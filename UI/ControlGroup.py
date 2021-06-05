@@ -12,11 +12,11 @@ class ControlGroup(wx.StaticBoxSizer):
         self.InnerSizer = wx.FlexGridSizer(0,2,PADDING,PADDING)
         self.Add(self.InnerSizer, 0, wx.ALIGN_RIGHT, PADDING)
 
-    def AddLabeledControl(self, module,
+    def AddLabeledControl(self, module = '',
             ctltype = '', value = '',
             contents = '', tooltip = '', callback = None):
         sizer = self.InnerSizer
-        State = module.Profile.PageState[module]
+        State = module.State
 
         text = wx.StaticText(module, -1, value + ':')
 

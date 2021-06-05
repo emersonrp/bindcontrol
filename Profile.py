@@ -12,7 +12,7 @@ from Page.InspirationPopper import InspirationPopper
 #from Page.Mastermind
 #from Page.SimpleBinds
 #from Page.SoD
-#from Page.TeamPetSelect
+from Page.TeamPetSelect import TeamPetSelect
 from Page.TypingMsg import TypingMsg
 
 class Profile(wx.Notebook):
@@ -32,7 +32,7 @@ class Profile(wx.Notebook):
         self.CreatePage(FPSDisplay(self))
         self.CreatePage(InspirationPopper(self))
         #self.CreatePage(Mastermind(self))
-        #self.CreatePage(TeamPetSelect(self))
+        self.CreatePage(TeamPetSelect(self))
         self.CreatePage(TypingMsg(self))
         #self.CreatePage(SimpleBinds(self))
         #self.CreatePage(BufferBinds(self))

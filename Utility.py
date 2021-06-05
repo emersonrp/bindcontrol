@@ -1,3 +1,5 @@
+import wx
+
 def ColorDefault():
     return {
         'border'     : { 'r' : 0,   'g' : 0,   'b' : 0, },
@@ -6,19 +8,17 @@ def ColorDefault():
     }
 
 
-__DATA__ = """
-
-sub Icon {
-    state %Icons;
-    my $iconname = shift;
-    return $Icons{$iconname} ||=
-        Wx::Bitmap->new (
-            Wx::Image->new (
-                "icons/$iconname.png", wxBITMAP_TYPE_ANY, -1,
+Icons = {}
+def Icon(iconname):
+    if not Icons.get('iconname', None):
+        Icons[iconname] = wx.Bitmap(
+            wx.Image(
+                f"icons/{iconname}.png", wx.BITMAP_TYPE_ANY, -1,
             )
-        );
-}
+        )
+    return Icons[iconname]
 
+__DATA__ = """
 
 sub CheckConflict {
     my ($t,$k,$Purpose) = @_;

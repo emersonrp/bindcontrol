@@ -1,4 +1,6 @@
 import wx
+import UI
+
 from Page import Page
 from UI.ControlGroup import ControlGroup
 
@@ -7,18 +9,6 @@ class TypingMsg(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
         self.TabTitle = "Typing"
-        self.Labels = {
-            'Enable' : 'Enable Chat Binds',
-            'Message' : '"afk typing" message',
-            'StartChat' : 'Start Chat (no "/")',
-            'SlashChat' : 'Start Chat (with "/")',
-            'StartEmote' : 'Begin emote (types "/em")',
-            'AutoReply' : 'AutoReply to incoming /tell',
-            'TellTarget' : 'Send /tell to current target',
-            'QuickChat' : 'QuickChat',
-            'TypingNotifierEnable' : 'Enable Typing Notifier',
-            'TypingNotifier' : 'Typing Notifier',
-        }
         self.State = {
             'Enable'               : 1,
             'Message'              : "afk Typing Message",
@@ -79,8 +69,8 @@ class TypingMsg(Page):
 
     def PopulateBindfiles(self):
         profile   = shift.Profile
-        ResetFile = profile.PageState['General']['ResetFile']
-        Typing    = profile.PageState['Typing']
+        ResetFile = profile.Pages['General'].State['ResetFile']
+        Typing    = profile.Pages['Typing']
 
         Notifier = Typing['TypingNotifier']
         if Notifier:
@@ -105,3 +95,16 @@ class TypingMsg(Page):
         if getattr(profile, 'Typing', None):
             return profile.Typing['enable']
 
+
+    UI.Labels.update({
+        'Enable' : 'Enable Chat Binds',
+        'Message' : '"afk typing" message',
+        'StartChat' : 'Start Chat (no "/")',
+        'SlashChat' : 'Start Chat (with "/")',
+        'StartEmote' : 'Begin emote (types "/em")',
+        'AutoReply' : 'AutoReply to incoming /tell',
+        'TellTarget' : 'Send /tell to current target',
+        'QuickChat' : 'QuickChat',
+        'TypingNotifierEnable' : 'Enable Typing Notifier',
+        'TypingNotifier' : 'Typing Notifier',
+    })

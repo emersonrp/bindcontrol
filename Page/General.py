@@ -1,5 +1,6 @@
 # UI / logic for the 'general' panel
 import wx
+import UI
 
 from GameData import GameData
 from UI.ControlGroup import ControlGroup
@@ -25,7 +26,6 @@ class General(Page):
             'Pool3': '',
             'Pool4': '',
         }
-
 
     def FillTab(self):
 
@@ -152,7 +152,6 @@ class General(Page):
         self.State['Secondary'] = event.GetEventObject.GetValue
         self.fillPickers
 
-
     def pickEpicPowerSet(self, event):
         self.State['Epic'] = event.GetEventObject.GetValue
         self.fillPickers
@@ -162,7 +161,6 @@ class General(Page):
         return
 
     def fillPickers(self):
-
         ArchData = GameData['Archetypes'][self.Archetype]
         aPicker = wx.Window.FindWindowById(id('Archetype'))
         aPicker.SetStringSelection(self.State['Archetype'])

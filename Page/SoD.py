@@ -1,8 +1,10 @@
 import wx
+import UI
 
 from GameData import GameData
 from Page import Page
 from UI.ControlGroup import ControlGroup
+
 
 class SoD(Page):
     def __init__(self, parent):
@@ -24,6 +26,7 @@ class SoD(Page):
             'AutoMouseLook'      : 0,
 
             'SprintPower'        : 'Sprint',
+            'SprintSoD'          : True,
 
             'ChangeCamera'       : 1,
             'CamdistBase'        : 15,
@@ -33,8 +36,7 @@ class SoD(Page):
             'DetailBase'         : 100,
             'DetailTravelling'   : 50,
 
-            'NonSoDMode'         : 1,
-            'ToggleSoD'          : 'CTRL-M',
+            'NonSoDMode'         : 'CTRL-M',
             'JumpMode'           : "T",
             'SimpleSJCJ'         : 1,
 
@@ -54,8 +56,10 @@ class SoD(Page):
             'TTPMode'            : 'SHIFT-CTRL-LBUTTON',
             'TTPCombo'           : 'SHIFT-CTRL',
             'TTPReset'           : 'SHIFT-CTRL-T',
+            'TTPAutoGFly'        : True,
 
-            'TPHideWindows'      : 0,
+            'TPHideWindows'      : False,
+            'TPAutoHover'        : True,
 
             'RunPrimary'         : "Super Speed",
             'RunPrimaryNumber'   : 2,
@@ -65,12 +69,9 @@ class SoD(Page):
             'FlyFly'             : '',
             'FlyGFly'            : '',
             'Unqueue'            : 1,
-            'ToggleSoD'          : "CTRL+M",
             'Enable'             : None,
         }
 
-
-        self.State['TPHideWindows'] = 1
 
         self.State['NovaMode'] = "T"
         self.State['NovaTray'] = "4"
@@ -78,12 +79,12 @@ class SoD(Page):
         self.State['DwarfMode'] = "G"
         self.State['DwarfTray'] = "5"
 
-        if (self.Profile.PageState['General']['Archetype'] == "Peacebringer"):
+        if (self.Profile.Pages['General'].State['Archetype'] == "Peacebringer"):
             self.State['NovaNova'] = "Bright Nova"
             self.State['DwarfDwarf'] = "White Dwarf"
             self.State['HumanFormShield'] = "Shining Shield"
 
-        elif (self.Profile.PageState['General']['Archetype'] == "Warshade"):
+        elif (self.Profile.Pages['General'].State['Archetype'] == "Warshade"):
             self.State['NovaNova'] = "Dark Nova"
             self.State['DwarfDwarf'] = "Black Dwarf"
             self.State['HumanFormShield'] = "Gravity Shield"
@@ -136,20 +137,21 @@ class SoD(Page):
 
 
         ##### GENERAL SETTINGS
-        generalSizer = UI.ControlGroup(self, 'General Settings')
+        generalSizer = ControlGroup(self, 'General Settings')
 
         generalSizer.AddLabeledControl(
-            value = 'AutoMouselook',
+            value = 'AutoMouseLook',
             ctltype = 'checkbox',
             tooltip = 'Automatically Mouselook when moving',
             module = self,
         )
-        generalSizer.AddLabeledControl(
-            value = 'SprintPower',
-            ctltype = 'combo',
-            contents = GameData['SprintPowers'],
-            module = self,
-        )
+        # TODO -- add "SprintPowers" to GameData
+#        generalSizer.AddLabeledControl(
+#            value = 'SprintPower',
+#            ctltype = 'combo',
+#            contents = GameData['SprintPowers'],
+#            module = self,
+#        )
 
         # TODO -- decide what to do with this.
         # generalSizer.Add( wx.CheckBox(self, SPRINT_UNQUEUE, "Exec powexecunqueue"))
@@ -160,11 +162,6 @@ class SoD(Page):
                 ctltype = 'keybutton',
                 module = self,
             )
-        generalSizer.AddLabeledControl(
-            value = 'ToggleSoD',
-            ctltype = 'keybutton',
-            module = self,
-        )
         generalSizer.AddLabeledControl(
             value = 'SprintSoD',
             ctltype = 'checkbox',
@@ -178,13 +175,13 @@ class SoD(Page):
         generalSizer.AddLabeledControl(
             value = 'CamdistBase',
             ctltype = 'spinbox',
-            contents = [1, 100],
+            contents = (1, 100),
             module = self,
         )
         generalSizer.AddLabeledControl(
             value = 'CamdistTravelling',
             ctltype = 'spinbox',
-            contents = [1, 100],
+            contents = (1, 100),
             module = self,
         )
         generalSizer.AddLabeledControl(
@@ -195,17 +192,17 @@ class SoD(Page):
         generalSizer.AddLabeledControl(
             value = 'DetailBase',
             ctltype = 'spinbox',
-            contents = [1, 100],
+            contents = (1, 100),
             module = self,
         )
         generalSizer.AddLabeledControl(
             value = 'DetailTravelling',
             ctltype = 'spinbox',
-            contents = [1, 100],
+            contents = (1, 100),
             module = self,
         )
         generalSizer.AddLabeledControl(
-            value = 'HideWinsDuringTP',
+            value = 'TPHideWindows',
             ctltype = 'checkbox',
             module = self,
         )
@@ -218,7 +215,7 @@ class SoD(Page):
 
 
         ##### SUPER SPEED
-        superSpeedSizer = UI.ControlGroup(self, 'Super Speed')
+        superSpeedSizer = ControlGroup(self, 'Super Speed')
         superSpeedSizer.AddLabeledControl(
             value = 'RunMode',
             ctltype = 'keybutton',
@@ -237,7 +234,7 @@ class SoD(Page):
         rightColumn.Add(superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
-        superJumpSizer = UI.ControlGroup(self, 'Super Jump')
+        superJumpSizer = ControlGroup(self, 'Super Jump')
         superJumpSizer.AddLabeledControl(
             value = 'JumpMode',
             ctltype = 'keybutton',
@@ -252,7 +249,7 @@ class SoD(Page):
 
 
         ##### FLY
-        flySizer = UI.ControlGroup(self, 'Flight')
+        flySizer = ControlGroup(self, 'Flight')
 
         flySizer.AddLabeledControl(
             value = 'FlyMode',
@@ -267,7 +264,7 @@ class SoD(Page):
         rightColumn.Add(flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
-        teleportSizer = UI.ControlGroup(self, 'Teleport')
+        teleportSizer = ControlGroup(self, 'Teleport')
 
         # if (at == peacebringer) "Dwarf Step"
         # if (at == warshade) "Shadow Step / Dwarf Step"
@@ -290,7 +287,7 @@ class SoD(Page):
 
         # if (player has hover): {
         teleportSizer.AddLabeledControl(
-            value = 'AutoHoverTP',
+            value = 'TPAutoHover',
             ctltype = 'checkbox',
             module = self,
         )
@@ -315,7 +312,7 @@ class SoD(Page):
 
         # if (player has group fly) {
         teleportSizer.AddLabeledControl(
-            value = 'AutoGFlyTTP',
+            value = 'TTPAutoGFly',
             ctltype = 'checkbox',
             module = self,
         )
@@ -325,7 +322,7 @@ class SoD(Page):
         rightColumn.Add(teleportSizer, 0, wx.EXPAND)
 
         ##### TEMP TRAVEL POWERS
-        tempSizer = UI.ControlGroup(self, 'Temp Travel Powers')
+        tempSizer = ControlGroup(self, 'Temp Travel Powers')
         # if (temp travel powers exist)?  Should this be "custom"?
         tempSizer.AddLabeledControl(
             value = 'TempMode',
@@ -341,7 +338,7 @@ class SoD(Page):
         rightColumn.Add(tempSizer, 0, wx.EXPAND)
 
         ##### KHELDIAN TRAVEL POWERS
-        kheldianSizer = UI.ControlGroup(self, 'Nova / Dwarf Travel Powers')
+        kheldianSizer = ControlGroup(self, 'Nova / Dwarf Travel Powers')
 
         kheldianSizer.AddLabeledControl(
             value = 'NovaMode',
@@ -420,7 +417,7 @@ class SoD(Page):
 
         if ((self.State['Default'] == modestr) and (t['totalkeys'] == 0)):
 
-            curfile = profile.PageStates['General']['ResetFile']
+            curfile = profile.Pages['General'].State['ResetFile']
             sodDefaultResetKey(mobile,stationary)
 
             sodUpKey     (t,bl,curfile,self.State,mobile,stationary,flight,'','','',sssj)
@@ -903,7 +900,7 @@ class SoD(Page):
 
         profile = self.Profile
 
-        ResetFile = profile.PageState['General']['ResetFile']
+        ResetFile = profile.Pages['General'].State['ResetFile']
 
         # ResetFile.SetBind(petselect['sel5'] + ' "petselect 5')
         if (self.State['Default'] == "NonSoD"):
@@ -977,7 +974,7 @@ class SoD(Page):
             t['jump'] = "Super Jump"
 
 
-        if (profile.PageState['General']['Archetype'] == "Peacebringer"):
+        if (profile.Pages['General'].State['Archetype'] == "Peacebringer"):
             if (self.State['FlyHover']):
                 t['canhov'] = 1
                 t['canfly'] = 1
@@ -989,7 +986,7 @@ class SoD(Page):
                 t['hover'] = "Energy Flight"
                 t['flyx'] = "Energy Flight"
 
-        elif (not (profile.PageState['General']['Archetype'] == "Warshade")):
+        elif (not (profile.Pages['General'].State['Archetype'] == "Warshade")):
             if (self.State['FlyHover'] and not self.State['FlyFly']):
                 t['canhov'] = 1
                 t['hover'] = "Hover"
@@ -1010,7 +1007,7 @@ class SoD(Page):
                 if (self.State['TPTPHover']): t['tphover'] = '$$powexectoggleon Hover'
 
 
-        if ((profile.PageState['General']['Archetype'] == "Peacebringer") and self.State['FlyQFly']):
+        if ((profile.Pages['General'].State['Archetype'] == "Peacebringer") and self.State['FlyQFly']):
             t['canqfly'] = 1
 
         if (self.State['FlyGFly']):
@@ -1297,10 +1294,10 @@ class SoD(Page):
             ResetFile.      SetBind(self.State['TempTraySwitch'],'+down$$gototray ' + self.State['TempTray'] + BindFile.BLF(profile, 'temptoggle2.txt'))
 
 
-        if (profile.PageState['General']['Archetype'] == "Warshade"):
+        if (profile.Pages['General'].State['Archetype'] == "Warshade"):
             dwarfTPPower  = "powexecname Black Dwarf Step"
             normalTPPower = "powexecname Shadow Step"
-        elif (profile.PageState['General']['Archetype'] == "Peacebringer"):
+        elif (profile.Pages['General'].State['Archetype'] == "Peacebringer"):
             dwarfTPPower = "powexecname White Dwarf Step"
         else:
             normalTPPower = "powexecname Teleport"
@@ -1313,7 +1310,7 @@ class SoD(Page):
             novapbind  = cbPBindToString(self.State['HumanNovaPBind'], profile)
             dwarfpbind = cbPBindToString(self.State['HumanDwarfPBind'],profile)
 
-        if ((profile.PageState['General']['Archetype'] == "Peacebringer") or (profile.PageState['General']['Archetype'] == "Warshade")):
+        if ((profile.Pages['General'].State['Archetype'] == "Peacebringer") or (profile.Pages['General'].State['Archetype'] == "Warshade")):
             if (humanBindKey):
                 ResetFile.SetBind(humanBindKey,humanpbind)
 
@@ -1432,7 +1429,7 @@ class SoD(Page):
             ResetFile.SetBind(self.State['TPBindKey'],'nop')
             ResetFile.SetBind(self.State['TPResetKey'],'nop')
 
-        if (self.State['TP'] and self.State['TPEnable'] and not (profile.PageState['General']['Archetype'] == "Peacebringer") and normalTPPower):
+        if (self.State['TP'] and self.State['TPEnable'] and not (profile.Pages['General'].State['Archetype'] == "Peacebringer") and normalTPPower):
             tphovermodeswitch = ''
             if (t['tphover'] == ''):
                 # TODO hmm can't get this from .KeyState directly?
@@ -1456,7 +1453,7 @@ class SoD(Page):
             tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
             tp_on2.SetBind(self.State['TPBindKey'],'-down$$' + normalTPPower + BindFile.BLF(profile, 'tp','tp_on1.txt'))
 
-        if (self.State['TTP'] and self.State['TTPEnable'] and not (profile.PageState['General']['Archetype'] == "Peacebringer") and teamTPPower) :
+        if (self.State['TTP'] and self.State['TTPEnable'] and not (profile.Pages['General'].State['Archetype'] == "Peacebringer") and teamTPPower) :
             tphovermodeswitch = ''
             ResetFile.SetBind(self.State['TTPComboKey'],'+down$$' + teamTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'ttp','ttp_on1.txt'))
             ResetFile.SetBind(self.State['TTPBindKey'],'nop')
@@ -2028,15 +2025,15 @@ class SoD(Page):
         if (self.State['FlyHover']
                 or self.State['FlyFly'] ): Utility.CheckConflict(self.State,"FlyMode","Fly Mode Key")
         if (self.State['FlyQFly']
-                and (profile.PageState['General']['Archetype'] == "Peacebringer")): Utility.CheckConflict(self.State,"QFlyMode","Q.Fly Mode Key")
+                and (profile.Pages['General'].State['Archetype'] == "Peacebringer")): Utility.CheckConflict(self.State,"QFlyMode","Q.Fly Mode Key")
         if (self.State['TP'] and self.State['TPEnable']):
             Utility.CheckConflict(self.State['TP'],"ComboKey","TP ComboKey")
             Utility.CheckConflict(self.State['TP'],"ResetKey","TP ResetKey")
 
             TPQuestion = "Teleport Bind"
-            if (profile.PageState['General']['Archetype'] == "Peacebringer") :
+            if (profile.Pages['General'].State['Archetype'] == "Peacebringer") :
                TPQuestion = "Dwarf Step Bind"
-            elif (profile.PageState['General']['Archetype'] == "Warshade") :
+            elif (profile.Pages['General'].State['Archetype'] == "Warshade") :
                TPQuestion = "Shd/Dwf Step Bind"
 
             Utility.CheckConflict(self.State['TP'],"BindKey", TPQuestion)
@@ -2051,7 +2048,7 @@ class SoD(Page):
             Utility.CheckConflict(self.State,"TempMode","Temp Mode Key")
             Utility.CheckConflict(self.State['Temp'],"TraySwitch","Tray Toggle Key")
 
-        if ((profile.PageState['General']['Archetype'] == "Peacebringer") or (profile.PageState['General']['Archetype'] == "Warshade")) :
+        if ((profile.Pages['General'].State['Archetype'] == "Peacebringer") or (profile.Pages['General'].State['Archetype'] == "Warshade")) :
             if (self.State['Nova']  and self.State['NovaEnable']): Utility.CheckConflict(self.State['Nova'], "Mode","Nova Form Bind")
             if (self.State['Dwarf'] and self.State['DwarfEnable']): Utility.CheckConflict(self.State['Dwarf'],"Mode","Dwarf Form Bind")
 
@@ -2213,68 +2210,67 @@ class SoD(Page):
 
 
 
-    UI.Labels.Add( {
-        Up : 'Up',
-        Down : 'Down',
-        Forward : 'Forward',
-        Back : 'Back',
-        Left : 'Strafe Left',
-        Right : 'Strafe Right',
-        TurnLeft : 'Turn Left',
-        TurnRight : 'Turn Right',
-        AutoRun : 'Auto Run',
-        Follow : 'Follow Target',
+    UI.Labels.update( {
+        'Up' : 'Up',
+        'Down' : 'Down',
+        'Forward' : 'Forward',
+        'Back' : 'Back',
+        'Left' : 'Strafe Left',
+        'Right' : 'Strafe Right',
+        'TurnLeft' : 'Turn Left',
+        'TurnRight' : 'Turn Right',
+        'AutoRun' : 'Auto Run',
+        'Follow' : 'Follow Target',
 
-        DefaultMode : 'Default SoD Mode',
-        MousechordSoD : 'Mousechord is SoD Forward',
-        AutoMouselook : 'Automatically Mouselook when moving',
+        'DefaultMode' : 'Default SoD Mode',
+        'MousechordSoD' : 'Mousechord is SoD Forward',
+        'AutoMouselook' : 'Automatically Mouselook when moving',
 
-        SprintPower : 'Power to use for Sprint',
+        'SprintPower' : 'Power to use for Sprint',
 
-        ChangeCamera : 'Change camera distance when moving',
-        CamdistBase : 'Base Camera Distance',
-        CamdistTravelling : 'Travelling Camera Distance',
+        'ChangeCamera' : 'Change camera distance when moving',
+        'CamdistBase' : 'Base Camera Distance',
+        'CamdistTravelling' : 'Travelling Camera Distance',
 
-        ChangeDetail : 'Change graphics detail level when moving',
-        DetailBase : 'Base Detail Level',
-        DetailTravelling : 'Travelling Detail Level',
+        'ChangeDetail' : 'Change graphics detail level when moving',
+        'DetailBase' : 'Base Detail Level',
+        'DetailTravelling' : 'Travelling Detail Level',
 
-        NonSoDMode : 'Non-SoD Mode',
-        ToggleSoD : 'SoD Mode Toggle',
-        JumpMode : 'Toggle Jump Mode',
-        SimpleSJCJ : 'Simple Combat Jumping / Super Jump Toggle',
+        'NonSoDMode' : 'Non-SoD Mode',
+        'JumpMode' : 'Toggle Jump Mode',
+        'SimpleSJCJ' : 'Simple Combat Jumping / Super Jump Toggle',
 
-        RunMode : 'Toggle Super Speed Mode',
-        SSOnlyWhenMoving : 'SuperSpeed only when moving',
-        SSSJModeEnable : 'Enable Super Speed / Super Jump Mode',
+        'RunMode' : 'Toggle Super Speed Mode',
+        'SSOnlyWhenMoving' : 'SuperSpeed only when moving',
+        'SSSJModeEnable' : 'Enable Super Speed / Super Jump Mode',
 
-        FlyMode : 'Toggle Fly Mode',
-        GFlyMode : 'Toggle Group Fly Mode',
+        'FlyMode' : 'Toggle Fly Mode',
+        'GFlyMode' : 'Toggle Group Fly Mode',
 
-        SelfTellOnChange : 'Self-/tell when changing mode',
+        'SelfTellOnChange' : 'Self-/tell when changing mode',
 
-        TPMode  : 'Teleport Bind',
-        TPCombo : 'Teleport Combo Key',
-        TPReset : 'Teleport Reset Key',
-        HideWinsDuringTP : 'Hide Windows when Teleporting',
-        AutoHoverTP : 'Automatically use Hover when Teleporting',
+        'TPMode'  : 'Teleport Bind',
+        'TPCombo' : 'Teleport Combo Key',
+        'TPReset' : 'Teleport Reset Key',
+        'TPHideWindows' : 'Hide Windows when Teleporting',
+        'TPAutoHover' : 'Automatically use Hover when Teleporting',
 
-        TTPMode  : 'Team Teleport Bind',
-        TTPCombo : 'Team Teleport Combo Key',
-        TTPReset : 'Team Teleport Reset Key',
-        AutoGFlyTTP : 'Automatically use Group Fly when Team Teleporting',
+        'TTPMode'  : 'Team Teleport Bind',
+        'TTPCombo' : 'Team Teleport Combo Key',
+        'TTPReset' : 'Team Teleport Reset Key',
+        'TTPAutoGFly' : 'Automatically use Group Fly when Team Teleporting',
 
-        TempMode : 'Toggle Temp Mode',
-        TempTray : 'Temporary Travel Power Tray',
+        'TempMode' : 'Toggle Temp Mode',
+        'TempTray' : 'Temporary Travel Power Tray',
 
-        NovaMode : 'Toggle Nova Form',
-        NovaTray : 'Nova Travel Power Tray',
-        DwarfMode : 'Toggle Dwarf Form',
-        DwarfTray : 'Dwarf Travel Power Tray',
-        HumanMode : 'Human Form',
-        HumanTray : 'Human Travel Power Tray',
+        'NovaMode' : 'Toggle Nova Form',
+        'NovaTray' : 'Nova Travel Power Tray',
+        'DwarfMode' : 'Toggle Dwarf Form',
+        'DwarfTray' : 'Dwarf Travel Power Tray',
+        'HumanMode' : 'Human Form',
+        'HumanTray' : 'Human Travel Power Tray',
 
-        SprintSoD : 'Enable Sprint SoD',
+        'SprintSoD' : 'Enable Sprint SoD',
     })
 
 class t():

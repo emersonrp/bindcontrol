@@ -14,6 +14,7 @@ class Page(wx.Panel):
         self.Profile = parent
         self.TabTitle = type(self).__name__
         self.State = {}
+        self.Profile.Pages[self.TabTitle] = self
 
     def help(self, event):
 
@@ -34,8 +35,6 @@ class Page(wx.Panel):
     # stubs
     def InitKeys(self):
         profile = self.Profile
-        if not profile.PageState.get(self, None):
-            profile.PageState[self] = self.State
 
     def PopulateBindFiles():
         return

@@ -1,7 +1,10 @@
 import wx
+import UI
 import Utility
+
 from UI.ControlGroup import ControlGroup
 from Page import Page
+
 
 class TeamPetSelect(Page):
     ordinals = ("First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth")
@@ -160,7 +163,7 @@ class TeamPetSelect(Page):
 
     def PopulateBindFiles(self):
         profile    = self.Profile
-        ResetFile  = profile.PageState['General']['ResetFile']
+        ResetFile  = profile.Pages['General'].State['ResetFile']
         if (self.State['TPSSelMode'] < 3):
             selmethod = "teamselect"
             selnummod = 0
@@ -297,7 +300,7 @@ class TeamPetSelect(Page):
         cbCheckConflict(TPS,"DecPetSize","Decrease Henchman Group Size")
 
     def bindisused(self, profile):
-        return profile.PageState['TPS'],get('Enable', None)
+        return profile.Pages['TPS'].State,get('Enable', None)
 
     def HelpText(self):
 
@@ -307,25 +310,25 @@ class TeamPetSelect(Page):
     Single Key Team Selection binds based on binds from Weap0nX.
     """
 
-#    UI.Labels.Add({
-#        TPSSelMode : "Team/Pet selection mode",
-#        TeamSelect1 : "Select First Team Member/Pet",
-#        TeamSelect2 : "Select Second Team Member/Pet",
-#        TeamSelect3 : "Select Third Team Member/Pet",
-#        TeamSelect4 : "Select Fourth Team Member/Pet",
-#        TeamSelect5 : "Select Fifth Team Member/Pet",
-#        TeamSelect6 : "Select Sixth Team Member/Pet",
-#        TeamSelect7 : "Select Seventh Team Member/Pet",
-#        TeamSelect8 : "Select Eighth Team Member/Pet",
-#        SelNextPet : 'Select Next Pet',
-#        SelPrevPet : 'Select Previous Pet',
-#        IncPetSize : 'Increase Pet Group Size',
-#        DecPetSize : 'Decrease Pet Group Size',
-#        SelNextTeam : 'Select Next Team Member',
-#        SelPrevTeam : 'Select Previous Team Member',
-#        IncTeamSize : 'Increase Team Size',
-#        DecTeamSize : 'Decrease Team Size',
-#        IncTeamPos  : 'Increase Team Position',
-#        DecTeamPos  : 'Decrease Team Position',
-#        Reset       : 'Reset to Solo',
-#    })
+    UI.Labels.update({
+        'TPSSelMode' : "Team/Pet selection mode",
+        'TeamSelect1' : "Select First Team Member/Pet",
+        'TeamSelect2' : "Select Second Team Member/Pet",
+        'TeamSelect3' : "Select Third Team Member/Pet",
+        'TeamSelect4' : "Select Fourth Team Member/Pet",
+        'TeamSelect5' : "Select Fifth Team Member/Pet",
+        'TeamSelect6' : "Select Sixth Team Member/Pet",
+        'TeamSelect7' : "Select Seventh Team Member/Pet",
+        'TeamSelect8' : "Select Eighth Team Member/Pet",
+        'SelNextPet' : 'Select Next Pet',
+        'SelPrevPet' : 'Select Previous Pet',
+        'IncPetSize' : 'Increase Pet Group Size',
+        'DecPetSize' : 'Decrease Pet Group Size',
+        'SelNextTeam' : 'Select Next Team Member',
+        'SelPrevTeam' : 'Select Previous Team Member',
+        'IncTeamSize' : 'Increase Team Size',
+        'DecTeamSize' : 'Decrease Team Size',
+        'IncTeamPos'  : 'Increase Team Position',
+        'DecTeamPos'  : 'Decrease Team Position',
+        'Reset'       : 'Reset to Solo',
+    })

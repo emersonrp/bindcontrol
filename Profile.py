@@ -11,7 +11,7 @@ from Page.General import General
 from Page.InspirationPopper import InspirationPopper
 #from Page.Mastermind
 #from Page.SimpleBinds
-#from Page.SoD
+from Page.SoD import SoD
 from Page.TeamPetSelect import TeamPetSelect
 from Page.TypingMsg import TypingMsg
 
@@ -21,14 +21,13 @@ class Profile(wx.Notebook):
         wx.Notebook.__init__(self, parent)
 
         self.BindFiles = {}
-        self.PageState = {}
-        self.Pages     = []
+        self.Pages     = {}
 
         # TODO -- here's where we'd load a profile from a file or something.
 
         # Add the individual tabs, in order.
         self.CreatePage(General(self))
-        #self.CreatePage(SoD(self))
+        self.CreatePage(SoD(self))
         self.CreatePage(FPSDisplay(self))
         self.CreatePage(InspirationPopper(self))
         #self.CreatePage(Mastermind(self))
@@ -43,7 +42,6 @@ class Profile(wx.Notebook):
         module.InitKeys()
         module.FillTab()
         page = self.AddPage(module, module.TabTitle)
-        self.Pages.append(page)
 
         self.Layout()
 

@@ -1,4 +1,5 @@
 import wx
+import UI
 
 PADDING = 5
 
@@ -18,7 +19,8 @@ class ControlGroup(wx.StaticBoxSizer):
         sizer = self.InnerSizer
         State = module.State
 
-        text = wx.StaticText(module, -1, value + ':')
+        label = UI.Labels.get(value, value)
+        text = wx.StaticText(module, -1, label + ':')
 
         if ctltype == ('keybutton'):
             control = wx.Button( module, -1, State[value])
@@ -37,9 +39,9 @@ class ControlGroup(wx.StaticBoxSizer):
             control = wx.CheckBox(module, -1)
             control.SetValue(bool(State[value]))
         elif ctltype == ('spinbox'):
-            control = wx.SpinCtrl(module, 0, -1)
+            control = wx.SpinCtrl(module, -1)
             control.SetValue(State[value])
-            control.SetRange(contents)
+            control.SetRange(*contents)
         elif ctltype == ('dirpicker'):
             control = wx.DirPickerCtrl(
                 module, -1, State[value], State[value], 

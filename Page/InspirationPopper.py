@@ -110,7 +110,7 @@ class InspirationPopper(Page):
     def PopulateBindFiles(self):
         profile = self.Profile
 
-        ResetFile = profile.PageState['General'][ResetFile]
+        ResetFile = profile.Pages['General'].State[ResetFile]
 
         for Insp in sorted(GameData['Inspirations']):
             forwardOrder = ""

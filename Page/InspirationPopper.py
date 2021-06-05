@@ -1,7 +1,7 @@
 import wx
 import Utility
 from Page import Page
-from GameData import GameData
+from GameData import Inspirations
 
 class InspirationPopper(Page):
     def __init__(self, parent):
@@ -27,7 +27,7 @@ class InspirationPopper(Page):
         InspRows =    wx.FlexGridSizer(0,10,2,2)
         RevInspRows = wx.FlexGridSizer(0,10,2,2)
 
-        for Insp in sorted(GameData['Inspirations']):
+        for Insp in sorted(Inspirations):
             revkey = f"Rev{Insp}Key"
             colors = f"{Insp}Colors"
             revcol = f"Rev{colors}"
@@ -112,14 +112,14 @@ class InspirationPopper(Page):
 
         ResetFile = profile.Pages['General'].State[ResetFile]
 
-        for Insp in sorted(GameData['Inspirations']):
+        for Insp in sorted(Inspirations):
             forwardOrder = ""
             reverseOrder = ""
 
-            for item in GameData['Inspirations'][Insp]:
+            for item in Inspirations[Insp]:
                 forwardOrder = forwardOrder + f"inspexecname {item}"
 
-            for item in GameData['Inspirations'][Insp].reverse():
+            for item in Inspirations[Insp].reverse():
                 reverseOrder = reverseOrder + f"inspexecname {item}"
 
 

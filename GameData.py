@@ -1,8 +1,6 @@
-GameData = {}
+Origins = ['Magic','Mutation','Natural','Science','Technology']
 
-GameData[ 'Origins' ] = ['Magic','Mutation','Natural','Science','Technology']
-
-GameData[ 'Archetypes' ] = {
+Archetypes = {
     "Arachnos Soldier": {
         'Faction': 'V',
         "Epic": {
@@ -2410,7 +2408,7 @@ GameData[ 'Archetypes' ] = {
     },
 };
 
-GameData[ 'MiscPowers' ] = {
+MiscPowers = {
 # -- TODO!!! split accolades by hero / villain
     "Badge": {
         "Accolade": [
@@ -2497,7 +2495,7 @@ GameData[ 'MiscPowers' ] = {
 }
 
 
-GameData[ 'Inspirations' ] = {
+Inspirations = {
     'Accuracy': ['Insight','Keen Insight','Uncanny Insight'],
     'Health'  : ['Respite','Dramatic Improvement','Resurgance'],
     'Damage'  : ['Enrage','Focused Rage','Righteous Rage'],
@@ -2507,7 +2505,7 @@ GameData[ 'Inspirations' ] = {
     'ResistDamage': ['Sturdy','Rugged','Robust'],
 }
 
-GameData[ 'Emotes' ] = [
+Emotes = [
     'AFK','Afraid','Akimbo','Angry','AssumePositionWall','AtEase','Attack',
 
     'BatSmash','BatSmashReact','BB','BBAltitude','BBBeat','BBCatchMe','BBDance','BBDiscoFreak',

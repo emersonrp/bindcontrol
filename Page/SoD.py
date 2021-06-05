@@ -1,7 +1,6 @@
 import wx
 import UI
 
-from GameData import GameData
 from Page import Page
 from UI.ControlGroup import ControlGroup
 

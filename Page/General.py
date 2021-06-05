@@ -2,7 +2,7 @@
 import wx
 import UI
 
-from GameData import GameData
+from GameData import Archetypes, Origins, MiscPowers
 from UI.ControlGroup import ControlGroup
 from Page import Page
 
@@ -29,7 +29,7 @@ class General(Page):
 
     def FillTab(self):
 
-        ArchData = GameData['Archetypes'][self.State['Archetype']]
+        ArchData = Archetypes[self.State['Archetype']]
 
         topSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -43,7 +43,7 @@ class General(Page):
             value = 'Archetype',
             ctltype = 'combo',
             module = self,
-            contents = sorted(GameData['Archetypes']),
+            contents = sorted(Archetypes),
             tooltip = '',
             callback = self.pickArchetype,
         )
@@ -51,7 +51,7 @@ class General(Page):
             value = 'Origin',
             ctltype = 'combo',
             module = self,
-            contents = GameData['Origins'],
+            contents = Origins,
             tooltip = '',
             callback = self.pickOrigin,
         )
@@ -83,7 +83,7 @@ class General(Page):
             value = 'Pool1',
             ctltype = 'combo',
             module = self,
-            contents = sorted(GameData['MiscPowers']['Pool']),
+            contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
         )
@@ -91,7 +91,7 @@ class General(Page):
             value = 'Pool2',
             ctltype = 'combo',
             module = self,
-            contents = sorted(GameData['MiscPowers']['Pool']),
+            contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
         )
@@ -99,7 +99,7 @@ class General(Page):
             value = 'Pool3',
             ctltype = 'combo',
             module = self,
-            contents = sorted(GameData['MiscPowers']['Pool']),
+            contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
         )
@@ -107,7 +107,7 @@ class General(Page):
             value = 'Pool4',
             ctltype = 'combo',
             module = self,
-            contents = sorted(GameData['MiscPowers']['Pool']),
+            contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
         )
@@ -161,7 +161,7 @@ class General(Page):
         return
 
     def fillPickers(self):
-        ArchData = GameData['Archetypes'][self.Archetype]
+        ArchData = Archetypes[self.Archetype]
         aPicker = wx.Window.FindWindowById(id('Archetype'))
         aPicker.SetStringSelection(self.State['Archetype'])
 
@@ -186,6 +186,6 @@ class General(Page):
         for i in [1, 2, 3, 4]:
             ppPicker = wx.Window.FindWindowById(id("Pooli"))
             ppPicker.Clear()
-            ppPicker.Append(sorted(GameData['MiscPowers']['Pool']))
+            ppPicker.Append(sorted(MiscPowers['Pool']))
             ppPicker.SetStringSelection(g[Pooli]) or ppPicker.SetSelection(1)
 

@@ -21,7 +21,8 @@ class Profile(wx.Notebook):
         wx.Notebook.__init__(self, parent)
 
         self.BindFiles = {}
-        self.PageState = {}  # pages store their per-profile data here
+        self.PageState = {}
+        self.Pages     = []
 
         # TODO -- here's where we'd load a profile from a file or something.
 
@@ -39,9 +40,8 @@ class Profile(wx.Notebook):
         #self.CreatePage(CustomBinds(self))
 
     def CreatePage(self, module):
-        module.InitKeys(self)
+        module.InitKeys()
         module.FillTab()
-
         self.AddPage(module, module.TabTitle)
 
     def GetBindFile(self, filename):

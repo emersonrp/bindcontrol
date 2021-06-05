@@ -13,6 +13,7 @@ class Page(wx.Panel):
         wx.Panel.__init__(self, parent)
         self.Profile = parent
         self.TabTitle = type(self).__name__
+        self.State = {}
 
     def help(self, event):
 
@@ -31,11 +32,14 @@ class Page(wx.Panel):
         self.HelpWindow.Show(not self.HelpWindow.IsShown())
 
     # stubs
-    def InitKeys():
-        return
+    def InitKeys(self):
+        profile = self.Profile
+        if not profile.PageState.get(self, None):
+            profile.PageState[self] = self.State
+
     def PopulateBindFiles():
-        print("stub PopBindFiles\n")
+        return
     def FillTab(self):
-        self.TabTitle = type(self).__name__
+        return
     def HelpText():
         return 'Help not currently implemented here.'

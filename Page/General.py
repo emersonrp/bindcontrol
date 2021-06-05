@@ -9,10 +9,7 @@ class General(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
 
-    def InitKeys(self, profile):
-        self.Profile = profile
-        profile.General = self
-        profile.PageState[self] = {
+        self.State = {
             'Name': '',
             'Archetype': 'Scrapper',
             'Origin': "Magic",
@@ -31,10 +28,8 @@ class General(Page):
 
 
     def FillTab(self):
-        General = self.Profile.General
-        State   = self.Profile.PageState[self]
 
-        ArchData = GameData['Archetypes'][State['Archetype']]
+        ArchData = GameData['Archetypes'][self.State['Archetype']]
 
         topSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -42,14 +37,12 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Name',
             ctltype = 'text',
-            parent = self,
-            module = General,
+            module = self,
         )
         powersBox.AddLabeledControl(
             value = 'Archetype',
             ctltype = 'combo',
-            parent = self,
-            module = General,
+            module = self,
             contents = sorted(GameData['Archetypes']),
             tooltip = '',
             callback = self.pickArchetype,
@@ -57,8 +50,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Origin',
             ctltype = 'combo',
-            parent = self,
-            module = General,
+            module = self,
             contents = GameData['Origins'],
             tooltip = '',
             callback = self.pickOrigin,
@@ -66,8 +58,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Primary',
             ctltype = 'combo',
-            parent = self,
-            module = General,
+            module = self,
             contents = sorted(ArchData['Primary']),
             tooltip = '',
             callback = self.pickPrimaryPowerSet,
@@ -75,8 +66,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Secondary',
             ctltype = 'combo',
-            parent = self,
-            module = General,
+            module = self,
             contents = sorted(ArchData['Secondary']),
             tooltip = '',
             callback = self.pickSecondaryPowerSet,
@@ -84,8 +74,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Epic',
             ctltype = 'combo',
-            parent = self,
-            module = General,
+            module = self,
             contents = sorted(ArchData['Epic']),
             tooltip = '',
             callback = self.pickEpicPowerSet,
@@ -93,8 +82,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Pool1',
             ctltype = 'combo',
-            parent = self,
-            module = General,
+            module = self,
             contents = sorted(GameData['MiscPowers']['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
@@ -102,8 +90,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Pool2',
             ctltype = 'combo',
-            parent = self,
-            module = General,
+            module = self,
             contents = sorted(GameData['MiscPowers']['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
@@ -111,8 +98,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Pool3',
             ctltype = 'combo',
-            parent = self,
-            module = General,
+            module = self,
             contents = sorted(GameData['MiscPowers']['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
@@ -120,8 +106,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Pool4',
             ctltype = 'combo',
-            parent = self,
-            module = General,
+            module = self,
             contents = sorted(GameData['MiscPowers']['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
@@ -129,22 +114,19 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'BindsDir',
             ctltype = 'dirpicker',
-            parent = self,
-            module = General,
+            module = self,
         )
         powersBox.AddLabeledControl(
             value = 'ResetKey',
             ctltype = 'keybutton',
-            parent = self,
-            module = General,
+            module = self,
             tooltip = 'This key is used by certain modules to reset binds to a sane state.',
         )
 
         powersBox.AddLabeledControl(
             value = 'ResetFeedback',
             ctltype = 'checkbox',
-            parent = self,
-            module = General,
+            module = self,
         )
 
         writeBindsButton = wx.Button( self, -1, 'Write Binds!' )
@@ -156,23 +138,23 @@ class General(Page):
         return self
 
     def pickArchetype(self, event):
-        State['Archetype'] = event.GetEventObject.GetValue
+        self.State['Archetype'] = event.GetEventObject.GetValue
         self.fillPickers()
 
     def pickOrigin(self):
         self.fillPickers()
 
     def pickPrimaryPowerSet(self, event):
-        State['Primary'] = event.GetEventObject.GetValue
+        self.State['Primary'] = event.GetEventObject.GetValue
         self.fillPickers
 
     def pickSecondaryPowerSet(self, event):
-        State['Secondary'] = event.GetEventObject.GetValue
+        self.State['Secondary'] = event.GetEventObject.GetValue
         self.fillPickers
 
 
     def pickEpicPowerSet(self, event):
-        State['Epic'] = event.GetEventObject.GetValue
+        self.State['Epic'] = event.GetEventObject.GetValue
         self.fillPickers
 
     def pickPoolPower(self, event):
@@ -181,29 +163,27 @@ class General(Page):
 
     def fillPickers(self):
 
-        g = self.Profile.General
-
-        ArchData = GameData['Archetypes'][g.Archetype]
+        ArchData = GameData['Archetypes'][self.Archetype]
         aPicker = wx.Window.FindWindowById(id('Archetype'))
-        aPicker.SetStringSelection(g.Archetype)
+        aPicker.SetStringSelection(self.State['Archetype'])
 
         oPicker = wx.Window.FindWindowById(id('Origin'))
-        oPicker.SetStringSelection(g.Origin)
+        oPicker.SetStringSelection(self.State['Origin'])
 
         pPicker = wx.Window.FindWindowById(id('Primary'))
         pPicker.Clear()
         pPicker.Append(sorted(ArchData['Primary']))
-        pPicker.SetStringSelection(g.Primary) or pPicker.SetSelection(1)
+        pPicker.SetStringSelection(self.State['Primary']) or pPicker.SetSelection(1)
 
         sPicker = wx.Window.FindWindowById(id('Secondary'))
         sPicker.Clear()
         sPicker.Append(sorted(ArchData['Secondary']))
-        sPicker.SetStringSelection(g.Secondary) or sPicker.SetSelection(1)
+        sPicker.SetStringSelection(self.State['Secondary']) or sPicker.SetSelection(1)
 
         ePicker = wx.Window.FindWindowById(id('Epic'))
         ePicker.Clear()
         ePicker.Append(sorted(ArchData['Epic']))
-        ePicker.SetStringSelection(g.Epic) or sPicker.SetSelection(1)
+        ePicker.SetStringSelection(self.State['Epic']) or sPicker.SetSelection(1)
 
         for i in [1, 2, 3, 4]:
             ppPicker = wx.Window.FindWindowById(id("Pooli"))

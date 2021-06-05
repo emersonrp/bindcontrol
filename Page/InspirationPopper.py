@@ -1,163 +1,155 @@
-#!/usr/bin/perl
+import wx
+import Utility
+from Page import Page
+from GameData import GameData
 
-use strict;
+class InspirationPopper(Page):
+    def __init__(self, parent):
+        Page.__init__(self, parent)
 
-package Page::InspirationPopper;
-use parent "Page::Page";
+        self.TabTitle = "Inspiration Popper"
 
-use Wx qw();
+        self.State = {
+            'Enable'          : None,
+            'AccuracyKey'     : "LSHIFT+A",
+            'HealthKey'       : "LSHIFT+S",
+            'DamageKey'       : "LSHIFT+D",
+            'EnduranceKey'    : "LSHIFT+Q",
+            'DefenseKey'      : "LSHIFT+W",
+            'BreakFreeKey'    : "LSHIFT+E",
+            'ResistDamageKey' : "LSHIFT+SPACE",
+        }
 
-use Utility qw(id);
+    def FillTab(self):
 
-our $PageName = 'InspPop';
+        sizer = wx.BoxSizer(wx.VERTICAL)
 
-sub InitKeys {
+        InspRows =    wx.FlexGridSizer(0,10,2,2)
+        RevInspRows = wx.FlexGridSizer(0,10,2,2)
 
-	my $self = shift;
+        for Insp in sorted(GameData['Inspirations']):
+            revkey = f"Rev{Insp}Key"
+            colors = f"{Insp}Colors"
+            revcol = f"Rev{colors}"
 
-	$self->Profile->InspPop ||= {
-		Enable => undef,
-		AccuracyKey     => "LSHIFT+A",
-		HealthKey       => "LSHIFT+S",
-		DamageKey       => "LSHIFT+D",
-		EnduranceKey    => "LSHIFT+Q",
-		DefenseKey      => "LSHIFT+W",
-		BreakFreeKey    => "LSHIFT+E",
-		ResistDamageKey => "LSHIFT+SPACE",
-	};
-}
+            if not self.State.get(revkey, None):
+                self.State[revkey] = "UNBOUND"
+            if not self.State.get(colors, None):
+                self.State[colors] = Utility.ColorDefault()
+            if not self.State.get(revcol, None):
+                self.State[revcol] = Utility.ColorDefault()
 
-sub FillTab {
+            for order in ("", "Rev"):
 
-	my $self = shift;
+                if order:
+                    rowSet = RevInspRows
+                else:
+                    rowSet = InspRows
 
-	$self->TabTitle = 'Inspiration Popper';
+                rowSet.Add( wx.StaticText(self, -1, f"{order} {Insp} Key"), 0,
+                        wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 
-	my $InspPop = $self->Profile->InspPop;
+                KeyPicker = wx.Button(self, -1, self.State[f"{order}{Insp}Key"])
+                KeyPicker.SetToolTip(
+                        wx.ToolTip(f"Choose the key combo to activate a {Insp} inspiration") )
+                rowSet.Add ( KeyPicker, 0, wx.EXPAND)
 
-	my $sizer = Wx::BoxSizer->new(Wx::wxVERTICAL);
+                rowSet.AddStretchSpacer(wx.EXPAND)
 
-	my $InspRows =    Wx::FlexGridSizer->new(0,10,2,2);
-	my $RevInspRows = Wx::FlexGridSizer->new(0,10,2,2);
+                ColorsCB = wx.CheckBox(self, -1, '')
+                ColorsCB.SetToolTip( wx.ToolTip("Colorize Inspiration-Popper chat feedback") )
+                rowSet.Add ( ColorsCB, 0, wx.ALIGN_CENTER_VERTICAL)
 
-	for my $Insp (sort keys %GameData::Inspirations) {
+                rowSet.Add( wx.StaticText(self, -1, "Border"), 0,
+                        wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+                bc = self.State[f"{order}{Insp}Colors"]['border']
+                rowSet.Add( wx.ColourPickerCtrl(
+                        self, -1,
+                        wx.Colour(bc['r'], bc['g'], bc['b']),
+                        wx.DefaultPosition, wx.DefaultSize,
+                    )
+                )
 
-		$InspPop->{"Rev${Insp}Key"}    ||= 'UNBOUND';
-		$InspPop->{"${Insp}Colors"}    ||= Utility::ColorDefault();
-		$InspPop->{"Rev${Insp}Colors"} ||= Utility::ColorDefault();
+                rowSet.Add( wx.StaticText(self, -1, "Background"), 0,
+                        wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+                bc = self.State[f"{order}{Insp}Colors"]['background']
+                rowSet.Add( wx.ColourPickerCtrl(
+                        self, -1,
+                        wx.Colour(bc['r'], bc['g'], bc['b']),
+                        wx.DefaultPosition, wx.DefaultSize,
+                    )
+                )
+                rowSet.Add( wx.StaticText(self, -1, "Text"), 0,
+                        wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+                fc = self.State[f"{order}{Insp}Colors"]['foreground']
+                rowSet.Add( wx.ColourPickerCtrl(
+                        self, -1,
+                        wx.Colour(fc['r'], fc['g'], fc['b']),
+                        wx.DefaultPosition, wx.DefaultSize,
+                    )
+                )
 
-		for my $order ('', 'Rev') {
+        useCB = wx.CheckBox( self, -1, 'Enable Inspiration Popper Binds (prefer largest)')
+        useCB.SetToolTip(wx.ToolTip(
+            'Check this to enable the Inspiration Popper Binds, (largest used first)'))
+        sizer.Add(useCB, 0, wx.ALL, 10)
+
+        sizer.Add(InspRows)
+
+        useRevCB = wx.CheckBox( self, -1,
+                'Enable Reverse Inspiration Popper Binds (prefer smallest)')
+        useCB.SetToolTip(wx.ToolTip(
+            'Check this to enable the Reverse Inspiration Popper Binds, (smallest used first)'))
+        sizer.Add(useRevCB, 0, wx.ALL, 10)
+
+        sizer.Add(RevInspRows)
+
+        self.SetSizerAndFit(sizer)
 
 
-			my ($KeyPicker, $ColorsCB, $bc, $fc);
+    def PopulateBindFiles(self):
+        profile = self.Profile
 
-			my $RowSet = $order ? $RevInspRows : $InspRows;
+        ResetFile = profile.PageState['General'][ResetFile]
 
-			$RowSet->Add ( Wx::StaticText->new($self, -1, "$order $Insp Key"), 0, Wx::wxALIGN_RIGHT|Wx::wxALIGN_CENTER_VERTICAL);
+        for Insp in sorted(GameData['Inspirations']):
+            forwardOrder = ""
+            reverseOrder = ""
 
-			$KeyPicker =  Wx::Button->    new($self, id("${order}${Insp}Key"), $InspPop->{"${order}${Insp}Key"});
-			$KeyPicker->SetToolTip( Wx::ToolTip->new("Choose the key combo to activate a $Insp inspiration") );
-			$RowSet->Add ( $KeyPicker, 0, Wx::wxEXPAND);
+            for item in GameData['Inspirations'][Insp]:
+                forwardOrder = forwardOrder + f"inspexecname {item}"
 
-			$RowSet->AddStretchSpacer(Wx::wxEXPAND);
+            for item in GameData['Inspirations'][Insp].reverse():
+                reverseOrder = reverseOrder + f"inspexecname {item}"
 
-			$ColorsCB = Wx::CheckBox->    new($self, id("${order}${Insp}Colors"), '');
-			$ColorsCB->SetToolTip( Wx::ToolTip->new("Colorize Inspiration-Popper chat feedback") );
-			$RowSet->Add ( $ColorsCB, 0, Wx::wxALIGN_CENTER_VERTICAL);
 
-			$RowSet->Add( Wx::StaticText->new($self, -1, "Border"), 0, Wx::wxALIGN_RIGHT|Wx::wxALIGN_CENTER_VERTICAL);
-			$bc = $InspPop->{"${order}${Insp}Colors"}->{'border'};
-			$RowSet->Add( Wx::ColourPickerCtrl->new(
-					$self, id("${order}${Insp}BorderColor"),
-					Wx::Colour->new($bc->{'r'}, $bc->{'g'}, $bc->{'b'}),
-					Wx::wxDefaultPosition, Wx::wxDefaultSize,
-				)
-			);
+            if self.State['Feedback']:
+                forwardOrder = cbChatColorOutput(self.State[f"{Insp}Colors"]) + Insp + forwardOrder
+                reverseOrder = cbChatColorOutput(self.State[f"Rev{Insp}Colors"]) + Insp + reverseOrder
 
-			$RowSet->Add( Wx::StaticText->new($self, -1, "Background"), 0, Wx::wxALIGN_RIGHT|Wx::wxALIGN_CENTER_VERTICAL);
-			$bc = $InspPop->{"${order}${Insp}Colors"}->{'background'};
-			$RowSet->Add( Wx::ColourPickerCtrl->new(
-					$self, id("${order}${Insp}BackgroundColor"),
-					Wx::Colour->new($bc->{'r'}, $bc->{'g'}, $bc->{'b'}),
-					Wx::wxDefaultPosition, Wx::wxDefaultSize,
-				)
-			);
-			$RowSet->Add( Wx::StaticText->new($self, -1, "Text"), 0, Wx::wxALIGN_RIGHT|Wx::wxALIGN_CENTER_VERTICAL);
-			$fc = $InspPop->{"${order}${Insp}Colors"}->{'foreground'};
-			$RowSet->Add( Wx::ColourPickerCtrl->new(
-					$self, id("${order}${Insp}ForegroundColor"),
-					Wx::Colour->new($fc->{'r'}, $fc->{'g'}, $fc->{'b'}),
-					Wx::wxDefaultPosition, Wx::wxDefaultSize,
-				)
-			);
-		}
-	}
+        if self.State['Enable']:
+            cbWriteBind(ResetFile, self.State[f"{Insp}Key"], forwardOrder)
+        if self.State['Reverse']:
+            cbWriteBind(ResetFile, self.State[f"Rev{Insp}Key"], reverseOrder)
 
-	my $useCB = Wx::CheckBox->new( $self, -1, 'Enable Inspiration Popper Binds (prefer largest)');
-	$useCB->SetToolTip(Wx::ToolTip->new('Check this to enable the Inspiration Popper Binds, (largest used first)'));
-	$sizer->Add($useCB, 0, Wx::wxALL, 10);
+    def findconflicts(self, profile):
+        if self.State['Enable']:
+            cbCheckConflict(self.State,'acckey',"Accuracy Key")
+            cbCheckConflict(self.State,'hpkey',"Healing Key")
+            cbCheckConflict(self.State,'damkey',"Damage Key")
+            cbCheckConflict(self.State,'endkey',"Endurance Key")
+            cbCheckConflict(self.State,'defkey',"Defense Key")
+            cbCheckConflict(self.State,'bfkey',"Breakfree Key")
+            cbCheckConflict(self.State,'reskey',"Resistance Key")
 
-	$sizer->Add($InspRows);
+        if self.State['Reverse']:
+            cbCheckConflict(self.State,'racckey',"Reverse Accuracy Key")
+            cbCheckConflict(self.State,'rhpkey',"Reverse Healing Key")
+            cbCheckConflict(self.State,'rdamkey',"Reverse Damage Key")
+            cbCheckConflict(self.State,'rendkey',"Reverse Endurance Key")
+            cbCheckConflict(self.State,'rdefkey',"Reverse Defense Key")
+            cbCheckConflict(self.State,'rbfkey',"Reverse Breakfree Key")
+            cbCheckConflict(self.State,'rreskey',"Reverse Resistance Key")
 
-	my $useRevCB = Wx::CheckBox->new( $self, -1, 'Enable Reverse Inspiration Popper Binds (prefer smallest)');
-	$useCB->SetToolTip(Wx::ToolTip->new('Check this to enable the Reverse Inspiration Popper Binds, (smallest used first)'));
-	$sizer->Add($useRevCB, 0, Wx::wxALL, 10);
-
-	$sizer->Add($RevInspRows);
-
-	$self->SetSizerAndFit($sizer);
-
-	return $self;
-}
-
-sub PopulateBindFiles {
-	my $profile = shift->Profile;
-
-	my $ResetFile = $profile->General->{'ResetFile'};
-	my $InspPop   = $profile->{'InspPop'};
-
-	for my $Insp (sort keys %GameData::Inspirations) {
-
-		my $forwardOrder = join '$$', map { "inspexecname $_" }         @{$GameData::Inspirations{$Insp}};
-		my $reverseOrder = join '$$', map { "inspexecname $_" } reverse @{$GameData::Inspirations{$Insp}};
-
-		if ($InspPop->{'Feedback'}) {
-			$forwardOrder = cbChatColorOutput($InspPop->{"${Insp}Colors"})    . $Insp . '$$' . $forwardOrder;
-			$reverseOrder = cbChatColorOutput($InspPop->{"Rev${Insp}Colors"}) . $Insp . '$$' . $reverseOrder;
-		}
-
-		cbWriteBind($ResetFile, $InspPop->{"${Insp}Key"},    $forwardOrder) if $InspPop->{'Enable'};
-		cbWriteBind($ResetFile, $InspPop->{"Rev${Insp}Key"}, $reverseOrder) if $InspPop->{'Reverse'};
-	}
-}
-
-sub findconflicts {
-	my ($profile) = @_;
-	my $InspPop = $profile->{'InspPop'};
-	if ($InspPop->{'enable'}) {
-		cbCheckConflict($InspPop,'acckey',"Accuracy Key");
-		cbCheckConflict($InspPop,'hpkey',"Healing Key");
-		cbCheckConflict($InspPop,'damkey',"Damage Key");
-		cbCheckConflict($InspPop,'endkey',"Endurance Key");
-		cbCheckConflict($InspPop,'defkey',"Defense Key");
-		cbCheckConflict($InspPop,'bfkey',"Breakfree Key");
-		cbCheckConflict($InspPop,'reskey',"Resistance Key");
-	}
-	if ($InspPop->{'reverse'}) {
-		cbCheckConflict($InspPop,'racckey',"Reverse Accuracy Key");
-		cbCheckConflict($InspPop,'rhpkey',"Reverse Healing Key");
-		cbCheckConflict($InspPop,'rdamkey',"Reverse Damage Key");
-		cbCheckConflict($InspPop,'rendkey',"Reverse Endurance Key");
-		cbCheckConflict($InspPop,'rdefkey',"Reverse Defense Key");
-		cbCheckConflict($InspPop,'rbfkey',"Reverse Breakfree Key");
-		cbCheckConflict($InspPop,'rreskey',"Reverse Resistance Key");
-	}
-}
-
-sub bindisused {
-	my ($profile) = @_;
-	return unless $profile->{'InspPop'};
-	return $profile-{'InspPop'}->{'enable'} || $profile->{'InspPop'}->{'reverse'};
-}
-
-1;
+    def bindisused(self, profile):
+        return bool(self.State['Enable'] or self.State['Reverse'])

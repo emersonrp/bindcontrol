@@ -8,7 +8,7 @@ from BindFile import BindFile
 #from Page.CustomBinds
 from Page.FPSDisplay import FPSDisplay
 from Page.General import General
-#from Page.InspirationPopper
+from Page.InspirationPopper import InspirationPopper
 #from Page.Mastermind
 #from Page.SimpleBinds
 #from Page.SoD
@@ -30,7 +30,7 @@ class Profile(wx.Notebook):
         self.CreatePage(General(self))
         #self.CreatePage(SoD(self))
         self.CreatePage(FPSDisplay(self))
-        #self.CreatePage(InspirationPopper(self))
+        self.CreatePage(InspirationPopper(self))
         #self.CreatePage(Mastermind(self))
         #self.CreatePage(TeamPetSelect(self))
         self.CreatePage(TypingMsg(self))
@@ -42,7 +42,10 @@ class Profile(wx.Notebook):
     def CreatePage(self, module):
         module.InitKeys()
         module.FillTab()
-        self.AddPage(module, module.TabTitle)
+        page = self.AddPage(module, module.TabTitle)
+        self.Pages.append(page)
+
+        self.Layout()
 
     def GetBindFile(self, filename):
         if not self.BindFiles.get(filename):

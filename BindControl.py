@@ -54,11 +54,11 @@ class Main(wx.Frame):
         self.SetMenuBar(MenuBar)
 
         # MENUBAR EVENTS
-        self.Bind(wx.EVT_MENU, None,  Profile_new)
+        self.Bind(wx.EVT_MENU, None, Profile_new)
         self.Bind(wx.EVT_MENU, None, Profile_load)
         self.Bind(wx.EVT_MENU, None, Profile_save)
         self.Bind(wx.EVT_MENU, None, Profile_prefs)
-        self.Bind(wx.EVT_MENU, None,   Profile_exit)
+        self.Bind(wx.EVT_MENU, self.exitApplication, Profile_exit)
 
         self.Bind(wx.EVT_MENU, None, Help_manual)
         self.Bind(wx.EVT_MENU, None, Help_faq)

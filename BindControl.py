@@ -79,7 +79,7 @@ class Main(wx.Frame):
         self.SetSizerAndFit(sizer)
         # TODO TODO TODO
 
-    def showAboutBox(self, paren):
+    def showAboutBox(self, event):
         if self.about_info is None:
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
@@ -92,7 +92,7 @@ class Main(wx.Frame):
 
         wx.adv.AboutBox(self.about_info)
 
-    def exitApplication():
+    def exitApplication(self, event):
         self.Close(1)
 
 if __name__ == "__main__":

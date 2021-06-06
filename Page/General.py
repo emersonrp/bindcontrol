@@ -26,6 +26,12 @@ class General(Page):
             'Pool3': '',
             'Pool4': '',
         }
+        UI.Labels.update({
+            'BindsDir' : 'Base Binds Directory',
+            'ResetFile' : 'Reset All Binds file',
+            'ResetKey' : 'Reset All Binds key',
+            'ResetFeedback' : 'Give /say feedback on reset',
+        })
 
     def FillTab(self):
 
@@ -130,7 +136,11 @@ class General(Page):
         )
 
         topSizer.Add(powersBox)
-        self.SetSizer(topSizer)
+
+        paddingSizer = wx.BoxSizer(wx.VERTICAL)
+        paddingSizer.Add(topSizer, flag=wx.ALL|wx.EXPAND, border = 20)
+
+        self.SetSizer(paddingSizer)
         return self
 
     def pickArchetype(self, event):

@@ -26,7 +26,9 @@ class FPSDisplay(Page):
 
         sizer.Add(minisizer)
 
-        self.SetSizerAndFit(sizer)
+        paddingSizer = wx.BoxSizer(wx.VERTICAL)
+        paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
+        self.SetSizerAndFit(paddingSizer)
 
         return self
 

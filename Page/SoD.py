@@ -384,7 +384,9 @@ class SoD(Page):
         topSizer.Add(leftColumn)
         topSizer.Add(rightColumn)
 
-        self.SetSizer(topSizer)
+        paddingSizer = wx.BoxSizer(wx.VERTICAL)
+        paddingSizer.Add(topSizer, flag = wx.ALL|wx.EXPAND, border = 16)
+        self.SetSizer(paddingSizer)
 
 
     def makeSoDFile(self, p):

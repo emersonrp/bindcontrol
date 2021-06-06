@@ -229,7 +229,9 @@ class Mastermind(Page):
 
         sizer.Add(PetNames)
 
-        self.SetSizerAndFit(sizer)
+        paddingSizer = wx.BoxSizer(wx.VERTICAL)
+        paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
+        self.SetSizerAndFit(paddingSizer)
 
     def HelpText(self):
         """

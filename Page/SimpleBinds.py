@@ -27,7 +27,9 @@ class SimpleBinds(Page):
             self.addBindToDialog(bbs)
 
 
-        self.SetSizerAndFit(sizer)
+        paddingSizer = wx.BoxSizer(wx.VERTICAL)
+        paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
+        self.SetSizerAndFit(paddingSizer)
 
         self.Layout()
 

@@ -6,15 +6,22 @@ class KeyBindDialog(wx.Dialog):
     def __init__(self, parent, desc = '', keybind = 'UNBOUND'):
         wx.Dialog.__init__(self, parent, -1, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
 
-        self.Binding = None
+        if not desc:
+            print("Tried to make a KeyBindDialog for something with no desc")
+            return
+
+        self.Binding = ''
         self.SetKeymap();
 
         sizer = wx.BoxSizer(wx.VERTICAL);
 
         self.kbDesc = wx.StaticText( self, -1, desc,    style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
-        self.kbBind = wx.StaticText( self, -1, keybind, style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
+        # self.kbBind = wx.StaticText( self, -1, keybind, style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
+        self.kbBind = wx.Button( self, -1, '', style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
 
-        sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND|wx.ALL, 15);
+        self.kbBind.SetLabelMarkup('<b><big><center>' + keybind + '</center></big></b>')
+
+        sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND|wx.LEFT|wx.RIGHT, 15);
         sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND|wx.ALL, 15);
 
         # Wrap everything in a vbox to add some padding
@@ -38,7 +45,7 @@ class KeyBindDialog(wx.Dialog):
 
         self.SetSizerAndFit(vbox);
         self.Layout()
-
+        self.SetFocus()
 
     def ShowWindow(self, *args):
         # self.Populate(args);
@@ -55,16 +62,24 @@ class KeyBindDialog(wx.Dialog):
 
 
     def handleBind(self, event):
+
+        print("got evt")
+
         evtType = event.GetEventType();
 
-        if (evtType == wx.EVT_KEY_DOWN):
-                # my $code = eval { $event.GetKeyCode; };
-                code = event.GetKeyCode()
+        self.Binding = ''
+        # check for each modifier key
+        # TODO -- LCTRL vs RCTRL etcetc
+        if (event.ControlDown()) : self.Binding = self.Binding + 'CTRL-'
+        if (event.ShiftDown())   : self.Binding = self.Binding + 'SHIFT-'
+        if (event.AltDown())     : self.Binding = self.Binding + 'ALT-'
 
-                # press escape to cancel
-                if (code == wx.WXK_ESCAPE) : self.EndModal(wx.CANCEL)
+        if (evtType == wx.EVT_KEY_DOWN or evtType == wx.EVT_KEY_UP or evtType == wx.EVT_CHAR):
+            print("Got a keystroke")
+            code = event.GetKeyCode()
 
-                KeyToBind = self.Keymap[code]
+            KeyToBind = self.Keymap[code]
+
         else:
             button = event.GetButton()
             KeyToBind = [
@@ -76,21 +91,9 @@ class KeyBindDialog(wx.Dialog):
                 'BUTTON5',
             ][button]
 
-        # check for each modifier key
-        # TODO -- LCTRL vs RCTRL etcetc
-        if (event.ControlDown()) : binding = binding + 'CTRL-'
-        if (event.ShiftDown())   : binding = binding + 'SHIFT-'
-        if (event.AltDown())     : binding = binding + 'ALT-'
-
-        binding = binding + KeyToBind
-        self.kbBind.SetLabel(binding)
+        self.Binding = self.Binding + KeyToBind
+        self.kbBind.SetLabel(self.Binding)
         self.Layout()
-
-        if (KeyToBind):
-                # $self->{'Handling'}++; # Don't take further input kthx
-                # TODO - blink the selection like a menu selection, then return it.
-                self.Binding = binding
-                self.EndModal(wx.OK);
 
         event.Skip(1);
 

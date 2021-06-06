@@ -64,7 +64,10 @@ class TypingMsg(Page):
         )
 
         topSizer.Add(sizer)
-        self.SetSizer(topSizer)
+
+        paddingSizer = wx.BoxSizer(wx.VERTICAL)
+        paddingSizer.Add(topSizer, flag = wx.ALL|wx.EXPAND, border = 16)
+        self.SetSizer(paddingSizer)
         self.TabTitle = 'Typing Message'
         return self
 

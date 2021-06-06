@@ -159,7 +159,9 @@ class TeamPetSelect(Page):
 
         self.TabTitle = 'Team / Pet Selection'
 
-        self.SetSizer(topSizer)
+        paddingSizer = wx.BoxSizer(wx.VERTICAL)
+        paddingSizer.Add(topSizer, flag = wx.ALL|wx.EXPAND, border = 16)
+        self.SetSizer(paddingSizer)
 
     def PopulateBindFiles(self):
         profile    = self.Profile

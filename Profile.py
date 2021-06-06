@@ -2,6 +2,7 @@
 
 
 import wx
+
 from BindFile import BindFile
 from Page.BufferBinds import BufferBinds
 #from Page.ComplexBinds
@@ -10,7 +11,7 @@ from Page.FPSDisplay import FPSDisplay
 from Page.General import General
 from Page.InspirationPopper import InspirationPopper
 from Page.Mastermind import Mastermind
-#from Page.SimpleBinds
+from Page.SimpleBinds import SimpleBinds
 from Page.SoD import SoD
 from Page.TeamPetSelect import TeamPetSelect
 from Page.TypingMsg import TypingMsg
@@ -33,7 +34,7 @@ class Profile(wx.Notebook):
         self.CreatePage(Mastermind(self))
         self.CreatePage(TeamPetSelect(self))
         self.CreatePage(TypingMsg(self))
-        #self.CreatePage(SimpleBinds(self))
+        self.CreatePage(SimpleBinds(self))
         self.CreatePage(BufferBinds(self))
         #self.CreatePage(ComplexBinds(self))
         #self.CreatePage(CustomBinds(self))

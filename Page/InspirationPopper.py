@@ -134,22 +134,22 @@ class InspirationPopper(Page):
 
     def findconflicts(self, profile):
         if self.State['Enable']:
-            cbCheckConflict(self.State,'acckey',"Accuracy Key")
-            cbCheckConflict(self.State,'hpkey',"Healing Key")
-            cbCheckConflict(self.State,'damkey',"Damage Key")
-            cbCheckConflict(self.State,'endkey',"Endurance Key")
-            cbCheckConflict(self.State,'defkey',"Defense Key")
-            cbCheckConflict(self.State,'bfkey',"Breakfree Key")
-            cbCheckConflict(self.State,'reskey',"Resistance Key")
+            Utility.CheckConflict(self.State,'acckey',"Accuracy Key")
+            Utility.CheckConflict(self.State,'hpkey',"Healing Key")
+            Utility.CheckConflict(self.State,'damkey',"Damage Key")
+            Utility.CheckConflict(self.State,'endkey',"Endurance Key")
+            Utility.CheckConflict(self.State,'defkey',"Defense Key")
+            Utility.CheckConflict(self.State,'bfkey',"Breakfree Key")
+            Utility.CheckConflict(self.State,'reskey',"Resistance Key")
 
         if self.State['Reverse']:
-            cbCheckConflict(self.State,'racckey',"Reverse Accuracy Key")
-            cbCheckConflict(self.State,'rhpkey',"Reverse Healing Key")
-            cbCheckConflict(self.State,'rdamkey',"Reverse Damage Key")
-            cbCheckConflict(self.State,'rendkey',"Reverse Endurance Key")
-            cbCheckConflict(self.State,'rdefkey',"Reverse Defense Key")
-            cbCheckConflict(self.State,'rbfkey',"Reverse Breakfree Key")
-            cbCheckConflict(self.State,'rreskey',"Reverse Resistance Key")
+            Utility.CheckConflict(self.State,'racckey',"Reverse Accuracy Key")
+            Utility.CheckConflict(self.State,'rhpkey',"Reverse Healing Key")
+            Utility.CheckConflict(self.State,'rdamkey',"Reverse Damage Key")
+            Utility.CheckConflict(self.State,'rendkey',"Reverse Endurance Key")
+            Utility.CheckConflict(self.State,'rdefkey',"Reverse Defense Key")
+            Utility.CheckConflict(self.State,'rbfkey',"Reverse Breakfree Key")
+            Utility.CheckConflict(self.State,'rreskey',"Reverse Resistance Key")
 
     def bindisused(self, profile):
         return bool(self.State['Enable'] or self.State['Reverse'])

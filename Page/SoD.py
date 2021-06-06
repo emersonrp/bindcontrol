@@ -9,6 +9,8 @@ class SoD(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
 
+        self.TabTitle = "Speed On Demand"
+
         self.State = {
             'Up'                 : "SPACE",
             'Down'               : "X",
@@ -121,6 +123,8 @@ class SoD(Page):
                 module = self,
             )
         # TODO!  fill this picker with only the appropriate bits.
+        # for i in (powers list):
+        #   if (player has power): add_to_contents(i)
         movementSizer.AddLabeledControl(
             value = 'DefaultMode',
             ctltype = 'combo',
@@ -381,8 +385,6 @@ class SoD(Page):
         topSizer.Add(rightColumn)
 
         self.SetSizer(topSizer)
-
-        self.TabTitle = "Speed On Demand"
 
 
     def makeSoDFile(self, p):
@@ -1431,9 +1433,7 @@ class SoD(Page):
         if (self.State['TP'] and self.State['TPEnable'] and not (profile.Pages['General'].State['Archetype'] == "Peacebringer") and normalTPPower):
             tphovermodeswitch = ''
             if (t['tphover'] == ''):
-                # TODO hmm can't get this from .KeyState directly?
-                tphovermodeswitch = t['bl']('r') + "000000.txt"
-                #(tphovermodeswitch = t['bl']('r')) =~ s/\d\d\d\d\d\d/000000/
+                tphovermodeswitch = re.sub('\d\d\d\d\d\d', '000000', t['bl']('r'))
 
             ResetFile.SetBind(self.State['TPComboKey'],'+down$$' + normalTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'tp','tp_on1.txt'))
             ResetFile.SetBind(self.State['TPBindKey'],'nop')
@@ -1473,8 +1473,7 @@ class SoD(Page):
 
     def sodResetKey(self, curfile, p, path, turnoff, moddir):
 
-        # TODO enable this
-        #path =~ s/\d\d\d\d\d\d/000000/;  # ick ick ick
+        path = re.sub('\d\d\d\d\d\d', '000000', path)
 
         if (moddir == 'up')  : u = 1
         else:                   u = 0
@@ -1557,8 +1556,7 @@ class SoD(Page):
 
 
         newbits = t.KeyState({'toggle' : 'space'})
-        # TODO -- enable this
-        #bl =~ s/\d\d\d\d\d\d/$newbits/
+        bl = re.sub('\d\d\d\d\d\d', newbits, bl)
 
         if t['space'] == 1: ini = '-down'
         else:               ini = '+down'
@@ -1566,8 +1564,7 @@ class SoD(Page):
         if (followbl):
             move = ''
             if (t['space'] != 1):
-                # TODO -- enable this!
-                # (bl = followbl) =~ s/\d\d\d\d\d\d/$newbits/
+                bl = re.sub('\d\d\d\d\d\d', '000000', followbl)
                 move = upx + dow + forw + bac + lef + rig
 
             curfile.SetBind(self.State['Up'],ini + move + bl)
@@ -1627,8 +1624,7 @@ class SoD(Page):
 
 
         newbits =t.KeyState({'toggle' : 'X'})
-        #TODO - enable this!
-        #bl =~ s/\d\d\d\d\d\d/$newbits/
+        bl = re.sub('\d\d\d\d\d\d', newbits, bl)
 
         if t['X'] == 1: ini = "-down"
         else:           ini = "+down"
@@ -1636,9 +1632,8 @@ class SoD(Page):
         if (followbl):
             move = ''
             if (t['X'] != 1):
-                # TODO enable this
-                #(bl = followbl) =~ s/\d\d\d\d\d\d/$newbits/
-               move =up + dowx + forw + bac + lef + rig
+                bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
+                move = up + dowx + forw + bac + lef + rig
 
             curfile.SetBind(self.State['Down'],ini + move + bl)
         elif (notautorun):
@@ -1702,8 +1697,7 @@ class SoD(Page):
 
 
         newbits = t.KeyState({'toggle' : 'W'})
-        # TODO -- enable this
-        #bl =~ s/\d\d\d\d\d\d/$newbits/
+        bl = re.sub('\d\d\d\d\d\d', newbits, bl)
 
         if t['W'] == 1: ini = "-down"
         else:           ini = "+down"
@@ -1712,8 +1706,7 @@ class SoD(Page):
             if (t['W'] == 1):
                move = ini
             else:
-                # TODO enable this
-                #(bl = followbl) =~ s/\d\d\d\d\d\d/$newbits/
+                bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
                 move = ini + up + dow + forx + bac + lef + rig
 
             curfile.SetBind(self.State['Forward'], move + bl)
@@ -1728,9 +1721,7 @@ class SoD(Page):
 
         else:
             if (t['W'] == 1):
-                # TODO enable this
-                # (bl =autorunbl) =~ s/\d\d\d\d\d\d/$newbits/
-                pass
+                bl = re.sub('\d\d\d\d\d\d', newbits, autorunbl)
 
             curfile.SetBind(self.State['Forward'], ini + up + dow + '$$forward 1$$backward 0' + lef + rig + t['mlon'] + bl)
             if (self.State['MouseChord']) :
@@ -1787,8 +1778,7 @@ class SoD(Page):
            toggle = actPower_name(None,1,toggleon,toggleoff)
 
         newbits =t.KeyState({'toggle' : 'S'})
-        # TODO enable this
-        # bl =~ s/\d\d\d\d\d\d/$newbits/
+        bl = re.sub('\d\d\d\d\d\d', newbits, bl)
 
         if (t['S'] == 1) : ini = "-down"
         else:              ini = "+down"
@@ -1797,8 +1787,7 @@ class SoD(Page):
             if (t['S'] == 1):
                move = ini
             else:
-                # TODO enable this
-                #(bl = followbl) =~ s/\d\d\d\d\d\d/$newbits/
+                bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
                 move = ini + up + dow + forw + bacx + lef + rig
 
             curfile.SetBind(self.State['Back'], move + bl)
@@ -1809,8 +1798,7 @@ class SoD(Page):
                 move = '$$forward 1$$backward 0'
             else:
                 move = '$$forward 0$$backward 1'
-                # TODO enable this
-                #(bl = autorunbl) =~ s/\d\d\d\d\d\d/$newbits/
+                bl = re.sub('\d\d\d\d\d\d', newbits, autorunbl)
 
             curfile.SetBind(self.State['Back'], ini + up + dow + move + lef + rig + t['mlon'] + bl)
 
@@ -1864,8 +1852,7 @@ class SoD(Page):
 
 
         newbits = t.KeyState({'toggle' : 'A'})
-        # TODO enable this
-        # bl =~ s/\d\d\d\d\d\d/$newbits/
+        bl = re.sub('\d\d\d\d\d\d', newbits, bl)
 
         if (t['A'] == 1): ini = '-down'
         else:             ini = '+down'
@@ -1874,8 +1861,7 @@ class SoD(Page):
             if (t['A'] == 1) :
                move = ini
             else:
-                # TODO enable this
-                #(bl = followbl) =~ s/\d\d\d\d\d\d/$newbits/
+                bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
                 move = ini + up + dow + forw + bac + lefx + rig
 
             curfile.SetBind(self.State['Left'],move + bl)
@@ -1929,8 +1915,7 @@ class SoD(Page):
            toggle = actPower_name(None,1,toggleon,toggleoff)
 
         newbits =t.KeyState({'toggle' : 'D'})
-        # TODO enable this
-        #bl =~ s/\d\d\d\d\d\d/$newbits/
+        bl = re.sub('\d\d\d\d\d\d', newbits, bl)
 
         if (t['D'] == 1): ini = '-down'
         else:             ini = '+down'
@@ -1939,8 +1924,7 @@ class SoD(Page):
             if (t['D'] == 1):
                 move = ini
             else:
-                # TODO enable this
-                #(bl = followbl) =~ s/\d\d\d\d\d\d/$newbits/
+                bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
                 move = ini + up + dow + forw + bac + lef + rigx
 
             curfile.SetBind(self.State['Right'], move + bl)

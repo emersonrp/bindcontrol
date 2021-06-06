@@ -1,5 +1,6 @@
 import wx
 import UI
+import Utility
 
 from Page import Page
 from UI.ControlGroup import ControlGroup
@@ -84,12 +85,12 @@ class TypingMsg(Page):
         ResetFile.SetBind(Typing['QuickChat'], 'quickchat' . Notifier)
 
     def findconflicts(self, profile):
-        cbCheckConflict(profile.Typing,"StartChat", "Start Chat Key")
-        cbCheckConflict(profile.Typing,"SlashChat", "Slashchat Key")
-        cbCheckConflict(profile.Typing,"StartEmote","Emote Key")
-        cbCheckConflict(profile.Typing,"AutoReply", "Autoreply Key")
-        cbCheckConflict(profile.Typing,"TellTarget","Tell Target Key")
-        cbCheckConflict(profile.Typing,"QuickChat", "Quickchat Key")
+        Utility.CheckConflict(profile.Typing,"StartChat", "Start Chat Key")
+        Utility.CheckConflict(profile.Typing,"SlashChat", "Slashchat Key")
+        Utility.CheckConflict(profile.Typing,"StartEmote","Emote Key")
+        Utility.CheckConflict(profile.Typing,"AutoReply", "Autoreply Key")
+        Utility.CheckConflict(profile.Typing,"TellTarget","Tell Target Key")
+        Utility.CheckConflict(profile.Typing,"QuickChat", "Quickchat Key")
 
     def bindisused(self, profile):
         if getattr(profile, 'Typing', None):

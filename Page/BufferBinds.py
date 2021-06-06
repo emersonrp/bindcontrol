@@ -1,5 +1,7 @@
 import wx
 import BindFile
+import Utility
+
 from Page import Page
 
 class BufferBinds(Page):
@@ -331,11 +333,11 @@ class BufferBinds(Page):
             title = bbind.get('title', "unknown")
             if ((bbind['target'] == 1) or (bbind['target'] == 3)):
                 for j in range(1,9):
-                    cbCheckConflict(bbind,"team"+j, f"Buff bind {title}: Team {j} Key")
+                    Utility.CheckConflict(bbind,"team"+j, f"Buff bind {title}: Team {j} Key")
 
             if ((bbind['target'] == 2) or (bbind['target'] == 3)):
                 for j in range(1,7):
-                    cbCheckConflict(bbind,"pet"+j, f"Buff bind {title}: Pet {j} Key")
+                    Utility.CheckConflict(bbind,"pet"+j, f"Buff bind {title}: Pet {j} Key")
 
     def bindisused(self, profile):
         return bool(len(self.buffer.keys()))

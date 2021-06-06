@@ -2,6 +2,7 @@ class BindFile():
 
     def __init__(self, filename):
 
+        # TODO -- implement with platform-agnostic file paths
         #$filename = File::Spec->catfile(@filename)
         #unless ($BindFiles{$filename}) {
             #$BindFiles{$filename} =  bless {filename = $filename, binds = {}}, $class
@@ -36,7 +37,8 @@ class BindFile():
 
     # BLFPath == just the path to the file
     def BLFPath(self, profile, *args, **kwargs):
-        # TODO - re-make this os-agnostic
+
+        # TODO -- implement with platform-agnostic file paths
         #file = pop @bits
         #($vol, $bdir, undef) = File::Spec->splitpath( $profile->General->{'BindsDir'}, 1 )
         #$dirpath = File::Spec->catdir($bdir, @bits)

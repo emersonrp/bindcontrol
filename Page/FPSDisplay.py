@@ -1,4 +1,5 @@
 import wx
+import Utilty
 from Page import Page
 
 class FPSDisplay(Page):
@@ -34,7 +35,7 @@ class FPSDisplay(Page):
         ResetFile.SetBind(self.Profile.FPS['Bindkey'],'++showfps++netgraph')
 
     def findconflicts(self):
-        cbCheckConflict(self.Profile.FPS,"Bindkey","FPS Display Toggle")
+        Utility.CheckConflict(self.Profile.FPS,"Bindkey","FPS Display Toggle")
 
     def bindisused(self):
         return self.State['Enable']

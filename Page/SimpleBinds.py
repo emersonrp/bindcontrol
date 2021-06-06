@@ -164,7 +164,7 @@ class SimpleBinds(Page):
 
     def findconflicts(self):
         for b in self.State['binds'].items():
-            Utility.cbCheckConflict(
+            Utility.CheckConflict(
                 b['key'], "Key", "Simple Bind " + (b['title'] or "Unknown")
             )
 

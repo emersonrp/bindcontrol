@@ -293,17 +293,17 @@ class TeamPetSelect(Page):
     def findconflicts(self, profile):
         TPS = profile.TeamPetSelect
         for i in range(1,9):
-            cbCheckConflict(TPS,f"TeamSelect{i}",f"Team/Pet {i} Key")
-        cbCheckConflict(TPS,"SelNextPet","Select next henchman")
-        cbCheckConflict(TPS,"SelPrevPet","Select previous henchman")
-        cbCheckConflict(TPS,"IncPetSize","Increase Henchman Group Size")
-        cbCheckConflict(TPS,"DecPetSize","Decrease Henchman Group Size")
+            Utility.CheckConflict(TPS,f"TeamSelect{i}",f"Team/Pet {i} Key")
+
+        Utility.CheckConflict(TPS,"SelNextPet","Select next henchman")
+        Utility.CheckConflict(TPS,"SelPrevPet","Select previous henchman")
+        Utility.CheckConflict(TPS,"IncPetSize","Increase Henchman Group Size")
+        Utility.CheckConflict(TPS,"DecPetSize","Decrease Henchman Group Size")
 
     def bindisused(self, profile):
         return profile.Pages['TPS'].State,get('Enable', None)
 
     def HelpText(self):
-
         return """
     Team/Pet Direct Selection binds contributed by ShieldBearer.
 

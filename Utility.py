@@ -1,4 +1,10 @@
 import wx
+import re
+
+conflictbinds = {
+    'binds' : {},
+    'conflicts' : {},
+}
 
 def ColorDefault():
     return {
@@ -19,31 +25,36 @@ def Icon(iconname):
         )
     return Icons[iconname]
 
-__DATA__ = """
 
-sub CheckConflict {
-    my ($t,$k,$Purpose) = @_;
-    return unless $t->{$k};
-    return if (uc $t->{$k} eq 'UNBOUND');
-#     if not conflictbinds.binds[t[k]] then
-#         -- no conflict, add this to the list of binds.
-#         conflictbinds.binds[t[k]] = {keybase = getMainKey(t[k]) or "UNBOUND",t=t,k=k,purpose=Purpose}
-#     else
-#         -- conflict...
-#         local c
-#         if not conflictbinds.conflicts[t[k]] then
-#             -- first conflict for this key.
-#             c = {}
-#             table.insert(c,conflictbinds.binds[t[k]])
-#             conflictbinds.conflicts[t[k]] = c
-#         else
-#             c = conflictbinds.conflicts[t[k]]
-#         end
-#         table.insert(c,{keybase = getMainKey(t[k]) or "UNBOUND",t=t,k=k,purpose=Purpose})
-#     end
-}
-1;
-__DATA__
+# TODO - not clear if this logic is correct;  dunno what each "c" table meant
+def CheckConflict(t, k, Purpose):
+
+    if not t.get('k', None)     : return
+    if t[k].upper() == "UNBOUND": return
+
+    if not conflictbinds['binds'][t[k]]:
+        # no conflict, add this to the list of binds.
+        keybase = getMainKey(t[k])
+        if keybase: conflictbinds['binds'][t[k]] = keybase
+        else:       conflictbinds['binds'][t[k]] = {'key':"UNBOUND",'t':t,'k':k,'purpose':Purpose}
+    else:
+        # -- conflict...
+        if not conflictbinds['conflicts'][t[k]]:
+            # -- first conflict for this key.
+            c = conflictbinds['binds'][t[k]]
+            conflictbinds['conflicts'][t[k]] = c
+        else:
+            c = conflictbinds['conflicts'][t[k]]
+
+        keybase = getMainKey(t[k])
+        if keybase: conflictbinds['conflicts'][t[k]] = keybase
+        else:       conflictbinds['conflicts'][t[k]] = {'key':"UNBOUND",'t':t,'k':k,'purpose':Purpose}
+
+
+def getMainKey(key):
+    return re.sub('[LR]?(SHIFT|CTRL|ALT)\+?', '', key)
+
+__DATA__ = """
 
 local cats = {}
 local mods = {}
@@ -55,93 +66,6 @@ setmetatable(dialogs,dlgs_mt)
 local filelist = {}
 
 local fmt = {__index={close=function() end}}
-
-local function basicSer(o)
-    if type(o) == "number" then
-        return tostring(o)
-    elseif type(o) == "boolean" then
-        return "true"
-    elseif type(o) == "string" then
-        return string.format("%q",o)
-    else
-        return "nil"
-    end
-end
-
-local function validKey(o)
-    if type(o) == "number" then
-        return true
-    elseif type(o) == "boolean" then
-        return true
-    elseif type(o) == "string" then
-        return true
-    elseif type(o) == "table" then
-        return true
-    else
-        return nil
-    end
-end
-
-function dumptable(file,n,o,nList)
-    nList = nList or {}
-    file:write(n.." = ")
-    if type(o) == "number" or type(o) == "string" or type(o) == "boolean" then
-        file:write(basicSer(o).."\n")
-    elseif type(o) == "table" then
-        if nList[o] then
-            file:write(nList[o].."\n")
-        else
-            nList[o] = n
-            file:write("{}\n")
-            local o2 = {}
-            for k,v in pairs(o) do
-                if validKey(k) and v then
-                    table.insert(o2,{k=k,v=v})
-                end
-            end
-            table.sort(o2,function(a,b)
-                if (type(a.k) == type(b.k)) and (type(a.k) ~= "table") then
-                    return a.k < b.k
-                end
-                return type(a.k) < type(b.k)
-            end)
-            for i,t in ipairs(o2) do
-                if type(t.k) == "table" then
-                    if nList[t.k] then
-                        dumptable(file,string.format("%s[%s]",n,nList[t.k]),t.v,nList)
-                    else
-                        dumptable(file,string.format("%s[false]",n),t.v,nList)
-                    end
-                else
-                    dumptable(file,string.format("%s[%s]",n,basicSer(t.k)),t.v,nList)
-                end
-            end
-        end
-    elseif type(o) == "userdata" then
-        file:write("nil\n")
-    elseif type(o) == "function" then
-        file:write("nil\n")
-    else
-        error("cannot save a "..type(o))
-    end
-end
-
-function getMainKey(key)
-    local str = key or "UNBOUND"
-    str = string.upper(str)
-    local mkey
-    str = string.gsub(str,"LSHIFT","")
-    str = string.gsub(str,"RSHIFT","")
-    str = string.gsub(str,"SHIFT","")
-    str = string.gsub(str,"LCTRL","")
-    str = string.gsub(str,"RCTRL","")
-    str = string.gsub(str,"CTRL","")
-    str = string.gsub(str,"LALT","")
-    str = string.gsub(str,"RALT","")
-    str = string.gsub(str,"ALT","")
-    mkey = string.gsub(str,"%+","")
-    return mkey
-end
 
 local progressbar
 local progressdialog
@@ -200,7 +124,7 @@ function cbResolveKeyConflicts(self,initprogbar)
     end
     conflictbinds = {}
     conflictbinds.binds = {}
-    conflictbinds.conflicts = {}
+    conflictbinds['conflicts'] = {}
     setProgBarText("Finding Conflicts")
     for _,module in pairs(mods) do
         if module.bindisused(self) then
@@ -210,7 +134,7 @@ function cbResolveKeyConflicts(self,initprogbar)
     end
     cbCheckConflict(self,"ResetKey","Binds Reset Key")
     local conflicts = {}
-    for k,v in pairs(conflictbinds.conflicts) do table.insert(conflicts,{v=v,k=k}) table.sort(conflicts,function(a,b) return a.v[1].keybase < b.v[1].keybase end) end
+    for k,v in pairs(conflictbinds['conflicts']) do table.insert(conflicts,{v=v,k=k}) table.sort(conflicts,function(a,b) return a.v[1].keybase < b.v[1].keybase end) end
     resetProgBar(table.getn(conflicts),"Resolving Conflicts")
     for i,v in ipairs(conflicts) do
         incProgBar()
@@ -463,50 +387,6 @@ function cbGetBindKey(bkey,desc,profile,label,t,k)
     end
 end
 
-function profile:saveprofile(saveasnewfile,saveasdefault)
-    cbResolveKeyConflicts(self,true)
-    if (string.find(self.base," ",1,true)) then
-        iup.Message("WARNING!","Using a Bind Directory with spaces will NOT work when you try to /bindloadfile, remove the spaces before you generate your bindfiles!")
-    end
-    local profilefile
-    if saveasnewfile then
-        local fileDlg = iup.filedlg{
-            dialogtype="SAVE",
-            title="Save Profile",
-            extfilter="CityBinder Profiles|*.cbp;All Files|*.*",
-            directory=cbBaseLocation;file=self.profile
-        }
-        fileDlg:popup(iup.CURRENT, iup.CURRENT)
-        if fileDlg.status == "-1" then cbdlg.bringfront="YES" return end
-        self.modified = nil
-        if string.lower(string.sub(fileDlg.value,-4)) ~= ".cbp" then
-            self.profile = fileDlg.value..".cbp"
-        else
-            self.profile = fileDlg.value
-        end
-        cbMakeDirectory(string.sub(self.profile,1,(string.find(self.profile,"\\[^\\]+$"))))
-        profilefile = cbOpen(self.profile,"w",true)
-    elseif saveasdefault then
-        if cbFileExists("default.lua") then
-            local res = iup.Alarm("Save over your Default Settings?","Are you sure you want to save over your default settings?","Yes","No")
-            if res == 2 then return end
-        end
-        self.modified = nil
-        profilefile = cbOpen("default.lua","w",true)
-    else
-        profilefile = cbOpen(self.profile, "w", true)
-    end
-    dumptable(profilefile,"loadup",self)
-    profilefile:close()
-    cbdlg.bringfront = "YES"
---    if saveasdefault then
---        iup.Message("Profile Saved","Successfully saved default profile")
---    else
---        iup.Message("Profile Saved","Successfully saved profile "..self.profile)
---    end
-end
-
-
 function cbCheckBind(label,t,k,tgl,desc,profile,w,h,w2,h2,tglcb)
     local tk = t[k] or "UNBOUND"
     local val = string.upper(tk)
@@ -668,98 +548,6 @@ function cbChatColors(profile,t)
     return iup.hbox{chatcolorenable,iup.frame{bordercolor;sunken="YES"; rastersize="21x21";margin="1x1"},borderbtn,
         iup.frame{bgc;sunken="YES"; rastersize="21x21";margin="1x1"},bgbtn,
         iup.frame{textcolor;sunken="YES"; rastersize="21x21";margin="1x1"},textbtn}
-end
-
-function cbExportPageSettings(profile,settings,t,as,multibind,exfile)
-    t = t or profile
-    as = as or settings
-    local fileDlg
-    local filename
-    if not exfile then
-        local over = "NO"
-        if multibind then over = "YES" end
-        fileDlg = iup.filedlg{dialogtype="SAVE",title="Export Binds",extfilter="CityBinder Pages|*.cbm;All Files|*.*",
-            directory=cbBaseLocation,nooverwriteprompt=over}
-        fileDlg:popup(iup.CURRENT, iup.CURRENT)
-        if fileDlg.status ~= "-1" then
-            if string.lower(string.sub(fileDlg.value,-4)) ~= ".cbm" then
-                filename = fileDlg.value..".cbm"
-            else
-                filename = fileDlg.value
-            end
-        end
-    else
-        fileDlg = {}
-        fileDlg.status = "0"
-        filename = exfile
-    end
-    if fileDlg.status == "0" or fileDlg.status == "1" then
-        if multibind then
-            -- determine replace, add, cancel.
-            _import = {} _import[as]={}
-            if (not exfile) and cbFileExists(filename) then
-                local ret = iup.Alarm("CBM File Already Exists!",filename.." Already Exists!","Replace","Add","Cancel")
-                if ret == 2 then
-                    dofile(filename)
-                elseif ret == 3 then
-                    return
-                end
-            elseif exfile then
-                dofile(exfile)
-            end
-            table.insert(_import[as],t[settings])
-            local exportfile = cbOpen(filename,"w",true)
-            dumptable(exportfile,"_import["..basicSer(as).."]",_import[as])
-            exportfile:close()
-            return filename
-        else
-            local exportfile = cbOpen(filename,"w",true)
-            dumptable(exportfile,"_import["..basicSer(as).."]",t[settings])
-            exportfile:close()
-        end
-    end
-end
-
-function cbImportPageSettings(profile,settings,t,as,multibind)
-    t = t or profile
-    as = as or settings
-    local fileDlg = iup.filedlg{dialogtype="OPEN",title="Import Binds",extfilter="CityBinder Pages|*.cbm;All Files|*.*",
-        directory=cbBaseLocation,allownew="NO"}
-    fileDlg:popup(iup.CURRENT, iup.CURRENT)
-    local filename = fileDlg.value
-    if fileDlg.status == "0" or fileDlg.status == "1" then
-        _import = {}
-        dofile(filename)
-        local t2 = _import[as]
-        if t2 then
-            profile.modified = true
-            if multibind then
-                return t2
-            else
-                t[settings] = t2
-            end
-            return true
-        end
-    end
-    return nil
-end
-
-function cbImportExportButtons(profile,settings,reloadCB,w,h,w2,h2)
-    -- create two buttons.
-    local exportbtn = cbButton("Export...",function() cbExportPageSettings(profile,settings) end,w,h)
-    local importbtn = cbButton("Import...",function()
-        local dialog = profile[settings].dialog
-        if cbImportPageSettings(profile,settings) then
-            -- Resolve Key COnflicts.
-            cbResolveKeyConflicts(profile,true)
-            -- unload and reload profile[settings].dialog
-            dialog:hide()
-            --sbinds.dlg:destroy()
-            reloadCB(profile)
-            --cbShowDialog(profile[settings].dialog,218,10,profile,function(self) profile[settings].dialog = nil end)
-        end
-    end,w2,h2)
-    return iup.hbox{exportbtn,importbtn}
 end
 
 function cbReloadPowers(t)

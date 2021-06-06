@@ -1,5 +1,5 @@
 import wx
-import Utilty
+import Utility
 from Page import Page
 
 class FPSDisplay(Page):

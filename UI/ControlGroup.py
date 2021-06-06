@@ -1,6 +1,8 @@
 import wx
 import UI
 
+from UI.KeyBindDialog import KeyBindDialog
+
 PADDING = 5
 
 class ControlGroup(wx.StaticBoxSizer):
@@ -8,6 +10,7 @@ class ControlGroup(wx.StaticBoxSizer):
     def __init__(self, parent, label):
         wx.StaticBoxSizer.__init__(self, wx.VERTICAL, parent, label = label)
 
+        self.Parent = parent
         self.Add(wx.StaticBox( parent, -1), wx.VERTICAL)
 
         self.InnerSizer = wx.FlexGridSizer(0,2,PADDING,PADDING)
@@ -24,7 +27,8 @@ class ControlGroup(wx.StaticBoxSizer):
 
         if ctltype == ('keybutton'):
             control = wx.Button( module, -1, State[value])
-            control.Bind(wx.EVT_BUTTON, lambda p: self.KeyPickerDialog(p))
+            control.Bind(wx.EVT_BUTTON, self.KeyPickerDialog)
+            control.KeyBindDesc = label
         elif ctltype == ('combo'):
             control = wx.ComboBox(
                 module, -1, State[value],
@@ -59,17 +63,18 @@ class ControlGroup(wx.StaticBoxSizer):
 
         return control
 
-    def KeyPickerDialog(self, p):
-        parent = p.parent
-        value  = p.value
+    def KeyPickerDialog(self, evt):
+        button = evt.EventObject
 
-        newKey = UI.KeyBindDialog.showWindow(parent, value, parent[value])
+        dlg = KeyBindDialog(self.Parent, button.KeyBindDesc, button.Label)
+
+        newKey = dlg.ShowWindow()
 
         # TODO -- check for conflicts
         # otherThingWithThatBind = checkConflicts(newKey)
 
-        # update the associated profile var
-        parent[value] = newKey
+        # TODO - update the associated page State
+        # page.State[value] = newKey
 
         # re-label the button
-        wx.Window.FindWindowById(Utility.id(value)).SetLabel(newKey)
+        evt.EventObject.SetLabel(newKey)

@@ -72,12 +72,18 @@ class Main(wx.Frame):
         # TODO - read in the config for the window (size, location, etc)
         # and apply it before ->Show()
 
-        # TODO TODO TODO -- remove this once we actually start making and saving profiles
         sizer = wx.BoxSizer(wx.VERTICAL)
-        profile = Profile(self)
-        sizer.Add(profile, 1, wx.EXPAND |  wx.ALL, 3)
+
+        self.Profile = Profile(self)
+        sizer.Add(self.Profile, 1, wx.EXPAND |  wx.ALL, 3)
+
+        WriteButton = wx.Button(self, -1, "Write Binds")
+        sizer.Add(WriteButton, 0, wx.EXPAND | wx.ALL, 5)
+
+        # WRITE BUTTON EVENT
+        self.Bind(wx.EVT_BUTTON, self.Profile.WriteBindFiles, WriteButton)
+
         self.SetSizerAndFit(sizer)
-        # TODO TODO TODO
 
     def showAboutBox(self, event):
         if self.about_info is None:

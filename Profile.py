@@ -19,7 +19,7 @@ from Page.TypingMsg import TypingMsg
 class Profile(wx.Notebook):
 
     def __init__(self, parent):
-        wx.Notebook.__init__(self, parent)
+        wx.Notebook.__init__(self, parent, style = wx.NB_LEFT)
 
         self.BindFiles = {}
         self.Pages     = {}

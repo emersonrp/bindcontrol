@@ -11,6 +11,7 @@ def ColorDefault():
 Icons = {}
 def Icon(iconname):
     if not Icons.get('iconname', None):
+        # TODO - platform-agnostic file paths
         Icons[iconname] = wx.Bitmap(
             wx.Image(
                 f"icons/{iconname}.png", wx.BITMAP_TYPE_ANY, -1,

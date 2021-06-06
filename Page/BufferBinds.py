@@ -8,6 +8,7 @@ class BufferBinds(Page):
         self.State = {
             'bufferbindsets' : (),
         }
+        self.TabTitle = "Buffer Binds"
 
     def FillTab(self):
         profile = self.Profile
@@ -27,12 +28,6 @@ class BufferBinds(Page):
         self.SetSizerAndFit(sizer)
 
         self.Layout()
-
-    def newBufferBindSet(self):
-        bbs = BufferBindSet()
-
-        # TODO - add to UI, focus it
-        return bbs
 
     def addBufferBindSetToDialog(self, bind):
 

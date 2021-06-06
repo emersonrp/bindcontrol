@@ -3,7 +3,7 @@
 
 import wx
 from BindFile import BindFile
-#from Page.BufferBinds
+from Page.BufferBinds import BufferBinds
 #from Page.ComplexBinds
 #from Page.CustomBinds
 from Page.FPSDisplay import FPSDisplay
@@ -34,7 +34,7 @@ class Profile(wx.Notebook):
         self.CreatePage(TeamPetSelect(self))
         self.CreatePage(TypingMsg(self))
         #self.CreatePage(SimpleBinds(self))
-        #self.CreatePage(BufferBinds(self))
+        self.CreatePage(BufferBinds(self))
         #self.CreatePage(ComplexBinds(self))
         #self.CreatePage(CustomBinds(self))
 

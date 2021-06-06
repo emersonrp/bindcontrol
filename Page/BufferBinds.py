@@ -282,7 +282,7 @@ class BufferBinds(Page):
                 if (bbind.get('power3enabled')): npow = 3
 
             if ((bbind['target'] == 1) or (bbind['target'] == 3)):
-                for j in range(1,8):
+                for j in range(1,9):
                     teamid = "team"+j
                     filebase = f"{profile['base']}\\buff{i}\\bufft{j}"
                     afile = profile.GetBindFile(f"{filebase}a.txt")
@@ -302,7 +302,7 @@ class BufferBinds(Page):
                             dfile.SetBind(teamid, f'-down$${chat3}powexecname {bbind["power3"]}$$bindloadfile {filebase}a.txt')
 
             if ((bbind['target'] == 2) or (bbind['target'] == 3)):
-                for j in range(1.6):
+                for j in range(1.7):
                     petid = "pet" + j
                     filebase = f"{profile['base']}\\buff{i}\\buffp{j}"
                     if (bbind['usepetnames']):
@@ -335,11 +335,11 @@ class BufferBinds(Page):
         for bbind in self.State['bufferbinds']:
             title = bbind.get('title', "unknown")
             if ((bbind['target'] == 1) or (bbind['target'] == 3)):
-                for j in range(1,8):
+                for j in range(1,9):
                     cbCheckConflict(bbind,"team"+j, f"Buff bind {title}: Team {j} Key")
 
             if ((bbind['target'] == 2) or (bbind['target'] == 3)):
-                for j in range(1,6):
+                for j in range(1,7):
                     cbCheckConflict(bbind,"pet"+j, f"Buff bind {title}: Pet {j} Key")
 
     def bindisused(self, profile):

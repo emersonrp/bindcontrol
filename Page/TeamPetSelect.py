@@ -197,7 +197,7 @@ class TeamPetSelect(Page):
         if (self.State['PetSelEnable']):
             tpsCreatePetSet(profile,1,0,profile.General['ResetFile'])
             for size in (1,2,3,4,5,6,7,8):
-                for sel in range(0, size):
+                for sel in range(size):
                     file = profile.GetBindFile("tps",f"pet{size}{sel}.txt")
                     tpsCreatePetSet(profile,size,sel,file)
 
@@ -205,8 +205,8 @@ class TeamPetSelect(Page):
         if (self.State['TeamSelEnable']):
             tpsCreateTeamSet(profile,1,0,0,profile.General['ResetFile'])
             for size in (1,2,3,4,5,6,7,8):
-                for pos in range(0, size):
-                    for sel in range(0, size):
+                for pos in range(size):
+                    for sel in range(size):
                         if (sel != pos or sel == 0):
                             file = profile.GetBindFile("tps", f"team{size}{pos}{sel}.txt")
                             tpsCreateTeamSet(profile,size,pos,sel,file)
@@ -292,7 +292,7 @@ class TeamPetSelect(Page):
 
     def findconflicts(self, profile):
         TPS = profile.TeamPetSelect
-        for i in range(1,8):
+        for i in range(1,9):
             cbCheckConflict(TPS,f"TeamSelect{i}",f"Team/Pet {i} Key")
         cbCheckConflict(TPS,"SelNextPet","Select next henchman")
         cbCheckConflict(TPS,"SelPrevPet","Select previous henchman")

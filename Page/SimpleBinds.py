@@ -1,4 +1,5 @@
 import wx
+from CustomBind import CustomBind
 from Page import Page
 
 class SimpleBinds(Page):
@@ -170,12 +171,6 @@ class SimpleBinds(Page):
     def bindisused(self, profile):
         return bool(len(self.State('binds')))
 
-class SimpleBind():
+class SimpleBind(CustomBind):
     def __init__(self, bind):
-        self.Key = ''
-        self.Title = ''
-        self.Payload
-
-        if bind.get('key',     None): self.Key     = bind['key']
-        if bind.get('title',   None): self.Title   = bind['title']
-        if bind.get('payload', None): self.Payload = bind['payload']
+        CustomBind.__init__(self, bind)

@@ -120,7 +120,7 @@ class SoD(Page):
             movementSizer.AddLabeledControl(
                 value = dir,
                 ctltype = 'keybutton',
-                module = self,
+                page = self,
             )
         # TODO!  fill this picker with only the appropriate bits.
         # for i in (powers list):
@@ -129,12 +129,12 @@ class SoD(Page):
             value = 'DefaultMode',
             ctltype = 'combo',
             contents = ('No SoD','Sprint','Super Speed','Jump','Fly'),
-            module = self,
+            page = self,
         )
         movementSizer.AddLabeledControl(
             value = 'MousechordSoD',
             ctltype = 'checkbox',
-            module = self,
+            page = self,
         )
         leftColumn.Add(movementSizer, 0, wx.EXPAND)
 
@@ -146,14 +146,14 @@ class SoD(Page):
             value = 'AutoMouseLook',
             ctltype = 'checkbox',
             tooltip = 'Automatically Mouselook when moving',
-            module = self,
+            page = self,
         )
         # TODO -- add "SprintPowers" to GameData
 #        generalSizer.AddLabeledControl(
 #            value = 'SprintPower',
 #            ctltype = 'combo',
 #            contents = GameData['SprintPowers'],
-#            module = self,
+#            page = self,
 #        )
 
         # TODO -- decide what to do with this.
@@ -163,56 +163,56 @@ class SoD(Page):
             generalSizer.AddLabeledControl(
                 value = command,
                 ctltype = 'keybutton',
-                module = self,
+                page = self,
             )
         generalSizer.AddLabeledControl(
             value = 'SprintSoD',
             ctltype = 'checkbox',
-            module = self,
+            page = self,
         )
         generalSizer.AddLabeledControl(
             value = 'ChangeCamera',
             ctltype = 'checkbox',
-            module = self,
+            page = self,
         )
         generalSizer.AddLabeledControl(
             value = 'CamdistBase',
             ctltype = 'spinbox',
             contents = (1, 100),
-            module = self,
+            page = self,
         )
         generalSizer.AddLabeledControl(
             value = 'CamdistTravelling',
             ctltype = 'spinbox',
             contents = (1, 100),
-            module = self,
+            page = self,
         )
         generalSizer.AddLabeledControl(
             value = 'ChangeDetail',
             ctltype = 'checkbox',
-            module = self,
+            page = self,
         )
         generalSizer.AddLabeledControl(
             value = 'DetailBase',
             ctltype = 'spinbox',
             contents = (1, 100),
-            module = self,
+            page = self,
         )
         generalSizer.AddLabeledControl(
             value = 'DetailTravelling',
             ctltype = 'spinbox',
             contents = (1, 100),
-            module = self,
+            page = self,
         )
         generalSizer.AddLabeledControl(
             value = 'TPHideWindows',
             ctltype = 'checkbox',
-            module = self,
+            page = self,
         )
         generalSizer.AddLabeledControl(
             value = 'SelfTellOnChange',
             ctltype = 'checkbox',
-            module = self,
+            page = self,
         )
         leftColumn.Add(generalSizer, 0, wx.EXPAND)
 
@@ -222,17 +222,17 @@ class SoD(Page):
         superSpeedSizer.AddLabeledControl(
             value = 'RunMode',
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
         superSpeedSizer.AddLabeledControl(
             value = 'SSOnlyWhenMoving',
             ctltype = 'checkbox',
-            module = self,
+            page = self,
         )
         superSpeedSizer.AddLabeledControl(
             value = 'SSSJModeEnable',
             ctltype = 'checkbox',
-            module = self,
+            page = self,
         )
         rightColumn.Add(superSpeedSizer, 0, wx.EXPAND)
 
@@ -241,12 +241,12 @@ class SoD(Page):
         superJumpSizer.AddLabeledControl(
             value = 'JumpMode',
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
         superJumpSizer.AddLabeledControl(
             value = 'SimpleSJCJ',
             ctltype = 'checkbox',
-            module = self,
+            page = self,
         )
         rightColumn.Add(superJumpSizer, 0, wx.EXPAND)
 
@@ -257,12 +257,12 @@ class SoD(Page):
         flySizer.AddLabeledControl(
             value = 'FlyMode',
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
         flySizer.AddLabeledControl(
             value = 'GFlyMode',
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
         rightColumn.Add(flySizer, 0, wx.EXPAND)
 
@@ -275,24 +275,24 @@ class SoD(Page):
         teleportSizer.AddLabeledControl(
             value = "TPMode",
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
         teleportSizer.AddLabeledControl(
             value = "TPCombo",
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
         teleportSizer.AddLabeledControl(
             value = "TPReset",
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
 
         # if (player has hover): {
         teleportSizer.AddLabeledControl(
             value = 'TPAutoHover',
             ctltype = 'checkbox',
-            module = self,
+            page = self,
         )
         #
 
@@ -300,24 +300,24 @@ class SoD(Page):
         teleportSizer.AddLabeledControl(
             value = "TTPMode",
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
         teleportSizer.AddLabeledControl(
             value = "TTPCombo",
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
         teleportSizer.AddLabeledControl(
             value = "TTPReset",
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
 
         # if (player has group fly) {
         teleportSizer.AddLabeledControl(
             value = 'TTPAutoGFly',
             ctltype = 'checkbox',
-            module = self,
+            page = self,
         )
         #
         #
@@ -330,13 +330,13 @@ class SoD(Page):
         tempSizer.AddLabeledControl(
             value = 'TempMode',
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
         tempSizer.AddLabeledControl(
             value = 'TempTray',
             ctltype = 'spinbox',
             contents = [1, 8],
-            module = self,
+            page = self,
         )
         rightColumn.Add(tempSizer, 0, wx.EXPAND)
 
@@ -346,37 +346,37 @@ class SoD(Page):
         kheldianSizer.AddLabeledControl(
             value = 'NovaMode',
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
         kheldianSizer.AddLabeledControl(
             value = 'NovaTray',
             ctltype = 'spinbox',
             contents = [1, 8],
-            module = self,
+            page = self,
         )
         kheldianSizer.AddLabeledControl(
             value = 'DwarfMode',
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
         kheldianSizer.AddLabeledControl(
             value = 'DwarfTray',
             ctltype = 'spinbox',
             contents = [1, 8],
-            module = self,
+            page = self,
         )
 
         # do we want a key to change directly to human form, instead of toggles?
         kheldianSizer.AddLabeledControl(
             value = 'HumanMode',
             ctltype = 'keybutton',
-            module = self,
+            page = self,
         )
         kheldianSizer.AddLabeledControl(
             value = 'HumanTray',
             ctltype = 'spinbox',
             contents = [1, 8],
-            module = self,
+            page = self,
         )
 
         rightColumn.Add(kheldianSizer, 0, wx.EXPAND)

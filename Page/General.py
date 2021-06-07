@@ -47,12 +47,12 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Name',
             ctltype = 'text',
-            module = self,
+            page = self,
         )
         powersBox.AddLabeledControl(
             value = 'Archetype',
             ctltype = 'combo',
-            module = self,
+            page = self,
             contents = sorted(Archetypes),
             tooltip = '',
             callback = self.pickArchetype,
@@ -60,7 +60,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Origin',
             ctltype = 'combo',
-            module = self,
+            page = self,
             contents = Origins,
             tooltip = '',
             callback = self.pickOrigin,
@@ -68,7 +68,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Primary',
             ctltype = 'combo',
-            module = self,
+            page = self,
             contents = sorted(ArchData['Primary']),
             tooltip = '',
             callback = self.pickPrimaryPowerSet,
@@ -76,7 +76,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Secondary',
             ctltype = 'combo',
-            module = self,
+            page = self,
             contents = sorted(ArchData['Secondary']),
             tooltip = '',
             callback = self.pickSecondaryPowerSet,
@@ -84,7 +84,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Epic',
             ctltype = 'combo',
-            module = self,
+            page = self,
             contents = sorted(ArchData['Epic']),
             tooltip = '',
             callback = self.pickEpicPowerSet,
@@ -92,7 +92,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Pool1',
             ctltype = 'combo',
-            module = self,
+            page = self,
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
@@ -100,7 +100,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Pool2',
             ctltype = 'combo',
-            module = self,
+            page = self,
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
@@ -108,7 +108,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Pool3',
             ctltype = 'combo',
-            module = self,
+            page = self,
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
@@ -116,7 +116,7 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'Pool4',
             ctltype = 'combo',
-            module = self,
+            page = self,
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
@@ -124,19 +124,19 @@ class General(Page):
         powersBox.AddLabeledControl(
             value = 'BindsDir',
             ctltype = 'dirpicker',
-            module = self,
+            page = self,
         )
         powersBox.AddLabeledControl(
             value = 'ResetKey',
             ctltype = 'keybutton',
-            module = self,
+            page = self,
             tooltip = 'This key is used by certain modules to reset binds to a sane state.',
         )
 
         powersBox.AddLabeledControl(
             value = 'ResetFeedback',
             ctltype = 'checkbox',
-            module = self,
+            page = self,
         )
 
         topSizer.Add(powersBox)

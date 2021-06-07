@@ -33,7 +33,7 @@ class TypingMsg(Page):
         sizer.AddLabeledControl(
             value   = 'Enable',
             ctltype = 'checkbox',
-            module  = self,
+            page  = self,
             tooltip = 'Enable / Disable chat binds',
         )
         for b in (
@@ -47,19 +47,19 @@ class TypingMsg(Page):
             sizer.AddLabeledControl(
                 value = b[0],
                 ctltype = 'keybutton',
-                module = self,
+                page = self,
                 tooltip = b[1],
             )
         sizer.AddLabeledControl(
             value = 'TypingNotifierEnable',
             ctltype = 'checkbox',
-            module = self,
+            page = self,
             tooltip = "Check this to enable the Typing Notifier",
         )
         sizer.AddLabeledControl(
             value = 'TypingNotifier',
             ctltype = 'text',
-            module = self,
+            page = self,
             tooltip = "Choose the message to display when you are typing chat messages or commands",
         )
 

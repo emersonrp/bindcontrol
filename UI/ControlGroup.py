@@ -15,24 +15,24 @@ class ControlGroup(wx.StaticBoxSizer):
         self.InnerSizer = wx.FlexGridSizer(0,2,3,3)
         self.Add(self.InnerSizer, 0, wx.ALIGN_RIGHT|wx.ALL, 16)
 
-    def AddLabeledControl(self, module = '',
+    def AddLabeledControl(self, page = '',
             ctltype = '', value = '',
             contents = '', tooltip = '', callback = None):
         sizer = self.InnerSizer
-        State = module.State
+        State = page.State
         padding = 2
 
         label = UI.Labels.get(value, value)
-        text = wx.StaticText(module, -1, label + ':')
+        text = wx.StaticText(page, -1, label + ':')
 
         if ctltype == ('keybutton'):
-            control = wx.Button( module, -1, State[value])
+            control = wx.Button( page, -1, State[value])
             control.Bind(wx.EVT_BUTTON, self.KeyPickerDialog)
             control.KeyBindDesc = label
 
         elif ctltype == ('combo'):
             control = wx.ComboBox(
-                module, -1, State[value],
+                page, -1, State[value],
                 wx.DefaultPosition, wx.DefaultSize,
                 contents,
                 wx.CB_READONLY)
@@ -40,21 +40,21 @@ class ControlGroup(wx.StaticBoxSizer):
                 control.Bind(wx.EVT_COMBOBOX, callback )
 
         elif ctltype == ('text'):
-            control = wx.TextCtrl(module, -1, State[value])
+            control = wx.TextCtrl(page, -1, State[value])
 
         elif ctltype == ('checkbox'):
-            control = wx.CheckBox(module, -1)
+            control = wx.CheckBox(page, -1)
             control.SetValue(bool(State[value]))
             padding = 10
 
         elif ctltype == ('spinbox'):
-            control = wx.SpinCtrl(module, -1)
+            control = wx.SpinCtrl(page, -1)
             control.SetValue(State[value])
             control.SetRange(*contents)
 
         elif ctltype == ('dirpicker'):
             control = wx.DirPickerCtrl(
-                module, -1, State[value], State[value], 
+                page, -1, State[value], State[value],
                 wx.DefaultPosition, wx.DefaultSize,
                 wx.DIRP_USE_TEXTCTRL|wx.ALL,
             )

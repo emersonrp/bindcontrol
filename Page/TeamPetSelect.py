@@ -69,7 +69,6 @@ class TeamPetSelect(Page):
         TPSDirectBox.AddLabeledControl(
             value = 'TPSSelMode',
             ctltype = 'combo',
-            page = self,
             contents = ['Teammates, then pets','Pets, then teammates','Teammates Only','Pets Only'],
             tooltip = 'Choose the order in which teammates and pets are selected with sequential keypresses',
         )
@@ -77,7 +76,6 @@ class TeamPetSelect(Page):
             TPSDirectBox.AddLabeledControl(
                 value = f"TeamSelect{selectid}",
                 ctltype = 'keybutton',
-                page = self,
                 tooltip = f"Choose the key that will select team member / pet {selectid}",
             )
         topSizer.Add(TPSDirectBox)
@@ -88,25 +86,21 @@ class TeamPetSelect(Page):
         PetSelBox.AddLabeledControl(
             value = 'SelNextPet',
             ctltype = 'keybutton',
-            page = self,
             tooltip = 'Choose the key that will select the next pet from the currently selected one',
         )
         PetSelBox.AddLabeledControl(
             value = 'SelPrevPet',
             ctltype = 'keybutton',
-            page = self,
             tooltip = 'Choose the key that will select the previous pet from the currently selected one',
         )
         PetSelBox.AddLabeledControl(
             value = 'IncPetSize',
             ctltype = 'keybutton',
-            page = self,
             tooltip = 'Choose the key that will increase the size of your pet/henchman group rotation',
         )
         PetSelBox.AddLabeledControl(
             value = 'DecPetSize',
             ctltype = 'keybutton',
-            page = self,
             tooltip = 'Choose the key that will decrease the size of your pet/henchman group rotation',
         )
         topSizer.Add(PetSelBox)
@@ -116,43 +110,36 @@ class TeamPetSelect(Page):
         TeamSelBox.AddLabeledControl(
             value ='SelNextTeam',
             ctltype = 'keybutton',
-            page = self,
             tooltip = 'Choose the key that will select the next teammate from the currently selected one',
         )
         TeamSelBox.AddLabeledControl(
             value ='SelPrevTeam',
             ctltype = 'keybutton',
-            page = self,
             tooltip = 'Choose the key that will select the previous teammate from the currently selected one',
         )
         TeamSelBox.AddLabeledControl(
             value ='IncTeamSize',
             ctltype = 'keybutton',
-            page = self,
             tooltip = 'Choose the key that will increase the size of your teammate rotation',
         )
         TeamSelBox.AddLabeledControl(
             value ='DecTeamSize',
             ctltype = 'keybutton',
-            page = self,
             tooltip = 'Choose the key that will decrease the size of your teammate rotation',
         )
         TeamSelBox.AddLabeledControl(
             value ='IncTeamPos',
             ctltype = 'keybutton',
-            page = self,
             tooltip = 'Choose the key that will move you to the next higher slot in the team rotation',
         )
         TeamSelBox.AddLabeledControl(
             value ='DecTeamPos',
             ctltype = 'keybutton',
-            page = self,
             tooltip = 'Choose the key that will move you to the next lower slot in the team rotation',
         )
         TeamSelBox.AddLabeledControl(
             value ='Reset',
             ctltype = 'keybutton',
-            page = self,
             tooltip = 'Choose the key that will reset your team rotation to solo',
         )
         topSizer.Add(TeamSelBox)

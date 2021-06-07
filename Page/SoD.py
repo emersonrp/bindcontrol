@@ -114,7 +114,7 @@ class SoD(Page):
 
 
         ##### MOVEMENT KEYS
-        movementSizer = ControlGroup(self, 'Movement Keys')
+        movementSizer = ControlGroup(self, self, 'Movement Keys')
 
         for dir in ("Up","Down","Forward","Back","Left","Right","TurnLeft","TurnRight"):
             movementSizer.AddLabeledControl(
@@ -137,7 +137,7 @@ class SoD(Page):
 
 
         ##### GENERAL SETTINGS
-        generalSizer = ControlGroup(self, 'General Settings')
+        generalSizer = ControlGroup(self, self, 'General Settings')
 
         generalSizer.AddLabeledControl(
             value = 'AutoMouseLook',
@@ -203,7 +203,7 @@ class SoD(Page):
 
 
         ##### SUPER SPEED
-        superSpeedSizer = ControlGroup(self, 'Super Speed')
+        superSpeedSizer = ControlGroup(self, self, 'Super Speed')
         superSpeedSizer.AddLabeledControl(
             value = 'RunMode',
             ctltype = 'keybutton',
@@ -219,7 +219,7 @@ class SoD(Page):
         rightColumn.Add(superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
-        superJumpSizer = ControlGroup(self, 'Super Jump')
+        superJumpSizer = ControlGroup(self, self, 'Super Jump')
         superJumpSizer.AddLabeledControl(
             value = 'JumpMode',
             ctltype = 'keybutton',
@@ -232,7 +232,7 @@ class SoD(Page):
 
 
         ##### FLY
-        flySizer = ControlGroup(self, 'Flight')
+        flySizer = ControlGroup(self, self, 'Flight')
 
         flySizer.AddLabeledControl(
             value = 'FlyMode',
@@ -245,7 +245,7 @@ class SoD(Page):
         rightColumn.Add(flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
-        teleportSizer = ControlGroup(self, 'Teleport')
+        teleportSizer = ControlGroup(self, self, 'Teleport')
 
         # if (at == peacebringer) "Dwarf Step"
         # if (at == warshade) "Shadow Step / Dwarf Step"
@@ -295,7 +295,7 @@ class SoD(Page):
         rightColumn.Add(teleportSizer, 0, wx.EXPAND)
 
         ##### TEMP TRAVEL POWERS
-        tempSizer = ControlGroup(self, 'Temp Travel Powers')
+        tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
         # if (temp travel powers exist)?  Should this be "custom"?
         tempSizer.AddLabeledControl(
             value = 'TempMode',
@@ -309,7 +309,7 @@ class SoD(Page):
         rightColumn.Add(tempSizer, 0, wx.EXPAND)
 
         ##### KHELDIAN TRAVEL POWERS
-        kheldianSizer = ControlGroup(self, 'Nova / Dwarf Travel Powers')
+        kheldianSizer = ControlGroup(self, self, 'Nova / Dwarf Travel Powers')
 
         kheldianSizer.AddLabeledControl(
             value = 'NovaMode',

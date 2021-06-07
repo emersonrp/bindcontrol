@@ -1,9 +1,11 @@
 import wx
 import Utility
+import UI
 
 from wx.richtext import RichTextCtrl as RTC
 from CustomBind import CustomBind
 from Page import Page
+from UI.ControlGroup import ControlGroup
 
 class BufferBinds(Page):
     def __init__(self, parent):
@@ -11,6 +13,17 @@ class BufferBinds(Page):
 
         self.Binds = {}
         self.TabTitle = "Buffer Binds"
+        self.State = {
+            'BuffPetsByName' : True,
+            'BuffsAffectTeam': True,
+            'BuffsAffectPets': True,
+        }
+
+        for i in (1,2,3,4,5,6,7,8):
+            self.State[f"Team{i}BuffKey"] = "UNBOUND"
+
+        for i in (1,2,3,4,5,6):
+            self.State[f"Pet{i}BuffKey"] = "UNBOUND"
 
     def FillTab(self):
         profile = self.Profile
@@ -44,7 +57,7 @@ class BufferBinds(Page):
 
     def AddBindToPage(self, _, bindinit = {}):
 
-        bind = BufferBind(bindinit)
+        bind = BufferBind(self, bindinit)
 
         # TODO - if bind is already in there, just scroll to it and pop it open
         bindCP = wx.CollapsiblePane(self, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
@@ -379,11 +392,24 @@ class BufferBinds(Page):
     def bindisused(self, profile):
         return bool(len(self.buffer.keys()))
 
+    for i in (1,2,3,4,5,6,7,8):
+        UI.Labels[f'Team{i}BuffKey'] = f"Team {i} Key"
+
+    for i in (1,2,3,4,5,6):
+        UI.Labels[f'Pet{i}BuffKey'] = f"Pet {i} Key"
+
+    UI.Labels.update( {
+        'BuffPetsByName' : "Buff Pets using Pet Names",
+        'BuffsAffectTeam' : "Buffs Affect Team Members",
+        'BuffsAffectPets' : "Buffs Affect Pets",
+    })
+
 ### CustomBind subclasses for the indibidual bind types
 
 class BufferBind(CustomBind):
-    def __init__(self, bind):
-        CustomBind.__init__(self, bind)
+    def __init__(self, page, bind):
+        CustomBind.__init__(self, page, bind)
+        self.Page = page
 
     def PopulateCP(self, BindCP):
 
@@ -393,6 +419,7 @@ class BufferBind(CustomBind):
         # payload  = RTC(pane, -1, "testing 1 2 3", style=wx.richtext.RE_MULTILINE)
         # payload.SetHint("/say Your bind text goes here!$$powexec Super Jump")
 
+        # bind text controls
         BindSizer = wx.GridBagSizer(hgap=5, vgap=5)
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Name:"),     (0,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(wx.TextCtrl  (pane, -1, ""),               (0,1), span=(1,4), flag=wx.EXPAND)
@@ -417,8 +444,24 @@ class BufferBind(CustomBind):
 
         BindSizer.Add(wx.StaticText(pane, -1, ""),                 (4,0))
 
-        BindSizer.Add(wx.CheckBox(pane, -1, "Buffs Affect Team Members"), (5,0), span = (1,2))
-        BindSizer.Add(wx.CheckBox(pane, -1, "Buffs Affect Pets"),         (5,3), span = (1,2))
+
+        # key picker controls
+        KeySizer = wx.BoxSizer(wx.HORIZONTAL)
+        TeamCtrls = ControlGroup(pane, self.Page, "Buff Team Keybinds")
+        PetCtrls  = ControlGroup(pane, self.Page, "Buff Pet Keybinds")
+
+        TeamCtrls.AddLabeledControl(ctltype = 'checkbox', value = "BuffsAffectTeam")
+        for i in (1,2,3,4,5,6,7,8):
+            TeamCtrls.AddLabeledControl(ctltype = "keybutton", value = f"Team{i}BuffKey", contents = "UNBOUND")
+
+
+        PetCtrls.AddLabeledControl(ctltype = 'checkbox', value = "BuffsAffectPets")
+        PetCtrls.AddLabeledControl(ctltype = "checkbox", value = "BuffPetsByName")
+        for i in (1,2,3,4,5,6):
+            PetCtrls.AddLabeledControl(ctltype = "keybutton", value = f"Pet{i}BuffKey", contents = "UNBOUND")
+
+        KeySizer.Add(TeamCtrls, 0, flag = wx.LEFT|wx.RIGHT, border = 5)
+        KeySizer.Add(PetCtrls,  0, flag = wx.LEFT|wx.RIGHT, border = 5)
 
         BindSizer.AddGrowableCol(1)
         BindSizer.AddGrowableCol(3)
@@ -426,7 +469,8 @@ class BufferBind(CustomBind):
 
         # border around the addr box
         border = wx.BoxSizer(wx.VERTICAL)
-        border.Add(BindSizer, 1, wx.EXPAND|wx.ALL, 10)
+        border.Add(BindSizer, 0, wx.EXPAND|wx.ALL, 10)
+        border.Add(KeySizer,  0, wx.EXPAND|wx.ALL, 10)
         pane.SetSizer(border)
 
 

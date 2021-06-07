@@ -5,11 +5,11 @@ from UI.KeyBindDialog import KeyBindDialog
 
 class ControlGroup(wx.StaticBoxSizer):
 
-    def __init__(self, parent, label):
-
+    def __init__(self, parent, page, label):
         wx.StaticBoxSizer.__init__(self, wx.VERTICAL, parent, label = label)
 
         self.Parent = parent
+        self.Page   = page
         # self.Add(wx.StaticBox( parent, -1), wx.VERTICAL)
 
         self.InnerSizer = wx.FlexGridSizer(0,2,3,3)
@@ -20,11 +20,10 @@ class ControlGroup(wx.StaticBoxSizer):
     def AddLabeledControl(self, ctlparent = None,
             ctltype = '', value = '',
             contents = '', tooltip = '', callback = None):
-        sizer = self.InnerSizer
-        State = self.Parent.State
 
-        page = self.Parent
-        ctlparent = ctlparent if ctlparent else page
+        sizer     = self.InnerSizer
+        State     = self.Page.State
+        ctlparent = ctlparent if ctlparent else self.Parent
 
         padding = 2
 

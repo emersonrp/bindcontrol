@@ -64,7 +64,7 @@ class TeamPetSelect(Page):
         topSizer.Add(headerSizer)
 
         ##### direct-select keys
-        TPSDirectBox = ControlGroup(self, 'Direct Team/Pet Select')
+        TPSDirectBox = ControlGroup(self, self, 'Direct Team/Pet Select')
 
         TPSDirectBox.AddLabeledControl(
             value = 'TPSSelMode',
@@ -81,7 +81,7 @@ class TeamPetSelect(Page):
         topSizer.Add(TPSDirectBox)
 
         ##### Pet Select Binds
-        PetSelBox = ControlGroup(self, 'Pet Select')
+        PetSelBox = ControlGroup(self, self, 'Pet Select')
 
         PetSelBox.AddLabeledControl(
             value = 'SelNextPet',
@@ -106,7 +106,7 @@ class TeamPetSelect(Page):
         topSizer.Add(PetSelBox)
 
         ##### Team Select Binds
-        TeamSelBox = ControlGroup(self, 'Team Select')
+        TeamSelBox = ControlGroup(self, self, 'Team Select')
         TeamSelBox.AddLabeledControl(
             value ='SelNextTeam',
             ctltype = 'keybutton',

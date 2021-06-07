@@ -28,7 +28,7 @@ class TypingMsg(Page):
     def FillTab(self):
 
         topSizer = wx.BoxSizer(wx.VERTICAL)
-        sizer = ControlGroup(self, 'Chat Binds')
+        sizer = ControlGroup(self, self, 'Chat Binds')
 
         sizer.AddLabeledControl(
             value   = 'Enable',

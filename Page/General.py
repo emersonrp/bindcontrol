@@ -43,7 +43,7 @@ class General(Page):
 
         topSizer = wx.BoxSizer(wx.VERTICAL)
 
-        powersBox = ControlGroup(self, 'Powers and Info')
+        powersBox = ControlGroup(self, self, 'Powers and Info')
         powersBox.AddLabeledControl(
             value = 'Name',
             ctltype = 'text',

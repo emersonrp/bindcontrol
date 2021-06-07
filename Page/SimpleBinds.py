@@ -43,7 +43,7 @@ class SimpleBinds(Page):
 
     def AddBindToPage(self, _, bindinit = {}):
 
-        bind = SimpleBind(bindinit)
+        bind = SimpleBind(self, bindinit)
 
         # TODO - if bind is already in there, just scroll to it and pop it open
         bindCP = wx.CollapsiblePane(self, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
@@ -196,8 +196,8 @@ class SimpleBinds(Page):
 ### CustomBind subclasses for the indibidual bind types
 
 class SimpleBind(CustomBind):
-    def __init__(self, bind):
-        CustomBind.__init__(self, bind)
+    def __init__(self, page, bind):
+        CustomBind.__init__(self, page, bind)
 
     def PopulateCP(self, BindCP):
 

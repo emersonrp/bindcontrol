@@ -22,7 +22,7 @@ class General(Page):
             'Secondary': 'Super Reflexes',
             'Epic': 'Weapon Mastery',
             'BindsDir': "c:\\CoHTest\\",
-            'ResetKey': 'CTRL-M',
+            'ResetKey': 'CTRL+M',
             'ResetFeedback': 1,
             'Pool1': '',
             'Pool2': '',

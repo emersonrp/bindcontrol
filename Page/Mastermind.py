@@ -74,51 +74,51 @@ class Mastermind(Page):
         self.State = {
             'Enable' : False,
 
-            'PetSelectAll' : 'ALT-V',
+            'PetSelectAll' : 'ALT+V',
             'PetSelectAllResponse' : 'Orders?',
             'PetSelectAllResponseMethod' : 'Petsay',
 
-            'PetSelectMinions' : 'ALT-Z',
+            'PetSelectMinions' : 'ALT+Z',
             'PetSelectMinionsResponse' : 'Orders?',
             'PetSelectMinionsResponseMethod' : 'Petsay',
 
-            'PetSelectLieutenants' : 'ALT-X',
+            'PetSelectLieutenants' : 'ALT+X',
             'PetSelectLieutenantsResponse' : 'Orders?',
             'PetSelectLieutenantsResponseMethod' : 'Petsay',
 
-            'PetSelectBoss' : 'ALT-C',
+            'PetSelectBoss' : 'ALT+C',
             'PetSelectBossResponse' : 'Orders?',
             'PetSelectBossResponseMethod' : 'Petsay',
 
-            'PetBodyguard' : 'ALT-G',
+            'PetBodyguard' : 'ALT+G',
             'PetBodyguardResponse' : 'Bodyguarding.',
             'PetBodyguardResponseMethod' : 'Petsay',
 
-            'PetAggressive' : 'ALT-A',
+            'PetAggressive' : 'ALT+A',
             'PetAggressiveResponse' : 'Kill On Sight.',
             'PetAggressiveResponseMethod' : 'Petsay',
 
-            'PetDefensive' : 'ALT-S',
+            'PetDefensive' : 'ALT+S',
             'PetDefensiveResponse' : 'Return Fire Only.',
             'PetDefensiveResponseMethod' : 'Petsay',
 
-            'PetPassive' : 'ALT-D',
+            'PetPassive' : 'ALT+D',
             'PetPassiveResponse' : 'At Ease.',
             'PetPassiveResponseMethod' : 'Petsay',
 
-            'PetAttack' : 'ALT-Q',
+            'PetAttack' : 'ALT+Q',
             'PetAttackResponse' : 'Open Fire!',
             'PetAttackResponseMethod' : 'Petsay',
 
-            'PetFollow' : 'ALT-W',
+            'PetFollow' : 'ALT+W',
             'PetFollowResponse' : 'Falling In.',
             'PetFollowResponseMethod' : 'Petsay',
 
-            'PetStay' : 'ALT-E',
+            'PetStay' : 'ALT+E',
             'PetStayResponse' : 'Holding This Position',
             'PetStayResponseMethod' : 'Petsay',
 
-            'PetGoto' : 'ALT-LBUTTON',
+            'PetGoto' : 'ALT+LBUTTON',
             'PetGotoResponse' : 'Moving To Checkpoint.',
             'PetGotoResponseMethod' : 'Petsay',
 
@@ -131,7 +131,7 @@ class Mastermind(Page):
             'PetBackgroundAttackEnabled' : 0,  # TODO -- need UI for this
             'PetBackgroundGotoEnabled' : 0,    # TODO -- need UI for this
 
-            'PetChatToggle' : 'ALT-M',
+            'PetChatToggle' : 'ALT+M',
             'PetSelect1' : 'F1',
             'PetSelect2' : 'F2',
             'PetSelect3' : 'F3',

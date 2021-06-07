@@ -12,7 +12,10 @@ class KeyBindDialog(wx.Dialog):
 
         desc = f"Press the key you want bound to {desc}:"
 
-        self.Binding = ''
+        self.Binding   = ''
+        self.ShiftSide = ''
+        self.CtrlSide  = ''
+        self.AltSide   = ''
         self.SetKeymap();
 
         sizer = wx.BoxSizer(wx.VERTICAL);
@@ -22,8 +25,8 @@ class KeyBindDialog(wx.Dialog):
 
         self.kbBind.SetLabelMarkup('<b><big>' + keybind + '</big></b>')
 
-        sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND|wx.LEFT|wx.RIGHT, 15);
-        sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND|wx.ALL, 15);
+        sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 15);
+        sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);
 
         # Wrap everything in a vbox to add some padding
         vbox = wx.BoxSizer(wx.VERTICAL);
@@ -40,7 +43,7 @@ class KeyBindDialog(wx.Dialog):
             i.Bind(wx.EVT_MOUSE_AUX2_DOWN , self.handleBind )
 
         buttonSizer = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
-        vbox.Add(buttonSizer, 0, wx.ALIGN_CENTER|wx.ALL|wx.EXPAND)
+        vbox.Add(buttonSizer, 0, wx.ALIGN_CENTER|wx.ALL)
 
         self.SetSizerAndFit(vbox);
         self.Layout()
@@ -64,17 +67,13 @@ class KeyBindDialog(wx.Dialog):
 
         evtType = event.GetEventType();
 
-        self.Binding = ''
-        # check for each modifier key
-        # TODO -- LCTRL vs RCTRL etcetc
-        if (event.CmdDown())   : self.Binding = self.Binding + 'CTRL-'
-        if (event.ShiftDown()) : self.Binding = self.Binding + 'SHIFT-'
-        if (event.AltDown())   : self.Binding = self.Binding + 'ALT-'
+        KeyToBind = ''
 
         if (isinstance(event, wx.KeyEvent)):
             code = event.GetKeyCode()
 
             KeyToBind = self.Keymap.get(code, '')
+
 
         else:
             button = event.GetButton()
@@ -85,10 +84,40 @@ class KeyBindDialog(wx.Dialog):
                 'RBUTTON',
                 'BUTTON4',
                 'BUTTON5',
+                'BUTTON6',
+                'BUTTON7',
+                'BUTTON8',
             ][button]
 
-        if KeyToBind:
-            self.Binding = self.Binding + str(KeyToBind)
+        # check for each modifier key
+        # TODO - we've gotten rid of the ability to do just, eg, "CTRL+" to get both sides
+        if (event.CmdDown())   :
+            if isinstance(event, wx.KeyEvent):
+                rawCode = event.GetRawKeyCode()
+                if   (rawCode == 65507): self.CtrlSide = "LCTRL+"
+                elif (rawCode == 65508): self.CtrlSide = "RCTRL+"
+        else:
+            self.CtrlSide = ''
+
+        if (event.ShiftDown()) :
+            if isinstance(event, wx.KeyEvent):
+                rawCode = event.GetRawKeyCode()
+                if   (rawCode == 65505): self.ShiftSide = "LSHIFT+"
+                elif (rawCode == 65506): self.ShiftSide = "RSHIFT+"
+        else:
+            self.ShiftSide = ''
+
+        # TODO - Alt goes missing if you mash several things while the dialog is open
+        if (event.AltDown())   :
+            if isinstance(event, wx.KeyEvent):
+                rawCode = event.GetRawKeyCode()
+                if   (rawCode == 65513): self.AltSide = "LALT+"
+                elif (rawCode == 65514): self.AltSide = "RALT+"
+        else:
+            self.AltSide = ''
+
+        self.Binding = self.CtrlSide + self.AltSide + self.ShiftSide + KeyToBind
+
         self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
         self.Layout()
 

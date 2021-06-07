@@ -37,7 +37,7 @@ class SoD(Page):
             'DetailBase'         : 100,
             'DetailTravelling'   : 50,
 
-            'NonSoDMode'         : 'CTRL-M',
+            'NonSoDMode'         : 'CTRL+M',
             'JumpMode'           : "T",
             'SimpleSJCJ'         : 1,
 
@@ -50,13 +50,13 @@ class SoD(Page):
 
             'SelfTellOnChange'   : 1,
 
-            'TPMode'             : 'SHIFT-LBUTTON',
+            'TPMode'             : 'SHIFT+LBUTTON',
             'TPCombo'            : 'SHIFT',
-            'TPReset'            : 'CTRL-T',
+            'TPReset'            : 'CTRL+T',
 
-            'TTPMode'            : 'SHIFT-CTRL-LBUTTON',
-            'TTPCombo'           : 'SHIFT-CTRL',
-            'TTPReset'           : 'SHIFT-CTRL-T',
+            'TTPMode'            : 'SHIFT+CTRL+LBUTTON',
+            'TTPCombo'           : 'SHIFT+CTRL',
+            'TTPReset'           : 'SHIFT+CTRL+T',
             'TTPAutoGFly'        : True,
 
             'TPHideWindows'      : False,

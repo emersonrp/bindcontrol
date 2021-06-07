@@ -393,7 +393,6 @@ class SoD(Page):
 
         t = p['t']
 
-        profile = self.Profile
 
         bl   = t['bl'].get(p['bl'], "")
         bla  = t['bl'].get(p['bla'], "")
@@ -420,7 +419,7 @@ class SoD(Page):
 
         if ((self.State['Default'] == modestr) and (t['totalkeys'] == 0)):
 
-            curfile = profile.Pages['General'].State['ResetFile']
+            curfile = profile.ResetFile
             sodDefaultResetKey(mobile,stationary)
 
             sodUpKey     (t,bl,curfile,self.State,mobile,stationary,flight,'','','',sssj)
@@ -455,7 +454,8 @@ class SoD(Page):
             sodLeftKey   (t,blbo,curfile,self.State,mobile,stationary,flight,'','',"bo",sssj)
             sodRightKey  (t,blbo,curfile,self.State,mobile,stationary,flight,'','',"bo",sssj)
 
-            # if (modestr == "Base") { makeBaseModeKey(profile,t,"r",curfile,$turnoff,$fix)
+            if (modestr == "Base") : makeBaseModeKey(profile,t,"r",curfile,turnoff,fix)
+
             t['ini'] = '-down$$'
 
             if (self.State['Default'] == "Fly"):
@@ -479,9 +479,9 @@ class SoD(Page):
                     makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
 
             t['ini'] = ''
-            # if (modestr == "GFly") { makeGFlyModeKey(profile,t,"gbo",curfile,$turnoff,$fix)
-            # if (modestr == "Run") { makeSpeedModeKey (profile,t,"s",curfile,$turnoff,$fix)
-            # if (modestr == "Jump") { makeJumpModeKey(profile,t,"j",curfile,$turnoff,path)
+            if (modestr == "GFly") : makeGFlyModeKey  (profile,t,"gbo",curfile,turnoff,fix)
+            if (modestr == "Run")  : makeSpeedModeKey (profile,t,"s",  curfile,turnoff,fix)
+            if (modestr == "Jump") : makeJumpModeKey  (profile,t,"j",  curfile,turnoff,path)
 
             sodAutoRunKey(t,bla,curfile,self.State,mobile,sssj)
 
@@ -499,11 +499,11 @@ class SoD(Page):
             sodRightKey  (t,blsd,curfile,self.State,mobile,stationary,flight,'','',"sd",sssj)
 
             t['ini'] = '-down$$'
-            # if (modestr == "Base") { makeBaseModeKey(profile,t,"r",curfile,$turnoff,$fix)
-            # if (modestr == "Fly") { makeFlyModeKey(profile,t,"a",curfile,$turnoff,$fix)
-            # if (modestr == "GFly") { makeGFlyModeKey(profile,t,"gbo",curfile,$turnoff,$fix)
+            if (modestr == "Base") : makeBaseModeKey(profile,t,"r",  curfile,turnoff,fix)
+            if (modestr == "Fly")  : makeFlyModeKey( profile,t,"a",  curfile,turnoff,fix)
+            if (modestr == "GFly") : makeGFlyModeKey(profile,t,"gbo",curfile,turnoff,fix)
             t['ini'] = ''
-            # if (modestr == "Jump") { makeJumpModeKey(profile,t,"j",curfile,$turnoff,path)
+            if (modestr == "Jump") : makeJumpModeKey(profile,t,"j",  curfile,turnoff,path)
 
             sodAutoRunKey(t,bla,curfile,self.State,mobile,sssj)
             sodFollowKey(t,blf,curfile,self.State,mobile)
@@ -523,9 +523,9 @@ class SoD(Page):
             #  Base to set down
             if (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"r",curfile,{mobile,stationary},sodSetDownFix)
             if (modestr == "Base")  : makeBaseModeKey  (profile,t,"r",curfile,turnoff,sodSetDownFix)
-            # if (t['BaseMode']):
-                # curfile.SetBind(t['BaseMode'],"+down$$down 1" + actPower_name(None,1,mobile) + t['detailhi'] + t['runcamdist'] + t['blsd'])
-            #}
+            if (t['BaseMode']):
+                curfile.SetBind(t['BaseMode'],"+down$$down 1" + actPower_name(None,1,mobile) + t['detailhi'] + t['runcamdist'] + t['blsd'])
+
             if (modestr == "Run")    : makeSpeedModeKey (profile,t,"s", curfile,turnoff,sodSetDownFix)
             if (modestr == "Fly")    : makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
             if (modestr == "Jump")   : makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
@@ -903,7 +903,7 @@ class SoD(Page):
 
         profile = self.Profile
 
-        ResetFile = profile.Pages['General'].State['ResetFile']
+        ResetFile = profile.ResetFile
 
         # ResetFile.SetBind(petselect['sel5'] + ' "petselect 5')
         if (self.State['Default'] == "NonSoD"):
@@ -1264,11 +1264,6 @@ class SoD(Page):
                                     t[self.State['Default'] + "Mode"] = None
 
 
-
-
-
-
-
         t['space'] = t['X'] = t['W'] = t['S'] = t['A'] = t['D'] = 0
 
         t['up']   = '$$up '       +    t['space']
@@ -1378,7 +1373,7 @@ class SoD(Page):
             if self.State['UseHumanFormPower']: humpower = '$$powexectoggleon ' + self.State['HumanFormShield']
             else:                               humpower = ''
 
-            dwrffile.SetBind(humanBindKey,f"tname, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Dwarf['Dwarf']}{humpower}$$gototray 1" + BindFile.BLF(profile, 'reset.txt'))
+            dwrffile.SetBind(humanBindKey,f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Dwarf['Dwarf']}{humpower}$$gototray 1" + BindFile.BLF(profile, 'reset.txt'))
 
             if dwarfpbind: dwrffile.SetBind(Dwarf['Mode'],dwarfpbind)
             if t['canqfly']:
@@ -1414,7 +1409,7 @@ class SoD(Page):
                 tp_on2 = profile.GetBindFile("dtp","tp_on2.txt")
                 tp_on2.SetBind(self.State['TPBindKey'],'-down$$' + dwarfTPPower + BindFile.BLF(profile, 'dtp','tp_on1.txt'))
 
-            # dwrffile.SetBind(self.State['ToggleKey'],"t \$name, Changing to Human Form, Normal Mode$fullstop\$\$powexectoggleoff Dwarf['Dwarf']\$\$gototray 1" + BindFile.BLF(profile, 'reset.txt'))
+            dwrffile.SetBind(self.State['ToggleKey'],"t $name, Changing to Human Form, Normal Mode$fullstop\$\$powexectoggleoff Dwarf['Dwarf']\$\$gototray 1" + BindFile.BLF(profile, 'reset.txt'))
 
 
         if (self.State['JumpSimple']):
@@ -1481,7 +1476,7 @@ class SoD(Page):
         else:                   u = 0
         if (moddir == 'down'): d = 1
         else:                   d = 0
-        curfile.SetBind(pGeneral['Reset Key'],
+        curfile.SetBind(p.Pages['General']['Reset Key'],
                 'up ' + u + '$$down ' + d + '$$forward 0$$backward 0$$left 0$$right 0' .
                 turnoff + '$$tname, SoD Binds Reset' + BindFile.BaseReset(p) + BindFile.BLF(p, path)
         )
@@ -1596,13 +1591,12 @@ class SoD(Page):
         if (stationary and stationary == 'Group Fly'): stationary = None
 
         if (flight == 'Jump'):
-           dowx = '$$down 0'
-            # if (t['cancj']  == 1) {aj = t['cjmp']
-            # if (t['canjmp'] == 1) {aj = t['jump']
-           actkeys = t['jkeys']
-           if (t['X'] == 1 and t['totalkeys'] > 1) : up = '$$up 1'
-           else:                                     up = '$$up 0'
-
+            dowx = '$$down 0'
+            if (t['cancj']  == 1) : aj = t['cjmp']
+            if (t['canjmp'] == 1) : aj = t['jump']
+            actkeys = t['jkeys']
+            if (t['X'] == 1 and t['totalkeys'] > 1) : up = '$$up 1'
+            else:                                     up = '$$up 0'
 
         toggleon = mobile
         if (actkeys == 0):
@@ -1644,9 +1638,6 @@ class SoD(Page):
             curfile.SetBind(self.State['Down'],ini + up + dowx + '$$backward 0' + lef + rig + t['mlon'] + bl)
 
 
-    ###### HERE!
-
-
     def sodForwardKey(self, t, bl, curfile, state, mobile, stationary, flught, autorunbl, followbl, bo, sssj):
         (up,dow,forx,bac,lef,rig) = (t.U,t.D,t['forx'],t.B,t.L,t.R)
 
@@ -1674,11 +1665,8 @@ class SoD(Page):
             if (not (mobile and mobile == stationary)):
                toggleoff = stationary
 
-
-
         if (t['totalkeys'] == 1 and t['W'] == 1):
             ml = t['mloff']
-
 
         if flight: testKeys = t['totalkeys']
         else:      testKeys = t['horizkeys']
@@ -1688,15 +1676,12 @@ class SoD(Page):
 
             toggleon = stationary
 
-
         if (sssj and t['space'] == 1) : #  if (we are jumping with SS+SJ mode enabled)
            toggleon = sssj
            toggleoff = mobile
 
-
         if (toggleon or toggleoff):
            toggle = actPower_name(None,1,toggleon,toggleoff)
-
 
         newbits = t.KeyState({'toggle' : 'W'})
         bl = re.sub('\d\d\d\d\d\d', newbits, bl)
@@ -1729,9 +1714,6 @@ class SoD(Page):
             if (self.State['MouseChord']) :
                 curfile.SetBind('mousechord', ini + up + dow + '$$forward 1$$backward 0' + rig + lef + t['mlon'] + bl)
 
-
-
-
     def sodBackKey(t,bl,curfile,state,mobile,stationary,flight,autorunbl,followbl,bo,sssj):
         (up,dow,forw,bacx,lef,rig) = (t.U,t.D,t.F, t['bacx'],t.L,t.R)
 
@@ -1758,11 +1740,8 @@ class SoD(Page):
            if (not (mobile and mobile == stationary)):
                toggleoff = stationary
 
-
-
         if (t['totalkeys'] == 1 and t['S'] == 1):
             ml = t['mloff']
-
 
         if flight: testKeys = t['totalkeys']
         else:      testKeys = t['horizkeys']
@@ -1822,7 +1801,6 @@ class SoD(Page):
 
             if (t['X'] == 1) : up = '$$up 0'
 
-
         toggleon = mobile
         if (t['totalkeys'] == 0):
             ml = t['mlon']
@@ -1830,11 +1808,8 @@ class SoD(Page):
             if (not (mobile and mobile == stationary)) :
                 toggleoff = stationary
 
-
-
         if (t['totalkeys'] == 1 and t['A'] == 1) :
             ml = t['mloff']
-
 
         if flight: testKeys = t['totalkeys']
         else:      testKeys = t['horizkeys']
@@ -1851,7 +1826,6 @@ class SoD(Page):
 
         if (toggleon or toggleoff) :
            toggle = actPower_name(None,1,toggleon,toggleoff)
-
 
         newbits = t.KeyState({'toggle' : 'A'})
         bl = re.sub('\d\d\d\d\d\d', newbits, bl)
@@ -1871,7 +1845,6 @@ class SoD(Page):
             curfile.SetBind(self.State['Left'],ini + up + dow + forw + bac + lefx + rig + ml + toggle + bl)
         else:
             curfile.SetBind(self.State['Left'],ini + up + dow + '$$backward 0' + lefx + rig + t['mlon'] + bl)
-
 
     def sodRightKey(t,bl,curfile,state,mobile,stationary,flight,autorun,followbl,bo,sssj):
         (up,dow,forw,bac,lef,rigx) = (t.U,t.D,t.F,t.B,t.L, t['rigx'])
@@ -2036,7 +2009,6 @@ class SoD(Page):
         if ((profile.Pages['General'].State['Archetype'] == "Peacebringer") or (profile.Pages['General'].State['Archetype'] == "Warshade")) :
             if (self.State['Nova']  and self.State['NovaEnable']): Utility.CheckConflict(self.State['Nova'], "Mode","Nova Form Bind")
             if (self.State['Dwarf'] and self.State['DwarfEnable']): Utility.CheckConflict(self.State['Dwarf'],"Mode","Dwarf Form Bind")
-
 
 
     #  toggleon variation

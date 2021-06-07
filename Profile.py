@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-
-
 import wx
 
 from BindFile import BindFile
@@ -28,6 +25,12 @@ class Profile(wx.Notebook):
 
         # Add the individual tabs, in order.
         self.CreatePage(General(self))
+
+        print(self.Pages['General'])
+        # Pluck some bits out of General that we'll want later
+        self.BindsDir  = self.Pages['General'].State['BindsDir']
+        self.ResetFile = self.GetBindFile(self.BindsDir, "resetfile.txt")
+
         self.CreatePage(SoD(self))
         self.CreatePage(FPSDisplay(self))
         self.CreatePage(InspirationPopper(self))
@@ -46,9 +49,16 @@ class Profile(wx.Notebook):
 
         self.Layout()
 
-    def GetBindFile(self, filename):
-        if not self.BindFiles.get(filename):
-            self.BindFiles[filename] = BindFile(filename)
+    def GetBindFile(self, *filename):
+        # Store them internally as a simple string
+        # but send BindFile the list of path parts
+        filename_key = "!!".join(filename)
+
+        if not self.BindFiles.get(filename_key, None):
+            self.BindFiles[filename_key] = BindFile(self, *filename)
+
+        return self.BindFiles[filename_key]
+
 
     def WriteBindFiles(self):
         for Page in self.Pages:

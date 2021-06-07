@@ -1,14 +1,14 @@
+from pathlib import Path
+
 class BindFile():
 
-    def __init__(self, filename):
+    def __init__(self, profile, *pathbits):
+        bindsdir = profile.BindsDir
+        pathbits = (bindsdir, *pathbits)
 
-        # TODO -- implement with platform-agnostic file paths
-        #$filename = File::Spec->catfile(@filename)
-        #unless ($BindFiles{$filename}) {
-            #$BindFiles{$filename} =  bless {filename = $filename, binds = {}}, $class
-        #}
-        #return $BindFiles{$filename}
-        return
+        self.Path = Path(*pathbits)
+
+        self.Binds = {}
 
     def SetBind(self, key, bindtext):
 
@@ -22,60 +22,28 @@ class BindFile():
             # $resetfile2->{$key} = $s
         # }
 
-        self.binds[key] = bindtext
+        self.Binds[key] = bindtext
 
     def BaseReset(self, profile):
         return '$$bindloadfilesilent ' + profile.General.BindsDir + "\\subreset.txt"
 
     # BLF == full "$$bindloadfilesilent path/to/file/kthx"
-    def BLF(self, *args, **kwargs):
-        return '$$' + self.BLFs(*args, **kwargs)
+    def BLF(self):
+        return '$$' + self.BLFs()
 
     # BLFs == same as above but no '$$' for use at start of binds.  Unnecessary?
-    def BLFs(self, *args, **kwargs):
-        return 'bindloadfilesilent ' . self.BLFPath(*args, **kwargs)
-
-    # BLFPath == just the path to the file
-    def BLFPath(self, profile, *args, **kwargs):
-
-        # TODO -- implement with platform-agnostic file paths
-        #file = pop @bits
-        #($vol, $bdir, undef) = File::Spec->splitpath( $profile->General->{'BindsDir'}, 1 )
-        #$dirpath = File::Spec->catdir($bdir, @bits)
-        #return File::Spec->catpath($vol, $dirpath, $file)
-
-        filepath = profile.General.Bindsdir
-        for arg in args:
-            filepath = filepath + "/" + arg
-
-        return filepath
+    def BLFs(self):
+        return 'bindloadfilesilent ' . str(self.Path)
 
     def Write(self, profile):
 
-        # TODO -- construct this all correctly with file modules; stubbed out for now
-        return
+        try:
+            self.Path.touch(exist_ok = True)
+        except e:
+            die("Can't instantiate file {self}: {e}")
 
-        ## # Pick apart the binds directory
-        ## ($vol, $bdir, undef) = File::Spec->splitpath( $profile->General->{'BindsDir'}, 1 )
+        contents = ''
+        for bind in self.Binds:
+            contents = contents + bind + "\n"
 
-        ## # Pick apart the filename into component bits.
-        ## (undef, $dir, $file) = File::Spec->splitpath( $self->{'filename'} )
-
-        ## # mash together the two 'directory' parts:
-        ## $dir = File::Spec->catdir($bdir, $dir)
-
-        ## # now we want the fully-qualified dir name so we can make sure it exists...
-        ## $newpath = File::Spec->catpath( $vol, $dir, '' )
-        ## # and the fully-qualified filename so we can write to it.
-        ## $fullname = File::Spec->catpath( $vol, $dir, $file )
-        ## # Make the dir if it doesn't exist already.
-        ## if ( ! -d $newpath ) {
-        ##     File::Path::make_path( $newpath, {verbose=1} ) or warn "can't make dir $newpath: $!"
-        ## }
-
-        ## # open the file and blast the poop into it.  whee!
-        ## open ($fh, '>', $fullname ) or warn "can't write to $fullname: $!"
-        ## for $k (sort keys %{ $self->{'binds'} }) {
-        ##     print $fh qq|$k "$self->{'binds'}->{$k}"\n|
-        ## }
-        ## # print STDERR "Done $fullname!\n"
+        self.write_text(contents)

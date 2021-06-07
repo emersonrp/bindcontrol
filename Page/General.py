@@ -10,6 +10,10 @@ class General(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
 
+        profile = parent
+        # TODO - make bindsdir os-agnostic
+        # TODO - find CoH install and put them there?
+        # TODO - help text about WINEPREFIX etc for Mac/Linux users
         self.State = {
             'Name': '',
             'Archetype': 'Scrapper',
@@ -18,7 +22,6 @@ class General(Page):
             'Secondary': 'Super Reflexes',
             'Epic': 'Weapon Mastery',
             'BindsDir': "c:\\CoHTest\\",
-            'ResetFile': self.Profile.GetBindFile('reset.txt'),
             'ResetKey': 'CTRL-M',
             'ResetFeedback': 1,
             'Pool1': '',
@@ -26,6 +29,7 @@ class General(Page):
             'Pool3': '',
             'Pool4': '',
         }
+
         UI.Labels.update({
             'BindsDir' : 'Base Binds Directory',
             'ResetFile' : 'Reset All Binds file',

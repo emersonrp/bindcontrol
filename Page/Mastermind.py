@@ -244,7 +244,7 @@ class Mastermind(Page):
         """
 
     def mmBGSelBind(self, profile, file, PetBodyguardResponse, powers):
-        MMP =    profile.PageStates['MastermindPets'].State
+        MMP =    profile.Pages['MastermindPets'].State
         if (self.State['bg_enable']):
             #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
             #  first check if any full tier groups are bodyguards.  full tier groups are either All BG or all NBG.
@@ -304,7 +304,7 @@ class Mastermind(Page):
 
     def mmBGActBind(self, profile, filedn, fileup, action, say, powers):
 
-        MMP =    profile.PageStates['MastermindPets'].State
+        MMP =    profile.Pages['MastermindPets'].State
         key    = self.State[f"Pet{action}"]
         method = self.State[f"Pet{action}ResponseMethod"]
 
@@ -366,7 +366,7 @@ class Mastermind(Page):
 
     def mmBGActBGBind(self, profile, filedn, fileup, action, say, powers):
 
-        MMP =    profile.PageStates['MastermindPets'].State
+        MMP =    profile.Pages['MastermindPets'].State
         key =    MMP[ "PetBackground{action}"]
         method = MMP[f"Pet{action}ResponseMethod"]
 
@@ -428,7 +428,7 @@ class Mastermind(Page):
         cbWriteToggleBind(filedn,fileup,key,bgsay,bgact,filedn.BLFPath,fileup.BLFPath)
 
     def mmQuietBGSelBind(self, profile, file, powers):
-        MMP =    profile.PageStates['MastermindPets'].State
+        MMP =    profile.Pages['MastermindPets'].State
         if (MMP['bg_enable']):
             #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
             #  first check if any full tier groups are bodyguards.  full tier groups are eaither All BG or all NBG.
@@ -467,7 +467,7 @@ class Mastermind(Page):
 
     def mmQuietBGActBind(self, profile, filedn, fileup, action, powers):
 
-        MMP =    profile.PageStates['MastermindPets'].State
+        MMP =    profile.Pages['MastermindPets'].State
         key = MMP[f"PetBackground{action}"]
 
         #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
@@ -507,7 +507,7 @@ class Mastermind(Page):
 
     def mmQuietBGActBGBind(self, profile, filedn, fileup, action, powers):
 
-        MMP =    profile.PageStates['MastermindPets'].State
+        MMP =    profile.Pages['MastermindPets'].State
         key    = MMP["PetBackground$action"]
         method = MMP["Pet${action}ResponseMethod"]
 
@@ -547,7 +547,7 @@ class Mastermind(Page):
         filedn.SetBind(key,bgact)
 
     def mmSubBind(self, profile, file, fn, grp, powers):
-        MMP =    profile.PageStates['MastermindPets'].State
+        MMP =    profile.Pages['MastermindPets'].State
         for cmd  in ('SelectAll', 'SelectMinions', 'SelectLieutenants', 'SelectBoss', 'Bodyguard',
                 'Aggressive', 'Defensive', 'Passive', 'Attack', 'Follow', 'Stay', 'Goto'):
             if (self.State[f"Pet{cmd}ResponseMethod"] != 'None') : PetResponses[cmd] = self.State[f"Pet{cmd}Response"]
@@ -569,7 +569,7 @@ class Mastermind(Page):
         file.SetBind(self.State['chattykey'],'tell $name, Non-Chatty Mode' + BindFile.BLF(profile, 'mmbinds',f"{fn}.txt"))
 
     def mmBGSubBind(self, profile, filedn, fileup, fn, powers):
-        MMP =    profile.PageStates['MastermindPets'].State
+        MMP =    profile.Pages['MastermindPets'].State
         PetResponses = {}
         for cmd in ('SelectAll','SelectMinions','SelectLieutenants','SelectBoss','Bodyguard','Aggressive','Defensive','Passive','Attack','Follow','Stay','Goto'):
             if (MMP[f'Pet{cmd}ResponseMethod'] != None) : PetResponses[cmd] = MMP[f'Pet{cmd}Response']
@@ -592,7 +592,7 @@ class Mastermind(Page):
         filedn.SetBind(MMP['chattykey'],'tell $name, Non-Chatty Mode' + BindFile.BLF(profile, 'mmbinds',f"{fn}a.txt"))
 
     def mmQuietSubBind(self, profile, file, fn, grp, powers):
-        MMP = profile.PageStates['MastermindPets'].State
+        MMP = profile.Pages['MastermindPets'].State
         file.SetBind(MMP['PetSelectAll'],        BindFile.BLFs(profile, 'mmbinds','all.txt'))
         file.SetBind(MMP['PetSelectMinions'],    BindFile.BLFs(profile, 'mmbinds','tier1.txt'))
         file.SetBind(MMP['PetSelectLieutenants'],BindFile.BLFs(profile, 'mmbinds','tier2.txt'))
@@ -610,7 +610,7 @@ class Mastermind(Page):
         file.SetBind(MMP['chattykey'],'tell $name, Chatty Mode' + BindFile.BLF(profile, 'mmbinds','c' + fn + '.txt'))
 
     def mmQuietBGSubBind(profile, filedn, fileup, fn, powers):
-        MMP = profile.PageStates['MastermindPets'].State
+        MMP = profile.Pages['MastermindPets'].State
         filedn.SetBind(MMP['PetSelectAll'],        BindFile.BLFs(profile, 'mmbinds','all.txt'))
         filedn.SetBind(MMP['PetSelectMinions'],    BindFile.BLFs(profile, 'mmbinds','tier1.txt'))
         filedn.SetBind(MMP['PetSelectLieutenants'],BindFile.BLFs(profile, 'mmbinds','tier2.txt'))
@@ -629,9 +629,9 @@ class Mastermind(Page):
         filedn.SetBind(MMP['chattykey'],'tell $name, Chatty Mode' + BindFile.BLF(profile, 'mmbinds','c' + fn + 'a.txt'))
 
     def PopulateBindFiles(self):
-        profile = sefl.Profile
-        ResetFile = profile.PageStates['General']['ResetFile']
-        MMP       = profile.PageStates['MastermindPets'].State
+        profile = self.Profile
+        ResetFile = profile.ResetFile
+        MMP       = profile.Pages['MastermindPets'].State
 
         if (MMP['petselenable']):
             if (MMP['Pet1Nameenabled']) : ResetFile.SetBind(MMP['sel0'],f"petselectname {MMP['Pet1Name']}") 
@@ -669,7 +669,7 @@ class Mastermind(Page):
             "Necromancy"  : { 'min' : "zom",  'lts' : "grav", 'bos' : "lich", },
             "Thugs"       : { 'min' : "thu",  'lts' : "enf",  'bos' : "bru", },
         }
-        powers = MMPowers[ profile.PageStates['General']['Primary'] ]
+        powers = MMPowers[ profile.Pages['General']['Primary'] ]
 
         # "Local","Self-Tell","Petsay","None"
         mmSubBind(profile, ResetFile,"all",None, powers)
@@ -690,7 +690,7 @@ class Mastermind(Page):
     def findconflicts(self):
         profile = self.Profile
 
-        MMP = profile.PageStates['MastermindPets'].State
+        MMP = profile.Pages['MastermindPets'].State
         if (MMP['petselenable']) :
             for i in range(1,7):
                 if (MMP[f'pet{i}nameenabled']): cbCheckConflict(MMP, f"sel{i-1}Select Pet {i}")
@@ -712,6 +712,6 @@ class Mastermind(Page):
             if (MMP['PetBackgroundAttackenabled']) : cbCheckConflict(MMP["PetBackgroundAttack"],"Pet Order: BG Attack")
             if (MMP['PetBackgroundGotoenabled'])   : cbCheckConflict(MMP["PetBackgroundGoto"]  ,"Pet Order: BG Goto")
 
-    def bindisused(self): return profile.PageStates['MastermindPets']['enabled']
+    def bindisused(self): return profile.Pages['MastermindPets']['enabled']
 
 

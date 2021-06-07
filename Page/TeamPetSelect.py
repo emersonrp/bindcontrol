@@ -165,7 +165,7 @@ class TeamPetSelect(Page):
 
     def PopulateBindFiles(self):
         profile    = self.Profile
-        ResetFile  = profile.Pages['General'].State['ResetFile']
+        ResetFile  = profile.ResetFile
         if (self.State['TPSSelMode'] < 3):
             selmethod = "teamselect"
             selnummod = 0
@@ -197,7 +197,7 @@ class TeamPetSelect(Page):
                 ResetFile.SetBind(self.State['sel1'],"selmethod " + (i - selnummod))
 
         if (self.State['PetSelEnable']):
-            tpsCreatePetSet(profile,1,0,profile.General['ResetFile'])
+            tpsCreatePetSet(profile,1,0,profile.ResetFile)
             for size in (1,2,3,4,5,6,7,8):
                 for sel in range(size):
                     file = profile.GetBindFile("tps",f"pet{size}{sel}.txt")
@@ -205,7 +205,7 @@ class TeamPetSelect(Page):
 
 
         if (self.State['TeamSelEnable']):
-            tpsCreateTeamSet(profile,1,0,0,profile.General['ResetFile'])
+            tpsCreateTeamSet(profile,1,0,0,profile.ResetFile)
             for size in (1,2,3,4,5,6,7,8):
                 for pos in range(size):
                     for sel in range(size):

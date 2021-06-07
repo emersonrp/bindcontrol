@@ -33,7 +33,7 @@ class FPSDisplay(Page):
         return self
 
     def PopulateBindFiles(self):
-        ResetFile = self.Profile.General['ResetFile']
+        ResetFile = self.Profile.ResetFile
         ResetFile.SetBind(self.Profile.FPS['Bindkey'],'++showfps++netgraph')
 
     def findconflicts(self):

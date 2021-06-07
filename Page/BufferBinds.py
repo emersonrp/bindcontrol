@@ -1,5 +1,4 @@
 import wx
-import BindFile
 import Utility
 
 from Page import Page
@@ -263,7 +262,7 @@ class BufferBinds(Page):
 
     def PopulateBindFiles(self):
         profile = self.Profile
-        ResetFile = profile.Pages['General']['ResetFile']
+        ResetFile = profile.ResetFile
 
         buffer = self.State['buffer']
 
@@ -329,8 +328,6 @@ class BufferBinds(Page):
                             dfile.SetBind(petid, f'-down$${chat3}powexecname {bbind["power3"]}$$bindloadfile {filebase}a.txt')
 
     def findconflicts(self, profile):
-        ResetFile = profile.Pages['General']['ResetFile']
-
         for bbind in self.State['bufferbinds']:
             title = bbind.get('title', "unknown")
             if ((bbind['target'] == 1) or (bbind['target'] == 3)):

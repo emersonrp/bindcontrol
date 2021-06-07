@@ -112,7 +112,7 @@ class InspirationPopper(Page):
     def PopulateBindFiles(self):
         profile = self.Profile
 
-        ResetFile = profile.Pages['General'].State[ResetFile]
+        ResetFile = profile.ResetFile
 
         for Insp in sorted(Inspirations):
             forwardOrder = ""

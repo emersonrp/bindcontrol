@@ -159,7 +159,7 @@ class SimpleBinds(Page):
 
     def PopulateBindFiles(self):
         profile   = self.Profile
-        ResetFile = profile.Pages['General']['ResetFile']
+        ResetFile = profile.ResetFile
 
         for b in self.State['binds'].items():
             ResetFile.SetBind(b['key'], Utility.cpBindToString(b['payload']))

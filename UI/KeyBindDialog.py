@@ -10,6 +10,8 @@ class KeyBindDialog(wx.Dialog):
             print("Tried to make a KeyBindDialog for something with no desc")
             return
 
+        desc = f"Press the key you want bound to {desc}:"
+
         self.Binding = ''
         self.SetKeymap();
 
@@ -38,8 +40,8 @@ class KeyBindDialog(wx.Dialog):
             i.Bind(wx.EVT_MOUSE_AUX1_DOWN , self.handleBind )
             i.Bind(wx.EVT_MOUSE_AUX2_DOWN , self.handleBind )
 
-        buttonSizer = self.CreateStdDialogButtonSizer(wx.OK|wx.CLOSE)
-        vbox.Add(buttonSizer)
+        buttonSizer = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
+        vbox.Add(buttonSizer, 0, wx.ALIGN_CENTER|wx.ALL|wx.EXPAND)
 
         self.SetSizerAndFit(vbox);
         self.Layout()
@@ -73,7 +75,7 @@ class KeyBindDialog(wx.Dialog):
         if (isinstance(event, wx.KeyEvent)):
             code = event.GetKeyCode()
 
-            KeyToBind = self.get(Keymap[code], '')
+            KeyToBind = self.Keymap.get(code, '')
 
         else:
             button = event.GetButton()

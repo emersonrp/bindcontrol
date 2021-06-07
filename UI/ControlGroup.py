@@ -73,7 +73,10 @@ class ControlGroup(wx.StaticBoxSizer):
 
         dlg = KeyBindDialog(self.Parent, button.KeyBindDesc, button.Label)
 
-        newKey = dlg.ShowWindow()
+        result = dlg.ShowModal()
+        newKey = ''
+
+        if(result == wx.ID_OK): newKey = dlg.Binding
 
         # TODO -- check for conflicts
         # otherThingWithThatBind = checkConflicts(newKey)
@@ -82,4 +85,5 @@ class ControlGroup(wx.StaticBoxSizer):
         # page.State[value] = newKey
 
         # re-label the button
-        evt.EventObject.SetLabel(newKey)
+        if newKey:
+            evt.EventObject.SetLabel(newKey)

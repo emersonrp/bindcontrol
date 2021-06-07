@@ -31,10 +31,10 @@ class General(Page):
         }
 
         UI.Labels.update({
-            'BindsDir' : 'Base Binds Directory',
-            'ResetFile' : 'Reset All Binds file',
-            'ResetKey' : 'Reset All Binds key',
-            'ResetFeedback' : 'Give /say feedback on reset',
+            'BindsDir'      : 'Base Binds Directory',
+            'ResetFile'     : 'Reset All Binds file',
+            'ResetKey'      : 'Reset All Binds key',
+            'ResetFeedback' : 'Enable Reset Feedback Self-/tell',
         })
 
     def FillTab(self):

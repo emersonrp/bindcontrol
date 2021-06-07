@@ -26,7 +26,6 @@ class Profile(wx.Notebook):
         # Add the individual tabs, in order.
         self.CreatePage(General(self))
 
-        print(self.Pages['General'])
         # Pluck some bits out of General that we'll want later
         self.BindsDir  = self.Pages['General'].State['BindsDir']
         self.ResetFile = self.GetBindFile(self.BindsDir, "resetfile.txt")

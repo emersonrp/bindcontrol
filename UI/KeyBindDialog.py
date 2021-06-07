@@ -18,7 +18,6 @@ class KeyBindDialog(wx.Dialog):
         sizer = wx.BoxSizer(wx.VERTICAL);
 
         self.kbDesc = wx.StaticText( self, -1, desc,    style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
-        # self.kbBind = wx.StaticText( self, -1, keybind, style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
         self.kbBind = wx.StaticText( self, -1, keybind, style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
 
         self.kbBind.SetLabelMarkup('<b><big>' + keybind + '</big></b>')

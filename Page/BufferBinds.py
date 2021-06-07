@@ -1,36 +1,74 @@
 import wx
 import Utility
 
+from wx.richtext import RichTextCtrl as RTC
+from CustomBind import CustomBind
 from Page import Page
 
 class BufferBinds(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
-        self.State = {
-            'bufferbindsets' : (),
-        }
+
+        self.Binds = {}
         self.TabTitle = "Buffer Binds"
 
     def FillTab(self):
         profile = self.Profile
 
-        sizer = wx.BoxSizer(wx.VERTICAL)
+        self.MainSizer = wx.BoxSizer(wx.VERTICAL) # overall sizer
+        self.PaneSizer = wx.BoxSizer(wx.VERTICAL) # sizer for collapsable panes
+        buttonSizer    = wx.BoxSizer(wx.HORIZONTAL) # sizer for new-item button
 
-        newBuffBindButton = wx.Button(self, -1, "New Buffer Bind")
-        buttonSizer = wx.BoxSizer(wx.HORIZONTAL)
-        buttonSizer.Add(newBuffBindButton, wx.ALIGN_CENTER)
+        # Stick a button in the bottom sizer
+        newBindButton = wx.Button(self, -1, "New Buffer Bind")
+        newBindButton.Bind(wx.EVT_BUTTON, self.AddBindToPage)
+        buttonSizer.Add(newBindButton, wx.ALIGN_CENTER)
 
-        sizer.Add( buttonSizer, 0, wx.EXPAND|wx.ALL)
+        # Put blank space into PaneSizer so it expands
+        self.PaneSizer.AddStretchSpacer()
 
-        for bbs in self.State['bufferbindsets']:
-            self.addBindToDialog(bbs)
+        # add the two sub-sizers, top one expandable
+        self.MainSizer.Add( self.PaneSizer, 1, wx.EXPAND|wx.ALL)
+        self.MainSizer.Add( buttonSizer, 0, wx.EXPAND|wx.ALL)
 
-
+        # sizer around the whole thing to add padding
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
-        paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
-        self.SetSizerAndFit(paddingSizer)
+        paddingSizer.Add(self.MainSizer, 1, flag = wx.ALL|wx.EXPAND, border = 16)
 
+        # Add any binds that came from a savefile
+        for bind in self.Binds:
+            bindCP = self.AddBindToPage(bind)
+
+        self.SetSizerAndFit(paddingSizer)
         self.Layout()
+
+    def AddBindToPage(self, _, bindinit = {}):
+
+        bind = BufferBind(bindinit)
+
+        # TODO - if bind is already in there, just scroll to it and pop it open
+        bindCP = wx.CollapsiblePane(self, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
+
+        self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged, bindCP)
+
+
+        bind.PopulateCP(bindCP)
+
+        self.PaneSizer.Insert(self.PaneSizer.GetItemCount() - 1, bindCP, 0, wx.ALL|wx.EXPAND, 10)
+        self.Layout()
+
+
+        #return bindCP
+
+    def OnPaneChanged(self, event):
+        self.Layout()
+
+
+
+
+
+
+
 
     def addBufferBindSetToDialog(self, bind):
 
@@ -341,25 +379,57 @@ class BufferBinds(Page):
     def bindisused(self, profile):
         return bool(len(self.buffer.keys()))
 
+### CustomBind subclasses for the indibidual bind types
 
-class BufferBindSet():
+class BufferBind(CustomBind):
     def __init__(self, bind):
-        self.Bindset = {
-                'target' : 3,
-                'team1' : "UNBOUND",
-                'team2' : "UNBOUND",
-                'team3' : "UNBOUND",
-                'team4' : "UNBOUND",
-                'team5' : "UNBOUND",
-                'team6' : "UNBOUND",
-                'team7' : "UNBOUND",
-                'team8' : "UNBOUND",
-                'pet1' : "UNBOUND",
-                'pet2' : "UNBOUND",
-                'pet3' : "UNBOUND",
-                'pet4' : "UNBOUND",
-                'pet5' : "UNBOUND",
-                'pet6' : "UNBOUND",
-        }
+        CustomBind.__init__(self, bind)
 
-        self.Bindset.update(bind)
+    def PopulateCP(self, BindCP):
+
+        BindCP.SetLabel("This is a test label")
+        pane = BindCP.GetPane()
+        # TODO:
+        # payload  = RTC(pane, -1, "testing 1 2 3", style=wx.richtext.RE_MULTILINE)
+        # payload.SetHint("/say Your bind text goes here!$$powexec Super Jump")
+
+        BindSizer = wx.GridBagSizer(hgap=5, vgap=5)
+        BindSizer.Add(wx.StaticText(pane, -1, "Bind Name:"),     (0,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.TextCtrl  (pane, -1, ""),               (0,1), span=(1,4), flag=wx.EXPAND)
+
+        BindSizer.Add(wx.StaticText(pane, -1, "First Buff Power"), (1,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(self.BuffPowerPicker(pane),                  (1,1), flag=wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.StaticText(pane, -1, "Extra"),            (1,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.TextCtrl  (pane, -1, ""),                 (1,3), flag=wx.EXPAND)
+        BindSizer.Add(wx.Button(pane, -1, "..."),                  (1,4), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+
+        BindSizer.Add(wx.StaticText(pane, -1, "Second Buff Power"),(2,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(self.BuffPowerPicker(pane),                  (2,1), flag=wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.StaticText(pane, -1, "Extra"),            (2,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.TextCtrl  (pane, -1, ""),                 (2,3), flag=wx.EXPAND)
+        BindSizer.Add(wx.Button(pane, -1, "..."),                  (2,4), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+
+        BindSizer.Add(wx.StaticText(pane, -1, "Third Buff Power"), (3,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(self.BuffPowerPicker(pane),                  (3,1), flag=wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.StaticText(pane, -1, "Extra"),            (3,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.TextCtrl  (pane, -1, ""),                 (3,3), flag=wx.EXPAND)
+        BindSizer.Add(wx.Button(pane, -1, "..."),                  (3,4), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+
+        BindSizer.Add(wx.StaticText(pane, -1, ""),                 (4,0))
+
+        BindSizer.Add(wx.CheckBox(pane, -1, "Buffs Affect Team Members"), (5,0), span = (1,2))
+        BindSizer.Add(wx.CheckBox(pane, -1, "Buffs Affect Pets"),         (5,3), span = (1,2))
+
+        BindSizer.AddGrowableCol(1)
+        BindSizer.AddGrowableCol(3)
+        BindSizer.Layout()
+
+        # border around the addr box
+        border = wx.BoxSizer(wx.VERTICAL)
+        border.Add(BindSizer, 1, wx.EXPAND|wx.ALL, 10)
+        pane.SetSizer(border)
+
+
+    def BuffPowerPicker(self, pane):
+        picker = wx.Choice(pane, -1)
+        return picker

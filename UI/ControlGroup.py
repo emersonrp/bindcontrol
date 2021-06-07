@@ -6,6 +6,7 @@ from UI.KeyBindDialog import KeyBindDialog
 class ControlGroup(wx.StaticBoxSizer):
 
     def __init__(self, parent, label):
+
         wx.StaticBoxSizer.__init__(self, wx.VERTICAL, parent, label = label)
 
         self.Parent = parent

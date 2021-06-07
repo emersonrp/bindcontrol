@@ -11,3 +11,9 @@ class CustomBind():
             if bind.get('title',   None): self.Title   = bind['title']
             if bind.get('payload', None): self.Payload = bind['payload']
 
+    def MakeBind(self):
+        # for overriding on child classes
+        # take whatever the internet representation of the bind is,
+        # and put it into key / title / payload
+
+        pass

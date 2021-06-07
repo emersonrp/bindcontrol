@@ -17,9 +17,9 @@ class KeyBindDialog(wx.Dialog):
 
         self.kbDesc = wx.StaticText( self, -1, desc,    style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
         # self.kbBind = wx.StaticText( self, -1, keybind, style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
-        self.kbBind = wx.Button( self, -1, '', style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
+        self.kbBind = wx.StaticText( self, -1, keybind, style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
 
-        self.kbBind.SetLabelMarkup('<b><big><center>' + keybind + '</center></big></b>')
+        self.kbBind.SetLabelMarkup('<b><big>' + keybind + '</big></b>')
 
         sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND|wx.LEFT|wx.RIGHT, 15);
         sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND|wx.ALL, 15);
@@ -30,9 +30,7 @@ class KeyBindDialog(wx.Dialog):
 
         # clearly I'm thinking of this the wrong way.
         for i in (self.kbDesc, self.kbBind, self):
-            i.Bind(wx.EVT_KEY_DOWN        , self.handleBind )
-            i.Bind(wx.EVT_KEY_UP          , self.handleBind )
-            i.Bind(wx.EVT_CHAR            , self.handleBind )
+            i.Bind(wx.EVT_CHAR_HOOK       , self.handleBind )
 
             i.Bind(wx.EVT_LEFT_DOWN       , self.handleBind )
             i.Bind(wx.EVT_MIDDLE_DOWN     , self.handleBind )
@@ -63,22 +61,19 @@ class KeyBindDialog(wx.Dialog):
 
     def handleBind(self, event):
 
-        print("got evt")
-
         evtType = event.GetEventType();
 
         self.Binding = ''
         # check for each modifier key
         # TODO -- LCTRL vs RCTRL etcetc
-        if (event.ControlDown()) : self.Binding = self.Binding + 'CTRL-'
-        if (event.ShiftDown())   : self.Binding = self.Binding + 'SHIFT-'
-        if (event.AltDown())     : self.Binding = self.Binding + 'ALT-'
+        if (event.CmdDown())   : self.Binding = self.Binding + 'CTRL-'
+        if (event.ShiftDown()) : self.Binding = self.Binding + 'SHIFT-'
+        if (event.AltDown())   : self.Binding = self.Binding + 'ALT-'
 
-        if (evtType == wx.EVT_KEY_DOWN or evtType == wx.EVT_KEY_UP or evtType == wx.EVT_CHAR):
-            print("Got a keystroke")
+        if (isinstance(event, wx.KeyEvent)):
             code = event.GetKeyCode()
 
-            KeyToBind = self.Keymap[code]
+            KeyToBind = self.get(Keymap[code], '')
 
         else:
             button = event.GetButton()
@@ -91,11 +86,12 @@ class KeyBindDialog(wx.Dialog):
                 'BUTTON5',
             ][button]
 
-        self.Binding = self.Binding + KeyToBind
-        self.kbBind.SetLabel(self.Binding)
+        if KeyToBind:
+            self.Binding = self.Binding + str(KeyToBind)
+        self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
         self.Layout()
 
-        event.Skip(1);
+        event.Skip();
 
     # This keymap code was initially adapted from PADRE < http://padre.perlide.org/ >.
     def SetKeymap(self):
@@ -173,7 +169,7 @@ class KeyBindDialog(wx.Dialog):
         }
 
         # Add alphanumerics
-        for alphanum in (list(string.ascii_lowercase) + list(range(10))):
+        for alphanum in (list(string.ascii_uppercase) + list(range(10))):
                 self.Keymap[ord(str(alphanum))] = alphanum
 
 

@@ -71,19 +71,18 @@ class ControlGroup(wx.StaticBoxSizer):
     def KeyPickerDialog(self, evt):
         button = evt.EventObject
 
-        dlg = KeyBindDialog(self.Parent, button.KeyBindDesc, button.Label)
+        with KeyBindDialog(self.Parent, button.KeyBindDesc, button.Label) as dlg:
 
-        result = dlg.ShowModal()
-        newKey = ''
+            newKey = ''
 
-        if(result == wx.ID_OK): newKey = dlg.Binding
+            if(dlg.ShowModal() == wx.ID_OK): newKey = dlg.Binding
 
-        # TODO -- check for conflicts
-        # otherThingWithThatBind = checkConflicts(newKey)
+            # TODO -- check for conflicts
+            # otherThingWithThatBind = checkConflicts(newKey)
 
-        # TODO - update the associated page State
-        # page.State[value] = newKey
+            # TODO - update the associated page State
+            # page.State[value] = newKey
 
-        # re-label the button
-        if newKey:
-            evt.EventObject.SetLabel(newKey)
+            # re-label the button
+            if newKey:
+                evt.EventObject.SetLabel(newKey)

@@ -93,8 +93,6 @@ class KeyBindDialog(wx.Dialog):
         self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
         self.Layout()
 
-        event.Skip();
-
     # This keymap code was initially adapted from PADRE < http://padre.perlide.org/ >.
     def SetKeymap(self):
         # key choice list
@@ -157,7 +155,7 @@ class KeyBindDialog(wx.Dialog):
                 wx.WXK_F22 : 'F22',
                 wx.WXK_F23 : 'F23',
                 wx.WXK_F24 : 'F24',
-                ord('~') : 'TILDE',
+                ord('`') : 'TILDE',
                 ord('-') : '-',
                 ord('=') : 'EQUALS',
                 ord('[') : '[',

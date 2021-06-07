@@ -209,12 +209,17 @@ class SimpleBind(CustomBind):
         # payload.SetHint("/say Your bind text goes here!$$powexec Super Jump")
 
         BindSizer = wx.GridBagSizer(hgap=5, vgap=5)
+
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Name:"),     (0,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(wx.TextCtrl  (pane, -1, ""),               (0,1), flag=wx.EXPAND)
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"),      (0,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(wx.Button    (pane, -1, "UNBOUND"),        (0,3), flag=wx.EXPAND)
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"), (1,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(wx.TextCtrl(pane, -1),                     (1,1), span=(1,3), flag=wx.ALL|wx.EXPAND)
+
+        BindSizer.AddGrowableCol(1)
+        BindSizer.AddGrowableCol(3)
+
         BindSizer.Layout()
 
         # border around the addr box

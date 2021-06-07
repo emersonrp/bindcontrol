@@ -1,7 +1,6 @@
 import wx
 from CustomBind import CustomBind
 from Page import Page
-from UI.ControlGroup import ControlGroup
 
 class SimpleBinds(Page):
     def __init__(self, parent):
@@ -13,20 +12,27 @@ class SimpleBinds(Page):
     def FillTab(self):
         profile = self.Profile
 
-        self.MainSizer = wx.BoxSizer(wx.VERTICAL)
+        self.MainSizer = wx.BoxSizer(wx.VERTICAL) # overall sizer
+        self.PaneSizer = wx.BoxSizer(wx.VERTICAL) # sizer for collapsable panes
+        buttonSizer    = wx.BoxSizer(wx.HORIZONTAL) # sizer for new-item button
 
+        # Stick a button in the bottom sizer
         newBindButton = wx.Button(self, -1, "New Simple Item")
         newBindButton.Bind(wx.EVT_BUTTON, self.AddBindToPage)
-        buttonSizer = wx.BoxSizer(wx.HORIZONTAL)
         buttonSizer.Add(newBindButton, wx.ALIGN_CENTER)
 
+        # Put blank space into PaneSizer so it expands
+        self.PaneSizer.AddStretchSpacer()
+
+        # add the two sub-sizers, top one expandable
+        self.MainSizer.Add( self.PaneSizer, 1, wx.EXPAND|wx.ALL)
         self.MainSizer.Add( buttonSizer, 0, wx.EXPAND|wx.ALL)
 
-
+        # sizer around the whole thing to add padding
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
-        paddingSizer.Add(self.MainSizer, flag = wx.ALL|wx.EXPAND, border = 16)
+        paddingSizer.Add(self.MainSizer, 1, flag = wx.ALL|wx.EXPAND, border = 16)
 
-        # Create collapsable tree for list of binds, each with their appropriate UI.
+        # Add any binds that came from a savefile
         for bind in self.Binds:
             bindCP = self.AddBindToPage(bind)
 
@@ -34,12 +40,6 @@ class SimpleBinds(Page):
         self.Layout()
 
     def AddBindToPage(self, _, bindinit = {}):
-
-        ###
-        # TODO - all of this is still TCL from citybinder
-        # TODO - this should be just the add-to-gui logic
-        #        where the bind might come from "new" or from a loaded profile
-        ###
 
         bind = SimpleBind(bindinit)
 
@@ -49,11 +49,14 @@ class SimpleBinds(Page):
 
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged, bindCP)
 
-        self.MainSizer.Add(bindCP, 1, wx.ALL|wx.EXPAND, 10)
 
         bind.PopulateCP(bindCP.GetPane())
 
-        return bindCP
+        self.PaneSizer.Insert(self.PaneSizer.GetItemCount() - 1, bindCP, 0, wx.ALL|wx.EXPAND, 10)
+        self.Layout()
+
+
+        #return bindCP
 
     def OnPaneChanged(self, event):
         self.Layout()
@@ -226,9 +229,7 @@ class SimpleBind(CustomBind):
         cstSizer.Add(zip)
         addrSizer.Add(cstSizer, 0, wx.EXPAND)
 
-        # border sizer inside the pane
+        # border around the addr box
         border = wx.BoxSizer(wx.VERTICAL)
-        border.Add(addrSizer, 1, wx.EXPAND|wx.ALL, 16)
+        border.Add(addrSizer, 0, wx.EXPAND|wx.ALL, 16)
         pane.SetSizer(border)
-
-        pane.Layout()

@@ -1,4 +1,6 @@
 import wx
+
+from wx.richtext import RichTextCtrl as RTC
 from CustomBind import CustomBind
 from Page import Page
 
@@ -44,13 +46,12 @@ class SimpleBinds(Page):
         bind = SimpleBind(bindinit)
 
         # TODO - if bind is already in there, just scroll to it and pop it open
-        bindCP = wx.CollapsiblePane(self, label = "Fake Item For Debug",
-                                        style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
+        bindCP = wx.CollapsiblePane(self, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged, bindCP)
 
 
-        bind.PopulateCP(bindCP.GetPane())
+        bind.PopulateCP(bindCP)
 
         self.PaneSizer.Insert(self.PaneSizer.GetItemCount() - 1, bindCP, 0, wx.ALL|wx.EXPAND, 10)
         self.Layout()
@@ -198,38 +199,25 @@ class SimpleBind(CustomBind):
     def __init__(self, bind):
         CustomBind.__init__(self, bind)
 
-    def PopulateCP(self, pane):
+    def PopulateCP(self, BindCP):
 
-        nameLbl = wx.StaticText(pane, -1, "Name:")
-        name = wx.TextCtrl(pane, -1, "");
+        BindCP.SetLabel("This is a test label")
+        pane = BindCP.GetPane()
 
-        addrLbl = wx.StaticText(pane, -1, "Address:")
-        addr1 = wx.TextCtrl(pane, -1, "");
-        addr2 = wx.TextCtrl(pane, -1, "");
+        # TODO:
+        # payload  = RTC(pane, -1, "testing 1 2 3", style=wx.richtext.RE_MULTILINE)
+        # payload.SetHint("/say Your bind text goes here!$$powexec Super Jump")
 
-        cstLbl = wx.StaticText(pane, -1, "City, State, Zip:")
-        city  = wx.TextCtrl(pane, -1, "", size=(150,-1));
-        state = wx.TextCtrl(pane, -1, "", size=(50,-1));
-        zip   = wx.TextCtrl(pane, -1, "", size=(70,-1));
-
-        addrSizer = wx.FlexGridSizer(cols=2, hgap=5, vgap=5)
-        addrSizer.AddGrowableCol(1)
-        addrSizer.Add(nameLbl, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        addrSizer.Add(name, 0, wx.EXPAND)
-        addrSizer.Add(addrLbl, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        addrSizer.Add(addr1, 0, wx.EXPAND)
-        addrSizer.Add((5,5))
-        addrSizer.Add(addr2, 0, wx.EXPAND)
-
-        addrSizer.Add(cstLbl, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-
-        cstSizer = wx.BoxSizer(wx.HORIZONTAL)
-        cstSizer.Add(city, 1)
-        cstSizer.Add(state, 0, wx.LEFT|wx.RIGHT, 5)
-        cstSizer.Add(zip)
-        addrSizer.Add(cstSizer, 0, wx.EXPAND)
+        BindSizer = wx.GridBagSizer(hgap=5, vgap=5)
+        BindSizer.Add(wx.StaticText(pane, -1, "Bind Name:"),     (0,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.TextCtrl  (pane, -1, ""),               (0,1), flag=wx.EXPAND)
+        BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"),      (0,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.Button    (pane, -1, "UNBOUND"),        (0,3), flag=wx.EXPAND)
+        BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"), (1,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.TextCtrl(pane, -1),                     (1,1), span=(1,3), flag=wx.ALL|wx.EXPAND)
+        BindSizer.Layout()
 
         # border around the addr box
         border = wx.BoxSizer(wx.VERTICAL)
-        border.Add(addrSizer, 0, wx.EXPAND|wx.ALL, 16)
+        border.Add(BindSizer, 1, wx.EXPAND|wx.ALL, 10)
         pane.SetSizer(border)

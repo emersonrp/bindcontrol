@@ -1,39 +1,39 @@
 import wx
 from CustomBind import CustomBind
 from Page import Page
+from UI.ControlGroup import ControlGroup
 
 class SimpleBinds(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
-        self.State = {
-            'binds': ()
-        }
+
+        self.Binds = ()
         self.TabTitle = "Simple Binds"
-
-
 
     def FillTab(self):
         profile = self.Profile
 
-        sizer = wx.BoxSizer(wx.VERTICAL)
+        self.MainSizer = wx.BoxSizer(wx.VERTICAL)
 
-        newBuffBindButton = wx.Button(self, -1, "New Simple Bind")
+        newBindButton = wx.Button(self, -1, "New Simple Item")
+        newBindButton.Bind(wx.EVT_BUTTON, self.AddBindToPage)
         buttonSizer = wx.BoxSizer(wx.HORIZONTAL)
-        buttonSizer.Add(newBuffBindButton, wx.ALIGN_CENTER)
+        buttonSizer.Add(newBindButton, wx.ALIGN_CENTER)
 
-        sizer.Add( buttonSizer, 0, wx.EXPAND|wx.ALL)
-
-        for bbs in self.State['binds']:
-            self.addBindToDialog(bbs)
+        self.MainSizer.Add( buttonSizer, 0, wx.EXPAND|wx.ALL)
 
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
-        paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
-        self.SetSizerAndFit(paddingSizer)
+        paddingSizer.Add(self.MainSizer, flag = wx.ALL|wx.EXPAND, border = 16)
 
+        # Create collapsable tree for list of binds, each with their appropriate UI.
+        for bind in self.Binds:
+            bindCP = self.AddBindToPage(bind)
+
+        self.SetSizerAndFit(paddingSizer)
         self.Layout()
 
-    def addSimpleBindToDialog(self, bind):
+    def AddBindToPage(self, _, bindinit = {}):
 
         ###
         # TODO - all of this is still TCL from citybinder
@@ -41,10 +41,26 @@ class SimpleBinds(Page):
         #        where the bind might come from "new" or from a loaded profile
         ###
 
-        pass
+        bind = SimpleBind(bindinit)
+
+        # TODO - if bind is already in there, just scroll to it and pop it open
+        bindCP = wx.CollapsiblePane(self, label = "Fake Item For Debug",
+                                        style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
+
+        self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged, bindCP)
+
+        self.MainSizer.Add(bindCP, 1, wx.ALL|wx.EXPAND, 10)
+
+        bind.PopulateCP(bindCP.GetPane())
+
+        return bindCP
+
+    def OnPaneChanged(self, event):
+        self.Layout()
+
 
         #sub addSBind {
-        #    my (sbinds,n,profile) #  this returns an IUP vbox/hbox to be inserted into the SBind Dialog box
+        #    my (sbinds,n,profile) #  this returns an IUP vbox/hbox to be inserted into the SBind Page box
         #    my sbind = sbinds[n]
         #    my sbtitle = cbTextBox("Bind Name",sbind.title,cbTextBoxCB(profile,sbind,"title"),200,nil,100)
         #    cbToolTip("Choose the Key Combo for this bind")
@@ -173,6 +189,46 @@ class SimpleBinds(Page):
     def bindisused(self, profile):
         return bool(len(self.State('binds')))
 
+### CustomBind subclasses for the indibidual bind types
+
 class SimpleBind(CustomBind):
     def __init__(self, bind):
         CustomBind.__init__(self, bind)
+
+    def PopulateCP(self, pane):
+
+        nameLbl = wx.StaticText(pane, -1, "Name:")
+        name = wx.TextCtrl(pane, -1, "");
+
+        addrLbl = wx.StaticText(pane, -1, "Address:")
+        addr1 = wx.TextCtrl(pane, -1, "");
+        addr2 = wx.TextCtrl(pane, -1, "");
+
+        cstLbl = wx.StaticText(pane, -1, "City, State, Zip:")
+        city  = wx.TextCtrl(pane, -1, "", size=(150,-1));
+        state = wx.TextCtrl(pane, -1, "", size=(50,-1));
+        zip   = wx.TextCtrl(pane, -1, "", size=(70,-1));
+
+        addrSizer = wx.FlexGridSizer(cols=2, hgap=5, vgap=5)
+        addrSizer.AddGrowableCol(1)
+        addrSizer.Add(nameLbl, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        addrSizer.Add(name, 0, wx.EXPAND)
+        addrSizer.Add(addrLbl, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        addrSizer.Add(addr1, 0, wx.EXPAND)
+        addrSizer.Add((5,5))
+        addrSizer.Add(addr2, 0, wx.EXPAND)
+
+        addrSizer.Add(cstLbl, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+
+        cstSizer = wx.BoxSizer(wx.HORIZONTAL)
+        cstSizer.Add(city, 1)
+        cstSizer.Add(state, 0, wx.LEFT|wx.RIGHT, 5)
+        cstSizer.Add(zip)
+        addrSizer.Add(cstSizer, 0, wx.EXPAND)
+
+        # border sizer inside the pane
+        border = wx.BoxSizer(wx.VERTICAL)
+        border.Add(addrSizer, 1, wx.EXPAND|wx.ALL, 16)
+        pane.SetSizer(border)
+
+        pane.Layout()

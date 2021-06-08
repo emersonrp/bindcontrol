@@ -1,7 +1,7 @@
 import wx
 import UI
+from UI.KeyBindDialog import KeyPickerEventHandler
 
-from UI.KeyBindDialog import KeyBindDialog
 
 class ControlGroup(wx.StaticBoxSizer):
 
@@ -34,7 +34,7 @@ class ControlGroup(wx.StaticBoxSizer):
 
         if ctlType == ('keybutton'):
             control = wx.Button( ctlParent, -1, Init[ctlName])
-            control.Bind(wx.EVT_BUTTON, self.KeyPickerDialog)
+            control.Bind(wx.EVT_BUTTON, KeyPickerEventHandler)
             control.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
             control.CtlName = ctlName
 
@@ -88,18 +88,3 @@ class ControlGroup(wx.StaticBoxSizer):
     def ClearButton(self, evt):
         evt.EventObject.SetLabel("UNBOUND")
 
-    def KeyPickerDialog(self, evt):
-        button = evt.EventObject
-
-        with KeyBindDialog(self.Parent, button.CtlName, button.Label) as dlg:
-
-            newKey = ''
-
-            if(dlg.ShowModal() == wx.ID_OK): newKey = dlg.Binding
-
-            # TODO -- check for conflicts
-            # otherThingWithThatBind = checkConflicts(newKey)
-
-            # re-label the button / set its state
-            if newKey:
-                evt.EventObject.SetLabel(newKey)

@@ -2,6 +2,20 @@ import wx
 import string
 import UI
 
+def KeyPickerEventHandler(evt):
+    button = evt.EventObject
+
+    with KeyBindDialog(button.Parent, button.CtlName, button.Label) as dlg:
+        newKey = ''
+        if(dlg.ShowModal() == wx.ID_OK): newKey = dlg.Binding
+
+        # TODO -- check for conflicts
+        # otherThingWithThatBind = checkConflicts(newKey)
+
+        # re-label the button / set its state
+        if newKey:
+            evt.EventObject.SetLabel(newKey)
+
 class KeyBindDialog(wx.Dialog):
     def __init__(self, parent, desc = '', keybind = 'UNBOUND'):
         wx.Dialog.__init__(self, parent, -1, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)

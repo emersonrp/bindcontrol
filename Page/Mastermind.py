@@ -1,6 +1,8 @@
 import wx
+import UI
 
 from Page import Page
+from UI.ControlGroup import ControlGroup
 
 import BindFile
 
@@ -8,62 +10,62 @@ class Mastermind(Page):
     petCommandKeyDefinitions = (
             {
                 'label'      : 'Select All',
-                'basename'      : 'PetSelectAll',
+                'ctrlName'      : 'PetSelectAll',
                 'tooltipdetail' : 'select all of your pets',
             },
             {
                 'label'      : 'Select Minions',
-                'basename'      : 'PetSelectMinions',
+                'ctrlName'      : 'PetSelectMinions',
                 'tooltipdetail' : 'select your "minion" pets',
             },
             {
                 'label'      : 'Select Lieutenants',
-                'basename'      : 'PetSelectLieutenants',
+                'ctrlName'      : 'PetSelectLieutenants',
                 'tooltipdetail' : 'select your "lieutenant" pets',
             },
             {
                 'label'      : 'Select Boss',
-                'basename'      : 'PetSelectBoss',
+                'ctrlName'      : 'PetSelectBoss',
                 'tooltipdetail' : 'select your "boss" pet',
             },
             {
                 'label'      : 'Bodyguard',
-                'basename'      : 'PetBodyguard',
+                'ctrlName'      : 'PetBodyguard',
                 'tooltipdetail' : 'put your selected pets into Bodyguard mode',
             },
             {
                 'label'      : 'Aggressive',
-                'basename'      : 'PetAggressive',
+                'ctrlName'      : 'PetAggressive',
                 'tooltipdetail' : 'set your selected pets to "Aggressive" mode',
             },
             {
                 'label'      : 'Defensive',
-                'basename'      : 'PetDefensive',
+                'ctrlName'      : 'PetDefensive',
                 'tooltipdetail' : 'set your selected pets to "Defensive" mode',
             },
             {
                 'label'      : 'Passive',
-                'basename'      : 'PetPassive',
+                'ctrlName'      : 'PetPassive',
                 'tooltipdetail' : 'set your selected pets to "Passive" mode',
             },
             {
                 'label'      : 'Attack',
-                'basename'      : 'PetAttack',
+                'ctrlName'      : 'PetAttack',
                 'tooltipdetail' : 'order your selected pets to Attack your target',
             },
             {
                 'label'      : 'Follow',
-                'basename'      : 'PetFollow',
+                'ctrlName'      : 'PetFollow',
                 'tooltipdetail' : 'order your selected pets to Follow you',
             },
             {
                 'label'      : 'Stay',
-                'basename'      : 'PetStay',
+                'ctrlName'      : 'PetStay',
                 'tooltipdetail' : 'order your selected pets to Stay at their current location',
             },
             {
                 'label'      : 'Go To',
-                'basename'      : 'PetGoto',
+                'ctrlName'      : 'PetGoto',
                 'tooltipdetail' : 'order your selected pets to Go To a targeted location',
             },
         )
@@ -174,34 +176,41 @@ class Mastermind(Page):
 
         sizer.AddSpacer(10)
 
-        # Iterate the data structure at the bottom and make the grid of controls for the basic pet binds
+        commandSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        petCommandsKeys  = ControlGroup(self, self, 'Pet Command Keys', width = 4)
+        #petResponseTexts = ControlGroup(self, self, 'Pet Responses')
+
+        # Iterate the data structure at the top and make the grid of controls for the basic pet binds
         ChatOptions = ('Local','Self-Tell','Petsay','---' )
-        PetCommandKeyRows = wx.FlexGridSizer(0,5,2,2)
-        for k in self.petCommandKeyDefinitions:
+        #PetCommandKeyRows = wx.FlexGridSizer(0,5,2,2)
+        for command in self.petCommandKeyDefinitions:
 
-            basename = k['basename'];  # all of the fieldnames we look up in the self.State are based on this value
+            petCommandsKeys.AddLabeledControl(
+                ctlName = command['ctrlName'],
+                ctlType = 'keybutton',
+                tooltip = "Choose the key combo that will " + command['tooltipdetail'],
+            )
 
-            al = wx.StaticText(self, -1, k['label'])
-            ab = wx.Button    (self, -1, self.Init[basename])
+            petCommandsKeys.AddLabeledControl(
+                noLabel = True,
+                ctlName = command['ctrlName'] + 'ResponseMethod',
+                ctlType = 'combobox',
+                contents = ChatOptions,
+                tooltip = "Choose how your pets will respond when they are in chatty mod and you " + command['tooltipdetail'],
+            )
+            petCommandsKeys.AddLabeledControl(
+                noLabel = True,
+                ctlName = command['ctrlName'] + "Response",
+                ctlType = "text",
+                tooltip = "Choose the chat response your pets give when you " + command['tooltipdetail'],
+            )
 
-            cl = wx.StaticText(self, -1, "Respond via:")
-            cm = wx.ComboBox  (self, -1, self.Init[f"{basename}ResponseMethod"],
-                    wx.DefaultPosition, wx.DefaultSize, ChatOptions, wx.CB_READONLY)
-            cr = wx.TextCtrl  (self, -1, self.Init[f"{basename}Response"])
 
-            tip = k['tooltipdetail']
-            ab.SetToolTip( wx.ToolTip("Choose the key combo that will $tip"))
-            cm.SetToolTip( wx.ToolTip("Choose the method your pets will use to respond when they are in chatty mode and you $tip"))
-            cr.SetToolTip( wx.ToolTip("Choose the chat response your pets will give when you $tip"))
-            cr.SetMinSize( [250, -1] )
+        commandSizer.Add(petCommandsKeys)
+        #commandSizer.Add(petResponseTexts)
 
-            PetCommandKeyRows.Add(al, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-            PetCommandKeyRows.Add(ab, 0, wx.EXPAND)
-            PetCommandKeyRows.Add(cl, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-            PetCommandKeyRows.Add(cm)
-            PetCommandKeyRows.Add(cr, 0, wx.EXPAND)
-
-        sizer.Add(PetCommandKeyRows)
+        sizer.Add(commandSizer)
 
         sizer.AddSpacer(15)
 
@@ -701,3 +710,5 @@ class Mastermind(Page):
     def bindisused(self): return profile.Mastermind['enabled']
 
 
+    for cmd in petCommandKeyDefinitions:
+        UI.Labels[cmd['ctrlName']] = cmd['label']

@@ -290,7 +290,7 @@ class TeamPetSelect(Page):
         Utility.CheckConflict(TPS,"DecPetSize","Decrease Henchman Group Size")
 
     def bindisused(self, profile):
-        return profile.Pages['TPS'].State,get('Enable', None)
+        return self.State,get('Enable', None)
 
     def HelpText(self):
         return """

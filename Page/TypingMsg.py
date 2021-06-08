@@ -70,7 +70,7 @@ class TypingMsg(Page):
     def PopulateBindfiles(self):
         profile   = shift.Profile
         ResetFile = profile.ResetFile
-        Typing    = profile.Pages['Typing']
+        Typing    = self.State
 
         Notifier = Typing['TypingNotifier']
         if Notifier:

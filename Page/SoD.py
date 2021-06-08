@@ -80,12 +80,12 @@ class SoD(Page):
         self.State['DwarfMode'] = "G"
         self.State['DwarfTray'] = "5"
 
-        if (self.Profile.Pages['General'].State['Archetype'] == "Peacebringer"):
+        if (self.Profile.General.State['Archetype'] == "Peacebringer"):
             self.State['NovaNova'] = "Bright Nova"
             self.State['DwarfDwarf'] = "White Dwarf"
             self.State['HumanFormShield'] = "Shining Shield"
 
-        elif (self.Profile.Pages['General'].State['Archetype'] == "Warshade"):
+        elif (self.Profile.General.State['Archetype'] == "Warshade"):
             self.State['NovaNova'] = "Dark Nova"
             self.State['DwarfDwarf'] = "Black Dwarf"
             self.State['HumanFormShield'] = "Gravity Shield"
@@ -939,7 +939,7 @@ class SoD(Page):
             t['jump'] = "Super Jump"
 
 
-        if (profile.Pages['General'].State['Archetype'] == "Peacebringer"):
+        if (profile.General.State['Archetype'] == "Peacebringer"):
             if (self.State['FlyHover']):
                 t['canhov'] = 1
                 t['canfly'] = 1
@@ -951,7 +951,7 @@ class SoD(Page):
                 t['hover'] = "Energy Flight"
                 t['flyx'] = "Energy Flight"
 
-        elif (not (profile.Pages['General'].State['Archetype'] == "Warshade")):
+        elif (not (profile.General.State['Archetype'] == "Warshade")):
             if (self.State['FlyHover'] and not self.State['FlyFly']):
                 t['canhov'] = 1
                 t['hover'] = "Hover"
@@ -972,7 +972,7 @@ class SoD(Page):
                 if (self.State['TPTPHover']): t['tphover'] = '$$powexectoggleon Hover'
 
 
-        if ((profile.Pages['General'].State['Archetype'] == "Peacebringer") and self.State['FlyQFly']):
+        if ((profile.General.State['Archetype'] == "Peacebringer") and self.State['FlyQFly']):
             t['canqfly'] = 1
 
         if (self.State['FlyGFly']):
@@ -1254,10 +1254,10 @@ class SoD(Page):
             ResetFile.      SetBind(self.State['TempTraySwitch'],'+down$$gototray ' + self.State['TempTray'] + BindFile.BLF(profile, 'temptoggle2.txt'))
 
 
-        if (profile.Pages['General'].State['Archetype'] == "Warshade"):
+        if (profile.General.State['Archetype'] == "Warshade"):
             dwarfTPPower  = "powexecname Black Dwarf Step"
             normalTPPower = "powexecname Shadow Step"
-        elif (profile.Pages['General'].State['Archetype'] == "Peacebringer"):
+        elif (profile.General.State['Archetype'] == "Peacebringer"):
             dwarfTPPower = "powexecname White Dwarf Step"
         else:
             normalTPPower = "powexecname Teleport"
@@ -1270,7 +1270,7 @@ class SoD(Page):
             novapbind  = cbPBindToString(self.State['HumanNovaPBind'], profile)
             dwarfpbind = cbPBindToString(self.State['HumanDwarfPBind'],profile)
 
-        if ((profile.Pages['General'].State['Archetype'] == "Peacebringer") or (profile.Pages['General'].State['Archetype'] == "Warshade")):
+        if ((profile.General.State['Archetype'] == "Peacebringer") or (profile.General.State['Archetype'] == "Warshade")):
             if (humanBindKey):
                 ResetFile.SetBind(humanBindKey,humanpbind)
 
@@ -1389,7 +1389,7 @@ class SoD(Page):
             ResetFile.SetBind(self.State['TPBindKey'],'nop')
             ResetFile.SetBind(self.State['TPResetKey'],'nop')
 
-        if (self.State['TP'] and self.State['TPEnable'] and not (profile.Pages['General'].State['Archetype'] == "Peacebringer") and normalTPPower):
+        if (self.State['TP'] and self.State['TPEnable'] and not (profile.General.State['Archetype'] == "Peacebringer") and normalTPPower):
             tphovermodeswitch = ''
             if (t['tphover'] == ''):
                 tphovermodeswitch = re.sub('\d\d\d\d\d\d', '000000', t['bl']('r'))
@@ -1411,7 +1411,7 @@ class SoD(Page):
             tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
             tp_on2.SetBind(self.State['TPBindKey'],'-down$$' + normalTPPower + BindFile.BLF(profile, 'tp','tp_on1.txt'))
 
-        if (self.State['TTP'] and self.State['TTPEnable'] and not (profile.Pages['General'].State['Archetype'] == "Peacebringer") and teamTPPower) :
+        if (self.State['TTP'] and self.State['TTPEnable'] and not (profile.General.State['Archetype'] == "Peacebringer") and teamTPPower) :
             tphovermodeswitch = ''
             ResetFile.SetBind(self.State['TTPComboKey'],'+down$$' + teamTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'ttp','ttp_on1.txt'))
             ResetFile.SetBind(self.State['TTPBindKey'],'nop')
@@ -1438,7 +1438,7 @@ class SoD(Page):
         else:                   u = 0
         if (moddir == 'down'): d = 1
         else:                   d = 0
-        curfile.SetBind(p.Pages['General']['Reset Key'],
+        curfile.SetBind(p.General['Reset Key'],
                 'up ' + u + '$$down ' + d + '$$forward 0$$backward 0$$left 0$$right 0' .
                 turnoff + '$$tname, SoD Binds Reset' + BindFile.BaseReset(p) + BindFile.BLF(p, path)
         )
@@ -1945,15 +1945,15 @@ class SoD(Page):
         if (self.State['FlyHover']
                 or self.State['FlyFly'] ): Utility.CheckConflict(self.State,"FlyMode","Fly Mode Key")
         if (self.State['FlyQFly']
-                and (profile.Pages['General'].State['Archetype'] == "Peacebringer")): Utility.CheckConflict(self.State,"QFlyMode","Q.Fly Mode Key")
+                and (profile.General.State['Archetype'] == "Peacebringer")): Utility.CheckConflict(self.State,"QFlyMode","Q.Fly Mode Key")
         if (self.State['TP'] and self.State['TPEnable']):
             Utility.CheckConflict(self.State['TP'],"ComboKey","TP ComboKey")
             Utility.CheckConflict(self.State['TP'],"ResetKey","TP ResetKey")
 
             TPQuestion = "Teleport Bind"
-            if (profile.Pages['General'].State['Archetype'] == "Peacebringer") :
+            if (profile.General.State['Archetype'] == "Peacebringer") :
                TPQuestion = "Dwarf Step Bind"
-            elif (profile.Pages['General'].State['Archetype'] == "Warshade") :
+            elif (profile.General.State['Archetype'] == "Warshade") :
                TPQuestion = "Shd/Dwf Step Bind"
 
             Utility.CheckConflict(self.State['TP'],"BindKey", TPQuestion)
@@ -1968,7 +1968,7 @@ class SoD(Page):
             Utility.CheckConflict(self.State,"TempMode","Temp Mode Key")
             Utility.CheckConflict(self.State['Temp'],"TraySwitch","Tray Toggle Key")
 
-        if ((profile.Pages['General'].State['Archetype'] == "Peacebringer") or (profile.Pages['General'].State['Archetype'] == "Warshade")) :
+        if ((profile.General.State['Archetype'] == "Peacebringer") or (profile.General.State['Archetype'] == "Warshade")) :
             if (self.State['Nova']  and self.State['NovaEnable']): Utility.CheckConflict(self.State['Nova'], "Mode","Nova Form Bind")
             if (self.State['Dwarf'] and self.State['DwarfEnable']): Utility.CheckConflict(self.State['Dwarf'],"Mode","Dwarf Form Bind")
 

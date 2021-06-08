@@ -14,7 +14,6 @@ class Page(wx.Panel):
         self.Profile = parent
         self.TabTitle = type(self).__name__
         self.State = {}
-        self.Profile.Pages[self.TabTitle] = self
 
     def help(self, event):
 

@@ -1,4 +1,6 @@
 import wx
+from pathlib import Path
+import yaml
 
 from BindFile import BindFile
 from Page.BufferBinds import BufferBinds
@@ -19,7 +21,7 @@ class Profile(wx.Notebook):
         wx.Notebook.__init__(self, parent, style = wx.NB_LEFT)
 
         self.BindFiles = {}
-        self.Pages     = {}
+        self.Pages     = []
 
         # TODO -- here's where we'd load a profile from a file or something.
 
@@ -27,7 +29,7 @@ class Profile(wx.Notebook):
         self.CreatePage(General(self))
 
         # Pluck some bits out of General that we'll want later
-        self.BindsDir  = self.Pages['General'].State['BindsDir']
+        self.BindsDir  = self.General.State['BindsDir']
         self.ResetFile = self.GetBindFile(self.BindsDir, "resetfile.txt")
 
         self.CreatePage(SoD(self))
@@ -46,8 +48,49 @@ class Profile(wx.Notebook):
         module.FillTab()
         page = self.AddPage(module, module.TabTitle)
 
+        setattr(self, module.TabTitle, module)
+
+        self.Pages.append(module.TabTitle)
+
         self.Layout()
 
+    ###################
+    # Profile Save/Load
+    def ProfileFile(self):
+        return Path(self.BindsDir, self.General.State['Name'] + ".bcp")
+
+    def SaveToFile(self):
+
+        savefile = self.ProfileFile()
+
+        savedata = {}
+        for page in self.Pages:
+            savedata[page] = getattr(self, page).State
+
+    def LoadFromFile(self, event):
+
+        with wx.FileDialog(self, "Open Profile file",
+               wildcard="Bindcontrol Profiles (*.bcp)|*.bcp",
+               # wildcard="Bindcontrol and Citybinder Profiles (*.bcp;*.cbp)|*.bcp;*.cbp",
+               style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return     # the user changed their mind
+
+            # Proceed loading the file chosen by the user
+            pathname = fileDialog.GetPath()
+            try:
+                with Path(pathname) as file:
+                    datastring = file.read_text()
+
+
+            except IOError:
+                wx.LogError("Cannot open file '%s'." % pathname)
+
+
+
+    #####################
+    # Bind file functions
     def GetBindFile(self, *filename):
         # Store them internally as a simple string
         # but send BindFile the list of path parts

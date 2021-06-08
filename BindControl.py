@@ -19,6 +19,9 @@ class Main(wx.Frame):
 
         self.about_info = None
 
+        # Start with a new profile
+        self.Profile = Profile(self)
+
         ProfMenu = wx.Menu()
 
         Profile_new   = ProfMenu.Append(-1, "New Profile...", "Create a new profile")
@@ -29,7 +32,6 @@ class Main(wx.Frame):
         Profile_exit  = ProfMenu.Append(wx.ID_EXIT)
 
         Profile_new.Enable(False)
-        Profile_load.Enable(False)
         Profile_save.Enable(False)
         Profile_prefs.Enable(False)
 
@@ -55,7 +57,7 @@ class Main(wx.Frame):
 
         # MENUBAR EVENTS
         self.Bind(wx.EVT_MENU, None, Profile_new)
-        self.Bind(wx.EVT_MENU, None, Profile_load)
+        self.Bind(wx.EVT_MENU, self.Profile.LoadFromFile, Profile_load)
         self.Bind(wx.EVT_MENU, None, Profile_save)
         self.Bind(wx.EVT_MENU, None, Profile_prefs)
         self.Bind(wx.EVT_MENU, self.exitApplication, Profile_exit)
@@ -74,7 +76,6 @@ class Main(wx.Frame):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.Profile = Profile(self)
         sizer.Add(self.Profile, 1, wx.EXPAND |  wx.ALL, 3)
 
         WriteButton = wx.Button(self, -1, "Write Binds")

@@ -15,7 +15,7 @@ class General(Page):
         # TODO - find CoH install and put them there?
         # TODO - help text about WINEPREFIX etc for Mac/Linux users
         self.State = {
-            'Name': '',
+            'Name': 'Profile',
             'Archetype': 'Scrapper',
             'Origin': "Magic",
             'Primary': 'Martial Arts',
@@ -28,13 +28,15 @@ class General(Page):
             'Pool2': '',
             'Pool3': '',
             'Pool4': '',
+            'UseSplitModKeys': False,
         }
 
         UI.Labels.update({
-            'BindsDir'      : 'Base Binds Directory',
-            'ResetFile'     : 'Reset All Binds file',
-            'ResetKey'      : 'Reset All Binds key',
-            'ResetFeedback' : 'Enable Reset Feedback Self-/tell',
+            'BindsDir'        : 'Base Binds Directory',
+            'ResetFile'       : 'Reset All Binds file',
+            'ResetKey'        : 'Reset All Binds key',
+            'ResetFeedback'   : 'Enable Reset Feedback Self-/tell',
+            'UseSplitModKeys' : 'Bind left and right modifier keys separately',
         })
 
     def FillTab(self):

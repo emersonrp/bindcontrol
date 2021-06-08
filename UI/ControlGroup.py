@@ -30,7 +30,7 @@ class ControlGroup(wx.StaticBoxSizer):
 
         label = UI.Labels.get(ctlName, ctlName)
         if not noLabel:
-            text = wx.StaticText(ctlParent, -1, label + ':')
+            ctlLabel = wx.StaticText(ctlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
             control = wx.Button( ctlParent, -1, Init[ctlName])
@@ -64,18 +64,24 @@ class ControlGroup(wx.StaticBoxSizer):
         elif ctlType == ('dirpicker'):
             control = wx.DirPickerCtrl(
                 ctlParent, -1, Init[ctlName], Init[ctlName],
-                wx.DefaultPosition, wx.DefaultSize,
-                wx.DIRP_USE_TEXTCTRL|wx.ALL,
+                style = wx.DIRP_USE_TEXTCTRL|wx.ALL,
             )
-        else: die(f"wtf?!  Got a ctlType that I don't know: {ctlType}")
+        elif ctlType == ('colorpicker'):
+            control = wx.ColourPickerCtrl( ctlParent, -1, contents)
+
+
+        else: wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}")
+
+        # Pack'em in there
         if tooltip:
             control.SetToolTip( wx.ToolTip(tooltip))
 
         if not noLabel:
-            sizer.Add( text,    0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        sizer.Add( control, 0, wx.ALL|wx.EXPAND, padding)
+            sizer.Add( ctlLabel,    0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+            self.Page.CtrlLabels[ctlName] = ctlLabel
 
-        self.Page.Controls[ctlName] = control
+        sizer.Add( control, 0, wx.ALL|wx.EXPAND, padding)
+        self.Page.Controls[ctlName]   = control
 
         self.Layout()
 

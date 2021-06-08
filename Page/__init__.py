@@ -15,6 +15,7 @@ class Page(wx.Panel):
         self.TabTitle = type(self).__name__
 
         self.Controls = {}
+        self.CtrlLabels = {}
 
 
     def help(self, event):

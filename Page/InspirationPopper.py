@@ -1,7 +1,9 @@
 import wx
+import UI
 import Utility
 from Page import Page
 from GameData import Inspirations
+from UI.ControlGroup import ControlGroup
 
 class InspirationPopper(Page):
     def __init__(self, parent):
@@ -28,71 +30,67 @@ class InspirationPopper(Page):
             'RevResistDamageKey' : "UNBOUND",
             'RevResurrectionKey' : "UNBOUND",
         }
+        for Insp in Inspirations:
+            self.Init[f"{Insp}Border"]     = Inspirations[Insp]['color']
+            self.Init[f"{Insp}Foreground"] = wx.BLACK
+            self.Init[f"{Insp}Background"] = wx.WHITE
 
     def BuildPage(self):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        InspRows =    wx.FlexGridSizer(0,10,2,2)
-        RevInspRows = wx.FlexGridSizer(0,10,2,2)
+        InspRows =    ControlGroup(self, self, width=8)
+        RevInspRows = ControlGroup(self, self, width=8)
 
         for Insp in Inspirations:
             revkey = f"Rev{Insp}Key"
             colors = f"{Insp}Colors"
             revcol = f"Rev{colors}"
 
-            # if not self.State.get(revkey, None):
-                # self.State[revkey] = "UNBOUND"
-            # if not self.State.get(colors, None):
-                # self.State[colors] = Utility.ColorDefault()
-            # if not self.State.get(revcol, None):
-                # self.State[revcol] = Utility.ColorDefault()
-
             for order in ("", "Rev"):
 
-                if order:
-                    rowSet = RevInspRows
-                else:
-                    rowSet = InspRows
+                rowSet = RevInspRows if order else InspRows
 
-                rowSet.Add( wx.StaticText(self, -1, f"{order} {Insp} Key"), 0,
-                        wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+                rowSet.AddLabeledControl(
+                    ctlType = 'keybutton',
+                    ctlName = f"{order}{Insp}Key",
+                    tooltip = f"Choose the key combo to activate a {Insp} inspiration",
 
-                KeyPicker = wx.Button(self, -1, self.Init[f"{order}{Insp}Key"])
-                KeyPicker.SetToolTip(
-                        wx.ToolTip(f"Choose the key combo to activate a {Insp} inspiration") )
-                rowSet.Add ( KeyPicker, 0, wx.EXPAND)
-
-                rowSet.AddStretchSpacer(wx.EXPAND)
-
-                ColorsCB = wx.CheckBox(self, -1, '')
-                ColorsCB.SetToolTip( wx.ToolTip("Colorize Inspiration-Popper chat feedback") )
-                rowSet.Add ( ColorsCB, 0, wx.ALIGN_CENTER_VERTICAL)
-
-                rowSet.Add( wx.StaticText(self, -1, "Border"), 0,
-                        wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-                border = Inspirations[Insp]['color']
-                rowSet.Add( wx.ColourPickerCtrl( self, -1, border, )
                 )
 
-                rowSet.Add( wx.StaticText(self, -1, "Background"), 0,
-                        wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-                rowSet.Add( wx.ColourPickerCtrl( self, -1, wx.WHITE,))
-                rowSet.Add( wx.StaticText(self, -1, "Text"), 0,
-                        wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-                rowSet.Add( wx.ColourPickerCtrl( self, -1, wx.BLACK, ))
+                rowSet.AddLabeledControl(
+                    ctlType = 'colorpicker',
+                    ctlName = f"{order}{Insp}Border",
+                    contents = Inspirations[Insp]['color'],
+                )
+
+                rowSet.AddLabeledControl(
+                    ctlType = 'colorpicker',
+                    ctlName = f"{order}{Insp}Background",
+                    contents = wx.WHITE,
+                )
+                rowSet.AddLabeledControl(
+                    ctlType = 'colorpicker',
+                    ctlName = f"{order}{Insp}Foreground",
+                    contents = wx.BLACK,
+                )
+
 
         useCB = wx.CheckBox( self, -1, 'Enable Inspiration Popper Binds (prefer largest)')
         useCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Inspiration Popper Binds, (largest used first)'))
+        self.Controls['EnableInspBinds'] = useCB
         sizer.Add(useCB, 0, wx.ALL, 10)
 
         sizer.Add(InspRows)
 
+        sizer.AddSpacer(20)
+
         useRevCB = wx.CheckBox( self, -1,
                 'Enable Reverse Inspiration Popper Binds (prefer smallest)')
-        useCB.SetToolTip(wx.ToolTip(
+        useRevCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Reverse Inspiration Popper Binds, (smallest used first)'))
+        self.Controls['EnableRevInspBinds'] = useRevCB
         sizer.Add(useRevCB, 0, wx.ALL, 10)
 
         sizer.Add(RevInspRows)
@@ -149,3 +147,27 @@ class InspirationPopper(Page):
     def bindisused(self, profile):
         return bool(self.State['Enable'] or self.State['Reverse'])
 
+    UI.Labels.update({
+        'Enable'          : "Enable Inspiration Popper",
+        'AccuracyKey'     : "Accuracy Key",
+        'HealthKey'       : "Health Key",
+        'DamageKey'       : "Damage Key",
+        'EnduranceKey'    : "Endurance Key",
+        'DefenseKey'      : "Defense Key",
+        'BreakFreeKey'    : "Break Free Key",
+        'ResistDamageKey' : "Resist Damage Key",
+        'ResurrectionKey' : "Resurrection Key",
+        'RevAccuracyKey'     : "Reverse Accuracy Key",
+        'RevHealthKey'       : "Reverse Health Key",
+        'RevDamageKey'       : "Reverse Damage Key",
+        'RevEnduranceKey'    : "Reverse Endurance Key",
+        'RevDefenseKey'      : "Reverse Defense Key",
+        'RevBreakFreeKey'    : "Reverse Break Free Key",
+        'RevResistDamageKey' : "Reverse Resist Damage Key",
+        'RevResurrectionKey' : "Reverse Resurrection Key",
+    })
+    for order in ("", "Rev"):
+        for Insp in Inspirations:
+            UI.Labels[f"{order}{Insp}Border"] = "Border"
+            UI.Labels[f"{order}{Insp}Foreground"] = "Foreground"
+            UI.Labels[f"{order}{Insp}Background"] = "Background"

@@ -10,7 +10,7 @@ class TypingMsg(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
         self.TabTitle = "Typing"
-        self.State = {
+        self.Init = {
             'Enable'               : 1,
             'Message'              : "afk Typing Message",
             'StartChat'            : 'ENTER',

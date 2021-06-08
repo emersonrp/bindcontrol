@@ -22,7 +22,7 @@ class ControlGroup(wx.StaticBoxSizer):
             contents = '', tooltip = '', callback = None):
 
         sizer     = self.InnerSizer
-        State     = self.Page.State
+        Init     = self.Page.Init
         ctlParent = ctlParent if ctlParent else self.Parent
 
         padding = 2
@@ -31,35 +31,32 @@ class ControlGroup(wx.StaticBoxSizer):
         text = wx.StaticText(ctlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
-            control = wx.Button( ctlParent, -1, State[ctlName])
+            control = wx.Button( ctlParent, -1, Init[ctlName])
             control.Bind(wx.EVT_BUTTON, self.KeyPickerDialog)
             control.ctrlName = label
 
         elif ctlType == ('combo'):
             control = wx.ComboBox(
-                ctlParent, -1, State[ctlName],
-                wx.DefaultPosition, wx.DefaultSize,
-                contents,
-                wx.CB_READONLY)
+                ctlParent, -1, Init[ctlName], style = wx.CB_READONLY)
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback )
 
         elif ctlType == ('text'):
-            control = wx.TextCtrl(ctlParent, -1, State[ctlName])
+            control = wx.TextCtrl(ctlParent, -1, Init[ctlName])
 
         elif ctlType == ('checkbox'):
             control = wx.CheckBox(ctlParent, -1)
-            control.SetValue(bool(State[ctlName]))
+            control.SetValue(bool(Init[ctlName]))
             padding = 10
 
         elif ctlType == ('spinbox'):
             control = wx.SpinCtrl(ctlParent, -1)
-            control.SetValue(State[ctlName])
+            control.SetValue(Init[ctlName])
             control.SetRange(*contents)
 
         elif ctlType == ('dirpicker'):
             control = wx.DirPickerCtrl(
-                ctlParent, -1, State[ctlName], State[ctlName],
+                ctlParent, -1, Init[ctlName], Init[ctlName],
                 wx.DefaultPosition, wx.DefaultSize,
                 wx.DIRP_USE_TEXTCTRL|wx.ALL,
             )

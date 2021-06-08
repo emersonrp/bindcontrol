@@ -13,7 +13,7 @@ class TeamPetSelect(Page):
         Page.__init__(self, parent)
 
         self.TabTitle = "Team / Pet Select"
-        self.State = {
+        self.Init = {
             'TPSEnable'   : True,
             'TPSSelMode'  : '',
             'TeamSelect1' : 'UNBOUND',
@@ -41,11 +41,11 @@ class TeamPetSelect(Page):
 
     def FillTab(self):
 
-        if not self.State.get('Mode', None): self.State['Mode'] = 1
+        if not self.GetState('Mode'): self.SetState('Mode', 1)
 
         for i in (1,2,3,4,5,6,7,8):
-            if not self.State.get(f"sel{i}", None):
-                self.State[f"sel{i}"] = 'UNBOUND'
+            if not self.GetState(f"sel{i}"):
+                self.SetState(f"sel{i}", "UNBOUND")
 
         topSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -153,12 +153,12 @@ class TeamPetSelect(Page):
     def PopulateBindFiles(self):
         profile    = self.Profile
         ResetFile  = profile.ResetFile
-        if (self.State['TPSSelMode'] < 3):
+        if (self.GetState('TPSSelMode') < 3):
             selmethod = "teamselect"
             selnummod = 0
             selmethod1 = "petselect"
             selnummod1 = 1
-            if (self.State['TPSSelMode'] == 2):
+            if (self.GetState('TPSSelMode') == 2):
                 selmethod = "petselect"
                 selnummod = 1
                 selmethod1 = "teamselect"
@@ -166,24 +166,24 @@ class TeamPetSelect(Page):
             selresetfile = profile.GetBindFile("tps","reset.txt")
             for i in (1,2,3,4,5,6,7,8):
                 selfile = profile.GetBindFile("tps",f"sel{i}.txt")
-                ResetFile.   SetBind(self.State[f"TeamSelect{i}"],"selmethod " + (i - selnummod) + BindFile.BLF(profile,'tps',"sel{i}.txt"))
-                selresetfile.SetBind(self.State[f"TeamSelect{i}"],"selmethod " + (i - selnummod) + BindFile.BLF(profile,'tps',"sel{i}.txt"))
+                ResetFile.   SetBind(self.GetState(f"TeamSelect{i}"),"selmethod " + (i - selnummod) + BindFile.BLF(profile,'tps',"sel{i}.txt"))
+                selresetfile.SetBind(self.GetState(f"TeamSelect{i}"),"selmethod " + (i - selnummod) + BindFile.BLF(profile,'tps',"sel{i}.txt"))
                 for j in (1,2,3,4,5,6,7,8):
                     if (i == j):
-                        selfile.SetBind(self.State[f"TeamSelect{j}"],"selmethod1 " + (j - selnummod1) + BindFile.BLF(profile,'tps',"reset.txt"))
+                        selfile.SetBind(self.GetState(f"TeamSelect{j}"),"selmethod1 " + (j - selnummod1) + BindFile.BLF(profile,'tps',"reset.txt"))
                     else:
-                        selfile.SetBind(self.State[f"TeamSelect{j}"],"selmethod " +  (j - selnummod)  + BindFile.BLF(profile,'tps',"selj.txt"))
+                        selfile.SetBind(self.GetState(f"TeamSelect{j}"),"selmethod " +  (j - selnummod)  + BindFile.BLF(profile,'tps',"selj.txt"))
 
         else:
             selmethod = "teamselect"
             selnummod = 0
-            if (self.State['TPSSelMode'] == 4):
+            if (self.GetState('TPSSelMode') == 4):
                 selmethod = "petselect"
                 selnummod = 1
             for i in (1,2,3,4,5,6,7,8):
-                ResetFile.SetBind(self.State['sel1'],"selmethod " + (i - selnummod))
+                ResetFile.SetBind(self.GetState('sel1'),"selmethod " + (i - selnummod))
 
-        if (self.State['PetSelEnable']):
+        if (self.GetState('PetSelEnable')):
             tpsCreatePetSet(profile,1,0,profile.ResetFile)
             for size in (1,2,3,4,5,6,7,8):
                 for sel in range(size):
@@ -191,7 +191,7 @@ class TeamPetSelect(Page):
                     tpsCreatePetSet(profile,size,sel,file)
 
 
-        if (self.State['TeamSelEnable']):
+        if (self.GetState('TeamSelEnable')):
             tpsCreateTeamSet(profile,1,0,0,profile.ResetFile)
             for size in (1,2,3,4,5,6,7,8):
                 for pos in range(size):
@@ -207,14 +207,14 @@ class TeamPetSelect(Page):
         # tsel is the currently selected team member as far as the bind knows, or 0 if unknown
         #file.SetBind(TPS.reset,'tell name, Re-Loaded Single Key Team Select Bind.' + BindFile.BLF(profile, 'petsel', '10.txt')
         if (tsize < 8):
-            file.SetBind(self.State['IncPetSize'],'tell name, ' + formatPetConfig(tsize+1) + BindFile.BLF(profile, 'tps', (tsize+1) + "tsel.txt"))
+            file.SetBind(self.GetState('IncPetSize'),'tell name, ' + formatPetConfig(tsize+1) + BindFile.BLF(profile, 'tps', (tsize+1) + "tsel.txt"))
         else:
-            file.SetBind(self.State['DecPetSize'],'nop')
+            file.SetBind(self.GetState('DecPetSize'),'nop')
 
         if (tsize == 1):
-            file.SetBind(self.State['DecPetSize'],'nop')
-            file.SetBind(self.State['SelNextPet'],'petselect 0' + BindFile.BLF(profile, 'tps', tsize + '1.txt'))
-            file.SetBind(self.State['SelPrevPet'],'petselect 0' + BindFile.BLF(profile, 'tps', tsize + '1.txt'))
+            file.SetBind(self.GetState('DecPetSize'),'nop')
+            file.SetBind(self.GetState('SelNextPet'),'petselect 0' + BindFile.BLF(profile, 'tps', tsize + '1.txt'))
+            file.SetBind(self.GetState('SelPrevPet'),'petselect 0' + BindFile.BLF(profile, 'tps', tsize + '1.txt'))
         else:
             (selnext,selprev) = (tsel+1,tsel-1)
             if (selnext > tsize): selnext = 1
@@ -222,9 +222,9 @@ class TeamPetSelect(Page):
             newsel = tsel
             if (tsize-1 < tsel): newsel = tsize-1
             if (tsize == 2):     newsel = 0
-            file.SetBind(self.State['DecPetSize'],'tell name, ' + formatPetConfig(tsize-1) + BindFile.BLF(profile, 'tps', (tsize-1) + newsel + '.txt'))
-            file.SetBind(self.State['SelNextPet'],'petselect ' + (selnext-1) + BindFile.BLF(profile, 'tps', tsize + selnext + '.txt'))
-            file.SetBind(self.State['SelPrevPet'],'petselect ' + (selprev-1) + BindFile.BLF(profile, 'tps', tsize + selprev + '.txt'))
+            file.SetBind(self.GetState('DecPetSize'),'tell name, ' + formatPetConfig(tsize-1) + BindFile.BLF(profile, 'tps', (tsize-1) + newsel + '.txt'))
+            file.SetBind(self.GetState('SelNextPet'),'petselect ' + (selnext-1) + BindFile.BLF(profile, 'tps', tsize + selnext + '.txt'))
+            file.SetBind(self.GetState('SelPrevPet'),'petselect ' + (selprev-1) + BindFile.BLF(profile, 'tps', tsize + selprev + '.txt'))
 
     def formatPetConfig(self, which):
         return "[" + ordinals[which - 1] + " Pet ]"
@@ -233,18 +233,18 @@ class TeamPetSelect(Page):
         #  tsize is the size of the team at the moment
         #  tpos is the position of the player at the moment, or 0 if unknown
         #  tsel is the currently selected team member as far as the bind knows, or 0 if unknown
-        file.SetBind(self.State['Reset'],'tell name, Re-Loaded Single Key Team Select Bind' + BindFile.BLF(profile, 'teamsel2', '100.txt'))
+        file.SetBind(self.GetState('Reset'),'tell name, Re-Loaded Single Key Team Select Bind' + BindFile.BLF(profile, 'teamsel2', '100.txt'))
         if (tsize < 8):
-            file.SetBind(self.State['IncTeamSize'],'tell name, ' + formatTeamConfig(tsize+1,tpos) + BindFile.BLF(profile, 'teamsel2',(tsize+1) + tpos + tsel + '.txt'))
+            file.SetBind(self.GetState('IncTeamSize'),'tell name, ' + formatTeamConfig(tsize+1,tpos) + BindFile.BLF(profile, 'teamsel2',(tsize+1) + tpos + tsel + '.txt'))
         else:
-            file.SetBind(self.State['IncTeamSize'],'nop')
+            file.SetBind(self.GetState('IncTeamSize'),'nop')
 
         if (tsize == 1):
-            file.SetBind(self.State['DecTeamSize'],'nop')
-            file.SetBind(self.State['IncTeamPos'], 'nop')
-            file.SetBind(self.State['DecTeamPos'], 'nop')
-            file.SetBind(self.State['SelNextTeam'],'nop')
-            file.SetBind(self.State['SelPrevTeam'],'nop')
+            file.SetBind(self.GetState('DecTeamSize'),'nop')
+            file.SetBind(self.GetState('IncTeamPos'), 'nop')
+            file.SetBind(self.GetState('DecTeamPos'), 'nop')
+            file.SetBind(self.GetState('SelNextTeam'),'nop')
+            file.SetBind(self.GetState('SelPrevTeam'),'nop')
         else:
             (selnext,selprev) = (tsel+1,tsel-1)
             if (selnext > tsize): selnext = 1
@@ -263,12 +263,12 @@ class TeamPetSelect(Page):
             if (tsize-1 < tsel): newsel = tsize-1
             if (tsize == 2)    : newpos = newsel = 0
 
-            file.SetBind(self.State['DecTeamSize'],'tell name, ' + formatTeamConfig(tsize-1,newpos) + BindFile.BLF(profile, 'teamsel2', (tsize-1) + newpos + newsel + '.txt'))
-            file.SetBind(self.State['IncTeamPos'], 'tell name, ' + formatTeamConfig(tsize,  tposup) + BindFile.BLF(profile, 'teamsel2', tsize + tposup + tsel + '.txt'))
-            file.SetBind(self.State['DecTeamPos'], 'tell name, ' + formatTeamConfig(tsize,  tposdn) + BindFile.BLF(profile, 'teamsel2', tsize + tposdn + tsel + '.txt'))
+            file.SetBind(self.GetState('DecTeamSize'),'tell name, ' + formatTeamConfig(tsize-1,newpos) + BindFile.BLF(profile, 'teamsel2', (tsize-1) + newpos + newsel + '.txt'))
+            file.SetBind(self.GetState('IncTeamPos'), 'tell name, ' + formatTeamConfig(tsize,  tposup) + BindFile.BLF(profile, 'teamsel2', tsize + tposup + tsel + '.txt'))
+            file.SetBind(self.GetState('DecTeamPos'), 'tell name, ' + formatTeamConfig(tsize,  tposdn) + BindFile.BLF(profile, 'teamsel2', tsize + tposdn + tsel + '.txt'))
 
-            file.SetBind(self.State['SelNextTeam'],'teamselect ' + selnext + BindFile.BLF(profile, 'teamsel2', tsize + tpos + selnext + '.txt'))
-            file.SetBind(self.State['SelPrevTeam'],'teamselect ' + selprev + BindFile.BLF(profile, 'teamsel2', tsize + tpos + selprev + '.txt'))
+            file.SetBind(self.GetState('SelNextTeam'),'teamselect ' + selnext + BindFile.BLF(profile, 'teamsel2', tsize + tpos + selnext + '.txt'))
+            file.SetBind(self.GetState('SelPrevTeam'),'teamselect ' + selprev + BindFile.BLF(profile, 'teamsel2', tsize + tpos + selprev + '.txt'))
 
     def formatTeamConfig(self, size, pos):
         sizetext = f"{size}-Man"
@@ -290,7 +290,7 @@ class TeamPetSelect(Page):
         Utility.CheckConflict(TPS,"DecPetSize","Decrease Henchman Group Size")
 
     def bindisused(self, profile):
-        return self.State,get('Enable', None)
+        return self.GetState('Enabled')
 
     def HelpText(self):
         return """

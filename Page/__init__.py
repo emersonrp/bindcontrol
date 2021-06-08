@@ -42,8 +42,13 @@ class Page(wx.Panel):
 
     def GetState(self, key):
         control = self.Controls[key]
-
-        # return control.Value()  # except the right thing for different control types
+        # This is idiotic but I gotta be me.
+        if   getattr(control, 'GetValue', None):
+            return control.GetValue()
+        elif getattr(control, 'GetPath', None):
+            return control.GetPath()
+        else:
+            print(f"{control} has no GetValue()")
 
     def SetState(self, key, value):
         control = self.Controls[key]

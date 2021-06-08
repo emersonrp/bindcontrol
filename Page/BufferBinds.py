@@ -13,17 +13,17 @@ class BufferBinds(Page):
 
         self.Binds = {}
         self.TabTitle = "Buffer Binds"
-        self.State = {
+        self.Init = {
             'BuffPetsByName' : True,
             'BuffsAffectTeam': True,
             'BuffsAffectPets': True,
         }
 
         for i in (1,2,3,4,5,6,7,8):
-            self.State[f"Team{i}BuffKey"] = "UNBOUND"
+            self.Init[f"Team{i}BuffKey"] = "UNBOUND"
 
         for i in (1,2,3,4,5,6):
-            self.State[f"Pet{i}BuffKey"] = "UNBOUND"
+            self.Init[f"Pet{i}BuffKey"] = "UNBOUND"
 
     def FillTab(self):
         profile = self.Profile
@@ -315,7 +315,7 @@ class BufferBinds(Page):
         profile = self.Profile
         ResetFile = profile.ResetFile
 
-        buffer = self.State['buffer']
+        buffer = self.GetState('buffer')
 
         for key in buffer:
             bbind = buffer['key']
@@ -379,7 +379,7 @@ class BufferBinds(Page):
                             dfile.SetBind(petid, f'-down$${chat3}powexecname {bbind["power3"]}$$bindloadfile {filebase}a.txt')
 
     def findconflicts(self, profile):
-        for bbind in self.State['bufferbinds']:
+        for bbind in self.GetState('bufferbinds'):
             title = bbind.get('title', "unknown")
             if ((bbind['target'] == 1) or (bbind['target'] == 3)):
                 for j in range(1,9):

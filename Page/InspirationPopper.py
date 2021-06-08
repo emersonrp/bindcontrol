@@ -9,7 +9,7 @@ class InspirationPopper(Page):
 
         self.TabTitle = "Inspiration Popper"
 
-        self.State = {
+        self.Init = {
             'Enable'          : None,
             'AccuracyKey'     : "LSHIFT+A",
             'HealthKey'       : "LSHIFT+S",
@@ -32,12 +32,12 @@ class InspirationPopper(Page):
             colors = f"{Insp}Colors"
             revcol = f"Rev{colors}"
 
-            if not self.State.get(revkey, None):
-                self.State[revkey] = "UNBOUND"
-            if not self.State.get(colors, None):
-                self.State[colors] = Utility.ColorDefault()
-            if not self.State.get(revcol, None):
-                self.State[revcol] = Utility.ColorDefault()
+            # if not self.State.get(revkey, None):
+                # self.State[revkey] = "UNBOUND"
+            # if not self.State.get(colors, None):
+                # self.State[colors] = Utility.ColorDefault()
+            # if not self.State.get(revcol, None):
+                # self.State[revcol] = Utility.ColorDefault()
 
             for order in ("", "Rev"):
 

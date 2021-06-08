@@ -11,7 +11,7 @@ class SoD(Page):
 
         self.TabTitle = "Speed On Demand"
 
-        self.State = {
+        self.Init = {
             'Up'                 : "SPACE",
             'Down'               : "X",
             'Forward'            : "W",
@@ -74,32 +74,34 @@ class SoD(Page):
         }
 
 
-        self.State['NovaMode'] = "T"
-        self.State['NovaTray'] = "4"
+        self.Init['NovaMode'] = "T"
+        self.Init['NovaTray'] = "4"
 
-        self.State['DwarfMode'] = "G"
-        self.State['DwarfTray'] = "5"
+        self.Init['DwarfMode'] = "G"
+        self.Init['DwarfTray'] = "5"
 
-        if (self.Profile.General.State['Archetype'] == "Peacebringer"):
-            self.State['NovaNova'] = "Bright Nova"
-            self.State['DwarfDwarf'] = "White Dwarf"
-            self.State['HumanFormShield'] = "Shining Shield"
+        # TODO we aren't ever a kheldian during init so this doesn't do anything
+        # I think this is the only place we have this logic yet, though.
+        if (self.Profile.General.Init['Archetype'] == "Peacebringer"):
+            self.Init['NovaNova'] = "Bright Nova"
+            self.Init['DwarfDwarf'] = "White Dwarf"
+            self.Init['HumanFormShield'] = "Shining Shield"
 
-        elif (self.Profile.General.State['Archetype'] == "Warshade"):
-            self.State['NovaNova'] = "Dark Nova"
-            self.State['DwarfDwarf'] = "Black Dwarf"
-            self.State['HumanFormShield'] = "Gravity Shield"
+        elif (self.Profile.General.Init['Archetype'] == "Warshade"):
+            self.Init['NovaNova'] = "Dark Nova"
+            self.Init['DwarfDwarf'] = "Black Dwarf"
+            self.Init['HumanFormShield'] = "Gravity Shield"
 
-        self.State['HumanMode']    = "UNBOUND"
-        self.State['HumanTray']    = "1"
-        self.State['HumanHumanPBind'] = "nop"
-        self.State['HumanNovaPBind']  = "nop"
-        self.State['HumanDwarfPBind'] = "nop"
+        self.Init['HumanMode']    = "UNBOUND"
+        self.Init['HumanTray']    = "1"
+        self.Init['HumanHumanPBind'] = "nop"
+        self.Init['HumanNovaPBind']  = "nop"
+        self.Init['HumanDwarfPBind'] = "nop"
 
         #  Temp Travel Powers
-        self.State['TempTray'] = "6"
-        self.State['TempTraySwitch'] = "UNBOUND"
-        self.State['TempMode'] = "UNBOUND"
+        self.Init['TempTray'] = "6"
+        self.Init['TempTraySwitch'] = "UNBOUND"
+        self.Init['TempMode'] = "UNBOUND"
 
     def FillTab(self):
 

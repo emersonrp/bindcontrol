@@ -7,7 +7,7 @@ class FPSDisplay(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
         self.TabTitle = "FPS / Netgraph"
-        self.State = {
+        self.Init = {
             'Enable': True,
             'Bindkey': "P",
         }
@@ -22,7 +22,7 @@ class FPSDisplay(Page):
         minisizer = wx.FlexGridSizer(0,2,5,5)
         minisizer.Add( wx.StaticText(self, -1, 'Toggle FPS/Netgraph'),
                 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        minisizer.Add( wx.Button(self, -1, self.State['Bindkey']))
+        minisizer.Add( wx.Button(self, -1, self.Init['Bindkey']))
 
         sizer.Add(minisizer)
 
@@ -40,5 +40,5 @@ class FPSDisplay(Page):
         Utility.CheckConflict(self.Profile.FPS,"Bindkey","FPS Display Toggle")
 
     def bindisused(self):
-        return self.State['Enable']
+        return self.GetState('Enable')
 

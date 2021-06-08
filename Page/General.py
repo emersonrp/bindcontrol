@@ -14,7 +14,7 @@ class General(Page):
         # TODO - make bindsdir os-agnostic
         # TODO - find CoH install and put them there?
         # TODO - help text about WINEPREFIX etc for Mac/Linux users
-        self.State = {
+        self.Init = {
             'Name': 'Profile',
             'Archetype': 'Scrapper',
             'Origin': "Magic",
@@ -41,8 +41,6 @@ class General(Page):
 
     def FillTab(self):
 
-        ArchData = Archetypes[self.State['Archetype']]
-
         topSizer = wx.BoxSizer(wx.VERTICAL)
 
         powersBox = ControlGroup(self, self, 'Powers and Info')
@@ -67,21 +65,21 @@ class General(Page):
         powersBox.AddLabeledControl(
             ctlName = 'Primary',
             ctlType = 'combo',
-            contents = sorted(ArchData['Primary']),
+            # contents = sorted(ArchData['Primary']),
             tooltip = '',
             callback = self.pickPrimaryPowerSet,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Secondary',
             ctlType = 'combo',
-            contents = sorted(ArchData['Secondary']),
+            # contents = sorted(ArchData['Secondary']),
             tooltip = '',
             callback = self.pickSecondaryPowerSet,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Epic',
             ctlType = 'combo',
-            contents = sorted(ArchData['Epic']),
+            # contents = sorted(ArchData['Epic']),
             tooltip = '',
             callback = self.pickEpicPowerSet,
         )
@@ -137,54 +135,21 @@ class General(Page):
         return self
 
     def pickArchetype(self, event):
-        self.State['Archetype'] = event.GetEventObject.GetValue()
-        self.fillPickers()
+        # TODO fill in Primary / Secondary powers pickers
+        pass
 
-    def pickOrigin(self):
-        self.fillPickers()
-
-    def pickPrimaryPowerSet(self, event):
-        self.State['Primary'] = event.GetEventObject.GetValue()
-        self.fillPickers
-
-    def pickSecondaryPowerSet(self, event):
-        self.State['Secondary'] = event.GetEventObject.GetValue()
-        self.fillPickers
-
-    def pickEpicPowerSet(self, event):
-        self.State['Epic'] = event.GetEventObject.GetValue()
-        self.fillPickers
+    def pickOrigin(self, event):
+        # TODO do we need to take any action based on this?
+        pass
 
     def pickPoolPower(self, event):
-        # TODO TODO TODO
-        return
+        pass
 
-    def fillPickers(self):
-        ArchData = Archetypes[self.Archetype]
-        aPicker = wx.Window.FindWindowById(id('Archetype'))
-        aPicker.SetStringSelection(self.State['Archetype'])
+    def pickPrimaryPowerSet(self, event):
+        pass
 
-        oPicker = wx.Window.FindWindowById(id('Origin'))
-        oPicker.SetStringSelection(self.State['Origin'])
+    def pickSecondaryPowerSet(self, event):
+        pass
 
-        pPicker = wx.Window.FindWindowById(id('Primary'))
-        pPicker.Clear()
-        pPicker.Append(sorted(ArchData['Primary']))
-        pPicker.SetStringSelection(self.State['Primary']) or pPicker.SetSelection(1)
-
-        sPicker = wx.Window.FindWindowById(id('Secondary'))
-        sPicker.Clear()
-        sPicker.Append(sorted(ArchData['Secondary']))
-        sPicker.SetStringSelection(self.State['Secondary']) or sPicker.SetSelection(1)
-
-        ePicker = wx.Window.FindWindowById(id('Epic'))
-        ePicker.Clear()
-        ePicker.Append(sorted(ArchData['Epic']))
-        ePicker.SetStringSelection(self.State['Epic']) or sPicker.SetSelection(1)
-
-        for i in [1, 2, 3, 4]:
-            ppPicker = wx.Window.FindWindowById(id("Pooli"))
-            ppPicker.Clear()
-            ppPicker.Append(sorted(MiscPowers['Pool']))
-            ppPicker.SetStringSelection(g[Pooli]) or ppPicker.SetSelection(1)
-
+    def pickEpicPowerSet(self, event):
+        pass

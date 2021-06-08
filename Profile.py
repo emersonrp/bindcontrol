@@ -29,7 +29,7 @@ class Profile(wx.Notebook):
         self.CreatePage(General(self))
 
         # Pluck some bits out of General that we'll want later
-        self.BindsDir  = self.General.State['BindsDir']
+        self.BindsDir  = self.General.GetState('BindsDir')
         self.ResetFile = self.GetBindFile(self.BindsDir, "resetfile.txt")
 
         self.CreatePage(SoD(self))

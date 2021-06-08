@@ -13,10 +13,11 @@ class Page(wx.Panel):
         wx.Panel.__init__(self, parent)
         self.Profile = parent
         self.TabTitle = type(self).__name__
-        self.State = {}
+
+        self.Controls = {}
+
 
     def help(self, event):
-
         if not (self.HelpWindow):
             HelpWindow = wx.MiniFrame .new( undef, -1, self.TabTitle + " Help",)
             BoxSizer   = wx.BoxSizer  .new( wx.VERTICAL )
@@ -32,12 +33,19 @@ class Page(wx.Panel):
         self.HelpWindow.Show(not self.HelpWindow.IsShown())
 
     # stubs
-    def InitKeys(self):
-        profile = self.Profile
-
-    def PopulateBindFiles():
+    def PopulateBindFiles(self):
         return
     def FillTab(self):
         return
-    def HelpText():
+    def HelpText(self):
         return 'Help not currently implemented here.'
+
+    def GetState(self, key):
+        control = self.Controls[key]
+
+        # return control.Value()  # except the right thing for different control types
+
+    def SetState(self, key, value):
+        control = self.Controls[key]
+
+        # control(key).SetValue(value) # except the right thing for all types

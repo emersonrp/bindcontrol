@@ -31,8 +31,8 @@ class TypingMsg(Page):
         sizer = ControlGroup(self, self, 'Chat Binds')
 
         sizer.AddLabeledControl(
-            value   = 'Enable',
-            ctltype = 'checkbox',
+            ctlName   = 'Enable',
+            ctlType = 'checkbox',
             tooltip = 'Enable / Disable chat binds',
         )
         for b in (
@@ -44,18 +44,18 @@ class TypingMsg(Page):
             ['QuickChat',  'Activates QuickChat'],
         ):
             sizer.AddLabeledControl(
-                value = b[0],
-                ctltype = 'keybutton',
+                ctlName = b[0],
+                ctlType = 'keybutton',
                 tooltip = b[1],
             )
         sizer.AddLabeledControl(
-            value = 'TypingNotifierEnable',
-            ctltype = 'checkbox',
+            ctlName = 'TypingNotifierEnable',
+            ctlType = 'checkbox',
             tooltip = "Check this to enable the Typing Notifier",
         )
         sizer.AddLabeledControl(
-            value = 'TypingNotifier',
-            ctltype = 'text',
+            ctlName = 'TypingNotifier',
+            ctlType = 'text',
             tooltip = "Choose the message to display when you are typing chat messages or commands",
         )
 

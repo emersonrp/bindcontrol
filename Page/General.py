@@ -21,7 +21,7 @@ class General(Page):
             'Primary': 'Martial Arts',
             'Secondary': 'Super Reflexes',
             'Epic': 'Weapon Mastery',
-            'BindsDir': "c:\\CoHTest\\",
+            'BindsDir': "/home/emerson",
             'ResetKey': 'CTRL+M',
             'ResetFeedback': 1,
             'Pool1': '',
@@ -47,85 +47,85 @@ class General(Page):
 
         powersBox = ControlGroup(self, self, 'Powers and Info')
         powersBox.AddLabeledControl(
-            value = 'Name',
-            ctltype = 'text',
+            ctlName = 'Name',
+            ctlType = 'text',
         )
         powersBox.AddLabeledControl(
-            value = 'Archetype',
-            ctltype = 'combo',
+            ctlName = 'Archetype',
+            ctlType = 'combo',
             contents = sorted(Archetypes),
             tooltip = '',
             callback = self.pickArchetype,
         )
         powersBox.AddLabeledControl(
-            value = 'Origin',
-            ctltype = 'combo',
+            ctlName = 'Origin',
+            ctlType = 'combo',
             contents = Origins,
             tooltip = '',
             callback = self.pickOrigin,
         )
         powersBox.AddLabeledControl(
-            value = 'Primary',
-            ctltype = 'combo',
+            ctlName = 'Primary',
+            ctlType = 'combo',
             contents = sorted(ArchData['Primary']),
             tooltip = '',
             callback = self.pickPrimaryPowerSet,
         )
         powersBox.AddLabeledControl(
-            value = 'Secondary',
-            ctltype = 'combo',
+            ctlName = 'Secondary',
+            ctlType = 'combo',
             contents = sorted(ArchData['Secondary']),
             tooltip = '',
             callback = self.pickSecondaryPowerSet,
         )
         powersBox.AddLabeledControl(
-            value = 'Epic',
-            ctltype = 'combo',
+            ctlName = 'Epic',
+            ctlType = 'combo',
             contents = sorted(ArchData['Epic']),
             tooltip = '',
             callback = self.pickEpicPowerSet,
         )
         powersBox.AddLabeledControl(
-            value = 'Pool1',
-            ctltype = 'combo',
+            ctlName = 'Pool1',
+            ctlType = 'combo',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
         )
         powersBox.AddLabeledControl(
-            value = 'Pool2',
-            ctltype = 'combo',
+            ctlName = 'Pool2',
+            ctlType = 'combo',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
         )
         powersBox.AddLabeledControl(
-            value = 'Pool3',
-            ctltype = 'combo',
+            ctlName = 'Pool3',
+            ctlType = 'combo',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
         )
         powersBox.AddLabeledControl(
-            value = 'Pool4',
-            ctltype = 'combo',
+            ctlName = 'Pool4',
+            ctlType = 'combo',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
         )
         powersBox.AddLabeledControl(
-            value = 'BindsDir',
-            ctltype = 'dirpicker',
+            ctlName = 'BindsDir',
+            ctlType = 'dirpicker',
         )
         powersBox.AddLabeledControl(
-            value = 'ResetKey',
-            ctltype = 'keybutton',
+            ctlName = 'ResetKey',
+            ctlType = 'keybutton',
             tooltip = 'This key is used by certain modules to reset binds to a sane state.',
         )
 
         powersBox.AddLabeledControl(
-            value = 'ResetFeedback',
-            ctltype = 'checkbox',
+            ctlName = 'ResetFeedback',
+            ctlType = 'checkbox',
         )
 
         topSizer.Add(powersBox)
@@ -137,22 +137,22 @@ class General(Page):
         return self
 
     def pickArchetype(self, event):
-        self.State['Archetype'] = event.GetEventObject.GetValue
+        self.State['Archetype'] = event.GetEventObject.GetValue()
         self.fillPickers()
 
     def pickOrigin(self):
         self.fillPickers()
 
     def pickPrimaryPowerSet(self, event):
-        self.State['Primary'] = event.GetEventObject.GetValue
+        self.State['Primary'] = event.GetEventObject.GetValue()
         self.fillPickers
 
     def pickSecondaryPowerSet(self, event):
-        self.State['Secondary'] = event.GetEventObject.GetValue
+        self.State['Secondary'] = event.GetEventObject.GetValue()
         self.fillPickers
 
     def pickEpicPowerSet(self, event):
-        self.State['Epic'] = event.GetEventObject.GetValue
+        self.State['Epic'] = event.GetEventObject.GetValue()
         self.fillPickers
 
     def pickPoolPower(self, event):

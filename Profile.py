@@ -1,6 +1,6 @@
 import wx
 from pathlib import Path
-import yaml
+import json
 
 from BindFile import BindFile
 from Page.BufferBinds import BufferBinds
@@ -44,7 +44,6 @@ class Profile(wx.Notebook):
         #self.CreatePage(CustomBinds(self))
 
     def CreatePage(self, module):
-        module.InitKeys()
         module.FillTab()
         page = self.AddPage(module, module.TabTitle)
 
@@ -59,18 +58,30 @@ class Profile(wx.Notebook):
     def ProfileFile(self):
         return Path(self.BindsDir, self.General.State['Name'] + ".bcp")
 
-    def SaveToFile(self):
 
-        savefile = self.ProfileFile()
+    def SaveToFile(self, event):
+
+        savefile = Path(self.ProfileFile())
 
         savedata = {}
-        for page in self.Pages:
-            savedata[page] = getattr(self, page).State
+        for pagename in self.Pages:
+            savedata[pagename] = {}
+            page = getattr(self, pagename)
+            for control in page.Controls:
+                savedata[pagename][control] = page.Controls[control].GetValue()
+
+        dumpstring = json.dumps(savedata, indent=0)
+        try:
+            savefile.touch() # make sure there's one there.
+            savefile.write_text(dumpstring)
+            wx.LogError(f"Wrote file {savefile}")
+        except None:
+            wx.LogError(f"Problem saving to file '{savefile}'")
 
     def LoadFromFile(self, event):
 
         with wx.FileDialog(self, "Open Profile file",
-               wildcard="Bindcontrol Profiles (*.bcp)|*.bcp",
+               wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
                # wildcard="Bindcontrol and Citybinder Profiles (*.bcp;*.cbp)|*.bcp;*.cbp",
                style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 
@@ -79,15 +90,20 @@ class Profile(wx.Notebook):
 
             # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
-            try:
-                with Path(pathname) as file:
+            with Path(pathname) as file:
+                try:
                     datastring = file.read_text()
+                    data = json.loads(datastring)
 
+                    print(data)
 
-            except IOError:
-                wx.LogError("Cannot open file '%s'." % pathname)
+                    for pagename in self.Pages:
+                        page = getattr(self, pagename)
+                        page.State = data[page]
+                        page.SyncControlsFromState()
 
-
+                except:
+                    wx.LogError("Cannot open file '%s'." % file)
 
     #####################
     # Bind file functions

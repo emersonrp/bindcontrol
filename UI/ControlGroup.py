@@ -16,63 +16,63 @@ class ControlGroup(wx.StaticBoxSizer):
         self.Add(self.InnerSizer, 0, wx.ALIGN_RIGHT|wx.ALL, 16)
 
     # control will parent itself in self.Parent
-    # optional ctlparent arg will pick a different parent for complicated layouts
-    def AddLabeledControl(self, ctlparent = None,
-            ctltype = '', value = '',
+    # optional ctlParent arg will pick a different parent for complicated layouts
+    def AddLabeledControl(self, ctlParent = None,
+            ctlType = '', ctlName = '',
             contents = '', tooltip = '', callback = None):
 
         sizer     = self.InnerSizer
         State     = self.Page.State
-        ctlparent = ctlparent if ctlparent else self.Parent
+        ctlParent = ctlParent if ctlParent else self.Parent
 
         padding = 2
 
-        label = UI.Labels.get(value, value)
-        text = wx.StaticText(ctlparent, -1, label + ':')
+        label = UI.Labels.get(ctlName, ctlName)
+        text = wx.StaticText(ctlParent, -1, label + ':')
 
-        if ctltype == ('keybutton'):
-            control = wx.Button( ctlparent, -1, State[value])
+        if ctlType == ('keybutton'):
+            control = wx.Button( ctlParent, -1, State[ctlName])
             control.Bind(wx.EVT_BUTTON, self.KeyPickerDialog)
-            control.KeyBindDesc = label
+            control.ctrlName = label
 
-        elif ctltype == ('combo'):
+        elif ctlType == ('combo'):
             control = wx.ComboBox(
-                ctlparent, -1, State[value],
+                ctlParent, -1, State[ctlName],
                 wx.DefaultPosition, wx.DefaultSize,
                 contents,
                 wx.CB_READONLY)
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback )
 
-        elif ctltype == ('text'):
-            control = wx.TextCtrl(ctlparent, -1, State[value])
+        elif ctlType == ('text'):
+            control = wx.TextCtrl(ctlParent, -1, State[ctlName])
 
-        elif ctltype == ('checkbox'):
-            control = wx.CheckBox(ctlparent, -1)
-            control.SetValue(bool(State[value]))
+        elif ctlType == ('checkbox'):
+            control = wx.CheckBox(ctlParent, -1)
+            control.SetValue(bool(State[ctlName]))
             padding = 10
 
-        elif ctltype == ('spinbox'):
-            control = wx.SpinCtrl(ctlparent, -1)
-            control.SetValue(State[value])
+        elif ctlType == ('spinbox'):
+            control = wx.SpinCtrl(ctlParent, -1)
+            control.SetValue(State[ctlName])
             control.SetRange(*contents)
 
-        elif ctltype == ('dirpicker'):
+        elif ctlType == ('dirpicker'):
             control = wx.DirPickerCtrl(
-                ctlparent, -1, State[value], State[value],
+                ctlParent, -1, State[ctlName], State[ctlName],
                 wx.DefaultPosition, wx.DefaultSize,
                 wx.DIRP_USE_TEXTCTRL|wx.ALL,
             )
-        else: die(f"wtf?!  Got a ctltype that I don't know: {ctltype}")
+        else: die(f"wtf?!  Got a ctlType that I don't know: {ctlType}")
         if tooltip:
             control.SetToolTip( wx.ToolTip(tooltip))
 
         sizer.Add( text,    0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         sizer.Add( control, 0, wx.ALL|wx.EXPAND, padding)
 
-        self.Layout
+        self.Page.Controls[ctlName] = control
 
-        return control
+        self.Layout()
 
     def KeyPickerDialog(self, evt):
         button = evt.EventObject
@@ -86,9 +86,6 @@ class ControlGroup(wx.StaticBoxSizer):
             # TODO -- check for conflicts
             # otherThingWithThatBind = checkConflicts(newKey)
 
-            # TODO - update the associated page State
-            # page.State[value] = newKey
-
-            # re-label the button
+            # re-label the button / set its state
             if newKey:
                 evt.EventObject.SetLabel(newKey)

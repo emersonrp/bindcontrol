@@ -28,12 +28,9 @@ class Main(wx.Frame):
         Profile_load  = ProfMenu.Append(-1, "Load Profile...", "Load an existing profile")
         Profile_save  = ProfMenu.Append(-1, "Save Profile", "Save the current profile")
         ProfMenu.AppendSeparator()
-        Profile_prefs = ProfMenu.Append(wx.ID_PREFERENCES)
         Profile_exit  = ProfMenu.Append(wx.ID_EXIT)
 
         Profile_new.Enable(False)
-        Profile_save.Enable(False)
-        Profile_prefs.Enable(False)
 
         # "Help" Menu
         HelpMenu = wx.Menu()
@@ -58,8 +55,7 @@ class Main(wx.Frame):
         # MENUBAR EVENTS
         self.Bind(wx.EVT_MENU, None, Profile_new)
         self.Bind(wx.EVT_MENU, self.Profile.LoadFromFile, Profile_load)
-        self.Bind(wx.EVT_MENU, None, Profile_save)
-        self.Bind(wx.EVT_MENU, None, Profile_prefs)
+        self.Bind(wx.EVT_MENU, self.Profile.SaveToFile  , Profile_save)
         self.Bind(wx.EVT_MENU, self.exitApplication, Profile_exit)
 
         self.Bind(wx.EVT_MENU, None, Help_manual)

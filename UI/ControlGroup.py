@@ -5,7 +5,7 @@ from UI.KeyBindDialog import KeyBindDialog
 
 class ControlGroup(wx.StaticBoxSizer):
 
-    def __init__(self, parent, page, label, width = 2):
+    def __init__(self, parent, page, label = '', width = 2, flexcols = [0]):
         wx.StaticBoxSizer.__init__(self, wx.VERTICAL, parent, label = label)
 
         self.Parent = parent
@@ -13,7 +13,8 @@ class ControlGroup(wx.StaticBoxSizer):
         # self.Add(wx.StaticBox( parent, -1), wx.VERTICAL)
 
         self.InnerSizer = wx.FlexGridSizer(0,width,3,3)
-        self.Add(self.InnerSizer, 0, wx.ALIGN_RIGHT|wx.ALL, 16)
+        for col in flexcols: self.InnerSizer.AddGrowableCol(col)
+        self.Add(self.InnerSizer, 0, wx.ALL|wx.EXPAND, 16)
 
     # control will parent itself in self.Parent
     # optional ctlParent arg will pick a different parent for complicated layouts
@@ -46,8 +47,11 @@ class ControlGroup(wx.StaticBoxSizer):
         elif ctlType == ('text'):
             control = wx.TextCtrl(ctlParent, -1, Init[ctlName])
 
+        elif ctlType == ('statictext'):
+            control = wx.StaticText(ctlParent, -1, contents)
+
         elif ctlType == ('checkbox'):
-            control = wx.CheckBox(ctlParent, -1)
+            control = wx.CheckBox(ctlParent, -1, contents)
             control.SetValue(bool(Init[ctlName]))
             padding = 10
 

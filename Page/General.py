@@ -31,14 +31,6 @@ class General(Page):
             'UseSplitModKeys': False,
         }
 
-        UI.Labels.update({
-            'BindsDir'        : 'Base Binds Directory',
-            'ResetFile'       : 'Reset All Binds file',
-            'ResetKey'        : 'Reset All Binds key',
-            'ResetFeedback'   : 'Enable Reset Feedback Self-/tell',
-            'UseSplitModKeys' : 'Bind left and right modifier keys separately',
-        })
-
     def BuildPage(self):
 
         topSizer = wx.BoxSizer(wx.VERTICAL)
@@ -153,3 +145,13 @@ class General(Page):
 
     def pickEpicPowerSet(self, event):
         pass
+
+
+    UI.Labels.update({
+        'BindsDir'        : 'Base Binds Directory',
+        'ResetFile'       : 'Reset All Binds file',
+        'ResetKey'        : 'Reset All Binds',
+        'ResetFeedback'   : 'Enable Reset Feedback Self-/tell',
+        'UseSplitModKeys' : 'Bind left and right modifier keys separately',
+    })
+

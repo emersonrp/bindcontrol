@@ -76,62 +76,57 @@ class Mastermind(Page):
         self.Init = {
             'Enable' : False,
 
-            'PetSelectAll' : 'ALT+V',
+            'PetSelectAll' : 'LALT+V',
             'PetSelectAllResponse' : 'Orders?',
             'PetSelectAllResponseMethod' : 'Petsay',
 
-            'PetSelectMinions' : 'ALT+Z',
+            'PetSelectMinions' : 'LALT+Z',
             'PetSelectMinionsResponse' : 'Orders?',
             'PetSelectMinionsResponseMethod' : 'Petsay',
 
-            'PetSelectLieutenants' : 'ALT+X',
+            'PetSelectLieutenants' : 'LALT+X',
             'PetSelectLieutenantsResponse' : 'Orders?',
             'PetSelectLieutenantsResponseMethod' : 'Petsay',
 
-            'PetSelectBoss' : 'ALT+C',
+            'PetSelectBoss' : 'LALT+C',
             'PetSelectBossResponse' : 'Orders?',
             'PetSelectBossResponseMethod' : 'Petsay',
 
-            'PetBodyguard' : 'ALT+G',
+            'PetBodyguard' : 'UNBOUND',
             'PetBodyguardResponse' : 'Bodyguarding.',
             'PetBodyguardResponseMethod' : 'Petsay',
 
-            'PetAggressive' : 'ALT+A',
+            'PetAggressive' : 'LALT+A',
             'PetAggressiveResponse' : 'Kill On Sight.',
             'PetAggressiveResponseMethod' : 'Petsay',
 
-            'PetDefensive' : 'ALT+S',
+            'PetDefensive' : 'LALT+S',
             'PetDefensiveResponse' : 'Return Fire Only.',
             'PetDefensiveResponseMethod' : 'Petsay',
 
-            'PetPassive' : 'ALT+D',
+            'PetPassive' : 'LALT+D',
             'PetPassiveResponse' : 'At Ease.',
             'PetPassiveResponseMethod' : 'Petsay',
 
-            'PetAttack' : 'ALT+Q',
+            'PetAttack' : 'LALT+Q',
             'PetAttackResponse' : 'Open Fire!',
             'PetAttackResponseMethod' : 'Petsay',
 
-            'PetFollow' : 'ALT+W',
+            'PetFollow' : 'LALT+W',
             'PetFollowResponse' : 'Falling In.',
             'PetFollowResponseMethod' : 'Petsay',
 
-            'PetStay' : 'ALT+E',
+            'PetStay' : 'LALT+E',
             'PetStayResponse' : 'Holding This Position',
             'PetStayResponseMethod' : 'Petsay',
 
-            'PetGoto' : 'ALT+LBUTTON',
+            'PetGoto' : 'LALT+LBUTTON',
             'PetGotoResponse' : 'Moving To Checkpoint.',
             'PetGotoResponseMethod' : 'Petsay',
 
             'PetBodyguardMode' : 1,
             'PetBodyguardAttack' : '',
             'PetBodyguardGoto' : '',
-
-            'PetBackgroundAttack' : 'UNBOUND', # TODO -- need UI for this
-            'PetBackgroundGoto' : 'UNBOUND',   # TODO -- need UI for this
-            'PetBackgroundAttackEnabled' : 0,  # TODO -- need UI for this
-            'PetBackgroundGotoEnabled' : 0,    # TODO -- need UI for this
 
             'PetChatToggle' : 'ALT+M',
             'PetSelect1' : 'F1',
@@ -161,10 +156,40 @@ class Mastermind(Page):
     def BuildPage(self):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
+        upperSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        #creditsBox = wx.StaticText(self, -1, self.HelpText(), style=wx.ALIGN_CENTER)
+        #upperSizer.Add(creditsBox, 0, wx.EXPAND|wx.ALL, 30)
+
+        # get the pet names, whether they're bodyguards, and binds to select them directly
+        # TODO -- probably want to enable/disable various bits of this based on whether bodyguard is
+        # active, or whether we have names, or whatever
+        petNames = ControlGroup(self, self, width = 5, flexcols=[1])
+
+        for PetID in range(1,7):
+
+            petNames.AddLabeledControl(
+                ctlName = f"Pet{PetID}Name",
+                ctlType = 'text',
+                tooltip = f"Specify Pet {PetID}'s Name for individual selection",
+            )
+            petNames.AddLabeledControl(
+                noLabel = True,
+                ctlName = f"Pet{PetID}Bodyguard",
+                ctlType = 'checkbox',
+                contents = "Bodyguard",
+                tooltip = f"Select whether pet {PetID} acts as Bodyguard",
+            )
+            petNames.AddLabeledControl(
+                ctlName = f"PetSelect{PetID}",
+                ctlType = "keybutton",
+                tooltip = f"Choose the Key Combo to Select Pet {PetID}"
+            )
+
+        upperSizer.Add(petNames, 1, wx.EXPAND)
 
         useCB = wx.CheckBox( self, -1, 'Enable Mastermind Pet Binds')
         useCB.SetToolTip(wx.ToolTip('Check this to enable the Mastermind Pet Action Binds'))
-        sizer.Add(useCB, 0, wx.ALL, 10)
 
         # TODO - add checkbox handler to hide/show (enable/disable?) the bodyguard options
         # TODO -- actually, automagically enable/disable these depending on whether any pets have their
@@ -172,18 +197,12 @@ class Mastermind(Page):
         bgCB = wx.CheckBox( self, -1, 'Enable Bodyguard Mode Binds')
         bgCB.SetToolTip(wx.ToolTip('Check this to enable the Bodyguard Mode Binds'))
         bgCB.SetValue(self.Init['PetBodyguardMode'])
-        sizer.Add(bgCB, 0, wx.ALL, 10)
 
-        sizer.AddSpacer(10)
 
-        commandSizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        petCommandsKeys  = ControlGroup(self, self, 'Pet Command Keys', width = 4)
-        #petResponseTexts = ControlGroup(self, self, 'Pet Responses')
+        petCommandsKeys  = ControlGroup(self, self, width = 5, flexcols = [4])
 
         # Iterate the data structure at the top and make the grid of controls for the basic pet binds
         ChatOptions = ('Local','Self-Tell','Petsay','---' )
-        #PetCommandKeyRows = wx.FlexGridSizer(0,5,2,2)
         for command in self.petCommandKeyDefinitions:
 
             petCommandsKeys.AddLabeledControl(
@@ -193,7 +212,6 @@ class Mastermind(Page):
             )
 
             petCommandsKeys.AddLabeledControl(
-                noLabel = True,
                 ctlName = command['ctrlName'] + 'ResponseMethod',
                 ctlType = 'combobox',
                 contents = ChatOptions,
@@ -207,43 +225,18 @@ class Mastermind(Page):
             )
 
 
-        commandSizer.Add(petCommandsKeys)
-        #commandSizer.Add(petResponseTexts)
-
-        sizer.Add(commandSizer)
-
-        sizer.AddSpacer(15)
-
-        # get the pet names, whether they're bodyguards, and binds to select them directly
-        # TODO -- probably want to enable/disable various bits of this based on whether bodyguard is
-        # active, or whether we have names, or whatever
-        PetNames = wx.FlexGridSizer(0,5,5,5)
-        for PetID in range(1,7):
-
-            pn = wx.TextCtrl(self,  -1, self.Init[f"Pet{PetID}Name"])
-            pn.SetToolTip( wx.ToolTip(f"Specify Pet {PetID}'s Name for individual selection") )
-
-            cb = wx.CheckBox(self, -1, "Bodyguard" )
-            cb.SetValue(self.Init[f"Pet{PetID}Bodyguard"])
-            cb.SetToolTip( wx.ToolTip(f"Select whether pet {PetID} acts as Bodyguard") )
-
-            bn = wx.Button(self, -1, self.Init[f"PetSelect{PetID}"])
-            bn.SetToolTip( wx.ToolTip(f"Choose the Key Combo to Select Pet {PetID}"))
-
-            PetNames.Add( wx.StaticText(self, -1, f"Pet {PetID}'s Name"), 0, wx.ALIGN_CENTER_VERTICAL)
-            PetNames.Add( pn )
-            PetNames.Add( cb, 0, wx.ALIGN_CENTER_VERTICAL)
-            PetNames.Add( wx.StaticText(self, -1, f"Select Pet {PetID}"), 0, wx.ALIGN_CENTER_VERTICAL)
-            PetNames.Add( bn )
-
-        sizer.Add(PetNames)
+        sizer.Add(upperSizer, 0, wx.EXPAND)
+        sizer.Add(useCB, 0, wx.ALL, 10)
+        sizer.Add(bgCB, 0, wx.ALL, 10)
+        sizer.AddSpacer(10)
+        sizer.Add(petCommandsKeys, 0, wx.EXPAND)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
         self.SetSizerAndFit(paddingSizer)
 
     def HelpText(self):
-        """
+        return """
         The Original Mastermind Control Binds
         were created in CoV Beta by Khaiba
         a.k.a. Sandolphan
@@ -712,3 +705,29 @@ class Mastermind(Page):
 
     for cmd in petCommandKeyDefinitions:
         UI.Labels[cmd['ctrlName']] = cmd['label']
+        UI.Labels.update({
+            'Pet1Name'                           : "First Pet's Name",
+            'Pet2Name'                           : "Second Pet's Name",
+            'Pet3Name'                           : "Third Pet's Name",
+            'Pet4Name'                           : "Fourth Pet's Name",
+            'Pet5Name'                           : "Fifth Pet's Name",
+            'Pet6Name'                           : "Sixth Pet's Name",
+            'PetSelect1'                         : "Select First Pet",
+            'PetSelect2'                         : "Select Second Pet",
+            'PetSelect3'                         : "Select Third Pet",
+            'PetSelect4'                         : "Select Fourth Pet",
+            'PetSelect5'                         : "Select Fifth Pet",
+            'PetSelect6'                         : "Select Sixth Pet",
+            'PetSelectAllResponseMethod'         : "Response to Select All",
+            'PetSelectMinionsResponseMethod'     : "Response to Select Minions",
+            'PetSelectLieutenantsResponseMethod' : "Response to Select Lieutenants",
+            'PetSelectBossResponseMethod'        : "Response to Select Boss",
+            'PetBodyguardResponseMethod'         : "Response to Bodyguard Mode",
+            'PetAggressiveResponseMethod'        : "Response to Set Aggressive",
+            'PetDefensiveResponseMethod'         : "Response to Set Defensive",
+            'PetPassiveResponseMethod'           : "Response to Set Passive",
+            'PetAttackResponseMethod'            : "Response to Attack",
+            'PetFollowResponseMethod'            : "Response to Follow",
+            'PetStayResponseMethod'              : "Response to Stay",
+            'PetGotoResponseMethod'              : "Response to Goto",
+        })

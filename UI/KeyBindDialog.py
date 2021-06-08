@@ -10,7 +10,7 @@ class KeyBindDialog(wx.Dialog):
             print("Tried to make a KeyBindDialog for something with no desc")
             return
 
-        desc = f"Press the key you want bound to {desc}:"
+        desc = f"Press the key you want bound to {UI.Labels[desc]}:"
 
         self.Binding   = ''
         self.ShiftSide = ''

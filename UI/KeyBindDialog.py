@@ -116,7 +116,7 @@ class KeyBindDialog(wx.Dialog):
         else:
             self.AltSide = ''
 
-        self.Binding = self.CtrlSide + self.AltSide + self.ShiftSide + KeyToBind
+        self.Binding = self.CtrlSide + self.AltSide + self.ShiftSide + str(KeyToBind)
 
         self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
         self.Layout()

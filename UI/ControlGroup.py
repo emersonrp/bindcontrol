@@ -33,7 +33,7 @@ class ControlGroup(wx.StaticBoxSizer):
         if ctlType == ('keybutton'):
             control = wx.Button( ctlParent, -1, Init[ctlName])
             control.Bind(wx.EVT_BUTTON, self.KeyPickerDialog)
-            control.ctrlName = label
+            control.CtlName = ctlName
 
         elif ctlType == ('combo'):
             control = wx.ComboBox(
@@ -74,7 +74,7 @@ class ControlGroup(wx.StaticBoxSizer):
     def KeyPickerDialog(self, evt):
         button = evt.EventObject
 
-        with KeyBindDialog(self.Parent, button.KeyBindDesc, button.Label) as dlg:
+        with KeyBindDialog(self.Parent, button.CtlName, button.Label) as dlg:
 
             newKey = ''
 

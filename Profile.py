@@ -34,7 +34,7 @@ class Profile(wx.Notebook):
 
         self.CreatePage(SoD(self))
         self.CreatePage(FPSDisplay(self))
-        #self.CreatePage(InspirationPopper(self))
+        self.CreatePage(InspirationPopper(self))
         self.CreatePage(Mastermind(self))
         #self.CreatePage(TeamPetSelect(self))
         #self.CreatePage(TypingMsg(self))

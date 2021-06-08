@@ -18,6 +18,15 @@ class InspirationPopper(Page):
             'DefenseKey'      : "LSHIFT+W",
             'BreakFreeKey'    : "LSHIFT+E",
             'ResistDamageKey' : "LSHIFT+SPACE",
+            'ResurrectionKey' : "LSHIFT+TILDE",
+            'RevAccuracyKey'     : "UNBOUND",
+            'RevHealthKey'       : "UNBOUND",
+            'RevDamageKey'       : "UNBOUND",
+            'RevEnduranceKey'    : "UNBOUND",
+            'RevDefenseKey'      : "UNBOUND",
+            'RevBreakFreeKey'    : "UNBOUND",
+            'RevResistDamageKey' : "UNBOUND",
+            'RevResurrectionKey' : "UNBOUND",
         }
 
     def BuildPage(self):
@@ -27,7 +36,7 @@ class InspirationPopper(Page):
         InspRows =    wx.FlexGridSizer(0,10,2,2)
         RevInspRows = wx.FlexGridSizer(0,10,2,2)
 
-        for Insp in sorted(Inspirations):
+        for Insp in Inspirations:
             revkey = f"Rev{Insp}Key"
             colors = f"{Insp}Colors"
             revcol = f"Rev{colors}"
@@ -49,7 +58,7 @@ class InspirationPopper(Page):
                 rowSet.Add( wx.StaticText(self, -1, f"{order} {Insp} Key"), 0,
                         wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 
-                KeyPicker = wx.Button(self, -1, self.State[f"{order}{Insp}Key"])
+                KeyPicker = wx.Button(self, -1, self.Init[f"{order}{Insp}Key"])
                 KeyPicker.SetToolTip(
                         wx.ToolTip(f"Choose the key combo to activate a {Insp} inspiration") )
                 rowSet.Add ( KeyPicker, 0, wx.EXPAND)
@@ -62,32 +71,16 @@ class InspirationPopper(Page):
 
                 rowSet.Add( wx.StaticText(self, -1, "Border"), 0,
                         wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-                bc = self.State[f"{order}{Insp}Colors"]['border']
-                rowSet.Add( wx.ColourPickerCtrl(
-                        self, -1,
-                        wx.Colour(bc['r'], bc['g'], bc['b']),
-                        wx.DefaultPosition, wx.DefaultSize,
-                    )
+                border = Inspirations[Insp]['color']
+                rowSet.Add( wx.ColourPickerCtrl( self, -1, border, )
                 )
 
                 rowSet.Add( wx.StaticText(self, -1, "Background"), 0,
                         wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-                bc = self.State[f"{order}{Insp}Colors"]['background']
-                rowSet.Add( wx.ColourPickerCtrl(
-                        self, -1,
-                        wx.Colour(bc['r'], bc['g'], bc['b']),
-                        wx.DefaultPosition, wx.DefaultSize,
-                    )
-                )
+                rowSet.Add( wx.ColourPickerCtrl( self, -1, wx.WHITE,))
                 rowSet.Add( wx.StaticText(self, -1, "Text"), 0,
                         wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-                fc = self.State[f"{order}{Insp}Colors"]['foreground']
-                rowSet.Add( wx.ColourPickerCtrl(
-                        self, -1,
-                        wx.Colour(fc['r'], fc['g'], fc['b']),
-                        wx.DefaultPosition, wx.DefaultSize,
-                    )
-                )
+                rowSet.Add( wx.ColourPickerCtrl( self, -1, wx.BLACK, ))
 
         useCB = wx.CheckBox( self, -1, 'Enable Inspiration Popper Binds (prefer largest)')
         useCB.SetToolTip(wx.ToolTip(
@@ -125,14 +118,14 @@ class InspirationPopper(Page):
                 reverseOrder = reverseOrder + f"inspexecname {item}"
 
 
-            if self.State['Feedback']:
-                forwardOrder = cbChatColorOutput(self.State[f"{Insp}Colors"]) + Insp + forwardOrder
-                reverseOrder = cbChatColorOutput(self.State[f"Rev{Insp}Colors"]) + Insp + reverseOrder
+            if self.Init['Feedback']:
+                forwardOrder = cbChatColorOutput(self.Init[f"{Insp}Colors"]) + Insp + forwardOrder
+                reverseOrder = cbChatColorOutput(self.Init[f"Rev{Insp}Colors"]) + Insp + reverseOrder
 
-        if self.State['Enable']:
-            cbWriteBind(ResetFile, self.State[f"{Insp}Key"], forwardOrder)
-        if self.State['Reverse']:
-            cbWriteBind(ResetFile, self.State[f"Rev{Insp}Key"], reverseOrder)
+        if self.Init['Enable']:
+            cbWriteBind(ResetFile, self.Init[f"{Insp}Key"], forwardOrder)
+        if self.Init['Reverse']:
+            cbWriteBind(ResetFile, self.Init[f"Rev{Insp}Key"], reverseOrder)
 
     def findconflicts(self, profile):
         if self.State['Enable']:
@@ -155,3 +148,4 @@ class InspirationPopper(Page):
 
     def bindisused(self, profile):
         return bool(self.State['Enable'] or self.State['Reverse'])
+

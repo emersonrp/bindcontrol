@@ -1,3 +1,5 @@
+import wx # for wx.Colour values
+
 Origins = ['Magic','Mutation','Natural','Science','Technology']
 
 Archetypes = {
@@ -2496,13 +2498,38 @@ MiscPowers = {
 
 
 Inspirations = {
-    'Accuracy': ['Insight','Keen Insight','Uncanny Insight'],
-    'Health'  : ['Respite','Dramatic Improvement','Resurgance'],
-    'Damage'  : ['Enrage','Focused Rage','Righteous Rage'],
-    'Endurance': ['Catch a Breath','Take a Breather','Second Wind'],
-    'Defense': ['Luck','Good Luck','Phenominal Luck'],
-    'BreakFree': ['Break Free','Emerge','Escape'],
-    'ResistDamage': ['Sturdy','Rugged','Robust'],
+    'Accuracy'     : {
+        'color': wx.YELLOW,
+        'tiers': ['Insight'        , 'Keen Insight'         , 'Uncanny Insight'] ,
+    },
+    'Health'       : {
+        'color': wx.GREEN,
+        'tiers': ['Respite'        , 'Dramatic Improvement' , 'Resurgance']      ,
+    },
+    'Damage'       : {
+        'color': wx.RED,
+        'tiers': ['Enrage'         , 'Focused Rage'         , 'Righteous Rage']  ,
+    },
+    'Endurance'    : {
+        'color': wx.BLUE,
+        'tiers': ['Catch a Breath' , 'Take a Breather'      , 'Second Wind']     ,
+    },
+    'Defense'      : {
+        'color': (128, 0, 153),  # purple
+        'tiers': ['Luck'           , 'Good Luck'            , 'Phenominal Luck'] ,
+    },
+    'ResistDamage' : {
+        'color': (230, 80, 0),   # orange
+        'tiers': ['Sturdy'         , 'Rugged'               , 'Robust']          ,
+    },
+    'BreakFree'    : {
+        'color': (110, 76, 200), # light purple
+        'tiers': ['Break Free'     , 'Emerge'               , 'Escape']          ,
+    },
+    'Resurrection' : {
+        'color': (50, 180, 160), # cyan
+        'tiers': ['Awaken'         , 'Bounce Back'          , 'Restoration']     ,
+    },
 }
 
 Emotes = [

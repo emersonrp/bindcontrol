@@ -35,6 +35,7 @@ class ControlGroup(wx.StaticBoxSizer):
         if ctlType == ('keybutton'):
             control = wx.Button( ctlParent, -1, Init[ctlName])
             control.Bind(wx.EVT_BUTTON, self.KeyPickerDialog)
+            control.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
             control.CtlName = ctlName
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
@@ -77,6 +78,9 @@ class ControlGroup(wx.StaticBoxSizer):
         self.Page.Controls[ctlName] = control
 
         self.Layout()
+
+    def ClearButton(self, evt):
+        evt.EventObject.SetLabel("UNBOUND")
 
     def KeyPickerDialog(self, evt):
         button = evt.EventObject

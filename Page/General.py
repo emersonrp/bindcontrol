@@ -39,7 +39,7 @@ class General(Page):
             'UseSplitModKeys' : 'Bind left and right modifier keys separately',
         })
 
-    def FillTab(self):
+    def BuildPage(self):
 
         topSizer = wx.BoxSizer(wx.VERTICAL)
 

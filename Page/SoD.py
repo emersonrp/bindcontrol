@@ -103,7 +103,7 @@ class SoD(Page):
         self.Init['TempTraySwitch'] = "UNBOUND"
         self.Init['TempMode'] = "UNBOUND"
 
-    def FillTab(self):
+    def BuildPage(self):
 
         topSizer = wx.FlexGridSizer(0,2,10,10)
 

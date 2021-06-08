@@ -12,7 +12,7 @@ class FPSDisplay(Page):
             'Bindkey': "P",
         }
 
-    def FillTab(self):
+    def BuildPage(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
 
         useCB = wx.CheckBox( self, -1, 'Enable FPS Binds')

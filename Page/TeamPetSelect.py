@@ -39,7 +39,7 @@ class TeamPetSelect(Page):
             'Reset'       : '',
         }
 
-    def FillTab(self):
+    def BuildPage(self):
 
         if not self.GetState('Mode'): self.SetState('Mode', 1)
 

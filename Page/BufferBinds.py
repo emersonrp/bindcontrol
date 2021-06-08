@@ -25,7 +25,7 @@ class BufferBinds(Page):
         for i in (1,2,3,4,5,6):
             self.Init[f"Pet{i}BuffKey"] = "UNBOUND"
 
-    def FillTab(self):
+    def BuildPage(self):
         profile = self.Profile
 
         self.MainSizer = wx.BoxSizer(wx.VERTICAL) # overall sizer

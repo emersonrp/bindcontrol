@@ -35,7 +35,7 @@ class Page(wx.Panel):
     # stubs
     def PopulateBindFiles(self):
         return
-    def FillTab(self):
+    def BuildPage(self):
         return
     def HelpText(self):
         return 'Help not currently implemented here.'

@@ -156,7 +156,7 @@ class Mastermind(Page):
 
         self.TabTitle = "Mastermind / Pet Binds"
 
-    def FillTab(self):
+    def BuildPage(self):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 

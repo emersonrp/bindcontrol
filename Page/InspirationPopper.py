@@ -20,7 +20,7 @@ class InspirationPopper(Page):
             'ResistDamageKey' : "LSHIFT+SPACE",
         }
 
-    def FillTab(self):
+    def BuildPage(self):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 

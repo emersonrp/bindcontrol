@@ -25,7 +25,7 @@ class TypingMsg(Page):
 
         self.Typingnotifierlimit = { 'cmdlist': ["Away From Keyboard","Emote"] }
 
-    def FillTab(self):
+    def BuildPage(self):
 
         topSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = ControlGroup(self, self, 'Chat Binds')

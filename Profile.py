@@ -44,7 +44,7 @@ class Profile(wx.Notebook):
         #self.CreatePage(CustomBinds(self))
 
     def CreatePage(self, module):
-        module.FillTab()
+        module.BuildPage()
         page = self.AddPage(module, module.TabTitle)
 
         setattr(self, module.TabTitle, module)

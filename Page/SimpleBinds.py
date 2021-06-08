@@ -11,7 +11,7 @@ class SimpleBinds(Page):
         self.Binds = ()
         self.TabTitle = "Simple Binds"
 
-    def FillTab(self):
+    def BuildPage(self):
         profile = self.Profile
 
         self.MainSizer = wx.BoxSizer(wx.VERTICAL) # overall sizer

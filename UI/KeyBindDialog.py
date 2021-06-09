@@ -27,9 +27,9 @@ class KeyBindDialog(wx.Dialog):
         desc = f"Press the key you want bound to {UI.Labels.get(desc, desc)}:"
 
         self.Binding   = ''
-        self.ShiftSide = ''
-        self.CtrlSide  = ''
-        self.AltSide   = ''
+        self.ShiftText = ''
+        self.CtrlText  = ''
+        self.AltText   = ''
         self.SetKeymap();
 
         sizer = wx.BoxSizer(wx.VERTICAL);
@@ -39,8 +39,12 @@ class KeyBindDialog(wx.Dialog):
 
         self.kbBind.SetLabelMarkup('<b><big>' + keybind + '</big></b>')
 
+        self.SeparateLRChooser = wx.CheckBox( self, -1, "Bind left/right mod keys separately")
+
         sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 15);
         sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);
+        sizer.AddSpacer(15)
+        sizer.Add( self.SeparateLRChooser, 0, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
 
         # Wrap everything in a vbox to add some padding
         vbox = wx.BoxSizer(wx.VERTICAL);
@@ -83,12 +87,12 @@ class KeyBindDialog(wx.Dialog):
 
         KeyToBind = ''
 
+        SeparateLR = self.SeparateLRChooser.Value
+
         if (isinstance(event, wx.KeyEvent)):
             code = event.GetKeyCode()
 
             KeyToBind = self.Keymap.get(code, '')
-
-
         else:
             button = event.GetButton()
             KeyToBind = [
@@ -104,33 +108,42 @@ class KeyBindDialog(wx.Dialog):
             ][button]
 
         # check for each modifier key
-        # TODO - we've gotten rid of the ability to do just, eg, "CTRL+" to get both sides
         if (event.CmdDown())   :
-            if isinstance(event, wx.KeyEvent):
-                rawCode = event.GetRawKeyCode()
-                if   (rawCode == 65507): self.CtrlSide = "LCTRL+"
-                elif (rawCode == 65508): self.CtrlSide = "RCTRL+"
+            if SeparateLR:
+                if isinstance(event, wx.KeyEvent):
+                    rawCode = event.GetRawKeyCode()
+                    if   (rawCode == 65507): self.CtrlText = "LCTRL+"
+                    elif (rawCode == 65508): self.CtrlText = "RCTRL+"
+            else:
+                self.CtrlText = "CTRL+"
         else:
-            self.CtrlSide = ''
+            self.CtrlText = ''
 
         if (event.ShiftDown()) :
-            if isinstance(event, wx.KeyEvent):
-                rawCode = event.GetRawKeyCode()
-                if   (rawCode == 65505): self.ShiftSide = "LSHIFT+"
-                elif (rawCode == 65506): self.ShiftSide = "RSHIFT+"
+            if SeparateLR:
+                if isinstance(event, wx.KeyEvent):
+                    rawCode = event.GetRawKeyCode()
+                    if   (rawCode == 65505): self.ShiftText = "LSHIFT+"
+                    elif (rawCode == 65506): self.ShiftText = "RSHIFT+"
+            else:
+                self.ShiftText = "SHIFT+"
         else:
-            self.ShiftSide = ''
+            self.ShiftText = ''
 
         # TODO - Alt goes missing if you mash several things while the dialog is open
         if (event.AltDown())   :
-            if isinstance(event, wx.KeyEvent):
-                rawCode = event.GetRawKeyCode()
-                if   (rawCode == 65513): self.AltSide = "LALT+"
-                elif (rawCode == 65514): self.AltSide = "RALT+"
+            if SeparateLR:
+                if isinstance(event, wx.KeyEvent):
+                    rawCode = event.GetRawKeyCode()
+                    if   (rawCode == 65513): self.AltText = "LALT+"
+                    elif (rawCode == 65514): self.AltText = "RALT+"
+            else:
+                self.AltText = "ALT+"
         else:
-            self.AltSide = ''
+            self.AltText = ''
 
-        self.Binding = self.CtrlSide + self.AltSide + self.ShiftSide + str(KeyToBind)
+        self.Binding = self.CtrlText + self.AltText + self.ShiftText + str(KeyToBind)
+        print(self.Binding)
 
         self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
         self.Layout()

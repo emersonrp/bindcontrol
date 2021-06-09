@@ -70,9 +70,8 @@ class SoD(Page):
             'FlyFly'             : '',
             'FlyGFly'            : '',
             'Unqueue'            : 1,
-            'Enable'             : None,
+            'EnableSoD'          : True,
         }
-
 
         self.Init['NovaMode'] = "T"
         self.Init['NovaTray'] = "4"
@@ -106,10 +105,12 @@ class SoD(Page):
     def BuildPage(self):
 
         topSizer = wx.FlexGridSizer(0,2,10,10)
-        EnableSoD = wx.CheckBox( self, -1, "Enable Speed On Demand Binds" )
+        EnableSoD = wx.CheckBox( self, -1, "Enable Speed On Demand Binds",  )
+        EnableSoD.SetValue(True)
         topSizer.Add( EnableSoD, 0, wx.TOP|wx.LEFT, 10)
         topSizer.AddSpacer(1)
         self.Controls['EnableSoD'] = EnableSoD
+        EnableSoD.Bind(wx.EVT_CHECKBOX, self.OnEnableSoD)
 
         leftColumn  = wx.BoxSizer(wx.VERTICAL)
         rightColumn = wx.BoxSizer(wx.VERTICAL)
@@ -204,6 +205,20 @@ class SoD(Page):
         leftColumn.Add(generalSizer, 0, wx.EXPAND)
 
 
+        ##### TEMP TRAVEL POWERS
+        tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
+        # if (temp travel powers exist)?  Should this be "custom"?
+        tempSizer.AddLabeledControl(
+            ctlName = 'TempMode',
+            ctlType = 'keybutton',
+        )
+        tempSizer.AddLabeledControl(
+            ctlName = 'TempTray',
+            ctlType = 'spinbox',
+            contents = [1, 8],
+        )
+        leftColumn.Add(tempSizer, 0, wx.EXPAND)
+
         ##### SUPER SPEED
         superSpeedSizer = ControlGroup(self, self, 'Super Speed')
         superSpeedSizer.AddLabeledControl(
@@ -296,20 +311,6 @@ class SoD(Page):
         # end team-tp
         rightColumn.Add(teleportSizer, 0, wx.EXPAND)
 
-        ##### TEMP TRAVEL POWERS
-        tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
-        # if (temp travel powers exist)?  Should this be "custom"?
-        tempSizer.AddLabeledControl(
-            ctlName = 'TempMode',
-            ctlType = 'keybutton',
-        )
-        tempSizer.AddLabeledControl(
-            ctlName = 'TempTray',
-            ctlType = 'spinbox',
-            contents = [1, 8],
-        )
-        rightColumn.Add(tempSizer, 0, wx.EXPAND)
-
         ##### KHELDIAN TRAVEL POWERS
         kheldianSizer = ControlGroup(self, self, 'Nova / Dwarf Travel Powers')
 
@@ -350,13 +351,16 @@ class SoD(Page):
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(topSizer, flag = wx.ALL|wx.EXPAND, border = 16)
-        self.SetSizer(paddingSizer)
+        self.SetSizerAndFit(paddingSizer)
 
+    def OnEnableSoD(self, evt):
+        for c,control in self.Controls.items():
+            if c != 'EnableSoD':  # don't disable yourself kthx
+                control.Enable(evt.EventObject.IsChecked())
 
     def makeSoDFile(self, p):
 
         t = p['t']
-
 
         bl   = t['bl'].get(p['bl'], "")
         bla  = t['bl'].get(p['bla'], "")
@@ -2021,9 +2025,10 @@ class SoD(Page):
 
     #sub actPower { goto &actPower_name
     def actPower_name(self, start, unq, on,*rest):
-        if (refon):
+        pass
+        #if (ref on):
             #  deal with power slot stuff..
-           traytest = on['trayslot']
+           #traytest = on['trayslot']
 
         # # TODO - reimplement this in Python re 'ref' etc
         # for v in rest:

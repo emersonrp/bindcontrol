@@ -22,6 +22,7 @@ class FPSDisplay(Page):
         controlsBox.AddLabeledControl(
             ctlName = 'FPSEnable',
             ctlType = 'checkbox',
+            callback = self.OnEnableCB,
         )
         controlsBox.AddLabeledControl(
             ctlName = 'FPSBindKey',
@@ -34,6 +35,10 @@ class FPSDisplay(Page):
         self.SetSizerAndFit(paddingSizer)
 
         return self
+
+
+    def OnEnableCB(self, evt):
+        self.Controls['FPSBindKey'].Enable(evt.EventObject.IsChecked())
 
     # TODO -- need two files to make this a toggle.
     def PopulateBindFiles(self):

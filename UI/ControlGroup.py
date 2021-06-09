@@ -59,6 +59,8 @@ class ControlGroup(wx.StaticBoxSizer):
             control = wx.CheckBox(ctlParent, -1, contents)
             control.SetValue(bool(Init[ctlName]))
             padding = 10
+            if callback:
+                control.Bind(wx.EVT_CHECKBOX, callback )
 
         elif ctlType == ('spinbox'):
             control = wx.SpinCtrl(ctlParent, -1)

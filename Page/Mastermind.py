@@ -158,9 +158,6 @@ class Mastermind(Page):
         sizer = wx.BoxSizer(wx.VERTICAL)
         upperSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        #creditsBox = wx.StaticText(self, -1, self.HelpText(), style=wx.ALIGN_CENTER)
-        #upperSizer.Add(creditsBox, 0, wx.EXPAND|wx.ALL, 30)
-
         # get the pet names, whether they're bodyguards, and binds to select them directly
         # TODO -- probably want to enable/disable various bits of this based on whether bodyguard is
         # active, or whether we have names, or whatever

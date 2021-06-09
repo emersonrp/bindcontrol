@@ -12,15 +12,16 @@ class InspirationPopper(Page):
         self.TabTitle = "Inspiration Popper"
 
         self.Init = {
-            'Enable'          : None,
-            'AccuracyKey'     : "LSHIFT+A",
-            'HealthKey'       : "LSHIFT+S",
-            'DamageKey'       : "LSHIFT+D",
-            'EnduranceKey'    : "LSHIFT+Q",
-            'DefenseKey'      : "LSHIFT+W",
-            'BreakFreeKey'    : "LSHIFT+E",
-            'ResistDamageKey' : "LSHIFT+SPACE",
-            'ResurrectionKey' : "LSHIFT+TILDE",
+            'EnableInspBinds'    : None,
+            'EnableRevInspBinds' : None,
+            'AccuracyKey'        : "LSHIFT+A",
+            'HealthKey'          : "LSHIFT+S",
+            'DamageKey'          : "LSHIFT+D",
+            'EnduranceKey'       : "LSHIFT+Q",
+            'DefenseKey'         : "LSHIFT+W",
+            'BreakFreeKey'       : "LSHIFT+E",
+            'ResistDamageKey'    : "LSHIFT+SPACE",
+            'ResurrectionKey'    : "LSHIFT+TILDE",
             'RevAccuracyKey'     : "UNBOUND",
             'RevHealthKey'       : "UNBOUND",
             'RevDamageKey'       : "UNBOUND",
@@ -39,8 +40,8 @@ class InspirationPopper(Page):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        InspRows =    ControlGroup(self, self, width=8)
-        RevInspRows = ControlGroup(self, self, width=8)
+        self.InspRows =    ControlGroup(self, self, width=8)
+        self.RevInspRows = ControlGroup(self, self, width=8)
 
         for Insp in Inspirations:
             revkey = f"Rev{Insp}Key"
@@ -49,13 +50,12 @@ class InspirationPopper(Page):
 
             for order in ("", "Rev"):
 
-                rowSet = RevInspRows if order else InspRows
+                rowSet = self.RevInspRows if order else self.InspRows
 
                 rowSet.AddLabeledControl(
                     ctlType = 'keybutton',
                     ctlName = f"{order}{Insp}Key",
                     tooltip = f"Choose the key combo to activate a {Insp} inspiration",
-
                 )
 
                 rowSet.AddLabeledControl(
@@ -81,8 +81,9 @@ class InspirationPopper(Page):
             'Check this to enable the Inspiration Popper Binds, (largest used first)'))
         self.Controls['EnableInspBinds'] = useCB
         sizer.Add(useCB, 0, wx.ALL, 10)
+        useCB.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
 
-        sizer.Add(InspRows)
+        sizer.Add(self.InspRows)
 
         sizer.AddSpacer(20)
 
@@ -92,13 +93,29 @@ class InspirationPopper(Page):
             'Check this to enable the Reverse Inspiration Popper Binds, (smallest used first)'))
         self.Controls['EnableRevInspBinds'] = useRevCB
         sizer.Add(useRevCB, 0, wx.ALL, 10)
+        useRevCB.Bind(wx.EVT_CHECKBOX, self.OnEnableRevCB)
 
-        sizer.Add(RevInspRows)
+        sizer.Add(self.RevInspRows)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
         self.SetSizerAndFit(paddingSizer)
 
+    def OnEnableCB(self, evt):
+        enable = evt.EventObject.IsChecked()
+        for Insp in Inspirations:
+            self.Controls[f"{Insp}Key"].Enable(enable)
+            self.Controls[f"{Insp}Border"].Enable(enable)
+            self.Controls[f"{Insp}Background"].Enable(enable)
+            self.Controls[f"{Insp}Foreground"].Enable(enable)
+
+    def OnEnableRevCB(self, evt):
+        enable = evt.EventObject.IsChecked()
+        for Insp in Inspirations:
+            self.Controls[f"Rev{Insp}Key"].Enable(enable)
+            self.Controls[f"Rev{Insp}Border"].Enable(enable)
+            self.Controls[f"Rev{Insp}Background"].Enable(enable)
+            self.Controls[f"Rev{Insp}Foreground"].Enable(enable)
 
     def PopulateBindFiles(self):
         profile = self.Profile

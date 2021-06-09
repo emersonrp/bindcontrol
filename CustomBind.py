@@ -2,15 +2,20 @@
 class CustomBind():
     def __init__(self, page, bind = None):
 
-        self.Key = ''
-        self.Title = ''
+        self.Key     = 'UNBOUND'
+        self.Name    = ''
         self.Payload = ''
         self.Page = page
 
         if bind:
             if bind.get('key',     None): self.Key     = bind['key']
-            if bind.get('title',   None): self.Title   = bind['title']
+            if bind.get('name',    None): self.Title   = bind['title']
             if bind.get('payload', None): self.Payload = bind['payload']
+
+    def BuildBindUI(parent, self):
+        # build the UI needed to edit/create this bind, and shim
+        # it into 'parent'
+        pass
 
     def MakeBinds(self):
         # for overriding on child classes

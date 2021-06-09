@@ -27,11 +27,6 @@ class Profile(wx.Notebook):
 
         # Add the individual tabs, in order.
         self.CreatePage(General(self))
-
-        # Pluck some bits out of General that we'll want later
-        self.BindsDir  = self.General.GetState('BindsDir')
-        self.ResetFile = self.GetBindFile(self.BindsDir, "resetfile.txt")
-
         self.CreatePage(SoD(self))
         self.CreatePage(FPSDisplay(self))
         self.CreatePage(InspirationPopper(self))
@@ -53,12 +48,15 @@ class Profile(wx.Notebook):
 
         self.Layout()
 
+    #####
+    # Convenience / JIT accessors
+    def Name(self)        : return self.General.GetState('Name')
+    def BindsDir(self)    : return self.General.GetState('BindsDir')
+    def ProfileFile(self) : return Path(self.BindsDir(), self.Name() + ".bcp")
+    def ResetFile(self)   : return self.GetBindFile(self.BindsDir, "resetfile.txt")
+
     ###################
     # Profile Save/Load
-    def ProfileFile(self):
-        return Path(self.BindsDir, self.General.State['Name'] + ".bcp")
-
-
     def SaveToFile(self, event):
 
         savefile = Path(self.ProfileFile())
@@ -67,14 +65,29 @@ class Profile(wx.Notebook):
         for pagename in self.Pages:
             savedata[pagename] = {}
             page = getattr(self, pagename)
-            for control in page.Controls:
-                savedata[pagename][control] = page.Controls[control].GetValue()
+            for controlname, control in page.Controls.items():
+
+                # skip if off
+                if control.IsEnabled():
+
+                    # look up what type of control it is to know how to extract its value
+                    controlType = type(control).__name__
+                    if controlType == 'DirPickerCtrl':
+                        value = control.GetPath()
+                    elif controlType == 'Button':
+                        value = control.GetLabel()
+                    elif controlType == 'ColourPickerCtrl':
+                        value = control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
+                    else:
+                        value = control.GetValue()
+
+                    savedata[pagename][controlname] = value
 
         dumpstring = json.dumps(savedata, indent=0)
         try:
             savefile.touch() # make sure there's one there.
             savefile.write_text(dumpstring)
-            wx.LogError(f"Wrote file {savefile}")
+            # wx.LogError(f"Wrote file {savefile}")
         except None:
             wx.LogError(f"Problem saving to file '{savefile}'")
 
@@ -95,12 +108,21 @@ class Profile(wx.Notebook):
                     datastring = file.read_text()
                     data = json.loads(datastring)
 
-                    print(data)
-
                     for pagename in self.Pages:
                         page = getattr(self, pagename)
-                        page.State = data[page]
-                        page.SyncControlsFromState()
+                        for controlname, control in page.Controls.items():
+                            value = data[pagename][controlname]
+
+                            # look up what type of control it is to know how to extract its value
+                            controlType = type(control).__name__
+                            if controlType == 'DirPickerCtrl':
+                                control.SetPath(value)
+                            elif controlType == 'Button':
+                                control.SetLabel(value)
+                            elif controlType == 'ColourPickerCtrl':
+                                control.SetColour(value)
+                            else:
+                                control.SetValue(value)
 
                 except:
                     wx.LogError("Cannot open file '%s'." % file)

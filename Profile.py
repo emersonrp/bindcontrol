@@ -18,7 +18,7 @@ from Page.TypingMsg import TypingMsg
 class Profile(wx.Notebook):
 
     def __init__(self, parent):
-        wx.Notebook.__init__(self, parent, style = wx.NB_LEFT)
+        wx.Notebook.__init__(self, parent, style = wx.NB_TOP)
 
         self.BindFiles = {}
         self.Pages     = []
@@ -31,8 +31,8 @@ class Profile(wx.Notebook):
         self.CreatePage(FPSDisplay(self))
         self.CreatePage(InspirationPopper(self))
         self.CreatePage(Mastermind(self))
-        #self.CreatePage(TeamPetSelect(self))
-        #self.CreatePage(TypingMsg(self))
+        self.CreatePage(TeamPetSelect(self))
+        self.CreatePage(TypingMsg(self))
         self.CreatePage(SimpleBinds(self))
         self.CreatePage(BufferBinds(self))
         #self.CreatePage(ComplexBinds(self))

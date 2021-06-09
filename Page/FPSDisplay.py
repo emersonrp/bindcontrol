@@ -1,4 +1,5 @@
 import wx
+import UI
 import Utility
 
 from UI.ControlGroup import ControlGroup
@@ -10,8 +11,8 @@ class FPSDisplay(Page):
         Page.__init__(self, parent)
         self.TabTitle = "FPS / Netgraph"
         self.Init = {
-            'Enable': True,
-            'Bindkey': "P",
+            'FPSEnable': True,
+            'FPSBindKey': "P",
         }
 
     def BuildPage(self):
@@ -19,11 +20,11 @@ class FPSDisplay(Page):
 
         controlsBox = ControlGroup(self, self, self.TabTitle)
         controlsBox.AddLabeledControl(
-            ctlName = 'Enable',
+            ctlName = 'FPSEnable',
             ctlType = 'checkbox',
         )
         controlsBox.AddLabeledControl(
-            ctlName = 'Bindkey',
+            ctlName = 'FPSBindKey',
             ctlType = 'keybutton',
         )
         topSizer.Add(controlsBox)
@@ -34,6 +35,7 @@ class FPSDisplay(Page):
 
         return self
 
+    # TODO -- need two files to make this a toggle.
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile
         ResetFile.SetBind(self.Profile.FPS['Bindkey'],'++showfps++netgraph')
@@ -43,4 +45,9 @@ class FPSDisplay(Page):
 
     def bindisused(self):
         return self.GetState('Enable')
+
+    UI.Labels.update({
+        'FPSEnable'  : "Enable the FPS/Netgraph bind",
+        'FPSBindKey' : "Turn on FPS and Netgraph",
+    })
 

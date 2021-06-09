@@ -106,10 +106,10 @@ class SoD(Page):
     def BuildPage(self):
 
         topSizer = wx.FlexGridSizer(0,2,10,10)
-
-        topSizer.Add( wx.CheckBox( self, -1, "Enable Speed On Demand Binds" ), 0,
-                wx.TOP|wx.LEFT, 10)
+        EnableSoD = wx.CheckBox( self, -1, "Enable Speed On Demand Binds" )
+        topSizer.Add( EnableSoD, 0, wx.TOP|wx.LEFT, 10)
         topSizer.AddSpacer(1)
+        self.Controls['EnableSoD'] = EnableSoD
 
         leftColumn  = wx.BoxSizer(wx.VERTICAL)
         rightColumn = wx.BoxSizer(wx.VERTICAL)

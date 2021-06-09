@@ -41,12 +41,6 @@ class TeamPetSelect(Page):
 
     def BuildPage(self):
 
-        if not self.GetState('Mode'): self.SetState('Mode', 1)
-
-        for i in (1,2,3,4,5,6,7,8):
-            if not self.GetState(f"sel{i}"):
-                self.SetState(f"sel{i}", "UNBOUND")
-
         topSizer = wx.BoxSizer(wx.VERTICAL)
 
         ##### header
@@ -54,6 +48,7 @@ class TeamPetSelect(Page):
 
         enablecb = wx.CheckBox( self, -1, 'Enable Team/Pet Select')
         enablecb.SetToolTip( wx.ToolTip('Check this to enable the Team/Pet Select Binds') )
+        self.Controls['EnableTeamPetSelectBinds'] = enablecb
 
         helpbutton = wx.BitmapButton(self, -1, Utility.Icon('Help'))
         helpbutton.Bind(wx.EVT_BUTTON, self.help)

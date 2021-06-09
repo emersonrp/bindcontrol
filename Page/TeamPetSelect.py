@@ -5,25 +5,15 @@ import Utility
 from UI.ControlGroup import ControlGroup
 from Page import Page
 
+ordinals = ("First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth")
 
 class TeamPetSelect(Page):
-    ordinals = ("First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth")
 
     def __init__(self, parent):
         Page.__init__(self, parent)
 
         self.TabTitle = "Team / Pet Select"
         self.Init = {
-            'TPSEnable'   : True,
-            'TPSSelMode'  : '',
-            'TeamSelect1' : 'UNBOUND',
-            'TeamSelect2' : 'UNBOUND',
-            'TeamSelect3' : 'UNBOUND',
-            'TeamSelect4' : 'UNBOUND',
-            'TeamSelect5' : 'UNBOUND',
-            'TeamSelect6' : 'UNBOUND',
-            'TeamSelect7' : 'UNBOUND',
-            'TeamSelect8' : 'UNBOUND',
             'EnablePet' : True,
             'SelNextPet' : 'UNBOUND',
             'SelPrevPet' : 'UNBOUND',
@@ -42,38 +32,6 @@ class TeamPetSelect(Page):
     def BuildPage(self):
 
         topSizer = wx.BoxSizer(wx.VERTICAL)
-
-        ##### header
-        headerSizer = wx.FlexGridSizer(0,2,10,10)
-
-        enablecb = wx.CheckBox( self, -1, 'Enable Team/Pet Select')
-        enablecb.SetToolTip( wx.ToolTip('Check this to enable the Team/Pet Select Binds') )
-        self.Controls['EnableTeamPetSelectBinds'] = enablecb
-
-        helpbutton = wx.BitmapButton(self, -1, Utility.Icon('Help'))
-        helpbutton.Bind(wx.EVT_BUTTON, self.help)
-
-        headerSizer.Add(enablecb, 0, wx.ALIGN_CENTER_VERTICAL)
-        headerSizer.Add(helpbutton, wx.ALIGN_RIGHT, 0)
-
-        topSizer.Add(headerSizer)
-
-        ##### direct-select keys
-        TPSDirectBox = ControlGroup(self, self, 'Direct Team/Pet Select')
-
-        TPSDirectBox.AddLabeledControl(
-            ctlName = 'TPSSelMode',
-            ctlType = 'combo',
-            contents = ['Teammates, then pets','Pets, then teammates','Teammates Only','Pets Only'],
-            tooltip = 'Choose the order in which teammates and pets are selected with sequential keypresses',
-        )
-        for selectid in (1,2,3,4,5,6,7,8):
-            TPSDirectBox.AddLabeledControl(
-                ctlName = f"TeamSelect{selectid}",
-                ctlType = 'keybutton',
-                tooltip = f"Choose the key that will select team member / pet {selectid}",
-            )
-        topSizer.Add(TPSDirectBox)
 
         ##### Pet Select Binds
         PetSelBox = ControlGroup(self, self, 'Pet Select')
@@ -148,36 +106,6 @@ class TeamPetSelect(Page):
     def PopulateBindFiles(self):
         profile    = self.Profile
         ResetFile  = profile.ResetFile
-        if (self.GetState('TPSSelMode') < 3):
-            selmethod = "teamselect"
-            selnummod = 0
-            selmethod1 = "petselect"
-            selnummod1 = 1
-            if (self.GetState('TPSSelMode') == 2):
-                selmethod = "petselect"
-                selnummod = 1
-                selmethod1 = "teamselect"
-                selnummod1 = 0
-            selresetfile = profile.GetBindFile("tps","reset.txt")
-            for i in (1,2,3,4,5,6,7,8):
-                selfile = profile.GetBindFile("tps",f"sel{i}.txt")
-                ResetFile.   SetBind(self.GetState(f"TeamSelect{i}"),"selmethod " + (i - selnummod) + BindFile.BLF(profile,'tps',"sel{i}.txt"))
-                selresetfile.SetBind(self.GetState(f"TeamSelect{i}"),"selmethod " + (i - selnummod) + BindFile.BLF(profile,'tps',"sel{i}.txt"))
-                for j in (1,2,3,4,5,6,7,8):
-                    if (i == j):
-                        selfile.SetBind(self.GetState(f"TeamSelect{j}"),"selmethod1 " + (j - selnummod1) + BindFile.BLF(profile,'tps',"reset.txt"))
-                    else:
-                        selfile.SetBind(self.GetState(f"TeamSelect{j}"),"selmethod " +  (j - selnummod)  + BindFile.BLF(profile,'tps',"selj.txt"))
-
-        else:
-            selmethod = "teamselect"
-            selnummod = 0
-            if (self.GetState('TPSSelMode') == 4):
-                selmethod = "petselect"
-                selnummod = 1
-            for i in (1,2,3,4,5,6,7,8):
-                ResetFile.SetBind(self.GetState('sel1'),"selmethod " + (i - selnummod))
-
         if (self.GetState('PetSelEnable')):
             tpsCreatePetSet(profile,1,0,profile.ResetFile)
             for size in (1,2,3,4,5,6,7,8):
@@ -296,14 +224,6 @@ class TeamPetSelect(Page):
 
     UI.Labels.update({
         'TPSSelMode' : "Team/Pet selection mode",
-        'TeamSelect1' : "Select First Team Member/Pet",
-        'TeamSelect2' : "Select Second Team Member/Pet",
-        'TeamSelect3' : "Select Third Team Member/Pet",
-        'TeamSelect4' : "Select Fourth Team Member/Pet",
-        'TeamSelect5' : "Select Fifth Team Member/Pet",
-        'TeamSelect6' : "Select Sixth Team Member/Pet",
-        'TeamSelect7' : "Select Seventh Team Member/Pet",
-        'TeamSelect8' : "Select Eighth Team Member/Pet",
         'SelNextPet' : 'Select Next Pet',
         'SelPrevPet' : 'Select Previous Pet',
         'IncPetSize' : 'Increase Pet Group Size',

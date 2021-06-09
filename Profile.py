@@ -6,14 +6,15 @@ from BindFile import BindFile
 from Page.BufferBinds import BufferBinds
 #from Page.ComplexBinds
 #from Page.CustomBinds
-from Page.FPSDisplay import FPSDisplay
+#from Page.FPSDisplay import FPSDisplay
+from Page.Gameplay import Gameplay
 from Page.General import General
 from Page.InspirationPopper import InspirationPopper
 from Page.Mastermind import Mastermind
 from Page.SimpleBinds import SimpleBinds
 from Page.SoD import SoD
 from Page.TeamPetSelect import TeamPetSelect
-from Page.TypingMsg import TypingMsg
+#from Page.TypingMsg import TypingMsg
 
 class Profile(wx.Notebook):
 
@@ -27,12 +28,13 @@ class Profile(wx.Notebook):
 
         # Add the individual tabs, in order.
         self.CreatePage(General(self))
+        self.CreatePage(Gameplay(self))
         self.CreatePage(SoD(self))
-        self.CreatePage(FPSDisplay(self))
+#        self.CreatePage(FPSDisplay(self))
         self.CreatePage(InspirationPopper(self))
         self.CreatePage(Mastermind(self))
         self.CreatePage(TeamPetSelect(self))
-        self.CreatePage(TypingMsg(self))
+#        self.CreatePage(TypingMsg(self))
         self.CreatePage(SimpleBinds(self))
         self.CreatePage(BufferBinds(self))
         #self.CreatePage(ComplexBinds(self))

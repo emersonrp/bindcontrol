@@ -20,7 +20,7 @@ class BufferBind(CustomBind):
         for i in (1,2,3,4,5,6):
             self.Init[f"Pet{i}BuffKey"] = "UNBOUND"
 
-    def BuildBindUI(self, BindCP):
+    def BuildBindUI(self, BindCP, page):
 
         BindCP.SetLabel("This is a test label")
         pane = BindCP.GetPane()

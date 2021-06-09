@@ -5,7 +5,7 @@ import json
 from BindFile import BindFile
 from Page.BufferBinds import BufferBinds
 #from Page.ComplexBinds
-#from Page.CustomBinds
+from Page.CustomBinds import CustomBinds
 #from Page.FPSDisplay import FPSDisplay
 from Page.Gameplay import Gameplay
 from Page.General import General
@@ -35,10 +35,10 @@ class Profile(wx.Notebook):
         self.CreatePage(Mastermind(self))
         self.CreatePage(TeamPetSelect(self))
 #        self.CreatePage(TypingMsg(self))
-        self.CreatePage(SimpleBinds(self))
-        self.CreatePage(BufferBinds(self))
+        #self.CreatePage(SimpleBinds(self))
+        #self.CreatePage(BufferBinds(self))
         #self.CreatePage(ComplexBinds(self))
-        #self.CreatePage(CustomBinds(self))
+        self.CreatePage(CustomBinds(self))
 
     def CreatePage(self, module):
         module.BuildPage()

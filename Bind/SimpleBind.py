@@ -8,15 +8,10 @@ class SimpleBind(CustomBind):
     def __init__(self, page, bind = {}):
         CustomBind.__init__(self, page, bind)
 
-    # TODO - where to put this logic?
     def BuildBindUI(self, BindCP, page):
 
         BindCP.SetLabel("This is a test label")
         pane = BindCP.GetPane()
-
-        # TODO:
-        # payload  = RTC(pane, -1, "testing 1 2 3", style=wx.richtext.RE_MULTILINE)
-        # payload.SetHint("/say Your bind text goes here!$$powexec Super Jump")
 
         # TODO - get 'bindclass' (Simple, Buffer, etc) and 'unique-bind-id' scheme
         bindclass = ''
@@ -26,20 +21,20 @@ class SimpleBind(CustomBind):
 
         BindNameCtrl = wx.TextCtrl(pane, -1, self.Name)
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Name:"), (0,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(BindNameCtrl,                              (0,1), flag=wx.EXPAND)
+        BindSizer.Add(BindNameCtrl,                          (0,1), flag=wx.EXPAND)
         page.Controls["BindName"] = BindNameCtrl
 
         BindKeyCtrl = wx.Button(pane, -1, self.Key)
         BindKeyCtrl.CtlName = f"{bindclass}{unique_bind_id}BindKey"
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), (0,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(BindKeyCtrl,                        (0,3), flag=wx.EXPAND)
+        BindSizer.Add(BindKeyCtrl,                          (0,3), flag=wx.EXPAND)
         BindKeyCtrl.Bind(wx.EVT_BUTTON, KeyPickerEventHandler)
         page.Controls['BindKey'] = BindKeyCtrl
 
-        BindPayloadCtrl = wx.TextCtrl(pane, -1, self.Payload)
+        BindContentsCtrl = wx.TextCtrl(pane, -1, self.Contents)
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"), (1,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(BindPayloadCtrl,                            (1,1), span=(1,3), flag=wx.ALL|wx.EXPAND)
-        page.Controls['BindPayload'] = BindPayloadCtrl
+        BindSizer.Add(BindContentsCtrl,                          (1,1), span=(1,3), flag=wx.ALL|wx.EXPAND)
+        page.Controls['BindContents'] = BindContentsCtrl
 
         BindSizer.AddGrowableCol(1)
         BindSizer.AddGrowableCol(3)

@@ -12,8 +12,8 @@ class InspirationPopper(Page):
         self.TabTitle = "Inspiration Popper"
 
         self.Init = {
-            'EnableInspBinds'    : None,
-            'EnableRevInspBinds' : None,
+            'EnableInspBinds'    : True,
+            'EnableRevInspBinds' : True,
             'AccuracyKey'        : "LSHIFT+A",
             'HealthKey'          : "LSHIFT+S",
             'DamageKey'          : "LSHIFT+D",
@@ -79,6 +79,7 @@ class InspirationPopper(Page):
         useCB = wx.CheckBox( self, -1, 'Enable Inspiration Popper Binds (prefer largest)')
         useCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Inspiration Popper Binds, (largest used first)'))
+        useCB.SetValue(self.Init['EnableInspBinds'])
         self.Controls['EnableInspBinds'] = useCB
         sizer.Add(useCB, 0, wx.ALL, 10)
         useCB.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
@@ -91,6 +92,7 @@ class InspirationPopper(Page):
                 'Enable Reverse Inspiration Popper Binds (prefer smallest)')
         useRevCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Reverse Inspiration Popper Binds, (smallest used first)'))
+        useRevCB.SetValue(self.Init['EnableRevInspBinds'])
         self.Controls['EnableRevInspBinds'] = useRevCB
         sizer.Add(useRevCB, 0, wx.ALL, 10)
         useRevCB.Bind(wx.EVT_CHECKBOX, self.OnEnableRevCB)

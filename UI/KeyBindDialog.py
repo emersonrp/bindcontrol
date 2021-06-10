@@ -11,11 +11,11 @@ if wx.Platform == '__WXMSW__':
         'RCTRL' : 0x1000000,
         'RALT'  : 0x1000000,
     }
-elif wx.Platform == '__WXX11_':
+elif wx.Platform == '__WXGTK__':
     modKeyFlags = {
-        'LSHIFT': 65505, 'RSHIFT': 65506,
-        'LCTRL' : 65507, 'RCTRL' : 65508,
-        'LALT'  : 65513, 'RALT'  : 65514
+        'RSHIFT': 0x08,
+        'RCTRL' : 0x08,
+        'RALT'  : 0x08,
     }
 elif wx.Platform == '__WXMAC__':
     pass
@@ -59,12 +59,13 @@ class KeyBindDialog(wx.Dialog):
 
         self.kbBind.SetLabelMarkup('<b><big>' + keybind + '</big></b>')
 
-        self.SeparateLRChooser = wx.CheckBox( self, -1, "Bind left/right mod keys separately")
+        if(modKeyFlags):
+            self.SeparateLRChooser = wx.CheckBox( self, -1, "Bind left/right mod keys separately")
 
-        sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 15);
-        sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);
-        sizer.AddSpacer(15)
-        sizer.Add( self.SeparateLRChooser, 0, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
+            sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 15);
+            sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);
+            sizer.AddSpacer(15)
+            sizer.Add( self.SeparateLRChooser, 0, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
 
         # Wrap everything in a vbox to add some padding
         vbox = wx.BoxSizer(wx.VERTICAL);
@@ -107,7 +108,7 @@ class KeyBindDialog(wx.Dialog):
 
         KeyToBind = ''
 
-        SeparateLR = self.SeparateLRChooser.Value
+        SeparateLR = self.SeparateLRChooser.Value if modKeyFlags else False
 
         if (isinstance(event, wx.KeyEvent)):
             code = event.GetKeyCode()
@@ -130,10 +131,8 @@ class KeyBindDialog(wx.Dialog):
         # check for each modifier key
         if (event.ShiftDown()) :
             if SeparateLR and modKeyFlags:
-                if isinstance(event, wx.KeyEvent):
+                if isinstance(event, wx.KeyEvent) and event.GetKeyCode() == wx.WXK_SHIFT:
                     rawFlags = event.GetRawKeyFlags()
-                    if not rawFlags: print("NO RAWFLAGS")
-                    print(bin(rawFlags))
                     self.ShiftText = "RSHIFT+" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT+"
             else:
                 self.ShiftText = "SHIFT+"
@@ -142,10 +141,8 @@ class KeyBindDialog(wx.Dialog):
 
         if (event.CmdDown())   :
             if SeparateLR and modKeyFlags:
-                if isinstance(event, wx.KeyEvent):
+                if isinstance(event, wx.KeyEvent) and event.GetKeyCode() == wx.WXK_RAW_CONTROL:
                     rawFlags = event.GetRawKeyFlags()
-                    print(hex(rawFlags))
-                    print(bin(rawFlags))
                     self.CtrlText = "RCTRL+" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL+"
             else:
                 self.CtrlText = "CTRL+"
@@ -155,10 +152,8 @@ class KeyBindDialog(wx.Dialog):
         # TODO - Alt goes missing if you mash several things while the dialog is open
         if (event.AltDown())   :
             if SeparateLR and modKeyFlags:
-                if isinstance(event, wx.KeyEvent):
+                if isinstance(event, wx.KeyEvent) and event.GetKeyCode() == wx.WXK_ALT:
                     rawFlags = event.GetRawKeyFlags()
-                    print(hex(rawFlags))
-                    print(bin(rawFlags))
                     self.AltText = "RALT+" if (rawFlags & modKeyFlags['RALT']) else "LALT+"
             else:
                 self.AltText = "ALT+"
@@ -166,7 +161,6 @@ class KeyBindDialog(wx.Dialog):
             self.AltText = ''
 
         self.Binding = self.CtrlText + self.AltText + self.ShiftText + str(KeyToBind)
-        print(self.Binding)
 
         self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
         self.Layout()

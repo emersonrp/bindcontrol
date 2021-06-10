@@ -1,6 +1,26 @@
 import wx
 import string
 import UI
+import Utility
+
+# Platform-specific keycodes for telling left from right
+modKeyFlags = {}
+if wx.Platform == '__WXMSW__':
+    modKeyFlags = {
+        'LSHIFT': 160, 'RSHIFT': 161,
+        'LCTRL' : 162, 'RCTRL' : 163,
+        'LAlT'  : 164, 'RALT'  : 165,
+    }
+elif wx.Platform == '__WXX11_':
+    modKeyFlags = {
+        'LSHIFT': 65505, 'RSHIFT': 65506,
+        'LCTRL' : 65507, 'RCTRL' : 65508,
+        'LALT'  : 65513, 'RALT'  : 65514
+    }
+elif wx.Platform == '__WXMAC__':
+    pass
+
+
 
 def KeyPickerEventHandler(evt):
     button = evt.EventObject
@@ -61,7 +81,7 @@ class KeyBindDialog(wx.Dialog):
             i.Bind(wx.EVT_MOUSE_AUX2_DOWN , self.handleBind )
 
         buttonSizer = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
-        vbox.Add(buttonSizer, 0, wx.ALIGN_CENTER|wx.ALL)
+        vbox.Add(buttonSizer, 0, wx.ALIGN_CENTER|wx.ALL, 16)
 
         self.SetSizerAndFit(vbox);
         self.Layout()
@@ -108,35 +128,35 @@ class KeyBindDialog(wx.Dialog):
             ][button]
 
         # check for each modifier key
-        if (event.CmdDown())   :
-            if SeparateLR:
-                if isinstance(event, wx.KeyEvent):
-                    rawCode = event.GetRawKeyCode()
-                    if   (rawCode == 65507): self.CtrlText = "LCTRL+"
-                    elif (rawCode == 65508): self.CtrlText = "RCTRL+"
-            else:
-                self.CtrlText = "CTRL+"
-        else:
-            self.CtrlText = ''
-
         if (event.ShiftDown()) :
-            if SeparateLR:
+            if SeparateLR and modKeyFlags:
                 if isinstance(event, wx.KeyEvent):
-                    rawCode = event.GetRawKeyCode()
-                    if   (rawCode == 65505): self.ShiftText = "LSHIFT+"
-                    elif (rawCode == 65506): self.ShiftText = "RSHIFT+"
+                    rawFlags = event.GetRawKeyFlags()
+                    if   (rawFlags & modKeyFlags['LSHIFT']): self.ShiftText = "LSHIFT+"
+                    elif (rawFlags & modKeyFlags['RSHIFT']): self.ShiftText = "RSHIFT+"
             else:
                 self.ShiftText = "SHIFT+"
         else:
             self.ShiftText = ''
 
+        if (event.CmdDown())   :
+            if SeparateLR and modKeyFlags:
+                if isinstance(event, wx.KeyEvent):
+                    rawFlags = event.GetRawKeyFlags()
+                    if   (rawFlags & modKeyFlags['LCTRL']): self.CtrlText = "LCTRL+"
+                    elif (rawFlags & modKeyFlags['RCTRL']): self.CtrlText = "RCTRL+"
+            else:
+                self.CtrlText = "CTRL+"
+        else:
+            self.CtrlText = ''
+
         # TODO - Alt goes missing if you mash several things while the dialog is open
         if (event.AltDown())   :
-            if SeparateLR:
+            if SeparateLR and modKeyFlags:
                 if isinstance(event, wx.KeyEvent):
-                    rawCode = event.GetRawKeyCode()
-                    if   (rawCode == 65513): self.AltText = "LALT+"
-                    elif (rawCode == 65514): self.AltText = "RALT+"
+                    rawFlags = event.GetRawKeyFlags()
+                    if   (rawFlags & modKeyFlags['LALT']): self.AltText = "LALT+"
+                    elif (rawFlags & modKeyFlags['RALT']): self.AltText = "RALT+"
             else:
                 self.AltText = "ALT+"
         else:

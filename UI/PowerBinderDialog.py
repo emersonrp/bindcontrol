@@ -17,6 +17,7 @@ class PowerBinderDialog(wx.Dialog):
         wx.Dialog.__init__(self, parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
         sizer = wx.BoxSizer(wx.VERTICAL);
+        self.mainSizer = sizer
 
         self.rearrangeCtrl = wx.RearrangeCtrl(self, -1, size=(500,300))
         sizer.Add(self.rearrangeCtrl, 1, wx.EXPAND)
@@ -34,12 +35,16 @@ class PowerBinderDialog(wx.Dialog):
         self.bindChoice.SetSelection(self.bindChoice.FindString("Use Power"))
         self.bindChoice.Bind(wx.EVT_CHOICE, self.OnBindChoice)
         choiceSizer.Add(self.bindChoice, 0, wx.ALIGN_CENTER_VERTICAL)
-        addButton = wx.Button(self, -1, "Add")
-        choiceSizer.Add(addButton, 0, wx.ALIGN_CENTER_VERTICAL)
-        addButton.Bind(wx.EVT_BUTTON, self.AddSomething)
 
+        addBindButton = wx.Button(self, -1, "Add")
+        choiceSizer.Add(addBindButton, 0, wx.ALIGN_CENTER_VERTICAL)
+        addBindButton.Bind(wx.EVT_BUTTON, self.OnAddBind)
 
-        sizer.Add(choiceSizer, 0, wx.EXPAND|wx.TOP, 16)
+        showBindTextButton = wx.Button(self, -1, "Show Bind Text")
+        choiceSizer.Add(showBindTextButton, 0, wx.ALIGN_CENTER_VERTICAL)
+        showBindTextButton.Bind(wx.EVT_BUTTON, self.OnShowBindText)
+
+        sizer.Add(choiceSizer, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 16)
 
         ###
         # UI Chunks for various choices
@@ -277,9 +282,7 @@ class PowerBinderDialog(wx.Dialog):
         sizer.Hide(windowToggleSizer)
         self.ExtraUI[windowToggleIndex] = { 'UI': windowToggleSizer }
 
-        sizer.Add(self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL|wx.HELP), 0, wx.EXPAND)
-
-
+        sizer.Add(self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL|wx.HELP), 0, wx.EXPAND|wx.TOP, 16)
 
         # Wrap everything in a vbox to add some padding
         vbox = wx.BoxSizer(wx.VERTICAL);
@@ -308,10 +311,12 @@ class PowerBinderDialog(wx.Dialog):
         self.Fit()
 
 
-
-    def AddSomething(self, evt):
+    def OnAddBind(self, evt):
         chosenName = self.bindChoice.GetString(self.bindChoice.GetSelection())
 
         self.rearrangeCtrl.GetList().Append(chosenName)
+
+    def OnShowBindText(self, evt):
+        pass
 
 

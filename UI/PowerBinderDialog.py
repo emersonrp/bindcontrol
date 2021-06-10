@@ -36,6 +36,61 @@ class PowerBinderDialog(wx.Dialog):
 
 
         sizer.Add(choiceSizer, 0, wx.EXPAND|wx.TOP, 16)
+
+        ###
+        # UI Chunks for various choices
+        # We make and Add() all of these but keep them hidden
+        # until the wx.Choice is on the right item
+
+        self.ExtraUI = {}
+
+        ####### Auto Power
+        autoPowerIndex = self.bindChoice.FindString("Auto Power")
+        autoPowerSizer = wx.BoxSizer(wx.HORIZONTAL)
+        autoPowerSizer.Add(wx.StaticText(self, -1, "Power:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        autoPowerName = wx.TextCtrl(self, -1)
+        autoPowerSizer.Add(autoPowerName, 1, wx.ALIGN_CENTER_VERTICAL)
+        sizer.Add(autoPowerSizer, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(autoPowerSizer)
+
+        self.ExtraUI[autoPowerIndex] = { UI: autoPowerSizer }
+
+        ####### Chat Command
+        chatCommandIndex = self.bindChoice.FindString("Chat Command")
+        chatCommandName = wx.TextCtrl(self, -1)
+        sizer.Add(chatCommandName, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(chatCommandName)
+
+        self.ExtraUI[chatCommandIndex] = { UI: chatCommandName }
+
+        ####### Chat Command Global
+        chatCommandGlobalIndex = self.bindChoice.FindString("Chat Command")
+        chatCommandGlobalName = wx.TextCtrl(self, -1)
+        sizer.Add(chatCommandGlobalName, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(chatCommandGlobalName)
+
+        self.ExtraUI[chatCommandGlobalIndex] = { UI: chatCommandGlobalName }
+
+        #######Costume Change
+        costumeChangeIndex = self.bindChoice.FindString("CostumeChange")
+        costumeChangeSizer = wx.BoxSizer(wx.HORIZONTAL)
+        costumeChangeSizer.Add(wx.StaticText(self, -1, "Costume:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        costumeChangeCostume = wx.Choice(self, -1,
+               choices = ["First", "Second", "Third", "Fourth", "Fifth"])
+        costumeChangeCostume.SetSelection(0)
+        costumeChangeSizer.Add(costumeChangeCostume, 1, wx.ALIGN_CENTER_VERTICAL)
+        sizer.Add(costumeChangeSizer, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(costumeChangeSizer)
+
+        self.ExtraUI[costumeChangeIndex] = { UI: costumeChangeSizer }
+
+
+
+
+
+
+
+
         sizer.Add(self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL|wx.HELP), 0)
 
         # Wrap everything in a vbox to add some padding
@@ -45,6 +100,8 @@ class PowerBinderDialog(wx.Dialog):
         self.SetSizerAndFit(vbox);
         self.Layout()
         self.SetFocus()
+
+
 
 
     def AddSomething(self, evt):

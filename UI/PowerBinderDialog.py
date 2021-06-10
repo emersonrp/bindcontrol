@@ -2,6 +2,8 @@ import wx
 import string
 import UI
 import GameData
+import pprint
+pp = pprint.PrettyPrinter(indent=1, width=132)
 
 def PowerBinderEventHandler(evt):
     button = evt.EventObject
@@ -14,9 +16,12 @@ class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
-        sizer = wx.BoxSizer(wx.VERTICAL);
 
-        self.rearrangeCtrl = wx.RearrangeCtrl(self, -1, size=(350,300))
+        sizer = wx.BoxSizer(wx.VERTICAL);
+        self.mainSizer = sizer
+        self.SetSizer(sizer)
+
+        self.rearrangeCtrl = wx.RearrangeCtrl(self, -1, size=(500,300))
         sizer.Add(self.rearrangeCtrl, 1, wx.EXPAND)
 
         choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -30,6 +35,7 @@ class PowerBinderDialog(wx.Dialog):
             'Window Toggle',
         ])
         self.bindChoice.SetSelection(self.bindChoice.FindString("Use Power"))
+        self.bindChoice.Bind(wx.EVT_CHOICE, self.OnBindChoice)
         choiceSizer.Add(self.bindChoice, 0, wx.ALIGN_CENTER_VERTICAL)
         addButton = wx.Button(self, -1, "Add")
         choiceSizer.Add(addButton, 0, wx.ALIGN_CENTER_VERTICAL)
@@ -53,7 +59,7 @@ class PowerBinderDialog(wx.Dialog):
         autoPowerSizer.Add(autoPowerName, 1, wx.ALIGN_CENTER_VERTICAL)
         sizer.Add(autoPowerSizer, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(autoPowerSizer)
-        self.ExtraUI[autoPowerIndex] = { UI: autoPowerSizer }
+        self.ExtraUI[autoPowerIndex] = { 'UI': autoPowerSizer }
 
         ####### Away From Keyboard
         AFKIndex = self.bindChoice.FindString("Away From Keyboard")
@@ -61,7 +67,7 @@ class PowerBinderDialog(wx.Dialog):
         AFKName.SetHint('Away From Keyboard Text')
         sizer.Add(AFKName, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(AFKName)
-        self.ExtraUI[AFKIndex] = { UI: AFKName }
+        self.ExtraUI[AFKIndex] = { 'UI': AFKName }
 
         ####### Chat Command
         chatCommandIndex = self.bindChoice.FindString("Chat Command")
@@ -103,18 +109,18 @@ class PowerBinderDialog(wx.Dialog):
         chatCommandSizer.Add(chatCommandMessage, (3,2), (1,4), flag=wx.EXPAND)
         sizer.Add(chatCommandSizer, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(chatCommandSizer)
-        self.ExtraUI[chatCommandIndex] = { UI: chatCommandSizer }
+        self.ExtraUI[chatCommandIndex] = { 'UI': chatCommandSizer }
 
         ####### Chat Command Global
-        chatCommandGlobalIndex = self.bindChoice.FindString("Chat Command")
+        chatCommandGlobalIndex = self.bindChoice.FindString("Chat Command (Global)")
         chatCommandGlobalName = wx.TextCtrl(self, -1)
         chatCommandGlobalName.SetHint('Chat Command (Global) Text')
         sizer.Add(chatCommandGlobalName, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(chatCommandGlobalName)
-        self.ExtraUI[chatCommandGlobalIndex] = { UI: chatCommandGlobalName }
+        self.ExtraUI[chatCommandGlobalIndex] = { 'UI': chatCommandGlobalName }
 
         #######Costume Change
-        costumeChangeIndex = self.bindChoice.FindString("CostumeChange")
+        costumeChangeIndex = self.bindChoice.FindString("Costume Change")
         costumeChangeSizer = wx.BoxSizer(wx.HORIZONTAL)
         costumeChangeSizer.Add(wx.StaticText(self, -1, "Costume:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         costumeChangeCostume = wx.Choice(self, -1,
@@ -123,7 +129,7 @@ class PowerBinderDialog(wx.Dialog):
         costumeChangeSizer.Add(costumeChangeCostume, 1, wx.ALIGN_CENTER_VERTICAL)
         sizer.Add(costumeChangeSizer, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(costumeChangeSizer)
-        self.ExtraUI[costumeChangeIndex] = { UI: costumeChangeSizer }
+        self.ExtraUI[costumeChangeIndex] = { 'UI': costumeChangeSizer }
 
         ####### Custom Bind
         customBindIndex = self.bindChoice.FindString("Custom Bind")
@@ -131,7 +137,7 @@ class PowerBinderDialog(wx.Dialog):
         customBindName.SetHint('Custom Bind Text')
         sizer.Add(customBindName, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(customBindName)
-        self.ExtraUI[customBindIndex] = { UI: customBindName }
+        self.ExtraUI[customBindIndex] = { 'UI': customBindName }
 
         ####### Emote
         emoteIndex = self.bindChoice.FindString("Emote")
@@ -142,7 +148,7 @@ class PowerBinderDialog(wx.Dialog):
         emoteSizer.Add(emoteName, 1, wx.ALIGN_CENTER_VERTICAL)
         sizer.Add(emoteSizer, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(emoteSizer)
-        self.ExtraUI[emoteIndex] = { UI: emoteSizer }
+        self.ExtraUI[emoteIndex] = { 'UI': emoteSizer }
 
         ####### Target Custom
         targetCustomIndex = self.bindChoice.FindString("Target Custom")
@@ -162,7 +168,7 @@ class PowerBinderDialog(wx.Dialog):
         targetCustomSizer.Add(wx.CheckBox(self, -1, "Target Not Base Items"))
         sizer.Add(targetCustomSizer, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(targetCustomSizer)
-        self.ExtraUI[targetCustomIndex] = { UI: targetCustomSizer }
+        self.ExtraUI[targetCustomIndex] = { 'UI': targetCustomSizer }
 
         ####### Target Enemy
         targetEnemyIndex = self.bindChoice.FindString("Target Enemy")
@@ -174,7 +180,7 @@ class PowerBinderDialog(wx.Dialog):
         targetEnemySizer.Add(targetEnemyModeChoice)
         sizer.Add(targetEnemySizer, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(targetEnemySizer)
-        self.ExtraUI[targetEnemyIndex] = { UI: targetEnemySizer }
+        self.ExtraUI[targetEnemyIndex] = { 'UI': targetEnemySizer }
 
         ####### Target Friend
         targetFriendIndex = self.bindChoice.FindString("Target Friend")
@@ -186,7 +192,7 @@ class PowerBinderDialog(wx.Dialog):
         targetFriendSizer.Add(targetFriendModeChoice)
         sizer.Add(targetFriendSizer, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(targetFriendSizer)
-        self.ExtraUI[targetFriendIndex] = { UI: targetFriendSizer }
+        self.ExtraUI[targetFriendIndex] = { 'UI': targetFriendSizer }
 
         ####### Team/Pet Select
         teamPetSelectIndex = self.bindChoice.FindString("Team/Pet Select")
@@ -198,7 +204,7 @@ class PowerBinderDialog(wx.Dialog):
         teamPetSelectSizer.Add(teamPetSelectNumber)
         sizer.Add(teamPetSelectSizer, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(teamPetSelectSizer)
-        self.ExtraUI[teamPetSelectIndex] = { UI: teamPetSelectSizer }
+        self.ExtraUI[teamPetSelectIndex] = { 'UI': teamPetSelectSizer }
 
         ####### Use Insp By Name
         useInspByNameIndex = self.bindChoice.FindString("Use Insp By Name")
@@ -210,7 +216,7 @@ class PowerBinderDialog(wx.Dialog):
         useInspByNameSizer.Add(useInspByNameModeChoice, 1)
         sizer.Add(useInspByNameSizer, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(useInspByNameSizer)
-        self.ExtraUI[useInspByNameIndex] = { UI: useInspByNameSizer }
+        self.ExtraUI[useInspByNameIndex] = { 'UI': useInspByNameSizer }
 
         ####### Use Insp From Row / Column
         useInspRowColumnIndex = self.bindChoice.FindString("Use Insp From Row/Column")
@@ -227,21 +233,17 @@ class PowerBinderDialog(wx.Dialog):
         useInspRowColumnSizer.Add(useInspRowColumnCol, 1)
         sizer.Add(useInspRowColumnSizer, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(useInspRowColumnSizer)
-        self.ExtraUI[useInspRowColumnIndex] = { UI: useInspRowColumnSizer }
+        self.ExtraUI[useInspRowColumnIndex] = { 'UI': useInspRowColumnSizer }
 
-
-
-
-
+        ### TODO TODO TODO
+        ####### Use Power
+        ####### Use Power From Tray
+        ####### Window Toggle
 
         sizer.Add(self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL|wx.HELP), 0)
 
-        # Wrap everything in a vbox to add some padding
-        vbox = wx.BoxSizer(wx.VERTICAL);
-        vbox.Add(sizer, 0, wx.EXPAND|wx.ALL, 10);
-
-        self.SetSizerAndFit(vbox);
         self.Layout()
+        self.Fit()
         self.SetFocus()
 
     def GetAllInsps(self):
@@ -251,6 +253,15 @@ class PowerBinderDialog(wx.Dialog):
                 Insplist.append(insp)
 
         return sorted(Insplist)
+
+    def OnBindChoice(self, evt):
+        index = evt.EventObject.GetSelection()
+
+        for i, extra in self.ExtraUI.items():
+            self.mainSizer.Show(extra['UI'], i == index)
+
+        self.Layout()
+        self.Fit()
 
 
 

@@ -1,6 +1,7 @@
 import wx
 import string
 import UI
+import GameData
 
 def PowerBinderEventHandler(evt):
     button = evt.EventObject
@@ -24,8 +25,8 @@ class PowerBinderDialog(wx.Dialog):
             'Chat Command (Global)', 'Costume Change', 'Custom Bind',
             'Emote', 'Power Abort', 'Power Unqueue', 'SG Mode Toggle',
             'Target Custom', 'Target Enemy', 'Target Friend',
-            'Team/Pet Select', 'Unselect', 'Use Insp by Name',
-            'Use Insp From Row / Custom', 'Use Power', 'Use Power From Tray',
+            'Team/Pet Select', 'Unselect', 'Use Insp By Name',
+            'Use Insp From Row/Column', 'Use Power', 'Use Power From Tray',
             'Window Toggle',
         ])
         self.bindChoice.SetSelection(self.bindChoice.FindString("Use Power"))
@@ -164,10 +165,10 @@ class PowerBinderDialog(wx.Dialog):
         self.ExtraUI[targetCustomIndex] = { UI: targetCustomSizer }
 
         ####### Target Enemy
-        targetEnemyIndex = self.bindChoice.FindString("Target Custom")
-        targetEnemySizer = wx.FlexGridSizer(2,3,3)
+        targetEnemyIndex = self.bindChoice.FindString("Target Enemy")
+        targetEnemySizer = wx.BoxSizer(wx.HORIZONTAL)
         targetEnemySizer.Add(wx.StaticText(self, -1, "Target Enemy:"), 0,
-                wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT|wx.RIGHT, 4)
+                wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         targetEnemyModeChoice = wx.Choice(self, -1, choices = ['Near','Far','Next','Prev'])
         targetEnemyModeChoice.SetSelection(0)
         targetEnemySizer.Add(targetEnemyModeChoice)
@@ -176,16 +177,61 @@ class PowerBinderDialog(wx.Dialog):
         self.ExtraUI[targetEnemyIndex] = { UI: targetEnemySizer }
 
         ####### Target Friend
-        targetFriendIndex = self.bindChoice.FindString("Target Custom")
-        targetFriendSizer = wx.FlexGridSizer(2,3,3)
+        targetFriendIndex = self.bindChoice.FindString("Target Friend")
+        targetFriendSizer = wx.BoxSizer(wx.HORIZONTAL)
         targetFriendSizer.Add(wx.StaticText(self, -1, "Target Friend:"), 0,
-                wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT|wx.RIGHT, 4)
+                wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         targetFriendModeChoice = wx.Choice(self, -1, choices = ['Near','Far','Next','Prev'])
         targetFriendModeChoice.SetSelection(0)
         targetFriendSizer.Add(targetFriendModeChoice)
         sizer.Add(targetFriendSizer, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(targetFriendSizer)
         self.ExtraUI[targetFriendIndex] = { UI: targetFriendSizer }
+
+        ####### Team/Pet Select
+        teamPetSelectIndex = self.bindChoice.FindString("Team/Pet Select")
+        teamPetSelectSizer = wx.BoxSizer(wx.HORIZONTAL)
+        teamPetSelectSizer.Add(wx.RadioButton(self, -1, "Teammate", style=wx.RB_GROUP|wx.ALIGN_CENTER_VERTICAL))
+        teamPetSelectSizer.Add(wx.RadioButton(self, -1, "Pet/Henchman", style=wx.ALIGN_CENTER_VERTICAL))
+        teamPetSelectNumber = wx.SpinCtrl(self, -1, style=wx.SP_ARROW_KEYS|wx.ALIGN_CENTER_VERTICAL)
+        teamPetSelectNumber.SetRange(1, 7)
+        teamPetSelectSizer.Add(teamPetSelectNumber)
+        sizer.Add(teamPetSelectSizer, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(teamPetSelectSizer)
+        self.ExtraUI[teamPetSelectIndex] = { UI: teamPetSelectSizer }
+
+        ####### Use Insp By Name
+        useInspByNameIndex = self.bindChoice.FindString("Use Insp By Name")
+        useInspByNameSizer = wx.BoxSizer(wx.HORIZONTAL)
+        useInspByNameSizer.Add(wx.StaticText(self, -1, "Inspiration:"), 0,
+                wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        useInspByNameModeChoice = wx.Choice(self, -1, choices = self.GetAllInsps())
+        useInspByNameModeChoice.SetSelection(0)
+        useInspByNameSizer.Add(useInspByNameModeChoice, 1)
+        sizer.Add(useInspByNameSizer, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(useInspByNameSizer)
+        self.ExtraUI[useInspByNameIndex] = { UI: useInspByNameSizer }
+
+        ####### Use Insp From Row / Column
+        useInspRowColumnIndex = self.bindChoice.FindString("Use Insp From Row/Column")
+        useInspRowColumnSizer = wx.BoxSizer(wx.HORIZONTAL)
+        useInspRowColumnSizer.Add(wx.StaticText(self, -1, "Row:"), 0,
+                wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        useInspRowColumnRow = wx.SpinCtrl(self, -1, style=wx.SP_ARROW_KEYS|wx.ALIGN_CENTER_VERTICAL)
+        useInspRowColumnRow.SetRange(1, 4)
+        useInspRowColumnSizer.Add(useInspRowColumnRow, 1)
+        useInspRowColumnSizer.Add(wx.StaticText(self, -1, "Column:"), 0,
+                wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        useInspRowColumnCol = wx.SpinCtrl(self, -1, style=wx.SP_ARROW_KEYS|wx.ALIGN_CENTER_VERTICAL)
+        useInspRowColumnCol.SetRange(1, 5)
+        useInspRowColumnSizer.Add(useInspRowColumnCol, 1)
+        sizer.Add(useInspRowColumnSizer, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(useInspRowColumnSizer)
+        self.ExtraUI[useInspRowColumnIndex] = { UI: useInspRowColumnSizer }
+
+
+
+
 
 
         sizer.Add(self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL|wx.HELP), 0)
@@ -198,6 +244,13 @@ class PowerBinderDialog(wx.Dialog):
         self.Layout()
         self.SetFocus()
 
+    def GetAllInsps(self):
+        Insplist = []
+        for type, info in GameData.Inspirations.items():
+            for insp in info['tiers']:
+                Insplist.append(insp)
+
+        return sorted(Insplist)
 
 
 

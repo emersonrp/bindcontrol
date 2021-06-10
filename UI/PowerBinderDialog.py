@@ -54,6 +54,14 @@ class PowerBinderDialog(wx.Dialog):
         sizer.Hide(autoPowerSizer)
         self.ExtraUI[autoPowerIndex] = { UI: autoPowerSizer }
 
+        ####### Away From Keyboard
+        AFKIndex = self.bindChoice.FindString("Away From Keyboard")
+        AFKName = wx.TextCtrl(self, -1)
+        AFKName.SetHint('Away From Keyboard Text')
+        sizer.Add(AFKName, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(AFKName)
+        self.ExtraUI[AFKIndex] = { UI: AFKName }
+
         ####### Chat Command
         chatCommandIndex = self.bindChoice.FindString("Chat Command")
         chatCommandSizer = wx.GridBagSizer(5, 5)
@@ -90,15 +98,16 @@ class PowerBinderDialog(wx.Dialog):
         chatCommandUseColorsCB = wx.CheckBox(self, -1, "Use Beginchat")
         chatCommandSizer.Add(chatCommandUseColorsCB, (3,0), (1,2), flag=wx.ALIGN_CENTER_VERTICAL)
         chatCommandMessage = wx.TextCtrl(self, -1)
-        chatCommandMessage.SetHint('Message')
+        chatCommandMessage.SetHint('Chat Command Text')
         chatCommandSizer.Add(chatCommandMessage, (3,2), (1,4), flag=wx.EXPAND)
         sizer.Add(chatCommandSizer, 0, wx.EXPAND|wx.TOP, 15)
-        # sizer.Hide(chatCommandSizer)
+        sizer.Hide(chatCommandSizer)
         self.ExtraUI[chatCommandIndex] = { UI: chatCommandSizer }
 
         ####### Chat Command Global
         chatCommandGlobalIndex = self.bindChoice.FindString("Chat Command")
         chatCommandGlobalName = wx.TextCtrl(self, -1)
+        chatCommandGlobalName.SetHint('Chat Command (Global) Text')
         sizer.Add(chatCommandGlobalName, 0, wx.EXPAND|wx.TOP, 15)
         sizer.Hide(chatCommandGlobalName)
         self.ExtraUI[chatCommandGlobalIndex] = { UI: chatCommandGlobalName }
@@ -115,11 +124,68 @@ class PowerBinderDialog(wx.Dialog):
         sizer.Hide(costumeChangeSizer)
         self.ExtraUI[costumeChangeIndex] = { UI: costumeChangeSizer }
 
+        ####### Custom Bind
+        customBindIndex = self.bindChoice.FindString("Custom Bind")
+        customBindName = wx.TextCtrl(self, -1)
+        customBindName.SetHint('Custom Bind Text')
+        sizer.Add(customBindName, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(customBindName)
+        self.ExtraUI[customBindIndex] = { UI: customBindName }
 
+        ####### Emote
+        emoteIndex = self.bindChoice.FindString("Emote")
+        emoteSizer = wx.BoxSizer(wx.HORIZONTAL)
+        emoteSizer.Add(wx.StaticText(self, -1, "Emote:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        # TODO - make this a wx.Choice with a list?  Yikes that's a big list.
+        emoteName = wx.TextCtrl(self, -1)
+        emoteSizer.Add(emoteName, 1, wx.ALIGN_CENTER_VERTICAL)
+        sizer.Add(emoteSizer, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(emoteSizer)
+        self.ExtraUI[emoteIndex] = { UI: emoteSizer }
 
+        ####### Target Custom
+        targetCustomIndex = self.bindChoice.FindString("Target Custom")
+        targetCustomSizer = wx.FlexGridSizer(2,3,3)
+        targetCustomSizer.Add(wx.StaticText(self, -1, "Target Mode:"), 0,
+                wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT|wx.RIGHT, 4)
+        targetCustomModeChoice = wx.Choice(self, -1, choices = ['Near','Far','Next','Prev'])
+        targetCustomModeChoice.SetSelection(0)
+        targetCustomSizer.Add(targetCustomModeChoice)
+        targetCustomSizer.Add(wx.CheckBox(self, -1, "Target Enemies"))
+        targetCustomSizer.Add(wx.CheckBox(self, -1, "Target Friends"))
+        targetCustomSizer.Add(wx.CheckBox(self, -1, "Target Defeated"))
+        targetCustomSizer.Add(wx.CheckBox(self, -1, "Target Living"))
+        targetCustomSizer.Add(wx.CheckBox(self, -1, "Target My Pets"))
+        targetCustomSizer.Add(wx.CheckBox(self, -1, "Target Not My Pets"))
+        targetCustomSizer.Add(wx.CheckBox(self, -1, "Target Base Items"))
+        targetCustomSizer.Add(wx.CheckBox(self, -1, "Target Not Base Items"))
+        sizer.Add(targetCustomSizer, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(targetCustomSizer)
+        self.ExtraUI[targetCustomIndex] = { UI: targetCustomSizer }
 
+        ####### Target Enemy
+        targetEnemyIndex = self.bindChoice.FindString("Target Custom")
+        targetEnemySizer = wx.FlexGridSizer(2,3,3)
+        targetEnemySizer.Add(wx.StaticText(self, -1, "Target Enemy:"), 0,
+                wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT|wx.RIGHT, 4)
+        targetEnemyModeChoice = wx.Choice(self, -1, choices = ['Near','Far','Next','Prev'])
+        targetEnemyModeChoice.SetSelection(0)
+        targetEnemySizer.Add(targetEnemyModeChoice)
+        sizer.Add(targetEnemySizer, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(targetEnemySizer)
+        self.ExtraUI[targetEnemyIndex] = { UI: targetEnemySizer }
 
-
+        ####### Target Friend
+        targetFriendIndex = self.bindChoice.FindString("Target Custom")
+        targetFriendSizer = wx.FlexGridSizer(2,3,3)
+        targetFriendSizer.Add(wx.StaticText(self, -1, "Target Friend:"), 0,
+                wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT|wx.RIGHT, 4)
+        targetFriendModeChoice = wx.Choice(self, -1, choices = ['Near','Far','Next','Prev'])
+        targetFriendModeChoice.SetSelection(0)
+        targetFriendSizer.Add(targetFriendModeChoice)
+        sizer.Add(targetFriendSizer, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(targetFriendSizer)
+        self.ExtraUI[targetFriendIndex] = { UI: targetFriendSizer }
 
 
         sizer.Add(self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL|wx.HELP), 0)

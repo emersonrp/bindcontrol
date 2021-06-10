@@ -3,13 +3,13 @@ import string
 import UI
 import Utility
 
-# Platform-specific keycodes for telling left from right
+# Platform-specific keyevent flags for telling left from right
 modKeyFlags = {}
 if wx.Platform == '__WXMSW__':
     modKeyFlags = {
-        'LSHIFT': 160, 'RSHIFT': 161,
-        'LCTRL' : 162, 'RCTRL' : 163,
-        'LAlT'  : 164, 'RALT'  : 165,
+        'RSHIFT': 0x40000,
+        'RCTRL' : 0x1000000,
+        'RALT'  : 0x1000000,
     }
 elif wx.Platform == '__WXX11_':
     modKeyFlags = {
@@ -132,8 +132,9 @@ class KeyBindDialog(wx.Dialog):
             if SeparateLR and modKeyFlags:
                 if isinstance(event, wx.KeyEvent):
                     rawFlags = event.GetRawKeyFlags()
-                    if   (rawFlags & modKeyFlags['LSHIFT']): self.ShiftText = "LSHIFT+"
-                    elif (rawFlags & modKeyFlags['RSHIFT']): self.ShiftText = "RSHIFT+"
+                    if not rawFlags: print("NO RAWFLAGS")
+                    print(bin(rawFlags))
+                    self.ShiftText = "RSHIFT+" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT+"
             else:
                 self.ShiftText = "SHIFT+"
         else:
@@ -143,8 +144,9 @@ class KeyBindDialog(wx.Dialog):
             if SeparateLR and modKeyFlags:
                 if isinstance(event, wx.KeyEvent):
                     rawFlags = event.GetRawKeyFlags()
-                    if   (rawFlags & modKeyFlags['LCTRL']): self.CtrlText = "LCTRL+"
-                    elif (rawFlags & modKeyFlags['RCTRL']): self.CtrlText = "RCTRL+"
+                    print(hex(rawFlags))
+                    print(bin(rawFlags))
+                    self.CtrlText = "RCTRL+" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL+"
             else:
                 self.CtrlText = "CTRL+"
         else:
@@ -155,8 +157,9 @@ class KeyBindDialog(wx.Dialog):
             if SeparateLR and modKeyFlags:
                 if isinstance(event, wx.KeyEvent):
                     rawFlags = event.GetRawKeyFlags()
-                    if   (rawFlags & modKeyFlags['LALT']): self.AltText = "LALT+"
-                    elif (rawFlags & modKeyFlags['RALT']): self.AltText = "RALT+"
+                    print(hex(rawFlags))
+                    print(bin(rawFlags))
+                    self.AltText = "RALT+" if (rawFlags & modKeyFlags['RALT']) else "LALT+"
             else:
                 self.AltText = "ALT+"
         else:

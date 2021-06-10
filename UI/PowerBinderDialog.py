@@ -16,10 +16,7 @@ class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
-
         sizer = wx.BoxSizer(wx.VERTICAL);
-        self.mainSizer = sizer
-        self.SetSizer(sizer)
 
         self.rearrangeCtrl = wx.RearrangeCtrl(self, -1, size=(500,300))
         sizer.Add(self.rearrangeCtrl, 1, wx.EXPAND)
@@ -235,13 +232,60 @@ class PowerBinderDialog(wx.Dialog):
         sizer.Hide(useInspRowColumnSizer)
         self.ExtraUI[useInspRowColumnIndex] = { 'UI': useInspRowColumnSizer }
 
-        ### TODO TODO TODO
         ####### Use Power
+        usePowerIndex = self.bindChoice.FindString("Use Power")
+        usePowerSizer = wx.GridBagSizer(5,5)
+        usePowerSizer.Add(wx.StaticText(self, -1, "Method:"), (0,0), flag=wx.ALIGN_CENTER_VERTICAL)
+        usePowerSizer.Add(wx.RadioButton(self, -1, "Toggle", style=wx.RB_GROUP|wx.ALIGN_CENTER_VERTICAL), (0,1))
+        usePowerSizer.Add(wx.RadioButton(self, -1, "On", style=wx.ALIGN_CENTER_VERTICAL), (0,2))
+        usePowerSizer.Add(wx.RadioButton(self, -1, "Off", style=wx.ALIGN_CENTER_VERTICAL), (0,3))
+        usePowerSizer.Add(wx.StaticText(self, -1, "Power:"), (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
+        usePowerName = wx.TextCtrl(self, -1)
+        usePowerName.SetHint('Power Name')
+        usePowerSizer.Add(usePowerName, (1,1), (1,3), flag=wx.EXPAND)
+        usePowerSizer.AddGrowableCol(3)
+        sizer.Add(usePowerSizer, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(usePowerSizer)
+        self.ExtraUI[usePowerIndex] = { 'UI': usePowerSizer }
+
         ####### Use Power From Tray
+        usePowerFromTrayIndex = self.bindChoice.FindString("Use Power From Tray")
+        usePowerFromTraySizer = wx.BoxSizer(wx.HORIZONTAL)
+        usePowerFromTraySizer.Add(wx.StaticText(self, -1, "Tray:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        usePowerFromTrayTray = wx.Choice(self, -1,
+               choices = ['Main Tray', 'Alt Tray', 'Alt 2 Tray', 'Tray 1', 'Tray2', 'Tray 3',
+                   'Tray 4', 'Tray 5', 'Tray 6', 'Tray 7', 'Tray 8', 'Tray 9', 'Tray 10'])
+        usePowerFromTrayTray.SetSelection(0)
+        usePowerFromTraySizer.Add(usePowerFromTrayTray, 1, wx.ALIGN_CENTER_VERTICAL)
+        usePowerFromTraySizer.Add(wx.StaticText(self, -1, "Slot:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        usePowerFromTraySlot = wx.SpinCtrl(self, -1, style=wx.SP_ARROW_KEYS)
+        usePowerFromTraySlot.SetRange(1, 10)
+        usePowerFromTraySizer.Add(usePowerFromTraySlot, 1, wx.ALIGN_CENTER_VERTICAL)
+        sizer.Add(usePowerFromTraySizer, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(usePowerFromTraySizer)
+        self.ExtraUI[usePowerFromTrayIndex] = { 'UI': usePowerFromTraySizer }
+
         ####### Window Toggle
+        windowToggleIndex = self.bindChoice.FindString("Use Power From Tray")
+        windowToggleSizer = wx.BoxSizer(wx.HORIZONTAL)
+        windowToggleSizer.Add(wx.StaticText(self, -1, "Tray:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        windowToggleTray = wx.Choice(self, -1,
+               choices = ['Powers', 'Manage', 'Chat', 'Tray', 'Target', 'Nav', 'Map', 'Menu', 'Pets'])
+        windowToggleTray.SetSelection(0)
+        windowToggleSizer.Add(windowToggleTray, 1, wx.ALIGN_CENTER_VERTICAL)
+        sizer.Add(windowToggleSizer, 0, wx.EXPAND|wx.TOP, 15)
+        sizer.Hide(windowToggleSizer)
+        self.ExtraUI[windowToggleIndex] = { 'UI': windowToggleSizer }
 
-        sizer.Add(self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL|wx.HELP), 0)
+        sizer.Add(self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL|wx.HELP), 0, wx.EXPAND)
 
+
+
+        # Wrap everything in a vbox to add some padding
+        vbox = wx.BoxSizer(wx.VERTICAL);
+        vbox.Add(sizer, 0, wx.EXPAND|wx.ALL, 10);
+
+        self.SetSizerAndFit(vbox);
         self.Layout()
         self.Fit()
         self.SetFocus()

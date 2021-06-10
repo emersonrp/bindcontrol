@@ -1,6 +1,7 @@
 # UI / logic for the 'general' panel
 import wx
 import UI
+import UI.PowerBinderDialog
 
 from GameData import Archetypes, Origins, MiscPowers
 from UI.ControlGroup import ControlGroup
@@ -122,6 +123,11 @@ class General(Page):
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(topSizer, flag=wx.ALL|wx.EXPAND, border = 20)
+
+
+        testPowerBinder = wx.Button(self, -1, "Test PowerBinder")
+        testPowerBinder.Bind(wx.EVT_BUTTON, UI.PowerBinderDialog.PowerBinderEventHandler)
+        paddingSizer.Add(testPowerBinder, flag=wx.ALL|wx.EXPAND, border = 20)
 
         self.SetSizer(paddingSizer)
         return self

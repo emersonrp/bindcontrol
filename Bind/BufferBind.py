@@ -24,9 +24,6 @@ class BufferBind(CustomBind):
 
         BindCP.SetLabel("This is a test label")
         pane = BindCP.GetPane()
-        # TODO:
-        # contents  = RTC(pane, -1, "testing 1 2 3", style=wx.richtext.RE_MULTILINE)
-        # contents.SetHint("/say Your bind text goes here!$$powexec Super Jump")
 
         # bind text controls
         BindSizer = wx.GridBagSizer(hgap=5, vgap=5)

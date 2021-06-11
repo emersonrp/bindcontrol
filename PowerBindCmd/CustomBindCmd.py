@@ -8,8 +8,10 @@ class CustomBindCmd(PowerBindCmd):
         PowerBindCmd.__init__(self, dialog)
 
     def BuildUI(self, dialog):
-        customBindName = wx.TextCtrl(dialog, -1)
-        customBindName.SetHint('Custom Bind Text')
+        self.customBindName = wx.TextCtrl(dialog, -1)
+        self.customBindName.SetHint('Custom Bind Text')
 
-        return customBindName
+        return self.customBindName
 
+    def MakeBindString(self, dialog):
+        return self.customBindName.GetValue()

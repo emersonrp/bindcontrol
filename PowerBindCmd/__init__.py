@@ -8,5 +8,5 @@ class PowerBindCmd():
     def BuildUI(self, dialog):
         pass
 
-    def Make(self, dialog):
+    def MakeBindString(self, dialog):
         pass

@@ -8,9 +8,12 @@ class AFKCmd(PowerBindCmd):
         PowerBindCmd.__init__(self, dialog)
 
     def BuildUI(self, dialog):
-        AFKIndex = self.bindChoice.FindString("Away From Keyboard")
-        AFKName = wx.TextCtrl(self, -1)
-        AFKName.SetHint('Away From Keyboard Text')
+        self.AFKName = wx.TextCtrl(dialog, -1)
+        self.AFKName.SetHint('Away From Keyboard Text')
 
-        return AFKName
+        return self.AFKName
 
+    def MakeBindString(self):
+        message = self.AFKName.GetValue()
+
+        return f"afk {message}" if message else "afk"

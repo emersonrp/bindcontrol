@@ -35,7 +35,7 @@ class PowerBinderDialog(wx.Dialog):
         self.bindChoice = wx.Choice(self, -1, choices = [cmd for cmd in commandClasses])
         self.bindChoice.SetSelection(self.bindChoice.FindString("Use Power"))
         self.bindChoice.Bind(wx.EVT_CHOICE, self.OnBindChoice)
-        choiceSizer.Add(self.bindChoice, 0, wx.ALIGN_CENTER_VERTICAL)
+        choiceSizer.Add(self.bindChoice, 1, wx.ALIGN_CENTER_VERTICAL)
 
         addBindButton = wx.Button(self, -1, "Add")
         choiceSizer.Add(addBindButton, 0, wx.ALIGN_CENTER_VERTICAL)
@@ -82,7 +82,7 @@ class PowerBinderDialog(wx.Dialog):
 
             # Shim the UI bits for the new command into the dialog,
             # just above the buttons, and then do the correct showing/hiding
-            self.mainSizer.Insert(self.mainSizer.GetItemCount()-1, newCommand.UI)
+            self.mainSizer.Insert(self.mainSizer.GetItemCount()-1, newCommand.UI, 0, wx.EXPAND)
             self.ShowUIFor(newCommand)
         # else no extra UI, don't show
 

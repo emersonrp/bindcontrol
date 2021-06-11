@@ -11,9 +11,15 @@ class TargetEnemyCmd(PowerBindCmd):
         targetEnemySizer = wx.BoxSizer(wx.HORIZONTAL)
         targetEnemySizer.Add(wx.StaticText(dialog, -1, "Target Enemy:"), 0,
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
-        targetEnemyModeChoice = wx.Choice(dialog, -1, choices = ['Near','Far','Next','Prev'])
-        targetEnemyModeChoice.SetSelection(0)
-        targetEnemySizer.Add(targetEnemyModeChoice)
+        self.targetEnemyModeChoice = wx.Choice(dialog, -1, choices = ['Near','Far','Next','Prev'])
+        self.targetEnemyModeChoice.SetSelection(0)
+        targetEnemySizer.Add(self.targetEnemyModeChoice)
 
         return targetEnemySizer
+
+    def MakeBindString(self, dialog):
+        choice = self.targetEnemyModeChoice
+        index  = choice.GetSelection()
+        mode   = choice.GetString(index)
+        return "targetenemy" + lower(mode)
 

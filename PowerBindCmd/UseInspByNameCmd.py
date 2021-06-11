@@ -5,9 +5,6 @@ import wx
 
 ####### Use Insp By Name
 class UseInspByNameCmd(PowerBindCmd):
-    def __init__(self, dialog):
-        PowerBindCmd.__init__(self, dialog)
-
     def BuildUI(self, dialog):
         useInspByNameSizer = wx.BoxSizer(wx.HORIZONTAL)
         useInspByNameSizer.Add(wx.StaticText(dialog, -1, "Inspiration:"), 0,
@@ -22,7 +19,7 @@ class UseInspByNameCmd(PowerBindCmd):
         choice = self.useInspByNameModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
-        return "inspexecname " + lower(mode)
+        return "inspexecname " + mode.lower()
 
 
     def GetAllInsps(self):

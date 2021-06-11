@@ -4,9 +4,6 @@ import wx
 
 ####### Team/Pet Select
 class TeamPetSelectCmd(PowerBindCmd):
-    def __init__(self, dialog):
-        PowerBindCmd.__init__(self, dialog)
-
     def BuildUI(self, dialog):
         teamPetSelectSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.teamPetSelectTeamRB = wx.RadioButton(dialog, -1, "Teammate", style=wx.RB_GROUP|wx.ALIGN_CENTER_VERTICAL)

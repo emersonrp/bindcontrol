@@ -4,9 +4,6 @@ import wx
 
 ####### Chat Command Global
 class ChatGlobalCmd(PowerBindCmd):
-    def __init__(self, dialog):
-        PowerBindCmd.__init__(self, dialog)
-
     def BuildUI(self, dialog):
         chatCommandGlobalSizer = wx.GridBagSizer(5,5)
 
@@ -32,4 +29,4 @@ class ChatGlobalCmd(PowerBindCmd):
 
         preface = "beginchat /" if useBeginchat else ""
 
-        return f'{preface} "{channel}" {message}'
+        return f'{preface}send "{channel}" {message}'

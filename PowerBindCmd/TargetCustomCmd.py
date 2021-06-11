@@ -3,9 +3,6 @@ import wx
 
 ####### Target Custom
 class TargetCustomCmd(PowerBindCmd):
-    def __init__(self, dialog):
-        PowerBindCmd.__init__(self, dialog)
-
     def BuildUI(self, dialog):
         targetCustomSizer = wx.GridBagSizer(5,5)
         targetCustomSizer.Add(wx.StaticText(dialog, -1, "Target Mode:"), (0,0),
@@ -41,7 +38,7 @@ class TargetCustomCmd(PowerBindCmd):
         choice = self.targetCustomModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
-        targetCommand = "targetcustom" + lower(mode)
+        targetCommand = "targetcustom" + mode.lower()
 
         enemy    = " enemy"    if self.targetCustomCBEnemies.      IsChecked() else ""
         friend   = " friend"   if self.targetCustomCBFriends.      IsChecked() else ""

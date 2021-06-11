@@ -4,9 +4,6 @@ import wx
 
 ####### Target Enemy
 class TargetEnemyCmd(PowerBindCmd):
-    def __init__(self, dialog):
-        PowerBindCmd.__init__(self, dialog)
-
     def BuildUI(self, dialog):
         targetEnemySizer = wx.BoxSizer(wx.HORIZONTAL)
         targetEnemySizer.Add(wx.StaticText(dialog, -1, "Target Enemy:"), 0,
@@ -21,5 +18,5 @@ class TargetEnemyCmd(PowerBindCmd):
         choice = self.targetEnemyModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
-        return "targetenemy" + lower(mode)
+        return "targetenemy" + mode.lower()
 

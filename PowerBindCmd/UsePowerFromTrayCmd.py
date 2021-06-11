@@ -4,9 +4,6 @@ import wx
 
 ####### Use Power From Tray
 class UsePowerFromTrayCmd(PowerBindCmd):
-    def __init__(self, dialog):
-        PowerBindCmd.__init__(self, dialog)
-
     def BuildUI(self, dialog):
         usePowerFromTraySizer = wx.BoxSizer(wx.HORIZONTAL)
         usePowerFromTraySizer.Add(wx.StaticText(dialog, -1, "Tray:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)

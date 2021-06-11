@@ -4,9 +4,6 @@ import wx
 
 ####### Target Friend
 class TargetFriendCmd(PowerBindCmd):
-    def __init__(self, dialog):
-        PowerBindCmd.__init__(self, dialog)
-
     def BuildUI(self, dialog):
         targetFriendSizer = wx.BoxSizer(wx.HORIZONTAL)
         targetFriendSizer.Add(wx.StaticText(dialog, -1, "Target Friend:"), 0,
@@ -21,4 +18,4 @@ class TargetFriendCmd(PowerBindCmd):
         choice = self.targetFriendModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
-        return "targetfriend" + lower(mode)
+        return "targetfriend" + mode.lower()

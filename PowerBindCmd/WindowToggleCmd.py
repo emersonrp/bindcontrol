@@ -4,9 +4,6 @@ import wx
 
 ####### Window Toggle
 class WindowToggleCmd(PowerBindCmd):
-    def __init__(self, dialog):
-        PowerBindCmd.__init__(self, dialog)
-
     def BuildUI(self, dialog):
         windows = [ 'Actions', 'Badge', 'ChanSearch', 'Chat', 'Chat0', 'Chat1', 'Chat2', 'Chat3',
             'Chat4', 'Clue', 'Combatmonitor', 'Combatnumbers', 'Compass', 'Compose', 'Contact',
@@ -25,5 +22,5 @@ class WindowToggleCmd(PowerBindCmd):
         choice = self.windowToggleTray
         index  = choice.GetSelection()
         window = choice.GetString(index)
-        return "windowtoggle " + lower(window)
+        return "windowtoggle " + window.lower()
 

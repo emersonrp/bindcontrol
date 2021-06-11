@@ -4,8 +4,9 @@ import UI
 import GameData
 
 from PowerBindCmd import AFKCmd, AutoPowerCmd, ChatCmd, ChatGlobalCmd, CostumeChangeCmd, CustomBindCmd, EmoteCmd, \
-                    PowerBindCmd, TargetCustomCmd, TargetEnemyCmd, TargetFriendCmd, TeamPetSelectCmd, \
-                    UseInspByNameCmd, UseInspRowColCmd, UsePowerCmd, UsePowerFromTrayCmd, WindowToggleCmd
+                    PowerAbortCmd, PowerBindCmd, PowerUnqueueCmd, SGModeToggleCmd, TargetCustomCmd, TargetEnemyCmd, \
+                    TargetFriendCmd, TeamPetSelectCmd, UnselectCmd, UseInspByNameCmd, UseInspRowColCmd, UsePowerCmd, \
+                    UsePowerFromTrayCmd, WindowToggleCmd
 
 
 import pprint
@@ -82,8 +83,9 @@ class PowerBinderDialog(wx.Dialog):
 
             # Shim the UI bits for the new command into the dialog,
             # just above the buttons, and then do the correct showing/hiding
-            self.mainSizer.Insert(self.mainSizer.GetItemCount()-1, newCommand.UI, 0, wx.EXPAND)
-            self.ShowUIFor(newCommand)
+            if newCommand.UI:
+                self.mainSizer.Insert(self.mainSizer.GetItemCount()-1, newCommand.UI, 0, wx.EXPAND)
+                self.ShowUIFor(newCommand)
         # else no extra UI, don't show
 
     def OnListSelect(self, evt):
@@ -95,7 +97,15 @@ class PowerBinderDialog(wx.Dialog):
 
 
     def OnShowBindText(self, evt):
-        pass
+        # Quick'n'dirty glom together of the bindstrings, for debugging
+        bindtexts = []
+        for index in range(self.rearrangeList.GetCount()):
+            c = self.rearrangeList.GetClientData(index)
+            if c: bindtexts.append(c.MakeBindString(self)) # why "if c"?!?
+
+        print('$$'.join(bindtexts))
+
+
 
     def ShowUIFor(self, command):
         ilist = self.rearrangeList
@@ -120,14 +130,14 @@ commandClasses = {
     'Costume Change'           : CostumeChangeCmd.CostumeChangeCmd,
     'Custom Bind'              : CustomBindCmd.CustomBindCmd,
     'Emote'                    : EmoteCmd.EmoteCmd,
-    'Power Abort'              : None,
-    'Power Unqueue'            : None,
-    'SG Mode Toggle'           : None,
+    'Power Abort'              : PowerAbortCmd.PowerAbortCmd,
+    'Power Unqueue'            : PowerUnqueueCmd.PowerUnqueueCmd,
+    'SG Mode Toggle'           : SGModeToggleCmd.SGModeToggleCmd,
     'Target Custom'            : TargetCustomCmd.TargetCustomCmd,
     'Target Enemy'             : TargetEnemyCmd.TargetEnemyCmd,
     'Target Friend'            : TargetFriendCmd.TargetFriendCmd,
     'Team/Pet Select'          : TeamPetSelectCmd.TeamPetSelectCmd,
-    'Unselect'                 : None,
+    'Unselect'                 : UnselectCmd.UnselectCmd,
     'Use Insp By Name'         : UseInspByNameCmd.UseInspByNameCmd,
     'Use Insp From Row/Column' : UseInspRowColCmd.UseInspRowColCmd,
     'Use Power'                : UsePowerCmd.UsePowerCmd,

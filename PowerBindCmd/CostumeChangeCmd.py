@@ -3,9 +3,6 @@ import wx
 
 #######Costume Change
 class CostumeChangeCmd(PowerBindCmd):
-    def __init__(self, dialog):
-        PowerBindCmd.__init__(self, dialog)
-
     def BuildUI(self, dialog):
         costumeChangeSizer = wx.BoxSizer(wx.HORIZONTAL)
         costumeChangeSizer.Add(wx.StaticText(dialog, -1, "Costume:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)

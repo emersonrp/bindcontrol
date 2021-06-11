@@ -6,10 +6,7 @@ import wx
 class ChatCmd(PowerBindCmd):
 
     def __init__(self, dialog):
-        PowerBindCmd.__init__(self, dialog)
-
-    def BuildUI(self, dialog):
-        chatChannelMap = {
+        self.chatChannelMap = { # before __init__
             'say' : 's',
             'group' : 'g',
             'broadcast': 'b',
@@ -26,7 +23,9 @@ class ChatCmd(PowerBindCmd):
             'tell $target,': 't $target,',
             'tell $name': 't $name',
         }
+        PowerBindCmd.__init__(self,dialog)
 
+    def BuildUI(self, dialog):
         chatCommandSizer = wx.GridBagSizer(5, 5)
         self.chatCommandUseColorsCB = wx.CheckBox(dialog, -1, "Use Chat Bubble Colors")
         chatCommandSizer.Add(self.chatCommandUseColorsCB, (0,0), (1,6), flag=wx.ALIGN_CENTER_VERTICAL)
@@ -51,7 +50,7 @@ class ChatCmd(PowerBindCmd):
         self.chatCommandChatSize.SetSelection(5)
         chatCommandSizer.Add(wx.StaticText(dialog, -1, "Size:"), (2,2), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
         chatCommandSizer.Add(self.chatCommandChatSize, (2,3))
-        self.chatCommandChannel = wx.Choice(dialog, -1, choices = [chan for chan in chatChannelMap])
+        self.chatCommandChannel = wx.Choice(dialog, -1, choices = [chan for chan in self.chatChannelMap])
         self.chatCommandChannel.SetSelection(0)
         chatCommandSizer.Add(wx.StaticText(dialog, -1, "Channel:"), (2,4), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
         chatCommandSizer.Add(self.chatCommandChannel, (2,5))
@@ -64,9 +63,12 @@ class ChatCmd(PowerBindCmd):
 
         return chatCommandSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self, dialog):
         duration = self.chatCommandDuration.GetValue()
-        size     = self.chatCommandChatSize.GetValue()
+
+        choice = self.chatCommandChatSize
+        index  = choice.GetSelection()
+        size   = choice.GetString(index)
 
         duration = f"<duration {duration}>" if duration != 7 else ""
         size     = f"<size {size}>"         if size     != 1 else ""
@@ -79,13 +81,16 @@ class ChatCmd(PowerBindCmd):
             fgcolor = self.chatCommandBGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
             bgcolor = self.chatCommandFGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
 
-            border  = f"<bordercolor {bdcolor}>"
+            bdcolor = f"<bordercolor {bdcolor}>"
             fgcolor = f"<color {fgcolor}>"
             bgcolor = f"<bgcolor {bgcolor}>"
 
         beginchat = "beginchat /" if self.chatCommandUseBeginchatCB.IsChecked() else ''
-        channel   = chatChannelMap[self.chatCommandChannel.GetValue()]
         text      = self.chatCommandMessage.GetValue()
+
+        choice  = self.chatCommandChannel
+        index   = choice.GetSelection()
+        channel = choice.GetString(index)
 
         return f"{beginchat}{channel} {size}{duration}{bdcolor}{fgcolor}{bgcolor}{text}"
 

@@ -4,9 +4,6 @@ import wx
 
 ####### Use Power
 class UsePowerCmd(PowerBindCmd):
-    def __init__(self, dialog):
-        PowerBindCmd.__init__(self, dialog)
-
     def BuildUI(self, dialog):
         usePowerSizer = wx.GridBagSizer(5,5)
         usePowerSizer.Add(wx.StaticText(dialog, -1, "Method:"), (0,0), flag=wx.ALIGN_CENTER_VERTICAL)

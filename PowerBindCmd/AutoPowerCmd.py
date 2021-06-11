@@ -3,9 +3,6 @@ import wx
 
 ####### Auto Power
 class AutoPowerCmd(PowerBindCmd):
-    def __init__(self, dialog):
-        PowerBindCmd.__init__(self, dialog)
-
     def BuildUI(self, dialog):
         autoPowerSizer = wx.BoxSizer(wx.HORIZONTAL)
         autoPowerSizer.Add(wx.StaticText(dialog, -1, "Power:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)

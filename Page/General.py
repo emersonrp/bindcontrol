@@ -2,7 +2,6 @@
 import wx
 import UI
 import UI.PowerBinderDialog
-import UI.EmotePicker
 
 from GameData import Archetypes, Origins, MiscPowers
 from UI.ControlGroup import ControlGroup
@@ -129,10 +128,6 @@ class General(Page):
         testPowerBinder = wx.Button(self, -1, "Test PowerBinder")
         testPowerBinder.Bind(wx.EVT_BUTTON, UI.PowerBinderDialog.PowerBinderEventHandler)
         paddingSizer.Add(testPowerBinder, flag=wx.ALL|wx.EXPAND, border = 20)
-
-        testEventPicker = wx.Button(self, -1, "Test Event Picker")
-        testEventPicker.Bind(wx.EVT_BUTTON, UI.EmotePicker.doEmotePicker)
-        paddingSizer.Add(testEventPicker, flag = wx.ALL|wx.EXPAND, border = 20)
 
         self.SetSizer(paddingSizer)
         return self

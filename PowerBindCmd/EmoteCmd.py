@@ -1,16 +1,20 @@
 from PowerBindCmd import PowerBindCmd
+import UI
+import UI.EmotePicker
 import wx
 
 ####### Emote
 class EmoteCmd(PowerBindCmd):
     def BuildUI(self, dialog):
         emoteSizer = wx.BoxSizer(wx.HORIZONTAL)
-        emoteSizer.Add(wx.StaticText(dialog, -1, "Emote:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
-        # TODO - make this a wx.Choice with a list?  Yikes that's a big list.
-        self.emoteName = wx.TextCtrl(dialog, -1)
+        self.emoteText = wx.StaticText(dialog, -1, "Select Emote:")
+        emoteSizer.Add(self.emoteText, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+
+        self.emoteName = wx.Button(dialog, -1, "...")
+        self.emoteName.Bind(wx.EVT_BUTTON, UI.EmotePicker.OnEmotePicker)
         emoteSizer.Add(self.emoteName, 1, wx.ALIGN_CENTER_VERTICAL)
 
         return emoteSizer
 
     def MakeBindString(self, dialog):
-        return f"em {self.emoteName.GetValue()}"
+        return f"em {self.emoteName.GetLabel()}"

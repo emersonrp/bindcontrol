@@ -2536,7 +2536,7 @@ Emotes = {
         'emotes': [
             { 'Converse' : [
                 { 'Greetings' : [
-                    'Hi|Wave',
+                    'Hi%emwave$$local Hi!',
                     'Hello <$target>%em wave$$local Hello, $target',
                     'Introduce <self>%em wave$$local Pleased to meet you! I am $name, a level $level $origin $archetype.',
                     'Looking for Team%local level $level $archetype$$local Looking for team.',
@@ -2545,7 +2545,7 @@ Emotes = {
                 { 'Combat   ' : [
                     'On my mark...%em stop$$local On my mark...',
                     'ATTACK!%em attack$$local ATTACK!',
-                    'Don\t attack!%em no$$local Don\'t attack!',
+                    'Don\'t attack!%em no$$local Don\'t attack!',
                     'Stop!%em stop$$local Stop!',
                     'Come get some!%em taunt1$$local Come get some!',
                 ] },

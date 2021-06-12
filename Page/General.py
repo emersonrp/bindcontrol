@@ -1,6 +1,7 @@
 # UI / logic for the 'general' panel
 import wx
 import UI
+import UI.PowerBinderDialog
 
 from GameData import Archetypes, Origins, MiscPowers
 from UI.ControlGroup import ControlGroup

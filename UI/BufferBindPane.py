@@ -2,6 +2,7 @@ import wx
 
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.ControlGroup import ControlGroup
+from UI.PowerBinderDialog import PowerBinderButton
 
 class BufferBindPane(CustomBindPaneParent):
     def __init__(self, page, bind):
@@ -29,23 +30,28 @@ class BufferBindPane(CustomBindPaneParent):
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Name:"),     (0,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(wx.TextCtrl  (pane, -1, ""),               (0,1), span=(1,4), flag=wx.EXPAND)
 
-        BindSizer.Add(wx.StaticText(pane, -1, "First Buff Power"), (1,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(self.BuffPowerPicker(pane),                  (1,1), flag=wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(wx.StaticText(pane, -1, "Extra"),            (1,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(wx.TextCtrl  (pane, -1, ""),                 (1,3), flag=wx.EXPAND)
-        BindSizer.Add(wx.Button(pane, -1, "..."),                  (1,4), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.StaticText(pane, -1, "First Buff Power"),  (1,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(self.BuffPowerPicker(pane),                   (1,1), flag=wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.StaticText(pane, -1, "Extra"),             (1,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        buffPower1 = wx.TextCtrl  (pane, -1, "")
+        BindSizer.Add(buffPower1,                                   (1,3), flag=wx.EXPAND)
+        BindSizer.Add(PowerBinderButton(pane, targetTextCtrl=buffPower1), (1,4), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 
-        BindSizer.Add(wx.StaticText(pane, -1, "Second Buff Power"),(2,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(self.BuffPowerPicker(pane),                  (2,1), flag=wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(wx.StaticText(pane, -1, "Extra"),            (2,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(wx.TextCtrl  (pane, -1, ""),                 (2,3), flag=wx.EXPAND)
-        BindSizer.Add(wx.Button(pane, -1, "..."),                  (2,4), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.StaticText(pane, -1, "Second Buff Power"), (2,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(self.BuffPowerPicker(pane),                   (2,1), flag=wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.StaticText(pane, -1, "Extra"),             (2,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        buffPower2 = wx.TextCtrl  (pane, -1, "")
+        BindSizer.Add(buffPower2,                                   (2,3), flag=wx.EXPAND)
+        BindSizer.Add(PowerBinderButton(pane, targetTextCtrl=buffPower2), (2,4), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 
-        BindSizer.Add(wx.StaticText(pane, -1, "Third Buff Power"), (3,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(self.BuffPowerPicker(pane),                  (3,1), flag=wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(wx.StaticText(pane, -1, "Extra"),            (3,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(wx.TextCtrl  (pane, -1, ""),                 (3,3), flag=wx.EXPAND)
-        BindSizer.Add(wx.Button(pane, -1, "..."),                  (3,4), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.StaticText(pane, -1, "Third Buff Power"),  (3,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(self.BuffPowerPicker(pane),                   (3,1), flag=wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.StaticText(pane, -1, "Extra"),             (3,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        buffPower3 = wx.TextCtrl  (pane, -1, "")
+        BindSizer.Add(buffPower3,                                   (3,3), flag=wx.EXPAND)
+        testbutton = PowerBinderButton(pane, targetTextCtrl=buffPower3)
+        print(testbutton)
+        BindSizer.Add(PowerBinderButton(pane, targetTextCtrl=buffPower3), (3,4), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 
         BindSizer.Add(wx.StaticText(pane, -1, ""),                 (4,0))
 

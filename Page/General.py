@@ -33,7 +33,7 @@ class General(Page):
 
     def BuildPage(self):
 
-        topSizer = wx.BoxSizer(wx.VERTICAL)
+        topSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         powersBox = ControlGroup(self, self, 'Powers and Info')
         powersBox.AddLabeledControl(
@@ -41,94 +41,118 @@ class General(Page):
             ctlType = 'text',
         )
         powersBox.AddLabeledControl(
-            ctlName = 'Archetype',
-            ctlType = 'combo',
-            contents = sorted(Archetypes),
-            tooltip = '',
-            callback = self.pickArchetype,
-        )
-        powersBox.AddLabeledControl(
             ctlName = 'Origin',
-            ctlType = 'combo',
+            ctlType = 'choice',
             contents = Origins,
             tooltip = '',
             callback = self.pickOrigin,
         )
         powersBox.AddLabeledControl(
+            ctlName = 'Archetype',
+            ctlType = 'choice',
+            contents = sorted(Archetypes),
+            tooltip = '',
+            callback = self.pickArchetype,
+        )
+        powersBox.AddLabeledControl(
             ctlName = 'Primary',
-            ctlType = 'combo',
+            ctlType = 'choice',
             # contents = sorted(ArchData['Primary']),
             tooltip = '',
             callback = self.pickPrimaryPowerSet,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Secondary',
-            ctlType = 'combo',
+            ctlType = 'choice',
             # contents = sorted(ArchData['Secondary']),
             tooltip = '',
             callback = self.pickSecondaryPowerSet,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Epic',
-            ctlType = 'combo',
+            ctlType = 'choice',
             # contents = sorted(ArchData['Epic']),
             tooltip = '',
             callback = self.pickEpicPowerSet,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Pool1',
-            ctlType = 'combo',
+            ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Pool2',
-            ctlType = 'combo',
+            ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Pool3',
-            ctlType = 'combo',
+            ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Pool4',
-            ctlType = 'combo',
+            ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.pickPoolPower,
         )
-        powersBox.AddLabeledControl(
+
+        prefsBox = ControlGroup(self, self, 'Preferences')
+        prefsBox.AddLabeledControl(
             ctlName = 'BindsDir',
             ctlType = 'dirpicker',
         )
-        powersBox.AddLabeledControl(
+        prefsBox.AddLabeledControl(
             ctlName = 'ResetKey',
             ctlType = 'keybutton',
             tooltip = 'This key is used by certain modules to reset binds to a sane state.',
         )
 
-        powersBox.AddLabeledControl(
+        prefsBox.AddLabeledControl(
             ctlName = 'ResetFeedback',
             ctlType = 'checkbox',
         )
 
-        topSizer.Add(powersBox)
+        topSizer.Add(powersBox, 0, wx.ALL, 6)
+        topSizer.Add(prefsBox, 0, wx.ALL, 6)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(topSizer, flag=wx.ALL|wx.EXPAND, border = 20)
 
-        self.SetSizer(paddingSizer)
+        self.SetSizerAndFit(paddingSizer)
         return self
 
     def pickArchetype(self, event):
+        choice = event.EventObject
+        index  = choice.GetSelection()
+        arch   = choice.GetString(index)
+
+        self.Controls['Primary'].Clear()
+        self.Controls['Secondary'].Clear()
+        self.Controls['Epic'].Clear()
+
         # TODO fill in Primary / Secondary powers pickers
-        pass
+        Primaries   = Archetypes[arch]['Primary']
+        Secondaries = Archetypes[arch]['Secondary']
+        Epix        = Archetypes[arch]['Epic']
+
+        for p in Primaries:
+            self.Controls['Primary'].Append(p)
+
+        for s in Secondaries:
+            self.Controls['Secondary'].Append(s)
+
+        for e in Epix:
+            self.Controls['Epic'].Append(e)
+
+        self.Fit()
 
     def pickOrigin(self, event):
         # TODO do we need to take any action based on this?

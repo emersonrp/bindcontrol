@@ -48,6 +48,12 @@ class ControlGroup(wx.StaticBoxSizer):
         elif ctlType == ('text'):
             control = wx.TextCtrl(ctlParent, -1, Init[ctlName])
 
+        elif ctlType == ('choice'):
+            contents = contents if contents else []
+            control = wx.Choice(ctlParent, -1, choices = contents)
+            if callback:
+                control.Bind(wx.EVT_CHOICE, callback )
+
         elif ctlType == ('statictext'):
             control = wx.StaticText(ctlParent, -1, contents)
 
@@ -66,11 +72,10 @@ class ControlGroup(wx.StaticBoxSizer):
         elif ctlType == ('dirpicker'):
             control = wx.DirPickerCtrl(
                 ctlParent, -1, Init[ctlName], Init[ctlName],
-                style = wx.DIRP_USE_TEXTCTRL|wx.ALL,
+                #style = wx.DIRP_USE_TEXTCTRL|wx.DIRP_SMALL,
             )
         elif ctlType == ('colorpicker'):
             control = wx.ColourPickerCtrl( ctlParent, -1, contents)
-
 
         else: wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}")
 

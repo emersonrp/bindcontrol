@@ -7,11 +7,14 @@ def OnEmotePicker(evt):
 
     button.PopupMenu(EmotePicker(button))
 
+
 class EmotePicker(wx.Menu):
+
+    payloadMap = {}
+
     def __init__(self, target):
         wx.Menu.__init__(self)
 
-        self.payloadMap = {}
         self.UpdateTarget = target
         self.BuildMenu(GameData.Emotes['emotes'])
 

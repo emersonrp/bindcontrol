@@ -1,6 +1,7 @@
 from PowerBindCmd import PowerBindCmd
 import UI
 import UI.EmotePicker
+from UI.EmotePicker import EmotePicker
 import wx
 
 ####### Emote
@@ -17,4 +18,7 @@ class EmoteCmd(PowerBindCmd):
         return emoteSizer
 
     def MakeBindString(self, dialog):
-        return f"em {self.emoteName.GetLabel()}"
+        displayedEmoteName = self.emoteName.GetLabel()
+        actualEmotePayload = EmotePicker.payloadMap[displayedEmoteName]
+
+        return actualEmotePayload

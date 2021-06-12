@@ -620,7 +620,13 @@ class Mastermind(Page):
 
     def PopulateBindFiles(self):
         profile = self.Profile
-        ResetFile = profile.ResetFile
+        ResetFile = profile.ResetFile()
+
+
+
+
+        # TODO - just to make progress, though we want to disable this whole ui if !Mastermind
+        return
 
         if (self.GetState('petselenable')):
             if (self.GetState('Pet1Nameenabled')) : ResetFile.SetBind(self.State['sel0'],f"petselectname {self.State['Pet1Name']}")
@@ -658,7 +664,7 @@ class Mastermind(Page):
             "Necromancy"  : { 'min' : "zom",  'lts' : "grav", 'bos' : "lich", },
             "Thugs"       : { 'min' : "thu",  'lts' : "enf",  'bos' : "bru", },
         }
-        powers = self.Stateowers[ profile.General.State['Primary'] ]
+        powers = self.Stateowers[ profile.General.GetState('Primary') ]
 
         # "Local","Self-Tell","Petsay","None"
         mmSubBind(profile, ResetFile,"all",None, powers)

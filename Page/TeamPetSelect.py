@@ -105,9 +105,9 @@ class TeamPetSelect(Page):
 
     def PopulateBindFiles(self):
         profile    = self.Profile
-        ResetFile  = profile.ResetFile
+        resetFile  = profile.ResetFile()
         if (self.GetState('PetSelEnable')):
-            tpsCreatePetSet(profile,1,0,profile.ResetFile)
+            tpsCreatePetSet(profile,1,0,resetFile)
             for size in (1,2,3,4,5,6,7,8):
                 for sel in range(size):
                     file = profile.GetBindFile("tps",f"pet{size}{sel}.txt")
@@ -115,7 +115,7 @@ class TeamPetSelect(Page):
 
 
         if (self.GetState('TeamSelEnable')):
-            tpsCreateTeamSet(profile,1,0,0,profile.ResetFile)
+            tpsCreateTeamSet(profile,1,0,0,resetFile)
             for size in (1,2,3,4,5,6,7,8):
                 for pos in range(size):
                     for sel in range(size):

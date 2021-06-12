@@ -387,7 +387,7 @@ class SoD(Page):
 
         if ((self.State['Default'] == modestr) and (t['totalkeys'] == 0)):
 
-            curfile = profile.ResetFile
+            curfile = profile.ResetFile()
             sodDefaultResetKey(mobile,stationary)
 
             sodUpKey     (t,bl,curfile,self.State,mobile,stationary,flight,'','','',sssj)
@@ -867,7 +867,7 @@ class SoD(Page):
     def iupMessage(self):
         print("ZOMG SOMEBODY IMPLEMENT A WARNING DIALOG!!!\n")
 
-    def PopulateBindFiles(self):
+    def WriteBindFiles(self):
 
         profile = self.Profile
 
@@ -1255,7 +1255,7 @@ class SoD(Page):
         if (self.State['Temp'] and self.State['TempEnable']):
             temptogglefile1 = profile.GetBindFile("temptoggle1.txt")
             temptogglefile2 = profile.GetBindFile("temptoggle2.txt")
-            temptogglefile2.SetBind(self.State['TempTraySwitch'],'-down$$gototray 1'                     + BindFile.BLF(profile, 'temptoggle1.txt'))
+            temptogglefile2.SetBind(self.State['TempTraySwitch'],'-down$$gototray 1'                         + BindFile.BLF(profile, 'temptoggle1.txt'))
             temptogglefile1.SetBind(self.State['TempTraySwitch'],'+down$$gototray ' + self.State['TempTray'] + BindFile.BLF(profile, 'temptoggle2.txt'))
             ResetFile.      SetBind(self.State['TempTraySwitch'],'+down$$gototray ' + self.State['TempTray'] + BindFile.BLF(profile, 'temptoggle2.txt'))
 
@@ -1282,7 +1282,7 @@ class SoD(Page):
 
         #  kheldian form support
         #  create the Nova and Dwarf form support files if enabled.
-        Nova =  self.State['Nova']
+        Nova  = self.State['Nova']
         Dwarf = self.State['Dwarf']
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'

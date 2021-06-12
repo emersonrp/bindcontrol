@@ -13,6 +13,20 @@ def ColorDefault():
         'background' : { 'r' : 255, 'g' : 255, 'b' : 255, },
     }
 
+def BLF (profile, *args):
+    return "$$" + BLFs(profile, *args)
+
+def BLFs(profile, *args):
+    return "bindloadfile " + BLFPath(profile, *args)
+
+def BLFPath(profile, *args):
+    # TODO TODO TODO -- os-agnostic please
+    filepath = profile.BindsDir()
+    for arg in args:
+        filepath = filepath + "/" + arg
+
+    return filepath
+
 
 Icons = {}
 def Icon(iconname):
@@ -28,6 +42,11 @@ def Icon(iconname):
 
 # TODO - not clear if this logic is correct;  dunno what each "c" table meant
 def CheckConflict(t, k, Purpose):
+
+    # TODO - therefore, for now, we'll just return out of this, to make progress
+    return
+
+
 
     if not t.get('k', None)     : return
     if t[k].upper() == "UNBOUND": return

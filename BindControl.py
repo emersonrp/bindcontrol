@@ -56,12 +56,12 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, None, Profile_new)
         self.Bind(wx.EVT_MENU, self.Profile.LoadFromFile, Profile_load)
         self.Bind(wx.EVT_MENU, self.Profile.SaveToFile  , Profile_save)
-        self.Bind(wx.EVT_MENU, self.exitApplication, Profile_exit)
+        self.Bind(wx.EVT_MENU, self.OnMenuExitApplication, Profile_exit)
 
         self.Bind(wx.EVT_MENU, None, Help_manual)
         self.Bind(wx.EVT_MENU, None, Help_faq)
         self.Bind(wx.EVT_MENU, None, Help_license)
-        self.Bind(wx.EVT_MENU, self.showAboutBox,      Help_about)
+        self.Bind(wx.EVT_MENU, self.OnMenuAboutBox,      Help_about)
 
         AppIcon = wx.Icon()
         AppIcon.LoadFile('BindControl.ico', wx.BITMAP_TYPE_ICO)
@@ -78,11 +78,14 @@ class Main(wx.Frame):
         sizer.Add(WriteButton, 0, wx.EXPAND | wx.ALL, 5)
 
         # WRITE BUTTON EVENT
-        self.Bind(wx.EVT_BUTTON, self.Profile.WriteBindFiles, WriteButton)
+        self.Bind(wx.EVT_BUTTON, self.OnWriteBindsButton, WriteButton)
 
         self.SetSizerAndFit(sizer)
 
-    def showAboutBox(self, event):
+    def OnWriteBindsButton(self, evt):
+        self.Profile.WriteBindFiles()
+
+    def OnMenuAboutBox(self, event):
         if self.about_info is None:
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
@@ -95,7 +98,7 @@ class Main(wx.Frame):
 
         wx.adv.AboutBox(self.about_info)
 
-    def exitApplication(self, event):
+    def OnMenuExitApplication(self, event):
         self.Close(1)
 
 if __name__ == "__main__":

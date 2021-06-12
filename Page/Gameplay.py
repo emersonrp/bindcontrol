@@ -1,6 +1,8 @@
 import wx
 import UI
 import Utility
+import BindFile
+from Utility import BLF
 
 from UI.ControlGroup import ControlGroup
 from Page import Page
@@ -126,10 +128,9 @@ class Gameplay(Page):
     def OnFPSEnable(self, evt):
         self.Controls['FPSBindKey'].Enable(evt.EventObject.IsChecked())
 
-    # TODO -- need two files to make this a toggle.
     def PopulateBindFiles(self):
-        ResetFile = self.Profile.ResetFile
-        ResetFile.SetBind(self.Profile.FPS['Bindkey'],'++showfps++netgraph')
+        ResetFile = self.Profile.ResetFile()
+        ResetFile.SetBind(self.Profile.Gameplay.GetState('FPSBindkey'),'++showfps++netgraph')
 
         if (self.GetState('TPSSelMode') < 3):
             selmethod = "teamselect"
@@ -142,15 +143,15 @@ class Gameplay(Page):
                 selmethod1 = "teamselect"
                 selnummod1 = 0
             selresetfile = self.Profile.GetBindFile("tps","reset.txt")
-            for i in (1,2,3,4,5,6,7,8):
+            for i in ('1','2','3','4','5','6','7','8'):
                 selfile = self.Profile.GetBindFile("tps",f"sel{i}.txt")
-                ResetFile.   SetBind(self.GetState(f"TeamSelect{i}"),"selmethod " + (i - selnummod) + BindFile.BLF(self.Profile,'tps',"sel{i}.txt"))
-                selresetfile.SetBind(self.GetState(f"TeamSelect{i}"),"selmethod " + (i - selnummod) + BindFile.BLF(self.Profile,'tps',"sel{i}.txt"))
-                for j in (1,2,3,4,5,6,7,8):
+                ResetFile.   SetBind(self.GetState(f"TeamSelect{i}"),f"{selmethod} {int(i) - selnummod}" + BLF(self.Profile,'tps',f"sel{i}.txt"))
+                selresetfile.SetBind(self.GetState(f"TeamSelect{i}"),f"{selmethod} {int(i) - selnummod}" + BLF(self.Profile,'tps',f"sel{i}.txt"))
+                for j in ('1','2','3','4','5','6','7','8'):
                     if (i == j):
-                        selfile.SetBind(self.GetState(f"TeamSelect{j}"),"selmethod1 " + (j - selnummod1) + BindFile.BLF(self.Profile,'tps',"reset.txt"))
+                        selfile.SetBind(self.GetState(f"TeamSelect{j}"),f"{selmethod1} {int(j) - selnummod1}" + BLF(self.Profile,'tps',"reset.txt"))
                     else:
-                        selfile.SetBind(self.GetState(f"TeamSelect{j}"),"selmethod " +  (j - selnummod)  + BindFile.BLF(self.Profile,'tps',"selj.txt"))
+                        selfile.SetBind(self.GetState(f"TeamSelect{j}"),f"{selmethod} {int(j) - selnummod}"  + BLF(self.Profile,'tps',"selj.txt"))
 
         else:
             selmethod = "teamselect"
@@ -161,29 +162,30 @@ class Gameplay(Page):
             for i in (1,2,3,4,5,6,7,8):
                 ResetFile.SetBind(self.GetState('sel1'),"selmethod " + (i - selnummod))
 
-        ResetFile = self.Profile.ResetFile
-        Typing    = self.State
+        ResetFile = self.Profile.ResetFile()
 
-        Notifier = Typing['TypingNotifier']
-        if Notifier:
-            Notifier = "\\Notifier"
+        notifier = self.GetState('TypingNotifier')
 
-        ResetFile.SetBind(Typing['StartChat'], 'show chatstartchat' . Notifier)
-        ResetFile.SetBind(Typing['SlashChat'], 'show chatslashchat' . Notifier)
-        ResetFile.SetBind(Typing['StartEmote'],'show chatem ' . Notifier)
-        ResetFile.SetBind(Typing['AutoReply'], 'autoreply' . Notifier)
-        ResetFile.SetBind(Typing['TellTarget'],'show chatbeginchat /tell target, ' . Notifier)
-        ResetFile.SetBind(Typing['QuickChat'], 'quickchat' . Notifier)
+        # TODO - re-examine the original code, wtf is this
+        if notifier:
+            notifier = "\\" + notifier
+
+        ResetFile.SetBind(self.GetState('StartChat'), 'show chatstartchat' + notifier)
+        ResetFile.SetBind(self.GetState('SlashChat'), 'show chatslashchat' + notifier)
+        ResetFile.SetBind(self.GetState('StartEmote'),'show chatem ' + notifier)
+        ResetFile.SetBind(self.GetState('AutoReply'), 'autoreply' + notifier)
+        ResetFile.SetBind(self.GetState('TellTarget'),'show chatbeginchat /tell target, ' + notifier)
+        ResetFile.SetBind(self.GetState('QuickChat'), 'quickchat' + notifier)
 
     def findconflicts(self):
-        Utility.CheckConflict(self.Profile.FPS,"Bindkey","FPS Display Toggle")
+        Utility.CheckConflict(self,"FPSBindkey","FPS Display Toggle")
 
-        Utility.CheckConflict(self.Profile.Typing,"StartChat", "Start Chat Key")
-        Utility.CheckConflict(self.Profile.Typing,"SlashChat", "Slashchat Key")
-        Utility.CheckConflict(self.Profile.Typing,"StartEmote","Emote Key")
-        Utility.CheckConflict(self.Profile.Typing,"AutoReply", "Autoreply Key")
-        Utility.CheckConflict(self.Profile.Typing,"TellTarget","Tell Target Key")
-        Utility.CheckConflict(self.Profile.Typing,"QuickChat", "Quickchat Key")
+        Utility.CheckConflict(self,"StartChat", "Start Chat Key")
+        Utility.CheckConflict(self,"SlashChat", "Slashchat Key")
+        Utility.CheckConflict(self,"StartEmote","Emote Key")
+        Utility.CheckConflict(self,"AutoReply", "Autoreply Key")
+        Utility.CheckConflict(self,"TellTarget","Tell Target Key")
+        Utility.CheckConflict(self,"QuickChat", "Quickchat Key")
 
     def bindisused(self):
         return self.GetState('Enable')

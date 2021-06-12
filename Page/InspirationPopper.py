@@ -122,30 +122,28 @@ class InspirationPopper(Page):
     def PopulateBindFiles(self):
         profile = self.Profile
 
-        ResetFile = profile.ResetFile
+        ResetFile = profile.ResetFile()
 
         for Insp in sorted(Inspirations):
             forwardOrder = ""
             reverseOrder = ""
 
             for item in Inspirations[Insp]:
-                forwardOrder = forwardOrder + f"inspexecname {item}"
+                forwardOrder = forwardOrder + f"inspexecname {item}$$"
+                reverseOrder = f"inspexecname {item}$$" + reverseOrder
 
-            for item in Inspirations[Insp].reverse():
-                reverseOrder = reverseOrder + f"inspexecname {item}"
+            # TODO - Re-enable 'feedback' notion with colors
+            # if self.Init['Feedback']:
+                # forwardOrder = cbChatColorOutput(self.Init[f"{Insp}Colors"]) + Insp + forwardOrder
+                # reverseOrder = cbChatColorOutput(self.Init[f"Rev{Insp}Colors"]) + Insp + reverseOrder
 
-
-            if self.Init['Feedback']:
-                forwardOrder = cbChatColorOutput(self.Init[f"{Insp}Colors"]) + Insp + forwardOrder
-                reverseOrder = cbChatColorOutput(self.Init[f"Rev{Insp}Colors"]) + Insp + reverseOrder
-
-        if self.Init['Enable']:
-            cbWriteBind(ResetFile, self.Init[f"{Insp}Key"], forwardOrder)
-        if self.Init['Reverse']:
-            cbWriteBind(ResetFile, self.Init[f"Rev{Insp}Key"], reverseOrder)
+        if self.GetState('EnableInspBinds'):
+            ResetFile.SetBind(self.GetState(f"{Insp}Key"), forwardOrder)
+        if self.GetState('EnableRevInspBinds'):
+            ResetFile.SetBind(self.GetState(f"Rev{Insp}Key"), reverseOrder)
 
     def findconflicts(self, profile):
-        if self.State['Enable']:
+        if self.GetState('EnableInspBinds'):
             Utility.CheckConflict(self.State,'acckey',"Accuracy Key")
             Utility.CheckConflict(self.State,'hpkey',"Healing Key")
             Utility.CheckConflict(self.State,'damkey',"Damage Key")
@@ -154,7 +152,7 @@ class InspirationPopper(Page):
             Utility.CheckConflict(self.State,'bfkey',"Breakfree Key")
             Utility.CheckConflict(self.State,'reskey',"Resistance Key")
 
-        if self.State['Reverse']:
+        if self.GetState('EnableRevInspBinds'):
             Utility.CheckConflict(self.State,'racckey',"Reverse Accuracy Key")
             Utility.CheckConflict(self.State,'rhpkey',"Reverse Healing Key")
             Utility.CheckConflict(self.State,'rdamkey',"Reverse Damage Key")

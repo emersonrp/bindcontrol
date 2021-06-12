@@ -72,7 +72,7 @@ class BufferBinds(Page):
 
     def PopulateBindFiles(self):
         profile = self.Profile
-        ResetFile = profile.ResetFile
+        ResetFile = profile.ResetFile()
 
         buffer = self.GetState('buffer')
 

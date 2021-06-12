@@ -21,7 +21,7 @@ class General(Page):
             'Primary': 'Martial Arts',
             'Secondary': 'Super Reflexes',
             'Epic': 'Weapon Mastery',
-            'BindsDir': "/home/emerson",
+            'BindsDir': "/home/emerson/cohbinds/",
             'ResetKey': 'CTRL+M',
             'ResetFeedback': 1,
             'Pool1': '',

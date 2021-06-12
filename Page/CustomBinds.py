@@ -314,9 +314,9 @@ class CustomBinds(Page):
 
     def PopulateBindFiles(self):
         profile = self.Profile
-        ResetFile = profile.ResetFile
+        ResetFile = profile.ResetFile()
 
-        buffer = self.GetState('buffer')
+        buffer = self.GetState('buffer') or []
 
         for key in buffer:
             bbind = buffer['key']

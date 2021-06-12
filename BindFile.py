@@ -3,9 +3,8 @@ from pathlib import Path
 class BindFile():
 
     def __init__(self, profile, *pathbits):
-        bindsdir = profile.BindsDir
+        bindsdir = profile.BindsDir()
         pathbits = (bindsdir, *pathbits)
-
         self.Path = Path(*pathbits)
 
         self.Binds = {}
@@ -13,7 +12,7 @@ class BindFile():
     def SetBind(self, key, bindtext):
 
         if key == None:
-            die("invalid key: {key}, bindtext {bindtext}")
+            print(f"invalid key: {self.Path}, {key}, bindtext {bindtext}")
 
         bindtext = bindtext.strip()
 

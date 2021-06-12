@@ -34,17 +34,27 @@ class Page(wx.Panel):
         self.HelpWindow.Show(not self.HelpWindow.IsShown())
 
     # stubs
+
+    # have the Bind objects fill the BindFile object with tuples of binds
     def PopulateBindFiles(self):
         return
+
+    # create and display the UI for this page
     def BuildPage(self):
         return
+
     def HelpText(self):
         return 'Help not currently implemented here.'
 
     def GetState(self, key):
-        control = self.Controls[key]
-        # This is idiotic but I gotta be me.
-        if   getattr(control, 'GetValue', None):
+        control = self.Controls.get(key, None)
+        if not control:
+            return
+        if isinstance(control, wx.Button):
+            return control.GetLabel()
+        elif isinstance(control, wx.Choice) or isinstance(control, wx.ComboBox):
+            return control.GetSelection()
+        elif getattr(control, 'GetValue', None):
             return control.GetValue()
         elif getattr(control, 'GetPath', None):
             return control.GetPath()

@@ -3,18 +3,14 @@ from pathlib import Path
 import json
 
 from BindFile import BindFile
-from Page.BufferBinds import BufferBinds
-#from Page.ComplexBinds
-from Page.CustomBinds import CustomBinds
-#from Page.FPSDisplay import FPSDisplay
-from Page.Gameplay import Gameplay
 from Page.General import General
+from Page.Gameplay import Gameplay
+from Page.SoD import SoD
 from Page.InspirationPopper import InspirationPopper
 from Page.Mastermind import Mastermind
-from Page.SimpleBinds import SimpleBinds
-from Page.SoD import SoD
 from Page.TeamPetSelect import TeamPetSelect
-#from Page.TypingMsg import TypingMsg
+#from Page.ComplexBinds
+from Page.CustomBinds import CustomBinds
 
 class Profile(wx.Notebook):
 
@@ -30,13 +26,9 @@ class Profile(wx.Notebook):
         self.CreatePage(General(self))
         self.CreatePage(Gameplay(self))
         self.CreatePage(SoD(self))
-#        self.CreatePage(FPSDisplay(self))
         self.CreatePage(InspirationPopper(self))
         self.CreatePage(Mastermind(self))
         self.CreatePage(TeamPetSelect(self))
-#        self.CreatePage(TypingMsg(self))
-        #self.CreatePage(SimpleBinds(self))
-        #self.CreatePage(BufferBinds(self))
         #self.CreatePage(ComplexBinds(self))
         self.CreatePage(CustomBinds(self))
 
@@ -55,7 +47,7 @@ class Profile(wx.Notebook):
     def Name(self)        : return self.General.GetState('Name')
     def BindsDir(self)    : return self.General.GetState('BindsDir')
     def ProfileFile(self) : return Path(self.BindsDir(), self.Name() + ".bcp")
-    def ResetFile(self)   : return self.GetBindFile(self.BindsDir, "resetfile.txt")
+    def ResetFile(self)   : return self.GetBindFile(self.BindsDir(), "resetfile.txt")
 
     ###################
     # Profile Save/Load
@@ -143,8 +135,9 @@ class Profile(wx.Notebook):
 
 
     def WriteBindFiles(self):
-        for Page in self.Pages:
-            print(Page.Name + "\n" + Page.PopulateBindFiles)
+        for pageName in self.Pages:
+            page = getattr(self, pageName, None)
+            print(f"----writing files for page {pageName}, which is a {page}")
 
-        for _, bindfile in self.BindFiles:
+        for bindfile in self.BindFiles:
             bindfile.Write(self)

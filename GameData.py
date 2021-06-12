@@ -2585,7 +2585,7 @@ Emotes = {
                 'Disagree|no', 'Shake Head|No', 'Yada Yada Yada|Yata', 'Talk to the Hand|TalkToHand',
             ]},
             { 'Interact' : [
-                'Salute', 'Military Salute', 'Praetorian Salute', 'At Ease'
+                'Salute', 'Military Salute', 'Praetorian Salute', 'At Ease',
                 '---',
                 'Bow', 'Fancy Bow', 'Clap', 'Praise', 'Camera',
                 '---',
@@ -2610,7 +2610,7 @@ Emotes = {
                     'Sit Chair 1', 'Sit Chair 2', 'Sit Chair 3', 'Sit Bench 1', 'Sit Bench 2',
                     'Sit Bench 3', 'Sit Bench 4', 'Sit Executive Chair', 'Sit Stool',
                     'Sit Table 1', 'Sit Table 2', 'Sit Ledge|ledgesit',
-                    '---'
+                    '---',
                     'Wall Lean', 'Assume the Position|assumepositionwall',
                 ]},
             ]},
@@ -2632,13 +2632,13 @@ Emotes = {
                 { 'Wedding' : [
                     'Propose, Throw Rice', 'Throw Confetti', 'Throw Rose Petals',
                 ] },
-                { 'Animal', [
+                { 'Animal': [
                     'Hiss', 'Sniff', 'Savage',
                 ] },
                 { 'Holiday' : [
                     'Throw Snowflakes|snowflakes', 'Offer Gift', 'Receive Gift',
                 ] },
-                { 'Steam Punk', [
+                { 'Steam Punk': [
                     'Inspiration', 'Hot Temper', 'Train Whistle',
                 ]},
             ]},

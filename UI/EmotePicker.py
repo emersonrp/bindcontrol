@@ -15,40 +15,38 @@ class EmotePicker(wx.Menu):
 
         EmoteData = GameData.Emotes
 
-        #self.AppendSubMenu(self.BuildMenu(self, EmoteData['emotes']))
-        self.BuildMenu(self, EmoteData['emotes'])
+        self.BuildMenu(EmoteData['emotes'])
 
 
-    # tangly recursive menu builder
-    def BuildMenu(self, menuroot, data):
+    def BuildMenu(self, data):
+        for category in data:
+            # 'Converse' : []
+            for catname, cat in category.items():
+                submenu = wx.Menu()
+                self.AppendSubMenu(submenu, catname)
 
-        for emote in data:
-            newthing = None
+                # [ {submenu: [ list, of, emotes ]},  "or just strings" ]
+                for subcat in cat:
+                    if isinstance(subcat, str):
+                        if subcat == "---":
+                            submenu.AppendSeparator()
+                        else:
+                            # TODO - split into visible string and actual emote,
+                            # TODO - and bind event with, I guess, a closure
+                            submenu.Append(-1, subcat)
 
-            if isinstance(emote, dict):
-                # recurse up a submenu
-                for name, subdata in emote.items():
-                    newthing = wx.Menu(name)
-                    toappend = self.BuildMenu(newthing, subdata)
-                    if isinstance(toappend, wx.Menu):
-                        newthing.AppendSubMenu(self.BuildMenu(self, subdata), name)
-                    else:
-                        newthing.Append(-1, item = name)
+                    elif isinstance(subcat, dict):
+                        # { submenu : [ list, of, emotes ]}
+                        for subitem, deepdata in subcat.items():
+                            print(f"subitem is {subitem}")
+                            print(f"deepdata is {deepdata}")
+                            subsubmenu = wx.Menu()
+                            submenu.AppendSubMenu(subsubmenu, subitem)
 
-            elif isinstance(emote, list):
-                # iterate
-                for item in emote:
-                    newthing = item
-                    menuroot.Append(self.BuildMenu(self, item))
-                    # menuroot.append(self.BuildMenu(item)
-
-            elif isinstance(emote, str):
-                # stick it in the menu thingie
-                menuroot.Append(-1, item = emote)
-                # parse the string for | % etc
-                # add the visible string to the menu,
-                # add the massaged bind string as ClientData()
-                #
-                # add event handler?
-                # return it
-        return newthing
+                            for leafitem in deepdata:
+                                if leafitem == "---":
+                                    subsubmenu.AppendSeparator()
+                                else:
+                                    # TODO - split into visible string and actual emote,
+                                    # TODO - and bind event with, I guess, a closure
+                                    subsubmenu.Append(-1, leafitem)

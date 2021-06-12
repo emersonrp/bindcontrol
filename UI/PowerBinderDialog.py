@@ -9,15 +9,15 @@ from PowerBindCmd import AFKCmd, AutoPowerCmd, ChatCmd, ChatGlobalCmd, CostumeCh
                     UsePowerFromTrayCmd, WindowToggleCmd
 
 
-import pprint
-pp = pprint.PrettyPrinter(indent=1, width=132)
-
 def PowerBinderEventHandler(evt):
     button = evt.EventObject
+    print(button)
 
     with PowerBinderDialog(button.Parent) as dlg:
 
-        if(dlg.ShowModal() == wx.ID_OK): pass
+        if(dlg.ShowModal() == wx.ID_OK):
+            bindString = dlg.MakeBindString()
+            button.targetTextCtrl.SetValue(bindString)
 
 class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent):
@@ -34,7 +34,6 @@ class PowerBinderDialog(wx.Dialog):
 
         choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.bindChoice = wx.Choice(self, -1, choices = [cmd for cmd in commandClasses])
-        self.bindChoice.SetSelection(self.bindChoice.FindString("Use Power"))
         self.bindChoice.Bind(wx.EVT_CHOICE, self.OnBindChoice)
         choiceSizer.Add(self.bindChoice, 1, wx.ALIGN_CENTER_VERTICAL)
 
@@ -42,9 +41,9 @@ class PowerBinderDialog(wx.Dialog):
         choiceSizer.Add(addBindButton, 0, wx.ALIGN_CENTER_VERTICAL)
         addBindButton.Bind(wx.EVT_BUTTON, self.OnAddBind)
 
-        showBindTextButton = wx.Button(self, -1, "Show Bind Text")
-        choiceSizer.Add(showBindTextButton, 0, wx.ALIGN_CENTER_VERTICAL)
-        showBindTextButton.Bind(wx.EVT_BUTTON, self.OnShowBindText)
+        showBindStringButton = wx.Button(self, -1, "Show Bind String")
+        choiceSizer.Add(showBindStringButton, 0, wx.ALIGN_CENTER_VERTICAL)
+        showBindStringButton.Bind(wx.EVT_BUTTON, self.OnShowBindString)
 
         sizer.Add(choiceSizer, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 16)
 
@@ -60,33 +59,50 @@ class PowerBinderDialog(wx.Dialog):
         self.SetFocus()
 
     def OnBindChoice(self, evt):
-        index = evt.EventObject.GetSelection()
+        index = self.bindChoice.GetSelection()
 
-        self.ShowUIFor(None)
+        # check whether we have an object already attached to this choice
+        cmdObject = None
+        try:
+            cmdObject = self.bindChoice.GetClientData(index)
+        except Exception:
+            pass
 
+        # if not, make and attach one
+        if not cmdObject:
+            chosenName = self.bindChoice.GetString(index)
+            newCommandClass = commandClasses[chosenName]
+            if newCommandClass:
+                cmdObject = newCommandClass(self)
+                self.bindChoice.SetClientData(index, cmdObject)
+
+                # Shim the UI bits (if any) for the new command into the dialog,
+                # just above the buttons, and then do the correct showing/hiding
+                if cmdObject.UI:
+                    self.mainSizer.Insert(self.mainSizer.GetItemCount()-1, cmdObject.UI, 0, wx.EXPAND)
+                # else no extra UI, don't show
+
+        # old or new, show it.
+        self.ShowUIFor(cmdObject)
         self.Layout()
         self.Fit()
 
 
     def OnAddBind(self, evt):
-        chosenName = self.bindChoice.GetString(self.bindChoice.GetSelection())
+        # find the item we just poked "add" next to
+        chosenSel  = self.bindChoice.GetSelection()
+        chosenName = self.bindChoice.GetString(chosenSel)
 
-        # Stick it into the list
+        # detach the command object from self.bindChoice, and instead glue it
+        # to self.rearrangeList
+        newCommand = self.bindChoice.DetachClientObject(chosenSel)
         newBindIndex = self.rearrangeList.Append(chosenName)
         self.rearrangeList.Select(newBindIndex)
+        self.rearrangeList.SetClientData(newBindIndex, newCommand)
 
-        # Make the command object and glue it to the list entry
-        newCommandClass = commandClasses[chosenName]
-        if newCommandClass:
-            newCommand = newCommandClass(self)
-            self.rearrangeList.SetClientData(newBindIndex, newCommand)
-
-            # Shim the UI bits for the new command into the dialog,
-            # just above the buttons, and then do the correct showing/hiding
-            if newCommand.UI:
-                self.mainSizer.Insert(self.mainSizer.GetItemCount()-1, newCommand.UI, 0, wx.EXPAND)
-                self.ShowUIFor(newCommand)
-        # else no extra UI, don't show
+        # hide its UI for now, and move the Choice Away
+        self.ShowUIFor(None)
+        self.bindChoice.SetSelection(wx.NOT_FOUND)
 
     def OnListSelect(self, evt):
         selected = self.rearrangeList.GetSelection()
@@ -95,25 +111,37 @@ class PowerBinderDialog(wx.Dialog):
         self.ShowUIFor(selCommand)
         evt.Skip()
 
+    def OnShowBindString(self, evt):
+        bindstring = self.MakeBindString()
 
-    def OnShowBindText(self, evt):
+    def MakeBindString(self):
         # Quick'n'dirty glom together of the bindstrings, for debugging
-        bindtexts = []
+        cmdBindStrings = []
         for index in range(self.rearrangeList.GetCount()):
             c = self.rearrangeList.GetClientData(index)
-            if c: bindtexts.append(c.MakeBindString(self)) # why "if c"?!?
+            if c: cmdBindStrings.append(c.MakeBindString(self)) # why "if c"?!?
 
-        print('$$'.join(bindtexts))
-
-
+        bindstring = ('$$'.join(cmdBindStrings))
+        print(bindstring)
+        return bindstring
 
     def ShowUIFor(self, command):
-        ilist = self.rearrangeList
 
         # unshow anything that's showing
-        for index in range(0,ilist.GetCount()):
-            c = ilist.GetClientData(index)
-            if c and c.UI: self.mainSizer.Hide(c.UI)
+        # NEW - from either rearrangeList or bindchoice
+        for index in range(0,self.rearrangeList.GetCount()):
+            try:
+                c = self.rearrangeList.GetClientData(index)
+                if c and c.UI: self.mainSizer.Hide(c.UI)
+            except Exception:
+                pass
+
+        for choice in range(self.bindChoice.GetCount()):
+            try:
+                c = self.bindChoice.GetClientData(choice)
+                if c and c.UI: self.mainSizer.Hide(c.UI)
+            except Exception:
+                pass
 
         # ... and show the one we want
         if command and command.UI: self.mainSizer.Show(command.UI)
@@ -145,4 +173,10 @@ commandClasses = {
     'Window Toggle'            : WindowToggleCmd.WindowToggleCmd,
 }
 
+class PowerBinderButton(wx.Button):
+    def __init__(self, parent, targetTextCtrl):
+        wx.Button.__init__(self, parent, -1, label = "...")
 
+        print(self)
+        self.targetTextCtrl = targetTextCtrl
+        self.Bind(wx.EVT_BUTTON, PowerBinderEventHandler)

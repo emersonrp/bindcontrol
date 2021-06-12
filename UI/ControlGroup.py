@@ -8,17 +8,13 @@ class ControlGroup(wx.StaticBoxSizer):
     def __init__(self, parent, page, label = '', width = 2, flexcols = [0]):
         wx.StaticBoxSizer.__init__(self, wx.VERTICAL, parent, label = label)
 
-        self.Parent = parent
         self.Page   = page
-        # self.Add(wx.StaticBox( parent, -1), wx.VERTICAL)
 
         self.InnerSizer = wx.FlexGridSizer(0,width,3,3)
         for col in flexcols: self.InnerSizer.AddGrowableCol(col)
         self.Add(self.InnerSizer, 0, wx.ALL|wx.EXPAND, 16)
 
-    # control will parent itself in self.Parent
-    # optional ctlParent arg will pick a different parent for complicated layouts
-    def AddLabeledControl(self, ctlParent = None,
+    def AddLabeledControl(self,
             ctlType = '', ctlName = '', noLabel = False,
             contents = '', tooltip = '', callback = None):
 
@@ -28,7 +24,7 @@ class ControlGroup(wx.StaticBoxSizer):
 
         sizer     = self.InnerSizer
         Init      = self.Page.Init
-        ctlParent = ctlParent if ctlParent else self.Parent
+        ctlParent = self.GetStaticBox()
 
         padding = 2
 

@@ -1,12 +1,11 @@
 import wx
 
-from Bind.CustomBind import CustomBind
-from wx.richtext import RichTextCtrl as RTC
+from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.ControlGroup import ControlGroup
 
-class BufferBind(CustomBind):
+class BufferBindPane(CustomBindPaneParent):
     def __init__(self, page, bind):
-        CustomBind.__init__(self, page, bind)
+        CustomBindPaneParent.__init__(self, page, bind)
         self.Page = page
         self.Init = {
             'BuffPetsByName' : True,

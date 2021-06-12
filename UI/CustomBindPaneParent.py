@@ -1,5 +1,5 @@
 # parent class for various bind types
-class CustomBind():
+class CustomBindPaneParent():
     def __init__(self, page, bind = None):
 
         self.Key      = 'UNBOUND'

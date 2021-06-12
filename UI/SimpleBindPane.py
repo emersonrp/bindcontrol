@@ -1,12 +1,12 @@
 import wx
-from Bind.CustomBind import CustomBind
-
+from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeyBindDialog import KeyPickerEventHandler
+
 ### CustomBind subclasses for the individual bind types
 
-class SimpleBind(CustomBind):
+class SimpleBindPane(CustomBindPaneParent):
     def __init__(self, page, bind = {}):
-        CustomBind.__init__(self, page, bind)
+        CustomBindPaneParent.__init__(self, page, bind)
 
     def BuildBindUI(self, BindCP, page):
 

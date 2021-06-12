@@ -3,8 +3,8 @@ import Utility
 import UI
 
 from Page import Page
-from Bind.BufferBind import BufferBind
-from Bind.SimpleBind import SimpleBind
+from UI.BufferBindPane import BufferBindPane
+from UI.SimpleBindPane import SimpleBindPane
 
 class CustomBinds(Page):
     def __init__(self, parent):
@@ -39,10 +39,10 @@ class CustomBinds(Page):
         # bottom sizer for the buttons
         buttonSizer         = wx.BoxSizer(wx.HORIZONTAL) # sizer for new-item buttons
         newSimpleBindButton = wx.Button(self, -1, "New Simple Bind")
-        newSimpleBindButton.Bind(wx.EVT_BUTTON, self.AddSimpleBindToPage)
+        newSimpleBindButton.Bind(wx.EVT_BUTTON, self.AddSimpleBindPaneToPage)
         buttonSizer.Add(newSimpleBindButton, wx.ALIGN_CENTER)
         newBufferBindButton = wx.Button(self, -1, "New Buffer Bind")
-        newBufferBindButton.Bind(wx.EVT_BUTTON, self.AddBufferBindToPage)
+        newBufferBindButton.Bind(wx.EVT_BUTTON, self.AddBufferBindPaneToPage)
         buttonSizer.Add(newBufferBindButton, wx.ALIGN_CENTER)
 
         # add the two parts of the layout, top one expandable
@@ -50,18 +50,18 @@ class CustomBinds(Page):
         MainSizer.Add( buttonSizer, 0, wx.EXPAND|wx.ALL)
 
         # sizer around the whole thing to add padding
-        # paddingSizer = wx.BoxSizer(wx.VERTICAL)
-        # paddingSizer.Add(MainSizer, 1, flag = wx.ALL|wx.EXPAND, border = 16)
+        paddingSizer = wx.BoxSizer(wx.VERTICAL)
+        paddingSizer.Add(MainSizer, 1, flag = wx.ALL|wx.EXPAND, border = 16)
 
-        # self.SetSizerAndFit(paddingSizer)
-        self.SetSizerAndFit(MainSizer)
+        self.SetSizerAndFit(paddingSizer)
+        #self.SetSizerAndFit(MainSizer)
         self.Layout()
 
-    def AddSimpleBindToPage(self, _, bindinit = {}):
-        self.AddBindToPage(None, bind = SimpleBind(self, bindinit))
+    def AddSimpleBindPaneToPage(self, _, bindinit = {}):
+        self.AddBindToPage(None, bind = SimpleBindPane(self, bindinit))
 
-    def AddBufferBindToPage(self, _, bindinit = {}):
-        self.AddBindToPage(None, bind = BufferBind(self, bindinit))
+    def AddBufferBindPaneToPage(self, _, bindinit = {}):
+        self.AddBindToPage(None, bind = BufferBindPane(self, bindinit))
 
     def AddBindToPage(self, _, bindinit = {}, bind = None):
 

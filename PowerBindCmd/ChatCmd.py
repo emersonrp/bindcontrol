@@ -73,9 +73,7 @@ class ChatCmd(PowerBindCmd):
         duration = f"<duration {duration}>" if duration != 7 else ""
         size     = f"<size {size}>"         if size     != 1 else ""
 
-        border  = ''
-        color   = ''
-        bgcolor = ''
+        bdcolor = fgcolor = bgcolor = ''
         if self.chatCommandUseColorsCB.IsChecked():
             bdcolor = self.chatCommandBorderColor.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
             fgcolor = self.chatCommandBGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX)

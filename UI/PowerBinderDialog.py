@@ -9,15 +9,15 @@ from PowerBindCmd import AFKCmd, AutoPowerCmd, ChatCmd, ChatGlobalCmd, CostumeCh
                     UsePowerFromTrayCmd, WindowToggleCmd
 
 
-import pprint
-pp = pprint.PrettyPrinter(indent=1, width=132)
-
 def PowerBinderEventHandler(evt):
     button = evt.EventObject
+    print(button)
 
     with PowerBinderDialog(button.Parent) as dlg:
 
-        if(dlg.ShowModal() == wx.ID_OK): pass
+        if(dlg.ShowModal() == wx.ID_OK):
+            bindString = dlg.MakeBindString()
+            button.targetTextCtrl.SetValue(bindString)
 
 class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent):
@@ -41,9 +41,9 @@ class PowerBinderDialog(wx.Dialog):
         choiceSizer.Add(addBindButton, 0, wx.ALIGN_CENTER_VERTICAL)
         addBindButton.Bind(wx.EVT_BUTTON, self.OnAddBind)
 
-        showBindTextButton = wx.Button(self, -1, "Show Bind Text")
-        choiceSizer.Add(showBindTextButton, 0, wx.ALIGN_CENTER_VERTICAL)
-        showBindTextButton.Bind(wx.EVT_BUTTON, self.OnShowBindText)
+        showBindStringButton = wx.Button(self, -1, "Show Bind String")
+        choiceSizer.Add(showBindStringButton, 0, wx.ALIGN_CENTER_VERTICAL)
+        showBindStringButton.Bind(wx.EVT_BUTTON, self.OnShowBindString)
 
         sizer.Add(choiceSizer, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 16)
 
@@ -111,17 +111,19 @@ class PowerBinderDialog(wx.Dialog):
         self.ShowUIFor(selCommand)
         evt.Skip()
 
+    def OnShowBindString(self, evt):
+        bindstring = self.MakeBindString()
 
-    def OnShowBindText(self, evt):
+    def MakeBindString(self):
         # Quick'n'dirty glom together of the bindstrings, for debugging
-        bindtexts = []
+        cmdBindStrings = []
         for index in range(self.rearrangeList.GetCount()):
             c = self.rearrangeList.GetClientData(index)
-            if c: bindtexts.append(c.MakeBindString(self)) # why "if c"?!?
+            if c: cmdBindStrings.append(c.MakeBindString(self)) # why "if c"?!?
 
-        print('$$'.join(bindtexts))
-
-
+        bindstring = ('$$'.join(cmdBindStrings))
+        print(bindstring)
+        return bindstring
 
     def ShowUIFor(self, command):
 
@@ -171,4 +173,10 @@ commandClasses = {
     'Window Toggle'            : WindowToggleCmd.WindowToggleCmd,
 }
 
+class PowerBinderButton(wx.Button):
+    def __init__(self, parent, targetTextCtrl):
+        wx.Button.__init__(self, parent, -1, label = "...")
 
+        print(self)
+        self.targetTextCtrl = targetTextCtrl
+        self.Bind(wx.EVT_BUTTON, PowerBinderEventHandler)

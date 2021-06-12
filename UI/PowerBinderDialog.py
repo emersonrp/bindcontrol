@@ -37,9 +37,10 @@ class PowerBinderDialog(wx.Dialog):
         self.bindChoice.Bind(wx.EVT_CHOICE, self.OnBindChoice)
         choiceSizer.Add(self.bindChoice, 1, wx.ALIGN_CENTER_VERTICAL)
 
-        addBindButton = wx.Button(self, -1, "Add")
-        choiceSizer.Add(addBindButton, 0, wx.ALIGN_CENTER_VERTICAL)
-        addBindButton.Bind(wx.EVT_BUTTON, self.OnAddBind)
+        self.addBindButton = wx.Button(self, -1, "Add")
+        choiceSizer.Add(self.addBindButton, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.addBindButton.Bind(wx.EVT_BUTTON, self.OnAddBind)
+        self.addBindButton.Enable(False)
 
         showBindStringButton = wx.Button(self, -1, "Show Bind String")
         choiceSizer.Add(showBindStringButton, 0, wx.ALIGN_CENTER_VERTICAL)
@@ -82,6 +83,9 @@ class PowerBinderDialog(wx.Dialog):
                     self.mainSizer.Insert(self.mainSizer.GetItemCount()-1, cmdObject.UI, 0, wx.EXPAND)
                 # else no extra UI, don't show
 
+        # enable the 'add' button so we can do something
+        self.addBindButton.Enable(True)
+
         # old or new, show it.
         self.ShowUIFor(cmdObject)
         self.Layout()
@@ -100,13 +104,19 @@ class PowerBinderDialog(wx.Dialog):
         self.rearrangeList.Select(newBindIndex)
         self.rearrangeList.SetClientData(newBindIndex, newCommand)
 
-        # hide its UI for now, and move the Choice Away
-        self.ShowUIFor(None)
+        # Reset the chooser to empty, leaving the UI in place, to make
+        # it clear that the UI now points to the object above
         self.bindChoice.SetSelection(wx.NOT_FOUND)
+
+        # Also re-disable the Add button since we're looking at an added one
+        self.addBindButton.Enable(False)
 
     def OnListSelect(self, evt):
         selected = self.rearrangeList.GetSelection()
         selCommand = self.rearrangeList.GetClientData(selected)
+
+        # Also re-disable the Add button since we're looking at an added one
+        self.addBindButton.Enable(False)
 
         self.ShowUIFor(selCommand)
         evt.Skip()

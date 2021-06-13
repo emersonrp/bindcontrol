@@ -22,7 +22,8 @@ class BufferBindPane(CustomBindPaneParent):
 
     def BuildBindUI(self, page):
 
-        self.CPane.SetLabel("This is a test label")
+        ### TODO - make the Label say more helpful things
+        self.CPane.SetLabel("Buffer Bind Set")
         pane = self.CPane.GetPane()
 
         # bind text controls

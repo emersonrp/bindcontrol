@@ -17,6 +17,7 @@ class Gameplay(Page):
         self.Init = {
             'FPSEnable': True,
             'FPSBindKey': "P",
+            'NetgraphBindKey': 'N',
             'TPSEnable'   : True,
             'TPSSelMode'  : '',
             'TeamSelect1' : 'UNBOUND',
@@ -38,10 +39,27 @@ class Gameplay(Page):
             'QuickChat'            : "'",
             'TypingNotifierEnable' : 1,
             'TypingNotifier'       : '',
+
+            'EnablePet' : True,
+            'SelNextPet' : 'UNBOUND',
+            'SelPrevPet' : 'UNBOUND',
+            'IncPetSize' : 'UNBOUND',
+            'DecPetSize' : 'UNBOUND',
+            'EnableTeam' : True,
+            'SelNextTeam' : 'A',
+            'SelPrevTeam' : 'G',
+            'IncTeamSize' : 'P',
+            'DecTeamSize' : 'H',
+            'IncTeamPos'  : '4',
+            'DecTeamPos'  : '8',
+            'Reset'       : '',
         }
 
     def BuildPage(self):
-        topSizer = wx.BoxSizer(wx.VERTICAL)
+        topSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        leftSizer = wx.BoxSizer(wx.VERTICAL)
+        rightSizer = wx.BoxSizer(wx.VERTICAL)
 
         ##### header
         headerSizer = wx.FlexGridSizer(0,2,10,10)
@@ -56,7 +74,7 @@ class Gameplay(Page):
         headerSizer.Add(enablecb, 0, wx.ALIGN_CENTER_VERTICAL)
         headerSizer.Add(helpbutton, wx.ALIGN_RIGHT, 0)
 
-        topSizer.Add(headerSizer)
+        leftSizer.Add(headerSizer, 0, wx.EXPAND|wx.ALL, 10)
 
         ##### direct-select keys
         TPSDirectBox = ControlGroup(self, self, 'Direct Team/Pet Select')
@@ -73,7 +91,73 @@ class Gameplay(Page):
                 ctlType = 'keybutton',
                 tooltip = f"Choose the key that will select team member / pet {selectid}",
             )
-        topSizer.Add(TPSDirectBox)
+        leftSizer.Add(TPSDirectBox, 0, wx.EXPAND|wx.ALL, 10)
+
+        ##### Team Select Binds
+        TeamSelBox = ControlGroup(self, self, 'Team Select')
+        TeamSelBox.AddLabeledControl(
+            ctlName ='SelNextTeam',
+            ctlType = 'keybutton',
+            tooltip = 'Choose the key that will select the next teammate from the currently selected one',
+        )
+        TeamSelBox.AddLabeledControl(
+            ctlName ='SelPrevTeam',
+            ctlType = 'keybutton',
+            tooltip = 'Choose the key that will select the previous teammate from the currently selected one',
+        )
+        TeamSelBox.AddLabeledControl(
+            ctlName ='IncTeamSize',
+            ctlType = 'keybutton',
+            tooltip = 'Choose the key that will increase the size of your teammate rotation',
+        )
+        TeamSelBox.AddLabeledControl(
+            ctlName ='DecTeamSize',
+            ctlType = 'keybutton',
+            tooltip = 'Choose the key that will decrease the size of your teammate rotation',
+        )
+        TeamSelBox.AddLabeledControl(
+            ctlName ='IncTeamPos',
+            ctlType = 'keybutton',
+            tooltip = 'Choose the key that will move you to the next higher slot in the team rotation',
+        )
+        TeamSelBox.AddLabeledControl(
+            ctlName ='DecTeamPos',
+            ctlType = 'keybutton',
+            tooltip = 'Choose the key that will move you to the next lower slot in the team rotation',
+        )
+        TeamSelBox.AddLabeledControl(
+            ctlName ='Reset',
+            ctlType = 'keybutton',
+            tooltip = 'Choose the key that will reset your team rotation to solo',
+        )
+        leftSizer.Add(TeamSelBox, 0, wx.EXPAND|wx.ALL, 10)
+
+
+
+        ##### Pet Select Binds
+        PetSelBox = ControlGroup(self, self, 'Pet Select')
+
+        PetSelBox.AddLabeledControl(
+            ctlName = 'SelNextPet',
+            ctlType = 'keybutton',
+            tooltip = 'Choose the key that will select the next pet from the currently selected one',
+        )
+        PetSelBox.AddLabeledControl(
+            ctlName = 'SelPrevPet',
+            ctlType = 'keybutton',
+            tooltip = 'Choose the key that will select the previous pet from the currently selected one',
+        )
+        PetSelBox.AddLabeledControl(
+            ctlName = 'IncPetSize',
+            ctlType = 'keybutton',
+            tooltip = 'Choose the key that will increase the size of your pet/henchman group rotation',
+        )
+        PetSelBox.AddLabeledControl(
+            ctlName = 'DecPetSize',
+            ctlType = 'keybutton',
+            tooltip = 'Choose the key that will decrease the size of your pet/henchman group rotation',
+        )
+        rightSizer.Add(PetSelBox, 0, wx.EXPAND|wx.ALL, 10)
 
         ##### FPS Keys
         controlsBox = ControlGroup(self, self, "FPS / Netgraph")
@@ -86,11 +170,15 @@ class Gameplay(Page):
             ctlName = 'FPSBindKey',
             ctlType = 'keybutton',
         )
-        topSizer.Add(controlsBox)
+        controlsBox.AddLabeledControl(
+            ctlName = 'NetgraphBindKey',
+            ctlType = 'keybutton',
+        )
+        rightSizer.Add(controlsBox, 0, wx.EXPAND|wx.ALL, 10)
 
-        sizer = ControlGroup(self, self, 'Chat Binds')
+        chatBindBox = ControlGroup(self, self, 'Chat Binds')
 
-        sizer.AddLabeledControl(
+        chatBindBox.AddLabeledControl(
             ctlName   = 'ChatEnable',
             ctlType = 'checkbox',
             tooltip = 'Enable / Disable chat binds',
@@ -103,23 +191,26 @@ class Gameplay(Page):
             ['TellTarget', 'Starts a /tell to your current target'],
             ['QuickChat',  'Activates QuickChat'],
         ):
-            sizer.AddLabeledControl(
+            chatBindBox.AddLabeledControl(
                 ctlName = b[0],
                 ctlType = 'keybutton',
                 tooltip = b[1],
             )
-        sizer.AddLabeledControl(
+        chatBindBox.AddLabeledControl(
             ctlName = 'TypingNotifierEnable',
             ctlType = 'checkbox',
             tooltip = "Check this to enable the Typing Notifier",
         )
-        sizer.AddLabeledControl(
+        chatBindBox.AddLabeledControl(
             ctlName = 'TypingNotifier',
             ctlType = 'text',
             tooltip = "Choose the message to display when you are typing chat messages or commands",
         )
 
-        topSizer.Add(sizer)
+        rightSizer.Add(chatBindBox, 0, wx.EXPAND|wx.ALL, 10)
+
+        topSizer.Add(leftSizer, 0, wx.ALL|wx.EXPAND, 10)
+        topSizer.Add(rightSizer, 0, wx.ALL|wx.EXPAND, 10)
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(topSizer, flag = wx.ALL|wx.EXPAND, border = 16)
         self.SetSizerAndFit(paddingSizer)
@@ -127,6 +218,7 @@ class Gameplay(Page):
 
     def OnFPSEnable(self, evt):
         self.Controls['FPSBindKey'].Enable(evt.EventObject.IsChecked())
+        self.Controls['NetgraphBindKey'].Enable(evt.EventObject.IsChecked())
 
     def PopulateBindFiles(self):
 
@@ -197,8 +289,9 @@ class Gameplay(Page):
         return self.GetState('Enable')
 
     UI.Labels.update({
-        'FPSEnable'  : "Enable the FPS/Netgraph bind",
-        'FPSBindKey' : "Turn on FPS and Netgraph",
+        'FPSEnable'  : "Enable the FPS/Netgraph binds",
+        'FPSBindKey' : "Turn on FPS",
+        'NetgraphBindKey' : 'Turn on Netgraph',
 
         'ChatEnable' : 'Enable Chat Binds',
         'Message' : '"afk typing" message',

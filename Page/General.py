@@ -128,7 +128,6 @@ class General(Page):
         paddingSizer.Add(topSizer, flag=wx.ALL|wx.EXPAND, border = 20)
 
         self.SetSizerAndFit(paddingSizer)
-        return self
 
     def OnPickArchetype(self, event):
         choice = event.EventObject

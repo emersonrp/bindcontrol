@@ -10,7 +10,6 @@ class CustomBinds(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
 
-        self.Binds = {}
         self.TabTitle = "Custom Binds"
 
         # TODO - This init belongs in the actual bind class, but "self.Page.Init"
@@ -39,10 +38,10 @@ class CustomBinds(Page):
         # bottom sizer for the buttons
         buttonSizer         = wx.BoxSizer(wx.HORIZONTAL) # sizer for new-item buttons
         newSimpleBindButton = wx.Button(self, -1, "New Simple Bind")
-        newSimpleBindButton.Bind(wx.EVT_BUTTON, self.AddSimpleBindPaneToPage)
+        newSimpleBindButton.Bind(wx.EVT_BUTTON, self.OnNewSimpleBindButton)
         buttonSizer.Add(newSimpleBindButton, wx.ALIGN_CENTER)
         newBufferBindButton = wx.Button(self, -1, "New Buffer Bind")
-        newBufferBindButton.Bind(wx.EVT_BUTTON, self.AddBufferBindPaneToPage)
+        newBufferBindButton.Bind(wx.EVT_BUTTON, self.OnNewBufferBindButton)
         buttonSizer.Add(newBufferBindButton, wx.ALIGN_CENTER)
 
         # add the two parts of the layout, top one expandable
@@ -57,22 +56,31 @@ class CustomBinds(Page):
         #self.SetSizerAndFit(MainSizer)
         self.Layout()
 
-    def AddSimpleBindPaneToPage(self, _, bindinit = {}):
+    def OnNewSimpleBindButton(self, _, bindinit = {}):
         self.AddBindToPage(bindpane = SimpleBindPane(self, bindinit))
 
-    def AddBufferBindPaneToPage(self, _, bindinit = {}):
+    def OnNewBufferBindButton(self, _, bindinit = {}):
         self.AddBindToPage(bindpane = BufferBindPane(self, bindinit))
 
     def AddBindToPage(self, bindinit = {}, bindpane = None):
 
         if not bindpane: wx.Error("Something tried to add an empty bindpane to the page")
 
-        # TODO - if bind is already in there, just scroll to it and pop it open
-
         bindpane.BuildBindUI(self)
 
-        self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), bindpane.CPane, 0, wx.ALL|wx.EXPAND, 10)
+        # put it in a box with a 'delete' button
+        deleteSizer = wx.BoxSizer(wx.HORIZONTAL)
+        deleteSizer.Add(bindpane.CPane, 1, wx.EXPAND, 5)
+        deleteButton = wx.Button(self.scrolledPane, -1, "Delete")
+        deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
+        deleteSizer.Add(deleteButton, 0, wx.LEFT|wx.RIGHT, 15)
+
+        self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), deleteSizer, 0, wx.ALL|wx.EXPAND, 10)
+        bindpane.CPane.Expand()
         self.Layout()
+
+    def OnDeleteButton(self, evt):
+        pass
 
 
     def addBufferBindSetToDialog(self, bind):
@@ -305,6 +313,8 @@ class CustomBinds(Page):
 
     def PopulateBindFiles(self):
 
+        for pane in self.paneSizer.Children():
+            pane.PopulateBindFiles()
 
         ### TODO
         return

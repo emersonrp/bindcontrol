@@ -10,12 +10,10 @@ class SimpleBindPane(CustomBindPaneParent):
 
     def BuildBindUI(self, page):
 
-        self.CPane.SetLabel("This is a test label")
-        pane = self.CPane.GetPane()
 
-        # TODO - get 'bindclass' (Simple, Buffer, etc) and 'unique-bind-id' scheme
-        bindclass = ''
-        unique_bind_id = ''
+        ### TODO - make the Label say more helpful things
+        self.CPane.SetLabel("Simple Bind")
+        pane = self.CPane.GetPane()
 
         BindSizer = wx.GridBagSizer(hgap=5, vgap=5)
 
@@ -25,7 +23,7 @@ class SimpleBindPane(CustomBindPaneParent):
         page.Controls["BindName"] = BindNameCtrl
 
         BindKeyCtrl = wx.Button(pane, -1, self.Key)
-        BindKeyCtrl.CtlName = f"{bindclass}{unique_bind_id}BindKey"
+        BindKeyCtrl.CtlName = f"{self.bindclass}{self.unique_bind_id}BindKey"
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), (0,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(BindKeyCtrl,                          (0,3), flag=wx.EXPAND)
         BindKeyCtrl.Bind(wx.EVT_BUTTON, KeyPickerEventHandler)

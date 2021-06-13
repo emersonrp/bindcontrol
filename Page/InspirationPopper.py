@@ -85,7 +85,7 @@ class InspirationPopper(Page):
         sizer.Add(self.useCB, 0, wx.ALL, 10)
         self.useCB.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
 
-        sizer.Add(self.InspRows)
+        sizer.Add(self.InspRows, 0, wx.EXPAND)
 
         sizer.AddSpacer(20)
 
@@ -98,7 +98,7 @@ class InspirationPopper(Page):
         sizer.Add(self.useRevCB, 0, wx.ALL, 10)
         self.useRevCB.Bind(wx.EVT_CHECKBOX, self.OnEnableRevCB)
 
-        sizer.Add(self.RevInspRows)
+        sizer.Add(self.RevInspRows, 0, wx.EXPAND)
 
 
         self.disableTellsCB = wx.CheckBox( self, -1,

@@ -2180,12 +2180,12 @@ class SoD(Page):
         'TPCombo' : 'Teleport Combo Key',
         'TPReset' : 'Teleport Reset Key',
         'TPHideWindows' : 'Hide Windows when Teleporting',
-        'TPAutoHover' : 'Automatically use Hover when Teleporting',
+        'TPAutoHover' : 'Hover when Teleporting',
 
         'TTPMode'  : 'Team Teleport Bind',
         'TTPCombo' : 'Team Teleport Combo Key',
         'TTPReset' : 'Team Teleport Reset Key',
-        'TTPAutoGFly' : 'Automatically use Group Fly when Team Teleporting',
+        'TTPAutoGFly' : 'Group Fly when Team Teleporting',
 
         'TempMode' : 'Toggle Temp Mode',
         'TempTray' : 'Temporary Travel Power Tray',

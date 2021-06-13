@@ -8,6 +8,9 @@ class CustomBindPaneParent():
         self.Name     = ''
         self.Contents = ''
         self.Page = page
+        self.bindclass = type(self).__name__
+        # TODO this will not always work
+        self.unique_bind_id = wx.NewIdRef()
 
         if bind:
             if bind.get('key',      None): self.Key      = bind['key']
@@ -23,11 +26,12 @@ class CustomBindPaneParent():
         # it into 'parent'
         pass
 
-    def MakeBinds(self):
-        # for overriding on child classes
-        # take whatever the internal representation of the bind is,
-        # and put it into one or more key / title / contents dicts
+    def PopulateBindFiles(self):
+        # for overriding on child classes this will be called in the course of
+        # the Custom Binds page doing its own PopulateBindFiles, iteratively
+        # over all of its kids
         pass
 
     def OnPaneChanged(self, evt):
         self.Page.Layout()
+

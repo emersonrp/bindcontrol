@@ -50,6 +50,8 @@ class Page(wx.Panel):
             return control.GetLabel()
         elif isinstance(control, wx.Choice) or isinstance(control, wx.ComboBox):
             return control.GetSelection()
+        elif isinstance(control, wx.ColourPickerCtrl):
+            return control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
         elif getattr(control, 'GetValue', None):
             return control.GetValue()
         elif getattr(control, 'GetPath', None):

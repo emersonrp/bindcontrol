@@ -46,8 +46,6 @@ def CheckConflict(t, k, Purpose):
     # TODO - therefore, for now, we'll just return out of this, to make progress
     return
 
-
-
     if not t.get('k', None)     : return
     if t[k].upper() == "UNBOUND": return
 
@@ -72,6 +70,8 @@ def CheckConflict(t, k, Purpose):
 
 def getMainKey(key):
     return re.sub('[LR]?(SHIFT|CTRL|ALT)\+?', '', key)
+
+def ChatColors(fg,bg,bd): return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'
 
 __DATA__ = """
 
@@ -514,15 +514,6 @@ function cbTogglePower(label,powerlist,togval,t,v,togcb,profile,w,h,w2,h2)
     ttoggle.action = function(_,v) togcb(_,v) if v == 1 then tlist.active ="YES" else tlist.active="NO" end end
     cbTTip = nil
     return iup.hbox{ttoggle,tlist;alignment="ACENTER"}
-end
-
-function cbChatColorOutput(t)
-    if type(t) ~= "table" then return "" end
-    if not t.enable then return "" end
-    local border = string.format("<bordercolor #%02x%02x%02x>",t.border.r,t.border.g,t.border.b)
-    local color = string.format("<color #%02x%02x%02x>",t.fgcolor.r,t.fgcolor.g,t.fgcolor.b)
-    local bgcolor = string.format("<bgcolor #%02x%02x%02x>",t.bgcolor.r,t.bgcolor.g,t.bgcolor.b)
-    return border..color..bgcolor
 end
 
 function cbChatColors(profile,t)

@@ -30,6 +30,7 @@ class InspirationPopper(Page):
             'RevBreakFreeKey'    : "UNBOUND",
             'RevResistDamageKey' : "UNBOUND",
             'RevResurrectionKey' : "UNBOUND",
+            'DisableTells'       : False,
         }
         for Insp in Inspirations:
             self.Init[f"{Insp}Border"]     = Inspirations[Insp]['color']
@@ -99,6 +100,15 @@ class InspirationPopper(Page):
 
         sizer.Add(self.RevInspRows)
 
+
+        disableTellsCB = wx.CheckBox( self, -1,
+                'Disable self-/tell feedback')
+        disableTellsCB.SetToolTip(wx.ToolTip(
+            'Check this box to avoid having your toon tell you whenever you pop an inspiration.'))
+        disableTellsCB.SetValue(self.Init['DisableTells'])
+        self.Controls['DisableTells'] = disableTellsCB
+        sizer.Add(disableTellsCB, 0, wx.ALL, 10)
+
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
         self.SetSizerAndFit(paddingSizer)
@@ -127,17 +137,23 @@ class InspirationPopper(Page):
         for Insp in sorted(Inspirations):
 
             tiers = Inspirations[Insp]['tiers']
-            forwardOrder = list(map(lambda s: f"inspexecname {s}", tiers))
+            forwardOrder = '$$'.join(         list(map(lambda s: f"inspexecname {s}", tiers)))
+            reverseOrder = '$$'.join(reversed(list(map(lambda s: f"inspexecname {s}", tiers))))
 
-            # TODO - Re-enable 'feedback' notion with colors
-            # if self.Init['Feedback']:
-                # forwardOrder = cbChatColorOutput(self.Init[f"{Insp}Colors"]) + Insp + forwardOrder
-                # reverseOrder = cbChatColorOutput(self.Init[f"Rev{Insp}Colors"]) + Insp + reverseOrder
+            if not self.GetState("DisableTells"):
+                bc = self.GetState(f'{Insp}Border')
+                bg = self.GetState(f'{Insp}Background')
+                fg = self.GetState(f'{Insp}Foreground')
+                forwardOrder = f'tell $name, {Utility.ChatColors(fg, bg, bc)}{Insp}$${forwardOrder}'
+                bc = self.GetState(f'Rev{Insp}Border')
+                bg = self.GetState(f'Rev{Insp}Background')
+                fg = self.GetState(f'Rev{Insp}Foreground')
+                reverseOrder = f'tell $name, {Utility.ChatColors(fg, bg, bc)}{Insp}$${reverseOrder}'
 
             if self.GetState('EnableInspBinds'):
-                ResetFile.SetBind(self.GetState(f"{Insp}Key"),    '$$'.join(forwardOrder))
+                ResetFile.SetBind(self.GetState(f"{Insp}Key"),    forwardOrder)
             if self.GetState('EnableRevInspBinds'):
-                ResetFile.SetBind(self.GetState(f"Rev{Insp}Key"), '$$'.join(reversed(forwardOrder)))
+                ResetFile.SetBind(self.GetState(f"Rev{Insp}Key"), reverseOrder)
 
     def findconflicts(self, profile):
         ### TODO

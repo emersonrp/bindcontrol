@@ -77,37 +77,37 @@ class InspirationPopper(Page):
                 )
 
 
-        useCB = wx.CheckBox( self, -1, 'Enable Inspiration Popper Binds (prefer largest)')
-        useCB.SetToolTip(wx.ToolTip(
+        self.useBC = wx.CheckBox( self, -1, 'Enable Inspiration Popper Binds (prefer largest)')
+        self.useBC.SetToolTip(wx.ToolTip(
             'Check this to enable the Inspiration Popper Binds, (largest used first)'))
-        useCB.SetValue(self.Init['EnableInspBinds'])
-        self.Controls['EnableInspBinds'] = useCB
-        sizer.Add(useCB, 0, wx.ALL, 10)
-        useCB.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
+        self.useBC.SetValue(self.Init['EnableInspBinds'])
+        self.Controls['EnableInspBinds'] = self.useBC
+        sizer.Add(self.useBC, 0, wx.ALL, 10)
+        self.useBC.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
 
         sizer.Add(self.InspRows)
 
         sizer.AddSpacer(20)
 
-        useRevCB = wx.CheckBox( self, -1,
+        self.useRevCB = wx.CheckBox( self, -1,
                 'Enable Reverse Inspiration Popper Binds (prefer smallest)')
-        useRevCB.SetToolTip(wx.ToolTip(
+        self.useRevCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Reverse Inspiration Popper Binds, (smallest used first)'))
-        useRevCB.SetValue(self.Init['EnableRevInspBinds'])
-        self.Controls['EnableRevInspBinds'] = useRevCB
-        sizer.Add(useRevCB, 0, wx.ALL, 10)
-        useRevCB.Bind(wx.EVT_CHECKBOX, self.OnEnableRevCB)
+        self.useRevCB.SetValue(self.Init['EnableRevInspBinds'])
+        self.Controls['EnableRevInspBinds'] = self.useRevCB
+        sizer.Add(self.useRevCB, 0, wx.ALL, 10)
+        self.useRevCB.Bind(wx.EVT_CHECKBOX, self.OnEnableRevCB)
 
         sizer.Add(self.RevInspRows)
 
 
-        disableTellsCB = wx.CheckBox( self, -1,
+        self.disableTellsCB = wx.CheckBox( self, -1,
                 'Disable self-/tell feedback')
-        disableTellsCB.SetToolTip(wx.ToolTip(
+        self.disableTellsCB.SetToolTip(wx.ToolTip(
             'Check this box to avoid having your toon tell you whenever you pop an inspiration.'))
-        disableTellsCB.SetValue(self.Init['DisableTells'])
-        self.Controls['DisableTells'] = disableTellsCB
-        sizer.Add(disableTellsCB, 0, wx.ALL, 10)
+        self.disableTellsCB.SetValue(self.Init['DisableTells'])
+        self.Controls['DisableTells'] = self.disableTellsCB
+        sizer.Add(self.disableTellsCB, 0, wx.ALL, 10)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)

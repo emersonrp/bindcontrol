@@ -77,13 +77,13 @@ class InspirationPopper(Page):
                 )
 
 
-        self.useBC = wx.CheckBox( self, -1, 'Enable Inspiration Popper Binds (prefer largest)')
-        self.useBC.SetToolTip(wx.ToolTip(
+        self.useCB = wx.CheckBox( self, -1, 'Enable Inspiration Popper Binds (prefer largest)')
+        self.useCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Inspiration Popper Binds, (largest used first)'))
-        self.useBC.SetValue(self.Init['EnableInspBinds'])
-        self.Controls['EnableInspBinds'] = self.useBC
-        sizer.Add(self.useBC, 0, wx.ALL, 10)
-        self.useBC.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
+        self.useCB.SetValue(self.Init['EnableInspBinds'])
+        self.Controls['EnableInspBinds'] = self.useCB
+        sizer.Add(self.useCB, 0, wx.ALL, 10)
+        self.useCB.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
 
         sizer.Add(self.InspRows)
 
@@ -108,6 +108,7 @@ class InspirationPopper(Page):
         self.disableTellsCB.SetValue(self.Init['DisableTells'])
         self.Controls['DisableTells'] = self.disableTellsCB
         sizer.Add(self.disableTellsCB, 0, wx.ALL, 10)
+        self.disableTellsCB.Bind(wx.EVT_CHECKBOX, self.OnDisableTellCB)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
@@ -115,19 +116,33 @@ class InspirationPopper(Page):
 
     def OnEnableCB(self, evt):
         enable = evt.EventObject.IsChecked()
+        notells = self.disableTellsCB.IsChecked()
         for Insp in Inspirations:
             self.Controls[f"{Insp}Key"].Enable(enable)
-            self.Controls[f"{Insp}Border"].Enable(enable)
-            self.Controls[f"{Insp}Background"].Enable(enable)
-            self.Controls[f"{Insp}Foreground"].Enable(enable)
+            self.Controls[f"{Insp}Border"].Enable(enable and not notells)
+            self.Controls[f"{Insp}Background"].Enable(enable and not notells)
+            self.Controls[f"{Insp}Foreground"].Enable(enable and not notells)
 
     def OnEnableRevCB(self, evt):
         enable = evt.EventObject.IsChecked()
+        notells = self.disableTellsCB.IsChecked()
         for Insp in Inspirations:
             self.Controls[f"Rev{Insp}Key"].Enable(enable)
-            self.Controls[f"Rev{Insp}Border"].Enable(enable)
-            self.Controls[f"Rev{Insp}Background"].Enable(enable)
-            self.Controls[f"Rev{Insp}Foreground"].Enable(enable)
+            self.Controls[f"Rev{Insp}Border"].Enable(enable and not notells)
+            self.Controls[f"Rev{Insp}Background"].Enable(enable and not notells)
+            self.Controls[f"Rev{Insp}Foreground"].Enable(enable and not notells)
+
+    def OnDisableTellCB(self, evt):
+        enable = evt.EventObject.IsChecked()
+        forward  = self.useCB.IsChecked()
+        reverse  = self.useRevCB.IsChecked()
+        for Insp in Inspirations:
+            self.Controls[f"{Insp}Border"].Enable(not enable and forward)
+            self.Controls[f"{Insp}Background"].Enable(not enable and forward)
+            self.Controls[f"{Insp}Foreground"].Enable(not enable and forward)
+            self.Controls[f"Rev{Insp}Border"].Enable(not enable and reverse)
+            self.Controls[f"Rev{Insp}Background"].Enable(not enable and reverse)
+            self.Controls[f"Rev{Insp}Foreground"].Enable(not enable and reverse)
 
     def PopulateBindFiles(self):
         profile = self.Profile

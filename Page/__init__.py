@@ -1,7 +1,17 @@
-
-#!/usr/bin/env python3
-
 # base class for all the individual tabs
+
+#  The Page keeps a list of each of the (non-static) controls on itself.
+#  It then tries to gatekeep these behind .GetState() and .SetState()
+#  in reality, we need to get directly at the controls occasionally
+#  to change a wx.Choice's list, for example.  Then we just trawl
+#  through page.Controls directly.  This could be improved.
+#
+#  There is an analogous CtrlLabels dict in case we want to get at
+#  the static labels for the controls for some reason.
+#  TODO -- if not, remove that notion from here and from ControlGroup
+
+#  page.GetState('FPSBindKey')
+#  page.SetState('Archetype', 'Blaster')
 
 import wx
 
@@ -17,7 +27,6 @@ class Page(wx.Panel):
         self.Controls = {}
         self.CtrlLabels = {}
 
-
     def help(self, event):
         if not (self.HelpWindow):
             HelpWindow = wx.MiniFrame .new( undef, -1, self.TabTitle + " Help",)
@@ -32,19 +41,6 @@ class Page(wx.Panel):
             self.HelpWindow = HelpWindow
 
         self.HelpWindow.Show(not self.HelpWindow.IsShown())
-
-    # stubs
-
-    # have the Bind objects fill the BindFile object with tuples of binds
-    def PopulateBindFiles(self):
-        return
-
-    # create and display the UI for this page
-    def BuildPage(self):
-        return
-
-    def HelpText(self):
-        return 'Help not currently implemented here.'
 
     def GetState(self, key):
         control = self.Controls.get(key, None)
@@ -62,6 +58,32 @@ class Page(wx.Panel):
             print(f"{control} has no GetValue()")
 
     def SetState(self, key, value):
-        control = self.Controls[key]
+        control = self.Controls.get(key, None)
 
-        # control(key).SetValue(value) # except the right thing for all types
+        if not control:
+            print(f"Got into SetState for key {key} with no control")
+
+        if isinstance(control, wx.Button):
+            return control.SetLabel(value)
+        elif isinstance(control, wx.Choice) or isinstance(control, wx.ComboBox):
+            return control.SetSelection(value)
+        elif getattr(control, 'SetValue', None):
+            return control.SetValue(value)
+        elif getattr(control, 'SetPath', None):
+            return control.SetPath(value)
+        else:
+            print(f"{control} has no SetValue()")
+
+    ##### stubs for overriding (shoes for industry!)
+
+    # create and display the UI for this page
+    def BuildPage(self):
+        return
+
+    # create and fill the BindFile object with tuples of binds
+    def PopulateBindFiles(self):
+        return
+
+    def HelpText(self):
+        return 'Help not currently implemented here.'
+

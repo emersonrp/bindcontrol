@@ -129,6 +129,12 @@ class Gameplay(Page):
         self.Controls['FPSBindKey'].Enable(evt.EventObject.IsChecked())
 
     def PopulateBindFiles(self):
+
+        ### TODO
+        return
+        ### TODO
+
+
         ResetFile = self.Profile.ResetFile()
         ResetFile.SetBind(self.Profile.Gameplay.GetState('FPSBindkey'),'++showfps++netgraph')
 

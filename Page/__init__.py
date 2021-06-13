@@ -80,9 +80,16 @@ class Page(wx.Panel):
     def BuildPage(self):
         return
 
-    # create and fill the BindFile object with tuples of binds
+    # create and fill the BindFile object with Bind objects
+    # NB - no state should be kept in the page
     def PopulateBindFiles(self):
         return
+    # TODO general logic,
+    # profile.GetBindFile(filename)
+    # for x in Controls:
+        # (do the thing)
+        # bindfile.SetBind(the thing)
+    # Walk away renee
 
     def HelpText(self):
         return 'Help not currently implemented here.'

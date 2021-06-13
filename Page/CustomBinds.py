@@ -304,6 +304,13 @@ class CustomBinds(Page):
     #    $bufferbinds.{'dlg_close_cb'} = sub { my(self) $bufferbinds.{'dlg'} = undef }
 
     def PopulateBindFiles(self):
+
+
+        ### TODO
+        return
+        ### TODO
+
+
         profile = self.Profile
         ResetFile = profile.ResetFile()
 

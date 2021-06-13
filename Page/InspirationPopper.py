@@ -125,24 +125,25 @@ class InspirationPopper(Page):
         ResetFile = profile.ResetFile()
 
         for Insp in sorted(Inspirations):
-            forwardOrder = ""
-            reverseOrder = ""
 
-            for item in Inspirations[Insp]:
-                forwardOrder = forwardOrder + f"inspexecname {item}$$"
-                reverseOrder = f"inspexecname {item}$$" + reverseOrder
+            tiers = Inspirations[Insp]['tiers']
+            forwardOrder = list(map(lambda s: f"inspexecname {s}", tiers))
 
             # TODO - Re-enable 'feedback' notion with colors
             # if self.Init['Feedback']:
                 # forwardOrder = cbChatColorOutput(self.Init[f"{Insp}Colors"]) + Insp + forwardOrder
                 # reverseOrder = cbChatColorOutput(self.Init[f"Rev{Insp}Colors"]) + Insp + reverseOrder
 
-        if self.GetState('EnableInspBinds'):
-            ResetFile.SetBind(self.GetState(f"{Insp}Key"), forwardOrder)
-        if self.GetState('EnableRevInspBinds'):
-            ResetFile.SetBind(self.GetState(f"Rev{Insp}Key"), reverseOrder)
+            if self.GetState('EnableInspBinds'):
+                ResetFile.SetBind(self.GetState(f"{Insp}Key"),    '$$'.join(forwardOrder))
+            if self.GetState('EnableRevInspBinds'):
+                ResetFile.SetBind(self.GetState(f"Rev{Insp}Key"), '$$'.join(reversed(forwardOrder)))
 
     def findconflicts(self, profile):
+        ### TODO
+        return
+        ### TODO
+
         if self.GetState('EnableInspBinds'):
             Utility.CheckConflict(self.State,'acckey',"Accuracy Key")
             Utility.CheckConflict(self.State,'hpkey',"Healing Key")

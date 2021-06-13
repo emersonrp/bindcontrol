@@ -619,6 +619,11 @@ class Mastermind(Page):
         filedn.SetBind(self.GetState('chattykey'),'tell $name, Chatty Mode' + BindFile.BLF(profile, 'mmbinds','c' + fn + 'a.txt'))
 
     def PopulateBindFiles(self):
+
+        ### TODO
+        return
+        ### TODO
+
         profile = self.Profile
         ResetFile = profile.ResetFile()
 

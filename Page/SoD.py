@@ -864,10 +864,11 @@ class SoD(Page):
         t['ini'] = ''
 
 
-    def iupMessage(self):
-        print("ZOMG SOMEBODY IMPLEMENT A WARNING DIALOG!!!\n")
+    def PopulateBindFiles(self):
 
-    def WriteBindFiles(self):
+        ### TODO
+        return
+        ### TODO
 
         profile = self.Profile
 
@@ -876,26 +877,26 @@ class SoD(Page):
         # ResetFile.SetBind(petselect['sel5'] + ' "petselect 5')
         if (self.State['Default'] == "NonSoD"):
             if (not self.State['NonSoD']):
-                iupMessage("Notice","Enabling NonSoD mode, since it is set as your default mode.")
+                wx.Error("Notice","Enabling NonSoD mode, since it is set as your default mode.")
             self.State['NonSoD'] = 1
 
         if (self.State['Default'] == "Base" and not self.State['Base']):
-            iupMessage("Notice","Enabling NonSoD mode and making it the default, since Sprint SoD, your previous Default mode, is not enabled.")
+            wx.Error("Notice","Enabling NonSoD mode and making it the default, since Sprint SoD, your previous Default mode, is not enabled.")
             self.State['NonSoD'] = 1
             self.State['Default'] = "NonSoD"
 
         if (self.State['Default'] == "Fly" and not (self.State['FlyHover'] or self.State['FlyFly'])):
-            iupMessage("Notice","Enabling NonSoD mode and making it the default, since Flight SoD, your previous Default mode, is not enabled.")
+            wx.Error("Notice","Enabling NonSoD mode and making it the default, since Flight SoD, your previous Default mode, is not enabled.")
             self.State['NonSoD'] = 1
             self.State['Default'] = "NonSoD"
 
         if (self.State['Default'] == "Jump" and not (self.State['JumpCJ'] or self.State['JumpSJ'])):
-            iupMessage("Notice","Enabling NonSoD mode and making it the default, since Superjump SoD, your previous Default mode, is not enabled.")
+            wx.Error("Notice","Enabling NonSoD mode and making it the default, since Superjump SoD, your previous Default mode, is not enabled.")
             self.State['NonSoD'] = 1
             self.State['Default'] = "NonSoD"
 
         if (self.State['Default'] == "Run" and self.State['RunPrimaryNumber'] == 1):
-            iupMessage("Notice","Enabling NonSoD mode and making it the default, since Superspeed SoD, your previous Default mode, is not enabled.")
+            wx.Error("Notice","Enabling NonSoD mode and making it the default, since Superspeed SoD, your previous Default mode, is not enabled.")
             self.State['NonSoD'] = 1
             self.State['Default'] = "NonSoD"
 

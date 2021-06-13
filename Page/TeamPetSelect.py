@@ -104,6 +104,12 @@ class TeamPetSelect(Page):
         self.SetSizer(paddingSizer)
 
     def PopulateBindFiles(self):
+
+        ### TODO
+        return
+        ### TODO
+
+
         profile    = self.Profile
         resetFile  = profile.ResetFile()
         if (self.GetState('PetSelEnable')):

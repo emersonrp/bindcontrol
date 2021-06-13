@@ -46,63 +46,63 @@ class General(Page):
             ctlType = 'choice',
             contents = Origins,
             tooltip = '',
-            callback = self.pickOrigin,
+            callback = self.OnPickOrigin,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Archetype',
             ctlType = 'choice',
             contents = sorted(Archetypes),
             tooltip = '',
-            callback = self.pickArchetype,
+            callback = self.OnPickArchetype,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Primary',
             ctlType = 'choice',
             # contents = sorted(ArchData['Primary']),
             tooltip = '',
-            callback = self.pickPrimaryPowerSet,
+            callback = self.OnPickPrimaryPowerSet,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Secondary',
             ctlType = 'choice',
             # contents = sorted(ArchData['Secondary']),
             tooltip = '',
-            callback = self.pickSecondaryPowerSet,
+            callback = self.OnPickSecondaryPowerSet,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Epic',
             ctlType = 'choice',
             # contents = sorted(ArchData['Epic']),
             tooltip = '',
-            callback = self.pickEpicPowerSet,
+            callback = self.OnPickEpicPowerSet,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Pool1',
             ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
-            callback = self.pickPoolPower,
+            callback = self.OnPickPoolPower,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Pool2',
             ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
-            callback = self.pickPoolPower,
+            callback = self.OnPickPoolPower,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Pool3',
             ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
-            callback = self.pickPoolPower,
+            callback = self.OnPickPoolPower,
         )
         powersBox.AddLabeledControl(
             ctlName = 'Pool4',
             ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
-            callback = self.pickPoolPower,
+            callback = self.OnPickPoolPower,
         )
 
         prefsBox = ControlGroup(self, self, 'Preferences')
@@ -130,7 +130,7 @@ class General(Page):
         self.SetSizerAndFit(paddingSizer)
         return self
 
-    def pickArchetype(self, event):
+    def OnPickArchetype(self, event):
         choice = event.EventObject
         index  = choice.GetSelection()
         arch   = choice.GetString(index)
@@ -155,20 +155,27 @@ class General(Page):
 
         self.Fit()
 
-    def pickOrigin(self, event):
+    def PopulateBindFiles(self):
+        ### TODO
+        return
+        ### TODO
+
+
+    # Event handlers
+    def OnPickOrigin(self, event):
         # TODO do we need to take any action based on this?
         pass
 
-    def pickPoolPower(self, event):
+    def OnPickPoolPower(self, event):
         pass
 
-    def pickPrimaryPowerSet(self, event):
+    def OnPickPrimaryPowerSet(self, event):
         pass
 
-    def pickSecondaryPowerSet(self, event):
+    def OnPickSecondaryPowerSet(self, event):
         pass
 
-    def pickEpicPowerSet(self, event):
+    def OnPickEpicPowerSet(self, event):
         pass
 
 

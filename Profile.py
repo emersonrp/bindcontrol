@@ -135,9 +135,20 @@ class Profile(wx.Notebook):
 
 
     def WriteBindFiles(self):
+        # Go to each page....
         for pageName in self.Pages:
             page = getattr(self, pageName, None)
-            print(f"----writing files for page {pageName}, which is a {page}")
 
-        for bindfile in self.BindFiles:
+            # ... and tell it to gather up binds and put them into bindfiles.
+            print(f"----getting profile bindfiles for page {pageName}")
+            binds = page.PopulateBindFiles()
+
+        # Now we have them here and can iterate them
+        print(self.BindFiles)
+        for filename, bindfile in self.BindFiles.items():
+            print(f"Iterating profile's bindfiles: {filename}")
             bindfile.Write(self)
+
+        # TODO try except finally
+        # clear out our state
+        self.BindFiles = {}

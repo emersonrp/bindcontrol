@@ -8,7 +8,6 @@ from Page.Gameplay import Gameplay
 from Page.SoD import SoD
 from Page.InspirationPopper import InspirationPopper
 from Page.Mastermind import Mastermind
-from Page.TeamPetSelect import TeamPetSelect
 #from Page.ComplexBinds
 from Page.CustomBinds import CustomBinds
 
@@ -28,7 +27,6 @@ class Profile(wx.Notebook):
         self.CreatePage(SoD(self))
         self.CreatePage(InspirationPopper(self))
         self.CreatePage(Mastermind(self))
-        self.CreatePage(TeamPetSelect(self))
         #self.CreatePage(ComplexBinds(self))
         self.CreatePage(CustomBinds(self))
 

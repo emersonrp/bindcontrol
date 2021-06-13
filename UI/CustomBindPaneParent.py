@@ -1,4 +1,6 @@
-# parent class for various bind types
+# parent class for various custom bindpane types
+import wx
+
 class CustomBindPaneParent():
     def __init__(self, page, bind = None):
 
@@ -12,6 +14,10 @@ class CustomBindPaneParent():
             if bind.get('name',     None): self.Title    = bind['title']
             if bind.get('contents', None): self.Contents = bind['contents']
 
+        self.CPane = wx.CollapsiblePane(page.scrolledPane,
+                style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
+        self.CPane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
+
     def BuildBindUI(parent, self):
         # build the UI needed to edit/create this bind, and shim
         # it into 'parent'
@@ -23,4 +29,5 @@ class CustomBindPaneParent():
         # and put it into one or more key / title / contents dicts
         pass
 
-
+    def OnPaneChanged(self, evt):
+        self.Page.Layout()

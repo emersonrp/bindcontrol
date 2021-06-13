@@ -58,30 +58,21 @@ class CustomBinds(Page):
         self.Layout()
 
     def AddSimpleBindPaneToPage(self, _, bindinit = {}):
-        self.AddBindToPage(None, bind = SimpleBindPane(self, bindinit))
+        self.AddBindToPage(bindpane = SimpleBindPane(self, bindinit))
 
     def AddBufferBindPaneToPage(self, _, bindinit = {}):
-        self.AddBindToPage(None, bind = BufferBindPane(self, bindinit))
+        self.AddBindToPage(bindpane = BufferBindPane(self, bindinit))
 
-    def AddBindToPage(self, _, bindinit = {}, bind = None):
+    def AddBindToPage(self, bindinit = {}, bindpane = None):
 
-        if not bind: wx.Error("Something tried to add an empty Bind to the page")
+        if not bindpane: wx.Error("Something tried to add an empty bindpane to the page")
 
         # TODO - if bind is already in there, just scroll to it and pop it open
-        #bindCP = wx.CollapsiblePane(self, style = wx.CP_DEFAULT_STYLE)
-        bindCP = wx.CollapsiblePane(self.scrolledPane, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
-        bindCP.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
+        bindpane.BuildBindUI(self)
 
-        bind.BuildBindUI(bindCP, self)
-
-        self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), bindCP, 0, wx.ALL|wx.EXPAND, 10)
+        self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), bindpane.CPane, 0, wx.ALL|wx.EXPAND, 10)
         self.Layout()
-
-    def OnPaneChanged(self, event):
-        print("Got into Panechanged")
-        self.Layout()
-
 
 
     def addBufferBindSetToDialog(self, bind):

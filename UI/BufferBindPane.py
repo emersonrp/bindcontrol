@@ -20,10 +20,10 @@ class BufferBindPane(CustomBindPaneParent):
         for i in (1,2,3,4,5,6):
             self.Init[f"Pet{i}BuffKey"] = "UNBOUND"
 
-    def BuildBindUI(self, BindCP, page):
+    def BuildBindUI(self, page):
 
-        BindCP.SetLabel("This is a test label")
-        pane = BindCP.GetPane()
+        self.CPane.SetLabel("This is a test label")
+        pane = self.CPane.GetPane()
 
         # bind text controls
         BindSizer = wx.GridBagSizer(hgap=5, vgap=5)
@@ -49,8 +49,6 @@ class BufferBindPane(CustomBindPaneParent):
         BindSizer.Add(wx.StaticText(pane, -1, "Extra"),             (3,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         buffPower3 = wx.TextCtrl  (pane, -1, "")
         BindSizer.Add(buffPower3,                                   (3,3), flag=wx.EXPAND)
-        testbutton = PowerBinderButton(pane, targetTextCtrl=buffPower3)
-        print(testbutton)
         BindSizer.Add(PowerBinderButton(pane, targetTextCtrl=buffPower3), (3,4), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 
         BindSizer.Add(wx.StaticText(pane, -1, ""),                 (4,0))

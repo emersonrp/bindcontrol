@@ -123,6 +123,7 @@ class PowerBinderDialog(wx.Dialog):
 
     def OnShowBindString(self, evt):
         bindstring = self.MakeBindString()
+        wx.MessageBox(bindstring, caption="Bind String")
 
     def MakeBindString(self):
         # Quick'n'dirty glom together of the bindstrings, for debugging
@@ -132,7 +133,6 @@ class PowerBinderDialog(wx.Dialog):
             if c: cmdBindStrings.append(c.MakeBindString(self)) # why "if c"?!?
 
         bindstring = ('$$'.join(cmdBindStrings))
-        print(bindstring)
         return bindstring
 
     def ShowUIFor(self, command):

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import wx
+import wx.lib.mixins.inspection
 import wx.adv
 
 from Profile import Profile
@@ -101,9 +102,15 @@ class Main(wx.Frame):
     def OnMenuExitApplication(self, event):
         self.Close(1)
 
+class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
+    def OnInit(self):
+        self.Init()
+        main = Main(None)
+        main.Show()
+
+        return True
+
 if __name__ == "__main__":
-    app = wx.App(0)
-    main = Main(None)
-    main.Show()
+    app = MyApp(redirect=False)
     app.MainLoop()
 

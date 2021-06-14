@@ -59,12 +59,12 @@ class KeySelectDialog(wx.Dialog):
 
         self.kbBind.SetLabelMarkup('<b><big>' + keybind + '</big></b>')
 
+        sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 15);
+        sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);
+        sizer.AddSpacer(15)
+
         if(modKeyFlags):
             self.SeparateLRChooser = wx.CheckBox( self, -1, "Bind left/right mod keys separately")
-
-            sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 15);
-            sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);
-            sizer.AddSpacer(15)
             sizer.Add( self.SeparateLRChooser, 0, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
 
         # Wrap everything in a vbox to add some padding

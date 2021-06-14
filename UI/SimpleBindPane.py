@@ -10,10 +10,8 @@ class SimpleBindPane(CustomBindPaneParent):
 
     def BuildBindUI(self, page):
 
-
-        ### TODO - make the Label say more helpful things
-        self.CPane.SetLabel("Simple Bind")
-        pane = self.CPane.GetPane()
+        self.SetLabel("Simple Bind")
+        pane = self.GetPane()
 
         BindSizer = wx.GridBagSizer(hgap=5, vgap=5)
 

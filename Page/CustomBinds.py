@@ -12,18 +12,6 @@ class CustomBinds(Page):
 
         self.TabTitle = "Custom Binds"
 
-        # TODO - This init belongs in the actual bind class, but "self.Page.Init"
-        # is hardwired into the innards of ControlGroup.  Hmmm.
-        self.Init = {
-            'BuffPetsByName' : True,
-            'BuffsAffectTeam': True,
-            'BuffsAffectPets': True,
-        }
-        for i in (1,2,3,4,5,6,7,8):
-            self.Init[f"Team{i}BuffKey"] = "UNBOUND"
-        for i in (1,2,3,4,5,6):
-            self.Init[f"Pet{i}BuffKey"] = "UNBOUND"
-
     def BuildPage(self):
 
         # Overall sizer for 'self'
@@ -76,7 +64,7 @@ class CustomBinds(Page):
         deleteSizer.Add(deleteButton, 0, wx.LEFT|wx.RIGHT, 15)
 
         self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), deleteSizer, 0, wx.ALL|wx.EXPAND, 10)
-        bindpane.CPane.Expand()
+        bindpane.Expand()
         self.Layout()
 
     def OnDeleteButton(self, evt):
@@ -313,7 +301,8 @@ class CustomBinds(Page):
 
     def PopulateBindFiles(self):
 
-        for pane in self.paneSizer.Children():
+        for panesizer in self.PaneSizer.Children:
+            pane = panesizer.GetWindow()
             pane.PopulateBindFiles()
 
         ### TODO
@@ -321,71 +310,6 @@ class CustomBinds(Page):
         ### TODO
 
 
-        profile = self.Profile
-        ResetFile = profile.ResetFile()
-
-        buffer = self.GetState('buffer') or []
-
-        for key in buffer:
-            bbind = buffer['key']
-
-            if bbind.get('selchatenabled', None):
-                chat1 = cbPBindToString(bbind['chat1'])
-                chat2 = cbPBindToString(bbind['chat2'])
-                chat3 = cbPBindToString(bbind['chat3'])
-
-            npow = 1
-            if bbind.get('power2enabled', None):
-                npow = 2
-                if (bbind.get('power3enabled')): npow = 3
-
-            if ((bbind['target'] == 1) or (bbind['target'] == 3)):
-                for j in range(1,9):
-                    teamid = "team"+j
-                    filebase = f"{profile['base']}\\buff{i}\\bufft{j}"
-                    afile = profile.GetBindFile(f"{filebase}a.txt")
-                    bfile = profile.GetBindFile(f"{filebase}b.txt")
-                    afile.SetBind(    teamid, f'+down$$teamselect {j}$${selchat}bindloadfile {filebase}b.txt')
-                    ResetFile.SetBind(teamid, f'+down$$teamselect {j}$${selchat}bindloadfile {filebase}b.txt')
-                    if (npow == 1):
-                        bfile.SetBind(teamid,f'-down$${chat1}powexecname {bbind["power1"]}$$bindloadfile {filebase}a.txt')
-                    else:
-                        bfile.SetBind(teamid,f'-down$${chat1}powexecname {bbind["power1"]}$$bindloadfile {filebase}c.txt')
-                        cfile = profile.GetBindFile(f"{filebase}c.txt")
-                        if (npow == 2):
-                            cfile.SetBind(teamid, f'{chat2}powexecname {bbind["power2"]}$$bindloadfile {filebase}a.txt')
-                        else:
-                            dfile = profile.GetBindFile(f"{filebase}d.txt")
-                            cfile.SetBind(teamid, f'+down$${chat2}powexecname {bbind["power2"]}$$bindloadfile {filebase}d.txt')
-                            dfile.SetBind(teamid, f'-down$${chat3}powexecname {bbind["power3"]}$$bindloadfile {filebase}a.txt')
-
-            if ((bbind['target'] == 2) or (bbind['target'] == 3)):
-                for j in range(1.7):
-                    petid = "pet" + j
-                    filebase = f"{profile['base']}\\buff{i}\\buffp{j}"
-                    if (bbind['usepetnames']):
-                        ResetFile.SetBind(petid, f'+down$$petselectname {profile["petaction"]}pet{j}name$${selchat}bindloadfile {filebase}b.txt')
-                    else:
-                        ResetFile.SetBind(petid, f'+down$$petselect {j-1}$${selchat}bindloadfile {filebase}b.txt')
-
-                    afile = profile.GetBindFile(f"{filebase}a.txt")
-                    bfile = profile.GetBindFile(f"{filebase}b.txt")
-                    if (bbind['usepetnames']):
-                        afile.SetBind(petid, f'+down$$petselectname {profile["petaction"]}pet{j}name$${selchat}bindloadfile {filebase}b.txt')
-                    else:
-                        afile.SetBind(petid, f'+down$$petselect {j-1}$${selchat}bindloadfile {filebase}b.txt')
-
-                    if (npow == 1):
-                        bfile.SetBind(petid, f'-down$${chat1}powexecname {bbind["power1"]}$$bindloadfile {filebase}a.txt')
-                    else:
-                        bfile.SetBind(petid, f'-down$${chat1}powexecname {bbind["power1"]}$$bindloadfile {filebase}c.txt')
-                        cfile = profile.GetBindFile(f"{filebase}c.txt")
-                        if (npow == 2):
-                            cfile.SetBind(petid, f"{chat2}powexecname {bbind['power2']}$$bindloadfile {filebase}a.txt")
-                        else:
-                            dfile = profile.GetBindFile(f"{filebase}d.txt")
-                            cfile.SetBind(petid, f'+down$${chat2}powexecname {bbind["power2"]}$$bindloadfile {filebase}d.txt')
-                            dfile.SetBind(petid, f'-down$${chat3}powexecname {bbind["power3"]}$$bindloadfile {filebase}a.txt')
 
     def findconflicts(self, profile):
         for bbind in self.GetState('bufferbinds'):

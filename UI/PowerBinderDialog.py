@@ -174,15 +174,15 @@ commandClasses = {
 }
 
 class PowerBinderButton(wx.Button):
-    def __init__(self, parent, targetTextCtrl):
+    def __init__(self, parent, tgtTxtCtrl):
         wx.Button.__init__(self, parent, -1, label = "...")
 
-        self.targetTextCtrl = targetTextCtrl
+        self.tgtTxtCtrl = tgtTxtCtrl
         self.Bind(wx.EVT_BUTTON, self.PowerBinderEventHandler)
 
     def PowerBinderEventHandler(self, evt):
         with PowerBinderDialog(self.Parent) as dlg:
-            if(self.targetTextCtrl and dlg.ShowModal() == wx.ID_OK):
+            if (self.tgtTxtCtrl and dlg.ShowModal() == wx.ID_OK):
                 bindString = dlg.MakeBindString()
-                self.targetTextCtrl.SetValue(bindString)
+                self.tgtTxtCtrl.SetValue(bindString)
 

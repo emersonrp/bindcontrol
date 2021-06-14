@@ -18,7 +18,11 @@ elif wx.Platform == '__WXGTK__':
         'RALT'  : 0x08,
     }
 elif wx.Platform == '__WXMAC__':
-    pass
+    modKeyFlags = {
+        'RSHIFT': 0x02,
+        'RCTRL' : 0x1fff, # O_O
+        'RALT'  : 0x20,
+    }
 
 
 
@@ -33,8 +37,7 @@ def KeySelectEventHandler(evt):
         # otherThingWithThatBind = checkConflicts(newKey)
 
         # re-label the button / set its state
-        if newKey:
-            evt.EventObject.SetLabel(newKey)
+        if newKey: button.SetLabel(newKey)
 
 class KeySelectDialog(wx.Dialog):
     def __init__(self, parent, desc = '', keybind = 'UNBOUND'):
@@ -59,12 +62,12 @@ class KeySelectDialog(wx.Dialog):
 
         self.kbBind.SetLabelMarkup('<b><big>' + keybind + '</big></b>')
 
+        sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 15);
+        sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);
+        sizer.AddSpacer(15)
+
         if(modKeyFlags):
             self.SeparateLRChooser = wx.CheckBox( self, -1, "Bind left/right mod keys separately")
-
-            sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 15);
-            sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);
-            sizer.AddSpacer(15)
             sizer.Add( self.SeparateLRChooser, 0, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
 
         # Wrap everything in a vbox to add some padding

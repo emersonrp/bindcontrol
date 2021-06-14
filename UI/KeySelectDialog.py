@@ -18,7 +18,11 @@ elif wx.Platform == '__WXGTK__':
         'RALT'  : 0x08,
     }
 elif wx.Platform == '__WXMAC__':
-    pass
+    modKeyFlags = {
+        'RSHIFT': 0x02,
+        'RCTRL' : 0x1fff, # O_O
+        'RALT'  : 0x20,
+    }
 
 
 
@@ -33,8 +37,7 @@ def KeySelectEventHandler(evt):
         # otherThingWithThatBind = checkConflicts(newKey)
 
         # re-label the button / set its state
-        if newKey:
-            evt.EventObject.SetLabel(newKey)
+        if newKey: button.SetLabel(newKey)
 
 class KeySelectDialog(wx.Dialog):
     def __init__(self, parent, desc = '', keybind = 'UNBOUND'):

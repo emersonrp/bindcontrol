@@ -187,6 +187,5 @@ class PowerBinderButton(wx.Button):
     def __init__(self, parent, targetTextCtrl):
         wx.Button.__init__(self, parent, -1, label = "...")
 
-        print(self)
         self.targetTextCtrl = targetTextCtrl
         self.Bind(wx.EVT_BUTTON, PowerBinderEventHandler)

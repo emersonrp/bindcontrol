@@ -2,7 +2,7 @@ import wx
 
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.ControlGroup import ControlGroup
-from UI.PowerBinderDialog import PowerBinderButton
+from UI.PowerBinderDialog import PowerBinderButton, PowerBinderEventHandler
 
 class BufferBindPane(CustomBindPaneParent):
     def __init__(self, page, bind):
@@ -19,12 +19,11 @@ class BufferBindPane(CustomBindPaneParent):
 
         for i in (1,2,3,4,5,6):
             page.Init[self.AddUniquePrefix() + f"Pet{i}BuffKey"] = "UNBOUND"
-        print(page.Init)
 
     def BuildBindUI(self, page):
 
-        self.CPane.SetLabel("This is a test label")
-        pane = self.CPane.GetPane()
+        self.SetLabel("This is a test label")
+        pane = self.GetPane()
 
         # bind text controls
         BindSizer = wx.GridBagSizer(hgap=5, vgap=5)
@@ -88,3 +87,73 @@ class BufferBindPane(CustomBindPaneParent):
     def BuffPowerPicker(self, pane):
         picker = wx.Choice(pane, -1)
         return picker
+
+
+# This is the old lua logic for stuffing buffer binds
+"""
+        profile = self.Profile
+        ResetFile = profile.ResetFile()
+
+        buffer = self.GetState('buffer') or []
+
+        for key in buffer:
+            bbind = buffer['key']
+
+            if bbind.get('selchatenabled', None):
+                chat1 = cbPBindToString(bbind['chat1'])
+                chat2 = cbPBindToString(bbind['chat2'])
+                chat3 = cbPBindToString(bbind['chat3'])
+
+            npow = 1
+            if bbind.get('power2enabled', None):
+                npow = 2
+                if (bbind.get('power3enabled')): npow = 3
+
+            if ((bbind['target'] == 1) or (bbind['target'] == 3)):
+                for j in range(1,9):
+                    teamid = "team"+j
+                    filebase = f"{profile['base']}\\buff{i}\\bufft{j}"
+                    afile = profile.GetBindFile(f"{filebase}a.txt")
+                    bfile = profile.GetBindFile(f"{filebase}b.txt")
+                    afile.SetBind(    teamid, f'+down$$teamselect {j}$${selchat}bindloadfile {filebase}b.txt')
+                    ResetFile.SetBind(teamid, f'+down$$teamselect {j}$${selchat}bindloadfile {filebase}b.txt')
+                    if (npow == 1):
+                        bfile.SetBind(teamid,f'-down$${chat1}powexecname {bbind["power1"]}$$bindloadfile {filebase}a.txt')
+                    else:
+                        bfile.SetBind(teamid,f'-down$${chat1}powexecname {bbind["power1"]}$$bindloadfile {filebase}c.txt')
+                        cfile = profile.GetBindFile(f"{filebase}c.txt")
+                        if (npow == 2):
+                            cfile.SetBind(teamid, f'{chat2}powexecname {bbind["power2"]}$$bindloadfile {filebase}a.txt')
+                        else:
+                            dfile = profile.GetBindFile(f"{filebase}d.txt")
+                            cfile.SetBind(teamid, f'+down$${chat2}powexecname {bbind["power2"]}$$bindloadfile {filebase}d.txt')
+                            dfile.SetBind(teamid, f'-down$${chat3}powexecname {bbind["power3"]}$$bindloadfile {filebase}a.txt')
+
+            if ((bbind['target'] == 2) or (bbind['target'] == 3)):
+                for j in range(1.7):
+                    petid = "pet" + j
+                    filebase = f"{profile['base']}\\buff{i}\\buffp{j}"
+                    if (bbind['usepetnames']):
+                        ResetFile.SetBind(petid, f'+down$$petselectname {profile["petaction"]}pet{j}name$${selchat}bindloadfile {filebase}b.txt')
+                    else:
+                        ResetFile.SetBind(petid, f'+down$$petselect {j-1}$${selchat}bindloadfile {filebase}b.txt')
+
+                    afile = profile.GetBindFile(f"{filebase}a.txt")
+                    bfile = profile.GetBindFile(f"{filebase}b.txt")
+                    if (bbind['usepetnames']):
+                        afile.SetBind(petid, f'+down$$petselectname {profile["petaction"]}pet{j}name$${selchat}bindloadfile {filebase}b.txt')
+                    else:
+                        afile.SetBind(petid, f'+down$$petselect {j-1}$${selchat}bindloadfile {filebase}b.txt')
+
+                    if (npow == 1):
+                        bfile.SetBind(petid, f'-down$${chat1}powexecname {bbind["power1"]}$$bindloadfile {filebase}a.txt')
+                    else:
+                        bfile.SetBind(petid, f'-down$${chat1}powexecname {bbind["power1"]}$$bindloadfile {filebase}c.txt')
+                        cfile = profile.GetBindFile(f"{filebase}c.txt")
+                        if (npow == 2):
+                            cfile.SetBind(petid, f"{chat2}powexecname {bbind['power2']}$$bindloadfile {filebase}a.txt")
+                        else:
+                            dfile = profile.GetBindFile(f"{filebase}d.txt")
+                            cfile.SetBind(petid, f'+down$${chat2}powexecname {bbind["power2"]}$$bindloadfile {filebase}d.txt')
+                            dfile.SetBind(petid, f'-down$${chat3}powexecname {bbind["power3"]}$$bindloadfile {filebase}a.txt')
+"""

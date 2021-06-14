@@ -1,8 +1,10 @@
 # parent class for various custom bindpane types
 import wx
 
-class CustomBindPaneParent():
+class CustomBindPaneParent(wx.CollapsiblePane):
     def __init__(self, page, bind = None):
+        wx.CollapsiblePane.__init__(self, page.scrolledPane,
+                style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
         # TODO - simplebind just have the one key<->contents,
         # but buffer binds have a whole set of them.
@@ -18,9 +20,7 @@ class CustomBindPaneParent():
             if bind.get('name',     None): self.Title    = bind['title']
             if bind.get('contents', None): self.Contents = bind['contents']
 
-        self.CPane = wx.CollapsiblePane(page.scrolledPane,
-                style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
-        self.CPane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
+        self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
 
     # This is so we can have multiple controls of the "same name" on the
     # Custom Binds page, if we have, say, several Simple binds.

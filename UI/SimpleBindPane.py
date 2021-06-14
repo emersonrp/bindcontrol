@@ -10,8 +10,8 @@ class SimpleBindPane(CustomBindPaneParent):
 
     def BuildBindUI(self, page):
 
-        self.CPane.SetLabel("This is a test label")
-        pane = self.CPane.GetPane()
+        self.SetLabel("This is a test label")
+        pane = self.GetPane()
 
         # TODO - get 'bindclass' (Simple, Buffer, etc) and 'unique-bind-id' scheme
         bindclass = ''

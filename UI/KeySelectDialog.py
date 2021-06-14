@@ -112,7 +112,6 @@ class KeySelectDialog(wx.Dialog):
 
         if (isinstance(event, wx.KeyEvent)):
             code = event.GetKeyCode()
-
             KeyToBind = self.Keymap.get(code, '')
         else:
             button = event.GetButton()
@@ -133,9 +132,9 @@ class KeySelectDialog(wx.Dialog):
             if SeparateLR and modKeyFlags:
                 if isinstance(event, wx.KeyEvent) and event.GetKeyCode() == wx.WXK_SHIFT:
                     rawFlags = event.GetRawKeyFlags()
-                    self.ShiftText = "RSHIFT+" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT+"
+                    self.ShiftText = "RSHIFT" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
             else:
-                self.ShiftText = "SHIFT+"
+                self.ShiftText = "SHIFT"
         else:
             self.ShiftText = ''
 
@@ -143,9 +142,9 @@ class KeySelectDialog(wx.Dialog):
             if SeparateLR and modKeyFlags:
                 if isinstance(event, wx.KeyEvent) and event.GetKeyCode() == wx.WXK_RAW_CONTROL:
                     rawFlags = event.GetRawKeyFlags()
-                    self.CtrlText = "RCTRL+" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL+"
+                    self.CtrlText = "RCTRL" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
             else:
-                self.CtrlText = "CTRL+"
+                self.CtrlText = "CTRL"
         else:
             self.CtrlText = ''
 
@@ -154,13 +153,14 @@ class KeySelectDialog(wx.Dialog):
             if SeparateLR and modKeyFlags:
                 if isinstance(event, wx.KeyEvent) and event.GetKeyCode() == wx.WXK_ALT:
                     rawFlags = event.GetRawKeyFlags()
-                    self.AltText = "RALT+" if (rawFlags & modKeyFlags['RALT']) else "LALT+"
+                    self.AltText = "RALT" if (rawFlags & modKeyFlags['RALT']) else "LALT"
             else:
-                self.AltText = "ALT+"
+                self.AltText = "ALT"
         else:
             self.AltText = ''
 
-        self.Binding = self.CtrlText + self.AltText + self.ShiftText + str(KeyToBind)
+        self.Binding = "+".join([ key for key in [self.CtrlText, self.AltText, self.ShiftText, str(KeyToBind)] if key])
+        # self.Binding = self.CtrlText + self.AltText + self.ShiftText + str(KeyToBind)
 
         self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
         self.Layout()
@@ -169,6 +169,7 @@ class KeySelectDialog(wx.Dialog):
     def SetKeymap(self):
         # key choice list
         self.Keymap = {
+                wx.WXK_RETURN : 'ENTER',
                 wx.WXK_BACK : 'BACKSPACE',
                 wx.WXK_TAB : 'TAB',
                 wx.WXK_SPACE : 'SPACE',

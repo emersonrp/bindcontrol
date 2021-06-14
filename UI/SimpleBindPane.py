@@ -1,6 +1,7 @@
 import wx
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeyBindDialog import KeyPickerEventHandler
+from UI.PowerBinderDialog import PowerBinderButton
 
 ### CustomBind subclasses for the individual bind types
 
@@ -17,23 +18,23 @@ class SimpleBindPane(CustomBindPaneParent):
 
         BindNameCtrl = wx.TextCtrl(pane, -1, self.Name)
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Name:"), (0,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(BindNameCtrl,                          (0,1), flag=wx.EXPAND)
-        page.Controls["BindName"] = BindNameCtrl
+        BindSizer.Add(BindNameCtrl,                          (0,1), flag=wx.EXPAND|wx.ALL, border=5)
+        page.Controls[self.UniqueName('BindName')] = BindNameCtrl
 
         BindKeyCtrl = wx.Button(pane, -1, self.Key)
         BindKeyCtrl.CtlName = f"{self.bindclass}{self.unique_bind_id}BindKey"
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), (0,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(BindKeyCtrl,                          (0,3), flag=wx.EXPAND)
+        BindSizer.Add(BindKeyCtrl,                          (0,3), flag=wx.EXPAND|wx.ALL, border=5)
         BindKeyCtrl.Bind(wx.EVT_BUTTON, KeyPickerEventHandler)
-        page.Controls['BindKey'] = BindKeyCtrl
+        page.Controls[self.UniqueName('BindKey')] = BindKeyCtrl
 
         BindContentsCtrl = wx.TextCtrl(pane, -1, self.Contents)
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"), (1,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(BindContentsCtrl,                          (1,1), span=(1,3), flag=wx.ALL|wx.EXPAND)
-        page.Controls['BindContents'] = BindContentsCtrl
+        BindSizer.Add(BindContentsCtrl,                          (1,1), (1,2), flag=wx.ALL|wx.EXPAND, border=5)
+        BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=BindContentsCtrl), (1,3), flag=wx.EXPAND)
+        page.Controls[self.UniqueName('BindContents')] = BindContentsCtrl
 
         BindSizer.AddGrowableCol(1)
-        BindSizer.AddGrowableCol(3)
 
         BindSizer.Layout()
 

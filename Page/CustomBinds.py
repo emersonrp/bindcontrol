@@ -58,7 +58,7 @@ class CustomBinds(Page):
 
         # put it in a box with a 'delete' button
         deleteSizer = wx.BoxSizer(wx.HORIZONTAL)
-        deleteSizer.Add(bindpane.CPane, 1, wx.EXPAND, 5)
+        deleteSizer.Add(bindpane, 1, wx.EXPAND, 5)
         deleteButton = wx.Button(self.scrolledPane, -1, "Delete")
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
         deleteSizer.Add(deleteButton, 0, wx.LEFT|wx.RIGHT, 15)

@@ -27,7 +27,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
     # TODO - still need to work out saving and especially loading
     # in Profile.  The "@@" below is so we can separate unique from
     # name for purposes of repopulating the UI on load.
-    def AddUniquePrefix(self, name = ''):
+    def UniqueName(self, name = ''):
         return self.bindclass + self.unique_bind_id + "@@" + name
 
     def BuildBindUI(parent, self):

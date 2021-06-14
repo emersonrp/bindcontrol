@@ -8,17 +8,18 @@ class BufferBindPane(CustomBindPaneParent):
     def __init__(self, page, bind):
         CustomBindPaneParent.__init__(self, page, bind)
         self.Page = page
-        self.Init = {
-            'BuffPetsByName' : True,
-            'BuffsAffectTeam': True,
-            'BuffsAffectPets': True,
+        page.Init = {
+            self.AddUniquePrefix('BuffPetsByName') : True,
+            self.AddUniquePrefix('BuffsAffectTeam'): True,
+            self.AddUniquePrefix('BuffsAffectPets'): True,
         }
 
         for i in (1,2,3,4,5,6,7,8):
-            self.Init[f"Team{i}BuffKey"] = "UNBOUND"
+            page.Init[self.AddUniquePrefix() + f"Team{i}BuffKey"] = "UNBOUND"
 
         for i in (1,2,3,4,5,6):
-            self.Init[f"Pet{i}BuffKey"] = "UNBOUND"
+            page.Init[self.AddUniquePrefix() + f"Pet{i}BuffKey"] = "UNBOUND"
+        print(page.Init)
 
     def BuildBindUI(self, page):
 
@@ -59,15 +60,16 @@ class BufferBindPane(CustomBindPaneParent):
         TeamCtrls = ControlGroup(pane, self.Page, "Buff Team Keybinds")
         PetCtrls  = ControlGroup(pane, self.Page, "Buff Pet Keybinds")
 
-        TeamCtrls.AddLabeledControl(ctlType = 'checkbox', ctlName = "BuffsAffectTeam")
+        TeamCtrls.AddLabeledControl(ctlType = 'checkbox', ctlName = self.AddUniquePrefix("BuffsAffectTeam"))
         for i in (1,2,3,4,5,6,7,8):
-            TeamCtrls.AddLabeledControl(ctlType = "keybutton", ctlName = f"Team{i}BuffKey", contents = "UNBOUND")
+            TeamCtrls.AddLabeledControl(ctlType = "keybutton",
+                    ctlName = self.AddUniquePrefix(f"Team{i}BuffKey"), contents = "UNBOUND")
 
 
-        PetCtrls.AddLabeledControl(ctlType = 'checkbox', ctlName = "BuffsAffectPets")
-        PetCtrls.AddLabeledControl(ctlType = "checkbox", ctlName = "BuffPetsByName")
+        PetCtrls.AddLabeledControl(ctlType = 'checkbox', ctlName = self.AddUniquePrefix("BuffsAffectPets"))
+        PetCtrls.AddLabeledControl(ctlType = "checkbox", ctlName = self.AddUniquePrefix("BuffPetsByName"))
         for i in (1,2,3,4,5,6):
-            PetCtrls.AddLabeledControl(ctlType = "keybutton", ctlName = f"Pet{i}BuffKey", contents = "UNBOUND")
+            PetCtrls.AddLabeledControl(ctlType = "keybutton", ctlName = self.AddUniquePrefix(f"Pet{i}BuffKey"), contents = "UNBOUND")
 
         KeySizer.Add(TeamCtrls, 0, flag = wx.LEFT|wx.RIGHT, border = 5)
         KeySizer.Add(PetCtrls,  0, flag = wx.LEFT|wx.RIGHT, border = 5)

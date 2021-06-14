@@ -13,18 +13,6 @@ class CustomBinds(Page):
         self.Binds = {}
         self.TabTitle = "Custom Binds"
 
-        # TODO - This init belongs in the actual bind class, but "self.Page.Init"
-        # is hardwired into the innards of ControlGroup.  Hmmm.
-        self.Init = {
-            'BuffPetsByName' : True,
-            'BuffsAffectTeam': True,
-            'BuffsAffectPets': True,
-        }
-        for i in (1,2,3,4,5,6,7,8):
-            self.Init[f"Team{i}BuffKey"] = "UNBOUND"
-        for i in (1,2,3,4,5,6):
-            self.Init[f"Pet{i}BuffKey"] = "UNBOUND"
-
     def BuildPage(self):
 
         # Overall sizer for 'self'
@@ -305,6 +293,8 @@ class CustomBinds(Page):
 
     def PopulateBindFiles(self):
 
+        for pane in self.PaneSizer.Children:
+            pane.PopulateBindFiles()
 
         ### TODO
         return

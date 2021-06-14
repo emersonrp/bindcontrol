@@ -127,6 +127,10 @@ class General(Page):
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(topSizer, flag=wx.ALL|wx.EXPAND, border = 20)
 
+        testPowerBinder = wx.Button(self, -1, "Test PowerBinder")
+        testPowerBinder.Bind(wx.EVT_BUTTON, UI.PowerBinderDialog.PowerBinderEventHandler)
+        paddingSizer.Add(testPowerBinder, flag=wx.ALL|wx.EXPAND, border = 20)
+
         self.SetSizerAndFit(paddingSizer)
 
     def OnPickArchetype(self, event):

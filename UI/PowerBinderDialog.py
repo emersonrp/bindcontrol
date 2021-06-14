@@ -9,16 +9,6 @@ from PowerBindCmd import AFKCmd, AutoPowerCmd, ChatCmd, ChatGlobalCmd, CostumeCh
                     UsePowerFromTrayCmd, WindowToggleCmd
 
 
-def PowerBinderEventHandler(evt):
-    button = evt.EventObject
-    print(button)
-
-    with PowerBinderDialog(button.Parent) as dlg:
-
-        if(dlg.ShowModal() == wx.ID_OK):
-            bindString = dlg.MakeBindString()
-            button.targetTextCtrl.SetValue(bindString)
-
 class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
@@ -184,8 +174,15 @@ commandClasses = {
 }
 
 class PowerBinderButton(wx.Button):
-    def __init__(self, parent, targetTextCtrl):
+    def __init__(self, parent, tgtTxtCtrl):
         wx.Button.__init__(self, parent, -1, label = "...")
 
-        self.targetTextCtrl = targetTextCtrl
-        self.Bind(wx.EVT_BUTTON, PowerBinderEventHandler)
+        self.tgtTxtCtrl = tgtTxtCtrl
+        self.Bind(wx.EVT_BUTTON, self.PowerBinderEventHandler)
+
+    def PowerBinderEventHandler(self, evt):
+        with PowerBinderDialog(self.Parent) as dlg:
+            if (self.tgtTxtCtrl and dlg.ShowModal() == wx.ID_OK):
+                bindString = dlg.MakeBindString()
+                self.tgtTxtCtrl.SetValue(bindString)
+

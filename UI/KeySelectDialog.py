@@ -22,10 +22,10 @@ elif wx.Platform == '__WXMAC__':
 
 
 
-def KeyPickerEventHandler(evt):
+def KeySelectEventHandler(evt):
     button = evt.EventObject
 
-    with KeyBindDialog(button.Parent, button.CtlName, button.Label) as dlg:
+    with KeySelectDialog(button.Parent, button.CtlName, button.Label) as dlg:
         newKey = ''
         if(dlg.ShowModal() == wx.ID_OK): newKey = dlg.Binding
 
@@ -36,12 +36,12 @@ def KeyPickerEventHandler(evt):
         if newKey:
             evt.EventObject.SetLabel(newKey)
 
-class KeyBindDialog(wx.Dialog):
+class KeySelectDialog(wx.Dialog):
     def __init__(self, parent, desc = '', keybind = 'UNBOUND'):
         wx.Dialog.__init__(self, parent, -1, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
 
         if not desc:
-            print("Tried to make a KeyBindDialog for something with no desc")
+            print("Tried to make a KeySelectDialog for something with no desc")
             return
 
         desc = f"Press the key you want bound to {UI.Labels.get(desc, desc)}:"

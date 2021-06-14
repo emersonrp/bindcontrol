@@ -1,7 +1,7 @@
 import wx
 import UI
 from KeyBind import KeyBind
-from UI.KeyBindDialog import KeyPickerEventHandler
+from UI.KeySelectDialog import KeySelectEventHandler
 
 
 class ControlGroup(wx.StaticBoxSizer):
@@ -35,7 +35,7 @@ class ControlGroup(wx.StaticBoxSizer):
 
         if ctlType == ('keybutton'):
             control = bc_wxKeyButton( ctlParent, -1, Init[ctlName])
-            control.Bind(wx.EVT_BUTTON, KeyPickerEventHandler)
+            control.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
             control.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
             control.CtlName = ctlName
 

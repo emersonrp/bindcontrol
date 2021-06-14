@@ -3,8 +3,9 @@ from pathlib import Path
 class BindFile():
 
     def __init__(self, profile, *pathbits):
-        bindsdir = profile.BindsDir()
-        pathbits = (bindsdir, *pathbits)
+        self.BindsDir = profile.BindsDir()
+        pathbits = (self.BindsDir, *pathbits)
+
         self.Path = Path(*pathbits)
 
         self.Binds = {}
@@ -17,10 +18,6 @@ class BindFile():
         if key == "UNBOUND": return
 
         contents = '"' + contents.strip() + '"'
-
-        bind = self.Binds[key] if self.Binds.get(key, None) else {}
-
-        bind[key] = contents
 
         ## TODO - do we actually need to objectinate individual binds?
         # bind.Key = key
@@ -46,9 +43,16 @@ class BindFile():
 
     def Write(self, profile):
         try:
+            Path(self.BindsDir).mkdir(parents = True, exist_ok = True)
+        except Exception as e:
+            print(f"Can't make bindsdir {self.BindsDir} : {e}")
+            return
+
+        try:
             self.Path.touch(exist_ok = True)
-        except e:
-            Wx.Error("Can't instantiate file {self}: {e}")
+        except Exception as e:
+            print(f"Can't instantiate file {self}: {e}")
+            return
 
         # TODO -- sort all this stuff by the Alpha key, subsort by mod keys
 

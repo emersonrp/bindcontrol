@@ -1,5 +1,6 @@
 # UI / logic for the 'general' panel
 import wx
+from pathlib import Path
 import UI
 from UI.PowerBinderDialog import PowerBinderButton
 
@@ -12,7 +13,7 @@ class General(Page):
         Page.__init__(self, parent)
 
         profile = parent
-        # TODO - make bindsdir os-agnostic
+
         # TODO - find CoH install and put them there?
         # TODO - help text about WINEPREFIX etc for Mac/Linux users
         self.Init = {
@@ -22,7 +23,7 @@ class General(Page):
             'Primary': 'Martial Arts',
             'Secondary': 'Super Reflexes',
             'Epic': 'Weapon Mastery',
-            'BindsDir': "/home/emerson/cohbinds/",
+            'BindsDir': str(Path.home().joinpath("cohbinds")),
             'ResetKey': 'CTRL+M',
             'ResetFeedback': 1,
             'Pool1': '',

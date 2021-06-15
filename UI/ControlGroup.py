@@ -31,7 +31,7 @@ class ControlGroup(wx.StaticBoxSizer):
 
         label = UI.Labels.get(ctlName, ctlName)
         if not noLabel:
-            ctlLabel = bc_wxStaticText(ctlParent, -1, label + ':')
+            ctlLabel = wx.StaticText(ctlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
             control = bc_wxKeyButton( ctlParent, -1, Init[ctlName])
@@ -40,43 +40,43 @@ class ControlGroup(wx.StaticBoxSizer):
             control.CtlName = ctlName
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
-            control = bc_wxComboBox(
+            control = wx.ComboBox(
                 ctlParent, -1, Init[ctlName],
                 choices = contents or (), style = wx.CB_READONLY)
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback )
 
         elif ctlType == ('text'):
-            control = bc_wxTextCtrl(ctlParent, -1, Init[ctlName])
+            control = wx.TextCtrl(ctlParent, -1, Init[ctlName])
 
         elif ctlType == ('choice'):
             contents = contents if contents else []
-            control = bc_wxChoice(ctlParent, -1, choices = contents)
+            control = wx.Choice(ctlParent, -1, choices = contents)
             if callback:
                 control.Bind(wx.EVT_CHOICE, callback )
 
         elif ctlType == ('statictext'):
-            control = bc_wxStaticText(ctlParent, -1, contents)
+            control = wx.StaticText(ctlParent, -1, contents)
 
         elif ctlType == ('checkbox'):
-            control = bc_wxCheckBox(ctlParent, -1, contents)
+            control = wx.CheckBox(ctlParent, -1, contents)
             control.SetValue(bool(Init[ctlName]))
             padding = 10
             if callback:
                 control.Bind(wx.EVT_CHECKBOX, callback )
 
         elif ctlType == ('spinbox'):
-            control = bc_wxSpinCtrl(ctlParent, -1)
+            control = wx.SpinCtrl(ctlParent, -1)
             control.SetValue(Init[ctlName])
             control.SetRange(*contents)
 
         elif ctlType == ('dirpicker'):
-            control = bc_wxDirPickerCtrl(
+            control = wx.DirPickerCtrl(
                 ctlParent, -1, Init[ctlName], Init[ctlName],
                 #style = wx.DIRP_USE_TEXTCTRL|wx.DIRP_SMALL,
             )
         elif ctlType == ('colorpicker'):
-            control = bc_wxColourPickerCtrl( ctlParent, -1, contents)
+            control = wx.ColourPickerCtrl( ctlParent, -1, contents)
 
         else: wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}")
 
@@ -103,35 +103,4 @@ class ControlGroup(wx.StaticBoxSizer):
 class bc_wxKeyButton(wx.Button, KeyBind):
     def __init__(self, *args, **kwargs):
         wx.Button.__init__(self, *args, **kwargs)
-
-class bc_wxComboBox(wx.ComboBox, KeyBind):
-    def __init__(self, *args, **kvargs):
-        wx.ComboBox.__init__(self, *args, **kvargs)
-
-class bc_wxTextCtrl(wx.TextCtrl, KeyBind):
-    def __init__(self, *args, **kvargs):
-        wx.TextCtrl.__init__(self, *args, **kvargs)
-
-class bc_wxChoice(wx.Choice, KeyBind):
-    def __init__(self, *args, **kvargs):
-        wx.Choice.__init__(self, *args, **kvargs)
-
-class bc_wxStaticText(wx.StaticText, KeyBind):
-    def __init__(self, *args, **kvargs):
-        wx.StaticText.__init__(self, *args, **kvargs)
-
-class bc_wxCheckBox(wx.CheckBox, KeyBind):
-    def __init__(self, *args, **kvargs):
-        wx.CheckBox.__init__(self, *args, **kvargs)
-
-class bc_wxSpinCtrl(wx.SpinCtrl, KeyBind):
-    def __init__(self, *args, **kvargs):
-        wx.SpinCtrl.__init__(self, *args, **kvargs)
-
-class bc_wxDirPickerCtrl(wx.DirPickerCtrl, KeyBind):
-    def __init__(self, *args, **kvargs):
-        wx.DirPickerCtrl.__init__(self, *args, **kvargs)
-
-class bc_wxColourPickerCtrl(wx.ColourPickerCtrl, KeyBind):
-    def __init__(self, *args, **kvargs):
-        wx.ColourPickerCtrl.__init__(self, *args, **kvargs)
+        #self.BindObject = BindObject()

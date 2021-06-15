@@ -34,9 +34,11 @@ class Profile(wx.Notebook):
         module.BuildPage()
         page = self.AddPage(module, module.TabTitle)
 
-        setattr(self, module.TabTitle, module)
+        modname = type(module).__name__
 
-        self.Pages.append(module.TabTitle)
+        setattr(self, modname, module)
+
+        self.Pages.append(modname)
 
         self.Layout()
 

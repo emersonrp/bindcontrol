@@ -16,9 +16,9 @@ class General(Page):
 
         self.Init = {
             'Name': 'Profile',
-            'Archetype': 'Scrapper',
             'Origin': "Magic",
-            'Primary': 'Martial Arts',
+            'Archetype': 'Mastermind',
+            'Primary': 'Ninjas',
             'Secondary': 'Super Reflexes',
             'Epic': 'Weapon Mastery',
             # TODO - find CoH install and put them there?
@@ -156,6 +156,8 @@ class General(Page):
         for e in Epix:
             self.Controls['Epic'].Append(e)
 
+        self.Profile.Mastermind.OnArchetypePowerChange()
+
         self.Fit()
 
     def PopulateBindFiles(self):
@@ -173,7 +175,7 @@ class General(Page):
                     )
 
 
-# Event handlers
+    # Event handlers
     def OnPickOrigin(self, event):
         # TODO do we need to take any action based on this?
         pass
@@ -182,7 +184,7 @@ class General(Page):
         pass
 
     def OnPickPrimaryPowerSet(self, event):
-        pass
+        self.Profile.Mastermind.OnArchetypePowerChange()
 
     def OnPickSecondaryPowerSet(self, event):
         pass

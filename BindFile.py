@@ -45,9 +45,9 @@ class BindFile():
 
     def Write(self, profile):
         try:
-            Path(self.BindsDir).mkdir(parents = True, exist_ok = True)
+            self.Path.parent.mkdir(parents = True, exist_ok = True)
         except Exception as e:
-            print(f"Can't make bindsdir {self.BindsDir} : {e}")
+            print(f"Can't make parent dirs {self.Path.parent} : {e}")
             return
 
         try:

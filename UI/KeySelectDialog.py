@@ -17,11 +17,12 @@ elif wx.Platform == '__WXGTK__':
         'RCTRL' : 0x08,
         'RALT'  : 0x08,
     }
+# Apple apparently throw flags on LEFT instead of RIGHT.  Think Different.
 elif wx.Platform == '__WXMAC__':
     modKeyFlags = {
-        'RSHIFT': 0x02,
-        'RCTRL' : 0x1fff, # O_O
-        'RALT'  : 0x20,
+        'LSHIFT': 0x02,
+        'LCTRL' : 0x2000,
+        'LALT'  : 0x20,
     }
 
 
@@ -42,6 +43,9 @@ def KeySelectEventHandler(evt):
 class KeySelectDialog(wx.Dialog):
     def __init__(self, parent, desc = '', keybind = 'UNBOUND'):
         wx.Dialog.__init__(self, parent, -1, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
+
+        # Mystery panel must be in here in order to get key events
+        dummyPanel = wx.Panel(self, -1)
 
         if not desc:
             print("Tried to make a KeySelectDialog for something with no desc")
@@ -135,7 +139,10 @@ class KeySelectDialog(wx.Dialog):
             if SeparateLR and modKeyFlags:
                 if isinstance(event, wx.KeyEvent) and event.GetKeyCode() == wx.WXK_SHIFT:
                     rawFlags = event.GetRawKeyFlags()
-                    self.ShiftText = "RSHIFT" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
+                    if wx.Platform == '__WXMAC__':
+                        self.ShiftText = "LSHIFT" if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT"
+                    else:
+                        self.ShiftText = "RSHIFT" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
             else:
                 self.ShiftText = "SHIFT"
         else:
@@ -145,7 +152,10 @@ class KeySelectDialog(wx.Dialog):
             if SeparateLR and modKeyFlags:
                 if isinstance(event, wx.KeyEvent) and event.GetKeyCode() == wx.WXK_RAW_CONTROL:
                     rawFlags = event.GetRawKeyFlags()
-                    self.CtrlText = "RCTRL" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
+                    if wx.Platform == '__WXMAC__':
+                        self.CtrlText = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
+                    else:
+                        self.CtrlText = "RCTRL" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
             else:
                 self.CtrlText = "CTRL"
         else:
@@ -156,7 +166,10 @@ class KeySelectDialog(wx.Dialog):
             if SeparateLR and modKeyFlags:
                 if isinstance(event, wx.KeyEvent) and event.GetKeyCode() == wx.WXK_ALT:
                     rawFlags = event.GetRawKeyFlags()
-                    self.AltText = "RALT" if (rawFlags & modKeyFlags['RALT']) else "LALT"
+                    if wx.Platform == '__WXMAC__':
+                        self.AltText = "LALT" if (rawFlags & modKeyFlags['LALT']) else "RALT"
+                    else:
+                        self.AltText = "RALT" if (rawFlags & modKeyFlags['RALT']) else "LALT"
             else:
                 self.AltText = "ALT"
         else:

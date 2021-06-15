@@ -14,8 +14,6 @@ class General(Page):
 
         profile = parent
 
-        # TODO - find CoH install and put them there?
-        # TODO - help text about WINEPREFIX etc for Mac/Linux users
         self.Init = {
             'Name': 'Profile',
             'Archetype': 'Scrapper',
@@ -23,8 +21,10 @@ class General(Page):
             'Primary': 'Martial Arts',
             'Secondary': 'Super Reflexes',
             'Epic': 'Weapon Mastery',
+            # TODO - find CoH install and put them there?
+            # TODO - help text about WINEPREFIX etc for Mac/Linux users
             'BindsDir': str(Path.home().joinpath("cohbinds")),
-            'ResetKey': 'CTRL+M',
+            'ResetKey': 'LCTRL+R',
             'ResetFeedback': 1,
             'Pool1': '',
             'Pool2': '',
@@ -159,12 +159,21 @@ class General(Page):
         self.Fit()
 
     def PopulateBindFiles(self):
-        ### TODO
-        return
-        ### TODO
+        resetfile = self.Profile.ResetFile()
+
+        # TODO - the toggling of sprint is probably an SoD option
+        resetfile.SetBind(self.GetState('ResetKey'),
+                    '$$'.join([
+                        resetfile.BLFs(),
+                        't $name, Keybinds reloaded.',
+                        'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
+                        'powexecname Sprint',
+                        'powexecunqueue',
+                        't $name, SoD Binds Reset'])
+                    )
 
 
-    # Event handlers
+# Event handlers
     def OnPickOrigin(self, event):
         # TODO do we need to take any action based on this?
         pass

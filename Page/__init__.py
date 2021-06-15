@@ -45,7 +45,7 @@ class Page(wx.Panel):
     def GetState(self, key):
         control = self.Controls.get(key, None)
         if not control:
-            return
+            return ''
         if isinstance(control, wx.Button):
             return control.GetLabel()
         elif isinstance(control, wx.Choice) or isinstance(control, wx.ComboBox):

@@ -30,14 +30,15 @@ class BindFile():
 
         self.Binds[key] = contents
 
-    def BaseReset(self, profile):
-        return '$$bind_load_file ' + profile.General.BindsDir + "\\subreset.txt"
+    # TODO - hard coded \\ in there, make this with Path
+    def BaseReset(self):
+        return f'$$bind_load_file {self.BindsDir}\\subreset.txt'
 
     # BLF == full "$$bind_load_file path/to/file/kthx"
     def BLF(self):
         return '$$' + self.BLFs()
 
-    # BLFs == same as above but no '$$' for use at start of binds.  Unnecessary?
+    # BLFs == same as above but no '$$' for use at start of binds.
     # TODO - make "silent" an option, and the default
     def BLFs(self):
         return f'bind_load_file {self.Path}'

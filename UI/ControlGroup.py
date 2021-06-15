@@ -9,7 +9,7 @@ class ControlGroup(wx.StaticBoxSizer):
     def __init__(self, parent, page, label = '', width = 2, flexcols = [0]):
         wx.StaticBoxSizer.__init__(self, wx.VERTICAL, parent, label = label)
 
-        self.Page   = page
+        self.Page = page
 
         self.InnerSizer = wx.FlexGridSizer(width,3,3)
         for col in flexcols: self.InnerSizer.AddGrowableCol(col)
@@ -87,7 +87,6 @@ class ControlGroup(wx.StaticBoxSizer):
 
         if not noLabel:
             sizer.Add( ctlLabel,    0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-            self.Page.CtrlLabels[ctlName] = ctlLabel
 
         sizer.Add( control, 0, wx.ALL|wx.EXPAND, padding)
         self.Page.Controls[ctlName]   = control

@@ -5,10 +5,6 @@
 #  in reality, we need to get directly at the controls occasionally
 #  to change a wx.Choice's list, for example.  Then we just trawl
 #  through page.Controls directly.  This could be improved.
-#
-#  There is an analogous CtrlLabels dict in case we want to get at
-#  the static labels for the controls for some reason.
-#  TODO -- if not, remove that notion from here and from ControlGroup
 
 #  page.GetState('FPSBindKey')
 #  page.SetState('Archetype', 'Blaster')
@@ -25,7 +21,6 @@ class Page(wx.Panel):
         self.TabTitle = type(self).__name__
 
         self.Controls = {}
-        self.CtrlLabels = {}
 
     def help(self, event):
         if not (self.HelpWindow):

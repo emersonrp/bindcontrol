@@ -11,9 +11,9 @@ class ControlGroup(wx.StaticBoxSizer):
 
         self.Page   = page
 
-        self.InnerSizer = wx.FlexGridSizer(0,width,3,3)
+        self.InnerSizer = wx.FlexGridSizer(width,3,3)
         for col in flexcols: self.InnerSizer.AddGrowableCol(col)
-        self.Add(self.InnerSizer, 0, wx.ALL|wx.EXPAND, 16)
+        self.Add(self.InnerSizer, 1, wx.ALL|wx.EXPAND, 16)
 
     def AddLabeledControl(self,
             ctlType = '', ctlName = '', noLabel = False,
@@ -93,6 +93,7 @@ class ControlGroup(wx.StaticBoxSizer):
         self.Page.Controls[ctlName]   = control
 
         self.Layout()
+        return control
 
     def ClearButton(self, evt):
         evt.EventObject.SetLabel("UNBOUND")

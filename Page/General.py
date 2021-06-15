@@ -131,10 +131,13 @@ class General(Page):
         testPowerBinder = PowerBinderButton(self, None)
         paddingSizer.Add(testPowerBinder, flag=wx.ALL|wx.EXPAND, border = 20)
 
+        # pre-fill the Primary/secondary pickers
+        self.OnPickArchetype()
+
         self.SetSizerAndFit(paddingSizer)
 
-    def OnPickArchetype(self, event):
-        choice = event.EventObject
+    def OnPickArchetype(self, event = {}):
+        choice = self.Controls['Archetype']
         index  = choice.GetSelection()
         arch   = choice.GetString(index)
 
@@ -142,21 +145,16 @@ class General(Page):
         self.Controls['Secondary'].Clear()
         self.Controls['Epic'].Clear()
 
-        # TODO fill in Primary / Secondary powers pickers
         Primaries   = Archetypes[arch]['Primary']
         Secondaries = Archetypes[arch]['Secondary']
         Epix        = Archetypes[arch]['Epic']
 
-        for p in Primaries:
-            self.Controls['Primary'].Append(p)
+        for p in Primaries   : self.Controls['Primary'].Append(p)
+        for s in Secondaries : self.Controls['Secondary'].Append(s)
+        for e in Epix        : self.Controls['Epic'].Append(e)
 
-        for s in Secondaries:
-            self.Controls['Secondary'].Append(s)
-
-        for e in Epix:
-            self.Controls['Epic'].Append(e)
-
-        self.Profile.Mastermind.OnArchetypePowerChange()
+        if getattr(self.Profile, 'Mastermind', None):
+            self.Profile.Mastermind.OnArchetypePowerChange()
 
         self.Fit()
 

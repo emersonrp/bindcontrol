@@ -11,62 +11,62 @@ class Mastermind(Page):
             {
                 'label'      : 'Select All',
                 'ctrlName'      : 'PetSelectAll',
-                'tooltipdetail' : 'select all of your pets',
+                'tooltipdetail' : 'Select all of your pets',
             },
             {
                 'label'      : 'Select Minions',
                 'ctrlName'      : 'PetSelectMinions',
-                'tooltipdetail' : 'select your "minion" pets',
+                'tooltipdetail' : 'Select your "minion" pets',
             },
             {
                 'label'      : 'Select Lieutenants',
                 'ctrlName'      : 'PetSelectLieutenants',
-                'tooltipdetail' : 'select your "lieutenant" pets',
+                'tooltipdetail' : 'Select your "lieutenant" pets',
             },
             {
                 'label'      : 'Select Boss',
                 'ctrlName'      : 'PetSelectBoss',
-                'tooltipdetail' : 'select your "boss" pet',
+                'tooltipdetail' : 'Select your "boss" pet',
             },
             {
                 'label'      : 'Bodyguard',
                 'ctrlName'      : 'PetBodyguard',
-                'tooltipdetail' : 'put your selected pets into Bodyguard mode',
+                'tooltipdetail' : 'Put your selected pets into Bodyguard mode',
             },
             {
                 'label'      : 'Aggressive',
                 'ctrlName'      : 'PetAggressive',
-                'tooltipdetail' : 'set your selected pets to "Aggressive" mode',
+                'tooltipdetail' : 'Set your selected pets to "Aggressive" mode',
             },
             {
                 'label'      : 'Defensive',
                 'ctrlName'      : 'PetDefensive',
-                'tooltipdetail' : 'set your selected pets to "Defensive" mode',
+                'tooltipdetail' : 'Set your selected pets to "Defensive" mode',
             },
             {
                 'label'      : 'Passive',
                 'ctrlName'      : 'PetPassive',
-                'tooltipdetail' : 'set your selected pets to "Passive" mode',
+                'tooltipdetail' : 'Set your selected pets to "Passive" mode',
             },
             {
                 'label'      : 'Attack',
                 'ctrlName'      : 'PetAttack',
-                'tooltipdetail' : 'order your selected pets to Attack your target',
+                'tooltipdetail' : 'Order your selected pets to Attack your target',
             },
             {
                 'label'      : 'Follow',
                 'ctrlName'      : 'PetFollow',
-                'tooltipdetail' : 'order your selected pets to Follow you',
+                'tooltipdetail' : 'Order your selected pets to Follow you',
             },
             {
                 'label'      : 'Stay',
                 'ctrlName'      : 'PetStay',
-                'tooltipdetail' : 'order your selected pets to Stay at their current location',
+                'tooltipdetail' : 'Order your selected pets to Stay at their current location',
             },
             {
                 'label'      : 'Go To',
                 'ctrlName'      : 'PetGoto',
-                'tooltipdetail' : 'order your selected pets to Go To a targeted location',
+                'tooltipdetail' : 'Order your selected pets to Go To a targeted location',
             },
         )
 
@@ -157,12 +157,11 @@ class Mastermind(Page):
     def BuildPage(self):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-        upperSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # get the pet names, whether they're bodyguards, and binds to select them directly
         # TODO -- probably want to enable/disable various bits of this based on whether bodyguard is
         # active, or whether we have names, or whatever
-        petNames = ControlGroup(self, self, width = 5, flexcols=[1])
+        petNames = ControlGroup(self, self, width = 5, flexcols=[1,4])
 
         for PetID in range(1,7):
 
@@ -183,8 +182,6 @@ class Mastermind(Page):
                 ctlType = "keybutton",
                 tooltip = f"Choose the Key Combo to Select Pet {PetID}"
             )
-
-        upperSizer.Add(petNames, 1, wx.EXPAND)
 
         useCB = wx.CheckBox( self, -1, 'Enable Mastermind Pet Binds')
         useCB.SetToolTip(wx.ToolTip('Check this to enable the Mastermind Pet Action Binds'))
@@ -224,14 +221,14 @@ class Mastermind(Page):
             )
 
 
-        sizer.Add(upperSizer, 0, wx.EXPAND)
+        sizer.Add(petNames, 0, wx.EXPAND)
         sizer.Add(useCB, 0, wx.ALL, 10)
         sizer.Add(bgCB, 0, wx.ALL, 10)
         sizer.AddSpacer(10)
         sizer.Add(petCommandsKeys, 0, wx.EXPAND)
 
-        paddingSizer = wx.BoxSizer(wx.VERTICAL)
-        paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
+        paddingSizer = wx.BoxSizer(wx.HORIZONTAL)
+        paddingSizer.Add(sizer, 1, flag = wx.ALL|wx.EXPAND, border = 16)
         self.SetSizerAndFit(paddingSizer)
 
         self.OnArchetypePowerChange()
@@ -283,7 +280,7 @@ class Mastermind(Page):
                     if (self.GetState('Pet3Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet3Name')} {PetBodyguardResponse}"
 
                 if (tier2bg == 2):
-                    bgsay = bgsay + f"$$petsaypow ltspow {PetBodyguardResponse}"
+                    bgsay = bgsay + f"$$petsaypow {powers['lts']} {PetBodyguardResponse}"
                 else:
                     if (self.GetState('Pet4Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet4Name')} {PetBodyguardResponse}"
                     if (self.GetState('Pet5Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet5Name')} {PetBodyguardResponse}"

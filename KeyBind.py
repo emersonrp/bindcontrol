@@ -3,7 +3,11 @@
 # bindfiles.
 
 class KeyBind():
+    def __init__(self):
+        self.KeyBindKey      = ''
+        self.KeyBindName     = ''
+        self.KeyBindContents = ''
 
-    def GetBind():
+    def GetKeyBindString():
+        return f'{self.KeyBindKey} "{self.KeyBindContents}"'
 
-        pass

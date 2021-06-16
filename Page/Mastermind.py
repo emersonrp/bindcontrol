@@ -1,6 +1,9 @@
 import wx
 import UI
 
+# Sandolphan / Khaiba's guide to these controls found at:
+# https://guidescroll.com/2011/07/city-of-heroes-mastermind-numeric-keypad-pet-controls/
+
 from Page import Page
 from UI.ControlGroup import ControlGroup
 

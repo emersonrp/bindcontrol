@@ -439,7 +439,7 @@ class Mastermind(Page):
     def mmQuietBGSelBind(self, profile, file, powers):
         if (self.GetState('bg_enable')):
             #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
-            #  first check if any full tier groups are bodyguards.  full tier groups are eaither All BG or all NBG.
+            #  first check if any full tier groups are bodyguards.  full tier groups are either All BG or all NBG.
             if (self.GetState('Pet1Bodyguard')) : tier1bg = tier1bg + 1
             if (self.GetState('Pet2Bodyguard')) : tier1bg = tier1bg + 1
             if (self.GetState('Pet3Bodyguard')) : tier1bg = tier1bg + 1
@@ -671,13 +671,13 @@ class Mastermind(Page):
 
         # TODO!!!  get this into / from GameData
         self.MMPowerSets = {
-            "Beast Mastery"   : { 'min' : 'wol', 'lts'       : 'lio', 'bos'   : 'dir' },
-            "Demon Summoning" : { 'min' : 'demonling', 'lts' : 'demon', 'bos' : 'demon prince' },
-            "Mercenaries"     : { 'min' : "sol",  'lts'      : "spec", 'bos'  : "com", },
-            "Necromancy"      : { 'min' : "zom",  'lts'      : "grav", 'bos'  : "lich", },
-            "Ninjas"          : { 'min' : "gen",  'lts'      : "joun", 'bos'  : "oni", },
-            "Robotics"        : { 'min' : "dron", 'lts'      : "prot", 'bos'  : "ass", },
-            "Thugs"           : { 'min' : "thu",  'lts'      : "enf",  'bos'  : "bru", },
+            "Beast Mastery"   : { 'min' : 'wol', 'lts'  : 'lio', 'bos'  : 'dir' },
+            "Demon Summoning" : { 'min' : 'lin', 'lts'  : 'mons', 'bos' : 'pri' },
+            "Mercenaries"     : { 'min' : "sol",  'lts' : "spec", 'bos' : "com", },
+            "Necromancy"      : { 'min' : "zom",  'lts' : "grav", 'bos' : "lich", },
+            "Ninjas"          : { 'min' : "gen",  'lts' : "joun", 'bos' : "oni", },
+            "Robotics"        : { 'min' : "dron", 'lts' : "prot", 'bos' : "ass", },
+            "Thugs"           : { 'min' : "thu",  'lts' : "enf",  'bos' : "bru", },
         }
         powers = self.MMPowerSets[ profile.General.GetState('Primary') ]
 
@@ -702,18 +702,18 @@ class Mastermind(Page):
             for i in range(1,7):
                 if (self.GetState(f'pet{i}nameenabled')): cbCheckConflict(self.State, f"sel{i-1}Select Pet {i}")
 
-        cbCheckConflict(self.GetState("PetSelectAll"),"Select All Pets")
-        cbCheckConflict(self.GetState("PetSelectMinions"),"Select Minions")
-        cbCheckConflict(self.GetState("PetSelectLieutenants"),"Select Lieutenants")
-        cbCheckConflict(self.GetState("PetSelectBoss"),"Select Boss Pet")
-        cbCheckConflict(self.GetState("PetAggressive"),"Set Pets Aggressive")
-        cbCheckConflict(self.GetState("PetDefensive"),"Set Pets Defensive")
-        cbCheckConflict(self.GetState("PetPassive"),"Set Pets Passive")
-        cbCheckConflict(self.GetState("PetAttack"),"Pet Order: Attack")
-        cbCheckConflict(self.GetState("PetFollow"),"Pet Order: Follow")
-        cbCheckConflict(self.GetState("PetStay"),"Pet Order: Stay")
-        cbCheckConflict(self.GetState("PetGoto"),"Pet Order: Goto")
-        cbCheckConflict(self.GetState("chattykey"),"Pet Action Bind Chatty Mode Toggle")
+        cbCheckConflict(self.GetState("PetSelectAll")         , "Select All Pets")
+        cbCheckConflict(self.GetState("PetSelectMinions")     , "Select Minions")
+        cbCheckConflict(self.GetState("PetSelectLieutenants") , "Select Lieutenants")
+        cbCheckConflict(self.GetState("PetSelectBoss")        , "Select Boss Pet")
+        cbCheckConflict(self.GetState("PetAggressive")        , "Set Pets Aggressive")
+        cbCheckConflict(self.GetState("PetDefensive")         , "Set Pets Defensive")
+        cbCheckConflict(self.GetState("PetPassive")           , "Set Pets Passive")
+        cbCheckConflict(self.GetState("PetAttack")            , "Pet Order: Attack")
+        cbCheckConflict(self.GetState("PetFollow")            , "Pet Order: Follow")
+        cbCheckConflict(self.GetState("PetStay")              , "Pet Order: Stay")
+        cbCheckConflict(self.GetState("PetGoto")              , "Pet Order: Goto")
+        cbCheckConflict(self.GetState("chattykey")            , "Pet Action Bind Chatty Mode Toggle")
         if (self.GetState('bg_enable')):
             cbCheckConflict(self.GetState("selbgm"),"Bodyguard Mode")
             if (self.GetState('PetBackgroundAttackenabled')) : cbCheckConflict(self.GetState("PetBackgroundAttack"),"Pet Order: BG Attack")

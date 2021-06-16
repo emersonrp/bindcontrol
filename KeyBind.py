@@ -4,9 +4,9 @@
 
 class KeyBind():
     def __init__(self):
-        self.KeyBindKey      = ''
-        self.KeyBindName     = ''
-        self.KeyBindContents = ''
+        self.KeyBindKey      = '' # actual key combo
+        self.KeyBindName     = '' # friendly name, ie, "Select All Pets"
+        self.KeyBindContents = '' # the actual bindstring (without surrounding "")
 
     def GetKeyBindString():
         return f'{self.KeyBindKey} "{self.KeyBindContents}"'

@@ -34,7 +34,7 @@ class ControlGroup(wx.StaticBoxSizer):
             ctlLabel = wx.StaticText(ctlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
-            control = bc_wxKeyButton( ctlParent, -1, Init[ctlName])
+            control = wx.Button( ctlParent, -1, Init[ctlName])
             control.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
             control.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
             control.CtlName = ctlName
@@ -97,11 +97,3 @@ class ControlGroup(wx.StaticBoxSizer):
     def ClearButton(self, evt):
         evt.EventObject.SetLabel("UNBOUND")
 
-
-### wee custom classes wrapping each control type and extending them
-### with our KeyBind mixin.
-
-class bc_wxKeyButton(wx.Button, KeyBind):
-    def __init__(self, *args, **kwargs):
-        wx.Button.__init__(self, *args, **kwargs)
-        #self.BindObject = BindObject()

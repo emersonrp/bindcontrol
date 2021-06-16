@@ -152,18 +152,18 @@ class InspirationPopper(Page):
         for Insp in sorted(Inspirations):
 
             tiers = Inspirations[Insp]['tiers']
-            forwardOrder = '$$'.join(         list(map(lambda s: f"inspexecname {s}", tiers)))
-            reverseOrder = '$$'.join(reversed(list(map(lambda s: f"inspexecname {s}", tiers))))
+            forwardOrder = list(map(lambda s: f"inspexecname {s}", tiers))
+            reverseOrder = forwardOrder[::-1]
 
             if not self.GetState("DisableTells"):
                 bc = self.GetState(f'{Insp}Border')
                 bg = self.GetState(f'{Insp}Background')
                 fg = self.GetState(f'{Insp}Foreground')
-                forwardOrder = f'tell $name, {Utility.ChatColors(fg, bg, bc)}{Insp}$${forwardOrder}'
+                forwardOrder.insert(0, f'tell $name, {Utility.ChatColors(fg, bg, bc)}{Insp}')
                 bc = self.GetState(f'Rev{Insp}Border')
                 bg = self.GetState(f'Rev{Insp}Background')
                 fg = self.GetState(f'Rev{Insp}Foreground')
-                reverseOrder = f'tell $name, {Utility.ChatColors(fg, bg, bc)}{Insp}$${reverseOrder}'
+                reverseOrder.insert(0, f'tell $name, {Utility.ChatColors(fg, bg, bc)}{Insp}')
 
             if self.GetState('EnableInspBinds'):
                 ResetFile.SetBind(self.GetState(f"{Insp}Key"),    f"{Insp}", "Inspiration Popper", forwardOrder)

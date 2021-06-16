@@ -17,7 +17,7 @@ class General(Page):
         self.Init = {
             'Name': 'Profile',
             'Origin': "Magic",
-            'Archetype': 'Mastermind',
+            'Archetype': 'Stalker',
             'Primary': 'Ninjas',
             'Secondary': 'Super Reflexes',
             'Epic': 'Weapon Mastery',

@@ -11,15 +11,14 @@ class BindFile():
 
         self.Binds = {}
 
-    def SetBind(self, key, name, page, *contents):
+    def SetBind(self, key, name, page, contents):
 
-        if key == None:
-            print(f"{self}: empty key in keybind: {name}, {page}, contents {contents}")
+        if not key:
+            #print(f"{self}: empty key in keybind: {name}, {page}, contents {contents}")
             return
-
         if key == "UNBOUND": return
 
-        keybind = KeyBind(key, name, page, *contents)
+        self.Binds[key] = KeyBind(key, name, page, contents)
 
         # TODO -- how to call out the 'reset file' object as special?
         # TODO 2 -- we don't? it should be the page's responsibility to
@@ -27,8 +26,6 @@ class BindFile():
         # if ($file eq $resetfile1 and $key eq $resetkey) {
             # $resetfile2->{$key} = $s
         # }
-
-        self.Binds[key] = KeyBind
 
     # TODO - "bind_load_file" instead of "bindloadfile" for now
     # so that we can rdiff the output of CityBinder
@@ -57,8 +54,8 @@ class BindFile():
         # TODO -- sort all this stuff by the Alpha key, subsort by mod keys
 
         output = ''
-        for bind, contents in self.Binds.items():
-            output = output + f'{bind} {contents}\n'
+        for bind, keybind in self.Binds.items():
+            output = output + keybind.GetKeyBindString()
 
         print(output)
         self.Path.write_text(output)

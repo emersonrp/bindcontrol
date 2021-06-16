@@ -561,14 +561,18 @@ class Mastermind(Page):
             PetResponses[cmd] = ''
             if (self.GetState(f"Pet{cmd}ResponseMethod") != 'None') : PetResponses[cmd] = self.GetState(f"Pet{cmd}Response")
 
-        file.SetBind(self.GetState('PetSelectAll'),        "Pet Select All", "Mastermind", self.GetState('PetSelectAllResponseMethod')         + f" PetResponses['SelectAll']"         + profile.GetBindFile('mmbinds','call.txt').BLF())
-        file.SetBind(self.GetState('PetSelectMinions'),    "Pet Select Minion", "Mastermind", self.GetState('PetSelectMinionsResponseMethod')     + f" PetResponses['SelectMinions']"     + profile.GetBindFile('mmbinds','ctier1.txt').BLF())
-        file.SetBind(self.GetState('PetSelectLieutenants'),"Pet Select Lieutenants", "Mastermind", self.GetState('PetSelectLieutenantsResponseMethod') + f" PetResponses['SelectLieutenants']" + profile.GetBindFile('mmbinds','ctier2.txt').BLF())
-        file.SetBind(self.GetState('PetSelectBoss'),       "Pet Select Boss", "Mastermind", self.GetState('PetSelectBossResponseMethod')        + f" PetResponses['SelectBoss']"        + profile.GetBindFile('mmbinds','ctier3.txt').BLF())
+        file.SetBind(self.GetState('PetSelectAll'),        "Pet Select All", "Mastermind",
+                     self.GetState('PetSelectAllResponseMethod') + f" {PetResponses['SelectAll']}" + profile.GetBindFile('mmbinds','call.txt').BLF())
+        file.SetBind(self.GetState('PetSelectMinions'),    "Pet Select Minion", "Mastermind",
+                     self.GetState('PetSelectMinionsResponseMethod') + f" {PetResponses['SelectMinions']}"     + profile.GetBindFile('mmbinds','ctier1.txt').BLF())
+        file.SetBind(self.GetState('PetSelectLieutenants'),"Pet Select Lieutenants", "Mastermind",
+                     self.GetState('PetSelectLieutenantsResponseMethod') + f" {PetResponses['SelectLieutenants']}" + profile.GetBindFile('mmbinds','ctier2.txt').BLF())
+        file.SetBind(self.GetState('PetSelectBoss'),       "Pet Select Boss", "Mastermind",
+                     self.GetState('PetSelectBossResponseMethod') + f" {PetResponses['SelectBoss']}" + profile.GetBindFile('mmbinds','ctier3.txt').BLF())
 
         self.mmBGSelBind(profile,file,PetResponses['Bodyguard'],powers)
 
-        if grp: petcom = f"$$petcompow{grp}"
+        if grp: petcom = f"$$petcompow {grp}"
         else:   petcom =  "petcomall"
         for cmd in ('Aggressive','Defensive','Attack','Follow','Stay','Goto'):
             file.SetBind(self.GetState(f"Pet[cmd]"), f"Pet {cmd}", "Mastermind", self.GetState(f"Pet[cmd]ResponseMethod") + f" {PetResponses[cmd]}{petcom} {cmd}")
@@ -606,7 +610,7 @@ class Mastermind(Page):
         file.SetBind(self.GetState('PetSelectBoss'),       "Pet Select Boss", "Mastermind", profile.GetBindFile('mmbinds','tier3.txt').BLF())
         self.mmQuietBGSelBind(profile, file, powers)
 
-        if grp: petcom = f"$$petcompow{grp}"
+        if grp: petcom = f"$$petcompow {grp}"
         else:   petcom =  '$$petcomall'
         for cmd in ('Aggressive','Defensive','Attack','Follow','Stay','Goto'):
             file.SetBind(self.GetState(f"Pet{cmd}"), "Pet Aggressive", "Mastermind", f"{petcom} {cmd}")
@@ -641,6 +645,11 @@ class Mastermind(Page):
         ### TODO
 
         profile = self.Profile
+
+        # TODO, is this the right place to check this?
+        if profile.General.GetState('Archetype') != "Mastermind":
+            return
+
         ResetFile = profile.ResetFile()
 
         if (self.GetState('petselenable')):

@@ -501,7 +501,8 @@ class SoD(Page):
             if (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"r",curfile,{mobile,stationary},sodSetDownFix)
             if (modestr == "Base")  : makeBaseModeKey  (profile,t,"r",curfile,turnoff,sodSetDownFix)
             if (t['BaseMode']):
-                curfile.SetBind(t['BaseMode'],"+down$$down 1" + actPower_name(None,1,mobile) + t['detailhi'] + t['runcamdist'] + t['blsd'])
+                curfile.SetBind(t['BaseMode'], "Base Mode", "Speed On Demand",
+                                "+down$$down 1" + actPower_name(None,1,mobile) + t['detailhi'] + t['runcamdist'] + t['blsd'])
 
             if (modestr == "Run")    : makeSpeedModeKey (profile,t,"s", curfile,turnoff,sodSetDownFix)
             if (modestr == "Fly")    : makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
@@ -554,7 +555,7 @@ class SoD(Page):
 
         sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight)
 
-        curfile.SetBind(self.GetState('Follow'),'nop')
+        curfile.SetBind(self.GetState('Follow'),'Follow','Speed On Demand','nop')
 
         # FollowRun Binds
         curfile = profile.GetBindFile(pathf)
@@ -582,7 +583,7 @@ class SoD(Page):
         if (modestr == "Temp")      : makeTempModeKey  (profile,t,"fr",curfile,turnoff,path)
         if (modestr == "QFly")      : makeQFlyModeKey  (profile,t,"fr",curfile,turnoff,modestr)
 
-        curfile.SetBind(self.GetState('AutoRun'),'nop')
+        curfile.SetBind(self.GetState('AutoRun'),'Auto Run','Speed On Demand','nop')
 
         sodFollowOffKey(t,bl,curfile,mobile,stationary,flight)
 
@@ -593,7 +594,7 @@ class SoD(Page):
         key = t['NonSoDMode']
         if (not key or (key == 'UNBOUND')): return
 
-        if p['SoD']['Feedback']: feedback = (fb or '$$tname, Non-SoD Mode')
+        if p['SoD']['Feedback']: feedback = (fb or '$$t $name, Non-SoD Mode')
         else:                    feedback = ''
 
         if t['ini'] == None: t['ini'] = ''
@@ -603,20 +604,23 @@ class SoD(Page):
             if (fix):
                 fix(p,t,key, makeNonSoDModeKey,"n",bl,cur,toff,'',feedback)
             else:
-                cur.SetBind(key, t['ini'] + self.actPower_toggle(None,1,None,toff) + t +dirs('UDFBLR') + t['detailhi'] + t['runcamdist'] + feedback + bindload)
+                cur.SetBind(key, "Non-SoD Mode", "Speed On Demand",
+                            t['ini'] + self.actPower_toggle(None,1,None,toff) + t +dirs('UDFBLR') + t['detailhi'] + t['runcamdist'] + feedback + bindload)
 
         elif (bl == "ar"):
             bindload = t['bl']('an')
             if (fix):
                 fix(p,t,key, makeNonSoDModeKey,"n",bl,cur,toff,"a",feedback)
             else:
-                cur.SetBind(key, t['ini'] + self.actPower_toggle(None,1,None,toff) + t['detailhi'] + t['runcamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                cur.SetBind(key, "Non-SoD Mode", "Speed On Demand",
+                            t['ini'] + self.actPower_toggle(None,1,None,toff) + t['detailhi'] + t['runcamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
 
         else:
             if (fix):
                 fix(p,t,key, makeNonSoDModeKey,"n",bl,cur,toff,"f",feedback)
             else:
-                cur.SetBind(key, t['ini'] + self.actPower_toggle(None,1,None,toff) + t['detailhi'] + t['runcamdist'] + '$$up 0' + feedback + t['bl']('fn'))
+                cur.SetBind(key, "Non-SoD Mode", "Speed On Demand",
+                            t['ini'] + self.actPower_toggle(None,1,None,toff) + t['detailhi'] + t['runcamdist'] + '$$up 0' + feedback + t['bl']('fn'))
         t['ini'] = ''
 
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
@@ -624,7 +628,7 @@ class SoD(Page):
         key = t['TempMode']
         if (not key or (key == "UNBOUND")): return
 
-        if p['SoD']['Feedback']: feedback = '$$tname, Temp Mode'
+        if p['SoD']['Feedback']: feedback = '$$t $name, Temp Mode'
         else:                    feedback = ''
 
         if not t['ini']: t['ini'] = ''
@@ -632,15 +636,19 @@ class SoD(Page):
 
         if (bl == "r"):
             bindload = t['bl']('t')
-            cur.SetBind(key, t['ini'] + actPower(None,1,trayslot,toff) + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
+            cur.SetBind(key, "Temp Mode", "Speed On Demand",
+                        t['ini'] + actPower(None,1,trayslot,toff) + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
         elif (bl == "ar"):
             bindload  = t['bl']('at')
             bindload2 = t['bl']('at','_t')
             tgl = p.GetBindFile(bindload2)
-            cur.SetBind(key, t['in'] + actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
-            tgl.SetBind(key, t['in'] + actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+            cur.SetBind(key, "Temp Mode", "Speed On Demand",
+                        t['in'] + actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
+            tgl.SetBind(key, "Temp Mode", "Speed On Demand",
+                        t['in'] + actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
         else:
-            cur.SetBind(key, t['ini'] + actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + feedback + t['bl']('ft'))
+            cur.SetBind(key, "Temp Mode", "Speed On Demand",
+                        t['ini'] + actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + feedback + t['bl']('ft'))
 
         t['ini'] = ''
 
@@ -651,10 +659,10 @@ class SoD(Page):
         if (not key or key == "UNBOUND"): return
 
         if (modestr == "NonSoD"):
-            cur.SetBind(key, "powexecname Quantum Flight")
+            cur.SetBind(key, "Quantum Flight", "Speed On Demand", "powexecname Quantum Flight")
             return
 
-        if p['SoD']['Feedback']: feedback = '$$tname, QFlight Mode'
+        if p['SoD']['Feedback']: feedback = '$$t $name, QFlight Mode'
         else:                    feedback = ''
 
         if not t['ini']: t['ini'] = ''
@@ -667,17 +675,22 @@ class SoD(Page):
             if (modestr == 'Nova' or modestr == 'Dwarf'): tray = '$$gototray 1'
             else:                                         tray = ''
 
-            cur.SetBind(key, t['ini'] + actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload2)
-            tgl.SetBind(key, t['ini'] + actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
+            cur.SetBind(key, "Quantum Flight", "Speed On Demand",
+                        t['ini'] + actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload2)
+            tgl.SetBind(key, "Quantum Flight", "Speed On Demand",
+                        t['ini'] + actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
 
         elif (bl == "ar"):
             bindload  = t['bl']('an')
             bindload2 = t['bl']('an','_t')
             tgl = p.GetBindFile(bindload2)
-            cur.SetBind(key, t['in'] + actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
-            tgl.SetBind(key, t['in'] + actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+            cur.SetBind(key, "Quantum Flight", "Speed On Demand",
+                        t['in'] + actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
+            tgl.SetBind(key, "Quantum Flight", "Speed On Demand",
+                        t['in'] + actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
         else:
-            cur.SetBind(key, t['ini'] + actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + feedback + t['bl']('fn'))
+            cur.SetBind(key, "Quantum Flight", "Speed On Demand",
+                        t['ini'] + actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + feedback + t['bl']('fn'))
 
         t['ini'] = ''
 
@@ -686,7 +699,7 @@ class SoD(Page):
         key = t['BaseMode']
         if (not key or key == "UNBOUND"): return
 
-        if p['SoD']['Feedback']: feedback = (fb or '$$tname, Sprint-SoD Mode')
+        if p['SoD']['Feedback']: feedback = (fb or '$$t $name, Sprint-SoD Mode')
         else:                    feedback = ''
 
         if not t['ini']: t['ini'] = ''
@@ -701,7 +714,8 @@ class SoD(Page):
             if (fix):
                 fix(p,t,key, makeBaseModeKey,"r",bl,cur,toff,'',feedback)
             else:
-                cur.SetBind(key, t['ini'] + ton + t.dirs('UDFBLR') + t['detailhi'] + t['runcamdist'] + feedback + bindload)
+                cur.SetBind(key, "Base Mode", "Speed On Demand",
+                            t['ini'] + ton + t.dirs('UDFBLR') + t['detailhi'] + t['runcamdist'] + feedback + bindload)
 
         elif (bl == "ar"):
             bindload  = t['bl']('gr')
@@ -709,13 +723,15 @@ class SoD(Page):
             if (fix):
                 fix(p,t,key, makeBaseModeKey,"r",bl,cur,toff,"a",feedback)
             else:
-                cur.SetBind(key, t['ini'] + self.actPower_toggle(1,1,t['sprint'],toff) + t['detailhi'] +  t['runcamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                cur.SetBind(key, "Base Mode", "Speed On Demand",
+                            t['ini'] + self.actPower_toggle(1,1,t['sprint'],toff) + t['detailhi'] +  t['runcamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
 
         else:
             if (fix):
                 fix(p,t,key, makeBaseModeKey,"r",bl,cur,toff,"f",feedback)
             else:
-                cur.SetBind(key, t['ini'] + self.actPower_toggle(1,1,t['sprint'], toff) + t['detailhi'] + t['runcamdist'] + '$$up 0' + fb + t['bl']('fr'))
+                cur.SetBind(key, "Base Mode", "Speed On Demand",
+                            t['ini'] + self.actPower_toggle(1,1,t['sprint'], toff) + t['detailhi'] + t['runcamdist'] + '$$up 0' + fb + t['bl']('fr'))
 
         t['ini'] = ''
 
@@ -723,7 +739,7 @@ class SoD(Page):
     def makeSpeedModeKey(self, p, t, bl, cur, toff, fix, fb):
         key = t['RunMode']
 
-        if p['SoD']['Feedback']: feedback = (fb or '$$tname, Superspeed Mode')
+        if p['SoD']['Feedback']: feedback = (fb or '$$t $name, Superspeed Mode')
         else:                    feedback = ''
 
         if not t['ini']: t['ini'] = ''
@@ -734,26 +750,31 @@ class SoD(Page):
                 if (fix):
                     fix(p,t,key,makeSpeedModeKey,"s",bl,cur,toff,'',feedback)
                 else:
-                    cur.SetBind(key,t['ini'] + self.actPower_toggle(1,1,t['speed'],toff) + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
+                    cur.SetBind(key, "Speed Mode", "Speed On Demand",
+                                t['ini'] + self.actPower_toggle(1,1,t['speed'],toff) + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
 
             elif (bl == "as"):
                 bindload = t['bl']('as')
                 if (fix):
                     fix(p,t,key,makeSpeedModeKey,"s",bl,cur,toff,"a",feedback)
                 elif (not feedback):
-                    cur.SetBind(key,t['ini'] + self.actPower_toggle(1,1,t['speed'],toff) + t.dirs('UDLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
+                    cur.SetBind(key, "Speed Mode", "Speed On Demand",
+                                t['ini'] + self.actPower_toggle(1,1,t['speed'],toff) + t.dirs('UDLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
                 else:
                     bindload  = t['bl']('as')
                     bindload2 = t['bl']('as','_s')
                     tgl = p.GetBindFile(bindload2)
-                    cur.SetBind(key,t['ini'] + self.actPower_toggle(1,1,t['speed'],toff) + t.dirs('UDLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload2)
-                    tgl.SetBind(key,t['ini'] + self.actPower_toggle(1,1,t['speed'],toff) + t.dirs('UDLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
+                    cur.SetBind(key, "Speed Mode", "Speed On Demand",
+                                t['ini'] + self.actPower_toggle(1,1,t['speed'],toff) + t.dirs('UDLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload2)
+                    tgl.SetBind(key, "Speed Mode", "Speed On Demand",
+                                t['ini'] + self.actPower_toggle(1,1,t['speed'],toff) + t.dirs('UDLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
 
             else:
                 if (fix):
                     fix(p,t,key,makeSpeedModeKey,"s",bl,cur,toff,"f",feedback)
                 else:
-                    cur.SetBind(key, t['ini'] + self.actPower_toggle(1,1,t['speed'],toff) + '$$up 0' +  t['detaillo'] + t['flycamdist'] + feedback + t['bl']('fs'))
+                    cur.SetBind(key, "Speed Mode", "Speed On Demand",
+                                t['ini'] + self.actPower_toggle(1,1,t['speed'],toff) + '$$up 0' +  t['detaillo'] + t['flycamdist'] + feedback + t['bl']('fs'))
 
 
 
@@ -766,7 +787,7 @@ class SoD(Page):
         key = t['JumpMode']
         if (t['canjmp'] and not p['SoD']['JumpSimple']):
 
-            if p['SoD']['Feedback']: feedback = '$$tname, Superjump Mode'
+            if p['SoD']['Feedback']: feedback = '$$t $name, Superjump Mode'
             else:                    feedback = ''
             tgl = p.GetBindFile(fbl)
 
@@ -777,15 +798,15 @@ class SoD(Page):
                     a = actPower(None,1,t['cjmp'],toff)
 
                 bindload = t['bl']('j')
-                tgl.SetBind(key, '-down' + a + t['detaillo'] + t['flycamdist'] + bindload)
-                cur.SetBind(key, '+down' + feedback + BindFile.BLF(p, fbl))
+                tgl.SetBind(key, "Jump Mode", "Speed On Demand", '-down' + a + t['detaillo'] + t['flycamdist'] + bindload)
+                cur.SetBind(key, "Jump Mode", "Speed On Demand", '+down' + feedback + BindFile.BLF(p, fbl))
             elif (bl == "aj"):
                 bindload = t['bl']('aj')
-                tgl.SetBind(key, '-down' + actPower(None,1,t['jump'],toff) + '$$up 1' + t['detaillo'] + t['flycamdist'] + t.dirs('DLR') + bindload)
-                cur.SetBind(key, '+down' + feedback + BindFile.BLF(p, fbl))
+                tgl.SetBind(key, "Jump Mode", "Speed On Demand", '-down' + actPower(None,1,t['jump'],toff) + '$$up 1' + t['detaillo'] + t['flycamdist'] + t.dirs('DLR') + bindload)
+                cur.SetBind(key, "Jump Mode", "Speed On Demand", '+down' + feedback + BindFile.BLF(p, fbl))
             else:
-                tgl.SetBind(key, '-down' + actPower(None,1,t['jump'],toff) + '$$up 1' + t['detaillo'] + t['flycamdist'] + t['bl']('fj'))
-                cur.SetBind(key, '+down' + feedback + BindFile.BLF(p, fbl))
+                tgl.SetBind(key, "Jump Mode", "Speed On Demand", '-down' + actPower(None,1,t['jump'],toff) + '$$up 1' + t['detaillo'] + t['flycamdist'] + t['bl']('fj'))
+                cur.SetBind(key, "Jump Mode", "Speed On Demand", '+down' + feedback + BindFile.BLF(p, fbl))
 
 
         t['ini'] = ''
@@ -796,7 +817,7 @@ class SoD(Page):
         key = t['FlyMode']
         if (not key or key == "UNBOUND"): return
 
-        if p['SoD']['Feedback']: feedback = (fb or '$$tname, Flight Mode')
+        if p['SoD']['Feedback']: feedback = (fb or '$$t $name, Flight Mode')
         else:                    feedback = ''
 
         if not t['ini']: t['ini'] = ''
@@ -807,7 +828,7 @@ class SoD(Page):
                 if (fix):
                     fix(p,t,key,makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
-                    cur.SetBind(key,'+down$$' + self.actPower_toggle(1,1,t['flyx'],toff) + '$$up 1$$down 0' + t.dirs('FBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
+                    cur.SetBind(key, "Fly Mode", "Speed On Demand", '+down$$' + self.actPower_toggle(1,1,t['flyx'],toff) + '$$up 1$$down 0' + t.dirs('FBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
 
             elif (bl == "a"):
                 if (not fb_on_a): feedback = ''
@@ -819,20 +840,20 @@ class SoD(Page):
                 if (fix):
                     fix(p,t,key,makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
-                    cur.SetBind(t['FlyMode'], t['ini'] + self.actPower_toggle(1,1, ton ,toff) + t.dirs('UDLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
+                    cur.SetBind(t['FlyMode'],  "Fly Mode", "Speed On Demand", t['ini'] + self.actPower_toggle(1,1, ton ,toff) + t.dirs('UDLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
 
             elif (bl == "af"):
                 bindload = t['bl']('af')
                 if (fix):
                     fix(p,t,key,makeFlyModeKey,"f",bl,cur,toff,"a",feedback)
                 else:
-                    cur.SetBind(key, t['ini'] + self.actPower_toggle(1,1,t['flyx'],toff) + t['detaillo'] + t['flycamdist'] + t.dirs('DLR') + feedback + bindload)
+                    cur.SetBind(key,  "Fly Mode", "Speed On Demand", t['ini'] + self.actPower_toggle(1,1,t['flyx'],toff) + t['detaillo'] + t['flycamdist'] + t.dirs('DLR') + feedback + bindload)
 
             else:
                 if (fix):
                     fix(p,t,key,makeFlyModeKey,"f",bl,cur,toff,"f",feedback)
                 else:
-                    cur.SetBind(key, t['ini'] + self.actPower_toggle(1,1,t['flyx'],toff) + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + t['bl']('ff'))
+                    cur.SetBind(key,  "Fly Mode", "Speed On Demand", t['ini'] + self.actPower_toggle(1,1,t['flyx'],toff) + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + t['bl']('ff'))
 
         t['ini'] = ''
 
@@ -849,23 +870,23 @@ class SoD(Page):
                 if (fix):
                     fix(p,t,key,makeGFlyModeKey,"gf",bl,cur,toff,'','')
                 else:
-                    cur.SetBind(key,t['ini'] + '$$up 1$$down 0' + self.actPower_toggle(None,1,t['gfly'],toff) + t.dirs('FBLR') + t['detaillo'] + t['flycamdist'] .bindload)
+                    cur.SetBind(key, "Group Fly Mode", "Speed On Demand", t['ini'] + '$$up 1$$down 0' + self.actPower_toggle(None,1,t['gfly'],toff) + t.dirs('FBLR') + t['detaillo'] + t['flycamdist'] .bindload)
 
             elif (bl == "gaf"):
                 bindload = t['bl']('gaf')
                 if (fix):
                     fix(p,t,key,makeGFlyModeKey,"gf",bl,cur,toff,"a")
                 else:
-                    cur.SetBind(key,t['ini'] + t['detaillo'] + t['flycamdist'] + t.dirs('UDLR') + bindload)
+                    cur.SetBind(key, "Group Fly Mode", "Speed On Demand", t['ini'] + t['detaillo'] + t['flycamdist'] + t.dirs('UDLR') + bindload)
 
             else:
                 if (fix):
                     fix(p,t,key,makeGFlyModeKey,"gf",bl,cur,toff,"f")
                 else:
                     if (bl == "gf"):
-                        cur.SetBind(key,t['ini'] + self.actPower_toggle(1,1,t['gfly'],toff) + t['detaillo'] + t['flycamdist'] + t['bl']('gff'))
+                        cur.SetBind(key, "Group Fly Mode", "Speed On Demand", t['ini'] + self.actPower_toggle(1,1,t['gfly'],toff) + t['detaillo'] + t['flycamdist'] + t['bl']('gff'))
                     else:
-                        cur.SetBind(key,t['ini'] + t['detaillo'] + t['flycamdist'] + t['bl']('gff'))
+                        cur.SetBind(key, "Group Fly Mode", "Speed On Demand", t['ini'] + t['detaillo'] + t['flycamdist'] + t['bl']('gff'))
 
 
 
@@ -1266,16 +1287,16 @@ class SoD(Page):
         t['rigx'] = '$$right '    + (1-t['D'])
 
         if (self.GetState('TLeft')  and self.GetState('TLeft')  == "UNBOUND"):
-            ResetFile.SetBind(self.GetState('TLeft'), "+turnleft")
+            ResetFile.SetBind(self.GetState('TLeft'), "Turn Left", "Speed On Demand", "+turnleft")
         if (self.GetState('TRight') and self.GetState('TRight') == "UNBOUND"):
-            ResetFile.SetBind(self.GetState('TRight'),"+turnright")
+            ResetFile.SetBind(self.GetState('TRight'), "Turn Right", "Speed On Demand", "+turnright")
 
         if (self.GetState('Temp') and self.GetState('TempEnable')):
             temptogglefile1 = profile.GetBindFile("temptoggle1.txt")
             temptogglefile2 = profile.GetBindFile("temptoggle2.txt")
-            temptogglefile2.SetBind(self.GetState('TempTraySwitch'),'-down$$gototray 1'                         + BindFile.BLF(profile, 'temptoggle1.txt'))
-            temptogglefile1.SetBind(self.GetState('TempTraySwitch'),'+down$$gototray ' + self.GetState('TempTray') + BindFile.BLF(profile, 'temptoggle2.txt'))
-            ResetFile.      SetBind(self.GetState('TempTraySwitch'),'+down$$gototray ' + self.GetState('TempTray') + BindFile.BLF(profile, 'temptoggle2.txt'))
+            temptogglefile2.SetBind(self.GetState('TempTraySwitch'), "Toggle Temp", "Speed On Demand", '-down$$gototray 1'                         + BindFile.BLF(profile, 'temptoggle1.txt'))
+            temptogglefile1.SetBind(self.GetState('TempTraySwitch'), "Toggle Temp", "Speed On Demand", '+down$$gototray ' + self.GetState('TempTray') + BindFile.BLF(profile, 'temptoggle2.txt'))
+            ResetFile.      SetBind(self.GetState('TempTraySwitch'), "Toggle Temp", "Speed On Demand", '+down$$gototray ' + self.GetState('TempTray') + BindFile.BLF(profile, 'temptoggle2.txt'))
 
 
         if (profile.General.GetState('Archetype') == "Warshade"):
@@ -1296,7 +1317,7 @@ class SoD(Page):
 
         if ((profile.General.GetState('Archetype') == "Peacebringer") or (profile.General.GetState('Archetype') == "Warshade")):
             if (humanBindKey):
-                ResetFile.SetBind(humanBindKey,humanpbind)
+                ResetFile.SetBind(humanBindKey, "Human Mode", "Speed On Demand", humanpbind)
 
         #  kheldian form support
         #  create the Nova and Dwarf form support files if enabled.
@@ -1306,12 +1327,14 @@ class SoD(Page):
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
         if (Nova and Nova['Enable']):
-            ResetFile.SetBind(Nova['Mode'], f"tname, Changing to {Nova['Nova']} Form{fullstop}{t['on']}{Nova['Nova']}$$gototray {Nova['Tray']}" + BindFile.BLF(profile, 'nova.txt'))
+            ResetFile.SetBind(Nova['Mode'], "Nova Mode", "Speed On Demand",
+                              f"t $name, Changing to {Nova['Nova']} Form{fullstop}{t['on']}{Nova['Nova']}$$gototray {Nova['Tray']}" + BindFile.BLF(profile, 'nova.txt'))
 
             novafile = profile.GetBindFile("nova.txt")
 
             if (Dwarf and Dwarf['Enable']):
-                novafile.SetBind(Dwarf['Mode'],f"tname, Changing to {Dwarf['Dwarf']} Form{fullstop}{t['off']}{Nova['Nova']}{t['on']}{Dwarf['Dwarf']}$$gototray {Dwarf['Tray']}" + BindFile.BLF(profile, 'dwarf.txt'))
+                novafile.SetBind(Dwarf['Mode'], "Dwarf Mode", "Speed On Demand",
+                                 f"t $name, Changing to {Dwarf['Dwarf']} Form{fullstop}{t['off']}{Nova['Nova']}{t['on']}{Dwarf['Dwarf']}$$gototray {Dwarf['Tray']}" + BindFile.BLF(profile, 'dwarf.txt'))
 
             if not humanBindKey:
                 humanBindKey = Nova['Mode']
@@ -1319,138 +1342,154 @@ class SoD(Page):
             if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + self.GetState('HumanFormShield')
             else:                               humpower = ''
 
-            novafile.SetBind(humanBindKey,f"tname, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Nova['Nova']} {humpower} $$gototray 1" + BindFile.BLF(profile, 'reset.txt'))
+            novafile.SetBind(humanBindKey, "Human Mode", "Speed On Demand",
+                             f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Nova['Nova']} {humpower} $$gototray 1" + BindFile.BLF(profile, 'reset.txt'))
 
             if (humanBindKey == Nova['Mode']): humanBindKey = None
 
-            if novapbind: novafile.SetBind(Nova['Mode'],novapbind)
+            if novapbind: novafile.SetBind(Nova['Mode'], "Nova Mode", "Speed On Demand", novapbind)
 
             if t['canqfly']: makeQFlyModeKey(profile,t,"r",novafile,Nova['Nova'],"Nova")
 
-            novafile.SetBind(self.GetState('Forward'),"+forward")
-            novafile.SetBind(self.GetState('Left'),"+left")
-            novafile.SetBind(self.GetState('Right'),"+right")
-            novafile.SetBind(self.GetState('Back'),"+backward")
-            novafile.SetBind(self.GetState('Up'),"+up")
-            novafile.SetBind(self.GetState('Down'),"+down")
-            novafile.SetBind(self.GetState('AutoRun'),"++forward")
+            novafile.SetBind(self.GetState('Forward'),"Forward", "Speed On Demand","+forward")
+            novafile.SetBind(self.GetState('Left'), "Left", "Speed On Demand", "+left")
+            novafile.SetBind(self.GetState('Right'), "Right", "Speed On Demand","+right")
+            novafile.SetBind(self.GetState('Back'), "Back", "Speed On Demand", "+backward")
+            novafile.SetBind(self.GetState('Up'), "Up", "Speed On Demand", "+up")
+            novafile.SetBind(self.GetState('Down'), "Down", "Speed On Demand", "+down")
+            novafile.SetBind(self.GetState('AutoRun'), "Auto Run", "Speed On Demand", "++forward")
             novafile.SetBind(self.GetState('FlyMode'),'nop')
             if (self.GetState('FlyMode') != self.GetState('RunMode')):
-                novafile.SetBind(self.GetState('RunMode'),'nop')
+                novafile.SetBind(self.GetState('RunMode'), "Run Mode", "Speed On Demand", 'nop')
             if (self.GetState('MouseChord')):
-                novafile.SetBind('mousechord "' + "+down$$+forward")
+                novafile.SetBind('mousechord', "Mouse Chord", "Speed On Demand", "+down$$+forward")
 
             if (self.GetState('TP') and self.GetState('TPEnable')):
-                novafile.SetBind(self.GetState('TPComboKey'),'nop')
-                novafile.SetBind(self.GetState('TPBindKey'),'nop')
-                novafile.SetBind(self.GetState('TPResetKey'),'nop')
+                novafile.SetBind(self.GetState('TPComboKey'), "TP Combo Key", "Speed On Demand", 'nop')
+                novafile.SetBind(self.GetState('TPBindKey'),  "TP Bind Key", "Speed On Demand", 'nop')
+                novafile.SetBind(self.GetState('TPResetKey'), "TP Reset Key", "Speed On Demand", 'nop')
 
-            novafile.SetBind(self.GetState('Follow'),"follow")
-            # novafile.SetBind(self.GetState('ToggleKey'),'tname, Changing to Human Form, Normal Mode$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0$$powexectoggleoff ' + Nova['Nova'] + '$$gototray 1' + BindFile.BLF(profile, 'reset.txt'))
+            novafile.SetBind(self.GetState('Follow'),"Follow", "Speed On Demand", "follow")
+            # novafile.SetBind(self.GetState('ToggleKey'),'t $name, Changing to Human Form, Normal Mode$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0$$powexectoggleoff ' + Nova['Nova'] + '$$gototray 1' + BindFile.BLF(profile, 'reset.txt'))
 
 
         if (Dwarf and Dwarf['Enable']):
-            ResetFile.SetBind(Dwarf['Mode'],f"tname, Changing to {Dwarf['Dwarf']} Form{fullstop}$$powexectoggleon {Dwarf['Dwarf']}$$gototray {Dwarf['Tray']}" + BindFile.BLF(profile, 'dwarf.txt'))
+            ResetFile.SetBind(Dwarf['Mode'], "Dwarf Mode", "Speed On Demand",
+                              f"t $name, Changing to {Dwarf['Dwarf']} Form{fullstop}$$powexectoggleon {Dwarf['Dwarf']}$$gototray {Dwarf['Tray']}" + BindFile.BLF(profile, 'dwarf.txt'))
             dwrffile = profile.GetBindFile("dwarf.txt")
             if (Nova and Nova['Enable']):
-                dwrffile.SetBind(Nova['Mode'],f"tname, Changing to {Nova['Nova']} Form{fullstop}$$powexectoggleoff {Dwarf['Dwarf']}$$powexectoggleon {Nova['Nova']}$$gototray {Nova['Tray']}" + BindFile.BLF(profile, 'nova.txt'))
+                dwrffile.SetBind(Nova['Mode'], "Nova Mode", "Speed On Demand",
+                                 f"t $name, Changing to {Nova['Nova']} Form{fullstop}$$powexectoggleoff {Dwarf['Dwarf']}$$powexectoggleon {Nova['Nova']}$$gototray {Nova['Tray']}" + BindFile.BLF(profile, 'nova.txt'))
 
             if not humanBindKey: humanBindKey = Dwarf['Mode']
             if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + self.GetState('HumanFormShield')
             else:                               humpower = ''
 
-            dwrffile.SetBind(humanBindKey,f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Dwarf['Dwarf']}{humpower}$$gototray 1" + BindFile.BLF(profile, 'reset.txt'))
+            dwrffile.SetBind(humanBindKey, "Human Mode", "Speed On Demand",
+                             f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Dwarf['Dwarf']}{humpower}$$gototray 1" + BindFile.BLF(profile, 'reset.txt'))
 
-            if dwarfpbind: dwrffile.SetBind(Dwarf['Mode'],dwarfpbind)
+            if dwarfpbind: dwrffile.SetBind(Dwarf['Mode'], "Dwarf Mode", "Speed On Demand", dwarfpbind)
             if t['canqfly']:
                 makeQFlyModeKey(profile,t,"r",dwrffile,Dwarf['Dwarf'],"Dwarf")
 
-            dwrffile.SetBind(self.GetState('Forward'),"+forward")
-            dwrffile.SetBind(self.GetState('Left'),"+left")
-            dwrffile.SetBind(self.GetState('Right'),"+right")
-            dwrffile.SetBind(self.GetState('Back'),"+backward")
-            dwrffile.SetBind(self.GetState('Up'),"+up")
-            dwrffile.SetBind(self.GetState('Down'),"+down")
-            dwrffile.SetBind(self.GetState('AutoRun'),"++forward")
-            dwrffile.SetBind(self.GetState('FlyMode'),'nop')
-            dwrffile.SetBind(self.GetState('Follow'),"follow")
+            dwrffile.SetBind(self.GetState('Forward'), "Forward", "Speed On Demand","+forward")
+            dwrffile.SetBind(self.GetState('Left'), "Left", "Speed On Demand", "+left")
+            dwrffile.SetBind(self.GetState('Right'), "Right", "Speed On Demand", "+right")
+            dwrffile.SetBind(self.GetState('Back'), "Back", "Speed On Demand", "+backward")
+            dwrffile.SetBind(self.GetState('Up'), "Up", "Speed On Demand", "+up")
+            dwrffile.SetBind(self.GetState('Down'), "Down", "Speed On Demand", "+down")
+            dwrffile.SetBind(self.GetState('AutoRun'), "Auto Run", "Speed On Demand","++forward")
+            dwrffile.SetBind(self.GetState('FlyMode'), "Fly Mode", "Speed On Demand", 'nop')
+            dwrffile.SetBind(self.GetState('Follow'), "Follow", "Speed On Demand", "follow")
             if (self.GetState('FlyMode') != self.GetState('RunMode')):
-                dwrffile.SetBind(self.GetState('RunMode'),'nop')
+                dwrffile.SetBind(self.GetState('RunMode'), "Run Mode", "Speed On Demand", 'nop')
             if (self.GetState('MouseChord')):
-                dwrffile.SetBind('mousechord "' + "+down$$+forward")
+                dwrffile.SetBind('mousechord', "Mouse Chord", "Speed On Demand", "+down$$+forward")
 
             if (self.GetState('TP') and self.GetState('TPEnable')):
-                dwrffile.SetBind(self.GetState('TPComboKey'),'+down$$' + dwarfTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'dtp','tp_on1.txt'))
-                dwrffile.SetBind(self.GetState('TPBindKey'),'nop')
-                dwrffile.SetBind(self.GetState('TPResetKey'),substr(t['detailhi'],2) + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'dtp','tp_off.txt'))
+                dwrffile.SetBind(self.GetState('TPComboKey'), "TP Combo", "Speed On Demand",
+                                 '+down$$' + dwarfTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'dtp','tp_on1.txt'))
+                dwrffile.SetBind(self.GetState('TPBindKey'), "TP Bind", "Speed On Demand", 'nop')
+                dwrffile.SetBind(self.GetState('TPResetKey'), "TP Reset", "Speed On Demand",
+                                 substr(t['detailhi'],2) + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'dtp','tp_off.txt'))
                 #  Create tp_off file
                 tp_off = profile.GetBindFile("dtp","tp_off.txt")
-                tp_off.SetBind(self.GetState('TPComboKey'),'+down$$' + dwarfTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'dtp','tp_on1.txt'))
-                tp_off.SetBind(self.GetState('TPBindKey'),'nop')
+                tp_off.SetBind(self.GetState('TPComboKey'), "TP Combo", "Speed On Demand",
+                               '+down$$' + dwarfTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'dtp','tp_on1.txt'))
+                tp_off.SetBind(self.GetState('TPBindKey'), "TB Bind", "Speed On Demand", 'nop')
 
                 tp_on1 = profile.GetBindFile("dtp","tp_on1.txt")
-                tp_on1.SetBind(self.GetState('TPComboKey'),'-down$$powexecunqueue' + t['detailhi'] + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'dtp','tp_off.txt'))
-                tp_on1.SetBind(self.GetState('TPBindKey'),'+down' + BindFile.BLF(profile, 'dtp','tp_on2.txt'))
+                tp_on1.SetBind(self.GetState('TPComboKey'), "TP Combo", "Speed On Demand",
+                               '-down$$powexecunqueue' + t['detailhi'] + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'dtp','tp_off.txt'))
+                tp_on1.SetBind(self.GetState('TPBindKey'), "TP Bind", "Speed On Demand",
+                               '+down' + BindFile.BLF(profile, 'dtp','tp_on2.txt'))
 
                 tp_on2 = profile.GetBindFile("dtp","tp_on2.txt")
-                tp_on2.SetBind(self.GetState('TPBindKey'),'-down$$' + dwarfTPPower + BindFile.BLF(profile, 'dtp','tp_on1.txt'))
+                tp_on2.SetBind(self.GetState('TPBindKey'), "TP Bind", "Speed On Demand",
+                               '-down$$' + dwarfTPPower + BindFile.BLF(profile, 'dtp','tp_on1.txt'))
 
-            dwrffile.SetBind(self.GetState('ToggleKey'),"t $name, Changing to Human Form, Normal Mode$fullstop\$\$powexectoggleoff Dwarf['Dwarf']\$\$gototray 1" + BindFile.BLF(profile, 'reset.txt'))
+            dwrffile.SetBind(self.GetState('ToggleKey'), "Toggle Key", "Speed On Demand",
+                             "t $name, Changing to Human Form, Normal Mode$fullstop\$\$powexectoggleoff Dwarf['Dwarf']\$\$gototray 1" + BindFile.BLF(profile, 'reset.txt'))
 
 
         if (self.GetState('JumpSimple')):
             if (self.GetState('JumpCJ') and self.GetState('JumpSJ')):
-                ResetFile.SetBind(self.GetState('JumpMode'),'powexecname Super Jump$$powexecname Combat Jumping')
+                ResetFile.SetBind(self.GetState('JumpMode'), "Jump Mode", "Speed On Demand",'powexecname Super Jump$$powexecname Combat Jumping')
             elif (self.GetState('JumpSJ')):
-                ResetFile.SetBind(self.GetState('JumpMode'),'powexecname Super Jump')
+                ResetFile.SetBind(self.GetState('JumpMode'), "Jump Mode", "Speed On Demand",'powexecname Super Jump')
             elif (self.GetState('JumpCJ')):
-                ResetFile.SetBind(self.GetState('JumpMode'),'powexecname Combat Jumping')
+                ResetFile.SetBind(self.GetState('JumpMode'), "Jump Mode", "Speed On Demand",'powexecname Combat Jumping')
 
 
 
         if (self.GetState('TP') and self.GetState('TPEnable') and not normalTPPower):
-            ResetFile.SetBind(self.GetState('TPComboKey'),'nop')
-            ResetFile.SetBind(self.GetState('TPBindKey'),'nop')
-            ResetFile.SetBind(self.GetState('TPResetKey'),'nop')
+            ResetFile.SetBind(self.GetState('TPComboKey'), "TP Combo", "Speed On Demand", 'nop')
+            ResetFile.SetBind(self.GetState('TPBindKey'),  "TP Bind", "Speed On Demand", 'nop')
+            ResetFile.SetBind(self.GetState('TPResetKey'), "TP Reset", "Speed On Demand", 'nop')
 
         if (self.GetState('TP') and self.GetState('TPEnable') and not (profile.General.GetState('Archetype') == "Peacebringer") and normalTPPower):
             tphovermodeswitch = ''
             if (t['tphover'] == ''):
                 tphovermodeswitch = re.sub('\d\d\d\d\d\d', '000000', t['bl']('r'))
 
-            ResetFile.SetBind(self.GetState('TPComboKey'),'+down$$' + normalTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'tp','tp_on1.txt'))
-            ResetFile.SetBind(self.GetState('TPBindKey'),'nop')
-            ResetFile.SetBind(self.GetState('TPResetKey'),substr(t['detailhi'],2) + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'tp','tp_off.txt') + tphovermodeswitch)
+            ResetFile.SetBind(self.GetState('TPComboKey'), "TP Combo", "Speed On Demand", '+down$$' + normalTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'tp','tp_on1.txt'))
+            ResetFile.SetBind(self.GetState('TPBindKey') , "TP Bind", "Speed On Demand", 'nop')
+            ResetFile.SetBind(self.GetState('TPResetKey'), "TP Reset", "Speed On Demand", substr(t['detailhi'],2) + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'tp','tp_off.txt') + tphovermodeswitch)
             #  Create tp_off file
             tp_off = profile.GetBindFile("tp","tp_off.txt")
-            tp_off.SetBind(self.GetState('TPComboKey'),'+down$$' + normalTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'tp','tp_on1.txt'))
-            tp_off.SetBind(self.GetState('TPBindKey'),'nop')
+            tp_off.SetBind(self.GetState('TPComboKey'), "TP Combo", "Speed On Demand",
+                           '+down$$' + normalTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'tp','tp_on1.txt'))
+            tp_off.SetBind(self.GetState('TPBindKey'), "TP Bind", "Speed On Demand", 'nop')
 
             tp_on1 = profile.GetBindFile("tp","tp_on1.txt")
             zoomin = t['detailhi'] + t['runcamdist']
             if (t['tphover']): zoomin = ''
-            tp_on1.SetBind(self.GetState('TPComboKey'),'-down$$powexecunqueue' + zoomin + windowshow + BindFile.BLF(profile, 'tp','tp_off.txt') + tphovermodeswitch)
-            tp_on1.SetBind(self.GetState('TPBindKey'),'+down' + t['tphover'] + BindFile.BLF(profile, 'tp','tp_on2.txt'))
+            tp_on1.SetBind(self.GetState('TPComboKey'), "TP Combo", "Speed On Demand", '-down$$powexecunqueue' + zoomin + windowshow + BindFile.BLF(profile, 'tp','tp_off.txt') + tphovermodeswitch)
+            tp_on1.SetBind(self.GetState('TPBindKey'), "TP Bind", "Speed On Demand", '+down' + t['tphover'] + BindFile.BLF(profile, 'tp','tp_on2.txt'))
 
             tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
-            tp_on2.SetBind(self.GetState('TPBindKey'),'-down$$' + normalTPPower + BindFile.BLF(profile, 'tp','tp_on1.txt'))
+            tp_on2.SetBind(self.GetState('TPBindKey'), "TP Bind", "Speed On Demand", '-down$$' + normalTPPower + BindFile.BLF(profile, 'tp','tp_on1.txt'))
 
         if (self.GetState('TTP') and self.GetState('TTPEnable') and not (profile.General.GetState('Archetype') == "Peacebringer") and teamTPPower) :
             tphovermodeswitch = ''
-            ResetFile.SetBind(self.GetState('TTPComboKey'),'+down$$' + teamTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'ttp','ttp_on1.txt'))
-            ResetFile.SetBind(self.GetState('TTPBindKey'),'nop')
-            ResetFile.SetBind(self.GetState('TTPResetKey'),substr(t['detailhi'],2) + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'ttp','ttp_off') + tphovermodeswitch)
+            ResetFile.SetBind(self.GetState('TTPComboKey'), "Team TP Combo", "Speed On Demand", '+down$$' + teamTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'ttp','ttp_on1.txt'))
+            ResetFile.SetBind(self.GetState('TTPBindKey'),  "Team TP Bind", "Speed On Demand", 'nop')
+            ResetFile.SetBind(self.GetState('TTPResetKey'), "Team TP Reset", "Speed On Demand", substr(t['detailhi'],2) + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'ttp','ttp_off') + tphovermodeswitch)
             #  Create tp_off file
             ttp_off = profile.GetBindFile("ttp","ttp_off.txt")
-            ttp_off.SetBind(self.GetState('TTPComboKey'),'+down$$' + teamTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'ttp','ttp_on1.txt'))
-            ttp_off.SetBind(self.GetState('TTPBindKey'),'nop')
+            ttp_off.SetBind(self.GetState('TTPComboKey'), "Team TP Combo", "Speed On Demand",
+                            '+down$$' + teamTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'ttp','ttp_on1.txt'))
+            ttp_off.SetBind(self.GetState('TTPBindKey'), "Team TP Bind", "Speed On Demand",'nop')
 
             ttp_on1 = profile.GetBindFile("ttp","ttp_on1.txt")
-            ttp_on1.SetBind(self.GetState('TTPComboKey'),'-down$$powexecunqueue' + t['detailhi'] + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'ttp','ttp_off') + tphovermodeswitch)
-            ttp_on1.SetBind(self.GetState('TTPBindKey'),'+down' + BindFile.BLF(profile, 'ttp','ttp_on2.txt'))
+            ttp_on1.SetBind(self.GetState('TTPComboKey'), "Team TP Combo", "Speed On Demand",
+                            '-down$$powexecunqueue' + t['detailhi'] + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'ttp','ttp_off') + tphovermodeswitch)
+            ttp_on1.SetBind(self.GetState('TTPBindKey'), "Team TP Bind", "Speed On Demand",
+                            '+down' + BindFile.BLF(profile, 'ttp','ttp_on2.txt'))
 
             ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
-            ttp_on2.SetBind(self.GetState('TTPBindKey'),'-down$$' + teamTPPower + BindFile.BLF(profile, 'ttp','ttp_on1.txt'))
+            ttp_on2.SetBind(self.GetState('TTPBindKey'), "Team TP Bind", "Speed On Demand",
+                            '-down$$' + teamTPPower + BindFile.BLF(profile, 'ttp','ttp_on1.txt'))
 
 
 
@@ -1464,16 +1503,16 @@ class SoD(Page):
         else:                   d = 0
 
         # TODO, BLF is on the Bindfile objects now.
-        curfile.SetBind(p.General.GetState('ResetKey'),
+        curfile.SetBind(p.General.GetState('ResetKey'), "SoD Reset", "Speed On Demand",
                 f'up {u} $$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
-                str(turnoff) + '$$tname, SoD Binds Reset' + curfile.BaseReset() + curfile.BLF() # <- that might not be right
+                str(turnoff) + '$$t $name, SoD Binds Reset' + curfile.BaseReset() + curfile.BLF() # <- that might not be right
         )
 
 
     def sodDefaultResetKey(self, mobile, stationary):
         return
         # TODO -- decide where to keep 'resetstring' and make this sub update it.
-        #cbAddReset('up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'.actPower_name(None,1,stationary,mobile) + '$$tname, SoD Binds Reset')
+        #cbAddReset('up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'.actPower_name(None,1,stationary,mobile) + '$$t $name, SoD Binds Reset')
 
 
 
@@ -1552,12 +1591,12 @@ class SoD(Page):
                 bl = re.sub('\d\d\d\d\d\d', '000000', followbl)
                 move = upx + dow + forw + bac + lef + rig
 
-            curfile.SetBind(self.GetState('Up'),ini + move + bl)
+            curfile.SetBind(self.GetState('Up'), "Up", "Speed On Demand", ini + move + bl)
         elif (notautorun):
-            curfile.SetBind(self.GetState('Up'),ini + upx + dow + forw + bac + lef + rig + ml + toggle + bl)
+            curfile.SetBind(self.GetState('Up'), "Up", "Speed On Demand", ini + upx + dow + forw + bac + lef + rig + ml + toggle + bl)
         else:
             if (not sssj) : toggle = ''  #  returns the following line to the way it was before sssj
-            curfile.SetBind(self.GetState('Up'),ini + upx + dow + '$$backward 0' + lef + rig + toggle + t['mlon'] + bl)
+            curfile.SetBind(self.GetState('Up'), "Up", "Speed On Demand", ini + upx + dow + '$$backward 0' + lef + rig + toggle + t['mlon'] + bl)
 
 
 
@@ -1619,11 +1658,11 @@ class SoD(Page):
                 bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
                 move = up + dowx + forw + bac + lef + rig
 
-            curfile.SetBind(self.GetState('Down'),ini + move + bl)
+            curfile.SetBind(self.GetState('Down'), "Down", "Speed On Demand", ini + move + bl)
         elif (notautorun):
-            curfile.SetBind(self.GetState('Down'),ini + up + dowx + forw + bac + lef + rig + ml + toggle + bl)
+            curfile.SetBind(self.GetState('Down'), "Down", "Speed On Demand", ini + up + dowx + forw + bac + lef + rig + ml + toggle + bl)
         else:
-            curfile.SetBind(self.GetState('Down'),ini + up + dowx + '$$backward 0' + lef + rig + t['mlon'] + bl)
+            curfile.SetBind(self.GetState('Down'), "Down", "Speed On Demand", ini + up + dowx + '$$backward 0' + lef + rig + t['mlon'] + bl)
 
 
     def sodForwardKey(self, t, bl, curfile,  mobile, stationary, flught, autorunbl, followbl, bo, sssj):
@@ -1684,23 +1723,23 @@ class SoD(Page):
                 bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
                 move = ini + up + dow + forx + bac + lef + rig
 
-            curfile.SetBind(self.GetState('Forward'), move + bl)
+            curfile.SetBind(self.GetState('Forward'), "Forward", "Speed On Demand", move + bl)
             if (self.GetState('MouseChord')):
                 if (t['W'] == 1) : move = ini + up + dow + forx + bac + rig + lef
-                curfile.SetBind('mousechord', move + bl)
+                curfile.SetBind('mousechord', "Mouse Chord", "Speed On Demand",  move + bl)
 
         elif (notautorunbl):
-            curfile.SetBind(self.GetState('Forward'), ini + up + dow + forx + bac + lef + rig + ml + toggle + bl)
+            curfile.SetBind(self.GetState('Forward'), "Forward", "Speed On Demand", ini + up + dow + forx + bac + lef + rig + ml + toggle + bl)
             if (self.GetState('MouseChord')):
-                curfile.SetBind('mousechord', ini + up + dow + forx + bac + rig + lef + ml + toggle + bl)
+                curfile.SetBind('mousechord', "Mouse Chord", "Speed On Demand", ini + up + dow + forx + bac + rig + lef + ml + toggle + bl)
 
         else:
             if (t['W'] == 1):
                 bl = re.sub('\d\d\d\d\d\d', newbits, autorunbl)
 
-            curfile.SetBind(self.GetState('Forward'), ini + up + dow + '$$forward 1$$backward 0' + lef + rig + t['mlon'] + bl)
+            curfile.SetBind(self.GetState('Forward'), "Forward", "Speed On Demand", ini + up + dow + '$$forward 1$$backward 0' + lef + rig + t['mlon'] + bl)
             if (self.GetState('MouseChord')) :
-                curfile.SetBind('mousechord', ini + up + dow + '$$forward 1$$backward 0' + rig + lef + t['mlon'] + bl)
+                curfile.SetBind('mousechord', "Mouse Chord", "Speed On Demand", ini + up + dow + '$$forward 1$$backward 0' + rig + lef + t['mlon'] + bl)
 
     def sodBackKey(t,bl,curfile,mobile,stationary,flight,autorunbl,followbl,bo,sssj):
         (up,dow,forw,bacx,lef,rig) = (t.U,t.D,t.F, t['bacx'],t.L,t.R)
@@ -1759,9 +1798,9 @@ class SoD(Page):
                 bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
                 move = ini + up + dow + forw + bacx + lef + rig
 
-            curfile.SetBind(self.GetState('Back'), move + bl)
+            curfile.SetBind(self.GetState('Back'), "Back", "Speed On Demand", move + bl)
         elif (notautorunbl) :
-            curfile.SetBind(self.GetState('Back'), ini + up + dow + forw + bacx + lef + rig + ml + toggle + bl)
+            curfile.SetBind(self.GetState('Back'), "Back", "Speed On Demand", ini + up + dow + forw + bacx + lef + rig + ml + toggle + bl)
         else:
             if (t['S'] == 1):
                 move = '$$forward 1$$backward 0'
@@ -1769,7 +1808,7 @@ class SoD(Page):
                 move = '$$forward 0$$backward 1'
                 bl = re.sub('\d\d\d\d\d\d', newbits, autorunbl)
 
-            curfile.SetBind(self.GetState('Back'), ini + up + dow + move + lef + rig + t['mlon'] + bl)
+            curfile.SetBind(self.GetState('Back'), "Back", "Speed On Demand", ini + up + dow + move + lef + rig + t['mlon'] + bl)
 
     def sodLeftKey(t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
         (up,dow,forw,bac,lefx,rig) = (t.U,t.D,t.F,t.B, t['lefx'],t.R)
@@ -1828,11 +1867,11 @@ class SoD(Page):
                 bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
                 move = ini + up + dow + forw + bac + lefx + rig
 
-            curfile.SetBind(self.GetState('Left'),move + bl)
+            curfile.SetBind(self.GetState('Left'), "Left", "Speed On Demand", move + bl)
         elif (notautorun) :
-            curfile.SetBind(self.GetState('Left'),ini + up + dow + forw + bac + lefx + rig + ml + toggle + bl)
+            curfile.SetBind(self.GetState('Left'), "Left", "Speed On Demand", ini + up + dow + forw + bac + lefx + rig + ml + toggle + bl)
         else:
-            curfile.SetBind(self.GetState('Left'),ini + up + dow + '$$backward 0' + lefx + rig + t['mlon'] + bl)
+            curfile.SetBind(self.GetState('Left'), "Left", "Speed On Demand", ini + up + dow + '$$backward 0' + lefx + rig + t['mlon'] + bl)
 
     def sodRightKey(t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
         (up,dow,forw,bac,lef,rigx) = (t.U,t.D,t.F,t.B,t.L, t['rigx'])
@@ -1890,18 +1929,18 @@ class SoD(Page):
                 bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
                 move = ini + up + dow + forw + bac + lef + rigx
 
-            curfile.SetBind(self.GetState('Right'), move + bl)
+            curfile.SetBind(self.GetState('Right'), "Right", "Speed On Demand", move + bl)
         elif (notautorun) :
-            curfile.SetBind(self.GetState('Right'), ini + up + dow + forw + bac + lef + rigx + ml + toggle + bl)
+            curfile.SetBind(self.GetState('Right'), "Right", "Speed On Demand", ini + up + dow + forw + bac + lef + rigx + ml + toggle + bl)
         else:
-            curfile.SetBind(self.GetState('Right'), ini + up + dow + '$$forward 1$$backward 0' + lef + rigx + t['mlon'] + bl)
+            curfile.SetBind(self.GetState('Right'), "Right", "Speed On Demand", ini + up + dow + '$$forward 1$$backward 0' + lef + rigx + t['mlon'] + bl)
 
 
     def sodAutoRunKey(t,bl,curfile,mobile,sssj):
         if (sssj and t['space'] == 1) :
-            curfile.SetBind(self.GetState('AutoRun'),'forward 1$$backward 0' + t.dirs('UDLR') + t['mlon'] + actPower_name(None,1,sssj,mobile) + bl)
+            curfile.SetBind(self.GetState('AutoRun'), "Auto Run", "Speed On Demand", 'forward 1$$backward 0' + t.dirs('UDLR') + t['mlon'] + actPower_name(None,1,sssj,mobile) + bl)
         else:
-            curfile.SetBind(self.GetState('AutoRun'),'forward 1$$backward 0' + t.dirs('UDLR') + t['mlon'] + actPower_name(None,1,mobile) + bl)
+            curfile.SetBind(self.GetState('AutoRun'), "Auto Run", "Speed On Demand", 'forward 1$$backward 0' + t.dirs('UDLR') + t['mlon'] + actPower_name(None,1,mobile) + bl)
 
     def sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight,sssj):
         if (not flight and not sssj) :
@@ -1923,11 +1962,11 @@ class SoD(Page):
                toggleon = t['mloff'] + actPower_name(None,1,stationary,mobile)
 
         bindload = bl + t.KeyState + '.txt'
-        curfile.SetBind(self.GetState('AutoRun'), t.dirs('UDFBLR') + toggleon + bindload)
+        curfile.SetBind(self.GetState('AutoRun'), "Auto Run", "Speed On Demand", t.dirs('UDFBLR') + toggleon + bindload)
 
 
     def sodFollowKey(t,bl,curfile,mobile):
-        curfile.SetBind(self.GetState('Follow'),'follow' + actPower_name(None,1,mobile) + bl + t.KeyState + '.txt')
+        curfile.SetBind(self.GetState('Follow'), "Follow", "Speed On Demand", 'follow' + actPower_name(None,1,mobile) + bl + t.KeyState + '.txt')
 
     def sodFollowOffKey(t,bl,curfile,mobile,stationary,flight):
         if (not flight):
@@ -1944,7 +1983,7 @@ class SoD(Page):
                 else:
                    toggle = actPower_name(None,1,stationary)
 
-        curfile.SetBind(self.GetState('Follow'),"follow" + toggle + t.U + t['dow'] + t.F + t.B + t.L + t.R + bl + t.KeyState + '.txt')
+        curfile.SetBind(self.GetState('Follow'), "Follow", "Speed On Demand", "follow" + toggle + t.U + t['dow'] + t.F + t.B + t.L + t.R + bl + t.KeyState + '.txt')
 
 
     def bindisused(self):
@@ -2139,7 +2178,7 @@ class SoD(Page):
         tglfile = profile.GetBindFile(filename)
         t['ini'] = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
-        curfile.SetBind(key,"+down" + feedback + actPower_name(None,1,t['cjmp']) + BindFile.BLF(profile,filename))
+        curfile.SetBind(key, "Jump Fix", "Speed On Demand", "+down" + feedback + actPower_name(None,1,t['cjmp']) + BindFile.BLF(profile,filename))
 
 
     def sodSetDownFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
@@ -2152,7 +2191,7 @@ class SoD(Page):
         tglfile = profile.GetBindFile(filename)
         t['ini'] = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
-        curfile.SetBind(key,'+down' + feedback + BindFile.BLF(profile,filename))
+        curfile.SetBind(key, "Set Down Fix", "Speed On Demand", '+down' + feedback + BindFile.BLF(profile,filename))
 
 
 

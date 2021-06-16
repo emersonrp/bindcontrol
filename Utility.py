@@ -13,10 +13,7 @@ def ColorDefault():
         'background' : { 'r' : 255, 'g' : 255, 'b' : 255, },
     }
 
-def BLF (profile, *args):
-    return "$$" + BLFs(profile, *args)
-
-def BLFs(profile, *args):
+def BLF(profile, *args):
     return "bindloadfile " + BLFPath(profile, *args)
 
 def BLFPath(profile, *args):

@@ -162,15 +162,15 @@ class General(Page):
         resetfile = self.Profile.ResetFile()
 
         # TODO - the toggling of sprint is probably an SoD option
-        resetfile.SetBind(self.GetState('ResetKey'),
-                    '$$'.join([
-                        resetfile.BLFs(),
+        resetfile.SetBind(self.GetState('ResetKey'), "Reset Binds", "General",
+                    [
+                        resetfile.BLF(),
                         't $name, Keybinds reloaded.',
                         'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
                         'powexecname Sprint',
                         'powexecunqueue',
-                        't $name, SoD Binds Reset'])
-                    )
+                        't $name, SoD Binds Reset'
+                    ])
 
 
     # Event handlers

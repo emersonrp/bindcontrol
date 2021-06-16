@@ -228,7 +228,8 @@ class Gameplay(Page):
 
 
         ResetFile = self.Profile.ResetFile()
-        ResetFile.SetBind(self.Profile.Gameplay.GetState('FPSBindkey'),'++showfps++netgraph')
+        ResetFile.SetBind(self.Profile.Gameplay.GetState('FPSBindkey'), "Show FPS", "Gameplay",'++showfps++netgraph')
+        ResetFile.SetBind(self.Profile.Gameplay.GetState('NetgraphBindkey'), "Show Netgraph", "Gameplay",'++netgraph')
 
         if (self.GetState('TPSSelMode') < 3):
             selmethod = "teamselect"
@@ -243,13 +244,13 @@ class Gameplay(Page):
             selresetfile = self.Profile.GetBindFile("tps","reset.txt")
             for i in ('1','2','3','4','5','6','7','8'):
                 selfile = self.Profile.GetBindFile("tps",f"sel{i}.txt")
-                ResetFile.   SetBind(self.GetState(f"TeamSelect{i}"),f"{selmethod} {int(i) - selnummod}" + BLF(self.Profile,'tps',f"sel{i}.txt"))
-                selresetfile.SetBind(self.GetState(f"TeamSelect{i}"),f"{selmethod} {int(i) - selnummod}" + BLF(self.Profile,'tps',f"sel{i}.txt"))
+                ResetFile.   SetBind(self.GetState(f"TeamSelect{i}"), f"Team Select {i}", "Gameplay", f"{selmethod} {int(i) - selnummod}" + BLF(self.Profile,'tps',f"sel{i}.txt"))
+                selresetfile.SetBind(self.GetState(f"TeamSelect{i}"), f"Team Select {i}", "Gameplay", f"{selmethod} {int(i) - selnummod}" + BLF(self.Profile,'tps',f"sel{i}.txt"))
                 for j in ('1','2','3','4','5','6','7','8'):
                     if (i == j):
-                        selfile.SetBind(self.GetState(f"TeamSelect{j}"),f"{selmethod1} {int(j) - selnummod1}" + BLF(self.Profile,'tps',"reset.txt"))
+                        selfile.SetBind(self.GetState(f"TeamSelect{j}"), f"Team Select {j}", "Gameplay", f"{selmethod1} {int(j) - selnummod1}" + BLF(self.Profile,'tps',"reset.txt"))
                     else:
-                        selfile.SetBind(self.GetState(f"TeamSelect{j}"),f"{selmethod} {int(j) - selnummod}"  + BLF(self.Profile,'tps',"selj.txt"))
+                        selfile.SetBind(self.GetState(f"TeamSelect{j}"), f"Team Select {j}", "Gameplay", f"{selmethod} {int(j) - selnummod}"  + BLF(self.Profile,'tps',"selj.txt"))
 
         else:
             selmethod = "teamselect"
@@ -258,7 +259,7 @@ class Gameplay(Page):
                 selmethod = "petselect"
                 selnummod = 1
             for i in (1,2,3,4,5,6,7,8):
-                ResetFile.SetBind(self.GetState('sel1'),"selmethod " + (i - selnummod))
+                ResetFile.SetBind(self.GetState('sel1'), "TPS Select", "Gameplay", "selmethod " + (i - selnummod))
 
         ResetFile = self.Profile.ResetFile()
 
@@ -268,12 +269,12 @@ class Gameplay(Page):
         if notifier:
             notifier = "\\" + notifier
 
-        ResetFile.SetBind(self.GetState('StartChat'), 'show chatstartchat' + notifier)
-        ResetFile.SetBind(self.GetState('SlashChat'), 'show chatslashchat' + notifier)
-        ResetFile.SetBind(self.GetState('StartEmote'),'show chatem ' + notifier)
-        ResetFile.SetBind(self.GetState('AutoReply'), 'autoreply' + notifier)
-        ResetFile.SetBind(self.GetState('TellTarget'),'show chatbeginchat /tell target, ' + notifier)
-        ResetFile.SetBind(self.GetState('QuickChat'), 'quickchat' + notifier)
+        ResetFile.SetBind(self.GetState('StartChat'), "Start Chat", "Gameplay",'show chatstartchat' + notifier)
+        ResetFile.SetBind(self.GetState('SlashChat'), "Slash Chat", "Gameplay",'show chatslashchat' + notifier)
+        ResetFile.SetBind(self.GetState('StartEmote'),"Start Emote", "Gameplay",'show chatem ' + notifier)
+        ResetFile.SetBind(self.GetState('AutoReply'), "Auto Reply", "Gameplay",'autoreply' + notifier)
+        ResetFile.SetBind(self.GetState('TellTarget'),"Tell Target", "Gameplay",'show chatbeginchat /tell target, ' + notifier)
+        ResetFile.SetBind(self.GetState('QuickChat'), "Quick Chat", "Gameplay",'quickchat' + notifier)
 
     def findconflicts(self):
         Utility.CheckConflict(self,"FPSBindkey","FPS Display Toggle")

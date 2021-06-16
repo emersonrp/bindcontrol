@@ -1,4 +1,5 @@
 from pathlib import Path
+from KeyBind import KeyBind
 
 class BindFile():
 
@@ -10,37 +11,34 @@ class BindFile():
 
         self.Binds = {}
 
-    def SetBind(self, key, contents):
+    def SetBind(self, key, name, page, *contents):
 
         if key == None:
-            print(f"invalid key: {self.Path}, {key}, contents {contents}")
+            print(f"{self}: empty key in keybind: {name}, {page}, contents {contents}")
+            return
 
         if key == "UNBOUND": return
 
-        contents = '"' + contents.strip() + '"'
-
-        ## TODO - do we actually need to objectinate individual binds?
-        # bind.Key = key
-        # bind.Contents = contents
+        keybind = KeyBind(key, name, page, *contents)
 
         # TODO -- how to call out the 'reset file' object as special?
+        # TODO 2 -- we don't? it should be the page's responsibility to
+        # stash keybinds in multiple bindfiles?  Maybe?
         # if ($file eq $resetfile1 and $key eq $resetkey) {
             # $resetfile2->{$key} = $s
         # }
 
-        self.Binds[key] = contents
+        self.Binds[key] = KeyBind
+
+    # TODO - "bind_load_file" instead of "bindloadfile" for now
+    # so that we can rdiff the output of CityBinder
 
     # TODO - hard coded \\ in there, make this with Path
     def BaseReset(self):
-        return f'$$bind_load_file {self.BindsDir}\\subreset.txt'
+        return f'bind_load_file {self.BindsDir}\\subreset.txt'
 
-    # BLF == full "$$bind_load_file path/to/file/kthx"
-    def BLF(self):
-        return '$$' + self.BLFs()
-
-    # BLFs == same as above but no '$$' for use at start of binds.
     # TODO - make "silent" an option, and the default
-    def BLFs(self):
+    def BLF(self):
         return f'bind_load_file {self.Path}'
 
     def Write(self, profile):

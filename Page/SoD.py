@@ -406,14 +406,14 @@ class SoD(Page):
             self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
             self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
 
-            if (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
-            if (modestr == "Base")  : self.makeBaseModeKey  (profile,t,"r", curfile,turnoff,fix)
-            if (modestr == "Fly")   : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
-            if (modestr == "GFly")  : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff,fix)
-            if (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
-            if (modestr == "Jump")  : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
-            if (modestr == "Temp")  : self.makeTempModeKey  (profile,t,"r", curfile,turnoff,path)
-            if (modestr == "QFly")  : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
+            if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
+            elif (modestr == "Base")  : self.makeBaseModeKey  (profile,t,"r", curfile,turnoff,fix)
+            elif (modestr == "Fly")   : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
+            elif (modestr == "GFly")  : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff,fix)
+            elif (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
+            elif (modestr == "Jump")  : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
+            elif (modestr == "Temp")  : self.makeTempModeKey  (profile,t,"r", curfile,turnoff,path)
+            elif (modestr == "QFly")  : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
 
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 
@@ -440,25 +440,25 @@ class SoD(Page):
                 if (self.GetState('NonSoD')):
                     t['FlyMode'] = t['NonSoDMode']
                     makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                if (self.GetState('Base')):
+                elif (self.GetState('Base')):
                     t['FlyMode'] = t['BaseMode']
                     makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                if (t['canss']):
+                elif (t['canss']):
                     t['FlyMode'] = t['RunMode']
                     makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                if (t['canjmp']):
+                elif (t['canjmp']):
                     t['FlyMode'] = t['JumpMode']
                     makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                if (self.GetState('Temp') and self.GetState('TempEnable')):
+                elif (self.GetState('Temp') and self.GetState('TempEnable')):
                     t['FlyMode'] = t['TempMode']
                     makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
                 else:
                     makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
 
             t['ini'] = ''
-            if (modestr == "GFly") : makeGFlyModeKey  (profile,t,"gbo",curfile,turnoff,fix)
-            if (modestr == "Run")  : makeSpeedModeKey (profile,t,"s",  curfile,turnoff,fix)
-            if (modestr == "Jump") : makeJumpModeKey  (profile,t,"j",  curfile,turnoff,path)
+            if   (modestr == "GFly") : makeGFlyModeKey  (profile,t,"gbo",curfile,turnoff,fix)
+            elif (modestr == "Run")  : makeSpeedModeKey (profile,t,"s",  curfile,turnoff,fix)
+            elif (modestr == "Jump") : makeJumpModeKey  (profile,t,"j",  curfile,turnoff,path)
 
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 
@@ -476,11 +476,11 @@ class SoD(Page):
             self.sodRightKey  (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
 
             t['ini'] = '-down$$'
-            if (modestr == "Base") : makeBaseModeKey(profile,t,"r",  curfile,turnoff,fix)
-            if (modestr == "Fly")  : makeFlyModeKey( profile,t,"a",  curfile,turnoff,fix)
-            if (modestr == "GFly") : makeGFlyModeKey(profile,t,"gbo",curfile,turnoff,fix)
+            if   (modestr == "Base") : makeBaseModeKey(profile,t,"r",  curfile,turnoff,fix)
+            elif (modestr == "Fly")  : makeFlyModeKey( profile,t,"a",  curfile,turnoff,fix)
+            elif (modestr == "GFly") : makeGFlyModeKey(profile,t,"gbo",curfile,turnoff,fix)
             t['ini'] = ''
-            if (modestr == "Jump") : makeJumpModeKey(profile,t,"j",  curfile,turnoff,path)
+            if   (modestr == "Jump") : makeJumpModeKey(profile,t,"j",  curfile,turnoff,path)
 
             sodAutoRunKey(t,bla,curfile,mobile,sssj)
             sodFollowKey(t,blf,curfile,mobile)
@@ -498,30 +498,30 @@ class SoD(Page):
 
         if ((flight == "Fly") and pathbo):
             #  Base to set down
-            if (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"r",curfile,{mobile,stationary},sodSetDownFix)
-            if (modestr == "Base")  : makeBaseModeKey  (profile,t,"r",curfile,turnoff,sodSetDownFix)
+            if   (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"r",curfile,{mobile,stationary},sodSetDownFix)
+            elif (modestr == "Base")  : makeBaseModeKey  (profile,t,"r",curfile,turnoff,sodSetDownFix)
+
             if (t['BaseMode']):
                 curfile.SetBind(t['BaseMode'], "Base Mode", "Speed On Demand",
                                 "+down$$down 1" + actPower_name(None,1,mobile) + t['detailhi'] + t['runcamdist'] + t['blsd'])
 
-            if (modestr == "Run")    : makeSpeedModeKey (profile,t,"s", curfile,turnoff,sodSetDownFix)
-            if (modestr == "Fly")    : makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
-            if (modestr == "Jump")   : makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
-            if (modestr == "Temp")   : makeTempModeKey  (profile,t,"r", curfile,turnoff,path)
-            if (modestr == "QFly")   : makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
+            if   (modestr == "Run")    : makeSpeedModeKey (profile,t,"s", curfile,turnoff,sodSetDownFix)
+            elif (modestr == "Fly")    : makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
+            elif (modestr == "Jump")   : makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
+            elif (modestr == "Temp")   : makeTempModeKey  (profile,t,"r", curfile,turnoff,path)
+            elif (modestr == "QFly")   : makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
         else:
-            if (modestr == "NonSoD") : makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
-            if (modestr == "Base")   : makeBaseModeKey  (profile,t,"r", curfile,turnoff,fix)
-            if (flight == "Jump"):
+            if   (modestr == "NonSoD") : makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
+            elif (modestr == "Base")   : makeBaseModeKey  (profile,t,"r", curfile,turnoff,fix)
+            elif (flight == "Jump"):
                 if (modestr == "Fly"): makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,None,1)
             else:
                 if (modestr == "Fly"): makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
 
-
-            if (modestr == "Run")   : makeSpeedModeKey  (profile,t,"s", curfile,turnoff,fix)
-            if (modestr == "Jump")  : makeJumpModeKey   (profile,t,"j", curfile,turnoff,path)
-            if (modestr == "Temp")  : makeTempModeKey   (profile,t,"r", curfile,turnoff,path)
-            if (modestr == "QFly")  : makeQFlyModeKey   (profile,t,"r", curfile,turnoff,modestr)
+            if   (modestr == "Run")   : makeSpeedModeKey  (profile,t,"s", curfile,turnoff,fix)
+            elif (modestr == "Jump")  : makeJumpModeKey   (profile,t,"j", curfile,turnoff,path)
+            elif (modestr == "Temp")  : makeTempModeKey   (profile,t,"r", curfile,turnoff,path)
+            elif (modestr == "QFly")  : makeQFlyModeKey   (profile,t,"r", curfile,turnoff,modestr)
 
         sodAutoRunKey(t,bla,curfile,mobile,sssj)
 
@@ -540,18 +540,18 @@ class SoD(Page):
         sodRightKey  (t,bla,curfile,mobile,stationary,flight,1,'','',sssj)
 
         if ((flight == "Fly") and pathbo):
-            if (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary},sodSetDownFix)
-            if (modestr == "Base")  : makeBaseModeKey  (profile,t,"gr",curfile,turnoff,sodSetDownFix)
-            if (modestr == "Run")   : makeSpeedModeKey (profile,t,"as",curfile,turnoff,sodSetDownFix)
+            if   (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary},sodSetDownFix)
+            elif (modestr == "Base")  : makeBaseModeKey  (profile,t,"gr",curfile,turnoff,sodSetDownFix)
+            elif (modestr == "Run")   : makeSpeedModeKey (profile,t,"as",curfile,turnoff,sodSetDownFix)
         else:
-            if (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary})
-            if (modestr == "Base")  : makeBaseModeKey  (profile,t,"gr",curfile,turnoff,fix)
-            if (modestr == "Run")   : makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
+            if   (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary})
+            elif (modestr == "Base")  : makeBaseModeKey  (profile,t,"gr",curfile,turnoff,fix)
+            elif (modestr == "Run")   : makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
 
-        if (modestr == "Fly")       : makeFlyModeKey   (profile,t,"af",curfile,turnoff,fix)
-        if (modestr == "Jump")      : makeJumpModeKey  (profile,t,"aj",curfile,turnoff,pathr)
-        if (modestr == "Temp")      : makeTempModeKey  (profile,t,"ar",curfile,turnoff,path)
-        if (modestr == "QFly")      : makeQFlyModeKey  (profile,t,"ar",curfile,turnoff,modestr)
+        if   (modestr == "Fly")       : makeFlyModeKey   (profile,t,"af",curfile,turnoff,fix)
+        elif (modestr == "Jump")      : makeJumpModeKey  (profile,t,"aj",curfile,turnoff,pathr)
+        elif (modestr == "Temp")      : makeTempModeKey  (profile,t,"ar",curfile,turnoff,path)
+        elif (modestr == "QFly")      : makeQFlyModeKey  (profile,t,"ar",curfile,turnoff,modestr)
 
         sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight)
 
@@ -570,18 +570,18 @@ class SoD(Page):
         sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
 
         if ((flight == "Fly") and pathbo):
-            if (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary},sodSetDownFix)
-            if (modestr == "Base")  : makeBaseModeKey  (profile,t,"fr",curfile,turnoff,sodSetDownFix)
-            if (modestr == "Run")   : makeSpeedModeKey (profile,t,"fs",curfile,turnoff,sodSetDownFix)
+            if   (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary},sodSetDownFix)
+            elif (modestr == "Base")  : makeBaseModeKey  (profile,t,"fr",curfile,turnoff,sodSetDownFix)
+            elif (modestr == "Run")   : makeSpeedModeKey (profile,t,"fs",curfile,turnoff,sodSetDownFix)
         else:
-            if (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary})
-            if (modestr == "Base")  : makeBaseModeKey  (profile,t,"fr",curfile,turnoff,fix)
-            if (modestr == "Run")   : makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
+            if   (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary})
+            elif (modestr == "Base")  : makeBaseModeKey  (profile,t,"fr",curfile,turnoff,fix)
+            elif (modestr == "Run")   : makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
 
-        if (modestr == "Fly")       : makeFlyModeKey   (profile,t,"ff",curfile,turnoff,fix)
-        if (modestr == "Jump")      : makeJumpModeKey  (profile,t,"fj",curfile,turnoff,pathf)
-        if (modestr == "Temp")      : makeTempModeKey  (profile,t,"fr",curfile,turnoff,path)
-        if (modestr == "QFly")      : makeQFlyModeKey  (profile,t,"fr",curfile,turnoff,modestr)
+        if   (modestr == "Fly")       : makeFlyModeKey   (profile,t,"ff",curfile,turnoff,fix)
+        elif (modestr == "Jump")      : makeJumpModeKey  (profile,t,"fj",curfile,turnoff,pathf)
+        elif (modestr == "Temp")      : makeTempModeKey  (profile,t,"fr",curfile,turnoff,path)
+        elif (modestr == "QFly")      : makeQFlyModeKey  (profile,t,"fr",curfile,turnoff,modestr)
 
         curfile.SetBind(self.GetState('AutoRun'),'Auto Run','Speed On Demand','nop')
 
@@ -895,8 +895,6 @@ class SoD(Page):
 
 
     def PopulateBindFiles(self):
-
-        return
 
 
         ### TODO
@@ -1966,7 +1964,7 @@ class SoD(Page):
 
 
     def sodFollowKey(t,bl,curfile,mobile):
-        curfile.SetBind(self.GetState('Follow'), "Follow", "Speed On Demand", 'follow' + actPower_name(None,1,mobile) + bl + t.KeyState + '.txt')
+        curfile.SetBind(self.GetState('Follow'), "Follow", "Speed On Demand", 'follow' + actPower_name(None,1,mobile) + bl + t.KeyState() + '.txt')
 
     def sodFollowOffKey(t,bl,curfile,mobile,stationary,flight):
         if (not flight):
@@ -1983,7 +1981,7 @@ class SoD(Page):
                 else:
                    toggle = actPower_name(None,1,stationary)
 
-        curfile.SetBind(self.GetState('Follow'), "Follow", "Speed On Demand", "follow" + toggle + t.U + t['dow'] + t.F + t.B + t.L + t.R + bl + t.KeyState + '.txt')
+        curfile.SetBind(self.GetState('Follow'), "Follow", "Speed On Demand", "follow" + toggle + t.U + t['dow'] + t.F + t.B + t.L + t.R + bl + t.KeyState() + '.txt')
 
 
     def bindisused(self):
@@ -2260,15 +2258,18 @@ class SoD(Page):
 
 class t():
 
+    # return binary string of which keys are "on";
+    # optionally flipping one of them first.
+    # TODO:  not clear this belongs on a class, as opposed
+    # to just a utility sub here or in Utility.
     def KeyState(self, p):
         togglebit = p['toggle']
 
         for key in ('space','X','W','S','A','D'):
             if key == togglebit:
-                ret = ret + nott[key]
+                ret = ret + str(not self[key])
             else:
-                ret = ret + self[key]
-
+                ret = ret + str(self[key])
         return ret
 
 
@@ -2280,7 +2281,7 @@ class t():
 #        code = shift
 #        suffix = shift || ''
 #        p = self['profile']
-#        return BindFile.BLF($p, uc($code), uc($code) + self.KeyState + suffix + '.txt')
+#        return BindFile.BLF($p, uc($code), uc($code) + self.KeyState() + suffix + '.txt')
 #
 #
 #    # This will return "CODE\CODE1010101<suffix>.txt"
@@ -2288,7 +2289,7 @@ class t():
 #        my self = shift
 #        code = shift
 #        suffix = shift || ''
-#        return File::Spec.catpath(None, uc($code), uc($code) + self.KeyState + suffix + '.txt')
+#        return File::Spec.catpath(None, uc($code), uc($code) + self.KeyState() + suffix + '.txt')
 #
 #
 #    sub dirs {

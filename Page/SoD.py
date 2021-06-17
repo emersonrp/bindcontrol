@@ -5,6 +5,7 @@ import Utility
 
 from Page import Page
 from UI.ControlGroup import ControlGroup
+from BindFile import BindFile
 
 
 class SoD(Page):
@@ -431,7 +432,7 @@ class SoD(Page):
             self.sodLeftKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
             self.sodRightKey  (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
 
-            if (modestr == "Base") : makeBaseModeKey(profile,t,"r",curfile,turnoff,fix)
+            if (modestr == "Base") : self.makeBaseModeKey(profile,t,"r",curfile,turnoff,fix)
 
             t['ini'] = '-down$$'
 
@@ -439,26 +440,26 @@ class SoD(Page):
 
                 if (self.GetState('NonSoD')):
                     t['FlyMode'] = t['NonSoDMode']
-                    makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
+                    self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
                 elif (self.GetState('Base')):
                     t['FlyMode'] = t['BaseMode']
-                    makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
+                    self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
                 elif (t['canss']):
                     t['FlyMode'] = t['RunMode']
-                    makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
+                    self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
                 elif (t['canjmp']):
                     t['FlyMode'] = t['JumpMode']
-                    makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
+                    self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
                 elif (self.GetState('Temp') and self.GetState('TempEnable')):
                     t['FlyMode'] = t['TempMode']
-                    makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
+                    self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
                 else:
-                    makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
+                    self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
 
             t['ini'] = ''
-            if   (modestr == "GFly") : makeGFlyModeKey  (profile,t,"gbo",curfile,turnoff,fix)
-            elif (modestr == "Run")  : makeSpeedModeKey (profile,t,"s",  curfile,turnoff,fix)
-            elif (modestr == "Jump") : makeJumpModeKey  (profile,t,"j",  curfile,turnoff,path)
+            if   (modestr == "GFly") : self.makeGFlyModeKey (profile,t,"gbo",curfile,turnoff,fix)
+            elif (modestr == "Run")  : self.makeSpeedModeKey(profile,t,"s",  curfile,turnoff,fix)
+            elif (modestr == "Jump") : self.makeJumpModeKey (profile,t,"j",  curfile,turnoff,path)
 
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 
@@ -476,14 +477,14 @@ class SoD(Page):
             self.sodRightKey  (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
 
             t['ini'] = '-down$$'
-            if   (modestr == "Base") : makeBaseModeKey(profile,t,"r",  curfile,turnoff,fix)
-            elif (modestr == "Fly")  : makeFlyModeKey( profile,t,"a",  curfile,turnoff,fix)
-            elif (modestr == "GFly") : makeGFlyModeKey(profile,t,"gbo",curfile,turnoff,fix)
+            if   (modestr == "Base") : self.makeBaseModeKey(profile,t,"r",  curfile,turnoff,fix)
+            elif (modestr == "Fly")  : self.makeFlyModeKey( profile,t,"a",  curfile,turnoff,fix)
+            elif (modestr == "GFly") : self.makeGFlyModeKey(profile,t,"gbo",curfile,turnoff,fix)
             t['ini'] = ''
-            if   (modestr == "Jump") : makeJumpModeKey(profile,t,"j",  curfile,turnoff,path)
+            if   (modestr == "Jump") : self.makeJumpModeKey(profile,t,"j",  curfile,turnoff,path)
 
-            sodAutoRunKey(t,bla,curfile,mobile,sssj)
-            sodFollowKey(t,blf,curfile,mobile)
+            self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
+            self.sodFollowKey(t,blf,curfile,mobile)
 
         curfile = profile.GetBindFile(path)
 
@@ -498,94 +499,93 @@ class SoD(Page):
 
         if ((flight == "Fly") and pathbo):
             #  Base to set down
-            if   (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"r",curfile,{mobile,stationary},sodSetDownFix)
-            elif (modestr == "Base")  : makeBaseModeKey  (profile,t,"r",curfile,turnoff,sodSetDownFix)
+            if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"r",curfile,{mobile,stationary},self.sodSetDownFix())
+            elif (modestr == "Base")  : self.makeBaseModeKey  (profile,t,"r",curfile,turnoff,self.sodSetDownFix())
 
             if (t['BaseMode']):
                 curfile.SetBind(t['BaseMode'], "Base Mode", "Speed On Demand",
-                                "+down$$down 1" + actPower_name(None,1,mobile) + t['detailhi'] + t['runcamdist'] + t['blsd'])
+                                "+down$$down 1" + self.actPower_name(None,1,mobile) + t['detailhi'] + t['runcamdist'] + t['blsd'])
 
-            if   (modestr == "Run")    : makeSpeedModeKey (profile,t,"s", curfile,turnoff,sodSetDownFix)
-            elif (modestr == "Fly")    : makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
-            elif (modestr == "Jump")   : makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
-            elif (modestr == "Temp")   : makeTempModeKey  (profile,t,"r", curfile,turnoff,path)
-            elif (modestr == "QFly")   : makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
+            if   (modestr == "Run")    : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,self.sodSetDownFix())
+            elif (modestr == "Fly")    : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
+            elif (modestr == "Jump")   : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
+            elif (modestr == "Temp")   : self.makeTempModeKey  (profile,t,"r", curfile,turnoff,path)
+            elif (modestr == "QFly")   : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
         else:
-            if   (modestr == "NonSoD") : makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
-            elif (modestr == "Base")   : makeBaseModeKey  (profile,t,"r", curfile,turnoff,fix)
+            if   (modestr == "NonSoD") : self.makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
+            elif (modestr == "Base")   : self.makeBaseModeKey  (profile,t,"r", curfile,turnoff,fix)
             elif (flight == "Jump"):
-                if (modestr == "Fly"): makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,None,1)
+                if (modestr == "Fly"): self.makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,None,1)
             else:
-                if (modestr == "Fly"): makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
+                if (modestr == "Fly"): self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
 
-            if   (modestr == "Run")   : makeSpeedModeKey  (profile,t,"s", curfile,turnoff,fix)
-            elif (modestr == "Jump")  : makeJumpModeKey   (profile,t,"j", curfile,turnoff,path)
-            elif (modestr == "Temp")  : makeTempModeKey   (profile,t,"r", curfile,turnoff,path)
-            elif (modestr == "QFly")  : makeQFlyModeKey   (profile,t,"r", curfile,turnoff,modestr)
+            if   (modestr == "Run")   : self.makeSpeedModeKey  (profile,t,"s", curfile,turnoff,fix)
+            elif (modestr == "Jump")  : self.makeJumpModeKey   (profile,t,"j", curfile,turnoff,path)
+            elif (modestr == "Temp")  : self.makeTempModeKey   (profile,t,"r", curfile,turnoff,path)
+            elif (modestr == "QFly")  : self.makeQFlyModeKey   (profile,t,"r", curfile,turnoff,modestr)
 
-        sodAutoRunKey(t,bla,curfile,mobile,sssj)
-
-        sodFollowKey(t,blf,curfile,mobile)
+        self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
+        self.sodFollowKey(t,blf,curfile,mobile)
 
     # AutoRun Binds
         curfile = profile.GetBindFile(pathr)
 
-        sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
+        self.sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
 
-        sodUpKey     (t,bla,curfile,mobile,stationary,flight,1,'','',sssj)
-        sodDownKey   (t,bla,curfile,mobile,stationary,flight,1,'','',sssj)
-        sodForwardKey(t,bla,curfile,mobile,stationary,flight,bl, '','',sssj)
-        sodBackKey   (t,bla,curfile,mobile,stationary,flight,bl, '','',sssj)
-        sodLeftKey   (t,bla,curfile,mobile,stationary,flight,1,'','',sssj)
-        sodRightKey  (t,bla,curfile,mobile,stationary,flight,1,'','',sssj)
+        self.sodUpKey     (t,bla,curfile,mobile,stationary,flight,1,'','',sssj)
+        self.sodDownKey   (t,bla,curfile,mobile,stationary,flight,1,'','',sssj)
+        self.sodForwardKey(t,bla,curfile,mobile,stationary,flight,bl, '','',sssj)
+        self.sodBackKey   (t,bla,curfile,mobile,stationary,flight,bl, '','',sssj)
+        self.sodLeftKey   (t,bla,curfile,mobile,stationary,flight,1,'','',sssj)
+        self.sodRightKey  (t,bla,curfile,mobile,stationary,flight,1,'','',sssj)
 
         if ((flight == "Fly") and pathbo):
-            if   (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary},sodSetDownFix)
-            elif (modestr == "Base")  : makeBaseModeKey  (profile,t,"gr",curfile,turnoff,sodSetDownFix)
-            elif (modestr == "Run")   : makeSpeedModeKey (profile,t,"as",curfile,turnoff,sodSetDownFix)
+            if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary},self.sodSetDownFix())
+            elif (modestr == "Base")  : self.makeBaseModeKey  (profile,t,"gr",curfile,turnoff,self.sodSetDownFix())
+            elif (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,self.sodSetDownFix())
         else:
-            if   (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary})
-            elif (modestr == "Base")  : makeBaseModeKey  (profile,t,"gr",curfile,turnoff,fix)
-            elif (modestr == "Run")   : makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
+            if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary})
+            elif (modestr == "Base")  : self.makeBaseModeKey  (profile,t,"gr",curfile,turnoff,fix)
+            elif (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
 
-        if   (modestr == "Fly")       : makeFlyModeKey   (profile,t,"af",curfile,turnoff,fix)
-        elif (modestr == "Jump")      : makeJumpModeKey  (profile,t,"aj",curfile,turnoff,pathr)
-        elif (modestr == "Temp")      : makeTempModeKey  (profile,t,"ar",curfile,turnoff,path)
-        elif (modestr == "QFly")      : makeQFlyModeKey  (profile,t,"ar",curfile,turnoff,modestr)
+        if   (modestr == "Fly")       : self.makeFlyModeKey   (profile,t,"af",curfile,turnoff,fix)
+        elif (modestr == "Jump")      : self.makeJumpModeKey  (profile,t,"aj",curfile,turnoff,pathr)
+        elif (modestr == "Temp")      : self.makeTempModeKey  (profile,t,"ar",curfile,turnoff,path)
+        elif (modestr == "QFly")      : self.makeQFlyModeKey  (profile,t,"ar",curfile,turnoff,modestr)
 
-        sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight)
+        self.sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight)
 
         curfile.SetBind(self.GetState('Follow'),'Follow','Speed On Demand','nop')
 
         # FollowRun Binds
         curfile = profile.GetBindFile(pathf)
 
-        sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
+        self.sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
 
-        sodUpKey     (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        sodDownKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        sodForwardKey(t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        sodBackKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        sodLeftKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
+        self.sodUpKey     (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
+        self.sodDownKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
+        self.sodForwardKey(t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
+        self.sodBackKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
+        self.sodLeftKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
+        self.sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
 
         if ((flight == "Fly") and pathbo):
-            if   (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary},sodSetDownFix)
-            elif (modestr == "Base")  : makeBaseModeKey  (profile,t,"fr",curfile,turnoff,sodSetDownFix)
-            elif (modestr == "Run")   : makeSpeedModeKey (profile,t,"fs",curfile,turnoff,sodSetDownFix)
+            if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary},self.sodSetDownFix())
+            elif (modestr == "Base")  : self.makeBaseModeKey  (profile,t,"fr",curfile,turnoff,self.sodSetDownFix())
+            elif (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,self.sodSetDownFix())
         else:
-            if   (modestr == "NonSoD"): makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary})
-            elif (modestr == "Base")  : makeBaseModeKey  (profile,t,"fr",curfile,turnoff,fix)
-            elif (modestr == "Run")   : makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
+            if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary})
+            elif (modestr == "Base")  : self.makeBaseModeKey  (profile,t,"fr",curfile,turnoff,fix)
+            elif (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
 
-        if   (modestr == "Fly")       : makeFlyModeKey   (profile,t,"ff",curfile,turnoff,fix)
-        elif (modestr == "Jump")      : makeJumpModeKey  (profile,t,"fj",curfile,turnoff,pathf)
-        elif (modestr == "Temp")      : makeTempModeKey  (profile,t,"fr",curfile,turnoff,path)
-        elif (modestr == "QFly")      : makeQFlyModeKey  (profile,t,"fr",curfile,turnoff,modestr)
+        if   (modestr == "Fly")       : self.makeFlyModeKey   (profile,t,"ff",curfile,turnoff,fix)
+        elif (modestr == "Jump")      : self.makeJumpModeKey  (profile,t,"fj",curfile,turnoff,pathf)
+        elif (modestr == "Temp")      : self.makeTempModeKey  (profile,t,"fr",curfile,turnoff,path)
+        elif (modestr == "QFly")      : self.makeQFlyModeKey  (profile,t,"fr",curfile,turnoff,modestr)
 
         curfile.SetBind(self.GetState('AutoRun'),'Auto Run','Speed On Demand','nop')
 
-        sodFollowOffKey(t,bl,curfile,mobile,stationary,flight)
+        self.sodFollowOffKey(t,bl,curfile,mobile,stationary,flight)
 
 
 
@@ -602,7 +602,7 @@ class SoD(Page):
         if (bl == "r"):
             bindload = t['bl']('n')
             if (fix):
-                fix(p,t,key, makeNonSoDModeKey,"n",bl,cur,toff,'',feedback)
+                fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,'',feedback)
             else:
                 cur.SetBind(key, "Non-SoD Mode", "Speed On Demand",
                             t['ini'] + self.actPower_toggle(None,1,None,toff) + t +dirs('UDFBLR') + t['detailhi'] + t['runcamdist'] + feedback + bindload)
@@ -610,14 +610,14 @@ class SoD(Page):
         elif (bl == "ar"):
             bindload = t['bl']('an')
             if (fix):
-                fix(p,t,key, makeNonSoDModeKey,"n",bl,cur,toff,"a",feedback)
+                fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"a",feedback)
             else:
                 cur.SetBind(key, "Non-SoD Mode", "Speed On Demand",
                             t['ini'] + self.actPower_toggle(None,1,None,toff) + t['detailhi'] + t['runcamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
 
         else:
             if (fix):
-                fix(p,t,key, makeNonSoDModeKey,"n",bl,cur,toff,"f",feedback)
+                fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"f",feedback)
             else:
                 cur.SetBind(key, "Non-SoD Mode", "Speed On Demand",
                             t['ini'] + self.actPower_toggle(None,1,None,toff) + t['detailhi'] + t['runcamdist'] + '$$up 0' + feedback + t['bl']('fn'))
@@ -637,18 +637,18 @@ class SoD(Page):
         if (bl == "r"):
             bindload = t['bl']('t')
             cur.SetBind(key, "Temp Mode", "Speed On Demand",
-                        t['ini'] + actPower(None,1,trayslot,toff) + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
+                        t['ini'] + self.actPower(None,1,trayslot,toff) + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
         elif (bl == "ar"):
             bindload  = t['bl']('at')
             bindload2 = t['bl']('at','_t')
             tgl = p.GetBindFile(bindload2)
             cur.SetBind(key, "Temp Mode", "Speed On Demand",
-                        t['in'] + actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
+                        t['in'] + self.actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
             tgl.SetBind(key, "Temp Mode", "Speed On Demand",
-                        t['in'] + actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                        t['in'] + self.actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
         else:
             cur.SetBind(key, "Temp Mode", "Speed On Demand",
-                        t['ini'] + actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + feedback + t['bl']('ft'))
+                        t['ini'] + self.actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + feedback + t['bl']('ft'))
 
         t['ini'] = ''
 
@@ -676,21 +676,21 @@ class SoD(Page):
             else:                                         tray = ''
 
             cur.SetBind(key, "Quantum Flight", "Speed On Demand",
-                        t['ini'] + actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload2)
+                        t['ini'] + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload2)
             tgl.SetBind(key, "Quantum Flight", "Speed On Demand",
-                        t['ini'] + actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
+                        t['ini'] + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
 
         elif (bl == "ar"):
             bindload  = t['bl']('an')
             bindload2 = t['bl']('an','_t')
             tgl = p.GetBindFile(bindload2)
             cur.SetBind(key, "Quantum Flight", "Speed On Demand",
-                        t['in'] + actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
+                        t['in'] + self.actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
             tgl.SetBind(key, "Quantum Flight", "Speed On Demand",
-                        t['in'] + actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                        t['in'] + self.actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
         else:
             cur.SetBind(key, "Quantum Flight", "Speed On Demand",
-                        t['ini'] + actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + feedback + t['bl']('fn'))
+                        t['ini'] + self.actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + feedback + t['bl']('fn'))
 
         t['ini'] = ''
 
@@ -712,7 +712,7 @@ class SoD(Page):
             ton = self.actPower_toggle(1, 1, sprint, toff)
 
             if (fix):
-                fix(p,t,key, makeBaseModeKey,"r",bl,cur,toff,'',feedback)
+                fix(p,t,key, self.makeBaseModeKey,"r",bl,cur,toff,'',feedback)
             else:
                 cur.SetBind(key, "Base Mode", "Speed On Demand",
                             t['ini'] + ton + t.dirs('UDFBLR') + t['detailhi'] + t['runcamdist'] + feedback + bindload)
@@ -721,14 +721,14 @@ class SoD(Page):
             bindload  = t['bl']('gr')
 
             if (fix):
-                fix(p,t,key, makeBaseModeKey,"r",bl,cur,toff,"a",feedback)
+                fix(p,t,key, self.makeBaseModeKey,"r",bl,cur,toff,"a",feedback)
             else:
                 cur.SetBind(key, "Base Mode", "Speed On Demand",
                             t['ini'] + self.actPower_toggle(1,1,t['sprint'],toff) + t['detailhi'] +  t['runcamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
 
         else:
             if (fix):
-                fix(p,t,key, makeBaseModeKey,"r",bl,cur,toff,"f",feedback)
+                fix(p,t,key, self.makeBaseModeKey,"r",bl,cur,toff,"f",feedback)
             else:
                 cur.SetBind(key, "Base Mode", "Speed On Demand",
                             t['ini'] + self.actPower_toggle(1,1,t['sprint'], toff) + t['detailhi'] + t['runcamdist'] + '$$up 0' + fb + t['bl']('fr'))
@@ -736,19 +736,19 @@ class SoD(Page):
         t['ini'] = ''
 
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
-    def makeSpeedModeKey(self, p, t, bl, cur, toff, fix, fb):
+    def makeSpeedModeKey(self, p, t, bl, cur, toff, fix, fb = ''):
         key = t['RunMode']
 
-        if p['SoD']['Feedback']: feedback = (fb or '$$t $name, Superspeed Mode')
-        else:                    feedback = ''
+        if p.SoD.GetState('Feedback'): feedback = (fb or '$$t $name, Superspeed Mode')
+        else:                          feedback = ''
 
-        if not t['ini']: t['ini'] = ''
+        if not t.get('ini', ''): t['ini'] = ''
 
         if (t['canss']):
             if (bl == 's'):
                 bindload = t['bl']('s')
                 if (fix):
-                    fix(p,t,key,makeSpeedModeKey,"s",bl,cur,toff,'',feedback)
+                    fix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,'',feedback)
                 else:
                     cur.SetBind(key, "Speed Mode", "Speed On Demand",
                                 t['ini'] + self.actPower_toggle(1,1,t['speed'],toff) + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
@@ -756,7 +756,7 @@ class SoD(Page):
             elif (bl == "as"):
                 bindload = t['bl']('as')
                 if (fix):
-                    fix(p,t,key,makeSpeedModeKey,"s",bl,cur,toff,"a",feedback)
+                    fix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"a",feedback)
                 elif (not feedback):
                     cur.SetBind(key, "Speed Mode", "Speed On Demand",
                                 t['ini'] + self.actPower_toggle(1,1,t['speed'],toff) + t.dirs('UDLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
@@ -771,7 +771,7 @@ class SoD(Page):
 
             else:
                 if (fix):
-                    fix(p,t,key,makeSpeedModeKey,"s",bl,cur,toff,"f",feedback)
+                    fix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"f",feedback)
                 else:
                     cur.SetBind(key, "Speed Mode", "Speed On Demand",
                                 t['ini'] + self.actPower_toggle(1,1,t['speed'],toff) + '$$up 0' +  t['detaillo'] + t['flycamdist'] + feedback + t['bl']('fs'))
@@ -793,19 +793,19 @@ class SoD(Page):
 
             if (bl == "j"):
                 if (t['horizkeys'] + t['space'] > 0):
-                    a = actPower(None,1,t['jump'],toff) + '$$up 1'
+                    a = self.actPower(None,1,t['jump'],toff) + '$$up 1'
                 else:
-                    a = actPower(None,1,t['cjmp'],toff)
+                    a = self.actPower(None,1,t['cjmp'],toff)
 
                 bindload = t['bl']('j')
                 tgl.SetBind(key, "Jump Mode", "Speed On Demand", '-down' + a + t['detaillo'] + t['flycamdist'] + bindload)
                 cur.SetBind(key, "Jump Mode", "Speed On Demand", '+down' + feedback + BindFile.BLF(p, fbl))
             elif (bl == "aj"):
                 bindload = t['bl']('aj')
-                tgl.SetBind(key, "Jump Mode", "Speed On Demand", '-down' + actPower(None,1,t['jump'],toff) + '$$up 1' + t['detaillo'] + t['flycamdist'] + t.dirs('DLR') + bindload)
+                tgl.SetBind(key, "Jump Mode", "Speed On Demand", '-down' + self.actPower(None,1,t['jump'],toff) + '$$up 1' + t['detaillo'] + t['flycamdist'] + t.dirs('DLR') + bindload)
                 cur.SetBind(key, "Jump Mode", "Speed On Demand", '+down' + feedback + BindFile.BLF(p, fbl))
             else:
-                tgl.SetBind(key, "Jump Mode", "Speed On Demand", '-down' + actPower(None,1,t['jump'],toff) + '$$up 1' + t['detaillo'] + t['flycamdist'] + t['bl']('fj'))
+                tgl.SetBind(key, "Jump Mode", "Speed On Demand", '-down' + self.actPower(None,1,t['jump'],toff) + '$$up 1' + t['detaillo'] + t['flycamdist'] + t['bl']('fj'))
                 cur.SetBind(key, "Jump Mode", "Speed On Demand", '+down' + feedback + BindFile.BLF(p, fbl))
 
 
@@ -826,7 +826,7 @@ class SoD(Page):
             if (bl == "bo"):
                 bindload = t['bl']('bo')
                 if (fix):
-                    fix(p,t,key,makeFlyModeKey,"f",bl,cur,toff,'',feedback)
+                    fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
                     cur.SetBind(key, "Fly Mode", "Speed On Demand", '+down$$' + self.actPower_toggle(1,1,t['flyx'],toff) + '$$up 1$$down 0' + t.dirs('FBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
 
@@ -838,20 +838,20 @@ class SoD(Page):
                 else:          ton = t['hover']
 
                 if (fix):
-                    fix(p,t,key,makeFlyModeKey,"f",bl,cur,toff,'',feedback)
+                    fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
                     cur.SetBind(t['FlyMode'],  "Fly Mode", "Speed On Demand", t['ini'] + self.actPower_toggle(1,1, ton ,toff) + t.dirs('UDLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
 
             elif (bl == "af"):
                 bindload = t['bl']('af')
                 if (fix):
-                    fix(p,t,key,makeFlyModeKey,"f",bl,cur,toff,"a",feedback)
+                    fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"a",feedback)
                 else:
                     cur.SetBind(key,  "Fly Mode", "Speed On Demand", t['ini'] + self.actPower_toggle(1,1,t['flyx'],toff) + t['detaillo'] + t['flycamdist'] + t.dirs('DLR') + feedback + bindload)
 
             else:
                 if (fix):
-                    fix(p,t,key,makeFlyModeKey,"f",bl,cur,toff,"f",feedback)
+                    fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"f",feedback)
                 else:
                     cur.SetBind(key,  "Fly Mode", "Speed On Demand", t['ini'] + self.actPower_toggle(1,1,t['flyx'],toff) + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + t['bl']('ff'))
 
@@ -868,20 +868,20 @@ class SoD(Page):
             if (bl == "gbo"):
                 bindload = t['bl']('gbo')
                 if (fix):
-                    fix(p,t,key,makeGFlyModeKey,"gf",bl,cur,toff,'','')
+                    fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,'','')
                 else:
                     cur.SetBind(key, "Group Fly Mode", "Speed On Demand", t['ini'] + '$$up 1$$down 0' + self.actPower_toggle(None,1,t['gfly'],toff) + t.dirs('FBLR') + t['detaillo'] + t['flycamdist'] .bindload)
 
             elif (bl == "gaf"):
                 bindload = t['bl']('gaf')
                 if (fix):
-                    fix(p,t,key,makeGFlyModeKey,"gf",bl,cur,toff,"a")
+                    fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,"a")
                 else:
                     cur.SetBind(key, "Group Fly Mode", "Speed On Demand", t['ini'] + t['detaillo'] + t['flycamdist'] + t.dirs('UDLR') + bindload)
 
             else:
                 if (fix):
-                    fix(p,t,key,makeGFlyModeKey,"gf",bl,cur,toff,"f")
+                    fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,"f")
                 else:
                     if (bl == "gf"):
                         cur.SetBind(key, "Group Fly Mode", "Speed On Demand", t['ini'] + self.actPower_toggle(1,1,t['gfly'],toff) + t['detaillo'] + t['flycamdist'] + t['bl']('gff'))
@@ -1185,7 +1185,7 @@ class SoD(Page):
                                         'stationary' : t['cjmp'],
                                         'modestr' : "Jump",
                                         'flight' : "Jump",
-                                        'fix' : sodJumpFix,
+                                        'fix' : self.sodJumpFix,
                                         'turnoff' : jturnoff,
                                     })
                                     t[self.GetState('Default') + "Mode"] = None
@@ -1387,7 +1387,7 @@ class SoD(Page):
 
             if dwarfpbind: dwrffile.SetBind(Dwarf['Mode'], "Dwarf Mode", "Speed On Demand", dwarfpbind)
             if t['canqfly']:
-                makeQFlyModeKey(profile,t,"r",dwrffile,Dwarf['Dwarf'],"Dwarf")
+                self.makeQFlyModeKey(profile,t,"r",dwrffile,Dwarf['Dwarf'],"Dwarf")
 
             dwrffile.SetBind(self.GetState('Forward'), "Forward", "Speed On Demand","+forward")
             dwrffile.SetBind(self.GetState('Left'), "Left", "Speed On Demand", "+left")
@@ -1599,9 +1599,11 @@ class SoD(Page):
 
 
     def sodDownKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
+        (up,dowx,forw,bac,lef,rig) = (t.U,t['dowx'],t.F,t.B,t.L,t.R)
 
         actkeys = t['totalkeys']
 
+        up = dowx = forw = bac = lef = rig = ''
         if (not flight):
             mobile = None
             stationary = None
@@ -1642,7 +1644,7 @@ class SoD(Page):
 
         toggle = ''
         if (toggleon or toggleoff):
-           toggle = actPower_name(None,1,toggleon,toggleoff)
+           toggle = self.actPower_name(None,1,toggleon,toggleoff)
 
 
         newbits =t.KeyState({'toggle' : 'X'})
@@ -1664,7 +1666,7 @@ class SoD(Page):
             curfile.SetBind(self.GetState('Down'), "Down", "Speed On Demand", f"{ini}{up}{dowx}$$backward 0{lef}{rig}{t['mlon']}{bl}")
 
 
-    def sodForwardKey(self, t, bl, curfile,  mobile, stationary, flught, autorunbl, followbl, bo, sssj):
+    def sodForwardKey(self, t, bl, curfile,  mobile, stationary, flight, autorunbl, followbl, bo, sssj):
         (up,dow,forx,bac,lef,rig) = (t.U,t.D,t['forx'],t.B,t.L,t.R)
 
         actkeys = t['totalkeys']
@@ -1708,7 +1710,7 @@ class SoD(Page):
 
         toggle = ''
         if (toggleon or toggleoff):
-           toggle = actPower_name(None,1,toggleon,toggleoff)
+           toggle = self.actPower_name(None,1,toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'W'})
         bl = re.sub('\d\d\d\d\d\d', newbits, bl)
@@ -1741,7 +1743,7 @@ class SoD(Page):
             if (self.GetState('MouseChord')) :
                 curfile.SetBind('mousechord', "Mouse Chord", "Speed On Demand", f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{rig}{lef}{t['mlon']}{bl}")
 
-    def sodBackKey(t,bl,curfile,mobile,stationary,flight,autorunbl,followbl,bo,sssj):
+    def sodBackKey(self,t,bl,curfile,mobile,stationary,flight,autorunbl,followbl,bo,sssj):
         (up,dow,forw,bacx,lef,rig) = (t.U,t.D,t.F, t['bacx'],t.L,t.R)
 
         actkeys = t['totalkeys']
@@ -1784,7 +1786,7 @@ class SoD(Page):
 
         toggle = ''
         if (toggleon or toggleoff) :
-           toggle = actPower_name(None,1,toggleon,toggleoff)
+           toggle = self.actPower_name(None,1,toggleon,toggleoff)
 
         newbits =t.KeyState({'toggle' : 'S'})
         bl = re.sub('\d\d\d\d\d\d', newbits, bl)
@@ -1811,7 +1813,7 @@ class SoD(Page):
 
             curfile.SetBind(self.GetState('Back'), "Back", "Speed On Demand", f"{ini}{up}{dow}{move}{lef}{rig}{t['mlon']}{bl}")
 
-    def sodLeftKey(t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
+    def sodLeftKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
         (up,dow,forw,bac,lefx,rig) = (t.U,t.D,t.F,t.B, t['lefx'],t.R)
 
         actkeys = t['totalkeys']
@@ -1854,7 +1856,7 @@ class SoD(Page):
 
         toggle = ''
         if (toggleon or toggleoff) :
-           toggle = actPower_name(None,1,toggleon,toggleoff)
+           toggle = self.actPower_name(None,1,toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'A'})
         bl = re.sub('\d\d\d\d\d\d', newbits, bl)
@@ -1875,7 +1877,7 @@ class SoD(Page):
         else:
             curfile.SetBind(self.GetState('Left'), "Left", "Speed On Demand", f"{ini}{up}{dow}{'$$backward 0'}{lefx}{rig}{t['mlon']}{bl}")
 
-    def sodRightKey(t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
+    def sodRightKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
         (up,dow,forw,bac,lef,rigx) = (t.U,t.D,t.F,t.B,t.L, t['rigx'])
 
         actkeys = t['totalkeys']
@@ -1917,7 +1919,7 @@ class SoD(Page):
 
         toggle = ''
         if (toggleon or toggleoff) : 
-           toggle = actPower_name(None,1,toggleon,toggleoff)
+           toggle = self.actPower_name(None,1,toggleon,toggleoff)
 
         newbits =t.KeyState({'toggle' : 'D'})
         bl = re.sub('\d\d\d\d\d\d', newbits, bl)
@@ -1939,52 +1941,52 @@ class SoD(Page):
             curfile.SetBind(self.GetState('Right'), "Right", "Speed On Demand", f"{ini}{up}{dow}$$forward 1$$backward 0{lef}{rigx}{t['mlon']}{bl}")
 
 
-    def sodAutoRunKey(t,bl,curfile,mobile,sssj):
+    def sodAutoRunKey(self,t,bl,curfile,mobile,sssj):
         if (sssj and t['space'] == 1) :
-            curfile.SetBind(self.GetState('AutoRun'), "Auto Run", "Speed On Demand", 'forward 1$$backward 0' + t.dirs('UDLR') + t['mlon'] + actPower_name(None,1,sssj,mobile) + bl)
+            curfile.SetBind(self.GetState('AutoRun'), "Auto Run", "Speed On Demand", 'forward 1$$backward 0' + t.dirs('UDLR') + t['mlon'] + self.actPower_name(None,1,sssj,mobile) + bl)
         else:
-            curfile.SetBind(self.GetState('AutoRun'), "Auto Run", "Speed On Demand", 'forward 1$$backward 0' + t.dirs('UDLR') + t['mlon'] + actPower_name(None,1,mobile) + bl)
+            curfile.SetBind(self.GetState('AutoRun'), "Auto Run", "Speed On Demand", 'forward 1$$backward 0' + t.dirs('UDLR') + t['mlon'] + self.actPower_name(None,1,mobile) + bl)
 
-    def sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight,sssj):
+    def sodAutoRunOffKey(self, t,bl,curfile,mobile,stationary,flight,sssj):
         if (not flight and not sssj) :
             if (t['horizkeys'] > 0) :
-               toggleon = t['mlon'] + actPower_name(None,1,mobile)
+               toggleon = t['mlon'] + self.actPower_name(None,1,mobile)
             else:
-               toggleon = t['mloff'] + actPower_name(None,1,stationary,mobile)
+               toggleon = t['mloff'] + self.actPower_name(None,1,stationary,mobile)
 
         elif (sssj) :
             if (t['horizkeys'] > 0 or t['space'] == 1) :
-               toggleon = t['mlon'] + actPower_name(None,1,mobile,toggleoff)
+               toggleon = t['mlon'] + self.actPower_name(None,1,mobile,toggleoff)
             else:
-               toggleon = t['mloff'] + actPower_name(None,1,stationary,mobile,toggleoff)
+               toggleon = t['mloff'] + self.actPower_name(None,1,stationary,mobile,toggleoff)
 
         else:
             if (t['totalkeys'] > 0) :
-               toggleon = t['mlon'] + actPower_name(None,1,mobile)
+               toggleon = t['mlon'] + self.actPower_name(None,1,mobile)
             else:
-               toggleon = t['mloff'] + actPower_name(None,1,stationary,mobile)
+               toggleon = t['mloff'] + self.actPower_name(None,1,stationary,mobile)
 
         bindload = bl + t.KeyState + '.txt'
         curfile.SetBind(self.GetState('AutoRun'), "Auto Run", "Speed On Demand", t.dirs('UDFBLR') + toggleon + bindload)
 
 
-    def sodFollowKey(t,bl,curfile,mobile):
-        curfile.SetBind(self.GetState('Follow'), "Follow", "Speed On Demand", 'follow' + actPower_name(None,1,mobile) + bl + t.KeyState() + '.txt')
+    def sodFollowKey(self, t,bl,curfile,mobile):
+        curfile.SetBind(self.GetState('Follow'), "Follow", "Speed On Demand", 'follow' + self.actPower_name(None,1,mobile) + bl + t.KeyState() + '.txt')
 
-    def sodFollowOffKey(t,bl,curfile,mobile,stationary,flight):
+    def sodFollowOffKey(self, t,bl,curfile,mobile,stationary,flight):
         if (not flight):
             if (t['horizkeys'] == 0) :
                 if (stationary == mobile) :
-                   toggle = actPower_name(None,1,stationary,mobile)
+                   toggle = self.actPower_name(None,1,stationary,mobile)
                 else:
-                   toggle = actPower_name(None,1,stationary)
+                   toggle = self.actPower_name(None,1,stationary)
 
         else:
             if (t['totalkeys'] == 0) :
                 if (stationary == mobile) :
-                   toggle = actPower_name(None,1,stationary,mobile)
+                   toggle = self.actPower_name(None,1,stationary,mobile)
                 else:
-                   toggle = actPower_name(None,1,stationary)
+                   toggle = self.actPower_name(None,1,stationary)
 
         curfile.SetBind(self.GetState('Follow'), "Follow", "Speed On Demand", "follow" + toggle + t.U + t['dow'] + t.F + t.B + t.L + t.R + bl + t.KeyState() + '.txt')
 
@@ -2036,7 +2038,7 @@ class SoD(Page):
             Utility.CheckConflict("TempMode","Temp Mode Key")
             Utility.CheckConflict(self.GetState('Temp'),"TraySwitch","Tray Toggle Key")
 
-        if ((profile.General.GetState('Archetype') == "Peacebringer") or (profile.General.GetState('Archetype') == "Warshade")) :
+        if ((self.Profile.General.GetState('Archetype') == "Peacebringer") or (self.Profile.General.GetState('Archetype') == "Warshade")) :
             if (self.GetState('Nova')  and self.GetState('NovaEnable')): Utility.CheckConflict(self.GetState('Nova'), "Mode","Nova Form Bind")
             if (self.GetState('Dwarf') and self.GetState('DwarfEnable')): Utility.CheckConflict(self.GetState('Dwarf'),"Mode","Dwarf Form Bind")
 
@@ -2085,7 +2087,6 @@ class SoD(Page):
         # return s
 
 
-    #sub actPower { goto &actPower_name
     def actPower_name(self, start, unq, on,*rest):
         pass
         #if (ref on):
@@ -2181,7 +2182,7 @@ class SoD(Page):
         tglfile = profile.GetBindFile(filename)
         t['ini'] = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
-        curfile.SetBind(key, "Jump Fix", "Speed On Demand", "+down" + feedback + actPower_name(None,1,t['cjmp']) + BindFile.BLF(profile,filename))
+        curfile.SetBind(key, "Jump Fix", "Speed On Demand", "+down" + feedback + self.actPower_name(None,1,t['cjmp']) + BindFile.BLF(profile,filename))
 
 
     def sodSetDownFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
@@ -2268,11 +2269,11 @@ class tObject(dict):
             self[key] = init[key]
 
 
-    # return binary string of which keys are "on";
+    # return binary "011010" string of which keys are "on";
     # optionally flipping one of them first.
     # TODO:  not clear this belongs on a class, as opposed
     # to just a utility sub here or in Utility.
-    def KeyState(self, p):
+    def KeyState(self, p = {}):
         togglebit = p['toggle']
 
         ret = ''
@@ -2282,6 +2283,13 @@ class tObject(dict):
             else:
                 ret = ret + str(self[key])
         return ret
+
+    def U(self) : return self['up']
+    def D(self) : return self['dow']
+    def F(self) : return self['forw']
+    def B(self) : return self['bac']
+    def L(self) : return self['lef']
+    def R(self) : return self['rig']
 
 
     # These next two subs are terrible.  This stuff should all be squirreled away in BindFile.
@@ -2311,9 +2319,3 @@ class tObject(dict):
 #
 #        returnret
 #
-#    sub U { shift()['up']
-#    sub D { shift()['dow']
-#    sub F { shift()['forw']
-#    sub B { shift()['bac']
-#    sub L { shift()['lef']
-#    sub R { shift()['rig']

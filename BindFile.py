@@ -1,5 +1,6 @@
 from pathlib import Path
 from KeyBind import KeyBind
+from collections import deque
 
 class BindFile():
 
@@ -52,10 +53,15 @@ class BindFile():
             return
 
         # TODO -- sort all this stuff by the Alpha key, subsort by mod keys
+        def rotateKeyBind(kb):
+            kb = deque(kb.split('+'))
+            kb.rotate(1)
+            return "+".join(kb)
+        sortedKeyBinds = sorted(self.Binds, key = rotateKeyBind)
 
         output = ''
-        for bind, keybind in self.Binds.items():
-            output = output + keybind.GetKeyBindString()
+        for keybind in sortedKeyBinds:
+            output = output + self.Binds[keybind].GetKeyBindString()
 
         print(output)
         self.Path.write_text(output)

@@ -932,7 +932,7 @@ class SoD(Page):
             self.SetState('Default', "NonSoD")
 
 
-        t = {
+        t = tObject({
             'profile'    : profile,
             'sprint'     : '',
             'speed'      : '',
@@ -960,7 +960,7 @@ class SoD(Page):
             'detailhi'   : '',
             'detaillo'   : '',
             'RunMode'    : '',
-        }
+        })
 
         if (self.GetState('JumpCJ') and not self.GetState('JumpSJ')):
             t['cancj'] = 1
@@ -1100,7 +1100,6 @@ class SoD(Page):
                                 t['horizkeys'] = W+S+A+D;    # total # of horizontal move keys.    So Sprint isn't turned on when jumping
                                 t['vertkeys'] = space+X
                                 t['jkeys'] = t['horizkeys']+t['space']
-
                                 if (self.GetState('NonSoD') or t['canqfly']):
                                     t[self.GetState('Default') + "Mode"] = t['NonSoDMode']
                                     self.makeSoDFile({
@@ -1573,6 +1572,7 @@ class SoD(Page):
                    toggleon = stationary
 
 
+        toggle = ''
         if (toggleon or toggleoff):
            toggle = self.actPower_name(None,1,toggleon,toggleoff,toggleoff2)
 
@@ -1587,14 +1587,14 @@ class SoD(Page):
             move = ''
             if (t['space'] != 1):
                 bl = re.sub('\d\d\d\d\d\d', '000000', followbl)
-                move = upx + dow + forw + bac + lef + rig
+                move = f"{upx}{dow}{forw}{bac}{lef}{rig}"
 
-            curfile.SetBind(self.GetState('Up'), "Up", "Speed On Demand", ini + move + bl)
-        elif (notautorun):
-            curfile.SetBind(self.GetState('Up'), "Up", "Speed On Demand", ini + upx + dow + forw + bac + lef + rig + ml + toggle + bl)
+            curfile.SetBind(self.GetState('Up'), "Up", "Speed On Demand", f"{ini}{move}{bl}")
+        elif (not autorun):
+            curfile.SetBind(self.GetState('Up'), "Up", "Speed On Demand", f"{ini}{upx}{dow}{forw}{bac}{lef}{rig}{ml}{toggle}{bl}")
         else:
             if (not sssj) : toggle = ''  #  returns the following line to the way it was before sssj
-            curfile.SetBind(self.GetState('Up'), "Up", "Speed On Demand", ini + upx + dow + '$$backward 0' + lef + rig + toggle + t['mlon'] + bl)
+            curfile.SetBind(self.GetState('Up'), "Up", "Speed On Demand", f"{ini}{upx}{dow}$$backward 0{lef}{rig}{toggle}{t['mlon']}{bl}")
 
 
 
@@ -1640,6 +1640,7 @@ class SoD(Page):
             toggleoff = None
 
 
+        toggle = ''
         if (toggleon or toggleoff):
            toggle = actPower_name(None,1,toggleon,toggleoff)
 
@@ -1654,13 +1655,13 @@ class SoD(Page):
             move = ''
             if (t['X'] != 1):
                 bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
-                move = up + dowx + forw + bac + lef + rig
+                move = f"{up}{dowx}{forw}{bac}{lef}{rig}"
 
-            curfile.SetBind(self.GetState('Down'), "Down", "Speed On Demand", ini + move + bl)
-        elif (notautorun):
-            curfile.SetBind(self.GetState('Down'), "Down", "Speed On Demand", ini + up + dowx + forw + bac + lef + rig + ml + toggle + bl)
+            curfile.SetBind(self.GetState('Down'), "Down", "Speed On Demand", f"{ini}{move}{bl}")
+        elif (not autorun):
+            curfile.SetBind(self.GetState('Down'), "Down", "Speed On Demand", f"{ini}{up}{dowx}{forw}{bac}{lef}{rig}{ml}{toggle}{bl}")
         else:
-            curfile.SetBind(self.GetState('Down'), "Down", "Speed On Demand", ini + up + dowx + '$$backward 0' + lef + rig + t['mlon'] + bl)
+            curfile.SetBind(self.GetState('Down'), "Down", "Speed On Demand", f"{ini}{up}{dowx}$$backward 0{lef}{rig}{t['mlon']}{bl}")
 
 
     def sodForwardKey(self, t, bl, curfile,  mobile, stationary, flught, autorunbl, followbl, bo, sssj):
@@ -1705,6 +1706,7 @@ class SoD(Page):
            toggleon = sssj
            toggleoff = mobile
 
+        toggle = ''
         if (toggleon or toggleoff):
            toggle = actPower_name(None,1,toggleon,toggleoff)
 
@@ -1719,25 +1721,25 @@ class SoD(Page):
                move = ini
             else:
                 bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
-                move = ini + up + dow + forx + bac + lef + rig
+                move = f"{ini}{up}{dow}{forx}{bac}{lef}{rig}"
 
             curfile.SetBind(self.GetState('Forward'), "Forward", "Speed On Demand", move + bl)
             if (self.GetState('MouseChord')):
-                if (t['W'] == 1) : move = ini + up + dow + forx + bac + rig + lef
+                if (t['W'] == 1) : move = f"{ini}{up}{dow}{forx}{bac}{rig}{lef}"
                 curfile.SetBind('mousechord', "Mouse Chord", "Speed On Demand",  move + bl)
 
-        elif (notautorunbl):
-            curfile.SetBind(self.GetState('Forward'), "Forward", "Speed On Demand", ini + up + dow + forx + bac + lef + rig + ml + toggle + bl)
+        elif (not autorunbl):
+            curfile.SetBind(self.GetState('Forward'), "Forward", "Speed On Demand", f"{ini}{up}{dow}{forx}{bac}{lef}{rig}{ml}{toggle}{bl}")
             if (self.GetState('MouseChord')):
-                curfile.SetBind('mousechord', "Mouse Chord", "Speed On Demand", ini + up + dow + forx + bac + rig + lef + ml + toggle + bl)
+                curfile.SetBind('mousechord', "Mouse Chord", "Speed On Demand", f"{ini}{up}{dow}{forx}{bac}{rig}{lef}{ml}{toggle}{bl}")
 
         else:
             if (t['W'] == 1):
                 bl = re.sub('\d\d\d\d\d\d', newbits, autorunbl)
 
-            curfile.SetBind(self.GetState('Forward'), "Forward", "Speed On Demand", ini + up + dow + '$$forward 1$$backward 0' + lef + rig + t['mlon'] + bl)
+            curfile.SetBind(self.GetState('Forward'), "Forward", "Speed On Demand", f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{lef}{rig}{t['mlon']}{bl}")
             if (self.GetState('MouseChord')) :
-                curfile.SetBind('mousechord', "Mouse Chord", "Speed On Demand", ini + up + dow + '$$forward 1$$backward 0' + rig + lef + t['mlon'] + bl)
+                curfile.SetBind('mousechord', "Mouse Chord", "Speed On Demand", f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{rig}{lef}{t['mlon']}{bl}")
 
     def sodBackKey(t,bl,curfile,mobile,stationary,flight,autorunbl,followbl,bo,sssj):
         (up,dow,forw,bacx,lef,rig) = (t.U,t.D,t.F, t['bacx'],t.L,t.R)
@@ -1780,6 +1782,7 @@ class SoD(Page):
             toggleon = sssj
             toggleoff = mobile
 
+        toggle = ''
         if (toggleon or toggleoff) :
            toggle = actPower_name(None,1,toggleon,toggleoff)
 
@@ -1794,11 +1797,11 @@ class SoD(Page):
                move = ini
             else:
                 bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
-                move = ini + up + dow + forw + bacx + lef + rig
+                move = f"{ini}{up}{dow}{forw}{bacx}{lef}{rig}"
 
             curfile.SetBind(self.GetState('Back'), "Back", "Speed On Demand", move + bl)
-        elif (notautorunbl) :
-            curfile.SetBind(self.GetState('Back'), "Back", "Speed On Demand", ini + up + dow + forw + bacx + lef + rig + ml + toggle + bl)
+        elif (not autorunbl) :
+            curfile.SetBind(self.GetState('Back'), "Back", "Speed On Demand", f"{ini}{up}{dow}{forw}{bacx}{lef}{rig}{ml}{toggle}{bl}")
         else:
             if (t['S'] == 1):
                 move = '$$forward 1$$backward 0'
@@ -1806,7 +1809,7 @@ class SoD(Page):
                 move = '$$forward 0$$backward 1'
                 bl = re.sub('\d\d\d\d\d\d', newbits, autorunbl)
 
-            curfile.SetBind(self.GetState('Back'), "Back", "Speed On Demand", ini + up + dow + move + lef + rig + t['mlon'] + bl)
+            curfile.SetBind(self.GetState('Back'), "Back", "Speed On Demand", f"{ini}{up}{dow}{move}{lef}{rig}{t['mlon']}{bl}")
 
     def sodLeftKey(t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
         (up,dow,forw,bac,lefx,rig) = (t.U,t.D,t.F,t.B, t['lefx'],t.R)
@@ -1849,6 +1852,7 @@ class SoD(Page):
            toggleon = sssj
            toggleoff = mobile
 
+        toggle = ''
         if (toggleon or toggleoff) :
            toggle = actPower_name(None,1,toggleon,toggleoff)
 
@@ -1863,13 +1867,13 @@ class SoD(Page):
                move = ini
             else:
                 bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
-                move = ini + up + dow + forw + bac + lefx + rig
+                move = f"{ini}{up}{dow}{forw}{bac}{lefx}{rig}"
 
             curfile.SetBind(self.GetState('Left'), "Left", "Speed On Demand", move + bl)
-        elif (notautorun) :
-            curfile.SetBind(self.GetState('Left'), "Left", "Speed On Demand", ini + up + dow + forw + bac + lefx + rig + ml + toggle + bl)
+        elif (not autorun) :
+            curfile.SetBind(self.GetState('Left'), "Left", "Speed On Demand", f"{ini}{up}{dow}{forw}{bac}{lefx}{rig}{ml}{toggle}{bl}")
         else:
-            curfile.SetBind(self.GetState('Left'), "Left", "Speed On Demand", ini + up + dow + '$$backward 0' + lefx + rig + t['mlon'] + bl)
+            curfile.SetBind(self.GetState('Left'), "Left", "Speed On Demand", f"{ini}{up}{dow}{'$$backward 0'}{lefx}{rig}{t['mlon']}{bl}")
 
     def sodRightKey(t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
         (up,dow,forw,bac,lef,rigx) = (t.U,t.D,t.F,t.B,t.L, t['rigx'])
@@ -1911,6 +1915,7 @@ class SoD(Page):
            toggleon = sssj
            toggleoff = mobile
 
+        toggle = ''
         if (toggleon or toggleoff) : 
            toggle = actPower_name(None,1,toggleon,toggleoff)
 
@@ -1925,13 +1930,13 @@ class SoD(Page):
                 move = ini
             else:
                 bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
-                move = ini + up + dow + forw + bac + lef + rigx
+                move = f"{ini}{up}{dow}{forw}{bac}{lef}{rigx}"
 
             curfile.SetBind(self.GetState('Right'), "Right", "Speed On Demand", move + bl)
-        elif (notautorun) :
-            curfile.SetBind(self.GetState('Right'), "Right", "Speed On Demand", ini + up + dow + forw + bac + lef + rigx + ml + toggle + bl)
+        elif (not autorun) :
+            curfile.SetBind(self.GetState('Right'), "Right", "Speed On Demand", f"{ini}{up}{dow}{forw}{bac}{lef}{rigx}{ml}{toggle}{bl}")
         else:
-            curfile.SetBind(self.GetState('Right'), "Right", "Speed On Demand", ini + up + dow + '$$forward 1$$backward 0' + lef + rigx + t['mlon'] + bl)
+            curfile.SetBind(self.GetState('Right'), "Right", "Speed On Demand", f"{ini}{up}{dow}$$forward 1$$backward 0{lef}{rigx}{t['mlon']}{bl}")
 
 
     def sodAutoRunKey(t,bl,curfile,mobile,sssj):
@@ -2062,7 +2067,7 @@ class SoD(Page):
         #            unq = 1
 
         #     else:
-        #         if ($v and ($v ne 'on') and notoffpower[$v]) {
+        #         if ($v and ($v ne 'on') and not offpower[$v]) {
         #            offpower[$v] = 1
         #            s .= '$$powexectoggleoff ' + v
 
@@ -2256,7 +2261,12 @@ class SoD(Page):
         'SprintSoD' : 'Enable Sprint SoD',
     })
 
-class t():
+class tObject(dict):
+    # TODO - do we want to call out each possibility by name since it's a known list?
+    def __init__(self, init):
+        for key in init:
+            self[key] = init[key]
+
 
     # return binary string of which keys are "on";
     # optionally flipping one of them first.
@@ -2265,6 +2275,7 @@ class t():
     def KeyState(self, p):
         togglebit = p['toggle']
 
+        ret = ''
         for key in ('space','X','W','S','A','D'):
             if key == togglebit:
                 ret = ret + str(not self[key])

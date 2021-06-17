@@ -122,6 +122,11 @@ class General(Page):
             ctlType = 'checkbox',
         )
 
+        prefsBox.AddLabeledControl(
+            ctlName = 'UseSplitModKeys',
+            ctlType = 'checkbox',
+        )
+
         topSizer.Add(powersBox, 0, wx.ALL, 6)
         topSizer.Add(prefsBox, 0, wx.ALL, 6)
 

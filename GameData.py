@@ -2516,7 +2516,7 @@ Inspirations = {
     },
     'Defense'      : {
         'color': (128, 0, 153),  # purple
-        'tiers': ['Luck'           , 'Good Luck'            , 'Phenominal Luck'] ,
+        'tiers': ['Luck'           , 'Good Luck'            , 'Phenomenal Luck'] ,
     },
     'ResistDamage' : {
         'color': (230, 80, 0),   # orange

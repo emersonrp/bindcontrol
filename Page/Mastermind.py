@@ -3,6 +3,8 @@ import UI
 
 # Sandolphan / Khaiba's guide to these controls found at:
 # https://guidescroll.com/2011/07/city-of-heroes-mastermind-numeric-keypad-pet-controls/
+#
+# Originally: https://web.archive.org/web/20120904222729/http://boards.cityofheroes.com/showthread.php?t=117256
 
 from Page import Page
 from UI.ControlGroup import ControlGroup
@@ -14,62 +16,62 @@ class Mastermind(Page):
             {
                 'label'      : 'Select All',
                 'ctrlName'      : 'PetSelectAll',
-                'tooltipdetail' : 'Select all of your pets',
+                'tooltipdetail' : 'select all of your pets',
             },
             {
                 'label'      : 'Select Minions',
                 'ctrlName'      : 'PetSelectMinions',
-                'tooltipdetail' : 'Select your "minion" pets',
+                'tooltipdetail' : 'select your "minion" pets',
             },
             {
                 'label'      : 'Select Lieutenants',
                 'ctrlName'      : 'PetSelectLieutenants',
-                'tooltipdetail' : 'Select your "lieutenant" pets',
+                'tooltipdetail' : 'select your "lieutenant" pets',
             },
             {
                 'label'      : 'Select Boss',
                 'ctrlName'      : 'PetSelectBoss',
-                'tooltipdetail' : 'Select your "boss" pet',
-            },
-            {
-                'label'      : 'Bodyguard',
-                'ctrlName'      : 'PetBodyguard',
-                'tooltipdetail' : 'Put your selected pets into Bodyguard mode',
+                'tooltipdetail' : 'select your "boss" pet',
             },
             {
                 'label'      : 'Aggressive',
                 'ctrlName'      : 'PetAggressive',
-                'tooltipdetail' : 'Set your selected pets to "Aggressive" mode',
+                'tooltipdetail' : 'set your selected pets to "Aggressive" mode',
             },
             {
                 'label'      : 'Defensive',
                 'ctrlName'      : 'PetDefensive',
-                'tooltipdetail' : 'Set your selected pets to "Defensive" mode',
+                'tooltipdetail' : 'set your selected pets to "Defensive" mode',
             },
             {
                 'label'      : 'Passive',
                 'ctrlName'      : 'PetPassive',
-                'tooltipdetail' : 'Set your selected pets to "Passive" mode',
+                'tooltipdetail' : 'set your selected pets to "Passive" mode',
             },
             {
                 'label'      : 'Attack',
                 'ctrlName'      : 'PetAttack',
-                'tooltipdetail' : 'Order your selected pets to Attack your target',
+                'tooltipdetail' : 'order your selected pets to Attack your target',
             },
             {
                 'label'      : 'Follow',
                 'ctrlName'      : 'PetFollow',
-                'tooltipdetail' : 'Order your selected pets to Follow you',
-            },
-            {
-                'label'      : 'Stay',
-                'ctrlName'      : 'PetStay',
-                'tooltipdetail' : 'Order your selected pets to Stay at their current location',
+                'tooltipdetail' : 'order your selected pets to Follow you',
             },
             {
                 'label'      : 'Go To',
                 'ctrlName'      : 'PetGoto',
-                'tooltipdetail' : 'Order your selected pets to Go To a targeted location',
+                'tooltipdetail' : 'order your selected pets to Go To a targeted location',
+            },
+            {
+                'label'      : 'Stay',
+                'ctrlName'      : 'PetStay',
+                'tooltipdetail' : 'order your selected pets to Stay at their current location',
+            },
+            {
+                'label'      : 'Bodyguard',
+                'ctrlName'      : 'PetBodyguard',
+                'tooltipdetail' : 'put your selected pets into Bodyguard mode',
             },
         )
 
@@ -80,19 +82,19 @@ class Mastermind(Page):
         self.Init = {
             'Enable' : False,
 
-            'PetSelectAll' : 'LALT+V',
+            'PetSelectAll' : 'NUMPAD0',
             'PetSelectAllResponse' : 'Orders?',
             'PetSelectAllResponseMethod' : 'Petsay',
 
-            'PetSelectMinions' : 'LALT+Z',
+            'PetSelectMinions' : 'NUMPAD1',
             'PetSelectMinionsResponse' : 'Orders?',
             'PetSelectMinionsResponseMethod' : 'Petsay',
 
-            'PetSelectLieutenants' : 'LALT+X',
+            'PetSelectLieutenants' : 'NUMPAD2',
             'PetSelectLieutenantsResponse' : 'Orders?',
             'PetSelectLieutenantsResponseMethod' : 'Petsay',
 
-            'PetSelectBoss' : 'LALT+C',
+            'PetSelectBoss' : 'NUMPAD3',
             'PetSelectBossResponse' : 'Orders?',
             'PetSelectBossResponseMethod' : 'Petsay',
 
@@ -100,33 +102,33 @@ class Mastermind(Page):
             'PetBodyguardResponse' : 'Bodyguarding.',
             'PetBodyguardResponseMethod' : 'Petsay',
 
-            'PetAggressive' : 'LALT+A',
+            'PetAggressive' : 'NUMPAD4',
             'PetAggressiveResponse' : 'Kill On Sight.',
             'PetAggressiveResponseMethod' : 'Petsay',
 
-            'PetDefensive' : 'LALT+S',
+            'PetDefensive' : 'NUMPAD5',
             'PetDefensiveResponse' : 'Return Fire Only.',
             'PetDefensiveResponseMethod' : 'Petsay',
 
-            'PetPassive' : 'LALT+D',
+            'PetPassive' : 'NUMPAD6',
             'PetPassiveResponse' : 'At Ease.',
             'PetPassiveResponseMethod' : 'Petsay',
 
-            'PetAttack' : 'LALT+Q',
+            'PetAttack' : 'NUMPAD7',
             'PetAttackResponse' : 'Open Fire!',
             'PetAttackResponseMethod' : 'Petsay',
 
-            'PetFollow' : 'LALT+W',
+            'PetFollow' : 'NUMPAD8',
             'PetFollowResponse' : 'Falling In.',
             'PetFollowResponseMethod' : 'Petsay',
 
-            'PetStay' : 'LALT+E',
-            'PetStayResponse' : 'Holding This Position',
-            'PetStayResponseMethod' : 'Petsay',
-
-            'PetGoto' : 'LALT+LBUTTON',
+            'PetGoto' : 'NUMPAD9',
             'PetGotoResponse' : 'Moving To Checkpoint.',
             'PetGotoResponseMethod' : 'Petsay',
+
+            'PetStay' : 'DECIMAL',
+            'PetStayResponse' : 'Holding This Position',
+            'PetStayResponseMethod' : 'Petsay',
 
             'PetBodyguardMode' : 1,
             'PetBodyguardAttack' : '',
@@ -140,12 +142,12 @@ class Mastermind(Page):
             'PetSelect5' : 'F5',
             'PetSelect6' : 'F6',
 
-            'Pet1Name' : 'Crow T Robot',
-            'Pet2Name' : 'Tom Servo',
-            'Pet3Name' : 'Cambot',
-            'Pet4Name' : 'Gypsy',
-            'Pet5Name' : 'Mike',
-            'Pet6Name' : 'Joel',
+            'Pet1Name' : '',
+            'Pet2Name' : '',
+            'Pet3Name' : '',
+            'Pet4Name' : '',
+            'Pet5Name' : '',
+            'Pet6Name' : '',
 
             'Pet1Bodyguard' : 0,
             'Pet2Bodyguard' : 1,
@@ -164,7 +166,7 @@ class Mastermind(Page):
         # get the pet names, whether they're bodyguards, and binds to select them directly
         # TODO -- probably want to enable/disable various bits of this based on whether bodyguard is
         # active, or whether we have names, or whatever
-        petNames = ControlGroup(self, self, width = 5, flexcols=[1,4])
+        petNames = ControlGroup(self, self, width = 5, label = "Pet Info and Selection Binds",flexcols=[1,4])
 
         for PetID in range(1,7):
 
@@ -186,19 +188,19 @@ class Mastermind(Page):
                 tooltip = f"Choose the Key Combo to Select Pet {PetID}"
             )
 
-        useCB = wx.CheckBox( self, -1, 'Enable Mastermind Pet Binds')
+        useCB = wx.CheckBox( self, -1, 'Enable Pet Action Binds')
         useCB.SetToolTip(wx.ToolTip('Check this to enable the Mastermind Pet Action Binds'))
         self.Ctrls['EnablePetActionBinds'] = useCB
 
         # TODO - add checkbox handler to hide/show (enable/disable?) the bodyguard options
         # TODO -- actually, automagically enable/disable these depending on whether any pets have their
         # individual "Bodyguard" checkboxes checked.
-        bgCB = wx.CheckBox( self, -1, 'Enable Bodyguard Mode Binds')
-        bgCB.SetToolTip(wx.ToolTip('Check this to enable the Bodyguard Mode Binds'))
-        bgCB.SetValue(self.Init['PetBodyguardMode'])
-        self.Ctrls['EnablePetBodyguardBinds'] = bgCB
+        # bgCB = wx.CheckBox( self, -1, 'Enable Bodyguard Mode Binds')
+        # bgCB.SetToolTip(wx.ToolTip('Check this to enable the Bodyguard Mode Binds'))
+        # bgCB.SetValue(self.Init['PetBodyguardMode'])
+        # self.Ctrls['EnablePetBodyguardBinds'] = bgCB
 
-        petCommandsKeys  = ControlGroup(self, self, width = 5, flexcols = [4])
+        petCommandsKeys = ControlGroup(self, self, width = 5, label = "Pet Action Binds", flexcols = [4])
 
         # Iterate the data structure at the top and make the grid of controls for the basic pet binds
         ChatOptions = ('Local','Self-Tell','Petsay','---' )
@@ -214,7 +216,7 @@ class Mastermind(Page):
                 ctlName = command['ctrlName'] + 'ResponseMethod',
                 ctlType = 'combobox',
                 contents = ChatOptions,
-                tooltip = "Choose how your pets will respond when they are in chatty mod and you " + command['tooltipdetail'],
+                tooltip = "Choose how your pets will respond when they are in chatty mode and you " + command['tooltipdetail'],
             )
             petCommandsKeys.AddLabeledControl(
                 noLabel = True,
@@ -223,16 +225,13 @@ class Mastermind(Page):
                 tooltip = "Choose the chat response your pets give when you " + command['tooltipdetail'],
             )
 
-
-        sizer.Add(petNames, 0, wx.EXPAND)
-        sizer.Add(useCB, 0, wx.ALL, 10)
-        sizer.Add(bgCB, 0, wx.ALL, 10)
+        sizer.Add(petNames, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 16)
         sizer.AddSpacer(10)
-        sizer.Add(petCommandsKeys, 0, wx.EXPAND)
+        sizer.Add(useCB, 0, wx.ALL, 16)
+        # sizer.Add(bgCB, 0, wx.ALL, 10)
+        sizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 16)
 
-        paddingSizer = wx.BoxSizer(wx.HORIZONTAL)
-        paddingSizer.Add(sizer, 1, flag = wx.ALL|wx.EXPAND, border = 16)
-        self.SetSizerAndFit(paddingSizer)
+        self.SetSizerAndFit(sizer)
 
         self.OnArchetypePowerChange()
 
@@ -556,8 +555,8 @@ class Mastermind(Page):
 
     def mmSubBind(self, profile, file, fn, grp, powers):
         PetResponses = {}
-        for cmd  in ('SelectAll', 'SelectMinions', 'SelectLieutenants', 'SelectBoss', 'Bodyguard',
-                'Aggressive', 'Defensive', 'Passive', 'Attack', 'Follow', 'Stay', 'Goto'):
+        for cmd  in ('SelectAll', 'SelectMinions', 'SelectLieutenants', 'SelectBoss', 
+                'Aggressive', 'Defensive', 'Passive', 'Attack', 'Follow', 'Goto', 'Stay','Bodyguard',):
             PetResponses[cmd] = ''
             if (self.GetState(f"Pet{cmd}ResponseMethod") != 'None') : PetResponses[cmd] = self.GetState(f"Pet{cmd}Response")
 
@@ -574,7 +573,7 @@ class Mastermind(Page):
 
         if grp: petcom = f"$$petcompow {grp}"
         else:   petcom =  "petcomall"
-        for cmd in ('Aggressive','Defensive','Attack','Follow','Stay','Goto'):
+        for cmd in ('Aggressive','Defensive','Attack','Follow','Goto', 'Stay'):
             file.SetBind(self.GetState(f"Pet[cmd]"), f"Pet {cmd}", "Mastermind", self.GetState(f"Pet[cmd]ResponseMethod") + f" {PetResponses[cmd]}{petcom} {cmd}")
 
         if (self.GetState('PetBackgroundAttackEnabled'))  : file.SetBind(self.GetState('PetBackgroundAttack'), "Pet Background Attack", "Mastermind", 'nop')
@@ -583,7 +582,7 @@ class Mastermind(Page):
 
     def mmBGSubBind(self, profile, filedn, fileup, fn, powers):
         PetResponses = {}
-        for cmd in ('SelectAll','SelectMinions','SelectLieutenants','SelectBoss','Bodyguard','Aggressive','Defensive','Passive','Attack','Follow','Stay','Goto'):
+        for cmd in ('SelectAll','SelectMinions','SelectLieutenants','SelectBoss','Aggressive','Defensive','Passive','Attack','Follow','Goto', 'Stay', 'Bodyguard',):
             if (self.GetState(f'Pet{cmd}ResponseMethod') != None) : PetResponses[cmd] = self.GetState(f'Pet{cmd}Response')
 
         filedn.SetBind(self.GetState('PetSelectAll'),        "Pet Select All", "Mastemind", self.GetState('PetSelectAllResponseMethod')         +  f" {PetResponses['SelectAll']}"         + profile.GetBindFile('mmbinds','call.txt').BLF())
@@ -592,7 +591,7 @@ class Mastermind(Page):
         filedn.SetBind(self.GetState('PetSelectBoss'),       "Pet Select Boss", "Mastemind", self.GetState('PetSelectBossResponseMethod')        +  f" {PetResponses['SelectBoss']}"        + profile.GetBindFile('mmbinds','ctier3.txt').BLF())
         self.mmBGSelBind(profile,filedn,PetResponses['Bodyguard'],powers)
 
-        for cmd in ('Aggressive','Defensive','Attack','Follow','Stay','Goto'):
+        for cmd in ('Aggressive','Defensive','Attack','Follow','Goto', 'Stay'):
             self.mmBGActBind(profile, filedn, fileup, cmd, PetResponses[cmd], powers)
 
         if (self.GetState('PetBackgroundAttackenabled')):
@@ -612,7 +611,7 @@ class Mastermind(Page):
 
         if grp: petcom = f"$$petcompow {grp}"
         else:   petcom =  '$$petcomall'
-        for cmd in ('Aggressive','Defensive','Attack','Follow','Stay','Goto'):
+        for cmd in ('Aggressive','Defensive','Attack','Follow','Goto', 'Stay'):
             file.SetBind(self.GetState(f"Pet{cmd}"), "Pet Aggressive", "Mastermind", f"{petcom} {cmd}")
 
         if (self.GetState('PetBackgroundAttackenabled'))  : file.SetBind(self.GetState('PetBackgroundAttack') , "Pet Background Attack", "Mastermind",'nop')
@@ -620,14 +619,14 @@ class Mastermind(Page):
 
         file.SetBind(self.GetState('chattykey'), "Chatty Mode", "Mastermind", 'tell $name, Chatty Mode' + profile.GetBindFile('mmbinds','c' + fn + '.txt').BLF())
 
-    def mmQuietBGSubBind(profile, filedn, fileup, fn, powers):
+    def mmQuietBGSubBind(self, profile, filedn, fileup, fn, powers):
         filedn.SetBind(self.GetState('PetSelectAll'),         "Pet Select All", "Mastermind", profile.GetBindFile('mmbinds','all.txt').BLF())
         filedn.SetBind(self.GetState('PetSelectMinions'),     "Pet Select Minions", "Mastermind", profile.GetBindFile('mmbinds','tier1.txt').BLF())
         filedn.SetBind(self.GetState('PetSelectLieutenants'), "Pet Select Lieutenants", "Mastermind", profile.GetBindFile('mmbinds','tier2.txt').BLF())
         filedn.SetBind(self.GetState('PetSelectBoss'),        "Pet Select Boss", "Mastermind", profile.GetBindFile('mmbinds','tier3.txt').BLF())
 
         self.mmQuietBGSelBind(profile,filedn,powers)
-        for cmd in ('Aggressive','Defensive','Passive','Attack','Follow','Stay','Goto'):
+        for cmd in ('Aggressive','Defensive','Passive','Attack','Follow','Goto', 'Stay'):
             self.mmQuietBGActBind(profile, filedn, fileup, cmd, powers)
 
         if (self.GetState('PetBackgroundAttackenabled')):
@@ -645,10 +644,6 @@ class Mastermind(Page):
         ### TODO
 
         profile = self.Profile
-
-        # TODO, is this the right place to check this?
-        if profile.General.GetState('Archetype') != "Mastermind":
-            return
 
         ResetFile = profile.ResetFile()
 
@@ -752,12 +747,12 @@ class Mastermind(Page):
             'PetSelectMinionsResponseMethod'     : "Response to Select Minions",
             'PetSelectLieutenantsResponseMethod' : "Response to Select Lieutenants",
             'PetSelectBossResponseMethod'        : "Response to Select Boss",
-            'PetBodyguardResponseMethod'         : "Response to Bodyguard Mode",
             'PetAggressiveResponseMethod'        : "Response to Set Aggressive",
             'PetDefensiveResponseMethod'         : "Response to Set Defensive",
             'PetPassiveResponseMethod'           : "Response to Set Passive",
             'PetAttackResponseMethod'            : "Response to Attack",
             'PetFollowResponseMethod'            : "Response to Follow",
-            'PetStayResponseMethod'              : "Response to Stay",
             'PetGotoResponseMethod'              : "Response to Goto",
+            'PetStayResponseMethod'              : "Response to Stay",
+            'PetBodyguardResponseMethod'         : "Response to Bodyguard Mode",
         })

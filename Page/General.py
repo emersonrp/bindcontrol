@@ -142,21 +142,21 @@ class General(Page):
         self.SetSizerAndFit(paddingSizer)
 
     def OnPickArchetype(self, event = {}):
-        choice = self.Controls['Archetype']
+        choice = self.Ctrls['Archetype']
         index  = choice.GetSelection()
         arch   = choice.GetString(index)
 
-        self.Controls['Primary'].Clear()
-        self.Controls['Secondary'].Clear()
-        self.Controls['Epic'].Clear()
+        self.Ctrls['Primary'].Clear()
+        self.Ctrls['Secondary'].Clear()
+        self.Ctrls['Epic'].Clear()
 
         Primaries   = Archetypes[arch]['Primary']
         Secondaries = Archetypes[arch]['Secondary']
         Epix        = Archetypes[arch]['Epic']
 
-        for p in Primaries   : self.Controls['Primary'].Append(p)
-        for s in Secondaries : self.Controls['Secondary'].Append(s)
-        for e in Epix        : self.Controls['Epic'].Append(e)
+        for p in Primaries   : self.Ctrls['Primary'].Append(p)
+        for s in Secondaries : self.Ctrls['Secondary'].Append(s)
+        for e in Epix        : self.Ctrls['Epic'].Append(e)
 
         if getattr(self.Profile, 'Mastermind', None):
             self.Profile.Mastermind.OnArchetypePowerChange()
@@ -167,7 +167,7 @@ class General(Page):
         resetfile = self.Profile.ResetFile()
 
         # TODO - the toggling of sprint is probably an SoD option
-        resetfile.SetBind(self.Controls['ResetKey'].KeyBind.MakeFileKeyBind(
+        resetfile.SetBind(self.Ctrls['ResetKey'].KeyBind.MakeFileKeyBind(
                     [
                         resetfile.BLF(),
                         't $name, Keybinds reloaded.',

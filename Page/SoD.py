@@ -112,7 +112,7 @@ class SoD(Page):
         EnableSoD.SetValue(True)
         topSizer.Add( EnableSoD, 0, wx.TOP|wx.LEFT, 10)
         topSizer.AddSpacer(1)
-        self.Controls['EnableSoD'] = EnableSoD
+        self.Ctrls['EnableSoD'] = EnableSoD
         EnableSoD.Bind(wx.EVT_CHECKBOX, self.OnEnableSoD)
 
         leftColumn  = wx.BoxSizer(wx.VERTICAL)
@@ -357,7 +357,7 @@ class SoD(Page):
         self.SetSizerAndFit(paddingSizer)
 
     def OnEnableSoD(self, evt):
-        for c,control in self.Controls.items():
+        for c,control in self.Ctrls.items():
             if c != 'EnableSoD':  # don't disable yourself kthx
                 control.Enable(evt.EventObject.IsChecked())
 

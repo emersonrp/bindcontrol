@@ -94,7 +94,7 @@ class ControlGroup(wx.StaticBoxSizer):
             sizer.Add( ctlLabel,    0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 
         sizer.Add( control, 0, wx.ALL|wx.EXPAND, padding)
-        self.Page.Controls[ctlName]   = control
+        self.Page.Ctrls[ctlName]   = control
 
         self.Layout()
         return control

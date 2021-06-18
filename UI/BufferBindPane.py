@@ -47,7 +47,7 @@ class BufferBindPane(CustomBindPaneParent):
         buffPower1 = wx.TextCtrl  (pane, -1, "")
         BindSizer.Add(buffPower1,                                     (1,3), flag=wx.EXPAND)
         BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=buffPower1), (1,4), flag=wx.ALIGN_RIGHT        |wx.ALIGN_CENTER_VERTICAL)
-        page.Controls[self.UniqueName('BuffPower1')] = buffPower1
+        page.Ctrls[self.UniqueName('BuffPower1')] = buffPower1
 
         BindSizer.Add(wx.StaticText(pane, -1, "Second Buff Power"),   (2,0), flag=wx.ALIGN_RIGHT        |wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(self.BuffPowerPicker(pane),                     (2,1), flag=wx.EXPAND             |wx.ALIGN_CENTER_VERTICAL)
@@ -55,7 +55,7 @@ class BufferBindPane(CustomBindPaneParent):
         buffPower2 = wx.TextCtrl  (pane, -1, "")
         BindSizer.Add(buffPower2,                                     (2,3), flag=wx.EXPAND)
         BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=buffPower2), (2,4), flag=wx.ALIGN_RIGHT        |wx.ALIGN_CENTER_VERTICAL)
-        page.Controls[self.UniqueName('BuffPower2')] = buffPower2
+        page.Ctrls[self.UniqueName('BuffPower2')] = buffPower2
 
         BindSizer.Add(wx.StaticText(pane, -1, "Third Buff Power"),    (3,0), flag=wx.ALIGN_RIGHT        |wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(self.BuffPowerPicker(pane),                     (3,1), flag=wx.EXPAND             |wx.ALIGN_CENTER_VERTICAL)
@@ -63,7 +63,7 @@ class BufferBindPane(CustomBindPaneParent):
         buffPower3 = wx.TextCtrl  (pane, -1, "")
         BindSizer.Add(buffPower3,                                     (3,3), flag=wx.EXPAND)
         BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=buffPower3), (3,4), flag=wx.ALIGN_RIGHT        |wx.ALIGN_CENTER_VERTICAL)
-        page.Controls[self.UniqueName('BuffPower3')] = buffPower3
+        page.Ctrls[self.UniqueName('BuffPower3')] = buffPower3
 
         BindSizer.Add(wx.StaticText(pane, -1, ""),                    (4,0))
 

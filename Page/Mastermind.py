@@ -188,7 +188,7 @@ class Mastermind(Page):
 
         useCB = wx.CheckBox( self, -1, 'Enable Mastermind Pet Binds')
         useCB.SetToolTip(wx.ToolTip('Check this to enable the Mastermind Pet Action Binds'))
-        self.Controls['EnablePetActionBinds'] = useCB
+        self.Ctrls['EnablePetActionBinds'] = useCB
 
         # TODO - add checkbox handler to hide/show (enable/disable?) the bodyguard options
         # TODO -- actually, automagically enable/disable these depending on whether any pets have their
@@ -196,7 +196,7 @@ class Mastermind(Page):
         bgCB = wx.CheckBox( self, -1, 'Enable Bodyguard Mode Binds')
         bgCB.SetToolTip(wx.ToolTip('Check this to enable the Bodyguard Mode Binds'))
         bgCB.SetValue(self.Init['PetBodyguardMode'])
-        self.Controls['EnablePetBodyguardBinds'] = bgCB
+        self.Ctrls['EnablePetBodyguardBinds'] = bgCB
 
         petCommandsKeys  = ControlGroup(self, self, width = 5, flexcols = [4])
 
@@ -241,7 +241,7 @@ class Mastermind(Page):
         arch = self.Profile.General.GetState('Archetype')
         pset = self.Profile.General.GetState('Primary')
 
-        for _, control in self.Controls.items():
+        for _, control in self.Ctrls.items():
             control.Enable(bool(arch == "Mastermind" and pset))
 
 

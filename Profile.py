@@ -59,7 +59,7 @@ class Profile(wx.Notebook):
         for pagename in self.Pages:
             savedata[pagename] = {}
             page = getattr(self, pagename)
-            for controlname, control in page.Controls.items():
+            for controlname, control in page.Ctrls.items():
 
                 # skip if off
                 if control.IsEnabled():
@@ -104,7 +104,7 @@ class Profile(wx.Notebook):
 
                     for pagename in self.Pages:
                         page = getattr(self, pagename)
-                        for controlname, control in page.Controls.items():
+                        for controlname, control in page.Ctrls.items():
                             value = data[pagename][controlname]
 
                             # look up what type of control it is to know how to extract its value

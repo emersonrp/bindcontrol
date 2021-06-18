@@ -66,7 +66,7 @@ class Gameplay(Page):
 
         enablecb = wx.CheckBox( self, -1, 'Enable Team/Pet Select')
         enablecb.SetToolTip( wx.ToolTip('Check this to enable the Team/Pet Select Binds') )
-        self.Controls['EnableTeamPetSelectBinds'] = enablecb
+        self.Ctrls['EnableTeamPetSelectBinds'] = enablecb
 
         helpbutton = wx.BitmapButton(self, -1, Utility.Icon('Help'))
         helpbutton.Bind(wx.EVT_BUTTON, self.help)
@@ -217,8 +217,8 @@ class Gameplay(Page):
 
 
     def OnFPSEnable(self, evt):
-        self.Controls['FPSBindKey'].Enable(evt.EventObject.IsChecked())
-        self.Controls['NetgraphBindKey'].Enable(evt.EventObject.IsChecked())
+        self.Ctrls['FPSBindKey'].Enable(evt.EventObject.IsChecked())
+        self.Ctrls['NetgraphBindKey'].Enable(evt.EventObject.IsChecked())
 
     def PopulateBindFiles(self):
 

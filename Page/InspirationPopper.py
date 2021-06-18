@@ -81,7 +81,7 @@ class InspirationPopper(Page):
         self.useCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Inspiration Popper Binds, (largest used first)'))
         self.useCB.SetValue(self.Init['EnableInspBinds'])
-        self.Controls['EnableInspBinds'] = self.useCB
+        self.Ctrls['EnableInspBinds'] = self.useCB
         sizer.Add(self.useCB, 0, wx.ALL, 10)
         self.useCB.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
 
@@ -94,7 +94,7 @@ class InspirationPopper(Page):
         self.useRevCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Reverse Inspiration Popper Binds, (smallest used first)'))
         self.useRevCB.SetValue(self.Init['EnableRevInspBinds'])
-        self.Controls['EnableRevInspBinds'] = self.useRevCB
+        self.Ctrls['EnableRevInspBinds'] = self.useRevCB
         sizer.Add(self.useRevCB, 0, wx.ALL, 10)
         self.useRevCB.Bind(wx.EVT_CHECKBOX, self.OnEnableRevCB)
 
@@ -106,7 +106,7 @@ class InspirationPopper(Page):
         self.disableTellsCB.SetToolTip(wx.ToolTip(
             'Check this box to avoid having your toon tell you whenever you pop an inspiration.'))
         self.disableTellsCB.SetValue(self.Init['DisableTells'])
-        self.Controls['DisableTells'] = self.disableTellsCB
+        self.Ctrls['DisableTells'] = self.disableTellsCB
         sizer.Add(self.disableTellsCB, 0, wx.ALL, 10)
         self.disableTellsCB.Bind(wx.EVT_CHECKBOX, self.OnDisableTellCB)
 
@@ -118,31 +118,31 @@ class InspirationPopper(Page):
         enable = evt.EventObject.IsChecked()
         notells = self.disableTellsCB.IsChecked()
         for Insp in Inspirations:
-            self.Controls[f"{Insp}Key"].Enable(enable)
-            self.Controls[f"{Insp}Border"].Enable(enable and not notells)
-            self.Controls[f"{Insp}Background"].Enable(enable and not notells)
-            self.Controls[f"{Insp}Foreground"].Enable(enable and not notells)
+            self.Ctrls[f"{Insp}Key"].Enable(enable)
+            self.Ctrls[f"{Insp}Border"].Enable(enable and not notells)
+            self.Ctrls[f"{Insp}Background"].Enable(enable and not notells)
+            self.Ctrls[f"{Insp}Foreground"].Enable(enable and not notells)
 
     def OnEnableRevCB(self, evt):
         enable = evt.EventObject.IsChecked()
         notells = self.disableTellsCB.IsChecked()
         for Insp in Inspirations:
-            self.Controls[f"Rev{Insp}Key"].Enable(enable)
-            self.Controls[f"Rev{Insp}Border"].Enable(enable and not notells)
-            self.Controls[f"Rev{Insp}Background"].Enable(enable and not notells)
-            self.Controls[f"Rev{Insp}Foreground"].Enable(enable and not notells)
+            self.Ctrls[f"Rev{Insp}Key"].Enable(enable)
+            self.Ctrls[f"Rev{Insp}Border"].Enable(enable and not notells)
+            self.Ctrls[f"Rev{Insp}Background"].Enable(enable and not notells)
+            self.Ctrls[f"Rev{Insp}Foreground"].Enable(enable and not notells)
 
     def OnDisableTellCB(self, evt):
         enable = evt.EventObject.IsChecked()
         forward  = self.useCB.IsChecked()
         reverse  = self.useRevCB.IsChecked()
         for Insp in Inspirations:
-            self.Controls[f"{Insp}Border"].Enable(not enable and forward)
-            self.Controls[f"{Insp}Background"].Enable(not enable and forward)
-            self.Controls[f"{Insp}Foreground"].Enable(not enable and forward)
-            self.Controls[f"Rev{Insp}Border"].Enable(not enable and reverse)
-            self.Controls[f"Rev{Insp}Background"].Enable(not enable and reverse)
-            self.Controls[f"Rev{Insp}Foreground"].Enable(not enable and reverse)
+            self.Ctrls[f"{Insp}Border"].Enable(not enable and forward)
+            self.Ctrls[f"{Insp}Background"].Enable(not enable and forward)
+            self.Ctrls[f"{Insp}Foreground"].Enable(not enable and forward)
+            self.Ctrls[f"Rev{Insp}Border"].Enable(not enable and reverse)
+            self.Ctrls[f"Rev{Insp}Background"].Enable(not enable and reverse)
+            self.Ctrls[f"Rev{Insp}Foreground"].Enable(not enable and reverse)
 
     def PopulateBindFiles(self):
         profile = self.Profile
@@ -166,9 +166,9 @@ class InspirationPopper(Page):
                 reverseOrder.insert(0, f'tell $name, {Utility.ChatColors(fg, bg, bc)}{Insp}')
 
             if self.GetState('EnableInspBinds'):
-                ResetFile.SetBind(self.Controls[f"{Insp}Key"].KeyBind.MakeFileKeyBind(forwardOrder))
+                ResetFile.SetBind(self.Ctrls[f"{Insp}Key"].KeyBind.MakeFileKeyBind(forwardOrder))
             if self.GetState('EnableRevInspBinds'):
-                ResetFile.SetBind(self.Controls[f"Rev{Insp}Key"].KeyBind.MakeFileKeyBind(reverseOrder))
+                ResetFile.SetBind(self.Ctrls[f"Rev{Insp}Key"].KeyBind.MakeFileKeyBind(reverseOrder))
 
     def findconflicts(self, profile):
         ### TODO

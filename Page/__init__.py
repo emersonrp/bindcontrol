@@ -4,7 +4,7 @@
 #  It then tries to gatekeep these behind .GetState() and .SetState()
 #  in reality, we need to get directly at the controls occasionally
 #  to change a wx.Choice's list, for example.  Then we just trawl
-#  through page.Controls directly.  This could be improved.
+#  through page.Ctrls directly.  This could be improved.
 
 #  page.GetState('FPSBindKey')
 #  page.SetState('Archetype', 'Blaster')
@@ -20,7 +20,7 @@ class Page(wx.Panel):
         self.Profile = parent
         self.TabTitle = type(self).__name__
 
-        self.Controls = {}
+        self.Ctrls = {}
 
     def help(self, event):
         if not (self.HelpWindow):
@@ -38,7 +38,7 @@ class Page(wx.Panel):
         self.HelpWindow.Show(not self.HelpWindow.IsShown())
 
     def GetState(self, key):
-        control = self.Controls.get(key, None)
+        control = self.Ctrls.get(key, None)
         if not control:
             return ''
         if isinstance(control, wx.Button):
@@ -55,7 +55,7 @@ class Page(wx.Panel):
             print(f"{control} has no GetValue()")
 
     def SetState(self, key, value):
-        control = self.Controls.get(key, None)
+        control = self.Ctrls.get(key, None)
 
         if not control:
             print(f"Got into SetState for key {key} with no control")

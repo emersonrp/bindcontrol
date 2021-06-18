@@ -166,9 +166,9 @@ class InspirationPopper(Page):
                 reverseOrder.insert(0, f'tell $name, {Utility.ChatColors(fg, bg, bc)}{Insp}')
 
             if self.GetState('EnableInspBinds'):
-                ResetFile.SetBind(self.GetState(f"{Insp}Key"),    f"{Insp}", "Inspiration Popper", forwardOrder)
+                ResetFile.SetBind(self.Controls[f"{Insp}Key"].KeyBind.MakeFileKeyBind(forwardOrder))
             if self.GetState('EnableRevInspBinds'):
-                ResetFile.SetBind(self.GetState(f"Rev{Insp}Key"), f"Rev{Insp}", "Inspiration Popper", reverseOrder)
+                ResetFile.SetBind(self.Controls[f"Rev{Insp}Key"].KeyBind.MakeFileKeyBind(reverseOrder))
 
     def findconflicts(self, profile):
         ### TODO

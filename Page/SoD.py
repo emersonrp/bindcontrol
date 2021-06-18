@@ -896,6 +896,7 @@ class SoD(Page):
 
     def PopulateBindFiles(self):
 
+        return
 
         ### TODO
         sssj = 0

@@ -1,6 +1,6 @@
 import wx
 import UI
-from KeyBind import KeyBind
+from KeyBind.ControlKeyBind import ControlKeyBind
 from UI.KeySelectDialog import KeySelectEventHandler
 
 
@@ -42,6 +42,7 @@ class ControlGroup(wx.StaticBoxSizer):
             control.CtlName = ctlName
             control.Page    = self.Page
             control.Profile = self.Profile
+            control.KeyBind = ControlKeyBind(Init[ctlName], label, self.Page.TabTitle)
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
             control = wx.ComboBox(

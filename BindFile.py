@@ -10,16 +10,13 @@ class BindFile():
 
         self.Path = Path(*pathbits)
 
-        self.Binds = {}
+        self.KeyBinds = {}
 
-    def SetBind(self, key, name, page, contents):
+    def SetBind(self, keybind):
 
-        if not key:
-            #print(f"{self}: empty key in keybind: {name}, {page}, contents {contents}")
-            return
-        if key == "UNBOUND": return
+        if keybind.Key == "UNBOUND": return
 
-        self.Binds[key] = KeyBind(key, name, page, contents)
+        self.KeyBinds[keybind.Key] = keybind
 
         # TODO -- how to call out the 'reset file' object as special?
         # TODO 2 -- we don't? it should be the page's responsibility to
@@ -57,11 +54,11 @@ class BindFile():
             kb = deque(kb.split('+'))
             kb.rotate(1)
             return "+".join(kb)
-        sortedKeyBinds = sorted(self.Binds, key = rotateKeyBind)
+        sortedKeyBinds = sorted(self.KeyBinds, key = rotateKeyBind)
 
         output = ''
         for keybind in sortedKeyBinds:
-            output = output + self.Binds[keybind].GetKeyBindString()
+            output = output + self.KeyBinds[keybind].GetKeyBindString()
 
         print(output)
         self.Path.write_text(output)

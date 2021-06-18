@@ -9,6 +9,7 @@ class ControlGroup(wx.StaticBoxSizer):
     def __init__(self, parent, page, label = '', width = 2, flexcols = [0]):
         wx.StaticBoxSizer.__init__(self, wx.VERTICAL, parent, label = label)
 
+        self.Profile = parent.Profile
         self.Page = page
 
         self.InnerSizer = wx.FlexGridSizer(width,3,3)
@@ -37,7 +38,10 @@ class ControlGroup(wx.StaticBoxSizer):
             control = wx.Button( ctlParent, -1, Init[ctlName])
             control.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
             control.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
+            # push context onto the button, we'll thank me later
             control.CtlName = ctlName
+            control.Page    = self.Page
+            control.Profile = self.Profile
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
             control = wx.ComboBox(

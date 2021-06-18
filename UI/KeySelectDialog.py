@@ -30,7 +30,7 @@ elif wx.Platform == '__WXMAC__':
 def KeySelectEventHandler(evt):
     button = evt.EventObject
 
-    with KeySelectDialog(button.Parent, button.CtlName, button.Label) as dlg:
+    with KeySelectDialog(button) as dlg:
         newKey = ''
         if(dlg.ShowModal() == wx.ID_OK): newKey = dlg.Binding
 
@@ -41,18 +41,25 @@ def KeySelectEventHandler(evt):
         if newKey: button.SetLabel(newKey)
 
 class KeySelectDialog(wx.Dialog):
-    def __init__(self, parent, desc = '', keybind = 'UNBOUND'):
-        wx.Dialog.__init__(self, parent, -1, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
+    def __init__(self, button):
+
+        self.Desc    = UI.Labels[button.CtlName]
+        self.Keybind = button.Label
+        self.Page    = button.Page
+
+        wx.Dialog.__init__(self, button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
 
         # Mystery panel must be in here in order to get key events
         dummyPanel = wx.Panel(self, -1)
 
-        if not desc:
+        if not self.Desc:
             print("Tried to make a KeySelectDialog for something with no desc")
             return
 
-        desc = f"Press the key you want bound to {UI.Labels.get(desc, desc)}:"
+        desc = f"Press the key you want bound to {self.Desc}:"
 
+        # is this ugly?
+        self.Profile   = button.Profile
         self.Binding   = ''
         self.ShiftText = ''
         self.CtrlText  = ''
@@ -62,9 +69,9 @@ class KeySelectDialog(wx.Dialog):
         sizer = wx.BoxSizer(wx.VERTICAL);
 
         self.kbDesc = wx.StaticText( self, -1, desc,    style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
-        self.kbBind = wx.StaticText( self, -1, keybind, style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
+        self.kbBind = wx.StaticText( self, -1, self.Keybind, style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
 
-        self.kbBind.SetLabelMarkup('<b><big>' + keybind + '</big></b>')
+        self.kbBind.SetLabelMarkup('<b><big>' + self.Keybind + '</big></b>')
 
         sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 15);
         sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);

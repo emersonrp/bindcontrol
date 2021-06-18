@@ -141,6 +141,21 @@ class General(Page):
 
         self.SetSizerAndFit(paddingSizer)
 
+    def PopulateBindFiles(self):
+        resetfile = self.Profile.ResetFile()
+
+        # TODO - the toggling of sprint is probably an SoD option
+        resetfile.SetBind(self.Ctrls['ResetKey'].KeyBind.MakeFileKeyBind(
+                    [
+                        resetfile.BLF(),
+                        't $name, Keybinds reloaded.',
+                        'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
+                        'powexecname Sprint',
+                        'powexecunqueue',
+                        't $name, SoD Binds Reset'
+                    ]))
+
+    ### EVENT HANDLERS
     def OnPickArchetype(self, event = {}):
         choice = self.Ctrls['Archetype']
         index  = choice.GetSelection()
@@ -158,24 +173,14 @@ class General(Page):
         for s in Secondaries : self.Ctrls['Secondary'].Append(s)
         for e in Epix        : self.Ctrls['Epic'].Append(e)
 
+        self.Ctrls['Primary'].SetSelection(0)
+        self.Ctrls['Secondary'].SetSelection(0)
+        self.Ctrls['Epic'].SetSelection(0)
+
         if getattr(self.Profile, 'Mastermind', None):
             self.Profile.Mastermind.OnArchetypePowerChange()
 
         self.Fit()
-
-    def PopulateBindFiles(self):
-        resetfile = self.Profile.ResetFile()
-
-        # TODO - the toggling of sprint is probably an SoD option
-        resetfile.SetBind(self.Ctrls['ResetKey'].KeyBind.MakeFileKeyBind(
-                    [
-                        resetfile.BLF(),
-                        't $name, Keybinds reloaded.',
-                        'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
-                        'powexecname Sprint',
-                        'powexecunqueue',
-                        't $name, SoD Binds Reset'
-                    ]))
 
 
     # Event handlers

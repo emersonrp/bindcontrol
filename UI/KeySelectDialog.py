@@ -38,7 +38,9 @@ def KeySelectEventHandler(evt):
         # otherThingWithThatBind = checkConflicts(newKey)
 
         # re-label the button / set its state
-        if newKey: button.SetLabel(newKey)
+        if newKey:
+            button.SetLabel(newKey)
+            button.KeyBind.Key = newKey
 
 class KeySelectDialog(wx.Dialog):
     def __init__(self, button):

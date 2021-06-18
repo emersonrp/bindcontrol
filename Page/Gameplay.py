@@ -19,7 +19,7 @@ class Gameplay(Page):
             'FPSBindKey': "P",
             'NetgraphBindKey': 'N',
             'TPSEnable'   : True,
-            'TPSSelMode'  : '',
+            'TPSSelMode'  : "Teammates, then pets",
             'TeamSelect1' : 'UNBOUND',
             'TeamSelect2' : 'UNBOUND',
             'TeamSelect3' : 'UNBOUND',
@@ -81,7 +81,7 @@ class Gameplay(Page):
 
         TPSDirectBox.AddLabeledControl(
             ctlName = 'TPSSelMode',
-            ctlType = 'combo',
+            ctlType = 'choice',
             contents = ['Teammates, then pets','Pets, then teammates','Teammates Only','Pets Only'],
             tooltip = 'Choose the order in which teammates and pets are selected with sequential keypresses',
         )
@@ -222,21 +222,20 @@ class Gameplay(Page):
 
     def PopulateBindFiles(self):
 
-        ### TODO
-        return
-        ### TODO
-
-
         ResetFile = self.Profile.ResetFile()
-        ResetFile.SetBind(self.Profile.Gameplay.GetState('FPSBindkey'), "Show FPS", "Gameplay",'++showfps++netgraph')
-        ResetFile.SetBind(self.Profile.Gameplay.GetState('NetgraphBindkey'), "Show Netgraph", "Gameplay",'++netgraph')
 
-        if (self.GetState('TPSSelMode') < 3):
+        ### FPS/Netgraph
+        ResetFile.SetBind(self.Ctrls['FPSBindKey']     .KeyBind.MakeFileKeyBind('++showfps++netgraph'))
+        ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].KeyBind.MakeFileKeyBind('++netgraph'))
+
+        # TeamSel (1)
+        # TODO -- check versus citybinder output, seems to be working but...?
+        if (self.GetState('TPSSelMode') != "Pets Only"):
             selmethod = "teamselect"
             selnummod = 0
             selmethod1 = "petselect"
             selnummod1 = 1
-            if (self.GetState('TPSSelMode') == 2):
+            if (self.GetState('TPSSelMode') == "Pets, then teammates"):
                 selmethod = "petselect"
                 selnummod = 1
                 selmethod1 = "teamselect"
@@ -244,37 +243,34 @@ class Gameplay(Page):
             selresetfile = self.Profile.GetBindFile("tps","reset.txt")
             for i in ('1','2','3','4','5','6','7','8'):
                 selfile = self.Profile.GetBindFile("tps",f"sel{i}.txt")
-                ResetFile.   SetBind(self.GetState(f"TeamSelect{i}"), f"Team Select {i}", "Gameplay", f"{selmethod} {int(i) - selnummod}" + BLF(self.Profile,'tps',f"sel{i}.txt"))
-                selresetfile.SetBind(self.GetState(f"TeamSelect{i}"), f"Team Select {i}", "Gameplay", f"{selmethod} {int(i) - selnummod}" + BLF(self.Profile,'tps',f"sel{i}.txt"))
+                ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].KeyBind.MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", BLF(self.Profile,'tps',f"sel{i}.txt")]))
+                selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].KeyBind.MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", BLF(self.Profile,'tps',f"sel{i}.txt")]))
                 for j in ('1','2','3','4','5','6','7','8'):
                     if (i == j):
-                        selfile.SetBind(self.GetState(f"TeamSelect{j}"), f"Team Select {j}", "Gameplay", f"{selmethod1} {int(j) - selnummod1}" + BLF(self.Profile,'tps',"reset.txt"))
+                        selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].KeyBind.MakeFileKeyBind([f"{selmethod1} {int(j) - selnummod1}", BLF(self.Profile,'tps',"reset.txt")]))
                     else:
-                        selfile.SetBind(self.GetState(f"TeamSelect{j}"), f"Team Select {j}", "Gameplay", f"{selmethod} {int(j) - selnummod}"  + BLF(self.Profile,'tps',"selj.txt"))
+                        selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].KeyBind.MakeFileKeyBind([f"{selmethod} {int(j) - selnummod}"  , BLF(self.Profile,'tps',f"sel{j}.txt")]))
 
         else:
             selmethod = "teamselect"
             selnummod = 0
-            if (self.GetState('TPSSelMode') == 4):
+            if (self.GetState('TPSSelMode') == "Pets Only"):
                 selmethod = "petselect"
                 selnummod = 1
             for i in (1,2,3,4,5,6,7,8):
-                ResetFile.SetBind(self.GetState('sel1'), "TPS Select", "Gameplay", "selmethod " + (i - selnummod))
+                ResetFile.SetBind(self.Ctrls['sel1'].KeyBind.MakeFileKeyBind("selmethod " + (i - selnummod)))
 
         ResetFile = self.Profile.ResetFile()
 
         notifier = self.GetState('TypingNotifier')
 
-        # TODO - re-examine the original code, wtf is this
-        if notifier:
-            notifier = "\\" + notifier
-
-        ResetFile.SetBind(self.GetState('StartChat'), "Start Chat", "Gameplay",'show chatstartchat' + notifier)
-        ResetFile.SetBind(self.GetState('SlashChat'), "Slash Chat", "Gameplay",'show chatslashchat' + notifier)
-        ResetFile.SetBind(self.GetState('StartEmote'),"Start Emote", "Gameplay",'show chatem ' + notifier)
-        ResetFile.SetBind(self.GetState('AutoReply'), "Auto Reply", "Gameplay",'autoreply' + notifier)
-        ResetFile.SetBind(self.GetState('TellTarget'),"Tell Target", "Gameplay",'show chatbeginchat /tell target, ' + notifier)
-        ResetFile.SetBind(self.GetState('QuickChat'), "Quick Chat", "Gameplay",'quickchat' + notifier)
+        # TypingNotifier
+        ResetFile.SetBind(self.Ctrls['StartChat'] .KeyBind.MakeFileKeyBind(['show chat', 'startchat', notifier]))
+        ResetFile.SetBind(self.Ctrls['SlashChat'] .KeyBind.MakeFileKeyBind(['show chat', 'slashchat', notifier]))
+        ResetFile.SetBind(self.Ctrls['StartEmote'].KeyBind.MakeFileKeyBind(['show chatem ' + notifier]))
+        ResetFile.SetBind(self.Ctrls['AutoReply'] .KeyBind.MakeFileKeyBind(['autoreply', notifier]))
+        ResetFile.SetBind(self.Ctrls['TellTarget'].KeyBind.MakeFileKeyBind(['show chat', 'beginchat /tell $target, ', notifier]))
+        ResetFile.SetBind(self.Ctrls['QuickChat'] .KeyBind.MakeFileKeyBind(['quickchat', notifier]))
 
     def findconflicts(self):
         Utility.CheckConflict(self,"FPSBindkey","FPS Display Toggle")

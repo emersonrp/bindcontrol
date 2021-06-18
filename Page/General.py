@@ -38,67 +38,67 @@ class General(Page):
         topSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         powersBox = ControlGroup(self, self, 'Powers and Info')
-        powersBox.AddLabeledControl(
+        powersBox.AddControl(
             ctlName = 'Name',
             ctlType = 'text',
         )
-        powersBox.AddLabeledControl(
+        powersBox.AddControl(
             ctlName = 'Origin',
             ctlType = 'choice',
             contents = Origins,
             tooltip = '',
             callback = self.OnPickOrigin,
         )
-        powersBox.AddLabeledControl(
+        powersBox.AddControl(
             ctlName = 'Archetype',
             ctlType = 'choice',
             contents = sorted(Archetypes),
             tooltip = '',
             callback = self.OnPickArchetype,
         )
-        powersBox.AddLabeledControl(
+        powersBox.AddControl(
             ctlName = 'Primary',
             ctlType = 'choice',
             # contents = sorted(ArchData['Primary']),
             tooltip = '',
             callback = self.OnPickPrimaryPowerSet,
         )
-        powersBox.AddLabeledControl(
+        powersBox.AddControl(
             ctlName = 'Secondary',
             ctlType = 'choice',
             # contents = sorted(ArchData['Secondary']),
             tooltip = '',
             callback = self.OnPickSecondaryPowerSet,
         )
-        powersBox.AddLabeledControl(
+        powersBox.AddControl(
             ctlName = 'Epic',
             ctlType = 'choice',
             # contents = sorted(ArchData['Epic']),
             tooltip = '',
             callback = self.OnPickEpicPowerSet,
         )
-        powersBox.AddLabeledControl(
+        powersBox.AddControl(
             ctlName = 'Pool1',
             ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.OnPickPoolPower,
         )
-        powersBox.AddLabeledControl(
+        powersBox.AddControl(
             ctlName = 'Pool2',
             ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.OnPickPoolPower,
         )
-        powersBox.AddLabeledControl(
+        powersBox.AddControl(
             ctlName = 'Pool3',
             ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
             tooltip = '',
             callback = self.OnPickPoolPower,
         )
-        powersBox.AddLabeledControl(
+        powersBox.AddControl(
             ctlName = 'Pool4',
             ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
@@ -107,22 +107,22 @@ class General(Page):
         )
 
         prefsBox = ControlGroup(self, self, 'Preferences')
-        prefsBox.AddLabeledControl(
+        prefsBox.AddControl(
             ctlName = 'BindsDir',
             ctlType = 'dirpicker',
         )
-        prefsBox.AddLabeledControl(
+        prefsBox.AddControl(
             ctlName = 'ResetKey',
             ctlType = 'keybutton',
             tooltip = 'This key is used by certain modules to reset binds to a sane state.',
         )
 
-        prefsBox.AddLabeledControl(
+        prefsBox.AddControl(
             ctlName = 'ResetFeedback',
             ctlType = 'checkbox',
         )
 
-        prefsBox.AddLabeledControl(
+        prefsBox.AddControl(
             ctlName = 'UseSplitModKeys',
             ctlType = 'checkbox',
         )

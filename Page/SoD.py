@@ -123,19 +123,19 @@ class SoD(Page):
         movementSizer = ControlGroup(self, self, 'Movement Keys')
 
         for dir in ("Up","Down","Forward","Back","Left","Right","TurnLeft","TurnRight"):
-            movementSizer.AddLabeledControl(
+            movementSizer.AddControl(
                 ctlName = dir,
                 ctlType = 'keybutton',
             )
         # TODO!  fill this picker with only the appropriate bits.
         # for i in (powers list):
         #   if (player has power): add_to_contents(i)
-        movementSizer.AddLabeledControl(
+        movementSizer.AddControl(
             ctlName = 'DefaultMode',
             ctlType = 'combo',
             contents = ('No SoD','Sprint','Super Speed','Jump','Fly'),
         )
-        movementSizer.AddLabeledControl(
+        movementSizer.AddControl(
             ctlName = 'MousechordSoD',
             ctlType = 'checkbox',
         )
@@ -145,13 +145,13 @@ class SoD(Page):
         ##### GENERAL SETTINGS
         generalSizer = ControlGroup(self, self, 'General Settings')
 
-        generalSizer.AddLabeledControl(
+        generalSizer.AddControl(
             ctlName = 'AutoMouseLook',
             ctlType = 'checkbox',
             tooltip = 'Automatically Mouselook when moving',
         )
         # TODO -- add "SprintPowers" to GameData
-#        generalSizer.AddLabeledControl(
+#        generalSizer.AddControl(
 #            ctlName = 'SprintPower',
 #            ctlType = 'combo',
 #            contents = GameData['SprintPowers'],
@@ -161,47 +161,47 @@ class SoD(Page):
         # generalSizer.Add( wx.CheckBox(self, SPRINT_UNQUEUE, "Exec powexecunqueue"))
 
         for command in ("AutoRun","Follow","NonSoDMode"): # TODO - lost "Sprint-Only SoD Mode" b/c couldn't find the name in %$Labels
-            generalSizer.AddLabeledControl(
+            generalSizer.AddControl(
                 ctlName = command,
                 ctlType = 'keybutton',
             )
-        generalSizer.AddLabeledControl(
+        generalSizer.AddControl(
             ctlName = 'SprintSoD',
             ctlType = 'checkbox',
         )
-        generalSizer.AddLabeledControl(
+        generalSizer.AddControl(
             ctlName = 'ChangeCamera',
             ctlType = 'checkbox',
         )
-        generalSizer.AddLabeledControl(
+        generalSizer.AddControl(
             ctlName = 'CamdistBase',
             ctlType = 'spinbox',
             contents = (1, 100),
         )
-        generalSizer.AddLabeledControl(
+        generalSizer.AddControl(
             ctlName = 'CamdistTravelling',
             ctlType = 'spinbox',
             contents = (1, 100),
         )
-        generalSizer.AddLabeledControl(
+        generalSizer.AddControl(
             ctlName = 'ChangeDetail',
             ctlType = 'checkbox',
         )
-        generalSizer.AddLabeledControl(
+        generalSizer.AddControl(
             ctlName = 'DetailBase',
             ctlType = 'spinbox',
             contents = (1, 100),
         )
-        generalSizer.AddLabeledControl(
+        generalSizer.AddControl(
             ctlName = 'DetailTravelling',
             ctlType = 'spinbox',
             contents = (1, 100),
         )
-        generalSizer.AddLabeledControl(
+        generalSizer.AddControl(
             ctlName = 'TPHideWindows',
             ctlType = 'checkbox',
         )
-        generalSizer.AddLabeledControl(
+        generalSizer.AddControl(
             ctlName = 'SelfTellOnChange',
             ctlType = 'checkbox',
         )
@@ -211,11 +211,11 @@ class SoD(Page):
         ##### TEMP TRAVEL POWERS
         tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
         # if (temp travel powers exist)?  Should this be "custom"?
-        tempSizer.AddLabeledControl(
+        tempSizer.AddControl(
             ctlName = 'TempMode',
             ctlType = 'keybutton',
         )
-        tempSizer.AddLabeledControl(
+        tempSizer.AddControl(
             ctlName = 'TempTray',
             ctlType = 'spinbox',
             contents = [1, 8],
@@ -224,15 +224,15 @@ class SoD(Page):
 
         ##### SUPER SPEED
         superSpeedSizer = ControlGroup(self, self, 'Super Speed')
-        superSpeedSizer.AddLabeledControl(
+        superSpeedSizer.AddControl(
             ctlName = 'RunMode',
             ctlType = 'keybutton',
         )
-        superSpeedSizer.AddLabeledControl(
+        superSpeedSizer.AddControl(
             ctlName = 'SSOnlyWhenMoving',
             ctlType = 'checkbox',
         )
-        superSpeedSizer.AddLabeledControl(
+        superSpeedSizer.AddControl(
             ctlName = 'SSSJModeEnable',
             ctlType = 'checkbox',
         )
@@ -240,11 +240,11 @@ class SoD(Page):
 
         ##### SUPER JUMP
         superJumpSizer = ControlGroup(self, self, 'Super Jump')
-        superJumpSizer.AddLabeledControl(
+        superJumpSizer.AddControl(
             ctlName = 'JumpMode',
             ctlType = 'keybutton',
         )
-        superJumpSizer.AddLabeledControl(
+        superJumpSizer.AddControl(
             ctlName = 'SimpleSJCJ',
             ctlType = 'checkbox',
         )
@@ -254,11 +254,11 @@ class SoD(Page):
         ##### FLY
         flySizer = ControlGroup(self, self, 'Flight')
 
-        flySizer.AddLabeledControl(
+        flySizer.AddControl(
             ctlName = 'FlyMode',
             ctlType = 'keybutton',
         )
-        flySizer.AddLabeledControl(
+        flySizer.AddControl(
             ctlName = 'GFlyMode',
             ctlType = 'keybutton',
         )
@@ -270,42 +270,42 @@ class SoD(Page):
         # if (at == peacebringer) "Dwarf Step"
         # if (at == warshade) "Shadow Step / Dwarf Step"
 
-        teleportSizer.AddLabeledControl(
+        teleportSizer.AddControl(
             ctlName = "TPMode",
             ctlType = 'keybutton',
         )
-        teleportSizer.AddLabeledControl(
+        teleportSizer.AddControl(
             ctlName = "TPCombo",
             ctlType = 'keybutton',
         )
-        teleportSizer.AddLabeledControl(
+        teleportSizer.AddControl(
             ctlName = "TPReset",
             ctlType = 'keybutton',
         )
 
         # if (player has hover): {
-        teleportSizer.AddLabeledControl(
+        teleportSizer.AddControl(
             ctlName = 'TPAutoHover',
             ctlType = 'checkbox',
         )
         #
 
         # if (player has team-tp) {
-        teleportSizer.AddLabeledControl(
+        teleportSizer.AddControl(
             ctlName = "TTPMode",
             ctlType = 'keybutton',
         )
-        teleportSizer.AddLabeledControl(
+        teleportSizer.AddControl(
             ctlName = "TTPCombo",
             ctlType = 'keybutton',
         )
-        teleportSizer.AddLabeledControl(
+        teleportSizer.AddControl(
             ctlName = "TTPReset",
             ctlType = 'keybutton',
         )
 
         # if (player has group fly) {
-        teleportSizer.AddLabeledControl(
+        teleportSizer.AddControl(
             ctlName = 'TTPAutoGFly',
             ctlType = 'checkbox',
         )
@@ -317,31 +317,31 @@ class SoD(Page):
         ##### KHELDIAN TRAVEL POWERS
         kheldianSizer = ControlGroup(self, self, 'Nova / Dwarf Travel Powers')
 
-        kheldianSizer.AddLabeledControl(
+        kheldianSizer.AddControl(
             ctlName = 'NovaMode',
             ctlType = 'keybutton',
         )
-        kheldianSizer.AddLabeledControl(
+        kheldianSizer.AddControl(
             ctlName = 'NovaTray',
             ctlType = 'spinbox',
             contents = [1, 8],
         )
-        kheldianSizer.AddLabeledControl(
+        kheldianSizer.AddControl(
             ctlName = 'DwarfMode',
             ctlType = 'keybutton',
         )
-        kheldianSizer.AddLabeledControl(
+        kheldianSizer.AddControl(
             ctlName = 'DwarfTray',
             ctlType = 'spinbox',
             contents = [1, 8],
         )
 
         # do we want a key to change directly to human form, instead of toggles?
-        kheldianSizer.AddLabeledControl(
+        kheldianSizer.AddControl(
             ctlName = 'HumanMode',
             ctlType = 'keybutton',
         )
-        kheldianSizer.AddLabeledControl(
+        kheldianSizer.AddControl(
             ctlName = 'HumanTray',
             ctlType = 'spinbox',
             contents = [1, 8],

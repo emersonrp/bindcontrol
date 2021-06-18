@@ -79,14 +79,14 @@ class Gameplay(Page):
         ##### direct-select keys
         TPSDirectBox = ControlGroup(self, self, 'Direct Team/Pet Select')
 
-        TPSDirectBox.AddLabeledControl(
+        TPSDirectBox.AddControl(
             ctlName = 'TPSSelMode',
             ctlType = 'choice',
             contents = ['Teammates, then pets','Pets, then teammates','Teammates Only','Pets Only'],
             tooltip = 'Choose the order in which teammates and pets are selected with sequential keypresses',
         )
         for selectid in (1,2,3,4,5,6,7,8):
-            TPSDirectBox.AddLabeledControl(
+            TPSDirectBox.AddControl(
                 ctlName = f"TeamSelect{selectid}",
                 ctlType = 'keybutton',
                 tooltip = f"Choose the key that will select team member / pet {selectid}",
@@ -95,37 +95,37 @@ class Gameplay(Page):
 
         ##### Team Select Binds
         TeamSelBox = ControlGroup(self, self, 'Team Select')
-        TeamSelBox.AddLabeledControl(
+        TeamSelBox.AddControl(
             ctlName ='SelNextTeam',
             ctlType = 'keybutton',
             tooltip = 'Choose the key that will select the next teammate from the currently selected one',
         )
-        TeamSelBox.AddLabeledControl(
+        TeamSelBox.AddControl(
             ctlName ='SelPrevTeam',
             ctlType = 'keybutton',
             tooltip = 'Choose the key that will select the previous teammate from the currently selected one',
         )
-        TeamSelBox.AddLabeledControl(
+        TeamSelBox.AddControl(
             ctlName ='IncTeamSize',
             ctlType = 'keybutton',
             tooltip = 'Choose the key that will increase the size of your teammate rotation',
         )
-        TeamSelBox.AddLabeledControl(
+        TeamSelBox.AddControl(
             ctlName ='DecTeamSize',
             ctlType = 'keybutton',
             tooltip = 'Choose the key that will decrease the size of your teammate rotation',
         )
-        TeamSelBox.AddLabeledControl(
+        TeamSelBox.AddControl(
             ctlName ='IncTeamPos',
             ctlType = 'keybutton',
             tooltip = 'Choose the key that will move you to the next higher slot in the team rotation',
         )
-        TeamSelBox.AddLabeledControl(
+        TeamSelBox.AddControl(
             ctlName ='DecTeamPos',
             ctlType = 'keybutton',
             tooltip = 'Choose the key that will move you to the next lower slot in the team rotation',
         )
-        TeamSelBox.AddLabeledControl(
+        TeamSelBox.AddControl(
             ctlName ='Reset',
             ctlType = 'keybutton',
             tooltip = 'Choose the key that will reset your team rotation to solo',
@@ -137,22 +137,22 @@ class Gameplay(Page):
         ##### Pet Select Binds
         PetSelBox = ControlGroup(self, self, 'Pet Select')
 
-        PetSelBox.AddLabeledControl(
+        PetSelBox.AddControl(
             ctlName = 'SelNextPet',
             ctlType = 'keybutton',
             tooltip = 'Choose the key that will select the next pet from the currently selected one',
         )
-        PetSelBox.AddLabeledControl(
+        PetSelBox.AddControl(
             ctlName = 'SelPrevPet',
             ctlType = 'keybutton',
             tooltip = 'Choose the key that will select the previous pet from the currently selected one',
         )
-        PetSelBox.AddLabeledControl(
+        PetSelBox.AddControl(
             ctlName = 'IncPetSize',
             ctlType = 'keybutton',
             tooltip = 'Choose the key that will increase the size of your pet/henchman group rotation',
         )
-        PetSelBox.AddLabeledControl(
+        PetSelBox.AddControl(
             ctlName = 'DecPetSize',
             ctlType = 'keybutton',
             tooltip = 'Choose the key that will decrease the size of your pet/henchman group rotation',
@@ -161,16 +161,16 @@ class Gameplay(Page):
 
         ##### FPS Keys
         controlsBox = ControlGroup(self, self, "FPS / Netgraph")
-        controlsBox.AddLabeledControl(
+        controlsBox.AddControl(
             ctlName = 'FPSEnable',
             ctlType = 'checkbox',
             callback = self.OnFPSEnable,
         )
-        controlsBox.AddLabeledControl(
+        controlsBox.AddControl(
             ctlName = 'FPSBindKey',
             ctlType = 'keybutton',
         )
-        controlsBox.AddLabeledControl(
+        controlsBox.AddControl(
             ctlName = 'NetgraphBindKey',
             ctlType = 'keybutton',
         )
@@ -178,7 +178,7 @@ class Gameplay(Page):
 
         chatBindBox = ControlGroup(self, self, 'Chat Binds')
 
-        chatBindBox.AddLabeledControl(
+        chatBindBox.AddControl(
             ctlName   = 'ChatEnable',
             ctlType = 'checkbox',
             tooltip = 'Enable / Disable chat binds',
@@ -191,17 +191,17 @@ class Gameplay(Page):
             ['TellTarget', 'Starts a /tell to your current target'],
             ['QuickChat',  'Activates QuickChat'],
         ):
-            chatBindBox.AddLabeledControl(
+            chatBindBox.AddControl(
                 ctlName = b[0],
                 ctlType = 'keybutton',
                 tooltip = b[1],
             )
-        chatBindBox.AddLabeledControl(
+        chatBindBox.AddControl(
             ctlName = 'TypingNotifierEnable',
             ctlType = 'checkbox',
             tooltip = "Check this to enable the Typing Notifier",
         )
-        chatBindBox.AddLabeledControl(
+        chatBindBox.AddControl(
             ctlName = 'TypingNotifier',
             ctlType = 'text',
             tooltip = "Choose the message to display when you are typing chat messages or commands",

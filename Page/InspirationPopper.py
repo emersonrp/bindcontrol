@@ -53,24 +53,24 @@ class InspirationPopper(Page):
 
                 rowSet = self.RevInspRows if order else self.InspRows
 
-                rowSet.AddLabeledControl(
+                rowSet.AddControl(
                     ctlType = 'keybutton',
                     ctlName = f"{order}{Insp}Key",
                     tooltip = f"Choose the key combo to activate a {Insp} inspiration",
                 )
 
-                rowSet.AddLabeledControl(
+                rowSet.AddControl(
                     ctlType = 'colorpicker',
                     ctlName = f"{order}{Insp}Border",
                     contents = Inspirations[Insp]['color'],
                 )
 
-                rowSet.AddLabeledControl(
+                rowSet.AddControl(
                     ctlType = 'colorpicker',
                     ctlName = f"{order}{Insp}Background",
                     contents = wx.WHITE,
                 )
-                rowSet.AddLabeledControl(
+                rowSet.AddControl(
                     ctlType = 'colorpicker',
                     ctlName = f"{order}{Insp}Foreground",
                     contents = wx.BLACK,

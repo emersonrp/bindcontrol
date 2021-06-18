@@ -73,16 +73,16 @@ class BufferBindPane(CustomBindPaneParent):
         TeamCtrls = ControlGroup(pane, self.Page, "Buff Team Keybinds")
         PetCtrls  = ControlGroup(pane, self.Page, "Buff Pet Keybinds")
 
-        TeamCtrls.AddLabeledControl(ctlType = 'checkbox', ctlName = self.UniqueName("BuffsAffectTeam"))
+        TeamCtrls.AddControl(ctlType = 'checkbox', ctlName = self.UniqueName("BuffsAffectTeam"))
         for i in (1,2,3,4,5,6,7,8):
-            TeamCtrls.AddLabeledControl(ctlType = "keybutton",
+            TeamCtrls.AddControl(ctlType = "keybutton",
                     ctlName = self.UniqueName(f"Team{i}BuffKey"), contents = "UNBOUND")
 
 
-        PetCtrls.AddLabeledControl(ctlType = 'checkbox', ctlName = self.UniqueName("BuffsAffectPets"))
-        PetCtrls.AddLabeledControl(ctlType = "checkbox", ctlName = self.UniqueName("BuffPetsByName"))
+        PetCtrls.AddControl(ctlType = 'checkbox', ctlName = self.UniqueName("BuffsAffectPets"))
+        PetCtrls.AddControl(ctlType = "checkbox", ctlName = self.UniqueName("BuffPetsByName"))
         for i in (1,2,3,4,5,6):
-            PetCtrls.AddLabeledControl(ctlType = "keybutton", ctlName = self.UniqueName(f"Pet{i}BuffKey"), contents = "UNBOUND")
+            PetCtrls.AddControl(ctlType = "keybutton", ctlName = self.UniqueName(f"Pet{i}BuffKey"), contents = "UNBOUND")
 
         KeySizer.Add(TeamCtrls, 0, flag = wx.LEFT|wx.RIGHT, border = 5)
         KeySizer.Add(PetCtrls,  0, flag = wx.LEFT|wx.RIGHT, border = 5)

@@ -16,7 +16,7 @@ class ControlGroup(wx.StaticBoxSizer):
         for col in flexcols: self.InnerSizer.AddGrowableCol(col)
         self.Add(self.InnerSizer, 1, wx.ALL|wx.EXPAND, 16)
 
-    def AddLabeledControl(self,
+    def AddControl(self,
             ctlType = '', ctlName = '', noLabel = False,
             contents = '', tooltip = '', callback = None):
 

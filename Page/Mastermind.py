@@ -170,19 +170,19 @@ class Mastermind(Page):
 
         for PetID in range(1,7):
 
-            petNames.AddLabeledControl(
+            petNames.AddControl(
                 ctlName = f"Pet{PetID}Name",
                 ctlType = 'text',
                 tooltip = f"Specify Pet {PetID}'s Name for individual selection",
             )
-            petNames.AddLabeledControl(
+            petNames.AddControl(
                 noLabel = True,
                 ctlName = f"Pet{PetID}Bodyguard",
                 ctlType = 'checkbox',
                 contents = "Bodyguard",
                 tooltip = f"Select whether pet {PetID} acts as Bodyguard",
             )
-            petNames.AddLabeledControl(
+            petNames.AddControl(
                 ctlName = f"PetSelect{PetID}",
                 ctlType = "keybutton",
                 tooltip = f"Choose the Key Combo to Select Pet {PetID}"
@@ -206,19 +206,19 @@ class Mastermind(Page):
         ChatOptions = ('Local','Self-Tell','Petsay','---' )
         for command in self.petCommandKeyDefinitions:
 
-            petCommandsKeys.AddLabeledControl(
+            petCommandsKeys.AddControl(
                 ctlName = command['ctrlName'],
                 ctlType = 'keybutton',
                 tooltip = "Choose the key combo that will " + command['tooltipdetail'],
             )
 
-            petCommandsKeys.AddLabeledControl(
+            petCommandsKeys.AddControl(
                 ctlName = command['ctrlName'] + 'ResponseMethod',
                 ctlType = 'combobox',
                 contents = ChatOptions,
                 tooltip = "Choose how your pets will respond when they are in chatty mode and you " + command['tooltipdetail'],
             )
-            petCommandsKeys.AddLabeledControl(
+            petCommandsKeys.AddControl(
                 noLabel = True,
                 ctlName = command['ctrlName'] + "Response",
                 ctlType = "text",

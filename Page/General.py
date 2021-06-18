@@ -195,6 +195,27 @@ class General(Page):
     def OnPickEpicPowerSet(self, event):
         pass
 
+    def GetPowers(self):
+        archetype = self.GetState('Archetype')
+        primary   = self.GetState('Primary')
+        secondary = self.GetState('Secondary')
+        epic      = self.GetState('Epic')
+        # TODO, for 1-4, collect up pool powers
+        # TODO - maybe also Incarnate stuff?
+
+        arch = Archetypes.get(archetype, None)
+        if not arch: return []
+
+        powers = []
+        pp = Archetypes[archetype]['Primary'].get(primary, None)
+        if pp: powers.extend(pp)
+        sp = Archetypes[archetype]['Secondary'].get(secondary, None)
+        if sp: powers.extend(sp)
+        ep = Archetypes[archetype]['Epic'].get(epic, None)
+        if ep: powers.extend(ep)
+
+        return powers
+
 
     UI.Labels.update({
         'BindsDir'        : 'Base Binds Directory',

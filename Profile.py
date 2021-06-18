@@ -14,7 +14,7 @@ from Page.CustomBinds import CustomBinds
 class Profile(wx.Notebook):
 
     def __init__(self, parent):
-        wx.Notebook.__init__(self, parent, style = wx.NB_TOP)
+        wx.Notebook.__init__(self, parent, style = wx.NB_TOP, name = "Profile")
 
         self.BindFiles = {}
         self.Pages     = []

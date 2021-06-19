@@ -25,16 +25,13 @@ class BindFile():
             # $resetfile2->{$key} = $s
         # }
 
-    # TODO - "bind_load_file" instead of "bindloadfile" for now
-    # so that we can rdiff the output of CityBinder
-
     # TODO - hard coded \\ in there, make this with Path
     def BaseReset(self):
         return f'bind_load_file {self.BindsDir}\\subreset.txt'
 
     # TODO - make "silent" an option, and the default
     def BLF(self):
-        return f'bind_load_file {self.Path}'
+        return f'bindloadfile {self.Path}'
 
     def Write(self, profile):
         try:

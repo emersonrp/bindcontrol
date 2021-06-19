@@ -137,7 +137,7 @@ class Mastermind(Page):
 
             'EnablePetActionBinds': 1,
 
-            'PetChatToggle' : 'ALT+M',
+            'PetChatToggle' : 'LALT+M',
             'PetSelect1' : 'F1',
             'PetSelect2' : 'F2',
             'PetSelect3' : 'F3',
@@ -145,12 +145,12 @@ class Mastermind(Page):
             'PetSelect5' : 'F5',
             'PetSelect6' : 'F6',
 
-            'Pet1Name' : '',
-            'Pet2Name' : '',
-            'Pet3Name' : '',
-            'Pet4Name' : '',
-            'Pet5Name' : '',
-            'Pet6Name' : '',
+            'Pet1Name' : 'test1',
+            'Pet2Name' : 'test2',
+            'Pet3Name' : 'test3',
+            'Pet4Name' : 'test4',
+            'Pet5Name' : 'test5',
+            'Pet6Name' : 'test6',
 
             'Pet1Bodyguard' : 0,
             'Pet2Bodyguard' : 1,
@@ -166,10 +166,6 @@ class Mastermind(Page):
             "Petsay"    : "petsayall ",
             "---"       : ""
         }
-
-
-
-
         self.TabTitle = "Mastermind / Pet Binds"
 
     def BuildPage(self):
@@ -280,7 +276,7 @@ class Mastermind(Page):
 
     def mmBGSelBind(self, profile, file, PetBodyguardResponse, powers):
         tier1bg = tier2bg = tier3bg = 0
-        bgact = bgset = bgsay = ''
+        bgset = bgsay = []
         if (self.GetState('EnablePetBodyguardBinds')):
             #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
             #  first check if any full tier groups are bodyguards.  full tier groups are either All BG or all NBG.
@@ -296,46 +292,47 @@ class Mastermind(Page):
             #  so, add all fullgroups into the bgsay command.
             #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
             if (((tier1bg + tier2bg + tier3bg) == 6) or (self.GetState('PetBodyguardResponseMethod') != '---')):
-                bgsay = self.GetChatMethod('PetBodyguardResponseMethod') + PetBodyguardResponse
+                bgsay = [self.GetChatMethod('PetBodyguardResponseMethod') + PetBodyguardResponse]
             else:
                 if (tier1bg == 3):
-                    bgsay = bgsay + f"$$petsaypow {powers['min']} {PetBodyguardResponse}"
+                    bgsay.append(f"petsaypow {powers['min']} {PetBodyguardResponse}")
                 else:
                     #  use petsayname commands for those tier1s that are bodyguards.
-                    if (self.GetState('Pet1Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet1Name')} {PetBodyguardResponse}"
-                    if (self.GetState('Pet2Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet2Name')} {PetBodyguardResponse}"
-                    if (self.GetState('Pet3Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet3Name')} {PetBodyguardResponse}"
+                    if (self.GetState('Pet1Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet1Name')} {PetBodyguardResponse}")
+                    if (self.GetState('Pet2Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet2Name')} {PetBodyguardResponse}")
+                    if (self.GetState('Pet3Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet3Name')} {PetBodyguardResponse}")
 
                 if (tier2bg == 2):
-                    bgsay = bgsay + f"$$petsaypow {powers['lts']} {PetBodyguardResponse}"
+                    bgsay.append(f"petsaypow {powers['lts']} {PetBodyguardResponse}")
                 else:
-                    if (self.GetState('Pet4Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet4Name')} {PetBodyguardResponse}"
-                    if (self.GetState('Pet5Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet5Name')} {PetBodyguardResponse}"
+                    if (self.GetState('Pet4Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet4Name')} {PetBodyguardResponse}")
+                    if (self.GetState('Pet5Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet5Name')} {PetBodyguardResponse}")
 
                 if (tier3bg == 1):
-                    bgsay = bgsay + f"$$petsaypow {powers['bos']} {PetBodyguardResponse}"
+                    bgsay.append(f"petsaypow {powers['bos']} {PetBodyguardResponse}")
 
             if ((tier1bg + tier2bg + tier3bg) == 6):
-                bgset = '$$petcomall def fol'
+                bgset = ['petcomall def fol']
             else:
                 if (tier1bg == 3):
-                    bgset = bgset + f"$$petcompow {powers['min']} def fol"
+                    bgset.append(f"petcompow {powers['min']} def fol")
                 else:
                     #  use petsayname commands for those tier1s that are bodyguards.
-                    if (self.GetState('Pet1Bodyguard')) : bgset = bgset + f"$$petcomname {self.GetState('Pet1Name')} def fol"
-                    if (self.GetState('Pet2Bodyguard')) : bgset = bgset + f"$$petcomname {self.GetState('Pet2Name')} def fol"
-                    if (self.GetState('Pet3Bodyguard')) : bgset = bgset + f"$$petcomname {self.GetState('Pet3Name')} def fol"
+                    if (self.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet1Name')} def fol")
+                    if (self.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet2Name')} def fol")
+                    if (self.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet3Name')} def fol")
 
                 if (tier2bg == 2):
-                    bgset = bgset + f"$$petcompow {powers['lts']} def fol"
+                    bgset.append(f"petcompow {powers['lts']} def fol")
                 else:
-                    if (self.GetState('Pet4Bodyguard')) : bgset = bgset + f"$$petcomname {self.GetState('Pet4Name')} def fol"
-                    if (self.GetState('Pet5Bodyguard')) : bgset = bgset + f"$$petcomname {self.GetState('Pet5Name')} def fol"
+                    if (self.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet4Name')} def fol")
+                    if (self.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet5Name')} def fol")
 
                 if (tier3bg == 1):
-                    bgset = bgset + f"$$petcompow {powers['bos']} def fol"
+                    bgset.append(f"petcompow {powers['bos']} def fol")
 
-            file.SetBind(self.Ctrls['PetBodyguard'].MakeFileKeyBind([bgsay + bgset, profile.GetBindFile('mmbinds','cbguarda.txt').BLF()]))
+            keyBindContents = bgsay + bgset + [profile.GetBindFile('mmbinds','cbguarda.txt').BLF()]
+            file.SetBind(self.Ctrls['PetBodyguard'].MakeFileKeyBind(keyBindContents))
 
     def mmBGActBind(self, profile, filedn, fileup, action, say, powers):
 
@@ -343,7 +340,7 @@ class Mastermind(Page):
         method = self.GetChatMethod(f"Pet{action}ResponseMethod")
 
         tier1bg = tier2bg = tier3bg = 0
-        bgact = bgset = bgsay = ''
+        bgact = bgsay = []
         #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
         #  first check if any full tier groups are bodyguards.  full tier groups are eaither All BG or all NBG.
         if (self.GetState('Pet1Bodyguard')) : tier1bg = tier1bg + 1
@@ -358,48 +355,47 @@ class Mastermind(Page):
         #  so, add all fullgroups into the bgsay command.
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
         if (((tier1bg + tier2bg + tier3bg) == 0) or (method != 3)):
-            saymethall = ("local ",'tell, $name ',"petsayall ","")
-            bgsay = method + say
+            bgsay = [method + say]
         else:
             if (tier1bg == 0):
-                bgsay = bgsay + f"$$petsaypow {powers['min']} $say"
+                bgsay.append(f"petsaypow {powers['min']} $say")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (not self.GetState('Pet1Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet1Name')} {say}"
-                if (not self.GetState('Pet2Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet2Name')} {say}"
-                if (not self.GetState('Pet3Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet3Name')} {say}"
+                if (not self.GetState('Pet1Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet1Name')} {say}")
+                if (not self.GetState('Pet2Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet2Name')} {say}")
+                if (not self.GetState('Pet3Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet3Name')} {say}")
 
             if (tier2bg == 0):
-                bgsay = bgsay + f"$$petsaypow {powers['lts']} {say}"
+                bgsay.append(f"petsaypow {powers['lts']} {say}")
             else :
-                if (not self.GetState('Pet4Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet4Name')} {say}"
-                if (not self.GetState('Pet5Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet5Name')} {say}"
+                if (not self.GetState('Pet4Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet4Name')} {say}")
+                if (not self.GetState('Pet5Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet5Name')} {say}")
 
             if (tier3bg == 0):
-                bgsay = bgsay + f"$$petsaypow {powers['bos']} {say}"
+                bgsay.append(f"petsaypow {powers['bos']} {say}")
 
         if ((tier1bg + tier2bg + tier3bg) == 0):
-            bgact = '$$petcomall ' + action
+            bgact = ['petcomall ' + action]
         else :
             if (tier1bg == 0):
-                bgact = bgact + f"$$petcompow {powers['min']} {action}"
+                bgact.append(f"petcompow {powers['min']} {action}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (not self.GetState('Pet1Bodyguard')) : bgact = bgact + f"$$petcomname {self.GetState('Pet1Name')} {action}"
-                if (not self.GetState('Pet2Bodyguard')) : bgact = bgact + f"$$petcomname {self.GetState('Pet2Name')} {action}"
-                if (not self.GetState('Pet3Bodyguard')) : bgact = bgact + f"$$petcomname {self.GetState('Pet3Name')} {action}"
+                if (not self.GetState('Pet1Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet1Name')} {action}")
+                if (not self.GetState('Pet2Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet2Name')} {action}")
+                if (not self.GetState('Pet3Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet3Name')} {action}")
 
             if (tier2bg == 0):
-                bgact = bgact + f"$$petcompow {powers['lts']} {action}"
+                bgact.append(f"petcompow {powers['lts']} {action}")
             else :
-                if (not self.GetState('Pet4Bodyguard')) : bgact = bgact + f"$$petcomname {self.GetState('Pet4Name')} {action}"
-                if (not self.GetState('Pet5Bodyguard')) : bgact = bgact + f"$$petcomname {self.GetState('Pet5Name')} {action}"
+                if (not self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet4Name')} {action}")
+                if (not self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet5Name')} {action}")
 
             if (tier3bg == 0):
-                bgact = bgact + '$$petcompow ' + f"{powers['bos']} {action}"
+                bgact.append('petcompow ' + f"{powers['bos']} {action}")
 
-        filedn.SetBind(FileKeyBind(key = key, contents = [bgsay, fileup.BLF()]))
-        fileup.SetBind(FileKeyBind(key = key, contents = [bgact, filedn.BLF()]))
+        filedn.SetBind(FileKeyBind(key = key, contents = bgsay + [fileup.BLF()]))
+        fileup.SetBind(FileKeyBind(key = key, contents = bgact + [filedn.BLF()]))
 
     def mmBGActBGBind(self, profile, filedn, fileup, action, say, powers):
 
@@ -407,7 +403,7 @@ class Mastermind(Page):
         method = self.GetChatMethod(f"Pet{action}ResponseMethod")
 
         tier1bg = tier2bg = tier3bg = 0
-        bgact = bgset = bgsay = ''
+        bgact = bgsay = []
         #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
         #  first check if any full tier groups are bodyguards.  full tier groups are eaither All BG or all NBG.
         if (self.GetState('Pet1Bodyguard')) : tier1bg = tier1bg + 1
@@ -422,53 +418,52 @@ class Mastermind(Page):
         #  so, add all fullgroups into the bgsay command.
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
         if (((tier1bg + tier2bg + tier3bg) == 6) or (method != 3)):
-            saymethall = ("local ",'tell, $name ',"petsayall ","")
-            bgsay = method + say
+            bgsay = [method + say]
         else :
             if (tier1bg == 3):
-                bgsay = bgsay + f"$$petsaypow {powers['min']} {say}"
+                bgsay.append(f"petsaypow {powers['min']} {say}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (self.GetState('Pet1Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet1Name')} {say}"
-                if (self.GetState('Pet2Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet2Name')} {say}"
-                if (self.GetState('Pet3Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet3Name')} {say}"
+                if (self.GetState('Pet1Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet1Name')} {say}")
+                if (self.GetState('Pet2Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet2Name')} {say}")
+                if (self.GetState('Pet3Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet3Name')} {say}")
 
             if (tier2bg == 2):
-                bgsay = bgsay + f"$$petsaypow {powers['lts']} {say}"
+                bgsay.append(f"petsaypow {powers['lts']} {say}")
             else :
-                if (self.GetState('Pet4Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet4Name')} {say}"
-                if (self.GetState('Pet5Bodyguard')) : bgsay = bgsay + f"$$petsayname {self.GetState('Pet5Name')} {say}"
+                if (self.GetState('Pet4Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet4Name')} {say}")
+                if (self.GetState('Pet5Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet5Name')} {say}")
 
             if (tier3bg == 1):
-                bgsay = bgsay + f"$$petsaypow {powers['bos']} {say}"
+                bgsay.append(f"petsaypow {powers['bos']} {say}")
 
         if ((tier1bg + tier2bg + tier3bg) == 6):
-            bgact = '$$petcomall ' + action
+            bgact = ['petcomall ' + action]
         else :
             if (tier1bg == 3):
-                bgact = bgact + f"$$petcompow {powers['min']} {action}"
+                bgact.append(bgact + f"petcompow {powers['min']} {action}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (self.GetState('Pet1Bodyguard')) : bgact = bgact + f"$$petcomname {self.GetState('Pet1Name')} {action}"
-                if (self.GetState('Pet2Bodyguard')) : bgact = bgact + f"$$petcomname {self.GetState('Pet2Name')} {action}"
-                if (self.GetState('Pet3Bodyguard')) : bgact = bgact + f"$$petcomname {self.GetState('Pet3Name')} {action}"
+                if (self.GetState('Pet1Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet1Name')} {action}")
+                if (self.GetState('Pet2Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet2Name')} {action}")
+                if (self.GetState('Pet3Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet3Name')} {action}")
 
             if (tier2bg == 2):
-                bgact = bgact + f"$$petcompow {powers['lts']} {action}"
+                bgact.append(f"petcompow {powers['lts']} {action}")
             else :
-                if (self.GetState('Pet4Bodyguard')) : bgact = bgact + f"$$petcomname {self.GetState('Pet4Name')} {action}"
-                if (self.GetState('Pet5Bodyguard')) : bgact = bgact + f"$$petcomname {self.GetState('Pet5Name')} {action}"
+                if (self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet4Name')} {action}")
+                if (self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet5Name')} {action}")
 
             if (tier3bg == 1):
-                bgact = bgact + f"$$petcompow {powers['bos']} {action}"
+                bgact.append(f"petcompow {powers['bos']} {action}")
 
         # file.SetBind(self.Ctrls['PetBodyguard'].MakeFileKeyBind(bgsay.$bgset.BindFile.BLF($profile, 'mmbinds','\mmbinds\\cbguarda.txt')))
-        filedn.SetBind(FileKeyBind(key = key, contents = [bgsay, fileup.BLF()]))
-        fileup.SetBind(FileKeyBind(key = key, contents = [bgact, filedn.BLF()]))
+        filedn.SetBind(FileKeyBind(key = key, contents = bgsay + [fileup.BLF()]))
+        fileup.SetBind(FileKeyBind(key = key, contents = bgact + [filedn.BLF()]))
 
     def mmQuietBGSelBind(self, profile, file, powers):
         tier1bg = tier2bg = tier3bg = 0
-        bgact = bgset = bgsay = ''
+        bgset = []
         if (self.GetState('EnablePetBodyguardBinds')):
             #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
             #  first check if any full tier groups are bodyguards.  full tier groups are either All BG or all NBG.
@@ -484,33 +479,33 @@ class Mastermind(Page):
             #  so, add all fullgroups into the bgsay command.
             #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
             if ((tier1bg + tier2bg + tier3bg) == 6):
-                bgset = "petcomall def fol"
+                bgset = ["petcomall def fol"]
             else :
                 if (tier1bg == 3):
-                    bgset = bgset + f"$$petcompow {powers['min']} def fol"
+                    bgset.append(f"petcompow {powers['min']} def fol")
                 else :
                     #  use petsayname commands for those tier1s that are bodyguards.
-                    if (self.GetState('Pet1Bodyguard')) : bgset = bgset + f"$$petcomname {self.GetState('Pet1Name')} def fol"
-                    if (self.GetState('Pet2Bodyguard')) : bgset = bgset + f"$$petcomname {self.GetState('Pet2Name')} def fol"
-                    if (self.GetState('Pet3Bodyguard')) : bgset = bgset + f"$$petcomname {self.GetState('Pet3Name')} def fol"
+                    if (self.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet1Name')} def fol")
+                    if (self.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet2Name')} def fol")
+                    if (self.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet3Name')} def fol")
 
                 if (tier2bg == 2):
-                    bgset = bgset + f"$$petcompow {powers['lts']} def fol"
+                    bgset.append(f"petcompow {powers['lts']} def fol")
                 else :
-                    if (self.GetState('Pet4Bodyguard')) : bgset = bgset + f"$$petcomname {self.GetState('Pet4Name')} def fol"
-                    if (self.GetState('Pet5Bodyguard')) : bgset = bgset + f"$$petcomname {self.GetState('Pet5Name')} def fol"
+                    if (self.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet4Name')} def fol")
+                    if (self.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet5Name')} def fol")
 
                 if (tier3bg == 1):
-                    bgset = bgset + f"$$petcompow {powers['bos']} def fol"
+                    bgset.append(f"petcompow {powers['bos']} def fol")
 
-            file.SetBind(self.Ctrls['PetBodyguard'].MakeFileKeyBind([bgset, profile.GetBindFile('mmbinds','mmbinds','bguarda.txt').BLF()]))
+            file.SetBind(self.Ctrls['PetBodyguard'].MakeFileKeyBind(bgset + [profile.GetBindFile('mmbinds','bguarda.txt').BLF()]))
 
     def mmQuietBGActBind(self, profile, filedn, fileup, action, powers):
 
         key = self.GetState(f"PetBodyguard{action}")
 
         tier1bg = tier2bg = tier3bg = 0
-        bgact = bgset = bgsay = ''
+        bgact = []
         #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
         #  first check if any full tier groups are bodyguards.  full tier groups are eaither All BG or all NBG.
         if (self.GetState('Pet1Bodyguard')) : tier1bg = tier1bg + 1
@@ -525,23 +520,23 @@ class Mastermind(Page):
         #  so, add all fullgroups into the bgsay command.
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
         if ((tier1bg + tier2bg + tier3bg) == 0):
-            bgact = "petcomall $action"
+            bgact = [f"petcomall {action}"]
         else :
             if (tier1bg == 0):
-                bgact = bgact + f"$$petcompow {powers['min']} {action}"
+                bgact.append(f"petcompow {powers['min']} {action}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (not self.GetState('Pet1Bodyguard')): bgact = bgact + f"$$petcomname {self.GetState('Pet1Name')} {action}"
-                if (not self.GetState('Pet2Bodyguard')): bgact = bgact + f"$$petcomname {self.GetState('Pet2Name')} {action}"
-                if (not self.GetState('Pet3Bodyguard')): bgact = bgact + f"$$petcomname {self.GetState('Pet3Name')} {action}"
+                if (not self.GetState('Pet1Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet1Name')} {action}")
+                if (not self.GetState('Pet2Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet2Name')} {action}")
+                if (not self.GetState('Pet3Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet3Name')} {action}")
 
             if (tier2bg == 0):
-                bgact = bgact + f"$$petcompow {powers['lts']} {action}"
+                bgact.append(f"petcompow {powers['lts']} {action}")
             else :
-                if (not self.GetState('Pet4Bodyguard')): bgact = bgact + f"$$petcomname {self.GetState('Pet4Name')} {action}"
-                if (not self.GetState('Pet5Bodyguard')): bgact = bgact + f"$$petcomname {self.GetState('Pet5Name')} {action}"
+                if (not self.GetState('Pet4Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet4Name')} {action}")
+                if (not self.GetState('Pet5Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet5Name')} {action}")
 
-            if (tier3bg == 0): bgact = bgact + f"$$petcompow {powers['bos']} {action}"
+            if (tier3bg == 0): bgact.append(f"petcompow {powers['bos']} {action}")
 
         # 'petcompow ',,grp.' Stay'
         filedn.SetBind(FileKeyBind(key = key, contents = bgact))
@@ -552,7 +547,7 @@ class Mastermind(Page):
         method = self.GetChatMethod("Pet${action}ResponseMethod")
 
         tier1bg = tier2bg = tier3bg = 0
-        bgact = bgset = bgsay = ''
+        bgact = []
         #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
         #  first check if any full tier groups are bodyguards.  full tier groups are eaither All BG or all NBG.
         if (self.GetState('Pet1Bodyguard')) : tier1bg = tier1bg + 1
@@ -567,30 +562,30 @@ class Mastermind(Page):
         #  so, add all fullgroups into the bgsay command.
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
         if ((tier1bg + tier2bg + tier3bg) == 6):
-            bgact = "petcomall $action"
+            bgact = [f"petcomall {action}"]
         else :
             if (tier1bg == 3):
-                bgact = bgact + f"$$petcompow {powers['min']} {action}"
+                bgact.append(f"petcompow {powers['min']} {action}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (self.GetState('Pet1Bodyguard')): bgact = bgact + f"$$petcomname {self.GetState('Pet1Name')} {action}"
-                if (self.GetState('Pet2Bodyguard')): bgact = bgact + f"$$petcomname {self.GetState('Pet2Name')} {action}"
-                if (self.GetState('Pet3Bodyguard')): bgact = bgact + f"$$petcomname {self.GetState('Pet3Name')} {action}"
+                if (self.GetState('Pet1Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet1Name')} {action}")
+                if (self.GetState('Pet2Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet2Name')} {action}")
+                if (self.GetState('Pet3Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet3Name')} {action}")
 
             if (tier2bg == 2):
-                bgact = bgact + f"$$petcompow  {powers['lts']} {action}"
+                bgact.append(f"petcompow  {powers['lts']} {action}")
             else :
-                if (self.GetState('Pet4Bodyguard')) : bgact = bgact + f"$$petcomname {self.GetState('Pet4Name')} {action}"
-                if (self.GetState('Pet5Bodyguard')) : bgact = bgact + f"$$petcomname {self.GetState('Pet5Name')} {action}"
+                if (self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet4Name')} {action}")
+                if (self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet5Name')} {action}")
 
-            if (tier3bg == 1) : bgact = bgact + f"$$petcompow {powers['bos']} {action}"
+            if (tier3bg == 1) : bgact.append(f"petcompow {powers['bos']} {action}")
 
         # 'petcompow ',,grp.' Stay'
-        filedn.SetBind(key, "bgact", "Mastermind", bgact)
+        filedn.SetBind(FileKeyBind(key = key, contents = bgact))
 
     def mmSubBind(self, profile, file, fn, grp, powers):
         PetResponses = {}
-        for cmd  in ('SelectAll', 'SelectMinions', 'SelectLieutenants', 'SelectBoss', 
+        for cmd in ('SelectAll', 'SelectMinions', 'SelectLieutenants', 'SelectBoss', 
                 'Aggressive', 'Defensive', 'Passive', 'Attack', 'Follow', 'Goto', 'Stay','Bodyguard',):
             PetResponses[cmd] = ''
             if self.GetChatMethod(f"Pet{cmd}ResponseMethod") : PetResponses[cmd] = self.GetState(f"Pet{cmd}Response")
@@ -607,8 +602,8 @@ class Mastermind(Page):
         self.mmBGSelBind(profile,file,PetResponses['Bodyguard'],powers)
 
         if grp: petcom = f"$$petcompow {grp}"
-        else:   petcom =  "petcomall"
-        for cmd in ('Aggressive','Defensive','Attack','Follow','Goto', 'Stay'):
+        else:   petcom =  "$$petcomall"
+        for cmd in ('Aggressive','Defensive','Passive', 'Attack','Follow','Goto', 'Stay'):
             file.SetBind(self.Ctrls[f"Pet{cmd}"].MakeFileKeyBind(self.GetChatMethod(f"Pet{cmd}ResponseMethod") + f" {PetResponses[cmd]}{petcom} {cmd}"))
 
         if (self.GetState('PetBodyguardAttackEnabled'))  : file.SetBind(self.Ctrls['PetBodyguardAttack'].MakeFileKeyBind('nop'))
@@ -620,13 +615,17 @@ class Mastermind(Page):
         for cmd in ('SelectAll','SelectMinions','SelectLieutenants','SelectBoss','Aggressive','Defensive','Passive','Attack','Follow','Goto', 'Stay', 'Bodyguard',):
             if self.GetChatMethod(f'Pet{cmd}ResponseMethod') : PetResponses[cmd] = self.GetState(f'Pet{cmd}Response')
 
-        filedn.SetBind(self.Ctrls['PetSelectAll'].MakeFileKeyBind([self.GetChatMethod('PetSelectAllResponseMethod') + f" {PetResponses['SelectAll']}", profile.GetBindFile('mmbinds','call.txt').BLF()]))
-        filedn.SetBind(self.Ctrls['PetSelectMinions'].MakeFileKeyBind([self.GetChatMethod('PetSelectMinionsResponseMethod') + f" {PetResponses['SelectMinions']}", profile.GetBindFile('mmbinds','ctier1.txt').BLF()]))
-        filedn.SetBind(self.Ctrls['PetSelectLieutenants'].MakeFileKeyBind([self.GetChatMethod('PetSelectLieutenantsResponseMethod') + f" {PetResponses['SelectLieutenants']}", profile.GetBindFile('mmbinds','ctier2.txt').BLF()]))
-        filedn.SetBind(self.Ctrls['PetSelectBoss'].MakeFileKeyBind([self.GetChatMethod('PetSelectBossResponseMethod') + f" {PetResponses['SelectBoss']}", profile.GetBindFile('mmbinds','ctier3.txt').BLF()]))
+        filedn.SetBind(self.Ctrls['PetSelectAll'].MakeFileKeyBind(
+            [self.GetChatMethod('PetSelectAllResponseMethod') + f" {PetResponses['SelectAll']}", profile.GetBindFile('mmbinds','call.txt').BLF()]))
+        filedn.SetBind(self.Ctrls['PetSelectMinions'].MakeFileKeyBind(
+            [self.GetChatMethod('PetSelectMinionsResponseMethod') + f" {PetResponses['SelectMinions']}", profile.GetBindFile('mmbinds','ctier1.txt').BLF()]))
+        filedn.SetBind(self.Ctrls['PetSelectLieutenants'].MakeFileKeyBind(
+            [self.GetChatMethod('PetSelectLieutenantsResponseMethod') + f" {PetResponses['SelectLieutenants']}", profile.GetBindFile('mmbinds','ctier2.txt').BLF()]))
+        filedn.SetBind(self.Ctrls['PetSelectBoss'].MakeFileKeyBind(
+            [self.GetChatMethod('PetSelectBossResponseMethod') + f" {PetResponses['SelectBoss']}", profile.GetBindFile('mmbinds','ctier3.txt').BLF()]))
         self.mmBGSelBind(profile,filedn,PetResponses['Bodyguard'],powers)
 
-        for cmd in ('Aggressive','Defensive','Attack','Follow','Goto', 'Stay'):
+        for cmd in ('Aggressive','Defensive','Passive', 'Attack','Follow','Goto', 'Stay'):
             self.mmBGActBind(profile, filedn, fileup, cmd, PetResponses[cmd], powers)
 
         if (self.GetState('PetBodyguardAttackenabled')):
@@ -644,15 +643,15 @@ class Mastermind(Page):
         file.SetBind(self.Ctrls['PetSelectBoss'].MakeFileKeyBind(profile.GetBindFile('mmbinds','tier3.txt').BLF()))
         self.mmQuietBGSelBind(profile, file, powers)
 
-        if grp: petcom = f"$$petcompow {grp}"
-        else:   petcom =  '$$petcomall'
-        for cmd in ('Aggressive','Defensive','Attack','Follow','Goto', 'Stay'):
+        if grp: petcom = f"petcompow {grp}"
+        else:   petcom =  'petcomall'
+        for cmd in ('Aggressive','Defensive','Passive', 'Attack','Follow','Goto', 'Stay'):
             file.SetBind(self.Ctrls[f"Pet{cmd}"].MakeFileKeyBind(f"{petcom} {cmd}"))
 
         if (self.GetState('PetBodyguardAttackenabled'))  : file.SetBind(self.Ctrls['PetBodyguardAttack'].MakeFileKeyBind('nop'))
         if (self.GetState('PetBodyguardGotoenabled'))    : file.SetBind(self.Ctrls['PetBodyguardGoto'].MakeFileKeyBind('nop'))
 
-        file.SetBind(self.Ctrls['PetChatToggle'].MakeFileKeyBind('tell $name, Chatty Mode' + profile.GetBindFile('mmbinds','c' + fn + '.txt').BLF()))
+        file.SetBind(self.Ctrls['PetChatToggle'].MakeFileKeyBind(['tell $name, Chatty Mode', profile.GetBindFile('mmbinds','c' + fn + '.txt').BLF()]))
 
     def mmQuietBGSubBind(self, profile, filedn, fileup, fn, powers):
         filedn.SetBind(self.Ctrls['PetSelectAll'].MakeFileKeyBind(profile.GetBindFile('mmbinds','all.txt').BLF()))

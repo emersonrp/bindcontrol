@@ -225,11 +225,6 @@ function profile:write()
     activeprofile = nil
 end
 
-function cbWriteToggleBind(filedown,fileup,key,binddown,bindup,filedownname,fileupname)
-    cbWriteBind(filedown,key,"+ $$"..binddown.."$$bindloadfile "..fileupname)
-    cbWriteBind(fileup,key,"- $$"..bindup.."$$bindloadfile "..filedownname)
-end
-
 function cbNewBind(str)
     str = str or "UNBOUND"
     str = string.upper(str)

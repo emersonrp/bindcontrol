@@ -7,7 +7,7 @@ class FileKeyBind(KeyBind):
 
     def GetKeyBindString(self):
 
-        payload = '$$'.join(self.Contents)
+        payload = '$$'.join([i for i in self.Contents if i])
 
         return f'{self.Key} "{payload}"\n'
 

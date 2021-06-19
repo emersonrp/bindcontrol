@@ -31,6 +31,7 @@ class General(Page):
             'Pool3': '',
             'Pool4': '',
             'UseSplitModKeys': False,
+            'FlushAllBinds' : False,
         }
 
     def BuildPage(self):
@@ -124,6 +125,11 @@ class General(Page):
 
         prefsBox.AddControl(
             ctlName = 'UseSplitModKeys',
+            ctlType = 'checkbox',
+        )
+
+        prefsBox.AddControl(
+            ctlName = 'FlushAllBinds',
             ctlType = 'checkbox',
         )
 
@@ -228,5 +234,6 @@ class General(Page):
         'ResetKey'        : 'Reset All Binds',
         'ResetFeedback'   : 'Enable Reset Feedback Self-/tell',
         'UseSplitModKeys' : 'Bind left and right modifier keys separately',
+        'FlushAllBinds'   : 'Set all binds to default before reapplying',
     })
 

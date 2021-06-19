@@ -17,9 +17,9 @@ class General(Page):
         self.Init = {
             'Name': 'Profile',
             'Origin': "Magic",
-            'Archetype': 'Stalker',
-            'Primary': 'Ninjas',
-            'Secondary': 'Super Reflexes',
+            'Archetype': 'Mastermind',
+            'Primary': '',
+            'Secondary': '',
             'Epic': 'Weapon Mastery',
             # TODO - find CoH install and put them there?
             # TODO - help text about WINEPREFIX etc for Mac/Linux users

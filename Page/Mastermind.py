@@ -134,6 +134,8 @@ class Mastermind(Page):
             'PetBodyguardAttack' : '',
             'PetBodyguardGoto' : '',
 
+            'EnablePetActionBinds': 1,
+
             'PetChatToggle' : 'ALT+M',
             'PetSelect1' : 'F1',
             'PetSelect2' : 'F2',
@@ -188,19 +190,29 @@ class Mastermind(Page):
                 tooltip = f"Choose the Key Combo to Select Pet {PetID}"
             )
 
-        useCB = wx.CheckBox( self, -1, 'Enable Pet Action Binds')
-        useCB.SetToolTip(wx.ToolTip('Check this to enable the Mastermind Pet Action Binds'))
-        self.Ctrls['EnablePetActionBinds'] = useCB
-
         # TODO - add checkbox handler to hide/show (enable/disable?) the bodyguard options
         # TODO -- actually, automagically enable/disable these depending on whether any pets have their
         # individual "Bodyguard" checkboxes checked.
-        # bgCB = wx.CheckBox( self, -1, 'Enable Bodyguard Mode Binds')
-        # bgCB.SetToolTip(wx.ToolTip('Check this to enable the Bodyguard Mode Binds'))
-        # bgCB.SetValue(self.Init['PetBodyguardMode'])
-        # self.Ctrls['EnablePetBodyguardBinds'] = bgCB
+        bgCB = wx.CheckBox( self, -1, 'Enable Bodyguard Mode Binds')
+        bgCB.SetToolTip(wx.ToolTip('Check this to enable the Bodyguard Mode Binds'))
+        bgCB.SetValue(self.Init['PetBodyguardMode'])
+        self.Ctrls['EnablePetBodyguardBinds'] = bgCB
 
-        petCommandsKeys = ControlGroup(self, self, width = 5, label = "Pet Action Binds", flexcols = [4])
+        petCommandsKeys = ControlGroup(self, self, width = 5, label = "Pet Action Binds", flexcols = [1,4])
+
+        # shim the Chatty Mode toggle in there, above the chat responses
+        useCB = petCommandsKeys.AddControl(
+            ctlName = 'EnablePetActionBinds',
+            ctlType = 'checkbox',
+            tooltip = 'Check this to enable the Mastermind Pet Action Binds'
+        )
+        petCommandsKeys.AddControl(
+            ctlName = 'PetChatToggle',
+            ctlType = 'keybutton',
+            tooltip = 'Choose the key combo that will toggle your pet\'s Chatty Mode',
+        )
+        petCommandsKeys.AddControl( ctlName = 'spacer3', ctlType = 'statictext', noLabel = True,)
+
 
         # Iterate the data structure at the top and make the grid of controls for the basic pet binds
         ChatOptions = ('Local','Self-Tell','Petsay','---' )
@@ -225,10 +237,13 @@ class Mastermind(Page):
                 tooltip = "Choose the chat response your pets give when you " + command['tooltipdetail'],
             )
 
+        cbSizer = wx.BoxSizer(wx.HORIZONTAL)
+        cbSizer.Add(useCB, 0, wx.ALL, 16)
+        cbSizer.Add(bgCB, 0, wx.ALL, 10)
+
         sizer.Add(petNames, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 16)
         sizer.AddSpacer(10)
-        sizer.Add(useCB, 0, wx.ALL, 16)
-        # sizer.Add(bgCB, 0, wx.ALL, 10)
+        sizer.Add(cbSizer, 0, wx.EXPAND)
         sizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 16)
 
         self.SetSizerAndFit(sizer)
@@ -310,8 +325,7 @@ class Mastermind(Page):
                 if (tier3bg == 1):
                     bgset = bgset + f"$$petcompow {powers['bos']} def fol"
 
-            # TODO what is 'selbgm'
-            file.SetBind(self.GetState( 'selbgm' ), "selbgm", "Mastermind", bgsay + bgset + profile.GetBindFile('mmbinds','\cbguarda.txt').BLF())
+            file.SetBind(self.Ctrls[ 'PetBodyguard' ].KeyBind.MakeFileKeyBind(bgsay + bgset + profile.GetBindFile('mmbinds','cbguarda.txt').BLF()))
 
     def mmBGActBind(self, profile, filedn, fileup, action, say, powers):
 
@@ -433,8 +447,7 @@ class Mastermind(Page):
             if (tier3bg == 1):
                 bgact = bgact + f"$$petcompow {powers['bos']} {action}"
 
-        # TODO what is 'selbgm'
-        # file.SetBind(self.GetState('selbgm'), 'selbgm', 'Mastermind", bgsay.$bgset.BindFile.BLF($profile, 'mmbinds','\mmbinds\\cbguarda.txt'))
+        # file.SetBind(self.Ctrls['PetBodyguard'].KeyBind.MakeFileKeyBind(bgsay.$bgset.BindFile.BLF($profile, 'mmbinds','\mmbinds\\cbguarda.txt')))
         cbWriteToggleBind(filedn,fileup,key,bgsay,bgact,filedn.BLFPath,fileup.BLFPath)
 
     def mmQuietBGSelBind(self, profile, file, powers):
@@ -472,7 +485,7 @@ class Mastermind(Page):
                 if (tier3bg == 1):
                     bgset = bgset + f"$$petcompow {powers['bos']} def fol"
 
-            file.SetBind(self.GetState('selbgm'), "selbgm", "Mastermind", bgset + profile.GetBindFile('mmbinds','\mmbinds\\bguarda.txt').BLF())
+            file.SetBind(self.Ctrls['PetBodyguard'].KeyBind.MakeFileKeyBind(bgset + profile.GetBindFile('mmbinds','\mmbinds\\bguarda.txt').BLF()))
 
     def mmQuietBGActBind(self, profile, filedn, fileup, action, powers):
 
@@ -560,35 +573,36 @@ class Mastermind(Page):
             PetResponses[cmd] = ''
             if (self.GetState(f"Pet{cmd}ResponseMethod") != 'None') : PetResponses[cmd] = self.GetState(f"Pet{cmd}Response")
 
-        file.SetBind(self.GetState('PetSelectAll'),        "Pet Select All", "Mastermind",
-                     self.GetState('PetSelectAllResponseMethod') + f" {PetResponses['SelectAll']}" + profile.GetBindFile('mmbinds','call.txt').BLF())
-        file.SetBind(self.GetState('PetSelectMinions'),    "Pet Select Minion", "Mastermind",
-                     self.GetState('PetSelectMinionsResponseMethod') + f" {PetResponses['SelectMinions']}"     + profile.GetBindFile('mmbinds','ctier1.txt').BLF())
-        file.SetBind(self.GetState('PetSelectLieutenants'),"Pet Select Lieutenants", "Mastermind",
-                     self.GetState('PetSelectLieutenantsResponseMethod') + f" {PetResponses['SelectLieutenants']}" + profile.GetBindFile('mmbinds','ctier2.txt').BLF())
-        file.SetBind(self.GetState('PetSelectBoss'),       "Pet Select Boss", "Mastermind",
-                     self.GetState('PetSelectBossResponseMethod') + f" {PetResponses['SelectBoss']}" + profile.GetBindFile('mmbinds','ctier3.txt').BLF())
+        file.SetBind(self.Ctrls['PetSelectAll'].KeyBind.MakeFileKeyBind(
+                     self.GetState('PetSelectAllResponseMethod') + f" {PetResponses['SelectAll']}" + profile.GetBindFile('mmbinds','call.txt').BLF()))
+        file.SetBind(self.Ctrls['PetSelectMinions'].KeyBind.MakeFileKeyBind(
+                     self.GetState('PetSelectMinionsResponseMethod') + f" {PetResponses['SelectMinions']}"     + profile.GetBindFile('mmbinds','ctier1.txt').BLF()))
+        file.SetBind(self.Ctrls['PetSelectLieutenants'].KeyBind.MakeFileKeyBind(
+                     self.GetState('PetSelectLieutenantsResponseMethod') + f" {PetResponses['SelectLieutenants']}" + profile.GetBindFile('mmbinds','ctier2.txt').BLF()))
+        file.SetBind(self.Ctrls['PetSelectBoss'].KeyBind.MakeFileKeyBind(
+                     self.GetState('PetSelectBossResponseMethod') + f" {PetResponses['SelectBoss']}" + profile.GetBindFile('mmbinds','ctier3.txt').BLF()))
 
         self.mmBGSelBind(profile,file,PetResponses['Bodyguard'],powers)
 
         if grp: petcom = f"$$petcompow {grp}"
         else:   petcom =  "petcomall"
         for cmd in ('Aggressive','Defensive','Attack','Follow','Goto', 'Stay'):
-            file.SetBind(self.GetState(f"Pet[cmd]"), f"Pet {cmd}", "Mastermind", self.GetState(f"Pet[cmd]ResponseMethod") + f" {PetResponses[cmd]}{petcom} {cmd}")
+            print(cmd)
+            file.SetBind(self.Ctrls[f"Pet{cmd}"].KeyBind.MakeFileKeyBind(self.GetState(f"Pet{cmd}ResponseMethod") + f" {PetResponses[cmd]}{petcom} {cmd}"))
 
-        if (self.GetState('PetBackgroundAttackEnabled'))  : file.SetBind(self.GetState('PetBackgroundAttack'), "Pet Background Attack", "Mastermind", 'nop')
-        if (self.GetState('PetBackgroundGotoenabled'))    : file.SetBind(self.GetState('PetBackgroundGoto'), "Pet Background Goto", "Mastermind",'nop')
-        file.SetBind(self.GetState('chattykey'), "Chatty Mode", "Mastermind", 'tell $name, Non-Chatty Mode' + profile.GetBindFile('mmbinds',f"{fn}.txt").BLF())
+        if (self.GetState('PetBackgroundAttackEnabled'))  : file.SetBind(self.Ctrls['PetBackgroundAttack'].KeyBind.MakeFileKeyBind('nop'))
+        if (self.GetState('PetBackgroundGotoenabled'))    : file.SetBind(self.Ctrls['PetBackgroundGoto'].KeyBind.MakeFileKeyBind('nop'))
+        file.SetBind(self.Ctrls['PetChatToggle'].KeyBind.MakeFileKeyBind('tell $name, Non-Chatty Mode' + profile.GetBindFile('mmbinds',f"{fn}.txt").BLF()))
 
     def mmBGSubBind(self, profile, filedn, fileup, fn, powers):
         PetResponses = {}
         for cmd in ('SelectAll','SelectMinions','SelectLieutenants','SelectBoss','Aggressive','Defensive','Passive','Attack','Follow','Goto', 'Stay', 'Bodyguard',):
             if (self.GetState(f'Pet{cmd}ResponseMethod') != None) : PetResponses[cmd] = self.GetState(f'Pet{cmd}Response')
 
-        filedn.SetBind(self.GetState('PetSelectAll'),        "Pet Select All", "Mastemind", self.GetState('PetSelectAllResponseMethod')         +  f" {PetResponses['SelectAll']}"         + profile.GetBindFile('mmbinds','call.txt').BLF())
-        filedn.SetBind(self.GetState('PetSelectMinions'),    "Pet Select Minions", "Mastemind", self.GetState('PetSelectMinionsResponseMethod')     +  f" {PetResponses['SelectMinions']}"     + profile.GetBindFile('mmbinds','ctier1.txt').BLF())
-        filedn.SetBind(self.GetState('PetSelectLieutenants'),"Pet Select Lieutenants", "Mastemind", self.GetState('PetSelectLieutenantsResponseMethod') +  f" {PetResponses['SelectLieutenants']}" + profile.GetBindFile('mmbinds','ctier2.txt').BLF())
-        filedn.SetBind(self.GetState('PetSelectBoss'),       "Pet Select Boss", "Mastemind", self.GetState('PetSelectBossResponseMethod')        +  f" {PetResponses['SelectBoss']}"        + profile.GetBindFile('mmbinds','ctier3.txt').BLF())
+        filedn.SetBind(self.Ctrls['PetSelectAll'].KeyBind.MakeFileKeyBind(self.GetState('PetSelectAllResponseMethod')         +  f" {PetResponses['SelectAll']}"         + profile.GetBindFile('mmbinds','call.txt').BLF()))
+        filedn.SetBind(self.Ctrls['PetSelectMinions'].KeyBind.MakeFileKeyBind(self.GetState('PetSelectMinionsResponseMethod')     +  f" {PetResponses['SelectMinions']}"     + profile.GetBindFile('mmbinds','ctier1.txt').BLF()))
+        filedn.SetBind(self.Ctrls['PetSelectLieutenants'].KeyBind.MakeFileKeyBind(self.GetState('PetSelectLieutenantsResponseMethod') +  f" {PetResponses['SelectLieutenants']}" + profile.GetBindFile('mmbinds','ctier2.txt').BLF()))
+        filedn.SetBind(self.Ctrls['PetSelectBoss'].KeyBind.MakeFileKeyBind(self.GetState('PetSelectBossResponseMethod')        +  f" {PetResponses['SelectBoss']}"        + profile.GetBindFile('mmbinds','ctier3.txt').BLF()))
         self.mmBGSelBind(profile,filedn,PetResponses['Bodyguard'],powers)
 
         for cmd in ('Aggressive','Defensive','Attack','Follow','Goto', 'Stay'):
@@ -600,30 +614,30 @@ class Mastermind(Page):
         if (self.GetState('PetBackgroundGotoenabled')):
             self.mmBGActBGBind( profile, filedn, fileup,'Goto', PetResponses['Goto'], powers)
 
-        filedn.SetBind(self.GetState('chattykey'), "Chatty Mode", "Mastermind", 'tell $name, Non-Chatty Mode' + profile.GetBindFile('mmbinds',f"{fn}a.txt").BLF())
+        filedn.SetBind(self.Ctrls['PetChatToggle'].KeyBind.MakeFileKeyBind('tell $name, Non-Chatty Mode' + profile.GetBindFile('mmbinds',f"{fn}a.txt").BLF()))
 
     def mmQuietSubBind(self, profile, file, fn, grp, powers):
-        file.SetBind(self.GetState('PetSelectAll'),        "Pet Select All", "Mastermind", profile.GetBindFile('mmbinds','all.txt').BLF())
-        file.SetBind(self.GetState('PetSelectMinions'),    "Pet Select Minions", "Mastermind", profile.GetBindFile('mmbinds','tier1.txt').BLF())
-        file.SetBind(self.GetState('PetSelectLieutenants'),"Pet Select Lieutenants", "Mastermind", profile.GetBindFile('mmbinds','tier2.txt').BLF())
-        file.SetBind(self.GetState('PetSelectBoss'),       "Pet Select Boss", "Mastermind", profile.GetBindFile('mmbinds','tier3.txt').BLF())
+        file.SetBind(self.Ctrls['PetSelectAll'].KeyBind.MakeFileKeyBind(profile.GetBindFile('mmbinds','all.txt').BLF()))
+        file.SetBind(self.Ctrls['PetSelectMinions'].KeyBind.MakeFileKeyBind(profile.GetBindFile('mmbinds','tier1.txt').BLF()))
+        file.SetBind(self.Ctrls['PetSelectLieutenants'].KeyBind.MakeFileKeyBind(profile.GetBindFile('mmbinds','tier2.txt').BLF()))
+        file.SetBind(self.Ctrls['PetSelectBoss'].KeyBind.MakeFileKeyBind(profile.GetBindFile('mmbinds','tier3.txt').BLF()))
         self.mmQuietBGSelBind(profile, file, powers)
 
         if grp: petcom = f"$$petcompow {grp}"
         else:   petcom =  '$$petcomall'
         for cmd in ('Aggressive','Defensive','Attack','Follow','Goto', 'Stay'):
-            file.SetBind(self.GetState(f"Pet{cmd}"), "Pet Aggressive", "Mastermind", f"{petcom} {cmd}")
+            file.SetBind(self.Ctrls[f"Pet{cmd}"].KeyBind.MakeFileKeyBind(f"{petcom} {cmd}"))
 
-        if (self.GetState('PetBackgroundAttackenabled'))  : file.SetBind(self.GetState('PetBackgroundAttack') , "Pet Background Attack", "Mastermind",'nop')
-        if (self.GetState('PetBackgroundGotoenabled'))    : file.SetBind(self.GetState('PetBackgroundGoto')   , "Pet Background Goto", "Mastermind",'nop')
+        if (self.GetState('PetBackgroundAttackenabled'))  : file.SetBind(self.Ctrls['PetBackgroundAttack'].KeyBind.MakeFileKeyBind('nop'))
+        if (self.GetState('PetBackgroundGotoenabled'))    : file.SetBind(self.Ctrls['PetBackgroundGoto'].KeyBind.MakeFileKeyBind('nop'))
 
-        file.SetBind(self.GetState('chattykey'), "Chatty Mode", "Mastermind", 'tell $name, Chatty Mode' + profile.GetBindFile('mmbinds','c' + fn + '.txt').BLF())
+        file.SetBind(self.Ctrls['PetChatToggle'].KeyBind.MakeFileKeyBind('tell $name, Chatty Mode' + profile.GetBindFile('mmbinds','c' + fn + '.txt').BLF()))
 
     def mmQuietBGSubBind(self, profile, filedn, fileup, fn, powers):
-        filedn.SetBind(self.GetState('PetSelectAll'),         "Pet Select All", "Mastermind", profile.GetBindFile('mmbinds','all.txt').BLF())
-        filedn.SetBind(self.GetState('PetSelectMinions'),     "Pet Select Minions", "Mastermind", profile.GetBindFile('mmbinds','tier1.txt').BLF())
-        filedn.SetBind(self.GetState('PetSelectLieutenants'), "Pet Select Lieutenants", "Mastermind", profile.GetBindFile('mmbinds','tier2.txt').BLF())
-        filedn.SetBind(self.GetState('PetSelectBoss'),        "Pet Select Boss", "Mastermind", profile.GetBindFile('mmbinds','tier3.txt').BLF())
+        filedn.SetBind(self.Ctrls['PetSelectAll'].KeyBind.MakeFileKeyBind(profile.GetBindFile('mmbinds','all.txt').BLF()))
+        filedn.SetBind(self.Ctrls['PetSelectMinions'].KeyBind.MakeFileKeyBind(profile.GetBindFile('mmbinds','tier1.txt').BLF()))
+        filedn.SetBind(self.Ctrls['PetSelectLieutenants'].KeyBind.MakeFileKeyBind(profile.GetBindFile('mmbinds','tier2.txt').BLF()))
+        filedn.SetBind(self.Ctrls['PetSelectBoss'].KeyBind.MakeFileKeyBind(profile.GetBindFile('mmbinds','tier3.txt').BLF()))
 
         self.mmQuietBGSelBind(profile,filedn,powers)
         for cmd in ('Aggressive','Defensive','Passive','Attack','Follow','Goto', 'Stay'):
@@ -635,7 +649,7 @@ class Mastermind(Page):
         if (self.GetState('PetBackgroundGotoenabled')):
             self.mmQuietBGActBGBind(profile, filedn, fileup,'Goto', powers)
 
-        filedn.SetBind(self.GetState('chattykey'), "Chatty Mode", "Mastermind", 'tell $name, Chatty Mode' + profile.GetBindFile('mmbinds','c' + fn + 'a.txt').BLF())
+        filedn.SetBind(self.Ctrls['PetChatToggle'].KeyBind.MakeFileKeyBind('tell $name, Chatty Mode' + profile.GetBindFile('mmbinds','c' + fn + 'a.txt').BLF()))
 
     def PopulateBindFiles(self):
 
@@ -648,12 +662,12 @@ class Mastermind(Page):
         ResetFile = profile.ResetFile()
 
         if (self.GetState('petselenable')):
-            if (self.GetState('Pet1Nameenabled')) : ResetFile.SetBind(self.GetState('sel0'), f"Select Pet 1 By Name", "Mastermind", f"petselectname {self.GetState('Pet1Name')}")
-            if (self.GetState('Pet2Nameenabled')) : ResetFile.SetBind(self.GetState('sel1'), f"Select Pet 2 By Name", "Mastermind", f"petselectname {self.GetState('Pet2Name')}")
-            if (self.GetState('Pet3Nameenabled')) : ResetFile.SetBind(self.GetState('sel2'), f"Select Pet 3 By Name", "Mastermind", f"petselectname {self.GetState('Pet3Name')}")
-            if (self.GetState('Pet4Nameenabled')) : ResetFile.SetBind(self.GetState('sel3'), f"Select Pet 4 By Name", "Mastermind", f"petselectname {self.GetState('Pet4Name')}")
-            if (self.GetState('Pet5Nameenabled')) : ResetFile.SetBind(self.GetState('sel4'), f"Select Pet 5 By Name", "Mastermind", f"petselectname {self.GetState('Pet5Name')}")
-            if (self.GetState('Pet6Nameenabled')) : ResetFile.SetBind(self.GetState('sel5'), f"Select Pet 6 By Name", "Mastermind", f"petselectname {self.GetState('Pet6Name')}")
+            if (self.GetState('Pet1Nameenabled')) : ResetFile.SetBind(self.Ctrls['sel0'].KeyBind.MakeFileKeyBind(f"petselectname {self.GetState('Pet1Name')}"))
+            if (self.GetState('Pet2Nameenabled')) : ResetFile.SetBind(self.Ctrls['sel1'].KeyBind.MakeFileKeyBind(f"petselectname {self.GetState('Pet2Name')}"))
+            if (self.GetState('Pet3Nameenabled')) : ResetFile.SetBind(self.Ctrls['sel2'].KeyBind.MakeFileKeyBind(f"petselectname {self.GetState('Pet3Name')}"))
+            if (self.GetState('Pet4Nameenabled')) : ResetFile.SetBind(self.Ctrls['sel3'].KeyBind.MakeFileKeyBind(f"petselectname {self.GetState('Pet4Name')}"))
+            if (self.GetState('Pet5Nameenabled')) : ResetFile.SetBind(self.Ctrls['sel4'].KeyBind.MakeFileKeyBind(f"petselectname {self.GetState('Pet5Name')}"))
+            if (self.GetState('Pet6Nameenabled')) : ResetFile.SetBind(self.Ctrls['sel5'].KeyBind.MakeFileKeyBind(f"petselectname {self.GetState('Pet6Name')}"))
 
         allfile = profile.GetBindFile('mmbinds','all.txt')
         minfile = profile.GetBindFile('mmbinds','tier1.txt')
@@ -719,9 +733,9 @@ class Mastermind(Page):
         cbCheckConflict(self.GetState("PetFollow")            , "Pet Order: Follow")
         cbCheckConflict(self.GetState("PetStay")              , "Pet Order: Stay")
         cbCheckConflict(self.GetState("PetGoto")              , "Pet Order: Goto")
-        cbCheckConflict(self.GetState("chattykey")            , "Pet Action Bind Chatty Mode Toggle")
+        cbCheckConflict(self.GetState("PetChatToggle")        , "Pet Action Bind Chatty Mode Toggle")
         if (self.GetState('bg_enable')):
-            cbCheckConflict(self.GetState("selbgm"),"Bodyguard Mode")
+            cbCheckConflict(self.GetState("PetBodyguard"),"Bodyguard Mode")
             if (self.GetState('PetBackgroundAttackenabled')) : cbCheckConflict(self.GetState("PetBackgroundAttack"),"Pet Order: BG Attack")
             if (self.GetState('PetBackgroundGotoenabled'))   : cbCheckConflict(self.GetState("PetBackgroundGoto")  ,"Pet Order: BG Goto")
 
@@ -755,4 +769,6 @@ class Mastermind(Page):
             'PetGotoResponseMethod'              : "Response to Goto",
             'PetStayResponseMethod'              : "Response to Stay",
             'PetBodyguardResponseMethod'         : "Response to Bodyguard Mode",
+            'EnablePetActionBinds'               : "Enable Pet Action Binds",
+            'PetChatToggle'                      : "Chat Mode Toggle",
         })

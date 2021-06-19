@@ -5,10 +5,6 @@ import wx.lib.mixins.inspection
 import wx.adv
 
 from Profile import Profile
-import StdDefault
-
-#import Powerbinder
-#import PowerBindCmds
 
 ###################
 # Main Window Class

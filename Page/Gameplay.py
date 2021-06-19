@@ -225,8 +225,8 @@ class Gameplay(Page):
         ResetFile = self.Profile.ResetFile()
 
         ### FPS/Netgraph
-        ResetFile.SetBind(self.Ctrls['FPSBindKey']     .KeyBind.MakeFileKeyBind('++showfps++netgraph'))
-        ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].KeyBind.MakeFileKeyBind('++netgraph'))
+        ResetFile.SetBind(self.Ctrls['FPSBindKey']     .MakeFileKeyBind('++showfps++netgraph'))
+        ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
 
         # TeamSel (1)
         # TODO -- check versus citybinder output, seems to be working but...?
@@ -243,13 +243,13 @@ class Gameplay(Page):
             selresetfile = self.Profile.GetBindFile("tps","reset.txt")
             for i in ('1','2','3','4','5','6','7','8'):
                 selfile = self.Profile.GetBindFile("tps",f"sel{i}.txt")
-                ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].KeyBind.MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", BLF(self.Profile,'tps',f"sel{i}.txt")]))
-                selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].KeyBind.MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", BLF(self.Profile,'tps',f"sel{i}.txt")]))
+                ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", BLF(self.Profile,'tps',f"sel{i}.txt")]))
+                selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", BLF(self.Profile,'tps',f"sel{i}.txt")]))
                 for j in ('1','2','3','4','5','6','7','8'):
                     if (i == j):
-                        selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].KeyBind.MakeFileKeyBind([f"{selmethod1} {int(j) - selnummod1}", BLF(self.Profile,'tps',"reset.txt")]))
+                        selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod1} {int(j) - selnummod1}", BLF(self.Profile,'tps',"reset.txt")]))
                     else:
-                        selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].KeyBind.MakeFileKeyBind([f"{selmethod} {int(j) - selnummod}"  , BLF(self.Profile,'tps',f"sel{j}.txt")]))
+                        selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod} {int(j) - selnummod}"  , BLF(self.Profile,'tps',f"sel{j}.txt")]))
 
         else:
             selmethod = "teamselect"
@@ -258,19 +258,19 @@ class Gameplay(Page):
                 selmethod = "petselect"
                 selnummod = 1
             for i in (1,2,3,4,5,6,7,8):
-                ResetFile.SetBind(self.Ctrls['sel1'].KeyBind.MakeFileKeyBind("selmethod " + (i - selnummod)))
+                ResetFile.SetBind(self.Ctrls['sel1'].MakeFileKeyBind("selmethod " + (i - selnummod)))
 
         ResetFile = self.Profile.ResetFile()
 
         notifier = self.GetState('TypingNotifier')
 
         # TypingNotifier
-        ResetFile.SetBind(self.Ctrls['StartChat'] .KeyBind.MakeFileKeyBind(['show chat', 'startchat', notifier]))
-        ResetFile.SetBind(self.Ctrls['SlashChat'] .KeyBind.MakeFileKeyBind(['show chat', 'slashchat', notifier]))
-        ResetFile.SetBind(self.Ctrls['StartEmote'].KeyBind.MakeFileKeyBind(['show chatem ' + notifier]))
-        ResetFile.SetBind(self.Ctrls['AutoReply'] .KeyBind.MakeFileKeyBind(['autoreply', notifier]))
-        ResetFile.SetBind(self.Ctrls['TellTarget'].KeyBind.MakeFileKeyBind(['show chat', 'beginchat /tell $target, ', notifier]))
-        ResetFile.SetBind(self.Ctrls['QuickChat'] .KeyBind.MakeFileKeyBind(['quickchat', notifier]))
+        ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind(['show chat', 'startchat', notifier]))
+        ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeFileKeyBind(['show chat', 'slashchat', notifier]))
+        ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind(['show chatem ' + notifier]))
+        ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeFileKeyBind(['autoreply', notifier]))
+        ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind(['show chat', 'beginchat /tell $target, ', notifier]))
+        ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind(['quickchat', notifier]))
 
     def findconflicts(self):
         Utility.CheckConflict(self,"FPSBindkey","FPS Display Toggle")

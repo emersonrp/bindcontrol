@@ -35,7 +35,7 @@ class ControlGroup(wx.StaticBoxSizer):
             ctlLabel = wx.StaticText(ctlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
-            control = wx.Button( ctlParent, -1, Init[ctlName])
+            control = bcKeyButton( ctlParent, -1, Init[ctlName])
             control.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
             control.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
             # push context onto the button, we'll thank me later
@@ -102,3 +102,9 @@ class ControlGroup(wx.StaticBoxSizer):
     def ClearButton(self, evt):
         evt.EventObject.SetLabel("UNBOUND")
 
+class bcKeyButton(wx.Button):
+    def __init__(self, parent, id, init):
+        wx.Button.__init__(self, parent, id, init)
+
+    def MakeFileKeyBind(self, contents):
+        return self.KeyBind.MakeFileKeyBind(contents)

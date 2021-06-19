@@ -145,7 +145,7 @@ class General(Page):
         resetfile = self.Profile.ResetFile()
 
         # TODO - the toggling of sprint is probably an SoD option
-        resetfile.SetBind(self.Ctrls['ResetKey'].KeyBind.MakeFileKeyBind(
+        resetfile.SetBind(self.Ctrls['ResetKey'].MakeFileKeyBind(
                     [
                         resetfile.BLF(),
                         't $name, Keybinds reloaded.',

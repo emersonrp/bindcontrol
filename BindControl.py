@@ -61,7 +61,7 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnMenuAboutBox,      Help_about)
 
         AppIcon = wx.Icon()
-        AppIcon.LoadFile('BindControl.ico', wx.BITMAP_TYPE_ICO)
+        AppIcon.LoadFile('icons/BindControl.ico', wx.BITMAP_TYPE_ICO)
         self.SetIcon(AppIcon)
 
         # TODO - read in the config for the window (size, location, etc)

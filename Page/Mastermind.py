@@ -333,24 +333,15 @@ class Mastermind(Page):
         Thugs added by Konoko!
         """
 
+    ### BIND CREATION METHODS
     def mmBGSelBind(self, profile, file, PetBodyguardResponse, powers):
-        tier1bg = tier2bg = tier3bg = 0
         bgset = bgsay = []
         if (self.GetState('PetBodyguardEnabled')):
-            #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
-            #  first check if any full tier groups are bodyguards.  full tier groups are either All BG or all NBG.
-            if (self.GetState('Pet1Bodyguard')) : tier1bg = tier1bg + 1
-            if (self.GetState('Pet2Bodyguard')) : tier1bg = tier1bg + 1
-            if (self.GetState('Pet3Bodyguard')) : tier1bg = tier1bg + 1
-            if (self.GetState('Pet4Bodyguard')) : tier2bg = tier2bg + 1
-            if (self.GetState('Pet5Bodyguard')) : tier2bg = tier2bg + 1
-            if (self.GetState('Pet6Bodyguard')) : tier3bg = tier3bg + 1
-            #  if tier1bg is 3 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
-            #  if tier2bg is 2 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
-            #  tier3bg is ALWAYS a full group, with only one member, he is either BG or NBG
-            #  so, add all fullgroups into the bgsay command.
+            (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
             #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
-            if (((tier1bg + tier2bg + tier3bg) == 6) or (self.GetState('PetBodyguardResponseMethod') != '---')):
+
+            # emerson TODO -- this ~= '---' was in the original code but produces different results
+            if (((tier1bg + tier2bg + tier3bg) == 6)):
                 bgsay = [self.GetChatMethod('PetBodyguardResponseMethod') + PetBodyguardResponse]
             else:
                 if (tier1bg == 3):
@@ -398,22 +389,10 @@ class Mastermind(Page):
         key    = self.GetState(f"Pet{action}")
         method = self.GetChatMethod(f"Pet{action}ResponseMethod")
 
-        tier1bg = tier2bg = tier3bg = 0
         bgact = bgsay = []
-        #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
-        #  first check if any full tier groups are bodyguards.  full tier groups are eaither All BG or all NBG.
-        if (self.GetState('Pet1Bodyguard')) : tier1bg = tier1bg + 1
-        if (self.GetState('Pet2Bodyguard')) : tier1bg = tier1bg + 1
-        if (self.GetState('Pet3Bodyguard')) : tier1bg = tier1bg + 1
-        if (self.GetState('Pet4Bodyguard')) : tier2bg = tier2bg + 1
-        if (self.GetState('Pet5Bodyguard')) : tier2bg = tier2bg + 1
-        if (self.GetState('Pet6Bodyguard')) : tier3bg = tier3bg + 1
-        #  if tier1bg is 3 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
-        #  if tier2bg is 2 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
-        #  tier3bg is ALWAYS a full group, with only one member, he is either BG or NBG
-        #  so, add all fullgroups into the bgsay command.
+        (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
-        if (((tier1bg + tier2bg + tier3bg) == 0) or (method != 3)):
+        if (((tier1bg + tier2bg + tier3bg) == 0)):
             bgsay = [method + say]
         else:
             if (tier1bg == 0):
@@ -460,22 +439,10 @@ class Mastermind(Page):
         key =    self.GetState(f"PetBodyguard{action}")
         method = self.GetChatMethod(f"Pet{action}ResponseMethod")
 
-        tier1bg = tier2bg = tier3bg = 0
         bgact = bgsay = []
-        #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
-        #  first check if any full tier groups are bodyguards.  full tier groups are eaither All BG or all NBG.
-        if (self.GetState('Pet1Bodyguard')) : tier1bg = tier1bg + 1
-        if (self.GetState('Pet2Bodyguard')) : tier1bg = tier1bg + 1
-        if (self.GetState('Pet3Bodyguard')) : tier1bg = tier1bg + 1
-        if (self.GetState('Pet4Bodyguard')) : tier2bg = tier2bg + 1
-        if (self.GetState('Pet5Bodyguard')) : tier2bg = tier2bg + 1
-        if (self.GetState('Pet6Bodyguard')) : tier3bg = tier3bg + 1
-        #  if tier1bg is 3 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
-        #  if tier2bg is 2 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
-        #  tier3bg is ALWAYS a full group, with only one member, he is either BG or NBG
-        #  so, add all fullgroups into the bgsay command.
+        (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
-        if (((tier1bg + tier2bg + tier3bg) == 6) or (method != '')):
+        if (((tier1bg + tier2bg + tier3bg) == 6)):
             bgsay = [method + say]
         else :
             if (tier1bg == 3):
@@ -521,20 +488,8 @@ class Mastermind(Page):
 
     def mmQuietBGSelBind(self, profile, file, powers):
         if (self.GetState('PetBodyguardEnabled')):
-            tier1bg = tier2bg = tier3bg = 0
             bgset = []
-            #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
-            #  first check if any full tier groups are bodyguards.  full tier groups are either All BG or all NBG.
-            if (self.GetState('Pet1Bodyguard')) : tier1bg = tier1bg + 1
-            if (self.GetState('Pet2Bodyguard')) : tier1bg = tier1bg + 1
-            if (self.GetState('Pet3Bodyguard')) : tier1bg = tier1bg + 1
-            if (self.GetState('Pet4Bodyguard')) : tier2bg = tier2bg + 1
-            if (self.GetState('Pet5Bodyguard')) : tier2bg = tier2bg + 1
-            if (self.GetState('Pet6Bodyguard')) : tier3bg = tier3bg + 1
-            #  if tier1bg is 3 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
-            #  if tier2bg is 2 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
-            #  tier3bg is ALWAYS a full group, with only one member, he is either BG or NBG
-            #  so, add all fullgroups into the bgsay command.
+            (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
             #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
             if ((tier1bg + tier2bg + tier3bg) == 6):
                 bgset = ["petcomall def fol"]
@@ -562,20 +517,8 @@ class Mastermind(Page):
 
         key = self.GetState(f"Pet{action}")
 
-        tier1bg = tier2bg = tier3bg = 0
         bgact = []
-        #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
-        #  first check if any full tier groups are bodyguards.  full tier groups are eaither All BG or all NBG.
-        if (self.GetState('Pet1Bodyguard')) : tier1bg = tier1bg + 1
-        if (self.GetState('Pet2Bodyguard')) : tier1bg = tier1bg + 1
-        if (self.GetState('Pet3Bodyguard')) : tier1bg = tier1bg + 1
-        if (self.GetState('Pet4Bodyguard')) : tier2bg = tier2bg + 1
-        if (self.GetState('Pet5Bodyguard')) : tier2bg = tier2bg + 1
-        if (self.GetState('Pet6Bodyguard')) : tier3bg = tier3bg + 1
-        #  if tier1bg is 3 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
-        #  if tier2bg is 2 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
-        #  tier3bg is ALWAYS a full group, with only one member, he is either BG or NBG
-        #  so, add all fullgroups into the bgsay command.
+        (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
         if ((tier1bg + tier2bg + tier3bg) == 0):
             bgact = [f"petcomall {action}"]
@@ -603,20 +546,8 @@ class Mastermind(Page):
 
         key    = self.GetState(f"PetBodyguard{action}")
 
-        tier1bg = tier2bg = tier3bg = 0
         bgact = []
-        #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
-        #  first check if any full tier groups are bodyguards.  full tier groups are eaither All BG or all NBG.
-        if (self.GetState('Pet1Bodyguard')) : tier1bg = tier1bg + 1
-        if (self.GetState('Pet2Bodyguard')) : tier1bg = tier1bg + 1
-        if (self.GetState('Pet3Bodyguard')) : tier1bg = tier1bg + 1
-        if (self.GetState('Pet4Bodyguard')) : tier2bg = tier2bg + 1
-        if (self.GetState('Pet5Bodyguard')) : tier2bg = tier2bg + 1
-        if (self.GetState('Pet6Bodyguard')) : tier3bg = tier3bg + 1
-        #  if tier1bg is 3 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
-        #  if tier2bg is 2 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
-        #  tier3bg is ALWAYS a full group, with only one member, he is either BG or NBG
-        #  so, add all fullgroups into the bgsay command.
+        (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
         if ((tier1bg + tier2bg + tier3bg) == 6):
             bgact = [f"petcomall {action}"]
@@ -802,6 +733,23 @@ class Mastermind(Page):
             'Petsay'    : petsay,
             '---'       : '',
         }[chatdesc]
+
+    def CountBodyguards(self):
+        #  fill bgsay with the right commands to have bodyguards say PetBodyguardResponse
+        #  first check if any full tier groups are bodyguards.  full tier groups are either All BG or all NBG.
+        #  if tier1bg is 3 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
+        #  if tier2bg is 2 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
+        #  tier3bg is ALWAYS a full group, with only one member, he is either BG or NBG
+        #  so, add all fullgroups into the bgsay command.
+        tier1bg = tier2bg = tier3bg = 0
+        if (self.GetState('Pet1Bodyguard')) : tier1bg = tier1bg + 1
+        if (self.GetState('Pet2Bodyguard')) : tier1bg = tier1bg + 1
+        if (self.GetState('Pet3Bodyguard')) : tier1bg = tier1bg + 1
+        if (self.GetState('Pet4Bodyguard')) : tier2bg = tier2bg + 1
+        if (self.GetState('Pet5Bodyguard')) : tier2bg = tier2bg + 1
+        if (self.GetState('Pet6Bodyguard')) : tier3bg = tier3bg + 1
+        return (tier1bg, tier2bg, tier3bg)
+
 
     for cmd in petCommandKeyDefinitions:
         UI.Labels[cmd['ctrlName']] = cmd['label']

@@ -663,27 +663,16 @@ class Mastermind(Page):
 
     def PopulateBindFiles(self):
 
-        ### TODO
-        #return
-        ### TODO
-
         profile = self.Profile
-
         ResetFile = profile.ResetFile()
 
-        if (self.GetState('PetSelEnable')):
-            if (self.GetState('Pet1Nameenabled')) :
-                ResetFile.SetBind(self.Ctrls['sel0'].MakeFileKeyBind(f"petselectname {self.GetState('Pet1Name')}"))
-            if (self.GetState('Pet2Nameenabled')) :
-                ResetFile.SetBind(self.Ctrls['sel1'].MakeFileKeyBind(f"petselectname {self.GetState('Pet2Name')}"))
-            if (self.GetState('Pet3Nameenabled')) :
-                ResetFile.SetBind(self.Ctrls['sel2'].MakeFileKeyBind(f"petselectname {self.GetState('Pet3Name')}"))
-            if (self.GetState('Pet4Nameenabled')) :
-                ResetFile.SetBind(self.Ctrls['sel3'].MakeFileKeyBind(f"petselectname {self.GetState('Pet4Name')}"))
-            if (self.GetState('Pet5Nameenabled')) :
-                ResetFile.SetBind(self.Ctrls['sel4'].MakeFileKeyBind(f"petselectname {self.GetState('Pet5Name')}"))
-            if (self.GetState('Pet6Nameenabled')) :
-                ResetFile.SetBind(self.Ctrls['sel5'].MakeFileKeyBind(f"petselectname {self.GetState('Pet6Name')}"))
+        # TODO - do we want "if enabled" or just let the user "UNBOUND" them?
+        ResetFile.SetBind(self.Ctrls['PetSelect1'].MakeFileKeyBind(f"petselectname {self.GetState('Pet1Name')}"))
+        ResetFile.SetBind(self.Ctrls['PetSelect2'].MakeFileKeyBind(f"petselectname {self.GetState('Pet2Name')}"))
+        ResetFile.SetBind(self.Ctrls['PetSelect3'].MakeFileKeyBind(f"petselectname {self.GetState('Pet3Name')}"))
+        ResetFile.SetBind(self.Ctrls['PetSelect4'].MakeFileKeyBind(f"petselectname {self.GetState('Pet4Name')}"))
+        ResetFile.SetBind(self.Ctrls['PetSelect5'].MakeFileKeyBind(f"petselectname {self.GetState('Pet5Name')}"))
+        ResetFile.SetBind(self.Ctrls['PetSelect6'].MakeFileKeyBind(f"petselectname {self.GetState('Pet6Name')}"))
 
         powers = self.MMPowerSets[ profile.General.GetState('Primary') ]
 
@@ -695,14 +684,15 @@ class Mastermind(Page):
 
         if (self.GetState('PetBodyguardEnabled')):
             bgfiledn = profile.GetBindFile('mmbinds','bguarda.txt')
-            bgfileup = profile.GetBindFile('mmbinds','bguardb.txt')
+            # citybinder had this commented out, and the file was empty if created
+            # bgfileup = profile.GetBindFile('mmbinds','bguardb.txt')
         self.mmSubBind(profile      , ResetFile   , "all"    , None          , powers)
         self.mmQuietSubBind(profile , allfile     , "all"    , None          , powers)
         self.mmQuietSubBind(profile , minfile     , "tier1"  , powers['min'] , powers)
         self.mmQuietSubBind(profile , ltsfile     , "tier2"  , powers['lts'] , powers)
         self.mmQuietSubBind(profile , bosfile     , "tier3"  , powers['bos'] , powers)
         if (self.GetState('PetBodyguardEnabled')):
-            self.mmQuietBGSubBind(profile,bgfiledn,bgfileup,"bguard",powers)
+            self.mmQuietBGSubBind(profile,bgfiledn,None,"bguard",powers)
 
         #### "Chatty" versions
         callfile = profile.GetBindFile('mmbinds','call.txt')

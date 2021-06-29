@@ -119,18 +119,26 @@ class InspirationPopper(Page):
         notells = self.disableTellsCB.IsChecked()
         for Insp in Inspirations:
             self.Ctrls[f"{Insp}Key"].Enable(enable)
+            self.Ctrls[f"{Insp}Key"].ctlLabel.Enable(enable)
             self.Ctrls[f"{Insp}Border"].Enable(enable and not notells)
+            self.Ctrls[f"{Insp}Border"].ctlLabel.Enable(enable and not notells)
             self.Ctrls[f"{Insp}Background"].Enable(enable and not notells)
+            self.Ctrls[f"{Insp}Background"].ctlLabel.Enable(enable and not notells)
             self.Ctrls[f"{Insp}Foreground"].Enable(enable and not notells)
+            self.Ctrls[f"{Insp}Foreground"].ctlLabel.Enable(enable and not notells)
 
     def OnEnableRevCB(self, evt):
         enable = evt.EventObject.IsChecked()
         notells = self.disableTellsCB.IsChecked()
         for Insp in Inspirations:
             self.Ctrls[f"Rev{Insp}Key"].Enable(enable)
+            self.Ctrls[f"Rev{Insp}Key"].ctlLabel.Enable(enable)
             self.Ctrls[f"Rev{Insp}Border"].Enable(enable and not notells)
+            self.Ctrls[f"Rev{Insp}Border"].ctlLabel.Enable(enable and not notells)
             self.Ctrls[f"Rev{Insp}Background"].Enable(enable and not notells)
+            self.Ctrls[f"Rev{Insp}Background"].ctlLabel.Enable(enable and not notells)
             self.Ctrls[f"Rev{Insp}Foreground"].Enable(enable and not notells)
+            self.Ctrls[f"Rev{Insp}Foreground"].ctlLabel.Enable(enable and not notells)
 
     def OnDisableTellCB(self, evt):
         enable = evt.EventObject.IsChecked()
@@ -138,11 +146,17 @@ class InspirationPopper(Page):
         reverse  = self.useRevCB.IsChecked()
         for Insp in Inspirations:
             self.Ctrls[f"{Insp}Border"].Enable(not enable and forward)
+            self.Ctrls[f"{Insp}Border"].ctlLabel.Enable(not enable and forward)
             self.Ctrls[f"{Insp}Background"].Enable(not enable and forward)
+            self.Ctrls[f"{Insp}Background"].ctlLabel.Enable(not enable and forward)
             self.Ctrls[f"{Insp}Foreground"].Enable(not enable and forward)
+            self.Ctrls[f"{Insp}Foreground"].ctlLabel.Enable(not enable and forward)
             self.Ctrls[f"Rev{Insp}Border"].Enable(not enable and reverse)
+            self.Ctrls[f"Rev{Insp}Border"].ctlLabel.Enable(not enable and reverse)
             self.Ctrls[f"Rev{Insp}Background"].Enable(not enable and reverse)
+            self.Ctrls[f"Rev{Insp}Background"].ctlLabel.Enable(not enable and reverse)
             self.Ctrls[f"Rev{Insp}Foreground"].Enable(not enable and reverse)
+            self.Ctrls[f"Rev{Insp}Foreground"].ctlLabel.Enable(not enable and reverse)
 
     def PopulateBindFiles(self):
         profile = self.Profile

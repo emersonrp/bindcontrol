@@ -362,6 +362,7 @@ class SoD(Page):
         for c,control in self.Ctrls.items():
             if c != 'EnableSoD':  # don't disable yourself kthx
                 control.Enable(evt.EventObject.IsChecked())
+                control.ctlLabel.Enable(evt.EventObject.IsChecked())
 
     def makeSoDFile(self, p):
 

@@ -19,17 +19,18 @@ class Page(wx.Panel):
         wx.Panel.__init__(self, parent)
         self.Profile = parent
         self.TabTitle = type(self).__name__
+        self.HelpWindow = None
 
         self.Ctrls = {}
 
     def help(self, event):
         if not (self.HelpWindow):
-            HelpWindow = wx.MiniFrame .new( undef, -1, self.TabTitle + " Help",)
-            BoxSizer   = wx.BoxSizer  .new( wx.VERTICAL )
-            Panel      = wx.Panel     .new( HelpWindow, -1 )
-            HelpText   = wx.StaticText.new( Panel, -1, self.HelpText, [10,10] )
+            HelpWindow = wx.MiniFrame ( None, -1, self.TabTitle + " Help",
+                       style = wx.CAPTION|wx.CLOSE_BOX|wx.STAY_ON_TOP|wx.RESIZE_BORDER)
+            BoxSizer   = wx.BoxSizer  ( wx.VERTICAL )
+            HelpText   = wx.StaticText( HelpWindow, -1, self.HelpText())
 
-            BoxSizer.Add( Panel, 1, wx.EXPAND )
+            BoxSizer.Add( HelpText, 1, wx.EXPAND|wx.ALL, 10)
 
             HelpWindow.SetSizer(BoxSizer)
 

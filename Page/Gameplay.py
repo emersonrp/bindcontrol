@@ -218,7 +218,9 @@ class Gameplay(Page):
 
     def OnFPSEnable(self, evt):
         self.Ctrls['FPSBindKey'].Enable(evt.EventObject.IsChecked())
+        self.Ctrls['FPSBindKey'].ctlLabel.Enable(evt.EventObject.IsChecked())
         self.Ctrls['NetgraphBindKey'].Enable(evt.EventObject.IsChecked())
+        self.Ctrls['NetgraphBindKey'].ctlLabel.Enable(evt.EventObject.IsChecked())
 
     def PopulateBindFiles(self):
 
@@ -286,7 +288,7 @@ class Gameplay(Page):
         return self.GetState('Enable')
 
     UI.Labels.update({
-        'FPSEnable'  : "Enable the FPS/Netgraph binds",
+        'FPSEnable'  : "Enable FPS/Netgraph binds",
         'FPSBindKey' : "Turn on FPS",
         'NetgraphBindKey' : 'Turn on Netgraph',
 

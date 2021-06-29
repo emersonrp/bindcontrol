@@ -13,7 +13,7 @@ class InspirationPopper(Page):
 
         self.Init = {
             'EnableInspBinds'    : True,
-            'EnableRevInspBinds' : True,
+            'EnableRevInspBinds' : False,
             'AccuracyKey'        : "LSHIFT+A",
             'HealthKey'          : "LSHIFT+S",
             'DamageKey'          : "LSHIFT+D",
@@ -22,14 +22,14 @@ class InspirationPopper(Page):
             'BreakFreeKey'       : "LSHIFT+E",
             'ResistDamageKey'    : "LSHIFT+SPACE",
             'ResurrectionKey'    : "LSHIFT+TILDE",
-            'RevAccuracyKey'     : "UNBOUND",
-            'RevHealthKey'       : "UNBOUND",
-            'RevDamageKey'       : "UNBOUND",
-            'RevEnduranceKey'    : "UNBOUND",
-            'RevDefenseKey'      : "UNBOUND",
-            'RevBreakFreeKey'    : "UNBOUND",
-            'RevResistDamageKey' : "UNBOUND",
-            'RevResurrectionKey' : "UNBOUND",
+            'RevAccuracyKey'     : "LSHIFT+A",
+            'RevHealthKey'       : "LSHIFT+S",
+            'RevDamageKey'       : "LSHIFT+D",
+            'RevEnduranceKey'    : "LSHIFT+Q",
+            'RevDefenseKey'      : "LSHIFT+W",
+            'RevBreakFreeKey'    : "LSHIFT+E",
+            'RevResistDamageKey' : "LSHIFT+SPACE",
+            'RevResurrectionKey' : "LSHIFT+TILDE",
             'DisableTells'       : False,
         }
         for Insp in Inspirations:
@@ -100,7 +100,6 @@ class InspirationPopper(Page):
 
         sizer.Add(self.RevInspRows, 0, wx.EXPAND)
 
-
         self.disableTellsCB = wx.CheckBox( self, -1,
                 'Disable self-/tell feedback')
         self.disableTellsCB.SetToolTip(wx.ToolTip(
@@ -114,8 +113,12 @@ class InspirationPopper(Page):
         paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
         self.SetSizerAndFit(paddingSizer)
 
-    def OnEnableCB(self, evt):
-        enable = evt.EventObject.IsChecked()
+        self.OnEnableCB()
+        self.OnEnableRevCB()
+        self.OnDisableTellCB()
+
+    def OnEnableCB(self, evt = None):
+        enable = self.useCB.IsChecked()
         notells = self.disableTellsCB.IsChecked()
         for Insp in Inspirations:
             self.Ctrls[f"{Insp}Key"].Enable(enable)
@@ -127,8 +130,8 @@ class InspirationPopper(Page):
             self.Ctrls[f"{Insp}Foreground"].Enable(enable and not notells)
             self.Ctrls[f"{Insp}Foreground"].ctlLabel.Enable(enable and not notells)
 
-    def OnEnableRevCB(self, evt):
-        enable = evt.EventObject.IsChecked()
+    def OnEnableRevCB(self, evt = None):
+        enable = self.useRevCB.IsChecked()
         notells = self.disableTellsCB.IsChecked()
         for Insp in Inspirations:
             self.Ctrls[f"Rev{Insp}Key"].Enable(enable)
@@ -140,8 +143,8 @@ class InspirationPopper(Page):
             self.Ctrls[f"Rev{Insp}Foreground"].Enable(enable and not notells)
             self.Ctrls[f"Rev{Insp}Foreground"].ctlLabel.Enable(enable and not notells)
 
-    def OnDisableTellCB(self, evt):
-        enable = evt.EventObject.IsChecked()
+    def OnDisableTellCB(self, evt = None):
+        enable = self.disableTellsCB.IsChecked()
         forward  = self.useCB.IsChecked()
         reverse  = self.useRevCB.IsChecked()
         for Insp in Inspirations:

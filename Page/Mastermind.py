@@ -319,9 +319,20 @@ class Mastermind(Page):
 
         for c in ['PetBodyguard','PetBodyguardResponseMethod','PetBodyguardResponse']:
             self.Ctrls[c].Enable(bgEnabled)
+            if self.Ctrls[c].ctlLabel:
+                self.Ctrls[c].ctlLabel.Enable(bgEnabled)
 
         self.Ctrls['PetBodyguardAttack'].Enable(bgEnabled and bgAttack)
+        self.Ctrls['PetBodyguardAttack'].ctlLabel.Enable(bgEnabled and bgAttack)
         self.Ctrls['PetBodyguardGoto']  .Enable(bgEnabled and bgGoto)
+        self.Ctrls['PetBodyguardGoto']  .ctlLabel.Enable(bgEnabled and bgGoto)
+
+        self.Ctrls['PetBodyguardAttackEnabled'].Enable(bgEnabled)
+        self.Ctrls['PetBodyguardGotoEnabled'].Enable(bgEnabled)
+
+        for petid in [1,2,3,4,5,6]:
+            self.Ctrls[f"Pet{petid}Bodyguard"].Enable(bgEnabled)
+
 
     def HelpText(self):
         return """

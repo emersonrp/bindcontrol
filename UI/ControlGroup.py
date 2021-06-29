@@ -90,8 +90,10 @@ class ControlGroup(wx.StaticBoxSizer):
         if tooltip:
             control.SetToolTip( wx.ToolTip(tooltip))
 
+        control.ctlLabel = None
         if not noLabel:
             sizer.Add( ctlLabel,    0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+            control.ctlLabel = ctlLabel
 
         sizer.Add( control, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, padding)
         self.Page.Ctrls[ctlName]   = control

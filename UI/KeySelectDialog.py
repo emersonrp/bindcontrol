@@ -63,9 +63,8 @@ class KeySelectDialog(wx.Dialog):
         # is this ugly?
         self.Profile   = button.Profile
         self.Binding   = ''
-        self.ShiftText = ''
-        self.CtrlText  = ''
-        self.AltText   = ''
+        self.ModToBind = ''
+        self.KeyToBind = ''
         self.SetKeymap();
 
         sizer = wx.BoxSizer(wx.VERTICAL);
@@ -124,7 +123,7 @@ class KeySelectDialog(wx.Dialog):
 
         evtType = event.GetEventType();
 
-        KeyToBind = ''
+        self.KeyToBind = self.ModToBind = KeyToBind = ''
 
         SeparateLR = self.SeparateLRChooser.Value if modKeyFlags else False
 
@@ -145,49 +144,59 @@ class KeySelectDialog(wx.Dialog):
                 'BUTTON8',
             ][button]
 
-        # check for each modifier key
-        if (event.ShiftDown()) :
-            if SeparateLR and modKeyFlags:
-                if isinstance(event, wx.KeyEvent) and event.GetKeyCode() == wx.WXK_SHIFT:
+        if event.HasAnyModifiers():
+            ShiftText = CtrlText = AltText = ''
+            if KeyToBind:
+                self.KeyToBind = KeyToBind
+
+            # TODO - Check modKeyFlags - sometimes LCTRL+LSHIFT comes out with RSHIFT
+            if (event.ShiftDown()) :
+                if SeparateLR and modKeyFlags:
                     rawFlags = event.GetRawKeyFlags()
                     if wx.Platform == '__WXMAC__':
-                        self.ShiftText = "LSHIFT" if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT"
+                        ShiftText = "LSHIFT" if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT"
                     else:
-                        self.ShiftText = "RSHIFT" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
-            else:
-                self.ShiftText = "SHIFT"
-        else:
-            self.ShiftText = ''
+                        ShiftText = "RSHIFT" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
+                else:
+                    ShiftText = "SHIFT"
+                if self.KeyToBind:
+                    self.ModToBind = ShiftText
+                else:
+                    self.KeyToBind = ShiftText
 
-        if (event.CmdDown())   :
-            if SeparateLR and modKeyFlags:
-                if isinstance(event, wx.KeyEvent) and event.GetKeyCode() == wx.WXK_RAW_CONTROL:
+            if (event.CmdDown())   :
+                if SeparateLR and modKeyFlags:
                     rawFlags = event.GetRawKeyFlags()
                     if wx.Platform == '__WXMAC__':
-                        self.CtrlText = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
+                        CtrlText = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
                     else:
-                        self.CtrlText = "RCTRL" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
-            else:
-                self.CtrlText = "CTRL"
-        else:
-            self.CtrlText = ''
+                        CtrlText = "RCTRL" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
+                else:
+                    CtrlText = "CTRL"
+                if self.KeyToBind:
+                    self.ModToBind = CtrlText
+                else:
+                    self.KeyToBind = CtrlText
 
-        # TODO - Alt goes missing if you mash several things while the dialog is open
-        if (event.AltDown())   :
-            if SeparateLR and modKeyFlags:
-                if isinstance(event, wx.KeyEvent) and event.GetKeyCode() == wx.WXK_ALT:
+            if (event.AltDown())   :
+                if SeparateLR and modKeyFlags:
                     rawFlags = event.GetRawKeyFlags()
                     if wx.Platform == '__WXMAC__':
-                        self.AltText = "LALT" if (rawFlags & modKeyFlags['LALT']) else "RALT"
+                        AltText = "LALT" if (rawFlags & modKeyFlags['LALT']) else "RALT"
                     else:
-                        self.AltText = "RALT" if (rawFlags & modKeyFlags['RALT']) else "LALT"
-            else:
-                self.AltText = "ALT"
-        else:
-            self.AltText = ''
+                        AltText = "RALT" if (rawFlags & modKeyFlags['RALT']) else "LALT"
+                else:
+                    AltText = "ALT"
+                if self.KeyToBind:
+                    self.ModToBind = AltText
+                else:
+                    self.KeyToBind = AltText
 
-        self.Binding = "+".join([ key for key in [self.CtrlText, self.AltText, self.ShiftText, str(KeyToBind)] if key])
-        # self.Binding = self.CtrlText + self.AltText + self.ShiftText + str(KeyToBind)
+        # else no modifiers down, easy peasy
+        else:
+            self.KeyToBind = KeyToBind
+
+        self.Binding = "+".join([ key for key in [self.ModToBind, str(self.KeyToBind)] if key])
 
         self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
         self.Layout()

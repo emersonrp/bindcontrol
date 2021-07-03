@@ -14,10 +14,9 @@ if wx.Platform == '__WXMSW__':
 elif wx.Platform == '__WXGTK__':
     modKeyFlags = {
         'RSHIFT': 0x08,
-        'RCTRL' : 0x08,
+        'LCTRL' : 0x04,
         'RALT'  : 0x08,
     }
-# Apple apparently throw flags on LEFT instead of RIGHT.  Think Different.
 elif wx.Platform == '__WXMAC__':
     modKeyFlags = {
         'LSHIFT': 0x02,
@@ -63,8 +62,8 @@ class KeySelectDialog(wx.Dialog):
         # is this ugly?
         self.Profile   = button.Profile
         self.Binding   = ''
-        self.ModToBind = ''
-        self.KeyToBind = ''
+        self.ModSlot = None
+        self.KeySlot = None
         self.SetKeymap();
 
         sizer = wx.BoxSizer(wx.VERTICAL);
@@ -120,83 +119,91 @@ class KeySelectDialog(wx.Dialog):
 
 
     def handleBind(self, event):
+        ### Algorithm:
+        # two slots, "Mod" and "Key"
+        # if normal key, put it in key slot
+        # if mod key
+        #   if already mod key, AND not the same one, AND still held down
+        #       put it in key slot
+        #   else
+        #       put it in key slot
+        SeparateLR = self.SeparateLRChooser.Value
 
-        evtType = event.GetEventType();
-
-        self.KeyToBind = self.ModToBind = KeyToBind = ''
-
-        SeparateLR = self.SeparateLRChooser.Value if modKeyFlags else False
+        # first clear out anything not being held down
+        if (
+            (not event.ControlDown() and self.ModSlot in ['CTRL', 'LCTRL', 'RCTRL'])
+            or
+            (not event.ShiftDown() and self.ModSlot in ['SHIFT', 'LSHIFT', 'RSHIFT'])
+            or
+            (not event.AltDown() and self.ModSlot in ['ALT', 'LALT', 'RALT'])
+        ):
+            self.ModSlot = None
 
         if (isinstance(event, wx.KeyEvent)):
             code = event.GetKeyCode()
-            KeyToBind = self.Keymap.get(code, '')
         else:
-            button = event.GetButton()
-            KeyToBind = [
-                '', # 'button zero' placeholder
-                'LBUTTON',
-                'MBUTTON',
-                'RBUTTON',
-                'BUTTON4',
-                'BUTTON5',
-                'BUTTON6',
-                'BUTTON7',
-                'BUTTON8',
-            ][button]
+            code = "BUTTON" + str(event.GetButton())
+        KeyToBind = str(self.Keymap.get(code, ''))
 
-        if event.HasAnyModifiers():
-            ShiftText = CtrlText = AltText = ''
-            if KeyToBind:
-                self.KeyToBind = KeyToBind
-
-            # TODO - Check modKeyFlags - sometimes LCTRL+LSHIFT comes out with RSHIFT
-            if (event.ShiftDown()) :
-                if SeparateLR and modKeyFlags:
-                    rawFlags = event.GetRawKeyFlags()
-                    if wx.Platform == '__WXMAC__':
-                        ShiftText = "LSHIFT" if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT"
-                    else:
-                        ShiftText = "RSHIFT" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
-                else:
-                    ShiftText = "SHIFT"
-                if self.KeyToBind:
-                    self.ModToBind = ShiftText
-                else:
-                    self.KeyToBind = ShiftText
-
-            if (event.CmdDown())   :
-                if SeparateLR and modKeyFlags:
-                    rawFlags = event.GetRawKeyFlags()
-                    if wx.Platform == '__WXMAC__':
-                        CtrlText = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
-                    else:
-                        CtrlText = "RCTRL" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
-                else:
-                    CtrlText = "CTRL"
-                if self.KeyToBind:
-                    self.ModToBind = CtrlText
-                else:
-                    self.KeyToBind = CtrlText
-
-            if (event.AltDown())   :
-                if SeparateLR and modKeyFlags:
-                    rawFlags = event.GetRawKeyFlags()
-                    if wx.Platform == '__WXMAC__':
-                        AltText = "LALT" if (rawFlags & modKeyFlags['LALT']) else "RALT"
-                    else:
-                        AltText = "RALT" if (rawFlags & modKeyFlags['RALT']) else "LALT"
-                else:
-                    AltText = "ALT"
-                if self.KeyToBind:
-                    self.ModToBind = AltText
-                else:
-                    self.KeyToBind = AltText
-
-        # else no modifiers down, easy peasy
+        if KeyToBind:
+            self.KeySlot = KeyToBind
         else:
-            self.KeyToBind = KeyToBind
+            ModKey = ''
+            if isinstance(event, wx.KeyEvent) and event.HasAnyModifiers():
 
-        self.Binding = "+".join([ key for key in [self.ModToBind, str(self.KeyToBind)] if key])
+                # TODO - Check modKeyFlags - sometimes LCTRL+LSHIFT comes out with RSHIFT
+                if event.GetKeyCode() == wx.WXK_SHIFT:
+                    if SeparateLR and modKeyFlags:
+                        rawFlags = event.GetRawKeyFlags()
+                        if wx.Platform == '__WXMAC__':
+                            ModKey = "LSHIFT" if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT"
+                        else:
+                            ModKey = "RSHIFT" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
+                    else:
+                        ModKey = "SHIFT"
+
+                if event.GetKeyCode() == wx.WXK_CONTROL: # TODO is this right for Mac?
+                    if SeparateLR and modKeyFlags:
+                        rawFlags = event.GetRawKeyFlags()
+                        if wx.Platform == '__WXMAC__':
+                            ModKey = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
+                        elif wx.Platform == '__WXGTK__':
+                            ModKey = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
+                        else:
+                            ModKey = "RCTRL" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
+                    else:
+                        ModKey = "CTRL"
+
+                if event.GetKeyCode() == wx.WXK_ALT:
+                    if SeparateLR and modKeyFlags:
+                        rawFlags = event.GetRawKeyFlags()
+                        if wx.Platform == '__WXMAC__':
+                            ModKey = "LALT" if (rawFlags & modKeyFlags['LALT']) else "RALT"
+                        else:
+                            ModKey = "RALT" if (rawFlags & modKeyFlags['RALT']) else "LALT"
+                    else:
+                        ModKey = "ALT"
+
+            if ModKey:
+                # if there's something already there
+                if self.ModSlot:
+                    # and it's not already us
+                    if self.ModSlot != ModKey:
+                        # check the mod keys' state
+                        if (
+                            (event.ControlDown() and ModKey in ['CTRL', 'LCTRL', 'RCTRL'])
+                            or
+                            (event.ShiftDown() and ModKey in ['SHIFT', 'LSHIFT', 'RSHIFT'])
+                            or
+                            (event.AltDown() and ModKey in ['ALT', 'LALT', 'RALT'])
+                        ):
+                            # and put it in -key- slot.
+                            self.KeySlot = ModKey
+                # nothing already there, add it to mod slot
+                else:
+                    self.ModSlot = ModKey
+
+        self.Binding = "+".join([ key for key in [self.ModSlot, self.KeySlot] if key])
 
         self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
         self.Layout()
@@ -275,6 +282,14 @@ class KeySelectDialog(wx.Dialog):
                 ord(',') : 'COMMA',
                 ord('.') : '.',
                 ord('/') : '/', 
+                'BUTTON1' : 'LBUTTON',
+                'BUTTON2' : 'MBUTTON',
+                'BUTTON3' : 'RBUTTON',
+                'BUTTON4' : 'BUTTON4',
+                'BUTTON5' : 'BUTTON5',
+                'BUTTON6' : 'BUTTON6',
+                'BUTTON7' : 'BUTTON7',
+                'BUTTON8' : 'BUTTON8',
         }
 
         # Add alphanumerics

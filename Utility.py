@@ -35,6 +35,15 @@ def Icon(iconname):
         )
     return Icons[iconname]
 
+#####
+# disable controls by name
+def DisableControls(page, enabled, names):
+    for name in names:
+        page.Ctrls[name].Enable(enabled)
+        page.Ctrls[name].ctlLabel.Enable(enabled)
+
+
+#####################################################
 
 # TODO - not clear if this logic is correct;  dunno what each "c" table meant
 def CheckConflict(t, k, Purpose):

@@ -2,7 +2,7 @@ import wx
 import UI
 import Utility
 import BindFile
-from Utility import BLF
+from Utility import BLF, DisableControls
 
 from UI.ControlGroup import ControlGroup
 from Page import Page
@@ -64,14 +64,16 @@ class Gameplay(Page):
         ##### header
         headerSizer = wx.FlexGridSizer(0,2,10,10)
 
-        enablecb = wx.CheckBox( self, -1, 'Enable Team/Pet Select')
-        enablecb.SetToolTip( wx.ToolTip('Check this to enable the Team/Pet Select Binds') )
-        self.Ctrls['EnableTeamPetSelectBinds'] = enablecb
+        # TODO - I intentionally left this one outside the control group, why?
+        self.enabletps = wx.CheckBox( self, -1, 'Enable Team/Pet Select')
+        self.enabletps.SetToolTip( wx.ToolTip('Check this to enable the Team/Pet Select Binds') )
+        #self.Ctrls['EnableTeamPetSelectBinds'] = self.enabletps
+        self.enabletps.Bind(wx.EVT_CHECKBOX, self.OnTPSEnable)
 
         helpbutton = wx.BitmapButton(self, -1, Utility.Icon('Help'))
         helpbutton.Bind(wx.EVT_BUTTON, self.help)
 
-        headerSizer.Add(enablecb, 0, wx.ALIGN_CENTER_VERTICAL)
+        headerSizer.Add(self.enabletps, 0, wx.ALIGN_CENTER_VERTICAL)
         headerSizer.Add(helpbutton, wx.ALIGN_RIGHT, 0)
 
         leftSizer.Add(headerSizer, 0, wx.EXPAND|wx.ALL, 10)
@@ -182,6 +184,7 @@ class Gameplay(Page):
             ctlName   = 'ChatEnable',
             ctlType = 'checkbox',
             tooltip = 'Enable / Disable chat binds',
+            callback = self.OnChatEnable,
         )
         for b in (
             ['StartChat',  'Activates the Chat bar'],
@@ -200,6 +203,7 @@ class Gameplay(Page):
             ctlName = 'TypingNotifierEnable',
             ctlType = 'checkbox',
             tooltip = "Check this to enable the Typing Notifier",
+            callback = self.OnTypeEnable,
         )
         chatBindBox.AddControl(
             ctlName = 'TypingNotifier',
@@ -215,12 +219,28 @@ class Gameplay(Page):
         paddingSizer.Add(topSizer, flag = wx.ALL|wx.EXPAND, border = 16)
         self.SetSizerAndFit(paddingSizer)
 
+        self.OnTPSEnable()
+        self.OnFPSEnable()
+        self.OnChatEnable()
+        self.OnTypeEnable()
 
-    def OnFPSEnable(self, evt):
-        self.Ctrls['FPSBindKey'].Enable(evt.EventObject.IsChecked())
-        self.Ctrls['FPSBindKey'].ctlLabel.Enable(evt.EventObject.IsChecked())
-        self.Ctrls['NetgraphBindKey'].Enable(evt.EventObject.IsChecked())
-        self.Ctrls['NetgraphBindKey'].ctlLabel.Enable(evt.EventObject.IsChecked())
+    def OnTPSEnable(self, evt = None):
+        DisableControls(self, self.enabletps.IsChecked(),
+            ['TPSSelMode','TeamSelect1','TeamSelect2','TeamSelect3',
+            'TeamSelect4', 'TeamSelect5','TeamSelect6','TeamSelect7',
+            'TeamSelect8'])
+
+    def OnFPSEnable(self, evt = None):
+        DisableControls(self, self.Ctrls['FPSEnable'].IsChecked(),
+            ['FPSBindKey','NetgraphBindKey'])
+
+    def OnChatEnable(self, evt = None):
+        DisableControls(self, self.Ctrls['ChatEnable'].IsChecked(),
+            ['StartChat','SlashChat','StartEmote','AutoReply','TellTarget','QuickChat'])
+
+    def OnTypeEnable(self, evt = None):
+        DisableControls(self, self.Ctrls['TypingNotifierEnable'].IsChecked(),
+            ['TypingNotifier'])
 
     def PopulateBindFiles(self):
 

@@ -44,10 +44,14 @@ class General(Page):
             ctlName = 'Name',
             ctlType = 'text',
         )
+
+        originchoices = []
+        for Origin in Origins:
+            originchoices.append([Origin, Icon(Origin)])
         powersBox.AddControl(
             ctlName = 'Origin',
-            ctlType = 'choice',
-            contents = Origins,
+            ctlType = 'bmcombo',
+            contents = originchoices,
             tooltip = '',
             callback = self.OnPickOrigin,
         )

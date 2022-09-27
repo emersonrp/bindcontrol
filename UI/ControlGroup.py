@@ -60,7 +60,7 @@ class ControlGroup(wx.StaticBoxSizer):
                 control.Bind(wx.EVT_COMBOBOX, callback )
             for entry in contents:
                 control.Append(*entry)
-            control.SetSelection(2)
+            control.SetValue(Init[ctlName])
 
         elif ctlType == ('text'):
             control = wx.TextCtrl(ctlParent, -1, Init[ctlName])

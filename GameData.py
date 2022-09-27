@@ -1679,6 +1679,7 @@ Archetypes = {
     },
     'Peacebringer': {
         'Faction': 'H',
+        "Epic": {},
         "Dependent": {
             "Bright Nova": [
                 "Bright Nova Bolt",
@@ -2352,6 +2353,7 @@ Archetypes = {
     },
     'Warshade': {
         'Faction': 'H',
+        "Epic": {},
         "Dependent": {
             "Black Dwarf": [
                 "Black Dwarf Strike",

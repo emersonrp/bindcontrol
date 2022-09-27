@@ -24,7 +24,6 @@ def BLFPath(profile, *args):
 
     return filepath
 
-
 Icons = {}
 def Icon(iconname):
     if not Icons.get('iconname', None):

@@ -1,4 +1,5 @@
 import wx
+from wx.adv import BitmapComboBox
 import UI
 from KeyBind.ControlKeyBind import ControlKeyBind
 from UI.KeySelectDialog import KeySelectEventHandler
@@ -50,6 +51,16 @@ class ControlGroup(wx.StaticBoxSizer):
                 choices = contents or (), style = wx.CB_READONLY)
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback )
+
+        elif (ctlType == 'bmcombo') or (ctlType == "bmcombobox"):
+            control = BitmapComboBox(
+                ctlParent, -1, Init[ctlName],
+                style = wx.CB_READONLY)
+            if callback:
+                control.Bind(wx.EVT_COMBOBOX, callback )
+            for entry in contents:
+                control.Append(*entry)
+            control.SetSelection(2)
 
         elif ctlType == ('text'):
             control = wx.TextCtrl(ctlParent, -1, Init[ctlName])

@@ -2,6 +2,7 @@
 import wx
 from pathlib import Path
 import UI
+from Utility import Icon
 from UI.PowerBinderDialog import PowerBinderButton
 
 from GameData import Archetypes, Origins, MiscPowers
@@ -50,10 +51,14 @@ class General(Page):
             tooltip = '',
             callback = self.OnPickOrigin,
         )
+
+        archchoices = []
+        for Arch in sorted(Archetypes):
+            archchoices.append([Arch, Icon(Arch)])
         powersBox.AddControl(
             ctlName = 'Archetype',
-            ctlType = 'choice',
-            contents = sorted(Archetypes),
+            ctlType = 'bmcombo',
+            contents = archchoices,
             tooltip = '',
             callback = self.OnPickArchetype,
         )

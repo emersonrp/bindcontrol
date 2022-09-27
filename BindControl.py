@@ -69,7 +69,7 @@ class Main(wx.Frame):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        sizer.Add(self.Profile, 1, wx.EXPAND |  wx.ALL, 3)
+        sizer.Add(self.Profile, 1, wx.EXPAND | wx.ALL, 3)
 
         WriteButton = wx.Button(self, -1, "Write Binds")
         sizer.Add(WriteButton, 0, wx.EXPAND | wx.ALL, 10)

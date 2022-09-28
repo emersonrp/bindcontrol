@@ -142,8 +142,8 @@ class General(Page):
             ctlType = 'checkbox',
         )
 
-        topSizer.Add(powersBox, 0, wx.ALL, 6)
-        topSizer.Add(prefsBox, 0, wx.ALL, 6)
+        topSizer.Add(powersBox, 1, wx.ALL, 6)
+        topSizer.Add(prefsBox,  2, wx.ALL, 6)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(topSizer, flag=wx.ALL|wx.EXPAND, border = 20)

@@ -60,7 +60,7 @@ class KeySelectDialog(wx.Dialog):
         desc = f"Press the key you want bound to {self.Desc}:"
 
         # is this ugly?
-        self.Profile   = button.Profile
+        self.Profile   = self.Page.Profile
         self.Binding   = ''
         self.ModSlot = None
         self.KeySlot = None
@@ -81,7 +81,6 @@ class KeySelectDialog(wx.Dialog):
             self.SeparateLRChooser = wx.CheckBox( self, -1, "Bind left/right mod keys separately")
             sizer.Add( self.SeparateLRChooser, 0, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
             self.SeparateLRChooser.SetValue( self.Profile.General.GetState('UseSplitModKeys') )
-
 
         # Wrap everything in a vbox to add some padding
         vbox = wx.BoxSizer(wx.VERTICAL);

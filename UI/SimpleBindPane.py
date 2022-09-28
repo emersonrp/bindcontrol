@@ -1,4 +1,5 @@
 import wx
+import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import KeySelectEventHandler
 from UI.PowerBinderDialog import PowerBinderButton
@@ -23,10 +24,12 @@ class SimpleBindPane(CustomBindPaneParent):
 
         BindKeyCtrl = wx.Button(pane, -1, self.Key)
         BindKeyCtrl.CtlName = f"{self.bindclass}{self.unique_bind_id}BindKey"
+        BindKeyCtrl.Page = page
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), (0,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(BindKeyCtrl,                          (0,3), flag=wx.EXPAND|wx.ALL, border=5)
         BindKeyCtrl.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
         page.Ctrls[self.UniqueName('BindKey')] = BindKeyCtrl
+        UI.Labels[BindKeyCtrl.CtlName] = "Simple Bind " + self.unique_bind_id
 
         BindContentsCtrl = wx.TextCtrl(pane, -1, self.Contents)
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"), (1,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)

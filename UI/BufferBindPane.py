@@ -23,12 +23,12 @@ class BufferBindPane(CustomBindPaneParent):
 
         for i in (1,2,3,4,5,6,7,8):
             ctrlName = self.UniqueName() + f"Team{i}BuffKey"
-            page.Init[ctrlName] = "UNBOUND"
+            page.Init[ctrlName] = ""
             UI.Labels[ctrlName] = f'Team {i} Key'
 
         for i in (1,2,3,4,5,6):
             ctrlName = self.UniqueName() + f"Pet{i}BuffKey"
-            page.Init[ctrlName] = "UNBOUND"
+            page.Init[ctrlName] = ""
             UI.Labels[ctrlName] = f'Pet {i} Key'
 
     def BuildBindUI(self, page):
@@ -76,13 +76,13 @@ class BufferBindPane(CustomBindPaneParent):
         TeamCtrls.AddControl(ctlType = 'checkbox', ctlName = self.UniqueName("BuffsAffectTeam"))
         for i in (1,2,3,4,5,6,7,8):
             TeamCtrls.AddControl(ctlType = "keybutton",
-                    ctlName = self.UniqueName(f"Team{i}BuffKey"), contents = "UNBOUND")
+                ctlName = self.UniqueName(f"Team{i}BuffKey"), contents = "")
 
 
         PetCtrls.AddControl(ctlType = 'checkbox', ctlName = self.UniqueName("BuffsAffectPets"))
         PetCtrls.AddControl(ctlType = "checkbox", ctlName = self.UniqueName("BuffPetsByName"))
         for i in (1,2,3,4,5,6):
-            PetCtrls.AddControl(ctlType = "keybutton", ctlName = self.UniqueName(f"Pet{i}BuffKey"), contents = "UNBOUND")
+            PetCtrls.AddControl(ctlType = "keybutton", ctlName = self.UniqueName(f"Pet{i}BuffKey"), contents = "")
 
         KeySizer.Add(TeamCtrls, 0, flag = wx.LEFT|wx.RIGHT, border = 5)
         KeySizer.Add(PetCtrls,  0, flag = wx.LEFT|wx.RIGHT, border = 5)

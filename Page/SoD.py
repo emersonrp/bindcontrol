@@ -96,7 +96,7 @@ class SoD(Page):
             self.Init['DwarfDwarf'] = "Black Dwarf"
             self.Init['HumanFormShield'] = "Gravity Shield"
 
-        self.Init['HumanMode']    = "UNBOUND"
+        self.Init['HumanMode']    = ""
         self.Init['HumanTray']    = "1"
         self.Init['HumanHumanPBind'] = "nop"
         self.Init['HumanNovaPBind']  = "nop"
@@ -104,8 +104,8 @@ class SoD(Page):
 
         #  Temp Travel Powers
         self.Init['TempTray'] = "6"
-        self.Init['TempTraySwitch'] = "UNBOUND"
-        self.Init['TempMode'] = "UNBOUND"
+        self.Init['TempTraySwitch'] = ""
+        self.Init['TempMode'] = ""
 
     def BuildPage(self):
 
@@ -589,7 +589,7 @@ class SoD(Page):
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeNonSoDModeKey(self, p, t, bl, cur, toff, fix, fb):
         key = t['NonSoDMode']
-        if (not key or (key == 'UNBOUND')): return
+        if not key: return
 
         if p['SoD']['Feedback']: feedback = (fb or '$$t $name, Non-SoD Mode')
         else:                    feedback = ''
@@ -620,7 +620,7 @@ class SoD(Page):
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeTempModeKey(self, p, t, bl, cur, toff):
         key = t['TempMode']
-        if (not key or (key == "UNBOUND")): return
+        if not key: return
 
         if p['SoD']['Feedback']: feedback = '$$t $name, Temp Mode'
         else:                    feedback = ''
@@ -646,7 +646,7 @@ class SoD(Page):
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeQFlyModeKey(self, p, t, bl, cur, toff, modestr):
         key = t['QFlyMode']
-        if (not key or key == "UNBOUND"): return
+        if not key: return
 
         if (modestr == "NonSoD"):
             cur.SetBind(key, "powexecname Quantum Flight")
@@ -682,7 +682,7 @@ class SoD(Page):
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeBaseModeKey(self, p, t, bl, cur, toff, fix, fb):
         key = t['BaseMode']
-        if (not key or key == "UNBOUND"): return
+        if not key: return
 
         if p['SoD']['Feedback']: feedback = (fb or '$$t $name, Sprint-SoD Mode')
         else:                    feedback = ''
@@ -790,7 +790,7 @@ class SoD(Page):
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeFlyModeKey(self, p, t, bl, cur, toff, fix, fb, fb_on_a):
         key = t['FlyMode']
-        if (not key or key == "UNBOUND"): return
+        if not key: return
 
         if p['SoD']['Feedback']: feedback = (fb or '$$t $name, Flight Mode')
         else:                    feedback = ''
@@ -1355,9 +1355,9 @@ class SoD(Page):
         t['rig']  = '$$right '    + str(   t['D'])
         t['rigx'] = '$$right '    + str((1-t['D']))
 
-        if (self.GetState('TLeft')  and self.GetState('TLeft')  == "UNBOUND"):
+        if (self.GetState('TLeft')):
             ResetFile.SetBind(self.Ctrls['TLeft'].MakeFileKeyBind("+turnleft"))
-        if (self.GetState('TRight') and self.GetState('TRight') == "UNBOUND"):
+        if (self.GetState('TRight')):
             ResetFile.SetBind(self.Ctrls['TRight'].MakeFileKeyBind("+turnright"))
 
         if (self.GetState('Temp') and self.GetState('TempEnable')):

@@ -36,7 +36,8 @@ class ControlGroup(wx.StaticBoxSizer):
             ctlLabel = wx.StaticText(ctlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
-            control = bcKeyButton( ctlParent, -1, Init[ctlName])
+            control = bcKeyButton( ctlParent, -1, '' )
+            control.SetLabel(Init[ctlName])
             control.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
             control.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
             # push context onto the button, we'll thank me later
@@ -103,21 +104,30 @@ class ControlGroup(wx.StaticBoxSizer):
 
         control.ctlLabel = None
         if not noLabel:
-            sizer.Add( ctlLabel,    0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+            sizer.Add( ctlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
             control.ctlLabel = ctlLabel
 
         sizer.Add( control, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, padding)
-        self.Page.Ctrls[ctlName]   = control
+        self.Page.Ctrls[ctlName] = control
 
         self.Layout()
         return control
 
     def ClearButton(self, evt):
-        evt.EventObject.SetLabel("UNBOUND")
+        evt.EventObject.SetLabel("")
 
 class bcKeyButton(wx.Button):
     def __init__(self, parent, id, init):
         wx.Button.__init__(self, parent, id, init)
+
+    # rename this to SetLabel to get "UNBOUND" behavior back
+    def NewSetLabel(self, label):
+        if label == '':
+            label = "UNBOUND"
+            self.SetOwnForegroundColour([128,128,188])
+        else:
+            self.SetOwnForegroundColour(wx.BLACK)
+        super().SetLabel(label)
 
     def MakeFileKeyBind(self, contents):
         return self.KeyBind.MakeFileKeyBind(contents)

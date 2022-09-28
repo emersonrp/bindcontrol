@@ -8,7 +8,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
 
         # TODO - simplebind just have the one key<->contents,
         # but buffer binds have a whole set of them.
-        self.Key            = 'UNBOUND'
+        self.Key            = ''
         self.Name           = ''
         self.Contents       = ''
         self.Page           = page

@@ -3,6 +3,7 @@ import string
 import UI
 import GameData
 
+# This is awful
 from PowerBindCmd import AFKCmd, AutoPowerCmd, ChatCmd, ChatGlobalCmd, CostumeChangeCmd, CustomBindCmd, EmoteCmd, \
                     PowerAbortCmd, PowerBindCmd, PowerUnqueueCmd, SGModeToggleCmd, TargetCustomCmd, TargetEnemyCmd, \
                     TargetFriendCmd, TeamPetSelectCmd, UnselectCmd, UseInspByNameCmd, UseInspRowColCmd, UsePowerCmd, \
@@ -16,25 +17,37 @@ class PowerBinderDialog(wx.Dialog):
         sizer = wx.BoxSizer(wx.VERTICAL);
         self.mainSizer = sizer
 
-        rearrangeCtrl = wx.RearrangeCtrl(self, -1, size=(550,400))
-        sizer.Add(rearrangeCtrl, 1, wx.EXPAND)
-
-        self.rearrangeList = rearrangeCtrl.GetList()
-        self.rearrangeList.Bind(wx.EVT_LISTBOX, self.OnListSelect)
-
-        choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.bindChoice = wx.Choice(self, -1, choices = [cmd for cmd in commandClasses])
         self.bindChoice.Bind(wx.EVT_CHOICE, self.OnBindChoice)
-        choiceSizer.Add(self.bindChoice, 1, wx.ALIGN_CENTER_VERTICAL)
+        self.mainSizer.Add(self.bindChoice, 1, wx.EXPAND|wx.BOTTOM, 10)
 
-        self.addBindButton = wx.Button(self, -1, "Add")
-        choiceSizer.Add(self.addBindButton, 0, wx.ALIGN_CENTER_VERTICAL)
-        self.addBindButton.Bind(wx.EVT_BUTTON, self.OnAddBind)
-        self.addBindButton.Enable(False)
+        rearrangeCtrl = wx.BoxSizer(wx.HORIZONTAL)
+        self.rearrangeList = wx.RearrangeList(self, -1, size=(550,400))
+        self.rearrangeList.Bind(wx.EVT_LISTBOX, self.OnListSelect)
+        rearrangeCtrl.Add(self.rearrangeList, 1)
 
-        showBindStringButton = wx.Button(self, -1, "Show Bind String")
-        choiceSizer.Add(showBindStringButton, 0, wx.ALIGN_CENTER_VERTICAL)
-        showBindStringButton.Bind(wx.EVT_BUTTON, self.OnShowBindString)
+        rearrangeButtons = wx.BoxSizer(wx.VERTICAL)
+        delButton = wx.Button(self, -1, "Delete")
+        delButton.Bind(wx.EVT_BUTTON, self.OnRearrangeDelete)
+        editButton = wx.Button(self, -1, "Edit")
+        editButton.Bind(wx.EVT_BUTTON, self.OnRearrangeEdit)
+        upButton = wx.Button(self, -1, "Up")
+        upButton.Bind(wx.EVT_BUTTON, self.OnRearrangeUp)
+        downButton = wx.Button(self, -1, "Down")
+        downButton.Bind(wx.EVT_BUTTON, self.OnRearrangeDown)
+        rearrangeButtons.Add(delButton, 1, wx.BOTTOM, 10)
+        rearrangeButtons.Add(editButton, 1, wx.BOTTOM, 10)
+        rearrangeButtons.Add(upButton, 1, wx.BOTTOM, 10)
+        rearrangeButtons.Add(downButton, 1, wx.BOTTOM, 10)
+        rearrangeCtrl.Add(rearrangeButtons, 0, wx.LEFT, 10)
+
+        sizer.Add(rearrangeCtrl, 0, wx.EXPAND|wx.TOP|wx.BOTTOM)
+
+        choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.BindStringDisplay = wx.StaticText(self, -1)
+        choiceSizer.Add(wx.StaticText(self, -1, "Bind String:"), 0)
+        choiceSizer.Add(self.BindStringDisplay, 1)
 
         sizer.Add(choiceSizer, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 16)
 
@@ -49,7 +62,21 @@ class PowerBinderDialog(wx.Dialog):
         self.Fit()
         self.SetFocus()
 
-    def OnBindChoice(self, evt):
+    def OnRearrangeDelete(self, evt):
+        current = self.rearrangeList.GetSelection()
+        self.rearrangeList.Delete(current)
+        self.UpdateBindStringDisplay()
+
+    def OnRearrangeUp(self, evt):
+        self.rearrangeList.MoveCurrentUp()
+        self.UpdateBindStringDisplay()
+
+    def OnRearrangeDown(self, evt):
+        self.rearrangeList.MoveCurrentDown()
+        self.UpdateBindStringDisplay()
+
+    def OnRearrangeEdit(self, evt):
+        return # TODO - this whole method
         index = self.bindChoice.GetSelection()
 
         # check whether we have an object already attached to this choice
@@ -73,19 +100,35 @@ class PowerBinderDialog(wx.Dialog):
                     self.mainSizer.Insert(self.mainSizer.GetItemCount()-1, cmdObject.UI, 0, wx.EXPAND)
                 # else no extra UI, don't show
 
-        # enable the 'add' button so we can do something
-        self.addBindButton.Enable(True)
-
         # old or new, show it.
         self.ShowUIFor(cmdObject)
         self.Layout()
         self.Fit()
 
-
-    def OnAddBind(self, evt):
+    def OnBindChoice(self, evt):
         # find the item we just poked "add" next to
         chosenSel  = self.bindChoice.GetSelection()
         chosenName = self.bindChoice.GetString(chosenSel)
+
+        # check whether we have an object already attached to this choice
+        cmdObject = None
+        try:
+            cmdObject = self.bindChoice.GetClientData(chosenSel)
+        except Exception:
+            pass
+
+        # if not, make and attach one
+        if not cmdObject:
+            newCommand = commandClasses[chosenName]
+            if newCommand:
+                cmdObject = newCommand(self)
+                self.bindChoice.SetClientData(chosenSel, cmdObject)
+                if cmdObject.UI:
+                    self.Freeze()
+                    self.mainSizer.Insert(self.mainSizer.GetItemCount()-1, cmdObject.UI, 0, wx.EXPAND)
+                    self.mainSizer.Hide(cmdObject.UI)
+                    self.Thaw()
+
 
         # detach the command object from self.bindChoice, and instead glue it
         # to self.rearrangeList
@@ -98,22 +141,17 @@ class PowerBinderDialog(wx.Dialog):
         # it clear that the UI now points to the object above
         self.bindChoice.SetSelection(wx.NOT_FOUND)
 
-        # Also re-disable the Add button since we're looking at an added one
-        self.addBindButton.Enable(False)
+        self.UpdateBindStringDisplay()
 
     def OnListSelect(self, evt):
         selected = self.rearrangeList.GetSelection()
         selCommand = self.rearrangeList.GetClientData(selected)
 
-        # Also re-disable the Add button since we're looking at an added one
-        self.addBindButton.Enable(False)
-
         self.ShowUIFor(selCommand)
         evt.Skip()
 
-    def OnShowBindString(self, evt):
-        bindstring = self.MakeBindString()
-        wx.MessageBox(bindstring, caption="Bind String")
+    def UpdateBindStringDisplay(self):
+        self.BindStringDisplay.SetLabel(self.MakeBindString())
 
     def MakeBindString(self):
         # Quick'n'dirty glom together of the bindstrings, for debugging

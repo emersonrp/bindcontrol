@@ -1,6 +1,6 @@
 import wx
 import UI
-import Utility
+from Utility import ChatColors, CheckConflict, DisableControls
 from Page import Page
 from GameData import Inspirations
 from UI.ControlGroup import ControlGroup
@@ -14,22 +14,22 @@ class InspirationPopper(Page):
         self.Init = {
             'EnableInspBinds'    : True,
             'EnableRevInspBinds' : False,
-            'AccuracyKey'        : "LSHIFT+A",
-            'HealthKey'          : "LSHIFT+S",
-            'DamageKey'          : "LSHIFT+D",
-            'EnduranceKey'       : "LSHIFT+Q",
-            'DefenseKey'         : "LSHIFT+W",
-            'BreakFreeKey'       : "LSHIFT+E",
-            'ResistDamageKey'    : "LSHIFT+SPACE",
-            'ResurrectionKey'    : "LSHIFT+TILDE",
-            'RevAccuracyKey'     : "LSHIFT+A",
-            'RevHealthKey'       : "LSHIFT+S",
-            'RevDamageKey'       : "LSHIFT+D",
-            'RevEnduranceKey'    : "LSHIFT+Q",
-            'RevDefenseKey'      : "LSHIFT+W",
-            'RevBreakFreeKey'    : "LSHIFT+E",
-            'RevResistDamageKey' : "LSHIFT+SPACE",
-            'RevResurrectionKey' : "LSHIFT+TILDE",
+            'AccuracyKey'        : "SHIFT+A",
+            'HealthKey'          : "SHIFT+S",
+            'DamageKey'          : "SHIFT+D",
+            'EnduranceKey'       : "SHIFT+Q",
+            'DefenseKey'         : "SHIFT+W",
+            'BreakFreeKey'       : "SHIFT+E",
+            'ResistDamageKey'    : "SHIFT+SPACE",
+            'ResurrectionKey'    : "SHIFT+TILDE",
+            'RevAccuracyKey'     : "SHIFT+CTRL+A",
+            'RevHealthKey'       : "SHIFT+CTRL+S",
+            'RevDamageKey'       : "SHIFT+CTRL+D",
+            'RevEnduranceKey'    : "SHIFT+CTRL+Q",
+            'RevDefenseKey'      : "SHIFT+CTRL+W",
+            'RevBreakFreeKey'    : "SHIFT+CTRL+E",
+            'RevResistDamageKey' : "SHIFT+CTRL+SPACE",
+            'RevResurrectionKey' : "SHIFT+CTRL+TILDE",
             'DisableTells'       : False,
         }
         for Insp in Inspirations:
@@ -118,48 +118,47 @@ class InspirationPopper(Page):
         self.OnDisableTellCB()
 
     def OnEnableCB(self, evt = None):
-        enable = self.useCB.IsChecked()
-        notells = self.disableTellsCB.IsChecked()
+        controls = []
         for Insp in Inspirations:
-            self.Ctrls[f"{Insp}Key"].Enable(enable)
-            self.Ctrls[f"{Insp}Key"].ctlLabel.Enable(enable)
-            self.Ctrls[f"{Insp}Border"].Enable(enable and not notells)
-            self.Ctrls[f"{Insp}Border"].ctlLabel.Enable(enable and not notells)
-            self.Ctrls[f"{Insp}Background"].Enable(enable and not notells)
-            self.Ctrls[f"{Insp}Background"].ctlLabel.Enable(enable and not notells)
-            self.Ctrls[f"{Insp}Foreground"].Enable(enable and not notells)
-            self.Ctrls[f"{Insp}Foreground"].ctlLabel.Enable(enable and not notells)
+            controls.append(f"{Insp}Key")
+            controls.append(f"{Insp}Border")
+            controls.append(f"{Insp}Background")
+            controls.append(f"{Insp}Foreground")
+        self.Freeze()
+        DisableControls(self, self.useCB.IsChecked(), controls)
+        if self.disableTellsCB.IsChecked():
+            self.OnDisableTellCB()
+        self.Thaw()
 
     def OnEnableRevCB(self, evt = None):
-        enable = self.useRevCB.IsChecked()
-        notells = self.disableTellsCB.IsChecked()
+        controls = []
         for Insp in Inspirations:
-            self.Ctrls[f"Rev{Insp}Key"].Enable(enable)
-            self.Ctrls[f"Rev{Insp}Key"].ctlLabel.Enable(enable)
-            self.Ctrls[f"Rev{Insp}Border"].Enable(enable and not notells)
-            self.Ctrls[f"Rev{Insp}Border"].ctlLabel.Enable(enable and not notells)
-            self.Ctrls[f"Rev{Insp}Background"].Enable(enable and not notells)
-            self.Ctrls[f"Rev{Insp}Background"].ctlLabel.Enable(enable and not notells)
-            self.Ctrls[f"Rev{Insp}Foreground"].Enable(enable and not notells)
-            self.Ctrls[f"Rev{Insp}Foreground"].ctlLabel.Enable(enable and not notells)
+            controls.append(f"Rev{Insp}Key")
+            controls.append(f"Rev{Insp}Border")
+            controls.append(f"Rev{Insp}Background")
+            controls.append(f"Rev{Insp}Foreground")
+        self.Freeze()
+        DisableControls(self, self.useRevCB.IsChecked(), controls)
+        if self.disableTellsCB.IsChecked():
+            self.OnDisableTellCB()
+        self.Thaw()
 
     def OnDisableTellCB(self, evt = None):
-        enable = self.disableTellsCB.IsChecked()
-        forward  = self.useCB.IsChecked()
-        reverse  = self.useRevCB.IsChecked()
+        enabled = not self.disableTellsCB.IsChecked()
+        controls = []
+        revcontrols = []
         for Insp in Inspirations:
-            self.Ctrls[f"{Insp}Border"].Enable(not enable and forward)
-            self.Ctrls[f"{Insp}Border"].ctlLabel.Enable(not enable and forward)
-            self.Ctrls[f"{Insp}Background"].Enable(not enable and forward)
-            self.Ctrls[f"{Insp}Background"].ctlLabel.Enable(not enable and forward)
-            self.Ctrls[f"{Insp}Foreground"].Enable(not enable and forward)
-            self.Ctrls[f"{Insp}Foreground"].ctlLabel.Enable(not enable and forward)
-            self.Ctrls[f"Rev{Insp}Border"].Enable(not enable and reverse)
-            self.Ctrls[f"Rev{Insp}Border"].ctlLabel.Enable(not enable and reverse)
-            self.Ctrls[f"Rev{Insp}Background"].Enable(not enable and reverse)
-            self.Ctrls[f"Rev{Insp}Background"].ctlLabel.Enable(not enable and reverse)
-            self.Ctrls[f"Rev{Insp}Foreground"].Enable(not enable and reverse)
-            self.Ctrls[f"Rev{Insp}Foreground"].ctlLabel.Enable(not enable and reverse)
+            controls.append(f"{Insp}Border")
+            controls.append(f"{Insp}Background")
+            controls.append(f"{Insp}Foreground")
+            revcontrols.append(f"Rev{Insp}Border")
+            revcontrols.append(f"Rev{Insp}Background")
+            revcontrols.append(f"Rev{Insp}Foreground")
+        if self.useCB.IsChecked():
+            DisableControls(self, enabled, controls)
+        if self.useRevCB.IsChecked():
+            DisableControls(self, enabled, revcontrols)
+
 
     def PopulateBindFiles(self):
         profile = self.Profile
@@ -176,11 +175,11 @@ class InspirationPopper(Page):
                 bc = self.GetState(f'{Insp}Border')
                 bg = self.GetState(f'{Insp}Background')
                 fg = self.GetState(f'{Insp}Foreground')
-                forwardOrder.insert(0, f'tell $name, {Utility.ChatColors(fg, bg, bc)}{Insp}')
+                forwardOrder.insert(0, f'tell $name, {ChatColors(fg, bg, bc)}{Insp}')
                 bc = self.GetState(f'Rev{Insp}Border')
                 bg = self.GetState(f'Rev{Insp}Background')
                 fg = self.GetState(f'Rev{Insp}Foreground')
-                reverseOrder.insert(0, f'tell $name, {Utility.ChatColors(fg, bg, bc)}{Insp}')
+                reverseOrder.insert(0, f'tell $name, {ChatColors(fg, bg, bc)}{Insp}')
 
             if self.GetState('EnableInspBinds'):
                 ResetFile.SetBind(self.Ctrls[f"{Insp}Key"].MakeFileKeyBind(forwardOrder))
@@ -193,22 +192,22 @@ class InspirationPopper(Page):
         ### TODO
 
         if self.GetState('EnableInspBinds'):
-            Utility.CheckConflict(self.State,'acckey',"Accuracy Key")
-            Utility.CheckConflict(self.State,'hpkey',"Healing Key")
-            Utility.CheckConflict(self.State,'damkey',"Damage Key")
-            Utility.CheckConflict(self.State,'endkey',"Endurance Key")
-            Utility.CheckConflict(self.State,'defkey',"Defense Key")
-            Utility.CheckConflict(self.State,'bfkey',"Breakfree Key")
-            Utility.CheckConflict(self.State,'reskey',"Resistance Key")
+            CheckConflict(self.State,'acckey',"Accuracy Key")
+            CheckConflict(self.State,'hpkey',"Healing Key")
+            CheckConflict(self.State,'damkey',"Damage Key")
+            CheckConflict(self.State,'endkey',"Endurance Key")
+            CheckConflict(self.State,'defkey',"Defense Key")
+            CheckConflict(self.State,'bfkey',"Breakfree Key")
+            CheckConflict(self.State,'reskey',"Resistance Key")
 
         if self.GetState('EnableRevInspBinds'):
-            Utility.CheckConflict(self.State,'racckey',"Reverse Accuracy Key")
-            Utility.CheckConflict(self.State,'rhpkey',"Reverse Healing Key")
-            Utility.CheckConflict(self.State,'rdamkey',"Reverse Damage Key")
-            Utility.CheckConflict(self.State,'rendkey',"Reverse Endurance Key")
-            Utility.CheckConflict(self.State,'rdefkey',"Reverse Defense Key")
-            Utility.CheckConflict(self.State,'rbfkey',"Reverse Breakfree Key")
-            Utility.CheckConflict(self.State,'rreskey',"Reverse Resistance Key")
+            CheckConflict(self.State,'racckey',"Reverse Accuracy Key")
+            CheckConflict(self.State,'rhpkey',"Reverse Healing Key")
+            CheckConflict(self.State,'rdamkey',"Reverse Damage Key")
+            CheckConflict(self.State,'rendkey',"Reverse Endurance Key")
+            CheckConflict(self.State,'rdefkey',"Reverse Defense Key")
+            CheckConflict(self.State,'rbfkey',"Reverse Breakfree Key")
+            CheckConflict(self.State,'rreskey',"Reverse Resistance Key")
 
     def bindisused(self, profile):
         return bool(self.State['Enable'] or self.State['Reverse'])

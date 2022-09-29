@@ -299,6 +299,21 @@ class Gameplay(Page):
         return self.GetState('Enable')
 
     UI.Labels.update({
+        'TPSSelMode' : "Team / Pet Select Mode",
+
+        'SelNextTeam' : "Select Next Teammate",
+        'SelPrevTeam' : "Select Previous Teammate",
+        'IncTeamSize' : "Increase Team Size",
+        'DecTeamSize' : "Decrease Team Size",
+        'IncTeamPos' : "Increase Team Position",
+        'DecTeamPos' : "Decrease Team Position",
+        'Reset'      : "Reset Team Rotation",
+
+        'SelNextPet' : "Select Next Pet",
+        'SelPrevPet' : "Select Previous Pet",
+        'IncPetSize' : "Increase Pet Group Size",
+        'DecPetSize' : "Decrease Pet Group Size",
+
         'FPSBindKey' : "Turn on FPS",
         'NetgraphBindKey' : 'Turn on Netgraph',
 

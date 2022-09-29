@@ -11,7 +11,7 @@ class UseInspByNameCmd(PowerBindCmd):
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         self.useInspByNameModeChoice = wx.Choice(dialog, -1, choices = self.GetAllInsps())
         self.useInspByNameModeChoice.SetSelection(0)
-        useInspByNameSizer.Add(self.useInspByNameModeChoice, 1)
+        useInspByNameSizer.Add(self.useInspByNameModeChoice, 1, wx.ALIGN_CENTER_VERTICAL)
 
         return useInspByNameSizer
 
@@ -27,5 +27,8 @@ class UseInspByNameCmd(PowerBindCmd):
         for type, info in GameData.Inspirations.items():
             for insp in info['tiers']:
                 Insplist.append(insp)
-        return sorted(Insplist)
+            Insplist.append("---")
+        Insplist.pop(-1) # snip the terminal "---"
+
+        return Insplist
 

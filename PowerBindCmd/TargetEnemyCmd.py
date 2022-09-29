@@ -10,7 +10,7 @@ class TargetEnemyCmd(PowerBindCmd):
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         self.targetEnemyModeChoice = wx.Choice(dialog, -1, choices = ['Near','Far','Next','Prev'])
         self.targetEnemyModeChoice.SetSelection(0)
-        targetEnemySizer.Add(self.targetEnemyModeChoice)
+        targetEnemySizer.Add(self.targetEnemyModeChoice, 0, wx.ALIGN_CENTER_VERTICAL)
 
         return targetEnemySizer
 

@@ -67,17 +67,17 @@ class Main(wx.Frame):
         # TODO - read in the config for the window (size, location, etc)
         # and apply it before ->Show()
 
-        sizer = wx.BoxSizer(wx.VERTICAL)
+        self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
-        sizer.Add(self.Profile, 1, wx.EXPAND | wx.ALL, 3)
+        self.Sizer.Add(self.Profile, 1, wx.EXPAND | wx.ALL, 3)
 
         WriteButton = wx.Button(self, -1, "Write Binds")
-        sizer.Add(WriteButton, 0, wx.EXPAND | wx.ALL, 10)
+        self.Sizer.Add(WriteButton, 0, wx.EXPAND | wx.ALL, 10)
 
         # WRITE BUTTON EVENT
         self.Bind(wx.EVT_BUTTON, self.OnWriteBindsButton, WriteButton)
 
-        self.SetSizerAndFit(sizer)
+        self.SetSizerAndFit(self.Sizer)
 
     def OnWriteBindsButton(self, evt):
         self.Profile.WriteBindFiles()

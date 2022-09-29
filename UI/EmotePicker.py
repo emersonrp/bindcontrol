@@ -10,7 +10,7 @@ def OnEmotePicker(evt):
 
 class EmotePicker(wx.Menu):
 
-    payloadMap = {}
+    payloadMap = { '...': '' }
 
     def __init__(self, target):
         wx.Menu.__init__(self)

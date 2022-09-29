@@ -10,12 +10,12 @@ class UseInspRowColCmd(PowerBindCmd):
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         self.useInspRowColumnRow = wx.Choice(dialog, -1, choices=['1','2','3','4'], style=wx.ALIGN_CENTER_VERTICAL)
         self.useInspRowColumnRow.SetSelection(0)
-        useInspRowColumnSizer.Add(self.useInspRowColumnRow, 1)
+        useInspRowColumnSizer.Add(self.useInspRowColumnRow, 0, wx.ALIGN_CENTER_VERTICAL)
         useInspRowColumnSizer.Add(wx.StaticText(dialog, -1, "Column:"), 0,
-                wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+                wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 4)
         self.useInspRowColumnCol = wx.Choice(dialog, -1, choices=['1','2','3','4','5'], style=wx.ALIGN_CENTER_VERTICAL)
         self.useInspRowColumnCol.SetSelection(0)
-        useInspRowColumnSizer.Add(self.useInspRowColumnCol, 1)
+        useInspRowColumnSizer.Add(self.useInspRowColumnCol, 0, wx.ALIGN_CENTER_VERTICAL)
 
         return useInspRowColumnSizer
 

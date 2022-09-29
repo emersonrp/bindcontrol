@@ -14,40 +14,49 @@ class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
+        self.EditDialog = PowerBinderEditDialog(self)
+
         sizer = wx.BoxSizer(wx.VERTICAL);
         self.mainSizer = sizer
 
+        choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
+        choiceSizer.Add(wx.StaticText(self, -1, "Add Step:"), 0, wx.ALIGN_CENTER_VERTICAL)
         self.bindChoice = wx.Choice(self, -1, choices = [cmd for cmd in commandClasses])
         self.bindChoice.Bind(wx.EVT_CHOICE, self.OnBindChoice)
-        self.mainSizer.Add(self.bindChoice, 1, wx.EXPAND|wx.BOTTOM, 10)
+        choiceSizer.Add(self.bindChoice, 1, wx.LEFT, 10)
+        sizer.Add(choiceSizer, 1, wx.EXPAND|wx.BOTTOM, 10)
 
         rearrangeCtrl = wx.BoxSizer(wx.HORIZONTAL)
-        self.rearrangeList = wx.RearrangeList(self, -1, size=(550,400))
-        self.rearrangeList.Bind(wx.EVT_LISTBOX, self.OnListSelect)
-        rearrangeCtrl.Add(self.rearrangeList, 1)
+
+        self.RearrangeList = wx.RearrangeList(self, -1, size=(550,400))
+        self.RearrangeList.Bind(wx.EVT_LISTBOX, self.OnListSelect)
+        rearrangeCtrl.Add(self.RearrangeList, 1)
 
         rearrangeButtons = wx.BoxSizer(wx.VERTICAL)
-        delButton = wx.Button(self, -1, "Delete")
-        delButton.Bind(wx.EVT_BUTTON, self.OnRearrangeDelete)
-        editButton = wx.Button(self, -1, "Edit")
-        editButton.Bind(wx.EVT_BUTTON, self.OnRearrangeEdit)
-        upButton = wx.Button(self, -1, "Up")
+        self.DelButton = wx.Button(self, -1, "Delete")
+        self.DelButton.Bind(wx.EVT_BUTTON, self.OnRearrangeDelete)
+        self.EditButton = wx.Button(self, -1, "Edit")
+        self.EditButton.Bind(wx.EVT_BUTTON, self.OnRearrangeEdit)
+        self.EditButton.Disable()
+        upButton = wx.Button(self, -1, "\u25B2")
         upButton.Bind(wx.EVT_BUTTON, self.OnRearrangeUp)
-        downButton = wx.Button(self, -1, "Down")
+        downButton = wx.Button(self, -1, "\u25BC")
         downButton.Bind(wx.EVT_BUTTON, self.OnRearrangeDown)
-        rearrangeButtons.Add(delButton, 1, wx.BOTTOM, 10)
-        rearrangeButtons.Add(editButton, 1, wx.BOTTOM, 10)
         rearrangeButtons.Add(upButton, 1, wx.BOTTOM, 10)
         rearrangeButtons.Add(downButton, 1, wx.BOTTOM, 10)
+        rearrangeButtons.Add(self.EditButton, 1, wx.BOTTOM, 10)
+        rearrangeButtons.Add(self.DelButton, 1, wx.BOTTOM, 10)
         rearrangeCtrl.Add(rearrangeButtons, 0, wx.LEFT, 10)
 
         sizer.Add(rearrangeCtrl, 0, wx.EXPAND|wx.TOP|wx.BOTTOM)
 
         choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.BindStringDisplay = wx.StaticText(self, -1)
-        choiceSizer.Add(wx.StaticText(self, -1, "Bind String:"), 0)
-        choiceSizer.Add(self.BindStringDisplay, 1)
+        self.BindStringDisplay = wx.TextCtrl(self, -1)
+        self.BindStringDisplay.Disable()
+        choiceSizer.Add(wx.StaticText(self, -1, "Bind String:"), 0,
+                        wx.ALIGN_CENTER_VERTICAL)
+        choiceSizer.Add(self.BindStringDisplay, 1, wx.LEFT, 10)
 
         sizer.Add(choiceSizer, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 16)
 
@@ -63,130 +72,95 @@ class PowerBinderDialog(wx.Dialog):
         self.SetFocus()
 
     def OnRearrangeDelete(self, evt):
-        current = self.rearrangeList.GetSelection()
-        self.rearrangeList.Delete(current)
+        current = self.RearrangeList.GetSelection()
+        if current == wx.NOT_FOUND: return
+
+        self.RearrangeList.Delete(current)
         self.UpdateBindStringDisplay()
 
     def OnRearrangeUp(self, evt):
-        self.rearrangeList.MoveCurrentUp()
+        self.RearrangeList.MoveCurrentUp()
         self.UpdateBindStringDisplay()
 
     def OnRearrangeDown(self, evt):
-        self.rearrangeList.MoveCurrentDown()
+        self.RearrangeList.MoveCurrentDown()
         self.UpdateBindStringDisplay()
 
     def OnRearrangeEdit(self, evt):
-        return # TODO - this whole method
-        index = self.bindChoice.GetSelection()
+        index = self.RearrangeList.GetSelection()
 
         # check whether we have an object already attached to this choice
         cmdObject = None
         try:
-            cmdObject = self.bindChoice.GetClientData(index)
+            cmdObject = self.RearrangeList.GetClientData(index)
         except Exception:
             pass
 
-        # if not, make and attach one
-        if not cmdObject:
-            chosenName = self.bindChoice.GetString(index)
-            newCommandClass = commandClasses[chosenName]
-            if newCommandClass:
-                cmdObject = newCommandClass(self)
-                self.bindChoice.SetClientData(index, cmdObject)
+        if cmdObject:
+            self.ShowEditDialogFor(cmdObject)
+        else:
+            print("cmdObject was None")
 
-                # Shim the UI bits (if any) for the new command into the dialog,
-                # just above the buttons, and then do the correct showing/hiding
-                if cmdObject.UI:
-                    self.mainSizer.Insert(self.mainSizer.GetItemCount()-1, cmdObject.UI, 0, wx.EXPAND)
-                # else no extra UI, don't show
-
-        # old or new, show it.
-        self.ShowUIFor(cmdObject)
-        self.Layout()
-        self.Fit()
-
+    # OnBindChoice creates a new step and adds it to the rearrangelist
     def OnBindChoice(self, evt):
-        # find the item we just poked "add" next to
         chosenSel  = self.bindChoice.GetSelection()
         chosenName = self.bindChoice.GetString(chosenSel)
 
-        # check whether we have an object already attached to this choice
-        cmdObject = None
-        try:
-            cmdObject = self.bindChoice.GetClientData(chosenSel)
-        except Exception:
-            pass
+        # make a new command object, attached to the parent dialog
+        newCommand = commandClasses[chosenName]
+        if newCommand:
+            cmdObject = newCommand(self.EditDialog)
+            self.bindChoice.SetClientData(chosenSel, cmdObject)
 
-        # if not, make and attach one
-        if not cmdObject:
-            newCommand = commandClasses[chosenName]
-            if newCommand:
-                cmdObject = newCommand(self)
-                self.bindChoice.SetClientData(chosenSel, cmdObject)
-                if cmdObject.UI:
-                    self.Freeze()
-                    self.mainSizer.Insert(self.mainSizer.GetItemCount()-1, cmdObject.UI, 0, wx.EXPAND)
-                    self.mainSizer.Hide(cmdObject.UI)
-                    self.Thaw()
-
-
-        # detach the command object from self.bindChoice, and instead glue it
-        # to self.rearrangeList
+        # detach the command object and instead glue it to self.RearrangeList
         newCommand = self.bindChoice.DetachClientObject(chosenSel)
-        newBindIndex = self.rearrangeList.Append(chosenName)
-        self.rearrangeList.Select(newBindIndex)
-        self.rearrangeList.SetClientData(newBindIndex, newCommand)
+        newBindIndex = self.RearrangeList.Append(chosenName)
+        self.RearrangeList.Select(newBindIndex)
+        self.RearrangeList.SetClientData(newBindIndex, newCommand)
 
-        # Reset the chooser to empty, leaving the UI in place, to make
-        # it clear that the UI now points to the object above
+        # show the edit dialog if this command needs it
+        if newCommand.UI:
+            self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.EXPAND|wx.ALL, 10)
+            self.ShowEditDialogFor(newCommand)
+
         self.bindChoice.SetSelection(wx.NOT_FOUND)
-
+        self.OnListSelect(evt)
         self.UpdateBindStringDisplay()
 
     def OnListSelect(self, evt):
-        selected = self.rearrangeList.GetSelection()
-        selCommand = self.rearrangeList.GetClientData(selected)
+        selected = self.RearrangeList.GetSelection()
 
-        self.ShowUIFor(selCommand)
-        evt.Skip()
+        selCommand = self.RearrangeList.GetClientData(selected)
+        if selCommand.UI:
+            self.EditButton.Enable()
+        else:
+            self.EditButton.Disable()
 
     def UpdateBindStringDisplay(self):
-        self.BindStringDisplay.SetLabel(self.MakeBindString())
+        self.BindStringDisplay.SetValue(self.MakeBindString())
 
     def MakeBindString(self):
-        # Quick'n'dirty glom together of the bindstrings, for debugging
         cmdBindStrings = []
-        for index in range(self.rearrangeList.GetCount()):
-            c = self.rearrangeList.GetClientData(index)
-            if c: cmdBindStrings.append(c.MakeBindString(self)) # why "if c"?!?
+        for index in range(self.RearrangeList.GetCount()):
+            c = self.RearrangeList.GetClientData(index)
+            if c: cmdBindStrings.append(c.MakeBindString(self))
 
         bindstring = ('$$'.join(cmdBindStrings))
         return bindstring
 
-    def ShowUIFor(self, command):
+    def ShowEditDialogFor(self, command):
+        self.EditDialog.mainSizer.Show(command.UI)
 
-        # unshow anything that's showing
-        # NEW - from either rearrangeList or bindchoice
-        for index in range(0,self.rearrangeList.GetCount()):
-            try:
-                c = self.rearrangeList.GetClientData(index)
-                if c and c.UI: self.mainSizer.Hide(c.UI)
-            except Exception:
-                pass
+        self.EditDialog.Layout()
+        self.EditDialog.Fit()
 
-        for choice in range(self.bindChoice.GetCount()):
-            try:
-                c = self.bindChoice.GetClientData(choice)
-                if c and c.UI: self.mainSizer.Hide(c.UI)
-            except Exception:
-                pass
+        chosenSel  = self.RearrangeList.GetSelection()
+        chosenName = self.RearrangeList.GetString(chosenSel)
 
-        # ... and show the one we want
-        if command and command.UI: self.mainSizer.Show(command.UI)
+        self.EditDialog.SetTitle(f'Editing Step "{chosenName}"')
+        self.EditDialog.ShowModal()
 
-        self.Layout()
-        self.Fit()
-
+        self.EditDialog.mainSizer.Hide(command.UI)
 
 commandClasses = {
     'Auto Power'               : AutoPowerCmd.AutoPowerCmd,
@@ -224,3 +198,18 @@ class PowerBinderButton(wx.Button):
                 bindString = dlg.MakeBindString()
                 self.tgtTxtCtrl.SetValue(bindString)
 
+class PowerBinderEditDialog(wx.Dialog):
+    def __init__(self, parent):
+        wx.Dialog.__init__(self, parent, -1, "Edit Step",
+           style = wx.DEFAULT_DIALOG_STYLE)
+
+        self.mainSizer = wx.BoxSizer(wx.VERTICAL)
+        self.mainSizer.SetMinSize([500, 150])
+
+        self.mainSizer.Add(
+            self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL),
+            0, wx.EXPAND|wx.ALL, 10)
+
+        self.SetSizerAndFit(self.mainSizer)
+        self.Layout()
+        self.Fit()

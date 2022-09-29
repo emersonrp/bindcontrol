@@ -5,6 +5,8 @@ import wx
 ####### Use Power
 class UsePowerCmd(PowerBindCmd):
     def BuildUI(self, dialog):
+        outerSizer = wx.BoxSizer(wx.HORIZONTAL)
+
         usePowerSizer = wx.GridBagSizer(5,5)
         usePowerSizer.Add(wx.StaticText(dialog, -1, "Method:"), (0,0), flag=wx.ALIGN_CENTER_VERTICAL)
         self.usePowerRBToggle = wx.RadioButton(dialog, -1, "Toggle", style=wx.RB_GROUP|wx.ALIGN_CENTER_VERTICAL)
@@ -18,7 +20,9 @@ class UsePowerCmd(PowerBindCmd):
         usePowerSizer.Add(self.usePowerName, (1,1), (1,3), flag=wx.EXPAND)
         usePowerSizer.AddGrowableCol(3)
 
-        return usePowerSizer
+        outerSizer.Add(usePowerSizer, 1, wx.ALIGN_CENTER_VERTICAL)
+
+        return outerSizer
 
     def MakeBindString(self, dialog):
         if self.usePowerRBToggle.GetValue():

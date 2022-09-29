@@ -10,7 +10,7 @@ class TargetFriendCmd(PowerBindCmd):
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         self.targetFriendModeChoice = wx.Choice(dialog, -1, choices = ['Near','Far','Next','Prev'])
         self.targetFriendModeChoice.SetSelection(0)
-        targetFriendSizer.Add(self.targetFriendModeChoice)
+        targetFriendSizer.Add(self.targetFriendModeChoice, 0, wx.ALIGN_CENTER_VERTICAL)
 
         return targetFriendSizer
 

@@ -140,14 +140,22 @@ class Profile(wx.Notebook):
             page = getattr(self, pageName, None)
 
             # ... and tell it to gather up binds and put them into bindfiles.
-            print(f"----getting profile bindfiles for page {pageName}")
-            binds = page.PopulateBindFiles()
+            page.PopulateBindFiles()
 
         # Now we have them here and can iterate them
-        print(self.BindFiles)
+        errors = 0
         for filename, bindfile in self.BindFiles.items():
-            print(f"Iterating profile's bindfiles: {filename}")
-            bindfile.Write(self)
+            try:
+                bindfile.Write(self)
+            except:
+                errors = errors + 1
+
+        if errors:
+            msg = f"Bind files written, but with {errors} errors.  Check the log."
+        else:
+            msg = "Bind files written!"
+
+        wx.MessageBox(msg, '', wx.OK, self)
 
         # TODO try except finally
         # clear out our state

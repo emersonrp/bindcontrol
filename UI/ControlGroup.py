@@ -23,13 +23,13 @@ class ControlGroup(wx.StaticBoxSizer):
 
         if not ctlName:
             wx.ErrorLog(f"Tried to make a labeled control without a CtlName!")
-            raise(Error)
+            raise(Exception)
 
         sizer     = self.InnerSizer
         Init      = self.Page.Init
         ctlParent = self.GetStaticBox()
 
-        padding = 2
+        padding = 0
 
         label = UI.Labels.get(ctlName, ctlName)
         if not noLabel:
@@ -79,7 +79,7 @@ class ControlGroup(wx.StaticBoxSizer):
         elif ctlType == ('checkbox'):
             control = wx.CheckBox(ctlParent, -1, contents)
             control.SetValue(bool(Init[ctlName]))
-            padding = 10
+            padding = 6
             if callback:
                 control.Bind(wx.EVT_CHECKBOX, callback )
 

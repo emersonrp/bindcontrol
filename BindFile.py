@@ -25,7 +25,7 @@ class BindFile():
             # $resetfile2->{$key} = $s
         # }
 
-    # TODO - hard coded \\ in there, make this with Path
+    # Windows path b/c the game will use it.
     def BaseReset(self):
         return f'bind_load_file {self.BindsDir}\\subreset.txt'
 
@@ -55,7 +55,10 @@ class BindFile():
 
         output = ''
         for keybind in sortedKeyBinds:
+            print(f"...binding {keybind}")
             output = output + self.KeyBinds[keybind].GetKeyBindString()
 
-        print(output)
-        self.Path.write_text(output)
+        try:
+            self.Path.write_text(output)
+        except Exception as e:
+            print("Can't write to {self.Path}: {e}")

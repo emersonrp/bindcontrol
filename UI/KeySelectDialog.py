@@ -33,9 +33,6 @@ def KeySelectEventHandler(evt):
         newKey = ''
         if(dlg.ShowModal() == wx.ID_OK): newKey = dlg.Binding
 
-        # TODO -- check for conflicts
-        # otherThingWithThatBind = checkConflicts(newKey)
-
         # re-label the button / set its state
         if newKey:
             button.SetLabel(newKey)
@@ -70,11 +67,13 @@ class KeySelectDialog(wx.Dialog):
 
         self.kbDesc = wx.StaticText( self, -1, desc,    style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
         self.kbBind = wx.StaticText( self, -1, self.Keybind, style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
+        self.kbErr  = wx.StaticText( self, -1, "", style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
 
         self.kbBind.SetLabelMarkup('<b><big>' + self.Keybind + '</big></b>')
 
         sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 15);
         sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);
+        sizer.Add( self.kbErr , 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);
         sizer.AddSpacer(15)
 
         if(modKeyFlags):
@@ -87,7 +86,7 @@ class KeySelectDialog(wx.Dialog):
         vbox.Add(sizer, 0, wx.EXPAND|wx.ALL, 10);
 
         # clearly I'm thinking of this the wrong way.
-        for i in (self.kbDesc, self.kbBind, self):
+        for i in (self.kbDesc, self.kbBind, self.kbErr, self):
             i.Bind(wx.EVT_CHAR_HOOK       , self.handleBind )
 
             i.Bind(wx.EVT_LEFT_DOWN       , self.handleBind )
@@ -102,13 +101,6 @@ class KeySelectDialog(wx.Dialog):
         self.SetSizerAndFit(vbox);
         self.Layout()
         self.SetFocus()
-
-    def ShowWindow(self, *args):
-        # self.Populate(args);
-
-        result = self.ShowModal()
-
-        if (result == wx.OK or result == wx.APPLY): return self.Binding
 
     def Populate(self, parent, id, current):
         self.kbDesc.SetLabel(f"Press the Key Combo you'd like to use for {UI.Labels[id]}");
@@ -140,6 +132,8 @@ class KeySelectDialog(wx.Dialog):
 
         if (isinstance(event, wx.KeyEvent)):
             code = event.GetKeyCode()
+            if code == wx.WXK_ESCAPE:
+                self.EndModal(wx.CANCEL)
         else:
             code = "BUTTON" + str(event.GetButton())
         KeyToBind = str(self.Keymap.get(code, ''))
@@ -205,7 +199,18 @@ class KeySelectDialog(wx.Dialog):
         self.Binding = "+".join([ key for key in [self.ModSlot, self.KeySlot] if key])
 
         self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
+
+        conflicts = Utility.CheckConflict(self.Profile, self.Binding)
+        if conflicts:
+            self.kbErr.SetLabel("CONFLICT FOUND")
+            self.kbBind.SetForegroundColour(wx.RED)
+        else:
+            self.kbErr.SetLabel("")
+            self.kbBind.SetForegroundColour(wx.BLACK)
+
         self.Layout()
+
+
 
     # This keymap code was initially adapted from PADRE < http://padre.perlide.org/ >.
     def SetKeymap(self):

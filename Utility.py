@@ -1,5 +1,6 @@
 import wx
 import re
+import UI
 
 conflictbinds = {
     'binds' : {},
@@ -44,33 +45,17 @@ def DisableControls(page, enabled, names):
 
 
 #####################################################
+from UI.ControlGroup import bcKeyButton
+def CheckConflict(profile, key):
+    for pageName in profile.Pages:
+        page = getattr(profile, pageName, None)
+        for ctrlname, ctrl in page.Ctrls.items():
+            if not ctrl.IsEnabled(): continue
+            if isinstance(ctrl, bcKeyButton):
+                #if (pageName = 'SoD') and (ctrl.GetLabel() != ''): breakpoint()
+                if key == ctrl.GetLabel():
+                    print(f"conflict found for key {key}: page {pageName}, {UI.Labels[ctrlname]}")
 
-# TODO - not clear if this logic is correct;  dunno what each "c" table meant
-def CheckConflict(t, k, Purpose):
-
-    # TODO - therefore, for now, we'll just return out of this, to make progress
-    return
-
-    if not t.get('k', None)     : return
-    if t[k].upper() == "UNBOUND": return
-
-    if not conflictbinds['binds'][t[k]]:
-        # no conflict, add this to the list of binds.
-        keybase = getMainKey(t[k])
-        if keybase: conflictbinds['binds'][t[k]] = keybase
-        else:       conflictbinds['binds'][t[k]] = {'key':"UNBOUND",'t':t,'k':k,'purpose':Purpose}
-    else:
-        # -- conflict...
-        if not conflictbinds['conflicts'][t[k]]:
-            # -- first conflict for this key.
-            c = conflictbinds['binds'][t[k]]
-            conflictbinds['conflicts'][t[k]] = c
-        else:
-            c = conflictbinds['conflicts'][t[k]]
-
-        keybase = getMainKey(t[k])
-        if keybase: conflictbinds['conflicts'][t[k]] = keybase
-        else:       conflictbinds['conflicts'][t[k]] = {'key':"UNBOUND",'t':t,'k':k,'purpose':Purpose}
 
 
 def getMainKey(key):

@@ -14,7 +14,7 @@ class BindFile():
 
     def SetBind(self, keybind):
 
-        if keybind.Key == "UNBOUND": return
+        if not keybind.Key: return
 
         self.KeyBinds[keybind.Key] = keybind
 
@@ -33,7 +33,7 @@ class BindFile():
     def BLF(self):
         return f'bindloadfile {self.Path}'
 
-    def Write(self, profile):
+    def Write(self):
         try:
             self.Path.parent.mkdir(parents = True, exist_ok = True)
         except Exception as e:
@@ -55,10 +55,10 @@ class BindFile():
 
         output = ''
         for keybind in sortedKeyBinds:
-            print(f"...binding {keybind}")
             output = output + self.KeyBinds[keybind].GetKeyBindString()
 
-        try:
-            self.Path.write_text(output)
-        except Exception as e:
-            print("Can't write to {self.Path}: {e}")
+        if output:
+            try:
+                self.Path.write_text(output)
+            except Exception as e:
+                print("Can't write to {self.Path}: {e}")

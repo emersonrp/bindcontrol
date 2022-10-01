@@ -146,8 +146,9 @@ class Profile(wx.Notebook):
         errors = 0
         for filename, bindfile in self.BindFiles.items():
             try:
-                bindfile.Write(self)
-            except:
+                bindfile.Write()
+            except Exception as e:
+                print(f"Done blowed up in bindfile.Write(): {e}")
                 errors = errors + 1
 
         if errors:

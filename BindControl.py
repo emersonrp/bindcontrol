@@ -3,6 +3,7 @@
 import wx
 import wx.lib.mixins.inspection
 import wx.adv
+import wx.html
 
 from Profile import Profile
 

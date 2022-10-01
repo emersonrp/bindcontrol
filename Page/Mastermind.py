@@ -80,15 +80,15 @@ class Mastermind(Page):
 
             'PetSelectAll' : 'LALT+V',
             'PetSelectAllResponse' : 'Orders?',
-            'PetSelectAllResponseMethod' : 'Local',
+            'PetSelectAllResponseMethod' : 'Petsay',
 
             'PetSelectMinions' : 'LALT+Z',
             'PetSelectMinionsResponse' : 'Orders?',
-            'PetSelectMinionsResponseMethod' : 'Self-tell',
+            'PetSelectMinionsResponseMethod' : 'Petsay',
 
             'PetSelectLieutenants' : 'LALT+X',
             'PetSelectLieutenantsResponse' : 'Orders?',
-            'PetSelectLieutenantsResponseMethod' : '---',
+            'PetSelectLieutenantsResponseMethod' : 'Petsay',
 
             'PetSelectBoss' : 'LALT+C',
             'PetSelectBossResponse' : 'Orders?',
@@ -126,9 +126,9 @@ class Mastermind(Page):
             'PetStayResponse' : 'Holding This Position.',
             'PetStayResponseMethod' : 'Petsay',
 
-            'PetBodyguardEnabled' : 1,
-            'PetBodyguardAttackEnabled' : True,
-            'PetBodyguardGotoEnabled' : True,
+            'PetBodyguardEnabled' : False,
+            'PetBodyguardAttackEnabled' : False,
+            'PetBodyguardGotoEnabled' : False,
             'PetBodyguardAttack' : '',
             'PetBodyguardGoto' : '',
 
@@ -313,9 +313,9 @@ class Mastermind(Page):
             control.Enable(bool(arch == "Mastermind" and pset))
 
     def OnBGCheckboxes(self, evt):
-        bgEnabled = self.Ctrls['PetBodyguardEnabled']       .IsChecked()
-        bgAttack  = self.Ctrls['PetBodyguardAttackEnabled'] .IsChecked()
-        bgGoto    = self.Ctrls['PetBodyguardGotoEnabled']   .IsChecked()
+        bgEnabled = self.GetState('PetBodyguardEnabled')
+        bgAttack  = self.GetState('PetBodyguardAttackEnabled')
+        bgGoto    = self.GetState('PetBodyguardGotoEnabled')
 
         for c in ['PetBodyguard','PetBodyguardResponseMethod','PetBodyguardResponse']:
             self.Ctrls[c].Enable(bgEnabled)
@@ -673,6 +673,8 @@ class Mastermind(Page):
         filedn.SetBind(self.Ctrls['PetChatToggle'].MakeFileKeyBind(['tell $name, Chatty Mode', profile.GetBindFile('mmbinds','c' + fn + 'a.txt').BLF()]))
 
     def PopulateBindFiles(self):
+
+        if not self.GetState('EnablePetActionBinds'): return
 
         profile = self.Profile
         ResetFile = profile.ResetFile()

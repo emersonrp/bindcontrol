@@ -12,7 +12,7 @@ class InspirationPopper(Page):
         self.TabTitle = "Inspiration Popper"
 
         self.Init = {
-            'EnableInspBinds'    : True,
+            'EnableInspBinds'    : False,
             'EnableRevInspBinds' : False,
             'AccuracyKey'        : "SHIFT+A",
             'HealthKey'          : "SHIFT+S",

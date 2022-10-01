@@ -14,7 +14,7 @@ class Gameplay(Page):
         Page.__init__(self, parent)
         self.TabTitle = "Gameplay"
         self.Init = {
-            'FPSEnable'       : True,
+            'FPSEnable'       : False,
             'FPSBindKey'      : 'P',
             'NetgraphBindKey' : 'N',
 
@@ -52,7 +52,7 @@ class Gameplay(Page):
             'DecTeamSize' : '',
             'IncTeamPos'  : '',
             'DecTeamPos'  : '',
-            'Reset'       : '',
+            'TeamReset'   : '',
         }
 
     def BuildPage(self):
@@ -103,7 +103,7 @@ class Gameplay(Page):
             ['DecTeamSize', 'Choose the key that will decrease the size of your teammate rotation'],
             ['IncTeamPos', 'Choose the key that will move you to the next higher slot in the team rotation'],
             ['DecTeamPos', 'Choose the key that will move you to the next lower slot in the team rotation'],
-            ['Reset', 'Choose the key that will reset your team rotation to solo'],
+            ['TeamReset', 'Choose the key that will reset your team rotation to solo'],
         ):
             TeamSelBox.AddControl(
                 ctlName = b[0],
@@ -214,89 +214,87 @@ class Gameplay(Page):
         self.OnTypeEnable()
 
     def OnTPSEnable(self, evt = None):
-        DisableControls(self, self.Ctrls['TPSEnable'].IsChecked(),
+        DisableControls(self, self.GetState('TPSEnable'),
             ['TPSSelMode','TeamSelect1','TeamSelect2','TeamSelect3',
             'TeamSelect4', 'TeamSelect5','TeamSelect6','TeamSelect7',
-            'TeamSelect8'])
+            'TeamSelect8',
+
+            'SelNextTeam', 'SelPrevTeam','IncTeamSize', 'DecTeamSize',
+            'IncTeamPos', 'DecTeamPos', 'TeamReset',
+
+            'SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize'])
 
     def OnFPSEnable(self, evt = None):
-        DisableControls(self, self.Ctrls['FPSEnable'].IsChecked(),
+        DisableControls(self, self.GetState('FPSEnable'),
             ['FPSBindKey','NetgraphBindKey'])
 
     def OnChatEnable(self, evt = None):
-        DisableControls(self, self.Ctrls['ChatEnable'].IsChecked(),
-            ['StartChat','SlashChat','StartEmote','AutoReply','TellTarget','QuickChat'])
+        DisableControls(self, self.GetState('ChatEnable'),
+            ['StartChat','SlashChat','StartEmote','AutoReply',
+             'TellTarget','QuickChat', 'TypingNotifierEnable', 'TypingNotifier'])
+        self.OnTypeEnable()
 
     def OnTypeEnable(self, evt = None):
-        DisableControls(self, self.Ctrls['TypingNotifierEnable'].IsChecked(),
+        DisableControls(self, self.GetState('TypingNotifierEnable'),
             ['TypingNotifier'])
 
     def PopulateBindFiles(self):
 
+
         ResetFile = self.Profile.ResetFile()
 
         ### FPS/Netgraph
-        ResetFile.SetBind(self.Ctrls['FPSBindKey']     .MakeFileKeyBind('++showfps++netgraph'))
-        ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
+        if self.GetState('FPSEnable'):
+            ResetFile.SetBind(self.Ctrls['FPSBindKey']     .MakeFileKeyBind('++showfps++netgraph'))
+            ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
 
-        # TeamSel (1)
+        ### Team / Pet Select
         # TODO -- check versus citybinder output, seems to be working but...?
-        if (self.GetState('TPSSelMode') != "Pets Only"):
-            selmethod = "teamselect"
-            selnummod = 0
-            selmethod1 = "petselect"
-            selnummod1 = 1
-            if (self.GetState('TPSSelMode') == "Pets, then teammates"):
-                selmethod = "petselect"
-                selnummod = 1
-                selmethod1 = "teamselect"
-                selnummod1 = 0
-            selresetfile = self.Profile.GetBindFile("tps","reset.txt")
-            for i in ('1','2','3','4','5','6','7','8'):
-                selfile = self.Profile.GetBindFile("tps",f"sel{i}.txt")
-                ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", BLF(self.Profile,'tps',f"sel{i}.txt")]))
-                selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", BLF(self.Profile,'tps',f"sel{i}.txt")]))
-                for j in ('1','2','3','4','5','6','7','8'):
-                    if (i == j):
-                        selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod1} {int(j) - selnummod1}", BLF(self.Profile,'tps',"reset.txt")]))
-                    else:
-                        selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod} {int(j) - selnummod}"  , BLF(self.Profile,'tps',f"sel{j}.txt")]))
+        if self.GetState('TPSEnable'):
+            if (self.GetState('TPSSelMode') != "Pets Only"):
+                selmethod = "teamselect"
+                selnummod = 0
+                selmethod1 = "petselect"
+                selnummod1 = 1
+                if (self.GetState('TPSSelMode') == "Pets, then teammates"):
+                    selmethod = "petselect"
+                    selnummod = 1
+                    selmethod1 = "teamselect"
+                    selnummod1 = 0
+                selresetfile = self.Profile.GetBindFile("tps","reset.txt")
+                for i in ('1','2','3','4','5','6','7','8'):
+                    selfile = self.Profile.GetBindFile("tps",f"sel{i}.txt")
+                    ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", BLF(self.Profile,'tps',f"sel{i}.txt")]))
+                    selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", BLF(self.Profile,'tps',f"sel{i}.txt")]))
+                    for j in ('1','2','3','4','5','6','7','8'):
+                        if (i == j):
+                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod1} {int(j) - selnummod1}", BLF(self.Profile,'tps',"reset.txt")]))
+                        else:
+                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod} {int(j) - selnummod}"  , BLF(self.Profile,'tps',f"sel{j}.txt")]))
 
-        else:
-            selmethod = "teamselect"
-            selnummod = 0
-            if (self.GetState('TPSSelMode') == "Pets Only"):
-                selmethod = "petselect"
-                selnummod = 1
-            for i in (1,2,3,4,5,6,7,8):
-                ResetFile.SetBind(self.Ctrls['sel1'].MakeFileKeyBind("selmethod " + (i - selnummod)))
+            else:
+                selmethod = "teamselect"
+                selnummod = 0
+                if (self.GetState('TPSSelMode') == "Pets Only"):
+                    selmethod = "petselect"
+                    selnummod = 1
+                for i in (1,2,3,4,5,6,7,8):
+                    ResetFile.SetBind(self.Ctrls['sel1'].MakeFileKeyBind("selmethod " + (i - selnummod)))
 
-        ResetFile = self.Profile.ResetFile()
+            ResetFile = self.Profile.ResetFile()
 
-        # Chat Binds with notifier, if appropriate
-        notifier = ''
-        if self.Ctrls['TypingNotifierEnable'].IsChecked():
-            notifier = 'afk ' + self.GetState('TypingNotifier')
+        ### Chat Binds with notifier, if appropriate
+        if self.GetState('ChatEnable'):
+            notifier = ''
+            if self.GetState('TypingNotifierEnable'):
+                notifier = 'afk ' + self.GetState('TypingNotifier')
 
-        ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', 'startchat']))
-        ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeFileKeyBind([notifier, 'show chat', 'slashchat']))
-        ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind([notifier, 'show chatem ' + notifier]))
-        ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeFileKeyBind([notifier, 'autoreply']))
-        ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
-        ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
-
-    def findconflicts(self):
-        CheckConflict(self,"FPSBindkey","FPS Display Toggle")
-
-        CheckConflict(self,"StartChat", "Start Chat Key")
-        CheckConflict(self,"SlashChat", "Slashchat Key")
-        CheckConflict(self,"StartEmote","Emote Key")
-        CheckConflict(self,"AutoReply", "Autoreply Key")
-        CheckConflict(self,"TellTarget","Tell Target Key")
-        CheckConflict(self,"QuickChat", "Quickchat Key")
-
-    def bindisused(self):
-        return self.GetState('Enable')
+            ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', 'startchat']))
+            ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeFileKeyBind([notifier, 'show chat', 'slashchat']))
+            ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind([notifier, 'show chatem ' + notifier]))
+            ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeFileKeyBind([notifier, 'autoreply']))
+            ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
+            ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
 
     UI.Labels.update({
         'TPSSelMode' : "Team / Pet Select Mode",
@@ -305,9 +303,9 @@ class Gameplay(Page):
         'SelPrevTeam' : "Select Previous Teammate",
         'IncTeamSize' : "Increase Team Size",
         'DecTeamSize' : "Decrease Team Size",
-        'IncTeamPos' : "Increase Team Position",
-        'DecTeamPos' : "Decrease Team Position",
-        'Reset'      : "Reset Team Rotation",
+        'IncTeamPos'  : "Increase Team Position",
+        'DecTeamPos'  : "Decrease Team Position",
+        'TeamReset'   : "Reset Team Rotation",
 
         'SelNextPet' : "Select Next Pet",
         'SelPrevPet' : "Select Previous Pet",

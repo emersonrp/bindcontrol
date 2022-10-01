@@ -75,7 +75,7 @@ class SoD(Page):
             'FlyFly'             : '',
             'FlyGFly'            : '',
             'Unqueue'            : 1,
-            'EnableSoD'          : True,
+            'EnableSoD'          : False,
         }
 
         self.Init['NovaMode'] = "T"
@@ -111,7 +111,7 @@ class SoD(Page):
 
         topSizer = wx.FlexGridSizer(0,2,10,10)
         EnableSoD = wx.CheckBox( self, -1, "Enable Speed On Demand Binds",  )
-        EnableSoD.SetValue(True)
+
         topSizer.Add( EnableSoD, 0, wx.TOP|wx.LEFT, 10)
         topSizer.AddSpacer(1)
         self.Ctrls['EnableSoD'] = EnableSoD
@@ -358,37 +358,41 @@ class SoD(Page):
         paddingSizer.Add(topSizer, flag = wx.ALL|wx.EXPAND, border = 16)
         self.SetSizerAndFit(paddingSizer)
 
-    def OnEnableSoD(self, evt):
+        self.OnEnableSoD()
+
+    def OnEnableSoD(self, evt = None):
         for c,control in self.Ctrls.items():
             if c != 'EnableSoD':  # don't disable yourself kthx
-                control.Enable(evt.EventObject.IsChecked())
-                control.ctlLabel.Enable(evt.EventObject.IsChecked())
+                control         .Enable(self.GetState('EnableSoD'))
+                control.ctlLabel.Enable(self.GetState('EnableSoD'))
 
     def makeSoDFile(self, p):
+
+        if not self.Ctrls['EnableSoD']: return
 
         profile = self.Profile
 
         t = p['t']
 
-        bl   = t.get('bl', "")
-        bla  = t.get('bla', "")
-        blf  = t.get('blf', "")
-        blbo = t.get('blbo', "")
-        blsd = t.get('blsd', "")
+        bl   = t.get('bl'   , p.get('bl'   , ""))
+        bla  = t.get('bla'  , p.get('bla'  , ""))
+        blf  = t.get('blf'  , p.get('blf'  , ""))
+        blbo = t.get('blbo' , p.get('blbo' , ""))
+        blsd = t.get('blsd' , p.get('blsd' , ""))
 
-        path   = t.get('path', "")
-        patha  = t.get('patha', "")
-        pathf  = t.get('pathf', "")
-        pathbo = t.get('pathbo', "")
-        pathsd = t.get('pathsd', "")
+        path   = t.get('path'   , p.get('path'   , ""))
+        patha  = t.get('patha'  , p.get('patha'  , ""))
+        pathf  = t.get('pathf'  , p.get('pathf'  , ""))
+        pathbo = t.get('pathbo' , p.get('pathbo' , ""))
+        pathsd = t.get('pathsd' , p.get('pathsd' , ""))
 
-        mobile     = p.get('mobile', "")
-        stationary = p.get('stationary', "")
-        modestr    = p.get('modestr', "")
-        flight     = p.get('flight', "")
-        fix        = p.get('fix', "")
-        turnoff    = p.get('turnoff', "")
-        sssj       = p.get('sssj', "")
+        mobile     = p.get('mobile'     , "")
+        stationary = p.get('stationary' , "")
+        modestr    = p.get('modestr'    , "")
+        flight     = p.get('flight'     , "")
+        fix        = p.get('fix'        , "")
+        turnoff    = p.get('turnoff'    , "")
+        sssj       = p.get('sssj'       , "")
 
         # TODO -- this wants to be turnoff ||= mobile, stationary once we know what those are.  arrays?  hashes?
         #$turnoff ||= {mobile,stationary}
@@ -871,6 +875,8 @@ class SoD(Page):
 
     def PopulateBindFiles(self):
 
+        if not self.GetState('EnableSoD'): return
+
         ### TODO
         sssj = 0
         ### TODO
@@ -1209,35 +1215,31 @@ class SoD(Page):
                                     if (self.GetState('SSSSSJModeEnable')): sssj = t['jump']
                                     if (self.GetState('SSMobileOnly')):
                                         self.makeSoDFile({
-                                            't' : t,
-                                            'bl' : 's',
-                                            'bla' : 'as',
-                                            'blf' : 'fs',
-                                            'path' : 's',
-                                            'patha' : 'as',
-                                            'pathf' : 'fs',
-                                            'mobile' : t['speed'],
+                                            't'          : t,
+                                            'bl'         : 's',
+                                            'bla'        : 'as',
+                                            'blf'        : 'fs',
+                                            'path'       : 's',
+                                            'patha'      : 'as',
+                                            'pathf'      : 'fs',
+                                            'mobile'     : t['speed'],
                                             'stationary' : '',
-                                            'modestr' : "Run",
-                                            'sssj' : sssj,
+                                            'modestr'    : "Run",
+                                            'sssj'       : sssj,
                                         })
                                     else:
                                         self.makeSoDFile({
-                                            't' : t,
-                                            'bl' : 's',
-                                            'bla' : 'as',
-                                            'blbo' : None,
-                                            'blf' : 'fs',
-                                            'blsd' : None,
-                                            'path' : 's',
-                                            'pathbo': None,
-                                            'patha' : 'as',
-                                            'pathsd': None,
-                                            'pathf' : 'fs',
-                                            'mobile' : t['speed'],
+                                            't'          : t,
+                                            'bl'         : 's',
+                                            'bla'        : 'as',
+                                            'blf'        : 'fs',
+                                            'path'       : 's',
+                                            'patha'      : 'as',
+                                            'pathf'      : 'fs',
+                                            'mobile'     : t['speed'],
                                             'stationary' : t['speed'],
-                                            'modestr' : "Run",
-                                            'sssj' : sssj,
+                                            'modestr'    : "Run",
+                                            'sssj'       : sssj,
                                         })
 
                                     t[self.GetState('Default') + "Mode"] = None
@@ -1246,19 +1248,19 @@ class SoD(Page):
                                     t[self.GetState('Default') + "Mode"] = t['JumpMode']
                                     if (t['jump'] == t['cjmp']): jturnoff = t['jumpifnocj']
                                     self.makeSoDFile({
-                                        't' : t,
-                                        'bl' : 'j',
-                                        'bla' : 'aj',
-                                        'blf' : 'fj',
-                                        'path' : 'j',
-                                        'patha' : 'aj',
-                                        'pathf' : 'fj',
-                                        'mobile' : t['jump'],
+                                        't'          : t,
+                                        'bl'         : 'j',
+                                        'bla'        : 'aj',
+                                        'blf'        : 'fj',
+                                        'path'       : 'j',
+                                        'patha'      : 'aj',
+                                        'pathf'      : 'fj',
+                                        'mobile'     : t['jump'],
                                         'stationary' : t['cjmp'],
-                                        'modestr' : "Jump",
-                                        'flight' : "Jump",
-                                        'fix' : self.sodJumpFix,
-                                        'turnoff' : jturnoff,
+                                        'modestr'    : "Jump",
+                                        'flight'     : "Jump",
+                                        'fix'        : self.sodJumpFix,
+                                        'turnoff'    : jturnoff,
                                     })
                                     t[self.GetState('Default') + "Mode"] = None
 

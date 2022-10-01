@@ -24,8 +24,6 @@ elif wx.Platform == '__WXMAC__':
         'LALT'  : 0x20,
     }
 
-
-
 def KeySelectEventHandler(evt):
     button = evt.EventObject
 
@@ -42,7 +40,7 @@ class KeySelectDialog(wx.Dialog):
     def __init__(self, button):
 
         self.Desc    = UI.Labels[button.CtlName]
-        self.Keybind = button.Label
+        self.Binding = button.Label
         self.Page    = button.Page
 
         wx.Dialog.__init__(self, button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
@@ -58,18 +56,17 @@ class KeySelectDialog(wx.Dialog):
 
         # is this ugly?
         self.Profile   = self.Page.Profile
-        self.Binding   = ''
         self.ModSlot = None
         self.KeySlot = None
         self.SetKeymap();
 
         sizer = wx.BoxSizer(wx.VERTICAL);
 
-        self.kbDesc = wx.StaticText( self, -1, desc,    style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
-        self.kbBind = wx.StaticText( self, -1, self.Keybind, style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
-        self.kbErr  = wx.StaticText( self, -1, "", style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
+        self.kbDesc = wx.StaticText( self, -1, desc,         style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
+        self.kbBind = wx.StaticText( self, -1, self.Binding, style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
+        self.kbErr  = wx.StaticText( self, -1, "",           style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
 
-        self.kbBind.SetLabelMarkup('<b><big>' + self.Keybind + '</big></b>')
+        self.ShowBind()
 
         sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 15);
         sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);
@@ -108,6 +105,8 @@ class KeySelectDialog(wx.Dialog):
         self.Fit();
         self.CentreOnParent();
 
+    def ShowBind(self):
+        self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
 
     def handleBind(self, event):
         ### Algorithm:
@@ -198,8 +197,9 @@ class KeySelectDialog(wx.Dialog):
 
         self.Binding = "+".join([ key for key in [self.ModSlot, self.KeySlot] if key])
 
-        self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
+        self.ShowBind()
 
+        # TODO: this is failing in MSW
         conflicts = Utility.CheckConflict(self.Profile, self.Binding)
         if conflicts:
             self.kbErr.SetLabel("CONFLICT FOUND")

@@ -78,62 +78,62 @@ class Mastermind(Page):
         self.Init = {
             'Enable' : False,
 
-            'PetSelectAll' : 'LCTRL+0',
+            'PetSelectAll' : 'LALT+V',
             'PetSelectAllResponse' : 'Orders?',
             'PetSelectAllResponseMethod' : 'Local',
 
-            'PetSelectMinions' : 'LCTRL+1',
+            'PetSelectMinions' : 'LALT+Z',
             'PetSelectMinionsResponse' : 'Orders?',
             'PetSelectMinionsResponseMethod' : 'Self-tell',
 
-            'PetSelectLieutenants' : 'LCTRL+2',
+            'PetSelectLieutenants' : 'LALT+X',
             'PetSelectLieutenantsResponse' : 'Orders?',
             'PetSelectLieutenantsResponseMethod' : '---',
 
-            'PetSelectBoss' : 'LCTRL+3',
+            'PetSelectBoss' : 'LALT+C',
             'PetSelectBossResponse' : 'Orders?',
             'PetSelectBossResponseMethod' : 'Petsay',
 
-            'PetBodyguard' : 'LSHIFT+5',
+            'PetBodyguard' : '',
             'PetBodyguardResponse' : 'Bodyguarding.',
             'PetBodyguardResponseMethod' : 'Petsay',
 
-            'PetAggressive' : 'LCTRL+4',
+            'PetAggressive' : 'LALT+A',
             'PetAggressiveResponse' : 'Kill On Sight.',
             'PetAggressiveResponseMethod' : 'Petsay',
 
-            'PetDefensive' : 'LCTRL+5',
+            'PetDefensive' : 'LALT+S',
             'PetDefensiveResponse' : 'Return Fire Only.',
             'PetDefensiveResponseMethod' : 'Petsay',
 
-            'PetPassive' : 'LCTRL+6',
+            'PetPassive' : 'LALT+D',
             'PetPassiveResponse' : 'At Ease.',
             'PetPassiveResponseMethod' : 'Petsay',
 
-            'PetAttack' : 'LCTRL+7',
+            'PetAttack' : 'LALT+Q',
             'PetAttackResponse' : 'Open Fire!',
             'PetAttackResponseMethod' : 'Petsay',
 
-            'PetFollow' : 'LCTRL+8',
+            'PetFollow' : 'LALT+W',
             'PetFollowResponse' : 'Falling In.',
             'PetFollowResponseMethod' : 'Petsay',
 
-            'PetGoto' : 'LCTRL+9',
+            'PetGoto' : 'LALT+LBUTTON',
             'PetGotoResponse' : 'Moving To Checkpoint.',
             'PetGotoResponseMethod' : 'Petsay',
 
-            'PetStay' : 'DECIMAL',
+            'PetStay' : 'LALT+E',
             'PetStayResponse' : 'Holding This Position.',
             'PetStayResponseMethod' : 'Petsay',
 
             'PetBodyguardEnabled' : 1,
             'PetBodyguardAttackEnabled' : True,
             'PetBodyguardGotoEnabled' : True,
-            'PetBodyguardAttack' : 'LSHIFT+7',
-            'PetBodyguardGoto' : 'LSHIFT+9',
+            'PetBodyguardAttack' : '',
+            'PetBodyguardGoto' : '',
 
 
-            'EnablePetActionBinds': 1,
+            'EnablePetActionBinds': 0,
 
             'PetChatToggle' : 'LALT+M',
             'PetSelect1' : 'F1',
@@ -151,10 +151,10 @@ class Mastermind(Page):
             'Pet6Name' : 'Commando',
 
             'Pet1Bodyguard' : 0,
-            'Pet2Bodyguard' : 1,
+            'Pet2Bodyguard' : 0,
             'Pet3Bodyguard' : 0,
             'Pet4Bodyguard' : 0,
-            'Pet5Bodyguard' : 1,
+            'Pet5Bodyguard' : 0,
             'Pet6Bodyguard' : 0,
         }
         self.MMPowerSets = {

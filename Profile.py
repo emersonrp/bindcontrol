@@ -47,7 +47,7 @@ class Profile(wx.Notebook):
     def Name(self)        : return self.General.GetState('Name')
     def BindsDir(self)    : return self.General.GetState('BindsDir')
     def ProfileFile(self) : return Path(self.BindsDir(), self.Name() + ".bcp")
-    def ResetFile(self)   : return self.GetBindFile(self.BindsDir(), "resetfile.txt")
+    def ResetFile(self)   : return self.GetBindFile(self.BindsDir(), "reset.txt")
 
     ###################
     # Profile Save/Load

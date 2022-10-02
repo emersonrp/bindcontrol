@@ -106,6 +106,11 @@ class ControlGroup(wx.StaticBoxSizer):
         if not noLabel:
             sizer.Add( ctlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
             control.ctlLabel = ctlLabel
+            ctlLabel.control = control
+
+        # make checkboxes' labels click to check them
+        if ctlType == ('checkbox') and control.ctlLabel:
+            control.ctlLabel.Bind(wx.EVT_LEFT_DOWN, self.onCBLabelClick)
 
         sizer.Add( control, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, padding)
         self.Page.Ctrls[ctlName] = control
@@ -116,18 +121,14 @@ class ControlGroup(wx.StaticBoxSizer):
     def ClearButton(self, evt):
         evt.EventObject.SetLabel("")
 
+    def onCBLabelClick(self, evt):
+        cblabel = evt.EventObject
+        cblabel.control.SetValue(not cblabel.control.IsChecked())
+        evt.Skip()
+
 class bcKeyButton(wx.Button):
     def __init__(self, parent, id, init):
         wx.Button.__init__(self, parent, id, init)
-
-    # rename this to SetLabel to get "UNBOUND" behavior back
-    def NewSetLabel(self, label):
-        if label == '':
-            label = "UNBOUND"
-            self.SetOwnForegroundColour([128,128,188])
-        else:
-            self.SetOwnForegroundColour(wx.BLACK)
-        super().SetLabel(label)
 
     def MakeFileKeyBind(self, contents):
         return self.KeyBind.MakeFileKeyBind(contents)

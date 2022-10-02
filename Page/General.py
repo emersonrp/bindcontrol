@@ -149,10 +149,12 @@ class General(Page):
         testPowerBinder = PowerBinderButton(self, None)
         paddingSizer.Add(testPowerBinder, flag=wx.ALL|wx.EXPAND, border = 20)
 
-        # pre-fill the Primary/secondary pickers
-        self.OnPickArchetype()
+        self.SynchronizeUI()
 
         self.SetSizerAndFit(paddingSizer)
+
+    def SynchronizeUI(self):
+        self.OnPickArchetype()
 
     def PopulateBindFiles(self):
         resetfile = self.Profile.ResetFile()

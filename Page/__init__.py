@@ -73,6 +73,8 @@ class Page(wx.Panel):
             print(f"{control} has no SetValue()")
 
     ##### stubs for overriding (shoes for industry!)
+    def SynchronizeUI(self):
+        return
 
     # create and display the UI for this page
     def BuildPage(self):

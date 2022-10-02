@@ -208,6 +208,9 @@ class Gameplay(Page):
         paddingSizer.Add(topSizer, flag = wx.ALL|wx.EXPAND, border = 16)
         self.SetSizerAndFit(paddingSizer)
 
+        self.SynchronizeUI()
+
+    def SynchronizeUI(self):
         self.OnTPSEnable()
         self.OnFPSEnable()
         self.OnChatEnable()

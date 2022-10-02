@@ -69,28 +69,32 @@ class Profile(wx.Notebook):
                     controlType = type(control).__name__
                     if controlType == 'DirPickerCtrl':
                         value = control.GetPath()
-                    elif controlType == 'Button':
+                    elif controlType == 'Button' or controlType == 'bcKeyButton':
                         value = control.GetLabel()
                     elif controlType == 'ColourPickerCtrl':
                         value = control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
+                    elif controlType == 'Choice':
+                        value = control.GetSelection()
+                    elif controlType == 'StaticText':
+                        continue
                     else:
                         value = control.GetValue()
 
                     savedata[pagename][controlname] = value
 
+        # TODO - iterate any custom binds and add them to the structure
         dumpstring = json.dumps(savedata, indent=0)
         try:
             savefile.touch() # make sure there's one there.
             savefile.write_text(dumpstring)
             # wx.LogError(f"Wrote file {savefile}")
-        except None:
-            wx.LogError(f"Problem saving to file '{savefile}'")
+        except Exception as e:
+            wx.LogError(f"Problem saving to file '{savefile}': {e}")
 
     def LoadFromFile(self, event):
 
         with wx.FileDialog(self, "Open Profile file",
                wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
-               # wildcard="Bindcontrol and Citybinder Profiles (*.bcp;*.cbp)|*.bcp;*.cbp",
                style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
@@ -99,28 +103,33 @@ class Profile(wx.Notebook):
             # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
             with Path(pathname) as file:
-                try:
-                    datastring = file.read_text()
-                    data = json.loads(datastring)
+                datastring = file.read_text()
+                data = json.loads(datastring)
 
-                    for pagename in self.Pages:
-                        page = getattr(self, pagename)
-                        for controlname, control in page.Ctrls.items():
-                            value = data[pagename][controlname]
+                for pagename in self.Pages:
+                    page = getattr(self, pagename)
+                    for controlname, control in page.Ctrls.items():
+                        value = data[pagename].get(controlname, None)
 
-                            # look up what type of control it is to know how to extract its value
-                            controlType = type(control).__name__
-                            if controlType == 'DirPickerCtrl':
-                                control.SetPath(value)
-                            elif controlType == 'Button':
-                                control.SetLabel(value)
-                            elif controlType == 'ColourPickerCtrl':
-                                control.SetColour(value)
-                            else:
-                                control.SetValue(value)
+                        if not value: continue
 
-                except:
-                    wx.LogError("Cannot open file '%s'." % file)
+                        # look up what type of control it is to know how to extract its value
+                        controlType = type(control).__name__
+                        if controlType == 'DirPickerCtrl':
+                            control.SetPath(value)
+                        elif controlType == 'Button' or controlType == 'bcKeyButton':
+                            control.SetLabel(value)
+                        elif controlType == 'ColourPickerCtrl':
+                            control.SetColour(value)
+                        elif controlType == 'Choice':
+                            control.SetSelection(value)
+                        else:
+                            control.SetValue(value)
+
+                    page.SynchronizeUI()
+
+                # TODO - iterate any saved custom binds and restore them
+
 
     #####################
     # Bind file functions

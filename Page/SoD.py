@@ -358,6 +358,10 @@ class SoD(Page):
         paddingSizer.Add(topSizer, flag = wx.ALL|wx.EXPAND, border = 16)
         self.SetSizerAndFit(paddingSizer)
 
+        self.SynchronizeUI()
+
+
+    def SynchronizeUI(self):
         self.OnEnableSoD()
 
     def OnEnableSoD(self, evt = None):

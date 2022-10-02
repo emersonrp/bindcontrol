@@ -113,6 +113,10 @@ class InspirationPopper(Page):
         paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
         self.SetSizerAndFit(paddingSizer)
 
+        self.SynchronizeUI()
+
+
+    def SynchronizeUI(self):
         self.OnEnableCB()
         self.OnEnableRevCB()
         self.OnDisableTellCB()

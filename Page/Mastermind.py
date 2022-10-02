@@ -310,8 +310,11 @@ class Mastermind(Page):
         sizer.Add(petselenable, 0, wx.EXPAND|wx.ALL, 16)
         sizer.Add(petNames, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 16)
 
+        self.SynchronizeUI()
+
         self.SetSizerAndFit(sizer)
 
+    def SynchronizeUI(self):
         self.OnArchetypePowerChange()
         self.OnPetCmdEnable()
         self.OnPetSelEnable()

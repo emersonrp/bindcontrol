@@ -11,6 +11,9 @@ from Page.Mastermind import Mastermind
 #from Page.ComplexBinds
 from Page.CustomBinds import CustomBinds
 
+import UI
+from UI.ControlGroup import bcKeyButton
+
 class Profile(wx.Notebook):
 
     def __init__(self, parent):
@@ -58,6 +61,21 @@ class Profile(wx.Notebook):
         for arg in args:
             filepath = filepath + "/" + arg
         return filepath
+
+    def CheckConflict(self, key):
+        conflicts = []
+
+        for pageName in self.Pages:
+            page = getattr(self, pageName, None)
+            for ctrlname, ctrl in page.Ctrls.items():
+                # TODO TODO TODO this next line is breaking this on Win wxpython 4.2.0
+                if not ctrl.IsEnabled(): continue
+                if isinstance(ctrl, bcKeyButton):
+                    if key == ctrl.GetLabel():
+                        print(f"conflict found for key {key}: page {pageName}, {UI.Labels[ctrlname]}")
+                        conflicts.append( {'page' : pageName, 'ctrl': UI.Labels[ctrlname]})
+        return conflicts
+
 
 
     ###################

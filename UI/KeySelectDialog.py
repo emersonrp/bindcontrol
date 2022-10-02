@@ -1,7 +1,6 @@
 import wx
 import string
 import UI
-import Utility
 
 # Platform-specific keyevent flags for telling left from right
 modKeyFlags = {}
@@ -200,7 +199,7 @@ class KeySelectDialog(wx.Dialog):
         self.ShowBind()
 
         # TODO: this is failing in MSW
-        conflicts = Utility.CheckConflict(self.Profile, self.Binding)
+        conflicts = self.Profile.CheckConflict(self.Binding)
         if conflicts:
             self.kbErr.SetLabel("CONFLICT FOUND")
             self.kbBind.SetForegroundColour(wx.RED)

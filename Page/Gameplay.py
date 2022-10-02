@@ -1,7 +1,7 @@
 import wx
 import UI
 import BindFile
-from Utility import CheckConflict, Icon
+from Utility import Icon
 
 from UI.ControlGroup import ControlGroup
 from Page import Page

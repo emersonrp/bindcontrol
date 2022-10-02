@@ -1,6 +1,6 @@
 import wx
 import UI
-from Utility import ChatColors, CheckConflict
+from Utility import ChatColors
 from Page import Page
 from GameData import Inspirations
 from UI.ControlGroup import ControlGroup
@@ -189,29 +189,6 @@ class InspirationPopper(Page):
                 ResetFile.SetBind(self.Ctrls[f"{Insp}Key"].MakeFileKeyBind(forwardOrder))
             if self.GetState('EnableRevInspBinds'):
                 ResetFile.SetBind(self.Ctrls[f"Rev{Insp}Key"].MakeFileKeyBind(reverseOrder))
-
-    def findconflicts(self, profile):
-        ### TODO
-        return
-        ### TODO
-
-        if self.GetState('EnableInspBinds'):
-            CheckConflict(self.State,'acckey',"Accuracy Key")
-            CheckConflict(self.State,'hpkey',"Healing Key")
-            CheckConflict(self.State,'damkey',"Damage Key")
-            CheckConflict(self.State,'endkey',"Endurance Key")
-            CheckConflict(self.State,'defkey',"Defense Key")
-            CheckConflict(self.State,'bfkey',"Breakfree Key")
-            CheckConflict(self.State,'reskey',"Resistance Key")
-
-        if self.GetState('EnableRevInspBinds'):
-            CheckConflict(self.State,'racckey',"Reverse Accuracy Key")
-            CheckConflict(self.State,'rhpkey',"Reverse Healing Key")
-            CheckConflict(self.State,'rdamkey',"Reverse Damage Key")
-            CheckConflict(self.State,'rendkey',"Reverse Endurance Key")
-            CheckConflict(self.State,'rdefkey',"Reverse Defense Key")
-            CheckConflict(self.State,'rbfkey',"Reverse Breakfree Key")
-            CheckConflict(self.State,'rreskey',"Reverse Resistance Key")
 
     def bindisused(self, profile):
         return bool(self.State['Enable'] or self.State['Reverse'])

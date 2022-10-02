@@ -12,32 +12,25 @@ class SimpleBindPane(CustomBindPaneParent):
 
     def BuildBindUI(self, page):
 
-        self.SetLabel("Simple Bind")
+        self.SetLabel(self.Title)
         pane = self.GetPane()
 
-        BindSizer = wx.GridBagSizer(hgap=5, vgap=5)
+        BindSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        BindNameCtrl = wx.TextCtrl(pane, -1, self.Name)
-        BindSizer.Add(wx.StaticText(pane, -1, "Bind Name:"), (0,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(BindNameCtrl,                          (0,1), flag=wx.EXPAND|wx.ALL, border=5)
-        page.Ctrls[self.UniqueName('BindName')] = BindNameCtrl
+        BindContentsCtrl = wx.TextCtrl(pane, -1, self.Contents)
+        BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"), 0, wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(BindContentsCtrl, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
+        BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=BindContentsCtrl), 0)
+        page.Ctrls[self.UniqueName('BindContents')] = BindContentsCtrl
 
         BindKeyCtrl = wx.Button(pane, -1, self.Key)
         BindKeyCtrl.CtlName = f"{self.bindclass}{self.unique_bind_id}BindKey"
         BindKeyCtrl.Page = page
-        BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), (0,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(BindKeyCtrl,                          (0,3), flag=wx.EXPAND|wx.ALL, border=5)
+        BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
+        BindSizer.Add(BindKeyCtrl,                          0)
         BindKeyCtrl.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
         page.Ctrls[self.UniqueName('BindKey')] = BindKeyCtrl
         UI.Labels[BindKeyCtrl.CtlName] = "Simple Bind " + self.unique_bind_id
-
-        BindContentsCtrl = wx.TextCtrl(pane, -1, self.Contents)
-        BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"), (1,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(BindContentsCtrl,                          (1,1), (1,2), flag=wx.ALL|wx.EXPAND, border=5)
-        BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=BindContentsCtrl), (1,3), flag=wx.EXPAND|wx.ALL, border=5)
-        page.Ctrls[self.UniqueName('BindContents')] = BindContentsCtrl
-
-        BindSizer.AddGrowableCol(1)
 
         BindSizer.Layout()
 

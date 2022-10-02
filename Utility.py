@@ -14,15 +14,6 @@ def ColorDefault():
         'background' : { 'r' : 255, 'g' : 255, 'b' : 255, },
     }
 
-def BLF(profile, *args):
-    return "bindloadfile " + BLFPath(profile, *args)
-
-def BLFPath(profile, *args):
-    filepath = profile.GameBindsDir()
-    for arg in args:
-        filepath = filepath + "/" + arg
-    return filepath
-
 Icons = {}
 def Icon(iconname):
     if not Icons.get('iconname', None):
@@ -34,7 +25,6 @@ def Icon(iconname):
     return Icons[iconname]
 
 
-#####################################################
 from UI.ControlGroup import bcKeyButton
 def CheckConflict(profile, key):
     conflicts = []

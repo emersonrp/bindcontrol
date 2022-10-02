@@ -50,6 +50,16 @@ class Profile(wx.Notebook):
     def ProfileFile(self)  : return Path(self.BindsDir(), self.Name() + ".bcp")
     def ResetFile(self)    : return self.GetBindFile("reset.txt")
 
+    def BLF(self, *args):
+        return "bindloadfile " + self.BLFPath(*args)
+
+    def BLFPath(self, *args):
+        filepath = self.GameBindsDir()
+        for arg in args:
+            filepath = filepath + "/" + arg
+        return filepath
+
+
     ###################
     # Profile Save/Load
     def SaveToFile(self, event):

@@ -1,7 +1,7 @@
 import wx
 import UI
 import BindFile
-from Utility import BLF, CheckConflict, Icon
+from Utility import CheckConflict, Icon
 
 from UI.ControlGroup import ControlGroup
 from Page import Page
@@ -268,13 +268,13 @@ class Gameplay(Page):
                 selresetfile = self.Profile.GetBindFile("tps","reset.txt")
                 for i in ('1','2','3','4','5','6','7','8'):
                     selfile = self.Profile.GetBindFile("tps",f"sel{i}.txt")
-                    ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", BLF(self.Profile,'tps',f"sel{i}.txt")]))
-                    selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", BLF(self.Profile,'tps',f"sel{i}.txt")]))
+                    ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", self.Profile.BLF('tps',f"sel{i}.txt")]))
+                    selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", self.Profile.BLF('tps',f"sel{i}.txt")]))
                     for j in ('1','2','3','4','5','6','7','8'):
                         if (i == j):
-                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod1} {int(j) - selnummod1}", BLF(self.Profile,'tps',"reset.txt")]))
+                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod1} {int(j) - selnummod1}", self.Profile.BLF('tps',"reset.txt")]))
                         else:
-                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod} {int(j) - selnummod}"  , BLF(self.Profile,'tps',f"sel{j}.txt")]))
+                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod} {int(j) - selnummod}"  , self.Profile.BLF('tps',f"sel{j}.txt")]))
 
             else:
                 selmethod = "teamselect"

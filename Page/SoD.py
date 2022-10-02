@@ -1369,9 +1369,9 @@ class SoD(Page):
         if (self.GetState('Temp') and self.GetState('TempEnable')):
             temptogglefile1 = profile.GetBindFile("temptoggle1.txt")
             temptogglefile2 = profile.GetBindFile("temptoggle2.txt")
-            temptogglefile2.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('-down$$gototray 1' + BindFile.BLF(profile, 'temptoggle1.txt')))
-            temptogglefile1.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('+down$$gototray ' + self.GetState('TempTray') + BindFile.BLF(profile, 'temptoggle2.txt')))
-            ResetFile.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('+down$$gototray ' + self.GetState('TempTray') + BindFile.BLF(profile, 'temptoggle2.txt')))
+            temptogglefile2.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('-down$$gototray 1' + profile.BLF('temptoggle1.txt')))
+            temptogglefile1.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('+down$$gototray ' + self.GetState('TempTray') + profile.BLF('temptoggle2.txt')))
+            ResetFile.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('+down$$gototray ' + self.GetState('TempTray') + profile.BLF('temptoggle2.txt')))
 
 
         if (profile.General.GetState('Archetype') == "Warshade"):
@@ -1402,12 +1402,12 @@ class SoD(Page):
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
         if (Nova and Nova['Enable']):
-            ResetFile.SetBind(Nova['Mode'], f"t $name, Changing to {Nova['Nova']} Form{fullstop}{t['on']}{Nova['Nova']}$$gototray {Nova['Tray']}" + BindFile.BLF(profile, 'nova.txt'))
+            ResetFile.SetBind(Nova['Mode'], f"t $name, Changing to {Nova['Nova']} Form{fullstop}{t['on']}{Nova['Nova']}$$gototray {Nova['Tray']}" + profile.BLF('nova.txt'))
 
             novafile = profile.GetBindFile("nova.txt")
 
             if (Dwarf and Dwarf['Enable']):
-                novafile.SetBind(Dwarf['Mode'], f"t $name, Changing to {Dwarf['Dwarf']} Form{fullstop}{t['off']}{Nova['Nova']}{t['on']}{Dwarf['Dwarf']}$$gototray {Dwarf['Tray']}" + BindFile.BLF(profile, 'dwarf.txt'))
+                novafile.SetBind(Dwarf['Mode'], f"t $name, Changing to {Dwarf['Dwarf']} Form{fullstop}{t['off']}{Nova['Nova']}{t['on']}{Dwarf['Dwarf']}$$gototray {Dwarf['Tray']}" + profile.BLF('dwarf.txt'))
 
             if not humanBindKey:
                 humanBindKey = Nova['Mode']
@@ -1415,7 +1415,7 @@ class SoD(Page):
             if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + self.GetState('HumanFormShield')
             else:                               humpower = ''
 
-            novafile.SetBind(humanBindKey, f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Nova['Nova']} {humpower} $$gototray 1" + BindFile.BLF(profile, 'reset.txt'))
+            novafile.SetBind(humanBindKey, f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Nova['Nova']} {humpower} $$gototray 1" + profile.BLF('reset.txt'))
 
             if (humanBindKey == Nova['Mode']): humanBindKey = None
 
@@ -1442,20 +1442,20 @@ class SoD(Page):
                 novafile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind('nop'))
 
             novafile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("follow"))
-            # novafile.SetBind(self.Ctrls['ToggleKey'].MakeFileKeyBind('t $name, Changing to Human Form, Normal Mode$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0$$powexectoggleoff ' + Nova['Nova'] + '$$gototray 1' + BindFile.BLF(profile, 'reset.txt')))
+            # novafile.SetBind(self.Ctrls['ToggleKey'].MakeFileKeyBind('t $name, Changing to Human Form, Normal Mode$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0$$powexectoggleoff ' + Nova['Nova'] + '$$gototray 1' + profile.BLF('reset.txt')))
 
 
         if (Dwarf and Dwarf['Enable']):
-            ResetFile.SetBind(Dwarf['Mode'], f"t $name, Changing to {Dwarf['Dwarf']} Form{fullstop}$$powexectoggleon {Dwarf['Dwarf']}$$gototray {Dwarf['Tray']}" + BindFile.BLF(profile, 'dwarf.txt'))
+            ResetFile.SetBind(Dwarf['Mode'], f"t $name, Changing to {Dwarf['Dwarf']} Form{fullstop}$$powexectoggleon {Dwarf['Dwarf']}$$gototray {Dwarf['Tray']}" + profile.BLF('dwarf.txt'))
             dwrffile = profile.GetBindFile("dwarf.txt")
             if (Nova and Nova['Enable']):
-                dwrffile.SetBind(Nova['Mode'], f"t $name, Changing to {Nova['Nova']} Form{fullstop}$$powexectoggleoff {Dwarf['Dwarf']}$$powexectoggleon {Nova['Nova']}$$gototray {Nova['Tray']}" + BindFile.BLF(profile, 'nova.txt'))
+                dwrffile.SetBind(Nova['Mode'], f"t $name, Changing to {Nova['Nova']} Form{fullstop}$$powexectoggleoff {Dwarf['Dwarf']}$$powexectoggleon {Nova['Nova']}$$gototray {Nova['Tray']}" + profile.BLF('nova.txt'))
 
             if not humanBindKey: humanBindKey = Dwarf['Mode']
             if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + self.GetState('HumanFormShield')
             else:                               humpower = ''
 
-            dwrffile.SetBind(humanBindKey, f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Dwarf['Dwarf']}{humpower}$$gototray 1" + BindFile.BLF(profile, 'reset.txt'))
+            dwrffile.SetBind(humanBindKey, f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Dwarf['Dwarf']}{humpower}$$gototray 1" + profile.BLF('reset.txt'))
 
             if dwarfpbind:
                 dwrffile.SetBind(Dwarf['Mode'], dwarfpbind)
@@ -1477,20 +1477,20 @@ class SoD(Page):
                 dwrffile.SetBind('mousechord', "+down$$+forward")
 
             if (self.GetState('TP') and self.GetState('TPEnable')):
-                dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + dwarfTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'dtp','tp_on1.txt')))
+                dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + dwarfTPPower + t['detaillo'] + t['flycamdist'] + windowhide + profile.BLF('dtp','tp_on1.txt')))
                 dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
-                dwrffile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind(substr(t['detailhi'],2) + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'dtp','tp_off.txt')))
+                dwrffile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind(substr(t['detailhi'],2) + t['runcamdist'] + windowshow + profile.BLF('dtp','tp_off.txt')))
                 tp_off = profile.GetBindFile("dtp","tp_off.txt")
-                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + dwarfTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'dtp','tp_on1.txt')))
+                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + dwarfTPPower + t['detaillo'] + t['flycamdist'] + windowhide + profile.BLF('dtp','tp_on1.txt')))
                 tp_off.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop') )
                 tp_on1 = profile.GetBindFile("dtp","tp_on1.txt")
-                tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t['detailhi'] + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'dtp','tp_off.txt')))
-                tp_on1.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+down' + BindFile.BLF(profile, 'dtp','tp_on2.txt')))
+                tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t['detailhi'] + t['runcamdist'] + windowshow + profile.BLF('dtp','tp_off.txt')))
+                tp_on1.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+down' + profile.BLF('dtp','tp_on2.txt')))
 
                 tp_on2 = profile.GetBindFile("dtp","tp_on2.txt")
-                tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$' + dwarfTPPower + BindFile.BLF(profile, 'dtp','tp_on1.txt')))
+                tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$' + dwarfTPPower + profile.BLF('dtp','tp_on1.txt')))
 
-            dwrffile.SetBind(self.Ctrls['ToggleKey'].MakeFileKeyBind("t $name, Changing to Human Form, Normal Mode$fullstop\$\$powexectoggleoff Dwarf['Dwarf']\$\$gototray 1" + BindFile.BLF(profile, 'reset.txt')))
+            dwrffile.SetBind(self.Ctrls['ToggleKey'].MakeFileKeyBind("t $name, Changing to Human Form, Normal Mode$fullstop\$\$powexectoggleoff Dwarf['Dwarf']\$\$gototray 1" + profile.BLF('reset.txt')))
 
 
         if (self.GetState('JumpSimple')):
@@ -1513,39 +1513,39 @@ class SoD(Page):
             if (t['tphover'] == ''):
                 tphovermodeswitch = re.sub('\d\d\d\d\d\d', '000000', t['bl']('r'))
 
-            ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + normalTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'tp','tp_on1.txt')))
+            ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + normalTPPower + t['detaillo'] + t['flycamdist'] + windowhide + profile.BLF('tp','tp_on1.txt')))
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
-            ResetFile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind(substr(t['detailhi'],2) + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'tp','tp_off.txt') + tphovermodeswitch))
+            ResetFile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind(substr(t['detailhi'],2) + t['runcamdist'] + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
             #  Create tp_off file
             tp_off = profile.GetBindFile("tp","tp_off.txt")
-            tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + normalTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'tp','tp_on1.txt')))
+            tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + normalTPPower + t['detaillo'] + t['flycamdist'] + windowhide + profile.BLF('tp','tp_on1.txt')))
             tp_off.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
 
             tp_on1 = profile.GetBindFile("tp","tp_on1.txt")
             zoomin = t['detailhi'] + t['runcamdist']
             if (t['tphover']): zoomin = ''
-            tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + zoomin + windowshow + BindFile.BLF(profile, 'tp','tp_off.txt') + tphovermodeswitch))
-            tp_on1.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+down' + t['tphover'] + BindFile.BLF(profile, 'tp','tp_on2.txt')))
+            tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
+            tp_on1.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+down' + t['tphover'] + profile.BLF('tp','tp_on2.txt')))
 
             tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
-            tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$' + normalTPPower + BindFile.BLF(profile, 'tp','tp_on1.txt')))
+            tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
 
         if (self.GetState('TTP') and self.GetState('TTPEnable') and not (profile.General.GetState('Archetype') == "Peacebringer") and teamTPPower) :
             tphovermodeswitch = ''
-            ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$' + teamTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'ttp','ttp_on1.txt')))
+            ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$' + teamTPPower + t['detaillo'] + t['flycamdist'] + windowhide + profile.BLF('ttp','ttp_on1.txt')))
             ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( 'nop'))
-            ResetFile.SetBind(self.Ctrls['TTPResetKey'].MakeFileKeyBind(substr(t['detailhi'],2) + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'ttp','ttp_off') + tphovermodeswitch))
+            ResetFile.SetBind(self.Ctrls['TTPResetKey'].MakeFileKeyBind(substr(t['detailhi'],2) + t['runcamdist'] + windowshow + profile.BLF('ttp','ttp_off') + tphovermodeswitch))
             #  Create tp_off file
             ttp_off = profile.GetBindFile("ttp","ttp_off.txt")
-            ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$' + teamTPPower + t['detaillo'] + t['flycamdist'] + windowhide + BindFile.BLF(profile, 'ttp','ttp_on1.txt')))
+            ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$' + teamTPPower + t['detaillo'] + t['flycamdist'] + windowhide + profile.BLF('ttp','ttp_on1.txt')))
             ttp_off.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('nop'))
 
             ttp_on1 = profile.GetBindFile("ttp","ttp_on1.txt")
-            ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t['detailhi'] + t['runcamdist'] + windowshow + BindFile.BLF(profile, 'ttp','ttp_off') + tphovermodeswitch))
-            ttp_on1.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('+down' + BindFile.BLF(profile, 'ttp','ttp_on2.txt')))
+            ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t['detailhi'] + t['runcamdist'] + windowshow + profile.BLF('ttp','ttp_off') + tphovermodeswitch))
+            ttp_on1.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('+down' + profile.BLF('ttp','ttp_on2.txt')))
 
             ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
-            ttp_on2.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( '-down$$' + teamTPPower + BindFile.BLF(profile, 'ttp','ttp_on1.txt')))
+            ttp_on2.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( '-down$$' + teamTPPower + profile.BLF('ttp','ttp_on1.txt')))
 
 
 
@@ -1554,9 +1554,9 @@ class SoD(Page):
         path = re.sub('\d\d\d\d\d\d', '000000', path)
 
         if (moddir == 'up')  : u = 1
-        else:                   u = 0
+        else:                  u = 0
         if (moddir == 'down'): d = 1
-        else:                   d = 0
+        else:                  d = 0
 
         # TODO, BLF is on the Bindfile objects now.
         curfile.SetBind(p.General.Ctrls['ResetKey'].MakeFileKeyBind(
@@ -2247,7 +2247,7 @@ class SoD(Page):
         tglfile = profile.GetBindFile(filename)
         t['ini'] = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
-        curfile.SetBind(key, "+down" + feedback + self.actPower_name(None,1,t['cjmp']) + BindFile.BLF(profile,filename))
+        curfile.SetBind(key, "+down" + feedback + self.actPower_name(None,1,t['cjmp']) + profile.BLF(filename))
 
 
     def sodSetDownFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
@@ -2260,7 +2260,7 @@ class SoD(Page):
         tglfile = profile.GetBindFile(filename)
         t['ini'] = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
-        curfile.SetBind(key, '+down' + feedback + BindFile.BLF(profile,filename))
+        curfile.SetBind(key, '+down' + feedback + profile.BLF(filename))
 
 
 

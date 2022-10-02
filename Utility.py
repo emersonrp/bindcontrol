@@ -41,7 +41,8 @@ def Icon(iconname):
 def DisableControls(page, enabled, names):
     for name in names:
         page.Ctrls[name].Enable(enabled)
-        page.Ctrls[name].ctlLabel.Enable(enabled)
+        if page.Ctrls[name].ctlLabel:
+            page.Ctrls[name].ctlLabel.Enable(enabled)
 
 
 #####################################################

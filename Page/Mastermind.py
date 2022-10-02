@@ -253,6 +253,7 @@ class Mastermind(Page):
         enableBGAttack = wx.CheckBox(staticbox, -1, "Enable")
         enableBGAttack.Bind(wx.EVT_CHECKBOX, self.OnBGCheckboxes)
         enableBGAttack.SetValue(bool(self.Init['PetBodyguardAttackEnabled']))
+        enableBGAttack.ctlLabel = None
         self.Ctrls['PetBodyguardAttackEnabled'] = enableBGAttack
         petCommandsKeys.InnerSizer.Add(enableBGAttack, 0, wx.ALL|wx.EXPAND, 5)
         petCommandsKeys.InnerSizer.Add(wx.StaticText(staticbox, -1, ''))
@@ -266,6 +267,7 @@ class Mastermind(Page):
         enableBGGoto = wx.CheckBox(petCommandsKeys.GetStaticBox(), -1, "Enable")
         enableBGGoto.Bind(wx.EVT_CHECKBOX, self.OnBGCheckboxes)
         enableBGGoto.SetValue(bool(self.Init['PetBodyguardGotoEnabled']))
+        enableBGGoto.ctlLabel = None
         self.Ctrls['PetBodyguardGotoEnabled'] = enableBGGoto
         petCommandsKeys.InnerSizer.Add(enableBGGoto, 0, wx.ALL|wx.EXPAND, 5)
         petCommandsKeys.InnerSizer.Add(wx.StaticText(staticbox, -1, ''))
@@ -710,54 +712,52 @@ class Mastermind(Page):
 
     def PopulateBindFiles(self):
 
-        if not self.GetState('PetCmdEnable'): return
-
         profile = self.Profile
         ResetFile = profile.ResetFile()
 
-        # TODO - do we want "if enabled" or just let the user "UNBOUND" them?
-        ResetFile.SetBind(self.Ctrls['PetSelect1'].MakeFileKeyBind(f"petselectname \"{self.GetState('Pet1Name')}\""))
-        ResetFile.SetBind(self.Ctrls['PetSelect2'].MakeFileKeyBind(f"petselectname \"{self.GetState('Pet2Name')}\""))
-        ResetFile.SetBind(self.Ctrls['PetSelect3'].MakeFileKeyBind(f"petselectname \"{self.GetState('Pet3Name')}\""))
-        ResetFile.SetBind(self.Ctrls['PetSelect4'].MakeFileKeyBind(f"petselectname \"{self.GetState('Pet4Name')}\""))
-        ResetFile.SetBind(self.Ctrls['PetSelect5'].MakeFileKeyBind(f"petselectname \"{self.GetState('Pet5Name')}\""))
-        ResetFile.SetBind(self.Ctrls['PetSelect6'].MakeFileKeyBind(f"petselectname \"{self.GetState('Pet6Name')}\""))
+        if self.GetState('PetCmdEnable'):
+            powers = self.MMPowerSets[ profile.General.GetState('Primary') ]
 
-        powers = self.MMPowerSets[ profile.General.GetState('Primary') ]
+            #### "Quiet" versions
+            allfile = profile.GetBindFile('mmbinds','all.txt')
+            minfile = profile.GetBindFile('mmbinds','tier1.txt')
+            ltsfile = profile.GetBindFile('mmbinds','tier2.txt')
+            bosfile = profile.GetBindFile('mmbinds','tier3.txt')
 
-        #### "Quiet" versions
-        allfile = profile.GetBindFile('mmbinds','all.txt')
-        minfile = profile.GetBindFile('mmbinds','tier1.txt')
-        ltsfile = profile.GetBindFile('mmbinds','tier2.txt')
-        bosfile = profile.GetBindFile('mmbinds','tier3.txt')
+            if (self.GetState('PetBodyguardEnabled')):
+                bgfiledn = profile.GetBindFile('mmbinds','bguarda.txt')
+                # citybinder had this commented out, and the file was empty if created
+                # bgfileup = profile.GetBindFile('mmbinds','bguardb.txt')
+            self.mmSubBind(profile      , ResetFile   , "all"    , None          , powers)
+            self.mmQuietSubBind(profile , allfile     , "all"    , None          , powers)
+            self.mmQuietSubBind(profile , minfile     , "tier1"  , powers['min'] , powers)
+            self.mmQuietSubBind(profile , ltsfile     , "tier2"  , powers['lts'] , powers)
+            self.mmQuietSubBind(profile , bosfile     , "tier3"  , powers['bos'] , powers)
+            if (self.GetState('PetBodyguardEnabled')):
+                self.mmQuietBGSubBind(profile,bgfiledn,None,"bguard",powers)
 
-        if (self.GetState('PetBodyguardEnabled')):
-            bgfiledn = profile.GetBindFile('mmbinds','bguarda.txt')
-            # citybinder had this commented out, and the file was empty if created
-            # bgfileup = profile.GetBindFile('mmbinds','bguardb.txt')
-        self.mmSubBind(profile      , ResetFile   , "all"    , None          , powers)
-        self.mmQuietSubBind(profile , allfile     , "all"    , None          , powers)
-        self.mmQuietSubBind(profile , minfile     , "tier1"  , powers['min'] , powers)
-        self.mmQuietSubBind(profile , ltsfile     , "tier2"  , powers['lts'] , powers)
-        self.mmQuietSubBind(profile , bosfile     , "tier3"  , powers['bos'] , powers)
-        if (self.GetState('PetBodyguardEnabled')):
-            self.mmQuietBGSubBind(profile,bgfiledn,None,"bguard",powers)
+            #### "Chatty" versions
+            callfile = profile.GetBindFile('mmbinds','call.txt')
+            cminfile = profile.GetBindFile('mmbinds','ctier1.txt')
+            cltsfile = profile.GetBindFile('mmbinds','ctier2.txt')
+            cbosfile = profile.GetBindFile('mmbinds','ctier3.txt')
 
-        #### "Chatty" versions
-        callfile = profile.GetBindFile('mmbinds','call.txt')
-        cminfile = profile.GetBindFile('mmbinds','ctier1.txt')
-        cltsfile = profile.GetBindFile('mmbinds','ctier2.txt')
-        cbosfile = profile.GetBindFile('mmbinds','ctier3.txt')
+            if (self.GetState('PetBodyguardEnabled')):
+                cbgfiledn = profile.GetBindFile('mmbinds','cbguarda.txt')
+                cbgfileup = profile.GetBindFile('mmbinds','cbguardb.txt')
+            self.mmSubBind(profile , callfile , "all"   , None          , powers)
+            self.mmSubBind(profile , cminfile , "tier1" , powers['min'] , powers)
+            self.mmSubBind(profile , cltsfile , "tier2" , powers['lts'] , powers)
+            self.mmSubBind(profile , cbosfile , "tier3" , powers['bos'] , powers)
+            if (self.GetState('PetBodyguardEnabled')):
+                self.mmBGSubBind(profile,cbgfiledn,cbgfileup,"bguard",powers)
 
-        if (self.GetState('PetBodyguardEnabled')):
-            cbgfiledn = profile.GetBindFile('mmbinds','cbguarda.txt')
-            cbgfileup = profile.GetBindFile('mmbinds','cbguardb.txt')
-        self.mmSubBind(profile , callfile , "all"   , None          , powers)
-        self.mmSubBind(profile , cminfile , "tier1" , powers['min'] , powers)
-        self.mmSubBind(profile , cltsfile , "tier2" , powers['lts'] , powers)
-        self.mmSubBind(profile , cbosfile , "tier3" , powers['bos'] , powers)
-        if (self.GetState('PetBodyguardEnabled')):
-            self.mmBGSubBind(profile,cbgfiledn,cbgfileup,"bguard",powers)
+        if self.GetState('PetSelEnable'):
+            for i in range(1,7):
+                name = self.GetState(f"Pet{i}Name")
+                ResetFile.SetBind(
+                    self.Ctrls[f"PetSelect{i}"].MakeFileKeyBind(f"petselectname \"{name}\"")
+                )
 
     def GetChatMethod(self, control, target = 'all'):
         chatdesc = self.GetState(control)

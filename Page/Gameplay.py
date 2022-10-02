@@ -235,8 +235,9 @@ class Gameplay(Page):
         self.OnTypeEnable()
 
     def OnTypeEnable(self, evt = None):
-        DisableControls(self, self.GetState('TypingNotifierEnable'),
-            ['TypingNotifier'])
+        chatenabled = self.GetState('ChatEnable')
+        typeenabled = self.GetState('TypingNotifierEnable')
+        DisableControls(self, chatenabled and typeenabled, ['TypingNotifier'])
 
     def PopulateBindFiles(self):
 

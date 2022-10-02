@@ -59,6 +59,20 @@ Linux users, install your distribution's packages for python 3 and wxPython.
 
 The eventual intent is to make this available pre-rolled into standalone binaries for Windows and MacOS, and a flatpak or the like for Linux.
 
+Using
+-----
+
+Clone this app, or get the source as a ZIP file.
+
+Windows users:  Double-click `BindControl.py` in the top-level folder
+
+Mac / Linux users: In a terminal, `cd` to where you put the BindControl source, then `python BindControl.py`.  Some distributions might need `python3` instead of `python`.
+
+
+Credits and License
+-------------------
+
+* BindControl is in many places a direct port of [CityBinder](http://sourceforge.net/projects/citybinder/) code, and in most other places was extremely influenced by it.
 
 BindControl is licensed under the GPL, version 3 or later.
 

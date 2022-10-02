@@ -1,5 +1,6 @@
 import wx
 import UI
+from Utility import DisableControls
 from KeyBind.FileKeyBind import FileKeyBind
 
 # Sandolphan / Khaiba's guide to these controls found at:
@@ -133,7 +134,7 @@ class Mastermind(Page):
             'PetBodyguardGoto' : '',
 
 
-            'EnablePetActionBinds': 0,
+            'PetCmdEnable': 0,
 
             'PetChatToggle' : 'LALT+M',
             'PetSelect1' : 'F1',
@@ -172,22 +173,14 @@ class Mastermind(Page):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
+        petcmdenable = wx.CheckBox( self, -1, 'Enable Pet Action Binds')
+        petcmdenable.SetToolTip( wx.ToolTip('Check this to enable the Mastermind Pet Action Binds') )
+        petcmdenable.Bind(wx.EVT_CHECKBOX, self.OnPetCmdEnable)
+
+        self.Ctrls['PetCmdEnable'] = petcmdenable
+
         petCommandsKeys = ControlGroup(self, self, width = 5, label = "Pet Action Binds", flexcols = [4])
 
-        petCommandsKeys.AddControl( ctlName = 'spacer', ctlType = 'statictext', noLabel = True,)
-        useCB = petCommandsKeys.AddControl(
-            noLabel = True,
-            ctlName = 'EnablePetActionBinds',
-            ctlType = 'checkbox',
-            contents = "Enable Pet Action Binds",
-            tooltip = 'Check this to enable the Mastermind Pet Action Binds'
-        )
-        petCommandsKeys.AddControl(
-            ctlName = 'PetChatToggle',
-            ctlType = 'keybutton',
-            tooltip = 'Choose the key combo that will toggle your pet\'s Chatty Mode',
-        )
-        petCommandsKeys.AddControl( ctlName = 'spacer', ctlType = 'statictext', noLabel = True,)
 
         # Iterate the data structure at the top and make the grid of controls for the basic pet binds
         for command in self.petCommandKeyDefinitions:
@@ -210,8 +203,15 @@ class Mastermind(Page):
                 tooltip = "Choose the chat response your pets give when you " + command['tooltipdetail'],
             )
 
+        petCommandsKeys.AddControl(
+            ctlName = 'PetChatToggle',
+            ctlType = 'keybutton',
+            tooltip = 'Choose the key combo that will toggle your pet\'s Chatty Mode',
+        )
+
         ### Bodyguard mode controls packed into the spacer differently
-        petCommandsKeys.AddControl( ctlName = f'spacer1', ctlType = 'statictext', noLabel = True,)
+        for i in [1,2,3,4]:
+            petCommandsKeys.AddControl( ctlName = f'spacer{i}', ctlType = 'statictext', noLabel = True,)
 
         bgCB = petCommandsKeys.AddControl(
             noLabel  = True,
@@ -223,7 +223,7 @@ class Mastermind(Page):
         bgCB.Bind(wx.EVT_CHECKBOX, self.OnBGCheckboxes)
 
         # Add a blank row
-        for i in [3,4,5]:
+        for i in [5,6,7]:
             petCommandsKeys.AddControl( ctlName = f'spacer{i}', ctlType = 'statictext', noLabel = True,)
 
         petCommandsKeys.AddControl(
@@ -271,6 +271,12 @@ class Mastermind(Page):
         petCommandsKeys.InnerSizer.Add(wx.StaticText(staticbox, -1, ''))
         petCommandsKeys.InnerSizer.Add(wx.StaticText(staticbox, -1, ''))
 
+        petselenable = wx.CheckBox( self, -1, 'Enable Pet By-Name Binds')
+        petselenable.SetToolTip( wx.ToolTip('Check this to enable the By-Name Selection Binds') )
+        petselenable.Bind(wx.EVT_CHECKBOX, self.OnPetSelEnable)
+
+        self.Ctrls['PetSelEnable'] = petselenable
+
         # get the pet names, whether they're bodyguards, and binds to select them directly
         # TODO -- probably want to enable/disable various bits of this based on whether bodyguard is
         # active, or whether we have names, or whatever
@@ -296,13 +302,17 @@ class Mastermind(Page):
                 tooltip = f"Choose the Key Combo to Select Pet {PetID} by Name"
             )
 
+        sizer.Add(petcmdenable, 0, wx.EXPAND|wx.TOP|wx.LEFT, 16)
         sizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 16)
         sizer.AddSpacer(10)
+        sizer.Add(petselenable, 0, wx.EXPAND|wx.ALL, 16)
         sizer.Add(petNames, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 16)
 
         self.SetSizerAndFit(sizer)
 
         self.OnArchetypePowerChange()
+        self.OnPetCmdEnable()
+        self.OnPetSelEnable()
 
     # not actually an event listener, gets called explicitly
     def OnArchetypePowerChange(self):
@@ -312,26 +322,52 @@ class Mastermind(Page):
         for _, control in self.Ctrls.items():
             control.Enable(bool(arch == "Mastermind" and pset))
 
-    def OnBGCheckboxes(self, evt):
+    def OnPetCmdEnable(self, evt = None):
+        self.Freeze()
+        enabled = self.GetState('PetCmdEnable')
+        for command in self.petCommandKeyDefinitions:
+            DisableControls(self, enabled, [
+                command['ctrlName'], command['ctrlName']+"ResponseMethod", command['ctrlName']+"Response"
+            ])
+        DisableControls(self, enabled,
+            [ 'PetChatToggle', 'PetBodyguard',
+             'PetBodyguardResponseMethod', 'PetBodyguardResponse', 'PetBodyguardAttack',
+             'PetBodyguardAttackEnabled', 'PetBodyguardGoto', 'PetBodyguardGotoEnabled' ])
+        self.OnBGCheckboxes()
+        self.Thaw()
+
+    def OnPetSelEnable(self, evt = None):
+        enabled = self.GetState('PetSelEnable')
+        for i in range(1,7):
+            DisableControls(self, enabled, [
+                f"Pet{i}Name", f"Pet{i}Bodyguard", f"PetSelect{i}"
+            ])
+
+        self.OnBGCheckboxes()
+
+    def OnBGCheckboxes(self, evt = None):
+        petcmdenabled = self.GetState('PetCmdEnable')
+        petselenabled = self.GetState('PetSelEnable')
+
         bgEnabled = self.GetState('PetBodyguardEnabled')
         bgAttack  = self.GetState('PetBodyguardAttackEnabled')
         bgGoto    = self.GetState('PetBodyguardGotoEnabled')
 
         for c in ['PetBodyguard','PetBodyguardResponseMethod','PetBodyguardResponse']:
-            self.Ctrls[c].Enable(bgEnabled)
+            self.Ctrls[c].Enable(petcmdenabled and bgEnabled)
             if self.Ctrls[c].ctlLabel:
-                self.Ctrls[c].ctlLabel.Enable(bgEnabled)
+                self.Ctrls[c].ctlLabel.Enable(petcmdenabled and bgEnabled)
 
-        self.Ctrls['PetBodyguardAttack'].Enable(bgEnabled and bgAttack)
-        self.Ctrls['PetBodyguardAttack'].ctlLabel.Enable(bgEnabled and bgAttack)
-        self.Ctrls['PetBodyguardGoto']  .Enable(bgEnabled and bgGoto)
-        self.Ctrls['PetBodyguardGoto']  .ctlLabel.Enable(bgEnabled and bgGoto)
+        self.Ctrls['PetBodyguardAttack']         .Enable(petcmdenabled and bgEnabled and bgAttack)
+        self.Ctrls['PetBodyguardAttack'].ctlLabel.Enable(petcmdenabled and bgEnabled and bgAttack)
+        self.Ctrls['PetBodyguardGoto']           .Enable(petcmdenabled and bgEnabled and bgGoto)
+        self.Ctrls['PetBodyguardGoto']  .ctlLabel.Enable(petcmdenabled and bgEnabled and bgGoto)
 
-        self.Ctrls['PetBodyguardAttackEnabled'].Enable(bgEnabled)
-        self.Ctrls['PetBodyguardGotoEnabled'].Enable(bgEnabled)
+        self.Ctrls['PetBodyguardAttackEnabled'].Enable(petcmdenabled and bgEnabled)
+        self.Ctrls['PetBodyguardGotoEnabled']  .Enable(petcmdenabled and bgEnabled)
 
         for petid in [1,2,3,4,5,6]:
-            self.Ctrls[f"Pet{petid}Bodyguard"].Enable(bgEnabled)
+            self.Ctrls[f"Pet{petid}Bodyguard"].Enable(petselenabled and bgEnabled)
 
 
     def HelpText(self):
@@ -674,7 +710,7 @@ class Mastermind(Page):
 
     def PopulateBindFiles(self):
 
-        if not self.GetState('EnablePetActionBinds'): return
+        if not self.GetState('PetCmdEnable'): return
 
         profile = self.Profile
         ResetFile = profile.ResetFile()
@@ -783,7 +819,7 @@ class Mastermind(Page):
         'PetStayResponseMethod'              : "Response to Stay",
         'PetBodyguard'                       : "Bodyguard Mode",
         'PetBodyguardResponseMethod'         : "Response to Bodyguard Mode",
-        'PetChatToggle'                      : "Chat Mode Toggle",
+        'PetChatToggle'                      : "Pet Chatty Mode Toggle",
         'PetBodyguardAttack'                 : "BG Mode Attack",
         'PetBodyguardGoto'                   : "BG Mode Goto",
     })

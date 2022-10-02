@@ -1,5 +1,6 @@
 import wx
 import re
+import GameData
 import UI
 import Utility
 from pathlib import Path
@@ -27,8 +28,8 @@ class SoD(Page):
             'TurnRight'          : "E",
             'AutoRun'            : "R",
             'Follow'             : "TILDE",
-            'DefaultMode'        : '',
-            'MousechordSoD'      : 1,
+            'DefaultMode'        : "Sprint",
+            'MousechordSoD'      : 0,
             'AutoMouseLook'      : 0,
 
             'SprintPower'        : 'Sprint',
@@ -129,14 +130,6 @@ class SoD(Page):
                 ctlName = dir,
                 ctlType = 'keybutton',
             )
-        # TODO!  fill this picker with only the appropriate bits.
-        # for i in (powers list):
-        #   if (player has power): add_to_contents(i)
-        movementSizer.AddControl(
-            ctlName = 'DefaultMode',
-            ctlType = 'combo',
-            contents = ('No SoD','Sprint','Super Speed','Jump','Fly'),
-        )
         movementSizer.AddControl(
             ctlName = 'MousechordSoD',
             ctlType = 'checkbox',
@@ -147,17 +140,24 @@ class SoD(Page):
         ##### GENERAL SETTINGS
         generalSizer = ControlGroup(self, self, 'General Settings')
 
+        # TODO!  fill this picker with only the appropriate bits.
+        # for i in (powers list):
+        #   if (player has power): add_to_contents(i)
+        generalSizer.AddControl(
+            ctlName = 'DefaultMode',
+            ctlType = 'combo',
+            contents = ('No SoD','Sprint','Super Speed','Jump','Fly'),
+        )
+        generalSizer.AddControl(
+            ctlName = 'SprintPower',
+            ctlType = 'combo',
+            contents = GameData.SprintPowers,
+        )
         generalSizer.AddControl(
             ctlName = 'AutoMouseLook',
             ctlType = 'checkbox',
             tooltip = 'Automatically Mouselook when moving',
         )
-        # TODO -- add "SprintPowers" to GameData
-#        generalSizer.AddControl(
-#            ctlName = 'SprintPower',
-#            ctlType = 'combo',
-#            contents = GameData['SprintPowers'],
-#        )
 
         # TODO -- decide what to do with this.
         # generalSizer.Add( wx.CheckBox(self, SPRINT_UNQUEUE, "Exec powexecunqueue"))
@@ -609,7 +609,7 @@ class SoD(Page):
             if (fix):
                 fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,'',feedback)
             else:
-                cur.SetBind(key, t['ini'] + self.actPower_toggle(None,1,None,toff) + t +dirs('UDFBLR') + t['detailhi'] + t['runcamdist'] + feedback + bindload)
+                cur.SetBind(key, t['ini'] + self.actPower_toggle(None,1,None,toff) + t + dirs('UDFBLR') + t['detailhi'] + t['runcamdist'] + feedback + bindload)
 
         elif (bl == "ar"):
             bindload = t['bl']('an')
@@ -871,9 +871,6 @@ class SoD(Page):
                     else:
                         cur.SetBind(key, t['ini'] + t['detaillo'] + t['flycamdist'] + t['bl']('gff'))
 
-
-
-
         t['ini'] = ''
 
 
@@ -1027,7 +1024,6 @@ class SoD(Page):
             t['detailhi'] = '$$visscale ' + self.GetState('DetailNormalAmt') + '$$shadowvol 0$$ss 0'
             t['detaillo'] = '$$visscale ' + self.GetState('DetailMovingAmt') + '$$shadowvol 0$$ss 0'
 
-
         if self.GetState('TPHideWindows'):
             windowhide = '$$windowhide health$$windowhide chat$$windowhide target$$windowhide tray'
             windowshow = '$$show health$$show chat$$show target$$show tray'
@@ -1125,12 +1121,6 @@ class SoD(Page):
         #t['blgbo'] = "$$bindloadfile " + t['pathgbo']
         #t['pathgsd'] = str(Path(t['subdirgsd'], "GSD"))  #  SetDown Fly Subfolder and base filename
         #t['blgsd'] = "$$bindloadfile " + t['pathgsd']
-
-
-
-
-
-
 
 
         # turn = "+zoomin$$-zoomin"  # a non functioning bind used only to activate the keydown/keyup functions of +commands
@@ -2058,52 +2048,52 @@ class SoD(Page):
         return self.GetState('Enable')
 
 
-    def findconflicts(self):
-        Utility.CheckConflict("Up","Up Key")
-        Utility.CheckConflict("Down","Down Key")
-        Utility.CheckConflict("Forward","Forward Key")
-        Utility.CheckConflict("Back","Back Key")
-        Utility.CheckConflict("Left","Strafe Left Key")
-        Utility.CheckConflict("Right","Strafe Right Key")
-        Utility.CheckConflict("TLeft","Turn Left Key")
-        Utility.CheckConflict("TRight","Turn Right Key")
-        Utility.CheckConflict("AutoRun","AutoRun Key")
-        Utility.CheckConflict("Follow","Follow Key")
-
-        if (self.GetState('NonSoD'))       : Utility.CheckConflict("NonSoDMode","NonSoD Key")
-        if (self.GetState('Base'))         : Utility.CheckConflict("BaseMode","Sprint Mode Key")
-        if (self.GetState('SSSS'))         : Utility.CheckConflict("RunMode","Speed Mode Key")
-        if (self.GetState('JumpCJ')
-                or self.GetState('JumpSJ') ): Utility.CheckConflict("JumpMode","Jump Mode Key")
-        if (self.GetState('FlyHover')
-                or self.GetState('FlyFly') ): Utility.CheckConflict("FlyMode","Fly Mode Key")
-        if (self.GetState('FlyQFly')
-                and (profile.General.GetState('Archetype') == "Peacebringer")): Utility.CheckConflict("QFlyMode","Q.Fly Mode Key")
-        if (self.GetState('TP') and self.GetState('TPEnable')):
-            Utility.CheckConflict(self.GetState('TP'),"ComboKey","TP ComboKey")
-            Utility.CheckConflict(self.GetState('TP'),"ResetKey","TP ResetKey")
-
-            TPQuestion = "Teleport Bind"
-            if (profile.General.GetState('Archetype') == "Peacebringer") :
-               TPQuestion = "Dwarf Step Bind"
-            elif (profile.General.GetState('Archetype') == "Warshade") :
-               TPQuestion = "Shd/Dwf Step Bind"
-
-            Utility.CheckConflict(self.GetState('TP'),"BindKey", TPQuestion)
-
-            if (self.GetState('FlyGFly')): Utility.CheckConflict("GFlyMode","Group Fly Key")
-        if (self.GetState('TTP') and self.GetState('TTPEnable')):
-            Utility.CheckConflict(self.GetState('TTP'),"ComboKey","TTP ComboKey")
-            Utility.CheckConflict(self.GetState('TTP'),"ResetKey","TTP ResetKey")
-            Utility.CheckConflict(self.GetState('TTP'),"BindKey","Team TP Bind")
-
-        if (self.GetState('Temp') and self.GetState('TempEnable')):
-            Utility.CheckConflict("TempMode","Temp Mode Key")
-            Utility.CheckConflict(self.GetState('Temp'),"TraySwitch","Tray Toggle Key")
-
-        if ((self.Profile.General.GetState('Archetype') == "Peacebringer") or (self.Profile.General.GetState('Archetype') == "Warshade")) :
-            if (self.GetState('Nova')  and self.GetState('NovaEnable')): Utility.CheckConflict(self.GetState('Nova'), "Mode","Nova Form Bind")
-            if (self.GetState('Dwarf') and self.GetState('DwarfEnable')): Utility.CheckConflict(self.GetState('Dwarf'),"Mode","Dwarf Form Bind")
+#    def findconflicts(self):
+#        Utility.CheckConflict("Up","Up Key")
+#        Utility.CheckConflict("Down","Down Key")
+#        Utility.CheckConflict("Forward","Forward Key")
+#        Utility.CheckConflict("Back","Back Key")
+#        Utility.CheckConflict("Left","Strafe Left Key")
+#        Utility.CheckConflict("Right","Strafe Right Key")
+#        Utility.CheckConflict("TLeft","Turn Left Key")
+#        Utility.CheckConflict("TRight","Turn Right Key")
+#        Utility.CheckConflict("AutoRun","AutoRun Key")
+#        Utility.CheckConflict("Follow","Follow Key")
+#
+#        if (self.GetState('NonSoD'))       : Utility.CheckConflict("NonSoDMode","NonSoD Key")
+#        if (self.GetState('Base'))         : Utility.CheckConflict("BaseMode","Sprint Mode Key")
+#        if (self.GetState('SSSS'))         : Utility.CheckConflict("RunMode","Speed Mode Key")
+#        if (self.GetState('JumpCJ')
+#                or self.GetState('JumpSJ') ): Utility.CheckConflict("JumpMode","Jump Mode Key")
+#        if (self.GetState('FlyHover')
+#                or self.GetState('FlyFly') ): Utility.CheckConflict("FlyMode","Fly Mode Key")
+#        if (self.GetState('FlyQFly')
+#                and (profile.General.GetState('Archetype') == "Peacebringer")): Utility.CheckConflict("QFlyMode","Q.Fly Mode Key")
+#        if (self.GetState('TP') and self.GetState('TPEnable')):
+#            Utility.CheckConflict(self.GetState('TP'),"ComboKey","TP ComboKey")
+#            Utility.CheckConflict(self.GetState('TP'),"ResetKey","TP ResetKey")
+#
+#            TPQuestion = "Teleport Bind"
+#            if (profile.General.GetState('Archetype') == "Peacebringer") :
+#               TPQuestion = "Dwarf Step Bind"
+#            elif (profile.General.GetState('Archetype') == "Warshade") :
+#               TPQuestion = "Shd/Dwf Step Bind"
+#
+#            Utility.CheckConflict(self.GetState('TP'),"BindKey", TPQuestion)
+#
+#            if (self.GetState('FlyGFly')): Utility.CheckConflict("GFlyMode","Group Fly Key")
+#        if (self.GetState('TTP') and self.GetState('TTPEnable')):
+#            Utility.CheckConflict(self.GetState('TTP'),"ComboKey","TTP ComboKey")
+#            Utility.CheckConflict(self.GetState('TTP'),"ResetKey","TTP ResetKey")
+#            Utility.CheckConflict(self.GetState('TTP'),"BindKey","Team TP Bind")
+#
+#        if (self.GetState('Temp') and self.GetState('TempEnable')):
+#            Utility.CheckConflict("TempMode","Temp Mode Key")
+#            Utility.CheckConflict(self.GetState('Temp'),"TraySwitch","Tray Toggle Key")
+#
+#        if ((self.Profile.General.GetState('Archetype') == "Peacebringer") or (self.Profile.General.GetState('Archetype') == "Warshade")) :
+#            if (self.GetState('Nova')  and self.GetState('NovaEnable')): Utility.CheckConflict(self.GetState('Nova'), "Mode","Nova Form Bind")
+#            if (self.GetState('Dwarf') and self.GetState('DwarfEnable')): Utility.CheckConflict(self.GetState('Dwarf'),"Mode","Dwarf Form Bind")
 
 
     #  toggleon variation
@@ -2243,7 +2233,7 @@ class SoD(Page):
 
     def sodJumpFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
 
-        filename = t['path']("${autofollowmode}j",suffix)
+        filename = t['path'](f"{autofollowmode}j",suffix)
         tglfile = profile.GetBindFile(filename)
         t['ini'] = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
@@ -2256,7 +2246,7 @@ class SoD(Page):
         else:
             pathsuffix = "a"
 
-        filename = t['path']("$autofollowmodepathsuffix",suffix)
+        filename = t['path'](f"{autofollowmode}{pathsuffix}",suffix)
         tglfile = profile.GetBindFile(filename)
         t['ini'] = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)

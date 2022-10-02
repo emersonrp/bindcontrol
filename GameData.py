@@ -2498,6 +2498,14 @@ MiscPowers = {
     },
 }
 
+SprintPowers = [
+    "Sprint",
+    "Prestige Power Slide",
+    "Prestige Power Dash",
+    "Prestige Power Quick",
+    "Prestige Power Rush",
+    "Prestige Power Slide",
+]
 
 Inspirations = {
     'Accuracy'     : {

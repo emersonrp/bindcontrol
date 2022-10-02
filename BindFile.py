@@ -1,14 +1,19 @@
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from KeyBind import KeyBind
 from collections import deque
 
 class BindFile():
 
     def __init__(self, profile, *pathbits):
-        self.BindsDir = profile.BindsDir()
-        pathbits = (self.BindsDir, *pathbits)
 
-        self.Path = Path(*pathbits)
+        self.BindsDir     = profile.BindsDir()
+        self.GameBindsDir = profile.GameBindsDir()
+
+        filepathbits = (self.BindsDir, *pathbits)
+        gamepathbits = (self.GameBindsDir, *pathbits)
+
+        self.Path     = Path(*filepathbits)
+        self.GamePath = PureWindowsPath(*gamepathbits)
 
         self.KeyBinds = {}
 
@@ -27,11 +32,11 @@ class BindFile():
 
     # Windows path b/c the game will use it.
     def BaseReset(self):
-        return f'bind_load_file {self.BindsDir}\\subreset.txt'
+        return f'bind_load_file {self.GameBindsDir}\\subreset.txt'
 
     # TODO - make "silent" an option, and the default
     def BLF(self):
-        return f'bindloadfile {self.Path}'
+        return f'bindloadfile {self.GamePath}'
 
     def Write(self):
         try:

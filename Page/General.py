@@ -25,6 +25,7 @@ class General(Page):
             # TODO - find CoH install and put them there?
             # TODO - help text about WINEPREFIX etc for Mac/Linux users
             'BindsDir': str(Path.home().joinpath("cohbinds")),
+            'GameBindsDir' : "Z:\\cohbinds\\",
             'ResetKey': 'LCTRL+R',
             'ResetFeedback': 1,
             'Pool1': '',
@@ -52,7 +53,6 @@ class General(Page):
             ctlName = 'Origin',
             ctlType = 'bmcombo',
             contents = originchoices,
-            tooltip = '',
             callback = self.OnPickOrigin,
         )
 
@@ -63,56 +63,48 @@ class General(Page):
             ctlName = 'Archetype',
             ctlType = 'bmcombo',
             contents = archchoices,
-            tooltip = '',
             callback = self.OnPickArchetype,
         )
         powersBox.AddControl(
             ctlName = 'Primary',
             ctlType = 'choice',
             # contents = sorted(ArchData['Primary']),
-            tooltip = '',
             callback = self.OnPickPrimaryPowerSet,
         )
         powersBox.AddControl(
             ctlName = 'Secondary',
             ctlType = 'choice',
             # contents = sorted(ArchData['Secondary']),
-            tooltip = '',
             callback = self.OnPickSecondaryPowerSet,
         )
         powersBox.AddControl(
             ctlName = 'Epic',
             ctlType = 'choice',
             # contents = sorted(ArchData['Epic']),
-            tooltip = '',
             callback = self.OnPickEpicPowerSet,
         )
         powersBox.AddControl(
             ctlName = 'Pool1',
             ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
-            tooltip = '',
             callback = self.OnPickPoolPower,
         )
         powersBox.AddControl(
             ctlName = 'Pool2',
             ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
-            tooltip = '',
             callback = self.OnPickPoolPower,
         )
         powersBox.AddControl(
             ctlName = 'Pool3',
             ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
-            tooltip = '',
             callback = self.OnPickPoolPower,
         )
         powersBox.AddControl(
             ctlName = 'Pool4',
             ctlType = 'choice',
             contents = sorted(MiscPowers['Pool']),
-            tooltip = '',
             callback = self.OnPickPoolPower,
         )
 
@@ -121,6 +113,12 @@ class General(Page):
             ctlName = 'BindsDir',
             ctlType = 'dirpicker',
         )
+        if (wx.Platform != '__WXMSW__'):
+            prefsBox.AddControl(
+                ctlName = 'GameBindsDir',
+                ctlType = 'text',
+                tooltip = 'When playing via Wine, the game\'s file paths will be different than the native ones.  Put a Windows path into this box that describes where Wine will find the above directory.',
+            )
         prefsBox.AddControl(
             ctlName = 'ResetKey',
             ctlType = 'keybutton',
@@ -158,7 +156,6 @@ class General(Page):
 
     def PopulateBindFiles(self):
         resetfile = self.Profile.ResetFile()
-
         # TODO - the toggling of sprint is probably an SoD option
         resetfile.SetBind(self.Ctrls['ResetKey'].MakeFileKeyBind(
                     [
@@ -239,6 +236,7 @@ class General(Page):
 
     UI.Labels.update({
         'BindsDir'        : 'Base Binds Directory',
+        'GameBindsDir'    : 'In-Game Binds Directory',
         'ResetFile'       : 'Reset All Binds file',
         'ResetKey'        : 'Reset All Binds',
         'ResetFeedback'   : 'Enable Reset Feedback Self-/tell',

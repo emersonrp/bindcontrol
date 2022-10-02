@@ -1032,7 +1032,7 @@ class SoD(Page):
             windowshow = ''
 
 
-        t['basepath'] = profile.BindsDir()
+        t['basepath'] = profile.GameBindsDir()
 
         t['subdirg'] = str(Path(t['basepath'], "R"))
         t['subdira'] = str(Path(t['basepath'], "F"))

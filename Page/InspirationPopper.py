@@ -1,6 +1,6 @@
 import wx
 import UI
-from Utility import ChatColors, CheckConflict, DisableControls
+from Utility import ChatColors, CheckConflict
 from Page import Page
 from GameData import Inspirations
 from UI.ControlGroup import ControlGroup
@@ -129,7 +129,7 @@ class InspirationPopper(Page):
             controls.append(f"{Insp}Background")
             controls.append(f"{Insp}Foreground")
         self.Freeze()
-        DisableControls(self, self.useCB.IsChecked(), controls)
+        self.DisableControls(self.useCB.IsChecked(), controls)
         if self.disableTellsCB.IsChecked():
             self.OnDisableTellCB()
         self.Thaw()
@@ -142,7 +142,7 @@ class InspirationPopper(Page):
             controls.append(f"Rev{Insp}Background")
             controls.append(f"Rev{Insp}Foreground")
         self.Freeze()
-        DisableControls(self, self.useRevCB.IsChecked(), controls)
+        self.DisableControls(self.useRevCB.IsChecked(), controls)
         if self.disableTellsCB.IsChecked():
             self.OnDisableTellCB()
         self.Thaw()
@@ -159,9 +159,9 @@ class InspirationPopper(Page):
             revcontrols.append(f"Rev{Insp}Background")
             revcontrols.append(f"Rev{Insp}Foreground")
         if self.useCB.IsChecked():
-            DisableControls(self, enabled, controls)
+            self.DisableControls(enabled, controls)
         if self.useRevCB.IsChecked():
-            DisableControls(self, enabled, revcontrols)
+            self.DisableControls(enabled, revcontrols)
 
 
     def PopulateBindFiles(self):

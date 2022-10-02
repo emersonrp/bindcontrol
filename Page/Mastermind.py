@@ -1,6 +1,5 @@
 import wx
 import UI
-from Utility import DisableControls
 from KeyBind.FileKeyBind import FileKeyBind
 
 # Sandolphan / Khaiba's guide to these controls found at:
@@ -331,10 +330,10 @@ class Mastermind(Page):
         self.Freeze()
         enabled = self.GetState('PetCmdEnable')
         for command in self.petCommandKeyDefinitions:
-            DisableControls(self, enabled, [
+            self.DisableControls(enabled, [
                 command['ctrlName'], command['ctrlName']+"ResponseMethod", command['ctrlName']+"Response"
             ])
-        DisableControls(self, enabled,
+        self.DisableControls(enabled,
             [ 'PetChatToggle', 'PetBodyguard',
              'PetBodyguardResponseMethod', 'PetBodyguardResponse', 'PetBodyguardAttack',
              'PetBodyguardAttackEnabled', 'PetBodyguardGoto', 'PetBodyguardGotoEnabled' ])
@@ -344,7 +343,7 @@ class Mastermind(Page):
     def OnPetSelEnable(self, evt = None):
         enabled = self.GetState('PetSelEnable')
         for i in range(1,7):
-            DisableControls(self, enabled, [
+            self.DisableControls(enabled, [
                 f"Pet{i}Name", f"Pet{i}Bodyguard", f"PetSelect{i}"
             ])
 

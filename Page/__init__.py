@@ -72,6 +72,14 @@ class Page(wx.Panel):
         else:
             print(f"{control} has no SetValue()")
 
+
+    # disable controls by name
+    def DisableControls(self, enabled, names):
+        for name in names:
+            self.Ctrls[name].Enable(enabled)
+            if self.Ctrls[name].ctlLabel:
+                self.Ctrls[name].ctlLabel.Enable(enabled)
+
     ##### stubs for overriding (shoes for industry!)
     def SynchronizeUI(self):
         return

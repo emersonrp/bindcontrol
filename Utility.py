@@ -18,31 +18,20 @@ def BLF(profile, *args):
     return "bindloadfile " + BLFPath(profile, *args)
 
 def BLFPath(profile, *args):
-    # TODO TODO TODO -- os-agnostic please
-    filepath = profile.BindsDir()
+    filepath = profile.GameBindsDir()
     for arg in args:
         filepath = filepath + "/" + arg
-
     return filepath
 
 Icons = {}
 def Icon(iconname):
     if not Icons.get('iconname', None):
-        # TODO - platform-agnostic file paths
         Icons[iconname] = wx.Bitmap(
             wx.Image(
                 f"icons/{iconname}.png", wx.BITMAP_TYPE_ANY, -1,
             )
         )
     return Icons[iconname]
-
-#####
-# disable controls by name
-def DisableControls(page, enabled, names):
-    for name in names:
-        page.Ctrls[name].Enable(enabled)
-        if page.Ctrls[name].ctlLabel:
-            page.Ctrls[name].ctlLabel.Enable(enabled)
 
 
 #####################################################
@@ -53,6 +42,7 @@ def CheckConflict(profile, key):
     for pageName in profile.Pages:
         page = getattr(profile, pageName, None)
         for ctrlname, ctrl in page.Ctrls.items():
+            # TODO TODO TODO this next line is breaking this on Win wxpython 4.2.0
             if not ctrl.IsEnabled(): continue
             if isinstance(ctrl, bcKeyButton):
                 if key == ctrl.GetLabel():

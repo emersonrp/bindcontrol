@@ -1,7 +1,7 @@
 import wx
 import UI
 import BindFile
-from Utility import BLF, CheckConflict, DisableControls, Icon
+from Utility import BLF, CheckConflict, Icon
 
 from UI.ControlGroup import ControlGroup
 from Page import Page
@@ -217,7 +217,7 @@ class Gameplay(Page):
         self.OnTypeEnable()
 
     def OnTPSEnable(self, evt = None):
-        DisableControls(self, self.GetState('TPSEnable'),
+        self.DisableControls(self.GetState('TPSEnable'),
             ['TPSSelMode','TeamSelect1','TeamSelect2','TeamSelect3',
             'TeamSelect4', 'TeamSelect5','TeamSelect6','TeamSelect7',
             'TeamSelect8',
@@ -228,11 +228,11 @@ class Gameplay(Page):
             'SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize'])
 
     def OnFPSEnable(self, evt = None):
-        DisableControls(self, self.GetState('FPSEnable'),
+        self.DisableControls(self.GetState('FPSEnable'),
             ['FPSBindKey','NetgraphBindKey'])
 
     def OnChatEnable(self, evt = None):
-        DisableControls(self, self.GetState('ChatEnable'),
+        self.DisableControls(self.GetState('ChatEnable'),
             ['StartChat','SlashChat','StartEmote','AutoReply',
              'TellTarget','QuickChat', 'TypingNotifierEnable', 'TypingNotifier'])
         self.OnTypeEnable()
@@ -240,7 +240,7 @@ class Gameplay(Page):
     def OnTypeEnable(self, evt = None):
         chatenabled = self.GetState('ChatEnable')
         typeenabled = self.GetState('TypingNotifierEnable')
-        DisableControls(self, chatenabled and typeenabled, ['TypingNotifier'])
+        self.DisableControls(chatenabled and typeenabled, ['TypingNotifier'])
 
     def PopulateBindFiles(self):
 

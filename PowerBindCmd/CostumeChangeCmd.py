@@ -25,7 +25,6 @@ class CostumeChangeCmd(PowerBindCmd):
         costumeNumber = self.costumeChangeCostume.GetSelection() + 1
         costumeEmote  = self.costumeChangeEmote.GetSelection()
 
-        print(f"costumeEmote is {costumeEmote}")
         if costumeEmote: # None, or 0 == "- None -"
             ccCmd = 'cce'
             emoteName = self.costumeChangeEmote.GetString(costumeEmote)

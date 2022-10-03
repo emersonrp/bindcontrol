@@ -599,20 +599,20 @@ class SoD(Page):
         key = t['NonSoDMode']
         if not key: return
 
-        if p['SoD']['Feedback']: feedback = (fb or '$$t $name, Non-SoD Mode')
-        else:                    feedback = ''
+        if self.GetState('Feedback'): feedback = (fb or '$$t $name, Non-SoD Mode')
+        else:                         feedback = ''
 
         if t['ini'] == None: t['ini'] = ''
 
         if (bl == "r"):
-            bindload = t['bl']('n')
+            bindload = t.bl('n')
             if (fix):
                 fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,'',feedback)
             else:
                 cur.SetBind(key, t['ini'] + self.actPower_toggle(None,1,None,toff) + t + dirs('UDFBLR') + t['detailhi'] + t['runcamdist'] + feedback + bindload)
 
         elif (bl == "ar"):
-            bindload = t['bl']('an')
+            bindload = t.bl('an')
             if (fix):
                 fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"a",feedback)
             else:
@@ -622,7 +622,7 @@ class SoD(Page):
             if (fix):
                 fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"f",feedback)
             else:
-                cur.SetBind(key, t['ini'] + self.actPower_toggle(None,1,None,toff) + t['detailhi'] + t['runcamdist'] + '$$up 0' + feedback + t['bl']('fn'))
+                cur.SetBind(key, t['ini'] + self.actPower_toggle(None,1,None,toff) + t['detailhi'] + t['runcamdist'] + '$$up 0' + feedback + t.bl('fn'))
         t['ini'] = ''
 
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
@@ -630,23 +630,23 @@ class SoD(Page):
         key = t['TempMode']
         if not key: return
 
-        if p['SoD']['Feedback']: feedback = '$$t $name, Temp Mode'
-        else:                    feedback = ''
+        if self.GetState('Feedback'): feedback = '$$t $name, Temp Mode'
+        else:                         feedback = ''
 
         if not t['ini']: t['ini'] = ''
-        trayslot = "1 p['SoD']['TempTray']"
+        trayslot = f"1 {self.GetState('TempTray')}"
 
         if (bl == "r"):
-            bindload = t['bl']('t')
+            bindload = t.bl('t')
             cur.SetBind(key, t['ini'] + self.actPower(None,1,trayslot,toff) + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
         elif (bl == "ar"):
-            bindload  = t['bl']('at')
-            bindload2 = t['bl']('at','_t')
+            bindload  = t.bl('at')
+            bindload2 = t.bl('at','_t')
             tgl = p.GetBindFile(bindload2)
             cur.SetBind(key, t['in'] + self.actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
             tgl.SetBind(key, t['in'] + self.actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
         else:
-            cur.SetBind(key, t['ini'] + self.actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + feedback + t['bl']('ft'))
+            cur.SetBind(key, t['ini'] + self.actPower(None,1,trayslot,toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + feedback + t.bl('ft'))
 
         t['ini'] = ''
 
@@ -660,14 +660,14 @@ class SoD(Page):
             cur.SetBind(key, "powexecname Quantum Flight")
             return
 
-        if p['SoD']['Feedback']: feedback = '$$t $name, QFlight Mode'
-        else:                    feedback = ''
+        if self.GetState('Feedback'): feedback = '$$t $name, QFlight Mode'
+        else:                         feedback = ''
 
         if not t['ini']: t['ini'] = ''
 
         if (bl == "r"):
-            bindload  = t['bl']('n')
-            bindload2 = t['bl']('n'+'_q')
+            bindload  = t.bl('n')
+            bindload2 = t.bl('n'+'_q')
             tgl = p.GetBindFile(bindload2)
 
             if (modestr == 'Nova' or modestr == 'Dwarf'): tray = '$$gototray 1'
@@ -677,13 +677,13 @@ class SoD(Page):
             tgl.SetBind(key, t['ini'] + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
 
         elif (bl == "ar"):
-            bindload  = t['bl']('an')
-            bindload2 = t['bl']('an','_t')
+            bindload  = t.bl('an')
+            bindload2 = t.bl('an','_t')
             tgl = p.GetBindFile(bindload2)
             cur.SetBind(key, t['in'] + self.actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
             tgl.SetBind(key, t['in'] + self.actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + t.dirs('DLR') + feedback + bindload)
         else:
-            cur.SetBind(key, t['ini'] + self.actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + feedback + t['bl']('fn'))
+            cur.SetBind(key, t['ini'] + self.actPower(None,1,'Quantum Flight', toff) + t['detaillo'] + t['flycamdist'] + '$$up 0' + feedback + t.bl('fn'))
 
         t['ini'] = ''
 
@@ -692,13 +692,13 @@ class SoD(Page):
         key = t['BaseMode']
         if not key: return
 
-        if p['SoD']['Feedback']: feedback = (fb or '$$t $name, Sprint-SoD Mode')
-        else:                    feedback = ''
+        if self.GetState('Feedback'): feedback = (fb or '$$t $name, Sprint-SoD Mode')
+        else:                         feedback = ''
 
         if not t['ini']: t['ini'] = ''
 
         if (bl == "r"):
-            bindload  = t['bl']()
+            bindload  = t.bl()
 
             if t['horizkeys']: sprint = t['sprint']
             else:              sprint = ''
@@ -710,7 +710,7 @@ class SoD(Page):
                 cur.SetBind(key, t['ini'] + ton + t.dirs('UDFBLR') + t['detailhi'] + t['runcamdist'] + feedback + bindload)
 
         elif (bl == "ar"):
-            bindload  = t['bl']('gr')
+            bindload  = t.bl('gr')
 
             if (fix):
                 fix(p,t,key, self.makeBaseModeKey,"r",bl,cur,toff,"a",feedback)
@@ -721,7 +721,7 @@ class SoD(Page):
             if (fix):
                 fix(p,t,key, self.makeBaseModeKey,"r",bl,cur,toff,"f",feedback)
             else:
-                cur.SetBind(key, t['ini'] + self.actPower_toggle(1,1,t['sprint'], toff) + t['detailhi'] + t['runcamdist'] + '$$up 0' + fb + t['bl']('fr'))
+                cur.SetBind(key, t['ini'] + self.actPower_toggle(1,1,t['sprint'], toff) + t['detailhi'] + t['runcamdist'] + '$$up 0' + fb + t.bl('fr'))
 
         t['ini'] = ''
 
@@ -768,10 +768,10 @@ class SoD(Page):
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeJumpModeKey(self, p, t, bl, cur, toff, fbl):
         key = t['JumpMode']
-        if (t['canjmp'] and not p['SoD']['JumpSimple']):
+        if (t['canjmp'] and not self.GetState('JumpSimple')):
 
-            if p['SoD']['Feedback']: feedback = '$$t $name, Superjump Mode'
-            else:                    feedback = ''
+            if self.GetState('Feedback'): feedback = '$$t $name, Superjump Mode'
+            else:                         feedback = ''
             tgl = p.GetBindFile(fbl)
 
             if (bl == "j"):
@@ -780,16 +780,16 @@ class SoD(Page):
                 else:
                     a = self.actPower(None,1,t['cjmp'],toff)
 
-                bindload = t['bl']('j')
+                bindload = t.bl('j')
                 tgl.SetBind(key, '-down' + a + t['detaillo'] + t['flycamdist'] + bindload)
-                cur.SetBind(key, '+down' + feedback + BindFile.BLF(p, fbl))
+                cur.SetBind(key, '+down' + feedback + p.BLF(fbl))
             elif (bl == "aj"):
-                bindload = t['bl']('aj')
+                bindload = t.bl('aj')
                 tgl.SetBind(key, '-down' + self.actPower(None,1,t['jump'],toff) + '$$up 1' + t['detaillo'] + t['flycamdist'] + t.dirs('DLR') + bindload)
-                cur.SetBind(key, '+down' + feedback + BindFile.BLF(p, fbl))
+                cur.SetBind(key, '+down' + feedback + p.BLF(fbl))
             else:
-                tgl.SetBind(key, '-down' + self.actPower(None,1,t['jump'],toff) + '$$up 1' + t['detaillo'] + t['flycamdist'] + t['bl']('fj'))
-                cur.SetBind(key, '+down' + feedback + BindFile.BLF(p, fbl))
+                tgl.SetBind(key, '-down' + self.actPower(None,1,t['jump'],toff) + '$$up 1' + t['detaillo'] + t['flycamdist'] + t.bl('fj'))
+                cur.SetBind(key, '+down' + feedback + p.BLF(fbl))
 
 
         t['ini'] = ''
@@ -800,14 +800,14 @@ class SoD(Page):
         key = t['FlyMode']
         if not key: return
 
-        if p['SoD']['Feedback']: feedback = (fb or '$$t $name, Flight Mode')
-        else:                    feedback = ''
+        if self.GetState('Feedback'): feedback = (fb or '$$t $name, Flight Mode')
+        else:                         feedback = ''
 
         if not t['ini']: t['ini'] = ''
 
         if (t['canhov'] + t['canfly'] > 0):
             if (bl == "bo"):
-                bindload = t['bl']('bo')
+                bindload = t.bl('bo')
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
@@ -815,7 +815,7 @@ class SoD(Page):
 
             elif (bl == "a"):
                 if (not fb_on_a): feedback = ''
-                bindload = t['bl']('a')
+                bindload = t.bl('a')
 
                 if t['tkeys']: ton = t['flyx']
                 else:          ton = t['hover']
@@ -826,7 +826,7 @@ class SoD(Page):
                     cur.SetBind(t['FlyMode'],  t['ini'] + self.actPower_toggle(1,1, ton ,toff) + t.dirs('UDLR') + t['detaillo'] + t['flycamdist'] + feedback + bindload)
 
             elif (bl == "af"):
-                bindload = t['bl']('af')
+                bindload = t.bl('af')
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"a",feedback)
                 else:
@@ -836,7 +836,7 @@ class SoD(Page):
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"f",feedback)
                 else:
-                    cur.SetBind(key,  t['ini'] + self.actPower_toggle(1,1,t['flyx'],toff) + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + t['bl']('ff'))
+                    cur.SetBind(key,  t['ini'] + self.actPower_toggle(1,1,t['flyx'],toff) + t.dirs('UDFBLR') + t['detaillo'] + t['flycamdist'] + feedback + t.bl('ff'))
 
         t['ini'] = ''
 
@@ -849,14 +849,14 @@ class SoD(Page):
 
         if (t['cangfly'] > 0):
             if (bl == "gbo"):
-                bindload = t['bl']('gbo')
+                bindload = t.bl('gbo')
                 if (fix):
                     fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,'','')
                 else:
                     cur.SetBind(key, t['ini'] + '$$up 1$$down 0' + self.actPower_toggle(None,1,t['gfly'],toff) + t.dirs('FBLR') + t['detaillo'] + t['flycamdist'] .bindload)
 
             elif (bl == "gaf"):
-                bindload = t['bl']('gaf')
+                bindload = t.bl('gaf')
                 if (fix):
                     fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,"a")
                 else:
@@ -867,9 +867,9 @@ class SoD(Page):
                     fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,"f")
                 else:
                     if (bl == "gf"):
-                        cur.SetBind(key, t['ini'] + self.actPower_toggle(1,1,t['gfly'],toff) + t['detaillo'] + t['flycamdist'] + t['bl']('gff'))
+                        cur.SetBind(key, t['ini'] + self.actPower_toggle(1,1,t['gfly'],toff) + t['detaillo'] + t['flycamdist'] + t.bl('gff'))
                     else:
-                        cur.SetBind(key, t['ini'] + t['detaillo'] + t['flycamdist'] + t['bl']('gff'))
+                        cur.SetBind(key, t['ini'] + t['detaillo'] + t['flycamdist'] + t.bl('gff'))
 
         t['ini'] = ''
 
@@ -941,6 +941,8 @@ class SoD(Page):
             'detailhi'   : '',
             'detaillo'   : '',
             'RunMode'    : '',
+            'JumpMode'   : '',
+            'unqueue'    : ''
         })
 
         if (self.GetState('JumpCJ') and not self.GetState('JumpSJ')):
@@ -948,11 +950,12 @@ class SoD(Page):
             t['cjmp'] = "Combat Jumping"
             t['jump'] = "Combat Jumping"
 
-        if (not self.GetState('JumpCJ') and self.GetState('JumpSJ')):
+        elif (not self.GetState('JumpCJ') and self.GetState('JumpSJ')):
             t['canjmp'] = 1
             t['jump'] = "Super Jump"
             t['jumpifnocj'] = "Super Jump"
 
+        else:
             t['cancj'] = 1
             t['canjmp'] = 1
             t['cjmp'] = "Combat Jumping"
@@ -977,13 +980,11 @@ class SoD(Page):
                 t['hover'] = "Hover"
                 t['flyx'] = "Hover"
                 if (self.GetState('TPTPHover')): t['tphover'] = '$$powexectoggleon Hover'
-
-            if (not self.GetState('FlyHover') and self.GetState('FlyFly')):
+            elif (not self.GetState('FlyHover') and self.GetState('FlyFly')):
                 t['canfly'] = 1
                 t['hover'] = "Fly"
                 t['flyx'] = "Fly"
-
-            if (self.GetState('FlyHover') and self.GetState('FlyFly')):
+            elif (self.GetState('FlyHover') and self.GetState('FlyFly')):
                 t['canhov'] = 1
                 t['canfly'] = 1
                 t['hover'] = "Hover"
@@ -991,14 +992,13 @@ class SoD(Page):
                 t['flyx'] = "Fly"
                 if (self.GetState('TPTPHover')): t['tphover'] = '$$powexectoggleon Hover'
 
-
         if ((profile.General.GetState('Archetype') == "Peacebringer") and self.GetState('FlyQFly')):
             t['canqfly'] = 1
 
-        if (self.GetState('FlyGFly')):
-            t['cangfly'] = 1
-            t['gfly'] = "Group Fly"
-            if (self.GetState('TTPTPGFly')): t['ttpgfly'] = '$$powexectoggleon Group Fly'
+        # if (self.GetState('FlyGFly')):
+        #     t['cangfly'] = 1
+        #     t['gfly'] = "Group Fly"
+        #     if (self.GetState('TTPTPGFly')): t['ttpgfly'] = '$$powexectoggleon Group Fly'
 
         if (self.GetState('RunPrimaryNumber') == 1):
             t['sprint'] = self.GetState('RunSecondary')
@@ -1009,7 +1009,7 @@ class SoD(Page):
             t['canss'] = 1
 
         if self.GetState('Unqueue') : t['unqueue'] = '$$powexecunqueue'
-        else:                      t['unqueue'] = ''
+
         if (self.GetState('AutoMouseLook')):
             t['mlon']  = '$$mouselook 1'
             t['mloff'] = '$$mouselook 0'
@@ -1034,93 +1034,92 @@ class SoD(Page):
 
         t['basepath'] = profile.GameBindsDir()
 
-        t['subdirg'] = str(Path(t['basepath'], "R"))
-        t['subdira'] = str(Path(t['basepath'], "F"))
-        t['subdirj'] = str(Path(t['basepath'], "J"))
-        t['subdirs'] = str(Path(t['basepath'], "S"))
-        t['subdirn'] = str(Path(t['basepath'], "N"))
-        t['subdirt'] = str(Path(t['basepath'], "T"))
-        t['subdirq'] = str(Path(t['basepath'], "Q"))
-        #t['subdirga'] = str(Path(t['basepath'], "GF"))
-        t['subdirar'] = str(Path(t['basepath'], "AR"))
-        t['subdiraf'] = str(Path(t['basepath'], "AF"))
-        t['subdiraj'] = str(Path(t['basepath'], "AJ"))
-        t['subdiras'] = str(Path(t['basepath'], "AS"))
-        #t['subdirgaf'] = str(Path(t['basepath'], "GAF"))
-        t['subdiran'] = str(Path(t['basepath'], "AN"))
-        t['subdirat'] = str(Path(t['basepath'], "AT"))
-        t['subdiraq'] = str(Path(t['basepath'], "AQ"))
-        t['subdirfr'] = str(Path(t['basepath'], "FR"))
-        t['subdirff'] = str(Path(t['basepath'], "FF"))
-        t['subdirfj'] = str(Path(t['basepath'], "FJ"))
-        t['subdirfs'] = str(Path(t['basepath'], "FS"))
-        #t['subdirgff'] = str(Path(t['basepath'], "GFF"))
-        t['subdirfn'] = str(Path(t['basepath'], "FN"))
-        t['subdirft'] = str(Path(t['basepath'], "FT"))
-        t['subdirfq'] = str(Path(t['basepath'], "FQ"))
-        #t: Blastoff mode and setdown mode))
-        t['subdirbo'] = str(Path(t['basepath'], "BO"))
-        t['subdirsd'] = str(Path(t['basepath'], "SD"))
-        #t['subdirgbo'] = str(Path(t['basepath'], "GBO"))
-        #t['subdirgsd'] = str(Path(t['basepath'], "GSD"))
         #turn="+zoomin$$-zoomin"  # a non functioning bind used only to activate the keydown/keyup functions of +commands
         t['turn'] = "+down"  # a non functioning bind used only to activate the keydown/keyup functions of +commands
-        t['path'] = str(Path(t['subdirg'], "R")) # ground subfolder and base filename.  Keep it shortish
-        t['bl'] = "$$bindloadfile " + t['path']
-        t['patha'] = str(Path(t['subdira'], "F")) # air subfolder and base filename
-        t['bla'] = "$$bindloadfile " + t['patha']
-        t['pathj'] = str(Path(t['subdirj'], "J"))
-        t['blj'] = "$$bindloadfile " + t['pathj']
-        t['paths'] = str(Path(t['subdirs'], "S"))
-        t['bls'] = "$$bindloadfile " + t['paths']
-        #t['pathga'] = str(Path(t['subdirga'], "GF")) # air subfolder and base filename
-        #t['blga'] = "$$bindloadfile " + t['pathga']
-        t['pathn'] = str(Path(t['subdirn'], "N")) # ground subfolder and base filename.  Keep it shortish
-        t['bln'] = "$$bindloadfile " + t['pathn']
-        t['patht'] = str(Path(t['subdirt'], "T")) # ground subfolder and base filename.  Keep it shortish
-        t['blt'] = "$$bindloadfile " + t['patht']
-        t['pathq'] = str(Path(t['subdirq'], "Q")) # ground subfolder and base filename.  Keep it shortish
-        t['blq'] = "$$bindloadfile " + t['pathq']
-        t['pathgr'] = str(Path(t['subdirar'], "AR"))  # ground autorun subfolder and base filename
-        t['blgr'] = "$$bindloadfile " + t['pathgr']
-        t['pathaf'] = str(Path(t['subdiraf'], "AF"))  # air autorun subfolder and base filename
-        t['blaf'] = "$$bindloadfile " + t['pathaf']
-        t['pathaj'] = str(Path(t['subdiraj'], "AJ"))
-        t['blaj'] = "$$bindloadfile " + t['pathaj']
-        t['pathas'] = str(Path(t['subdiras'], "AS"))
-        t['blas'] = "$$bindloadfile " + t['pathas']
-        #t['pathgaf'] = str(Path(t['subdirgaf'], "GAF"))  # air autorun subfolder and base filename
-        #t['blgaf'] = "$$bindloadfile " + t['pathgaf']
-        t['pathan'] = str(Path(t['subdiran'], "AN")) # ground subfolder and base filename.  Keep it shortish
-        t['blan'] = "$$bindloadfile " + t['pathan']
-        t['pathat'] = str(Path(t['subdirat'], "AT")) # ground subfolder and base filename.  Keep it shortish
-        t['blat'] = "$$bindloadfile " + t['pathat']
-        t['pathaq'] = str(Path(t['subdiraq'], "AQ")) # ground subfolder and base filename.  Keep it shortish
-        t['blaq'] = "$$bindloadfile " + t['pathaq']
-        t['pathfr'] = str(Path(t['subdirfr'], "FR"))  # Follow Run subfolder and base filename
-        t['blfr'] = "$$bindloadfile " + t['pathfr']
-        t['pathff'] = str(Path(t['subdirff'], "FF"))  # Follow Fly subfolder and base filename
-        t['blff'] = "$$bindloadfile " + t['pathff']
-        t['pathfj'] = str(Path(t['subdirfj'], "FJ"))
-        t['blfj'] = "$$bindloadfile " + t['pathfj']
-        t['pathfs'] = str(Path(t['subdirfs'], "FS"))
-        t['blfs'] = "$$bindloadfile " + t['pathfs']
-        #t['pathgff'] = str(Path(t['subdirgff'], "GFF"))  # Follow Fly subfolder and base filename
-        #t['blgff'] = "$$bindloadfile " + t['pathgff']
-        t['pathfn'] = str(Path(t['subdirfn'], "FN")) # ground subfolder and base filename.  Keep it shortish
-        t['blfn'] = "$$bindloadfile " + t['pathfn']
-        t['pathft'] = str(Path(t['subdirft'], "FT")) # ground subfolder and base filename.  Keep it shortish
-        t['blft'] = "$$bindloadfile " + t['pathat']
-        t['pathfq'] = str(Path(t['subdirfq'], "FQ")) # ground subfolder and base filename.  Keep it shortish
-        t['blfq'] = "$$bindloadfile " + t['pathfq']
-        t['pathbo'] = str(Path(t['subdirbo'], "BO"))  # Blastoff Fly subfolder and base filename
-        t['blbo'] = "$$bindloadfile " + t['pathbo']
-        t['pathsd'] = str(Path(t['subdirsd'], "SD"))  #  SetDown Fly Subfolder and base filename
-        t['blsd'] = "$$bindloadfile " + t['pathsd']
-        #t['pathgbo'] = str(Path(t['subdirgbo'], "GBO"))  # Blastoff Fly subfolder and base filename
-        #t['blgbo'] = "$$bindloadfile " + t['pathgbo']
-        #t['pathgsd'] = str(Path(t['subdirgsd'], "GSD"))  #  SetDown Fly Subfolder and base filename
-        #t['blgsd'] = "$$bindloadfile " + t['pathgsd']
+
+        t['path']    = f"{t['basepath']}/R/R" # ground subfolder and base filename.  Keep it shortish
+        t['bl']      = f"$$bindloadfile {t['path']}"
+
+        t['patha'] = f"{t['basepath']}/F/F" # air subfolder and base filename
+        t['bla'] = f"$$bindloadfile {t['patha']}"
+
+        t['pathj'] = f"{t['basepath']}/J/J"
+        t['blj'] = f"$$bindloadfile {t['pathj']}"
+
+        t['paths'] = f"{t['basepath']}/S/S"
+        t['bls'] = f"$$bindloadfile {t['paths']}"
+
+        #t['pathga'] = f"{t['basepath']}/GF/GF" # air subfolder and base filename
+        #t['blga'] = f"$$bindloadfile {t['pathga']}"
+
+        t['pathn'] = f"{t['basepath']}/N/N" # ground subfolder and base filename.  Keep it shortish
+        t['bln'] = f"$$bindloadfile {t['pathn']}"
+
+        t['patht'] = f"{t['basepath']}/T/T" # ground subfolder and base filename.  Keep it shortish
+        t['blt'] = f"$$bindloadfile {t['patht']}"
+
+        t['pathq'] = f"{t['basepath']}/Q/Q" # ground subfolder and base filename.  Keep it shortish
+        t['blq'] = f"$$bindloadfile {t['pathq']}"
+
+        t['pathgr'] = f"{t['basepath']}/AR/AR"  # ground autorun subfolder and base filename
+        t['blgr'] = f"$$bindloadfile {t['pathgr']}"
+
+        t['pathaf'] = f"{t['basepath']}/AF/AF"  # air autorun subfolder and base filename
+        t['blaf'] = f"$$bindloadfile {t['pathaf']}"
+
+        t['pathaj'] = f"{t['basepath']}/AJ/AJ"
+        t['blaj'] = f"$$bindloadfile {t['pathaj']}"
+
+        t['pathas'] = f"{t['basepath']}/AS/AS"
+        t['blas'] = f"$$bindloadfile {t['pathas']}"
+
+        #t['pathgaf'] = f"{t['basepath']}/GAF/GAF"  # air autorun subfolder and base filename
+        #t['blgaf'] = f"$$bindloadfile {t['pathgaf']}"
+
+        t['pathan'] = f"{t['basepath']}/AN/AN" # ground subfolder and base filename.  Keep it shortish
+        t['blan'] = f"$$bindloadfile {t['pathan']}"
+
+        t['pathat'] = f"{t['basepath']}/AT/AT" # ground subfolder and base filename.  Keep it shortish
+        t['blat'] = f"$$bindloadfile {t['pathat']}"
+
+        t['pathaq'] = f"{t['basepath']}/AQ/AQ" # ground subfolder and base filename.  Keep it shortish
+        t['blaq'] = f"$$bindloadfile {t['pathaq']}"
+
+        t['pathfr'] = f"{t['basepath']}/FR/FR"  # Follow Run subfolder and base filename
+        t['blfr'] = f"$$bindloadfile {t['pathfr']}"
+
+        t['pathff'] = f"{t['basepath']}/FF/FF"  # Follow Fly subfolder and base filename
+        t['blff'] = f"$$bindloadfile {t['pathff']}"
+
+        t['pathfj'] = f"{t['basepath']}/FJ/FJ"
+        t['blfj'] = f"$$bindloadfile {t['pathfj']}"
+
+        t['pathfs'] = f"{t['basepath']}/FS/FS"
+        t['blfs'] = f"$$bindloadfile {t['pathfs']}"
+
+        #t['pathgff'] = f"{t['basepath']}/GFF/GFF"  # Follow Fly subfolder and base filename
+        #t['blgff'] = f"$$bindloadfile {t['pathgff']}"
+
+        t['pathfn'] = f"{t['basepath']}/FN/FN" # ground subfolder and base filename.  Keep it shortish
+        t['blfn'] = f"$$bindloadfile {t['pathfn']}"
+
+        t['pathft'] = f"{t['basepath']}/FT/FT" # ground subfolder and base filename.  Keep it shortish
+        t['blft'] = f"$$bindloadfile {t['pathat']}"
+
+        t['pathfq'] = f"{t['basepath']}/FQ/FQ" # ground subfolder and base filename.  Keep it shortish
+        t['blfq'] = f"$$bindloadfile {t['pathfq']}"
+
+        t['pathbo'] = f"{t['basepath']}/BO/BO"  # Blastoff Fly subfolder and base filename
+        t['blbo'] = f"$$bindloadfile {t['pathbo']}"
+
+        t['pathsd'] = f"{t['basepath']}/SD/SD"  #  SetDown Fly Subfolder and base filename
+        t['blsd'] = f"$$bindloadfile {t['pathsd']}"
+
+        #t['pathgbo'] = f"{t['basepath']}/GBO/GBO"  # Blastoff Fly subfolder and base filename
+        #t['blgbo'] = f"$$bindloadfile {t['pathgbo']}"
+
+        #t['pathgsd'] = f"{t['basepath']}/GSD/GSD"  #  SetDown Fly Subfolder and base filename
+        #t['blgsd'] = f"$$bindloadfile {t['pathgsd']}"
 
 
         # turn = "+zoomin$$-zoomin"  # a non functioning bind used only to activate the keydown/keyup functions of +commands
@@ -1130,11 +1129,11 @@ class SoD(Page):
         # self.SetState('Default', "Base")
         #  set up the keys to be used.
         if (self.GetState('Default') == "NonSoD") : t['NonSoDMode'] = self.GetState('NonSoDMode')
-        if (self.GetState('Default') == "Base")   : t['BaseMode'] = self.GetState('BaseMode')
-        if (self.GetState('Default') == "Fly")    : t['FlyMode'] = self.GetState('FlyMode')
-        if (self.GetState('Default') == "Jump")   : t['JumpMode'] = self.GetState('JumpMode')
-        if (self.GetState('Default') == "Run")    : t['RunMode'] = self.GetState('RunMode')
-    #     if (self.GetState('Default') == "GFly")  : t['GFlyMode'] = self.GetState('GFlyMode')
+        if (self.GetState('Default') == "Base")   : t['BaseMode']   = self.GetState('BaseMode')
+        if (self.GetState('Default') == "Fly")    : t['FlyMode']    = self.GetState('FlyMode')
+        if (self.GetState('Default') == "Jump")   : t['JumpMode']   = self.GetState('JumpMode')
+        if (self.GetState('Default') == "Run")    : t['RunMode']    = self.GetState('RunMode')
+    #    if (self.GetState('Default') == "GFly")   : t['GFlyMode']   = self.GetState('GFlyMode')
         t['TempMode'] = self.GetState('TempMode')
         t['QFlyMode'] = self.GetState('QFlyMode')
 
@@ -1239,8 +1238,10 @@ class SoD(Page):
                                     t[self.GetState('Default') + "Mode"] = None
 
                                 if (t['canjmp']>0 and not (self.GetState('JumpSimple'))):
+                                    jturnoff = ''
                                     t[self.GetState('Default') + "Mode"] = t['JumpMode']
-                                    if (t['jump'] == t['cjmp']): jturnoff = t['jumpifnocj']
+                                    if (t['jump'] == t['cjmp']):
+                                        jturnoff = t['jumpifnocj']
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : 'j',
@@ -1296,26 +1297,26 @@ class SoD(Page):
                                     })
                                     t[self.GetState('Default') + "Mode"] = None
 
-                                if (t['cangfly']):
-                                    t[self.GetState('Default') + "Mode"] = t['GFlyMode']
-                                    self.makeSoDFile({
-                                        't' : t,
-                                        'bl' : 'a',
-                                        'bla' : 'af',
-                                        'blf' : 'ff',
-                                        'path' : 'ga',
-                                        'patha' : 'gaf',
-                                        'pathf' : 'gff',
-                                        'mobile' : t['gfly'],
-                                        'stationary' : t['gfly'],
-                                        'modestr' : "GFly",
-                                        'flight' : "GFly",
-                                        'pathbo' : 'gbo',
-                                        'pathsd' : 'gsd',
-                                        'blbo' : 'gbo',
-                                        'blsd' : 'gsd',
-                                    })
-                                    t[self.GetState('Default') + "Mode"] = None
+                                # if (t['cangfly']):
+                                #     t[self.GetState('Default') + "Mode"] = t['GFlyMode']
+                                #     self.makeSoDFile({
+                                #         't' : t,
+                                #         'bl' : 'a',
+                                #         'bla' : 'af',
+                                #         'blf' : 'ff',
+                                #         'path' : 'ga',
+                                #         'patha' : 'gaf',
+                                #         'pathf' : 'gff',
+                                #         'mobile' : t['gfly'],
+                                #         'stationary' : t['gfly'],
+                                #         'modestr' : "GFly",
+                                #         'flight' : "GFly",
+                                #         'pathbo' : 'gbo',
+                                #         'pathsd' : 'gsd',
+                                #         'blbo' : 'gbo',
+                                #         'blsd' : 'gsd',
+                                #     })
+                                #     t[self.GetState('Default') + "Mode"] = None
 
                                 if (self.GetState('Temp') and self.GetState('TempEnable')):
                                     trayslot = "1 " + self.GetState('TempTray')
@@ -1372,7 +1373,6 @@ class SoD(Page):
         else:
             normalTPPower = "powexecname Teleport"
             teamTPPower   = "powexecname Team Teleport"
-
 
         if (self.GetState('Human') and self.GetState('HumanEnable')):
             humanBindKey = self.GetState('HumanMode')
@@ -1482,7 +1482,6 @@ class SoD(Page):
 
             dwrffile.SetBind(self.Ctrls['ToggleKey'].MakeFileKeyBind("t $name, Changing to Human Form, Normal Mode$fullstop\$\$powexectoggleoff Dwarf['Dwarf']\$\$gototray 1" + profile.BLF('reset.txt')))
 
-
         if (self.GetState('JumpSimple')):
             if (self.GetState('JumpCJ') and self.GetState('JumpSJ')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Super Jump$$powexecname Combat Jumping'))
@@ -1490,8 +1489,6 @@ class SoD(Page):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Super Jump'))
             elif (self.GetState('JumpCJ')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Combat Jumping'))
-
-
 
         if (self.GetState('TP') and self.GetState('TPEnable') and not normalTPPower):
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('nop'))
@@ -1501,7 +1498,7 @@ class SoD(Page):
         if (self.GetState('TP') and self.GetState('TPEnable') and not (profile.General.GetState('Archetype') == "Peacebringer") and normalTPPower):
             tphovermodeswitch = ''
             if (t['tphover'] == ''):
-                tphovermodeswitch = re.sub('\d\d\d\d\d\d', '000000', t['bl']('r'))
+                tphovermodeswitch = re.sub('\d\d\d\d\d\d', '000000', t.bl('r'))
 
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + normalTPPower + t['detaillo'] + t['flycamdist'] + windowhide + profile.BLF('tp','tp_on1.txt')))
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
@@ -1548,7 +1545,6 @@ class SoD(Page):
         if (moddir == 'down'): d = 1
         else:                  d = 0
 
-        # TODO, BLF is on the Bindfile objects now.
         curfile.SetBind(p.General.Ctrls['ResetKey'].MakeFileKeyBind(
                 f'up {u} $$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
                 str(turnoff) + '$$t $name, SoD Binds Reset' + curfile.BaseReset() + curfile.BLF() # <- that might not be right
@@ -1594,6 +1590,7 @@ class SoD(Page):
 
 
         toggleon = mobile
+        toggleoff2 = ''
         if (actkeys == 0):
            ml = t['mlon']
            toggleon = mobile
@@ -1621,11 +1618,9 @@ class SoD(Page):
                else: #  otherwise turn on the stationary power..
                    toggleon = stationary
 
-
         toggle = ''
         if (toggleon or toggleoff):
            toggle = self.actPower_name(None,1,toggleon,toggleoff,toggleoff2)
-
 
         newbits = t.KeyState({'toggle' : 'space'})
         bl = re.sub('\d\d\d\d\d\d', newbits, bl)
@@ -1682,7 +1677,6 @@ class SoD(Page):
         else:
            toggleon = None
 
-
         if (t['totalkeys'] == 1 and t['X'] == 1):
            ml = t['mloff']
            if (not (stationary and mobile == stationary)): toggleoff = mobile
@@ -1690,11 +1684,9 @@ class SoD(Page):
         else:
             toggleoff = None
 
-
         toggle = ''
         if (toggleon or toggleoff):
            toggle = self.actPower_name(None,1,toggleon,toggleoff)
-
 
         newbits =t.KeyState({'toggle' : 'X'})
         bl = re.sub('\d\d\d\d\d\d', newbits, bl)
@@ -1734,7 +1726,6 @@ class SoD(Page):
                 (t['X'] == 1)
                 ): up = '$$up 0'
            else : up = '$$up 1'
-
 
         toggleon = mobile
         if (t['totalkeys'] == 0) :
@@ -1810,7 +1801,6 @@ class SoD(Page):
            else:                                      up = '$$up 1'
 
            if (t['X'] == 1) : up = '$$up 0'
-
 
         toggleon = mobile
         if (t['totalkeys'] == 0):
@@ -2098,93 +2088,88 @@ class SoD(Page):
 
     #  toggleon variation
     def actPower_toggle(self, start, unq, on, *rest):
-        # if (refon):
+        s = ''
+        if not isinstance(on, str):
             #  deal with power slot stuff..
-           # traytest = on['trayslot']
-
-        return ""
+          traytest = on['trayslot']
 
         offpower = {}
-        # # TODO this will simply not work yet
-        # for v in rest:
-        #     if (ref(v)):
-        #         while (my ($j,w) = each %$v):
-        #             if (w and w ne 'on' and not offpower[$w]):
-        #                 if (refw):
-        #                     if ($w['trayslot'] == traytest):
-        #                        s = s + '$$powexectray ' + w['trayslot']
-        #                        unq = 1
 
-        #                 else:
-        #                    offpower['w'] = 1
-        #                    s .= '$$powexectoggleoff ' + w
+        for v in rest:
+            if v and not isinstance(v, str):
+                for j, w in v.items():
+                    if (w and w != 'on' and not offpower[w]):
+                        if not isinstance(w, str):
+                            if (w['trayslot'] == traytest):
+                               s = s + '$$powexectray ' + w['trayslot']
+                               unq = 1
 
-        #         if ($v['trayslo'] andv['trayslot'] ==traytest) {
-        #            s =s + '$$powexectray ' + v['trayslot']
-        #            unq = 1
+                        else:
+                           offpower['w'] = 1
+                           s = s + '$$powexectoggleoff ' + w
 
-        #     else:
-        #         if ($v and ($v ne 'on') and not offpower[$v]) {
-        #            offpower[$v] = 1
-        #            s .= '$$powexectoggleoff ' + v
+                if (v['trayslot'] and v['trayslot'] == traytest):
+                   s = s + '$$powexectray ' + v['trayslot']
+                   unq = 1
 
-        # if ($unq ands):
-        #    s .= '$$powexecunqueue'
+            else:
+                if (v and (v != 'on') and not offpower.get(v, None)):
+                   offpower[v] = 1
+                   s = s + '$$powexectoggleoff ' + v
 
-        # # if start then s = string.sub(s,3,string.len(s)) end
-        # if ($on):
-        #     if (refon):
-        #         #  deal with power slot stuff..
-        #        s .= '$$powexectray '.$on['trayslot'] + '$$powexectray ' + on['trayslot']
-        #     else:
-        #        s .= '$$powexectoggleon ' + on
+        if (unq and s):
+           s = s + '$$powexecunqueue'
 
-        # return s
+        # if start then s = string.sub(s,3,string.len(s)) end
+        if (on):
+            if not (isinstance(on, str)):
+                #  deal with power slot stuff..
+               s = s + '$$powexectray '.on['trayslot'] + '$$powexectray ' + on['trayslot']
+            else:
+               s = s + '$$powexectoggleon ' + on
+
+        return s
 
 
     def actPower_name(self, start, unq, on,*rest):
         s = ''
-        #if (ref on):
-            #  deal with power slot stuff..
-           #traytest = on['trayslot']
+        if not isinstance(on, str):
+           #  deal with power slot stuff..
+           traytest = on['trayslot']
 
-        # # TODO - reimplement this in Python re 'ref' etc
-        # for v in rest:
-        #     if (not ref(v)):
-        #         if (v and v ne 'on'):
-        #            s .= '$$powexecname ' + v
+        for v in rest:
+            if isinstance(v, str):
+                if (v and v != 'on'):
+                   s = s + '$$powexecname ' + v
 
-        #     else: #v is a ref
-        #         while (my (None,w) = each %$v) {
-        #             if ($w andw ne 'on'):
-        #                 if (refw):
-        #                     if ($w['trayslot'] ==traytest) {
-        #                        s .= '$$powexectray ' + w['trayslot']
-
-        #                 else:
-        #                    s .= '$$powexecname ' + w
+            elif v: #v is a dict
+                for _,w in v.items():
+                    if (w and w != 'on'):
+                        if isinstance(w, str):
+                           s = s + '$$powexecname ' + w
+                        else:
+                           if (w['trayslot'] == traytest):
+                               s = s + '$$powexectray ' + w['trayslot']
 
 
+                if (v['trayslot'] and v['trayslot'] == traytest):
+                   s = s + '$$powexectray ' + v['trayslot']
 
-        #         if ($v['trayslot'] andv['trayslot'] ==traytest) {
-        #            s .= '$$powexectray ' + v['trayslot']
+        if (unq and s):
+           s = s + '$$powexecunqueue'
 
+        if (on):
+            if isinstance(s, str):
+               s = s + '$$powexecname ' + on + '$$powexecname ' + on
+            else:
+                #  deal with power slot stuff..
+               s = s + '$$powexectray ' + on['trayslot'] + '$$powexectray ' + on['trayslot']
 
-
-        # if ($unq ands):
-        #    s .= '$$powexecunqueue'
-
-
-        # if ($on andon ne ''):
-        #     if (refon):
-        #         #  deal with power slot stuff..
-        #        s .= '$$powexectray ' + on['trayslot'] + '$$powexectray ' + on['trayslot']
-        #     else:
-        #        s .= '$$powexecname ' + on + '$$powexecname ' + on
-
-
-        # if ($start) {s = substrs, 2
+        if (start): s = s[:2]
         return s
+
+    actPower = actPower_name
+    #actPower = actPower_toggle
 
 
     # TODO - this isn't used anywhere, is it useful?
@@ -2357,13 +2342,9 @@ class tObject(dict):
 
     # These next two subs are terrible.  This stuff should all be squirreled away in BindFile.
 
-#    # This will return "$bindloadfilesilent C:\path\CODE\CODE1010101<suffix>.txt"
-#    sub bl {
-#        my self = shift
-#        code = shift
-#        suffix = shift || ''
-#        p = self['profile']
-#        return BindFile.BLF($p, uc($code), uc($code) + self.KeyState() + suffix + '.txt')
+    # This will return "$bindloadfilesilent C:\path\CODE\CODE1010101<suffix>.txt"
+    def bl(self, code, suffix = ''):
+        return self['profile'].BLF(code.upper(), code.upper() + self.KeyState() + suffix + '.txt')
 #
 #
 #    # This will return "CODE\CODE1010101<suffix>.txt"
@@ -2374,3 +2355,4 @@ class tObject(dict):
 #        return File::Spec.catpath(None, uc($code), uc($code) + self.KeyState() + suffix + '.txt')
 #
 #
+

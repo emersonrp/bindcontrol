@@ -17,7 +17,16 @@ class BindFile():
 
         self.KeyBinds = {}
 
-    def SetBind(self, keybind):
+    def SetBind(self, keybind, contents = None):
+
+        # TODO - this isinstance logic is here because SoD.py has about a million
+        # spots where it just calls this with (key, string).  Better solution would be
+        # to make SoD call this with a keybind object.
+
+        # TODO and/or maybe this should just get called with key/string and
+        # then forge its own KeyBind objects
+        if isinstance(keybind, str):
+            keybind = KeyBind(keybind, "", "", contents)
 
         if not keybind.Key: return
 

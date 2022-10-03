@@ -368,13 +368,10 @@ class SoD(Page):
 
     def makeSoDFile(self, p):
 
-        if not self.Ctrls['EnableSoD']: return
-
         profile = self.Profile
 
         t = p['t']
 
-        #breakpoint()
         bl   = t.bl   or p.get('bl'   , "")
         bla  = t.bla  or p.get('bla'  , "")
         blf  = t.blf  or p.get('blf'  , "")
@@ -425,7 +422,7 @@ class SoD(Page):
 
         if (flight and (flight == "Fly") and pathbo):
             #  blast off
-            curfile = profile.GetBindFile(pathbo)
+            curfile = profile.GetBindFile(pathbo + t.KeyState() + ".txt")
             self.sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
 
             self.sodUpKey     (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
@@ -460,14 +457,15 @@ class SoD(Page):
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
 
             t.ini = ''
-            if   (modestr == "GFly") : self.makeGFlyModeKey (profile,t,"gbo",curfile,turnoff,fix)
-            elif (modestr == "Run")  : self.makeSpeedModeKey(profile,t,"s",  curfile,turnoff,fix)
-            elif (modestr == "Jump") : self.makeJumpModeKey (profile,t,"j",  curfile,turnoff,path)
+            # if   (modestr == "GFly") : self.makeGFlyModeKey (profile,t,"gbo",curfile,turnoff,fix)
+            # elif (modestr == "Run")  : self.makeSpeedModeKey(profile,t,"s",  curfile,turnoff,fix)
+            # elif (modestr == "Jump") : self.makeJumpModeKey (profile,t,"j",  curfile,turnoff,path)
 
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 
             self.sodFollowKey(t,blf,curfile,mobile)
 
+            # TODO this is commented out in citybinder, why?
             # curfile = profile.GetBindFile(pathsd)
 
             self.sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
@@ -489,7 +487,8 @@ class SoD(Page):
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
             self.sodFollowKey(t,blf,curfile,mobile)
 
-        curfile = profile.GetBindFile(path)
+        ### TODO recently added Keystate and .txt to this.  Is this right?
+        curfile = profile.GetBindFile(path + t.KeyState() + ".txt")
 
         self.sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
 
@@ -530,7 +529,7 @@ class SoD(Page):
         self.sodFollowKey(t,blf,curfile,mobile)
 
         # AutoRun Binds
-        curfile = profile.GetBindFile(patha)
+        curfile = profile.GetBindFile(patha + t.KeyState() + ".txt")
 
         self.sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
 
@@ -560,7 +559,7 @@ class SoD(Page):
         curfile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind('nop'))
 
         # FollowRun Binds
-        curfile = profile.GetBindFile(pathf)
+        curfile = profile.GetBindFile(pathf + t.KeyState() + ".txt")
 
         self.sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
 
@@ -1000,9 +999,6 @@ class SoD(Page):
         t.basepath     = profile.BindsDir()
         t.gamebasepath = profile.GameBindsDir()
 
-        #turn="+zoomin$$-zoomin"  # a non functioning bind used only to activate the keydown/keyup functions of +commands
-        t.turn = "+down"  # a non functioning bind used only to activate the keydown/keyup functions of +commands
-
         t.path     = str(Path(t.basepath) / 'R' / 'R')
         t.gamepath = str(PureWindowsPath(t.gamebasepath) / 'R' / 'R')
         t.bl       = f"$$bindloadfile {t.gamepath}"
@@ -1114,10 +1110,6 @@ class SoD(Page):
         #t.pathgsd     = str(Path(t.basepath) / 'GSD' / 'GSD')  #  SetDown Fly Subfolder and base filename
         #t.gamepathgsd = str(PureWindowsPath(t.basepath) / 'GSD' / 'GSD')  #  SetDown Fly Subfolder and base filename
         #t.blgsd       = f"$$bindloadfile {t.gamepathgsd}"
-
-
-        # turn = "+zoomin$$-zoomin"  # a non functioning bind used only to activate the keydown/keyup functions of +commands
-        t.turn = "+down";  # a non functioning bind used only to activate the keydown/keyup functions of +commands
 
         #  temporarily set self.GetState('Default') to "NonSoD"
         # self.SetState('Default', "Base")
@@ -1615,7 +1607,6 @@ class SoD(Page):
            toggle = self.actPower_name(None,1,toggleon,toggleoff,toggleoff2)
 
         newbits = t.KeyState({'toggle' : 'space'})
-        #breakpoint()
         bl = f"{bl}{newbits}.txt"
 
         if t.space == 1: ini = '-down'
@@ -2326,12 +2317,12 @@ class tObject(dict):
             self.RunMode    = ''
             self.JumpMode   = ''
 
-            self.space      = ''
-            self.X          = ''
-            self.W          = ''
-            self.S          = ''
-            self.A          = ''
-            self.D          = ''
+            self.space      = 0
+            self.X          = 0
+            self.W          = 0
+            self.S          = 0
+            self.A          = 0
+            self.D          = 0
             self.up         = ''
             self.dow        = ''
             self.forw       = ''

@@ -1160,16 +1160,16 @@ class SoD(Page):
                                 if (self.GetState('NonSoD') or t.canqfly):
                                     setattr(t, self.GetState('Default') + "Mode", t.NonSoDMode)
                                     self.makeSoDFile({
-                                        't' : t,
-                                        'bl' : 'n',
-                                        'bla' : 'an',
-                                        'blf' : 'fn',
-                                        'path' : 'n',
-                                        'patha' : 'an',
-                                        'pathf' : 'fn',
-                                        'mobile' : '',
+                                        't'          : t,
+                                        'bl'         : t.bln,
+                                        'bla'        : t.blan,
+                                        'blf'        : t.blfn,
+                                        'path'       : t.pathn,
+                                        'patha'      : t.pathan,
+                                        'pathf'      : t.pathfn,
+                                        'mobile'     : '',
                                         'stationary' : '',
-                                        'modestr' : "NonSoD",
+                                        'modestr'    : "NonSoD",
                                     })
                                     setattr(t, self.GetState('Default') + "Mode", None)
 
@@ -1177,12 +1177,12 @@ class SoD(Page):
                                     setattr(t, self.GetState('Default') + "Mode", t.BaseMode)
                                     self.makeSoDFile({
                                         't'          : t,
-                                        'bl'         : 'r',
-                                        'bla'        : 'gr',
-                                        'blf'        : 'fr',
-                                        'path'       : 'r',
-                                        'patha'      : 'ar',
-                                        'pathf'      : 'fr',
+                                        'bl'         : t.blr,
+                                        'bla'        : t.blgr,
+                                        'blf'        : t.blfr,
+                                        'path'       : t.pathr,
+                                        'patha'      : t.pathar,
+                                        'pathf'      : t.pathfr,
                                         'mobile'     : t.sprint,
                                         'stationary' : '',
                                         'modestr'    : "Base",
@@ -1195,12 +1195,12 @@ class SoD(Page):
                                     if (self.GetState('SSMobileOnly')):
                                         self.makeSoDFile({
                                             't'          : t,
-                                            'bl'         : 's',
-                                            'bla'        : 'as',
-                                            'blf'        : 'fs',
-                                            'path'       : 's',
-                                            'patha'      : 'as',
-                                            'pathf'      : 'fs',
+                                            'bl'         : t.bls,
+                                            'bla'        : t.blas,
+                                            'blf'        : t.blfs,
+                                            'path'       : t.paths,
+                                            'patha'      : t.pathas,
+                                            'pathf'      : t.pathfs,
                                             'mobile'     : t.speed,
                                             'stationary' : '',
                                             'modestr'    : "Run",
@@ -1209,12 +1209,12 @@ class SoD(Page):
                                     else:
                                         self.makeSoDFile({
                                             't'          : t,
-                                            'bl'         : 's',
-                                            'bla'        : 'as',
-                                            'blf'        : 'fs',
-                                            'path'       : 's',
-                                            'patha'      : 'as',
-                                            'pathf'      : 'fs',
+                                            'bl'         : t.bls,
+                                            'bla'        : t.blas,
+                                            'blf'        : t.blfs,
+                                            'path'       : t.paths,
+                                            'patha'      : t.pathas,
+                                            'pathf'      : t.pathfs,
                                             'mobile'     : t.speed,
                                             'stationary' : t.speed,
                                             'modestr'    : "Run",
@@ -1230,12 +1230,12 @@ class SoD(Page):
                                         jturnoff = t.jumpifnocj
                                     self.makeSoDFile({
                                         't'          : t,
-                                        'bl'         : 'j',
-                                        'bla'        : 'aj',
-                                        'blf'        : 'fj',
-                                        'path'       : 'j',
-                                        'patha'      : 'aj',
-                                        'pathf'      : 'fj',
+                                        'bl'         : t.blj,
+                                        'bla'        : t.blaj,
+                                        'blf'        : t.blfj,
+                                        'path'       : t.pathj,
+                                        'patha'      : t.pathaj,
+                                        'pathf'      : t.pathfj,
                                         'mobile'     : t.jump,
                                         'stationary' : t.cjmp,
                                         'modestr'    : "Jump",
@@ -1248,59 +1248,60 @@ class SoD(Page):
                                 if (t.canhov+t.canfly>0):
                                     setattr(t, self.GetState('Default') + "Mode", t.FlyMode)
                                     self.makeSoDFile({
-                                        't' : t,
-                                        'bl' : 'r',
-                                        'bla' : 'af',
-                                        'blf' : 'ff',
-                                        'path' : 'r',
-                                        'patha' : 'af',
-                                        'pathf' : 'ff',
-                                        'mobile' : t.flyx,
+                                        't'          : t,
+                                        'bl'         : t.blr,
+                                        'bla'        : t.blaf,
+                                        'blf'        : t.blff,
+                                        'path'       : t.pathr,
+                                        'patha'      : t.pathaf,
+                                        'pathf'      : t.pathff,
+                                        'mobile'     : t.flyx,
                                         'stationary' : t.hover,
-                                        'modestr' : "Fly",
-                                        'flight' : "Fly",
-                                        'pathbo' : 'bo',
-                                        'pathsd' : 'sd',
-                                        'blbo' : 'bo',
-                                        'blsd' : 'sd',
+                                        'modestr'    : "Fly",
+                                        'flight'     : "Fly",
+                                        # TODO - aren't these next four no-ops?
+                                        # 'pathbo'     : 'bo',
+                                        # 'pathsd'     : 'sd',
+                                        # 'blbo'       : 'bo',
+                                        # 'blsd'       : 'sd',
                                     })
                                     setattr(t, self.GetState('Default') + "Mode", None)
 
                                 if (t.canqfly>0):
                                     setattr(t, self.GetState('Default') + "Mode", t.QFlyMode)
                                     self.makeSoDFile({
-                                        't' : t,
-                                        'bl' : 'q',
-                                        'bla' : 'aq',
-                                        'blf' : 'fq',
-                                        'path' : 'q',
-                                        'patha' : 'aq',
-                                        'pathf' : 'fq',
-                                        'mobile' : "Quantum Flight",
+                                        't'          : t,
+                                        'bl'         : t.blq,
+                                        'bla'        : t.blaq,
+                                        'blf'        : t.blfq,
+                                        'path'       : t.pathq,
+                                        'patha'      : t.pathaq,
+                                        'pathf'      : t.pathfq,
+                                        'mobile'     : "Quantum Flight",
                                         'stationary' : "Quantum Flight",
-                                        'modestr' : "QFly",
-                                        'flight' : "Fly",
+                                        'modestr'    : "QFly",
+                                        'flight'     : "Fly",
                                     })
                                     setattr(t, self.GetState('Default') + "Mode", None)
 
                                 # if (t.cangfly):
                                 #     setattr(t, self.GetState('Default') + "Mode", t.GFlyMode)
                                 #     self.makeSoDFile({
-                                #         't' : t,
-                                #         'bl' : 'a',
-                                #         'bla' : 'af',
-                                #         'blf' : 'ff',
-                                #         'path' : 'ga',
-                                #         'patha' : 'gaf',
-                                #         'pathf' : 'gff',
-                                #         'mobile' : t.gfly,
+                                #         't'          : t,
+                                #         'bl'         : t.bla,
+                                #         'bla'        : t.blaf,
+                                #         'blf'        : t.blff,
+                                #         'path'       : t.pathga,
+                                #         'patha'      : t.pathgaf,
+                                #         'pathf'      : t.pathgff,
+                                #         'mobile'     : t.gfly,
                                 #         'stationary' : t.gfly,
-                                #         'modestr' : "GFly",
-                                #         'flight' : "GFly",
-                                #         'pathbo' : 'gbo',
-                                #         'pathsd' : 'gsd',
-                                #         'blbo' : 'gbo',
-                                #         'blsd' : 'gsd',
+                                #         'modestr'    : "GFly",
+                                #         'flight'     : "GFly",
+                                #         'pathbo'     : t.pathgbo,
+                                #         'pathsd'     : t.pathgsd,
+                                #         'blbo'       : t.blgbo,
+                                #         'blsd'       : t.blgsd,
                                 #     })
                                 #     setattr(t, self.GetState('Default') + "Mode", None)
 
@@ -1308,17 +1309,17 @@ class SoD(Page):
                                     trayslot = "1 " + self.GetState('TempTray')
                                     setattr(t, self.GetState('Default') + "Mode", t.TempMode)
                                     self.makeSoDFile({
-                                        't' : t,
-                                        'bl' : 't',
-                                        'bla' : 'at',
-                                        'blf' : 'ft',
-                                        'path' : 't',
-                                        'patha' : 'at',
-                                        'pathf' : 'ft',
-                                        'mobile' : trayslot,
+                                        't'          : t,
+                                        'bl'         : t.blt,
+                                        'bla'        : t.blat,
+                                        'blf'        : t.blft,
+                                        'path'       : t.patht,
+                                        'patha'      : t.pathat,
+                                        'pathf'      : t.pathft,
+                                        'mobile'     : trayslot,
                                         'stationary' : trayslot,
-                                        'modestr' : "Temp",
-                                        'flight' : "Fly",
+                                        'modestr'    : "Temp",
+                                        'flight'     : "Fly",
                                     })
                                     setattr(t, self.GetState('Default') + "Mode", None)
 

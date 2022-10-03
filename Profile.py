@@ -193,13 +193,22 @@ class Profile(wx.Notebook):
             page.PopulateBindFiles()
 
         # Now we have them here and can iterate them
-        errors = 0
+        errors = donefiles = 0
+        totalfiles = len(self.BindFiles)
+        dlg = wx.ProgressDialog('Writing Bind Files','',
+            maximum = totalfiles, style=wx.PD_APP_MODAL|wx.PD_AUTO_HIDE)
+
         for filename, bindfile in self.BindFiles.items():
             try:
                 bindfile.Write()
             except Exception as e:
                 print(f"Done blowed up in bindfile.Write(): {e}")
-                errors = errors + 1
+                errors += 1
+
+            donefiles += 1
+            dlg.Update(donefiles, filename)
+
+        dlg.Destroy()
 
         if errors:
             msg = f"Bind files written, but with {errors} errors.  Check the log."

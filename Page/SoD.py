@@ -38,24 +38,29 @@ class SoD(Page):
             'ChangeCamera'       : 1,
             'CamdistBase'        : 15,
             'CamdistTravelling'  : 60,
-
             'ChangeDetail'       : 1,
             'DetailBase'         : 100,
             'DetailTravelling'   : 50,
+            'SelfTellOnChange'   : 1,
 
             'NonSoDMode'         : 'CTRL+M',
-            'JumpMode'           : "T",
-            'SimpleSJCJ'         : 1,
 
+            'HasSS'              : False,
             'RunMode'            : "C",
             'SSOnlyWhenMoving'   : 0,
             'SSSJModeEnable'     : 1,
 
+            'HasSJ'              : False,
+            'HasCJ'              : False,
+            'JumpMode'           : "T",
+            'SimpleSJCJ'         : 1,
+
+            'HasCF'              : False,
             'FlyMode'            : "F",
-            'GFlyMode'           : "G",
+            'HasQF'              : False,
+            'QFlyMode'           : "G",
 
-            'SelfTellOnChange'   : 1,
-
+            'HasTP'              : False,
             'TPMode'             : 'SHIFT+LBUTTON',
             'TPCombo'            : 'SHIFT',
             'TPReset'            : 'CTRL+T',
@@ -78,9 +83,11 @@ class SoD(Page):
             'EnableSoD'          : True,
         }
 
+        self.Init['UseNova']  = False
         self.Init['NovaMode'] = "T"
         self.Init['NovaTray'] = "4"
 
+        self.Init['UseDwarf']  = False
         self.Init['DwarfMode'] = "G"
         self.Init['DwarfTray'] = "5"
 
@@ -167,43 +174,47 @@ class SoD(Page):
             ctlName = 'SprintSoD',
             ctlType = 'checkbox',
         )
-        generalSizer.AddControl(
+        leftColumn.Add(generalSizer, 0, wx.EXPAND)
+
+        ### DETAIL SETTINGS
+        detailSizer = ControlGroup(self, self, 'Detail Settings')
+        detailSizer.AddControl(
             ctlName = 'ChangeCamera',
             ctlType = 'checkbox',
         )
-        generalSizer.AddControl(
+        detailSizer.AddControl(
             ctlName = 'CamdistBase',
             ctlType = 'spinbox',
             contents = (1, 100),
         )
-        generalSizer.AddControl(
+        detailSizer.AddControl(
             ctlName = 'CamdistTravelling',
             ctlType = 'spinbox',
             contents = (1, 100),
         )
-        generalSizer.AddControl(
+        detailSizer.AddControl(
             ctlName = 'ChangeDetail',
             ctlType = 'checkbox',
         )
-        generalSizer.AddControl(
+        detailSizer.AddControl(
             ctlName = 'DetailBase',
             ctlType = 'spinbox',
             contents = (1, 100),
         )
-        generalSizer.AddControl(
+        detailSizer.AddControl(
             ctlName = 'DetailTravelling',
             ctlType = 'spinbox',
             contents = (1, 100),
         )
-        generalSizer.AddControl(
+        detailSizer.AddControl(
             ctlName = 'TPHideWindows',
             ctlType = 'checkbox',
         )
-        generalSizer.AddControl(
+        detailSizer.AddControl(
             ctlName = 'SelfTellOnChange',
             ctlType = 'checkbox',
         )
-        leftColumn.Add(generalSizer, 0, wx.EXPAND)
+        leftColumn.Add(detailSizer, 0, wx.EXPAND)
 
 
         ##### TEMP TRAVEL POWERS
@@ -223,6 +234,10 @@ class SoD(Page):
         ##### SUPER SPEED
         superSpeedSizer = ControlGroup(self, self, 'Super Speed')
         superSpeedSizer.AddControl(
+            ctlName = 'HasSS',
+            ctlType = "checkbox",
+        )
+        superSpeedSizer.AddControl(
             ctlName = 'RunMode',
             ctlType = 'keybutton',
         )
@@ -239,6 +254,14 @@ class SoD(Page):
         ##### SUPER JUMP
         superJumpSizer = ControlGroup(self, self, 'Super Jump')
         superJumpSizer.AddControl(
+            ctlName = 'HasSJ',
+            ctlType = 'checkbox',
+        )
+        superJumpSizer.AddControl(
+            ctlName = 'HasCJ',
+            ctlType = 'checkbox',
+        )
+        superJumpSizer.AddControl(
             ctlName = 'JumpMode',
             ctlType = 'keybutton',
         )
@@ -251,15 +274,26 @@ class SoD(Page):
 
         ##### FLY
         flySizer = ControlGroup(self, self, 'Flight')
-
+        flySizer.AddControl(
+            ctlName = 'HasCF',
+            ctlType = 'checkbox',
+        )
         flySizer.AddControl(
             ctlName = 'FlyMode',
             ctlType = 'keybutton',
         )
         flySizer.AddControl(
-            ctlName = 'GFlyMode',
+            ctlName = 'HasQF',
+            ctlType = 'checkbox',
+        )
+        flySizer.AddControl(
+            ctlName = 'QFlyMode',
             ctlType = 'keybutton',
         )
+        # flySizer.AddControl(
+        #     ctlName = 'GFlyMode',
+        #     ctlType = 'keybutton',
+        # )
         rightColumn.Add(flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
@@ -267,7 +301,10 @@ class SoD(Page):
 
         # if (at == peacebringer) "Dwarf Step"
         # if (at == warshade) "Shadow Step / Dwarf Step"
-
+        teleportSizer.AddControl(
+            ctlName = 'HasTP',
+            ctlType = 'checkbox',
+        )
         teleportSizer.AddControl(
             ctlName = "TPMode",
             ctlType = 'keybutton',
@@ -288,25 +325,26 @@ class SoD(Page):
         )
         #
 
-        # if (player has team-tp) {
-        teleportSizer.AddControl(
-            ctlName = "TTPMode",
-            ctlType = 'keybutton',
-        )
-        teleportSizer.AddControl(
-            ctlName = "TTPCombo",
-            ctlType = 'keybutton',
-        )
-        teleportSizer.AddControl(
-            ctlName = "TTPReset",
-            ctlType = 'keybutton',
-        )
+        # TODO - do we want these team versions in there?
+        # # if (player has team-tp) {
+        # teleportSizer.AddControl(
+        #     ctlName = "TTPMode",
+        #     ctlType = 'keybutton',
+        # )
+        # teleportSizer.AddControl(
+        #     ctlName = "TTPCombo",
+        #     ctlType = 'keybutton',
+        # )
+        # teleportSizer.AddControl(
+        #     ctlName = "TTPReset",
+        #     ctlType = 'keybutton',
+        # )
 
-        # if (player has group fly) {
-        teleportSizer.AddControl(
-            ctlName = 'TTPAutoGFly',
-            ctlType = 'checkbox',
-        )
+        # # if (player has group fly) {
+        # teleportSizer.AddControl(
+        #     ctlName = 'TTPAutoGFly',
+        #     ctlType = 'checkbox',
+        # )
         #
         #
         # end team-tp
@@ -316,6 +354,10 @@ class SoD(Page):
         kheldianSizer = ControlGroup(self, self, 'Nova / Dwarf Travel Powers')
 
         kheldianSizer.AddControl(
+            ctlName = 'UseNova',
+            ctlType = 'checkbox',
+        )
+        kheldianSizer.AddControl(
             ctlName = 'NovaMode',
             ctlType = 'keybutton',
         )
@@ -323,6 +365,10 @@ class SoD(Page):
             ctlName = 'NovaTray',
             ctlType = 'spinbox',
             contents = [1, 8],
+        )
+        kheldianSizer.AddControl(
+            ctlName = 'UseDwarf',
+            ctlType = 'checkbox',
         )
         kheldianSizer.AddControl(
             ctlName = 'DwarfMode',
@@ -2225,20 +2271,20 @@ class SoD(Page):
 
 
     UI.Labels.update( {
-        'Up' : 'Up',
-        'Down' : 'Down',
-        'Forward' : 'Forward',
-        'Back' : 'Back',
-        'Left' : 'Strafe Left',
-        'Right' : 'Strafe Right',
-        'TurnLeft' : 'Turn Left',
+        'Up'        : 'Up',
+        'Down'      : 'Down',
+        'Forward'   : 'Forward',
+        'Back'      : 'Back',
+        'Left'      : 'Strafe Left',
+        'Right'     : 'Strafe Right',
+        'TurnLeft'  : 'Turn Left',
         'TurnRight' : 'Turn Right',
-        'AutoRun' : 'Auto Run',
-        'Follow' : 'Follow Target',
+        'AutoRun'   : 'Auto Run',
+        'Follow'    : 'Follow Target',
 
-        'DefaultMode' : 'Default SoD Mode',
+        'DefaultMode'   : 'Default SoD Mode',
         'MousechordSoD' : 'Mousechord is SoD Forward',
-        'AutoMouselook' : 'Automatically Mouselook when moving',
+        'AutoMouseLook' : 'Mouselook when moving',
 
         'SprintPower' : 'Power to use for Sprint',
 
@@ -2250,19 +2296,25 @@ class SoD(Page):
         'DetailBase' : 'Base Detail Level',
         'DetailTravelling' : 'Travelling Detail Level',
 
+        'HasSJ' : 'Player has Super Jump',
+        'HasCJ' : 'Player has Combat Jumping',
         'NonSoDMode' : 'Non-SoD Mode',
         'JumpMode' : 'Toggle Jump Mode',
         'SimpleSJCJ' : 'Simple Combat Jumping / Super Jump Toggle',
 
+        'HasSS' : 'Player has Super Speed',
         'RunMode' : 'Toggle Super Speed Mode',
         'SSOnlyWhenMoving' : 'SuperSpeed only when moving',
         'SSSJModeEnable' : 'Enable Super Speed / Super Jump Mode',
 
+        'HasCF' : 'Player has Combat Flying',
         'FlyMode' : 'Toggle Fly Mode',
-        'GFlyMode' : 'Toggle Group Fly Mode',
+        'HasQF' : 'Player has Quantum Flight',
+        'QFlyMode' : 'Toggle Quantum Fly Mode',
 
         'SelfTellOnChange' : 'Self-/tell when changing mode',
 
+        'HasTP' : 'Player has Teleport',
         'TPMode'  : 'Teleport Bind',
         'TPCombo' : 'Teleport Combo Key',
         'TPReset' : 'Teleport Reset Key',
@@ -2277,8 +2329,10 @@ class SoD(Page):
         'TempMode' : 'Toggle Temp Mode',
         'TempTray' : 'Temporary Travel Power Tray',
 
+        'UseNova' : 'Use Nova Form Toggle',
         'NovaMode' : 'Toggle Nova Form',
         'NovaTray' : 'Nova Travel Power Tray',
+        'UseDwarf' : 'Use Dwarf Form Toggle',
         'DwarfMode' : 'Toggle Dwarf Form',
         'DwarfTray' : 'Dwarf Travel Power Tray',
         'HumanMode' : 'Human Form',

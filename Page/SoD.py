@@ -75,7 +75,6 @@ class SoD(Page):
             'FlyHover'           : 1,
             'FlyFly'             : '',
             'FlyGFly'            : '',
-            'Unqueue'            : 1,
             'EnableSoD'          : True,
         }
 
@@ -158,9 +157,6 @@ class SoD(Page):
             ctlType = 'checkbox',
             tooltip = 'Automatically Mouselook when moving',
         )
-
-        # TODO -- decide what to do with this.
-        # generalSizer.Add( wx.CheckBox(self, SPRINT_UNQUEUE, "Exec powexecunqueue"))
 
         for command in ("AutoRun","Follow","NonSoDMode"): # TODO - lost "Sprint-Only SoD Mode" b/c couldn't find the name in %$Labels
             generalSizer.AddControl(
@@ -378,17 +374,18 @@ class SoD(Page):
 
         t = p['t']
 
-        bl   = t.get('bl'   , p.get('bl'   , ""))
-        bla  = t.get('bla'  , p.get('bla'  , ""))
-        blf  = t.get('blf'  , p.get('blf'  , ""))
-        blbo = t.get('blbo' , p.get('blbo' , ""))
-        blsd = t.get('blsd' , p.get('blsd' , ""))
+        #breakpoint()
+        bl   = t.bl   or p.get('bl'   , "")
+        bla  = t.bla  or p.get('bla'  , "")
+        blf  = t.blf  or p.get('blf'  , "")
+        blbo = t.blbo or p.get('blbo' , "")
+        blsd = t.blsd or p.get('blsd' , "")
 
-        path   = t.get('path'   , p.get('path'   , ""))
-        patha  = t.get('patha'  , p.get('patha'  , ""))
-        pathf  = t.get('pathf'  , p.get('pathf'  , ""))
-        pathbo = t.get('pathbo' , p.get('pathbo' , ""))
-        pathsd = t.get('pathsd' , p.get('pathsd' , ""))
+        path   = t.path   or p.get('path'   , "")
+        patha  = t.patha  or p.get('patha'  , "")
+        pathf  = t.pathf  or p.get('pathf'  , "")
+        pathbo = t.pathbo or p.get('pathbo' , "")
+        pathsd = t.pathsd or p.get('pathsd' , "")
 
         mobile     = p.get('mobile'     , "")
         stationary = p.get('stationary' , "")
@@ -914,6 +911,7 @@ class SoD(Page):
 
         t = tObject(profile)
 
+        ## Combat Jumping / Super Jump
         if (self.GetState('JumpCJ') and not self.GetState('JumpSJ')):
             t.cancj = 1
             t.cjmp = "Combat Jumping"
@@ -930,7 +928,7 @@ class SoD(Page):
             t.cjmp = "Combat Jumping"
             t.jump = "Super Jump"
 
-
+        ## Flying / hover
         if (profile.General.GetState('Archetype') == "Peacebringer"):
             if (self.GetState('FlyHover')):
                 t.canhov = 1
@@ -977,8 +975,6 @@ class SoD(Page):
             t.speed  = self.GetState('RunPrimary')
             t.canss = 1
 
-        if self.GetState('Unqueue') : t.unqueue = '$$powexecunqueue'
-
         if (self.GetState('AutoMouseLook')):
             t.mlon  = '$$mouselook 1'
             t.mloff = '$$mouselook 0'
@@ -1001,93 +997,99 @@ class SoD(Page):
             windowshow = ''
 
 
-        t.basepath = profile.GameBindsDir()
+        t.basepath     = profile.BindsDir()
+        t.gamebasepath = profile.GameBindsDir()
 
         #turn="+zoomin$$-zoomin"  # a non functioning bind used only to activate the keydown/keyup functions of +commands
         t.turn = "+down"  # a non functioning bind used only to activate the keydown/keyup functions of +commands
 
-        t.path    = f"{t.basepath}/R/R" # ground subfolder and base filename.  Keep it shortish
+        # TODO - like this:
+        # t.path = str(Path(t.basepath) / R / R)
+        # t.gamepath = str(PureWindowsPath(t.gamebasepath) / R / R)
+        # t.bl      = f"$$bindloadfile {t.path}"
+
+        t.path    = f"{t.basepath}R\\R" # ground subfolder and base filename.
         t.bl      = f"$$bindloadfile {t.path}"
 
-        t.patha = f"{t.basepath}/F/F" # air subfolder and base filename
+        t.patha = f"{t.basepath}F\\F" # air subfolder and base filename
         t.bla = f"$$bindloadfile {t.patha}"
 
-        t.pathj = f"{t.basepath}/J/J"
+        t.pathj = f"{t.basepath}J\\J"
         t.blj = f"$$bindloadfile {t.pathj}"
 
-        t.paths = f"{t.basepath}/S/S"
+        t.paths = f"{t.basepath}S\\S"
         t.bls = f"$$bindloadfile {t.paths}"
 
-        #t.pathga = f"{t.basepath}/GF/GF" # air subfolder and base filename
+        #t.pathga = f"{t.basepath}GF\\GF" # air subfolder and base filename
         #t.blga = f"$$bindloadfile {t.pathga}"
 
-        t.pathn = f"{t.basepath}/N/N" # ground subfolder and base filename.  Keep it shortish
+        t.pathn = f"{t.basepath}N\\N" # ground subfolder and base filename.
         t.bln = f"$$bindloadfile {t.pathn}"
 
-        t.patht = f"{t.basepath}/T/T" # ground subfolder and base filename.  Keep it shortish
+        t.patht = f"{t.basepath}T\\T" # ground subfolder and base filename.
         t.blt = f"$$bindloadfile {t.patht}"
 
-        t.pathq = f"{t.basepath}/Q/Q" # ground subfolder and base filename.  Keep it shortish
+        t.pathq = f"{t.basepath}Q\\Q" # ground subfolder and base filename.
         t.blq = f"$$bindloadfile {t.pathq}"
 
-        t.pathgr = f"{t.basepath}/AR/AR"  # ground autorun subfolder and base filename
+        t.pathgr = f"{t.basepath}AR\\AR"  # ground autorun subfolder and base filename
         t.blgr = f"$$bindloadfile {t.pathgr}"
 
-        t.pathaf = f"{t.basepath}/AF/AF"  # air autorun subfolder and base filename
+        t.pathaf = f"{t.basepath}AF\\AF"  # air autorun subfolder and base filename
         t.blaf = f"$$bindloadfile {t.pathaf}"
 
-        t.pathaj = f"{t.basepath}/AJ/AJ"
+        t.pathaj = f"{t.basepath}AJ\\AJ"
         t.blaj = f"$$bindloadfile {t.pathaj}"
 
-        t.pathas = f"{t.basepath}/AS/AS"
+        t.pathas = f"{t.basepath}AS\\AS"
         t.blas = f"$$bindloadfile {t.pathas}"
 
-        #t.pathgaf = f"{t.basepath}/GAF/GAF"  # air autorun subfolder and base filename
+        #t.pathgaf = f"{t.basepath}GAF\\GAF"  # air autorun subfolder and base filename
         #t.blgaf = f"$$bindloadfile {t.pathgaf}"
 
-        t.pathan = f"{t.basepath}/AN/AN" # ground subfolder and base filename.  Keep it shortish
+        t.pathan = f"{t.basepath}AN\\AN" # ground subfolder and base filename.
         t.blan = f"$$bindloadfile {t.pathan}"
 
-        t.pathat = f"{t.basepath}/AT/AT" # ground subfolder and base filename.  Keep it shortish
+        t.pathat = f"{t.basepath}AT\\AT" # ground subfolder and base filename.
         t.blat = f"$$bindloadfile {t.pathat}"
 
-        t.pathaq = f"{t.basepath}/AQ/AQ" # ground subfolder and base filename.  Keep it shortish
+        t.pathaq = f"{t.basepath}AQ\\AQ" # ground subfolder and base filename.
         t.blaq = f"$$bindloadfile {t.pathaq}"
 
-        t.pathfr = f"{t.basepath}/FR/FR"  # Follow Run subfolder and base filename
+        t.pathfr = f"{t.basepath}FR\\FR"  # Follow Run subfolder and base filename
         t.blfr = f"$$bindloadfile {t.pathfr}"
 
-        t.pathff = f"{t.basepath}/FF/FF"  # Follow Fly subfolder and base filename
+        t.pathff = f"{t.basepath}FF\\FF"  # Follow Fly subfolder and base filename
         t.blff = f"$$bindloadfile {t.pathff}"
 
-        t.pathfj = f"{t.basepath}/FJ/FJ"
+        t.pathfj = f"{t.basepath}FJ\\FJ"
         t.blfj = f"$$bindloadfile {t.pathfj}"
 
-        t.pathfs = f"{t.basepath}/FS/FS"
+        t.pathfs = f"{t.basepath}FS\\FS"
         t.blfs = f"$$bindloadfile {t.pathfs}"
 
-        #t.pathgff = f"{t.basepath}/GFF/GFF"  # Follow Fly subfolder and base filename
+        #t.pathgff = f"{t.basepath}GFF\\GFF"  # Follow Fly subfolder and base filename
         #t.blgff = f"$$bindloadfile {t.pathgff}"
 
-        t.pathfn = f"{t.basepath}/FN/FN" # ground subfolder and base filename.  Keep it shortish
+        t.pathfn = f"{t.basepath}FN\\FN" # ground subfolder and base filename.
         t.blfn = f"$$bindloadfile {t.pathfn}"
 
-        t.pathft = f"{t.basepath}/FT/FT" # ground subfolder and base filename.  Keep it shortish
+        t.pathft = f"{t.basepath}FT\\FT" # ground subfolder and base filename.
         t.blft = f"$$bindloadfile {t.pathat}"
 
-        t.pathfq = f"{t.basepath}/FQ/FQ" # ground subfolder and base filename.  Keep it shortish
+        t.pathfq = f"{t.basepath}FQ\\FQ" # ground subfolder and base filename.
         t.blfq = f"$$bindloadfile {t.pathfq}"
 
-        t.pathbo = f"{t.basepath}/BO/BO"  # Blastoff Fly subfolder and base filename
+        t.pathbo = f"{t.basepath}BO\\BO"  # Blastoff Fly subfolder and base filename
         t.blbo = f"$$bindloadfile {t.pathbo}"
 
-        t.pathsd = f"{t.basepath}/SD/SD"  #  SetDown Fly Subfolder and base filename
+        t.pathsd = f"{t.basepath}SD\\SD"  #  SetDown Fly Subfolder and base filename
         t.blsd = f"$$bindloadfile {t.pathsd}"
 
-        #t.pathgbo = f"{t.basepath}/GBO/GBO"  # Blastoff Fly subfolder and base filename
+        #t.pathgbo = f"{t.basepath}GBO\\GBO"  # Blastoff Fly subfolder and base filename
         #t.blgbo = f"$$bindloadfile {t.pathgbo}"
 
-        #t.pathgsd = f"{t.basepath}/GSD/GSD"  #  SetDown Fly Subfolder and base filename
+        #t.pathgsd = f"{t.basepath}GSD\\GSD"  #  SetDown Fly Subfolder and base filename
         #t.blgsd = f"$$bindloadfile {t.pathgsd}"
 
 
@@ -1159,16 +1161,16 @@ class SoD(Page):
                                 if (self.GetState('Base')):
                                     setattr(t, self.GetState('Default') + "Mode", t.BaseMode)
                                     self.makeSoDFile({
-                                        't' : t,
-                                        'bl' : 'r',
-                                        'bla' : 'gr',
-                                        'blf' : 'fr',
-                                        'path' : 'r',
-                                        'patha' : 'ar',
-                                        'pathf' : 'fr',
-                                        'mobile' : t.sprint,
+                                        't'          : t,
+                                        'bl'         : 'r',
+                                        'bla'        : 'gr',
+                                        'blf'        : 'fr',
+                                        'path'       : 'r',
+                                        'patha'      : 'ar',
+                                        'pathf'      : 'fr',
+                                        'mobile'     : t.sprint,
                                         'stationary' : '',
-                                        'modestr' : "Base",
+                                        'modestr'    : "Base",
                                     })
                                     setattr(t, self.GetState('Default') + "Mode", None)
 
@@ -1380,7 +1382,7 @@ class SoD(Page):
 
             if novapbind: novafile.SetBind(Nova['Mode'], novapbind)
 
-            if t.canqfly: makeQFlyModeKey(profile,t,"r",novafile,Nova['Nova'],"Nova")
+            if t.canqfly: self.makeQFlyModeKey(profile,t,"r",novafile,Nova['Nova'],"Nova")
 
             novafile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind("+forward"))
             novafile.SetBind(self.Ctrls['Left'].MakeFileKeyBind("+left"))
@@ -1438,7 +1440,7 @@ class SoD(Page):
             if (self.GetState('TP') and self.GetState('TPEnable')):
                 dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
                 dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
-                dwrffile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind(substr(t.detailhi,2) + t.runcamdist + windowshow + profile.BLF('dtp','tp_off.txt')))
+                dwrffile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind(t.detailhi[2:] + t.runcamdist + windowshow + profile.BLF('dtp','tp_off.txt')))
                 tp_off = profile.GetBindFile("dtp","tp_off.txt")
                 tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
                 tp_off.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop') )
@@ -1467,11 +1469,11 @@ class SoD(Page):
         if (self.GetState('TP') and self.GetState('TPEnable') and not (profile.General.GetState('Archetype') == "Peacebringer") and normalTPPower):
             tphovermodeswitch = ''
             if (t.tphover == ''):
-                tphovermodeswitch = re.sub('\d\d\d\d\d\d', '000000', t.BLF('r'))
+                tphovermodeswitch = t.BLF('R') + "000000.txt"
 
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
-            ResetFile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind(substr(t.detailhi,2) + t.runcamdist + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
+            ResetFile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind(t.detailhi[2:] + t.runcamdist + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
             #  Create tp_off file
             tp_off = profile.GetBindFile("tp","tp_off.txt")
             tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
@@ -1490,7 +1492,7 @@ class SoD(Page):
             tphovermodeswitch = ''
             ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
             ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( 'nop'))
-            ResetFile.SetBind(self.Ctrls['TTPResetKey'].MakeFileKeyBind(substr(t.detailhi,2) + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off') + tphovermodeswitch))
+            ResetFile.SetBind(self.Ctrls['TTPResetKey'].MakeFileKeyBind(t.detailhi[2:] + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off') + tphovermodeswitch))
             #  Create tp_off file
             ttp_off = profile.GetBindFile("ttp","ttp_off.txt")
             ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
@@ -1507,16 +1509,16 @@ class SoD(Page):
 
     def sodResetKey(self, curfile, p, path, turnoff, moddir):
 
-        path = re.sub('\d\d\d\d\d\d', '000000', path)
-
         if (moddir == 'up')  : u = 1
         else:                  u = 0
         if (moddir == 'down'): d = 1
         else:                  d = 0
 
         curfile.SetBind(p.General.Ctrls['ResetKey'].MakeFileKeyBind(
-                f'up {u} $$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
-                str(turnoff) + '$$t $name, SoD Binds Reset' + curfile.BaseReset() + curfile.BLF() # <- that might not be right
+                f'up {u}$$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
+                str(turnoff) +
+                '$$t $name, SoD Binds Reset' + curfile.BaseReset() +
+                f"$$bindloadfile{path}000000.txt"
         ))
 
 
@@ -1526,8 +1528,6 @@ class SoD(Page):
         cbAddReset('up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'.actPower_name(None,1,stationary,mobile) + '$$t $name, SoD Binds Reset')
 
 
-
-    # TODO TODO TODO -- the s/\d\d\d\d\d\d/$newbits/ scheme in the following six subs is a vile evil (live veil ilve vlie) hack.
     def sodUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun, followbl, bo, sssj):
 
         (upx,dow,forw,bac,lef,rig) = (t.upx,t.dow,t.forw,t.bac,t.lef,t.rig)
@@ -1592,15 +1592,16 @@ class SoD(Page):
            toggle = self.actPower_name(None,1,toggleon,toggleoff,toggleoff2)
 
         newbits = t.KeyState({'toggle' : 'space'})
-        bl = re.sub('\d\d\d\d\d\d', newbits, bl)
+        #breakpoint()
+        bl = f"{bl}{newbits}.txt"
 
         if t.space == 1: ini = '-down'
-        else:               ini = '+down'
+        else:            ini = '+down'
 
         if (followbl):
             move = ''
             if (t.space != 1):
-                bl = re.sub('\d\d\d\d\d\d', '000000', followbl)
+                bl = f"{followbl}{newbits}.txt"
                 move = f"{upx}{dow}{forw}{bac}{lef}{rig}"
 
             curfile.SetBind(self.Ctrls['Up'].MakeFileKeyBind(f"{ini}{move}{bl}"))
@@ -1657,8 +1658,8 @@ class SoD(Page):
         if (toggleon or toggleoff):
            toggle = self.actPower_name(None,1,toggleon,toggleoff)
 
-        newbits =t.KeyState({'toggle' : 'X'})
-        bl = re.sub('\d\d\d\d\d\d', newbits, bl)
+        newbits = t.KeyState({'toggle' : 'X'})
+        bl = f"{bl}{t.space}{1-t.X}{t.W}{t.S}{t.A}{t.D}.txt"
 
         if t.X == 1: ini = "-down"
         else:           ini = "+down"
@@ -1666,7 +1667,7 @@ class SoD(Page):
         if (followbl):
             move = ''
             if (t.X != 1):
-                bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
+                bl = f"{followbl}{t.space}{t.W}{t.S}{t.A}{t.D}.txt"
                 move = f"{up}{dowx}{forw}{bac}{lef}{rig}"
 
             curfile.SetBind(self.Ctrls['Down'].MakeFileKeyBind(f"{ini}{move}{bl}"))
@@ -1722,7 +1723,7 @@ class SoD(Page):
            toggle = self.actPower_name(None,1,toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'W'})
-        bl = re.sub('\d\d\d\d\d\d', newbits, bl)
+        bl = f"{bl}{newbits}.txt"
 
         if t.W == 1: ini = "-down"
         else:           ini = "+down"
@@ -1731,7 +1732,7 @@ class SoD(Page):
             if (t.W == 1):
                move = ini
             else:
-                bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
+                bl = f"{followbl}{newbits}.txt"
                 move = f"{ini}{up}{dow}{forx}{bac}{lef}{rig}"
 
             curfile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind(move + bl))
@@ -1746,7 +1747,7 @@ class SoD(Page):
 
         else:
             if (t.W == 1):
-                bl = re.sub('\d\d\d\d\d\d', newbits, autorunbl)
+                bl = f"{autorunbl}{newbits}.txt"
 
             curfile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind(f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{lef}{rig}{t.mlon}{bl}"))
             if (self.GetState('MouseChord')) :
@@ -1797,8 +1798,8 @@ class SoD(Page):
         if (toggleon or toggleoff) :
            toggle = self.actPower_name(None,1,toggleon,toggleoff)
 
-        newbits =t.KeyState({'toggle' : 'S'})
-        bl = re.sub('\d\d\d\d\d\d', newbits, bl)
+        newbits = t.KeyState({'toggle' : 'S'})
+        bl = f"{bl}{newbits}.txt"
 
         if (t.S == 1) : ini = "-down"
         else:              ini = "+down"
@@ -1807,7 +1808,7 @@ class SoD(Page):
             if (t.S == 1):
                move = ini
             else:
-                bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
+                bl = f"{followbl}{newbits}.txt"
                 move = f"{ini}{up}{dow}{forw}{bacx}{lef}{rig}"
 
             curfile.SetBind(self.Ctrls['Back'].MakeFileKeyBind(move + bl))
@@ -1818,7 +1819,7 @@ class SoD(Page):
                 move = '$$forward 1$$backward 0'
             else:
                 move = '$$forward 0$$backward 1'
-                bl = re.sub('\d\d\d\d\d\d', newbits, autorunbl)
+                bl = f"{autorunbl}{newbits}.txt"
 
             curfile.SetBind(self.Ctrls['Back'].MakeFileKeyBind(f"{ini}{up}{dow}{move}{lef}{rig}{t.mlon}{bl}"))
 
@@ -1869,7 +1870,7 @@ class SoD(Page):
            toggle = self.actPower_name(None,1,toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'A'})
-        bl = re.sub('\d\d\d\d\d\d', newbits, bl)
+        bl = f"{bl}{newbits}.txt"
 
         if (t.A == 1): ini = '-down'
         else:             ini = '+down'
@@ -1878,7 +1879,7 @@ class SoD(Page):
             if (t.A == 1) :
                move = ini
             else:
-                bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
+                bl = f"{followbl}{newbits}.txt"
                 move = f"{ini}{up}{dow}{forw}{bac}{lefx}{rig}"
 
             curfile.SetBind(self.Ctrls['Left'].MakeFileKeyBind(move + bl))
@@ -1932,8 +1933,8 @@ class SoD(Page):
         if (toggleon or toggleoff) : 
            toggle = self.actPower_name(None,1,toggleon,toggleoff)
 
-        newbits =t.KeyState({'toggle' : 'D'})
-        bl = re.sub('\d\d\d\d\d\d', newbits, bl)
+        newbits = t.KeyState({'toggle' : 'D'})
+        bl = f"{bl}{newbits}.txt"
 
         if (t.D == 1): ini = '-down'
         else:             ini = '+down'
@@ -1942,7 +1943,7 @@ class SoD(Page):
             if (t.D == 1):
                 move = ini
             else:
-                bl = re.sub('\d\d\d\d\d\d', newbits, followbl)
+                bl = f"{followbl}{newbits}.txt"
                 move = f"{ini}{up}{dow}{forw}{bac}{lef}{rigx}"
 
             curfile.SetBind(self.Ctrls['Right'].MakeFileKeyBind(move + bl))
@@ -2301,7 +2302,7 @@ class tObject(dict):
             self.detaillo   = ''
             self.RunMode    = ''
             self.JumpMode   = ''
-            self.unqueue    = ''
+
             self.space      = ''
             self.X          = ''
             self.W          = ''
@@ -2315,6 +2316,17 @@ class tObject(dict):
             self.lef        = ''
             self.rig        = ''
 
+            self.bl   = ''
+            self.bla  = ''
+            self.blf  = ''
+            self.blbo = ''
+            self.blsd = ''
+
+            self.path   = ''
+            self.patha  = ''
+            self.pathf  = ''
+            self.pathbo = ''
+            self.pathsd = ''
 
     # return binary "011010" string of which keys are "on";
     # optionally flipping one of them first.
@@ -2325,9 +2337,9 @@ class tObject(dict):
 
         ret = ''
         for key in ('space','X','W','S','A','D'):
-            retthing = getattr(self, key)
+            retthing = int(getattr(self, key))
             if key == togglebit:
-                ret = ret + str(not retthing)
+                ret = ret + str(1 - retthing)
             else:
                 ret = ret + str(retthing)
         return ret
@@ -2346,7 +2358,7 @@ class tObject(dict):
 
     # This will return "$bindloadfilesilent C:\path\CODE\CODE1010101<suffix>.txt"
     def BLF(self, code, suffix = ''):
-        return self['profile'].BLF(code.upper(), code.upper() + self.KeyState() + suffix + '.txt')
+        return self.profile.BLF(code.upper(), code.upper() + self.KeyState() + suffix + '.txt')
 #
 #
 #    # This will return "CODE\CODE1010101<suffix>.txt"

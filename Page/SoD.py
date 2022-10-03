@@ -18,6 +18,8 @@ class SoD(Page):
         self.TabTitle = "Speed On Demand"
 
         self.Init = {
+            'EnableSoD'          : True,
+
             'Up'                 : "SPACE",
             'Down'               : "X",
             'Forward'            : "W",
@@ -80,7 +82,6 @@ class SoD(Page):
             'FlyHover'           : 1,
             'FlyFly'             : '',
             'FlyGFly'            : '',
-            'EnableSoD'          : True,
         }
 
         self.Init['UseNova']  = False
@@ -418,17 +419,17 @@ class SoD(Page):
 
         t = p['t']
 
-        bl   = t.bl   or p.get('bl'   , "")
-        bla  = t.bla  or p.get('bla'  , "")
-        blf  = t.blf  or p.get('blf'  , "")
-        blbo = t.blbo or p.get('blbo' , "")
-        blsd = t.blsd or p.get('blsd' , "")
+        bl   = p.get('bl'   , t.bl)
+        bla  = p.get('bla'  , t.bla)
+        blf  = p.get('blf'  , t.blf)
+        blbo = p.get('blbo' , t.blbo)
+        blsd = p.get('blsd' , t.blsd)
 
-        path   = t.path   or p.get('path'   , "")
-        patha  = t.patha  or p.get('patha'  , "")
-        pathf  = t.pathf  or p.get('pathf'  , "")
-        pathbo = t.pathbo or p.get('pathbo' , "")
-        pathsd = t.pathsd or p.get('pathsd' , "")
+        path   = p.get('path'   , t.path)
+        patha  = p.get('patha'  , t.patha)
+        pathf  = p.get('pathf'  , t.pathf)
+        pathbo = p.get('pathbo' , t.pathbo)
+        pathsd = p.get('pathsd' , t.pathsd)
 
         mobile     = p.get('mobile'     , "")
         stationary = p.get('stationary' , "")

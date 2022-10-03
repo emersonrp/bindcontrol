@@ -3,7 +3,7 @@ import re
 import GameData
 import UI
 import Utility
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 from Page import Page
 from UI.ControlGroup import ControlGroup
@@ -1003,94 +1003,117 @@ class SoD(Page):
         #turn="+zoomin$$-zoomin"  # a non functioning bind used only to activate the keydown/keyup functions of +commands
         t.turn = "+down"  # a non functioning bind used only to activate the keydown/keyup functions of +commands
 
-        # TODO - like this:
-        # t.path = str(Path(t.basepath) / R / R)
-        # t.gamepath = str(PureWindowsPath(t.gamebasepath) / R / R)
-        # t.bl      = f"$$bindloadfile {t.path}"
+        t.path     = str(Path(t.basepath) / 'R' / 'R')
+        t.gamepath = str(PureWindowsPath(t.gamebasepath) / 'R' / 'R')
+        t.bl       = f"$$bindloadfile {t.gamepath}"
 
-        t.path    = f"{t.basepath}R\\R" # ground subfolder and base filename.
-        t.bl      = f"$$bindloadfile {t.path}"
+        t.patha     = str(Path(t.basepath) / 'F' / 'F') # air subfolder and base filename
+        t.gamepatha = str(PureWindowsPath(t.basepath) / 'F' / 'F') # air subfolder and base filename
+        t.bla       = f"$$bindloadfile {t.gamepatha}"
 
-        t.patha = f"{t.basepath}F\\F" # air subfolder and base filename
-        t.bla = f"$$bindloadfile {t.patha}"
+        t.pathj     = str(Path(t.basepath) / 'J' / 'J')
+        t.gamepathj = str(PureWindowsPath(t.basepath) / 'J' / 'J')
+        t.blj       = f"$$bindloadfile {t.gamepathj}"
 
-        t.pathj = f"{t.basepath}J\\J"
-        t.blj = f"$$bindloadfile {t.pathj}"
+        t.paths     = str(Path(t.basepath) / 'S' / 'S')
+        t.gamepaths = str(PureWindowsPath(t.basepath) / 'S' / 'S')
+        t.bls       = f"$$bindloadfile {t.gamepaths}"
 
-        t.paths = f"{t.basepath}S\\S"
-        t.bls = f"$$bindloadfile {t.paths}"
+        #t.pathga     = str(Path(t.basepath) / 'GF' / 'GF') # air subfolder and base filename
+        #t.gamepathga = str(PureWindowsPath(t.basepath) / 'GF' / 'GF') # air subfolder and base filename
+        #t.blga       = f"$$bindloadfile {t.gamepathga}"
 
-        #t.pathga = f"{t.basepath}GF\\GF" # air subfolder and base filename
-        #t.blga = f"$$bindloadfile {t.pathga}"
+        t.pathn     = str(Path(t.basepath) / 'N' / 'N') # ground subfolder and base filename.
+        t.gamepathn = str(PureWindowsPath(t.basepath) / 'N' / 'N') # ground subfolder and base filename.
+        t.bln       = f"$$bindloadfile {t.gamepathn}"
 
-        t.pathn = f"{t.basepath}N\\N" # ground subfolder and base filename.
-        t.bln = f"$$bindloadfile {t.pathn}"
+        t.patht     = str(Path(t.basepath) / 'T' / 'T') # ground subfolder and base filename.
+        t.gamepatht = str(PureWindowsPath(t.basepath) / 'T' / 'T') # ground subfolder and base filename.
+        t.blt       = f"$$bindloadfile {t.gamepatht}"
 
-        t.patht = f"{t.basepath}T\\T" # ground subfolder and base filename.
-        t.blt = f"$$bindloadfile {t.patht}"
+        t.pathq     = str(Path(t.basepath) / 'Q' / 'Q') # ground subfolder and base filename.
+        t.gamepathq = str(PureWindowsPath(t.basepath) / 'Q' / 'Q') # ground subfolder and base filename.
+        t.blq       = f"$$bindloadfile {t.gamepathq}"
 
-        t.pathq = f"{t.basepath}Q\\Q" # ground subfolder and base filename.
-        t.blq = f"$$bindloadfile {t.pathq}"
+        t.pathgr     = str(Path(t.basepath) / 'AR' / 'AR')  # ground autorun subfolder and base filename
+        t.gamepathgr = str(PureWindowsPath(t.basepath) / 'AR' / 'AR')  # ground autorun subfolder and base filename
+        t.blgr       = f"$$bindloadfile {t.gamepathgr}"
 
-        t.pathgr = f"{t.basepath}AR\\AR"  # ground autorun subfolder and base filename
-        t.blgr = f"$$bindloadfile {t.pathgr}"
+        t.pathaf     = str(Path(t.basepath) / 'AF' / 'AF')  # air autorun subfolder and base filename
+        t.gamepathaf = str(PureWindowsPath(t.basepath) / 'AF' / 'AF')  # air autorun subfolder and base filename
+        t.blaf       = f"$$bindloadfile {t.gamepathaf}"
 
-        t.pathaf = f"{t.basepath}AF\\AF"  # air autorun subfolder and base filename
-        t.blaf = f"$$bindloadfile {t.pathaf}"
+        t.pathaj     = str(Path(t.basepath) / 'AJ' / 'AJ')
+        t.gamepathaj = str(PureWindowsPath(t.basepath) / 'AJ' / 'AJ')
+        t.blaj       = f"$$bindloadfile {t.gamepathaj}"
 
-        t.pathaj = f"{t.basepath}AJ\\AJ"
-        t.blaj = f"$$bindloadfile {t.pathaj}"
+        t.pathas     = str(Path(t.basepath) / 'AS' / 'AS')
+        t.gamepathas = str(PureWindowsPath(t.basepath) / 'AS' / 'AS')
+        t.blas       = f"$$bindloadfile {t.gamepathas}"
 
-        t.pathas = f"{t.basepath}AS\\AS"
-        t.blas = f"$$bindloadfile {t.pathas}"
+        #t.pathgaf     = str(Path(t.basepath) / 'GAF' / 'GAF')  # air autorun subfolder and base filename
+        #t.gamepathgaf = str(PureWindowsPath(t.basepath) / 'GAF' / 'GAF')  # air autorun subfolder and base filename
+        #t.blgaf       = f"$$bindloadfile {t.gamepathgaf}"
 
-        #t.pathgaf = f"{t.basepath}GAF\\GAF"  # air autorun subfolder and base filename
-        #t.blgaf = f"$$bindloadfile {t.pathgaf}"
+        t.pathan     = str(Path(t.basepath) / 'AN' / 'AN') # ground subfolder and base filename.
+        t.gamepathan = str(PureWindowsPath(t.basepath) / 'AN' / 'AN') # ground subfolder and base filename.
+        t.blan       = f"$$bindloadfile {t.gamepathan}"
 
-        t.pathan = f"{t.basepath}AN\\AN" # ground subfolder and base filename.
-        t.blan = f"$$bindloadfile {t.pathan}"
+        t.pathat     = str(Path(t.basepath) / 'AT' / 'AT') # ground subfolder and base filename.
+        t.gamepathat = str(PureWindowsPath(t.basepath) / 'AT' / 'AT') # ground subfolder and base filename.
+        t.blat       = f"$$bindloadfile {t.gamepathat}"
 
-        t.pathat = f"{t.basepath}AT\\AT" # ground subfolder and base filename.
-        t.blat = f"$$bindloadfile {t.pathat}"
+        t.pathaq     = str(Path(t.basepath) / 'AQ' / 'AQ') # ground subfolder and base filename.
+        t.gamepathaq = str(PureWindowsPath(t.basepath) / 'AQ' / 'AQ') # ground subfolder and base filename.
+        t.blaq       = f"$$bindloadfile {t.gamepathaq}"
 
-        t.pathaq = f"{t.basepath}AQ\\AQ" # ground subfolder and base filename.
-        t.blaq = f"$$bindloadfile {t.pathaq}"
+        t.pathfr     = str(Path(t.basepath) / 'FR' / 'FR')  # Follow Run subfolder and base filename
+        t.gamepathfr = str(PureWindowsPath(t.basepath) / 'FR' / 'FR')  # Follow Run subfolder and base filename
+        t.blfr       = f"$$bindloadfile {t.gamepathfr}"
 
-        t.pathfr = f"{t.basepath}FR\\FR"  # Follow Run subfolder and base filename
-        t.blfr = f"$$bindloadfile {t.pathfr}"
+        t.pathff     = str(Path(t.basepath) / 'FF' / 'FF')  # Follow Fly subfolder and base filename
+        t.gamepathff = str(PureWindowsPath(t.basepath) / 'FF' / 'FF')  # Follow Fly subfolder and base filename
+        t.blff       = f"$$bindloadfile {t.gamepathff}"
 
-        t.pathff = f"{t.basepath}FF\\FF"  # Follow Fly subfolder and base filename
-        t.blff = f"$$bindloadfile {t.pathff}"
+        t.pathfj     = str(Path(t.basepath) / 'FJ' / 'FJ')
+        t.gamepathfj = str(PureWindowsPath(t.basepath) / 'FJ' / 'FJ')
+        t.blfj       = f"$$bindloadfile {t.gamepathfj}"
 
-        t.pathfj = f"{t.basepath}FJ\\FJ"
-        t.blfj = f"$$bindloadfile {t.pathfj}"
+        t.pathfs     = str(Path(t.basepath) / 'FS' / 'FS')
+        t.gamepathfs = str(PureWindowsPath(t.basepath) / 'FS' / 'FS')
+        t.blfs       = f"$$bindloadfile {t.gamepathfs}"
 
-        t.pathfs = f"{t.basepath}FS\\FS"
-        t.blfs = f"$$bindloadfile {t.pathfs}"
+        #t.pathgff     = str(Path(t.basepath) / 'GFF' / 'GFF')  # Follow Fly subfolder and base filename
+        #t.gamepathgff = str(PureWindowsPath(t.basepath) / 'GFF' / 'GFF')  # Follow Fly subfolder and base filename
+        #t.blgff       = f"$$bindloadfile {t.gamepathgff}"
 
-        #t.pathgff = f"{t.basepath}GFF\\GFF"  # Follow Fly subfolder and base filename
-        #t.blgff = f"$$bindloadfile {t.pathgff}"
+        t.pathfn     = str(Path(t.basepath) / 'FN' / 'FN') # ground subfolder and base filename.
+        t.gamepathfn = str(PureWindowsPath(t.basepath) / 'FN' / 'FN') # ground subfolder and base filename.
+        t.blfn       = f"$$bindloadfile {t.gamepathfn}"
 
-        t.pathfn = f"{t.basepath}FN\\FN" # ground subfolder and base filename.
-        t.blfn = f"$$bindloadfile {t.pathfn}"
+        t.pathft     = str(Path(t.basepath) / 'FT' / 'FT') # ground subfolder and base filename.
+        t.gamepathft = str(PureWindowsPath(t.basepath) / 'FT' / 'FT') # ground subfolder and base filename.
+        t.blft       = f"$$bindloadfile {t.gamepathat}"
 
-        t.pathft = f"{t.basepath}FT\\FT" # ground subfolder and base filename.
-        t.blft = f"$$bindloadfile {t.pathat}"
+        t.pathfq     = str(Path(t.basepath) / 'FQ' / 'FQ') # ground subfolder and base filename.
+        t.gamepathfq = str(PureWindowsPath(t.basepath) / 'FQ' / 'FQ') # ground subfolder and base filename.
+        t.blfq       = f"$$bindloadfile {t.gamepathfq}"
 
-        t.pathfq = f"{t.basepath}FQ\\FQ" # ground subfolder and base filename.
-        t.blfq = f"$$bindloadfile {t.pathfq}"
+        t.pathbo     = str(Path(t.basepath) / 'BO' / 'BO')  # Blastoff Fly subfolder and base filename
+        t.gamepathbo = str(PureWindowsPath(t.basepath) / 'BO' / 'BO')  # Blastoff Fly subfolder and base filename
+        t.blbo       = f"$$bindloadfile {t.gamepathbo}"
 
-        t.pathbo = f"{t.basepath}BO\\BO"  # Blastoff Fly subfolder and base filename
-        t.blbo = f"$$bindloadfile {t.pathbo}"
+        t.pathsd     = str(Path(t.basepath) / 'SD' / 'SD')  #  SetDown Fly Subfolder and base filename
+        t.gamepathsd = str(PureWindowsPath(t.basepath) / 'SD' / 'SD')  #  SetDown Fly Subfolder and base filename
+        t.blsd       = f"$$bindloadfile {t.gamepathsd}"
 
-        t.pathsd = f"{t.basepath}SD\\SD"  #  SetDown Fly Subfolder and base filename
-        t.blsd = f"$$bindloadfile {t.pathsd}"
+        #t.pathgbo     = str(Path(t.basepath) / 'GBO' / 'GBO')  # Blastoff Fly subfolder and base filename
+        #t.gamepathgbo = str(PureWindowsPath(t.basepath) / 'GBO' / 'GBO')  # Blastoff Fly subfolder and base filename
+        #t.blgbo       = f"$$bindloadfile {t.gamepathgbo}"
 
-        #t.pathgbo = f"{t.basepath}GBO\\GBO"  # Blastoff Fly subfolder and base filename
-        #t.blgbo = f"$$bindloadfile {t.pathgbo}"
-
-        #t.pathgsd = f"{t.basepath}GSD\\GSD"  #  SetDown Fly Subfolder and base filename
-        #t.blgsd = f"$$bindloadfile {t.pathgsd}"
+        #t.pathgsd     = str(Path(t.basepath) / 'GSD' / 'GSD')  #  SetDown Fly Subfolder and base filename
+        #t.gamepathgsd = str(PureWindowsPath(t.basepath) / 'GSD' / 'GSD')  #  SetDown Fly Subfolder and base filename
+        #t.blgsd       = f"$$bindloadfile {t.gamepathgsd}"
 
 
         # turn = "+zoomin$$-zoomin"  # a non functioning bind used only to activate the keydown/keyup functions of +commands
@@ -2322,11 +2345,16 @@ class tObject(dict):
             self.blbo = ''
             self.blsd = ''
 
-            self.path   = ''
-            self.patha  = ''
-            self.pathf  = ''
-            self.pathbo = ''
-            self.pathsd = ''
+            self.path       = ''
+            self.gamepath   = ''
+            self.patha      = ''
+            self.gamepatha  = ''
+            self.pathf      = ''
+            self.gamepathf  = ''
+            self.pathbo     = ''
+            self.gamepathbo = ''
+            self.pathsd     = ''
+            self.gamepathsd = ''
 
     # return binary "011010" string of which keys are "on";
     # optionally flipping one of them first.

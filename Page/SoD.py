@@ -52,11 +52,13 @@ class SoD(Page):
             'SSOnlyWhenMoving'   : 0,
             'SSSJModeEnable'     : 1,
 
-            'HasSJ'              : False,
-            'HasCJ'              : False,
+            'JumpSJ'              : False,
+            'JumpCJ'              : False,
             'JumpMode'           : "T",
             'SimpleSJCJ'         : 1,
 
+            'FlyHover'           : False,
+            'FlyFly'             : False,
             'HasCF'              : False,
             'FlyMode'            : "F",
             'HasQF'              : False,
@@ -73,14 +75,12 @@ class SoD(Page):
             'TTPAutoGFly'        : True,
 
             'TPHideWindows'      : False,
-            'TPAutoHover'        : True,
+            'TPTPHover'          : False,
 
             'RunPrimary'         : "Super Speed",
             'RunPrimaryNumber'   : 2,
             'RunSecondary'       : "Sprint",
             'RunSecondaryNumber' : 1,
-            'FlyHover'           : 1,
-            'FlyFly'             : '',
             'FlyGFly'            : '',
         }
 
@@ -255,11 +255,11 @@ class SoD(Page):
         ##### SUPER JUMP
         superJumpSizer = ControlGroup(self, self, 'Super Jump')
         superJumpSizer.AddControl(
-            ctlName = 'HasSJ',
+            ctlName = 'JumpSJ',
             ctlType = 'checkbox',
         )
         superJumpSizer.AddControl(
-            ctlName = 'HasCJ',
+            ctlName = 'JumpCJ',
             ctlType = 'checkbox',
         )
         superJumpSizer.AddControl(
@@ -276,21 +276,29 @@ class SoD(Page):
         ##### FLY
         flySizer = ControlGroup(self, self, 'Flight')
         flySizer.AddControl(
-            ctlName = 'HasCF',
+            ctlName = 'FlyHover',
             ctlType = 'checkbox',
         )
+        flySizer.AddControl(
+            ctlName = 'FlyFly',
+            ctlType = 'checkbox',
+        )
+        #flySizer.AddControl(
+        #    ctlName = 'HasCF',
+        #    ctlType = 'checkbox',
+        #)
         flySizer.AddControl(
             ctlName = 'FlyMode',
             ctlType = 'keybutton',
         )
-        flySizer.AddControl(
-            ctlName = 'HasQF',
-            ctlType = 'checkbox',
-        )
-        flySizer.AddControl(
-            ctlName = 'QFlyMode',
-            ctlType = 'keybutton',
-        )
+        #flySizer.AddControl(
+        #    ctlName = 'HasQF',
+        #    ctlType = 'checkbox',
+        #)
+        #flySizer.AddControl(
+        #    ctlName = 'QFlyMode',
+        #    ctlType = 'keybutton',
+        #)
         # flySizer.AddControl(
         #     ctlName = 'GFlyMode',
         #     ctlType = 'keybutton',
@@ -321,7 +329,7 @@ class SoD(Page):
 
         # if (player has hover): {
         teleportSizer.AddControl(
-            ctlName = 'TPAutoHover',
+            ctlName = 'TPTPHover',
             ctlType = 'checkbox',
         )
         #
@@ -402,7 +410,6 @@ class SoD(Page):
         self.SetSizerAndFit(paddingSizer)
 
         self.SynchronizeUI()
-
 
     def SynchronizeUI(self):
         self.OnEnableSoD()
@@ -635,8 +642,6 @@ class SoD(Page):
 
         self.sodFollowOffKey(t,bl,curfile,mobile,stationary,flight)
 
-
-
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeNonSoDModeKey(self, p, t, bl, cur, toff, fix, fb):
         key = t.NonSoDMode
@@ -691,7 +696,6 @@ class SoD(Page):
             cur.SetBind(key, t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('ft'))
 
         t.ini = ''
-
 
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeQFlyModeKey(self, p, t, bl, cur, toff, modestr):
@@ -806,7 +810,6 @@ class SoD(Page):
 
         t.ini = ''
 
-
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeJumpModeKey(self, p, t, bl, cur, toff, fbl):
         key = t.JumpMode
@@ -835,7 +838,6 @@ class SoD(Page):
 
 
         t.ini = ''
-
 
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeFlyModeKey(self, p, t, bl, cur, toff, fix, fb, fb_on_a):
@@ -882,7 +884,6 @@ class SoD(Page):
 
         t.ini = ''
 
-
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeGFlyModeKey(self, p, t, bl, cur, toff, fix):
         key = t.GFlyMode
@@ -914,7 +915,6 @@ class SoD(Page):
                         cur.SetBind(key, t.ini + t.detaillo + t.flycamdist + t.BLF('gff'))
 
         t.ini = ''
-
 
     def PopulateBindFiles(self):
 
@@ -968,7 +968,7 @@ class SoD(Page):
             t.jump = "Super Jump"
             t.jumpifnocj = "Super Jump"
 
-        else:
+        elif self.GetState('JumpCJ') and self.GetState('JumpSJ'):
             t.cancj = 1
             t.canjmp = 1
             t.cjmp = "Combat Jumping"
@@ -1041,7 +1041,6 @@ class SoD(Page):
         else:
             windowhide = ''
             windowshow = ''
-
 
         t.basepath     = profile.BindsDir()
         t.gamebasepath = profile.GameBindsDir()
@@ -1267,7 +1266,6 @@ class SoD(Page):
                                             'modestr'    : "Run",
                                             'sssj'       : sssj,
                                         })
-
                                     setattr(t, self.GetState('Default') + "Mode", None)
 
                                 if (t.canjmp>0 and not (self.GetState('JumpSimple'))):
@@ -1420,6 +1418,7 @@ class SoD(Page):
 
         #  kheldian form support
         #  create the Nova and Dwarf form support files if enabled.
+        ### TODO all of this has wrong control names
         Nova  = self.GetState('Nova')
         Dwarf = self.GetState('Dwarf')
 
@@ -1568,8 +1567,6 @@ class SoD(Page):
             ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
             ttp_on2.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( '-down$$' + teamTPPower + profile.BLF('ttp','ttp_on1.txt')))
 
-
-
     def sodResetKey(self, curfile, p, path, turnoff, moddir):
 
         if (moddir == 'up')  : u = 1
@@ -1584,12 +1581,10 @@ class SoD(Page):
                 f"$$bindloadfile{path}000000.txt"
         ))
 
-
     def sodDefaultResetKey(self, mobile, stationary):
         return
         # TODO -- decide where to keep 'resetstring' and make this sub update it.
         cbAddReset('up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'.actPower_name(None,1,stationary,mobile) + '$$t $name, SoD Binds Reset')
-
 
     def sodUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun, followbl, bo, sssj):
 
@@ -2014,7 +2009,6 @@ class SoD(Page):
         else:
             curfile.SetBind(self.Ctrls['Right'].MakeFileKeyBind(f"{ini}{up}{dow}$$forward 1$$backward 0{lef}{rigx}{t.mlon}{bl}"))
 
-
     def sodAutoRunKey(self,t,bl,curfile,mobile,sssj):
         if (sssj and t.space == 1) :
             curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mlon + self.actPower_name(None,1,sssj,mobile) + bl))
@@ -2043,7 +2037,6 @@ class SoD(Page):
         bindload = bl + t.KeyState() + '.txt'
         curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind(t.dirs('UDFBLR') + toggleon + bindload))
 
-
     def sodFollowKey(self, t,bl,curfile,mobile):
         curfile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind('follow' + self.actPower_name(None,1,mobile) + bl + t.KeyState() + '.txt'))
 
@@ -2064,59 +2057,6 @@ class SoD(Page):
                    toggle = self.actPower_name(None,1,stationary)
 
         curfile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("follow" + toggle + t.up + t.dow + t.forw + t.bac + t.lef + t.rig + bl + t.KeyState() + '.txt'))
-
-
-    def bindisused(self):
-        return self.GetState('Enable')
-
-
-#    def findconflicts(self):
-#        Utility.CheckConflict("Up","Up Key")
-#        Utility.CheckConflict("Down","Down Key")
-#        Utility.CheckConflict("Forward","Forward Key")
-#        Utility.CheckConflict("Back","Back Key")
-#        Utility.CheckConflict("Left","Strafe Left Key")
-#        Utility.CheckConflict("Right","Strafe Right Key")
-#        Utility.CheckConflict("TLeft","Turn Left Key")
-#        Utility.CheckConflict("TRight","Turn Right Key")
-#        Utility.CheckConflict("AutoRun","AutoRun Key")
-#        Utility.CheckConflict("Follow","Follow Key")
-#
-#        if (self.GetState('NonSoD'))       : Utility.CheckConflict("NonSoDMode","NonSoD Key")
-#        if (self.GetState('Base'))         : Utility.CheckConflict("BaseMode","Sprint Mode Key")
-#        if (self.GetState('SSSS'))         : Utility.CheckConflict("RunMode","Speed Mode Key")
-#        if (self.GetState('JumpCJ')
-#                or self.GetState('JumpSJ') ): Utility.CheckConflict("JumpMode","Jump Mode Key")
-#        if (self.GetState('FlyHover')
-#                or self.GetState('FlyFly') ): Utility.CheckConflict("FlyMode","Fly Mode Key")
-#        if (self.GetState('FlyQFly')
-#                and (profile.General.GetState('Archetype') == "Peacebringer")): Utility.CheckConflict("QFlyMode","Q.Fly Mode Key")
-#        if (self.GetState('TP') and self.GetState('TPEnable')):
-#            Utility.CheckConflict(self.GetState('TP'),"ComboKey","TP ComboKey")
-#            Utility.CheckConflict(self.GetState('TP'),"ResetKey","TP ResetKey")
-#
-#            TPQuestion = "Teleport Bind"
-#            if (profile.General.GetState('Archetype') == "Peacebringer") :
-#               TPQuestion = "Dwarf Step Bind"
-#            elif (profile.General.GetState('Archetype') == "Warshade") :
-#               TPQuestion = "Shd/Dwf Step Bind"
-#
-#            Utility.CheckConflict(self.GetState('TP'),"BindKey", TPQuestion)
-#
-#            if (self.GetState('FlyGFly')): Utility.CheckConflict("GFlyMode","Group Fly Key")
-#        if (self.GetState('TTP') and self.GetState('TTPEnable')):
-#            Utility.CheckConflict(self.GetState('TTP'),"ComboKey","TTP ComboKey")
-#            Utility.CheckConflict(self.GetState('TTP'),"ResetKey","TTP ResetKey")
-#            Utility.CheckConflict(self.GetState('TTP'),"BindKey","Team TP Bind")
-#
-#        if (self.GetState('Temp') and self.GetState('TempEnable')):
-#            Utility.CheckConflict("TempMode","Temp Mode Key")
-#            Utility.CheckConflict(self.GetState('Temp'),"TraySwitch","Tray Toggle Key")
-#
-#        if ((self.Profile.General.GetState('Archetype') == "Peacebringer") or (self.Profile.General.GetState('Archetype') == "Warshade")) :
-#            if (self.GetState('Nova')  and self.GetState('NovaEnable')): Utility.CheckConflict(self.GetState('Nova'), "Mode","Nova Form Bind")
-#            if (self.GetState('Dwarf') and self.GetState('DwarfEnable')): Utility.CheckConflict(self.GetState('Dwarf'),"Mode","Dwarf Form Bind")
-
 
     #  toggleon variation
     def actPower_toggle(self, start, unq, on, *rest):
@@ -2162,7 +2102,6 @@ class SoD(Page):
 
         return s
 
-
     def actPower_name(self, start, unq, on,*rest):
         s = ''
         if not isinstance(on, str):
@@ -2202,7 +2141,6 @@ class SoD(Page):
 
     actPower = actPower_name
     #actPower = actPower_toggle
-
 
     # TODO - this isn't used anywhere, is it useful?
     #  updated hybrid binds can reduce the space used in SoD Bindfiles by more than 40KB per SoD mode generated
@@ -2256,7 +2194,6 @@ class SoD(Page):
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
         curfile.SetBind(key, "+down" + feedback + self.actPower_name(None,1,t.cjmp) + profile.BLF(filename))
 
-
     def sodSetDownFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
         if autofollowmode:
             pathsuffix = "f"
@@ -2268,8 +2205,6 @@ class SoD(Page):
         t.ini = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
         curfile.SetBind(key, '+down' + feedback + profile.BLF(filename))
-
-
 
     UI.Labels.update( {
         'Up'        : 'Up',
@@ -2296,9 +2231,10 @@ class SoD(Page):
         'ChangeDetail' : 'Change graphics detail level when moving',
         'DetailBase' : 'Base Detail Level',
         'DetailTravelling' : 'Travelling Detail Level',
+        'TPHideWindows' : 'Hide Windows when Teleporting',
 
-        'HasSJ' : 'Player has Super Jump',
-        'HasCJ' : 'Player has Combat Jumping',
+        'JumpSJ' : 'Player has Super Jump',
+        'JumpCJ' : 'Player has Combat Jumping',
         'NonSoDMode' : 'Non-SoD Mode',
         'JumpMode' : 'Toggle Jump Mode',
         'SimpleSJCJ' : 'Simple Combat Jumping / Super Jump Toggle',
@@ -2308,6 +2244,8 @@ class SoD(Page):
         'SSOnlyWhenMoving' : 'SuperSpeed only when moving',
         'SSSJModeEnable' : 'Enable Super Speed / Super Jump Mode',
 
+        'FlyHover' : "Player has Hover",
+        'FlyFly' : "Player has Flight",
         'HasCF' : 'Player has Combat Flying',
         'FlyMode' : 'Toggle Fly Mode',
         'HasQF' : 'Player has Quantum Flight',
@@ -2319,8 +2257,7 @@ class SoD(Page):
         'TPMode'  : 'Teleport Bind',
         'TPCombo' : 'Teleport Combo Key',
         'TPReset' : 'Teleport Reset Key',
-        'TPHideWindows' : 'Hide Windows when Teleporting',
-        'TPAutoHover' : 'Hover when Teleporting',
+        'TPTPHover' : 'Hover when Teleporting',
 
         'TTPMode'  : 'Team Teleport Bind',
         'TTPCombo' : 'Team Teleport Combo Key',
@@ -2428,20 +2365,7 @@ class tObject(dict):
 
         return ret
 
-
-    # These next two subs are terrible.  This stuff should all be squirreled away in BindFile.
-
     # This will return "$bindloadfilesilent C:\path\CODE\CODE1010101<suffix>.txt"
     def BLF(self, code, suffix = ''):
         return self.profile.BLF(code.upper(), code.upper() + self.KeyState() + suffix + '.txt')
-#
-#
-#    # This will return "CODE\CODE1010101<suffix>.txt"
-#    sub path {
-#        my self = shift
-#        code = shift
-#        suffix = shift || ''
-#        return File::Spec.catpath(None, uc($code), uc($code) + self.KeyState() + suffix + '.txt')
-#
-#
 

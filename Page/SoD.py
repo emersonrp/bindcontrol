@@ -495,7 +495,7 @@ class SoD(Page):
                 if (self.GetState('NonSoD')):
                     t.FlyMode = t.NonSoDMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                elif (self.GetState('Base')):
+                elif (self.GetState('SprintSoD')):
                     t.FlyMode = t.BaseMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
                 elif (t.canss):
@@ -734,7 +734,7 @@ class SoD(Page):
         t.ini = ''
 
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
-    def makeBaseModeKey(self, p, t, bl, cur, toff, fix, fb):
+    def makeBaseModeKey(self, p, t, bl, cur, toff, fix, fb = ''):
         key = t.BaseMode
         if not key: return
 
@@ -934,7 +934,7 @@ class SoD(Page):
                 wx.Error("Notice","Enabling NonSoD mode, since it is set as your default mode.")
             self.SetState('NonSoD', 1)
 
-        if (self.GetState('Default') == "Base" and not self.GetState('Base')):
+        if (self.GetState('Default') == "Base" and not self.GetState('SprintSoD')):
             wx.Error("Notice","Enabling NonSoD mode and making it the default, since Sprint SoD, your previous Default mode, is not enabled.")
             self.SetState('NonSoD', 1)
             self.SetState('Default', "NonSoD")
@@ -1016,6 +1016,7 @@ class SoD(Page):
         if (self.GetState('RunPrimaryNumber') == 1):
             t.sprint = self.GetState('RunSecondary')
             t.speed  = self.GetState('RunSecondary')
+            t.canss = 0
         else:
             t.sprint = self.GetState('RunSecondary')
             t.speed  = self.GetState('RunPrimary')
@@ -1219,15 +1220,15 @@ class SoD(Page):
                                     })
                                     setattr(t, self.GetState('Default') + "Mode", None)
 
-                                if (self.GetState('Base')):
+                                if (self.GetState('SprintSoD')):
                                     setattr(t, self.GetState('Default') + "Mode", t.BaseMode)
                                     self.makeSoDFile({
                                         't'          : t,
-                                        'bl'         : t.blr,
+                                        'bl'         : t.bl,
                                         'bla'        : t.blgr,
                                         'blf'        : t.blfr,
-                                        'path'       : t.pathr,
-                                        'patha'      : t.pathar,
+                                        'path'       : t.path,
+                                        'patha'      : t.pathgr,
                                         'pathf'      : t.pathfr,
                                         'mobile'     : t.sprint,
                                         'stationary' : '',
@@ -2307,6 +2308,8 @@ class tObject(dict):
             self.flycamdist = ''
             self.detailhi   = ''
             self.detaillo   = ''
+            self.BaseMode   = ''
+            self.FlyMode    = ''
             self.RunMode    = ''
             self.JumpMode   = ''
 

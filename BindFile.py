@@ -1,5 +1,5 @@
 from pathlib import Path, PureWindowsPath
-from KeyBind import KeyBind
+from KeyBind.FileKeyBind import FileKeyBind
 from collections import deque
 
 class BindFile():
@@ -26,7 +26,7 @@ class BindFile():
         # TODO and/or maybe this should just get called with key/string and
         # then forge its own KeyBind objects
         if isinstance(keybind, str):
-            keybind = KeyBind(keybind, "", "", contents)
+            keybind = FileKeyBind(keybind, "", "", contents)
 
         if not keybind.Key: return
 

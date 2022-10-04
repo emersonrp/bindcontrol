@@ -41,6 +41,7 @@ class Page(wx.Panel):
     def GetState(self, key):
         control = self.Ctrls.get(key, None)
         if not control:
+            print(f"Unknown control in GetState: {key}")
             return ''
         if isinstance(control, wx.Button):
             return control.GetLabel()
@@ -64,6 +65,9 @@ class Page(wx.Panel):
         if isinstance(control, wx.Button):
             return control.SetLabel(value)
         elif isinstance(control, wx.Choice) or isinstance(control, wx.ComboBox):
+            if isinstance(value, str):
+                value = control.FindString(value)
+                if value == wx.NOT_FOUND: value = 0
             return control.SetSelection(value)
         elif getattr(control, 'SetValue', None):
             return control.SetValue(value)

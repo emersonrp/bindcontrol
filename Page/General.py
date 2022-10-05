@@ -59,12 +59,13 @@ class General(Page):
         archchoices = []
         for Arch in sorted(Archetypes):
             archchoices.append([Arch, Icon(Arch)])
-        powersBox.AddControl(
+        archpicker = powersBox.AddControl(
             ctlName = 'Archetype',
             ctlType = 'bmcombo',
             contents = archchoices,
             callback = self.OnPickArchetype,
         )
+        archpicker.SetSelection(0) # needed for Mac
         powersBox.AddControl(
             ctlName = 'Primary',
             ctlType = 'choice',

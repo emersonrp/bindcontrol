@@ -2199,7 +2199,7 @@ class SoD(Page):
         curfile.SetBind(key, '+down' + feedback + profile.BLF(filename))
 
     def canss(self):
-        return self.GetState('DefaultMode') == 1 and self.GetState('HasSS')
+        return self.GetState('DefaultMode') == 'Super Speed' and self.GetState('HasSS')
 
 UI.Labels.update( {
     'Up'        : 'Up',

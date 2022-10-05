@@ -1667,7 +1667,6 @@ class SoD(Page):
         actkeys = t.totalkeys
         ml = ''
 
-        up = dowx = forw = bac = lef = rig = ''
         if (not flight):
             mobile = None
             stationary = None
@@ -1687,7 +1686,7 @@ class SoD(Page):
             if (t.canjmp == 1) : aj = t.jump
             actkeys = t.jkeys
             if (t.X == 1 and t.totalkeys > 1) : up = '$$up 1'
-            else:                                     up = '$$up 0'
+            else:                               up = '$$up 0'
 
         toggleon = mobile
         if (actkeys == 0):
@@ -1712,7 +1711,7 @@ class SoD(Page):
         bl = f"{bl}{t.space}{1-t.X}{t.W}{t.S}{t.A}{t.D}.txt"
 
         if t.X == 1: ini = "-down"
-        else:           ini = "+down"
+        else:        ini = "+down"
 
         if (followbl):
             move = ''
@@ -2052,7 +2051,7 @@ class SoD(Page):
         curfile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("follow" + toggle + t.up + t.dow + t.forw + t.bac + t.lef + t.rig + bl + t.KeyState() + '.txt'))
 
     #  toggleon variation
-    def actPower_toggle(self, start, unq, on, rest):
+    def actPower_toggle(self, start, unq, on, *rest):
         s = ''
         if on and not isinstance(on, str):
             #  deal with power slot stuff..

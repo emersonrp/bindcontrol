@@ -25,7 +25,8 @@ class General(Page):
             # TODO - find CoH install and put them there?
             # TODO - help text about WINEPREFIX etc for Mac/Linux users
             'BindsDir': str(Path.home().joinpath("cohbinds")),
-            'GameBindsDir' : "Z:\\cohbinds\\",
+            # TODO put this back to Z:\\cohbinds\\
+            'GameBindsDir' : "C:\\Users\\emerson\\cbcohbinds\\",
             'ResetKey': 'LCTRL+R',
             'ResetFeedback': 1,
             'Pool1': '',

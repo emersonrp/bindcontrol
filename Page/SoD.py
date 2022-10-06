@@ -264,7 +264,7 @@ class SoD(Page):
             ctlType = 'keybutton',
         )
         superSpeedSizer.AddControl(
-            ctlName = 'SSOnlyWhenMoving',
+            ctlName = 'SSMobileOnly',
             ctlType = 'checkbox',
         )
         superSpeedSizer.AddControl(
@@ -297,11 +297,11 @@ class SoD(Page):
         ##### FLY
         flySizer = ControlGroup(self, self, 'Flight')
         flySizer.AddControl(
-            ctlName = 'FlyHover',
+            ctlName = 'HasHover',
             ctlType = 'checkbox',
         )
         flySizer.AddControl(
-            ctlName = 'FlyFly',
+            ctlName = 'HasFly',
             ctlType = 'checkbox',
         )
         flySizer.AddControl(
@@ -476,8 +476,7 @@ class SoD(Page):
         turnoff    = p.get('turnoff'    , "")
         sssj       = p.get('sssj'       , "")
 
-        # TODO -- this wants to be turnoff ||= mobile, stationary once we know what those are.  arrays?  hashes?
-        #$turnoff ||= {mobile,stationary}
+        turnoff = turnoff or {mobile, stationary}
 
         if ((self.GetState('DefaultMode') == modestr) and (t.totalkeys == 0)):
 
@@ -490,14 +489,14 @@ class SoD(Page):
             self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
             self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
 
-            if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
-            elif (modestr == "Sprint")  : self.makeSprintModeKey  (profile,t,"r", curfile,turnoff,fix)
-            elif (modestr == "Fly")   : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
-            elif (modestr == "GFly")  : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff,fix)
-            elif (modestr == "Super Speed")   : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
-            elif (modestr == "Jump")  : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
-            elif (modestr == "Temp")  : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
-            elif (modestr == "QFly")  : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
+            if   (modestr == "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
+            elif (modestr == "Sprint")      : self.makeSprintModeKey  (profile,t,"r", curfile,turnoff,fix)
+            elif (modestr == "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
+            elif (modestr == "GFly")        : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff,fix)
+            elif (modestr == "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
+            elif (modestr == "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
+            elif (modestr == "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
+            elif (modestr == "QFly")        : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
 
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 
@@ -1425,6 +1424,8 @@ class SoD(Page):
         #  kheldian form support
         #  create the Nova and Dwarf form support files if enabled.
         ### TODO all of this has wrong control names
+        ### TODO this next line is just to shut up pylint; remove it once we have Nova and Dwarf dtrt.
+        Nova = Dwarf = {}
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
@@ -2015,6 +2016,10 @@ class SoD(Page):
             curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mlon + self.actPower_name(None,1,mobile) + bl))
 
     def sodAutoRunOffKey(self, t,bl,curfile,mobile,stationary,flight,sssj):
+        toggleon = toggleoff = ''
+        if sssj and t.space == 1:
+            toggleoff = mobile
+            mobile = sssj
         if (not flight and not sssj) :
             if (t.horizkeys > 0) :
                toggleon = t.mlon + self.actPower_name(None,1,mobile)

@@ -439,7 +439,7 @@ class SoD(Page):
     def SynchronizeUI(self):
         self.OnEnableSoD()
 
-    def OnEnableSoD(self, evt = None):
+    def OnEnableSoD(self, _ = None):
         for c,control in self.Ctrls.items():
             if c != 'EnableSoD':  # don't disable yourself kthx
                 control         .Enable(self.GetState('EnableSoD'))
@@ -455,14 +455,14 @@ class SoD(Page):
         bla  = p.get('bla'  , t.bla)
         blf  = p.get('blf'  , t.blf)
         blbo = p.get('blbo' , t.blbo)
-        blsd = p.get('blsd' , t.blsd)
+        # blsd = p.get('blsd' , t.blsd) # used in commented-out code
 
         path     = p.get('path'     , t.path)
         gamepath = p.get('gamepath' , t.gamepath)
         patha    = p.get('patha'    , t.patha)
         pathf    = p.get('pathf'    , t.pathf)
         pathbo   = p.get('pathbo'   , t.pathbo)
-        pathsd   = p.get('pathsd'   , t.pathsd)
+        # pathsd   = p.get('pathsd'   , t.pathsd) # used in commented-out code
 
         mobile     = p.get('mobile'     , "")
         stationary = p.get('stationary' , "")
@@ -480,7 +480,7 @@ class SoD(Page):
             curfile = profile.ResetFile()
 
             self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-            self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
+            self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','','')
             self.sodForwardKey(t,bl,curfile,mobile,stationary,flight,'','','',sssj)
             self.sodBackKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
             self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
@@ -505,7 +505,7 @@ class SoD(Page):
             self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
 
             self.sodUpKey     (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
-            self.sodDownKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
+            self.sodDownKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo")
             self.sodForwardKey(t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
             self.sodBackKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
             self.sodLeftKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
@@ -550,7 +550,7 @@ class SoD(Page):
 #            self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
 #
 #            self.sodUpKey     (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
-#            self.sodDownKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
+#            self.sodDownKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd")
 #            self.sodForwardKey(t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
 #            self.sodBackKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
 #            self.sodLeftKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
@@ -572,7 +572,7 @@ class SoD(Page):
         self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
 
         self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-        self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
+        self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','','')
         self.sodForwardKey(t,bl,curfile,mobile,stationary,flight,'','','',sssj)
         self.sodBackKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
         self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
@@ -595,7 +595,7 @@ class SoD(Page):
             if   (modestr == "NonSoD") : self.makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
             elif (modestr == "Sprint")   : self.makeSprintModeKey  (profile,t,"r", curfile,turnoff,fix)
             elif (flight == "Jump"):
-                if (modestr == "Fly"): self.makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,None,1)
+                if (modestr == "Fly"): self.makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,'',True)
             else:
                 if (modestr == "Fly"): self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
 
@@ -613,7 +613,7 @@ class SoD(Page):
         self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
 
         self.sodUpKey     (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
-        self.sodDownKey   (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
+        self.sodDownKey   (t,bla,curfile,mobile,stationary,flight,1, '','')
         self.sodForwardKey(t,bla,curfile,mobile,stationary,flight,bl,'','',sssj)
         self.sodBackKey   (t,bla,curfile,mobile,stationary,flight,bl,'','',sssj)
         self.sodLeftKey   (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
@@ -643,7 +643,7 @@ class SoD(Page):
         self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
 
         self.sodUpKey     (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        self.sodDownKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
+        self.sodDownKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'')
         self.sodForwardKey(t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
         self.sodBackKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
         self.sodLeftKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
@@ -1172,12 +1172,12 @@ class SoD(Page):
         #  temporarily set self.GetState('DefaultMode') to "NonSoD"
         # self.SetState('DefaultMode', "Sprint")
         #  set up the keys to be used.
-        if (self.GetState('DefaultMode') == "NonSoD") : t.NonSoDMode = self.GetState('NonSoDMode')
-        if (self.GetState('DefaultMode') == "Sprint")   : t.SprintMode   = self.GetState('SprintMode')
-        if (self.GetState('DefaultMode') == "Fly")    : t.FlyMode    = self.GetState('FlyMode')
-        if (self.GetState('DefaultMode') == "Jump")   : t.JumpMode   = self.GetState('JumpMode')
-        if (self.GetState('DefaultMode') == "Super Speed")    : t.RunMode    = self.GetState('RunMode')
-    #    if (self.GetState('DefaultMode') == "GFly")   : t.GFlyMode   = self.GetState('GFlyMode')
+        if (self.GetState('DefaultMode') == "NonSoD")      : t.NonSoDMode = self.GetState('NonSoDMode')
+        if (self.GetState('DefaultMode') == "Sprint")      : t.SprintMode = self.GetState('SprintMode')
+        if (self.GetState('DefaultMode') == "Fly")         : t.FlyMode    = self.GetState('FlyMode')
+        if (self.GetState('DefaultMode') == "Jump")        : t.JumpMode   = self.GetState('JumpMode')
+        if (self.GetState('DefaultMode') == "Super Speed") : t.RunMode    = self.GetState('RunMode')
+    #    if (self.GetState('DefaultMode') == "GFly")        : t.GFlyMode   = self.GetState('GFlyMode')
         t.TempMode = self.GetState('TempMode')
         t.QFlyMode = self.GetState('QFlyMode')
 
@@ -1516,7 +1516,7 @@ class SoD(Page):
                 tp_on2 = profile.GetBindFile("dtp","tp_on2.txt")
                 tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$' + dwarfTPPower + profile.BLF('dtp','tp_on1.txt')))
 
-            dwrffile.SetBind(self.Ctrls['ToggleKey'].MakeFileKeyBind("t $name, Changing to Human Form, Normal Mode$fullstop\$\$powexectoggleoff Dwarf['Dwarf']\$\$gototray 1" + profile.BLF('reset.txt')))
+            dwrffile.SetBind(self.Ctrls['ToggleKey'].MakeFileKeyBind(f"t $name, Changing to Human Form, Normal Mode$fullstop$$powexectoggleoff {Dwarf['Dwarf']}$$gototray 1" + profile.BLF('reset.txt')))
 
         if (self.GetState('SimpleSJCJ')):
             if (self.GetState('JumpCJ') and self.GetState('JumpSJ')):
@@ -1643,7 +1643,7 @@ class SoD(Page):
                else: #  otherwise turn on the stationary power..
                    toggleon = stationary
 
-        toggle = ''
+        toggle = toggleoff = ''
         if (toggleon or toggleoff):
            toggle = self.actPower_name(None,1,toggleon,toggleoff,toggleoff2)
 
@@ -1666,7 +1666,7 @@ class SoD(Page):
             if (not sssj) : toggle = ''  #  returns the following line to the way it was before sssj
             curfile.SetBind(self.Ctrls['Up'].MakeFileKeyBind(f"{ini}{upx}{dow}$$backward 0{lef}{rig}{toggle}{t.mlon}{bl}"))
 
-    def sodDownKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
+    def sodDownKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo):
         (up,dowx,forw,bac,lef,rig) = (t.up,t.dowx,t.forw,t.bac,t.lef,t.rig)
 
         actkeys = t.totalkeys
@@ -1694,6 +1694,7 @@ class SoD(Page):
             else:                               up = '$$up 0'
 
         toggleon = mobile
+        toggleoff = ''
         if (actkeys == 0):
            ml = t.mlon
            toggleon = mobile
@@ -1713,7 +1714,7 @@ class SoD(Page):
            toggle = self.actPower_name(None,1,toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'X'})
-        bl = f"{bl}{t.space}{1-t.X}{t.W}{t.S}{t.A}{t.D}.txt"
+        bl = f"{bl}{newbits}.txt"
 
         if t.X == 1: ini = "-down"
         else:        ini = "+down"
@@ -2061,7 +2062,7 @@ class SoD(Page):
 
     #  toggleon variation
     def actPower_toggle(self, start, unq, on, *rest):
-        s = ''
+        s = traytest = ''
         if on and not isinstance(on, str):
             #  deal with power slot stuff..
           traytest = on['trayslot']
@@ -2093,7 +2094,7 @@ class SoD(Page):
         if (unq and s):
            s = s + '$$powexecunqueue'
 
-        # if start then s = string.sub(s,3,string.len(s)) end
+        if start: s = s[2:]
         if (on):
             if not (isinstance(on, str)):
                 #  deal with power slot stuff..
@@ -2104,7 +2105,7 @@ class SoD(Page):
         return s
 
     def actPower_name(self, start, unq, on, *rest):
-        s = ''
+        s = traytest = ''
         if on and not isinstance(on, str):
            #  deal with power slot stuff..
            traytest = on['trayslot']
@@ -2131,13 +2132,13 @@ class SoD(Page):
            s = s + '$$powexecunqueue'
 
         if (on):
-            if isinstance(s, str):
+            if isinstance(on, str):
                s = s + '$$powexecname ' + on + '$$powexecname ' + on
             else:
                 #  deal with power slot stuff..
                s = s + '$$powexectray ' + on['trayslot'] + '$$powexectray ' + on['trayslot']
 
-        if (start): s = s[:2]
+        if (start): s = s[2:]
         return s
 
     actPower = actPower_name
@@ -2318,38 +2319,117 @@ class tObject(dict):
             self.NonSoDMode = ''
             self.SprintMode = ''
             self.FlyMode    = ''
-            self.RunMode    = ''
             self.JumpMode   = ''
+            self.RunMode    = ''
+            self.GFlyMode   = ''
+            self.TempMode   = ''
+            self.QFlyMode   = ''
+            #self.jumpifnocj = ''
 
-            self.space      = 0
-            self.X          = 0
-            self.W          = 0
-            self.S          = 0
-            self.A          = 0
-            self.D          = 0
-            self.up         = ''
-            self.dow        = ''
-            self.forw       = ''
-            self.bac        = ''
-            self.lef        = ''
-            self.rig        = ''
+            self.space = 0
+            self.X     = 0
+            self.W     = 0
+            self.S     = 0
+            self.A     = 0
+            self.D     = 0
+            self.up    = ''
+            self.dow   = ''
+            self.forw  = ''
+            self.bac   = ''
+            self.lef   = ''
+            self.rig   = ''
+            self.upx   = ''
+            self.dowx  = ''
+            self.forx  = ''
+            self.bacx  = ''
+            self.lefx  = ''
+            self.rigx  = ''
 
             self.bl   = ''
             self.bla  = ''
-            self.blf  = ''
+            self.blaf = ''
+            self.blaj = ''
+            self.blan = ''
+            self.blaq = ''
+            self.blas = ''
+            self.blat = ''
             self.blbo = ''
+            self.blf  = ''
+            self.blff = ''
+            self.blfn = ''
+            self.blfj = ''
+            self.blfq = ''
+            self.blfs = ''
+            self.blft = ''
+            self.blfr = ''
+            self.blgr = ''
+            self.blj  = ''
+            self.bln  = ''
+            self.blq  = ''
+            self.bls  = ''
             self.blsd = ''
+            self.blt  = ''
 
-            self.path       = ''
+            self.path   = ''
+            self.patha  = ''
+            self.pathaf = ''
+            self.pathaj = ''
+            self.pathan = ''
+            self.pathaq = ''
+            self.pathas = ''
+            self.pathat = ''
+            self.pathbo = ''
+            self.pathf  = ''
+            self.pathff = ''
+            self.pathfn = ''
+            self.pathfj = ''
+            self.pathfq = ''
+            self.pathfs = ''
+            self.pathft = ''
+            self.pathfr = ''
+            self.pathgr = ''
+            self.pathj  = ''
+            self.pathn  = ''
+            self.pathq  = ''
+            self.paths  = ''
+            self.pathsd = ''
+            self.patht  = ''
+
             self.gamepath   = ''
-            self.patha      = ''
             self.gamepatha  = ''
-            self.pathf      = ''
-            self.gamepathf  = ''
-            self.pathbo     = ''
+            self.gamepathaf = ''
+            self.gamepathaj = ''
+            self.gamepathan = ''
+            self.gamepathaq = ''
+            self.gamepathas = ''
+            self.gamepathat = ''
             self.gamepathbo = ''
-            self.pathsd     = ''
+            self.gamepathf  = ''
+            self.gamepathff = ''
+            self.gamepathfn = ''
+            self.gamepathfj = ''
+            self.gamepathfq = ''
+            self.gamepathfs = ''
+            self.gamepathft = ''
+            self.gamepathfr = ''
+            self.gamepathgr = ''
+            self.gamepathj  = ''
+            self.gamepathn  = ''
+            self.gamepathq  = ''
+            self.gamepaths  = ''
             self.gamepathsd = ''
+            self.gamepatht  = ''
+
+            self.basepath     = ''
+            self.gamebasepath = ''
+
+            self.path         = ''
+            self.gamepath     = ''
+
+            self.vertkeys = 0
+            self.horizkeys = 0
+            self.jkeys = 0
+
 
     # return binary "011010" string of which keys are "on";
     # optionally flipping one of them first.

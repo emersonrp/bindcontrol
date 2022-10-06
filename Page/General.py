@@ -13,8 +13,6 @@ class General(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
 
-        profile = parent
-
         self.Init = {
             'Name': 'Profile',
             'Origin': "Magic",

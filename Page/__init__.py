@@ -11,8 +11,6 @@
 
 import wx
 
-import BindFile
-
 class Page(wx.Panel):
 
     def __init__(self, parent):
@@ -23,7 +21,7 @@ class Page(wx.Panel):
 
         self.Ctrls = {}
 
-    def help(self, event):
+    def help(self, _):
         if not (self.HelpWindow):
             HelpWindow = wx.MiniFrame ( None, -1, self.TabTitle + " Help",
                        style = wx.CAPTION|wx.CLOSE_BOX|wx.STAY_ON_TOP|wx.RESIZE_BORDER)
@@ -55,6 +53,7 @@ class Page(wx.Panel):
             return control.GetPath()
         else:
             print(f"{control} has no GetValue()")
+            return ''
 
     def SetState(self, key, value):
         control = self.Ctrls.get(key, None)

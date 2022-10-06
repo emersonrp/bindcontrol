@@ -148,178 +148,68 @@ class SoD(Page):
         # TODO!  fill this picker with only the appropriate bits.
         # for i in (powers list):
         #   if (player has power): add_to_contents(i)
-        generalSizer.AddControl(
-            ctlName = 'DefaultMode',
-            ctlType = 'choice',
-            contents = ('NonSoD','Sprint','Super Speed','Jump','Fly'),
-        )
-        generalSizer.AddControl(
-            ctlName = 'SprintPower',
-            ctlType = 'choice',
-            contents = GameData.SprintPowers,
-        )
-        generalSizer.AddControl(
-            ctlName = 'AutoMouseLook',
-            ctlType = 'checkbox',
-            tooltip = 'Automatically Mouselook when moving',
-        )
-        generalSizer.AddControl(
-            ctlName = 'AutoRun',
-            ctlType = 'keybutton',
-        )
-        generalSizer.AddControl(
-            ctlName = 'Follow',
-            ctlType = 'keybutton',
-        )
-        generalSizer.AddControl(
-            ctlName = 'NonSoDEnable',
-            ctlType = 'checkbox',
-        )
-        generalSizer.AddControl(
-            ctlName = 'NonSoDMode',
-            ctlType = 'keybutton',
-        )
-        generalSizer.AddControl(
-            ctlName = 'SprintSoD',
-            ctlType = 'checkbox',
-        )
+        generalSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'combo',
+            contents = ('No SoD','Sprint','Super Speed','Jump','Fly'),)
+        generalSizer.AddControl( ctlName = 'SprintPower', ctlType = 'combo',
+            contents = GameData.SprintPowers,)
+        generalSizer.AddControl( ctlName = 'AutoMouseLook', ctlType = 'checkbox',
+            tooltip = 'Automatically Mouselook when moving',)
+        generalSizer.AddControl( ctlName = 'AutoRun', ctlType = 'keybutton',)
+        generalSizer.AddControl( ctlName = 'Follow', ctlType = 'keybutton',)
+        generalSizer.AddControl( ctlName = 'NonSoDEnable', ctlType = 'checkbox',)
+        generalSizer.AddControl( ctlName = 'NonSoDMode', ctlType = 'keybutton',)
+        generalSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',)
         leftColumn.Add(generalSizer, 0, wx.EXPAND)
 
         ### DETAIL SETTINGS
         detailSizer = ControlGroup(self, self, 'Detail Settings')
-        detailSizer.AddControl(
-            ctlName = 'ChangeCamera',
-            ctlType = 'checkbox',
-        )
-        detailSizer.AddControl(
-            ctlName = 'CamdistBase',
-            ctlType = 'spinbox',
-            contents = (1, 100),
-        )
-        detailSizer.AddControl(
-            ctlName = 'CamdistMove',
-            ctlType = 'spinbox',
-            contents = (1, 100),
-        )
-        detailSizer.AddControl(
-            ctlName = 'ChangeDetail',
-            ctlType = 'checkbox',
-        )
-        detailSizer.AddControl(
-            ctlName = 'DetailBase',
-            ctlType = 'spinbox',
-            contents = (1, 100),
-        )
-        detailSizer.AddControl(
-            ctlName = 'DetailMove',
-            ctlType = 'spinbox',
-            contents = (1, 100),
-        )
-        detailSizer.AddControl(
-            ctlName = 'TPHideWindows',
-            ctlType = 'checkbox',
-        )
-        detailSizer.AddControl(
-            ctlName = 'Feedback',
-            ctlType = 'checkbox',
-        )
+        detailSizer.AddControl( ctlName = 'ChangeCamera', ctlType = 'checkbox',)
+        detailSizer.AddControl( ctlName = 'CamdistBase', ctlType = 'spinbox', contents = (1, 100),)
+        detailSizer.AddControl( ctlName = 'CamdistMove', ctlType = 'spinbox', contents = (1, 100),)
+        detailSizer.AddControl( ctlName = 'ChangeDetail', ctlType = 'checkbox',)
+        detailSizer.AddControl( ctlName = 'DetailBase', ctlType = 'spinbox', contents = (1, 100),)
+        detailSizer.AddControl( ctlName = 'DetailMove', ctlType = 'spinbox', contents = (1, 100),)
+        detailSizer.AddControl( ctlName = 'TPHideWindows', ctlType = 'checkbox',)
+        detailSizer.AddControl( ctlName = 'Feedback', ctlType = 'checkbox',)
         leftColumn.Add(detailSizer, 0, wx.EXPAND)
 
 
         ##### TEMP TRAVEL POWERS
         tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
         # if (temp travel powers exist)?  Should this be "custom"?
-        tempSizer.AddControl(
-            ctlName = 'TempEnable',
-            ctlType = 'checkbox',
-        )
-        tempSizer.AddControl(
-            ctlName = 'TempMode',
-            ctlType = 'keybutton',
-        )
-        tempSizer.AddControl(
-            ctlName = 'TempTray',
-            ctlType = 'spinbox',
-            contents = [1, 8],
-        )
-        tempSizer.AddControl(
-            ctlName = 'TempTraySwitch',
-            ctlType = 'keybutton',
-        )
+        tempSizer.AddControl( ctlName = 'TempEnable', ctlType = 'checkbox',)
+        tempSizer.AddControl( ctlName = 'TempMode', ctlType = 'keybutton',)
+        tempSizer.AddControl( ctlName = 'TempTray', ctlType = 'spinbox', contents = [1, 8],)
+        tempSizer.AddControl( ctlName = 'TempTraySwitch', ctlType = 'keybutton',)
         leftColumn.Add(tempSizer, 0, wx.EXPAND)
         leftColumn.Hide(tempSizer) # TODO
 
         ##### SUPER SPEED
         superSpeedSizer = ControlGroup(self, self, 'Super Speed')
-        superSpeedSizer.AddControl(
-            ctlName = 'HasSS',
-            ctlType = "checkbox",
-        )
-        superSpeedSizer.AddControl(
-            ctlName = 'RunMode',
-            ctlType = 'keybutton',
-        )
-        superSpeedSizer.AddControl(
-            ctlName = 'SSMobileOnly',
-            ctlType = 'checkbox',
-        )
-        superSpeedSizer.AddControl(
-            ctlName = 'SSSJModeEnable',
-            ctlType = 'checkbox',
-        )
+        superSpeedSizer.AddControl( ctlName = 'HasSS', ctlType = "checkbox",)
+        superSpeedSizer.AddControl( ctlName = 'RunMode', ctlType = 'keybutton',)
+        superSpeedSizer.AddControl( ctlName = 'SSMobileOnly', ctlType = 'checkbox',)
+        superSpeedSizer.AddControl( ctlName = 'SSSJModeEnable', ctlType = 'checkbox',)
         rightColumn.Add(superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
         superJumpSizer = ControlGroup(self, self, 'Super Jump')
-        superJumpSizer.AddControl(
-            ctlName = 'JumpSJ',
-            ctlType = 'checkbox',
-        )
-        superJumpSizer.AddControl(
-            ctlName = 'JumpCJ',
-            ctlType = 'checkbox',
-        )
-        superJumpSizer.AddControl(
-            ctlName = 'JumpMode',
-            ctlType = 'keybutton',
-        )
-        superJumpSizer.AddControl(
-            ctlName = 'SimpleSJCJ',
-            ctlType = 'checkbox',
-        )
+        superJumpSizer.AddControl( ctlName = 'JumpSJ', ctlType = 'checkbox',)
+        superJumpSizer.AddControl( ctlName = 'JumpCJ', ctlType = 'checkbox',)
+        superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',)
+        superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',)
         rightColumn.Add(superJumpSizer, 0, wx.EXPAND)
 
 
         ##### FLY
         flySizer = ControlGroup(self, self, 'Flight')
-        flySizer.AddControl(
-            ctlName = 'HasHover',
-            ctlType = 'checkbox',
-        )
-        flySizer.AddControl(
-            ctlName = 'HasFly',
-            ctlType = 'checkbox',
-        )
-        flySizer.AddControl(
-            ctlName = 'HasCF',
-            ctlType = 'checkbox',
-        )
-        flySizer.AddControl(
-            ctlName = 'FlyMode',
-            ctlType = 'keybutton',
-        )
-        flySizer.AddControl(
-            ctlName = 'HasQF',
-            ctlType = 'checkbox',
-        )
-        flySizer.AddControl(
-            ctlName = 'QFlyMode',
-            ctlType = 'keybutton',
-        )
-        #flySizer.AddControl(
-        #    ctlName = 'GFlyMode',
-        #    ctlType = 'keybutton',
-        #)
+        flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',)
+        flySizer.AddControl( ctlName = 'HasFly', ctlType = 'checkbox',)
+        flySizer.AddControl( ctlName = 'HasCF', ctlType = 'checkbox',)
+        flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
+        flySizer.AddControl( ctlName = 'HasQF', ctlType = 'checkbox',)
+        flySizer.AddControl( ctlName = 'QFlyMode', ctlType = 'keybutton',)
+        #flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',)
         rightColumn.Add(flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
@@ -327,103 +217,36 @@ class SoD(Page):
 
         # if (at == peacebringer) "Dwarf Step"
         # if (at == warshade) "Shadow Step / Dwarf Step"
-        teleportSizer.AddControl(
-            ctlName = 'HasTP',
-            ctlType = 'checkbox',
-        )
-        teleportSizer.AddControl(
-            ctlName = "TPMode",
-            ctlType = 'keybutton',
-        )
-        teleportSizer.AddControl(
-            ctlName = "TPCombo",
-            ctlType = 'keybutton',
-        )
-        teleportSizer.AddControl(
-            ctlName = "TPReset",
-            ctlType = 'keybutton',
-        )
-
-        # if (player has hover): {
-        teleportSizer.AddControl(
-            ctlName = 'TPTPHover',
-            ctlType = 'checkbox',
-        )
-        #
+        teleportSizer.AddControl( ctlName = 'HasTP', ctlType = 'checkbox',)
+        teleportSizer.AddControl( ctlName = "TPMode", ctlType = 'keybutton',)
+        teleportSizer.AddControl( ctlName = "TPCombo", ctlType = 'keybutton',)
+        teleportSizer.AddControl( ctlName = "TPReset", ctlType = 'keybutton',)
+        # if (player has hover):
+        teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',)
 
         # TODO - do we want these team versions in there?
         # if (player has team-tp) {
-        teleportSizer.AddControl(
-            ctlName = "HasTTP",
-            ctlType = 'checkbox',
-        )
-        teleportSizer.AddControl(
-            ctlName = "TTPMode",
-            ctlType = 'keybutton',
-        )
-        teleportSizer.AddControl(
-            ctlName = "TTPCombo",
-            ctlType = 'keybutton',
-        )
-        teleportSizer.AddControl(
-            ctlName = "TTPReset",
-            ctlType = 'keybutton',
-        )
-        for c in ['TTPMode','TTPCombo','TTPReset']:
-            teleportSizer.Show(self.Ctrls[c], False)
-            teleportSizer.Show(self.Ctrls[c].ctlLabel, False)
-
-        # # if (player has group fly) {
-        # teleportSizer.AddControl(
-        #     ctlName = 'TTPAutoGFly',
-        #     ctlType = 'checkbox',
-        # )
-        #
-        #
+        teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',)
+        teleportSizer.AddControl( ctlName = "TTPMode", ctlType = 'keybutton',)
+        teleportSizer.AddControl( ctlName = "TTPCombo", ctlType = 'keybutton',)
+        teleportSizer.AddControl( ctlName = "TTPReset", ctlType = 'keybutton',)
+        # # if (player has group fly):
+        # teleportSizer.AddControl( ctlName = 'TTPAutoGFly', ctlType = 'checkbox',)
         # end team-tp
         rightColumn.Add(teleportSizer, 0, wx.EXPAND)
 
         ##### KHELDIAN TRAVEL POWERS
         kheldianSizer = ControlGroup(self, self, 'Nova / Dwarf Travel Powers')
 
-        kheldianSizer.AddControl(
-            ctlName = 'UseNova',
-            ctlType = 'checkbox',
-        )
-        kheldianSizer.AddControl(
-            ctlName = 'NovaMode',
-            ctlType = 'keybutton',
-        )
-        kheldianSizer.AddControl(
-            ctlName = 'NovaTray',
-            ctlType = 'spinbox',
-            contents = [1, 8],
-        )
-        kheldianSizer.AddControl(
-            ctlName = 'UseDwarf',
-            ctlType = 'checkbox',
-        )
-        kheldianSizer.AddControl(
-            ctlName = 'DwarfMode',
-            ctlType = 'keybutton',
-        )
-        kheldianSizer.AddControl(
-            ctlName = 'DwarfTray',
-            ctlType = 'spinbox',
-            contents = [1, 8],
-        )
-
+        kheldianSizer.AddControl( ctlName = 'UseNova', ctlType = 'checkbox',)
+        kheldianSizer.AddControl( ctlName = 'NovaMode', ctlType = 'keybutton',)
+        kheldianSizer.AddControl( ctlName = 'NovaTray', ctlType = 'spinbox', contents = [1, 8],)
+        kheldianSizer.AddControl( ctlName = 'UseDwarf', ctlType = 'checkbox',)
+        kheldianSizer.AddControl( ctlName = 'DwarfMode', ctlType = 'keybutton',)
+        kheldianSizer.AddControl( ctlName = 'DwarfTray', ctlType = 'spinbox', contents = [1, 8],)
         # do we want a key to change directly to human form, instead of toggles?
-        kheldianSizer.AddControl(
-            ctlName = 'HumanMode',
-            ctlType = 'keybutton',
-        )
-        kheldianSizer.AddControl(
-            ctlName = 'HumanTray',
-            ctlType = 'spinbox',
-            contents = [1, 8],
-        )
-
+        kheldianSizer.AddControl( ctlName = 'HumanMode', ctlType = 'keybutton',)
+        kheldianSizer.AddControl( ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 8],)
         rightColumn.Add(kheldianSizer, 0, wx.EXPAND)
         rightColumn.Hide(kheldianSizer) # TODO
 
@@ -1426,6 +1249,9 @@ class SoD(Page):
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
+        ### TODO TODO TODO - these are just in here to make pylint happy;  fix the actual problem
+        Nova = Dwarf = {}
+
         if (self.GetState('UseNova')):
             ResetFile.SetBind(self.GetState('NovaMode'),
                 f"t $name, Changing to {Nova['Nova']} Form{fullstop}{t.on}{Nova['Nova']}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt'))
@@ -2324,7 +2150,7 @@ class tObject(dict):
             self.GFlyMode   = ''
             self.TempMode   = ''
             self.QFlyMode   = ''
-            #self.jumpifnocj = ''
+            self.jumpifnocj = ''
 
             self.space = 0
             self.X     = 0

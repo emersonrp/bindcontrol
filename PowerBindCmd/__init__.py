@@ -6,7 +6,7 @@ class PowerBindCmd():
         self.UI = self.BuildUI(dialog)
 
     def BuildUI(self, dialog):
-        pass
+        return
 
     def MakeBindString(self, dialog):
-        pass
+        return

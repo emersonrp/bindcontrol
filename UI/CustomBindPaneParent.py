@@ -30,7 +30,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
     def UniqueName(self, name = ''):
         return self.bindclass + self.unique_bind_id + "@@" + name
 
-    def BuildBindUI(parent, self):
+    def BuildBindUI(self, parent):
         # build the UI needed to edit/create this bind, and shim
         # it into 'parent'
         pass

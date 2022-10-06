@@ -52,7 +52,7 @@ class CustomBinds(Page):
 
     def AddBindToPage(self, bindinit = {}, bindpane = None):
 
-        if not bindpane: wx.Error("Something tried to add an empty bindpane to the page")
+        if not bindpane: wx.LogError("Something tried to add an empty bindpane to the page")
 
         bindname = ''
         dlg = wx.TextEntryDialog(self, 'Enter name for new bind')

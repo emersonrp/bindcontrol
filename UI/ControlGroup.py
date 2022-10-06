@@ -22,7 +22,7 @@ class ControlGroup(wx.StaticBoxSizer):
             contents = '', tooltip = '', callback = None):
 
         if not ctlName:
-            wx.ErrorLog(f"Tried to make a labeled control without a CtlName!")
+            wx.LogError(f"Tried to make a labeled control without a CtlName!")
             raise(Exception)
 
         sizer     = self.InnerSizer

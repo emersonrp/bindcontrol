@@ -109,6 +109,7 @@ class ControlGroup(wx.StaticBoxSizer):
             ctlLabel.control = control
 
         # make checkboxes' labels click to check them
+        # TODO - doesn't work on Linux hmm
         if ctlType == ('checkbox') and control.ctlLabel:
             control.ctlLabel.Bind(wx.EVT_LEFT_DOWN, self.onCBLabelClick)
 

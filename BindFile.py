@@ -66,6 +66,8 @@ class BindFile():
             kb.rotate(1)
             return "+".join(kb)
         sortedKeyBinds = sorted(self.KeyBinds, key = rotateKeyBind)
+        # TODO this next line is just to imitate citbinder's weird naive sorting
+        sortedKeyBinds = sorted(self.KeyBinds)
 
         output = ''
         for keybind in sortedKeyBinds:

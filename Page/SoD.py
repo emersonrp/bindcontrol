@@ -30,7 +30,8 @@ class SoD(Page):
             'TurnRight'          : "E",
             'AutoRun'            : "R",
             'Follow'             : "TILDE",
-            'DefaultMode'        : "Sprint",
+            #'DefaultMode'        : "Sprint",
+            'DefaultMode'        : "Super Speed", # for testing
             'MouseChord'         : 0,
             'AutoMouseLook'      : 0,
 
@@ -48,9 +49,10 @@ class SoD(Page):
             'NonSoDEnable'       : False,
             'NonSoDMode'         : 'CTRL+M',
 
-            'HasSS'              : False,
+            #'HasSS'              : False,
+            'HasSS'              : True, # for testing
             'RunMode'            : "C",
-            'SSOnlyWhenMoving'   : 0,
+            'SSMobileOnly'       : 0,
             'SSSJModeEnable'     : 1,
 
             'JumpSJ'             : False,
@@ -58,8 +60,8 @@ class SoD(Page):
             'JumpMode'           : "T",
             'SimpleSJCJ'         : 1,
 
-            'FlyHover'           : False,
-            'FlyFly'             : False,
+            'HasHover'           : False,
+            'HasFly'             : False,
             'HasCF'              : False,
             'FlyMode'            : "F",
             'HasQF'              : False,
@@ -371,6 +373,9 @@ class SoD(Page):
             ctlName = "TTPReset",
             ctlType = 'keybutton',
         )
+        for c in ['TTPMode','TTPCombo','TTPReset']:
+            teleportSizer.Show(self.Ctrls[c], False)
+            teleportSizer.Show(self.Ctrls[c].ctlLabel, False)
 
         # # if (player has group fly) {
         # teleportSizer.AddControl(
@@ -456,11 +461,12 @@ class SoD(Page):
         blbo = p.get('blbo' , t.blbo)
         blsd = p.get('blsd' , t.blsd)
 
-        path   = p.get('path'   , t.path)
-        patha  = p.get('patha'  , t.patha)
-        pathf  = p.get('pathf'  , t.pathf)
-        pathbo = p.get('pathbo' , t.pathbo)
-        pathsd = p.get('pathsd' , t.pathsd)
+        path     = p.get('path'     , t.path)
+        gamepath = p.get('gamepath' , t.gamepath)
+        patha    = p.get('patha'    , t.patha)
+        pathf    = p.get('pathf'    , t.pathf)
+        pathbo   = p.get('pathbo'   , t.pathbo)
+        pathsd   = p.get('pathsd'   , t.pathsd)
 
         mobile     = p.get('mobile'     , "")
         stationary = p.get('stationary' , "")
@@ -500,7 +506,7 @@ class SoD(Page):
         if (flight and (flight == "Fly") and pathbo):
             #  blast off
             curfile = profile.GetBindFile(pathbo + t.KeyState() + ".txt")
-            self.sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
+            self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
 
             self.sodUpKey     (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
             self.sodDownKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
@@ -542,32 +548,32 @@ class SoD(Page):
 
             self.sodFollowKey(t,blf,curfile,mobile)
 
-            # TODO this is commented out in citybinder, why?
+            # TODO this section is commented out in citybinder, why?
             # curfile = profile.GetBindFile(pathsd)
-
-            self.sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
-
-            self.sodUpKey     (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
-            self.sodDownKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
-            self.sodForwardKey(t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
-            self.sodBackKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
-            self.sodLeftKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
-            self.sodRightKey  (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
-
-            t.ini = '-down$$'
-            if   (modestr == "Sprint") : self.makeSprintModeKey(profile,t,"r",  curfile,turnoff,fix)
-            elif (modestr == "Fly")  : self.makeFlyModeKey( profile,t,"a",  curfile,turnoff,fix)
-            elif (modestr == "GFly") : self.makeGFlyModeKey(profile,t,"gbo",curfile,turnoff,fix)
-            t.ini = ''
-            if   (modestr == "Jump") : self.makeJumpModeKey(profile,t,"j",  curfile,turnoff,path)
-
-            self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
-            self.sodFollowKey(t,blf,curfile,mobile)
+#
+#            self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
+#
+#            self.sodUpKey     (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
+#            self.sodDownKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
+#            self.sodForwardKey(t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
+#            self.sodBackKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
+#            self.sodLeftKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
+#            self.sodRightKey  (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
+#
+#            t.ini = '-down$$'
+#            if   (modestr == "Sprint") : self.makeSprintModeKey(profile,t,"r",  curfile,turnoff,fix)
+#            elif (modestr == "Fly")  : self.makeFlyModeKey( profile,t,"a",  curfile,turnoff,fix)
+#            elif (modestr == "GFly") : self.makeGFlyModeKey(profile,t,"gbo",curfile,turnoff,fix)
+#            t.ini = ''
+#            if   (modestr == "Jump") : self.makeJumpModeKey(profile,t,"j",  curfile,turnoff,path)
+#
+#            self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
+#            self.sodFollowKey(t,blf,curfile,mobile)
 
         ### TODO recently added Keystate and .txt to this.  Is this right?
         curfile = profile.GetBindFile(path + t.KeyState() + ".txt")
 
-        self.sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
+        self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
 
         self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
         self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
@@ -608,7 +614,7 @@ class SoD(Page):
         # AutoRun Binds
         curfile = profile.GetBindFile(patha + t.KeyState() + ".txt")
 
-        self.sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
+        self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
 
         self.sodUpKey     (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
         self.sodDownKey   (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
@@ -638,7 +644,7 @@ class SoD(Page):
         # FollowRun Binds
         curfile = profile.GetBindFile(pathf + t.KeyState() + ".txt")
 
-        self.sodResetKey(curfile,profile,path,self.actPower_toggle(None,1,stationary,mobile),'')
+        self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
 
         self.sodUpKey     (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
         self.sodDownKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
@@ -952,7 +958,7 @@ class SoD(Page):
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
 
-        elif (self.GetState('DefaultMode') == "Fly" and not (self.GetState('FlyHover') or self.GetState('FlyFly'))):
+        elif (self.GetState('DefaultMode') == "Fly" and not (self.GetState('HasHover') or self.GetState('HasFly'))):
             wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Fly mode but your character has neither Hover nor Fly.", "Mode Changed", wx.OK|wx.ICON_WARNING)
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
@@ -989,7 +995,7 @@ class SoD(Page):
 
         ## Flying / hover
         if (profile.General.GetState('Archetype') == "Peacebringer"):
-            if (self.GetState('FlyHover')):
+            if (self.GetState('HasHover')):
                 t.canhov = 1
                 t.canfly = 1
                 t.hover = "Combat Flight"
@@ -1001,16 +1007,16 @@ class SoD(Page):
                 t.flyx = "Energy Flight"
 
         elif (not (profile.General.GetState('Archetype') == "Warshade")):
-            if (self.GetState('FlyHover') and not self.GetState('FlyFly')):
+            if (self.GetState('HasHover') and not self.GetState('HasFly')):
                 t.canhov = 1
                 t.hover = "Hover"
                 t.flyx = "Hover"
                 if (self.GetState('TPTPHover')): t.tphover = '$$powexectoggleon Hover'
-            elif (not self.GetState('FlyHover') and self.GetState('FlyFly')):
+            elif (not self.GetState('HasHover') and self.GetState('HasFly')):
                 t.canfly = 1
                 t.hover = "Fly"
                 t.flyx = "Fly"
-            elif (self.GetState('FlyHover') and self.GetState('FlyFly')):
+            elif (self.GetState('HasHover') and self.GetState('HasFly')):
                 t.canhov = 1
                 t.canfly = 1
                 t.hover = "Hover"
@@ -1237,6 +1243,7 @@ class SoD(Page):
                                         'bla'        : t.blgr,
                                         'blf'        : t.blfr,
                                         'path'       : t.path,
+                                        'gamepath'   : t.gamepath,
                                         'patha'      : t.pathgr,
                                         'pathf'      : t.pathfr,
                                         'mobile'     : t.sprint,
@@ -1565,7 +1572,7 @@ class SoD(Page):
             ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
             ttp_on2.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( '-down$$' + teamTPPower + profile.BLF('ttp','ttp_on1.txt')))
 
-    def sodResetKey(self, curfile, p, path, turnoff, moddir):
+    def sodResetKey(self, curfile, p, gamepath, turnoff, moddir):
 
         if (moddir == 'up')  : u = 1
         else:                  u = 0
@@ -1576,7 +1583,7 @@ class SoD(Page):
                 f'up {u}$$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
                 str(turnoff) +
                 '$$t $name, SoD Binds Reset' + curfile.BaseReset() +
-                f"$$bindloadfile{path}000000.txt"
+                f"$$bindloadfile {gamepath}000000.txt"
         ))
 
     def sodUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun, followbl, bo, sssj):
@@ -1817,7 +1824,7 @@ class SoD(Page):
            dow = '$$down 0'
            actkeys = t.jkeys
            if (t.totalkeys == 1 and t.S == 1) : up = '$$up 0'
-           else:                                      up = '$$up 1'
+           else:                                up = '$$up 1'
 
            if (t.X == 1) : up = '$$up 0'
 
@@ -1887,7 +1894,7 @@ class SoD(Page):
             dow = '$$down 0'
             actkeys = t.jkeys
             if (t.totalkeys == 1 and t.A == 1) : up = '$$up 0'
-            else:                                      up = '$$up 1'
+            else:                                up = '$$up 1'
 
             if (t.X == 1) : up = '$$up 0'
 
@@ -1952,7 +1959,7 @@ class SoD(Page):
             dow = '$$down 0'
             actkeys = t.jkeys
             if (t.totalkeys == 1 and t.D == 1) : up = '$$up 0'
-            else:                                      up = '$$up 1'
+            else:                                up = '$$up 1'
 
             if (t.X == 1) : up = '$$up 0'
 
@@ -2094,7 +2101,7 @@ class SoD(Page):
 
         return s
 
-    def actPower_name(self, start, unq, on,*rest):
+    def actPower_name(self, start, unq, on, *rest):
         s = ''
         if on and not isinstance(on, str):
            #  deal with power slot stuff..
@@ -2237,11 +2244,11 @@ UI.Labels.update( {
 
     'HasSS' : 'Player has Super Speed',
     'RunMode' : 'Toggle Super Speed Mode',
-    'SSOnlyWhenMoving' : 'SuperSpeed only when moving',
+    'SSMobileOnly' : 'SuperSpeed only when moving',
     'SSSJModeEnable' : 'Enable Super Speed / Super Jump Mode',
 
-    'FlyHover' : "Player has Hover",
-    'FlyFly' : "Player has Flight",
+    'HasHover' : "Player has Hover",
+    'HasFly' : "Player has Flight",
     'HasCF' : 'Player has Combat Flying',
     'FlyMode' : 'Toggle Fly Mode',
     'HasQF' : 'Player has Quantum Flight',

@@ -7,6 +7,7 @@ class BindFile():
     def __init__(self, profile, *pathbits):
 
         self.BindsDir     = profile.BindsDir()
+        # TODO - check if GameBindsDir ends in \\, maybe in Profile itself?
         self.GameBindsDir = profile.GameBindsDir()
 
         filepathbits = (self.BindsDir, *pathbits)
@@ -41,7 +42,7 @@ class BindFile():
 
     # Windows path b/c the game will use it.
     def BaseReset(self):
-        return f'bind_load_file {self.GameBindsDir}\\subreset.txt'
+        return f'bind_load_file {self.GameBindsDir}subreset.txt'
 
     # TODO - make "silent" an option, and the default
     def BLF(self):

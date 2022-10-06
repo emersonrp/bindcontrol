@@ -472,7 +472,8 @@ class SoD(Page):
         turnoff    = p.get('turnoff'    , "")
         sssj       = p.get('sssj'       , "")
 
-        turnoff = turnoff or {mobile, stationary}
+        # TODO This seems important but it gets passed to actPower_toggle which gets confused
+        # turnoff = turnoff or (mobile, stationary)
 
         if ((self.GetState('DefaultMode') == modestr) and (t.totalkeys == 0)):
 
@@ -486,7 +487,7 @@ class SoD(Page):
             self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
 
             if   (modestr == "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
-            elif (modestr == "Sprint")      : self.makeSprintModeKey  (profile,t,"r", curfile,turnoff,fix)
+            elif (modestr == "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
             elif (modestr == "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
             elif (modestr == "GFly")        : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff,fix)
             elif (modestr == "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)

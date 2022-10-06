@@ -26,7 +26,7 @@ class General(Page):
             # TODO - help text about WINEPREFIX etc for Mac/Linux users
             'BindsDir': str(Path.home().joinpath("cohbinds")),
             # TODO put this back to Z:\\cohbinds\\
-            'GameBindsDir' : "C:\\Users\\emerson\\cbcohbinds\\",
+            'GameBindsDir' : "Z:\\cbcohbinds\\",
             'ResetKey': 'LCTRL+R',
             'ResetFeedback': 1,
             'Pool1': '',

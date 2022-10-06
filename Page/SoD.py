@@ -1,15 +1,11 @@
 import wx
-import re
 import GameData
 import UI
-import Utility
 from pathlib import Path, PureWindowsPath
 
 from Page import Page
 from UI.ControlGroup import ControlGroup
-from BindFile import BindFile
 from KeyBind.FileKeyBind import FileKeyBind
-
 
 class SoD(Page):
     def __init__(self, parent):
@@ -584,7 +580,7 @@ class SoD(Page):
         if ((flight == "Fly") and pathbo):
             #  Base to set down
             if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"r",curfile,{mobile,stationary},self.sodSetDownFix)
-            elif (modestr == "Base")  : self.makeBaseModeKey  (profile,t,"r",curfile,turnoff,self.sodSetDownFix)
+            elif (modestr == "Sprint")  : self.makeSprintModeKey  (profile,t,"r",curfile,turnoff,self.sodSetDownFix)
 
             if (t.SprintMode):
                 curfile.SetBind(t.SprintMode, "+down$$down 1" + self.actPower_name(None,1,mobile) + t.detailhi + t.runcamdist + t.blsd)
@@ -596,7 +592,7 @@ class SoD(Page):
             elif (modestr == "QFly")   : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
         else:
             if   (modestr == "NonSoD") : self.makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
-            elif (modestr == "Base")   : self.makeBaseModeKey  (profile,t,"r", curfile,turnoff,fix)
+            elif (modestr == "Sprint")   : self.makeSprintModeKey  (profile,t,"r", curfile,turnoff,fix)
             elif (flight == "Jump"):
                 if (modestr == "Fly"): self.makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,None,1)
             else:
@@ -624,11 +620,11 @@ class SoD(Page):
 
         if ((flight == "Fly") and pathbo):
             if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary},self.sodSetDownFix)
-            elif (modestr == "Base")  : self.makeBaseModeKey  (profile,t,"gr",curfile,turnoff,self.sodSetDownFix)
+            elif (modestr == "Sprint")  : self.makeSprintModeKey  (profile,t,"gr",curfile,turnoff,self.sodSetDownFix)
             elif (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,self.sodSetDownFix)
         else:
             if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary})
-            elif (modestr == "Base")  : self.makeBaseModeKey  (profile,t,"gr",curfile,turnoff,fix)
+            elif (modestr == "Sprint")  : self.makeSprintModeKey  (profile,t,"gr",curfile,turnoff,fix)
             elif (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
 
         if   (modestr == "Fly")       : self.makeFlyModeKey   (profile,t,"af",curfile,turnoff,fix)
@@ -654,11 +650,11 @@ class SoD(Page):
 
         if ((flight == "Fly") and pathbo):
             if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary},self.sodSetDownFix)
-            elif (modestr == "Base")  : self.makeBaseModeKey  (profile,t,"fr",curfile,turnoff,self.sodSetDownFix)
+            elif (modestr == "Sprint")  : self.makeSprintModeKey  (profile,t,"fr",curfile,turnoff,self.sodSetDownFix)
             elif (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,self.sodSetDownFix)
         else:
             if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary})
-            elif (modestr == "Base")  : self.makeBaseModeKey  (profile,t,"fr",curfile,turnoff,fix)
+            elif (modestr == "Sprint")  : self.makeSprintModeKey  (profile,t,"fr",curfile,turnoff,fix)
             elif (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
 
         if   (modestr == "Fly")       : self.makeFlyModeKey   (profile,t,"ff",curfile,turnoff,fix)
@@ -1987,7 +1983,7 @@ class SoD(Page):
            toggleoff = mobile
 
         toggle = ''
-        if (toggleon or toggleoff) : 
+        if (toggleon or toggleoff) :
            toggle = self.actPower_name(None,1,toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'D'})
@@ -2073,7 +2069,7 @@ class SoD(Page):
 
         for v in rest:
             if v and not isinstance(v, str):
-                for j, w in v.items():
+                for _, w in v.items():
                     if (w and w != 'on' and not offpower[w]):
                         if not isinstance(w, str):
                             if (w['trayslot'] == traytest):

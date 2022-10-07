@@ -359,9 +359,9 @@ class SoD(Page):
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
 
             t.ini = ''
-            # if   (modestr == "GFly") : self.makeGFlyModeKey (profile,t,"gbo",curfile,turnoff,fix)
-            # elif (modestr == "Super Speed")  : self.makeSpeedModeKey(profile,t,"s",  curfile,turnoff,fix)
-            # elif (modestr == "Jump") : self.makeJumpModeKey (profile,t,"j",  curfile,turnoff,path)
+            # if   (modestr == "GFly")        : self.makeGFlyModeKey (profile,t,"gbo",curfile,turnoff,fix)
+            # elif (modestr == "Super Speed") : self.makeSpeedModeKey(profile,t,"s",  curfile,turnoff,fix)
+            # elif (modestr == "Jump")        : self.makeJumpModeKey (profile,t,"j",  curfile,turnoff,path)
 
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 
@@ -1406,7 +1406,7 @@ class SoD(Page):
         curfile.SetBind(p.General.Ctrls['ResetKey'].MakeFileKeyBind(
                 f'up {u}$$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
                 str(turnoff) +
-                '$$t $name, SoD Binds Reset' + curfile.BaseReset() +
+                '$$t $name, SoD Binds Reset$$' + curfile.BaseReset() +
                 f"$$bindloadfile {gamepath}000000.txt"
         ))
 
@@ -1548,7 +1548,7 @@ class SoD(Page):
         if (followbl):
             move = ''
             if (t.X != 1):
-                bl = f"{followbl}{t.space}{t.W}{t.S}{t.A}{t.D}.txt"
+                bl = f"{followbl}{newbits}.txt"
                 move = f"{up}{dowx}{forw}{bac}{lef}{rig}"
 
             curfile.SetBind(self.Ctrls['Down'].MakeFileKeyBind(f"{ini}{move}{bl}"))
@@ -1818,7 +1818,7 @@ class SoD(Page):
         bl = f"{bl}{newbits}.txt"
 
         if (t.D == 1): ini = '-down'
-        else:             ini = '+down'
+        else:          ini = '+down'
 
         if (followbl) :
             if (t.D == 1):
@@ -1834,10 +1834,11 @@ class SoD(Page):
             curfile.SetBind(self.Ctrls['Right'].MakeFileKeyBind(f"{ini}{up}{dow}$$forward 1$$backward 0{lef}{rigx}{t.mlon}{bl}"))
 
     def sodAutoRunKey(self,t,bl,curfile,mobile,sssj):
+        bindload = bl + t.KeyState() + ".txt"
         if (sssj and t.space == 1) :
-            curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mlon + self.actPower_name(None,1,sssj,mobile) + bl))
+            curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mlon + self.actPower_name(None,1,sssj,mobile) + bindload))
         else:
-            curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mlon + self.actPower_name(None,1,mobile) + bl))
+            curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mlon + self.actPower_name(None,1,mobile) + bindload))
 
     def sodAutoRunOffKey(self, t,bl,curfile,mobile,stationary,flight,sssj):
         toggleon = toggleoff = ''
@@ -1863,7 +1864,8 @@ class SoD(Page):
                toggleon = t.mloff + self.actPower_name(None,1,stationary,mobile)
 
         bindload = bl + t.KeyState() + '.txt'
-        curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind(t.dirs('UDFBLR') + toggleon + bindload))
+        # "[2:]" on next line is to trim off the initial "$$" that dirs() provides
+        curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind(t.dirs('UDFBLR')[2:] + toggleon + bindload))
 
     def sodFollowKey(self, t,bl,curfile,mobile):
         curfile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind('follow' + self.actPower_name(None,1,mobile) + bl + t.KeyState() + '.txt'))
@@ -2033,6 +2035,14 @@ class SoD(Page):
         t.ini = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
         curfile.SetBind(key, '+down' + feedback + profile.BLF(filename))
+
+    def bindBothResetFiles(self, key, contents):
+        self.Profile.ResetFile.BindKey(key, contents)
+        if key != self.Ctrls['ResetKey']:
+            subresetpath = Path(self.Profile.BindsDir) / "subreset.txt"
+            subresetfile = self.Profile.GetBindFile(subresetpath)
+            subresetfile.BindKey(key, contents)
+
 
     def canss(self):
         return self.GetState('DefaultMode') == 'Super Speed' and self.GetState('HasSS')

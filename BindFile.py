@@ -7,6 +7,7 @@ class BindFile():
     def __init__(self, profile, *pathbits):
 
         self.BindsDir     = profile.BindsDir()
+        self.Profile      = profile
         # TODO - check if GameBindsDir ends in \\, maybe in Profile itself?
         self.GameBindsDir = profile.GameBindsDir()
 
@@ -33,12 +34,13 @@ class BindFile():
 
         self.KeyBinds[keybind.Key] = keybind
 
-        # TODO -- how to call out the 'reset file' object as special?
-        # TODO 2 -- we don't? it should be the page's responsibility to
-        # stash keybinds in multiple bindfiles?  Maybe?
-        # if ($file eq $resetfile1 and $key eq $resetkey) {
-            # $resetfile2->{$key} = $s
-        # }
+        # Terrible hack to add things into the subreset file when
+        # added to the reset file.  Ouch.
+        if self == self.Profile.ResetFile():
+            subresetpath = Path(self.BindsDir) / "subreset.txt"
+            subresetfile = self.Profile.GetBindFile(str(subresetpath))
+            if keybind.Key != self.Profile.General.GetState('ResetKey'):
+                subresetfile.SetBind(keybind, contents)
 
     # Windows path b/c the game will use it.
     def BaseReset(self):

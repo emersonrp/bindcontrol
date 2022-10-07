@@ -124,8 +124,8 @@ class SoD(Page):
         EnableSoD.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         EnableSoD.SetValue(self.Init['EnableSoD'])
 
-        leftColumn  = wx.BoxSizer(wx.VERTICAL)
-        rightColumn = wx.BoxSizer(wx.VERTICAL)
+        self.leftColumn  = wx.BoxSizer(wx.VERTICAL)
+        self.rightColumn = wx.BoxSizer(wx.VERTICAL)
 
 
         ##### MOVEMENT KEYS
@@ -140,8 +140,7 @@ class SoD(Page):
             ctlName = 'MouseChord',
             ctlType = 'checkbox',
         )
-        leftColumn.Add(movementSizer, 0, wx.EXPAND)
-
+        self.leftColumn.Add(movementSizer, 0, wx.EXPAND)
 
         ##### GENERAL SETTINGS
         generalSizer = ControlGroup(self, self, 'General Settings')
@@ -161,7 +160,7 @@ class SoD(Page):
         generalSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',)
         self.Ctrls['SprintSoD'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         generalSizer.AddControl( ctlName = 'SprintSoDMode', ctlType = 'keybutton',)
-        leftColumn.Add(generalSizer, 0, wx.EXPAND)
+        self.leftColumn.Add(generalSizer, 0, wx.EXPAND)
 
         ### DETAIL SETTINGS
         detailSizer = ControlGroup(self, self, 'Detail Settings')
@@ -175,7 +174,7 @@ class SoD(Page):
         detailSizer.AddControl( ctlName = 'DetailMove', ctlType = 'spinbox', contents = (1, 100),)
         detailSizer.AddControl( ctlName = 'TPHideWindows', ctlType = 'checkbox',)
         detailSizer.AddControl( ctlName = 'Feedback', ctlType = 'checkbox',)
-        leftColumn.Add(detailSizer, 0, wx.EXPAND)
+        self.leftColumn.Add(detailSizer, 0, wx.EXPAND)
 
 
         ##### TEMP TRAVEL POWERS
@@ -186,8 +185,7 @@ class SoD(Page):
         tempSizer.AddControl( ctlName = 'TempMode', ctlType = 'keybutton',)
         tempSizer.AddControl( ctlName = 'TempTray', ctlType = 'spinbox', contents = [1, 8],)
         tempSizer.AddControl( ctlName = 'TempTraySwitch', ctlType = 'keybutton',)
-        leftColumn.Add(tempSizer, 0, wx.EXPAND)
-        leftColumn.Hide(tempSizer) # TODO
+        self.leftColumn.Add(tempSizer, 0, wx.EXPAND)
 
         ##### SUPER SPEED
         superSpeedSizer = ControlGroup(self, self, 'Super Speed')
@@ -196,7 +194,7 @@ class SoD(Page):
         superSpeedSizer.AddControl( ctlName = 'RunMode', ctlType = 'keybutton',)
         superSpeedSizer.AddControl( ctlName = 'SSMobileOnly', ctlType = 'checkbox',)
         superSpeedSizer.AddControl( ctlName = 'SSSJModeEnable', ctlType = 'checkbox',)
-        rightColumn.Add(superSpeedSizer, 0, wx.EXPAND)
+        self.rightColumn.Add(superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
         superJumpSizer = ControlGroup(self, self, 'Super Jump')
@@ -204,24 +202,24 @@ class SoD(Page):
         self.Ctrls['HasSJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         superJumpSizer.AddControl( ctlName = 'HasCJ', ctlType = 'checkbox',)
         self.Ctrls['HasCJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',)
         superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',)
-        rightColumn.Add(superJumpSizer, 0, wx.EXPAND)
+        superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',)
+        self.rightColumn.Add(superJumpSizer, 0, wx.EXPAND)
 
         ##### FLY
-        flySizer = ControlGroup(self, self, 'Flight')
-        flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',)
+        self.flySizer = ControlGroup(self, self, 'Flight')
+        self.flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',)
         self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        flySizer.AddControl( ctlName = 'HasFly', ctlType = 'checkbox',)
+        self.flySizer.AddControl( ctlName = 'HasFly', ctlType = 'checkbox',)
         self.Ctrls['HasFly'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        flySizer.AddControl( ctlName = 'HasCF', ctlType = 'checkbox',)
+        self.flySizer.AddControl( ctlName = 'HasCF', ctlType = 'checkbox',)
         self.Ctrls['HasCF'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
-        flySizer.AddControl( ctlName = 'HasQF', ctlType = 'checkbox',)
+        self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
+        self.flySizer.AddControl( ctlName = 'HasQF', ctlType = 'checkbox',)
         self.Ctrls['HasQF'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        flySizer.AddControl( ctlName = 'QFlyMode', ctlType = 'keybutton',)
-        #flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',)
-        rightColumn.Add(flySizer, 0, wx.EXPAND)
+        self.flySizer.AddControl( ctlName = 'QFlyMode', ctlType = 'keybutton',)
+        #self.flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',)
+        self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
         teleportSizer = ControlGroup(self, self, 'Teleport')
@@ -234,37 +232,38 @@ class SoD(Page):
         teleportSizer.AddControl( ctlName = "TPCombo", ctlType = 'keybutton',)
         teleportSizer.AddControl( ctlName = "TPReset", ctlType = 'keybutton',)
         teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',)
+        self.rightColumn.Add(teleportSizer, 0, wx.EXPAND)
 
         # TODO - do we want these team versions in there?
-        teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',)
+        teamTeleportSizer = ControlGroup(self, self, 'Team Teleport')
+        teamTeleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',)
         self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        teleportSizer.AddControl( ctlName = "TTPMode", ctlType = 'keybutton',)
-        teleportSizer.AddControl( ctlName = "TTPCombo", ctlType = 'keybutton',)
-        teleportSizer.AddControl( ctlName = "TTPReset", ctlType = 'keybutton',)
+        teamTeleportSizer.AddControl( ctlName = "TTPMode", ctlType = 'keybutton',)
+        teamTeleportSizer.AddControl( ctlName = "TTPCombo", ctlType = 'keybutton',)
+        teamTeleportSizer.AddControl( ctlName = "TTPReset", ctlType = 'keybutton',)
         # if (player has group fly):
         # teleportSizer.AddControl( ctlName = 'TTPAutoGFly', ctlType = 'checkbox',)
         # end team-tp
-        rightColumn.Add(teleportSizer, 0, wx.EXPAND)
+        self.rightColumn.Add(teamTeleportSizer, 0, wx.EXPAND)
 
         ##### KHELDIAN TRAVEL POWERS
-        kheldianSizer = ControlGroup(self, self, 'Nova / Dwarf Travel Powers')
+        self.kheldianSizer = ControlGroup(self, self, 'Nova / Dwarf Travel Powers')
 
-        kheldianSizer.AddControl( ctlName = 'UseNova', ctlType = 'checkbox',)
+        self.kheldianSizer.AddControl( ctlName = 'UseNova', ctlType = 'checkbox',)
         self.Ctrls['UseNova'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        kheldianSizer.AddControl( ctlName = 'NovaMode', ctlType = 'keybutton',)
-        kheldianSizer.AddControl( ctlName = 'NovaTray', ctlType = 'spinbox', contents = [1, 8],)
-        kheldianSizer.AddControl( ctlName = 'UseDwarf', ctlType = 'checkbox',)
+        self.kheldianSizer.AddControl( ctlName = 'NovaMode', ctlType = 'keybutton',)
+        self.kheldianSizer.AddControl( ctlName = 'NovaTray', ctlType = 'spinbox', contents = [1, 8],)
+        self.kheldianSizer.AddControl( ctlName = 'UseDwarf', ctlType = 'checkbox',)
         self.Ctrls['UseDwarf'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        kheldianSizer.AddControl( ctlName = 'DwarfMode', ctlType = 'keybutton',)
-        kheldianSizer.AddControl( ctlName = 'DwarfTray', ctlType = 'spinbox', contents = [1, 8],)
+        self.kheldianSizer.AddControl( ctlName = 'DwarfMode', ctlType = 'keybutton',)
+        self.kheldianSizer.AddControl( ctlName = 'DwarfTray', ctlType = 'spinbox', contents = [1, 8],)
         # do we want a key to change directly to human form, instead of toggles?
-        kheldianSizer.AddControl( ctlName = 'HumanMode', ctlType = 'keybutton',)
-        kheldianSizer.AddControl( ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 8],)
-        rightColumn.Add(kheldianSizer, 0, wx.EXPAND)
-        rightColumn.Hide(kheldianSizer) # TODO
+        self.kheldianSizer.AddControl( ctlName = 'HumanMode', ctlType = 'keybutton',)
+        self.kheldianSizer.AddControl( ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 8],)
+        self.rightColumn.Add(self.kheldianSizer, 0, wx.EXPAND)
 
-        topSizer.Add(leftColumn)
-        topSizer.Add(rightColumn)
+        topSizer.Add(self.leftColumn)
+        topSizer.Add(self.rightColumn)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(topSizer, flag = wx.ALL|wx.EXPAND, border = 16)
@@ -316,6 +315,9 @@ class SoD(Page):
             c['SSSJModeEnable']         .Enable(self.GetState('HasSS') and self.GetState('HasSJ'))
             c['SSSJModeEnable'].ctlLabel.Enable(self.GetState('HasSS') and self.GetState('HasSJ'))
 
+            # TODO - in citybinder, this is "if SJ or CJ" but shouldn't it be "SJ -and- CJ"?
+            c['SimpleSJCJ']         .Enable(self.GetState('HasSJ') or self.GetState('HasCJ'))
+            c['SimpleSJCJ'].ctlLabel.Enable(self.GetState('HasSJ') or self.GetState('HasCJ'))
             c['JumpMode']         .Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
             c['JumpMode'].ctlLabel.Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
@@ -323,9 +325,9 @@ class SoD(Page):
             c['SSMobileOnly']         .Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
             c['SSMobileOnly'].ctlLabel.Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
 
-            c['FlyMode']         .Enable((self.GetState('HasHover') or self.GetState('HasFly'))
+            c['FlyMode']         .Enable((self.GetState('HasHover') or self.GetState('HasFly') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
-            c['FlyMode'].ctlLabel.Enable((self.GetState('HasHover') or self.GetState('HasFly'))
+            c['FlyMode'].ctlLabel.Enable((self.GetState('HasHover') or self.GetState('HasFly') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
             c['QFlyMode']         .Enable(self.GetState('HasQF'))
             c['QFlyMode'].ctlLabel.Enable(self.GetState('HasQF'))
@@ -355,13 +357,53 @@ class SoD(Page):
             c['DwarfTray']         .Enable(self.GetState('UseDwarf'))
             c['DwarfTray'].ctlLabel.Enable(self.GetState('UseDwarf'))
 
-            ### TODO TODO TODO show/hide kheldian sizer depending on selected archetype;
-            # remember to disable all controls inside when hiding
+            # show/hide kheldian-influenced controls depending on selected archetype;
+            archetype = self.Profile.General.GetState('Archetype')
+            kheldianOnlyControls = ['HasCF', 'HasQF', 'QFlyMode']
+            nonkheldianOnlyControls = ['HasFly','HasHover','TPTPHover']
 
-        except Exception:
-            pass
+            kheldianGridSizer = self.kheldianSizer.GetChildren()[0].GetSizer()
+            flyGridSizer      = self.flySizer.GetChildren()[0].GetSizer()
+            if archetype == "Peacebringer" or archetype == "Warshade":
+                # show kheldian sizer, enable controls
+                for ctrl in kheldianGridSizer.GetChildren():
+                    ctrl.GetWindow().Enable(True)
+                self.rightColumn.Show(self.kheldianSizer)
+                # if Warshade: hide flight sizer, disable controls
+                for ctrl in flyGridSizer.GetChildren():
+                    ctrl.GetWindow().Enable(archetype != "Warshade")
+                self.rightColumn.Show(self.flySizer, archetype != "Warshade")
+
+                # en/disable controls in other sizers
+                for c in kheldianOnlyControls:
+                    ctrl = self.Ctrls[c]
+                    ctrl.GetContainingSizer().Show(ctrl)
+                    ctrl.GetContainingSizer().Show(ctrl.ctlLabel)
+                for c in nonkheldianOnlyControls:
+                    ctrl = self.Ctrls[c]
+                    ctrl.GetContainingSizer().Hide(ctrl)
+                    ctrl.GetContainingSizer().Hide(ctrl.ctlLabel)
+            else:
+                # hide kheldiansizer, disable controls
+                for ctrl in kheldianGridSizer.GetChildren():
+                    ctrl.GetWindow().Enable(False)
+                    self.rightColumn.Hide(self.kheldianSizer)
+
+                # en/disable controls in other sizers
+                for c in kheldianOnlyControls:
+                    ctrl = self.Ctrls[c]
+                    ctrl.GetContainingSizer().Hide(ctrl)
+                    ctrl.GetContainingSizer().Hide(ctrl.ctlLabel)
+                for c in nonkheldianOnlyControls:
+                    ctrl = self.Ctrls[c]
+                    ctrl.GetContainingSizer().Show(ctrl)
+                    ctrl.GetContainingSizer().Show(ctrl.ctlLabel)
+
+        except Exception as e:
+            print(f"Something blowed up in SoD SynchronizeUI:  {e}")
 
         self.Thaw()
+        self.Layout()
 
 
     def makeSoDFile(self, p):

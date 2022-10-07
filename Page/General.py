@@ -192,7 +192,9 @@ class General(Page):
         self.Ctrls['Epic'].SetSelection(0)
 
         if getattr(self.Profile, 'Mastermind', None):
-            self.Profile.Mastermind.OnArchetypePowerChange()
+            self.Profile.Mastermind.SynchronizeUI()
+        if getattr(self.Profile, 'SoD', None):
+            self.Profile.SoD.SynchronizeUI()
 
         self.Fit()
 

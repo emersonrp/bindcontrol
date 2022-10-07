@@ -38,8 +38,6 @@ class ControlGroup(wx.StaticBoxSizer):
         if ctlType == ('keybutton'):
             control = bcKeyButton( ctlParent, -1, '' )
             control.SetLabel(Init[ctlName])
-            control.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
-            control.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
             # push context onto the button, we'll thank me later
             control.CtlName = ctlName
             control.Page    = self.Page
@@ -119,9 +117,6 @@ class ControlGroup(wx.StaticBoxSizer):
         self.Layout()
         return control
 
-    def ClearButton(self, evt):
-        evt.EventObject.SetLabel("")
-
     def onCBLabelClick(self, evt):
         cblabel = evt.EventObject
         cblabel.control.SetValue(not cblabel.control.IsChecked())
@@ -130,6 +125,11 @@ class ControlGroup(wx.StaticBoxSizer):
 class bcKeyButton(wx.Button):
     def __init__(self, parent, id, init):
         wx.Button.__init__(self, parent, id, init)
+
+        self.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
+
+    def ClearButton(self, _): self.SetLabel("")
 
     def MakeFileKeyBind(self, contents):
         return self.KeyBind.MakeFileKeyBind(contents)

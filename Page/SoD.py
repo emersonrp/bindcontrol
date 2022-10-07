@@ -2,9 +2,10 @@ import wx
 import GameData
 import UI
 from pathlib import Path, PureWindowsPath
+from KeyBind.ControlKeyBind import ControlKeyBind
 
 from Page import Page
-from UI.ControlGroup import ControlGroup
+from UI.ControlGroup import ControlGroup, bcKeyButton
 from KeyBind.FileKeyBind import FileKeyBind
 
 class SoD(Page):
@@ -129,17 +130,133 @@ class SoD(Page):
 
 
         ##### MOVEMENT KEYS
-        movementSizer = ControlGroup(self, self, 'Movement Keys')
+        movementSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = "Movement Keys")
+        staticbox = movementSizer.GetStaticBox()
+        innerSizer = wx.BoxSizer(wx.HORIZONTAL)
+        movementSizer.Add(innerSizer, 1, wx.ALL|wx.ALIGN_CENTER, 10)
 
-        for dir in ("Up","Down","Forward","Back","Left","Right","TurnLeft","TurnRight"):
-            movementSizer.AddControl(
-                ctlName = dir,
-                ctlType = 'keybutton',
-            )
-        movementSizer.AddControl(
-            ctlName = 'MouseChord',
-            ctlType = 'checkbox',
-        )
+        keySizer = wx.GridBagSizer(3, 3)
+        innerSizer.Add(keySizer)
+        tlLabel = wx.StaticText(staticbox, label = 'Turn Left')
+        keySizer.Add(tlLabel, [0,0], flag = wx.ALIGN_CENTER)
+        fwLabel = wx.StaticText(staticbox, label = 'Forward')
+        keySizer.Add(fwLabel, [0,1], flag = wx.ALIGN_CENTER)
+        trLabel = wx.StaticText(staticbox, label = 'Turn Right')
+        keySizer.Add(trLabel, [0,2], flag = wx.ALIGN_CENTER)
+
+        tleftButton = bcKeyButton(staticbox, -1, '')
+        tleftButton.SetLabel(self.Init['TurnLeft'])
+        self.Ctrls['TurnLeft'] = tleftButton
+        tleftButton.CtlName = 'TurnLeft'
+        tleftButton.ctlLabel = tlLabel
+        tleftButton.Page = self
+        tleftButton.Profile = self.Profile
+        tleftButton.KeyBind = ControlKeyBind(self.Init['TurnLeft'], 'Turn Left', self.TabTitle)
+        keySizer.Add(tleftButton, [1,0])
+
+        forwardButton = bcKeyButton(staticbox, -1, '')
+        self.Ctrls['Forward'] = forwardButton
+        forwardButton.SetLabel(self.Init['Forward'])
+        forwardButton.CtlName = 'Forward'
+        forwardButton.ctlLabel = fwLabel
+        forwardButton.Page = self
+        forwardButton.Profile = self.Profile
+        forwardButton.KeyBind = ControlKeyBind(self.Init['Forward'], 'Forward', self.TabTitle)
+        keySizer.Add(forwardButton, [1,1])
+
+        trightButton = bcKeyButton(staticbox, -1, '')
+        self.Ctrls['TurnRight'] = trightButton
+        trightButton.SetLabel(self.Init['TurnRight'])
+        trightButton.CtlName = 'TurnRight'
+        trightButton.ctlLabel = trLabel
+        trightButton.Page = self
+        trightButton.Profile = self.Profile
+        trightButton.KeyBind = ControlKeyBind(self.Init['TurnRight'], 'TurnRight', self.TabTitle)
+        keySizer.Add(trightButton, [1,2])
+
+        leftLabel = wx.StaticText(staticbox, label = 'Left')
+        backLabel = wx.StaticText(staticbox, label = 'Back')
+        rightLabel = wx.StaticText(staticbox, label = 'Right')
+
+        leftButton = bcKeyButton(staticbox, -1, '')
+        self.Ctrls['Left'] = leftButton
+        leftButton.SetLabel(self.Init['Left'])
+        leftButton.CtlName = 'Left'
+        leftButton.ctlLabel = leftLabel
+        leftButton.Page = self
+        leftButton.Profile = self.Profile
+        leftButton.KeyBind = ControlKeyBind(self.Init['Left'], 'Left', self.TabTitle)
+        keySizer.Add(leftButton, [2,0])
+
+        backButton = bcKeyButton(staticbox, -1, '')
+        backButton.SetLabel(self.Init['Back'])
+        self.Ctrls['Back'] = backButton
+        backButton.CtlName = 'Back'
+        backButton.ctlLabel = backLabel
+        backButton.Page = self
+        backButton.Profile = self.Profile
+        backButton.KeyBind = ControlKeyBind(self.Init['Back'], 'Back', self.TabTitle)
+        keySizer.Add(backButton, [2,1])
+
+        rightButton = bcKeyButton(staticbox, -1, '')
+        self.Ctrls['Right'] = rightButton
+        rightButton.SetLabel(self.Init['Right'])
+        rightButton.CtlName = 'Right'
+        rightButton.ctlLabel = rightLabel
+        rightButton.Page = self
+        rightButton.Profile = self.Profile
+        rightButton.KeyBind = ControlKeyBind(self.Init['Right'], 'Right', self.TabTitle)
+        keySizer.Add(rightButton, [2,2])
+
+        keySizer.Add(leftLabel, [3,0], flag = wx.ALIGN_CENTER)
+        keySizer.Add(backLabel, [3,1], flag = wx.ALIGN_CENTER)
+        keySizer.Add(rightLabel, [3,2], flag = wx.ALIGN_CENTER)
+
+        downLabel = wx.StaticText(staticbox, label = 'Down')
+        upLabel   = wx.StaticText(staticbox, label = 'Up')
+
+        downButton = bcKeyButton(staticbox, -1, '')
+        self.Ctrls['Down'] = downButton
+        downButton.SetLabel(self.Init['Down'])
+        downButton.CtlName = 'Down'
+        downButton.ctlLabel = downLabel
+        downButton.Page = self
+        downButton.Profile = self.Profile
+        downButton.KeyBind = ControlKeyBind(self.Init['Down'], 'Down', self.TabTitle)
+        keySizer.Add(downButton, [4,0], [1,1], wx.TOP, 10)
+
+        upButton = bcKeyButton(staticbox, -1, '')
+        self.Ctrls['Up'] = upButton
+        upButton.SetLabel(self.Init['Up'])
+        upButton.CtlName = 'Up'
+        upButton.ctlLabel = upLabel
+        upButton.Page = self
+        upButton.Profile = self.Profile
+        upButton.KeyBind = ControlKeyBind(self.Init['Up'], 'Up', self.TabTitle)
+        keySizer.Add(upButton, [4,1], [1,2], wx.EXPAND|wx.TOP, 10)
+
+        keySizer.Add(downLabel, [5,0], [1,1], flag = wx.ALIGN_CENTER)
+        keySizer.Add(upLabel,   [5,1], [1,2], flag = wx.ALIGN_CENTER)
+
+        #mcSizer = wx.FlexGridSizer(2,1,5,5)
+        #mcSizer.AddGrowableCol(0)
+        mcSizer = wx.BoxSizer(wx.HORIZONTAL)
+        mcLabel = wx.StaticText(staticbox, -1, UI.Labels['MouseChord'] + ":")
+        mcSizer.Add(mcLabel, 0, wx.LEFT|wx.RIGHT, 5)
+        mcLabel.Bind(wx.EVT_LEFT_DOWN, self.onCBLabelClick)
+        mousechord = wx.CheckBox(staticbox, -1)
+        self.Ctrls['MouseChord'] = mousechord
+        mousechord.SetValue(bool(self.Init['MouseChord']))
+        mousechord.CtlName = 'MouseChord'
+        mousechord.ctlLabel = mcLabel
+        mcLabel.control = mousechord
+        mousechord.Page = self
+        mousechord.Profile = self.Profile
+        mousechord.KeyBind = ControlKeyBind(self.Init['MouseChord'], 'MouseChord', self.TabTitle)
+        mcSizer.Add(mousechord, 0, wx.RIGHT, 10)
+
+        movementSizer.Add(mcSizer, 0, wx.ALIGN_RIGHT|wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)
+
         self.leftColumn.Add(movementSizer, 0, wx.EXPAND)
 
         ##### GENERAL SETTINGS
@@ -160,6 +277,7 @@ class SoD(Page):
         generalSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',)
         self.Ctrls['SprintSoD'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         generalSizer.AddControl( ctlName = 'SprintSoDMode', ctlType = 'keybutton',)
+
         self.leftColumn.Add(generalSizer, 0, wx.EXPAND)
 
         ### DETAIL SETTINGS
@@ -279,8 +397,9 @@ class SoD(Page):
             # start with turning everything on or off to match the global checkbox
             for cname,control in c.items():
                 if cname != 'EnableSoD':  # don't disable yourself kthx
-                    control         .Enable(self.GetState('EnableSoD'))
-                    control.ctlLabel.Enable(self.GetState('EnableSoD'))
+                    control.Enable(self.GetState('EnableSoD'))
+                    if not isinstance(control.ctlLabel, str):
+                        control.ctlLabel.Enable(self.GetState('EnableSoD'))
 
             # and if everything's off, we're done
             if not self.GetState('EnableSoD'): return
@@ -399,8 +518,9 @@ class SoD(Page):
                     ctrl.GetContainingSizer().Show(ctrl)
                     ctrl.GetContainingSizer().Show(ctrl.ctlLabel)
 
-        except Exception as e:
-            print(f"Something blowed up in SoD SynchronizeUI:  {e}")
+        #except Exception as e:
+        #    print(f"Something blowed up in SoD SynchronizeUI:  {e}")
+        finally: pass
 
         self.Thaw()
         self.Layout()
@@ -2178,6 +2298,11 @@ class SoD(Page):
 
     def canss(self):
         return self.GetState('DefaultMode') == 'Super Speed' and self.GetState('HasSS')
+
+    def onCBLabelClick(self, evt):
+        cblabel = evt.EventObject
+        cblabel.control.SetValue(not cblabel.control.IsChecked())
+        evt.Skip()
 
 UI.Labels.update( {
     'Up'             : 'Up',

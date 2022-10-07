@@ -1627,7 +1627,7 @@ class SoD(Page):
                 curfile.SetBind('mousechord', f"{ini}{up}{dow}{forx}{bac}{rig}{lef}{ml}{toggle}{bl}")
 
         else:
-            if (t.W == 1):
+            if (t.W != 1):
                 bl = f"{autorunbl}{newbits}.txt"
 
             curfile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind(f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{lef}{rig}{t.mlon}{bl}"))

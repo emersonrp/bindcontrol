@@ -33,6 +33,7 @@ class SoD(Page):
 
             'SprintPower'        : 'Sprint',
             'SprintSoD'          : True,  # "Base" in citybinder
+            'SprintSoDMode'      : '',
 
             'ChangeCamera'       : 1,
             'CamdistBase'        : 15,
@@ -51,8 +52,8 @@ class SoD(Page):
             'SSMobileOnly'       : 0,
             'SSSJModeEnable'     : 1,
 
-            'JumpSJ'             : False,
-            'JumpCJ'             : False,
+            'HasSJ'             : False,
+            'HasCJ'             : False,
             'JumpMode'           : "T",
             'SimpleSJCJ'         : 1,
 
@@ -120,7 +121,7 @@ class SoD(Page):
         topSizer.Add( EnableSoD, 0, wx.TOP|wx.LEFT, 10)
         topSizer.AddSpacer(1)
         self.Ctrls['EnableSoD'] = EnableSoD
-        EnableSoD.Bind(wx.EVT_CHECKBOX, self.OnEnableSoD)
+        EnableSoD.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         EnableSoD.SetValue(self.Init['EnableSoD'])
 
         leftColumn  = wx.BoxSizer(wx.VERTICAL)
@@ -148,25 +149,31 @@ class SoD(Page):
         # TODO!  fill this picker with only the appropriate bits.
         # for i in (powers list):
         #   if (player has power): add_to_contents(i)
-        generalSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'combo',
+        generalSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'choice',
             contents = ('No SoD','Sprint','Super Speed','Jump','Fly'),)
-        generalSizer.AddControl( ctlName = 'SprintPower', ctlType = 'combo',
+        self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
+        generalSizer.AddControl( ctlName = 'SprintPower', ctlType = 'choice',
             contents = GameData.SprintPowers,)
         generalSizer.AddControl( ctlName = 'AutoMouseLook', ctlType = 'checkbox',
             tooltip = 'Automatically Mouselook when moving',)
         generalSizer.AddControl( ctlName = 'AutoRun', ctlType = 'keybutton',)
         generalSizer.AddControl( ctlName = 'Follow', ctlType = 'keybutton',)
         generalSizer.AddControl( ctlName = 'NonSoDEnable', ctlType = 'checkbox',)
+        self.Ctrls['NonSoDEnable'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         generalSizer.AddControl( ctlName = 'NonSoDMode', ctlType = 'keybutton',)
         generalSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',)
+        self.Ctrls['SprintSoD'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        generalSizer.AddControl( ctlName = 'SprintSoDMode', ctlType = 'keybutton',)
         leftColumn.Add(generalSizer, 0, wx.EXPAND)
 
         ### DETAIL SETTINGS
         detailSizer = ControlGroup(self, self, 'Detail Settings')
         detailSizer.AddControl( ctlName = 'ChangeCamera', ctlType = 'checkbox',)
+        self.Ctrls['ChangeCamera'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         detailSizer.AddControl( ctlName = 'CamdistBase', ctlType = 'spinbox', contents = (1, 100),)
         detailSizer.AddControl( ctlName = 'CamdistMove', ctlType = 'spinbox', contents = (1, 100),)
         detailSizer.AddControl( ctlName = 'ChangeDetail', ctlType = 'checkbox',)
+        self.Ctrls['ChangeDetail'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         detailSizer.AddControl( ctlName = 'DetailBase', ctlType = 'spinbox', contents = (1, 100),)
         detailSizer.AddControl( ctlName = 'DetailMove', ctlType = 'spinbox', contents = (1, 100),)
         detailSizer.AddControl( ctlName = 'TPHideWindows', ctlType = 'checkbox',)
@@ -178,6 +185,7 @@ class SoD(Page):
         tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
         # if (temp travel powers exist)?  Should this be "custom"?
         tempSizer.AddControl( ctlName = 'TempEnable', ctlType = 'checkbox',)
+        self.Ctrls['TempEnable'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         tempSizer.AddControl( ctlName = 'TempMode', ctlType = 'keybutton',)
         tempSizer.AddControl( ctlName = 'TempTray', ctlType = 'spinbox', contents = [1, 8],)
         tempSizer.AddControl( ctlName = 'TempTraySwitch', ctlType = 'keybutton',)
@@ -187,6 +195,7 @@ class SoD(Page):
         ##### SUPER SPEED
         superSpeedSizer = ControlGroup(self, self, 'Super Speed')
         superSpeedSizer.AddControl( ctlName = 'HasSS', ctlType = "checkbox",)
+        self.Ctrls['HasSS'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         superSpeedSizer.AddControl( ctlName = 'RunMode', ctlType = 'keybutton',)
         superSpeedSizer.AddControl( ctlName = 'SSMobileOnly', ctlType = 'checkbox',)
         superSpeedSizer.AddControl( ctlName = 'SSSJModeEnable', ctlType = 'checkbox',)
@@ -194,8 +203,10 @@ class SoD(Page):
 
         ##### SUPER JUMP
         superJumpSizer = ControlGroup(self, self, 'Super Jump')
-        superJumpSizer.AddControl( ctlName = 'JumpSJ', ctlType = 'checkbox',)
-        superJumpSizer.AddControl( ctlName = 'JumpCJ', ctlType = 'checkbox',)
+        superJumpSizer.AddControl( ctlName = 'HasSJ', ctlType = 'checkbox',)
+        self.Ctrls['HasSJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        superJumpSizer.AddControl( ctlName = 'HasCJ', ctlType = 'checkbox',)
+        self.Ctrls['HasCJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',)
         superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',)
         rightColumn.Add(superJumpSizer, 0, wx.EXPAND)
@@ -204,10 +215,14 @@ class SoD(Page):
         ##### FLY
         flySizer = ControlGroup(self, self, 'Flight')
         flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',)
+        self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         flySizer.AddControl( ctlName = 'HasFly', ctlType = 'checkbox',)
+        self.Ctrls['HasFly'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         flySizer.AddControl( ctlName = 'HasCF', ctlType = 'checkbox',)
+        self.Ctrls['HasCF'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
         flySizer.AddControl( ctlName = 'HasQF', ctlType = 'checkbox',)
+        self.Ctrls['HasQF'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         flySizer.AddControl( ctlName = 'QFlyMode', ctlType = 'keybutton',)
         #flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',)
         rightColumn.Add(flySizer, 0, wx.EXPAND)
@@ -218,18 +233,19 @@ class SoD(Page):
         # if (at == peacebringer) "Dwarf Step"
         # if (at == warshade) "Shadow Step / Dwarf Step"
         teleportSizer.AddControl( ctlName = 'HasTP', ctlType = 'checkbox',)
+        self.Ctrls['HasTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         teleportSizer.AddControl( ctlName = "TPMode", ctlType = 'keybutton',)
         teleportSizer.AddControl( ctlName = "TPCombo", ctlType = 'keybutton',)
         teleportSizer.AddControl( ctlName = "TPReset", ctlType = 'keybutton',)
-        # if (player has hover):
         teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',)
 
         # TODO - do we want these team versions in there?
-        # if (player has team-tp) {
         teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',)
+        self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         teleportSizer.AddControl( ctlName = "TTPMode", ctlType = 'keybutton',)
         teleportSizer.AddControl( ctlName = "TTPCombo", ctlType = 'keybutton',)
         teleportSizer.AddControl( ctlName = "TTPReset", ctlType = 'keybutton',)
+
         # # if (player has group fly):
         # teleportSizer.AddControl( ctlName = 'TTPAutoGFly', ctlType = 'checkbox',)
         # end team-tp
@@ -239,9 +255,11 @@ class SoD(Page):
         kheldianSizer = ControlGroup(self, self, 'Nova / Dwarf Travel Powers')
 
         kheldianSizer.AddControl( ctlName = 'UseNova', ctlType = 'checkbox',)
+        self.Ctrls['UseNova'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         kheldianSizer.AddControl( ctlName = 'NovaMode', ctlType = 'keybutton',)
         kheldianSizer.AddControl( ctlName = 'NovaTray', ctlType = 'spinbox', contents = [1, 8],)
         kheldianSizer.AddControl( ctlName = 'UseDwarf', ctlType = 'checkbox',)
+        self.Ctrls['UseDwarf'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         kheldianSizer.AddControl( ctlName = 'DwarfMode', ctlType = 'keybutton',)
         kheldianSizer.AddControl( ctlName = 'DwarfTray', ctlType = 'spinbox', contents = [1, 8],)
         # do we want a key to change directly to human form, instead of toggles?
@@ -259,14 +277,97 @@ class SoD(Page):
 
         self.SynchronizeUI()
 
-    def SynchronizeUI(self):
-        self.OnEnableSoD()
+    def SynchronizeUI(self, _ = None):
+        self.Freeze()
 
-    def OnEnableSoD(self, _ = None):
-        for c,control in self.Ctrls.items():
-            if c != 'EnableSoD':  # don't disable yourself kthx
-                control         .Enable(self.GetState('EnableSoD'))
-                control.ctlLabel.Enable(self.GetState('EnableSoD'))
+        try:
+            c = self.Ctrls
+            # start with turning everything on or off to match the global checkbox
+            for cname,control in c.items():
+                if cname != 'EnableSoD':  # don't disable yourself kthx
+                    control         .Enable(self.GetState('EnableSoD'))
+                    control.ctlLabel.Enable(self.GetState('EnableSoD'))
+
+            # and if everything's off, we're done
+            if not self.GetState('EnableSoD'): return
+
+            c['NonSoDMode']         .Enable(self.GetState('NonSoDEnable'))
+            c['NonSoDMode'].ctlLabel.Enable(self.GetState('NonSoDEnable'))
+
+            c['SprintSoDMode']         .Enable(self.GetState('SprintSoD') and self.GetState('DefaultMode') != "Sprint")
+            c['SprintSoDMode'].ctlLabel.Enable(self.GetState('SprintSoD') and self.GetState('DefaultMode') != "Sprint")
+
+            c['CamdistBase']         .Enable(self.GetState('ChangeCamera'))
+            c['CamdistBase'].ctlLabel.Enable(self.GetState('ChangeCamera'))
+            c['CamdistMove']         .Enable(self.GetState('ChangeCamera'))
+            c['CamdistMove'].ctlLabel.Enable(self.GetState('ChangeCamera'))
+
+            c['DetailBase']         .Enable(self.GetState('ChangeDetail'))
+            c['DetailBase'].ctlLabel.Enable(self.GetState('ChangeDetail'))
+            c['DetailMove']         .Enable(self.GetState('ChangeDetail'))
+            c['DetailMove'].ctlLabel.Enable(self.GetState('ChangeDetail'))
+
+            c['TempMode']         .Enable(self.GetState('TempEnable'))
+            c['TempMode'].ctlLabel.Enable(self.GetState('TempEnable'))
+            c['TempTray']         .Enable(self.GetState('TempEnable'))
+            c['TempTray'].ctlLabel.Enable(self.GetState('TempEnable'))
+            c['TempTraySwitch']         .Enable(self.GetState('TempEnable'))
+            c['TempTraySwitch'].ctlLabel.Enable(self.GetState('TempEnable'))
+
+            c['RunMode']         .Enable(self.GetState('HasSS') and self.GetState('DefaultMode') != "Super Speed")
+            c['RunMode'].ctlLabel.Enable(self.GetState('HasSS') and self.GetState('DefaultMode') != "Super Speed")
+            c['SSMobileOnly']         .Enable(self.GetState('HasSS'))
+            c['SSMobileOnly'].ctlLabel.Enable(self.GetState('HasSS'))
+            c['SSSJModeEnable']         .Enable(self.GetState('HasSS') and self.GetState('HasSJ'))
+            c['SSSJModeEnable'].ctlLabel.Enable(self.GetState('HasSS') and self.GetState('HasSJ'))
+
+            c['JumpMode']         .Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
+                                          and self.GetState('DefaultMode') != "Jump")
+            c['JumpMode'].ctlLabel.Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
+                                          and self.GetState('DefaultMode') != "Jump")
+            c['SSMobileOnly']         .Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
+            c['SSMobileOnly'].ctlLabel.Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
+
+            c['FlyMode']         .Enable((self.GetState('HasHover') or self.GetState('HasFly'))
+                                          and self.GetState('DefaultMode') != "Fly")
+            c['FlyMode'].ctlLabel.Enable((self.GetState('HasHover') or self.GetState('HasFly'))
+                                          and self.GetState('DefaultMode') != "Fly")
+            c['QFlyMode']         .Enable(self.GetState('HasQF'))
+            c['QFlyMode'].ctlLabel.Enable(self.GetState('HasQF'))
+
+            c['TPMode']         .Enable(self.GetState('HasTP'))
+            c['TPMode'].ctlLabel.Enable(self.GetState('HasTP'))
+            c['TPCombo']         .Enable(self.GetState('HasTP'))
+            c['TPCombo'].ctlLabel.Enable(self.GetState('HasTP'))
+            c['TPReset']         .Enable(self.GetState('HasTP'))
+            c['TPReset'].ctlLabel.Enable(self.GetState('HasTP'))
+            c['TPTPHover']         .Enable(self.GetState('HasTP') and self.GetState('HasHover'))
+            c['TPTPHover'].ctlLabel.Enable(self.GetState('HasTP') and self.GetState('HasHover'))
+
+            c['TTPMode']         .Enable(self.GetState('HasTTP'))
+            c['TTPMode'].ctlLabel.Enable(self.GetState('HasTTP'))
+            c['TTPCombo']         .Enable(self.GetState('HasTTP'))
+            c['TTPCombo'].ctlLabel.Enable(self.GetState('HasTTP'))
+            c['TTPReset']         .Enable(self.GetState('HasTTP'))
+            c['TTPReset'].ctlLabel.Enable(self.GetState('HasTTP'))
+
+            c['NovaMode']         .Enable(self.GetState('UseNova'))
+            c['NovaMode'].ctlLabel.Enable(self.GetState('UseNova'))
+            c['NovaTray']         .Enable(self.GetState('UseNova'))
+            c['NovaTray'].ctlLabel.Enable(self.GetState('UseNova'))
+            c['DwarfMode']         .Enable(self.GetState('UseDwarf'))
+            c['DwarfMode'].ctlLabel.Enable(self.GetState('UseDwarf'))
+            c['DwarfTray']         .Enable(self.GetState('UseDwarf'))
+            c['DwarfTray'].ctlLabel.Enable(self.GetState('UseDwarf'))
+
+            ### TODO TODO TODO show/hide kheldian sizer depending on selected archetype;
+            # remember to disable all controls inside when hiding
+
+        except Exception as e:
+            pass
+
+        self.Thaw()
+
 
     def makeSoDFile(self, p):
 
@@ -782,7 +883,7 @@ class SoD(Page):
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
 
-        elif (self.GetState('DefaultMode') == "Jump" and not (self.GetState('JumpCJ') or self.GetState('JumpSJ'))):
+        elif (self.GetState('DefaultMode') == "Jump" and not (self.GetState('HasCJ') or self.GetState('HasSJ'))):
             wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Jump mode but your character has neither Combat Jumping nor Super Jump.", "Mode Changed", wx.OK|wx.ICON_WARNING)
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
@@ -796,17 +897,17 @@ class SoD(Page):
         t = tObject(profile)
 
         ## Combat Jumping / Super Jump
-        if (self.GetState('JumpCJ') and not self.GetState('JumpSJ')):
+        if (self.GetState('HasCJ') and not self.GetState('HasSJ')):
             t.cancj = 1
             t.cjmp = "Combat Jumping"
             t.jump = "Combat Jumping"
 
-        elif (not self.GetState('JumpCJ') and self.GetState('JumpSJ')):
+        elif (not self.GetState('HasCJ') and self.GetState('HasSJ')):
             t.canjmp = 1
             t.jump = "Super Jump"
             t.jumpifnocj = "Super Jump"
 
-        elif self.GetState('JumpCJ') and self.GetState('JumpSJ'):
+        elif self.GetState('HasCJ') and self.GetState('HasSJ'):
             t.cancj = 1
             t.canjmp = 1
             t.cjmp = "Combat Jumping"
@@ -1345,11 +1446,11 @@ class SoD(Page):
             dwrffile.SetBind(self.Ctrls['ToggleKey'].MakeFileKeyBind(f"t $name, Changing to Human Form, Normal Mode$fullstop$$powexectoggleoff {Dwarf['Dwarf']}$$gototray 1" + profile.BLF('reset.txt')))
 
         if (self.GetState('SimpleSJCJ')):
-            if (self.GetState('JumpCJ') and self.GetState('JumpSJ')):
+            if (self.GetState('HasCJ') and self.GetState('HasSJ')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Super Jump$$powexecname Combat Jumping'))
-            elif (self.GetState('JumpSJ')):
+            elif (self.GetState('HasSJ')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Super Jump'))
-            elif (self.GetState('JumpCJ')):
+            elif (self.GetState('HasCJ')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Combat Jumping'))
 
         if (self.GetState('HasTP') and not normalTPPower):
@@ -2074,10 +2175,13 @@ UI.Labels.update( {
     'DetailMove' : 'Travelling Detail Level',
     'TPHideWindows' : 'Hide Windows when Teleporting',
 
-    'JumpSJ' : 'Player has Super Jump',
-    'JumpCJ' : 'Player has Combat Jumping',
+    'HasSJ' : 'Player has Super Jump',
+    'HasCJ' : 'Player has Combat Jumping',
     'NonSoDEnable' : 'Enable Non-SoD Movement Mode',
     'NonSoDMode' : 'Non-SoD Key',
+    'SprintSoD' : 'Enable Sprint SoD',
+    'SprintSoDMode' : "Sprint Mode Key",
+
     'JumpMode' : 'Toggle Jump Mode',
     'SimpleSJCJ' : 'Simple Combat Jumping / Super Jump Toggle',
 
@@ -2121,7 +2225,6 @@ UI.Labels.update( {
     'HumanMode' : 'Human Form',
     'HumanTray' : 'Human Travel Power Tray',
 
-    'SprintSoD' : 'Enable Sprint SoD',
 })
 
 class tObject(dict):

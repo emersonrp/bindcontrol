@@ -1,5 +1,6 @@
 import wx
 import UI
+import UI.PowerPicker
 
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.ControlGroup import ControlGroup
@@ -97,7 +98,10 @@ class BufferBindPane(CustomBindPaneParent):
 
 
     def BuffPowerPicker(self, pane):
-        picker = wx.Choice(pane, -1)
+        picker = wx.Button(pane, -1)
+        picker.SetLabel('...')
+
+        picker.Bind(wx.EVT_BUTTON, UI.PowerPicker.OnPowerPicker)
         return picker
 
 

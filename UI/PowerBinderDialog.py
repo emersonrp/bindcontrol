@@ -1,5 +1,7 @@
 import wx
 import UI
+import UI.EmotePicker
+from UI.EmotePicker import EmotePicker
 import GameData
 
 
@@ -190,10 +192,10 @@ class PowerBindCmd():
     def __init__(self, dialog):
         self.UI = self.BuildUI(dialog)
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, _):
         return
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         return
 
 ####### Away From Keyboard
@@ -206,7 +208,7 @@ class AFKCmd(PowerBindCmd):
 
         return sizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         message = self.AFKName.GetValue()
 
         return f"afk {message}" if message else "afk"
@@ -221,7 +223,7 @@ class AutoPowerCmd(PowerBindCmd):
 
         return autoPowerSizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         return f"powexecauto {self.autoPowerName.GetValue()}"
 
 ####### Chat Command
@@ -285,7 +287,7 @@ class ChatCmd(PowerBindCmd):
 
         return chatCommandSizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         duration = self.chatCommandDuration.GetValue()
 
         choice = self.chatCommandChatSize
@@ -334,7 +336,7 @@ class ChatGlobalCmd(PowerBindCmd):
 
         return chatCommandGlobalSizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         useBeginchat = self.chatCommandGlobalUseBeginchatCB.IsChecked()
         channel      = self.chatCommandGlobalChannel.GetValue()
         message      = self.chatCommandGlobalMessage.GetValue()
@@ -362,7 +364,7 @@ class CostumeChangeCmd(PowerBindCmd):
 
         return costumeChangeSizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         costumeNumber = self.costumeChangeCostume.GetSelection() + 1
         costumeEmote  = self.costumeChangeEmote.GetSelection()
 
@@ -392,9 +394,6 @@ class CustomBindCmd(PowerBindCmd):
 
 ####### Emote
 class EmoteCmd(PowerBindCmd):
-    import UI
-    import UI.EmotePicker
-    from UI.EmotePicker import EmotePicker
     def BuildUI(self, dialog):
         emoteSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.emoteText = wx.StaticText(dialog, -1, "Select Emote:")
@@ -406,7 +405,7 @@ class EmoteCmd(PowerBindCmd):
 
         return emoteSizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         displayedEmoteName = self.emoteName.GetLabel()
         actualEmotePayload = EmotePicker.payloadMap[displayedEmoteName]
 
@@ -414,17 +413,17 @@ class EmoteCmd(PowerBindCmd):
 
 ####### Power Abort
 class PowerAbortCmd(PowerBindCmd):
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         return 'powexecabort'
 
 ####### Power Unqueue
 class PowerUnqueueCmd(PowerBindCmd):
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         return 'powexecunqueue'
 
 ####### SG Mode Toggle
 class SGModeToggleCmd(PowerBindCmd):
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         return 'sgmode'
 
 ####### Target Custom
@@ -460,7 +459,7 @@ class TargetCustomCmd(PowerBindCmd):
 
         return targetCustomSizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         choice = self.targetCustomModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
@@ -491,7 +490,7 @@ class TargetEnemyCmd(PowerBindCmd):
 
         return targetEnemySizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         choice = self.targetEnemyModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
@@ -509,7 +508,7 @@ class TargetFriendCmd(PowerBindCmd):
 
         return targetFriendSizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         choice = self.targetFriendModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
@@ -533,7 +532,7 @@ class TeamPetSelectCmd(PowerBindCmd):
 
         return teamPetSelectSizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         teamOrPet = 'team' if self.teamPetSelectTeamRB.GetValue() else 'pet'
         targetNumber = self.teamPetSelectNumber.GetSelection()+1
 
@@ -541,7 +540,7 @@ class TeamPetSelectCmd(PowerBindCmd):
 
 ####### Unselect
 class UnselectCmd(PowerBindCmd):
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         return 'unselect'
 
 ####### Use Insp By Name
@@ -556,7 +555,7 @@ class UseInspByNameCmd(PowerBindCmd):
 
         return useInspByNameSizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         choice = self.useInspByNameModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
@@ -565,7 +564,7 @@ class UseInspByNameCmd(PowerBindCmd):
 
     def GetAllInsps(self):
         Insplist = []
-        for type, info in GameData.Inspirations.items():
+        for _, info in GameData.Inspirations.items():
             for insp in info['tiers']:
                 Insplist.append(insp)
             Insplist.append("---")
@@ -590,7 +589,7 @@ class UseInspRowColCmd(PowerBindCmd):
 
         return useInspRowColumnSizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         row = self.useInspRowColumnRow.GetSelection()+1
         col = self.useInspRowColumnCol.GetSelection()+1
 
@@ -618,7 +617,7 @@ class UsePowerCmd(PowerBindCmd):
 
         return outerSizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         if self.usePowerRBToggle.GetValue():
             method = "powexecname"
         elif self.usePowerRBOn.GetValue():
@@ -626,7 +625,8 @@ class UsePowerCmd(PowerBindCmd):
         elif self.usePowerRBOff.GetValue():
             method = "powexectoggleoff"
         else:
-            pass # halt and catch fire
+            wx.LogError('PowerBindCmd "UsePowerCmd" got an impossible value for toggle/on/off')
+            return ''
 
         return f"{method} {self.usePowerName.GetValue()}"
 
@@ -652,7 +652,7 @@ class UsePowerFromTrayCmd(PowerBindCmd):
 
         return usePowerFromTraySizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         choice = self.usePowerFromTrayTray
         tray = choice.GetSelection()
 
@@ -687,7 +687,7 @@ class WindowToggleCmd(PowerBindCmd):
 
         return windowToggleSizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         choice = self.windowToggleTray
         index  = choice.GetSelection()
         window = choice.GetString(index)

@@ -1,4 +1,3 @@
-import re
 import wx
 import GameData
 
@@ -60,7 +59,7 @@ class EmotePicker(wx.Menu):
 
 
             self.payloadMap[label] = payload
-            menuitem = menu.Append(-1, label)
+            menu.Append(-1, label)
 
     def OnMenuSelection(self, evt):
         menuitem = self.FindItemById(evt.GetId())

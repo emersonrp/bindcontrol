@@ -47,23 +47,25 @@ class General(Page):
         originchoices = []
         for Origin in Origins:
             originchoices.append([Origin, Icon(Origin)])
-        powersBox.AddControl(
+        originpicker = powersBox.AddControl(
             ctlName = 'Origin',
             ctlType = 'bmcombo',
             contents = originchoices,
             callback = self.OnPickOrigin,
         )
+        originpicker.SetMinSize([200,-1])
 
         archchoices = []
         for Arch in sorted(Archetypes):
             archchoices.append([Arch, Icon(Arch)])
-        powersBox.AddControl(
+        archpicker = powersBox.AddControl(
             ctlName = 'Archetype',
             ctlType = 'bmcombo',
             contents = archchoices,
             callback = self.OnPickArchetype,
         )
-        #self.SetState('Archetype', self.Init['Archetype'])
+        archpicker.SetMinSize([200,-1])
+
         powersBox.AddControl(
             ctlName = 'Primary',
             ctlType = 'choice',
@@ -170,9 +172,7 @@ class General(Page):
 
     ### EVENT HANDLERS
     def OnPickArchetype(self, _ = {}):
-        choice = self.Ctrls['Archetype']
-        index  = choice.GetSelection()
-        arch   = choice.GetString(index)
+        arch   = self.GetState('Archetype')
 
         self.Ctrls['Primary'].Clear()
         self.Ctrls['Secondary'].Clear()

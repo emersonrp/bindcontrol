@@ -1,5 +1,5 @@
 from pathlib import Path, PureWindowsPath
-from KeyBind.FileKeyBind import FileKeyBind
+from KeyBind import FileKeyBind
 from collections import deque
 
 class BindFile():

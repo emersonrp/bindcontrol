@@ -2,7 +2,7 @@ import wx
 from wx.adv import BitmapComboBox
 from Page import Page
 import UI
-from KeyBind.ControlKeyBind import ControlKeyBind
+from KeyBind import ControlKeyBind
 from UI.KeySelectDialog import KeySelectEventHandler
 
 

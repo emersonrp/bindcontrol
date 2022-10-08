@@ -1,6 +1,5 @@
 import wx
 import UI
-import BindFile
 from Utility import Icon
 
 from UI.ControlGroup import ControlGroup

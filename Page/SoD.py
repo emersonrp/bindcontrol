@@ -2,11 +2,9 @@ import wx
 import GameData
 import UI
 from pathlib import Path, PureWindowsPath
-from KeyBind.ControlKeyBind import ControlKeyBind
-
+from KeyBind import ControlKeyBind, FileKeyBind
 from Page import Page
 from UI.ControlGroup import ControlGroup, bcKeyButton
-from KeyBind.FileKeyBind import FileKeyBind
 
 class SoD(Page):
     def __init__(self, parent):

@@ -1,6 +1,6 @@
 import wx
 import UI
-from KeyBind.FileKeyBind import FileKeyBind
+from KeyBind import FileKeyBind
 
 # Sandolphan / Khaiba's guide to these controls found at:
 # https://guidescroll.com/2011/07/city-of-heroes-mastermind-numeric-keypad-pet-controls/
@@ -9,8 +9,6 @@ from KeyBind.FileKeyBind import FileKeyBind
 
 from Page import Page
 from UI.ControlGroup import ControlGroup
-
-import BindFile
 
 class Mastermind(Page):
     petCommandKeyDefinitions = (

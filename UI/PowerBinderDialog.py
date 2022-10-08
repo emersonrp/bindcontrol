@@ -1,13 +1,6 @@
 import wx
-#import string
-#import UI
-#import GameData
-
-# This is awful
-from PowerBindCmd import AFKCmd, AutoPowerCmd, ChatCmd, ChatGlobalCmd, CostumeChangeCmd, CustomBindCmd, EmoteCmd, \
-                    PowerAbortCmd, PowerUnqueueCmd, SGModeToggleCmd, TargetCustomCmd, TargetEnemyCmd, \
-                    TargetFriendCmd, TeamPetSelectCmd, UnselectCmd, UseInspByNameCmd, UseInspRowColCmd, UsePowerCmd, \
-                    UsePowerFromTrayCmd, WindowToggleCmd
+import UI
+import GameData
 
 
 class PowerBinderDialog(wx.Dialog):
@@ -162,29 +155,6 @@ class PowerBinderDialog(wx.Dialog):
 
         self.EditDialog.mainSizer.Hide(command.UI)
 
-commandClasses = {
-    'Auto Power'               : AutoPowerCmd.AutoPowerCmd,
-    'Away From Keyboard'       : AFKCmd.AFKCmd,
-    'Chat Command'             : ChatCmd.ChatCmd,
-    'Chat Command (Global)'    : ChatGlobalCmd.ChatGlobalCmd,
-    'Costume Change'           : CostumeChangeCmd.CostumeChangeCmd,
-    'Custom Bind'              : CustomBindCmd.CustomBindCmd,
-    'Emote'                    : EmoteCmd.EmoteCmd,
-    'Power Abort'              : PowerAbortCmd.PowerAbortCmd,
-    'Power Unqueue'            : PowerUnqueueCmd.PowerUnqueueCmd,
-    'SG Mode Toggle'           : SGModeToggleCmd.SGModeToggleCmd,
-    'Target Custom'            : TargetCustomCmd.TargetCustomCmd,
-    'Target Enemy'             : TargetEnemyCmd.TargetEnemyCmd,
-    'Target Friend'            : TargetFriendCmd.TargetFriendCmd,
-    'Team/Pet Select'          : TeamPetSelectCmd.TeamPetSelectCmd,
-    'Unselect'                 : UnselectCmd.UnselectCmd,
-    'Use Insp By Name'         : UseInspByNameCmd.UseInspByNameCmd,
-    'Use Insp From Row/Column' : UseInspRowColCmd.UseInspRowColCmd,
-    'Use Power'                : UsePowerCmd.UsePowerCmd,
-    'Use Power From Tray'      : UsePowerFromTrayCmd.UsePowerFromTrayCmd,
-    'Window Toggle'            : WindowToggleCmd.WindowToggleCmd,
-}
-
 class PowerBinderButton(wx.Button):
     def __init__(self, parent, tgtTxtCtrl):
         wx.Button.__init__(self, parent, -1, label = "...")
@@ -213,3 +183,536 @@ class PowerBinderEditDialog(wx.Dialog):
         self.SetSizerAndFit(self.mainSizer)
         self.Layout()
         self.Fit()
+
+########### Power Binder Command Objects
+class PowerBindCmd():
+
+    def __init__(self, dialog):
+        self.UI = self.BuildUI(dialog)
+
+    def BuildUI(self, dialog):
+        return
+
+    def MakeBindString(self, dialog):
+        return
+
+####### Away From Keyboard
+class AFKCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.AFKName = wx.TextCtrl(dialog, -1)
+        self.AFKName.SetHint('Away From Keyboard Text')
+        sizer.Add(self.AFKName, 1, wx.ALIGN_CENTER_VERTICAL)
+
+        return sizer
+
+    def MakeBindString(self, dialog):
+        message = self.AFKName.GetValue()
+
+        return f"afk {message}" if message else "afk"
+
+####### Auto Power
+class AutoPowerCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        autoPowerSizer = wx.BoxSizer(wx.HORIZONTAL)
+        autoPowerSizer.Add(wx.StaticText(dialog, -1, "Power:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        self.autoPowerName = wx.TextCtrl(dialog, -1)
+        autoPowerSizer.Add(self.autoPowerName, 1, wx.ALIGN_CENTER_VERTICAL)
+
+        return autoPowerSizer
+
+    def MakeBindString(self, dialog):
+        return f"powexecauto {self.autoPowerName.GetValue()}"
+
+####### Chat Command
+class ChatCmd(PowerBindCmd):
+
+    def __init__(self, dialog):
+        self.chatChannelMap = { # before __init__
+            'say' : 's',
+            'group' : 'g',
+            'broadcast': 'b',
+            'local': 'l',
+            'yell': 'y',
+            'friends': 'f',
+            'general': 'gen',
+            'help': 'h',
+            'looking for group': 'lfg',
+            'request': 'req',
+            'arena': 'ac',
+            'supergroup': 'sg',
+            'coalition': 'c',
+            'tell $target,': 't $target,',
+            'tell $name': 't $name',
+        }
+        PowerBindCmd.__init__(self,dialog)
+
+    def BuildUI(self, dialog):
+        chatCommandSizer = wx.GridBagSizer(5, 5)
+        self.chatCommandUseColorsCB = wx.CheckBox(dialog, -1, "Use Chat Bubble Colors")
+        chatCommandSizer.Add(self.chatCommandUseColorsCB, (0,0), (1,6), flag=wx.ALIGN_CENTER_VERTICAL)
+        # row 1
+        self.chatCommandBorderColor = wx.ColourPickerCtrl(dialog, -1)
+        chatCommandSizer.Add(wx.StaticText(dialog, -1, "Border:"), (1,0), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        chatCommandSizer.Add(self.chatCommandBorderColor, (1,1))
+        self.chatCommandBGColor = wx.ColourPickerCtrl(dialog, -1)
+        chatCommandSizer.Add(wx.StaticText(dialog, -1, "Background:"), (1,2), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        chatCommandSizer.Add(self.chatCommandBGColor, (1,3))
+        self.chatCommandFGColor = wx.ColourPickerCtrl(dialog, -1)
+        chatCommandSizer.Add(wx.StaticText(dialog, -1, "Text:"), (1,4), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        chatCommandSizer.Add(self.chatCommandFGColor, (1,5))
+        # row 2
+        self.chatCommandDuration = wx.SpinCtrl(dialog, -1, style=wx.SP_ARROW_KEYS)
+        self.chatCommandDuration.SetRange(1, 20)
+        self.chatCommandDuration.SetValue(7)
+        chatCommandSizer.Add(wx.StaticText(dialog, -1, "Duration:"), (2,0), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        chatCommandSizer.Add(self.chatCommandDuration, (2,1))
+        self.chatCommandChatSize = wx.Choice(dialog, -1,
+               choices = ['0.5', '0.6', '0.7', '0.8', '0.9', '1', '1.1', '1.2', '1.3', '1.4', '1.5'])
+        self.chatCommandChatSize.SetSelection(5)
+        chatCommandSizer.Add(wx.StaticText(dialog, -1, "Size:"), (2,2), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        chatCommandSizer.Add(self.chatCommandChatSize, (2,3))
+        self.chatCommandChannel = wx.Choice(dialog, -1, choices = [chan for chan in self.chatChannelMap])
+        self.chatCommandChannel.SetSelection(0)
+        chatCommandSizer.Add(wx.StaticText(dialog, -1, "Channel:"), (2,4), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        chatCommandSizer.Add(self.chatCommandChannel, (2,5))
+        # row 3
+        self.chatCommandUseBeginchatCB = wx.CheckBox(dialog, -1, "Use Beginchat")
+        chatCommandSizer.Add(self.chatCommandUseBeginchatCB, (3,0), (1,2), flag=wx.ALIGN_CENTER_VERTICAL)
+        self.chatCommandMessage = wx.TextCtrl(dialog, -1)
+        self.chatCommandMessage.SetHint('Chat Command Text')
+        chatCommandSizer.Add(self.chatCommandMessage, (3,2), (1,4), flag=wx.EXPAND)
+
+        return chatCommandSizer
+
+    def MakeBindString(self, dialog):
+        duration = self.chatCommandDuration.GetValue()
+
+        choice = self.chatCommandChatSize
+        index  = choice.GetSelection()
+        size   = choice.GetString(index)
+
+        duration = f"<duration {duration}>" if duration != 7 else ""
+        size     = f"<size {size}>"         if size     != 1 else ""
+
+        bdcolor = fgcolor = bgcolor = ''
+        if self.chatCommandUseColorsCB.IsChecked():
+            bdcolor = self.chatCommandBorderColor.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
+            fgcolor = self.chatCommandBGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
+            bgcolor = self.chatCommandFGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
+
+            bdcolor = f"<bordercolor {bdcolor}>"
+            fgcolor = f"<color {fgcolor}>"
+            bgcolor = f"<bgcolor {bgcolor}>"
+
+        beginchat = "beginchat /" if self.chatCommandUseBeginchatCB.IsChecked() else ''
+        text      = self.chatCommandMessage.GetValue()
+
+        choice  = self.chatCommandChannel
+        index   = choice.GetSelection()
+        channel = choice.GetString(index)
+
+        return f"{beginchat}{channel} {size}{duration}{bdcolor}{fgcolor}{bgcolor}{text}"
+
+####### Chat Command Global
+class ChatGlobalCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        chatCommandGlobalSizer = wx.GridBagSizer(5,5)
+
+        self.chatCommandGlobalUseBeginchatCB = wx.CheckBox(dialog, -1, "Use beginchat")
+        chatCommandGlobalSizer.Add(self.chatCommandGlobalUseBeginchatCB, (0,0), (1,2))
+
+        self.chatCommandGlobalChannel = wx.TextCtrl(dialog, -1)
+        self.chatCommandGlobalChannel.SetHint("Channel")
+        chatCommandGlobalSizer.Add(self.chatCommandGlobalChannel, (1,0))
+
+        self.chatCommandGlobalMessage = wx.TextCtrl(dialog, -1)
+        self.chatCommandGlobalMessage.SetHint('Chat Command (Global) Message')
+        chatCommandGlobalSizer.Add(self.chatCommandGlobalMessage, (1,1), flag=wx.EXPAND)
+
+        chatCommandGlobalSizer.AddGrowableCol(1)
+
+        return chatCommandGlobalSizer
+
+    def MakeBindString(self, dialog):
+        useBeginchat = self.chatCommandGlobalUseBeginchatCB.IsChecked()
+        channel      = self.chatCommandGlobalChannel.GetValue()
+        message      = self.chatCommandGlobalMessage.GetValue()
+
+        preface = "beginchat /" if useBeginchat else ""
+
+        return f'{preface}send "{channel}" {message}'
+
+#######Costume Change
+class CostumeChangeCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        costumeChangeSizer = wx.BoxSizer(wx.HORIZONTAL)
+        costumeChangeSizer.Add(wx.StaticText(dialog, -1, "Costume:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        self.costumeChangeCostume = wx.Choice(dialog, -1,
+               choices = ["First", "Second", "Third", "Fourth", "Fifth"])
+        self.costumeChangeCostume.SetSelection(0)
+        costumeChangeSizer.Add(self.costumeChangeCostume, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+
+        costumeChangeSizer.Add(wx.StaticText(dialog, -1, "CC Emote:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        self.costumeChangeEmote = wx.Choice(dialog, -1,
+                choices = GameData.Emotes['costumechange'])
+        self.costumeChangeEmote.Insert("- None -", 0)
+        self.costumeChangeEmote.SetSelection(0)
+        costumeChangeSizer.Add(self.costumeChangeEmote, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+
+        return costumeChangeSizer
+
+    def MakeBindString(self, dialog):
+        costumeNumber = self.costumeChangeCostume.GetSelection() + 1
+        costumeEmote  = self.costumeChangeEmote.GetSelection()
+
+        if costumeEmote: # None, or 0 == "- None -"
+            ccCmd = 'cce'
+            emoteName = self.costumeChangeEmote.GetString(costumeEmote)
+            emoteName = " CC" + emoteName.replace(" ","")
+        else:
+            ccCmd = 'cc'
+            emoteName = ''
+
+
+        return f"{ccCmd} {costumeNumber}{emoteName}"
+
+####### Custom Bind
+class CustomBindCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.customBindName = wx.TextCtrl(dialog, -1)
+        self.customBindName.SetHint('Custom Bind Text')
+        sizer.Add(self.customBindName, 1, wx.ALIGN_CENTER_VERTICAL)
+
+        return sizer
+
+    def MakeBindString(self, dialog):
+        return self.customBindName.GetValue()
+
+####### Emote
+class EmoteCmd(PowerBindCmd):
+    import UI
+    import UI.EmotePicker
+    from UI.EmotePicker import EmotePicker
+    def BuildUI(self, dialog):
+        emoteSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.emoteText = wx.StaticText(dialog, -1, "Select Emote:")
+        emoteSizer.Add(self.emoteText, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+
+        self.emoteName = wx.Button(dialog, -1, "...")
+        self.emoteName.Bind(wx.EVT_BUTTON, UI.EmotePicker.OnEmotePicker)
+        emoteSizer.Add(self.emoteName, 1, wx.ALIGN_CENTER_VERTICAL)
+
+        return emoteSizer
+
+    def MakeBindString(self, dialog):
+        displayedEmoteName = self.emoteName.GetLabel()
+        actualEmotePayload = EmotePicker.payloadMap[displayedEmoteName]
+
+        return actualEmotePayload
+
+####### Power Abort
+class PowerAbortCmd(PowerBindCmd):
+    def MakeBindString(self, dialog):
+        return 'powexecabort'
+
+####### Power Unqueue
+class PowerUnqueueCmd(PowerBindCmd):
+    def MakeBindString(self, dialog):
+        return 'powexecunqueue'
+
+####### SG Mode Toggle
+class SGModeToggleCmd(PowerBindCmd):
+    def MakeBindString(self, dialog):
+        return 'sgmode'
+
+####### Target Custom
+class TargetCustomCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        targetCustomSizer = wx.GridBagSizer(5,5)
+        targetCustomSizer.Add(wx.StaticText(dialog, -1, "Target Mode:"), (0,0),
+                flag =wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT|wx.RIGHT)
+        self.targetCustomModeChoice = wx.Choice(dialog, -1, choices = ['Near','Far','Next','Prev'])
+        self.targetCustomModeChoice.SetSelection(0)
+        targetCustomSizer.Add(self.targetCustomModeChoice, (0,1), flag=wx.EXPAND)
+        self.targetCustomOptionalName = wx.TextCtrl(dialog, -1)
+        self.targetCustomOptionalName.SetHint("Optional name to match")
+        targetCustomSizer.Add(self.targetCustomOptionalName, (0,2), flag=wx.EXPAND)
+        self.targetCustomCBEnemies = wx.CheckBox(dialog, -1, "Enemies")
+        targetCustomSizer.Add(self.targetCustomCBEnemies, (1,0))
+        self.targetCustomCBFriends = wx.CheckBox(dialog, -1, "Friends")
+        targetCustomSizer.Add(self.targetCustomCBFriends, (1,1))
+        self.targetCustomCBDefeated = wx.CheckBox(dialog, -1, "Defeated")
+        targetCustomSizer.Add(self.targetCustomCBDefeated, (2,0))
+        self.targetCustomCBAlive = wx.CheckBox(dialog, -1, "Alive")
+        targetCustomSizer.Add(self.targetCustomCBAlive, (2,1))
+        self.targetCustomCBMyPets = wx.CheckBox(dialog, -1, "My Pets")
+        targetCustomSizer.Add(self.targetCustomCBMyPets, (3,0))
+        self.targetCustomCBNotMyPets = wx.CheckBox(dialog, -1, "Not My Pets")
+        targetCustomSizer.Add(self.targetCustomCBNotMyPets, (3,1))
+        self.targetCustomCBBaseItems = wx.CheckBox(dialog, -1, "Base Items")
+        targetCustomSizer.Add(self.targetCustomCBBaseItems, (4,0))
+        self.targetCustomCBNotBaseItems = wx.CheckBox(dialog, -1, "Not Base Items")
+        targetCustomSizer.Add(self.targetCustomCBNotBaseItems, (4,1))
+
+        targetCustomSizer.AddGrowableCol(2)
+
+        return targetCustomSizer
+
+    def MakeBindString(self, dialog):
+        choice = self.targetCustomModeChoice
+        index  = choice.GetSelection()
+        mode   = choice.GetString(index)
+        targetCommand = "targetcustom" + mode.lower()
+
+        enemy    = " enemy"    if self.targetCustomCBEnemies.      IsChecked() else ""
+        friend   = " friend"   if self.targetCustomCBFriends.      IsChecked() else ""
+        defeated = " defeated" if self.targetCustomCBDefeated.     IsChecked() else ""
+        alive    = " alive"    if self.targetCustomCBAlive.        IsChecked() else ""
+        mypet    = " mypet"    if self.targetCustomCBMyPets.       IsChecked() else ""
+        notmypet = " notmypet" if self.targetCustomCBNotMyPets.    IsChecked() else ""
+        base     = " base"     if self.targetCustomCBBaseItems.    IsChecked() else ""
+        notbase  = " notbase"  if self.targetCustomCBNotBaseItems. IsChecked() else ""
+
+        name = self.targetCustomOptionalName.GetValue()
+
+        return f"{targetCommand}{enemy}{friend}{defeated}{alive}{mypet}{notmypet}{base}{notbase} {name}"
+
+####### Target Enemy
+class TargetEnemyCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        targetEnemySizer = wx.BoxSizer(wx.HORIZONTAL)
+        targetEnemySizer.Add(wx.StaticText(dialog, -1, "Target Enemy:"), 0,
+                wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        self.targetEnemyModeChoice = wx.Choice(dialog, -1, choices = ['Near','Far','Next','Prev'])
+        self.targetEnemyModeChoice.SetSelection(0)
+        targetEnemySizer.Add(self.targetEnemyModeChoice, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        return targetEnemySizer
+
+    def MakeBindString(self, dialog):
+        choice = self.targetEnemyModeChoice
+        index  = choice.GetSelection()
+        mode   = choice.GetString(index)
+        return "targetenemy" + mode.lower()
+
+####### Target Friend
+class TargetFriendCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        targetFriendSizer = wx.BoxSizer(wx.HORIZONTAL)
+        targetFriendSizer.Add(wx.StaticText(dialog, -1, "Target Friend:"), 0,
+                wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        self.targetFriendModeChoice = wx.Choice(dialog, -1, choices = ['Near','Far','Next','Prev'])
+        self.targetFriendModeChoice.SetSelection(0)
+        targetFriendSizer.Add(self.targetFriendModeChoice, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        return targetFriendSizer
+
+    def MakeBindString(self, dialog):
+        choice = self.targetFriendModeChoice
+        index  = choice.GetSelection()
+        mode   = choice.GetString(index)
+        return "targetfriend" + mode.lower()
+
+####### Team/Pet Select
+class TeamPetSelectCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        teamPetSelectSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.teamPetSelectTeamRB = wx.RadioButton(dialog, -1, "Teammate", style=wx.RB_GROUP|wx.ALIGN_CENTER_VERTICAL)
+        teamPetSelectSizer.Add(self.teamPetSelectTeamRB, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        self.teamPetSelectPetRB  = wx.RadioButton(dialog, -1, "Pet/Henchman", style=wx.ALIGN_CENTER_VERTICAL)
+        teamPetSelectSizer.Add(self.teamPetSelectPetRB, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        self.teamPetSelectNumber = wx.Choice(dialog, -1, choices=['1','2','3','4','5','6','7','8'],
+                style=wx.ALIGN_CENTER_VERTICAL)
+        self.teamPetSelectNumber.SetSelection(0)
+        teamPetSelectSizer.Add(self.teamPetSelectNumber, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        return teamPetSelectSizer
+
+    def MakeBindString(self, dialog):
+        teamOrPet = 'team' if self.teamPetSelectTeamRB.GetValue() else 'pet'
+        targetNumber = self.teamPetSelectNumber.GetSelection()+1
+
+        return f"{teamOrPet}select {targetNumber}"
+
+####### Unselect
+class UnselectCmd(PowerBindCmd):
+    def MakeBindString(self, dialog):
+        return 'unselect'
+
+####### Use Insp By Name
+class UseInspByNameCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        useInspByNameSizer = wx.BoxSizer(wx.HORIZONTAL)
+        useInspByNameSizer.Add(wx.StaticText(dialog, -1, "Inspiration:"), 0,
+                wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        self.useInspByNameModeChoice = wx.Choice(dialog, -1, choices = self.GetAllInsps())
+        self.useInspByNameModeChoice.SetSelection(0)
+        useInspByNameSizer.Add(self.useInspByNameModeChoice, 1, wx.ALIGN_CENTER_VERTICAL)
+
+        return useInspByNameSizer
+
+    def MakeBindString(self, dialog):
+        choice = self.useInspByNameModeChoice
+        index  = choice.GetSelection()
+        mode   = choice.GetString(index)
+        return "inspexecname " + mode.lower()
+
+
+    def GetAllInsps(self):
+        Insplist = []
+        for type, info in GameData.Inspirations.items():
+            for insp in info['tiers']:
+                Insplist.append(insp)
+            Insplist.append("---")
+        Insplist.pop(-1) # snip the terminal "---"
+
+        return Insplist
+
+####### Use Insp From Row / Column
+class UseInspRowColCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        useInspRowColumnSizer = wx.BoxSizer(wx.HORIZONTAL)
+        useInspRowColumnSizer.Add(wx.StaticText(dialog, -1, "Row:"), 0,
+                wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        self.useInspRowColumnRow = wx.Choice(dialog, -1, choices=['1','2','3','4'], style=wx.ALIGN_CENTER_VERTICAL)
+        self.useInspRowColumnRow.SetSelection(0)
+        useInspRowColumnSizer.Add(self.useInspRowColumnRow, 0, wx.ALIGN_CENTER_VERTICAL)
+        useInspRowColumnSizer.Add(wx.StaticText(dialog, -1, "Column:"), 0,
+                wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 4)
+        self.useInspRowColumnCol = wx.Choice(dialog, -1, choices=['1','2','3','4','5'], style=wx.ALIGN_CENTER_VERTICAL)
+        self.useInspRowColumnCol.SetSelection(0)
+        useInspRowColumnSizer.Add(self.useInspRowColumnCol, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        return useInspRowColumnSizer
+
+    def MakeBindString(self, dialog):
+        row = self.useInspRowColumnRow.GetSelection()+1
+        col = self.useInspRowColumnCol.GetSelection()+1
+
+        return f"inspexectray {col} {row}"
+
+####### Use Power
+class UsePowerCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        outerSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        usePowerSizer = wx.GridBagSizer(5,5)
+        usePowerSizer.Add(wx.StaticText(dialog, -1, "Method:"), (0,0), flag=wx.ALIGN_CENTER_VERTICAL)
+        self.usePowerRBToggle = wx.RadioButton(dialog, -1, "Toggle", style=wx.RB_GROUP|wx.ALIGN_CENTER_VERTICAL)
+        usePowerSizer.Add(self.usePowerRBToggle, (0,1))
+        self.usePowerRBOn = wx.RadioButton(dialog, -1, "On", style=wx.ALIGN_CENTER_VERTICAL)
+        usePowerSizer.Add(self.usePowerRBOn, (0,2))
+        self.usePowerRBOff = wx.RadioButton(dialog, -1, "Off", style=wx.ALIGN_CENTER_VERTICAL)
+        usePowerSizer.Add(self.usePowerRBOff, (0,3))
+        usePowerSizer.Add(wx.StaticText(dialog, -1, "Power:"), (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
+        self.usePowerName = wx.ComboBox(dialog, -1, choices=self.GetPowers())
+        usePowerSizer.Add(self.usePowerName, (1,1), (1,3), flag=wx.EXPAND)
+        usePowerSizer.AddGrowableCol(3)
+
+        outerSizer.Add(usePowerSizer, 1, wx.ALIGN_CENTER_VERTICAL)
+
+        return outerSizer
+
+    def MakeBindString(self, dialog):
+        if self.usePowerRBToggle.GetValue():
+            method = "powexecname"
+        elif self.usePowerRBOn.GetValue():
+            method = "powexectoggleon"
+        elif self.usePowerRBOff.GetValue():
+            method = "powexectoggleoff"
+        else:
+            pass # halt and catch fire
+
+        return f"{method} {self.usePowerName.GetValue()}"
+
+    def GetPowers(self):
+        profile = wx.Window.FindWindowByName("Profile")
+        return profile.General.GetPowers() or []
+
+####### Use Power From Tray
+class UsePowerFromTrayCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        usePowerFromTraySizer = wx.BoxSizer(wx.HORIZONTAL)
+        usePowerFromTraySizer.Add(wx.StaticText(dialog, -1, "Tray:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        self.usePowerFromTrayTray = wx.Choice(dialog, -1,
+               choices = ['Main Tray', 'Alt Tray', 'Alt 2 Tray', 'Tray 1', 'Tray2', 'Tray 3',
+                   'Tray 4', 'Tray 5', 'Tray 6', 'Tray 7', 'Tray 8', 'Tray 9', 'Tray 10'])
+        self.usePowerFromTrayTray.SetSelection(0)
+        usePowerFromTraySizer.Add(self.usePowerFromTrayTray, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+
+        usePowerFromTraySizer.Add(wx.StaticText(dialog, -1, "Slot:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        self.usePowerFromTraySlot = wx.Choice(dialog, -1, choices=['1','2','3','4','5','6','7','8','9','10'])
+        self.usePowerFromTraySlot.SetSelection(0)
+        usePowerFromTraySizer.Add(self.usePowerFromTraySlot, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+
+        return usePowerFromTraySizer
+
+    def MakeBindString(self, dialog):
+        choice = self.usePowerFromTrayTray
+        tray = choice.GetSelection()
+
+        choice = self.usePowerFromTraySlot
+        slot   = choice.GetSelection()+1
+
+        mode = "slot"
+        mode2 = ''
+        if tray > 3:
+            mode = "tray"
+            mode2 = f" {tray - 3}"
+        elif tray == 3:
+            mode = "alt2slot"
+        elif tray == 2:
+            mode = "altslot"
+
+        return f"powexec{mode} {slot}{mode2}"
+
+####### Window Toggle
+class WindowToggleCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        windows = [ 'Actions', 'Badge', 'ChanSearch', 'Chat', 'Chat0', 'Chat1', 'Chat2', 'Chat3',
+            'Chat4', 'Clue', 'Combatmonitor', 'Combatnumbers', 'Compass', 'Compose', 'Contact',
+            'Costume', 'Email', 'Enhancements', 'Friend', 'Group', 'Help', 'Info', 'Inspirations',
+            'Map', 'Mission', 'Nav', 'Options', 'Pet', 'Power', 'PowerList', 'Recipes', 'Salvage',
+            'Search', 'Supergroup', 'Team', 'Target', 'Tray', ]
+        windowToggleSizer = wx.BoxSizer(wx.HORIZONTAL)
+        windowToggleSizer.Add(wx.StaticText(dialog, -1, "Window:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        self.windowToggleTray = wx.Choice(dialog, -1, choices = windows)
+        self.windowToggleTray.SetSelection(0)
+        windowToggleSizer.Add(self.windowToggleTray, 1, wx.ALIGN_CENTER_VERTICAL)
+
+        return windowToggleSizer
+
+    def MakeBindString(self, dialog):
+        choice = self.windowToggleTray
+        index  = choice.GetSelection()
+        window = choice.GetString(index)
+        return "windowtoggle " + window.lower()
+
+commandClasses = {
+    'Auto Power'               : AutoPowerCmd,
+    'Away From Keyboard'       : AFKCmd,
+    'Chat Command'             : ChatCmd,
+    'Chat Command (Global)'    : ChatGlobalCmd,
+    'Costume Change'           : CostumeChangeCmd,
+    'Custom Bind'              : CustomBindCmd,
+    'Emote'                    : EmoteCmd,
+    'Power Abort'              : PowerAbortCmd,
+    'Power Unqueue'            : PowerUnqueueCmd,
+    'SG Mode Toggle'           : SGModeToggleCmd,
+    'Target Custom'            : TargetCustomCmd,
+    'Target Enemy'             : TargetEnemyCmd,
+    'Target Friend'            : TargetFriendCmd,
+    'Team/Pet Select'          : TeamPetSelectCmd,
+    'Unselect'                 : UnselectCmd,
+    'Use Insp By Name'         : UseInspByNameCmd,
+    'Use Insp From Row/Column' : UseInspRowColCmd,
+    'Use Power'                : UsePowerCmd,
+    'Use Power From Tray'      : UsePowerFromTrayCmd,
+    'Window Toggle'            : WindowToggleCmd,
+}
+

@@ -19,8 +19,8 @@ class ControlGroup(wx.StaticBoxSizer):
         self.Add(self.InnerSizer, 1, wx.ALL|wx.EXPAND, 10)
 
     def AddControl(self,
-            ctlType = '', ctlName = '', noLabel = False,
-            contents = '', tooltip = '', callback = None):
+        ctlType = '', ctlName = '', noLabel = False,
+        contents : str|list = '', tooltip = '', callback = None):
 
         if not ctlName:
             wx.LogError(f"Tried to make a labeled control without a CtlName!")
@@ -54,7 +54,7 @@ class ControlGroup(wx.StaticBoxSizer):
 
         elif (ctlType == 'bmcombo') or (ctlType == "bmcombobox"):
             control = BitmapComboBox(
-                ctlParent, -1, Init[ctlName],
+                ctlParent, -1, '',
                 style = wx.CB_READONLY)
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback )

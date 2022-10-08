@@ -39,7 +39,7 @@ class Page(wx.Panel):
     def GetState(self, key):
         control = self.Ctrls.get(key, None)
         if not control:
-            print(f"Unknown control in GetState: {key}")
+            wx.LogError(f"Unknown control in GetState: {key}")
             return ''
         if isinstance(control, wx.Button):
             return control.GetLabel()
@@ -52,18 +52,19 @@ class Page(wx.Panel):
         elif getattr(control, 'GetPath', None):
             return control.GetPath()
         else:
-            print(f"{control} has no GetValue()")
+            wx.LogError(f"{control} has no GetValue()")
             return ''
 
     def SetState(self, key, value):
         control = self.Ctrls.get(key, None)
 
         if not control:
-            print(f"Got into SetState for key {key} with no control")
+            wx.LogError(f"Got into SetState for key {key} with no control")
+            return
 
         if isinstance(control, wx.Button):
             return control.SetLabel(value)
-        elif isinstance(control, wx.Choice) or isinstance(control, wx.ComboBox):
+        elif isinstance(control, wx.Choice):
             if isinstance(value, str):
                 value = control.FindString(value)
                 if value == wx.NOT_FOUND: value = 0
@@ -73,7 +74,7 @@ class Page(wx.Panel):
         elif getattr(control, 'SetPath', None):
             return control.SetPath(value)
         else:
-            print(f"{control} has no SetValue()")
+            wx.LogError(f"{control} has no SetValue()")
 
 
     # disable controls by name

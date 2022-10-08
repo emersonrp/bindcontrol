@@ -20,7 +20,6 @@ class General(Page):
             'Primary': '',
             'Secondary': '',
             'Epic': 'Weapon Mastery',
-            # TODO - find CoH install and put them there?
             # TODO - help text about WINEPREFIX etc for Mac/Linux users
             'BindsDir': str(Path.home().joinpath("cohbinds")),
             # TODO put this back to Z:\\cohbinds\\
@@ -58,13 +57,13 @@ class General(Page):
         archchoices = []
         for Arch in sorted(Archetypes):
             archchoices.append([Arch, Icon(Arch)])
-        archpicker = powersBox.AddControl(
+        powersBox.AddControl(
             ctlName = 'Archetype',
             ctlType = 'bmcombo',
             contents = archchoices,
             callback = self.OnPickArchetype,
         )
-        archpicker.SetSelection(0) # needed for Mac
+        #self.SetState('Archetype', self.Init['Archetype'])
         powersBox.AddControl(
             ctlName = 'Primary',
             ctlType = 'choice',
@@ -170,7 +169,7 @@ class General(Page):
                     ]))
 
     ### EVENT HANDLERS
-    def OnPickArchetype(self, event = {}):
+    def OnPickArchetype(self, _ = {}):
         choice = self.Ctrls['Archetype']
         index  = choice.GetSelection()
         arch   = choice.GetString(index)
@@ -200,20 +199,20 @@ class General(Page):
 
 
     # Event handlers
-    def OnPickOrigin(self, event):
+    def OnPickOrigin(self, _):
         # TODO do we need to take any action based on this?
         pass
 
-    def OnPickPoolPower(self, event):
+    def OnPickPoolPower(self, _):
         pass
 
-    def OnPickPrimaryPowerSet(self, event):
+    def OnPickPrimaryPowerSet(self, _):
         self.Profile.Mastermind.OnArchetypePowerChange()
 
-    def OnPickSecondaryPowerSet(self, event):
+    def OnPickSecondaryPowerSet(self, _):
         pass
 
-    def OnPickEpicPowerSet(self, event):
+    def OnPickEpicPowerSet(self, _):
         pass
 
     def GetPowers(self):

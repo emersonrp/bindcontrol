@@ -80,8 +80,8 @@ class Page(wx.Panel):
     def DisableControls(self, enabled, names):
         for name in names:
             self.Ctrls[name].Enable(enabled)
-            if self.Ctrls[name].ctlLabel:
-                self.Ctrls[name].ctlLabel.Enable(enabled)
+            if self.Ctrls[name].CtlLabel:
+                self.Ctrls[name].CtlLabel.Enable(enabled)
 
     ##### stubs for overriding (shoes for industry!)
     def SynchronizeUI(self):

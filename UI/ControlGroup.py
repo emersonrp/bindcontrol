@@ -1,5 +1,6 @@
 import wx
 from wx.adv import BitmapComboBox
+from Page import Page
 import UI
 from KeyBind.ControlKeyBind import ControlKeyBind
 from UI.KeySelectDialog import KeySelectEventHandler
@@ -33,7 +34,7 @@ class ControlGroup(wx.StaticBoxSizer):
 
         label = UI.Labels.get(ctlName, ctlName)
         if not noLabel:
-            ctlLabel = wx.StaticText(ctlParent, -1, label + ':')
+            CtlLabel = wx.StaticText(ctlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
             control = bcKeyButton( ctlParent, -1, '' )
@@ -94,22 +95,24 @@ class ControlGroup(wx.StaticBoxSizer):
         elif ctlType == ('colorpicker'):
             control = wx.ColourPickerCtrl( ctlParent, -1, contents)
 
-        else: wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}")
+        else:
+            wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}")
+            return
 
         # Pack'em in there
         if tooltip:
             control.SetToolTip( wx.ToolTip(tooltip))
 
-        control.ctlLabel = None
+        control.CtlLabel = None
         if not noLabel:
-            sizer.Add( ctlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-            control.ctlLabel = ctlLabel
-            ctlLabel.control = control
+            sizer.Add( CtlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+            control.CtlLabel = CtlLabel
+            CtlLabel.control = control
 
         # make checkboxes' labels click to check them
         # TODO - doesn't work on Linux hmm
-        if ctlType == ('checkbox') and control.ctlLabel:
-            control.ctlLabel.Bind(wx.EVT_LEFT_DOWN, self.onCBLabelClick)
+        if ctlType == ('checkbox') and control.CtlLabel:
+            control.CtlLabel.Bind(wx.EVT_LEFT_DOWN, self.onCBLabelClick)
 
         sizer.Add( control, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, padding)
         self.Page.Ctrls[ctlName] = control
@@ -125,6 +128,11 @@ class ControlGroup(wx.StaticBoxSizer):
 class bcKeyButton(wx.Button):
     def __init__(self, parent, id, init):
         wx.Button.__init__(self, parent, id, init)
+        self.CtlName: str
+        self.CtlLabel: wx.StaticText
+        self.Page: Page
+        self.Profile: Profile
+        self.KeyBind: ControlKeyBind
 
         self.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
         self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)

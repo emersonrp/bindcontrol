@@ -70,7 +70,7 @@ class BindFile():
             return "+".join(kb)
         sortedKeyBinds = sorted(self.KeyBinds, key = rotateKeyBind)
         # TODO this next line is just to imitate citbinder's weird naive sorting
-        sortedKeyBinds = sorted(self.KeyBinds)
+        sortedKeyBinds = sorted(self.KeyBinds, key = str.casefold)
 
         output = ''
         for keybind in sortedKeyBinds:

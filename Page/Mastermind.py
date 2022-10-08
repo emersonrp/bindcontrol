@@ -252,7 +252,7 @@ class Mastermind(Page):
         enableBGAttack = wx.CheckBox(staticbox, -1, "Enable")
         enableBGAttack.Bind(wx.EVT_CHECKBOX, self.OnBGCheckboxes)
         enableBGAttack.SetValue(bool(self.Init['PetBodyguardAttackEnabled']))
-        enableBGAttack.ctlLabel = None
+        enableBGAttack.CtlLabel = None
         self.Ctrls['PetBodyguardAttackEnabled'] = enableBGAttack
         petCommandsKeys.InnerSizer.Add(enableBGAttack, 0, wx.ALL|wx.EXPAND, 5)
         petCommandsKeys.InnerSizer.Add(wx.StaticText(staticbox, -1, ''))
@@ -266,7 +266,7 @@ class Mastermind(Page):
         enableBGGoto = wx.CheckBox(petCommandsKeys.GetStaticBox(), -1, "Enable")
         enableBGGoto.Bind(wx.EVT_CHECKBOX, self.OnBGCheckboxes)
         enableBGGoto.SetValue(bool(self.Init['PetBodyguardGotoEnabled']))
-        enableBGGoto.ctlLabel = None
+        enableBGGoto.CtlLabel = None
         self.Ctrls['PetBodyguardGotoEnabled'] = enableBGGoto
         petCommandsKeys.InnerSizer.Add(enableBGGoto, 0, wx.ALL|wx.EXPAND, 5)
         petCommandsKeys.InnerSizer.Add(wx.StaticText(staticbox, -1, ''))
@@ -359,13 +359,13 @@ class Mastermind(Page):
 
         for c in ['PetBodyguard','PetBodyguardResponseMethod','PetBodyguardResponse']:
             self.Ctrls[c].Enable(petcmdenabled and bgEnabled)
-            if self.Ctrls[c].ctlLabel:
-                self.Ctrls[c].ctlLabel.Enable(petcmdenabled and bgEnabled)
+            if self.Ctrls[c].CtlLabel:
+                self.Ctrls[c].CtlLabel.Enable(petcmdenabled and bgEnabled)
 
         self.Ctrls['PetBodyguardAttack']         .Enable(petcmdenabled and bgEnabled and bgAttack)
-        self.Ctrls['PetBodyguardAttack'].ctlLabel.Enable(petcmdenabled and bgEnabled and bgAttack)
+        self.Ctrls['PetBodyguardAttack'].CtlLabel.Enable(petcmdenabled and bgEnabled and bgAttack)
         self.Ctrls['PetBodyguardGoto']           .Enable(petcmdenabled and bgEnabled and bgGoto)
-        self.Ctrls['PetBodyguardGoto']  .ctlLabel.Enable(petcmdenabled and bgEnabled and bgGoto)
+        self.Ctrls['PetBodyguardGoto']  .CtlLabel.Enable(petcmdenabled and bgEnabled and bgGoto)
 
         self.Ctrls['PetBodyguardAttackEnabled'].Enable(petcmdenabled and bgEnabled)
         self.Ctrls['PetBodyguardGotoEnabled']  .Enable(petcmdenabled and bgEnabled)
@@ -624,7 +624,7 @@ class Mastermind(Page):
 
     def mmSubBind(self, profile, file, fn, grp, powers):
         PetResponses = {}
-        for cmd in ('SelectAll', 'SelectMinions', 'SelectLieutenants', 'SelectBoss', 
+        for cmd in ('SelectAll', 'SelectMinions', 'SelectLieutenants', 'SelectBoss',
                 'Aggressive', 'Defensive', 'Passive', 'Attack', 'Follow', 'Goto', 'Stay','Bodyguard',):
             PetResponses[cmd] = ''
             if self.GetChatMethod(f"Pet{cmd}ResponseMethod") : PetResponses[cmd] = self.GetState(f"Pet{cmd}Response")

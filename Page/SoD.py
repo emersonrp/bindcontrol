@@ -148,7 +148,7 @@ class SoD(Page):
         tleftButton.SetLabel(self.Init['TurnLeft'])
         self.Ctrls['TurnLeft'] = tleftButton
         tleftButton.CtlName = 'TurnLeft'
-        tleftButton.ctlLabel = tlLabel
+        tleftButton.CtlLabel = tlLabel
         tleftButton.Page = self
         tleftButton.Profile = self.Profile
         tleftButton.KeyBind = ControlKeyBind(self.Init['TurnLeft'], 'Turn Left', self.TabTitle)
@@ -158,7 +158,7 @@ class SoD(Page):
         self.Ctrls['Forward'] = forwardButton
         forwardButton.SetLabel(self.Init['Forward'])
         forwardButton.CtlName = 'Forward'
-        forwardButton.ctlLabel = fwLabel
+        forwardButton.CtlLabel = fwLabel
         forwardButton.Page = self
         forwardButton.Profile = self.Profile
         forwardButton.KeyBind = ControlKeyBind(self.Init['Forward'], 'Forward', self.TabTitle)
@@ -168,7 +168,7 @@ class SoD(Page):
         self.Ctrls['TurnRight'] = trightButton
         trightButton.SetLabel(self.Init['TurnRight'])
         trightButton.CtlName = 'TurnRight'
-        trightButton.ctlLabel = trLabel
+        trightButton.CtlLabel = trLabel
         trightButton.Page = self
         trightButton.Profile = self.Profile
         trightButton.KeyBind = ControlKeyBind(self.Init['TurnRight'], 'TurnRight', self.TabTitle)
@@ -182,7 +182,7 @@ class SoD(Page):
         self.Ctrls['Left'] = leftButton
         leftButton.SetLabel(self.Init['Left'])
         leftButton.CtlName = 'Left'
-        leftButton.ctlLabel = leftLabel
+        leftButton.CtlLabel = leftLabel
         leftButton.Page = self
         leftButton.Profile = self.Profile
         leftButton.KeyBind = ControlKeyBind(self.Init['Left'], 'Left', self.TabTitle)
@@ -192,7 +192,7 @@ class SoD(Page):
         backButton.SetLabel(self.Init['Back'])
         self.Ctrls['Back'] = backButton
         backButton.CtlName = 'Back'
-        backButton.ctlLabel = backLabel
+        backButton.CtlLabel = backLabel
         backButton.Page = self
         backButton.Profile = self.Profile
         backButton.KeyBind = ControlKeyBind(self.Init['Back'], 'Back', self.TabTitle)
@@ -202,7 +202,7 @@ class SoD(Page):
         self.Ctrls['Right'] = rightButton
         rightButton.SetLabel(self.Init['Right'])
         rightButton.CtlName = 'Right'
-        rightButton.ctlLabel = rightLabel
+        rightButton.CtlLabel = rightLabel
         rightButton.Page = self
         rightButton.Profile = self.Profile
         rightButton.KeyBind = ControlKeyBind(self.Init['Right'], 'Right', self.TabTitle)
@@ -219,7 +219,7 @@ class SoD(Page):
         self.Ctrls['Down'] = downButton
         downButton.SetLabel(self.Init['Down'])
         downButton.CtlName = 'Down'
-        downButton.ctlLabel = downLabel
+        downButton.CtlLabel = downLabel
         downButton.Page = self
         downButton.Profile = self.Profile
         downButton.KeyBind = ControlKeyBind(self.Init['Down'], 'Down', self.TabTitle)
@@ -229,7 +229,7 @@ class SoD(Page):
         self.Ctrls['Up'] = upButton
         upButton.SetLabel(self.Init['Up'])
         upButton.CtlName = 'Up'
-        upButton.ctlLabel = upLabel
+        upButton.CtlLabel = upLabel
         upButton.Page = self
         upButton.Profile = self.Profile
         upButton.KeyBind = ControlKeyBind(self.Init['Up'], 'Up', self.TabTitle)
@@ -248,7 +248,7 @@ class SoD(Page):
         self.Ctrls['MouseChord'] = mousechord
         mousechord.SetValue(bool(self.Init['MouseChord']))
         mousechord.CtlName = 'MouseChord'
-        mousechord.ctlLabel = mcLabel
+        mousechord.CtlLabel = mcLabel
         mcLabel.control = mousechord
         mousechord.Page = self
         mousechord.Profile = self.Profile
@@ -398,83 +398,83 @@ class SoD(Page):
             for cname,control in c.items():
                 if cname != 'EnableSoD':  # don't disable yourself kthx
                     control.Enable(self.GetState('EnableSoD'))
-                    if not isinstance(control.ctlLabel, str):
-                        control.ctlLabel.Enable(self.GetState('EnableSoD'))
+                    if not isinstance(control.CtlLabel, str):
+                        control.CtlLabel.Enable(self.GetState('EnableSoD'))
 
             # and if everything's off, we're done
             if not self.GetState('EnableSoD'): return
 
             c['NonSoDMode']         .Enable(self.GetState('NonSoDEnable'))
-            c['NonSoDMode'].ctlLabel.Enable(self.GetState('NonSoDEnable'))
+            c['NonSoDMode'].CtlLabel.Enable(self.GetState('NonSoDEnable'))
 
             c['SprintSoDMode']         .Enable(self.GetState('SprintSoD') and self.GetState('DefaultMode') != "Sprint")
-            c['SprintSoDMode'].ctlLabel.Enable(self.GetState('SprintSoD') and self.GetState('DefaultMode') != "Sprint")
+            c['SprintSoDMode'].CtlLabel.Enable(self.GetState('SprintSoD') and self.GetState('DefaultMode') != "Sprint")
 
             c['CamdistBase']         .Enable(self.GetState('ChangeCamera'))
-            c['CamdistBase'].ctlLabel.Enable(self.GetState('ChangeCamera'))
+            c['CamdistBase'].CtlLabel.Enable(self.GetState('ChangeCamera'))
             c['CamdistMove']         .Enable(self.GetState('ChangeCamera'))
-            c['CamdistMove'].ctlLabel.Enable(self.GetState('ChangeCamera'))
+            c['CamdistMove'].CtlLabel.Enable(self.GetState('ChangeCamera'))
 
             c['DetailBase']         .Enable(self.GetState('ChangeDetail'))
-            c['DetailBase'].ctlLabel.Enable(self.GetState('ChangeDetail'))
+            c['DetailBase'].CtlLabel.Enable(self.GetState('ChangeDetail'))
             c['DetailMove']         .Enable(self.GetState('ChangeDetail'))
-            c['DetailMove'].ctlLabel.Enable(self.GetState('ChangeDetail'))
+            c['DetailMove'].CtlLabel.Enable(self.GetState('ChangeDetail'))
 
             c['TempMode']         .Enable(self.GetState('TempEnable'))
-            c['TempMode'].ctlLabel.Enable(self.GetState('TempEnable'))
+            c['TempMode'].CtlLabel.Enable(self.GetState('TempEnable'))
             c['TempTray']         .Enable(self.GetState('TempEnable'))
-            c['TempTray'].ctlLabel.Enable(self.GetState('TempEnable'))
+            c['TempTray'].CtlLabel.Enable(self.GetState('TempEnable'))
             c['TempTraySwitch']         .Enable(self.GetState('TempEnable'))
-            c['TempTraySwitch'].ctlLabel.Enable(self.GetState('TempEnable'))
+            c['TempTraySwitch'].CtlLabel.Enable(self.GetState('TempEnable'))
 
             c['RunMode']         .Enable(self.GetState('HasSS') and self.GetState('DefaultMode') != "Super Speed")
-            c['RunMode'].ctlLabel.Enable(self.GetState('HasSS') and self.GetState('DefaultMode') != "Super Speed")
+            c['RunMode'].CtlLabel.Enable(self.GetState('HasSS') and self.GetState('DefaultMode') != "Super Speed")
             c['SSMobileOnly']         .Enable(self.GetState('HasSS'))
-            c['SSMobileOnly'].ctlLabel.Enable(self.GetState('HasSS'))
+            c['SSMobileOnly'].CtlLabel.Enable(self.GetState('HasSS'))
             c['SSSJModeEnable']         .Enable(self.GetState('HasSS') and self.GetState('HasSJ'))
-            c['SSSJModeEnable'].ctlLabel.Enable(self.GetState('HasSS') and self.GetState('HasSJ'))
+            c['SSSJModeEnable'].CtlLabel.Enable(self.GetState('HasSS') and self.GetState('HasSJ'))
 
             # TODO - in citybinder, this is "if SJ or CJ" but shouldn't it be "SJ -and- CJ"?
             c['SimpleSJCJ']         .Enable(self.GetState('HasSJ') or self.GetState('HasCJ'))
-            c['SimpleSJCJ'].ctlLabel.Enable(self.GetState('HasSJ') or self.GetState('HasCJ'))
-            c['JumpMode']         .Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
+            c['SimpleSJCJ'].CtlLabel.Enable(self.GetState('HasSJ') or self.GetState('HasCJ'))
+            c['JumpMode']           .Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
-            c['JumpMode'].ctlLabel.Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
+            c['JumpMode'].CtlLabel.Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
             c['SSMobileOnly']         .Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
-            c['SSMobileOnly'].ctlLabel.Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
+            c['SSMobileOnly'].CtlLabel.Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
 
             c['FlyMode']         .Enable((self.GetState('HasHover') or self.GetState('HasFly') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
-            c['FlyMode'].ctlLabel.Enable((self.GetState('HasHover') or self.GetState('HasFly') or self.GetState('HasCF'))
+            c['FlyMode'].CtlLabel.Enable((self.GetState('HasHover') or self.GetState('HasFly') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
             c['QFlyMode']         .Enable(self.GetState('HasQF'))
-            c['QFlyMode'].ctlLabel.Enable(self.GetState('HasQF'))
+            c['QFlyMode'].CtlLabel.Enable(self.GetState('HasQF'))
 
             c['TPMode']         .Enable(self.GetState('HasTP'))
-            c['TPMode'].ctlLabel.Enable(self.GetState('HasTP'))
+            c['TPMode'].CtlLabel.Enable(self.GetState('HasTP'))
             c['TPCombo']         .Enable(self.GetState('HasTP'))
-            c['TPCombo'].ctlLabel.Enable(self.GetState('HasTP'))
+            c['TPCombo'].CtlLabel.Enable(self.GetState('HasTP'))
             c['TPReset']         .Enable(self.GetState('HasTP'))
-            c['TPReset'].ctlLabel.Enable(self.GetState('HasTP'))
+            c['TPReset'].CtlLabel.Enable(self.GetState('HasTP'))
             c['TPTPHover']         .Enable(self.GetState('HasTP') and self.GetState('HasHover'))
-            c['TPTPHover'].ctlLabel.Enable(self.GetState('HasTP') and self.GetState('HasHover'))
+            c['TPTPHover'].CtlLabel.Enable(self.GetState('HasTP') and self.GetState('HasHover'))
 
             c['TTPMode']         .Enable(self.GetState('HasTTP'))
-            c['TTPMode'].ctlLabel.Enable(self.GetState('HasTTP'))
+            c['TTPMode'].CtlLabel.Enable(self.GetState('HasTTP'))
             c['TTPCombo']         .Enable(self.GetState('HasTTP'))
-            c['TTPCombo'].ctlLabel.Enable(self.GetState('HasTTP'))
+            c['TTPCombo'].CtlLabel.Enable(self.GetState('HasTTP'))
             c['TTPReset']         .Enable(self.GetState('HasTTP'))
-            c['TTPReset'].ctlLabel.Enable(self.GetState('HasTTP'))
+            c['TTPReset'].CtlLabel.Enable(self.GetState('HasTTP'))
 
             c['NovaMode']         .Enable(self.GetState('UseNova'))
-            c['NovaMode'].ctlLabel.Enable(self.GetState('UseNova'))
+            c['NovaMode'].CtlLabel.Enable(self.GetState('UseNova'))
             c['NovaTray']         .Enable(self.GetState('UseNova'))
-            c['NovaTray'].ctlLabel.Enable(self.GetState('UseNova'))
+            c['NovaTray'].CtlLabel.Enable(self.GetState('UseNova'))
             c['DwarfMode']         .Enable(self.GetState('UseDwarf'))
-            c['DwarfMode'].ctlLabel.Enable(self.GetState('UseDwarf'))
+            c['DwarfMode'].CtlLabel.Enable(self.GetState('UseDwarf'))
             c['DwarfTray']         .Enable(self.GetState('UseDwarf'))
-            c['DwarfTray'].ctlLabel.Enable(self.GetState('UseDwarf'))
+            c['DwarfTray'].CtlLabel.Enable(self.GetState('UseDwarf'))
 
             # show/hide kheldian-influenced controls depending on selected archetype;
             archetype = self.Profile.General.GetState('Archetype')
@@ -497,11 +497,11 @@ class SoD(Page):
                 for c in kheldianOnlyControls:
                     ctrl = self.Ctrls[c]
                     ctrl.GetContainingSizer().Show(ctrl)
-                    ctrl.GetContainingSizer().Show(ctrl.ctlLabel)
+                    ctrl.GetContainingSizer().Show(ctrl.CtlLabel)
                 for c in nonkheldianOnlyControls:
                     ctrl = self.Ctrls[c]
                     ctrl.GetContainingSizer().Hide(ctrl)
-                    ctrl.GetContainingSizer().Hide(ctrl.ctlLabel)
+                    ctrl.GetContainingSizer().Hide(ctrl.CtlLabel)
             else:
                 # hide kheldiansizer, disable controls
                 for ctrl in kheldianGridSizer.GetChildren():
@@ -512,18 +512,18 @@ class SoD(Page):
                 for c in kheldianOnlyControls:
                     ctrl = self.Ctrls[c]
                     ctrl.GetContainingSizer().Hide(ctrl)
-                    ctrl.GetContainingSizer().Hide(ctrl.ctlLabel)
+                    ctrl.GetContainingSizer().Hide(ctrl.CtlLabel)
                 for c in nonkheldianOnlyControls:
                     ctrl = self.Ctrls[c]
                     ctrl.GetContainingSizer().Show(ctrl)
-                    ctrl.GetContainingSizer().Show(ctrl.ctlLabel)
+                    ctrl.GetContainingSizer().Show(ctrl.CtlLabel)
 
-        #except Exception as e:
-        #    print(f"Something blowed up in SoD SynchronizeUI:  {e}")
-        finally: pass
+        except Exception as e:
+            print(f"Something blowed up in SoD SynchronizeUI:  {e}")
 
-        self.Thaw()
-        self.Layout()
+        finally:
+            self.Thaw()
+            self.Layout()
 
 
     def makeSoDFile(self, p):
@@ -583,7 +583,7 @@ class SoD(Page):
         if (flight and (flight == "Fly") and pathbo):
             #  blast off
             curfile = profile.GetBindFile(pathbo + t.KeyState() + ".txt")
-            self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
+            self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
 
             self.sodUpKey     (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
             self.sodDownKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo")
@@ -628,7 +628,7 @@ class SoD(Page):
             # TODO this section is commented out in citybinder, why?
             # curfile = profile.GetBindFile(pathsd)
 #
-#            self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
+#            self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
 #
 #            self.sodUpKey     (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
 #            self.sodDownKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd")
@@ -650,7 +650,7 @@ class SoD(Page):
         ### TODO recently added Keystate and .txt to this.  Is this right?
         curfile = profile.GetBindFile(path + t.KeyState() + ".txt")
 
-        self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
+        self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
 
         self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
         self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','','')
@@ -665,7 +665,7 @@ class SoD(Page):
             elif (modestr == "Sprint")  : self.makeSprintModeKey  (profile,t,"r",curfile,turnoff,self.sodSetDownFix)
 
             if (t.SprintMode):
-                curfile.SetBind(t.SprintMode, "+down$$down 1" + self.actPower_name(None,1,mobile) + t.detailhi + t.runcamdist + t.blsd)
+                curfile.SetBind(t.SprintMode, "+down$$down 1" + self.actPower_name(None,True,mobile) + t.detailhi + t.runcamdist + t.blsd)
 
             if   (modestr == "Run")    : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,self.sodSetDownFix)
             elif (modestr == "Fly")    : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
@@ -691,7 +691,7 @@ class SoD(Page):
         # AutoRun Binds
         curfile = profile.GetBindFile(patha + t.KeyState() + ".txt")
 
-        self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
+        self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
 
         self.sodUpKey     (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
         self.sodDownKey   (t,bla,curfile,mobile,stationary,flight,1, '','')
@@ -721,7 +721,7 @@ class SoD(Page):
         # FollowRun Binds
         curfile = profile.GetBindFile(pathf + t.KeyState() + ".txt")
 
-        self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,1,stationary,mobile),'')
+        self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
 
         self.sodUpKey     (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
         self.sodDownKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'')
@@ -761,20 +761,20 @@ class SoD(Page):
             if (fix):
                 fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,'',feedback)
             else:
-                cur.SetBind(key, t.ini + self.actPower_toggle(None,1,None,toff) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
+                cur.SetBind(key, t.ini + self.actPower_toggle(None,True,None,toff) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
 
         elif (bl == "ar"):
             bindload = t.BLF('an')
             if (fix):
                 fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"a",feedback)
             else:
-                cur.SetBind(key, t.ini + self.actPower_toggle(None,1,None,toff) + t.detailhi + t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                cur.SetBind(key, t.ini + self.actPower_toggle(None,True,None,toff) + t.detailhi + t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
 
         else:
             if (fix):
                 fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"f",feedback)
             else:
-                cur.SetBind(key, t.ini + self.actPower_toggle(None,1,None,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
+                cur.SetBind(key, t.ini + self.actPower_toggle(None,True,None,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
         t.ini = ''
 
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
@@ -848,7 +848,7 @@ class SoD(Page):
 
             if t.horizkeys: sprint = t.sprint
             else:           sprint = ''
-            ton = self.actPower_toggle(1, 1, sprint, toff)
+            ton = self.actPower_toggle(1, True, sprint, toff)
 
             if (fix):
                 fix(p,t,key, self.makeSprintModeKey,"r",bl,cur,toff,'',feedback)
@@ -861,13 +861,13 @@ class SoD(Page):
             if (fix):
                 fix(p,t,key, self.makeSprintModeKey,"r",bl,cur,toff,"a",feedback)
             else:
-                cur.SetBind(key, t.ini + self.actPower_toggle(1,1,t.sprint,toff) + t.detailhi +  t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                cur.SetBind(key, t.ini + self.actPower_toggle(1,True,t.sprint,toff) + t.detailhi +  t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
 
         else:
             if (fix):
                 fix(p,t,key, self.makeSprintModeKey,"r",bl,cur,toff,"f",feedback)
             else:
-                cur.SetBind(key, t.ini + self.actPower_toggle(1,1,t.sprint,toff) + t.detailhi + t.runcamdist + '$$up 0' + fb + t.BLF('fr'))
+                cur.SetBind(key, t.ini + self.actPower_toggle(1,True,t.sprint,toff) + t.detailhi + t.runcamdist + '$$up 0' + fb + t.BLF('fr'))
 
         t.ini = ''
 
@@ -887,27 +887,27 @@ class SoD(Page):
                 if (fix):
                     fix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,'',feedback)
                 else:
-                    cur.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,1,t.speed,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload))
+                    cur.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload))
 
             elif (bl == "as"):
                 bindload = f"{t.blas}{t.KeyState()}.txt"
                 if (fix):
                     fix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"a",feedback)
                 elif (not feedback):
-                    cur.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,1,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload))
+                    cur.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload))
                 else:
                     # TODO - what is the reasoning here for two files?  wtf _s.txt
                     bindload  = f"{t.pathas}{t.KeyState()}.txt"
                     bindload2 = f"{t.pathas}{t.KeyState()}_s.txt"
                     tgl = p.GetBindFile(bindload2)
-                    cur.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,1,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload2))
-                    tgl.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,1,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload))
+                    cur.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload2))
+                    tgl.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload))
 
             else:
                 if (fix):
                     fix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"f",feedback)
                 else:
-                    cur.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,1,t.speed,toff) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + t.blfs))
+                    cur.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,True,t.speed,toff) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + t.blfs))
 
         t.ini = ''
 
@@ -953,7 +953,7 @@ class SoD(Page):
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
-                    cur.SetBind(key, '+down$$' + self.actPower_toggle(1,1,t.flyx,toff) + '$$up 1$$down 0' + t.dirs('FBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    cur.SetBind(key, '+down$$' + self.actPower_toggle(1,True,t.flyx,toff) + '$$up 1$$down 0' + t.dirs('FBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "a"):
                 if (not fb_on_a): feedback = ''
@@ -965,20 +965,20 @@ class SoD(Page):
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
-                    cur.SetBind(t.FlyMode,  t.ini + self.actPower_toggle(1,1,ton,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    cur.SetBind(t.FlyMode,  t.ini + self.actPower_toggle(1,True,ton,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "af"):
                 bindload = t.BLF('af')
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"a",feedback)
                 else:
-                    cur.SetBind(key,  t.ini + self.actPower_toggle(1,1,t.flyx,toff) + t.detaillo + t.flycamdist + t.dirs('DLR') + feedback + bindload)
+                    cur.SetBind(key,  t.ini + self.actPower_toggle(1,True,t.flyx,toff) + t.detaillo + t.flycamdist + t.dirs('DLR') + feedback + bindload)
 
             else:
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"f",feedback)
                 else:
-                    cur.SetBind(key,  t.ini + self.actPower_toggle(1,1,t.flyx,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + t.BLF('ff'))
+                    cur.SetBind(key,  t.ini + self.actPower_toggle(1,True,t.flyx,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + t.BLF('ff'))
 
         t.ini = ''
 
@@ -992,7 +992,7 @@ class SoD(Page):
                 if (fix):
                     fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,'','')
                 else:
-                    cur.SetBind(key, t.ini + '$$up 1$$down 0' + self.actPower_toggle(None,1,t.gfly,toff) + t.dirs('FBLR') + t.detaillo + t.flycamdist .bindload)
+                    cur.SetBind(key, t.ini + '$$up 1$$down 0' + self.actPower_toggle(None,True,t.gfly,toff) + t.dirs('FBLR') + t.detaillo + t.flycamdist .bindload)
 
             elif (bl == "gaf"):
                 bindload = t.BLF('gaf')
@@ -1006,7 +1006,7 @@ class SoD(Page):
                     fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,"f")
                 else:
                     if (bl == "gf"):
-                        cur.SetBind(key, t.ini + self.actPower_toggle(1,1,t.gfly,toff) + t.detaillo + t.flycamdist + t.BLF('gff'))
+                        cur.SetBind(key, t.ini + self.actPower_toggle(1,True,t.gfly,toff) + t.detaillo + t.flycamdist + t.BLF('gff'))
                     else:
                         cur.SetBind(key, t.ini + t.detaillo + t.flycamdist + t.BLF('gff'))
 
@@ -1654,10 +1654,8 @@ class SoD(Page):
 
     def sodResetKey(self, curfile, p, gamepath, turnoff, moddir):
 
-        if (moddir == 'up')  : u = 1
-        else:                  u = 0
-        if (moddir == 'down'): d = 1
-        else:                  d = 0
+        u = int(moddir == 'up')
+        d = int(moddir == 'down')
 
         # TODO -- this is where the resetkey binds end up different from citybinder --
         # 'turnoff' ends up full of stuff where in citybinder, it isn't.  Mysterious.
@@ -1727,7 +1725,7 @@ class SoD(Page):
 
         toggle = toggleoff = ''
         if (toggleon or toggleoff):
-           toggle = self.actPower_name(None,1,toggleon,toggleoff,toggleoff2)
+           toggle = self.actPower_name(None,True,toggleon,toggleoff,toggleoff2)
 
         newbits = t.KeyState({'toggle' : 'space'})
         bl = f"{bl}{newbits}.txt"
@@ -1793,7 +1791,7 @@ class SoD(Page):
 
         toggle = ''
         if (toggleon or toggleoff):
-           toggle = self.actPower_name(None,1,toggleon,toggleoff)
+           toggle = self.actPower_name(None,True,toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'X'})
         bl = f"{bl}{newbits}.txt"
@@ -1856,7 +1854,7 @@ class SoD(Page):
 
         toggle = ''
         if (toggleon or toggleoff):
-           toggle = self.actPower_name(None,1,toggleon,toggleoff)
+           toggle = self.actPower_name(None,True,toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'W'})
         bl = f"{bl}{newbits}.txt"
@@ -1932,7 +1930,7 @@ class SoD(Page):
 
         toggle = ''
         if (toggleon or toggleoff) :
-           toggle = self.actPower_name(None,1,toggleon,toggleoff)
+           toggle = self.actPower_name(None,True,toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'S'})
         bl = f"{bl}{newbits}.txt"
@@ -2002,7 +2000,7 @@ class SoD(Page):
 
         toggle = ''
         if (toggleon or toggleoff) :
-           toggle = self.actPower_name(None,1,toggleon,toggleoff)
+           toggle = self.actPower_name(None,True,toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'A'})
         bl = f"{bl}{newbits}.txt"
@@ -2065,7 +2063,7 @@ class SoD(Page):
 
         toggle = ''
         if (toggleon or toggleoff) :
-           toggle = self.actPower_name(None,1,toggleon,toggleoff)
+           toggle = self.actPower_name(None,True,toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'D'})
         bl = f"{bl}{newbits}.txt"
@@ -2089,9 +2087,9 @@ class SoD(Page):
     def sodAutoRunKey(self,t,bl,curfile,mobile,sssj):
         bindload = bl + t.KeyState() + ".txt"
         if (sssj and t.space == 1) :
-            curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mlon + self.actPower_name(None,1,sssj,mobile) + bindload))
+            curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mlon + self.actPower_name(None,True,sssj,mobile) + bindload))
         else:
-            curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mlon + self.actPower_name(None,1,mobile) + bindload))
+            curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mlon + self.actPower_name(None,True,mobile) + bindload))
 
     def sodAutoRunOffKey(self, t,bl,curfile,mobile,stationary,flight,sssj):
         toggleon = toggleoff = ''
@@ -2100,44 +2098,44 @@ class SoD(Page):
             mobile = sssj
         if (not flight and not sssj) :
             if (t.horizkeys > 0) :
-               toggleon = t.mlon + self.actPower_name(None,1,mobile)
+               toggleon = t.mlon + self.actPower_name(None,True,mobile)
             else:
-               toggleon = t.mloff + self.actPower_name(None,1,stationary,mobile)
+               toggleon = t.mloff + self.actPower_name(None,True,stationary,mobile)
 
         elif (sssj) :
             if (t.horizkeys > 0 or t.space == 1) :
-               toggleon = t.mlon + self.actPower_name(None,1,mobile,toggleoff)
+               toggleon = t.mlon + self.actPower_name(None,True,mobile,toggleoff)
             else:
-               toggleon = t.mloff + self.actPower_name(None,1,stationary,mobile,toggleoff)
+               toggleon = t.mloff + self.actPower_name(None,True,stationary,mobile,toggleoff)
 
         else:
             if (t.totalkeys > 0) :
-               toggleon = t.mlon + self.actPower_name(None,1,mobile)
+               toggleon = t.mlon + self.actPower_name(None,True,mobile)
             else:
-               toggleon = t.mloff + self.actPower_name(None,1,stationary,mobile)
+               toggleon = t.mloff + self.actPower_name(None,True,stationary,mobile)
 
         bindload = bl + t.KeyState() + '.txt'
         # "[2:]" on next line is to trim off the initial "$$" that dirs() provides
         curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind(t.dirs('UDFBLR')[2:] + toggleon + bindload))
 
     def sodFollowKey(self, t,bl,curfile,mobile):
-        curfile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind('follow' + self.actPower_name(None,1,mobile) + bl + t.KeyState() + '.txt'))
+        curfile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind('follow' + self.actPower_name(None,True,mobile) + bl + t.KeyState() + '.txt'))
 
     def sodFollowOffKey(self, t,bl,curfile,mobile,stationary,flight):
         toggle = ''
         if (not flight):
             if (t.horizkeys == 0) :
                 if (stationary == mobile) :
-                   toggle = self.actPower_name(None,1,stationary,mobile)
+                   toggle = self.actPower_name(None,True,stationary,mobile)
                 else:
-                   toggle = self.actPower_name(None,1,stationary)
+                   toggle = self.actPower_name(None,True,stationary)
 
         else:
             if (t.totalkeys == 0) :
                 if (stationary == mobile) :
-                   toggle = self.actPower_name(None,1,stationary,mobile)
+                   toggle = self.actPower_name(None,True,stationary,mobile)
                 else:
-                   toggle = self.actPower_name(None,1,stationary)
+                   toggle = self.actPower_name(None,True,stationary)
 
         curfile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("follow" + toggle + t.up + t.dow + t.forw + t.bac + t.lef + t.rig + bl + t.KeyState() + '.txt'))
 
@@ -2148,6 +2146,7 @@ class SoD(Page):
             #  deal with power slot stuff..
           traytest = on['trayslot']
 
+        unq = False  # TODO - then why do we pass this in in the first place?
         offpower = {}
 
         for v in rest:
@@ -2157,7 +2156,7 @@ class SoD(Page):
                         if not isinstance(w, str):
                             if (w['trayslot'] == traytest):
                                s = s + '$$powexectray ' + w['trayslot']
-                               unq = 1
+                               unq = True
 
                         else:
                            offpower['w'] = 1
@@ -2165,7 +2164,7 @@ class SoD(Page):
 
                 if (v['trayslot'] and v['trayslot'] == traytest):
                    s = s + '$$powexectray ' + v['trayslot']
-                   unq = 1
+                   unq = True
 
             else:
                 if (v and (v != 'on') and not offpower.get(v, None)):
@@ -2275,7 +2274,7 @@ class SoD(Page):
         tglfile  = profile.GetBindFile(filename)
         t.ini    = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
-        curfile.SetBind(key, "+down" + feedback + self.actPower_name(None,1,t.cjmp) + profile.BLF(filename))
+        curfile.SetBind(key, "+down" + feedback + self.actPower_name(None,True,t.cjmp) + profile.BLF(filename))
 
     def sodSetDownFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
         if autofollowmode:
@@ -2420,24 +2419,24 @@ class tObject(dict):
             self.QFlyMode   = ''
             self.jumpifnocj = ''
 
-            self.space = 0
-            self.X     = 0
-            self.W     = 0
-            self.S     = 0
-            self.A     = 0
-            self.D     = 0
-            self.up    = ''
-            self.dow   = ''
-            self.forw  = ''
-            self.bac   = ''
-            self.lef   = ''
-            self.rig   = ''
-            self.upx   = ''
-            self.dowx  = ''
-            self.forx  = ''
-            self.bacx  = ''
-            self.lefx  = ''
-            self.rigx  = ''
+            self.space :int = 0
+            self.X :int     = 0
+            self.W :int     = 0
+            self.S :int     = 0
+            self.A :int     = 0
+            self.D :int     = 0
+            self.up         = ''
+            self.dow        = ''
+            self.forw       = ''
+            self.bac        = ''
+            self.lef        = ''
+            self.rig        = ''
+            self.upx        = ''
+            self.dowx       = ''
+            self.forx       = ''
+            self.bacx       = ''
+            self.lefx       = ''
+            self.rigx       = ''
 
             self.bl   = ''
             self.bla  = ''
@@ -2520,9 +2519,10 @@ class tObject(dict):
             self.path         = ''
             self.gamepath     = ''
 
-            self.vertkeys  = 0
-            self.horizkeys = 0
-            self.jkeys     = 0
+            self.vertkeys  :int = 0
+            self.horizkeys :int = 0
+            self.jkeys     :int = 0
+            self.totalkeys :int = 0
 
 
     # return binary "011010" string of which keys are "on";

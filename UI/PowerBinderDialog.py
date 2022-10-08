@@ -1,11 +1,11 @@
 import wx
-import string
-import UI
-import GameData
+#import string
+#import UI
+#import GameData
 
 # This is awful
 from PowerBindCmd import AFKCmd, AutoPowerCmd, ChatCmd, ChatGlobalCmd, CostumeChangeCmd, CustomBindCmd, EmoteCmd, \
-                    PowerAbortCmd, PowerBindCmd, PowerUnqueueCmd, SGModeToggleCmd, TargetCustomCmd, TargetEnemyCmd, \
+                    PowerAbortCmd, PowerUnqueueCmd, SGModeToggleCmd, TargetCustomCmd, TargetEnemyCmd, \
                     TargetFriendCmd, TeamPetSelectCmd, UnselectCmd, UseInspByNameCmd, UseInspRowColCmd, UsePowerCmd, \
                     UsePowerFromTrayCmd, WindowToggleCmd
 
@@ -71,22 +71,22 @@ class PowerBinderDialog(wx.Dialog):
         self.Fit()
         self.SetFocus()
 
-    def OnRearrangeDelete(self, evt):
+    def OnRearrangeDelete(self, _):
         current = self.RearrangeList.GetSelection()
         if current == wx.NOT_FOUND: return
 
         self.RearrangeList.Delete(current)
         self.UpdateBindStringDisplay()
 
-    def OnRearrangeUp(self, evt):
+    def OnRearrangeUp(self, _):
         self.RearrangeList.MoveCurrentUp()
         self.UpdateBindStringDisplay()
 
-    def OnRearrangeDown(self, evt):
+    def OnRearrangeDown(self, _):
         self.RearrangeList.MoveCurrentDown()
         self.UpdateBindStringDisplay()
 
-    def OnRearrangeEdit(self, evt):
+    def OnRearrangeEdit(self, _):
         index = self.RearrangeList.GetSelection()
 
         # check whether we have an object already attached to this choice
@@ -127,7 +127,7 @@ class PowerBinderDialog(wx.Dialog):
         self.OnListSelect(evt)
         self.UpdateBindStringDisplay()
 
-    def OnListSelect(self, evt):
+    def OnListSelect(self, _):
         selected = self.RearrangeList.GetSelection()
 
         selCommand = self.RearrangeList.GetClientData(selected)
@@ -192,7 +192,7 @@ class PowerBinderButton(wx.Button):
         self.tgtTxtCtrl = tgtTxtCtrl
         self.Bind(wx.EVT_BUTTON, self.PowerBinderEventHandler)
 
-    def PowerBinderEventHandler(self, evt):
+    def PowerBinderEventHandler(self, _):
         with PowerBinderDialog(self.Parent) as dlg:
             if (self.tgtTxtCtrl and dlg.ShowModal() == wx.ID_OK):
                 bindString = dlg.MakeBindString()

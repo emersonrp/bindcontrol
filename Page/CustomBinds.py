@@ -11,6 +11,7 @@ class CustomBinds(Page):
         Page.__init__(self, parent)
 
         self.TabTitle = "Custom Binds"
+        self.Panes    = []
 
     def BuildPage(self):
 
@@ -34,7 +35,7 @@ class CustomBinds(Page):
 
         # add the two parts of the layout, top one expandable
         MainSizer.Add( self.scrolledPane, 1, wx.EXPAND)
-        MainSizer.Add( buttonSizer, 0, wx.EXPAND|wx.ALL)
+        MainSizer.Add( buttonSizer,       0, wx.EXPAND)
 
         # sizer around the whole thing to add padding
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
@@ -52,17 +53,26 @@ class CustomBinds(Page):
 
     def AddBindToPage(self, bindinit = {}, bindpane = None):
 
-        if not bindpane: wx.LogError("Something tried to add an empty bindpane to the page")
-
-        bindname = ''
-        dlg = wx.TextEntryDialog(self, 'Enter name for new bind')
-        if dlg.ShowModal() == wx.ID_OK:
-            bindname = dlg.GetValue()
-        else:
-            bindpane.Destroy()
+        if not bindpane:
+            wx.LogError("Something tried to add an empty bindpane to the page")
             return
 
-        dlg.Destroy()
+        if bindinit:
+            # TODO - this is for initializing one of these from a saved profile
+            pass
+        else:
+            bindname = ''
+            dlg = wx.TextEntryDialog(self, 'Enter name for new bind')
+            if dlg.ShowModal() == wx.ID_OK:
+                bindname = dlg.GetValue()
+            else:
+                bindpane.Destroy()
+                return
+
+            dlg.Destroy()
+
+        self.Panes.append(bindpane)
+
 
         bindpane.Title = bindname
         bindpane.BuildBindUI(self)
@@ -79,19 +89,17 @@ class CustomBinds(Page):
         bindpane.Expand()
         self.Layout()
 
-    def OnDeleteButton(self, evt):
+    def OnDeleteButton(self, _):
         pass
 
     def PopulateBindFiles(self):
 
-        for panesizer in self.PaneSizer.Children:
-            pane = panesizer.GetWindow()
+        for pane in self.Panes:
             pane.PopulateBindFiles()
 
         ### TODO
         return
         ### TODO
-
 
     for i in (1,2,3,4,5,6,7,8):
         UI.Labels[f'Team{i}BuffKey'] = f"Team {i} Key"

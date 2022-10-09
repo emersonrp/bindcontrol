@@ -1,5 +1,4 @@
 import wx
-import Utility
 import UI
 
 from Page import Page

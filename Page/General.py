@@ -84,28 +84,30 @@ class General(Page):
             # contents = sorted(ArchData['Epic']),
             callback = self.OnPickEpicPowerSet,
         )
+        poolcontents = sorted(MiscPowers['Pool'])
+        poolcontents.insert(0, '')
         powersBox.AddControl(
             ctlName = 'Pool1',
             ctlType = 'choice',
-            contents = sorted(MiscPowers['Pool']),
+            contents = poolcontents,
             callback = self.OnPickPoolPower,
         )
         powersBox.AddControl(
             ctlName = 'Pool2',
             ctlType = 'choice',
-            contents = sorted(MiscPowers['Pool']),
+            contents = poolcontents,
             callback = self.OnPickPoolPower,
         )
         powersBox.AddControl(
             ctlName = 'Pool3',
             ctlType = 'choice',
-            contents = sorted(MiscPowers['Pool']),
+            contents = poolcontents,
             callback = self.OnPickPoolPower,
         )
         powersBox.AddControl(
             ctlName = 'Pool4',
             ctlType = 'choice',
-            contents = sorted(MiscPowers['Pool']),
+            contents = poolcontents,
             callback = self.OnPickPoolPower,
         )
 
@@ -186,6 +188,8 @@ class General(Page):
         Secondaries = Archetypes[arch]['Secondary']
         Epix        = Archetypes[arch]['Epic']
 
+        self.Ctrls['Epic'].Append('') # allow us to deselect epic pool
+
         for p in Primaries   : self.Ctrls['Primary'].Append(p)
         for s in Secondaries : self.Ctrls['Secondary'].Append(s)
         for e in Epix        : self.Ctrls['Epic'].Append(e)
@@ -218,28 +222,6 @@ class General(Page):
 
     def OnPickEpicPowerSet(self, _):
         pass
-
-    def GetPowers(self):
-        archetype = self.GetState('Archetype')
-        primary   = self.GetState('Primary')
-        secondary = self.GetState('Secondary')
-        epic      = self.GetState('Epic')
-        # TODO, for 1-4, collect up pool powers
-        # TODO - maybe also Incarnate stuff?
-
-        arch = Archetypes.get(archetype, None)
-        if not arch: return []
-
-        powers = []
-        pp = Archetypes[archetype]['Primary'].get(primary, None)
-        if pp: powers.extend(pp)
-        sp = Archetypes[archetype]['Secondary'].get(secondary, None)
-        if sp: powers.extend(sp)
-        ep = Archetypes[archetype]['Epic'].get(epic, None)
-        if ep: powers.extend(ep)
-
-        return powers
-
 
     UI.Labels.update({
         'BindsDir'        : 'Base Binds Directory',

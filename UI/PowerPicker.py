@@ -35,8 +35,7 @@ class PowerPickerMenu(wx.Menu):
 
             powers = archdata[category][gen.GetState(category)]
 
-            for power in powers:
-                submenu.Append(-1, power)
+            for power in powers: submenu.Append(-1, power)
 
         # Pool powers
         for poolpicker in ["Pool1", "Pool2", "Pool3", "Pool4"]:
@@ -44,6 +43,10 @@ class PowerPickerMenu(wx.Menu):
             if poolname:
                 submenu = wx.Menu()
                 self.AppendSubMenu(submenu, "Pool: " + poolname)
+
+                powers = GameData.MiscPowers['Pool'][poolname]
+                for power in powers: submenu.Append(-1, power)
+
 
     def OnMenuSelection(self, evt):
         menuitem = self.FindItemById(evt.GetId())

@@ -31,10 +31,10 @@ class PowerPickerMenu(wx.Menu):
         for category in ['Primary', 'Secondary', 'Epic']:
             submenu = wx.Menu()
             catname = gen.GetState(category)
+            if not catname: continue
             self.AppendSubMenu(submenu, f"{category}: {catname}")
 
-            powers = archdata[category][gen.GetState(category)]
-
+            powers = archdata[category][catname]
             for power in powers: submenu.Append(-1, power)
 
         # Pool powers

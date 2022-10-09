@@ -6,83 +6,21 @@ Archetypes = {
     "Arachnos Soldier": {
         'Faction': 'V',
         "Epic": {
-            "Mace Mastery": [
-                "Mace Blast",
-                "Web Envelope",
-                "Disruptor Blast",
-                "Summon Blaster",
-            ],
-            "Leviathan Mastery": [
-                "Spirit Shark",
-                "School of Sharks",
-                "Chum Spray",
-                "Summon Guardian",
-            ],
-            "Soul Mastery": [
-                "Dark Obliteration",
-                "Gloom",
-                "Soul Tentacles",
-                "Summon Widow",
-            ],
-            "Mu Mastery": [
-                "Mu Lightning",
-                "Electrifying Fences",
-                "Ball Lightning",
-                "Summon Striker",
-            ],
+            "Mace Mastery"      : [ "Mace Blast", "Web Envelope", "Disruptor Blast", "Shatter Armor", "Summon Blaster", ],
+            "Leviathan Mastery" : [ "Spirit Shark", "School of Sharks", "Arctic Breath", "Bile Spray", "Summon Guardian", ],
+            "Soul Mastery"      : [ "Gloom", "Soul Tentacles", "Darkest Night", "Dark Obliteration", "Summon Widow", ],
+            "Mu Mastery"        : [ "Mu Lightning", "Electrifying Fences", "Ball Lightning", "Static Discharge", "Summon Striker", ],
         },
         "Primary": {
-            "Arachnos Soldier": [
-                "Single Shot",
-                "Pummel",
-                "Burst",
-                "Wide Area Web Grenade",
-                "Heavy Burst",
-                "Bayonet",
-                "Venom Grenade",
-                "Frag Grenade",
-            ],
-            "Crab Spider Soldier":[
-                "Channelgun",
-                "Slice",
-                "Longfang",
-                "Aim",
-                "Suppression",
-                "Arm Lash",
-                "Venom Grenade",
-                "Frag Grenade",
-                "Frenzy",
-                "Omega Maneuver",
-            ],
-            "Bane Spider Soldier": [
-                "Bash",
-                "Mace Beam",
-                "Mace Beam Blast",
-                "Build Up",
-                "Mace Beam Volley",
-                "Poisonous Ray",
-                "Pulverize",
-                "Shatter",
-                "Placate",
-                "Crowd Control",
-            ],
+            "Arachnos Soldier"    : [ "Single Shot", "Pummel", "Burst", "Wide Area Web Grenade", "Heavy Burst", "Bayonet", "Venom Grenade", "Frag Grenade", ],
+            "Crab Spider Soldier" : [ "Channelgun", "Slice", "Longfang", "Aim", "Suppression", "Arm Lash", "Venom Grenade", "Frag Grenade", "Frenzy", "Omega Maneuver", ],
+            "Bane Spider Soldier" : [ "Bash", "Mace Beam", "Mace Beam Blast", "Build Up", "Mace Beam Volley", "Poisonous Ray", "Pulverize", "Shatter", "Placate", "Crowd Control", ],
         },
         "Secondary": {
-            "Training and Gadgets": [
-                "Tactical Training: Maneuvers",
-                "Tactical Training: Assault",
-                "Tactical Training: Leadership",
-                "Call Reinforcements",
-            ],
-            "Crab Spider Training": [
-                "Fortification",
-                "Summon Spiderlings",
-            ],
-            "Bane Spider Training": [
-                "Cloaking Device",
-                "Surveillance",
-                "Web Cocoon",
-            ],
+            "Training and Gadgets": [ "Wolf Spider Armor", "Combat Training: Defensive", "Combat Training: Offensive", "Tactical Training: Maneuvers", "Tactical Training: Assault",
+                                        "Tactical Training: Leadership", "Mental Training", "Call Reinforcements", ],
+            "Crab Spider Training": [ "Crab Spider Armor Upgrade", "Fortification", "Serum", "Summon Spiderlings", ],
+            "Bane Spider Training": [ "Bane Spider Armor Upgrade", "Cloaking Device", "Surveillance", "Web Cocoon", ],
         },
     },
     "Arachnos Widow": {
@@ -199,6 +137,31 @@ Archetypes = {
                 "Sleep Grenade",
                 "LRM Missile",
                 "Cryo Freeze Ray",
+            ],
+            "Leviathan Mastery": [
+                "School of Sharks",
+                "Chum Spray",
+                "Spirit Shark Jaws",
+            ],
+            "Mace Mastery": [
+                "Web Envelope",
+                "Scorpion Shield",
+                "Mace Beam Volley",
+                "Summon Spiderlings",
+                "Web Cocoon",
+            ],
+            "Mu Mastery": [
+                "Static Discharge",
+                "Charged Armor",
+                "Electrifying Fences",
+                "Summon Adept",
+                "Electric Shackles",
+            ],
+            "Soul Mastery": [
+                "Dark Embrace",
+                "Night Fall",
+                "Soul Storm",
+                "Soul Tentacles",
             ],
         },
         "Primary": {
@@ -385,6 +348,30 @@ Archetypes = {
     'Brute': {
         'Faction': 'V',
         "Epic": {
+            "Arctic Mastery": [
+                "Chilblain",
+                "Block of Ice",
+                "Ice Blast",
+                "Ice Storm",
+            ],
+            "Earth Mastery": [
+                "Salt Crystals",
+                "Fossilize",
+                "Stalagmites",
+                "Stone Prison",
+            ],
+            "Energy Mastery": [
+                "Conserve Power",
+                "Focused Accuracy",
+                "Laser Beam Eyes",
+                "Energy Torrent",
+            ],
+            "Pyre Mastery": [
+                "Ring of Fire",
+                "Char",
+                "Fire Blast",
+                "Fire Ball",
+            ],
             "Mace Mastery": [
                 "Mace Blast",
                 "Web Envelope",
@@ -629,6 +616,34 @@ Archetypes = {
                 "Rock Armor",
                 "Earth's Embrace",
             ],
+            "Leviathan Mastery": [
+                "Water Spout",
+                "Bile Spray",
+                "Hibernate",
+                "Shark Skin",
+                "Summon Coralax",
+            ],
+            "Mace Mastery": [
+                "Poisonous Ray",
+                "Scorpion Shield",
+                "Disruptor Blast",
+                "Focused Accuracy",
+                "Summon Tarantula",
+            ],
+            "Mu Mastery": [
+                "Power Sink",
+                "Charged Armor",
+                "Ball Lightning",
+                "Surge of Power",
+                "Summon Guardian",
+            ],
+            "Soul Mastery": [
+                "Dark Consumption",
+                "Dark Embrace",
+                "Dark Obliteration",
+                "Soul Drain",
+                "Summon Seer",
+            ]
         },
         "Primary": {
             "Earth Control": [
@@ -1327,7 +1342,9 @@ Archetypes = {
             ],
             "Leviathan Mastery": [
                 "Water Spout",
-                "Chum Spray",
+                "Bile Spray",
+                "Hibernate",
+                "Shark Skin",
                 "Summon Coralax",
             ],
             "Soul Mastery": [
@@ -1340,8 +1357,16 @@ Archetypes = {
                 "Power Sink",
                 "Charged Armor",
                 "Ball Lightning",
+                "Surge of Power",
                 "Summon Guardian",
             ],
+            "Soul Mastery": [
+                "Dark Consumption",
+                "Dark Embrace",
+                "Dark Obliteration",
+                "Soul Drain",
+                "Summon Seer",
+            ]
         },
         "Primary": {
             "Earth Control": [

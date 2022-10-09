@@ -24,7 +24,8 @@ class PowerPicker(wx.Menu):
         archdata = GameData.Archetypes[gen.GetState('Archetype')]
         for category in ['Primary', 'Secondary', 'Epic']:
             submenu = wx.Menu()
-            self.AppendSubMenu(submenu, category)
+            catname = gen.GetState(category)
+            self.AppendSubMenu(submenu, f"{category}: {catname}")
 
             powers = archdata[category][gen.GetState(category)]
 

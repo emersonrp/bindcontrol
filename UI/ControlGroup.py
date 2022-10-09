@@ -26,18 +26,18 @@ class ControlGroup(wx.StaticBoxSizer):
             wx.LogError(f"Tried to make a labeled control without a CtlName!")
             raise(Exception)
 
-        sizer     = self.InnerSizer
         Init      = self.Page.Init
-        ctlParent = self.GetStaticBox()
+        CtlParent = self.GetStaticBox()
+        CtlLabel  = None
 
         padding = 0
 
         label = UI.Labels.get(ctlName, ctlName)
         if not noLabel:
-            CtlLabel = wx.StaticText(ctlParent, -1, label + ':')
+            CtlLabel = wx.StaticText(CtlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
-            control = bcKeyButton( ctlParent, -1, '' )
+            control = bcKeyButton( CtlParent, -1, '' )
             control.SetLabel(Init[ctlName])
             # push context onto the button, we'll thank me later
             control.CtlName = ctlName
@@ -47,14 +47,14 @@ class ControlGroup(wx.StaticBoxSizer):
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
             control = wx.ComboBox(
-                ctlParent, -1, Init[ctlName],
+                CtlParent, -1, Init[ctlName],
                 choices = contents or (), style = wx.CB_READONLY)
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback )
 
         elif (ctlType == 'bmcombo') or (ctlType == "bmcombobox"):
             control = BitmapComboBox(
-                ctlParent, -1, '',
+                CtlParent, -1, '',
                 style = wx.CB_READONLY)
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback )
@@ -67,37 +67,37 @@ class ControlGroup(wx.StaticBoxSizer):
                 control.SetSelection(index)
 
         elif ctlType == ('text'):
-            control = wx.TextCtrl(ctlParent, -1, Init[ctlName])
+            control = wx.TextCtrl(CtlParent, -1, Init[ctlName])
 
         elif ctlType == ('choice'):
             contents = contents if contents else []
-            control = wx.Choice(ctlParent, -1, choices = contents)
+            control = wx.Choice(CtlParent, -1, choices = contents)
             control.SetSelection(control.FindString(Init[ctlName]))
             if callback:
                 control.Bind(wx.EVT_CHOICE, callback )
 
         elif ctlType == ('statictext'):
-            control = wx.StaticText(ctlParent, -1, contents)
+            control = wx.StaticText(CtlParent, -1, contents)
 
         elif ctlType == ('checkbox'):
-            control = wx.CheckBox(ctlParent, -1, contents)
+            control = wx.CheckBox(CtlParent, -1, contents)
             control.SetValue(bool(Init[ctlName]))
             padding = 6
             if callback:
                 control.Bind(wx.EVT_CHECKBOX, callback )
 
         elif ctlType == ('spinbox'):
-            control = wx.SpinCtrl(ctlParent, -1)
+            control = wx.SpinCtrl(CtlParent, -1)
             control.SetValue(Init[ctlName])
             control.SetRange(*contents)
 
         elif ctlType == ('dirpicker'):
             control = wx.DirPickerCtrl(
-                ctlParent, -1, Init[ctlName], Init[ctlName],
+                CtlParent, -1, Init[ctlName], Init[ctlName],
                 #style = wx.DIRP_USE_TEXTCTRL|wx.DIRP_SMALL,
             )
         elif ctlType == ('colorpicker'):
-            control = wx.ColourPickerCtrl( ctlParent, -1, contents)
+            control = wx.ColourPickerCtrl( CtlParent, -1, contents)
 
         else:
             wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}")
@@ -108,8 +108,9 @@ class ControlGroup(wx.StaticBoxSizer):
             control.SetToolTip( wx.ToolTip(tooltip))
 
         control.CtlLabel = None
-        if not noLabel:
-            sizer.Add( CtlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        if not noLabel and CtlLabel:
+            CtlLabel.SetToolTip( wx.ToolTip(tooltip))
+            self.InnerSizer.Add( CtlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
             control.CtlLabel = CtlLabel
             CtlLabel.control = control
 
@@ -118,7 +119,7 @@ class ControlGroup(wx.StaticBoxSizer):
         if ctlType == ('checkbox') and control.CtlLabel:
             control.CtlLabel.Bind(wx.EVT_LEFT_DOWN, self.onCBLabelClick)
 
-        sizer.Add( control, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, padding)
+        self.InnerSizer.Add( control, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, padding)
         self.Page.Ctrls[ctlName] = control
 
         self.Layout()

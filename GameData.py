@@ -390,6 +390,15 @@ Archetypes = {
     'Scrapper': {
         'Faction': 'H',
         "Epic": {
+            "Blaze Mastery"     : [ "Ring of Fire", "Char", "Fire Blast", "Melt Armor", "Fire Ball", ],
+            "Body Mastery"      : [ "Conserve Power", "Focused Accuracy", "Laser Beam Eyes", "Physical Perfection", "Energy Torrent", ],
+            "Darkness Mastery"  : [ "Torrent", "Petrifying Gaze", "Dark Blast", "Night Fall", "Tenebrous Tentacles", ],
+            "Weapon Mastery"    : [ "Web Grenade", "Caltrops", "Shuriken", "Targeting Drone", "Exploding Shurken", ],
+
+            "Leviathan Mastery" : [ "Spirit Shark", "Water Spout", "Hibernate", "Spirit Shark Jaws", "Summon Guardian", ],
+            "Mace Mastery"      : [ "Mace Blast", "Mace Beam", "Disruptor Blast", "Web Cocoon", "Summon Spiderlings", ],
+            "Mu Mastery"        : [ "Mu Bolts", "Zapp", "Ball Lightning", "Electric Shackles", "Summon Adept", ],
+            "Soul Mastery"      : [ "Dark Blast", "Moonbeam", "Shadow Meld", "Soul Storm", "Summon Widow", ],
         },
         "Primary": {
             "Battle Axe"       : [ "Beheader", "Chop", "Gash", "Build Up", "Swoop", "Taunt", "Whirling Axe", "Cleave", "Pendulum", ],

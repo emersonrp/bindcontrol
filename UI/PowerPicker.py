@@ -1,19 +1,24 @@
 import wx
 import GameData
 
-def OnPowerPicker(evt):
-    button = evt.EventObject
+class PowerPicker(wx.Button):
+    def __init__(self, parent):
+        wx.Button.__init__(self, parent)
 
-    picker = PowerPicker(button)
-    picker.BuildMenu()
-    button.PopupMenu(picker)
+        self.SetLabel('...')
+        self.Bind(wx.EVT_BUTTON, self.OnPowerPicker)
 
-class PowerPicker(wx.Menu):
+    def OnPowerPicker(self, _):
+        self.Picker = PowerPickerMenu(self)
+        self.Picker.BuildMenu()
+        self.PopupMenu(self.Picker)
 
-    def __init__(self, target):
+class PowerPickerMenu(wx.Menu):
+
+    def __init__(self, button):
         wx.Menu.__init__(self)
 
-        self.UpdateTarget = target
+        self.Button = button
         self.Bind(wx.EVT_MENU, self.OnMenuSelection)
 
     def BuildMenu(self):
@@ -21,6 +26,7 @@ class PowerPicker(wx.Menu):
         profile = wx.Window.FindWindowByName("Profile")
         gen = profile.General
 
+        # primary / secondary / epic powers
         archdata = GameData.Archetypes[gen.GetState('Archetype')]
         for category in ['Primary', 'Secondary', 'Epic']:
             submenu = wx.Menu()
@@ -32,7 +38,15 @@ class PowerPicker(wx.Menu):
             for power in powers:
                 submenu.Append(-1, power)
 
+        # Pool powers
+        for poolpicker in ["Pool1", "Pool2", "Pool3", "Pool4"]:
+            poolname = gen.GetState(poolpicker)
+            if poolname:
+                submenu = wx.Menu()
+                self.AppendSubMenu(submenu, "Pool: " + poolname)
+
     def OnMenuSelection(self, evt):
         menuitem = self.FindItemById(evt.GetId())
         label = menuitem.GetItemLabel()
-        self.UpdateTarget.SetLabel(label)
+        self.Button.SetLabel(label)
+

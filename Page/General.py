@@ -3,7 +3,7 @@ import wx
 from pathlib import Path
 import UI
 from Utility import Icon
-from UI.PowerBinderDialog import PowerBinderButton
+from UI.PowerPicker import PowerPicker
 
 from GameData import Archetypes, Origins, MiscPowers
 from UI.ControlGroup import ControlGroup
@@ -147,8 +147,8 @@ class General(Page):
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(topSizer, flag=wx.ALL|wx.EXPAND, border = 20)
 
-        testPowerBinder = PowerBinderButton(self, None)
-        paddingSizer.Add(testPowerBinder, flag=wx.ALL|wx.EXPAND, border = 20)
+        testPowerPicker = PowerPicker(self)
+        paddingSizer.Add(testPowerPicker, flag=wx.ALL|wx.EXPAND, border = 20)
 
         self.SynchronizeUI()
 
@@ -172,7 +172,11 @@ class General(Page):
 
     ### EVENT HANDLERS
     def OnPickArchetype(self, _ = {}):
-        arch   = self.GetState('Archetype')
+        arch = self.GetState('Archetype')
+
+        if not arch:
+            wx.LogError("Got into OnPickArchetype with arch not set, bailing.")
+            return
 
         self.Ctrls['Primary'].Clear()
         self.Ctrls['Secondary'].Clear()
@@ -245,5 +249,9 @@ class General(Page):
         'ResetFeedback'   : 'Enable Reset Feedback Self-/tell',
         'UseSplitModKeys' : 'Bind left and right modifier keys separately',
         'FlushAllBinds'   : 'Set all binds to default before reapplying',
+        'Pool1'           : "Power Pool 1",
+        'Pool2'           : "Power Pool 2",
+        'Pool3'           : "Power Pool 3",
+        'Pool4'           : "Power Pool 4",
     })
 

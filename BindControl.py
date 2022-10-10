@@ -80,24 +80,24 @@ class Main(wx.Frame):
 
         self.SetSizerAndFit(self.Sizer)
 
-    def OnWriteBindsButton(self, evt):
+    def OnWriteBindsButton(self, _):
         self.Profile.WriteBindFiles()
 
-    def OnMenuAboutBox(self, event):
+    def OnMenuAboutBox(self, _):
         if self.about_info is None:
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
             info.SetName('BindControl')
             info.SetVersion('0.1')
             info.SetDescription("BindControl can help you set up custom keybinds in City of Heroes/Villains, including speed-on-demand binds.\n\nBased on CityBinder 0.76, Copyright (C) 2005-2006 Jeff Sheets\n\nSpeed-On-Demand binds were originally created by Gnarley\'s Speed On Demand Binds Program.  Advanced Teleport Binds by DrLetharga.")
-            info.SetCopyright('(c) 2010-2021 R Pickett <emerson@hayseed.net>')
+            info.SetCopyright('(c) 2010-2022 R Pickett <emerson@hayseed.net>')
             info.SetWebSite('https://github.com/emersonrp/bindcontrol')
             self.about_info = info
 
         wx.adv.AboutBox(self.about_info)
 
-    def OnMenuExitApplication(self, event):
-        self.Close(1)
+    def OnMenuExitApplication(self, _):
+        self.Close(True)
 
 class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
     def OnInit(self):
@@ -109,5 +109,9 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
 
 if __name__ == "__main__":
     app = MyApp(redirect=False)
+
+
+    #import wx.lib.inspection
+    #wx.lib.inspection.InspectionTool().Show()
     app.MainLoop()
 

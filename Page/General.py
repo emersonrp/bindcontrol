@@ -3,10 +3,12 @@ import wx
 from pathlib import Path
 import UI
 from Utility import Icon
-from UI.PowerPicker import PowerPicker
-
 from GameData import Archetypes, Origins, MiscPowers
+
+from UI.PowerPicker import PowerPicker
 from UI.ControlGroup import ControlGroup
+from UI.IncarnateBox import IncarnateBox
+
 from Page import Page
 
 class General(Page):
@@ -111,6 +113,13 @@ class General(Page):
             callback = self.OnPickPoolPower,
         )
 
+        ### Right column
+        rightCol = wx.BoxSizer(wx.VERTICAL)
+
+        # Incarnate interface
+        incarnateBox = IncarnateBox(self)
+
+        # preferences
         prefsBox = ControlGroup(self, self, 'Preferences')
         prefsBox.AddControl(
             ctlName = 'BindsDir',
@@ -143,8 +152,11 @@ class General(Page):
             ctlType = 'checkbox',
         )
 
+        rightCol.Add(incarnateBox, 1, wx.ALL|wx.EXPAND, 6)
+        rightCol.Add(prefsBox,     0, wx.ALL, 6)
+
         topSizer.Add(powersBox, 1, wx.ALL, 6)
-        topSizer.Add(prefsBox,  2, wx.ALL, 6)
+        topSizer.Add(rightCol,  2, wx.ALL, 6)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(topSizer, flag=wx.ALL|wx.EXPAND, border = 20)
@@ -239,4 +251,3 @@ class General(Page):
         'Pool3'           : "Power Pool 3",
         'Pool4'           : "Power Pool 4",
     })
-

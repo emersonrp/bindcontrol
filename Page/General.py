@@ -198,6 +198,9 @@ class General(Page):
         self.Ctrls['Secondary'].SetSelection(0)
         self.Ctrls['Epic'].SetSelection(0)
 
+        self.Ctrls['Epic']         .Enable(arch != "Peacebringer" and arch != "Warshade")
+        self.Ctrls['Epic'].CtlLabel.Enable(arch != "Peacebringer" and arch != "Warshade")
+
         if getattr(self.Profile, 'Mastermind', None):
             self.Profile.Mastermind.SynchronizeUI()
         if getattr(self.Profile, 'SoD', None):

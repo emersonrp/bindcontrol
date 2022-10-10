@@ -352,7 +352,7 @@ Archetypes = {
         "Secondary": {
             "Cold Domination"     : [ "Infrigidate", "Ice Shield", "Snow Storm", "Glacial Shield", "Frostwork", "Arctic Fog", "Benumb", "Sleet", "Heat Loss", ],
             "Dark Miasma"         : [ "Twilight Grasp", "Tar Patch", "Darkest Night", "Howling Twilight", "Shadow Fall", "Fearsome Stare", "Petrifying Gaze", "Black Hole", "Dark Servant", ],
-            "Electrical Affinity" : [ "Shock", "Rejuvenating Circuit", "Discharge", "Energizing Circuit", "Faraday Cage", "Empowering Circuit", "Defibrillate", "Insulating Cirbuit", "Amp Up", ],
+            "Electrical Affinity" : [ "Shock", "Rejuvenating Circuit", "Discharge", "Energizing Circuit", "Faraday Cage", "Empowering Circuit", "Defibrillate", "Insulating Circuit", "Amp Up", ],
             "Empathy"             : [ "Healing Aura", "Heal Other", "Absorb Pain", "Resurrect", "Clear Mind", "Fortitude", "Recovery Aura", "Regeneration Aura", "Adrenalin Boost", ],
             "Force Field"         : [ "Force Bolt", "Deflection Shield", "Force Bolt", "Insulation Shield", "Detention Field", "Dispersion Bubble", "Repulsion Field", "Repulsion Bomb", "Force Bubble", ],
             "Kinetics"            : [ "Transfusion", "Siphon Power", "Repel", "Siphon Speed", "Increase Density", "Speed Boost", "Inertial Reduction", "Transference", "Fulcrum Shift", ],

@@ -7,6 +7,7 @@ class PowerPicker(wx.Button):
         wx.Button.__init__(self, parent)
 
         self.SetLabel('...')
+        self.SetMinSize((-1, 40))
         self.Bind(wx.EVT_BUTTON, self.OnPowerPicker)
 
     def OnPowerPicker(self, _):
@@ -60,5 +61,7 @@ class PowerPickerMenu(wx.Menu):
     def OnMenuSelection(self, evt):
         menuitem = self.FindItemById(evt.GetId())
         label = menuitem.GetItemLabel()
+        bitmap = menuitem.GetBitmapBundle()
         self.Button.SetLabel(label)
+        self.Button.SetBitmap(bitmap)
 

@@ -390,11 +390,13 @@ Archetypes = {
         },
         "Primary": {
             "Luminous Blast": [ "Gleaming Bolt", "Glinting Eye", "Gleaming Blast", "Bright Nova", "Radiant Strike", "Proton Scatter", "Inner Light",
-                               "Luminous Detonation", "Incandescent Strike", "Pulsar", "Glowing Touch", "Solar Flare", "Dawn Strike", "Photon Seekers", ],
+                                "Luminous Detonation", "Incandescent Strike", "Pulsar", "Glowing Touch", "Solar Flare", "Dawn Strike", "Photon Seekers",
+                                "Bright Nova Bolt", "Bright Nova Blast", "Bright Nova Scatter", "Bright Nova Detonation", ],
         },
         "Secondary": {
             "Luminous Aura": [ "Incandescence", "Shining Shield", "Essence Boost", "Thermal Shield", "Quantum Shield", "Group Energy Flight", "White Dwarf",
-                              "Reform Essence", "Conserve Energy", "Quantum Maneuvers", "Quantum Flight", "Restore Essence", "Light Form", ],
+                               "Reform Essence", "Conserve Energy", "Quantum Maneuvers", "Quantum Flight", "Restore Essence", "Light Form",
+                               "White Dwarf Strike", "White Dwarf Smite", "White Dwarf Flare", "White Dwarf Sublimation", "White Dwarf Antagonize", "White Dwarf Step", ],
         },
     },
     'Scrapper': {
@@ -607,10 +609,14 @@ Archetypes = {
             "Inherent": [ "Shadow Recall", "Shadow Step", ],
         },
         "Primary": {
-            "Umbral Blast": [ "Shadow Bolt", "Ebon Eye", "Gravimetric Snare", "Dark Nova", "Shadow Blast", "Sunless Mire", "Dark Detonation", "Gravity Well", "Essence Drain", "Gravity Emanation", "Unchain Essence", "Dark Extraction", "Quasar", ],
+            "Umbral Blast": [ "Shadow Bolt", "Ebon Eye", "Gravimetric Snare", "Dark Nova", "Shadow Blast", "Sunless Mire","Dark Detonation",
+                              "Gravity Well", "Essence Drain", "Gravitic Emanation", "Unchain Essence", "Dark Extraction", "Quasar",
+                              "Dark Nova Blast", "Dark Nova Bolt", "Dark Nova Detonation", "Dark Nova Emanation", ],
         },
         "Secondary": {
-            "Umbral Aura": [ "Absorption", "Gravity Shield", "Orbiting Death", "Penumbral Shield", "Shadow Cloak", "Twilight Shield", "Black Dwarf", "Stygian Circle", "Nebulous Form", "Inky Aspect", "Stygian Return", "Eclipse", ],
+            "Umbral Aura": [ "Absorption", "Gravity Shield", "Orbiting Death", "Penumbral Shield", "Shadow Cloak", "Twilight Shield",
+                             "Black Dwarf", "Stygian Circle", "Nebulous Form", "Inky Aspect", "Stygian Return", "Eclipse",
+                             "Black Dwarf Strike", "Black Dwarf Smite", "Black Dwarf Mire", "Black Dwarf Drain", "Black Dwarf Step", "Black Dwarf Antagonize", ],
         },
     },
 };

@@ -386,7 +386,7 @@ Archetypes = {
             "White Dwarf": [ "White Dwarf Strike", "White Dwarf Smite", "White Dwarf Flare", "White Dwarf Sublimation", "White Dwarf Antagonize", "White Dwarf Step", ],
         },
         "Inherent": {
-            "Inherent": [ "Combat Flight", "Energy Flight", ],
+            "Inherent": [ "Combat Flight", "Energy Flight", "Quantum Acceleration",],
         },
         "Primary": {
             "Luminous Blast": [ "Gleaming Bolt", "Glinting Eye", "Gleaming Blast", "Bright Nova", "Radiant Strike", "Proton Scatter", "Inner Light",
@@ -631,15 +631,35 @@ MiscPowers = {
         ],
     },
     "General": {
-        "General": [
-            "Sprint",
+        "Inherent": [
             "Brawl",
             "Rest",
+            "Sprint",
+            "Walk",
             "Prestige Power Slide",
+        ],
+        "P2W": [
             "Prestige Power Rush",
             "Prestige Power Dash",
             "Prestige Power Surge ",
             "Prestige Power Quick",
+            "Shadowy Presence",
+            "Jump Pack",
+            "Pocket D VIP Pass",
+            "Mission Transporter",
+            "Athletic Run",
+            "Beast Run",
+            "Inner Inspiration",
+            "Mystic Fortune",
+            "Ninja Run",
+            "Secondary Mutation",
+            "Self Destruction",
+            "Steam Jump",
+            "Apprentice Charm",
+            "Mutagen",
+            "Taser Dart",
+            "Throwing Knives",
+            "Tranq Dart",
         ],
     },
     "Pool": {

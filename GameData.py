@@ -53,11 +53,11 @@ Archetypes = {
     'Blaster': {
         'Faction': 'H',
         'Epic': {
-            'Cold Mastery'      : [ 'Snow Storm', 'Flash Freeze', 'Frozen Armor', 'Hoarfrost', 'Hibernate', ],
-            'Electric Mastery'  : [ 'Static Discharge', 'Shocking Bolt', 'Charged Armor', 'Surge of Power', 'EMP Pulse', ],
-            'Flame Mastery'     : [ 'Bonfire', 'Char', 'Fire Shield', 'Melt Armor', 'Rise of the Phoenix', ],
-            'Force Mastery'     : [ 'Personal Force Field', 'Repulsion Field', 'Repulsion Bomb', 'Temp Invulnerability', 'Force of Nature', ],
-            'Munitions Mastery' : [ 'Body Armor', 'Cryo Freeze Ray', 'Sleep Grenade', 'Surveillance', 'LRM Rocket', ],
+            'Cold Mastery'       : [ 'Snow Storm', 'Flash Freeze', 'Frozen Armor', 'Hoarfrost', 'Hibernate', ],
+            'Electrical Mastery' : [ 'Static Discharge', 'Shocking Bolt', 'Charged Armor', 'Surge of Power', 'EM Pulse', ],
+            'Flame Mastery'      : [ 'Bonfire', 'Char', 'Fire Shield', 'Melt Armor', 'Rise of the Phoenix', ],
+            'Force Mastery'      : [ 'Personal Force Field', 'Repulsion Field', 'Repulsion Bomb', 'Temp Invulnerability', 'Force of Nature', ],
+            'Munitions Mastery'  : [ 'Body Armor', 'Cryo Freeze Ray', 'Sleep Grenade', 'Surveillance', 'LRM Rocket', ],
 
             'Leviathan Mastery' : [ 'School of Sharks', 'Bile Spray', 'Knockout Blow', 'Shark Skin', 'Spirit Shark Jaws', ],
             'Mace Mastery'      : [ 'Web Envelope', 'Scorpion Shield', 'Mace Beam Volley', 'Summon Spiderlings', 'Web Cocoon', ],
@@ -102,7 +102,7 @@ Archetypes = {
     'Brute': {
         'Faction': 'V',
         'Epic': {
-            'Arctic Mastery'    : [ 'Chilblain', 'Block of Ice', 'Ice Blast', 'Shiver', 'Ice Storm', ],
+            'Arctic Mastery'    : [ 'Chillblain', 'Block of Ice', 'Ice Blast', 'Shiver', 'Ice Storm', ],
             'Earth Mastery'     : [ 'Stone Prison', 'Salt Crystals', 'Fossilize', 'Quicksand', 'Stalagmites', ],
             'Energy Mastery'    : [ 'Superior Conditioning', 'Focused Accuracy', 'Laser Beam Eyes', 'Physical Perfection', 'Energy Torrent', ],
             'Pyre Mastery'      : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
@@ -343,7 +343,7 @@ Archetypes = {
             'Chill Mastery'     : [ 'Ice Blast', 'Flash Freeze', 'Hoarfrost', 'Frozen Armor', 'Hibernate', ],
             'Charge Mastery'    : [ 'Static Discharge', 'Electric Shackles', 'Thunder Strike', 'Surge of Power', 'EM Pulse', ],
             'Heat Mastery'      : [ 'Bonfire', 'Fire Blast', 'Fire Ball', 'Char', 'Rise of the Phoenix', ],
-            'Field Mastery'     : [ 'Invulnerability', 'Power Blast', 'Energy Torrent', 'Explosive Blast', 'Force of Nature', ],
+            'Field Mastery'     : [ 'Temp Invulnerability', 'Power Blast', 'Energy Torrent', 'Explosive Blast', 'Force of Nature', ],
 
             'Leviathan Mastery' : [ 'School of Sharks', 'Bile Spray', 'Knockout Blow', 'Shark Skin', 'Spirit Shark Jaws', ],
             'Mace Mastery'      : [ 'Web Envelope', 'Scorpion Shield', 'Mace Beam Volley', 'Power Boost', 'Web Cocoon', ],
@@ -367,7 +367,7 @@ Archetypes = {
             'Force Field'         : [ 'Force Bolt', 'Deflection Shield', 'Force Bolt', 'Insulation Shield', 'Detention Field', 'Dispersion Bubble', 'Repulsion Field', 'Repulsion Bomb', 'Force Bubble', ],
             'Kinetics'            : [ 'Transfusion', 'Siphon Power', 'Repel', 'Siphon Speed', 'Increase Density', 'Speed Boost', 'Inertial Reduction', 'Transference', 'Fulcrum Shift', ],
             'Nature Affinity'     : [ 'Corrosive Enzymes', 'Regrowth', 'Wild Growth', 'Spore Cloud', 'Lifegiving Spores', 'Wild Bastion', 'Rebirth', 'Entangling Aura', 'Overgrowth', ],
-            'Pain Domination'     : [ 'Nullify Pain', 'Soothe', 'Share Pain', 'Conduit Of Pain', 'Enforced Morale', 'Suppress Pain', 'World of Pain', 'Anguishing Cry', 'Painbringer', ],
+            'Pain Domination'     : [ 'Nullify Pain', 'Soothe', 'Share Pain', 'Conduit of Pain', 'Enforced Morale', 'Suppress Pain', 'World of Pain', 'Anguishing Cry', 'Painbringer', ],
             'Poison'              : [ 'Alkaloid', 'Envenom', 'Weaken', 'Neurotoxic Breath', 'Elixir of Life', 'Antidote', 'Paralytic Poison', 'Poison Trap', 'Noxious Gas', ],
             'Radiation Emission'  : [ 'Radiant Aura', 'Radiation Infection', 'Accelerate Metabolism', 'Enervating Field', 'Mutation', 'Lingering Radiation', 'Choking Cloud', 'Fallout', 'EM Pulse', ],
             'Sonic Resonance'     : [ 'Sonic Siphon', 'Sonic Barrier', 'Sonic Haven', 'Sonic Cage', 'Disruption Field', 'Sonic Dispersion', 'Sonic Repulsion', 'Clarity', 'Liquefy', ],
@@ -405,7 +405,7 @@ Archetypes = {
             'Blaze Mastery'     : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
             'Body Mastery'      : [ 'Conserve Power', 'Focused Accuracy', 'Laser Beam Eyes', 'Physical Perfection', 'Energy Torrent', ],
             'Darkness Mastery'  : [ 'Torrent', 'Petrifying Gaze', 'Dark Blast', 'Night Fall', 'Tenebrous Tentacles', ],
-            'Weapon Mastery'    : [ 'Web Grenade', 'Caltrops', 'Shuriken', 'Targeting Drone', 'Exploding Shurken', ],
+            'Weapon Mastery'    : [ 'Web Grenade', 'Caltrops', 'Shuriken', 'Targeting Drone', 'Exploding Shuriken', ],
 
             'Leviathan Mastery' : [ 'Spirit Shark', 'Water Spout', 'Hibernate', 'Spirit Shark Jaws', 'Summon Guardian', ],
             'Mace Mastery'      : [ 'Mace Blast', 'Mace Beam', 'Disruptor Blast', 'Web Cocoon', 'Summon Spiderlings', ],
@@ -503,7 +503,7 @@ Archetypes = {
             'Blaze Mastery'     : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
             'Body Mastery'      : [ 'Superior Conditioning', 'Focused Accuracy', 'Laser Beam Eyes', 'Physical Perfection', 'Energy Torrent', ],
             'Darkness Mastery'  : [ 'Torrent', 'Petrifying Gaze', 'Dark Blast', 'Night Fall', 'Tenebrous Tentacles', ],
-            'Weapon Mastery'    : [ 'Web Grenade', 'Physical Perfection', 'Shuriken', 'Targeting Drone', 'Exploding Shurken', ],
+            'Weapon Mastery'    : [ 'Web Grenade', 'Physical Perfection', 'Shuriken', 'Targeting Drone', 'Exploding Shuriken', ],
 
             'Leviathan Mastery' : [ 'Spirit Shark', 'Water Spout', 'Hibernate', 'Spirit Shark Jaws', 'Summon Guardian', ],
             'Mace Mastery'      : [ 'Mace Blast', 'Mace Beam', 'Disruptor Blast', 'Web Cocoon', 'Summon Spiderlings', ],
@@ -550,7 +550,7 @@ Archetypes = {
     'Tanker': {
         'Faction': 'H',
         'Epic': {
-            'Arctic Mastery'    : [ 'Chilblain', 'Block of Ice', 'Ice Blast', 'Shiver', 'Ice Storm', ],
+            'Arctic Mastery'    : [ 'Chillblain', 'Block of Ice', 'Ice Blast', 'Shiver', 'Ice Storm', ],
             'Earth Mastery'     : [ 'Stone Prison', 'Salt Crystals', 'Fossilize', 'Quicksand', 'Stalagmites', ],
             'Energy Mastery'    : [ 'Conserve Power', 'Focused Accuracy', 'Laser Beam Eyes', 'Physical Perfection', 'Energy Torrent', ],
             'Pyre Mastery'      : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],

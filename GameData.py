@@ -670,7 +670,7 @@ MiscPowers = {
                        'Partial Radial Conversion', 'Total Radial Conversion', 'Core Flawless Interface', 'Radial Flawless Interface', ],
         },
         'Lore': {
-            'Types': [ 'Arachnos', 'Banished Pantheon', 'Carnival of Shadows', 'Cimerorans', 'Clockwork', 'IDF', 'Demons',
+            'Types': [ 'Arachnos', 'Banished Pantheon', 'Carnival of Shadows', 'Cimerorans', 'Clockwork', 'Demons', 'IDF',
                       'Knives of Vengeance', 'Longbow', 'Nemesis', 'Phantom', 'Polar Lights', 'Rikti', 'Robotic Drones',
                       'Rularuu', 'Seers', 'Storm Elementals', 'Talons of Vengeance', 'Tsoo', 'Vanguard', 'Warworks', ],
             'Powers': [ 'Ally', 'Core Ally', 'Radial Ally', 'Total Core Improved Ally', 'Partial Core Improved Ally',

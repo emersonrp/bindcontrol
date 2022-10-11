@@ -1,5 +1,7 @@
 import wx
-import wx.lib.buttons as buttons
+from Utility import Icon
+
+import GameData
 
 class IncarnateBox(wx.StaticBoxSizer):
     def __init__(self, parent):
@@ -32,29 +34,76 @@ class IncarnateBox(wx.StaticBoxSizer):
 
 class IncarnatePicker(wx.StaticBoxSizer):
     def __init__(self, parent, label = ""):
-        wx.StaticBoxSizer.__init__(self, wx.HORIZONTAL, parent)
+        wx.StaticBoxSizer.__init__(self, wx.HORIZONTAL, parent, label = label)
         staticbox = self.GetStaticBox()
+
+        self.Label = label
+        self.PopupMenu = self.BuildMenu(label)
+        self.PopupMenu.Bind(wx.EVT_MENU, self.OnMenuSelection)
 
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.IncName = wx.StaticText(staticbox, wx.ID_ANY,
-                    label + "\n", style = wx.ALIGN_CENTER)
-        #self.IncIcon = wx.Button(staticbox,size=[36,36])
-        self.IncIcon = buttons.GenButton(staticbox, size=wx.Size(36,36),
-                    style = wx.BORDER_NONE)
-        self.IncIcon.SetBackgroundColour(bgColors[label])
+        self.IncIcon = wx.Button(staticbox, size=wx.Size(60,40))
+        self.IncIcon.Bind(wx.EVT_BUTTON, self.OnButtonPress)
+        self.IncName = wx.StaticText(staticbox, wx.ID_ANY, style=wx.ALIGN_RIGHT)
 
-        hsizer.Add(self.IncName, 1, wx.ALIGN_CENTER_VERTICAL)
+        hsizer.Add(self.IncName, 1, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 6)
         hsizer.Add(self.IncIcon, 0, wx.ALIGN_CENTER_VERTICAL)
 
         self.Add(hsizer, 1, wx.EXPAND|wx.RIGHT|wx.BOTTOM, 12)
 
+    def OnButtonPress(self, evt):
+        button = evt.EventObject
 
-bgColors = {
-    'Alpha'     : [255, 180, 180],
-    'Destiny'   : [180, 180, 180],
-    'Hybrid'    : [255, 180, 180],
-    'Interface' : [180, 180, 255],
-    'Judgement' : [180, 255, 180],
-    'Lore'      : [255, 180, 255],
+        button.PopupMenu(self.PopupMenu)
+
+    def OnMenuSelection(self, evt):
+        menuitem = evt.EventObject.FindItemById(evt.GetId())
+
+        self.IncName.SetLabel(menuitem.GetItemLabel())
+        self.IncIcon.SetBitmapLabel(menuitem.GetBitmapBundle())
+
+        # Yes both of the self.Layout() are necessary to do the sizing / wrap dance.
+        self.Layout()
+        w,_ = self.IncName.GetSize()
+        self.IncName.Wrap(w)
+        self.Layout()
+
+    def BuildMenu(self, slot):
+        menu = wx.Menu()
+
+        incData = GameData.MiscPowers['Incarnate'][slot]
+
+        for type in incData['Types']:
+            submenu = wx.Menu()
+            menu.AppendSubMenu(submenu, type)
+
+            for index, power in enumerate(incData['Powers']):
+                menuitem = wx.MenuItem(id = wx.ID_ANY, text = f"{type} {power}")
+                rarity = Rarities[ index ]
+
+                # aliases for the Lore types ie "Polar Lights" => "Lights" to match the icons
+                aliasedtype = Aliases.get(type, type)
+
+
+                iconname = f"Incarnate/Incarnate_{slot}_{aliasedtype}_{rarity}"
+                icon = Icon(iconname)
+                if icon: menuitem.SetBitmap(icon)
+
+                submenu.Append(menuitem)
+
+        return menu
+
+Rarities = ['Common', 'Uncommon', 'Uncommon', 'Rare', 'Rare', 'Rare', 'Rare', 'VeryRare', 'VeryRare']
+Aliases = {
+    "Banished Pantheon"   : "Banished",
+    "Carnival of Shadows" : "Carnival",
+    "Cimerorans"          : "Cimeroran",
+    "Knives of Vengeance" : "Knives",
+    "Phantom"             : "Phantoms",
+    "Polar Lights"        : "Lights",
+    "Robotic Drones"      : "Drones",
+    "Storm Elementals"    : "Elementals",
+    "Talons of Vengeance" : "Talons",
+    "Warworks"            : "WarWorks",
 }

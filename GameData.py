@@ -177,7 +177,7 @@ Archetypes = {
             "Mind Control"     : [ "Mesmerize", "Levitate", "Dominate", "Confuse", "Mass Hypnosis", "Telekinesis", "Total Domination", "Terrify", "Mass Confusion", ],
             "Plant Control"    : [ "Entangle", "Strangler", "Roots", "Spore Burst", "Seeds of Confusion", "Spirit Tree", "Vines", "Carrion Creepers", "Fly Trap", ],
             "Symphony Control" : [ "Melodic Binding", "Hymn of Dissonance", "Aria of Stasis", "Impassioned Serenade", "Dreadful Discord", "Enfeebling Lullaby", "Confounding Chant", "Chords of Despair", "Reverberant", ],
-            "Wind Control"     : [ "Updraft", "Downdraft", "Breathless", "Wind Shear", "Thundergust", "Microburst", "Keening Winds", "Vacuum", "Vortex", ],
+            # "Wind Control"     : [ "Updraft", "Downdraft", "Breathless", "Wind Shear", "Thundergust", "Microburst", "Keening Winds", "Vacuum", "Vortex", ],
         },
         "Secondary": {
             "Cold Domination"     : [ "Infrigidate", "Ice Shield", "Snow Storm", "Glacial Shield", "Frostwork", "Arctic Fog", "Benumb", "Sleet", "Heat Loss", ],
@@ -320,7 +320,7 @@ Archetypes = {
             "Mind Control"     : [ "Mesmerize", "Levitate", "Dominate", "Confuse", "Mass Hypnosis", "Telekinesis", "Total Domination", "Terrify", "Mass Confusion", ],
             "Plant Control"    : [ "Entangle", "Strangler", "Roots", "Spore Burst", "Seeds of Confusion", "Spirit Tree", "Vines", "Carrion Creepers", "Fly Trap", ],
             "Symphony Control" : [ "Melodic Binding", "Hymn of Dissonance", "Aria of Stasis", "Impassioned Serenade", "Dreadful Discord", "Enfeebling Lullaby", "Confounding Chant", "Chords of Despair", "Reverberant", ],
-            "Wind Control"     : [ "Updraft", "Downdraft", "Breathless", "Wind Shear", "Thundergust", "Microburst", "Keening Winds", "Vacuum", "Vortex", ],
+            # "Wind Control"     : [ "Updraft", "Downdraft", "Breathless", "Wind Shear", "Thundergust", "Microburst", "Keening Winds", "Vacuum", "Vortex", ],
         },
         "Secondary": {
             "Dark Assault"        : [ "Dark Blast", "Smite", "Gloom", "Night Fall", "Gather Shadows", "Engulfing Darkness", "Life Drain", "Moon Beam", "Midnight Grasp", ],

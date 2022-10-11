@@ -32,6 +32,15 @@ class IncarnateBox(wx.StaticBoxSizer):
         incarnateSizer.AddGrowableCol(2)
         incarnateSizer.AddGrowableCol(3)
 
+    def GetPowers(self):
+        powers = []
+        for box in [self.hybridInc, self.loreInc, self.destinyInc, self.judgementInc, self.interfaceInc, self.alphaInc]:
+            name = box.IncName.GetLabel()
+            if name:
+                powers.append({'name' : name, 'icon' : box.IncIcon.GetBitmap()})
+        return powers
+
+
 class IncarnatePicker(wx.StaticBoxSizer):
     def __init__(self, parent, label = ""):
         wx.StaticBoxSizer.__init__(self, wx.HORIZONTAL, parent, label = label)

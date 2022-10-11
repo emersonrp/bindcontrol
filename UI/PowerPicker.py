@@ -57,6 +57,18 @@ class PowerPickerMenu(wx.Menu):
                     if icon: menuitem.SetBitmap(icon)
                     submenu.Append(menuitem)
 
+        # Incarnate Powers
+        submenu = wx.Menu()
+        incPowers = gen.incarnateBox.GetPowers()
+        if incPowers:
+            self.AppendSubMenu(submenu, "Incarnate:")
+            for power in incPowers:
+                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power['name'])
+                icon = power['icon']
+                if icon: menuitem.SetBitmap(icon)
+                submenu.Append(menuitem)
+
+
 
     def OnMenuSelection(self, evt):
         menuitem = self.FindItemById(evt.GetId())

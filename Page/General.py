@@ -117,7 +117,7 @@ class General(Page):
         rightCol = wx.BoxSizer(wx.VERTICAL)
 
         # Incarnate interface
-        incarnateBox = IncarnateBox(self)
+        self.incarnateBox = IncarnateBox(self)
 
         # preferences
         prefsBox = ControlGroup(self, self, 'Preferences')
@@ -152,7 +152,7 @@ class General(Page):
             ctlType = 'checkbox',
         )
 
-        rightCol.Add(incarnateBox, 1, wx.ALL|wx.EXPAND, 6)
+        rightCol.Add(self.incarnateBox, 1, wx.ALL|wx.EXPAND, 6)
         rightCol.Add(prefsBox,     0, wx.ALL, 6)
 
         topSizer.Add(powersBox, 1, wx.ALL, 6)

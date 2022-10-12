@@ -1,5 +1,5 @@
 import wx
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 import json
 
 from BindFile import BindFile
@@ -56,10 +56,10 @@ class Profile(wx.Notebook):
         return "bindloadfile " + self.BLFPath(*args)
 
     def BLFPath(self, *args):
-        filepath = self.GameBindsDir()
+        filepath = PureWindowsPath(self.GameBindsDir())
         for arg in args:
-            filepath = filepath + "/" + arg
-        return filepath
+            filepath = filepath  /  arg
+        return str(filepath)
 
     def CheckConflict(self, key):
         conflicts = []

@@ -551,7 +551,6 @@ class SoD(Page):
         turnoff    = p.get('turnoff'    , "")
         sssj       = p.get('sssj'       , "")
 
-        # TODO This seems important but it gets passed to actPower_toggle which gets confused
         turnoff = turnoff or {mobile, stationary}
 
         if ((self.GetState('DefaultMode') == modestr) and (t.totalkeys == 0)):
@@ -595,7 +594,6 @@ class SoD(Page):
             t.ini = '-down$$'
 
             if (self.GetState('DefaultMode') == "Fly"):
-
                 if (self.GetState('NonSoDEnable')):
                     t.FlyMode = t.NonSoDMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
@@ -665,7 +663,7 @@ class SoD(Page):
             #if (t.SprintMode):
                 #curfile.SetBind(t.SprintMode, "+down$$down 1" + self.actPower_name(None,True,mobile) + t.detailhi + t.runcamdist + t.blsd)
 
-            if (modestr != "Run")    : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,self.sodSetDownFix)
+            if (modestr != "Super Speed")    : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,self.sodSetDownFix)
             if (modestr != "Fly")    : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
             if (modestr != "Jump")   : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
             if (modestr != "Temp")   : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
@@ -678,7 +676,7 @@ class SoD(Page):
             else:
                 if (modestr != "Fly"): self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
 
-            if (modestr != "Run")    : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
+            if (modestr != "Super Speed")    : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
             if (modestr != "Jump")   : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
             if (modestr != "Temp")   : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
             if (modestr != "QFly")   : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
@@ -701,11 +699,11 @@ class SoD(Page):
         if ((flight == "Fly") and pathbo):
             if (modestr != "NonSoD"): self.makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary},self.sodSetDownFix)
             if (modestr != "Sprint"): self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,self.sodSetDownFix)
-            if (modestr != "Run")   : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,self.sodSetDownFix)
+            if (modestr != "Super Speed")   : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,self.sodSetDownFix)
         else:
             if (modestr != "NonSoD"): self.makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary})
             if (modestr != "Sprint"): self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,fix)
-            if (modestr != "Run")   : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
+            if (modestr != "Super Speed")   : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
 
         if   (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"af",curfile,turnoff,fix)
         elif (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"aj",curfile,turnoff,patha)
@@ -731,11 +729,11 @@ class SoD(Page):
         if ((flight == "Fly") and pathbo):
             if (modestr != "NonSoD"): self.makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary},self.sodSetDownFix)
             if (modestr != "Sprint"): self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,self.sodSetDownFix)
-            if (modestr != "Run")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,self.sodSetDownFix)
+            if (modestr != "Super Speed")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,self.sodSetDownFix)
         else:
             if (modestr != "NonSoD"): self.makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary})
             if (modestr != "Sprint"): self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,fix)
-            if (modestr != "Run")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
+            if (modestr != "Super Speed")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
 
         if   (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"ff",curfile,turnoff,fix)
         elif (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"fj",curfile,turnoff,pathf)
@@ -844,7 +842,7 @@ class SoD(Page):
         else:                         feedback = ''
 
         if (bl == "r"):
-            bindload  = t.BLF('')
+            bindload  = t.BLF('R')
 
             if t.horizkeys: sprint = t.sprint
             else:           sprint = ''
@@ -1381,11 +1379,10 @@ class SoD(Page):
                                         'stationary' : t.hover,
                                         'modestr'    : "Fly",
                                         'flight'     : "Fly",
-                                        # TODO - aren't these next four no-ops?
-                                        # 'pathbo'     : 'bo',
-                                        # 'pathsd'     : 'sd',
-                                        # 'blbo'       : 'bo',
-                                        # 'blsd'       : 'sd',
+                                        'pathbo'     : 'bo',
+                                        'pathsd'     : 'sd',
+                                        'blbo'       : 'bo',
+                                        'blsd'       : 'sd',
                                     })
                                     setattr(t, self.GetState('DefaultMode') + "Mode", None)
 
@@ -1659,8 +1656,7 @@ class SoD(Page):
         # 'turnoff' ends up full of stuff where in citybinder, it isn't.  Mysterious.
         curfile.SetBind(p.General.Ctrls['ResetKey'].MakeFileKeyBind(
                 f'up {u}$$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
-                # TODO TODO TODO this is commented out to match citybinder's output but THIS IS WRONG put it back eventually
-                # str(turnoff) +
+                str(turnoff) +
                 '$$t $name, SoD Binds Reset$$' + curfile.BaseReset() +
                 f"$$bindloadfile {gamepath}000000.txt"
         ))
@@ -2549,4 +2545,4 @@ class tObject(dict):
 
     # This will return "$bindloadfilesilent C:\path\CODE\CODE101010<suffix>.txt"
     def BLF(self, code, suffix = ''):
-        return self.profile.BLF(code.upper(), code.upper() + self.KeyState() + suffix + '.txt')
+        return "$$" + self.profile.BLF(code.upper(), code.upper() + self.KeyState() + suffix + '.txt')

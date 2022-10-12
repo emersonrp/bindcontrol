@@ -26,8 +26,7 @@ class SoD(Page):
             'TurnRight'       : "E",
             'AutoRun'         : "R",
             'Follow'          : "TILDE",
-            #'DefaultMode'    : "Sprint",
-            'DefaultMode'     : "Super Speed", # for testing
+            'DefaultMode'    : "Sprint",
             'MouseChord'      : 0,
             'AutoMouseLook'   : 0,
 
@@ -805,6 +804,7 @@ class SoD(Page):
     def makeQFlyModeKey(self, p, t, bl, cur, toff, modestr):
         key = t.QFlyMode
         if not key: return
+        if not self.Ctrls['QFlyMode'].IsEnabled(): return
 
         if (modestr == "NonSoD"):
             cur.SetBind(key, "powexecname Quantum Flight")
@@ -874,7 +874,6 @@ class SoD(Page):
     # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeSpeedModeKey(self, p, t, bl, cur, toff, fix, fb = ''):
         key = t.RunMode
-
         bindload = feedback = ''
 
         if p.SoD.GetState('Feedback'): feedback = (fb or '$$t $name, Superspeed Mode')
@@ -907,7 +906,8 @@ class SoD(Page):
                 if (fix):
                     fix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"f",feedback)
                 else:
-                    cur.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,True,t.speed,toff) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + t.blfs))
+                    bindload = f"{t.blfs}{t.KeyState()}.txt"
+                    cur.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,True,t.speed,toff) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + bindload))
 
         t.ini = ''
 
@@ -1349,7 +1349,7 @@ class SoD(Page):
                                 if (t.canjmp and not (self.GetState('SimpleSJCJ'))):
                                     setattr(t, self.GetState('DefaultMode') + "Mode", t.JumpMode)
                                     jturnoff = ''
-                                    if (t.jump == t.cjmp): jturnoff = t.jumpifnocj
+                                    if (t.jump != t.cjmp): jturnoff = t.jumpifnocj
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : t.blj,
@@ -1613,7 +1613,7 @@ class SoD(Page):
 
         if (self.GetState('HasTP') and not (profile.General.GetState('Archetype') == "Peacebringer") and normalTPPower):
             tphovermodeswitch = ''
-            if (t.tphover == ''):
+            if (t.tphover != ''):
                 tphovermodeswitch = t.BLF('R') + "000000.txt"
 
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
@@ -1698,14 +1698,14 @@ class SoD(Page):
         if (actkeys == 0):
            ml = t.mlon
            toggleon = mobile
-           if (not (mobile and (mobile == stationary))) : toggleoff = stationary
+           if (not (mobile and (mobile != stationary))) : toggleoff = stationary
         else:
             toggleon = ''
 
 
         if (t.totalkeys == 1 and t.space == 1):
            ml = t.mloff
-           if (not (stationary and (mobile == stationary))) : toggleoff = mobile
+           if (not (stationary and (mobile != stationary))) : toggleoff = mobile
            toggleon = stationary
         else:
             toggleoff = ''
@@ -1714,7 +1714,7 @@ class SoD(Page):
             if (t.space == 0): #  if we are hitting the space bar rather than releasing its..
                toggleon = sssj
                toggleoff = mobile
-               if (stationary and stationary == mobile) : toggleoff2 = stationary
+               if (stationary and stationary != mobile) : toggleoff2 = stationary
             elif (t.space == 1) : #  if we are releasing the space bar ..
                toggleoff = sssj
                if (t.horizkeys > 0 or autorun) : #  and we are moving laterally, or in autorun..
@@ -1777,13 +1777,13 @@ class SoD(Page):
         if (actkeys == 0):
            ml = t.mlon
            toggleon = mobile
-           if (not (mobile and mobile == stationary)): toggleoff = stationary
+           if (not (mobile and mobile != stationary)): toggleoff = stationary
         else:
            toggleon = None
 
         if (t.totalkeys == 1 and t.X == 1):
            ml = t.mloff
-           if (not (stationary and mobile == stationary)): toggleoff = mobile
+           if (not (stationary and mobile != stationary)): toggleoff = mobile
            toggleon = stationary
         else:
             toggleoff = None
@@ -1834,7 +1834,7 @@ class SoD(Page):
         toggleon = mobile
         if (t.totalkeys == 0) :
             ml = t.mlon
-            if (not (mobile and mobile == stationary)):
+            if (not (mobile and mobile != stationary)):
                toggleoff = stationary
 
         if (t.totalkeys == 1 and t.W == 1):
@@ -1843,7 +1843,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else:      testKeys = t.horizkeys
         if (testKeys == 1 and t.W == 1) :
-            if (not (stationary and mobile == stationary)):
+            if (not (stationary and mobile != stationary)):
                 toggleoff = mobile
             toggleon = stationary
 
@@ -1870,7 +1870,7 @@ class SoD(Page):
 
             curfile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind(move + bl))
             if (self.GetState('MouseChord')):
-                if (t.W == 1) : move = f"{ini}{up}{dow}{forx}{bac}{rig}{lef}"
+                if (t.W != 1) : move = f"{ini}{up}{dow}{forx}{bac}{rig}{lef}"
                 curfile.SetBind('mousechord',  move + bl)
 
         elif (not autorunbl):
@@ -1909,7 +1909,7 @@ class SoD(Page):
         if (t.totalkeys == 0):
            ml = t.mlon
            toggleon = mobile
-           if (not (mobile and mobile == stationary)):
+           if (not (mobile and mobile != stationary)):
                toggleoff = stationary
 
         if (t.totalkeys == 1 and t.S == 1):
@@ -1918,7 +1918,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else:      testKeys = t.horizkeys
         if (testKeys == 1 and t.S == 1):
-            if (not (stationary and mobile == stationary)):
+            if (not (stationary and mobile != stationary)):
                toggleoff = mobile
 
             toggleon = stationary
@@ -1979,7 +1979,7 @@ class SoD(Page):
         if (t.totalkeys == 0):
             ml = t.mlon
             toggleon = mobile
-            if (not (mobile and mobile == stationary)) :
+            if (not (mobile and mobile != stationary)) :
                 toggleoff = stationary
 
         if (t.totalkeys == 1 and t.A == 1) :
@@ -1989,7 +1989,7 @@ class SoD(Page):
         else:      testKeys = t.horizkeys
 
         if (testKeys == 1 and t.A == 1) :
-            if (not (stationary and mobile == stationary)):
+            if (not (stationary and mobile != stationary)):
                toggleoff = mobile
             toggleon = stationary
 
@@ -2043,7 +2043,7 @@ class SoD(Page):
         if (t.totalkeys == 0):
            ml = t.mlon
            toggleon = mobile
-           if (not (mobile and mobile == stationary)) :
+           if (not (mobile and mobile != stationary)) :
                toggleoff = stationary
 
         if (t.totalkeys == 1 and t.D == 1) :
@@ -2052,7 +2052,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else :     testKeys = t.horizkeys
         if (testKeys == 1 and t.D == 1) :
-            if (not (stationary and mobile == stationary)):
+            if (not (stationary and mobile != stationary)):
                toggleoff = mobile
             toggleon = stationary
 
@@ -2124,14 +2124,14 @@ class SoD(Page):
         toggle = ''
         if (not flight):
             if (t.horizkeys == 0) :
-                if (stationary == mobile) :
+                if (stationary != mobile) :
                    toggle = self.actPower_name(None,True,stationary,mobile)
                 else:
                    toggle = self.actPower_name(None,True,stationary)
 
         else:
             if (t.totalkeys == 0) :
-                if (stationary == mobile) :
+                if (stationary != mobile) :
                    toggle = self.actPower_name(None,True,stationary,mobile)
                 else:
                    toggle = self.actPower_name(None,True,stationary)
@@ -2155,7 +2155,7 @@ class SoD(Page):
                 for w in v:
                     if (w and w != on and not offpower.get(w, None)):
                         if not isinstance(w, str):
-                            if (w['trayslot'] == traytest):
+                            if (w['trayslot'] != traytest):
                                s = s + '$$powexectray ' + w['trayslot']
                                unq = True
                         else:
@@ -2175,7 +2175,6 @@ class SoD(Page):
         if (unq and s):
            s = s + '$$powexecunqueue'
 
-        if start: s = s[2:]
         if (on):
             if not (isinstance(on, str)):
                 #  deal with power slot stuff..
@@ -2183,6 +2182,7 @@ class SoD(Page):
             else:
                s = s + '$$powexectoggleon ' + on
 
+        if start: s = s[2:]
         return s
 
     def actPower_name(self, start, unq, on, *rest):
@@ -2202,11 +2202,11 @@ class SoD(Page):
                         if isinstance(w, str):
                            s = s + '$$powexecname ' + w
                         else:
-                           if (w['trayslot'] == traytest):
+                           if (w['trayslot'] != traytest):
                                s = s + '$$powexectray ' + w['trayslot']
 
                 # TODO does this ever happen?  commenting out for now UNDO THIS
-                # if (v['trayslot'] and v['trayslot'] == traytest):
+                # if (v['trayslot'] and v['trayslot'] != traytest):
                 #    s = s + '$$powexectray ' + v['trayslot']
 
         if (unq and s):

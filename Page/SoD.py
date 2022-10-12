@@ -1,4 +1,5 @@
 import wx
+import re
 import GameData
 import UI
 from pathlib import Path, PureWindowsPath
@@ -32,15 +33,15 @@ class SoD(Page):
 
             'SprintPower'     : 'Sprint',
             'SprintSoD'       : True,  # "Base" in citybinder
-            'SprintSoDMode'   : '',
+            'SprintMode'   : '',
 
-            'ChangeCamera'    : 1,
+            'ChangeCamera'    : False,
             'CamdistBase'     : 15,
             'CamdistMove'     : 60,
-            'ChangeDetail'    : 1,
+            'ChangeDetail'    : False,
             'DetailBase'      : 100,
             'DetailMove'      : 50,
-            'Feedback'        : 1,
+            'Feedback'        : False,
 
             'NonSoDEnable'    : False,
             'NonSoDMode'      : 'CTRL+M',
@@ -74,7 +75,7 @@ class SoD(Page):
             'TTPReset'        : 'SHIFT+CTRL+T',
             'TTPAutoGFly'     : True,
 
-            'TPHideWindows'   : False,
+            'TPHideWindows'   : True,
             'TPTPHover'       : False,
 
             'FlyGFly'         : '',
@@ -274,7 +275,7 @@ class SoD(Page):
         generalSizer.AddControl( ctlName = 'NonSoDMode', ctlType = 'keybutton',)
         generalSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',)
         self.Ctrls['SprintSoD'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        generalSizer.AddControl( ctlName = 'SprintSoDMode', ctlType = 'keybutton',)
+        generalSizer.AddControl( ctlName = 'SprintMode', ctlType = 'keybutton',)
 
         self.leftColumn.Add(generalSizer, 0, wx.EXPAND)
 
@@ -405,8 +406,8 @@ class SoD(Page):
             c['NonSoDMode']         .Enable(self.GetState('NonSoDEnable'))
             c['NonSoDMode'].CtlLabel.Enable(self.GetState('NonSoDEnable'))
 
-            c['SprintSoDMode']         .Enable(self.GetState('SprintSoD') and self.GetState('DefaultMode') != "Sprint")
-            c['SprintSoDMode'].CtlLabel.Enable(self.GetState('SprintSoD') and self.GetState('DefaultMode') != "Sprint")
+            c['SprintMode']         .Enable(self.GetState('SprintSoD') and self.GetState('DefaultMode') != "Sprint")
+            c['SprintMode'].CtlLabel.Enable(self.GetState('SprintSoD') and self.GetState('DefaultMode') != "Sprint")
 
             c['CamdistBase']         .Enable(self.GetState('ChangeCamera'))
             c['CamdistBase'].CtlLabel.Enable(self.GetState('ChangeCamera'))
@@ -552,7 +553,7 @@ class SoD(Page):
         sssj       = p.get('sssj'       , "")
 
         # TODO This seems important but it gets passed to actPower_toggle which gets confused
-        # turnoff = turnoff or (mobile, stationary)
+        turnoff = turnoff or {mobile, stationary}
 
         if ((self.GetState('DefaultMode') == modestr) and (t.totalkeys == 0)):
 
@@ -565,14 +566,14 @@ class SoD(Page):
             self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
             self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
 
-            if   (modestr == "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
-            elif (modestr == "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
-            elif (modestr == "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
-            elif (modestr == "GFly")        : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff,fix)
-            elif (modestr == "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
-            elif (modestr == "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
-            elif (modestr == "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
-            elif (modestr == "QFly")        : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
+            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
+            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
+            if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
+            # if (modestr != "GFly")        : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff,fix)
+            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
+            if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
+            if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
+            if (modestr != "QFly")        : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
 
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 
@@ -602,7 +603,7 @@ class SoD(Page):
                 elif (self.GetState('SprintSoD')):
                     t.FlyMode = t.SprintMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                elif (self.canss()):
+                elif (self.GetState('HasSS')):
                     t.FlyMode = t.RunMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
                 elif (t.canjmp):
@@ -615,9 +616,9 @@ class SoD(Page):
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
 
             t.ini = ''
-            # if   (modestr == "GFly")        : self.makeGFlyModeKey (profile,t,"gbo",curfile,turnoff,fix)
-            # elif (modestr == "Super Speed") : self.makeSpeedModeKey(profile,t,"s",  curfile,turnoff,fix)
-            # elif (modestr == "Jump")        : self.makeJumpModeKey (profile,t,"j",  curfile,turnoff,path)
+            # if (modestr != "GFly")        : self.makeGFlyModeKey (profile,t,"gbo",curfile,turnoff,fix)
+            # if (modestr != "Super Speed") : self.makeSpeedModeKey(profile,t,"s",  curfile,turnoff,fix)
+            # if (modestr != "Jump")        : self.makeJumpModeKey (profile,t,"j",  curfile,turnoff,path)
 
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 
@@ -636,11 +637,11 @@ class SoD(Page):
 #            self.sodRightKey  (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
 #
 #            t.ini = '-down$$'
-#            if   (modestr == "Sprint") : self.makeSprintModeKey(profile,t,"r",  curfile,turnoff,fix)
-#            elif (modestr == "Fly")  : self.makeFlyModeKey( profile,t,"a",  curfile,turnoff,fix)
-#            elif (modestr == "GFly") : self.makeGFlyModeKey(profile,t,"gbo",curfile,turnoff,fix)
+#            if (modestr != "Sprint") : self.makeSprintModeKey(profile,t,"r",  curfile,turnoff,fix)
+#            if (modestr != "Fly")  : self.makeFlyModeKey( profile,t,"a",  curfile,turnoff,fix)
+#            if (modestr != "GFly") : self.makeGFlyModeKey(profile,t,"gbo",curfile,turnoff,fix)
 #            t.ini = ''
-#            if   (modestr == "Jump") : self.makeJumpModeKey(profile,t,"j",  curfile,turnoff,path)
+#            if (modestr != "Jump") : self.makeJumpModeKey(profile,t,"j",  curfile,turnoff,path)
 #
 #            self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 #            self.sodFollowKey(t,blf,curfile,mobile)
@@ -659,29 +660,29 @@ class SoD(Page):
 
         if ((flight == "Fly") and pathbo):
             #  Base to set down
-            if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"r",curfile,{mobile,stationary},self.sodSetDownFix)
-            elif (modestr == "Sprint")  : self.makeSprintModeKey  (profile,t,"r",curfile,turnoff,self.sodSetDownFix)
+            if (modestr != "NonSoD") : self.makeNonSoDModeKey(profile,t,"r",curfile,{mobile,stationary},self.sodSetDownFix)
+            if (modestr != "Sprint") : self.makeSprintModeKey(profile,t,"r",curfile,turnoff,self.sodSetDownFix)
 
-            if (t.SprintMode):
-                curfile.SetBind(t.SprintMode, "+down$$down 1" + self.actPower_name(None,True,mobile) + t.detailhi + t.runcamdist + t.blsd)
+            #if (t.SprintMode):
+                #curfile.SetBind(t.SprintMode, "+down$$down 1" + self.actPower_name(None,True,mobile) + t.detailhi + t.runcamdist + t.blsd)
 
-            if   (modestr == "Run")    : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,self.sodSetDownFix)
-            elif (modestr == "Fly")    : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
-            elif (modestr == "Jump")   : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
-            elif (modestr == "Temp")   : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
-            elif (modestr == "QFly")   : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
+            if (modestr != "Run")    : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,self.sodSetDownFix)
+            if (modestr != "Fly")    : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
+            if (modestr != "Jump")   : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
+            if (modestr != "Temp")   : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
+            if (modestr != "QFly")   : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
         else:
-            if   (modestr == "NonSoD") : self.makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
-            elif (modestr == "Sprint")   : self.makeSprintModeKey  (profile,t,"r", curfile,turnoff,fix)
-            elif (flight == "Jump"):
-                if (modestr == "Fly"): self.makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,'',True)
+            if (modestr != "NonSoD") : self.makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
+            if (modestr != "Sprint") : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
+            if (flight == "Jump"):
+                if (modestr != "Fly"): self.makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,'',True)
             else:
-                if (modestr == "Fly"): self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
+                if (modestr != "Fly"): self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
 
-            if   (modestr == "Run")   : self.makeSpeedModeKey  (profile,t,"s", curfile,turnoff,fix)
-            elif (modestr == "Jump")  : self.makeJumpModeKey   (profile,t,"j", curfile,turnoff,path)
-            elif (modestr == "Temp")  : self.makeTempModeKey   (profile,t,"r", curfile,turnoff)
-            elif (modestr == "QFly")  : self.makeQFlyModeKey   (profile,t,"r", curfile,turnoff,modestr)
+            if (modestr != "Run")    : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
+            if (modestr != "Jump")   : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
+            if (modestr != "Temp")   : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
+            if (modestr != "QFly")   : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
 
         self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
         self.sodFollowKey(t,blf,curfile,mobile)
@@ -699,18 +700,18 @@ class SoD(Page):
         self.sodRightKey  (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
 
         if ((flight == "Fly") and pathbo):
-            if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary},self.sodSetDownFix)
-            elif (modestr == "Sprint")  : self.makeSprintModeKey  (profile,t,"gr",curfile,turnoff,self.sodSetDownFix)
-            elif (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,self.sodSetDownFix)
+            if (modestr != "NonSoD"): self.makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary},self.sodSetDownFix)
+            if (modestr != "Sprint"): self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,self.sodSetDownFix)
+            if (modestr != "Run")   : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,self.sodSetDownFix)
         else:
-            if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary})
-            elif (modestr == "Sprint")  : self.makeSprintModeKey  (profile,t,"gr",curfile,turnoff,fix)
-            elif (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
+            if (modestr != "NonSoD"): self.makeNonSoDModeKey(profile,t,"ar",curfile,{mobile,stationary})
+            if (modestr != "Sprint"): self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,fix)
+            if (modestr != "Run")   : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
 
-        if   (modestr == "Fly")       : self.makeFlyModeKey   (profile,t,"af",curfile,turnoff,fix)
-        elif (modestr == "Jump")      : self.makeJumpModeKey  (profile,t,"aj",curfile,turnoff,patha)
-        elif (modestr == "Temp")      : self.makeTempModeKey  (profile,t,"ar",curfile,turnoff)
-        elif (modestr == "QFly")      : self.makeQFlyModeKey  (profile,t,"ar",curfile,turnoff,modestr)
+        if   (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"af",curfile,turnoff,fix)
+        elif (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"aj",curfile,turnoff,patha)
+        elif (modestr != "Temp")      : self.makeTempModeKey(profile,t,"ar",curfile,turnoff)
+        elif (modestr != "QFly")      : self.makeQFlyModeKey(profile,t,"ar",curfile,turnoff,modestr)
 
         self.sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight,sssj)
 
@@ -729,18 +730,18 @@ class SoD(Page):
         self.sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
 
         if ((flight == "Fly") and pathbo):
-            if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary},self.sodSetDownFix)
-            elif (modestr == "Sprint")  : self.makeSprintModeKey  (profile,t,"fr",curfile,turnoff,self.sodSetDownFix)
-            elif (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,self.sodSetDownFix)
+            if (modestr != "NonSoD"): self.makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary},self.sodSetDownFix)
+            if (modestr != "Sprint"): self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,self.sodSetDownFix)
+            if (modestr != "Run")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,self.sodSetDownFix)
         else:
-            if   (modestr == "NonSoD"): self.makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary})
-            elif (modestr == "Sprint")  : self.makeSprintModeKey  (profile,t,"fr",curfile,turnoff,fix)
-            elif (modestr == "Run")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
+            if (modestr != "NonSoD"): self.makeNonSoDModeKey(profile,t,"fr",curfile,{mobile,stationary})
+            if (modestr != "Sprint"): self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,fix)
+            if (modestr != "Run")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
 
-        if   (modestr == "Fly")       : self.makeFlyModeKey   (profile,t,"ff",curfile,turnoff,fix)
-        elif (modestr == "Jump")      : self.makeJumpModeKey  (profile,t,"fj",curfile,turnoff,pathf)
-        elif (modestr == "Temp")      : self.makeTempModeKey  (profile,t,"fr",curfile,turnoff)
-        elif (modestr == "QFly")      : self.makeQFlyModeKey  (profile,t,"fr",curfile,turnoff,modestr)
+        if   (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"ff",curfile,turnoff,fix)
+        elif (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"fj",curfile,turnoff,pathf)
+        elif (modestr != "Temp")      : self.makeTempModeKey(profile,t,"fr",curfile,turnoff)
+        elif (modestr != "QFly")      : self.makeQFlyModeKey(profile,t,"fr",curfile,turnoff,modestr)
 
         curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('nop'))
 
@@ -750,6 +751,7 @@ class SoD(Page):
     def makeNonSoDModeKey(self, p, t, bl, cur, toff, fix = None, fb = ''):
         key = t.NonSoDMode
         if not key: return
+        if not self.Ctrls['NonSoDMode'].IsEnabled(): return
 
         if self.GetState('Feedback'): feedback = (fb or '$$t $name, Non-SoD Mode')
         else:                         feedback = ''
@@ -842,7 +844,7 @@ class SoD(Page):
         else:                         feedback = ''
 
         if (bl == "r"):
-            bindload  = t.BLF()
+            bindload  = t.BLF('')
 
             if t.horizkeys: sprint = t.sprint
             else:           sprint = ''
@@ -879,7 +881,7 @@ class SoD(Page):
 
         if not t.get('ini', ''): t.ini = ''
 
-        if (self.canss()):
+        if (self.GetState('HasSS')):
             if (bl == 's'):
                 bindload = f"{t.bls}{t.KeyState()}.txt"
                 if (fix):
@@ -1247,15 +1249,13 @@ class SoD(Page):
         #t.gamepathgsd = str(PureWindowsPath(t.gamebasepath) / 'GSD' / 'GSD')
         #t.blgsd       = f"$$bindloadfile {t.gamepathgsd}"
 
-        #  temporarily set self.GetState('DefaultMode') to "NonSoD"
-        # self.SetState('DefaultMode', "Sprint")
         #  set up the keys to be used.
-        if (self.GetState('DefaultMode') == "NonSoD")      : t.NonSoDMode = self.GetState('NonSoDMode')
-        if (self.GetState('DefaultMode') == "Sprint")      : t.SprintMode = self.GetState('SprintMode')
-        if (self.GetState('DefaultMode') == "Fly")         : t.FlyMode    = self.GetState('FlyMode')
-        if (self.GetState('DefaultMode') == "Jump")        : t.JumpMode   = self.GetState('JumpMode')
-        if (self.GetState('DefaultMode') == "Super Speed") : t.RunMode    = self.GetState('RunMode')
-    #    if (self.GetState('DefaultMode') == "GFly")        : t.GFlyMode   = self.GetState('GFlyMode')
+        if (self.GetState('DefaultMode') != "NonSoD")      : t.NonSoDMode = self.GetState('NonSoDMode')
+        if (self.GetState('DefaultMode') != "Sprint")      : t.SprintMode = self.GetState('SprintMode')
+        if (self.GetState('DefaultMode') != "Fly")         : t.FlyMode    = self.GetState('FlyMode')
+        if (self.GetState('DefaultMode') != "Jump")        : t.JumpMode   = self.GetState('JumpMode')
+        if (self.GetState('DefaultMode') != "Super Speed") : t.RunMode    = self.GetState('RunMode')
+    #    if (self.GetState('DefaultMode') != "GFly")        : t.GFlyMode   = self.GetState('GFlyMode')
         t.TempMode = self.GetState('TempMode')
         t.QFlyMode = self.GetState('QFlyMode')
 
@@ -1326,7 +1326,7 @@ class SoD(Page):
                                     })
                                     setattr(t, self.GetState('DefaultMode') + "Mode", None)
 
-                                if (self.canss()):
+                                if (self.GetState('HasSS')):
                                     setattr(t, self.GetState('DefaultMode') + "Mode", t.RunMode)
                                     if (self.GetState('SSSJModeEnable')): sssj = t.jump
                                     stationary = ''
@@ -1659,7 +1659,8 @@ class SoD(Page):
         # 'turnoff' ends up full of stuff where in citybinder, it isn't.  Mysterious.
         curfile.SetBind(p.General.Ctrls['ResetKey'].MakeFileKeyBind(
                 f'up {u}$$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
-                str(turnoff) +
+                # TODO TODO TODO this is commented out to match citybinder's output but THIS IS WRONG put it back eventually
+                # str(turnoff) +
                 '$$t $name, SoD Binds Reset$$' + curfile.BaseReset() +
                 f"$$bindloadfile {gamepath}000000.txt"
         ))
@@ -2140,32 +2141,34 @@ class SoD(Page):
     #  toggleon variation
     def actPower_toggle(self, start, unq, on, *rest):
         s = traytest = ''
+
+        # TODO I think this case never happens
         if on and not isinstance(on, str):
             #  deal with power slot stuff..
-          traytest = on['trayslot']
+            traytest = on['trayslot']
 
-        unq = False  # TODO - then why do we pass this in in the first place?
+        unq = False  # we pass 'unq' in and ignore it to have the same signature as actPower_name
         offpower = {}
 
         for v in rest:
             if v and not isinstance(v, str):
-                for _, w in v.items():
-                    if (w and w != 'on' and not offpower[w]):
+                for w in v:
+                    if (w and w != on and not offpower.get(w, None)):
                         if not isinstance(w, str):
                             if (w['trayslot'] == traytest):
                                s = s + '$$powexectray ' + w['trayslot']
                                unq = True
-
                         else:
-                           offpower['w'] = 1
+                           offpower[w] = 1
                            s = s + '$$powexectoggleoff ' + w
 
-                if (v['trayslot'] and v['trayslot'] == traytest):
-                   s = s + '$$powexectray ' + v['trayslot']
-                   unq = True
+                # TODO does this ever happen?  commenting out for now UNDO THIS
+                #if (v['trayslot'] and v['trayslot'] != traytest):
+                #   s = s + '$$powexectray ' + v['trayslot']
+                #   unq = True
 
             else:
-                if (v and (v != 'on') and not offpower.get(v, None)):
+                if (v and (v != on) and not offpower.get(v, None)):
                    offpower[v] = 1
                    s = s + '$$powexectoggleoff ' + v
 
@@ -2190,21 +2193,21 @@ class SoD(Page):
 
         for v in rest:
             if isinstance(v, str):
-                if (v and v != 'on'):
+                if (v and v != on):
                    s = s + '$$powexecname ' + v
 
-            elif v: #v is a dict
-                for _,w in v.items():
-                    if (w and w != 'on'):
+            elif v: #v is a set
+                for w in v:
+                    if (w and w != on):
                         if isinstance(w, str):
                            s = s + '$$powexecname ' + w
                         else:
                            if (w['trayslot'] == traytest):
                                s = s + '$$powexectray ' + w['trayslot']
 
-
-                if (v['trayslot'] and v['trayslot'] == traytest):
-                   s = s + '$$powexectray ' + v['trayslot']
+                # TODO does this ever happen?  commenting out for now UNDO THIS
+                # if (v['trayslot'] and v['trayslot'] == traytest):
+                #    s = s + '$$powexectray ' + v['trayslot']
 
         if (unq and s):
            s = s + '$$powexecunqueue'
@@ -2293,9 +2296,6 @@ class SoD(Page):
             subresetfile = self.Profile.GetBindFile(subresetpath)
             subresetfile.BindKey(key, contents)
 
-    def canss(self):
-        return self.GetState('DefaultMode') == 'Super Speed' and self.GetState('HasSS')
-
     def onCBLabelClick(self, evt):
         cblabel = evt.EventObject
         cblabel.control.SetValue(not cblabel.control.IsChecked())
@@ -2333,7 +2333,7 @@ UI.Labels.update( {
     'NonSoDEnable'   : 'Enable Non-SoD Movement Mode',
     'NonSoDMode'     : 'Non-SoD Key',
     'SprintSoD'      : 'Enable Sprint SoD',
-    'SprintSoDMode'  : "Sprint Mode Key",
+    'SprintMode'  : "Sprint Mode Key",
 
     'JumpMode'       : 'Toggle Jump Mode',
     'SimpleSJCJ'     : 'Simple Combat Jumping / Super Jump Toggle',

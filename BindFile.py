@@ -78,6 +78,6 @@ class BindFile():
 
         if output:
             try:
-                self.Path.write_text(output)
+                self.Path.write_text(output, newline = '\r\n')
             except Exception as e:
                 print("Can't write to {self.Path}: {e}")

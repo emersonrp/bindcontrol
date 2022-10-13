@@ -67,10 +67,10 @@ class BindFile():
         def rotateKeyBind(kb):
             kb = deque(kb.split('+'))
             kb.rotate(1)
+            # turn them into, eg, 'S        +SHIFT' so "SHIFT-S" sorts after "S" but before "SPACE"
+            kb[0] = kb[0]+"        "
             return "+".join(kb)
         sortedKeyBinds = sorted(self.KeyBinds, key = rotateKeyBind)
-        # TODO this next line is just to imitate citbinder's weird naive sorting
-        sortedKeyBinds = sorted(self.KeyBinds, key = str.casefold)
 
         output = ''
         for keybind in sortedKeyBinds:

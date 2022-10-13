@@ -57,7 +57,7 @@ class SoD(Page):
             'SimpleSJCJ'      : 1,
 
             'HasHover'        : False,
-            'HasFly'          : False,
+            'HasFly'          : True,
             'HasCF'           : False,
             'FlyMode'         : "F",
             'HasQF'           : False,
@@ -473,7 +473,7 @@ class SoD(Page):
             c['DwarfTray'].CtlLabel.Enable(self.GetState('UseDwarf'))
 
             # show/hide kheldian-influenced controls depending on selected archetype;
-            archetype = self.Profile.General.GetState('Archetype')
+            archetype = self.Profile.Archetype()
             kheldianOnlyControls = ['HasCF', 'HasQF', 'QFlyMode']
             nonkheldianOnlyControls = ['HasFly','HasHover','TPTPHover']
 
@@ -660,11 +660,11 @@ class SoD(Page):
             #if (t.SprintMode):
                 #curfile.SetBind(t.SprintMode, "+down$$down 1" + self.actPower_name(None,True,mobile) + t.detailhi + t.runcamdist + t.blsd)
 
-            if (modestr != "Super Speed")    : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,self.sodSetDownFix)
-            if (modestr != "Fly")    : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
-            if (modestr != "Jump")   : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
-            if (modestr != "Temp")   : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
-            if (modestr != "QFly")   : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
+            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,self.sodSetDownFix)
+            if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
+            if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path)
+            if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
+            if (modestr != "QFly")        : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
         else:
             if (modestr != "NonSoD") : self.makeNonSoDModeKey(profile,t,"r", curfile,{mobile,stationary})
             if (modestr != "Sprint") : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
@@ -741,7 +741,6 @@ class SoD(Page):
 
         self.sodFollowOffKey(t,bl,curfile,mobile,stationary,flight)
 
-    # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeNonSoDModeKey(self, p, t, bl, cur, toff, fix = None, fb = ''):
         key = t.NonSoDMode
         if not key: return
@@ -771,7 +770,6 @@ class SoD(Page):
                 cur.SetBind(key, t.ini + self.actPower_toggle(None,True,None,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
         t.ini = ''
 
-    # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeTempModeKey(self, p, t, bl, cur, toff):
         key = t.TempMode
         if not key: return
@@ -795,7 +793,6 @@ class SoD(Page):
 
         t.ini = ''
 
-    # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeQFlyModeKey(self, p, t, bl, cur, toff, modestr):
         key = t.QFlyMode
         if not key: return
@@ -830,7 +827,6 @@ class SoD(Page):
 
         t.ini = ''
 
-    # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeSprintModeKey(self, p, t, bl, cur, toff, fix, fb = ''):
         key = t.SprintMode
         if not key: return
@@ -862,11 +858,10 @@ class SoD(Page):
             if (fix):
                 fix(p,t,key, self.makeSprintModeKey,"r",bl,cur,toff,"f",feedback)
             else:
-                cur.SetBind(key, t.ini + self.actPower_toggle(1,True,t.sprint,toff) + t.detailhi + t.runcamdist + '$$up 0' + fb + t.BLF('fr'))
+                cur.SetBind(key, t.ini + self.actPower_toggle(1,True,t.sprint,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fr'))
 
         t.ini = ''
 
-    # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeSpeedModeKey(self, p, t, bl, cur, toff, fix, fb = ''):
         key = t.RunMode
         bindload = feedback = ''
@@ -906,7 +901,6 @@ class SoD(Page):
 
         t.ini = ''
 
-    # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeJumpModeKey(self, p, t, bl, cur, toff, fbl):
         key = t.JumpMode
         if (t.canjmp and not self.GetState('SimpleSJCJ')):
@@ -934,7 +928,6 @@ class SoD(Page):
 
         t.ini = ''
 
-    # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeFlyModeKey(self, p, t, bl, cur, toff, fix, fb = '', fb_on_a = False):
         key = t.FlyMode
         if not key: return
@@ -977,7 +970,6 @@ class SoD(Page):
 
         t.ini = ''
 
-    # TODO -- seems like these subs could get consolidated but stab one at that was feeble
     def makeGFlyModeKey(self, p, t, bl, cur, toff, fix):
         key = t.GFlyMode
 
@@ -1065,7 +1057,7 @@ class SoD(Page):
             t.jump   = "Super Jump"
 
         ## Flying / hover
-        if (profile.General.GetState('Archetype') == "Peacebringer"):
+        if (profile.Archetype() == "Peacebringer"):
             if (self.GetState('HasHover')):
                 t.canhov = 1
                 t.canfly = 1
@@ -1077,7 +1069,7 @@ class SoD(Page):
                 t.hover  = "Energy Flight"
                 t.flyx   = "Energy Flight"
 
-        elif (not (profile.General.GetState('Archetype') == "Warshade")):
+        elif (not (profile.Archetype() == "Warshade")):
             if (self.GetState('HasHover') and not self.GetState('HasFly')):
                 t.canhov = 1
                 t.hover  = "Hover"
@@ -1095,7 +1087,7 @@ class SoD(Page):
                 t.flyx   = "Fly"
                 if (self.GetState('TPTPHover')): t.tphover = '$$powexectoggleon Hover'
 
-        if ((profile.General.GetState('Archetype') == "Peacebringer") and self.GetState('FlyQFly')):
+        if ((profile.Archetype() == "Peacebringer") and self.GetState('FlyQFly')):
             t.canqfly = 1
 
         # if (self.GetState('FlyGFly')):
@@ -1296,6 +1288,7 @@ class SoD(Page):
                                         'bla'        : t.blan,
                                         'blf'        : t.blfn,
                                         'path'       : t.pathn,
+                                        'gamepath'   : t.gamepathn,
                                         'patha'      : t.pathan,
                                         'pathf'      : t.pathfn,
                                         'mobile'     : '',
@@ -1324,15 +1317,14 @@ class SoD(Page):
                                 if (self.GetState('HasSS')):
                                     setattr(t, self.GetState('DefaultMode') + "Mode", t.RunMode)
                                     if (self.GetState('SSSJModeEnable')): sssj = t.jump
-                                    stationary = ''
-                                    if (not self.GetState('SSMobileOnly')):
-                                        stationary = t.speed
+                                    stationary = '' if self.GetState('SSMobileOnly') else t.speed
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : t.bls,
                                         'bla'        : t.blas,
                                         'blf'        : t.blfs,
                                         'path'       : t.paths,
+                                        'gamepath'   : t.gamepaths,
                                         'patha'      : t.pathas,
                                         'pathf'      : t.pathfs,
                                         'mobile'     : t.speed,
@@ -1352,6 +1344,7 @@ class SoD(Page):
                                         'bla'        : t.blaj,
                                         'blf'        : t.blfj,
                                         'path'       : t.pathj,
+                                        'gamepath'   : t.gamepathj,
                                         'patha'      : t.pathaj,
                                         'pathf'      : t.pathfj,
                                         'mobile'     : t.jump,
@@ -1371,16 +1364,13 @@ class SoD(Page):
                                         'bla'        : t.blaf,
                                         'blf'        : t.blff,
                                         'path'       : t.patha,
+                                        'gamepath'   : t.gamepatha,
                                         'patha'      : t.pathaf,
                                         'pathf'      : t.pathff,
                                         'mobile'     : t.flyx,
                                         'stationary' : t.hover,
                                         'modestr'    : "Fly",
                                         'flight'     : "Fly",
-                                        'pathbo'     : t.pathbo,
-                                        'pathsd'     : t.pathsd,
-                                        'blbo'       : t.pathbo,
-                                        'blsd'       : t.pathsd,
                                     })
                                     setattr(t, self.GetState('DefaultMode') + "Mode", None)
 
@@ -1392,6 +1382,7 @@ class SoD(Page):
                                #         'bla'        : t.blaq,
                                #         'blf'        : t.blfq,
                                #         'path'       : t.pathq,
+                               #         'gamepath'   : t.gamepathq,
                                #         'patha'      : t.pathaq,
                                #         'pathf'      : t.pathfq,
                                #         'mobile'     : "Quantum Flight",
@@ -1409,6 +1400,7 @@ class SoD(Page):
                                 #         'bla'        : t.blgaf,
                                 #         'blf'        : t.blgff,
                                 #         'path'       : t.pathga,
+                                #         'gamepath'   : t.gamepathga,
                                 #         'patha'      : t.pathgaf,
                                 #         'pathf'      : t.pathgff,
                                 #         'mobile'     : t.gfly,
@@ -1431,6 +1423,7 @@ class SoD(Page):
                                         'bla'        : t.blat,
                                         'blf'        : t.blft,
                                         'path'       : t.patht,
+                                        'gamepath'   : t.gamepatht,
                                         'patha'      : t.pathat,
                                         'pathf'      : t.pathft,
                                         'mobile'     : trayslot,
@@ -1468,15 +1461,16 @@ class SoD(Page):
             temptogglefile1.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('+down$$gototray ' + self.GetState('TempTray') + profile.BLF('temptoggle2.txt')))
             ResetFile.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('+down$$gototray ' + self.GetState('TempTray') + profile.BLF('temptoggle2.txt')))
 
-        ### Kheldian power setup
+        ###### Kheldian power setup
+        #  create the Nova and Dwarf form support files if enabled.
 
         ### TODO TODO TODO - these are just in here to make pylint happy;  fix the actual problem
         Nova = Dwarf = {}
 
-        if (profile.General.GetState('Archetype') == "Warshade"):
+        if (profile.Archetype() == "Warshade"):
             dwarfTPPower  = "powexecname Black Dwarf Step"
             normalTPPower = "powexecname Shadow Step"
-        elif (profile.General.GetState('Archetype') == "Peacebringer"):
+        elif (profile.Archetype() == "Peacebringer"):
             dwarfTPPower = "powexecname White Dwarf Step"
         else:
             normalTPPower = "powexecname Teleport"
@@ -1488,15 +1482,9 @@ class SoD(Page):
             novapbind    = self.GetState('HumanNovaPBind')
             dwarfpbind   = self.GetState('HumanDwarfPBind')
 
-        if ((profile.General.GetState('Archetype') == "Peacebringer") or (profile.General.GetState('Archetype') == "Warshade")):
+        if ((profile.Archetype() == "Peacebringer") or (profile.General.GetState('Archetype') == "Warshade")):
             if (humanBindKey):
                 ResetFile.SetBind(humanBindKey, humanpbind)
-
-        #  kheldian form support
-        #  create the Nova and Dwarf form support files if enabled.
-        ### TODO all of this has wrong control names
-        ### TODO this next line is just to shut up pylint; remove it once we have Nova and Dwarf dtrt.
-        Nova = Dwarf = {}
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
@@ -1606,7 +1594,7 @@ class SoD(Page):
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind( 'nop'))
             ResetFile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind('nop'))
 
-        if (self.GetState('HasTP') and not (profile.General.GetState('Archetype') == "Peacebringer") and normalTPPower):
+        if (self.GetState('HasTP') and not (profile.Archetype() == "Peacebringer") and normalTPPower):
             tphovermodeswitch = ''
             if (t.tphover != ''):
                 tphovermodeswitch = t.BLF('R') + "000000.txt"
@@ -1628,7 +1616,7 @@ class SoD(Page):
             tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
             tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
 
-        if (self.GetState('HasTTP') and not (profile.General.GetState('Archetype') == "Peacebringer") and teamTPPower) :
+        if (self.GetState('HasTTP') and not (profile.Archetype() == "Peacebringer") and teamTPPower) :
             tphovermodeswitch = ''
             ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
             ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( 'nop'))
@@ -1651,7 +1639,7 @@ class SoD(Page):
         d = int(moddir == 'down')
 
         # TODO -- this is where the resetkey binds end up different from citybinder --
-        # 'turnoff' ends up full of stuff where in citybinder, it isn't.  Mysterious.
+        # 'turnoff' ends up full of stuff in citybinder that's not the case here.  Weird.
         curfile.SetBind(p.General.Ctrls['ResetKey'].MakeFileKeyBind(
                 f'up {u}$$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
                 str(turnoff) +
@@ -2136,7 +2124,7 @@ class SoD(Page):
     def actPower_toggle(self, start, unq, on, *rest):
         s = traytest = ''
 
-        # TODO I think this case never happens
+        # TODO Temp Travel Power stuff - might comment all this out
         if on and not isinstance(on, str):
             #  deal with power slot stuff..
             traytest = on['trayslot']
@@ -2199,9 +2187,9 @@ class SoD(Page):
                            if (w['trayslot'] != traytest):
                                s = s + '$$powexectray ' + w['trayslot']
 
-                # TODO does this ever happen?  commenting out for now UNDO THIS
-                # if (v['trayslot'] and v['trayslot'] != traytest):
-                #    s = s + '$$powexectray ' + v['trayslot']
+                # TODO Temp Travel Power stuff -- maybe comment out later
+                if (v['trayslot'] and v['trayslot'] != traytest):
+                   s = s + '$$powexectray ' + v['trayslot']
 
         if (unq and s):
            s = s + '$$powexecunqueue'
@@ -2217,7 +2205,7 @@ class SoD(Page):
         return s
 
     actPower = actPower_name
-    #actPower = actPower_toggle
+    # actPower = actPower_toggle
 
     # TODO - this isn't used anywhere, is it useful?
     #  updated hybrid binds can reduce the space used in SoD Bindfiles by more than 40KB per SoD mode generated
@@ -2265,7 +2253,7 @@ class SoD(Page):
 
     def sodJumpFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
 
-        filename = t.path(f"{autofollowmode}j",suffix)
+        filename = t.path + f"{autofollowmode}j" + suffix
         tglfile  = profile.GetBindFile(filename)
         t.ini    = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
@@ -2277,9 +2265,10 @@ class SoD(Page):
         else:
             pathsuffix = "a"
 
-        filename = t.path(f"{autofollowmode}{pathsuffix}",suffix)
+        filename = t.path + f"{autofollowmode}{pathsuffix}" + suffix
         tglfile = profile.GetBindFile(filename)
         t.ini = '-down$$'
+
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
         curfile.SetBind(key, '+down' + feedback + profile.BLF(filename))
 

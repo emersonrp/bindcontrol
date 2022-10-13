@@ -49,6 +49,7 @@ class Profile(wx.Notebook):
     # Convenience / JIT accessors
     def Name(self)         : return self.General.GetState('Name')
     def BindsDir(self)     : return self.General.GetState('BindsDir')
+    def Archetype(self)    : return self.General.GetState('Archetype')
     def GameBindsDir(self) : return (self.General.GetState('GameBindsDir') or self.BindsDir())
     def ResetFile(self)    : return self.GetBindFile("reset.txt")
 

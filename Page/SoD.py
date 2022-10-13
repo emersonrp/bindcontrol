@@ -439,8 +439,6 @@ class SoD(Page):
                                           and self.GetState('DefaultMode') != "Jump")
             c['JumpMode'].CtlLabel.Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
-            c['SSMobileOnly']         .Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
-            c['SSMobileOnly'].CtlLabel.Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
 
             c['FlyMode']         .Enable((self.GetState('HasHover') or self.GetState('HasFly') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
@@ -643,7 +641,6 @@ class SoD(Page):
 #            self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 #            self.sodFollowKey(t,blf,curfile,mobile)
 
-        ### TODO recently added Keystate and .txt to this.  Is this right?
         curfile = profile.GetBindFile(path + t.KeyState() + ".txt")
 
         self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
@@ -750,8 +747,8 @@ class SoD(Page):
         if not key: return
         if not self.Ctrls['NonSoDMode'].IsEnabled(): return
 
-        if self.GetState('Feedback'): feedback = (fb or '$$t $name, Non-SoD Mode')
-        else:                         feedback = ''
+        if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Non-SoD Mode'
+        else:                                      feedback = ''
 
         if (bl == "r"):
             bindload = t.BLF('n')
@@ -838,8 +835,8 @@ class SoD(Page):
         key = t.SprintMode
         if not key: return
 
-        if self.GetState('Feedback'): feedback = (fb or '$$t $name, Sprint-SoD Mode')
-        else:                         feedback = ''
+        if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Sprint-SoD Mode'
+        else:                                      feedback = ''
 
         if (bl == "r"):
             bindload  = t.BLF('R')
@@ -874,7 +871,7 @@ class SoD(Page):
         key = t.RunMode
         bindload = feedback = ''
 
-        if p.SoD.GetState('Feedback'): feedback = (fb or '$$t $name, Superspeed Mode')
+        if (not fb) and p.SoD.GetState('Feedback'): feedback = '$$t $name, Superspeed Mode'
 
         if not t.get('ini', ''): t.ini = ''
 
@@ -942,8 +939,8 @@ class SoD(Page):
         key = t.FlyMode
         if not key: return
 
-        if self.GetState('Feedback'): feedback = (fb or '$$t $name, Flight Mode')
-        else:                         feedback = ''
+        if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Flight Mode'
+        else:                                      feedback = ''
 
         if (t.canhov + t.canfly > 0):
             if (bl == "bo"):
@@ -1288,7 +1285,7 @@ class SoD(Page):
                                 t.rigx = f'$$right {1-D}'
 
                                 t.totalkeys = space+X+W+S+A+D;    # total number of keys down
-                                t.horizkeys = W+S+A+D;    # total # of horizontal move keys.    So Sprint isn't turned on when jumping
+                                t.horizkeys = W+S+A+D;    # total # of horizontal move keys. So Sprint isn't turned on when jumping
                                 t.vertkeys  = space+X
                                 t.jkeys     = t.horizkeys+t.space
                                 if (self.GetState('NonSoDEnable') or t.canqfly):
@@ -1328,7 +1325,8 @@ class SoD(Page):
                                     setattr(t, self.GetState('DefaultMode') + "Mode", t.RunMode)
                                     if (self.GetState('SSSJModeEnable')): sssj = t.jump
                                     stationary = ''
-                                    if (self.GetState('SSMobileOnly')): stationary = t.speed
+                                    if (not self.GetState('SSMobileOnly')):
+                                        stationary = t.speed
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : t.bls,
@@ -1369,47 +1367,47 @@ class SoD(Page):
                                     setattr(t, self.GetState('DefaultMode') + "Mode", t.FlyMode)
                                     self.makeSoDFile({
                                         't'          : t,
-                                        'bl'         : t.bl,
+                                        'bl'         : t.bla,
                                         'bla'        : t.blaf,
                                         'blf'        : t.blff,
-                                        'path'       : t.path,
+                                        'path'       : t.patha,
                                         'patha'      : t.pathaf,
                                         'pathf'      : t.pathff,
                                         'mobile'     : t.flyx,
                                         'stationary' : t.hover,
                                         'modestr'    : "Fly",
                                         'flight'     : "Fly",
-                                        'pathbo'     : 'bo',
-                                        'pathsd'     : 'sd',
-                                        'blbo'       : 'bo',
-                                        'blsd'       : 'sd',
+                                        'pathbo'     : t.pathbo,
+                                        'pathsd'     : t.pathsd,
+                                        'blbo'       : t.pathbo,
+                                        'blsd'       : t.pathsd,
                                     })
                                     setattr(t, self.GetState('DefaultMode') + "Mode", None)
 
-                                if (t.canqfly):
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.QFlyMode)
-                                    self.makeSoDFile({
-                                        't'          : t,
-                                        'bl'         : t.blq,
-                                        'bla'        : t.blaq,
-                                        'blf'        : t.blfq,
-                                        'path'       : t.pathq,
-                                        'patha'      : t.pathaq,
-                                        'pathf'      : t.pathfq,
-                                        'mobile'     : "Quantum Flight",
-                                        'stationary' : "Quantum Flight",
-                                        'modestr'    : "QFly",
-                                        'flight'     : "Fly",
-                                    })
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
+                               # if (t.canqfly):
+                               #     setattr(t, self.GetState('DefaultMode') + "Mode", t.QFlyMode)
+                               #     self.makeSoDFile({
+                               #         't'          : t,
+                               #         'bl'         : t.blq,
+                               #         'bla'        : t.blaq,
+                               #         'blf'        : t.blfq,
+                               #         'path'       : t.pathq,
+                               #         'patha'      : t.pathaq,
+                               #         'pathf'      : t.pathfq,
+                               #         'mobile'     : "Quantum Flight",
+                               #         'stationary' : "Quantum Flight",
+                               #         'modestr'    : "QFly",
+                               #         'flight'     : "Fly",
+                               #     })
+                               #     setattr(t, self.GetState('DefaultMode') + "Mode", None)
 
                                 # if (t.cangfly):
                                 #     setattr(t, self.GetState('DefaultMode') + "Mode", t.GFlyMode)
                                 #     self.makeSoDFile({
                                 #         't'          : t,
-                                #         'bl'         : t.bla,
-                                #         'bla'        : t.blaf,
-                                #         'blf'        : t.blff,
+                                #         'bl'         : t.blga,
+                                #         'bla'        : t.blgaf,
+                                #         'blf'        : t.blgff,
                                 #         'path'       : t.pathga,
                                 #         'patha'      : t.pathgaf,
                                 #         'pathf'      : t.pathgff,
@@ -1668,7 +1666,7 @@ class SoD(Page):
         actkeys = t.totalkeys
         ml = ''
 
-        if (not flight and not sssj):
+        if (not flight) and (not sssj):
             mobile = stationary = None
 
         if (bo == "bo") :
@@ -1694,14 +1692,14 @@ class SoD(Page):
         if (actkeys == 0):
            ml = t.mlon
            toggleon = mobile
-           if (not (mobile and (mobile != stationary))) : toggleoff = stationary
+           if (not mobile) and (mobile != stationary) : toggleoff = stationary
         else:
             toggleon = ''
 
 
         if (t.totalkeys == 1 and t.space == 1):
            ml = t.mloff
-           if (not (stationary and (mobile != stationary))) : toggleoff = mobile
+           if (not stationary) and (mobile != stationary) : toggleoff = mobile
            toggleon = stationary
         else:
             toggleoff = ''
@@ -1773,13 +1771,13 @@ class SoD(Page):
         if (actkeys == 0):
            ml = t.mlon
            toggleon = mobile
-           if (not (mobile and mobile != stationary)): toggleoff = stationary
+           if (not mobile) and (mobile != stationary): toggleoff = stationary
         else:
            toggleon = None
 
         if (t.totalkeys == 1 and t.X == 1):
            ml = t.mloff
-           if (not (stationary and mobile != stationary)): toggleoff = mobile
+           if (not stationary) and (mobile != stationary): toggleoff = mobile
            toggleon = stationary
         else:
             toggleoff = None
@@ -1830,7 +1828,7 @@ class SoD(Page):
         toggleon = mobile
         if (t.totalkeys == 0) :
             ml = t.mlon
-            if (not (mobile and mobile != stationary)):
+            if (not mobile) and (mobile != stationary):
                toggleoff = stationary
 
         if (t.totalkeys == 1 and t.W == 1):
@@ -1839,7 +1837,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else:      testKeys = t.horizkeys
         if (testKeys == 1 and t.W == 1) :
-            if (not (stationary and mobile != stationary)):
+            if (not stationary) and (mobile != stationary):
                 toggleoff = mobile
             toggleon = stationary
 
@@ -1905,7 +1903,7 @@ class SoD(Page):
         if (t.totalkeys == 0):
            ml = t.mlon
            toggleon = mobile
-           if (not (mobile and mobile != stationary)):
+           if (not mobile) and (mobile != stationary):
                toggleoff = stationary
 
         if (t.totalkeys == 1 and t.S == 1):
@@ -1914,7 +1912,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else:      testKeys = t.horizkeys
         if (testKeys == 1 and t.S == 1):
-            if (not (stationary and mobile != stationary)):
+            if (not stationary) and (mobile != stationary):
                toggleoff = mobile
 
             toggleon = stationary
@@ -1975,7 +1973,7 @@ class SoD(Page):
         if (t.totalkeys == 0):
             ml = t.mlon
             toggleon = mobile
-            if (not (mobile and mobile != stationary)) :
+            if (not mobile) and (mobile != stationary) :
                 toggleoff = stationary
 
         if (t.totalkeys == 1 and t.A == 1) :
@@ -1985,7 +1983,7 @@ class SoD(Page):
         else:      testKeys = t.horizkeys
 
         if (testKeys == 1 and t.A == 1) :
-            if (not (stationary and mobile != stationary)):
+            if (not stationary) and (mobile != stationary):
                toggleoff = mobile
             toggleon = stationary
 
@@ -2039,7 +2037,7 @@ class SoD(Page):
         if (t.totalkeys == 0):
            ml = t.mlon
            toggleon = mobile
-           if (not (mobile and mobile != stationary)) :
+           if (not mobile) and (mobile != stationary) :
                toggleoff = stationary
 
         if (t.totalkeys == 1 and t.D == 1) :
@@ -2048,7 +2046,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else :     testKeys = t.horizkeys
         if (testKeys == 1 and t.D == 1) :
-            if (not (stationary and mobile != stationary)):
+            if (not stationary) and (mobile != stationary):
                toggleoff = mobile
             toggleon = stationary
 
@@ -2091,7 +2089,7 @@ class SoD(Page):
         if sssj and t.space == 1:
             toggleoff = mobile
             mobile = sssj
-        if (not flight and not sssj) :
+        if (not flight) and (not sssj) :
             if (t.horizkeys > 0) :
                toggleon = t.mlon + self.actPower_name(None,True,mobile)
             else:

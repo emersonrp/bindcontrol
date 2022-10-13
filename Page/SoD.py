@@ -595,20 +595,20 @@ class SoD(Page):
                 if (self.GetState('NonSoDEnable')):
                     t.FlyMode = t.NonSoDMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                elif (self.GetState('SprintSoD')):
+                if (self.GetState('SprintSoD')):
                     t.FlyMode = t.SprintMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                elif (self.GetState('HasSS')):
+                if (self.GetState('HasSS')):
                     t.FlyMode = t.RunMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                elif (t.canjmp):
+                if (t.canjmp):
                     t.FlyMode = t.JumpMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                elif (self.GetState('TempEnable')):
+                if (self.GetState('TempEnable')):
                     t.FlyMode = t.TempMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                else:
-                    self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
+            else:
+                self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
 
             t.ini = ''
             # if (modestr != "GFly")        : self.makeGFlyModeKey (profile,t,"gbo",curfile,turnoff,fix)
@@ -702,10 +702,10 @@ class SoD(Page):
             if (modestr != "Sprint"): self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,fix)
             if (modestr != "Super Speed")   : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
 
-        if   (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"af",curfile,turnoff,fix)
-        elif (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"aj",curfile,turnoff,patha)
-        elif (modestr != "Temp")      : self.makeTempModeKey(profile,t,"ar",curfile,turnoff)
-        elif (modestr != "QFly")      : self.makeQFlyModeKey(profile,t,"ar",curfile,turnoff,modestr)
+        if (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"af",curfile,turnoff,fix)
+        if (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"aj",curfile,turnoff,patha)
+        if (modestr != "Temp")      : self.makeTempModeKey(profile,t,"ar",curfile,turnoff)
+        if (modestr != "QFly")      : self.makeQFlyModeKey(profile,t,"ar",curfile,turnoff,modestr)
 
         self.sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight,sssj)
 
@@ -732,10 +732,10 @@ class SoD(Page):
             if (modestr != "Sprint"): self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,fix)
             if (modestr != "Super Speed")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
 
-        if   (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"ff",curfile,turnoff,fix)
-        elif (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"fj",curfile,turnoff,pathf)
-        elif (modestr != "Temp")      : self.makeTempModeKey(profile,t,"fr",curfile,turnoff)
-        elif (modestr != "QFly")      : self.makeQFlyModeKey(profile,t,"fr",curfile,turnoff,modestr)
+        if (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"ff",curfile,turnoff,fix)
+        if (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"fj",curfile,turnoff,pathf)
+        if (modestr != "Temp")      : self.makeTempModeKey(profile,t,"fr",curfile,turnoff)
+        if (modestr != "QFly")      : self.makeQFlyModeKey(profile,t,"fr",curfile,turnoff,modestr)
 
         curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('nop'))
 
@@ -947,8 +947,8 @@ class SoD(Page):
                 if (not fb_on_a): feedback = ''
                 bindload = t.BLF('a')
 
-                if t.tkeys: ton = t.flyx
-                else:       ton = t.hover
+                if t.totalkeys: ton = t.flyx
+                else:           ton = t.hover
 
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)

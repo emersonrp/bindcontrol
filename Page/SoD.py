@@ -51,13 +51,13 @@ class SoD(Page):
             'SSMobileOnly'    : 0,
             'SSSJModeEnable'  : 1,
 
-            'HasSJ'           : False,
+            'HasSJ'           : True,
             'HasCJ'           : False,
             'JumpMode'        : "T",
             'SimpleSJCJ'      : 1,
 
             'HasHover'        : False,
-            'HasFly'          : True,
+            'HasFly'          : False,
             'HasCF'           : False,
             'FlyMode'         : "F",
             'HasQF'           : False,
@@ -607,6 +607,7 @@ class SoD(Page):
                     t.FlyMode = t.TempMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
             else:
+                if re.search(r'BO000000.txt', str(curfile.Path)): breakpoint()
                 self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
 
             t.ini = ''
@@ -867,8 +868,6 @@ class SoD(Page):
 
         if (not fb) and p.SoD.GetState('Feedback'): feedback = '$$t $name, Superspeed Mode'
 
-        if not t.get('ini', ''): t.ini = ''
-
         if (self.GetState('HasSS')):
             if (bl == 's'):
                 bindload = f"{t.bls}{t.KeyState()}.txt"
@@ -936,7 +935,7 @@ class SoD(Page):
 
         if (t.canhov or t.canfly):
             if (bl == "bo"):
-                bindload = t.BLF('bo')
+                bindload = t.blbo + t.KeyState() + ".txt"
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
@@ -944,7 +943,7 @@ class SoD(Page):
 
             elif (bl == "a"):
                 if (not fb_on_a): feedback = ''
-                bindload = t.BLF('a')
+                bindload = t.bla + t.KeyState() + ".txt"
 
                 if t.totalkeys: ton = t.flyx
                 else:           ton = t.hover
@@ -955,17 +954,18 @@ class SoD(Page):
                     cur.SetBind(t.FlyMode,  t.ini + self.actPower_toggle(1,True,ton,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "af"):
-                bindload = t.BLF('af')
+                bindload = t.blaf + t.KeyState() + ".txt"
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"a",feedback)
                 else:
                     cur.SetBind(key,  t.ini + self.actPower_toggle(1,True,t.flyx,toff) + t.detaillo + t.flycamdist + t.dirs('DLR') + feedback + bindload)
 
             else:
+                bindload = t.blff + t.KeyState() + ".txt"
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"f",feedback)
                 else:
-                    cur.SetBind(key,  t.ini + self.actPower_toggle(1,True,t.flyx,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + t.BLF('ff'))
+                    cur.SetBind(key,  t.ini + self.actPower_toggle(1,True,t.flyx,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + t.blff + t.KeyState() + ".txt")
 
         t.ini = ''
 
@@ -2260,11 +2260,12 @@ class SoD(Page):
 
     def sodJumpFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
 
-        filename = t.path + f"{autofollowmode}j" + suffix
+        filename = getattr(t,"path" + f"{autofollowmode}j") + suffix + t.KeyState() + '.txt'
+        gamefilename = getattr(t,"gamepath" + f"{autofollowmode}j") + suffix + t.KeyState() + '.txt'
         tglfile  = profile.GetBindFile(filename)
         t.ini    = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
-        curfile.SetBind(key, "+down" + feedback + self.actPower_name(None,True,t.cjmp) + profile.BLF(filename))
+        curfile.SetBind(key, "+down" + feedback + self.actPower_name(None,True,t.cjmp) + profile.BLF(gamefilename))
 
     def sodSetDownFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
         if autofollowmode:
@@ -2272,12 +2273,13 @@ class SoD(Page):
         else:
             pathsuffix = "a"
 
-        filename = t.path + f"{autofollowmode}{pathsuffix}" + suffix
+        filename = getattr(t,'path' + f"{autofollowmode}{pathsuffix}") + t.KeyState() + suffix + ".txt"
+        gamefilename = getattr(t,'gamepath' + f"{autofollowmode}{pathsuffix}") + t.KeyState() + suffix + ".txt"
         tglfile = profile.GetBindFile(filename)
         t.ini = '-down$$'
 
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
-        curfile.SetBind(key, '+down' + feedback + profile.BLF(filename))
+        curfile.SetBind(key, '+down' + feedback + "$$" + profile.BLF(gamefilename))
 
     def bindBothResetFiles(self, key, contents):
         self.Profile.ResetFile.BindKey(key, contents)

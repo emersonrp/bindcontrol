@@ -1681,7 +1681,8 @@ class SoD(Page):
            if (t.X == 1):                          upx = '$$up 0'
 
         toggleon   = mobile
-        toggleoff2 = ''
+        toggleoff  = None
+        toggleoff2 = None
         if (actkeys == 0):
            ml = t.mlon
            toggleon = mobile
@@ -1692,10 +1693,10 @@ class SoD(Page):
 
         if (t.totalkeys == 1 and t.space == 1):
            ml = t.mloff
-           if (not stationary) and (mobile != stationary) : toggleoff = mobile
+           if (stationary != '') and (mobile != stationary) : toggleoff = mobile
            toggleon = stationary
         else:
-            toggleoff = ''
+            toggleoff = None
 
         if (sssj):
             if (t.space == 0): #  if we are hitting the space bar rather than releasing its..
@@ -1760,7 +1761,7 @@ class SoD(Page):
             else:                               up = '$$up 0'
 
         toggleon = mobile
-        toggleoff = ''
+        toggleoff = None
         if (actkeys == 0):
            ml = t.mlon
            toggleon = mobile
@@ -1770,7 +1771,7 @@ class SoD(Page):
 
         if (t.totalkeys == 1 and t.X == 1):
            ml = t.mloff
-           if (not stationary) and (mobile != stationary): toggleoff = mobile
+           if (stationary != '') and (mobile != stationary): toggleoff = mobile
            toggleon = stationary
         else:
             toggleoff = None
@@ -1801,7 +1802,7 @@ class SoD(Page):
         (up,dow,forx,bac,lef,rig) = (t.up,t.dow,t.forx,t.bac,t.lef,t.rig)
 
         # actkeys = t.totalkeys
-        ml = toggleoff = ''
+        ml = ''
         if (bo == "bo") : up = '$$up 1'; dow = '$$down 0'
         if (bo == "sd") : up = '$$up 0'; dow = '$$down 1'
 
@@ -1819,6 +1820,7 @@ class SoD(Page):
            else : up = '$$up 1'
 
         toggleon = mobile
+        toggleoff = None
         if (t.totalkeys == 0) :
             ml = t.mlon
             if (not mobile) and (mobile != stationary):
@@ -1830,7 +1832,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else:      testKeys = t.horizkeys
         if (testKeys == 1 and t.W == 1) :
-            if (not stationary) and (mobile != stationary):
+            if (stationary != '') and (mobile != stationary):
                 toggleoff = mobile
             toggleon = stationary
 
@@ -1877,7 +1879,7 @@ class SoD(Page):
         (up,dow,forw,bacx,lef,rig) = (t.up,t.dow,t.forw, t.bacx,t.lef,t.rig)
 
         # actkeys = t.totalkeys
-        ml = toggleoff = ''
+        ml = ''
         if (bo == "bo") : up = '$$up 1';dow = '$$down 0'
         if (bo == "sd") : up = '$$up 0';dow = '$$down 1'
 
@@ -1893,6 +1895,7 @@ class SoD(Page):
            if (t.X == 1) : up = '$$up 0'
 
         toggleon = mobile
+        toggleoff = None
         if (t.totalkeys == 0):
            ml = t.mlon
            toggleon = mobile
@@ -1905,7 +1908,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else:      testKeys = t.horizkeys
         if (testKeys == 1 and t.S == 1):
-            if (not stationary) and (mobile != stationary):
+            if (stationary != '') and (mobile != stationary):
                toggleoff = mobile
 
             toggleon = stationary
@@ -1947,7 +1950,7 @@ class SoD(Page):
         (up,dow,forw,bac,lefx,rig) = (t.up,t.dow,t.forw,t.bac, t.lefx,t.rig)
 
         # actkeys = t.totalkeys
-        ml = toggleoff = ''
+        ml = ''
         if (bo == "bo") : up = '$$up 1';dow = '$$down 0'
         if (bo == "sd") : up = '$$up 0';dow = '$$down 1'
 
@@ -1963,6 +1966,7 @@ class SoD(Page):
             if (t.X == 1) : up = '$$up 0'
 
         toggleon = mobile
+        toggleoff = None
         if (t.totalkeys == 0):
             ml = t.mlon
             toggleon = mobile
@@ -1976,7 +1980,7 @@ class SoD(Page):
         else:      testKeys = t.horizkeys
 
         if (testKeys == 1 and t.A == 1) :
-            if (not stationary) and (mobile != stationary):
+            if (stationary != '') and (mobile != stationary):
                toggleoff = mobile
             toggleon = stationary
 
@@ -2011,7 +2015,7 @@ class SoD(Page):
         (up,dow,forw,bac,lef,rigx) = (t.up,t.dow,t.forw,t.bac,t.lef, t.rigx)
 
         # actkeys = t.totalkeys
-        ml = toggleoff = ''
+        ml = ''
         if (bo == "bo") :up = '$$up 1';dow = '$$down 0'
         if (bo == "sd") :up = '$$up 0';dow = '$$down 1'
 
@@ -2027,6 +2031,7 @@ class SoD(Page):
             if (t.X == 1) : up = '$$up 0'
 
         toggleon = mobile
+        toggleoff = None
         if (t.totalkeys == 0):
            ml = t.mlon
            toggleon = mobile
@@ -2039,7 +2044,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else :     testKeys = t.horizkeys
         if (testKeys == 1 and t.D == 1) :
-            if (not stationary) and (mobile != stationary):
+            if (stationary != '') and (mobile != stationary):
                toggleoff = mobile
             toggleon = stationary
 

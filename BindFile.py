@@ -44,7 +44,7 @@ class BindFile():
 
     # Windows path b/c the game will use it.
     def BaseReset(self):
-        return f'bind_load_file {self.GameBindsDir}subreset.txt'
+        return f'bindloadfile {self.GameBindsDir}subreset.txt'
 
     # TODO - make "silent" an option, and the default
     def BLF(self):

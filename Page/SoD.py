@@ -579,7 +579,6 @@ class SoD(Page):
             #  blast off
             curfile = profile.GetBindFile(pathbo + t.KeyState() + ".txt")
             self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
-
             self.sodUpKey     (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
             self.sodDownKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo")
             self.sodForwardKey(t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
@@ -935,7 +934,7 @@ class SoD(Page):
         if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Flight Mode'
         else:                                      feedback = ''
 
-        if (t.canhov + t.canfly > 0):
+        if (t.canhov or t.canfly):
             if (bl == "bo"):
                 bindload = t.BLF('bo')
                 if (fix):
@@ -2130,40 +2129,48 @@ class SoD(Page):
             traytest = on['trayslot']
 
         unq = False  # we pass 'unq' in and ignore it to have the same signature as actPower_name
-        offpower = {}
+        offpower = set()
 
         for v in rest:
             if v and not isinstance(v, str):
                 for w in v:
-                    if (w and w != on and not offpower.get(w, None)):
+                    if (w and w != on and not (w in offpower)):
                         if not isinstance(w, str):
                             if (w['trayslot'] != traytest):
                                s = s + '$$powexectray ' + w['trayslot']
                                unq = True
                         else:
-                           offpower[w] = 1
-                           s = s + '$$powexectoggleoff ' + w
+                            offpower.add(w)
+                            s = s + '$$powexectoggleoff ' + w
 
-                # TODO does this ever happen?  commenting out for now UNDO THIS
-                #if (v['trayslot'] and v['trayslot'] != traytest):
-                #   s = s + '$$powexectray ' + v['trayslot']
-                #   unq = True
+                # TODO This is part of Temp Travel Power which might go away
+                # It currently breaks because v is a set not a dict.
+                #
+                # if (v['trayslot'] and v['trayslot'] != traytest):
+                #    s = s + '$$powexectray ' + v['trayslot']
+                #    unq = True
 
             else:
-                if (v and (v != on) and not offpower.get(v, None)):
-                   offpower[v] = 1
-                   s = s + '$$powexectoggleoff ' + v
+                # TODO -- the uncommented line is as in citybinder.  I think it's a bug
+                # talking about w instead of v.  I am going with it for now while diffing
+                #if (v and (v != on) and not (v in offpower)):
+                w = ''
+                if (v and (w != on) and not (v in offpower)):
+                    offpower.add(v)
+                    s = s + '$$powexectoggleoff ' + v
 
         if (unq and s):
-           s = s + '$$powexecunqueue'
+            s = s + '$$powexecunqueue'
 
         if (on):
             if not (isinstance(on, str)):
                 #  deal with power slot stuff..
-               s = s + '$$powexectray ' + on['trayslot'] + '$$powexectray ' + on['trayslot']
+                s = s + '$$powexectray ' + on['trayslot'] + '$$powexectray ' + on['trayslot']
             else:
-               s = s + '$$powexectoggleon ' + on
+                s = s + '$$powexectoggleon ' + on
 
+        # TODO this is commented out in citybinder, but seems to be needed here
+        # It's a mystery.
         if start: s = s[2:]
         return s
 

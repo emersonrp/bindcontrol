@@ -54,7 +54,7 @@ class Profile(wx.Notebook):
     def ResetFile(self)    : return self.GetBindFile("reset.txt")
 
     def BLF(self, *args):
-        return "bindloadfile " + self.BLFPath(*args)
+        return "$$bindloadfile " + self.BLFPath(*args)
 
     def BLFPath(self, *args):
         filepath = PureWindowsPath(self.GameBindsDir())

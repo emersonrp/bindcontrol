@@ -201,23 +201,52 @@ class Profile(wx.Notebook):
 
         for filename, bindfile in self.BindFiles.items():
             try:
+                donefiles += 1
                 bindfile.Write()
             except Exception as e:
                 print(f"Done blowed up in bindfile.Write(): {e}")
+                donefiles -= 1
                 errors += 1
 
-            donefiles += 1
             dlg.Update(donefiles, filename)
 
         dlg.Destroy()
 
         if errors:
-            msg = f"Bind files written, but with {errors} errors.  Check the log."
+            msg = f"{donefiles} bind files written, but there were {errors} errors.  Check the log."
         else:
-            msg = "Bind files written!"
+            msg = f"{donefiles} bind files written!"
 
-        wx.MessageBox(msg, '', wx.OK, self)
+        with DoneDialog(self, msg = msg) as dlg: dlg.ShowModal()
 
         # TODO try except finally
         # clear out our state
         self.BindFiles = {}
+
+
+class DoneDialog(wx.Dialog):
+    def __init__(self, parent, msg = ''):
+        wx.Dialog.__init__(self, parent, title = "Bindfiles Written")
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        msg = msg + "\n\nLog on to the character you made these for and type:"
+
+        sizer.Add(
+            wx.StaticText(self, label = msg, style = wx.ALIGN_CENTER),
+            1, wx.EXPAND|wx.ALL, 10
+        )
+        textCtrl = wx.TextCtrl(self, id = wx.ID_ANY,
+                       style = wx.TE_READONLY|wx.TE_CENTER,
+                       value = "/bindloadfile " + parent.GameBindsDir() + "reset.txt")
+        textCtrl.SetFont(
+            wx.Font(10, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = u'Courier')
+        )
+
+        sizer.Add( textCtrl, 0, wx.EXPAND|wx.ALL, 10)
+
+        sizer.Add(
+            self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10
+        )
+        self.SetSizerAndFit(sizer)
+

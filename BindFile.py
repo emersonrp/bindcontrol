@@ -63,14 +63,37 @@ class BindFile():
             print(f"Can't instantiate file {self}: {e}")
             return
 
-        # TODO -- sort all this stuff by the Alpha key, subsort by mod keys
-        def rotateKeyBind(kb):
-            kb = deque(kb.split('+'))
-            kb.rotate(1)
-            # turn them into, eg, 'S        +SHIFT' so "SHIFT-S" sorts after "S" but before "SPACE"
-            kb[0] = kb[0]+"        "
-            return "+".join(kb)
-        sortedKeyBinds = sorted(self.KeyBinds, key = rotateKeyBind)
+        # duplicate citybinder's (modified) logic exactly
+        import re
+        def getMainKey(testkey):
+            str = testkey or "UNBOUND"
+            str = str.upper()
+            str = re.sub(r'LSHIFT', '', str)
+            str = re.sub(r'RSHIFT', '', str)
+            str = re.sub(r'SHIFT', '', str)
+            str = re.sub(r'LCTRL', '', str)
+            str = re.sub(r'RCTRL', '', str)
+            str = re.sub(r'CTRL', '', str)
+            str = re.sub(r'LALT', '', str)
+            str = re.sub(r'RALT', '', str)
+            str = re.sub(r'ALT', '', str)
+            str = re.sub(r'\+', "", str)
+            if str == '':
+                rval = testkey
+            else:
+                rval = str
+            if testkey != str: rval = rval + "        " + testkey
+            return rval
+        sortedKeyBinds = sorted(self.KeyBinds, key = getMainKey)
+
+        # TODO -- put this back when we're no longer diffing
+#        def rotateKeyBind(kb):
+#            kb = deque(kb.split('+'))
+#            kb.rotate(1)
+#            # turn them into, eg, 'S        +SHIFT' so "SHIFT-S" sorts after "S" but before "SPACE"
+#            kb[0] = kb[0]+"        "
+#            return "+".join(kb)
+#        sortedKeyBinds = sorted(self.KeyBinds, key = rotateKeyBind)
 
         output = ''
         for keybind in sortedKeyBinds:

@@ -1605,7 +1605,7 @@ class SoD(Page):
         if (self.GetState('HasTP') and not (profile.Archetype() == "Peacebringer") and normalTPPower):
             tphovermodeswitch = ''
             if (t.tphover != ''):
-                tphovermodeswitch = t.BLF('R') + "000000.txt"
+                tphovermodeswitch = t.bla + "000000.txt"
 
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
@@ -1687,14 +1687,14 @@ class SoD(Page):
         if (actkeys == 0):
            ml = t.mlon
            toggleon = mobile
-           if (not mobile) and (mobile != stationary) : toggleoff = stationary
+           if (not mobile) and (mobile != '') and (mobile != stationary) : toggleoff = stationary
         else:
             toggleon = ''
 
 
         if (t.totalkeys == 1 and t.space == 1):
            ml = t.mloff
-           if (not stationary) and (mobile != stationary) : toggleoff = mobile
+           if (not stationary) and (stationary != '') and (mobile != stationary) : toggleoff = mobile
            toggleon = stationary
         else:
             toggleoff = None
@@ -1703,7 +1703,7 @@ class SoD(Page):
             if (t.space == 0): #  if we are hitting the space bar rather than releasing its..
                toggleon = sssj
                toggleoff = mobile
-               if (not stationary) and (mobile != stationary) : toggleoff2 = stationary
+               if (not stationary) and (stationary != '') and (mobile != stationary) : toggleoff2 = stationary
             elif (t.space == 1) : #  if we are releasing the space bar ..
                toggleoff = sssj
                if (t.horizkeys > 0 or autorun) : #  and we are moving laterally, or in autorun..
@@ -1766,13 +1766,13 @@ class SoD(Page):
         if (actkeys == 0):
            ml = t.mlon
            toggleon = mobile
-           if (not mobile) and (mobile != stationary): toggleoff = stationary
+           if (not mobile) and (mobile != '') and (mobile != stationary): toggleoff = stationary
         else:
            toggleon = None
 
         if (t.totalkeys == 1 and t.X == 1):
            ml = t.mloff
-           if (not stationary) and (mobile != stationary): toggleoff = mobile
+           if (not stationary) and (stationary != '') and (mobile != stationary): toggleoff = mobile
            toggleon = stationary
         else:
             toggleoff = None
@@ -1824,7 +1824,7 @@ class SoD(Page):
         toggleoff = None
         if (t.totalkeys == 0) :
             ml = t.mlon
-            if (not mobile) and (mobile != stationary):
+            if (not mobile) and (mobile != '') and (mobile != stationary):
                toggleoff = stationary
 
         if (t.totalkeys == 1 and t.W == 1):
@@ -1833,7 +1833,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else:      testKeys = t.horizkeys
         if (testKeys == 1 and t.W == 1) :
-            if (not stationary) and (mobile != stationary):
+            if (not stationary) and (stationary != '') and (mobile != stationary):
                 toggleoff = mobile
             toggleon = stationary
 
@@ -1900,7 +1900,7 @@ class SoD(Page):
         if (t.totalkeys == 0):
            ml = t.mlon
            toggleon = mobile
-           if (not mobile) and (mobile != stationary):
+           if (not mobile) and (mobile != '') and (mobile != stationary):
                toggleoff = stationary
 
         if (t.totalkeys == 1 and t.S == 1):
@@ -1909,7 +1909,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else:      testKeys = t.horizkeys
         if (testKeys == 1 and t.S == 1):
-            if (not stationary) and (mobile != stationary):
+            if (not stationary) and (stationary != '') and (mobile != stationary):
                toggleoff = mobile
 
             toggleon = stationary
@@ -1971,7 +1971,7 @@ class SoD(Page):
         if (t.totalkeys == 0):
             ml = t.mlon
             toggleon = mobile
-            if (not mobile) and (mobile != stationary) :
+            if (not mobile) and (mobile != '') and (mobile != stationary) :
                 toggleoff = stationary
 
         if (t.totalkeys == 1 and t.A == 1) :
@@ -1981,7 +1981,7 @@ class SoD(Page):
         else:      testKeys = t.horizkeys
 
         if (testKeys == 1 and t.A == 1) :
-            if (not stationary) and (mobile != stationary):
+            if (not stationary) and (stationary != '') and (mobile != stationary):
                toggleoff = mobile
             toggleon = stationary
 
@@ -2036,7 +2036,7 @@ class SoD(Page):
         if (t.totalkeys == 0):
            ml = t.mlon
            toggleon = mobile
-           if (not mobile) and (mobile != stationary) :
+           if (not mobile) and (mobile != '') and (mobile != stationary) :
                toggleoff = stationary
 
         if (t.totalkeys == 1 and t.D == 1) :
@@ -2045,7 +2045,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else :     testKeys = t.horizkeys
         if (testKeys == 1 and t.D == 1) :
-            if (not stationary) and (mobile != stationary):
+            if (not stationary) and (stationary != '') and (mobile != stationary):
                 toggleoff = mobile
             toggleon = stationary
 

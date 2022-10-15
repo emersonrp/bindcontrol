@@ -1342,8 +1342,8 @@ class SoD(Page):
 
                                 if (t.canjmp and not (self.GetState('SimpleSJCJ'))):
                                     setattr(t, self.GetState('DefaultMode') + "Mode", t.JumpMode)
-                                    jturnoff = ''
-                                    if (t.jump != t.cjmp): jturnoff = t.jumpifnocj
+                                    jturnoff = None
+                                    if (t.jump != t.cjmp): jturnoff = {t.jumpifnocj}
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : t.blj,

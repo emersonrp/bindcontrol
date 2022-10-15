@@ -1694,7 +1694,7 @@ class SoD(Page):
 
         if (t.totalkeys == 1 and t.space == 1):
            ml = t.mloff
-           if (stationary != '') and (mobile != stationary) : toggleoff = mobile
+           if (not stationary) and (mobile != stationary) : toggleoff = mobile
            toggleon = stationary
         else:
             toggleoff = None
@@ -1703,7 +1703,7 @@ class SoD(Page):
             if (t.space == 0): #  if we are hitting the space bar rather than releasing its..
                toggleon = sssj
                toggleoff = mobile
-               if (stationary != '' and stationary != mobile) : toggleoff2 = stationary
+               if (not stationary) and (mobile != stationary) : toggleoff2 = stationary
             elif (t.space == 1) : #  if we are releasing the space bar ..
                toggleoff = sssj
                if (t.horizkeys > 0 or autorun) : #  and we are moving laterally, or in autorun..
@@ -1772,7 +1772,7 @@ class SoD(Page):
 
         if (t.totalkeys == 1 and t.X == 1):
            ml = t.mloff
-           if (stationary != '') and (mobile != stationary): toggleoff = mobile
+           if (not stationary) and (mobile != stationary): toggleoff = mobile
            toggleon = stationary
         else:
             toggleoff = None
@@ -1833,7 +1833,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else:      testKeys = t.horizkeys
         if (testKeys == 1 and t.W == 1) :
-            if (stationary != '') and (mobile != stationary):
+            if (not stationary) and (mobile != stationary):
                 toggleoff = mobile
             toggleon = stationary
 
@@ -1909,7 +1909,7 @@ class SoD(Page):
         if flight: testKeys = t.totalkeys
         else:      testKeys = t.horizkeys
         if (testKeys == 1 and t.S == 1):
-            if (stationary != '') and (mobile != stationary):
+            if (not stationary) and (mobile != stationary):
                toggleoff = mobile
 
             toggleon = stationary
@@ -1981,7 +1981,7 @@ class SoD(Page):
         else:      testKeys = t.horizkeys
 
         if (testKeys == 1 and t.A == 1) :
-            if (stationary != '') and (mobile != stationary):
+            if (not stationary) and (mobile != stationary):
                toggleoff = mobile
             toggleon = stationary
 
@@ -2040,22 +2040,22 @@ class SoD(Page):
                toggleoff = stationary
 
         if (t.totalkeys == 1 and t.D == 1) :
-           ml = t.mloff
+            ml = t.mloff
 
         if flight: testKeys = t.totalkeys
         else :     testKeys = t.horizkeys
         if (testKeys == 1 and t.D == 1) :
-            if (stationary != '') and (mobile != stationary):
-               toggleoff = mobile
+            if (not stationary) and (mobile != stationary):
+                toggleoff = mobile
             toggleon = stationary
 
         if (sssj and t.space == 1) : #  if (we are jumping with SS+SJ mode enabled
-           toggleon = sssj
-           toggleoff = mobile
+            toggleon = sssj
+            toggleoff = mobile
 
         toggle = ''
         if (toggleon or toggleoff) :
-           toggle = self.actPower_name(None,True,toggleon,toggleoff)
+            toggle = self.actPower_name(None,True,toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'D'})
         bl = f"{bl}{newbits}.txt"

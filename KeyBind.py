@@ -31,6 +31,8 @@ class FileKeyBind(KeyBind):
 
         # remove any initial $$ if we snuck in here with it.
         payload = re.sub(r'^\$\$', '', payload)
+        # and any doubled up '$$'
+        payload = re.sub(r'\$\$\$\$', '$$', payload)
 
         return f'{self.Key} "{payload}"\n'
 

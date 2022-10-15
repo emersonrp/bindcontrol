@@ -46,7 +46,7 @@ class Page(wx.Panel):
         elif isinstance(control, wx.Choice) or isinstance(control, wx.ComboBox):
             sel = control.GetSelection()
             if sel != -1: return control.GetString(control.GetSelection())
-            else        : return None
+            else        : return ''
         elif isinstance(control, wx.ColourPickerCtrl):
             return control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
         elif getattr(control, 'GetValue', None):

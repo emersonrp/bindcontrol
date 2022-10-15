@@ -1,3 +1,4 @@
+import re
 class KeyBind():
     def __init__(self, key, name, page, contents):
 
@@ -27,6 +28,9 @@ class FileKeyBind(KeyBind):
     def GetKeyBindString(self):
 
         payload = '$$'.join([i for i in self.Contents if i])
+
+        # remove any initial $$ if we snuck in here with it.
+        payload = re.sub(r'^\$\$', '', payload)
 
         return f'{self.Key} "{payload}"\n'
 

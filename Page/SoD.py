@@ -49,7 +49,7 @@ class SoD(Page):
             'HasSS'           : True, # for testing
             'RunMode'         : "C",
             'SSMobileOnly'    : False,
-            'SSSJModeEnable'  : False,
+            'SSSJModeEnable'  : True,
 
             'HasSJ'           : True,
             'HasCJ'           : False,
@@ -710,7 +710,7 @@ class SoD(Page):
         if (modestr != "Temp")      : self.makeTempModeKey(profile,t,"ar",curfile,turnoff)
         if (modestr != "QFly")      : self.makeQFlyModeKey(profile,t,"ar",curfile,turnoff,modestr)
 
-        self.sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight,sssj)
+        self.sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight)
 
         curfile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind('nop'))
 
@@ -1702,7 +1702,7 @@ class SoD(Page):
             if (t.space == 0): #  if we are hitting the space bar rather than releasing its..
                toggleon = sssj
                toggleoff = mobile
-               if (stationary and stationary != mobile) : toggleoff2 = stationary
+               if (stationary != '' and stationary != mobile) : toggleoff2 = stationary
             elif (t.space == 1) : #  if we are releasing the space bar ..
                toggleoff = sssj
                if (t.horizkeys > 0 or autorun) : #  and we are moving laterally, or in autorun..
@@ -1710,7 +1710,7 @@ class SoD(Page):
                else: #  otherwise turn on the stationary power..
                    toggleon = stationary
 
-        toggle = toggleoff = ''
+        toggle = ''
         if (toggleon or toggleoff):
            toggle = self.actPower_name(None,True,toggleon,toggleoff,toggleoff2)
 
@@ -2082,7 +2082,8 @@ class SoD(Page):
         else:
             curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mlon + self.actPower_name(None,True,mobile) + bindload))
 
-    def sodAutoRunOffKey(self, t,bl,curfile,mobile,stationary,flight,sssj):
+    # TODO sssj never gets passed in, in citybinder.  Is this right?
+    def sodAutoRunOffKey(self, t,bl,curfile,mobile,stationary,flight,sssj = None):
         toggleon = toggleoff = None
         if sssj and t.space == 1:
             toggleoff = mobile
@@ -2095,15 +2096,15 @@ class SoD(Page):
 
         elif (sssj) :
             if (t.horizkeys > 0 or t.space == 1) :
-               toggleon = t.mlon + self.actPower_name(None,True,mobile,toggleoff)
+                toggleon = t.mlon + self.actPower_name(None,True,mobile,toggleoff)
             else:
-               toggleon = t.mloff + self.actPower_name(None,True,stationary,mobile,toggleoff)
+                toggleon = t.mloff + self.actPower_name(None,True,stationary,mobile,toggleoff)
 
         else:
             if (t.totalkeys > 0) :
-               toggleon = t.mlon + self.actPower_name(None,True,mobile)
+                toggleon = t.mlon + self.actPower_name(None,True,mobile)
             else:
-               toggleon = t.mloff + self.actPower_name(None,True,stationary,mobile)
+                toggleon = t.mloff + self.actPower_name(None,True,stationary,mobile)
 
         bindload = bl + t.KeyState() + '.txt'
         # "[2:]" on next line is to trim off the initial "$$" that dirs() provides

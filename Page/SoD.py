@@ -50,13 +50,13 @@ class SoD(Page):
             'SSMobileOnly'    : False,
             'SSSJModeEnable'  : False,
 
-            'HasSJ'           : False,
-            'HasCJ'           : False,
+            'HasSJ'           : True,
+            'HasCJ'           : True,
             'JumpMode'        : "T",
             'SimpleSJCJ'      : False,
 
-            'HasHover'        : False,
-            'HasFly'          : False,
+            'HasHover'        : True,
+            'HasFly'          : True,
             'HasCF'           : False,
             'FlyMode'         : "F",
             'HasQF'           : False,
@@ -67,10 +67,10 @@ class SoD(Page):
             'TPComboKey'      : 'LSHIFT',
             'TPResetKey'      : 'LCTRL+T',
 
-            'HasTTP'          : False,
-            'TTPBindKey'      : 'LSHIFT+CTRL+LBUTTON',
-            'TTPComboKey'     : 'LSHIFT+CTRL',
-            'TTPResetKey'     : 'LSHIFT+CTRL+T',
+            'HasTTP'          : True,
+            'TTPBindKey'      : 'LSHIFT+LCTRL+LBUTTON',
+            'TTPComboKey'     : 'LSHIFT+LCTRL',
+            'TTPResetKey'     : 'LSHIFT+LCTRL+T',
             'TTPAutoGFly'     : True,
 
             'TPHideWindows'   : True,
@@ -1628,14 +1628,14 @@ class SoD(Page):
             tphovermodeswitch = ''
             ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
             ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( 'nop'))
-            ResetFile.SetBind(self.Ctrls['TTPResetKey'].MakeFileKeyBind(t.detailhi[2:] + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off') + tphovermodeswitch))
+            ResetFile.SetBind(self.Ctrls['TTPResetKey'].MakeFileKeyBind(t.detailhi[2:] + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt') + tphovermodeswitch))
             #  Create tp_off file
             ttp_off = profile.GetBindFile("ttp","ttp_off.txt")
             ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
             ttp_off.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('nop'))
 
             ttp_on1 = profile.GetBindFile("ttp","ttp_on1.txt")
-            ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off') + tphovermodeswitch))
+            ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt') + tphovermodeswitch))
             ttp_on1.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('+down' + profile.BLF('ttp','ttp_on2.txt')))
 
             ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")

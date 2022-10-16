@@ -49,17 +49,6 @@ class PrefsDialog(wx.Dialog):
         buttonSizer.AddButton(wx.Button(self, wx.ID_CANCEL))
         buttonSizer.Realize()
 
-        # # TODO - move this to SoD page
-        # prefsBox.AddControl(
-        #     ctlName = 'ResetKey',
-        #     ctlType = 'keybutton',
-        #     tooltip = 'This key is used by certain modules to reset binds to a sane state.',
-        # )
-
-        # prefsBox.AddControl(
-        #     ctlName = 'ResetFeedback',
-        #     ctlType = 'checkbox',
-        # )
         paddingSizer.Add(sizer, 0, wx.ALL, 10)
         paddingSizer.Add(buttonSizer, 0, wx.ALL|wx.EXPAND, 10)
 

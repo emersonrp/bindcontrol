@@ -31,7 +31,8 @@ class Main(wx.Frame):
             else:
                 bindpath = str(Path.home().joinpath('cohbinds'))
             config.Write('BindPath', bindpath)
-            config.Write('GameBindPath', "Z:\\cohbinds\\")
+            if wx.Platform != '__WXMSW__':
+                config.Write('GameBindPath', "Z:\\cohbinds\\")
             config.WriteBool('UseSplitModKeys', False)
             config.WriteBool('FlushAllBinds', True)
 

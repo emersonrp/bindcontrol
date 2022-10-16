@@ -125,17 +125,7 @@ class General(Page):
         self.OnPickArchetype()
 
     def PopulateBindFiles(self):
-        resetfile = self.Profile.ResetFile()
-        # TODO - make the "tell name" feedback a preference to match citybinder
-        resetfile.SetBind(self.Ctrls['ResetKey'].MakeFileKeyBind(
-                    [
-                        resetfile.BLF(),
-                        # 'tell $name, Keybinds reloaded.',
-                        'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
-                        'powexecname Sprint',
-                        'powexecunqueue',
-                        't $name, SoD Binds Reset'
-                    ]))
+        return
 
     ### EVENT HANDLERS
     def OnPickArchetype(self, _ = {}):

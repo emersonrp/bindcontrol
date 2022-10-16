@@ -57,10 +57,7 @@ class CustomBinds(Page):
             return
 
         bindname = ''
-        if bindpane.Title:
-            # TODO - this is for initializing one of these from a saved profile
-            pass
-        else:
+        if not bindpane.Title: # this is from a "New Bind" button
             dlg = wx.TextEntryDialog(self, 'Enter name for new bind')
             if dlg.ShowModal() == wx.ID_OK:
                 bindname = dlg.GetValue()
@@ -87,6 +84,7 @@ class CustomBinds(Page):
         self.Layout()
 
     def OnDeleteButton(self, _):
+        # TODO delete this bind
         pass
 
     def PopulateBindFiles(self):

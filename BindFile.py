@@ -39,7 +39,7 @@ class BindFile():
         if self == self.Profile.ResetFile():
             subresetpath = Path(self.BindsDir) / "subreset.txt"
             subresetfile = self.Profile.GetBindFile(str(subresetpath))
-            if keybind.Key != self.Profile.General.GetState('ResetKey'):
+            if keybind.Key != self.Profile.SoD.GetState('ResetKey'):
                 subresetfile.SetBind(keybind, contents)
 
     # Windows path b/c the game will use it.

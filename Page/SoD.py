@@ -30,6 +30,8 @@ class SoD(Page):
             'MouseChord'      : 0,
             'AutoMouseLook'   : 0,
 
+            'ResetKey'        : 'LCTRL-R',
+            'ResetFeedback'   : False,
             'SprintPower'     : 'Sprint',
             'SprintSoD'       : True,  # "Base" in citybinder
             'SprintMode'      : '',
@@ -259,6 +261,15 @@ class SoD(Page):
         ##### GENERAL SETTINGS
         generalSizer = ControlGroup(self, self, 'General Settings')
 
+        generalSizer.AddControl(
+            ctlName = 'ResetKey',
+            ctlType = 'keybutton',
+            tooltip = 'This key is used by certain modules to reset binds to a sane state.',
+        )
+        generalSizer.AddControl(
+            ctlName = 'ResetFeedback',
+            ctlType = 'checkbox',
+        )
         generalSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'choice',
             contents = ('No SoD','Sprint','Super Speed','Jump','Fly'),)
         self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
@@ -1021,6 +1032,17 @@ class SoD(Page):
 
         ResetFile = profile.ResetFile()
 
+        ResetFile.SetBind(self.Ctrls['ResetKey'].MakeFileKeyBind(
+                    [
+                        ResetFile.BLF(),
+                        # 'tell $name, Keybinds reloaded.',
+                        'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
+                        'powexecname Sprint',
+                        'powexecunqueue',
+                        # TODO - honor ResetFeedback checkbox
+                        't $name, SoD Binds Reset'
+                    ]))
+
         if (self.GetState('DefaultMode') == "NonSoD"):
             if (not self.GetState('NonSoDEnable')):
                 wx.MessageBox("Enabling NonSoD mode, since it is set as your default mode.", "Mode Changed", wx.OK|wx.ICON_WARNING)
@@ -1660,7 +1682,7 @@ class SoD(Page):
         u = int(moddir == 'up')
         d = int(moddir == 'down')
 
-        curfile.SetBind(p.General.Ctrls['ResetKey'].MakeFileKeyBind(
+        curfile.SetBind(self.Ctrls['ResetKey'].MakeFileKeyBind(
                 f'up {u}$$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
                 str(turnoff) +
                 '$$t $name, SoD Binds Reset$$' + curfile.BaseReset() +
@@ -2332,6 +2354,8 @@ UI.Labels.update( {
     'AutoRun'        : 'Auto Run',
     'Follow'         : 'Follow Target',
 
+    'ResetKey'       : 'Reset All Binds',
+    'ResetFeedback'  : 'Enable Reset Feedback Self-/tell',
     'DefaultMode'    : 'Default SoD Mode',
     'MouseChord'     : 'Mousechord is SoD Forward',
     'AutoMouseLook'  : 'Mouselook when moving',

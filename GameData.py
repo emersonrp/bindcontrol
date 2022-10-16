@@ -978,7 +978,7 @@ Emotes = {
 
 
 
-# TODO -- these emotes seem not to be in the in-game picker.  Really really investigate
+# TODO -- these emotes seem not to be in the in-game picker, but are in the game.  Filter them into the structure above.
 '''
             'Cameraphone',
             'Despair',

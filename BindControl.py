@@ -6,6 +6,7 @@ import wx.adv
 import wx.html
 
 from Profile import Profile
+from UI.PrefsDialog import PrefsDialog
 
 ###################
 # Main Window Class
@@ -20,12 +21,15 @@ class Main(wx.Frame):
         # Start with a new profile
         self.Profile = Profile(self)
 
+        self.PrefsDialog = PrefsDialog(self)
+
         ProfMenu = wx.Menu()
 
         Profile_new   = ProfMenu.Append(-1, "New Profile...", "Create a new profile")
         Profile_load  = ProfMenu.Append(-1, "Load Profile...", "Load an existing profile")
         Profile_save  = ProfMenu.Append(-1, "Save Profile", "Save the current profile")
         ProfMenu.AppendSeparator()
+        Profile_preferences = ProfMenu.Append(wx.ID_PREFERENCES, "&Preferences", "Configure BindControl")
         Profile_exit  = ProfMenu.Append(wx.ID_EXIT)
 
         Profile_new.Enable(False)
@@ -51,10 +55,11 @@ class Main(wx.Frame):
         self.SetMenuBar(MenuBar)
 
         # MENUBAR EVENTS
-        self.Bind(wx.EVT_MENU, None, Profile_new)
-        self.Bind(wx.EVT_MENU, self.Profile.LoadFromFile, Profile_load)
-        self.Bind(wx.EVT_MENU, self.Profile.SaveToFile  , Profile_save)
-        self.Bind(wx.EVT_MENU, self.OnMenuExitApplication, Profile_exit)
+        self.Bind(wx.EVT_MENU , None                       , Profile_new)
+        self.Bind(wx.EVT_MENU , self.Profile.LoadFromFile  , Profile_load)
+        self.Bind(wx.EVT_MENU , self.Profile.SaveToFile    , Profile_save)
+        self.Bind(wx.EVT_MENU , self.OnMenuPrefsDialog     , Profile_preferences)
+        self.Bind(wx.EVT_MENU , self.OnMenuExitApplication , Profile_exit)
 
         self.Bind(wx.EVT_MENU, None, Help_manual)
         self.Bind(wx.EVT_MENU, None, Help_faq)
@@ -82,6 +87,9 @@ class Main(wx.Frame):
 
     def OnWriteBindsButton(self, _):
         self.Profile.WriteBindFiles()
+
+    def OnMenuPrefsDialog(self, _):
+        self.PrefsDialog.ShowModal()
 
     def OnMenuAboutBox(self, _):
         if self.about_info is None:

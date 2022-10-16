@@ -11,7 +11,7 @@ class IncarnateBox(wx.StaticBoxSizer):
 
         incarnateSizer = wx.GridBagSizer(4, 4)
 
-        self.Add(incarnateSizer, 1, wx.EXPAND|wx.ALL, 6)
+        self.Add(incarnateSizer, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
 
         self.hybridInc    = IncarnatePicker(staticbox, label = "Hybrid")
         self.loreInc      = IncarnatePicker(staticbox, label = "Lore")

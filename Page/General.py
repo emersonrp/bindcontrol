@@ -21,19 +21,11 @@ class General(Page):
             'Archetype': 'Mastermind',
             'Primary': '',
             'Secondary': '',
-            'Epic': 'Weapon Mastery',
-            # TODO - help text about WINEPREFIX etc for Mac/Linux users
-            'BindsDir': str(Path.home().joinpath("cohbinds")),
-            # TODO put this back to Z:\\cohbinds\\
-            'GameBindsDir' : "Z:\\cbcohbinds\\",
-            'ResetKey': 'LCTRL+R',
-            'ResetFeedback': 1,
+            'Epic': '',
             'Pool1': '',
             'Pool2': '',
             'Pool3': '',
             'Pool4': '',
-            'UseSplitModKeys': False,
-            'FlushAllBinds' : False,
         }
 
     def BuildPage(self):
@@ -113,56 +105,17 @@ class General(Page):
             callback = self.OnPickPoolPower,
         )
 
-        ### Right column
-        rightCol = wx.BoxSizer(wx.VERTICAL)
-
         # Incarnate interface
         self.incarnateBox = IncarnateBox(self)
 
-        # preferences
-        prefsBox = ControlGroup(self, self, 'Preferences')
-        prefsBox.AddControl(
-            ctlName = 'BindsDir',
-            ctlType = 'dirpicker',
-        )
-        if (wx.Platform != '__WXMSW__'):
-            prefsBox.AddControl(
-                ctlName = 'GameBindsDir',
-                ctlType = 'text',
-                tooltip = 'When playing via Wine, the game\'s file paths will be different than the native ones.  Put a Windows path into this box that describes where Wine will find the above directory.',
-            )
-        prefsBox.AddControl(
-            ctlName = 'ResetKey',
-            ctlType = 'keybutton',
-            tooltip = 'This key is used by certain modules to reset binds to a sane state.',
-        )
-
-        prefsBox.AddControl(
-            ctlName = 'ResetFeedback',
-            ctlType = 'checkbox',
-        )
-
-        prefsBox.AddControl(
-            ctlName = 'UseSplitModKeys',
-            ctlType = 'checkbox',
-        )
-
-        prefsBox.AddControl(
-            ctlName = 'FlushAllBinds',
-            ctlType = 'checkbox',
-        )
-
-        rightCol.Add(self.incarnateBox, 1, wx.ALL|wx.EXPAND, 6)
-        rightCol.Add(prefsBox,     0, wx.ALL, 6)
-
-        topSizer.Add(powersBox, 1, wx.ALL, 6)
-        topSizer.Add(rightCol,  2, wx.ALL, 6)
+        topSizer.Add(powersBox, 1, wx.ALL|wx.EXPAND, 6)
+        topSizer.Add(self.incarnateBox,  2, wx.ALL|wx.EXPAND, 6)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(topSizer, flag=wx.ALL|wx.EXPAND, border = 20)
 
-        testPowerPicker = PowerPicker(self)
-        paddingSizer.Add(testPowerPicker, flag=wx.ALL|wx.EXPAND, border = 20)
+        # testPowerPicker = PowerPicker(self)
+        # paddingSizer.Add(testPowerPicker, flag=wx.ALL|wx.EXPAND, border = 20)
 
         self.SynchronizeUI()
 
@@ -239,13 +192,6 @@ class General(Page):
         pass
 
     UI.Labels.update({
-        'BindsDir'        : 'Base Binds Directory',
-        'GameBindsDir'    : 'In-Game Binds Directory',
-        'ResetFile'       : 'Reset All Binds file',
-        'ResetKey'        : 'Reset All Binds',
-        'ResetFeedback'   : 'Enable Reset Feedback Self-/tell',
-        'UseSplitModKeys' : 'Bind left and right modifier keys separately',
-        'FlushAllBinds'   : 'Set all binds to default before reapplying',
         'Pool1'           : "Power Pool 1",
         'Pool2'           : "Power Pool 2",
         'Pool3'           : "Power Pool 3",

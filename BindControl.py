@@ -5,6 +5,7 @@ import wx.lib.mixins.inspection
 import wx.adv
 import wx.html
 
+from pathlib import Path
 from Profile import Profile
 from UI.PrefsDialog import PrefsDialog
 
@@ -20,6 +21,19 @@ class Main(wx.Frame):
 
         # Start with a new profile
         self.Profile = Profile(self)
+
+        config = wx.FileConfig('bindcontrol')
+        wx.Config.Set(config)
+        if not config.Exists('BindPath'):
+            # we don't have a config file at all;  initialize one with defaults
+            if wx.Platform == '__WXMSW__':
+                bindpath = "C:\\cohbinds\\"
+            else:
+                bindpath = str(Path.home().joinpath('cohbinds'))
+            config.Write('BindPath', bindpath)
+            config.Write('GameBindPath', "Z:\\cohbinds\\")
+            config.WriteBool('UseSplitModKeys', False)
+            config.WriteBool('FlushAllBinds', True)
 
         self.PrefsDialog = PrefsDialog(self)
 
@@ -89,7 +103,15 @@ class Main(wx.Frame):
         self.Profile.WriteBindFiles()
 
     def OnMenuPrefsDialog(self, _):
-        self.PrefsDialog.ShowModal()
+        if self.PrefsDialog.ShowModal() == wx.ID_OK:
+            config = wx.Config.Get()
+            config.Write('BindPath', self.PrefsDialog.bindsDirPicker.GetPath())
+            if self.PrefsDialog.gameBindsDirPicker:
+                config.Write('GameBindPath', self.PrefsDialog.gameBindsDirPicker.GetValue())
+            config.WriteBool('UseSplitModKeys', self.PrefsDialog.UseSplitModKeys.GetValue())
+            config.WriteBool('FlushAllBinds', self.PrefsDialog.FlushAllBinds.GetValue())
+
+            config.Flush()
 
     def OnMenuAboutBox(self, _):
         if self.about_info is None:

@@ -13,11 +13,11 @@ class SimpleBindPane(CustomBindPaneParent):
         self.Title = init.get('Title', '')
 
     def Serialize(self):
-        data = {
+        return {
             'Type'     : 'SimpleBind',
-            'Title'    : self.GetLabel(),
+            'Title'    : self.Title,
             'Contents' : self.Ctrls['BindContents'].GetValue(),
-            'Key'      : self.Ctrls['BindKey'].GetValue(),
+            'Key'      : self.Ctrls['BindKey'].GetLabel(),
         }
 
     def BuildBindUI(self, page):

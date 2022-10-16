@@ -202,6 +202,8 @@ class KeySelectDialog(wx.Dialog):
         self.ShowBind()
 
         # TODO: this is failing in MSW
+        # TODO 2: would be nice to pass in the control being checked so if we type the key
+        # that's already in there it doesn't complain that there's a conflict with itself
         conflicts = self.Profile.CheckConflict(self.Binding)
         if conflicts:
             self.kbErr.SetLabel("CONFLICT FOUND")

@@ -35,7 +35,7 @@ class Profile(wx.Notebook):
 
     def CreatePage(self, module):
         module.BuildPage()
-        page = self.AddPage(module, module.TabTitle)
+        self.AddPage(module, module.TabTitle)
 
         modname = type(module).__name__
 
@@ -66,7 +66,7 @@ class Profile(wx.Notebook):
         conflicts = []
 
         for pageName in self.Pages:
-            page = getattr(self, pageName, None)
+            page = getattr(self, pageName)
             for ctrlname, ctrl in page.Ctrls.items():
                 # TODO TODO TODO this next line is breaking this on Win wxpython 4.2.0
                 if not ctrl.IsEnabled(): continue
@@ -122,14 +122,12 @@ class Profile(wx.Notebook):
                     savedata[pagename][controlname] = value
 
         # TODO - iterate any custom binds and add them to the structure
-        savedata['Custom Binds'] = []
+        savedata['CustomBinds'] = []
 
         customPage = getattr(self, 'CustomBinds')
         for pane in customPage.PaneSizer.GetChildren():
             bindpane = pane.GetSizer().GetChildren()[0].GetWindow()
-            savedata['Custom Binds'].append(bindpane.Serialize())
-
-        return
+            savedata['CustomBinds'].append(bindpane.Serialize())
 
         dumpstring = json.dumps(savedata, indent=0)
         try:

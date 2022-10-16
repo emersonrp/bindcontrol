@@ -293,14 +293,14 @@ class SoD(Page):
 
 
         ##### TEMP TRAVEL POWERS
-        tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
+        self.tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
         # if (temp travel powers exist)?  Should this be "custom"?
-        tempSizer.AddControl( ctlName = 'TempEnable', ctlType = 'checkbox',)
+        self.tempSizer.AddControl( ctlName = 'TempEnable', ctlType = 'checkbox',)
         self.Ctrls['TempEnable'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        tempSizer.AddControl( ctlName = 'TempMode', ctlType = 'keybutton',)
-        tempSizer.AddControl( ctlName = 'TempTray', ctlType = 'spinbox', contents = [1, 8],)
-        tempSizer.AddControl( ctlName = 'TempTraySwitch', ctlType = 'keybutton',)
-        self.leftColumn.Add(tempSizer, 0, wx.EXPAND)
+        self.tempSizer.AddControl( ctlName = 'TempMode', ctlType = 'keybutton',)
+        self.tempSizer.AddControl( ctlName = 'TempTray', ctlType = 'spinbox', contents = [1, 8],)
+        self.tempSizer.AddControl( ctlName = 'TempTraySwitch', ctlType = 'keybutton',)
+        self.leftColumn.Add(self.tempSizer, 0, wx.EXPAND)
 
         ##### SUPER SPEED
         superSpeedSizer = ControlGroup(self, self, 'Super Speed')
@@ -471,6 +471,14 @@ class SoD(Page):
             c['DwarfTray']         .Enable(self.GetState('UseDwarf'))
             c['DwarfTray'].CtlLabel.Enable(self.GetState('UseDwarf'))
 
+            # TODO - for now, hide temp travel power stuff;
+            # redo later using named power instead of trayslots
+            tempGridSizer = self.tempSizer.GetChildren()[0].GetSizer()
+            for ctrl in tempGridSizer.GetChildren():
+                ctrl.GetWindow().Enable(False)
+            self.leftColumn.Hide(self.tempSizer)
+            # end TODO temp sizer
+
             # show/hide kheldian-influenced controls depending on selected archetype;
             archetype = self.Profile.Archetype()
             kheldianOnlyControls = ['HasCF', 'HasQF', 'QFlyMode']
@@ -478,7 +486,7 @@ class SoD(Page):
 
             kheldianGridSizer = self.kheldianSizer.GetChildren()[0].GetSizer()
             flyGridSizer      = self.flySizer.GetChildren()[0].GetSizer()
-            if archetype == "Peacebringer" or archetype == "Warshade":
+            if False and archetype == "Peacebringer" or archetype == "Warshade":
                 # show kheldian sizer, enable controls
                 for ctrl in kheldianGridSizer.GetChildren():
                     ctrl.GetWindow().Enable(True)
@@ -501,7 +509,7 @@ class SoD(Page):
                 # hide kheldiansizer, disable controls
                 for ctrl in kheldianGridSizer.GetChildren():
                     ctrl.GetWindow().Enable(False)
-                    self.rightColumn.Hide(self.kheldianSizer)
+                self.rightColumn.Hide(self.kheldianSizer)
 
                 # en/disable controls in other sizers
                 for c in kheldianOnlyControls:

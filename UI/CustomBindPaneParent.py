@@ -2,25 +2,22 @@
 import wx
 
 class CustomBindPaneParent(wx.CollapsiblePane):
-    def __init__(self, page, bind = None):
+    def __init__(self, page, init = {}):
         wx.CollapsiblePane.__init__(self, page.scrolledPane,
                 style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
         self.Ctrls = {}
+        self.Init  = init
+        self.Title = ''
 
         # TODO - simplebind just have the one key<->contents,
         # but buffer binds have a whole set of them.
-        self.Key            = ''
-        self.Name           = ''
-        self.Contents       = ''
-        self.Page           = page
+        # self.Key            = ''
+        # self.Name           = ''
+        # self.Contents       = ''
+        # self.Page           = page
         self.bindclass      = type(self).__name__
         self.unique_bind_id = str(wx.NewIdRef().GetId())
-
-        if bind:
-            if bind.get('key',      None): self.Key      = bind['key']
-            if bind.get('name',     None): self.Title    = bind['title']
-            if bind.get('contents', None): self.Contents = bind['contents']
 
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
 

@@ -56,11 +56,11 @@ class CustomBinds(Page):
             wx.LogError("Something tried to add an empty bindpane to the page")
             return
 
+        bindname = ''
         if bindinit:
             # TODO - this is for initializing one of these from a saved profile
             pass
         else:
-            bindname = ''
             dlg = wx.TextEntryDialog(self, 'Enter name for new bind')
             if dlg.ShowModal() == wx.ID_OK:
                 bindname = dlg.GetValue()
@@ -72,10 +72,8 @@ class CustomBinds(Page):
 
         self.Panes.append(bindpane)
 
-
         bindpane.Title = bindname
         bindpane.BuildBindUI(self)
-        bindpane.SetBackgroundColour([240,240,240])
 
         # put it in a box with a 'delete' button
         deleteSizer = wx.BoxSizer(wx.HORIZONTAL)

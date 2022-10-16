@@ -1,6 +1,8 @@
 import wx
 import string
 import UI
+import wx.lib.newevent
+KeyChanged, EVT_KEY_CHANGED = wx.lib.newevent.NewEvent()
 
 # Platform-specific keyevent flags for telling left from right
 modKeyFlags = {}
@@ -34,6 +36,7 @@ def KeySelectEventHandler(evt):
         if newKey:
             button.SetLabel(newKey)
             button.Key = newKey
+            wx.PostEvent(button, KeyChanged())
 
 class KeySelectDialog(wx.Dialog):
     def __init__(self, button):
@@ -297,10 +300,11 @@ class KeySelectDialog(wx.Dialog):
 
         # Add alphanumerics
         for alphanum in (list(string.ascii_uppercase) + list(range(10))):
-                self.Keymap[ord(str(alphanum))] = alphanum
+            self.Keymap[ord(str(alphanum))] = alphanum
 
 from KeyBind import ControlKeyBind
 class bcKeyButton(wx.Button):
+
     def __init__(self, parent, id, init = {}):
         wx.Button.__init__(self, parent, id)
         self.CtlName: str            = init.get('CtlName', None)
@@ -312,7 +316,10 @@ class bcKeyButton(wx.Button):
         self.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
         self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
 
-    def ClearButton(self, _): self.SetLabel("")
+
+    def ClearButton(self, _):
+        self.SetLabel("")
+        wx.PostEvent(self, KeyChanged())
 
     def MakeFileKeyBind(self, contents):
         return self.KeyBind.MakeFileKeyBind(contents)

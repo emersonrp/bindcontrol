@@ -77,8 +77,9 @@ class KeySelectDialog(wx.Dialog):
 
         if(modKeyFlags):
             self.SeparateLRChooser = wx.CheckBox( self, -1, "Bind left/right mod keys separately")
+            self.SeparateLRChooser.SetToolTip("This allows you to bind specifically left or right side mod keys for this bind.  This will not change the global preference.")
             sizer.Add( self.SeparateLRChooser, 0, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
-            self.SeparateLRChooser.SetValue( self.Profile.General.GetState('UseSplitModKeys') )
+            self.SeparateLRChooser.SetValue( wx.Config.Get().ReadBool('UseSplitModKeys') )
 
         # Wrap everything in a vbox to add some padding
         vbox = wx.BoxSizer(wx.VERTICAL);

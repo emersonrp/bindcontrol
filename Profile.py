@@ -28,11 +28,11 @@ class Profile(wx.Notebook):
         # Add the individual tabs, in order.
         self.CreatePage(General(self))
         self.CreatePage(Gameplay(self))
+        self.CreatePage(CustomBinds(self))
         self.CreatePage(SoD(self))
         self.CreatePage(InspirationPopper(self))
         self.CreatePage(Mastermind(self))
         #self.CreatePage(ComplexBinds(self))
-        self.CreatePage(CustomBinds(self))
 
     def CreatePage(self, module):
         module.BuildPage()
@@ -49,9 +49,9 @@ class Profile(wx.Notebook):
     #####
     # Convenience / JIT accessors
     def Name(self)         : return self.General.GetState('Name')
-    def BindsDir(self)     : return self.General.GetState('BindsDir')
     def Archetype(self)    : return self.General.GetState('Archetype')
-    def GameBindsDir(self) : return (self.General.GetState('GameBindsDir') or self.BindsDir())
+    def BindsDir(self)     : return wx.Config.Get().Read('BindPath')
+    def GameBindsDir(self) : return wx.Config.Get().Read('GameBindPath') or self.BindsDir()
     def ResetFile(self)    : return self.GetBindFile("reset.txt")
 
     def BLF(self, *args):

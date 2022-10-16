@@ -86,7 +86,7 @@ class Profile(wx.Notebook):
     def ProfileFile(self):
         return Path(self.ProfilePath(), self.Name() + ".bcp")
 
-    def SaveToFile(self, event):
+    def SaveToFile(self, _):
 
         savefile = self.ProfileFile()
 
@@ -128,7 +128,7 @@ class Profile(wx.Notebook):
         except Exception as e:
             wx.LogError(f"Problem saving to file '{savefile}': {e}")
 
-    def LoadFromFile(self, event):
+    def LoadFromFile(self, _):
 
         with wx.FileDialog(self, "Open Profile file",
                 wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",

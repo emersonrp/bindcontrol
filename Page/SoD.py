@@ -42,21 +42,21 @@ class SoD(Page):
             'DetailMove'      : 50,
             'Feedback'        : False,
 
-            'NonSoDEnable'    : False,
-            'NonSoDMode'      : 'CTRL+M',
+            'NonSoDEnable'    : True,
+            'NonSoDMode'      : '[',
 
             'HasSS'           : True,
             'RunMode'         : "C",
-            'SSMobileOnly'    : False,
+            'SSMobileOnly'    : True,
             'SSSJModeEnable'  : False,
 
-            'HasSJ'           : True,
-            'HasCJ'           : True,
+            'HasSJ'           : False,
+            'HasCJ'           : False,
             'JumpMode'        : "T",
             'SimpleSJCJ'      : False,
 
-            'HasHover'        : True,
-            'HasFly'          : True,
+            'HasHover'        : False,
+            'HasFly'          : False,
             'HasCF'           : False,
             'FlyMode'         : "F",
             'HasQF'           : False,
@@ -67,7 +67,7 @@ class SoD(Page):
             'TPComboKey'      : 'LSHIFT',
             'TPResetKey'      : 'LCTRL+T',
 
-            'HasTTP'          : True,
+            'HasTTP'          : False,
             'TTPBindKey'      : 'LSHIFT+LCTRL+LBUTTON',
             'TTPComboKey'     : 'LSHIFT+LCTRL',
             'TTPResetKey'     : 'LSHIFT+LCTRL+T',
@@ -533,14 +533,14 @@ class SoD(Page):
         blbo = p.get('blbo' , t.blbo)
         # blsd = p.get('blsd' , t.blsd) # used in commented-out code
 
-        path      = p.get('path'     , t.path)
-        gamepath  = p.get('gamepath' , t.gamepath)
-        patha     = p.get('patha'    , t.patha)
-        gamepatha = p.get('gamepatha'    , t.gamepatha)
-        pathf     = p.get('pathf'    , t.pathf)
-        gamepathf = p.get('gamepathf'    , t.gamepathf)
-        pathbo    = p.get('pathbo'   , t.pathbo)
-        # pathsd  = p.get('pathsd'   , t.pathsd) # used in commented-out code
+        path      = p.get('path'      , t.path)
+        gamepath  = p.get('gamepath'  , t.gamepath)
+        patha     = p.get('patha'     , t.patha)
+        gamepatha = p.get('gamepatha' , t.gamepatha)
+        pathf     = p.get('pathf'     , t.pathf)
+        gamepathf = p.get('gamepathf' , t.gamepathf)
+        pathbo    = p.get('pathbo'    , t.pathbo)
+        # pathsd  = p.get('pathsd'    , t.pathsd) # used in commented-out code
 
         mobile     = p.get('mobile'     , None)
         stationary = p.get('stationary' , None)
@@ -886,9 +886,9 @@ class SoD(Page):
                     cur.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload))
                 else:
                     # TODO - what is the reasoning here for two files?  wtf _s.txt
-                    bindload  = f"{t.pathas}{t.KeyState()}.txt"
-                    bindload2 = f"{t.pathas}{t.KeyState()}_s.txt"
-                    tgl = p.GetBindFile(bindload2)
+                    bindload  = f"{t.blas}{t.KeyState()}.txt"
+                    bindload2 = f"{t.blas}{t.KeyState()}_s.txt"
+                    tgl = p.GetBindFile(f"{t.pathas}{t.KeyState()}_s.txt")
                     cur.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload2))
                     tgl.SetBind(FileKeyBind(key = key, contents = t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload))
 
@@ -1292,7 +1292,9 @@ class SoD(Page):
                                         'path'       : t.pathn,
                                         'gamepath'   : t.gamepathn,
                                         'patha'      : t.pathan,
+                                        'gamepatha'  : t.gamepathan,
                                         'pathf'      : t.pathfn,
+                                        'gamepathf'  : t.gamepathfn,
                                         'mobile'     : None,
                                         'stationary' : None,
                                         'modestr'    : "NonSoD",
@@ -1352,7 +1354,9 @@ class SoD(Page):
                                         'path'       : t.pathj,
                                         'gamepath'   : t.gamepathj,
                                         'patha'      : t.pathaj,
+                                        'gamepatha'  : t.gamepathaj,
                                         'pathf'      : t.pathfj,
+                                        'gamepathf'  : t.gamepathfj,
                                         'mobile'     : t.jump,
                                         'stationary' : t.cjmp,
                                         'modestr'    : "Jump",
@@ -1433,7 +1437,9 @@ class SoD(Page):
                                         'path'       : t.patht,
                                         'gamepath'   : t.gamepatht,
                                         'patha'      : t.pathat,
+                                        'gamepatha'  : t.gamepathat,
                                         'pathf'      : t.pathft,
+                                        'gamepathf'  : t.gamepathft,
                                         'mobile'     : trayslot,
                                         'stationary' : trayslot,
                                         'modestr'    : "Temp",

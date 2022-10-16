@@ -35,9 +35,16 @@ class Main(wx.Frame):
                 config.Write('GameBindPath', "Z:\\cohbinds\\")
             config.WriteBool('UseSplitModKeys', False)
             config.WriteBool('FlushAllBinds', True)
+            # TODO the commented code for repositioning the window also caused a terrible resize, investigate.
+            #winPos = self.GetPosition()
+            #config.WriteInt("WindowX", winPos.x)
+            #config.WriteInt("WindowY", winPos.y)
+
+        #self.SetSize(config.ReadInt('WindowX'), config.ReadInt('WindowY'), -1, -1, wx.SIZE_USE_EXISTING)
 
         self.PrefsDialog = PrefsDialog(self)
 
+        # "Profile" Menu
         ProfMenu = wx.Menu()
 
         Profile_new   = ProfMenu.Append(-1, "New Profile...", "Create a new profile")
@@ -81,21 +88,21 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, None, Help_license)
         self.Bind(wx.EVT_MENU, self.OnMenuAboutBox,      Help_about)
 
-        AppIcon = wx.Icon()
-        AppIcon.LoadFile('icons/BindControl.ico', wx.BITMAP_TYPE_ICO)
-        self.SetIcon(AppIcon)
+        #self.Bind(wx.EVT_MOVE, self.OnMove)
 
-        # TODO - read in the config for the window (size, location, etc)
-        # and apply it before ->Show()
+        self.AppIcon = wx.Icon()
+        self.AppIcon.LoadFile('icons/BindControl.ico', wx.BITMAP_TYPE_ICO)
+        self.SetIcon(self.AppIcon)
 
         self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
+        # TODO open with no profile, force "new" or "load"
+        # Probably want Profile() to return something to fill the sizer
         self.Sizer.Add(self.Profile, 1, wx.EXPAND | wx.ALL, 3)
 
+        # WRITE BUTTON
         WriteButton = wx.Button(self, -1, "Write Binds")
         self.Sizer.Add(WriteButton, 0, wx.EXPAND | wx.ALL, 10)
-
-        # WRITE BUTTON EVENT
         self.Bind(wx.EVT_BUTTON, self.OnWriteBindsButton, WriteButton)
 
         self.SetSizerAndFit(self.Sizer)
@@ -118,9 +125,18 @@ class Main(wx.Frame):
         if self.about_info is None:
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
+            info.SetIcon(self.AppIcon)
             info.SetName('BindControl')
-            info.SetVersion('0.1')
-            info.SetDescription("BindControl can help you set up custom keybinds in City of Heroes/Villains, including speed-on-demand binds.\n\nBased on CityBinder 0.76, Copyright (C) 2005-2006 Jeff Sheets\n\nSpeed-On-Demand binds were originally created by Gnarley\'s Speed On Demand Binds Program.  Advanced Teleport Binds by DrLetharga.")
+            info.SetVersion('0.5')
+            info.SetDescription("""
+BindControl can help you set up custom keybinds in City of Heroes/Villains, including speed-on-demand binds.
+
+Based on CityBinder 0.76, Copyright (C) 2005-2006 Jeff Sheets
+
+Speed-On-Demand binds were originally created by Gnarley's Speed On Demand Binds Program.  Advanced Teleport Binds by DrLetharga.
+
+Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
+""")
             info.SetCopyright('(c) 2010-2022 R Pickett <emerson@hayseed.net>')
             info.SetWebSite('https://github.com/emersonrp/bindcontrol')
             self.about_info = info
@@ -129,6 +145,13 @@ class Main(wx.Frame):
 
     def OnMenuExitApplication(self, _):
         self.Close(True)
+
+#     def OnMove(self, _):
+#         winPos = self.GetPosition()
+#         config = wx.Config.Get()
+#         config.WriteInt("WindowX", winPos.x)
+#         config.WriteInt("WindowY", winPos.y)
+
 
 class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
     def OnInit(self):

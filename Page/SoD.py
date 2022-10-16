@@ -141,7 +141,7 @@ class SoD(Page):
         trLabel = wx.StaticText(staticbox, label = 'Turn Right')
         keySizer.Add(trLabel, [0,2], flag = wx.ALIGN_CENTER)
 
-        tleftButton = bcKeyButton(staticbox, -1, '')
+        tleftButton = bcKeyButton(staticbox, -1, )
         tleftButton.SetLabel(self.Init['TurnLeft'])
         self.Ctrls['TurnLeft'] = tleftButton
         tleftButton.CtlName = 'TurnLeft'
@@ -151,7 +151,7 @@ class SoD(Page):
         tleftButton.KeyBind = ControlKeyBind(self.Init['TurnLeft'], 'Turn Left', self.TabTitle)
         keySizer.Add(tleftButton, [1,0])
 
-        forwardButton = bcKeyButton(staticbox, -1, '')
+        forwardButton = bcKeyButton(staticbox, -1, )
         self.Ctrls['Forward'] = forwardButton
         forwardButton.SetLabel(self.Init['Forward'])
         forwardButton.CtlName = 'Forward'
@@ -161,7 +161,7 @@ class SoD(Page):
         forwardButton.KeyBind = ControlKeyBind(self.Init['Forward'], 'Forward', self.TabTitle)
         keySizer.Add(forwardButton, [1,1])
 
-        trightButton = bcKeyButton(staticbox, -1, '')
+        trightButton = bcKeyButton(staticbox, -1, )
         self.Ctrls['TurnRight'] = trightButton
         trightButton.SetLabel(self.Init['TurnRight'])
         trightButton.CtlName = 'TurnRight'
@@ -175,7 +175,7 @@ class SoD(Page):
         backLabel = wx.StaticText(staticbox, label = 'Back')
         rightLabel = wx.StaticText(staticbox, label = 'Right')
 
-        leftButton = bcKeyButton(staticbox, -1, '')
+        leftButton = bcKeyButton(staticbox, -1, )
         self.Ctrls['Left'] = leftButton
         leftButton.SetLabel(self.Init['Left'])
         leftButton.CtlName = 'Left'
@@ -185,7 +185,7 @@ class SoD(Page):
         leftButton.KeyBind = ControlKeyBind(self.Init['Left'], 'Left', self.TabTitle)
         keySizer.Add(leftButton, [2,0])
 
-        backButton = bcKeyButton(staticbox, -1, '')
+        backButton = bcKeyButton(staticbox, -1, )
         backButton.SetLabel(self.Init['Back'])
         self.Ctrls['Back'] = backButton
         backButton.CtlName = 'Back'
@@ -195,7 +195,7 @@ class SoD(Page):
         backButton.KeyBind = ControlKeyBind(self.Init['Back'], 'Back', self.TabTitle)
         keySizer.Add(backButton, [2,1])
 
-        rightButton = bcKeyButton(staticbox, -1, '')
+        rightButton = bcKeyButton(staticbox, -1, )
         self.Ctrls['Right'] = rightButton
         rightButton.SetLabel(self.Init['Right'])
         rightButton.CtlName = 'Right'
@@ -212,7 +212,7 @@ class SoD(Page):
         downLabel = wx.StaticText(staticbox, label = 'Down')
         upLabel   = wx.StaticText(staticbox, label = 'Up')
 
-        downButton = bcKeyButton(staticbox, -1, '')
+        downButton = bcKeyButton(staticbox, -1, )
         self.Ctrls['Down'] = downButton
         downButton.SetLabel(self.Init['Down'])
         downButton.CtlName = 'Down'
@@ -222,7 +222,7 @@ class SoD(Page):
         downButton.KeyBind = ControlKeyBind(self.Init['Down'], 'Down', self.TabTitle)
         keySizer.Add(downButton, [4,0], [1,1], wx.TOP, 10)
 
-        upButton = bcKeyButton(staticbox, -1, '')
+        upButton = bcKeyButton(staticbox, -1, )
         self.Ctrls['Up'] = upButton
         upButton.SetLabel(self.Init['Up'])
         upButton.CtlName = 'Up'

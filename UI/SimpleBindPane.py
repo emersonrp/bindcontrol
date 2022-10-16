@@ -1,7 +1,7 @@
 import wx
 import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
-from UI.KeySelectDialog import KeySelectEventHandler
+from UI.KeySelectDialog import bcKeyButton
 from UI.PowerBinderDialog import PowerBinderButton
 
 ### CustomBind subclasses for the individual bind types
@@ -34,15 +34,17 @@ class SimpleBindPane(CustomBindPaneParent):
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"), 0, wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(BindContentsCtrl, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=BindContentsCtrl), 0)
-        page.Ctrls[self.UniqueName('BindContents')] = BindContentsCtrl
+        self.Ctrls['BindContents'] = BindContentsCtrl
 
-        BindKeyCtrl = wx.Button(pane, -1, self.Key)
-        BindKeyCtrl.CtlName = f"{self.bindclass}{self.unique_bind_id}BindKey"
-        BindKeyCtrl.Page = page
+        BindKeyCtrl = bcKeyButton(pane, -1, {
+            'CtlName' : f"{self.bindclass}{self.unique_bind_id}BindKey",
+            'Page'    : page,
+            'Key'     : self.Key,
+        })
+
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(BindKeyCtrl,                          0)
-        BindKeyCtrl.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
-        page.Ctrls[self.UniqueName('BindKey')] = BindKeyCtrl
+        self.Ctrls['BindKey'] = BindKeyCtrl
         UI.Labels[BindKeyCtrl.CtlName] = "Simple Bind " + self.unique_bind_id
 
         BindSizer.Layout()

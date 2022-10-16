@@ -1,9 +1,8 @@
 import wx
 from wx.adv import BitmapComboBox
-from Page import Page
 import UI
+from UI.KeySelectDialog import bcKeyButton
 from KeyBind import ControlKeyBind
-from UI.KeySelectDialog import KeySelectEventHandler
 
 
 class ControlGroup(wx.StaticBoxSizer):
@@ -37,7 +36,7 @@ class ControlGroup(wx.StaticBoxSizer):
             CtlLabel = wx.StaticText(CtlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
-            control = bcKeyButton( CtlParent, -1, '' )
+            control = bcKeyButton( CtlParent, -1, )
             control.SetLabel(Init[ctlName])
             # push context onto the button, we'll thank me later
             control.CtlName = ctlName
@@ -130,19 +129,3 @@ class ControlGroup(wx.StaticBoxSizer):
         cblabel.control.SetValue(not cblabel.control.IsChecked())
         evt.Skip()
 
-class bcKeyButton(wx.Button):
-    def __init__(self, parent, id, init):
-        wx.Button.__init__(self, parent, id, init)
-        self.CtlName: str
-        self.CtlLabel: wx.StaticText
-        self.Page: Page
-        self.Profile: Profile
-        self.KeyBind: ControlKeyBind
-
-        self.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
-        self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
-
-    def ClearButton(self, _): self.SetLabel("")
-
-    def MakeFileKeyBind(self, contents):
-        return self.KeyBind.MakeFileKeyBind(contents)

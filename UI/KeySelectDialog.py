@@ -33,7 +33,7 @@ def KeySelectEventHandler(evt):
         # re-label the button / set its state
         if newKey:
             button.SetLabel(newKey)
-            button.KeyBind.Key = newKey
+            button.Key = newKey
 
 class KeySelectDialog(wx.Dialog):
     def __init__(self, button):
@@ -299,4 +299,20 @@ class KeySelectDialog(wx.Dialog):
         for alphanum in (list(string.ascii_uppercase) + list(range(10))):
                 self.Keymap[ord(str(alphanum))] = alphanum
 
+from KeyBind import ControlKeyBind
+class bcKeyButton(wx.Button):
+    def __init__(self, parent, id, init = {}):
+        wx.Button.__init__(self, parent, id)
+        self.CtlName: str            = init.get('CtlName', None)
+        self.CtlLabel: wx.StaticText = init.get('CtlLabel', None)
+        self.Page                    = init.get('Page', None)
+        self.KeyBind: ControlKeyBind = init.get('KeyBind', None)
+        self.Key: str                = init.get('Key', '')
 
+        self.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
+
+    def ClearButton(self, _): self.SetLabel("")
+
+    def MakeFileKeyBind(self, contents):
+        return self.KeyBind.MakeFileKeyBind(contents)

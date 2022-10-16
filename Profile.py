@@ -96,6 +96,8 @@ class Profile(wx.Notebook):
         savedata = {}
         for pagename in self.Pages:
             savedata[pagename] = {}
+            if pagename == "Custom Binds": continue
+
             page = getattr(self, pagename)
             for controlname, control in page.Ctrls.items():
 
@@ -120,6 +122,15 @@ class Profile(wx.Notebook):
                     savedata[pagename][controlname] = value
 
         # TODO - iterate any custom binds and add them to the structure
+        savedata['Custom Binds'] = []
+
+        customPage = getattr(self, 'CustomBinds')
+        for pane in customPage.PaneSizer.GetChildren():
+            bindpane = pane.GetSizer().GetChildren()[0].GetWindow()
+            savedata['Custom Binds'].append(bindpane.Serialize())
+
+        return
+
         dumpstring = json.dumps(savedata, indent=0)
         try:
             savefile.touch() # make sure there's one there.

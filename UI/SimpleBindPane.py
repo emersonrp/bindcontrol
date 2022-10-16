@@ -10,6 +10,19 @@ class SimpleBindPane(CustomBindPaneParent):
     def __init__(self, page, bind = {}):
         CustomBindPaneParent.__init__(self, page, bind)
 
+        if bind:
+            self.Title = bind['Title']
+            self.Key = bind['Key']
+            self.Contents = bind['Contents']
+
+    def Serialize(self):
+        data = {
+            'Type'     : 'SimpleBind',
+            'Title'    : self.Title,
+            'Contents' : self.Ctrls['BindContents'].GetValue(),
+            'Key'      : self.Ctrls['BindKey'].GetValue(),
+        }
+
     def BuildBindUI(self, page):
 
         self.SetLabel(self.Title)

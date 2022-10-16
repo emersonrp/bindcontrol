@@ -6,6 +6,8 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         wx.CollapsiblePane.__init__(self, page.scrolledPane,
                 style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
+        self.Ctrls = {}
+
         # TODO - simplebind just have the one key<->contents,
         # but buffer binds have a whole set of them.
         self.Key            = ''
@@ -40,6 +42,9 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         # for overriding on child classes this will be called in the course of
         # the Custom Binds page doing its own PopulateBindFiles, iteratively
         # over all of its kids
+
+    def Serialize(self):
+        print(f"Inside {self.bindclass} Serialize, please override")
 
     def OnPaneChanged(self, evt):
         self.Page.Layout()

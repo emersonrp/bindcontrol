@@ -284,7 +284,7 @@ class KeySelectDialog(wx.Dialog):
                 ord("'") : "'",
                 ord(',') : 'COMMA',
                 ord('.') : '.',
-                ord('/') : '/', 
+                ord('/') : '/',
                 'BUTTON1' : 'LBUTTON',
                 'BUTTON2' : 'MBUTTON',
                 'BUTTON3' : 'RBUTTON',

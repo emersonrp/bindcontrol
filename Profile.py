@@ -13,6 +13,7 @@ from Page.CustomBinds import CustomBinds
 
 import UI
 from UI.ControlGroup import bcKeyButton
+from UI.SimpleBindPane import SimpleBindPane
 
 class Profile(wx.Notebook):
 
@@ -96,7 +97,7 @@ class Profile(wx.Notebook):
         savedata = {}
         for pagename in self.Pages:
             savedata[pagename] = {}
-            if pagename == "Custom Binds": continue
+            if pagename == "CustomBinds": continue
 
             page = getattr(self, pagename)
             for controlname, control in page.Ctrls.items():
@@ -157,6 +158,7 @@ class Profile(wx.Notebook):
             data = json.loads(datastring)
 
             for pagename in self.Pages:
+                if pagename == "CustomBinds": continue
                 page = getattr(self, pagename)
                 for controlname, control in page.Ctrls.items():
                     value = data[pagename].get(controlname, None)
@@ -179,6 +181,12 @@ class Profile(wx.Notebook):
                 page.SynchronizeUI()
 
             # TODO - iterate any saved custom binds and restore them
+            cbpage = getattr(self, "CustomBinds")
+            for custombind in data['CustomBinds']:
+                if custombind['Type'] == "SimpleBind":
+                    bindpane = SimpleBindPane(cbpage, init = custombind)
+                    cbpage.AddBindToPage(bindpane = bindpane)
+
 
 
     #####################

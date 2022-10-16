@@ -50,14 +50,14 @@ class CustomBinds(Page):
     def OnNewBufferBindButton(self, _):
         self.AddBindToPage(bindpane = BufferBindPane(self))
 
-    def AddBindToPage(self, bindinit = {}, bindpane = None):
+    def AddBindToPage(self, bindpane = None):
 
         if not bindpane:
             wx.LogError("Something tried to add an empty bindpane to the page")
             return
 
         bindname = ''
-        if bindinit:
+        if bindpane.Title:
             # TODO - this is for initializing one of these from a saved profile
             pass
         else:
@@ -72,7 +72,7 @@ class CustomBinds(Page):
 
         self.Panes.append(bindpane)
 
-        bindpane.Title = bindname
+        bindpane.Title = bindpane.Title or bindname
         bindpane.BuildBindUI(self)
 
         # put it in a box with a 'delete' button

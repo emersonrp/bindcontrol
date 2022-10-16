@@ -315,6 +315,8 @@ class bcKeyButton(wx.Button):
         self.KeyBind: ControlKeyBind = init.get('KeyBind', None)
         self.Key: str                = init.get('Key', '')
 
+        self.SetLabel(self.Key)
+
         self.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
         self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
 

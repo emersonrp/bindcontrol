@@ -11,6 +11,7 @@ class SimpleBindPane(CustomBindPaneParent):
         CustomBindPaneParent.__init__(self, page, init)
 
         self.Title = init.get('Title', '')
+        self.Init  = init
 
     def Serialize(self):
         return {

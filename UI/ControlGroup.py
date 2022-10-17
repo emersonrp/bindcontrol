@@ -2,7 +2,7 @@ import wx
 from wx.adv import BitmapComboBox
 import UI
 from UI.KeySelectDialog import bcKeyButton
-from KeyBind import ControlKeyBind
+from KeyBind import KeyBind
 import wx.lib.stattext as ST
 
 
@@ -43,7 +43,7 @@ class ControlGroup(wx.StaticBoxSizer):
             control.CtlName = ctlName
             control.Page    = self.Page
             control.Profile = self.Profile
-            control.KeyBind = ControlKeyBind(Init[ctlName], label, self.Page.TabTitle)
+            control.KeyBind = KeyBind(Init[ctlName], label, self.Page.TabTitle, '')
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
             control = wx.ComboBox(

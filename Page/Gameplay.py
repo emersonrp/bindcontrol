@@ -19,14 +19,14 @@ class Gameplay(Page):
 
             'TPSEnable'   : True,
             'TPSSelMode'  : "Teammates, then pets",
-            'TeamSelect1' : '',
-            'TeamSelect2' : '',
-            'TeamSelect3' : '',
-            'TeamSelect4' : '',
-            'TeamSelect5' : '',
-            'TeamSelect6' : '',
-            'TeamSelect7' : '',
-            'TeamSelect8' : '',
+            'TeamSelect1' : '1',
+            'TeamSelect2' : '2',
+            'TeamSelect3' : '3',
+            'TeamSelect4' : '4',
+            'TeamSelect5' : '5',
+            'TeamSelect6' : '6',
+            'TeamSelect7' : '7',
+            'TeamSelect8' : '8',
 
             'ChatEnable' : 1,
             'StartChat'  : 'ENTER',
@@ -247,8 +247,8 @@ class Gameplay(Page):
 
         ### FPS/Netgraph
         if self.GetState('FPSEnable'):
-            ResetFile.SetBind(self.Ctrls['FPSBindKey']     .MakeFileKeyBind('++showfps++netgraph'))
-            ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
+            ResetFile.SetBind(self.Ctrls['FPSBindKey']     .WithContents('++showfps++netgraph'))
+            ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].WithContents('++netgraph'))
 
         ### Team / Pet Select
         if self.GetState('TPSEnable'):
@@ -268,13 +268,13 @@ class Gameplay(Page):
                 selresetfile = self.Profile.GetBindFile("teamsel","reset.txt")
                 for i in ('1','2','3','4','5','6','7','8'):
                     selfile = self.Profile.GetBindFile("teamsel",f"sel{i}.txt")
-                    ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
-                    selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
+                    ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].WithContents([f"{selmethod} {int(i) - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
+                    selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].WithContents([f"{selmethod} {int(i) - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
                     for j in ('1','2','3','4','5','6','7','8'):
                         if (i == j):
-                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod1} {int(j) - selnummod1}", self.Profile.BLF('teamsel',"reset.txt")]))
+                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].WithContents([f"{selmethod1} {int(j) - selnummod1}", self.Profile.BLF('teamsel',"reset.txt")]))
                         else:
-                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod} {int(j) - selnummod}"  , self.Profile.BLF('teamsel',f"sel{j}.txt")]))
+                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].WithContents([f"{selmethod} {int(j) - selnummod}"  , self.Profile.BLF('teamsel',f"sel{j}.txt")]))
 
             else:
                 selmethod = "teamselect"
@@ -283,7 +283,7 @@ class Gameplay(Page):
                     selmethod = "petselect"
                     selnummod = 1
                 for i in (1,2,3,4,5,6,7,8):
-                    ResetFile.SetBind(self.Ctrls[f'TeamSelect{i}'].MakeFileKeyBind(selmethod + " " + str(i - selnummod)))
+                    ResetFile.SetBind(self.Ctrls[f'TeamSelect{i}'].WithContents(selmethod + " " + str(i - selnummod)))
 
             ResetFile = self.Profile.ResetFile()
 
@@ -293,12 +293,12 @@ class Gameplay(Page):
             if self.GetState('TypingNotifierEnable'):
                 notifier = 'afk ' + self.GetState('TypingNotifier')
 
-            ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', 'startchat']))
-            ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeFileKeyBind([notifier, 'show chat', 'slashchat']))
-            ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind([notifier, 'show chatem ' + notifier]))
-            ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeFileKeyBind([notifier, 'autoreply']))
-            ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
-            ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
+            ResetFile.SetBind(self.Ctrls['StartChat'] .WithContents([notifier, 'show chat', 'startchat']))
+            ResetFile.SetBind(self.Ctrls['SlashChat'] .WithContents([notifier, 'show chat', 'slashchat']))
+            ResetFile.SetBind(self.Ctrls['StartEmote'].WithContents([notifier, 'show chatem ' + notifier]))
+            ResetFile.SetBind(self.Ctrls['AutoReply'] .WithContents([notifier, 'autoreply']))
+            ResetFile.SetBind(self.Ctrls['TellTarget'].WithContents([notifier, 'show chat', 'beginchat /tell $target, ']))
+            ResetFile.SetBind(self.Ctrls['QuickChat'] .WithContents([notifier, 'quickchat']))
 
     UI.Labels.update({
         'TPSSelMode' : "Team / Pet Select Mode",

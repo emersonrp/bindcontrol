@@ -1,6 +1,6 @@
 import wx
 from pathlib import Path, PureWindowsPath
-from KeyBind import FileKeyBind
+from KeyBind import KeyBind
 from collections import deque
 
 class BindFile():
@@ -28,8 +28,10 @@ class BindFile():
 
         # TODO and/or maybe this should just get called with key/string and
         # then forge its own KeyBind objects
+        #
+        # TODO and we should really get Name and Page in there
         if isinstance(keybind, str):
-            keybind = FileKeyBind(keybind, "", "", contents)
+            keybind = KeyBind(keybind, "", "", contents)
 
         if not keybind.Key: return
 
@@ -42,7 +44,7 @@ class BindFile():
             subresetpath = Path(self.BindsDir) / "subreset.txt"
             subresetfile = self.Profile.GetBindFile(str(subresetpath))
             if keybind.Key != config.Read('ResetKey'):
-                subresetfile.SetBind(keybind, contents)
+                subresetfile.SetBind(keybind)
 
     # Windows path b/c the game will use it.
     def BaseReset(self):
@@ -65,21 +67,21 @@ class BindFile():
             wx.LogError(f"Can't instantiate bindfile {self}: {e}")
             return
 
-        # duplicate citybinder's (modified) logic exactly
+        # duplicate citybinder's (modified) sorting logic exactly
         import re
         def getMainKey(testkey):
             str = testkey or "UNBOUND"
             str = str.upper()
-            str = re.sub(r'LSHIFT', '', str)
-            str = re.sub(r'RSHIFT', '', str)
-            str = re.sub(r'SHIFT', '', str)
-            str = re.sub(r'LCTRL', '', str)
-            str = re.sub(r'RCTRL', '', str)
-            str = re.sub(r'CTRL', '', str)
-            str = re.sub(r'LALT', '', str)
-            str = re.sub(r'RALT', '', str)
-            str = re.sub(r'ALT', '', str)
-            str = re.sub(r'\+', "", str)
+            str = re.sub(r'LSHIFT' , '' , str)
+            str = re.sub(r'RSHIFT' , '' , str)
+            str = re.sub(r'SHIFT'  , '' , str)
+            str = re.sub(r'LCTRL'  , '' , str)
+            str = re.sub(r'RCTRL'  , '' , str)
+            str = re.sub(r'CTRL'   , '' , str)
+            str = re.sub(r'LALT'   , '' , str)
+            str = re.sub(r'RALT'   , '' , str)
+            str = re.sub(r'ALT'    , '' , str)
+            str = re.sub(r'\+'     , "" , str)
             if str == '':
                 rval = testkey
             else:
@@ -88,26 +90,13 @@ class BindFile():
             return rval
         sortedKeyBinds = sorted(self.KeyBinds, key = getMainKey)
 
-        # TODO -- put this back when we're no longer diffing
-#        def rotateKeyBind(kb):
-#            kb = deque(kb.split('+'))
-#            kb.rotate(1)
-#            # turn them into, eg, 'S        +SHIFT' so "SHIFT-S" sorts after "S" but before "SPACE"
-#            kb[0] = kb[0]+"        "
-#            return "+".join(kb)
-#        sortedKeyBinds = sorted(self.KeyBinds, key = rotateKeyBind)
-
         output = ''
         for keybind in sortedKeyBinds:
-            try:
-                kb = self.KeyBinds[keybind]
-                payload = kb.GetKeyBindString()
-                if len(payload) > 255:
-                    raise Exception
-            except Exception as e:
-                wx.LogError(f"Bind '{kb.Key}' from page '{kb.Page}' is too long - this will cause badness in-game!")
-            finally:
-                output = output + payload
+            kb = self.KeyBinds[keybind]
+            payload = kb.GetKeyBindString()
+            if len(payload) > 255:
+                wx.LogError(f"Bind '{kb.Key}' from page '{kb.Page}' is too long {payload} - this will cause badness in-game!")
+            output = output + payload
 
         if output:
             try:

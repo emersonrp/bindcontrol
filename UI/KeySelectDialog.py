@@ -304,14 +304,14 @@ class KeySelectDialog(wx.Dialog):
         for alphanum in (list(string.ascii_uppercase) + list(range(10))):
             self.Keymap[ord(str(alphanum))] = alphanum
 
-from KeyBind import KeyBind
+from KeyBind import ControlKeyBind
 class bcKeyButton(wx.Button):
 
     def __init__(self, parent, id, init = {}):
         wx.Button.__init__(self, parent, id)
         self.CtlName: str            = init.get('CtlName', None)
         self.CtlLabel: wx.StaticText = init.get('CtlLabel', None)
-        self.KeyBind: KeyBind        = init.get('KeyBind', None)
+        self.KeyBind: ControlKeyBind = init.get('KeyBind', None)
         self.Key: str                = init.get('Key', '')
 
         self.SetLabel(self.Key)
@@ -324,5 +324,5 @@ class bcKeyButton(wx.Button):
         self.SetLabel("")
         wx.PostEvent(self, KeyChanged())
 
-    def WithContents(self, contents):
-        return self.KeyBind.WithContents(contents)
+    def MakeFileKeyBind(self, contents):
+        return self.KeyBind.MakeFileKeyBind(contents)

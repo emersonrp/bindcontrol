@@ -9,11 +9,21 @@ class KeyBind():
         self.Page     = page     # which tab the bind originated on
         self.Contents = contents # a list of strings to '$$'-join to create the actual payload
 
-    # this is cruft leftover from the original control vs file keybind scheme
-    def WithContents(self, contents):
-        if isinstance(contents, str): contents = [contents]
+class ControlKeyBind(KeyBind):
+    def __init__(self, key = "", name = "", page = "", contents = ()):
+        KeyBind.__init__(self, key, name, page, contents)
+
+
+    # factory for PopulateBindFiles to use
+    def MakeFileKeyBind(self, contents):
         self.Contents = contents
-        return self
+
+        return FileKeyBind(self.Key, self.Name, self.Page, contents)
+
+class FileKeyBind(KeyBind):
+    def __init__(self, key = "", name = "", page = "", contents = ()):
+        KeyBind.__init__(self, key, name, page, contents)
+
 
     def GetKeyBindString(self):
 

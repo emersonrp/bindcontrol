@@ -130,9 +130,9 @@ class Profile(wx.Notebook):
         try:
             savefile.touch() # make sure there's one there.
             savefile.write_text(dumpstring)
-            # wx.LogError(f"Wrote file {savefile}")
+            wx.LogInfo(f"Wrote profile '{savefile}''")
         except Exception as e:
-            wx.LogError(f"Problem saving to file '{savefile}': {e}")
+            wx.LogError(f"Problem saving to profile '{savefile}': {e}")
 
     def LoadFromFile(self, _):
 
@@ -142,6 +142,7 @@ class Profile(wx.Notebook):
                 style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
+                wx.LogInfo("User canceled loading profile")
                 return     # the user changed their mind
 
             # Proceed loading the file chosen by the user
@@ -181,6 +182,8 @@ class Profile(wx.Notebook):
                 if custombind['Type'] == "SimpleBind":
                     bindpane = SimpleBindPane(cbpage, init = custombind)
                     cbpage.AddBindToPage(bindpane = bindpane)
+
+            wx.LogInfo(f"Loaded profile {pathname}")
 
     #####################
     # Bind file functions
@@ -223,7 +226,7 @@ class Profile(wx.Notebook):
                 donefiles += 1
                 bindfile.Write()
             except Exception as e:
-                print(f"Done blowed up in bindfile.Write(): {e}")
+                wx.LogError(f"Failed to write bindfile {filename}: {e}")
                 donefiles -= 1
                 errors += 1
 

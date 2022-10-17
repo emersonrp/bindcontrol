@@ -19,6 +19,8 @@ class Main(wx.Frame):
 
         self.about_info = None
 
+        self.LogWindow = wx.LogWindow(self, "Log Window", show = False, passToOld = False)
+
         # Start with a new profile
         self.Profile = Profile(self)
 
@@ -69,10 +71,15 @@ class Main(wx.Frame):
         Help_faq.Enable(False)
         Help_license.Enable(False)
 
+        LogMenu = wx.Menu()
+
+        Log_window = LogMenu.Append(-1, "Log Window", "Show the log window")
+
         # cram the separate menus into a menubar
         MenuBar = wx.MenuBar()
         MenuBar.Append(ProfMenu, 'Profile')
         MenuBar.Append(HelpMenu, 'Help')
+        MenuBar.Append(LogMenu, 'Log')
 
         # glue the menubar into the main window
         self.SetMenuBar(MenuBar)
@@ -88,6 +95,8 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, None, Help_faq)
         self.Bind(wx.EVT_MENU, None, Help_license)
         self.Bind(wx.EVT_MENU, self.OnMenuAboutBox,      Help_about)
+
+        self.Bind(wx.EVT_MENU, self.OnMenuLogWindow, Log_window)
 
         #self.Bind(wx.EVT_MOVE, self.OnMove)
 
@@ -144,6 +153,9 @@ Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
             self.about_info = info
 
         wx.adv.AboutBox(self.about_info)
+
+    def OnMenuLogWindow(self, _):
+        self.LogWindow.Show()
 
     def OnMenuExitApplication(self, _):
         self.Close(True)

@@ -56,13 +56,13 @@ class BindFile():
         try:
             self.Path.parent.mkdir(parents = True, exist_ok = True)
         except Exception as e:
-            print(f"Can't make parent dirs {self.Path.parent} : {e}")
+            wx.LogError(f"Can't make bindfile parent dirs {self.Path.parent} : {e}")
             return
 
         try:
             self.Path.touch(exist_ok = True)
         except Exception as e:
-            print(f"Can't instantiate file {self}: {e}")
+            wx.LogError(f"Can't instantiate bindfile {self}: {e}")
             return
 
         # duplicate citybinder's (modified) logic exactly
@@ -99,10 +99,19 @@ class BindFile():
 
         output = ''
         for keybind in sortedKeyBinds:
-            output = output + self.KeyBinds[keybind].GetKeyBindString()
+            try:
+                kb = self.KeyBinds[keybind]
+                payload = kb.GetKeyBindString()
+                if len(payload) > 255:
+                    raise Exception
+            except Exception as e:
+                wx.LogError(f"Bind '{kb.Key}' from page '{kb.Page}' is too long - this will cause badness in-game!")
+            finally:
+                output = output + payload
 
         if output:
             try:
                 self.Path.write_text(output, newline = '\r\n')
             except Exception as e:
-                print("Can't write to {self.Path}: {e}")
+                wx.LogError("Can't write to bindfile {self.Path}: {e}")
+

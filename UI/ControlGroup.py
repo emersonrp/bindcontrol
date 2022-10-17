@@ -3,6 +3,7 @@ from wx.adv import BitmapComboBox
 import UI
 from UI.KeySelectDialog import bcKeyButton
 from KeyBind import ControlKeyBind
+import wx.lib.stattext as ST
 
 
 class ControlGroup(wx.StaticBoxSizer):
@@ -33,7 +34,7 @@ class ControlGroup(wx.StaticBoxSizer):
 
         label = UI.Labels.get(ctlName, ctlName)
         if not noLabel:
-            CtlLabel = wx.StaticText(CtlParent, -1, label + ':')
+            CtlLabel = ST.GenStaticText(CtlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
             control = bcKeyButton( CtlParent, -1, )
@@ -114,7 +115,6 @@ class ControlGroup(wx.StaticBoxSizer):
             CtlLabel.control = control
 
         # make checkboxes' labels click to check them
-        # TODO - doesn't work on Linux hmm
         if ctlType == ('checkbox') and control.CtlLabel:
             control.CtlLabel.Bind(wx.EVT_LEFT_DOWN, self.onCBLabelClick)
 

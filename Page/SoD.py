@@ -1,7 +1,7 @@
 import wx
-import re
 import GameData
 import UI
+import wx.lib.stattext as ST
 from pathlib import Path, PureWindowsPath
 from KeyBind import ControlKeyBind, FileKeyBind
 from Page import Page
@@ -240,7 +240,7 @@ class SoD(Page):
         #mcSizer = wx.FlexGridSizer(2,1,5,5)
         #mcSizer.AddGrowableCol(0)
         mcSizer = wx.BoxSizer(wx.HORIZONTAL)
-        mcLabel = wx.StaticText(staticbox, -1, UI.Labels['MouseChord'] + ":")
+        mcLabel = ST.GenStaticText(staticbox, -1, UI.Labels['MouseChord'] + ":")
         mcSizer.Add(mcLabel, 0, wx.LEFT|wx.RIGHT, 5)
         mcLabel.Bind(wx.EVT_LEFT_DOWN, self.onCBLabelClick)
         mousechord = wx.CheckBox(staticbox, -1)

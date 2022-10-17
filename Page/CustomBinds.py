@@ -83,9 +83,12 @@ class CustomBinds(Page):
         bindpane.Expand()
         self.Layout()
 
-    def OnDeleteButton(self, _):
-        # TODO delete this bind
-        pass
+    def OnDeleteButton(self, evt):
+        delButton = evt.EventObject
+        sizer = delButton.GetContainingSizer()
+        self.PaneSizer.Hide(sizer)
+        self.PaneSizer.Remove(sizer)
+        self.Layout()
 
     def PopulateBindFiles(self):
 

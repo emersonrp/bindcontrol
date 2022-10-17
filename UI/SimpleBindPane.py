@@ -12,6 +12,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
         self.Title = init.get('Title', '')
         self.Init  = init
+        self.Page  = page # for re-layout when pane changes size
 
     def Serialize(self):
         return {

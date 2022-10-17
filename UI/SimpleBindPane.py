@@ -38,16 +38,17 @@ class SimpleBindPane(CustomBindPaneParent):
         self.Ctrls['BindContents'] = BindContentsCtrl
 
         BindKeyCtrl = bcKeyButton(pane, -1, {
-            'CtlName' : f"{self.bindclass}{self.unique_bind_id}BindKey",
+            'CtlName' : f"{self.bindclass}BindKey",
             'Page'    : page,
             'Key'     : self.Init.get('Key', ''),
         })
+        BindKeyCtrl.Profile = self.Page.Profile
         BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(BindKeyCtrl,                          0)
         self.Ctrls['BindKey'] = BindKeyCtrl
-        UI.Labels[BindKeyCtrl.CtlName] = "Simple Bind " + self.unique_bind_id
+        UI.Labels[BindKeyCtrl.CtlName] = "Simple Bind "
 
         BindSizer.Layout()
 

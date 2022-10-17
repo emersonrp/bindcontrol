@@ -3,6 +3,7 @@ from pathlib import Path, PureWindowsPath
 import json
 
 from BindFile import BindFile
+from KeyBind import FileKeyBind
 from Page.General import General
 from Page.Gameplay import Gameplay
 from Page.SoD import SoD
@@ -204,7 +205,7 @@ class Profile(wx.Notebook):
 
         config = wx.ConfigBase.Get()
         resetfile = self.ResetFile()
-        resetfile.SetBind(config.Read('ResetKey'), resetfile.BLF())
+        resetfile.SetBind(FileKeyBind(config.Read('ResetKey'), "Reset Key", "Preferences", resetfile.BLF()))
 
 
         # Go to each page....

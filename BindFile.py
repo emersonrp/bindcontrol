@@ -1,7 +1,7 @@
 import wx
 from pathlib import Path, PureWindowsPath
 from KeyBind import FileKeyBind
-from collections import deque
+#from collections import deque
 
 class BindFile():
 
@@ -99,9 +99,9 @@ class BindFile():
 
         output = ''
         for keybind in sortedKeyBinds:
+            kb = self.KeyBinds[keybind]
+            payload = kb.GetKeyBindString()
             try:
-                kb = self.KeyBinds[keybind]
-                payload = kb.GetKeyBindString()
                 if len(payload) > 255:
                     raise Exception
             except Exception as e:

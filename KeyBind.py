@@ -13,7 +13,6 @@ class ControlKeyBind(KeyBind):
     def __init__(self, key = "", name = "", page = "", contents = ()):
         KeyBind.__init__(self, key, name, page, contents)
 
-
     # factory for PopulateBindFiles to use
     def MakeFileKeyBind(self, contents):
         self.Contents = contents
@@ -21,9 +20,8 @@ class ControlKeyBind(KeyBind):
         return FileKeyBind(self.Key, self.Name, self.Page, contents)
 
 class FileKeyBind(KeyBind):
-    def __init__(self, key = "", name = "", page = "", contents = ()):
+    def __init__(self, key, name, page, contents):
         KeyBind.__init__(self, key, name, page, contents)
-
 
     def GetKeyBindString(self):
 

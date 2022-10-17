@@ -122,7 +122,7 @@ class Main(wx.Frame):
 
     def OnMenuPrefsDialog(self, _):
         if self.PrefsDialog.ShowModal() == wx.ID_OK:
-            config = wx.Config.Get()
+            config = wx.ConfigBase.Get()
             config.Write('BindPath', self.PrefsDialog.bindsDirPicker.GetPath())
             if self.PrefsDialog.gameBindsDirPicker:
                 config.Write('GameBindPath', self.PrefsDialog.gameBindsDirPicker.GetValue())
@@ -162,7 +162,7 @@ Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
 
 #     def OnMove(self, _):
 #         winPos = self.GetPosition()
-#         config = wx.Config.Get()
+#         config = wx.ConfigBase.Get()
 #         config.WriteInt("WindowX", winPos.x)
 #         config.WriteInt("WindowY", winPos.y)
 
@@ -177,7 +177,6 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
 
 if __name__ == "__main__":
     app = MyApp(redirect=False)
-
 
     #import wx.lib.inspection
     #wx.lib.inspection.InspectionTool().Show()

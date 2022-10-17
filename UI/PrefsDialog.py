@@ -8,7 +8,7 @@ class PrefsDialog(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, title = "Preferences")
 
-        config = wx.Config.Get()
+        config = wx.ConfigBase.Get()
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
 

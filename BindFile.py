@@ -39,7 +39,7 @@ class BindFile():
 
         # Terrible hack to add things into the subreset file when
         # added to the reset file.  Ouch.
-        config = wx.Config.Get()
+        config = wx.ConfigBase.Get()
         if self == self.Profile.ResetFile():
             subresetpath = Path(self.BindsDir) / "subreset.txt"
             subresetfile = self.Profile.GetBindFile(str(subresetpath))

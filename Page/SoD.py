@@ -1029,7 +1029,7 @@ class SoD(Page):
 
         ResetFile = profile.ResetFile()
 
-        config = wx.Config.Get()
+        config = wx.ConfigBase.Get()
         ResetFile.SetBind(config.Read('ResetFile'),
                     [
                         ResetFile.BLF(),
@@ -1680,7 +1680,7 @@ class SoD(Page):
         u = int(moddir == 'up')
         d = int(moddir == 'down')
 
-        config = wx.Config.Get()
+        config = wx.ConfigBase.Get()
         curfile.SetBind(config.Read('ResetKey'),
                 f'up {u}$$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
                 str(turnoff) +

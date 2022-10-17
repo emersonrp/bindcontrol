@@ -50,8 +50,8 @@ class Profile(wx.Notebook):
     # Convenience / JIT accessors
     def Name(self)         : return self.General.GetState('Name')
     def Archetype(self)    : return self.General.GetState('Archetype')
-    def BindsDir(self)     : return wx.Config.Get().Read('BindPath')
-    def GameBindsDir(self) : return wx.Config.Get().Read('GameBindPath') or self.BindsDir()
+    def BindsDir(self)     : return wx.ConfigBase.Get().Read('BindPath')
+    def GameBindsDir(self) : return wx.ConfigBase.Get().Read('GameBindPath') or self.BindsDir()
     def ResetFile(self)    : return self.GetBindFile("reset.txt")
 
     def BLF(self, *args):
@@ -202,7 +202,7 @@ class Profile(wx.Notebook):
         # Start by making reset load itself.  This might get overridden with
         # more elaborate load strings in like SoD, but this is the safety
 
-        config = wx.Config.Get()
+        config = wx.ConfigBase.Get()
         resetfile = self.ResetFile()
         resetfile.SetBind(config.Read('ResetKey'), resetfile.BLF())
 

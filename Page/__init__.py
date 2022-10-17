@@ -98,12 +98,6 @@ class Page(wx.Panel):
     # NB - no state should be kept in the page
     def PopulateBindFiles(self):
         return
-    # TODO general logic,
-    # profile.GetBindFile(filename)
-    # for x in Controls:
-        # (do the thing)
-        # bindfile.SetBind(the thing)
-    # Walk away renee
 
     def HelpText(self):
         return 'Help not currently implemented here.'

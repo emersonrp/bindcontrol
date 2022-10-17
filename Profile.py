@@ -63,7 +63,7 @@ class Profile(wx.Notebook):
             filepath = filepath  /  arg
         return str(filepath)
 
-    def CheckConflict(self, key):
+    def CheckConflict(self, key, button):
         conflicts = []
 
         for pageName in self.Pages:
@@ -71,9 +71,9 @@ class Profile(wx.Notebook):
             for ctrlname, ctrl in page.Ctrls.items():
                 # TODO TODO TODO this next line is breaking this on Win wxpython 4.2.0
                 if not ctrl.IsEnabled(): continue
+                if ctrl == button: continue
                 if isinstance(ctrl, bcKeyButton):
                     if key == ctrl.GetLabel():
-                        print(f"conflict found for key {key}: page {pageName}, {UI.Labels[ctrlname]}")
                         conflicts.append( {'page' : pageName, 'ctrl': UI.Labels[ctrlname]})
         return conflicts
 
@@ -91,7 +91,6 @@ class Profile(wx.Notebook):
 
         savefile = self.ProfileFile()
 
-        # TODO - "this path doesn't exist, create it?"
         self.ProfilePath().mkdir( parents = True, exist_ok = True )
 
         savedata = {}
@@ -122,7 +121,6 @@ class Profile(wx.Notebook):
 
                     savedata[pagename][controlname] = value
 
-        # TODO - iterate any custom binds and add them to the structure
         savedata['CustomBinds'] = []
 
         customPage = getattr(self, 'CustomBinds')
@@ -180,14 +178,11 @@ class Profile(wx.Notebook):
 
                 page.SynchronizeUI()
 
-            # TODO - iterate any saved custom binds and restore them
             cbpage = getattr(self, "CustomBinds")
             for custombind in data['CustomBinds']:
                 if custombind['Type'] == "SimpleBind":
                     bindpane = SimpleBindPane(cbpage, init = custombind)
                     cbpage.AddBindToPage(bindpane = bindpane)
-
-
 
     #####################
     # Bind file functions
@@ -205,7 +200,7 @@ class Profile(wx.Notebook):
     def WriteBindFiles(self):
         # Go to each page....
         for pageName in self.Pages:
-            page = getattr(self, pageName, None)
+            page = getattr(self, pageName)
 
             # ... and tell it to gather up binds and put them into bindfiles.
             page.PopulateBindFiles()
@@ -236,7 +231,6 @@ class Profile(wx.Notebook):
 
         with DoneDialog(self, msg = msg) as dlg: dlg.ShowModal()
 
-        # TODO try except finally
         # clear out our state
         self.BindFiles = {}
 
@@ -255,15 +249,14 @@ class DoneDialog(wx.Dialog):
         )
         textCtrl = wx.TextCtrl(self, id = wx.ID_ANY,
                        style = wx.TE_READONLY|wx.TE_CENTER,
-                       value = "/bindloadfile " + parent.GameBindsDir() + "reset.txt")
+                       value = "/bindloadfile " + parent.GameBindsDir() + "reset.txt"
+        )
         textCtrl.SetFont(
             wx.Font(10, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = u'Courier')
         )
 
         sizer.Add( textCtrl, 0, wx.EXPAND|wx.ALL, 10)
 
-        sizer.Add(
-            self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10
-        )
+        sizer.Add( self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10)
         self.SetSizerAndFit(sizer)
 

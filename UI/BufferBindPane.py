@@ -11,24 +11,24 @@ class BufferBindPane(CustomBindPaneParent):
         CustomBindPaneParent.__init__(self, page)
         self.Page = page
         page.Init = {
-            self.UniqueName('BuffPetsByName') : True,
-            self.UniqueName('BuffsAffectTeam'): True,
-            self.UniqueName('BuffsAffectPets'): True,
+            'BuffPetsByName' : True,
+            'BuffsAffectTeam': True,
+            'BuffsAffectPets': True,
         }
 
         UI.Labels.update({
-            self.UniqueName("BuffsAffectTeam") : "Buffs Affect Team",
-            self.UniqueName("BuffsAffectPets") : "Buffs Affect Pets",
-            self.UniqueName("BuffPetsByName")  : "Buff Pets By Name",
+            "BuffsAffectTeam" : "Buffs Affect Team",
+            "BuffsAffectPets" : "Buffs Affect Pets",
+            "BuffPetsByName"  : "Buff Pets By Name",
         })
 
         for i in (1,2,3,4,5,6,7,8):
-            ctrlName = self.UniqueName() + f"Team{i}BuffKey"
+            ctrlName = f"Team{i}BuffKey"
             page.Init[ctrlName] = ""
             UI.Labels[ctrlName] = f'Team {i} Key'
 
         for i in (1,2,3,4,5,6):
-            ctrlName = self.UniqueName() + f"Pet{i}BuffKey"
+            ctrlName = f"Pet{i}BuffKey"
             page.Init[ctrlName] = ""
             UI.Labels[ctrlName] = f'Pet {i} Key'
 
@@ -46,7 +46,7 @@ class BufferBindPane(CustomBindPaneParent):
         buffPower1 = wx.TextCtrl  (pane, -1, "")
         BindSizer.Add(buffPower1,                                      (0,3), flag=wx.EXPAND)
         BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=buffPower1),  (0,4), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        page.Ctrls[self.UniqueName('BuffPower1')] = buffPower1
+        page.Ctrls['BuffPower1'] = buffPower1
 
         BindSizer.Add(wx.StaticText(pane, -1, "Second Buff Power:"),   (1,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(PowerPicker(pane),                               (1,1), flag=wx.EXPAND     |wx.ALIGN_CENTER_VERTICAL)
@@ -54,7 +54,7 @@ class BufferBindPane(CustomBindPaneParent):
         buffPower2 = wx.TextCtrl  (pane, -1, "")
         BindSizer.Add(buffPower2,                                      (1,3), flag=wx.EXPAND)
         BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=buffPower2),  (1,4), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        page.Ctrls[self.UniqueName('BuffPower2')] = buffPower2
+        page.Ctrls['BuffPower2'] = buffPower2
 
         BindSizer.Add(wx.StaticText(pane, -1, "Third Buff Power:"),    (2,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(PowerPicker(pane),                               (2,1), flag=wx.EXPAND     |wx.ALIGN_CENTER_VERTICAL)
@@ -62,7 +62,7 @@ class BufferBindPane(CustomBindPaneParent):
         buffPower3 = wx.TextCtrl  (pane, -1, "")
         BindSizer.Add(buffPower3,                                      (2,3), flag=wx.EXPAND)
         BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=buffPower3),  (2,4), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        page.Ctrls[self.UniqueName('BuffPower3')] = buffPower3
+        page.Ctrls['BuffPower3'] = buffPower3
 
         BindSizer.Add(wx.StaticText(pane, -1, ""),                    (3,0))
 
@@ -72,16 +72,18 @@ class BufferBindPane(CustomBindPaneParent):
         TeamCtrls = ControlGroup(pane, self.Page, "Buff Team Keybinds")
         PetCtrls  = ControlGroup(pane, self.Page, "Buff Pet Keybinds")
 
-        TeamCtrls.AddControl(ctlType = 'checkbox', ctlName = self.UniqueName("BuffsAffectTeam"))
+        TeamCtrls.AddControl(ctlType = 'checkbox', ctlName = "BuffsAffectTeam")
         for i in (1,2,3,4,5,6,7,8):
-            TeamCtrls.AddControl(ctlType = "keybutton",
-                ctlName = self.UniqueName(f"Team{i}BuffKey"), contents = "")
+            TeamCtrls.AddControl(
+                ctlType = "keybutton",
+                ctlName = f"Team{i}BuffKey",
+                contents = ""
+            )
 
-
-        PetCtrls.AddControl(ctlType = 'checkbox', ctlName = self.UniqueName("BuffsAffectPets"))
-        PetCtrls.AddControl(ctlType = "checkbox", ctlName = self.UniqueName("BuffPetsByName"))
+        PetCtrls.AddControl(ctlType = 'checkbox', ctlName = "BuffsAffectPets")
+        PetCtrls.AddControl(ctlType = "checkbox", ctlName = "BuffPetsByName")
         for i in (1,2,3,4,5,6):
-            PetCtrls.AddControl(ctlType = "keybutton", ctlName = self.UniqueName(f"Pet{i}BuffKey"), contents = "")
+            PetCtrls.AddControl(ctlType = "keybutton", ctlName = f"Pet{i}BuffKey", contents = "")
 
         KeySizer.Add(TeamCtrls, 0, flag = wx.LEFT|wx.RIGHT, border = 5)
         KeySizer.Add(PetCtrls,  0, flag = wx.LEFT|wx.RIGHT, border = 5)

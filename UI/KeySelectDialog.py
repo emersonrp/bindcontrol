@@ -44,6 +44,7 @@ class KeySelectDialog(wx.Dialog):
         self.Desc    = UI.Labels[button.CtlName]
         self.Binding = button.Label
         self.Page    = button.Page
+        self.Button  = button
 
         wx.Dialog.__init__(self, button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
 
@@ -119,7 +120,7 @@ class KeySelectDialog(wx.Dialog):
         #   if already mod key, AND not the same one, AND still held down
         #       put it in key slot
         #   else
-        #       put it in key slot
+        #       put it in mod slot
         SeparateLR = self.SeparateLRChooser.Value
 
         # first clear out anything not being held down
@@ -202,20 +203,18 @@ class KeySelectDialog(wx.Dialog):
 
         self.ShowBind()
 
-        # TODO: this is failing in MSW
-        # TODO 2: would be nice to pass in the control being checked so if we type the key
-        # that's already in there it doesn't complain that there's a conflict with itself
-        conflicts = self.Profile.CheckConflict(self.Binding)
+        conflicts = self.Profile.CheckConflict(self.Binding, self.Button)
         if conflicts:
-            self.kbErr.SetLabel("CONFLICT FOUND")
+            conflictString = ''
+            for conflict in conflicts:
+                conflictString = conflictString + f'Conflict with "{conflict["ctrl"]}" on {conflict["page"]} page.'
+            self.kbErr.SetLabel(conflictString)
             self.kbBind.SetForegroundColour(wx.RED)
         else:
             self.kbErr.SetLabel("")
             self.kbBind.SetForegroundColour(wx.BLACK)
 
         self.Layout()
-
-
 
     # This keymap code was initially adapted from PADRE < http://padre.perlide.org/ >.
     def SetKeymap(self):

@@ -10,24 +10,9 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         self.Init  = init
         self.Title = ''
 
-        # TODO - simplebind just have the one key<->contents,
-        # but buffer binds have a whole set of them.
-        # self.Key            = ''
-        # self.Name           = ''
-        # self.Contents       = ''
-        # self.Page           = page
         self.bindclass      = type(self).__name__
-        self.unique_bind_id = str(wx.NewIdRef().GetId())
 
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
-
-    # This is so we can have multiple controls of the "same name" on the
-    # Custom Binds page, if we have, say, several Simple binds.
-    # TODO - still need to work out saving and especially loading
-    # in Profile.  The "@@" below is so we can separate unique from
-    # name for purposes of repopulating the UI on load.
-    def UniqueName(self, name = ''):
-        return self.bindclass + self.unique_bind_id + "@@" + name
 
     def BuildBindUI(self, parent):
         # build the UI needed to edit/create this bind, and shim

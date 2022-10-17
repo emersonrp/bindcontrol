@@ -91,23 +91,6 @@ class CustomBinds(Page):
         self.Layout()
 
     def PopulateBindFiles(self):
-
         for pane in self.Panes:
             pane.PopulateBindFiles()
-
-        ### TODO
-        return
-        ### TODO
-
-    for i in (1,2,3,4,5,6,7,8):
-        UI.Labels[f'Team{i}BuffKey'] = f"Team {i} Key"
-
-    for i in (1,2,3,4,5,6):
-        UI.Labels[f'Pet{i}BuffKey'] = f"Pet {i} Key"
-
-    UI.Labels.update( {
-        'BuffPetsByName' : "Buff Pets using Pet Names",
-        'BuffsAffectTeam' : "Buffs Affect Team Members",
-        'BuffsAffectPets' : "Buffs Affect Pets",
-    })
 

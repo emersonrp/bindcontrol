@@ -69,8 +69,7 @@ class Profile(wx.Notebook):
         for pageName in self.Pages:
             page = getattr(self, pageName)
             for ctrlname, ctrl in page.Ctrls.items():
-                # TODO TODO TODO this next line is breaking this on Win wxpython 4.2.0
-                if not ctrl.IsEnabled(): continue
+                if not ctrl.IsThisEnabled(): continue
                 if ctrl == button: continue
                 if isinstance(ctrl, bcKeyButton):
                     if key == ctrl.GetLabel():

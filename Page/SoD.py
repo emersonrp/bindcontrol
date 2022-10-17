@@ -1030,7 +1030,7 @@ class SoD(Page):
         ResetFile = profile.ResetFile()
 
         config = wx.ConfigBase.Get()
-        ResetFile.SetBind(config.Read('ResetFile'), "Reset Key", self,
+        ResetFile.SetBind(config.Read('ResetKey'), "Reset Key", self,
                     [
                         ResetFile.BLF(),
                         # 'tell $name, Keybinds reloaded.',

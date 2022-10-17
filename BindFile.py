@@ -2,6 +2,7 @@ import wx
 import inspect
 from pathlib import Path, PureWindowsPath
 from KeyBind import FileKeyBind
+from Page import Page
 #from collections import deque
 
 class BindFile():
@@ -21,7 +22,7 @@ class BindFile():
 
         self.KeyBinds = {}
 
-    def SetBind(self, keybind, contents = None):
+    def SetBind(self, keybind: FileKeyBind|str, name:str = '', page:Page|None = None, contents: str|list = ''):
 
         # TODO - this isinstance logic is here because SoD.py has about a million
         # spots where it just calls this with (key, string).  Better solution would be
@@ -30,10 +31,11 @@ class BindFile():
         # TODO and/or maybe this should just get called with key/string and
         # then forge its own KeyBind objects
         if isinstance(keybind, str):
-            prevFrame = inspect.currentframe().f_back
-            (filen, line, funcn, _, _) = inspect.getframeinfo(prevFrame)
-            print(f"Called as string from {filen}, {funcn}, {line}")
-            keybind = FileKeyBind(keybind, "", "", contents)
+            if name and not contents: # got called as (key, contents)
+                prevFrame = inspect.currentframe().f_back
+                (filen, line, funcn, _, _) = inspect.getframeinfo(prevFrame)
+                print(f"SetBind called old way from {filen}, {funcn}, {line} -- PROBABLY BROKEN")
+            keybind = FileKeyBind(keybind, name, page, contents)
 
         if not keybind.Key: return
 

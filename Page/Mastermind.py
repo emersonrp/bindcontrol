@@ -1,6 +1,5 @@
 import wx
 import UI
-from KeyBind import FileKeyBind
 
 # Sandolphan / Khaiba's guide to these controls found at:
 # https://guidescroll.com/2011/07/city-of-heroes-mastermind-numeric-keypad-pet-controls/
@@ -324,7 +323,7 @@ class Mastermind(Page):
         for _, control in self.Ctrls.items():
             control.Enable(bool(arch == "Mastermind" and pset))
 
-    def OnPetCmdEnable(self, evt = None):
+    def OnPetCmdEnable(self, _ = None):
         self.Freeze()
         enabled = self.GetState('PetCmdEnable')
         for command in self.petCommandKeyDefinitions:
@@ -338,7 +337,7 @@ class Mastermind(Page):
         self.OnBGCheckboxes()
         self.Thaw()
 
-    def OnPetSelEnable(self, evt = None):
+    def OnPetSelEnable(self, _ = None):
         enabled = self.GetState('PetSelEnable')
         for i in range(1,7):
             self.DisableControls(enabled, [
@@ -347,7 +346,7 @@ class Mastermind(Page):
 
         self.OnBGCheckboxes()
 
-    def OnBGCheckboxes(self, evt = None):
+    def OnBGCheckboxes(self, _ = None):
         petcmdenabled = self.GetState('PetCmdEnable')
         petselenabled = self.GetState('PetSelEnable')
 
@@ -374,12 +373,12 @@ class Mastermind(Page):
 
     def HelpText(self):
         return """
-        The Original Mastermind Control Binds
-        were created in CoV Beta by Khaiba
-        a.k.a. Sandolphan
-        Bodyguard code inspired directly from
-        Sandolphan's Bodyguard binds.
-        Thugs added by Konoko!
+The Original Mastermind Control Binds
+were created in CoV Beta by Khaiba
+a.k.a. Sandolphan
+Bodyguard code inspired directly from
+Sandolphan's Bodyguard binds.
+Thugs added by Konoko!
         """
 
     ### BIND CREATION METHODS
@@ -436,6 +435,7 @@ class Mastermind(Page):
     def mmBGActBind(self, profile, filedn, fileup, action, say, powers):
 
         key    = self.GetState(f"Pet{action}")
+        name   = UI.Labels[f"Pet{action}"]
         method = self.GetChatMethod(f"Pet{action}ResponseMethod")
 
         bgact = bgsay = []
@@ -481,11 +481,12 @@ class Mastermind(Page):
             if (tier3bg == 0):
                 bgact.append('petcompow ' + f"{powers['bos']} {action}")
 
-        filedn.SetBind(FileKeyBind(key = key, contents = bgsay + [fileup.BLF()]))
-        fileup.SetBind(FileKeyBind(key = key, contents = bgact + [filedn.BLF()]))
+        filedn.SetBind(key, name, self, bgsay + [fileup.BLF()])
+        fileup.SetBind(key, name, self, bgact + [filedn.BLF()])
 
     def mmBGActBGBind(self, profile, filedn, fileup, action, say, powers):
         key =    self.GetState(f"PetBodyguard{action}")
+        name = UI.Labels[f"PetBodyguard{action}"]
         method = self.GetChatMethod(f"Pet{action}ResponseMethod")
 
         bgact = bgsay = []
@@ -515,7 +516,7 @@ class Mastermind(Page):
             bgact = ['petcomall ' + action]
         else :
             if (tier1bg == 3):
-                bgact.append(bgact + f"petcompow {powers['min']} {action}")
+                bgact.append(f"petcompow {powers['min']} {action}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
                 if (self.GetState('Pet1Bodyguard')) : bgact.append(f"petcomname \"{self.GetState('Pet1Name')}\" {action}")
@@ -532,8 +533,8 @@ class Mastermind(Page):
                 bgact.append(f"petcompow {powers['bos']} {action}")
 
         # file.SetBind(self.Ctrls['PetBodyguard'].MakeFileKeyBind(bgsay.$bgset.BindFile.BLF($profile, 'mmbinds','\mmbinds\\cbguarda.txt')))
-        filedn.SetBind(FileKeyBind(key = key, contents = bgsay + [fileup.BLF()]))
-        fileup.SetBind(FileKeyBind(key = key, contents = bgact + [filedn.BLF()]))
+        filedn.SetBind(key, name, self, bgsay + [fileup.BLF()])
+        fileup.SetBind(key, name, self, bgact + [filedn.BLF()])
 
     def mmQuietBGSelBind(self, profile, file, powers):
         if (self.GetState('PetBodyguardEnabled')):
@@ -565,11 +566,12 @@ class Mastermind(Page):
     def mmQuietBGActBind(self, profile, filedn, fileup, action, powers):
 
         key = self.GetState(f"Pet{action}")
+        name = UI.Labels[f"Pet{action}"]
 
         bgact = []
         (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
-        if ((tier1bg + tier2bg + tier3bg) == 0):
+        if ((tier1bg + tier2bg + tier3bg) == 6):
             bgact = [f"petcomall {action}"]
         else :
             if (tier1bg == 0):
@@ -589,11 +591,12 @@ class Mastermind(Page):
             if (tier3bg == 0): bgact.append(f"petcompow {powers['bos']} {action}")
 
         # 'petcompow ',,grp.' Stay'
-        filedn.SetBind(FileKeyBind(key = key, contents = bgact))
+        filedn.SetBind(key, name, self, bgact)
 
     def mmQuietBGActBGBind(self, profile, filedn, fileup, action, powers):
 
-        key    = self.GetState(f"PetBodyguard{action}")
+        key  = self.GetState(f"PetBodyguard{action}")
+        name = UI.Labels[f"PetBodyguard{action}"]
 
         bgact = []
         (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
@@ -617,8 +620,10 @@ class Mastermind(Page):
 
             if (tier3bg == 1) : bgact.append(f"petcompow {powers['bos']} {action}")
 
+        # TODO - this seems right but was not in citybinder
+        if not bgact: return
         # 'petcompow ',,grp.' Stay'
-        filedn.SetBind(FileKeyBind(key = key, contents = bgact))
+        filedn.SetBind(key, name, self, bgact)
 
     def mmSubBind(self, profile, file, fn, grp, powers):
         PetResponses = {}

@@ -33,6 +33,7 @@ class Main(wx.Frame):
             config.Write('BindPath', bindpath)
             if wx.Platform != '__WXMSW__':
                 config.Write('GameBindPath', "Z:\\cohbinds\\")
+            config.Write('ResetKey', 'LCTRL+R')
             config.WriteBool('UseSplitModKeys', False)
             config.WriteBool('FlushAllBinds', True)
             # TODO the commented code for repositioning the window also caused a terrible resize, investigate.
@@ -118,6 +119,7 @@ class Main(wx.Frame):
                 config.Write('GameBindPath', self.PrefsDialog.gameBindsDirPicker.GetValue())
             config.WriteBool('UseSplitModKeys', self.PrefsDialog.UseSplitModKeys.GetValue())
             config.WriteBool('FlushAllBinds', self.PrefsDialog.FlushAllBinds.GetValue())
+            config.Write('ResetKey', self.PrefsDialog.ResetKey.GetLabel())
 
             config.Flush()
 

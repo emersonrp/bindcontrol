@@ -1,3 +1,4 @@
+import wx
 from pathlib import Path, PureWindowsPath
 from KeyBind import FileKeyBind
 from collections import deque
@@ -36,10 +37,11 @@ class BindFile():
 
         # Terrible hack to add things into the subreset file when
         # added to the reset file.  Ouch.
+        config = wx.Config.Get()
         if self == self.Profile.ResetFile():
             subresetpath = Path(self.BindsDir) / "subreset.txt"
             subresetfile = self.Profile.GetBindFile(str(subresetpath))
-            if keybind.Key != self.Profile.SoD.GetState('ResetKey'):
+            if keybind.Key != config.Read('ResetKey'):
                 subresetfile.SetBind(keybind, contents)
 
     # Windows path b/c the game will use it.

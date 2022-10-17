@@ -30,8 +30,6 @@ class SoD(Page):
             'MouseChord'      : 0,
             'AutoMouseLook'   : 0,
 
-            'ResetKey'        : 'LCTRL-R',
-            'ResetFeedback'   : False,
             'SprintPower'     : 'Sprint',
             'SprintSoD'       : True,  # "Base" in citybinder
             'SprintMode'      : '',
@@ -261,15 +259,6 @@ class SoD(Page):
         ##### GENERAL SETTINGS
         generalSizer = ControlGroup(self, self, 'General Settings')
 
-        generalSizer.AddControl(
-            ctlName = 'ResetKey',
-            ctlType = 'keybutton',
-            tooltip = 'This key is used by certain modules to reset binds to a sane state.',
-        )
-        generalSizer.AddControl(
-            ctlName = 'ResetFeedback',
-            ctlType = 'checkbox',
-        )
         generalSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'choice',
             contents = ('No SoD','Sprint','Super Speed','Jump','Fly'),)
         self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
@@ -1032,7 +1021,8 @@ class SoD(Page):
 
         ResetFile = profile.ResetFile()
 
-        ResetFile.SetBind(self.Ctrls['ResetKey'].MakeFileKeyBind(
+        config = wx.Config.Get()
+        ResetFile.SetBind(config.Read('ResetFile'),
                     [
                         ResetFile.BLF(),
                         # 'tell $name, Keybinds reloaded.',
@@ -1041,7 +1031,7 @@ class SoD(Page):
                         'powexecunqueue',
                         # TODO - honor ResetFeedback checkbox
                         't $name, SoD Binds Reset'
-                    ]))
+                    ])
 
         if (self.GetState('DefaultMode') == "NonSoD"):
             if (not self.GetState('NonSoDEnable')):
@@ -1682,12 +1672,13 @@ class SoD(Page):
         u = int(moddir == 'up')
         d = int(moddir == 'down')
 
-        curfile.SetBind(self.Ctrls['ResetKey'].MakeFileKeyBind(
+        config = wx.Config.Get()
+        curfile.SetBind(config.Read('ResetKey'),
                 f'up {u}$$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
                 str(turnoff) +
                 '$$t $name, SoD Binds Reset$$' + curfile.BaseReset() +
                 f"$$bindloadfile {gamepath}000000.txt"
-        ))
+        )
 
     def sodUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun, followbl, bo, sssj):
 
@@ -2330,13 +2321,6 @@ class SoD(Page):
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
         curfile.SetBind(key, '+down' + feedback + profile.BLF(gamefilename))
 
-    def bindBothResetFiles(self, key, contents):
-        self.Profile.ResetFile.BindKey(key, contents)
-        if key != self.Ctrls['ResetKey']:
-            subresetpath = Path(self.Profile.BindsDir) / "subreset.txt"
-            subresetfile = self.Profile.GetBindFile(subresetpath)
-            subresetfile.BindKey(key, contents)
-
     def onCBLabelClick(self, evt):
         cblabel = evt.EventObject
         cblabel.control.SetValue(not cblabel.control.IsChecked())
@@ -2354,8 +2338,6 @@ UI.Labels.update( {
     'AutoRun'        : 'Auto Run',
     'Follow'         : 'Follow Target',
 
-    'ResetKey'       : 'Reset All Binds',
-    'ResetFeedback'  : 'Enable Reset Feedback Self-/tell',
     'DefaultMode'    : 'Default SoD Mode',
     'MouseChord'     : 'Mousechord is SoD Forward',
     'AutoMouseLook'  : 'Mouselook when moving',

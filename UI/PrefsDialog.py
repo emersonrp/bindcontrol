@@ -1,4 +1,7 @@
 import wx
+import wx.lib.stattext as ST
+import UI
+from UI.KeySelectDialog import bcKeyButton
 from pathlib import Path
 
 class PrefsDialog(wx.Dialog):
@@ -23,7 +26,15 @@ class PrefsDialog(wx.Dialog):
             self.gameBindsDirPicker.SetToolTip('When playing via Wine, the game\'s file paths will be different than the native ones.  Put a Windows path into this box that describes where Wine will find the above directory.  Keeping this path as short as possible is strongly recommended.')
             sizer.Add( self.gameBindsDirPicker, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
-        splitKeyLabel = wx.StaticText(self, label = "Bind left and right modifier keys separately:")
+        sizer.Add( wx.StaticText(self, label = "Binds Reset Key:"), 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        self.ResetKey = bcKeyButton(self, -1, init ={ 'CtlName': 'ResetKey', })
+        self.ResetKey.SetLabel( config.Read('ResetKey') )
+        self.ResetKey.Profile = None # to appease CheckConflict()
+        UI.Labels.update({ 'ResetKey': 'Binds Reset Key'})
+        sizer.Add( self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)
+
+
+        splitKeyLabel = ST.GenStaticText(self, label = "Bind left and right modifier keys separately:")
         sizer.Add( splitKeyLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.UseSplitModKeys = wx.CheckBox(self)
         self.UseSplitModKeys.SetValue(config.ReadBool('UseSplitModKeys'))
@@ -34,7 +45,7 @@ class PrefsDialog(wx.Dialog):
         splitKeyLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
 
-        flushBindsLabel = wx.StaticText(self, label = "Set all binds to default before reapplying:")
+        flushBindsLabel = ST.GenStaticText(self, label = "Set all binds to default before reapplying:")
         sizer.Add( flushBindsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.FlushAllBinds = wx.CheckBox(self)
         self.FlushAllBinds.SetValue(config.ReadBool('FlushAllBinds'))

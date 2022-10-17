@@ -42,9 +42,9 @@ class KeySelectDialog(wx.Dialog):
     def __init__(self, button):
 
         self.Desc    = UI.Labels[button.CtlName]
-        self.Binding = button.Label
-        self.Page    = button.Page
         self.Button  = button
+        self.Binding = button.Label
+        self.Profile = button.Profile
 
         wx.Dialog.__init__(self, button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
 
@@ -58,7 +58,6 @@ class KeySelectDialog(wx.Dialog):
         desc = f"Press the key you want bound to {self.Desc}:"
 
         # is this ugly?
-        self.Profile   = self.Page.Profile
         self.ModSlot = None
         self.KeySlot = None
         self.SetKeymap();
@@ -203,16 +202,17 @@ class KeySelectDialog(wx.Dialog):
 
         self.ShowBind()
 
-        conflicts = self.Profile.CheckConflict(self.Binding, self.Button)
-        if conflicts:
-            conflictString = ''
-            for conflict in conflicts:
-                conflictString = conflictString + f'Conflict with "{conflict["ctrl"]}" on {conflict["page"]} page.'
-            self.kbErr.SetLabel(conflictString)
-            self.kbBind.SetForegroundColour(wx.RED)
-        else:
-            self.kbErr.SetLabel("")
-            self.kbBind.SetForegroundColour(wx.BLACK)
+        if self.Profile:
+            conflicts = self.Profile.CheckConflict(self.Binding, self.Button)
+            if conflicts:
+                conflictString = ''
+                for conflict in conflicts:
+                    conflictString = conflictString + f'Conflict with "{conflict["ctrl"]}" on {conflict["page"]} page.'
+                self.kbErr.SetLabel(conflictString)
+                self.kbBind.SetForegroundColour(wx.RED)
+            else:
+                self.kbErr.SetLabel("")
+                self.kbBind.SetForegroundColour(wx.BLACK)
 
         self.Layout()
 
@@ -311,7 +311,6 @@ class bcKeyButton(wx.Button):
         wx.Button.__init__(self, parent, id)
         self.CtlName: str            = init.get('CtlName', None)
         self.CtlLabel: wx.StaticText = init.get('CtlLabel', None)
-        self.Page                    = init.get('Page', None)
         self.KeyBind: ControlKeyBind = init.get('KeyBind', None)
         self.Key: str                = init.get('Key', '')
 

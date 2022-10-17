@@ -77,8 +77,6 @@ class Profile(wx.Notebook):
                         conflicts.append( {'page' : pageName, 'ctrl': UI.Labels[ctrlname]})
         return conflicts
 
-
-
     ###################
     # Profile Save/Load
     def ProfilePath(self):
@@ -198,6 +196,15 @@ class Profile(wx.Notebook):
 
 
     def WriteBindFiles(self):
+
+        # Start by making reset load itself.  This might get overridden with
+        # more elaborate load strings in like SoD, but this is the safety
+
+        config = wx.Config.Get()
+        resetfile = self.ResetFile()
+        resetfile.SetBind(config.Read('ResetKey'), resetfile.BLF())
+
+
         # Go to each page....
         for pageName in self.Pages:
             page = getattr(self, pageName)

@@ -67,6 +67,7 @@ class Gameplay(Page):
         tpsenable.SetToolTip( wx.ToolTip('Check this to enable the Combined Team/Pet Select Binds') )
         tpsenable.Bind(wx.EVT_CHECKBOX, self.OnTPSEnable)
         self.Ctrls['TPSEnable'] = tpsenable
+        tpsenable.SetValue(self.Init['TPSEnable'])
 
         tpshelpbutton = wx.BitmapButton(self, -1, Icon('Help'))
         tpshelpbutton.Bind(wx.EVT_BUTTON, self.help)
@@ -242,8 +243,6 @@ class Gameplay(Page):
         self.DisableControls(chatenabled and typeenabled, ['TypingNotifier'])
 
     def PopulateBindFiles(self):
-
-
         ResetFile = self.Profile.ResetFile()
 
         ### FPS/Netgraph
@@ -252,9 +251,11 @@ class Gameplay(Page):
             ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
 
         ### Team / Pet Select
-        # TODO -- check versus citybinder output, seems to be working but...?
         if self.GetState('TPSEnable'):
-            if (self.GetState('TPSSelMode') != "Pets Only"):
+            if (self.GetState('TPSSelMode') != "Pets Only"
+                    and
+                self.GetState('TPSSelMode') != "Teammates Only"):
+
                 selmethod = "teamselect"
                 selnummod = 0
                 selmethod1 = "petselect"
@@ -264,16 +265,16 @@ class Gameplay(Page):
                     selnummod = 1
                     selmethod1 = "teamselect"
                     selnummod1 = 0
-                selresetfile = self.Profile.GetBindFile("tps","reset.txt")
+                selresetfile = self.Profile.GetBindFile("teamsel","reset.txt")
                 for i in ('1','2','3','4','5','6','7','8'):
-                    selfile = self.Profile.GetBindFile("tps",f"sel{i}.txt")
-                    ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", self.Profile.BLF('tps',f"sel{i}.txt")]))
-                    selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", self.Profile.BLF('tps',f"sel{i}.txt")]))
+                    selfile = self.Profile.GetBindFile("teamsel",f"sel{i}.txt")
+                    ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
+                    selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
                     for j in ('1','2','3','4','5','6','7','8'):
                         if (i == j):
-                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod1} {int(j) - selnummod1}", self.Profile.BLF('tps',"reset.txt")]))
+                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod1} {int(j) - selnummod1}", self.Profile.BLF('teamsel',"reset.txt")]))
                         else:
-                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod} {int(j) - selnummod}"  , self.Profile.BLF('tps',f"sel{j}.txt")]))
+                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod} {int(j) - selnummod}"  , self.Profile.BLF('teamsel',f"sel{j}.txt")]))
 
             else:
                 selmethod = "teamselect"
@@ -282,7 +283,7 @@ class Gameplay(Page):
                     selmethod = "petselect"
                     selnummod = 1
                 for i in (1,2,3,4,5,6,7,8):
-                    ResetFile.SetBind(self.Ctrls['sel1'].MakeFileKeyBind("selmethod " + (i - selnummod)))
+                    ResetFile.SetBind(self.Ctrls[f'TeamSelect{i}'].MakeFileKeyBind(selmethod + " " + str(i - selnummod)))
 
             ResetFile = self.Profile.ResetFile()
 

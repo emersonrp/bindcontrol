@@ -1,4 +1,5 @@
 import wx
+import inspect
 from pathlib import Path, PureWindowsPath
 from KeyBind import FileKeyBind
 #from collections import deque
@@ -29,6 +30,9 @@ class BindFile():
         # TODO and/or maybe this should just get called with key/string and
         # then forge its own KeyBind objects
         if isinstance(keybind, str):
+            prevFrame = inspect.currentframe().f_back
+            (filen, line, funcn, _, _) = inspect.getframeinfo(prevFrame)
+            print(f"Called as string from {filen}, {funcn}, {line}")
             keybind = FileKeyBind(keybind, "", "", contents)
 
         if not keybind.Key: return

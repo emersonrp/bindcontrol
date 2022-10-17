@@ -753,6 +753,7 @@ class SoD(Page):
 
     def makeNonSoDModeKey(self, p, t, bl, cur, toff, fix = None, fb = ''):
         key = t.NonSoDMode
+        name = UI.Labels['NonSoDMode']
         if not key: return
         if not self.Ctrls['NonSoDMode'].IsEnabled(): return
 
@@ -764,24 +765,25 @@ class SoD(Page):
             if (fix):
                 fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,'',feedback)
             else:
-                cur.SetBind(key, t.ini + self.actPower_toggle(None,True,None,toff) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
+                cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower_toggle(None,True,None,toff) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload))
 
         elif (bl == "ar"):
             bindload = t.BLF('an')
             if (fix):
                 fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"a",feedback)
             else:
-                cur.SetBind(key, t.ini + self.actPower_toggle(None,True,None,toff) + t.detailhi + t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower_toggle(None,True,None,toff) + t.detailhi + t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload))
 
         else:
             if (fix):
                 fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"f",feedback)
             else:
-                cur.SetBind(key, t.ini + self.actPower_toggle(None,True,None,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
+                cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower_toggle(None,True,None,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn')))
         t.ini = ''
 
     def makeTempModeKey(self, p, t, bl, cur, toff):
         key = t.TempMode
+        name = UI.Labels['TempMode']
         if not key: return
 
         if self.GetState('Feedback'): feedback = '$$t $name, Temp Mode'
@@ -791,25 +793,26 @@ class SoD(Page):
 
         if (bl == "r"):
             bindload = t.BLF('t')
-            cur.SetBind(key, t.ini + self.actPower(None,1,trayslot,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+            cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower(None,1,trayslot,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload))
         elif (bl == "ar"):
             bindload  = t.BLF('at')
             bindload2 = t.BLF('at','_t')
             tgl = p.GetBindFile(bindload2)
-            cur.SetBind(key, t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
-            tgl.SetBind(key, t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+            cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload2))
+            tgl.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload))
         else:
-            cur.SetBind(key, t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('ft'))
+            cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('ft')))
 
         t.ini = ''
 
     def makeQFlyModeKey(self, p, t, bl, cur, toff, modestr):
         key = t.QFlyMode
+        name = UI.Labels['QFlyMode']
         if not key: return
         if not self.Ctrls['QFlyMode'].IsEnabled(): return
 
         if (modestr == "NonSoD"):
-            cur.SetBind(key, "powexecname Quantum Flight")
+            cur.SetBind(FileKeyBind(key, name, self, "powexecname Quantum Flight"))
             return
 
         if self.GetState('Feedback'): feedback = '$$t $name, QFlight Mode'
@@ -823,22 +826,23 @@ class SoD(Page):
             if (modestr == 'Nova' or modestr == 'Dwarf'): tray = '$$gototray 1'
             else:                                         tray = ''
 
-            cur.SetBind(key, t.ini + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload2)
-            tgl.SetBind(key, t.ini + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+            cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload2))
+            tgl.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload))
 
         elif (bl == "ar"):
             bindload  = t.BLF('an')
             bindload2 = t.BLF('an','_t')
             tgl = p.GetBindFile(bindload2)
-            cur.SetBind(key, t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
-            tgl.SetBind(key, t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+            cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload2))
+            tgl.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload))
         else:
-            cur.SetBind(key, t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('fn'))
+            cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('fn')))
 
         t.ini = ''
 
     def makeSprintModeKey(self, p, t, bl, cur, toff, fix, fb = ''):
         key = t.SprintMode
+        name = UI.Labels['SprintMode']
         if not key: return
 
         if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Sprint-SoD Mode'
@@ -854,7 +858,7 @@ class SoD(Page):
             if (fix):
                 fix(p,t,key, self.makeSprintModeKey,"r",bl,cur,toff,'',feedback)
             else:
-                cur.SetBind(key, t.ini + ton + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
+                cur.SetBind(FileKeyBind(key, name, self, t.ini + ton + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload))
 
         elif (bl == "ar"):
             bindload  = t.BLF('gr')
@@ -862,13 +866,13 @@ class SoD(Page):
             if (fix):
                 fix(p,t,key, self.makeSprintModeKey,"r",bl,cur,toff,"a",feedback)
             else:
-                cur.SetBind(key, t.ini + self.actPower_toggle(1,True,t.sprint,toff) + t.detailhi +  t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower_toggle(1,True,t.sprint,toff) + t.detailhi +  t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload))
 
         else:
             if (fix):
                 fix(p,t,key, self.makeSprintModeKey,"r",bl,cur,toff,"f",feedback)
             else:
-                cur.SetBind(key, t.ini + self.actPower_toggle(1,True,t.sprint,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fr'))
+                cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower_toggle(1,True,t.sprint,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fr')))
 
         t.ini = ''
 
@@ -912,6 +916,7 @@ class SoD(Page):
 
     def makeJumpModeKey(self, p, t, bl, cur, toff, fpath, fbl):
         key = t.JumpMode
+        name = UI.Labels['JumpMode']
         if (t.canjmp and not self.GetState('SimpleSJCJ')):
 
             if self.GetState('Feedback'): feedback = '$$t $name, Superjump Mode'
@@ -927,19 +932,20 @@ class SoD(Page):
                 else:
                     a = self.actPower(None,1,t.cjmp,toff)
 
-                tgl.SetBind(key, '-down' + a + t.detaillo + t.flycamdist + t.blj + t.KeyState() + ".txt")
-                cur.SetBind(key, '+down' + feedback + '$$bindloadfile ' + tglbl)
+                tgl.SetBind(FileKeyBind(key, name, self, '-down' + a + t.detaillo + t.flycamdist + t.blj + t.KeyState() + ".txt"))
+                cur.SetBind(FileKeyBind(key, name, self, '+down' + feedback + '$$bindloadfile ' + tglbl))
             elif (bl == "aj"):
-                tgl.SetBind(key, '-down' + self.actPower(None,1,t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + t.dirs('DLR') + t.blaj + t.KeyState() + ".txt")
-                cur.SetBind(key, '+down' + feedback + '$$bindloadfile ' + tglbl)
+                tgl.SetBind(FileKeyBind(key, name, self, '-down' + self.actPower(None,1,t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + t.dirs('DLR') + t.blaj + t.KeyState() + ".txt"))
+                cur.SetBind(FileKeyBind(key, name, self, '+down' + feedback + '$$bindloadfile ' + tglbl))
             else:
-                tgl.SetBind(key, '-down' + self.actPower(None,1,t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + t.blfj + t.KeyState() + ".txt")
-                cur.SetBind(key, '+down' + feedback + '$$bindloadfile ' + tglbl)
+                tgl.SetBind(FileKeyBind(key, name, self, '-down' + self.actPower(None,1,t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + t.blfj + t.KeyState() + ".txt"))
+                cur.SetBind(FileKeyBind(key, name, self, '+down' + feedback + '$$bindloadfile ' + tglbl))
 
         t.ini = ''
 
     def makeFlyModeKey(self, p, t, bl, cur, toff, fix, fb = '', fb_on_a = False):
         key = t.FlyMode
+        name = UI.Labels['FlyMode']
         if not key: return
 
         if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Flight Mode'
@@ -951,7 +957,7 @@ class SoD(Page):
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
-                    cur.SetBind(key, '+down$$' + self.actPower_toggle(1,True,t.flyx,toff) + '$$up 1$$down 0' + t.dirs('FBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    cur.SetBind(FileKeyBind(key, name, self, '+down$$' + self.actPower_toggle(1,True,t.flyx,toff) + '$$up 1$$down 0' + t.dirs('FBLR') + t.detaillo + t.flycamdist + feedback + bindload))
 
             elif (bl == "a"):
                 if (not fb_on_a): feedback = ''
@@ -963,26 +969,27 @@ class SoD(Page):
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
-                    cur.SetBind(t.FlyMode,  t.ini + self.actPower_toggle(1,True,ton,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    cur.SetBind(FileKeyBind(t.FlyMode, name, self, t.ini + self.actPower_toggle(1,True,ton,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload))
 
             elif (bl == "af"):
                 bindload = t.blaf + t.KeyState() + ".txt"
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"a",feedback)
                 else:
-                    cur.SetBind(key,  t.ini + self.actPower_toggle(1,True,t.flyx,toff) + t.detaillo + t.flycamdist + t.dirs('DLR') + feedback + bindload)
+                    cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower_toggle(1,True,t.flyx,toff) + t.detaillo + t.flycamdist + t.dirs('DLR') + feedback + bindload))
 
             else:
                 bindload = t.blff + t.KeyState() + ".txt"
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"f",feedback)
                 else:
-                    cur.SetBind(key,  t.ini + self.actPower_toggle(1,True,t.flyx,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + t.blff + t.KeyState() + ".txt")
+                    cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower_toggle(1,True,t.flyx,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + t.blff + t.KeyState() + ".txt"))
 
         t.ini = ''
 
     def makeGFlyModeKey(self, p, t, bl, cur, toff, fix):
         key = t.GFlyMode
+        name = UI.Labels['GFlyMode']
 
         if (t.cangfly > 0):
             if (bl == "gbo"):
@@ -990,23 +997,23 @@ class SoD(Page):
                 if (fix):
                     fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,'','')
                 else:
-                    cur.SetBind(key, t.ini + '$$up 1$$down 0' + self.actPower_toggle(None,True,t.gfly,toff) + t.dirs('FBLR') + t.detaillo + t.flycamdist .bindload)
+                    cur.SetBind(FileKeyBind(key, name, self, t.ini + '$$up 1$$down 0' + self.actPower_toggle(None,True,t.gfly,toff) + t.dirs('FBLR') + t.detaillo + t.flycamdist .bindload))
 
             elif (bl == "gaf"):
                 bindload = t.BLF('gaf')
                 if (fix):
                     fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,"a")
                 else:
-                    cur.SetBind(key, t.ini + t.detaillo + t.flycamdist + t.dirs('UDLR') + bindload)
+                    cur.SetBind(FileKeyBind(key, name, self, t.ini + t.detaillo + t.flycamdist + t.dirs('UDLR') + bindload))
 
             else:
                 if (fix):
                     fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,"f")
                 else:
                     if (bl == "gf"):
-                        cur.SetBind(key, t.ini + self.actPower_toggle(1,True,t.gfly,toff) + t.detaillo + t.flycamdist + t.BLF('gff'))
+                        cur.SetBind(FileKeyBind(key, name, self, t.ini + self.actPower_toggle(1,True,t.gfly,toff) + t.detaillo + t.flycamdist + t.BLF('gff')))
                     else:
-                        cur.SetBind(key, t.ini + t.detaillo + t.flycamdist + t.BLF('gff'))
+                        cur.SetBind(FileKeyBind(key, name, self, t.ini + t.detaillo + t.flycamdist + t.BLF('gff')))
 
         t.ini = ''
 
@@ -1023,7 +1030,7 @@ class SoD(Page):
         ResetFile = profile.ResetFile()
 
         config = wx.ConfigBase.Get()
-        ResetFile.SetBind(config.Read('ResetFile'),
+        ResetFile.SetBind(FileKeyBind(config.Read('ResetFile'), "Reset Key", self,
                     [
                         ResetFile.BLF(),
                         # 'tell $name, Keybinds reloaded.',
@@ -1032,7 +1039,7 @@ class SoD(Page):
                         'powexecunqueue',
                         # TODO - honor ResetFeedback checkbox
                         't $name, SoD Binds Reset'
-                    ])
+                    ]))
 
         if (self.GetState('DefaultMode') == "NonSoD"):
             if (not self.GetState('NonSoDEnable')):
@@ -1674,12 +1681,14 @@ class SoD(Page):
         d = int(moddir == 'down')
 
         config = wx.ConfigBase.Get()
-        curfile.SetBind(config.Read('ResetKey'),
+        curfile.SetBind(FileKeyBind(config.Read('ResetKey'),
+                                    UI.Labels['ResetKey'],
+                                    self,
                 f'up {u}$$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
                 str(turnoff) +
                 '$$t $name, SoD Binds Reset$$' + curfile.BaseReset() +
                 f"$$bindloadfile {gamepath}000000.txt"
-        )
+        ))
 
     def sodUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun, followbl, bo, sssj):
 
@@ -1829,6 +1838,7 @@ class SoD(Page):
 
     def sodForwardKey(self, t, bl, curfile,  mobile, stationary, flight, autorunbl, followbl, bo, sssj):
         (up,dow,forx,bac,lef,rig) = (t.up,t.dow,t.forx,t.bac,t.lef,t.rig)
+        name = UI.Labels['Forward']
 
         # actkeys = t.totalkeys
         ml = ''
@@ -1889,12 +1899,12 @@ class SoD(Page):
             curfile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind(move + bl))
             if (self.GetState('MouseChord')):
                 if (t.W != 1) : move = f"{ini}{up}{dow}{forx}{bac}{rig}{lef}"
-                curfile.SetBind('mousechord',  move + bl)
+                curfile.SetBind(FileKeyBind('mousechord', name, self, move + bl))
 
         elif (not autorunbl):
             curfile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind(f"{ini}{up}{dow}{forx}{bac}{lef}{rig}{ml}{toggle}{bl}"))
             if (self.GetState('MouseChord')):
-                curfile.SetBind('mousechord', f"{ini}{up}{dow}{forx}{bac}{rig}{lef}{ml}{toggle}{bl}")
+                curfile.SetBind(FileKeyBind('mousechord', name, self, f"{ini}{up}{dow}{forx}{bac}{rig}{lef}{ml}{toggle}{bl}"))
 
         else:
             if (t.W != 1):
@@ -1902,7 +1912,7 @@ class SoD(Page):
 
             curfile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind(f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{lef}{rig}{t.mlon}{bl}"))
             if (self.GetState('MouseChord')) :
-                curfile.SetBind('mousechord', f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{rig}{lef}{t.mlon}{bl}")
+                curfile.SetBind(FileKeyBind('mousechord', name, self, f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{rig}{lef}{t.mlon}{bl}"))
 
     def sodBackKey(self,t,bl,curfile,mobile,stationary,flight,autorunbl,followbl,bo,sssj):
         (up,dow,forw,bacx,lef,rig) = (t.up,t.dow,t.forw, t.bacx,t.lef,t.rig)
@@ -2306,7 +2316,7 @@ class SoD(Page):
         tglfile  = profile.GetBindFile(filename)
         t.ini    = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
-        curfile.SetBind(key, "+down" + feedback + self.actPower_name(None,True,t.cjmp) + profile.BLF(gamefilename))
+        curfile.SetBind(FileKeyBind(key, "Jump Fix", self, "+down" + feedback + self.actPower_name(None,True,t.cjmp) + profile.BLF(gamefilename)))
 
     def sodSetDownFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
         if autofollowmode:
@@ -2320,7 +2330,7 @@ class SoD(Page):
         t.ini = '-down$$'
 
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
-        curfile.SetBind(key, '+down' + feedback + profile.BLF(gamefilename))
+        curfile.SetBind(FileKeyBind(key, "SetDown Fix", self, '+down' + feedback + profile.BLF(gamefilename)))
 
     def onCBLabelClick(self, evt):
         cblabel = evt.EventObject

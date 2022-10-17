@@ -1,6 +1,5 @@
 import wx
 import UI
-from Utility import ChatColors
 from Page import Page
 from GameData import Inspirations
 from UI.ControlGroup import ControlGroup
@@ -45,12 +44,7 @@ class InspirationPopper(Page):
         self.RevInspRows = ControlGroup(self, self, width=8)
 
         for Insp in Inspirations:
-            revkey = f"Rev{Insp}Key"
-            colors = f"{Insp}Colors"
-            revcol = f"Rev{colors}"
-
             for order in ("", "Rev"):
-
                 rowSet = self.RevInspRows if order else self.InspRows
 
                 rowSet.AddControl(
@@ -121,7 +115,7 @@ class InspirationPopper(Page):
         self.OnEnableRevCB()
         self.OnDisableTellCB()
 
-    def OnEnableCB(self, evt = None):
+    def OnEnableCB(self, _ = None):
         controls = []
         for Insp in Inspirations:
             controls.append(f"{Insp}Key")
@@ -134,7 +128,7 @@ class InspirationPopper(Page):
             self.OnDisableTellCB()
         self.Thaw()
 
-    def OnEnableRevCB(self, evt = None):
+    def OnEnableRevCB(self, _ = None):
         controls = []
         for Insp in Inspirations:
             controls.append(f"Rev{Insp}Key")
@@ -147,7 +141,7 @@ class InspirationPopper(Page):
             self.OnDisableTellCB()
         self.Thaw()
 
-    def OnDisableTellCB(self, evt = None):
+    def OnDisableTellCB(self, _ = None):
         enabled = not self.disableTellsCB.IsChecked()
         controls = []
         revcontrols = []
@@ -190,19 +184,16 @@ class InspirationPopper(Page):
             if self.GetState('EnableRevInspBinds'):
                 ResetFile.SetBind(self.Ctrls[f"Rev{Insp}Key"].WithContents(reverseOrder))
 
-    def bindisused(self, profile):
-        return bool(self.State['Enable'] or self.State['Reverse'])
-
     UI.Labels.update({
-        'Enable'          : "Enable Inspiration Popper",
-        'AccuracyKey'     : "Accuracy Key",
-        'HealthKey'       : "Health Key",
-        'DamageKey'       : "Damage Key",
-        'EnduranceKey'    : "Endurance Key",
-        'DefenseKey'      : "Defense Key",
-        'BreakFreeKey'    : "Break Free Key",
-        'ResistDamageKey' : "Resist Damage Key",
-        'ResurrectionKey' : "Resurrection Key",
+        'Enable'             : "Enable Inspiration Popper",
+        'AccuracyKey'        : "Accuracy Key",
+        'HealthKey'          : "Health Key",
+        'DamageKey'          : "Damage Key",
+        'EnduranceKey'       : "Endurance Key",
+        'DefenseKey'         : "Defense Key",
+        'BreakFreeKey'       : "Break Free Key",
+        'ResistDamageKey'    : "Resist Damage Key",
+        'ResurrectionKey'    : "Resurrection Key",
         'RevAccuracyKey'     : "Reverse Accuracy Key",
         'RevHealthKey'       : "Reverse Health Key",
         'RevDamageKey'       : "Reverse Damage Key",
@@ -217,3 +208,6 @@ class InspirationPopper(Page):
             UI.Labels[f"{order}{Insp}Border"] = "Border"
             UI.Labels[f"{order}{Insp}Foreground"] = "Foreground"
             UI.Labels[f"{order}{Insp}Background"] = "Background"
+
+def ChatColors(fg,bg,bd): return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'
+

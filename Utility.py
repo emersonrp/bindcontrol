@@ -2,13 +2,6 @@ import wx
 import re
 import os
 
-def ColorDefault():
-    return {
-        'border'     : { 'r' : 0,   'g' : 0,   'b' : 0, },
-        'foreground' : { 'r' : 0,   'g' : 0,   'b' : 0, },
-        'background' : { 'r' : 255, 'g' : 255, 'b' : 255, },
-    }
-
 Icons = {}
 def Icon(name = '', powerset = '', power = ''):
     # parse powerset and power to get name, if supplied
@@ -28,9 +21,4 @@ def Icon(name = '', powerset = '', power = ''):
             print(f"Missing powers icon: {name}")
 
     return Icons.get(name, None)
-
-def getMainKey(key):
-    return re.sub('[LR]?(SHIFT|CTRL|ALT)\+?', '', key)
-
-def ChatColors(fg,bg,bd): return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'
 

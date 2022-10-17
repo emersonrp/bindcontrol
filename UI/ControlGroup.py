@@ -1,9 +1,12 @@
+from typing import Any, Callable
+
 import wx
 from wx.adv import BitmapComboBox
+import wx.lib.stattext as ST
+
 import UI
 from UI.KeySelectDialog import bcKeyButton
 from KeyBind import KeyBind
-import wx.lib.stattext as ST
 
 
 class ControlGroup(wx.StaticBoxSizer):
@@ -19,8 +22,13 @@ class ControlGroup(wx.StaticBoxSizer):
         self.Add(self.InnerSizer, 1, wx.ALL|wx.EXPAND, 10)
 
     def AddControl(self,
-        ctlType = '', ctlName = '', noLabel = False,
-        contents : str|list = '', tooltip = '', callback = None):
+                   ctlType  : str = '',
+                   ctlName  : str = '',
+                   noLabel  : bool = False,
+                   contents : Any = '',
+                   tooltip  : str = '',
+                   callback : Callable|None = None
+        ):
 
         if not ctlName:
             wx.LogError(f"Tried to make a labeled control without a CtlName!")

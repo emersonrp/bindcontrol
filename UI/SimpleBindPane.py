@@ -40,7 +40,9 @@ class SimpleBindPane(CustomBindPaneParent):
 
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"),              0, wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(BindContentsCtrl,                                       1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
-        BindSizer.Add(PowerBinderButton(pane, BindContentsCtrl, powerbinderdata), 0)
+        pbb = PowerBinderButton(pane, BindContentsCtrl, powerbinderdata)
+        BindSizer.Add(pbb, 0)
+        self.PowerBinderDlg = pbb.PowerBinderDialog
         self.Ctrls['BindContents'] = BindContentsCtrl
 
         BindKeyCtrl = bcKeyButton(pane, -1, {

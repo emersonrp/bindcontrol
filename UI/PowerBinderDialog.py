@@ -76,12 +76,13 @@ class PowerBinderDialog(wx.Dialog):
     def SaveToData(self):
         data = []
         index = 0
-        for thingie in self.RearrangeList.GetItems():
+        for _ in self.RearrangeList.GetItems():
             # check whether we have an object already attached to this choice
             cmdObject = self.RearrangeList.GetClientData(index)
             commandClassName = commandRevClasses[type(cmdObject)]
-            data.append({commandClassName: thingie.Serialize()})
+            data.append({commandClassName: cmdObject.Serialize()})
             index = index + 1
+        return data
 
     def OnRearrangeDelete(self, _):
         current = self.RearrangeList.GetSelection()

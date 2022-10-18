@@ -112,6 +112,7 @@ class PowerBinderDialog(wx.Dialog):
             self.ShowEditDialogFor(cmdObject)
         else:
             print("cmdObject was None")
+        self.UpdateBindStringDisplay()
 
     # OnBindChoice creates a new step and adds it to the rearrangelist
     def OnBindChoice(self, evt):
@@ -186,7 +187,9 @@ class PowerBinderButton(wx.Button):
         dlg = self.PowerBinderDialog
         if (self.tgtTxtCtrl and dlg.ShowModal() == wx.ID_OK):
             bindString = dlg.MakeBindString()
-            self.tgtTxtCtrl.SetValue(bindString)
+            if bindString != self.tgtTxtCtrl.GetValue():
+                self.tgtTxtCtrl.SetValue(bindString)
+                wx.App.Get().Profile.SetModified()
 
 class PowerBinderEditDialog(wx.Dialog):
     def __init__(self, parent, init = {}):

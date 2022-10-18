@@ -174,6 +174,8 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
     def OnInit(self):
         self.Init()
         main = Main(None)
+        self.Profile = main.Profile
+
         main.Show()
 
         return True

@@ -17,7 +17,7 @@ class Gameplay(Page):
             'FPSBindKey'      : 'P',
             'NetgraphBindKey' : 'N',
 
-            'TPSEnable'   : True,
+            'TPSEnable'   : False,
             'TPSSelMode'  : "Teammates, then pets",
             'TeamSelect1' : '',
             'TeamSelect2' : '',
@@ -226,21 +226,25 @@ class Gameplay(Page):
             'IncTeamPos', 'DecTeamPos', 'TeamReset',
 
             'SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize'])
+        if evt: evt.Skip()
 
     def OnFPSEnable(self, evt = None):
         self.DisableControls(self.GetState('FPSEnable'),
             ['FPSBindKey','NetgraphBindKey'])
+        if evt: evt.Skip()
 
     def OnChatEnable(self, evt = None):
         self.DisableControls(self.GetState('ChatEnable'),
             ['StartChat','SlashChat','StartEmote','AutoReply',
              'TellTarget','QuickChat', 'TypingNotifierEnable', 'TypingNotifier'])
         self.OnTypeEnable()
+        if evt: evt.Skip()
 
     def OnTypeEnable(self, evt = None):
         chatenabled = self.GetState('ChatEnable')
         typeenabled = self.GetState('TypingNotifierEnable')
         self.DisableControls(chatenabled and typeenabled, ['TypingNotifier'])
+        if evt: evt.Skip()
 
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()

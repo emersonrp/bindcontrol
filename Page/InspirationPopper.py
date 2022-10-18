@@ -115,7 +115,7 @@ class InspirationPopper(Page):
         self.OnEnableRevCB()
         self.OnDisableTellCB()
 
-    def OnEnableCB(self, _ = None):
+    def OnEnableCB(self, evt = None):
         controls = []
         for Insp in Inspirations:
             controls.append(f"{Insp}Key")
@@ -127,8 +127,9 @@ class InspirationPopper(Page):
         if self.disableTellsCB.IsChecked():
             self.OnDisableTellCB()
         self.Thaw()
+        if evt: evt.Skip()
 
-    def OnEnableRevCB(self, _ = None):
+    def OnEnableRevCB(self, evt = None):
         controls = []
         for Insp in Inspirations:
             controls.append(f"Rev{Insp}Key")
@@ -140,8 +141,9 @@ class InspirationPopper(Page):
         if self.disableTellsCB.IsChecked():
             self.OnDisableTellCB()
         self.Thaw()
+        if evt: evt.Skip()
 
-    def OnDisableTellCB(self, _ = None):
+    def OnDisableTellCB(self, evt = None):
         enabled = not self.disableTellsCB.IsChecked()
         controls = []
         revcontrols = []
@@ -156,7 +158,7 @@ class InspirationPopper(Page):
             self.DisableControls(enabled, controls)
         if self.useRevCB.IsChecked():
             self.DisableControls(enabled, revcontrols)
-
+        if evt: evt.Skip()
 
     def PopulateBindFiles(self):
         profile = self.Profile

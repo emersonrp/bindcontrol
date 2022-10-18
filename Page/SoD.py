@@ -386,7 +386,7 @@ class SoD(Page):
 
         self.SynchronizeUI()
 
-    def SynchronizeUI(self, _ = None):
+    def SynchronizeUI(self, evt = None):
         self.Freeze()
 
         try:
@@ -527,6 +527,7 @@ class SoD(Page):
         finally:
             self.Thaw()
             self.Layout()
+            if evt: evt.Skip()
 
 
     def makeSoDFile(self, p):

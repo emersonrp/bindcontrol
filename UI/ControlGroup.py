@@ -9,7 +9,6 @@ from UI.KeySelectDialog import bcKeyButton
 from KeyBind import ControlKeyBind
 import wx.lib.stattext as ST
 
-
 class ControlGroup(wx.StaticBoxSizer):
 
     def __init__(self, parent, page, label = '', width = 2, flexcols = [0]):
@@ -53,7 +52,6 @@ class ControlGroup(wx.StaticBoxSizer):
             control.Page    = self.Page
             control.Profile = self.Profile
             control.KeyBind = ControlKeyBind(Init[ctlName], label, self.Page.TabTitle)
-            control.Bind(wx.EVT_BUTTON, self.Profile.SetModified)
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
             control = wx.ComboBox(
@@ -61,7 +59,6 @@ class ControlGroup(wx.StaticBoxSizer):
                 choices = contents or (), style = wx.CB_READONLY)
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback )
-            control.Bind(wx.EVT_COMBOBOX, self.Profile.SetModified)
 
         elif (ctlType == 'bmcombo') or (ctlType == "bmcombobox"):
             control = BitmapComboBox(
@@ -76,11 +73,9 @@ class ControlGroup(wx.StaticBoxSizer):
                 control.SetValue(Init[ctlName])
             else:
                 control.SetSelection(index)
-            control.Bind(wx.EVT_COMBOBOX, self.Profile.SetModified)
 
         elif ctlType == ('text'):
             control = wx.TextCtrl(CtlParent, -1, Init[ctlName])
-            control.Bind(wx.EVT_TEXT, self.Profile.SetModified)
 
         elif ctlType == ('choice'):
             contents = contents if contents else []
@@ -88,7 +83,6 @@ class ControlGroup(wx.StaticBoxSizer):
             control.SetSelection(control.FindString(Init[ctlName]))
             if callback:
                 control.Bind(wx.EVT_CHOICE, callback )
-            control.Bind(wx.EVT_CHOICE, self.Profile.SetModified )
 
         elif ctlType == ('statictext'):
             control = wx.StaticText(CtlParent, -1, contents)
@@ -99,23 +93,19 @@ class ControlGroup(wx.StaticBoxSizer):
             padding = 6
             if callback:
                 control.Bind(wx.EVT_CHECKBOX, callback )
-            control.Bind(wx.EVT_CHECKBOX, self.Profile.SetModified )
 
         elif ctlType == ('spinbox'):
             control = wx.SpinCtrl(CtlParent, -1)
             control.SetValue(Init[ctlName])
             control.SetRange(*contents)
-            control.Bind(wx.EVT_SPINCTRL, self.Profile.SetModified)
 
         elif ctlType == ('dirpicker'):
             control = wx.DirPickerCtrl(
                 CtlParent, -1, Init[ctlName], Init[ctlName],
                 #style = wx.DIRP_USE_TEXTCTRL|wx.DIRP_SMALL,
             )
-            control.Bind(wx.EVT_DIRPICKER_CHANGED, self.Profile.SetModified)
         elif ctlType == ('colorpicker'):
             control = wx.ColourPickerCtrl( CtlParent, -1, contents)
-            control.Bind(wx.EVT_COLOURPICKER_CHANGED, self.Profile.SetModified)
 
         else:
             wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}")

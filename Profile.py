@@ -33,6 +33,13 @@ class Profile(wx.Notebook):
         self.CreatePage(Mastermind(self))
         #self.CreatePage(ComplexBinds(self))
 
+        # bind all control events so we can decide that we're modified.
+        for evt in [
+            wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
+            wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU,
+        ]:
+            self.Bind(evt, self.SetModified)
+
         if loadfile: self.doLoadFromFile(loadfile)
 
     def CreatePage(self, module):

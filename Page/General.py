@@ -165,21 +165,21 @@ class General(Page):
 
 
     # Event handlers
-    def OnPickOrigin(self, _):
-        # TODO do we need to take any action based on this?
-        pass
+    def OnPickOrigin(self, evt):
+        evt.Skip()
 
-    def OnPickPoolPower(self, _):
-        pass
+    def OnPickPoolPower(self, evt):
+        evt.Skip()
 
-    def OnPickPrimaryPowerSet(self, _):
+    def OnPickPrimaryPowerSet(self, evt):
         self.Profile.Mastermind.OnArchetypePowerChange()
+        evt.Skip()
 
-    def OnPickSecondaryPowerSet(self, _):
-        pass
+    def OnPickSecondaryPowerSet(self, evt):
+        evt.Skip()
 
-    def OnPickEpicPowerSet(self, _):
-        pass
+    def OnPickEpicPowerSet(self, evt):
+        evt.Skip()
 
     UI.Labels.update({
         'Pool1'           : "Power Pool 1",

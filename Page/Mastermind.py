@@ -323,7 +323,7 @@ class Mastermind(Page):
         for _, control in self.Ctrls.items():
             control.Enable(bool(arch == "Mastermind" and pset))
 
-    def OnPetCmdEnable(self, _ = None):
+    def OnPetCmdEnable(self, evt = None):
         self.Freeze()
         enabled = self.GetState('PetCmdEnable')
         for command in self.petCommandKeyDefinitions:
@@ -336,8 +336,9 @@ class Mastermind(Page):
              'PetBodyguardAttackEnabled', 'PetBodyguardGoto', 'PetBodyguardGotoEnabled' ])
         self.OnBGCheckboxes()
         self.Thaw()
+        if evt: evt.Skip()
 
-    def OnPetSelEnable(self, _ = None):
+    def OnPetSelEnable(self, evt = None):
         enabled = self.GetState('PetSelEnable')
         for i in range(1,7):
             self.DisableControls(enabled, [
@@ -345,8 +346,9 @@ class Mastermind(Page):
             ])
 
         self.OnBGCheckboxes()
+        if evt: evt.Skip()
 
-    def OnBGCheckboxes(self, _ = None):
+    def OnBGCheckboxes(self, evt = None):
         petcmdenabled = self.GetState('PetCmdEnable')
         petselenabled = self.GetState('PetSelEnable')
 
@@ -369,7 +371,7 @@ class Mastermind(Page):
 
         for petid in [1,2,3,4,5,6]:
             self.Ctrls[f"Pet{petid}Bodyguard"].Enable(petselenabled and bgEnabled)
-
+        if evt: evt.Skip()
 
     def HelpText(self):
         return """

@@ -77,6 +77,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
         w,_ = self.IncName.GetSize()
         self.IncName.Wrap(w)
         self.Layout()
+        evt.Skip()
 
     def BuildMenu(self, slot):
         menu = wx.Menu()

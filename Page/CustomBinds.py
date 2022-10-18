@@ -44,11 +44,13 @@ class CustomBinds(Page):
         #self.SetSizerAndFit(MainSizer)
         self.Layout()
 
-    def OnNewSimpleBindButton(self, _):
+    def OnNewSimpleBindButton(self, evt):
         self.AddBindToPage(bindpane = SimpleBindPane(self))
+        evt.Skip()
 
-    def OnNewBufferBindButton(self, _):
+    def OnNewBufferBindButton(self, evt):
         self.AddBindToPage(bindpane = BufferBindPane(self))
+        evt.Skip()
 
     def AddBindToPage(self, bindpane = None):
 
@@ -89,6 +91,7 @@ class CustomBinds(Page):
         self.PaneSizer.Hide(sizer)
         self.PaneSizer.Remove(sizer)
         self.Layout()
+        evt.Skip()
 
     def PopulateBindFiles(self):
         for pane in self.Panes:

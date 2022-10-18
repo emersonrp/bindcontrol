@@ -2,9 +2,9 @@ import wx
 import re
 from pathlib import Path, PureWindowsPath
 import json
-from Utility import Icon
 
 from BindFile import BindFile
+
 from Page.General import General
 from Page.Gameplay import Gameplay
 from Page.SoD import SoD
@@ -22,9 +22,10 @@ class Profile(wx.Notebook):
     def __init__(self, parent, loadfile = None):
         wx.Notebook.__init__(self, parent, style = wx.NB_TOP, name = "Profile")
 
-        self.BindFiles = {}
-        self.Pages     = []
-        self.Modified  = False
+        self.BindFiles : dict      = {}
+        self.Pages     : list      = []
+        self.Modified  : bool      = False
+        self.Filename  : Path|None = None
 
         # Add the individual tabs, in order.
         self.CreatePage(General(self))
@@ -94,12 +95,31 @@ class Profile(wx.Notebook):
     def ProfilePath(self):
         return Path.home() / "Documents" / "bindcontrol"
 
-    def ProfileFile(self):
-        return Path(self.ProfilePath(), self.Name() + ".bcp")
-
     def SaveToFile(self, _ = None):
+        with wx.FileDialog(self, "Save Profile file",
+                wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
+                defaultDir = str(self.ProfilePath()),
+                defaultFile = self.Name() + '.bcp',
+                style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
 
-        savefile = self.ProfileFile()
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                wx.LogMessage("User canceled saving new profile")
+                return     # the user changed their mind
+
+            # Proceed loading the file chosen by the user
+            pathname = fileDialog.GetPath()
+            if not re.search(r'\.bcp$', pathname):
+                pathname = pathname + '.bcp'
+            self.Filename = Path(pathname)
+
+            return self.doSaveToFile()
+
+
+    def doSaveToFile(self, _ = None):
+
+        savefile = self.Filename
+        if not savefile:
+            return self.SaveToFile()
 
         self.ProfilePath().mkdir( parents = True, exist_ok = True )
 
@@ -165,6 +185,7 @@ class Profile(wx.Notebook):
 
             # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
+            self.Filename = Path(pathname)
             self.doLoadFromFile(pathname)
 
     def doLoadFromFile(self, pathname):

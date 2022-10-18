@@ -52,9 +52,10 @@ class Main(wx.Frame):
         # "Profile" Menu
         ProfMenu = wx.Menu()
 
-        Profile_new   = ProfMenu.Append(-1, "New Profile...", "Create a new profile")
-        Profile_load  = ProfMenu.Append(-1, "Load Profile...", "Load an existing profile")
-        Profile_save  = ProfMenu.Append(-1, "Save Profile", "Save the current profile")
+        Profile_new    = ProfMenu.Append(-1, "New Profile...", "Create a new profile")
+        Profile_load   = ProfMenu.Append(-1, "Load Profile...", "Load an existing profile")
+        Profile_saveas = ProfMenu.Append(-1, "Save Profile As...", "Save the current profile under a new filename")
+        Profile_save   = ProfMenu.Append(-1, "Save Profile", "Save the current profile")
         ProfMenu.AppendSeparator()
         Profile_preferences = ProfMenu.Append(wx.ID_PREFERENCES, "&Preferences", "Configure BindControl")
         Profile_exit  = ProfMenu.Append(wx.ID_EXIT)
@@ -89,7 +90,8 @@ class Main(wx.Frame):
         # MENUBAR EVENTS
         self.Bind(wx.EVT_MENU , None                       , Profile_new)
         self.Bind(wx.EVT_MENU , self.Profile.LoadFromFile  , Profile_load)
-        self.Bind(wx.EVT_MENU , self.Profile.SaveToFile    , Profile_save)
+        self.Bind(wx.EVT_MENU , self.Profile.doSaveToFile    , Profile_save)
+        self.Bind(wx.EVT_MENU , self.Profile.SaveToFile , Profile_saveas)
         self.Bind(wx.EVT_MENU , self.OnMenuPrefsDialog     , Profile_preferences)
         self.Bind(wx.EVT_MENU , self.OnMenuExitApplication , Profile_exit)
 

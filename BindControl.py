@@ -25,25 +25,22 @@ class Main(wx.Frame):
         self.Profile = Profile(self)
 
         config = wx.FileConfig('bindcontrol')
-        wx.Config.Set(config)
+        wx.ConfigBase.Set(config)
+        # Check each config bit for existence and set to default if no
         if not config.Exists('BindPath'):
-            # we don't have a config file at all;  initialize one with defaults
             if wx.Platform == '__WXMSW__':
                 bindpath = "C:\\cohbinds\\"
             else:
                 bindpath = str(Path.home().joinpath('cohbinds'))
             config.Write('BindPath', bindpath)
+        if not config.Exists('GameBindPath'):
             if wx.Platform != '__WXMSW__':
                 config.Write('GameBindPath', "Z:\\cohbinds\\")
-            config.Write('ResetKey', 'LCTRL+R')
-            config.WriteBool('UseSplitModKeys', False)
-            config.WriteBool('FlushAllBinds', True)
-            # TODO the commented code for repositioning the window also caused a terrible resize, investigate.
-            #winPos = self.GetPosition()
-            #config.WriteInt("WindowX", winPos.x)
-            #config.WriteInt("WindowY", winPos.y)
-
-        #self.SetSize(config.ReadInt('WindowX'), config.ReadInt('WindowY'), -1, -1, wx.SIZE_USE_EXISTING)
+        if not config.Exists('ResetKey')        : config.Write('ResetKey', 'LCTRL+R')
+        if not config.Exists('UseSplitModKeys') : config.WriteBool('UseSplitModKeys', False)
+        if not config.Exists('FlushAllBinds')   : config.WriteBool('FlushAllBinds', True)
+        if not config.Exists('StartWith')       : config.Write('StartWith', 'New Profile')
+        config.Flush()
 
         self.PrefsDialog = PrefsDialog(self)
 
@@ -98,8 +95,6 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.OnMenuLogWindow, Log_window)
 
-        #self.Bind(wx.EVT_MOVE, self.OnMove)
-
         self.AppIcon = wx.Icon()
         self.AppIcon.LoadFile('icons/BindControl.ico', wx.BITMAP_TYPE_ICO)
         self.SetIcon(self.AppIcon)
@@ -129,6 +124,8 @@ class Main(wx.Frame):
             config.WriteBool('UseSplitModKeys', self.PrefsDialog.UseSplitModKeys.GetValue())
             config.WriteBool('FlushAllBinds', self.PrefsDialog.FlushAllBinds.GetValue())
             config.Write('ResetKey', self.PrefsDialog.ResetKey.GetLabel())
+            startwith = "New Profile" if self.PrefsDialog.StartWithNewProfile.GetValue() else "Last Profile"
+            config.Write('StartWith', startwith)
 
             config.Flush()
 
@@ -159,13 +156,6 @@ Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
 
     def OnMenuExitApplication(self, _):
         self.Close(True)
-
-#     def OnMove(self, _):
-#         winPos = self.GetPosition()
-#         config = wx.ConfigBase.Get()
-#         config.WriteInt("WindowX", winPos.x)
-#         config.WriteInt("WindowY", winPos.y)
-
 
 class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
     def OnInit(self):

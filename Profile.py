@@ -17,13 +17,11 @@ from UI.SimpleBindPane import SimpleBindPane
 
 class Profile(wx.Notebook):
 
-    def __init__(self, parent):
+    def __init__(self, parent, loadfile = None):
         wx.Notebook.__init__(self, parent, style = wx.NB_TOP, name = "Profile")
 
         self.BindFiles = {}
         self.Pages     = []
-
-        # TODO -- here's where we'd load a profile from a file or something.
 
         # Add the individual tabs, in order.
         self.CreatePage(General(self))
@@ -33,6 +31,8 @@ class Profile(wx.Notebook):
         self.CreatePage(InspirationPopper(self))
         self.CreatePage(Mastermind(self))
         #self.CreatePage(ComplexBinds(self))
+
+        if loadfile: self.doLoadFromFile(loadfile)
 
     def CreatePage(self, module):
         module.BuildPage()

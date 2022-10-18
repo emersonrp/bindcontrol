@@ -55,6 +55,17 @@ class PrefsDialog(wx.Dialog):
         flushBindsLabel.CB = self.FlushAllBinds
         flushBindsLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
+        StartWithProfileLabel = wx.StaticText(self, label = "On startup, start with:")
+        sizer.Add( StartWithProfileLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        StartWithSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.StartWithNewProfile  = wx.RadioButton(self, label="New Profile")
+        self.StartWithLastProfile = wx.RadioButton(self, label="Last Profile")
+        if config.Read('StartWith') == "New Profile": self.StartWithNewProfile.SetValue(True)
+        else:                                         self.StartWithLastProfile.SetValue(True)
+        StartWithSizer.Add(self.StartWithNewProfile)
+        StartWithSizer.Add(self.StartWithLastProfile)
+        sizer.Add (StartWithSizer, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+
         buttonSizer = wx.StdDialogButtonSizer()
         buttonSizer.AddButton(wx.Button(self, wx.ID_OK))
         buttonSizer.AddButton(wx.Button(self, wx.ID_CANCEL))

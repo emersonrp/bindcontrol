@@ -92,6 +92,7 @@ class Profile(wx.Notebook):
 
     ###################
     # Profile Save/Load
+    # TODO is this correctly cross-platform?
     def ProfilePath(self):
         return Path.home() / "Documents" / "bindcontrol"
 
@@ -116,7 +117,6 @@ class Profile(wx.Notebook):
 
 
     def doSaveToFile(self, _ = None):
-
         savefile = self.Filename
         if not savefile:
             return self.SaveToFile()
@@ -184,7 +184,6 @@ class Profile(wx.Notebook):
 
             # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
-            self.Filename = Path(pathname)
             self.doLoadFromFile(pathname)
 
     def doLoadFromFile(self, pathname):
@@ -224,6 +223,7 @@ class Profile(wx.Notebook):
                     bindpane = SimpleBindPane(cbpage, init = custombind)
                     cbpage.AddBindToPage(bindpane = bindpane)
 
+            self.Filename = Path(pathname)
             wx.LogMessage(f"Loaded profile {pathname}")
             self.ClearModified()
 

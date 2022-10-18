@@ -22,6 +22,7 @@ class Profile(wx.Notebook):
 
         self.BindFiles = {}
         self.Pages     = []
+        self.Modified  = False
 
         # Add the individual tabs, in order.
         self.CreatePage(General(self))
@@ -75,6 +76,9 @@ class Profile(wx.Notebook):
                     if key == ctrl.GetLabel():
                         conflicts.append( {'page' : pageName, 'ctrl': UI.Labels[ctrlname]})
         return conflicts
+
+    def SetModified  (self, _ = None): self.Modified = True
+    def ClearModified(self, _ = None): self.Modified = False
 
     ###################
     # Profile Save/Load
@@ -130,6 +134,7 @@ class Profile(wx.Notebook):
             savefile.touch() # make sure there's one there.
             savefile.write_text(dumpstring)
             wx.LogInfo(f"Wrote profile '{savefile}''")
+            self.ClearModified()
         except Exception as e:
             wx.LogError(f"Problem saving to profile '{savefile}': {e}")
 

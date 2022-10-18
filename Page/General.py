@@ -33,10 +33,11 @@ class General(Page):
         topSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         powersBox = ControlGroup(self, self, 'Powers and Info')
-        powersBox.AddControl(
+        self.NameCtrl = powersBox.AddControl(
             ctlName = 'Name',
             ctlType = 'text',
         )
+        self.NameCtrl.Bind(wx.EVT_TEXT, self.OnNameCtrlChanged)
 
         originchoices = []
         for Origin in Origins:
@@ -128,7 +129,7 @@ class General(Page):
         return
 
     ### EVENT HANDLERS
-    def OnPickArchetype(self, _ = {}):
+    def OnPickArchetype(self, evt = {}):
         arch = self.GetState('Archetype')
 
         if not arch:
@@ -162,9 +163,19 @@ class General(Page):
             self.Profile.SoD.SynchronizeUI()
 
         self.Fit()
+        if evt: evt.Skip()
 
 
     # Event handlers
+    def OnNameCtrlChanged(self, evt):
+        text = self.NameCtrl.GetValue()
+        if len(text) == 0:
+            self.NameCtrl.SetBackgroundColour((255,200,200))
+        else:
+            self.NameCtrl.SetBackgroundColour(wx.NullColour)
+        evt.Skip()
+
+
     def OnPickOrigin(self, evt):
         evt.Skip()
 

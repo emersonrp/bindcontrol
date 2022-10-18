@@ -106,10 +106,10 @@ class General(Page):
         )
 
         # Incarnate interface
-        self.incarnateBox = IncarnateBox(self)
+        self.IncarnateBox = IncarnateBox(self)
 
         topSizer.Add(powersBox, 1, wx.ALL|wx.EXPAND, 6)
-        topSizer.Add(self.incarnateBox,  2, wx.ALL|wx.EXPAND, 6)
+        topSizer.Add(self.IncarnateBox,  2, wx.ALL|wx.EXPAND, 6)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(topSizer, flag=wx.ALL|wx.EXPAND, border = 20)

@@ -1,5 +1,7 @@
 import wx
+import re
 from Utility import Icon
+import wx.lib.buttons as buttons
 
 import GameData
 
@@ -40,6 +42,26 @@ class IncarnateBox(wx.StaticBoxSizer):
                 powers.append({'name' : name, 'icon' : box.IncIcon.GetBitmap()})
         return powers
 
+    def FillWith(self, data):
+        incarnate = data['General'].get('Incarnate', None)
+        if incarnate:
+            for boxname, contents in incarnate.items():
+                box = getattr(self, boxname.lower() + "Inc")
+                box.IncName.SetLabel(contents['power'])
+                box.IncIcon.SetBitmapLabel(Icon(contents['iconfile']))
+                box.IconFileName = contents['iconfile']
+
+    def GetData(self):
+        incarnatedata = {}
+        for box in [self.hybridInc, self.loreInc, self.destinyInc, self.judgementInc, self.interfaceInc, self.alphaInc]:
+            if box.IncName.GetLabel():
+                incarnatedata[box.Label] = {
+                    'power'    : re.sub('\n', ' ', box.IncName.GetLabel()),
+                    'iconfile' : box.IconFileName,
+                }
+        return incarnatedata
+
+
 
 class IncarnatePicker(wx.StaticBoxSizer):
     def __init__(self, parent, label = ""):
@@ -53,7 +75,9 @@ class IncarnatePicker(wx.StaticBoxSizer):
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.IncIcon = wx.Button(staticbox, size=wx.Size(60,40))
+        self.IncIcon.Picker = self
         self.IncIcon.Bind(wx.EVT_BUTTON, self.OnButtonPress)
+        self.IncIcon.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
         self.IncName = wx.StaticText(staticbox, wx.ID_ANY, style=wx.ALIGN_RIGHT)
 
         hsizer.Add(self.IncName, 1, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 6)
@@ -70,13 +94,21 @@ class IncarnatePicker(wx.StaticBoxSizer):
         menuitem = evt.EventObject.FindItemById(evt.GetId())
 
         self.IncName.SetLabel(menuitem.GetItemLabel())
-        self.IncIcon.SetBitmapLabel(menuitem.GetBitmapBundle())
+        self.IncIcon.SetBitmap(menuitem.GetBitmapBundle())
+        self.IconFileName = menuitem.IconFileName
 
         # Yes both of the self.Layout() are necessary to do the sizing / wrap dance.
         self.Layout()
         w,_ = self.IncName.GetSize()
         self.IncName.Wrap(w)
         self.Layout()
+        evt.Skip()
+
+    def OnRightClick(self, evt):
+        button = evt.EventObject
+        button.SetBitmap(Icon('Empty'))
+        button.Picker.IncName.SetLabel('')
+        button.Layout()
         evt.Skip()
 
     def BuildMenu(self, slot):
@@ -95,10 +127,10 @@ class IncarnatePicker(wx.StaticBoxSizer):
                 # aliases for the Lore types ie "Polar Lights" => "Lights" to match the icons
                 aliasedtype = Aliases.get(type, type)
 
-
                 iconname = f"Incarnate/Incarnate_{slot}_{aliasedtype}_{rarity}"
                 icon = Icon(iconname)
                 if icon: menuitem.SetBitmap(icon)
+                menuitem.IconFileName = iconname
 
                 submenu.Append(menuitem)
 

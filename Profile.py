@@ -1,6 +1,8 @@
 import wx
+import re
 from pathlib import Path, PureWindowsPath
 import json
+from Utility import Icon
 
 from BindFile import BindFile
 from Page.General import General
@@ -108,10 +110,8 @@ class Profile(wx.Notebook):
 
             page = getattr(self, pagename)
             for controlname, control in page.Ctrls.items():
-
                 # skip if off
                 if control.IsEnabled():
-
                     # look up what type of control it is to know how to extract its value
                     controlType = type(control).__name__
                     if controlType == 'DirPickerCtrl':
@@ -128,6 +128,12 @@ class Profile(wx.Notebook):
                         value = control.GetValue()
 
                     savedata[pagename][controlname] = value
+
+            if pagename == "General":
+                incarnatedata = page.IncarnateBox.GetData()
+                if incarnatedata:
+                    savedata[pagename]['Incarnate'] = incarnatedata
+
 
         savedata['CustomBinds'] = []
 
@@ -186,6 +192,9 @@ class Profile(wx.Notebook):
                         control.SetSelection(value)
                     else:
                         control.SetValue(value)
+
+                if pagename == 'General':
+                    page.IncarnateBox.FillWith(data)
 
                 page.SynchronizeUI()
 

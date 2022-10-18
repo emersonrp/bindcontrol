@@ -5,7 +5,7 @@ from UI.PowerPicker import PowerPicker
 import GameData
 
 class PowerBinderDialog(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, init = {}):
         wx.Dialog.__init__(self, parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
         self.EditDialog = PowerBinderEditDialog(self)
@@ -60,10 +60,28 @@ class PowerBinderDialog(wx.Dialog):
         vbox = wx.BoxSizer(wx.VERTICAL);
         vbox.Add(sizer, 0, wx.EXPAND|wx.ALL, 10);
 
+        # if we are loading from profile, ie, have "init", build the list from it
+        if init: self.LoadFromData(init)
+
         self.SetSizerAndFit(vbox);
         self.Layout()
         self.Fit()
         self.SetFocus()
+
+    def LoadFromData(self, init):
+        for type, data in init.items():
+            commandClass = commandClasses[type]
+            self.RearrangeList.Append(commandClass(data))
+
+    def SaveToData(self):
+        data = []
+        index = 0
+        for thingie in self.RearrangeList.GetItems():
+            # check whether we have an object already attached to this choice
+            cmdObject = self.RearrangeList.GetClientData(index)
+            commandClassName = commandRevClasses[type(cmdObject)]
+            data.append({commandClassName: thingie.Serialize()})
+            index = index + 1
 
     def OnRearrangeDelete(self, _):
         current = self.RearrangeList.GetSelection()
@@ -171,7 +189,7 @@ class PowerBinderButton(wx.Button):
             self.tgtTxtCtrl.SetValue(bindString)
 
 class PowerBinderEditDialog(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, init = {}):
         wx.Dialog.__init__(self, parent, -1, "Edit Step",
            style = wx.DEFAULT_DIALOG_STYLE)
 
@@ -188,15 +206,15 @@ class PowerBinderEditDialog(wx.Dialog):
 
 ########### Power Binder Command Objects
 class PowerBindCmd():
-
-    def __init__(self, dialog):
+    def __init__(self, dialog, init = {}):
         self.UI = self.BuildUI(dialog)
+        if init: self.Deserialize(init)
 
-    def BuildUI(self, _):
-        return
-
-    def MakeBindString(self, _):
-        return
+    # Methods to override
+    def BuildUI(self, _)        : return
+    def MakeBindString(self, _) : return
+    def Serialize(self)         : return
+    def Deserialize(self, _) : return
 
 ####### Away From Keyboard
 class AFKCmd(PowerBindCmd):

@@ -10,17 +10,21 @@ class SimpleBindPane(CustomBindPaneParent):
     def __init__(self, page, init = {}):
         CustomBindPaneParent.__init__(self, page, init)
 
-        self.Title = init.get('Title', '')
-        self.Init  = init
-        self.Page  = page # for re-layout when pane changes size
+        self.Title          = init.get('Title', '')
+        self.Init           = init
+        self.Page           = page # for re-layout when pane changes size
+        self.PowerBinderDlg = None
+        self.BindPane       = None
 
     def Serialize(self):
-        return {
+        data = {
             'Type'     : 'SimpleBind',
             'Title'    : self.Title,
             'Contents' : self.Ctrls['BindContents'].GetValue(),
             'Key'      : self.Ctrls['BindKey'].GetLabel(),
         }
+        if self.PowerBinderDlg: data['PowerBinderDlg'] = self.PowerBinderDlg.SaveToData()
+        return data
 
     def BuildBindUI(self, page):
 
@@ -32,9 +36,11 @@ class SimpleBindPane(CustomBindPaneParent):
         BindContentsCtrl = wx.TextCtrl(pane, -1, self.Init.get('Contents', ''))
         BindContentsCtrl.Bind(wx.EVT_TEXT, self.onContentsChanged)
 
+        powerbinderdata = self.Init.get('PowerBinder', {})
+
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"),              0, wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(BindContentsCtrl,                                       1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
-        BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl = BindContentsCtrl), 0)
+        BindSizer.Add(PowerBinderButton(pane, BindContentsCtrl, powerbinderdata), 0)
         self.Ctrls['BindContents'] = BindContentsCtrl
 
         BindKeyCtrl = bcKeyButton(pane, -1, {

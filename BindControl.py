@@ -112,6 +112,8 @@ class Main(wx.Frame):
 
         self.SetSizerAndFit(self.Sizer)
 
+        self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
+
     def OnWriteBindsButton(self, _):
         self.Profile.WriteBindFiles()
 
@@ -156,6 +158,12 @@ Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
 
     def OnMenuExitApplication(self, _):
         self.Close(True)
+
+    def OnWindowClosing(self, evt):
+        if self.Profile.Modified:
+            if wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.ICON_QUESTION|wx.YES_NO) == wx.YES:
+                self.Profile.SaveToFile()
+        evt.Skip()
 
 class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
     def OnInit(self):

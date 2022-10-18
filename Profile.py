@@ -88,7 +88,7 @@ class Profile(wx.Notebook):
     def ProfileFile(self):
         return Path(self.ProfilePath(), self.Name() + ".bcp")
 
-    def SaveToFile(self, _):
+    def SaveToFile(self, _ = None):
 
         savefile = self.ProfileFile()
 
@@ -131,9 +131,10 @@ class Profile(wx.Notebook):
 
         dumpstring = json.dumps(savedata, indent=0)
         try:
+            wx.ConfigBase.Get().Write('LastProfile', str(savefile))
             savefile.touch() # make sure there's one there.
             savefile.write_text(dumpstring)
-            wx.LogInfo(f"Wrote profile '{savefile}''")
+            wx.LogMessage(f"Wrote profile '{savefile}'")
             self.ClearModified()
         except Exception as e:
             wx.LogError(f"Problem saving to profile '{savefile}': {e}")
@@ -188,6 +189,7 @@ class Profile(wx.Notebook):
                     cbpage.AddBindToPage(bindpane = bindpane)
 
             wx.LogInfo(f"Loaded profile {pathname}")
+            self.ClearModified()
 
     #####################
     # Bind file functions

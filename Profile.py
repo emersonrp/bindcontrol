@@ -154,7 +154,7 @@ class Profile(wx.Notebook):
                 style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
-                wx.LogInfo("User canceled loading profile")
+                wx.LogMessage("User canceled loading profile")
                 return     # the user changed their mind
 
             # Proceed loading the file chosen by the user
@@ -195,7 +195,7 @@ class Profile(wx.Notebook):
                     bindpane = SimpleBindPane(cbpage, init = custombind)
                     cbpage.AddBindToPage(bindpane = bindpane)
 
-            wx.LogInfo(f"Loaded profile {pathname}")
+            wx.LogMessage(f"Loaded profile {pathname}")
             self.ClearModified()
 
     #####################

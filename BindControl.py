@@ -21,9 +21,6 @@ class Main(wx.Frame):
 
         self.LogWindow = wx.LogWindow(self, "Log Window", show = False, passToOld = False)
 
-        # Start with a new profile
-        self.Profile = Profile(self)
-
         config = wx.FileConfig('bindcontrol')
         wx.ConfigBase.Set(config)
         # Check each config bit for existence and set to default if no
@@ -41,6 +38,14 @@ class Main(wx.Frame):
         if not config.Exists('FlushAllBinds')   : config.WriteBool('FlushAllBinds', True)
         if not config.Exists('StartWith')       : config.Write('StartWith', 'New Profile')
         config.Flush()
+
+        # Start with a new profile
+        self.Profile = Profile(self)
+        # load up the last one if the pref says to and if it's there
+        if config.Read('StartWith') == 'Last Profile':
+            filename = config.Read('LastProfile')
+            if filename:
+                self.Profile.doLoadFromFile(filename)
 
         self.PrefsDialog = PrefsDialog(self)
 

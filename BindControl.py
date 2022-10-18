@@ -108,8 +108,6 @@ class Main(wx.Frame):
 
         self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
-        # TODO open with no profile, force "new" or "load"
-        # Probably want Profile() to return something to fill the sizer
         self.Sizer.Add(self.Profile, 1, wx.EXPAND | wx.ALL, 3)
 
         # WRITE BUTTON

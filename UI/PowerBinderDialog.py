@@ -228,7 +228,6 @@ class AutoPowerCmd(PowerBindCmd):
 
 ####### Chat Command
 class ChatCmd(PowerBindCmd):
-
     def __init__(self, dialog):
         self.chatChannelMap = { # before __init__
             'say' : 's',
@@ -376,7 +375,6 @@ class CostumeChangeCmd(PowerBindCmd):
             ccCmd = 'cc'
             emoteName = ''
 
-
         return f"{ccCmd} {costumeNumber}{emoteName}"
 
 ####### Custom Bind
@@ -389,7 +387,7 @@ class CustomBindCmd(PowerBindCmd):
 
         return sizer
 
-    def MakeBindString(self, dialog):
+    def MakeBindString(self, _):
         return self.customBindName.GetValue()
 
 ####### Emote
@@ -693,6 +691,7 @@ class WindowToggleCmd(PowerBindCmd):
         window = choice.GetString(index)
         return "windowtoggle " + window.lower()
 
+# Must always add to this list when adding a new command class above
 commandClasses = {
     'Auto Power'               : AutoPowerCmd,
     'Away From Keyboard'       : AFKCmd,
@@ -715,4 +714,4 @@ commandClasses = {
     'Use Power From Tray'      : UsePowerFromTrayCmd,
     'Window Toggle'            : WindowToggleCmd,
 }
-
+commandRevClasses = {v: k for k, v in commandClasses.items()}

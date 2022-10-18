@@ -156,7 +156,6 @@ class Profile(wx.Notebook):
 
 
         savedata['CustomBinds'] = []
-
         customPage = getattr(self, 'CustomBinds')
         for pane in customPage.PaneSizer.GetChildren():
             bindpane = pane.GetSizer().GetChildren()[0].GetWindow()

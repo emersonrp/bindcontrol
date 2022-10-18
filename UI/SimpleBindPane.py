@@ -58,10 +58,10 @@ class SimpleBindPane(CustomBindPaneParent):
         pane.SetSizer(border)
         self.checkIfWellFormed()
 
-    def onContentsChanged(self, evt):
+    def onContentsChanged(self, _):
         self.checkIfWellFormed()
 
-    def onKeyChanged(self, evt):
+    def onKeyChanged(self, _):
         self.checkIfWellFormed()
 
     def checkIfWellFormed(self):

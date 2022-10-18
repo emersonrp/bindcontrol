@@ -1,9 +1,8 @@
 import wx
 import UI
 import UI.EmotePicker
-from UI.EmotePicker import EmotePicker
+from UI.PowerPicker import PowerPicker
 import GameData
-
 
 class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent):
@@ -158,17 +157,18 @@ class PowerBinderDialog(wx.Dialog):
         self.EditDialog.mainSizer.Hide(command.UI)
 
 class PowerBinderButton(wx.Button):
-    def __init__(self, parent, tgtTxtCtrl):
+    def __init__(self, parent, tgtTxtCtrl, init = {}):
         wx.Button.__init__(self, parent, -1, label = "...")
+        self.PowerBinderDialog = PowerBinderDialog(self.Parent, init)
 
         self.tgtTxtCtrl = tgtTxtCtrl
         self.Bind(wx.EVT_BUTTON, self.PowerBinderEventHandler)
 
     def PowerBinderEventHandler(self, _):
-        with PowerBinderDialog(self.Parent) as dlg:
-            if (self.tgtTxtCtrl and dlg.ShowModal() == wx.ID_OK):
-                bindString = dlg.MakeBindString()
-                self.tgtTxtCtrl.SetValue(bindString)
+        dlg = self.PowerBinderDialog
+        if (self.tgtTxtCtrl and dlg.ShowModal() == wx.ID_OK):
+            bindString = dlg.MakeBindString()
+            self.tgtTxtCtrl.SetValue(bindString)
 
 class PowerBinderEditDialog(wx.Dialog):
     def __init__(self, parent):
@@ -405,7 +405,7 @@ class EmoteCmd(PowerBindCmd):
 
     def MakeBindString(self, _):
         displayedEmoteName = self.emoteName.GetLabel()
-        actualEmotePayload = EmotePicker.payloadMap[displayedEmoteName]
+        actualEmotePayload = UI.EmotePicker.EmotePicker.payloadMap[displayedEmoteName]
 
         return actualEmotePayload
 

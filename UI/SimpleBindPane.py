@@ -36,7 +36,7 @@ class SimpleBindPane(CustomBindPaneParent):
         BindContentsCtrl = wx.TextCtrl(pane, -1, self.Init.get('Contents', ''))
         BindContentsCtrl.Bind(wx.EVT_TEXT, self.onContentsChanged)
 
-        powerbinderdata = self.Init.get('PowerBinder', {})
+        powerbinderdata = self.Init.get('PowerBinderDlg', {})
 
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"),              0, wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(BindContentsCtrl,                                       1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)

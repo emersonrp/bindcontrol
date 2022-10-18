@@ -60,18 +60,20 @@ class PowerBinderDialog(wx.Dialog):
         vbox = wx.BoxSizer(wx.VERTICAL);
         vbox.Add(sizer, 0, wx.EXPAND|wx.ALL, 10);
 
-        # if we are loading from profile, ie, have "init", build the list from it
-        if init: self.LoadFromData(init)
-
         self.SetSizerAndFit(vbox);
         self.Layout()
         self.Fit()
         self.SetFocus()
 
+        # if we are loading from profile, ie, have "init", build the list from it
+        if init: self.LoadFromData(init)
+
     def LoadFromData(self, init):
-        for type, data in init.items():
-            commandClass = commandClasses[type]
-            self.RearrangeList.Append(commandClass(data))
+        for item in init:
+            for type, data in item.items():
+                commandClass = commandClasses[type]
+                index = self.RearrangeList.Append(type)
+                self.RearrangeList.SetClientData(index, commandClass(self, data))
 
     def SaveToData(self):
         data = []

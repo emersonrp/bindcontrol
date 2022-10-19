@@ -73,7 +73,7 @@ class PowerBinderDialog(wx.Dialog):
             for type, data in item.items():
                 commandClass = commandClasses[type]
                 index = self.RearrangeList.Append(type)
-                self.RearrangeList.SetClientData(index, commandClass(self, data))
+                self.RearrangeList.SetClientData(index, commandClass(self.EditDialog, data))
 
     def SaveToData(self):
         data = []
@@ -136,7 +136,6 @@ class PowerBinderDialog(wx.Dialog):
 
         # show the edit dialog if this command needs it
         if newCommand.UI:
-            self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.EXPAND|wx.ALL, 10)
             self.ShowEditDialogFor(newCommand)
 
         self.bindChoice.SetSelection(wx.NOT_FOUND)
@@ -165,6 +164,10 @@ class PowerBinderDialog(wx.Dialog):
         return bindstring
 
     def ShowEditDialogFor(self, command):
+        # if we haven't already been added to the edit dialog, do so.
+        if not self.EditDialog.mainSizer.GetItem(command.UI):
+            self.EditDialog.mainSizer.Insert(0, command.UI, 1, wx.EXPAND|wx.ALL, 10)
+
         self.EditDialog.mainSizer.Show(command.UI)
 
         self.EditDialog.Layout()

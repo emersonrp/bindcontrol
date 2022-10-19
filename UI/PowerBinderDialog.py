@@ -1,7 +1,9 @@
 import wx
+import re
 import UI
 import UI.EmotePicker
 from UI.PowerPicker import PowerPicker
+from wx.adv import BitmapComboBox
 import GameData
 from Icon import GetIcon
 
@@ -703,7 +705,12 @@ class UseInspByNameCmd(PowerBindCmd):
         useInspByNameSizer = wx.BoxSizer(wx.HORIZONTAL)
         useInspByNameSizer.Add(wx.StaticText(dialog, -1, "Inspiration:"), 0,
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
-        self.useInspByNameModeChoice = wx.Choice(dialog, -1, choices = self.GetAllInsps())
+        self.useInspByNameModeChoice = BitmapComboBox(dialog, style = wx.CB_READONLY)
+        for _, info in GameData.Inspirations.items():
+            for insp in info['tiers']:
+                name = re.sub(' ', '', insp)
+                icon = GetIcon(f'Inspirations/{name}')
+                self.useInspByNameModeChoice.Append(insp, icon)
         self.useInspByNameModeChoice.SetSelection(0)
         useInspByNameSizer.Add(self.useInspByNameModeChoice, 1, wx.ALIGN_CENTER_VERTICAL)
 

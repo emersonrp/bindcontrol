@@ -731,7 +731,7 @@ Inspirations = {
     },
     'Health'       : {
         'color': wx.GREEN,
-        'tiers': ['Respite'        , 'Dramatic Improvement' , 'Resurgance', 'Perfect Health',]      ,
+        'tiers': ['Respite'        , 'Dramatic Improvement' , 'Resurgence', 'Perfect Health',]      ,
     },
     'Damage'       : {
         'color': wx.RED,

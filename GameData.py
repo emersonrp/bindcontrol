@@ -727,35 +727,35 @@ SprintPowers = [
 Inspirations = {
     'Accuracy'     : {
         'color': wx.YELLOW,
-        'tiers': ['Insight'        , 'Keen Insight'         , 'Uncanny Insight'] ,
+        'tiers': ['Insight'        , 'Keen Insight'         , 'Uncanny Insight', 'Sight Beyond Sight',] ,
     },
     'Health'       : {
         'color': wx.GREEN,
-        'tiers': ['Respite'        , 'Dramatic Improvement' , 'Resurgance']      ,
+        'tiers': ['Respite'        , 'Dramatic Improvement' , 'Resurgance', 'Perfect Health',]      ,
     },
     'Damage'       : {
         'color': wx.RED,
-        'tiers': ['Enrage'         , 'Focused Rage'         , 'Righteous Rage']  ,
+        'tiers': ['Enrage'         , 'Focused Rage'         , 'Righteous Rage', 'Furious Rage',]  ,
     },
     'Endurance'    : {
         'color': wx.BLUE,
-        'tiers': ['Catch a Breath' , 'Take a Breather'      , 'Second Wind']     ,
+        'tiers': ['Catch a Breath' , 'Take a Breather'      , 'Second Wind', 'Back in the Fight',]     ,
     },
     'Defense'      : {
         'color': (128, 0, 153),  # purple
-        'tiers': ['Luck'           , 'Good Luck'            , 'Phenomenal Luck'] ,
+        'tiers': ['Luck'           , 'Good Luck'            , 'Phenomenal Luck', 'Amazing Luck',] ,
     },
     'ResistDamage' : {
         'color': (230, 80, 0),   # orange
-        'tiers': ['Sturdy'         , 'Rugged'               , 'Robust']          ,
+        'tiers': ['Sturdy'         , 'Rugged'               , 'Robust', 'Resistant',]          ,
     },
     'BreakFree'    : {
         'color': (110, 76, 200), # light purple
-        'tiers': ['Break Free'     , 'Emerge'               , 'Escape']          ,
+        'tiers': ['Break Free'     , 'Emerge'               , 'Escape', 'Liberate',]          ,
     },
     'Resurrection' : {
         'color': (50, 180, 160), # cyan
-        'tiers': ['Awaken'         , 'Bounce Back'          , 'Restoration']     ,
+        'tiers': ['Awaken'         , 'Bounce Back'          , 'Restoration', 'Immortal Recovery',]     ,
     },
 }
 

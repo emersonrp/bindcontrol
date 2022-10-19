@@ -41,7 +41,7 @@ TODO
 * Save binds in $bindsdir/$profile directories
 * More error detection and handling
 * ~~Log errors and warnings in less intrusive, more readable way~~
-* Store PowerBinder state for re-editing;  save state with Profile
+* ~~Store PowerBinder state for re-editing;  save state with Profile~~
 * Kheldian form/travel binds in speed-on-demand
 * Temporary powers in speed-on-demand
 * Account for [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) in SoD

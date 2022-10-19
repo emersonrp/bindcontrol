@@ -214,7 +214,7 @@ class Profile(wx.Notebook):
                 if pagename == 'General':
                     page.IncarnateBox.FillWith(data)
 
-                page.SynchronizeUI()
+                # page.SynchronizeUI()  # nope, this clears and repopulates the Primary and Secondary pickers we just SetSelection() on
 
             cbpage = getattr(self, "CustomBinds")
             for custombind in data['CustomBinds']:

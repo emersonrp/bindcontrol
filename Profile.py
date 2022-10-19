@@ -160,7 +160,7 @@ class Profile(wx.Notebook):
             bindpane = pane.GetSizer().GetChildren()[0].GetWindow()
             savedata['CustomBinds'].append(bindpane.Serialize())
 
-        dumpstring = json.dumps(savedata, indent=0)
+        dumpstring = json.dumps(savedata, indent=2)
         try:
             wx.ConfigBase.Get().Write('LastProfile', str(savefile))
             savefile.touch() # make sure there's one there.

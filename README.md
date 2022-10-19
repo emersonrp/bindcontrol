@@ -17,7 +17,7 @@ Features
 * Chat binds with optional 'typing' notifier
 * Rotational next/prev team and pet selection
 * Custom Binds
-    * create simple binds using PowerBinder, a flexible tool for stringing together arbitrary commands into bind strings
+    * create custom binds using PowerBinder, a flexible tool for putting together arbitrary commands into bind strings
 * Speed-on-Demand
     * based on [citybinder](http://sourceforge.net/projects/citybinder/) and the original Gnarley's SoD keybinds
     * supports Super Speed, Super Jump, Flight, Teleport, and Sprint powers
@@ -36,12 +36,9 @@ Features
 TODO
 ----
 
-* ~~Clarify new / save / load profile flow~~
-* ~~Move preferences to separate dialog;  show during "new profile" creation~~
+* Clarify new / save / load profile flow
 * Save binds in $bindsdir/$profile directories
 * More error detection and handling
-* ~~Log errors and warnings in less intrusive, more readable way~~
-* ~~Store PowerBinder state for re-editing;  save state with Profile~~
 * Kheldian form/travel binds in speed-on-demand
 * Temporary powers in speed-on-demand
 * Account for [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) in SoD

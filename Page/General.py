@@ -1,7 +1,7 @@
 # UI / logic for the 'general' panel
 import wx
 import UI
-from Icon import Icon
+from Icon import GetIcon
 from GameData import Archetypes, Origins, MiscPowers
 
 from UI.ControlGroup import ControlGroup
@@ -39,7 +39,7 @@ class General(Page):
 
         originchoices = []
         for Origin in Origins:
-            originchoices.append([Origin, Icon(Origin)])
+            originchoices.append([Origin, GetIcon(Origin)])
         originpicker = powersBox.AddControl(
             ctlName = 'Origin',
             ctlType = 'bmcombo',
@@ -50,7 +50,7 @@ class General(Page):
 
         archchoices = []
         for Arch in sorted(Archetypes):
-            archchoices.append([Arch, Icon(Arch)])
+            archchoices.append([Arch, GetIcon(Arch)])
         archpicker = powersBox.AddControl(
             ctlName = 'Archetype',
             ctlType = 'bmcombo',

@@ -1,6 +1,6 @@
 import wx
 import UI
-from Icon import Icon
+from Icon import GetIcon
 
 from UI.ControlGroup import ControlGroup
 from Page import Page
@@ -69,7 +69,7 @@ class Gameplay(Page):
         self.Ctrls['TPSEnable'] = tpsenable
         tpsenable.SetValue(self.Init['TPSEnable'])
 
-        tpshelpbutton = wx.BitmapButton(self, -1, Icon('Help'))
+        tpshelpbutton = wx.BitmapButton(self, -1, GetIcon('Help'))
         tpshelpbutton.Bind(wx.EVT_BUTTON, self.help)
 
         tpsenablesizer.Add(tpsenable, 0, wx.ALIGN_CENTER_VERTICAL)
@@ -136,7 +136,7 @@ class Gameplay(Page):
         fpsenable.Bind(wx.EVT_CHECKBOX, self.OnFPSEnable)
         self.Ctrls['FPSEnable'] = fpsenable
 
-        fpshelpbutton = wx.BitmapButton(self, -1, Icon('Help'))
+        fpshelpbutton = wx.BitmapButton(self, -1, GetIcon('Help'))
         fpshelpbutton.Bind(wx.EVT_BUTTON, self.help)
 
         FPSSizer.Add(fpsenable, 0, wx.ALIGN_CENTER_VERTICAL)
@@ -164,7 +164,7 @@ class Gameplay(Page):
         chatenable.Bind(wx.EVT_CHECKBOX, self.OnChatEnable)
         self.Ctrls['ChatEnable'] = chatenable
 
-        chathelpbutton = wx.BitmapButton(self, -1, Icon('Help'))
+        chathelpbutton = wx.BitmapButton(self, -1, GetIcon('Help'))
         chathelpbutton.Bind(wx.EVT_BUTTON, self.help)
 
         ChatSizer.Add(chatenable, 0, wx.ALIGN_CENTER_VERTICAL)

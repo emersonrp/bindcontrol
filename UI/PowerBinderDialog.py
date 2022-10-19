@@ -3,6 +3,7 @@ import UI
 import UI.EmotePicker
 from UI.PowerPicker import PowerPicker
 import GameData
+from Icon import GetIcon
 
 class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent, init = {}):
@@ -809,7 +810,7 @@ class UsePowerCmd(PowerBindCmd):
             'method': method,
             'pname' : self.usePowerName.GetLabel(),
             # TODO - thread icon filename through picker
-            #'picon' : self.usePowerName.GetIconFilename(),
+            'picon' : self.usePowerName.IconFilename
         }
 
     def Deserialize(self, init):
@@ -822,7 +823,7 @@ class UsePowerCmd(PowerBindCmd):
             self.usePowerRBToggle.SetValue(True)
         if init.get('pname', ''): self.usePowerName.SetLabel(init['pname'])
         # TODO when icon is threaded in here
-        # if init.get('picon', ''): self.usePowerName.SetIconFromFilenameMagically(init['picon'])
+        if init.get('picon', ''): self.usePowerName.SetBitmap(GetIcon(init['picon']))
 
 ####### Use Power From Tray
 class UsePowerFromTrayCmd(PowerBindCmd):

@@ -1,6 +1,6 @@
 import wx
 import GameData
-from Icon import Icon
+from Icon import GetIcon
 
 class PowerPicker(wx.Button):
     def __init__(self, parent):
@@ -9,6 +9,7 @@ class PowerPicker(wx.Button):
         self.SetLabel('...')
         self.SetMinSize((-1, 40))
         self.Bind(wx.EVT_BUTTON, self.OnPowerPicker)
+        self.IconFilename = ''
 
     def OnPowerPicker(self, _):
         self.Picker = PowerPickerMenu(self)
@@ -39,8 +40,10 @@ class PowerPickerMenu(wx.Menu):
             powers = archdata[category][powerset]
             for power in powers:
                 menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
-                icon = Icon(powerset = powerset, power = power)
-                if icon: menuitem.SetBitmap(icon)
+                icon = GetIcon(powerset = powerset, power = power)
+                if icon:
+                    menuitem.SetBitmap(icon)
+                    menuitem.IconFilename = icon.Filename
                 submenu.Append(menuitem)
 
         # Pool powers
@@ -53,8 +56,10 @@ class PowerPickerMenu(wx.Menu):
                 powers = GameData.MiscPowers['Pool'][poolname]
                 for power in powers:
                     menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
-                    icon = Icon(powerset = poolname, power = power)
-                    if icon: menuitem.SetBitmap(icon)
+                    icon = GetIcon(powerset = poolname, power = power)
+                    if icon:
+                        menuitem.SetBitmap(icon)
+                        menuitem.IconFilename = icon.Filename
                     submenu.Append(menuitem)
 
         # Incarnate Powers
@@ -65,7 +70,9 @@ class PowerPickerMenu(wx.Menu):
             for power in incPowers:
                 menuitem = wx.MenuItem(id = wx.ID_ANY, text = power['name'])
                 icon = power['icon']
-                if icon: menuitem.SetBitmap(icon)
+                if icon:
+                    menuitem.SetBitmap(icon)
+                    menuitem.IconFilename = power['iconfilename']
                 submenu.Append(menuitem)
 
     def OnMenuSelection(self, evt):
@@ -74,4 +81,5 @@ class PowerPickerMenu(wx.Menu):
         bitmap = menuitem.GetBitmapBundle()
         self.Button.SetLabel(label)
         self.Button.SetBitmap(bitmap)
+        self.Button.IconFilename = menuitem.IconFilename
 

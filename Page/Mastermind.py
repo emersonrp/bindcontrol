@@ -388,9 +388,8 @@ Thugs added by Konoko!
         bgset = bgsay = []
         if (self.GetState('PetBodyguardEnabled')):
             (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
+            #
             #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
-
-            # emerson TODO -- this ~= '---' was in the original code but produces different results
             if (((tier1bg + tier2bg + tier3bg) == 6)):
                 bgsay = [self.GetChatMethod('PetBodyguardResponseMethod') + PetBodyguardResponse]
             else:
@@ -434,7 +433,7 @@ Thugs added by Konoko!
             keyBindContents = bgsay + bgset + [profile.GetBindFile('mmbinds','cbguarda.txt').BLF()]
             file.SetBind(self.Ctrls['PetBodyguard'].MakeFileKeyBind(keyBindContents))
 
-    def mmBGActBind(self, profile, filedn, fileup, action, say, powers):
+    def mmBGActBind(self, _, filedn, fileup, action, say, powers):
 
         key    = self.GetState(f"Pet{action}")
         name   = UI.Labels[f"Pet{action}"]
@@ -486,7 +485,7 @@ Thugs added by Konoko!
         filedn.SetBind(key, name, self, bgsay + [fileup.BLF()])
         fileup.SetBind(key, name, self, bgact + [filedn.BLF()])
 
-    def mmBGActBGBind(self, profile, filedn, fileup, action, say, powers):
+    def mmBGActBGBind(self, _, filedn, fileup, action, say, powers):
         key =    self.GetState(f"PetBodyguard{action}")
         name = UI.Labels[f"PetBodyguard{action}"]
         method = self.GetChatMethod(f"Pet{action}ResponseMethod")
@@ -565,7 +564,7 @@ Thugs added by Konoko!
 
             file.SetBind(self.Ctrls['PetBodyguard'].MakeFileKeyBind(bgset + [profile.GetBindFile('mmbinds','bguarda.txt').BLF()]))
 
-    def mmQuietBGActBind(self, profile, filedn, fileup, action, powers):
+    def mmQuietBGActBind(self, _, filedn, __, action, powers):
 
         key = self.GetState(f"Pet{action}")
         name = UI.Labels[f"Pet{action}"]
@@ -595,7 +594,7 @@ Thugs added by Konoko!
         # 'petcompow ',,grp.' Stay'
         filedn.SetBind(key, name, self, bgact)
 
-    def mmQuietBGActBGBind(self, profile, filedn, fileup, action, powers):
+    def mmQuietBGActBGBind(self, _, filedn, __, action, powers):
 
         key  = self.GetState(f"PetBodyguard{action}")
         name = UI.Labels[f"PetBodyguard{action}"]
@@ -622,7 +621,6 @@ Thugs added by Konoko!
 
             if (tier3bg == 1) : bgact.append(f"petcompow {powers['bos']} {action}")
 
-        # TODO - this seems right but was not in citybinder
         if not bgact: return
         # 'petcompow ',,grp.' Stay'
         filedn.SetBind(key, name, self, bgact)
@@ -731,16 +729,15 @@ Thugs added by Konoko!
             ltsfile = profile.GetBindFile('mmbinds','tier2.txt')
             bosfile = profile.GetBindFile('mmbinds','tier3.txt')
 
-            if (self.GetState('PetBodyguardEnabled')):
-                bgfiledn = profile.GetBindFile('mmbinds','bguarda.txt')
-                # citybinder had this commented out, and the file was empty if created
-                # bgfileup = profile.GetBindFile('mmbinds','bguardb.txt')
             self.mmSubBind(profile      , ResetFile   , "all"    , None          , powers)
             self.mmQuietSubBind(profile , allfile     , "all"    , None          , powers)
             self.mmQuietSubBind(profile , minfile     , "tier1"  , powers['min'] , powers)
             self.mmQuietSubBind(profile , ltsfile     , "tier2"  , powers['lts'] , powers)
             self.mmQuietSubBind(profile , bosfile     , "tier3"  , powers['bos'] , powers)
             if (self.GetState('PetBodyguardEnabled')):
+                # citybinder had this commented out, and the file was empty if created
+                # bgfileup = profile.GetBindFile('mmbinds','bguardb.txt')
+                bgfiledn = profile.GetBindFile('mmbinds','bguarda.txt')
                 self.mmQuietBGSubBind(profile,bgfiledn,None,"bguard",powers)
 
             #### "Chatty" versions
@@ -749,14 +746,13 @@ Thugs added by Konoko!
             cltsfile = profile.GetBindFile('mmbinds','ctier2.txt')
             cbosfile = profile.GetBindFile('mmbinds','ctier3.txt')
 
-            if (self.GetState('PetBodyguardEnabled')):
-                cbgfiledn = profile.GetBindFile('mmbinds','cbguarda.txt')
-                cbgfileup = profile.GetBindFile('mmbinds','cbguardb.txt')
             self.mmSubBind(profile , callfile , "all"   , None          , powers)
             self.mmSubBind(profile , cminfile , "tier1" , powers['min'] , powers)
             self.mmSubBind(profile , cltsfile , "tier2" , powers['lts'] , powers)
             self.mmSubBind(profile , cbosfile , "tier3" , powers['bos'] , powers)
             if (self.GetState('PetBodyguardEnabled')):
+                cbgfiledn = profile.GetBindFile('mmbinds','cbguarda.txt')
+                cbgfileup = profile.GetBindFile('mmbinds','cbguardb.txt')
                 self.mmBGSubBind(profile,cbgfiledn,cbgfileup,"bguard",powers)
 
         if self.GetState('PetSelEnable'):

@@ -700,7 +700,6 @@ class UnselectCmd(PowerBindCmd):
 
 ####### Use Insp By Name
 class UseInspByNameCmd(PowerBindCmd):
-    # TODO add icons
     def BuildUI(self, dialog):
         useInspByNameSizer = wx.BoxSizer(wx.HORIZONTAL)
         useInspByNameSizer.Add(wx.StaticText(dialog, -1, "Inspiration:"), 0,
@@ -816,7 +815,6 @@ class UsePowerCmd(PowerBindCmd):
         return {
             'method': method,
             'pname' : self.usePowerName.GetLabel(),
-            # TODO - thread icon filename through picker
             'picon' : self.usePowerName.IconFilename
         }
 
@@ -829,7 +827,6 @@ class UsePowerCmd(PowerBindCmd):
         else:
             self.usePowerRBToggle.SetValue(True)
         if init.get('pname', ''): self.usePowerName.SetLabel(init['pname'])
-        # TODO when icon is threaded in here
         if init.get('picon', ''): self.usePowerName.SetBitmap(GetIcon(init['picon']))
 
 ####### Use Power From Tray

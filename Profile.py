@@ -92,7 +92,6 @@ class Profile(wx.Notebook):
 
     ###################
     # Profile Save/Load
-    # TODO is this correctly cross-platform?
     def ProfilePath(self):
         return Path.home() / "Documents" / "bindcontrol"
 

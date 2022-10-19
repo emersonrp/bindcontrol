@@ -899,7 +899,6 @@ class SoD(Page):
                 elif (not feedback):
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
                 else:
-                    # TODO - what is the reasoning here for two files?  wtf _s.txt
                     bindload  = f"{t.blas}{t.KeyState()}.txt"
                     bindload2 = f"{t.blas}{t.KeyState()}_s.txt"
                     tgl = p.GetBindFile(f"{t.pathas}{t.KeyState()}_s.txt")
@@ -1022,9 +1021,7 @@ class SoD(Page):
 
         if not self.GetState('EnableSoD'): return
 
-        ### TODO
         sssj = 0
-        ### TODO
 
         profile = self.Profile
 

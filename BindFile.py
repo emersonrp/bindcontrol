@@ -24,14 +24,10 @@ class BindFile():
 
     def SetBind(self, keybind: FileKeyBind|str, name:str = '', page:Page|None = None, contents: str|list = ''):
 
-        # TODO - this isinstance logic is here because SoD.py has about a million
-        # spots where it just calls this with (key, string).  Better solution would be
-        # to make SoD call this with a keybind object.
-
-        # TODO and/or maybe this should just get called with key/string and
-        # then forge its own KeyBind objects
+        # we can either be called with a FileKeyBind, in which case we're golden, or with
+        # four strings, in which case we need to roll a FileKeyBind.  Someday pick one scheme.
         if isinstance(keybind, str):
-            if name and not contents: # got called as (key, contents)
+            if name and not contents: # got called as (key, contents), this is bad.
                 prevFrame = inspect.currentframe().f_back
                 (filen, line, funcn, _, _) = inspect.getframeinfo(prevFrame)
                 print(f"SetBind called old way from {filen}, {funcn}, {line} -- PROBABLY BROKEN")

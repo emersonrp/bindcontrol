@@ -1,6 +1,6 @@
 import wx
 import GameData
-from Utility import Icon
+from Icon import Icon
 
 class PowerPicker(wx.Button):
     def __init__(self, parent):

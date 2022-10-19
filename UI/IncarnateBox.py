@@ -1,6 +1,6 @@
 import wx
 import re
-from Utility import Icon
+from Icon import Icon
 import wx.lib.buttons as buttons
 
 import GameData

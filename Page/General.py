@@ -1,11 +1,9 @@
 # UI / logic for the 'general' panel
 import wx
-from pathlib import Path
 import UI
-from Utility import Icon
+from Icon import Icon
 from GameData import Archetypes, Origins, MiscPowers
 
-from UI.PowerPicker import PowerPicker
 from UI.ControlGroup import ControlGroup
 from UI.IncarnateBox import IncarnateBox
 

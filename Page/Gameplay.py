@@ -1,6 +1,6 @@
 import wx
 import UI
-from Utility import Icon
+from Icon import Icon
 
 from UI.ControlGroup import ControlGroup
 from Page import Page

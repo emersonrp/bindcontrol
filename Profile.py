@@ -196,7 +196,7 @@ class Profile(wx.Notebook):
                 for controlname, control in page.Ctrls.items():
                     value = data[pagename].get(controlname, None)
 
-                    if not value: continue
+                    if value == None: continue
 
                     # look up what type of control it is to know how to extract its value
                     controlType = type(control).__name__
@@ -213,8 +213,8 @@ class Profile(wx.Notebook):
 
                 if pagename == 'General':
                     page.IncarnateBox.FillWith(data)
-
-                # page.SynchronizeUI()  # nope, this clears and repopulates the Primary and Secondary pickers we just SetSelection() on
+                else:
+                    page.SynchronizeUI()  # this clears and repops the Primary and Secondary pickers on 'General'
 
             cbpage = getattr(self, "CustomBinds")
             for custombind in data['CustomBinds']:

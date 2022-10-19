@@ -96,7 +96,7 @@ class Mastermind(Page):
             'PetBodyguardResponseMethod' : 'Petsay',
 
             'PetAggressive' : 'LALT+A',
-            'PetAggressiveResponse' : 'Kill On Sight.',
+            'PetAggressiveResponse' : 'Kill on Sight.',
             'PetAggressiveResponseMethod' : 'Petsay',
 
             'PetDefensive' : 'LALT+S',
@@ -116,11 +116,11 @@ class Mastermind(Page):
             'PetFollowResponseMethod' : 'Petsay',
 
             'PetGoto' : 'LALT+LBUTTON',
-            'PetGotoResponse' : 'Moving To Checkpoint.',
+            'PetGotoResponse' : 'Moving to Checkpoint.',
             'PetGotoResponseMethod' : 'Petsay',
 
             'PetStay' : 'LALT+E',
-            'PetStayResponse' : 'Holding This Position.',
+            'PetStayResponse' : 'Holding this Position.',
             'PetStayResponseMethod' : 'Petsay',
 
             'PetBodyguardEnabled' : False,
@@ -442,11 +442,11 @@ Thugs added by Konoko!
         bgact = bgsay = []
         (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
-        if (((tier1bg + tier2bg + tier3bg) == 0)):
+        if (((tier1bg + tier2bg + tier3bg) == 0)): # TODO citybinder "or method ~= 3"
             bgsay = [method + say]
         else:
             if (tier1bg == 0):
-                bgsay.append(f"petsaypow {powers['min']} $say")
+                bgsay.append(f"petsaypow {powers['min']} {say}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
                 if (not self.GetState('Pet1Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet1Name')}\" {say}")
@@ -572,7 +572,7 @@ Thugs added by Konoko!
         bgact = []
         (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
-        if ((tier1bg + tier2bg + tier3bg) == 6):
+        if ((tier1bg + tier2bg + tier3bg) == 0):
             bgact = [f"petcomall {action}"]
         else :
             if (tier1bg == 0):

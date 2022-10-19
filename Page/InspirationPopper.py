@@ -168,8 +168,9 @@ class InspirationPopper(Page):
         for Insp in sorted(Inspirations):
 
             tiers = Inspirations[Insp]['tiers']
-            forwardOrder = list(map(lambda s: f"inspexecname {s}", tiers))
-            reverseOrder = forwardOrder[::-1]
+            # "reverse" order is as it is in gamebinds, smallest first
+            reverseOrder = list(map(lambda s: f"inspexecname {s}", tiers))
+            forwardOrder = reverseOrder[::-1]
 
             if not self.GetState("DisableTells"):
                 bc = self.GetState(f'{Insp}Border')

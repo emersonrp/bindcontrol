@@ -442,7 +442,8 @@ Thugs added by Konoko!
         bgact = bgsay = []
         (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
-        if (((tier1bg + tier2bg + tier3bg) == 0)): # TODO citybinder "or method ~= 3"
+        #  TODO -- "method != 'Petsay' is in citybinder as 'method ~= 3' which I think is right."
+        if (((tier1bg + tier2bg + tier3bg) == 0) or method != 'Petsay'):
             bgsay = [method + say]
         else:
             if (tier1bg == 0):
@@ -482,8 +483,8 @@ Thugs added by Konoko!
             if (tier3bg == 0):
                 bgact.append('petcompow ' + f"{powers['bos']} {action}")
 
-        filedn.SetBind(key, name, self, bgsay + [fileup.BLF()])
-        fileup.SetBind(key, name, self, bgact + [filedn.BLF()])
+        filedn.SetBind(key, name, self, ["+ $$"] + bgsay + [fileup.BLF()])
+        fileup.SetBind(key, name, self, ["- $$"] + bgact + [filedn.BLF()])
 
     def mmBGActBGBind(self, _, filedn, fileup, action, say, powers):
         key =    self.GetState(f"PetBodyguard{action}")
@@ -534,8 +535,8 @@ Thugs added by Konoko!
                 bgact.append(f"petcompow {powers['bos']} {action}")
 
         # file.SetBind(self.Ctrls['PetBodyguard'].MakeFileKeyBind(bgsay.$bgset.BindFile.BLF($profile, 'mmbinds','\mmbinds\\cbguarda.txt')))
-        filedn.SetBind(key, name, self, bgsay + [fileup.BLF()])
-        fileup.SetBind(key, name, self, bgact + [filedn.BLF()])
+        filedn.SetBind(key, name, self, ["+ $$"] + bgsay + [fileup.BLF()])
+        fileup.SetBind(key, name, self, ["- $$"] + bgact + [filedn.BLF()])
 
     def mmQuietBGSelBind(self, profile, file, powers):
         if (self.GetState('PetBodyguardEnabled')):
@@ -781,8 +782,8 @@ Thugs added by Konoko!
         #  first check if any full tier groups are bodyguards.  full tier groups are either All BG or all NBG.
         #  if tier1bg is 3 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
         #  if tier2bg is 2 or 0 then it is a full bg or full nbg group.  otherwise we have to call them by name.
-        #  tier3bg is ALWAYS a full group, with only one member, he is either BG or NBG
-        #  so, add all fullgroups into the bgsay command.
+        #  tier3bg is ALWAYS a full group, with only one member, it is either BG or NBG
+        #  so, add all full groups into the bgsay command.
         tier1bg = tier2bg = tier3bg = 0
         if (self.GetState('Pet1Bodyguard')) : tier1bg = tier1bg + 1
         if (self.GetState('Pet2Bodyguard')) : tier1bg = tier1bg + 1

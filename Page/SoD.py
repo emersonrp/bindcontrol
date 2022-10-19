@@ -755,8 +755,8 @@ class SoD(Page):
     def makeNonSoDModeKey(self, p, t, bl, cur, toff, fix = None, fb = ''):
         key = t.NonSoDMode
         name = UI.Labels['NonSoDMode']
-        if not key: return
         if not self.Ctrls['NonSoDMode'].IsEnabled(): return
+        if not key: return
 
         if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Non-SoD Mode'
         else:                                      feedback = ''
@@ -785,6 +785,7 @@ class SoD(Page):
     def makeTempModeKey(self, p, t, bl, cur, toff):
         key = t.TempMode
         name = UI.Labels['TempMode']
+        if not self.Ctrls['TempMode'].IsEnabled(): return
         if not key: return
 
         if self.GetState('Feedback'): feedback = '$$t $name, Temp Mode'
@@ -799,8 +800,8 @@ class SoD(Page):
             bindload  = t.BLF('at')
             bindload2 = t.BLF('at','_t')
             tgl = p.GetBindFile(bindload2)
-            cur.SetBind(key, name, self, t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
-            tgl.SetBind(key, name, self, t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
+            tgl.SetBind(key, name, self, "- $$" + t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
         else:
             cur.SetBind(key, name, self, t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('ft'))
 
@@ -809,8 +810,8 @@ class SoD(Page):
     def makeQFlyModeKey(self, p, t, bl, cur, toff, modestr):
         key = t.QFlyMode
         name = UI.Labels['QFlyMode']
-        if not key: return
         if not self.Ctrls['QFlyMode'].IsEnabled(): return
+        if not key: return
 
         if (modestr == "NonSoD"):
             cur.SetBind(key, name, self, "powexecname Quantum Flight")
@@ -827,15 +828,15 @@ class SoD(Page):
             if (modestr == 'Nova' or modestr == 'Dwarf'): tray = '$$gototray 1'
             else:                                         tray = ''
 
-            cur.SetBind(key, name, self, t.ini + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload2)
-            tgl.SetBind(key, name, self, t.ini + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload2)
+            tgl.SetBind(key, name, self, "- $$" + t.ini + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
         elif (bl == "ar"):
             bindload  = t.BLF('an')
             bindload2 = t.BLF('an','_t')
             tgl = p.GetBindFile(bindload2)
-            cur.SetBind(key, name, self, t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
-            tgl.SetBind(key, name, self, t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
+            tgl.SetBind(key, name, self, "- $$" + t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
         else:
             cur.SetBind(key, name, self, t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('fn'))
 
@@ -844,6 +845,7 @@ class SoD(Page):
     def makeSprintModeKey(self, p, t, bl, cur, toff, fix, fb = ''):
         key = t.SprintMode
         name = UI.Labels['SprintMode']
+        if not self.Ctrls['SprintMode'].IsEnabled(): return
         if not key: return
 
         if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Sprint-SoD Mode'
@@ -880,6 +882,7 @@ class SoD(Page):
     def makeSpeedModeKey(self, p, t, bl, cur, toff, fix, fb = ''):
         key = t.RunMode
         name = UI.Labels['RunMode']
+        if not self.Ctrls['RunMode'].IsEnabled(): return
         bindload = feedback = ''
 
         if (not fb) and p.SoD.GetState('Feedback'): feedback = '$$t $name, Superspeed Mode'
@@ -902,8 +905,8 @@ class SoD(Page):
                     bindload  = f"{t.blas}{t.KeyState()}.txt"
                     bindload2 = f"{t.blas}{t.KeyState()}_s.txt"
                     tgl = p.GetBindFile(f"{t.pathas}{t.KeyState()}_s.txt")
-                    cur.SetBind(key, name, self, t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload2)
-                    tgl.SetBind(key, name, self, t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload2)
+                    tgl.SetBind(key, name, self, "- $$" + t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             else:
                 if (fix):
@@ -917,6 +920,7 @@ class SoD(Page):
     def makeJumpModeKey(self, p, t, bl, cur, toff, fpath, fbl):
         key = t.JumpMode
         name = UI.Labels['JumpMode']
+        if not self.Ctrls['JumpMode'].IsEnabled(): return
         if (t.canjmp and not self.GetState('SimpleSJCJ')):
 
             if self.GetState('Feedback'): feedback = '$$t $name, Superjump Mode'
@@ -946,6 +950,7 @@ class SoD(Page):
     def makeFlyModeKey(self, p, t, bl, cur, toff, fix, fb = '', fb_on_a = False):
         key = t.FlyMode
         name = UI.Labels['FlyMode']
+        if not self.Ctrls['FlyMode'].IsEnabled(): return
         if not key: return
 
         if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Flight Mode'
@@ -990,6 +995,7 @@ class SoD(Page):
     def makeGFlyModeKey(self, p, t, bl, cur, toff, fix):
         key = t.GFlyMode
         name = UI.Labels['GFlyMode']
+        if not self.Ctrls['GFlyMode'].IsEnabled(): return
 
         if (t.cangfly > 0):
             if (bl == "gbo"):

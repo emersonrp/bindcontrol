@@ -140,8 +140,8 @@ class PowerBinderDialog(wx.Dialog):
 
         # show the edit dialog if this command needs it
         if newCommand.UI:
-            self.ShowEditDialogFor(newCommand)
             self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.EXPAND|wx.ALL, 10)
+            self.ShowEditDialogFor(newCommand)
 
         self.bindChoice.SetSelection(wx.NOT_FOUND)
         self.OnListSelect(evt)
@@ -238,11 +238,18 @@ class AFKCmd(PowerBindCmd):
 
     def MakeBindString(self, _):
         message = self.AFKName.GetValue()
-
         return f"afk {message}" if message else "afk"
+
+    def Serialize(self):
+        return {'message': self.AFKName.GetValue()}
+
+    def Deserialize(self, init):
+        if init['message']:
+            self.AFKName.SetValue(init['message'])
 
 ####### Auto Power
 class AutoPowerCmd(PowerBindCmd):
+    ### TODO make this use power picker
     def BuildUI(self, dialog):
         autoPowerSizer = wx.BoxSizer(wx.HORIZONTAL)
         autoPowerSizer.Add(wx.StaticText(dialog, -1, "Power:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
@@ -254,9 +261,16 @@ class AutoPowerCmd(PowerBindCmd):
     def MakeBindString(self, _):
         return f"powexecauto {self.autoPowerName.GetValue()}"
 
+    def Serialize(self):
+        return {'power' : self.autoPowerName.GetValue()}
+
+    def Deserialize(self, init):
+        if init['power']:
+            self.autoPowerName.SetValue(init['power'])
+
 ####### Chat Command
 class ChatCmd(PowerBindCmd):
-    def __init__(self, dialog):
+    def __init__(self, dialog, init):
         self.chatChannelMap = { # before __init__
             'say' : 's',
             'group' : 'g',
@@ -274,7 +288,7 @@ class ChatCmd(PowerBindCmd):
             'tell $target,': 't $target,',
             'tell $name': 't $name',
         }
-        PowerBindCmd.__init__(self,dialog)
+        PowerBindCmd.__init__(self, dialog, init)
 
     def BuildUI(self, dialog):
         chatCommandSizer = wx.GridBagSizer(5, 5)
@@ -343,6 +357,31 @@ class ChatCmd(PowerBindCmd):
 
         return f"{beginchat}{channel} {size}{duration}{bdcolor}{fgcolor}{bgcolor}{text}"
 
+    def Serialize(self):
+        return {
+            'usecolors' : self.chatCommandUseColorsCB.IsChecked(),
+            'beginchat' : self.chatCommandUseBeginchatCB.IsChecked(),
+            'channel'   : self.chatCommandChannel .GetSelection(),
+            'size'      : self.chatCommandChatSize.GetSelection(),
+            'duration'  : self.chatCommandDuration.GetValue(),
+            'bdcolor'   : self.chatCommandBorderColor.GetColour().GetAsString(wx.C2S_HTML_SYNTAX),
+            'fgcolor'   : self.chatCommandFGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX),
+            'bgcolor'   : self.chatCommandBGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX),
+            'text'      : self.chatCommandMessage.GetValue(),
+        }
+
+    def Deserialize(self, init):
+        if init.get('usecolors', '') : self.chatCommandUseColorsCB   .SetValue(init['usecolors'])
+        if init.get('beginchat', '') : self.chatCommandUseBeginchatCB.SetValue(init['beginchat'])
+        if init.get('channel'  , '') : self.chatCommandChannel .SetSelection(init['channel'])
+        if init.get('size'     , '') : self.chatCommandChatSize.SetSelection(init['size'])
+        if init.get('duration' , '') : self.chatCommandDuration.SetValue(init['duration'])
+        if init.get('bdcolor'  , '') : self.chatCommandBorderColor.SetColour(init['bdcolor'])
+        if init.get('fgcolor'  , '') : self.chatCommandFGColor    .SetColour(init['fgcolor'])
+        if init.get('bgcolor'  , '') : self.chatCommandBGColor    .SetColour(init['bgcolor'])
+        if init.get('text'     , '') : self.chatCommandMessage.SetValue(init['text'])
+
+
 ####### Chat Command Global
 class ChatGlobalCmd(PowerBindCmd):
     def BuildUI(self, dialog):
@@ -371,6 +410,18 @@ class ChatGlobalCmd(PowerBindCmd):
         preface = "beginchat /" if useBeginchat else ""
 
         return f'{preface}send "{channel}" {message}'
+
+    def Serialize(self):
+        return {
+            'usebeginchat': self.chatCommandGlobalUseBeginchatCB.GetValue(),
+            'channel'     : self.chatCommandGlobalChannel.GetValue(),
+            'message'     : self.chatCommandGlobalMessage.GetValue(),
+        }
+
+    def Deserialize(self, init):
+        if init.get('usebeginchat', ''): self.chatCommandGlobalUseBeginchatCB.SetValue(init['usebeginchat'])
+        if init.get('channel',      ''): self.chatCommandGlobalChannel.SetValue(init['channel'])
+        if init.get('message',      ''): self.chatCommandGlobalMessage.SetValue(init['message'])
 
 #######Costume Change
 class CostumeChangeCmd(PowerBindCmd):
@@ -405,6 +456,16 @@ class CostumeChangeCmd(PowerBindCmd):
 
         return f"{ccCmd} {costumeNumber}{emoteName}"
 
+    def Serialize(self):
+        return{
+            'costumeNumber': self.costumeChangeCostume.GetSelection(),
+            'costumeEmote' : self.costumeChangeEmote.GetSelection(),
+        }
+
+    def Deserialize(self, init):
+        if init.get('costumeNumber', ''): self.costumeChangeCostume.SetSelection(init['costumeNumber'])
+        if init.get('costumeEmote' , ''): self.costumeChangeEmote  .SetSelection(init['costumeEmote'])
+
 ####### Custom Bind
 class CustomBindCmd(PowerBindCmd):
     def BuildUI(self, dialog):
@@ -417,6 +478,12 @@ class CustomBindCmd(PowerBindCmd):
 
     def MakeBindString(self, _):
         return self.customBindName.GetValue()
+
+    def Serialize(self):
+        return { 'customBindName': self.customBindName.GetValue() }
+
+    def Deserialize(self,init):
+        if init.get('customBindName', ''): self.customBindName.SetValue(init['customBindName'])
 
 ####### Emote
 class EmoteCmd(PowerBindCmd):
@@ -436,6 +503,12 @@ class EmoteCmd(PowerBindCmd):
         actualEmotePayload = UI.EmotePicker.EmotePicker.payloadMap[displayedEmoteName]
 
         return actualEmotePayload
+
+    def Serialize(self):
+        return {'emoteName': self.emoteName.GetLabel()}
+
+    def Deserialize(self, init):
+        if init.get('emoteName', ''): self.emoteName.SetLabel(init['emoteName'])
 
 ####### Power Abort
 class PowerAbortCmd(PowerBindCmd):
@@ -504,6 +577,33 @@ class TargetCustomCmd(PowerBindCmd):
 
         return f"{targetCommand}{enemy}{friend}{defeated}{alive}{mypet}{notmypet}{base}{notbase} {name}"
 
+    def Serialize(self):
+        return {
+            'mode'     : self.targetCustomModeChoice.GetSelection(),
+            'enemy'    : self.targetCustomCBEnemies.     IsChecked(),
+            'friend'   : self.targetCustomCBFriends.     IsChecked(),
+            'defeated' : self.targetCustomCBDefeated.    IsChecked(),
+            'alive'    : self.targetCustomCBAlive.       IsChecked(),
+            'mypet'    : self.targetCustomCBMyPets.      IsChecked(),
+            'notmypet' : self.targetCustomCBNotMyPets.   IsChecked(),
+            'base'     : self.targetCustomCBBaseItems.   IsChecked(),
+            'notbase'  : self.targetCustomCBNotBaseItems.IsChecked(),
+            'name'     : self.targetCustomOptionalName.GetValue(),
+        }
+
+    def Deserialize(self, init):
+        if init.get('mode'    , ''): self.targetCustomModeChoice.SetSelection(init['mode'])
+        if init.get('enemy'   , ''): self.targetCustomCBEnemies.     SetValue(init['enemy'])
+        if init.get('friend'  , ''): self.targetCustomCBFriends.     SetValue(init['friend'])
+        if init.get('defeated', ''): self.targetCustomCBDefeated.    SetValue(init['defeated'])
+        if init.get('alive'   , ''): self.targetCustomCBAlive.       SetValue(init['alive'])
+        if init.get('mypet'   , ''): self.targetCustomCBMyPets.      SetValue(init['mypet'])
+        if init.get('notmypet', ''): self.targetCustomCBNotMyPets.   SetValue(init['notmypet'])
+        if init.get('base'    , ''): self.targetCustomCBBaseItems.   SetValue(init['base'])
+        if init.get('notbase' , ''): self.targetCustomCBNotBaseItems.SetValue(init['notbase'])
+        if init.get('name'    , ''): self.targetCustomOptionalName.SetValue(init['name'])
+
+
 ####### Target Enemy
 class TargetEnemyCmd(PowerBindCmd):
     def BuildUI(self, dialog):
@@ -522,6 +622,12 @@ class TargetEnemyCmd(PowerBindCmd):
         mode   = choice.GetString(index)
         return "targetenemy" + mode.lower()
 
+    def Serialize(self):
+        return { 'mode' : self.targetEnemyModeChoice.GetSelection() }
+
+    def Deserialize(self, init):
+        if init.get('mode', ''): self.targetEnemyModeChoice.SetSelection(init['mode'])
+
 ####### Target Friend
 class TargetFriendCmd(PowerBindCmd):
     def BuildUI(self, dialog):
@@ -539,6 +645,12 @@ class TargetFriendCmd(PowerBindCmd):
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
         return "targetfriend" + mode.lower()
+
+    def Serialize(self):
+        return { 'mode' : self.targetFriendModeChoice.GetSelection() }
+
+    def Deserialize(self, init):
+        if init.get('mode', ''): self.targetFriendModeChoice.SetSelection(init['mode'])
 
 ####### Team/Pet Select
 class TeamPetSelectCmd(PowerBindCmd):
@@ -564,6 +676,20 @@ class TeamPetSelectCmd(PowerBindCmd):
 
         return f"{teamOrPet}select {targetNumber}"
 
+    def Serialize(self):
+        return {
+            'teamOrPet': 'team' if self.teamPetSelectTeamRB.GetValue() else 'pet',
+            'targetNum': self.teamPetSelectNumber.GetSelection(),
+        }
+
+    def Deserialize(self, init):
+        ToP = init.get('teamOrPet', '')
+        if ToP == 'pet':
+            self.teamPetSelectPetRB.SetValue(True)
+        else:
+            self.teamPetSelectTeamRB.SetValue(True)
+        if init.get('targetNum', ''): self.teamPetSelectNumber.SetSelection(init['targetNum'])
+
 ####### Unselect
 class UnselectCmd(PowerBindCmd):
     def MakeBindString(self, _):
@@ -571,6 +697,7 @@ class UnselectCmd(PowerBindCmd):
 
 ####### Use Insp By Name
 class UseInspByNameCmd(PowerBindCmd):
+    # TODO add icons
     def BuildUI(self, dialog):
         useInspByNameSizer = wx.BoxSizer(wx.HORIZONTAL)
         useInspByNameSizer.Add(wx.StaticText(dialog, -1, "Inspiration:"), 0,
@@ -587,7 +714,6 @@ class UseInspByNameCmd(PowerBindCmd):
         mode   = choice.GetString(index)
         return "inspexecname " + mode.lower()
 
-
     def GetAllInsps(self):
         Insplist = []
         for _, info in GameData.Inspirations.items():
@@ -597,6 +723,12 @@ class UseInspByNameCmd(PowerBindCmd):
         Insplist.pop(-1) # snip the terminal "---"
 
         return Insplist
+
+    def Serialize(self):
+        return { 'insp' : self.useInspByNameModeChoice.GetSelection() }
+
+    def Deserialize(self, init):
+        if init.get('insp', ''): self.useInspByNameModeChoice.SetSelection(init['insp'])
 
 ####### Use Insp From Row / Column
 class UseInspRowColCmd(PowerBindCmd):
@@ -620,6 +752,16 @@ class UseInspRowColCmd(PowerBindCmd):
         col = self.useInspRowColumnCol.GetSelection()+1
 
         return f"inspexectray {col} {row}"
+
+    def Serialize(self):
+        return {
+            'col' : self.useInspRowColumnCol.GetSelection(),
+            'row' : self.useInspRowColumnRow.GetSelection(),
+        }
+
+    def Deserialize(self, init):
+        if init.get('col', ''): self.useInspRowColumnCol.SetSelection(init['col'])
+        if init.get('row', ''): self.useInspRowColumnRow.SetSelection(init['row'])
 
 ####### Use Power
 class UsePowerCmd(PowerBindCmd):
@@ -655,6 +797,32 @@ class UsePowerCmd(PowerBindCmd):
             return ''
 
         return f"{method} {self.usePowerName.GetLabel()}"
+
+    def Serialize(self):
+        if   self.usePowerRBOn.GetValue():
+            method = "powexectoggleon"
+        elif self.usePowerRBOff.GetValue():
+            method = "powexectoggleoff"
+        else:
+            method = "powexecname"
+        return {
+            'method': method,
+            'pname' : self.usePowerName.GetLabel(),
+            # TODO - thread icon filename through picker
+            #'picon' : self.usePowerName.GetIconFilename(),
+        }
+
+    def Deserialize(self, init):
+        method = init.get('method', '')
+        if method == 'powexectoggleon':
+            self.usePowerRBOn.SetValue(True)
+        elif method == 'powexectoggleoff':
+            self.usePowerRBOff.SetValue(True)
+        else:
+            self.usePowerRBToggle.SetValue(True)
+        if init.get('pname', ''): self.usePowerName.SetLabel(init['pname'])
+        # TODO when icon is threaded in here
+        # if init.get('picon', ''): self.usePowerName.SetIconFromFilenameMagically(init['picon'])
 
 ####### Use Power From Tray
 class UsePowerFromTrayCmd(PowerBindCmd):
@@ -693,6 +861,16 @@ class UsePowerFromTrayCmd(PowerBindCmd):
 
         return f"powexec{mode} {slot}{mode2}"
 
+    def Serialize(self):
+        return {
+            'tray' : self.usePowerFromTrayTray.GetSelection(),
+            'slot' : self.usePowerFromTraySlot.GetSelection(),
+        }
+
+    def Deserialize(self, init):
+        if init.get('tray', ''): self.usePowerFromTrayTray.SetSelection(init['tray'])
+        if init.get('slot', ''): self.usePowerFromTraySlot.SetSelection(init['slot'])
+
 ####### Window Toggle
 class WindowToggleCmd(PowerBindCmd):
     def BuildUI(self, dialog):
@@ -714,6 +892,12 @@ class WindowToggleCmd(PowerBindCmd):
         index  = choice.GetSelection()
         window = choice.GetString(index)
         return "windowtoggle " + window.lower()
+
+    def Serialize(self):
+        return { 'window': self.windowToggleTray.GetSelection() }
+
+    def Deserialize(self, init):
+        if init.get('window', ''): self.windowToggleTray.SetSelection(init['window'])
 
 # Must always add to this list when adding a new command class above
 commandClasses = {

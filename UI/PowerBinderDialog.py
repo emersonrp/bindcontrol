@@ -27,6 +27,7 @@ class PowerBinderDialog(wx.Dialog):
 
         self.RearrangeList = wx.RearrangeList(self, -1, size=(550,400))
         self.RearrangeList.Bind(wx.EVT_LISTBOX, self.OnListSelect)
+        self.RearrangeList.Bind(wx.EVT_LISTBOX_DCLICK, self.OnRearrangeEdit)
         rearrangeCtrl.Add(self.RearrangeList, 1)
 
         rearrangeButtons = wx.BoxSizer(wx.VERTICAL)
@@ -252,24 +253,26 @@ class AFKCmd(PowerBindCmd):
 
 ####### Auto Power
 class AutoPowerCmd(PowerBindCmd):
-    ### TODO make this use power picker
     def BuildUI(self, dialog):
         autoPowerSizer = wx.BoxSizer(wx.HORIZONTAL)
         autoPowerSizer.Add(wx.StaticText(dialog, -1, "Power:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
-        self.autoPowerName = wx.TextCtrl(dialog, -1)
-        autoPowerSizer.Add(self.autoPowerName, 1, wx.ALIGN_CENTER_VERTICAL)
+        self.autoPowerName = PowerPicker(dialog)
+        autoPowerSizer.Add(self.autoPowerName, 1, wx.EXPAND)
 
         return autoPowerSizer
 
     def MakeBindString(self, _):
-        return f"powexecauto {self.autoPowerName.GetValue()}"
+        return f"powexecauto {self.autoPowerName.GetLabel()}"
 
     def Serialize(self):
-        return {'power' : self.autoPowerName.GetValue()}
+        return {
+            'pname' : self.autoPowerName.GetLabel(),
+            'picon' : self.autoPowerName.IconFilename
+        }
 
     def Deserialize(self, init):
-        if init['power']:
-            self.autoPowerName.SetValue(init['power'])
+        if init.get('pname', ''): self.autoPowerName.SetLabel(init['pname'])
+        if init.get('picon', ''): self.autoPowerName.SetBitmap(GetIcon(init['picon']))
 
 ####### Chat Command
 class ChatCmd(PowerBindCmd):

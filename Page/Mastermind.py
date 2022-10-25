@@ -340,7 +340,7 @@ class Mastermind(Page):
 
     def OnPetSelEnable(self, evt = None):
         enabled = self.GetState('PetSelEnable')
-        for i in range(1,7):
+        for i in [1,2,3,4,5,6]:
             self.DisableControls(enabled, [ f"Pet{i}Name", f"PetSelect{i}" ])
 
         self.OnBGCheckboxes()
@@ -452,8 +452,7 @@ Thugs added by Konoko!
         bgsay = []
         (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
-        #  TODO -- "method != 'Petsay' is in citybinder as 'method ~= 3' which I think is right."
-        if (((tier1bg + tier2bg + tier3bg) == 0) or method != 'Petsay'):
+        if (((tier1bg + tier2bg + tier3bg) == 0) or method == 'petsayall'):
             bgsay = [method + say]
         else:
             if (tier1bg == 0):
@@ -768,7 +767,7 @@ Thugs added by Konoko!
                 self.mmBGSubBind(profile,cbgfiledn,cbgfileup,"bguard",powers)
 
         if self.GetState('PetSelEnable'):
-            for i in range(1,7):
+            for i in [1,2,3,4,5,6]:
                 name = self.GetState(f"Pet{i}Name")
                 ResetFile.SetBind(
                     self.Ctrls[f"PetSelect{i}"].MakeFileKeyBind(f"petselectname {name}")

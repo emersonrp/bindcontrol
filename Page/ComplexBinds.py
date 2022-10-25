@@ -1,3 +1,4 @@
+"""
 #!/usr/bin/perl
 
 use strict;
@@ -26,7 +27,7 @@ sub addCBind {
 #		my (_,l,c,newval)
 #		cbind[l] = cbind[l] or {}
 #		if (ewval == "") { newval = nil }
-#		if ( == 1) { cbind[l].bindkey = newval } else { cbind[l][c-1] = newval } profile.modified = true 
+#		if ( == 1) { cbind[l].bindkey = newval } else { cbind[l][c-1] = newval } profile.modified = true
 #		return iup.DEFAULT
 #	}
 #	sub matrix_entercell {
@@ -53,7 +54,7 @@ sub addCBind {
 #			cbinds.dlg = nil
 #			module.createDialog(cbinds,profile)
 #			cbShowDialog(cbinds.dlg,218,10,profile,cbinds.dlg_close_cb)
-#			profile.modified = true 
+#			profile.modified = true
 #		} })
 #	my $exportbtn = cbButton("Export...",function() cbExportPageSettings(profile,n,cbinds,"ComplexBind") })
 #	return iup.frame{iup.vbox{bindtext,matrix,iup.hbox{delbtn,exportbtn}},cx = 0, cy = 65 * (n-1)}
@@ -78,7 +79,7 @@ sub createDialog {
 #			cbinds.dlg = nil
 #			module.createDialog(cbinds,profile)
 #			cbShowDialog(cbinds.dlg,218,10,profile,cbinds.dlg_close_cb)
-#			profile.modified = true 
+#			profile.modified = true
 #		},100)
 #	my $importbtn = cbButton("Import Complex Bind",function()
 #		my $newcbind = newCBind() #  we will be filling this new BBind up.
@@ -178,7 +179,7 @@ sub writeBind {
 	if ($cbinds->{$bindset}->{$key}->{$cycle}) {
 		$cmd = $cbinds->{$bindset}->{$key}->{$cycle} . '$$';
 	}
-	$cmd .= "bindloadfile $profile->{'base'}\\cbinds\\$bindset-$nextCycle.txt";
+	$cmd .= "bindloadfilesilent $profile->{'base'}\\cbinds\\$bindset-$nextCycle.txt";
 	$file->SetBind($k,$cmd);
 }
 
@@ -223,3 +224,4 @@ sub bindisused {
 }
 
 1;
+"""

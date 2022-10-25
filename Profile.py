@@ -66,7 +66,7 @@ class Profile(wx.Notebook):
     def ResetFile(self)    : return self.GetBindFile("reset.txt")
 
     def BLF(self, *args):
-        return "$$bindloadfile " + self.BLFPath(*args)
+        return "$$bindloadfilesilent " + self.BLFPath(*args)
 
     def BLFPath(self, *args):
         filepath = PureWindowsPath(self.GameBindsDir())
@@ -300,7 +300,7 @@ class DoneDialog(wx.Dialog):
         )
         textCtrl = wx.TextCtrl(self, id = wx.ID_ANY,
                        style = wx.TE_READONLY|wx.TE_CENTER,
-                       value = "/bindloadfile " + parent.GameBindsDir() + "reset.txt"
+                       value = "/bindloadfilesilent " + parent.GameBindsDir() + "reset.txt"
         )
         textCtrl.SetFont(
             wx.Font(10, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = u'Courier')

@@ -757,7 +757,7 @@ Thugs added by Konoko!
             for i in range(1,7):
                 name = self.GetState(f"Pet{i}Name")
                 ResetFile.SetBind(
-                    self.Ctrls[f"PetSelect{i}"].MakeFileKeyBind(f"petselectname \"{name}\"")
+                    self.Ctrls[f"PetSelect{i}"].MakeFileKeyBind(f"petselectname {name}")
                 )
 
     def GetChatMethod(self, control, target = 'all'):

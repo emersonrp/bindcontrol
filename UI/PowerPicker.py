@@ -66,7 +66,7 @@ class PowerPickerMenu(wx.Menu):
         submenu = wx.Menu()
         incPowers = gen.IncarnateBox.GetPowers()
         if incPowers:
-            self.AppendSubMenu(submenu, "Incarnate:")
+            self.AppendSubMenu(submenu, "Incarnate")
             for power in incPowers:
                 menuitem = wx.MenuItem(id = wx.ID_ANY, text = power['name'])
                 icon = power['icon']

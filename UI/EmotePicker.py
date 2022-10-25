@@ -38,7 +38,17 @@ class EmotePicker(wx.Menu):
                             submenu.AppendSubMenu(subsubmenu, subitem)
 
                             for leafitem in deepdata:
-                                self.HandleEmoteString(leafitem, subsubmenu)
+                                if isinstance(leafitem, str):
+                                    self.HandleEmoteString(leafitem, subsubmenu)
+
+                                elif isinstance(leafitem, dict):
+                                    # Thanks, "kneel" subsubsubsubmenu
+                                    for subsubitem, deeperdata in leafitem.items():
+                                        subsubsubmenu = wx.Menu()
+                                        subsubmenu.AppendSubMenu(subsubsubmenu, subsubitem)
+
+                                        for kneelitem in deeperdata:
+                                            self.HandleEmoteString(kneelitem, subsubsubmenu)
 
     def HandleEmoteString(self, item, menu):
         if item == "---":

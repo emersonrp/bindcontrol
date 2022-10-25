@@ -1,12 +1,8 @@
-import json 
+import json
 import requests
 import pprint
 
-# TODO - save cached version, touch it back up every once in a while.
-# TODO - or make it a menu item, "Refresh Game Data"
-
 def GetDataFromWeb():
-
 
     Archetypes = {}
 
@@ -39,7 +35,5 @@ def GetDataFromWeb():
     Output_Archetypes = { 'Archetypes' : Archetypes }
     pp = pprint.PrettyPrinter(indent=1, width=132)
     pp.pprint(Output_Archetypes)
-
-
 
 GetDataFromWeb()

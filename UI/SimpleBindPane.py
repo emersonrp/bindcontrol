@@ -74,10 +74,13 @@ class SimpleBindPane(CustomBindPaneParent):
 
     def checkIfWellFormed(self):
         bc = self.Ctrls['BindContents']
-        if bc.GetValue():
+        bc.SetToolTip('')
+        if bc.GetValue() and len(bc.GetValue()) <= 255:
             bc.SetBackgroundColour(wx.NullColour)
         else:
             bc.SetBackgroundColour((255,200,200))
+            if len(bc.GetValue()) > 255:
+                bc.SetToolTip("This bind is longer than 255 characters, which will cause problems in-game.")
 
         bk = self.Ctrls['BindKey']
         if bk.GetLabel():

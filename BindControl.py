@@ -52,15 +52,13 @@ class Main(wx.Frame):
         # "Profile" Menu
         ProfMenu = wx.Menu()
 
-        Profile_new    = ProfMenu.Append(-1, "New Profile...", "Create a new profile")
+        Profile_new    = ProfMenu.Append(-1, "New Profile", "Create a new profile")
         Profile_load   = ProfMenu.Append(-1, "Load Profile...", "Load an existing profile")
         Profile_saveas = ProfMenu.Append(-1, "Save Profile As...", "Save the current profile under a new filename")
         Profile_save   = ProfMenu.Append(-1, "Save Profile", "Save the current profile")
         ProfMenu.AppendSeparator()
         Profile_preferences = ProfMenu.Append(wx.ID_PREFERENCES, "&Preferences", "Configure BindControl")
         Profile_exit  = ProfMenu.Append(wx.ID_EXIT)
-
-        Profile_new.Enable(False)
 
         # "Help" Menu
         HelpMenu = wx.Menu()
@@ -88,10 +86,10 @@ class Main(wx.Frame):
         self.SetMenuBar(MenuBar)
 
         # MENUBAR EVENTS
-        self.Bind(wx.EVT_MENU , None                       , Profile_new)
+        self.Bind(wx.EVT_MENU , self.OnNewProfile          , Profile_new)
         self.Bind(wx.EVT_MENU , self.Profile.LoadFromFile  , Profile_load)
-        self.Bind(wx.EVT_MENU , self.Profile.doSaveToFile    , Profile_save)
-        self.Bind(wx.EVT_MENU , self.Profile.SaveToFile , Profile_saveas)
+        self.Bind(wx.EVT_MENU , self.Profile.doSaveToFile  , Profile_save)
+        self.Bind(wx.EVT_MENU , self.Profile.SaveToFile    , Profile_saveas)
         self.Bind(wx.EVT_MENU , self.OnMenuPrefsDialog     , Profile_preferences)
         self.Bind(wx.EVT_MENU , self.OnMenuExitApplication , Profile_exit)
 
@@ -118,6 +116,22 @@ class Main(wx.Frame):
         self.SetSizerAndFit(self.Sizer)
 
         self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
+
+    def OnNewProfile(self, _):
+        if self.Profile.Modified:
+            if wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.ICON_QUESTION|wx.YES_NO) == wx.YES:
+                self.Profile.SaveToFile()
+        self.Freeze()
+        try:
+            self.Sizer.Remove(0)
+            self.Profile.Destroy()
+            self.Profile = Profile(self)
+            self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND|wx.ALL, 3)
+        except Exception as e:
+            wx.LogError(f"Something broke in new profile: {e}")
+        finally:
+            self.Layout()
+            self.Thaw()
 
     def OnWriteBindsButton(self, _):
         self.Profile.WriteBindFiles()

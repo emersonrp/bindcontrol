@@ -36,7 +36,6 @@ Features
 TODO
 ----
 
-* Clarify new / save / load profile flow
 * Save binds in $bindsdir/$profile directories
 * More error detection and handling
 * Kheldian form/travel binds in speed-on-demand

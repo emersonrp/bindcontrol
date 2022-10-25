@@ -78,6 +78,7 @@ class CustomBinds(Page):
         deleteSizer = wx.BoxSizer(wx.HORIZONTAL)
         deleteSizer.Add(bindpane, 1, wx.EXPAND, 5)
         deleteButton = wx.Button(self.scrolledPane, -1, "Delete")
+        deleteButton.BindPane = bindpane
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
         deleteSizer.Add(deleteButton, 0, wx.LEFT|wx.RIGHT, 15)
 
@@ -90,6 +91,8 @@ class CustomBinds(Page):
         sizer = delButton.GetContainingSizer()
         self.PaneSizer.Hide(sizer)
         self.PaneSizer.Remove(sizer)
+        self.Panes.remove(delButton.BindPane)
+        delButton.BindPane.Destroy()
         self.Layout()
         evt.Skip()
 

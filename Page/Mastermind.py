@@ -1,4 +1,5 @@
 import wx
+import re
 import UI
 
 # Sandolphan / Khaiba's guide to these controls found at:
@@ -281,7 +282,6 @@ class Mastermind(Page):
 
         petCommandsKeys.InnerSizer.Add(bgsizer, 1)
 
-
         petselenable = wx.CheckBox( self, -1, 'Enable Pet By-Name Binds')
         petselenable.SetToolTip( wx.ToolTip('Check this to enable the By-Name Selection Binds') )
         petselenable.Bind(wx.EVT_CHECKBOX, self.OnPetSelEnable)
@@ -302,6 +302,7 @@ class Mastermind(Page):
                 ctlType = "keybutton",
                 tooltip = f"Choose the Key Combo to Select Pet {PetID} by Name"
             )
+            self.Ctrls[f"Pet{PetID}Name"].Bind(wx.EVT_TEXT, self.OnNameTextChange)
 
         sizer.Add(petcmdenable, 0, wx.EXPAND|wx.TOP|wx.LEFT, 16)
         sizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 16)
@@ -344,6 +345,16 @@ class Mastermind(Page):
 
         self.OnBGCheckboxes()
         if evt: evt.Skip()
+
+    def OnNameTextChange(self, evt):
+        ctrl = evt.EventObject
+        if re.search(' ', ctrl.GetValue()):
+            ctrl.SetBackgroundColour([255,200,200])
+            ctrl.SetToolTip("This pet name contains spaces, which will cause this pet's by-name binds not to work.  Change your pet's name to something without spaces.")
+        else:
+            ctrl.SetBackgroundColour(wx.NullColour)
+            ctrl.SetToolTip('')
+
 
     def OnBGCheckboxes(self, evt = None):
         petcmdenabled = self.GetState('PetCmdEnable')
@@ -394,15 +405,15 @@ Thugs added by Konoko!
                     bgsay.append(f"petsaypow {powers['min']} {PetBodyguardResponse}")
                 else:
                     #  use petsayname commands for those tier1s that are bodyguards.
-                    if (self.GetState('Pet1Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet1Name')}\" {PetBodyguardResponse}")
-                    if (self.GetState('Pet2Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet2Name')}\" {PetBodyguardResponse}")
-                    if (self.GetState('Pet3Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet3Name')}\" {PetBodyguardResponse}")
+                    if (self.GetState('Pet1Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet1Name')} {PetBodyguardResponse}")
+                    if (self.GetState('Pet2Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet2Name')} {PetBodyguardResponse}")
+                    if (self.GetState('Pet3Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet3Name')} {PetBodyguardResponse}")
 
                 if (tier2bg == 2):
                     bgsay.append(f"petsaypow {powers['lts']} {PetBodyguardResponse}")
                 else:
-                    if (self.GetState('Pet4Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet4Name')}\" {PetBodyguardResponse}")
-                    if (self.GetState('Pet5Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet5Name')}\" {PetBodyguardResponse}")
+                    if (self.GetState('Pet4Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet4Name')} {PetBodyguardResponse}")
+                    if (self.GetState('Pet5Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet5Name')} {PetBodyguardResponse}")
 
                 if (tier3bg == 1):
                     bgsay.append(f"petsaypow {powers['bos']} {PetBodyguardResponse}")
@@ -414,15 +425,15 @@ Thugs added by Konoko!
                     bgset.append(f"petcompow {powers['min']} def fol")
                 else:
                     #  use petsayname commands for those tier1s that are bodyguards.
-                    if (self.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname \"{self.GetState('Pet1Name')}\" def fol")
-                    if (self.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname \"{self.GetState('Pet2Name')}\" def fol")
-                    if (self.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname \"{self.GetState('Pet3Name')}\" def fol")
+                    if (self.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet1Name')} def fol")
+                    if (self.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet2Name')} def fol")
+                    if (self.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet3Name')} def fol")
 
                 if (tier2bg == 2):
                     bgset.append(f"petcompow {powers['lts']} def fol")
                 else:
-                    if (self.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname \"{self.GetState('Pet4Name')}\" def fol")
-                    if (self.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname \"{self.GetState('Pet5Name')}\" def fol")
+                    if (self.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet4Name')} def fol")
+                    if (self.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet5Name')} def fol")
 
                 if (tier3bg == 1):
                     bgset.append(f"petcompow {powers['bos']} def fol")
@@ -447,15 +458,15 @@ Thugs added by Konoko!
                 bgsay.append(f"petsaypow {powers['min']} {say}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (not self.GetState('Pet1Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet1Name')}\" {say}")
-                if (not self.GetState('Pet2Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet2Name')}\" {say}")
-                if (not self.GetState('Pet3Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet3Name')}\" {say}")
+                if (not self.GetState('Pet1Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet1Name')} {say}")
+                if (not self.GetState('Pet2Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet2Name')} {say}")
+                if (not self.GetState('Pet3Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet3Name')} {say}")
 
             if (tier2bg == 0):
                 bgsay.append(f"petsaypow {powers['lts']} {say}")
             else :
-                if (not self.GetState('Pet4Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet4Name')}\" {say}")
-                if (not self.GetState('Pet5Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet5Name')}\" {say}")
+                if (not self.GetState('Pet4Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet4Name')} {say}")
+                if (not self.GetState('Pet5Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet5Name')} {say}")
 
             if (tier3bg == 0):
                 bgsay.append(f"petsaypow {powers['bos']} {say}")
@@ -467,15 +478,15 @@ Thugs added by Konoko!
                 bgact.append(f"petcompow {powers['min']} {action}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (not self.GetState('Pet1Bodyguard')) : bgact.append(f"petcomname \"{self.GetState('Pet1Name')}\" {action}")
-                if (not self.GetState('Pet2Bodyguard')) : bgact.append(f"petcomname \"{self.GetState('Pet2Name')}\" {action}")
-                if (not self.GetState('Pet3Bodyguard')) : bgact.append(f"petcomname \"{self.GetState('Pet3Name')}\" {action}")
+                if (not self.GetState('Pet1Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet1Name')} {action}")
+                if (not self.GetState('Pet2Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet2Name')} {action}")
+                if (not self.GetState('Pet3Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet3Name')} {action}")
 
             if (tier2bg == 0):
                 bgact.append(f"petcompow {powers['lts']} {action}")
             else :
-                if (not self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname \"{self.GetState('Pet4Name')}\" {action}")
-                if (not self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname \"{self.GetState('Pet5Name')}\" {action}")
+                if (not self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet4Name')} {action}")
+                if (not self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet5Name')} {action}")
 
             if (tier3bg == 0):
                 bgact.append('petcompow ' + f"{powers['bos']} {action}")
@@ -498,15 +509,15 @@ Thugs added by Konoko!
                 bgsay.append(f"petsaypow {powers['min']} {say}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (self.GetState('Pet1Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet1Name')}\" {say}")
-                if (self.GetState('Pet2Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet2Name')}\" {say}")
-                if (self.GetState('Pet3Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet3Name')}\" {say}")
+                if (self.GetState('Pet1Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet1Name')} {say}")
+                if (self.GetState('Pet2Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet2Name')} {say}")
+                if (self.GetState('Pet3Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet3Name')} {say}")
 
             if (tier2bg == 2):
                 bgsay.append(f"petsaypow {powers['lts']} {say}")
             else :
-                if (self.GetState('Pet4Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet4Name')}\" {say}")
-                if (self.GetState('Pet5Bodyguard')) : bgsay.append(f"petsayname \"{self.GetState('Pet5Name')}\" {say}")
+                if (self.GetState('Pet4Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet4Name')} {say}")
+                if (self.GetState('Pet5Bodyguard')) : bgsay.append(f"petsayname {self.GetState('Pet5Name')} {say}")
 
             if (tier3bg == 1):
                 bgsay.append(f"petsaypow {powers['bos']} {say}")
@@ -518,15 +529,15 @@ Thugs added by Konoko!
                 bgact.append(f"petcompow {powers['min']} {action}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (self.GetState('Pet1Bodyguard')) : bgact.append(f"petcomname \"{self.GetState('Pet1Name')}\" {action}")
-                if (self.GetState('Pet2Bodyguard')) : bgact.append(f"petcomname \"{self.GetState('Pet2Name')}\" {action}")
-                if (self.GetState('Pet3Bodyguard')) : bgact.append(f"petcomname \"{self.GetState('Pet3Name')}\" {action}")
+                if (self.GetState('Pet1Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet1Name')} {action}")
+                if (self.GetState('Pet2Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet2Name')} {action}")
+                if (self.GetState('Pet3Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet3Name')} {action}")
 
             if (tier2bg == 2):
                 bgact.append(f"petcompow {powers['lts']} {action}")
             else :
-                if (self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname \"{self.GetState('Pet4Name')}\" {action}")
-                if (self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname \"{self.GetState('Pet5Name')}\" {action}")
+                if (self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet4Name')} {action}")
+                if (self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet5Name')} {action}")
 
             if (tier3bg == 1):
                 bgact.append(f"petcompow {powers['bos']} {action}")
@@ -547,15 +558,15 @@ Thugs added by Konoko!
                     bgset.append(f"petcompow {powers['min']} def fol")
                 else :
                     #  use petsayname commands for those tier1s that are bodyguards.
-                    if (self.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname \"{self.GetState('Pet1Name')}\" def fol")
-                    if (self.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname \"{self.GetState('Pet2Name')}\" def fol")
-                    if (self.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname \"{self.GetState('Pet3Name')}\" def fol")
+                    if (self.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet1Name')} def fol")
+                    if (self.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet2Name')} def fol")
+                    if (self.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet3Name')} def fol")
 
                 if (tier2bg == 2):
                     bgset.append(f"petcompow {powers['lts']} def fol")
                 else :
-                    if (self.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname \"{self.GetState('Pet4Name')}\" def fol")
-                    if (self.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname \"{self.GetState('Pet5Name')}\" def fol")
+                    if (self.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet4Name')} def fol")
+                    if (self.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet5Name')} def fol")
 
                 if (tier3bg == 1):
                     bgset.append(f"petcompow {powers['bos']} def fol")
@@ -577,15 +588,15 @@ Thugs added by Konoko!
                 bgact.append(f"petcompow {powers['min']} {action}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (not self.GetState('Pet1Bodyguard')): bgact.append(f"petcomname \"{self.GetState('Pet1Name')}\" {action}")
-                if (not self.GetState('Pet2Bodyguard')): bgact.append(f"petcomname \"{self.GetState('Pet2Name')}\" {action}")
-                if (not self.GetState('Pet3Bodyguard')): bgact.append(f"petcomname \"{self.GetState('Pet3Name')}\" {action}")
+                if (not self.GetState('Pet1Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet1Name')} {action}")
+                if (not self.GetState('Pet2Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet2Name')} {action}")
+                if (not self.GetState('Pet3Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet3Name')} {action}")
 
             if (tier2bg == 0):
                 bgact.append(f"petcompow {powers['lts']} {action}")
             else :
-                if (not self.GetState('Pet4Bodyguard')): bgact.append(f"petcomname \"{self.GetState('Pet4Name')}\" {action}")
-                if (not self.GetState('Pet5Bodyguard')): bgact.append(f"petcomname \"{self.GetState('Pet5Name')}\" {action}")
+                if (not self.GetState('Pet4Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet4Name')} {action}")
+                if (not self.GetState('Pet5Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet5Name')} {action}")
 
             if (tier3bg == 0): bgact.append(f"petcompow {powers['bos']} {action}")
 
@@ -607,15 +618,15 @@ Thugs added by Konoko!
                 bgact.append(f"petcompow {powers['min']} {action}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (self.GetState('Pet1Bodyguard')): bgact.append(f"petcomname \"{self.GetState('Pet1Name')}\" {action}")
-                if (self.GetState('Pet2Bodyguard')): bgact.append(f"petcomname \"{self.GetState('Pet2Name')}\" {action}")
-                if (self.GetState('Pet3Bodyguard')): bgact.append(f"petcomname \"{self.GetState('Pet3Name')}\" {action}")
+                if (self.GetState('Pet1Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet1Name')} {action}")
+                if (self.GetState('Pet2Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet2Name')} {action}")
+                if (self.GetState('Pet3Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet3Name')} {action}")
 
             if (tier2bg == 2):
                 bgact.append(f"petcompow  {powers['lts']} {action}")
             else :
-                if (self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname \"{self.GetState('Pet4Name')}\" {action}")
-                if (self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname \"{self.GetState('Pet5Name')}\" {action}")
+                if (self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet4Name')} {action}")
+                if (self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet5Name')} {action}")
 
             if (tier3bg == 1) : bgact.append(f"petcompow {powers['bos']} {action}")
 

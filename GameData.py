@@ -155,7 +155,7 @@ Archetypes = {
     'Controller': {
         'Faction': 'H',
         'Epic': {
-            'Fire Mastery'          : [ 'Fire Blast', 'Fire Ball', 'Fire Shield', 'Phoenix Rising', 'Consume', ],
+            'Fire Mastery'          : [ 'Fire Blast', 'Fire Ball', 'Fire Shield', 'Rise of the Phoenix', 'Consume', ],
             'Ice Mastery'           : [ 'Ice Blast', 'Hibernate', 'Frozen Armor', 'Frost Breath', 'Ice Storm', ],
             'Primal Forces Mastery' : [ 'Power Blast', 'Conserve Power', 'Temp Invulnerability', 'Energy Torrent', 'Power Boost', ],
             'Psionic Mastery'       : [ 'Mental Blast', 'Indomitable Will', 'Mind Over Body', 'World of Confusion', 'Psionic Tornado', ],

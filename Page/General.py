@@ -181,7 +181,7 @@ class General(Page):
         evt.Skip()
 
     def OnPickPrimaryPowerSet(self, evt):
-        self.Profile.Mastermind.OnArchetypePowerChange()
+        self.Profile.Mastermind.SynchronizeUI()
         evt.Skip()
 
     def OnPickSecondaryPowerSet(self, evt):

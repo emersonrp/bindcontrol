@@ -74,51 +74,51 @@ class Mastermind(Page):
         self.Init = {
             'Enable' : False,
 
-            'PetSelectAll' : 'LALT+V',
+            'PetSelectAll' : 'NUMPAD0',
             'PetSelectAllResponse' : 'Orders?',
             'PetSelectAllResponseMethod' : 'Petsay',
 
-            'PetSelectMinions' : 'LALT+Z',
+            'PetSelectMinions' : 'NUMPAD1',
             'PetSelectMinionsResponse' : 'Orders?',
             'PetSelectMinionsResponseMethod' : 'Petsay',
 
-            'PetSelectLieutenants' : 'LALT+X',
+            'PetSelectLieutenants' : 'NUMPAD2',
             'PetSelectLieutenantsResponse' : 'Orders?',
             'PetSelectLieutenantsResponseMethod' : 'Petsay',
 
-            'PetSelectBoss' : 'LALT+C',
+            'PetSelectBoss' : 'NUMPAD3',
             'PetSelectBossResponse' : 'Orders?',
             'PetSelectBossResponseMethod' : 'Petsay',
 
-            'PetBodyguard' : '',
+            'PetBodyguard' : 'MULTIPLY',
             'PetBodyguardResponse' : 'Bodyguarding.',
             'PetBodyguardResponseMethod' : 'Petsay',
 
-            'PetAggressive' : 'LALT+A',
+            'PetAggressive' : 'NUMPAD4',
             'PetAggressiveResponse' : 'Kill on Sight.',
             'PetAggressiveResponseMethod' : 'Petsay',
 
-            'PetDefensive' : 'LALT+S',
+            'PetDefensive' : 'NUMPAD5',
             'PetDefensiveResponse' : 'Return Fire Only.',
             'PetDefensiveResponseMethod' : 'Petsay',
 
-            'PetPassive' : 'LALT+D',
+            'PetPassive' : 'NUMPAD6',
             'PetPassiveResponse' : 'At Ease.',
             'PetPassiveResponseMethod' : 'Petsay',
 
-            'PetAttack' : 'LALT+Q',
+            'PetAttack' : 'NUMPAD7',
             'PetAttackResponse' : 'Open Fire!',
             'PetAttackResponseMethod' : 'Petsay',
 
-            'PetFollow' : 'LALT+W',
+            'PetFollow' : 'NUMPAD8',
             'PetFollowResponse' : 'Falling In.',
             'PetFollowResponseMethod' : 'Petsay',
 
-            'PetGoto' : 'LALT+LBUTTON',
+            'PetGoto' : 'NUMPAD9',
             'PetGotoResponse' : 'Moving to Checkpoint.',
             'PetGotoResponseMethod' : 'Petsay',
 
-            'PetStay' : 'LALT+E',
+            'PetStay' : 'DIVIDE',
             'PetStayResponse' : 'Holding this Position.',
             'PetStayResponseMethod' : 'Petsay',
 
@@ -247,7 +247,7 @@ class Mastermind(Page):
         staticbox = petCommandsKeys.GetStaticBox()
         enableBGAttack = wx.CheckBox(staticbox, -1, "Enable")
         enableBGAttack.Bind(wx.EVT_CHECKBOX, self.OnBGCheckboxes)
-        enableBGAttack.SetValue(bool(self.Init['PetBodyguardAttackEnabled']))
+        enableBGAttack.SetValue(self.Init['PetBodyguardAttackEnabled'])
         enableBGAttack.CtlLabel = None
         self.Ctrls['PetBodyguardAttackEnabled'] = enableBGAttack
         petCommandsKeys.InnerSizer.Add(enableBGAttack, 0, wx.ALL|wx.EXPAND, 5)
@@ -261,12 +261,26 @@ class Mastermind(Page):
         )
         enableBGGoto = wx.CheckBox(petCommandsKeys.GetStaticBox(), -1, "Enable")
         enableBGGoto.Bind(wx.EVT_CHECKBOX, self.OnBGCheckboxes)
-        enableBGGoto.SetValue(bool(self.Init['PetBodyguardGotoEnabled']))
+        enableBGGoto.SetValue(self.Init['PetBodyguardGotoEnabled'])
         enableBGGoto.CtlLabel = None
         self.Ctrls['PetBodyguardGotoEnabled'] = enableBGGoto
         petCommandsKeys.InnerSizer.Add(enableBGGoto, 0, wx.ALL|wx.EXPAND, 5)
-        petCommandsKeys.InnerSizer.Add(wx.StaticText(staticbox, -1, ''))
-        petCommandsKeys.InnerSizer.Add(wx.StaticText(staticbox, -1, ''))
+
+
+        bgSelectText = wx.StaticText(staticbox, label = "Select Bodyguard Pets:")
+        petCommandsKeys.InnerSizer.Add(bgSelectText, 1, wx.LEFT|wx.RIGHT, 10)
+        bgsizer = wx.BoxSizer(wx.HORIZONTAL)
+        petcbs = []
+        for PetID in [1,2,3,4,5,6]:
+            petcb = wx.CheckBox(staticbox, -1, str(PetID))
+            petcbs.append(petcb)
+            self.Ctrls[f"Pet{PetID}Bodyguard"] = petcb
+            petcb.CtlLabel = bgSelectText
+            petcb.SetToolTip(f"Select whether pet {PetID} acts as Bodyguard")
+            bgsizer.Add(petcb, 0, wx.LEFT|wx.RIGHT, 5)
+
+        petCommandsKeys.InnerSizer.Add(bgsizer, 1)
+
 
         petselenable = wx.CheckBox( self, -1, 'Enable Pet By-Name Binds')
         petselenable.SetToolTip( wx.ToolTip('Check this to enable the By-Name Selection Binds') )
@@ -274,24 +288,14 @@ class Mastermind(Page):
 
         self.Ctrls['PetSelEnable'] = petselenable
 
-        # get the pet names, whether they're bodyguards, and binds to select them directly
-        # TODO -- probably want to enable/disable various bits of this based on whether bodyguard is
-        # active, or whether we have names, or whatever
-        petNames = ControlGroup(self, self, width = 5, label = "Pet Names and By-Name Selection Binds",flexcols=[1,4])
+        # get the pet names and binds to select them directly
+        petNames = ControlGroup(self, self, width = 4, label = "Pet Names and By-Name Selection Binds",flexcols=[1,3])
 
-        for PetID in range(1,7):
-
+        for PetID in [1,2,3,4,5,6]:
             petNames.AddControl(
                 ctlName = f"Pet{PetID}Name",
                 ctlType = 'text',
                 tooltip = f"Specify Pet {PetID}'s Name for individual selection",
-            )
-            petNames.AddControl(
-                noLabel = True,
-                ctlName = f"Pet{PetID}Bodyguard",
-                ctlType = 'checkbox',
-                contents = "Bodyguard",
-                tooltip = f"Select whether pet {PetID} acts as Bodyguard",
             )
             petNames.AddControl(
                 ctlName = f"PetSelect{PetID}",
@@ -310,17 +314,13 @@ class Mastermind(Page):
         self.SetSizerAndFit(sizer)
 
     def SynchronizeUI(self):
-        self.OnArchetypePowerChange()
-        self.OnPetCmdEnable()
-        self.OnPetSelEnable()
-
-    # not actually an event listener, gets called explicitly
-    def OnArchetypePowerChange(self):
         arch = self.Profile.General.GetState('Archetype')
         pset = self.Profile.General.GetState('Primary')
 
         for _, control in self.Ctrls.items():
             control.Enable(bool(arch == "Mastermind" and pset))
+        self.OnPetCmdEnable()
+        self.OnPetSelEnable()
 
     def OnPetCmdEnable(self, evt = None):
         self.Freeze()
@@ -340,16 +340,13 @@ class Mastermind(Page):
     def OnPetSelEnable(self, evt = None):
         enabled = self.GetState('PetSelEnable')
         for i in range(1,7):
-            self.DisableControls(enabled, [
-                f"Pet{i}Name", f"Pet{i}Bodyguard", f"PetSelect{i}"
-            ])
+            self.DisableControls(enabled, [ f"Pet{i}Name", f"PetSelect{i}" ])
 
         self.OnBGCheckboxes()
         if evt: evt.Skip()
 
     def OnBGCheckboxes(self, evt = None):
         petcmdenabled = self.GetState('PetCmdEnable')
-        petselenabled = self.GetState('PetSelEnable')
 
         bgEnabled = self.GetState('PetBodyguardEnabled')
         bgAttack  = self.GetState('PetBodyguardAttackEnabled')
@@ -369,7 +366,8 @@ class Mastermind(Page):
         self.Ctrls['PetBodyguardGotoEnabled']  .Enable(petcmdenabled and bgEnabled)
 
         for petid in [1,2,3,4,5,6]:
-            self.Ctrls[f"Pet{petid}Bodyguard"].Enable(petselenabled and bgEnabled)
+            self.Ctrls[f"Pet{petid}Bodyguard"]         .Enable(bgEnabled)
+            self.Ctrls[f"Pet{petid}Bodyguard"].CtlLabel.Enable(bgEnabled)
         if evt: evt.Skip()
 
     def HelpText(self):

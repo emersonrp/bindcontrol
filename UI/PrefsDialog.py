@@ -29,7 +29,6 @@ class PrefsDialog(wx.Dialog):
         sizer.Add( wx.StaticText(self, label = "Binds Reset Key:"), 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ResetKey = bcKeyButton(self, -1, init ={ 'CtlName': 'ResetKey', })
         self.ResetKey.SetLabel( config.Read('ResetKey') )
-        self.ResetKey.Profile = None # to appease CheckConflict()
         UI.Labels.update({ 'ResetKey': 'Binds Reset Key'})
         sizer.Add( self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)
 
@@ -75,7 +74,6 @@ class PrefsDialog(wx.Dialog):
         paddingSizer.Add(buttonSizer, 0, wx.ALL|wx.EXPAND, 10)
 
         self.SetSizerAndFit(paddingSizer)
-
 
     def onCBLabelClick(self, evt):
         cblabel = evt.EventObject

@@ -161,9 +161,7 @@ class InspirationPopper(Page):
         if evt: evt.Skip()
 
     def PopulateBindFiles(self):
-        profile = self.Profile
-
-        ResetFile = profile.ResetFile()
+        ResetFile = self.Profile.ResetFile()
 
         for Insp in sorted(Inspirations):
 

@@ -50,7 +50,6 @@ class SimpleBindPane(CustomBindPaneParent):
             'Page'    : page,
             'Key'     : self.Init.get('Key', ''),
         })
-        BindKeyCtrl.Profile = self.Page.Profile
         BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)

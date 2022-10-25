@@ -90,22 +90,12 @@ class BindFile():
             return rval
         sortedKeyBinds = sorted(self.KeyBinds, key = getMainKey)
 
-        # TODO -- put this back when we're no longer diffing
-#        def rotateKeyBind(kb):
-#            kb = deque(kb.split('+'))
-#            kb.rotate(1)
-#            # turn them into, eg, 'S        +SHIFT' so "SHIFT-S" sorts after "S" but before "SPACE"
-#            kb[0] = kb[0]+"        "
-#            return "+".join(kb)
-#        sortedKeyBinds = sorted(self.KeyBinds, key = rotateKeyBind)
-
         output = ''
         for keybind in sortedKeyBinds:
             kb = self.KeyBinds[keybind]
             payload = kb.GetKeyBindString()
             try:
-                if len(payload) > 255:
-                    raise Exception
+                if len(payload) > 255: raise Exception
             except Exception as e:
                 wx.LogError(f"Bind '{kb.Key}' from page '{kb.Page}' is too long - this will cause badness in-game!")
             finally:

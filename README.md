@@ -37,6 +37,7 @@ TODO
 ----
 
 * Save binds in $bindsdir/$profile directories
+* Detect and warn if a bind exceeds 255 characters
 * More error detection and handling
 * Kheldian form/travel binds in speed-on-demand
 * Temporary powers in speed-on-demand
@@ -69,6 +70,8 @@ Credits and License
 -------------------
 
 BindControl is in many places a direct port of [CityBinder](http://sourceforge.net/projects/citybinder/) code, and in most other places was extremely influenced by it.
+
+Speed on Demand binds are based on the [original SoD binds by Gnarley](https://mega.nz/folder/4HB2kAoC#Hy1m4EXbcyrPXxPPMCSb8w).  Advanced teleport binds are based on a (long-lost) program written by Dr Letharga.  Mastermind binds adapted from [Sandalphan's Mastermind Numeric Keypad Pet Controls](https://web.archive.org/web/20120904222729/http://boards.cityofheroes.com/showthread.php?t=117256)
 
 BindControl is licensed under the GPL, version 3 or later.
 

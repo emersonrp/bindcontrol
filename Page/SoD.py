@@ -100,12 +100,12 @@ class SoD(Page):
 
         # TODO we aren't ever a kheldian during init so this doesn't do anything
         # I think this is the only place we have this logic yet, though.
-        if (self.Profile.General.Init['Archetype'] == "Peacebringer"):
+        if (self.Profile.Archetype() == "Peacebringer"):
             self.Init['NovaNova'] = "Bright Nova"
             self.Init['DwarfDwarf'] = "White Dwarf"
             self.Init['HumanFormShield'] = "Shining Shield"
 
-        elif (self.Profile.General.Init['Archetype'] == "Warshade"):
+        elif (self.Profile.Archetype() == "Warshade"):
             self.Init['NovaNova'] = "Dark Nova"
             self.Init['DwarfDwarf'] = "Black Dwarf"
             self.Init['HumanFormShield'] = "Gravity Shield"
@@ -147,7 +147,6 @@ class SoD(Page):
         tleftButton.CtlName = 'TurnLeft'
         tleftButton.CtlLabel = tlLabel
         tleftButton.Page = self
-        tleftButton.Profile = self.Profile
         tleftButton.KeyBind = ControlKeyBind(self.Init['TurnLeft'], 'Turn Left', self.TabTitle)
         keySizer.Add(tleftButton, [1,0])
 
@@ -157,7 +156,6 @@ class SoD(Page):
         forwardButton.CtlName = 'Forward'
         forwardButton.CtlLabel = fwLabel
         forwardButton.Page = self
-        forwardButton.Profile = self.Profile
         forwardButton.KeyBind = ControlKeyBind(self.Init['Forward'], 'Forward', self.TabTitle)
         keySizer.Add(forwardButton, [1,1])
 
@@ -167,7 +165,6 @@ class SoD(Page):
         trightButton.CtlName = 'TurnRight'
         trightButton.CtlLabel = trLabel
         trightButton.Page = self
-        trightButton.Profile = self.Profile
         trightButton.KeyBind = ControlKeyBind(self.Init['TurnRight'], 'TurnRight', self.TabTitle)
         keySizer.Add(trightButton, [1,2])
 
@@ -181,7 +178,6 @@ class SoD(Page):
         leftButton.CtlName = 'Left'
         leftButton.CtlLabel = leftLabel
         leftButton.Page = self
-        leftButton.Profile = self.Profile
         leftButton.KeyBind = ControlKeyBind(self.Init['Left'], 'Left', self.TabTitle)
         keySizer.Add(leftButton, [2,0])
 
@@ -191,7 +187,6 @@ class SoD(Page):
         backButton.CtlName = 'Back'
         backButton.CtlLabel = backLabel
         backButton.Page = self
-        backButton.Profile = self.Profile
         backButton.KeyBind = ControlKeyBind(self.Init['Back'], 'Back', self.TabTitle)
         keySizer.Add(backButton, [2,1])
 
@@ -201,7 +196,6 @@ class SoD(Page):
         rightButton.CtlName = 'Right'
         rightButton.CtlLabel = rightLabel
         rightButton.Page = self
-        rightButton.Profile = self.Profile
         rightButton.KeyBind = ControlKeyBind(self.Init['Right'], 'Right', self.TabTitle)
         keySizer.Add(rightButton, [2,2])
 
@@ -218,7 +212,6 @@ class SoD(Page):
         downButton.CtlName = 'Down'
         downButton.CtlLabel = downLabel
         downButton.Page = self
-        downButton.Profile = self.Profile
         downButton.KeyBind = ControlKeyBind(self.Init['Down'], 'Down', self.TabTitle)
         keySizer.Add(downButton, [4,0], [1,1], wx.TOP, 10)
 
@@ -228,7 +221,6 @@ class SoD(Page):
         upButton.CtlName = 'Up'
         upButton.CtlLabel = upLabel
         upButton.Page = self
-        upButton.Profile = self.Profile
         upButton.KeyBind = ControlKeyBind(self.Init['Up'], 'Up', self.TabTitle)
         keySizer.Add(upButton, [4,1], [1,2], wx.EXPAND|wx.TOP, 10)
 
@@ -248,7 +240,6 @@ class SoD(Page):
         mousechord.CtlLabel = mcLabel
         mcLabel.control = mousechord
         mousechord.Page = self
-        mousechord.Profile = self.Profile
         mousechord.KeyBind = ControlKeyBind(self.Init['MouseChord'], 'MouseChord', self.TabTitle)
         mcSizer.Add(mousechord, 0, wx.RIGHT, 10)
 
@@ -1528,7 +1519,7 @@ class SoD(Page):
             novapbind    = self.GetState('HumanNovaPBind')
             dwarfpbind   = self.GetState('HumanDwarfPBind')
 
-        if ((profile.Archetype() == "Peacebringer") or (profile.General.GetState('Archetype') == "Warshade")):
+        if ((profile.Archetype() == "Peacebringer") or (profile.Archetype() == "Warshade")):
             if (humanBindKey):
                 ResetFile.SetBind(humanBindKey, humanpbind)
 
@@ -2428,7 +2419,7 @@ class tObject(dict):
             self.hover      = None
             self.fly        = None
             self.flyx       = None
-            self.jump       = None
+            self.jump       = ''
             self.cjmp       = ''
             self.canhov     = 0
             self.canfly     = 0

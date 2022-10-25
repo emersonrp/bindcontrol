@@ -44,7 +44,6 @@ class KeySelectDialog(wx.Dialog):
         self.Desc    = UI.Labels[button.CtlName]
         self.Button  = button
         self.Binding = button.Label
-        self.Profile = button.Profile
 
         wx.Dialog.__init__(self, button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
 
@@ -102,12 +101,6 @@ class KeySelectDialog(wx.Dialog):
         self.Layout()
         self.SetFocus()
 
-    def Populate(self, parent, id, current):
-        self.kbDesc.SetLabel(f"Press the Key Combo you'd like to use for {UI.Labels[id]}");
-        self.kbBind.SetLabel(current);
-        self.Fit();
-        self.CentreOnParent();
-
     def ShowBind(self):
         self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
 
@@ -138,6 +131,7 @@ class KeySelectDialog(wx.Dialog):
                 self.EndModal(wx.CANCEL)
         else:
             code = "BUTTON" + str(event.GetButton())
+
         KeyToBind = str(self.Keymap.get(code, ''))
 
         if KeyToBind:
@@ -202,8 +196,9 @@ class KeySelectDialog(wx.Dialog):
 
         self.ShowBind()
 
-        if self.Profile:
-            conflicts = self.Profile.CheckConflict(self.Binding, self.Button)
+        Profile = wx.App.Get().Profile
+        if Profile:
+            conflicts = Profile.CheckConflict(self.Binding, self.Button)
             if conflicts:
                 conflictString = ''
                 for conflict in conflicts:

@@ -71,7 +71,6 @@ class Mastermind(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
 
-        self.Profile = parent
         self.Init = {
             'Enable' : False,
 

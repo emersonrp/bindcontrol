@@ -355,7 +355,6 @@ class Mastermind(Page):
             ctrl.SetBackgroundColour(wx.NullColour)
             ctrl.SetToolTip('')
 
-
     def OnBGCheckboxes(self, evt = None):
         petcmdenabled = self.GetState('PetCmdEnable')
 
@@ -393,11 +392,13 @@ Thugs added by Konoko!
 
     ### BIND CREATION METHODS
     def mmBGSelBind(self, profile, file, PetBodyguardResponse, powers):
-        bgset = bgsay = []
+        bgset = []
+        bgsay = []
         if (self.GetState('PetBodyguardEnabled')):
             (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
             #
             #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
+
             if (((tier1bg + tier2bg + tier3bg) == 6)):
                 bgsay = [self.GetChatMethod('PetBodyguardResponseMethod') + PetBodyguardResponse]
             else:
@@ -447,7 +448,8 @@ Thugs added by Konoko!
         name   = UI.Labels[f"Pet{action}"]
         method = self.GetChatMethod(f"Pet{action}ResponseMethod")
 
-        bgact = bgsay = []
+        bgact = []
+        bgsay = []
         (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
         #  TODO -- "method != 'Petsay' is in citybinder as 'method ~= 3' which I think is right."
@@ -499,7 +501,8 @@ Thugs added by Konoko!
         name = UI.Labels[f"PetBodyguard{action}"]
         method = self.GetChatMethod(f"Pet{action}ResponseMethod")
 
-        bgact = bgsay = []
+        bgact = []
+        bgsay = []
         (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
         if (((tier1bg + tier2bg + tier3bg) == 6)):

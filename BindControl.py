@@ -187,10 +187,10 @@ Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
 class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
     def OnInit(self):
         self.Init()
-        main = Main(None)
-        self.Profile = main.Profile
+        self.Main = Main(None)
+        self.Profile = self.Main.Profile
 
-        main.Show()
+        self.Main.Show()
 
         return True
 

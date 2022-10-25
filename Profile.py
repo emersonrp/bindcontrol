@@ -249,15 +249,20 @@ class Profile(wx.Notebook):
         resetfile.SetBind(config.Read('ResetKey'), "Reset Key", "Preferences", resetfile.BLF())
 
 
+        errors = donefiles = 0
+        #
         # Go to each page....
         for pageName in self.Pages:
             page = getattr(self, pageName)
 
             # ... and tell it to gather up binds and put them into bindfiles.
-            page.PopulateBindFiles()
+            try:
+                page.PopulateBindFiles()
+            except Exception as e:
+                wx.LogError(f"Error populating bind file: {e}")
+                errors += 1
 
         # Now we have them here and can iterate them
-        errors = donefiles = 0
         totalfiles = len(self.BindFiles)
         dlg = wx.ProgressDialog('Writing Bind Files','',
             maximum = totalfiles, style=wx.PD_APP_MODAL|wx.PD_AUTO_HIDE)
@@ -280,7 +285,11 @@ class Profile(wx.Notebook):
         else:
             msg = f"{donefiles} bind files written!"
 
-        with DoneDialog(self, msg = msg) as dlg: dlg.ShowModal()
+        with DoneDialog(self, msg = msg) as dlg:
+
+            dlg.ShowModal()
+            if errors:
+                wx.App.Get().Main.LogWindow.Show()
 
         # clear out our state
         self.BindFiles = {}

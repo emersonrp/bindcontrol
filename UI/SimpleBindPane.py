@@ -12,7 +12,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
         self.Title          = init.get('Title', '')
         self.Init           = init
-        self.Page           = page # for re-layout when pane changes size
+        self.Page           = page # for re-layout when pane changes size and for SetBind()
         self.PowerBinderDlg = None
         self.BindPane       = None
 
@@ -72,6 +72,8 @@ class SimpleBindPane(CustomBindPaneParent):
         self.checkIfWellFormed()
 
     def checkIfWellFormed(self):
+        isWellFormed = True
+
         bc = self.Ctrls['BindContents']
         bc.SetToolTip('')
         if bc.GetValue() and len(bc.GetValue()) <= 255:
@@ -80,10 +82,25 @@ class SimpleBindPane(CustomBindPaneParent):
             bc.SetBackgroundColour((255,200,200))
             if len(bc.GetValue()) > 255:
                 bc.SetToolTip("This bind is longer than 255 characters, which will cause problems in-game.")
+            isWellFormed = False
 
         bk = self.Ctrls['BindKey']
         if bk.GetLabel():
             bk.SetBackgroundColour(wx.NullColour)
         else:
             bk.SetBackgroundColour((255,200,200))
+            isWellFormed = False
+
+        return isWellFormed
+
+
+    def PopulateBindFiles(self):
+        if not self.checkIfWellFormed():
+            wx.LogError(f"Custom Bind \"{self.Title}\" is not complete or has errors.")
+            raise Exception
+        resetfile = wx.App.Get().Profile.ResetFile()
+        bk = self.Ctrls['BindKey']
+        bc = self.Ctrls['BindContents']
+
+        resetfile.SetBind(bk.GetLabel(), self.Title, self.Page, bc.GetValue())
 

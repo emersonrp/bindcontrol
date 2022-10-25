@@ -93,16 +93,13 @@ class BindFile():
         for keybind in sortedKeyBinds:
             kb = self.KeyBinds[keybind]
             payload = kb.GetKeyBindString()
-            try:
-                if len(payload) > 255: raise Exception
-            except Exception as e:
-                wx.LogError(f"Bind '{kb.Key}' from page '{kb.Page}' is too long - this will cause badness in-game!")
-            finally:
-                output = output + payload
+            if len(payload) > 255:
+                raise Exception(f"Bind '{kb.Key}' from page '{kb.Page}' is too long - this will cause badness in-game!")
+            output = output + payload
 
         if output:
             try:
                 self.Path.write_text(output, newline = '\r\n')
             except Exception as e:
-                wx.LogError("Can't write to bindfile {self.Path}: {e}")
+                raise Exception("Can't write to bindfile {self.Path}: {e}")
 

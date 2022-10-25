@@ -7,6 +7,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
                 style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
         self.Ctrls = {}
+        self.Page  = page
         self.Init  = init
         self.Title = ''
 
@@ -14,7 +15,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
 
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
 
-    def BuildBindUI(self, parent):
+    def BuildBindUI(self, _):
         # build the UI needed to edit/create this bind, and shim
         # it into 'parent'
         pass
@@ -28,6 +29,5 @@ class CustomBindPaneParent(wx.CollapsiblePane):
     def Serialize(self):
         print(f"Inside {self.bindclass} Serialize, please override")
 
-    def OnPaneChanged(self, evt):
+    def OnPaneChanged(self, _):
         self.Page.Layout()
-

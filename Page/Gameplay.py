@@ -1,6 +1,7 @@
 import wx
 import UI
 from Icon import GetIcon
+from Help import HelpButton
 
 from UI.ControlGroup import ControlGroup
 from Page import Page
@@ -70,8 +71,7 @@ class Gameplay(Page):
         self.Ctrls['TPSEnable'] = tpsenable
         tpsenable.SetValue(self.Init['TPSEnable'])
 
-        tpshelpbutton = wx.BitmapButton(self, -1, GetIcon('Help'))
-        tpshelpbutton.Bind(wx.EVT_BUTTON, self.getHelpHandler('TPSBinds.html'))
+        tpshelpbutton = HelpButton(self, 'TPSBinds.html')
 
         tpsenablesizer.Add(tpsenable, 0, wx.ALIGN_CENTER_VERTICAL)
         tpsenablesizer.Add(tpshelpbutton, wx.ALIGN_RIGHT)
@@ -103,8 +103,7 @@ class Gameplay(Page):
         self.Ctrls['TeamEnable'] = teamenable
         teamenable.SetValue(self.Init['TeamEnable'])
 
-        teamhelpbutton = wx.BitmapButton(self, -1, GetIcon('Help'))
-        teamhelpbutton.Bind(wx.EVT_BUTTON, self.getHelpHandler('TeamSelectBinds.html'))
+        teamhelpbutton = HelpButton(self, 'TeamSelectBinds.html')
 
         teamenablesizer.Add(teamenable, 0, wx.ALIGN_CENTER_VERTICAL)
         teamenablesizer.Add(teamhelpbutton, wx.ALIGN_RIGHT)
@@ -136,8 +135,7 @@ class Gameplay(Page):
         self.Ctrls['PetEnable'] = petenable
         petenable.SetValue(self.Init['PetEnable'])
 
-        pethelpbutton = wx.BitmapButton(self, -1, GetIcon('Help'))
-        pethelpbutton.Bind(wx.EVT_BUTTON, self.getHelpHandler('PetSelectBinds.html'))
+        pethelpbutton = HelpButton(self, 'PetSelectBinds.html')
 
         petenablesizer.Add(petenable, 0, wx.ALIGN_CENTER_VERTICAL)
         petenablesizer.Add(pethelpbutton, wx.ALIGN_RIGHT)
@@ -168,8 +166,7 @@ class Gameplay(Page):
         fpsenable.Bind(wx.EVT_CHECKBOX, self.OnFPSEnable)
         self.Ctrls['FPSEnable'] = fpsenable
 
-        fpshelpbutton = wx.BitmapButton(self, -1, GetIcon('Help'))
-        fpshelpbutton.Bind(wx.EVT_BUTTON, self.getHelpHandler('FPSBinds.html'))
+        fpshelpbutton = HelpButton(self, 'FPSBinds.html')
 
         FPSSizer.Add(fpsenable, 0, wx.ALIGN_CENTER_VERTICAL)
         FPSSizer.Add(fpshelpbutton, wx.ALIGN_RIGHT, 0)
@@ -196,8 +193,7 @@ class Gameplay(Page):
         chatenable.Bind(wx.EVT_CHECKBOX, self.OnChatEnable)
         self.Ctrls['ChatEnable'] = chatenable
 
-        chathelpbutton = wx.BitmapButton(self, -1, GetIcon('Help'))
-        chathelpbutton.Bind(wx.EVT_BUTTON, self.getHelpHandler('ChatBinds.html'))
+        chathelpbutton = HelpButton(self, 'ChatBinds.html')
 
         ChatSizer.Add(chatenable, 0, wx.ALIGN_CENTER_VERTICAL)
         ChatSizer.Add(chathelpbutton, wx.ALIGN_RIGHT, 0)
@@ -241,6 +237,8 @@ class Gameplay(Page):
         self.SetSizerAndFit(paddingSizer)
 
         self.SynchronizeUI()
+
+    def getHelpHandler(self, evt): return
 
     def SynchronizeUI(self):
         self.OnTPSEnable()

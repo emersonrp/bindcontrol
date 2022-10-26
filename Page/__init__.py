@@ -20,16 +20,6 @@ class Page(wx.Panel):
 
         self.Ctrls = {}
 
-    def help(self, filename):
-        from BindControl import HelpWindow
-        helpwindow = HelpWindow(self, title = self.TabTitle + " Help")
-        helpwindow.LoadFile(f"Help/{filename}")
-        helpwindow.Show()
-
-    def getHelpHandler(self, filename):
-        def OnClick(evt): self.help(filename)
-        return OnClick
-
     def GetState(self, key):
         control = self.Ctrls.get(key, None)
         if not control:

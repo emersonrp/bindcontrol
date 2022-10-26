@@ -7,6 +7,7 @@ import wx.html
 from pathlib import Path
 from Profile import Profile
 from UI.PrefsDialog import PrefsDialog
+from Help import ShowHelpWindow
 
 ###################
 # Main Window Class
@@ -176,34 +177,16 @@ Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
         self.Close(True)
 
     def OnHelpManual(self, _):
-        ManualWindow = HelpWindow(self)
-        ManualWindow.LoadFile('Manual.html')
-        ManualWindow.Show()
-
+        ShowHelpWindow(self, 'Manual.html')
 
     def OnHelpLicense(self, _):
-        LicenseWindow = HelpWindow(self, title = "License")
-        LicenseWindow.LoadFile('LICENSE.html')
-        LicenseWindow.Show()
+        ShowHelpWindow(self, 'LICENSE.html')
 
     def OnWindowClosing(self, evt):
         if self.Profile.Modified:
             if wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.ICON_QUESTION|wx.YES_NO) == wx.YES:
                 self.Profile.SaveToFile()
         evt.Skip()
-
-class HelpWindow(wx.MiniFrame):
-    def __init__(self, parent, title = '', size = (800,600), style = wx.CAPTION|wx.CLOSE_BOX|wx.STAY_ON_TOP|wx.RESIZE_BORDER):
-        wx.MiniFrame.__init__(self, parent, title = '', size = size, style = style)
-
-        self.manualsizer = wx.BoxSizer(wx.VERTICAL)
-        self.manualpane  = wx.html.HtmlWindow(self, size = (800, 600))
-        self.manualpane.SetRelatedFrame(self, '%s')
-        self.manualsizer.Add(self.manualpane, 1, wx.EXPAND)
-        self.SetSizer(self.manualsizer)
-
-    def LoadFile(self, file):
-        self.manualpane.LoadFile(file)
 
 class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
     def OnInit(self):

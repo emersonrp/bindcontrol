@@ -103,6 +103,8 @@ class Gameplay(Page):
         self.Ctrls['TeamEnable'] = teamenable
         teamenable.SetValue(self.Init['TeamEnable'])
 
+        teamenable.Disable()
+
         teamhelpbutton = HelpButton(self, 'TeamSelectBinds.html')
 
         teamenablesizer.Add(teamenable, 0, wx.ALIGN_CENTER_VERTICAL)
@@ -134,6 +136,8 @@ class Gameplay(Page):
         petenable.Bind(wx.EVT_CHECKBOX, self.OnPetEnable)
         self.Ctrls['PetEnable'] = petenable
         petenable.SetValue(self.Init['PetEnable'])
+
+        petenable.Disable()
 
         pethelpbutton = HelpButton(self, 'PetSelectBinds.html')
 

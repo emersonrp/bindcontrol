@@ -5,9 +5,11 @@ BindControl is a helper app for creating and maintaining keybinds for City of He
 
 It is an enhanced port of Konoko and Monorail's [CityBinder 0.76](http://sourceforge.net/projects/citybinder/), using the WxWidgets UI toolkit.
 
-During City of Heroes' original run, CityBinder was the go-to app for keybinds.  It's written in lua, using the IUP toolkit, which is difficult to set up for development on modern OSes.  I wanted to add features and clean up the UI, so in a stunning and likely unwise act of hubris, I instead started work on BindControl.
+During City of Heroes' original run, CityBinder was the go-to app for keybinds.  It's written in lua, using the IUP toolkit, and the required versions of those can be difficult to set up for development on modern OSes.  I wanted to add features and clean up the UI, so in a stunning and likely unwise act of hubris, I instead started work on BindControl.
 
-I worked on it on-and-off for the remainder of the original run of the game, then shelved it, ostensibly forever.  Now here in the age of the SCORE, Homecoming, and other servers, it once again has value, so I've dusted it off.
+I worked on it on-and-off for the remainder of the original run of the game, then shelved it, ostensibly forever.  Now here in the age of the SCORE, Homecoming, and other servers, it once again has value, so I've dusted it off and continued to add features and modernize it.
+
+BindControl is initially targeted at Homecoming players, but currently almost all features will work regardless of server.  The intent is to make it server-agnostic as much as possible, and to allow the user to choose the type of server they play on for the features that differ.
 
 Features
 --------
@@ -15,7 +17,6 @@ Features
 * Runs on Windows, MacOS, and Linux
 * Separate profiles for different characters or situations
 * Chat binds with optional 'typing' notifier
-* Rotational next/prev team and pet selection
 * Custom Binds
     * create custom binds using PowerBinder, a flexible tool for putting together arbitrary commands into bind strings
 * Speed-on-Demand
@@ -28,21 +29,23 @@ Features
     * optional /say feedback
 * Mastermind / pet binds
     * select pets by power level: all, minions, lieutenants, and boss
-    * orders for aggressive/defensive/passive; attack, follow, go to, and stay
-    * pets can give feedback on each order;  chattiness is toggleable via keybind
+    * orders for aggressive / defensive / passive stances; attack, follow, go to, and stay
+    * pets can give feedback on each order;  chattiness can be toggled via keybind
+    * "bodyguard mode" shortcuts -- define which pets should be treated as bodyguards, and toggle Bodyguard Mode on and off for them, with future orders then applying to the remaining pets.
     * by-name pet selection
-    * "bodyguard mode" shortcuts
 
 TODO
 ----
 
+* Rotational next/prev team and pet selection
+* Additional useful Gameplay binds, eg, "Invite Target," "Quit to Desktop," more
 * Save binds in $bindsdir/$profile directories
 * More error detection and handling
 * Kheldian form/travel binds in speed-on-demand
 * Temporary powers in speed-on-demand
-* Account for [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) in SoD
-* Buffer bind sets in Custom Binds
-* Roll binaries for Windows, MacOS, flatpak for Linux
+* Support [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) in SoD
+* Buffer bind sets, as well as others TBD, in Custom Binds
+* Roll standalone binaries for Windows, MacOS, Linux (flatpak?)
 * More and better help text and documentation
 
 Dependencies

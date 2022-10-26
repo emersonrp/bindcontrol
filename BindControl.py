@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import wx
 import wx.lib.mixins.inspection
 import wx.adv
@@ -21,18 +20,27 @@ class Main(wx.Frame):
 
         self.LogWindow = wx.LogWindow(self, "Log Window", show = False, passToOld = False)
 
+        self.ManualWindow = wx.MiniFrame( None, title = 'BindControl Manual', size = (800, 600),
+                                         style = wx.CAPTION|wx.CLOSE_BOX|wx.STAY_ON_TOP|wx.RESIZE_BORDER)
+        manualsizer = wx.BoxSizer(wx.VERTICAL)
+        manualpane  = wx.html.HtmlWindow(self.ManualWindow, size = (800, 600))
+        manualpane.SetRelatedFrame(self.ManualWindow, '%s')
+        manualpane.LoadFile('Manual.html')
+        manualsizer.Add(manualpane, 1, wx.EXPAND)
+        self.ManualWindow.SetSizer(manualsizer)
+
         config = wx.FileConfig('bindcontrol')
         wx.ConfigBase.Set(config)
         # Check each config bit for existence and set to default if no
         if not config.Exists('BindPath'):
             if wx.Platform == '__WXMSW__':
-                bindpath = "C:\\cohbinds\\"
+                bindpath = "C:\\coh\\"
             else:
-                bindpath = str(Path.home().joinpath('cohbinds'))
+                bindpath = str(Path.home() / '.wine' / 'drive_c' / 'coh')
             config.Write('BindPath', bindpath)
         if not config.Exists('GameBindPath'):
             if wx.Platform != '__WXMSW__':
-                config.Write('GameBindPath', "Z:\\cohbinds\\")
+                config.Write('GameBindPath', "c:\\coh\\")
         if not config.Exists('ResetKey')        : config.Write('ResetKey', 'LCTRL+R')
         if not config.Exists('UseSplitModKeys') : config.WriteBool('UseSplitModKeys', False)
         if not config.Exists('FlushAllBinds')   : config.WriteBool('FlushAllBinds', True)
@@ -68,7 +76,6 @@ class Main(wx.Frame):
         Help_license = HelpMenu.Append(-1,"License Info","")
         Help_about   = HelpMenu.Append(wx.ID_ABOUT)
 
-        Help_manual.Enable(False)
         Help_faq.Enable(False)
         Help_license.Enable(False)
 
@@ -93,7 +100,7 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU , self.OnMenuPrefsDialog     , Profile_preferences)
         self.Bind(wx.EVT_MENU , self.OnMenuExitApplication , Profile_exit)
 
-        self.Bind(wx.EVT_MENU, None, Help_manual)
+        self.Bind(wx.EVT_MENU, self.OnHelpManual, Help_manual)
         self.Bind(wx.EVT_MENU, None, Help_faq)
         self.Bind(wx.EVT_MENU, None, Help_license)
         self.Bind(wx.EVT_MENU, self.OnMenuAboutBox,      Help_about)
@@ -177,6 +184,9 @@ Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
 
     def OnMenuExitApplication(self, _):
         self.Close(True)
+
+    def OnHelpManual(self, _):
+        self.ManualWindow.Show()
 
     def OnWindowClosing(self, evt):
         if self.Profile.Modified:

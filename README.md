@@ -37,7 +37,6 @@ TODO
 ----
 
 * Save binds in $bindsdir/$profile directories
-* Detect and warn if a bind exceeds 255 characters
 * More error detection and handling
 * Kheldian form/travel binds in speed-on-demand
 * Temporary powers in speed-on-demand

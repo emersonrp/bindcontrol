@@ -2,7 +2,6 @@ import wx
 import wx.lib.stattext as ST
 import UI
 from UI.KeySelectDialog import bcKeyButton
-from pathlib import Path
 
 class PrefsDialog(wx.Dialog):
     def __init__(self, parent):
@@ -44,7 +43,7 @@ class PrefsDialog(wx.Dialog):
         splitKeyLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
 
-        flushBindsLabel = ST.GenStaticText(self, label = "Set all binds to default before reapplying:")
+        flushBindsLabel = ST.GenStaticText(self, label = "Reset all binds to default before reapplying:")
         sizer.Add( flushBindsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.FlushAllBinds = wx.CheckBox(self)
         self.FlushAllBinds.SetValue(config.ReadBool('FlushAllBinds'))

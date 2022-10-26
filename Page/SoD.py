@@ -1025,10 +1025,11 @@ class SoD(Page):
         ResetFile = profile.ResetFile()
 
         config = wx.ConfigBase.Get()
+        keybindreset = 'keybind_reset$$' if config.ReadBool('FlushAllBinds') else ''
         ResetFile.SetBind(config.Read('ResetKey'), "Reset Key", self,
                     [
+                        keybindreset,
                         ResetFile.BLF(),
-                        # 'tell $name, Keybinds reloaded.',
                         'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
                         'powexecname Sprint',
                         'powexecunqueue',

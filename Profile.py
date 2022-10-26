@@ -246,7 +246,8 @@ class Profile(wx.Notebook):
 
         config = wx.ConfigBase.Get()
         resetfile = self.ResetFile()
-        resetfile.SetBind(config.Read('ResetKey'), "Reset Key", "Preferences", resetfile.BLF())
+        keybindreset = 'keybind_reset$$' if config.ReadBool('FlushAllBinds') else ''
+        resetfile.SetBind(config.Read('ResetKey'), "Reset Key", "Preferences", keybindreset + resetfile.BLF())
 
 
         errors = donefiles = 0

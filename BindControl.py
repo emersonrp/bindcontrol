@@ -20,14 +20,11 @@ class Main(wx.Frame):
 
         self.LogWindow = wx.LogWindow(self, "Log Window", show = False, passToOld = False)
 
-        self.ManualWindow = wx.MiniFrame( None, title = 'BindControl Manual', size = (800, 600),
-                                         style = wx.CAPTION|wx.CLOSE_BOX|wx.STAY_ON_TOP|wx.RESIZE_BORDER)
-        manualsizer = wx.BoxSizer(wx.VERTICAL)
-        manualpane  = wx.html.HtmlWindow(self.ManualWindow, size = (800, 600))
-        manualpane.SetRelatedFrame(self.ManualWindow, '%s')
-        manualpane.LoadFile('Manual.html')
-        manualsizer.Add(manualpane, 1, wx.EXPAND)
-        self.ManualWindow.SetSizer(manualsizer)
+        self.ManualWindow = HelpWindow(self)
+        self.ManualWindow.LoadFile('Manual.html')
+
+        self.LicenseWindow = HelpWindow(self, title = "License")
+        self.LicenseWindow.LoadFile('LICENSE.html')
 
         config = wx.FileConfig('bindcontrol')
         wx.ConfigBase.Set(config)
@@ -77,7 +74,6 @@ class Main(wx.Frame):
         Help_about   = HelpMenu.Append(wx.ID_ABOUT)
 
         Help_faq.Enable(False)
-        Help_license.Enable(False)
 
         LogMenu = wx.Menu()
 
@@ -102,7 +98,7 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.OnHelpManual, Help_manual)
         self.Bind(wx.EVT_MENU, None, Help_faq)
-        self.Bind(wx.EVT_MENU, None, Help_license)
+        self.Bind(wx.EVT_MENU, self.OnHelpLicense, Help_license)
         self.Bind(wx.EVT_MENU, self.OnMenuAboutBox,      Help_about)
 
         self.Bind(wx.EVT_MENU, self.OnMenuLogWindow, Log_window)
@@ -188,11 +184,27 @@ Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
     def OnHelpManual(self, _):
         self.ManualWindow.Show()
 
+    def OnHelpLicense(self, _):
+        self.LicenseWindow.Show()
+
     def OnWindowClosing(self, evt):
         if self.Profile.Modified:
             if wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.ICON_QUESTION|wx.YES_NO) == wx.YES:
                 self.Profile.SaveToFile()
         evt.Skip()
+
+class HelpWindow(wx.MiniFrame):
+    def __init__(self, parent, title = '', size = (800,600), style = wx.CAPTION|wx.CLOSE_BOX|wx.STAY_ON_TOP|wx.RESIZE_BORDER):
+        wx.MiniFrame.__init__(self, parent, title = '', size = size, style = style)
+
+        self.manualsizer = wx.BoxSizer(wx.VERTICAL)
+        self.manualpane  = wx.html.HtmlWindow(self, size = (800, 600))
+        self.manualpane.SetRelatedFrame(self, '%s')
+        self.manualsizer.Add(self.manualpane, 1, wx.EXPAND)
+        self.SetSizer(self.manualsizer)
+
+    def LoadFile(self, file):
+        self.manualpane.LoadFile(file)
 
 class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
     def OnInit(self):

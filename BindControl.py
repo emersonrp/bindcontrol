@@ -20,12 +20,6 @@ class Main(wx.Frame):
 
         self.LogWindow = wx.LogWindow(self, "Log Window", show = False, passToOld = False)
 
-        self.ManualWindow = HelpWindow(self)
-        self.ManualWindow.LoadFile('Manual.html')
-
-        self.LicenseWindow = HelpWindow(self, title = "License")
-        self.LicenseWindow.LoadFile('LICENSE.html')
-
         config = wx.FileConfig('bindcontrol')
         wx.ConfigBase.Set(config)
         # Check each config bit for existence and set to default if no
@@ -182,10 +176,15 @@ Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
         self.Close(True)
 
     def OnHelpManual(self, _):
-        self.ManualWindow.Show()
+        ManualWindow = HelpWindow(self)
+        ManualWindow.LoadFile('Manual.html')
+        ManualWindow.Show()
+
 
     def OnHelpLicense(self, _):
-        self.LicenseWindow.Show()
+        LicenseWindow = HelpWindow(self, title = "License")
+        LicenseWindow.LoadFile('LICENSE.html')
+        LicenseWindow.Show()
 
     def OnWindowClosing(self, evt):
         if self.Profile.Modified:

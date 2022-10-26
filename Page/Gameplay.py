@@ -13,10 +13,6 @@ class Gameplay(Page):
         Page.__init__(self, parent)
         self.TabTitle = "Gameplay"
         self.Init = {
-            'FPSEnable'       : False,
-            'FPSBindKey'      : 'P',
-            'NetgraphBindKey' : 'N',
-
             'TPSEnable'   : False,
             'TPSSelMode'  : "Teammates, then pets",
             'TeamSelect1' : '',
@@ -28,7 +24,26 @@ class Gameplay(Page):
             'TeamSelect7' : '',
             'TeamSelect8' : '',
 
-            'ChatEnable' : 1,
+            'TeamEnable'  : False,
+            'SelNextTeam' : '',
+            'SelPrevTeam' : '',
+            'IncTeamSize' : '',
+            'DecTeamSize' : '',
+            'IncTeamPos'  : '',
+            'DecTeamPos'  : '',
+            'TeamReset'   : '',
+
+            'PetEnable'   : False,
+            'SelNextPet'  : '',
+            'SelPrevPet'  : '',
+            'IncPetSize'  : '',
+            'DecPetSize'  : '',
+
+            'FPSEnable'       : False,
+            'FPSBindKey'      : 'P',
+            'NetgraphBindKey' : 'N',
+
+            'ChatEnable' : True,
             'StartChat'  : 'ENTER',
             'SlashChat'  : '/',
             'StartEmote' : ';',
@@ -38,20 +53,6 @@ class Gameplay(Page):
 
             'TypingNotifierEnable' : 1,
             'TypingNotifier'       : 'typing',
-
-            'PetEnable'   : True,
-            'SelNextPet'  : '',
-            'SelPrevPet'  : '',
-            'IncPetSize'  : '',
-            'DecPetSize'  : '',
-            'TeamEnable'  : True,
-            'SelNextTeam' : '',
-            'SelPrevTeam' : '',
-            'IncTeamSize' : '',
-            'DecTeamSize' : '',
-            'IncTeamPos'  : '',
-            'DecTeamPos'  : '',
-            'TeamReset'   : '',
         }
 
     def BuildPage(self):
@@ -61,7 +62,7 @@ class Gameplay(Page):
         rightSizer = wx.BoxSizer(wx.VERTICAL)
 
         ##### Enable TPS Direct Select
-        tpsenablesizer = wx.FlexGridSizer(0,2,10,10)
+        tpsenablesizer = wx.BoxSizer(wx.HORIZONTAL)
 
         tpsenable = wx.CheckBox( self, -1, 'Enable Team/Pet Select')
         tpsenable.SetToolTip( wx.ToolTip('Check this to enable the Combined Team/Pet Select Binds') )
@@ -70,12 +71,12 @@ class Gameplay(Page):
         tpsenable.SetValue(self.Init['TPSEnable'])
 
         tpshelpbutton = wx.BitmapButton(self, -1, GetIcon('Help'))
-        tpshelpbutton.Bind(wx.EVT_BUTTON, self.help)
+        tpshelpbutton.Bind(wx.EVT_BUTTON, self.getHelpHandler('TPSBinds.html'))
 
         tpsenablesizer.Add(tpsenable, 0, wx.ALIGN_CENTER_VERTICAL)
-        tpsenablesizer.Add(tpshelpbutton, wx.ALIGN_RIGHT, 0)
+        tpsenablesizer.Add(tpshelpbutton, wx.ALIGN_RIGHT)
 
-        leftSizer.Add(tpsenablesizer, 0, wx.EXPAND|wx.ALL, 10)
+        leftSizer.Add(tpsenablesizer, 0, wx.ALL, 10)
 
         ##### direct-select keys
         TPSDirectBox = ControlGroup(self, self, 'Combined Team/Pet Select')
@@ -95,6 +96,21 @@ class Gameplay(Page):
         leftSizer.Add(TPSDirectBox, 0, wx.EXPAND|wx.ALL, 10)
 
         ##### Team Select Binds
+        teamenablesizer = wx.BoxSizer(wx.HORIZONTAL)
+        teamenable = wx.CheckBox( self, -1, 'Enable Team Select')
+        teamenable.SetToolTip( wx.ToolTip('Check this to enable the Single Key Team Select Binds') )
+        teamenable.Bind(wx.EVT_CHECKBOX, self.OnTeamEnable)
+        self.Ctrls['TeamEnable'] = teamenable
+        teamenable.SetValue(self.Init['TeamEnable'])
+
+        teamhelpbutton = wx.BitmapButton(self, -1, GetIcon('Help'))
+        teamhelpbutton.Bind(wx.EVT_BUTTON, self.getHelpHandler('TeamSelectBinds.html'))
+
+        teamenablesizer.Add(teamenable, 0, wx.ALIGN_CENTER_VERTICAL)
+        teamenablesizer.Add(teamhelpbutton, wx.ALIGN_RIGHT)
+
+        leftSizer.Add(teamenablesizer, 0, wx.ALL, 10)
+
         TeamSelBox = ControlGroup(self, self, 'Team Select')
         for b in (
             ['SelNextTeam', 'Choose the key that will select the next teammate from the currently selected one'],
@@ -113,6 +129,22 @@ class Gameplay(Page):
         leftSizer.Add(TeamSelBox, 0, wx.EXPAND|wx.ALL, 10)
 
         ##### Pet Select Binds
+        petenablesizer = wx.BoxSizer(wx.HORIZONTAL)
+        petenable = wx.CheckBox( self, -1, 'Enable Pet Select')
+        petenable.SetToolTip( wx.ToolTip('Check this to enable the Single Key Pet Select Binds') )
+        petenable.Bind(wx.EVT_CHECKBOX, self.OnPetEnable)
+        self.Ctrls['PetEnable'] = petenable
+        petenable.SetValue(self.Init['PetEnable'])
+
+        pethelpbutton = wx.BitmapButton(self, -1, GetIcon('Help'))
+        pethelpbutton.Bind(wx.EVT_BUTTON, self.getHelpHandler('PetSelectBinds.html'))
+
+        petenablesizer.Add(petenable, 0, wx.ALIGN_CENTER_VERTICAL)
+        petenablesizer.Add(pethelpbutton, wx.ALIGN_RIGHT)
+
+        rightSizer.Add(petenablesizer, 0, wx.ALL, 10)
+
+
         PetSelBox = ControlGroup(self, self, 'Pet Select')
         for b in (
             ['SelNextPet', 'Choose the key that will select the next pet from the currently selected one'],
@@ -137,7 +169,7 @@ class Gameplay(Page):
         self.Ctrls['FPSEnable'] = fpsenable
 
         fpshelpbutton = wx.BitmapButton(self, -1, GetIcon('Help'))
-        fpshelpbutton.Bind(wx.EVT_BUTTON, self.help)
+        fpshelpbutton.Bind(wx.EVT_BUTTON, self.getHelpHandler('FPSBinds.html'))
 
         FPSSizer.Add(fpsenable, 0, wx.ALIGN_CENTER_VERTICAL)
         FPSSizer.Add(fpshelpbutton, wx.ALIGN_RIGHT, 0)
@@ -165,7 +197,7 @@ class Gameplay(Page):
         self.Ctrls['ChatEnable'] = chatenable
 
         chathelpbutton = wx.BitmapButton(self, -1, GetIcon('Help'))
-        chathelpbutton.Bind(wx.EVT_BUTTON, self.help)
+        chathelpbutton.Bind(wx.EVT_BUTTON, self.getHelpHandler('ChatBinds.html'))
 
         ChatSizer.Add(chatenable, 0, wx.ALIGN_CENTER_VERTICAL)
         ChatSizer.Add(chathelpbutton, wx.ALIGN_RIGHT, 0)
@@ -212,6 +244,8 @@ class Gameplay(Page):
 
     def SynchronizeUI(self):
         self.OnTPSEnable()
+        self.OnTeamEnable()
+        self.OnPetEnable()
         self.OnFPSEnable()
         self.OnChatEnable()
         self.OnTypeEnable()
@@ -220,12 +254,18 @@ class Gameplay(Page):
         self.DisableControls(self.GetState('TPSEnable'),
             ['TPSSelMode','TeamSelect1','TeamSelect2','TeamSelect3',
             'TeamSelect4', 'TeamSelect5','TeamSelect6','TeamSelect7',
-            'TeamSelect8',
+            'TeamSelect8'])
+        if evt: evt.Skip()
 
-            'SelNextTeam', 'SelPrevTeam','IncTeamSize', 'DecTeamSize',
-            'IncTeamPos', 'DecTeamPos', 'TeamReset',
+    def OnTeamEnable(self, evt = None):
+        self.DisableControls(self.GetState('TeamEnable'),
+            ['SelNextTeam', 'SelPrevTeam','IncTeamSize', 'DecTeamSize',
+            'IncTeamPos', 'DecTeamPos', 'TeamReset'])
+        if evt: evt.Skip()
 
-            'SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize'])
+    def OnPetEnable(self, evt = None):
+        self.DisableControls(self.GetState('PetEnable'),
+            ['SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize'])
         if evt: evt.Skip()
 
     def OnFPSEnable(self, evt = None):
@@ -270,15 +310,15 @@ class Gameplay(Page):
                     selmethod1 = "teamselect"
                     selnummod1 = 0
                 selresetfile = self.Profile.GetBindFile("teamsel","reset.txt")
-                for i in ('1','2','3','4','5','6','7','8'):
+                for i in (1,2,3,4,5,6,7,8):
                     selfile = self.Profile.GetBindFile("teamsel",f"sel{i}.txt")
-                    ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
-                    selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {int(i) - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
-                    for j in ('1','2','3','4','5','6','7','8'):
+                    ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {i - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
+                    selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {i - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
+                    for j in (1,2,3,4,5,6,7,8):
                         if (i == j):
-                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod1} {int(j) - selnummod1}", self.Profile.BLF('teamsel',"reset.txt")]))
+                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod1} {j - selnummod1}", self.Profile.BLF('teamsel',"reset.txt")]))
                         else:
-                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod} {int(j) - selnummod}"  , self.Profile.BLF('teamsel',f"sel{j}.txt")]))
+                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod} {j - selnummod}"  , self.Profile.BLF('teamsel',f"sel{j}.txt")]))
 
             else:
                 selmethod = "teamselect"
@@ -287,7 +327,7 @@ class Gameplay(Page):
                     selmethod = "petselect"
                     selnummod = 1
                 for i in (1,2,3,4,5,6,7,8):
-                    ResetFile.SetBind(self.Ctrls[f'TeamSelect{i}'].MakeFileKeyBind(selmethod + " " + str(i - selnummod)))
+                    ResetFile.SetBind(self.Ctrls[f'TeamSelect{i}'].MakeFileKeyBind(f"{selmethod} {i - selnummod}"))
 
             ResetFile = self.Profile.ResetFile()
 
@@ -320,8 +360,8 @@ class Gameplay(Page):
         'IncPetSize' : "Increase Pet Group Size",
         'DecPetSize' : "Decrease Pet Group Size",
 
-        'FPSBindKey' : "Turn on FPS",
-        'NetgraphBindKey' : 'Turn on Netgraph',
+        'FPSBindKey'      : "Toggle FPS Display",
+        'NetgraphBindKey' : "Toggle Netgraph Display",
 
         'StartChat'            : 'Start Chat (no "/")',
         'SlashChat'            : 'Start Chat (with "/")',

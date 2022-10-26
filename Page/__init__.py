@@ -17,24 +17,18 @@ class Page(wx.Panel):
         wx.Panel.__init__(self, parent)
         self.Profile = parent
         self.TabTitle = type(self).__name__
-        self.HelpWindow = None
 
         self.Ctrls = {}
 
-    def help(self, _):
-        if not (self.HelpWindow):
-            HelpWindow = wx.MiniFrame ( None, -1, self.TabTitle + " Help",
-                       style = wx.CAPTION|wx.CLOSE_BOX|wx.STAY_ON_TOP|wx.RESIZE_BORDER)
-            BoxSizer   = wx.BoxSizer  ( wx.VERTICAL )
-            HelpText   = wx.StaticText( HelpWindow, -1, self.HelpText())
+    def help(self, filename):
+        from BindControl import HelpWindow
+        helpwindow = HelpWindow(self, title = self.TabTitle + " Help")
+        helpwindow.LoadFile(f"Help/{filename}")
+        helpwindow.Show()
 
-            BoxSizer.Add( HelpText, 1, wx.EXPAND|wx.ALL, 10)
-
-            HelpWindow.SetSizer(BoxSizer)
-
-            self.HelpWindow = HelpWindow
-
-        self.HelpWindow.Show(not self.HelpWindow.IsShown())
+    def getHelpHandler(self, filename):
+        def OnClick(evt): self.help(filename)
+        return OnClick
 
     def GetState(self, key):
         control = self.Ctrls.get(key, None)

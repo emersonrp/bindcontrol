@@ -668,17 +668,17 @@ class SoD(Page):
             if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
             if (modestr != "QFly")        : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
         else:
-            if (modestr != "NonSoD") : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ])
-            if (modestr != "Sprint") : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
+            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ])
+            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
             if (flight == "Jump"):
-                if (modestr != "Fly"): self.makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,'',True)
+                if (modestr != "Fly")     : self.makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,'',True)
             else:
-                if (modestr != "Fly"): self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
+                if (modestr != "Fly")     : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
 
-            if (modestr != "Super Speed")    : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
-            if (modestr != "Jump")   : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path,gamepath)
-            if (modestr != "Temp")   : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
-            if (modestr != "QFly")   : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
+            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
+            if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path,gamepath)
+            if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
+            if (modestr != "QFly")        : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
 
         self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
         self.sodFollowKey(t,blf,curfile,mobile)
@@ -791,8 +791,8 @@ class SoD(Page):
             bindload  = t.BLF('at')
             bindload2 = t.BLF('at','_t')
             tgl = p.GetBindFile(bindload2)
-            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
-            tgl.SetBind(key, name, self, "- $$" + t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + bindload2)
+            tgl.SetBind(key, name, self, "- $$" + feedback + bindload)
         else:
             cur.SetBind(key, name, self, t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('ft'))
 
@@ -819,15 +819,15 @@ class SoD(Page):
             if (modestr == 'Nova' or modestr == 'Dwarf'): tray = '$$gototray 1'
             else:                                         tray = ''
 
-            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload2)
-            tgl.SetBind(key, name, self, "- $$" + t.ini + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + bindload2)
+            tgl.SetBind(key, name, self, "- $$" + feedback + bindload)
 
         elif (bl == "ar"):
             bindload  = t.BLF('an')
             bindload2 = t.BLF('an','_t')
             tgl = p.GetBindFile(bindload2)
-            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload2)
-            tgl.SetBind(key, name, self, "- $$" + t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + bindload2)
+            tgl.SetBind(key, name, self, "- $$" + feedback + bindload)
         else:
             cur.SetBind(key, name, self, t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('fn'))
 
@@ -836,7 +836,6 @@ class SoD(Page):
     def makeSprintModeKey(self, p, t, bl, cur, toff, fix, fb = ''):
         key = t.SprintMode
         name = UI.Labels['SprintMode']
-        if not self.Ctrls['SprintMode'].IsEnabled(): return
         if not key: return
 
         if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Sprint-SoD Mode'
@@ -896,8 +895,8 @@ class SoD(Page):
                     bindload  = f"{t.blas}{t.KeyState()}.txt"
                     bindload2 = f"{t.blas}{t.KeyState()}_s.txt"
                     tgl = p.GetBindFile(f"{t.pathas}{t.KeyState()}_s.txt")
-                    cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload2)
-                    tgl.SetBind(key, name, self, "- $$" + t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower_toggle(1,True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + bindload2)
+                    tgl.SetBind(key, name, self, "- $$" + feedback + bindload)
 
             else:
                 if (fix):
@@ -1302,8 +1301,8 @@ class SoD(Page):
                                 t.rig  = f'$$right {D}'
                                 t.rigx = f'$$right {1-D}'
 
-                                t.totalkeys = space+X+W+S+A+D;    # total number of keys down
-                                t.horizkeys = W+S+A+D;    # total # of horizontal move keys. So Sprint isn't turned on when jumping
+                                t.totalkeys = space+X+W+S+A+D # total number of keys down
+                                t.horizkeys = W+S+A+D # total # of horizontal move keys. So Sprint isn't turned on when jumping
                                 t.vertkeys  = space+X
                                 t.jkeys     = t.horizkeys+t.space
                                 if (self.GetState('NonSoDEnable') or t.canqfly):

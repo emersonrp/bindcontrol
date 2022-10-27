@@ -6,7 +6,7 @@ import wx.lib.stattext as ST
 
 import UI
 from UI.KeySelectDialog import bcKeyButton
-from KeyBind import ControlKeyBind
+from KeyBind import KeyBind
 import wx.lib.stattext as ST
 
 class ControlGroup(wx.StaticBoxSizer):
@@ -49,7 +49,7 @@ class ControlGroup(wx.StaticBoxSizer):
             # push context onto the button, we'll thank me later
             control.CtlName = ctlName
             control.Page    = self.Page
-            control.KeyBind = ControlKeyBind(Init[ctlName], label, self.Page.TabTitle)
+            control.KeyBind = KeyBind(Init[ctlName], label, self.Page.TabTitle)
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
             control = wx.ComboBox(

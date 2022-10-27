@@ -299,7 +299,7 @@ class KeySelectDialog(wx.Dialog):
         for alphanum in (list(string.ascii_uppercase) + list(range(10))):
             self.Keymap[ord(str(alphanum))] = alphanum
 
-from KeyBind import ControlKeyBind
+from KeyBind import KeyBind
 from Page import Page
 class bcKeyButton(wx.Button):
 
@@ -307,7 +307,7 @@ class bcKeyButton(wx.Button):
         wx.Button.__init__(self, parent, id)
         self.CtlName  : str            = init.get('CtlName', None)
         self.CtlLabel : wx.StaticText  = init.get('CtlLabel', None)
-        self.KeyBind  : ControlKeyBind = init.get('KeyBind', None)
+        self.KeyBind  : KeyBind = init.get('KeyBind', None)
         self.Key      : str            = init.get('Key', '')
         self.Page     : Page           = parent
 

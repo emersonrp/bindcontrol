@@ -3,7 +3,7 @@ import GameData
 import UI
 import wx.lib.stattext as ST
 from pathlib import Path, PureWindowsPath
-from KeyBind import ControlKeyBind
+from KeyBind import KeyBind
 from Page import Page
 from UI.ControlGroup import ControlGroup, bcKeyButton
 
@@ -147,7 +147,7 @@ class SoD(Page):
         tleftButton.CtlName = 'TurnLeft'
         tleftButton.CtlLabel = tlLabel
         tleftButton.Page = self
-        tleftButton.KeyBind = ControlKeyBind(self.Init['TurnLeft'], 'Turn Left', self.TabTitle)
+        tleftButton.KeyBind = KeyBind(self.Init['TurnLeft'], 'Turn Left', self.TabTitle)
         keySizer.Add(tleftButton, [1,0])
 
         forwardButton = bcKeyButton(staticbox, -1, )
@@ -156,7 +156,7 @@ class SoD(Page):
         forwardButton.CtlName = 'Forward'
         forwardButton.CtlLabel = fwLabel
         forwardButton.Page = self
-        forwardButton.KeyBind = ControlKeyBind(self.Init['Forward'], 'Forward', self.TabTitle)
+        forwardButton.KeyBind = KeyBind(self.Init['Forward'], 'Forward', self.TabTitle)
         keySizer.Add(forwardButton, [1,1])
 
         trightButton = bcKeyButton(staticbox, -1, )
@@ -165,7 +165,7 @@ class SoD(Page):
         trightButton.CtlName = 'TurnRight'
         trightButton.CtlLabel = trLabel
         trightButton.Page = self
-        trightButton.KeyBind = ControlKeyBind(self.Init['TurnRight'], 'TurnRight', self.TabTitle)
+        trightButton.KeyBind = KeyBind(self.Init['TurnRight'], 'TurnRight', self.TabTitle)
         keySizer.Add(trightButton, [1,2])
 
         leftLabel = wx.StaticText(staticbox, label = 'Left')
@@ -178,7 +178,7 @@ class SoD(Page):
         leftButton.CtlName = 'Left'
         leftButton.CtlLabel = leftLabel
         leftButton.Page = self
-        leftButton.KeyBind = ControlKeyBind(self.Init['Left'], 'Left', self.TabTitle)
+        leftButton.KeyBind = KeyBind(self.Init['Left'], 'Left', self.TabTitle)
         keySizer.Add(leftButton, [2,0])
 
         backButton = bcKeyButton(staticbox, -1, )
@@ -187,7 +187,7 @@ class SoD(Page):
         backButton.CtlName = 'Back'
         backButton.CtlLabel = backLabel
         backButton.Page = self
-        backButton.KeyBind = ControlKeyBind(self.Init['Back'], 'Back', self.TabTitle)
+        backButton.KeyBind = KeyBind(self.Init['Back'], 'Back', self.TabTitle)
         keySizer.Add(backButton, [2,1])
 
         rightButton = bcKeyButton(staticbox, -1, )
@@ -196,7 +196,7 @@ class SoD(Page):
         rightButton.CtlName = 'Right'
         rightButton.CtlLabel = rightLabel
         rightButton.Page = self
-        rightButton.KeyBind = ControlKeyBind(self.Init['Right'], 'Right', self.TabTitle)
+        rightButton.KeyBind = KeyBind(self.Init['Right'], 'Right', self.TabTitle)
         keySizer.Add(rightButton, [2,2])
 
         keySizer.Add(leftLabel, [3,0], flag = wx.ALIGN_CENTER)
@@ -212,7 +212,7 @@ class SoD(Page):
         downButton.CtlName = 'Down'
         downButton.CtlLabel = downLabel
         downButton.Page = self
-        downButton.KeyBind = ControlKeyBind(self.Init['Down'], 'Down', self.TabTitle)
+        downButton.KeyBind = KeyBind(self.Init['Down'], 'Down', self.TabTitle)
         keySizer.Add(downButton, [4,0], [1,1], wx.TOP, 10)
 
         upButton = bcKeyButton(staticbox, -1, )
@@ -221,7 +221,7 @@ class SoD(Page):
         upButton.CtlName = 'Up'
         upButton.CtlLabel = upLabel
         upButton.Page = self
-        upButton.KeyBind = ControlKeyBind(self.Init['Up'], 'Up', self.TabTitle)
+        upButton.KeyBind = KeyBind(self.Init['Up'], 'Up', self.TabTitle)
         keySizer.Add(upButton, [4,1], [1,2], wx.EXPAND|wx.TOP, 10)
 
         keySizer.Add(downLabel, [5,0], [1,1], flag = wx.ALIGN_CENTER)
@@ -240,7 +240,7 @@ class SoD(Page):
         setattr(mousechord, 'CtlLabel', mcLabel)
         setattr(mcLabel   , 'control' , mousechord)
         setattr(mousechord, 'Page'    , self)
-        setattr(mousechord, 'KeyBind' , ControlKeyBind(self.Init['MouseChord'] , 'MouseChord' , self.TabTitle))
+        setattr(mousechord, 'KeyBind' , KeyBind(self.Init['MouseChord'] , 'MouseChord' , self.TabTitle))
         mcSizer.Add(mousechord, 0, wx.RIGHT, 10)
 
         movementSizer.Add(mcSizer, 0, wx.ALIGN_RIGHT|wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)

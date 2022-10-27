@@ -9,7 +9,6 @@ def ShowHelpWindow(parent, filename):
         HelpWindows[filename] = HelpWindow(parent, filename)
     HelpWindows[filename].Show()
 
-
 class HelpWindow(wx.MiniFrame):
     def __init__(self, parent, filename):
         wx.MiniFrame.__init__(self, parent, size = (800, 600),
@@ -35,4 +34,3 @@ class HelpButton(wx.BitmapButton):
     def GetHelpHandler(self):
         def OnClick(_): ShowHelpWindow(self.Parent, self.Filename)
         return OnClick
-

@@ -60,18 +60,16 @@ class Profile(wx.Notebook):
     # Convenience / JIT accessors
     def Name(self)         : return self.General.GetState('Name')
     def Archetype(self)    : return self.General.GetState('Archetype')
-    def BindsDir(self)     : return wx.ConfigBase.Get().Read('BindPath')
-    def GameBindsDir(self) : return wx.ConfigBase.Get().Read('GameBindPath') or self.BindsDir()
     def ResetFile(self)    : return self.GetBindFile("reset.txt")
+    def BindsDir(self)     :
+        return str(Path(wx.ConfigBase.Get().Read('BindPath')) / self.Name())
+    def GameBindsDir(self) :
+        return str(PureWindowsPath(wx.ConfigBase.Get().Read('GameBindPath')) / self.Name()) or self.BindsDir()
 
     def BLF(self, *args):
-        return "$$bindloadfilesilent " + self.BLFPath(*args)
-
-    def BLFPath(self, *args):
         filepath = PureWindowsPath(self.GameBindsDir())
-        for arg in args:
-            filepath = filepath  /  arg
-        return str(filepath)
+        for arg in args: filepath = filepath  /  arg
+        return "$$bindloadfilesilent " + str(filepath)
 
     def CheckConflict(self, key, button):
         conflicts = []

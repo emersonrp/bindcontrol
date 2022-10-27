@@ -9,16 +9,12 @@ class BindFile():
 
     def __init__(self, profile, *pathbits):
 
-        self.BindsDir     = profile.BindsDir()
         self.Profile      = profile
-        # TODO - check if GameBindsDir ends in \\, maybe in Profile itself?
+        self.BindsDir     = profile.BindsDir()
         self.GameBindsDir = profile.GameBindsDir()
 
-        filepathbits = (self.BindsDir, *pathbits)
-        gamepathbits = (self.GameBindsDir, *pathbits)
-
-        self.Path     = Path(*filepathbits)
-        self.GamePath = PureWindowsPath(*gamepathbits)
+        self.Path     = Path           (self.BindsDir,     *pathbits)
+        self.GamePath = PureWindowsPath(self.GameBindsDir, *pathbits)
 
         self.KeyBinds = {}
 
@@ -39,16 +35,14 @@ class BindFile():
 
         # Terrible hack to add things into the subreset file when
         # added to the reset file.  Ouch.
-        config = wx.ConfigBase.Get()
         if self == self.Profile.ResetFile():
             subresetpath = Path(self.BindsDir) / "subreset.txt"
             subresetfile = self.Profile.GetBindFile(str(subresetpath))
-            if keybind.Key != config.Read('ResetKey'):
+            if keybind.Key != wx.ConfigBase.Get().Read('ResetKey'):
                 subresetfile.SetBind(keybind, contents)
 
-    # Windows path b/c the game will use it.
     def BaseReset(self):
-        return f'bindloadfilesilent {self.GameBindsDir}subreset.txt'
+        return f'bindloadfilesilent {PureWindowsPath(self.GameBindsDir) / "subreset.txt"}'
 
     def BLF(self):
         return f'bindloadfilesilent {self.GamePath}'
@@ -57,14 +51,12 @@ class BindFile():
         try:
             self.Path.parent.mkdir(parents = True, exist_ok = True)
         except Exception as e:
-            wx.LogError(f"Can't make bindfile parent dirs {self.Path.parent} : {e}")
-            return
+            raise Exception(f"Can't make bindfile parent dirs {self.Path.parent} : {e}")
 
         try:
             self.Path.touch(exist_ok = True)
         except Exception as e:
-            wx.LogError(f"Can't instantiate bindfile {self}: {e}")
-            return
+            raise Exception(f"Can't instantiate bindfile {self}: {e}")
 
         # duplicate citybinder's (modified) logic exactly
         import re

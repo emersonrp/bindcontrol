@@ -28,12 +28,12 @@ class Profile(wx.Notebook):
         self.Filename  : Path|None = None
 
         # Add the individual tabs, in order.
-        self.CreatePage(General(self))
-        self.CreatePage(Gameplay(self))
-        self.CreatePage(CustomBinds(self))
-        self.CreatePage(SoD(self))
-        self.CreatePage(InspirationPopper(self))
-        self.CreatePage(Mastermind(self))
+        self.General           = self.CreatePage(General(self))
+        self.Gameplay          = self.CreatePage(Gameplay(self))
+        self.CustomBinds       = self.CreatePage(CustomBinds(self))
+        self.SoD               = self.CreatePage(SoD(self))
+        self.InspirationPopper = self.CreatePage(InspirationPopper(self))
+        self.Mastermind        = self.CreatePage(Mastermind(self))
         #self.CreatePage(ComplexBinds(self))
 
         # bind all control events so we can decide that we're modified.
@@ -51,11 +51,10 @@ class Profile(wx.Notebook):
 
         modname = type(module).__name__
 
-        setattr(self, modname, module)
-
         self.Pages.append(modname)
 
         self.Layout()
+        return module
 
     #####
     # Convenience / JIT accessors
@@ -246,6 +245,12 @@ class Profile(wx.Notebook):
 
 
     def WriteBindFiles(self):
+
+        profilename = self.General.GetState('Name')
+        if len(profilename) == 0 or re.search(" ", profilename):
+            wx.MessageBox("Profile Name is not valid, please correct this.")
+            self.ChangeSelection(0)
+            return
 
         # Start by making reset load itself.  This might get overridden with
         # more elaborate load strings in like SoD, but this is the safety

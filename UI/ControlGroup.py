@@ -97,6 +97,11 @@ class ControlGroup(wx.StaticBoxSizer):
             control.SetValue(Init[ctlName])
             control.SetRange(*contents)
 
+        elif ctlType == ('spinboxfractional'):
+            control = wx.SpinCtrlDouble(CtlParent, inc = 0.05)
+            control.SetValue(Init[ctlName])
+            control.SetRange(*contents)
+
         elif ctlType == ('dirpicker'):
             control = wx.DirPickerCtrl(
                 CtlParent, -1, Init[ctlName], Init[ctlName],

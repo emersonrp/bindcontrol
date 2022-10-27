@@ -1,4 +1,5 @@
 # UI / logic for the 'general' panel
+import re
 import wx
 import UI
 from Icon import GetIcon
@@ -166,11 +167,17 @@ class General(Page):
 
     # Event handlers
     def OnNameCtrlChanged(self, evt):
-        text = self.NameCtrl.GetValue()
-        if len(text) == 0:
-            self.NameCtrl.SetBackgroundColour((255,200,200))
+        nc = self.NameCtrl
+        text = nc.GetValue()
+        if len(text) == 0 or re.search(" ", text):
+            nc.SetBackgroundColour((255,200,200))
+            if len(text) == 0:
+                nc.SetToolTip("The profile name cannot be empty.")
+            else:
+                nc.SetToolTip("The profile name cannot contain spaces.")
         else:
-            self.NameCtrl.SetBackgroundColour(wx.NullColour)
+            nc.SetBackgroundColour(wx.NullColour)
+            nc.SetToolTip(None)
         evt.Skip()
 
 

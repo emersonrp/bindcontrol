@@ -120,6 +120,12 @@ class Profile(wx.Notebook):
         if not savefile:
             return self.SaveToFile()
 
+        profilename = self.General.GetState('Name')
+        if len(profilename) == 0 or re.search(" ", profilename):
+            wx.MessageBox("Profile Name is not valid, please correct this.")
+            self.ChangeSelection(0)
+            return
+
         self.ProfilePath().mkdir( parents = True, exist_ok = True )
 
         savedata = {}

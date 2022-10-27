@@ -236,11 +236,11 @@ class SoD(Page):
         mousechord = wx.CheckBox(staticbox, -1)
         self.Ctrls['MouseChord'] = mousechord
         mousechord.SetValue(bool(self.Init['MouseChord']))
-        mousechord.CtlName = 'MouseChord'
-        mousechord.CtlLabel = mcLabel
-        mcLabel.control = mousechord
-        mousechord.Page = self
-        mousechord.KeyBind = ControlKeyBind(self.Init['MouseChord'], 'MouseChord', self.TabTitle)
+        setattr(mousechord, 'CtlName' , 'MouseChord')
+        setattr(mousechord, 'CtlLabel', mcLabel)
+        setattr(mcLabel   , 'control' , mousechord)
+        setattr(mousechord, 'Page'    , self)
+        setattr(mousechord, 'KeyBind' , ControlKeyBind(self.Init['MouseChord'] , 'MouseChord' , self.TabTitle))
         mcSizer.Add(mousechord, 0, wx.RIGHT, 10)
 
         movementSizer.Add(mcSizer, 0, wx.ALIGN_RIGHT|wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)
@@ -580,7 +580,7 @@ class SoD(Page):
 
         if (flight and (flight == "Fly") and pathbo):
             #  blast off
-            curfile = profile.GetBindFile(str(pathbo) + t.KeyState() + ".txt")
+            curfile = profile.GetBindFile(f"{pathbo}{t.KeyState()}.txt")
             self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
             self.sodUpKey     (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
             self.sodDownKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo")
@@ -643,7 +643,7 @@ class SoD(Page):
 #            self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 #            self.sodFollowKey(t,blf,curfile,mobile)
 
-        curfile = profile.GetBindFile(str(path) + t.KeyState() + ".txt")
+        curfile = profile.GetBindFile(f"{path}{t.KeyState()}.txt")
 
         self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
 
@@ -684,7 +684,7 @@ class SoD(Page):
         self.sodFollowKey(t,blf,curfile,mobile)
 
         # AutoRun Binds
-        curfile = profile.GetBindFile(str(patha) + t.KeyState() + ".txt")
+        curfile = profile.GetBindFile(f"{patha}{t.KeyState()}.txt")
 
         self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
 
@@ -714,7 +714,7 @@ class SoD(Page):
         curfile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind('nop'))
 
         # FollowRun Binds
-        curfile = profile.GetBindFile(str(pathf) + t.KeyState() + ".txt")
+        curfile = profile.GetBindFile(f"{pathf}{t.KeyState()}.txt")
 
         self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
 
@@ -917,8 +917,8 @@ class SoD(Page):
             if self.GetState('Feedback'): feedback = '$$t $name, Superjump Mode'
             else:                         feedback = ''
 
-            tglbl = str(fbl)   + t.KeyState() + "j.txt"
-            tglfn = str(fpath) + t.KeyState() + "j.txt"
+            tglbl =   f"{fbl}{t.KeyState()}j.txt"
+            tglfn = f"{fpath}{t.KeyState()}j.txt"
             tgl = p.GetBindFile(tglfn)
 
             if (bl == "j"):
@@ -1067,54 +1067,54 @@ class SoD(Page):
 
         ## Combat Jumping / Super Jump
         if (self.GetState('HasCJ') and not self.GetState('HasSJ')):
-            t.cancj = 1
+            t.cancj = True
             t.cjmp  = "Combat Jumping"
             t.jump  = "Combat Jumping"
 
         elif (not self.GetState('HasCJ') and self.GetState('HasSJ')):
-            t.canjmp     = 1
+            t.canjmp     = True
             t.jump       = "Super Jump"
             t.jumpifnocj = "Super Jump"
 
         elif self.GetState('HasCJ') and self.GetState('HasSJ'):
-            t.cancj  = 1
-            t.canjmp = 1
+            t.cancj  = True
+            t.canjmp = True
             t.cjmp   = "Combat Jumping"
             t.jump   = "Super Jump"
 
         ## Flying / hover
         if (profile.Archetype() == "Peacebringer"):
             if (self.GetState('HasHover')):
-                t.canhov = 1
-                t.canfly = 1
+                t.canhov = True
+                t.canfly = True
                 t.hover  = "Combat Flight"
                 t.fly    = "Energy Flight"
                 t.flyx   = "Energy Flight"
             else:
-                t.canfly = 1
+                t.canfly = True
                 t.hover  = "Energy Flight"
                 t.flyx   = "Energy Flight"
 
         elif (not (profile.Archetype() == "Warshade")):
             if (self.GetState('HasHover') and not self.GetState('HasFly')):
-                t.canhov = 1
+                t.canhov = True
                 t.hover  = "Hover"
                 t.flyx   = "Hover"
                 if (self.GetState('TPTPHover')): t.tphover = '$$powexectoggleon Hover'
             elif (not self.GetState('HasHover') and self.GetState('HasFly')):
-                t.canfly = 1
+                t.canfly = True
                 t.hover  = "Fly"
                 t.flyx   = "Fly"
             elif (self.GetState('HasHover') and self.GetState('HasFly')):
-                t.canhov = 1
-                t.canfly = 1
+                t.canhov = True
+                t.canfly = True
                 t.hover  = "Hover"
                 t.fly    = "Fly"
                 t.flyx   = "Fly"
                 if (self.GetState('TPTPHover')): t.tphover = '$$powexectoggleon Hover'
 
         if ((profile.Archetype() == "Peacebringer") and self.GetState('FlyQFly')):
-            t.canqfly = 1
+            t.canqfly = True
 
         # if (self.GetState('FlyGFly')):
         #     t.cangfly = 1
@@ -1671,7 +1671,7 @@ class SoD(Page):
             ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
             ttp_on2.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( '-down$$' + teamTPPower + profile.BLF('ttp','ttp_on1.txt')))
 
-    def sodResetKey(self, curfile, p, gamepath, turnoff, moddir):
+    def sodResetKey(self, curfile, _, gamepath, turnoff, moddir):
 
         u = int(moddir == 'up')
         d = int(moddir == 'down')
@@ -1871,7 +1871,7 @@ class SoD(Page):
                 toggleoff = mobile
             toggleon = stationary
 
-        if (sssj and t.space == 1) : #  if (we are jumping with SS+SJ mode enabled)
+        if (sssj and t.space == 1) : #  if we are jumping with SS+SJ mode enabled)
            toggleon = sssj
            toggleoff = mobile
 
@@ -1948,7 +1948,7 @@ class SoD(Page):
 
             toggleon = stationary
 
-        if (sssj and t.space == 1): #  if (we are jumping with SS+SJ mode enabled
+        if (sssj and t.space == 1): #  if we are jumping with SS+SJ mode enabled
             toggleon = sssj
             toggleoff = mobile
 
@@ -2019,7 +2019,7 @@ class SoD(Page):
                toggleoff = mobile
             toggleon = stationary
 
-        if (sssj and t.space == 1) : #  if (we are jumping with SS+SJ mode enabled
+        if (sssj and t.space == 1) : #  if we are jumping with SS+SJ mode enabled
            toggleon  = sssj
            toggleoff = mobile
 
@@ -2083,7 +2083,7 @@ class SoD(Page):
                 toggleoff = mobile
             toggleon = stationary
 
-        if (sssj and t.space == 1) : #  if (we are jumping with SS+SJ mode enabled
+        if (sssj and t.space == 1) : #  if we are jumping with SS+SJ mode enabled
             toggleon = sssj
             toggleoff = mobile
 
@@ -2413,146 +2413,147 @@ UI.Labels.update( {
 
 class tObject(dict):
     def __init__(self, profile):
-            self.profile    = profile
-            self.ini        = ''
-            self.sprint     = None
-            self.speed      = None
-            self.hover      = None
-            self.fly        = None
-            self.flyx       = None
-            self.jump       = ''
-            self.cjmp       = ''
-            self.canhov     = 0
-            self.canfly     = 0
-            self.canqfly    = 0
-            self.cangfly    = 0
-            self.cancj      = 0
-            self.canjmp     = 0
-            self.tphover    = ''
-            self.ttpgrpfly  = ''
-            self.on         = '$$powexectoggleon '
-            # self.on       = '$$powexecname '
-            self.off        = '$$powexectoggleoff '
-            self.mlon       = ''
-            self.mloff      = ''
-            self.runcamdist = ''
-            self.flycamdist = ''
-            self.detailhi   = ''
-            self.detaillo   = ''
-            self.NonSoDMode = ''
-            self.SprintMode = ''
-            self.FlyMode    = ''
-            self.JumpMode   = ''
-            self.RunMode    = ''
-            self.GFlyMode   = ''
-            self.TempMode   = ''
-            self.QFlyMode   = ''
-            self.jumpifnocj = ''
+        from Profile import Profile
+        self.profile    :Profile = profile
+        self.ini        :str = ''
+        self.sprint     :str = ''
+        self.speed      :str = ''
+        self.hover      :str = ''
+        self.fly        :str = ''
+        self.flyx       :str = ''
+        self.jump       :str = ''
+        self.cjmp       :str = ''
+        self.canhov     :bool = False
+        self.canfly     :bool = False
+        self.canqfly    :bool = False
+        self.cangfly    :bool = False
+        self.cancj      :bool = False
+        self.canjmp     :bool = False
+        self.tphover    :str = ''
+        self.ttpgrpfly  :str = ''
+        self.on         :str = '$$powexectoggleon '
+        # self.on         :str = '$$powexecname '
+        self.off        :str = '$$powexectoggleoff '
+        self.mlon       :str = ''
+        self.mloff      :str = ''
+        self.runcamdist :str = ''
+        self.flycamdist :str = ''
+        self.detailhi   :str = ''
+        self.detaillo   :str = ''
+        self.NonSoDMode :str = ''
+        self.SprintMode :str = ''
+        self.FlyMode    :str = ''
+        self.JumpMode   :str = ''
+        self.RunMode    :str = ''
+        self.GFlyMode   :str = ''
+        self.TempMode   :str = ''
+        self.QFlyMode   :str = ''
+        self.jumpifnocj :str = ''
 
-            self.space :int = 0
-            self.X :int     = 0
-            self.W :int     = 0
-            self.S :int     = 0
-            self.A :int     = 0
-            self.D :int     = 0
-            self.up         = ''
-            self.dow        = ''
-            self.forw       = ''
-            self.bac        = ''
-            self.lef        = ''
-            self.rig        = ''
-            self.upx        = ''
-            self.dowx       = ''
-            self.forx       = ''
-            self.bacx       = ''
-            self.lefx       = ''
-            self.rigx       = ''
+        self.space:int = 0
+        self.X    :int = 0
+        self.W    :int = 0
+        self.S    :int = 0
+        self.A    :int = 0
+        self.D    :int = 0
+        self.up   :str = ''
+        self.dow  :str = ''
+        self.forw :str = ''
+        self.bac  :str = ''
+        self.lef  :str = ''
+        self.rig  :str = ''
+        self.upx  :str = ''
+        self.dowx :str = ''
+        self.forx :str = ''
+        self.bacx :str = ''
+        self.lefx :str = ''
+        self.rigx :str = ''
 
-            self.bl   = ''
-            self.bla  = ''
-            self.blaf = ''
-            self.blaj = ''
-            self.blan = ''
-            self.blaq = ''
-            self.blas = ''
-            self.blat = ''
-            self.blbo = ''
-            self.blf  = ''
-            self.blff = ''
-            self.blfn = ''
-            self.blfj = ''
-            self.blfq = ''
-            self.blfs = ''
-            self.blft = ''
-            self.blfr = ''
-            self.blgr = ''
-            self.blj  = ''
-            self.bln  = ''
-            self.blq  = ''
-            self.bls  = ''
-            self.blsd = ''
-            self.blt  = ''
+        self.bl   :str = ''
+        self.bla  :str = ''
+        self.blaf :str = ''
+        self.blaj :str = ''
+        self.blan :str = ''
+        self.blaq :str = ''
+        self.blas :str = ''
+        self.blat :str = ''
+        self.blbo :str = ''
+        self.blf  :str = ''
+        self.blff :str = ''
+        self.blfn :str = ''
+        self.blfj :str = ''
+        self.blfq :str = ''
+        self.blfs :str = ''
+        self.blft :str = ''
+        self.blfr :str = ''
+        self.blgr :str = ''
+        self.blj  :str = ''
+        self.bln  :str = ''
+        self.blq  :str = ''
+        self.bls  :str = ''
+        self.blsd :str = ''
+        self.blt  :str = ''
 
-            self.path   = ''
-            self.patha  = ''
-            self.pathaf = ''
-            self.pathaj = ''
-            self.pathan = ''
-            self.pathaq = ''
-            self.pathas = ''
-            self.pathat = ''
-            self.pathbo = ''
-            self.pathf  = ''
-            self.pathff = ''
-            self.pathfn = ''
-            self.pathfj = ''
-            self.pathfq = ''
-            self.pathfs = ''
-            self.pathft = ''
-            self.pathfr = ''
-            self.pathgr = ''
-            self.pathj  = ''
-            self.pathn  = ''
-            self.pathq  = ''
-            self.paths  = ''
-            self.pathsd = ''
-            self.patht  = ''
+        self.path   :Path = Path()
+        self.patha  :Path = Path()
+        self.pathaf :Path = Path()
+        self.pathaj :Path = Path()
+        self.pathan :Path = Path()
+        self.pathaq :Path = Path()
+        self.pathas :Path = Path()
+        self.pathat :Path = Path()
+        self.pathbo :Path = Path()
+        self.pathf  :Path = Path()
+        self.pathff :Path = Path()
+        self.pathfn :Path = Path()
+        self.pathfj :Path = Path()
+        self.pathfq :Path = Path()
+        self.pathfs :Path = Path()
+        self.pathft :Path = Path()
+        self.pathfr :Path = Path()
+        self.pathgr :Path = Path()
+        self.pathj  :Path = Path()
+        self.pathn  :Path = Path()
+        self.pathq  :Path = Path()
+        self.paths  :Path = Path()
+        self.pathsd :Path = Path()
+        self.patht  :Path = Path()
 
-            self.gamepath   = ''
-            self.gamepatha  = ''
-            self.gamepathaf = ''
-            self.gamepathaj = ''
-            self.gamepathan = ''
-            self.gamepathaq = ''
-            self.gamepathas = ''
-            self.gamepathat = ''
-            self.gamepathbo = ''
-            self.gamepathf  = ''
-            self.gamepathff = ''
-            self.gamepathfn = ''
-            self.gamepathfj = ''
-            self.gamepathfq = ''
-            self.gamepathfs = ''
-            self.gamepathft = ''
-            self.gamepathfr = ''
-            self.gamepathgr = ''
-            self.gamepathj  = ''
-            self.gamepathn  = ''
-            self.gamepathq  = ''
-            self.gamepaths  = ''
-            self.gamepathsd = ''
-            self.gamepatht  = ''
+        self.gamepath   :PureWindowsPath = PureWindowsPath()
+        self.gamepatha  :PureWindowsPath = PureWindowsPath()
+        self.gamepathaf :PureWindowsPath = PureWindowsPath()
+        self.gamepathaj :PureWindowsPath = PureWindowsPath()
+        self.gamepathan :PureWindowsPath = PureWindowsPath()
+        self.gamepathaq :PureWindowsPath = PureWindowsPath()
+        self.gamepathas :PureWindowsPath = PureWindowsPath()
+        self.gamepathat :PureWindowsPath = PureWindowsPath()
+        self.gamepathbo :PureWindowsPath = PureWindowsPath()
+        self.gamepathf  :PureWindowsPath = PureWindowsPath()
+        self.gamepathff :PureWindowsPath = PureWindowsPath()
+        self.gamepathfn :PureWindowsPath = PureWindowsPath()
+        self.gamepathfj :PureWindowsPath = PureWindowsPath()
+        self.gamepathfq :PureWindowsPath = PureWindowsPath()
+        self.gamepathfs :PureWindowsPath = PureWindowsPath()
+        self.gamepathft :PureWindowsPath = PureWindowsPath()
+        self.gamepathfr :PureWindowsPath = PureWindowsPath()
+        self.gamepathgr :PureWindowsPath = PureWindowsPath()
+        self.gamepathj  :PureWindowsPath = PureWindowsPath()
+        self.gamepathn  :PureWindowsPath = PureWindowsPath()
+        self.gamepathq  :PureWindowsPath = PureWindowsPath()
+        self.gamepaths  :PureWindowsPath = PureWindowsPath()
+        self.gamepathsd :PureWindowsPath = PureWindowsPath()
+        self.gamepatht  :PureWindowsPath = PureWindowsPath()
 
-            self.basepath     = ''
-            self.gamebasepath = ''
+        self.basepath     :Path = Path()
+        self.gamebasepath :PureWindowsPath = PureWindowsPath()
 
-            self.path         = ''
-            self.gamepath     = ''
+        self.path         :Path = Path()
+        self.gamepath     :PureWindowsPath = PureWindowsPath()
 
-            self.vertkeys  :int = 0
-            self.horizkeys :int = 0
-            self.jkeys     :int = 0
-            self.totalkeys :int = 0
+        self.vertkeys  :int = 0
+        self.horizkeys :int = 0
+        self.jkeys     :int = 0
+        self.totalkeys :int = 0
 
 
     # return binary "011010" string of which keys are "on";

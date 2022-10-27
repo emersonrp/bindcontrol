@@ -300,20 +300,21 @@ class KeySelectDialog(wx.Dialog):
             self.Keymap[ord(str(alphanum))] = alphanum
 
 from KeyBind import ControlKeyBind
+from Page import Page
 class bcKeyButton(wx.Button):
 
     def __init__(self, parent, id, init = {}):
         wx.Button.__init__(self, parent, id)
-        self.CtlName: str            = init.get('CtlName', None)
-        self.CtlLabel: wx.StaticText = init.get('CtlLabel', None)
-        self.KeyBind: ControlKeyBind = init.get('KeyBind', None)
-        self.Key: str                = init.get('Key', '')
+        self.CtlName  : str            = init.get('CtlName', None)
+        self.CtlLabel : wx.StaticText  = init.get('CtlLabel', None)
+        self.KeyBind  : ControlKeyBind = init.get('KeyBind', None)
+        self.Key      : str            = init.get('Key', '')
+        self.Page     : Page           = parent
 
         self.SetLabel(self.Key)
 
         self.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
         self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
-
 
     def ClearButton(self, _):
         self.SetLabel("")

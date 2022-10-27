@@ -6,7 +6,7 @@ import wx.lib.stattext as ST
 
 import UI
 from UI.KeySelectDialog import bcKeyButton
-from KeyBind import KeyBind
+from BindFile import KeyBind
 import wx.lib.stattext as ST
 
 class ControlGroup(wx.StaticBoxSizer):

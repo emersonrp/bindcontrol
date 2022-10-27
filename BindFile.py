@@ -1,9 +1,37 @@
+import re
 import wx
 import inspect
 from pathlib import Path, PureWindowsPath
-from KeyBind import FileKeyBind
 from Page import Page
-#from collections import deque
+
+class KeyBind():
+    def __init__(self, key, name, page, contents = []):
+
+        if type(contents) == str: contents = [contents]
+
+        self.Key      = key      # actual key combo
+        self.Name     = name     # friendly name, ie, "Select All Pets"
+        self.Page     = page     # which tab the bind originated on
+        self.Contents = contents # a list of strings to '$$'-join to create the actual payload
+
+    # factory for PopulateBindFiles to use
+    def MakeFileKeyBind(self, contents):
+        if type(contents) == str: contents = [contents]
+
+        # changing self.Contents and reusing self over and over broke horribly in SoD.
+        # Therefore, we just make a new KeyBind object.  Maybe investigate someday.
+        return KeyBind(self.Key, self.Name, self.Page, contents)
+
+    def GetKeyBindString(self):
+
+        payload = '$$'.join([i for i in self.Contents if i])
+
+        # remove any initial $$ if we snuck in here with it.
+        payload = re.sub(r'^\$\$', '', payload)
+        # and any doubled up '$$'
+        payload = re.sub(r'\$\$\$\$', '$$', payload)
+
+        return f'{self.Key} "{payload}"\n'
 
 class BindFile():
 
@@ -18,16 +46,16 @@ class BindFile():
 
         self.KeyBinds = {}
 
-    def SetBind(self, keybind: FileKeyBind|str, name:str = '', page:Page|None = None, contents: str|list = ''):
+    def SetBind(self, keybind:KeyBind|str, name:str = '', page:Page|None = None, contents:str|list = ''):
 
-        # we can either be called with a FileKeyBind, in which case we're golden, or with
-        # four strings, in which case we need to roll a FileKeyBind.  Someday pick one scheme.
+        # we can either be called with a KeyBind, in which case we're golden, or with
+        # four strings, in which case we need to roll a KeyBind.  Someday pick one scheme.
         if isinstance(keybind, str):
             if name and not contents: # got called as (key, contents), this is bad.
                 prevFrame = inspect.currentframe().f_back
                 (filen, line, funcn, _, _) = inspect.getframeinfo(prevFrame)
                 print(f"SetBind called old way from {filen}, {funcn}, {line} -- PROBABLY BROKEN")
-            keybind = FileKeyBind(keybind, name, page, contents)
+            keybind = KeyBind(keybind, name, page, contents)
 
         if not keybind.Key: return
 
@@ -59,7 +87,6 @@ class BindFile():
             raise Exception(f"Can't instantiate bindfile {self}: {e}")
 
         # duplicate citybinder's (modified) logic exactly
-        import re
         def getMainKey(testkey):
             str = testkey or "UNBOUND"
             str = str.upper()

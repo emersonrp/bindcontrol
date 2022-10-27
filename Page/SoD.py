@@ -3,7 +3,7 @@ import GameData
 import UI
 import wx.lib.stattext as ST
 from pathlib import Path, PureWindowsPath
-from KeyBind import KeyBind
+from BindFile import KeyBind
 from Page import Page
 from UI.ControlGroup import ControlGroup, bcKeyButton
 

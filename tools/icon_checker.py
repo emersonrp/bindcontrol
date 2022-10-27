@@ -31,6 +31,8 @@ for filename in [f for f in os.listdir(f"{parentdir}/icons/Powers/") if f.endswi
     filecheck.add(os.path.basename(filename))
 for filename in [f for f in os.listdir(f"{parentdir}/icons/Incarnate/") if f.endswith('png')]:
     filecheck.add(os.path.basename(filename))
+for filename in [f for f in os.listdir(f"{parentdir}/icons/Inspirations/") if f.endswith('png')]:
+    filecheck.add(os.path.basename(filename))
 
 # Archetype Primary and Secondary
 for archname, archdata in GameData.Archetypes.items():
@@ -44,7 +46,6 @@ for archname, archdata in GameData.Archetypes.items():
                     print(f"{archname}: {filename}")
                     count = count + 1
                 else:
-                    # we found it, pull it back out of the set
                     if filename in filecheck: filecheck.remove(filename)
 
 # Pool Powers
@@ -57,7 +58,6 @@ for poolname, pool in GameData.MiscPowers['Pool'].items():
             print(f"Pool Power: {filename}")
             count = count + 1
         else:
-            # we found it, pull it back out of the set
             if filename in filecheck: filecheck.remove(filename)
 
 # Incarnate Powers
@@ -72,6 +72,16 @@ for slot, slotdata in GameData.MiscPowers['Incarnate'].items():
             else:
                 if filename in filecheck: filecheck.remove(filename)
 
+# Inspirations
+for type, data in GameData.Inspirations.items():
+    for insp in data['tiers']:
+        insp = re.sub(r'\W+', '',  insp)
+        filename = f"{insp}.png"
+        if not os.path.exists(f"{parentdir}/icons/Inspirations/{filename}"):
+            print(f"Inspirations: {filename}")
+            count = count + 1
+        else:
+            if filename in filecheck: filecheck.remove(filename)
 
 
 

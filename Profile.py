@@ -62,12 +62,12 @@ class Profile(wx.Notebook):
     def Archetype(self)    : return self.General.GetState('Archetype')
     def ResetFile(self)    : return self.GetBindFile("reset.txt")
     def BindsDir(self)     :
-        return str(Path(wx.ConfigBase.Get().Read('BindPath')) / self.Name())
+        return Path(wx.ConfigBase.Get().Read('BindPath')) / self.Name()
     def GameBindsDir(self) :
-        return str(PureWindowsPath(wx.ConfigBase.Get().Read('GameBindPath')) / self.Name()) or self.BindsDir()
+        return PureWindowsPath(wx.ConfigBase.Get().Read('GameBindPath')) / self.Name() or self.BindsDir()
 
     def BLF(self, *args):
-        filepath = PureWindowsPath(self.GameBindsDir())
+        filepath = self.GameBindsDir()
         for arg in args: filepath = filepath  /  arg
         return "$$bindloadfilesilent " + str(filepath)
 
@@ -110,7 +110,6 @@ class Profile(wx.Notebook):
             self.Filename = Path(pathname)
 
             return self.doSaveToFile()
-
 
     def doSaveToFile(self, _ = None):
         savefile = self.Filename
@@ -319,7 +318,7 @@ class DoneDialog(wx.Dialog):
         )
         textCtrl = wx.TextCtrl(self, id = wx.ID_ANY,
                        style = wx.TE_READONLY|wx.TE_CENTER,
-                       value = "/bindloadfilesilent " + parent.GameBindsDir() + "reset.txt"
+                       value = "/bindloadfilesilent " + str(parent.GameBindsDir() / "reset.txt")
         )
         textCtrl.SetFont(
             wx.Font(10, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = u'Courier')

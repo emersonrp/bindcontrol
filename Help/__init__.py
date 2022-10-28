@@ -21,8 +21,12 @@ class HelpWindow(wx.MiniFrame):
         self.manualpane.SetRelatedFrame(self, '%s')
         self.manualsizer.Add(self.manualpane, 1, wx.EXPAND)
         self.SetSizer(self.manualsizer)
-        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-        self.manualpane.LoadFile(f"{base_path}/Help/{filename}")
+        base_path = getattr(sys, '_MEIPASS', '')
+        if base_path:
+            base_path = base_path + "/Help/"
+        else:
+            base_path = os.path.dirname(os.path.abspath(__file__))
+        self.manualpane.LoadFile(f"{base_path}/{filename}")
         self.Layout()
 
         HelpWindows[filename] = self

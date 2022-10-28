@@ -1,3 +1,5 @@
+import sys
+import os
 import wx
 import wx.html
 from Icon import GetIcon
@@ -19,7 +21,8 @@ class HelpWindow(wx.MiniFrame):
         self.manualpane.SetRelatedFrame(self, '%s')
         self.manualsizer.Add(self.manualpane, 1, wx.EXPAND)
         self.SetSizer(self.manualsizer)
-        self.manualpane.LoadFile(f"Help/{filename}")
+        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+        self.manualpane.LoadFile(f"{base_path}/Help/{filename}")
         self.Layout()
 
         HelpWindows[filename] = self

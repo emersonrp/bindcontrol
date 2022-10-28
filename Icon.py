@@ -1,6 +1,7 @@
 import wx
 import re
 import os
+import sys
 
 Icons = {}
 
@@ -12,7 +13,8 @@ def GetIcon(name = '', powerset = '', power = ''):
         name     = f"Powers/{powerset}_{power}"
 
     if not Icons.get(name, None):
-        filename = f"icons/{name}.png"
+        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+        filename = f"{base_path}/icons/{name}.png"
         if os.path.exists(filename):
             Icons[name] = Icon( wx.Image( filename, wx.BITMAP_TYPE_ANY, -1,))
             Icons[name].Filename = name

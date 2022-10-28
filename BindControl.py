@@ -98,9 +98,9 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.OnMenuLogWindow, Log_window)
 
-        self.AppIcon = wx.Icon()
-        self.AppIcon.LoadFile('icons/BindControl.ico', wx.BITMAP_TYPE_ICO)
-        self.SetIcon(self.AppIcon)
+        self.AppIcon = wx.IconBundle()
+        self.AppIcon.AddIcon('icons/BindControl.ico', wx.BITMAP_TYPE_ANY)
+        self.SetIcons(self.AppIcon)
 
         self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -152,7 +152,6 @@ class Main(wx.Frame):
         if self.about_info is None:
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
-            info.SetIcon(self.AppIcon)
             info.SetName('BindControl')
             info.SetVersion('0.5')
             info.SetDescription("""

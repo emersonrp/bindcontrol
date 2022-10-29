@@ -66,7 +66,7 @@ class Profile(wx.Notebook):
     def GameBindsDir(self) :
         gbp = wx.ConfigBase.Get().Read('GameBindPath')
         if gbp:
-            return PureWindowsPath(gbp / self.Name())
+            return PureWindowsPath(gbp) / self.Name()
         else:
             return self.BindsDir()
 
@@ -219,11 +219,16 @@ class Profile(wx.Notebook):
 
                 if pagename == 'General':
                     page.IncarnateBox.FillWith(data)
+                    # Re-fill Primary and Secondary pickers.
+                    page.OnPickArchetype()
+                    page.Ctrls['Primary']  .SetSelection(data['General'].get('Primary'  , None))
+                    page.Ctrls['Secondary'].SetSelection(data['General'].get('Secondary', None))
                 else:
                     page.SynchronizeUI()  # this clears and repops the Primary and Secondary pickers on 'General'
 
             cbpage = getattr(self, "CustomBinds")
             for custombind in data['CustomBinds']:
+                if not custombind: continue
                 if custombind['Type'] == "SimpleBind":
                     bindpane = SimpleBindPane(cbpage, init = custombind)
                     cbpage.AddBindToPage(bindpane = bindpane)

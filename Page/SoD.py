@@ -14,7 +14,7 @@ class SoD(Page):
         self.TabTitle = "Speed On Demand"
 
         self.Init = {
-            'EnableSoD'       : True,
+            'EnableSoD'       : False,
 
             'Up'              : "SPACE",
             'Down'            : "X",
@@ -42,12 +42,12 @@ class SoD(Page):
             'DetailMove'      : 50,
             'Feedback'        : False,
 
-            'NonSoDEnable'    : True,
+            'NonSoDEnable'    : False,
             'NonSoDMode'      : '[',
 
-            'HasSS'           : True,
+            'HasSS'           : False,
             'RunMode'         : "C",
-            'SSMobileOnly'    : True,
+            'SSMobileOnly'    : False,
             'SSSJModeEnable'  : False,
 
             'HasSJ'           : False,
@@ -62,7 +62,7 @@ class SoD(Page):
             'HasQF'           : False,
             'QFlyMode'        : "G",
 
-            'HasTP'           : True,
+            'HasTP'           : False,
             'TPBindKey'       : 'LSHIFT+LBUTTON',
             'TPComboKey'      : 'LSHIFT',
             'TPResetKey'      : 'LCTRL+T',

@@ -64,7 +64,11 @@ class Profile(wx.Notebook):
     def BindsDir(self)     :
         return Path(wx.ConfigBase.Get().Read('BindPath')) / self.Name()
     def GameBindsDir(self) :
-        return PureWindowsPath(wx.ConfigBase.Get().Read('GameBindPath')) / self.Name() or self.BindsDir()
+        gbp = wx.ConfigBase.Get().Read('GameBindPath')
+        if gbp:
+            return PureWindowsPath(gbp / self.Name())
+        else:
+            return self.BindsDir()
 
     def BLF(self, *args):
         filepath = self.GameBindsDir()

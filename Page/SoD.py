@@ -422,9 +422,8 @@ class SoD(Page):
             c['SSSJModeEnable']         .Enable(self.GetState('HasSS') and self.GetState('HasSJ'))
             c['SSSJModeEnable'].CtlLabel.Enable(self.GetState('HasSS') and self.GetState('HasSJ'))
 
-            # TODO - in citybinder, this is "if SJ or CJ" but shouldn't it be "SJ -and- CJ"?
-            c['SimpleSJCJ']         .Enable(self.GetState('HasSJ') or self.GetState('HasCJ'))
-            c['SimpleSJCJ'].CtlLabel.Enable(self.GetState('HasSJ') or self.GetState('HasCJ'))
+            c['SimpleSJCJ']         .Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
+            c['SimpleSJCJ'].CtlLabel.Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
             c['JumpMode']           .Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
             c['JumpMode'].CtlLabel.Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
@@ -550,9 +549,7 @@ class SoD(Page):
         turnoff    = p.get('turnoff'    , "")
         sssj       = p.get('sssj'       , "")
 
-        # TODO TODO TODO -- here and seven other places, this list should be instead a set.
-        # Keeping it as a list for now to match citybinder
-        turnoff = turnoff or [ mobile, stationary ]
+        turnoff = turnoff or { mobile, stationary }
 
         if ((self.GetState('DefaultMode') == modestr) and (t.totalkeys == 0)):
 
@@ -581,7 +578,7 @@ class SoD(Page):
         if (flight and (flight == "Fly") and pathbo):
             #  blast off
             curfile = profile.GetBindFile(f"{pathbo}{t.KeyState()}.txt")
-            self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
+            self.sodResetKey(curfile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
             self.sodUpKey     (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
             self.sodDownKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo")
             self.sodForwardKey(t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
@@ -624,7 +621,7 @@ class SoD(Page):
             # TODO this section is commented out in citybinder, why?
             # curfile = profile.GetBindFile(str(pathsd))
 #
-#            self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
+#            self.sodResetKey(curfile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
 #
 #            self.sodUpKey     (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
 #            self.sodDownKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd")
@@ -645,7 +642,7 @@ class SoD(Page):
 
         curfile = profile.GetBindFile(f"{path}{t.KeyState()}.txt")
 
-        self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
+        self.sodResetKey(curfile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
 
         self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
         self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','','')
@@ -686,7 +683,7 @@ class SoD(Page):
         # AutoRun Binds
         curfile = profile.GetBindFile(f"{patha}{t.KeyState()}.txt")
 
-        self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
+        self.sodResetKey(curfile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
 
         self.sodUpKey     (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
         self.sodDownKey   (t,bla,curfile,mobile,stationary,flight,1, '','')
@@ -716,7 +713,7 @@ class SoD(Page):
         # FollowRun Binds
         curfile = profile.GetBindFile(f"{pathf}{t.KeyState()}.txt")
 
-        self.sodResetKey(curfile,profile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
+        self.sodResetKey(curfile,gamepath,self.actPower_toggle(None,True,stationary,mobile),'')
 
         self.sodUpKey     (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
         self.sodDownKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'')
@@ -1032,8 +1029,7 @@ class SoD(Page):
                         'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
                         'powexecname Sprint',
                         'powexecunqueue',
-                        # TODO - honor ResetFeedback checkbox
-                        't $name, SoD Binds Reset'
+                        't $name, SoD Binds Reset',
                     ])
 
         if (self.GetState('DefaultMode') == "NonSoD"):
@@ -1670,7 +1666,7 @@ class SoD(Page):
             ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
             ttp_on2.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( '-down$$' + teamTPPower + profile.BLF('ttp','ttp_on1.txt')))
 
-    def sodResetKey(self, curfile, _, gamepath, turnoff, moddir):
+    def sodResetKey(self, curfile, gamepath, turnoff, moddir):
 
         u = int(moddir == 'up')
         d = int(moddir == 'down')
@@ -2167,41 +2163,20 @@ class SoD(Page):
 
     #  toggleon variation
     def actPower_toggle(self, start, unq, on, *rest):
-        s = traytest = ''
-
-        # TODO Temp Travel Power stuff - might comment all this out
-        if on and not isinstance(on, str):
-            #  deal with power slot stuff..
-            traytest = on['trayslot']
+        s = ''
 
         unq = False  # we pass 'unq' in and ignore it to have the same signature as actPower_name
         offpower = set()
 
-        w = None # TODO remove this when fixing 'v' vs 'w' below
         for v in rest:
             if v and not isinstance(v, str):
                 for w in v:
                     if (w and w != on and not (w in offpower)):
-                        if not isinstance(w, str):
-                            if (w['trayslot'] != traytest):
-                               s = s + '$$powexectray ' + w['trayslot']
-                               unq = True
-                        else:
-                            offpower.add(w)
-                            s = s + '$$powexectoggleoff ' + w
-
-                # TODO This is part of Temp Travel Power which might go away
-                # It currently breaks because v is a set not a dict.
-                #
-                # if (v['trayslot'] and v['trayslot'] != traytest):
-                #    s = s + '$$powexectray ' + v['trayslot']
-                #    unq = True
+                        offpower.add(w)
+                        s = s + '$$powexectoggleoff ' + w
 
             else:
-                # TODO -- the uncommented line is as in citybinder.  I think it's a bug
-                # talking about w instead of v.  I am going with it for now while diffing
-                #if (v != '' and (v != on) and not (v in offpower)):
-                if (v != '' and (w != on) and not (v in offpower)):
+                if (v != '' and (v != on) and not (v in offpower)):
                     offpower.add(v)
                     s = s + '$$powexectoggleoff ' + v
 
@@ -2209,100 +2184,34 @@ class SoD(Page):
             s = s + '$$powexecunqueue'
 
         if (on and on != ''):
-            if not (isinstance(on, str)):
-                #  deal with power slot stuff..
-                s = s + '$$powexectray ' + on['trayslot'] + '$$powexectray ' + on['trayslot']
-            else:
-                s = s + '$$powexectoggleon ' + on
+            s = s + '$$powexectoggleon ' + on
 
-        # TODO this is commented out in citybinder, but seems to be needed here
-        # It's a mystery.
         if start: s = s[2:]
         return s
 
     def actPower_name(self, start, unq, on, *rest):
-        s = traytest = ''
-        if isinstance(on, dict):
-           #  deal with power slot stuff..
-           traytest = on['trayslot']
-
+        s = ''
         for v in rest:
             if isinstance(v, str):
                 if (v != '' and v != on):
                     s = s + '$$powexecname ' + v
 
-            elif isinstance(v, list):  # TODO change to set later
+            elif isinstance(v, set):
                 for w in v:
                     if (w and w != on):
-                        if isinstance(w, dict):
-                            if (w['trayslot'] != traytest):
-                                s = s + '$$powexectray ' + w['trayslot']
-                        else:
-                            s = s + '$$powexecname ' + w
-
-                # TODO Temp Travel Power stuff -- maybe comment out later
-                # if (v['trayslot'] and v['trayslot'] != traytest):
-                #    s = s + '$$powexectray ' + v['trayslot']
+                        s = s + '$$powexecname ' + w
 
         if (unq and s != ''):
             s = s + '$$powexecunqueue'
 
         if (on and on != ''):
-            if isinstance(on, str):
-                s = s + '$$powexecname ' + on + '$$powexecname ' + on
-            else:
-                #  deal with power slot stuff..
-                s = s + '$$powexectray ' + on['trayslot'] + '$$powexectray ' + on['trayslot']
+            s = s + '$$powexecname ' + on + '$$powexecname ' + on
 
         if (start): s = s[2:]
         return s
 
     actPower = actPower_name
     # actPower = actPower_toggle
-
-    # TODO - this isn't used anywhere, is it useful?
-    #  updated hybrid binds can reduce the space used in SoD Bindfiles by more than 40KB per SoD mode generated
-    # sub actPower_hybrid {
-    #     my ($start,$unq,$on,@rest) = @_
-    #     my ($s,traytest) = ('','')
-    #     if (refon) {traytest =on['trayslot']
-
-    #     for v (@rest) {
-    #         if (!refv):
-    #             if ($v == 'on') {s .= '$$powexecname ' + v
-    #          else:
-    #             while (my (None,w) = each %$v) {
-    #                 if ($w andw ne 'on'):
-    #                     if (refw):
-    #                         if ($w['trayslot'] ==traytest) {
-    #                            s .= '$$powexectray ' + w['trayslot']
-
-    #                      else:
-    #                        s .= '$$powexecname ' + w
-
-
-
-    #             if ($v['trayslot'] ==traytest) {
-    #                s .= '$$powexectray ' + v['trayslot']
-
-
-
-    #     if ($unq ands) {s .= '$$powexecunqueue'
-
-    #     if ($on):
-    #         if (refon):
-    #             #  deal with power slot stuff..
-    #            s .= '$$powexectray ' + on['trayslot'] + '$$powexectray ' + on['trayslot']
-    #          else:
-    #            s .= '$$powexectoggleon ' + on
-
-
-    #     if ($start) {s = substrs, 2
-    #     returns
-
-
-    # local actPower = actPower_name
-    # # local actPower = self.actPower_toggle
 
     def sodJumpFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
 

@@ -79,7 +79,8 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.IncIcon = wx.Button(staticbox, size=wx.Size(60,40))
+        import wx.lib.buttons as buttons
+        self.IncIcon = buttons.GenBitmapButton(staticbox, bitmap = GetIcon('Empty'), size=wx.Size(40,40))
         self.IncIcon.Picker = self
         self.IncIcon.Bind(wx.EVT_BUTTON, self.OnButtonPress)
         self.IncIcon.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
@@ -99,7 +100,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
         menuitem = evt.EventObject.FindItemById(evt.GetId())
 
         self.IncName.SetLabel(menuitem.GetItemLabel())
-        self.IncIcon.SetBitmap(menuitem.GetBitmapBundle())
+        self.IncIcon.SetBitmapLabel(menuitem.GetBitmapBundle().GetBitmap(wx.Size(40,40)))
         self.IconFilename = menuitem.IconFilename
 
         # Yes both of the self.Layout() are necessary to do the sizing / wrap dance.
@@ -111,7 +112,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
     def OnRightClick(self, evt):
         button = evt.EventObject
-        button.SetBitmap(GetIcon('Empty'))
+        button.SetBitmapLabel(GetIcon('Empty'))
         button.Picker.IncName.SetLabel('')
         button.Layout()
         evt.Skip()

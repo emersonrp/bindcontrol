@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import sys, os
 import wx
 import wx.lib.mixins.inspection
 import wx.adv
@@ -99,7 +100,9 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnMenuLogWindow, Log_window)
 
         self.AppIcon = wx.IconBundle()
-        self.AppIcon.AddIcon('icons/BindControl.ico', wx.BITMAP_TYPE_ANY)
+        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+        filename = f"{base_path}/icons/BindControl.ico"
+        self.AppIcon.AddIcon(filename, wx.BITMAP_TYPE_ANY)
         self.SetIcons(self.AppIcon)
 
         self.Sizer = wx.BoxSizer(wx.VERTICAL)

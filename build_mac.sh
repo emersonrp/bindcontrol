@@ -1,5 +1,6 @@
 #!/bin/bash
 pyinstaller \
+    -i tools/bcicon/BindControl.icns \
 	--onefile \
 	--noconsole \
 	--noconfirm \

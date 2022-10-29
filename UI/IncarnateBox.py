@@ -41,7 +41,7 @@ class IncarnateBox(wx.StaticBoxSizer):
             if name:
                 powers.append({
                     'name'         : name,
-                    'icon'         : box.IncIcon.GetBitmap(),
+                    'icon'         : box.IncIcon.GetBitmapLabel(),
                     'iconfilename' : box.IconFilename,
                 })
         return powers

@@ -65,7 +65,9 @@ Dependencies
 * [wxPython](https://www.wxpython.org) version 4.1 or later
 
 Windows and MacOS users, follow the instructions on the above sites' download pages to install Python and wxPython.
+
 <i>MacOS users: fiddling with installing recent versions of Python can be a rabbit hole.  Use the pre-rolled Bindcontrol.app if it's available and works for you.</i>
+
 Linux users, install your distribution's packages for Python 3 and wxPython.
 
 Running from Source

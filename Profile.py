@@ -227,6 +227,7 @@ class Profile(wx.Notebook):
                     page.SynchronizeUI()  # this clears and repops the Primary and Secondary pickers on 'General'
 
             cbpage = getattr(self, "CustomBinds")
+            cbpage.scrolledPane.DestroyChildren()
             for custombind in data['CustomBinds']:
                 if not custombind: continue
                 if custombind['Type'] == "SimpleBind":

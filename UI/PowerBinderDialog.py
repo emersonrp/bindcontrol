@@ -341,8 +341,8 @@ class ChatCmd(PowerBindCmd):
         index  = choice.GetSelection()
         size   = choice.GetString(index)
 
-        duration = f"<duration {duration}>" if duration != 7 else ""
-        size     = f"<size {size}>"         if size     != 1 else ""
+        duration = f"<duration {duration}>" if duration != 7   else ""
+        size     = f"<size {size}>"         if size     != "1" else ""
 
         bdcolor = fgcolor = bgcolor = ''
         if self.chatCommandUseColorsCB.IsChecked():

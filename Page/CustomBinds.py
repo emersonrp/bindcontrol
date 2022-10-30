@@ -28,9 +28,9 @@ class CustomBinds(Page):
         newSimpleBindButton = wx.Button(self, -1, "New Simple Bind")
         newSimpleBindButton.Bind(wx.EVT_BUTTON, self.OnNewSimpleBindButton)
         buttonSizer.Add(newSimpleBindButton, wx.ALIGN_CENTER)
-        #newBufferBindButton = wx.Button(self, -1, "New Buffer Bind")
-        #newBufferBindButton.Bind(wx.EVT_BUTTON, self.OnNewBufferBindButton)
-        #buttonSizer.Add(newBufferBindButton, wx.ALIGN_CENTER)
+        newBufferBindButton = wx.Button(self, -1, "New Buffer Bind")
+        newBufferBindButton.Bind(wx.EVT_BUTTON, self.OnNewBufferBindButton)
+        buttonSizer.Add(newBufferBindButton, wx.ALIGN_CENTER)
 
         # add the two parts of the layout, top one expandable
         MainSizer.Add( self.scrolledPane, 1, wx.EXPAND)

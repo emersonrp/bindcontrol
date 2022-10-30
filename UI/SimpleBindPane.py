@@ -14,7 +14,6 @@ class SimpleBindPane(CustomBindPaneParent):
         self.Init           = init
         self.Page           = page # for re-layout when pane changes size and for SetBind()
         self.PowerBinderDlg = None
-        self.BindPane       = None
 
     def Serialize(self):
         data = {
@@ -93,7 +92,6 @@ class SimpleBindPane(CustomBindPaneParent):
 
         return isWellFormed
 
-
     def PopulateBindFiles(self):
         if not self.checkIfWellFormed():
             wx.LogError(f"Custom Bind \"{self.Title}\" is not complete or has errors.")
@@ -103,4 +101,3 @@ class SimpleBindPane(CustomBindPaneParent):
         bc = self.Ctrls['BindContents']
 
         resetfile.SetBind(bk.GetLabel(), self.Title, self.Page, bc.GetValue())
-

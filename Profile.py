@@ -16,6 +16,7 @@ from Page.CustomBinds import CustomBinds
 import UI
 from UI.ControlGroup import bcKeyButton
 from UI.SimpleBindPane import SimpleBindPane
+from UI.BufferBindPane import BufferBindPane
 
 class Profile(wx.Notebook):
 
@@ -232,6 +233,9 @@ class Profile(wx.Notebook):
                 if not custombind: continue
                 if custombind['Type'] == "SimpleBind":
                     bindpane = SimpleBindPane(cbpage, init = custombind)
+                    cbpage.AddBindToPage(bindpane = bindpane)
+                elif custombind['Type'] == "BufferBind":
+                    bindpane = BufferBindPane(cbpage, init = custombind)
                     cbpage.AddBindToPage(bindpane = bindpane)
 
             self.Filename = Path(pathname)

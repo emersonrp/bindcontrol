@@ -19,7 +19,8 @@ Features
 * <i>in progress</i> - team/pet rotational selection
 * Chat binds with optional 'typing' notifier
 * Custom Binds
-    * create custom binds using PowerBinder, a flexible tool for putting together arbitrary commands into bind strings
+    * create simple binds using PowerBinder, a flexible tool for putting together arbitrary commands into bind strings
+    * buffer binds, allowing quick one-key buffing of each teammate and/or pet
 * Speed-on-Demand
     * based on [citybinder](http://sourceforge.net/projects/citybinder/) and the original Gnarly's SoD keybinds
     * supports Super Speed, Super Jump, Flight, Teleport, and Sprint powers
@@ -41,10 +42,10 @@ TODO
 * Rotational next/prev team and pet selection
 * Additional useful Gameplay binds, eg, "Invite Target," "Quit to Desktop," more
 * More error detection and handling
+* Support [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) in SoD
 * Kheldian form/travel binds in speed-on-demand
 * Temporary powers in speed-on-demand
-* Support [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) in SoD
-* Buffer bind sets, as well as others TBD, in Custom Binds
+* Additional custom bind types
 * Roll standalone binaries for Windows, MacOS, Linux
     * In progress... TODO: sign / notarize MacOS App?
 * More and better help text and documentation
@@ -83,9 +84,25 @@ Mac / Linux users: In a terminal, `cd` to where you put the BindControl source, 
 Credits and License
 -------------------
 
-BindControl is in many places a direct port of [CityBinder](http://sourceforge.net/projects/citybinder/) code, and in most other places was extremely influenced by it.
+BindControl is in many places a direct port of [CityBinder](http://sourceforge.net/projects/citybinder/) code, and in most other places was extremely influenced by it.  Keybinding code drew from similar code in [PADRE](https://padre.perlide.org/).
 
-Speed on Demand binds are based on the [original SoD binds by Gnarly](https://mega.nz/folder/4HB2kAoC#Hy1m4EXbcyrPXxPPMCSb8w).  Advanced teleport binds are based on a (long-lost) program written by Dr Letharga.  Mastermind binds adapted from [Sandalphan's Mastermind Numeric Keypad Pet Controls](https://web.archive.org/web/20120904222729/http://boards.cityofheroes.com/showthread.php?t=117256)
+Citybinder's acknowledgements are reproduced below:
+```
+    Obviously, without Cryptic and NCSoft to have created/funded/published
+    City of Heroes and City of Villains, there would be no point to this
+    program.  Thanks to Gnarly and the numerous people who contributed to the
+    creation of the Speed on Demand System.  Thanks to Sandolphan/Khaiba and
+    the many people who posted Mastermind binds in the CoV Beta forums.
+    Again thanks to Sandolphan for the Bodyguard mode binds.  Also thanks
+    to the following people, who directly contributed to CityBinder, either
+    with bug reports, feature suggestions, or contirbuted binds.
+    PerezPersuader, Blue_Daze, Back_Blast, IronVulture, Darkelven,
+    Shadowhand, Knight_Marshal, Nilt_, Psygon, DuskA, CyberKnight7, ErieFF,
+    Darc_Reign, Beerninja, BarfBag, Oronis, TrystarMojo, Pyrobard,
+    Ang_Rui_Shen, Konoko, Draznar, Local_Man, tyrose, Caustic, 80sboi,
+    DarknessEternal, reiella, Robotech_Master, Ground_Zeroo, Stylina, and
+    ShieldBearer.
+```
 
 BindControl is licensed under the GPL, version 3 or later.
 

@@ -53,6 +53,7 @@ for poolname, pool in GameData.MiscPowers['Pool'].items():
     for power in pool:
 
         power = re.sub(r'\W+', '', power)
+        poolname = re.sub(r'\W+', '', poolname)
         filename = f"{poolname}_{power}.png"
         if not os.path.exists(f"{parentdir}/icons/Powers/{filename}"):
             print(f"Pool Power: {filename}")

@@ -9,12 +9,18 @@ class PowerPicker(wx.Button):
         self.SetLabel('...')
         self.SetMinSize((-1, 40))
         self.Bind(wx.EVT_BUTTON, self.OnPowerPicker)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
         self.IconFilename = ''
 
     def OnPowerPicker(self, _):
         self.Picker = PowerPickerMenu(self)
         self.Picker.BuildMenu()
         self.PopupMenu(self.Picker)
+
+    def OnRightClick(self, _):
+        self.SetLabel('...')
+        self.IconFilename = ''
+        self.SetBitmapLabel(GetIcon('Empty'))
 
 class PowerPickerMenu(wx.Menu):
 

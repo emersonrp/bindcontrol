@@ -257,7 +257,7 @@ class AutoPowerCmd(PowerBindCmd):
         autoPowerSizer = wx.BoxSizer(wx.HORIZONTAL)
         autoPowerSizer.Add(wx.StaticText(dialog, -1, "Power:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         self.autoPowerName = PowerPicker(dialog)
-        autoPowerSizer.Add(self.autoPowerName, 1, wx.EXPAND)
+        autoPowerSizer.Add(self.autoPowerName, 1, wx.ALIGN_CENTER_VERTICAL)
 
         return autoPowerSizer
 
@@ -276,7 +276,7 @@ class AutoPowerCmd(PowerBindCmd):
 
 ####### Chat Command
 class ChatCmd(PowerBindCmd):
-    def __init__(self, dialog, init):
+    def __init__(self, dialog, init = {}):
         self.chatChannelMap = { # before __init__
             'say' : 's',
             'group' : 'g',

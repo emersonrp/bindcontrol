@@ -103,8 +103,6 @@ class Gameplay(Page):
         self.Ctrls['TeamEnable'] = teamenable
         teamenable.SetValue(self.Init['TeamEnable'])
 
-        teamenable.Disable()
-
         teamhelpbutton = HelpButton(self, 'TeamSelectBinds.html')
 
         teamenablesizer.Add(teamenable, 0, wx.ALIGN_CENTER_VERTICAL)
@@ -242,8 +240,6 @@ class Gameplay(Page):
 
         self.SynchronizeUI()
 
-    def getHelpHandler(self, evt): return
-
     def SynchronizeUI(self):
         self.OnTPSEnable()
         self.OnTeamEnable()
@@ -333,6 +329,16 @@ class Gameplay(Page):
 
             ResetFile = self.Profile.ResetFile()
 
+
+        if self.GetState('TeamEnable'):
+            self.ts2CreateSet(1,0,0,self.Profile.ResetFile())
+            for tsize in 1,2,3,4,5,6,7,8:
+                for tpos in range(0,tsize+1):
+                    for tsel in range(0,tsize+1):
+                        if (tsel != tpos) or (tsel == 0):
+                            file = self.Profile.GetBindFile('teamsel2', f'{tsize}{tpos}{tsel}.txt')
+                            self.ts2CreateSet(tsize, tpos, tsel, file)
+
         ### Chat Binds with notifier, if appropriate
         if self.GetState('ChatEnable'):
             notifier = ''
@@ -345,6 +351,55 @@ class Gameplay(Page):
             ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeFileKeyBind([notifier, 'autoreply']))
             ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
             ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
+
+    def formatTeamConfig(self, size, pos):
+        sizetext = f"{size}-Man"
+        postext = ", No Spot"
+        if pos > 0   : postext = f", {ordinals[pos-1]} Spot"
+        if size == 1 : sizetext = "Solo"; postext = ""
+        if size == 2 : sizetext = "Duo"
+        if size == 3 : sizetext = "Trio"
+        return f"[{sizetext}{postext}]"
+
+    def ts2CreateSet(self, tsize, tpos, tsel, file):
+        # tsize is the size of the team at the moment
+        # tpos is the position of the player at the moment, or 0 if unknown
+        # tsel is the currently selected team member as far as the bind knows, or 0 if unknown
+        file.SetBind(self.GetState('TeamReset'), self, UI.Labels['TeamReset'], f'tell $name, Re-Loaded Single Key Team Select Bind.$$bindloadfilesilent {self.Profile.GameBindsDir()}\\teamsel2\\100.txt')
+        if tsize < 8:
+            file.SetBind(self.GetState('IncTeamSize'), self, UI.Labels['IncTeamSize'], f'tell $name, {self.formatTeamConfig(tsize+1,tpos)}$$bindloadfilesilent {self.Profile.GameBindsDir()}\\teamsel2\\{tsize+1}{tpos}{tsel}.txt')
+        else:
+            file.SetBind(self.GetState('IncTeamSize'), self, UI.Labels['IncTeamSize'], 'nop')
+
+        if tsize == 1:
+            file.SetBind(self.GetState('DecTeamSize'), self, UI.Labels['DecTeamSize'], 'nop')
+            file.SetBind(self.GetState('IncTeamPos'), self, UI.Labels['IncTeamPos'], 'nop')
+            file.SetBind(self.GetState('DecTeamPos'), self, UI.Labels['DecTeamPos'], 'nop')
+            file.SetBind(self.GetState('SelNextTeam'), self, UI.Labels['SelNextTeam'], 'nop')
+            file.SetBind(self.GetState('SelPrevTeam'), self, UI.Labels['SelPrevTeam'], 'nop')
+        else:
+            selnext = tsel+1
+            selprev = tsel-1
+            if selnext > tsize : selnext = 1
+            if selprev < 1     : selprev = tsize
+            if selnext == tpos : selnext = selnext + 1
+            if selprev == tpos : selprev = selprev - 1
+            if selnext > tsize : selnext = 1
+            if selprev < 1     : selprev = tsize
+            tposup = tpos+1
+            tposdn = tpos-1
+            if tposup > tsize  : tposup = 0
+            if tposdn < 0      : tposdn = tsize
+            newpos = tpos
+            newsel = tsel
+            if tsize-1 < tpos  : newpos = tsize-1
+            if tsize-1 < tsel  : newsel = tsize-1
+            if tsize == 2      : newpos = 0; newsel = 0
+            file.SetBind(self.GetState('DecTeamSize'), self, UI.Labels['DecTeamSize'],  f'tell $name, {self.formatTeamConfig(tsize-1,newpos)}$$bindloadfilesilent {self.Profile.GameBindsDir()}\\teamsel2\\{tsize-1}{newpos}{newsel}.txt')
+            file.SetBind(self.GetState('IncTeamPos'), self, UI.Labels['IncTeamPos'],   f'tell $name, {self.formatTeamConfig(tsize,  tposup)}$$bindloadfilesilent {self.Profile.GameBindsDir()}\\teamsel2\\{tsize  }{tposup}{tsel  }.txt')
+            file.SetBind(self.GetState('DecTeamPos'), self, UI.Labels['DecTeamPos'],   f'tell $name, {self.formatTeamConfig(tsize,  tposdn)}$$bindloadfilesilent {self.Profile.GameBindsDir()}\\teamsel2\\{tsize  }{tposdn}{tsel  }.txt')
+            file.SetBind(self.GetState('SelNextTeam'), self, UI.Labels['SelNextTeam'], f'teamselect {selnext}$$bindloadfilesilent {self.Profile.GameBindsDir()}\\teamsel2\\{tsize}{tpos}{selnext}.txt')
+            file.SetBind(self.GetState('SelPrevTeam'), self, UI.Labels['SelPrevTeam'], f'teamselect {selprev}$$bindloadfilesilent {self.Profile.GameBindsDir()}\\teamsel2\\{tsize}{tpos}{selprev}.txt')
 
     UI.Labels.update({
         'TPSSelMode' : "Team / Pet Select Mode",

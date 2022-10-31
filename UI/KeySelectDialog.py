@@ -1,7 +1,6 @@
 import re
 import wx
 import wx.html
-from wx.html import HtmlWindow
 import string
 import UI
 import wx.lib.newevent
@@ -57,11 +56,10 @@ class KeySelectDialog(wx.Dialog):
         wx.Dialog.__init__(self, button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
 
         # Mystery panel must be in here in order to get key events
-        dummyPanel = wx.Panel(self, -1)
+        _ = wx.Panel(self, -1)
 
         if not self.Desc:
-            print("Tried to make a KeySelectDialog for something with no desc")
-            return
+            raise Exception("Tried to make a KeySelectDialog for something with no desc")
 
         desc = f"Press the key you want bound to {self.Desc}:"
 
@@ -150,7 +148,6 @@ class KeySelectDialog(wx.Dialog):
             ModKey = ''
             if isinstance(event, wx.KeyEvent) and event.HasAnyModifiers():
 
-                # TODO - Check modKeyFlags - sometimes LCTRL+LSHIFT comes out with RSHIFT
                 if event.GetKeyCode() == wx.WXK_SHIFT:
                     if SeparateLR and modKeyFlags:
                         rawFlags = event.GetRawKeyFlags()

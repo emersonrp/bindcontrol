@@ -193,6 +193,7 @@ class PowerBinderButton(wx.Button):
 
         self.tgtTxtCtrl = tgtTxtCtrl
         self.Bind(wx.EVT_BUTTON, self.PowerBinderEventHandler)
+        self.SetToolTip("Launch PowerBinder")
 
     def PowerBinderEventHandler(self, _):
         dlg = self.PowerBinderDialog

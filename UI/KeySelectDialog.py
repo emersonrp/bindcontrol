@@ -1,4 +1,7 @@
+import re
 import wx
+import wx.html
+from wx.html import HtmlWindow
 import string
 import UI
 import wx.lib.newevent
@@ -34,8 +37,14 @@ def KeySelectEventHandler(evt):
 
         # re-label the button / set its state
         if newKey:
-            button.SetLabel(newKey)
             button.Key = newKey
+            # shorten and <small>ify label if it's long
+            if re.search(r'\+\w\w\w', newKey):
+                newKey = re.sub(r'SHIFT\+', 'S+', newKey)
+                newKey = re.sub(r'CTRL\+', 'C+', newKey)
+                newKey = re.sub(r'ALT\+', 'A+', newKey)
+                newKey = f"<small>{newKey}</small>"
+            button.SetLabelMarkup(newKey)
             wx.PostEvent(button, KeyChanged())
 
 class KeySelectDialog(wx.Dialog):
@@ -64,14 +73,15 @@ class KeySelectDialog(wx.Dialog):
         sizer = wx.BoxSizer(wx.VERTICAL);
 
         self.kbDesc = wx.StaticText( self, -1, desc,         style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
-        self.kbBind = wx.StaticText( self, -1, self.Binding, style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
-        self.kbErr  = wx.StaticText( self, -1, "",           style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
+        self.kbBind = wx.html.HtmlWindow( self, -1, size=(300,60), style=wx.html.HW_SCROLLBAR_NEVER)
+        self.kbBind.SetHTMLBackgroundColour(self.GetBackgroundColour())
+        self.kbErr  = wx.StaticText( self, -1, " ",          style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
 
         self.ShowBind()
 
-        sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 15);
-        sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);
-        sizer.Add( self.kbErr , 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15);
+        sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5);
+        sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL);
+        sizer.Add( self.kbErr , 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5);
         sizer.AddSpacer(15)
 
         if(modKeyFlags):
@@ -102,7 +112,7 @@ class KeySelectDialog(wx.Dialog):
         self.SetFocus()
 
     def ShowBind(self):
-        self.kbBind.SetLabelMarkup('<b><big>' + self.Binding + '</big></b>')
+        self.kbBind.SetPage('<center><b><font size=+4>' + self.Binding + '</font></b></center>')
 
     def handleBind(self, event):
         ### Algorithm:
@@ -132,7 +142,7 @@ class KeySelectDialog(wx.Dialog):
         else:
             code = "BUTTON" + str(event.GetButton())
 
-        KeyToBind = str(self.Keymap.get(code, ''))
+        KeyToBind = self.Keymap.get(code, '')
 
         if KeyToBind:
             self.KeySlot = KeyToBind
@@ -206,7 +216,7 @@ class KeySelectDialog(wx.Dialog):
                 self.kbErr.SetLabel(conflictString)
                 self.kbBind.SetForegroundColour(wx.RED)
             else:
-                self.kbErr.SetLabel("")
+                self.kbErr.SetLabel(" ")
                 self.kbBind.SetForegroundColour(wx.BLACK)
 
         self.Layout()
@@ -297,7 +307,7 @@ class KeySelectDialog(wx.Dialog):
 
         # Add alphanumerics
         for alphanum in (list(string.ascii_uppercase) + list(range(10))):
-            self.Keymap[ord(str(alphanum))] = alphanum
+            self.Keymap[ord(str(alphanum))] = str(alphanum)
 
 from BindFile import KeyBind
 from Page import Page

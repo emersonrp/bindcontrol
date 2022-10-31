@@ -389,9 +389,6 @@ class SoD(Page):
                     if not isinstance(control.CtlLabel, str):
                         control.CtlLabel.Enable(self.GetState('EnableSoD'))
 
-            # and if everything's off, we're done
-            if not self.GetState('EnableSoD'): return
-
             c['NonSoDMode']         .Enable(self.GetState('NonSoDEnable'))
             c['NonSoDMode'].CtlLabel.Enable(self.GetState('NonSoDEnable'))
 

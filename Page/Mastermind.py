@@ -176,16 +176,18 @@ class Mastermind(Page):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
+        petcmdenablesizer = wx.BoxSizer(wx.HORIZONTAL)
         petcmdenable = wx.CheckBox( self, -1, 'Enable Pet Action Binds')
         petcmdenable.SetToolTip( wx.ToolTip('Check this to enable the Mastermind Pet Action Binds') )
         petcmdenable.Bind(wx.EVT_CHECKBOX, self.OnPetCmdEnable)
-
         self.Ctrls['PetCmdEnable'] = petcmdenable
-
-        petCommandsKeys = ControlGroup(self, self, width = 5, label = "Pet Action Binds", flexcols = [4])
-
+        petcmdenable.SetValue(self.Init['PetCmdEnable'])
+        petcmdhelpbutton = HelpButton(self, 'PetActionBinds.html')
+        petcmdenablesizer.Add(petcmdenable, 0, wx.ALIGN_CENTER_VERTICAL)
+        petcmdenablesizer.Add(petcmdhelpbutton, 0)
 
         # Iterate the data structure at the top and make the grid of controls for the basic pet binds
+        petCommandsKeys = ControlGroup(self, self, width = 5, label = "Pet Action Binds", flexcols = [4])
         for command in self.petCommandKeyDefinitions:
 
             petCommandsKeys.AddControl(
@@ -329,9 +331,7 @@ class Mastermind(Page):
         petnpenable.Bind(wx.EVT_CHECKBOX, self.OnPetNPEnable)
         self.Ctrls['PetNPEnable'] = petnpenable
         petnpenable.SetValue(self.Init['PetNPEnable'])
-
         petnphelpbutton = HelpButton(self, 'PetOneKeyBinds.html')
-
         petnpenablesizer.Add(petnpenable, 0, wx.ALIGN_CENTER_VERTICAL)
         petnpenablesizer.Add(petnphelpbutton, 0)
 
@@ -349,7 +349,7 @@ class Mastermind(Page):
             )
 
         # Bring it all together
-        sizer.Add(petcmdenable, 0, wx.EXPAND|wx.TOP|wx.LEFT, 16)
+        sizer.Add(petcmdenablesizer, 0, wx.EXPAND|wx.TOP|wx.LEFT, 16)
         sizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 16)
         sizer.AddSpacer(10)
         sizer.Add(petselenable, 0, wx.EXPAND|wx.ALL, 16)

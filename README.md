@@ -16,7 +16,6 @@ Features
 
 * Runs on Windows, MacOS, and Linux
 * Separate profiles for different characters or situations
-* <i>in progress</i> - team/pet rotational selection
 * Chat binds with optional 'typing' notifier
 * Custom Binds
     * create simple binds using PowerBinder, a flexible tool for putting together arbitrary commands into bind strings
@@ -35,11 +34,11 @@ Features
     * pets can give feedback on each order;  chattiness can be toggled via keybind
     * "bodyguard mode" shortcuts -- define which pets should be treated as bodyguards, and toggle Bodyguard Mode on and off for them, with attack/follow/stance/etc orders then applying to the remaining pets.
     * by-name pet selection
+    * next-pet / previous-pet binds
 
 TODO
 ----
 
-* Rotational next/prev team and pet selection
 * Additional useful Gameplay binds, eg, "Invite Target," "Quit to Desktop," more
 * More error detection and handling
 * Support [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) in SoD

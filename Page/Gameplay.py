@@ -34,9 +34,10 @@ class Gameplay(Page):
             'DecTeamPos'  : '',
             'TeamReset'   : '',
 
-            'FPSEnable'       : False,
-            'FPSBindKey'      : 'P',
-            'NetgraphBindKey' : 'N',
+            'QuitToDesktop' : '',
+            'InviteTarget'  : '',
+            'FPSBindKey'      : '',
+            'NetgraphBindKey' : '',
 
             'ChatEnable' : True,
             'StartChat'  : 'ENTER',
@@ -106,13 +107,13 @@ class Gameplay(Page):
 
         TeamSelBox = ControlGroup(self, self, 'Team Select')
         for b in (
-            ['SelNextTeam', 'Choose the key that will select the next teammate from the currently selected one'],
-            ['SelPrevTeam', 'Choose the key that will select the previous teammate from the currently selected one'],
-            ['IncTeamSize', 'Choose the key that will increase the size of your teammate rotation'],
-            ['DecTeamSize', 'Choose the key that will decrease the size of your teammate rotation'],
-            ['IncTeamPos', 'Choose the key that will move you to the next higher slot in the team rotation'],
-            ['DecTeamPos', 'Choose the key that will move you to the next lower slot in the team rotation'],
-            ['TeamReset', 'Choose the key that will reset your team rotation to solo'],
+            ['SelNextTeam' , 'Choose the key that will select the next teammate from the currently selected one']     ,
+            ['SelPrevTeam' , 'Choose the key that will select the previous teammate from the currently selected one'] ,
+            ['IncTeamSize' , 'Choose the key that will increase the size of your teammate rotation']                  ,
+            ['DecTeamSize' , 'Choose the key that will decrease the size of your teammate rotation']                  ,
+            ['IncTeamPos'  , 'Choose the key that will move you to the next higher slot in the team rotation']        ,
+            ['DecTeamPos'  , 'Choose the key that will move you to the next lower slot in the team rotation']         ,
+            ['TeamReset'   , 'Choose the key that will reset your team rotation to solo']                             ,
         ):
             TeamSelBox.AddControl(
                 ctlName = b[0],
@@ -120,33 +121,6 @@ class Gameplay(Page):
                 tooltip = b[1],
             )
         leftSizer.Add(TeamSelBox, 0, wx.EXPAND|wx.ALL, 10)
-
-        ### Enable FPS
-        FPSSizer = wx.FlexGridSizer(0,2,10,10)
-
-        fpsenable = wx.CheckBox( self, -1, 'Enable FPS/Netgraph Binds')
-        fpsenable.SetToolTip( wx.ToolTip('Check this to enable the FPS Meter and Network Graph Binds') )
-        fpsenable.Bind(wx.EVT_CHECKBOX, self.OnFPSEnable)
-        self.Ctrls['FPSEnable'] = fpsenable
-
-        fpshelpbutton = HelpButton(self, 'FPSBinds.html')
-
-        FPSSizer.Add(fpsenable, 0, wx.ALIGN_CENTER_VERTICAL)
-        FPSSizer.Add(fpshelpbutton, wx.ALIGN_RIGHT, 0)
-
-        rightSizer.Add(FPSSizer, 0, wx.EXPAND|wx.ALL, 10)
-
-        ##### FPS Keys
-        controlsBox = ControlGroup(self, self, "FPS / Netgraph")
-        controlsBox.AddControl(
-            ctlName = 'FPSBindKey',
-            ctlType = 'keybutton',
-        )
-        controlsBox.AddControl(
-            ctlName = 'NetgraphBindKey',
-            ctlType = 'keybutton',
-        )
-        rightSizer.Add(controlsBox, 0, wx.EXPAND|wx.ALL, 10)
 
         ### Enable Chat
         ChatSizer = wx.FlexGridSizer(0,2,10,10)
@@ -190,8 +164,23 @@ class Gameplay(Page):
             ctlType = 'text',
             tooltip = "Choose the message to display when you are typing chat messages or commands",
         )
-
         rightSizer.Add(chatBindBox, 0, wx.EXPAND|wx.ALL, 10)
+
+        ### Helpful Binds
+        HelpfulSizer = ControlGroup(self, self, 'Helpful Binds')
+        for b in (
+            ['QuitToDesktop'   , 'Choose the key that will quit directly to the desktop']  ,
+            ['InviteTarget'    , 'Choose the key that will invite your target to a group'] ,
+            ['FPSBindKey'      , 'Choose the key that will toggle the FPS Display']        ,
+            ['NetgraphBindKey' , 'Choose the key that will toggle the Netgraph Display']   ,
+        ):
+            HelpfulSizer.AddControl(
+                ctlName = b[0],
+                ctlType = 'keybutton',
+                tooltip = b[1],
+            )
+
+        rightSizer.Add(HelpfulSizer, 0, wx.EXPAND|wx.ALL, 10)
 
         topSizer.Add(leftSizer, 0, wx.ALL|wx.EXPAND, 10)
         topSizer.Add(rightSizer, 0, wx.ALL|wx.EXPAND, 10)
@@ -204,7 +193,6 @@ class Gameplay(Page):
     def SynchronizeUI(self):
         self.OnTPSEnable()
         self.OnTeamEnable()
-        self.OnFPSEnable()
         self.OnChatEnable()
         self.OnTypeEnable()
 
@@ -219,11 +207,6 @@ class Gameplay(Page):
         self.DisableControls(self.GetState('TeamEnable'),
             ['SelNextTeam', 'SelPrevTeam','IncTeamSize', 'DecTeamSize',
             'IncTeamPos', 'DecTeamPos', 'TeamReset'])
-        if evt: evt.Skip()
-
-    def OnFPSEnable(self, evt = None):
-        self.DisableControls(self.GetState('FPSEnable'),
-            ['FPSBindKey','NetgraphBindKey'])
         if evt: evt.Skip()
 
     def OnChatEnable(self, evt = None):
@@ -241,11 +224,6 @@ class Gameplay(Page):
 
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()
-
-        ### FPS/Netgraph
-        if self.GetState('FPSEnable'):
-            ResetFile.SetBind(self.Ctrls['FPSBindKey']     .MakeFileKeyBind('++showfps++netgraph'))
-            ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
 
         ### Team / Pet Select
         if self.GetState('TPSEnable'):
@@ -307,6 +285,12 @@ class Gameplay(Page):
             ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
             ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
 
+        ### Helpful Binds
+        ResetFile.SetBind(self.Ctrls['QuitToDesktop']  .MakeFileKeyBind('quit'))
+        ResetFile.SetBind(self.Ctrls['InviteTarget']   .MakeFileKeyBind('invite $target'))
+        ResetFile.SetBind(self.Ctrls['FPSBindKey']     .MakeFileKeyBind('++showfps'))
+        ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
+
     def formatTeamConfig(self, size, pos):
         sizetext = f"{size}-Man"
         postext = ", No Spot"
@@ -363,6 +347,9 @@ class Gameplay(Page):
         'IncTeamPos'  : "Increase Team Position",
         'DecTeamPos'  : "Decrease Team Position",
         'TeamReset'   : "Reset Team Rotation",
+
+        'QuitToDesktop' : 'Quit to Desktop',
+        'InviteTarget'  : 'Invite Target to Group',
 
         'FPSBindKey'      : "Toggle FPS Display",
         'NetgraphBindKey' : "Toggle Netgraph Display",

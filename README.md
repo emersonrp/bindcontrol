@@ -3,7 +3,7 @@ BindControl
 
 BindControl is a helper app for creating and maintaining keybinds for City of Heroes.
 
-It is an enhanced port of Konoko and Monorail's [CityBinder 0.76](http://sourceforge.net/projects/citybinder/), using the WxWidgets UI toolkit.
+It is an enhanced port of Konoko and Monorail's [CityBinder 0.76](http://sourceforge.net/projects/citybinder/), using Python and the WxWidgets UI toolkit.
 
 During City of Heroes' original run, CityBinder was the go-to app for keybinds.  It's written in lua, using the IUP toolkit, and the required versions of those can be difficult to set up for development on modern OSes.  I wanted to add features and clean up the UI, so in a stunning and likely unwise act of hubris, I instead started work on BindControl.
 
@@ -28,17 +28,19 @@ Features
     * by-type
     * largest-first or smallest-first
     * optional /say feedback
-* Mastermind / pet binds
+* Mastermind / Pet Binds
     * select pets by power level: all, minions, lieutenants, and boss
     * orders for aggressive / defensive / passive stances; attack, follow, go to, and stay
     * pets can give feedback on each order;  chattiness can be toggled via keybind
-    * "bodyguard mode" shortcuts -- define which pets should be treated as bodyguards, and toggle Bodyguard Mode on and off for them, with attack/follow/stance/etc orders then applying to the remaining pets.
+    * "bodyguard mode" shortcuts -- define which pets should be treated as bodyguards, and toggle Bodyguard Mode on and off for them, <strike>with attack/follow/stance/etc orders then applying to the remaining pets.</strike> (<i>Not working as intended</i>)
     * by-name pet selection
     * next-pet / previous-pet binds
 
 TODO
 ----
 
+* Bodyguard mode, as implemented in citybinder, doesn't work as intended, and might not be able to due to game restrictions.
+* Investigate improvements to Mastermind binds to clarify and expand the behavior.
 * Additional useful Gameplay binds, eg, "Invite Target," "Quit to Desktop," more
 * More error detection and handling
 * Support [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) in SoD
@@ -50,13 +52,12 @@ TODO
 * More and better help text and documentation
 * Fix bugs as found
 
-
 Using
 -----
 
 <b>Windows and MacOS users:  try the binaries from the [latest release](https://github.com/emersonrp/bindcontrol/releases), and give feedback.  If they work for you, they're the quickest path to victory.</b>
 
-Failing that, or if you want to tinker with the Python code:
+Failing that, or if you want to run bleeding edge code:
 
 Dependencies
 ------------
@@ -73,12 +74,11 @@ Linux users, install your distribution's packages for Python 3 and wxPython.
 Running from Source
 -------------------
 
-Clone this repo, or get the source as a ZIP file and unzip it somewhere.
+Clone this repo.
 
 Windows users:  Double-click `BindControl.py` in the top-level folder
 
 Mac / Linux users: In a terminal, `cd` to where you put the BindControl source, then `python BindControl.py`.  Some distributions might need `python3` instead of `python`.
-
 
 Credits and License
 -------------------

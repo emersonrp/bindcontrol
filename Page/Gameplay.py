@@ -34,12 +34,6 @@ class Gameplay(Page):
             'DecTeamPos'  : '',
             'TeamReset'   : '',
 
-            'PetEnable'   : False,
-            'SelNextPet'  : '',
-            'SelPrevPet'  : '',
-            'IncPetSize'  : '',
-            'DecPetSize'  : '',
-
             'FPSEnable'       : False,
             'FPSBindKey'      : 'P',
             'NetgraphBindKey' : 'N',
@@ -127,37 +121,6 @@ class Gameplay(Page):
             )
         leftSizer.Add(TeamSelBox, 0, wx.EXPAND|wx.ALL, 10)
 
-        ##### Pet Select Binds
-        petenablesizer = wx.BoxSizer(wx.HORIZONTAL)
-        petenable = wx.CheckBox( self, -1, 'Enable Pet Select')
-        petenable.SetToolTip( wx.ToolTip('Check this to enable the Single Key Pet Select Binds') )
-        petenable.Bind(wx.EVT_CHECKBOX, self.OnPetEnable)
-        self.Ctrls['PetEnable'] = petenable
-        petenable.SetValue(self.Init['PetEnable'])
-
-        pethelpbutton = HelpButton(self, 'PetSelectBinds.html')
-
-        petenablesizer.Add(petenable, 0, wx.ALIGN_CENTER_VERTICAL)
-        petenablesizer.Add(pethelpbutton, wx.ALIGN_RIGHT)
-
-        rightSizer.Add(petenablesizer, 0, wx.ALL, 10)
-
-
-        PetSelBox = ControlGroup(self, self, 'Pet Select')
-        for b in (
-            ['SelNextPet', 'Choose the key that will select the next pet from the currently selected one'],
-            ['SelPrevPet', 'Choose the key that will select the previous pet from the currently selected one'],
-            ['IncPetSize', 'Choose the key that will increase the size of your pet/henchman group rotation'],
-            ['DecPetSize', 'Choose the key that will decrease the size of your pet/henchman group rotation'],
-        ):
-            PetSelBox.AddControl(
-                ctlName = b[0],
-                ctlType = 'keybutton',
-                tooltip = b[1],
-            )
-
-        rightSizer.Add(PetSelBox, 0, wx.EXPAND|wx.ALL, 10)
-
         ### Enable FPS
         FPSSizer = wx.FlexGridSizer(0,2,10,10)
 
@@ -241,7 +204,6 @@ class Gameplay(Page):
     def SynchronizeUI(self):
         self.OnTPSEnable()
         self.OnTeamEnable()
-        self.OnPetEnable()
         self.OnFPSEnable()
         self.OnChatEnable()
         self.OnTypeEnable()
@@ -257,11 +219,6 @@ class Gameplay(Page):
         self.DisableControls(self.GetState('TeamEnable'),
             ['SelNextTeam', 'SelPrevTeam','IncTeamSize', 'DecTeamSize',
             'IncTeamPos', 'DecTeamPos', 'TeamReset'])
-        if evt: evt.Skip()
-
-    def OnPetEnable(self, evt = None):
-        self.DisableControls(self.GetState('PetEnable'),
-            ['SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize'])
         if evt: evt.Skip()
 
     def OnFPSEnable(self, evt = None):
@@ -337,13 +294,6 @@ class Gameplay(Page):
                             file = self.Profile.GetBindFile('teamsel2', f'{tsize}{tpos}{tsel}.txt')
                             self.ts2CreateSet(tsize, tpos, tsel, file)
 
-        # Prev / next pet binds
-        self.psCreateSet(1,0,self.Profile.ResetFile())
-        for tsize in 1,2,3,4,5,6:
-            for tsel in range(0,tsize+1):
-                file = self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt")
-                self.psCreateSet(tsize,tsel,file)
-
         ### Chat Binds with notifier, if appropriate
         if self.GetState('ChatEnable'):
             notifier = ''
@@ -403,30 +353,6 @@ class Gameplay(Page):
             file.SetBind(self.GetState('SelNextTeam'), self, UI.Labels['SelNextTeam'], f'teamselect {selnext}$$bindloadfilesilent {self.Profile.GameBindsDir()}\\teamsel2\\{tsize}{tpos}{selnext}.txt')
             file.SetBind(self.GetState('SelPrevTeam'), self, UI.Labels['SelPrevTeam'], f'teamselect {selprev}$$bindloadfilesilent {self.Profile.GameBindsDir()}\\teamsel2\\{tsize}{tpos}{selprev}.txt')
 
-    def psCreateSet(self, tsize, tsel, file):
-        # tsize is the size of the team at the moment
-        # tpos is the position of the player at the moment, or 0 if unknown
-        # tsel is the currently selected team member as far as the bind knows, or 0 if unknown
-        #file.SetBind(self.reset,'tell $name, Re-Loaded Single Key Team Select Bind.$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\10.txt')
-        if tsize < 6:
-            file.SetBind(self.GetState('IncPetSize'), self, UI.Labels['IncPetSize'], f'tell $name, [{tsize+1} Pet]$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\{tsize+1}{tsel}.txt')
-        else:
-            file.SetBind(self.GetState('IncPetSize'), self, UI.Labels['IncPetSize'], 'nop')
-        if tsize == 1:
-            file.SetBind(self.GetState('DecPetSize'), self, UI.Labels['DecPetSize'], 'nop')
-            file.SetBind(self.GetState('SelNextPet'), self, UI.Labels['SelNextPet'], f'petselect 0$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\{tsize}1.txt')
-            file.SetBind(self.GetState('SelPrevPet'), self, UI.Labels['SelPrevPet'], f'petselect 0$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\{tsize}1.txt')
-        else:
-            selnext,selprev = tsel+1,tsel-1
-            if selnext > tsize : selnext = 1
-            if selprev < 1 : selprev = tsize
-            newsel = tsel
-            if tsize-1 < tsel : newsel = tsize-1
-            if tsize == 2 : newsel = 0
-            file.SetBind(self.GetState('DecPetSize'), self, UI.Labels['DecPetSize'], f'tell $name, [{tsize-1} Pet]$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\{tsize-1}{newsel}.txt')
-            file.SetBind(self.GetState('SelNextPet'), self, UI.Labels['SelNextPet'], f'petselect {selnext-1}$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\{tsize}{selnext}.txt')
-            file.SetBind(self.GetState('SelPrevPet'), self, UI.Labels['SelPrevPet'], f'petselect {selprev-1}$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\{tsize}{selprev}.txt')
-
     UI.Labels.update({
         'TPSSelMode' : "Team / Pet Select Mode",
 
@@ -437,11 +363,6 @@ class Gameplay(Page):
         'IncTeamPos'  : "Increase Team Position",
         'DecTeamPos'  : "Decrease Team Position",
         'TeamReset'   : "Reset Team Rotation",
-
-        'SelNextPet' : "Select Next Pet",
-        'SelPrevPet' : "Select Previous Pet",
-        'IncPetSize' : "Increase Pet Group Size",
-        'DecPetSize' : "Decrease Pet Group Size",
 
         'FPSBindKey'      : "Toggle FPS Display",
         'NetgraphBindKey' : "Toggle Netgraph Display",

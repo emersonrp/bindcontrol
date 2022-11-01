@@ -83,10 +83,9 @@ class Profile(wx.Notebook):
             page = getattr(self, pageName)
             for ctrlname, ctrl in page.Ctrls.items():
                 if not ctrl.IsThisEnabled(): continue
-                if ctrl == button: continue
                 if isinstance(ctrl, bcKeyButton):
                     if key == ctrl.GetLabel():
-                        conflicts.append( {'page' : pageName, 'ctrl': UI.Labels[ctrlname]})
+                        conflicts.append( {'page' : page.TabTitle, 'ctrl': UI.Labels[ctrlname]})
         return conflicts
 
     def SetModified  (self, _ = None): self.Modified = True

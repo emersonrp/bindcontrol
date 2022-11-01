@@ -44,6 +44,7 @@ def KeySelectEventHandler(evt):
                 newKey = re.sub(r'ALT\+', 'A+', newKey)
                 newKey = f"<small>{newKey}</small>"
             button.SetLabelMarkup(newKey)
+            button.KeyBind.Key = newKey
             wx.PostEvent(button, KeyChanged())
 
 class KeySelectDialog(wx.Dialog):
@@ -210,11 +211,13 @@ class KeySelectDialog(wx.Dialog):
                 conflictString = ''
                 for conflict in conflicts:
                     conflictString = conflictString + f'Conflict with "{conflict["ctrl"]}" on {conflict["page"]} page.'
+                self.kbErr.SetForegroundColour(wx.RED)
                 self.kbErr.SetLabel(conflictString)
-                self.kbBind.SetForegroundColour(wx.RED)
+                self.kbBind.SetHTMLBackgroundColour((255,200,200))
             else:
+                self.kbErr.SetForegroundColour(wx.NullColour)
                 self.kbErr.SetLabel(" ")
-                self.kbBind.SetForegroundColour(wx.BLACK)
+                self.kbBind.SetHTMLBackgroundColour(wx.WHITE)
 
         self.Layout()
 

@@ -16,6 +16,8 @@ Features
 
 * Runs on Windows, MacOS, and Linux
 * Separate profiles for different characters or situations
+* One-key next-teammate / previous-teammate selection
+* Various helpful shortcut binds, "Quit to Desktop", "Invite Target", "Show FPS", "Show Netgraph" - more to come.
 * Chat binds with optional 'typing' notifier
 * Custom Binds
     * create simple binds using PowerBinder, a flexible tool for putting together arbitrary commands into bind strings
@@ -41,7 +43,6 @@ TODO
 
 * Bodyguard mode, as implemented in citybinder, doesn't work as intended, and might not be able to due to game restrictions.
 * Investigate improvements to Mastermind binds to clarify and expand the behavior.
-* Additional useful Gameplay binds, eg, "Invite Target," "Quit to Desktop," more
 * More error detection and handling
 * Support [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) in SoD
 * Kheldian form/travel binds in speed-on-demand

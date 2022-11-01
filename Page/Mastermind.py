@@ -1,6 +1,7 @@
 import wx
 import re
 import UI
+from UI.KeySelectDialog import bcKeyButton
 
 # Sandolphan / Khaiba's guide to these controls found at:
 # https://guidescroll.com/2011/07/city-of-heroes-mastermind-numeric-keypad-pet-controls/
@@ -129,8 +130,7 @@ class Mastermind(Page):
             'PetBodyguardAttack' : '',
             'PetBodyguardGoto' : '',
 
-
-            'PetCmdEnable': 0,
+            'PetCmdEnable': False,
 
             'PetChatToggle' : 'LALT+M',
             'PetSelect1' : 'F1',
@@ -155,13 +155,13 @@ class Mastermind(Page):
             'Pet6Bodyguard' : 0,
         }
         self.MMPowerSets = {
-            "Beast Mastery"   : { 'min' : 'wol', 'lts'  : 'lio', 'bos'  : 'dir' },
-            "Demon Summoning" : { 'min' : 'lin', 'lts'  : 'mons', 'bos' : 'pri' },
-            "Mercenaries"     : { 'min' : "sol",  'lts' : "spec", 'bos' : "com", },
+            "Beast Mastery"   : { 'min' : 'wol',  'lts' : 'lio',  'bos' : 'dir',  },
+            "Demon Summoning" : { 'min' : 'lin',  'lts' : 'mons', 'bos' : 'pri',  },
+            "Mercenaries"     : { 'min' : "sol",  'lts' : "spec", 'bos' : "com",  },
             "Necromancy"      : { 'min' : "zom",  'lts' : "grav", 'bos' : "lich", },
-            "Ninjas"          : { 'min' : "gen",  'lts' : "joun", 'bos' : "oni", },
-            "Robotics"        : { 'min' : "dron", 'lts' : "prot", 'bos' : "ass", },
-            "Thugs"           : { 'min' : "thu",  'lts' : "enf",  'bos' : "bru", },
+            "Ninjas"          : { 'min' : "gen",  'lts' : "joun", 'bos' : "oni",  },
+            "Robotics"        : { 'min' : "dron", 'lts' : "prot", 'bos' : "ass",  },
+            "Thugs"           : { 'min' : "thu",  'lts' : "enf",  'bos' : "bru",  },
         }
         self.TabTitle = "Mastermind / Pet Binds"
 
@@ -289,26 +289,37 @@ class Mastermind(Page):
         self.Ctrls['PetSelEnable'] = petselenable
 
         # get the pet names and binds to select them directly
-        petNames = ControlGroup(self, self, width = 4, label = "Pet Names and By-Name Selection Binds",flexcols=[1,3])
+        PetNames  = wx.StaticBoxSizer(wx.HORIZONTAL, self, label = "Pet Names and By-Name Keybinds")
+        PetInner = wx.GridBagSizer(hgap = 5, vgap = 5)
+        PetNames.Add(PetInner, 1, wx.ALL|wx.EXPAND, 10)
+        self.PetNameLabel = wx.StaticText(self, label = "Pet Name:")
+        self.PetKeyLabel  = wx.StaticText(self, label = "Select Key:")
+        PetInner.Add(self.PetNameLabel, (1,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        PetInner.Add(self.PetKeyLabel,  (2,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 
-        for PetID in [1,2,3,4,5,6]:
-            petNames.AddControl(
-                ctlName = f"Pet{PetID}Name",
-                ctlType = 'text',
-                tooltip = f"Specify Pet {PetID}'s Name for individual selection",
-            )
-            petNames.AddControl(
-                ctlName = f"PetSelect{PetID}",
-                ctlType = "keybutton",
-                tooltip = f"Choose the Key Combo to Select Pet {PetID} by Name"
-            )
-            self.Ctrls[f"Pet{PetID}Name"].Bind(wx.EVT_TEXT, self.OnNameTextChange)
+        for i in (1,2,3,4,5,6):
+            label = wx.StaticText(self, label = f'Pet {i}')
+            button = bcKeyButton(self, -1, init = {
+                'CtlName'  : f'PetSelect{i}',
+                'CtlLabel' : label,
+                'Key'      : self.Init[f'PetSelect{i}'],
+            })
+            self.Ctrls[f'PetSelect{i}'] = button
+            name = wx.TextCtrl(self)
+            name.Bind(wx.EVT_TEXT, self.OnNameTextChange)
+            name.CtlLabel = None
+            self.Ctrls[f'Pet{i}Name'] = name
+
+            PetInner.Add(label,  (0,i), flag=wx.EXPAND|wx.ALIGN_CENTER)
+            PetInner.Add(name,   (1,i), flag=wx.EXPAND)
+            PetInner.Add(button, (2,i), flag=wx.EXPAND)
+            PetInner.AddGrowableCol(i)
 
         sizer.Add(petcmdenable, 0, wx.EXPAND|wx.TOP|wx.LEFT, 16)
         sizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 16)
         sizer.AddSpacer(10)
         sizer.Add(petselenable, 0, wx.EXPAND|wx.ALL, 16)
-        sizer.Add(petNames, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 16)
+        sizer.Add(PetNames, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 16)
 
         self.SynchronizeUI()
 
@@ -320,6 +331,8 @@ class Mastermind(Page):
 
         for _, control in self.Ctrls.items():
             control.Enable(bool(arch == "Mastermind" and pset))
+        self.PetNameLabel.Enable(bool(arch == "Mastermind" and pset))
+        self.PetKeyLabel .Enable(bool(arch == "Mastermind" and pset))
         self.OnPetCmdEnable()
         self.OnPetSelEnable()
 
@@ -339,9 +352,11 @@ class Mastermind(Page):
         if evt: evt.Skip()
 
     def OnPetSelEnable(self, evt = None):
-        enabled = self.GetState('PetSelEnable')
+        enabled = bool(self.GetState('PetSelEnable'))
         for i in [1,2,3,4,5,6]:
             self.DisableControls(enabled, [ f"Pet{i}Name", f"PetSelect{i}" ])
+        self.PetNameLabel.Enable(enabled)
+        self.PetKeyLabel .Enable(enabled)
 
         self.OnBGCheckboxes()
         if evt: evt.Skip()
@@ -379,16 +394,6 @@ class Mastermind(Page):
             self.Ctrls[f"Pet{petid}Bodyguard"]         .Enable(bgEnabled)
             self.Ctrls[f"Pet{petid}Bodyguard"].CtlLabel.Enable(bgEnabled)
         if evt: evt.Skip()
-
-    def HelpText(self):
-        return """
-The Original Mastermind Control Binds
-were created in CoV Beta by Khaiba
-a.k.a. Sandolphan
-Bodyguard code inspired directly from
-Sandolphan's Bodyguard binds.
-Thugs added by Konoko!
-        """
 
     ### BIND CREATION METHODS
     def mmBGSelBind(self, profile, file, PetBodyguardResponse, powers):

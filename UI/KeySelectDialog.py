@@ -314,9 +314,9 @@ class bcKeyButton(wx.Button):
         wx.Button.__init__(self, parent, id)
         self.CtlName  : str           = init.get('CtlName', None)
         self.CtlLabel : wx.StaticText = init.get('CtlLabel', None)
-        self.KeyBind  : KeyBind       = init.get('KeyBind', None)
         self.Key      : str           = init.get('Key', '')
         self.Page     : Page          = parent
+        self.KeyBind  : KeyBind       = init.get('KeyBind', KeyBind(self.Key, self.Page, ''))
 
         self.SetLabel(self.Key)
 

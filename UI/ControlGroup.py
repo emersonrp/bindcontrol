@@ -105,7 +105,6 @@ class ControlGroup(wx.StaticBoxSizer):
         elif ctlType == ('dirpicker'):
             control = wx.DirPickerCtrl(
                 CtlParent, -1, Init[ctlName], Init[ctlName],
-                #style = wx.DIRP_USE_TEXTCTRL|wx.DIRP_SMALL,
             )
         elif ctlType == ('colorpicker'):
             control = wx.ColourPickerCtrl( CtlParent, -1, contents)
@@ -120,7 +119,7 @@ class ControlGroup(wx.StaticBoxSizer):
         control.CtlLabel = None
         if not noLabel and CtlLabel:
             CtlLabel.SetToolTip( wx.ToolTip(tooltip))
-            self.InnerSizer.Add( CtlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+            self.InnerSizer.Add( CtlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
             control.CtlLabel = CtlLabel
             CtlLabel.control = control
 

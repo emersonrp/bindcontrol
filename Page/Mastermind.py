@@ -225,9 +225,23 @@ class Mastermind(Page):
         )
         bgCB.Bind(wx.EVT_CHECKBOX, self.OnBGCheckboxes)
 
-        # Add a blank row
-        for i in [5,6,7]:
-            petCommandsKeys.AddControl( ctlName = f'spacer{i}', ctlType = 'statictext', noLabel = True,)
+        petCommandsKeys.AddControl( ctlName = f'spacer5', ctlType = 'statictext', noLabel = True,)
+
+        staticbox = petCommandsKeys.GetStaticBox()
+        bgSelectText = wx.StaticText(staticbox, label = "Select Bodyguard Pets:")
+        petCommandsKeys.InnerSizer.Add(bgSelectText, 1, wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 10)
+        bgsizer = wx.BoxSizer(wx.HORIZONTAL)
+        petcbs = []
+        for PetID in [1,2,3,4,5,6]:
+            petcb = wx.CheckBox(staticbox, -1, str(PetID))
+            petcbs.append(petcb)
+            self.Ctrls[f"Pet{PetID}Bodyguard"] = petcb
+            petcb.CtlLabel = bgSelectText
+            petcb.SetToolTip(f"Select whether pet {PetID} acts as Bodyguard")
+            bgsizer.Add(petcb, 0, wx.LEFT|wx.RIGHT, 5)
+
+        petCommandsKeys.InnerSizer.Add(bgsizer, 1, wx.ALIGN_CENTER_VERTICAL)
+
 
         petCommandsKeys.AddControl(
             ctlType = 'keybutton',
@@ -252,7 +266,6 @@ class Mastermind(Page):
             ctlType = 'keybutton',
             tooltip = "Choose the key combo that will command your bodyguards to attack your target",
         )
-        staticbox = petCommandsKeys.GetStaticBox()
         enableBGAttack = wx.CheckBox(staticbox, -1, "Enable")
         enableBGAttack.Bind(wx.EVT_CHECKBOX, self.OnBGCheckboxes)
         enableBGAttack.SetValue(self.Init['PetBodyguardAttackEnabled'])
@@ -274,20 +287,6 @@ class Mastermind(Page):
         self.Ctrls['PetBodyguardGotoEnabled'] = enableBGGoto
         petCommandsKeys.InnerSizer.Add(enableBGGoto, 0, wx.ALL|wx.EXPAND, 5)
 
-
-        bgSelectText = wx.StaticText(staticbox, label = "Select Bodyguard Pets:")
-        petCommandsKeys.InnerSizer.Add(bgSelectText, 1, wx.LEFT|wx.RIGHT, 10)
-        bgsizer = wx.BoxSizer(wx.HORIZONTAL)
-        petcbs = []
-        for PetID in [1,2,3,4,5,6]:
-            petcb = wx.CheckBox(staticbox, -1, str(PetID))
-            petcbs.append(petcb)
-            self.Ctrls[f"Pet{PetID}Bodyguard"] = petcb
-            petcb.CtlLabel = bgSelectText
-            petcb.SetToolTip(f"Select whether pet {PetID} acts as Bodyguard")
-            bgsizer.Add(petcb, 0, wx.LEFT|wx.RIGHT, 5)
-
-        petCommandsKeys.InnerSizer.Add(bgsizer, 1)
 
         petselenable = wx.CheckBox( self, -1, 'Enable Pet By-Name Binds')
         petselenable.SetToolTip( wx.ToolTip('Check this to enable the By-Name Selection Binds') )
@@ -432,8 +431,8 @@ class Mastermind(Page):
         self.Ctrls['PetBodyguardGotoEnabled']  .Enable(petcmdenabled and bgEnabled)
 
         for petid in [1,2,3,4,5,6]:
-            self.Ctrls[f"Pet{petid}Bodyguard"]         .Enable(bgEnabled)
-            self.Ctrls[f"Pet{petid}Bodyguard"].CtlLabel.Enable(bgEnabled)
+            self.Ctrls[f"Pet{petid}Bodyguard"]         .Enable(petcmdenabled and bgEnabled)
+            self.Ctrls[f"Pet{petid}Bodyguard"].CtlLabel.Enable(petcmdenabled and bgEnabled)
         if evt: evt.Skip()
 
     ### BIND CREATION METHODS
@@ -952,25 +951,25 @@ class Mastermind(Page):
         'PetSelect4'                         : "Select Fourth Pet",
         'PetSelect5'                         : "Select Fifth Pet",
         'PetSelect6'                         : "Select Sixth Pet",
-        'PetSelectAllResponseMethod'         : "Response to Select All Pets",
-        'PetSelectMinionsResponseMethod'     : "Response to Select Minions",
-        'PetSelectLieutenantsResponseMethod' : "Response to Select Lieutenants",
-        'PetSelectBossResponseMethod'        : "Response to Select Boss",
-        'PetAggressiveResponseMethod'        : "Response to Set Aggressive",
-        'PetDefensiveResponseMethod'         : "Response to Set Defensive",
-        'PetPassiveResponseMethod'           : "Response to Set Passive",
-        'PetAttackResponseMethod'            : "Response to Attack",
-        'PetFollowResponseMethod'            : "Response to Follow",
-        'PetGotoResponseMethod'              : "Response to Goto",
-        'PetStayResponseMethod'              : "Response to Stay",
+        'PetSelectAllResponseMethod'         : "Pet Response",
+        'PetSelectMinionsResponseMethod'     : "Pet Response",
+        'PetSelectLieutenantsResponseMethod' : "Pet Response",
+        'PetSelectBossResponseMethod'        : "Pet Response",
+        'PetAggressiveResponseMethod'        : "Pet Response",
+        'PetDefensiveResponseMethod'         : "Pet Response",
+        'PetPassiveResponseMethod'           : "Pet Response",
+        'PetAttackResponseMethod'            : "Pet Response",
+        'PetFollowResponseMethod'            : "Pet Response",
+        'PetGotoResponseMethod'              : "Pet Response",
+        'PetStayResponseMethod'              : "Pet Response",
         'PetBodyguard'                       : "Bodyguard Mode",
-        'PetBodyguardResponseMethod'         : "Response to Bodyguard Mode",
+        'PetBodyguardResponseMethod'         : "Pet Response",
         'PetChatToggle'                      : "Pet Chatty Mode Toggle",
         'PetBodyguardAttack'                 : "BG Mode Attack",
         'PetBodyguardGoto'                   : "BG Mode Goto",
-        'PetNPEnable' : 'Enable Single Key Pet Binds',
-        'SelNextPet' : "Select Next Pet",
-        'SelPrevPet' : "Select Previous Pet",
-        'IncPetSize' : "Increase Pet Group Size",
-        'DecPetSize' : "Decrease Pet Group Size",
+        'PetNPEnable'                        : 'Enable Single Key Pet Binds',
+        'SelNextPet'                         : "Select Next Pet",
+        'SelPrevPet'                         : "Select Previous Pet",
+        'IncPetSize'                         : "Increase Pet Group Size",
+        'DecPetSize'                         : "Decrease Pet Group Size",
     })

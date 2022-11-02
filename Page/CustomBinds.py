@@ -58,11 +58,11 @@ class CustomBinds(Page):
             wx.LogError("Something tried to add an empty bindpane to the page")
             return
 
-        bindname = ''
         if not bindpane.Title: # this is from a "New Bind" button
             dlg = wx.TextEntryDialog(self, 'Enter name for new bind')
             if dlg.ShowModal() == wx.ID_OK:
-                bindname = dlg.GetValue()
+                bindpane.Title = dlg.GetValue()
+                bindpane.SetLabel(bindpane.Title)
             else:
                 bindpane.Destroy()
                 return
@@ -71,7 +71,6 @@ class CustomBinds(Page):
 
         self.Panes.append(bindpane)
 
-        bindpane.Title = bindpane.Title or bindname
         bindpane.BuildBindUI(self)
 
         # put it in a box with a 'delete' button
@@ -99,4 +98,3 @@ class CustomBinds(Page):
     def PopulateBindFiles(self):
         for pane in self.Panes:
             pane.PopulateBindFiles()
-

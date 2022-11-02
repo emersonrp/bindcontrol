@@ -9,11 +9,8 @@ from UI.PowerBinderDialog import PowerBinderButton
 
 class BufferBindPane(CustomBindPaneParent):
     def __init__(self, page, init = {}):
-        CustomBindPaneParent.__init__(self, page)
+        CustomBindPaneParent.__init__(self, page, init)
 
-        self.Title   = init.get('Title', '')
-        self.Page    = page
-        self.Profile = page.Profile
         self.Init    = {
             'BuffChat1'       : '',
             'BuffChat2'       : '',
@@ -41,8 +38,6 @@ class BufferBindPane(CustomBindPaneParent):
 
 
     def BuildBindUI(self, _):
-
-        self.SetLabel(self.Title)
         pane = self.GetPane()
 
         # bind text controls

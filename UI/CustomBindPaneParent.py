@@ -6,10 +6,12 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         wx.CollapsiblePane.__init__(self, page.scrolledPane,
                 style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
-        self.Ctrls = {}
-        self.Page  = page
-        self.Init  = init
-        self.Title = ''
+        self.Ctrls   = {}
+        self.Page    = page
+        self.Profile = page.Profile
+        self.Init    = init
+        self.Title   = init.get('Title', '')
+        self.SetLabel(self.Title)
 
         self.bindclass      = type(self).__name__
 

@@ -10,9 +10,6 @@ class SimpleBindPane(CustomBindPaneParent):
     def __init__(self, page, init = {}):
         CustomBindPaneParent.__init__(self, page, init)
 
-        self.Title          = init.get('Title', '')
-        self.Init           = init
-        self.Page           = page # for re-layout when pane changes size and for SetBind()
         self.PowerBinderDlg = None
 
     def Serialize(self):
@@ -26,8 +23,6 @@ class SimpleBindPane(CustomBindPaneParent):
         return data
 
     def BuildBindUI(self, page):
-
-        self.SetLabel(self.Title)
         pane = self.GetPane()
 
         BindSizer = wx.BoxSizer(wx.HORIZONTAL)

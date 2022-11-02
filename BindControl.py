@@ -121,7 +121,7 @@ class Main(wx.Frame):
     def OnNewProfile(self, _):
         if self.Profile.Modified:
             if wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.ICON_QUESTION|wx.YES_NO) == wx.YES:
-                self.Profile.SaveToFile()
+                self.Profile.doSaveToFile()
         self.Freeze()
         try:
             self.Sizer.Remove(0)
@@ -187,7 +187,7 @@ Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
     def OnWindowClosing(self, evt):
         if self.Profile.Modified:
             if wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.ICON_QUESTION|wx.YES_NO) == wx.YES:
-                self.Profile.SaveToFile()
+                self.Profile.doSaveToFile()
         evt.Skip()
 
 class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):

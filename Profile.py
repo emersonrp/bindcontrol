@@ -324,7 +324,14 @@ class DoneDialog(wx.Dialog):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        msg = msg + "\n\nLog on to the character you made these for and type:"
+        msg = msg + f"""
+
+If you are updating existing installed BindControl binds, you can
+press \"{wx.ConfigBase.Get().Read('ResetKey')}\" to load your new binds.
+
+If this is a new set of keybinds, log on to the character
+you made them for and type into the chat window:
+"""
 
         sizer.Add(
             wx.StaticText(self, label = msg, style = wx.ALIGN_CENTER),
@@ -332,13 +339,12 @@ class DoneDialog(wx.Dialog):
         )
         textCtrl = wx.TextCtrl(self, id = wx.ID_ANY,
                        style = wx.TE_READONLY|wx.TE_CENTER,
-                       value = "/bindloadfilesilent " + str(parent.GameBindsDir() / "reset.txt")
+                       value = "/bindloadfile " + str(parent.GameBindsDir() / "reset.txt")
         )
         textCtrl.SetFont(
             wx.Font(10, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = u'Courier')
         )
-
-        sizer.Add( textCtrl, 0, wx.EXPAND|wx.ALL, 10)
+        sizer.Add( textCtrl, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
         sizer.Add( self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10)
         self.SetSizerAndFit(sizer)

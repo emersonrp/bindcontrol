@@ -104,7 +104,7 @@ class BufferBindPane(CustomBindPaneParent):
                 buffPower3.IconFilename = bp3['picon']
 
         # key picker controls
-        TeamCtrls = wx.StaticBoxSizer(wx.HORIZONTAL, pane, label = "Buff Teammates Keybinds")
+        TeamCtrls = wx.StaticBoxSizer(wx.HORIZONTAL, pane, label = "Buff Team Keybinds")
         TeamInner = wx.GridBagSizer(hgap = 5, vgap = 5)
         TeamCtrls.Add(TeamInner, 1, wx.ALL|wx.EXPAND, 10)
         PetCtrls  = wx.StaticBoxSizer(wx.HORIZONTAL, pane, label = "Buff Pets Keybinds")
@@ -115,9 +115,7 @@ class BufferBindPane(CustomBindPaneParent):
         self.Ctrls['BuffsAffectTeam'] = wx.CheckBox(pane, -1, label = UI.Labels['BuffsAffectTeam'])
         self.Ctrls['BuffsAffectTeam'].SetValue(self.Init['BuffsAffectTeam'])
         self.Ctrls['BuffsAffectTeam'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        TeamInner.Add(self.Ctrls['BuffsAffectTeam'], (0,0))
-        self.Ctrls['BuffTeamLabel'] = wx.StaticText(pane, label = "Buff Teammate Keys:", style=wx.ALIGN_RIGHT)
-        TeamInner.Add(self.Ctrls['BuffTeamLabel'], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
+        TeamInner.Add(self.Ctrls['BuffsAffectTeam'], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6,7,8):
             button = bcKeyButton(pane, -1, init = { 'CtlName' : f'Team{i}BuffKey', })
             button.SetLabel(self.Init[f'Team{i}BuffKey'])
@@ -130,9 +128,7 @@ class BufferBindPane(CustomBindPaneParent):
         self.Ctrls['BuffsAffectPets'] = wx.CheckBox(pane, -1, label = UI.Labels['BuffsAffectPets'])
         self.Ctrls['BuffsAffectPets'].SetValue(self.Init['BuffsAffectPets'])
         self.Ctrls['BuffsAffectPets'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        PetInner.Add(self.Ctrls['BuffsAffectPets'], (0,0))
-        self.Ctrls['BuffPetLabel'] = wx.StaticText(pane, label = "Buff Pet Keys:", style=wx.ALIGN_RIGHT)
-        PetInner.Add(self.Ctrls['BuffPetLabel'], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
+        PetInner.Add(self.Ctrls['BuffsAffectPets'], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6):
             button = bcKeyButton(pane, -1, init = { 'CtlName' : f'Pet{i}BuffKey', })
             button.SetLabel(self.Init[f'Pet{i}BuffKey'])
@@ -215,12 +211,10 @@ class BufferBindPane(CustomBindPaneParent):
 
     def SynchronizeUI(self, _ = None):
         useteam = self.Ctrls['BuffsAffectTeam'].GetValue()
-        self.Ctrls['BuffTeamLabel'].Enable(useteam)
         for i in [1,2,3,4,5,6,7,8]:
             self.Ctrls[f'Team{i}BuffKey']         .Enable(useteam)
             self.Ctrls[f'Team{i}BuffKey'].CtlLabel.Enable(useteam)
         usepet = self.Ctrls['BuffsAffectPets'].GetValue()
-        self.Ctrls['BuffPetLabel'].Enable(usepet)
         for i in [1,2,3,4,5,6]:
             self.Ctrls[f'Pet{i}BuffKey']         .Enable(usepet)
             self.Ctrls[f'Pet{i}BuffKey'].CtlLabel.Enable(usepet)

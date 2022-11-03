@@ -203,6 +203,12 @@ class PowerBinderButton(wx.Button):
                 self.tgtTxtCtrl.SetValue(bindString)
                 wx.App.Get().Profile.SetModified()
 
+    def LoadFromData(self, data):
+        self.PowerBinderDialog.LoadFromData(data)
+
+    def SaveToData(self):
+        return self.PowerBinderDialog.SaveToData()
+
 class PowerBinderEditDialog(wx.Dialog):
     def __init__(self, parent, init = {}):
         wx.Dialog.__init__(self, parent, -1, "Edit Step",

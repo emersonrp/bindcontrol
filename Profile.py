@@ -1,7 +1,7 @@
-import wx
 import re
 from pathlib import Path, PureWindowsPath
 import json
+import wx
 
 from BindFile import BindFile
 
@@ -10,13 +10,13 @@ from Page.Gameplay import Gameplay
 from Page.SoD import SoD
 from Page.InspirationPopper import InspirationPopper
 from Page.Mastermind import Mastermind
-#from Page.ComplexBinds
 from Page.CustomBinds import CustomBinds
 
 import UI
 from UI.ControlGroup import bcKeyButton
 from UI.SimpleBindPane import SimpleBindPane
 from UI.BufferBindPane import BufferBindPane
+from UI.ComplexBindPane import ComplexBindPane
 
 class Profile(wx.Notebook):
 
@@ -35,7 +35,6 @@ class Profile(wx.Notebook):
         self.SoD               = self.CreatePage(SoD(self))
         self.InspirationPopper = self.CreatePage(InspirationPopper(self))
         self.Mastermind        = self.CreatePage(Mastermind(self))
-        #self.CreatePage(ComplexBinds(self))
 
         # bind all control events so we can decide that we're modified.
         for evt in [
@@ -66,17 +65,15 @@ class Profile(wx.Notebook):
         return Path(wx.ConfigBase.Get().Read('BindPath')) / self.Name()
     def GameBindsDir(self) :
         gbp = wx.ConfigBase.Get().Read('GameBindPath')
-        if gbp:
-            return PureWindowsPath(gbp) / self.Name()
-        else:
-            return self.BindsDir()
+        if gbp: return PureWindowsPath(gbp) / self.Name()
+        return self.BindsDir()
 
     def BLF(self, *args):
         filepath = self.GameBindsDir()
         for arg in args: filepath = filepath  /  arg
         return "$$bindloadfilesilent " + str(filepath)
 
-    def CheckConflict(self, key, button):
+    def CheckConflict(self, key):
         conflicts = []
 
         for pageName in self.Pages:
@@ -105,7 +102,7 @@ class Profile(wx.Notebook):
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 wx.LogMessage("User canceled saving new profile")
-                return     # the user changed their mind
+                return False    # the user changed their mind
 
             # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
@@ -124,7 +121,7 @@ class Profile(wx.Notebook):
         if len(profilename) == 0 or re.search(" ", profilename):
             wx.MessageBox("Profile Name is not valid, please correct this.")
             self.ChangeSelection(0)
-            return
+            return False
 
         self.ProfilePath().mkdir( parents = True, exist_ok = True )
 
@@ -141,7 +138,7 @@ class Profile(wx.Notebook):
                     controlType = type(control).__name__
                     if controlType == 'DirPickerCtrl':
                         value = control.GetPath()
-                    elif controlType == 'Button' or controlType == 'bcKeyButton':
+                    elif controlType in ('Button', 'bcKeyButton'):
                         value = control.GetLabel()
                     elif controlType == 'ColourPickerCtrl':
                         value = control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
@@ -202,13 +199,13 @@ class Profile(wx.Notebook):
                 for controlname, control in page.Ctrls.items():
                     value = data[pagename].get(controlname, None)
 
-                    if value == None: continue
+                    if value is None: continue
 
                     # look up what type of control it is to know how to extract its value
                     controlType = type(control).__name__
                     if controlType == 'DirPickerCtrl':
                         control.SetPath(value)
-                    elif controlType == 'Button' or controlType == 'bcKeyButton':
+                    elif controlType in ('Button', 'bcKeyButton'):
                         control.SetLabel(value)
                     elif controlType == 'ColourPickerCtrl':
                         control.SetColour(value)
@@ -235,6 +232,9 @@ class Profile(wx.Notebook):
                     cbpage.AddBindToPage(bindpane = bindpane)
                 elif custombind['Type'] == "BufferBind":
                     bindpane = BufferBindPane(cbpage, init = custombind)
+                    cbpage.AddBindToPage(bindpane = bindpane)
+                elif custombind['Type'] == "ComplexBind":
+                    bindpane = ComplexBindPane(cbpage, init = custombind)
                     cbpage.AddBindToPage(bindpane = bindpane)
 
             self.Filename = Path(pathname)
@@ -342,10 +342,9 @@ you made them for and type into the chat window:
                        value = "/bindloadfile " + str(parent.GameBindsDir() / "reset.txt")
         )
         textCtrl.SetFont(
-            wx.Font(10, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = u'Courier')
+            wx.Font(10, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = 'Courier')
         )
         sizer.Add( textCtrl, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
         sizer.Add( self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10)
         self.SetSizerAndFit(sizer)
-

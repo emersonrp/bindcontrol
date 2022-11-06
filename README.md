@@ -21,6 +21,7 @@ Features
 * Chat binds with optional 'typing' notifier
 * Custom Binds
     * create simple binds using PowerBinder, a flexible tool for putting together arbitrary commands into bind strings
+    * complex binds, chains of PowerBinder actions that fire sequentially on multiple presses of a keybind
     * buffer binds, allowing quick one-key buffing of each teammate and/or pet
 * Speed-on-Demand
     * based on [citybinder](http://sourceforge.net/projects/citybinder/) and the original Gnarly's SoD keybinds
@@ -47,7 +48,6 @@ TODO
 * Support [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) in SoD
 * Kheldian form/travel binds in speed-on-demand
 * Temporary powers in speed-on-demand
-* Additional custom bind types
 * Roll standalone binaries for Windows, MacOS, Linux
     * In progress... TODO: sign / notarize MacOS App?
 * More and better help text and documentation

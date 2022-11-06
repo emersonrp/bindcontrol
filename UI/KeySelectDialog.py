@@ -206,7 +206,7 @@ class KeySelectDialog(wx.Dialog):
 
         Profile = wx.App.Get().Profile
         if Profile:
-            conflicts = Profile.CheckConflict(self.Binding, self.Button)
+            conflicts = Profile.CheckConflict(self.Binding)
             if conflicts:
                 conflictString = ''
                 for conflict in conflicts:

@@ -2,8 +2,9 @@ import wx
 import UI
 
 from Page import Page
-from UI.BufferBindPane import BufferBindPane
-from UI.SimpleBindPane import SimpleBindPane
+from UI.BufferBindPane  import BufferBindPane
+from UI.SimpleBindPane  import SimpleBindPane
+from UI.ComplexBindPane import ComplexBindPane
 
 class CustomBinds(Page):
     def __init__(self, parent):
@@ -22,6 +23,9 @@ class CustomBinds(Page):
         newSimpleBindButton = wx.Button(self, -1, "New Simple Bind")
         newSimpleBindButton.Bind(wx.EVT_BUTTON, self.OnNewSimpleBindButton)
         buttonSizer.Add(newSimpleBindButton, wx.ALIGN_CENTER)
+        newComplexBindButton = wx.Button(self, -1, "New Complex Bind")
+        newComplexBindButton.Bind(wx.EVT_BUTTON, self.OnNewComplexBindButton)
+        buttonSizer.Add(newComplexBindButton, wx.ALIGN_CENTER)
         newBufferBindButton = wx.Button(self, -1, "New Buffer Bind")
         newBufferBindButton.Bind(wx.EVT_BUTTON, self.OnNewBufferBindButton)
         buttonSizer.Add(newBufferBindButton, wx.ALIGN_CENTER)
@@ -46,6 +50,10 @@ class CustomBinds(Page):
 
     def OnNewSimpleBindButton(self, evt):
         self.AddBindToPage(bindpane = SimpleBindPane(self))
+        evt.Skip()
+
+    def OnNewComplexBindButton(self, evt):
+        self.AddBindToPage(bindpane = ComplexBindPane(self))
         evt.Skip()
 
     def OnNewBufferBindButton(self, evt):

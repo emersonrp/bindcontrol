@@ -48,15 +48,15 @@ TODO
 * Support [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) in SoD
 * Kheldian form/travel binds in speed-on-demand
 * Temporary powers in speed-on-demand
-* Roll standalone binaries for Windows, MacOS, Linux
-    * In progress... TODO: sign / notarize MacOS App?
+* Roll standalone binaries for Windows, <strike>MacOS</strike>, Linux
+    * MacOS binaries need signing and notarization
 * More and better help text and documentation
 * Fix bugs as found
 
 Using
 -----
 
-<b>Windows and MacOS users:  try the binaries from the [latest release](https://github.com/emersonrp/bindcontrol/releases), and give feedback.  If they work for you, they're the quickest path to victory.</b>
+<b>Windows users:  try the binary from the [latest release](https://github.com/emersonrp/bindcontrol/releases), and give feedback.  If that works for you, it's the quickest path to victory.</b>
 
 Failing that, or if you want to run bleeding edge code:
 
@@ -66,9 +66,9 @@ Dependencies
 * [Python](https://www.python.org) version 3.10 or later
 * [wxPython](https://www.wxpython.org) version 4.1 or later
 
-Windows and MacOS users, follow the instructions on the above sites' download pages to install Python and wxPython.
+Windows users, follow the instructions on the above sites' download pages to install Python and wxPython.
 
-<i>MacOS users: fiddling with installing recent versions of Python can be a rabbit hole.  Use the pre-rolled Bindcontrol.app if it's available and works for you.</i>
+MacOS users:  I recommend following the instructions in [this article at opensource.com](https://opensource.com/article/19/5/python-3-default-mac#comments) to get Python 3 installed and working by default.  Once everything is working, you will want to run `pip3 install wxPython`.
 
 Linux users, install your distribution's packages for Python 3 and wxPython.
 

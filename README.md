@@ -68,7 +68,7 @@ Dependencies
 
 Windows users, follow the instructions on the above sites' download pages to install Python and wxPython.
 
-MacOS users:  I recommend following the instructions in [this article at opensource.com](https://opensource.com/article/19/5/python-3-default-mac#comments) to get Python 3 installed and working by default.  Once everything is working, you will want to run `pip3 install wxPython`.
+MacOS users:  I recommend following the instructions in [this article at opensource.com](https://www.opensource.com/article/19/5/python-3-default-mac) to get Python 3 installed and working by default.  Once everything is working, you will want to run `pip3 install wxPython`.
 
 Linux users, install your distribution's packages for Python 3 and wxPython.
 

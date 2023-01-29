@@ -156,7 +156,7 @@ class Main(wx.Frame):
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
             info.SetName('BindControl')
-            info.SetVersion('0.8')
+            info.SetVersion('0.8.1')
             info.SetDescription("""
 BindControl can help you set up custom keybinds in City of Heroes/Villains, including speed-on-demand binds.
 

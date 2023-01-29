@@ -100,6 +100,8 @@ class KeySelectDialog(wx.Dialog):
             i.Bind(wx.EVT_LEFT_DOWN       , self.handleBind )
             i.Bind(wx.EVT_MIDDLE_DOWN     , self.handleBind )
             i.Bind(wx.EVT_RIGHT_DOWN      , self.handleBind )
+            i.Bind(wx.EVT_LEFT_DCLICK     , self.handleBind )
+            i.Bind(wx.EVT_RIGHT_DCLICK    , self.handleBind )
             i.Bind(wx.EVT_MOUSE_AUX1_DOWN , self.handleBind )
             i.Bind(wx.EVT_MOUSE_AUX2_DOWN , self.handleBind )
 
@@ -138,6 +140,8 @@ class KeySelectDialog(wx.Dialog):
             code = event.GetKeyCode()
             if code == wx.WXK_ESCAPE:
                 self.EndModal(wx.CANCEL)
+        elif (event.ButtonDClick()):
+            code = "DCLICK" + str(event.GetButton())
         else:
             code = "BUTTON" + str(event.GetButton())
 
@@ -303,6 +307,8 @@ class KeySelectDialog(wx.Dialog):
                 'BUTTON6' : 'BUTTON6',
                 'BUTTON7' : 'BUTTON7',
                 'BUTTON8' : 'BUTTON8',
+                'DCLICK1' : 'LEFTDOUBLECLICK',
+                'DCLICK3' : 'RIGHTDOUBLECLICK',
         }
 
         # Add alphanumerics

@@ -118,7 +118,8 @@ class BufferBindPane(CustomBindPaneParent):
         TeamInner.Add(self.Ctrls['BuffsAffectTeam'], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6,7,8):
             button = bcKeyButton(pane, -1, init = { 'CtlName' : f'Team{i}BuffKey', })
-            button.SetLabel(self.Init[f'Team{i}BuffKey'])
+            button.Key = self.Init[f'Team{i}BuffKey']
+            button.SetLabel(button.Key)
             label = wx.StaticText(pane, label = f'Teammate {i}')
             button.CtlLabel = label
             TeamInner.Add(label, (0,i), flag = wx.EXPAND|wx.ALIGN_CENTER)
@@ -131,7 +132,8 @@ class BufferBindPane(CustomBindPaneParent):
         PetInner.Add(self.Ctrls['BuffsAffectPets'], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6):
             button = bcKeyButton(pane, -1, init = { 'CtlName' : f'Pet{i}BuffKey', })
-            button.SetLabel(self.Init[f'Pet{i}BuffKey'])
+            button.Key = self.Init[f'Pet{i}BuffKey']
+            button.SetLabel(button.Key)
             label = wx.StaticText(pane, label = f'Pet {i}')
             button.CtlLabel = label
             PetInner.Add(label , (0,i), flag = wx.EXPAND|wx.ALIGN_CENTER)
@@ -167,7 +169,7 @@ class BufferBindPane(CustomBindPaneParent):
 
         if self.Ctrls['BuffsAffectTeam'].GetValue():
             for j in [1,2,3,4,5,6,7,8]:
-                teamkey = self.Ctrls[f"Team{j}BuffKey"].GetLabel()
+                teamkey = self.Ctrls[f"Team{j}BuffKey"].Key
                 if not teamkey: continue
                 filebase = profile.BindsDir()     / f"buff{self.Title}" / f"bufft{j}"
                 gamebase = profile.GameBindsDir() / f"buff{self.Title}" / f"bufft{j}"
@@ -189,7 +191,7 @@ class BufferBindPane(CustomBindPaneParent):
 
         if self.Ctrls['BuffsAffectPets'].GetValue():
             for j in [1,2,3,4,5,6]:
-                petkey = self.Ctrls[f"Pet{j}BuffKey"].GetLabel()
+                petkey = self.Ctrls[f"Pet{j}BuffKey"].Key
                 if not petkey: continue
                 filebase = profile.BindsDir()     / f"buff{self.Title}" / f"buffp{j}"
                 gamebase = profile.GameBindsDir() / f"buff{self.Title}" / f"buffp{j}"
@@ -246,8 +248,8 @@ class BufferBindPane(CustomBindPaneParent):
                 'picon' : self.Ctrls['BuffPower3'].IconFilename,
             }
         for i in (1,2,3,4,5,6,7,8):
-            data[f'Team{i}BuffKey'] = self.Ctrls[f'Team{i}BuffKey'].GetLabel()
+            data[f'Team{i}BuffKey'] = self.Ctrls[f'Team{i}BuffKey'].Key
         for i in (1,2,3,4,5,6):
-            data[f'Pet{i}BuffKey'] = self.Ctrls[f'Pet{i}BuffKey'].GetLabel()
+            data[f'Pet{i}BuffKey'] = self.Ctrls[f'Pet{i}BuffKey'].Key
 
         return data

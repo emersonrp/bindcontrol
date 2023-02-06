@@ -37,14 +37,7 @@ def KeySelectEventHandler(evt):
         # re-label the button / set its state
         if newKey:
             button.Key = newKey
-            # shorten and <small>ify label if it's long
-            if re.search(r'\+\w\w\w', newKey):
-                newKey = re.sub(r'SHIFT\+', 'S+', newKey)
-                newKey = re.sub(r'CTRL\+', 'C+', newKey)
-                newKey = re.sub(r'ALT\+', 'A+', newKey)
-                newKey = f"<small>{newKey}</small>"
-            button.SetLabelMarkup(newKey)
-            button.KeyBind.Key = newKey
+            button.SetLabel(newKey)
             wx.PostEvent(button, KeyChanged())
 
 class KeySelectDialog(wx.Dialog):
@@ -52,7 +45,7 @@ class KeySelectDialog(wx.Dialog):
 
         self.Desc    = UI.Labels[button.CtlName]
         self.Button  = button
-        self.Binding = button.Label
+        self.Binding = button.Key
 
         wx.Dialog.__init__(self, button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
 
@@ -325,7 +318,6 @@ class bcKeyButton(wx.Button):
         self.CtlLabel : wx.StaticText = init.get('CtlLabel', None)
         self.Key      : str           = init.get('Key', '')
         self.Page     : Page          = parent
-        self.KeyBind  : KeyBind       = init.get('KeyBind', KeyBind(self.Key, self.Page, ''))
 
         self.SetLabel(self.Key)
 
@@ -337,4 +329,13 @@ class bcKeyButton(wx.Button):
         wx.PostEvent(self, KeyChanged())
 
     def MakeFileKeyBind(self, contents):
-        return self.KeyBind.MakeFileKeyBind(contents)
+        return KeyBind(self.Key, self.CtlLabel, self.Page, contents)
+
+    def SetLabel(self, keyLabel):
+        if re.search(r'\+\w\w\w', keyLabel):
+            # smallify and abbreviate if we have a mod key
+            keyLabel = re.sub(r'SHIFT\+', 'S+', keyLabel)
+            keyLabel = re.sub(r'CTRL\+', 'C+', keyLabel)
+            keyLabel = re.sub(r'ALT\+', 'A+', keyLabel)
+            keyLabel = f"<small>{keyLabel}</small>"
+        self.SetLabelMarkup(keyLabel)

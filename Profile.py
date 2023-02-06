@@ -81,7 +81,7 @@ class Profile(wx.Notebook):
             for ctrlname, ctrl in page.Ctrls.items():
                 if not ctrl.IsThisEnabled(): continue
                 if isinstance(ctrl, bcKeyButton):
-                    if key == ctrl.GetLabel():
+                    if key == ctrl.Key:
                         conflicts.append( {'page' : page.TabTitle, 'ctrl': UI.Labels[ctrlname]})
         return conflicts
 
@@ -138,8 +138,10 @@ class Profile(wx.Notebook):
                     controlType = type(control).__name__
                     if controlType == 'DirPickerCtrl':
                         value = control.GetPath()
-                    elif controlType in ('Button', 'bcKeyButton'):
+                    elif controlType == 'Button':
                         value = control.GetLabel()
+                    elif controlType == 'bcKeyButton':
+                        value = control.Key
                     elif controlType == 'ColourPickerCtrl':
                         value = control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
                     elif controlType == 'Choice':
@@ -205,8 +207,11 @@ class Profile(wx.Notebook):
                     controlType = type(control).__name__
                     if controlType == 'DirPickerCtrl':
                         control.SetPath(value)
-                    elif controlType in ('Button', 'bcKeyButton'):
+                    elif controlType == 'Button':
                         control.SetLabel(value)
+                    elif controlType == 'bcKeyButton':
+                        control.SetLabel(value)
+                        control.Key = value
                     elif controlType == 'ColourPickerCtrl':
                         control.SetColour(value)
                     elif controlType == 'Choice':

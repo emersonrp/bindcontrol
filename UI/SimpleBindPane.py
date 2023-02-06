@@ -17,7 +17,7 @@ class SimpleBindPane(CustomBindPaneParent):
             'Type'     : 'SimpleBind',
             'Title'    : self.Title,
             'Contents' : self.Ctrls['BindContents'].GetValue(),
-            'Key'      : self.Ctrls['BindKey'].GetLabel(),
+            'Key'      : self.Ctrls['BindKey'].Key,
         }
         if self.PowerBinderDlg: data['PowerBinderDlg'] = self.PowerBinderDlg.SaveToData()
         return data
@@ -79,7 +79,7 @@ class SimpleBindPane(CustomBindPaneParent):
             isWellFormed = False
 
         bk = self.Ctrls['BindKey']
-        if bk.GetLabel():
+        if bk.Key:
             bk.SetBackgroundColour(wx.NullColour)
         else:
             bk.SetBackgroundColour((255,200,200))
@@ -95,4 +95,4 @@ class SimpleBindPane(CustomBindPaneParent):
         bk = self.Ctrls['BindKey']
         bc = self.Ctrls['BindContents']
 
-        resetfile.SetBind(bk.GetLabel(), self.Title, self.Page, bc.GetValue())
+        resetfile.SetBind(bk.Key, self.Title, self.Page, bc.GetValue())

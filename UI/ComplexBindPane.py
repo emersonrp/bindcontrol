@@ -1,7 +1,7 @@
 import wx
 import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
-from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
+from UI.KeySelectDialog import bcKeyButton
 from UI.PowerBinderDialog import PowerBinderButton
 
 class ComplexBindPane(CustomBindPaneParent):
@@ -14,7 +14,7 @@ class ComplexBindPane(CustomBindPaneParent):
         data = {
             'Type' : 'ComplexBind',
             'Title': self.Title,
-            'Key'  : self.Ctrls['BindKey'].GetLabel(),
+            'Key'  : self.Ctrls['BindKey'].Key,
             'Steps': [],
         }
         for step in self.Steps:
@@ -46,7 +46,6 @@ class ComplexBindPane(CustomBindPaneParent):
             'Page'    : page,
             'Key'     : self.Init.get('Key', ''),
         })
-        #BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
         BindKeySizer = wx.BoxSizer(wx.HORIZONTAL)
         BindKeySizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindKeySizer.Add(BindKeyCtrl,                          0)
@@ -117,7 +116,7 @@ class ComplexBindPane(CustomBindPaneParent):
             nextCycle = 1 if (i+1 > len(fullsteps)) else i+1
 
             cmd = [step.BindContents.GetValue(), self.Profile.BLF(f'cbinds\\{self.Title}-{nextCycle}.txt')]
-            key = self.Ctrls['BindKey'].GetLabel()
+            key = self.Ctrls['BindKey'].Key
 
             if i == 1: resetfile.SetBind(key, self, self.Title, cmd)
             cbindfile.SetBind(key, self, self.Title, cmd)

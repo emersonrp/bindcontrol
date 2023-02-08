@@ -65,7 +65,7 @@ class KeySelectDialog(wx.Dialog):
         sizer = wx.BoxSizer(wx.VERTICAL);
 
         self.kbDesc = wx.StaticText( self, -1, desc,         style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
-        self.kbBind = wx.html.HtmlWindow( self, -1, size=(300,60), style=wx.html.HW_SCROLLBAR_NEVER)
+        self.kbBind = wx.html.HtmlWindow( self, -1, size=(360,60), style=wx.html.HW_SCROLLBAR_NEVER)
         self.kbBind.SetHTMLBackgroundColour(self.GetBackgroundColour())
         self.kbErr  = wx.StaticText( self, -1, " ",          style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
 
@@ -326,16 +326,18 @@ class bcKeyButton(wx.Button):
 
     def ClearButton(self, _):
         self.SetLabel("")
+        self.Key = ""
         wx.PostEvent(self, KeyChanged())
 
     def MakeFileKeyBind(self, contents):
         return KeyBind(self.Key, self.CtlLabel, self.Page, contents)
 
     def SetLabel(self, keyLabel):
-        if re.search(r'\+\w\w\w', keyLabel):
+        if re.search(r'\+\w\w\w', keyLabel) or len(keyLabel) > 9:
             # smallify and abbreviate if we have a mod key
             keyLabel = re.sub(r'SHIFT\+', 'S+', keyLabel)
             keyLabel = re.sub(r'CTRL\+', 'C+', keyLabel)
             keyLabel = re.sub(r'ALT\+', 'A+', keyLabel)
+            keyLabel = re.sub(r'DOUBLECLICK', 'DCLICK', keyLabel)
             keyLabel = f"<small>{keyLabel}</small>"
         self.SetLabelMarkup(keyLabel)

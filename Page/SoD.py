@@ -58,20 +58,20 @@ class SoD(Page):
             'HasHover'        : False,
             'HasFly'          : False,
             'HasCF'           : False,
+            'HasGFly'         : False,
             'FlyMode'         : "F",
             'HasQF'           : False,
-            'QFlyMode'        : "G",
+            'QFlyMode'        : "",
+            'GFlyMode'        : "",
 
             'HasTP'           : False,
             'TPBindKey'       : 'LSHIFT+LBUTTON',
             'TPComboKey'      : 'LSHIFT',
-            'TPResetKey'      : 'LCTRL+T',
 
             'HasTTP'          : False,
             'TTPBindKey'      : 'LSHIFT+LCTRL+LBUTTON',
             'TTPComboKey'     : 'LSHIFT+LCTRL',
-            'TTPResetKey'     : 'LSHIFT+LCTRL+T',
-            'TTPAutoGFly'     : True,
+            'TTPTPGFly'       : False,
 
             'TPHideWindows'   : True,
             'TPTPHover'       : False,
@@ -319,11 +319,13 @@ class SoD(Page):
         self.Ctrls['HasFly'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'HasCF', ctlType = 'checkbox',)
         self.Ctrls['HasCF'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.flySizer.AddControl( ctlName = 'HasGFly', ctlType = 'checkbox',)
+        self.Ctrls['HasGFly'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'HasQF', ctlType = 'checkbox',)
         self.Ctrls['HasQF'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'QFlyMode', ctlType = 'keybutton',)
-        #self.flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',)
+        self.flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',)
         self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
@@ -335,7 +337,6 @@ class SoD(Page):
         self.Ctrls['HasTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         teleportSizer.AddControl( ctlName = "TPBindKey", ctlType = 'keybutton',)
         teleportSizer.AddControl( ctlName = "TPComboKey", ctlType = 'keybutton',)
-        teleportSizer.AddControl( ctlName = "TPResetKey", ctlType = 'keybutton',)
         teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',)
         self.rightColumn.Add(teleportSizer, 0, wx.EXPAND)
 
@@ -345,9 +346,7 @@ class SoD(Page):
         self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         teamTeleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton',)
         teamTeleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton',)
-        teamTeleportSizer.AddControl( ctlName = "TTPResetKey", ctlType = 'keybutton',)
-        # if (player has group fly):
-        # teleportSizer.AddControl( ctlName = 'TTPAutoGFly', ctlType = 'checkbox',)
+        teamTeleportSizer.AddControl( ctlName = 'TTPTPGFly', ctlType = 'checkbox',)
         # end team-tp
         self.rightColumn.Add(teamTeleportSizer, 0, wx.EXPAND)
 
@@ -432,12 +431,13 @@ class SoD(Page):
             c['QFlyMode']         .Enable(self.GetState('HasQF'))
             c['QFlyMode'].CtlLabel.Enable(self.GetState('HasQF'))
 
+            c['GFlyMode']         .Enable(self.GetState('HasGFly'))
+            c['GFlyMode'].CtlLabel.Enable(self.GetState('HasGFly'))
+
             c['TPBindKey']         .Enable(self.GetState('HasTP'))
             c['TPBindKey'].CtlLabel.Enable(self.GetState('HasTP'))
             c['TPComboKey']         .Enable(self.GetState('HasTP'))
             c['TPComboKey'].CtlLabel.Enable(self.GetState('HasTP'))
-            c['TPResetKey']         .Enable(self.GetState('HasTP'))
-            c['TPResetKey'].CtlLabel.Enable(self.GetState('HasTP'))
             c['TPTPHover']         .Enable(self.GetState('HasTP') and self.GetState('HasHover'))
             c['TPTPHover'].CtlLabel.Enable(self.GetState('HasTP') and self.GetState('HasHover'))
 
@@ -445,8 +445,8 @@ class SoD(Page):
             c['TTPBindKey'].CtlLabel.Enable(self.GetState('HasTTP'))
             c['TTPComboKey']         .Enable(self.GetState('HasTTP'))
             c['TTPComboKey'].CtlLabel.Enable(self.GetState('HasTTP'))
-            c['TTPResetKey']         .Enable(self.GetState('HasTTP'))
-            c['TTPResetKey'].CtlLabel.Enable(self.GetState('HasTTP'))
+            c['TTPTPGFly']         .Enable(self.GetState('HasTTP') and self.GetState('HasGFly'))
+            c['TTPTPGFly'].CtlLabel.Enable(self.GetState('HasTTP') and self.GetState('HasGFly'))
 
             c['NovaMode']         .Enable(self.GetState('UseNova'))
             c['NovaMode'].CtlLabel.Enable(self.GetState('UseNova'))
@@ -561,7 +561,7 @@ class SoD(Page):
             if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ])
             if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
             if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
-            # if (modestr != "GFly")        : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff,fix)
+            if (modestr != "GFly")        : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff,fix)
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
             if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path, gamepath)
             if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
@@ -606,9 +606,9 @@ class SoD(Page):
                 self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
 
             t.ini = ''
-            # if (modestr != "GFly")        : self.makeGFlyModeKey (profile,t,"gbo",curfile,turnoff,fix)
-            # if (modestr != "Super Speed") : self.makeSpeedModeKey(profile,t,"s",  curfile,turnoff,fix)
-            # if (modestr != "Jump")        : self.makeJumpModeKey (profile,t,"j",  curfile,turnoff,path,gamepath)
+            if (modestr != "GFly")        : self.makeGFlyModeKey (profile,t,"gbo",curfile,turnoff,fix)
+            if (modestr != "Super Speed") : self.makeSpeedModeKey(profile,t,"s",  curfile,turnoff,fix)
+            if (modestr != "Jump")        : self.makeJumpModeKey (profile,t,"j",  curfile,turnoff,path,gamepath)
 
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 
@@ -980,7 +980,7 @@ class SoD(Page):
         name = UI.Labels['GFlyMode']
         if not self.Ctrls['GFlyMode'].IsEnabled(): return
 
-        if (t.cangfly > 0):
+        if t.cangfly:
             if (bl == "gbo"):
                 bindload = t.BLF('gbo')
                 if (fix):
@@ -1107,10 +1107,10 @@ class SoD(Page):
         if ((profile.Archetype() == "Peacebringer") and self.GetState('FlyQFly')):
             t.canqfly = True
 
-        # if (self.GetState('FlyGFly')):
-        #     t.cangfly = 1
-        #     t.gfly    = "Group Fly"
-        #     if (self.GetState('TTPTPGFly')): t.ttpgfly = '$$powexectoggleon Group Fly'
+        if (self.GetState('HasGFly')):
+            t.cangfly = True
+            t.gfly    = "Group Fly"
+            if (self.GetState('TTPTPGFly')): t.ttpgfly = '$$powexectoggleon Group Fly'
 
         if (self.GetState('HasSS')):
             t.sprint = self.GetState('SprintPower')
@@ -1259,7 +1259,7 @@ class SoD(Page):
         if (self.GetState('DefaultMode') != "Fly")         : t.FlyMode    = self.GetState('FlyMode')
         if (self.GetState('DefaultMode') != "Jump")        : t.JumpMode   = self.GetState('JumpMode')
         if (self.GetState('DefaultMode') != "Super Speed") : t.RunMode    = self.GetState('RunMode')
-    #    if (self.GetState('DefaultMode') != "GFly")        : t.GFlyMode   = self.GetState('GFlyMode')
+        if (self.GetState('DefaultMode') != "GFly")        : t.GFlyMode   = self.GetState('GFlyMode')
         t.TempMode = self.GetState('TempMode')
         t.QFlyMode = self.GetState('QFlyMode')
 
@@ -1419,27 +1419,27 @@ class SoD(Page):
                                #     })
                                #     setattr(t, self.GetState('DefaultMode') + "Mode", None)
 
-                                # if (t.cangfly):
-                                #     setattr(t, self.GetState('DefaultMode') + "Mode", t.GFlyMode)
-                                #     self.makeSoDFile({
-                                #         't'          : t,
-                                #         'bl'         : t.blga,
-                                #         'bla'        : t.blgaf,
-                                #         'blf'        : t.blgff,
-                                #         'path'       : t.pathga,
-                                #         'gamepath'   : t.gamepathga,
-                                #         'patha'      : t.pathgaf,
-                                #         'pathf'      : t.pathgff,
-                                #         'mobile'     : t.gfly,
-                                #         'stationary' : t.gfly,
-                                #         'modestr'    : "GFly",
-                                #         'flight'     : "GFly",
-                                #         'pathbo'     : t.pathgbo,
-                                #         'pathsd'     : t.pathgsd,
-                                #         'blbo'       : t.blgbo,
-                                #         'blsd'       : t.blgsd,
-                                #     })
-                                #     setattr(t, self.GetState('DefaultMode') + "Mode", None)
+                                if (t.cangfly):
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.GFlyMode)
+                                    self.makeSoDFile({
+                                        't'          : t,
+                                        'bl'         : t.blga,
+                                        'bla'        : t.blgaf,
+                                        'blf'        : t.blgff,
+                                        'path'       : t.pathga,
+                                        'gamepath'   : t.gamepathga,
+                                        'patha'      : t.pathgaf,
+                                        'pathf'      : t.pathgff,
+                                        'mobile'     : t.gfly,
+                                        'stationary' : t.gfly,
+                                        'modestr'    : "GFly",
+                                        'flight'     : "GFly",
+                                        'pathbo'     : t.pathgbo,
+                                        'pathsd'     : t.pathgsd,
+                                        'blbo'       : t.blgbo,
+                                        'blsd'       : t.blgsd,
+                                    })
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
 
                                 if (self.GetState('TempEnable')):
                                     trayslot = "1 " + self.GetState('TempTray')
@@ -1499,13 +1499,13 @@ class SoD(Page):
         dwarfTPPower = normalTPPower = teamTPPower = ''
 
         if (profile.Archetype() == "Warshade"):
-            dwarfTPPower  = "powexecname Black Dwarf Step"
-            normalTPPower = "powexecname Shadow Step"
+            dwarfTPPower  = "Black Dwarf Step"
+            normalTPPower = "Shadow Step"
         elif (profile.Archetype() == "Peacebringer"):
-            dwarfTPPower = "powexecname White Dwarf Step"
+            dwarfTPPower = "White Dwarf Step"
         else:
-            normalTPPower = "powexecname Teleport"
-            teamTPPower   = "powexecname Team Teleport"
+            normalTPPower = "Teleport"
+            teamTPPower   = "Team Teleport"
 
         if (self.GetState('HumanMode')):
             humanBindKey = self.GetState('HumanMode')
@@ -1558,7 +1558,6 @@ class SoD(Page):
             if (self.GetState('HasTP')):
                 novafile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('nop'))
                 novafile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind( 'nop'))
-                novafile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind('nop'))
 
             novafile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("follow"))
             # novafile.SetBind(self.Ctrls['ToggleKey'].MakeFileKeyBind('t $name, Changing to Human Form, Normal Mode$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0$$powexectoggleoff ' + Nova['Nova'] + '$$gototray 1' + profile.BLF('reset.txt')))
@@ -1596,21 +1595,21 @@ class SoD(Page):
                 dwrffile.SetBind('mousechord', "+down$$+forward")
 
             if (self.GetState('HasTP')):
-                dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
                 dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
-                dwrffile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind(t.detailhi[2:] + t.runcamdist + windowshow + profile.BLF('dtp','tp_off.txt')))
+                dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
                 tp_off = profile.GetBindFile("dtp","tp_off.txt")
-                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
                 tp_off.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop') )
+                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
                 tp_on1 = profile.GetBindFile("dtp","tp_on1.txt")
-                tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('dtp','tp_off.txt')))
                 tp_on1.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+down' + profile.BLF('dtp','tp_on2.txt')))
+                tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('dtp','tp_off.txt')))
 
                 tp_on2 = profile.GetBindFile("dtp","tp_on2.txt")
-                tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$' + dwarfTPPower + profile.BLF('dtp','tp_on1.txt')))
+                tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$powexecname ' + dwarfTPPower + profile.BLF('dtp','tp_on1.txt')))
 
             dwrffile.SetBind(self.Ctrls['ToggleKey'].MakeFileKeyBind(f"t $name, Changing to Human Form, Normal Mode$fullstop$$powexectoggleoff {Dwarf['Dwarf']}$$gototray 1" + profile.BLF('reset.txt')))
-        ### End Kheldian-specific stuff
+        ###
+        ###### End Kheldian power setup
 
         if (self.GetState('SimpleSJCJ')):
             if (self.GetState('HasCJ') and self.GetState('HasSJ')):
@@ -1621,48 +1620,48 @@ class SoD(Page):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Combat Jumping'))
 
         if (self.GetState('HasTP') and not normalTPPower):
-            ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('nop'))
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind( 'nop'))
-            ResetFile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind('nop'))
+            ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('nop'))
 
+        # Normal non-peacebringer teleport binds
         if (self.GetState('HasTP') and not (profile.Archetype() == "Peacebringer") and normalTPPower):
             tphovermodeswitch = ''
             if (t.tphover != ''):
                 tphovermodeswitch = t.bla + "000000.txt"
 
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
-            ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
-            ResetFile.SetBind(self.Ctrls['TPResetKey'].MakeFileKeyBind(t.detailhi[2:] + t.runcamdist + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
-            #  Create tp_off file
+            ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
+
             tp_off = profile.GetBindFile("tp","tp_off.txt")
             tp_off.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
-            tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
+            tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
 
             tp_on1 = profile.GetBindFile("tp","tp_on1.txt")
             zoomin = t.detailhi + t.runcamdist
             if (t.tphover): zoomin = ''
-            tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
             tp_on1.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+down' + t.tphover + profile.BLF('tp','tp_on2.txt')))
+            tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
 
             tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
-            tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
+            tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$powexecname ' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
 
+        # normal non-peacebringer team teleport binds
         if (self.GetState('HasTTP') and not (profile.Archetype() == "Peacebringer") and teamTPPower) :
             tphovermodeswitch = ''
-            ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
+
             ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( 'nop'))
-            ResetFile.SetBind(self.Ctrls['TTPResetKey'].MakeFileKeyBind(t.detailhi[2:] + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt') + tphovermodeswitch))
-            #  Create tp_off file
+            ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
+
             ttp_off = profile.GetBindFile("ttp","ttp_off.txt")
-            ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
             ttp_off.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('nop'))
+            ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
 
             ttp_on1 = profile.GetBindFile("ttp","ttp_on1.txt")
-            ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt') + tphovermodeswitch))
             ttp_on1.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('+down' + profile.BLF('ttp','ttp_on2.txt')))
+            ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt') + tphovermodeswitch))
 
             ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
-            ttp_on2.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( '-down$$' + teamTPPower + profile.BLF('ttp','ttp_on1.txt')))
+            ttp_on2.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( '-down$$powexecname ' + teamTPPower + profile.BLF('ttp','ttp_on1.txt')))
 
     def sodResetKey(self, curfile, gamepath, turnoff, moddir):
 
@@ -2284,23 +2283,23 @@ UI.Labels.update( {
     'HasHover'       : "Player has Hover",
     'HasFly'         : "Player has Flight",
     'HasCF'          : 'Player has Combat Flying',
+    'HasGFly'        : 'Player has Group Fly',
     'FlyMode'        : 'Toggle Fly Mode',
     'HasQF'          : 'Player has Quantum Flight',
     'QFlyMode'       : 'Toggle Quantum Fly Mode',
+    'GFlyMode'       : 'Toggle Group Fly Mode',
 
     'Feedback'       : 'Self-/tell when changing mode',
 
     'HasTP'          : 'Player has Teleport',
     'TPBindKey'      : 'Teleport Bind',
-    'TPComboKey'     : 'Teleport Combo Key',
-    'TPResetKey'     : 'Teleport Reset Key',
+    'TPComboKey'     : 'Hold to show Teleport reticle',
     'TPTPHover'      : 'Hover when Teleporting',
 
     'HasTTP'         : 'Player has Team Teleport',
     'TTPBindKey'     : 'Team Teleport Bind',
-    'TTPComboKey'    : 'Team Teleport Combo Key',
-    'TTPResetKey'    : 'Team Teleport Reset Key',
-    'TTPAutoGFly'    : 'Group Fly when Team Teleporting',
+    'TTPComboKey'    : 'Hold to show Team Teleport reticle',
+    'TTPTPGFly'      : 'Group Fly when Team Teleporting',
 
     'TempEnable'     : 'Enable Temp Travel Mode',
     'TempMode'       : 'Toggle Temp Mode',
@@ -2326,6 +2325,8 @@ class tObject(dict):
         self.speed      :str = ''
         self.hover      :str = ''
         self.fly        :str = ''
+        self.gfly       :str = ''
+        self.gfly       :str = ''
         self.flyx       :str = ''
         self.jump       :str = ''
         self.cjmp       :str = ''
@@ -2336,7 +2337,7 @@ class tObject(dict):
         self.cancj      :bool = False
         self.canjmp     :bool = False
         self.tphover    :str = ''
-        self.ttpgrpfly  :str = ''
+        self.ttpgfly    :str = ''
         self.on         :str = '$$powexectoggleon '
         # self.on         :str = '$$powexecname '
         self.off        :str = '$$powexectoggleoff '
@@ -2393,6 +2394,11 @@ class tObject(dict):
         self.blft :str = ''
         self.blfr :str = ''
         self.blgr :str = ''
+        self.blga :str = ''
+        self.blgaf :str = ''
+        self.blgbo :str = ''
+        self.blgff :str = ''
+        self.blgsd :str = ''
         self.blj  :str = ''
         self.bln  :str = ''
         self.blq  :str = ''
@@ -2417,6 +2423,11 @@ class tObject(dict):
         self.pathfs :Path = Path()
         self.pathft :Path = Path()
         self.pathfr :Path = Path()
+        self.pathga :Path = Path()
+        self.pathgaf :Path = Path()
+        self.pathgbo :Path = Path()
+        self.pathgff :Path = Path()
+        self.pathgsd :Path = Path()
         self.pathgr :Path = Path()
         self.pathj  :Path = Path()
         self.pathn  :Path = Path()
@@ -2442,6 +2453,7 @@ class tObject(dict):
         self.gamepathfs :PureWindowsPath = PureWindowsPath()
         self.gamepathft :PureWindowsPath = PureWindowsPath()
         self.gamepathfr :PureWindowsPath = PureWindowsPath()
+        self.gamepathga :PureWindowsPath = PureWindowsPath()
         self.gamepathgr :PureWindowsPath = PureWindowsPath()
         self.gamepathj  :PureWindowsPath = PureWindowsPath()
         self.gamepathn  :PureWindowsPath = PureWindowsPath()

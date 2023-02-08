@@ -147,7 +147,7 @@ class SoD(Page):
         tleftButton.CtlName = 'TurnLeft'
         tleftButton.CtlLabel = tlLabel
         tleftButton.Page = self
-        tleftButton.KeyBind = KeyBind(self.Init['TurnLeft'], 'Turn Left', self.TabTitle)
+        tleftButton.Key = self.Init['TurnLeft']
         keySizer.Add(tleftButton, [1,0])
 
         forwardButton = bcKeyButton(staticbox, -1, )
@@ -156,7 +156,7 @@ class SoD(Page):
         forwardButton.CtlName = 'Forward'
         forwardButton.CtlLabel = fwLabel
         forwardButton.Page = self
-        forwardButton.KeyBind = KeyBind(self.Init['Forward'], 'Forward', self.TabTitle)
+        forwardButton.Key = self.Init['Forward']
         keySizer.Add(forwardButton, [1,1])
 
         trightButton = bcKeyButton(staticbox, -1, )
@@ -165,7 +165,7 @@ class SoD(Page):
         trightButton.CtlName = 'TurnRight'
         trightButton.CtlLabel = trLabel
         trightButton.Page = self
-        trightButton.KeyBind = KeyBind(self.Init['TurnRight'], 'TurnRight', self.TabTitle)
+        trightButton.Key = self.Init['TurnRight']
         keySizer.Add(trightButton, [1,2])
 
         leftLabel = wx.StaticText(staticbox, label = 'Left')
@@ -178,7 +178,7 @@ class SoD(Page):
         leftButton.CtlName = 'Left'
         leftButton.CtlLabel = leftLabel
         leftButton.Page = self
-        leftButton.KeyBind = KeyBind(self.Init['Left'], 'Left', self.TabTitle)
+        leftButton.Key = self.Init['Left']
         keySizer.Add(leftButton, [2,0])
 
         backButton = bcKeyButton(staticbox, -1, )
@@ -187,7 +187,7 @@ class SoD(Page):
         backButton.CtlName = 'Back'
         backButton.CtlLabel = backLabel
         backButton.Page = self
-        backButton.KeyBind = KeyBind(self.Init['Back'], 'Back', self.TabTitle)
+        backButton.Key = self.Init['Back']
         keySizer.Add(backButton, [2,1])
 
         rightButton = bcKeyButton(staticbox, -1, )
@@ -196,7 +196,7 @@ class SoD(Page):
         rightButton.CtlName = 'Right'
         rightButton.CtlLabel = rightLabel
         rightButton.Page = self
-        rightButton.KeyBind = KeyBind(self.Init['Right'], 'Right', self.TabTitle)
+        rightButton.Key = self.Init['Right']
         keySizer.Add(rightButton, [2,2])
 
         keySizer.Add(leftLabel, [3,0], flag = wx.ALIGN_CENTER)
@@ -212,7 +212,7 @@ class SoD(Page):
         downButton.CtlName = 'Down'
         downButton.CtlLabel = downLabel
         downButton.Page = self
-        downButton.KeyBind = KeyBind(self.Init['Down'], 'Down', self.TabTitle)
+        downButton.Key = self.Init['Down']
         keySizer.Add(downButton, [4,0], [1,1], wx.TOP, 10)
 
         upButton = bcKeyButton(staticbox, -1, )
@@ -221,7 +221,7 @@ class SoD(Page):
         upButton.CtlName = 'Up'
         upButton.CtlLabel = upLabel
         upButton.Page = self
-        upButton.KeyBind = KeyBind(self.Init['Up'], 'Up', self.TabTitle)
+        upButton.Key = self.Init['Up']
         keySizer.Add(upButton, [4,1], [1,2], wx.EXPAND|wx.TOP, 10)
 
         keySizer.Add(downLabel, [5,0], [1,1], flag = wx.ALIGN_CENTER)
@@ -240,7 +240,6 @@ class SoD(Page):
         setattr(mousechord, 'CtlLabel', mcLabel)
         setattr(mcLabel   , 'control' , mousechord)
         setattr(mousechord, 'Page'    , self)
-        setattr(mousechord, 'KeyBind' , KeyBind(self.Init['MouseChord'] , 'MouseChord' , self.TabTitle))
         mcSizer.Add(mousechord, 0, wx.RIGHT, 10)
 
         movementSizer.Add(mcSizer, 0, wx.ALIGN_RIGHT|wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)
@@ -1496,6 +1495,8 @@ class SoD(Page):
 
         ### TODO TODO TODO - these are just in here to make pylint happy;  fix the actual problem
         Nova = Dwarf = {}
+        humanBindKey = humanpbind = novapbind = dwarfpbind = None
+        dwarfTPPower = normalTPPower = teamTPPower = ''
 
         if (profile.Archetype() == "Warshade"):
             dwarfTPPower  = "powexecname Black Dwarf Step"

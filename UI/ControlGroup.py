@@ -49,7 +49,7 @@ class ControlGroup(wx.StaticBoxSizer):
             # push context onto the button, we'll thank me later
             control.CtlName = ctlName
             control.Page    = self.Page
-            control.KeyBind = KeyBind(Init[ctlName], label, self.Page.TabTitle)
+            control.Key     = Init[ctlName]
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
             control = wx.ComboBox(

@@ -40,8 +40,15 @@ class InspirationPopper(Page):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.InspRows =    ControlGroup(self, self, width=8)
-        self.RevInspRows = ControlGroup(self, self, width=8)
+        InspTabs = wx.Notebook(self, style = wx.NB_TOP, name = 'InspTabs')
+
+        for tab in ('Basic Inspirations', 'Dual Inspirations', 'Team Inspirations', 'Dual Team Inspirations',):
+            InspTabs.AddPage(wx.Panel(InspTabs), tab)
+
+        self.InspRows =    ControlGroup(self, self, width=8, label = "Large Inspirations First")
+        self.RevInspRows = ControlGroup(self, self, width=8, label = "Small Inspirations First")
+
+        sizer.Add(InspTabs, 1, wx.EXPAND)
 
         for Insp in Inspirations:
             for order in ("", "Rev"):
@@ -195,14 +202,14 @@ class InspirationPopper(Page):
         'BreakFreeKey'       : "Break Free Key",
         'ResistDamageKey'    : "Resist Damage Key",
         'ResurrectionKey'    : "Resurrection Key",
-        'RevAccuracyKey'     : "Reverse Accuracy Key",
-        'RevHealthKey'       : "Reverse Health Key",
-        'RevDamageKey'       : "Reverse Damage Key",
-        'RevEnduranceKey'    : "Reverse Endurance Key",
-        'RevDefenseKey'      : "Reverse Defense Key",
-        'RevBreakFreeKey'    : "Reverse Break Free Key",
-        'RevResistDamageKey' : "Reverse Resist Damage Key",
-        'RevResurrectionKey' : "Reverse Resurrection Key",
+        'RevAccuracyKey'     : "Accuracy Key",
+        'RevHealthKey'       : "Health Key",
+        'RevDamageKey'       : "Damage Key",
+        'RevEnduranceKey'    : "Endurance Key",
+        'RevDefenseKey'      : "Defense Key",
+        'RevBreakFreeKey'    : "Break Free Key",
+        'RevResistDamageKey' : "Resist Damage Key",
+        'RevResurrectionKey' : "Resurrection Key",
     })
     for order in ("", "Rev"):
         for Insp in Inspirations:

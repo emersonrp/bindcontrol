@@ -1629,39 +1629,39 @@ class SoD(Page):
             if (t.tphover != ''):
                 tphovermodeswitch = t.bla + "000000.txt"
 
-            ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
+            ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexec_location cursor ' + normalTPPower))
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
 
             tp_off = profile.GetBindFile("tp","tp_off.txt")
-            tp_off.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
+            #tp_off.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
             tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
 
             tp_on1 = profile.GetBindFile("tp","tp_on1.txt")
             zoomin = t.detailhi + t.runcamdist
             if (t.tphover): zoomin = ''
-            tp_on1.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+down' + t.tphover + profile.BLF('tp','tp_on2.txt')))
+            #tp_on1.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+down' + t.tphover + profile.BLF('tp','tp_on2.txt')))
             tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
 
-            tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
-            tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$powexecname ' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
+            #tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
+            #tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$powexecname ' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
 
         # normal non-peacebringer team teleport binds
         if (self.GetState('HasTTP') and not (profile.Archetype() == "Peacebringer") and teamTPPower) :
             tphovermodeswitch = ''
 
-            ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( 'nop'))
+            ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('powexec_location cursor ' + teamTPPower))
             ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
 
             ttp_off = profile.GetBindFile("ttp","ttp_off.txt")
-            ttp_off.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('nop'))
+            #ttp_off.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('nop'))
             ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
 
             ttp_on1 = profile.GetBindFile("ttp","ttp_on1.txt")
-            ttp_on1.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('+down' + profile.BLF('ttp','ttp_on2.txt')))
+            #ttp_on1.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('+down' + profile.BLF('ttp','ttp_on2.txt')))
             ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt') + tphovermodeswitch))
 
-            ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
-            ttp_on2.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( '-down$$powexecname ' + teamTPPower + profile.BLF('ttp','ttp_on1.txt')))
+            #ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
+            #ttp_on2.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( '-down$$powexecname ' + teamTPPower + profile.BLF('ttp','ttp_on1.txt')))
 
     def sodResetKey(self, curfile, gamepath, turnoff, moddir):
 

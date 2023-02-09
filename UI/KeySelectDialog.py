@@ -333,7 +333,7 @@ class bcKeyButton(wx.Button):
         return KeyBind(self.Key, self.CtlLabel, self.Page, contents)
 
     def SetLabel(self, keyLabel):
-        if re.search(r'\+\w\w\w', keyLabel) or len(keyLabel) > 9:
+        if re.search(r'\+\w\w\w\w\w', keyLabel) or len(keyLabel) > 12:
             # smallify and abbreviate if we have a mod key
             keyLabel = re.sub(r'SHIFT\+', 'S+', keyLabel)
             keyLabel = re.sub(r'CTRL\+', 'C+', keyLabel)

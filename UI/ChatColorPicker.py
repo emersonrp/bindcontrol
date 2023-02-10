@@ -32,8 +32,7 @@ class ChatColorPicker(wx.BoxSizer):
         self.Add(self.example, 0, wx.LEFT|wx.ALIGN_CENTER, 15)
 
     def onColorChanged(self, _ = None):
-        print("Hi got here")
         self.example.SetBackgroundColour(self.borderPicker.GetColour())
         self.exampleText.SetBackgroundColour(self.backgroundPicker.GetColour())
         self.exampleText.SetForegroundColour(self.textPicker.GetColour())
-
+        self.exampleText.Refresh()

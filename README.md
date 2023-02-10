@@ -86,6 +86,8 @@ Credits and License
 
 BindControl is in many places a direct port of [CityBinder](http://sourceforge.net/projects/citybinder/) code, and in most other places was extremely influenced by it.  Keybinding code drew from similar code in [PADRE](https://padre.perlide.org/).
 
+Various newer functionality was added to [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by tailcoat, who kindly provided his source code and permission to adapt for use with BindControl, as well as offered suggestions and advice for improvements.
+
 Citybinder's acknowledgements are reproduced below:
 ```
     Obviously, without Cryptic and NCSoft to have created/funded/published

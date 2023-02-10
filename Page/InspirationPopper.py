@@ -32,9 +32,9 @@ class InspirationPopper(Page):
             'DisableTells'       : False,
         }
         for Insp in Inspirations:
-            self.Init[f"{Insp}Border"]     = Inspirations[Insp]['color']
-            self.Init[f"{Insp}Foreground"] = wx.BLACK
-            self.Init[f"{Insp}Background"] = wx.WHITE
+            self.Init[f"{Insp}Border"]     = Inspirations[Insp]['bordercolor']
+            self.Init[f"{Insp}Foreground"] = Inspirations[Insp]['bordercolor']
+            self.Init[f"{Insp}Background"] = Inspirations[Insp]['color']
 
     def BuildPage(self):
 
@@ -63,18 +63,18 @@ class InspirationPopper(Page):
                 rowSet.AddControl(
                     ctlType = 'colorpicker',
                     ctlName = f"{order}{Insp}Border",
-                    contents = Inspirations[Insp]['color'],
+                    contents = Inspirations[Insp]['bordercolor'],
                 )
 
                 rowSet.AddControl(
                     ctlType = 'colorpicker',
                     ctlName = f"{order}{Insp}Background",
-                    contents = wx.WHITE,
+                    contents = Inspirations[Insp]['color'],
                 )
                 rowSet.AddControl(
                     ctlType = 'colorpicker',
                     ctlName = f"{order}{Insp}Foreground",
-                    contents = wx.BLACK,
+                    contents = Inspirations[Insp]['bordercolor'],
                 )
 
 

@@ -732,35 +732,43 @@ SprintPowers = [
 
 Inspirations = {
     'Accuracy'     : {
-        'color': wx.YELLOW,
+        'color': (255, 238, 0),
+        'bordercolor': (118, 80, 0),
         'tiers': ['Insight'        , 'Keen Insight'         , 'Uncanny Insight', 'Sight Beyond Sight',] ,
     },
     'Health'       : {
-        'color': wx.GREEN,
+        'color': (135, 220, 38),
+        'bordercolor': (0, 66, 7),
         'tiers': ['Respite'        , 'Dramatic Improvement' , 'Resurgence', 'Perfect Health',]      ,
     },
     'Damage'       : {
-        'color': wx.RED,
+        'color': (249, 163, 152),
+        'bordercolor': (179, 0, 0),
         'tiers': ['Enrage'         , 'Focused Rage'         , 'Righteous Rage', 'Furious Rage',]  ,
     },
     'Endurance'    : {
-        'color': wx.BLUE,
+        'color': (122, 220, 255),
+        'bordercolor': (0, 30, 160),
         'tiers': ['Catch a Breath' , 'Take a Breather'      , 'Second Wind', 'Back in the Fight',]     ,
     },
     'Defense'      : {
         'color': (128, 0, 153),  # purple
+        'bordercolor': (94, 0, 94),
         'tiers': ['Luck'           , 'Good Luck'            , 'Phenomenal Luck', 'Amazing Luck',] ,
     },
     'ResistDamage' : {
-        'color': (230, 80, 0),   # orange
+        'color': (255, 178, 99),
+        'bordercolor': (151, 54, 0),
         'tiers': ['Sturdy'         , 'Rugged'               , 'Robust', 'Resistant',]          ,
     },
     'BreakFree'    : {
-        'color': (110, 76, 200), # light purple
+        'color': (186, 174, 255),
+        'bordercolor': ('57, 0, 113'),
         'tiers': ['Break Free'     , 'Emerge'               , 'Escape', 'Liberate',]          ,
     },
     'Resurrection' : {
         'color': (50, 180, 160), # cyan
+        'bordercolor': (0, 30, 10),
         'tiers': ['Awaken'         , 'Bounce Back'          , 'Restoration', 'Immortal Recovery',]     ,
     },
 }

@@ -370,7 +370,7 @@ class SoD(Page):
         topSizer.Add(self.rightColumn)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
-        paddingSizer.Add(topSizer, flag = wx.ALL|wx.EXPAND, border = 16)
+        paddingSizer.Add(topSizer, flag = wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
         self.SetSizerAndFit(paddingSizer)
 
         self.SynchronizeUI()

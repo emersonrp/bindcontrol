@@ -112,7 +112,7 @@ class General(Page):
         topSizer.Add(self.IncarnateBox,  2, wx.ALL|wx.EXPAND, 6)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
-        paddingSizer.Add(topSizer, flag=wx.ALL|wx.EXPAND, border = 20)
+        paddingSizer.Add(topSizer, flag=wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, border = 20)
 
         # testPowerPicker = PowerPicker(self)
         # paddingSizer.Add(testPowerPicker, flag=wx.ALL|wx.EXPAND, border = 20)

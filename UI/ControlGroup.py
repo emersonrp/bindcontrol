@@ -6,8 +6,6 @@ import wx.lib.stattext as ST
 
 import UI
 from UI.KeySelectDialog import bcKeyButton
-from BindFile import KeyBind
-import wx.lib.stattext as ST
 
 class ControlGroup(wx.StaticBoxSizer):
 
@@ -113,7 +111,7 @@ class ControlGroup(wx.StaticBoxSizer):
                 CtlParent, -1, Init[ctlName], Init[ctlName],
             )
         elif ctlType == ('colorpicker'):
-            control = wx.ColourPickerCtrl( CtlParent, -1, contents)
+            control = wx.ColourPickerCtrl( CtlParent, -1, contents, size = (30,30))
 
         else:
             wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}")

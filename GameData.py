@@ -763,7 +763,7 @@ Inspirations = {
     },
     'BreakFree'    : {
         'color': (186, 174, 255),
-        'bordercolor': ('57, 0, 113'),
+        'bordercolor': (57, 0, 113),
         'tiers': ['Break Free'     , 'Emerge'               , 'Escape', 'Liberate',]          ,
     },
     'Resurrection' : {

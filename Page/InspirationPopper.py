@@ -4,37 +4,64 @@ from Page import Page
 from GameData import Inspirations
 from UI.ControlGroup import ControlGroup
 
+tabnames = {
+    'Basic' : 'Basic Inspirations',
+    'Dual' : 'Dual Inspirations',
+    'Team' : 'Team Inspirations',
+    'DualTeam' : 'Dual Team Inspirations',
+}
+
 class InspirationPopper(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
 
         self.TabTitle = "Inspiration Popper"
 
-        self.Init = {
-            'EnableInspBinds'    : False,
-            'EnableRevInspBinds' : False,
-            'AccuracyKey'        : "SHIFT+A",
-            'HealthKey'          : "SHIFT+S",
-            'DamageKey'          : "SHIFT+D",
-            'EnduranceKey'       : "SHIFT+Q",
-            'DefenseKey'         : "SHIFT+W",
-            'BreakFreeKey'       : "SHIFT+E",
-            'ResistDamageKey'    : "SHIFT+SPACE",
-            'ResurrectionKey'    : "SHIFT+TILDE",
-            'RevAccuracyKey'     : "SHIFT+CTRL+A",
-            'RevHealthKey'       : "SHIFT+CTRL+S",
-            'RevDamageKey'       : "SHIFT+CTRL+D",
-            'RevEnduranceKey'    : "SHIFT+CTRL+Q",
-            'RevDefenseKey'      : "SHIFT+CTRL+W",
-            'RevBreakFreeKey'    : "SHIFT+CTRL+E",
-            'RevResistDamageKey' : "SHIFT+CTRL+SPACE",
-            'RevResurrectionKey' : "SHIFT+CTRL+TILDE",
-            'DisableTells'       : False,
-        }
-        for Insp in Inspirations:
-            self.Init[f"{Insp}Border"]     = Inspirations[Insp]['bordercolor']
-            self.Init[f"{Insp}Foreground"] = Inspirations[Insp]['bordercolor']
-            self.Init[f"{Insp}Background"] = Inspirations[Insp]['color']
+        self.Init = {}
+
+        for tab in tabnames:
+            self.Init[f'{tab}AccuracyKey']        = ""
+            self.Init[f'{tab}HealthKey']          = ""
+            self.Init[f'{tab}DamageKey']          = ""
+            self.Init[f'{tab}EnduranceKey']       = ""
+            self.Init[f'{tab}DefenseKey']         = ""
+            self.Init[f'{tab}BreakFreeKey']       = ""
+            self.Init[f'{tab}ResistDamageKey']    = ""
+            self.Init[f'{tab}ResurrectionKey']    = ""
+            self.Init[f'{tab}RevAccuracyKey']     = ""
+            self.Init[f'{tab}RevHealthKey']       = ""
+            self.Init[f'{tab}RevDamageKey']       = ""
+            self.Init[f'{tab}RevEnduranceKey']    = ""
+            self.Init[f'{tab}RevDefenseKey']      = ""
+            self.Init[f'{tab}RevBreakFreeKey']    = ""
+            self.Init[f'{tab}RevResistDamageKey'] = ""
+            self.Init[f'{tab}RevResurrectionKey'] = ""
+            for Insp in Inspirations:
+                self.Init[f"{tab}{Insp}Border"]     = Inspirations[Insp]['bordercolor']
+                self.Init[f"{tab}{Insp}Foreground"] = Inspirations[Insp]['bordercolor']
+                self.Init[f"{tab}{Insp}Background"] = Inspirations[Insp]['color']
+
+        self.Init.update({
+            'EnableInspBinds'         : False,
+            'EnableRevInspBinds'      : False,
+            'DisableTells'            : False,
+            'BasicAccuracyKey'        : "SHIFT+A",
+            'BasicHealthKey'          : "SHIFT+S",
+            'BasicDamageKey'          : "SHIFT+D",
+            'BasicEnduranceKey'       : "SHIFT+Q",
+            'BasicDefenseKey'         : "SHIFT+W",
+            'BasicBreakFreeKey'       : "SHIFT+E",
+            'BasicResistDamageKey'    : "SHIFT+SPACE",
+            'BasicResurrectionKey'    : "SHIFT+TILDE",
+            'BasicRevAccuracyKey'     : "SHIFT+CTRL+A",
+            'BasicRevHealthKey'       : "SHIFT+CTRL+S",
+            'BasicRevDamageKey'       : "SHIFT+CTRL+D",
+            'BasicRevEnduranceKey'    : "SHIFT+CTRL+Q",
+            'BasicRevDefenseKey'      : "SHIFT+CTRL+W",
+            'BasicRevBreakFreeKey'    : "SHIFT+CTRL+E",
+            'BasicRevResistDamageKey' : "SHIFT+CTRL+SPACE",
+            'BasicRevResurrectionKey' : "SHIFT+CTRL+TILDE",
+        })
 
     def BuildPage(self):
 
@@ -42,42 +69,7 @@ class InspirationPopper(Page):
 
         InspTabs = wx.Notebook(self, style = wx.NB_TOP, name = 'InspTabs')
 
-        for tab in ('Basic Inspirations', 'Dual Inspirations', 'Team Inspirations', 'Dual Team Inspirations',):
-            InspTabs.AddPage(wx.Panel(InspTabs), tab)
-
-        self.InspRows =    ControlGroup(self, self, width=8, label = "Large Inspirations First")
-        self.RevInspRows = ControlGroup(self, self, width=8, label = "Small Inspirations First")
-
-        sizer.Add(InspTabs, 1, wx.EXPAND)
-
-        for Insp in Inspirations:
-            for order in ("", "Rev"):
-                rowSet = self.RevInspRows if order else self.InspRows
-
-                rowSet.AddControl(
-                    ctlType = 'keybutton',
-                    ctlName = f"{order}{Insp}Key",
-                    tooltip = f"Choose the key combo to activate a {Insp} inspiration",
-                )
-
-                rowSet.AddControl(
-                    ctlType = 'colorpicker',
-                    ctlName = f"{order}{Insp}Border",
-                    contents = Inspirations[Insp]['bordercolor'],
-                )
-
-                rowSet.AddControl(
-                    ctlType = 'colorpicker',
-                    ctlName = f"{order}{Insp}Background",
-                    contents = Inspirations[Insp]['color'],
-                )
-                rowSet.AddControl(
-                    ctlType = 'colorpicker',
-                    ctlName = f"{order}{Insp}Foreground",
-                    contents = Inspirations[Insp]['bordercolor'],
-                )
-
-
+        # TODO - make this radio buttons more like CB4HC does it.
         self.useCB = wx.CheckBox( self, -1, 'Enable Inspiration Popper Binds (prefer largest)')
         self.useCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Inspiration Popper Binds, (largest used first)'))
@@ -85,10 +77,6 @@ class InspirationPopper(Page):
         self.Ctrls['EnableInspBinds'] = self.useCB
         sizer.Add(self.useCB, 0, wx.ALL, 10)
         self.useCB.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
-
-        sizer.Add(self.InspRows, 0, wx.EXPAND)
-
-        sizer.AddSpacer(20)
 
         self.useRevCB = wx.CheckBox( self, -1,
                 'Enable Reverse Inspiration Popper Binds (prefer smallest)')
@@ -99,7 +87,47 @@ class InspirationPopper(Page):
         sizer.Add(self.useRevCB, 0, wx.ALL, 10)
         self.useRevCB.Bind(wx.EVT_CHECKBOX, self.OnEnableRevCB)
 
-        sizer.Add(self.RevInspRows, 0, wx.EXPAND)
+        for tab, tabname in tabnames.items():
+            tabpanel = wx.Panel(InspTabs)
+            InspTabs.AddPage(tabpanel, tabname)
+            tabsizer = wx.BoxSizer(wx.VERTICAL)
+
+            InspRows =    ControlGroup(tabpanel, self, width=8, label = "Large Inspirations First")
+            RevInspRows = ControlGroup(tabpanel, self, width=8, label = "Small Inspirations First")
+
+            for Insp in Inspirations:
+                for order in ("", "Rev"):
+                    rowSet = RevInspRows if order else InspRows
+
+                    rowSet.AddControl(
+                        ctlType = 'keybutton',
+                        ctlName = f"{tab}{order}{Insp}Key",
+                        tooltip = f"Choose the key combo to activate a {Insp} inspiration",
+                    )
+
+                    rowSet.AddControl(
+                        ctlType = 'colorpicker',
+                        ctlName = f"{tab}{order}{Insp}Border",
+                        contents = Inspirations[Insp]['bordercolor'],
+                    )
+
+                    rowSet.AddControl(
+                        ctlType = 'colorpicker',
+                        ctlName = f"{tab}{order}{Insp}Background",
+                        contents = Inspirations[Insp]['color'],
+                    )
+                    rowSet.AddControl(
+                        ctlType = 'colorpicker',
+                        ctlName = f"{tab}{order}{Insp}Foreground",
+                        contents = Inspirations[Insp]['bordercolor'],
+                    )
+
+            tabsizer.Add(InspRows, 0, wx.EXPAND|wx.ALL, 10)
+            tabsizer.Add(RevInspRows, 0, wx.EXPAND|wx.ALL, 10)
+
+            tabpanel.SetSizerAndFit(tabsizer)
+
+        sizer.Add(InspTabs, 1, wx.EXPAND)
 
         self.disableTellsCB = wx.CheckBox( self, -1,
                 'Disable self-/tell feedback')
@@ -124,11 +152,12 @@ class InspirationPopper(Page):
 
     def OnEnableCB(self, evt = None):
         controls = []
-        for Insp in Inspirations:
-            controls.append(f"{Insp}Key")
-            controls.append(f"{Insp}Border")
-            controls.append(f"{Insp}Background")
-            controls.append(f"{Insp}Foreground")
+        for tab in tabnames:
+            for Insp in Inspirations:
+                controls.append(f"{tab}{Insp}Key")
+                controls.append(f"{tab}{Insp}Border")
+                controls.append(f"{tab}{Insp}Background")
+                controls.append(f"{tab}{Insp}Foreground")
         self.Freeze()
         self.DisableControls(self.useCB.IsChecked(), controls)
         if self.disableTellsCB.IsChecked():
@@ -138,11 +167,12 @@ class InspirationPopper(Page):
 
     def OnEnableRevCB(self, evt = None):
         controls = []
-        for Insp in Inspirations:
-            controls.append(f"Rev{Insp}Key")
-            controls.append(f"Rev{Insp}Border")
-            controls.append(f"Rev{Insp}Background")
-            controls.append(f"Rev{Insp}Foreground")
+        for tab in tabnames:
+            for Insp in Inspirations:
+                controls.append(f"{tab}Rev{Insp}Key")
+                controls.append(f"{tab}Rev{Insp}Border")
+                controls.append(f"{tab}Rev{Insp}Background")
+                controls.append(f"{tab}Rev{Insp}Foreground")
         self.Freeze()
         self.DisableControls(self.useRevCB.IsChecked(), controls)
         if self.disableTellsCB.IsChecked():
@@ -192,30 +222,31 @@ class InspirationPopper(Page):
             if self.GetState('EnableRevInspBinds'):
                 ResetFile.SetBind(self.Ctrls[f"Rev{Insp}Key"].MakeFileKeyBind(reverseOrder))
 
-    UI.Labels.update({
-        'Enable'             : "Enable Inspiration Popper",
-        'AccuracyKey'        : "Accuracy Key",
-        'HealthKey'          : "Health Key",
-        'DamageKey'          : "Damage Key",
-        'EnduranceKey'       : "Endurance Key",
-        'DefenseKey'         : "Defense Key",
-        'BreakFreeKey'       : "Break Free Key",
-        'ResistDamageKey'    : "Resist Damage Key",
-        'ResurrectionKey'    : "Resurrection Key",
-        'RevAccuracyKey'     : "Accuracy Key",
-        'RevHealthKey'       : "Health Key",
-        'RevDamageKey'       : "Damage Key",
-        'RevEnduranceKey'    : "Endurance Key",
-        'RevDefenseKey'      : "Defense Key",
-        'RevBreakFreeKey'    : "Break Free Key",
-        'RevResistDamageKey' : "Resist Damage Key",
-        'RevResurrectionKey' : "Resurrection Key",
-    })
-    for order in ("", "Rev"):
-        for Insp in Inspirations:
-            UI.Labels[f"{order}{Insp}Border"] = "Border"
-            UI.Labels[f"{order}{Insp}Foreground"] = "Foreground"
-            UI.Labels[f"{order}{Insp}Background"] = "Background"
+    UI.Labels['Enable'] = "Enable Inspiration Popper"
+
+    for tab in tabnames:
+        UI.Labels[f'{tab}AccuracyKey']        = "Accuracy Key"
+        UI.Labels[f'{tab}HealthKey']          = "Health Key"
+        UI.Labels[f'{tab}DamageKey']          = "Damage Key"
+        UI.Labels[f'{tab}EnduranceKey']       = "Endurance Key"
+        UI.Labels[f'{tab}DefenseKey']         = "Defense Key"
+        UI.Labels[f'{tab}BreakFreeKey']       = "Break Free Key"
+        UI.Labels[f'{tab}ResistDamageKey']    = "Resist Damage Key"
+        UI.Labels[f'{tab}ResurrectionKey']    = "Resurrection Key"
+        UI.Labels[f'{tab}RevAccuracyKey']     = "Accuracy Key"
+        UI.Labels[f'{tab}RevHealthKey']       = "Health Key"
+        UI.Labels[f'{tab}RevDamageKey']       = "Damage Key"
+        UI.Labels[f'{tab}RevEnduranceKey']    = "Endurance Key"
+        UI.Labels[f'{tab}RevDefenseKey']      = "Defense Key"
+        UI.Labels[f'{tab}RevBreakFreeKey']    = "Break Free Key"
+        UI.Labels[f'{tab}RevResistDamageKey'] = "Resist Damage Key"
+        UI.Labels[f'{tab}RevResurrectionKey'] = "Resurrection Key"
+
+        for order in ("", "Rev"):
+            for Insp in Inspirations:
+                UI.Labels[f"{tab}{order}{Insp}Border"]     = "Border"
+                UI.Labels[f"{tab}{order}{Insp}Foreground"] = "Foreground"
+                UI.Labels[f"{tab}{order}{Insp}Background"] = "Background"
 
 def ChatColors(fg,bg,bd): return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'
 

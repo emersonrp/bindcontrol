@@ -3,6 +3,7 @@ import UI
 from Page import Page
 from GameData import Inspirations
 from UI.ControlGroup import ControlGroup
+from UI.ChatColorPicker import ChatColorPicker
 
 tabnames = {
     'Basic' : 'Basic Inspirations',
@@ -86,6 +87,8 @@ class InspirationPopper(Page):
         self.Ctrls['EnableRevInspBinds'] = self.useRevCB
         sizer.Add(self.useRevCB, 0, wx.ALL, 10)
         self.useRevCB.Bind(wx.EVT_CHECKBOX, self.OnEnableRevCB)
+
+        sizer.Add(ChatColorPicker(self, "Test", {'border': wx.RED, 'background': wx.WHITE, 'text': wx.BLACK}), 0)
 
         for tab, tabname in tabnames.items():
             tabpanel = wx.Panel(InspTabs)
@@ -245,7 +248,7 @@ class InspirationPopper(Page):
         for order in ("", "Rev"):
             for Insp in Inspirations:
                 UI.Labels[f"{tab}{order}{Insp}Border"]     = "Border"
-                UI.Labels[f"{tab}{order}{Insp}Foreground"] = "Foreground"
+                UI.Labels[f"{tab}{order}{Insp}Foreground"] = "Text"
                 UI.Labels[f"{tab}{order}{Insp}Background"] = "Background"
 
 def ChatColors(fg,bg,bd): return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'

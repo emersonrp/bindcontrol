@@ -2,6 +2,7 @@ import re
 from pathlib import Path, PureWindowsPath
 import json
 import wx
+import wx.lib.colourselect as csel
 
 from BindFile import BindFile
 
@@ -310,11 +311,11 @@ class Profile(wx.Notebook):
             page = getattr(self, pageName)
 
             # ... and tell it to gather up binds and put them into bindfiles.
-        #    try:
-            page.PopulateBindFiles()
-        #    except Exception as e:
-        #        wx.LogError(f"Error populating bind file: {e}")
-        #        errors += 1
+            try:
+                page.PopulateBindFiles()
+            except Exception as e:
+                wx.LogError(f"Error populating bind file: {e}")
+                errors += 1
 
         # Now we have them here and can iterate them
         totalfiles = len(self.BindFiles)

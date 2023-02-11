@@ -7,11 +7,11 @@ from BindFile import KeyBind
 from Page import Page
 from UI.ControlGroup import ControlGroup, bcKeyButton
 
-class SoD(Page):
+class MovementPowers(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
 
-        self.TabTitle = "Speed On Demand"
+        self.TabTitle = "Movement / Speed on Demand"
 
         self.Init = {
             'EnableSoD'       : False,

@@ -6,9 +6,9 @@ from UI.ChatColorPicker import ChatColorPicker
 from UI.KeySelectDialog import bcKeyButton
 
 tabnames = {
-    'Basic' : 'Basic Inspirations',
-    'Dual' : 'Dual Inspirations',
-    'Team' : 'Team Inspirations',
+    'Single'   : 'Basic Inspirations',
+    'Dual'     : 'Dual Inspirations',
+    'Team'     : 'Team Inspirations',
     'DualTeam' : 'Dual Team Inspirations',
 }
 
@@ -21,47 +21,32 @@ class InspirationPopper(Page):
         self.Init = {}
 
         for tab in tabnames:
-            self.Init[f'{tab}AccuracyKey']        = ""
-            self.Init[f'{tab}HealthKey']          = ""
-            self.Init[f'{tab}DamageKey']          = ""
-            self.Init[f'{tab}EnduranceKey']       = ""
-            self.Init[f'{tab}DefenseKey']         = ""
-            self.Init[f'{tab}BreakFreeKey']       = ""
-            self.Init[f'{tab}ResistDamageKey']    = ""
-            self.Init[f'{tab}ResurrectionKey']    = ""
-            self.Init[f'{tab}RevAccuracyKey']     = ""
-            self.Init[f'{tab}RevHealthKey']       = ""
-            self.Init[f'{tab}RevDamageKey']       = ""
-            self.Init[f'{tab}RevEnduranceKey']    = ""
-            self.Init[f'{tab}RevDefenseKey']      = ""
-            self.Init[f'{tab}RevBreakFreeKey']    = ""
-            self.Init[f'{tab}RevResistDamageKey'] = ""
-            self.Init[f'{tab}RevResurrectionKey'] = ""
-            for _,Insp in Inspirations['Single'].items():
-                self.Init[f"{tab}{Insp}Border"]     = Insp['dkcolor']
-                self.Init[f"{tab}{Insp}Foreground"] = Insp['dkcolor']
-                self.Init[f"{tab}{Insp}Background"] = Insp['ltcolor']
-
+            for name, Insp in Inspirations[tab].items():
+                self.Init[f'{tab}{name}Key']        = ""
+                self.Init[f'{tab}Rev{name}Key']     = ""
+                self.Init[f"{tab}{name}Border"]     = Insp['dkcolor']
+                self.Init[f"{tab}{name}Foreground"] = Insp['dkcolor']
+                self.Init[f"{tab}{name}Background"] = Insp['ltcolor']
         self.Init.update({
             'EnableInspBinds'         : False,
             'EnableRevInspBinds'      : False,
             'DisableTells'            : False,
-            'BasicAccuracyKey'        : "SHIFT+A",
-            'BasicHealthKey'          : "SHIFT+S",
-            'BasicDamageKey'          : "SHIFT+D",
-            'BasicEnduranceKey'       : "SHIFT+Q",
-            'BasicDefenseKey'         : "SHIFT+W",
-            'BasicBreakFreeKey'       : "SHIFT+E",
-            'BasicResistDamageKey'    : "SHIFT+SPACE",
-            'BasicResurrectionKey'    : "SHIFT+TILDE",
-            'BasicRevAccuracyKey'     : "SHIFT+CTRL+A",
-            'BasicRevHealthKey'       : "SHIFT+CTRL+S",
-            'BasicRevDamageKey'       : "SHIFT+CTRL+D",
-            'BasicRevEnduranceKey'    : "SHIFT+CTRL+Q",
-            'BasicRevDefenseKey'      : "SHIFT+CTRL+W",
-            'BasicRevBreakFreeKey'    : "SHIFT+CTRL+E",
-            'BasicRevResistDamageKey' : "SHIFT+CTRL+SPACE",
-            'BasicRevResurrectionKey' : "SHIFT+CTRL+TILDE",
+            'SingleAccuracyKey'        : "SHIFT+A",
+            'SingleHealthKey'          : "SHIFT+S",
+            'SingleDamageKey'          : "SHIFT+D",
+            'SingleEnduranceKey'       : "SHIFT+Q",
+            'SingleDefenseKey'         : "SHIFT+W",
+            'SingleBreakFreeKey'       : "SHIFT+E",
+            'SingleResistDamageKey'    : "SHIFT+SPACE",
+            'SingleResurrectionKey'    : "SHIFT+TILDE",
+            'SingleRevAccuracyKey'     : "SHIFT+CTRL+A",
+            'SingleRevHealthKey'       : "SHIFT+CTRL+S",
+            'SingleRevDamageKey'       : "SHIFT+CTRL+D",
+            'SingleRevEnduranceKey'    : "SHIFT+CTRL+Q",
+            'SingleRevDefenseKey'      : "SHIFT+CTRL+W",
+            'SingleRevBreakFreeKey'    : "SHIFT+CTRL+E",
+            'SingleRevResistDamageKey' : "SHIFT+CTRL+SPACE",
+            'SingleRevResurrectionKey' : "SHIFT+CTRL+TILDE",
         })
 
     def BuildPage(self):
@@ -103,7 +88,7 @@ class InspirationPopper(Page):
             RevInspRows.AddGrowableCol(1)
             RevInspBox.Add(RevInspRows, 1, wx.ALL|wx.EXPAND, 10)
 
-            for Insp in Inspirations['Single']:
+            for Insp in Inspirations[tab]:
                 for order in ("", "Rev"):
                     rowSet = RevInspRows if order else InspRows
                     box    = RevInspBox  if order else InspBox
@@ -119,9 +104,9 @@ class InspirationPopper(Page):
 
                     chatcolorpicker = ChatColorPicker(box.GetStaticBox(), self, f"{tab}{order}{Insp}",
                         {
-                          'border'     : Inspirations['Single'][Insp]['dkcolor'],
-                          'background' : Inspirations['Single'][Insp]['ltcolor'],
-                          'text'       : Inspirations['Single'][Insp]['dkcolor'],
+                          'border'     : Inspirations[tab][Insp]['dkcolor'],
+                          'background' : Inspirations[tab][Insp]['ltcolor'],
+                          'text'       : Inspirations[tab][Insp]['dkcolor'],
                         })
 
                     rowSet.Add(kblabel,         0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 3)
@@ -161,7 +146,7 @@ class InspirationPopper(Page):
     def OnEnableCB(self, evt = None):
         controls = []
         for tab in tabnames:
-            for Insp in Inspirations['Single']:
+            for Insp in Inspirations[tab]:
                 controls.append(f"{tab}{Insp}Key")
                 controls.append(f"{tab}{Insp}Border")
                 controls.append(f"{tab}{Insp}Background")
@@ -176,7 +161,7 @@ class InspirationPopper(Page):
     def OnEnableRevCB(self, evt = None):
         controls = []
         for tab in tabnames:
-            for Insp in Inspirations['Single']:
+            for Insp in Inspirations[tab]:
                 controls.append(f"{tab}Rev{Insp}Key")
                 controls.append(f"{tab}Rev{Insp}Border")
                 controls.append(f"{tab}Rev{Insp}Background")
@@ -192,13 +177,14 @@ class InspirationPopper(Page):
         enabled = not self.disableTellsCB.IsChecked()
         controls = []
         revcontrols = []
-        for Insp in Inspirations['Single']:
-            controls.append(f"{Insp}Border")
-            controls.append(f"{Insp}Background")
-            controls.append(f"{Insp}Foreground")
-            revcontrols.append(f"Rev{Insp}Border")
-            revcontrols.append(f"Rev{Insp}Background")
-            revcontrols.append(f"Rev{Insp}Foreground")
+        for tab in tabnames:
+            for Insp in Inspirations[tab]:
+                controls.append(f"{tab}{Insp}Border")
+                controls.append(f"{tab}{Insp}Background")
+                controls.append(f"{tab}{Insp}Foreground")
+                revcontrols.append(f"{tab}Rev{Insp}Border")
+                revcontrols.append(f"{tab}Rev{Insp}Background")
+                revcontrols.append(f"{tab}Rev{Insp}Foreground")
         if self.useCB.IsChecked():
             self.DisableControls(enabled, controls)
         if self.useRevCB.IsChecked():
@@ -208,50 +194,35 @@ class InspirationPopper(Page):
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()
 
-        for Insp in sorted(Inspirations['Single']):
+        for tab in tabnames:
+            for Insp in sorted(Inspirations[tab]):
 
-            tiers = Inspirations['Single'][Insp]['tiers']
-            # "reverse" order is as it is in gamebinds, smallest first
-            reverseOrder = list(map(lambda s: f"inspexecname {s}", tiers))
-            forwardOrder = reverseOrder[::-1]
+                tiers = Inspirations[tab][Insp]['tiers']
+                # "reverse" order is as it is in gamebinds, smallest first
+                reverseOrder = list(map(lambda s: f"inspexecname {s}", tiers))
+                forwardOrder = reverseOrder[::-1]
 
-            if not self.GetState("DisableTells"):
-                bc = self.GetState(f'{Insp}Border')
-                bg = self.GetState(f'{Insp}Background')
-                fg = self.GetState(f'{Insp}Foreground')
-                forwardOrder.insert(0, f'tell $name, {ChatColors(fg, bg, bc)}{Insp}')
-                bc = self.GetState(f'Rev{Insp}Border')
-                bg = self.GetState(f'Rev{Insp}Background')
-                fg = self.GetState(f'Rev{Insp}Foreground')
-                reverseOrder.insert(0, f'tell $name, {ChatColors(fg, bg, bc)}{Insp}')
+                if not self.GetState("DisableTells"):
+                    bc = self.GetState(f'{tab}{Insp}Border')
+                    bg = self.GetState(f'{tab}{Insp}Background')
+                    fg = self.GetState(f'{tab}{Insp}Foreground')
+                    forwardOrder.insert(0, f'tell $name, {ChatColors(fg, bg, bc)}{Insp}')
+                    bc = self.GetState(f'{tab}Rev{Insp}Border')
+                    bg = self.GetState(f'{tab}Rev{Insp}Background')
+                    fg = self.GetState(f'{tab}Rev{Insp}Foreground')
+                    reverseOrder.insert(0, f'tell $name, {ChatColors(fg, bg, bc)}{Insp}')
 
-            if self.GetState('EnableInspBinds'):
-                ResetFile.SetBind(self.Ctrls[f"{Insp}Key"].MakeFileKeyBind(forwardOrder))
-            if self.GetState('EnableRevInspBinds'):
-                ResetFile.SetBind(self.Ctrls[f"Rev{Insp}Key"].MakeFileKeyBind(reverseOrder))
+                if self.GetState('EnableInspBinds'):
+                    ResetFile.SetBind(self.Ctrls[f"{tab}{Insp}Key"].MakeFileKeyBind(forwardOrder))
+                if self.GetState('EnableRevInspBinds'):
+                    ResetFile.SetBind(self.Ctrls[f"{tab}Rev{Insp}Key"].MakeFileKeyBind(reverseOrder))
 
     UI.Labels['Enable'] = "Enable Inspiration Popper"
 
     for tab in tabnames:
-        UI.Labels[f'{tab}AccuracyKey']        = "Accuracy Key"
-        UI.Labels[f'{tab}HealthKey']          = "Health Key"
-        UI.Labels[f'{tab}DamageKey']          = "Damage Key"
-        UI.Labels[f'{tab}EnduranceKey']       = "Endurance Key"
-        UI.Labels[f'{tab}DefenseKey']         = "Defense Key"
-        UI.Labels[f'{tab}BreakFreeKey']       = "Break Free Key"
-        UI.Labels[f'{tab}ResistDamageKey']    = "Resist Damage Key"
-        UI.Labels[f'{tab}ResurrectionKey']    = "Resurrection Key"
-        UI.Labels[f'{tab}RevAccuracyKey']     = "Accuracy Key"
-        UI.Labels[f'{tab}RevHealthKey']       = "Health Key"
-        UI.Labels[f'{tab}RevDamageKey']       = "Damage Key"
-        UI.Labels[f'{tab}RevEnduranceKey']    = "Endurance Key"
-        UI.Labels[f'{tab}RevDefenseKey']      = "Defense Key"
-        UI.Labels[f'{tab}RevBreakFreeKey']    = "Break Free Key"
-        UI.Labels[f'{tab}RevResistDamageKey'] = "Resist Damage Key"
-        UI.Labels[f'{tab}RevResurrectionKey'] = "Resurrection Key"
-
         for order in ("", "Rev"):
-            for Insp in Inspirations['Single']:
+            for Insp in Inspirations[tab]:
+                UI.Labels[f"{tab}{order}{Insp}Key"]        = f"{Insp} Key"
                 UI.Labels[f"{tab}{order}{Insp}Border"]     = "Border"
                 UI.Labels[f"{tab}{order}{Insp}Foreground"] = "Text"
                 UI.Labels[f"{tab}{order}{Insp}Background"] = "Background"

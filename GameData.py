@@ -827,7 +827,7 @@ Inspirations = {
             'tiers': ['Protection Imbuement', 'Greater Protection Imbuement', 'Superior Protection Imbuement',],
         },
     },
-    'Dual Team' : {
+    'DualTeam' : {
         'Acc / Dam' : {
             'ltcolor' : (255, 238, 0),
             'dkcolor' : (179, 0, 0),

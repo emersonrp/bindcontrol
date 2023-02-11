@@ -162,7 +162,7 @@ class Profile(wx.Notebook):
                         value = control.GetLabel()
                     elif controlType == 'bcKeyButton':
                         value = control.Key
-                    elif controlType == 'ColourPickerCtrl':
+                    elif controlType == 'ColourPickerCtrl' or controlType == 'ColourSelect':
                         value = control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
                     elif controlType == 'Choice':
                         value = control.GetSelection()
@@ -236,7 +236,7 @@ class Profile(wx.Notebook):
                     elif controlType == 'bcKeyButton':
                         control.SetLabel(value)
                         control.Key = value
-                    elif controlType == 'ColourPickerCtrl':
+                    elif controlType == 'ColourPickerCtrl' or controlType == 'ColourSelect':
                         control.SetColour(value)
                     elif controlType == 'Choice':
                         control.SetSelection(value)
@@ -310,11 +310,11 @@ class Profile(wx.Notebook):
             page = getattr(self, pageName)
 
             # ... and tell it to gather up binds and put them into bindfiles.
-            try:
-                page.PopulateBindFiles()
-            except Exception as e:
-                wx.LogError(f"Error populating bind file: {e}")
-                errors += 1
+        #    try:
+            page.PopulateBindFiles()
+        #    except Exception as e:
+        #        wx.LogError(f"Error populating bind file: {e}")
+        #        errors += 1
 
         # Now we have them here and can iterate them
         totalfiles = len(self.BindFiles)

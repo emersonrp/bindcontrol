@@ -2,8 +2,8 @@ import wx
 import UI
 from Page import Page
 from GameData import Inspirations
-from UI.ControlGroup import ControlGroup
 from UI.ChatColorPicker import ChatColorPicker
+from UI.KeySelectDialog import bcKeyButton
 
 tabnames = {
     'Basic' : 'Basic Inspirations',
@@ -88,45 +88,48 @@ class InspirationPopper(Page):
         sizer.Add(self.useRevCB, 0, wx.ALL, 10)
         self.useRevCB.Bind(wx.EVT_CHECKBOX, self.OnEnableRevCB)
 
-        sizer.Add(ChatColorPicker(self, "Test", {'border': wx.RED, 'background': wx.WHITE, 'text': wx.BLACK}), 0)
-
         for tab, tabname in tabnames.items():
             tabpanel = wx.Panel(InspTabs)
             InspTabs.AddPage(tabpanel, tabname)
             tabsizer = wx.BoxSizer(wx.VERTICAL)
 
-            InspRows =    ControlGroup(tabpanel, self, width=8, label = "Large Inspirations First")
-            RevInspRows = ControlGroup(tabpanel, self, width=8, label = "Small Inspirations First")
+            InspBox  = wx.StaticBoxSizer(wx.VERTICAL, tabpanel, "Large Inspirations First")
+            InspRows = wx.FlexGridSizer(3,0,3)
+            InspRows.AddGrowableCol(1)
+            InspBox.Add(InspRows, 1, wx.ALL|wx.EXPAND, 10)
+
+            RevInspBox  = wx.StaticBoxSizer(wx.VERTICAL, tabpanel, "Small Inspirations First")
+            RevInspRows = wx.FlexGridSizer(3,0,3)
+            RevInspRows.AddGrowableCol(1)
+            RevInspBox.Add(RevInspRows, 1, wx.ALL|wx.EXPAND, 10)
 
             for Insp in Inspirations:
                 for order in ("", "Rev"):
                     rowSet = RevInspRows if order else InspRows
+                    box    = RevInspBox  if order else InspBox
 
-                    rowSet.AddControl(
-                        ctlType = 'keybutton',
-                        ctlName = f"{tab}{order}{Insp}Key",
-                        tooltip = f"Choose the key combo to activate a {Insp} inspiration",
-                    )
+                    keybutton = bcKeyButton(box.GetStaticBox(), wx.ID_ANY)
+                    keybutton.CtlName = f"{tab}{order}{Insp}Key"
+                    kblabel = wx.StaticText(box.GetStaticBox(), wx.ID_ANY, label = UI.Labels[keybutton.CtlName] + ":")
+                    keybutton.CtlLabel = kblabel
+                    self.Ctrls[keybutton.CtlName] = keybutton
+                    keybutton.Page = self
+                    keybutton.SetLabel(self.Init[keybutton.CtlName])
+                    keybutton.Key = self.Init[keybutton.CtlName]
 
-                    rowSet.AddControl(
-                        ctlType = 'colorpicker',
-                        ctlName = f"{tab}{order}{Insp}Border",
-                        contents = Inspirations[Insp]['bordercolor'],
-                    )
+                    chatcolorpicker = ChatColorPicker(box.GetStaticBox(), self, f"{tab}{order}{Insp}",
+                        {
+                          'border'     : Inspirations[Insp]['bordercolor'],
+                          'background' : Inspirations[Insp]['color'],
+                          'text'       : Inspirations[Insp]['bordercolor'],
+                        })
 
-                    rowSet.AddControl(
-                        ctlType = 'colorpicker',
-                        ctlName = f"{tab}{order}{Insp}Background",
-                        contents = Inspirations[Insp]['color'],
-                    )
-                    rowSet.AddControl(
-                        ctlType = 'colorpicker',
-                        ctlName = f"{tab}{order}{Insp}Foreground",
-                        contents = Inspirations[Insp]['bordercolor'],
-                    )
+                    rowSet.Add(kblabel,         0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 3)
+                    rowSet.Add(keybutton,       0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 3)
+                    rowSet.Add(chatcolorpicker, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
 
-            tabsizer.Add(InspRows, 0, wx.EXPAND|wx.ALL, 10)
-            tabsizer.Add(RevInspRows, 0, wx.EXPAND|wx.ALL, 10)
+            tabsizer.Add(InspBox, 0, wx.EXPAND|wx.ALL, 10)
+            tabsizer.Add(RevInspBox, 0, wx.EXPAND|wx.ALL, 10)
 
             tabpanel.SetSizerAndFit(tabsizer)
 

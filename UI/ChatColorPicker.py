@@ -1,33 +1,46 @@
 import wx
+import wx.lib.colourselect as csel
 
 class ChatColorPicker(wx.BoxSizer):
 
-    def __init__(self, parent, prefix, cols):
+    def __init__(self, parent, page, prefix, cols):
         wx.BoxSizer.__init__(self, wx.HORIZONTAL)
 
-        self.Add(wx.StaticText(parent, label = "Border:"), 0, wx.ALL|wx.ALIGN_CENTER, 5)
-        self.borderPicker = wx.ColourPickerCtrl(parent, colour = cols['border'], size = (30,30))
-        self.Add(self.borderPicker, 0, wx.ALL|wx.ALIGN_CENTER, 5)
+        self.borderLabel = wx.StaticText(parent, label = "Border:")
+        self.borderPicker = csel.ColourSelect(parent, colour = cols['border'], size = (30,30))
+        self.borderPicker.CtlName = f"{prefix}Border"
+        self.borderPicker.CtlLabel = self.borderLabel
+        page.Ctrls[self.borderPicker.CtlName] = self.borderPicker
+        self.Add(self.borderLabel,  0, wx.LEFT|wx.ALIGN_CENTER, 5)
+        self.Add(self.borderPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 5)
 
-        self.Add(wx.StaticText(parent, label = "Background:"), 0, wx.ALL|wx.ALIGN_CENTER, 5)
-        self.backgroundPicker = wx.ColourPickerCtrl(parent, colour = cols['background'], size = (30,30))
-        self.Add(self.backgroundPicker, 0, wx.ALL|wx.ALIGN_CENTER, 5)
+        self.backgroundLabel = wx.StaticText(parent, label = "Background:")
+        self.backgroundPicker = csel.ColourSelect(parent, colour = cols['background'], size = (30,30))
+        self.backgroundPicker.CtlName = f"{prefix}Background"
+        self.backgroundPicker.CtlLabel = self.backgroundLabel
+        page.Ctrls[self.backgroundPicker.CtlName] = self.backgroundPicker
+        self.Add(self.backgroundLabel,  0, wx.LEFT|wx.ALIGN_CENTER, 5)
+        self.Add(self.backgroundPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 5)
 
-        self.Add(wx.StaticText(parent, label = "Text:"), 0, wx.ALL|wx.ALIGN_CENTER, 5)
-        self.textPicker = wx.ColourPickerCtrl(parent, colour = cols['text'], size = (30,30))
-        self.Add(self.textPicker, 0, wx.ALL|wx.ALIGN_CENTER, 5)
+        self.textLabel = wx.StaticText(parent, label = "Text:")
+        self.textPicker = csel.ColourSelect(parent, colour = cols['text'], size = (30,30))
+        self.textPicker.CtlName = f"{prefix}Foreground"
+        self.textPicker.CtlLabel = self.textLabel
+        page.Ctrls[self.textPicker.CtlName] = self.textPicker
+        self.Add(self.textLabel,  0, wx.LEFT|wx.ALIGN_CENTER, 5)
+        self.Add(self.textPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 5)
 
         self.example = wx.Panel(parent)
         self.exampleSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.exampleText = wx.StaticText(self.example, style = wx.ALIGN_CENTER_HORIZONTAL,)
-        self.exampleText.SetLabelMarkup("<big>  Example  </big>")
+        self.exampleText.SetLabelMarkup("<big>  Example Text  </big>")
         self.exampleSizer.Add(self.exampleText, 0, wx.ALL, 3)
         self.example.SetSizerAndFit(self.exampleSizer)
         self.onColorChanged()
 
-        self.borderPicker.Bind(wx.EVT_COLOURPICKER_CHANGED, self.onColorChanged)
-        self.backgroundPicker.Bind(wx.EVT_COLOURPICKER_CHANGED, self.onColorChanged)
-        self.textPicker.Bind(wx.EVT_COLOURPICKER_CHANGED, self.onColorChanged)
+        self.borderPicker.Bind(csel.EVT_COLOURSELECT, self.onColorChanged)
+        self.backgroundPicker.Bind(csel.EVT_COLOURSELECT, self.onColorChanged)
+        self.textPicker.Bind(csel.EVT_COLOURSELECT, self.onColorChanged)
 
         self.Add(self.example, 0, wx.LEFT|wx.ALIGN_CENTER, 15)
 

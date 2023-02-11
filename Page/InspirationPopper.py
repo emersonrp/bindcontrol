@@ -37,10 +37,10 @@ class InspirationPopper(Page):
             self.Init[f'{tab}RevBreakFreeKey']    = ""
             self.Init[f'{tab}RevResistDamageKey'] = ""
             self.Init[f'{tab}RevResurrectionKey'] = ""
-            for Insp in Inspirations:
-                self.Init[f"{tab}{Insp}Border"]     = Inspirations[Insp]['bordercolor']
-                self.Init[f"{tab}{Insp}Foreground"] = Inspirations[Insp]['bordercolor']
-                self.Init[f"{tab}{Insp}Background"] = Inspirations[Insp]['color']
+            for _,Insp in Inspirations['Single'].items():
+                self.Init[f"{tab}{Insp}Border"]     = Insp['dkcolor']
+                self.Init[f"{tab}{Insp}Foreground"] = Insp['dkcolor']
+                self.Init[f"{tab}{Insp}Background"] = Insp['ltcolor']
 
         self.Init.update({
             'EnableInspBinds'         : False,
@@ -66,9 +66,8 @@ class InspirationPopper(Page):
 
     def BuildPage(self):
 
-        sizer = wx.BoxSizer(wx.VERTICAL)
-
-        InspTabs = wx.Notebook(self, style = wx.NB_TOP, name = 'InspTabs')
+        sizer          = wx.BoxSizer(wx.VERTICAL)
+        centeringSizer = wx.BoxSizer(wx.VERTICAL)
 
         # TODO - make this radio buttons more like CB4HC does it.
         self.useCB = wx.CheckBox( self, -1, 'Enable Inspiration Popper Binds (prefer largest)')
@@ -76,7 +75,7 @@ class InspirationPopper(Page):
             'Check this to enable the Inspiration Popper Binds, (largest used first)'))
         self.useCB.SetValue(self.Init['EnableInspBinds'])
         self.Ctrls['EnableInspBinds'] = self.useCB
-        sizer.Add(self.useCB, 0, wx.ALL, 10)
+        centeringSizer.Add(self.useCB, 0, wx.ALL, 10)
         self.useCB.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
 
         self.useRevCB = wx.CheckBox( self, -1,
@@ -85,9 +84,10 @@ class InspirationPopper(Page):
             'Check this to enable the Reverse Inspiration Popper Binds, (smallest used first)'))
         self.useRevCB.SetValue(self.Init['EnableRevInspBinds'])
         self.Ctrls['EnableRevInspBinds'] = self.useRevCB
-        sizer.Add(self.useRevCB, 0, wx.ALL, 10)
+        centeringSizer.Add(self.useRevCB, 0, wx.ALL, 10)
         self.useRevCB.Bind(wx.EVT_CHECKBOX, self.OnEnableRevCB)
 
+        InspTabs = wx.Notebook(self, style = wx.NB_TOP, name = 'InspTabs')
         for tab, tabname in tabnames.items():
             tabpanel = wx.Panel(InspTabs)
             InspTabs.AddPage(tabpanel, tabname)
@@ -103,7 +103,7 @@ class InspirationPopper(Page):
             RevInspRows.AddGrowableCol(1)
             RevInspBox.Add(RevInspRows, 1, wx.ALL|wx.EXPAND, 10)
 
-            for Insp in Inspirations:
+            for Insp in Inspirations['Single']:
                 for order in ("", "Rev"):
                     rowSet = RevInspRows if order else InspRows
                     box    = RevInspBox  if order else InspBox
@@ -119,9 +119,9 @@ class InspirationPopper(Page):
 
                     chatcolorpicker = ChatColorPicker(box.GetStaticBox(), self, f"{tab}{order}{Insp}",
                         {
-                          'border'     : Inspirations[Insp]['bordercolor'],
-                          'background' : Inspirations[Insp]['color'],
-                          'text'       : Inspirations[Insp]['bordercolor'],
+                          'border'     : Inspirations['Single'][Insp]['dkcolor'],
+                          'background' : Inspirations['Single'][Insp]['ltcolor'],
+                          'text'       : Inspirations['Single'][Insp]['dkcolor'],
                         })
 
                     rowSet.Add(kblabel,         0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 3)
@@ -133,7 +133,7 @@ class InspirationPopper(Page):
 
             tabpanel.SetSizerAndFit(tabsizer)
 
-        sizer.Add(InspTabs, 1, wx.EXPAND)
+        centeringSizer.Add(InspTabs)
 
         self.disableTellsCB = wx.CheckBox( self, -1,
                 'Disable self-/tell feedback')
@@ -141,8 +141,10 @@ class InspirationPopper(Page):
             'Check this box to avoid having your toon tell you whenever you pop an inspiration.'))
         self.disableTellsCB.SetValue(self.Init['DisableTells'])
         self.Ctrls['DisableTells'] = self.disableTellsCB
-        sizer.Add(self.disableTellsCB, 0, wx.ALL, 10)
+        centeringSizer.Add(self.disableTellsCB, 0, wx.ALL, 10)
         self.disableTellsCB.Bind(wx.EVT_CHECKBOX, self.OnDisableTellCB)
+
+        sizer.Add(centeringSizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
@@ -159,7 +161,7 @@ class InspirationPopper(Page):
     def OnEnableCB(self, evt = None):
         controls = []
         for tab in tabnames:
-            for Insp in Inspirations:
+            for Insp in Inspirations['Single']:
                 controls.append(f"{tab}{Insp}Key")
                 controls.append(f"{tab}{Insp}Border")
                 controls.append(f"{tab}{Insp}Background")
@@ -174,7 +176,7 @@ class InspirationPopper(Page):
     def OnEnableRevCB(self, evt = None):
         controls = []
         for tab in tabnames:
-            for Insp in Inspirations:
+            for Insp in Inspirations['Single']:
                 controls.append(f"{tab}Rev{Insp}Key")
                 controls.append(f"{tab}Rev{Insp}Border")
                 controls.append(f"{tab}Rev{Insp}Background")
@@ -190,7 +192,7 @@ class InspirationPopper(Page):
         enabled = not self.disableTellsCB.IsChecked()
         controls = []
         revcontrols = []
-        for Insp in Inspirations:
+        for Insp in Inspirations['Single']:
             controls.append(f"{Insp}Border")
             controls.append(f"{Insp}Background")
             controls.append(f"{Insp}Foreground")
@@ -206,9 +208,9 @@ class InspirationPopper(Page):
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()
 
-        for Insp in sorted(Inspirations):
+        for Insp in sorted(Inspirations['Single']):
 
-            tiers = Inspirations[Insp]['tiers']
+            tiers = Inspirations['Single'][Insp]['tiers']
             # "reverse" order is as it is in gamebinds, smallest first
             reverseOrder = list(map(lambda s: f"inspexecname {s}", tiers))
             forwardOrder = reverseOrder[::-1]
@@ -249,7 +251,7 @@ class InspirationPopper(Page):
         UI.Labels[f'{tab}RevResurrectionKey'] = "Resurrection Key"
 
         for order in ("", "Rev"):
-            for Insp in Inspirations:
+            for Insp in Inspirations['Single']:
                 UI.Labels[f"{tab}{order}{Insp}Border"]     = "Border"
                 UI.Labels[f"{tab}{order}{Insp}Foreground"] = "Text"
                 UI.Labels[f"{tab}{order}{Insp}Background"] = "Background"

@@ -715,11 +715,12 @@ class UseInspByNameCmd(PowerBindCmd):
         useInspByNameSizer.Add(wx.StaticText(dialog, -1, "Inspiration:"), 0,
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         self.useInspByNameModeChoice = BitmapComboBox(dialog, style = wx.CB_READONLY)
-        for _, info in GameData.Inspirations.items():
-            for insp in info['tiers']:
-                name = re.sub(' ', '', insp)
-                icon = GetIcon(f'Inspirations/{name}')
-                self.useInspByNameModeChoice.Append(insp, icon)
+        for _, types in GameData.Inspirations.items():
+            for _, info in types.items():
+                for insp in info['tiers']:
+                    name = re.sub(' ', '', insp)
+                    icon = GetIcon(f'Inspirations/{name}')
+                    self.useInspByNameModeChoice.Append(insp, icon)
         self.useInspByNameModeChoice.SetSelection(0)
         useInspByNameSizer.Add(self.useInspByNameModeChoice, 1, wx.ALIGN_CENTER_VERTICAL)
 

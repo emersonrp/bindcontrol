@@ -790,6 +790,60 @@ Inspirations = {
             'tiers' : ['Revitalize', 'Rejuvenate', 'Invigorate', 'Refresh',],
         }
     },
+    'Team' : {
+        'Accuracy'     : {
+            'ltcolor': (255, 238, 0),
+            'dkcolor': (118, 80, 0),
+            'tiers': ['Insight Imbuement', 'Keen Insight Imbuement', 'Uncanny Insight Imbuement',],
+        },
+        'Health'       : {
+            'ltcolor': (135, 220, 38),
+            'dkcolor': (0, 66, 7),
+            'tiers': ['Health Imbuement', 'Greater Health Imbuement', 'Superior Health Imbuement',],
+        },
+        'Damage'       : {
+            'ltcolor': (249, 163, 152),
+            'dkcolor': (179, 0, 0),
+            'tiers': ['Rage Imbuement', 'Focused Rage Imbuement', 'Righteous Rage Imbuement',],
+        },
+        'Endurance'    : {
+            'ltcolor': (122, 220, 255),
+            'dkcolor': (0, 30, 160),
+            'tiers': ['Endurance Imbuement', 'Greater Endurance Imbuement', 'Superior Endurance Imbuement',],
+        },
+        'Defense'      : {
+            'ltcolor': (228, 166, 236),
+            'dkcolor': (94, 0, 94),
+            'tiers': ['Luck Imbuement', 'Good Luck Imbuement', 'Phenomenal Luck Imbuement',],
+        },
+        'ResistDamage' : {
+            'ltcolor': (255, 178, 99),
+            'dkcolor': (151, 54, 0),
+            'tiers': ['Sturdy Imbuement', 'Rugged Imbuement', 'Robust Imbuement',],
+        },
+        'BreakFree'    : {
+            'ltcolor': (186, 174, 255),
+            'dkcolor': (57, 0, 113),
+            'tiers': ['Protection Imbuement', 'Greater Protection Imbuement', 'Superior Protection Imbuement',],
+        },
+    },
+    'Dual Team' : {
+        'Acc / Dam' : {
+            'ltcolor' : (255, 238, 0),
+            'dkcolor' : (179, 0, 0),
+            'tiers' : ['Tactical Imbuement', 'Precise Imbuement', 'Intuition Imbuement',],
+        },
+        'Def / Res' : {
+            'ltcolor' : (255, 178, 99),
+            'dkcolor' : (179, 0, 148),
+            'tiers' : ['Guarding Imbuement', 'Protecting Imbuement', 'Impenetrable Imbuement',],
+        },
+        'End / Heal' : {
+            'ltcolor' : (135, 220, 38),
+            'dkcolor' : (0, 30, 160),
+            'tiers' : ['Rejuvenating Imbuement', 'Invigorating Imbuement', 'Refreshing Imbuement',],
+        }
+    },
 }
 
 DefaultBinds = {

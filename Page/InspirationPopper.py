@@ -89,6 +89,9 @@ class InspirationPopper(Page):
         self.Ctrls['UseSuperInsp'] = self.useSuperInspCB
         optionsBox.Add(self.useSuperInspCB, 0, wx.ALL, 6)
 
+        # TODO - implement the logic here and re-enable useSuperInspCB
+        self.useSuperInspCB.Disable()
+
         self.disableTellsCB = wx.CheckBox( optionsBox.GetStaticBox(), -1, 'Disable self-/tell feedback')
         self.disableTellsCB.SetToolTip(wx.ToolTip(
             'Check this box to avoid having your toon tell you whenever you pop an inspiration.'))

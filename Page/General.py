@@ -7,8 +7,10 @@ from GameData import Archetypes, Origins, MiscPowers
 
 from UI.ControlGroup import ControlGroup
 from UI.IncarnateBox import IncarnateBox
+from UI.ChatColorPicker import ChatColorPicker
 
 from Page import Page
+from Help import HelpButton
 
 class General(Page):
     def __init__(self, parent):
@@ -25,6 +27,17 @@ class General(Page):
             'Pool2': '',
             'Pool3': '',
             'Pool4': '',
+
+            'ChatEnable' : True,
+            'StartChat'  : 'ENTER',
+            'SlashChat'  : '/',
+            'StartEmote' : ';',
+            'AutoReply'  : 'BACKSPACE',
+            'TellTarget' : 'COMMA',
+            'QuickChat'  : "'",
+
+            'TypingNotifierEnable' : 1,
+            'TypingNotifier'       : 'typing',
         }
 
     def BuildPage(self):
@@ -105,14 +118,71 @@ class General(Page):
             callback = self.OnPickPoolPower,
         )
 
+        ### Enable Chat
+        ChatSizer = wx.BoxSizer(wx.VERTICAL)
+
+        ChatTopSizer = wx.BoxSizer(wx.HORIZONTAL)
+        chatenable = wx.CheckBox(self, -1, 'Enable Chat Binds')
+        chatenable.SetToolTip( wx.ToolTip('Check this to enable the Chat Binds') )
+        chatenable.Bind(wx.EVT_CHECKBOX, self.OnChatEnable)
+        self.Ctrls['ChatEnable'] = chatenable
+
+        chathelpbutton = HelpButton(self, 'ChatBinds.html')
+
+        ChatTopSizer.Add(chatenable, 0, wx.ALIGN_CENTER_VERTICAL)
+        ChatTopSizer.Add(chathelpbutton, 0)
+
+        ChatSizer.Add(ChatTopSizer, 0, wx.LEFT, 10)
+
+        ChatColorSizer = wx.StaticBoxSizer(wx.HORIZONTAL, self, "Default Chat Colors")
+        ChatColors = ChatColorPicker(ChatColorSizer.GetStaticBox(), self, '', {
+            'border'     : wx.BLACK,
+            'background' : wx.WHITE,
+            'text'       : wx.BLACK,
+        })
+        ChatColorSizer.Add(ChatColors, 0, wx.ALL, 10)
+        ChatSizer.Add(ChatColorSizer, 0)
+
+        chatBindBox = ControlGroup(self, self, 'Chat Binds')
+
+        for b in (
+            ['StartChat',  'Activates the Chat bar'],
+            ['SlashChat',  'Activates the Chat bar with a slash already typed'],
+            ['StartEmote', 'Activates the Chat bar with "/em" already typed'],
+            ['AutoReply',  'AutoReplies to incoming tells'],
+            ['TellTarget', 'Starts a /tell to your current target'],
+            ['QuickChat',  'Activates QuickChat'],
+        ):
+            chatBindBox.AddControl(
+                ctlName = b[0],
+                ctlType = 'keybutton',
+                tooltip = b[1],
+            )
+
+        chatBindBox.AddControl(
+            ctlName = 'TypingNotifierEnable',
+            ctlType = 'checkbox',
+            tooltip = "Check this to enable the Typing Notifier",
+            callback = self.OnTypeEnable,
+        )
+        chatBindBox.AddControl(
+            ctlName = 'TypingNotifier',
+            ctlType = 'text',
+            tooltip = "Choose the message to display when you are typing chat messages or commands",
+        )
+        ChatSizer.Add(chatBindBox, 1, wx.EXPAND)
         # Incarnate interface
         self.IncarnateBox = IncarnateBox(self)
 
-        topSizer.Add(powersBox, 1, wx.ALL|wx.EXPAND, 6)
-        topSizer.Add(self.IncarnateBox,  2, wx.ALL|wx.EXPAND, 6)
+        topSizer.Add(powersBox, 0, wx.RIGHT|wx.EXPAND, 10)
+        topSizer.Add(ChatSizer, 0,          wx.EXPAND, 0)
+
+        centeringSizer  = wx.BoxSizer(wx.VERTICAL)
+        centeringSizer.Add(topSizer,           0, wx.TOP|wx.EXPAND, 10)
+        centeringSizer.Add(self.IncarnateBox,  0, wx.TOP|wx.EXPAND, 10)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
-        paddingSizer.Add(topSizer, flag=wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, border = 20)
+        paddingSizer.Add(centeringSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
         # testPowerPicker = PowerPicker(self)
         # paddingSizer.Add(testPowerPicker, flag=wx.ALL|wx.EXPAND, border = 20)
@@ -196,6 +266,19 @@ class General(Page):
 
     def OnPickEpicPowerSet(self, evt):
         evt.Skip()
+
+    def OnChatEnable(self, evt = None):
+        self.DisableControls(self.GetState('ChatEnable'),
+            ['StartChat','SlashChat','StartEmote','AutoReply',
+             'TellTarget','QuickChat', 'TypingNotifierEnable', 'TypingNotifier'])
+        self.OnTypeEnable()
+        if evt: evt.Skip()
+
+    def OnTypeEnable(self, evt = None):
+        chatenabled = self.GetState('ChatEnable')
+        typeenabled = self.GetState('TypingNotifierEnable')
+        self.DisableControls(chatenabled and typeenabled, ['TypingNotifier'])
+        if evt: evt.Skip()
 
     UI.Labels.update({
         'Pool1'           : "Power Pool 1",

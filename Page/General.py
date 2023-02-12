@@ -134,15 +134,40 @@ class General(Page):
 
         ChatSizer.Add(ChatTopSizer, 0, wx.LEFT, 10)
 
-        ChatColorSizer = wx.StaticBoxSizer(wx.HORIZONTAL, self, "Default Chat Colors")
+        ### Chat Color Picker
+        ChatColorSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Default Chat Colors")
+        ChatColorEnable = wx.CheckBox(ChatColorSizer.GetStaticBox(), -1, 'Use Custom Chat Colors')
+        ChatColorEnable.SetToolTip( wx.ToolTip('Check this to select custom colors for your chat messages'))
         ChatColors = ChatColorPicker(ChatColorSizer.GetStaticBox(), self, '', {
             'border'     : wx.BLACK,
             'background' : wx.WHITE,
             'text'       : wx.BLACK,
         })
+        ChatColorSizer.Add(ChatColorEnable, 0, wx.ALL, 6)
         ChatColorSizer.Add(ChatColors, 0, wx.ALL, 10)
         ChatSizer.Add(ChatColorSizer, 0)
 
+        ## Typing Notifier
+        TNSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Typing Notifier")
+        TNEnable = wx.CheckBox(TNSizer.GetStaticBox(), -1, 'Use Typing Notifier')
+        TNEnable.SetToolTip(
+                wx.ToolTip('Check this to enable a floating "typing" notifier when you are typing into the chat box'))
+        TNCtrlSizer = wx.BoxSizer(wx.HORIZONTAL)
+        TNLabel = wx.StaticText(TNSizer.GetStaticBox(), label = "Typing Notifier:", style=wx.ALIGN_RIGHT)
+        TN = wx.TextCtrl(TNSizer.GetStaticBox(), value = self.Init['TypingNotifier'], style=wx.TE_CENTER)
+        TN.CtlName = 'TypingNotifier'
+        TN.CtlLabel = TNLabel
+        self.Ctrls['TypingNotifier'] = TN
+        TNCtrlSizer.Add(TNLabel, 1, wx.ALL|wx.ALIGN_CENTER, 6)
+        TNCtrlSizer.Add(TN,      1, wx.ALL, 6)
+
+        TNSizer.Add(TNEnable,    0, wx.ALL, 5)
+        TNSizer.Add(TNCtrlSizer, 0, wx.ALL|wx.EXPAND, 5)
+
+        ChatSizer.Add(TNSizer, 0, wx.TOP|wx.EXPAND, 6)
+
+
+        ### Chat binds
         chatBindBox = ControlGroup(self, self, 'Chat Binds')
 
         for b in (
@@ -158,20 +183,9 @@ class General(Page):
                 ctlType = 'keybutton',
                 tooltip = b[1],
             )
-
-        chatBindBox.AddControl(
-            ctlName = 'TypingNotifierEnable',
-            ctlType = 'checkbox',
-            tooltip = "Check this to enable the Typing Notifier",
-            callback = self.OnTypeEnable,
-        )
-        chatBindBox.AddControl(
-            ctlName = 'TypingNotifier',
-            ctlType = 'text',
-            tooltip = "Choose the message to display when you are typing chat messages or commands",
-        )
         ChatSizer.Add(chatBindBox, 1, wx.EXPAND)
-        # Incarnate interface
+
+        ### Incarnate interface
         self.IncarnateBox = IncarnateBox(self)
 
         topSizer.Add(powersBox, 0, wx.RIGHT|wx.EXPAND, 10)
@@ -179,7 +193,7 @@ class General(Page):
 
         centeringSizer  = wx.BoxSizer(wx.VERTICAL)
         centeringSizer.Add(topSizer,           0, wx.TOP|wx.EXPAND, 10)
-        centeringSizer.Add(self.IncarnateBox,  0, wx.TOP|wx.EXPAND, 10)
+        centeringSizer.Add(self.IncarnateBox,  0, wx.TOP|wx.EXPAND, 6)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(centeringSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 0)

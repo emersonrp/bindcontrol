@@ -8,10 +8,10 @@ from UI.ChatColorPicker import ChatColorPicker
 from UI.KeySelectDialog import bcKeyButton
 
 tabnames = {
-    'Single'   : 'Single Inspirations',
-    'Dual'     : 'Dual Inspirations',
-    'Team'     : 'Team Inspirations',
-    'DualTeam' : 'Dual Team Inspirations',
+    'Single'   : 'Single',
+    'Dual'     : 'Dual',
+    'Team'     : 'Team',
+    'DualTeam' : 'Dual Team',
 }
 
 class InspirationPopper(Page):
@@ -103,7 +103,7 @@ class InspirationPopper(Page):
         optionButtonBox = wx.BoxSizer(wx.HORIZONTAL)
         profileChatColorButton = wx.Button(optionsBox.GetStaticBox(), label = "Profile's Chat Colors")
         profileChatColorButton.SetToolTip("Set self-/tell colors to the default profile chat colors")
-        byInspColorButton      = wx.Button(optionsBox.GetStaticBox(), label = "Color-coded by Insp")
+        byInspColorButton      = wx.Button(optionsBox.GetStaticBox(), label = "Color-coded")
         byInspColorButton     .SetToolTip("Set self-/tell colors to colored according to inspiration type")
         optionButtonBox.Add(profileChatColorButton, 1, wx.ALL, 10)
         optionButtonBox.Add(byInspColorButton,      1, wx.ALL, 10)
@@ -174,7 +174,7 @@ class InspirationPopper(Page):
 
             tabpanel.SetSizerAndFit(tabsizer)
 
-        centeringSizer.Add(InspTabs)
+        centeringSizer.Add(InspTabs, 0, wx.EXPAND)
 
         sizer.Add(centeringSizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
 

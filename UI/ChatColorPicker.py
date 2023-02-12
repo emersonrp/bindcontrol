@@ -7,7 +7,7 @@ class ChatColorPicker(wx.BoxSizer):
         wx.BoxSizer.__init__(self, wx.HORIZONTAL)
 
         self.borderLabel = wx.StaticText(parent, label = "Border:")
-        self.borderPicker = csel.ColourSelect(parent, colour = cols['border'], size = (30,30))
+        self.borderPicker = csel.ColourSelect(parent, colour = cols['border'], size = wx.Size(30,30))
         self.borderPicker.CtlName = f"{prefix}Border"
         self.borderPicker.CtlLabel = self.borderLabel
         page.Ctrls[self.borderPicker.CtlName] = self.borderPicker
@@ -15,7 +15,7 @@ class ChatColorPicker(wx.BoxSizer):
         self.Add(self.borderPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 5)
 
         self.backgroundLabel = wx.StaticText(parent, label = "Background:")
-        self.backgroundPicker = csel.ColourSelect(parent, colour = cols['background'], size = (30,30))
+        self.backgroundPicker = csel.ColourSelect(parent, colour = cols['background'], size = wx.Size(30,30))
         self.backgroundPicker.CtlName = f"{prefix}Background"
         self.backgroundPicker.CtlLabel = self.backgroundLabel
         page.Ctrls[self.backgroundPicker.CtlName] = self.backgroundPicker

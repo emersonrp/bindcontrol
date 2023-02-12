@@ -1,12 +1,14 @@
 import wx
+import wx.lib.colourselect as csel
 import UI
+import Icon
 from Page import Page
 from GameData import Inspirations
 from UI.ChatColorPicker import ChatColorPicker
 from UI.KeySelectDialog import bcKeyButton
 
 tabnames = {
-    'Single'   : 'Basic Inspirations',
+    'Single'   : 'Single Inspirations',
     'Dual'     : 'Dual Inspirations',
     'Team'     : 'Team Inspirations',
     'DualTeam' : 'Dual Team Inspirations',
@@ -17,6 +19,7 @@ class InspirationPopper(Page):
         Page.__init__(self, parent)
 
         self.TabTitle = "Inspiration Popper"
+        self.chatPickers = {}
 
         self.Init = {}
 
@@ -28,9 +31,10 @@ class InspirationPopper(Page):
                 self.Init[f"{tab}{name}Foreground"] = Insp['dkcolor']
                 self.Init[f"{tab}{name}Background"] = Insp['ltcolor']
         self.Init.update({
-            'EnableInspBinds'         : False,
-            'EnableRevInspBinds'      : False,
-            'DisableTells'            : False,
+            'EnableInspBinds'          : False,
+            'EnableRevInspBinds'       : False,
+            'DisableTells'             : False,
+            'UseSuperInsp'             : False,
             'SingleAccuracyKey'        : "SHIFT+A",
             'SingleHealthKey'          : "SHIFT+S",
             'SingleDamageKey'          : "SHIFT+D",
@@ -50,32 +54,75 @@ class InspirationPopper(Page):
         })
 
     def BuildPage(self):
-
         sizer          = wx.BoxSizer(wx.VERTICAL)
         centeringSizer = wx.BoxSizer(wx.VERTICAL)
 
-        # TODO - make this radio buttons more like CB4HC does it.
-        self.useCB = wx.CheckBox( self, -1, 'Enable Inspiration Popper Binds (prefer largest)')
+        optionsSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # "Use Order" options
+        useOrderBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Use Order")
+
+        self.useCB = wx.CheckBox( useOrderBox.GetStaticBox(), -1, 'Enable Largest-First Binds')
         self.useCB.SetToolTip(wx.ToolTip(
-            'Check this to enable the Inspiration Popper Binds, (largest used first)'))
+            'Check this to enable the Inspiration Popper Binds, (largest inspirations used first)'))
         self.useCB.SetValue(self.Init['EnableInspBinds'])
         self.Ctrls['EnableInspBinds'] = self.useCB
-        centeringSizer.Add(self.useCB, 0, wx.ALL, 10)
+        useOrderBox.Add(self.useCB, 1, wx.ALL, 6)
         self.useCB.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
 
-        self.useRevCB = wx.CheckBox( self, -1,
-                'Enable Reverse Inspiration Popper Binds (prefer smallest)')
+        self.useRevCB = wx.CheckBox( useOrderBox.GetStaticBox(), -1, 'Enable Smallest-First Binds')
         self.useRevCB.SetToolTip(wx.ToolTip(
-            'Check this to enable the Reverse Inspiration Popper Binds, (smallest used first)'))
+            'Check this to enable the Reverse Inspiration Popper Binds, (smallest inspirations used first)'))
         self.useRevCB.SetValue(self.Init['EnableRevInspBinds'])
         self.Ctrls['EnableRevInspBinds'] = self.useRevCB
-        centeringSizer.Add(self.useRevCB, 0, wx.ALL, 10)
+        useOrderBox.Add(self.useRevCB, 1, wx.ALL, 6)
         self.useRevCB.Bind(wx.EVT_CHECKBOX, self.OnEnableRevCB)
 
+        optionsSizer.Add(useOrderBox, 1, wx.EXPAND, 0)
+
+        # General Options
+        optionsBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Options")
+        self.useSuperInspCB = wx.CheckBox( optionsBox.GetStaticBox(), -1, 'Use Super Inspirations')
+        self.useSuperInspCB.SetToolTip(wx.ToolTip(
+            'Check this to include Super Inspirations in the Inspiration Popper binds.  If you\'re concerned about accidental activation and would prefer to use Super Inspirations manually, leave this unchecked.'))
+        self.useSuperInspCB.SetValue(self.Init['UseSuperInsp'])
+        self.Ctrls['UseSuperInsp'] = self.useSuperInspCB
+        optionsBox.Add(self.useSuperInspCB, 0, wx.ALL, 6)
+
+        self.disableTellsCB = wx.CheckBox( optionsBox.GetStaticBox(), -1, 'Disable self-/tell feedback')
+        self.disableTellsCB.SetToolTip(wx.ToolTip(
+            'Check this box to avoid having your toon tell you whenever you pop an inspiration.'))
+        self.disableTellsCB.SetValue(self.Init['DisableTells'])
+        self.Ctrls['DisableTells'] = self.disableTellsCB
+        optionsBox.Add(self.disableTellsCB, 0, wx.ALL, 6)
+        self.disableTellsCB.Bind(wx.EVT_CHECKBOX, self.OnDisableTellCB)
+
+        optionButtonBox = wx.BoxSizer(wx.HORIZONTAL)
+        profileChatColorButton = wx.Button(optionsBox.GetStaticBox(), label = "Profile's Chat Colors")
+        profileChatColorButton.SetToolTip("Set self-/tell colors to the default profile chat colors")
+        byInspColorButton      = wx.Button(optionsBox.GetStaticBox(), label = "Color-coded by Insp")
+        byInspColorButton     .SetToolTip("Set self-/tell colors to colored according to inspiration type")
+        optionButtonBox.Add(profileChatColorButton, 1, wx.ALL, 10)
+        optionButtonBox.Add(byInspColorButton,      1, wx.ALL, 10)
+        profileChatColorButton.Bind(wx.EVT_BUTTON, self.OnProfileChatColorButton)
+        byInspColorButton     .Bind(wx.EVT_BUTTON, self.OnByInspColorButton)
+        # TODO re-enable and implement this when we have default chat colors for the profile
+        profileChatColorButton.Disable()
+
+        optionsBox.Add(optionButtonBox)
+
+        optionsSizer.Add(optionsBox, 1, wx.EXPAND|wx.LEFT, 10)
+
+        centeringSizer.Add(optionsSizer, 1, wx.BOTTOM|wx.EXPAND, 10)
+
         InspTabs = wx.Notebook(self, style = wx.NB_TOP, name = 'InspTabs')
+        InspTabs.SetPadding(wx.Size(2,0))
         for tab, tabname in tabnames.items():
             tabpanel = wx.Panel(InspTabs)
-            InspTabs.AddPage(tabpanel, tabname)
+            il = wx.ImageList(18,18)
+            idx1 = il.Add(Icon.GetIcon(f"UI/Insp{tab}"))
+            InspTabs.AssignImageList(il)
+            InspTabs.AddPage(tabpanel, tabname, imageId = idx1)
             tabsizer = wx.BoxSizer(wx.VERTICAL)
 
             InspBox  = wx.StaticBoxSizer(wx.VERTICAL, tabpanel, "Large Inspirations First")
@@ -88,7 +135,7 @@ class InspirationPopper(Page):
             RevInspRows.AddGrowableCol(1)
             RevInspBox.Add(RevInspRows, 1, wx.ALL|wx.EXPAND, 10)
 
-            for Insp in Inspirations[tab]:
+            for Insp, InspData in Inspirations[tab].items():
                 for order in ("", "Rev"):
                     rowSet = RevInspRows if order else InspRows
                     box    = RevInspBox  if order else InspBox
@@ -102,12 +149,18 @@ class InspirationPopper(Page):
                     keybutton.SetLabel(self.Init[keybutton.CtlName])
                     keybutton.Key = self.Init[keybutton.CtlName]
 
+                    # reverse the colors if we're doing team inspirations
+                    ltcolor = 'ltcolor'; dkcolor = 'dkcolor'
+                    if tab == "Team" or tab == "DualTeam":
+                        ltcolor = 'dkcolor'; dkcolor = 'ltcolor'
+
                     chatcolorpicker = ChatColorPicker(box.GetStaticBox(), self, f"{tab}{order}{Insp}",
                         {
-                          'border'     : Inspirations[tab][Insp]['dkcolor'],
-                          'background' : Inspirations[tab][Insp]['ltcolor'],
-                          'text'       : Inspirations[tab][Insp]['dkcolor'],
+                          'border'     : InspData[dkcolor],
+                          'background' : InspData[ltcolor],
+                          'text'       : InspData[dkcolor],
                         })
+                    self.chatPickers[f"{tab}{order}{Insp}"] = chatcolorpicker
 
                     rowSet.Add(kblabel,         0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 3)
                     rowSet.Add(keybutton,       0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 3)
@@ -119,15 +172,6 @@ class InspirationPopper(Page):
             tabpanel.SetSizerAndFit(tabsizer)
 
         centeringSizer.Add(InspTabs)
-
-        self.disableTellsCB = wx.CheckBox( self, -1,
-                'Disable self-/tell feedback')
-        self.disableTellsCB.SetToolTip(wx.ToolTip(
-            'Check this box to avoid having your toon tell you whenever you pop an inspiration.'))
-        self.disableTellsCB.SetValue(self.Init['DisableTells'])
-        self.Ctrls['DisableTells'] = self.disableTellsCB
-        centeringSizer.Add(self.disableTellsCB, 0, wx.ALL, 10)
-        self.disableTellsCB.Bind(wx.EVT_CHECKBOX, self.OnDisableTellCB)
 
         sizer.Add(centeringSizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
@@ -142,6 +186,25 @@ class InspirationPopper(Page):
         self.OnEnableCB()
         self.OnEnableRevCB()
         self.OnDisableTellCB()
+
+    def OnProfileChatColorButton(self, evt = None):
+        pass
+
+    def OnByInspColorButton(self, evt = None):
+        for tab, tabname in tabnames.items():
+            for Insp, InspData in Inspirations[tab].items():
+                for order in ("", "Rev"):
+                    # reverse the colors if we're doing team inspirations
+                    ltcolor = 'ltcolor'; dkcolor = 'dkcolor'
+                    if tab == "Team" or tab == "DualTeam":
+                        ltcolor = 'dkcolor'; dkcolor = 'ltcolor'
+
+                    self.Ctrls[f'{tab}{order}{Insp}Border']    .SetColour(InspData[dkcolor])
+                    self.Ctrls[f'{tab}{order}{Insp}Background'].SetColour(InspData[ltcolor])
+                    self.Ctrls[f'{tab}{order}{Insp}Foreground'].SetColour(InspData[dkcolor])
+                    control = self.Ctrls[f'{tab}{order}{Insp}Border']
+                    wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
+
 
     def OnEnableCB(self, evt = None):
         controls = []

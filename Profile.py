@@ -239,6 +239,8 @@ class Profile(wx.Notebook):
                         control.Key = value
                     elif controlType == 'ColourPickerCtrl' or controlType == 'ColourSelect':
                         control.SetColour(value)
+                        if controlType == 'ColourSelect':
+                            wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
                     elif controlType == 'Choice':
                         control.SetSelection(value)
                     else:

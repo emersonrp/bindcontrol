@@ -84,10 +84,11 @@ class CustomBinds(Page):
         # put it in a box with a 'delete' button
         deleteSizer = wx.BoxSizer(wx.HORIZONTAL)
         deleteSizer.Add(bindpane, 1, wx.EXPAND, 5)
-        deleteButton = wx.Button(self.scrolledPane, -1, "Delete")
+        deleteButton = wx.Button(self.scrolledPane, -1, "X", size = [40, -1])
+        deleteButton.SetForegroundColour(wx.RED)
         deleteButton.BindPane = bindpane
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
-        deleteSizer.Add(deleteButton, 0, wx.LEFT|wx.RIGHT, 15)
+        deleteSizer.Add(deleteButton, 0, wx.LEFT, 10)
 
         self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), deleteSizer, 0, wx.ALL|wx.EXPAND, 10)
         bindpane.Expand()
@@ -95,6 +96,8 @@ class CustomBinds(Page):
 
     def OnDeleteButton(self, evt):
         delButton = evt.EventObject
+        bindname = delButton.BindPane.Title
+        if wx.MessageBox(f'Delete Bind "{bindname}"?', 'Delete Bind', wx.YES_NO) == wx.NO: return
         sizer = delButton.GetContainingSizer()
         self.PaneSizer.Hide(sizer)
         self.PaneSizer.Remove(sizer)

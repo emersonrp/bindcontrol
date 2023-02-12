@@ -228,6 +228,7 @@ class Profile(wx.Notebook):
                     page.OnPickArchetype()
                     page.Ctrls['Primary']  .SetSelection(data['General'].get('Primary'  , None))
                     page.Ctrls['Secondary'].SetSelection(data['General'].get('Secondary', None))
+                    page.Ctrls['Epic']     .SetSelection(data['General'].get('Epic'     , None))
                 else:
                     page.SynchronizeUI()  # this clears and repops the Primary and Secondary pickers on 'General'
 

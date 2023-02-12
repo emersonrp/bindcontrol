@@ -986,7 +986,7 @@ class MovementPowers(Page):
                 if (fix):
                     fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,'','')
                 else:
-                    cur.SetBind(key, name, self, t.ini + '$$up 1$$down 0' + self.actPower_toggle(None,True,t.gfly,toff) + t.dirs('FBLR') + t.detaillo + t.flycamdist .bindload)
+                    cur.SetBind(key, name, self, t.ini + '$$up 1$$down 0' + self.actPower_toggle(None,True,t.gfly,toff) + t.dirs('FBLR') + t.detaillo + t.flycamdist + bindload)
 
             elif (bl == "gaf"):
                 bindload = t.BLF('gaf')
@@ -2292,13 +2292,13 @@ UI.Labels.update( {
     'Feedback'       : 'Self-/tell when changing mode',
 
     'HasTP'          : 'Player has Teleport',
-    'TPBindKey'      : 'Teleport Bind',
-    'TPComboKey'     : 'Hold to show Teleport reticle',
+    'TPBindKey'      : 'Teleport to Cursor',
+    'TPComboKey'     : 'Show Teleport Reticle',
     'TPTPHover'      : 'Hover when Teleporting',
 
     'HasTTP'         : 'Player has Team Teleport',
-    'TTPBindKey'     : 'Team Teleport Bind',
-    'TTPComboKey'    : 'Hold to show Team Teleport reticle',
+    'TTPBindKey'     : 'Team Teleport to Cursor',
+    'TTPComboKey'    : 'Show Team Teleport Reticle',
     'TTPTPGFly'      : 'Group Fly when Team Teleporting',
 
     'TempEnable'     : 'Enable Temp Travel Mode',

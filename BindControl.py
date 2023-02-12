@@ -56,7 +56,7 @@ class Main(wx.Frame):
         Profile_new    = ProfMenu.Append(-1, "New Profile", "Create a new profile")
         Profile_load   = ProfMenu.Append(-1, "Load Profile...", "Load an existing profile")
         Profile_saveas = ProfMenu.Append(-1, "Save Profile As...", "Save the current profile under a new filename")
-        Profile_save   = ProfMenu.Append(-1, "Save Profile", "Save the current profile")
+        Profile_save   = ProfMenu.Append(-1, "&Save Profile\tCTRL-S", "Save the current profile")
         ProfMenu.AppendSeparator()
         Profile_preferences = ProfMenu.Append(wx.ID_PREFERENCES, "&Preferences", "Configure BindControl")
         Profile_exit  = ProfMenu.Append(wx.ID_EXIT)
@@ -120,8 +120,11 @@ class Main(wx.Frame):
 
     def OnNewProfile(self, _):
         if self.Profile.Modified:
-            if wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.ICON_QUESTION|wx.YES_NO) == wx.YES:
+            result = wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
+            if result == wx.YES:
                 self.Profile.doSaveToFile()
+            elif result == wx.CANCEL:
+                return
         self.Freeze()
         try:
             self.Sizer.Remove(0)
@@ -156,7 +159,7 @@ class Main(wx.Frame):
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
             info.SetName('BindControl')
-            info.SetVersion('0.8.2')
+            info.SetVersion('0.8.3')
             info.SetDescription("""
 BindControl can help you set up custom keybinds in City of Heroes/Villains, including speed-on-demand binds.
 
@@ -186,8 +189,11 @@ Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
 
     def OnWindowClosing(self, evt):
         if self.Profile.Modified:
-            if wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.ICON_QUESTION|wx.YES_NO) == wx.YES:
+            result = wx.MessageBox("Profile not saved, save now?", "Profile modified",wx.YES_NO|wx.CANCEL)
+            if result == wx.YES:
                 self.Profile.doSaveToFile()
+            elif result == wx.CANCEL:
+                return
         evt.Skip()
 
 class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):

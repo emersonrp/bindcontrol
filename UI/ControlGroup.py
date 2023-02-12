@@ -136,5 +136,7 @@ class ControlGroup(wx.StaticBoxSizer):
     def OnCBLabelClick(self, evt):
         cblabel = evt.EventObject
         cblabel.control.SetValue(not cblabel.control.IsChecked())
+        fakeevt = wx.CommandEvent(wx.EVT_CHECKBOX.typeId, cblabel.control.GetId())
+        wx.PostEvent(cblabel.control, fakeevt)
         evt.Skip()
 

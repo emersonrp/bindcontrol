@@ -118,24 +118,10 @@ class General(Page):
             callback = self.OnPickPoolPower,
         )
 
-        ### Enable Chat
         ChatSizer = wx.BoxSizer(wx.VERTICAL)
 
-        ChatTopSizer = wx.BoxSizer(wx.HORIZONTAL)
-        chatenable = wx.CheckBox(self, -1, 'Enable Chat Binds')
-        chatenable.SetToolTip( wx.ToolTip('Check this to enable the Chat Binds') )
-        chatenable.Bind(wx.EVT_CHECKBOX, self.OnChatEnable)
-        self.Ctrls['ChatEnable'] = chatenable
-
-        chathelpbutton = HelpButton(self, 'ChatBinds.html')
-
-        ChatTopSizer.Add(chatenable, 0, wx.ALIGN_CENTER_VERTICAL)
-        ChatTopSizer.Add(chathelpbutton, 0)
-
-        ChatSizer.Add(ChatTopSizer, 0, wx.LEFT, 10)
-
         ### Chat Color Picker
-        ChatColorSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Default Chat Colors")
+        ChatColorSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Chat Colors")
         ChatColorEnable = wx.CheckBox(ChatColorSizer.GetStaticBox(), -1, 'Use Custom Chat Colors')
         ChatColorEnable.SetToolTip( wx.ToolTip('Check this to select custom colors for your chat messages'))
         ChatColors = ChatColorPicker(ChatColorSizer.GetStaticBox(), self, '', {
@@ -280,13 +266,6 @@ class General(Page):
 
     def OnPickEpicPowerSet(self, evt):
         evt.Skip()
-
-    def OnChatEnable(self, evt = None):
-        self.DisableControls(self.GetState('ChatEnable'),
-            ['StartChat','SlashChat','StartEmote','AutoReply',
-             'TellTarget','QuickChat', 'TypingNotifierEnable', 'TypingNotifier'])
-        self.OnTypeEnable()
-        if evt: evt.Skip()
 
     def OnTypeEnable(self, evt = None):
         chatenabled = self.GetState('ChatEnable')

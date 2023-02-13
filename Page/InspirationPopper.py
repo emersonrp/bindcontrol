@@ -7,7 +7,7 @@ from GameData import Inspirations
 from UI.ChatColorPicker import ChatColorPicker
 from UI.KeySelectDialog import bcKeyButton
 
-tabnames = {
+tabs = {
     'Single'   : 'Single',
     'Dual'     : 'Dual',
     'Team'     : 'Team',
@@ -23,7 +23,7 @@ class InspirationPopper(Page):
 
         self.Init = {}
 
-        for tab in tabnames:
+        for tab in tabs:
             for name, Insp in Inspirations[tab].items():
                 self.Init[f'{tab}{name}Key']        = ""
                 self.Init[f'{tab}Rev{name}Key']     = ""
@@ -33,7 +33,7 @@ class InspirationPopper(Page):
         self.Init.update({
             'EnableInspBinds'          : False,
             'EnableRevInspBinds'       : False,
-            'DisableTells'             : False,
+            'EnableTells'              : True,
             'UseSuperInsp'             : False,
             'SingleAccuracyKey'        : "SHIFT+A",
             'SingleHealthKey'          : "SHIFT+S",
@@ -89,16 +89,13 @@ class InspirationPopper(Page):
         self.Ctrls['UseSuperInsp'] = self.useSuperInspCB
         optionsBox.Add(self.useSuperInspCB, 0, wx.ALL, 6)
 
-        # TODO - implement the logic here and re-enable useSuperInspCB
-        self.useSuperInspCB.Disable()
-
-        self.disableTellsCB = wx.CheckBox( optionsBox.GetStaticBox(), -1, 'Disable self-/tell feedback')
-        self.disableTellsCB.SetToolTip(wx.ToolTip(
+        self.enableTellsCB = wx.CheckBox( optionsBox.GetStaticBox(), -1, 'Enable self-/tell feedback')
+        self.enableTellsCB.SetToolTip(wx.ToolTip(
             'Check this box to avoid having your toon tell you whenever you pop an inspiration.'))
-        self.disableTellsCB.SetValue(self.Init['DisableTells'])
-        self.Ctrls['DisableTells'] = self.disableTellsCB
-        optionsBox.Add(self.disableTellsCB, 0, wx.ALL, 6)
-        self.disableTellsCB.Bind(wx.EVT_CHECKBOX, self.OnDisableTellCB)
+        self.enableTellsCB.SetValue(self.Init['EnableTells'])
+        self.Ctrls['EnableTells'] = self.enableTellsCB
+        optionsBox.Add(self.enableTellsCB, 0, wx.ALL, 6)
+        self.enableTellsCB.Bind(wx.EVT_CHECKBOX, self.OnEnableTellCB)
 
         optionButtonBox = wx.BoxSizer(wx.HORIZONTAL)
         profileChatColorButton = wx.Button(optionsBox.GetStaticBox(), label = "Profile's Chat Colors")
@@ -120,7 +117,7 @@ class InspirationPopper(Page):
 
         InspTabs = wx.Notebook(self, style = wx.NB_TOP, name = 'InspTabs')
         InspTabs.SetPadding(wx.Size(2,0))
-        for tab, tabname in tabnames.items():
+        for tab, tabname in tabs.items():
             tabpanel = wx.Panel(InspTabs)
             il = wx.ImageList(18,18)
             idx1 = il.Add(Icon.GetIcon(f"UI/Insp{tab}"))
@@ -188,13 +185,13 @@ class InspirationPopper(Page):
     def SynchronizeUI(self):
         self.OnEnableCB()
         self.OnEnableRevCB()
-        self.OnDisableTellCB()
+        self.OnEnableTellCB()
 
     def OnProfileChatColorButton(self, evt = None):
         pass
 
-    def OnByInspColorButton(self, evt = None):
-        for tab, tabname in tabnames.items():
+    def OnByInspColorButton(self, _):
+        for tab in tabs:
             for Insp, InspData in Inspirations[tab].items():
                 for order in ("", "Rev"):
                     # reverse the colors if we're doing team inspirations
@@ -211,7 +208,7 @@ class InspirationPopper(Page):
 
     def OnEnableCB(self, evt = None):
         controls = []
-        for tab in tabnames:
+        for tab in tabs:
             for Insp in Inspirations[tab]:
                 controls.append(f"{tab}{Insp}Key")
                 controls.append(f"{tab}{Insp}Border")
@@ -219,14 +216,14 @@ class InspirationPopper(Page):
                 controls.append(f"{tab}{Insp}Foreground")
         self.Freeze()
         self.DisableControls(self.useCB.IsChecked(), controls)
-        if self.disableTellsCB.IsChecked():
-            self.OnDisableTellCB()
+        if self.enableTellsCB.IsChecked():
+            self.OnEnableTellCB()
         self.Thaw()
         if evt: evt.Skip()
 
     def OnEnableRevCB(self, evt = None):
         controls = []
-        for tab in tabnames:
+        for tab in tabs:
             for Insp in Inspirations[tab]:
                 controls.append(f"{tab}Rev{Insp}Key")
                 controls.append(f"{tab}Rev{Insp}Border")
@@ -234,16 +231,16 @@ class InspirationPopper(Page):
                 controls.append(f"{tab}Rev{Insp}Foreground")
         self.Freeze()
         self.DisableControls(self.useRevCB.IsChecked(), controls)
-        if self.disableTellsCB.IsChecked():
-            self.OnDisableTellCB()
+        if self.enableTellsCB.IsChecked():
+            self.OnEnableTellCB()
         self.Thaw()
         if evt: evt.Skip()
 
-    def OnDisableTellCB(self, evt = None):
-        enabled = not self.disableTellsCB.IsChecked()
+    def OnEnableTellCB(self, evt = None):
+        enabled = self.enableTellsCB.IsChecked()
         controls = []
         revcontrols = []
-        for tab in tabnames:
+        for tab in tabs:
             for Insp in Inspirations[tab]:
                 controls.append(f"{tab}{Insp}Border")
                 controls.append(f"{tab}{Insp}Background")
@@ -260,15 +257,18 @@ class InspirationPopper(Page):
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()
 
-        for tab in tabnames:
+        for tab in tabs:
             for Insp in sorted(Inspirations[tab]):
 
                 tiers = Inspirations[tab][Insp]['tiers']
                 # "reverse" order is as it is in gamebinds, smallest first
                 reverseOrder = list(map(lambda s: f"inspexecname {s}", tiers))
+                # If we don't want to use Super Insps, trim them from the end of the reverse list
+                if not self.GetState('UseSuperInsp'): del reverseOrder[-1:]
+                # Then flip it around for "forward" largest-first order
                 forwardOrder = reverseOrder[::-1]
 
-                if not self.GetState("DisableTells"):
+                if self.GetState("EnableTells"):
                     bc = self.GetState(f'{tab}{Insp}Border')
                     bg = self.GetState(f'{tab}{Insp}Background')
                     fg = self.GetState(f'{tab}{Insp}Foreground')
@@ -285,7 +285,7 @@ class InspirationPopper(Page):
 
     UI.Labels['Enable'] = "Enable Inspiration Popper"
 
-    for tab in tabnames:
+    for tab in tabs:
         for order in ("", "Rev"):
             for Insp in Inspirations[tab]:
                 UI.Labels[f"{tab}{order}{Insp}Key"]        = f"{Insp} Key"

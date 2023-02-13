@@ -227,10 +227,11 @@ class SoD(Page):
         keySizer.Add(downLabel, [5,0], [1,1], flag = wx.ALIGN_CENTER)
         keySizer.Add(upLabel,   [5,1], [1,2], flag = wx.ALIGN_CENTER)
 
-        #mcSizer = wx.FlexGridSizer(2,1,5,5)
-        #mcSizer.AddGrowableCol(0)
         mcSizer = wx.BoxSizer(wx.HORIZONTAL)
-        mcLabel = ST.GenStaticText(staticbox, -1, UI.Labels['MouseChord'] + ":")
+        if wx.Platform != '__WXMSW__':
+            mcLabel = ST.GenStaticText(staticbox, -1, UI.Labels['MouseChord'] + ":")
+        else:
+            mcLabel = wx.StaticText(staticbox, -1, UI.Labels['MouseChord'] + ":")
         mcSizer.Add(mcLabel, 0, wx.LEFT|wx.RIGHT, 5)
         mcLabel.Bind(wx.EVT_LEFT_DOWN, self.onCBLabelClick)
         mousechord = wx.CheckBox(staticbox, -1)

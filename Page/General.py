@@ -124,7 +124,10 @@ class General(Page):
         ChatColorSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Chat Colors")
         ChatColorEnable = wx.CheckBox(ChatColorSizer.GetStaticBox(), -1, 'Use Custom Chat Colors')
         ChatColorEnable.SetToolTip( wx.ToolTip('Check this to select custom colors for your chat messages'))
-        ChatColors = ChatColorPicker(ChatColorSizer.GetStaticBox(), self, '', {
+        ChatColorEnable.CtlName = "ChatColorEnable"
+        self.Ctrls['ChatColorEnable'] = ChatColorEnable
+        ChatColorEnable.Bind(wx.EVT_CHECKBOX, self.OnColorEnable)
+        ChatColors = ChatColorPicker(ChatColorSizer.GetStaticBox(), self, 'Chat', {
             'border'     : wx.BLACK,
             'background' : wx.WHITE,
             'text'       : wx.BLACK,
@@ -138,6 +141,10 @@ class General(Page):
         TNEnable = wx.CheckBox(TNSizer.GetStaticBox(), -1, 'Use Typing Notifier')
         TNEnable.SetToolTip(
                 wx.ToolTip('Check this to enable a floating "typing" notifier when you are typing into the chat box'))
+        TNEnable.CtlName = 'TypingNotifierEnable'
+        TNEnable.CtlLabel = None
+        TNEnable.Bind(wx.EVT_CHECKBOX, self.OnTypeEnable)
+        self.Ctrls['TypingNotifierEnable'] = TNEnable
         TNCtrlSizer = wx.BoxSizer(wx.HORIZONTAL)
         TNLabel = wx.StaticText(TNSizer.GetStaticBox(), label = "Typing Notifier:", style=wx.ALIGN_RIGHT)
         TN = wx.TextCtrl(TNSizer.GetStaticBox(), value = self.Init['TypingNotifier'], style=wx.TE_CENTER)
@@ -151,7 +158,6 @@ class General(Page):
         TNSizer.Add(TNCtrlSizer, 0, wx.ALL|wx.EXPAND, 5)
 
         ChatSizer.Add(TNSizer, 0, wx.TOP|wx.EXPAND, 6)
-
 
         ### Chat binds
         chatBindBox = ControlGroup(self, self, 'Chat Binds')
@@ -193,6 +199,8 @@ class General(Page):
 
     def SynchronizeUI(self):
         self.OnPickArchetype()
+        self.OnTypeEnable()
+        self.OnColorEnable()
 
     def PopulateBindFiles(self):
         return
@@ -267,10 +275,14 @@ class General(Page):
     def OnPickEpicPowerSet(self, evt):
         evt.Skip()
 
+    def OnColorEnable(self, evt = None):
+        colorsenabled = self.GetState('ChatColorEnable')
+        self.DisableControls(colorsenabled, ['ChatBorder', 'ChatBackground', 'ChatForeground'])
+        if evt: evt.Skip()
+
     def OnTypeEnable(self, evt = None):
-        chatenabled = self.GetState('ChatEnable')
         typeenabled = self.GetState('TypingNotifierEnable')
-        self.DisableControls(chatenabled and typeenabled, ['TypingNotifier'])
+        self.DisableControls(typeenabled, ['TypingNotifier'])
         if evt: evt.Skip()
 
     UI.Labels.update({

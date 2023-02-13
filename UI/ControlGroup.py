@@ -41,7 +41,13 @@ class ControlGroup(wx.StaticBoxSizer):
 
         label = UI.Labels.get(ctlName, ctlName)
         if not noLabel:
-            CtlLabel = ST.GenStaticText(CtlParent, -1, label + ':')
+            # This ST.GenStaticText is so we can intercept clicks on it, but
+            # the background color is wrong on Windows in a way I can't work out,
+            # and clicks work on Windows anyway, so...
+            if wx.Platform != '__WXMSW__':
+                CtlLabel = ST.GenStaticText(CtlParent, -1, label + ':')
+            else:
+                CtlLabel = wx.StaticText(CtlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
             control = bcKeyButton( CtlParent, -1, )

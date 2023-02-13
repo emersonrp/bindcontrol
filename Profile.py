@@ -133,7 +133,9 @@ class Profile(wx.Notebook):
             page = getattr(self, pagename)
             for controlname, control in page.Ctrls.items():
                 # skip if off
-                if control.IsEnabled():
+                # UPDATE: No, let's save disabled controls' states, too, so as not to lose config
+                # if someone, say, turns on "disable self tell" with a bunch of custom colors defined
+                # if control.IsEnabled():
                     # look up what type of control it is to know how to extract its value
                     controlType = type(control).__name__
                     if controlType == 'DirPickerCtrl':

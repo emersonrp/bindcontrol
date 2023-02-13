@@ -68,6 +68,12 @@ class Profile(wx.Notebook):
         if gbp: return PureWindowsPath(gbp) / self.Name()
         return self.BindsDir()
 
+    def HasPowerPool(self, poolname):
+        for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
+            if self.General.Ctrls[picker].GetString(self.General.Ctrls[picker].GetSelection()) == poolname:
+                return True
+        return False
+
     def BLF(self, *args):
         filepath = self.GameBindsDir()
         for arg in args: filepath = filepath  /  arg
@@ -198,7 +204,7 @@ class Profile(wx.Notebook):
             data = json.loads(datastring)
 
             # load old Profiles pre-rename
-            if data['SoD']: data['MovementPowers'] = data['SoD']
+            if 'SoD' in data: data['MovementPowers'] = data['SoD']
 
             for pagename in self.Pages:
                 if pagename == "CustomBinds": continue

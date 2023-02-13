@@ -1,9 +1,7 @@
 import wx
 import GameData
 import UI
-import wx.lib.stattext as ST
 from pathlib import Path, PureWindowsPath
-from BindFile import KeyBind
 from Page import Page
 from UI.ControlGroup import ControlGroup, bcKeyButton
 
@@ -110,21 +108,12 @@ class MovementPowers(Page):
             self.Init['DwarfDwarf'] = "Black Dwarf"
             self.Init['HumanFormShield'] = "Gravity Shield"
 
-
     def BuildPage(self):
 
         topSizer = wx.FlexGridSizer(0,2,10,10)
-        EnableSoD = wx.CheckBox( self, -1, "Enable Speed On Demand Binds",  )
-
-        topSizer.Add(EnableSoD, 0, wx.TOP|wx.LEFT, 10)
-        topSizer.AddSpacer(1)
-        self.Ctrls['EnableSoD'] = EnableSoD
-        EnableSoD.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        EnableSoD.SetValue(self.Init['EnableSoD'])
 
         self.leftColumn  = wx.BoxSizer(wx.VERTICAL)
         self.rightColumn = wx.BoxSizer(wx.VERTICAL)
-
 
         ##### MOVEMENT KEYS
         movementSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = "Movement Keys")
@@ -132,13 +121,13 @@ class MovementPowers(Page):
         innerSizer = wx.BoxSizer(wx.VERTICAL)
         movementSizer.Add(innerSizer, 1, wx.ALL|wx.ALIGN_CENTER, 10)
 
-        keySizer = wx.GridBagSizer(3, 3)
+        keySizer = wx.GridBagSizer(6, 3)
         tlLabel = wx.StaticText(staticbox, label = 'Turn Left')
-        keySizer.Add(tlLabel, [0,0], flag = wx.ALIGN_CENTER)
+        keySizer.Add(tlLabel, [0,0], [1,2], flag = wx.ALIGN_CENTER)
         fwLabel = wx.StaticText(staticbox, label = 'Forward')
-        keySizer.Add(fwLabel, [0,1], flag = wx.ALIGN_CENTER)
+        keySizer.Add(fwLabel, [0,2], [1,2], flag = wx.ALIGN_CENTER)
         trLabel = wx.StaticText(staticbox, label = 'Turn Right')
-        keySizer.Add(trLabel, [0,2], flag = wx.ALIGN_CENTER)
+        keySizer.Add(trLabel, [0,4], [1,2], flag = wx.ALIGN_CENTER)
 
         tleftButton = bcKeyButton(staticbox, -1, )
         tleftButton.SetLabel(self.Init['TurnLeft'])
@@ -147,7 +136,7 @@ class MovementPowers(Page):
         tleftButton.CtlLabel = tlLabel
         tleftButton.Page = self
         tleftButton.Key = self.Init['TurnLeft']
-        keySizer.Add(tleftButton, [1,0])
+        keySizer.Add(tleftButton, [1,0], [1,2])
 
         forwardButton = bcKeyButton(staticbox, -1, )
         self.Ctrls['Forward'] = forwardButton
@@ -156,7 +145,7 @@ class MovementPowers(Page):
         forwardButton.CtlLabel = fwLabel
         forwardButton.Page = self
         forwardButton.Key = self.Init['Forward']
-        keySizer.Add(forwardButton, [1,1])
+        keySizer.Add(forwardButton, [1,2], [1,2])
 
         trightButton = bcKeyButton(staticbox, -1, )
         self.Ctrls['TurnRight'] = trightButton
@@ -165,7 +154,7 @@ class MovementPowers(Page):
         trightButton.CtlLabel = trLabel
         trightButton.Page = self
         trightButton.Key = self.Init['TurnRight']
-        keySizer.Add(trightButton, [1,2])
+        keySizer.Add(trightButton, [1,4], [1,2])
 
         leftLabel = wx.StaticText(staticbox, label = 'Left')
         backLabel = wx.StaticText(staticbox, label = 'Back')
@@ -178,7 +167,7 @@ class MovementPowers(Page):
         leftButton.CtlLabel = leftLabel
         leftButton.Page = self
         leftButton.Key = self.Init['Left']
-        keySizer.Add(leftButton, [2,0])
+        keySizer.Add(leftButton, [2,0], [1,2])
 
         backButton = bcKeyButton(staticbox, -1, )
         backButton.SetLabel(self.Init['Back'])
@@ -187,7 +176,7 @@ class MovementPowers(Page):
         backButton.CtlLabel = backLabel
         backButton.Page = self
         backButton.Key = self.Init['Back']
-        keySizer.Add(backButton, [2,1])
+        keySizer.Add(backButton, [2,2], [1,2])
 
         rightButton = bcKeyButton(staticbox, -1, )
         self.Ctrls['Right'] = rightButton
@@ -196,11 +185,11 @@ class MovementPowers(Page):
         rightButton.CtlLabel = rightLabel
         rightButton.Page = self
         rightButton.Key = self.Init['Right']
-        keySizer.Add(rightButton, [2,2])
+        keySizer.Add(rightButton, [2,4], [1,2])
 
-        keySizer.Add(leftLabel, [3,0], flag = wx.ALIGN_CENTER)
-        keySizer.Add(backLabel, [3,1], flag = wx.ALIGN_CENTER)
-        keySizer.Add(rightLabel, [3,2], flag = wx.ALIGN_CENTER)
+        keySizer.Add(leftLabel,  [3,0], [1,2], flag = wx.ALIGN_CENTER)
+        keySizer.Add(backLabel,  [3,2], [1,2], flag = wx.ALIGN_CENTER)
+        keySizer.Add(rightLabel, [3,4], [1,2], flag = wx.ALIGN_CENTER)
 
         downLabel = wx.StaticText(staticbox, label = 'Down')
         upLabel   = wx.StaticText(staticbox, label = 'Up')
@@ -212,7 +201,7 @@ class MovementPowers(Page):
         downButton.CtlLabel = downLabel
         downButton.Page = self
         downButton.Key = self.Init['Down']
-        keySizer.Add(downButton, [4,0], [1,1], wx.TOP, 10)
+        keySizer.Add(downButton, [4,0], [1,2], wx.TOP, 10)
 
         upButton = bcKeyButton(staticbox, -1, )
         self.Ctrls['Up'] = upButton
@@ -221,52 +210,62 @@ class MovementPowers(Page):
         upButton.CtlLabel = upLabel
         upButton.Page = self
         upButton.Key = self.Init['Up']
-        keySizer.Add(upButton, [4,1], [1,2], wx.EXPAND|wx.TOP, 10)
+        keySizer.Add(upButton, [4,2], [1,4], wx.EXPAND|wx.TOP, 10)
 
-        keySizer.Add(downLabel, [5,0], [1,1], flag = wx.ALIGN_CENTER)
-        keySizer.Add(upLabel,   [5,1], [1,2], flag = wx.ALIGN_CENTER)
+        keySizer.Add(downLabel, [5,0], [1,2], flag = wx.ALIGN_CENTER)
+        keySizer.Add(upLabel,   [5,2], [1,4], flag = wx.ALIGN_CENTER)
 
-        mcSizer = wx.BoxSizer(wx.HORIZONTAL)
-        if wx.Platform != '__WXMSW__':
-            mcLabel = ST.GenStaticText(staticbox, -1, UI.Labels['MouseChord'] + ":")
-        else:
-            mcLabel = wx.StaticText(staticbox, -1, UI.Labels['MouseChord'] + ":")
-        mcSizer.Add(mcLabel, 0, wx.LEFT|wx.RIGHT, 5)
-        mcLabel.Bind(wx.EVT_LEFT_DOWN, self.onCBLabelClick)
-        mousechord = wx.CheckBox(staticbox, -1)
-        self.Ctrls['MouseChord'] = mousechord
-        mousechord.SetValue(bool(self.Init['MouseChord']))
-        setattr(mousechord, 'CtlName' , 'MouseChord')
-        setattr(mousechord, 'CtlLabel', mcLabel)
-        setattr(mcLabel   , 'control' , mousechord)
-        setattr(mousechord, 'Page'    , self)
-        mcSizer.Add(mousechord, 0, wx.RIGHT, 10)
+        autoRunLabel = wx.StaticText(staticbox, label = 'Autorun')
+        followLabel  = wx.StaticText(staticbox, label = 'Follow')
+
+        autoRunButton = bcKeyButton(staticbox, -1, )
+        self.Ctrls['AutoRun'] = autoRunButton
+        autoRunButton.SetLabel(self.Init['AutoRun'])
+        autoRunButton.CtlName = 'AutoRun'
+        autoRunButton.CtlLabel = autoRunLabel
+        autoRunButton.Page = self
+        autoRunButton.Key = self.Init['AutoRun']
+        keySizer.Add(autoRunButton, [6,1], [1,2], wx.EXPAND|wx.TOP, 10)
+
+        followButton = bcKeyButton(staticbox, -1, )
+        self.Ctrls['Follow'] = followButton
+        followButton.SetLabel(self.Init['Follow'])
+        followButton.CtlName = 'Follow'
+        followButton.CtlLabel = followLabel
+        followButton.Page = self
+        followButton.Key = self.Init['Follow']
+        keySizer.Add(followButton, [6,3], [1,2], wx.EXPAND|wx.TOP, 10)
+
+        keySizer.Add(autoRunLabel, [7,1], [1,2], flag = wx.ALIGN_CENTER)
+        keySizer.Add(followLabel,  [7,3], [1,2], flag = wx.ALIGN_CENTER)
 
         innerSizer.Add(keySizer, 0)
-        innerSizer.Add(mcSizer,  0, wx.ALIGN_CENTER|wx.TOP, 15)
 
         self.leftColumn.Add(movementSizer, 0, wx.EXPAND)
 
-        ##### GENERAL SETTINGS
-        generalSizer = ControlGroup(self, self, 'General Settings')
+        ##### SPEED ON DEMAND SETTINGS
+        SoDSizer = ControlGroup(self, self, 'Speed on Demand Settings')
 
-        generalSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'choice',
+        SoDSizer.AddControl( ctlName = 'EnableSoD', ctlType = 'checkbox',)
+        self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        SoDSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'choice',
             contents = ('No SoD','Sprint','Super Speed','Jump','Fly'),)
         self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
-        generalSizer.AddControl( ctlName = 'SprintPower', ctlType = 'choice',
+        SoDSizer.AddControl( ctlName = 'SprintPower', ctlType = 'choice',
             contents = GameData.SprintPowers,)
-        generalSizer.AddControl( ctlName = 'AutoMouseLook', ctlType = 'checkbox',
+        SoDSizer.AddControl( ctlName = 'AutoMouseLook', ctlType = 'checkbox',
             tooltip = 'Automatically Mouselook when moving',)
-        generalSizer.AddControl( ctlName = 'AutoRun', ctlType = 'keybutton',)
-        generalSizer.AddControl( ctlName = 'Follow', ctlType = 'keybutton',)
-        generalSizer.AddControl( ctlName = 'NonSoDEnable', ctlType = 'checkbox',)
+        #SoDSizer.AddControl( ctlName = 'AutoRun', ctlType = 'keybutton',)
+        #SoDSizer.AddControl( ctlName = 'Follow', ctlType = 'keybutton',)
+        SoDSizer.AddControl( ctlName = 'NonSoDEnable', ctlType = 'checkbox',)
         self.Ctrls['NonSoDEnable'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        generalSizer.AddControl( ctlName = 'NonSoDMode', ctlType = 'keybutton',)
-        generalSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',)
+        SoDSizer.AddControl( ctlName = 'NonSoDMode', ctlType = 'keybutton',)
+        SoDSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',)
         self.Ctrls['SprintSoD'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        generalSizer.AddControl( ctlName = 'SprintMode', ctlType = 'keybutton',)
+        SoDSizer.AddControl( ctlName = 'SprintMode', ctlType = 'keybutton',)
+        SoDSizer.AddControl( ctlName = 'MouseChord', ctlType = 'checkbox',)
 
-        self.leftColumn.Add(generalSizer, 0, wx.EXPAND)
+        self.leftColumn.Add(SoDSizer, 0, wx.EXPAND)
 
         ### DETAIL SETTINGS
         detailSizer = ControlGroup(self, self, 'Detail Settings')
@@ -294,23 +293,23 @@ class MovementPowers(Page):
         self.leftColumn.Add(self.tempSizer, 0, wx.EXPAND)
 
         ##### SUPER SPEED
-        superSpeedSizer = ControlGroup(self, self, 'Super Speed')
-        superSpeedSizer.AddControl( ctlName = 'HasSS', ctlType = "checkbox",)
+        self.superSpeedSizer = ControlGroup(self, self, 'Super Speed')
+        self.superSpeedSizer.AddControl( ctlName = 'HasSS', ctlType = "checkbox",)
         self.Ctrls['HasSS'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        superSpeedSizer.AddControl( ctlName = 'RunMode', ctlType = 'keybutton',)
-        superSpeedSizer.AddControl( ctlName = 'SSMobileOnly', ctlType = 'checkbox',)
-        superSpeedSizer.AddControl( ctlName = 'SSSJModeEnable', ctlType = 'checkbox',)
-        self.rightColumn.Add(superSpeedSizer, 0, wx.EXPAND)
+        self.superSpeedSizer.AddControl( ctlName = 'RunMode', ctlType = 'keybutton',)
+        self.superSpeedSizer.AddControl( ctlName = 'SSMobileOnly', ctlType = 'checkbox',)
+        self.superSpeedSizer.AddControl( ctlName = 'SSSJModeEnable', ctlType = 'checkbox',)
+        self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
-        superJumpSizer = ControlGroup(self, self, 'Super Jump')
-        superJumpSizer.AddControl( ctlName = 'HasSJ', ctlType = 'checkbox',)
+        self.superJumpSizer = ControlGroup(self, self, 'Super Jump')
+        self.superJumpSizer.AddControl( ctlName = 'HasSJ', ctlType = 'checkbox',)
         self.Ctrls['HasSJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        superJumpSizer.AddControl( ctlName = 'HasCJ', ctlType = 'checkbox',)
+        self.superJumpSizer.AddControl( ctlName = 'HasCJ', ctlType = 'checkbox',)
         self.Ctrls['HasCJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',)
-        superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',)
-        self.rightColumn.Add(superJumpSizer, 0, wx.EXPAND)
+        self.superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',)
+        self.superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',)
+        self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
         ##### FLY
         self.flySizer = ControlGroup(self, self, 'Flight')
@@ -330,26 +329,21 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
-        teleportSizer = ControlGroup(self, self, 'Teleport')
+        self.teleportSizer = ControlGroup(self, self, 'Teleport')
 
         # if (at == peacebringer) "Dwarf Step"
         # if (at == warshade) "Shadow Step / Dwarf Step"
-        teleportSizer.AddControl( ctlName = 'HasTP', ctlType = 'checkbox',)
+        self.teleportSizer.AddControl( ctlName = 'HasTP', ctlType = 'checkbox',)
         self.Ctrls['HasTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        teleportSizer.AddControl( ctlName = "TPBindKey", ctlType = 'keybutton',)
-        teleportSizer.AddControl( ctlName = "TPComboKey", ctlType = 'keybutton',)
-        teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',)
-        self.rightColumn.Add(teleportSizer, 0, wx.EXPAND)
-
-        # TODO - do we want these team versions in there?
-        teamTeleportSizer = ControlGroup(self, self, 'Team Teleport')
-        teamTeleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',)
+        self.teleportSizer.AddControl( ctlName = "TPBindKey", ctlType = 'keybutton',)
+        self.teleportSizer.AddControl( ctlName = "TPComboKey", ctlType = 'keybutton',)
+        self.teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',)
+        self.teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',)
         self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        teamTeleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton',)
-        teamTeleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton',)
-        teamTeleportSizer.AddControl( ctlName = 'TTPTPGFly', ctlType = 'checkbox',)
-        # end team-tp
-        self.rightColumn.Add(teamTeleportSizer, 0, wx.EXPAND)
+        self.teleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton',)
+        self.teleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton',)
+        self.teleportSizer.AddControl( ctlName = 'TTPTPGFly', ctlType = 'checkbox',)
+        self.rightColumn.Add(self.teleportSizer, 0, wx.EXPAND)
 
         ##### KHELDIAN TRAVEL POWERS
         self.kheldianSizer = ControlGroup(self, self, 'Nova / Dwarf Travel Powers')
@@ -381,12 +375,17 @@ class MovementPowers(Page):
 
         try:
             c = self.Ctrls
-            # start with turning everything on or off to match the global checkbox
-            for cname,control in c.items():
-                if cname != 'EnableSoD':  # don't disable yourself kthx
-                    control.Enable(self.GetState('EnableSoD'))
-                    if not isinstance(control.CtlLabel, str):
-                        control.CtlLabel.Enable(self.GetState('EnableSoD'))
+
+            # TODO - we no longer treat this entire page as "speed on demand" so
+            # we don't want to turn on or off the entire page with that checkbox
+            # We might want to toggle the controls in the SoD control group tho
+
+            # # start with turning everything on or off to match the global checkbox
+            # for cname,control in c.items():
+            #     if cname != 'EnableSoD':  # don't disable yourself kthx
+            #         control.Enable(self.GetState('EnableSoD'))
+            #         if not isinstance(control.CtlLabel, str):
+            #             control.CtlLabel.Enable(self.GetState('EnableSoD'))
 
             c['NonSoDMode']         .Enable(self.GetState('NonSoDEnable'))
             c['NonSoDMode'].CtlLabel.Enable(self.GetState('NonSoDEnable'))
@@ -466,6 +465,12 @@ class MovementPowers(Page):
             self.leftColumn.Hide(self.tempSizer)
             # end TODO temp sizer
 
+            # show/hide control groups based on power pool picks
+            self.rightColumn.Show(self.flySizer,        self.Profile.HasPowerPool('Flight'))
+            self.rightColumn.Show(self.superJumpSizer,  self.Profile.HasPowerPool('Leaping'))
+            self.rightColumn.Show(self.superSpeedSizer, self.Profile.HasPowerPool('Speed'))
+            self.rightColumn.Show(self.teleportSizer,   self.Profile.HasPowerPool('Teleportation'))
+
             # show/hide kheldian-influenced controls depending on selected archetype;
             archetype = self.Profile.Archetype()
             kheldianOnlyControls = ['HasCF', 'HasQF', 'QFlyMode']
@@ -515,7 +520,6 @@ class MovementPowers(Page):
             self.Thaw()
             self.Layout()
             if evt: evt.Skip()
-
 
     def makeSoDFile(self, p):
 
@@ -1008,53 +1012,41 @@ class MovementPowers(Page):
         t.ini = ''
 
     def PopulateBindFiles(self):
-
-        if not self.GetState('EnableSoD'): return
-
-        sssj = 0
-
-        profile = self.Profile
-
+        profile   = self.Profile
         ResetFile = profile.ResetFile()
 
-        config = wx.ConfigBase.Get()
-        keybindreset = 'keybind_reset$$' if config.ReadBool('FlushAllBinds') else ''
-        ResetFile.SetBind(config.Read('ResetKey'), "Reset Key", self,
-                    [
-                        keybindreset,
-                        ResetFile.BLF(),
-                        'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
-                        'powexecname Sprint',
-                        'powexecunqueue',
-                        't $name, SoD Binds Reset',
-                    ])
+        # bind normal movement keys if SoD not enabled
+        if not self.GetState('EnableSoD'):
+            if (self.GetState('Left')):
+                ResetFile.SetBind(self.Ctrls['Left'].MakeFileKeyBind("+left"))
+            if (self.GetState('Right')):
+                ResetFile.SetBind(self.Ctrls['Right'].MakeFileKeyBind("+right"))
+            if (self.GetState('Up')):
+                ResetFile.SetBind(self.Ctrls['Up'].MakeFileKeyBind("+up"))
+            if (self.GetState('Down')):
+                ResetFile.SetBind(self.Ctrls['Down'].MakeFileKeyBind("+down"))
+            if (self.GetState('Forward')):
+                ResetFile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind("+forward"))
+            if (self.GetState('Back')):
+                ResetFile.SetBind(self.Ctrls['Back'].MakeFileKeyBind("+back"))
+            if (self.GetState('Follow')):
+                ResetFile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("+follow"))
+            if (self.GetState('AutoRun')):
+                ResetFile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind("++autorun"))
 
-        if (self.GetState('DefaultMode') == "NonSoD"):
-            if (not self.GetState('NonSoDEnable')):
-                wx.MessageBox("Enabling NonSoD mode, since it is set as your default mode.", "Mode Changed", wx.OK|wx.ICON_WARNING)
-            self.SetState('NonSoDEnable', 1)
+        if (self.GetState('TurnLeft')):
+            ResetFile.SetBind(self.Ctrls['TurnLeft'].MakeFileKeyBind("+turnleft"))
+        if (self.GetState('TurnRight')):
+            ResetFile.SetBind(self.Ctrls['TurnRight'].MakeFileKeyBind("+turnright"))
 
-        elif (self.GetState('DefaultMode') == "Sprint" and not self.GetState('SprintSoD')):
-            wx.MessageBox("Enabling NonSoD mode and making it the default, since Sprint SoD, your previous Default mode, is not enabled.", "Mode Changed", wx.OK|wx.ICON_WARNING)
-            self.SetState('NonSoDEnable', 1)
-            self.SetState('DefaultMode', "NonSoD")
+        if (self.GetState('TempEnable')):
+            temptogglefile1 = profile.GetBindFile("temptoggle1.txt")
+            temptogglefile2 = profile.GetBindFile("temptoggle2.txt")
+            temptogglefile2.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('-down$$gototray 1' + profile.BLF('temptoggle1.txt')))
+            temptogglefile1.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('+down$$gototray ' + self.GetState('TempTray') + profile.BLF('temptoggle2.txt')))
+            ResetFile.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('+down$$gototray ' + self.GetState('TempTray') + profile.BLF('temptoggle2.txt')))
 
-        elif (self.GetState('DefaultMode') == "Fly" and not (self.GetState('HasHover') or self.GetState('HasFly'))):
-            wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Fly mode but your character has neither Hover nor Fly.", "Mode Changed", wx.OK|wx.ICON_WARNING)
-            self.SetState('NonSoDEnable', 1)
-            self.SetState('DefaultMode', "NonSoD")
-
-        elif (self.GetState('DefaultMode') == "Jump" and not (self.GetState('HasCJ') or self.GetState('HasSJ'))):
-            wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Jump mode but your character has neither Combat Jumping nor Super Jump.", "Mode Changed", wx.OK|wx.ICON_WARNING)
-            self.SetState('NonSoDEnable', 1)
-            self.SetState('DefaultMode', "NonSoD")
-
-        elif (self.GetState('DefaultMode') == "Super Speed" and not self.GetState('HasSS')):
-            wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Super Speed mode but your character doesn't have Super Speed", "Mode Changed", wx.OK|wx.ICON_WARNING)
-            self.SetState('NonSoDEnable', 1)
-            self.SetState('DefaultMode', "NonSoD")
-
-
+        # set up the "t" object that drives approximately everything
         t = tObject(profile)
 
         ## Combat Jumping / Super Jump
@@ -1132,364 +1124,7 @@ class MovementPowers(Page):
             t.detailhi = f"$$visscale {self.GetState('DetailBase')}$$shadowvol 0$$ss 0"
             t.detaillo = f"$$visscale {self.GetState('DetailMove')}$$shadowvol 0$$ss 0"
 
-        if self.GetState('TPHideWindows'):
-            windowhide = '$$windowhide health$$windowhide chat$$windowhide target$$windowhide tray'
-            windowshow = '$$show health$$show chat$$show target$$show tray'
-        else:
-            windowhide = ''
-            windowshow = ''
-
-        t.basepath     = profile.BindsDir()
-        t.gamebasepath = profile.GameBindsDir()
-
-        t.path     = t.basepath     / 'R' / 'R'
-        t.gamepath = t.gamebasepath / 'R' / 'R'
-        t.bl       = f"$$bindloadfilesilent {t.gamepath}"
-
-        t.patha     = t.basepath     / 'F' / 'F' # air subfolder and base filename
-        t.gamepatha = t.gamebasepath / 'F' / 'F'
-        t.bla       = f"$$bindloadfilesilent {t.gamepatha}"
-
-        t.pathj     = t.basepath     / 'J' / 'J'
-        t.gamepathj = t.gamebasepath / 'J' / 'J'
-        t.blj       = f"$$bindloadfilesilent {t.gamepathj}"
-
-        t.paths     = t.basepath     / 'S' / 'S'
-        t.gamepaths = t.gamebasepath / 'S' / 'S'
-        t.bls       = f"$$bindloadfilesilent {t.gamepaths}"
-
-        #t.pathga     = t.basepath     / 'GF' / 'GF' # air subfolder and base filename
-        #t.gamepathga = t.gamebasepath / 'GF' / 'GF'
-        #t.blga       = f"$$bindloadfilesilent {t.gamepathga}"
-
-        t.pathn     = t.basepath     / 'N' / 'N' # ground subfolder and base filename.
-        t.gamepathn = t.gamebasepath / 'N' / 'N'
-        t.bln       = f"$$bindloadfilesilent {t.gamepathn}"
-
-        t.patht     = t.basepath     / 'T' / 'T' # ground subfolder and base filename.
-        t.gamepatht = t.gamebasepath / 'T' / 'T'
-        t.blt       = f"$$bindloadfilesilent {t.gamepatht}"
-
-        t.pathq     = t.basepath     / 'Q' / 'Q' # ground subfolder and base filename.
-        t.gamepathq = t.gamebasepath / 'Q' / 'Q'
-        t.blq       = f"$$bindloadfilesilent {t.gamepathq}"
-
-        t.pathgr     = t.basepath     / 'AR' / 'AR'  # ground autorun subfolder and base filename
-        t.gamepathgr = t.gamebasepath / 'AR' / 'AR'
-        t.blgr       = f"$$bindloadfilesilent {t.gamepathgr}"
-
-        t.pathaf     = t.basepath     / 'AF' / 'AF'  # air autorun subfolder and base filename
-        t.gamepathaf = t.gamebasepath / 'AF' / 'AF'
-        t.blaf       = f"$$bindloadfilesilent {t.gamepathaf}"
-
-        t.pathaj     = t.basepath     / 'AJ' / 'AJ'
-        t.gamepathaj = t.gamebasepath / 'AJ' / 'AJ'
-        t.blaj       = f"$$bindloadfilesilent {t.gamepathaj}"
-
-        t.pathas     = t.basepath     / 'AS' / 'AS'
-        t.gamepathas = t.gamebasepath / 'AS' / 'AS'
-        t.blas       = f"$$bindloadfilesilent {t.gamepathas}"
-
-        #t.pathgaf     = t.basepath     / 'GAF' / 'GAF'  # air autorun subfolder and base filename
-        #t.gamepathgaf = t.gamebasepath / 'GAF' / 'GAF'
-        #t.blgaf       = f"$$bindloadfilesilent {t.gamepathgaf}"
-
-        t.pathan     = t.basepath     / 'AN' / 'AN' # ground subfolder and base filename.
-        t.gamepathan = t.gamebasepath / 'AN' / 'AN'
-        t.blan       = f"$$bindloadfilesilent {t.gamepathan}"
-
-        t.pathat     = t.basepath     / 'AT' / 'AT' # ground subfolder and base filename.
-        t.gamepathat = t.gamebasepath / 'AT' / 'AT'
-        t.blat       = f"$$bindloadfilesilent {t.gamepathat}"
-
-        t.pathaq     = t.basepath     / 'AQ' / 'AQ' # ground subfolder and base filename.
-        t.gamepathaq = t.gamebasepath / 'AQ' / 'AQ'
-        t.blaq       = f"$$bindloadfilesilent {t.gamepathaq}"
-
-        t.pathfr     = t.basepath     / 'FR' / 'FR'  # Follow Run subfolder and base filename
-        t.gamepathfr = t.gamebasepath / 'FR' / 'FR'
-        t.blfr       = f"$$bindloadfilesilent {t.gamepathfr}"
-
-        t.pathff     = t.basepath     / 'FF' / 'FF'  # Follow Fly subfolder and base filename
-        t.gamepathff = t.gamebasepath / 'FF' / 'FF'
-        t.blff       = f"$$bindloadfilesilent {t.gamepathff}"
-
-        t.pathfj     = t.basepath     / 'FJ' / 'FJ'
-        t.gamepathfj = t.gamebasepath / 'FJ' / 'FJ'
-        t.blfj       = f"$$bindloadfilesilent {t.gamepathfj}"
-
-        t.pathfs     = t.basepath     / 'FS' / 'FS'
-        t.gamepathfs = t.gamebasepath / 'FS' / 'FS'
-        t.blfs       = f"$$bindloadfilesilent {t.gamepathfs}"
-
-        #t.pathgff     = t.basepath     / 'GFF' / 'GFF'  # Follow Fly subfolder and base filename
-        #t.gamepathgff = t.gamebasepath / 'GFF' / 'GFF'
-        #t.blgff       = f"$$bindloadfilesilent {t.gamepathgff}"
-
-        t.pathfn     = t.basepath     / 'FN' / 'FN' # ground subfolder and base filename.
-        t.gamepathfn = t.gamebasepath / 'FN' / 'FN'
-        t.blfn       = f"$$bindloadfilesilent {t.gamepathfn}"
-
-        t.pathft     = t.basepath     / 'FT' / 'FT' # ground subfolder and base filename.
-        t.gamepathft = t.gamebasepath / 'FT' / 'FT'
-        t.blft       = f"$$bindloadfilesilent {t.gamepathat}"
-
-        t.pathfq     = t.basepath     / 'FQ' / 'FQ' # ground subfolder and base filename.
-        t.gamepathfq = t.gamebasepath / 'FQ' / 'FQ'
-        t.blfq       = f"$$bindloadfilesilent {t.gamepathfq}"
-
-        t.pathbo     = t.basepath     / 'BO' / 'BO'  # Blastoff Fly subfolder and base filename
-        t.gamepathbo = t.gamebasepath / 'BO' / 'BO'
-        t.blbo       = f"$$bindloadfilesilent {t.gamepathbo}"
-
-        t.pathsd     = t.basepath     / 'SD' / 'SD'  #  SetDown Fly Subfolder and base filename
-        t.gamepathsd = t.gamebasepath / 'SD' / 'SD'
-        t.blsd       = f"$$bindloadfilesilent {t.gamepathsd}"
-
-        #t.pathgbo     = t.basepath     / 'GBO' / 'GBO'  # Blastoff Fly subfolder and base filename
-        #t.gamepathgbo = t.gamebasepath / 'GBO' / 'GBO'
-        #t.blgbo       = f"$$bindloadfilesilent {t.gamepathgbo}"
-
-        #t.pathgsd     = t.basepath     / 'GSD' / 'GSD'  #  SetDown Fly Subfolder and base filename
-        #t.gamepathgsd = t.gamebasepath / 'GSD' / 'GSD'
-        #t.blgsd       = f"$$bindloadfilesilent {t.gamepathgsd}"
-
-        #  set up the keys to be used.
-        if (self.GetState('DefaultMode') != "NonSoD")      : t.NonSoDMode = self.GetState('NonSoDMode')
-        if (self.GetState('DefaultMode') != "Sprint")      : t.SprintMode = self.GetState('SprintMode')
-        if (self.GetState('DefaultMode') != "Fly")         : t.FlyMode    = self.GetState('FlyMode')
-        if (self.GetState('DefaultMode') != "Jump")        : t.JumpMode   = self.GetState('JumpMode')
-        if (self.GetState('DefaultMode') != "Super Speed") : t.RunMode    = self.GetState('RunMode')
-        if (self.GetState('DefaultMode') != "GFly")        : t.GFlyMode   = self.GetState('GFlyMode')
-        t.TempMode = self.GetState('TempMode')
-        t.QFlyMode = self.GetState('QFlyMode')
-
-        for space in (0,1):
-            t.space = space
-            t.up  = f'$$up {space}'
-            t.upx = f'$$up {1-space}'
-
-            for X in (0,1):
-                t.X = X
-                t.dow  = f'$$down {X}'
-                t.dowx = f'$$down {1-X}'
-
-                for W in (0,1):
-                    t.W = W
-                    t.forw = f'$$forward {W}'
-                    t.forx = f'$$forward {1-W}'
-
-                    for S in (0,1):
-                        t.S = S
-                        t.bac  = f'$$backward {S}'
-                        t.bacx = f'$$backward {1-S}'
-
-                        for A in (0,1):
-                            t.A = A
-                            t.lef  = f'$$left {A}'
-                            t.lefx = f'$$left {1-A}'
-
-                            for D in (0,1):
-                                t.D = D
-                                t.rig  = f'$$right {D}'
-                                t.rigx = f'$$right {1-D}'
-
-                                t.totalkeys = space+X+W+S+A+D # total number of keys down
-                                t.horizkeys = W+S+A+D # total # of horizontal move keys. So Sprint isn't turned on when jumping
-                                t.vertkeys  = space+X
-                                t.jkeys     = t.horizkeys+t.space
-                                if (self.GetState('NonSoDEnable') or t.canqfly):
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.NonSoDMode)
-                                    self.makeSoDFile({
-                                        't'          : t,
-                                        'bl'         : t.bln,
-                                        'bla'        : t.blan,
-                                        'blf'        : t.blfn,
-                                        'path'       : t.pathn,
-                                        'gamepath'   : t.gamepathn,
-                                        'patha'      : t.pathan,
-                                        'gamepatha'  : t.gamepathan,
-                                        'pathf'      : t.pathfn,
-                                        'gamepathf'  : t.gamepathfn,
-                                        'mobile'     : None,
-                                        'stationary' : None,
-                                        'modestr'    : "NonSoD",
-                                    })
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
-
-                                if (self.GetState('SprintSoD')):
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.SprintMode)
-                                    self.makeSoDFile({
-                                        't'          : t,
-                                        'bl'         : t.bl,
-                                        'bla'        : t.blgr,
-                                        'blf'        : t.blfr,
-                                        'path'       : t.path,
-                                        'gamepath'   : t.gamepath,
-                                        'patha'      : t.pathgr,
-                                        'gamepatha'  : t.gamepathgr,
-                                        'pathf'      : t.pathfr,
-                                        'gamepathf'  : t.gamepathfr,
-                                        'mobile'     : t.sprint,
-                                        'stationary' : None,
-                                        'modestr'    : "Sprint",
-                                    })
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
-
-                                if (self.GetState('HasSS')):
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.RunMode)
-                                    if (self.GetState('SSSJModeEnable')): sssj = t.jump
-                                    st = None if self.GetState('SSMobileOnly') else t.speed
-                                    self.makeSoDFile({
-                                        't'          : t,
-                                        'bl'         : t.bls,
-                                        'bla'        : t.blas,
-                                        'blf'        : t.blfs,
-                                        'path'       : t.paths,
-                                        'gamepath'   : t.gamepaths,
-                                        'patha'      : t.pathas,
-                                        'gamepatha'  : t.gamepathas,
-                                        'pathf'      : t.pathfs,
-                                        'gamepathf'  : t.gamepathfs,
-                                        'mobile'     : t.speed,
-                                        'stationary' : st,
-                                        'modestr'    : "Super Speed",
-                                        'sssj'       : sssj,
-                                    })
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
-
-                                if (t.canjmp and not (self.GetState('SimpleSJCJ'))):
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.JumpMode)
-                                    jturnoff = None
-                                    if (t.jump != t.cjmp): jturnoff = {t.jumpifnocj}
-                                    self.makeSoDFile({
-                                        't'          : t,
-                                        'bl'         : t.blj,
-                                        'bla'        : t.blaj,
-                                        'blf'        : t.blfj,
-                                        'path'       : t.pathj,
-                                        'gamepath'   : t.gamepathj,
-                                        'patha'      : t.pathaj,
-                                        'gamepatha'  : t.gamepathaj,
-                                        'pathf'      : t.pathfj,
-                                        'gamepathf'  : t.gamepathfj,
-                                        'mobile'     : t.jump,
-                                        'stationary' : t.cjmp,
-                                        'modestr'    : "Jump",
-                                        'flight'     : "Jump",
-                                        'fix'        : self.sodJumpFix,
-                                        'turnoff'    : jturnoff,
-                                    })
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
-
-                                if (t.canhov or t.canfly):
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.FlyMode)
-                                    self.makeSoDFile({
-                                        't'          : t,
-                                        'bl'         : t.bla,
-                                        'bla'        : t.blaf,
-                                        'blf'        : t.blff,
-                                        'path'       : t.patha,
-                                        'gamepath'   : t.gamepatha,
-                                        'patha'      : t.pathaf,
-                                        'gamepatha'  : t.gamepathaf,
-                                        'pathf'      : t.pathff,
-                                        'gamepathf'  : t.gamepathff,
-                                        'mobile'     : t.flyx,
-                                        'stationary' : t.hover,
-                                        'modestr'    : "Fly",
-                                        'flight'     : "Fly",
-                                    })
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
-
-                               # if (t.canqfly):
-                               #     setattr(t, self.GetState('DefaultMode') + "Mode", t.QFlyMode)
-                               #     self.makeSoDFile({
-                               #         't'          : t,
-                               #         'bl'         : t.blq,
-                               #         'bla'        : t.blaq,
-                               #         'blf'        : t.blfq,
-                               #         'path'       : t.pathq,
-                               #         'gamepath'   : t.gamepathq,
-                               #         'patha'      : t.pathaq,
-                               #         'pathf'      : t.pathfq,
-                               #         'mobile'     : "Quantum Flight",
-                               #         'stationary' : "Quantum Flight",
-                               #         'modestr'    : "QFly",
-                               #         'flight'     : "Fly",
-                               #     })
-                               #     setattr(t, self.GetState('DefaultMode') + "Mode", None)
-
-                                if (t.cangfly):
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.GFlyMode)
-                                    self.makeSoDFile({
-                                        't'          : t,
-                                        'bl'         : t.blga,
-                                        'bla'        : t.blgaf,
-                                        'blf'        : t.blgff,
-                                        'path'       : t.pathga,
-                                        'gamepath'   : t.gamepathga,
-                                        'patha'      : t.pathgaf,
-                                        'pathf'      : t.pathgff,
-                                        'mobile'     : t.gfly,
-                                        'stationary' : t.gfly,
-                                        'modestr'    : "GFly",
-                                        'flight'     : "GFly",
-                                        'pathbo'     : t.pathgbo,
-                                        'pathsd'     : t.pathgsd,
-                                        'blbo'       : t.blgbo,
-                                        'blsd'       : t.blgsd,
-                                    })
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
-
-                                if (self.GetState('TempEnable')):
-                                    trayslot = "1 " + self.GetState('TempTray')
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.TempMode)
-                                    self.makeSoDFile({
-                                        't'          : t,
-                                        'bl'         : t.blt,
-                                        'bla'        : t.blat,
-                                        'blf'        : t.blft,
-                                        'path'       : t.patht,
-                                        'gamepath'   : t.gamepatht,
-                                        'patha'      : t.pathat,
-                                        'gamepatha'  : t.gamepathat,
-                                        'pathf'      : t.pathft,
-                                        'gamepathf'  : t.gamepathft,
-                                        'mobile'     : trayslot,
-                                        'stationary' : trayslot,
-                                        'modestr'    : "Temp",
-                                        'flight'     : "Fly",
-                                    })
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
-
-
-        t.space = t.X = t.W = t.S = t.A = t.D = 0
-
-        t.up   = '$$up '       + str(   t.space)
-        t.upx  = '$$up '       + str((1-t.space))
-        t.dow  = '$$down '     + str(   t.X)
-        t.dowx = '$$down '     + str((1-t.X))
-        t.forw = '$$forward '  + str(   t.W)
-        t.forx = '$$forward '  + str((1-t.W))
-        t.bac  = '$$backward ' + str(   t.S)
-        t.bacx = '$$backward ' + str((1-t.S))
-        t.lef  = '$$left '     + str(   t.A)
-        t.lefx = '$$left '     + str((1-t.A))
-        t.rig  = '$$right '    + str(   t.D)
-        t.rigx = '$$right '    + str((1-t.D))
-
-        if (self.GetState('TurnLeft')):
-            ResetFile.SetBind(self.Ctrls['TurnLeft'].MakeFileKeyBind("+turnleft"))
-        if (self.GetState('TurnRight')):
-            ResetFile.SetBind(self.Ctrls['TurnRight'].MakeFileKeyBind("+turnright"))
-
-        if (self.GetState('TempEnable')):
-            temptogglefile1 = profile.GetBindFile("temptoggle1.txt")
-            temptogglefile2 = profile.GetBindFile("temptoggle2.txt")
-            temptogglefile2.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('-down$$gototray 1' + profile.BLF('temptoggle1.txt')))
-            temptogglefile1.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('+down$$gototray ' + self.GetState('TempTray') + profile.BLF('temptoggle2.txt')))
-            ResetFile.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('+down$$gototray ' + self.GetState('TempTray') + profile.BLF('temptoggle2.txt')))
+        if self.GetState('EnableSoD'): self.doSpeedOnDemandBinds(t)
 
         ###### Kheldian power setup
         #  create the Nova and Dwarf form support files if enabled.
@@ -1498,6 +1133,13 @@ class MovementPowers(Page):
         Nova = Dwarf = {}
         humanBindKey = humanpbind = novapbind = dwarfpbind = None
         dwarfTPPower = normalTPPower = teamTPPower = ''
+
+        if self.GetState('TPHideWindows'):
+            windowhide = '$$windowhide health$$windowhide chat$$windowhide target$$windowhide tray'
+            windowshow = '$$show health$$show chat$$show target$$show tray'
+        else:
+            windowhide = ''
+            windowshow = ''
 
         if (profile.Archetype() == "Warshade"):
             dwarfTPPower  = "Black Dwarf Step"
@@ -1664,6 +1306,387 @@ class MovementPowers(Page):
             #ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
             #ttp_on2.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( '-down$$powexecname ' + teamTPPower + profile.BLF('ttp','ttp_on1.txt')))
 
+
+    def doSpeedOnDemandBinds(self, t):
+        profile   = self.Profile
+        ResetFile = profile.ResetFile()
+        config    = wx.ConfigBase.Get()
+
+        keybindreset = 'keybind_reset$$' if config.ReadBool('FlushAllBinds') else ''
+        ResetFile.SetBind(config.Read('ResetKey'), "Reset Key", self,
+                    [
+                        keybindreset,
+                        ResetFile.BLF(),
+                        'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
+                        'powexecname Sprint',
+                        'powexecunqueue',
+                        't $name, SoD Binds Reset',
+                    ])
+
+        if (self.GetState('DefaultMode') == "NonSoD"):
+            if (not self.GetState('NonSoDEnable')):
+                wx.MessageBox("Enabling NonSoD mode, since it is set as your default mode.", "Mode Changed", wx.OK|wx.ICON_WARNING)
+            self.SetState('NonSoDEnable', 1)
+
+        elif (self.GetState('DefaultMode') == "Sprint" and not self.GetState('SprintSoD')):
+            wx.MessageBox("Enabling NonSoD mode and making it the default, since Sprint SoD, your previous Default mode, is not enabled.", "Mode Changed", wx.OK|wx.ICON_WARNING)
+            self.SetState('NonSoDEnable', 1)
+            self.SetState('DefaultMode', "NonSoD")
+
+        elif (self.GetState('DefaultMode') == "Fly" and not (self.GetState('HasHover') or self.GetState('HasFly'))):
+            wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Fly mode but your character has neither Hover nor Fly.", "Mode Changed", wx.OK|wx.ICON_WARNING)
+            self.SetState('NonSoDEnable', 1)
+            self.SetState('DefaultMode', "NonSoD")
+
+        elif (self.GetState('DefaultMode') == "Jump" and not (self.GetState('HasCJ') or self.GetState('HasSJ'))):
+            wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Jump mode but your character has neither Combat Jumping nor Super Jump.", "Mode Changed", wx.OK|wx.ICON_WARNING)
+            self.SetState('NonSoDEnable', 1)
+            self.SetState('DefaultMode', "NonSoD")
+
+        elif (self.GetState('DefaultMode') == "Super Speed" and not self.GetState('HasSS')):
+            wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Super Speed mode but your character doesn't have Super Speed", "Mode Changed", wx.OK|wx.ICON_WARNING)
+            self.SetState('NonSoDEnable', 1)
+            self.SetState('DefaultMode', "NonSoD")
+
+        t.basepath     = profile.BindsDir()
+        t.gamebasepath = profile.GameBindsDir()
+
+        t.path     = t.basepath     / 'R' / 'R'
+        t.gamepath = t.gamebasepath / 'R' / 'R'
+        t.bl       = f"$$bindloadfilesilent {t.gamepath}"
+
+        t.patha     = t.basepath     / 'F' / 'F' # air subfolder and base filename
+        t.gamepatha = t.gamebasepath / 'F' / 'F'
+        t.bla       = f"$$bindloadfilesilent {t.gamepatha}"
+
+        t.pathj     = t.basepath     / 'J' / 'J'
+        t.gamepathj = t.gamebasepath / 'J' / 'J'
+        t.blj       = f"$$bindloadfilesilent {t.gamepathj}"
+
+        t.paths     = t.basepath     / 'S' / 'S'
+        t.gamepaths = t.gamebasepath / 'S' / 'S'
+        t.bls       = f"$$bindloadfilesilent {t.gamepaths}"
+
+        #t.pathga     = t.basepath     / 'GF' / 'GF' # air subfolder and base filename
+        #t.gamepathga = t.gamebasepath / 'GF' / 'GF'
+        #t.blga       = f"$$bindloadfilesilent {t.gamepathga}"
+
+        t.pathn     = t.basepath     / 'N' / 'N' # ground subfolder and base filename.
+        t.gamepathn = t.gamebasepath / 'N' / 'N'
+        t.bln       = f"$$bindloadfilesilent {t.gamepathn}"
+
+        t.patht     = t.basepath     / 'T' / 'T' # ground subfolder and base filename.
+        t.gamepatht = t.gamebasepath / 'T' / 'T'
+        t.blt       = f"$$bindloadfilesilent {t.gamepatht}"
+
+        t.pathq     = t.basepath     / 'Q' / 'Q' # ground subfolder and base filename.
+        t.gamepathq = t.gamebasepath / 'Q' / 'Q'
+        t.blq       = f"$$bindloadfilesilent {t.gamepathq}"
+
+        t.pathgr     = t.basepath     / 'AR' / 'AR'  # ground autorun subfolder and base filename
+        t.gamepathgr = t.gamebasepath / 'AR' / 'AR'
+        t.blgr       = f"$$bindloadfilesilent {t.gamepathgr}"
+
+        t.pathaf     = t.basepath     / 'AF' / 'AF'  # air autorun subfolder and base filename
+        t.gamepathaf = t.gamebasepath / 'AF' / 'AF'
+        t.blaf       = f"$$bindloadfilesilent {t.gamepathaf}"
+
+        t.pathaj     = t.basepath     / 'AJ' / 'AJ'
+        t.gamepathaj = t.gamebasepath / 'AJ' / 'AJ'
+        t.blaj       = f"$$bindloadfilesilent {t.gamepathaj}"
+
+        t.pathas     = t.basepath     / 'AS' / 'AS'
+        t.gamepathas = t.gamebasepath / 'AS' / 'AS'
+        t.blas       = f"$$bindloadfilesilent {t.gamepathas}"
+
+        #t.pathgaf     = t.basepath     / 'GAF' / 'GAF'  # air autorun subfolder and base filename
+        #t.gamepathgaf = t.gamebasepath / 'GAF' / 'GAF'
+        #t.blgaf       = f"$$bindloadfilesilent {t.gamepathgaf}"
+
+        t.pathan     = t.basepath     / 'AN' / 'AN' # ground subfolder and base filename.
+        t.gamepathan = t.gamebasepath / 'AN' / 'AN'
+        t.blan       = f"$$bindloadfilesilent {t.gamepathan}"
+
+        t.pathat     = t.basepath     / 'AT' / 'AT' # ground subfolder and base filename.
+        t.gamepathat = t.gamebasepath / 'AT' / 'AT'
+        t.blat       = f"$$bindloadfilesilent {t.gamepathat}"
+
+        t.pathaq     = t.basepath     / 'AQ' / 'AQ' # ground subfolder and base filename.
+        t.gamepathaq = t.gamebasepath / 'AQ' / 'AQ'
+        t.blaq       = f"$$bindloadfilesilent {t.gamepathaq}"
+
+        t.pathfr     = t.basepath     / 'FR' / 'FR'  # Follow Run subfolder and base filename
+        t.gamepathfr = t.gamebasepath / 'FR' / 'FR'
+        t.blfr       = f"$$bindloadfilesilent {t.gamepathfr}"
+
+        t.pathff     = t.basepath     / 'FF' / 'FF'  # Follow Fly subfolder and base filename
+        t.gamepathff = t.gamebasepath / 'FF' / 'FF'
+        t.blff       = f"$$bindloadfilesilent {t.gamepathff}"
+
+        t.pathfj     = t.basepath     / 'FJ' / 'FJ'
+        t.gamepathfj = t.gamebasepath / 'FJ' / 'FJ'
+        t.blfj       = f"$$bindloadfilesilent {t.gamepathfj}"
+
+        t.pathfs     = t.basepath     / 'FS' / 'FS'
+        t.gamepathfs = t.gamebasepath / 'FS' / 'FS'
+        t.blfs       = f"$$bindloadfilesilent {t.gamepathfs}"
+
+        #t.pathgff     = t.basepath     / 'GFF' / 'GFF'  # Follow Fly subfolder and base filename
+        #t.gamepathgff = t.gamebasepath / 'GFF' / 'GFF'
+        #t.blgff       = f"$$bindloadfilesilent {t.gamepathgff}"
+
+        t.pathfn     = t.basepath     / 'FN' / 'FN' # ground subfolder and base filename.
+        t.gamepathfn = t.gamebasepath / 'FN' / 'FN'
+        t.blfn       = f"$$bindloadfilesilent {t.gamepathfn}"
+
+        t.pathft     = t.basepath     / 'FT' / 'FT' # ground subfolder and base filename.
+        t.gamepathft = t.gamebasepath / 'FT' / 'FT'
+        t.blft       = f"$$bindloadfilesilent {t.gamepathat}"
+
+        t.pathfq     = t.basepath     / 'FQ' / 'FQ' # ground subfolder and base filename.
+        t.gamepathfq = t.gamebasepath / 'FQ' / 'FQ'
+        t.blfq       = f"$$bindloadfilesilent {t.gamepathfq}"
+
+        t.pathbo     = t.basepath     / 'BO' / 'BO'  # Blastoff Fly subfolder and base filename
+        t.gamepathbo = t.gamebasepath / 'BO' / 'BO'
+        t.blbo       = f"$$bindloadfilesilent {t.gamepathbo}"
+
+        t.pathsd     = t.basepath     / 'SD' / 'SD'  #  SetDown Fly Subfolder and base filename
+        t.gamepathsd = t.gamebasepath / 'SD' / 'SD'
+        t.blsd       = f"$$bindloadfilesilent {t.gamepathsd}"
+
+        t.pathgbo     = t.basepath     / 'GBO' / 'GBO'  # Blastoff Fly subfolder and base filename
+        t.gamepathgbo = t.gamebasepath / 'GBO' / 'GBO'
+        t.blgbo       = f"$$bindloadfilesilent {t.gamepathgbo}"
+
+        t.pathgsd     = t.basepath     / 'GSD' / 'GSD'  #  SetDown Fly Subfolder and base filename
+        t.gamepathgsd = t.gamebasepath / 'GSD' / 'GSD'
+        t.blgsd       = f"$$bindloadfilesilent {t.gamepathgsd}"
+
+        #  set up the keys to be used.
+        if (self.GetState('DefaultMode') != "NonSoD")      : t.NonSoDMode = self.GetState('NonSoDMode')
+        if (self.GetState('DefaultMode') != "Sprint")      : t.SprintMode = self.GetState('SprintMode')
+        if (self.GetState('DefaultMode') != "Fly")         : t.FlyMode    = self.GetState('FlyMode')
+        if (self.GetState('DefaultMode') != "Jump")        : t.JumpMode   = self.GetState('JumpMode')
+        if (self.GetState('DefaultMode') != "Super Speed") : t.RunMode    = self.GetState('RunMode')
+        if (self.GetState('DefaultMode') != "GFly")        : t.GFlyMode   = self.GetState('GFlyMode')
+        t.TempMode = self.GetState('TempMode')
+        t.QFlyMode = self.GetState('QFlyMode')
+
+        for space in (0,1):
+            t.space = space
+            t.up  = f'$$up {space}'
+            t.upx = f'$$up {1-space}'
+
+            for X in (0,1):
+                t.X = X
+                t.dow  = f'$$down {X}'
+                t.dowx = f'$$down {1-X}'
+
+                for W in (0,1):
+                    t.W = W
+                    t.forw = f'$$forward {W}'
+                    t.forx = f'$$forward {1-W}'
+
+                    for S in (0,1):
+                        t.S = S
+                        t.bac  = f'$$backward {S}'
+                        t.bacx = f'$$backward {1-S}'
+
+                        for A in (0,1):
+                            t.A = A
+                            t.lef  = f'$$left {A}'
+                            t.lefx = f'$$left {1-A}'
+
+                            for D in (0,1):
+                                t.D = D
+                                t.rig  = f'$$right {D}'
+                                t.rigx = f'$$right {1-D}'
+
+                                t.totalkeys = space+X+W+S+A+D # total number of keys down
+                                t.horizkeys = W+S+A+D # total # of horizontal move keys. So Sprint isn't turned on when jumping
+                                t.vertkeys  = space+X
+                                t.jkeys     = t.horizkeys+t.space
+                                if (self.GetState('NonSoDEnable') or t.canqfly):
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.NonSoDMode)
+                                    self.makeSoDFile({
+                                        't'          : t,
+                                        'bl'         : t.bln,
+                                        'bla'        : t.blan,
+                                        'blf'        : t.blfn,
+                                        'path'       : t.pathn,
+                                        'gamepath'   : t.gamepathn,
+                                        'patha'      : t.pathan,
+                                        'gamepatha'  : t.gamepathan,
+                                        'pathf'      : t.pathfn,
+                                        'gamepathf'  : t.gamepathfn,
+                                        'mobile'     : None,
+                                        'stationary' : None,
+                                        'modestr'    : "NonSoD",
+                                    })
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
+
+                                if (self.GetState('SprintSoD')):
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.SprintMode)
+                                    self.makeSoDFile({
+                                        't'          : t,
+                                        'bl'         : t.bl,
+                                        'bla'        : t.blgr,
+                                        'blf'        : t.blfr,
+                                        'path'       : t.path,
+                                        'gamepath'   : t.gamepath,
+                                        'patha'      : t.pathgr,
+                                        'gamepatha'  : t.gamepathgr,
+                                        'pathf'      : t.pathfr,
+                                        'gamepathf'  : t.gamepathfr,
+                                        'mobile'     : t.sprint,
+                                        'stationary' : None,
+                                        'modestr'    : "Sprint",
+                                    })
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
+
+                                if (self.GetState('HasSS')):
+                                    sssj = None
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.RunMode)
+                                    if (self.GetState('SSSJModeEnable')): sssj = t.jump
+                                    st = None if self.GetState('SSMobileOnly') else t.speed
+                                    self.makeSoDFile({
+                                        't'          : t,
+                                        'bl'         : t.bls,
+                                        'bla'        : t.blas,
+                                        'blf'        : t.blfs,
+                                        'path'       : t.paths,
+                                        'gamepath'   : t.gamepaths,
+                                        'patha'      : t.pathas,
+                                        'gamepatha'  : t.gamepathas,
+                                        'pathf'      : t.pathfs,
+                                        'gamepathf'  : t.gamepathfs,
+                                        'mobile'     : t.speed,
+                                        'stationary' : st,
+                                        'modestr'    : "Super Speed",
+                                        'sssj'       : sssj,
+                                    })
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
+
+                                if (t.canjmp and not (self.GetState('SimpleSJCJ'))):
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.JumpMode)
+                                    jturnoff = None
+                                    if (t.jump != t.cjmp): jturnoff = {t.jumpifnocj}
+                                    self.makeSoDFile({
+                                        't'          : t,
+                                        'bl'         : t.blj,
+                                        'bla'        : t.blaj,
+                                        'blf'        : t.blfj,
+                                        'path'       : t.pathj,
+                                        'gamepath'   : t.gamepathj,
+                                        'patha'      : t.pathaj,
+                                        'gamepatha'  : t.gamepathaj,
+                                        'pathf'      : t.pathfj,
+                                        'gamepathf'  : t.gamepathfj,
+                                        'mobile'     : t.jump,
+                                        'stationary' : t.cjmp,
+                                        'modestr'    : "Jump",
+                                        'flight'     : "Jump",
+                                        'fix'        : self.sodJumpFix,
+                                        'turnoff'    : jturnoff,
+                                    })
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
+
+                                if (t.canhov or t.canfly):
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.FlyMode)
+                                    self.makeSoDFile({
+                                        't'          : t,
+                                        'bl'         : t.bla,
+                                        'bla'        : t.blaf,
+                                        'blf'        : t.blff,
+                                        'path'       : t.patha,
+                                        'gamepath'   : t.gamepatha,
+                                        'patha'      : t.pathaf,
+                                        'gamepatha'  : t.gamepathaf,
+                                        'pathf'      : t.pathff,
+                                        'gamepathf'  : t.gamepathff,
+                                        'mobile'     : t.flyx,
+                                        'stationary' : t.hover,
+                                        'modestr'    : "Fly",
+                                        'flight'     : "Fly",
+                                    })
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
+
+                                if (t.canqfly):
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.QFlyMode)
+                                    self.makeSoDFile({
+                                        't'          : t,
+                                        'bl'         : t.blq,
+                                        'bla'        : t.blaq,
+                                        'blf'        : t.blfq,
+                                        'path'       : t.pathq,
+                                        'gamepath'   : t.gamepathq,
+                                        'patha'      : t.pathaq,
+                                        'pathf'      : t.pathfq,
+                                        'mobile'     : "Quantum Flight",
+                                        'stationary' : "Quantum Flight",
+                                        'modestr'    : "QFly",
+                                        'flight'     : "Fly",
+                                    })
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
+
+                                if (t.cangfly):
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.GFlyMode)
+                                    self.makeSoDFile({
+                                        't'          : t,
+                                        'bl'         : t.blga,
+                                        'bla'        : t.blgaf,
+                                        'blf'        : t.blgff,
+                                        'path'       : t.pathga,
+                                        'gamepath'   : t.gamepathga,
+                                        'patha'      : t.pathgaf,
+                                        'pathf'      : t.pathgff,
+                                        'mobile'     : t.gfly,
+                                        'stationary' : t.gfly,
+                                        'modestr'    : "GFly",
+                                        'flight'     : "GFly",
+                                        'pathbo'     : t.pathgbo,
+                                        'pathsd'     : t.pathgsd,
+                                        'blbo'       : t.blgbo,
+                                        'blsd'       : t.blgsd,
+                                    })
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
+
+                                if (self.GetState('TempEnable')):
+                                    trayslot = "1 " + self.GetState('TempTray')
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.TempMode)
+                                    self.makeSoDFile({
+                                        't'          : t,
+                                        'bl'         : t.blt,
+                                        'bla'        : t.blat,
+                                        'blf'        : t.blft,
+                                        'path'       : t.patht,
+                                        'gamepath'   : t.gamepatht,
+                                        'patha'      : t.pathat,
+                                        'gamepatha'  : t.gamepathat,
+                                        'pathf'      : t.pathft,
+                                        'gamepathf'  : t.gamepathft,
+                                        'mobile'     : trayslot,
+                                        'stationary' : trayslot,
+                                        'modestr'    : "Temp",
+                                        'flight'     : "Fly",
+                                    })
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
+
+        t.space = t.X = t.W = t.S = t.A = t.D = 0
+
+        t.up   = '$$up '       + str(   t.space)
+        t.upx  = '$$up '       + str((1-t.space))
+        t.dow  = '$$down '     + str(   t.X)
+        t.dowx = '$$down '     + str((1-t.X))
+        t.forw = '$$forward '  + str(   t.W)
+        t.forx = '$$forward '  + str((1-t.W))
+        t.bac  = '$$backward ' + str(   t.S)
+        t.bacx = '$$backward ' + str((1-t.S))
+        t.lef  = '$$left '     + str(   t.A)
+        t.lefx = '$$left '     + str((1-t.A))
+        t.rig  = '$$right '    + str(   t.D)
+        t.rigx = '$$right '    + str((1-t.D))
     def sodResetKey(self, curfile, gamepath, turnoff, moddir):
 
         u = int(moddir == 'up')
@@ -2251,6 +2274,7 @@ UI.Labels.update( {
     'AutoRun'        : 'Auto Run',
     'Follow'         : 'Follow Target',
 
+    'EnableSoD'      : 'Enable Speed on Demand Binds',
     'DefaultMode'    : 'Default SoD Mode',
     'MouseChord'     : 'Mousechord is SoD Forward',
     'AutoMouseLook'  : 'Mouselook when moving',
@@ -2455,7 +2479,9 @@ class tObject(dict):
         self.gamepathft :PureWindowsPath = PureWindowsPath()
         self.gamepathfr :PureWindowsPath = PureWindowsPath()
         self.gamepathga :PureWindowsPath = PureWindowsPath()
+        self.gamepathgbo:PureWindowsPath = PureWindowsPath()
         self.gamepathgr :PureWindowsPath = PureWindowsPath()
+        self.gamepathgsd:PureWindowsPath = PureWindowsPath()
         self.gamepathj  :PureWindowsPath = PureWindowsPath()
         self.gamepathn  :PureWindowsPath = PureWindowsPath()
         self.gamepathq  :PureWindowsPath = PureWindowsPath()

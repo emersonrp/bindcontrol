@@ -185,6 +185,7 @@ class General(Page):
         evt.Skip()
 
     def OnPickPoolPower(self, evt):
+        self.Profile.MovementPowers.SynchronizeUI()
         evt.Skip()
 
     def OnPickPrimaryPowerSet(self, evt):

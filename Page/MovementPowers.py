@@ -129,11 +129,10 @@ class MovementPowers(Page):
         ##### MOVEMENT KEYS
         movementSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = "Movement Keys")
         staticbox = movementSizer.GetStaticBox()
-        innerSizer = wx.BoxSizer(wx.HORIZONTAL)
+        innerSizer = wx.BoxSizer(wx.VERTICAL)
         movementSizer.Add(innerSizer, 1, wx.ALL|wx.ALIGN_CENTER, 10)
 
         keySizer = wx.GridBagSizer(3, 3)
-        innerSizer.Add(keySizer)
         tlLabel = wx.StaticText(staticbox, label = 'Turn Left')
         keySizer.Add(tlLabel, [0,0], flag = wx.ALIGN_CENTER)
         fwLabel = wx.StaticText(staticbox, label = 'Forward')
@@ -242,7 +241,8 @@ class MovementPowers(Page):
         setattr(mousechord, 'Page'    , self)
         mcSizer.Add(mousechord, 0, wx.RIGHT, 10)
 
-        movementSizer.Add(mcSizer, 0, wx.ALIGN_RIGHT|wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)
+        innerSizer.Add(keySizer, 0)
+        innerSizer.Add(mcSizer,  0, wx.ALIGN_CENTER|wx.TOP, 15)
 
         self.leftColumn.Add(movementSizer, 0, wx.EXPAND)
 

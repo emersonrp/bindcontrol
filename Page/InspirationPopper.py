@@ -4,7 +4,7 @@ import UI
 import Icon
 from Page import Page
 from GameData import Inspirations
-from UI.ChatColorPicker import ChatColorPicker
+from UI.ChatColorPicker import ChatColorPicker, ChatColors
 from UI.KeySelectDialog import bcKeyButton
 
 tabs = {
@@ -293,5 +293,4 @@ class InspirationPopper(Page):
                 UI.Labels[f"{tab}{order}{Insp}Foreground"] = "Text"
                 UI.Labels[f"{tab}{order}{Insp}Background"] = "Background"
 
-def ChatColors(fg,bg,bd): return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'
 

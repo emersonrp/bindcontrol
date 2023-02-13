@@ -202,19 +202,6 @@ class Gameplay(Page):
                             file = self.Profile.GetBindFile('teamsel2', f'{tsize}{tpos}{tsel}.txt')
                             self.ts2CreateSet(tsize, tpos, tsel, file)
 
-        ### Chat Binds with notifier, if appropriate
-        if self.GetState('ChatEnable'):
-            notifier = ''
-            if self.GetState('TypingNotifierEnable'):
-                notifier = 'afk ' + self.GetState('TypingNotifier')
-
-            ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', 'startchat']))
-            ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeFileKeyBind([notifier, 'show chat', 'slashchat']))
-            ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind([notifier, 'show chatem ' + notifier]))
-            ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeFileKeyBind([notifier, 'autoreply']))
-            ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
-            ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
-
         ### Helpful Binds
         ResetFile.SetBind(self.Ctrls['QuitToDesktop']  .MakeFileKeyBind('quit'))
         ResetFile.SetBind(self.Ctrls['InviteTarget']   .MakeFileKeyBind('invite $target'))
@@ -283,16 +270,6 @@ class Gameplay(Page):
 
         'FPSBindKey'      : "Toggle FPS Display",
         'NetgraphBindKey' : "Toggle Netgraph Display",
-
-        'StartChat'            : 'Start Chat (no "/")',
-        'SlashChat'            : 'Start Chat (with "/")',
-        'StartEmote'           : 'Begin emote (types "/em")',
-        'AutoReply'            : 'AutoReply to incoming /tell',
-        'TellTarget'           : 'Send /tell to current target',
-        'QuickChat'            : 'QuickChat',
-
-        'TypingNotifierEnable' : 'Enable Typing Notifier',
-        'TypingNotifier'       : 'Typing Notifier',
     })
 
     for i in range(1,9):

@@ -7,10 +7,9 @@ from GameData import Archetypes, Origins, MiscPowers
 
 from UI.ControlGroup import ControlGroup
 from UI.IncarnateBox import IncarnateBox
-from UI.ChatColorPicker import ChatColorPicker
+from UI.ChatColorPicker import ChatColorPicker, ChatColors
 
 from Page import Page
-from Help import HelpButton
 
 class General(Page):
     def __init__(self, parent):
@@ -142,7 +141,6 @@ class General(Page):
         TNEnable.SetToolTip(
                 wx.ToolTip('Check this to enable a floating "typing" notifier when you are typing into the chat box'))
         TNEnable.CtlName = 'TypingNotifierEnable'
-        TNEnable.CtlLabel = None
         TNEnable.Bind(wx.EVT_CHECKBOX, self.OnTypeEnable)
         self.Ctrls['TypingNotifierEnable'] = TNEnable
         TNCtrlSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -163,12 +161,12 @@ class General(Page):
         chatBindBox = ControlGroup(self, self, 'Chat Binds')
 
         for b in (
-            ['StartChat',  'Activates the Chat bar'],
-            ['SlashChat',  'Activates the Chat bar with a slash already typed'],
-            ['StartEmote', 'Activates the Chat bar with "/em" already typed'],
-            ['AutoReply',  'AutoReplies to incoming tells'],
-            ['TellTarget', 'Starts a /tell to your current target'],
-            ['QuickChat',  'Activates QuickChat'],
+            ['StartChat',  'Activates the Chat bar with notifier and custom colors if selected'],
+            ['SlashChat',  'Activates the Chat bar with notifier and a slash already typed'],
+            ['StartEmote', 'Activates the Chat bar with notifier and "/em" already typed'],
+            ['AutoReply',  'AutoReplies to incoming tells with notifier'],
+            ['TellTarget', 'Starts a /tell to your current target with notifier'],
+            ['QuickChat',  'Pops up QuickChat menu, with notifier'],
         ):
             chatBindBox.AddControl(
                 ctlName = b[0],
@@ -203,6 +201,27 @@ class General(Page):
         self.OnColorEnable()
 
     def PopulateBindFiles(self):
+        ResetFile = self.Profile.ResetFile()
+
+        colorstring = ''
+        if self.GetState('ChatColorEnable'):
+            colorstring = ChatColors(
+                self.GetState('ChatForeground'),
+                self.GetState('ChatBackground'),
+                self.GetState('ChatBorder'),
+            )
+
+        notifier = ''
+        if self.GetState('TypingNotifierEnable'):
+            notifier = 'afk ' + self.GetState('TypingNotifier')
+
+        ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', 'beginchat ' + colorstring]))
+        ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeFileKeyBind([notifier, 'show chat', 'slashchat']))
+        ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind([notifier, 'show chatem ' + notifier]))
+        ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeFileKeyBind([notifier, 'autoreply']))
+        ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
+        ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
+
         return
 
     ### EVENT HANDLERS
@@ -290,4 +309,14 @@ class General(Page):
         'Pool2'           : "Power Pool 2",
         'Pool3'           : "Power Pool 3",
         'Pool4'           : "Power Pool 4",
+
+        'StartChat'            : 'Start Chat',
+        'SlashChat'            : 'Start Chat (with "/")',
+        'StartEmote'           : 'Begin emote (types "/em")',
+        'AutoReply'            : 'AutoReply to incoming /tell',
+        'TellTarget'           : 'Send /tell to current target',
+        'QuickChat'            : 'Pop up QuickChat menu',
+
+        'TypingNotifierEnable' : 'Enable Typing Notifier',
+        'TypingNotifier'       : 'Typing Notifier',
     })

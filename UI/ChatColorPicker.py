@@ -49,3 +49,5 @@ class ChatColorPicker(wx.BoxSizer):
         self.exampleText.SetBackgroundColour(self.backgroundPicker.GetColour())
         self.exampleText.SetForegroundColour(self.textPicker.GetColour())
         self.exampleText.Refresh()
+
+def ChatColors(fg,bg,bd): return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'

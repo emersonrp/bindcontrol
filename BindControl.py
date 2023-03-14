@@ -173,7 +173,7 @@ class Main(wx.Frame):
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
             info.SetName('BindControl')
-            info.SetVersion('0.9')
+            info.SetVersion('0.10')
             info.SetDescription("""
 BindControl can help you set up custom keybinds in City of Heroes/Villains, including speed-on-demand binds.
 
@@ -182,6 +182,8 @@ Based on CityBinder 0.76, Copyright (c) 2005-2006 Jeff Sheets, and CityBinder fo
 Speed-On-Demand binds were originally created by Gnarley's Speed On Demand Binds Program.  Advanced Teleport Binds by DrLetharga.
 
 Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
+
+Inspiration Popper design adapted from CityBinder for Homecoming by Tailcoat.
 """)
             info.SetCopyright('(c) 2010-2023 R Pickett <emerson@hayseed.net>')
             info.SetWebSite('https://github.com/emersonrp/bindcontrol')

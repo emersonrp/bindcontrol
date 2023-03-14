@@ -28,9 +28,10 @@ Features
     * supports Super Speed, Super Jump, Flight, Teleport, and Sprint powers
     * one-key reset in case SoD binds get tangled up
 * Inspiration Popper
-    * by-type
+    * by-type; dual and team inspirations supported
+    * option to use or skip "super" inspirations
     * largest-first or smallest-first
-    * optional /say feedback
+    * optional /say feedback with per-inspiration custom colors
 * Mastermind / Pet Binds
     * select pets by power level: all, minions, lieutenants, and boss
     * orders for aggressive / defensive / passive stances; attack, follow, go to, and stay
@@ -105,6 +106,8 @@ Citybinder's acknowledgements are reproduced below:
     DarknessEternal, reiella, Robotech_Master, Ground_Zeroo, Stylina, and
     ShieldBearer.
 ```
+
+The improved Inspiration Popper design was gratefully adapted from an unreleased version of [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by Tailcoat.
 
 BindControl is licensed under the GPL, version 3 or later.
 

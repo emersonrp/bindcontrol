@@ -106,8 +106,6 @@ class InspirationPopper(Page):
         optionButtonBox.Add(byInspColorButton,      1, wx.ALL, 10)
         profileChatColorButton.Bind(wx.EVT_BUTTON, self.OnProfileChatColorButton)
         byInspColorButton     .Bind(wx.EVT_BUTTON, self.OnByInspColorButton)
-        # TODO re-enable and implement this when we have default chat colors for the profile
-        profileChatColorButton.Disable()
 
         optionsBox.Add(optionButtonBox)
 
@@ -187,8 +185,17 @@ class InspirationPopper(Page):
         self.OnEnableRevCB()
         self.OnEnableTellCB()
 
-    def OnProfileChatColorButton(self, evt = None):
-        pass
+    def OnProfileChatColorButton(self, _):
+        dkcolor = self.Profile.General.GetState('ChatForeground')
+        ltcolor = self.Profile.General.GetState('ChatBackground')
+        for tab in tabs:
+            for Insp in Inspirations[tab]:
+                for order in ("", "Rev"):
+                    self.Ctrls[f'{tab}{order}{Insp}Border']    .SetColour(dkcolor)
+                    self.Ctrls[f'{tab}{order}{Insp}Background'].SetColour(ltcolor)
+                    self.Ctrls[f'{tab}{order}{Insp}Foreground'].SetColour(dkcolor)
+                    control = self.Ctrls[f'{tab}{order}{Insp}Border']
+                    wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
 
     def OnByInspColorButton(self, _):
         for tab in tabs:

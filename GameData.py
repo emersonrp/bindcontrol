@@ -731,37 +731,118 @@ SprintPowers = [
 ]
 
 Inspirations = {
-    'Accuracy'     : {
-        'color': wx.YELLOW,
-        'tiers': ['Insight'        , 'Keen Insight'         , 'Uncanny Insight', 'Sight Beyond Sight',] ,
+    'Single' : {
+        'Accuracy'     : {
+            'ltcolor': (255, 238, 0),
+            'dkcolor': (118, 80, 0),
+            'tiers': ['Insight', 'Keen Insight', 'Uncanny Insight', 'Sight Beyond Sight',],
+        },
+        'Health'       : {
+            'ltcolor': (135, 220, 38),
+            'dkcolor': (0, 66, 7),
+            'tiers': ['Respite', 'Dramatic Improvement', 'Resurgence', 'Perfect Health',],
+        },
+        'Damage'       : {
+            'ltcolor': (249, 163, 152),
+            'dkcolor': (179, 0, 0),
+            'tiers': ['Enrage', 'Focused Rage', 'Righteous Rage', 'Furious Rage',],
+        },
+        'Endurance'    : {
+            'ltcolor': (122, 220, 255),
+            'dkcolor': (0, 30, 160),
+            'tiers': ['Catch a Breath', 'Take a Breather', 'Second Wind', 'Back in the Fight',],
+        },
+        'Defense'      : {
+            'ltcolor': (228, 166, 236),
+            'dkcolor': (94, 0, 94),
+            'tiers': ['Luck', 'Good Luck', 'Phenomenal Luck', 'Amazing Luck',],
+        },
+        'ResistDamage' : {
+            'ltcolor': (255, 178, 99),
+            'dkcolor': (151, 54, 0),
+            'tiers': ['Sturdy', 'Rugged', 'Robust', 'Resistant',],
+        },
+        'BreakFree'    : {
+            'ltcolor': (186, 174, 255),
+            'dkcolor': (57, 0, 113),
+            'tiers': ['Break Free', 'Emerge', 'Escape', 'Liberate',],
+        },
+        'Resurrection' : {
+            'ltcolor': (50, 180, 160), # cyan
+            'dkcolor': (0, 30, 10),
+            'tiers': ['Awaken', 'Bounce Back', 'Restoration', 'Immortal Recovery',],
+        },
     },
-    'Health'       : {
-        'color': wx.GREEN,
-        'tiers': ['Respite'        , 'Dramatic Improvement' , 'Resurgence', 'Perfect Health',]      ,
+    'Dual' : {
+        'Acc / Dam' : {
+            'ltcolor' : (255, 238, 0),
+            'dkcolor' : (179, 0, 0),
+            'tiers' : ['Keen', 'Tactical', 'Precise', 'Intuition',],
+        },
+        'Def / Res' : {
+            'ltcolor' : (255, 178, 99),
+            'dkcolor' : (179, 0, 148),
+            'tiers' : ['Shielded', 'Guarded', 'Protected', 'Impenetrable',],
+        },
+        'End / Heal' : {
+            'ltcolor' : (135, 220, 38),
+            'dkcolor' : (0, 30, 160),
+            'tiers' : ['Revitalize', 'Rejuvenate', 'Invigorate', 'Refresh',],
+        }
     },
-    'Damage'       : {
-        'color': wx.RED,
-        'tiers': ['Enrage'         , 'Focused Rage'         , 'Righteous Rage', 'Furious Rage',]  ,
+    'Team' : {
+        'Accuracy'     : {
+            'ltcolor': (255, 238, 0),
+            'dkcolor': (118, 80, 0),
+            'tiers': ['Insight Imbuement', 'Keen Insight Imbuement', 'Uncanny Insight Imbuement',],
+        },
+        'Health'       : {
+            'ltcolor': (135, 220, 38),
+            'dkcolor': (0, 66, 7),
+            'tiers': ['Health Imbuement', 'Greater Health Imbuement', 'Superior Health Imbuement',],
+        },
+        'Damage'       : {
+            'ltcolor': (249, 163, 152),
+            'dkcolor': (179, 0, 0),
+            'tiers': ['Rage Imbuement', 'Focused Rage Imbuement', 'Righteous Rage Imbuement',],
+        },
+        'Endurance'    : {
+            'ltcolor': (122, 220, 255),
+            'dkcolor': (0, 30, 160),
+            'tiers': ['Endurance Imbuement', 'Greater Endurance Imbuement', 'Superior Endurance Imbuement',],
+        },
+        'Defense'      : {
+            'ltcolor': (228, 166, 236),
+            'dkcolor': (94, 0, 94),
+            'tiers': ['Luck Imbuement', 'Good Luck Imbuement', 'Phenomenal Luck Imbuement',],
+        },
+        'ResistDamage' : {
+            'ltcolor': (255, 178, 99),
+            'dkcolor': (151, 54, 0),
+            'tiers': ['Sturdy Imbuement', 'Rugged Imbuement', 'Robust Imbuement',],
+        },
+        'BreakFree'    : {
+            'ltcolor': (186, 174, 255),
+            'dkcolor': (57, 0, 113),
+            'tiers': ['Protection Imbuement', 'Greater Protection Imbuement', 'Superior Protection Imbuement',],
+        },
     },
-    'Endurance'    : {
-        'color': wx.BLUE,
-        'tiers': ['Catch a Breath' , 'Take a Breather'      , 'Second Wind', 'Back in the Fight',]     ,
-    },
-    'Defense'      : {
-        'color': (128, 0, 153),  # purple
-        'tiers': ['Luck'           , 'Good Luck'            , 'Phenomenal Luck', 'Amazing Luck',] ,
-    },
-    'ResistDamage' : {
-        'color': (230, 80, 0),   # orange
-        'tiers': ['Sturdy'         , 'Rugged'               , 'Robust', 'Resistant',]          ,
-    },
-    'BreakFree'    : {
-        'color': (110, 76, 200), # light purple
-        'tiers': ['Break Free'     , 'Emerge'               , 'Escape', 'Liberate',]          ,
-    },
-    'Resurrection' : {
-        'color': (50, 180, 160), # cyan
-        'tiers': ['Awaken'         , 'Bounce Back'          , 'Restoration', 'Immortal Recovery',]     ,
+    'DualTeam' : {
+        'Acc / Dam' : {
+            'ltcolor' : (255, 238, 0),
+            'dkcolor' : (179, 0, 0),
+            'tiers' : ['Tactical Imbuement', 'Precise Imbuement', 'Intuition Imbuement',],
+        },
+        'Def / Res' : {
+            'ltcolor' : (255, 178, 99),
+            'dkcolor' : (179, 0, 148),
+            'tiers' : ['Guarding Imbuement', 'Protecting Imbuement', 'Impenetrable Imbuement',],
+        },
+        'End / Heal' : {
+            'ltcolor' : (135, 220, 38),
+            'dkcolor' : (0, 30, 160),
+            'tiers' : ['Rejuvenating Imbuement', 'Invigorating Imbuement', 'Refreshing Imbuement',],
+        }
     },
 }
 

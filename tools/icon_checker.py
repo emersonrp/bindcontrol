@@ -74,15 +74,16 @@ for slot, slotdata in GameData.MiscPowers['Incarnate'].items():
                 if filename in filecheck: filecheck.remove(filename)
 
 # Inspirations
-for type, data in GameData.Inspirations.items():
-    for insp in data['tiers']:
-        insp = re.sub(r'\W+', '',  insp)
-        filename = f"{insp}.png"
-        if not os.path.exists(f"{parentdir}/icons/Inspirations/{filename}"):
-            print(f"Inspirations: {filename}")
-            count = count + 1
-        else:
-            if filename in filecheck: filecheck.remove(filename)
+for _, type in GameData.Inspirations.items():
+    for _, data in type.items():
+        for insp in data['tiers']:
+            insp = re.sub(r'\W+', '',  insp)
+            filename = f"{insp}.png"
+            if not os.path.exists(f"{parentdir}/icons/Inspirations/{filename}"):
+                print(f"Inspirations: {filename}")
+                count = count + 1
+            else:
+                if filename in filecheck: filecheck.remove(filename)
 
 
 

@@ -10,6 +10,7 @@
 #  page.SetState('Archetype', 'Blaster')
 
 import wx
+import wx.lib.colourselect as csel
 
 class Page(wx.Panel):
 
@@ -31,7 +32,7 @@ class Page(wx.Panel):
             sel = control.GetSelection()
             if sel != -1: return control.GetString(control.GetSelection())
             else        : return ''
-        elif isinstance(control, wx.ColourPickerCtrl):
+        elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
             return control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
         elif getattr(control, 'GetValue', None):
             return control.GetValue()

@@ -28,9 +28,10 @@ Features
     * supports Super Speed, Super Jump, Flight, Teleport, and Sprint powers
     * one-key reset in case SoD binds get tangled up
 * Inspiration Popper
-    * by-type
+    * by-type; dual and team inspirations supported
+    * option to use or skip "super" inspirations
     * largest-first or smallest-first
-    * optional /say feedback
+    * optional /say feedback with per-inspiration custom colors
 * Mastermind / Pet Binds
     * select pets by power level: all, minions, lieutenants, and boss
     * orders for aggressive / defensive / passive stances; attack, follow, go to, and stay
@@ -86,6 +87,8 @@ Credits and License
 
 BindControl is in many places a direct port of [CityBinder](http://sourceforge.net/projects/citybinder/) code, and in most other places was extremely influenced by it.  Keybinding code drew from similar code in [PADRE](https://padre.perlide.org/).
 
+Various newer functionality was added to [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by tailcoat, who kindly provided his source code and permission to adapt for use with BindControl, as well as offered suggestions and advice for improvements.
+
 Citybinder's acknowledgements are reproduced below:
 ```
     Obviously, without Cryptic and NCSoft to have created/funded/published
@@ -103,6 +106,8 @@ Citybinder's acknowledgements are reproduced below:
     DarknessEternal, reiella, Robotech_Master, Ground_Zeroo, Stylina, and
     ShieldBearer.
 ```
+
+The improved Inspiration Popper design was gratefully adapted from an unreleased version of [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by Tailcoat.
 
 BindControl is licensed under the GPL, version 3 or later.
 

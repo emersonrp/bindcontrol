@@ -38,17 +38,6 @@ class Gameplay(Page):
             'InviteTarget'  : '',
             'FPSBindKey'      : '',
             'NetgraphBindKey' : '',
-
-            'ChatEnable' : True,
-            'StartChat'  : 'ENTER',
-            'SlashChat'  : '/',
-            'StartEmote' : ';',
-            'AutoReply'  : 'BACKSPACE',
-            'TellTarget' : 'COMMA',
-            'QuickChat'  : "'",
-
-            'TypingNotifierEnable' : 1,
-            'TypingNotifier'       : 'typing',
         }
 
     def BuildPage(self):
@@ -122,50 +111,6 @@ class Gameplay(Page):
             )
         leftSizer.Add(TeamSelBox, 0, wx.EXPAND|wx.ALL, 10)
 
-        ### Enable Chat
-        ChatSizer = wx.FlexGridSizer(0,2,10,10)
-
-        chatenable = wx.CheckBox(self, -1, 'Enable Chat Binds')
-        chatenable.SetToolTip( wx.ToolTip('Check this to enable the Chat Binds') )
-        chatenable.Bind(wx.EVT_CHECKBOX, self.OnChatEnable)
-        self.Ctrls['ChatEnable'] = chatenable
-
-        chathelpbutton = HelpButton(self, 'ChatBinds.html')
-
-        ChatSizer.Add(chatenable, 0, wx.ALIGN_CENTER_VERTICAL)
-        ChatSizer.Add(chathelpbutton, wx.ALIGN_RIGHT, 0)
-
-        rightSizer.Add(ChatSizer, 0, wx.EXPAND|wx.ALL, 10)
-
-        chatBindBox = ControlGroup(self, self, 'Chat Binds')
-
-        for b in (
-            ['StartChat',  'Activates the Chat bar'],
-            ['SlashChat',  'Activates the Chat bar with a slash already typed'],
-            ['StartEmote', 'Activates the Chat bar with "/em" already typed'],
-            ['AutoReply',  'AutoReplies to incoming tells'],
-            ['TellTarget', 'Starts a /tell to your current target'],
-            ['QuickChat',  'Activates QuickChat'],
-        ):
-            chatBindBox.AddControl(
-                ctlName = b[0],
-                ctlType = 'keybutton',
-                tooltip = b[1],
-            )
-
-        chatBindBox.AddControl(
-            ctlName = 'TypingNotifierEnable',
-            ctlType = 'checkbox',
-            tooltip = "Check this to enable the Typing Notifier",
-            callback = self.OnTypeEnable,
-        )
-        chatBindBox.AddControl(
-            ctlName = 'TypingNotifier',
-            ctlType = 'text',
-            tooltip = "Choose the message to display when you are typing chat messages or commands",
-        )
-        rightSizer.Add(chatBindBox, 0, wx.EXPAND|wx.ALL, 10)
-
         ### Helpful Binds
         HelpfulSizer = ControlGroup(self, self, 'Helpful Binds')
         for b in (
@@ -193,8 +138,6 @@ class Gameplay(Page):
     def SynchronizeUI(self):
         self.OnTPSEnable()
         self.OnTeamEnable()
-        self.OnChatEnable()
-        self.OnTypeEnable()
 
     def OnTPSEnable(self, evt = None):
         self.DisableControls(self.GetState('TPSEnable'),
@@ -207,19 +150,6 @@ class Gameplay(Page):
         self.DisableControls(self.GetState('TeamEnable'),
             ['SelNextTeam', 'SelPrevTeam','IncTeamSize', 'DecTeamSize',
             'IncTeamPos', 'DecTeamPos', 'TeamReset'])
-        if evt: evt.Skip()
-
-    def OnChatEnable(self, evt = None):
-        self.DisableControls(self.GetState('ChatEnable'),
-            ['StartChat','SlashChat','StartEmote','AutoReply',
-             'TellTarget','QuickChat', 'TypingNotifierEnable', 'TypingNotifier'])
-        self.OnTypeEnable()
-        if evt: evt.Skip()
-
-    def OnTypeEnable(self, evt = None):
-        chatenabled = self.GetState('ChatEnable')
-        typeenabled = self.GetState('TypingNotifierEnable')
-        self.DisableControls(chatenabled and typeenabled, ['TypingNotifier'])
         if evt: evt.Skip()
 
     def PopulateBindFiles(self):
@@ -271,19 +201,6 @@ class Gameplay(Page):
                         if (tsel != tpos) or (tsel == 0):
                             file = self.Profile.GetBindFile('teamsel2', f'{tsize}{tpos}{tsel}.txt')
                             self.ts2CreateSet(tsize, tpos, tsel, file)
-
-        ### Chat Binds with notifier, if appropriate
-        if self.GetState('ChatEnable'):
-            notifier = ''
-            if self.GetState('TypingNotifierEnable'):
-                notifier = 'afk ' + self.GetState('TypingNotifier')
-
-            ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', 'startchat']))
-            ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeFileKeyBind([notifier, 'show chat', 'slashchat']))
-            ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind([notifier, 'show chatem ' + notifier]))
-            ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeFileKeyBind([notifier, 'autoreply']))
-            ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
-            ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
 
         ### Helpful Binds
         ResetFile.SetBind(self.Ctrls['QuitToDesktop']  .MakeFileKeyBind('quit'))
@@ -353,16 +270,6 @@ class Gameplay(Page):
 
         'FPSBindKey'      : "Toggle FPS Display",
         'NetgraphBindKey' : "Toggle Netgraph Display",
-
-        'StartChat'            : 'Start Chat (no "/")',
-        'SlashChat'            : 'Start Chat (with "/")',
-        'StartEmote'           : 'Begin emote (types "/em")',
-        'AutoReply'            : 'AutoReply to incoming /tell',
-        'TellTarget'           : 'Send /tell to current target',
-        'QuickChat'            : 'QuickChat',
-
-        'TypingNotifierEnable' : 'Enable Typing Notifier',
-        'TypingNotifier'       : 'Typing Notifier',
     })
 
     for i in range(1,9):

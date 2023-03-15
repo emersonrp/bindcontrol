@@ -20,6 +20,8 @@ class Main(wx.Frame):
 
         self.about_info = None
 
+        self.SetStatusBar(wx.StatusBar(self, style = 0))
+
         self.LogWindow = wx.LogWindow(self, "Log Window", show = False, passToOld = False)
 
         config = wx.FileConfig('bindcontrol')
@@ -53,10 +55,12 @@ class Main(wx.Frame):
         # "Profile" Menu
         ProfMenu = wx.Menu()
 
-        Profile_new    = ProfMenu.Append(-1, "New Profile", "Create a new profile")
-        Profile_load   = ProfMenu.Append(-1, "Load Profile...", "Load an existing profile")
-        Profile_saveas = ProfMenu.Append(-1, "Save Profile As...", "Save the current profile under a new filename")
-        Profile_save   = ProfMenu.Append(-1, "&Save Profile\tCTRL-S", "Save the current profile")
+        Profile_new         = ProfMenu.Append(-1, "New Profile", "Create a new profile")
+        Profile_load        = ProfMenu.Append(-1, "Load Profile...", "Load an existing profile")
+        Profile_save        = ProfMenu.Append(-1, "&Save Profile\tCTRL-S", "Save the current profile")
+        Profile_saveas      = ProfMenu.Append(-1, "Save Profile As...", "Save the current profile under a new filename")
+        ProfMenu.AppendSeparator()
+        Profile_savedefault = ProfMenu.Append(-1, "Save Profile As Default", "Save the current profile as the default for new profiles")
         ProfMenu.AppendSeparator()
         Profile_preferences = ProfMenu.Append(wx.ID_PREFERENCES, "&Preferences", "Configure BindControl")
         Profile_exit  = ProfMenu.Append(wx.ID_EXIT)
@@ -86,9 +90,10 @@ class Main(wx.Frame):
 
         # MENUBAR EVENTS
         self.Bind(wx.EVT_MENU , self.OnNewProfile          , Profile_new)
-        self.Bind(wx.EVT_MENU , self.Profile.LoadFromFile  , Profile_load)
-        self.Bind(wx.EVT_MENU , self.Profile.doSaveToFile  , Profile_save)
-        self.Bind(wx.EVT_MENU , self.Profile.SaveToFile    , Profile_saveas)
+        self.Bind(wx.EVT_MENU , self.OnProfileLoad         , Profile_load)
+        self.Bind(wx.EVT_MENU , self.OnProfileSave         , Profile_save)
+        self.Bind(wx.EVT_MENU , self.OnProfileSaveAs       , Profile_saveas)
+        self.Bind(wx.EVT_MENU , self.OnProfileSaveDefault  , Profile_savedefault)
         self.Bind(wx.EVT_MENU , self.OnMenuPrefsDialog     , Profile_preferences)
         self.Bind(wx.EVT_MENU , self.OnMenuExitApplication , Profile_exit)
 
@@ -131,11 +136,20 @@ class Main(wx.Frame):
             self.Profile.Destroy()
             self.Profile = Profile(self)
             self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND|wx.ALL, 3)
+            defaultProfile = Path(self.Profile.ProfilePath() / 'Default.bcp')
+            self.Profile.doLoadFromFile(defaultProfile)
         except Exception as e:
             wx.LogError(f"Something broke in new profile: {e}")
         finally:
             self.Layout()
             self.Thaw()
+
+    def OnProfileLoad(self, evt)        :
+        self.OnNewProfile(evt)
+        self.Profile.LoadFromFile(evt)
+    def OnProfileSave(self, evt)        : self.Profile.doSaveToFile(evt)
+    def OnProfileSaveAs(self, evt)      : self.Profile.SaveToFile(evt)
+    def OnProfileSaveDefault(self, evt) : self.Profile.SaveAsDefault(evt)
 
     def OnWriteBindsButton(self, _):
         self.Profile.WriteBindFiles()
@@ -159,17 +173,19 @@ class Main(wx.Frame):
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
             info.SetName('BindControl')
-            info.SetVersion('0.8.3')
+            info.SetVersion('0.10')
             info.SetDescription("""
 BindControl can help you set up custom keybinds in City of Heroes/Villains, including speed-on-demand binds.
 
-Based on CityBinder 0.76, Copyright (c) 2005-2006 Jeff Sheets
+Based on CityBinder 0.76, Copyright (c) 2005-2006 Jeff Sheets, and CityBinder for Homecoming 0.2, Copyright (c) 2021-2023 tailcoat
 
 Speed-On-Demand binds were originally created by Gnarley's Speed On Demand Binds Program.  Advanced Teleport Binds by DrLetharga.
 
 Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
+
+Inspiration Popper design adapted from CityBinder for Homecoming by Tailcoat.
 """)
-            info.SetCopyright('(c) 2010-2022 R Pickett <emerson@hayseed.net>')
+            info.SetCopyright('(c) 2010-2023 R Pickett <emerson@hayseed.net>')
             info.SetWebSite('https://github.com/emersonrp/bindcontrol')
             self.about_info = info
 

@@ -2,6 +2,7 @@ import re
 from pathlib import Path, PureWindowsPath
 import json
 import wx
+import wx.lib.colourselect as csel
 
 from BindFile import BindFile
 
@@ -99,6 +100,24 @@ class Profile(wx.Notebook):
     def ProfilePath(self):
         return Path.home() / "Documents" / "bindcontrol"
 
+    def SaveAsDefault(self, _ = None):
+        currentfilename = self.Filename
+        currentmodified = self.Modified
+        currentname     = self.Name()
+
+        self.General.SetState('Name', 'Default')
+        self.Filename = Path(self.ProfilePath() / 'Default.bcp')
+
+        if self.Filename.exists():
+            result = wx.MessageBox("Overwrite Default Profile?", "Default Profile Exists", wx.YES_NO)
+            if result == wx.NO: return
+
+        self.doSaveToFile()
+
+        self.Filename = currentfilename
+        self.Modified = currentmodified
+        self.General.SetState('Name', currentname)
+
     def SaveToFile(self, _ = None):
         with wx.FileDialog(self, "Save Profile file",
                 wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
@@ -150,7 +169,7 @@ class Profile(wx.Notebook):
                         value = control.GetLabel()
                     elif controlType == 'bcKeyButton':
                         value = control.Key
-                    elif controlType == 'ColourPickerCtrl':
+                    elif controlType == 'ColourPickerCtrl' or controlType == 'ColourSelect':
                         value = control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
                     elif controlType == 'Choice':
                         value = control.GetSelection()
@@ -170,8 +189,10 @@ class Profile(wx.Notebook):
         savedata['CustomBinds'] = []
         customPage = getattr(self, 'CustomBinds')
         for pane in customPage.PaneSizer.GetChildren():
-            bindpane = pane.GetSizer().GetChildren()[0].GetWindow()
-            savedata['CustomBinds'].append(bindpane.Serialize())
+            bindui = pane.GetSizer().GetChildren()
+            if bindui:
+                bindpane = bindui[0].GetWindow()
+                savedata['CustomBinds'].append(bindpane.Serialize())
 
         dumpstring = json.dumps(savedata, indent=2)
         try:
@@ -210,11 +231,13 @@ class Profile(wx.Notebook):
                 if pagename == "CustomBinds": continue
                 page = getattr(self, pagename)
                 for controlname, control in page.Ctrls.items():
-                    value = data[pagename].get(controlname, None)
 
+                    value = None
+                    if pagename in data:
+                        value = data[pagename].get(controlname, None)
                     if value is None: continue
 
-                    # look up what type of control it is to know how to extract its value
+                    # look up what type of control it is to know how to update its value
                     controlType = type(control).__name__
                     if controlType == 'DirPickerCtrl':
                         control.SetPath(value)
@@ -223,8 +246,10 @@ class Profile(wx.Notebook):
                     elif controlType == 'bcKeyButton':
                         control.SetLabel(value)
                         control.Key = value
-                    elif controlType == 'ColourPickerCtrl':
+                    elif controlType == 'ColourPickerCtrl' or controlType == 'ColourSelect':
                         control.SetColour(value)
+                        if controlType == 'ColourSelect':
+                            wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
                     elif controlType == 'Choice':
                         control.SetSelection(value)
                     else:
@@ -255,6 +280,7 @@ class Profile(wx.Notebook):
                     cbpage.AddBindToPage(bindpane = bindpane)
 
             self.Filename = Path(pathname)
+            wx.ConfigBase.Get().Write('LastProfile', str(file))
             wx.LogMessage(f"Loaded profile {pathname}")
             self.ClearModified()
 

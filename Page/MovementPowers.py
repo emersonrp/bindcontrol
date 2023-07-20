@@ -44,29 +44,35 @@ class MovementPowers(Page):
             'NonSoDMode'      : '[',
 
             'HasSS'           : False,
+            'HasSoS'          : False,
             'RunMode'         : "C",
             'SSMobileOnly'    : False,
             'SSSJModeEnable'  : False,
+            'JauntKey'        : "",
 
             'HasSJ'           : False,
             'HasCJ'           : False,
+            'HasML'           : False,
             'JumpMode'        : "T",
             'SimpleSJCJ'      : False,
+            'TakeoffKey'      : "",
 
             'HasHover'        : False,
             'HasFly'          : False,
-            'HasCF'           : False,
             'HasGFly'         : False,
+            'HasCF'           : False, # hidden
+            'HasEF'           : False, # hidden
+            'HasQF'           : False, # hidden
             'FlyMode'         : "F",
-            'HasQF'           : False,
-            'QFlyMode'        : "",
             'GFlyMode'        : "",
+            'AfterburnerKey'  : "",
 
             'HasTP'           : False,
             'TPBindKey'       : 'LSHIFT+LBUTTON',
             'TPComboKey'      : 'LSHIFT',
 
             'HasTTP'          : False,
+            'HasTL'           : False,
             'TTPBindKey'      : 'LSHIFT+LCTRL+LBUTTON',
             'TTPComboKey'     : 'LSHIFT+LCTRL',
             'TTPTPGFly'       : False,
@@ -114,6 +120,10 @@ class MovementPowers(Page):
 
         self.leftColumn  = wx.BoxSizer(wx.VERTICAL)
         self.rightColumn = wx.BoxSizer(wx.VERTICAL)
+
+        self.hiddenSizer = ControlGroup(self, self, "Hidden Settings")
+        self.leftColumn.Add(self.hiddenSizer)
+        self.leftColumn.Hide(self.hiddenSizer)
 
         ##### MOVEMENT KEYS
         movementSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = "Movement Keys")
@@ -296,7 +306,10 @@ class MovementPowers(Page):
         self.superSpeedSizer = ControlGroup(self, self, 'Speed')
         self.superSpeedSizer.AddControl( ctlName = 'HasSS', ctlType = "checkbox",)
         self.Ctrls['HasSS'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.superSpeedSizer.AddControl( ctlName = 'HasSoS', ctlType = "checkbox",)
+        self.Ctrls['HasSoS'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.superSpeedSizer.AddControl( ctlName = 'RunMode', ctlType = 'keybutton',)
+        self.superSpeedSizer.AddControl( ctlName = 'JauntKey', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl( ctlName = 'SSMobileOnly', ctlType = 'checkbox',)
         self.superSpeedSizer.AddControl( ctlName = 'SSSJModeEnable', ctlType = 'checkbox',)
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
@@ -307,8 +320,11 @@ class MovementPowers(Page):
         self.Ctrls['HasSJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.superJumpSizer.AddControl( ctlName = 'HasCJ', ctlType = 'checkbox',)
         self.Ctrls['HasCJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.superJumpSizer.AddControl( ctlName = 'HasML', ctlType = 'checkbox',)
+        self.Ctrls['HasML'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',)
         self.superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',)
+        self.superJumpSizer.AddControl( ctlName = 'TakeoffKey', ctlType = 'keybutton',)
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
         ##### FLY
@@ -317,15 +333,15 @@ class MovementPowers(Page):
         self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'HasFly', ctlType = 'checkbox',)
         self.Ctrls['HasFly'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.flySizer.AddControl( ctlName = 'HasCF', ctlType = 'checkbox',)
-        self.Ctrls['HasCF'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
+        self.flySizer.AddControl( ctlName = 'AfterburnerKey', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'HasGFly', ctlType = 'checkbox',)
         self.Ctrls['HasGFly'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
-        self.flySizer.AddControl( ctlName = 'HasQF', ctlType = 'checkbox',)
-        self.Ctrls['HasQF'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.flySizer.AddControl( ctlName = 'QFlyMode', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',)
+        # hidden checkboxes for keeping state
+        self.hiddenSizer.AddControl( ctlName = 'HasCF', ctlType = 'checkbox',)
+        self.hiddenSizer.AddControl( ctlName = 'HasEF', ctlType = 'checkbox',)
+        self.hiddenSizer.AddControl( ctlName = 'HasQF', ctlType = 'checkbox',)
         self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
@@ -340,12 +356,24 @@ class MovementPowers(Page):
         self.teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',)
         self.teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',)
         self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.teleportSizer.AddControl( ctlName = "HasTL", ctlType = 'checkbox',)
+        self.Ctrls['HasTL'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.teleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton',)
         self.teleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton',)
         self.teleportSizer.AddControl( ctlName = 'TTPTPGFly', ctlType = 'checkbox',)
         self.rightColumn.Add(self.teleportSizer, 0, wx.EXPAND)
 
         ##### KHELDIAN TRAVEL POWERS
+        # Combat Flying, Quantum Flight, and Energy Flight are inherent to Peacebringers
+        if (self.Profile.Archetype() == "Peacebringer"):
+            self.SetState('HasCF', True)
+            self.SetState('HasEF', True)
+            self.SetState('HasQF', True)
+        # TODO - Peacebringers have "Quantum Acceleration" in the place of Afterburner
+        # Logic:
+        #      AfterburnerPower = (arch == peace) ? "Quantum Acceleration" : "Afterburner"
+        # then use it in the keybind
+
         self.kheldianSizer = ControlGroup(self, self, 'Nova / Dwarf Travel Powers')
 
         self.kheldianSizer.AddControl( ctlName = 'UseNova', ctlType = 'checkbox',)
@@ -360,6 +388,7 @@ class MovementPowers(Page):
         self.kheldianSizer.AddControl( ctlName = 'HumanMode', ctlType = 'keybutton',)
         self.kheldianSizer.AddControl( ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 8],)
         self.rightColumn.Add(self.kheldianSizer, 0, wx.EXPAND)
+
 
         topSizer.Add(self.leftColumn)
         topSizer.Add(self.rightColumn)
@@ -416,6 +445,8 @@ class MovementPowers(Page):
             c['SSMobileOnly'].CtlLabel.Enable(self.GetState('HasSS'))
             c['SSSJModeEnable']         .Enable(self.GetState('HasSS') and self.GetState('HasSJ'))
             c['SSSJModeEnable'].CtlLabel.Enable(self.GetState('HasSS') and self.GetState('HasSJ'))
+            c['JauntKey']         .Enable(self.GetState('HasSoS'))
+            c['JauntKey'].CtlLabel.Enable(self.GetState('HasSoS'))
 
             c['SimpleSJCJ']         .Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
             c['SimpleSJCJ'].CtlLabel.Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
@@ -423,13 +454,15 @@ class MovementPowers(Page):
                                           and self.GetState('DefaultMode') != "Jump")
             c['JumpMode'].CtlLabel.Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
+            c['TakeoffKey']         .Enable(self.GetState('HasML'))
+            c['TakeoffKey'].CtlLabel.Enable(self.GetState('HasML'))
 
             c['FlyMode']         .Enable((self.GetState('HasHover') or self.GetState('HasFly') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
             c['FlyMode'].CtlLabel.Enable((self.GetState('HasHover') or self.GetState('HasFly') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
-            c['QFlyMode']         .Enable(self.GetState('HasQF'))
-            c['QFlyMode'].CtlLabel.Enable(self.GetState('HasQF'))
+            c['AfterburnerKey']         .Enable(self.GetState('HasFly'))
+            c['AfterburnerKey'].CtlLabel.Enable(self.GetState('HasFly'))
 
             c['GFlyMode']         .Enable(self.GetState('HasGFly'))
             c['GFlyMode'].CtlLabel.Enable(self.GetState('HasGFly'))
@@ -466,14 +499,16 @@ class MovementPowers(Page):
             # end TODO temp sizer
 
             # show/hide control groups based on power pool picks
-            self.rightColumn.Show(self.flySizer,        self.Profile.HasPowerPool('Flight'))
-            self.rightColumn.Show(self.superJumpSizer,  self.Profile.HasPowerPool('Leaping'))
-            self.rightColumn.Show(self.superSpeedSizer, self.Profile.HasPowerPool('Speed'))
+            self.rightColumn.Show(self.flySizer,
+                self.Profile.HasPowerPool('Flight') or self.Profile.HasPowerPool('Sorcery'))
+            self.rightColumn.Show(self.superJumpSizer,
+                self.Profile.HasPowerPool('Leaping') or self.Profile.HasPowerPool('Force of Will'))
+            self.rightColumn.Show(self.superSpeedSizer,
+                self.Profile.HasPowerPool('Speed') or self.Profile.HasPowerPool('Experimentation'))
             self.rightColumn.Show(self.teleportSizer,   self.Profile.HasPowerPool('Teleportation'))
 
             # show/hide kheldian-influenced controls depending on selected archetype;
             archetype = self.Profile.Archetype()
-            kheldianOnlyControls = ['HasCF', 'HasQF', 'QFlyMode']
             nonkheldianOnlyControls = ['HasFly','HasHover','TPTPHover']
 
             kheldianGridSizer = self.kheldianSizer.GetChildren()[0].GetSizer()
@@ -486,13 +521,10 @@ class MovementPowers(Page):
                 # if Warshade: hide flight sizer, disable controls
                 for ctrl in flyGridSizer.GetChildren():
                     ctrl.GetWindow().Enable(archetype != "Warshade")
-                self.rightColumn.Show(self.flySizer, archetype != "Warshade")
+                # TODO: this is not right, warshades can still pick Flight pool
+                # self.rightColumn.Show(self.flySizer, archetype != "Warshade")
 
                 # en/disable controls in other sizers
-                for c in kheldianOnlyControls:
-                    ctrl = self.Ctrls[c]
-                    ctrl.GetContainingSizer().Show(ctrl)
-                    ctrl.GetContainingSizer().Show(ctrl.CtlLabel)
                 for c in nonkheldianOnlyControls:
                     ctrl = self.Ctrls[c]
                     ctrl.GetContainingSizer().Hide(ctrl)
@@ -504,10 +536,6 @@ class MovementPowers(Page):
                 self.rightColumn.Hide(self.kheldianSizer)
 
                 # en/disable controls in other sizers
-                for c in kheldianOnlyControls:
-                    ctrl = self.Ctrls[c]
-                    ctrl.GetContainingSizer().Hide(ctrl)
-                    ctrl.GetContainingSizer().Hide(ctrl.CtlLabel)
                 for c in nonkheldianOnlyControls:
                     ctrl = self.Ctrls[c]
                     ctrl.GetContainingSizer().Show(ctrl)
@@ -570,7 +598,6 @@ class MovementPowers(Page):
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
             if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path, gamepath)
             if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
-            if (modestr != "QFly")        : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
 
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 
@@ -664,7 +691,6 @@ class MovementPowers(Page):
             if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
             if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path,gamepath)
             if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
-            if (modestr != "QFly")        : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
         else:
             if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ])
             if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
@@ -676,7 +702,6 @@ class MovementPowers(Page):
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
             if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path,gamepath)
             if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
-            if (modestr != "QFly")        : self.makeQFlyModeKey  (profile,t,"r", curfile,turnoff,modestr)
 
         self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
         self.sodFollowKey(t,blf,curfile,mobile)
@@ -705,7 +730,6 @@ class MovementPowers(Page):
         if (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"af",curfile,turnoff,fix)
         if (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"aj",curfile,turnoff,patha,gamepatha)
         if (modestr != "Temp")      : self.makeTempModeKey(profile,t,"ar",curfile,turnoff)
-        if (modestr != "QFly")      : self.makeQFlyModeKey(profile,t,"ar",curfile,turnoff,modestr)
 
         self.sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight)
 
@@ -735,7 +759,6 @@ class MovementPowers(Page):
         if (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"ff",curfile,turnoff,fix)
         if (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"fj",curfile,turnoff, pathf, gamepathf)
         if (modestr != "Temp")      : self.makeTempModeKey(profile,t,"fr",curfile,turnoff)
-        if (modestr != "QFly")      : self.makeQFlyModeKey(profile,t,"fr",curfile,turnoff,modestr)
 
         curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('nop'))
 
@@ -793,41 +816,6 @@ class MovementPowers(Page):
             tgl.SetBind(key, name, self, "- $$" + feedback + bindload)
         else:
             cur.SetBind(key, name, self, t.ini + self.actPower(None,1,trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('ft'))
-
-        t.ini = ''
-
-    def makeQFlyModeKey(self, p, t, bl, cur, toff, modestr):
-        key = t.QFlyMode
-        name = UI.Labels['QFlyMode']
-        if not self.Ctrls['QFlyMode'].IsEnabled(): return
-        if not key: return
-
-        if (modestr == "NonSoD"):
-            cur.SetBind(key, name, self, "powexecname Quantum Flight")
-            return
-
-        if self.GetState('Feedback'): feedback = '$$t $name, QFlight Mode'
-        else:                         feedback = ''
-
-        if (bl == "r"):
-            bindload  = t.BLF('n')
-            bindload2 = t.BLF('n'+'_q')
-            tgl = p.GetBindFile(bindload2)
-
-            if (modestr == 'Nova' or modestr == 'Dwarf'): tray = '$$gototray 1'
-            else:                                         tray = ''
-
-            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower(None,1,'Quantum Flight', toff) + tray + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + bindload2)
-            tgl.SetBind(key, name, self, "- $$" + feedback + bindload)
-
-        elif (bl == "ar"):
-            bindload  = t.BLF('an')
-            bindload2 = t.BLF('an','_t')
-            tgl = p.GetBindFile(bindload2)
-            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + bindload2)
-            tgl.SetBind(key, name, self, "- $$" + feedback + bindload)
-        else:
-            cur.SetBind(key, name, self, t.ini + self.actPower(None,1,'Quantum Flight', toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('fn'))
 
         t.ini = ''
 
@@ -1183,8 +1171,6 @@ class MovementPowers(Page):
 
             if novapbind: novafile.SetBind(self.GetState('NovaMode'), novapbind)
 
-            if t.canqfly: self.makeQFlyModeKey(profile,t,"r",novafile,Nova['Nova'],"Nova")
-
             novafile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind("+forward"))
             novafile.SetBind(self.Ctrls['Left'].MakeFileKeyBind("+left"))
             novafile.SetBind(self.Ctrls['Right'].MakeFileKeyBind("+right"))
@@ -1220,8 +1206,6 @@ class MovementPowers(Page):
 
             if dwarfpbind:
                 dwrffile.SetBind(self.GetState('DwarfMode'), dwarfpbind)
-            if t.canqfly:
-                self.makeQFlyModeKey(profile,t,"r",dwrffile,Dwarf['Dwarf'],"Dwarf")
 
             dwrffile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind("+forward"))
             dwrffile.SetBind(self.Ctrls['Left'].MakeFileKeyBind("+left"))
@@ -1471,7 +1455,6 @@ class MovementPowers(Page):
         if (self.GetState('DefaultMode') != "Super Speed") : t.RunMode    = self.GetState('RunMode')
         if (self.GetState('DefaultMode') != "GFly")        : t.GFlyMode   = self.GetState('GFlyMode')
         t.TempMode = self.GetState('TempMode')
-        t.QFlyMode = self.GetState('QFlyMode')
 
         for space in (0,1):
             t.space = space
@@ -1608,24 +1591,6 @@ class MovementPowers(Page):
                                         'mobile'     : t.flyx,
                                         'stationary' : t.hover,
                                         'modestr'    : "Fly",
-                                        'flight'     : "Fly",
-                                    })
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", None)
-
-                                if (t.canqfly):
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.QFlyMode)
-                                    self.makeSoDFile({
-                                        't'          : t,
-                                        'bl'         : t.blq,
-                                        'bla'        : t.blaq,
-                                        'blf'        : t.blfq,
-                                        'path'       : t.pathq,
-                                        'gamepath'   : t.gamepathq,
-                                        'patha'      : t.pathaq,
-                                        'pathf'      : t.pathfq,
-                                        'mobile'     : "Quantum Flight",
-                                        'stationary' : "Quantum Flight",
-                                        'modestr'    : "QFly",
                                         'flight'     : "Fly",
                                     })
                                     setattr(t, self.GetState('DefaultMode') + "Mode", None)
@@ -2292,6 +2257,7 @@ UI.Labels.update( {
 
     'HasSJ'          : 'Player has Super Jump',
     'HasCJ'          : 'Player has Combat Jumping',
+    'HasML'          : 'Player has Mighty Leap',
     'NonSoDEnable'   : 'Enable Non-SoD Movement Mode',
     'NonSoDMode'     : 'Non-SoD Key',
     'SprintSoD'      : 'Enable Sprint SoD',
@@ -2299,19 +2265,20 @@ UI.Labels.update( {
 
     'JumpMode'       : 'Toggle Jump Mode',
     'SimpleSJCJ'     : 'Simple Combat Jumping / Super Jump Toggle',
+    'TakeoffKey'     : 'Takeoff Key',
 
     'HasSS'          : 'Player has Super Speed',
+    'HasSoS'         : 'Player has Speed of Sound',
     'RunMode'        : 'Toggle Super Speed Mode',
     'SSMobileOnly'   : 'SuperSpeed only when moving',
     'SSSJModeEnable' : 'Enable Super Speed / Super Jump Mode',
+    'JauntKey'       : 'Jaunt Key',
 
     'HasHover'       : "Player has Hover",
     'HasFly'         : "Player has Flight",
-    'HasCF'          : 'Player has Combat Flying',
     'HasGFly'        : 'Player has Group Fly',
     'FlyMode'        : 'Toggle Fly Mode',
-    'HasQF'          : 'Player has Quantum Flight',
-    'QFlyMode'       : 'Toggle Quantum Fly Mode',
+    'AfterburnerKey' : 'Afterburner Key',
     'GFlyMode'       : 'Toggle Group Fly Mode',
 
     'Feedback'       : 'Self-/tell when changing mode',
@@ -2322,6 +2289,7 @@ UI.Labels.update( {
     'TPTPHover'      : 'Hover when Teleporting',
 
     'HasTTP'         : 'Player has Team Teleport',
+    'HasTL'          : 'Player has Translocation',
     'TTPBindKey'     : 'Team Teleport to Cursor',
     'TTPComboKey'    : 'Show Team Teleport Reticle',
     'TTPTPGFly'      : 'Group Fly when Team Teleporting',
@@ -2379,7 +2347,6 @@ class tObject(dict):
         self.RunMode    :str = ''
         self.GFlyMode   :str = ''
         self.TempMode   :str = ''
-        self.QFlyMode   :str = ''
         self.jumpifnocj :str = ''
 
         self.space:int = 0

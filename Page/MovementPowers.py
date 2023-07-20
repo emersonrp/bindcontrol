@@ -57,8 +57,8 @@ class MovementPowers(Page):
             'SimpleSJCJ'      : False,
             'TakeoffKey'      : "",
 
+            'FlyPower'        : "-",
             'HasHover'        : False,
-            'HasFly'          : False,
             'HasGFly'         : False,
             'HasCF'           : False, # hidden
             'HasEF'           : False, # hidden
@@ -329,10 +329,10 @@ class MovementPowers(Page):
 
         ##### FLY
         self.flySizer = ControlGroup(self, self, 'Flight')
+        self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = ['-'])
+        self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',)
         self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.flySizer.AddControl( ctlName = 'HasFly', ctlType = 'checkbox',)
-        self.Ctrls['HasFly'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'AfterburnerKey', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'HasGFly', ctlType = 'checkbox',)
@@ -400,7 +400,7 @@ class MovementPowers(Page):
         self.SynchronizeUI()
 
     def SynchronizeUI(self, evt = None):
-        self.Freeze()
+        #self.Freeze()
 
         try:
             c = self.Ctrls
@@ -457,12 +457,28 @@ class MovementPowers(Page):
             c['TakeoffKey']         .Enable(self.GetState('HasML'))
             c['TakeoffKey'].CtlLabel.Enable(self.GetState('HasML'))
 
-            c['FlyMode']         .Enable((self.GetState('HasHover') or self.GetState('HasFly') or self.GetState('HasCF'))
+            FlightIdx = c['FlyPower'].FindString('Flight')
+            FlightExists = FlightIdx != wx.NOT_FOUND
+            if self.Profile.HasPowerPool('Flight'):
+                if not FlightExists: c['FlyPower'].Append('Flight')
+            else:
+                if FlightExists: c['FlyPower'].Delete(FlightIdx)
+
+            MFlightIdx = c['FlyPower'].FindString('Mystic Flight')
+            MFlightExists = MFlightIdx != wx.NOT_FOUND
+            if self.Profile.HasPowerPool('Sorcery'):
+                if not MFlightExists: c['FlyPower'].Append('Mystic Flight')
+            else:
+                if MFlightExists: c['FlyPower'].Delete(MFlightIdx)
+
+            c['FlyMode']         .Enable((self.GetState('FlyPower') != '-' or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
-            c['FlyMode'].CtlLabel.Enable((self.GetState('HasHover') or self.GetState('HasFly') or self.GetState('HasCF'))
+            c['FlyMode'].CtlLabel.Enable((self.GetState('FlyPower') != '-' or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
-            c['AfterburnerKey']         .Enable(self.GetState('HasFly'))
-            c['AfterburnerKey'].CtlLabel.Enable(self.GetState('HasFly'))
+            c['HasHover']         .Enable(self.Profile.HasPowerPool('Flight'))
+            c['HasHover'].CtlLabel.Enable(self.Profile.HasPowerPool('Flight'))
+            c['AfterburnerKey']         .Enable(self.GetState('FlyPower') == 'Flight')
+            c['AfterburnerKey'].CtlLabel.Enable(self.GetState('FlyPower') == 'Flight')
 
             c['GFlyMode']         .Enable(self.GetState('HasGFly'))
             c['GFlyMode'].CtlLabel.Enable(self.GetState('HasGFly'))
@@ -509,7 +525,7 @@ class MovementPowers(Page):
 
             # show/hide kheldian-influenced controls depending on selected archetype;
             archetype = self.Profile.Archetype()
-            nonkheldianOnlyControls = ['HasFly','HasHover','TPTPHover']
+            nonkheldianOnlyControls = ['HasHover','TPTPHover']
 
             kheldianGridSizer = self.kheldianSizer.GetChildren()[0].GetSizer()
             flyGridSizer      = self.flySizer.GetChildren()[0].GetSizer()
@@ -545,7 +561,7 @@ class MovementPowers(Page):
             print(f"Something blowed up in SoD SynchronizeUI:  {e}")
 
         finally:
-            self.Thaw()
+            #self.Thaw()
             self.Layout()
             if evt: evt.Skip()
 
@@ -1068,16 +1084,16 @@ class MovementPowers(Page):
                 t.flyx   = "Energy Flight"
 
         elif (not (profile.Archetype() == "Warshade")):
-            if (self.GetState('HasHover') and not self.GetState('HasFly')):
+            if (self.GetState('HasHover') and not self.GetState('FlyPower') != '-'):
                 t.canhov = True
                 t.hover  = "Hover"
                 t.flyx   = "Hover"
                 if (self.GetState('TPTPHover')): t.tphover = '$$powexectoggleon Hover'
-            elif (not self.GetState('HasHover') and self.GetState('HasFly')):
+            elif (not self.GetState('HasHover') and self.GetState('FlyPower') != '-'):
                 t.canfly = True
                 t.hover  = "Fly"
                 t.flyx   = "Fly"
-            elif (self.GetState('HasHover') and self.GetState('HasFly')):
+            elif (self.GetState('HasHover') and self.GetState('FlyPower') != '-'):
                 t.canhov = True
                 t.canfly = True
                 t.hover  = "Hover"
@@ -1317,7 +1333,7 @@ class MovementPowers(Page):
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
 
-        elif (self.GetState('DefaultMode') == "Fly" and not (self.GetState('HasHover') or self.GetState('HasFly'))):
+        elif (self.GetState('DefaultMode') == "Fly" and not (self.GetState('HasHover') or self.GetState('FlyPower') != '-')):
             wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Fly mode but your character has neither Hover nor Fly.", "Mode Changed", wx.OK|wx.ICON_WARNING)
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
@@ -2274,8 +2290,8 @@ UI.Labels.update( {
     'SSSJModeEnable' : 'Enable Super Speed / Super Jump Mode',
     'JauntKey'       : 'Jaunt Key',
 
+    'FlyPower'       : "Primary Flight Power",
     'HasHover'       : "Player has Hover",
-    'HasFly'         : "Player has Flight",
     'HasGFly'        : 'Player has Group Fly',
     'FlyMode'        : 'Toggle Fly Mode',
     'AfterburnerKey' : 'Afterburner Key',

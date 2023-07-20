@@ -728,6 +728,9 @@ SprintPowers = [
     'Prestige Power Quick',
     'Prestige Power Rush',
     'Prestige Power Slide',
+    'Athletic Run',
+    'Beast Run',
+    'Ninja Run',
 ]
 
 Inspirations = {

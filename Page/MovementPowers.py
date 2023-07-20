@@ -293,7 +293,7 @@ class MovementPowers(Page):
         self.leftColumn.Add(self.tempSizer, 0, wx.EXPAND)
 
         ##### SUPER SPEED
-        self.superSpeedSizer = ControlGroup(self, self, 'Super Speed')
+        self.superSpeedSizer = ControlGroup(self, self, 'Speed')
         self.superSpeedSizer.AddControl( ctlName = 'HasSS', ctlType = "checkbox",)
         self.Ctrls['HasSS'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.superSpeedSizer.AddControl( ctlName = 'RunMode', ctlType = 'keybutton',)
@@ -302,7 +302,7 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
-        self.superJumpSizer = ControlGroup(self, self, 'Super Jump')
+        self.superJumpSizer = ControlGroup(self, self, 'Jumping')
         self.superJumpSizer.AddControl( ctlName = 'HasSJ', ctlType = 'checkbox',)
         self.Ctrls['HasSJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.superJumpSizer.AddControl( ctlName = 'HasCJ', ctlType = 'checkbox',)
@@ -478,7 +478,7 @@ class MovementPowers(Page):
 
             kheldianGridSizer = self.kheldianSizer.GetChildren()[0].GetSizer()
             flyGridSizer      = self.flySizer.GetChildren()[0].GetSizer()
-            if False and archetype == "Peacebringer" or archetype == "Warshade":
+            if False and (archetype == "Peacebringer" or archetype == "Warshade"):
                 # show kheldian sizer, enable controls
                 for ctrl in kheldianGridSizer.GetChildren():
                     ctrl.GetWindow().Enable(True)

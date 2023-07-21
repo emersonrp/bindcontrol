@@ -43,8 +43,7 @@ class MovementPowers(Page):
             'NonSoDEnable'    : False,
             'NonSoDMode'      : '[',
 
-            'HasSS'           : False,
-            'HasSoS'          : False,
+            'SpeedPower'      : '-',
             'RunMode'         : "C",
             'SSMobileOnly'    : False,
             'SSSJModeEnable'  : False,
@@ -259,7 +258,7 @@ class MovementPowers(Page):
         SoDSizer.AddControl( ctlName = 'EnableSoD', ctlType = 'checkbox',)
         self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         SoDSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'choice',
-            contents = ('No SoD','Sprint','Super Speed','Jump','Fly'),)
+            contents = ('No SoD','Sprint','Speed','Jump','Fly'),)
         self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
         SoDSizer.AddControl( ctlName = 'SprintPower', ctlType = 'choice',
             contents = GameData.SprintPowers,)
@@ -304,10 +303,8 @@ class MovementPowers(Page):
 
         ##### SUPER SPEED
         self.superSpeedSizer = ControlGroup(self, self, 'Speed')
-        self.superSpeedSizer.AddControl( ctlName = 'HasSS', ctlType = "checkbox",)
-        self.Ctrls['HasSS'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.superSpeedSizer.AddControl( ctlName = 'HasSoS', ctlType = "checkbox",)
-        self.Ctrls['HasSoS'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = ['-'])
+        self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
         self.superSpeedSizer.AddControl( ctlName = 'RunMode', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl( ctlName = 'JauntKey', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl( ctlName = 'SSMobileOnly', ctlType = 'checkbox',)
@@ -439,14 +436,28 @@ class MovementPowers(Page):
             c['TempTraySwitch']         .Enable(self.GetState('TempEnable'))
             c['TempTraySwitch'].CtlLabel.Enable(self.GetState('TempEnable'))
 
-            c['RunMode']         .Enable(self.GetState('HasSS') and self.GetState('DefaultMode') != "Super Speed")
-            c['RunMode'].CtlLabel.Enable(self.GetState('HasSS') and self.GetState('DefaultMode') != "Super Speed")
-            c['SSMobileOnly']         .Enable(self.GetState('HasSS'))
-            c['SSMobileOnly'].CtlLabel.Enable(self.GetState('HasSS'))
-            c['SSSJModeEnable']         .Enable(self.GetState('HasSS') and self.GetState('HasSJ'))
-            c['SSSJModeEnable'].CtlLabel.Enable(self.GetState('HasSS') and self.GetState('HasSJ'))
-            c['JauntKey']         .Enable(self.GetState('HasSoS'))
-            c['JauntKey'].CtlLabel.Enable(self.GetState('HasSoS'))
+            SoSIdx = c['SpeedPower'].FindString('Speed of Sound')
+            SoSExists = SoSIdx != wx.NOT_FOUND
+            if self.Profile.HasPowerPool('Experimentation'):
+                if not SoSExists: c['SpeedPower'].Append('Speed of Sound')
+            else:
+                if SoSExists: c['SpeedPower'].Delete(SoSIdx)
+
+            SSIdx = c['SpeedPower'].FindString('Super Speed')
+            SSExists = SSIdx != wx.NOT_FOUND
+            if self.Profile.HasPowerPool('Speed'):
+                if not SSExists: c['SpeedPower'].Append('Super Speed')
+            else:
+                if SSExists: c['SpeedPower'].Delete(SSIdx)
+
+            c['RunMode']         .Enable(self.GetState('SpeedPower') != '-' and self.GetState('DefaultMode') != "Speed")
+            c['RunMode'].CtlLabel.Enable(self.GetState('SpeedPower') != '-' and self.GetState('DefaultMode') != "Speed")
+            c['SSMobileOnly']         .Enable(self.GetState('SpeedPower') != '-')
+            c['SSMobileOnly'].CtlLabel.Enable(self.GetState('SpeedPower') != '-')
+            c['SSSJModeEnable']         .Enable(self.GetState('SpeedPower') != '-' and self.GetState('HasSJ'))
+            c['SSSJModeEnable'].CtlLabel.Enable(self.GetState('SpeedPower') != '-' and self.GetState('HasSJ'))
+            c['JauntKey']         .Enable(self.GetState('SpeedPower') == "Speed of Sound")
+            c['JauntKey'].CtlLabel.Enable(self.GetState('SpeedPower') == "Speed of Sound")
 
             c['SimpleSJCJ']         .Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
             c['SimpleSJCJ'].CtlLabel.Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
@@ -641,7 +652,7 @@ class MovementPowers(Page):
                 if (self.GetState('SprintSoD')):
                     t.FlyMode = t.SprintMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                if (self.GetState('HasSS')):
+                if (self.GetState('SpeedPower') != '-'):
                     t.FlyMode = t.RunMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
                 if (t.canjmp):
@@ -879,7 +890,7 @@ class MovementPowers(Page):
 
         if (not fb) and p.SoD.GetState('Feedback'): feedback = '$$t $name, Superspeed Mode'
 
-        if (self.GetState('HasSS')):
+        if (self.GetState('SpeedPower') != '-'):
             if (bl == 's'):
                 bindload = f"{t.bls}{t.KeyState()}.txt"
                 if (fix):
@@ -1109,7 +1120,7 @@ class MovementPowers(Page):
             t.gfly    = "Group Fly"
             if (self.GetState('TTPTPGFly')): t.ttpgfly = '$$powexectoggleon Group Fly'
 
-        if (self.GetState('HasSS')):
+        if (self.GetState('SpeedPower') != '-'):
             t.sprint = self.GetState('SprintPower')
             t.speed  = 'Super Speed'
         else:
@@ -1343,7 +1354,7 @@ class MovementPowers(Page):
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
 
-        elif (self.GetState('DefaultMode') == "Super Speed" and not self.GetState('HasSS')):
+        elif (self.GetState('DefaultMode') == "Speed" and not self.GetState('SpeedPower') != '-'):
             wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Super Speed mode but your character doesn't have Super Speed", "Mode Changed", wx.OK|wx.ICON_WARNING)
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
@@ -1464,12 +1475,12 @@ class MovementPowers(Page):
         t.blgsd       = f"$$bindloadfilesilent {t.gamepathgsd}"
 
         #  set up the keys to be used.
-        if (self.GetState('DefaultMode') != "NonSoD")      : t.NonSoDMode = self.GetState('NonSoDMode')
-        if (self.GetState('DefaultMode') != "Sprint")      : t.SprintMode = self.GetState('SprintMode')
-        if (self.GetState('DefaultMode') != "Fly")         : t.FlyMode    = self.GetState('FlyMode')
-        if (self.GetState('DefaultMode') != "Jump")        : t.JumpMode   = self.GetState('JumpMode')
-        if (self.GetState('DefaultMode') != "Super Speed") : t.RunMode    = self.GetState('RunMode')
-        if (self.GetState('DefaultMode') != "GFly")        : t.GFlyMode   = self.GetState('GFlyMode')
+        if (self.GetState('DefaultMode') != "NonSoD") : t.NonSoDMode = self.GetState('NonSoDMode')
+        if (self.GetState('DefaultMode') != "Sprint") : t.SprintMode = self.GetState('SprintMode')
+        if (self.GetState('DefaultMode') != "Fly")    : t.FlyMode    = self.GetState('FlyMode')
+        if (self.GetState('DefaultMode') != "Jump")   : t.JumpMode   = self.GetState('JumpMode')
+        if (self.GetState('DefaultMode') != "Speed")  : t.RunMode    = self.GetState('RunMode')
+        if (self.GetState('DefaultMode') != "GFly")   : t.GFlyMode   = self.GetState('GFlyMode')
         t.TempMode = self.GetState('TempMode')
 
         for space in (0,1):
@@ -1544,7 +1555,7 @@ class MovementPowers(Page):
                                     })
                                     setattr(t, self.GetState('DefaultMode') + "Mode", None)
 
-                                if (self.GetState('HasSS')):
+                                if (self.GetState('SpeedPower') != '-'):
                                     sssj = None
                                     setattr(t, self.GetState('DefaultMode') + "Mode", t.RunMode)
                                     if (self.GetState('SSSJModeEnable')): sssj = t.jump
@@ -2283,8 +2294,7 @@ UI.Labels.update( {
     'SimpleSJCJ'     : 'Simple Combat Jumping / Super Jump Toggle',
     'TakeoffKey'     : 'Takeoff Key',
 
-    'HasSS'          : 'Player has Super Speed',
-    'HasSoS'         : 'Player has Speed of Sound',
+    'SpeedPower'     : "Primary Speed Power",
     'RunMode'        : 'Toggle Super Speed Mode',
     'SSMobileOnly'   : 'SuperSpeed only when moving',
     'SSSJModeEnable' : 'Enable Super Speed / Super Jump Mode',

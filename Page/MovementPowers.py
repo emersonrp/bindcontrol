@@ -49,9 +49,8 @@ class MovementPowers(Page):
             'SSSJModeEnable'  : False,
             'JauntKey'        : "",
 
-            'HasSJ'           : False,
+            'JumpPower'       : '-',
             'HasCJ'           : False,
-            'HasML'           : False,
             'JumpMode'        : "T",
             'SimpleSJCJ'      : False,
             'TakeoffKey'      : "",
@@ -313,12 +312,10 @@ class MovementPowers(Page):
 
         ##### SUPER JUMP
         self.superJumpSizer = ControlGroup(self, self, 'Jumping')
-        self.superJumpSizer.AddControl( ctlName = 'HasSJ', ctlType = 'checkbox',)
-        self.Ctrls['HasSJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = ['-'])
+        self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
         self.superJumpSizer.AddControl( ctlName = 'HasCJ', ctlType = 'checkbox',)
         self.Ctrls['HasCJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.superJumpSizer.AddControl( ctlName = 'HasML', ctlType = 'checkbox',)
-        self.Ctrls['HasML'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',)
         self.superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',)
         self.superJumpSizer.AddControl( ctlName = 'TakeoffKey', ctlType = 'keybutton',)
@@ -397,7 +394,7 @@ class MovementPowers(Page):
         self.SynchronizeUI()
 
     def SynchronizeUI(self, evt = None):
-        #self.Freeze()
+        self.Freeze()
 
         try:
             c = self.Ctrls
@@ -454,19 +451,35 @@ class MovementPowers(Page):
             c['RunMode'].CtlLabel.Enable(self.GetState('SpeedPower') != '-' and self.GetState('DefaultMode') != "Speed")
             c['SSMobileOnly']         .Enable(self.GetState('SpeedPower') != '-')
             c['SSMobileOnly'].CtlLabel.Enable(self.GetState('SpeedPower') != '-')
-            c['SSSJModeEnable']         .Enable(self.GetState('SpeedPower') != '-' and self.GetState('HasSJ'))
-            c['SSSJModeEnable'].CtlLabel.Enable(self.GetState('SpeedPower') != '-' and self.GetState('HasSJ'))
+            c['SSSJModeEnable']         .Enable(self.GetState('SpeedPower') != '-' and self.GetState('JumpPower') != '-')
+            c['SSSJModeEnable'].CtlLabel.Enable(self.GetState('SpeedPower') != '-' and self.GetState('JumpPower') != '-')
             c['JauntKey']         .Enable(self.GetState('SpeedPower') == "Speed of Sound")
             c['JauntKey'].CtlLabel.Enable(self.GetState('SpeedPower') == "Speed of Sound")
 
-            c['SimpleSJCJ']         .Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
-            c['SimpleSJCJ'].CtlLabel.Enable(self.GetState('HasSJ') and self.GetState('HasCJ'))
-            c['JumpMode']           .Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
+            MLIdx = c['JumpPower'].FindString('Mighty Leap')
+            MLExists = MLIdx != wx.NOT_FOUND
+            if self.Profile.HasPowerPool('Force of Will'):
+                if not MLExists: c['JumpPower'].Append('Mighty Leap')
+            else:
+                if MLExists: c['JumpPower'].Delete(MLIdx)
+
+            SJIdx = c['JumpPower'].FindString('Super Jump')
+            SJExists = SJIdx != wx.NOT_FOUND
+            if self.Profile.HasPowerPool('Leaping'):
+                if not SJExists: c['JumpPower'].Append('Super Jump')
+            else:
+                if SJExists: c['JumpPower'].Delete(SJIdx)
+
+            c['HasCJ']         .Enable(self.Profile.HasPowerPool('Leaping'))
+            c['HasCJ'].CtlLabel.Enable(self.Profile.HasPowerPool('Leaping'))
+            c['SimpleSJCJ']         .Enable(self.GetState('JumpPower') != '-' and self.GetState('HasCJ'))
+            c['SimpleSJCJ'].CtlLabel.Enable(self.GetState('JumpPower') != '-' and self.GetState('HasCJ'))
+            c['JumpMode']           .Enable((self.GetState('JumpPower') != '-' or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
-            c['JumpMode'].CtlLabel.Enable((self.GetState('HasSJ') or self.GetState('HasCJ'))
+            c['JumpMode'].CtlLabel.Enable((self.GetState('JumpPower') != '-' or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
-            c['TakeoffKey']         .Enable(self.GetState('HasML'))
-            c['TakeoffKey'].CtlLabel.Enable(self.GetState('HasML'))
+            c['TakeoffKey']         .Enable(self.GetState('JumpPower') == "Mighty Leap")
+            c['TakeoffKey'].CtlLabel.Enable(self.GetState('JumpPower') == "Mighty Leap")
 
             FlightIdx = c['FlyPower'].FindString('Flight')
             FlightExists = FlightIdx != wx.NOT_FOUND
@@ -572,7 +585,7 @@ class MovementPowers(Page):
             print(f"Something blowed up in SoD SynchronizeUI:  {e}")
 
         finally:
-            #self.Thaw()
+            self.Thaw()
             self.Layout()
             if evt: evt.Skip()
 
@@ -1065,17 +1078,17 @@ class MovementPowers(Page):
         t = tObject(profile)
 
         ## Combat Jumping / Super Jump
-        if (self.GetState('HasCJ') and not self.GetState('HasSJ')):
+        if (self.GetState('HasCJ') and not self.GetState('JumpPower') != '-'):
             t.cancj = True
             t.cjmp  = "Combat Jumping"
             t.jump  = "Combat Jumping"
 
-        elif (not self.GetState('HasCJ') and self.GetState('HasSJ')):
+        elif (not self.GetState('HasCJ') and self.GetState('JumpPower') != '-'):
             t.canjmp     = True
             t.jump       = "Super Jump"
             t.jumpifnocj = "Super Jump"
 
-        elif self.GetState('HasCJ') and self.GetState('HasSJ'):
+        elif self.GetState('HasCJ') and self.GetState('JumpPower') != '-':
             t.cancj  = True
             t.canjmp = True
             t.cjmp   = "Combat Jumping"
@@ -1266,9 +1279,9 @@ class MovementPowers(Page):
         ###### End Kheldian power setup
 
         if (self.GetState('SimpleSJCJ')):
-            if (self.GetState('HasCJ') and self.GetState('HasSJ')):
+            if (self.GetState('HasCJ') and self.GetState('JumpPower') != '-'):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Super Jump$$powexecname Combat Jumping'))
-            elif (self.GetState('HasSJ')):
+            elif (self.GetState('JumpPower') != '-'):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Super Jump'))
             elif (self.GetState('HasCJ')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Combat Jumping'))
@@ -1349,7 +1362,7 @@ class MovementPowers(Page):
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
 
-        elif (self.GetState('DefaultMode') == "Jump" and not (self.GetState('HasCJ') or self.GetState('HasSJ'))):
+        elif (self.GetState('DefaultMode') == "Jump" and not (self.GetState('HasCJ') or self.GetState('JumpPower') != '-')):
             wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Jump mode but your character has neither Combat Jumping nor Super Jump.", "Mode Changed", wx.OK|wx.ICON_WARNING)
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
@@ -2282,14 +2295,13 @@ UI.Labels.update( {
     'DetailMove'     : 'Travelling Detail Level',
     'TPHideWindows'  : 'Hide Windows when Teleporting',
 
-    'HasSJ'          : 'Player has Super Jump',
-    'HasCJ'          : 'Player has Combat Jumping',
-    'HasML'          : 'Player has Mighty Leap',
     'NonSoDEnable'   : 'Enable Non-SoD Movement Mode',
     'NonSoDMode'     : 'Non-SoD Key',
     'SprintSoD'      : 'Enable Sprint SoD',
     'SprintMode'     : "Sprint Mode Key",
 
+    'JumpPower'      : "Primary Jump Power",
+    'HasCJ'          : 'Player has Combat Jumping',
     'JumpMode'       : 'Toggle Jump Mode',
     'SimpleSJCJ'     : 'Simple Combat Jumping / Super Jump Toggle',
     'TakeoffKey'     : 'Takeoff Key',

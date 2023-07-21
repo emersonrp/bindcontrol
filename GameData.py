@@ -731,6 +731,7 @@ SprintPowers = [
     'Athletic Run',
     'Beast Run',
     'Ninja Run',
+    'Infiltration',
 ]
 
 Inspirations = {

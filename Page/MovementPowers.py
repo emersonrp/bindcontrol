@@ -54,6 +54,7 @@ class MovementPowers(Page):
             'JumpMode'        : "T",
             'SimpleSJCJ'      : False,
             'TakeoffKey'      : "",
+            'DoubleJumpKey'   : "",
 
             'FlyPower'        : '',
             'HasHover'        : False,
@@ -319,6 +320,7 @@ class MovementPowers(Page):
         self.superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',)
         self.superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',)
         self.superJumpSizer.AddControl( ctlName = 'TakeoffKey', ctlType = 'keybutton',)
+        self.superJumpSizer.AddControl( ctlName = 'DoubleJumpKey', ctlType = 'keybutton',)
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
         ##### FLY
@@ -462,6 +464,7 @@ class MovementPowers(Page):
             c['JumpMode']  .Enable((self.GetState('JumpPower') or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
             c['TakeoffKey'].Enable(self.GetState('JumpPower') == "Mighty Leap")
+            c['DoubleJumpKey'].Enable(self.GetState('JumpPower') == "Super Jump")
 
             ### FLIGHT POWERS
             FlyIdx = c['FlyPower'].FindString('Fly')
@@ -1142,6 +1145,8 @@ class MovementPowers(Page):
             ResetFile.SetBind(self.Ctrls['JauntKey'].MakeFileKeyBind('powexecname Jaunt'))
         if self.Ctrls['TakeoffKey'].IsEnabled():
             ResetFile.SetBind(self.Ctrls['TakeoffKey'].MakeFileKeyBind('powexecname Takeoff'))
+        if self.Ctrls['DoubleJumpKey'].IsEnabled():
+            ResetFile.SetBind(self.Ctrls['DoubleJumpKey'].MakeFileKeyBind('powexecname Double Jump'))
 
         ###### Kheldian power setup
         #  create the Nova and Dwarf form support files if enabled.
@@ -2296,6 +2301,7 @@ UI.Labels.update( {
     'JumpMode'       : 'Toggle Jump Mode',
     'SimpleSJCJ'     : 'Simple Combat Jumping / Super Jump Toggle',
     'TakeoffKey'     : 'Takeoff Key',
+    'DoubleJumpKey'  : 'Double Jump Key',
 
     'SpeedPower'     : "Primary Speed Power",
     'RunMode'        : 'Toggle Super Speed Mode',

@@ -156,18 +156,17 @@ class Profile(wx.Notebook):
                 # if someone, say, turns on "disable self tell" with a bunch of custom colors defined
                 # if control.IsEnabled():
                     # look up what type of control it is to know how to extract its value
-                    controlType = type(control).__name__
-                    if controlType == 'DirPickerCtrl':
+                    if isinstance(control, wx.DirPickerCtrl):
                         value = control.GetPath()
-                    elif controlType == 'Button':
+                    elif isinstance(control, wx.Button):
                         value = control.GetLabel()
-                    elif controlType == 'bcKeyButton':
+                    elif isinstance(control, bcKeyButton):
                         value = control.Key
-                    elif controlType == 'ColourPickerCtrl' or controlType == 'ColourSelect':
+                    elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
                         value = control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
-                    elif controlType == 'Choice':
+                    elif isinstance(control, wx.Choice):
                         value = control.GetSelection()
-                    elif controlType == 'StaticText':
+                    elif isinstance(control, wx.StaticText):
                         continue
                     else:
                         value = control.GetValue()
@@ -229,19 +228,18 @@ class Profile(wx.Notebook):
                     if value is None: continue
 
                     # look up what type of control it is to know how to update its value
-                    controlType = type(control).__name__
-                    if controlType == 'DirPickerCtrl':
+                    if isinstance(control, wx.DirPickerCtrl):
                         control.SetPath(value)
-                    elif controlType == 'Button':
-                        control.SetLabel(value)
-                    elif controlType == 'bcKeyButton':
+                    elif isinstance(control, bcKeyButton):
                         control.SetLabel(value)
                         control.Key = value
-                    elif controlType == 'ColourPickerCtrl' or controlType == 'ColourSelect':
+                    elif isinstance(control, wx.Button):
+                        control.SetLabel(value)
+                    elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
                         control.SetColour(value)
-                        if controlType == 'ColourSelect':
+                        if isinstance(control, csel.ColourSelect):
                             wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
-                    elif controlType == 'Choice':
+                    elif isinstance(control, wx.Choice):
                         control.SetSelection(value)
                     else:
                         control.SetValue(value)

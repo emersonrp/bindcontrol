@@ -48,7 +48,7 @@ class ControlGroup(wx.StaticBoxSizer):
                 CtlLabel = wx.StaticText(CtlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
-            control = bcKeyButton( CtlParent, -1, )
+            control = cgbcKeyButton( CtlParent, -1, )
             control.SetLabel(Init[ctlName])
             # push context onto the button, we'll thank me later
             control.CtlName = ctlName
@@ -56,14 +56,14 @@ class ControlGroup(wx.StaticBoxSizer):
             control.Key     = Init[ctlName]
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
-            control = wx.ComboBox(
+            control = cgComboBox(
                 CtlParent, -1, Init[ctlName],
                 choices = contents or (), style = wx.CB_READONLY)
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback )
 
         elif (ctlType == 'bmcombo') or (ctlType == "bmcombobox"):
-            control = BitmapComboBox(
+            control = cgBMComboBox(
                 CtlParent, -1, '',
                 style = wx.CB_READONLY)
             if callback:
@@ -77,41 +77,41 @@ class ControlGroup(wx.StaticBoxSizer):
                 control.SetSelection(index)
 
         elif ctlType == ('text'):
-            control = wx.TextCtrl(CtlParent, -1, Init[ctlName])
+            control = cgTextCtrl(CtlParent, -1, Init[ctlName])
 
         elif ctlType == ('choice'):
             contents = contents if contents else []
-            control = wx.Choice(CtlParent, -1, choices = contents)
+            control = cgChoice(CtlParent, -1, choices = contents)
             control.SetSelection(control.FindString(Init[ctlName]))
             if callback:
                 control.Bind(wx.EVT_CHOICE, callback )
 
         elif ctlType == ('statictext'):
-            control = wx.StaticText(CtlParent, -1, contents)
+            control = cgStaticText(CtlParent, -1, contents)
 
         elif ctlType == ('checkbox'):
-            control = wx.CheckBox(CtlParent, -1, contents)
+            control = cgCheckBox(CtlParent, -1, contents)
             control.SetValue(bool(Init[ctlName]))
             padding = 6
             if callback:
                 control.Bind(wx.EVT_CHECKBOX, callback )
 
         elif ctlType == ('spinbox'):
-            control = wx.SpinCtrl(CtlParent, -1)
+            control = cgSpinCtrl(CtlParent, -1)
             control.SetValue(Init[ctlName])
             control.SetRange(*contents)
 
         elif ctlType == ('spinboxfractional'):
-            control = wx.SpinCtrlDouble(CtlParent, inc = 0.05)
+            control = cgSpinCtrlDouble(CtlParent, inc = 0.05)
             control.SetValue(Init[ctlName])
             control.SetRange(*contents)
 
         elif ctlType == ('dirpicker'):
-            control = wx.DirPickerCtrl(
+            control = cgDirPickerCtrl(
                 CtlParent, -1, Init[ctlName], Init[ctlName],
             )
         elif ctlType == ('colorpicker'):
-            control = wx.ColourPickerCtrl( CtlParent, -1, contents, size = (30,30))
+            control = cgColourPickerCtrl( CtlParent, -1, contents, size = (30,30))
 
         else:
             wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}")
@@ -120,7 +120,6 @@ class ControlGroup(wx.StaticBoxSizer):
         # Pack'em in there
         if tooltip: control.SetToolTip( wx.ToolTip(tooltip) )
 
-        control.CtlLabel = None
         if not noLabel and CtlLabel:
             CtlLabel.SetToolTip( wx.ToolTip(tooltip))
             self.InnerSizer.Add( CtlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
@@ -137,10 +136,32 @@ class ControlGroup(wx.StaticBoxSizer):
         self.Layout()
         return control
 
+    # check or uncheck checkboxes when clicking the associated label
     def OnCBLabelClick(self, evt):
         cblabel = evt.EventObject
         cblabel.control.SetValue(not cblabel.control.IsChecked())
         fakeevt = wx.CommandEvent(wx.EVT_CHECKBOX.typeId, cblabel.control.GetId())
         wx.PostEvent(cblabel.control, fakeevt)
         evt.Skip()
+
+class HasLabelMixin():
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.CtlLabel = None
+
+    def Enable(self, doEnable):
+        super().Enable(doEnable)
+        if self.CtlLabel: self.CtlLabel.Enable(doEnable)
+
+class cgbcKeyButton     (HasLabelMixin, bcKeyButton)         : pass
+class cgComboBox        (HasLabelMixin, wx.ComboBox)         : pass
+class cgBMComboBox      (HasLabelMixin, BitmapComboBox)      : pass
+class cgTextCtrl        (HasLabelMixin, wx.TextCtrl)         : pass
+class cgChoice          (HasLabelMixin, wx.Choice)           : pass
+class cgStaticText      (HasLabelMixin, wx.StaticText)       : pass
+class cgCheckBox        (HasLabelMixin, wx.CheckBox)         : pass
+class cgSpinCtrl        (HasLabelMixin, wx.SpinCtrl)         : pass
+class cgSpinCtrlDouble  (HasLabelMixin, wx.SpinCtrlDouble)   : pass
+class cgDirPickerCtrl   (HasLabelMixin, wx.DirPickerCtrl)    : pass
+class cgColourPickerCtrl(HasLabelMixin, wx.ColourPickerCtrl) : pass
 

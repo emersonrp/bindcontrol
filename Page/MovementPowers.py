@@ -437,10 +437,10 @@ class MovementPowers(Page):
             else:
                 if SSExists: c['SpeedPower'].Delete(SSIdx)
 
-            c['RunMode']         .Enable(bool(self.GetState('SpeedPower')) and self.GetState('DefaultMode') != "Speed")
-            c['SSMobileOnly']         .Enable(bool(self.GetState('SpeedPower')))
-            c['SSSJModeEnable']         .Enable(bool(self.GetState('SpeedPower') and self.GetState('JumpPower')))
-            c['JauntKey']         .Enable(self.GetState('SpeedPower') == "Speed of Sound")
+            c['RunMode'].Enable(bool(self.GetState('SpeedPower')) and self.GetState('DefaultMode') != "Speed")
+            c['SSMobileOnly'].Enable(bool(self.GetState('SpeedPower')))
+            c['SSSJModeEnable'].Enable(bool(self.GetState('SpeedPower') and self.GetState('JumpPower')))
+            c['JauntKey'].Enable(self.GetState('SpeedPower') == "Speed of Sound")
 
             ### JUMP POWERS
             MLIdx = c['JumpPower'].FindString('Mighty Leap')
@@ -457,19 +457,19 @@ class MovementPowers(Page):
             else:
                 if SJExists: c['JumpPower'].Delete(SJIdx)
 
-            c['HasCJ']         .Enable(self.Profile.HasPowerPool('Leaping'))
-            c['SimpleSJCJ']         .Enable(bool(self.GetState('JumpPower') and self.GetState('HasCJ')))
-            c['JumpMode']           .Enable((self.GetState('JumpPower') or self.GetState('HasCJ'))
+            c['HasCJ'].Enable(self.Profile.HasPowerPool('Leaping'))
+            c['SimpleSJCJ'].Enable(bool(self.GetState('JumpPower') and self.GetState('HasCJ')))
+            c['JumpMode']  .Enable((self.GetState('JumpPower') or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
-            c['TakeoffKey']         .Enable(self.GetState('JumpPower') == "Mighty Leap")
+            c['TakeoffKey'].Enable(self.GetState('JumpPower') == "Mighty Leap")
 
             ### FLIGHT POWERS
-            FlightIdx = c['FlyPower'].FindString('Flight')
-            FlightExists = FlightIdx != wx.NOT_FOUND
+            FlyIdx = c['FlyPower'].FindString('Fly')
+            FlyExists = FlyIdx != wx.NOT_FOUND
             if self.Profile.HasPowerPool('Flight'):
-                if not FlightExists: c['FlyPower'].Append('Flight')
+                if not FlyExists: c['FlyPower'].Append('Fly')
             else:
-                if FlightExists: c['FlyPower'].Delete(FlightIdx)
+                if FlyExists: c['FlyPower'].Delete(FlyIdx)
 
             MFlightIdx = c['FlyPower'].FindString('Mystic Flight')
             MFlightExists = MFlightIdx != wx.NOT_FOUND
@@ -478,17 +478,17 @@ class MovementPowers(Page):
             else:
                 if MFlightExists: c['FlyPower'].Delete(MFlightIdx)
 
-            c['FlyMode']         .Enable((self.GetState('FlyPower') or self.GetState('HasCF'))
+            c['FlyMode'].Enable((self.GetState('FlyPower') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
-            c['HasHover']         .Enable(self.Profile.HasPowerPool('Flight'))
-            c['AfterburnerKey']         .Enable(self.GetState('FlyPower') == 'Flight')
+            c['HasHover'].Enable(self.Profile.HasPowerPool('Flight'))
+            c['AfterburnerKey'].Enable(self.GetState('FlyPower') == 'Fly')
 
             c['GFlyMode'].Enable(self.GetState('HasGFly'))
 
             ### TELEPORT POWERS
-            c['TPBindKey']         .Enable(self.GetState('HasTP'))
-            c['TPComboKey']         .Enable(self.GetState('HasTP'))
-            c['TPTPHover']         .Enable(self.GetState('HasTP') and self.GetState('HasHover'))
+            c['TPBindKey'].Enable(self.GetState('HasTP'))
+            c['TPComboKey'].Enable(self.GetState('HasTP'))
+            c['TPTPHover'].Enable(self.GetState('HasTP') and self.GetState('HasHover'))
 
             c['TTPBindKey'].Enable(self.GetState('HasTTP'))
             c['TTPComboKey'].Enable(self.GetState('HasTTP'))
@@ -613,6 +613,7 @@ class MovementPowers(Page):
 
             self.sodFollowKey(t,blf,curfile,mobile)
 
+        # TODO is (flight == "Fly") correct here or do we want this for MF, too?
         if (flight and (flight == "Fly") and pathbo):
             #  blast off
             curfile = profile.GetBindFile(f"{pathbo}{t.KeyState()}.txt")
@@ -689,6 +690,7 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
         self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
 
+        # TODO is (flight == "Fly") correct here or do we want this for MF, too?
         if ((flight == "Fly") and pathbo):
             #  Base to set down
             if (modestr != "NonSoD") : self.makeNonSoDModeKey(profile,t,"r",curfile,[ mobile,stationary ],self.sodSetDownFix)
@@ -728,6 +730,7 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
         self.sodRightKey  (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
 
+        # TODO is (flight == "Fly") correct here or do we want this for MF, too?
         if ((flight == "Fly") and pathbo):
             if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"ar",curfile,[ mobile,stationary ],self.sodSetDownFix)
             if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,self.sodSetDownFix)
@@ -757,6 +760,7 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
         self.sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
 
+        # TODO is (flight == "Fly") correct here or do we want this for MF, too?
         if ((flight == "Fly") and pathbo):
             if (modestr != "NonSoD"): self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ],self.sodSetDownFix)
             if (modestr != "Sprint"): self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,self.sodSetDownFix)
@@ -871,7 +875,7 @@ class MovementPowers(Page):
         if not self.Ctrls['RunMode'].IsEnabled(): return
         bindload = feedback = ''
 
-        if (not fb) and p.SoD.GetState('Feedback'): feedback = '$$t $name, Superspeed Mode'
+        if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Superspeed Mode'
 
         if (self.GetState('SpeedPower')):
             if (bl == 's'):
@@ -1055,17 +1059,20 @@ class MovementPowers(Page):
 
         elif (not self.GetState('HasCJ') and self.GetState('JumpPower')):
             t.canjmp     = True
-            t.jump       = "Super Jump"
-            t.jumpifnocj = "Super Jump"
+            t.jump       = self.GetState('JumpPower')
+            t.jumpifnocj = self.GetState('JumpPower')
 
         elif self.GetState('HasCJ') and self.GetState('JumpPower'):
             t.cancj  = True
             t.canjmp = True
             t.cjmp   = "Combat Jumping"
-            t.jump   = "Super Jump"
+            t.jump   = self.GetState('JumpPower')
 
         ## Flying / hover
         if (profile.Archetype() == "Peacebringer"):
+            # TODO - wrap kheldian powers into the FlyPower picker and use that.
+            # TODO - this will involve probably having an automatic "HoverPower" notion
+            #        or do Peacebringers sometimes take Flight?
             if (self.GetState('HasHover')):
                 t.canhov = True
                 t.canfly = True
@@ -1085,14 +1092,14 @@ class MovementPowers(Page):
                 if (self.GetState('TPTPHover')): t.tphover = '$$powexectoggleon Hover'
             elif (not self.GetState('HasHover') and self.GetState('FlyPower')):
                 t.canfly = True
-                t.hover  = "Fly"
-                t.flyx   = "Fly"
+                t.hover  = self.GetState('FlyPower')
+                t.flyx   = self.GetState('FlyPower')
             elif (self.GetState('HasHover') and self.GetState('FlyPower')):
                 t.canhov = True
                 t.canfly = True
                 t.hover  = "Hover"
-                t.fly    = "Fly"
-                t.flyx   = "Fly"
+                t.fly    = self.GetState('FlyPower')
+                t.flyx   = self.GetState('FlyPower')
                 if (self.GetState('TPTPHover')): t.tphover = '$$powexectoggleon Hover'
 
         if ((profile.Archetype() == "Peacebringer") and self.GetState('FlyQFly')):
@@ -1105,7 +1112,7 @@ class MovementPowers(Page):
 
         if (self.GetState('SpeedPower')):
             t.sprint = self.GetState('SprintPower')
-            t.speed  = 'Super Speed'
+            t.speed  = self.GetState('SpeedPower')
         else:
             t.sprint = self.GetState('SprintPower')
             t.speed  = self.GetState('SprintPower')
@@ -1122,7 +1129,19 @@ class MovementPowers(Page):
             t.detailhi = f"$$visscale {self.GetState('DetailBase')}$$shadowvol 0$$ss 0"
             t.detaillo = f"$$visscale {self.GetState('DetailMove')}$$shadowvol 0$$ss 0"
 
+        ###
+        ### Here's where we go into the giant SoD tangle, conditionally
+        ###
         if self.GetState('EnableSoD'): self.doSpeedOnDemandBinds(t)
+
+        # Make binds for the "stage 2" travel powers like Afterburner, if appropriate
+        if self.Ctrls['AfterburnerKey'].IsEnabled():
+            # TODO - this will be "self.AfterburnerPower" when we merge Kheldian logic later
+            ResetFile.SetBind(self.Ctrls['AfterburnerKey'].MakeFileKeyBind('powexecname Afterburner'))
+        if self.Ctrls['JauntKey'].IsEnabled():
+            ResetFile.SetBind(self.Ctrls['JauntKey'].MakeFileKeyBind('powexecname Jaunt'))
+        if self.Ctrls['TakeoffKey'].IsEnabled():
+            ResetFile.SetBind(self.Ctrls['TakeoffKey'].MakeFileKeyBind('powexecname Takeoff'))
 
         ###### Kheldian power setup
         #  create the Nova and Dwarf form support files if enabled.
@@ -1131,6 +1150,7 @@ class MovementPowers(Page):
         Nova = Dwarf = {}
         humanBindKey = humanpbind = novapbind = dwarfpbind = None
         dwarfTPPower = normalTPPower = teamTPPower = ''
+        ### TODO TODO TODO - these are just in here to make pylint happy;  fix the actual problem
 
         if self.GetState('TPHideWindows'):
             windowhide = '$$windowhide health$$windowhide chat$$windowhide target$$windowhide tray'
@@ -1601,7 +1621,7 @@ class MovementPowers(Page):
                                         'mobile'     : t.flyx,
                                         'stationary' : t.hover,
                                         'modestr'    : "Fly",
-                                        'flight'     : "Fly",
+                                        'flight'     : self.GetState('FlyPower'),
                                     })
                                     setattr(t, self.GetState('DefaultMode') + "Mode", None)
 
@@ -1644,7 +1664,7 @@ class MovementPowers(Page):
                                         'mobile'     : trayslot,
                                         'stationary' : trayslot,
                                         'modestr'    : "Temp",
-                                        'flight'     : "Fly",
+                                        'flight'     : self.GetState('FlyPower'),
                                     })
                                     setattr(t, self.GetState('DefaultMode') + "Mode", None)
 
@@ -1662,6 +1682,7 @@ class MovementPowers(Page):
         t.lefx = '$$left '     + str((1-t.A))
         t.rig  = '$$right '    + str(   t.D)
         t.rigx = '$$right '    + str((1-t.D))
+
     def sodResetKey(self, curfile, gamepath, turnoff, moddir):
 
         u = int(moddir == 'up')

@@ -419,20 +419,15 @@ class Mastermind(Page):
 
         for c in ['PetBodyguard','PetBodyguardResponseMethod','PetBodyguardResponse']:
             self.Ctrls[c].Enable(petcmdenabled and bgEnabled)
-            if self.Ctrls[c].CtlLabel:
-                self.Ctrls[c].CtlLabel.Enable(petcmdenabled and bgEnabled)
 
-        self.Ctrls['PetBodyguardAttack']         .Enable(petcmdenabled and bgEnabled and bgAttack)
-        self.Ctrls['PetBodyguardAttack'].CtlLabel.Enable(petcmdenabled and bgEnabled and bgAttack)
-        self.Ctrls['PetBodyguardGoto']           .Enable(petcmdenabled and bgEnabled and bgGoto)
-        self.Ctrls['PetBodyguardGoto']  .CtlLabel.Enable(petcmdenabled and bgEnabled and bgGoto)
+        self.Ctrls['PetBodyguardAttack'].Enable(petcmdenabled and bgEnabled and bgAttack)
+        self.Ctrls['PetBodyguardGoto']  .Enable(petcmdenabled and bgEnabled and bgGoto)
 
         self.Ctrls['PetBodyguardAttackEnabled'].Enable(petcmdenabled and bgEnabled)
         self.Ctrls['PetBodyguardGotoEnabled']  .Enable(petcmdenabled and bgEnabled)
 
         for petid in [1,2,3,4,5,6]:
-            self.Ctrls[f"Pet{petid}Bodyguard"]         .Enable(petcmdenabled and bgEnabled)
-            self.Ctrls[f"Pet{petid}Bodyguard"].CtlLabel.Enable(petcmdenabled and bgEnabled)
+            self.Ctrls[f"Pet{petid}Bodyguard"].Enable(petcmdenabled and bgEnabled)
         if evt: evt.Skip()
 
     ### BIND CREATION METHODS

@@ -214,12 +214,10 @@ class BufferBindPane(CustomBindPaneParent):
     def SynchronizeUI(self, _ = None):
         useteam = self.Ctrls['BuffsAffectTeam'].GetValue()
         for i in [1,2,3,4,5,6,7,8]:
-            self.Ctrls[f'Team{i}BuffKey']         .Enable(useteam)
-            self.Ctrls[f'Team{i}BuffKey'].CtlLabel.Enable(useteam)
+            self.Ctrls[f'Team{i}BuffKey'].Enable(useteam)
         usepet = self.Ctrls['BuffsAffectPets'].GetValue()
         for i in [1,2,3,4,5,6]:
-            self.Ctrls[f'Pet{i}BuffKey']         .Enable(usepet)
-            self.Ctrls[f'Pet{i}BuffKey'].CtlLabel.Enable(usepet)
+            self.Ctrls[f'Pet{i}BuffKey'].Enable(usepet)
 
     def Serialize(self):
         data = {

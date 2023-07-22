@@ -407,31 +407,20 @@ class MovementPowers(Page):
             # for cname,control in c.items():
             #     if cname != 'EnableSoD':  # don't disable yourself kthx
             #         control.Enable(self.GetState('EnableSoD'))
-            #         if not isinstance(control.CtlLabel, str):
-            #             control.CtlLabel.Enable(self.GetState('EnableSoD'))
 
-            c['NonSoDMode']         .Enable(self.GetState('NonSoDEnable'))
-            c['NonSoDMode'].CtlLabel.Enable(self.GetState('NonSoDEnable'))
+            c['NonSoDMode'].Enable(self.GetState('NonSoDEnable'))
 
-            c['SprintMode']         .Enable(self.GetState('SprintSoD') and self.GetState('DefaultMode') != "Sprint")
-            c['SprintMode'].CtlLabel.Enable(self.GetState('SprintSoD') and self.GetState('DefaultMode') != "Sprint")
+            c['SprintMode'].Enable(self.GetState('SprintSoD') and self.GetState('DefaultMode') != "Sprint")
 
-            c['CamdistBase']         .Enable(self.GetState('ChangeCamera'))
-            c['CamdistBase'].CtlLabel.Enable(self.GetState('ChangeCamera'))
-            c['CamdistMove']         .Enable(self.GetState('ChangeCamera'))
-            c['CamdistMove'].CtlLabel.Enable(self.GetState('ChangeCamera'))
+            c['CamdistBase'].Enable(self.GetState('ChangeCamera'))
+            c['CamdistMove'].Enable(self.GetState('ChangeCamera'))
 
-            c['DetailBase']         .Enable(self.GetState('ChangeDetail'))
-            c['DetailBase'].CtlLabel.Enable(self.GetState('ChangeDetail'))
-            c['DetailMove']         .Enable(self.GetState('ChangeDetail'))
-            c['DetailMove'].CtlLabel.Enable(self.GetState('ChangeDetail'))
+            c['DetailBase'].Enable(self.GetState('ChangeDetail'))
+            c['DetailMove'].Enable(self.GetState('ChangeDetail'))
 
-            c['TempMode']         .Enable(self.GetState('TempEnable'))
-            c['TempMode'].CtlLabel.Enable(self.GetState('TempEnable'))
-            c['TempTray']         .Enable(self.GetState('TempEnable'))
-            c['TempTray'].CtlLabel.Enable(self.GetState('TempEnable'))
-            c['TempTraySwitch']         .Enable(self.GetState('TempEnable'))
-            c['TempTraySwitch'].CtlLabel.Enable(self.GetState('TempEnable'))
+            c['TempMode'].Enable(self.GetState('TempEnable'))
+            c['TempTray'].Enable(self.GetState('TempEnable'))
+            c['TempTraySwitch'].Enable(self.GetState('TempEnable'))
 
             ### SPEED POWERS
             SoSIdx = c['SpeedPower'].FindString('Speed of Sound')
@@ -449,13 +438,9 @@ class MovementPowers(Page):
                 if SSExists: c['SpeedPower'].Delete(SSIdx)
 
             c['RunMode']         .Enable(bool(self.GetState('SpeedPower')) and self.GetState('DefaultMode') != "Speed")
-            c['RunMode'].CtlLabel.Enable(bool(self.GetState('SpeedPower')) and self.GetState('DefaultMode') != "Speed")
             c['SSMobileOnly']         .Enable(bool(self.GetState('SpeedPower')))
-            c['SSMobileOnly'].CtlLabel.Enable(bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable']         .Enable(bool(self.GetState('SpeedPower') and self.GetState('JumpPower')))
-            c['SSSJModeEnable'].CtlLabel.Enable(bool(self.GetState('SpeedPower') and self.GetState('JumpPower')))
             c['JauntKey']         .Enable(self.GetState('SpeedPower') == "Speed of Sound")
-            c['JauntKey'].CtlLabel.Enable(self.GetState('SpeedPower') == "Speed of Sound")
 
             ### JUMP POWERS
             MLIdx = c['JumpPower'].FindString('Mighty Leap')
@@ -473,15 +458,10 @@ class MovementPowers(Page):
                 if SJExists: c['JumpPower'].Delete(SJIdx)
 
             c['HasCJ']         .Enable(self.Profile.HasPowerPool('Leaping'))
-            c['HasCJ'].CtlLabel.Enable(self.Profile.HasPowerPool('Leaping'))
             c['SimpleSJCJ']         .Enable(bool(self.GetState('JumpPower') and self.GetState('HasCJ')))
-            c['SimpleSJCJ'].CtlLabel.Enable(bool(self.GetState('JumpPower') and self.GetState('HasCJ')))
             c['JumpMode']           .Enable((self.GetState('JumpPower') or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
-            c['JumpMode'].CtlLabel.Enable((self.GetState('JumpPower') or self.GetState('HasCJ'))
-                                          and self.GetState('DefaultMode') != "Jump")
             c['TakeoffKey']         .Enable(self.GetState('JumpPower') == "Mighty Leap")
-            c['TakeoffKey'].CtlLabel.Enable(self.GetState('JumpPower') == "Mighty Leap")
 
             ### FLIGHT POWERS
             FlightIdx = c['FlyPower'].FindString('Flight')
@@ -500,39 +480,24 @@ class MovementPowers(Page):
 
             c['FlyMode']         .Enable((self.GetState('FlyPower') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
-            c['FlyMode'].CtlLabel.Enable((self.GetState('FlyPower') or self.GetState('HasCF'))
-                                          and self.GetState('DefaultMode') != "Fly")
             c['HasHover']         .Enable(self.Profile.HasPowerPool('Flight'))
-            c['HasHover'].CtlLabel.Enable(self.Profile.HasPowerPool('Flight'))
             c['AfterburnerKey']         .Enable(self.GetState('FlyPower') == 'Flight')
-            c['AfterburnerKey'].CtlLabel.Enable(self.GetState('FlyPower') == 'Flight')
 
-            c['GFlyMode']         .Enable(self.GetState('HasGFly'))
-            c['GFlyMode'].CtlLabel.Enable(self.GetState('HasGFly'))
+            c['GFlyMode'].Enable(self.GetState('HasGFly'))
 
             ### TELEPORT POWERS
             c['TPBindKey']         .Enable(self.GetState('HasTP'))
-            c['TPBindKey'].CtlLabel.Enable(self.GetState('HasTP'))
             c['TPComboKey']         .Enable(self.GetState('HasTP'))
-            c['TPComboKey'].CtlLabel.Enable(self.GetState('HasTP'))
             c['TPTPHover']         .Enable(self.GetState('HasTP') and self.GetState('HasHover'))
-            c['TPTPHover'].CtlLabel.Enable(self.GetState('HasTP') and self.GetState('HasHover'))
 
-            c['TTPBindKey']         .Enable(self.GetState('HasTTP'))
-            c['TTPBindKey'].CtlLabel.Enable(self.GetState('HasTTP'))
-            c['TTPComboKey']         .Enable(self.GetState('HasTTP'))
-            c['TTPComboKey'].CtlLabel.Enable(self.GetState('HasTTP'))
-            c['TTPTPGFly']         .Enable(self.GetState('HasTTP') and self.GetState('HasGFly'))
-            c['TTPTPGFly'].CtlLabel.Enable(self.GetState('HasTTP') and self.GetState('HasGFly'))
+            c['TTPBindKey'].Enable(self.GetState('HasTTP'))
+            c['TTPComboKey'].Enable(self.GetState('HasTTP'))
+            c['TTPTPGFly'].Enable(self.GetState('HasTTP') and self.GetState('HasGFly'))
 
-            c['NovaMode']         .Enable(self.GetState('UseNova'))
-            c['NovaMode'].CtlLabel.Enable(self.GetState('UseNova'))
-            c['NovaTray']         .Enable(self.GetState('UseNova'))
-            c['NovaTray'].CtlLabel.Enable(self.GetState('UseNova'))
-            c['DwarfMode']         .Enable(self.GetState('UseDwarf'))
-            c['DwarfMode'].CtlLabel.Enable(self.GetState('UseDwarf'))
-            c['DwarfTray']         .Enable(self.GetState('UseDwarf'))
-            c['DwarfTray'].CtlLabel.Enable(self.GetState('UseDwarf'))
+            c['NovaMode'].Enable(self.GetState('UseNova'))
+            c['NovaTray'].Enable(self.GetState('UseNova'))
+            c['DwarfMode'].Enable(self.GetState('UseDwarf'))
+            c['DwarfTray'].Enable(self.GetState('UseDwarf'))
 
             # TODO - for now, hide temp travel power stuff;
             # redo later using named power instead of trayslots

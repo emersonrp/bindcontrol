@@ -43,19 +43,19 @@ class MovementPowers(Page):
             'NonSoDEnable'    : False,
             'NonSoDMode'      : '[',
 
-            'SpeedPower'      : '-',
+            'SpeedPower'      : '',
             'RunMode'         : "C",
             'SSMobileOnly'    : False,
             'SSSJModeEnable'  : False,
             'JauntKey'        : "",
 
-            'JumpPower'       : '-',
+            'JumpPower'       : '',
             'HasCJ'           : False,
             'JumpMode'        : "T",
             'SimpleSJCJ'      : False,
             'TakeoffKey'      : "",
 
-            'FlyPower'        : "-",
+            'FlyPower'        : '',
             'HasHover'        : False,
             'HasGFly'         : False,
             'HasCF'           : False, # hidden
@@ -302,7 +302,7 @@ class MovementPowers(Page):
 
         ##### SUPER SPEED
         self.superSpeedSizer = ControlGroup(self, self, 'Speed')
-        self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = ['-'])
+        self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''])
         self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
         self.superSpeedSizer.AddControl( ctlName = 'RunMode', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl( ctlName = 'JauntKey', ctlType = 'keybutton',)
@@ -312,7 +312,7 @@ class MovementPowers(Page):
 
         ##### SUPER JUMP
         self.superJumpSizer = ControlGroup(self, self, 'Jumping')
-        self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = ['-'])
+        self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''])
         self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
         self.superJumpSizer.AddControl( ctlName = 'HasCJ', ctlType = 'checkbox',)
         self.Ctrls['HasCJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
@@ -323,7 +323,7 @@ class MovementPowers(Page):
 
         ##### FLY
         self.flySizer = ControlGroup(self, self, 'Flight')
-        self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = ['-'])
+        self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''])
         self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',)
         self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
@@ -433,6 +433,7 @@ class MovementPowers(Page):
             c['TempTraySwitch']         .Enable(self.GetState('TempEnable'))
             c['TempTraySwitch'].CtlLabel.Enable(self.GetState('TempEnable'))
 
+            ### SPEED POWERS
             SoSIdx = c['SpeedPower'].FindString('Speed of Sound')
             SoSExists = SoSIdx != wx.NOT_FOUND
             if self.Profile.HasPowerPool('Experimentation'):
@@ -447,15 +448,16 @@ class MovementPowers(Page):
             else:
                 if SSExists: c['SpeedPower'].Delete(SSIdx)
 
-            c['RunMode']         .Enable(self.GetState('SpeedPower') != '-' and self.GetState('DefaultMode') != "Speed")
-            c['RunMode'].CtlLabel.Enable(self.GetState('SpeedPower') != '-' and self.GetState('DefaultMode') != "Speed")
-            c['SSMobileOnly']         .Enable(self.GetState('SpeedPower') != '-')
-            c['SSMobileOnly'].CtlLabel.Enable(self.GetState('SpeedPower') != '-')
-            c['SSSJModeEnable']         .Enable(self.GetState('SpeedPower') != '-' and self.GetState('JumpPower') != '-')
-            c['SSSJModeEnable'].CtlLabel.Enable(self.GetState('SpeedPower') != '-' and self.GetState('JumpPower') != '-')
+            c['RunMode']         .Enable(bool(self.GetState('SpeedPower')) and self.GetState('DefaultMode') != "Speed")
+            c['RunMode'].CtlLabel.Enable(bool(self.GetState('SpeedPower')) and self.GetState('DefaultMode') != "Speed")
+            c['SSMobileOnly']         .Enable(bool(self.GetState('SpeedPower')))
+            c['SSMobileOnly'].CtlLabel.Enable(bool(self.GetState('SpeedPower')))
+            c['SSSJModeEnable']         .Enable(bool(self.GetState('SpeedPower') and self.GetState('JumpPower')))
+            c['SSSJModeEnable'].CtlLabel.Enable(bool(self.GetState('SpeedPower') and self.GetState('JumpPower')))
             c['JauntKey']         .Enable(self.GetState('SpeedPower') == "Speed of Sound")
             c['JauntKey'].CtlLabel.Enable(self.GetState('SpeedPower') == "Speed of Sound")
 
+            ### JUMP POWERS
             MLIdx = c['JumpPower'].FindString('Mighty Leap')
             MLExists = MLIdx != wx.NOT_FOUND
             if self.Profile.HasPowerPool('Force of Will'):
@@ -472,15 +474,16 @@ class MovementPowers(Page):
 
             c['HasCJ']         .Enable(self.Profile.HasPowerPool('Leaping'))
             c['HasCJ'].CtlLabel.Enable(self.Profile.HasPowerPool('Leaping'))
-            c['SimpleSJCJ']         .Enable(self.GetState('JumpPower') != '-' and self.GetState('HasCJ'))
-            c['SimpleSJCJ'].CtlLabel.Enable(self.GetState('JumpPower') != '-' and self.GetState('HasCJ'))
-            c['JumpMode']           .Enable((self.GetState('JumpPower') != '-' or self.GetState('HasCJ'))
+            c['SimpleSJCJ']         .Enable(bool(self.GetState('JumpPower') and self.GetState('HasCJ')))
+            c['SimpleSJCJ'].CtlLabel.Enable(bool(self.GetState('JumpPower') and self.GetState('HasCJ')))
+            c['JumpMode']           .Enable((self.GetState('JumpPower') or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
-            c['JumpMode'].CtlLabel.Enable((self.GetState('JumpPower') != '-' or self.GetState('HasCJ'))
+            c['JumpMode'].CtlLabel.Enable((self.GetState('JumpPower') or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
             c['TakeoffKey']         .Enable(self.GetState('JumpPower') == "Mighty Leap")
             c['TakeoffKey'].CtlLabel.Enable(self.GetState('JumpPower') == "Mighty Leap")
 
+            ### FLIGHT POWERS
             FlightIdx = c['FlyPower'].FindString('Flight')
             FlightExists = FlightIdx != wx.NOT_FOUND
             if self.Profile.HasPowerPool('Flight'):
@@ -495,9 +498,9 @@ class MovementPowers(Page):
             else:
                 if MFlightExists: c['FlyPower'].Delete(MFlightIdx)
 
-            c['FlyMode']         .Enable((self.GetState('FlyPower') != '-' or self.GetState('HasCF'))
+            c['FlyMode']         .Enable((self.GetState('FlyPower') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
-            c['FlyMode'].CtlLabel.Enable((self.GetState('FlyPower') != '-' or self.GetState('HasCF'))
+            c['FlyMode'].CtlLabel.Enable((self.GetState('FlyPower') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
             c['HasHover']         .Enable(self.Profile.HasPowerPool('Flight'))
             c['HasHover'].CtlLabel.Enable(self.Profile.HasPowerPool('Flight'))
@@ -507,6 +510,7 @@ class MovementPowers(Page):
             c['GFlyMode']         .Enable(self.GetState('HasGFly'))
             c['GFlyMode'].CtlLabel.Enable(self.GetState('HasGFly'))
 
+            ### TELEPORT POWERS
             c['TPBindKey']         .Enable(self.GetState('HasTP'))
             c['TPBindKey'].CtlLabel.Enable(self.GetState('HasTP'))
             c['TPComboKey']         .Enable(self.GetState('HasTP'))
@@ -583,6 +587,7 @@ class MovementPowers(Page):
 
         except Exception as e:
             print(f"Something blowed up in SoD SynchronizeUI:  {e}")
+            raise e
 
         finally:
             self.Thaw()
@@ -665,7 +670,7 @@ class MovementPowers(Page):
                 if (self.GetState('SprintSoD')):
                     t.FlyMode = t.SprintMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                if (self.GetState('SpeedPower') != '-'):
+                if (self.GetState('SpeedPower')):
                     t.FlyMode = t.RunMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
                 if (t.canjmp):
@@ -903,7 +908,7 @@ class MovementPowers(Page):
 
         if (not fb) and p.SoD.GetState('Feedback'): feedback = '$$t $name, Superspeed Mode'
 
-        if (self.GetState('SpeedPower') != '-'):
+        if (self.GetState('SpeedPower')):
             if (bl == 's'):
                 bindload = f"{t.bls}{t.KeyState()}.txt"
                 if (fix):
@@ -1078,17 +1083,17 @@ class MovementPowers(Page):
         t = tObject(profile)
 
         ## Combat Jumping / Super Jump
-        if (self.GetState('HasCJ') and not self.GetState('JumpPower') != '-'):
+        if (self.GetState('HasCJ') and not self.GetState('JumpPower')):
             t.cancj = True
             t.cjmp  = "Combat Jumping"
             t.jump  = "Combat Jumping"
 
-        elif (not self.GetState('HasCJ') and self.GetState('JumpPower') != '-'):
+        elif (not self.GetState('HasCJ') and self.GetState('JumpPower')):
             t.canjmp     = True
             t.jump       = "Super Jump"
             t.jumpifnocj = "Super Jump"
 
-        elif self.GetState('HasCJ') and self.GetState('JumpPower') != '-':
+        elif self.GetState('HasCJ') and self.GetState('JumpPower'):
             t.cancj  = True
             t.canjmp = True
             t.cjmp   = "Combat Jumping"
@@ -1108,16 +1113,16 @@ class MovementPowers(Page):
                 t.flyx   = "Energy Flight"
 
         elif (not (profile.Archetype() == "Warshade")):
-            if (self.GetState('HasHover') and not self.GetState('FlyPower') != '-'):
+            if (self.GetState('HasHover') and not self.GetState('FlyPower')):
                 t.canhov = True
                 t.hover  = "Hover"
                 t.flyx   = "Hover"
                 if (self.GetState('TPTPHover')): t.tphover = '$$powexectoggleon Hover'
-            elif (not self.GetState('HasHover') and self.GetState('FlyPower') != '-'):
+            elif (not self.GetState('HasHover') and self.GetState('FlyPower')):
                 t.canfly = True
                 t.hover  = "Fly"
                 t.flyx   = "Fly"
-            elif (self.GetState('HasHover') and self.GetState('FlyPower') != '-'):
+            elif (self.GetState('HasHover') and self.GetState('FlyPower')):
                 t.canhov = True
                 t.canfly = True
                 t.hover  = "Hover"
@@ -1133,7 +1138,7 @@ class MovementPowers(Page):
             t.gfly    = "Group Fly"
             if (self.GetState('TTPTPGFly')): t.ttpgfly = '$$powexectoggleon Group Fly'
 
-        if (self.GetState('SpeedPower') != '-'):
+        if (self.GetState('SpeedPower')):
             t.sprint = self.GetState('SprintPower')
             t.speed  = 'Super Speed'
         else:
@@ -1279,9 +1284,9 @@ class MovementPowers(Page):
         ###### End Kheldian power setup
 
         if (self.GetState('SimpleSJCJ')):
-            if (self.GetState('HasCJ') and self.GetState('JumpPower') != '-'):
+            if (self.GetState('HasCJ') and self.GetState('JumpPower')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Super Jump$$powexecname Combat Jumping'))
-            elif (self.GetState('JumpPower') != '-'):
+            elif (self.GetState('JumpPower')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Super Jump'))
             elif (self.GetState('HasCJ')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Combat Jumping'))
@@ -1357,17 +1362,17 @@ class MovementPowers(Page):
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
 
-        elif (self.GetState('DefaultMode') == "Fly" and not (self.GetState('HasHover') or self.GetState('FlyPower') != '-')):
+        elif (self.GetState('DefaultMode') == "Fly" and not (self.GetState('HasHover') or self.GetState('FlyPower'))):
             wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Fly mode but your character has neither Hover nor Fly.", "Mode Changed", wx.OK|wx.ICON_WARNING)
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
 
-        elif (self.GetState('DefaultMode') == "Jump" and not (self.GetState('HasCJ') or self.GetState('JumpPower') != '-')):
+        elif (self.GetState('DefaultMode') == "Jump" and not (self.GetState('HasCJ') or self.GetState('JumpPower'))):
             wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Jump mode but your character has neither Combat Jumping nor Super Jump.", "Mode Changed", wx.OK|wx.ICON_WARNING)
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
 
-        elif (self.GetState('DefaultMode') == "Speed" and not self.GetState('SpeedPower') != '-'):
+        elif (self.GetState('DefaultMode') == "Speed" and not self.GetState('SpeedPower')):
             wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Super Speed mode but your character doesn't have Super Speed", "Mode Changed", wx.OK|wx.ICON_WARNING)
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
@@ -1568,7 +1573,7 @@ class MovementPowers(Page):
                                     })
                                     setattr(t, self.GetState('DefaultMode') + "Mode", None)
 
-                                if (self.GetState('SpeedPower') != '-'):
+                                if (self.GetState('SpeedPower')):
                                     sssj = None
                                     setattr(t, self.GetState('DefaultMode') + "Mode", t.RunMode)
                                     if (self.GetState('SSSJModeEnable')): sssj = t.jump

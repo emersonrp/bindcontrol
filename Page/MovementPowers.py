@@ -65,13 +65,13 @@ class MovementPowers(Page):
             'FlyMode'         : "F",
             'GFlyMode'        : "",
             'AfterburnerKey'  : "",
+            'TranslocationKey': "",
 
             'HasTP'           : False,
             'TPBindKey'       : 'LSHIFT+LBUTTON',
             'TPComboKey'      : 'LSHIFT',
 
             'HasTTP'          : False,
-            'HasTL'           : False,
             'TTPBindKey'      : 'LSHIFT+LCTRL+LBUTTON',
             'TTPComboKey'     : 'LSHIFT+LCTRL',
             'TTPTPGFly'       : False,
@@ -331,6 +331,7 @@ class MovementPowers(Page):
         self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'AfterburnerKey', ctlType = 'keybutton',)
+        self.flySizer.AddControl( ctlName = 'TranslocationKey', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'HasGFly', ctlType = 'checkbox',)
         self.Ctrls['HasGFly'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',)
@@ -352,8 +353,6 @@ class MovementPowers(Page):
         self.teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',)
         self.teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',)
         self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.teleportSizer.AddControl( ctlName = "HasTL", ctlType = 'checkbox',)
-        self.Ctrls['HasTL'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.teleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton',)
         self.teleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton',)
         self.teleportSizer.AddControl( ctlName = 'TTPTPGFly', ctlType = 'checkbox',)
@@ -485,6 +484,7 @@ class MovementPowers(Page):
                                           and self.GetState('DefaultMode') != "Fly")
             c['HasHover'].Enable(self.Profile.HasPowerPool('Flight'))
             c['AfterburnerKey'].Show(self.GetState('FlyPower') == 'Fly')
+            c['TranslocationKey'].Show(self.GetState('FlyPower') == 'Mystic Flight')
 
             c['GFlyMode'].Enable(self.GetState('HasGFly'))
 
@@ -1141,6 +1141,8 @@ class MovementPowers(Page):
         if self.Ctrls['AfterburnerKey'].IsEnabled():
             # TODO - this will be "self.AfterburnerPower" when we merge Kheldian logic later
             ResetFile.SetBind(self.Ctrls['AfterburnerKey'].MakeFileKeyBind('powexecname Afterburner'))
+        if self.Ctrls['TranslocationKey'].IsEnabled():
+            ResetFile.SetBind(self.Ctrls['TranslocationKey'].MakeFileKeyBind('powexec_location cursor Translocation'))
         if self.Ctrls['JauntKey'].IsEnabled():
             ResetFile.SetBind(self.Ctrls['JauntKey'].MakeFileKeyBind('powexecname Jaunt'))
         if self.Ctrls['TakeoffKey'].IsEnabled():
@@ -2309,12 +2311,13 @@ UI.Labels.update( {
     'SSSJModeEnable' : 'Enable Super Speed / Super Jump Mode',
     'JauntKey'       : 'Jaunt Key',
 
-    'FlyPower'       : "Primary Flight Power",
-    'HasHover'       : "Player has Hover",
-    'HasGFly'        : 'Player has Group Fly',
-    'FlyMode'        : 'Toggle Fly Mode',
-    'AfterburnerKey' : 'Afterburner Key',
-    'GFlyMode'       : 'Toggle Group Fly Mode',
+    'FlyPower'         : "Primary Flight Power",
+    'HasHover'         : "Player has Hover",
+    'HasGFly'          : 'Player has Group Fly',
+    'FlyMode'          : 'Toggle Fly Mode',
+    'AfterburnerKey'   : 'Afterburner Key',
+    'TranslocationKey' : 'Translocation Key',
+    'GFlyMode'         : 'Toggle Group Fly Mode',
 
     'Feedback'       : 'Self-/tell when changing mode',
 
@@ -2324,7 +2327,6 @@ UI.Labels.update( {
     'TPTPHover'      : 'Hover when Teleporting',
 
     'HasTTP'         : 'Player has Team Teleport',
-    'HasTL'          : 'Player has Translocation',
     'TTPBindKey'     : 'Team Teleport to Cursor',
     'TTPComboKey'    : 'Show Team Teleport Reticle',
     'TTPTPGFly'      : 'Group Fly when Team Teleporting',

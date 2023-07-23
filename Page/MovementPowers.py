@@ -442,7 +442,7 @@ class MovementPowers(Page):
             c['RunMode'].Enable(bool(self.GetState('SpeedPower')) and self.GetState('DefaultMode') != "Speed")
             c['SSMobileOnly'].Enable(bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable'].Enable(bool(self.GetState('SpeedPower') and self.GetState('JumpPower')))
-            c['JauntKey'].Enable(self.GetState('SpeedPower') == "Speed of Sound")
+            c['JauntKey'].Show(self.GetState('SpeedPower') == "Speed of Sound")
 
             ### JUMP POWERS
             MLIdx = c['JumpPower'].FindString('Mighty Leap')
@@ -484,7 +484,7 @@ class MovementPowers(Page):
             c['FlyMode'].Enable((self.GetState('FlyPower') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
             c['HasHover'].Enable(self.Profile.HasPowerPool('Flight'))
-            c['AfterburnerKey'].Enable(self.GetState('FlyPower') == 'Fly')
+            c['AfterburnerKey'].Show(self.GetState('FlyPower') == 'Fly')
 
             c['GFlyMode'].Enable(self.GetState('HasGFly'))
 

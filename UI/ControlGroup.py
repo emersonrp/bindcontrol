@@ -144,7 +144,7 @@ class ControlGroup(wx.StaticBoxSizer):
         wx.PostEvent(cblabel.control, fakeevt)
         evt.Skip()
 
-class HasLabelMixin():
+class CGControlMixin():
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.CtlLabel = None
@@ -153,15 +153,22 @@ class HasLabelMixin():
         super().Enable(doEnable)
         if self.CtlLabel: self.CtlLabel.Enable(doEnable)
 
-class cgbcKeyButton     (HasLabelMixin, bcKeyButton)         : pass
-class cgComboBox        (HasLabelMixin, wx.ComboBox)         : pass
-class cgBMComboBox      (HasLabelMixin, BitmapComboBox)      : pass
-class cgTextCtrl        (HasLabelMixin, wx.TextCtrl)         : pass
-class cgChoice          (HasLabelMixin, wx.Choice)           : pass
-class cgStaticText      (HasLabelMixin, wx.StaticText)       : pass
-class cgCheckBox        (HasLabelMixin, wx.CheckBox)         : pass
-class cgSpinCtrl        (HasLabelMixin, wx.SpinCtrl)         : pass
-class cgSpinCtrlDouble  (HasLabelMixin, wx.SpinCtrlDouble)   : pass
-class cgDirPickerCtrl   (HasLabelMixin, wx.DirPickerCtrl)    : pass
-class cgColourPickerCtrl(HasLabelMixin, wx.ColourPickerCtrl) : pass
+    def Show(self, doShow):
+        self.GetContainingSizer().Show(self,          show = doShow)
+        self.GetContainingSizer().Show(self.CtlLabel, show = doShow)
+        self.Enable(doShow)
+        self.GetContainingSizer().Layout()
+
+
+class cgbcKeyButton     (CGControlMixin, bcKeyButton)         : pass
+class cgComboBox        (CGControlMixin, wx.ComboBox)         : pass
+class cgBMComboBox      (CGControlMixin, BitmapComboBox)      : pass
+class cgTextCtrl        (CGControlMixin, wx.TextCtrl)         : pass
+class cgChoice          (CGControlMixin, wx.Choice)           : pass
+class cgStaticText      (CGControlMixin, wx.StaticText)       : pass
+class cgCheckBox        (CGControlMixin, wx.CheckBox)         : pass
+class cgSpinCtrl        (CGControlMixin, wx.SpinCtrl)         : pass
+class cgSpinCtrlDouble  (CGControlMixin, wx.SpinCtrlDouble)   : pass
+class cgDirPickerCtrl   (CGControlMixin, wx.DirPickerCtrl)    : pass
+class cgColourPickerCtrl(CGControlMixin, wx.ColourPickerCtrl) : pass
 

@@ -396,7 +396,7 @@ class MovementPowers(Page):
         self.SynchronizeUI()
 
     def SynchronizeUI(self, evt = None):
-        self.Freeze()
+        #self.Freeze()
 
         try:
             c = self.Ctrls
@@ -463,8 +463,8 @@ class MovementPowers(Page):
             c['SimpleSJCJ'].Enable(bool(self.GetState('JumpPower') and self.GetState('HasCJ')))
             c['JumpMode']  .Enable((self.GetState('JumpPower') or self.GetState('HasCJ'))
                                           and self.GetState('DefaultMode') != "Jump")
-            c['TakeoffKey'].Enable(self.GetState('JumpPower') == "Mighty Leap")
-            c['DoubleJumpKey'].Enable(self.GetState('JumpPower') == "Super Jump")
+            c['TakeoffKey'].Show(self.GetState('JumpPower') == "Mighty Leap")
+            c['DoubleJumpKey'].Show(self.GetState('JumpPower') == "Super Jump")
 
             ### FLIGHT POWERS
             FlyIdx = c['FlyPower'].FindString('Fly')
@@ -558,7 +558,7 @@ class MovementPowers(Page):
             raise e
 
         finally:
-            self.Thaw()
+            #self.Thaw()
             self.Layout()
             if evt: evt.Skip()
 

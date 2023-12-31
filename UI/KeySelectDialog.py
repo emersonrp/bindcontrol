@@ -126,22 +126,25 @@ class KeySelectDialog(wx.Dialog):
         SeparateLR = self.SeparateLRChooser.Value
 
         # first clear out anything not being held down
-        if (
-            (not event.ControlDown() and self.ModSlot in ['CTRL', 'LCTRL', 'RCTRL'])
-            or
-            (not event.ShiftDown() and self.ModSlot in ['SHIFT', 'LSHIFT', 'RSHIFT'])
-            or
-            (not event.AltDown() and self.ModSlot in ['ALT', 'LALT', 'RALT'])
-        ):
-            self.ModSlot = None
+        if not (isinstance(event, wx.JoystickEvent)): # joystick events don't have "ModDown()" methods
+            if (
+                (not event.ControlDown() and self.ModSlot in ['CTRL', 'LCTRL', 'RCTRL'])
+                or
+                (not event.ShiftDown() and self.ModSlot in ['SHIFT', 'LSHIFT', 'RSHIFT'])
+                or
+                (not event.AltDown() and self.ModSlot in ['ALT', 'LALT', 'RALT'])
+            ):
+                self.ModSlot = None
 
+        code = ''
         if (isinstance(event, wx.KeyEvent)):
             code = event.GetKeyCode()
             if code == wx.WXK_ESCAPE:
                 self.EndModal(wx.CANCEL)
         elif (isinstance(event, wx.JoystickEvent)):
-            wx.LogMessage("Got A Joystick Event!!!")
-            return
+            wx.LogMessage("Joystick event")
+            if event.IsButton():
+                code = "JOY" + str(event.GetButtonOrdinal() + 1)
         elif (event.ButtonDClick()):
             code = "DCLICK" + str(event.GetButton())
         else:
@@ -311,6 +314,22 @@ class KeySelectDialog(wx.Dialog):
                 'BUTTON8' : 'BUTTON8',
                 'DCLICK1' : 'LEFTDOUBLECLICK',
                 'DCLICK3' : 'RIGHTDOUBLECLICK',
+                'JOY1'    : 'JOY1',
+                'JOY2'    : 'JOY2',
+                'JOY3'    : 'JOY3',
+                'JOY4'    : 'JOY4',
+                'JOY5'    : 'JOY5',
+                'JOY6'    : 'JOY6',
+                'JOY7'    : 'JOY7',
+                'JOY8'    : 'JOY8',
+                'JOY9'    : 'JOY9',
+                'JOY10'    : 'JOY10',
+                'JOY11'    : 'JOY11',
+                'JOY12'    : 'JOY12',
+                'JOY13'    : 'JOY13',
+                'JOY14'    : 'JOY14',
+                'JOY15'    : 'JOY15',
+                'JOY16'    : 'JOY16',
         }
 
         # Add alphanumerics

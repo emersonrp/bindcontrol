@@ -116,7 +116,9 @@ class Main(wx.Frame):
 
         # WRITE BUTTON
         WriteButton = wx.Button(self, -1, "Write Binds")
-        self.Sizer.Add(WriteButton, 0, wx.EXPAND | wx.ALL, 10)
+        writeSizer = wx.BoxSizer(wx.HORIZONTAL)
+        writeSizer.Add(WriteButton, 1, wx.EXPAND)
+        self.Sizer.Add(writeSizer,  0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, 10)
         self.Bind(wx.EVT_BUTTON, self.OnWriteBindsButton, WriteButton)
 
         self.SetSizerAndFit(self.Sizer)

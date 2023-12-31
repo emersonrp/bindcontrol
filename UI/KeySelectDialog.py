@@ -1,5 +1,6 @@
 import re
 import wx
+import wx.adv
 import wx.html
 import string
 import UI
@@ -48,6 +49,9 @@ class KeySelectDialog(wx.Dialog):
         self.Binding = button.Key
 
         wx.Dialog.__init__(self, button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
+
+        self.joystick = wx.adv.Joystick()
+        self.joystick.SetCapture(self)
 
         # Mystery panel must be in here in order to get key events
         _ = wx.Panel(self, -1)
@@ -98,6 +102,8 @@ class KeySelectDialog(wx.Dialog):
             i.Bind(wx.EVT_MOUSE_AUX1_DOWN , self.handleBind )
             i.Bind(wx.EVT_MOUSE_AUX2_DOWN , self.handleBind )
 
+            i.Bind(wx.EVT_JOYSTICK_EVENTS , self.handleBind )
+
         buttonSizer = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
         vbox.Add(buttonSizer, 0, wx.ALIGN_CENTER|wx.ALL, 16)
 
@@ -133,6 +139,9 @@ class KeySelectDialog(wx.Dialog):
             code = event.GetKeyCode()
             if code == wx.WXK_ESCAPE:
                 self.EndModal(wx.CANCEL)
+        elif (isinstance(event, wx.JoystickEvent)):
+            wx.LogMessage("Got A Joystick Event!!!")
+            return
         elif (event.ButtonDClick()):
             code = "DCLICK" + str(event.GetButton())
         else:

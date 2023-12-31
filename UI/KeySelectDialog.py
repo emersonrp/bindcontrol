@@ -141,10 +141,35 @@ class KeySelectDialog(wx.Dialog):
             code = event.GetKeyCode()
             if code == wx.WXK_ESCAPE:
                 self.EndModal(wx.CANCEL)
+        # controller events are hairy
         elif (isinstance(event, wx.JoystickEvent)):
             wx.LogMessage("Joystick event")
-            if event.IsButton():
+            if event.ButtonDown():
                 code = "JOY" + str(event.GetButtonOrdinal() + 1)
+            elif event.IsMove() or event.IsZMove():
+                position = event.GetPosition()
+                pos = zpos = rudpos = upos = vpos = 0
+                xpos,ypos                            = self.joystick.GetPosition()
+                if self.joystick.HasZ():      zpos   = self.joystick.GetZPosition()
+                if self.joystick.HasRudder(): rudpos = self.joystick.GetRudderPosition()
+                if self.joystick.HasU():      upos   = self.joystick.GetUPosition()
+                if self.joystick.HasV():      vpos   = self.joystick.GetVPosition()
+
+                self.currentAxes = [xpos, ypos, zpos, rudpos, upos, vpos]
+                # TODO ? Maybe ? Figure out which one moved the most, most recently?
+                # TODO ? Maybe ? Figure out which one is closest to the end of one end of its throw?
+                # TODO Yes surely - Do some magic with "parking" anything that's moving back toward
+                #      center until something else moves at least as far away.  Logic will need fiddling
+
+                # xpos,ypos   == JOYSTICK1_(UP|DOWN|LEFT|RIGHT)
+                # rudpos,upos == JOYSTICK3_(UP|DOWN|LEFT|RIGHT)
+                # TODO - is Z and V Joystick2, then?
+
+                wx.LogMessage(f"x {xpos} y {ypos} z {zpos} rud {rudpos} u {upos} v {vpos}")
+
+                dircode = "" # TODO remove
+                code = "JOYSTICK1_" + dircode
+
         elif (event.ButtonDClick()):
             code = "DCLICK" + str(event.GetButton())
         else:
@@ -330,6 +355,10 @@ class KeySelectDialog(wx.Dialog):
                 'JOY14'    : 'JOY14',
                 'JOY15'    : 'JOY15',
                 'JOY16'    : 'JOY16',
+                "JOYSTICK1_UP"    : "JOYSTICK1_UP",
+                "JOYSTICK1_DOWN"  : "JOYSTICK1_DOWN",
+                "JOYSTICK1_LEFT"  : "JOYSTICK1_LEFT",
+                "JOYSTICK1_RIGHT" : "JOYSTICK1_RIGHT",
         }
 
         # Add alphanumerics

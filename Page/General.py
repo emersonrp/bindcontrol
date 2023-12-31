@@ -215,7 +215,11 @@ class General(Page):
         if self.GetState('TypingNotifierEnable'):
             notifier = 'afk ' + self.GetState('TypingNotifier')
 
-        ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', 'beginchat ' + colorstring]))
+        startchatcommand = "startchat "
+        if self.GetState('ChatColorEnable'):
+            startchatcommand = "beginchat "
+
+        ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', startchatcommand + colorstring]))
         ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeFileKeyBind([notifier, 'show chat', 'slashchat']))
         ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind([notifier, 'show chatem ' + notifier]))
         ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeFileKeyBind([notifier, 'autoreply']))

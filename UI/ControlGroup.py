@@ -124,7 +124,7 @@ class ControlGroup(wx.StaticBoxSizer):
             CtlLabel.SetToolTip( wx.ToolTip(tooltip))
             self.InnerSizer.Add( CtlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
             control.CtlLabel = CtlLabel
-            CtlLabel.control = control
+            setattr(CtlLabel, "control", control)
 
         # make checkboxes' labels click to check them
         if ctlType == ('checkbox') and control.CtlLabel:
@@ -147,7 +147,7 @@ class ControlGroup(wx.StaticBoxSizer):
 class HasLabelMixin():
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.CtlLabel = None
+        self.CtlLabel : ST.GenStaticText | wx.StaticText | None = None
 
     def Enable(self, doEnable):
         super().Enable(doEnable)

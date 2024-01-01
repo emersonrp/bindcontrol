@@ -1,6 +1,5 @@
 import re
 import wx
-import wx.adv
 import wx.html
 import string
 import UI
@@ -141,29 +140,15 @@ class KeySelectDialog(wx.Dialog):
             code = event.GetKeyCode()
             if code == wx.WXK_ESCAPE:
                 self.EndModal(wx.CANCEL)
-        # controller events are hairy
+
         elif (isinstance(event, wx.JoystickEvent)):
             if event.ButtonDown():
-                wx.LogMessage("Controller Button")
                 button_num = event.GetButtonOrdinal() + 1
                 if button_num <= 25: # CoH only supports 25 buttons?  [needs verification]
                     code = "JOY" + str(button_num)
             elif event.IsMove() or event.IsZMove():
-                wx.LogMessage("Joystick Move")
-
-                self.joystick.CheckAxes()
-                # for each axis that exists:
-                #   If it's > 50% of the way to an endpoint, put it in the pool
-                #   If it's in the pool and less than 50% of the way to an endpoint, remove it
-                #  Examine each axis in the pool.  The one closest to an endpoint wins.
-
-
-
-
-                # xpos,ypos   == JOYSTICK1_(UP|DOWN|LEFT|RIGHT)
-                # rudpos,upos == JOYSTICK3_(UP|DOWN|LEFT|RIGHT)
-                # TODO - is Z and V Joystick2, then?
-                # dpudpos,dplrpos = JOYPAD_(UP|DOWN|LEFT|RIGHT)
+                self.joystick.SetCurrentAxis()
+                code = self.joystick.CurrentAxis
 
         elif (event.ButtonDClick()):
             code = "DCLICK" + str(event.GetButton())
@@ -336,26 +321,47 @@ class KeySelectDialog(wx.Dialog):
                 'BUTTON8' : 'BUTTON8',
                 'DCLICK1' : 'LEFTDOUBLECLICK',
                 'DCLICK3' : 'RIGHTDOUBLECLICK',
-                'JOY1'    : 'JOY1',
-                'JOY2'    : 'JOY2',
-                'JOY3'    : 'JOY3',
-                'JOY4'    : 'JOY4',
-                'JOY5'    : 'JOY5',
-                'JOY6'    : 'JOY6',
-                'JOY7'    : 'JOY7',
-                'JOY8'    : 'JOY8',
-                'JOY9'    : 'JOY9',
-                'JOY10'    : 'JOY10',
-                'JOY11'    : 'JOY11',
-                'JOY12'    : 'JOY12',
-                'JOY13'    : 'JOY13',
-                'JOY14'    : 'JOY14',
-                'JOY15'    : 'JOY15',
-                'JOY16'    : 'JOY16',
-                "JOYSTICK1_UP"    : "JOYSTICK1_UP",
-                "JOYSTICK1_DOWN"  : "JOYSTICK1_DOWN",
-                "JOYSTICK1_LEFT"  : "JOYSTICK1_LEFT",
-                "JOYSTICK1_RIGHT" : "JOYSTICK1_RIGHT",
+                'JOY1'  : 'JOY1',
+                'JOY2'  : 'JOY2',
+                'JOY3'  : 'JOY3',
+                'JOY4'  : 'JOY4',
+                'JOY5'  : 'JOY5',
+                'JOY6'  : 'JOY6',
+                'JOY7'  : 'JOY7',
+                'JOY8'  : 'JOY8',
+                'JOY9'  : 'JOY9',
+                'JOY10' : 'JOY10',
+                'JOY11' : 'JOY11',
+                'JOY12' : 'JOY12',
+                'JOY13' : 'JOY13',
+                'JOY14' : 'JOY14',
+                'JOY15' : 'JOY15',
+                'JOY16' : 'JOY16',
+                'JOY17' : 'JOY17',
+                'JOY18' : 'JOY18',
+                'JOY19' : 'JOY19',
+                'JOY20' : 'JOY20',
+                'JOY21' : 'JOY21',
+                'JOY22' : 'JOY22',
+                'JOY23' : 'JOY23',
+                'JOY24' : 'JOY24',
+                'JOY25' : 'JOY25',
+                "J1_U" : "JOYSTICK1_UP",
+                "J1_D" : "JOYSTICK1_DOWN",
+                "J1_L" : "JOYSTICK1_LEFT",
+                "J1_R" : "JOYSTICK1_RIGHT",
+                "J2_U" : "JOYSTICK2_UP",
+                "J2_D" : "JOYSTICK2_DOWN",
+                "J2_L" : "JOYSTICK2_LEFT",
+                "J2_R" : "JOYSTICK2_RIGHT",
+                "J3_U" : "JOYSTICK3_UP",
+                "J3_D" : "JOYSTICK3_DOWN",
+                "J3_L" : "JOYSTICK3_LEFT",
+                "J3_R" : "JOYSTICK3_RIGHT",
+                "JP_U" : "JOYPAD_UP",
+                "JP_D" : "JOYPAD_DOWN",
+                "JP_L" : "JOYPAD_LEFT",
+                "JP_R" : "JOYPAD_RIGHT",
         }
 
         # Add alphanumerics
@@ -397,14 +403,16 @@ class bcKeyButton(wx.Button):
         self.SetLabelMarkup(keyLabel)
 
 # Utility class for querying joystick
+import wx.adv
 class bcJoystick(wx.adv.Joystick):
 
     def __init__(self):
         wx.adv.Joystick.__init__(self)
         self.AxisStates = [None] * self.GetNumberAxes() # ["JOYSTICK1_UP", None, None, etc etc]
+        self.CurrentAxis = ''
 
-    def CheckAxes(self):
-        current_axis_percents = [None] * self.GetNumberAxes() # ["JOYSTICK1_UP", None, None, etc etc]
+    def SetCurrentAxis(self):
+        current_axis_percents = [0] * self.GetNumberAxes() # ["JOYSTICK1_UP", None, None, etc etc]
 
         for axis in range(0, self.GetNumberAxes()):
 
@@ -415,26 +423,75 @@ class bcJoystick(wx.adv.Joystick):
             if axis == 0:
                 amin, amax = self.GetXMin(), self.GetXMax()
                 current_axis_percents[axis]= self.CenteredAxisPercent(amin, amax, apos)
+                # Joystick1_LEFT, Joystick1_RIGHT
             elif axis == 1:
                 amin, amax = self.GetYMin(), self.GetYMax()
                 current_axis_percents[axis]= self.CenteredAxisPercent(amin, amax, apos)
+                # Joystick1_UP, Joystick1_DOWN
             elif axis == 2: # rudder is uncentered
                 amin, amax = self.GetRudderMin(), self.GetRudderMax()
                 current_axis_percents[axis]= self.UncenteredAxisPercent(amin, amax, apos)
+                # Joystick3_LEFT, Joystick3_RIGHT
             elif axis == 3:
                 amin, amax = self.GetZMin(), self.GetZMax()
                 current_axis_percents[axis]= self.CenteredAxisPercent(amin, amax, apos)
+                # Joystick3_UP, Joystick3_DOWN
             elif axis == 4:
                 amin, amax = self.GetUMin(), self.GetUMax()
                 current_axis_percents[axis]= self.CenteredAxisPercent(amin, amax, apos)
+                # Joystick2_RIGHT
             elif axis == 5: # v is uncentered
                 amin, amax = self.GetVMin(), self.GetVMax()
                 current_axis_percents[axis]= self.UncenteredAxisPercent(amin, amax, apos)
+                # Joystick2_LEFT
             elif axis in [6,7]:
                 amin, amax = -32767, 32767
                 current_axis_percents[axis]= self.CenteredAxisPercent(amin, amax, apos)
+                # JOYPAD_*
 
-        wx.LogMessage(f"{current_axis_percents}")
+        current_axis = current_axis_percents.index(max(current_axis_percents, key=abs))
+
+        code = ''
+        if current_axis == 0:
+            if current_axis_percents[current_axis] < -50:
+                code = "J1_L"
+            elif current_axis_percents[current_axis] > 50:
+                code = "J1_R"
+        elif current_axis == 1:
+            if current_axis_percents[current_axis] < -50:
+                code = "J1_U"
+            elif current_axis_percents[current_axis] > 50:
+                code = "J1_D"
+        elif current_axis == 2:
+            if current_axis_percents[current_axis] > 50:
+                code = "J2_R"
+        elif current_axis == 3:
+            if current_axis_percents[current_axis] < -50:
+                code = "J3_L"
+            elif current_axis_percents[current_axis] > 50:
+                code = "J3_R"
+        elif current_axis == 4:
+            if current_axis_percents[current_axis] < -50:
+                code = "J3_U"
+            elif current_axis_percents[current_axis] > 50:
+                code = "J3_D"
+        elif current_axis == 5:
+            if current_axis_percents[current_axis] > 50:
+                code = "J2_L"
+        elif current_axis == 6:
+            if current_axis_percents[current_axis] < -50:
+                code = "JP_L"
+            elif current_axis_percents[current_axis] > 50:
+                code = "JP_R"
+        elif current_axis == 7:
+            if current_axis_percents[current_axis] < -50:
+                code = "JP_U"
+            elif current_axis_percents[current_axis] > 50:
+                code = "JP_D"
+
+        if code:
+            self.CurrentAxis = code
+
 
     def CenteredAxisPercent(self, amin, amax, apos):
         center = amin + ((amax - amin) / 2)

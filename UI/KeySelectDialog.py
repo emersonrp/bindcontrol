@@ -50,7 +50,7 @@ class KeySelectDialog(wx.Dialog):
 
         wx.Dialog.__init__(self, button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
 
-        self.joystick = wx.adv.Joystick()
+        self.joystick = bcJoystick()
         self.joystick.SetCapture(self)
 
         # Mystery panel must be in here in order to get key events
@@ -68,10 +68,10 @@ class KeySelectDialog(wx.Dialog):
 
         sizer = wx.BoxSizer(wx.VERTICAL);
 
-        self.kbDesc = wx.StaticText( self, -1, desc,         style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
+        self.kbDesc = wx.StaticText( self, -1, desc, style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
         self.kbBind = wx.html.HtmlWindow( self, -1, size=(360,60), style=wx.html.HW_SCROLLBAR_NEVER)
         self.kbBind.SetHTMLBackgroundColour(self.GetBackgroundColour())
-        self.kbErr  = wx.StaticText( self, -1, " ",          style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
+        self.kbErr  = wx.StaticText( self, -1, " ", style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
 
         self.ShowBind()
 
@@ -143,32 +143,27 @@ class KeySelectDialog(wx.Dialog):
                 self.EndModal(wx.CANCEL)
         # controller events are hairy
         elif (isinstance(event, wx.JoystickEvent)):
-            wx.LogMessage("Joystick event")
             if event.ButtonDown():
-                code = "JOY" + str(event.GetButtonOrdinal() + 1)
+                wx.LogMessage("Controller Button")
+                button_num = event.GetButtonOrdinal() + 1
+                if button_num <= 25: # CoH only supports 25 buttons?  [needs verification]
+                    code = "JOY" + str(button_num)
             elif event.IsMove() or event.IsZMove():
-                position = event.GetPosition()
-                pos = zpos = rudpos = upos = vpos = 0
-                xpos,ypos                            = self.joystick.GetPosition()
-                if self.joystick.HasZ():      zpos   = self.joystick.GetZPosition()
-                if self.joystick.HasRudder(): rudpos = self.joystick.GetRudderPosition()
-                if self.joystick.HasU():      upos   = self.joystick.GetUPosition()
-                if self.joystick.HasV():      vpos   = self.joystick.GetVPosition()
+                wx.LogMessage("Joystick Move")
 
-                self.currentAxes = [xpos, ypos, zpos, rudpos, upos, vpos]
-                # TODO ? Maybe ? Figure out which one moved the most, most recently?
-                # TODO ? Maybe ? Figure out which one is closest to the end of one end of its throw?
-                # TODO Yes surely - Do some magic with "parking" anything that's moving back toward
-                #      center until something else moves at least as far away.  Logic will need fiddling
+                self.joystick.CheckAxes()
+                # for each axis that exists:
+                #   If it's > 50% of the way to an endpoint, put it in the pool
+                #   If it's in the pool and less than 50% of the way to an endpoint, remove it
+                #  Examine each axis in the pool.  The one closest to an endpoint wins.
+
+
+
 
                 # xpos,ypos   == JOYSTICK1_(UP|DOWN|LEFT|RIGHT)
                 # rudpos,upos == JOYSTICK3_(UP|DOWN|LEFT|RIGHT)
                 # TODO - is Z and V Joystick2, then?
-
-                wx.LogMessage(f"x {xpos} y {ypos} z {zpos} rud {rudpos} u {upos} v {vpos}")
-
-                dircode = "" # TODO remove
-                code = "JOYSTICK1_" + dircode
+                # dpudpos,dplrpos = JOYPAD_(UP|DOWN|LEFT|RIGHT)
 
         elif (event.ButtonDClick()):
             code = "DCLICK" + str(event.GetButton())
@@ -215,6 +210,8 @@ class KeySelectDialog(wx.Dialog):
                     else:
                         ModKey = "ALT"
 
+            # TODO should this be indented a level to be inside "if it's a key event"?
+            # bc joystick events don't have event.AltDown() et al
             if ModKey:
                 # if there's something already there
                 if self.ModSlot:
@@ -398,3 +395,56 @@ class bcKeyButton(wx.Button):
             keyLabel = re.sub(r'DOUBLECLICK', 'DCLICK', keyLabel)
             keyLabel = f"<small>{keyLabel}</small>"
         self.SetLabelMarkup(keyLabel)
+
+# Utility class for querying joystick
+class bcJoystick(wx.adv.Joystick):
+
+    def __init__(self):
+        wx.adv.Joystick.__init__(self)
+        self.AxisStates = [None] * self.GetNumberAxes() # ["JOYSTICK1_UP", None, None, etc etc]
+
+    def CheckAxes(self):
+        current_axis_percents = [None] * self.GetNumberAxes() # ["JOYSTICK1_UP", None, None, etc etc]
+
+        for axis in range(0, self.GetNumberAxes()):
+
+            # TODO - this code makes assumptions about which axes are "centered" and "uncentered"
+            # and about the range of the dpad.  This works for my Logitech 310 but possibly nothing
+            # else.  This will take some third-party testing
+            apos = self.GetPosition(axis)
+            if axis == 0:
+                amin, amax = self.GetXMin(), self.GetXMax()
+                current_axis_percents[axis]= self.CenteredAxisPercent(amin, amax, apos)
+            elif axis == 1:
+                amin, amax = self.GetYMin(), self.GetYMax()
+                current_axis_percents[axis]= self.CenteredAxisPercent(amin, amax, apos)
+            elif axis == 2: # rudder is uncentered
+                amin, amax = self.GetRudderMin(), self.GetRudderMax()
+                current_axis_percents[axis]= self.UncenteredAxisPercent(amin, amax, apos)
+            elif axis == 3:
+                amin, amax = self.GetZMin(), self.GetZMax()
+                current_axis_percents[axis]= self.CenteredAxisPercent(amin, amax, apos)
+            elif axis == 4:
+                amin, amax = self.GetUMin(), self.GetUMax()
+                current_axis_percents[axis]= self.CenteredAxisPercent(amin, amax, apos)
+            elif axis == 5: # v is uncentered
+                amin, amax = self.GetVMin(), self.GetVMax()
+                current_axis_percents[axis]= self.UncenteredAxisPercent(amin, amax, apos)
+            elif axis in [6,7]:
+                amin, amax = -32767, 32767
+                current_axis_percents[axis]= self.CenteredAxisPercent(amin, amax, apos)
+
+        wx.LogMessage(f"{current_axis_percents}")
+
+    def CenteredAxisPercent(self, amin, amax, apos):
+        center = amin + ((amax - amin) / 2)
+        if apos > center:
+            return int(apos / (amax - center) * 100)
+        else:
+            return int(apos / (center - amin) * 100)
+
+    def UncenteredAxisPercent(self, amin, amax, apos):
+        # uncentered axes, on XBox 360 controllers, start at
+        # -50% and go to 50%, so mash these values so they 0-100
+        apos = apos + amax; amin = amin + amax;  amax = amax + amax
+        return int(apos / (amax - amin) * 100)

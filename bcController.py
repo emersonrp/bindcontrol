@@ -21,9 +21,10 @@ class bcController(wx.adv.Joystick):
 
         for axis in range(0, self.GetNumberAxes()):
 
-            # TODO - this code makes assumptions about which axes are "centered" and "uncentered"
-            # and about the range of the dpad.  This works for my Logitech 310 but possibly nothing
-            # else.  This will take some third-party testing
+            # TODO - this code makes assumptions about the range/location of the dpad.
+            # This works for my Logitech 310 but possibly nothing else.
+            # This will take some third-party testing
+
             apos = self.GetPosition(axis)
             if axis == 0:
                 amin, amax = self.GetXMin(), self.GetXMax()
@@ -68,7 +69,9 @@ class bcController(wx.adv.Joystick):
             elif current_axis_percents[current_axis] > 50:
                 code = "J1_D"
         elif current_axis == 2:
-            if current_axis_percents[current_axis] > 50:
+            if current_axis_percents[current_axis] < -50:
+                code = "J2_L"
+            elif current_axis_percents[current_axis] > 50:
                 code = "J2_R"
         elif current_axis == 3:
             if current_axis_percents[current_axis] < -50:
@@ -83,6 +86,8 @@ class bcController(wx.adv.Joystick):
         elif current_axis == 5:
             if current_axis_percents[current_axis] > 50:
                 code = "J2_L"
+            elif current_axis_percents[current_axis] < -50:
+                code = "J2_R"
         elif current_axis == 6:
             if current_axis_percents[current_axis] < -50:
                 code = "JP_L"
@@ -103,9 +108,9 @@ class bcController(wx.adv.Joystick):
 
         for axis in range(0, self.GetNumberAxes()):
 
-            # TODO - this code makes assumptions about which axes are "centered" and "uncentered"
-            # and about the range of the dpad.  This works for my Logitech 310 but possibly nothing
-            # else.  This will take some third-party testing
+            # TODO - this code makes assumptions about the range/location of the dpad.
+            # This works for my Logitech 310 but possibly nothing else.
+            # This will take some third-party testing
             apos = self.GetPosition(axis)
             if axis == 0:
                 amin, amax = self.GetXMin(), self.GetXMax()

@@ -150,8 +150,10 @@ class KeySelectDialog(wx.Dialog):
                     code = "JOY" + str(button_num)
             elif event.IsMove() or event.IsZMove():
                 self.joystick.SetCurrentAxisPercents()
+
                 # don't let wee jiggles at the center trigger SetCurrentAxis()
-                if abs(max(self.joystick.CurrentAxisPercents, key=abs)) < 50:
+                # this is "no axis is > 50% in some direction" and "POV is centered"
+                if self.joystick.StickIsNearCenter() and self.joystick.GetPOVPosition() > 60000:
                     return
                 self.joystick.SetCurrentAxis()
                 code = self.joystick.CurrentAxis

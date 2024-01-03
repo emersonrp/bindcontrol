@@ -60,22 +60,36 @@ class bcController(wx.adv.Joystick):
                 # JOYPAD_*
 
     def SetCurrentAxis(self):
-        self.SetCurrentAxisPercents()
+        povpos = code = None
+        if self.HasPOV4Dir():
+            povpos = self.GetPOVPosition()
 
-        current_axis = self.CurrentAxisPercents.index(max(self.CurrentAxisPercents, key=abs))
+        if povpos != None and povpos < 60000: # 65535 seems to mean "at center"
+            if   povpos == 0     : code = "JP_U"
+            elif povpos == 9000  : code = "JP_R"
+            elif povpos == 18000 : code = "JP_D"
+            elif povpos == 27000 : code = "JP_L"
 
-        code = current_dir = None
+        else:
+            self.SetCurrentAxisPercents()
 
-        if self.CurrentAxisPercents[current_axis] < -50:
-            current_dir = 0
-        elif self.CurrentAxisPercents[current_axis] > 50:
-            current_dir = 1
+            current_axis = self.CurrentAxisPercents.index(max(self.CurrentAxisPercents, key=abs))
 
-        if current_dir != None:
-            code = self.CodeTable[current_axis][current_dir]
+            current_dir = None
+
+            if self.CurrentAxisPercents[current_axis] < -50:
+                current_dir = 0
+            elif self.CurrentAxisPercents[current_axis] > 50:
+                current_dir = 1
+
+            if current_dir != None:
+                code = self.CodeTable[current_axis][current_dir]
 
         if code:
             self.CurrentAxis = code
+
+    def StickIsNearCenter(self):
+        return abs(max(self.CurrentAxisPercents, key=abs)) < 50
 
     def AxisPercent(self, amin, amax, apos):
         center = amin + ((amax - amin) / 2)

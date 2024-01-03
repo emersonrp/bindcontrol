@@ -6,7 +6,6 @@ class bcController(wx.adv.Joystick):
 
     def __init__(self):
         wx.adv.Joystick.__init__(self)
-        self.CurrentAxis = ''
         self.SetCodeTable()
 
         self.CurrentAxisPercents = [0] * self.GetNumberAxes()
@@ -59,7 +58,7 @@ class bcController(wx.adv.Joystick):
                 self.CurrentAxisPercents[axis]= self.AxisPercent(amin, amax, apos)
                 # JOYPAD_*
 
-    def SetCurrentAxis(self):
+    def GetCurrentAxis(self):
         povpos = code = None
         if self.HasPOV4Dir():
             povpos = self.GetPOVPosition()
@@ -85,8 +84,7 @@ class bcController(wx.adv.Joystick):
             if current_dir != None:
                 code = self.CodeTable[current_axis][current_dir]
 
-        if code:
-            self.CurrentAxis = code
+        return code
 
     def StickIsNearCenter(self):
         return abs(max(self.CurrentAxisPercents, key=abs)) < 50

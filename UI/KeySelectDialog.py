@@ -149,19 +149,23 @@ class KeySelectDialog(wx.Dialog):
                 if button_num <= 25: # CoH only supports 25 buttons?  [needs verification]
                     code = "JOY" + str(button_num)
             elif event.IsMove() or event.IsZMove():
-                self.joystick.SetCurrentAxisPercents()
-
                 # don't let wee jiggles at the center trigger SetCurrentAxis()
+                self.joystick.SetCurrentAxisPercents()
                 # this is "no axis is > 50% in some direction" and "POV is centered"
                 if self.joystick.StickIsNearCenter() and self.joystick.GetPOVPosition() > 60000:
                     return
-                self.joystick.SetCurrentAxis()
-                code = self.joystick.CurrentAxis
+                code = self.joystick.GetCurrentAxis()
+            else:
+                wx.LogMessage("Got an unknown joystick event")
 
         elif (event.ButtonDClick()):
             code = "DCLICK" + str(event.GetButton())
         else:
             code = "BUTTON" + str(event.GetButton())
+
+        if code == '':
+            wx.LogMessage(f"got through handleBind() with {event} without setting a code")
+            return
 
         KeyToBind = self.Keymap.get(code, '')
 

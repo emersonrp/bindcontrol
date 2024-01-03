@@ -149,6 +149,10 @@ class KeySelectDialog(wx.Dialog):
                 if button_num <= 25: # CoH only supports 25 buttons?  [needs verification]
                     code = "JOY" + str(button_num)
             elif event.IsMove() or event.IsZMove():
+                self.joystick.SetCurrentAxisPercents()
+                # don't let wee jiggles at the center trigger SetCurrentAxis()
+                if abs(max(self.joystick.CurrentAxisPercents, key=abs)) < 50:
+                    return
                 self.joystick.SetCurrentAxis()
                 code = self.joystick.CurrentAxis
 

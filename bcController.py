@@ -9,10 +9,10 @@ class bcController(wx.adv.Joystick):
         self.CurrentAxis = ''
         self.SetCodeTable()
 
-    def SetCurrentAxis(self):
-        current_axis_percents = [0] * self.GetNumberAxes()
+        self.CurrentAxisPercents = [0] * self.GetNumberAxes()
 
-        for axis in range(len(current_axis_percents)):
+    def SetCurrentAxisPercents(self):
+        for axis in range(len(self.CurrentAxisPercents)):
 
             # TODO - this code makes assumptions about the range/location of the dpad.
             # This works for my Logitech 310 but possibly nothing else.
@@ -20,11 +20,11 @@ class bcController(wx.adv.Joystick):
             apos = self.GetPosition(axis)
             if axis == 0:
                 amin, amax = self.GetXMin(), self.GetXMax()
-                current_axis_percents[axis]= self.AxisPercent(amin, amax, apos)
+                self.CurrentAxisPercents[axis]= self.AxisPercent(amin, amax, apos)
                 # Joystick1_LEFT, Joystick1_RIGHT
             elif axis == 1:
                 amin, amax = self.GetYMin(), self.GetYMax()
-                current_axis_percents[axis]= self.AxisPercent(amin, amax, apos)
+                self.CurrentAxisPercents[axis]= self.AxisPercent(amin, amax, apos)
                 # Joystick1_UP, Joystick1_DOWN
             elif axis == 2:
                 amin, amax = self.GetRudderMin(), self.GetRudderMax()
@@ -34,15 +34,15 @@ class bcController(wx.adv.Joystick):
                     apos = apos + corr
                     amin = amin - corr
                     amax = amax + corr
-                current_axis_percents[axis]= self.AxisPercent(amin, amax, apos)
+                self.CurrentAxisPercents[axis]= self.AxisPercent(amin, amax, apos)
                 # Joystick2_LEFT
             elif axis == 3:
                 amin, amax = self.GetZMin(), self.GetZMax()
-                current_axis_percents[axis]= self.AxisPercent(amin, amax, apos)
+                self.CurrentAxisPercents[axis]= self.AxisPercent(amin, amax, apos)
                 # Joystick3_LEFT, Joystick3_RIGHT
             elif axis == 4:
                 amin, amax = self.GetUMin(), self.GetUMax()
-                current_axis_percents[axis]= self.AxisPercent(amin, amax, apos)
+                self.CurrentAxisPercents[axis]= self.AxisPercent(amin, amax, apos)
                 # Joystick3_UP, Joystick3_DOWN
             elif axis == 5:
                 amin, amax = self.GetVMin(), self.GetVMax()
@@ -52,20 +52,23 @@ class bcController(wx.adv.Joystick):
                     apos = apos + corr
                     amin = amin - corr
                     amax = amax + corr
-                current_axis_percents[axis]= self.AxisPercent(amin, amax, apos)
+                self.CurrentAxisPercents[axis]= self.AxisPercent(amin, amax, apos)
                 # Joystick2_LEFT
             elif axis in [6,7]:
                 amin, amax = -32767, 32767
-                current_axis_percents[axis]= self.AxisPercent(amin, amax, apos)
+                self.CurrentAxisPercents[axis]= self.AxisPercent(amin, amax, apos)
                 # JOYPAD_*
 
-        current_axis = current_axis_percents.index(max(current_axis_percents, key=abs))
+    def SetCurrentAxis(self):
+        self.SetCurrentAxisPercents()
+
+        current_axis = self.CurrentAxisPercents.index(max(self.CurrentAxisPercents, key=abs))
 
         code = current_dir = None
 
-        if current_axis_percents[current_axis] < -50:
+        if self.CurrentAxisPercents[current_axis] < -50:
             current_dir = 0
-        elif current_axis_percents[current_axis] > 50:
+        elif self.CurrentAxisPercents[current_axis] > 50:
             current_dir = 1
 
         if current_dir != None:

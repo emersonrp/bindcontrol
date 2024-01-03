@@ -95,6 +95,25 @@ class bcController(wx.adv.Joystick):
         # (amax - center) is the (positive) total throw on one side of center
         return int((apos - center) / (amax - center) * 100)
 
+    def ListOfPossibleMods(self):
+        # return a list of strings of controls that might be used as controller_modifiers
+        # or extra_modifiers
+        possible_mods = ["LTrigger", "RTrigger"] # assume everybody has triggers
+
+        for bnum in range(1, self.GetNumberButtons()):
+            bname = "JOY" + str(bnum)
+            # TODO - should keep these mappings in this class somewhere
+            if bnum == 5: bname = "LeftBumper"
+            if bnum == 6: bname = "RightBumper"
+            possible_mods.append(bname)
+
+        # windows vs linux treatment of dpad
+        if self.HasPOV4Dir() or self.GetMaxAxes() > 6:
+            possible_mods = possible_mods + ["Joypad_Up", "Joypad_Down", "Joypad_Left", "Joypad_Right"]
+
+        return possible_mods
+
+
     def SetCodeTable(self):
         # sets the Code table, which is a list, indexed by axis number,
         # of lists of [negative direction, positive direction] codes

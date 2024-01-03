@@ -91,8 +91,8 @@ class bcController(wx.adv.Joystick):
                     ['J1_L', 'J1_R'],
                     ['J1_U', 'J1_D'],
                     ['J2_L', 'J2_R'],
-                    ['J3_L', 'J3_R'],
                     ['J3_U', 'J3_D'],
+                    ['J3_L', 'J3_R'],
                     ['J2_L', 'J2_R'],
                     ['JP_L', 'JP_R'],
                     ['JP_U', 'JP_D'],
@@ -110,6 +110,7 @@ class bcController(wx.adv.Joystick):
                     ['JP_U', 'JP_D'],
             ]
 
+        # TODO this is utterly untested
         elif wx.Platform == '__WXMAC__':
             self.CodeTable =  [
                     ['J1_L', 'J1_R'],

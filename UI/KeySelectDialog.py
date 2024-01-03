@@ -29,6 +29,11 @@ elif wx.Platform == '__WXMAC__':
         'LALT'  : 0x20,
     }
 
+modKeys = ['SHIFT', 'LSHIFT', 'RSHIFT', 'ALT', 'RALT', 'LALT', 'CTRL', 'LCTRL', 'RCTRL',
+        # TODO - set up a place in Preferences to pick which joystick thingies are mod keys, but for now:
+        'LTrigger', 'RTrigger', 'LeftBumper', 'RightBumper', 'JOY9', 'JOY10',
+]
+
 def KeySelectEventHandler(evt):
     button = evt.EventObject
 
@@ -124,114 +129,89 @@ class KeySelectDialog(wx.Dialog):
         #       put it in key slot
         #   else
         #       put it in mod slot
-        SeparateLR = self.SeparateLRChooser.Value
+        pressed_mods = []
+        pressed_keys = []
 
-        # first clear out anything not being held down
-        if not (isinstance(event, wx.JoystickEvent)): # joystick events don't have "ModDown()" methods
-            if (
-                (not event.ControlDown() and self.ModSlot in ['CTRL', 'LCTRL', 'RCTRL'])
-                or
-                (not event.ShiftDown() and self.ModSlot in ['SHIFT', 'LSHIFT', 'RSHIFT'])
-                or
-                (not event.AltDown() and self.ModSlot in ['ALT', 'LALT', 'RALT'])
-            ):
-                self.ModSlot = None
-
-        code = ''
         if (isinstance(event, wx.KeyEvent)):
-            code = event.GetKeyCode()
-            if code == wx.WXK_ESCAPE:
+            if event.GetKeyCode() == wx.WXK_ESCAPE:
                 self.EndModal(wx.CANCEL)
 
         elif (isinstance(event, wx.JoystickEvent)):
             if event.ButtonDown():
-                button_num = event.GetButtonOrdinal() + 1
-                if button_num <= 25: # CoH only supports 25 buttons?  [needs verification]
-                    code = "JOY" + str(button_num)
+                # Carry on, we'll handle these below
+                pass
             elif event.IsMove() or event.IsZMove():
+                # TODO - Deb's idea!  Maybe only listen to one of these every X milliseconds or so?
+
                 # don't let wee jiggles at the center trigger SetCurrentAxis()
                 self.joystick.SetCurrentAxisPercents()
                 # this is "no axis is > 50% in some direction" and "POV is centered"
                 if self.joystick.StickIsNearCenter() and self.joystick.GetPOVPosition() > 60000:
                     return
-                code = self.joystick.GetCurrentAxis()
             else:
-                wx.LogMessage("Got an unknown joystick event")
+                # Unknown joystick event.  These fire quite a bit.
+                return
 
         elif (event.ButtonDClick()):
-            code = "DCLICK" + str(event.GetButton())
+            pressed_keys.append("DCLICK" + str(event.GetButton()))
         else:
-            code = "BUTTON" + str(event.GetButton())
+            pressed_keys.append("BUTTON" + str(event.GetButton()))
 
-        if code == '':
-            wx.LogMessage(f"got through handleBind() with {event} without setting a code")
+        # iterate all possible values, and see if they're currently held down.
+        # this applies to keystrokes and joystick axes.  js buttons and mouse
+        # clicks have already been added.  This might not be optimal.
+        for possible_key in self.Keymap:
+            # actual keys are ints in the list
+            if (isinstance(possible_key, int) and wx.GetKeyState(possible_key)
+                    or
+                self.joystick and (possible_key == self.joystick.GetCurrentAxis())):
+
+                pressed_keys.append(self.Keymap[possible_key])
+
+        # iterate joystick buttons and add those that are pressed
+        for button in range(0, self.joystick.GetMaxButtons()):
+            if self.joystick.GetButtonState(button):
+                button_keyname = "JOY" + str(button+1)
+                pressed_keys.append(self.Keymap[button_keyname])
+
+        # If we're off the keyboard/etc, clear our current state,
+        # but return so we don't update the binding to nothing
+        if not pressed_keys:
+            self.KeySlot = self.ModSlot = ''
             return
 
-        KeyToBind = self.Keymap.get(code, '')
+        # massage keyboard mods if "separate L/R" is active
+        if self.SeparateLRChooser.Value and isinstance(event, wx.KeyEvent):
+            self.FixLRModKeys(event, pressed_keys)
 
-        if KeyToBind:
-            self.KeySlot = KeyToBind
+        for key in pressed_keys:
+            if key in modKeys:
+                pressed_keys.remove(key)
+                pressed_mods.append(key)
+
+        if pressed_keys:
+            if pressed_mods:
+                self.ModSlot = pressed_mods[0]
+            else:
+                self.ModSlot = ''
+            self.KeySlot = pressed_keys[0]
         else:
-            ModKey = ''
-            if isinstance(event, wx.KeyEvent) and event.HasAnyModifiers():
+            self.ModSlot = ''
+            if not pressed_mods:
+                self.KeySlot = ''
+            else:
+                self.KeySlot = pressed_mods[0]
 
-                if event.GetKeyCode() == wx.WXK_SHIFT:
-                    if SeparateLR and modKeyFlags:
-                        rawFlags = event.GetRawKeyFlags()
-                        if wx.Platform == '__WXMAC__':
-                            ModKey = "LSHIFT" if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT"
-                        else:
-                            ModKey = "RSHIFT" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
-                    else:
-                        ModKey = "SHIFT"
-
-                if event.GetKeyCode() == wx.WXK_CONTROL: # TODO is this right for Mac?
-                    if SeparateLR and modKeyFlags:
-                        rawFlags = event.GetRawKeyFlags()
-                        if wx.Platform == '__WXMAC__':
-                            ModKey = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
-                        elif wx.Platform == '__WXGTK__':
-                            ModKey = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
-                        else:
-                            ModKey = "RCTRL" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
-                    else:
-                        ModKey = "CTRL"
-
-                if event.GetKeyCode() == wx.WXK_ALT:
-                    if SeparateLR and modKeyFlags:
-                        rawFlags = event.GetRawKeyFlags()
-                        if wx.Platform == '__WXMAC__':
-                            ModKey = "LALT" if (rawFlags & modKeyFlags['LALT']) else "RALT"
-                        else:
-                            ModKey = "RALT" if (rawFlags & modKeyFlags['RALT']) else "LALT"
-                    else:
-                        ModKey = "ALT"
-
-            # TODO should this be indented a level to be inside "if it's a key event"?
-            # bc joystick events don't have event.AltDown() et al
-            if ModKey:
-                # if there's something already there
-                if self.ModSlot:
-                    # and it's not already us
-                    if self.ModSlot != ModKey:
-                        # check the mod keys' state
-                        if (
-                            (event.ControlDown() and ModKey in ['CTRL', 'LCTRL', 'RCTRL'])
-                            or
-                            (event.ShiftDown() and ModKey in ['SHIFT', 'LSHIFT', 'RSHIFT'])
-                            or
-                            (event.AltDown() and ModKey in ['ALT', 'LALT', 'RALT'])
-                        ):
-                            # and put it in -key- slot.
-                            self.KeySlot = ModKey
-                # nothing already there, add it to mod slot
-                else:
-                    self.ModSlot = ModKey
-
-        self.Binding = "+".join([ key for key in [self.ModSlot, self.KeySlot] if key])
+        if self.ModSlot or self.KeySlot:
+            self.Binding = "+".join([ key for key in [self.ModSlot, self.KeySlot] if key])
 
         self.ShowBind()
 
+        self.CheckConflicts()
+
+        self.Layout()
+
+    def CheckConflicts(self):
         Profile = wx.App.Get().Profile
         if Profile:
             conflicts = Profile.CheckConflict(self.Binding)
@@ -247,7 +227,34 @@ class KeySelectDialog(wx.Dialog):
                 self.kbErr.SetLabel(" ")
                 self.kbBind.SetHTMLBackgroundColour(wx.WHITE)
 
-        self.Layout()
+    def FixLRModKeys(self, event, pressed_keys):
+        for key in pressed_keys:
+            new_mod = None
+            if key == "SHIFT":
+                rawFlags = event.GetRawKeyFlags()
+                if wx.Platform == '__WXMAC__':
+                    new_mod = "LSHIFT" if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT"
+                else:
+                    new_mod = "RSHIFT" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
+
+            if key == "CTRL":
+                rawFlags = event.GetRawKeyFlags()
+                if wx.Platform == '__WXMAC__':
+                    new_mod = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
+                elif wx.Platform == '__WXGTK__':
+                    new_mod = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
+                else:
+                    new_mod = "RCTRL" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
+
+            if key == "ALT":
+                rawFlags = event.GetRawKeyFlags()
+                if wx.Platform == '__WXMAC__':
+                    new_mod = "LALT" if (rawFlags & modKeyFlags['LALT']) else "RALT"
+                else:
+                    new_mod = "RALT" if (rawFlags & modKeyFlags['RALT']) else "LALT"
+
+            if new_mod:
+                pressed_keys[pressed_keys.index(key)] = new_mod
 
     # This keymap code was initially adapted from PADRE < http://padre.perlide.org/ >.
     def SetKeymap(self):
@@ -256,6 +263,9 @@ class KeySelectDialog(wx.Dialog):
                 wx.WXK_RETURN : 'ENTER',
                 wx.WXK_BACK : 'BACKSPACE',
                 wx.WXK_TAB : 'TAB',
+                wx.WXK_SHIFT: 'SHIFT',
+                wx.WXK_ALT: 'ALT',
+                wx.WXK_CONTROL: 'CTRL', # TODO - wx.WXK_RAW_CONTROL for Mac, instead?
                 wx.WXK_SPACE : 'SPACE',
                 wx.WXK_UP : 'UP',
                 wx.WXK_DOWN : 'DOWN',
@@ -337,8 +347,8 @@ class KeySelectDialog(wx.Dialog):
                 'JOY2'  : 'JOY2',
                 'JOY3'  : 'JOY3',
                 'JOY4'  : 'JOY4',
-                'JOY5'  : 'JOY5',
-                'JOY6'  : 'JOY6',
+                'JOY5'  : 'LeftBumper',
+                'JOY6'  : 'RightBumper',
                 'JOY7'  : 'JOY7',
                 'JOY8'  : 'JOY8',
                 'JOY9'  : 'JOY9',
@@ -362,10 +372,11 @@ class KeySelectDialog(wx.Dialog):
                 "J1_D" : "JOYSTICK1_DOWN",
                 "J1_L" : "JOYSTICK1_LEFT",
                 "J1_R" : "JOYSTICK1_RIGHT",
-                "J2_U" : "JOYSTICK2_UP",
-                "J2_D" : "JOYSTICK2_DOWN",
-                "J2_L" : "JOYSTICK2_LEFT",
-                "J2_R" : "JOYSTICK2_RIGHT",
+                # Do these actually exist in the wild?
+                #"J2_U" : "JOYSTICK2_UP",
+                #"J2_D" : "JOYSTICK2_DOWN",
+                "J2_L" : "RTrigger",
+                "J2_R" : "LTrigger",
                 "J3_U" : "JOYSTICK3_UP",
                 "J3_D" : "JOYSTICK3_DOWN",
                 "J3_L" : "JOYSTICK3_LEFT",

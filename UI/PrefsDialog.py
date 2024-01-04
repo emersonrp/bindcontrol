@@ -78,7 +78,7 @@ class PrefsDialog(wx.Dialog):
         # CONTROLLER PANEL
         ###
         controllerPanel = wx.Panel(notebook)
-        controllerSizer = wx.FlexGridSizer(2,0,0)
+        controllerSizer = wx.FlexGridSizer(3,0,0)
 
         # Controller name display
         controllerNameLabel = ST.GenStaticText(controllerPanel, label = 'Controller:')
@@ -87,20 +87,35 @@ class PrefsDialog(wx.Dialog):
         if controller.GetNumberJoysticks() > 0:
             controllerName.SetLabel(controller.GetProductName())
         controllerSizer.Add( controllerName, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        controllerSizer.Add( wx.StaticText(controllerPanel, label = ''))
 
         # Pickers for controller_modifiers
+        possible_mods = controller.ListOfPossibleMods()
         controllerModsLabel = ST.GenStaticText(controllerPanel, label = 'Controller Modifiers:')
         controllerSizer.Add( controllerModsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
-        controllerModsButton = wx.Button(controllerPanel, label = "Controller Modifiers")
-        controllerSizer.Add(controllerModsButton, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        self.ControllerModPicker1 = controllerModPicker(controllerPanel, choices = possible_mods)
+        self.ControllerModPicker1.SetSelection(self.ControllerModPicker1.FindString(config.Read('ControllerMod1')))
+        controllerSizer.Add(self.ControllerModPicker1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        self.ControllerModPicker2 = controllerModPicker(controllerPanel, choices = possible_mods)
+        self.ControllerModPicker2.SetSelection(self.ControllerModPicker2.FindString(config.Read('ControllerMod2')))
+        controllerSizer.Add(self.ControllerModPicker2, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         # Pickers for extra_modifiers
         extraModsLabel = ST.GenStaticText(controllerPanel, label = 'Extra Modifiers:')
         controllerSizer.Add( extraModsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
-        extraModsButton = wx.Button(controllerPanel, label = "Extra Modifiers")
-        controllerSizer.Add(extraModsButton, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
-
-        possible_mods = controller.ListOfPossibleMods()
+        self.ExtraModPicker1 = controllerModPicker(controllerPanel, choices = possible_mods)
+        self.ExtraModPicker1.SetSelection(self.ExtraModPicker1.FindString(config.Read('ExtraMod1')))
+        controllerSizer.Add(self.ExtraModPicker1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        self.ExtraModPicker2 = controllerModPicker(controllerPanel, choices = possible_mods)
+        self.ExtraModPicker2.SetSelection(self.ExtraModPicker2.FindString(config.Read('ExtraMod2')))
+        controllerSizer.Add(self.ExtraModPicker2, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        controllerSizer.Add(wx.StaticText(controllerPanel, label = ''))
+        self.ExtraModPicker3 = controllerModPicker(controllerPanel, choices = possible_mods)
+        self.ExtraModPicker3.SetSelection(self.ExtraModPicker3.FindString(config.Read('ExtraMod3')))
+        controllerSizer.Add(self.ExtraModPicker3, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        self.ExtraModPicker4 = controllerModPicker(controllerPanel, choices = possible_mods)
+        self.ExtraModPicker4.SetSelection(self.ExtraModPicker4.FindString(config.Read('ExtraMod4')))
+        controllerSizer.Add(self.ExtraModPicker4, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         controllerPanel.SetSizerAndFit(controllerSizer)
 
@@ -124,3 +139,7 @@ class PrefsDialog(wx.Dialog):
         cblabel = evt.EventObject
         cblabel.CB.SetValue(not cblabel.CB.IsChecked())
         evt.Skip()
+
+class controllerModPicker(wx.Choice):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

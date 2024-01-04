@@ -24,6 +24,7 @@ class Main(wx.Frame):
 
         self.LogWindow = wx.LogWindow(self, "Log Window", show = False, passToOld = False)
         self.LogWindow.SetLogLevel(wx.LOG_Message)
+        self.LogWindow.GetFrame().SetSize(1000,300)
 
         config = wx.FileConfig('bindcontrol')
         wx.ConfigBase.Set(config)
@@ -169,6 +170,13 @@ class Main(wx.Frame):
             startwith = "New Profile" if self.PrefsDialog.StartWithNewProfile.GetValue() else "Last Profile"
             config.Write('StartWith', startwith)
 
+            config.Write('ControllerMod1', self.PrefsDialog.ControllerModPicker1.GetStringSelection())
+            config.Write('ControllerMod2', self.PrefsDialog.ControllerModPicker2.GetStringSelection())
+            config.Write('ExtraMod1', self.PrefsDialog.ExtraModPicker1.GetStringSelection())
+            config.Write('ExtraMod2', self.PrefsDialog.ExtraModPicker2.GetStringSelection())
+            config.Write('ExtraMod3', self.PrefsDialog.ExtraModPicker3.GetStringSelection())
+            config.Write('ExtraMod4', self.PrefsDialog.ExtraModPicker4.GetStringSelection())
+
             config.Flush()
 
     def OnMenuAboutBox(self, _):
@@ -188,7 +196,7 @@ Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
 
 Inspiration Popper design adapted from CityBinder for Homecoming by Tailcoat.
 """)
-            info.SetCopyright('(c) 2010-2023 R Pickett <emerson@hayseed.net>')
+            info.SetCopyright('(c) 2010-2024 R Pickett <emerson@hayseed.net>')
             info.SetWebSite('https://github.com/emersonrp/bindcontrol')
             self.about_info = info
 

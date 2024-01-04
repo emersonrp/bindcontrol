@@ -76,17 +76,18 @@ class bcController(wx.adv.Joystick):
         else:
             self.SetCurrentAxisPercents()
 
-            current_axis = self.CurrentAxisPercents.index(max(self.CurrentAxisPercents, key=abs))
+            if self.CurrentAxisPercents: # might be empty list if we have no controller.
+                current_axis = self.CurrentAxisPercents.index(max(self.CurrentAxisPercents, key=abs))
 
-            current_dir = None
+                current_dir = None
 
-            if self.CurrentAxisPercents[current_axis] < -50:
-                current_dir = 0
-            elif self.CurrentAxisPercents[current_axis] > 50:
-                current_dir = 1
+                if self.CurrentAxisPercents[current_axis] < -50:
+                    current_dir = 0
+                elif self.CurrentAxisPercents[current_axis] > 50:
+                    current_dir = 1
 
-            if current_dir != None:
-                code = self.CodeTable[current_axis][current_dir]
+                if current_dir != None:
+                    code = self.CodeTable[current_axis][current_dir]
 
         return code
 
@@ -102,7 +103,7 @@ class bcController(wx.adv.Joystick):
     def ListOfPossibleMods(self):
         # return a list of strings of controls that might be used as controller_modifiers
         # or extra_modifiers
-        possible_mods = ["LTrigger", "RTrigger"] # assume everybody has triggers
+        possible_mods = ["", "LTrigger", "RTrigger"] # assume everybody has triggers
 
         for bnum in range(1, self.GetNumberButtons()):
             bname = "JOY" + str(bnum)

@@ -30,7 +30,7 @@ elif wx.Platform == '__WXMAC__':
     }
 
 modKeys = ['SHIFT', 'LSHIFT', 'RSHIFT', 'ALT', 'RALT', 'LALT', 'CTRL', 'LCTRL', 'RCTRL',
-        # TODO - set up a place in Preferences to pick which joystick thingies are mod keys, but for now:
+        # TODO - set up a place in Preferences to pick which controller thingies are mod keys, but for now:
         'LTrigger', 'RTrigger', 'LeftBumper', 'RightBumper', 'JOY9', 'JOY10',
 ]
 
@@ -56,8 +56,8 @@ class KeySelectDialog(wx.Dialog):
 
         wx.Dialog.__init__(self, button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
 
-        self.joystick = bcController()
-        self.joystick.SetCapture(self)
+        self.controller = bcController()
+        self.controller.SetCapture(self)
 
         # Mystery panel must be in here in order to get key events
         _ = wx.Panel(self, -1)
@@ -141,12 +141,10 @@ class KeySelectDialog(wx.Dialog):
                 # Carry on, we'll handle these below
                 pass
             elif event.IsMove() or event.IsZMove():
-                # TODO - Deb's idea!  Maybe only listen to one of these every X milliseconds or so?
-
                 # don't let wee jiggles at the center trigger SetCurrentAxis()
-                self.joystick.SetCurrentAxisPercents()
+                self.controller.SetCurrentAxisPercents()
                 # this is "no axis is > 50% in some direction" and "POV is centered"
-                if self.joystick.StickIsNearCenter() and self.joystick.GetPOVPosition() > 60000:
+                if self.controller.StickIsNearCenter() and self.controller.GetPOVPosition() > 60000:
                     return
             else:
                 # Unknown joystick event.  These fire quite a bit.
@@ -164,17 +162,17 @@ class KeySelectDialog(wx.Dialog):
             # actual keys are ints in the list
             if (isinstance(possible_key, int) and wx.GetKeyState(possible_key)
                     or
-                self.joystick and (possible_key == self.joystick.GetCurrentAxis())):
+                self.controller and (possible_key == self.controller.GetCurrentAxis())):
 
                 pressed_keys.append(self.Keymap[possible_key])
 
         # iterate joystick buttons and add those that are pressed
-        for button in range(0, self.joystick.GetMaxButtons()):
-            if self.joystick.GetButtonState(button):
+        for button in range(0, self.controller.GetNumberButtons()):
+            if self.controller.GetButtonState(button):
                 button_keyname = "JOY" + str(button+1)
                 pressed_keys.append(self.Keymap[button_keyname])
 
-        # If we're off the keyboard/etc, clear our current state,
+        # If we're completely off the keyboard/etc, clear our current state,
         # but return so we don't update the binding to nothing
         if not pressed_keys:
             self.KeySlot = self.ModSlot = ''
@@ -196,6 +194,7 @@ class KeySelectDialog(wx.Dialog):
                 self.ModSlot = ''
             self.KeySlot = pressed_keys[0]
         else:
+            # no pressed keys, so put the first mod in as the KeySlot
             self.ModSlot = ''
             if not pressed_mods:
                 self.KeySlot = ''
@@ -230,15 +229,14 @@ class KeySelectDialog(wx.Dialog):
     def FixLRModKeys(self, event, pressed_keys):
         for key in pressed_keys:
             new_mod = None
+            rawFlags = event.GetRawKeyFlags()
             if key == "SHIFT":
-                rawFlags = event.GetRawKeyFlags()
                 if wx.Platform == '__WXMAC__':
                     new_mod = "LSHIFT" if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT"
                 else:
                     new_mod = "RSHIFT" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
 
             if key == "CTRL":
-                rawFlags = event.GetRawKeyFlags()
                 if wx.Platform == '__WXMAC__':
                     new_mod = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
                 elif wx.Platform == '__WXGTK__':
@@ -247,7 +245,6 @@ class KeySelectDialog(wx.Dialog):
                     new_mod = "RCTRL" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
 
             if key == "ALT":
-                rawFlags = event.GetRawKeyFlags()
                 if wx.Platform == '__WXMAC__':
                     new_mod = "LALT" if (rawFlags & modKeyFlags['LALT']) else "RALT"
                 else:
@@ -422,5 +419,8 @@ class bcKeyButton(wx.Button):
             keyLabel = re.sub(r'CTRL\+', 'C+', keyLabel)
             keyLabel = re.sub(r'ALT\+', 'A+', keyLabel)
             keyLabel = re.sub(r'DOUBLECLICK', 'DCLICK', keyLabel)
+            keyLabel = re.sub(r'Trigger', 'Trig', keyLabel)
+            keyLabel = re.sub(r'LeftBumper', 'LBump', keyLabel)
+            keyLabel = re.sub(r'RightBumper', 'RBump', keyLabel)
             keyLabel = f"<small>{keyLabel}</small>"
         self.SetLabelMarkup(keyLabel)

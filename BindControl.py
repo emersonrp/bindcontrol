@@ -23,6 +23,7 @@ class Main(wx.Frame):
         self.SetStatusBar(wx.StatusBar(self, style = 0))
 
         self.LogWindow = wx.LogWindow(self, "Log Window", show = False, passToOld = False)
+        self.LogWindow.SetLogLevel(wx.LOG_Message)
 
         config = wx.FileConfig('bindcontrol')
         wx.ConfigBase.Set(config)
@@ -175,7 +176,7 @@ class Main(wx.Frame):
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
             info.SetName('BindControl')
-            info.SetVersion('0.10')
+            info.SetVersion('0.10-controller-0.2')
             info.SetDescription("""
 BindControl can help you set up custom keybinds in City of Heroes/Villains, including speed-on-demand binds.
 

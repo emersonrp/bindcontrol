@@ -26,9 +26,13 @@ class bcController(wx.adv.Joystick):
                 self.CurrentAxisPercents[axis]= self.AxisPercent(amin, amax, apos)
                 # Joystick1_UP, Joystick1_DOWN
             elif axis == 2:
-                amin, amax = self.GetRudderMin(), self.GetRudderMax()
-                # normalize this to 0 - 65535 on Linux.  Find a better way if needed
-                if wx.Platform == "__WXGTK__":
+                # So far, looks like on MacOS, axis 2 is Z
+                if wx.Platform == "__WXMAC__":
+                    amin, amax = self.GetZMin(), self.GetZMax()
+                else:
+                    amin, amax = self.GetRudderMin(), self.GetRudderMax()
+                # normalize this on Linux and Mac.  Find a better way if needed
+                if wx.Platform == "__WXGTK__" or wx.Platform == "__WXMAC__":
                     corr = (amax - amin) / 2
                     apos = apos + corr
                     amin = amin - corr
@@ -45,8 +49,8 @@ class bcController(wx.adv.Joystick):
                 # Joystick3_UP, Joystick3_DOWN
             elif axis == 5:
                 amin, amax = self.GetVMin(), self.GetVMax()
-                # normalize this to 0 - 65535 on Linux.  Find a better way if needed
-                if wx.Platform == "__WXGTK__":
+                # normalize this on Linux and Mac.  Find a better way if needed
+                if wx.Platform == "__WXGTK__" or wx.Platform == "__WXMAC__":
                     corr = (amax - amin) / 2
                     apos = apos + corr
                     amin = amin - corr
@@ -146,10 +150,11 @@ class bcController(wx.adv.Joystick):
             self.CodeTable =  [
                     ['J1_L', 'J1_R'],
                     ['J1_U', 'J1_D'],
-                    ['J2_L', 'J2_R'],
                     ['J3_L', 'J3_R'],
-                    ['J3_U', 'J3_D'],
-                    ['J2_L', 'J2_R'],
-                    ['JP_L', 'JP_R'],
-                    ['JP_U', 'JP_D'],
+                    # Currently no way to test more than three axes on Mac
+#                    ['J3_L', 'J3_R'],
+#                    ['J3_U', 'J3_D'],
+#                    ['J2_L', 'J2_R'],
+#                    ['JP_L', 'JP_R'],
+#                    ['JP_U', 'JP_D'],
             ]

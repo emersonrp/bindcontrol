@@ -162,15 +162,17 @@ class KeySelectDialog(wx.Dialog):
             # actual keys are ints in the list
             if (isinstance(possible_key, int) and wx.GetKeyState(possible_key)
                     or
-                self.controller and (possible_key == self.controller.GetCurrentAxis())):
+                self.controller.IsOk() and (possible_key == self.controller.GetCurrentAxis())):
 
                 pressed_keys.append(self.Keymap[possible_key])
 
         # iterate joystick buttons and add those that are pressed
-        for button in range(0, self.controller.GetNumberButtons()):
-            if self.controller.GetButtonState(button):
-                button_keyname = "JOY" + str(button+1)
-                pressed_keys.append(self.Keymap[button_keyname])
+        if self.controller.IsOk():
+            print("Looking at buttons")
+            for button in range(0, self.controller.GetNumberButtons()):
+                if self.controller.GetButtonState(button):
+                    button_keyname = "JOY" + str(button+1)
+                    pressed_keys.append(self.Keymap[button_keyname])
 
         # If we're completely off the keyboard/etc, clear our current state,
         # but return so we don't update the binding to nothing

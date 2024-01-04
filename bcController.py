@@ -8,7 +8,11 @@ class bcController(wx.adv.Joystick):
         wx.adv.Joystick.__init__(self)
         self.SetCodeTable()
 
-        self.CurrentAxisPercents = [0] * self.GetNumberAxes()
+        self.CurrentAxisPercents = []
+
+        # Don't even poll axes if we're not joysticking
+        if self.IsOk():
+            self.CurrentAxisPercents = [0] * self.GetNumberAxes()
 
     def SetCurrentAxisPercents(self):
         for axis in range(len(self.CurrentAxisPercents)):
@@ -103,6 +107,8 @@ class bcController(wx.adv.Joystick):
     def ListOfPossibleMods(self):
         # return a list of strings of controls that might be used as controller_modifiers
         # or extra_modifiers
+        if not self.IsOk(): return []
+
         possible_mods = ["", "LTrigger", "RTrigger"] # assume everybody has triggers
 
         for bnum in range(1, self.GetNumberButtons()):

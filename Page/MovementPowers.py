@@ -47,6 +47,7 @@ class MovementPowers(Page):
             'SpeedMode'       : "C",
             'SSMobileOnly'    : False,
             'SSSJModeEnable'  : False,
+            'SpeedPhaseKey'   : "",
             'JauntKey'        : "",
 
             'JumpPower'       : '',
@@ -56,16 +57,17 @@ class MovementPowers(Page):
             'TakeoffKey'      : "",
             'DoubleJumpKey'   : "",
 
-            'FlyPower'        : '',
-            'HasHover'        : False,
-            'HasGFly'         : False,
-            'HasCF'           : False, # hidden
-            'HasEF'           : False, # hidden
-            'HasQF'           : False, # hidden
-            'FlyMode'         : "F",
-            'GFlyMode'        : "",
-            'AfterburnerKey'  : "",
-            'TranslocationKey': "",
+            'FlyPower'            : '',
+            'HasHover'            : False,
+            'HasGFly'             : False,
+            'HasCF'               : False, # hidden
+            'HasEF'               : False, # hidden
+            'HasQF'               : False, # hidden
+            'FlyMode'             : "F",
+            'GFlyMode'            : "",
+            'EvasiveManeuversKey' : "",
+            'AfterburnerKey'      : "",
+            'TranslocationKey'    : "",
 
             'HasTP'           : False,
             'TPBindKey'       : 'LSHIFT+LBUTTON',
@@ -306,6 +308,7 @@ class MovementPowers(Page):
         self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''])
         self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
         self.superSpeedSizer.AddControl( ctlName = 'SpeedMode', ctlType = 'keybutton',)
+        self.superSpeedSizer.AddControl( ctlName = 'SpeedPhaseKey', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl( ctlName = 'JauntKey', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl( ctlName = 'SSMobileOnly', ctlType = 'checkbox',)
         self.superSpeedSizer.AddControl( ctlName = 'SSSJModeEnable', ctlType = 'checkbox',)
@@ -330,6 +333,7 @@ class MovementPowers(Page):
         self.flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',)
         self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
+        self.flySizer.AddControl( ctlName = 'EvasiveManeuversKey', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'AfterburnerKey', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'TranslocationKey', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'HasGFly', ctlType = 'checkbox',)
@@ -441,6 +445,7 @@ class MovementPowers(Page):
             c['SpeedMode'].Enable(bool(self.GetState('SpeedPower')) and self.GetState('DefaultMode') != "Speed")
             c['SSMobileOnly'].Enable(bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable'].Enable(bool(self.GetState('SpeedPower') and self.GetState('JumpPower')))
+            c['SpeedPhaseKey'].Show(self.GetState('SpeedPower') == "Super Speed")
             c['JauntKey'].Show(self.GetState('SpeedPower') == "Speed of Sound")
 
             ### JUMP POWERS
@@ -483,6 +488,7 @@ class MovementPowers(Page):
             c['FlyMode'].Enable((self.GetState('FlyPower') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
             c['HasHover'].Enable(self.Profile.HasPowerPool('Flight'))
+            c['EvasiveManeuversKey'].Show(self.GetState('FlyPower') == 'Fly')
             c['AfterburnerKey'].Show(self.GetState('FlyPower') == 'Fly')
             c['TranslocationKey'].Show(self.GetState('FlyPower') == 'Mystic Flight')
 
@@ -1132,11 +1138,15 @@ class MovementPowers(Page):
         if self.GetState('EnableSoD'): self.doSpeedOnDemandBinds(t)
 
         # Make binds for the "stage 2" travel powers like Afterburner, if appropriate
+        if self.Ctrls['EvasiveManeuversKey'].IsEnabled():
+            ResetFile.SetBind(self.Ctrls['EvasiveManeuversKey'].MakeFileKeyBind('powexecname Evasive Maneuvers'))
         if self.Ctrls['AfterburnerKey'].IsEnabled():
             # TODO - this will be "self.AfterburnerPower" when we merge Kheldian logic later
             ResetFile.SetBind(self.Ctrls['AfterburnerKey'].MakeFileKeyBind('powexecname Afterburner'))
         if self.Ctrls['TranslocationKey'].IsEnabled():
             ResetFile.SetBind(self.Ctrls['TranslocationKey'].MakeFileKeyBind('powexec_location cursor Translocation'))
+        if self.Ctrls['SpeedPhaseKey'].IsEnabled():
+            ResetFile.SetBind(self.Ctrls['SpeedPhaseKey'].MakeFileKeyBind('powexecname Speed Phase'))
         if self.Ctrls['JauntKey'].IsEnabled():
             ResetFile.SetBind(self.Ctrls['JauntKey'].MakeFileKeyBind('powexecname Jaunt'))
         if self.Ctrls['TakeoffKey'].IsEnabled():
@@ -2281,15 +2291,17 @@ UI.Labels.update( {
     'SpeedMode'      : 'Toggle Super Speed Mode',
     'SSMobileOnly'   : 'SuperSpeed only when moving',
     'SSSJModeEnable' : 'Enable Super Speed / Super Jump Mode',
+    'SpeedPhaseKey'  : 'Speed Phase Key',
     'JauntKey'       : 'Jaunt Key',
 
-    'FlyPower'         : "Primary Flight Power",
-    'HasHover'         : "Player has Hover",
-    'HasGFly'          : 'Player has Group Fly',
-    'FlyMode'          : 'Toggle Fly Mode',
-    'AfterburnerKey'   : 'Afterburner Key',
-    'TranslocationKey' : 'Translocation Key',
-    'GFlyMode'         : 'Toggle Group Fly Mode',
+    'FlyPower'            : "Primary Flight Power",
+    'HasHover'            : "Player has Hover",
+    'HasGFly'             : 'Player has Group Fly',
+    'FlyMode'             : 'Toggle Fly Mode',
+    'EvasiveManeuversKey' : 'Evasive Maneuvers Key',
+    'AfterburnerKey'      : 'Afterburner Key',
+    'TranslocationKey'    : 'Translocation Key',
+    'GFlyMode'            : 'Toggle Group Fly Mode',
 
     'Feedback'       : 'Self-/tell when changing mode',
 

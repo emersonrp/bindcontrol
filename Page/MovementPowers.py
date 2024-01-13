@@ -396,6 +396,12 @@ class MovementPowers(Page):
 
         self.SynchronizeUI()
 
+    # If we have two items, blank plus one power, pre-set it to the one power
+    def PrePickLonePower(self, control):
+        if not isinstance(control, wx.Choice): return
+
+        if control.GetCount() == 2: control.SetSelection(1)
+
     def SynchronizeUI(self, evt = None):
         #self.Freeze()
 
@@ -439,6 +445,7 @@ class MovementPowers(Page):
                 if not SSExists: c['SpeedPower'].Append('Super Speed')
             else:
                 if SSExists: c['SpeedPower'].Delete(SSIdx)
+            self.PrePickLonePower(c['SpeedPower'])
 
             c['SpeedMode'].Enable(bool(self.GetState('SpeedPower')) and self.GetState('DefaultMode') != "Speed")
             c['SSMobileOnly'].Enable(bool(self.GetState('SpeedPower')))
@@ -460,6 +467,7 @@ class MovementPowers(Page):
                 if not SJExists: c['JumpPower'].Append('Super Jump')
             else:
                 if SJExists: c['JumpPower'].Delete(SJIdx)
+            self.PrePickLonePower(c['JumpPower'])
 
             c['HasCJ'].Enable(self.Profile.HasPowerPool('Leaping'))
             c['SimpleSJCJ'].Enable(bool(self.GetState('JumpPower') and self.GetState('HasCJ')))
@@ -482,6 +490,7 @@ class MovementPowers(Page):
                 if not MFlightExists: c['FlyPower'].Append('Mystic Flight')
             else:
                 if MFlightExists: c['FlyPower'].Delete(MFlightIdx)
+            self.PrePickLonePower(c['FlyPower'])
 
             c['FlyMode'].Enable((self.GetState('FlyPower') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")

@@ -44,7 +44,7 @@ class MovementPowers(Page):
             'NonSoDMode'      : '[',
 
             'SpeedPower'      : '',
-            'RunMode'         : "C",
+            'SpeedMode'       : "C",
             'SSMobileOnly'    : False,
             'SSSJModeEnable'  : False,
             'JauntKey'        : "",
@@ -305,7 +305,7 @@ class MovementPowers(Page):
         self.superSpeedSizer = ControlGroup(self, self, 'Speed')
         self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''])
         self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
-        self.superSpeedSizer.AddControl( ctlName = 'RunMode', ctlType = 'keybutton',)
+        self.superSpeedSizer.AddControl( ctlName = 'SpeedMode', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl( ctlName = 'JauntKey', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl( ctlName = 'SSMobileOnly', ctlType = 'checkbox',)
         self.superSpeedSizer.AddControl( ctlName = 'SSSJModeEnable', ctlType = 'checkbox',)
@@ -438,7 +438,7 @@ class MovementPowers(Page):
             else:
                 if SSExists: c['SpeedPower'].Delete(SSIdx)
 
-            c['RunMode'].Enable(bool(self.GetState('SpeedPower')) and self.GetState('DefaultMode') != "Speed")
+            c['SpeedMode'].Enable(bool(self.GetState('SpeedPower')) and self.GetState('DefaultMode') != "Speed")
             c['SSMobileOnly'].Enable(bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable'].Enable(bool(self.GetState('SpeedPower') and self.GetState('JumpPower')))
             c['JauntKey'].Show(self.GetState('SpeedPower') == "Speed of Sound")
@@ -517,7 +517,7 @@ class MovementPowers(Page):
                 self.Profile.HasPowerPool('Leaping') or self.Profile.HasPowerPool('Force of Will'))
             self.rightColumn.Show(self.superSpeedSizer,
                 self.Profile.HasPowerPool('Speed') or self.Profile.HasPowerPool('Experimentation'))
-            self.rightColumn.Show(self.teleportSizer,   self.Profile.HasPowerPool('Teleportation'))
+            self.rightColumn.Show(self.teleportSizer, self.Profile.HasPowerPool('Teleportation'))
 
             # show/hide kheldian-influenced controls depending on selected archetype;
             archetype = self.Profile.Archetype()
@@ -588,10 +588,8 @@ class MovementPowers(Page):
         modestr    = p.get('modestr'    , "")
         flight     = p.get('flight'     , "")
         fix        = p.get('fix'        , "")
-        turnoff    = p.get('turnoff'    , "")
+        turnoff    = p.get('turnoff'    , [ mobile, stationary ])
         sssj       = p.get('sssj'       , "")
-
-        turnoff = turnoff or { mobile, stationary }
 
         if ((self.GetState('DefaultMode') == modestr) and (t.totalkeys == 0)):
 
@@ -616,11 +614,10 @@ class MovementPowers(Page):
 
             self.sodFollowKey(t,blf,curfile,mobile,stationary)
 
-        # TODO is (flight == "Fly") correct here or do we want this for MF, too?
-        if (flight and (flight == "Fly") and pathbo):
+        if (flight and (flight == "Fly" or flight == "Mystic Flight") and pathbo):
             #  blast off
             curfile = profile.GetBindFile(f"{pathbo}{t.KeyState()}.txt")
-            self.sodResetKey(curfile,gamepath,self.actPower_toggle(False,stationary,mobile),'')
+            self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile))
             self.sodUpKey     (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
             self.sodDownKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo")
             self.sodForwardKey(t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
@@ -640,7 +637,7 @@ class MovementPowers(Page):
                     t.FlyMode = t.SprintMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
                 if (self.GetState('SpeedPower')):
-                    t.FlyMode = t.RunMode
+                    t.FlyMode = t.SpeedMode
                     self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
                 if (t.canjmp):
                     t.FlyMode = t.JumpMode
@@ -663,7 +660,7 @@ class MovementPowers(Page):
             # TODO this section is commented out in citybinder, why?
             # curfile = profile.GetBindFile(str(pathsd))
 #
-#            self.sodResetKey(curfile,gamepath,self.actPower_toggle(False,stationary,mobile),'')
+#            self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile),'')
 #
 #            self.sodUpKey     (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
 #            self.sodDownKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd")
@@ -684,7 +681,7 @@ class MovementPowers(Page):
 
         curfile = profile.GetBindFile(f"{path}{t.KeyState()}.txt")
 
-        self.sodResetKey(curfile,gamepath,self.actPower_toggle(False,stationary,mobile),'')
+        self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile))
 
         self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
         self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','','')
@@ -693,8 +690,7 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
         self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
 
-        # TODO is (flight == "Fly") correct here or do we want this for MF, too?
-        if ((flight == "Fly") and pathbo):
+        if ((flight == "Fly" or flight == "Mystic Flight") and pathbo):
             #  Base to set down
             if (modestr != "NonSoD") : self.makeNonSoDModeKey(profile,t,"r",curfile,[ mobile,stationary ],self.sodSetDownFix)
             if (modestr != "Sprint") : self.makeSprintModeKey(profile,t,"r",curfile,turnoff,self.sodSetDownFix)
@@ -724,7 +720,7 @@ class MovementPowers(Page):
         # AutoRun Binds
         curfile = profile.GetBindFile(f"{patha}{t.KeyState()}.txt")
 
-        self.sodResetKey(curfile,gamepath,self.actPower_toggle(False,stationary,mobile),'')
+        self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile))
 
         self.sodUpKey     (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
         self.sodDownKey   (t,bla,curfile,mobile,stationary,flight,1, '','')
@@ -733,8 +729,7 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
         self.sodRightKey  (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
 
-        # TODO is (flight == "Fly") correct here or do we want this for MF, too?
-        if ((flight == "Fly") and pathbo):
+        if ((flight == "Fly" or flight == "Mystic Flight") and pathbo):
             if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"ar",curfile,[ mobile,stationary ],self.sodSetDownFix)
             if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,self.sodSetDownFix)
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,self.sodSetDownFix)
@@ -754,7 +749,7 @@ class MovementPowers(Page):
         # FollowRun Binds
         curfile = profile.GetBindFile(f"{pathf}{t.KeyState()}.txt")
 
-        self.sodResetKey(curfile,gamepath,self.actPower_toggle(False,stationary,mobile),'')
+        self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile))
 
         self.sodUpKey     (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
         self.sodDownKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'')
@@ -763,15 +758,14 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
         self.sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
 
-        # TODO is (flight == "Fly") correct here or do we want this for MF, too?
-        if ((flight == "Fly") and pathbo):
-            if (modestr != "NonSoD"): self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ],self.sodSetDownFix)
-            if (modestr != "Sprint"): self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,self.sodSetDownFix)
-            if (modestr != "Super Speed")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,self.sodSetDownFix)
+        if ((flight == "Fly" or flight == "Mystic Flight") and pathbo):
+            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ],self.sodSetDownFix)
+            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,self.sodSetDownFix)
+            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,self.sodSetDownFix)
         else:
-            if (modestr != "NonSoD"): self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ])
-            if (modestr != "Sprint"): self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,fix)
-            if (modestr != "Super Speed")   : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
+            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ])
+            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,fix)
+            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
 
         if (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"ff",curfile,turnoff,fix)
         if (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"fj",curfile,turnoff, pathf, gamepathf)
@@ -795,20 +789,20 @@ class MovementPowers(Page):
             if (fix):
                 fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,'',feedback)
             else:
-                cur.SetBind(key, name, self, t.ini + self.actPower_toggle(False,None,toff) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
+                cur.SetBind(key, name, self, t.ini + self.actPower_toggle(None,toff) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
 
         elif (bl == "ar"):
             bindload = t.BLF('an')
             if (fix):
                 fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"a",feedback)
             else:
-                cur.SetBind(key, name, self, t.ini + self.actPower_toggle(False,None,toff) + t.detailhi + t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                cur.SetBind(key, name, self, t.ini + self.actPower_toggle(None,toff) + t.detailhi + t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
 
         else:
             if (fix):
                 fix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"f",feedback)
             else:
-                cur.SetBind(key, name, self, t.ini + self.actPower_toggle(False,None,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
+                cur.SetBind(key, name, self, t.ini + self.actPower_toggle(None,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
         t.ini = ''
 
     def makeTempModeKey(self, p, t, bl, cur, toff):
@@ -849,7 +843,7 @@ class MovementPowers(Page):
 
             if t.horizkeys: sprint = t.sprint
             else:           sprint = ''
-            ton = self.actPower_toggle(True, sprint, toff)
+            ton = self.actPower_toggle(sprint, toff, start = True)
 
             if (fix):
                 fix(p,t,key, self.makeSprintModeKey,"r",bl,cur,toff,'',feedback)
@@ -862,20 +856,20 @@ class MovementPowers(Page):
             if (fix):
                 fix(p,t,key, self.makeSprintModeKey,"r",bl,cur,toff,"a",feedback)
             else:
-                cur.SetBind(key, name, self, t.ini + self.actPower_toggle(True,t.sprint,toff) + t.detailhi +  t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint,toff,start=True) + t.detailhi +  t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
 
         else:
             if (fix):
                 fix(p,t,key, self.makeSprintModeKey,"r",bl,cur,toff,"f",feedback)
             else:
-                cur.SetBind(key, name, self, t.ini + self.actPower_toggle(True,t.sprint,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fr'))
+                cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint,toff,start=True) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fr'))
 
         t.ini = ''
 
     def makeSpeedModeKey(self, p, t, bl, cur, toff, fix, fb = ''):
-        key = t.RunMode
-        name = UI.Labels['RunMode']
-        if not self.Ctrls['RunMode'].IsEnabled(): return
+        key = t.SpeedMode
+        name = UI.Labels['SpeedMode']
+        if not self.Ctrls['SpeedMode'].IsEnabled(): return
         bindload = feedback = ''
 
         if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Superspeed Mode'
@@ -886,19 +880,19 @@ class MovementPowers(Page):
                 if (fix):
                     fix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,'',feedback)
                 else:
-                    cur.SetBind(key, name, self, t.ini + self.actPower_toggle(True,t.speed,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "as"):
                 bindload = f"{t.blas}{t.KeyState()}.txt"
                 if (fix):
                     fix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"a",feedback)
                 elif (not feedback):
-                    cur.SetBind(key, name, self, t.ini + self.actPower_toggle(True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
                 else:
                     bindload  = f"{t.blas}{t.KeyState()}.txt"
                     bindload2 = f"{t.blas}{t.KeyState()}_s.txt"
                     tgl = p.GetBindFile(f"{t.pathas}{t.KeyState()}_s.txt")
-                    cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower_toggle(True,t.speed,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + bindload2)
+                    cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower_toggle(t.speed,toff,start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + bindload2)
                     tgl.SetBind(key, name, self, "- $$" + feedback + bindload)
 
             else:
@@ -906,7 +900,7 @@ class MovementPowers(Page):
                     fix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"f",feedback)
                 else:
                     bindload = f"{t.blfs}{t.KeyState()}.txt"
-                    cur.SetBind(key, name, self, t.ini + self.actPower_toggle(True,t.speed,toff) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + bindload)
+                    cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
 
@@ -955,7 +949,7 @@ class MovementPowers(Page):
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
-                    cur.SetBind(key, name, self, '+down$$' + self.actPower_toggle(True,t.flyx,toff) + '$$up 1$$down 0' + t.dirs('FBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    cur.SetBind(key, name, self, '+down$$' + self.actPower_toggle(t.flyx,toff,start=True) + '$$up 1$$down 0' + t.dirs('FBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "a"):
                 if (not fb_on_a): feedback = ''
@@ -967,21 +961,21 @@ class MovementPowers(Page):
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
-                    cur.SetBind(t.FlyMode, name, self, t.ini + self.actPower_toggle(True,ton,toff) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    cur.SetBind(t.FlyMode, name, self, t.ini + self.actPower_toggle(ton,toff,start=true) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "af"):
                 bindload = t.blaf + t.KeyState() + ".txt"
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"a",feedback)
                 else:
-                    cur.SetBind(key, name, self, t.ini + self.actPower_toggle(True,t.flyx,toff) + t.detaillo + t.flycamdist + t.dirs('DLR') + feedback + bindload)
+                    cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx,toff,start=True) + t.detaillo + t.flycamdist + t.dirs('DLR') + feedback + bindload)
 
             else:
                 bindload = t.blff + t.KeyState() + ".txt"
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"f",feedback)
                 else:
-                    cur.SetBind(key, name, self, t.ini + self.actPower_toggle(True,t.flyx,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + t.blff + t.KeyState() + ".txt")
+                    cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx,toff,start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + t.blff + t.KeyState() + ".txt")
 
         t.ini = ''
 
@@ -996,7 +990,7 @@ class MovementPowers(Page):
                 if (fix):
                     fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,'','')
                 else:
-                    cur.SetBind(key, name, self, t.ini + '$$up 1$$down 0' + self.actPower_toggle(False,t.gfly,toff) + t.dirs('FBLR') + t.detaillo + t.flycamdist + bindload)
+                    cur.SetBind(key, name, self, t.ini + '$$up 1$$down 0' + self.actPower_toggle(t.gfly,toff) + t.dirs('FBLR') + t.detaillo + t.flycamdist + bindload)
 
             elif (bl == "gaf"):
                 bindload = t.BLF('gaf')
@@ -1010,7 +1004,7 @@ class MovementPowers(Page):
                     fix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,"f")
                 else:
                     if (bl == "gf"):
-                        cur.SetBind(key, name, self, t.ini + self.actPower_toggle(True,t.gfly,toff) + t.detaillo + t.flycamdist + t.BLF('gff'))
+                        cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.gfly,toff,start=True) + t.detaillo + t.flycamdist + t.BLF('gff'))
                     else:
                         cur.SetBind(key, name, self, t.ini + t.detaillo + t.flycamdist + t.BLF('gff'))
 
@@ -1216,8 +1210,8 @@ class MovementPowers(Page):
             novafile.SetBind(self.Ctrls['Down'].MakeFileKeyBind("+down"))
             novafile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind("++forward"))
             novafile.SetBind(self.Ctrls['FlyMode'].MakeFileKeyBind('nop'))
-            if (self.GetState('FlyMode') != self.GetState('RunMode')):
-                novafile.SetBind(self.Ctrls['RunMode'].MakeFileKeyBind('nop'))
+            if (self.GetState('FlyMode') != self.GetState('SpeedMode')):
+                novafile.SetBind(self.Ctrls['SpeedMode'].MakeFileKeyBind('nop'))
             if (self.GetState('MouseChord')):
                 novafile.SetBind('mousechord', "+down$$+forward")
 
@@ -1253,8 +1247,8 @@ class MovementPowers(Page):
             dwrffile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind("++forward"))
             dwrffile.SetBind(self.Ctrls['FlyMode'].MakeFileKeyBind('nop'))
             dwrffile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("follow"))
-            if (self.GetState('FlyMode') != self.GetState('RunMode')):
-                dwrffile.SetBind(self.Ctrls['RunMode'].MakeFileKeyBind('nop'))
+            if (self.GetState('FlyMode') != self.GetState('SpeedMode')):
+                dwrffile.SetBind(self.Ctrls['SpeedMode'].MakeFileKeyBind('nop'))
             if (self.GetState('MouseChord')):
                 dwrffile.SetBind('mousechord', "+down$$+forward")
 
@@ -1489,7 +1483,7 @@ class MovementPowers(Page):
         if (self.GetState('DefaultMode') != "Sprint") : t.SprintMode = self.GetState('SprintMode')
         if (self.GetState('DefaultMode') != "Fly")    : t.FlyMode    = self.GetState('FlyMode')
         if (self.GetState('DefaultMode') != "Jump")   : t.JumpMode   = self.GetState('JumpMode')
-        if (self.GetState('DefaultMode') != "Speed")  : t.RunMode    = self.GetState('RunMode')
+        if (self.GetState('DefaultMode') != "Speed")  : t.SpeedMode    = self.GetState('SpeedMode')
         if (self.GetState('DefaultMode') != "GFly")   : t.GFlyMode   = self.GetState('GFlyMode')
         t.TempMode = self.GetState('TempMode')
 
@@ -1567,7 +1561,7 @@ class MovementPowers(Page):
 
                                 if (self.GetState('SpeedPower')):
                                     sssj = None
-                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.RunMode)
+                                    setattr(t, self.GetState('DefaultMode') + "Mode", t.SpeedMode)
                                     if (self.GetState('SSSJModeEnable')): sssj = t.jump
                                     st = None if self.GetState('SSMobileOnly') else t.speed
                                     self.makeSoDFile({
@@ -1671,35 +1665,32 @@ class MovementPowers(Page):
                                         'mobile'     : trayslot,
                                         'stationary' : trayslot,
                                         'modestr'    : "Temp",
-                                        'flight'     : self.GetState('FlyPower'),
+                                        'flight'     : t.fly,
                                     })
                                     setattr(t, self.GetState('DefaultMode') + "Mode", None)
 
         t.space = t.X = t.W = t.S = t.A = t.D = 0
 
-        t.up   = '$$up '       + str(   t.space)
-        t.upx  = '$$up '       + str((1-t.space))
-        t.dow  = '$$down '     + str(   t.X)
-        t.dowx = '$$down '     + str((1-t.X))
-        t.forw = '$$forward '  + str(   t.W)
-        t.forx = '$$forward '  + str((1-t.W))
-        t.bac  = '$$backward ' + str(   t.S)
-        t.bacx = '$$backward ' + str((1-t.S))
-        t.lef  = '$$left '     + str(   t.A)
-        t.lefx = '$$left '     + str((1-t.A))
-        t.rig  = '$$right '    + str(   t.D)
-        t.rigx = '$$right '    + str((1-t.D))
+        t.up   = '$$up 0'
+        t.upx  = '$$up 1'
+        t.dow  = '$$down 0'
+        t.dowx = '$$down 1'
+        t.forw = '$$forward 0'
+        t.forx = '$$forward 1'
+        t.bac  = '$$backward 0'
+        t.bacx = '$$backward 1'
+        t.lef  = '$$left 0'
+        t.lefx = '$$left 1'
+        t.rig  = '$$right 0'
+        t.rigx = '$$right 1'
 
-    def sodResetKey(self, curfile, gamepath, turnoff, moddir):
-
-        u = int(moddir == 'up')
-        d = int(moddir == 'down')
+    def sodResetKey(self, curfile, gamepath, turnoff):
 
         config = wx.ConfigBase.Get()
         curfile.SetBind(config.Read('ResetKey'),
                                     UI.Labels['ResetKey'],
                                     self,
-                f'up {u}$$down {d}$$forward 0$$backward 0$$left 0$$right 0' +
+                f'up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0' +
                 str(turnoff) +
                 '$$t $name, Binds Reset$$' + curfile.BaseReset() +
                 f"$$bindloadfilesilent {gamepath}000000.txt"
@@ -1765,7 +1756,7 @@ class MovementPowers(Page):
 
         toggle = ''
         if (toggleon or toggleoff):
-           toggle = self.actPower_toggle(False,toggleon,[toggleoff,toggleoff2])
+           toggle = self.actPower_toggle(toggleon,[toggleoff,toggleoff2])
 
         newbits = t.KeyState({'toggle' : 'space'})
         bl = f"{bl}{newbits}.txt"
@@ -1831,7 +1822,7 @@ class MovementPowers(Page):
 
         toggle = ''
         if (toggleon or toggleoff):
-           toggle = self.actPower_toggle(False,toggleon,toggleoff)
+           toggle = self.actPower_toggle(toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'X'})
         bl = f"{bl}{newbits}.txt"
@@ -1894,7 +1885,7 @@ class MovementPowers(Page):
 
         toggle = ''
         if (toggleon or toggleoff):
-           toggle = self.actPower_toggle(False,toggleon,toggleoff)
+           toggle = self.actPower_toggle(toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'W'})
         bl = f"{bl}{newbits}.txt"
@@ -1968,7 +1959,7 @@ class MovementPowers(Page):
 
         toggle = ''
         if (toggleon or toggleoff) :
-           toggle = self.actPower_toggle(False,toggleon,toggleoff)
+           toggle = self.actPower_toggle(toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'S'})
         bl = f"{bl}{newbits}.txt"
@@ -2036,7 +2027,7 @@ class MovementPowers(Page):
 
         toggle = ''
         if (toggleon or toggleoff) :
-           toggle = self.actPower_toggle(False,toggleon,toggleoff)
+           toggle = self.actPower_toggle(toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'A'})
         bl = f"{bl}{newbits}.txt"
@@ -2098,7 +2089,7 @@ class MovementPowers(Page):
 
         toggle = ''
         if (toggleon or toggleoff) :
-            toggle = self.actPower_toggle(False,toggleon,toggleoff)
+            toggle = self.actPower_toggle(toggleon,toggleoff)
 
         newbits = t.KeyState({'toggle' : 'D'})
         bl = f"{bl}{newbits}.txt"
@@ -2155,46 +2146,42 @@ class MovementPowers(Page):
         curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind(t.dirs('UDFBLR')[2:] + toggleon + bindload))
 
     def sodFollowKey(self, t,bl,curfile,mobile,stationary):
-        curfile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind('follow' + self.actPower_toggle(False,mobile,stationary) + bl + t.KeyState() + '.txt'))
+        curfile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind('follow' + self.actPower_toggle(mobile,stationary) + bl + t.KeyState() + '.txt'))
 
     def sodFollowOffKey(self, t,bl,curfile,mobile,stationary,flight):
         toggle = ''
         if (not flight):
             if (t.horizkeys == 0) :
                 if (stationary != mobile) :
-                   toggle = self.actPower_toggle(False,stationary,mobile)
+                   toggle = self.actPower_toggle(stationary,mobile)
                 else:
                    toggle = self.actPower_name(stationary)
 
         else:
             if (t.totalkeys == 0) :
                 if (stationary != mobile) :
-                   toggle = self.actPower_toggle(False,stationary,mobile)
+                   toggle = self.actPower_toggle(stationary,mobile)
                 else:
                    toggle = self.actPower_name(stationary)
 
         curfile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("follow" + toggle + t.up + t.dow + t.forw + t.bac + t.lef + t.rig + bl + t.KeyState() + '.txt'))
 
     #  toggleon variation
-    def actPower_toggle(self, start, on, *rest):
+    def actPower_toggle(self, on, off, start = False):
         s = ''
 
         offpower = set()
 
-        for v in rest:
-            if v and not isinstance(v, str):
-                for w in v:
-                    if (w and w != on and not (w in offpower)):
-                        offpower.add(w)
-                        s = s + '$$powexectoggleoff ' + w
+        if off and not isinstance(off, str):
+            for w in off:
+                if (w and w != on and not (w in offpower)):
+                    offpower.add(w)
+                    s = s + '$$powexectoggleoff ' + w
 
-            else:
-                if (v and v != '' and (v != on) and not (v in offpower)):
-                    offpower.add(v)
-                    s = s + '$$powexectoggleoff ' + v
-
-        if s:
-            s = s + '$$powexecunqueue'
+        else:
+            if (off and off != '' and (off != on) and not (off in offpower)):
+                offpower.add(off)
+                s = s + '$$powexectoggleoff ' + off
 
         if (on and on != ''):
             s = s + '$$powexectoggleon ' + on
@@ -2224,7 +2211,7 @@ class MovementPowers(Page):
 
     def sodJumpFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
 
-        filename     = str(getattr(t,"path" + f"{autofollowmode}j")) + t.KeyState() + suffix + '.txt'
+        filename     = str(getattr(t,"path"     + f"{autofollowmode}j")) + t.KeyState() + suffix + '.txt'
         gamefilename = str(getattr(t,"gamepath" + f"{autofollowmode}j")) + t.KeyState() + suffix + '.txt'
         tglfile      = profile.GetBindFile(filename)
         t.ini        = '-down$$'
@@ -2237,7 +2224,7 @@ class MovementPowers(Page):
         else:
             pathsuffix = "a"
 
-        filename     = str(getattr(t,'path' + f"{autofollowmode}{pathsuffix}")) + t.KeyState() + suffix + ".txt"
+        filename     = str(getattr(t,'path'     + f"{autofollowmode}{pathsuffix}")) + t.KeyState() + suffix + ".txt"
         gamefilename = str(getattr(t,'gamepath' + f"{autofollowmode}{pathsuffix}")) + t.KeyState() + suffix + ".txt"
         tglfile      = profile.GetBindFile(filename)
         t.ini        = '-down$$'
@@ -2291,7 +2278,7 @@ UI.Labels.update( {
     'DoubleJumpKey'  : 'Double Jump Key',
 
     'SpeedPower'     : "Primary Speed Power",
-    'RunMode'        : 'Toggle Super Speed Mode',
+    'SpeedMode'      : 'Toggle Super Speed Mode',
     'SSMobileOnly'   : 'SuperSpeed only when moving',
     'SSSJModeEnable' : 'Enable Super Speed / Super Jump Mode',
     'JauntKey'       : 'Jaunt Key',
@@ -2354,7 +2341,6 @@ class tObject(dict):
         self.tphover    :str = ''
         self.ttpgfly    :str = ''
         self.on         :str = '$$powexectoggleon '
-        # self.on         :str = '$$powexecname '
         self.off        :str = '$$powexectoggleoff '
         self.mlon       :str = ''
         self.mloff      :str = ''
@@ -2366,7 +2352,7 @@ class tObject(dict):
         self.SprintMode :str = ''
         self.FlyMode    :str = ''
         self.JumpMode   :str = ''
-        self.RunMode    :str = ''
+        self.SpeedMode  :str = ''
         self.GFlyMode   :str = ''
         self.TempMode   :str = ''
         self.jumpifnocj :str = ''
@@ -2492,8 +2478,6 @@ class tObject(dict):
 
     # return binary "011010" string of which keys are "on";
     # optionally flipping one of them first.
-    # TODO:  not clear this belongs on a class as opposed
-    # to just a utility sub here or in Utility.
     def KeyState(self, p = {}):
         togglebit = p.get('toggle', '')
 

@@ -320,6 +320,7 @@ class MovementPowers(Page):
         self.superJumpSizer.AddControl( ctlName = 'HasCJ', ctlType = 'checkbox',)
         self.Ctrls['HasCJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',)
+        self.Ctrls['SimpleSJCJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',)
         self.superJumpSizer.AddControl( ctlName = 'TakeoffKey', ctlType = 'keybutton',)
         self.superJumpSizer.AddControl( ctlName = 'DoubleJumpKey', ctlType = 'keybutton',)
@@ -471,8 +472,11 @@ class MovementPowers(Page):
 
             c['HasCJ'].Enable(self.Profile.HasPowerPool('Leaping'))
             c['SimpleSJCJ'].Enable(bool(self.GetState('JumpPower') and self.GetState('HasCJ')))
-            c['JumpMode']  .Enable((self.GetState('JumpPower') or self.GetState('HasCJ'))
-                                          and self.GetState('DefaultMode') != "Jump")
+            c['JumpMode']  .Enable(bool(
+                    ((self.GetState('JumpPower') or self.GetState('HasCJ')) and self.GetState('DefaultMode') != "Jump")
+                        or
+                    self.GetState('SimpleSJCJ')
+                ))
             c['TakeoffKey'].Show(self.GetState('JumpPower') == "Mighty Leap")
             c['DoubleJumpKey'].Show(self.GetState('JumpPower') == "Super Jump")
 
@@ -973,7 +977,7 @@ class MovementPowers(Page):
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
-                    cur.SetBind(t.FlyMode, name, self, t.ini + self.actPower_toggle(ton,toff,start=true) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    cur.SetBind(t.FlyMode, name, self, t.ini + self.actPower_toggle(ton,toff,start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "af"):
                 bindload = t.blaf + t.KeyState() + ".txt"

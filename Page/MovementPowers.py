@@ -645,24 +645,13 @@ class MovementPowers(Page):
 
             t.ini = '-down$$'
 
-            if (self.GetState('DefaultMode') == "Fly"):
-                if (self.GetState('NonSoDEnable')):
-                    t.FlyMode = t.NonSoDMode
-                    self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                if (self.GetState('SprintSoD')):
-                    t.FlyMode = t.SprintMode
-                    self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                if (self.GetState('SpeedPower')):
-                    t.FlyMode = t.SpeedMode
-                    self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                if (t.canjmp):
-                    t.FlyMode = t.JumpMode
-                    self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-                if (self.GetState('TempEnable')):
-                    t.FlyMode = t.TempMode
-                    self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-            else:
-                self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
+            if (self.GetState('DefaultMode') == "Fly") :
+                if (self.GetState('NonSoDEnable'))     : t.FlyMode = t.NonSoDMode
+                if (self.GetState('SprintSoD'))        : t.FlyMode = t.SprintMode
+                if (self.GetState('SpeedPower'))       : t.FlyMode = t.SpeedMode
+                if (t.canjmp)                          : t.FlyMode = t.JumpMode
+                if (self.GetState('TempEnable'))       : t.FlyMode = t.TempMode
+            self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
 
             t.ini = ''
             if (modestr != "GFly")        : self.makeGFlyModeKey (profile,t,"gbo",curfile,turnoff,fix)

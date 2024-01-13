@@ -65,7 +65,6 @@ class MovementPowers(Page):
             'HasQF'               : False, # hidden
             'FlyMode'             : "F",
             'GFlyMode'            : "",
-            'EvasiveManeuversKey' : "",
             'AfterburnerKey'      : "",
             'TranslocationKey'    : "",
 
@@ -333,7 +332,6 @@ class MovementPowers(Page):
         self.flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',)
         self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
-        self.flySizer.AddControl( ctlName = 'EvasiveManeuversKey', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'AfterburnerKey', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'TranslocationKey', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'HasGFly', ctlType = 'checkbox',)
@@ -488,7 +486,6 @@ class MovementPowers(Page):
             c['FlyMode'].Enable((self.GetState('FlyPower') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
             c['HasHover'].Enable(self.Profile.HasPowerPool('Flight'))
-            c['EvasiveManeuversKey'].Show(self.GetState('FlyPower') == 'Fly')
             c['AfterburnerKey'].Show(self.GetState('FlyPower') == 'Fly')
             c['TranslocationKey'].Show(self.GetState('FlyPower') == 'Mystic Flight')
 
@@ -1138,8 +1135,6 @@ class MovementPowers(Page):
         if self.GetState('EnableSoD'): self.doSpeedOnDemandBinds(t)
 
         # Make binds for the "stage 2" travel powers like Afterburner, if appropriate
-        if self.Ctrls['EvasiveManeuversKey'].IsEnabled():
-            ResetFile.SetBind(self.Ctrls['EvasiveManeuversKey'].MakeFileKeyBind('powexecname Evasive Maneuvers'))
         if self.Ctrls['AfterburnerKey'].IsEnabled():
             # TODO - this will be "self.AfterburnerPower" when we merge Kheldian logic later
             ResetFile.SetBind(self.Ctrls['AfterburnerKey'].MakeFileKeyBind('powexecname Afterburner'))
@@ -2298,7 +2293,6 @@ UI.Labels.update( {
     'HasHover'            : "Player has Hover",
     'HasGFly'             : 'Player has Group Fly',
     'FlyMode'             : 'Toggle Fly Mode',
-    'EvasiveManeuversKey' : 'Evasive Maneuvers Key',
     'AfterburnerKey'      : 'Afterburner Key',
     'TranslocationKey'    : 'Translocation Key',
     'GFlyMode'            : 'Toggle Group Fly Mode',

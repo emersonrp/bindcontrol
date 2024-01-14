@@ -113,7 +113,7 @@ class BindFile():
             kb = self.KeyBinds[keybind]
             payload = kb.GetKeyBindString()
             if len(payload) > 255:
-                raise Exception(f"Bind '{kb.Key}' from page '{kb.Page}' is too long - this will cause badness in-game!")
+                raise Exception(f"Bind '{kb.Key}' from page '{kb.Page}' is {len(payload)} characters long - this will cause badness in-game!")
             output = output + payload
 
         if output:

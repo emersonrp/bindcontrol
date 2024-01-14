@@ -258,8 +258,8 @@ class General(Page):
 
         if getattr(self.Profile, 'Mastermind', None):
             self.Profile.Mastermind.SynchronizeUI()
-        if getattr(self.Profile, 'SoD', None):
-            self.Profile.SoD.SynchronizeUI()
+        if getattr(self.Profile, 'MovementPowers', None):
+            self.Profile.MovementPowers.SynchronizeUI()
 
         self.Fit()
         if evt: evt.Skip()
@@ -285,6 +285,7 @@ class General(Page):
         evt.Skip()
 
     def OnPickPoolPower(self, evt):
+        self.Profile.MovementPowers.SynchronizeUI()
         evt.Skip()
 
     def OnPickPrimaryPowerSet(self, evt):

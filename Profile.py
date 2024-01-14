@@ -8,7 +8,7 @@ from BindFile import BindFile
 
 from Page.General import General
 from Page.Gameplay import Gameplay
-from Page.SoD import SoD
+from Page.MovementPowers import MovementPowers
 from Page.InspirationPopper import InspirationPopper
 from Page.Mastermind import Mastermind
 from Page.CustomBinds import CustomBinds
@@ -33,7 +33,7 @@ class Profile(wx.Notebook):
         self.General           = self.CreatePage(General(self))
         self.Gameplay          = self.CreatePage(Gameplay(self))
         self.CustomBinds       = self.CreatePage(CustomBinds(self))
-        self.SoD               = self.CreatePage(SoD(self))
+        self.MovementPowers    = self.CreatePage(MovementPowers(self))
         self.InspirationPopper = self.CreatePage(InspirationPopper(self))
         self.Mastermind        = self.CreatePage(Mastermind(self))
 
@@ -68,6 +68,12 @@ class Profile(wx.Notebook):
         gbp = wx.ConfigBase.Get().Read('GameBindPath')
         if gbp: return PureWindowsPath(gbp) / self.Name()
         return self.BindsDir()
+
+    def HasPowerPool(self, poolname):
+        for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
+            if self.General.Ctrls[picker].GetString(self.General.Ctrls[picker].GetSelection()) == poolname:
+                return True
+        return False
 
     def BLF(self, *args):
         filepath = self.GameBindsDir()
@@ -217,6 +223,9 @@ class Profile(wx.Notebook):
             datastring = file.read_text()
             data = json.loads(datastring)
 
+            # load old Profiles pre-rename
+            if 'SoD' in data: data['MovementPowers'] = data['SoD']
+
             for pagename in self.Pages:
                 if pagename == "CustomBinds": continue
                 page = getattr(self, pagename)
@@ -295,7 +304,7 @@ class Profile(wx.Notebook):
             return
 
         # Start by making reset load itself.  This might get overridden with
-        # more elaborate load strings in like SoD, but this is the safety
+        # more elaborate load strings in like MovementPowers, but this is the safety
 
         config = wx.ConfigBase.Get()
         resetfile = self.ResetFile()

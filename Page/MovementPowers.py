@@ -527,13 +527,37 @@ class MovementPowers(Page):
             # end TODO temp sizer
 
             # show/hide control groups based on power pool picks
-            self.rightColumn.Show(self.flySizer,
-                self.Profile.HasPowerPool('Flight') or self.Profile.HasPowerPool('Sorcery'))
-            self.rightColumn.Show(self.superJumpSizer,
-                self.Profile.HasPowerPool('Leaping') or self.Profile.HasPowerPool('Force of Will'))
-            self.rightColumn.Show(self.superSpeedSizer,
-                self.Profile.HasPowerPool('Speed') or self.Profile.HasPowerPool('Experimentation'))
-            self.rightColumn.Show(self.teleportSizer, self.Profile.HasPowerPool('Teleportation'))
+            if (self.Profile.HasPowerPool('Flight') or self.Profile.HasPowerPool('Sorcery')):
+                self.rightColumn.Show(self.flySizer, True)
+            else:
+                self.rightColumn.Show(self.flySizer, False)
+                for ctrl in self.flySizer.GetChildren():
+                    win = ctrl.GetWindow()
+                    if win: win.Enable(False)
+
+            if (self.Profile.HasPowerPool('Leaping') or self.Profile.HasPowerPool('Force of Will')):
+                self.rightColumn.Show(self.superJumpSizer, True)
+            else:
+                self.rightColumn.Show(self.superJumpSizer, False)
+                for ctrl in self.superJumpSizer.GetChildren():
+                    win = ctrl.GetWindow()
+                    if win: win.Enable(False)
+
+            if (self.Profile.HasPowerPool('Speed') or self.Profile.HasPowerPool('Experimentation')):
+                self.rightColumn.Show(self.superSpeedSizer, True)
+            else:
+                self.rightColumn.Show(self.superSpeedSizer, False)
+                for ctrl in self.superSpeedSizer.GetChildren():
+                    win = ctrl.GetWindow()
+                    if win: win.Enable(False)
+
+            if (self.Profile.HasPowerPool('Teleportation')):
+                self.rightColumn.Show(self.teleportSizer, True)
+            else:
+                self.rightColumn.Show(self.teleportSizer, False)
+                for ctrl in self.teleportSizer.GetChildren():
+                    win = ctrl.GetWindow()
+                    if win: win.Enable(False)
 
             # show/hide kheldian-influenced controls depending on selected archetype;
             archetype = self.Profile.Archetype()
@@ -1151,6 +1175,13 @@ class MovementPowers(Page):
         if self.Ctrls['DoubleJumpKey'].IsEnabled():
             ResetFile.SetBind(self.Ctrls['DoubleJumpKey'].MakeFileKeyBind('powexecname Double Jump'))
 
+        if self.GetState('TPHideWindows'):
+            windowhide = '$$windowhide health$$windowhide chat$$windowhide target$$windowhide tray'
+            windowshow = '$$show health$$show chat$$show target$$show tray'
+        else:
+            windowhide = ''
+            windowshow = ''
+
         ###### Kheldian power setup
         #  create the Nova and Dwarf form support files if enabled.
 
@@ -1159,13 +1190,6 @@ class MovementPowers(Page):
         humanBindKey = humanpbind = novapbind = dwarfpbind = None
         dwarfTPPower = normalTPPower = teamTPPower = ''
         ### TODO TODO TODO - these are just in here to make pylint happy;  fix the actual problem
-
-        if self.GetState('TPHideWindows'):
-            windowhide = '$$windowhide health$$windowhide chat$$windowhide target$$windowhide tray'
-            windowshow = '$$show health$$show chat$$show target$$show tray'
-        else:
-            windowhide = ''
-            windowshow = ''
 
         if (profile.Archetype() == "Warshade"):
             dwarfTPPower  = "Black Dwarf Step"

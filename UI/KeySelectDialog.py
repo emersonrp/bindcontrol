@@ -58,7 +58,7 @@ class KeySelectDialog(wx.Dialog):
         desc = f"Press the key you want bound to {self.Desc}:"
 
         # is this ugly?
-        self.ModSlot = None
+        self.ModSlot = set()
         self.KeySlot = None
         self.SetKeymap();
 
@@ -120,14 +120,18 @@ class KeySelectDialog(wx.Dialog):
         SeparateLR = self.SeparateLRChooser.Value
 
         # first clear out anything not being held down
-        if (
-            (not event.ControlDown() and self.ModSlot in ['CTRL', 'LCTRL', 'RCTRL'])
-            or
-            (not event.ShiftDown() and self.ModSlot in ['SHIFT', 'LSHIFT', 'RSHIFT'])
-            or
-            (not event.AltDown() and self.ModSlot in ['ALT', 'LALT', 'RALT'])
-        ):
-            self.ModSlot = None
+        if not event.ControlDown():
+            self.ModSlot.discard('CTRL')
+            self.ModSlot.discard('LCTRL')
+            self.ModSlot.discard('RCTRL')
+        if not event.ShiftDown():
+            self.ModSlot.discard('SHIFT')
+            self.ModSlot.discard('LSHIFT')
+            self.ModSlot.discard('RSHIFT')
+        if not event.AltDown():
+            self.ModSlot.discard('ALT')
+            self.ModSlot.discard('LALT')
+            self.ModSlot.discard('RALT')
 
         if (isinstance(event, wx.KeyEvent)):
             code = event.GetKeyCode()
@@ -143,61 +147,42 @@ class KeySelectDialog(wx.Dialog):
         if KeyToBind:
             self.KeySlot = KeyToBind
         else:
-            ModKey = ''
             if isinstance(event, wx.KeyEvent) and event.HasAnyModifiers():
 
-                if event.GetKeyCode() == wx.WXK_SHIFT:
+                if event.ShiftDown():
                     if SeparateLR and modKeyFlags:
                         rawFlags = event.GetRawKeyFlags()
                         if wx.Platform == '__WXMAC__':
-                            ModKey = "LSHIFT" if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT"
+                            self.ModSlot.add("LSHIFT") if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT"
                         else:
-                            ModKey = "RSHIFT" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
+                            self.ModSlot.add("RSHIFT") if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
                     else:
-                        ModKey = "SHIFT"
+                        self.ModSlot.add("SHIFT")
 
-                if event.GetKeyCode() == wx.WXK_CONTROL: # TODO is this right for Mac?
+                if event.ControlDown():
                     if SeparateLR and modKeyFlags:
                         rawFlags = event.GetRawKeyFlags()
                         if wx.Platform == '__WXMAC__':
-                            ModKey = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
+                            self.ModSlot.add("LCTRL") if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
                         elif wx.Platform == '__WXGTK__':
-                            ModKey = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
+                            self.ModSlot.add("LCTRL") if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
                         else:
-                            ModKey = "RCTRL" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
+                            self.ModSlot.add("RCTRL") if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
                     else:
-                        ModKey = "CTRL"
+                        self.ModSlot.add("CTRL")
 
-                if event.GetKeyCode() == wx.WXK_ALT:
+                if event.AltDown():
                     if SeparateLR and modKeyFlags:
                         rawFlags = event.GetRawKeyFlags()
                         if wx.Platform == '__WXMAC__':
-                            ModKey = "LALT" if (rawFlags & modKeyFlags['LALT']) else "RALT"
+                            self.ModSlot.add("LALT") if (rawFlags & modKeyFlags['LALT']) else "RALT"
                         else:
-                            ModKey = "RALT" if (rawFlags & modKeyFlags['RALT']) else "LALT"
+                            self.ModSlot.add("RALT") if (rawFlags & modKeyFlags['RALT']) else "LALT"
                     else:
-                        ModKey = "ALT"
+                        self.ModSlot.add("ALT")
 
-            if ModKey:
-                # if there's something already there
-                if self.ModSlot:
-                    # and it's not already us
-                    if self.ModSlot != ModKey:
-                        # check the mod keys' state
-                        if (
-                            (event.ControlDown() and ModKey in ['CTRL', 'LCTRL', 'RCTRL'])
-                            or
-                            (event.ShiftDown() and ModKey in ['SHIFT', 'LSHIFT', 'RSHIFT'])
-                            or
-                            (event.AltDown() and ModKey in ['ALT', 'LALT', 'RALT'])
-                        ):
-                            # and put it in -key- slot.
-                            self.KeySlot = ModKey
-                # nothing already there, add it to mod slot
-                else:
-                    self.ModSlot = ModKey
-
-        self.Binding = "+".join([ key for key in [self.ModSlot, self.KeySlot] if key])
+        ModKeys      = "+".join([ key for key in self.ModSlot if key])
+        self.Binding = "+".join([ key for key in [ModKeys, self.KeySlot] if key])
 
         self.ShowBind()
 

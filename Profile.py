@@ -164,10 +164,10 @@ class Profile(wx.Notebook):
                     # look up what type of control it is to know how to extract its value
                     if isinstance(control, wx.DirPickerCtrl):
                         value = control.GetPath()
-                    elif isinstance(control, wx.Button):
-                        value = control.GetLabel()
                     elif isinstance(control, bcKeyButton):
                         value = control.Key
+                    elif isinstance(control, wx.Button):
+                        value = control.GetLabel()
                     elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
                         value = control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
                     elif isinstance(control, wx.Choice):

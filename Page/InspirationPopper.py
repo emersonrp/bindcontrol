@@ -115,11 +115,11 @@ class InspirationPopper(Page):
 
         InspTabs = wx.Notebook(self, style = wx.NB_TOP, name = 'InspTabs')
         InspTabs.SetPadding(wx.Size(2,0))
+        il = wx.ImageList(18,18)
+        InspTabs.AssignImageList(il)
         for tab, tabname in tabs.items():
             tabpanel = wx.Panel(InspTabs)
-            il = wx.ImageList(18,18)
             idx1 = il.Add(Icon.GetIcon(f"UI/Insp{tab}"))
-            InspTabs.AssignImageList(il)
             InspTabs.AddPage(tabpanel, tabname, imageId = idx1)
             tabsizer = wx.BoxSizer(wx.VERTICAL)
 

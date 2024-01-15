@@ -144,7 +144,6 @@ class KeySelectDialog(wx.Dialog):
             self.ModSlot.discard('ALT')
             self.ModSlot.discard('LALT')
             self.ModSlot.discard('RALT')
-        pressed_mods = set()
         pressed_keys = set()
 
         if (isinstance(event, wx.KeyEvent)):
@@ -195,55 +194,47 @@ class KeySelectDialog(wx.Dialog):
             self.KeySlot = None
             return
 
+        if isinstance(event, wx.KeyEvent) and event.HasAnyModifiers():
+            if event.ShiftDown():
+                if SeparateLR and modKeyFlags:
+                    rawFlags = event.GetRawKeyFlags()
+                    if wx.Platform == '__WXMAC__':
+                        pressed_keys.add(("LSHIFT") if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT")
+                    else:
+                        pressed_keys.add(("RSHIFT") if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT")
+                else:
+                    pressed_keys.add("SHIFT")
+
+            if event.ControlDown():
+                if SeparateLR and modKeyFlags:
+                    rawFlags = event.GetRawKeyFlags()
+                    if wx.Platform == '__WXMAC__':
+                        pressed_keys.add(("LCTRL") if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL")
+                    elif wx.Platform == '__WXGTK__':
+                        pressed_keys.add(("LCTRL") if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL")
+                    else:
+                        pressed_keys.add(("RCTRL") if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL")
+                else:
+                    pressed_keys.add("CTRL")
+
+            if event.AltDown():
+                if SeparateLR and modKeyFlags:
+                    rawFlags = event.GetRawKeyFlags()
+                    if wx.Platform == '__WXMAC__':
+                        pressed_keys.add(("LALT") if (rawFlags & modKeyFlags['LALT']) else "RALT")
+                    else:
+                        pressed_keys.add(("RALT") if (rawFlags & modKeyFlags['RALT']) else "LALT")
+                else:
+                    pressed_keys.add("ALT")
+
         for key in pressed_keys:
             if key in modKeys:
-                pressed_keys.remove(key)
-                pressed_mods.add(key)
-
-        if pressed_keys:
-            if pressed_mods:
-                self.ModSlot = pressed_mods
+                self.ModSlot.add(key)
             else:
-                self.ModSlot = set()
-            self.KeySlot = pressed_keys.pop()
-        else:
+                self.KeySlot = key
 
-            if isinstance(event, wx.KeyEvent) and event.HasAnyModifiers():
-
-                if event.ShiftDown():
-                    if SeparateLR and modKeyFlags:
-                        rawFlags = event.GetRawKeyFlags()
-                        if wx.Platform == '__WXMAC__':
-                            self.ModSlot.add("LSHIFT") if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT"
-                        else:
-                            self.ModSlot.add("RSHIFT") if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
-                    else:
-                        self.ModSlot.add("SHIFT")
-
-                if event.ControlDown():
-                    if SeparateLR and modKeyFlags:
-                        rawFlags = event.GetRawKeyFlags()
-                        if wx.Platform == '__WXMAC__':
-                            self.ModSlot.add("LCTRL") if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
-                        elif wx.Platform == '__WXGTK__':
-                            self.ModSlot.add("LCTRL") if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
-                        else:
-                            self.ModSlot.add("RCTRL") if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
-                    else:
-                        self.ModSlot.add("CTRL")
-
-                if event.AltDown():
-                    if SeparateLR and modKeyFlags:
-                        rawFlags = event.GetRawKeyFlags()
-                        if wx.Platform == '__WXMAC__':
-                            self.ModSlot.add("LALT") if (rawFlags & modKeyFlags['LALT']) else "RALT"
-                        else:
-                            self.ModSlot.add("RALT") if (rawFlags & modKeyFlags['RALT']) else "LALT"
-                    else:
-                        self.ModSlot.add("ALT")
-
-        ModKeys      = "+".join([ key for key in sorted(self.ModSlot, reverse=True) if key])
-        self.Binding = "+".join([ key for key in [ModKeys, self.KeySlot] if key])
+        totalModKeys = "+".join([ key for key in sorted(self.ModSlot, reverse=True) if key])
+        self.Binding = "+".join([ key for key in [totalModKeys, self.KeySlot] if key])
 
         self.ShowBind()
 

@@ -29,10 +29,7 @@ elif wx.Platform == '__WXMAC__':
         'LALT'  : 0x20,
     }
 
-modKeys = ['SHIFT', 'LSHIFT', 'RSHIFT', 'ALT', 'RALT', 'LALT', 'CTRL', 'LCTRL', 'RCTRL',
-        # TODO - set up a place in Preferences to pick which controller thingies are mod keys, but for now:
-        'LTrigger', 'RTrigger', 'LeftBumper', 'RightBumper', 'JOY9', 'JOY10',
-]
+modKeys = [] # gets set every ShowModal() call
 
 class KeySelectDialog(wx.Dialog):
     def __init__(self, button):
@@ -103,6 +100,18 @@ class KeySelectDialog(wx.Dialog):
         self.SetSizerAndFit(vbox);
         self.Layout()
         self.SetFocus()
+
+    def ShowModal(self):
+        # re-set-up ModKeys every time we show the dialog in case prefs changed.
+        modKeys = ['SHIFT', 'LSHIFT', 'RSHIFT', 'ALT', 'RALT', 'LALT', 'CTRL', 'LCTRL', 'RCTRL', ]
+        for picker in ['ControllerMod1', 'ControllerMod2', 'ExtraMod1', 'ExtraMod2', 'ExtraMod3', 'ExtraMod4']:
+            config = wx.ConfigBase.Get()
+            modkey = config.Read(picker)
+            if modkey:
+                modKeys.append(modkey)
+
+        super().ShowModal()
+
 
     def ShowBind(self):
         self.kbBind.SetPage('<center><b><font size=+4>' + self.Binding + '</font></b></center>')

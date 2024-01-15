@@ -181,7 +181,7 @@ class KeySelectDialog(wx.Dialog):
                     else:
                         self.ModSlot.add("ALT")
 
-        ModKeys      = "+".join([ key for key in self.ModSlot if key])
+        ModKeys      = "+".join([ key for key in sorted(self.ModSlot, reverse=True) if key])
         self.Binding = "+".join([ key for key in [ModKeys, self.KeySlot] if key])
 
         self.ShowBind()
@@ -320,9 +320,9 @@ class bcKeyButton(wx.Button):
     def SetLabel(self, keyLabel):
         if re.search(r'\+\w\w\w\w\w', keyLabel) or len(keyLabel) > 12:
             # smallify and abbreviate if we have a mod key
-            keyLabel = re.sub(r'SHIFT\+', 'S+', keyLabel)
-            keyLabel = re.sub(r'CTRL\+', 'C+', keyLabel)
-            keyLabel = re.sub(r'ALT\+', 'A+', keyLabel)
+            keyLabel = re.sub(r'SHIFT\+', 'Sh+', keyLabel)
+            keyLabel = re.sub(r'CTRL\+', 'Ctl+', keyLabel)
+            keyLabel = re.sub(r'ALT\+', 'Alt+', keyLabel)
             keyLabel = re.sub(r'DOUBLECLICK', 'DCLICK', keyLabel)
             keyLabel = f"<small>{keyLabel}</small>"
         self.SetLabelMarkup(keyLabel)

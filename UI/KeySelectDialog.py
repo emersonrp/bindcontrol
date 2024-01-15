@@ -4,6 +4,8 @@ import wx.html
 import string
 import UI
 import wx.lib.newevent
+from bcController import bcController
+
 KeyChanged, EVT_KEY_CHANGED = wx.lib.newevent.NewEvent()
 
 # Platform-specific keyevent flags for telling left from right
@@ -27,6 +29,11 @@ elif wx.Platform == '__WXMAC__':
         'LALT'  : 0x20,
     }
 
+modKeys = ['SHIFT', 'LSHIFT', 'RSHIFT', 'ALT', 'RALT', 'LALT', 'CTRL', 'LCTRL', 'RCTRL',
+        # TODO - set up a place in Preferences to pick which controller thingies are mod keys, but for now:
+        'LTrigger', 'RTrigger', 'LeftBumper', 'RightBumper', 'JOY9', 'JOY10',
+]
+
 def KeySelectEventHandler(evt):
     button = evt.EventObject
 
@@ -48,6 +55,9 @@ class KeySelectDialog(wx.Dialog):
         self.Binding = button.Key
 
         wx.Dialog.__init__(self, button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
+
+        self.controller = bcController()
+        self.controller.SetCapture(self)
 
         # Mystery panel must be in here in order to get key events
         _ = wx.Panel(self, -1)
@@ -98,6 +108,8 @@ class KeySelectDialog(wx.Dialog):
             i.Bind(wx.EVT_MOUSE_AUX1_DOWN , self.handleBind )
             i.Bind(wx.EVT_MOUSE_AUX2_DOWN , self.handleBind )
 
+            i.Bind(wx.EVT_JOYSTICK_EVENTS , self.handleBind )
+
         buttonSizer = self.CreateButtonSizer(wx.OK|wx.CANCEL|wx.NO_DEFAULT)
         vbox.Add(buttonSizer, 0, wx.ALIGN_CENTER|wx.ALL, 16)
 
@@ -132,21 +144,70 @@ class KeySelectDialog(wx.Dialog):
             self.ModSlot.discard('ALT')
             self.ModSlot.discard('LALT')
             self.ModSlot.discard('RALT')
+        pressed_mods = set()
+        pressed_keys = set()
 
         if (isinstance(event, wx.KeyEvent)):
-            code = event.GetKeyCode()
-            if code == wx.WXK_ESCAPE:
+            if event.GetKeyCode() == wx.WXK_ESCAPE:
                 self.EndModal(wx.CANCEL)
+
+        elif (isinstance(event, wx.JoystickEvent)):
+            if event.ButtonDown():
+                # Carry on, we'll handle these below
+                pass
+            elif event.IsMove() or event.IsZMove():
+                # don't let wee jiggles at the center trigger SetCurrentAxis()
+                self.controller.SetCurrentAxisPercents()
+                # this is "no axis is > 50% in some direction" and "POV is centered"
+                if self.controller.StickIsNearCenter() and self.controller.GetPOVPosition() > 60000:
+                    return
+            else:
+                # Unknown joystick event.  These fire quite a bit.
+                return
+
         elif (event.ButtonDClick()):
-            code = "DCLICK" + str(event.GetButton())
+            pressed_keys.add("DCLICK" + str(event.GetButton()))
         else:
-            code = "BUTTON" + str(event.GetButton())
+            pressed_keys.add("BUTTON" + str(event.GetButton()))
 
-        KeyToBind = self.Keymap.get(code, '')
+        # iterate all possible values, and see if they're currently held down.
+        # this applies to keystrokes and joystick axes.  js buttons and mouse
+        # clicks have already been added.  This might not be optimal.
+        for possible_key in self.Keymap:
+            # actual keys are ints in the list
+            if (isinstance(possible_key, int) and wx.GetKeyState(possible_key)
+                    or
+                self.controller.IsOk() and (possible_key == self.controller.GetCurrentAxis())):
 
-        if KeyToBind:
-            self.KeySlot = KeyToBind
+                pressed_keys.add(self.Keymap[possible_key])
+
+        # iterate joystick buttons and add those that are pressed
+        if self.controller.IsOk():
+            for button in range(0, self.controller.GetNumberButtons()):
+                if self.controller.GetButtonState(button):
+                    button_keyname = "JOY" + str(button+1)
+                    pressed_keys.add(self.Keymap[button_keyname])
+
+        # If we're completely off the keyboard/etc, clear our current state,
+        # but return so we don't update the binding to nothing
+        if not pressed_keys:
+            self.ModSlot = set()
+            self.KeySlot = None
+            return
+
+        for key in pressed_keys:
+            if key in modKeys:
+                pressed_keys.remove(key)
+                pressed_mods.add(key)
+
+        if pressed_keys:
+            if pressed_mods:
+                self.ModSlot = pressed_mods
+            else:
+                self.ModSlot = set()
+            self.KeySlot = pressed_keys.pop()
         else:
+
             if isinstance(event, wx.KeyEvent) and event.HasAnyModifiers():
 
                 if event.ShiftDown():
@@ -186,6 +247,11 @@ class KeySelectDialog(wx.Dialog):
 
         self.ShowBind()
 
+        self.CheckConflicts()
+
+        self.Layout()
+
+    def CheckConflicts(self):
         Profile = wx.App.Get().Profile
         if Profile:
             conflicts = Profile.CheckConflict(self.Binding)
@@ -201,8 +267,6 @@ class KeySelectDialog(wx.Dialog):
                 self.kbErr.SetLabel(" ")
                 self.kbBind.SetHTMLBackgroundColour( wx.WHITE )
 
-        self.Layout()
-
     # This keymap code was initially adapted from PADRE < http://padre.perlide.org/ >.
     def SetKeymap(self):
         # key choice list
@@ -210,6 +274,9 @@ class KeySelectDialog(wx.Dialog):
                 wx.WXK_RETURN : 'ENTER',
                 wx.WXK_BACK : 'BACKSPACE',
                 wx.WXK_TAB : 'TAB',
+                wx.WXK_SHIFT: 'SHIFT',
+                wx.WXK_ALT: 'ALT',
+                wx.WXK_CONTROL: 'CTRL', # TODO - wx.WXK_RAW_CONTROL for Mac, instead?
                 wx.WXK_SPACE : 'SPACE',
                 wx.WXK_UP : 'UP',
                 wx.WXK_DOWN : 'DOWN',
@@ -287,6 +354,48 @@ class KeySelectDialog(wx.Dialog):
                 'BUTTON8' : 'BUTTON8',
                 'DCLICK1' : 'LEFTDOUBLECLICK',
                 'DCLICK3' : 'RIGHTDOUBLECLICK',
+                'JOY1'  : 'JOY1',
+                'JOY2'  : 'JOY2',
+                'JOY3'  : 'JOY3',
+                'JOY4'  : 'JOY4',
+                'JOY5'  : 'LeftBumper',
+                'JOY6'  : 'RightBumper',
+                'JOY7'  : 'JOY7',
+                'JOY8'  : 'JOY8',
+                'JOY9'  : 'JOY9',
+                'JOY10' : 'JOY10',
+                'JOY11' : 'JOY11',
+                'JOY12' : 'JOY12',
+                'JOY13' : 'JOY13',
+                'JOY14' : 'JOY14',
+                'JOY15' : 'JOY15',
+                'JOY16' : 'JOY16',
+                'JOY17' : 'JOY17',
+                'JOY18' : 'JOY18',
+                'JOY19' : 'JOY19',
+                'JOY20' : 'JOY20',
+                'JOY21' : 'JOY21',
+                'JOY22' : 'JOY22',
+                'JOY23' : 'JOY23',
+                'JOY24' : 'JOY24',
+                'JOY25' : 'JOY25',
+                "J1_U" : "JOYSTICK1_UP",
+                "J1_D" : "JOYSTICK1_DOWN",
+                "J1_L" : "JOYSTICK1_LEFT",
+                "J1_R" : "JOYSTICK1_RIGHT",
+                # Do these actually exist in the wild?
+                #"J2_U" : "JOYSTICK2_UP",
+                #"J2_D" : "JOYSTICK2_DOWN",
+                "J2_L" : "RTrigger",
+                "J2_R" : "LTrigger",
+                "J3_U" : "JOYSTICK3_UP",
+                "J3_D" : "JOYSTICK3_DOWN",
+                "J3_L" : "JOYSTICK3_LEFT",
+                "J3_R" : "JOYSTICK3_RIGHT",
+                "JP_U" : "JOYPAD_UP",
+                "JP_D" : "JOYPAD_DOWN",
+                "JP_L" : "JOYPAD_LEFT",
+                "JP_R" : "JOYPAD_RIGHT",
         }
 
         # Add alphanumerics
@@ -317,12 +426,15 @@ class bcKeyButton(wx.Button):
     def MakeFileKeyBind(self, contents):
         return KeyBind(self.Key, self.CtlLabel, self.Page, contents)
 
-    def SetLabel(self, keyLabel):
-        if re.search(r'\+\w\w\w\w\w', keyLabel) or len(keyLabel) > 12:
+    def SetLabel(self, label):
+        if re.search(r'\+\w\w\w\w\w', label) or len(label) > 12:
             # smallify and abbreviate if we have a mod key
-            keyLabel = re.sub(r'SHIFT\+', 'Sh+', keyLabel)
-            keyLabel = re.sub(r'CTRL\+', 'Ctl+', keyLabel)
-            keyLabel = re.sub(r'ALT\+', 'Alt+', keyLabel)
-            keyLabel = re.sub(r'DOUBLECLICK', 'DCLICK', keyLabel)
-            keyLabel = f"<small>{keyLabel}</small>"
-        self.SetLabelMarkup(keyLabel)
+            label = re.sub(r'SHIFT\+', 'Sh+', label)
+            label = re.sub(r'CTRL\+', 'Ctl+', label)
+            label = re.sub(r'ALT\+', 'Alt+', label)
+            label = re.sub(r'DOUBLECLICK', 'DCLICK', label)
+            label = re.sub(r'Trigger', 'Trig', label)
+            label = re.sub(r'LeftBumper', 'LBump', label)
+            label = re.sub(r'RightBumper', 'RBump', label)
+            label = f"<small>{label}</small>"
+        self.SetLabelMarkup(label)

@@ -23,6 +23,8 @@ class Main(wx.Frame):
         self.SetStatusBar(wx.StatusBar(self, style = 0))
 
         self.LogWindow = wx.LogWindow(self, "Log Window", show = False, passToOld = False)
+        self.LogWindow.SetLogLevel(wx.LOG_Message)
+        self.LogWindow.GetFrame().SetSize(1000,300)
 
         config = wx.FileConfig('bindcontrol')
         wx.ConfigBase.Set(config)
@@ -116,7 +118,9 @@ class Main(wx.Frame):
 
         # WRITE BUTTON
         WriteButton = wx.Button(self, -1, "Write Binds")
-        self.Sizer.Add(WriteButton, 0, wx.EXPAND | wx.ALL, 10)
+        writeSizer = wx.BoxSizer(wx.HORIZONTAL)
+        writeSizer.Add(WriteButton, 1, wx.EXPAND)
+        self.Sizer.Add(writeSizer,  0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, 10)
         self.Bind(wx.EVT_BUTTON, self.OnWriteBindsButton, WriteButton)
 
         self.SetSizerAndFit(self.Sizer)
@@ -166,6 +170,13 @@ class Main(wx.Frame):
             startwith = "New Profile" if self.PrefsDialog.StartWithNewProfile.GetValue() else "Last Profile"
             config.Write('StartWith', startwith)
 
+            config.Write('ControllerMod1', self.PrefsDialog.ControllerModPicker1.GetStringSelection())
+            config.Write('ControllerMod2', self.PrefsDialog.ControllerModPicker2.GetStringSelection())
+            config.Write('ExtraMod1', self.PrefsDialog.ExtraModPicker1.GetStringSelection())
+            config.Write('ExtraMod2', self.PrefsDialog.ExtraModPicker2.GetStringSelection())
+            config.Write('ExtraMod3', self.PrefsDialog.ExtraModPicker3.GetStringSelection())
+            config.Write('ExtraMod4', self.PrefsDialog.ExtraModPicker4.GetStringSelection())
+
             config.Flush()
 
     def OnMenuAboutBox(self, _):
@@ -173,7 +184,7 @@ class Main(wx.Frame):
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
             info.SetName('BindControl')
-            info.SetVersion('0.12')
+            info.SetVersion('0.13')
             info.SetDescription("""
 BindControl can help you set up custom keybinds in City of Heroes/Villains, including speed-on-demand binds.
 
@@ -185,7 +196,7 @@ Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
 
 Inspiration Popper design adapted from CityBinder for Homecoming by Tailcoat.
 """)
-            info.SetCopyright('(c) 2010-2023 R Pickett <emerson@hayseed.net>')
+            info.SetCopyright('(c) 2010-2024 R Pickett <emerson@hayseed.net>')
             info.SetWebSite('https://github.com/emersonrp/bindcontrol')
             self.about_info = info
 

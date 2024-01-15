@@ -1056,7 +1056,7 @@ class MovementPowers(Page):
             if (self.GetState('Forward')):
                 ResetFile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind("+forward"))
             if (self.GetState('Back')):
-                ResetFile.SetBind(self.Ctrls['Back'].MakeFileKeyBind("+back"))
+                ResetFile.SetBind(self.Ctrls['Back'].MakeFileKeyBind("+backward"))
             if (self.GetState('Follow')):
                 ResetFile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("+follow"))
             if (self.GetState('AutoRun')):

@@ -34,19 +34,6 @@ modKeys = ['SHIFT', 'LSHIFT', 'RSHIFT', 'ALT', 'RALT', 'LALT', 'CTRL', 'LCTRL', 
         'LTrigger', 'RTrigger', 'LeftBumper', 'RightBumper', 'JOY9', 'JOY10',
 ]
 
-def KeySelectEventHandler(evt):
-    button = evt.EventObject
-
-    with KeySelectDialog(button) as dlg:
-        newKey = ''
-        if(dlg.ShowModal() == wx.ID_OK): newKey = dlg.Binding
-
-        # re-label the button / set its state
-        if newKey:
-            button.Key = newKey
-            button.SetLabel(newKey)
-            wx.PostEvent(button, KeyChanged())
-
 class KeySelectDialog(wx.Dialog):
     def __init__(self, button):
 
@@ -121,14 +108,6 @@ class KeySelectDialog(wx.Dialog):
         self.kbBind.SetPage('<center><b><font size=+4>' + self.Binding + '</font></b></center>')
 
     def handleBind(self, event):
-        ### Algorithm:
-        # two slots, "Mod" and "Key"
-        # if normal key, put it in key slot
-        # if mod key
-        #   if already mod key, AND not the same one, AND still held down
-        #       put it in key slot
-        #   else
-        #       put it in mod slot
         SeparateLR = self.SeparateLRChooser.Value
 
         # first clear out anything not being held down
@@ -406,7 +385,7 @@ class bcKeyButton(wx.Button):
 
         self.SetLabel(self.Key)
 
-        self.Bind(wx.EVT_BUTTON, KeySelectEventHandler)
+        self.Bind(wx.EVT_BUTTON, self.KeySelectEventHandler)
         self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
 
     def ClearButton(self, _):
@@ -429,3 +408,23 @@ class bcKeyButton(wx.Button):
             label = re.sub(r'RightBumper', 'RBump', label)
             label = f"<small>{label}</small>"
         self.SetLabelMarkup(label)
+
+    def KeySelectEventHandler(self, evt):
+        button = evt.EventObject
+
+        existingKey = button.Key
+
+        with KeySelectDialog(button) as dlg:
+            newKey = ''
+            if(dlg.ShowModal() == wx.ID_OK): newKey = dlg.Binding
+
+            # re-label the button / set its state
+            if newKey:
+                button.Key = newKey
+                button.SetLabel(newKey)
+                wx.PostEvent(button, KeyChanged())
+
+                if existingKey != newKey:
+                    Profile = wx.App.Get().Profile
+                    Profile.SetModified()
+

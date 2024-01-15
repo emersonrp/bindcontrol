@@ -80,7 +80,7 @@ class Profile(wx.Notebook):
         for arg in args: filepath = filepath  /  arg
         return "$$bindloadfilesilent " + str(filepath)
 
-    def CheckConflict(self, key):
+    def CheckConflict(self, key, existingctrlname):
         conflicts = []
 
         for pageName in self.Pages:
@@ -88,7 +88,7 @@ class Profile(wx.Notebook):
             for ctrlname, ctrl in page.Ctrls.items():
                 if not ctrl.IsThisEnabled(): continue
                 if isinstance(ctrl, bcKeyButton):
-                    if key == ctrl.Key:
+                    if key == ctrl.Key and not existingctrlname == ctrlname:
                         conflicts.append( {'page' : page.TabTitle, 'ctrl': UI.Labels[ctrlname]})
         return conflicts
 

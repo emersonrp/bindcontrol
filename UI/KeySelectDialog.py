@@ -64,10 +64,10 @@ class KeySelectDialog(wx.Dialog):
 
         sizer = wx.BoxSizer(wx.VERTICAL);
 
-        self.kbDesc = wx.StaticText( self, -1, desc,         style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
+        self.kbDesc = wx.StaticText     ( self, -1, desc,          style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
         self.kbBind = wx.html.HtmlWindow( self, -1, size=(360,60), style=wx.html.HW_SCROLLBAR_NEVER)
-        self.kbBind.SetHTMLBackgroundColour(self.GetBackgroundColour())
-        self.kbErr  = wx.StaticText( self, -1, " ",          style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
+        self.kbBind.SetHTMLBackgroundColour( wx.WHITE )
+        self.kbErr  = wx.StaticText     ( self, -1, " ",           style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
 
         self.ShowBind()
 
@@ -98,7 +98,7 @@ class KeySelectDialog(wx.Dialog):
             i.Bind(wx.EVT_MOUSE_AUX1_DOWN , self.handleBind )
             i.Bind(wx.EVT_MOUSE_AUX2_DOWN , self.handleBind )
 
-        buttonSizer = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
+        buttonSizer = self.CreateButtonSizer(wx.OK|wx.CANCEL|wx.NO_DEFAULT)
         vbox.Add(buttonSizer, 0, wx.ALIGN_CENTER|wx.ALL, 16)
 
         self.SetSizerAndFit(vbox);
@@ -199,7 +199,7 @@ class KeySelectDialog(wx.Dialog):
             else:
                 self.kbErr.SetForegroundColour(wx.NullColour)
                 self.kbErr.SetLabel(" ")
-                self.kbBind.SetHTMLBackgroundColour(wx.WHITE)
+                self.kbBind.SetHTMLBackgroundColour( wx.WHITE )
 
         self.Layout()
 

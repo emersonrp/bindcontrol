@@ -103,9 +103,9 @@ class KeySelectDialog(wx.Dialog):
 
     def ShowModal(self):
         # re-set-up ModKeys every time we show the dialog in case prefs changed.
+        config = wx.ConfigBase.Get()
         modKeys = ['SHIFT', 'LSHIFT', 'RSHIFT', 'ALT', 'RALT', 'LALT', 'CTRL', 'LCTRL', 'RCTRL', ]
         for picker in ['ControllerMod1', 'ControllerMod2', 'ExtraMod1', 'ExtraMod2', 'ExtraMod3', 'ExtraMod4']:
-            config = wx.ConfigBase.Get()
             modkey = config.Read(picker)
             if modkey:
                 modKeys.append(modkey)
@@ -249,7 +249,8 @@ class KeySelectDialog(wx.Dialog):
     # This keymap code was initially adapted from PADRE < http://padre.perlide.org/ >.
     def SetKeymap(self):
         # key choice list
-        self.Keymap = {
+        from typing import Dict
+        self.Keymap: Dict[str|int, str] = {
                 wx.WXK_RETURN : 'ENTER',
                 wx.WXK_BACK : 'BACKSPACE',
                 wx.WXK_TAB : 'TAB',

@@ -48,9 +48,8 @@ class PrefsDialog(wx.Dialog):
         self.UseSplitModKeys.SetToolTip("By default, BindControl will bind modifier keys, eg CTRL and SHIFT, without regard to which side of the keyboard they're on.  Check this if you'd like to bind the left-side modifier keys separately from the right-side ones.")
         generalSizer.Add( self.UseSplitModKeys, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
-        splitKeyLabel.CB = self.UseSplitModKeys
+        setattr(splitKeyLabel, 'CB', self.UseSplitModKeys)
         splitKeyLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
-
 
         flushBindsLabel = ST.GenStaticText(generalPanel, label = "Reset all binds to default before reapplying:")
         generalSizer.Add( flushBindsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
@@ -59,7 +58,7 @@ class PrefsDialog(wx.Dialog):
         self.FlushAllBinds.SetToolTip("Set all binds to City of Heroes' default before applying BindControl's binds.  Uncheck this if you have added any binds into the game that are not managed by BindControl.")
         generalSizer.Add( self.FlushAllBinds, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
-        flushBindsLabel.CB = self.FlushAllBinds
+        setattr(flushBindsLabel, 'CB', self.FlushAllBinds)
         flushBindsLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
         StartWithProfileLabel = wx.StaticText(generalPanel, label = "On startup, start with:")

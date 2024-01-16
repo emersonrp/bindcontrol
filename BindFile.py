@@ -52,9 +52,12 @@ class BindFile():
         # four strings, in which case we need to roll a KeyBind.  Someday pick one scheme.
         if isinstance(keybind, str):
             if name and not contents: # got called as (key, contents), this is bad.
-                prevFrame = inspect.currentframe().f_back
-                (filen, line, funcn, _, _) = inspect.getframeinfo(prevFrame)
-                print(f"SetBind called old way from {filen}, {funcn}, {line} -- PROBABLY BROKEN")
+                currframe = inspect.currentframe()
+                if currframe:
+                    prevFrame = currframe.f_back
+                    if prevFrame:
+                        (filen, line, funcn, _, _) = inspect.getframeinfo(prevFrame)
+                        print(f"SetBind called old way from {filen}, {funcn}, {line} -- PROBABLY BROKEN")
             keybind = KeyBind(keybind, name, page, contents)
 
         if not keybind.Key: return

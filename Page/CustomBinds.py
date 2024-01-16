@@ -86,7 +86,7 @@ class CustomBinds(Page):
         deleteSizer.Add(bindpane, 1, wx.EXPAND, 5)
         deleteButton = wx.Button(self.scrolledPane, -1, "X", size = [40, -1])
         deleteButton.SetForegroundColour(wx.RED)
-        deleteButton.BindPane = bindpane
+        setattr(deleteButton, "BindPane", bindpane)
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
         deleteSizer.Add(deleteButton, 0, wx.LEFT, 10)
 

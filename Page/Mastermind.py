@@ -236,7 +236,7 @@ class Mastermind(Page):
             petcb = wx.CheckBox(staticbox, -1, str(PetID))
             petcbs.append(petcb)
             self.Ctrls[f"Pet{PetID}Bodyguard"] = petcb
-            petcb.CtlLabel = bgSelectText
+            setattr(petcb, "CtlLabel", bgSelectText)
             petcb.SetToolTip(f"Select whether pet {PetID} acts as Bodyguard")
             bgsizer.Add(petcb, 0, wx.LEFT|wx.RIGHT, 5)
 
@@ -269,7 +269,7 @@ class Mastermind(Page):
         enableBGAttack = wx.CheckBox(staticbox, -1, "Enable")
         enableBGAttack.Bind(wx.EVT_CHECKBOX, self.OnBGCheckboxes)
         enableBGAttack.SetValue(self.Init['PetBodyguardAttackEnabled'])
-        enableBGAttack.CtlLabel = None
+        setattr(enableBGAttack, "CtlLabel", None)
         self.Ctrls['PetBodyguardAttackEnabled'] = enableBGAttack
         petCommandsKeys.InnerSizer.Add(enableBGAttack, 0, wx.ALL|wx.EXPAND, 5)
         petCommandsKeys.InnerSizer.Add(wx.StaticText(staticbox, -1, ''))
@@ -283,7 +283,7 @@ class Mastermind(Page):
         enableBGGoto = wx.CheckBox(petCommandsKeys.GetStaticBox(), -1, "Enable")
         enableBGGoto.Bind(wx.EVT_CHECKBOX, self.OnBGCheckboxes)
         enableBGGoto.SetValue(self.Init['PetBodyguardGotoEnabled'])
-        enableBGGoto.CtlLabel = None
+        setattr(enableBGGoto, "CtlLabel", None)
         self.Ctrls['PetBodyguardGotoEnabled'] = enableBGGoto
         petCommandsKeys.InnerSizer.Add(enableBGGoto, 0, wx.ALL|wx.EXPAND, 5)
 
@@ -313,7 +313,7 @@ class Mastermind(Page):
             self.Ctrls[f'PetSelect{i}'] = button
             name = wx.TextCtrl(self)
             name.Bind(wx.EVT_TEXT, self.OnNameTextChange)
-            name.CtlLabel = None
+            setattr(name, "CtlLabel", None)
             self.Ctrls[f'Pet{i}Name'] = name
 
             PetInner.Add(label,  (0,i), flag=wx.EXPAND|wx.ALIGN_CENTER)

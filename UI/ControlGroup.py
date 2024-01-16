@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any, Callable, Protocol
 
 import wx
 from wx.adv import BitmapComboBox
@@ -144,22 +144,29 @@ class ControlGroup(wx.StaticBoxSizer):
         wx.PostEvent(cblabel.control, fakeevt)
         evt.Skip()
 
-class CGControlMixin():
-    def __init__(self, *args, **kwargs):
+### Deep magic for linting / pytight / mypy
+class CGControlProtocol(Protocol):
+    Enable: Callable
+    GetContainingSizer: Callable
+    CtlLabel : ST.GenStaticText | wx.StaticText | None
+
+# Mixin to enable/show controls' labels when they are enabled/shown
+class CGControlMixin:
+    def __init__(self: CGControlProtocol, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.CtlLabel : ST.GenStaticText | wx.StaticText | None = None
 
-    def Enable(self, doEnable):
-        super().Enable(doEnable)
-        if self.CtlLabel: self.CtlLabel.Enable(doEnable)
+    def Enable(self: CGControlProtocol, enable = True):
+        super().Enable(enable)
+        if self.CtlLabel: self.CtlLabel.Enable(enable)
 
-    def Show(self, doShow):
-        self.GetContainingSizer().Show(self,          show = doShow)
-        self.GetContainingSizer().Show(self.CtlLabel, show = doShow)
-        self.Enable(doShow)
+    def Show(self: CGControlProtocol, show = True):
+        self.GetContainingSizer().Show(self,          show = show)
+        self.GetContainingSizer().Show(self.CtlLabel, show = show)
+        self.Enable(show)
         self.GetContainingSizer().Layout()
 
-
+# Miniclasses to use the above mixin
 class cgbcKeyButton     (CGControlMixin, bcKeyButton)         : pass
 class cgComboBox        (CGControlMixin, wx.ComboBox)         : pass
 class cgBMComboBox      (CGControlMixin, BitmapComboBox)      : pass
@@ -171,4 +178,3 @@ class cgSpinCtrl        (CGControlMixin, wx.SpinCtrl)         : pass
 class cgSpinCtrlDouble  (CGControlMixin, wx.SpinCtrlDouble)   : pass
 class cgDirPickerCtrl   (CGControlMixin, wx.DirPickerCtrl)    : pass
 class cgColourPickerCtrl(CGControlMixin, wx.ColourPickerCtrl) : pass
-

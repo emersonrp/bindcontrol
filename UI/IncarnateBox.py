@@ -81,7 +81,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
         import wx.lib.buttons as buttons
         self.IncIcon = buttons.ThemedGenBitmapButton(staticbox, bitmap = GetIcon('Empty'), size=wx.Size(39,40))
-        self.IncIcon.Picker = self
+        setattr(self.IncIcon, 'Picker', self)
         self.IncIcon.Bind(wx.EVT_BUTTON, self.OnButtonPress)
         self.IncIcon.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
         self.IncName = wx.StaticText(staticbox, wx.ID_ANY, style=wx.ALIGN_RIGHT)
@@ -136,7 +136,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
                 iconname = f"Incarnate/Incarnate_{slot}_{aliasedtype}_{rarity}"
                 icon = GetIcon(iconname)
                 if icon: menuitem.SetBitmap(icon)
-                menuitem.IconFilename = iconname
+                setattr(menuitem, 'IconFilename', iconname)
 
                 submenu.Append(menuitem)
 

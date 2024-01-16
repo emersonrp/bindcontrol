@@ -1,5 +1,6 @@
 import re
 from pathlib import Path, PureWindowsPath
+from typing import Dict, Any
 import json
 import wx
 import wx.lib.colourselect as csel
@@ -150,7 +151,7 @@ class Profile(wx.Notebook):
 
         self.ProfilePath().mkdir( parents = True, exist_ok = True )
 
-        savedata = {}
+        savedata : Dict[str, Any] = {}
         for pagename in self.Pages:
             savedata[pagename] = {}
             if pagename == "CustomBinds": continue

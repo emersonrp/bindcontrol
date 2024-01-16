@@ -132,9 +132,8 @@ class PowerBinderDialog(wx.Dialog):
 
         # make a new command object, attached to the parent dialog
         newCommand = commandClasses[chosenName]
-        if newCommand:
-            cmdObject = newCommand(self.EditDialog)
-            self.bindChoice.SetClientData(chosenSel, cmdObject)
+        cmdObject = newCommand(self.EditDialog)
+        self.bindChoice.SetClientData(chosenSel, cmdObject)
 
         # detach the command object and instead glue it to self.RearrangeList
         newCommand = self.bindChoice.DetachClientObject(chosenSel)
@@ -232,10 +231,10 @@ class PowerBindCmd():
         if init: self.Deserialize(init)
 
     # Methods to override
-    def BuildUI(self, _)        : return
-    def MakeBindString(self, _) : return
-    def Serialize(self)         : return
-    def Deserialize(self, _) : return
+    def BuildUI(self, dialog)   : return wx.Sizer()
+    def MakeBindString(self, _) : return str('')
+    def Serialize(self)         : return {}
+    def Deserialize(self, init) : return
 
 ####### Away From Keyboard
 class AFKCmd(PowerBindCmd):
@@ -718,7 +717,7 @@ class UseInspByNameCmd(PowerBindCmd):
         for _, types in GameData.Inspirations.items():
             for _, info in types.items():
                 for insp in info['tiers']:
-                    name = re.sub(' ', '', insp)
+                    name = re.sub(' ', '', str(insp))
                     icon = GetIcon(f'Inspirations/{name}')
                     self.useInspByNameModeChoice.Append(insp, icon)
         self.useInspByNameModeChoice.SetSelection(0)

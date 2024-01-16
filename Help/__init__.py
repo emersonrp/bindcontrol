@@ -1,15 +1,9 @@
 import sys
 import os
+from typing import Dict
 import wx
 import wx.html
 from Icon import GetIcon
-
-HelpWindows = {}
-
-def ShowHelpWindow(parent, filename):
-    if not HelpWindows.get(filename, None):
-        HelpWindows[filename] = HelpWindow(parent, filename)
-    HelpWindows[filename].Show()
 
 class HelpWindow(wx.MiniFrame):
     def __init__(self, parent, filename):
@@ -41,3 +35,10 @@ class HelpButton(wx.BitmapButton):
     def GetHelpHandler(self):
         def OnClick(_): ShowHelpWindow(self.Parent, self.Filename)
         return OnClick
+
+HelpWindows: Dict[str, HelpWindow] = {}
+def ShowHelpWindow(parent, filename):
+    if not HelpWindows.get(filename, None):
+        HelpWindows[filename] = HelpWindow(parent, filename)
+    HelpWindows[filename].Show()
+

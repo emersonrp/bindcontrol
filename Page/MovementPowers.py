@@ -2,6 +2,7 @@ import wx
 import GameData
 import UI
 from pathlib import Path, PureWindowsPath
+from typing import Dict, Any
 from Page import Page
 from UI.ControlGroup import ControlGroup, bcKeyButton
 
@@ -11,7 +12,7 @@ class MovementPowers(Page):
 
         self.TabTitle = "Movement / Speed on Demand"
 
-        self.Init = {
+        self.Init: Dict[str, Any] = {
             'EnableSoD'       : False,
 
             'Up'              : "SPACE",
@@ -588,8 +589,8 @@ class MovementPowers(Page):
                 self.rightColumn.Hide(self.kheldianSizer)
 
                 # en/disable controls in other sizers
-                for c in nonkheldianOnlyControls:
-                    ctrl = self.Ctrls[c]
+                for cname in nonkheldianOnlyControls:
+                    ctrl = self.Ctrls[cname]
                     ctrl.GetContainingSizer().Show(ctrl)
                     ctrl.GetContainingSizer().Show(ctrl.CtlLabel)
 
@@ -1186,7 +1187,8 @@ class MovementPowers(Page):
         #  create the Nova and Dwarf form support files if enabled.
 
         ### TODO TODO TODO - these are just in here to make pylint happy;  fix the actual problem
-        Nova = Dwarf = {}
+        Nova : Dict[str, str] = {}
+        Dwarf: Dict[str, str] = {}
         humanBindKey = humanpbind = novapbind = dwarfpbind = None
         dwarfTPPower = normalTPPower = teamTPPower = ''
         ### TODO TODO TODO - these are just in here to make pylint happy;  fix the actual problem
@@ -2360,7 +2362,6 @@ class tObject(dict):
         self.hover      :str = ''
         self.fly        :str = ''
         self.gfly       :str = ''
-        self.gfly       :str = ''
         self.flyx       :str = ''
         self.jump       :str = ''
         self.cjmp       :str = ''
@@ -2498,9 +2499,6 @@ class tObject(dict):
 
         self.basepath     :Path = Path()
         self.gamebasepath :PureWindowsPath = PureWindowsPath()
-
-        self.path         :Path = Path()
-        self.gamepath     :PureWindowsPath = PureWindowsPath()
 
         self.vertkeys  :int = 0
         self.horizkeys :int = 0

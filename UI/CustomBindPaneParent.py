@@ -17,7 +17,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
 
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
 
-    def BuildBindUI(self, _):
+    def BuildBindUI(self, page):
         # build the UI needed to edit/create this bind, and shim
         # it into 'parent'
         pass
@@ -30,6 +30,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
 
     def Serialize(self):
         print(f"Inside {self.bindclass} Serialize, please override")
+        return {}
 
     def OnPaneChanged(self, _):
         self.Page.Layout()

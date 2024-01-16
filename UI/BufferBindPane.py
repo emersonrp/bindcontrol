@@ -37,7 +37,7 @@ class BufferBindPane(CustomBindPaneParent):
         self.Init.update(init)
 
 
-    def BuildBindUI(self, _):
+    def BuildBindUI(self, page):
         pane = self.GetPane()
 
         # bind text controls

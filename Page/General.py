@@ -5,7 +5,7 @@ import UI
 from Icon import GetIcon
 from GameData import Archetypes, Origins, MiscPowers
 
-from UI.ControlGroup import ControlGroup
+from UI.ControlGroup import ControlGroup, cgTextCtrl
 from UI.IncarnateBox import IncarnateBox
 from UI.ChatColorPicker import ChatColorPicker, ChatColors
 
@@ -123,7 +123,7 @@ class General(Page):
         ChatColorSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Chat Colors")
         ChatColorEnable = wx.CheckBox(ChatColorSizer.GetStaticBox(), -1, 'Use Custom Chat Colors')
         ChatColorEnable.SetToolTip( wx.ToolTip('Check this to select custom colors for your chat messages'))
-        ChatColorEnable.CtlName = "ChatColorEnable"
+        setattr(ChatColorEnable, "CtlName", "ChatColorEnable")
         self.Ctrls['ChatColorEnable'] = ChatColorEnable
         ChatColorEnable.Bind(wx.EVT_CHECKBOX, self.OnColorEnable)
         ChatColors = ChatColorPicker(ChatColorSizer.GetStaticBox(), self, 'Chat', {
@@ -140,14 +140,14 @@ class General(Page):
         TNEnable = wx.CheckBox(TNSizer.GetStaticBox(), -1, 'Use Typing Notifier')
         TNEnable.SetToolTip(
                 wx.ToolTip('Check this to enable a floating "typing" notifier when you are typing into the chat box'))
-        TNEnable.CtlName = 'TypingNotifierEnable'
+        setattr(TNEnable, "CtlName", 'TypingNotifierEnable')
         TNEnable.Bind(wx.EVT_CHECKBOX, self.OnTypeEnable)
         self.Ctrls['TypingNotifierEnable'] = TNEnable
         TNCtrlSizer = wx.BoxSizer(wx.HORIZONTAL)
         TNLabel = wx.StaticText(TNSizer.GetStaticBox(), label = "Typing Notifier:", style=wx.ALIGN_RIGHT)
         TN = wx.TextCtrl(TNSizer.GetStaticBox(), value = self.Init['TypingNotifier'], style=wx.TE_CENTER)
-        TN.CtlName = 'TypingNotifier'
-        TN.CtlLabel = TNLabel
+        setattr(TN, "CtlName", 'TypingNotifier')
+        setattr(TN, "CtlLabel", TNLabel)
         self.Ctrls['TypingNotifier'] = TN
         TNCtrlSizer.Add(TNLabel, 1, wx.ALL|wx.ALIGN_CENTER, 6)
         TNCtrlSizer.Add(TN,      1, wx.ALL, 6)
@@ -268,16 +268,17 @@ class General(Page):
     # Event handlers
     def OnNameCtrlChanged(self, evt):
         nc = self.NameCtrl
-        text = nc.GetValue()
-        if len(text) == 0 or re.search(" ", text):
-            nc.SetBackgroundColour((255,200,200))
-            if len(text) == 0:
-                nc.SetToolTip("The profile name cannot be empty.")
+        if isinstance(nc, cgTextCtrl):
+            text = nc.GetValue()
+            if len(text) == 0 or re.search(" ", text):
+                nc.SetBackgroundColour((255,200,200))
+                if len(text) == 0:
+                    nc.SetToolTip("The profile name cannot be empty.")
+                else:
+                    nc.SetToolTip("The profile name cannot contain spaces.")
             else:
-                nc.SetToolTip("The profile name cannot contain spaces.")
-        else:
-            nc.SetBackgroundColour(wx.NullColour)
-            nc.SetToolTip(None)
+                nc.SetBackgroundColour(wx.NullColour)
+                nc.SetToolTip(None)
         evt.Skip()
 
 

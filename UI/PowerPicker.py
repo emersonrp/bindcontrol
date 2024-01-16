@@ -49,7 +49,7 @@ class PowerPickerMenu(wx.Menu):
                 icon = GetIcon(powerset = powerset, power = power)
                 if icon:
                     menuitem.SetBitmap(icon)
-                    menuitem.IconFilename = icon.Filename
+                    setattr(menuitem, 'IconFilename', icon.Filename)
                 submenu.Append(menuitem)
 
         # Pool powers
@@ -65,7 +65,7 @@ class PowerPickerMenu(wx.Menu):
                     icon = GetIcon(powerset = poolname, power = power)
                     if icon:
                         menuitem.SetBitmap(icon)
-                        menuitem.IconFilename = icon.Filename
+                        setattr(menuitem, 'IconFilename', icon.Filename)
                     submenu.Append(menuitem)
 
         # Incarnate Powers
@@ -78,7 +78,7 @@ class PowerPickerMenu(wx.Menu):
                 icon = power['icon']
                 if icon:
                     menuitem.SetBitmap(icon)
-                    menuitem.IconFilename = power['iconfilename']
+                    setattr(menuitem, 'IconFilename', power['iconfilename'])
                 submenu.Append(menuitem)
 
     def OnMenuSelection(self, evt):

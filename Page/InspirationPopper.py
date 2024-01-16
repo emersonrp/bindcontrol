@@ -1,5 +1,6 @@
 import wx
 import wx.lib.colourselect as csel
+from typing import Dict, Any
 import UI
 import Icon
 from Page import Page
@@ -21,7 +22,7 @@ class InspirationPopper(Page):
         self.TabTitle = "Inspiration Popper"
         self.chatPickers = {}
 
-        self.Init = {}
+        self.Init : Dict[str, Any] = {}
 
         for tab in tabs:
             for name, Insp in Inspirations[tab].items():

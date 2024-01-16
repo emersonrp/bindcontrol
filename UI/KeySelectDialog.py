@@ -1,6 +1,8 @@
 import re
+from typing import Dict, List
 import wx
 import wx.html
+import wx.lib.stattext as ST
 import string
 import UI
 import wx.lib.newevent
@@ -29,7 +31,7 @@ elif wx.Platform == '__WXMAC__':
         'LALT'  : 0x20,
     }
 
-modKeys = [] # gets set every ShowModal() call
+modKeys: List[str] = [] # gets set every ShowModal() call
 
 class KeySelectDialog(wx.Dialog):
     def __init__(self, button):
@@ -249,7 +251,6 @@ class KeySelectDialog(wx.Dialog):
     # This keymap code was initially adapted from PADRE < http://padre.perlide.org/ >.
     def SetKeymap(self):
         # key choice list
-        from typing import Dict
         self.Keymap: Dict[str|int, str] = {
                 wx.WXK_RETURN : 'ENTER',
                 wx.WXK_BACK : 'BACKSPACE',
@@ -389,7 +390,7 @@ class bcKeyButton(wx.Button):
     def __init__(self, parent, id, init = {}):
         wx.Button.__init__(self, parent, id)
         self.CtlName  : str           = init.get('CtlName', None)
-        self.CtlLabel : wx.StaticText = init.get('CtlLabel', None)
+        self.CtlLabel : ST.GenStaticText | wx.StaticText | None = init.get('CtlLabel', None)
         self.Key      : str           = init.get('Key', '')
         self.Page     : Page          = parent
 

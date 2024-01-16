@@ -1,8 +1,8 @@
-import wx # for wx.Colour values
+from typing import Dict, Any
 
 Origins = ['Magic','Mutation','Natural','Science','Technology']
 
-Archetypes = {
+Archetypes: Dict[Any, Any] = {
     'Arachnos Soldier': {
         'Faction': 'V',
         'Epic': {
@@ -624,7 +624,7 @@ Archetypes = {
     },
 };
 
-MiscPowers = {
+MiscPowers: Dict[str, dict] = {
     'Badge': {
         'Accolade': [
             'Eye of the Magus',

@@ -1,12 +1,13 @@
 # Utility class for querying joystick/controller
 import wx
 import wx.adv
+from typing import List
 
 class bcController(wx.adv.Joystick):
 
     def __init__(self):
         wx.adv.Joystick.__init__(self)
-        self.SetCodeTable()
+        self.CodeTable = self.SetCodeTable()
 
         self.CurrentAxisPercents = []
 
@@ -71,11 +72,11 @@ class bcController(wx.adv.Joystick):
         if self.HasPOV4Dir():
             povpos = self.GetPOVPosition()
 
-        if povpos != None and povpos < 60000: # 65535 seems to mean "at center"
-            if   povpos == 0     : code = "JP_U"
-            elif povpos == 9000  : code = "JP_R"
-            elif povpos == 18000 : code = "JP_D"
-            elif povpos == 27000 : code = "JP_L"
+            if povpos != None and povpos < 60000: # 65535 seems to mean "at center"
+                if   povpos == 0     : code = "JP_U"
+                elif povpos == 9000  : code = "JP_R"
+                elif povpos == 18000 : code = "JP_D"
+                elif povpos == 27000 : code = "JP_L"
 
         else:
             self.SetCurrentAxisPercents()
@@ -128,8 +129,9 @@ class bcController(wx.adv.Joystick):
     def SetCodeTable(self):
         # sets the Code table, which is a list, indexed by axis number,
         # of lists of [negative direction, positive direction] codes
+        CodeTable : List[List] = []
         if wx.Platform == '__WXMSW__':
-            self.CodeTable =  [
+            CodeTable =  [
                     ['J1_L', 'J1_R'],
                     ['J1_U', 'J1_D'],
                     ['J2_L', 'J2_R'],
@@ -141,7 +143,7 @@ class bcController(wx.adv.Joystick):
             ]
 
         elif wx.Platform == '__WXGTK__':
-            self.CodeTable =  [
+            CodeTable =  [
                     ['J1_L', 'J1_R'],
                     ['J1_U', 'J1_D'],
                     [''    , 'J2_R'],
@@ -154,7 +156,7 @@ class bcController(wx.adv.Joystick):
 
         # TODO this is utterly untested
         elif wx.Platform == '__WXMAC__':
-            self.CodeTable =  [
+            CodeTable =  [
                     ['J1_L', 'J1_R'],
                     ['J1_U', 'J1_D'],
                     ['J3_L', 'J3_R'],
@@ -165,3 +167,4 @@ class bcController(wx.adv.Joystick):
 #                    ['JP_L', 'JP_R'],
 #                    ['JP_U', 'JP_D'],
             ]
+        return CodeTable

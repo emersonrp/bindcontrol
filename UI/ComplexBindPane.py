@@ -72,14 +72,17 @@ class ComplexBindPane(CustomBindPaneParent):
         panel = wx.Panel(parent)
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        panel.StepLabel = wx.StaticText(panel, -1, f"Step {stepNumber}:")
-        sizer.Add(panel.StepLabel, 0, wx.ALIGN_CENTER_VERTICAL)
+        StepLabel = wx.StaticText(panel, -1, f"Step {stepNumber}:")
+        setattr(panel, 'StepLabel', StepLabel)
+        sizer.Add(StepLabel, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        panel.BindContents= wx.TextCtrl(panel, -1, step.get('contents', ''))
-        sizer.Add(panel.BindContents, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
+        BindContents = wx.TextCtrl(panel, -1, step.get('contents', ''))
+        setattr(panel, 'BindContents', BindContents)
+        sizer.Add(BindContents, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
 
-        panel.PowerBinder = PowerBinderButton(panel, panel.BindContents, step.get('powerbinderdata', {}))
-        sizer.Add(panel.PowerBinder, 0)
+        PowerBinder = PowerBinderButton(panel, BindContents, step.get('powerbinderdata', {}))
+        setattr(panel, 'PowerBinder', PowerBinder)
+        sizer.Add(PowerBinder, 0)
 
         delButton = wx.Button(panel, -1, "X", size = (40,-1))
         delButton.SetForegroundColour(wx.RED)

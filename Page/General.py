@@ -52,7 +52,7 @@ class General(Page):
 
         originchoices = []
         for Origin in Origins:
-            originchoices.append([Origin, GetIcon(Origin)])
+            originchoices.append([Origin, GetIcon(f"Origins/{Origin}")])
         originpicker = powersBox.AddControl(
             ctlName = 'Origin',
             ctlType = 'bmcombo',
@@ -63,7 +63,7 @@ class General(Page):
 
         archchoices = []
         for Arch in sorted(Archetypes):
-            archchoices.append([Arch, GetIcon(Arch)])
+            archchoices.append([Arch, GetIcon(f"Archetypes/{Arch}")])
         archpicker = powersBox.AddControl(
             ctlName = 'Archetype',
             ctlType = 'bmcombo',

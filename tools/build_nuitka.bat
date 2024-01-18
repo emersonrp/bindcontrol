@@ -1,3 +1,9 @@
+@echo off
+
+for /f %%i in ('git describe --tags') do set VERSION=%%i
+
+echo %VERSION% > version.txt
+
 python -m nuitka ^
 	--standalone ^
 	--remove-output ^
@@ -11,6 +17,6 @@ python -m nuitka ^
 
 cd dist
 ren BindControl.dist BindControl
-7z a BindControl-windows.zip BindControl
+7z a BindControl-%VERSION%-windows.zip BindControl
 rmdir /s /q BindControl
 cd ..

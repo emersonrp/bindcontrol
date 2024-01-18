@@ -11,5 +11,6 @@ python -m nuitka ^
 
 cd dist
 ren BindControl.dist BindControl
-7z a BindControl.zip BindControl
+7z a BindControl-windows.zip BindControl
+rmdir /s /q BindControl
 cd ..

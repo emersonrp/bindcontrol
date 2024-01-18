@@ -31,7 +31,6 @@ elif wx.Platform == '__WXMAC__':
         'LALT'  : 0x20,
     }
 
-modKeys: List[str] = [] # gets set every ShowModal() call
 
 class KeySelectDialog(wx.Dialog):
     def __init__(self, button):
@@ -39,6 +38,8 @@ class KeySelectDialog(wx.Dialog):
         self.Desc    = UI.Labels[button.CtlName]
         self.Button  = button
         self.Binding = button.Key
+
+        self.modKeys: List[str] = [] # gets set every ShowModal() call
 
         wx.Dialog.__init__(self, button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
 
@@ -106,11 +107,11 @@ class KeySelectDialog(wx.Dialog):
     def ShowModal(self):
         # re-set-up ModKeys every time we show the dialog in case prefs changed.
         config = wx.ConfigBase.Get()
-        modKeys = ['SHIFT', 'LSHIFT', 'RSHIFT', 'ALT', 'RALT', 'LALT', 'CTRL', 'LCTRL', 'RCTRL', ]
+        self.modKeys = ['SHIFT', 'LSHIFT', 'RSHIFT', 'ALT', 'RALT', 'LALT', 'CTRL', 'LCTRL', 'RCTRL', ]
         for picker in ['ControllerMod1', 'ControllerMod2', 'ExtraMod1', 'ExtraMod2', 'ExtraMod3', 'ExtraMod4']:
             modkey = config.Read(picker)
             if modkey:
-                modKeys.append(modkey)
+                self.modKeys.append(modkey)
 
         super().ShowModal()
 
@@ -163,11 +164,18 @@ class KeySelectDialog(wx.Dialog):
         # this applies to keystrokes and joystick axes.  js buttons and mouse
         # clicks have already been added.  This might not be optimal.
         for possible_key in self.Keymap:
-            # actual keys are ints in the list
-            if (isinstance(possible_key, int) and wx.GetKeyState(possible_key)
-                    or
-                self.controller.IsOk() and (possible_key == self.controller.GetCurrentAxis())):
-
+            if (
+                    (
+                        # actual keys are ints in the list
+                        isinstance(possible_key, int)
+                            and
+                        (
+                            (isinstance(event, wx.KeyEvent) and event.GetKeyCode() == possible_key)
+                        )
+                    )
+                        or
+                    self.controller.IsOk() and (possible_key == self.controller.GetCurrentAxis())
+                ):
                 pressed_keys.add(self.Keymap[possible_key])
 
         # iterate joystick buttons and add those that are pressed
@@ -218,7 +226,7 @@ class KeySelectDialog(wx.Dialog):
                     pressed_keys.add("ALT")
 
         for key in pressed_keys:
-            if key in modKeys:
+            if key in self.modKeys:
                 self.ModSlot.add(key)
             else:
                 self.KeySlot = key

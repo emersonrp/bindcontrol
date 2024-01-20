@@ -1,6 +1,11 @@
+@echo off
+
+for /f %%i in ('git describe --tags') do set VERSION=%%i
+
+echo %VERSION% > version.txt
+
 pyinstaller ^
 	-i icons\BindControl.ico ^
-	--onefile ^
 	--noconsole ^
 	--noconfirm ^
 	--clean ^
@@ -14,3 +19,8 @@ pyinstaller ^
 	--exclude-module _socket ^
 	--exclude-module _ssl ^
 	BindControl.py
+
+cd dist
+7z a BindControl-%VERSION%-windows.zip BindControl
+rmdir /s /q BindControl
+cd ..

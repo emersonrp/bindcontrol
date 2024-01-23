@@ -11,6 +11,7 @@ pyinstaller ^
 	--clean ^
 	--add-data icons;icons ^
 	--add-data Help;Help ^
+	--add-data version.txt;. ^
 	--exclude-module _bz2 ^
 	--exclude-module _ctypes ^
 	--exclude-module _decimal ^

@@ -1,5 +1,6 @@
 import subprocess
 import os
+import sys
 
 def get_git_tag(path=None):
     if path is None:
@@ -16,7 +17,9 @@ def current_version():
 
     if not version:
         try:
-            with open('version.txt', 'r') as file:
+            base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+            filename = f"{base_path}/version.txt"
+            with open(filename, 'r') as file:
                 version = file.read().strip()
         except:
             pass

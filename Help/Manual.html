@@ -132,7 +132,9 @@
 
             <p><u><i>More Custom Bind Types to come...</i></u></p>
 
-            <h3>Speed on Demand</h3>
+            <h3>Movement / Speed on Demand</h3>
+            <p>This page is where you configure movement keys as well as other movement features.  It is most typicallly used to
+            configure <b>Speed On Demand.</b></p>
             <p>Speed on Demand is a system by which fast, expensive travel powers get toggled as-needed when movement keys are pressed.
             This is intended to increase mobility and reduce endurance drain without having to manage travel powers manually.</p>
             <p>If you enable Speed on Demand binds, the standard movement keys will be rebound to use Speed on Demand (unless you configure
@@ -144,20 +146,17 @@
             <p>It's possible to have the binds auto-select different detail levels and camera distance when moving.  This was historically
             used for lower-power GPUs during the mid-2000s but the settings can still help when running on a laptop or other old hardward,
             or just if it's your preference.</p>
-            <p>You'll want to select which travel powers your character has so the keybinds can be set up to support all of them.  If
-            you have multiple travel powers, it's possible to set up a key to toggle any power that's not the one used for the default
-            mode.  There is also support for various useful combinations of powers, such as "Hover when Teleporting" and "Super Speed /
-            Super Jump Mode."</p>
-            <p><b>NOTE</b> -- The Speed on Demand binds are derived from the citybinder and Gnarly code from the 2000s.  It operates
-            under assumptions about travel powers that are no longer true on Homecoming as of Issue 27 Page 2.  These differences will
-            be accounted for in a future version of BindControl.</p>
+            <p>You'll want to select which travel powers your character has, using the Power Pool pickers on the "General" tab, so
+            the keybinds can be set up to support all of them.  If you have multiple travel powers, it's possible to set up a key
+            to toggle any power that's not the one used for the default mode.  There is also support for various useful
+            combinations of powers, such as "Hover when Teleporting" and "Super Speed / Super Jump Mode."</p>
             <p>Kheldian travel and form powers as well as temporary travel powers will be added in a future version of BindControl.</p>
 
             <h3>Inspiration Popper</h3>
             <p>The Inspiration Popper offers the ability to use classes of inspirations from a single key, either preferring smallest-first
             or largest-first.  That is to say, for instance, a single key can be bound to Accuracy inspirations, and it will try to
             use any accuracy inspiration in your inventory, starting with the most powerful.</p>
-            <p>Optionally the Inspiration Popper can give you feedback that it was used via self-/tell.</p>
+            <p>Optionally the Inspiration Popper can give you feedback that it was used, via self-/tell.</p>
 
             <h3>Mastermind / Pet Binds</h3>
             <p>The Mastermind binds offer one-key selection of groups of Mastermind pets as well as one-key orders for stance and action.
@@ -174,8 +173,8 @@
         <p>First, double-check BindControl to make sure you have things set as you expect.  There are a lot of checkboxes and controls
         and keybind dialogs, and it's possible you accidentally changed something or forgot something.</p>
         <p>Second, check the Log Window (under the "Log" menu at the top of BindControl), which might have some interesting and
-        relevant errors related to what you're seeing.  BindControl won't actually write binds to files in a variety of error conditions,
-        so you might simply not have the binds you expect in the files.</p>
+        relevant errors related to what you're seeing.  BindControl won't actually succeed at writing binds to files in a variety
+        of error conditions, so you might simply not have the binds you expect written to the files.</p>
         <p>Finally, it's possible, even likely, that you've found a bug.  Please go to the BindControl Github page and file an issue.
         The Github page is linked from the Help &gt; About BindControl dialog.</p>
 

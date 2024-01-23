@@ -113,7 +113,7 @@ class KeySelectDialog(wx.Dialog):
             if modkey:
                 self.modKeys.append(modkey)
 
-        super().ShowModal()
+        return super().ShowModal()
 
 
     def ShowBind(self):

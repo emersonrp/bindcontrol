@@ -231,7 +231,7 @@ class PowerBindCmd():
         if init: self.Deserialize(init)
 
     # Methods to override
-    def BuildUI(self, dialog)   : return wx.Sizer()
+    def BuildUI(self, dialog)   : return wx.BoxSizer()
     def MakeBindString(self, _) : return str('')
     def Serialize(self)         : return {}
     def Deserialize(self, init) : return

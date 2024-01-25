@@ -1,30 +1,33 @@
+import platform
 import re
+import string
 from typing import Dict, List
+
 import wx
 import wx.html
 import wx.lib.stattext as ST
-import string
-import UI
 import wx.lib.newevent
+
+import UI
 from bcController import bcController
 
 KeyChanged, EVT_KEY_CHANGED = wx.lib.newevent.NewEvent()
 
 # Platform-specific keyevent flags for telling left from right
 modKeyFlags = {}
-if wx.Platform == '__WXMSW__':
+if platform.system() == 'Windows':
     modKeyFlags = {
         'RSHIFT': 0x40000,
         'RCTRL' : 0x1000000,
         'RALT'  : 0x1000000,
     }
-elif wx.Platform == '__WXGTK__':
+elif platform.system() == 'Linux':
     modKeyFlags = {
         'RSHIFT': 0x08,
         'LCTRL' : 0x04,
         'RALT'  : 0x08,
     }
-elif wx.Platform == '__WXMAC__':
+elif platform.system() == 'Darwin':
     modKeyFlags = {
         'LSHIFT': 0x02,
         'LCTRL' : 0x2000,
@@ -196,7 +199,7 @@ class KeySelectDialog(wx.Dialog):
             if event.ShiftDown():
                 if SeparateLR and modKeyFlags:
                     rawFlags = event.GetRawKeyFlags()
-                    if wx.Platform == '__WXMAC__':
+                    if platform.system() == 'Darwin':
                         pressed_keys.add(("LSHIFT") if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT")
                     else:
                         pressed_keys.add(("RSHIFT") if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT")
@@ -206,9 +209,9 @@ class KeySelectDialog(wx.Dialog):
             if event.ControlDown():
                 if SeparateLR and modKeyFlags:
                     rawFlags = event.GetRawKeyFlags()
-                    if wx.Platform == '__WXMAC__':
+                    if platform.system() == 'Darwin':
                         pressed_keys.add(("LCTRL") if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL")
-                    elif wx.Platform == '__WXGTK__':
+                    elif platform.system() == 'Linux':
                         pressed_keys.add(("LCTRL") if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL")
                     else:
                         pressed_keys.add(("RCTRL") if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL")
@@ -218,7 +221,7 @@ class KeySelectDialog(wx.Dialog):
             if event.AltDown():
                 if SeparateLR and modKeyFlags:
                     rawFlags = event.GetRawKeyFlags()
-                    if wx.Platform == '__WXMAC__':
+                    if platform.system() == 'Darwin':
                         pressed_keys.add(("LALT") if (rawFlags & modKeyFlags['LALT']) else "RALT")
                     else:
                         pressed_keys.add(("RALT") if (rawFlags & modKeyFlags['RALT']) else "LALT")

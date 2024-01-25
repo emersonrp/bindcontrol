@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-import sys, os
+import sys, os, platform
+
 import wx
 import wx.lib.mixins.inspection
 import wx.adv
@@ -31,13 +32,13 @@ class Main(wx.Frame):
         wx.ConfigBase.Set(config)
         # Check each config bit for existence and set to default if no
         if not config.Exists('BindPath'):
-            if wx.Platform == '__WXMSW__':
+            if platform.system() == 'Windows':
                 bindpath = "C:\\coh\\"
             else:
                 bindpath = str(Path.home() / '.wine' / 'drive_c' / 'coh')
             config.Write('BindPath', bindpath)
         if not config.Exists('GameBindPath'):
-            if wx.Platform != '__WXMSW__':
+            if platform.system() != 'Windows':
                 config.Write('GameBindPath', "c:\\coh\\")
         if not config.Exists('ResetKey')        : config.Write('ResetKey', 'LCTRL+R')
         if not config.Exists('UseSplitModKeys') : config.WriteBool('UseSplitModKeys', False)

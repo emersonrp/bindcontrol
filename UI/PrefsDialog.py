@@ -1,3 +1,5 @@
+import platform
+
 import wx
 import wx.lib.stattext as ST
 import UI
@@ -28,7 +30,7 @@ class PrefsDialog(wx.Dialog):
         generalSizer.Add( self.bindsDirPicker, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         self.gameBindsDirPicker = None
-        if (wx.Platform != '__WXMSW__'):
+        if (platform.system() != 'Windows'):
             generalSizer.Add( wx.StaticText(generalPanel, label = "In-Game Binds Directory:") , 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
             self.gameBindsDirPicker = wx.TextCtrl(generalPanel, value = config.Read('GameBindPath'))
             self.gameBindsDirPicker.SetToolTip('When playing via Wine, the game\'s file paths will be different than the native ones.  Put a Windows path into this box that describes where Wine will find the above directory.  Keeping this path as short as possible is strongly recommended.')

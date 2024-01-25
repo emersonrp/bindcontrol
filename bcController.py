@@ -1,5 +1,5 @@
 # Utility class for querying joystick/controller
-import wx
+import platform
 import wx.adv
 from typing import List
 
@@ -32,12 +32,12 @@ class bcController(wx.adv.Joystick):
                 # Joystick1_UP, Joystick1_DOWN
             elif axis == 2:
                 # So far, looks like on MacOS, axis 2 is Z
-                if wx.Platform == "__WXMAC__":
+                if platform.system() == "Darwin":
                     amin, amax = self.GetZMin(), self.GetZMax()
                 else:
                     amin, amax = self.GetRudderMin(), self.GetRudderMax()
                 # normalize this on Linux and Mac.  Find a better way if needed
-                if wx.Platform == "__WXGTK__" or wx.Platform == "__WXMAC__":
+                if platform.system() == "Linux" or platform.system() == "Darwin":
                     corr = (amax - amin) / 2
                     apos = apos + corr
                     amin = amin - corr
@@ -55,7 +55,7 @@ class bcController(wx.adv.Joystick):
             elif axis == 5:
                 amin, amax = self.GetVMin(), self.GetVMax()
                 # normalize this on Linux and Mac.  Find a better way if needed
-                if wx.Platform == "__WXGTK__" or wx.Platform == "__WXMAC__":
+                if platform.system() == "Linux" or platform.system() == "Darwin":
                     corr = (amax - amin) / 2
                     apos = apos + corr
                     amin = amin - corr
@@ -130,7 +130,7 @@ class bcController(wx.adv.Joystick):
         # sets the Code table, which is a list, indexed by axis number,
         # of lists of [negative direction, positive direction] codes
         CodeTable : List[List] = []
-        if wx.Platform == '__WXMSW__':
+        if platform.system() == 'Windows':
             CodeTable =  [
                     ['J1_L', 'J1_R'],
                     ['J1_U', 'J1_D'],
@@ -142,7 +142,7 @@ class bcController(wx.adv.Joystick):
                     ['JP_U', 'JP_D'],
             ]
 
-        elif wx.Platform == '__WXGTK__':
+        elif platform.system() == 'Linux':
             CodeTable =  [
                     ['J1_L', 'J1_R'],
                     ['J1_U', 'J1_D'],
@@ -155,7 +155,7 @@ class bcController(wx.adv.Joystick):
             ]
 
         # TODO this is utterly untested
-        elif wx.Platform == '__WXMAC__':
+        elif platform.system() == 'Darwin':
             CodeTable =  [
                     ['J1_L', 'J1_R'],
                     ['J1_U', 'J1_D'],

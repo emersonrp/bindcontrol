@@ -1,4 +1,5 @@
 from typing import Any, Callable, Protocol
+import platform
 
 import wx
 from wx.adv import BitmapComboBox
@@ -42,7 +43,7 @@ class ControlGroup(wx.StaticBoxSizer):
             # This ST.GenStaticText is so we can intercept clicks on it, but
             # the background color is wrong on Windows in a way I can't work out,
             # and clicks work on Windows anyway, so...
-            if wx.Platform != '__WXMSW__':
+            if platform.system() != 'Windows':
                 CtlLabel = ST.GenStaticText(CtlParent, -1, label + ':')
             else:
                 CtlLabel = wx.StaticText(CtlParent, -1, label + ':')

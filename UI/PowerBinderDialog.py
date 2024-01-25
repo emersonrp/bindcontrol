@@ -231,10 +231,10 @@ class PowerBindCmd():
         if init: self.Deserialize(init)
 
     # Methods to override
-    def BuildUI(self, dialog)   : return wx.BoxSizer()
-    def MakeBindString(self, _) : return str('')
-    def Serialize(self)         : return {}
-    def Deserialize(self, init) : return
+    def BuildUI(self, dialog) -> wx.Sizer : return wx.BoxSizer()
+    def MakeBindString(self, _)           : return str('')
+    def Serialize(self)                   : return {}
+    def Deserialize(self, init)           : return
 
 ####### Away From Keyboard
 class AFKCmd(PowerBindCmd):

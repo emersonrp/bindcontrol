@@ -221,7 +221,12 @@ class Profile(wx.Notebook):
 
     def doLoadFromFile(self, pathname):
         with Path(pathname) as file:
-            datastring = file.read_text()
+            try:
+                datastring = file.read_text()
+            except Exception as e:
+                wx.LogError(f"Profile {pathname} could not be loaded: {e}")
+                return None
+
             data = json.loads(datastring)
 
             # load old Profiles pre-rename

@@ -301,12 +301,12 @@ class General(Page):
 
     def OnColorEnable(self, evt = None):
         colorsenabled = self.GetState('ChatColorEnable')
-        self.DisableControls(colorsenabled, ['ChatBorder', 'ChatBackground', 'ChatForeground'])
+        self.EnableControls(colorsenabled, ['ChatBorder', 'ChatBackground', 'ChatForeground'])
         if evt: evt.Skip()
 
     def OnTypeEnable(self, evt = None):
         typeenabled = self.GetState('TypingNotifierEnable')
-        self.DisableControls(typeenabled, ['TypingNotifier'])
+        self.EnableControls(typeenabled, ['TypingNotifier'])
         if evt: evt.Skip()
 
     UI.Labels.update({

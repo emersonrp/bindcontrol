@@ -26,6 +26,9 @@ class Page(wx.Panel):
         if not control:
             wx.LogError(f"Unknown control in GetState: {key}")
             return ''
+        # We might be tempted to short-circuit out if the control is not enabled
+        # but that breaks things terribly during window init.  Might be worth tracking
+        # down and fixing but not today.
         if isinstance(control, wx.Button):
             return control.GetLabel()
         elif isinstance(control, wx.Choice) or isinstance(control, wx.ComboBox):
@@ -65,7 +68,7 @@ class Page(wx.Panel):
 
 
     # disable controls by name
-    def DisableControls(self, enabled, names):
+    def EnableControls(self, enabled, names):
         for name in names:
             self.Ctrls[name].Enable(enabled)
 

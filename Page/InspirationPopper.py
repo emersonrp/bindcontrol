@@ -223,7 +223,7 @@ class InspirationPopper(Page):
                 controls.append(f"{tab}{Insp}Background")
                 controls.append(f"{tab}{Insp}Foreground")
         self.Freeze()
-        self.DisableControls(self.useCB.IsChecked(), controls)
+        self.EnableControls(self.useCB.IsChecked(), controls)
         if self.enableTellsCB.IsChecked():
             self.OnEnableTellCB()
         self.Thaw()
@@ -238,7 +238,7 @@ class InspirationPopper(Page):
                 controls.append(f"{tab}Rev{Insp}Background")
                 controls.append(f"{tab}Rev{Insp}Foreground")
         self.Freeze()
-        self.DisableControls(self.useRevCB.IsChecked(), controls)
+        self.EnableControls(self.useRevCB.IsChecked(), controls)
         if self.enableTellsCB.IsChecked():
             self.OnEnableTellCB()
         self.Thaw()
@@ -257,9 +257,9 @@ class InspirationPopper(Page):
                 revcontrols.append(f"{tab}Rev{Insp}Background")
                 revcontrols.append(f"{tab}Rev{Insp}Foreground")
         if self.useCB.IsChecked():
-            self.DisableControls(enabled, controls)
+            self.EnableControls(enabled, controls)
         if self.useRevCB.IsChecked():
-            self.DisableControls(enabled, revcontrols)
+            self.EnableControls(enabled, revcontrols)
         if evt: evt.Skip()
 
     def PopulateBindFiles(self):

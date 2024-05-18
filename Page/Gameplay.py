@@ -140,14 +140,14 @@ class Gameplay(Page):
         self.OnTeamEnable()
 
     def OnTPSEnable(self, evt = None):
-        self.DisableControls(self.GetState('TPSEnable'),
+        self.EnableControls(self.GetState('TPSEnable'),
             ['TPSSelMode','TeamSelect1','TeamSelect2','TeamSelect3',
             'TeamSelect4', 'TeamSelect5','TeamSelect6','TeamSelect7',
             'TeamSelect8'])
         if evt: evt.Skip()
 
     def OnTeamEnable(self, evt = None):
-        self.DisableControls(self.GetState('TeamEnable'),
+        self.EnableControls(self.GetState('TeamEnable'),
             ['SelNextTeam', 'SelPrevTeam','IncTeamSize', 'DecTeamSize',
             'IncTeamPos', 'DecTeamPos', 'TeamReset'])
         if evt: evt.Skip()

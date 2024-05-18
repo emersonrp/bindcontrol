@@ -375,10 +375,10 @@ class Mastermind(Page):
         self.Freeze()
         enabled = self.GetState('PetCmdEnable')
         for command in self.petCommandKeyDefinitions:
-            self.DisableControls(enabled, [
+            self.EnableControls(enabled, [
                 command['ctrlName'], command['ctrlName']+"ResponseMethod", command['ctrlName']+"Response"
             ])
-        self.DisableControls(enabled,
+        self.EnableControls(enabled,
             [ 'PetChatToggle', 'PetBodyguard',
              'PetBodyguardResponseMethod', 'PetBodyguardResponse', 'PetBodyguardAttack',
              'PetBodyguardAttackEnabled', 'PetBodyguardGoto', 'PetBodyguardGotoEnabled' ])
@@ -389,7 +389,7 @@ class Mastermind(Page):
     def OnPetSelEnable(self, evt = None):
         enabled = bool(self.GetState('PetSelEnable'))
         for i in [1,2,3,4,5,6]:
-            self.DisableControls(enabled, [ f"Pet{i}Name", f"PetSelect{i}" ])
+            self.EnableControls(enabled, [ f"Pet{i}Name", f"PetSelect{i}" ])
         self.PetNameLabel.Enable(enabled)
         self.PetKeyLabel .Enable(enabled)
 
@@ -398,7 +398,7 @@ class Mastermind(Page):
 
     def OnPetNPEnable(self, evt = None):
         enabled = bool(self.GetState('PetNPEnable'))
-        self.DisableControls(enabled, ['SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize'])
+        self.EnableControls(enabled, ['SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize'])
         if evt: evt.Skip()
 
     def OnNameTextChange(self, evt):

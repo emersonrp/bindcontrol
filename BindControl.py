@@ -43,6 +43,7 @@ class Main(wx.Frame):
         if not config.Exists('UseSplitModKeys')     : config.WriteBool('UseSplitModKeys', False)
         if not config.Exists('FlushAllBinds')       : config.WriteBool('FlushAllBinds', True)
         if not config.Exists('StartWith')           : config.Write('StartWith', 'New Profile')
+        if not config.Exists('ProfilePath')         : config.Write('ProfilePath', str(Path.home() / "Documents" / "bindcontrol"))
         if not config.Exists('SaveSizeAndPosition') : config.WriteBool('SaveSizeAndPosition', True)
         config.Flush()
 
@@ -193,8 +194,11 @@ class Main(wx.Frame):
             config.WriteBool('UseSplitModKeys', self.PrefsDialog.UseSplitModKeys.GetValue())
             config.WriteBool('FlushAllBinds', self.PrefsDialog.FlushAllBinds.GetValue())
             config.Write('ResetKey', self.PrefsDialog.ResetKey.GetLabel())
+
             startwith = "New Profile" if self.PrefsDialog.StartWithNewProfile.GetValue() else "Last Profile"
             config.Write('StartWith', startwith)
+            config.Write('ProfilePath', self.PrefsDialog.ProfileDirPicker.GetPath())
+
             config.WriteBool('SaveSizeAndPosition', self.PrefsDialog.SaveSizeAndPosition.GetValue())
 
             config.Write('ControllerMod1', self.PrefsDialog.ControllerModPicker1.GetStringSelection())

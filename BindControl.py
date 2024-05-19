@@ -138,15 +138,17 @@ class Main(wx.Frame):
 
         # Do not SetSizerAndFit() - Fit() is poison
         self.SetSizer(self.Sizer)
-        # manually get the size of the Profile, manually set the window that size.  Tedious.
-        if config.ReadBool('SaveSizeAndPosition'):
+
+        if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinH') and config.HasEntry('WinW'):
             height = config.ReadInt('WinH')
             width  = config.ReadInt('WinW')
         else:
             height = self.Profile.GetBestSize().height
             width  = self.Profile.GetBestSize().width + 24 # account for Profile's padding
+
         self.SetSize((width, height))
-        if config.ReadBool('SaveSizeAndPosition'):
+
+        if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinX') and config.HasEntry('WinY'):
             self.SetPosition((config.ReadInt('WinX'), config.ReadInt('WinY')))
 
         self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)

@@ -3,6 +3,7 @@ import sys, os, platform
 
 import wx
 import wx.lib.mixins.inspection
+import wx.lib.scrolledpanel as scrolled
 import wx.adv
 import wx.html
 from bcVersion import current_version
@@ -22,8 +23,6 @@ class Main(wx.Frame):
 
         self.about_info = None
 
-        self.SetStatusBar(wx.StatusBar(self, style = 0))
-
         self.LogWindow = wx.LogWindow(self, "Log Window", show = False, passToOld = False)
         self.LogWindow.SetLogLevel(wx.LOG_Message)
         self.LogWindow.GetFrame().SetSize(1000,300)
@@ -40,19 +39,34 @@ class Main(wx.Frame):
         if not config.Exists('GameBindPath'):
             if platform.system() != 'Windows':
                 config.Write('GameBindPath', "c:\\coh\\")
-        if not config.Exists('ResetKey')        : config.Write('ResetKey', 'LCTRL+R')
-        if not config.Exists('UseSplitModKeys') : config.WriteBool('UseSplitModKeys', False)
-        if not config.Exists('FlushAllBinds')   : config.WriteBool('FlushAllBinds', True)
-        if not config.Exists('StartWith')       : config.Write('StartWith', 'New Profile')
+        if not config.Exists('ResetKey')            : config.Write('ResetKey', 'LCTRL+R')
+        if not config.Exists('UseSplitModKeys')     : config.WriteBool('UseSplitModKeys', False)
+        if not config.Exists('FlushAllBinds')       : config.WriteBool('FlushAllBinds', True)
+        if not config.Exists('StartWith')           : config.Write('StartWith', 'New Profile')
+        if not config.Exists('SaveSizeAndPosition') : config.WriteBool('SaveSizeAndPosition', True)
         config.Flush()
 
+        self.Sizer = wx.BoxSizer(wx.VERTICAL)
+
         # Start with a new profile
-        self.Profile = Profile(self)
+        self.ProfileScroller = scrolled.ScrolledPanel(self)
+        self.ProfileScrollerSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.Profile = Profile(self.ProfileScroller)
+
+        self.ProfileScrollerSizer.Add(self.Profile, 1, wx.EXPAND)
+        self.ProfileScroller.SetSizer(self.ProfileScrollerSizer)
+        self.ProfileScroller.SetupScrolling()
+
+        # (used "Insert" here so we can DRY this up with OnNewProfile later)
+        self.Sizer.Insert(0, self.ProfileScroller, 1, wx.EXPAND | wx.ALL, 3)
+
         # load up the last one if the pref says to and if it's there
         if config.Read('StartWith') == 'Last Profile':
             filename = config.Read('LastProfile')
             if filename:
                 self.Profile.doLoadFromFile(filename)
+
 
         self.PrefsDialog = PrefsDialog(self)
 
@@ -114,23 +128,30 @@ class Main(wx.Frame):
         self.AppIcon.AddIcon(filename, wx.BITMAP_TYPE_ANY)
         self.SetIcons(self.AppIcon)
 
-        self.Sizer = wx.BoxSizer(wx.VERTICAL)
-
-        self.Sizer.Add(self.Profile, 1, wx.EXPAND | wx.ALL, 3)
-
         # WRITE BUTTON
         WriteButton = wx.Button(self, -1, "Write Binds")
         writeSizer = wx.BoxSizer(wx.HORIZONTAL)
         writeSizer.Add(WriteButton, 1, wx.EXPAND)
-        self.Sizer.Add(writeSizer,  0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, 10)
+        self.Sizer.Add(writeSizer,  0, wx.EXPAND | wx.ALL, 10)
         self.Bind(wx.EVT_BUTTON, self.OnWriteBindsButton, WriteButton)
 
-        self.SetSizerAndFit(self.Sizer)
+        # Do not SetSizerAndFit() - Fit() is poison
+        self.SetSizer(self.Sizer)
+        # manually get the size of the Profile, manually set the window that size.  Tedious.
+        if config.ReadBool('SaveSizeAndPosition'):
+            height = config.ReadInt('WinH')
+            width  = config.ReadInt('WinW')
+        else:
+            height = self.Profile.GetBestSize().height
+            width  = self.Profile.GetBestSize().width + 24 # account for Profile's padding
+        self.SetSize((width, height))
+        if config.ReadBool('SaveSizeAndPosition'):
+            self.SetPosition((config.ReadInt('WinX'), config.ReadInt('WinY')))
 
         self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
 
     def OnNewProfile(self, _):
-        if self.Profile.Modified:
+        if self.Profile and self.Profile.Modified:
             result = wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
             if result == wx.YES:
                 self.Profile.doSaveToFile()
@@ -138,10 +159,13 @@ class Main(wx.Frame):
                 return
         self.Freeze()
         try:
-            self.Sizer.Remove(0)
+            self.ProfileScrollerSizer.Remove(0)
             self.Profile.Destroy()
-            self.Profile = Profile(self)
-            self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND|wx.ALL, 3)
+
+            self.Profile = Profile(self.ProfileScroller)
+            self.ProfileScrollerSizer.Add(self.Profile, 1, wx.EXPAND)
+            self.ProfileScroller.SetupScrolling()
+
             defaultProfile = Path(self.Profile.ProfilePath() / 'Default.bcp')
             self.Profile.doLoadFromFile(defaultProfile)
         except Exception as e:
@@ -171,6 +195,7 @@ class Main(wx.Frame):
             config.Write('ResetKey', self.PrefsDialog.ResetKey.GetLabel())
             startwith = "New Profile" if self.PrefsDialog.StartWithNewProfile.GetValue() else "Last Profile"
             config.Write('StartWith', startwith)
+            config.WriteBool('SaveSizeAndPosition', self.PrefsDialog.SaveSizeAndPosition.GetValue())
 
             config.Write('ControllerMod1', self.PrefsDialog.ControllerModPicker1.GetStringSelection())
             config.Write('ControllerMod2', self.PrefsDialog.ControllerModPicker2.GetStringSelection())
@@ -223,6 +248,14 @@ Inspiration Popper design adapted from CityBinder for Homecoming by Tailcoat.
                 self.Profile.doSaveToFile()
             elif result == wx.CANCEL:
                 return
+
+        config = wx.ConfigBase.Get()
+        if config.ReadBool('SaveSizeAndPosition'):
+            config.WriteInt('WinX', self.GetPosition().x)
+            config.WriteInt('WinY', self.GetPosition().y)
+            config.WriteInt('WinH', self.GetSize().height)
+            config.WriteInt('WinW', self.GetSize().width)
+            config.Flush()
         evt.Skip()
 
 class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):

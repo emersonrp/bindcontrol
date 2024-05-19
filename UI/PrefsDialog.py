@@ -73,6 +73,17 @@ class PrefsDialog(wx.Dialog):
         StartWithSizer.Add(self.StartWithNewProfile)
         StartWithSizer.Add(self.StartWithLastProfile)
         generalSizer.Add (StartWithSizer, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+
+        SaveSizeLabel = ST.GenStaticText(generalPanel, label = "Save size and position of BindControl window:")
+        generalSizer.Add( SaveSizeLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        self.SaveSizeAndPosition = wx.CheckBox(generalPanel)
+        self.SaveSizeAndPosition.SetValue(config.ReadBool('SaveSizeAndPosition'))
+        self.SaveSizeAndPosition.SetToolTip("Save the size and position of the BindControl window between sessions.")
+        generalSizer.Add( self.SaveSizeAndPosition, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+
+        setattr(SaveSizeLabel, 'CB', self.SaveSizeAndPosition)
+        SaveSizeLabel.Bind( wx.EVT_LEFT_DOWN, self.onSSAPLabelClick )
+
         generalPanel.SetSizerAndFit(generalSizer)
 
         ###
@@ -137,6 +148,11 @@ class PrefsDialog(wx.Dialog):
         self.SetSizerAndFit(overallSizer)
 
     def onCBLabelClick(self, evt):
+        cblabel = evt.EventObject
+        cblabel.CB.SetValue(not cblabel.CB.IsChecked())
+        evt.Skip()
+
+    def onSSAPLabelClick(self, evt):
         cblabel = evt.EventObject
         cblabel.CB.SetValue(not cblabel.CB.IsChecked())
         evt.Skip()

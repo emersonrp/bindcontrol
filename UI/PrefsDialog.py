@@ -73,6 +73,13 @@ class PrefsDialog(wx.Dialog):
         StartWithSizer.Add(self.StartWithNewProfile)
         StartWithSizer.Add(self.StartWithLastProfile)
         generalSizer.Add (StartWithSizer, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+
+        ProfilePathLabel = wx.StaticText(generalPanel, label = "Path for saved profiles:")
+        generalSizer.Add( ProfilePathLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        self.ProfileDirPicker = wx.DirPickerCtrl(generalPanel, path = config.Read('ProfilePath'))
+        self.ProfileDirPicker.SetToolTip('Profiles will be saved to this location.')
+        generalSizer.Add( self.ProfileDirPicker, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+
         generalPanel.SetSizerAndFit(generalSizer)
 
         ###

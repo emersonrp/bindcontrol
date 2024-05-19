@@ -43,6 +43,7 @@ class Main(wx.Frame):
         if not config.Exists('ResetKey')        : config.Write('ResetKey', 'LCTRL+R')
         if not config.Exists('UseSplitModKeys') : config.WriteBool('UseSplitModKeys', False)
         if not config.Exists('FlushAllBinds')   : config.WriteBool('FlushAllBinds', True)
+        if not config.Exists('ProfilePath')     : config.Write('ProfilePath', str(Path.home() / "Documents" / "bindcontrol"))
         if not config.Exists('StartWith')       : config.Write('StartWith', 'New Profile')
         config.Flush()
 
@@ -171,6 +172,7 @@ class Main(wx.Frame):
             config.Write('ResetKey', self.PrefsDialog.ResetKey.GetLabel())
             startwith = "New Profile" if self.PrefsDialog.StartWithNewProfile.GetValue() else "Last Profile"
             config.Write('StartWith', startwith)
+            config.Write('ProfilePath', self.PrefsDialog.ProfileDirPicker.GetPath())
 
             config.Write('ControllerMod1', self.PrefsDialog.ControllerModPicker1.GetStringSelection())
             config.Write('ControllerMod2', self.PrefsDialog.ControllerModPicker2.GetStringSelection())

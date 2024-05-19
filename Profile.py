@@ -99,7 +99,7 @@ class Profile(wx.Notebook):
     ###################
     # Profile Save/Load
     def ProfilePath(self):
-        return wx.ConfigBase.Get().Read('ProfilePath')
+        return Path(wx.ConfigBase.Get().Read('ProfilePath'))
 
     def SaveAsDefault(self, _ = None):
         currentfilename = self.Filename

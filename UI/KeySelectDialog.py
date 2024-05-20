@@ -234,6 +234,30 @@ class KeySelectDialog(wx.Dialog):
             else:
                 self.KeySlot = key
 
+        # not clear what the race condition is where we're getting both, say, "SHIFT" and "LSHIFT"
+        # into the set, but we'll just manually deconstruct that situation here.
+        if ("SHIFT" in self.ModSlot and ("LSHIFT" in self.ModSlot or "RSHIFT" in self.ModSlot)):
+            if SeparateLR:
+                self.ModSlot.discard("SHIFT")
+            else:
+                self.ModSlot.discard("LSHIFT")
+                self.ModSlot.discard("RSHIFT")
+
+        if ("CTRL" in self.ModSlot and ("LCTRL" in self.ModSlot or "RCTRL" in self.ModSlot)):
+            if SeparateLR:
+                self.ModSlot.discard("CTRL")
+            else:
+                self.ModSlot.discard("LCTRL")
+                self.ModSlot.discard("RCTRL")
+
+        if ("ALT" in self.ModSlot and ("LALT" in self.ModSlot or "RALT" in self.ModSlot)):
+            if SeparateLR:
+                self.ModSlot.discard("ALT")
+            else:
+                self.ModSlot.discard("LALT")
+                self.ModSlot.discard("RALT")
+
+        # Finally, build the bind string from what we have left over
         totalModKeys = "+".join([ key for key in sorted(self.ModSlot, reverse=True) if key])
         self.Binding = "+".join([ key for key in [totalModKeys, self.KeySlot] if key])
 

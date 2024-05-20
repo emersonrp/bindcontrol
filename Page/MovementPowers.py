@@ -118,7 +118,7 @@ class MovementPowers(Page):
 
     def BuildPage(self):
 
-        topSizer = wx.FlexGridSizer(0,2,10,10)
+        topSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.leftColumn  = wx.BoxSizer(wx.VERTICAL)
         self.rightColumn = wx.BoxSizer(wx.VERTICAL)
@@ -389,8 +389,8 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.kheldianSizer, 0, wx.EXPAND)
 
 
-        topSizer.Add(self.leftColumn)
-        topSizer.Add(self.rightColumn)
+        topSizer.Add(self.leftColumn, 0, wx.ALL, 3)
+        topSizer.Add(self.rightColumn, 0, wx.ALL, 3)
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(topSizer, flag = wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
@@ -503,16 +503,17 @@ class MovementPowers(Page):
             c['AfterburnerKey'].Show(self.GetState('FlyPower') == 'Fly')
             c['TranslocationKey'].Show(self.GetState('FlyPower') == 'Mystic Flight')
 
-            c['GFlyMode'].Enable(self.GetState('HasGFly'))
+            c['HasGFly'].Enable(self.Profile.HasPowerPool('Flight'))
+            c['GFlyMode'].Enable(self.hasGFly())
 
             ### TELEPORT POWERS
             c['TPBindKey'].Enable(self.GetState('HasTP'))
             c['TPComboKey'].Enable(self.GetState('HasTP'))
-            c['TPTPHover'].Enable(self.GetState('HasTP') and self.GetState('HasHover'))
+            c['TPTPHover'].Enable(self.GetState('HasTP') and self.hasHover())
 
             c['TTPBindKey'].Enable(self.GetState('HasTTP'))
             c['TTPComboKey'].Enable(self.GetState('HasTTP'))
-            c['TTPTPGFly'].Enable(self.GetState('HasTTP') and self.GetState('HasGFly'))
+            c['TTPTPGFly'].Enable(self.GetState('HasTTP') and self.hasGFly())
 
             c['NovaMode'].Enable(self.GetState('UseNova'))
             c['NovaTray'].Enable(self.GetState('UseNova'))
@@ -613,7 +614,6 @@ class MovementPowers(Page):
         bla  = p.get('bla'  , t.bla)
         blf  = p.get('blf'  , t.blf)
         blbo = p.get('blbo' , t.blbo)
-        # blsd = p.get('blsd' , t.blsd) # used in commented-out code
 
         path      = p.get('path'      , t.path)
         gamepath  = p.get('gamepath'  , t.gamepath)
@@ -622,7 +622,6 @@ class MovementPowers(Page):
         pathf     = p.get('pathf'     , t.pathf)
         gamepathf = p.get('gamepathf' , t.gamepathf)
         pathbo    = p.get('pathbo'    , t.pathbo)
-        # pathsd  = p.get('pathsd'    , t.pathsd) # used in commented-out code
 
         mobile     = p.get('mobile'     , None)
         stationary = p.get('stationary' , None)
@@ -687,28 +686,6 @@ class MovementPowers(Page):
 
             self.sodFollowKey(t,blf,curfile,mobile,stationary)
 
-            # TODO this section is commented out in citybinder, why?
-            # curfile = profile.GetBindFile(str(pathsd))
-#
-#            self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile),'')
-#
-#            self.sodUpKey     (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
-#            self.sodDownKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd")
-#            self.sodForwardKey(t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
-#            self.sodBackKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
-#            self.sodLeftKey   (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
-#            self.sodRightKey  (t,blsd,curfile,mobile,stationary,flight,'','',"sd",sssj)
-#
-#            t.ini = '-down$$'
-#            if (modestr != "Sprint") : self.makeSprintModeKey(profile,t,"r",  curfile,turnoff,fix)
-#            if (modestr != "Fly")  : self.makeFlyModeKey( profile,t,"a",  curfile,turnoff,fix)
-#            if (modestr != "GFly") : self.makeGFlyModeKey(profile,t,"gbo",curfile,turnoff,fix)
-#            t.ini = ''
-#            if (modestr != "Jump") : self.makeJumpModeKey(profile,t,"j",  curfile,turnoff,path,gamepath)
-#
-#            self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
-#            self.sodFollowKey(t,blf,curfile,mobile,stationary)
-
         curfile = profile.GetBindFile(f"{path}{t.KeyState()}.txt")
 
         self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile))
@@ -724,9 +701,6 @@ class MovementPowers(Page):
             #  Base to set down
             if (modestr != "NonSoD") : self.makeNonSoDModeKey(profile,t,"r",curfile,[ mobile,stationary ],self.sodSetDownFix)
             if (modestr != "Sprint") : self.makeSprintModeKey(profile,t,"r",curfile,turnoff,self.sodSetDownFix)
-
-            #if (t.SprintMode):
-                #curfile.SetBind(t.SprintMode, "+down$$down 1" + self.actPower_name(mobile) + t.detailhi + t.runcamdist + t.blsd)
 
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,self.sodSetDownFix)
             if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
@@ -1100,7 +1074,7 @@ class MovementPowers(Page):
             # TODO - wrap kheldian powers into the FlyPower picker and use that.
             # TODO - this will involve probably having an automatic "HoverPower" notion
             #        or do Peacebringers sometimes take Flight?
-            if (self.GetState('HasHover')):
+            if (self.hasHover()):
                 t.canhov = True
                 t.canfly = True
                 t.hover  = "Combat Flight"
@@ -1112,16 +1086,16 @@ class MovementPowers(Page):
                 t.flyx   = "Energy Flight"
 
         elif (not (profile.Archetype() == "Warshade")):
-            if (self.GetState('HasHover') and not self.GetState('FlyPower')):
+            if (self.hasHover() and not self.GetState('FlyPower')):
                 t.canhov = True
                 t.hover  = "Hover"
                 t.flyx   = "Hover"
                 if (self.GetState('TPTPHover')): t.tphover = '$$powexectoggleon Hover'
-            elif (not self.GetState('HasHover') and self.GetState('FlyPower')):
+            elif (not self.hasHover() and self.GetState('FlyPower')):
                 t.canfly = True
                 t.hover  = self.GetState('FlyPower')
                 t.flyx   = self.GetState('FlyPower')
-            elif (self.GetState('HasHover') and self.GetState('FlyPower')):
+            elif (self.hasHover() and self.GetState('FlyPower')):
                 t.canhov = True
                 t.canfly = True
                 t.hover  = "Hover"
@@ -1156,6 +1130,13 @@ class MovementPowers(Page):
             t.detailhi = f"$$visscale {self.GetState('DetailBase')}$$shadowvol 0$$ss 0"
             t.detaillo = f"$$visscale {self.GetState('DetailMove')}$$shadowvol 0$$ss 0"
 
+        if self.GetState('TPHideWindows'):
+            windowhide = '$$windowhide health$$windowhide chat$$windowhide target$$windowhide tray'
+            windowshow = '$$show health$$show chat$$show target$$show tray'
+        else:
+            windowhide = ''
+            windowshow = ''
+
         ###
         ### Here's where we go into the giant SoD tangle, conditionally
         ###
@@ -1166,6 +1147,8 @@ class MovementPowers(Page):
             # TODO - this will be "self.AfterburnerPower" when we merge Kheldian logic later
             ResetFile.SetBind(self.Ctrls['AfterburnerKey'].MakeFileKeyBind('powexecname Afterburner'))
         if self.Ctrls['TranslocationKey'].IsEnabled():
+
+        ### TODO here is where we should add "windowhide" and "windowshow" for Mystic Flight to hide windows
             ResetFile.SetBind(self.Ctrls['TranslocationKey'].MakeFileKeyBind('powexec_location cursor Translocation'))
         if self.Ctrls['SpeedPhaseKey'].IsEnabled():
             ResetFile.SetBind(self.Ctrls['SpeedPhaseKey'].MakeFileKeyBind('powexecname Speed Phase'))
@@ -1175,13 +1158,6 @@ class MovementPowers(Page):
             ResetFile.SetBind(self.Ctrls['TakeoffKey'].MakeFileKeyBind('powexecname Takeoff'))
         if self.Ctrls['DoubleJumpKey'].IsEnabled():
             ResetFile.SetBind(self.Ctrls['DoubleJumpKey'].MakeFileKeyBind('powexecname Double Jump'))
-
-        if self.GetState('TPHideWindows'):
-            windowhide = '$$windowhide health$$windowhide chat$$windowhide target$$windowhide tray'
-            windowshow = '$$show health$$show chat$$show target$$show tray'
-        else:
-            windowhide = ''
-            windowshow = ''
 
         ###### Kheldian power setup
         #  create the Nova and Dwarf form support files if enabled.
@@ -1314,6 +1290,10 @@ class MovementPowers(Page):
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind( 'nop'))
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('nop'))
 
+
+
+
+
         # Normal non-peacebringer teleport binds
         if (self.GetState('HasTP') and not (profile.Archetype() == "Peacebringer") and normalTPPower):
             tphovermodeswitch = ''
@@ -1335,6 +1315,11 @@ class MovementPowers(Page):
 
             #tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
             #tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$powexecname ' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
+
+
+
+
+
 
         # normal non-peacebringer team teleport binds
         if (self.GetState('HasTTP') and not (profile.Archetype() == "Peacebringer") and teamTPPower) :
@@ -1382,12 +1367,12 @@ class MovementPowers(Page):
             self.SetState('DefaultMode', "NonSoD")
 
         elif (self.GetState('DefaultMode') == "Fly" and not (self.GetState('HasHover') or self.GetState('FlyPower'))):
-            wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Fly mode but your character has neither Hover nor Fly.", "Mode Changed", wx.OK|wx.ICON_WARNING)
+            wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Fly mode but your character has neither Hover nor a Fly power.", "Mode Changed", wx.OK|wx.ICON_WARNING)
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
 
         elif (self.GetState('DefaultMode') == "Jump" and not (self.GetState('HasCJ') or self.GetState('JumpPower'))):
-            wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Jump mode but your character has neither Combat Jumping nor Super Jump.", "Mode Changed", wx.OK|wx.ICON_WARNING)
+            wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Jump mode but your character has neither Combat Jumping nor a Super Jump power.", "Mode Changed", wx.OK|wx.ICON_WARNING)
             self.SetState('NonSoDEnable', 1)
             self.SetState('DefaultMode', "NonSoD")
 
@@ -1499,17 +1484,9 @@ class MovementPowers(Page):
         t.gamepathbo = t.gamebasepath / 'BO' / 'BO'
         t.blbo       = f"$${BLF()} {t.gamepathbo}"
 
-        t.pathsd     = t.basepath     / 'SD' / 'SD'  #  SetDown Fly Subfolder and base filename
-        t.gamepathsd = t.gamebasepath / 'SD' / 'SD'
-        t.blsd       = f"$${BLF()} {t.gamepathsd}"
-
-        t.pathgbo     = t.basepath     / 'GBO' / 'GBO'  # Blastoff Fly subfolder and base filename
+        t.pathgbo     = t.basepath     / 'GBO' / 'GBO'  # Blastoff Group Fly subfolder and base filename
         t.gamepathgbo = t.gamebasepath / 'GBO' / 'GBO'
         t.blgbo       = f"$${BLF()} {t.gamepathgbo}"
-
-        t.pathgsd     = t.basepath     / 'GSD' / 'GSD'  #  SetDown Fly Subfolder and base filename
-        t.gamepathgsd = t.gamebasepath / 'GSD' / 'GSD'
-        t.blgsd       = f"$${BLF()} {t.gamepathgsd}"
 
         #  set up the enable-mode keys to be used.
         if (self.GetState('DefaultMode') != "NonSoD") : t.NonSoDMode = self.GetState('NonSoDMode')
@@ -1675,9 +1652,7 @@ class MovementPowers(Page):
                                         'modestr'    : "GFly",
                                         'flight'     : "GFly",
                                         'pathbo'     : t.pathgbo,
-                                        'pathsd'     : t.pathgsd,
                                         'blbo'       : t.blgbo,
-                                        'blsd'       : t.blgsd,
                                     })
                                     setattr(t, self.GetState('DefaultMode') + "Mode", None)
 
@@ -2271,6 +2246,14 @@ class MovementPowers(Page):
         evt.Skip()
 
 
+    ### convenience methods
+    def hasHover(self):
+        return bool(self.Profile.HasPowerPool('Flight') and self.GetState('HasHover'))
+
+    def hasGFly(self):
+        return bool(self.Profile.HasPowerPool('Flight') and self.GetState('HasGFly'))
+
+
 UI.Labels.update( {
     'Up'             : 'Up',
     'Down'           : 'Down',
@@ -2432,12 +2415,10 @@ class tObject(dict):
         self.blgaf :str = ''
         self.blgbo :str = ''
         self.blgff :str = ''
-        self.blgsd :str = ''
         self.blj  :str = ''
         self.bln  :str = ''
         self.blq  :str = ''
         self.bls  :str = ''
-        self.blsd :str = ''
         self.blt  :str = ''
 
         self.path   :Path = Path()
@@ -2461,13 +2442,11 @@ class tObject(dict):
         self.pathgaf :Path = Path()
         self.pathgbo :Path = Path()
         self.pathgff :Path = Path()
-        self.pathgsd :Path = Path()
         self.pathgr :Path = Path()
         self.pathj  :Path = Path()
         self.pathn  :Path = Path()
         self.pathq  :Path = Path()
         self.paths  :Path = Path()
-        self.pathsd :Path = Path()
         self.patht  :Path = Path()
 
         self.gamepath   :PureWindowsPath = PureWindowsPath()
@@ -2490,12 +2469,10 @@ class tObject(dict):
         self.gamepathga :PureWindowsPath = PureWindowsPath()
         self.gamepathgbo:PureWindowsPath = PureWindowsPath()
         self.gamepathgr :PureWindowsPath = PureWindowsPath()
-        self.gamepathgsd:PureWindowsPath = PureWindowsPath()
         self.gamepathj  :PureWindowsPath = PureWindowsPath()
         self.gamepathn  :PureWindowsPath = PureWindowsPath()
         self.gamepathq  :PureWindowsPath = PureWindowsPath()
         self.gamepaths  :PureWindowsPath = PureWindowsPath()
-        self.gamepathsd :PureWindowsPath = PureWindowsPath()
         self.gamepatht  :PureWindowsPath = PureWindowsPath()
 
         self.basepath     :Path = Path()

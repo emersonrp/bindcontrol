@@ -53,11 +53,12 @@ Archetypes: Dict[Any, Any] = {
     'Blaster': {
         'Faction': 'H',
         'Epic': {
-            'Cold Mastery'       : [ 'Snow Storm', 'Flash Freeze', 'Frozen Armor', 'Hoarfrost', 'Hibernate', ],
-            'Electrical Mastery' : [ 'Static Discharge', 'Shocking Bolt', 'Charged Armor', 'Surge of Power', 'EM Pulse', ],
-            'Flame Mastery'      : [ 'Bonfire', 'Char', 'Fire Shield', 'Melt Armor', 'Rise of the Phoenix', ],
+            'Ice Mastery'       : [ 'Snow Storm', 'Flash Freeze', 'Frozen Armor', 'Hoarfrost', 'Hibernate', ],
+            'Dark Mastery'       : [ 'Murky Cloud', 'Fearsome Stare', 'Possess', 'Black Hole', 'Soul Consumption', ],
+            'Electricity Mastery' : [ 'Static Discharge', 'Shocking Bolt', 'Charged Armor', 'Surge of Power', 'EM Pulse', ],
+            'Fire Mastery'      : [ 'Bonfire', 'Char', 'Fire Shield', 'Melt Armor', 'Rise of the Phoenix', ],
             'Force Mastery'      : [ 'Personal Force Field', 'Repulsion Field', 'Force Bomb', 'Temp Invulnerability', 'Force of Nature', ],
-            'Munitions Mastery'  : [ 'Body Armor', 'Cryo Freeze Ray', 'Sleep Grenade', 'Surveillance', 'LRM Rocket', ],
+            'Arsenal Mastery'  : [ 'Body Armor', 'Cryo Freeze Ray', 'Sleep Grenade', 'Surveillance', 'LRM Rocket', ],
 
             'Leviathan Mastery' : [ 'School of Sharks', 'Bile Spray', 'Knockout Blow', 'Shark Skin', 'Spirit Shark Jaws', ],
             'Mace Mastery'      : [ 'Web Envelope', 'Scorpion Shield', 'Mace Beam Volley', 'Summon Spiderlings', 'Web Cocoon', ],
@@ -79,12 +80,13 @@ Archetypes: Dict[Any, Any] = {
             'Radiation Blast'  : [ 'Neutrino Bolt', 'X-Ray Beam', 'Irradiate', 'Electron Haze', 'Aim', 'Proton Volley', 'Cosmic Burst', 'Neutron Bomb', 'Atomic Blast', ],
             'Seismic Blast'    : [ 'Encase', 'Shatter', 'Rock Shards', 'Entomb', 'Seismic Force', 'Upthrust', 'Tombstone', 'Stalagmite', 'Meteor', ],
             'Sonic Attack'     : [ 'Shriek', 'Scream', 'Howl', 'Shockwave', 'Shout', 'Amplify', 'Siren\'s Song', 'Screech', 'Dreadful Wail', ],
+            'Storm Blast'      : [ 'Gust', 'Hailstones', 'Jet Stream', 'Storm Cell', 'Intensify', 'Direct Strike', 'Chain Lightning', 'Cloudburst', 'Category Five', ],
             'Water Blast'      : [ 'Aqua Bolt', 'Hydro Blast', 'Water Burst', 'Whirlpool', 'Tidal Forces', 'Dehydrate', 'Water Jet', 'Steam Spray', 'Geyser', ],
         },
         'Secondary': {
             'Atomic Manipulation'      : [ 'Electron Shackles', 'Negatron Slam', 'Positron Cell', 'Ionize', 'Beta Decay', 'Metabolic Acceleration', 'Atom Smasher', 'Radioactive Cloud', 'Positronic Fist', ],
             'Darkness Manipulation'    : [ 'Penumbral Grasp', 'Smite', 'Death Shroud', 'Shadow Maul', 'Soul Drain', 'Touch of the Beyond', 'Dark Consumption', 'Dark Pit', 'Midnight Grasp' ],
-            'Devices'                  : [ 'Toxic Web Grenade', 'Caltrops', 'Taser', 'Targeting Drone', 'Smoke Grenade', 'Field Operative', 'Trip Mine', 'Time Bomb', 'Gun Drone', ],
+            'Devices'                  : [ 'Toxic Web Grenade', 'Caltrops', 'Taser', 'Targeting Drone', 'Smoke Grenade', 'Field Operative', 'Trip Mine', 'Remote Bomb', 'Gun Drone', ],
             'Earth Manipulation'       : [ 'Stone Prison', 'Heavy Mallet', 'Salt Crystals', 'Build Up', 'Tremor', 'Mud Bath', 'Beryl Crystals', 'Fracture', 'Seismic Smash', ],
             'Electricity Manipulation' : [ 'Electric Fence', 'Charged Brawl', 'Build Up', 'Havoc Punch', 'Thunder Strike', 'Dynamo', 'Power Sink', 'Force of Thunder', 'Shocking Grasp', ],
             'Energy Manipulation'      : [ 'Power Thrust', 'Energy Punch', 'Build Up', 'Bone Smasher', 'Energize', 'Stun', 'Power Boost', 'Boost Range', 'Total Focus', ],
@@ -102,10 +104,12 @@ Archetypes: Dict[Any, Any] = {
     'Brute': {
         'Faction': 'V',
         'Epic': {
-            'Arctic Mastery'    : [ 'Chillblain', 'Block of Ice', 'Ice Blast', 'Shiver', 'Ice Storm', ],
+            'Ice Mastery'    : [ 'Chillblain', 'Block of Ice', 'Ice Blast', 'Shiver', 'Ice Storm', ],
+            'Dark Mastery'      : [ 'Penumbral Grasp', 'Petrifying Gaze', 'Dark Blast', 'Night Fall', 'Tar Patch', ],
             'Earth Mastery'     : [ 'Stone Prison', 'Salt Crystals', 'Fossilize', 'Quicksand', 'Stalagmites', ],
             'Energy Mastery'    : [ 'Superior Conditioning', 'Focused Accuracy', 'Laser Beam Eyes', 'Physical Perfection', 'Energy Torrent', ],
-            'Pyre Mastery'      : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
+            'Psionic Mastery'   : [ 'Mesmerize', 'Dominate', 'Harmonic Mind', 'Mental Blast', 'Psionic Tornado', ],
+            'Fire Mastery'      : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
 
             'Leviathan Mastery' : [ 'Spirit Shark', 'School of Sharks', 'Arctic Breath', 'Bile Spray', 'Summon Guardian', ],
             'Mace Mastery'      : [ 'Mace Blast', 'Web Envelope', 'Disruptor Blast', 'Focused Accuracy', 'Summon Blaster', ],
@@ -155,11 +159,12 @@ Archetypes: Dict[Any, Any] = {
     'Controller': {
         'Faction': 'H',
         'Epic': {
+            'Dark Mastery'          : [ 'Murky Cloud', 'Dark Blast', 'Umbral Torrent', 'Midnight Grasp', 'Soul Consumption' ],
             'Fire Mastery'          : [ 'Fire Blast', 'Fire Ball', 'Fire Shield', 'Rise of the Phoenix', 'Consume', ],
             'Ice Mastery'           : [ 'Ice Blast', 'Hibernate', 'Frozen Armor', 'Frost Breath', 'Ice Storm', ],
-            'Primal Forces Mastery' : [ 'Power Blast', 'Conserve Power', 'Temp Invulnerability', 'Energy Torrent', 'Power Boost', ],
+            'Energy Mastery' : [ 'Power Blast', 'Conserve Power', 'Temp Invulnerability', 'Energy Torrent', 'Power Boost', ],
             'Psionic Mastery'       : [ 'Mental Blast', 'Indomitable Will', 'Mind Over Body', 'World of Confusion', 'Psionic Tornado', ],
-            'Stone Mastery'         : [ 'Hurl Boulder', 'Fissure', 'Rock Armor', 'Seismic Smash', 'Earth\'s Embrace', ],
+            'Earth Mastery'         : [ 'Hurl Boulder', 'Fissure', 'Rock Armor', 'Seismic Smash', 'Earth\'s Embrace', ],
 
             'Leviathan Mastery'     : [ 'Water Spout', 'Bile Spray', 'Hibernate', 'Shark Skin', 'Summon Coralax', ],
             'Mace Mastery'          : [ 'Poisonous Ray', 'Scorpion Shield', 'Disruptor Blast', 'Focused Accuracy', 'Summon Tarantula', ],
@@ -167,6 +172,7 @@ Archetypes: Dict[Any, Any] = {
             'Soul Mastery'          : [ 'Dark Consumption', 'Dark Embrace', 'Dark Obliteration', 'Soul Drain', 'Summon Seer', ]
         },
         'Primary': {
+            'Arsenal Control'  : [ 'Tranquilizer', 'Cryo Freeze Ray', 'Sleep Grenade', 'Liquid Nitrogen', 'Cloaking Device', 'Smoke Canister', 'Flash Bang', 'Tear Gas', 'Tri-Cannon', ],
             'Darkness Control' : [ 'Shadowy Binds', 'Dark Grasp', 'Living Shadows', 'Possess', 'Fearsome Stare', 'Heart of Darkness', 'Haunt', 'Shadow Field', 'Umbra Beast', ],
             'Earth Control'    : [ 'Stone Prison', 'Fossilize', 'Stone Cages', 'Quicksand', 'Salt Crystals', 'Stalagmites', 'Earthquake', 'Volcanic Gasses', 'Animate Stone', ],
             'Electric Control' : [ 'Electric Fence', 'Tesla Cage', 'Chain Fences', 'Jolting Chain', 'Conductive Aura', 'Static Field', 'Paralyzing Blast', 'Synaptic Overload', 'Gremlins', ],
@@ -194,18 +200,19 @@ Archetypes: Dict[Any, Any] = {
             'Storm Summoning'     : [ 'Gale', 'O2 Boost', 'Snow Storm', 'Steamy Mist', 'Freezing Rain', 'Hurricane', 'Thunder Clap', 'Tornado', 'Lightning Storm', ],
             'Thermal Radiation'   : [ 'Warmth', 'Thermal Shield', 'Cauterize', 'Plasma Shield', 'Power of the Phoenix', 'Thaw', 'Forge', 'Heat Exhaustion', 'Melt Armor', ],
             'Time Manipulation'   : [ 'Time Crawl', 'Temporal Mending', 'Time\'s Juncture', 'Temporal Selection', 'Distortion Field', 'Time Stop', 'Farsight', 'Slowed Response', 'Chrono Shift', ],
-            'Traps'               : [ 'Web Grenade', 'Caltrops', 'Triage Beacon', 'Acid Mortar', 'Force Field Generator', 'Poison Trap', 'Seeker Drones', 'Trip Mine', 'Time Bomb', ],
+            'Traps'               : [ 'Web Grenade', 'Caltrops', 'Triage Beacon', 'Acid Mortar', 'Force Field Generator', 'Poison Trap', 'Seeker Drones', 'Trip Mine', 'Temporal Bomb', ],
             'Trick Arrow'         : [ 'Entangling Arrow', 'Flash Arrow', 'Glue Arrow', 'Ice Arrow', 'Poison Gas Arrow', 'Acid Arrow', 'Disruption Arrow', 'Oil Slick Arrow', 'EMP Arrow', ],
         },
     },
     'Corruptor': {
         'Faction': 'V',
         'Epic': {
-            'Dark Mastery'        : [ 'Oppressive Gloom', 'Dark Consumption', 'Dark Embrace', 'Soul Transfer', 'Soul Drain', ],
+            'Dark Mastery'        : [ 'Oppressive Gloom', 'Dark Consumption', 'Dark Embrace', 'Soul Transfer', 'Spirit Drain', ],
             'Electricity Mastery' : [ 'Electric Fence', 'Thunder Strike', 'Charged Armor', 'Shocking Bolt', 'Power Sink', ],
-            'Power Mastery'       : [ 'Conserve Power', 'Power Build Up', 'Temp Invulnerability', 'Force of Nature', 'Total Focus', ],
-            'Psychic Mastery'     : [ 'Dominate', 'Mass Hypnosis', 'Mind Over Body', 'World of Confusion', 'Telekinesis', ],
-            'Flame Mastery'       : [ 'Consume', 'Char', 'Fire Shield', 'Rise of the Phoenix', 'Greater Fire Sword', ],
+            'Ice Mastery'         : [ 'Frozen Armor', 'Flash Freeze', 'Hoarfrost', 'Build Up', 'Ice Elemental', ],
+            'Energy Mastery'       : [ 'Conserve Power', 'Power Build Up', 'Temp Invulnerability', 'Force of Nature', 'Total Focus', ],
+            'Psionic Mastery'     : [ 'Dominate', 'Mass Hypnosis', 'Mind Over Body', 'World of Confusion', 'Telekinesis', ],
+            'Fire Mastery'       : [ 'Consume', 'Char', 'Fire Shield', 'Rise of the Phoenix', 'Greater Fire Sword', ],
 
             'Leviathan Mastery'   : [ 'School of Sharks', 'Shark Skin', 'Hibernate', 'Spirit Shark Jaws', 'Summon Coralax', ],
             'Mace Mastery'        : [ 'Web Envelope', 'Scorpion Shield', 'Focused Accuracy', 'Web Cocoon', 'Summon Disruptor', ],
@@ -226,6 +233,7 @@ Archetypes: Dict[Any, Any] = {
             'Psychic Blast'    : [ 'Psionic Dart', 'Mental Blast', 'Telekinetic Blast', 'Psychic Focus', 'Will Domination', 'Psionic Lance', 'Psionic Tornado', 'Scramble Thoughts', 'Psychic Wail', ],
             'Radiation Blast'  : [ 'Neutrino Bolt', 'X-Ray Beam', 'Irradiate', 'Electron Haze', 'Proton Volley', 'Aim', 'Cosmic Burst', 'Neutron Bomb', 'Atomic Blast', ],
             'Sonic Attack'     : [ 'Shriek', 'Scream', 'Howl', 'Shockwave', 'Shout', 'Amplify', 'Siren\'s Song', 'Screech', 'Dreadful Wail', ],
+            'Storm Blast'      : [ 'Gust', 'Hailstones', 'Jet Stream', 'Storm Cell', 'Intensify', 'Direct Strike', 'Chain Lightning', 'Cloudburst', 'Category Five', ],
             'Water Blast'      : [ 'Aqua Bolt', 'Hydro Blast', 'Water Burst', 'Whirlpool', 'Tidal Forces', 'Dehydrate', 'Water Jet', 'Steam Spray', 'Geyser', ],
         },
         'Secondary': {
@@ -243,18 +251,19 @@ Archetypes: Dict[Any, Any] = {
             'Storm Summoning'     : [ 'Gale', 'O2 Boost', 'Snow Storm', 'Steamy Mist', 'Freezing Rain', 'Hurricane', 'Thunder Clap', 'Tornado', 'Lightning Storm', ],
             'Thermal Radiation'   : [ 'Warmth', 'Fire Shield', 'Cauterize', 'Plasma Shield', 'Power of the Phoenix', 'Thaw', 'Forge', 'Heat Exhaustion', 'Melt Armor', ],
             'Time Manipulation'   : [ 'Time Crawl', 'Temporal Mending', 'Time\'s Juncture', 'Temporal Selection', 'Distortion Field', 'Time Stop', 'Farsight', 'Slowed Response', 'Chrono Shift', ],
-            'Traps'               : [ 'Web Grenade', 'Caltrops', 'Triage Beacon', 'Acid Mortar', 'Force Field Generator', 'Poison Trap', 'Seeker Drones', 'Trip Mine', 'Time Bomb', ],
+            'Traps'               : [ 'Web Grenade', 'Caltrops', 'Triage Beacon', 'Acid Mortar', 'Force Field Generator', 'Poison Trap', 'Seeker Drones', 'Trip Mine', 'Temporal Bomb', ],
             'Trick Arrow'         : [ 'Entangling Arrow', 'Flash Arrow', 'Glue Arrow', 'Ice Arrow', 'Poison Gas Arrow', 'Acid Arrow', 'Disruption Arrow', 'Oil Slick Arrow', 'EMP Arrow', ],
         },
     },
     'Defender': {
         'Faction': 'H',
         'Epic': {
-            'Dark Mastery'        : [ 'Oppressive Gloom', 'Dark Consumption', 'Dark Embrace', 'Soul Transfer', 'Soul Drain', ],
+            'Dark Mastery'        : [ 'Oppressive Gloom', 'Dark Consumption', 'Dark Embrace', 'Soul Transfer', 'Spirit Drain', ],
             'Electricity Mastery' : [ 'Electric Fence', 'Thunder Strike', 'Charged Armor', 'Shocking Bolt', 'Power Sink', ],
-            'Power Mastery'       : [ 'Conserve Power', 'Power Build Up', 'Temp Invulnerability', 'Force of Nature', 'Total Focus', ],
-            'Psychic Mastery'     : [ 'Dominate', 'Mass Hypnosis', 'Mind Over Body', 'World of Confusion', 'Telekinesis', ],
-            'Flame Mastery'       : [ 'Consume', 'Char', 'Fire Shield', 'Rise of the Phoenix', 'Greater Fire Sword', ],
+            'Ice Mastery'         : [ 'Frozen Armor', 'Flash Freeze', 'Hoarfrost', 'Build Up', 'Ice Elemental', ],
+            'Energy Mastery'       : [ 'Conserve Power', 'Power Build Up', 'Temp Invulnerability', 'Force of Nature', 'Total Focus', ],
+            'Psionic Mastery'     : [ 'Dominate', 'Mass Hypnosis', 'Mind Over Body', 'World of Confusion', 'Telekinesis', ],
+            'Fire Mastery'       : [ 'Consume', 'Char', 'Fire Shield', 'Rise of the Phoenix', 'Greater Fire Sword', ],
 
             'Leviathan Mastery'   : [ 'School of Sharks', 'Shark Skin', 'Hibernate', 'Spirit Shark Jaws', 'Summon Coralax', ],
             'Mace Mastery'        : [ 'Web Envelope', 'Scorpion Shield', 'Focused Accuracy', 'Web Cocoon', 'Summon Disruptor', ],
@@ -276,7 +285,7 @@ Archetypes: Dict[Any, Any] = {
             'Storm Summoning'     : [ 'Gale', 'O2 Boost', 'Snow Storm', 'Steamy Mist', 'Freezing Rain', 'Hurricane', 'Thunder Clap', 'Tornado', 'Lightning Storm', ],
             'Thermal Radiation'   : [ 'Warmth', 'Fire Shield', 'Cauterize', 'Plasma Shield', 'Power of the Phoenix', 'Thaw', 'Forge', 'Heat Exhaustion', 'Melt Armor', ],
             'Time Manipulation'   : [ 'Time Crawl', 'Temporal Mending', 'Time\'s Juncture', 'Temporal Selection', 'Distortion Field', 'Time Stop', 'Farsight', 'Slowed Response', 'Chrono Shift', ],
-            'Traps'               : [ 'Web Grenade', 'Caltrops', 'Triage Beacon', 'Acid Mortar', 'Force Field Generator', 'Poison Trap', 'Seeker Drones', 'Trip Mine', 'Time Bomb', ],
+            'Traps'               : [ 'Web Grenade', 'Caltrops', 'Triage Beacon', 'Acid Mortar', 'Force Field Generator', 'Poison Trap', 'Seeker Drones', 'Trip Mine', 'Temporal Bomb', ],
             'Trick Arrow'         : [ 'Entangling Arrow', 'Flash Arrow', 'Glue Arrow', 'Ice Arrow', 'Poison Gas Arrow', 'Acid Arrow', 'Disruption Arrow', 'Oil Slick Arrow', 'EMP Arrow', ],
         },
         'Secondary': {
@@ -294,15 +303,17 @@ Archetypes: Dict[Any, Any] = {
             'Radiation Blast'  : [ 'Neutrino Bolt', 'X-Ray Beam', 'Irradiate', 'Electron Haze', 'Proton Volley', 'Aim', 'Cosmic Burst', 'Neutron Bomb', 'Atomic Blast', ],
             'Seismic Blast'    : [ 'Encase', 'Shatter', 'Rock Shards', 'Entomb', 'Seismic Force', 'Upthrust', 'Tombstone', 'Stalagmite', 'Meteor', ],
             'Sonic Attack'     : [ 'Shriek', 'Scream', 'Howl', 'Shockwave', 'Shout', 'Amplify', 'Siren\'s Song', 'Screech', 'Dreadful Wail', ],
+            'Storm Blast'      : [ 'Gust', 'Hailstones', 'Jet Stream', 'Storm Cell', 'Intensify', 'Direct Strike', 'Chain Lightning', 'Cloudburst', 'Category Five', ],
             'Water Blast'      : [ 'Aqua Bolt', 'Hydro Blast', 'Water Burst', 'Whirlpool', 'Tidal Forces', 'Dehydrate', 'Water Jet', 'Steam Spray', 'Geyser', ],
         },
     },
     'Dominator': {
         'Faction': 'V',
         'Epic': {
+            'Dark Mastery'          : [ 'Murky Cloud', 'Tar Patch', 'Darkest Night', 'Umbral Torrent', 'Soul Consumption', ],
             'Fire Mastery'          : [ 'Rain of Fire', 'Fire Ball', 'Fire Shield', 'Rise of the Phoenix', 'Melt Armor', ],
             'Ice Mastery'           : [ 'Sleet', 'Hibernate', 'Frozen Armor', 'Hoarfrost', 'Ice Storm', ],
-            'Primal Forces Mastery' : [ 'Energy Transfer', 'Conserve Power', 'Temp Invulnerability', 'Energy Torrent', 'Explosive Blast', ],
+            'Energy Mastery' : [ 'Energy Transfer', 'Conserve Power', 'Temp Invulnerability', 'Energy Torrent', 'Explosive Blast', ],
             'Psionic Mastery'       : [ 'Link Minds', 'Indomitable Will', 'Mind Over Body', 'World of Confusion', 'Psionic Tornado', ],
 
             'Leviathan Mastery'     : [ 'Water Spout', 'Bile Spray', 'Hibernate', 'Shark Skin', 'Summon Coralax', ],
@@ -311,6 +322,7 @@ Archetypes: Dict[Any, Any] = {
             'Soul Mastery'          : [ 'Dark Consumption', 'Dark Embrace', 'Dark Obliteration', 'Soul Drain', 'Summon Seer', ]
         },
         'Primary': {
+            'Arsenal Control'  : [ 'Tranquilizer', 'Cryo Freeze Ray', 'Sleep Grenade', 'Liquid Nitrogen', 'Cloaking Device', 'Smoke Canister', 'Flash Bang', 'Tear Gas', 'Tri-Cannon', ],
             'Darkness Control' : [ 'Shadowy Binds', 'Dark Grasp', 'Living Shadows', 'Possess', 'Fearsome Stare', 'Heart of Darkness', 'Haunt', 'Shadow Field', 'Umbra Beast', ],
             'Earth Control'    : [ 'Stone Prison', 'Fossilize', 'Stone Cages', 'Quicksand', 'Salt Crystals', 'Stalagmites', 'Earthquake', 'Volcanic Gasses', 'Animate Stone', ],
             'Electric Control' : [ 'Electric Fence', 'Tesla Cage', 'Chain Fences', 'Jolting Chain', 'Conductive Aura', 'Static Field', 'Paralyzing Blast', 'Synaptic Overload', 'Gremlins', ],
@@ -324,6 +336,7 @@ Archetypes: Dict[Any, Any] = {
             # 'Wind Control'     : [ 'Updraft', 'Downdraft', 'Breathless', 'Wind Shear', 'Thundergust', 'Microburst', 'Keening Winds', 'Vacuum', 'Vortex', ],
         },
         'Secondary': {
+            'Arsenal Assault'     : [ 'Burst', 'Buttstroke', 'Buckshot', 'Elbow Strike', 'Power Up', 'Trip Mine', 'Targeting Drone', 'Sniper Rifle', 'Ignite', ],
             'Dark Assault'        : [ 'Dark Blast', 'Smite', 'Gloom', 'Night Fall', 'Gather Shadows', 'Engulfing Darkness', 'Life Drain', 'Moon Beam', 'Midnight Grasp', ],
             'Earth Assault'       : [ 'Stone Spears', 'Stone Mallet', 'Tremor', 'Hurl Boulder', 'Power Up', 'Heavy Mallet', 'Seismic Smash', 'Mud Pots', 'Fissure', ],
             'Electricity Assault' : [ 'Charged Bolts', 'Charged Brawl', 'Lightning Bolt', 'Havoc Punch', 'Build Up', 'Zapp', 'Static Discharge', 'Thunder Strike', 'Voltaic Sentinel', ],
@@ -341,9 +354,10 @@ Archetypes: Dict[Any, Any] = {
     'Mastermind': {
         'Faction': 'V',
         'Epic': {
-            'Chill Mastery'     : [ 'Ice Blast', 'Flash Freeze', 'Hoarfrost', 'Frozen Armor', 'Hibernate', ],
-            'Charge Mastery'    : [ 'Static Discharge', 'Electric Shackles', 'Thunder Strike', 'Surge of Power', 'EM Pulse', ],
-            'Heat Mastery'      : [ 'Bonfire', 'Fire Blast', 'Fire Ball', 'Char', 'Rise of the Phoenix', ],
+            'Ice Mastery'     : [ 'Ice Blast', 'Flash Freeze', 'Hoarfrost', 'Frozen Armor', 'Hibernate', ],
+            'Electricity Mastery'    : [ 'Static Discharge', 'Electric Shackles', 'Thunder Strike', 'Surge of Power', 'EM Pulse', ],
+            'Dark Mastery'      : [ 'Murky Cloud', 'Shadowy Binds', 'Dark Pit', 'Possess', 'Soul Consumption', ],
+            'Fire Mastery'      : [ 'Bonfire', 'Fire Blast', 'Fire Ball', 'Char', 'Rise of the Phoenix', ],
             'Field Mastery'     : [ 'Temp Invulnerability', 'Power Blast', 'Energy Torrent', 'Explosive Blast', 'Force of Nature', ],
 
             'Leviathan Mastery' : [ 'School of Sharks', 'Bile Spray', 'Knockout Blow', 'Shark Skin', 'Spirit Shark Jaws', ],
@@ -403,9 +417,11 @@ Archetypes: Dict[Any, Any] = {
     'Scrapper': {
         'Faction': 'H',
         'Epic': {
-            'Blaze Mastery'     : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
-            'Body Mastery'      : [ 'Conserve Power', 'Focused Accuracy', 'Laser Beam Eyes', 'Physical Perfection', 'Energy Torrent', ],
-            'Darkness Mastery'  : [ 'Torrent', 'Petrifying Gaze', 'Dark Blast', 'Night Fall', 'Tenebrous Tentacles', ],
+            'Fire Mastery'     : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
+            'Energy Mastery'      : [ 'Conserve Power', 'Focused Accuracy', 'Laser Beam Eyes', 'Physical Perfection', 'Energy Torrent', ],
+            'Dark Mastery'  : [ 'Torrent', 'Petrifying Gaze', 'Dark Blast', 'Night Fall', 'Tenebrous Tentacles', ],
+            'Ice Mastery'       : [ 'Ice Bolt', 'Frozen Spear', 'Shiver', 'Frigid Wind', 'Ice Elemental', ],
+            'Psionic Mastery'   : [ 'Mental Blast', 'Psionic Lance', 'Psychic Scream', 'Harmonic Mind', 'Psionic Nexus', ],
             'Weapon Mastery'    : [ 'Web Grenade', 'Caltrops', 'Shuriken', 'Targeting Drone', 'Exploding Shuriken', ],
 
             'Leviathan Mastery' : [ 'Spirit Shark', 'Water Spout', 'Hibernate', 'Spirit Shark Jaws', 'Summon Guardian', ],
@@ -469,6 +485,7 @@ Archetypes: Dict[Any, Any] = {
             'Radiation Blast'  : [ 'Neutrino Bolt', 'X-Ray Beam', 'Irradiate', 'Cosmic Burst', 'Aim', 'Electron Haze', 'Proton Stream', 'Neutron Bomb', 'Atomic Blast'],
             'Seismic Blast'    : [ 'Encase', 'Shatter', 'Rock Shards', 'Entomb', 'Seismic Force', 'Upthrust', 'Gravestone', 'Stalagmite', 'Meteor'],
             'Sonic Attack'     : [ 'Shriek', 'Scream', 'Howl', 'Shout', 'Amplify', 'Shockwave', 'Sirens Song', 'Screech', 'Dreadful Wail'],
+            'Storm Blast'      : [ 'Gust', 'Hailstones', 'Jet Stream', 'Storm Cell', 'Intensify', 'Lightning Strike', 'Chain Lightning', 'Cloudburst', 'Category Five', ],
             'Water Blast'      : [ 'Aqua Bolt', 'Hydro Blast', 'Water Burst', 'Dehydrate', 'Tidal Forces', 'Whirlpool', 'Water Jet', 'Steam Spray', 'Geyser']
         },
         'Secondary': {
@@ -491,7 +508,7 @@ Archetypes: Dict[Any, Any] = {
             'Fire Mastery'        : [ 'Fire Cages', 'Cremate', 'Char', 'Fire Sword Circle', 'Warmth', ],
             'Electricity Mastery' : [ 'Chain Fences', 'Havoc Punch', 'Paralyzing Jolt', 'Lightning Field', 'Rehabilitating Circuit', ],
             'Ice Mastery'         : [ 'Frostbite', 'Ice Sword', 'Block of Ice', 'Frozen Aura', 'Snow Storm', ],
-            'Ninja Tool Mastery'  : [ 'Tashibishi', 'Sting of the Wasp', 'Paralyzing Dart', 'The Lotus Drops', 'Kemuridama', ],
+            'Weapon Mastery'  : [ 'Tashibishi', 'Sting of the Wasp', 'Paralyzing Dart', 'The Lotus Drops', 'Kemuridama', ],
             'Psionic Mastery'     : [ 'Mass Hypnosis', 'Mind Probe', 'Dominate', 'Psychic Shockwave', 'Link Minds', ],
 
             'Leviathan Mastery'   : [ 'School of Sharks', 'Knockout Blow', 'Arctic Breath', 'Spirit Shark Jaws', 'Summon Coralax', ],
@@ -503,9 +520,11 @@ Archetypes: Dict[Any, Any] = {
     'Stalker': {
         'Faction': 'V',
         'Epic': {
-            'Blaze Mastery'     : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
-            'Body Mastery'      : [ 'Superior Conditioning', 'Focused Accuracy', 'Laser Beam Eyes', 'Physical Perfection', 'Energy Torrent', ],
-            'Darkness Mastery'  : [ 'Torrent', 'Petrifying Gaze', 'Dark Blast', 'Night Fall', 'Tenebrous Tentacles', ],
+            'Fire Mastery'     : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
+            'Energy Mastery'      : [ 'Superior Conditioning', 'Focused Accuracy', 'Laser Beam Eyes', 'Physical Perfection', 'Energy Torrent', ],
+            'Dark Mastery'  : [ 'Torrent', 'Petrifying Gaze', 'Dark Blast', 'Night Fall', 'Tenebrous Tentacles', ],
+            'Ice Mastery'       : [ 'Ice Bolt', 'Frozen Spear', 'Shiver', 'Frigid Wind', 'Ice Elemental', ],
+            'Psionic Mastery'   : [ 'Mental Blast', 'Psionic Lance', 'Psychic Scream', 'Harmonic Mind', 'Psionic Nexus', ],
             'Weapon Mastery'    : [ 'Web Grenade', 'Physical Perfection', 'Shuriken', 'Targeting Drone', 'Exploding Shuriken', ],
 
             'Leviathan Mastery' : [ 'Spirit Shark', 'Water Spout', 'Hibernate', 'Spirit Shark Jaws', 'Summon Guardian', ],
@@ -553,10 +572,12 @@ Archetypes: Dict[Any, Any] = {
     'Tanker': {
         'Faction': 'H',
         'Epic': {
-            'Arctic Mastery'    : [ 'Chillblain', 'Block of Ice', 'Ice Blast', 'Shiver', 'Ice Storm', ],
+            'Ice Mastery'    : [ 'Chillblain', 'Block of Ice', 'Ice Blast', 'Shiver', 'Ice Storm', ],
+            'Dark Mastery'      : [ 'Penumbral Grasp', 'Petrifying Gaze', 'Dark Blast', 'Night Fall', 'Tar Patch', ],
             'Earth Mastery'     : [ 'Stone Prison', 'Salt Crystals', 'Fossilize', 'Quicksand', 'Stalagmites', ],
             'Energy Mastery'    : [ 'Conserve Power', 'Focused Accuracy', 'Laser Beam Eyes', 'Physical Perfection', 'Energy Torrent', ],
-            'Pyre Mastery'      : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
+            'Psionic Mastery'   : [ 'Mesmerize', 'Dominate', 'Harmonic Mind', 'Mental Blast', 'Psionic Tornado', ],
+            'Fire Mastery'      : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
 
             'Leviathan Mastery' : [ 'Spirit Shark', 'School of Sharks', 'Arctic Breath', 'Bile Spray', 'Summon Guardian', ],
             'Mace Mastery'      : [ 'Mace Blast', 'Web Envelope', 'Disruptor Blast', 'Focused Accuracy', 'Summon Blaster', ],
@@ -1018,6 +1039,7 @@ Emotes = {
             'Chicken', 'Slash Throat', 'Bring it!', 'Threaten|threathand', 'Hands Up', 'Smack',
             'Slap', 'Slap React', 'Alakazam!', 'Alakazam! React', 'Bat Smash',
             'Bat Smash React', 'Ultimate Power', 'Facepalm', 'Double Facepalm',
+            'Casting', 'Channel',
             '---',
             { 'Judge' : [
                 'Score 1', 'Score 2', 'Score 3', 'Score 4', 'Score 5',
@@ -1049,7 +1071,7 @@ Emotes = {
             'Dust Off', 'Read Book', 'Burp',
             '---',
             'Laughs|laugh', 'Giggle|laugh2', 'Drat', 'Shucks', 'Grief', 'Flipping Coin',
-            'Open Gift', 'Ghoul Flex', 'Tantrum', 'Collapse', 'Swoon',
+            'Open Gift', 'Ghoul Flex', 'Tantrum', 'Collapse', 'Swoon', 'Defeated',
             '---',
             { 'Athletics' : [
                 'Backflip', 'Flex 1', 'Flex 2', 'Flex 3', 'Jumping Jacks', 'Kata', 'Pushups|Pushup',
@@ -1080,15 +1102,23 @@ Emotes = {
             'Basketball Dribble|basketball', 'Catch Breath',
             '---',
             { 'Food and Drink' : [
-                'Eat Food', 'Eat Donut', 'Drink',  'Drink Tea|teabag', 'Drink Enriche',
+                'Eat Food', 'Eat Donut', 'Eat Hotdog|hotdog', 'Eat Hamburger|hamburger', 'Eat Jumbo Hotdog|jumbohotdog',
+                'Eat Pocket Dog|pocketdog', 'Eat Watermelon|watermelon', 'Eat Onigiri|onigiri', 'Drink',  'Drink Tea|teabag', 'Drink Enriche',
                 { 'Drenched Donuts' :
                     [ 'Eat Strawberry Donut|Donut1', 'Eat Chocolate Donut|Donut2', 'Eat Sprinkled Donut|Donut3',
                      'Eat Plain Donut|Donut4', 'Eat Blue Sky Donut|Donut5', 'Eat Winter Donut|WinterDonut',
-                     'Eat Spooky Donut|SpookyDonut', 'Drink DD Coffee|DDCoffee', 'Drink DD Coffee 2|DDCoffee2' ],
+                     'Eat Spooky Donut|SpookyDonut', 'Eat Jelly Donut|jellydonut', 'Eat Lemon Donut|lemondonut',
+                     'Drink DD Coffee|DDCoffee', 'Drink DD Coffee 2|DDCoffee2' ],
+                 },
+                { 'Collectible Mugs' :
+                    [ 'Arachnos Mug', 'Paragon Mug', 'Winter Mug', 'Pumpkin Mug', ],
                  },
             ]},
             { 'Away' : [
-                'Cellphone', 'Crouch',
+                { 'Phone' :
+                    [ 'Smartphone 1', 'Smartphone 2', 'Cellphone', 'Text 1', 'Text 2', 'Camera Phone 1', 'Camera Phone 2', ],
+                 },
+                'Crouch',
                 { 'Kneel' : [ 'kneel', 'kneel2', 'kneel3', 'kneel4', 'kneel5'] },
                 'Use Laptop|laptop', 'Lotus', 'Read Newspaper|newspaper',
                 'AFK Sleep|sleep', 'Sit on Ground|sit', 'Wait|waiting',

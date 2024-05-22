@@ -1632,7 +1632,7 @@ class MovementPowers(Page):
                                         'mobile'     : t.flyx,
                                         'stationary' : t.hover,
                                         'modestr'    : "Fly",
-                                        'flight'     : t.fly,
+                                        'flight'     : t.fly or t.flyx,
                                     })
                                     setattr(t, self.GetState('DefaultMode') + "Mode", None)
 

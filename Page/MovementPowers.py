@@ -289,7 +289,6 @@ class MovementPowers(Page):
         self.Ctrls['ChangeDetail'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         detailSizer.AddControl( ctlName = 'DetailBase', ctlType = 'spinboxfractional', contents = (0, 1),)
         detailSizer.AddControl( ctlName = 'DetailMove', ctlType = 'spinboxfractional', contents = (0, 1),)
-        detailSizer.AddControl( ctlName = 'TPHideWindows', ctlType = 'checkbox',)
         detailSizer.AddControl( ctlName = 'Feedback', ctlType = 'checkbox',)
         self.leftColumn.Add(detailSizer, 0, wx.EXPAND)
 
@@ -352,14 +351,18 @@ class MovementPowers(Page):
         # if (at == warshade) "Shadow Step / Dwarf Step"
         self.teleportSizer.AddControl( ctlName = 'HasTP', ctlType = 'checkbox',)
         self.Ctrls['HasTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.teleportSizer.AddControl( ctlName = "TPBindKey", ctlType = 'keybutton',)
-        self.teleportSizer.AddControl( ctlName = "TPComboKey", ctlType = 'keybutton',)
+        self.teleportSizer.AddControl( ctlName = "TPBindKey", ctlType = 'keybutton',
+            tooltip = 'Immediately teleport to the cursor position without showing a destination reticle', )
+        self.teleportSizer.AddControl( ctlName = "TPComboKey", ctlType = 'keybutton',
+            tooltip = 'Show teleport reticle on keypress;  teleport to reticle on key release', )
         self.teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',)
         self.teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',)
         self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.teleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton',)
         self.teleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton',)
         self.teleportSizer.AddControl( ctlName = 'TTPTPGFly', ctlType = 'checkbox',)
+        self.teleportSizer.AddControl( ctlName = 'TPHideWindows', ctlType = 'checkbox',
+            tooltip = 'Hide most UI elements while teleport reticle is visible.', )
         self.rightColumn.Add(self.teleportSizer, 0, wx.EXPAND)
 
         ##### KHELDIAN TRAVEL POWERS
@@ -1131,8 +1134,8 @@ class MovementPowers(Page):
             t.detaillo = f"$$visscale {self.GetState('DetailMove')}$$shadowvol 0$$ss 0"
 
         if self.GetState('TPHideWindows'):
-            windowhide = '$$windowhide health$$windowhide chat$$windowhide target$$windowhide tray'
-            windowshow = '$$show health$$show chat$$show target$$show tray'
+            windowhide = '$$windowhide health$$windowhide chat$$windowhide target$$windowhide tray$$windowhide nav'
+            windowshow = '$$show health$$show chat$$show target$$show tray$$show nav'
         else:
             windowhide = ''
             windowshow = ''
@@ -1301,21 +1304,15 @@ class MovementPowers(Page):
                 tphovermodeswitch = t.bla + "000000.txt"
 
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexec_location cursor ' + normalTPPower))
-            ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
+            ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
 
             tp_off = profile.GetBindFile("tp","tp_off.txt")
-            #tp_off.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
-            tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
+            tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexec_name ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
 
-            tp_on1 = profile.GetBindFile("tp","tp_on1.txt")
+            tp_on = profile.GetBindFile("tp","tp_on.txt")
             zoomin = t.detailhi + t.runcamdist
             if (t.tphover): zoomin = ''
-            #tp_on1.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+down' + t.tphover + profile.BLF('tp','tp_on2.txt')))
-            tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
-
-            #tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
-            #tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$powexecname ' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
-
+            tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexec_unqueue$$powexec_location cursor ' + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
 
 
 
@@ -1333,11 +1330,10 @@ class MovementPowers(Page):
             ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
 
             ttp_on1 = profile.GetBindFile("ttp","ttp_on1.txt")
-            #ttp_on1.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('+down' + profile.BLF('ttp','ttp_on2.txt')))
             ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt') + tphovermodeswitch))
 
-            #ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
-            #ttp_on2.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind( '-down$$powexecname ' + teamTPPower + profile.BLF('ttp','ttp_on1.txt')))
+
+
 
 
     def doSpeedOnDemandBinds(self, t):
@@ -1632,6 +1628,8 @@ class MovementPowers(Page):
                                         'mobile'     : t.flyx,
                                         'stationary' : t.hover,
                                         'modestr'    : "Fly",
+                                        # TODO: added "or t.flyx" here to fix BO/* not being written if hover
+                                        # is not available.  This might not be the right solution
                                         'flight'     : t.fly or t.flyx,
                                     })
                                     setattr(t, self.GetState('DefaultMode') + "Mode", None)
@@ -2312,8 +2310,8 @@ UI.Labels.update( {
     'Feedback'       : 'Self-/tell when changing mode',
 
     'HasTP'          : 'Player has Teleport',
-    'TPBindKey'      : 'Teleport to Cursor',
-    'TPComboKey'     : 'Show Teleport Reticle',
+    'TPBindKey'      : 'Teleport to Cursor Immediately',
+    'TPComboKey'     : 'Teleport to Cursor on Key Release',
     'TPTPHover'      : 'Hover when Teleporting',
 
     'HasTTP'         : 'Player has Team Teleport',

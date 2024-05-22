@@ -210,6 +210,8 @@ class Main(wx.Frame):
             config.Write('ExtraMod3', self.PrefsDialog.ExtraModPicker3.GetStringSelection())
             config.Write('ExtraMod4', self.PrefsDialog.ExtraModPicker4.GetStringSelection())
 
+            config.WriteBool('VerboseBLF', self.PrefsDialog.VerboseBLF.GetValue())
+
             config.Flush()
 
     def OnMenuAboutBox(self, _):

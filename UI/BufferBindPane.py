@@ -1,6 +1,7 @@
 import wx
 import UI
 from Icon import GetIcon
+from BLF import BLF
 from UI.PowerPicker import PowerPicker
 
 from UI.CustomBindPaneParent import CustomBindPaneParent
@@ -156,7 +157,7 @@ class BufferBindPane(CustomBindPaneParent):
         profile = self.Profile
         ResetFile = profile.ResetFile()
 
-        selchat = self.Ctrls['SelChat']   .GetValue()
+        selchat = self.Ctrls['SelChat']  .GetValue()
         chat1   = self.Ctrls['BuffChat1'].GetValue()
         chat2   = self.Ctrls['BuffChat2'].GetValue()
         chat3   = self.Ctrls['BuffChat3'].GetValue()
@@ -175,19 +176,19 @@ class BufferBindPane(CustomBindPaneParent):
                 gamebase = profile.GameBindsDir() / f"buff{self.Title}" / f"bufft{j}"
                 afile = profile.GetBindFile(f"{filebase}a.txt")
                 bfile = profile.GetBindFile(f"{filebase}b.txt")
-                afile.SetBind(    teamkey, self.Page, self.Title, [f'teamselect {j}', selchat, f'bindloadfilesilent {gamebase}b.txt'])
-                ResetFile.SetBind(teamkey, self.Page, self.Title, [f'teamselect {j}', selchat, f'bindloadfilesilent {gamebase}b.txt'])
+                afile.SetBind(    teamkey, self.Page, self.Title, [f'teamselect {j}', selchat, f'{BLF()} {gamebase}b.txt'])
+                ResetFile.SetBind(teamkey, self.Page, self.Title, [f'teamselect {j}', selchat, f'{BLF()} {gamebase}b.txt'])
                 if (npow == 1):
-                    bfile.SetBind(teamkey, self.Page, self.Title, [chat1, f'powexecname {self.Ctrls["BuffPower1"].GetLabel()}', f'bindloadfilesilent {gamebase}a.txt'])
+                    bfile.SetBind(teamkey, self.Page, self.Title, [chat1, f'powexecname {self.Ctrls["BuffPower1"].GetLabel()}', f'{BLF()} {gamebase}a.txt'])
                 else:
-                    bfile.SetBind(teamkey, self.Page, self.Title, [chat1, f'powexecname {self.Ctrls["BuffPower1"].GetLabel()}', f'bindloadfilesilent {gamebase}c.txt'])
+                    bfile.SetBind(teamkey, self.Page, self.Title, [chat1, f'powexecname {self.Ctrls["BuffPower1"].GetLabel()}', f'{BLF()} {gamebase}c.txt'])
                     cfile = profile.GetBindFile(f"{filebase}c.txt")
                     if (npow == 2):
-                        cfile.SetBind(teamkey,  self.Page, self.Title, [chat2, f'powexecname {self.Ctrls["BuffPower2"].GetLabel()}', f'bindloadfilesilent {gamebase}a.txt'])
+                        cfile.SetBind(teamkey,  self.Page, self.Title, [chat2, f'powexecname {self.Ctrls["BuffPower2"].GetLabel()}', f'{BLF()} {gamebase}a.txt'])
                     else:
                         dfile = profile.GetBindFile(f"{filebase}d.txt")
-                        cfile.SetBind(teamkey,  self.Page, self.Title, [chat2, f'powexecname {self.Ctrls["BuffPower2"].GetLabel()}', f'bindloadfilesilent {gamebase}d.txt'])
-                        dfile.SetBind(teamkey,  self.Page, self.Title, [chat3, f'powexecname {self.Ctrls["BuffPower3"].GetLabel()}', f'bindloadfilesilent {gamebase}a.txt'])
+                        cfile.SetBind(teamkey,  self.Page, self.Title, [chat2, f'powexecname {self.Ctrls["BuffPower2"].GetLabel()}', f'{BLF()} {gamebase}d.txt'])
+                        dfile.SetBind(teamkey,  self.Page, self.Title, [chat3, f'powexecname {self.Ctrls["BuffPower3"].GetLabel()}', f'{BLF()} {gamebase}a.txt'])
 
         if self.Ctrls['BuffsAffectPets'].GetValue():
             for j in [1,2,3,4,5,6]:
@@ -197,19 +198,19 @@ class BufferBindPane(CustomBindPaneParent):
                 gamebase = profile.GameBindsDir() / f"buff{self.Title}" / f"buffp{j}"
                 afile = profile.GetBindFile(f"{filebase}a.txt")
                 bfile = profile.GetBindFile(f"{filebase}b.txt")
-                afile.SetBind    (petkey, self.Page, self.Title, [f'petselect {j-1}', selchat, f'bindloadfilesilent {gamebase}b.txt'])
-                ResetFile.SetBind(petkey, self.Page, self.Title, [f'petselect {j}'  , selchat, f'bindloadfilesilent {gamebase}b.txt'])
+                afile.SetBind    (petkey, self.Page, self.Title, [f'petselect {j-1}', selchat, f'{BLF()} {gamebase}b.txt'])
+                ResetFile.SetBind(petkey, self.Page, self.Title, [f'petselect {j}'  , selchat, f'{BLF()} {gamebase}b.txt'])
                 if (npow == 1):
-                    bfile.SetBind(petkey, [chat1, f'powexecname {self.Ctrls["BuffPower1"]}', f'bindloadfilesilent {gamebase}a.txt'])
+                    bfile.SetBind(petkey, [chat1, f'powexecname {self.Ctrls["BuffPower1"]}', f'{BLF()} {gamebase}a.txt'])
                 else:
-                    bfile.SetBind(petkey, [chat1, f'powexecname {self.Ctrls["BuffPower1"]}', f'bindloadfilesilent {gamebase}c.txt'])
+                    bfile.SetBind(petkey, [chat1, f'powexecname {self.Ctrls["BuffPower1"]}', f'{BLF()} {gamebase}c.txt'])
                     cfile = profile.GetBindFile(f"{filebase}c.txt")
                     if (npow == 2):
-                        cfile.SetBind(petkey, f"{chat2}powexecname {self.Ctrls['BuffPower2']}$$bindloadfilesilent {gamebase}a.txt")
+                        cfile.SetBind(petkey, f"{chat2}powexecname {self.Ctrls['BuffPower2']}$${BLF()} {gamebase}a.txt")
                     else:
                         dfile = profile.GetBindFile(f"{filebase}d.txt")
-                        cfile.SetBind(petkey, [chat2, f'powexecname {self.Ctrls["BuffPower2"]}', f'bindloadfilesilent {gamebase}d.txt'])
-                        dfile.SetBind(petkey, [chat3, f'powexecname {self.Ctrls["BuffPower3"]}', f'bindloadfilesilent {gamebase}a.txt'])
+                        cfile.SetBind(petkey, [chat2, f'powexecname {self.Ctrls["BuffPower2"]}', f'{BLF()} {gamebase}d.txt'])
+                        dfile.SetBind(petkey, [chat3, f'powexecname {self.Ctrls["BuffPower3"]}', f'{BLF()} {gamebase}a.txt'])
 
     def SynchronizeUI(self, _ = None):
         useteam = self.Ctrls['BuffsAffectTeam'].GetValue()

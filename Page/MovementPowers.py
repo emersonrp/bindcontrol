@@ -3,6 +3,7 @@ import GameData
 import UI
 from pathlib import Path, PureWindowsPath
 from typing import Dict, Any
+from BLF import BLF
 from Page import Page
 from UI.ControlGroup import ControlGroup, bcKeyButton
 
@@ -291,7 +292,6 @@ class MovementPowers(Page):
         detailSizer.AddControl( ctlName = 'TPHideWindows', ctlType = 'checkbox',)
         detailSizer.AddControl( ctlName = 'Feedback', ctlType = 'checkbox',)
         self.leftColumn.Add(detailSizer, 0, wx.EXPAND)
-
 
         ##### TEMP TRAVEL POWERS
         self.tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
@@ -954,13 +954,13 @@ class MovementPowers(Page):
                     a = self.actPower_name(t.cjmp,toff)
 
                 tgl.SetBind(key, name, self, '-down' + a + t.detaillo + t.flycamdist + t.blj + t.KeyState() + ".txt")
-                cur.SetBind(key, name, self, '+down' + feedback + '$$bindloadfilesilent ' + tglbl)
+                cur.SetBind(key, name, self, '+down' + feedback + f'$${BLF()} ' + tglbl)
             elif (bl == "aj"):
                 tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + t.dirs('DLR') + t.blaj + t.KeyState() + ".txt")
-                cur.SetBind(key, name, self, '+down' + feedback + '$$bindloadfilesilent ' + tglbl)
+                cur.SetBind(key, name, self, '+down' + feedback + f'$${BLF()} ' + tglbl)
             else:
                 tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + t.blfj + t.KeyState() + ".txt")
-                cur.SetBind(key, name, self, '+down' + feedback + '$$bindloadfilesilent ' + tglbl)
+                cur.SetBind(key, name, self, '+down' + feedback + f'$${BLF()} ' + tglbl)
 
         t.ini = ''
 
@@ -1401,115 +1401,115 @@ class MovementPowers(Page):
 
         t.path     = t.basepath     / 'R' / 'R'
         t.gamepath = t.gamebasepath / 'R' / 'R'
-        t.bl       = f"$$bindloadfilesilent {t.gamepath}"
+        t.bl       = f"$${BLF()} {t.gamepath}"
 
         t.patha     = t.basepath     / 'F' / 'F' # air subfolder and base filename
         t.gamepatha = t.gamebasepath / 'F' / 'F'
-        t.bla       = f"$$bindloadfilesilent {t.gamepatha}"
+        t.bla       = f"$${BLF()} {t.gamepatha}"
 
         t.pathj     = t.basepath     / 'J' / 'J'
         t.gamepathj = t.gamebasepath / 'J' / 'J'
-        t.blj       = f"$$bindloadfilesilent {t.gamepathj}"
+        t.blj       = f"$${BLF()} {t.gamepathj}"
 
         t.paths     = t.basepath     / 'S' / 'S'
         t.gamepaths = t.gamebasepath / 'S' / 'S'
-        t.bls       = f"$$bindloadfilesilent {t.gamepaths}"
+        t.bls       = f"$${BLF()} {t.gamepaths}"
 
         #t.pathga     = t.basepath     / 'GF' / 'GF' # air subfolder and base filename
         #t.gamepathga = t.gamebasepath / 'GF' / 'GF'
-        #t.blga       = f"$$bindloadfilesilent {t.gamepathga}"
+        #t.blga       = f"$${BLF()} {t.gamepathga}"
 
         t.pathn     = t.basepath     / 'N' / 'N' # ground subfolder and base filename.
         t.gamepathn = t.gamebasepath / 'N' / 'N'
-        t.bln       = f"$$bindloadfilesilent {t.gamepathn}"
+        t.bln       = f"$${BLF()} {t.gamepathn}"
 
         t.patht     = t.basepath     / 'T' / 'T' # ground subfolder and base filename.
         t.gamepatht = t.gamebasepath / 'T' / 'T'
-        t.blt       = f"$$bindloadfilesilent {t.gamepatht}"
+        t.blt       = f"$${BLF()} {t.gamepatht}"
 
         t.pathq     = t.basepath     / 'Q' / 'Q' # ground subfolder and base filename.
         t.gamepathq = t.gamebasepath / 'Q' / 'Q'
-        t.blq       = f"$$bindloadfilesilent {t.gamepathq}"
+        t.blq       = f"$${BLF()} {t.gamepathq}"
 
         t.pathgr     = t.basepath     / 'AR' / 'AR'  # ground autorun subfolder and base filename
         t.gamepathgr = t.gamebasepath / 'AR' / 'AR'
-        t.blgr       = f"$$bindloadfilesilent {t.gamepathgr}"
+        t.blgr       = f"$${BLF()} {t.gamepathgr}"
 
         t.pathaf     = t.basepath     / 'AF' / 'AF'  # air autorun subfolder and base filename
         t.gamepathaf = t.gamebasepath / 'AF' / 'AF'
-        t.blaf       = f"$$bindloadfilesilent {t.gamepathaf}"
+        t.blaf       = f"$${BLF()} {t.gamepathaf}"
 
         t.pathaj     = t.basepath     / 'AJ' / 'AJ'
         t.gamepathaj = t.gamebasepath / 'AJ' / 'AJ'
-        t.blaj       = f"$$bindloadfilesilent {t.gamepathaj}"
+        t.blaj       = f"$${BLF()} {t.gamepathaj}"
 
         t.pathas     = t.basepath     / 'AS' / 'AS'
         t.gamepathas = t.gamebasepath / 'AS' / 'AS'
-        t.blas       = f"$$bindloadfilesilent {t.gamepathas}"
+        t.blas       = f"$${BLF()} {t.gamepathas}"
 
         #t.pathgaf     = t.basepath     / 'GAF' / 'GAF'  # air autorun subfolder and base filename
         #t.gamepathgaf = t.gamebasepath / 'GAF' / 'GAF'
-        #t.blgaf       = f"$$bindloadfilesilent {t.gamepathgaf}"
+        #t.blgaf       = f"$${BLF()} {t.gamepathgaf}"
 
         t.pathan     = t.basepath     / 'AN' / 'AN' # ground subfolder and base filename.
         t.gamepathan = t.gamebasepath / 'AN' / 'AN'
-        t.blan       = f"$$bindloadfilesilent {t.gamepathan}"
+        t.blan       = f"$${BLF()} {t.gamepathan}"
 
         t.pathat     = t.basepath     / 'AT' / 'AT' # ground subfolder and base filename.
         t.gamepathat = t.gamebasepath / 'AT' / 'AT'
-        t.blat       = f"$$bindloadfilesilent {t.gamepathat}"
+        t.blat       = f"$${BLF()} {t.gamepathat}"
 
         t.pathaq     = t.basepath     / 'AQ' / 'AQ' # ground subfolder and base filename.
         t.gamepathaq = t.gamebasepath / 'AQ' / 'AQ'
-        t.blaq       = f"$$bindloadfilesilent {t.gamepathaq}"
+        t.blaq       = f"$${BLF()} {t.gamepathaq}"
 
         t.pathfr     = t.basepath     / 'FR' / 'FR'  # Follow Run subfolder and base filename
         t.gamepathfr = t.gamebasepath / 'FR' / 'FR'
-        t.blfr       = f"$$bindloadfilesilent {t.gamepathfr}"
+        t.blfr       = f"$${BLF()} {t.gamepathfr}"
 
         t.pathff     = t.basepath     / 'FF' / 'FF'  # Follow Fly subfolder and base filename
         t.gamepathff = t.gamebasepath / 'FF' / 'FF'
-        t.blff       = f"$$bindloadfilesilent {t.gamepathff}"
+        t.blff       = f"$${BLF()} {t.gamepathff}"
 
         t.pathfj     = t.basepath     / 'FJ' / 'FJ'
         t.gamepathfj = t.gamebasepath / 'FJ' / 'FJ'
-        t.blfj       = f"$$bindloadfilesilent {t.gamepathfj}"
+        t.blfj       = f"$${BLF()} {t.gamepathfj}"
 
         t.pathfs     = t.basepath     / 'FS' / 'FS'
         t.gamepathfs = t.gamebasepath / 'FS' / 'FS'
-        t.blfs       = f"$$bindloadfilesilent {t.gamepathfs}"
+        t.blfs       = f"$${BLF()} {t.gamepathfs}"
 
         #t.pathgff     = t.basepath     / 'GFF' / 'GFF'  # Follow Fly subfolder and base filename
         #t.gamepathgff = t.gamebasepath / 'GFF' / 'GFF'
-        #t.blgff       = f"$$bindloadfilesilent {t.gamepathgff}"
+        #t.blgff       = f"$${BLF()} {t.gamepathgff}"
 
         t.pathfn     = t.basepath     / 'FN' / 'FN' # ground subfolder and base filename.
         t.gamepathfn = t.gamebasepath / 'FN' / 'FN'
-        t.blfn       = f"$$bindloadfilesilent {t.gamepathfn}"
+        t.blfn       = f"$${BLF()} {t.gamepathfn}"
 
         t.pathft     = t.basepath     / 'FT' / 'FT' # ground subfolder and base filename.
         t.gamepathft = t.gamebasepath / 'FT' / 'FT'
-        t.blft       = f"$$bindloadfilesilent {t.gamepathat}"
+        t.blft       = f"$${BLF()} {t.gamepathat}"
 
         t.pathfq     = t.basepath     / 'FQ' / 'FQ' # ground subfolder and base filename.
         t.gamepathfq = t.gamebasepath / 'FQ' / 'FQ'
-        t.blfq       = f"$$bindloadfilesilent {t.gamepathfq}"
+        t.blfq       = f"$${BLF()} {t.gamepathfq}"
 
         t.pathbo     = t.basepath     / 'BO' / 'BO'  # Blastoff Fly subfolder and base filename
         t.gamepathbo = t.gamebasepath / 'BO' / 'BO'
-        t.blbo       = f"$$bindloadfilesilent {t.gamepathbo}"
+        t.blbo       = f"$${BLF()} {t.gamepathbo}"
 
         t.pathsd     = t.basepath     / 'SD' / 'SD'  #  SetDown Fly Subfolder and base filename
         t.gamepathsd = t.gamebasepath / 'SD' / 'SD'
-        t.blsd       = f"$$bindloadfilesilent {t.gamepathsd}"
+        t.blsd       = f"$${BLF()} {t.gamepathsd}"
 
         t.pathgbo     = t.basepath     / 'GBO' / 'GBO'  # Blastoff Fly subfolder and base filename
         t.gamepathgbo = t.gamebasepath / 'GBO' / 'GBO'
-        t.blgbo       = f"$$bindloadfilesilent {t.gamepathgbo}"
+        t.blgbo       = f"$${BLF()} {t.gamepathgbo}"
 
         t.pathgsd     = t.basepath     / 'GSD' / 'GSD'  #  SetDown Fly Subfolder and base filename
         t.gamepathgsd = t.gamebasepath / 'GSD' / 'GSD'
-        t.blgsd       = f"$$bindloadfilesilent {t.gamepathgsd}"
+        t.blgsd       = f"$${BLF()} {t.gamepathgsd}"
 
         #  set up the enable-mode keys to be used.
         if (self.GetState('DefaultMode') != "NonSoD") : t.NonSoDMode = self.GetState('NonSoDMode')
@@ -1726,7 +1726,7 @@ class MovementPowers(Page):
                 f'up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0' +
                 str(turnoff) +
                 '$$t $name, Binds Reset$$' + curfile.BaseReset() +
-                f"$$bindloadfilesilent {gamepath}000000.txt"
+                f"$${BLF()} {gamepath}000000.txt"
         )
 
     def sodUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun, followbl, bo, sssj):
@@ -2270,6 +2270,7 @@ class MovementPowers(Page):
         cblabel.control.SetValue(not cblabel.control.IsChecked())
         evt.Skip()
 
+
 UI.Labels.update( {
     'Up'             : 'Up',
     'Down'           : 'Down',
@@ -2528,6 +2529,6 @@ class tObject(dict):
 
         return ret
 
-    # This will return "$bindloadfilesilent C:\path\CODE\CODE101010<suffix>.txt"
+    # This will return "${BLF()} C:\path\CODE\CODE101010<suffix>.txt"
     def BLF(self, code, suffix = ''):
         return self.profile.BLF(code.upper(), code.upper() + self.KeyState() + suffix + '.txt')

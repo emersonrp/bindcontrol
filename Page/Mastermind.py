@@ -1,6 +1,7 @@
 import wx
 import re
 import UI
+from BLF import BLF
 from Help import HelpButton
 from UI.KeySelectDialog import bcKeyButton
 
@@ -879,15 +880,15 @@ class Mastermind(Page):
         # tsize is the size of the team at the moment
         # tpos is the position of the player at the moment, or 0 if unknown
         # tsel is the currently selected team member as far as the bind knows, or 0 if unknown
-        #file.SetBind(self.reset,'tell $name, Re-Loaded Single Key Team Select Bind.$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\10.txt')
+        #file.SetBind(self.reset,'tell $name, Re-Loaded Single Key Team Select Bind.$${BLF()} {self.Profile.GameBindsDir()}\\petsel\\10.txt')
         if tsize < 6:
-            file.SetBind(self.GetState('IncPetSize'), self, UI.Labels['IncPetSize'], f'tell $name, [{tsize+1} Pet]$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\{tsize+1}{tsel}.txt')
+            file.SetBind(self.GetState('IncPetSize'), self, UI.Labels['IncPetSize'], f'tell $name, [{tsize+1} Pet]$${BLF()} {self.Profile.GameBindsDir()}\\petsel\\{tsize+1}{tsel}.txt')
         else:
             file.SetBind(self.GetState('IncPetSize'), self, UI.Labels['IncPetSize'], 'nop')
         if tsize == 1:
             file.SetBind(self.GetState('DecPetSize'), self, UI.Labels['DecPetSize'], 'nop')
-            file.SetBind(self.GetState('SelNextPet'), self, UI.Labels['SelNextPet'], f'petselect 0$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\{tsize}1.txt')
-            file.SetBind(self.GetState('SelPrevPet'), self, UI.Labels['SelPrevPet'], f'petselect 0$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\{tsize}1.txt')
+            file.SetBind(self.GetState('SelNextPet'), self, UI.Labels['SelNextPet'], f'petselect 0$${BLF()} {self.Profile.GameBindsDir()}\\petsel\\{tsize}1.txt')
+            file.SetBind(self.GetState('SelPrevPet'), self, UI.Labels['SelPrevPet'], f'petselect 0$${BLF()} {self.Profile.GameBindsDir()}\\petsel\\{tsize}1.txt')
         else:
             selnext,selprev = tsel+1,tsel-1
             if selnext > tsize : selnext = 1
@@ -895,9 +896,9 @@ class Mastermind(Page):
             newsel = tsel
             if tsize-1 < tsel : newsel = tsize-1
             if tsize == 2 : newsel = 0
-            file.SetBind(self.GetState('DecPetSize'), self, UI.Labels['DecPetSize'], f'tell $name, [{tsize-1} Pet]$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\{tsize-1}{newsel}.txt')
-            file.SetBind(self.GetState('SelNextPet'), self, UI.Labels['SelNextPet'], f'petselect {selnext-1}$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\{tsize}{selnext}.txt')
-            file.SetBind(self.GetState('SelPrevPet'), self, UI.Labels['SelPrevPet'], f'petselect {selprev-1}$$bindloadfilesilent {self.Profile.GameBindsDir()}\\petsel\\{tsize}{selprev}.txt')
+            file.SetBind(self.GetState('DecPetSize'), self, UI.Labels['DecPetSize'], f'tell $name, [{tsize-1} Pet]$${BLF()} {self.Profile.GameBindsDir()}\\petsel\\{tsize-1}{newsel}.txt')
+            file.SetBind(self.GetState('SelNextPet'), self, UI.Labels['SelNextPet'], f'petselect {selnext-1}$${BLF()} {self.Profile.GameBindsDir()}\\petsel\\{tsize}{selnext}.txt')
+            file.SetBind(self.GetState('SelPrevPet'), self, UI.Labels['SelPrevPet'], f'petselect {selprev-1}$${BLF()} {self.Profile.GameBindsDir()}\\petsel\\{tsize}{selprev}.txt')
 
     def GetChatMethod(self, control, target = 'all'):
         chatdesc = self.GetState(control)

@@ -2,6 +2,7 @@ import re
 import wx
 import inspect
 from pathlib import Path, PureWindowsPath
+from BLF import BLF
 from Page import Page
 
 class KeyBind():
@@ -73,10 +74,10 @@ class BindFile():
                 subresetfile.SetBind(keybind, contents)
 
     def BaseReset(self):
-        return f'bindloadfilesilent {PureWindowsPath(self.GameBindsDir) / "subreset.txt"}'
+        return f'{BLF()} {PureWindowsPath(self.GameBindsDir) / "subreset.txt"}'
 
     def BLF(self):
-        return f'bindloadfilesilent {self.GamePath}'
+        return f'{BLF()} {self.GamePath}'
 
     def Write(self):
         try:

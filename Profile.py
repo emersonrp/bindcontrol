@@ -6,6 +6,7 @@ import wx
 import wx.lib.colourselect as csel
 
 from BindFile import BindFile
+from BLF import BLF
 
 from Page.General import General
 from Page.Gameplay import Gameplay
@@ -79,7 +80,7 @@ class Profile(wx.Notebook):
     def BLF(self, *args):
         filepath = self.GameBindsDir()
         for arg in args: filepath = filepath  /  arg
-        return "$$bindloadfilesilent " + str(filepath)
+        return f"$${BLF()} " + str(filepath)
 
     def CheckConflict(self, key, existingctrlname):
         conflicts = []
@@ -285,6 +286,7 @@ class Profile(wx.Notebook):
 
             self.Filename = Path(pathname)
             wx.ConfigBase.Get().Write('LastProfile', str(file))
+            wx.ConfigBase.Get().Flush()
             wx.LogMessage(f"Loaded profile {pathname}")
             self.ClearModified()
 

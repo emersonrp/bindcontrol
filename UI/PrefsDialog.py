@@ -42,7 +42,6 @@ class PrefsDialog(wx.Dialog):
         UI.Labels.update({ 'ResetKey': 'Binds Reset Key'})
         generalSizer.Add( self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)
 
-
         splitKeyLabel = ST.GenStaticText(generalPanel, label = "Bind left and right modifier keys separately:")
         generalSizer.Add( splitKeyLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.UseSplitModKeys = wx.CheckBox(generalPanel)
@@ -137,8 +136,27 @@ class PrefsDialog(wx.Dialog):
 
         controllerPanel.SetSizerAndFit(controllerSizer)
 
+        ###
+        # DEBUG PANEL
+        ###
+        debugPanel = wx.Panel(notebook)
+        debugSizer = wx.FlexGridSizer(2,0,0)
+
+        verboseBLFLabel = ST.GenStaticText(debugPanel, label = "Verbose feedback when loading bind file:")
+        debugSizer.Add( verboseBLFLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        self.VerboseBLF = wx.CheckBox(debugPanel)
+        self.VerboseBLF.SetValue(config.ReadBool('VerboseBLF'))
+        self.VerboseBLF.SetToolTip("Enable output to the chat box whenever a bind file is loaded.  This could be rather spammy, most especially with Speed on Demand binds.")
+        debugSizer.Add( self.VerboseBLF, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+
+        setattr(verboseBLFLabel, 'CB', self.VerboseBLF)
+        verboseBLFLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
+
+        debugPanel.SetSizerAndFit(debugSizer)
+
         notebook.AddPage(generalPanel, "General", select = True)
         notebook.AddPage(controllerPanel, "Controller")
+        notebook.AddPage(debugPanel, "Debug")
 
         buttonSizer = wx.StdDialogButtonSizer()
         buttonSizer.AddButton(wx.Button(self, wx.ID_OK))

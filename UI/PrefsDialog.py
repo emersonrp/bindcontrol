@@ -146,11 +146,24 @@ class PrefsDialog(wx.Dialog):
         debugSizer.Add( verboseBLFLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.VerboseBLF = wx.CheckBox(debugPanel)
         self.VerboseBLF.SetValue(config.ReadBool('VerboseBLF'))
-        self.VerboseBLF.SetToolTip("Enable output to the chat box whenever a bind file is loaded.  This could be rather spammy, most especially with Speed on Demand binds.")
+        tooltip = "Enable output to the chat box whenever a bind file is loaded.  This could be rather spammy, most especially with Speed on Demand binds."
+        verboseBLFLabel.SetToolTip(tooltip)
+        self.VerboseBLF.SetToolTip(tooltip)
         debugSizer.Add( self.VerboseBLF, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
-
         setattr(verboseBLFLabel, 'CB', self.VerboseBLF)
         verboseBLFLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
+
+        crashOnBindErrorLabel = ST.GenStaticText(debugPanel, label = "Crash on write-binds error:")
+        debugSizer.Add( crashOnBindErrorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        self.CrashOnBindError = wx.CheckBox(debugPanel)
+        self.CrashOnBindError.SetValue(config.ReadBool('CrashOnBindError'))
+        tooltip = "Crash and raise a stack trace if there is an error writing the bind files.  You want this turned off unless you are doing deep debugging."
+        crashOnBindErrorLabel.SetToolTip(tooltip)
+        self.CrashOnBindError.SetToolTip(tooltip)
+        debugSizer.Add( self.CrashOnBindError, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+        setattr(crashOnBindErrorLabel, 'CB', self.CrashOnBindError)
+        crashOnBindErrorLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
+
 
         debugPanel.SetSizerAndFit(debugSizer)
 

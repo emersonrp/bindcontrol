@@ -45,6 +45,8 @@ class Main(wx.Frame):
         if not config.Exists('StartWith')           : config.Write('StartWith', 'New Profile')
         if not config.Exists('ProfilePath')         : config.Write('ProfilePath', str(Path.home() / "Documents" / "bindcontrol"))
         if not config.Exists('SaveSizeAndPosition') : config.WriteBool('SaveSizeAndPosition', True)
+        if not config.Exists('VerboseBLF')          : config.WriteBool('VerboseBLF', False)
+        if not config.Exists('CrashOnBindError')    : config.WriteBool('CrashOnBindError', False)
         config.Flush()
 
         self.Sizer = wx.BoxSizer(wx.VERTICAL)
@@ -211,6 +213,7 @@ class Main(wx.Frame):
             config.Write('ExtraMod4', self.PrefsDialog.ExtraModPicker4.GetStringSelection())
 
             config.WriteBool('VerboseBLF', self.PrefsDialog.VerboseBLF.GetValue())
+            config.WriteBool('CrashOnBindError', self.PrefsDialog.CrashOnBindError.GetValue())
 
             config.Flush()
 

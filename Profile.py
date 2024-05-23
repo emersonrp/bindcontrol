@@ -334,6 +334,9 @@ class Profile(wx.Notebook):
                 wx.LogError(f"Error populating bind file: {e}")
                 errors += 1
 
+                if config.ReadBool('CrashOnBindError'):
+                    raise e
+
         # Now we have them here and can iterate them
         totalfiles = len(self.BindFiles)
         dlg = wx.ProgressDialog('Writing Bind Files','',

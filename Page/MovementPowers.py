@@ -70,11 +70,11 @@ class MovementPowers(Page):
             'AfterburnerKey'      : "",
 
             'TPPower'         : '',
-            'TPBindKey'       : 'LSHIFT+LBUTTON',
+            'TPBindKey'       : '',
             'TPComboKey'      : 'LSHIFT',
 
             'HasTTP'          : False,
-            'TTPBindKey'      : 'LSHIFT+LCTRL+LBUTTON',
+            'TTPBindKey'      : '',
             'TTPComboKey'     : 'LSHIFT+LCTRL',
             'TTPTPGFly'       : False,
 
@@ -1275,16 +1275,16 @@ class MovementPowers(Page):
             # TODO:  this should get rolled into the core teleport logic I think.
             if (self.GetState('TPPower')):
                 dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
-                dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
+                dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$-down$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
                 tp_off = profile.GetBindFile("dtp","tp_off.txt")
                 tp_off.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop') )
-                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
+                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$-down$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
                 tp_on1 = profile.GetBindFile("dtp","tp_on1.txt")
-                tp_on1.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+down' + profile.BLF('dtp','tp_on2.txt')))
-                tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('dtp','tp_off.txt')))
+                tp_on1.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+down$$-down' + profile.BLF('dtp','tp_on2.txt')))
+                tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('dtp','tp_off.txt')))
 
                 tp_on2 = profile.GetBindFile("dtp","tp_on2.txt")
-                tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('-down$$powexecname ' + dwarfTPPower + profile.BLF('dtp','tp_on1.txt')))
+                tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+down$$-down$$powexecname ' + dwarfTPPower + profile.BLF('dtp','tp_on1.txt')))
 
             dwrffile.SetBind(self.Ctrls['ToggleKey'].MakeFileKeyBind(f"t $name, Changing to Human Form, Normal Mode$fullstop$$powexectoggleoff {Dwarf['Dwarf']}$$gototray 1" + profile.BLF('reset.txt')))
         ###
@@ -1314,16 +1314,16 @@ class MovementPowers(Page):
                 tphovermodeswitch = t.bla + "000000.txt"
 
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexec_location cursor ' + normalTPPower))
-            ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
+            ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$-down$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
 
             tp_off = profile.GetBindFile("tp","tp_off.txt")
-            tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
+            tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$-down$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
 
             tp_on = profile.GetBindFile("tp","tp_on.txt")
             # TODO: what is this?  Do we need it for TTP binds, below?
             zoomin = t.detailhi + t.runcamdist
             if (t.tphover): zoomin = ''
-            tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecunqueue$$powexeclocation cursor ' + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
+            tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$-down$$powexecunqueue$$powexeclocation cursor ' + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
 
 
 
@@ -1333,13 +1333,13 @@ class MovementPowers(Page):
         if (self.GetState('HasTTP') and not (profile.Archetype() == "Peacebringer") and teamTPPower) :
 
             ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('powexeclocation cursor ' + teamTPPower))
-            ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on.txt')))
+            ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$-down$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on.txt')))
 
             ttp_off = profile.GetBindFile("ttp","ttp_off.txt")
-            ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on.txt')))
+            ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$-down$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on.txt')))
 
             ttp_on = profile.GetBindFile("ttp","ttp_on.txt")
-            ttp_on.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
+            ttp_on.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
 
 
 

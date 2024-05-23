@@ -68,9 +68,8 @@ class MovementPowers(Page):
             'FlyMode'             : "F",
             'GFlyMode'            : "",
             'AfterburnerKey'      : "",
-            'TranslocationKey'    : "",
 
-            'HasTP'           : False,
+            'TPPower'         : '',
             'TPBindKey'       : 'LSHIFT+LBUTTON',
             'TPComboKey'      : 'LSHIFT',
 
@@ -334,7 +333,6 @@ class MovementPowers(Page):
         self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'AfterburnerKey', ctlType = 'keybutton',)
-        self.flySizer.AddControl( ctlName = 'TranslocationKey', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'HasGFly', ctlType = 'checkbox',)
         self.Ctrls['HasGFly'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',)
@@ -346,11 +344,10 @@ class MovementPowers(Page):
 
         ##### TELEPORT
         self.teleportSizer = ControlGroup(self, self, 'Teleport')
-
         # if (at == peacebringer) "Dwarf Step"
         # if (at == warshade) "Shadow Step / Dwarf Step"
-        self.teleportSizer.AddControl( ctlName = 'HasTP', ctlType = 'checkbox',)
-        self.Ctrls['HasTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.teleportSizer.AddControl(ctlName = "TPPower", ctlType = 'choice', contents = [''])
+        self.Ctrls['TPPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
         self.teleportSizer.AddControl( ctlName = "TPBindKey", ctlType = 'keybutton',
             tooltip = 'Immediately teleport to the cursor position without showing a destination reticle', )
         self.teleportSizer.AddControl( ctlName = "TPComboKey", ctlType = 'keybutton',
@@ -504,15 +501,30 @@ class MovementPowers(Page):
                                           and self.GetState('DefaultMode') != "Fly")
             c['HasHover'].Enable(self.Profile.HasPowerPool('Flight'))
             c['AfterburnerKey'].Show(self.GetState('FlyPower') == 'Fly')
-            c['TranslocationKey'].Show(self.GetState('FlyPower') == 'Mystic Flight')
 
             c['HasGFly'].Enable(self.Profile.HasPowerPool('Flight'))
             c['GFlyMode'].Enable(self.hasGFly())
 
             ### TELEPORT POWERS
-            c['TPBindKey'].Enable(self.GetState('HasTP'))
-            c['TPComboKey'].Enable(self.GetState('HasTP'))
-            c['TPTPHover'].Enable(self.GetState('HasTP') and self.hasHover())
+            # TODO: we'll wrap the various Kheldian TP powers into this tangle later
+            TPIdx = c['TPPower'].FindString('Teleport')
+            TPExists = TPIdx != wx.NOT_FOUND
+            if self.Profile.HasPowerPool('Teleportation'):
+                if not TPExists: c['TPPower'].Append('Teleport')
+            else:
+                if TPExists: c['TPPower'].Delete(TPIdx)
+
+            TranslocIdx = c['TPPower'].FindString('Translocation')
+            TranslocExists = TranslocIdx != wx.NOT_FOUND
+            if self.Profile.HasPowerPool('Sorcery'):
+                if not TranslocExists: c['TPPower'].Append('Translocation')
+            else:
+                if TranslocExists: c['TPPower'].Delete(TranslocIdx)
+            self.PrePickLonePower(c['TPPower'])
+
+            c['TPBindKey'].Enable(self.GetState('TPPower') != '')
+            c['TPComboKey'].Enable(self.GetState('TPPower') != '')
+            c['TPTPHover'].Enable(self.GetState('TPPower') != '' and self.hasHover())
 
             c['TTPBindKey'].Enable(self.GetState('HasTTP'))
             c['TTPComboKey'].Enable(self.GetState('HasTTP'))
@@ -556,7 +568,7 @@ class MovementPowers(Page):
                     win = ctrl.GetWindow()
                     if win: win.Enable(False)
 
-            if (self.Profile.HasPowerPool('Teleportation')):
+            if (self.Profile.HasPowerPool('Teleportation') or self.Profile.HasPowerPool('Sorcery')):
                 self.rightColumn.Show(self.teleportSizer, True)
             else:
                 self.rightColumn.Show(self.teleportSizer, False)
@@ -1149,10 +1161,6 @@ class MovementPowers(Page):
         if self.Ctrls['AfterburnerKey'].IsEnabled():
             # TODO - this will be "self.AfterburnerPower" when we merge Kheldian logic later
             ResetFile.SetBind(self.Ctrls['AfterburnerKey'].MakeFileKeyBind('powexecname Afterburner'))
-        if self.Ctrls['TranslocationKey'].IsEnabled():
-
-        ### TODO here is where we should add "windowhide" and "windowshow" for Mystic Flight to hide windows
-            ResetFile.SetBind(self.Ctrls['TranslocationKey'].MakeFileKeyBind('powexec_location cursor Translocation'))
         if self.Ctrls['SpeedPhaseKey'].IsEnabled():
             ResetFile.SetBind(self.Ctrls['SpeedPhaseKey'].MakeFileKeyBind('powexecname Speed Phase'))
         if self.Ctrls['JauntKey'].IsEnabled():
@@ -1178,7 +1186,7 @@ class MovementPowers(Page):
         elif (profile.Archetype() == "Peacebringer"):
             dwarfTPPower = "White Dwarf Step"
         else:
-            normalTPPower = "Teleport"
+            normalTPPower = self.GetState('TPPower')
             teamTPPower   = "Team Teleport"
 
         if (self.GetState('HumanMode')):
@@ -1227,7 +1235,7 @@ class MovementPowers(Page):
             if (self.GetState('MouseChord')):
                 novafile.SetBind('mousechord', "+down$$+forward")
 
-            if (self.GetState('HasTP')):
+            if (self.GetState('TPPower')):
                 novafile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('nop'))
                 novafile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind( 'nop'))
 
@@ -1264,7 +1272,8 @@ class MovementPowers(Page):
             if (self.GetState('MouseChord')):
                 dwrffile.SetBind('mousechord', "+down$$+forward")
 
-            if (self.GetState('HasTP')):
+            # TODO:  this should get rolled into the core teleport logic I think.
+            if (self.GetState('TPPower')):
                 dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
                 dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
                 tp_off = profile.GetBindFile("dtp","tp_off.txt")
@@ -1289,7 +1298,7 @@ class MovementPowers(Page):
             elif (self.GetState('HasCJ')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Combat Jumping'))
 
-        if (self.GetState('HasTP') and not normalTPPower):
+        if (not normalTPPower):
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind( 'nop'))
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('nop'))
 
@@ -1298,7 +1307,8 @@ class MovementPowers(Page):
 
 
         # Normal non-peacebringer teleport binds
-        if (self.GetState('HasTP') and not (profile.Archetype() == "Peacebringer") and normalTPPower):
+        if (normalTPPower and not (profile.Archetype() == "Peacebringer")):
+            # TODO: what is this?  Do we need it for TTP binds, below?
             tphovermodeswitch = ''
             if (t.tphover != ''):
                 tphovermodeswitch = t.bla + "000000.txt"
@@ -1307,12 +1317,13 @@ class MovementPowers(Page):
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
 
             tp_off = profile.GetBindFile("tp","tp_off.txt")
-            tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexec_name ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
+            tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
 
             tp_on = profile.GetBindFile("tp","tp_on.txt")
+            # TODO: what is this?  Do we need it for TTP binds, below?
             zoomin = t.detailhi + t.runcamdist
             if (t.tphover): zoomin = ''
-            tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexec_unqueue$$powexec_location cursor ' + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
+            tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+down$$powexecunqueue$$powexeclocation cursor ' + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
 
 
 
@@ -1320,17 +1331,15 @@ class MovementPowers(Page):
 
         # normal non-peacebringer team teleport binds
         if (self.GetState('HasTTP') and not (profile.Archetype() == "Peacebringer") and teamTPPower) :
-            tphovermodeswitch = ''
 
-            ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('powexec_location cursor ' + teamTPPower))
-            ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
+            ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('powexeclocation cursor ' + teamTPPower))
+            ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on.txt')))
 
             ttp_off = profile.GetBindFile("ttp","ttp_off.txt")
-            #ttp_off.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('nop'))
-            ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
+            ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+down$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on.txt')))
 
-            ttp_on1 = profile.GetBindFile("ttp","ttp_on1.txt")
-            ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt') + tphovermodeswitch))
+            ttp_on = profile.GetBindFile("ttp","ttp_on.txt")
+            ttp_on.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('-down$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
 
 
 
@@ -2304,12 +2313,11 @@ UI.Labels.update( {
     'HasGFly'             : 'Player has Group Fly',
     'FlyMode'             : 'Toggle Fly Mode',
     'AfterburnerKey'      : 'Afterburner Key',
-    'TranslocationKey'    : 'Translocation Key',
     'GFlyMode'            : 'Toggle Group Fly Mode',
 
     'Feedback'       : 'Self-/tell when changing mode',
 
-    'HasTP'          : 'Player has Teleport',
+    'TPPower'        : 'TeleportPower',
     'TPBindKey'      : 'Teleport to Cursor Immediately',
     'TPComboKey'     : 'Teleport to Cursor on Key Release',
     'TPTPHover'      : 'Hover when Teleporting',

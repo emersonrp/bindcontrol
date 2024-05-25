@@ -159,27 +159,30 @@ class Profile(wx.Notebook):
 
             page = getattr(self, pagename)
             for controlname, control in page.Ctrls.items():
-                # skip if off
-                # UPDATE: No, let's save disabled controls' states, too, so as not to lose config
+                # Save disabled controls' states, too, so as not to lose config
                 # if someone, say, turns on "disable self tell" with a bunch of custom colors defined
-                # if control.IsEnabled():
-                    # look up what type of control it is to know how to extract its value
-                    if isinstance(control, wx.DirPickerCtrl):
-                        value = control.GetPath()
-                    elif isinstance(control, bcKeyButton):
-                        value = control.Key
-                    elif isinstance(control, wx.Button):
-                        value = control.GetLabel()
-                    elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
-                        value = control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
-                    elif isinstance(control, wx.Choice):
-                        value = control.GetSelection()
-                    elif isinstance(control, wx.StaticText):
-                        continue
-                    else:
-                        value = control.GetValue()
+                # look up what type of control it is to know how to extract its value
+                if isinstance(control, wx.DirPickerCtrl):
+                    value = control.GetPath()
+                elif isinstance(control, bcKeyButton):
+                    value = control.Key
+                elif isinstance(control, wx.Button):
+                    value = control.GetLabel()
+                elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
+                    value = control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
+                elif isinstance(control, wx.Choice):
+                    # we used to save the numerical selection which could break if the contents
+                    # of a picker changed between runs, like, say, if new powersets appeared.
+                    # Save the string value instead
+                    value = ""
+                    sel = control.GetSelection()
+                    if (sel > 0): value = control.GetString(sel)
+                elif isinstance(control, wx.StaticText):
+                    continue
+                else:
+                    value = control.GetValue()
 
-                    savedata[pagename][controlname] = value
+                savedata[pagename][controlname] = value
 
             if pagename == "General":
                 incarnatedata = page.IncarnateBox.GetData()
@@ -256,17 +259,34 @@ class Profile(wx.Notebook):
                         if isinstance(control, csel.ColourSelect):
                             wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
                     elif isinstance(control, wx.Choice):
+                        # we used to save the numerical selection which could break if the contents
+                        # of a picker changed between runs, like, say, if new powersets appeared.
+                        # we still check whether we have a numerical value so we can load old profiles.
+                        if isinstance(value, str):
+                            value = control.FindString(value)
+                            if value == wx.NOT_FOUND: value = 0
                         control.SetSelection(value)
                     else:
                         control.SetValue(value)
 
                 if pagename == 'General':
                     page.IncarnateBox.FillWith(data)
-                    # Re-fill Primary and Secondary pickers.
+                    # Re-fill Primary and Secondary pickers, honoring old numeric indices if needed
                     page.OnPickArchetype()
-                    page.Ctrls['Primary']  .SetSelection(data['General'].get('Primary'  , None))
-                    page.Ctrls['Secondary'].SetSelection(data['General'].get('Secondary', None))
-                    page.Ctrls['Epic']     .SetSelection(data['General'].get('Epic'     , None))
+                    prim = data['General'].get('Primary', None)
+                    if isinstance(prim, str):
+                        prim = page.Ctrls['Primary'].FindString(prim)
+                    page.Ctrls['Primary']  .SetSelection(prim)
+
+                    seco = data['General'].get('Secondary', None)
+                    if isinstance(seco, str):
+                        seco = page.Ctrls['Secondary'].FindString(seco)
+                    page.Ctrls['Secondary'].SetSelection(seco)
+
+                    epic = data['General'].get('Epic', None)
+                    if isinstance(epic, str):
+                        epic = page.Ctrls['Epic'].FindString(epic)
+                    page.Ctrls['Epic'].SetSelection(epic)
                 else:
                     page.SynchronizeUI()  # this clears and repops the Primary and Secondary pickers on 'General'
 

@@ -5,7 +5,7 @@ BindControl is a helper app for creating and maintaining keybinds for City of He
 
 It is an enhanced port of Konoko and Monorail's [CityBinder 0.76](http://sourceforge.net/projects/citybinder/), using Python and the WxWidgets UI toolkit.
 
-During City of Heroes' original run, CityBinder was the go-to app for keybinds.  It's written in lua, using the IUP toolkit, and the required versions of those can be difficult to set up for development on modern OSes.  I wanted to add features and clean up the UI, so in a stunning and likely unwise act of hubris, I instead started work on BindControl.
+During City of Heroes' original run, CityBinder was the go-to app for keybinds.  It's written in lua, using the IUP toolkit, and the required versions of those can be difficult to set up for development on modern OSes.  I wanted to add features and clean up the UI, so in a stunningly unwise act of hubris, I instead started work on BindControl.
 
 I worked on it on-and-off for the remainder of the original run of the game, then shelved it, ostensibly forever.  Now here in the age of the SCORE, Homecoming, and other servers, it once again has value, so I've dusted it off and continued to add features and modernize it.
 
@@ -19,27 +19,31 @@ Features
 * One-key next-teammate / previous-teammate selection
 * Various helpful shortcut binds, "Quit to Desktop", "Invite Target", "Show FPS", "Show Netgraph" - more to come.
 * Chat binds with optional 'typing' notifier and custom chat colors
+* Controller support (WIP, binds created with a controller work perfectly, but BindControl itself sometimes has trouble detecting controller input)
+
 * Custom Binds
-    * create simple binds using PowerBinder, a flexible tool for stringing together arbitrary commands for keybinding
-    * complex binds, chains of PowerBinder actions that fire sequentially on multiple presses of a keybind
-    * buffer binds, allowing quick one-key buffing of each teammate and/or pet
-* Speed-on-Demand
-    * based on [citybinder](http://sourceforge.net/projects/citybinder/) and the original Gnarly's SoD keybinds
-    * supports Super Speed, Super Jump, Flight, Teleport, and Sprint powers
-    * one-key reset in case SoD binds get tangled up
-    * Support for [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) - WIP but functional
+    * Create simple binds using PowerBinder, a flexible tool for stringing together arbitrary commands for keybinding
+    * Complex binds, chains of PowerBinder actions that fire sequentially on multiple presses of a keybind
+    * Buffer binds, allowing quick one-key buffing of each teammate and/or pet
+* Movement / Speed-on-Demand
+    * Speed-on-Demand based on [citybinder](http://sourceforge.net/projects/citybinder/) and the original Gnarly's SoD keybinds
+    * Supports all formal travel powers:  Fly, Mystic Flight, Group Fly, Super Jump, Mighty Leap, Super Speed, Speed of Sound, Teleport, and Team Teleport
+    * Secondary travel powers like Mystic Flight's "Translocation" are starting to be better integrated
+    * Supports [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) - WIP but functional
+    * Homecoming's <code>powexec_location cursor</code> feature incorporated into Teleport binds, with "teleport immediately" and "teleport on key release" options available
+    * One-key reset in case SoD binds get tangled up
 * Inspiration Popper
-    * by-type; dual and team inspirations supported
-    * option to use or skip "super" inspirations
-    * largest-first or smallest-first
-    * optional /say feedback with per-inspiration custom colors
+    * By-type; dual and team inspirations supported
+    * Option to use or skip "super" inspirations
+    * Largest-first or smallest-first
+    * Optional /say feedback with per-inspiration custom colors
 * Mastermind / Pet Binds
-    * select pets by power level: all, minions, lieutenants, and boss
-    * orders for aggressive / defensive / passive stances; attack, follow, go to, and stay
-    * pets can give feedback on each order;  chattiness can be toggled via keybind
-    * "bodyguard mode" shortcuts -- define which pets should be treated as bodyguards, and toggle Bodyguard Mode on and off for them, <strike>with attack/follow/stance/etc orders then applying to the remaining pets.</strike> (<i>Not working as intended</i>)
-    * by-name pet selection
-    * next-pet / previous-pet binds
+    * Select pets by power level: all, minions, lieutenants, and boss
+    * Orders for aggressive / defensive / passive stances; attack, follow, go to, and stay
+    * Pets can give feedback on each order;  chattiness can be toggled via keybind
+    * "Bodyguard mode" shortcuts -- define which pets should be treated as bodyguards, and toggle Bodyguard Mode on and off for them, <strike>with attack/follow/stance/etc orders then applying to the remaining pets.</strike> (<i>Not working as intended</i>)
+    * By-name pet selection
+    * Next-pet / previous-pet binds
 
 TODO
 ----
@@ -51,40 +55,43 @@ TODO
 * More error detection and handling
 * Kheldian form/travel binds in speed-on-demand
 * Temporary powers in speed-on-demand
-* <strike>Roll standalone binaries for Windows, MacOS, Linux</strike>
-    * Windows binary distribution of Python apps trigger anti-malware warnings
-    * MacOS binaries need signing and notarization
+* Roll standalone binaries for Windows, MacOS, Linux - partially implemented
+    * Windows binary distribution of Python apps can trigger <a href="Help/MalwareWarnings.md">anti-malware warnings</a>
+    * MacOS binaries need signing and notarization;  I release them anyway for the brave
     * Linux binaries might be possible with some container scheme
 * More and better help text and documentation
 * Fix bugs as found
 
-Using
------
+Using Binary Releases
+---------------------
 
-<b>Windows users:  try the ZIP file from the [latest release](https://github.com/emersonrp/bindcontrol/releases), and give feedback.  If that works for you, it's the quickest path to victory.</b>
+Windows users:  try the ZIP file from the [latest release](https://github.com/emersonrp/bindcontrol/releases), and give feedback.  If that works for you, it's the quickest path to victory.
 
-Failing that, or if you want to run bleeding edge code:
+MacOS users:  an experimental binary release has been made available.  It is not signed and/or notarized, and might or might not work at all.  Any feedback is encouraged.
 
-Dependencies
-------------
+<b>If you receive malware warnings</b>, please read <a href="Help/MalwareWarnings.md">my comments on that issue</a>.
 
-* [Python](https://www.python.org) version 3.10 or later
-* [wxPython](https://www.wxpython.org) version 4.1 or later
-
-Windows users, follow the instructions on the above sites' download pages to install Python and wxPython.
-
-MacOS users:  I recommend following the instructions in [this article at opensource.com](https://www.opensource.com/article/19/5/python-3-default-mac) to get Python 3 installed and working by default.  Once everything is working, you will want to run `pip3 install wxPython`.
-
-Linux users, install your distribution's packages for Python 3 and wxPython.
-
-Running from Source
+Running From Source
 -------------------
 
-Clone this repo.
+### Dependencies
 
-Windows (and possibly Mac) users:  Double-click `BindControl.py` in the top-level folder
+1. [Python](https://www.python.org) version 3.10 or later
+2. [wxPython](https://www.wxpython.org) version 4.1 or later
 
-Mac / Linux users: In a terminal, `cd` to where you put the BindControl source, then `python BindControl.py`.  Some distributions might need `python3` instead of `python`.
+* Windows users, follow the instructions on the above sites' download pages to install Python and wxPython.
+
+* MacOS users, I recommend following the instructions in [this article at opensource.com](https://www.opensource.com/article/19/5/python-3-default-mac) to get Python 3 installed and working by default.  Once everything is working, you will want to run `pip3 install wxPython`.
+
+* Linux users, install your distribution's packages for Python 3 and wxPython.
+
+### Getting and running the code
+
+* Clone this repo.
+
+* Windows (and possibly Mac) users:  Double-click `BindControl.py` in the top-level folder
+
+* Mac / Linux users: In a terminal, `cd` to where you put the BindControl source, then `python BindControl.py`.  Some distributions might need `python3` instead of `python`.
 
 Credits and License
 -------------------

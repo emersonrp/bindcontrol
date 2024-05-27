@@ -3,6 +3,7 @@ import platform
 import wx
 import wx.lib.stattext as ST
 import UI
+from Help import HelpButton
 from UI.KeySelectDialog import bcKeyButton
 from bcController import bcController
 
@@ -104,7 +105,8 @@ class PrefsDialog(wx.Dialog):
         if controller.GetNumberJoysticks() > 0:
             controllerName.SetLabel(controller.GetProductName())
         controllerSizer.Add( controllerName, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
-        controllerSizer.Add( wx.StaticText(controllerPanel, label = ''))
+        controllerhelpbutton = HelpButton(controllerPanel, 'ControllerModifiers.html')
+        controllerSizer.Add( controllerhelpbutton)
 
         # Pickers for controller_modifiers
         possible_mods = controller.ListOfPossibleMods()

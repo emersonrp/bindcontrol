@@ -161,11 +161,12 @@ class CGControlMixin:
         super().Enable(enable)
         if self.CtlLabel: self.CtlLabel.Enable(enable)
 
+    # TODO:  this enables/disables correctly but doesn't hide as expected.  Hmm.
     def Show(self: CGControlProtocol, show = True):
         self.GetContainingSizer().Show(self,          show = show)
         self.GetContainingSizer().Show(self.CtlLabel, show = show)
         self.Enable(show)
-        self.GetContainingSizer().Layout()
+        self.Page.Layout() # pyright: ignore
 
 # Miniclasses to use the above mixin
 class cgbcKeyButton     (CGControlMixin, bcKeyButton)         : pass

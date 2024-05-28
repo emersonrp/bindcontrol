@@ -12,28 +12,26 @@ import UI
 from bcController import bcController
 
 KeyChanged, EVT_KEY_CHANGED = wx.lib.newevent.NewEvent()
-
-# Platform-specific keyevent flags for telling left from right
-modKeyFlags = {}
+# Platform-specific keycodes for telling left from right
+modRawKeyCodes = {}
 if platform.system() == 'Windows':
-    modKeyFlags = {
-        'RSHIFT': 0x40000,
-        'RCTRL' : 0x1000000,
-        'RALT'  : 0x1000000,
+    modRawKeyCodes = {
+            160: 'LSHIFT', 161: 'RSHIFT',
+            162: 'LCTRL' , 163: 'RCTRL' ,
+            164: 'LAlT'  , 165: 'RALT'  ,
     }
 elif platform.system() == 'Linux':
-    modKeyFlags = {
-        'RSHIFT': 0x08,
-        'LCTRL' : 0x04,
-        'RALT'  : 0x08,
+    modRawKeyCodes = {
+            65505: 'LSHIFT', 65506: 'RSHIFT',
+            65507: 'LCTRL' , 65508: 'RCTRL' ,
+            65513: 'LALT'  , 65514: 'RALT'  ,
     }
 elif platform.system() == 'Darwin':
-    modKeyFlags = {
-        'LSHIFT': 0x02,
-        'LCTRL' : 0x2000,
-        'LALT'  : 0x20,
+    modRawKeyCodes = {
+            56: 'LSHIFT', 60: 'RSHIFT',
+            59: 'LCTRL' , 62: 'RCTRL' ,
+            58: 'LALT'  , 61: 'RALT'  ,
     }
-
 
 class KeySelectDialog(wx.Dialog):
     def __init__(self, button):
@@ -50,7 +48,7 @@ class KeySelectDialog(wx.Dialog):
         self.controller.SetCapture(self)
 
         # Mystery panel must be in here in order to get key events
-        _ = wx.Panel(self, -1)
+        self.mysteryPanel = wx.Panel(self, -1)
 
         if not self.Desc:
             raise Exception("Tried to make a KeySelectDialog for something with no desc")
@@ -60,6 +58,7 @@ class KeySelectDialog(wx.Dialog):
         # is this ugly?
         self.ModSlot = set()
         self.KeySlot = None
+        self.PressedKeys = set()
         self.SetKeymap();
 
         sizer = wx.BoxSizer(wx.VERTICAL);
@@ -76,7 +75,7 @@ class KeySelectDialog(wx.Dialog):
         sizer.Add( self.kbErr , 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5);
         sizer.AddSpacer(15)
 
-        if(modKeyFlags):
+        if(modRawKeyCodes):
             self.SeparateLRChooser = wx.CheckBox( self, -1, "Bind left/right mod keys separately")
             self.SeparateLRChooser.SetToolTip("This allows you to bind specifically left or right side mod keys for this bind.  This will not change the global preference.")
             sizer.Add( self.SeparateLRChooser, 0, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
@@ -87,18 +86,21 @@ class KeySelectDialog(wx.Dialog):
         vbox.Add(sizer, 0, wx.EXPAND|wx.ALL, 10);
 
         # clearly I'm thinking of this the wrong way.
-        for i in (self.kbDesc, self.kbBind, self.kbErr, self):
-            i.Bind(wx.EVT_CHAR_HOOK       , self.handleBind )
+        self.SeparateLRChooser.Bind(wx.EVT_KEY_UP    , self.handleKeyUp )
+        self.SeparateLRChooser.Bind(wx.EVT_CHAR_HOOK , self.handleCharHook )
+        for i in (self.mysteryPanel, self.kbDesc, self.kbBind, self.kbErr, self):
+            i.Bind(wx.EVT_KEY_UP          , self.handleKeyUp )
+            i.Bind(wx.EVT_CHAR_HOOK       , self.handleCharHook )
 
-            i.Bind(wx.EVT_LEFT_DOWN       , self.handleBind )
-            i.Bind(wx.EVT_MIDDLE_DOWN     , self.handleBind )
-            i.Bind(wx.EVT_RIGHT_DOWN      , self.handleBind )
-            i.Bind(wx.EVT_LEFT_DCLICK     , self.handleBind )
-            i.Bind(wx.EVT_RIGHT_DCLICK    , self.handleBind )
-            i.Bind(wx.EVT_MOUSE_AUX1_DOWN , self.handleBind )
-            i.Bind(wx.EVT_MOUSE_AUX2_DOWN , self.handleBind )
+            i.Bind(wx.EVT_JOYSTICK_EVENTS , self.handleJS )
 
-            i.Bind(wx.EVT_JOYSTICK_EVENTS , self.handleBind )
+            i.Bind(wx.EVT_LEFT_DOWN       , self.handleMouse )
+            i.Bind(wx.EVT_MIDDLE_DOWN     , self.handleMouse )
+            i.Bind(wx.EVT_RIGHT_DOWN      , self.handleMouse )
+            i.Bind(wx.EVT_LEFT_DCLICK     , self.handleMouse )
+            i.Bind(wx.EVT_RIGHT_DCLICK    , self.handleMouse )
+            i.Bind(wx.EVT_MOUSE_AUX1_DOWN , self.handleMouse )
+            i.Bind(wx.EVT_MOUSE_AUX2_DOWN , self.handleMouse )
 
         buttonSizer = self.CreateButtonSizer(wx.OK|wx.CANCEL|wx.NO_DEFAULT)
         vbox.Add(buttonSizer, 0, wx.ALIGN_CENTER|wx.ALL, 16)
@@ -122,120 +124,97 @@ class KeySelectDialog(wx.Dialog):
     def ShowBind(self):
         self.kbBind.SetPage('<center><b><font size=+4>' + self.Binding + '</font></b></center>')
 
-    def handleBind(self, event):
+
+    def handleJS(self, event):
+        # knock wood, this seems to be working fairly well now.
+        if event.ButtonDown() or event.IsMove() or event.IsZMove():
+            # iterate joystick buttons and add those that are pressed
+            for button in range(0, self.controller.GetNumberButtons()):
+                button_keyname = "JOY" + str(button+1)
+                if self.controller.GetButtonState(button):
+                    self.PressedKeys.add(self.Keymap[button_keyname])
+                else:
+                    self.PressedKeys.discard(self.Keymap[button_keyname])
+
+            self.controller.SetCurrentAxisPercents()
+            # don't let wee jiggles at the center trigger this.
+            # this is "no axis is > 50% in some direction" and "POV is centered"
+            if self.controller.StickIsNearCenter() and self.controller.GetPOVPosition() > 60000:
+                return
+
+            # iterate axes and discard() all;  then add the current one
+            # this means they have to hold the axis while clicking "OK" which
+            # is less than great but we can't detect intent in software.
+            for axis_code in self.controller.GetAllAxisCodes():
+                self.PressedKeys.discard(self.Keymap[axis_code])
+
+            current_axis = self.controller.GetCurrentAxis()
+            if current_axis:
+                self.PressedKeys.add(self.Keymap[current_axis])
+
+        else:
+            # Unknown joystick event.  These fire quite a bit.
+            return
+
+        self.buildBind()
+
+    def handleCharHook(self, event):
+        # Key down
         SeparateLR = self.SeparateLRChooser.Value
 
-        # first clear out anything not being held down
-        if not event.ControlDown():
-            self.ModSlot.discard('CTRL')
-            self.ModSlot.discard('LCTRL')
-            self.ModSlot.discard('RCTRL')
-        if not event.ShiftDown():
-            self.ModSlot.discard('SHIFT')
-            self.ModSlot.discard('LSHIFT')
-            self.ModSlot.discard('RSHIFT')
-        if not event.AltDown():
-            self.ModSlot.discard('ALT')
-            self.ModSlot.discard('LALT')
-            self.ModSlot.discard('RALT')
-        pressed_keys = set()
-
+        # close the dialog on ESCAPE
         if (isinstance(event, wx.KeyEvent)):
             if event.GetKeyCode() == wx.WXK_ESCAPE:
                 self.EndModal(wx.CANCEL)
-
-        elif (isinstance(event, wx.JoystickEvent)):
-            if event.ButtonDown():
-                # Carry on, we'll handle these below
-                pass
-            elif event.IsMove() or event.IsZMove():
-                # don't let wee jiggles at the center trigger SetCurrentAxis()
-                self.controller.SetCurrentAxisPercents()
-                # this is "no axis is > 50% in some direction" and "POV is centered"
-                if self.controller.StickIsNearCenter() and self.controller.GetPOVPosition() > 60000:
-                    return
-            else:
-                # Unknown joystick event.  These fire quite a bit.
                 return
 
-        elif (event.ButtonDClick()):
-            pressed_keys.add("DCLICK" + str(event.GetButton()))
+        rkc = event.GetRawKeyCode()
+        if SeparateLR and rkc in modRawKeyCodes:
+            self.PressedKeys.add(modRawKeyCodes[rkc])
         else:
-            pressed_keys.add("BUTTON" + str(event.GetButton()))
+            self.PressedKeys.add(self.Keymap[event.GetKeyCode()])
 
-        # iterate all possible values, and see if they're currently held down.
-        # this applies to keystrokes and joystick axes.  js buttons and mouse
-        # clicks have already been added.  This might not be optimal.
-        for possible_key in self.Keymap:
-            if (
-                    (
-                        # actual keys are ints in the list
-                        isinstance(possible_key, int)
-                            and
-                        (
-                            (isinstance(event, wx.KeyEvent) and event.GetKeyCode() == possible_key)
-                        )
-                    )
-                        or
-                    self.controller.IsOk() and (possible_key == self.controller.GetCurrentAxis())
-                ):
-                pressed_keys.add(self.Keymap[possible_key])
+        self.buildBind()
 
-        # iterate joystick buttons and add those that are pressed
-        if self.controller.IsOk():
-            for button in range(0, self.controller.GetNumberButtons()):
-                if self.controller.GetButtonState(button):
-                    button_keyname = "JOY" + str(button+1)
-                    pressed_keys.add(self.Keymap[button_keyname])
+    def handleKeyUp(self, event):
+        # Key-up:  clear keys that were released
+        SeparateLR = self.SeparateLRChooser.Value
+        rkc = event.GetRawKeyCode()
+
+        if SeparateLR and rkc in modRawKeyCodes:
+            self.PressedKeys.discard(modRawKeyCodes[rkc])
+        else:
+            self.PressedKeys.discard(self.Keymap[event.GetKeyCode()])
+
+        self.buildBind()
+
+    def handleMouse(self, event):
+        if (event.ButtonDClick()):
+            self.PressedKeys.add("DCLICK" + str(event.GetButton()))
+        else:
+            self.PressedKeys.add("BUTTON" + str(event.GetButton()))
+
+        self.buildBind()
+
+
+    def buildBind(self):
+        SeparateLR = self.SeparateLRChooser.Value
 
         # If we're completely off the keyboard/etc, clear our current state,
         # but return so we don't update the binding to nothing
-        if not pressed_keys:
+        if not self.PressedKeys:
             self.ModSlot = set()
             self.KeySlot = None
             return
 
-        if isinstance(event, wx.KeyEvent) and event.HasAnyModifiers():
-            if event.ShiftDown():
-                if SeparateLR and modKeyFlags:
-                    rawFlags = event.GetRawKeyFlags()
-                    if platform.system() == 'Darwin':
-                        pressed_keys.add(("LSHIFT") if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT")
-                    else:
-                        pressed_keys.add(("RSHIFT") if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT")
-                else:
-                    pressed_keys.add("SHIFT")
-
-            if event.ControlDown():
-                if SeparateLR and modKeyFlags:
-                    rawFlags = event.GetRawKeyFlags()
-                    if platform.system() == 'Darwin':
-                        pressed_keys.add(("LCTRL") if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL")
-                    elif platform.system() == 'Linux':
-                        pressed_keys.add(("LCTRL") if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL")
-                    else:
-                        pressed_keys.add(("RCTRL") if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL")
-                else:
-                    pressed_keys.add("CTRL")
-
-            if event.AltDown():
-                if SeparateLR and modKeyFlags:
-                    rawFlags = event.GetRawKeyFlags()
-                    if platform.system() == 'Darwin':
-                        pressed_keys.add(("LALT") if (rawFlags & modKeyFlags['LALT']) else "RALT")
-                    else:
-                        pressed_keys.add(("RALT") if (rawFlags & modKeyFlags['RALT']) else "LALT")
-                else:
-                    pressed_keys.add("ALT")
-
-        for key in pressed_keys:
+        for key in self.PressedKeys:
             if key in self.modKeys:
                 self.ModSlot.add(key)
             else:
                 self.KeySlot = key
 
-        # not clear what the race condition is where we're getting both, say, "SHIFT" and "LSHIFT"
-        # into the set, but we'll just manually deconstruct that situation here.
+        # If we switched SeparateLR midstream, we might get LSHIFT and SHIFT both in there.
+        # Clear up that situation
         if ("SHIFT" in self.ModSlot and ("LSHIFT" in self.ModSlot or "RSHIFT" in self.ModSlot)):
             if SeparateLR:
                 self.ModSlot.discard("SHIFT")

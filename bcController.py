@@ -15,6 +15,17 @@ class bcController(wx.adv.Joystick):
         if self.IsOk():
             self.CurrentAxisPercents = [0] * self.GetNumberAxes()
 
+    def GetAllAxisCodes(self):
+        all_axis_codes = []
+
+        if self.IsOk():
+            for pair in self.CodeTable:
+                for axis_code in pair:
+                    if axis_code != '':  all_axis_codes.append(axis_code)
+
+        return all_axis_codes
+
+
     def SetCurrentAxisPercents(self):
         for axis in range(len(self.CurrentAxisPercents)):
 

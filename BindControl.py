@@ -228,7 +228,7 @@ BindControl can help you set up custom keybinds in City of Heroes/Villains, incl
 
 Based on CityBinder 0.76, Copyright (c) 2005-2006 Jeff Sheets, and CityBinder for Homecoming 0.2, Copyright (c) 2021-2023 tailcoat
 
-Speed-On-Demand binds were originally created by Gnarley's Speed On Demand Binds Program.  Advanced Teleport Binds by DrLetharga.
+Speed-On-Demand binds were originally created by Gnarley's Speed On Demand Binds Program.  Advanced Teleport Binds originally by DrLetharga, updated for Homecoming by emerson.
 
 Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.
 

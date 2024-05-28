@@ -340,7 +340,6 @@ class Profile(wx.Notebook):
         feedback = 't $name, Resetting keybinds.'
         resetfile.SetBind(config.Read('ResetKey'), "Reset Key", "Preferences", [keybindreset , feedback, resetfile.BLF()])
 
-
         errors = donefiles = 0
         #
         # Go to each page....
@@ -351,11 +350,11 @@ class Profile(wx.Notebook):
             try:
                 page.PopulateBindFiles()
             except Exception as e:
-                wx.LogError(f"Error populating bind file: {e}")
-                errors += 1
-
                 if config.ReadBool('CrashOnBindError'):
                     raise e
+                else:
+                    wx.LogError(f"Error populating bind file: {e}")
+                    errors += 1
 
         # Now we have them here and can iterate them
         totalfiles = len(self.BindFiles)
@@ -367,18 +366,21 @@ class Profile(wx.Notebook):
                 donefiles += 1
                 bindfile.Write()
             except Exception as e:
-                wx.LogError(f"Failed to write bindfile {filename}: {e}")
-                donefiles -= 1
-                errors += 1
+                if config.ReadBool('CrashOnBindError'):
+                    raise e
+                else:
+                    wx.LogError(f"Failed to write bindfile {filename}: {e}")
+                    donefiles -= 1
+                    errors += 1
 
             dlg.Update(donefiles, filename)
 
         dlg.Destroy()
 
         if errors:
-            msg = f"{donefiles} bind files written, but there were {errors} errors.  Check the log."
+            msg = f"{donefiles} of {totalfiles} bind files written, but there were {errors} errors.  Check the log."
         else:
-            msg = f"{donefiles} bind files written!"
+            msg = f"{donefiles} of {totalfiles} bind files written successfully."
 
         with DoneDialog(self, msg = msg) as dlg:
 

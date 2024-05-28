@@ -1231,7 +1231,6 @@ Emotes = {
             'Flypose2',
             'Flypose3',
             'Flypose4',
-            'JellyDonut',
             'JellyDonut2',
             'Hi',
             'Hmmm',

@@ -93,8 +93,8 @@ Running From Source
 
 * Mac / Linux users: In a terminal, `cd` to where you put the BindControl source, then `python BindControl.py`.  Some distributions might need `python3` instead of `python`.
 
-Credits and License
--------------------
+Credits
+-------
 
 BindControl is in many places a direct port of [CityBinder](http://sourceforge.net/projects/citybinder/) code, and in most other places was extremely influenced by it.  Keybinding code drew from similar code in [PADRE](https://padre.perlide.org/).
 
@@ -120,6 +120,12 @@ Citybinder's acknowledgements are reproduced below:
 
 The improved Inspiration Popper design was gratefully adapted from an unreleased version of [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by Tailcoat.
 
-BindControl is licensed under the GPL, version 3 or later.
+Github Actions for automated building of binary releases graciously provided by <a href="https://github.com/JamzTheMan">JamzTheMan</a>.
+
+License
+-------
+
+BindControl is licensed under the <a href="Help/LICENSE.html">GPL version 3</a> or later.
+
 
 emerson@hayseed.net

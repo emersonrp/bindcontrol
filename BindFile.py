@@ -65,16 +65,8 @@ class BindFile():
 
         self.KeyBinds[keybind.Key] = keybind
 
-        # Terrible hack to add things into the subreset file when
-        # added to the reset file.  Ouch.
-        if self == self.Profile.ResetFile():
-            subresetpath = Path(self.BindsDir) / "subreset.txt"
-            subresetfile = self.Profile.GetBindFile(str(subresetpath))
-            if keybind.Key != wx.ConfigBase.Get().Read('ResetKey'):
-                subresetfile.SetBind(keybind, contents)
-
     def BaseReset(self):
-        return f'{BLF()} {PureWindowsPath(self.GameBindsDir) / "subreset.txt"}'
+        return f'{BLF()} {PureWindowsPath(self.GameBindsDir) / "reset.txt"}'
 
     def BLF(self):
         return f'{BLF()} {self.GamePath}'

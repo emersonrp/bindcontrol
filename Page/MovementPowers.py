@@ -45,29 +45,30 @@ class MovementPowers(Page):
             'NonSoDEnable'    : False,
             'NonSoDMode'      : '[',
 
-            'SpeedPower'      : '',
-            'SpeedMode'       : "C",
-            'SSMobileOnly'    : False,
-            'SSSJModeEnable'  : False,
-            'SpeedPhaseKey'   : "",
-            'JauntKey'        : "",
+            'SpeedPower'        : '',
+            'SpeedMode'         : "C",
+            'SSMobileOnly'      : False,
+            'SSSJModeEnable'    : False,
+            'SpeedSpecialKey'   : "",
+            'SpeedSpecialPower' : "",
 
-            'JumpPower'       : '',
-            'HasCJ'           : False,
-            'JumpMode'        : "T",
-            'SimpleSJCJ'      : False,
-            'TakeoffKey'      : "",
-            'DoubleJumpKey'   : "",
+            'JumpPower'        : '',
+            'HasCJ'            : False,
+            'JumpMode'         : "T",
+            'SimpleSJCJ'       : False,
+            'JumpSpecialKey'   : "",
+            'JumpSpecialPower' : "",
 
-            'FlyPower'       : '',
-            'HasHover'       : False,
-            'HasGFly'        : False,
-            'HasCF'          : False, # hidden
-            'HasEF'          : False, # hidden
-            'HasQF'          : False, # hidden
-            'FlyMode'        : "F",
-            'GFlyMode'       : "",
-            'AfterburnerKey' : "",
+            'FlyPower'        : '',
+            'HasHover'        : False,
+            'HasGFly'         : False,
+            'HasCF'           : False, # hidden
+            'HasEF'           : False, # hidden
+            'HasQF'           : False, # hidden
+            'FlyMode'         : "F",
+            'GFlyMode'        : "",
+            'FlySpecialKey'   : "",
+            'FlySpecialPower' : "", # hidden
 
             'TPPower'         : '',
             'TPBindKey'       : '',
@@ -306,8 +307,7 @@ class MovementPowers(Page):
         self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''])
         self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
         self.superSpeedSizer.AddControl( ctlName = 'SpeedMode', ctlType = 'keybutton',)
-        self.superSpeedSizer.AddControl( ctlName = 'SpeedPhaseKey', ctlType = 'keybutton',)
-        self.superSpeedSizer.AddControl( ctlName = 'JauntKey', ctlType = 'keybutton',)
+        self.superSpeedSizer.AddControl( ctlName = 'SpeedSpecialKey', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl( ctlName = 'SSMobileOnly', ctlType = 'checkbox',)
         self.superSpeedSizer.AddControl( ctlName = 'SSSJModeEnable', ctlType = 'checkbox',)
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
@@ -321,8 +321,7 @@ class MovementPowers(Page):
         self.superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',)
         self.Ctrls['SimpleSJCJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',)
-        self.superJumpSizer.AddControl( ctlName = 'TakeoffKey', ctlType = 'keybutton',)
-        self.superJumpSizer.AddControl( ctlName = 'DoubleJumpKey', ctlType = 'keybutton',)
+        self.superJumpSizer.AddControl( ctlName = 'JumpSpecialKey', ctlType = 'keybutton',)
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
         ##### FLY
@@ -332,7 +331,7 @@ class MovementPowers(Page):
         self.flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',)
         self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
-        self.flySizer.AddControl( ctlName = 'AfterburnerKey', ctlType = 'keybutton',)
+        self.flySizer.AddControl( ctlName = 'FlySpecialKey', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'HasGFly', ctlType = 'checkbox',)
         self.Ctrls['HasGFly'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',)
@@ -340,6 +339,9 @@ class MovementPowers(Page):
         self.hiddenSizer.AddControl( ctlName = 'HasCF', ctlType = 'checkbox',)
         self.hiddenSizer.AddControl( ctlName = 'HasEF', ctlType = 'checkbox',)
         self.hiddenSizer.AddControl( ctlName = 'HasQF', ctlType = 'checkbox',)
+        self.hiddenSizer.AddControl( ctlName = 'FlySpecialPower', ctlType = 'text', )
+        self.hiddenSizer.AddControl( ctlName = 'JumpSpecialPower', ctlType = 'text', )
+        self.hiddenSizer.AddControl( ctlName = 'SpeedSpecialPower', ctlType = 'text', )
         self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
@@ -410,15 +412,6 @@ class MovementPowers(Page):
         try:
             c = self.Ctrls
 
-            # TODO - we no longer treat this entire page as "speed on demand" so
-            # we don't want to turn on or off the entire page with that checkbox
-            # We might want to toggle the controls in the SoD control group tho
-
-            # # start with turning everything on or off to match the global checkbox
-            # for cname,control in c.items():
-            #     if cname != 'EnableSoD':  # don't disable yourself kthx
-            #         control.Enable(self.GetState('EnableSoD'))
-
             c['NonSoDMode'].Enable(self.GetState('NonSoDEnable'))
 
             c['SprintMode'].Enable(self.GetState('SprintSoD') and self.GetState('DefaultMode') != "Sprint")
@@ -447,13 +440,23 @@ class MovementPowers(Page):
                 if not SSExists: c['SpeedPower'].Append('Super Speed')
             else:
                 if SSExists: c['SpeedPower'].Delete(SSIdx)
+
             self.PrePickLonePower(c['SpeedPower'])
 
             c['SpeedMode'].Enable(bool(self.GetState('SpeedPower')) and self.GetState('DefaultMode') != "Speed")
             c['SSMobileOnly'].Enable(bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable'].Enable(bool(self.GetState('SpeedPower') and self.GetState('JumpPower')))
-            c['SpeedPhaseKey'].Show(self.GetState('SpeedPower') == "Super Speed")
-            c['JauntKey'].Show(self.GetState('SpeedPower') == "Speed of Sound")
+            c['SpeedSpecialKey'].Show(bool(self.GetState('SpeedPower')))
+
+            c['SpeedSpecialKey'].Show(False)
+            if (self.GetState('SpeedPower') == "Super Speed"):
+                c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase Key:')
+                c['SpeedSpecialPower'].SetValue('Speed Phase')
+                c['SpeedSpecialKey'].Show()
+            elif (self.GetState('SpeedPower') == "Speed of Sound"):
+                c['SpeedSpecialKey'].CtlLabel.SetLabel('Jaunt Key:')
+                c['SpeedSpecialPower'].SetValue('Jaunt')
+                c['SpeedSpecialKey'].Show()
 
             ### JUMP POWERS
             MLIdx = c['JumpPower'].FindString('Mighty Leap')
@@ -469,6 +472,7 @@ class MovementPowers(Page):
                 if not SJExists: c['JumpPower'].Append('Super Jump')
             else:
                 if SJExists: c['JumpPower'].Delete(SJIdx)
+
             self.PrePickLonePower(c['JumpPower'])
 
             c['HasCJ'].Enable(self.Profile.HasPowerPool('Leaping'))
@@ -478,8 +482,16 @@ class MovementPowers(Page):
                         or
                     self.GetState('SimpleSJCJ')
                 ))
-            c['TakeoffKey'].Show(self.GetState('JumpPower') == "Mighty Leap")
-            c['DoubleJumpKey'].Show(self.GetState('JumpPower') == "Super Jump")
+
+            c['JumpSpecialKey'].Show(False)
+            if (self.GetState('JumpPower') == "Mighty Leap"):
+                c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff Key:')
+                c['JumpSpecialPower'].SetValue('Takeoff')
+                c['JumpSpecialKey'].Show()
+            elif (self.GetState('JumpPower') == "Super Jump"):
+                c['JumpSpecialKey'].CtlLabel.SetLabel('Double Jump Key:')
+                c['JumpSpecialPower'].SetValue('Double Jump')
+                c['JumpSpecialKey'].Show()
 
             ### FLIGHT POWERS
             FlyIdx = c['FlyPower'].FindString('Fly')
@@ -495,12 +507,18 @@ class MovementPowers(Page):
                 if not MFlightExists: c['FlyPower'].Append('Mystic Flight')
             else:
                 if MFlightExists: c['FlyPower'].Delete(MFlightIdx)
+
             self.PrePickLonePower(c['FlyPower'])
 
             c['FlyMode'].Enable((self.GetState('FlyPower') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
             c['HasHover'].Enable(self.Profile.HasPowerPool('Flight'))
-            c['AfterburnerKey'].Show(self.GetState('FlyPower') == 'Fly')
+
+            c['FlySpecialKey'].Show(False)
+            if (self.GetState('FlyPower') == "Fly"):
+                c['FlySpecialKey'].CtlLabel.SetLabel('Afterburner Key:')
+                c['FlySpecialPower'].SetValue('Afterburner')
+                c['FlySpecialKey'].Show()
 
             c['HasGFly'].Enable(self.Profile.HasPowerPool('Flight'))
             c['GFlyMode'].Enable(self.hasGFly())
@@ -1158,17 +1176,12 @@ class MovementPowers(Page):
         if self.GetState('EnableSoD'): self.doSpeedOnDemandBinds(t)
 
         # Make binds for the "stage 2" travel powers like Afterburner, if appropriate
-        if self.Ctrls['AfterburnerKey'].IsEnabled():
-            # TODO - this will be "self.AfterburnerPower" when we merge Kheldian logic later
-            ResetFile.SetBind(self.Ctrls['AfterburnerKey'].MakeFileKeyBind('powexecname Afterburner'))
-        if self.Ctrls['SpeedPhaseKey'].IsEnabled():
-            ResetFile.SetBind(self.Ctrls['SpeedPhaseKey'].MakeFileKeyBind('powexecname Speed Phase'))
-        if self.Ctrls['JauntKey'].IsEnabled():
-            ResetFile.SetBind(self.Ctrls['JauntKey'].MakeFileKeyBind('powexecname Jaunt'))
-        if self.Ctrls['TakeoffKey'].IsEnabled():
-            ResetFile.SetBind(self.Ctrls['TakeoffKey'].MakeFileKeyBind('powexecname Takeoff'))
-        if self.Ctrls['DoubleJumpKey'].IsEnabled():
-            ResetFile.SetBind(self.Ctrls['DoubleJumpKey'].MakeFileKeyBind('powexecname Double Jump'))
+        if self.Ctrls['FlySpecialKey'].IsEnabled():
+            ResetFile.SetBind(self.Ctrls['FlySpecialKey'].MakeFileKeyBind(f'powexecname {self.GetState("FlySpecialPower")}'))
+        if self.Ctrls['SpeedSpecialKey'].IsEnabled():
+            ResetFile.SetBind(self.Ctrls['SpeedSpecialKey'].MakeFileKeyBind(f'powexecname {self.GetState("SpeedSpecialPower")}'))
+        if self.Ctrls['JumpSpecialKey'].IsEnabled():
+            ResetFile.SetBind(self.Ctrls['JumpSpecialKey'].MakeFileKeyBind(f'powexecname {self.GetState("JumpSpecialPower")}'))
 
         ###### Kheldian power setup
         #  create the Nova and Dwarf form support files if enabled.
@@ -2282,26 +2295,27 @@ UI.Labels.update( {
     'SprintSoD'      : 'Enable Sprint SoD',
     'SprintMode'     : "Sprint Mode Key",
 
-    'JumpPower'      : "Primary Jump Power",
-    'HasCJ'          : 'Player has Combat Jumping',
-    'JumpMode'       : 'Toggle Jump Mode',
-    'SimpleSJCJ'     : 'Simple Combat Jumping / Super Jump Toggle',
-    'TakeoffKey'     : 'Takeoff Key',
-    'DoubleJumpKey'  : 'Double Jump Key',
+    'JumpPower'        : "Primary Jump Power",
+    'HasCJ'            : 'Player has Combat Jumping',
+    'JumpMode'         : 'Toggle Jump Mode',
+    'SimpleSJCJ'       : 'Simple Combat Jumping / Super Jump Toggle',
+    'JumpSpecialKey'   : '',
+    'JumpSpecialPower' : '', # hidden
 
-    'SpeedPower'     : "Primary Speed Power",
-    'SpeedMode'      : 'Toggle Super Speed Mode',
-    'SSMobileOnly'   : 'SuperSpeed only when moving',
-    'SSSJModeEnable' : 'Enable Super Speed / Super Jump Mode',
-    'SpeedPhaseKey'  : 'Speed Phase Key',
-    'JauntKey'       : 'Jaunt Key',
+    'SpeedPower'        : "Primary Speed Power",
+    'SpeedMode'         : 'Toggle Super Speed Mode',
+    'SSMobileOnly'      : 'SuperSpeed only when moving',
+    'SSSJModeEnable'    : 'Enable Super Speed / Super Jump Mode',
+    'SpeedSpecialKey'   : '',
+    'SpeedSpecialPower' : '', # Hidden
 
-    'FlyPower'            : "Primary Flight Power",
-    'HasHover'            : "Player has Hover",
-    'HasGFly'             : 'Player has Group Fly',
-    'FlyMode'             : 'Toggle Fly Mode',
-    'AfterburnerKey'      : 'Afterburner Key',
-    'GFlyMode'            : 'Toggle Group Fly Mode',
+    'FlyPower'        : "Primary Flight Power",
+    'HasHover'        : "Player has Hover",
+    'HasGFly'         : 'Player has Group Fly',
+    'FlyMode'         : 'Toggle Fly Mode',
+    'FlySpecialKey'   : 'Afterburner Key',
+    'FlySpecialPower' : '', # hidden
+    'GFlyMode'        : 'Toggle Group Fly Mode',
 
     'Feedback'       : 'Self-/tell when changing mode',
 

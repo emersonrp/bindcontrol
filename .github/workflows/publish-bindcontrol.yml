@@ -66,11 +66,11 @@ jobs:
         run: |
           ${{ matrix.CMD_VERIFY }}
 
-      - name: Get latest commit message
-        shell: bash
-        run: |
-          commitMessage=$(git log -1 --pretty=format:%B)
-          echo "COMMIT_MESSAGE=$commitMessage" >> $GITHUB_ENV
+#      - name: Get latest commit message
+#        shell: bash
+#        run: |
+#          commitMessage=$(git log -1 --pretty=format:%B)
+#          echo "COMMIT_MESSAGE=$commitMessage" >> $GITHUB_ENV
 
       - name: Upload Release Asset
         uses: svenstaro/upload-release-action@v2
@@ -81,4 +81,4 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
           release_name: "BindControl ${{ github.ref_name }}"
-          body: "${{ env.COMMIT_MESSAGE }}"
+          body: "${{ github.event.head_commit.message }}"

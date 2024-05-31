@@ -176,7 +176,7 @@ class Profile(wx.Notebook):
                     # Save the string value instead
                     value = ""
                     sel = control.GetSelection()
-                    if (sel > 0): value = control.GetString(sel)
+                    if (sel != wx.NOT_FOUND): value = control.GetString(sel)
                 elif isinstance(control, wx.StaticText):
                     continue
                 else:

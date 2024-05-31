@@ -58,7 +58,7 @@ class BindFile():
                     prevFrame = currframe.f_back
                     if prevFrame:
                         (filen, line, funcn, _, _) = inspect.getframeinfo(prevFrame)
-                        print(f"SetBind called old way from {filen}, {funcn}, {line} -- PROBABLY BROKEN")
+                        raise(Exception(f"SetBind called old way from {filen}, {funcn}, {line} -- PROBABLY BROKEN"))
             keybind = KeyBind(keybind, name, page, contents)
 
         if not keybind.Key: return

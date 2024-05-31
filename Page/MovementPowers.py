@@ -43,7 +43,7 @@ class MovementPowers(Page):
             'Feedback'        : False,
 
             'NonSoDEnable'    : False,
-            'NonSoDMode'      : '[',
+            'NonSoDMode'      : '',
 
             'SpeedPower'        : '',
             'SpeedMode'         : "C",
@@ -60,10 +60,9 @@ class MovementPowers(Page):
             'JumpSpecialPower' : "",
 
             'FlyPower'        : '',
+            'HoverPower'      : '', # hidden
             'HasHover'        : False,
             'HasGFly'         : False,
-            'HasCF'           : False, # hidden
-            'HasEF'           : False, # hidden
             'HasQF'           : False, # hidden
             'FlyMode'         : "F",
             'GFlyMode'        : "",
@@ -84,37 +83,22 @@ class MovementPowers(Page):
 
             'FlyGFly'         : '',
 
+            'HumanTray'       : "1",
+
             'UseNova'         : False,
-            'NovaMode'        : "T",
+            'NovaMode'        : "[",
             'NovaTray'        : "4",
 
             'UseDwarf'        : False,
-            'DwarfMode'       : "G",
+            'DwarfMode'       : "]",
             'DwarfTray'       : "5",
 
-            'HumanMode'       : "",
-            'HumanTray'       : "1",
-            'HumanHumanPBind' : "nop",
-            'HumanNovaPBind'  : "nop",
-            'HumanDwarfPBind' : "nop",
 
             'TempEnable'      : False,
             'TempTray'        : "6",
             'TempTraySwitch'  : "",
             'TempMode'        : "",
         }
-
-        # TODO we aren't ever a kheldian during init so this doesn't do anything
-        # I think this is the only place we have this logic yet, though.
-        if (self.Profile.Archetype() == "Peacebringer"):
-            self.Init['NovaNova'] = "Bright Nova"
-            self.Init['DwarfDwarf'] = "White Dwarf"
-            self.Init['HumanFormShield'] = "Shining Shield"
-
-        elif (self.Profile.Archetype() == "Warshade"):
-            self.Init['NovaNova'] = "Dark Nova"
-            self.Init['DwarfDwarf'] = "Black Dwarf"
-            self.Init['HumanFormShield'] = "Gravity Shield"
 
     def BuildPage(self):
 
@@ -135,11 +119,12 @@ class MovementPowers(Page):
 
         keySizer = wx.GridBagSizer(6, 3)
         tlLabel = wx.StaticText(staticbox, label = 'Turn Left')
-        keySizer.Add(tlLabel, [0,0], [1,2], flag = wx.ALIGN_CENTER)
         fwLabel = wx.StaticText(staticbox, label = 'Forward')
-        keySizer.Add(fwLabel, [0,2], [1,2], flag = wx.ALIGN_CENTER)
         trLabel = wx.StaticText(staticbox, label = 'Turn Right')
-        keySizer.Add(trLabel, [0,4], [1,2], flag = wx.ALIGN_CENTER)
+
+        keySizer.Add(tlLabel, [0,0], [1,2], wx.ALIGN_CENTER)
+        keySizer.Add(fwLabel, [0,2], [1,2], wx.ALIGN_CENTER)
+        keySizer.Add(trLabel, [0,4], [1,2], wx.ALIGN_CENTER)
 
         tleftButton = bcKeyButton(staticbox, -1, )
         tleftButton.SetLabel(self.Init['TurnLeft'])
@@ -199,12 +184,15 @@ class MovementPowers(Page):
         rightButton.Key = self.Init['Right']
         keySizer.Add(rightButton, [2,4], [1,2])
 
-        keySizer.Add(leftLabel,  [3,0], [1,2], flag = wx.ALIGN_CENTER)
-        keySizer.Add(backLabel,  [3,2], [1,2], flag = wx.ALIGN_CENTER)
-        keySizer.Add(rightLabel, [3,4], [1,2], flag = wx.ALIGN_CENTER)
+        keySizer.Add(leftLabel,  [3,0], [1,2], wx.ALIGN_CENTER)
+        keySizer.Add(backLabel,  [3,2], [1,2], wx.ALIGN_CENTER)
+        keySizer.Add(rightLabel, [3,4], [1,2], wx.ALIGN_CENTER)
 
         downLabel = wx.StaticText(staticbox, label = 'Down')
         upLabel   = wx.StaticText(staticbox, label = 'Up')
+
+        keySizer.Add(downLabel, [4,0], [1,2], wx.ALIGN_CENTER|wx.TOP, 16)
+        keySizer.Add(upLabel,   [4,2], [1,4], wx.ALIGN_CENTER|wx.TOP, 16)
 
         downButton = bcKeyButton(staticbox, -1, )
         self.Ctrls['Down'] = downButton
@@ -213,7 +201,7 @@ class MovementPowers(Page):
         downButton.CtlLabel = downLabel
         downButton.Page = self
         downButton.Key = self.Init['Down']
-        keySizer.Add(downButton, [4,0], [1,2], wx.TOP, 10)
+        keySizer.Add(downButton, [5,0], [1,2], wx.EXPAND)
 
         upButton = bcKeyButton(staticbox, -1, )
         self.Ctrls['Up'] = upButton
@@ -222,10 +210,7 @@ class MovementPowers(Page):
         upButton.CtlLabel = upLabel
         upButton.Page = self
         upButton.Key = self.Init['Up']
-        keySizer.Add(upButton, [4,2], [1,4], wx.EXPAND|wx.TOP, 10)
-
-        keySizer.Add(downLabel, [5,0], [1,2], flag = wx.ALIGN_CENTER)
-        keySizer.Add(upLabel,   [5,2], [1,4], flag = wx.ALIGN_CENTER)
+        keySizer.Add(upButton, [5,2], [1,4], wx.EXPAND)
 
         autoRunLabel = wx.StaticText(staticbox, label = 'Autorun')
         followLabel  = wx.StaticText(staticbox, label = 'Follow')
@@ -237,7 +222,7 @@ class MovementPowers(Page):
         autoRunButton.CtlLabel = autoRunLabel
         autoRunButton.Page = self
         autoRunButton.Key = self.Init['AutoRun']
-        keySizer.Add(autoRunButton, [6,1], [1,2], wx.EXPAND|wx.TOP, 10)
+        keySizer.Add(autoRunButton, [6,1], [1,2], wx.EXPAND)
 
         followButton = bcKeyButton(staticbox, -1, )
         self.Ctrls['Follow'] = followButton
@@ -246,10 +231,10 @@ class MovementPowers(Page):
         followButton.CtlLabel = followLabel
         followButton.Page = self
         followButton.Key = self.Init['Follow']
-        keySizer.Add(followButton, [6,3], [1,2], wx.EXPAND|wx.TOP, 10)
+        keySizer.Add(followButton, [6,3], [1,2], wx.EXPAND)
 
-        keySizer.Add(autoRunLabel, [7,1], [1,2], flag = wx.ALIGN_CENTER)
-        keySizer.Add(followLabel,  [7,3], [1,2], flag = wx.ALIGN_CENTER)
+        keySizer.Add(autoRunLabel, [7,1], [1,2], wx.ALIGN_CENTER)
+        keySizer.Add(followLabel,  [7,3], [1,2], wx.ALIGN_CENTER)
 
         innerSizer.Add(keySizer, 0)
 
@@ -335,9 +320,8 @@ class MovementPowers(Page):
         self.flySizer.AddControl( ctlName = 'HasGFly', ctlType = 'checkbox',)
         self.Ctrls['HasGFly'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',)
-        # hidden checkboxes for keeping state
-        self.hiddenSizer.AddControl( ctlName = 'HasCF', ctlType = 'checkbox',)
-        self.hiddenSizer.AddControl( ctlName = 'HasEF', ctlType = 'checkbox',)
+        # hidden controls for keeping state
+        self.hiddenSizer.AddControl( ctlName = 'HoverPower', ctlType = 'text')
         self.hiddenSizer.AddControl( ctlName = 'HasQF', ctlType = 'checkbox',)
         self.hiddenSizer.AddControl( ctlName = 'FlySpecialPower', ctlType = 'text', )
         self.hiddenSizer.AddControl( ctlName = 'JumpSpecialPower', ctlType = 'text', )
@@ -365,18 +349,9 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.teleportSizer, 0, wx.EXPAND)
 
         ##### KHELDIAN TRAVEL POWERS
-        # Combat Flying, Quantum Flight, and Energy Flight are inherent to Peacebringers
-        if (self.Profile.Archetype() == "Peacebringer"):
-            self.SetState('HasCF', True)
-            self.SetState('HasEF', True)
-            self.SetState('HasQF', True)
-        # TODO - Peacebringers have "Quantum Acceleration" in the place of Afterburner
-        # Logic:
-        #      AfterburnerPower = (arch == peace) ? "Quantum Acceleration" : "Afterburner"
-        # then use it in the keybind
+        self.kheldianSizer = ControlGroup(self, self, 'Kheldian Forms / Powers')
 
-        self.kheldianSizer = ControlGroup(self, self, 'Nova / Dwarf Travel Powers')
-
+        self.kheldianSizer.AddControl( ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 8],)
         self.kheldianSizer.AddControl( ctlName = 'UseNova', ctlType = 'checkbox',)
         self.Ctrls['UseNova'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.kheldianSizer.AddControl( ctlName = 'NovaMode', ctlType = 'keybutton',)
@@ -385,11 +360,7 @@ class MovementPowers(Page):
         self.Ctrls['UseDwarf'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.kheldianSizer.AddControl( ctlName = 'DwarfMode', ctlType = 'keybutton',)
         self.kheldianSizer.AddControl( ctlName = 'DwarfTray', ctlType = 'spinbox', contents = [1, 8],)
-        # do we want a key to change directly to human form, instead of toggles?
-        self.kheldianSizer.AddControl( ctlName = 'HumanMode', ctlType = 'keybutton',)
-        self.kheldianSizer.AddControl( ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 8],)
         self.rightColumn.Add(self.kheldianSizer, 0, wx.EXPAND)
-
 
         topSizer.Add(self.leftColumn, 0, wx.ALL, 3)
         topSizer.Add(self.rightColumn, 0, wx.ALL, 3)
@@ -427,7 +398,10 @@ class MovementPowers(Page):
             c['TempTraySwitch'].Enable(self.GetState('TempEnable'))
 
             ### SHOW/HIDE CONTROL GROUPS BASED ON POWER POOL PICKS
-            if (self.Profile.HasPowerPool('Flight') or self.Profile.HasPowerPool('Sorcery')):
+            archetype = self.Profile.Archetype()
+            if (self.Profile.HasPowerPool('Flight')
+                        or self.Profile.HasPowerPool('Sorcery')
+                        or archetype == "Peacebringer"):
                 self.rightColumn.Show(self.flySizer, True)
             else:
                 self.rightColumn.Show(self.flySizer, False)
@@ -451,9 +425,10 @@ class MovementPowers(Page):
                     win = ctrl.GetWindow()
                     if win: win.Enable(False)
 
-            if (self.Profile.HasPowerPool('Teleportation') or
-                    self.Profile.HasPowerPool('Sorcery') or
-                    self.Profile.HasPowerPool('Experimentation')):
+            if (self.Profile.HasPowerPool('Teleportation')
+                        or self.Profile.HasPowerPool('Sorcery')
+                        or self.Profile.HasPowerPool('Experimentation')
+                        or archetype == "Warshade"):
                 self.rightColumn.Show(self.teleportSizer, True)
             else:
                 self.rightColumn.Show(self.teleportSizer, False)
@@ -539,11 +514,24 @@ class MovementPowers(Page):
             else:
                 if MFlightExists: c['FlyPower'].Delete(MFlightIdx)
 
+            EFlightIdx = c['FlyPower'].FindString('Energy Flight')
+            EFlightExists = EFlightIdx != wx.NOT_FOUND
+            if archetype == 'Peacebringer':
+                if not EFlightExists: c['FlyPower'].Append('Energy Flight')
+            else:
+                if EFlightExists: c['FlyPower'].Delete(EFlightIdx)
+
             self.PrePickLonePower(c['FlyPower'])
 
-            c['FlyMode'].Enable((self.GetState('FlyPower') or self.GetState('HasCF'))
+            c['FlyMode'].Enable(bool(self.GetState('FlyPower') or self.GetState('HasCF'))
                                           and self.GetState('DefaultMode') != "Fly")
-            c['HasHover'].Enable(self.Profile.HasPowerPool('Flight'))
+            c['HasHover'].Show(self.Profile.HasPowerPool('Flight') or archetype == "Peacebringer")
+            if archetype == 'Peacebringer':
+                c['HasHover'].CtlLabel.SetLabel('Has Combat Flight:')
+                c['HoverPower'].SetValue('Combat Flight')
+            else:
+                c['HasHover'].CtlLabel.SetLabel('Has Hover:')
+                c['HoverPower'].SetValue('Hover')
 
             c['FlySpecialKey'].Show(False)
             if (self.GetState('FlyPower') == "Fly"):
@@ -577,6 +565,14 @@ class MovementPowers(Page):
                 if not JauntExists: c['TPPower'].Append('Jaunt')
             else:
                 if JauntExists: c['TPPower'].Delete(JauntIdx)
+
+            ShadowStepIdx = c['TPPower'].FindString('Shadow Step')
+            ShadowStepExists = ShadowStepIdx != wx.NOT_FOUND
+            if archetype == "Warshade":
+                if not ShadowStepExists: c['TPPower'].Append('Shadow Step')
+            else:
+                if ShadowStepExists: c['TPPower'].Delete(ShadowStepIdx)
+
             self.PrePickLonePower(c['TPPower'])
 
             c['TPBindKey'].Enable(self.GetState('TPPower') != '')
@@ -602,20 +598,17 @@ class MovementPowers(Page):
             # end TODO temp sizer
 
             # show/hide kheldian-influenced controls depending on selected archetype;
-            archetype = self.Profile.Archetype()
-
             kheldianGridSizer = self.kheldianSizer.GetChildren()[0].GetSizer()
-            flyGridSizer      = self.flySizer.GetChildren()[0].GetSizer()
-            if False and (archetype == "Peacebringer" or archetype == "Warshade"):
+            if (archetype == "Peacebringer" or archetype == "Warshade"):
                 # show kheldian sizer, enable controls
                 for ctrl in kheldianGridSizer.GetChildren():
                     ctrl.GetWindow().Enable(True)
                 self.rightColumn.Show(self.kheldianSizer)
-                # if Warshade: hide flight sizer, disable controls
-                for ctrl in flyGridSizer.GetChildren():
-                    ctrl.GetWindow().Enable(archetype != "Warshade")
-                # TODO: this is not right, warshades can still pick Flight pool
-                # self.rightColumn.Show(self.flySizer, archetype != "Warshade")
+
+                c['NovaMode'].Enable(self.GetState('UseNova'))
+                c['NovaTray'].Enable(self.GetState('UseNova'))
+                c['DwarfMode'].Enable(self.GetState('UseDwarf'))
+                c['DwarfTray'].Enable(self.GetState('UseDwarf'))
 
             else:
                 # hide kheldiansizer, disable controls
@@ -1098,38 +1091,28 @@ class MovementPowers(Page):
             t.jump   = self.GetState('JumpPower')
 
         ## Flying / hover
-        if (profile.Archetype() == "Peacebringer"):
-            # TODO - wrap kheldian powers into the FlyPower picker and use that.
-            # TODO - this will involve probably having an automatic "HoverPower" notion
-            #        or do Peacebringers sometimes take Flight?
-            if (self.hasHover()):
-                t.canhov = True
-                t.canfly = True
-                t.hover  = "Combat Flight"
-                t.fly    = "Energy Flight"
-                t.flyx   = "Energy Flight"
-            else:
-                t.canfly = True
-                t.hover  = "Energy Flight"
-                t.flyx   = "Energy Flight"
+        t.hover  = self.GetState('HoverPower')
+        t.flyx   = self.GetState('FlyPower')
 
-        elif (not (profile.Archetype() == "Warshade")):
+        if (profile.Archetype() == "Peacebringer"):
+            t.canfly = True
+
+        else:
+            # hover, no fly
             if (self.hasHover() and not self.GetState('FlyPower')):
                 t.canhov = True
-                t.hover  = "Hover"
-                t.flyx   = "Hover"
-                if (self.GetState('TPTPHover')): t.tphover = '$$powexectoggleon Hover'
+                t.flyx   = self.GetState('HoverPower')
+                if (self.GetState('TPTPHover')): t.tphover = f'$$powexectoggleon {self.GetState("HoverPower")}'
+            # fly, no hover
             elif (not self.hasHover() and self.GetState('FlyPower')):
                 t.canfly = True
                 t.hover  = self.GetState('FlyPower')
-                t.flyx   = self.GetState('FlyPower')
+            # hover and fly
             elif (self.hasHover() and self.GetState('FlyPower')):
                 t.canhov = True
                 t.canfly = True
-                t.hover  = "Hover"
                 t.fly    = self.GetState('FlyPower')
-                t.flyx   = self.GetState('FlyPower')
-                if (self.GetState('TPTPHover')): t.tphover = '$$powexectoggleon Hover'
+                if (self.GetState('TPTPHover')): t.tphover = f'$$powexectoggleon {self.GetState("HoverPower")}'
 
         if ((profile.Archetype() == "Peacebringer") and self.GetState('FlyQFly')):
             t.canqfly = True
@@ -1180,55 +1163,43 @@ class MovementPowers(Page):
 
         ###### Kheldian power setup
         #  create the Nova and Dwarf form support files if enabled.
+        archetype = profile.Archetype()
 
-        ### TODO TODO TODO - these are just in here to make pylint happy;  fix the actual problem
-        Nova : Dict[str, str] = {}
-        Dwarf: Dict[str, str] = {}
-        humanBindKey = humanpbind = novapbind = dwarfpbind = None
+        Nova = Dwarf = HumanFormShield = ''
+        if (archetype == "Peacebringer"):
+            Nova = "Bright Nova"
+            Dwarf = "White Dwarf"
+            HumanFormShield = "Shining Shield"
+
+        elif (archetype == "Warshade"):
+            Nova = "Dark Nova"
+            Dwarf = "Black Dwarf"
+            HumanFormShield = "Gravity Shield"
+
         dwarfTPPower = normalTPPower = teamTPPower = ''
-        ### TODO TODO TODO - these are just in here to make pylint happy;  fix the actual problem
 
-        if (profile.Archetype() == "Warshade"):
+        if (archetype == "Warshade"):
             dwarfTPPower  = "Black Dwarf Step"
             normalTPPower = "Shadow Step"
-        elif (profile.Archetype() == "Peacebringer"):
+        elif (archetype == "Peacebringer"):
             dwarfTPPower = "White Dwarf Step"
         else:
             normalTPPower = self.GetState('TPPower')
             teamTPPower   = "Team Teleport"
 
-        if (self.GetState('HumanMode')):
-            humanBindKey = self.GetState('HumanMode')
-            humanpbind   = self.GetState('HumanHumanPBind')
-            novapbind    = self.GetState('HumanNovaPBind')
-            dwarfpbind   = self.GetState('HumanDwarfPBind')
-
-        if ((profile.Archetype() == "Peacebringer") or (profile.Archetype() == "Warshade")):
-            if (humanBindKey):
-                ResetFile.SetBind(humanBindKey, humanpbind)
-
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
         if (self.GetState('UseNova')):
-            ResetFile.SetBind(self.GetState('NovaMode'),
-                f"t $name, Changing to {Nova['Nova']} Form{fullstop}{t.on}{Nova['Nova']}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt'))
+            ResetFile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"t $name, Changing to {Nova} Form{fullstop}{t.on}{Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
             novafile = profile.GetBindFile("nova.txt")
 
             if (self.GetState('UseDwarf')):
-                novafile.SetBind(self.GetState('DwarfMode'), f"t $name, Changing to {Dwarf['Dwarf']} Form{fullstop}{t.off}{Nova['Nova']}{t.on}{Dwarf['Dwarf']}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt'))
+                novafile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"t $name, Changing to {Dwarf} Form{fullstop}{t.off}{Nova}{t.on}{Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
 
-            if not humanBindKey:
-                humanBindKey = self.GetState('NovaMode')
-
-            if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + self.GetState('HumanFormShield')
+            if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + HumanFormShield
             else:                                  humpower = ''
-
-            novafile.SetBind(humanBindKey, f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Nova['Nova']} {humpower} $$gototray 1" + profile.BLF('reset.txt'))
-
-            if (humanBindKey == self.GetState('NovaMode')): humanBindKey = None
-
-            if novapbind: novafile.SetBind(self.GetState('NovaMode'), novapbind)
+            novafile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Nova}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
 
             novafile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind("+forward"))
             novafile.SetBind(self.Ctrls['Left'].MakeFileKeyBind("+left"))
@@ -1243,28 +1214,21 @@ class MovementPowers(Page):
             if (self.GetState('MouseChord')):
                 novafile.SetBind('mousechord', "+down$$+forward")
 
-            if (self.GetState('TPPower')):
-                novafile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('nop'))
-                novafile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind( 'nop'))
+            # no teleport while nova
+            novafile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('nop'))
+            novafile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind( 'nop'))
 
             novafile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("follow"))
-            # novafile.SetBind(self.Ctrls['ToggleKey'].MakeFileKeyBind('t $name, Changing to Human Form, Normal Mode$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0$$powexectoggleoff ' + Nova['Nova'] + '$$gototray 1' + profile.BLF('reset.txt')))
-
 
         if (self.GetState('UseDwarf')):
-            ResetFile.SetBind(self.GetState('DwarfMode'), f"t $name, Changing to {Dwarf['Dwarf']} Form{fullstop}$$powexectoggleon {Dwarf['Dwarf']}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt'))
+            ResetFile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"t $name, Changing to {Dwarf} Form{fullstop}$$powexectoggleon {Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
             dwrffile = profile.GetBindFile("dwarf.txt")
             if (self.GetState('UseNova')):
-                dwrffile.SetBind(self.GetState('NovaMode'), f"t $name, Changing to {Nova['Nova']} Form{fullstop}$$powexectoggleoff {Dwarf['Dwarf']}$$powexectoggleon {Nova['Nova']}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt'))
+                dwrffile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"t $name, Changing to {Nova} Form{fullstop}$$powexectoggleoff {Dwarf}$$powexectoggleon {Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
-            if not humanBindKey: humanBindKey = self.GetState('DwarfMode')
-            if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + self.GetState('HumanFormShield')
-            else:                               humpower = ''
-
-            dwrffile.SetBind(humanBindKey, f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Dwarf['Dwarf']}{humpower}$$gototray 1" + profile.BLF('reset.txt'))
-
-            if dwarfpbind:
-                dwrffile.SetBind(self.GetState('DwarfMode'), dwarfpbind)
+            if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + HumanFormShield
+            else:                                  humpower = ''
+            dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Dwarf}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
 
             dwrffile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind("+forward"))
             dwrffile.SetBind(self.Ctrls['Left'].MakeFileKeyBind("+left"))
@@ -1278,23 +1242,25 @@ class MovementPowers(Page):
             if (self.GetState('FlyMode') != self.GetState('SpeedMode')):
                 dwrffile.SetBind(self.Ctrls['SpeedMode'].MakeFileKeyBind('nop'))
             if (self.GetState('MouseChord')):
-                dwrffile.SetBind('mousechord', "+down$$+forward")
+                dwrffile.SetBind('mousechord', "Dwarf Mode Mousechord", self, "+down$$+forward")
 
-            # TODO:  this should get rolled into the core teleport logic I think.
-            if (self.GetState('TPPower')):
-                dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
-                dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
+            # TODO:  this should get DRY'ed up with the normal teleport logic below
+            if dwarfTPPower:
+                tphovermodeswitch = ''
+                if (t.tphover != ''):
+                    tphovermodeswitch = t.bla + "000000.txt"
+
+                dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexec_location cursor ' + dwarfTPPower))
+                dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on.txt')))
+
                 tp_off = profile.GetBindFile("dtp","tp_off.txt")
-                tp_off.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop') )
-                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
-                tp_on1 = profile.GetBindFile("dtp","tp_on1.txt")
-                tp_on1.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+first$$-first' + profile.BLF('dtp','tp_on2.txt')))
-                tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('dtp','tp_off.txt')))
+                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on.txt')))
 
-                tp_on2 = profile.GetBindFile("dtp","tp_on2.txt")
-                tp_on2.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + dwarfTPPower + profile.BLF('dtp','tp_on1.txt')))
+                tp_on = profile.GetBindFile("dtp","tp_on.txt")
+                zoomin = t.detailhi + t.runcamdist
+                if (t.tphover): zoomin = ''
+                tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecunqueue$$powexeclocation cursor ' + dwarfTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
 
-            dwrffile.SetBind(self.Ctrls['ToggleKey'].MakeFileKeyBind(f"t $name, Changing to Human Form, Normal Mode$fullstop$$powexectoggleoff {Dwarf['Dwarf']}$$gototray 1" + profile.BLF('reset.txt')))
         ###
         ###### End Kheldian power setup
 
@@ -1310,13 +1276,8 @@ class MovementPowers(Page):
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind( 'nop'))
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('nop'))
 
-
-
-
-
         # Normal non-peacebringer teleport binds
-        if (normalTPPower and not (profile.Archetype() == "Peacebringer")):
-            # TODO: what is this?  Do we need it for TTP binds, below?
+        if (normalTPPower and not (archetype == "Peacebringer")):
             tphovermodeswitch = ''
             if (t.tphover != ''):
                 tphovermodeswitch = t.bla + "000000.txt"
@@ -1328,17 +1289,12 @@ class MovementPowers(Page):
             tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
 
             tp_on = profile.GetBindFile("tp","tp_on.txt")
-            # TODO: what is this?  Do we need it for TTP binds, below?
             zoomin = t.detailhi + t.runcamdist
             if (t.tphover): zoomin = ''
             tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecunqueue$$powexeclocation cursor ' + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
 
-
-
-
-
         # normal non-peacebringer team teleport binds
-        if (self.GetState('HasTTP') and not (profile.Archetype() == "Peacebringer") and teamTPPower) :
+        if (self.GetState('HasTTP') and not (archetype == "Peacebringer") and teamTPPower) :
 
             ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('powexeclocation cursor ' + teamTPPower))
             ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on.txt')))
@@ -1350,15 +1306,12 @@ class MovementPowers(Page):
             ttp_on.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+first$$-first$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
 
 
-
-
-
     def doSpeedOnDemandBinds(self, t):
         profile   = self.Profile
         ResetFile = profile.ResetFile()
         config    = wx.ConfigBase.Get()
 
-        keybindreset = 'keybind_reset$$' if config.ReadBool('FlushAllBinds') else ''
+        keybindreset = 'keybind_reset' if config.ReadBool('FlushAllBinds') else ''
         ResetFile.SetBind(config.Read('ResetKey'), "Reset Key", self,
                     [
                         keybindreset,
@@ -2329,14 +2282,13 @@ UI.Labels.update( {
     'TempTray'       : 'Temporary Travel Power Tray',
     'TempTraySwitch' : "Tray Toggle",
 
+    'HumanTray'      : 'Human Form Power Tray',
     'UseNova'        : 'Use Nova Form Toggle',
     'NovaMode'       : 'Toggle Nova Form',
-    'NovaTray'       : 'Nova Travel Power Tray',
+    'NovaTray'       : 'Nova Form Power Tray',
     'UseDwarf'       : 'Use Dwarf Form Toggle',
     'DwarfMode'      : 'Toggle Dwarf Form',
-    'DwarfTray'      : 'Dwarf Travel Power Tray',
-    'HumanMode'      : 'Human Form',
-    'HumanTray'      : 'Human Travel Power Tray',
+    'DwarfTray'      : 'Dwarf Form Power Tray',
 })
 
 class tObject(dict):

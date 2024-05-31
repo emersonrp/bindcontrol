@@ -426,7 +426,7 @@ class MovementPowers(Page):
             c['TempTray'].Enable(self.GetState('TempEnable'))
             c['TempTraySwitch'].Enable(self.GetState('TempEnable'))
 
-            # show/hide control groups based on power pool picks
+            ### SHOW/HIDE CONTROL GROUPS BASED ON POWER POOL PICKS
             if (self.Profile.HasPowerPool('Flight') or self.Profile.HasPowerPool('Sorcery')):
                 self.rightColumn.Show(self.flySizer, True)
             else:

@@ -53,7 +53,7 @@ class KeySelectDialog(wx.Dialog):
         if not self.Desc:
             raise Exception("Tried to make a KeySelectDialog for something with no desc")
 
-        desc = f"Press the key you want bound to {self.Desc}:"
+        desc = f"Press the key you want bound to {self.Desc}"
 
         # is this ugly?
         self.ModSlot = set()

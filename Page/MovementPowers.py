@@ -485,7 +485,7 @@ class MovementPowers(Page):
 
             c['SpeedSpecialKey'].Show(False)
             if (self.GetState('SpeedPower') == "Super Speed"):
-                c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase Key:')
+                c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
                 c['SpeedSpecialPower'].SetValue('Speed Phase')
                 c['SpeedSpecialKey'].Show()
 
@@ -516,11 +516,11 @@ class MovementPowers(Page):
 
             c['JumpSpecialKey'].Show(False)
             if (self.GetState('JumpPower') == "Mighty Leap"):
-                c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff Key:')
+                c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
                 c['JumpSpecialPower'].SetValue('Takeoff')
                 c['JumpSpecialKey'].Show()
             elif (self.GetState('JumpPower') == "Super Jump"):
-                c['JumpSpecialKey'].CtlLabel.SetLabel('Double Jump Key:')
+                c['JumpSpecialKey'].CtlLabel.SetLabel('Double Jump:')
                 c['JumpSpecialPower'].SetValue('Double Jump')
                 c['JumpSpecialKey'].Show()
 
@@ -547,7 +547,7 @@ class MovementPowers(Page):
 
             c['FlySpecialKey'].Show(False)
             if (self.GetState('FlyPower') == "Fly"):
-                c['FlySpecialKey'].CtlLabel.SetLabel('Afterburner Key:')
+                c['FlySpecialKey'].CtlLabel.SetLabel('Afterburner:')
                 c['FlySpecialPower'].SetValue('Afterburner')
                 c['FlySpecialKey'].Show()
 
@@ -2286,9 +2286,9 @@ UI.Labels.update( {
     'TPHideWindows'  : 'Hide Windows when Teleporting',
 
     'NonSoDEnable'   : 'Enable Non-SoD Movement Mode',
-    'NonSoDMode'     : 'Non-SoD Key',
+    'NonSoDMode'     : 'Non-SoD',
     'SprintSoD'      : 'Enable Sprint SoD',
-    'SprintMode'     : "Sprint Mode Key",
+    'SprintMode'     : "Sprint Mode",
 
     'JumpPower'        : "Primary Jump Power",
     'HasCJ'            : 'Player has Combat Jumping',
@@ -2308,7 +2308,7 @@ UI.Labels.update( {
     'HasHover'        : "Player has Hover",
     'HasGFly'         : 'Player has Group Fly',
     'FlyMode'         : 'Toggle Fly Mode',
-    'FlySpecialKey'   : 'Afterburner Key',
+    'FlySpecialKey'   : 'Afterburner',
     'FlySpecialPower' : '', # hidden
     'GFlyMode'        : 'Toggle Group Fly Mode',
 
@@ -2327,7 +2327,7 @@ UI.Labels.update( {
     'TempEnable'     : 'Enable Temp Travel Mode',
     'TempMode'       : 'Toggle Temp Mode',
     'TempTray'       : 'Temporary Travel Power Tray',
-    'TempTraySwitch' : "Tray Toggle Key",
+    'TempTraySwitch' : "Tray Toggle",
 
     'UseNova'        : 'Use Nova Form Toggle',
     'NovaMode'       : 'Toggle Nova Form',

@@ -451,7 +451,9 @@ class MovementPowers(Page):
                     win = ctrl.GetWindow()
                     if win: win.Enable(False)
 
-            if (self.Profile.HasPowerPool('Teleportation') or self.Profile.HasPowerPool('Sorcery')):
+            if (self.Profile.HasPowerPool('Teleportation') or
+                    self.Profile.HasPowerPool('Sorcery') or
+                    self.Profile.HasPowerPool('Experimentation')):
                 self.rightColumn.Show(self.teleportSizer, True)
             else:
                 self.rightColumn.Show(self.teleportSizer, False)
@@ -478,17 +480,13 @@ class MovementPowers(Page):
 
             c['SpeedMode'].Enable(bool(self.GetState('SpeedPower')) and self.GetState('DefaultMode') != "Speed")
             c['SSMobileOnly'].Enable(bool(self.GetState('SpeedPower')))
-            c['SSSJModeEnable'].Enable(bool(self.GetState('SpeedPower') and self.GetState('JumpPower')))
+            c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
             c['SpeedSpecialKey'].Show(bool(self.GetState('SpeedPower')))
 
             c['SpeedSpecialKey'].Show(False)
             if (self.GetState('SpeedPower') == "Super Speed"):
                 c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase Key:')
                 c['SpeedSpecialPower'].SetValue('Speed Phase')
-                c['SpeedSpecialKey'].Show()
-            elif (self.GetState('SpeedPower') == "Speed of Sound"):
-                c['SpeedSpecialKey'].CtlLabel.SetLabel('Jaunt Key:')
-                c['SpeedSpecialPower'].SetValue('Jaunt')
                 c['SpeedSpecialKey'].Show()
 
             ### JUMP POWERS
@@ -509,7 +507,7 @@ class MovementPowers(Page):
             self.PrePickLonePower(c['JumpPower'])
 
             c['HasCJ'].Enable(self.Profile.HasPowerPool('Leaping'))
-            c['SimpleSJCJ'].Enable(bool(self.GetState('JumpPower') and self.GetState('HasCJ')))
+            c['SimpleSJCJ'].Enable(bool(self.GetState('JumpPower') or self.GetState('HasCJ')))
             c['JumpMode']  .Enable(bool(
                     ((self.GetState('JumpPower') or self.GetState('HasCJ')) and self.GetState('DefaultMode') != "Jump")
                         or
@@ -573,13 +571,22 @@ class MovementPowers(Page):
                 if TranslocExists: c['TPPower'].Delete(TranslocIdx)
             self.PrePickLonePower(c['TPPower'])
 
+            JauntIdx = c['TPPower'].FindString('Jaunt')
+            JauntExists = JauntIdx != wx.NOT_FOUND
+            if self.Profile.HasPowerPool('Experimentation') and (self.GetState('SpeedPower') == "Speed of Sound"):
+                if not JauntExists: c['TPPower'].Append('Jaunt')
+            else:
+                if JauntExists: c['TPPower'].Delete(JauntIdx)
+            self.PrePickLonePower(c['TPPower'])
+
             c['TPBindKey'].Enable(self.GetState('TPPower') != '')
             c['TPComboKey'].Enable(self.GetState('TPPower') != '')
-            c['TPTPHover'].Enable(self.GetState('TPPower') != '' and self.hasHover())
+            c['TPTPHover'].Show((self.GetState('TPPower') != '') and self.hasHover())
 
-            c['TTPBindKey'].Enable(self.GetState('HasTTP'))
-            c['TTPComboKey'].Enable(self.GetState('HasTTP'))
-            c['TTPTPGFly'].Enable(self.GetState('HasTTP') and self.hasGFly())
+            c['HasTTP']     .Show(self.Profile.HasPowerPool('Teleportation'))
+            c['TTPBindKey'] .Show(c['HasTTP'].IsShown() and self.GetState('HasTTP'))
+            c['TTPComboKey'].Show(c['HasTTP'].IsShown() and self.GetState('HasTTP'))
+            c['TTPTPGFly']  .Show(c['HasTTP'].IsShown() and self.GetState('HasTTP') and self.hasGFly())
 
             c['NovaMode'].Enable(self.GetState('UseNova'))
             c['NovaTray'].Enable(self.GetState('UseNova'))
@@ -596,7 +603,6 @@ class MovementPowers(Page):
 
             # show/hide kheldian-influenced controls depending on selected archetype;
             archetype = self.Profile.Archetype()
-            nonkheldianOnlyControls = ['HasHover','TPTPHover']
 
             kheldianGridSizer = self.kheldianSizer.GetChildren()[0].GetSizer()
             flyGridSizer      = self.flySizer.GetChildren()[0].GetSizer()
@@ -611,22 +617,11 @@ class MovementPowers(Page):
                 # TODO: this is not right, warshades can still pick Flight pool
                 # self.rightColumn.Show(self.flySizer, archetype != "Warshade")
 
-                # en/disable controls in other sizers
-                for c in nonkheldianOnlyControls:
-                    ctrl = self.Ctrls[c]
-                    ctrl.GetContainingSizer().Hide(ctrl)
-                    ctrl.GetContainingSizer().Hide(ctrl.CtlLabel)
             else:
                 # hide kheldiansizer, disable controls
                 for ctrl in kheldianGridSizer.GetChildren():
                     ctrl.GetWindow().Enable(False)
                 self.rightColumn.Hide(self.kheldianSizer)
-
-                # en/disable controls in other sizers
-                for cname in nonkheldianOnlyControls:
-                    ctrl = self.Ctrls[cname]
-                    ctrl.GetContainingSizer().Show(ctrl)
-                    ctrl.GetContainingSizer().Show(ctrl.CtlLabel)
 
         except Exception as e:
             print(f"Something blowed up in SoD SynchronizeUI:  {e}")

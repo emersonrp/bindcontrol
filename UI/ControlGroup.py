@@ -5,6 +5,7 @@ import wx
 from wx.adv import BitmapComboBox
 import wx.lib.stattext as ST
 
+from Page import Page
 import UI
 from UI.KeySelectDialog import bcKeyButton
 
@@ -118,6 +119,8 @@ class ControlGroup(wx.StaticBoxSizer):
             wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}")
             raise Exception
 
+        control.Page = self.Page
+
         # Pack'em in there
         if tooltip: control.SetToolTip( wx.ToolTip(tooltip) )
 
@@ -150,6 +153,7 @@ class CGControlProtocol(Protocol):
     Enable: Callable
     GetContainingSizer: Callable
     CtlLabel : ST.GenStaticText | wx.StaticText | None
+    Page : Page
 
 # Mixin to enable/show controls' labels when they are enabled/shown
 class CGControlMixin:
@@ -166,7 +170,7 @@ class CGControlMixin:
         self.GetContainingSizer().Show(self,          show = show)
         self.GetContainingSizer().Show(self.CtlLabel, show = show)
         self.Enable(show)
-        self.Page.Layout() # pyright: ignore
+        self.Page.Layout()
 
 # Miniclasses to use the above mixin
 class cgbcKeyButton     (CGControlMixin, bcKeyButton)         : pass

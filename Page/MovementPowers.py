@@ -426,6 +426,39 @@ class MovementPowers(Page):
             c['TempTray'].Enable(self.GetState('TempEnable'))
             c['TempTraySwitch'].Enable(self.GetState('TempEnable'))
 
+            # show/hide control groups based on power pool picks
+            if (self.Profile.HasPowerPool('Flight') or self.Profile.HasPowerPool('Sorcery')):
+                self.rightColumn.Show(self.flySizer, True)
+            else:
+                self.rightColumn.Show(self.flySizer, False)
+                for ctrl in self.flySizer.GetChildren():
+                    win = ctrl.GetWindow()
+                    if win: win.Enable(False)
+
+            if (self.Profile.HasPowerPool('Leaping') or self.Profile.HasPowerPool('Force of Will')):
+                self.rightColumn.Show(self.superJumpSizer, True)
+            else:
+                self.rightColumn.Show(self.superJumpSizer, False)
+                for ctrl in self.superJumpSizer.GetChildren():
+                    win = ctrl.GetWindow()
+                    if win: win.Enable(False)
+
+            if (self.Profile.HasPowerPool('Speed') or self.Profile.HasPowerPool('Experimentation')):
+                self.rightColumn.Show(self.superSpeedSizer, True)
+            else:
+                self.rightColumn.Show(self.superSpeedSizer, False)
+                for ctrl in self.superSpeedSizer.GetChildren():
+                    win = ctrl.GetWindow()
+                    if win: win.Enable(False)
+
+            if (self.Profile.HasPowerPool('Teleportation') or self.Profile.HasPowerPool('Sorcery')):
+                self.rightColumn.Show(self.teleportSizer, True)
+            else:
+                self.rightColumn.Show(self.teleportSizer, False)
+                for ctrl in self.teleportSizer.GetChildren():
+                    win = ctrl.GetWindow()
+                    if win: win.Enable(False)
+
             ### SPEED POWERS
             SoSIdx = c['SpeedPower'].FindString('Speed of Sound')
             SoSExists = SoSIdx != wx.NOT_FOUND
@@ -560,39 +593,6 @@ class MovementPowers(Page):
                 ctrl.GetWindow().Enable(False)
             self.leftColumn.Hide(self.tempSizer)
             # end TODO temp sizer
-
-            # show/hide control groups based on power pool picks
-            if (self.Profile.HasPowerPool('Flight') or self.Profile.HasPowerPool('Sorcery')):
-                self.rightColumn.Show(self.flySizer, True)
-            else:
-                self.rightColumn.Show(self.flySizer, False)
-                for ctrl in self.flySizer.GetChildren():
-                    win = ctrl.GetWindow()
-                    if win: win.Enable(False)
-
-            if (self.Profile.HasPowerPool('Leaping') or self.Profile.HasPowerPool('Force of Will')):
-                self.rightColumn.Show(self.superJumpSizer, True)
-            else:
-                self.rightColumn.Show(self.superJumpSizer, False)
-                for ctrl in self.superJumpSizer.GetChildren():
-                    win = ctrl.GetWindow()
-                    if win: win.Enable(False)
-
-            if (self.Profile.HasPowerPool('Speed') or self.Profile.HasPowerPool('Experimentation')):
-                self.rightColumn.Show(self.superSpeedSizer, True)
-            else:
-                self.rightColumn.Show(self.superSpeedSizer, False)
-                for ctrl in self.superSpeedSizer.GetChildren():
-                    win = ctrl.GetWindow()
-                    if win: win.Enable(False)
-
-            if (self.Profile.HasPowerPool('Teleportation') or self.Profile.HasPowerPool('Sorcery')):
-                self.rightColumn.Show(self.teleportSizer, True)
-            else:
-                self.rightColumn.Show(self.teleportSizer, False)
-                for ctrl in self.teleportSizer.GetChildren():
-                    win = ctrl.GetWindow()
-                    if win: win.Enable(False)
 
             # show/hide kheldian-influenced controls depending on selected archetype;
             archetype = self.Profile.Archetype()

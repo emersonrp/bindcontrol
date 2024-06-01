@@ -107,7 +107,13 @@ class MovementPowers(Page):
         self.leftColumn  = wx.BoxSizer(wx.VERTICAL)
         self.rightColumn = wx.BoxSizer(wx.VERTICAL)
 
+        # hidden controls for keeping state
         self.hiddenSizer = ControlGroup(self, self, "Hidden Settings")
+        self.hiddenSizer.AddControl( ctlName = 'HoverPower', ctlType = 'text')
+        self.hiddenSizer.AddControl( ctlName = 'HasQF', ctlType = 'checkbox',)
+        self.hiddenSizer.AddControl( ctlName = 'FlySpecialPower', ctlType = 'text', )
+        self.hiddenSizer.AddControl( ctlName = 'JumpSpecialPower', ctlType = 'text', )
+        self.hiddenSizer.AddControl( ctlName = 'SpeedSpecialPower', ctlType = 'text', )
         self.leftColumn.Add(self.hiddenSizer)
         self.leftColumn.Hide(self.hiddenSizer)
 
@@ -243,20 +249,23 @@ class MovementPowers(Page):
         ##### SPEED ON DEMAND SETTINGS
         SoDSizer = ControlGroup(self, self, 'Speed on Demand Settings')
 
-        SoDSizer.AddControl( ctlName = 'EnableSoD', ctlType = 'checkbox',)
+        SoDSizer.AddControl( ctlName = 'EnableSoD', ctlType = 'checkbox',
+            tooltip = "Enable Speed on Demand behavior for the movement keys, above.")
         self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         SoDSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'choice',
-            contents = ('No SoD','Sprint','Speed','Jump','Fly'),)
+            contents = ('No SoD','Sprint','Speed','Jump','Fly'),
+            tooltip = "Select the Speed on Demand mode the movement keys will use by default.")
         self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
         SoDSizer.AddControl( ctlName = 'SprintPower', ctlType = 'choice',
-            contents = GameData.SprintPowers,)
+            contents = GameData.SprintPowers,
+            tooltip = "Select the power to use for Sprint Speed on Demand.")
         SoDSizer.AddControl( ctlName = 'AutoMouseLook', ctlType = 'checkbox',
-            tooltip = 'Automatically Mouselook when moving',)
-        #SoDSizer.AddControl( ctlName = 'AutoRun', ctlType = 'keybutton',)
-        #SoDSizer.AddControl( ctlName = 'Follow', ctlType = 'keybutton',)
-        SoDSizer.AddControl( ctlName = 'NonSoDEnable', ctlType = 'checkbox',)
+            tooltip = 'Automatically engage mouselook whenever moving',)
+        SoDSizer.AddControl( ctlName = 'NonSoDEnable', ctlType = 'checkbox',
+            tooltip = "Use a key to toggle whether Speed on Demand is active.")
         self.Ctrls['NonSoDEnable'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        SoDSizer.AddControl( ctlName = 'NonSoDMode', ctlType = 'keybutton',)
+        SoDSizer.AddControl( ctlName = 'NonSoDMode', ctlType = 'keybutton',
+            tooltip = "Select the key to toggle Speed on Demand.")
         SoDSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',)
         self.Ctrls['SprintSoD'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         SoDSizer.AddControl( ctlName = 'SprintMode', ctlType = 'keybutton',)
@@ -266,15 +275,22 @@ class MovementPowers(Page):
 
         ### DETAIL SETTINGS
         detailSizer = ControlGroup(self, self, 'Detail Settings')
-        detailSizer.AddControl( ctlName = 'ChangeCamera', ctlType = 'checkbox',)
+        detailSizer.AddControl( ctlName = 'ChangeCamera', ctlType = 'checkbox',
+            tooltip = "Change the camera distance while moving.")
         self.Ctrls['ChangeCamera'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        detailSizer.AddControl( ctlName = 'CamdistBase', ctlType = 'spinbox', contents = (1, 100),)
-        detailSizer.AddControl( ctlName = 'CamdistMove', ctlType = 'spinbox', contents = (1, 100),)
-        detailSizer.AddControl( ctlName = 'ChangeDetail', ctlType = 'checkbox',)
+        detailSizer.AddControl( ctlName = 'CamdistBase', ctlType = 'spinbox', contents = (1, 100),
+            tooltip = "Set the camera distance to use while stationary.")
+        detailSizer.AddControl( ctlName = 'CamdistMove', ctlType = 'spinbox', contents = (1, 100),
+            tooltip = "Set the camera distance to use while moving.")
+        detailSizer.AddControl( ctlName = 'ChangeDetail', ctlType = 'checkbox',
+            tooltip = "Change the game's detail level while moving.")
         self.Ctrls['ChangeDetail'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        detailSizer.AddControl( ctlName = 'DetailBase', ctlType = 'spinboxfractional', contents = (0, 1),)
-        detailSizer.AddControl( ctlName = 'DetailMove', ctlType = 'spinboxfractional', contents = (0, 1),)
-        detailSizer.AddControl( ctlName = 'Feedback', ctlType = 'checkbox',)
+        detailSizer.AddControl( ctlName = 'DetailBase', ctlType = 'spinboxfractional', contents = (0, 1),
+            tooltip = "Set the detail level to use while stationary.")
+        detailSizer.AddControl( ctlName = 'DetailMove', ctlType = 'spinboxfractional', contents = (0, 1),
+            tooltip = "Set the detail level to use while moving.")
+        detailSizer.AddControl( ctlName = 'Feedback', ctlType = 'checkbox',
+            tooltip = "Announce changes in Speed on Demand modes via self-/tell.")
         self.leftColumn.Add(detailSizer, 0, wx.EXPAND)
 
         ##### TEMP TRAVEL POWERS
@@ -285,81 +301,99 @@ class MovementPowers(Page):
         self.tempSizer.AddControl( ctlName = 'TempMode', ctlType = 'keybutton',)
         self.tempSizer.AddControl( ctlName = 'TempTray', ctlType = 'spinbox', contents = [1, 8],)
         self.tempSizer.AddControl( ctlName = 'TempTraySwitch', ctlType = 'keybutton',)
-        self.leftColumn.Add(self.tempSizer, 0, wx.EXPAND)
+        self.rightColumn.Add(self.tempSizer, 0, wx.EXPAND)
 
         ##### SUPER SPEED
         self.superSpeedSizer = ControlGroup(self, self, 'Speed')
-        self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''])
+        self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''],
+            tooltip = "Select the super speed power to use with the keybinds in this section.")
         self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
-        self.superSpeedSizer.AddControl( ctlName = 'SpeedMode', ctlType = 'keybutton',)
+        self.superSpeedSizer.AddControl( ctlName = 'SpeedMode', ctlType = 'keybutton',
+            tooltip = "Enter Speed on Demand Super Speed Mode.")
         self.superSpeedSizer.AddControl( ctlName = 'SpeedSpecialKey', ctlType = 'keybutton',)
-        self.superSpeedSizer.AddControl( ctlName = 'SSMobileOnly', ctlType = 'checkbox',)
-        self.superSpeedSizer.AddControl( ctlName = 'SSSJModeEnable', ctlType = 'checkbox',)
+        self.superSpeedSizer.AddControl( ctlName = 'SSMobileOnly', ctlType = 'checkbox',
+            tooltip = "Activate speed power only when moving;  deactivate when stationary.")
+        self.superSpeedSizer.AddControl( ctlName = 'SSSJModeEnable', ctlType = 'checkbox',
+            tooltip = "Enable Super Speed + Super Jump mode.  Check the Manual for details.")
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
         self.superJumpSizer = ControlGroup(self, self, 'Jumping')
-        self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''])
+        self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''],
+            tooltip = "Select the jump power to use with the keybinds in this section.")
         self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
-        self.superJumpSizer.AddControl( ctlName = 'HasCJ', ctlType = 'checkbox',)
+        self.superJumpSizer.AddControl( ctlName = 'HasCJ', ctlType = 'checkbox',
+            tooltip = "Should the binds use Combat Jumping as a defense / stationary power?")
         self.Ctrls['HasCJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',)
+        self.superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',
+            tooltip = "Use the Jump Mode key as a simple Super Jump / Combat Jumping toggle.  This will toggle on and off either power if it is the only one available.")
         self.Ctrls['SimpleSJCJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',)
+        self.superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',
+            tooltip = "Enter Speed on Demand Jump Mode.")
         self.superJumpSizer.AddControl( ctlName = 'JumpSpecialKey', ctlType = 'keybutton',)
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
         ##### FLY
         self.flySizer = ControlGroup(self, self, 'Flight')
-        self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''])
+        self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''],
+            tooltip = "Select the flight power to use with the keybinds in this section.")
         self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
-        self.flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',)
+        self.flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',
+            tooltip = "Should the binds use Hover as a defense / stationary power?")
         self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',)
+        self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',
+            tooltip = "Enter Speed on Demand Fly Mode.")
         self.flySizer.AddControl( ctlName = 'FlySpecialKey', ctlType = 'keybutton',)
-        self.flySizer.AddControl( ctlName = 'HasGFly', ctlType = 'checkbox',)
+        self.flySizer.AddControl( ctlName = 'HasGFly', ctlType = 'checkbox',
+            tooltip = "Enable Group Fly-related keybinds.")
         self.Ctrls['HasGFly'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',)
-        # hidden controls for keeping state
-        self.hiddenSizer.AddControl( ctlName = 'HoverPower', ctlType = 'text')
-        self.hiddenSizer.AddControl( ctlName = 'HasQF', ctlType = 'checkbox',)
-        self.hiddenSizer.AddControl( ctlName = 'FlySpecialPower', ctlType = 'text', )
-        self.hiddenSizer.AddControl( ctlName = 'JumpSpecialPower', ctlType = 'text', )
-        self.hiddenSizer.AddControl( ctlName = 'SpeedSpecialPower', ctlType = 'text', )
+        self.flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',
+            tooltip = "Enter Group Fly Speed on Demand Mode.")
         self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
         self.teleportSizer = ControlGroup(self, self, 'Teleport')
-        # if (at == peacebringer) "Dwarf Step"
-        # if (at == warshade) "Shadow Step / Dwarf Step"
-        self.teleportSizer.AddControl(ctlName = "TPPower", ctlType = 'choice', contents = [''])
+        self.teleportSizer.AddControl(ctlName = "TPPower", ctlType = 'choice', contents = [''],
+            tooltip = "Select the teleport power to use with the keybinds in this section.")
         self.Ctrls['TPPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
         self.teleportSizer.AddControl( ctlName = "TPBindKey", ctlType = 'keybutton',
-            tooltip = 'Immediately teleport to the cursor position without showing a destination reticle', )
+            tooltip = 'Immediately teleport to the cursor position without showing a destination reticle.', )
         self.teleportSizer.AddControl( ctlName = "TPComboKey", ctlType = 'keybutton',
-            tooltip = 'Show teleport reticle on keypress;  teleport to reticle on key release', )
-        self.teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',)
-        self.teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',)
+            tooltip = 'Show teleport reticle on keypress;  teleport to reticle on key release.', )
+        self.teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',
+            tooltip = "Activate the Hover power after teleporting.")
+        self.teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',
+            tooltip = "Enable Team Teleport-related keybinds.")
         self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.teleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton',)
-        self.teleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton',)
-        self.teleportSizer.AddControl( ctlName = 'TTPTPGFly', ctlType = 'checkbox',)
+        self.teleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton',
+            tooltip = "Immediately Team Teleport to the cursor position without showing a destination reticle.")
+        self.teleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton',
+            tooltip = "Show Team Teleport reticle on keypress;  Team Teleport to reticle on key release.",)
+        self.teleportSizer.AddControl( ctlName = 'TTPTPGFly', ctlType = 'checkbox',
+            tooltip = "Activate the Group Fly power after Team Teleporting.")
         self.teleportSizer.AddControl( ctlName = 'TPHideWindows', ctlType = 'checkbox',
-            tooltip = 'Hide most UI elements while teleport reticle is visible.', )
+            tooltip = 'Hide most UI elements while a teleport reticle is visible.', )
         self.rightColumn.Add(self.teleportSizer, 0, wx.EXPAND)
 
         ##### KHELDIAN TRAVEL POWERS
         self.kheldianSizer = ControlGroup(self, self, 'Kheldian Forms / Powers')
 
-        self.kheldianSizer.AddControl( ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 8],)
-        self.kheldianSizer.AddControl( ctlName = 'UseNova', ctlType = 'checkbox',)
+        self.kheldianSizer.AddControl( ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 8],
+            tooltip = "Select the powers tray to change to when in human form.")
+        self.kheldianSizer.AddControl( ctlName = 'UseNova', ctlType = 'checkbox',
+            tooltip = "Use a key to toggle between Nova and human form.")
         self.Ctrls['UseNova'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.kheldianSizer.AddControl( ctlName = 'NovaMode', ctlType = 'keybutton',)
-        self.kheldianSizer.AddControl( ctlName = 'NovaTray', ctlType = 'spinbox', contents = [1, 8],)
-        self.kheldianSizer.AddControl( ctlName = 'UseDwarf', ctlType = 'checkbox',)
+        self.kheldianSizer.AddControl( ctlName = 'NovaMode', ctlType = 'keybutton',
+            tooltip = "Select the key to toggle between Nova and human form.")
+        self.kheldianSizer.AddControl( ctlName = 'NovaTray', ctlType = 'spinbox', contents = [1, 8],
+            tooltip = "Select the powers tray to change to when in Nova form.")
+        self.kheldianSizer.AddControl( ctlName = 'UseDwarf', ctlType = 'checkbox',
+            tooltip = "Use a key to toggle between Dwarf and human form.")
         self.Ctrls['UseDwarf'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.kheldianSizer.AddControl( ctlName = 'DwarfMode', ctlType = 'keybutton',)
-        self.kheldianSizer.AddControl( ctlName = 'DwarfTray', ctlType = 'spinbox', contents = [1, 8],)
+        self.kheldianSizer.AddControl( ctlName = 'DwarfMode', ctlType = 'keybutton',
+            tooltip = "Select the key to toggle between Dwarf and human form.")
+        self.kheldianSizer.AddControl( ctlName = 'DwarfTray', ctlType = 'spinbox', contents = [1, 8],
+            tooltip = "Select the powers tray to change to when in Dwarf form.")
         self.rightColumn.Add(self.kheldianSizer, 0, wx.EXPAND)
 
         topSizer.Add(self.leftColumn, 0, wx.ALL, 3)
@@ -594,7 +628,7 @@ class MovementPowers(Page):
             tempGridSizer = self.tempSizer.GetChildren()[0].GetSizer()
             for ctrl in tempGridSizer.GetChildren():
                 ctrl.GetWindow().Enable(False)
-            self.leftColumn.Hide(self.tempSizer)
+            self.rightColumn.Hide(self.tempSizer)
             # end TODO temp sizer
 
             # show/hide kheldian-influenced controls depending on selected archetype;

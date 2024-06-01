@@ -36,7 +36,10 @@ elif platform.system() == 'Darwin':
 class KeySelectDialog(wx.Dialog):
     def __init__(self, button):
 
-        self.Desc    = (button.CtlLabel.GetLabel() or UI.Labels[button.CtlName])
+        if button.CtlLabel:
+            self.Desc    = button.CtlLabel.GetLabel()
+        else:
+            self.Desc    = UI.Labels[button.CtlName]
         self.Button  = button
         self.Binding = button.Key
 

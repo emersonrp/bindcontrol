@@ -398,14 +398,14 @@ class DoneDialog(wx.Dialog):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        msg = msg + f"""
-
-If you are updating existing installed BindControl binds, you can
-press \"{wx.ConfigBase.Get().Read('ResetKey')}\" to load your new binds.
-
-If this is a new set of keybinds, log on to the character
-you made them for and type into the chat window:
-"""
+        msg = msg + (
+            "\n\n"
+            "If you are updating existing installed BindControl binds, you can\n"
+            f"press \"{wx.ConfigBase.Get().Read('ResetKey')}\" to load your new binds.\n"
+            "\n"
+            "If this is a new set of keybinds, log on to the character\n"
+            "you made them for and type into the chat window:\n"
+        )
 
         sizer.Add(
             wx.StaticText(self, label = msg, style = wx.ALIGN_CENTER),

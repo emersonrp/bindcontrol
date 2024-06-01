@@ -77,9 +77,7 @@ def do_git(command, path):
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 def is_wsl(v: str = platform.uname().release) -> int:
-    """
-    detects if Python is running in WSL
-    """
+    ### detects if Python is running in WSL
 
     if v.endswith("-Microsoft"):
         return 1
@@ -90,9 +88,8 @@ def is_wsl(v: str = platform.uname().release) -> int:
 
 
 def wsl_available() -> int:
-    """
-    detect if Windows Subsystem for Linux is available from Windows
-    """
+    ### detect if Windows Subsystem for Linux is available from Windows
+
     if os.name != "nt" or not shutil.which("wsl"):
         return False
     try:

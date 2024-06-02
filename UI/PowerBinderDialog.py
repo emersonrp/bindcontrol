@@ -2,6 +2,7 @@ import wx
 import re
 import UI
 import UI.EmotePicker
+from UI.ControlGroup import ControlGroup
 from UI.PowerPicker import PowerPicker
 from wx.adv import BitmapComboBox
 import GameData
@@ -11,6 +12,7 @@ class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent, init = {}):
         wx.Dialog.__init__(self, parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
+        self.Page = parent.Page
         self.EditDialog = PowerBinderEditDialog(self)
 
         sizer = wx.BoxSizer(wx.VERTICAL);
@@ -75,7 +77,10 @@ class PowerBinderDialog(wx.Dialog):
     def LoadFromData(self, init):
         for item in init:
             for type, data in item.items():
-                commandClass = commandClasses[type]
+                commandClass = commandClasses.get(type, None)
+                if not commandClass:
+                    wx.LogError(f"Profile contained unknown custom bind command class {type}!")
+                    return
                 index = self.RearrangeList.Append(type)
                 newCommand = commandClass(self.EditDialog, data)
                 self.RearrangeList.SetClientData(index, newCommand)
@@ -188,7 +193,7 @@ class PowerBinderDialog(wx.Dialog):
 class PowerBinderButton(wx.Button):
     def __init__(self, parent, tgtTxtCtrl, init = {}):
         wx.Button.__init__(self, parent, -1, label = "...")
-        self.PowerBinderDialog = PowerBinderDialog(self.Parent, init)
+        self.PowerBinderDialog = PowerBinderDialog(parent, init)
 
         self.tgtTxtCtrl = tgtTxtCtrl
         self.Bind(wx.EVT_BUTTON, self.PowerBinderEventHandler)
@@ -215,6 +220,8 @@ class PowerBinderEditDialog(wx.Dialog):
 
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
         self.mainSizer.SetMinSize([500, 150])
+
+        self.Page = parent.Page
 
         self.mainSizer.Add(
             self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL),
@@ -279,6 +286,90 @@ class AutoPowerCmd(PowerBindCmd):
     def Deserialize(self, init):
         if init.get('pname', ''): self.autoPowerName.SetLabel(init['pname'])
         if init.get('picon', ''): self.autoPowerName.SetBitmap(GetIcon(init['picon']))
+
+####### Buff Display Command
+class BuffDisplayCmd(PowerBindCmd):
+    def __init__(self, dialog, init = {}):
+        self.Page = dialog.Page
+        self.buffDisplayMap = {
+            'Status Window' : {
+                'Hide Auto' : 1,
+                'Hide Toggles' : 2,
+                'No Blinking' : 4,
+                'No Stacking' : 8,
+                'Numeric Stacking' : 16,
+                'Hide Buff Numbers' : 32,
+                'Stop Sending Buffs' : 64,
+            },
+            'Group Window' : {
+                'Hide Auto' : 256,
+                'Hide Toggles' : 512,
+                'No Blinking' : 1024,
+                'No Stacking' : 2048,
+                'Numeric Stacking' : 4096,
+                'Hide Buff Numbers' : 8192,
+                'Stop Sending Buffs' : 16384,
+            },
+            'Pet Window' : {
+                'Hide Auto' : 65536,
+                'Hide Toggles' : 131072,
+                'No Blinking' : 262144,
+                'No Stacking' : 524288,
+                'Numeric Stacking' : 1048576,
+                'Hide Buff Numbers' : 2097152,
+                'Stop Sending Buffs' : 4194304,
+            },
+        }
+        self.Groups = {}
+        PowerBindCmd.__init__(self, dialog, init)
+
+    def BuildUI(self, dialog):
+        groupSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        for group, controls in self.buffDisplayMap.items():
+            self.Groups[group] = ControlGroup(dialog, self.Page, label = group)
+            groupid = self.Groups[group].GetStaticBox().GetId()
+            for cb, data in controls.items():
+                self.Groups[group].AddControl(
+                    ctlType = 'checkbox',
+                    ctlName = f"{groupid}_{group}_{cb}",
+                    label = cb,
+                    data = data,
+                )
+
+            groupSizer.Add(self.Groups[group])
+
+        return groupSizer
+
+    def CalculateValue(self):
+        page = wx.App.Get().Profile.CustomBinds
+
+        total = 0
+
+        for group, controls in self.buffDisplayMap.items():
+            groupid = self.Groups[group].GetStaticBox().GetId()
+            for cb in controls:
+                checkbox = page.Ctrls[f"{groupid}_{group}_{cb}"]
+                if checkbox.IsChecked():
+                    total = total + checkbox.Data
+        return total
+
+    def MakeBindString(self, _):
+        return f"optionset buffsettings {self.CalculateValue()}"
+
+    def Serialize(self):
+        return { 'value' : self.CalculateValue() }
+
+    def Deserialize(self, init):
+        value = init.get('value', 0)
+
+        for group, controls in self.buffDisplayMap.items():
+            groupid = self.Groups[group].GetStaticBox().GetId()
+            for cb in controls:
+                checkbox = self.Page.Ctrls[f"{groupid}_{group}_{cb}"]
+                checkbox.SetValue( checkbox.Data & value )
+
+
 
 ####### Chat Command
 class ChatCmd(PowerBindCmd):
@@ -918,6 +1009,7 @@ class WindowToggleCmd(PowerBindCmd):
 commandClasses = {
     'Auto Power'               : AutoPowerCmd,
     'Away From Keyboard'       : AFKCmd,
+    'Buff Display Settings'    : BuffDisplayCmd,
     'Chat Command'             : ChatCmd,
     'Chat Command (Global)'    : ChatGlobalCmd,
     'Costume Change'           : CostumeChangeCmd,

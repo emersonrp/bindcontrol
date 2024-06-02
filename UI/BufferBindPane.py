@@ -40,6 +40,7 @@ class BufferBindPane(CustomBindPaneParent):
 
     def BuildBindUI(self, page):
         pane = self.GetPane()
+        pane.Page = page
 
         # bind text controls
         BindSizer = wx.GridBagSizer(hgap=5, vgap=5)

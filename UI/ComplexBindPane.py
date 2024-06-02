@@ -61,7 +61,9 @@ class ComplexBindPane(CustomBindPaneParent):
         pane.SetSizer(border)
 
     def onAddStepButton(self, _ = None, stepdata = {}):
-        step = self.MakeBindStepUI(self.GetPane(), stepdata)
+        pane = self.GetPane()
+        pane.Page = self.Page
+        step = self.MakeBindStepUI(pane, stepdata)
         self.BindStepSizer.Insert(self.BindStepSizer.GetItemCount()-1, step, 0, wx.EXPAND)
         self.Steps.append(step)
         self.Page.Layout()
@@ -70,6 +72,7 @@ class ComplexBindPane(CustomBindPaneParent):
     def MakeBindStepUI(self, parent, step):
         stepNumber = self.BindStepSizer.GetItemCount() # is already the next step because of the add button
         panel = wx.Panel(parent)
+        panel.Page = parent.Page
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         StepLabel = wx.StaticText(panel, -1, f"Step {stepNumber}:")

@@ -26,7 +26,9 @@ class ControlGroup(wx.StaticBoxSizer):
                    noLabel  : bool = False,
                    contents : Any = '',
                    tooltip  : str = '',
-                   callback : Callable|None = None
+                   callback : Callable|None = None,
+                   label    : str = '',
+                   data     : Any = None,
         ):
 
         if not ctlName:
@@ -39,7 +41,7 @@ class ControlGroup(wx.StaticBoxSizer):
 
         padding = 0
 
-        label = UI.Labels.get(ctlName, ctlName)
+        label = label or UI.Labels.get(ctlName, ctlName)
         if not noLabel:
             # This ST.GenStaticText is so we can intercept clicks on it, but
             # the background color is wrong on Windows in a way I can't work out,
@@ -92,7 +94,7 @@ class ControlGroup(wx.StaticBoxSizer):
 
         elif ctlType == ('checkbox'):
             control = cgCheckBox(CtlParent, -1, contents)
-            control.SetValue(bool(Init[ctlName]))
+            control.SetValue(bool(Init.get(ctlName, False)))
             padding = 6
             if callback:
                 control.Bind(wx.EVT_CHECKBOX, callback )
@@ -118,7 +120,11 @@ class ControlGroup(wx.StaticBoxSizer):
             wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}")
             raise Exception
 
+        # stash away the page that the control belongs to
         control.Page = self.Page
+
+        # And any user-defined data.  I thought wx had a scheme for this but no?
+        control.Data = data
 
         # Pack'em in there
         if tooltip: control.SetToolTip( wx.ToolTip(tooltip) )
@@ -149,32 +155,33 @@ class ControlGroup(wx.StaticBoxSizer):
 
 ### Deep magic for linting / pytight / mypy
 class CGControlProtocol(Protocol):
-    Enable: Callable
-    GetContainingSizer: Callable
-    SetToolTip: Callable
-    CtlLabel : ST.GenStaticText | wx.StaticText | None
-    Page : Page
+    Enable             : Callable
+    GetContainingSizer : Callable
+    CtlLabel           : ST.GenStaticText | wx.StaticText | None
+    Page               : Page | None
+    Data               : Any
 
 # Mixin to enable/show controls' labels when they are enabled/shown
 class CGControlMixin:
     def __init__(self: CGControlProtocol, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.CtlLabel : ST.GenStaticText | wx.StaticText | None = None
+        self.Page = None
+        self.Data = None
 
     def Enable(self: CGControlProtocol, enable = True):
         super().Enable(enable)
         if self.CtlLabel: self.CtlLabel.Enable(enable)
 
-    # TODO:  this enables/disables correctly but doesn't hide as expected.  Hmm.
     def Show(self: CGControlProtocol, show = True):
-        self.GetContainingSizer().Show(self,          show = show)
+        self.GetContainingSizer().Show(self, show = show)
         if self.CtlLabel:
             self.GetContainingSizer().Show(self.CtlLabel, show = show)
         self.Enable(show)
-        self.Page.Layout()
+        if self.Page: self.Page.Layout()
 
     def SetToolTip(self, tooltip):
-        super().SetToolTip(tooltip)
+        super().SetToolTip(tooltip) # pyright: ignore
         if self.CtlLabel:
             self.CtlLabel.SetToolTip(tooltip)
 

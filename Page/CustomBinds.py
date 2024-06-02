@@ -12,6 +12,7 @@ class CustomBinds(Page):
 
         self.TabTitle = "Custom Binds"
         self.Panes    = []
+        self.Init     = {}
 
     def BuildPage(self):
 

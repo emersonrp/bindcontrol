@@ -13,6 +13,9 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         self.Title   = init.get('Title', '')
         self.SetLabel(self.Title)
 
+        # stash away the bind name inside the inner pane
+        self.GetPane().Title = self.Title
+
         self.bindclass      = type(self).__name__
 
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)

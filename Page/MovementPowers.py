@@ -338,8 +338,7 @@ class MovementPowers(Page):
         self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the flight power to use with the keybinds in this section.")
         self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
-        self.flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',
-            tooltip = "Should the binds use Hover as a defense / stationary power?")
+        self.flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',)
         self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',
             tooltip = "Enter Speed on Demand Fly Mode.")
@@ -562,9 +561,11 @@ class MovementPowers(Page):
             c['HasHover'].Show(self.Profile.HasPowerPool('Flight') or archetype == "Peacebringer")
             if archetype == 'Peacebringer':
                 c['HasHover'].CtlLabel.SetLabel('Has Combat Flight:')
+                c['HasHover'].SetToolTip('Should the binds use Combat Flight as a defense / stationary power?  If your Peacebringer is below level 10, leave this unchecked.')
                 c['HoverPower'].SetValue('Combat Flight')
             else:
                 c['HasHover'].CtlLabel.SetLabel('Has Hover:')
+                c['HasHover'].SetToolTip('Should the binds use Hover as a defense / stationary power?')
                 c['HoverPower'].SetValue('Hover')
 
             c['FlySpecialKey'].Show(False)
@@ -709,7 +710,7 @@ class MovementPowers(Page):
 
             self.sodFollowKey(t,blf,curfile,mobile,stationary)
 
-        if (flight and (flight == "Fly" or flight == "Mystic Flight") and pathbo):
+        if (flight and (flight == self.GetState('FlyPower')) and pathbo):
             #  blast off
             curfile = profile.GetBindFile(f"{pathbo}{t.KeyState()}.txt")
             self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile,True))
@@ -1131,22 +1132,21 @@ class MovementPowers(Page):
         if (profile.Archetype() == "Peacebringer"):
             t.canfly = True
 
-        else:
-            # hover, no fly
-            if (self.hasHover() and not self.GetState('FlyPower')):
-                t.canhov = True
-                t.flyx   = self.GetState('HoverPower')
-                if (self.GetState('TPTPHover')): t.tphover = f'$$powexectoggleon {self.GetState("HoverPower")}'
-            # fly, no hover
-            elif (not self.hasHover() and self.GetState('FlyPower')):
-                t.canfly = True
-                t.hover  = self.GetState('FlyPower')
-            # hover and fly
-            elif (self.hasHover() and self.GetState('FlyPower')):
-                t.canhov = True
-                t.canfly = True
-                t.fly    = self.GetState('FlyPower')
-                if (self.GetState('TPTPHover')): t.tphover = f'$$powexectoggleon {self.GetState("HoverPower")}'
+        # hover, no fly
+        if (self.hasHover() and not self.GetState('FlyPower')):
+            t.canhov = True
+            t.flyx   = self.GetState('HoverPower')
+            if (self.GetState('TPTPHover')): t.tphover = f'$$powexectoggleon {self.GetState("HoverPower")}'
+        # fly, no hover
+        elif (not self.hasHover() and bool(self.GetState('FlyPower'))):
+            t.canfly = True
+            t.hover  = self.GetState('FlyPower')
+        # hover and fly
+        elif (self.hasHover() and self.GetState('FlyPower')):
+            t.canhov = True
+            t.canfly = True
+            t.fly    = self.GetState('FlyPower')
+            if (self.GetState('TPTPHover')): t.tphover = f'$$powexectoggleon {self.GetState("HoverPower")}'
 
         if ((profile.Archetype() == "Peacebringer") and self.GetState('FlyQFly')):
             t.canqfly = True
@@ -1712,10 +1712,6 @@ class MovementPowers(Page):
 
     def sodUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun, followbl, bo, sssj):
 
-        #import re
-        #if re.search('F000000', str(curfile.Path)):
-        #    breakpoint()
-
         (upx,dow,forw,bac,lef,rig) = (t.upx,t.dow,t.forw,t.bac,t.lef,t.rig)
 
         actkeys = t.totalkeys
@@ -2238,7 +2234,10 @@ class MovementPowers(Page):
 
     ### convenience methods
     def hasHover(self):
-        return bool(self.Profile.HasPowerPool('Flight') and self.GetState('HasHover'))
+        return bool(
+            (self.Profile.HasPowerPool('Flight') or self.Profile.Archetype() == "Peacebringer")
+            and self.GetState('HasHover')
+        )
 
     def hasGFly(self):
         return bool(self.Profile.HasPowerPool('Flight') and self.GetState('HasGFly'))

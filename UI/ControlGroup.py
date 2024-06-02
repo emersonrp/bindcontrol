@@ -151,6 +151,7 @@ class ControlGroup(wx.StaticBoxSizer):
 class CGControlProtocol(Protocol):
     Enable: Callable
     GetContainingSizer: Callable
+    SetToolTip: Callable
     CtlLabel : ST.GenStaticText | wx.StaticText | None
     Page : Page
 
@@ -167,9 +168,15 @@ class CGControlMixin:
     # TODO:  this enables/disables correctly but doesn't hide as expected.  Hmm.
     def Show(self: CGControlProtocol, show = True):
         self.GetContainingSizer().Show(self,          show = show)
-        self.GetContainingSizer().Show(self.CtlLabel, show = show)
+        if self.CtlLabel:
+            self.GetContainingSizer().Show(self.CtlLabel, show = show)
         self.Enable(show)
         self.Page.Layout()
+
+    def SetToolTip(self, tooltip):
+        super().SetToolTip(tooltip)
+        if self.CtlLabel:
+            self.CtlLabel.SetToolTip(tooltip)
 
 # Miniclasses to use the above mixin
 class cgbcKeyButton     (CGControlMixin, bcKeyButton)         : pass

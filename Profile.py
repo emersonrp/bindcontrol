@@ -140,8 +140,7 @@ class Profile(wx.Notebook):
             return self.doSaveToFile()
 
     def doSaveToFile(self, _ = None):
-        savefile = self.Filename
-        if not savefile:
+        if not self.Filename:
             return self.SaveToFile()
 
         profilename = self.General.GetState('Name')
@@ -151,6 +150,9 @@ class Profile(wx.Notebook):
             return False
 
         self.ProfilePath().mkdir( parents = True, exist_ok = True )
+
+        self.Filename = self.ProfilePath() / Path(profilename + ".bcp")
+        savefile = self.Filename
 
         savedata : Dict[str, Any] = {}
         for pagename in self.Pages:

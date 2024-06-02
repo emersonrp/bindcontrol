@@ -470,19 +470,8 @@ class MovementPowers(Page):
                     if win: win.Enable(False)
 
             ### SPEED POWERS
-            SoSIdx = c['SpeedPower'].FindString('Speed of Sound')
-            SoSExists = SoSIdx != wx.NOT_FOUND
-            if self.Profile.HasPowerPool('Experimentation'):
-                if not SoSExists: c['SpeedPower'].Append('Speed of Sound')
-            else:
-                if SoSExists: c['SpeedPower'].Delete(SoSIdx)
-
-            SSIdx = c['SpeedPower'].FindString('Super Speed')
-            SSExists = SSIdx != wx.NOT_FOUND
-            if self.Profile.HasPowerPool('Speed'):
-                if not SSExists: c['SpeedPower'].Append('Super Speed')
-            else:
-                if SSExists: c['SpeedPower'].Delete(SSIdx)
+            c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPowerPool('Experimentation'))
+            c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPowerPool('Speed'))
 
             self.PrePickLonePower(c['SpeedPower'])
 
@@ -498,19 +487,8 @@ class MovementPowers(Page):
                 c['SpeedSpecialKey'].Show()
 
             ### JUMP POWERS
-            MLIdx = c['JumpPower'].FindString('Mighty Leap')
-            MLExists = MLIdx != wx.NOT_FOUND
-            if self.Profile.HasPowerPool('Force of Will'):
-                if not MLExists: c['JumpPower'].Append('Mighty Leap')
-            else:
-                if MLExists: c['JumpPower'].Delete(MLIdx)
-
-            SJIdx = c['JumpPower'].FindString('Super Jump')
-            SJExists = SJIdx != wx.NOT_FOUND
-            if self.Profile.HasPowerPool('Leaping'):
-                if not SJExists: c['JumpPower'].Append('Super Jump')
-            else:
-                if SJExists: c['JumpPower'].Delete(SJIdx)
+            c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPowerPool('Force of Will'))
+            c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPowerPool('Leaping'))
 
             self.PrePickLonePower(c['JumpPower'])
 
@@ -533,26 +511,9 @@ class MovementPowers(Page):
                 c['JumpSpecialKey'].Show()
 
             ### FLIGHT POWERS
-            FlyIdx = c['FlyPower'].FindString('Fly')
-            FlyExists = FlyIdx != wx.NOT_FOUND
-            if self.Profile.HasPowerPool('Flight'):
-                if not FlyExists: c['FlyPower'].Append('Fly')
-            else:
-                if FlyExists: c['FlyPower'].Delete(FlyIdx)
-
-            MFlightIdx = c['FlyPower'].FindString('Mystic Flight')
-            MFlightExists = MFlightIdx != wx.NOT_FOUND
-            if self.Profile.HasPowerPool('Sorcery'):
-                if not MFlightExists: c['FlyPower'].Append('Mystic Flight')
-            else:
-                if MFlightExists: c['FlyPower'].Delete(MFlightIdx)
-
-            EFlightIdx = c['FlyPower'].FindString('Energy Flight')
-            EFlightExists = EFlightIdx != wx.NOT_FOUND
-            if archetype == 'Peacebringer':
-                if not EFlightExists: c['FlyPower'].Append('Energy Flight')
-            else:
-                if EFlightExists: c['FlyPower'].Delete(EFlightIdx)
+            c['FlyPower'].ShowEntryIf("Fly",           self.Profile.HasPowerPool("Flight"))
+            c['FlyPower'].ShowEntryIf("Mystic Flight", self.Profile.HasPowerPool("Sorcery"))
+            c['FlyPower'].ShowEntryIf("Energy Flight", archetype == "Peacebringer")
 
             self.PrePickLonePower(c['FlyPower'])
 
@@ -574,39 +535,20 @@ class MovementPowers(Page):
                 c['FlySpecialPower'].SetValue('Afterburner')
                 c['FlySpecialKey'].Show()
 
+            if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.GetState('HasHover'))):
+                c['FlySpecialKey'].CtlLabel.SetLabel('Quantum Maneuvers:')
+                c['FlySpecialPower'].SetValue('Quantum Maneuvers')
+                c['FlySpecialKey'].Show()
+
             c['HasGFly'].Enable(self.Profile.HasPowerPool('Flight'))
             c['GFlyMode'].Enable(self.hasGFly())
 
             ### TELEPORT POWERS
-            # TODO: we'll wrap the various Kheldian TP powers into this tangle later
-            TPIdx = c['TPPower'].FindString('Teleport')
-            TPExists = TPIdx != wx.NOT_FOUND
-            if self.Profile.HasPowerPool('Teleportation'):
-                if not TPExists: c['TPPower'].Append('Teleport')
-            else:
-                if TPExists: c['TPPower'].Delete(TPIdx)
-
-            TranslocIdx = c['TPPower'].FindString('Translocation')
-            TranslocExists = TranslocIdx != wx.NOT_FOUND
-            if self.Profile.HasPowerPool('Sorcery'):
-                if not TranslocExists: c['TPPower'].Append('Translocation')
-            else:
-                if TranslocExists: c['TPPower'].Delete(TranslocIdx)
-            self.PrePickLonePower(c['TPPower'])
-
-            JauntIdx = c['TPPower'].FindString('Jaunt')
-            JauntExists = JauntIdx != wx.NOT_FOUND
-            if self.Profile.HasPowerPool('Experimentation') and (self.GetState('SpeedPower') == "Speed of Sound"):
-                if not JauntExists: c['TPPower'].Append('Jaunt')
-            else:
-                if JauntExists: c['TPPower'].Delete(JauntIdx)
-
-            ShadowStepIdx = c['TPPower'].FindString('Shadow Step')
-            ShadowStepExists = ShadowStepIdx != wx.NOT_FOUND
-            if archetype == "Warshade":
-                if not ShadowStepExists: c['TPPower'].Append('Shadow Step')
-            else:
-                if ShadowStepExists: c['TPPower'].Delete(ShadowStepIdx)
+            c['TPPower'].ShowEntryIf('Teleport',      self.Profile.HasPowerPool('Teleportation'))
+            c['TPPower'].ShowEntryIf('Translocation', self.Profile.HasPowerPool('Sorcery'))
+            c['TPPower'].ShowEntryIf('Jaunt',         self.Profile.HasPowerPool('Experimentation')
+                                                        and self.GetState('SpeedPower') == "Speed of Sound")
+            c['TPPower'].ShowEntryIf('Shadow Step',   archetype == "Warshade")
 
             self.PrePickLonePower(c['TPPower'])
 

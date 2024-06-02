@@ -190,7 +190,15 @@ class cgbcKeyButton     (CGControlMixin, bcKeyButton)         : pass
 class cgComboBox        (CGControlMixin, wx.ComboBox)         : pass
 class cgBMComboBox      (CGControlMixin, BitmapComboBox)      : pass
 class cgTextCtrl        (CGControlMixin, wx.TextCtrl)         : pass
-class cgChoice          (CGControlMixin, wx.Choice)           : pass
+class cgChoice          (CGControlMixin, wx.Choice)           :
+    def ShowEntryIf(self, entry: str, condition: bool):
+        idx    = self.FindString(entry)
+        exists = idx != wx.NOT_FOUND
+        if condition:
+            if not exists: self.Append(entry)
+        else:
+            if exists: self.Delete(idx)
+
 class cgStaticText      (CGControlMixin, wx.StaticText)       : pass
 class cgCheckBox        (CGControlMixin, wx.CheckBox)         : pass
 class cgSpinCtrl        (CGControlMixin, wx.SpinCtrl)         : pass

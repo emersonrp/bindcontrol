@@ -68,32 +68,59 @@ class CustomBinds(Page):
             return
 
         if not bindpane.Title: # this is from a "New Bind" button
-            dlg = wx.TextEntryDialog(self, 'Enter name for new bind')
-            if dlg.ShowModal() == wx.ID_OK:
-                bindpane.Title = dlg.GetValue()
-                bindpane.SetLabel(bindpane.Title)
-            else:
-                bindpane.Destroy()
+            self.SetBindPaneLabel(None, bindpane, new = True)
+            if not bindpane: # clicked 'Cancel'
                 return
-
-            dlg.Destroy()
 
         self.Panes.append(bindpane)
 
         bindpane.BuildBindUI(self)
 
-        # put it in a box with a 'delete' button
-        deleteSizer = wx.BoxSizer(wx.HORIZONTAL)
-        deleteSizer.Add(bindpane, 1, wx.EXPAND, 5)
+        # put it in a box with control buttons
+        bindSizer = wx.BoxSizer(wx.HORIZONTAL)
+        bindSizer.Add(bindpane, 1, wx.EXPAND, 5)
+
+        buttonSizer = wx.BoxSizer(wx.VERTICAL)
         deleteButton = wx.Button(self.scrolledPane, -1, "X", size = [40, -1])
         deleteButton.SetForegroundColour(wx.RED)
         setattr(deleteButton, "BindPane", bindpane)
+        setattr(bindpane,     "DelButton", deleteButton)
+        deleteButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
-        deleteSizer.Add(deleteButton, 0, wx.LEFT, 10)
+        buttonSizer.Add(deleteButton)
 
-        self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), deleteSizer, 0, wx.ALL|wx.EXPAND, 10)
+        renameButton = wx.Button(self.scrolledPane, -1, "#", size = [40, -1])
+        setattr(renameButton, "BindPane", bindpane)
+        setattr(bindpane,     "RenButton", renameButton)
+        renameButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
+        renameButton.Bind(wx.EVT_BUTTON, self.SetBindPaneLabel)
+        buttonSizer.Add(renameButton)
+
+        bindSizer.Add(buttonSizer, 0, wx.LEFT, 10)
+
+        self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), bindSizer, 0, wx.ALL|wx.EXPAND, 10)
         bindpane.Expand()
         self.Layout()
+
+    def SetBindPaneLabel(self, evt, bindpane = None, new = False):
+        if not bindpane:
+            bindpane = evt.GetEventObject().BindPane
+        if not bindpane:
+            wx.LogError("Tried to set a BindPane label without a bindpane!")
+            return
+        dlg = wx.TextEntryDialog(self, 'Enter name for bind')
+        if bindpane.Title:
+            dlg.SetValue(bindpane.Title)
+        if dlg.ShowModal() == wx.ID_OK:
+            bindpane.Title = dlg.GetValue()
+            bindpane.SetLabel(bindpane.Title)
+            bindpane.DelButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
+            bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
+        else:
+            if new:
+                bindpane.Destroy()
+
+        dlg.Destroy()
 
     def OnDeleteButton(self, evt):
         delButton = evt.EventObject

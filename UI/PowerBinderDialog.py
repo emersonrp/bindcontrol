@@ -171,7 +171,7 @@ class PowerBinderDialog(wx.Dialog):
         cmdBindStrings = []
         for index in range(self.RearrangeList.GetCount()):
             c = self.RearrangeList.GetClientData(index)
-            if c: cmdBindStrings.append(c.MakeBindString(self))
+            if c: cmdBindStrings.append(c.MakeBindString())
 
         bindstring = ('$$'.join(cmdBindStrings))
         return bindstring
@@ -239,7 +239,7 @@ class PowerBindCmd():
 
     # Methods to override
     def BuildUI(self, dialog) -> wx.Sizer : return wx.BoxSizer()
-    def MakeBindString(self, _)           : return str('')
+    def MakeBindString(self)              : return str('')
     def Serialize(self)                   : return {}
     def Deserialize(self, init)           : return
 
@@ -253,7 +253,7 @@ class AFKCmd(PowerBindCmd):
 
         return sizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         message = self.AFKName.GetValue()
         return f"afk {message}" if message else "afk"
 
@@ -274,7 +274,7 @@ class AutoPowerCmd(PowerBindCmd):
 
         return autoPowerSizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         return f"powexecauto {self.autoPowerName.GetLabel()}"
 
     def Serialize(self):
@@ -354,7 +354,7 @@ class BuffDisplayCmd(PowerBindCmd):
                     total = total + checkbox.Data
         return total
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         return f"optionset buffsettings {self.CalculateValue()}"
 
     def Serialize(self):
@@ -431,7 +431,7 @@ class ChatCmd(PowerBindCmd):
 
         return chatCommandSizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         duration = self.chatCommandDuration.GetValue()
 
         choice = self.chatCommandChatSize
@@ -505,7 +505,7 @@ class ChatGlobalCmd(PowerBindCmd):
 
         return chatCommandGlobalSizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         useBeginchat = self.chatCommandGlobalUseBeginchatCB.IsChecked()
         channel      = self.chatCommandGlobalChannel.GetValue()
         message      = self.chatCommandGlobalMessage.GetValue()
@@ -545,7 +545,7 @@ class CostumeChangeCmd(PowerBindCmd):
 
         return costumeChangeSizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         costumeNumber = self.costumeChangeCostume.GetSelection() + 1
         costumeEmote  = self.costumeChangeEmote.GetSelection()
 
@@ -569,6 +569,120 @@ class CostumeChangeCmd(PowerBindCmd):
         if init.get('costumeNumber', ''): self.costumeChangeCostume.SetSelection(init['costumeNumber'])
         if init.get('costumeEmote' , ''): self.costumeChangeEmote  .SetSelection(init['costumeEmote'])
 
+####### Graphics Command
+class GraphicsCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        sizer = wx.FlexGridSizer(2)
+
+        self.visscalecb = wx.CheckBox(dialog, label = "visscale")
+        sizer.Add(self.visscalecb)
+        self.visscalesc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.5, max = 10, inc = 0.1)
+        sizer.Add(self.visscalesc)
+
+        self.dofweightcb = wx.CheckBox(dialog, label = "dofweight")
+        sizer.Add(self.dofweightcb)
+        self.dofweightsc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.5, max = 2.0, inc = 0.1)
+        sizer.Add(self.dofweightsc)
+
+        self.fsaacb = wx.CheckBox(dialog, label = "fsaa")
+        sizer.Add(self.fsaacb)
+        self.fsaach = wx.Choice(dialog, choices = ["0", "2", "4", "8"])
+        self.fsaach.SetSelection(0)
+        sizer.Add(self.fsaach)
+
+        self.bloomscalecb = wx.CheckBox(dialog, label = "bloomscale")
+        sizer.Add(self.bloomscalecb)
+        self.bloomscalech = wx.Choice(dialog, choices = ["2", "4"])
+        self.bloomscalech.SetSelection(0)
+        sizer.Add(self.bloomscalech)
+
+        self.bloomweightcb = wx.CheckBox(dialog, label = "bloomweight")
+        sizer.Add(self.bloomweightcb)
+        self.bloomweightsc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.0, max = 2.0, inc = 0.1)
+        sizer.Add(self.bloomweightsc)
+
+        self.lodbiascb = wx.CheckBox(dialog, label = "lodbias")
+        sizer.Add(self.lodbiascb)
+        self.lodbiassc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.3, max = 20.0, inc = 0.1)
+        sizer.Add(self.lodbiassc)
+
+        self.renderscalecb = wx.CheckBox(dialog, label = "renderscale")
+        sizer.Add(self.renderscalecb)
+        self.renderscalesc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.1, max = 20.0, inc = 0.1)
+        sizer.Add(self.renderscalesc)
+
+        return sizer
+
+    def MakeBindString(self):
+        # choice 1, do this one at a time by hand;  choice 2, hack up some data-driven iterable.  I choose 1.
+        bindstrings = []
+        if self.visscalecb.IsChecked():
+            bindstrings.append("visscale " + str(self.visscalesc.GetValue()))
+        if self.dofweightcb.IsChecked():
+            bindstrings.append("dofweight " + str(self.dofweightsc.GetValue()))
+        if self.fsaacb.IsChecked():
+            fsaavalue = ""
+            fsaaselection = self.fsaach.GetSelection()
+            if fsaaselection != wx.NOT_FOUND:
+                fsaavalue = self.fsaach.GetString(fsaaselection)
+            bindstrings.append("fsaa " + fsaavalue)
+        if self.bloomscalecb.IsChecked():
+            bloomscalevalue = ""
+            bloomscaleselection = self.bloomscalech.GetSelection()
+            if bloomscaleselection != wx.NOT_FOUND:
+                bloomscalevalue = self.bloomscalech.GetString(bloomscaleselection)
+            bindstrings.append("bloomscale " + bloomscalevalue)
+        if self.bloomweightcb.IsChecked():
+            bindstrings.append("bloomweight " + str(self.bloomweightsc.GetValue()))
+        if self.lodbiascb.IsChecked():
+            bindstrings.append("lodbias " + str(self.lodbiassc.GetValue()))
+        if self.renderscalecb.IsChecked():
+            bindstrings.append("renderscale " + str(self.renderscalesc.GetValue()))
+
+        return '$$'.join(bindstrings)
+
+    def Serialize(self):
+        fsaavalue = ""
+        fsaaselection = self.fsaach.GetSelection()
+        if fsaaselection != wx.NOT_FOUND:
+            fsaavalue = self.fsaach.GetString(fsaaselection)
+        bloomscalevalue = ""
+        bloomscaleselection = self.bloomscalech.GetSelection()
+        if bloomscaleselection != wx.NOT_FOUND:
+            bloomscalevalue = self.bloomscalech.GetString(bloomscaleselection)
+        return {
+            'visscalecb'    : self.visscalecb.IsChecked(),
+            'visscalesc'    : self.visscalesc.GetValue(),
+            'dofweightcb'   : self.dofweightcb.IsChecked(),
+            'dofweightsc'   : self.dofweightsc.GetValue(),
+            'fsaacb'        : self.fsaacb.IsChecked(),
+            'fsaach'        : fsaavalue,
+            'bloomscalecb'  : self.bloomscalecb.IsChecked(),
+            'bloomscalech'  : bloomscalevalue,
+            'bloomweightcb' : self.bloomweightcb.IsChecked(),
+            'bloomweightsc' : self.bloomweightsc.GetValue(),
+            'lodbiascb'     : self.lodbiascb.IsChecked(),
+            'lodbiassc'     : self.lodbiassc.GetValue(),
+            'renderscalecb' : self.renderscalecb.IsChecked(),
+            'renderscalesc' : self.renderscalesc.GetValue(),
+        }
+
+    def Deserialize(self, init):
+        self.visscalecb.SetValue(init.get('visscalecb', False))
+        self.visscalesc.SetValue(init.get('visscalesc', 1.0))
+        self.dofweightcb.SetValue(init.get('dofweightcb', False))
+        self.dofweightsc.SetValue(init.get('dofweightsc', 1.0))
+        self.fsaacb.SetValue(init.get('fsaacb', False))
+        self.fsaach.SetSelection(self.fsaach.FindString(init.get('fsaach', '')))
+        self.bloomscalecb.SetValue(init.get('bloomscalecb', False))
+        self.bloomscalech.SetSelection(self.bloomscalech.FindString(init.get('bloomscalech', '')))
+        self.bloomweightcb.SetValue(init.get('bloomweightcb', False))
+        self.bloomweightsc.SetValue(init.get('bloomweightsc', 1.0))
+        self.lodbiascb.SetValue(init.get('lodbiascb', False))
+        self.lodbiassc.SetValue(init.get('lodbiassc', 1.0))
+        self.renderscalecb.SetValue(init.get('renderscalecb', False))
+        self.renderscalesc.SetValue(init.get('renderscalesc', 1.0))
+
 ####### Custom Bind
 class CustomBindCmd(PowerBindCmd):
     def BuildUI(self, dialog):
@@ -579,7 +693,7 @@ class CustomBindCmd(PowerBindCmd):
 
         return sizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         return self.customBindName.GetValue()
 
     def Serialize(self):
@@ -601,7 +715,7 @@ class EmoteCmd(PowerBindCmd):
 
         return emoteSizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         displayedEmoteName = self.emoteName.GetLabel()
         actualEmotePayload = UI.EmotePicker.EmotePicker.payloadMap[displayedEmoteName]
 
@@ -615,17 +729,17 @@ class EmoteCmd(PowerBindCmd):
 
 ####### Power Abort
 class PowerAbortCmd(PowerBindCmd):
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         return 'powexecabort'
 
 ####### Power Unqueue
 class PowerUnqueueCmd(PowerBindCmd):
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         return 'powexecunqueue'
 
 ####### SG Mode Toggle
 class SGModeToggleCmd(PowerBindCmd):
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         return 'sgmode'
 
 ####### Target Custom
@@ -661,7 +775,7 @@ class TargetCustomCmd(PowerBindCmd):
 
         return targetCustomSizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         choice = self.targetCustomModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
@@ -719,7 +833,7 @@ class TargetEnemyCmd(PowerBindCmd):
 
         return targetEnemySizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         choice = self.targetEnemyModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
@@ -743,7 +857,7 @@ class TargetFriendCmd(PowerBindCmd):
 
         return targetFriendSizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         choice = self.targetFriendModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
@@ -773,7 +887,7 @@ class TeamPetSelectCmd(PowerBindCmd):
 
         return teamPetSelectSizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         teamOrPet = 'team' if self.teamPetSelectTeamRB.GetValue() else 'pet'
         targetNumber = self.teamPetSelectNumber.GetSelection()+1
 
@@ -795,7 +909,7 @@ class TeamPetSelectCmd(PowerBindCmd):
 
 ####### Unselect
 class UnselectCmd(PowerBindCmd):
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         return 'unselect'
 
 ####### Use Insp By Name
@@ -816,7 +930,7 @@ class UseInspByNameCmd(PowerBindCmd):
 
         return useInspByNameSizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         choice = self.useInspByNameModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
@@ -855,7 +969,7 @@ class UseInspRowColCmd(PowerBindCmd):
 
         return useInspRowColumnSizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         row = self.useInspRowColumnRow.GetSelection()+1
         col = self.useInspRowColumnCol.GetSelection()+1
 
@@ -893,7 +1007,7 @@ class UsePowerCmd(PowerBindCmd):
 
         return outerSizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         if self.usePowerRBToggle.GetValue():
             method = "powexecname"
         elif self.usePowerRBOn.GetValue():
@@ -948,7 +1062,7 @@ class UsePowerFromTrayCmd(PowerBindCmd):
 
         return usePowerFromTraySizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         choice = self.usePowerFromTrayTray
         tray = choice.GetSelection()
 
@@ -993,7 +1107,7 @@ class WindowToggleCmd(PowerBindCmd):
 
         return windowToggleSizer
 
-    def MakeBindString(self, _):
+    def MakeBindString(self):
         choice = self.windowToggleTray
         index  = choice.GetSelection()
         window = choice.GetString(index)
@@ -1015,6 +1129,7 @@ commandClasses = {
     'Costume Change'           : CostumeChangeCmd,
     'Custom Bind'              : CustomBindCmd,
     'Emote'                    : EmoteCmd,
+    'Graphics Settings'        : GraphicsCmd,
     'Power Abort'              : PowerAbortCmd,
     'Power Unqueue'            : PowerUnqueueCmd,
     'SG Mode Toggle'           : SGModeToggleCmd,

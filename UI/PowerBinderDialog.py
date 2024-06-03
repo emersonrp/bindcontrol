@@ -509,6 +509,8 @@ class BuffDisplayCmd(PowerBindCmd):
     def Deserialize(self, init):
         value = init.get('value', 0)
 
+        value = value or 0  # in case we had for some reason 'None' stashed in the init values
+
         for group, controls in self.buffDisplayMap.items():
             groupid = self.Groups[group].GetStaticBox().GetId()
             for cb in controls:

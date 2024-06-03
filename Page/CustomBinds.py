@@ -108,17 +108,34 @@ class CustomBinds(Page):
         if not bindpane:
             wx.LogError("Tried to set a BindPane label without a bindpane!")
             return
-        dlg = wx.TextEntryDialog(self, 'Enter name for bind')
-        if bindpane.Title:
-            dlg.SetValue(bindpane.Title)
-        if dlg.ShowModal() == wx.ID_OK:
-            bindpane.Title = dlg.GetValue()
-            bindpane.SetLabel(bindpane.Title)
-            bindpane.DelButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
-            bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
-        else:
-            if new:
-                bindpane.Destroy()
+
+        # freeze and thaw to jump thru some hoops to make the title display update on Windows
+        bindpane.Freeze()
+        try:
+            dlg = wx.TextEntryDialog(self, 'Enter name for bind')
+            if bindpane.Title:
+                dlg.SetValue(bindpane.Title)
+            if dlg.ShowModal() == wx.ID_OK:
+                bindpane.Title = dlg.GetValue()
+                bindpane.SetLabel(bindpane.Title)
+                if not new:
+                    bindpane.DelButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
+                    bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
+            else:
+                if new:
+                    bindpane.Destroy()
+
+            if bindpane.IsCollapsed():
+                bindpane.Expand()
+                bindpane.Collapse()
+            else:
+                bindpane.Collapse()
+                bindpane.Expand()
+        except Exception as e:
+            raise e
+        finally:
+            bindpane.Parent.Layout()
+            bindpane.Thaw()
 
         dlg.Destroy()
 

@@ -173,6 +173,8 @@ class Main(wx.Frame):
 
             defaultProfile = Path(self.Profile.ProfilePath() / 'Default.bcp')
             self.Profile.doLoadFromFile(defaultProfile)
+            self.Profile.General.SetState('Name', '')
+            self.Profile.Filename = None
         except Exception as e:
             wx.LogError(f"Something broke in new profile: {e}")
         finally:
@@ -180,7 +182,6 @@ class Main(wx.Frame):
             self.Thaw()
 
     def OnProfileLoad(self, evt)        :
-        self.OnNewProfile(evt)
         self.Profile.LoadFromFile(evt)
     def OnProfileSave(self, evt)        : self.Profile.doSaveToFile(evt)
     def OnProfileSaveAs(self, evt)      : self.Profile.SaveToFile(evt)

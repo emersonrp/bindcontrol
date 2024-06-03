@@ -84,6 +84,7 @@ class CustomBinds(Page):
         deleteButton = wx.Button(self.scrolledPane, -1, "X", size = [40, -1])
         deleteButton.SetForegroundColour(wx.RED)
         setattr(deleteButton, "BindPane", bindpane)
+        setattr(deleteButton, "BindSizer", bindSizer)
         setattr(bindpane,     "DelButton", deleteButton)
         deleteButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
@@ -143,7 +144,7 @@ class CustomBinds(Page):
         delButton = evt.EventObject
         bindname = delButton.BindPane.Title
         if wx.MessageBox(f'Delete Bind "{bindname}"?', 'Delete Bind', wx.YES_NO) == wx.NO: return
-        sizer = delButton.GetContainingSizer()
+        sizer = delButton.BindSizer
         self.PaneSizer.Hide(sizer)
         self.PaneSizer.Remove(sizer)
         self.Panes.remove(delButton.BindPane)

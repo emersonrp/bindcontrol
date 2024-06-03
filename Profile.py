@@ -16,7 +16,7 @@ from Page.Mastermind import Mastermind
 from Page.CustomBinds import CustomBinds
 
 import UI
-from UI.ControlGroup import bcKeyButton
+from UI.ControlGroup import bcKeyButton, cgStaticText, cgSpinCtrl, cgSpinCtrlDouble
 from UI.SimpleBindPane import SimpleBindPane
 from UI.BufferBindPane import BufferBindPane
 from UI.ComplexBindPane import ComplexBindPane
@@ -111,7 +111,7 @@ class Profile(wx.Notebook):
         self.Filename = Path(self.ProfilePath() / 'Default.bcp')
 
         if self.Filename.exists():
-            result = wx.MessageBox("Overwrite Default Profile?", "Default Profile Exists", wx.YES_NO)
+            result = wx.MessageBox("Overwrite Default Profile?", "Profile Exists", wx.YES_NO)
             if result == wx.NO: return
 
         self.doSaveToFile()
@@ -198,7 +198,8 @@ class Profile(wx.Notebook):
             bindui = pane.GetSizer().GetChildren()
             if bindui:
                 bindpane = bindui[0].GetWindow()
-                savedata['CustomBinds'].append(bindpane.Serialize())
+                if bindpane:
+                    savedata['CustomBinds'].append(bindpane.Serialize())
 
         dumpstring = json.dumps(savedata, indent=2)
         try:
@@ -211,11 +212,10 @@ class Profile(wx.Notebook):
             wx.LogError(f"Problem saving to profile '{savefile}': {e}")
 
     def LoadFromFile(self, _):
-
         with wx.FileDialog(self, "Open Profile file",
-                wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
+                wildcard   = "Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
                 defaultDir = str(self.ProfilePath()),
-                style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+                style      = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 wx.LogMessage("User canceled loading profile")
@@ -246,16 +246,15 @@ class Profile(wx.Notebook):
                     value = None
                     if pagename in data:
                         value = data[pagename].get(controlname, None)
-                    if value is None: continue
 
                     # look up what type of control it is to know how to update its value
                     if isinstance(control, wx.DirPickerCtrl):
-                        control.SetPath(value)
+                        control.SetPath(value if value else '')
                     elif isinstance(control, bcKeyButton):
-                        control.SetLabel(value)
-                        control.Key = value
+                        control.SetLabel(value if value else '')
+                        control.Key = value if value else ''
                     elif isinstance(control, wx.Button):
-                        control.SetLabel(value)
+                        control.SetLabel(value if value else '')
                     elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
                         control.SetColour(value)
                         if isinstance(control, csel.ColourSelect):
@@ -267,9 +266,15 @@ class Profile(wx.Notebook):
                         if isinstance(value, str):
                             value = control.FindString(value)
                             if value == wx.NOT_FOUND: value = 0
-                        control.SetSelection(value)
+                        control.SetSelection(value if value else 0)
+                    elif isinstance(control, wx.CheckBox):
+                        control.SetValue(value if value else False)
+                    elif isinstance(control, cgStaticText):
+                        continue
+                    elif isinstance(control, cgSpinCtrl) or isinstance(control, cgSpinCtrlDouble):
+                        control.SetValue(value if value else page.Init.get(controlname, 0))
                     else:
-                        control.SetValue(value)
+                        control.SetValue(value if value else '')
 
                 if pagename == 'General':
                     page.IncarnateBox.FillWith(data)
@@ -296,14 +301,16 @@ class Profile(wx.Notebook):
             cbpage.scrolledPane.DestroyChildren()
             for custombind in data['CustomBinds']:
                 if not custombind: continue
+
+                bindpane = None
                 if custombind['Type'] == "SimpleBind":
                     bindpane = SimpleBindPane(cbpage, init = custombind)
-                    cbpage.AddBindToPage(bindpane = bindpane)
                 elif custombind['Type'] == "BufferBind":
                     bindpane = BufferBindPane(cbpage, init = custombind)
-                    cbpage.AddBindToPage(bindpane = bindpane)
                 elif custombind['Type'] == "ComplexBind":
                     bindpane = ComplexBindPane(cbpage, init = custombind)
+
+                if bindpane:
                     cbpage.AddBindToPage(bindpane = bindpane)
 
             self.Filename = Path(pathname)

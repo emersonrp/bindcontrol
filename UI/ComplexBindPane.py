@@ -1,3 +1,4 @@
+import re
 import wx
 import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
@@ -117,12 +118,13 @@ class ComplexBindPane(CustomBindPaneParent):
         resetfile = self.Profile.ResetFile()
         # fish out only the steps that have contents
         fullsteps = list(filter(lambda x: x.BindContents.GetValue(), self.Steps))
+        title = re.sub(r'\W+', '', self.Title)
         for i, step in enumerate(fullsteps, start = 1):
-            cbindfile = self.Profile.GetBindFile("cbinds", f"{self.Title}-{i}.txt")
+            cbindfile = self.Profile.GetBindFile("cbinds", f"{title}-{i}.txt")
             nextCycle = 1 if (i+1 > len(fullsteps)) else i+1
 
-            cmd = [step.BindContents.GetValue(), self.Profile.BLF(f'cbinds\\{self.Title}-{nextCycle}.txt')]
+            cmd = [step.BindContents.GetValue(), self.Profile.BLF(f'cbinds\\{title}-{nextCycle}.txt')]
             key = self.Ctrls['BindKey'].Key
 
-            if i == 1: resetfile.SetBind(key, self, self.Title, cmd)
-            cbindfile.SetBind(key, self, self.Title, cmd)
+            if i == 1: resetfile.SetBind(key, self, title, cmd)
+            cbindfile.SetBind(key, self, title, cmd)

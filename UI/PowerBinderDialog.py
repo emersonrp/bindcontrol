@@ -590,8 +590,8 @@ class ChatCmd(PowerBindCmd):
         bdcolor = fgcolor = bgcolor = ''
         if self.chatCommandUseColorsCB.IsChecked():
             bdcolor = self.chatCommandBorderColor.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
-            fgcolor = self.chatCommandBGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
-            bgcolor = self.chatCommandFGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
+            fgcolor = self.chatCommandFGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
+            bgcolor = self.chatCommandBGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
 
             bdcolor = f"<bordercolor {bdcolor}>"
             fgcolor = f"<color {fgcolor}>"

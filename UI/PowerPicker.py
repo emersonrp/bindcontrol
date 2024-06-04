@@ -81,6 +81,46 @@ class PowerPickerMenu(wx.Menu):
                     setattr(menuitem, 'IconFilename', power['iconfilename'])
                 submenu.Append(menuitem)
 
+        # Misc / Inherent Powers
+        submenu = wx.Menu()
+        self.AppendSubMenu(submenu, "Misc")
+
+        accoladepowers = GameData.MiscPowers['Badge']['Accolade']
+        if accoladepowers:
+            accolademenu = wx.Menu()
+            submenu.AppendSubMenu(accolademenu, "Accolade")
+            for power in accoladepowers:
+                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
+                icon = GetIcon(powerset = 'Misc', power = power)
+                if icon:
+                    menuitem.SetBitmap(icon)
+                    setattr(menuitem, 'IconFilename', icon.Filename)
+                accolademenu.Append(menuitem)
+
+        inherentpowers = GameData.MiscPowers['General']['Inherent']
+        if inherentpowers:
+            inherentmenu = wx.Menu()
+            submenu.AppendSubMenu(inherentmenu, "Inherent")
+            for power in inherentpowers:
+                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
+                icon = GetIcon(powerset = 'Misc', power = power)
+                if icon:
+                    menuitem.SetBitmap(icon)
+                    setattr(menuitem, 'IconFilename', icon.Filename)
+                inherentmenu.Append(menuitem)
+
+        smartpowers = GameData.MiscPowers['General']['SMART']
+        if smartpowers:
+            smartmenu = wx.Menu()
+            submenu.AppendSubMenu(smartmenu, "SMART")
+            for power in smartpowers:
+                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
+                icon = GetIcon(powerset = 'Misc', power = power)
+                if icon:
+                    menuitem.SetBitmap(icon)
+                    setattr(menuitem, 'IconFilename', icon.Filename)
+                smartmenu.Append(menuitem)
+
     def OnMenuSelection(self, evt):
         menuitem = self.FindItemById(evt.GetId())
         label = menuitem.GetItemLabel()

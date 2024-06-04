@@ -97,6 +97,18 @@ for slot, slotdata in GameData.MiscPowers['Incarnate'].items():
             else:
                 if filename in filecheck: filecheck.remove(filename)
 
+# Misc Powers
+# TODO generalize this more?
+miscpowerlist = GameData.MiscPowers['Badge']['Accolade'] + GameData.MiscPowers['General']['Inherent'] + GameData.MiscPowers['General']['SMART']
+for power in miscpowerlist:
+    power = re.sub(r'\W+', '', power)
+    filename = f"Misc_{power}.png"
+    if not os.path.exists(f"{parentdir}/icons/Powers/{filename}"):
+        print(f"Misc Power: {filename}")
+        count = count + 1
+    else:
+        if filename in filecheck: filecheck.remove(filename)
+
 # Inspirations
 for _, type in GameData.Inspirations.items():
     for _, data in type.items():

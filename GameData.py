@@ -668,7 +668,7 @@ MiscPowers: Dict[str, dict] = {
             'Walk',
             'Prestige Power Slide',
         ],
-        'P2W': [
+        'SMART': [
             'Prestige Power Rush',
             'Prestige Power Dash',
             'Prestige Power Surge ',

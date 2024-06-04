@@ -31,6 +31,7 @@ Features
     * Secondary travel powers like Mystic Flight's "Translocation" are starting to be better integrated
     * Supports [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) - WIP but functional
     * Homecoming's <code>powexec_location cursor</code> feature incorporated into Teleport binds, with "teleport immediately" and "teleport on key release" options available
+    * Kheldian form toggles;  Kheldian movement powers incorporated into Speed-on-Demand
     * One-key reset in case SoD binds get tangled up
 * Inspiration Popper
     * By-type; dual and team inspirations supported
@@ -53,7 +54,6 @@ TODO
 * Bodyguard mode, as implemented in citybinder, doesn't work as intended, and might not be able to due to game restrictions.
 * Investigate improvements to Mastermind binds to clarify and expand the behavior.
 * More error detection and handling
-* Kheldian form/travel binds in speed-on-demand
 * Temporary powers in speed-on-demand
 * Roll standalone binaries for Windows, MacOS, Linux - partially implemented
     * Windows binary distribution of Python apps can trigger <a href="Help/MalwareWarnings.md">anti-malware warnings</a>
@@ -121,6 +121,10 @@ Citybinder's acknowledgements are reproduced below:
 The improved Inspiration Popper design was gratefully adapted from an unreleased version of [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by Tailcoat.
 
 Github Actions for automated building of binary releases graciously provided by <a href="https://github.com/JamzTheMan">JamzTheMan</a>.
+
+Additional feedback and suggestions provided in the <a href="https://forums.homecomingservers.com/topic/38674-bindcontrol-alternative-to-citybinder/">Homecoming Forums thread</a> by:<br>
+DevoDog68, BlackSpectre, Premmy, kenlon, Lumenia, autobotpinto
+
 
 License
 -------

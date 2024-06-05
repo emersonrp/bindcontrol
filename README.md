@@ -122,8 +122,8 @@ The improved Inspiration Popper design was gratefully adapted from an unreleased
 
 Github Actions for automated building of binary releases graciously provided by <a href="https://github.com/JamzTheMan">JamzTheMan</a>.
 
-Additional feedback and suggestions provided in the <a href="https://forums.homecomingservers.com/topic/38674-bindcontrol-alternative-to-citybinder/">Homecoming Forums thread</a> by:<br>
-DevoDog68, BlackSpectre, Premmy, kenlon, Lumenia, autobotpinto
+Additional feedback and suggestions provided in the <a href="https://forums.homecomingservers.com/topic/38674-bindcontrol-alternative-to-citybinder/">Homecoming Forums thread</a> and in <a href="https://github.com/emersonrp/bindcontrol/issues">Github issues</a> by:<br>
+DevoDog68, BlackSpectre, Premmy, kenlon, Lumenia, xizar, autobotpinto
 
 
 License

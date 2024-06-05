@@ -1,5 +1,6 @@
 # parent class for various custom bindpane types
 import wx
+from UI.KeySelectDialog import bcKeyButton
 
 class CustomBindPaneParent(wx.CollapsiblePane):
     def __init__(self, page, init = {}):
@@ -37,3 +38,11 @@ class CustomBindPaneParent(wx.CollapsiblePane):
 
     def OnPaneChanged(self, _):
         self.Page.Layout()
+
+    # this is called when we duplicate a bind.  We'll want to clear any keybuttons
+    # to keep the new duplicate bind from conflicting
+    def ClearKeyBinds(self):
+        for _,ctrl in self.Ctrls.items():
+            if isinstance(ctrl, bcKeyButton):
+                ctrl.ClearButton(None)
+

@@ -185,9 +185,11 @@ class CustomBinds(Page):
             wx.LogError(f"Error duplicating bind {oldbindpane.Title}!")
             return
 
-        # clear the title so we get to name it
+        # clear the title so we get to name it.
+        # also clear the keybind itself.
         newbindpane.Title = None
         self.AddBindToPage(newbindpane)
+        newbindpane.ClearKeyBinds()
 
     def PopulateBindFiles(self):
         for pane in self.Panes:

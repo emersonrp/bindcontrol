@@ -17,7 +17,7 @@ class CustomBinds(Page):
     def BuildPage(self):
 
         # Overall sizer for 'self'
-        MainSizer = wx.BoxSizer(wx.VERTICAL) # overall sizer
+        MainSizer = wx.BoxSizer(wx.VERTICAL)
 
         # bottom sizer for the buttons
         buttonSizer         = wx.BoxSizer(wx.HORIZONTAL) # sizer for new-item buttons
@@ -46,7 +46,6 @@ class CustomBinds(Page):
         paddingSizer.Add(MainSizer, 1, flag = wx.ALL|wx.EXPAND, border = 16)
 
         self.SetSizerAndFit(paddingSizer)
-        #self.SetSizerAndFit(MainSizer)
         self.Layout()
 
     def OnNewSimpleBindButton(self, evt):
@@ -97,6 +96,13 @@ class CustomBinds(Page):
         renameButton.Bind(wx.EVT_BUTTON, self.SetBindPaneLabel)
         buttonSizer.Add(renameButton)
 
+        duplicateButton = wx.Button(self.scrolledPane, -1, "+", size = [40, -1])
+        setattr(duplicateButton, "BindPane", bindpane)
+        setattr(bindpane,        "DupButton", duplicateButton)
+        duplicateButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
+        duplicateButton.Bind(wx.EVT_BUTTON, self.OnDuplicateButton)
+        buttonSizer.Add(duplicateButton)
+
         bindSizer.Add(buttonSizer, 0, wx.LEFT, 10)
 
         self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), bindSizer, 0, wx.ALL|wx.EXPAND, 10)
@@ -117,11 +123,23 @@ class CustomBinds(Page):
             if bindpane.Title:
                 dlg.SetValue(bindpane.Title)
             if dlg.ShowModal() == wx.ID_OK:
-                bindpane.Title = dlg.GetValue()
+                # check if we already have a bind named that.  Complex Binds use the name as
+                # part of the bindfiles' filenames, so we can't have dupes
+                title = dlg.GetValue()
+                for pane in self.Panes:
+                    if title == pane.Title:
+                        # show an "oops" dialog, this might not be perfect
+                        wx.MessageBox(f"A bind called {title} already exists!", "Error", wx.OK, self)
+                        self.SetBindPaneLabel(evt, bindpane, new)
+                        dlg.Destroy()
+                        return
+
+                bindpane.Title = title
                 bindpane.SetLabel(bindpane.Title)
                 if not new:
                     bindpane.DelButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
                     bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
+                    bindpane.DupButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
             else:
                 if new:
                     bindpane.Destroy()
@@ -151,6 +169,25 @@ class CustomBinds(Page):
         delButton.BindPane.Destroy()
         self.Layout()
         evt.Skip()
+
+    def OnDuplicateButton(self, evt):
+        oldbindpane = evt.EventObject.BindPane
+        init = oldbindpane.Serialize()
+        newbindpane = None
+        if   isinstance(oldbindpane, SimpleBindPane):
+            newbindpane = SimpleBindPane(self, init)
+        elif isinstance(oldbindpane, ComplexBindPane):
+            newbindpane = ComplexBindPane(self, init)
+        elif isinstance(oldbindpane, BufferBindPane):
+            newbindpane = BufferBindPane(self, init)
+
+        if not newbindpane:
+            wx.LogError(f"Error duplicating bind {oldbindpane.Title}!")
+            return
+
+        # clear the title so we get to name it
+        newbindpane.Title = None
+        self.AddBindToPage(newbindpane)
 
     def PopulateBindFiles(self):
         for pane in self.Panes:

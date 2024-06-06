@@ -1,3 +1,4 @@
+import re
 import wx
 import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
@@ -16,8 +17,8 @@ class SimpleBindPane(CustomBindPaneParent):
         data = {
             'Type'     : 'SimpleBind',
             'Title'    : self.Title,
-            'Contents' : self.Ctrls['BindContents'].GetValue(),
-            'Key'      : self.Ctrls['BindKey'].Key,
+            'Contents' : self.Ctrls[self.MakeCtlName('BindContents')].GetValue(),
+            'Key'      : self.Ctrls[self.MakeCtlName('BindKey')].Key,
         }
         if self.PowerBinderDlg: data['PowerBinderDlg'] = self.PowerBinderDlg.SaveToData()
         return data
@@ -38,10 +39,10 @@ class SimpleBindPane(CustomBindPaneParent):
         pbb = PowerBinderButton(pane, BindContentsCtrl, powerbinderdata)
         BindSizer.Add(pbb, 0, wx.ALIGN_CENTER_VERTICAL)
         self.PowerBinderDlg = pbb.PowerBinderDialog
-        self.Ctrls['BindContents'] = BindContentsCtrl
+        self.Ctrls[self.MakeCtlName('BindContents')] = BindContentsCtrl
 
         BindKeyCtrl = bcKeyButton(pane, -1, {
-            'CtlName' : f"{self.bindclass}BindKey",
+            'CtlName' : self.MakeCtlName("BindKey"),
             'Page'    : page,
             'Key'     : self.Init.get('Key', ''),
         })
@@ -49,8 +50,8 @@ class SimpleBindPane(CustomBindPaneParent):
 
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(BindKeyCtrl,                          0, wx.ALIGN_CENTER_VERTICAL)
-        self.Ctrls['BindKey'] = BindKeyCtrl
-        UI.Labels[BindKeyCtrl.CtlName] = "Simple Bind "
+        self.Ctrls[BindKeyCtrl.CtlName] = BindKeyCtrl
+        UI.Labels[BindKeyCtrl.CtlName] = f'Simple Bind "{pane.Title}"'
 
         BindSizer.Layout()
 
@@ -90,8 +91,8 @@ class SimpleBindPane(CustomBindPaneParent):
 
     def PopulateBindFiles(self):
         if not self.checkIfWellFormed():
-            wx.LogError(f"Custom Bind \"{self.Title}\" is not complete or has errors.")
-            raise Exception
+            wx.MessageBox(f"Custom Bind \"{self.Title}\" is not complete or has errors.  Not written to bindfile.")
+            return
         resetfile = wx.App.Get().Profile.ResetFile()
         bk = self.Ctrls['BindKey']
         bc = self.Ctrls['BindContents']

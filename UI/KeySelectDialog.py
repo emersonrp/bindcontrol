@@ -474,6 +474,8 @@ class bcKeyButton(wx.Button):
                 self.SetError(False)
             return conflicts
 
+    # TODO - maybe? move this into UI/ControlGroup's mixin so we can 'seterror' on any control.
+    # Will need to dig out / generalize the 'conflicts' notion
     def SetError(self, iserror = True, conflicts = None):
         if iserror:
             self.SetBackgroundColour((255,200,200))

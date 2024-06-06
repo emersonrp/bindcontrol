@@ -2,7 +2,7 @@ import re
 import wx
 import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
-from UI.KeySelectDialog import bcKeyButton
+from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinderDialog import PowerBinderButton
 
 class ComplexBindPane(CustomBindPaneParent):
@@ -15,7 +15,7 @@ class ComplexBindPane(CustomBindPaneParent):
         data = {
             'Type' : 'ComplexBind',
             'Title': self.Title,
-            'Key'  : self.Ctrls['BindKey'].Key,
+            'Key'  : self.Ctrls[self.MakeCtlName('BindKey')].Key,
             'Steps': [],
         }
         for step in self.Steps:
@@ -43,16 +43,18 @@ class ComplexBindPane(CustomBindPaneParent):
         self.BindSizer.Add ( self.BindStepSizer, 1, wx.EXPAND)
 
         BindKeyCtrl = bcKeyButton(pane, -1, {
-            'CtlName' : f"{self.bindclass}BindKey",
+            'CtlName' : self.MakeCtlName('BindKey'),
             'Page'    : page,
             'Key'     : self.Init.get('Key', ''),
         })
+        BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
+
         BindKeySizer = wx.BoxSizer(wx.HORIZONTAL)
         BindKeySizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindKeySizer.Add(BindKeyCtrl,                          0)
         self.BindSizer.Add(BindKeySizer, 0, wx.LEFT|wx.RIGHT, 10)
-        self.Ctrls['BindKey'] = BindKeyCtrl
-        UI.Labels[BindKeyCtrl.CtlName] = "Complex Bind "
+        self.Ctrls[BindKeyCtrl.CtlName] = BindKeyCtrl
+        UI.Labels[BindKeyCtrl.CtlName] = f'Complex Bind "{self.Title}"'
 
         self.BindSizer.Layout()
 
@@ -60,6 +62,24 @@ class ComplexBindPane(CustomBindPaneParent):
         border = wx.BoxSizer(wx.VERTICAL)
         border.Add(self.BindSizer, 1, wx.EXPAND|wx.ALL, 10)
         pane.SetSizer(border)
+
+    def onContentsChanged(self, _):
+        self.checkIfWellFormed()
+
+    def onKeyChanged(self, _):
+        self.checkIfWellFormed()
+
+    def checkIfWellFormed(self):
+        isWellFormed = True
+
+        bk = self.Ctrls[self.MakeCtlName('BindKey')]
+        if bk.Key:
+            bk.SetError(False)
+        else:
+            bk.SetError(True)
+            isWellFormed = False
+
+        return isWellFormed
 
     def onAddStepButton(self, _ = None, stepdata = {}):
         pane = self.GetPane()
@@ -115,6 +135,10 @@ class ComplexBindPane(CustomBindPaneParent):
         #self.Layout()
 
     def PopulateBindFiles(self):
+        if not self.checkIfWellFormed():
+            wx.MessageBox(f"Custom Bind \"{self.Title}\" is not complete or has errors.  Not written to bindfile.")
+            return
+
         resetfile = self.Profile.ResetFile()
         # fish out only the steps that have contents
         fullsteps = list(filter(lambda x: x.BindContents.GetValue(), self.Steps))
@@ -124,7 +148,7 @@ class ComplexBindPane(CustomBindPaneParent):
             nextCycle = 1 if (i+1 > len(fullsteps)) else i+1
 
             cmd = [step.BindContents.GetValue(), self.Profile.BLF(f'cbinds\\{title}-{nextCycle}.txt')]
-            key = self.Ctrls['BindKey'].Key
+            key = self.Ctrls[self.MakeCtlName('BindKey')].Key
 
             if i == 1: resetfile.SetBind(key, self, title, cmd)
             cbindfile.SetBind(key, self, title, cmd)

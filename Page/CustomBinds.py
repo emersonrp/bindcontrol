@@ -75,6 +75,9 @@ class CustomBinds(Page):
 
         bindpane.BuildBindUI(self)
 
+        for ctrlname, ctrl in bindpane.Ctrls.items():
+            self.Ctrls[ctrlname] = ctrl
+
         # put it in a box with control buttons
         bindSizer = wx.BoxSizer(wx.HORIZONTAL)
         bindSizer.Add(bindpane, 1, wx.EXPAND, 5)
@@ -166,6 +169,7 @@ class CustomBinds(Page):
         self.PaneSizer.Hide(sizer)
         self.PaneSizer.Remove(sizer)
         self.Panes.remove(delButton.BindPane)
+        # TODO -- here we need to iterate all controls and remove them from page.Ctrls
         delButton.BindPane.Destroy()
         self.Layout()
         evt.Skip()

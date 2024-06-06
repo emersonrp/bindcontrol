@@ -1,3 +1,4 @@
+import re
 import wx
 import UI
 from Icon import GetIcon
@@ -12,7 +13,14 @@ class BufferBindPane(CustomBindPaneParent):
     def __init__(self, page, init = {}):
         CustomBindPaneParent.__init__(self, page, init)
 
-        self.Init    = {
+        self.PassedInit = init
+
+    def BuildBindUI(self, page):
+        pane = self.GetPane()
+        pane.Page = page
+
+        # Doing this init here since we need Title to be set to get this right
+        self.Init = {
             'BuffChat1'       : '',
             'BuffChat2'       : '',
             'BuffChat3'       : '',
@@ -22,25 +30,12 @@ class BufferBindPane(CustomBindPaneParent):
             'BuffsAffectTeam' : False,
             'BuffsAffectPets' : False,
         }
-        UI.Labels.update({
-            "BuffsAffectTeam" : "Enable",
-            "BuffsAffectPets" : "Enable",
-        })
         for i in (1,2,3,4,5,6,7,8):
-            ctrlName = f"Team{i}BuffKey"
             self.Init[f'Team{i}BuffKey'] = ''
-            UI.Labels[ctrlName] = f'Team {i} Key'
         for i in (1,2,3,4,5,6):
-            ctrlName = f"Pet{i}BuffKey"
             self.Init[f'Pet{i}BuffKey'] = ''
-            UI.Labels[ctrlName] = f'Pet {i} Key'
 
-        self.Init.update(init)
-
-
-    def BuildBindUI(self, page):
-        pane = self.GetPane()
-        pane.Page = page
+        self.Init.update(self.PassedInit)
 
         # bind text controls
         BindSizer = wx.GridBagSizer(hgap=5, vgap=5)
@@ -49,7 +44,7 @@ class BufferBindPane(CustomBindPaneParent):
         selSizer = wx.BoxSizer(wx.HORIZONTAL)
         selchat = wx.TextCtrl(pane, -1, self.Init.get('SelectChat', ''))
         selchat.SetHint('Optional chat/emote command when selecting target')
-        self.Ctrls['SelChat'] = selchat
+        self.Ctrls[self.MakeCtlName('SelChat')] = selchat
         selSizer.Add(selchat, 1, wx.EXPAND|wx.RIGHT, 5)
         selSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=selchat), 0, wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(selSizer, (0,0), (1,4), flag=wx.EXPAND)
@@ -59,11 +54,11 @@ class BufferBindPane(CustomBindPaneParent):
         buffChat1.SetHint('Optional chat/emote command when buffing')
         BindSizer.Add(buffChat1,                                     (1,0), flag=wx.EXPAND)
         BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=buffChat1), (1,1), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        self.Ctrls['BuffChat1'] = buffChat1
+        self.Ctrls[self.MakeCtlName('BuffChat1')] = buffChat1
         BindSizer.Add(wx.StaticText(pane, -1, "First Buff Power:"),  (1,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         buffPower1 = PowerPicker(pane)
         BindSizer.Add(buffPower1,                                    (1,3), flag=wx.EXPAND     |wx.ALIGN_CENTER_VERTICAL)
-        self.Ctrls['BuffPower1'] = buffPower1
+        self.Ctrls[self.MakeCtlName('BuffPower1')] = buffPower1
         bp1 = self.Init.get('BuffPower1', {})
         if bp1:
             if bp1['pname']: buffPower1.SetLabel(bp1['pname'])
@@ -76,12 +71,12 @@ class BufferBindPane(CustomBindPaneParent):
         buffChat2.SetHint('Optional chat/emote command when buffing')
         BindSizer.Add(buffChat2,                                     (2,0), flag=wx.EXPAND)
         BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=buffChat2), (2,1), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        self.Ctrls['BuffChat2'] = buffChat2
+        self.Ctrls[self.MakeCtlName('BuffChat2')] = buffChat2
         BindSizer.Add(wx.StaticText(pane, -1, "Second Buff Power:"), (2,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         buffPower2 = PowerPicker(pane)
         bp2 = self.Init.get('BuffPower2', {})
         BindSizer.Add(buffPower2,                                    (2,3), flag=wx.EXPAND     |wx.ALIGN_CENTER_VERTICAL)
-        self.Ctrls['BuffPower2'] = buffPower2
+        self.Ctrls[self.MakeCtlName('BuffPower2')] = buffPower2
         if bp2:
             if bp2['pname']: buffPower2.SetLabel(bp2['pname'])
             if bp2['picon']:
@@ -93,12 +88,12 @@ class BufferBindPane(CustomBindPaneParent):
         buffChat3.SetHint('Optional chat/emote command when buffing')
         BindSizer.Add(buffChat3,                                     (3,0), flag=wx.EXPAND)
         BindSizer.Add(PowerBinderButton(pane, tgtTxtCtrl=buffChat3), (3,1), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        self.Ctrls['BuffChat3'] = buffChat3
+        self.Ctrls[self.MakeCtlName('BuffChat3')] = buffChat3
         BindSizer.Add(wx.StaticText(pane, -1, "Third Buff Power:"),  (3,2), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         buffPower3 = PowerPicker(pane)
         bp3 = self.Init.get('BuffPower3', {})
         BindSizer.Add(buffPower3,                                    (3,3), flag=wx.EXPAND     |wx.ALIGN_CENTER_VERTICAL)
-        self.Ctrls['BuffPower3'] = buffPower3
+        self.Ctrls[self.MakeCtlName('BuffPower3')] = buffPower3
         if bp3:
             if bp3['pname']: buffPower3.SetLabel(bp3['pname'])
             if bp3['picon']:
@@ -113,34 +108,33 @@ class BufferBindPane(CustomBindPaneParent):
         PetInner = wx.GridBagSizer(hgap = 5, vgap = 5)
         PetCtrls.Add(PetInner, 1, wx.ALL|wx.EXPAND, 10)
 
-
-        self.Ctrls['BuffsAffectTeam'] = wx.CheckBox(pane, -1, label = UI.Labels['BuffsAffectTeam'])
-        self.Ctrls['BuffsAffectTeam'].SetValue(self.Init['BuffsAffectTeam'])
-        self.Ctrls['BuffsAffectTeam'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        TeamInner.Add(self.Ctrls['BuffsAffectTeam'], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
+        self.Ctrls[self.MakeCtlName('BuffsAffectTeam')] = wx.CheckBox(pane, -1, label = 'Enable')
+        self.Ctrls[self.MakeCtlName('BuffsAffectTeam')].SetValue(self.Init['BuffsAffectTeam'])
+        self.Ctrls[self.MakeCtlName('BuffsAffectTeam')].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        TeamInner.Add(self.Ctrls[self.MakeCtlName('BuffsAffectTeam')], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6,7,8):
-            button = bcKeyButton(pane, -1, init = { 'CtlName' : f'Team{i}BuffKey', })
+            button = bcKeyButton(pane, -1, init = { 'CtlName' : self.MakeCtlName(f'Team{i}BuffKey'), })
             button.Key = self.Init[f'Team{i}BuffKey']
             button.SetLabel(button.Key)
             label = wx.StaticText(pane, label = f'Teammate {i}')
             button.CtlLabel = label
             TeamInner.Add(label, (0,i), flag = wx.EXPAND|wx.ALIGN_CENTER)
             TeamInner.Add(button, (1,i))
-            self.Ctrls[f'Team{i}BuffKey'] = button
+            self.Ctrls[self.MakeCtlName(f'Team{i}BuffKey')] = button
 
-        self.Ctrls['BuffsAffectPets'] = wx.CheckBox(pane, -1, label = UI.Labels['BuffsAffectPets'])
-        self.Ctrls['BuffsAffectPets'].SetValue(self.Init['BuffsAffectPets'])
-        self.Ctrls['BuffsAffectPets'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        PetInner.Add(self.Ctrls['BuffsAffectPets'], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
+        self.Ctrls[self.MakeCtlName('BuffsAffectPets')] = wx.CheckBox(pane, -1, label = 'Enable')
+        self.Ctrls[self.MakeCtlName('BuffsAffectPets')].SetValue(self.Init['BuffsAffectPets'])
+        self.Ctrls[self.MakeCtlName('BuffsAffectPets')].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        PetInner.Add(self.Ctrls[self.MakeCtlName('BuffsAffectPets')], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6):
-            button = bcKeyButton(pane, -1, init = { 'CtlName' : f'Pet{i}BuffKey', })
+            button = bcKeyButton(pane, -1, init = { 'CtlName' : self.MakeCtlName(f'Pet{i}BuffKey'), })
             button.Key = self.Init[f'Pet{i}BuffKey']
             button.SetLabel(button.Key)
             label = wx.StaticText(pane, label = f'Pet {i}')
             button.CtlLabel = label
             PetInner.Add(label , (0,i), flag = wx.EXPAND|wx.ALIGN_CENTER)
             PetInner.Add(button, (1,i))
-            self.Ctrls[f'Pet{i}BuffKey'] = button
+            self.Ctrls[self.MakeCtlName(f'Pet{i}BuffKey')] = button
 
         BindSizer.AddGrowableCol(0)
         BindSizer.AddGrowableCol(3)
@@ -158,98 +152,100 @@ class BufferBindPane(CustomBindPaneParent):
         profile = self.Profile
         ResetFile = profile.ResetFile()
 
-        selchat = self.Ctrls['SelChat']  .GetValue()
-        chat1   = self.Ctrls['BuffChat1'].GetValue()
-        chat2   = self.Ctrls['BuffChat2'].GetValue()
-        chat3   = self.Ctrls['BuffChat3'].GetValue()
+        title = re.sub(r'\W+', '', self.Title)
+
+        selchat = self.Ctrls[self.MakeCtlName('SelChat')]  .GetValue()
+        chat1   = self.Ctrls[self.MakeCtlName('BuffChat1')].GetValue()
+        chat2   = self.Ctrls[self.MakeCtlName('BuffChat2')].GetValue()
+        chat3   = self.Ctrls[self.MakeCtlName('BuffChat3')].GetValue()
 
         npow = 1
-        if self.Ctrls['BuffPower2'].GetLabel():
+        if self.Ctrls[self.MakeCtlName('BuffPower2')].GetLabel():
             npow = 2
-            if self.Ctrls['BuffPower3'].GetLabel():
+            if self.Ctrls[self.MakeCtlName('BuffPower3')].GetLabel():
                 npow = 3
 
-        if self.Ctrls['BuffsAffectTeam'].GetValue():
+        if self.Ctrls[self.MakeCtlName('BuffsAffectTeam')].GetValue():
             for j in [1,2,3,4,5,6,7,8]:
-                teamkey = self.Ctrls[f"Team{j}BuffKey"].Key
+                teamkey = self.Ctrls[self.MakeCtlName(f"Team{j}BuffKey")].Key
                 if not teamkey: continue
-                filebase = profile.BindsDir()     / f"buff{self.Title}" / f"bufft{j}"
-                gamebase = profile.GameBindsDir() / f"buff{self.Title}" / f"bufft{j}"
+                filebase = profile.BindsDir()     / f"buff{title}" / f"bufft{j}"
+                gamebase = profile.GameBindsDir() / f"buff{title}" / f"bufft{j}"
                 afile = profile.GetBindFile(f"{filebase}a.txt")
                 bfile = profile.GetBindFile(f"{filebase}b.txt")
                 afile.SetBind(    teamkey, self.Page, self.Title, [f'teamselect {j}', selchat, f'{BLF()} {gamebase}b.txt'])
                 ResetFile.SetBind(teamkey, self.Page, self.Title, [f'teamselect {j}', selchat, f'{BLF()} {gamebase}b.txt'])
                 if (npow == 1):
-                    bfile.SetBind(teamkey, self.Page, self.Title, [chat1, f'powexecname {self.Ctrls["BuffPower1"].GetLabel()}', f'{BLF()} {gamebase}a.txt'])
+                    bfile.SetBind(teamkey, self.Page, self.Title, [chat1, 'powexecname ', self.Ctrls[self.MakeCtlName("BuffPower1")].GetLabel(), f'{BLF()} {gamebase}a.txt'])
                 else:
-                    bfile.SetBind(teamkey, self.Page, self.Title, [chat1, f'powexecname {self.Ctrls["BuffPower1"].GetLabel()}', f'{BLF()} {gamebase}c.txt'])
+                    bfile.SetBind(teamkey, self.Page, self.Title, [chat1, f'powexecname ', self.Ctrls[self.MakeCtlName("BuffPower1")].GetLabel(), f'{BLF()} {gamebase}c.txt'])
                     cfile = profile.GetBindFile(f"{filebase}c.txt")
                     if (npow == 2):
-                        cfile.SetBind(teamkey,  self.Page, self.Title, [chat2, f'powexecname {self.Ctrls["BuffPower2"].GetLabel()}', f'{BLF()} {gamebase}a.txt'])
+                        cfile.SetBind(teamkey,  self.Page, self.Title, [chat2, f'powexecname ', self.Ctrls[self.MakeCtlName("BuffPower2")].GetLabel(), f'{BLF()} {gamebase}a.txt'])
                     else:
                         dfile = profile.GetBindFile(f"{filebase}d.txt")
-                        cfile.SetBind(teamkey,  self.Page, self.Title, [chat2, f'powexecname {self.Ctrls["BuffPower2"].GetLabel()}', f'{BLF()} {gamebase}d.txt'])
-                        dfile.SetBind(teamkey,  self.Page, self.Title, [chat3, f'powexecname {self.Ctrls["BuffPower3"].GetLabel()}', f'{BLF()} {gamebase}a.txt'])
+                        cfile.SetBind(teamkey,  self.Page, self.Title, [chat2, f'powexecname ', self.Ctrls[self.MakeCtlName("BuffPower2")].GetLabel(), f'{BLF()} {gamebase}d.txt'])
+                        dfile.SetBind(teamkey,  self.Page, self.Title, [chat3, f'powexecname ', self.Ctrls[self.MakeCtlName("BuffPower3")].GetLabel(), f'{BLF()} {gamebase}a.txt'])
 
-        if self.Ctrls['BuffsAffectPets'].GetValue():
+        if self.Ctrls[self.MakeCtlName("BuffsAffectPets")].GetValue():
             for j in [1,2,3,4,5,6]:
-                petkey = self.Ctrls[f"Pet{j}BuffKey"].Key
+                petkey = self.Ctrls[self.MakeCtlName(f"Pet{j}BuffKey")].Key
                 if not petkey: continue
-                filebase = profile.BindsDir()     / f"buff{self.Title}" / f"buffp{j}"
-                gamebase = profile.GameBindsDir() / f"buff{self.Title}" / f"buffp{j}"
+                filebase = profile.BindsDir()     / f"buff{title}" / f"buffp{j}"
+                gamebase = profile.GameBindsDir() / f"buff{title}" / f"buffp{j}"
                 afile = profile.GetBindFile(f"{filebase}a.txt")
                 bfile = profile.GetBindFile(f"{filebase}b.txt")
                 afile.SetBind    (petkey, self.Page, self.Title, [f'petselect {j-1}', selchat, f'{BLF()} {gamebase}b.txt'])
                 ResetFile.SetBind(petkey, self.Page, self.Title, [f'petselect {j}'  , selchat, f'{BLF()} {gamebase}b.txt'])
                 if (npow == 1):
-                    bfile.SetBind(petkey, [chat1, f'powexecname {self.Ctrls["BuffPower1"]}', f'{BLF()} {gamebase}a.txt'])
+                    bfile.SetBind(petkey, [chat1, f'powexecname ', self.Ctrls[self.MakeCtlName("BuffPower1")], f'{BLF()} {gamebase}a.txt'])
                 else:
-                    bfile.SetBind(petkey, [chat1, f'powexecname {self.Ctrls["BuffPower1"]}', f'{BLF()} {gamebase}c.txt'])
+                    bfile.SetBind(petkey, [chat1, f'powexecname ', self.Ctrls[self.MakeCtlName("BuffPower1")], f'{BLF()} {gamebase}c.txt'])
                     cfile = profile.GetBindFile(f"{filebase}c.txt")
                     if (npow == 2):
-                        cfile.SetBind(petkey, f"{chat2}powexecname {self.Ctrls['BuffPower2']}$${BLF()} {gamebase}a.txt")
+                        cfile.SetBind(petkey, [f"{chat2}powexecname ", self.Ctrls[self.MakeCtlName("BuffPower2")], f"{BLF()} {gamebase}a.txt"])
                     else:
                         dfile = profile.GetBindFile(f"{filebase}d.txt")
-                        cfile.SetBind(petkey, [chat2, f'powexecname {self.Ctrls["BuffPower2"]}', f'{BLF()} {gamebase}d.txt'])
-                        dfile.SetBind(petkey, [chat3, f'powexecname {self.Ctrls["BuffPower3"]}', f'{BLF()} {gamebase}a.txt'])
+                        cfile.SetBind(petkey, [chat2, f'powexecname ', self.Ctrls[self.MakeCtlName("BuffPower2")], f'{BLF()} {gamebase}d.txt'])
+                        dfile.SetBind(petkey, [chat3, f'powexecname ', self.Ctrls[self.MakeCtlName("BuffPower3")], f'{BLF()} {gamebase}a.txt'])
 
     def SynchronizeUI(self, _ = None):
-        useteam = self.Ctrls['BuffsAffectTeam'].GetValue()
+        useteam = self.Ctrls[self.MakeCtlName("BuffsAffectTeam")].GetValue()
         for i in [1,2,3,4,5,6,7,8]:
-            self.Ctrls[f'Team{i}BuffKey'].Enable(useteam)
-        usepet = self.Ctrls['BuffsAffectPets'].GetValue()
+            self.Ctrls[self.MakeCtlName(f'Team{i}BuffKey')].Enable(useteam)
+        usepet = self.Ctrls[self.MakeCtlName("BuffsAffectPets")].GetValue()
         for i in [1,2,3,4,5,6]:
-            self.Ctrls[f'Pet{i}BuffKey'].Enable(usepet)
+            self.Ctrls[self.MakeCtlName(f'Pet{i}BuffKey')].Enable(usepet)
 
     def Serialize(self):
         data = {
             'Type'            : 'BufferBind',
             'Title'           : self.Title,
-            'SelChat'         : self.Ctrls['SelChat'].GetValue(),
-            'BuffChat1'       : self.Ctrls['BuffChat1'].GetValue(),
-            'BuffChat2'       : self.Ctrls['BuffChat2'].GetValue(),
-            'BuffChat3'       : self.Ctrls['BuffChat3'].GetValue(),
-            'BuffsAffectTeam' : self.Ctrls['BuffsAffectTeam'].GetValue(),
-            'BuffsAffectPets' : self.Ctrls['BuffsAffectPets'].GetValue(),
+            "SelChat"         : self.Ctrls[self.MakeCtlName("SelChat")].GetValue(),
+            "BuffChat1"       : self.Ctrls[self.MakeCtlName("BuffChat1")].GetValue(),
+            "BuffChat2"       : self.Ctrls[self.MakeCtlName("BuffChat2")].GetValue(),
+            "BuffChat3"       : self.Ctrls[self.MakeCtlName("BuffChat3")].GetValue(),
+            "BuffsAffectTeam" : self.Ctrls[self.MakeCtlName("BuffsAffectTeam")].GetValue(),
+            "BuffsAffectPets" : self.Ctrls[self.MakeCtlName("BuffsAffectPets")].GetValue(),
         }
-        if self.Ctrls['BuffPower1'].GetLabel() != "...":
+        if self.Ctrls[self.MakeCtlName("BuffPower1")].GetLabel() != "...":
             data['BuffPower1'] = {
-                'pname' : self.Ctrls['BuffPower1'].GetLabel(),
-                'picon' : self.Ctrls['BuffPower1'].IconFilename,
+                'pname' : self.Ctrls[self.MakeCtlName("BuffPower1")].GetLabel(),
+                'picon' : self.Ctrls[self.MakeCtlName("BuffPower1")].IconFilename,
             }
-        if self.Ctrls['BuffPower2'].GetLabel() != "...":
+        if self.Ctrls[self.MakeCtlName("BuffPower2")].GetLabel() != "...":
             data['BuffPower2'] = {
-                'pname' : self.Ctrls['BuffPower2'].GetLabel(),
-                'picon' : self.Ctrls['BuffPower2'].IconFilename,
+                'pname' : self.Ctrls[self.MakeCtlName("BuffPower2")].GetLabel(),
+                'picon' : self.Ctrls[self.MakeCtlName("BuffPower2")].IconFilename,
             }
-        if self.Ctrls['BuffPower3'].GetLabel() != "...":
+        if self.Ctrls[self.MakeCtlName("BuffPower3")].GetLabel() != "...":
             data['BuffPower3'] = {
-                'pname' : self.Ctrls['BuffPower3'].GetLabel(),
-                'picon' : self.Ctrls['BuffPower3'].IconFilename,
+                'pname' : self.Ctrls[self.MakeCtlName("BuffPower3")].GetLabel(),
+                'picon' : self.Ctrls[self.MakeCtlName("BuffPower3")].IconFilename,
             }
         for i in (1,2,3,4,5,6,7,8):
-            data[f'Team{i}BuffKey'] = self.Ctrls[f'Team{i}BuffKey'].Key
+            data[f'Team{i}BuffKey'] = self.Ctrls[self.MakeCtlName(f'Team{i}BuffKey')].Key
         for i in (1,2,3,4,5,6):
-            data[f'Pet{i}BuffKey'] = self.Ctrls[f'Pet{i}BuffKey'].Key
+            data[f'Pet{i}BuffKey']  = self.Ctrls[self.MakeCtlName(f'Pet{i}BuffKey')].Key
 
         return data

@@ -1,4 +1,5 @@
 # parent class for various custom bindpane types
+import re
 import wx
 from UI.KeySelectDialog import bcKeyButton
 
@@ -23,7 +24,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
 
     def BuildBindUI(self, page):
         # build the UI needed to edit/create this bind, and shim
-        # it into 'parent'
+        # it into 'page'
         pass
 
     def PopulateBindFiles(self):
@@ -46,3 +47,6 @@ class CustomBindPaneParent(wx.CollapsiblePane):
             if isinstance(ctrl, bcKeyButton):
                 ctrl.ClearButton(None)
 
+    def MakeCtlName(self, name):
+        title = re.sub(r'\W+', '', self.Title)
+        return f"{self.bindclass}_{title}_{name}"

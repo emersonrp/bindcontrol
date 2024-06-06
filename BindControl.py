@@ -284,6 +284,10 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         self.Main = Main(None)
         self.Profile = self.Main.Profile
 
+        # TODO bootstrapping problem, can't do this inside Profile's "__init__" because
+        # it needs to be defined deep inside its innards.  This is amateur hour stuff sigh.
+        self.Profile.CheckAllConflicts()
+
         self.Main.Show()
 
         return True

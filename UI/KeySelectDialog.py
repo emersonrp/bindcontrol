@@ -56,7 +56,7 @@ class KeySelectDialog(wx.Dialog):
         if not self.Desc:
             raise Exception("Tried to make a KeySelectDialog for something with no desc")
 
-        desc = f"Press the key you want bound to {self.Desc}"
+        desc = f"Press the key you want bound to {self.Desc}\n(Right-click a key button to clear it.)"
 
         # is this ugly?
         self.ModSlot = set()
@@ -124,10 +124,8 @@ class KeySelectDialog(wx.Dialog):
 
         return super().ShowModal()
 
-
     def ShowBind(self):
         self.kbBind.SetPage('<center><b><font size=+4>' + self.Binding + '</font></b></center>')
-
 
     def handleJS(self, event):
         # knock wood, this seems to be working fairly well now.
@@ -267,13 +265,13 @@ class KeySelectDialog(wx.Dialog):
     def CheckConflicts(self):
         Profile = wx.App.Get().Profile
         if Profile:
-            conflicts = Profile.CheckConflict(self.Binding, self.Button.CtlName)
+            conflicts = self.Button.CheckConflicts(self.Binding)
             if conflicts:
-                conflictString = ''
+                conflictStrings = []
                 for conflict in conflicts:
-                    conflictString = conflictString + f'Conflict with "{conflict["ctrl"]}" on {conflict["page"]} page.'
+                    conflictStrings.append(f'Conflict with "{conflict["ctrl"]}" on {conflict["page"]} page.')
                 self.kbErr.SetForegroundColour(wx.RED)
-                self.kbErr.SetLabel(conflictString)
+                self.kbErr.SetLabel("\n".join(conflictStrings))
                 self.kbBind.SetHTMLBackgroundColour((255,200,200))
             else:
                 self.kbErr.SetForegroundColour(wx.NullColour)
@@ -439,6 +437,12 @@ class bcKeyButton(wx.Button):
         self.Bind(wx.EVT_BUTTON, self.KeySelectEventHandler)
         self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
 
+    def ClearButton(self, _):
+        self.SetLabel("")
+        self.Key = ""
+        wx.PostEvent(self, KeyChanged())
+        wx.App.Get().Profile.CheckAllConflicts()
+
     def MakeFileKeyBind(self, contents):
         return KeyBind(self.Key, self.CtlLabel, self.Page, contents)
 
@@ -460,14 +464,33 @@ class bcKeyButton(wx.Button):
             label = f"<small>{label}</small>"
         self.SetLabelMarkup(label)
 
-    def ClearButton(self, evt):
-        button = evt.EventObject
-        button.SetLabel("")
-        button.Key = ""
-        wx.PostEvent(button, KeyChanged())
+    def CheckConflicts(self, newbinding = None):
+        Profile = wx.App.Get().Profile
+        if Profile:
+            conflicts = Profile.CheckConflict(newbinding or self.Key, self.CtlName)
+            if conflicts:
+                self.SetError(True, conflicts = conflicts)
+            else:
+                self.SetError(False)
+            return conflicts
+
+    def SetError(self, iserror = True, conflicts = None):
+        if iserror:
+            self.SetBackgroundColour((255,200,200))
+            if conflicts:
+                conflictStrings = []
+                for conflict in conflicts:
+                    conflictStrings.append(f'This key conflicts with \"{conflict["ctrl"]}\" on the \"{conflict["page"]}\" tab.')
+                self.SetToolTip('\n'.join(conflictStrings))
+            else:
+                self.SetToolTip("This key must be defined to complete your bind.")
+        else:
+            self.SetOwnBackgroundColour(wx.NullColour)
+            self.SetToolTip('')
 
     def KeySelectEventHandler(self, evt):
         button = evt.EventObject
+        Profile = wx.App.Get().Profile
 
         existingKey = button.Key
 
@@ -482,5 +505,6 @@ class bcKeyButton(wx.Button):
                 wx.PostEvent(button, KeyChanged())
 
                 if existingKey != newKey:
-                    Profile = wx.App.Get().Profile
                     Profile.SetModified()
+
+            Profile.CheckAllConflicts()

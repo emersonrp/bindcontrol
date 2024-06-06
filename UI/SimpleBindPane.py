@@ -81,9 +81,9 @@ class SimpleBindPane(CustomBindPaneParent):
 
         bk = self.Ctrls['BindKey']
         if bk.Key:
-            bk.SetBackgroundColour(wx.NullColour)
+            bk.SetError(False)
         else:
-            bk.SetBackgroundColour((255,200,200))
+            bk.SetError(True)
             isWellFormed = False
 
         return isWellFormed

@@ -86,7 +86,7 @@ class PowerBinderDialog(wx.Dialog):
                 newCommand = commandClass(self.EditDialog, data)
                 self.RearrangeList.SetClientData(index, newCommand)
                 if newCommand.UI:
-                    self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.EXPAND|wx.ALL, 10)
+                    self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10)
                     self.EditDialog.mainSizer.Hide(newCommand.UI)
 
     def SaveToData(self):
@@ -149,7 +149,7 @@ class PowerBinderDialog(wx.Dialog):
 
         # show the edit dialog if this command needs it
         if newCommand.UI:
-            self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.EXPAND|wx.ALL, 10)
+            self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 10)
             self.ShowEditDialogFor(newCommand)
 
         self.bindChoice.SetSelection(wx.NOT_FOUND)
@@ -215,9 +215,11 @@ class PowerBinderButton(wx.Button):
         return self.PowerBinderDialog.SaveToData()
 
 class PowerBinderEditDialog(wx.Dialog):
-    def __init__(self, parent, init = {}):
+    def __init__(self, parent):
         wx.Dialog.__init__(self, parent, -1, "Edit Step",
            style = wx.DEFAULT_DIALOG_STYLE)
+
+        outerSizer = wx.BoxSizer(wx.VERTICAL)
 
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
         self.mainSizer.SetMinSize([500, 150])
@@ -228,7 +230,9 @@ class PowerBinderEditDialog(wx.Dialog):
             self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL),
             0, wx.EXPAND|wx.ALL, 10)
 
-        self.SetSizerAndFit(self.mainSizer)
+        outerSizer.Add(self.mainSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 3)
+
+        self.SetSizerAndFit(outerSizer)
         self.Layout()
         self.Fit()
 
@@ -714,6 +718,72 @@ class CostumeChangeCmd(PowerBindCmd):
     def Deserialize(self, init):
         if init.get('costumeNumber', ''): self.costumeChangeCostume.SetSelection(init['costumeNumber'])
         if init.get('costumeEmote' , ''): self.costumeChangeEmote  .SetSelection(init['costumeEmote'])
+
+####### Movement Command
+class MovementCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.plusbutton = wx.RadioButton(dialog, label = "+")
+        sizer.Add(self.plusbutton, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.plusbutton.SetValue(True)
+
+        self.plusplusbutton = wx.RadioButton(dialog, label = "++")
+        sizer.Add(self.plusplusbutton, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        self.minusbutton = wx.RadioButton(dialog, label = '-')
+        sizer.Add(self.minusbutton, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        self.commandchoice = wx.Choice(dialog, choices = [
+            "forward", "left", "right", "backward", "up", "down",
+            "turnleft", "turnright", "first", "autorun", "clicktomove",
+        ],)
+        sizer.Add(self.commandchoice, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.commandchoice.SetSelection(0)
+
+        self.zerobutton = wx.RadioButton(dialog, label = "0")
+        sizer.Add(self.zerobutton, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        self.onebutton = wx.RadioButton(dialog, label = "1")
+        sizer.Add(self.onebutton, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        return sizer
+
+    def MakeBindString(self):
+        pre = post = ''
+        if   self.plusbutton.GetValue()     : pre = "+"
+        elif self.plusplusbutton.GetValue() : pre = "++"
+        elif self.minusbutton.GetValue()    : pre = "-"
+        elif self.zerobutton.GetValue()     : post = " 0"
+        elif self.onebutton.GetValue()      : post = " 1"
+
+        command = self.commandchoice.GetString(self.commandchoice.GetSelection())
+
+        return f"{pre}{command}{post}"
+
+    def Serialize(self):
+        mod = ''
+        if   self.plusbutton.GetValue()     : mod = "plus"
+        elif self.plusplusbutton.GetValue() : mod = "plusplus"
+        elif self.minusbutton.GetValue()    : mod = "minus"
+        elif self.zerobutton.GetValue()     : mod = "zero"
+        elif self.onebutton.GetValue()      : mod = "one"
+
+        return {
+            'mod'     : mod,
+            'command' : self.commandchoice.GetString(self.commandchoice.GetSelection()),
+        }
+
+    def Deserialize(self, init):
+        mod = init.get('mod', 'plus')
+
+        if   mod == 'plus'     : self.plusbutton.SetValue(True)
+        elif mod == 'plusplus' : self.plusplusbutton.SetValue(True)
+        elif mod == 'minus'    : self.minusbutton.SetValue(True)
+        elif mod == 'zero'     : self.zerobutton.SetValue(True)
+        elif mod == 'one'      : self.onebutton.SetValue(True)
+
+        self.commandchoice.SetSelection(self.commandchoice.FindString(init.get('command', 'forward')))
 
 ####### Graphics Command
 class GraphicsCmd(PowerBindCmd):
@@ -1277,6 +1347,7 @@ commandClasses = {
     'Custom Bind'              : CustomBindCmd,
     'Emote'                    : EmoteCmd,
     'Graphics Settings'        : GraphicsCmd,
+    'Movement Commands'        : MovementCmd,
     'Power Abort'              : PowerAbortCmd,
     'Power Unqueue'            : PowerUnqueueCmd,
     'SG Mode Toggle'           : SGModeToggleCmd,

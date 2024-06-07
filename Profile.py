@@ -104,8 +104,8 @@ class Profile(wx.Notebook):
         for pageName in self.Pages:
             page = getattr(self, pageName)
             for ctrlname, ctrl in page.Ctrls.items():
-                if not ctrl.IsThisEnabled(): continue
                 if isinstance(ctrl, bcKeyButton):
+                    if not ctrl.IsThisEnabled(): continue
                     if (key != '') and (key == ctrl.Key) and (not existingctrlname == ctrlname):
                         conflicts.append( {'page' : page.TabTitle, 'ctrl': UI.Labels[ctrlname]})
         return conflicts
@@ -115,8 +115,8 @@ class Profile(wx.Notebook):
         for pageName in self.Pages:
             page = getattr(self, pageName)
             for _, ctrl in page.Ctrls.items():
-                if not ctrl.IsThisEnabled(): continue
                 if isinstance(ctrl, bcKeyButton):
+                    if not ctrl.IsThisEnabled(): continue
                     ctrl.CheckConflicts()
 
 

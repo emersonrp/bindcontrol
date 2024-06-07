@@ -166,10 +166,11 @@ class CustomBinds(Page):
         bindname = delButton.BindPane.Title
         if wx.MessageBox(f'Delete Bind "{bindname}"?', 'Delete Bind', wx.YES_NO) == wx.NO: return
         sizer = delButton.BindSizer
+        for ctrlname in delButton.BindPane.Ctrls:
+            if self.Ctrls.get(ctrlname, None) : del self.Ctrls[ctrlname]
         self.PaneSizer.Hide(sizer)
         self.PaneSizer.Remove(sizer)
         self.Panes.remove(delButton.BindPane)
-        # TODO -- here we need to iterate all controls and remove them from page.Ctrls
         delButton.BindPane.Destroy()
         self.Layout()
         evt.Skip()

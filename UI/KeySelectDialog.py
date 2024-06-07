@@ -439,12 +439,15 @@ class bcKeyButton(wx.Button):
 
         self.Bind(wx.EVT_BUTTON, self.KeySelectEventHandler)
         self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
+        self.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
+
+    def onKeyChanged(self, _):
+        wx.App.Get().Profile.CheckAllConflicts()
 
     def ClearButton(self, _):
         self.SetLabel("")
         self.Key = ""
         wx.PostEvent(self, KeyChanged())
-        wx.App.Get().Profile.CheckAllConflicts()
 
     def MakeFileKeyBind(self, contents):
         return KeyBind(self.Key, self.CtlLabel, self.Page, contents)
@@ -495,7 +498,6 @@ class bcKeyButton(wx.Button):
             self.SetOwnBackgroundColour(wx.NullColour)
             self.SetToolTip('')
             self.HasError = False
-
 
     def KeySelectEventHandler(self, evt):
         button = evt.EventObject

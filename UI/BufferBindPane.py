@@ -6,7 +6,7 @@ from BLF import BLF
 from UI.PowerPicker import PowerPicker
 
 from UI.CustomBindPaneParent import CustomBindPaneParent
-from UI.KeySelectDialog import bcKeyButton
+from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinderDialog import PowerBinderButton
 
 class BufferBindPane(CustomBindPaneParent):
@@ -15,11 +15,6 @@ class BufferBindPane(CustomBindPaneParent):
 
         self.PassedInit = init
 
-    def BuildBindUI(self, page):
-        pane = self.GetPane()
-        pane.Page = page
-
-        # Doing this init here since we need Title to be set to get this right
         self.Init = {
             'BuffChat1'       : '',
             'BuffChat2'       : '',
@@ -34,6 +29,16 @@ class BufferBindPane(CustomBindPaneParent):
             self.Init[f'Team{i}BuffKey'] = ''
         for i in (1,2,3,4,5,6):
             self.Init[f'Pet{i}BuffKey'] = ''
+
+    def BuildBindUI(self, page):
+        pane = self.GetPane()
+        pane.Page = page
+
+        # Doing this UI here since we need Title to be set to get MakeCtlName right
+        for i in (1,2,3,4,5,6,7,8):
+            UI.Labels[self.MakeCtlName(f'Team{i}BuffKey')] = f'Team {i} Key'
+        for i in (1,2,3,4,5,6):
+            UI.Labels[self.MakeCtlName(f'Pet{i}BuffKey')] = f'Pet {i} Key'
 
         self.Init.update(self.PassedInit)
 

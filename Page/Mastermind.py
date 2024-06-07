@@ -870,11 +870,12 @@ class Mastermind(Page):
                 )
         #
         # Prev / next pet binds
-        self.psCreateSet(1,0,self.Profile.ResetFile())
-        for tsize in 1,2,3,4,5,6:
-            for tsel in range(0,tsize+1):
-                file = self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt")
-                self.psCreateSet(tsize,tsel,file)
+        if self.GetState('PetNPEnable'):
+            self.psCreateSet(1,0,self.Profile.ResetFile())
+            for tsize in 1,2,3,4,5,6:
+                for tsel in range(0,tsize+1):
+                    file = self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt")
+                    self.psCreateSet(tsize,tsel,file)
 
     def psCreateSet(self, tsize, tsel, file):
         # tsize is the size of the team at the moment

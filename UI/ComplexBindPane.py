@@ -63,14 +63,27 @@ class ComplexBindPane(CustomBindPaneParent):
         border.Add(self.BindSizer, 1, wx.EXPAND|wx.ALL, 10)
         pane.SetSizer(border)
 
+        self.checkIfWellFormed()
+
     def onContentsChanged(self, _):
         self.checkIfWellFormed()
 
     def onKeyChanged(self, _):
         self.checkIfWellFormed()
+        if self.Profile:
+            self.Profile.CheckAllConflicts()
 
     def checkIfWellFormed(self):
         isWellFormed = True
+
+        # TODO - check each step for > 255 char
+        firststep = self.Steps[0].BindContents
+        fullsteps = list(filter(lambda x: x.BindContents.GetValue(), self.Steps))
+        if fullsteps:
+            firststep.SetBackgroundColour(wx.NullColour)
+        else:
+            firststep.SetBackgroundColour((255,200,200))
+            isWellFormed = False
 
         bk = self.Ctrls[self.MakeCtlName('BindKey')]
         if bk.Key:
@@ -85,6 +98,7 @@ class ComplexBindPane(CustomBindPaneParent):
         pane = self.GetPane()
         pane.Page = self.Page
         step = self.MakeBindStepUI(pane, stepdata)
+        step.BindContents.Bind(wx.EVT_TEXT, self.onContentsChanged)
         self.BindStepSizer.Insert(self.BindStepSizer.GetItemCount()-1, step, 0, wx.EXPAND)
         self.Steps.append(step)
         self.Page.Layout()
@@ -125,9 +139,6 @@ class ComplexBindPane(CustomBindPaneParent):
         self.RenumberSteps()
         self.Page.Layout()
         self.Profile.SetModified()
-
-    def onContentsChanged(self, _ = None):
-        pass
 
     def RenumberSteps(self):
         for i, step in enumerate(self.Steps, start = 1):

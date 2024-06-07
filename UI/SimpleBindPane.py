@@ -51,7 +51,7 @@ class SimpleBindPane(CustomBindPaneParent):
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(BindKeyCtrl,                          0, wx.ALIGN_CENTER_VERTICAL)
         self.Ctrls[BindKeyCtrl.CtlName] = BindKeyCtrl
-        UI.Labels[BindKeyCtrl.CtlName] = f'Simple Bind "{pane.Title}"'
+        UI.Labels[BindKeyCtrl.CtlName] = f'Simple Bind "{self.Title}"'
 
         BindSizer.Layout()
 
@@ -66,11 +66,13 @@ class SimpleBindPane(CustomBindPaneParent):
 
     def onKeyChanged(self, _):
         self.checkIfWellFormed()
+        if self.Profile:
+            self.Profile.CheckAllConflicts()
 
     def checkIfWellFormed(self):
         isWellFormed = True
 
-        bc = self.Ctrls['BindContents']
+        bc = self.Ctrls[self.MakeCtlName('BindContents')]
         bc.SetToolTip('')
         if bc.GetValue() and len(bc.GetValue()) <= 255:
             bc.SetBackgroundColour(wx.NullColour)
@@ -80,7 +82,7 @@ class SimpleBindPane(CustomBindPaneParent):
                 bc.SetToolTip("This bind is longer than 255 characters, which will cause problems in-game.")
             isWellFormed = False
 
-        bk = self.Ctrls['BindKey']
+        bk = self.Ctrls[self.MakeCtlName('BindKey')]
         if bk.Key:
             bk.SetError(False)
         else:

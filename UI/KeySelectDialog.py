@@ -408,6 +408,7 @@ class bcKeyButton(wx.Button):
         self.CtlLabel : ST.GenStaticText | wx.StaticText | None = init.get('CtlLabel', None)
         self.Key      : str           = init.get('Key', '')
         self.Page     : Page          = parent
+        self.HasError : bool          = False
 
         self.SetLabel(self.Key)
 
@@ -443,7 +444,8 @@ class bcKeyButton(wx.Button):
             if conflicts:
                 self.SetError(True, conflicts = conflicts)
             else:
-                self.SetError(False)
+                if not self.HasError: # don't clear errors if we already had one
+                    self.SetError(False)
             return conflicts
 
     # TODO - maybe? move this into UI/ControlGroup's mixin so we can 'seterror' on any control.
@@ -458,9 +460,12 @@ class bcKeyButton(wx.Button):
                 self.SetToolTip('\n'.join(conflictStrings))
             else:
                 self.SetToolTip("This key must be defined to complete your bind.")
+            self.HasError = True
         else:
             self.SetOwnBackgroundColour(wx.NullColour)
             self.SetToolTip('')
+            self.HasError = False
+
 
     def KeySelectEventHandler(self, evt):
         button = evt.EventObject

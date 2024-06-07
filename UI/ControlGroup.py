@@ -5,6 +5,7 @@ import wx
 from wx.adv import BitmapComboBox
 import wx.lib.stattext as ST
 
+from UI.ErrorControls import ErrorControlMixin
 from Page import Page
 import UI
 from UI.KeySelectDialog import bcKeyButton
@@ -153,31 +154,31 @@ class ControlGroup(wx.StaticBoxSizer):
         wx.PostEvent(cblabel.control, fakeevt)
         evt.Skip()
 
-### Deep magic for linting / pytight / mypy
-class CGControlProtocol(Protocol):
-    Enable             : Callable
-    GetContainingSizer : Callable
-    CtlLabel           : ST.GenStaticText | wx.StaticText | None
-    Page               : Page | None
-    Data               : Any
-
 # Mixin to enable/show controls' labels when they are enabled/shown
 class CGControlMixin:
-    def __init__(self: CGControlProtocol, *args, **kwargs):
+    GetContainingSizer     : Callable
+    SetBackgroundColour    : Callable
+    SetOwnBackgroundColour : Callable
+    CtlLabel               : ST.GenStaticText | wx.StaticText | None
+    Page                   : Page # pyright: ignore
+    Data                   : Any
+
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.CtlLabel : ST.GenStaticText | wx.StaticText | None = None
         self.Page = None
         self.Data = None
 
-    def Enable(self: CGControlProtocol, enable = True):
-        super().Enable(enable)
+    def Enable(self, enable = True):
+        super().Enable(enable) # pyright: ignore
         if self.CtlLabel: self.CtlLabel.Enable(enable)
 
-    def Show(self: CGControlProtocol, show = True):
+    def Show(self, show = True):
         self.GetContainingSizer().Show(self, show = show)
+        self.Enable(show)
         if self.CtlLabel:
             self.GetContainingSizer().Show(self.CtlLabel, show = show)
-        self.Enable(show)
+            self.CtlLabel.Enable(show)
         if self.Page: self.Page.Layout()
 
     def SetToolTip(self, tooltip):
@@ -185,18 +186,18 @@ class CGControlMixin:
         if self.CtlLabel:
             self.CtlLabel.SetToolTip(tooltip)
 
-# Miniclasses to use the above mixin
-class cgbcKeyButton     (CGControlMixin, bcKeyButton)         : pass
-class cgComboBox        (CGControlMixin, wx.ComboBox)         : pass
-class cgBMComboBox      (CGControlMixin, BitmapComboBox)      : pass
-class cgTextCtrl        (CGControlMixin, wx.TextCtrl)         : pass
-class cgStaticText      (CGControlMixin, wx.StaticText)       : pass
-class cgCheckBox        (CGControlMixin, wx.CheckBox)         : pass
-class cgSpinCtrl        (CGControlMixin, wx.SpinCtrl)         : pass
-class cgSpinCtrlDouble  (CGControlMixin, wx.SpinCtrlDouble)   : pass
-class cgDirPickerCtrl   (CGControlMixin, wx.DirPickerCtrl)    : pass
-class cgColourPickerCtrl(CGControlMixin, wx.ColourPickerCtrl) : pass
-class cgChoice          (CGControlMixin, wx.Choice)           :
+# Miniclasses to use mixins
+class cgbcKeyButton     (CGControlMixin,                    bcKeyButton)         : pass
+class cgComboBox        (CGControlMixin, ErrorControlMixin, wx.ComboBox)         : pass
+class cgBMComboBox      (CGControlMixin, ErrorControlMixin, BitmapComboBox)      : pass
+class cgTextCtrl        (CGControlMixin, ErrorControlMixin, wx.TextCtrl)         : pass
+class cgStaticText      (CGControlMixin, ErrorControlMixin, wx.StaticText)       : pass
+class cgCheckBox        (CGControlMixin, ErrorControlMixin, wx.CheckBox)         : pass
+class cgSpinCtrl        (CGControlMixin, ErrorControlMixin, wx.SpinCtrl)         : pass
+class cgSpinCtrlDouble  (CGControlMixin, ErrorControlMixin, wx.SpinCtrlDouble)   : pass
+class cgDirPickerCtrl   (CGControlMixin, ErrorControlMixin, wx.DirPickerCtrl)    : pass
+class cgColourPickerCtrl(CGControlMixin, ErrorControlMixin, wx.ColourPickerCtrl) : pass
+class cgChoice          (CGControlMixin, ErrorControlMixin, wx.Choice)           :
     def ShowEntryIf(self, entry: str, condition: bool):
         idx    = self.FindString(entry)
         exists = idx != wx.NOT_FOUND
@@ -204,4 +205,3 @@ class cgChoice          (CGControlMixin, wx.Choice)           :
             if not exists: self.Append(entry)
         else:
             if exists: self.Delete(idx)
-

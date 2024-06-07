@@ -9,6 +9,7 @@ import wx.lib.stattext as ST
 import wx.lib.newevent
 
 import UI
+from UI.ErrorControls import ErrorControlMixin
 from bcController import bcController
 
 KeyChanged, EVT_KEY_CHANGED = wx.lib.newevent.NewEvent()
@@ -418,7 +419,7 @@ class KeySelectDialog(wx.Dialog):
             self.Keymap[ord(str(alphanum))] = str(alphanum)
 
 from BindFile import KeyBind
-class bcKeyButton(wx.Button):
+class bcKeyButton(ErrorControlMixin, wx.Button):
 
     def __init__(self, parent, id, init = {}):
         self.CtlName  : str                                     = init.get('CtlName', None)
@@ -426,14 +427,12 @@ class bcKeyButton(wx.Button):
         self.Key      : str                                     = init.get('Key', '')
         self.Page                                               = parent
         self.AlwaysShorten : bool                               = init.get('AlwaysShorten', False)
-        self.HasError : bool          = False
+        self.Errors   : dict                                    = {}
 
         # This might be overloading "AlwaysShorten", but:
         style = wx.BU_EXACTFIT if self.AlwaysShorten else 0
 
         wx.Button.__init__(self, parent, id, style = style)
-        self.Key      : str           = init.get('Key', '')
-        self.Page     : Page          = parent
 
         self.SetLabel(self.Key)
 
@@ -475,29 +474,13 @@ class bcKeyButton(wx.Button):
         if Profile:
             conflicts = Profile.CheckConflict(newbinding or self.Key, self.CtlName)
             if conflicts:
-                self.SetError(True, conflicts = conflicts)
-            else:
-                if not self.HasError: # don't clear errors if we already had one
-                    self.SetError(False)
-            return conflicts
-
-    # TODO - maybe? move this into UI/ControlGroup's mixin so we can 'seterror' on any control.
-    # Will need to dig out / generalize the 'conflicts' notion
-    def SetError(self, iserror = True, conflicts = None):
-        if iserror:
-            self.SetBackgroundColour((255,200,200))
-            if conflicts:
                 conflictStrings = []
                 for conflict in conflicts:
                     conflictStrings.append(f'This key conflicts with \"{conflict["ctrl"]}\" on the \"{conflict["page"]}\" tab.')
-                self.SetToolTip('\n'.join(conflictStrings))
+                self.AddError('conflict', '\n'.join(conflictStrings))
             else:
-                self.SetToolTip("This key must be defined to complete your bind.")
-            self.HasError = True
-        else:
-            self.SetOwnBackgroundColour(wx.NullColour)
-            self.SetToolTip('')
-            self.HasError = False
+                self.RemoveError('conflict')
+            return conflicts
 
     def KeySelectEventHandler(self, evt):
         button = evt.EventObject

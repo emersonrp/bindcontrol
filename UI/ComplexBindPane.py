@@ -86,10 +86,10 @@ class ComplexBindPane(CustomBindPaneParent):
             isWellFormed = False
 
         bk = self.Ctrls[self.MakeCtlName('BindKey')]
-        if bk.Key:
-            bk.SetError(False)
+        if not bk.Key:
+            bk.AddError('undef', 'The keybind has not been selected')
         else:
-            bk.SetError(True)
+            bk.RemoveError('undef')
             isWellFormed = False
 
         return isWellFormed

@@ -147,17 +147,19 @@ class CustomBinds(Page):
                 if new:
                     bindpane.Destroy()
 
-            if bindpane.IsCollapsed():
-                bindpane.Expand()
-                bindpane.Collapse()
-            else:
-                bindpane.Collapse()
-                bindpane.Expand()
+            if bindpane:
+                if bindpane.IsCollapsed():
+                    bindpane.Expand()
+                    bindpane.Collapse()
+                else:
+                    bindpane.Collapse()
+                    bindpane.Expand()
         except Exception as e:
             raise e
         finally:
-            bindpane.Parent.Layout()
-            bindpane.Thaw()
+            if bindpane:
+                bindpane.Parent.Layout()
+                bindpane.Thaw()
 
         dlg.Destroy()
 

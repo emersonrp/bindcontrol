@@ -84,9 +84,9 @@ class SimpleBindPane(CustomBindPaneParent):
 
         bk = self.Ctrls[self.MakeCtlName('BindKey')]
         if bk.Key:
-            bk.SetError(False)
+            bk.RemoveError('undef')
         else:
-            bk.SetError(True)
+            bk.AddError('undef', 'The keybind has not been selected')
             isWellFormed = False
 
         return isWellFormed

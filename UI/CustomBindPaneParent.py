@@ -4,7 +4,7 @@ from UI.KeySelectDialog import bcKeyButton
 
 class CustomBindPaneParent(wx.CollapsiblePane):
     def __init__(self, page, init = {}):
-        wx.CollapsiblePane.__init__(self, page.scrolledPane,
+        wx.CollapsiblePane.__init__(self, page.scrolledPanel,
                 style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
         self.Ctrls   = {}

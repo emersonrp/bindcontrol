@@ -32,14 +32,14 @@ class CustomBinds(Page):
         buttonSizer.Add(newBufferBindButton, wx.ALIGN_CENTER)
 
         # a scrollable window and sizer for the collection of collapsable panes
-        self.PaneSizer      = wx.BoxSizer(wx.VERTICAL)
-        self.scrolledPane   = wx.ScrolledWindow(self, -1, style = wx.VSCROLL)
-        self.scrolledPane.SetScrollRate(10,10) # necessary to enable scrolling at all.
-        self.scrolledPane.SetSizer(self.PaneSizer)
+        self.PaneSizer     = wx.BoxSizer(wx.VERTICAL)
+        self.scrolledPanel = wx.ScrolledWindow(self, -1, style = wx.VSCROLL)
+        self.scrolledPanel.SetScrollRate(10,10) # necessary to enable scrolling at all.
+        self.scrolledPanel.SetSizer(self.PaneSizer)
 
         # add the two parts of the layout, bottom one expandable
-        MainSizer.Add( buttonSizer,       0, wx.EXPAND)
-        MainSizer.Add( self.scrolledPane, 1, wx.EXPAND)
+        MainSizer.Add( buttonSizer,       0, wx.EXPAND|wx.BOTTOM, 16)
+        MainSizer.Add( self.scrolledPanel, 1, wx.EXPAND)
 
         # sizer around the whole thing to add padding
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
@@ -80,7 +80,7 @@ class CustomBinds(Page):
         bindSizer.Add(bindpane, 1, wx.EXPAND, 5)
 
         buttonSizer = wx.BoxSizer(wx.VERTICAL)
-        deleteButton = wx.Button(self.scrolledPane, -1, "X", size = [40, -1])
+        deleteButton = wx.Button(self.scrolledPanel, -1, "X", size = [40, -1])
         deleteButton.SetForegroundColour(wx.RED)
         setattr(deleteButton, "BindPane", bindpane)
         setattr(deleteButton, "BindSizer", bindSizer)
@@ -89,14 +89,14 @@ class CustomBinds(Page):
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
         buttonSizer.Add(deleteButton)
 
-        renameButton = wx.Button(self.scrolledPane, -1, "#", size = [40, -1])
+        renameButton = wx.Button(self.scrolledPanel, -1, "#", size = [40, -1])
         setattr(renameButton, "BindPane", bindpane)
         setattr(bindpane,     "RenButton", renameButton)
         renameButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
         renameButton.Bind(wx.EVT_BUTTON, self.SetBindPaneLabel)
         buttonSizer.Add(renameButton)
 
-        duplicateButton = wx.Button(self.scrolledPane, -1, "+", size = [40, -1])
+        duplicateButton = wx.Button(self.scrolledPanel, -1, "+", size = [40, -1])
         setattr(duplicateButton, "BindPane", bindpane)
         setattr(bindpane,        "DupButton", duplicateButton)
         duplicateButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')

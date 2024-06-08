@@ -54,8 +54,14 @@ class Profile(wx.Notebook):
         scrollpane = self.Parent
         if (evt.GetSelection() == 2): # TODO this is ugly hard-coded for "Custom Binds" tab
             scrollpane.ShowScrollbars(wx.SHOW_SB_NEVER, wx.SHOW_SB_NEVER)
+            scrollpane.Bind(wx.EVT_SCROLLWIN, self.doNothing)
+            scrollpane.SetVirtualSize(scrollpane.GetClientSize())
         else:
             scrollpane.ShowScrollbars(wx.SHOW_SB_DEFAULT, wx.SHOW_SB_DEFAULT)
+            scrollpane.Bind(wx.EVT_SCROLLWIN, None)
+            scrollpane.SetVirtualSize(scrollpane.GetBestVirtualSize())
+
+    def doNothing(self, _): pass
 
     def CreatePage(self, module):
         module.BuildPage()
@@ -307,7 +313,7 @@ class Profile(wx.Notebook):
                     page.SynchronizeUI()  # this clears/repops the Primary/Secondary pickers on 'General' so don't do it there
 
             cbpage = getattr(self, "CustomBinds")
-            cbpage.scrolledPane.DestroyChildren()
+            cbpage.scrolledPanel.DestroyChildren()
             for custombind in data['CustomBinds']:
                 if not custombind: continue
 

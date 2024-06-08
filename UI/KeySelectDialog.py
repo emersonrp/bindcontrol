@@ -340,7 +340,9 @@ class KeySelectDialog(wx.Dialog):
                 ord(';') : ';',
                 ord("'") : "'",
                 ord(',') : 'COMMA',
-                ord('.') : '.',
+                ord('.') : 'PERIOD',
+                ord('<') : 'COMMA',
+                ord('>') : 'PERIOD',
                 ord('/') : '/',
                 'BUTTON1' : 'LBUTTON',
                 'BUTTON2' : 'MBUTTON',
@@ -436,6 +438,11 @@ class bcKeyButton(wx.Button):
             label = re.sub(r'RightBumper', 'RBump', label)
             label = f"<small>{label}</small>"
         self.SetLabelMarkup(label)
+
+    # this so we don't write "Sh+BACKSPACE" to the binds
+    # I thought I fixed this long long ago
+    def GetLabel(self):
+        return self.Key
 
     def KeySelectEventHandler(self, evt):
         button = evt.EventObject

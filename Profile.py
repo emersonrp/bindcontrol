@@ -46,7 +46,16 @@ class Profile(wx.Notebook):
         ]:
             self.Bind(evt, self.SetModified)
 
+        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.onPageChanged)
+
         if loadfile: self.doLoadFromFile(loadfile)
+
+    def onPageChanged(self, evt):
+        scrollpane = self.Parent
+        if (evt.GetSelection() == 2): # TODO this is ugly hard-coded for "Custom Binds" tab
+            scrollpane.ShowScrollbars(wx.SHOW_SB_NEVER, wx.SHOW_SB_NEVER)
+        else:
+            scrollpane.ShowScrollbars(wx.SHOW_SB_DEFAULT, wx.SHOW_SB_DEFAULT)
 
     def CreatePage(self, module):
         module.BuildPage()

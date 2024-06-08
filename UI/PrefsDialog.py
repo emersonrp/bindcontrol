@@ -166,6 +166,16 @@ class PrefsDialog(wx.Dialog):
         setattr(crashOnBindErrorLabel, 'CB', self.CrashOnBindError)
         crashOnBindErrorLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
+        showInspectorLabel = ST.GenStaticText(debugPanel, label = "Show Widget Inspector:")
+        debugSizer.Add( showInspectorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        self.ShowInspector = wx.CheckBox(debugPanel)
+        self.ShowInspector.SetValue(config.ReadBool('ShowInspector'))
+        tooltip = "Show the wxPython widget inspector while running.  While harmless, this will open an extra, cryptic window that you're probably not interested in unless debugging."
+        showInspectorLabel.SetToolTip(tooltip)
+        self.ShowInspector.SetToolTip(tooltip)
+        debugSizer.Add( self.ShowInspector, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+        setattr(showInspectorLabel, 'CB', self.ShowInspector)
+        showInspectorLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
         debugPanel.SetSizerAndFit(debugSizer)
 

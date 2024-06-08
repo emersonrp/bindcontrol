@@ -47,6 +47,7 @@ class Main(wx.Frame):
         if not config.Exists('SaveSizeAndPosition') : config.WriteBool('SaveSizeAndPosition', True)
         if not config.Exists('VerboseBLF')          : config.WriteBool('VerboseBLF', False)
         if not config.Exists('CrashOnBindError')    : config.WriteBool('CrashOnBindError', False)
+        if not config.Exists('ShowInspector')       : config.WriteBool('ShowInspector', False)
         config.Flush()
 
         self.Sizer = wx.BoxSizer(wx.VERTICAL)
@@ -215,6 +216,7 @@ class Main(wx.Frame):
 
             config.WriteBool('VerboseBLF', self.PrefsDialog.VerboseBLF.GetValue())
             config.WriteBool('CrashOnBindError', self.PrefsDialog.CrashOnBindError.GetValue())
+            config.WriteBool('ShowInspector', self.PrefsDialog.ShowInspector.GetValue())
 
             config.Flush()
 
@@ -283,7 +285,9 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
 if __name__ == "__main__":
     app = MyApp(redirect=False)
 
-    #import wx.lib.inspection
-    #wx.lib.inspection.InspectionTool().Show()
+    config = wx.ConfigBase.Get()
+    if config.ReadBool('ShowInspector'):
+        import wx.lib.inspection
+        wx.lib.inspection.InspectionTool().Show()
     app.MainLoop()
 

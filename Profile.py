@@ -295,7 +295,7 @@ class Profile(wx.Notebook):
                         epic = page.Ctrls['Epic'].FindString(epic)
                     page.Ctrls['Epic'].SetSelection(epic)
                 else:
-                    page.SynchronizeUI()  # this clears and repops the Primary and Secondary pickers on 'General'
+                    page.SynchronizeUI()  # this clears/repops the Primary/Secondary pickers on 'General' so don't do it there
 
             cbpage = getattr(self, "CustomBinds")
             cbpage.scrolledPane.DestroyChildren()

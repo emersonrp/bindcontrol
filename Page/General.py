@@ -261,7 +261,7 @@ class General(Page):
         if getattr(self.Profile, 'MovementPowers', None):
             self.Profile.MovementPowers.SynchronizeUI()
 
-        self.Fit()
+        #self.Fit() # this was making the "General" tab de-center on Load Profile on Windows
         if evt: evt.Skip()
 
 

@@ -14,6 +14,8 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         self.Title   = init.get('Title', '')
         self.SetLabel(self.Title)
 
+        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT))
+
         # stash away the bind name inside the inner pane
         self.GetPane().Title = self.Title
 

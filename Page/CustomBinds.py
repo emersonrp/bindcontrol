@@ -1,5 +1,5 @@
 import wx
-import UI
+from Icon import GetIcon
 
 from Page import Page
 from UI.BufferBindPane  import BufferBindPane
@@ -79,8 +79,8 @@ class CustomBinds(Page):
         bindSizer = wx.BoxSizer(wx.HORIZONTAL)
         bindSizer.Add(bindpane, 1, wx.EXPAND, 5)
 
-        buttonSizer = wx.BoxSizer(wx.HORIZONTAL)
-        deleteButton = wx.Button(self.scrolledPanel, -1, "X", size = [20, -1])
+        buttonSizer = wx.BoxSizer(wx.VERTICAL)
+        deleteButton = wx.BitmapButton(self.scrolledPanel, -1, bitmap = GetIcon('UI/delete'))
         deleteButton.SetForegroundColour(wx.RED)
         setattr(deleteButton, "BindPane", bindpane)
         setattr(deleteButton, "BindSizer", bindSizer)
@@ -89,14 +89,14 @@ class CustomBinds(Page):
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
         buttonSizer.Add(deleteButton)
 
-        renameButton = wx.Button(self.scrolledPanel, -1, "#", size = [20, -1])
+        renameButton = wx.BitmapButton(self.scrolledPanel, -1, bitmap = GetIcon('UI/rename'))
         setattr(renameButton, "BindPane", bindpane)
         setattr(bindpane,     "RenButton", renameButton)
         renameButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
         renameButton.Bind(wx.EVT_BUTTON, self.SetBindPaneLabel)
         buttonSizer.Add(renameButton)
 
-        duplicateButton = wx.Button(self.scrolledPanel, -1, "+", size = [20, -1])
+        duplicateButton = wx.BitmapButton(self.scrolledPanel, -1, bitmap = GetIcon('UI/copy'))
         setattr(duplicateButton, "BindPane", bindpane)
         setattr(bindpane,        "DupButton", duplicateButton)
         duplicateButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')

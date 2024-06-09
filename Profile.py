@@ -136,6 +136,11 @@ class Profile(wx.Notebook):
         self.General.SetState('Name', currentname)
 
     def SaveToFile(self, _ = None):
+        try:
+            self.ProfilePath().mkdir( parents = True, exist_ok = True )
+        except Exception as e:
+            wx.LogError(f"Can't make Profile path {self.ProfilePath()} - {e}")
+
         with wx.FileDialog(self, "Save Profile file",
                 wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
                 defaultDir = str(self.ProfilePath()),
@@ -146,7 +151,7 @@ class Profile(wx.Notebook):
                 wx.LogMessage("User canceled saving new profile")
                 return False    # the user changed their mind
 
-            # Proceed loading the file chosen by the user
+            # Proceed with the file chosen by the user
             pathname = fileDialog.GetPath()
             if not re.search(r'\.bcp$', pathname):
                 pathname = pathname + '.bcp'

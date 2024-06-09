@@ -155,7 +155,9 @@ class Profile(wx.Notebook):
             pathname = fileDialog.GetPath()
             if not re.search(r'\.bcp$', pathname):
                 pathname = pathname + '.bcp'
+
             self.Filename = Path(pathname)
+            self.General.SetState('Name', self.Filename.stem)
 
             return self.doSaveToFile()
 

@@ -42,7 +42,7 @@ class Main(wx.Frame):
         if not config.Exists('ResetKey')            : config.Write('ResetKey', 'LCTRL+R')
         if not config.Exists('UseSplitModKeys')     : config.WriteBool('UseSplitModKeys', False)
         if not config.Exists('FlushAllBinds')       : config.WriteBool('FlushAllBinds', True)
-        if not config.Exists('StartWith')           : config.Write('StartWith', 'New Profile')
+        if not config.Exists('StartWith')           : config.Write('StartWith', 'Last Profile')
         if not config.Exists('ProfilePath')         : config.Write('ProfilePath', str(Path.home() / "Documents" / "bindcontrol"))
         if not config.Exists('SaveSizeAndPosition') : config.WriteBool('SaveSizeAndPosition', True)
         if not config.Exists('VerboseBLF')          : config.WriteBool('VerboseBLF', False)

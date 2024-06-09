@@ -197,6 +197,8 @@ class KeySelectDialog(wx.Dialog):
         self.clearMouseKeys()
         if event.GetEventType() == wx.wxEVT_MOUSEWHEEL:
             self.PressedKeys.add("MOUSEWHEEL")
+        elif (event.LeftIsDown() and event.RightIsDown()):
+            self.PressedKeys.add("MOUSECHORD")
         elif (event.ButtonDClick()):
             self.PressedKeys.add("DCLICK" + str(event.GetButton()))
         else:
@@ -210,6 +212,7 @@ class KeySelectDialog(wx.Dialog):
             if re.match("DCLICK", key) or re.match("BUTTON", key):
                 self.PressedKeys.discard(key)
         self.PressedKeys.discard("MOUSEWHEEL")
+        self.PressedKeys.discard("MOUSECHORD")
 
 
     def buildBind(self):
@@ -313,6 +316,7 @@ class KeySelectDialog(wx.Dialog):
                 wx.WXK_NUMPAD7 : 'NUMPAD7',
                 wx.WXK_NUMPAD8 : 'NUMPAD8',
                 wx.WXK_NUMPAD9 : 'NUMPAD9',
+                wx.WXK_NUMLOCK : 'NUMLOCK',
                 wx.WXK_NUMPAD_MULTIPLY : 'MULTIPLY',
                 wx.WXK_NUMPAD_ADD : 'ADD',
                 wx.WXK_NUMPAD_SUBTRACT : 'SUBTRACT',

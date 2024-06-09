@@ -104,6 +104,7 @@ class KeySelectDialog(wx.Dialog):
             i.Bind(wx.EVT_RIGHT_DCLICK    , self.handleMouse )
             i.Bind(wx.EVT_MOUSE_AUX1_DOWN , self.handleMouse )
             i.Bind(wx.EVT_MOUSE_AUX2_DOWN , self.handleMouse )
+            i.Bind(wx.EVT_MOUSEWHEEL      , self.handleMouse )
 
         buttonSizer = self.CreateButtonSizer(wx.OK|wx.CANCEL|wx.NO_DEFAULT)
         vbox.Add(buttonSizer, 0, wx.ALIGN_CENTER|wx.ALL, 16)
@@ -175,6 +176,7 @@ class KeySelectDialog(wx.Dialog):
         if SeparateLR and rkc in modRawKeyCodes:
             self.PressedKeys.add(modRawKeyCodes[rkc])
         else:
+            self.clearMouseKeys()
             self.PressedKeys.add(self.Keymap[event.GetKeyCode()])
 
         self.buildBind()
@@ -192,12 +194,22 @@ class KeySelectDialog(wx.Dialog):
         self.buildBind()
 
     def handleMouse(self, event):
-        if (event.ButtonDClick()):
+        self.clearMouseKeys()
+        if event.GetEventType() == wx.wxEVT_MOUSEWHEEL:
+            self.PressedKeys.add("MOUSEWHEEL")
+        elif (event.ButtonDClick()):
             self.PressedKeys.add("DCLICK" + str(event.GetButton()))
         else:
             self.PressedKeys.add("BUTTON" + str(event.GetButton()))
 
         self.buildBind()
+
+    def clearMouseKeys(self):
+        pressedkeys = list(self.PressedKeys)
+        for key in pressedkeys:
+            if re.match("DCLICK", key) or re.match("BUTTON", key):
+                self.PressedKeys.discard(key)
+        self.PressedKeys.discard("MOUSEWHEEL")
 
 
     def buildBind(self):

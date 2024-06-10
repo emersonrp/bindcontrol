@@ -16,7 +16,7 @@ Features
 
 * Runs on Windows, MacOS, and Linux
 * Separate profiles for different characters, archetypes, or situations
-* One-key next-teammate / previous-teammate selection
+* One-key next-teammate / previous-teammate selection, with support for setting team size and optionally skipping the player in the next/previous rotation
 * Various helpful shortcut binds, "Quit to Desktop", "Invite Target", "Show FPS", "Show Netgraph" - more to come.
 * Chat binds with optional 'typing' notifier and custom chat colors
 * Controller support (WIP, binds created with a controller work perfectly, but BindControl itself sometimes has trouble detecting controller input)
@@ -50,7 +50,6 @@ TODO
 ----
 
 * Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment.
-* Finish implementation of team select binds
 * Bodyguard mode, as implemented in citybinder, doesn't work as intended, and might not be able to due to game restrictions.
 * Investigate improvements to Mastermind binds to clarify and expand the behavior.
 * More error detection and handling

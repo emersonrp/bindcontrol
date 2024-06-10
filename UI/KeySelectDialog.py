@@ -303,6 +303,7 @@ class KeySelectDialog(wx.Dialog):
                 wx.WXK_PAGEUP : 'PAGEUP',
                 wx.WXK_PAGEDOWN : 'PAGEDOWN',
                 wx.WXK_PRINT : 'SYSRQ',
+                wx.WXK_SNAPSHOT : 'SYSRQ', # TODO - this is for Windows;  it only fires a KeyUp event.  Bug in wx?
                 wx.WXK_SCROLL : 'SCROLL',
                 wx.WXK_MENU : 'APPS',
                 wx.WXK_PAUSE : 'PAUSE',

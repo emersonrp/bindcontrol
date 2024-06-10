@@ -82,7 +82,7 @@ class Gameplay(Page):
         ##### Team Select Binds
         teamenablesizer = wx.BoxSizer(wx.HORIZONTAL)
         teamenable = wx.CheckBox( self, -1, 'Enable Team Select')
-        teamenable.SetToolTip( wx.ToolTip('Check this to enable the Single Key Team Select Binds') )
+        teamenable.SetToolTip( wx.ToolTip('Check this to enable the Next/Prev Team Select Binds') )
         teamenable.Bind(wx.EVT_CHECKBOX, self.OnTeamEnable)
         self.Ctrls['TeamEnable'] = teamenable
         teamenable.SetValue(self.Init['TeamEnable'])
@@ -96,13 +96,13 @@ class Gameplay(Page):
 
         TeamSelBox = ControlGroup(self, self, 'Team Select')
         for b in (
-            ['SelNextTeam' , 'Choose the key that will select the next teammate from the currently selected one']     ,
             ['SelPrevTeam' , 'Choose the key that will select the previous teammate from the currently selected one'] ,
-            ['IncTeamSize' , 'Choose the key that will increase the size of your teammate rotation']                  ,
+            ['SelNextTeam' , 'Choose the key that will select the next teammate from the currently selected one']     ,
             ['DecTeamSize' , 'Choose the key that will decrease the size of your teammate rotation']                  ,
-            ['IncTeamPos'  , 'Choose the key that will move you to the next higher slot in the team rotation']        ,
-            ['DecTeamPos'  , 'Choose the key that will move you to the next lower slot in the team rotation']         ,
-            ['TeamReset'   , 'Choose the key that will reset your team rotation to solo']                             ,
+            ['IncTeamSize' , 'Choose the key that will increase the size of your teammate rotation']                  ,
+            ['DecTeamPos'  , 'Choose the key that will move you to the next lower position in the team rotation']         ,
+            ['IncTeamPos'  , 'Choose the key that will move you to the next higher position in the team rotation']        ,
+            ['TeamReset'   , 'Choose the key that will reset your next/prev teammate binds to Solo / No Position']                             ,
         ):
             TeamSelBox.AddControl(
                 ctlName = b[0],
@@ -221,7 +221,7 @@ class Gameplay(Page):
         # tsize is the size of the team at the moment
         # tpos is the position of the player at the moment, or 0 if unknown
         # tsel is the currently selected team member as far as the bind knows, or 0 if unknown
-        file.SetBind(self.GetState('TeamReset'), self, UI.Labels['TeamReset'], f'tell $name, Re-Loaded Single Key Team Select Bind.$${BLF()} {self.Profile.GameBindsDir()}\\teamsel2\\100.txt')
+        file.SetBind(self.GetState('TeamReset'), self, UI.Labels['TeamReset'], f'tell $name, Re-Loaded Next/Prev Team Select Bind.$${BLF()} {self.Profile.GameBindsDir()}\\teamsel2\\100.txt')
         if tsize < 8:
             file.SetBind(self.GetState('IncTeamSize'), self, UI.Labels['IncTeamSize'], f'tell $name, {self.formatTeamConfig(tsize+1,tpos)}$${BLF()} {self.Profile.GameBindsDir()}\\teamsel2\\{tsize+1}{tpos}{tsel}.txt')
         else:
@@ -242,6 +242,13 @@ class Gameplay(Page):
             if selnext > tsize : selnext = 1
             if selprev < 1     : selprev = tsize
             tposup,tposdn = tpos+1,tpos-1
+            # These next two lines are added by emerson to the original CityBinder logic
+            # to fix an issue where if the binds were currently "at" position X, and you
+            # tried to inc/dec your position to X, it wouldn't find the (semi-correctly)
+            # nonexistent bind file.  This is suboptimal.
+            if tposup == tsel  : tposup = tposup + 1
+            if tposdn == tsel  : tposdn = tposdn - 1
+            # end emerson addition
             if tposup > tsize  : tposup = 0
             if tposdn < 0      : tposdn = tsize
             newpos,newsel = tpos,tsel

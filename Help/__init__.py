@@ -19,6 +19,8 @@ class HelpHTMLWindow(wx.html.HtmlWindow):
 
         self.Bind(wx.html.EVT_HTML_LINK_CLICKED, self.HandleLinkClicked)
 
+    # TODO - maybe check if we have "http(s)" at the start, and if not,
+    # we're loading a local file and should use ourselves not the browser?
     def HandleLinkClicked(self, evt):
         linkinfo = evt.GetLinkInfo()
         page = linkinfo.GetHref()
@@ -32,10 +34,10 @@ class HelpWindow(wx.MiniFrame):
 
         manualhtml = HelpHTMLWindow(self, filename)
 
-        self.manualsizer = wx.BoxSizer(wx.VERTICAL)
+        manualsizer = wx.BoxSizer(wx.VERTICAL)
+        manualsizer.Add(manualhtml, 1, wx.EXPAND)
 
-        self.manualsizer.Add(manualhtml, 1, wx.EXPAND)
-        self.SetSizer(self.manualsizer)
+        self.SetSizer(manualsizer)
 
         self.Layout()
 
@@ -53,8 +55,11 @@ class HelpPopup(wx.PopupTransientWindow):
         manualsizer.Add(manualhtml, 1, wx.EXPAND|wx.ALL, 3)
 
         self.panel.SetSizer(manualsizer)
-        manualsizer.Fit(self.panel)
-        manualsizer.Fit(self)
+
+        # resize the whole thing to match manualhtml's correct vertical size
+        self.SetSize(manualhtml.GetVirtualSize())
+        self.panel.SetSize(manualhtml.GetVirtualSize())
+
         self.Layout()
 
         HelpPopups[filename] = self

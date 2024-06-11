@@ -267,7 +267,11 @@ class Profile(wx.Notebook):
 
                     value = None
                     if pagename in data:
-                        value = data[pagename].get(controlname, None)
+                        if controlname in data[pagename]:
+                            value = data[pagename].get(controlname, None)
+                        # if we don't have a given control in the load data, skip it completely --
+                        # it should alread have the default value from Init
+                        else: continue
 
                     # look up what type of control it is to know how to update its value
                     if isinstance(control, wx.DirPickerCtrl):

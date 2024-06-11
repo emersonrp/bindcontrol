@@ -247,7 +247,7 @@ class Main(wx.Frame):
         self.LogWindow.Show()
 
     def OnMenuExitApplication(self, _):
-        self.Close(True)
+        self.Close()
 
     def OnHelpManual(self, _):
         ShowHelpWindow(self, 'Manual.html')

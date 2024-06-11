@@ -4,6 +4,7 @@ from BLF import BLF
 from Help import HelpButton
 
 from UI.ControlGroup import ControlGroup
+from UI.KeySelectDialog import bcKeyButton
 from Page import Page
 
 ordinals = ("First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth")
@@ -38,10 +39,73 @@ class Gameplay(Page):
             'InviteTarget'  : '',
             'FPSBindKey'      : '',
             'NetgraphBindKey' : '',
+
+            'Tray1Enabled' : False,
+            'Tray2Enabled' : False,
+            'Tray3Enabled' : False,
+            'Tray4Enabled' : False,
         }
+        for tray in (3,2,1):
+            mod = ['', '', 'ALT+', 'SHIFT+'][tray]
+            for button in (1,2,3,4,5,6,7,8,9,0):
+                ctlname = f'Tray{tray}Button{button}'
+                self.Init[ctlname] = f"{mod}{button}"
+                UI.Labels[ctlname] = f"Tray {tray}, Button {button}"
+
+        for button in (1,2,3,4,5,6,7,8,9,0):
+            ctlname = f'Tray4Button{button}'
+            self.Init[ctlname] = f"CTRL+{button}"
+            UI.Labels[ctlname] = f"Server Tray, Button {button}"
 
     def BuildPage(self):
-        topSizer = wx.BoxSizer(wx.HORIZONTAL)
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+
+        ##### Power Tray Buttons
+        traySizer = wx.StaticBoxSizer(wx.HORIZONTAL, self, label = 'Power Tray Buttons')
+
+        trayGridSizer = wx.FlexGridSizer(11,4,0)
+        # server tray at the top
+        checkbox = wx.CheckBox(self, wx.ID_ANY, label = f"Server Tray")
+        checkbox.SetValue(self.Init.get(f'Tray4Enabled', False))
+        checkbox.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls[f'Tray4Enabled'] = checkbox
+        trayGridSizer.Add(checkbox, 0, wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5)
+
+        for button in (1,2,3,4,5,6,7,8,9,0):
+            ctlname = f'Tray4Button{button}'
+            traybutton = bcKeyButton(self, wx.ID_ANY, init = {
+                'CtlName'       : ctlname,
+                'Key'           : self.Init[ctlname],
+                'AlwaysShorten' : True,
+            })
+            self.Ctrls[ctlname] = traybutton
+
+            trayGridSizer.Add(traybutton, 1, wx.EXPAND)
+        # Then the three main trays
+        for tray in (3,2,1):
+            checkbox = wx.CheckBox(self, wx.ID_ANY, label = f"Tray {tray}")
+            checkbox.SetValue(self.Init.get(f'Tray{tray}Enabled', False))
+            checkbox.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+            self.Ctrls[f'Tray{tray}Enabled'] = checkbox
+            trayGridSizer.Add(checkbox, 0, wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5)
+
+            for button in (1,2,3,4,5,6,7,8,9,0):
+                ctlname = f'Tray{tray}Button{button}'
+                traybutton = bcKeyButton(self, wx.ID_ANY, init = {
+                    'CtlName'       : ctlname,
+                    'Key'           : self.Init[ctlname],
+                    'AlwaysShorten' : True,
+                })
+                self.Ctrls[ctlname] = traybutton
+
+                trayGridSizer.Add(traybutton, 1, wx.EXPAND)
+
+        traySizer.Add(trayGridSizer, 0, wx.ALL, 10)
+        traygridbutton = HelpButton(self, 'PowerTrayButtons.html')
+        traySizer.Add(traygridbutton, 0, wx.ALL, 10)
+
+        # Bottom Sizer for narrower boxes
+        bottomSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         leftSizer = wx.BoxSizer(wx.VERTICAL)
         rightSizer = wx.BoxSizer(wx.VERTICAL)
@@ -79,7 +143,8 @@ class Gameplay(Page):
             )
         leftSizer.Add(TPSDirectBox, 0, wx.EXPAND|wx.ALL, 10)
 
-        ##### Team Select Binds
+
+        ##### Next/Prev Team Select Binds
         teamenablesizer = wx.BoxSizer(wx.HORIZONTAL)
         teamenable = wx.CheckBox( self, -1, 'Enable Team Select')
         teamenable.SetToolTip( wx.ToolTip('Check this to enable the Next/Prev Team Select Binds') )
@@ -92,7 +157,7 @@ class Gameplay(Page):
         teamenablesizer.Add(teamenable, 0, wx.ALIGN_CENTER_VERTICAL)
         teamenablesizer.Add(teamhelpbutton, wx.ALIGN_RIGHT)
 
-        leftSizer.Add(teamenablesizer, 0, wx.ALL, 10)
+        rightSizer.Add(teamenablesizer, 0, wx.ALL, 10)
 
         TeamSelBox = ControlGroup(self, self, 'Team Select')
         for b in (
@@ -109,7 +174,7 @@ class Gameplay(Page):
                 ctlType = 'keybutton',
                 tooltip = b[1],
             )
-        leftSizer.Add(TeamSelBox, 0, wx.EXPAND|wx.ALL, 10)
+        rightSizer.Add(TeamSelBox, 0, wx.EXPAND|wx.ALL, 10)
 
         ### Helpful Binds
         HelpfulSizer = ControlGroup(self, self, 'Helpful Binds')
@@ -127,17 +192,24 @@ class Gameplay(Page):
 
         rightSizer.Add(HelpfulSizer, 0, wx.EXPAND|wx.ALL, 10)
 
-        topSizer.Add(leftSizer, 0, wx.ALL|wx.EXPAND, 10)
-        topSizer.Add(rightSizer, 0, wx.ALL|wx.EXPAND, 10)
-        paddingSizer = wx.BoxSizer(wx.VERTICAL)
-        paddingSizer.Add(topSizer, flag = wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
-        self.SetSizerAndFit(paddingSizer)
+
+        bottomSizer.Add(leftSizer,  0, wx.ALL|wx.EXPAND, 10)
+        bottomSizer.Add(rightSizer, 0, wx.ALL|wx.EXPAND, 10)
+        mainSizer.Add(traySizer,   flag = wx.ALL|          wx.ALIGN_CENTER_HORIZONTAL, border = 16)
+        mainSizer.Add(bottomSizer, flag = wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
+        self.SetSizerAndFit(mainSizer)
 
         self.SynchronizeUI()
 
-    def SynchronizeUI(self):
+    def SynchronizeUI(self, evt = None):
         self.OnTPSEnable()
         self.OnTeamEnable()
+        for button in (1,2,3,4,5,6,7,8,9,0):
+            self.Ctrls[f"Tray1Button{button}"].Enable(self.GetState('Tray1Enabled'))
+            self.Ctrls[f"Tray2Button{button}"].Enable(self.GetState('Tray2Enabled'))
+            self.Ctrls[f"Tray3Button{button}"].Enable(self.GetState('Tray3Enabled'))
+            self.Ctrls[f"Tray4Button{button}"].Enable(self.GetState('Tray4Enabled'))
+        if evt: evt.Skip()
 
     def OnTPSEnable(self, evt = None):
         self.EnableControls(self.GetState('TPSEnable'),
@@ -154,6 +226,19 @@ class Gameplay(Page):
 
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()
+
+        ### Tray buttons
+        for button in (1,2,3,4,5,6,7,8,9,0):
+            slotbutton = button if button != 0 else 10
+            if self.GetState('Tray1Enabled'):
+                ResetFile.SetBind(self.Ctrls[f"Tray1Button{button}"].MakeFileKeyBind(f"powexec_slot {slotbutton}"))
+            if self.GetState('Tray2Enabled'):
+                ResetFile.SetBind(self.Ctrls[f"Tray2Button{button}"].MakeFileKeyBind(f"powexec_altslot {slotbutton}"))
+            if self.GetState('Tray3Enabled'):
+                ResetFile.SetBind(self.Ctrls[f"Tray3Button{button}"].MakeFileKeyBind(f"powexec_alt2slot {slotbutton}"))
+            if self.GetState('Tray4Enabled'):
+                ResetFile.SetBind(self.Ctrls[f"Tray4Button{button}"].MakeFileKeyBind(f"powexec_serverslot {slotbutton}"))
+
 
         ### Team / Pet Select
         if self.GetState('TPSEnable'):

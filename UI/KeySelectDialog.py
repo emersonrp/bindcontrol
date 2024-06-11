@@ -7,6 +7,8 @@ import wx
 import wx.html
 import wx.lib.stattext as ST
 import wx.lib.newevent
+import wx.lib.agw.shapedbutton
+from wx.lib.agw.shapedbutton import SButton
 
 import UI
 from bcController import bcController
@@ -39,7 +41,7 @@ class KeySelectDialog(wx.Dialog):
         if button.CtlLabel:
             self.Desc    = button.CtlLabel.GetLabel()
         else:
-            self.Desc    = UI.Labels[button.CtlName]
+            self.Desc    = UI.Labels.get(button.CtlName, 'this button')
         self.Button  = button
         self.Binding = button.Key
 
@@ -420,35 +422,39 @@ class KeySelectDialog(wx.Dialog):
             self.Keymap[ord(str(alphanum))] = str(alphanum)
 
 from BindFile import KeyBind
-from Page import Page
 class bcKeyButton(wx.Button):
 
     def __init__(self, parent, id, init = {}):
-        wx.Button.__init__(self, parent, id)
-        self.CtlName  : str           = init.get('CtlName', None)
+        self.CtlName  : str                                     = init.get('CtlName', None)
         self.CtlLabel : ST.GenStaticText | wx.StaticText | None = init.get('CtlLabel', None)
-        self.Key      : str           = init.get('Key', '')
-        self.Page     : Page          = parent
+        self.Key      : str                                     = init.get('Key', '')
+        self.Page                                               = parent
+        self.AlwaysShorten : bool                               = init.get('AlwaysShorten', False)
+
+        # This might be overloading "AlwaysShorten", but:
+        style = wx.BU_EXACTFIT if self.AlwaysShorten else 0
+
+        wx.Button.__init__(self, parent, id, style = style)
 
         self.SetLabel(self.Key)
 
         self.Bind(wx.EVT_BUTTON, self.KeySelectEventHandler)
         self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
 
-    def ClearButton(self, _):
-        self.SetLabel("")
-        self.Key = ""
-        wx.PostEvent(self, KeyChanged())
-
     def MakeFileKeyBind(self, contents):
         return KeyBind(self.Key, self.CtlLabel, self.Page, contents)
 
     def SetLabel(self, label):
-        if re.search(r'\+\w\w\w\w\w', label) or len(label) > 12:
-            # smallify and abbreviate if we have a mod key
-            label = re.sub(r'SHIFT\+', 'Sh+', label)
-            label = re.sub(r'CTRL\+', 'Ctl+', label)
-            label = re.sub(r'ALT\+', 'Alt+', label)
+        # if we have a long label or AlwaysShorten, smallify, and abbreviate if we have a mod key
+        if re.search(r'\+\w\w\w\w\w', label) or len(label) > 12 or self.AlwaysShorten:
+            if self.AlwaysShorten:
+                label = re.sub(r'SHIFT\+', 'S+', label)
+                label = re.sub(r'CTRL\+', 'C+', label)
+                label = re.sub(r'ALT\+', 'A+', label)
+            else:
+                label = re.sub(r'SHIFT\+', 'Sh+', label)
+                label = re.sub(r'CTRL\+', 'Ctl+', label)
+                label = re.sub(r'ALT\+', 'Alt+', label)
             label = re.sub(r'DOUBLECLICK', 'DCLICK', label)
             label = re.sub(r'Trigger', 'Trig', label)
             label = re.sub(r'LeftBumper', 'LBump', label)
@@ -456,10 +462,11 @@ class bcKeyButton(wx.Button):
             label = f"<small>{label}</small>"
         self.SetLabelMarkup(label)
 
-    # this so we don't write "Sh+BACKSPACE" to the binds
-    # I thought I fixed this long long ago
-    def GetLabel(self):
-        return self.Key
+    def ClearButton(self, evt):
+        button = evt.EventObject
+        button.SetLabel("")
+        button.Key = ""
+        wx.PostEvent(button, KeyChanged())
 
     def KeySelectEventHandler(self, evt):
         button = evt.EventObject
@@ -479,4 +486,3 @@ class bcKeyButton(wx.Button):
                 if existingKey != newKey:
                     Profile = wx.App.Get().Profile
                     Profile.SetModified()
-

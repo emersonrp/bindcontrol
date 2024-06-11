@@ -16,10 +16,11 @@ from Page.Mastermind import Mastermind
 from Page.CustomBinds import CustomBinds
 
 import UI
-from UI.ControlGroup import bcKeyButton, cgStaticText, cgSpinCtrl, cgSpinCtrlDouble
+from UI.ControlGroup import cgStaticText, cgSpinCtrl, cgSpinCtrlDouble
 from UI.SimpleBindPane import SimpleBindPane
 from UI.BufferBindPane import BufferBindPane
 from UI.ComplexBindPane import ComplexBindPane
+from UI.KeySelectDialog import bcKeyButton
 
 class Profile(wx.Notebook):
 
@@ -270,7 +271,7 @@ class Profile(wx.Notebook):
                         if controlname in data[pagename]:
                             value = data[pagename].get(controlname, None)
                         # if we don't have a given control in the load data, skip it completely --
-                        # it should alread have the default value from Init
+                        # it should already have the default value from Init
                         else: continue
 
                     # look up what type of control it is to know how to update its value

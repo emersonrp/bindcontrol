@@ -1,9 +1,7 @@
 import re
-import wx
 import inspect
 from pathlib import Path, PureWindowsPath
 from BLF import BLF
-from Page import Page
 
 class KeyBind():
     def __init__(self, key, name, page, contents = []):
@@ -47,7 +45,7 @@ class BindFile():
 
         self.KeyBinds = {}
 
-    def SetBind(self, keybind:KeyBind|str, name:str = '', page:Page|None = None, contents:str|list = ''):
+    def SetBind(self, keybind:KeyBind|str, name:str = '', page = None, contents:str|list = ''):
 
         # we can either be called with a KeyBind, in which case we're golden, or with
         # four strings, in which case we need to roll a KeyBind.  Someday pick one scheme.

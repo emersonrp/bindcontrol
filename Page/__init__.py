@@ -11,6 +11,7 @@
 
 import wx
 import wx.lib.colourselect as csel
+from UI.KeySelectDialog import bcKeyButton
 
 class Page(wx.Panel):
 
@@ -29,7 +30,9 @@ class Page(wx.Panel):
         # We might be tempted to short-circuit out if the control is not enabled
         # but that breaks things terribly during window init.  Might be worth tracking
         # down and fixing but not today.
-        if isinstance(control, wx.Button):
+        if isinstance(control, bcKeyButton):
+            return control.Key
+        elif isinstance(control, wx.Button):
             return control.GetLabel()
         elif isinstance(control, wx.Choice) or isinstance(control, wx.ComboBox):
             sel = control.GetSelection()

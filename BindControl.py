@@ -274,6 +274,12 @@ class Main(wx.Frame):
 
 class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
     def OnInit(self):
+        # Let's try to unbuffer "print" for easier debug
+        # This per "Perkins"' comment on https://stackoverflow.com/questions/107705/disable-output-buffering
+        import builtins
+        import functools
+        builtins.print = functools.partial(print, flush=True)
+
         self.Init()
         self.Main = Main(None)
         self.Profile = self.Main.Profile

@@ -121,6 +121,7 @@ class CustomBinds(Page):
 
         # freeze and thaw to jump thru some hoops to make the title display update on Windows
         bindpane.Freeze()
+        oldtitle = bindpane.Title
         try:
             dlg = wx.TextEntryDialog(self, 'Enter name for bind')
             if bindpane.Title:
@@ -143,6 +144,7 @@ class CustomBinds(Page):
                     bindpane.DelButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
                     bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
                     bindpane.DupButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
+                    bindpane.RenameCtrlsFrom(oldtitle)
             else:
                 if new:
                     bindpane.Destroy()

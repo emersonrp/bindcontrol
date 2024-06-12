@@ -280,6 +280,8 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         import functools
         builtins.print = functools.partial(print, flush=True)
 
+        self.Profile = None
+
         self.Init()
         self.Main = Main(None)
         self.Profile = self.Main.Profile

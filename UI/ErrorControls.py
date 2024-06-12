@@ -16,6 +16,11 @@ class ErrorControlMixin:
         self.Errors[errname] = tooltip
         self.SetErrorToolTip()
 
+    def Enable(self, enable = True):
+        super().Enable(enable) # pyright: ignore
+        if enable == False:
+            self.RemoveError('conflict')
+
     def RemoveError(self, errname):
         self.Errors.pop(errname, None)
         if not self.Errors:

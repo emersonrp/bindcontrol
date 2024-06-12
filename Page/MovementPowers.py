@@ -495,9 +495,9 @@ class MovementPowers(Page):
             c['HasCJ'].Enable(self.Profile.HasPowerPool('Leaping'))
             c['SimpleSJCJ'].Enable(bool(self.GetState('JumpPower') or self.GetState('HasCJ')))
             c['JumpMode']  .Enable(bool(
-                    ((self.GetState('JumpPower') or self.GetState('HasCJ')) and self.GetState('DefaultMode') != "Jump")
-                        or
-                    self.GetState('SimpleSJCJ')
+                    self.GetState('DefaultMode') != "Jump"
+                        and
+                    (self.GetState('JumpPower') or self.GetState('HasCJ') or self.GetState('SimpleSJCJ'))
                 ))
 
             c['JumpSpecialKey'].Show(False)
@@ -1241,12 +1241,13 @@ class MovementPowers(Page):
         ###### End Kheldian power setup
 
         if (self.GetState('SimpleSJCJ')):
-            if (self.GetState('HasCJ') and self.GetState('JumpPower')):
-                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Super Jump$$powexecname Combat Jumping'))
+            jpower = self.GetState('JumpPower')
+            if (self.GetState('HasCJ') and jpower):
+                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind(f'powexecname {jpower}$$powexecname Combat Jumping'))
             elif (self.GetState('JumpPower')):
-                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Super Jump'))
+                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind(f'powexecname {jpower}'))
             elif (self.GetState('HasCJ')):
-                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind('powexecname Combat Jumping'))
+                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind(f'powexecname Combat Jumping'))
 
         if (not normalTPPower):
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind( 'nop'))

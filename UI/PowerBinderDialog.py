@@ -727,14 +727,14 @@ class MovementCmd(PowerBindCmd):
     def BuildUI(self, dialog):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.plusbutton = wx.RadioButton(dialog, label = "+")
+        self.plusbutton = wx.RadioButton(dialog, label = "+", style=wx.RB_GROUP|wx.ALIGN_CENTER_VERTICAL)
         sizer.Add(self.plusbutton, 0, wx.ALIGN_CENTER_VERTICAL)
         self.plusbutton.SetValue(True)
 
-        self.plusplusbutton = wx.RadioButton(dialog, label = "++")
+        self.plusplusbutton = wx.RadioButton(dialog, label = "++", style=wx.ALIGN_CENTER_VERTICAL)
         sizer.Add(self.plusplusbutton, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        self.minusbutton = wx.RadioButton(dialog, label = '-')
+        self.minusbutton = wx.RadioButton(dialog, label = '-', style=wx.ALIGN_CENTER_VERTICAL)
         sizer.Add(self.minusbutton, 0, wx.ALIGN_CENTER_VERTICAL)
 
         self.commandchoice = wx.Choice(dialog, choices = [
@@ -744,10 +744,10 @@ class MovementCmd(PowerBindCmd):
         sizer.Add(self.commandchoice, 0, wx.ALIGN_CENTER_VERTICAL)
         self.commandchoice.SetSelection(0)
 
-        self.zerobutton = wx.RadioButton(dialog, label = "0")
+        self.zerobutton = wx.RadioButton(dialog, label = "0", style=wx.ALIGN_CENTER_VERTICAL)
         sizer.Add(self.zerobutton, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        self.onebutton = wx.RadioButton(dialog, label = "1")
+        self.onebutton = wx.RadioButton(dialog, label = "1", style=wx.ALIGN_CENTER_VERTICAL)
         sizer.Add(self.onebutton, 0, wx.ALIGN_CENTER_VERTICAL)
 
         return sizer

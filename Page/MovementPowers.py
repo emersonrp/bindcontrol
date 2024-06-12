@@ -517,7 +517,7 @@ class MovementPowers(Page):
 
             self.PrePickLonePower(c['FlyPower'])
 
-            c['FlyMode'].Enable(bool(self.GetState('FlyPower') or self.GetState('HasCF'))
+            c['FlyMode'].Enable(bool(self.GetState('FlyPower') or self.GetState('HoverPower'))
                                           and self.GetState('DefaultMode') != "Fly")
             c['HasHover'].Show(self.Profile.HasPowerPool('Flight') or archetype == "Peacebringer")
             if archetype == 'Peacebringer':

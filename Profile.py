@@ -325,20 +325,23 @@ class Profile(wx.Notebook):
                     page.SynchronizeUI()  # this clears/repops the Primary/Secondary pickers on 'General' so don't do it there
 
             cbpage = getattr(self, "CustomBinds")
-            cbpage.scrolledPanel.DestroyChildren()
-            for custombind in data['CustomBinds']:
-                if not custombind: continue
+            if cbpage:
+                cbpage.scrolledPanel.DestroyChildren()
+                cbpage.Ctrls = []
+                cbpage.Panes = []
+                for custombind in data['CustomBinds']:
+                    if not custombind: continue
 
-                bindpane = None
-                if custombind['Type'] == "SimpleBind":
-                    bindpane = SimpleBindPane(cbpage, init = custombind)
-                elif custombind['Type'] == "BufferBind":
-                    bindpane = BufferBindPane(cbpage, init = custombind)
-                elif custombind['Type'] == "ComplexBind":
-                    bindpane = ComplexBindPane(cbpage, init = custombind)
+                    bindpane = None
+                    if custombind['Type'] == "SimpleBind":
+                        bindpane = SimpleBindPane(cbpage, init = custombind)
+                    elif custombind['Type'] == "BufferBind":
+                        bindpane = BufferBindPane(cbpage, init = custombind)
+                    elif custombind['Type'] == "ComplexBind":
+                        bindpane = ComplexBindPane(cbpage, init = custombind)
 
-                if bindpane:
-                    cbpage.AddBindToPage(bindpane = bindpane)
+                    if bindpane:
+                        cbpage.AddBindToPage(bindpane = bindpane)
 
             self.Filename = Path(pathname)
             wx.ConfigBase.Get().Write('LastProfile', str(file))

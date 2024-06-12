@@ -337,7 +337,7 @@ class Profile(wx.Notebook):
             cbpage = getattr(self, "CustomBinds")
             if cbpage:
                 cbpage.scrolledPanel.DestroyChildren()
-                cbpage.Ctrls = []
+                cbpage.Ctrls = {}
                 cbpage.Panes = []
                 for custombind in data['CustomBinds']:
                     if not custombind: continue

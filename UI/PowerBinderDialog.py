@@ -194,13 +194,16 @@ class PowerBinderDialog(wx.Dialog):
 class PowerBinderButton(wx.Button):
     def __init__(self, parent, tgtTxtCtrl, init = {}):
         wx.Button.__init__(self, parent, -1, label = "...")
-        self.PowerBinderDialog = PowerBinderDialog(parent, init)
+        self.Init = init
+        self.PowerBinderDialog = None
 
         self.tgtTxtCtrl = tgtTxtCtrl
         self.Bind(wx.EVT_BUTTON, self.PowerBinderEventHandler)
         self.SetToolTip("Launch PowerBinder")
 
     def PowerBinderEventHandler(self, _):
+        if not self.PowerBinderDialog:
+            self.PowerBinderDialog = PowerBinderDialog(self.Parent, self.Init)
         dlg = self.PowerBinderDialog
         if (self.tgtTxtCtrl and dlg.ShowModal() == wx.ID_OK):
             bindString = dlg.MakeBindString()

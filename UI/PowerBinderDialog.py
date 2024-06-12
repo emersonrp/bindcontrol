@@ -150,7 +150,10 @@ class PowerBinderDialog(wx.Dialog):
         # show the edit dialog if this command needs it
         if newCommand.UI:
             self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 10)
-            self.ShowEditDialogFor(newCommand)
+            if (self.ShowEditDialogFor(newCommand) == wx.ID_CANCEL):
+                # User clicked 'cancel', remove the step
+                self.RearrangeList.Delete(newBindIndex)
+                self.RearrangeList.SetSelection(newBindIndex - 1)
 
         self.bindChoice.SetSelection(wx.NOT_FOUND)
         self.OnListSelect(evt)
@@ -187,24 +190,24 @@ class PowerBinderDialog(wx.Dialog):
         chosenName = self.RearrangeList.GetString(chosenSel)
 
         self.EditDialog.SetTitle(f'Editing Step "{chosenName}"')
-        self.EditDialog.ShowModal()
+        retval = self.EditDialog.ShowModal()
 
         self.EditDialog.mainSizer.Hide(command.UI)
+
+        return retval
 
 class PowerBinderButton(wx.Button):
     def __init__(self, parent, tgtTxtCtrl, init = {}):
         wx.Button.__init__(self, parent, -1, label = "...")
         self.Init = init
-        self.PowerBinderDialog = None
+        self.Dialog = None
 
         self.tgtTxtCtrl = tgtTxtCtrl
         self.Bind(wx.EVT_BUTTON, self.PowerBinderEventHandler)
         self.SetToolTip("Launch PowerBinder")
 
     def PowerBinderEventHandler(self, _):
-        if not self.PowerBinderDialog:
-            self.PowerBinderDialog = PowerBinderDialog(self.Parent, self.Init)
-        dlg = self.PowerBinderDialog
+        dlg = self.PowerBinderDialog()
         if (self.tgtTxtCtrl and dlg.ShowModal() == wx.ID_OK):
             bindString = dlg.MakeBindString()
             if bindString != self.tgtTxtCtrl.GetValue():
@@ -212,10 +215,16 @@ class PowerBinderButton(wx.Button):
                 wx.App.Get().Profile.SetModified()
 
     def LoadFromData(self, data):
-        self.PowerBinderDialog.LoadFromData(data)
+        self.PowerBinderDialog().LoadFromData(data)
 
     def SaveToData(self):
-        return self.PowerBinderDialog.SaveToData()
+        return self.PowerBinderDialog().SaveToData()
+
+    def PowerBinderDialog(self):
+        if not self.Dialog:
+            self.Dialog = PowerBinderDialog(self.Parent, self.Init)
+        return self.Dialog
+
 
 class PowerBinderEditDialog(wx.Dialog):
     def __init__(self, parent):

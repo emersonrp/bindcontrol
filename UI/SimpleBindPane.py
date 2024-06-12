@@ -10,7 +10,7 @@ class SimpleBindPane(CustomBindPaneParent):
     def __init__(self, page, init = {}):
         CustomBindPaneParent.__init__(self, page, init)
 
-        self.PowerBinderDlg = None
+        self.PowerBinderBtn = None
 
     def Serialize(self):
         data = {
@@ -19,7 +19,11 @@ class SimpleBindPane(CustomBindPaneParent):
             'Contents' : self.Ctrls['BindContents'].GetValue(),
             'Key'      : self.Ctrls['BindKey'].Key,
         }
-        if self.PowerBinderDlg: data['PowerBinderDlg'] = self.PowerBinderDlg.SaveToData()
+        if self.PowerBinderBtn:
+            if self.PowerBinderBtn.PowerBinderDialog():
+                data['PowerBinderDlg'] = self.PowerBinderBtn.PowerBinderDialog().SaveToData()
+            else:
+                wx.LogError(f'Unable to save PowerBinder data for Simple Bind "{self.Title}"')
         return data
 
     def BuildBindUI(self, page):
@@ -37,7 +41,7 @@ class SimpleBindPane(CustomBindPaneParent):
         BindSizer.Add(BindContentsCtrl,                                       1, wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5)
         pbb = PowerBinderButton(pane, BindContentsCtrl, powerbinderdata)
         BindSizer.Add(pbb, 0, wx.ALIGN_CENTER_VERTICAL)
-        self.PowerBinderDlg = pbb.PowerBinderDialog
+        self.PowerBinderBtn = pbb
         self.Ctrls['BindContents'] = BindContentsCtrl
 
         BindKeyCtrl = bcKeyButton(pane, -1, {

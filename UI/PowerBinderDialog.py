@@ -150,7 +150,10 @@ class PowerBinderDialog(wx.Dialog):
         # show the edit dialog if this command needs it
         if newCommand.UI:
             self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 10)
-            self.ShowEditDialogFor(newCommand)
+            if (self.ShowEditDialogFor(newCommand) == wx.ID_CANCEL):
+                # User clicked 'cancel', remove the step
+                self.RearrangeList.Delete(newBindIndex)
+                self.RearrangeList.SetSelection(newBindIndex - 1)
 
         self.bindChoice.SetSelection(wx.NOT_FOUND)
         self.OnListSelect(evt)
@@ -187,24 +190,24 @@ class PowerBinderDialog(wx.Dialog):
         chosenName = self.RearrangeList.GetString(chosenSel)
 
         self.EditDialog.SetTitle(f'Editing Step "{chosenName}"')
-        self.EditDialog.ShowModal()
+        retval = self.EditDialog.ShowModal()
 
         self.EditDialog.mainSizer.Hide(command.UI)
+
+        return retval
 
 class PowerBinderButton(wx.Button):
     def __init__(self, parent, tgtTxtCtrl, init = {}):
         wx.Button.__init__(self, parent, -1, label = "...")
         self.Init = init
-        self.PowerBinderDialog = None
+        self.Dialog = None
 
         self.tgtTxtCtrl = tgtTxtCtrl
         self.Bind(wx.EVT_BUTTON, self.PowerBinderEventHandler)
         self.SetToolTip("Launch PowerBinder")
 
     def PowerBinderEventHandler(self, _):
-        if not self.PowerBinderDialog:
-            self.PowerBinderDialog = PowerBinderDialog(self.Parent, self.Init)
-        dlg = self.PowerBinderDialog
+        dlg = self.PowerBinderDialog()
         if (self.tgtTxtCtrl and dlg.ShowModal() == wx.ID_OK):
             bindString = dlg.MakeBindString()
             if bindString != self.tgtTxtCtrl.GetValue():
@@ -212,10 +215,16 @@ class PowerBinderButton(wx.Button):
                 wx.App.Get().Profile.SetModified()
 
     def LoadFromData(self, data):
-        self.PowerBinderDialog.LoadFromData(data)
+        self.PowerBinderDialog().LoadFromData(data)
 
     def SaveToData(self):
-        return self.PowerBinderDialog.SaveToData()
+        return self.PowerBinderDialog().SaveToData()
+
+    def PowerBinderDialog(self):
+        if not self.Dialog:
+            self.Dialog = PowerBinderDialog(self.Parent, self.Init)
+        return self.Dialog
+
 
 class PowerBinderEditDialog(wx.Dialog):
     def __init__(self, parent):
@@ -1310,6 +1319,134 @@ class UsePowerFromTrayCmd(PowerBindCmd):
         if init.get('tray', ''): self.usePowerFromTrayTray.SetSelection(init['tray'])
         if init.get('slot', ''): self.usePowerFromTraySlot.SetSelection(init['slot'])
 
+####### Window Color
+class WindowColorCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        windowColorSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.ColorBorder  = wx.Panel(dialog, -1, size = (150, 150))
+        borderSizer = wx.BoxSizer(wx.VERTICAL)
+        self.ColorBorder.SetSizer(borderSizer)
+        self.ColorDisplay = wx.StaticText(self.ColorBorder, -1, size = (140, 140))
+        borderSizer.Add(self.ColorDisplay, 0, wx.ALL, 5)
+
+        windowColorSizer.Add(self.ColorBorder, 0, wx.ALIGN_CENTER|wx.RIGHT, 15)
+
+        RGBASizer = wx.FlexGridSizer(3, 4, 5)
+
+        RGBASizer.Add(wx.StaticText(dialog, label = "R:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        self.RSlider = wx.Slider(dialog, -1, size = (300, -1), value = 36, minValue = 0, maxValue = 255)
+        self.RSlider.Bind(wx.EVT_SCROLL, self.UpdateFromSlider)
+        RGBASizer.Add(self.RSlider, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        self.RReadout = wx.SpinCtrl(dialog, -1, initial = 128, min = 0, max = 255)
+        self.RReadout.Bind(wx.EVT_TEXT, self.UpdateFromText)
+        RGBASizer.Add(self.RReadout, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+
+        RGBASizer.Add(wx.StaticText(dialog, label = "G:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        self.GSlider = wx.Slider(dialog, -1, size = (300, -1), value = 145, minValue = 0, maxValue = 255)
+        self.GSlider.Bind(wx.EVT_SCROLL, self.UpdateFromSlider)
+        RGBASizer.Add(self.GSlider, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        self.GReadout = wx.SpinCtrl(dialog, -1, initial = 128, min = 0, max = 255)
+        self.GReadout.Bind(wx.EVT_TEXT, self.UpdateFromText)
+        RGBASizer.Add(self.GReadout, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+
+        RGBASizer.Add(wx.StaticText(dialog, label = "B:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        self.BSlider = wx.Slider(dialog, -1, size = (300, -1), value = 255, minValue = 0, maxValue = 255)
+        self.BSlider.Bind(wx.EVT_SCROLL, self.UpdateFromSlider)
+        RGBASizer.Add(self.BSlider, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        self.BReadout = wx.SpinCtrl(dialog, -1, initial = 128, min = 0, max = 255)
+        self.BReadout.Bind(wx.EVT_TEXT, self.UpdateFromText)
+        RGBASizer.Add(self.BReadout, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+
+        RGBASizer.Add(wx.StaticText(dialog, label = "A:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        self.ASlider = wx.Slider(dialog, -1, size = (300, -1), value = 255, minValue = 0, maxValue = 255)
+        self.ASlider.Bind(wx.EVT_SCROLL, self.UpdateFromSlider)
+        RGBASizer.Add(self.ASlider, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        self.AReadout = wx.SpinCtrl(dialog, -1, initial = 128, min = 0, max = 255)
+        self.AReadout.Bind(wx.EVT_TEXT, self.UpdateFromText)
+        RGBASizer.Add(self.AReadout, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+
+        windowColorSizer.Add(RGBASizer)
+
+        self.UpdateFromSlider()
+
+        return windowColorSizer
+
+    def MakeBindString(self):
+        Rval = self.RSlider.GetValue()
+        Gval = self.GSlider.GetValue()
+        Bval = self.BSlider.GetValue()
+        Aval = self.ASlider.GetValue()
+        return f"windowcolor {Rval} {Gval} {Bval} {Aval}"
+
+    def Serialize(self):
+        return {
+            'Rval' : self.RSlider.GetValue(),
+            'Gval' : self.GSlider.GetValue(),
+            'Bval' : self.BSlider.GetValue(),
+            'Aval' : self.ASlider.GetValue(),
+        }
+
+    def Deserialize(self, init):
+        self.RSlider.SetValue(init['Rval'])
+        self.GSlider.SetValue(init['Gval'])
+        self.BSlider.SetValue(init['Bval'])
+        self.ASlider.SetValue(init['Aval'])
+        self.UpdateFromSlider()
+
+    def UpdateFromSlider(self, _ = None):
+        Rval = self.RSlider.GetValue()
+        Gval = self.GSlider.GetValue()
+        Bval = self.BSlider.GetValue()
+        Aval = self.ASlider.GetValue()
+        self.ColorBorder.SetBackgroundColour((Rval, Gval, Bval))
+        self.ColorDisplay.SetBackgroundColour((Aval, Aval, Aval))
+        self.RReadout.SetValue(Rval)
+        self.GReadout.SetValue(Gval)
+        self.BReadout.SetValue(Bval)
+        self.AReadout.SetValue(Aval)
+
+    def UpdateFromText(self, _ = None):
+        Rval = self.RReadout.GetValue()
+        Gval = self.GReadout.GetValue()
+        Bval = self.BReadout.GetValue()
+        Aval = self.AReadout.GetValue()
+        self.ColorBorder.SetBackgroundColour((Rval, Gval, Bval))
+        self.ColorDisplay.SetBackgroundColour((Aval, Aval, Aval))
+        self.RSlider.SetValue(Rval)
+        self.GSlider.SetValue(Gval)
+        self.BSlider.SetValue(Bval)
+        self.ASlider.SetValue(Aval)
+
+####### Window Save / Load
+class WindowSaveLoadCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.CommandChoice = wx.Choice(dialog, -1, choices = ["Save Window Settings", "Load Window Settings"])
+        self.CommandChoice.SetSelection(0)
+        sizer.Add(self.CommandChoice, 0, wx.ALL, 5)
+
+        self.FilePath = wx.TextCtrl(dialog, -1, size = (400, -1),
+            value = str(wx.App.Get().Profile.GameBindsDir() / 'windows.txt'))
+        sizer.Add(self.FilePath, 0, wx.ALL, 5)
+
+        return sizer
+
+    def MakeBindString(self):
+        command = ['wdwsavefile', 'wdwloadfile'][self.CommandChoice.GetSelection()]
+        return f'{command} "{self.FilePath.GetValue()}"'
+
+    def Serialize(self):
+        return {
+            'command' : self.CommandChoice.GetSelection(),
+            'filename' : self.FilePath.GetValue(),
+        }
+
+    def Deserialize(self, init):
+        self.CommandChoice.SetSelection(init.get('command', 0))
+        self.FilePath.SetValue(init.get('filename', ''))
+
 ####### Window Toggle
 class WindowToggleCmd(PowerBindCmd):
     def BuildUI(self, dialog):
@@ -1363,6 +1500,8 @@ commandClasses = {
     'Use Insp From Row/Column' : UseInspRowColCmd,
     'Use Power'                : UsePowerCmd,
     'Use Power From Tray'      : UsePowerFromTrayCmd,
+    'Window Color'             : WindowColorCmd,
+    'Window Save / Load'       : WindowSaveLoadCmd,
     'Window Toggle'            : WindowToggleCmd,
 }
 commandRevClasses = {v: k for k, v in commandClasses.items()}

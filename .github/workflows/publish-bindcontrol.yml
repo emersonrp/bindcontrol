@@ -17,7 +17,7 @@ jobs:
             CMD_VERIFY: dir dist/BindControl
             FILE_NAME: BindControl-${{ github.ref_name }}_windows.zip
           - os: macos-latest
-            CMD_BUILD:  pyinstaller -i tools/bcicon/BindControl.icns --onefile --noconsole --noconfirm --clean --add-data icons:icons --add-data Help:Help --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --exclude-module _socket --exclude-module _ssl BindControl.py
+            CMD_BUILD:  pyinstaller -i tools/bcicon/BindControl.icns --noconsole --noconfirm --clean --add-data icons:icons --add-data Help:Help --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --exclude-module _socket --exclude-module _ssl --exclude-module numpy --exclude-module six BindControl.py
             CMD_VERIFY: ls -la dist/BindControl
             FILE_NAME: BindControl-${{ github.ref_name }}_macos.zip
 #          - os: ubuntu-latest
@@ -32,12 +32,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python 3.10
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
       - name: Cache pip dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}

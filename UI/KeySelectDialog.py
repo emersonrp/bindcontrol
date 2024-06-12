@@ -7,8 +7,6 @@ import wx
 import wx.html
 import wx.lib.stattext as ST
 import wx.lib.newevent
-import wx.lib.agw.shapedbutton
-from wx.lib.agw.shapedbutton import SButton
 
 import UI
 from bcController import bcController

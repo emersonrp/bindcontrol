@@ -16,7 +16,6 @@ class CustomBinds(Page):
 
     def BuildPage(self):
 
-        # Overall sizer for 'self'
         MainSizer = wx.BoxSizer(wx.VERTICAL)
 
         # bottom sizer for the buttons
@@ -31,15 +30,15 @@ class CustomBinds(Page):
         newBufferBindButton.Bind(wx.EVT_BUTTON, self.OnNewBufferBindButton)
         buttonSizer.Add(newBufferBindButton, wx.ALIGN_CENTER)
 
-        # a scrollable window and sizer for the collection of collapsable panes
+        # a scrollable window and sizer for the collection of collapsible panes
         self.PaneSizer     = wx.BoxSizer(wx.VERTICAL)
         self.scrolledPanel = wx.ScrolledWindow(self, -1, style = wx.VSCROLL)
         self.scrolledPanel.SetScrollRate(10,10) # necessary to enable scrolling at all.
         self.scrolledPanel.SetSizer(self.PaneSizer)
 
         # add the two parts of the layout, bottom one expandable
-        MainSizer.Add( buttonSizer,       0, wx.EXPAND|wx.BOTTOM, 16)
-        MainSizer.Add( self.scrolledPanel, 1, wx.EXPAND)
+        MainSizer.Add(buttonSizer,        0, wx.EXPAND|wx.BOTTOM, 16)
+        MainSizer.Add(self.scrolledPanel, 1, wx.EXPAND)
 
         # sizer around the whole thing to add padding
         paddingSizer = wx.BoxSizer(wx.VERTICAL)

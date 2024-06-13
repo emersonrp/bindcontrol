@@ -4,6 +4,7 @@ import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinderDialog import PowerBinderButton
+from UI.ControlGroup import cgTextCtrl
 
 ### CustomBind subclasses for the individual bind types
 
@@ -33,7 +34,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
         BindSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        BindContentsCtrl = wx.TextCtrl(pane, -1, self.Init.get('Contents', ''))
+        BindContentsCtrl = cgTextCtrl(pane, -1, self.Init.get('Contents', ''))
         BindContentsCtrl.Bind(wx.EVT_TEXT, self.onContentsChanged)
 
         powerbinderdata = self.Init.get('PowerBinderDlg', {})
@@ -78,12 +79,17 @@ class SimpleBindPane(CustomBindPaneParent):
 
         bc = self.Ctrls[self.MakeCtlName('BindContents')]
         bc.SetToolTip('')
-        if bc.GetValue() and len(bc.GetValue()) <= 255:
-            bc.SetBackgroundColour(wx.NullColour)
+
+        if bc.GetValue():
+            bc.RemoveError('undef')
         else:
-            bc.SetBackgroundColour((255,200,200))
-            if len(bc.GetValue()) > 255:
-                bc.SetToolTip("This bind is longer than 255 characters, which will cause problems in-game.")
+            bc.AddError('undef', 'The bind contents have not been defined.')
+            isWellFormed = False
+
+        if len(bc.GetValue()) <= 255:
+            bc.RemoveError('length')
+        else:
+            bc.AddError('length', 'This bind is longer than 255 characters, which will cause problems in-game.')
             isWellFormed = False
 
         bk = self.Ctrls[self.MakeCtlName('BindKey')]

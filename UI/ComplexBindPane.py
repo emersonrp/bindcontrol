@@ -4,6 +4,7 @@ import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinderDialog import PowerBinderButton
+from UI.ControlGroup import cgTextCtrl
 
 class ComplexBindPane(CustomBindPaneParent):
     def __init__(self, page, init = {}):
@@ -28,6 +29,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
     def BuildBindUI(self, page):
         pane = self.GetPane()
+        pane.Page = self.Page
 
         self.BindSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BindStepSizer = wx.BoxSizer(wx.VERTICAL)
@@ -40,7 +42,7 @@ class ComplexBindPane(CustomBindPaneParent):
         else:
             self.onAddStepButton()
 
-        self.BindSizer.Add ( self.BindStepSizer, 1, wx.EXPAND)
+        self.BindSizer.Add (self.BindStepSizer, 1, wx.EXPAND)
 
         BindKeyCtrl = bcKeyButton(pane, -1, {
             'CtlName' : self.MakeCtlName('BindKey'),
@@ -80,10 +82,20 @@ class ComplexBindPane(CustomBindPaneParent):
         firststep = self.Steps[0].BindContents
         fullsteps = list(filter(lambda x: x.BindContents.GetValue(), self.Steps))
         if fullsteps:
-            firststep.SetBackgroundColour(wx.NullColour)
+            firststep.RemoveError('undef')
         else:
-            firststep.SetBackgroundColour((255,200,200))
+            firststep.AddError('undef', 'At least one step must be defined')
             isWellFormed = False
+
+        stepsWellFormed = True
+        for step in self.Steps:
+            if len(step.BindContents.GetValue()) <= 255:
+                step.BindContents.RemoveError('length')
+            else:
+                step.BindContents.AddError('length', 'This step is longer than 255 characters, which will cause problems in-game.')
+                stepsWellFormed = False
+
+        if (not stepsWellFormed): isWellFormed = False
 
         bk = self.Ctrls[self.MakeCtlName('BindKey')]
         if not bk.Key:
@@ -95,41 +107,12 @@ class ComplexBindPane(CustomBindPaneParent):
         return isWellFormed
 
     def onAddStepButton(self, _ = None, stepdata = {}):
-        pane = self.GetPane()
-        pane.Page = self.Page
-        step = self.MakeBindStepUI(pane, stepdata)
-        step.BindContents.Bind(wx.EVT_TEXT, self.onContentsChanged)
+        stepNumber = self.BindStepSizer.GetItemCount() # already the next step because of the add button
+        step = BindStep(self, stepNumber, stepdata)
         self.BindStepSizer.Insert(self.BindStepSizer.GetItemCount()-1, step, 0, wx.EXPAND)
         self.Steps.append(step)
         self.Page.Layout()
         self.Profile.SetModified()
-
-    def MakeBindStepUI(self, parent, step):
-        stepNumber = self.BindStepSizer.GetItemCount() # is already the next step because of the add button
-        panel = wx.Panel(parent)
-        panel.Page = parent.Page
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        StepLabel = wx.StaticText(panel, -1, f"Step {stepNumber}:")
-        setattr(panel, 'StepLabel', StepLabel)
-        sizer.Add(StepLabel, 0, wx.ALIGN_CENTER_VERTICAL)
-
-        BindContents = wx.TextCtrl(panel, -1, step.get('contents', ''))
-        setattr(panel, 'BindContents', BindContents)
-        sizer.Add(BindContents, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
-
-        PowerBinder = PowerBinderButton(panel, BindContents, step.get('powerbinderdata', {}))
-        setattr(panel, 'PowerBinder', PowerBinder)
-        sizer.Add(PowerBinder, 0)
-
-        delButton = wx.Button(panel, -1, "X", size = (40,-1))
-        delButton.SetForegroundColour(wx.RED)
-        delButton.Bind(wx.EVT_BUTTON, self.onDelButton)
-        sizer.Add(delButton, 0)
-
-        panel.SetSizer(sizer)
-
-        return panel
 
     def onDelButton(self, evt):
         button = evt.EventObject
@@ -163,3 +146,33 @@ class ComplexBindPane(CustomBindPaneParent):
 
             if i == 1: resetfile.SetBind(key, self, title, cmd)
             cbindfile.SetBind(key, self, title, cmd)
+
+class BindStep(wx.Panel):
+    def __init__(self, parent, stepNumber, step):
+
+        self.Page = parent.Page
+        pane = parent.GetPane()
+
+        super().__init__(pane)
+
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        StepLabel = wx.StaticText(self, -1, f"Step {stepNumber}:")
+        self.StepLabel = StepLabel
+        sizer.Add(StepLabel, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        BindContents = cgTextCtrl(self, -1, step.get('contents', ''))
+        self.BindContents = BindContents
+        sizer.Add(BindContents, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
+        self.BindContents.Bind(wx.EVT_TEXT, parent.onContentsChanged)
+
+        PowerBinder = PowerBinderButton(self, BindContents, step.get('powerbinderdata', {}))
+        self.PowerBinder = PowerBinder
+        sizer.Add(PowerBinder, 0)
+
+        delButton = wx.Button(self, -1, "X", size = (40,-1))
+        delButton.SetForegroundColour(wx.RED)
+        delButton.Bind(wx.EVT_BUTTON, parent.onDelButton)
+        sizer.Add(delButton, 0)
+
+        self.SetSizer(sizer)

@@ -15,11 +15,13 @@ jobs:
           - os: windows-latest
             CMD_BUILD: pyinstaller -i icons/BindControl.ico --noconsole --noconfirm --clean --add-data icons:icons --add-data Help:Help --add-data version.txt:. --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --exclude-module _socket --exclude-module _ssl BindControl.py
             CMD_VERIFY: dir dist/BindControl
+            CMD_PREZIP: echo
             FILE_NAME: BindControl-${{ github.ref_name }}_windows.zip
-            #- os: macos-12
-            #  CMD_BUILD:  pyinstaller -i tools/bcicon/BindControl.icns --onedir --windowed --noconsole --noconfirm --clean --add-data icons:icons --add-data Help:Help --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --exclude-module _socket --exclude-module _ssl --exclude-module numpy BindControl.py
-            #  CMD_VERIFY: ls -la dist/BindControl.app
-            #  FILE_NAME: BindControl-${{ github.ref_name }}_macos.zip
+            - os: macos-12
+              CMD_BUILD:  pyinstaller -i tools/bcicon/BindControl.icns --onedir --windowed --noconsole --noconfirm --clean --add-data icons:icons --add-data Help:Help --add-data version.txt:. --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --exclude-module _socket --exclude-module _ssl --exclude-module numpy BindControl.py
+              CMD_VERIFY: ls -la dist/BindControl.app
+              CMD_PREZIP: rm -rf dist/BindControl
+              FILE_NAME: BindControl-${{ github.ref_name }}_macos.zip
 #          - os: ubuntu-latest
 #            CMD_BUILD: pyinstaller -i icons/BindControl.ico --noconsole --noconfirm --clean --add-data icons:icons --add-data Help:Help --add-data version.txt:. --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --exclude-module _socket --exclude-module _ssl BindControl.py
 #            CMD_VERIFY: ls -la dist/BindControl
@@ -60,6 +62,7 @@ jobs:
         with:
           type: 'zip'
           directory: './dist'
+          command: '${{ matrix.CMD_PREZIP }}'
           filename: '${{ matrix.FILE_NAME }}'
 
       - name: Verify Files

@@ -63,3 +63,9 @@ class CustomBindPaneParent(wx.CollapsiblePane):
                 [_, _, name] = re.split(r'_', ctrlname)
                 self.Ctrls[self.MakeCtlName(name)] = ctrl
                 del(self.Ctrls[ctrlname])
+
+    def AllBindFiles(self):
+        return {
+            'files' : [],
+            'dirs'  : [],
+        }

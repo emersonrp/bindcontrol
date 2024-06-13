@@ -202,3 +202,16 @@ class CustomBinds(Page):
     def PopulateBindFiles(self):
         for pane in self.Panes:
             pane.PopulateBindFiles()
+
+    def AllBindFiles(self):
+        files = []
+        dirs  = []
+        for pane in self.Panes:
+            bfs = pane.AllBindFiles()
+            files.extend(bfs['files'])
+            dirs .extend(bfs['dirs'])
+
+        return {
+            'files' : files,
+            'dirs'  : dirs,
+        }

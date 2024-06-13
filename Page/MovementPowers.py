@@ -2185,6 +2185,46 @@ class MovementPowers(Page):
     def hasGFly(self):
         return bool(self.Profile.HasPowerPool('Flight') and self.GetState('HasGFly'))
 
+    def AllBindFiles(self):
+        files = []
+        dirs  = [
+                'R'  , 'F'   , 'J'  , 'S'  , 'N'  , 'T'  , 'Q'  ,
+                'AR' , 'AF'  , 'AJ' , 'AS' , 'AN' , 'AT' , 'AQ' ,
+                'FR' , 'FF'  , 'FJ' , 'FS' , 'FN' , 'FT' , 'FQ' ,
+                'BO' , 'GBO' ,
+        ]
+        for dir in dirs:
+            for sp in (0,1):
+                for X in (0,1):
+                    for W in (0,1):
+                        for S in (0,1):
+                            for A in (0,1):
+                                for D in (0,1):
+                                    for suffix in ['', 'f', 'j', 'a', 'n', 'r', 's', 'gf', '_t', '_s',]:
+                                        files.append(
+                                            self.Profile.GetBindFile(dir,
+                                                f'{dir}{sp}{X}{W}{S}{A}{D}{suffix}.txt')
+                                            )
+
+        files.append(self.Profile.GetBindFile('nova.txt'))
+        files.append(self.Profile.GetBindFile('dwarf.txt'))
+
+        dirs.append('dtp')
+        files.append(self.Profile.GetBindFile('dtp', 'tp_on.txt'))
+        files.append(self.Profile.GetBindFile('dtp', 'tp_off.txt'))
+
+        dirs.append('tp')
+        files.append(self.Profile.GetBindFile('tp', 'tp_on.txt'))
+        files.append(self.Profile.GetBindFile('tp', 'tp_off.txt'))
+
+        dirs.append('ttp')
+        files.append(self.Profile.GetBindFile('ttp', 'ttp_on.txt'))
+        files.append(self.Profile.GetBindFile('ttp', 'ttp_off.txt'))
+
+        return {
+            'files' : files,
+            'dirs'  : dirs,
+        }
 
 UI.Labels.update( {
     'Up'             : 'Up',

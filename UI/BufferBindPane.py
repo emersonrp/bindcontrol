@@ -254,3 +254,20 @@ class BufferBindPane(CustomBindPaneParent):
             data[f'Pet{i}BuffKey']  = self.Ctrls[self.MakeCtlName(f'Pet{i}BuffKey')].Key
 
         return data
+
+    def AllBindFiles(self):
+        files = []
+        title = re.sub(r'\W+', '', self.Title)
+        for j in [1,2,3,4,5,6,7,8]:
+            filebase = self.Profile.BindsDir() / f"buff{title}" / f"bufft{j}"
+            for k in ['a','b','c','d']:
+                files.append(self.Profile.GetBindFile(f"{filebase}{k}.txt"))
+
+        for j in [1,2,3,4,5,6]:
+            filebase = self.Profile.BindsDir() / f"buff{title}" / f"buffp{j}"
+            for k in ['a','b','c','d']:
+                files.append(self.Profile.GetBindFile(f"{filebase}{k}.txt"))
+
+        return {
+            'files' : files,
+        }

@@ -91,3 +91,11 @@ class Page(wx.Panel):
     def HelpText(self):
         return 'Help not currently implemented here.'
 
+    # return a list of all bindfiles
+    # TODO - list of filenames?  list of actual BindFile objects?
+    def AllBindFiles(self):
+        wx.LogError("AllBindFiles called on parent Page, needs implementing somewhere.")
+        return {
+            'files' : [],
+            'dirs'  : [],
+        }

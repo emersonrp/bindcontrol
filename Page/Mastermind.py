@@ -931,6 +931,23 @@ class Mastermind(Page):
         if (self.GetState('Pet6Bodyguard')) : tier3bg = tier3bg + 1
         return (tier1bg, tier2bg, tier3bg)
 
+    def AllBindFiles(self):
+        files = []
+        # not clear that all of these are used but let's be thorough
+        for fn in [
+            'all'     , 'tier1'    , 'tier2'   , 'tier3'   ,
+            'alla'    , 'tier1a'   , 'tier2a'  , 'tier3a'  ,
+            'call'    , 'ctier1'   , 'ctier2'  , 'ctier3'  ,
+            'calla'   , 'ctier1a'  , 'ctier2a' , 'ctier3a' ,
+            'bguarda' , 'cbguarda' ,
+        ]:
+            files.append(self.Profile.GetBindFile('mmbinds', f'{fn}.txt'))
+
+        return {
+            'files' : files,
+            'dirs'  : ['mmbinds'],
+        }
+
 
     for cmd in petCommandKeyDefinitions:
         UI.Labels[cmd['ctrlName']] = cmd['label']

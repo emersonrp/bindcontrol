@@ -1235,7 +1235,7 @@ class MovementPowers(Page):
                 tp_on = profile.GetBindFile("dtp","tp_on.txt")
                 zoomin = t.detailhi + t.runcamdist
                 if (t.tphover): zoomin = ''
-                tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecunqueue$$powexeclocation cursor ' + dwarfTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
+                tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecunqueue$$powexeclocation cursor ' + dwarfTPPower + zoomin + windowshow + profile.BLF('dtp','tp_off.txt') + tphovermodeswitch))
 
         ###
         ###### End Kheldian power setup

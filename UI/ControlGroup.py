@@ -1,4 +1,4 @@
-from typing import Any, Callable, Protocol
+from typing import Any, Callable
 import platform
 
 import wx
@@ -6,7 +6,7 @@ from wx.adv import BitmapComboBox
 import wx.lib.stattext as ST
 
 from UI.ErrorControls import ErrorControlMixin
-from Page import Page
+from Page import Page as bcPage
 import UI
 from UI.KeySelectDialog import bcKeyButton
 
@@ -160,7 +160,7 @@ class CGControlMixin:
     SetBackgroundColour    : Callable
     SetOwnBackgroundColour : Callable
     CtlLabel               : ST.GenStaticText | wx.StaticText | None
-    Page                   : Page # pyright: ignore
+    Page                   : bcPage|None
     Data                   : Any
 
     def __init__(self, *args, **kwargs):

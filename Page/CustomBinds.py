@@ -18,7 +18,7 @@ class CustomBinds(Page):
 
         MainSizer = wx.BoxSizer(wx.VERTICAL)
 
-        # bottom sizer for the buttons
+        # sizer for the buttons
         buttonSizer         = wx.BoxSizer(wx.HORIZONTAL) # sizer for new-item buttons
         newSimpleBindButton = wx.Button(self, -1, "New Simple Bind")
         newSimpleBindButton.Bind(wx.EVT_BUTTON, self.OnNewSimpleBindButton)
@@ -44,7 +44,7 @@ class CustomBinds(Page):
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer.Add(MainSizer, 1, flag = wx.ALL|wx.EXPAND, border = 16)
 
-        self.SetSizerAndFit(paddingSizer)
+        self.SetSizer(paddingSizer)
         self.Layout()
 
     def OnNewSimpleBindButton(self, evt):

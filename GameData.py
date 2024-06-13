@@ -982,7 +982,7 @@ Emotes = {
     'emotes': [
         { 'Converse' : [
             { 'Greetings' : [
-                'Hi%emwave$$local Hi!',
+                'Hi%em wave$$local Hi!',
                 'Hello <$target>%em wave$$local Hello, $target',
                 'Introduce <self>%em wave$$local Pleased to meet you! I am $name, a level $level $origin $archetype.',
                 'Looking for Team%local level $level $archetype$$local Looking for team.',

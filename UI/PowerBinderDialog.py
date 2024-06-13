@@ -945,7 +945,7 @@ class EmoteCmd(PowerBindCmd):
 
     def MakeBindString(self):
         displayedEmoteName = self.emoteName.GetLabel()
-        actualEmotePayload = UI.EmotePicker.EmotePicker.payloadMap[displayedEmoteName]
+        actualEmotePayload = UI.EmotePicker.payloadMap[displayedEmoteName]
 
         return actualEmotePayload
 

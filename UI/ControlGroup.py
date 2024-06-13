@@ -67,13 +67,20 @@ class ControlGroup(wx.StaticBoxSizer):
                 control.Bind(wx.EVT_COMBOBOX, callback )
 
         elif (ctlType == 'bmcombo') or (ctlType == "bmcombobox"):
+            choices = []
+            bitmaps = []
+            for c in contents:
+                choices.append(c[0])
+                bitmaps.append(c[1])
             control = cgBMComboBox(
                 CtlParent, -1, '',
-                style = wx.CB_READONLY)
+                style = wx.CB_READONLY,
+                choices = choices,
+            )
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback )
-            for entry in contents:
-                control.Append(*entry)
+            for i, entry in enumerate(bitmaps):
+                control.SetItemBitmap(i, entry)
             index = control.FindString(Init[ctlName])
             if index == -1:
                 control.SetValue(Init[ctlName])

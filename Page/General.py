@@ -75,19 +75,16 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'Primary',
             ctlType = 'choice',
-            # contents = sorted(ArchData['Primary']),
             callback = self.OnPickPrimaryPowerSet,
         )
         powersBox.AddControl(
             ctlName = 'Secondary',
             ctlType = 'choice',
-            # contents = sorted(ArchData['Secondary']),
             callback = self.OnPickSecondaryPowerSet,
         )
         powersBox.AddControl(
             ctlName = 'Epic',
             ctlType = 'choice',
-            # contents = sorted(ArchData['Epic']),
             callback = self.OnPickEpicPowerSet,
         )
         poolcontents = sorted(MiscPowers['Pool'])

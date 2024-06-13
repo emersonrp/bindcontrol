@@ -3,7 +3,6 @@ import sys, os, platform
 
 import wx
 import wx.lib.mixins.inspection
-import wx.lib.scrolledpanel as scrolled
 import wx.adv
 import wx.html
 from bcVersion import current_version
@@ -53,17 +52,10 @@ class Main(wx.Frame):
         self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Start with a new profile
-        self.ProfileScroller = scrolled.ScrolledPanel(self)
-        self.ProfileScrollerSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.Profile = Profile(self.ProfileScroller)
+        self.Profile = Profile(self)
 
-        self.ProfileScrollerSizer.Add(self.Profile, 1, wx.EXPAND)
-        self.ProfileScroller.SetSizer(self.ProfileScrollerSizer)
-        self.ProfileScroller.SetupScrolling()
-
-        # (used "Insert" here so we can DRY this up with OnNewProfile later)
-        self.Sizer.Insert(0, self.ProfileScroller, 1, wx.EXPAND | wx.ALL, 3)
+        self.Sizer.Add(self.Profile, 1, wx.EXPAND)
 
         # load up the last one if the pref says to and if it's there
         if config.Read('StartWith') == 'Last Profile':
@@ -165,12 +157,11 @@ class Main(wx.Frame):
                 return
         self.Freeze()
         try:
-            self.ProfileScrollerSizer.Remove(0)
+            self.Sizer.Remove(0)
             self.Profile.Destroy()
 
-            self.Profile = Profile(self.ProfileScroller)
-            self.ProfileScrollerSizer.Add(self.Profile, 1, wx.EXPAND)
-            self.ProfileScroller.SetupScrolling()
+            self.Profile = Profile(self)
+            self.Sizer.Add(self.Profile, 1, wx.EXPAND)
 
             defaultProfile = Path(self.Profile.ProfilePath() / 'Default.bcp')
             self.Profile.doLoadFromFile(defaultProfile)

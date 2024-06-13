@@ -175,8 +175,6 @@ class Mastermind(Page):
 
     def BuildPage(self):
 
-        sizer = wx.BoxSizer(wx.VERTICAL)
-
         petcmdenablesizer = wx.BoxSizer(wx.HORIZONTAL)
         petcmdenable = wx.CheckBox( self, -1, 'Enable Pet Action Binds')
         petcmdenable.SetToolTip( wx.ToolTip('Check this to enable the Mastermind Pet Action Binds') )
@@ -347,18 +345,16 @@ class Mastermind(Page):
             )
 
         # Bring it all together
-        sizer.Add(petcmdenablesizer, 0, wx.EXPAND|wx.TOP|wx.LEFT, 16)
-        sizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 16)
-        sizer.AddSpacer(10)
-        sizer.Add(petselenable, 0, wx.EXPAND|wx.ALL, 16)
-        sizer.Add(PetNames, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 16)
+        self.MainSizer.Add(petcmdenablesizer, 0, wx.EXPAND|wx.TOP|wx.LEFT, 16)
+        self.MainSizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 16)
+        self.MainSizer.AddSpacer(10)
+        self.MainSizer.Add(petselenable, 0, wx.EXPAND|wx.ALL, 16)
+        self.MainSizer.Add(PetNames, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 16)
 
-        sizer.Add(petnpenablesizer, 0, wx.EXPAND|wx.ALL, 16)
-        sizer.Add(PetSelBox, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 16)
+        self.MainSizer.Add(petnpenablesizer, 0, wx.EXPAND|wx.ALL, 16)
+        self.MainSizer.Add(PetSelBox, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 16)
 
         self.SynchronizeUI()
-
-        self.SetSizerAndFit(sizer)
 
     def SynchronizeUI(self):
         arch = self.Profile.General.GetState('Archetype')

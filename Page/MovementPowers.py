@@ -398,9 +398,7 @@ class MovementPowers(Page):
         topSizer.Add(self.leftColumn, 0, wx.ALL, 3)
         topSizer.Add(self.rightColumn, 0, wx.ALL, 3)
 
-        paddingSizer = wx.BoxSizer(wx.VERTICAL)
-        paddingSizer.Add(topSizer, flag = wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
-        self.SetSizerAndFit(paddingSizer)
+        self.MainSizer.Add(topSizer, flag = wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
 
         self.SynchronizeUI()
 

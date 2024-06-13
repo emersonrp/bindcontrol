@@ -58,7 +58,6 @@ class Gameplay(Page):
             UI.Labels[ctlname] = f"Server Tray, Button {button}"
 
     def BuildPage(self):
-        mainSizer = wx.BoxSizer(wx.VERTICAL)
 
         ##### Power Tray Buttons
         traySizer = wx.StaticBoxSizer(wx.HORIZONTAL, self, label = 'Power Tray Buttons')
@@ -195,9 +194,8 @@ class Gameplay(Page):
 
         bottomSizer.Add(leftSizer,  0, wx.ALL|wx.EXPAND, 10)
         bottomSizer.Add(rightSizer, 0, wx.ALL|wx.EXPAND, 10)
-        mainSizer.Add(traySizer,   flag = wx.ALL|          wx.ALIGN_CENTER_HORIZONTAL, border = 16)
-        mainSizer.Add(bottomSizer, flag = wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
-        self.SetSizerAndFit(mainSizer)
+        self.MainSizer.Add(traySizer,   flag = wx.ALL|          wx.ALIGN_CENTER_HORIZONTAL, border = 16)
+        self.MainSizer.Add(bottomSizer, flag = wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
 
         self.SynchronizeUI()
 

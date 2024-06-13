@@ -16,8 +16,6 @@ class CustomBinds(Page):
 
     def BuildPage(self):
 
-        MainSizer = wx.BoxSizer(wx.VERTICAL)
-
         # sizer for the buttons
         buttonSizer         = wx.BoxSizer(wx.HORIZONTAL) # sizer for new-item buttons
         newSimpleBindButton = wx.Button(self, -1, "New Simple Bind")
@@ -37,14 +35,13 @@ class CustomBinds(Page):
         self.scrolledPanel.SetSizer(self.PaneSizer)
 
         # add the two parts of the layout, bottom one expandable
-        MainSizer.Add(buttonSizer,        0, wx.EXPAND|wx.BOTTOM, 16)
-        MainSizer.Add(self.scrolledPanel, 1, wx.EXPAND)
+        self.MainSizer.Add(buttonSizer,        0, wx.EXPAND|wx.BOTTOM, 16)
+        self.MainSizer.Add(self.scrolledPanel, 1, wx.EXPAND)
 
-        # sizer around the whole thing to add padding
-        paddingSizer = wx.BoxSizer(wx.VERTICAL)
-        paddingSizer.Add(MainSizer, 1, flag = wx.ALL|wx.EXPAND, border = 16)
+        # disable scrolling on the main page's ScrolledWindow.
+        # This is black magic, and may still act squirrely.
+        self.ShowScrollbars(wx.SHOW_SB_NEVER, wx.SHOW_SB_NEVER)
 
-        self.SetSizer(paddingSizer)
         self.Layout()
 
     def OnNewSimpleBindButton(self, evt):

@@ -55,7 +55,6 @@ class InspirationPopper(Page):
         })
 
     def BuildPage(self):
-        sizer          = wx.BoxSizer(wx.VERTICAL)
         centeringSizer = wx.BoxSizer(wx.VERTICAL)
 
         optionsSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -172,11 +171,7 @@ class InspirationPopper(Page):
 
         centeringSizer.Add(InspTabs, 0, wx.EXPAND)
 
-        sizer.Add(centeringSizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
-
-        paddingSizer = wx.BoxSizer(wx.VERTICAL)
-        paddingSizer.Add(sizer, flag = wx.ALL|wx.EXPAND, border = 16)
-        self.SetSizerAndFit(paddingSizer)
+        self.MainSizer.Add(centeringSizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
         self.SynchronizeUI()
 

@@ -11,12 +11,20 @@
 
 import wx
 import wx.lib.colourselect as csel
+import wx.lib.scrolledpanel as scrolled
 from UI.KeySelectDialog import bcKeyButton
 
-class Page(wx.Panel):
+class Page(wx.ScrolledWindow):
 
     def __init__(self, parent):
-        wx.Panel.__init__(self, parent)
+        wx.ScrolledWindow.__init__(self, parent)
+
+        self.MainSizer = wx.BoxSizer(wx.VERTICAL)
+        paddingSizer = wx.BoxSizer(wx.VERTICAL)
+        paddingSizer.Add(self.MainSizer, 1, flag = wx.ALL|wx.EXPAND, border = 16)
+
+        self.SetSizer(paddingSizer)
+
         self.Profile = parent
         self.TabTitle = type(self).__name__
 

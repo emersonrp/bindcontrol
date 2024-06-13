@@ -182,15 +182,9 @@ class General(Page):
         centeringSizer.Add(topSizer,           0, wx.TOP|wx.EXPAND, 10)
         centeringSizer.Add(self.IncarnateBox,  0, wx.TOP|wx.EXPAND, 6)
 
-        paddingSizer = wx.BoxSizer(wx.VERTICAL)
-        paddingSizer.Add(centeringSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 0)
-
-        # testPowerPicker = PowerPicker(self)
-        # paddingSizer.Add(testPowerPicker, flag=wx.ALL|wx.EXPAND, border = 20)
+        self.MainSizer.Add(centeringSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
         self.SynchronizeUI()
-
-        self.SetSizerAndFit(paddingSizer)
 
     def SynchronizeUI(self):
         self.OnPickArchetype()

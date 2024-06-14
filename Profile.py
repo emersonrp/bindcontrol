@@ -438,7 +438,7 @@ class Profile(wx.Notebook):
         else:
             msg = f"{donefiles} of {totalfiles} bind files written successfully."
 
-        with DoneDialog(self, msg = msg) as dlg:
+        with WriteDoneDialog(self, msg = msg) as dlg:
 
             dlg.ShowModal()
             if errors:
@@ -448,8 +448,8 @@ class Profile(wx.Notebook):
         self.BindFiles = {}
 
     def AllBindFiles(self):
-        files = []
-        dirs  = []
+        files = [self.ResetFile()]
+        dirs  = [str(self.BindsDir())]
         for pageName in self.Pages:
             page = getattr(self, pageName)
             bf = page.AllBindFiles()
@@ -463,14 +463,16 @@ class Profile(wx.Notebook):
             'dirs'  : dirs,
         }
 
-
     def DeleteBindFiles(self):
-        ### TODO TODO TODO -- check that BindsDir is sane
+        bindpath = wx.ConfigBase.Get().Read('BindPath')
+        if len(bindpath) < 6: # "C:\COH" being the classic
+            wx.MessageBox(f"Your Binds Directory is set to '{bindpath}' which seems wrong.  Check the preferences dialog.", "Binds Directory Error", wx.OK)
+            return
 
-        result = wx.MessageBox(f"This will delete all BindControl-generated files inside:\n\n{self.BindsDir()}\n\nThis might take a moment.  Are you sure?", "DELETE ALL BINDFILES", wx.YES_NO)
+        result = wx.MessageBox(f"This will delete all BindControl-generated files and directories inside:\n\n          {self.BindsDir()}\n\nPlease double-check this path and make sure this is what you mean to do.\n\nAre you sure?", "DELETE ALL BINDFILES", wx.YES_NO)
         if result == wx.NO: return
 
-        # this is generated using Profile.BindsDir() so if that's sane, we're probably OK.
+        # this is generated using Profile.GetBindFile() so if BindsDir is sane, we're probably OK.
         bindfiles = self.AllBindFiles()
 
         totalfiles = len(bindfiles['files']) + len(bindfiles['dirs'])
@@ -480,28 +482,37 @@ class Profile(wx.Notebook):
         progress = 0
         removed = 0
         for file in bindfiles['files']:
-            # check AGAIN that it's inside BindsDir
-            # check if it exists
-            # unlink it, increment "removed" counter
+            if not file.Path.is_relative_to(bindpath):
+                wx.LogError(f"Bindfile {file.Path} not in {bindpath}, skipping deletion!")
+            elif file.Path.is_file():
+                file.Path.unlink()
+                removed = removed + 1
+
             dlg.Update(progress, str(file.Path))
             progress = progress + 1
 
         for bdir in bindfiles['dirs']:
-            # check AGAIN that it's inside BindsDir
-            # check if it exists
-            # check if it's empty
-            # rmdir it, increment "removed" counter
+            dirpath = Path(self.BindsDir() / bdir)
+            if dirpath.is_dir():
+                # try / except because if it's not empty it'll barf.
+                try:
+                    dirpath.rmdir()
+                    # not incrementing "removed" here because we just want to count
+                    # files, so we can match "wrote X files" with "deleted X files"
+                    pass
+                except Exception:
+                    pass
+
             dlg.Update(progress, bdir)
             progress = progress + 1
 
-        # throw up a summary dialog:
-        # "Removed X files and dirs.  You might want to /reset_keybinds.
-        # You can Write Binds again now for a clean set of binds."
+        with DeleteDoneDialog(self, removed = removed) as dlg:
+            dlg.ShowModal()
 
+        # clear out our state
+        self.BindFiles = {}
 
-
-
-class DoneDialog(wx.Dialog):
+class WriteDoneDialog(wx.Dialog):
     def __init__(self, parent, msg = ''):
         wx.Dialog.__init__(self, parent, title = "Bindfiles Written")
 
@@ -529,5 +540,37 @@ class DoneDialog(wx.Dialog):
         )
         sizer.Add( textCtrl, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
+        sizer.Add(self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10)
+        self.SetSizerAndFit(sizer)
+
+class DeleteDoneDialog(wx.Dialog):
+    def __init__(self, parent, removed = 0):
+        wx.Dialog.__init__(self, parent, title = "Bindfiles Deleted")
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        sizer.Add(
+            wx.StaticText(self, label = (
+                    f"Deleted {removed} bind files and removed empty directories."
+                    "\n\n"
+                    "If you had previously loaded this set of binds with a character,"
+                    "\n"
+                    "you will likely experience bad results until you log into that character and type:"
+                ), style = wx.ALIGN_CENTER),
+            1, wx.EXPAND|wx.ALL, 10
+        )
+        textCtrl = wx.TextCtrl(self, id = wx.ID_ANY,
+                       style = wx.TE_READONLY|wx.TE_CENTER,
+                       value = "/keybind_reset",
+        )
+        textCtrl.SetFont(
+            wx.Font(10, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = 'Courier')
+        )
+        sizer.Add(textCtrl, 0, wx.EXPAND|wx.ALL, 10)
+
+        sizer.Add(
+            wx.StaticText(self, label = f"Alternatively, you can Write Binds again at this point for a fresh set of bindfiles.", style = wx.ALIGN_CENTER),
+            1, wx.EXPAND|wx.ALL, 10
+        )
         sizer.Add( self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10)
         self.SetSizerAndFit(sizer)

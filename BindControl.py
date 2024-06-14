@@ -168,20 +168,18 @@ class Main(wx.Frame):
             self.Profile = Profile(self)
             self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
 
-            # loading the default profile does The Right Thing over in Profile.doLoadFromFile
-            defaultProfile = Path(self.Profile.ProfilePath() / 'Default.bcp')
-            self.Profile.doLoadFromFile(defaultProfile)
+            self.Profile.LoadFromDefault()
+
         except Exception as e:
             wx.LogError(f"Something broke in new profile: {e}")
         finally:
             self.Layout()
             self.Thaw()
 
-    def OnProfileLoad(self, evt)        :
-        self.Profile.LoadFromFile(evt)
-    def OnProfileSave(self, evt)        : self.Profile.doSaveToFile(evt)
-    def OnProfileSaveAs(self, evt)      : self.Profile.SaveToFile(evt)
-    def OnProfileSaveDefault(self, evt) : self.Profile.SaveAsDefault(evt)
+    def OnProfileLoad(self, evt)      : self.Profile.LoadFromFile(evt)
+    def OnProfileSave(self, evt)      : self.Profile.doSaveToFile(evt)
+    def OnProfileSaveAs(self, evt)    : self.Profile.SaveToFile(evt)
+    def OnProfileSaveDefault(self, _) : self.Profile.SaveAsDefault()
 
     def OnWriteBindsButton(self, _):
         self.Profile.WriteBindFiles()

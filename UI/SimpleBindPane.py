@@ -106,7 +106,7 @@ class SimpleBindPane(CustomBindPaneParent):
             wx.MessageBox(f"Custom Bind \"{self.Title}\" is not complete or has errors.  Not written to bindfile.")
             return
         resetfile = wx.App.Get().Profile.ResetFile()
-        bk = self.Ctrls['BindKey']
-        bc = self.Ctrls['BindContents']
+        bk = self.Ctrls[self.MakeCtlName('BindKey')]
+        bc = self.Ctrls[self.MakeCtlName('BindContents')]
 
         resetfile.SetBind(bk.Key, self.Title, self.Page, bc.GetValue())

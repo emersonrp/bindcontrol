@@ -939,9 +939,13 @@ class Mastermind(Page):
         ]:
             files.append(self.Profile.GetBindFile('mmbinds', f'{fn}.txt'))
 
+            for tsize in 1,2,3,4,5,6:
+                for tsel in range(0,tsize+1):
+                    files.append(self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt"))
+
         return {
             'files' : files,
-            'dirs'  : ['mmbinds'],
+            'dirs'  : ['mmbinds', 'petsel'],
         }
 
 

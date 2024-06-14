@@ -84,6 +84,7 @@ class Main(wx.Frame):
 
         Help_manual  = HelpMenu.Append(-1,"Manual","User's Manual")
         Help_faq     = HelpMenu.Append(-1,"FAQ","Frequently Asked Questions")
+        Help_files   = HelpMenu.Append(-1,"Files","About BindControl's Output Files")
         Help_license = HelpMenu.Append(-1,"License Info","")
         Help_about   = HelpMenu.Append(wx.ID_ABOUT)
 
@@ -113,6 +114,7 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.OnHelpManual, Help_manual)
         self.Bind(wx.EVT_MENU, None, Help_faq)
+        self.Bind(wx.EVT_MENU, self.OnHelpFiles, Help_files)
         self.Bind(wx.EVT_MENU, self.OnHelpLicense, Help_license)
         self.Bind(wx.EVT_MENU, self.OnMenuAboutBox,      Help_about)
 
@@ -250,6 +252,9 @@ class Main(wx.Frame):
 
     def OnHelpLicense(self, _):
         ShowHelpWindow(self, 'LICENSE.html')
+
+    def OnHelpFiles(self, _):
+        ShowHelpWindow(self, 'OutputFiles.html')
 
     def OnWindowClosing(self, evt):
         if self.Profile.Modified:

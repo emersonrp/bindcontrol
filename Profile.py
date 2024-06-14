@@ -464,11 +464,6 @@ class Profile(wx.Notebook):
         }
 
     def DeleteBindFiles(self):
-        bindpath = wx.ConfigBase.Get().Read('BindPath')
-        if len(bindpath) < 6: # "C:\COH" being the classic
-            wx.MessageBox(f"Your Binds Directory is set to '{bindpath}' which seems wrong.  Check the preferences dialog.", "Binds Directory Error", wx.OK)
-            return
-
         result = wx.MessageBox((
                 "DELETING ALL BINDFILES"
                 "\n\n"
@@ -482,8 +477,21 @@ class Profile(wx.Notebook):
             ), "DELETE ALL BINDFILES", wx.YES_NO)
         if result == wx.NO: return
 
+        removed = self.doDeleteBindsFiles(self.AllBindFiles())
+
+        with DeleteDoneDialog(self, removed = removed) as dlg:
+            dlg.ShowModal()
+
+
+
+    def doDeleteBindsFiles(self, bindfiles):
+
+        bindpath = wx.ConfigBase.Get().Read('BindPath')
+        if len(bindpath) < 6: # "C:\COH" being the classic
+            wx.MessageBox(f"Your Binds Directory is set to '{bindpath}' which seems wrong.  Check the preferences dialog.", "Binds Directory Error", wx.OK)
+            return
+
         # this is generated using Profile.GetBindFile() so if BindsDir is sane, we're probably OK.
-        bindfiles = self.AllBindFiles()
 
         totalfiles = len(bindfiles['files']) + len(bindfiles['dirs'])
         dlg = wx.ProgressDialog('Deleting Bind Files', '',
@@ -516,11 +524,10 @@ class Profile(wx.Notebook):
             dlg.Update(progress, bdir)
             progress = progress + 1
 
-        with DeleteDoneDialog(self, removed = removed) as dlg:
-            dlg.ShowModal()
-
         # clear out our state
         self.BindFiles = {}
+
+        return removed
 
 class WriteDoneDialog(wx.Dialog):
     def __init__(self, parent, msg = ''):

@@ -2,6 +2,8 @@ import re
 from pathlib import Path, PureWindowsPath
 from typing import Dict, Any
 import json
+import codecs
+import base64
 import wx
 import wx.lib.colourselect as csel
 
@@ -114,38 +116,70 @@ class Profile(wx.Notebook):
     def ProfilePath(self):
         return Path(wx.ConfigBase.Get().Read('ProfilePath'))
 
-    def SaveAsDefault(self, _ = None):
-        currentfilename = self.Filename
-        currentmodified = self.Modified
-        currentname     = self.Name()
-
-        try:
-            self.ProfilePath().mkdir( parents = True, exist_ok = True )
-        except Exception as e:
-            wx.LogError(f"Can't make Profile path {self.ProfilePath()} - {e}")
-
-        self.Filename = Path(self.ProfilePath() / 'Default.bcp')
-
-        if self.Filename.exists():
-            result = wx.MessageBox("Overwrite Default Profile?", "Profile Exists", wx.YES_NO)
+    def SaveAsDefault(self, prompt = True):
+        if prompt:
+            result = wx.MessageBox("This will set the current profile to be used as a template when making a new profile.  Continue?", "Save As Default", wx.YES_NO)
             if result == wx.NO: return
 
-        self.General.SetState('Name', '')
-        self.doSaveToFile()
+        # stash away our current values
+        currName = self.Name()
+        filename = self.Filename
+        self.Freeze()
+        try:
+            # so much could go wrong.
+            self.General.SetState('Name', '')
+            self.Filename = None
+            jsonstring = self.AsJSON(small = True)
+            zipstring = codecs.encode(jsonstring.encode('utf-8'), 'zlib')
+            b64string = base64.b64encode(zipstring)
 
-        self.Filename = currentfilename
-        self.Modified = currentmodified
-        self.General.SetState('Name', currentname)
+            wx.ConfigBase.Get().Write('DefaultProfile', b64string)
+            wx.ConfigBase.Get().Flush()
+        except Exception as e:
+            # Let us know if it did
+            wx.LogError(f"Failed to write default profile: {e}")
+        finally:
+            # clean up our stashed state
+            self.General.SetState('Name', currName)
+            self.Filename = filename
+            self.Thaw()
+
+    def GetDefaultProfileJSON(self, _ = None):
+        jsonstring = None
+
+        # If we have it already saved the new way
+        if wx.ConfigBase.Get().HasEntry('DefaultProfile'):
+            try:
+                b64string = wx.ConfigBase.Get().Read('DefaultProfile')
+                zipstring = base64.b64decode(b64string)
+                jsonstring = codecs.decode(zipstring, 'zlib')
+            except Exception as e:
+                wx.LogError(f"Problem loading default profile: {e}")
+
+        return jsonstring
+
+    def LoadFromDefault(self, _ = None):
+        FoundOldDefaultProfile = False
+        # Try to get it from prefs
+        jsonstring = self.GetDefaultProfileJSON()
+        if not jsonstring:
+            # Otherwise look for the file way
+            oldDefaultProfile = self.ProfilePath() / "Default.bcp"
+            if oldDefaultProfile.exists():
+                FoundOldDefaultProfile = True
+                jsonstring = oldDefaultProfile.read_text()
+
+        self.doLoadFromJSON(jsonstring)
+
+        # if we found one the file way, migrate it to the new way
+        if FoundOldDefaultProfile:
+            self.SaveAsDefault(prompt = False)
 
     def SaveToFile(self, _ = None):
         try:
             self.ProfilePath().mkdir( parents = True, exist_ok = True )
         except Exception as e:
             wx.LogError(f"Can't make Profile path {self.ProfilePath()} - {e}")
-
-        # yes we want this both in SaveToFile and doSaveToFile
-        if re.fullmatch(r'default', self.Name(), flags = re.I):
-            return self.SaveAsDefault()
 
         with wx.FileDialog(self, "Save Profile file",
                 wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
@@ -171,10 +205,6 @@ class Profile(wx.Notebook):
         if not self.Filename:
             return self.SaveToFile()
 
-        # yes we want this both in SaveToFile and doSaveToFile
-        if re.fullmatch(r'default', self.Name(), flags = re.I):
-            return self.SaveAsDefault()
-
         profilename = self.Name()
         if len(profilename) == 0 or re.search(" ", profilename):
             wx.MessageBox("Profile Name is not valid, please correct this.")
@@ -188,6 +218,18 @@ class Profile(wx.Notebook):
             raise Exception(f"No Filename set in Profile {self.Name()}!  Aborting save.")
         savefile = self.Filename
 
+        dumpstring = self.AsJSON()
+
+        try:
+            wx.ConfigBase.Get().Write('LastProfile', str(savefile))
+            savefile.touch() # make sure there's one there.
+            savefile.write_text(dumpstring)
+            wx.LogMessage(f"Wrote profile {savefile}")
+            self.ClearModified()
+        except Exception as e:
+            wx.LogError(f"Problem saving to profile {savefile}: {e}")
+
+    def AsJSON(self, small = False):
         savedata : Dict[str, Any] = {}
         for pagename in self.Pages:
             savedata[pagename] = {}
@@ -225,7 +267,6 @@ class Profile(wx.Notebook):
                 if incarnatedata:
                     savedata[pagename]['Incarnate'] = incarnatedata
 
-
         savedata['CustomBinds'] = []
         customPage = getattr(self, 'CustomBinds')
         for pane in customPage.PaneSizer.GetChildren():
@@ -235,15 +276,10 @@ class Profile(wx.Notebook):
                 if bindpane:
                     savedata['CustomBinds'].append(bindpane.Serialize())
 
-        dumpstring = json.dumps(savedata, indent=2)
-        try:
-            wx.ConfigBase.Get().Write('LastProfile', str(savefile))
-            savefile.touch() # make sure there's one there.
-            savefile.write_text(dumpstring)
-            wx.LogMessage(f"Wrote profile {savefile}")
-            self.ClearModified()
-        except Exception as e:
-            wx.LogError(f"Problem saving to profile {savefile}: {e}")
+        if small:
+            return json.dumps(savedata, separators = (',', ':'))
+        else:
+            return json.dumps(savedata, indent=2)
 
     def LoadFromFile(self, _):
         with wx.FileDialog(self, "Open Profile file",
@@ -262,110 +298,108 @@ class Profile(wx.Notebook):
     def doLoadFromFile(self, pathname):
         with Path(pathname) as file:
             try:
-                datastring = file.read_text()
+                jsonstring = file.read_text()
+                self.doLoadFromJSON(jsonstring)
             except Exception as e:
                 wx.LogError(f"Profile {pathname} could not be loaded: {e}")
                 return None
 
-            data = json.loads(datastring)
+        self.Filename = Path(pathname)
+        wx.ConfigBase.Get().Write('LastProfile', pathname)
+        wx.ConfigBase.Get().Flush()
+        wx.LogMessage(f"Loaded profile {pathname}")
 
-            # load old Profiles pre-rename
-            if 'SoD' in data: data['MovementPowers'] = data['SoD']
+    def doLoadFromJSON(self, jsonstring):
+        if not jsonstring: return
 
-            for pagename in self.Pages:
-                if pagename == "CustomBinds": continue
-                page = getattr(self, pagename)
-                for controlname, control in page.Ctrls.items():
+        data = json.loads(jsonstring)
 
-                    value = None
-                    if pagename in data:
-                        if controlname in data[pagename]:
-                            value = data[pagename].get(controlname, None)
-                        # if we don't have a given control in the load data, skip it completely --
-                        # it should already have the default value from Init
-                        else: continue
+        # load old Profiles pre-rename of "Movement Powers" tab
+        if 'SoD' in data: data['MovementPowers'] = data['SoD']
 
-                    # look up what type of control it is to know how to update its value
-                    if isinstance(control, wx.DirPickerCtrl):
-                        control.SetPath(value if value else '')
-                    elif isinstance(control, bcKeyButton):
-                        control.SetLabel(value if value else '')
-                        control.Key = value if value else ''
-                    elif isinstance(control, wx.Button):
-                        control.SetLabel(value if value else '')
-                    elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
-                        control.SetColour(value)
-                        if isinstance(control, csel.ColourSelect):
-                            wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
-                    elif isinstance(control, wx.Choice):
-                        # we used to save the numerical selection which could break if the contents
-                        # of a picker changed between runs, like, say, if new powersets appeared.
-                        # we still check whether we have a numerical value so we can load old profiles.
-                        if isinstance(value, str):
-                            value = control.FindString(value)
-                            if value == wx.NOT_FOUND: value = 0
-                        control.SetSelection(value if value else 0)
-                    elif isinstance(control, wx.CheckBox):
-                        control.SetValue(value if value else False)
-                    elif isinstance(control, cgStaticText):
-                        continue
-                    elif isinstance(control, cgSpinCtrl) or isinstance(control, cgSpinCtrlDouble):
-                        control.SetValue(value if value else page.Init.get(controlname, 0))
-                    else:
-                        control.SetValue(value if value else '')
+        for pagename in self.Pages:
+            if pagename == "CustomBinds": continue
+            page = getattr(self, pagename)
+            for controlname, control in page.Ctrls.items():
 
-                if pagename == 'General':
-                    page.IncarnateBox.FillWith(data)
-                    # Re-fill Primary and Secondary pickers, honoring old numeric indices if needed
-                    page.OnPickArchetype()
-                    prim = data['General'].get('Primary', None)
-                    if isinstance(prim, str):
-                        prim = page.Ctrls['Primary'].FindString(prim)
-                    page.Ctrls['Primary']  .SetSelection(prim)
+                value = None
+                if pagename in data:
+                    if controlname in data[pagename]:
+                        value = data[pagename].get(controlname, None)
+                    # if we don't have a given control in the load data, skip it completely --
+                    # it should already have the default value from Init
+                    else: continue
 
-                    seco = data['General'].get('Secondary', None)
-                    if isinstance(seco, str):
-                        seco = page.Ctrls['Secondary'].FindString(seco)
-                    page.Ctrls['Secondary'].SetSelection(seco)
-
-                    epic = data['General'].get('Epic', None)
-                    if isinstance(epic, str):
-                        epic = page.Ctrls['Epic'].FindString(epic)
-                    page.Ctrls['Epic'].SetSelection(epic)
+                # look up what type of control it is to know how to update its value
+                if isinstance(control, wx.DirPickerCtrl):
+                    control.SetPath(value if value else '')
+                elif isinstance(control, bcKeyButton):
+                    control.SetLabel(value if value else '')
+                    control.Key = value if value else ''
+                elif isinstance(control, wx.Button):
+                    control.SetLabel(value if value else '')
+                elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
+                    control.SetColour(value)
+                    if isinstance(control, csel.ColourSelect):
+                        wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
+                elif isinstance(control, wx.Choice):
+                    # we used to save the numerical selection which could break if the contents
+                    # of a picker changed between runs, like, say, if new powersets appeared.
+                    # we still check whether we have a numerical value so we can load old profiles.
+                    if isinstance(value, str):
+                        value = control.FindString(value)
+                        if value == wx.NOT_FOUND: value = 0
+                    control.SetSelection(value if value else 0)
+                elif isinstance(control, wx.CheckBox):
+                    control.SetValue(value if value else False)
+                elif isinstance(control, cgStaticText):
+                    continue
+                elif isinstance(control, cgSpinCtrl) or isinstance(control, cgSpinCtrlDouble):
+                    control.SetValue(value if value else page.Init.get(controlname, 0))
                 else:
-                    page.SynchronizeUI()  # this clears/repops the Primary/Secondary pickers on 'General' so don't do it there
+                    control.SetValue(value if value else '')
 
-            cbpage = getattr(self, "CustomBinds")
-            if cbpage:
-                cbpage.scrolledPanel.DestroyChildren()
-                cbpage.Ctrls = {}
-                cbpage.Panes = []
-                for custombind in data['CustomBinds']:
-                    if not custombind: continue
+            if pagename == 'General':
+                page.IncarnateBox.FillWith(data)
+                # Re-fill Primary and Secondary pickers, honoring old numeric indices if needed
+                page.OnPickArchetype()
+                prim = data['General'].get('Primary', None)
+                if isinstance(prim, str):
+                    prim = page.Ctrls['Primary'].FindString(prim)
+                page.Ctrls['Primary']  .SetSelection(prim)
 
-                    bindpane = None
-                    if custombind['Type'] == "SimpleBind":
-                        bindpane = SimpleBindPane(cbpage, init = custombind)
-                    elif custombind['Type'] == "BufferBind":
-                        bindpane = BufferBindPane(cbpage, init = custombind)
-                    elif custombind['Type'] == "ComplexBind":
-                        bindpane = ComplexBindPane(cbpage, init = custombind)
+                seco = data['General'].get('Secondary', None)
+                if isinstance(seco, str):
+                    seco = page.Ctrls['Secondary'].FindString(seco)
+                page.Ctrls['Secondary'].SetSelection(seco)
 
-                    if bindpane:
-                        cbpage.AddBindToPage(bindpane = bindpane)
-
-            if re.search(r'Default.bcp', str(pathname)):
-                # we loaded the default profile, clear the name and Filename
-                # so we get prompted to save it someplace different
-                self.General.SetState('Name', '')
-                self.Filename = None
-                wx.LogMessage(f"Loaded default profile as new profile")
+                epic = data['General'].get('Epic', None)
+                if isinstance(epic, str):
+                    epic = page.Ctrls['Epic'].FindString(epic)
+                page.Ctrls['Epic'].SetSelection(epic)
             else:
-                self.Filename = Path(pathname)
-                wx.ConfigBase.Get().Write('LastProfile', str(file))
-                wx.ConfigBase.Get().Flush()
-                wx.LogMessage(f"Loaded profile {pathname}")
-            self.ClearModified()
+                page.SynchronizeUI()  # this clears/repops the Primary/Secondary pickers on 'General' so don't do it there
+
+        cbpage = getattr(self, "CustomBinds")
+        if cbpage:
+            cbpage.scrolledPanel.DestroyChildren()
+            cbpage.Ctrls = {}
+            cbpage.Panes = []
+            for custombind in data['CustomBinds']:
+                if not custombind: continue
+
+                bindpane = None
+                if custombind['Type'] == "SimpleBind":
+                    bindpane = SimpleBindPane(cbpage, init = custombind)
+                elif custombind['Type'] == "BufferBind":
+                    bindpane = BufferBindPane(cbpage, init = custombind)
+                elif custombind['Type'] == "ComplexBind":
+                    bindpane = ComplexBindPane(cbpage, init = custombind)
+
+                if bindpane:
+                    cbpage.AddBindToPage(bindpane = bindpane)
+        self.ClearModified()
+
 
     #####################
     # Bind file functions

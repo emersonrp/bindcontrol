@@ -381,7 +381,6 @@ class Profile(wx.Notebook):
 
 
     def WriteBindFiles(self):
-
         profilename = self.General.GetState('Name')
         if len(profilename) == 0 or re.search(" ", profilename):
             wx.MessageBox("Profile Name is not valid, please correct this.")
@@ -447,6 +446,59 @@ class Profile(wx.Notebook):
 
         # clear out our state
         self.BindFiles = {}
+
+    def AllBindFiles(self):
+        files = []
+        dirs  = []
+        for pageName in self.Pages:
+            page = getattr(self, pageName)
+            bf = page.AllBindFiles()
+            for file in bf['files']:
+                files.append(file)
+            for bdir in bf['dirs']:
+                dirs.append(bdir)
+
+        return {
+            'files' : files,
+            'dirs'  : dirs,
+        }
+
+
+    def DeleteBindFiles(self):
+        ### TODO TODO TODO -- check that BindsDir is sane
+
+        result = wx.MessageBox(f"This will delete all BindControl-generated files inside:\n\n{self.BindsDir()}\n\nThis might take a moment.  Are you sure?", "DELETE ALL BINDFILES", wx.YES_NO)
+        if result == wx.NO: return
+
+        # this is generated using Profile.BindsDir() so if that's sane, we're probably OK.
+        bindfiles = self.AllBindFiles()
+
+        totalfiles = len(bindfiles['files']) + len(bindfiles['dirs'])
+        dlg = wx.ProgressDialog('Deleting Bind Files', '',
+            maximum = totalfiles, style=wx.PD_APP_MODAL|wx.PD_AUTO_HIDE)
+
+        progress = 0
+        removed = 0
+        for file in bindfiles['files']:
+            # check AGAIN that it's inside BindsDir
+            # check if it exists
+            # unlink it, increment "removed" counter
+            dlg.Update(progress, str(file.Path))
+            progress = progress + 1
+
+        for bdir in bindfiles['dirs']:
+            # check AGAIN that it's inside BindsDir
+            # check if it exists
+            # check if it's empty
+            # rmdir it, increment "removed" counter
+            dlg.Update(progress, bdir)
+            progress = progress + 1
+
+        # throw up a summary dialog:
+        # "Removed X files and dirs.  You might want to /reset_keybinds.
+        # You can Write Binds again now for a clean set of binds."
+
+
 
 
 class DoneDialog(wx.Dialog):

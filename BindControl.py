@@ -126,10 +126,15 @@ class Main(wx.Frame):
 
         # WRITE BUTTON
         WriteButton = wx.Button(self, -1, "Write Binds")
+        WriteButton.SetToolTip("This will write out the bindfiles to the configured binds directory.")
+        DeleteButton = wx.Button(self, -1, "Delete All Binds")
+        DeleteButton.SetToolTip("This will delete all BindControl-managed files in the configured binds directory.")
         writeSizer = wx.BoxSizer(wx.HORIZONTAL)
         writeSizer.Add(WriteButton, 1, wx.EXPAND)
+        writeSizer.Add(DeleteButton, 0, wx.EXPAND)
         self.Sizer.Add(writeSizer,  0, wx.EXPAND | wx.ALL, 10)
-        self.Bind(wx.EVT_BUTTON, self.OnWriteBindsButton, WriteButton)
+        WriteButton .Bind(wx.EVT_BUTTON, self.OnWriteBindsButton)
+        DeleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteBindsButton)
 
         # Do not SetSizerAndFit() - Fit() is poison
         self.SetSizer(self.Sizer)
@@ -180,6 +185,9 @@ class Main(wx.Frame):
 
     def OnWriteBindsButton(self, _):
         self.Profile.WriteBindFiles()
+
+    def OnDeleteBindsButton(self, _):
+        self.Profile.DeleteBindFiles()
 
     def OnMenuPrefsDialog(self, _):
         if self.PrefsDialog.ShowModal() == wx.ID_OK:

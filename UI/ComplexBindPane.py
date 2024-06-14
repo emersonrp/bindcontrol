@@ -155,6 +155,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
         return {
             'files' : files,
+            'dirs'  : ['cbinds'],
         }
 
 class BindStep(wx.Panel):

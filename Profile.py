@@ -469,7 +469,17 @@ class Profile(wx.Notebook):
             wx.MessageBox(f"Your Binds Directory is set to '{bindpath}' which seems wrong.  Check the preferences dialog.", "Binds Directory Error", wx.OK)
             return
 
-        result = wx.MessageBox(f"This will delete all BindControl-generated files and directories inside:\n\n          {self.BindsDir()}\n\nPlease double-check this path and make sure this is what you mean to do.\n\nAre you sure?", "DELETE ALL BINDFILES", wx.YES_NO)
+        result = wx.MessageBox((
+                "DELETING ALL BINDFILES"
+                "\n\n"
+                "This will delete all BindControl-generated files and directories inside:"
+                "\n\n"
+                f"          {self.BindsDir()}"
+                "\n\n"
+                "Please double-check this path and make sure this is what you mean to do."
+                "\n\n"
+                "Are you sure?"
+            ), "DELETE ALL BINDFILES", wx.YES_NO)
         if result == wx.NO: return
 
         # this is generated using Profile.GetBindFile() so if BindsDir is sane, we're probably OK.

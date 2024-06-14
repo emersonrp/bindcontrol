@@ -205,8 +205,9 @@ class CustomBinds(Page):
         dirs  = []
         for pane in self.Panes:
             bfs = pane.AllBindFiles()
-            files.extend(bfs['files'])
-            dirs .extend(bfs['dirs'])
+            if bfs:
+                files.extend(bfs['files'])
+                dirs .extend(bfs['dirs'])
 
         return {
             'files' : files,

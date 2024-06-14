@@ -270,4 +270,5 @@ class BufferBindPane(CustomBindPaneParent):
 
         return {
             'files' : files,
+            'dirs'  : [f"buff{title}"],
         }

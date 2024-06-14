@@ -119,13 +119,18 @@ class Profile(wx.Notebook):
         currentmodified = self.Modified
         currentname     = self.Name()
 
-        self.General.SetState('Name', 'Default')
+        try:
+            self.ProfilePath().mkdir( parents = True, exist_ok = True )
+        except Exception as e:
+            wx.LogError(f"Can't make Profile path {self.ProfilePath()} - {e}")
+
         self.Filename = Path(self.ProfilePath() / 'Default.bcp')
 
         if self.Filename.exists():
             result = wx.MessageBox("Overwrite Default Profile?", "Profile Exists", wx.YES_NO)
             if result == wx.NO: return
 
+        self.General.SetState('Name', '')
         self.doSaveToFile()
 
         self.Filename = currentfilename
@@ -138,10 +143,14 @@ class Profile(wx.Notebook):
         except Exception as e:
             wx.LogError(f"Can't make Profile path {self.ProfilePath()} - {e}")
 
+        # yes we want this both in SaveToFile and doSaveToFile
+        if re.fullmatch(r'default', self.Name(), flags = re.I):
+            return self.SaveAsDefault()
+
         with wx.FileDialog(self, "Save Profile file",
                 wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
                 defaultDir = str(self.ProfilePath()),
-                defaultFile = self.Name() + '.bcp',
+                defaultFile = self.Name(),
                 style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
@@ -150,7 +159,7 @@ class Profile(wx.Notebook):
 
             # Proceed with the file chosen by the user
             pathname = fileDialog.GetPath()
-            if not re.search(r'\.bcp$', pathname):
+            if not re.search(r'\.bcp$', pathname, flags = re.I):
                 pathname = pathname + '.bcp'
 
             self.Filename = Path(pathname)
@@ -162,7 +171,11 @@ class Profile(wx.Notebook):
         if not self.Filename:
             return self.SaveToFile()
 
-        profilename = self.General.GetState('Name')
+        # yes we want this both in SaveToFile and doSaveToFile
+        if re.fullmatch(r'default', self.Name(), flags = re.I):
+            return self.SaveAsDefault()
+
+        profilename = self.Name()
         if len(profilename) == 0 or re.search(" ", profilename):
             wx.MessageBox("Profile Name is not valid, please correct this.")
             self.ChangeSelection(0)
@@ -170,7 +183,9 @@ class Profile(wx.Notebook):
 
         self.ProfilePath().mkdir( parents = True, exist_ok = True )
 
-        self.Filename = self.ProfilePath() / Path(profilename + ".bcp")
+        #self.Filename = self.ProfilePath() / Path(profilename + ".bcp")
+        if not self.Filename:
+            raise Exception(f"No Filename set in Profile {self.Name()}!  Aborting save.")
         savefile = self.Filename
 
         savedata : Dict[str, Any] = {}
@@ -225,10 +240,10 @@ class Profile(wx.Notebook):
             wx.ConfigBase.Get().Write('LastProfile', str(savefile))
             savefile.touch() # make sure there's one there.
             savefile.write_text(dumpstring)
-            wx.LogMessage(f"Wrote profile '{savefile}'")
+            wx.LogMessage(f"Wrote profile {savefile}")
             self.ClearModified()
         except Exception as e:
-            wx.LogError(f"Problem saving to profile '{savefile}': {e}")
+            wx.LogError(f"Problem saving to profile {savefile}: {e}")
 
     def LoadFromFile(self, _):
         with wx.FileDialog(self, "Open Profile file",
@@ -339,10 +354,17 @@ class Profile(wx.Notebook):
                     if bindpane:
                         cbpage.AddBindToPage(bindpane = bindpane)
 
-            self.Filename = Path(pathname)
-            wx.ConfigBase.Get().Write('LastProfile', str(file))
-            wx.ConfigBase.Get().Flush()
-            wx.LogMessage(f"Loaded profile {pathname}")
+            if re.search(r'Default.bcp', str(pathname)):
+                # we loaded the default profile, clear the name and Filename
+                # so we get prompted to save it someplace different
+                self.General.SetState('Name', '')
+                self.Filename = None
+                wx.LogMessage(f"Loaded default profile as new profile")
+            else:
+                self.Filename = Path(pathname)
+                wx.ConfigBase.Get().Write('LastProfile', str(file))
+                wx.ConfigBase.Get().Flush()
+                wx.LogMessage(f"Loaded profile {pathname}")
             self.ClearModified()
 
     #####################

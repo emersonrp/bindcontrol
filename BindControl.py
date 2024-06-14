@@ -161,12 +161,11 @@ class Main(wx.Frame):
             self.Profile.Destroy()
 
             self.Profile = Profile(self)
-            self.Sizer.Add(self.Profile, 1, wx.EXPAND)
+            self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
 
+            # loading the default profile does The Right Thing over in Profile.doLoadFromFile
             defaultProfile = Path(self.Profile.ProfilePath() / 'Default.bcp')
             self.Profile.doLoadFromFile(defaultProfile)
-            self.Profile.General.SetState('Name', '')
-            self.Profile.Filename = None
         except Exception as e:
             wx.LogError(f"Something broke in new profile: {e}")
         finally:

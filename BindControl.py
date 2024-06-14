@@ -165,7 +165,8 @@ class Main(wx.Frame):
 
             # loading the default profile does The Right Thing over in Profile.doLoadFromFile
             defaultProfile = Path(self.Profile.ProfilePath() / 'Default.bcp')
-            self.Profile.doLoadFromFile(defaultProfile)
+            if defaultProfile.exists():
+                self.Profile.doLoadFromFile(defaultProfile)
         except Exception as e:
             wx.LogError(f"Something broke in new profile: {e}")
         finally:

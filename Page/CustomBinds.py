@@ -163,8 +163,10 @@ class CustomBinds(Page):
 
     def OnDeleteButton(self, evt):
         delButton = evt.EventObject
-        bindname = delButton.BindPane.Title
-        if wx.MessageBox(f'Delete Bind "{bindname}"?', 'Delete Bind', wx.YES_NO) == wx.NO: return
+        bindpane = delButton.BindPane
+        with BindDeletionDialog(self, bindpane) as dlg:
+            if dlg.ShowModal() == wx.ID_CANCEL:
+                return
         sizer = delButton.BindSizer
         for ctrlname in delButton.BindPane.Ctrls:
             if self.Ctrls.get(ctrlname, None) : del self.Ctrls[ctrlname]
@@ -213,3 +215,20 @@ class CustomBinds(Page):
             'files' : files,
             'dirs'  : dirs,
         }
+
+class BindDeletionDialog(wx.Dialog):
+    def __init__(self, parent, bindpane):
+        wx.Dialog.__init__(self, parent, title = "Delete Bind")
+
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+        mainSizer.Add(wx.StaticText(self, label = f'Delete Custom Bind "{bindpane.Title}"?'), 0, wx.ALL, 20)
+
+        # TODO - "if we're a complex or buffer bind"
+        self.DeleteFilesCB = wx.CheckBox(self, label = "Delete all associated bindfiles")
+        mainSizer.Add(self.DeleteFilesCB, 0, wx.ALL, 10)
+        # end TODO
+
+        mainSizer.Add(self.CreateButtonSizer(wx.OK|wx.CANCEL), 0, wx.ALL|wx.ALIGN_CENTER, 20)
+
+        self.SetSizerAndFit(mainSizer)
+

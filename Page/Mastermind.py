@@ -287,9 +287,13 @@ class Mastermind(Page):
 #        petCommandsKeys.InnerSizer.Add(enableBGGoto, 0, wx.ALL|wx.EXPAND, 5)
 
 
+        petselenablesizer = wx.BoxSizer(wx.HORIZONTAL)
         petselenable = wx.CheckBox( self, -1, 'Enable Pet By-Name Binds')
         petselenable.SetToolTip( wx.ToolTip('Check this to enable the By-Name Selection Binds') )
         petselenable.Bind(wx.EVT_CHECKBOX, self.OnPetSelEnable)
+        petselhelpbutton = HelpButton(self, 'PetByNameBinds.html')
+        petselenablesizer.Add(petselenable, 0, wx.ALIGN_CENTER_VERTICAL)
+        petselenablesizer.Add(petselhelpbutton, 0)
 
         self.Ctrls['PetSelEnable'] = petselenable
 
@@ -311,7 +315,6 @@ class Mastermind(Page):
             })
             self.Ctrls[f'PetSelect{i}'] = button
             name = wx.TextCtrl(self)
-            name.Bind(wx.EVT_TEXT, self.OnNameTextChange)
             setattr(name, "CtlLabel", None)
             self.Ctrls[f'Pet{i}Name'] = name
 
@@ -348,7 +351,7 @@ class Mastermind(Page):
         self.MainSizer.Add(petcmdenablesizer, 0, wx.EXPAND|wx.TOP|wx.LEFT, 16)
         self.MainSizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 16)
         self.MainSizer.AddSpacer(10)
-        self.MainSizer.Add(petselenable, 0, wx.EXPAND|wx.ALL, 16)
+        self.MainSizer.Add(petselenablesizer, 0, wx.EXPAND|wx.ALL, 16)
         self.MainSizer.Add(PetNames, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 16)
 
         self.MainSizer.Add(petnpenablesizer, 0, wx.EXPAND|wx.ALL, 16)
@@ -398,15 +401,6 @@ class Mastermind(Page):
         enabled = bool(self.GetState('PetNPEnable'))
         self.EnableControls(enabled, ['SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize'])
         if evt: evt.Skip()
-
-    def OnNameTextChange(self, evt):
-        ctrl = evt.EventObject
-        if re.search(' ', ctrl.GetValue()):
-            ctrl.SetBackgroundColour([255,200,200])
-            ctrl.SetToolTip("This pet name contains spaces, which will cause this pet's by-name binds not to work.  Change your pet's name to something without spaces.")
-        else:
-            ctrl.SetBackgroundColour(wx.NullColour)
-            ctrl.SetToolTip('')
 
     def OnBGCheckboxes(self, evt = None):
         petcmdenabled = self.GetState('PetCmdEnable')

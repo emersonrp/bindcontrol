@@ -57,8 +57,11 @@ class HelpPopup(wx.PopupTransientWindow):
         self.panel.SetSizer(manualsizer)
 
         # resize the whole thing to match manualhtml's correct vertical size
-        self.SetSize(manualhtml.GetVirtualSize())
-        self.panel.SetSize(manualhtml.GetVirtualSize())
+        virtsize = manualhtml.GetVirtualSize()
+        virtsize.SetWidth(virtsize.GetWidth()+10)
+        virtsize.SetHeight(virtsize.GetHeight()+10)
+        self.SetSize(virtsize)
+        self.panel.SetSize(virtsize)
 
         self.Layout()
 

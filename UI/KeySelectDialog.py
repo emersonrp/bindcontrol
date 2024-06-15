@@ -360,6 +360,8 @@ class KeySelectDialog(wx.Dialog):
                 ord('<') : 'COMMA',
                 ord('>') : 'PERIOD',
                 ord('/') : '/',
+                ord('(') : '9',
+                ord(')') : '0',
                 'BUTTON1' : 'LBUTTON',
                 'BUTTON2' : 'MBUTTON',
                 'BUTTON3' : 'RBUTTON',

@@ -574,7 +574,7 @@ class MovementPowers(Page):
 
             # show/hide kheldian-influenced controls depending on selected archetype;
             kheldianGridSizer = self.kheldianSizer.GetChildren()[0].GetSizer()
-            if (archetype == "Peacebringer" or archetype == "Warshade"):
+            if (self.isKheldian()):
                 # show kheldian sizer, enable controls
                 for ctrl in kheldianGridSizer.GetChildren():
                     ctrl.GetWindow().Enable(True)
@@ -1163,7 +1163,7 @@ class MovementPowers(Page):
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
-        if (self.GetState('UseNova')):
+        if (self.isKheldian() and self.GetState('UseNova')):
             ResetFile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"t $name, Changing to {Nova} Form{fullstop}{t.on}{Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
             novafile = profile.GetBindFile("nova.txt")
@@ -1194,7 +1194,7 @@ class MovementPowers(Page):
 
             novafile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("follow"))
 
-        if (self.GetState('UseDwarf')):
+        if (self.isKheldian() and self.GetState('UseDwarf')):
             ResetFile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"t $name, Changing to {Dwarf} Form{fullstop}$$powexectoggleon {Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
             dwrffile = profile.GetBindFile("dwarf.txt")
             if (self.GetState('UseNova')):
@@ -2182,6 +2182,9 @@ class MovementPowers(Page):
 
     def hasGFly(self):
         return bool(self.Profile.HasPowerPool('Flight') and self.GetState('HasGFly'))
+
+    def isKheldian(self):
+        return bool(self.Profile.Archetype() == "Warshade" or self.Profile.Archetype() == "Peacebringer")
 
     def AllBindFiles(self):
         files = []

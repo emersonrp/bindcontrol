@@ -589,7 +589,22 @@ class WriteDoneDialog(wx.Dialog):
         textCtrl.SetFont(
             wx.Font(10, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = 'Courier')
         )
-        sizer.Add( textCtrl, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+        sizer.Add(textCtrl, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+
+        fileslist = wx.TextCtrl(self, id = wx.ID_ANY, size=(-1,150),
+                                value = "reset.txt\n", style = wx.TE_READONLY|wx.TE_MULTILINE)
+        for filename in sorted(parent.BindFiles.keys()):
+            if filename == "reset.txt": continue
+            bindfile = parent.BindFiles[filename]
+
+            displaypath = bindfile.Path.relative_to(parent.BindsDir())
+
+            fileslist.AppendText(f"{displaypath}\n")
+
+        fileslist.SetInsertionPoint(0)
+
+        sizer.Add(wx.StaticText(self, -1, label = "Files written:"), 0, wx.TOP|wx.RIGHT|wx.LEFT, 10)
+        sizer.Add(fileslist, 0, wx.ALL|wx.EXPAND, 10)
 
         sizer.Add(self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10)
         self.SetSizerAndFit(sizer)

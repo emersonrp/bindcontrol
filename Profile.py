@@ -10,6 +10,8 @@ import wx.lib.colourselect as csel
 from BindFile import BindFile
 from BLF import BLF
 
+from Icon import GetIcon
+
 from Page.General import General
 from Page.Gameplay import Gameplay
 from Page.MovementPowers import MovementPowers
@@ -497,11 +499,13 @@ class DoneDialog(wx.Dialog):
             "If this is a new set of keybinds, log on to the character\n"
             "you made them for and type into the chat window:\n"
         )
-
         sizer.Add(
             wx.StaticText(self, label = msg, style = wx.ALIGN_CENTER),
             1, wx.EXPAND|wx.ALL, 10
         )
+
+        ### helpful copyable /blf text
+        blfSizer = wx.BoxSizer(wx.HORIZONTAL)
         textCtrl = wx.TextCtrl(self, id = wx.ID_ANY,
                        style = wx.TE_READONLY|wx.TE_CENTER,
                        value = "/bindloadfile " + str(parent.GameBindsDir() / "reset.txt")
@@ -509,7 +513,21 @@ class DoneDialog(wx.Dialog):
         textCtrl.SetFont(
             wx.Font(10, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = 'Courier')
         )
-        sizer.Add( textCtrl, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+        blfSizer.Add(textCtrl, 1, wx.EXPAND)
+        copyButton = wx.BitmapButton(self, bitmap = GetIcon('UI/copy'))
+        setattr(copyButton, 'textctrl', textCtrl)
+        blfSizer.Add(copyButton, 0)
+        copyButton.Bind(wx.EVT_BUTTON, self.doTextCopy)
 
+        sizer.Add(blfSizer, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
         sizer.Add( self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10)
         self.SetSizerAndFit(sizer)
+
+    def doTextCopy(self, evt):
+        dataObj = wx.TextDataObject(evt.EventObject.textctrl.GetValue())
+        if wx.TheClipboard.Open():
+            wx.TheClipboard.SetData(dataObj)
+            wx.TheClipboard.Flush()
+            wx.TheClipboard.Close()
+        else:
+            wx.MessageBox("Couldn't open the clipboard for copying")

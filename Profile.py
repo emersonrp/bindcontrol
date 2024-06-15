@@ -512,13 +512,13 @@ class Profile(wx.Notebook):
             ), "DELETE ALL BINDFILES", wx.YES_NO)
         if result == wx.NO: return
 
-        removed = self.doDeleteBindsFiles(self.AllBindFiles())
+        removed = self.doDeleteBindFiles(self.AllBindFiles())
 
         if removed:
             with DeleteDoneDialog(self, removed = removed) as dlg:
                 dlg.ShowModal()
 
-    def doDeleteBindsFiles(self, bindfiles):
+    def doDeleteBindFiles(self, bindfiles):
 
         bindpath = wx.ConfigBase.Get().Read('BindPath')
         if len(bindpath) < 6: # "C:\COH" being the classic

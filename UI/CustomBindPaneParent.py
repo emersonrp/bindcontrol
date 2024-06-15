@@ -54,9 +54,8 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         return f"{self.bindclass}_{title}_{name}"
 
     def RenameCtrlsFrom(self, oldtitle):
-        breakpoint()
         oldtitle = re.sub(r'\W+', '', oldtitle)
-        # jump through this list() hoop since we're modifying self.Ctrls
+        # don't iterate self.Ctrls directly since we're modifying it as we go
         for ctrlname in list(self.Ctrls):
             if re.search(oldtitle, ctrlname):
                 ctrl = self.Ctrls[ctrlname]

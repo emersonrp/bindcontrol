@@ -512,20 +512,25 @@ class Profile(wx.Notebook):
             ), "DELETE ALL BINDFILES", wx.YES_NO)
         if result == wx.NO: return
 
-        removed = self.doDeleteBindsFiles(self.AllBindFiles())
+        removed = self.doDeleteBindFiles(self.AllBindFiles())
 
         if removed:
             with DeleteDoneDialog(self, removed = removed) as dlg:
                 dlg.ShowModal()
 
-    def doDeleteBindsFiles(self, bindfiles):
+    def doDeleteBindFiles(self, bindfiles):
 
         bindpath = wx.ConfigBase.Get().Read('BindPath')
         if len(bindpath) < 6: # "C:\COH" being the classic
             wx.MessageBox(f"Your Binds Directory is set to '{bindpath}' which seems wrong.  Check the preferences dialog.", "Binds Directory Error", wx.OK)
             return
 
-        # this is generated using Profile.GetBindFile() so if BindsDir is sane, we're probably OK.
+        if not bindfiles:
+            wx.LogError("Tried to doDeleteBindFiles with no bindfiles.  Bailing.")
+            return
+
+        # bindfiles is generated using someone's AllBindFiles(), which uses
+        # Profile.GetBindFile(), so if BindsDir is sane, we're probably OK.
 
         totalfiles = len(bindfiles['files']) + len(bindfiles['dirs'])
         dlg = wx.ProgressDialog('Deleting Bind Files', '',

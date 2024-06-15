@@ -122,6 +122,8 @@ class CustomBinds(Page):
         # freeze and thaw to jump thru some hoops to make the title display update on Windows
         bindpane.Freeze()
         oldtitle = bindpane.Title
+        # marshal up the files to delete, before we change the name
+        deletefiles = None if new else bindpane.AllBindFiles()
         try:
             dlg = wx.TextEntryDialog(self, 'Enter name for bind')
             if bindpane.Title:
@@ -133,6 +135,8 @@ class CustomBinds(Page):
                 for pane in self.Panes:
                     if title == pane.Title:
                         # show an "oops" dialog, this might not be perfect
+                        # TODO if we don't change the name, but click "OK" it errors because
+                        # we already have ourselves named that.
                         wx.MessageBox(f"A bind called {title} already exists!", "Error", wx.OK, self)
                         self.SetBindPaneLabel(evt, bindpane, new)
                         dlg.Destroy()
@@ -145,6 +149,9 @@ class CustomBinds(Page):
                     bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
                     bindpane.DupButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
                     bindpane.RenameCtrlsFrom(oldtitle)
+                    # if we have files to delete (we do, if not new) then delete them.
+                    if deletefiles:
+                        self.Profile.doDeleteBindFiles(deletefiles)
             else:
                 if new:
                     bindpane.Destroy()
@@ -167,8 +174,14 @@ class CustomBinds(Page):
 
     def OnDeleteButton(self, evt):
         delButton = evt.EventObject
-        bindname = delButton.BindPane.Title
-        if wx.MessageBox(f'Delete Bind "{bindname}"?', 'Delete Bind', wx.YES_NO) == wx.NO: return
+        bindpane = delButton.BindPane
+        with BindDeletionDialog(self, bindpane) as dlg:
+            if dlg.ShowModal() == wx.ID_CANCEL:
+                return
+            if dlg.DeleteFilesCB and dlg.DeleteFilesCB.GetValue():
+                # do the delete of the files
+                files = bindpane.AllBindFiles()
+                self.Profile.doDeleteBindFiles(files)
         sizer = delButton.BindSizer
         for ctrlname in delButton.BindPane.Ctrls:
             if self.Ctrls.get(ctrlname, None) : del self.Ctrls[ctrlname]
@@ -217,3 +230,22 @@ class CustomBinds(Page):
             'files' : files,
             'dirs'  : dirs,
         }
+
+class BindDeletionDialog(wx.Dialog):
+    def __init__(self, parent, bindpane):
+        wx.Dialog.__init__(self, parent, title = "Delete Bind")
+
+        self.DeleteFilesCB = None
+
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+        mainSizer.Add(wx.StaticText(self, label = f'Delete Custom Bind "{bindpane.Title}"?'), 0, wx.ALL, 20)
+
+        if isinstance(bindpane, ComplexBindPane) or isinstance(bindpane, BufferBindPane):
+            self.DeleteFilesCB = wx.CheckBox(self, label = "Delete all associated bindfiles")
+            self.DeleteFilesCB.SetValue(True)
+            mainSizer.Add(self.DeleteFilesCB, 0, wx.ALL|wx.ALIGN_CENTER, 10)
+
+        mainSizer.Add(self.CreateButtonSizer(wx.OK|wx.CANCEL), 0, wx.ALL|wx.ALIGN_CENTER, 20)
+
+        self.SetSizerAndFit(mainSizer)
+

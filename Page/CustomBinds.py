@@ -2,6 +2,7 @@ import wx
 from Icon import GetIcon
 
 from Page import Page
+from Help import HelpButton
 from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
@@ -21,12 +22,15 @@ class CustomBinds(Page):
         newSimpleBindButton = wx.Button(self, -1, "New Simple Bind")
         newSimpleBindButton.Bind(wx.EVT_BUTTON, self.OnNewSimpleBindButton)
         buttonSizer.Add(newSimpleBindButton, wx.ALIGN_CENTER)
+        buttonSizer.Add(HelpButton(self, 'SimpleBinds.html'), 0, wx.ALIGN_CENTER)
         newComplexBindButton = wx.Button(self, -1, "New Complex Bind")
         newComplexBindButton.Bind(wx.EVT_BUTTON, self.OnNewComplexBindButton)
         buttonSizer.Add(newComplexBindButton, wx.ALIGN_CENTER)
+        buttonSizer.Add(HelpButton(self, 'ComplexBinds.html'), 0, wx.ALIGN_CENTER)
         newBufferBindButton = wx.Button(self, -1, "New Buffer Bind")
         newBufferBindButton.Bind(wx.EVT_BUTTON, self.OnNewBufferBindButton)
         buttonSizer.Add(newBufferBindButton, wx.ALIGN_CENTER)
+        buttonSizer.Add(HelpButton(self, 'BufferBinds.html'), 0, wx.ALIGN_CENTER)
 
         # a scrollable window and sizer for the collection of collapsible panes
         self.PaneSizer     = wx.BoxSizer(wx.VERTICAL)

@@ -118,6 +118,8 @@ class CustomBinds(Page):
         # freeze and thaw to jump thru some hoops to make the title display update on Windows
         bindpane.Freeze()
         oldtitle = bindpane.Title
+        # marshal up the files to delete, before we change the name
+        deletefiles = None if new else bindpane.AllBindFiles()
         try:
             dlg = wx.TextEntryDialog(self, 'Enter name for bind')
             if bindpane.Title:
@@ -129,6 +131,8 @@ class CustomBinds(Page):
                 for pane in self.Panes:
                     if title == pane.Title:
                         # show an "oops" dialog, this might not be perfect
+                        # TODO if we don't change the name, but click "OK" it errors because
+                        # we already have ourselves named that.
                         wx.MessageBox(f"A bind called {title} already exists!", "Error", wx.OK, self)
                         self.SetBindPaneLabel(evt, bindpane, new)
                         dlg.Destroy()
@@ -141,6 +145,9 @@ class CustomBinds(Page):
                     bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
                     bindpane.DupButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
                     bindpane.RenameCtrlsFrom(oldtitle)
+                    # if we have files to delete (we do, if not new) then delete them.
+                    if deletefiles:
+                        self.Profile.doDeleteBindFiles(deletefiles)
             else:
                 if new:
                     bindpane.Destroy()

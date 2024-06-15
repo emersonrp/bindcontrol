@@ -525,7 +525,12 @@ class Profile(wx.Notebook):
             wx.MessageBox(f"Your Binds Directory is set to '{bindpath}' which seems wrong.  Check the preferences dialog.", "Binds Directory Error", wx.OK)
             return
 
-        # this is generated using Profile.GetBindFile() so if BindsDir is sane, we're probably OK.
+        if not bindfiles:
+            wx.LogError("Tried to doDeleteBindFiles with no bindfiles.  Bailing.")
+            return
+
+        # bindfiles is generated using someone's AllBindFiles(), which uses
+        # Profile.GetBindFile(), so if BindsDir is sane, we're probably OK.
 
         totalfiles = len(bindfiles['files']) + len(bindfiles['dirs'])
         dlg = wx.ProgressDialog('Deleting Bind Files', '',

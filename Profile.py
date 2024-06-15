@@ -475,7 +475,6 @@ class Profile(wx.Notebook):
             msg = f"{donefiles} of {totalfiles} bind files written successfully."
 
         with WriteDoneDialog(self, msg = msg) as dlg:
-
             dlg.ShowModal()
             if errors:
                 wx.App.Get().Main.LogWindow.Show()
@@ -573,15 +572,15 @@ class WriteDoneDialog(wx.Dialog):
 
         msg = msg + (
             "\n\n"
-            "If you are updating existing installed BindControl binds, you can\n"
-            f"press \"{wx.ConfigBase.Get().Read('ResetKey')}\" to load your new binds.\n"
+            "If you are updating existing installed BindControl binds,\n"
+            f"you can press \"{wx.ConfigBase.Get().Read('ResetKey')}\" in-game to load your new binds.\n"
             "\n"
             "If this is a new set of keybinds, log on to the character\n"
-            "you made them for and type into the chat window:\n"
+            "you made them for and type into the chat window:"
         )
         sizer.Add(
             wx.StaticText(self, label = msg, style = wx.ALIGN_CENTER),
-            1, wx.EXPAND|wx.ALL, 10
+            0, wx.EXPAND|wx.ALL, 10
         )
 
         ### helpful copyable /blf text
@@ -591,7 +590,15 @@ class WriteDoneDialog(wx.Dialog):
                        value = "/bindloadfile " + str(parent.GameBindsDir() / "reset.txt")
         )
         textCtrl.SetFont(
-            wx.Font(10, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = 'Courier')
+            wx.Font(9, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = 'Courier')
+        )
+        # https://wxpython.org/Phoenix/docs/html/wx.Control.html#wx.Control.GetSizeFromTextSize
+        textCtrl.SetInitialSize(
+            textCtrl.GetSizeFromTextSize(
+                textCtrl.GetTextExtent(
+                    textCtrl.GetValue()
+                )
+            )
         )
         blfSizer.Add(textCtrl, 1, wx.EXPAND)
         copyButton = wx.BitmapButton(self, bitmap = GetIcon('UI/copy'))

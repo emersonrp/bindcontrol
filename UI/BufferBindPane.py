@@ -164,11 +164,13 @@ class BufferBindPane(CustomBindPaneParent):
         chat2   = self.Ctrls[self.MakeCtlName('BuffChat2')].GetValue()
         chat3   = self.Ctrls[self.MakeCtlName('BuffChat3')].GetValue()
 
-        npow = 1
-        if self.Ctrls[self.MakeCtlName('BuffPower2')].GetLabel():
-            npow = 2
-            if self.Ctrls[self.MakeCtlName('BuffPower3')].GetLabel():
-                npow = 3
+        npow = 0
+        if self.Ctrls[self.MakeCtlName('BuffPower1')].GetLabel() != "...":
+            npow = 1
+            if self.Ctrls[self.MakeCtlName('BuffPower2')].GetLabel() != "...":
+                npow = 2
+                if self.Ctrls[self.MakeCtlName('BuffPower3')].GetLabel() != "...":
+                    npow = 3
 
         if self.Ctrls[self.MakeCtlName('BuffsAffectTeam')].GetValue():
             for j in [1,2,3,4,5,6,7,8]:

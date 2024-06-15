@@ -484,7 +484,7 @@ class Profile(wx.Notebook):
 
     def AllBindFiles(self):
         files = [self.ResetFile()]
-        dirs  = [str(self.BindsDir())]
+        dirs  = []
         for pageName in self.Pages:
             page = getattr(self, pageName)
             bf = page.AllBindFiles()
@@ -514,10 +514,9 @@ class Profile(wx.Notebook):
 
         removed = self.doDeleteBindsFiles(self.AllBindFiles())
 
-        with DeleteDoneDialog(self, removed = removed) as dlg:
-            dlg.ShowModal()
-
-
+        if removed:
+            with DeleteDoneDialog(self, removed = removed) as dlg:
+                dlg.ShowModal()
 
     def doDeleteBindsFiles(self, bindfiles):
 
@@ -532,6 +531,7 @@ class Profile(wx.Notebook):
         dlg = wx.ProgressDialog('Deleting Bind Files', '',
             maximum = totalfiles, style=wx.PD_APP_MODAL|wx.PD_AUTO_HIDE)
 
+        # try all 15k+ of the files
         progress = 0
         removed = 0
         for file in bindfiles['files']:
@@ -544,6 +544,7 @@ class Profile(wx.Notebook):
             dlg.Update(progress, str(file.Path))
             progress = progress + 1
 
+        # try the directories
         for bdir in bindfiles['dirs']:
             dirpath = Path(self.BindsDir() / bdir)
             if dirpath.is_dir():
@@ -558,6 +559,13 @@ class Profile(wx.Notebook):
 
             dlg.Update(progress, bdir)
             progress = progress + 1
+
+        # remove the bindsdir itself, if empty
+        bindsdir = Path(self.BindsDir())
+        try:
+            bindsdir.rmdir()
+        except Exception:
+            pass
 
         # clear out our state
         self.BindFiles = {}
@@ -634,6 +642,7 @@ class WriteDoneDialog(wx.Dialog):
             wx.TheClipboard.Close()
         else:
             wx.MessageBox("Couldn't open the clipboard for copying")
+
 class DeleteDoneDialog(wx.Dialog):
     def __init__(self, parent, removed = 0):
         wx.Dialog.__init__(self, parent, title = "Bindfiles Deleted")

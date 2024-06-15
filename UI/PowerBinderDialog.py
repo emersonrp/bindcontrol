@@ -162,11 +162,12 @@ class PowerBinderDialog(wx.Dialog):
     def OnListSelect(self, _):
         selected = self.RearrangeList.GetSelection()
 
-        selCommand = self.RearrangeList.GetClientData(selected)
-        if selCommand.UI:
-            self.EditButton.Enable()
-        else:
-            self.EditButton.Disable()
+        if selected != wx.NOT_FOUND:
+            selCommand = self.RearrangeList.GetClientData(selected)
+            if selCommand.UI:
+                self.EditButton.Enable()
+            else:
+                self.EditButton.Disable()
 
     def UpdateBindStringDisplay(self):
         self.BindStringDisplay.SetValue(self.MakeBindString())
@@ -1146,7 +1147,7 @@ class UseInspByNameCmd(PowerBindCmd):
         useInspByNameSizer = wx.BoxSizer(wx.HORIZONTAL)
         useInspByNameSizer.Add(wx.StaticText(dialog, -1, "Inspiration:"), 0,
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
-        self.useInspByNameModeChoice = BitmapComboBox(dialog, style = wx.CB_READONLY)
+        self.useInspByNameModeChoice = BitmapComboBox(dialog, size = (200, -1), style = wx.CB_READONLY)
         for _, types in GameData.Inspirations.items():
             for _, info in types.items():
                 for insp in info['tiers']:

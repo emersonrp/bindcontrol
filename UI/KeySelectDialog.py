@@ -130,12 +130,21 @@ class KeySelectDialog(wx.Dialog):
         self.kbBind.SetPage('<center><b><font size=+4>' + self.Binding + '</font></b></center>')
 
     def handleJS(self, event):
+        if not self.PressedKeys:
+            self.ModSlot = ''
+            self.KeySlot = ''
+
         if event.ButtonDown():
-            button_keyname = "JOY" + str(event.GetButtonChange()+1)
+            button_keyname = self.Keymap["JOY" + str(event.GetButtonOrdinal()+1)]
+            self.PressedKeys[button_keyname] = None
             if button_keyname in self.modKeys:
-                self.ModSlot = self.Keymap[button_keyname]
+                self.ModSlot = button_keyname
             else:
-                self.KeySlot = self.Keymap[button_keyname]
+                self.KeySlot = button_keyname
+
+        elif event.ButtonUp():
+            button_keyname = self.Keymap["JOY" + str(event.GetButtonOrdinal()+1)]
+            self.PressedKeys.pop(button_keyname, '')
 
         elif event.IsMove() or event.IsZMove():
             self.controller.SetCurrentAxisPercents()
@@ -144,9 +153,18 @@ class KeySelectDialog(wx.Dialog):
             if self.controller.StickIsNearCenter() and self.controller.GetPOVPosition() > 60000:
                 return
 
+            # clear all axes from PressedKeys
+            for axis in [
+                "JOYSTICK1_UP" , "JOYSTICK1_DOWN" , "JOYSTICK1_LEFT" , "JOYSTICK1_RIGHT" ,
+                "RTrigger"     , "LTrigger"       ,
+                "JOYSTICK3_UP" , "JOYSTICK3_DOWN" , "JOYSTICK3_LEFT" , "JOYSTICK3_RIGHT" ,
+                "JOYPAD_UP"    , "JOYPAD_DOWN"    , "JOYPAD_LEFT"    , "JOYPAD_RIGHT"    ,
+            ]:self.PressedKeys.pop(axis, '')
+
             current_axis = self.controller.GetCurrentAxis()
             if current_axis:
                 payload = self.Keymap[current_axis]
+                self.PressedKeys[payload] = None
                 if payload in self.modKeys:
                     self.ModSlot = payload
                 else:

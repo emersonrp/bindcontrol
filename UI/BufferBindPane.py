@@ -3,10 +3,10 @@ import wx
 import UI
 from Icon import GetIcon
 from BLF import BLF
-from UI.PowerPicker import PowerPicker
+from UI.PowerPicker import PowerPicker, EVT_POWER_CHANGED
 
 from UI.CustomBindPaneParent import CustomBindPaneParent
-from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
+from UI.KeySelectDialog import bcKeyButton
 from UI.PowerBinderDialog import PowerBinderButton
 
 class BufferBindPane(CustomBindPaneParent):
@@ -104,6 +104,10 @@ class BufferBindPane(CustomBindPaneParent):
             if bp3['picon']:
                 buffPower3.SetBitmap(GetIcon(bp3['picon']))
                 buffPower3.IconFilename = bp3['picon']
+
+        buffPower1.Bind(EVT_POWER_CHANGED, self.CheckAnyPowerPicked)
+        buffPower2.Bind(EVT_POWER_CHANGED, self.CheckAnyPowerPicked)
+        buffPower3.Bind(EVT_POWER_CHANGED, self.CheckAnyPowerPicked)
 
         # key picker controls
         TeamCtrls = wx.StaticBoxSizer(wx.HORIZONTAL, pane, label = "Buff Team Keybinds")
@@ -220,9 +224,12 @@ class BufferBindPane(CustomBindPaneParent):
         useteam = self.Ctrls[self.MakeCtlName("BuffsAffectTeam")].GetValue()
         for i in [1,2,3,4,5,6,7,8]:
             self.Ctrls[self.MakeCtlName(f'Team{i}BuffKey')].Enable(useteam)
+
         usepet = self.Ctrls[self.MakeCtlName("BuffsAffectPets")].GetValue()
         for i in [1,2,3,4,5,6]:
             self.Ctrls[self.MakeCtlName(f'Pet{i}BuffKey')].Enable(usepet)
+
+        self.CheckAnyPowerPicked()
 
     def Serialize(self):
         data = {
@@ -274,3 +281,13 @@ class BufferBindPane(CustomBindPaneParent):
             'files' : files,
             'dirs'  : [f"buff{title}"],
         }
+
+    def CheckAnyPowerPicked(self, _ = None):
+        bp1 = self.Ctrls[self.MakeCtlName("BuffPower1")]
+        bp2 = self.Ctrls[self.MakeCtlName("BuffPower2")]
+        bp3 = self.Ctrls[self.MakeCtlName("BuffPower3")]
+
+        if (bp1.GetLabel() != '...' or bp2.GetLabel() != '...' or bp3.GetLabel() != '...'):
+            self.Ctrls[self.MakeCtlName("BuffPower1")].RemoveError('nopower')
+        else:
+            self.Ctrls[self.MakeCtlName("BuffPower1")].AddError('nopower', 'At least one power must be selected')

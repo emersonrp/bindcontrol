@@ -1,8 +1,12 @@
 import wx
 import GameData
 from Icon import GetIcon
+from UI.ErrorControls import ErrorControlMixin
 
-class PowerPicker(wx.Button):
+import wx.lib.newevent
+PowerChanged, EVT_POWER_CHANGED = wx.lib.newevent.NewEvent()
+
+class PowerPicker(ErrorControlMixin, wx.Button):
     def __init__(self, parent):
         wx.Button.__init__(self, parent)
 
@@ -11,16 +15,21 @@ class PowerPicker(wx.Button):
         self.Bind(wx.EVT_BUTTON, self.OnPowerPicker)
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
         self.IconFilename = ''
+        self.Errors = {}
+        self.Picker = None
 
     def OnPowerPicker(self, _):
         self.Picker = PowerPickerMenu(self)
         self.Picker.BuildMenu()
         self.PopupMenu(self.Picker)
+        # TODO maybe it should update itself with the results from the menu
+        # instead of the menu reaching in and fiddling with it.  Maybe.
 
     def OnRightClick(self, _):
         self.SetLabel('...')
         self.IconFilename = ''
         self.SetBitmapLabel(GetIcon('Empty'))
+        wx.PostEvent(self, PowerChanged())
 
 class PowerPickerMenu(wx.Menu):
 
@@ -128,4 +137,4 @@ class PowerPickerMenu(wx.Menu):
         self.Button.SetLabel(label)
         self.Button.SetBitmap(bitmap)
         self.Button.IconFilename = menuitem.IconFilename
-
+        wx.PostEvent(self.Button, PowerChanged())

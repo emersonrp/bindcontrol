@@ -3,7 +3,7 @@ import wx
 import UI
 from Icon import GetIcon
 from BLF import BLF
-from UI.PowerPicker import PowerPicker
+from UI.PowerPicker import PowerPicker, EVT_POWER_CHANGED
 
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
@@ -105,37 +105,45 @@ class BufferBindPane(CustomBindPaneParent):
                 buffPower3.SetBitmap(GetIcon(bp3['picon']))
                 buffPower3.IconFilename = bp3['picon']
 
+        buffPower1.Bind(EVT_POWER_CHANGED, self.CheckAnyPowerPicked)
+        buffPower2.Bind(EVT_POWER_CHANGED, self.CheckAnyPowerPicked)
+        buffPower3.Bind(EVT_POWER_CHANGED, self.CheckAnyPowerPicked)
+
         # key picker controls
         TeamCtrls = wx.StaticBoxSizer(wx.HORIZONTAL, pane, label = "Buff Team Keybinds")
+        TeamSB = TeamCtrls.GetStaticBox()
         TeamInner = wx.GridBagSizer(hgap = 5, vgap = 5)
         TeamCtrls.Add(TeamInner, 1, wx.ALL|wx.EXPAND, 10)
         PetCtrls  = wx.StaticBoxSizer(wx.HORIZONTAL, pane, label = "Buff Pets Keybinds")
+        PetSB = PetCtrls.GetStaticBox()
         PetInner = wx.GridBagSizer(hgap = 5, vgap = 5)
         PetCtrls.Add(PetInner, 1, wx.ALL|wx.EXPAND, 10)
 
-        self.Ctrls[self.MakeCtlName('BuffsAffectTeam')] = wx.CheckBox(pane, -1, label = 'Enable')
+        self.Ctrls[self.MakeCtlName('BuffsAffectTeam')] = wx.CheckBox(TeamSB, -1, label = 'Enable')
         self.Ctrls[self.MakeCtlName('BuffsAffectTeam')].SetValue(self.Init['BuffsAffectTeam'])
         self.Ctrls[self.MakeCtlName('BuffsAffectTeam')].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         TeamInner.Add(self.Ctrls[self.MakeCtlName('BuffsAffectTeam')], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6,7,8):
-            button = bcKeyButton(pane, -1, init = { 'CtlName' : self.MakeCtlName(f'Team{i}BuffKey'), })
+            button = bcKeyButton(TeamSB, -1, init = { 'CtlName' : self.MakeCtlName(f'Team{i}BuffKey'), })
             button.Key = self.Init[f'Team{i}BuffKey']
             button.SetLabel(button.Key)
-            label = wx.StaticText(pane, label = f'Teammate {i}')
+            button.Bind(EVT_KEY_CHANGED, self.CheckAnyKeyPicked)
+            label = wx.StaticText(TeamSB, label = f'Teammate {i}')
             button.CtlLabel = label
             TeamInner.Add(label, (0,i), flag = wx.EXPAND|wx.ALIGN_CENTER)
             TeamInner.Add(button, (1,i))
             self.Ctrls[self.MakeCtlName(f'Team{i}BuffKey')] = button
 
-        self.Ctrls[self.MakeCtlName('BuffsAffectPets')] = wx.CheckBox(pane, -1, label = 'Enable')
+        self.Ctrls[self.MakeCtlName('BuffsAffectPets')] = wx.CheckBox(PetSB, -1, label = 'Enable')
         self.Ctrls[self.MakeCtlName('BuffsAffectPets')].SetValue(self.Init['BuffsAffectPets'])
         self.Ctrls[self.MakeCtlName('BuffsAffectPets')].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         PetInner.Add(self.Ctrls[self.MakeCtlName('BuffsAffectPets')], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6):
-            button = bcKeyButton(pane, -1, init = { 'CtlName' : self.MakeCtlName(f'Pet{i}BuffKey'), })
+            button = bcKeyButton(PetSB, -1, init = { 'CtlName' : self.MakeCtlName(f'Pet{i}BuffKey'), })
             button.Key = self.Init[f'Pet{i}BuffKey']
             button.SetLabel(button.Key)
-            label = wx.StaticText(pane, label = f'Pet {i}')
+            button.Bind(EVT_KEY_CHANGED, self.CheckAnyKeyPicked)
+            label = wx.StaticText(PetSB, label = f'Pet {i}')
             button.CtlLabel = label
             PetInner.Add(label , (0,i), flag = wx.EXPAND|wx.ALIGN_CENTER)
             PetInner.Add(button, (1,i))
@@ -154,6 +162,10 @@ class BufferBindPane(CustomBindPaneParent):
         self.SynchronizeUI()
 
     def PopulateBindFiles(self):
+        if not self.checkIfWellFormed():
+            wx.MessageBox(f"Custom Bind \"{self.Title}\" is not complete or has errors.  Not written to bindfile.")
+            return
+
         profile = self.Profile
         ResetFile = profile.ResetFile()
 
@@ -220,9 +232,13 @@ class BufferBindPane(CustomBindPaneParent):
         useteam = self.Ctrls[self.MakeCtlName("BuffsAffectTeam")].GetValue()
         for i in [1,2,3,4,5,6,7,8]:
             self.Ctrls[self.MakeCtlName(f'Team{i}BuffKey')].Enable(useteam)
+
         usepet = self.Ctrls[self.MakeCtlName("BuffsAffectPets")].GetValue()
         for i in [1,2,3,4,5,6]:
             self.Ctrls[self.MakeCtlName(f'Pet{i}BuffKey')].Enable(usepet)
+
+        self.CheckAnyPowerPicked()
+        self.CheckAnyKeyPicked()
 
     def Serialize(self):
         data = {
@@ -274,3 +290,35 @@ class BufferBindPane(CustomBindPaneParent):
             'files' : files,
             'dirs'  : [f"buff{title}"],
         }
+
+    def checkIfWellFormed(self):
+        return self.CheckAnyKeyPicked() and self.CheckAnyPowerPicked()
+
+    def CheckAnyKeyPicked(self, _ = None):
+        KeyIsPicked = False
+        for i in (1,2,3,4,5,6,7,8):
+            if self.Ctrls[self.MakeCtlName(f'Team{i}BuffKey')].Key:
+                KeyIsPicked = True
+        for i in (1,2,3,4,5,6):
+            if self.Ctrls[self.MakeCtlName(f'Pet{i}BuffKey')].Key:
+                KeyIsPicked = True
+
+        Team1Button = self.Ctrls[self.MakeCtlName(f'Team1BuffKey')]
+        if KeyIsPicked:
+            Team1Button.RemoveError('undef')
+        else:
+            Team1Button.AddError('undef', 'At least one Team or Pet key must be selected.')
+
+        return KeyIsPicked
+
+    def CheckAnyPowerPicked(self, _ = None):
+        bp1 = self.Ctrls[self.MakeCtlName("BuffPower1")]
+        bp2 = self.Ctrls[self.MakeCtlName("BuffPower2")]
+        bp3 = self.Ctrls[self.MakeCtlName("BuffPower3")]
+
+        if (bp1.GetLabel() != '...' or bp2.GetLabel() != '...' or bp3.GetLabel() != '...'):
+            self.Ctrls[self.MakeCtlName("BuffPower1")].RemoveError('nopower')
+            return True
+        else:
+            self.Ctrls[self.MakeCtlName("BuffPower1")].AddError('nopower', 'At least one power must be selected')
+            return False

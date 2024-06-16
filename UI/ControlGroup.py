@@ -134,14 +134,13 @@ class ControlGroup(wx.StaticBoxSizer):
         # And any user-defined data.  I thought wx had a scheme for this but no?
         control.Data = data
 
-        # Pack'em in there
-        if tooltip: control.SetToolTip( wx.ToolTip(tooltip) )
-
         if not noLabel and CtlLabel:
-            CtlLabel.SetToolTip( wx.ToolTip(tooltip))
             self.InnerSizer.Add( CtlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
             control.CtlLabel = CtlLabel
             setattr(CtlLabel, "control", control)
+
+        # Pack'em in there
+        if tooltip and tooltip != '': control.SetToolTip(tooltip)
 
         # make checkboxes' labels click to check them
         if ctlType == ('checkbox') and control.CtlLabel:

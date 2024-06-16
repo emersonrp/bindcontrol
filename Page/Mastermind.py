@@ -11,7 +11,7 @@ from UI.KeySelectDialog import bcKeyButton
 # Originally: https://web.archive.org/web/20120904222729/http://boards.cityofheroes.com/showthread.php?t=117256
 
 from Page import Page
-from UI.ControlGroup import ControlGroup
+from UI.ControlGroup import ControlGroup, cgTextCtrl
 
 class Mastermind(Page):
     petCommandKeyDefinitions = (
@@ -210,7 +210,7 @@ class Mastermind(Page):
         PetInner.Add(self.PetKeyLabel,  (2,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 
         for i in (1,2,3,4,5,6):
-            name = wx.TextCtrl(PetNameSB, style = wx.TE_CENTRE)
+            name = cgTextCtrl(PetNameSB, style = wx.TE_CENTRE)
             setattr(name, "CtlLabel", None)
             self.Ctrls[f'Pet{i}Name'] = name
             name.Bind(wx.EVT_TEXT, self.OnNameTextChange)
@@ -416,11 +416,11 @@ class Mastermind(Page):
     def OnNameTextChange(self, evt):
         ctrl = evt.EventObject
         if re.search(' ', ctrl.GetValue()):
-            ctrl.SetBackgroundColour([255,200,200])
-            ctrl.SetToolTip("This pet name contains spaces, which will cause this pet's by-name binds not to work.  Change your pet's name to something without spaces.")
+            ctrl.AddError('spaces', "This pet name contains spaces, which will cause this pet's by-name binds not to work.  Change your pet's name to something without spaces.")
         else:
-            ctrl.SetBackgroundColour(wx.NullColour)
-            ctrl.SetToolTip('')
+            ctrl.RemoveError('spaces')
+
+        self.CheckBGModeNames()
 
     def OnBGCheckboxes(self, evt = None):
         petcmdenabled = self.GetState('PetCmdEnable')
@@ -441,6 +441,17 @@ class Mastermind(Page):
         for petid in [1,2,3,4,5,6]:
             self.Ctrls[f"Pet{petid}Bodyguard"].Enable(petcmdenabled and bgEnabled)
         if evt: evt.Skip()
+
+        self.CheckBGModeNames()
+
+    def CheckBGModeNames(self):
+        if self.GetState('PetBodyguardEnabled'):
+            for i in (1,2,3,4,5,6):
+                ctrl = self.Ctrls[f'Pet{i}Name']
+                if ctrl.GetValue():
+                    ctrl.RemoveError('undef')
+                else:
+                    ctrl.AddError('undef', 'Bodyguard Mode requires the pet name be filled in.')
 
     ### BIND CREATION METHODS
     def mmBGSelBind(self, file, PetBodyguardResponse, powers):

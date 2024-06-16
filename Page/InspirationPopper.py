@@ -44,14 +44,14 @@ class InspirationPopper(Page):
             'SingleBreakFreeKey'       : "SHIFT+E",
             'SingleResistDamageKey'    : "SHIFT+SPACE",
             'SingleResurrectionKey'    : "SHIFT+TILDE",
-            'SingleRevAccuracyKey'     : "SHIFT+CTRL+A",
-            'SingleRevHealthKey'       : "SHIFT+CTRL+S",
-            'SingleRevDamageKey'       : "SHIFT+CTRL+D",
-            'SingleRevEnduranceKey'    : "SHIFT+CTRL+Q",
-            'SingleRevDefenseKey'      : "SHIFT+CTRL+W",
-            'SingleRevBreakFreeKey'    : "SHIFT+CTRL+E",
-            'SingleRevResistDamageKey' : "SHIFT+CTRL+SPACE",
-            'SingleRevResurrectionKey' : "SHIFT+CTRL+TILDE",
+            'SingleRevAccuracyKey'     : "",
+            'SingleRevHealthKey'       : "",
+            'SingleRevDamageKey'       : "",
+            'SingleRevEnduranceKey'    : "",
+            'SingleRevDefenseKey'      : "",
+            'SingleRevBreakFreeKey'    : "",
+            'SingleRevResistDamageKey' : "",
+            'SingleRevResurrectionKey' : "",
         })
 
     def BuildPage(self):

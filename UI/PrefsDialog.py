@@ -47,7 +47,7 @@ class PrefsDialog(wx.Dialog):
         generalSizer.Add( splitKeyLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.UseSplitModKeys = wx.CheckBox(generalPanel)
         self.UseSplitModKeys.SetValue(config.ReadBool('UseSplitModKeys'))
-        self.UseSplitModKeys.SetToolTip("By default, BindControl will bind modifier keys, eg CTRL and SHIFT, without regard to which side of the keyboard they're on.  Check this if you'd like to bind the left-side modifier keys separately from the right-side ones.")
+        self.UseSplitModKeys.SetToolTip("This allows the left and right modifier keys to be bound separately if on the \"right-hand\" side of a bind.  Check the Manual for more information.")
         generalSizer.Add( self.UseSplitModKeys, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
         setattr(splitKeyLabel, 'CB', self.UseSplitModKeys)

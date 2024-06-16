@@ -44,6 +44,20 @@ class KeySelectDialog(wx.Dialog):
         self.Button  = button
         self.Binding = button.Key
 
+        # prepopulate ModSlot and KeySlot so ShowBind doesn't clear everything
+        # on the first event it sees, usually a spurious joystick event
+        bindsplit = re.split(r'\+', self.Binding)
+        if len(bindsplit) == 2:
+            self.ModSlot = bindsplit[0]
+            self.KeySlot = bindsplit[1]
+        else:
+            self.ModSlot = ''
+            self.KeySlot = bindsplit[0]
+
+        self.PressedKeys = set()
+
+        self.SetKeymap();
+
         self.modKeys: List[str] = [] # gets set every ShowModal() call
         self.dualKeys = ['SHIFT','CTRL','ALT'] # keys which might be mod and might be trigger
 
@@ -61,15 +75,10 @@ class KeySelectDialog(wx.Dialog):
         desc = f"Press the key you want bound to {self.Desc}\n(Right-click a key button to clear it.)"
 
         # is this ugly?
-        self.ModSlot = None
-        self.KeySlot = None
-        self.PressedKeys = dict()
-        self.SetKeymap();
-
         sizer = wx.BoxSizer(wx.VERTICAL);
 
         self.kbDesc = wx.StaticText     ( self, -1, desc,          style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
-        self.kbBind = wx.html.HtmlWindow( self, -1, size=(360,60), style=wx.html.HW_SCROLLBAR_NEVER)
+        self.kbBind = wx.html.HtmlWindow( self, -1, size=(450,60), style=wx.html.HW_SCROLLBAR_NEVER)
         self.kbBind.SetHTMLBackgroundColour( wx.WHITE )
         self.kbErr  = wx.StaticText     ( self, -1, " ",           style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
 
@@ -130,13 +139,20 @@ class KeySelectDialog(wx.Dialog):
         self.kbBind.SetPage('<center><b><font size=+4>' + self.Binding + '</font></b></center>')
 
     def handleJS(self, event):
-        if not self.PressedKeys:
-            self.ModSlot = ''
-            self.KeySlot = ''
+        # we don't want to do this clearing logic with unknown events,
+        # hence this tangly "if"
+        if (
+            (not event.ButtonDown()) and (not event.ButtonUp()) and
+            (not event.IsMove())     and (not event.IsZMove())  and
+            (not self.controller.GetCurrentAxis())
+        ):
+            if not self.PressedKeys:
+                self.ModSlot = ''
+                self.KeySlot = ''
 
         if event.ButtonDown():
             button_keyname = self.Keymap["JOY" + str(event.GetButtonOrdinal()+1)]
-            self.PressedKeys[button_keyname] = None
+            self.PressedKeys.add(button_keyname)
             if button_keyname in self.modKeys:
                 self.ModSlot = button_keyname
             else:
@@ -144,7 +160,7 @@ class KeySelectDialog(wx.Dialog):
 
         elif event.ButtonUp():
             button_keyname = self.Keymap["JOY" + str(event.GetButtonOrdinal()+1)]
-            self.PressedKeys.pop(button_keyname, '')
+            self.PressedKeys.discard(button_keyname)
 
         elif event.IsMove() or event.IsZMove():
             self.controller.SetCurrentAxisPercents()
@@ -159,12 +175,12 @@ class KeySelectDialog(wx.Dialog):
                 "RTrigger"     , "LTrigger"       ,
                 "JOYSTICK3_UP" , "JOYSTICK3_DOWN" , "JOYSTICK3_LEFT" , "JOYSTICK3_RIGHT" ,
                 "JOYPAD_UP"    , "JOYPAD_DOWN"    , "JOYPAD_LEFT"    , "JOYPAD_RIGHT"    ,
-            ]:self.PressedKeys.pop(axis, '')
+            ]:self.PressedKeys.discard(axis)
 
             current_axis = self.controller.GetCurrentAxis()
             if current_axis:
                 payload = self.Keymap[current_axis]
-                self.PressedKeys[payload] = None
+                self.PressedKeys.add(payload)
                 if payload in self.modKeys:
                     self.ModSlot = payload
                 else:
@@ -178,7 +194,6 @@ class KeySelectDialog(wx.Dialog):
 
     def handleCharHook(self, event):
         # Key down
-        SeparateLR = self.SeparateLRChooser.Value
 
         # close the dialog on ESCAPE
         if (isinstance(event, wx.KeyEvent)):
@@ -186,39 +201,40 @@ class KeySelectDialog(wx.Dialog):
                 self.EndModal(wx.CANCEL)
                 return
 
+        # fish out the payload name -- upgrade "SHIFT" to "LSHIFT" etc if appropriate
+        SeparateLR = self.SeparateLRChooser.Value
         payload = self.Keymap[event.GetKeyCode()]
+        rkc = event.GetRawKeyCode()
+        if SeparateLR and rkc in modRawKeyCodes:
+            payload = modRawKeyCodes[rkc]
 
         if not self.PressedKeys:
             # If we have no pressed keys, ie, we're starting over, clear state and start
-            rkc = event.GetRawKeyCode()
-            if SeparateLR and rkc in modRawKeyCodes:
-                payload = modRawKeyCodes[rkc]
             self.KeySlot = payload
             self.ModSlot = ''
         else:
             # we have something held down
             if payload in self.dualKeys:
                 # we're handling one of the magical "dual keys"
-                # this is tangly.  We want to put dual keys in the Right Place,
-                # which is hard to DWIM algorithmically.  It's easy to get something
-                # stuck in ModSlot and never pop it out.
                 if self.ModSlot:
                     # if we have a ModKey already...
-                    # if we are not the existing ModSlot, use us as the target key.
-                    # ie, we already had "SHIFT" and we hit "CTRL"
-                    if self.ModSlot != payload:
-                        rkc = event.GetRawKeyCode()
-                        if SeparateLR and rkc in modRawKeyCodes:
-                            payload = modRawKeyCodes[rkc]
+                    if self.KeySlot in self.dualKeys:
+                        # If we have a dualkey in the keyslot, bump it to the ModSlot
+                        # and use us as the keyslot.
+                        self.ModSlot = self.NormalizeDualKeyName(self.KeySlot)
+                        self.KeySlot = payload
+                    elif self.ModSlot != self.NormalizeDualKeyName(payload):
+                        # if we are not the existing ModSlot, use us as the target key.
+                        # ie, we already had "SHIFT" and we hit "CTRL"
                         self.KeySlot = payload
                     # else we have a modslot and we are already it, we're done
                 else:
                     # we don't have a modkey, but we have something held down,
                     # so it must be in keyslot.
                     if self.KeySlot in self.dualKeys:
-                        # If it's a dualkey, let's bump it to the modslot
-                        # and use us as the keyslot.
-                        self.ModSlot = self.NormalizeDualKeys(self.KeySlot)
+                        # If it's a dualkey in KeySlot, let's bump it to ModSlot
+                        # and use this as KeySlot.
+                        self.ModSlot = self.NormalizeDualKeyName(self.KeySlot)
                         self.KeySlot = payload
                     else:
                         # it's not a dualkey, so let's be its mod
@@ -231,15 +247,15 @@ class KeySelectDialog(wx.Dialog):
                 # "SHIFT" then "R" or whatever, and we'll initially assign the SHIFT
                 # to the KeySlot
                 if self.KeySlot in self.modKeys:
-                    self.ModSlot = self.NormalizeDualKeys(str(self.KeySlot))
+                    self.ModSlot = self.NormalizeDualKeyName(self.KeySlot)
 
                 self.KeySlot = payload
 
-        self.PressedKeys[payload] = None
+        self.PressedKeys.add(payload)
 
         self.buildBind()
 
-    def NormalizeDualKeys(self, name):
+    def NormalizeDualKeyName(self, name):
         return { 'LSHIFT' : 'SHIFT' , 'RSHIFT' : 'SHIFT' , 'SHIFT' : 'SHIFT' ,
                  'LCTRL'  : 'CTRL'  , 'RCTRL'  : 'CTRL'  , 'CTRL'  : 'CTRL'  ,
                  'LALT'   : 'ALT'   , 'RALT'   : 'ALT'   , 'ALT'   : 'ALT'   ,
@@ -251,9 +267,9 @@ class KeySelectDialog(wx.Dialog):
         rkc = event.GetRawKeyCode()
 
         if SeparateLR and rkc in modRawKeyCodes:
-            self.PressedKeys.pop(modRawKeyCodes[rkc], None)
+            self.PressedKeys.discard(modRawKeyCodes[rkc])
         else:
-            self.PressedKeys.pop(self.Keymap[event.GetKeyCode()], None)
+            self.PressedKeys.discard(self.Keymap[event.GetKeyCode()])
 
         self.buildBind()
 
@@ -265,7 +281,7 @@ class KeySelectDialog(wx.Dialog):
 
         # if we have just a modkey, move it over
         if self.KeySlot in self.modKeys:
-            self.ModSlot = self.NormalizeDualKeys(self.KeySlot)
+            self.ModSlot = self.NormalizeDualKeyName(self.KeySlot)
 
         if event.GetEventType() == wx.wxEVT_MOUSEWHEEL:
             self.KeySlot = "MOUSEWHEEL"

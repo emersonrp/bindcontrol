@@ -13,25 +13,26 @@ from UI.ErrorControls import ErrorControlMixin
 from bcController import bcController
 
 KeyChanged, EVT_KEY_CHANGED = wx.lib.newevent.NewEvent()
-# Platform-specific keycodes for telling left from right
-modRawKeyCodes = {}
+
+# Platform-specific keyevent flags for telling left from right
+modKeyFlags = {}
 if platform.system() == 'Windows':
-    modRawKeyCodes = {
-            160: 'LSHIFT', 161: 'RSHIFT',
-            162: 'LCTRL' , 163: 'RCTRL' ,
-            164: 'LAlT'  , 165: 'RALT'  ,
+    modKeyFlags = {
+        'RSHIFT': 0x40000,
+        'RCTRL' : 0x1000000,
+        'RALT'  : 0x1000000,
     }
 elif platform.system() == 'Linux':
-    modRawKeyCodes = {
-            65505: 'LSHIFT', 65506: 'RSHIFT',
-            65507: 'LCTRL' , 65508: 'RCTRL' ,
-            65513: 'LALT'  , 65514: 'RALT'  ,
+    modKeyFlags = {
+        'RSHIFT': 0x08,
+        'LCTRL' : 0x04,
+        'RALT'  : 0x08,
     }
 elif platform.system() == 'Darwin':
-    modRawKeyCodes = {
-            56: 'LSHIFT', 60: 'RSHIFT',
-            59: 'LCTRL' , 62: 'RCTRL' ,
-            58: 'LALT'  , 61: 'RALT'  ,
+    modKeyFlags = {
+        'LSHIFT': 0x02,
+        'LCTRL' : 0x2000,
+        'LALT'  : 0x20,
     }
 
 class KeySelectDialog(wx.Dialog):
@@ -40,7 +41,7 @@ class KeySelectDialog(wx.Dialog):
         if button.CtlLabel:
             self.Desc    = button.CtlLabel.GetLabel()
         else:
-            self.Desc    = UI.Labels.get(button.CtlName, 'this button')
+            self.Desc    = UI.Labels.get(button.CtlName, 'this keybind')
         self.Button  = button
         self.Binding = button.Key
 
@@ -89,7 +90,7 @@ class KeySelectDialog(wx.Dialog):
         sizer.Add( self.kbErr , 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5);
         sizer.AddSpacer(15)
 
-        if(modRawKeyCodes):
+        if(modKeyFlags):
             self.SeparateLRChooser = wx.CheckBox( self, -1, "Bind left/right mod keys separately")
             self.SeparateLRChooser.SetToolTip("This allows you to bind specifically left or right side mod keys for this bind.  This will not change the global preference.")
             sizer.Add( self.SeparateLRChooser, 0, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
@@ -201,12 +202,7 @@ class KeySelectDialog(wx.Dialog):
                 self.EndModal(wx.CANCEL)
                 return
 
-        # fish out the payload name -- upgrade "SHIFT" to "LSHIFT" etc if appropriate
-        SeparateLR = self.SeparateLRChooser.Value
-        payload = self.Keymap[event.GetKeyCode()]
-        rkc = event.GetRawKeyCode()
-        if SeparateLR and rkc in modRawKeyCodes:
-            payload = modRawKeyCodes[rkc]
+        payload = self.GetEventPayload(event)
 
         if not self.PressedKeys:
             # If we have no pressed keys, ie, we're starting over, clear state and start
@@ -217,6 +213,9 @@ class KeySelectDialog(wx.Dialog):
             if payload in self.dualKeys:
                 # we're handling one of the magical "dual keys"
                 if self.ModSlot:
+                    # TODO -- this logic isn't right and we still get "ALT+ALT" if
+                    # we're holding down SHIFT+ALT and hit "ALT" again.
+
                     # if we have a ModKey already...
                     if self.KeySlot in self.dualKeys:
                         # If we have a dualkey in the keyslot, bump it to the ModSlot
@@ -255,6 +254,36 @@ class KeySelectDialog(wx.Dialog):
 
         self.buildBind()
 
+    def GetEventPayload(self, event):
+        # fish out the payload name -- upgrade "SHIFT" to "LSHIFT" etc if appropriate
+        SeparateLR = self.SeparateLRChooser.Value
+        payload    = self.Keymap[event.GetKeyCode()]
+
+        if SeparateLR and modKeyFlags:
+            rawFlags = event.GetRawKeyFlags()
+            system   = platform.system()
+            if payload == "SHIFT":
+                if system == 'Darwin':
+                    payload = "LSHIFT" if (rawFlags & modKeyFlags['LSHIFT']) else "RSHIFT"
+                else:
+                    payload = "RSHIFT" if (rawFlags & modKeyFlags['RSHIFT']) else "LSHIFT"
+
+            if payload == "CTRL":
+                if system == 'Darwin':
+                    payload = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
+                elif system == 'Linux':
+                    payload = "LCTRL" if (rawFlags & modKeyFlags['LCTRL']) else "RCTRL"
+                else:
+                    payload = "RCTRL" if (rawFlags & modKeyFlags['RCTRL']) else "LCTRL"
+
+            if payload == "ALT":
+                if system == 'Darwin':
+                    payload = "LALT" if (rawFlags & modKeyFlags['LALT']) else "RALT"
+                else:
+                    payload = "RALT" if (rawFlags & modKeyFlags['RALT']) else "LALT"
+
+        return payload
+
     def NormalizeDualKeyName(self, name):
         return { 'LSHIFT' : 'SHIFT' , 'RSHIFT' : 'SHIFT' , 'SHIFT' : 'SHIFT' ,
                  'LCTRL'  : 'CTRL'  , 'RCTRL'  : 'CTRL'  , 'CTRL'  : 'CTRL'  ,
@@ -262,15 +291,7 @@ class KeySelectDialog(wx.Dialog):
         }[name]
 
     def handleKeyUp(self, event):
-        # Key-up:  clear keys that were released
-        SeparateLR = self.SeparateLRChooser.Value
-        rkc = event.GetRawKeyCode()
-
-        if SeparateLR and rkc in modRawKeyCodes:
-            self.PressedKeys.discard(modRawKeyCodes[rkc])
-        else:
-            self.PressedKeys.discard(self.Keymap[event.GetKeyCode()])
-
+        self.PressedKeys.discard(self.GetEventPayload(event))
         self.buildBind()
 
     def handleMouse(self, event):
@@ -330,6 +351,7 @@ class KeySelectDialog(wx.Dialog):
                 wx.WXK_SHIFT: 'SHIFT',
                 wx.WXK_ALT: 'ALT',
                 wx.WXK_CONTROL: 'CTRL', # TODO - wx.WXK_RAW_CONTROL for Mac, instead?
+                wx.WXK_WINDOWS_LEFT: '', # TODO - is this OK?  keeps it from blowing up but...
                 wx.WXK_SPACE : 'SPACE',
                 wx.WXK_UP : 'UP',
                 wx.WXK_DOWN : 'DOWN',

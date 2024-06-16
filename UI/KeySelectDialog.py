@@ -60,9 +60,9 @@ class KeySelectDialog(wx.Dialog):
         desc = f"Press the key you want bound to {self.Desc}\n(Right-click a key button to clear it.)"
 
         # is this ugly?
-        self.ModSlot = set()
+        self.ModSlot = {}
         self.KeySlot = None
-        self.PressedKeys = set()
+        self.PressedKeys = {}
         self.SetKeymap();
 
         sizer = wx.BoxSizer(wx.VERTICAL);
@@ -135,9 +135,9 @@ class KeySelectDialog(wx.Dialog):
             for button in range(0, self.controller.GetNumberButtons()):
                 button_keyname = "JOY" + str(button+1)
                 if self.controller.GetButtonState(button):
-                    self.PressedKeys.add(self.Keymap[button_keyname])
+                    self.PressedKeys[self.Keymap[button_keyname]] = None
                 else:
-                    self.PressedKeys.discard(self.Keymap[button_keyname])
+                    self.PressedKeys.pop(self.Keymap[button_keyname], None)
 
             self.controller.SetCurrentAxisPercents()
             # don't let wee jiggles at the center trigger this.
@@ -149,11 +149,11 @@ class KeySelectDialog(wx.Dialog):
             # this means they have to hold the axis while clicking "OK" which
             # is less than great but we can't detect intent in software.
             for axis_code in self.controller.GetAllAxisCodes():
-                self.PressedKeys.discard(self.Keymap[axis_code])
+                self.PressedKeys.pop(self.Keymap[axis_code], None)
 
             current_axis = self.controller.GetCurrentAxis()
             if current_axis:
-                self.PressedKeys.add(self.Keymap[current_axis])
+                self.PressedKeys[self.Keymap[current_axis]] = None
 
         else:
             # Unknown joystick event.  These fire quite a bit.
@@ -173,10 +173,10 @@ class KeySelectDialog(wx.Dialog):
 
         rkc = event.GetRawKeyCode()
         if SeparateLR and rkc in modRawKeyCodes:
-            self.PressedKeys.add(modRawKeyCodes[rkc])
+            self.PressedKeys[modRawKeyCodes[rkc]] = None
         else:
             self.clearMouseKeys()
-            self.PressedKeys.add(self.Keymap[event.GetKeyCode()])
+            self.PressedKeys[self.Keymap[event.GetKeyCode()]] = None
 
         self.buildBind()
 
@@ -186,22 +186,22 @@ class KeySelectDialog(wx.Dialog):
         rkc = event.GetRawKeyCode()
 
         if SeparateLR and rkc in modRawKeyCodes:
-            self.PressedKeys.discard(modRawKeyCodes[rkc])
+            self.PressedKeys.pop(modRawKeyCodes[rkc], None)
         else:
-            self.PressedKeys.discard(self.Keymap[event.GetKeyCode()])
+            self.PressedKeys.pop(self.Keymap[event.GetKeyCode()], None)
 
         self.buildBind()
 
     def handleMouse(self, event):
         self.clearMouseKeys()
         if event.GetEventType() == wx.wxEVT_MOUSEWHEEL:
-            self.PressedKeys.add("MOUSEWHEEL")
+            self.PressedKeys["MOUSEWHEEL"] = None
         elif (event.LeftIsDown() and event.RightIsDown()):
-            self.PressedKeys.add("MOUSECHORD")
+            self.PressedKeys["MOUSECHORD"] = None
         elif (event.ButtonDClick()):
-            self.PressedKeys.add("DCLICK" + str(event.GetButton()))
+            self.PressedKeys["DCLICK" + str(event.GetButton())] = None
         else:
-            self.PressedKeys.add("BUTTON" + str(event.GetButton()))
+            self.PressedKeys["BUTTON" + str(event.GetButton())] = None
 
         self.buildBind()
 
@@ -209,9 +209,9 @@ class KeySelectDialog(wx.Dialog):
         pressedkeys = list(self.PressedKeys)
         for key in pressedkeys:
             if re.match("DCLICK", key) or re.match("BUTTON", key):
-                self.PressedKeys.discard(key)
-        self.PressedKeys.discard("MOUSEWHEEL")
-        self.PressedKeys.discard("MOUSECHORD")
+                self.PressedKeys.pop(key, None)
+        self.PressedKeys.pop("MOUSEWHEEL", None)
+        self.PressedKeys.pop("MOUSECHORD", None)
 
 
     def buildBind(self):
@@ -220,13 +220,13 @@ class KeySelectDialog(wx.Dialog):
         # If we're completely off the keyboard/etc, clear our current state,
         # but return so we don't update the binding to nothing
         if not self.PressedKeys:
-            self.ModSlot = set()
+            self.ModSlot = {}
             self.KeySlot = None
             return
 
         for key in self.PressedKeys:
             if key in self.modKeys:
-                self.ModSlot.add(key)
+                self.ModSlot[key] = None
             else:
                 self.KeySlot = key
 
@@ -234,24 +234,24 @@ class KeySelectDialog(wx.Dialog):
         # Clear up that situation
         if ("SHIFT" in self.ModSlot and ("LSHIFT" in self.ModSlot or "RSHIFT" in self.ModSlot)):
             if SeparateLR:
-                self.ModSlot.discard("SHIFT")
+                self.ModSlot.pop("SHIFT", None)
             else:
-                self.ModSlot.discard("LSHIFT")
-                self.ModSlot.discard("RSHIFT")
+                self.ModSlot.pop("LSHIFT", None)
+                self.ModSlot.pop("RSHIFT", None)
 
         if ("CTRL" in self.ModSlot and ("LCTRL" in self.ModSlot or "RCTRL" in self.ModSlot)):
             if SeparateLR:
-                self.ModSlot.discard("CTRL")
+                self.ModSlot.pop("CTRL", None)
             else:
-                self.ModSlot.discard("LCTRL")
-                self.ModSlot.discard("RCTRL")
+                self.ModSlot.pop("LCTRL", None)
+                self.ModSlot.pop("RCTRL", None)
 
         if ("ALT" in self.ModSlot and ("LALT" in self.ModSlot or "RALT" in self.ModSlot)):
             if SeparateLR:
-                self.ModSlot.discard("ALT")
+                self.ModSlot.pop("ALT", None)
             else:
-                self.ModSlot.discard("LALT")
-                self.ModSlot.discard("RALT")
+                self.ModSlot.pop("LALT", None)
+                self.ModSlot.pop("RALT", None)
 
         # Finally, build the bind string from what we have left over
         totalModKeys = "+".join([ key for key in sorted(self.ModSlot, reverse=True) if key])

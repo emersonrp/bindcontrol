@@ -213,13 +213,16 @@ class KeySelectDialog(wx.Dialog):
             if payload in self.dualKeys:
                 # we're handling one of the magical "dual keys"
                 if self.ModSlot:
-                    # TODO -- this logic isn't right and we still get "ALT+ALT" if
-                    # we're holding down SHIFT+ALT and hit "ALT" again.
-
-                    # if we have a ModKey already...
-                    if self.KeySlot in self.dualKeys:
-                        # If we have a dualkey in the keyslot, bump it to the ModSlot
-                        # and use us as the keyslot.
+                    # if we have a ModKey already
+                    if (self.KeySlot in self.dualKeys and
+                        (self.NormalizeDualKeyName(self.KeySlot) != self.NormalizeDualKeyName(payload))
+                    ):
+                        # If we have a dualkey in the keyslot, and it's not us
+                        # (ie, prevent "ALT+ALT"), bump it to the ModSlot and
+                        # use us as the KeySlot.
+                        #
+                        # TODO there's still a weird case where if we are holding down SHIFT
+                        # and keep tapping ALT, while LR is true, we get "ALT+LALT"
                         self.ModSlot = self.NormalizeDualKeyName(self.KeySlot)
                         self.KeySlot = payload
                     elif self.ModSlot != self.NormalizeDualKeyName(payload):

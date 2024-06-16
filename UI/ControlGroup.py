@@ -12,10 +12,15 @@ from UI.KeySelectDialog import bcKeyButton
 
 class ControlGroup(wx.StaticBoxSizer):
 
-    def __init__(self, parent, page, label = '', width = 2, flexcols = [0]):
+    def __init__(self, parent, page, label = '', width = 2, flexcols = [0], topcontent = None):
         wx.StaticBoxSizer.__init__(self, wx.VERTICAL, parent, label = label)
 
-        self.Page    = page
+        self.Page = page
+
+        # usually for an "enable this stuff" checkbox in a wx.Panel
+        if topcontent:
+            topcontent.Reparent(self.GetStaticBox())
+            self.Add(topcontent, 0, wx.ALL|wx.EXPAND, 10)
 
         self.InnerSizer = wx.FlexGridSizer(width,3,3)
         for col in flexcols: self.InnerSizer.AddGrowableCol(col)

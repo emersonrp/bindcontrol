@@ -140,7 +140,9 @@ class ControlGroup(wx.StaticBoxSizer):
             setattr(CtlLabel, "control", control)
 
         # Pack'em in there
-        if tooltip and tooltip != '': control.SetToolTip(tooltip)
+        if tooltip and tooltip != '':
+            control.DefaultToolTip = tooltip
+            control.SetToolTip(tooltip)
 
         # make checkboxes' labels click to check them
         if ctlType == ('checkbox') and control.CtlLabel:

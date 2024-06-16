@@ -10,6 +10,7 @@ class ErrorControlMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.Errors = {}
+        self.DefaultToolTip = ''
 
     def AddError(self, errname, tooltip = None):
         self.SetBackgroundColour((255,200,200))
@@ -34,4 +35,5 @@ class ErrorControlMixin:
             if tip:
                 self.SetToolTip("\n".join(tipstrings))
                 return
-        self.SetToolTip('')
+
+        self.SetToolTip(self.DefaultToolTip)

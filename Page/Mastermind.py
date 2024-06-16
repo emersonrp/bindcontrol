@@ -416,7 +416,7 @@ class Mastermind(Page):
     def OnNameTextChange(self, evt):
         ctrl = evt.EventObject
         if re.search(' ', ctrl.GetValue()):
-            ctrl.AddError('spaces', "This pet name contains spaces, which will cause this pet's by-name binds not to work.  Change your pet's name to something without spaces.")
+            ctrl.AddError('spaces', "This pet name contains spaces, which will cause this pet's by-name binds and bodyguard binds not to work.  Change your pet's name to something without spaces.  Check the Manual for more information.")
         else:
             ctrl.RemoveError('spaces')
 
@@ -899,7 +899,7 @@ class Mastermind(Page):
 
         ### Prev / next pet binds
         if self.GetState('PetNPEnable'):
-            self.psCreateSet(1,0,self.Profile.ResetFile())
+            self.psCreateSet(6,0,self.Profile.ResetFile())
             for tsize in 1,2,3,4,5,6:
                 for tsel in range(0,tsize+1):
                     file = self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt")

@@ -269,7 +269,7 @@ class General(Page):
                     nc.SetToolTip("The profile name cannot contain spaces.")
             else:
                 nc.SetBackgroundColour(wx.NullColour)
-                nc.SetToolTip(None)
+                nc.SetToolTip('')
         evt.Skip()
 
 

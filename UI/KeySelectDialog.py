@@ -496,6 +496,7 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.Page                                               = parent
         self.AlwaysShorten : bool                               = init.get('AlwaysShorten', False)
         self.Errors   : dict                                    = {}
+        self.DefaultToolTip : str                               = ''
 
         # This might be overloading "AlwaysShorten", but:
         style = wx.BU_EXACTFIT if self.AlwaysShorten else 0

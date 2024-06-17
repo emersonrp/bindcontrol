@@ -196,6 +196,7 @@ class Mastermind(Page):
             },
         }
         self.TabTitle = "Mastermind / Pet Binds"
+        self.uniqueNames = []
 
     def BuildPage(self):
 
@@ -421,6 +422,7 @@ class Mastermind(Page):
             ctrl.RemoveError('spaces')
 
         self.CheckBGModeNames()
+        self.CheckNamesAreUnique()
 
     def OnBGCheckboxes(self, evt = None):
         petcmdenabled = self.GetState('PetCmdEnable')
@@ -443,6 +445,7 @@ class Mastermind(Page):
         if evt: evt.Skip()
 
         self.CheckBGModeNames()
+        self.CheckNamesAreUnique()
 
     def CheckBGModeNames(self):
         if self.GetState('PetBodyguardEnabled'):
@@ -452,6 +455,22 @@ class Mastermind(Page):
                     ctrl.RemoveError('undef')
                 else:
                     ctrl.AddError('undef', 'Bodyguard Mode requires the pet name be filled in.')
+
+    def CheckNamesAreUnique(self):
+        names = []
+        for i in (1,2,3,4,5,6):
+            ctrl = self.Ctrls[f'Pet{i}Name']
+            names.append(ctrl.GetValue())
+
+        # we stash this away every time we calculate it so we can
+        # extract it trivially when we write binds
+        self.uniqueNames = FindSmallestUniqueSubstring(names)
+        for i in (1,2,3,4,5,6):
+            ctrl = self.Ctrls[f'Pet{i}Name']
+            if self.uniqueNames[i-1]:
+                ctrl.RemoveError('unique')
+            else:
+                ctrl.AddError('unique', 'This pet name is not different enough to identify it uniquely.')
 
     ### BIND CREATION METHODS
     def mmBGSelBind(self, file, PetBodyguardResponse, powers):
@@ -473,15 +492,15 @@ class Mastermind(Page):
                     #  use petsayname commands for those tier1s that are bodyguards.
                     if (self.GetState('Pet1Bodyguard')) :
                         if re.match('petsay', method):
-                            method = f"petsayname {self.GetState('Pet1Name')} "
+                            method = f"petsayname {self.uniqueNames[0]} "
                         bgsay.append(method + PetBodyguardResponse)
                     if (self.GetState('Pet2Bodyguard')) :
                         if re.match('petsay', method):
-                            method = f"petsayname {self.GetState('Pet2Name')} "
+                            method = f"petsayname {self.uniqueNames[1]} "
                         bgsay.append(method + PetBodyguardResponse)
                     if (self.GetState('Pet3Bodyguard')) :
                         if re.match('petsay', method):
-                            method = f"petsayname {self.GetState('Pet3Name')} "
+                            method = f"petsayname {self.uniqueNames[2]} "
                         bgsay.append(method + PetBodyguardResponse)
 
                 if (tier2bg == 2):
@@ -490,11 +509,11 @@ class Mastermind(Page):
                 else:
                     if (self.GetState('Pet4Bodyguard')) :
                         if re.match('petsay', method):
-                            method = f"petsayname {self.GetState('Pet4Name')} "
+                            method = f"petsayname {self.uniqueNames[3]} "
                         bgsay.append(method + PetBodyguardResponse)
                     if (self.GetState('Pet5Bodyguard')) :
                         if re.match('petsay', method):
-                            method = f"petsayname {self.GetState('Pet5Name')} "
+                            method = f"petsayname {self.uniqueNames[4]} "
                         bgsay.append(method + PetBodyguardResponse)
 
                 if (tier3bg == 1):
@@ -508,15 +527,15 @@ class Mastermind(Page):
                     bgset.append(f"petcompow {powers['min']} def fol")
                 else:
                     #  use petsayname commands for those tier1s that are bodyguards.
-                    if (self.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet1Name')} def fol")
-                    if (self.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet2Name')} def fol")
-                    if (self.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet3Name')} def fol")
+                    if (self.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[0]} def fol")
+                    if (self.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[1]} def fol")
+                    if (self.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[2]} def fol")
 
                 if (tier2bg == 2):
                     bgset.append(f"petcompow {powers['lts']} def fol")
                 else:
-                    if (self.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet4Name')} def fol")
-                    if (self.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet5Name')} def fol")
+                    if (self.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[3]} def fol")
+                    if (self.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[4]} def fol")
 
                 if (tier3bg == 1):
                     bgset.append(f"petcompow {powers['bos']} def fol")
@@ -545,15 +564,15 @@ class Mastermind(Page):
                 #  use petsayname commands for those tier1s that are bodyguards.
                 if (not self.GetState('Pet1Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.GetState('Pet1Name')} "
+                        method = f"petsayname {self.uniqueNames[0]} "
                     bgsay.append(f"{method}{say}")
                 if (not self.GetState('Pet2Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.GetState('Pet2Name')} "
+                        method = f"petsayname {self.uniqueNames[1]} "
                     bgsay.append(f"{method}{say}")
                 if (not self.GetState('Pet3Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.GetState('Pet3Name')} "
+                        method = f"petsayname {self.uniqueNames[2]} "
                     bgsay.append(f"{method}{say}")
 
             if (tier2bg == 0):
@@ -562,11 +581,11 @@ class Mastermind(Page):
             else :
                 if (not self.GetState('Pet4Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.GetState('Pet4Name')} "
+                        method = f"petsayname {self.uniqueNames[3]} "
                     bgsay.append(f"{method}{say}")
                 if (not self.GetState('Pet5Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.GetState('Pet5Name')} "
+                        method = f"petsayname {self.uniqueNames[4]} "
                     bgsay.append(f"{method}{say}")
 
             if (tier3bg == 0):
@@ -580,15 +599,15 @@ class Mastermind(Page):
                 bgact.append(f"petcompow {powers['min']} {action}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (not self.GetState('Pet1Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet1Name')} {action}")
-                if (not self.GetState('Pet2Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet2Name')} {action}")
-                if (not self.GetState('Pet3Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet3Name')} {action}")
+                if (not self.GetState('Pet1Bodyguard')) : bgact.append(f"petcomname {self.uniqueNames[0]} {action}")
+                if (not self.GetState('Pet2Bodyguard')) : bgact.append(f"petcomname {self.uniqueNames[1]} {action}")
+                if (not self.GetState('Pet3Bodyguard')) : bgact.append(f"petcomname {self.uniqueNames[2]} {action}")
 
             if (tier2bg == 0):
                 bgact.append(f"petcompow {powers['lts']} {action}")
             else :
-                if (not self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet4Name')} {action}")
-                if (not self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet5Name')} {action}")
+                if (not self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname {self.uniqueNames[3]} {action}")
+                if (not self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname {self.uniqueNames[4]} {action}")
 
             if (tier3bg == 0):
                 bgact.append('petcompow ' + f"{powers['bos']} {action}")
@@ -615,15 +634,15 @@ class Mastermind(Page):
                 #  use petsayname commands for those tier1s that are bodyguards.
                 if (self.GetState('Pet1Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.GetState('Pet1Name')} "
+                        method = f"petsayname {self.uniqueNames[0]} "
                     bgsay.append(f"{method}{say}")
                 if (self.GetState('Pet2Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.GetState('Pet2Name')} "
+                        method = f"petsayname {self.uniqueNames[1]} "
                     bgsay.append(f"{method}{say}")
                 if (self.GetState('Pet3Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.GetState('Pet3Name')} "
+                        method = f"petsayname {self.uniqueNames[2]} "
                     bgsay.append(f"{method}{say}")
 
             if (tier2bg == 2):
@@ -632,11 +651,11 @@ class Mastermind(Page):
             else :
                 if (self.GetState('Pet4Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.GetState('Pet4Name')} "
+                        method = f"petsayname {self.uniqueNames[3]} "
                     bgsay.append(f"{method}{say}")
                 if (self.GetState('Pet5Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.GetState('Pet5Name')} "
+                        method = f"petsayname {self.uniqueNames[4]} "
                     bgsay.append(f"{method}{say}")
 
             if (tier3bg == 1):
@@ -650,15 +669,15 @@ class Mastermind(Page):
                 bgact.append(f"petcompow {powers['min']} {action}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (self.GetState('Pet1Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet1Name')} {action}")
-                if (self.GetState('Pet2Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet2Name')} {action}")
-                if (self.GetState('Pet3Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet3Name')} {action}")
+                if (self.GetState('Pet1Bodyguard')) : bgact.append(f"petcomname {self.uniqueNames[0]} {action}")
+                if (self.GetState('Pet2Bodyguard')) : bgact.append(f"petcomname {self.uniqueNames[1]} {action}")
+                if (self.GetState('Pet3Bodyguard')) : bgact.append(f"petcomname {self.uniqueNames[2]} {action}")
 
             if (tier2bg == 2):
                 bgact.append(f"petcompow {powers['lts']} {action}")
             else :
-                if (self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet4Name')} {action}")
-                if (self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet5Name')} {action}")
+                if (self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname {self.uniqueNames[3]} {action}")
+                if (self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname {self.uniqueNames[4]} {action}")
 
             if (tier3bg == 1):
                 bgact.append(f"petcompow {powers['bos']} {action}")
@@ -680,15 +699,15 @@ class Mastermind(Page):
                     bgset.append(f"petcompow {powers['min']} def fol")
                 else :
                     #  use petsayname commands for those tier1s that are bodyguards.
-                    if (self.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet1Name')} def fol")
-                    if (self.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet2Name')} def fol")
-                    if (self.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet3Name')} def fol")
+                    if (self.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[0]} def fol")
+                    if (self.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[1]} def fol")
+                    if (self.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[2]} def fol")
 
                 if (tier2bg == 2):
                     bgset.append(f"petcompow {powers['lts']} def fol")
                 else :
-                    if (self.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet4Name')} def fol")
-                    if (self.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname {self.GetState('Pet5Name')} def fol")
+                    if (self.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[3]} def fol")
+                    if (self.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[4]} def fol")
 
                 if (tier3bg == 1):
                     bgset.append(f"petcompow {powers['bos']} def fol")
@@ -710,15 +729,15 @@ class Mastermind(Page):
                 bgact.append(f"petcompow {powers['min']} {action}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (not self.GetState('Pet1Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet1Name')} {action}")
-                if (not self.GetState('Pet2Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet2Name')} {action}")
-                if (not self.GetState('Pet3Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet3Name')} {action}")
+                if (not self.GetState('Pet1Bodyguard')): bgact.append(f"petcomname {self.uniqueNames[0]} {action}")
+                if (not self.GetState('Pet2Bodyguard')): bgact.append(f"petcomname {self.uniqueNames[1]} {action}")
+                if (not self.GetState('Pet3Bodyguard')): bgact.append(f"petcomname {self.uniqueNames[2]} {action}")
 
             if (tier2bg == 0):
                 bgact.append(f"petcompow {powers['lts']} {action}")
             else :
-                if (not self.GetState('Pet4Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet4Name')} {action}")
-                if (not self.GetState('Pet5Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet5Name')} {action}")
+                if (not self.GetState('Pet4Bodyguard')): bgact.append(f"petcomname {self.uniqueNames[3]} {action}")
+                if (not self.GetState('Pet5Bodyguard')): bgact.append(f"petcomname {self.uniqueNames[4]} {action}")
 
             if (tier3bg == 0): bgact.append(f"petcompow {powers['bos']} {action}")
 
@@ -740,15 +759,15 @@ class Mastermind(Page):
                 bgact.append(f"petcompow {powers['min']} {action}")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (self.GetState('Pet1Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet1Name')} {action}")
-                if (self.GetState('Pet2Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet2Name')} {action}")
-                if (self.GetState('Pet3Bodyguard')): bgact.append(f"petcomname {self.GetState('Pet3Name')} {action}")
+                if (self.GetState('Pet1Bodyguard')): bgact.append(f"petcomname {self.uniqueNames[0]} {action}")
+                if (self.GetState('Pet2Bodyguard')): bgact.append(f"petcomname {self.uniqueNames[1]} {action}")
+                if (self.GetState('Pet3Bodyguard')): bgact.append(f"petcomname {self.uniqueNames[2]} {action}")
 
             if (tier2bg == 2):
                 bgact.append(f"petcompow  {powers['lts']} {action}")
             else :
-                if (self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet4Name')} {action}")
-                if (self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname {self.GetState('Pet5Name')} {action}")
+                if (self.GetState('Pet4Bodyguard')) : bgact.append(f"petcomname {self.uniqueNames[3]} {action}")
+                if (self.GetState('Pet5Bodyguard')) : bgact.append(f"petcomname {self.uniqueNames[4]} {action}")
 
             if (tier3bg == 1) : bgact.append(f"petcompow {powers['bos']} {action}")
 

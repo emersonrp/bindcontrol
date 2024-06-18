@@ -126,7 +126,7 @@ class Profile(wx.Notebook):
     def GenerateBindsDirectoryName(self):
         # start with just the ASCII characters in the name
         # TODO - This could cause trouble if someone has some weird all-Unicode name
-        profileName = str(self.Name().encode('ascii', 'ignore'))
+        profileName = self.Name().encode('ascii', 'ignore').decode('ascii')
 
         # by default, let's just use the first four letters of the Name():
         bindsdirname = profileName[:4]
@@ -206,6 +206,10 @@ class Profile(wx.Notebook):
         # if we found one the file way, migrate it to the new way
         if FoundOldDefaultProfile:
             self.SaveAsDefault(prompt = False)
+
+        # TODO - here's where we should check if that bindsdir exists
+        # already and do something, append "1" or something?
+        self.ProfileBindsDir = self.GenerateBindsDirectoryName()
 
         self.Parent.SetTitle(f"BindControl: {self.Name()}")
         # now we have a named profile that we haven't saved.

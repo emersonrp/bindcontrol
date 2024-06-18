@@ -184,6 +184,8 @@ class PowerBinderDialog(wx.Dialog):
         return bindstring
 
     def ShowEditDialogFor(self, command, chosenName):
+        if not command.UI: return
+
         self.EditDialog.mainSizer.Show(command.UI)
 
         self.EditDialog.Layout()

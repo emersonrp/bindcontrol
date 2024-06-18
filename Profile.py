@@ -31,10 +31,11 @@ class Profile(wx.Notebook):
     def __init__(self, parent, loadfile = None):
         wx.Notebook.__init__(self, parent, style = wx.NB_TOP, name = "Profile")
 
-        self.BindFiles : dict      = {}
-        self.Pages     : list      = []
-        self.Modified  : bool      = False
-        self.Filename  : Path|None = None
+        self.BindFiles       : dict      = {}
+        self.Pages           : list      = []
+        self.Modified        : bool      = False
+        self.Filename        : Path|None = None
+        self.ProfileBindsDir : str       = ''
 
         # Add the individual tabs, in order.
         self.General           = self.CreatePage(General(self))
@@ -52,6 +53,7 @@ class Profile(wx.Notebook):
             self.Bind(evt, self.SetModified)
 
         if loadfile: self.doLoadFromFile(loadfile)
+
 
     def CreatePage(self, module):
         module.BuildPage()
@@ -237,12 +239,6 @@ class Profile(wx.Notebook):
         if not self.Filename:
             return self.SaveToFile()
 
-        profilename = self.Name()
-        if len(profilename) == 0 or re.search(" ", profilename):
-            wx.MessageBox("Profile Name is not valid, please correct this.")
-            self.ChangeSelection(0)
-            return False
-
         self.ProfilePath().mkdir( parents = True, exist_ok = True )
 
         #self.Filename = self.ProfilePath() / Path(profilename + ".bcp")
@@ -265,6 +261,7 @@ class Profile(wx.Notebook):
 
     def AsJSON(self, small = False):
         savedata : Dict[str, Any] = {}
+        savedata['ProfileBindsDir'] = self.ProfileBindsDir
         for pagename in self.Pages:
             savedata[pagename] = {}
             if pagename == "CustomBinds": continue
@@ -339,6 +336,11 @@ class Profile(wx.Notebook):
                 return None
 
         self.Filename = Path(pathname)
+        # NEW - if we're loading a profile from before when we stored the
+        # ProfileBindsDir in it, set that to the filename.
+        if not self.ProfileBindsDir:
+            self.ProfileBindsDir = self.Filename.stem
+
         wx.ConfigBase.Get().Write('LastProfile', pathname)
         wx.ConfigBase.Get().Flush()
         wx.LogMessage(f"Loaded profile {pathname}")
@@ -351,6 +353,10 @@ class Profile(wx.Notebook):
 
         # load old Profiles pre-rename of "Movement Powers" tab
         if 'SoD' in data: data['MovementPowers'] = data['SoD']
+
+        # we store the ProfileBindsDir outside of the sections
+        if data.get('ProfileBindsDir', None):
+            self.ProfileBindsDir = data['ProfileBindsDir']
 
         for pagename in self.Pages:
             if pagename == "CustomBinds": continue

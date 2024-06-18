@@ -42,7 +42,7 @@ class General(Page):
 
         topSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        powersBox = ControlGroup(self, self, 'Powers and Info')
+        powersBox = ControlGroup(self, self, 'Powers')
 
         originchoices = []
         for Origin in Origins:

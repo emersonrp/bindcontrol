@@ -16,7 +16,6 @@ class General(Page):
         Page.__init__(self, parent)
 
         self.Init = {
-            'Name': 'Profile',
             'Origin': "Magic",
             'Archetype': 'Mastermind',
             'Primary': '',
@@ -44,11 +43,6 @@ class General(Page):
         topSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         powersBox = ControlGroup(self, self, 'Powers and Info')
-        self.NameCtrl = powersBox.AddControl(
-            ctlName = 'Name',
-            ctlType = 'text',
-        )
-        self.NameCtrl.Bind(wx.EVT_TEXT, self.OnNameCtrlChanged)
 
         originchoices = []
         for Origin in Origins:
@@ -261,24 +255,6 @@ class General(Page):
 
         #self.Fit() # this was making the "General" tab de-center on Load Profile on Windows
         if evt: evt.Skip()
-
-
-    # Event handlers
-    def OnNameCtrlChanged(self, evt):
-        nc = self.NameCtrl
-        if isinstance(nc, cgTextCtrl):
-            text = nc.GetValue()
-            if len(text) == 0 or re.search(" ", text):
-                nc.SetBackgroundColour((255,200,200))
-                if len(text) == 0:
-                    nc.SetToolTip("The profile name cannot be empty.")
-                else:
-                    nc.SetToolTip("The profile name cannot contain spaces.")
-            else:
-                nc.SetBackgroundColour(wx.NullColour)
-                nc.SetToolTip('')
-        evt.Skip()
-
 
     def OnPickOrigin(self, evt):
         evt.Skip()

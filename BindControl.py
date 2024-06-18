@@ -203,14 +203,23 @@ class Main(wx.Frame):
             elif result == wx.CANCEL:
                 return
         self.Freeze()
+
         try:
+            dlg = wx.TextEntryDialog(self, 'Enter name for new profile:')
+            if dlg.ShowModal() == wx.ID_OK:
+                # check if we already have a bind named that.  Complex Binds use the name as
+                # part of the bindfiles' filenames, so we can't have dupes
+                newname = dlg.GetValue()
+            else:
+                return
+
             self.Sizer.Remove(0)
             self.Profile.Destroy()
 
             self.Profile = Profile(self)
             self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
 
-            self.Profile.LoadFromDefault()
+            self.Profile.LoadFromDefault(newname)
 
         except Exception as e:
             wx.LogError(f"Something broke in new profile: {e}.  This is a bug.")
@@ -344,4 +353,3 @@ if __name__ == "__main__":
         import wx.lib.inspection
         wx.lib.inspection.InspectionTool().Show()
     app.MainLoop()
-

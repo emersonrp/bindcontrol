@@ -428,12 +428,6 @@ class Mastermind(Page):
         if evt: evt.Skip()
 
     def OnNameTextChange(self, evt):
-        ctrl = evt.EventObject
-        if re.search(' ', ctrl.GetValue()):
-            ctrl.AddError('spaces', "This pet name contains spaces, which will cause this pet's by-name binds and bodyguard binds not to work.  Change your pet's name to something without spaces.  Check the Manual for more information.")
-        else:
-            ctrl.RemoveError('spaces')
-
         self.CheckBGModeNames()
         self.CheckNamesAreUnique()
 
@@ -468,9 +462,16 @@ class Mastermind(Page):
 
     def CheckNamesAreUnique(self):
         names = []
+        wasMultiWord = [False] * 6
         for i in (1,2,3,4,5,6):
             ctrl = self.Ctrls[f'Pet{i}Name']
-            names.append(ctrl.GetValue())
+            value = ctrl.GetValue()
+            # if we contain multiple words, use the longest
+            words = value.split()
+            if len(words) > 1:
+                wasMultiWord[i-1] = True
+                value = max(words, key = len)
+            names.append(value)
 
         # we stash this away every time we calculate it so we can
         # extract it trivially when we write binds
@@ -480,7 +481,8 @@ class Mastermind(Page):
             if self.uniqueNames[i-1]:
                 ctrl.RemoveError('unique')
             else:
-                ctrl.AddError('unique', 'This pet name is not different enough to identify it uniquely.')
+                MWWarning = "  BindControl only uses the longest word of a multi-word name." if wasMultiWord[i-1] else ""
+                ctrl.AddError('unique', f'This pet name is not different enough to identify it uniquely.{MWWarning}')
 
     ### BIND CREATION METHODS
 
@@ -1068,6 +1070,11 @@ class Mastermind(Page):
     })
 
 # https://stackoverflow.com/questions/11245481/find-the-smallest-unique-substring-for-each-string-in-an-array
+#
+# Oho I see that I used the "brute force" method from the above URL instead
+# of the "elegant" one.  Still it's blazingly fast for these six short strings,
+# enough so that we can use it on every TextCtrl change.  If people start to
+# complain of lag, we can experiment with the elegant one.
 def FindSmallestUniqueSubstring(names):
     uniqueNames = [''] * len(names)
     ### For each name

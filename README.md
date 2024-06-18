@@ -44,18 +44,17 @@ Features
     * Select pets by power level: all, minions, lieutenants, and boss
     * Orders for aggressive / defensive / passive stances; attack, follow, go to, and stay
     * Pets can give feedback on each order;  chattiness can be toggled via keybind
-    * "Bodyguard mode" shortcuts -- define which pets should be treated as bodyguards, and toggle Bodyguard Mode on and off for them, <strike>with attack/follow/stance/etc orders then applying to the remaining pets.</strike> (<i>Not working as intended</i>)
+    * "Bodyguard mode" shortcuts -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress
     * By-name pet selection
     * Next-pet / previous-pet binds
 
 TODO
 ----
 
-* Attempt to make every slash command in the game available in some way, typically via PowerBinder.
-* Better management of the actual generated bindfiles, including cleaning up old unused ones.
-* Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment.
-* Bodyguard mode, as implemented in citybinder, doesn't work as intended, and might not be able to due to game restrictions.
-* Investigate improvements to Mastermind binds to clarify and expand the behavior.
+* Attempt to make every slash command in the game available in some way, typically via PowerBinder
+* Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment
+* Bodyguard mode, as implemented in citybinder, doesn't work as intended, and might not be able to due to game restrictions
+* Investigate improvements to Mastermind binds to clarify and expand the behavior
 * More error detection and handling
 * Temporary powers in speed-on-demand
 * Roll standalone binaries for Windows, MacOS, Linux - partially implemented

@@ -935,7 +935,7 @@ class Mastermind(Page):
             'alla'    , 'tier1a'   , 'tier2a'  , 'tier3a'  ,
             'call'    , 'ctier1'   , 'ctier2'  , 'ctier3'  ,
             'calla'   , 'ctier1a'  , 'ctier2a' , 'ctier3a' ,
-            'bguarda' , 'cbguarda' ,
+            'bguarda' , 'cbguarda' , 'cbguardb',
         ]:
             files.append(self.Profile.GetBindFile('mmbinds', f'{fn}.txt'))
 

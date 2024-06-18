@@ -82,12 +82,13 @@ class PowerBinderDialog(wx.Dialog):
                 if not commandClass:
                     wx.LogError(f"Profile contained unknown custom bind command class {type}!")
                     return
-                index = self.RearrangeList.Append(type)
                 newCommand = commandClass(self.EditDialog, data)
+                index = self.RearrangeList.Append(newCommand.MakeListEntryString())
                 self.RearrangeList.SetClientData(index, newCommand)
                 if newCommand.UI:
                     self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10)
                     self.EditDialog.mainSizer.Hide(newCommand.UI)
+        self.UpdateBindStringDisplay()
 
     def SaveToData(self):
         data = []
@@ -126,7 +127,8 @@ class PowerBinderDialog(wx.Dialog):
             pass
 
         if cmdObject:
-            self.ShowEditDialogFor(cmdObject)
+            self.ShowEditDialogFor(cmdObject, self.RearrangeList.GetString(index))
+            self.RearrangeList.SetString(index, cmdObject.MakeListEntryString())
         else:
             print("cmdObject was None")
         self.UpdateBindStringDisplay()
@@ -143,17 +145,16 @@ class PowerBinderDialog(wx.Dialog):
 
         # detach the command object and instead glue it to self.RearrangeList
         newCommand = self.bindChoice.DetachClientObject(chosenSel)
-        newBindIndex = self.RearrangeList.Append(chosenName)
-        self.RearrangeList.Select(newBindIndex)
-        self.RearrangeList.SetClientData(newBindIndex, newCommand)
 
         # show the edit dialog if this command needs it
         if newCommand.UI:
             self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 10)
-            if (self.ShowEditDialogFor(newCommand) == wx.ID_CANCEL):
-                # User clicked 'cancel', remove the step
-                self.RearrangeList.Delete(newBindIndex)
-                self.RearrangeList.SetSelection(newBindIndex - 1)
+            if (self.ShowEditDialogFor(newCommand, chosenName) == wx.ID_CANCEL):
+                return
+
+        newBindIndex = self.RearrangeList.Append(newCommand.MakeListEntryString())
+        self.RearrangeList.Select(newBindIndex)
+        self.RearrangeList.SetClientData(newBindIndex, newCommand)
 
         self.bindChoice.SetSelection(wx.NOT_FOUND)
         self.OnListSelect(evt)
@@ -171,6 +172,7 @@ class PowerBinderDialog(wx.Dialog):
 
     def UpdateBindStringDisplay(self):
         self.BindStringDisplay.SetValue(self.MakeBindString())
+        self.BindStringDisplay.SetToolTip(self.MakeBindString())
 
     def MakeBindString(self):
         cmdBindStrings = []
@@ -181,16 +183,15 @@ class PowerBinderDialog(wx.Dialog):
         bindstring = ('$$'.join(cmdBindStrings))
         return bindstring
 
-    def ShowEditDialogFor(self, command):
+    def ShowEditDialogFor(self, command, chosenName):
+        if not command.UI: return
+
         self.EditDialog.mainSizer.Show(command.UI)
 
         self.EditDialog.Layout()
         self.EditDialog.Fit()
 
-        chosenSel  = self.RearrangeList.GetSelection()
-        chosenName = self.RearrangeList.GetString(chosenSel)
-
-        self.EditDialog.SetTitle(f'Editing Step "{chosenName}"')
+        self.EditDialog.SetTitle(f'Editing Step "{commandRevClasses[type(command)]}"')
         retval = self.EditDialog.ShowModal()
 
         self.EditDialog.mainSizer.Hide(command.UI)
@@ -256,10 +257,17 @@ class PowerBindCmd():
         if init: self.Deserialize(init)
 
     # Methods to override
-    def BuildUI(self, dialog) -> wx.Sizer : return wx.BoxSizer()
-    def MakeBindString(self)              : return str('')
-    def Serialize(self)                   : return {}
-    def Deserialize(self, init)           : return
+    def BuildUI(self, dialog) -> wx.Sizer|None : return None
+    def MakeBindString(self) -> str            : return str('')
+    def Serialize(self) -> dict                : return {}
+    def Deserialize(self, init)                : return
+
+    def MakeListEntryString(self):
+        commandClassName = commandRevClasses[type(self)]
+        bindstr = self.MakeBindString()
+        short_bindstr = "{:.40}{}".format(bindstr, "…" if len(bindstr) > 40 else "")
+        return f"{commandClassName} - {short_bindstr}"
+
 
 ####### Away From Keyboard
 class AFKCmd(PowerBindCmd):

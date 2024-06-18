@@ -67,7 +67,11 @@ class Profile(wx.Notebook):
 
     #####
     # Convenience / JIT accessors
-    def Name(self)         : return self.General.GetState('Name')
+    def Name(self)         :
+        if self.Filename:
+            return self.Filename.stem
+        else:
+            return ''
     def Archetype(self)    : return self.General.GetState('Archetype')
     def ResetFile(self)    : return self.GetBindFile("reset.txt")
     def BindsDir(self)     :
@@ -123,13 +127,8 @@ class Profile(wx.Notebook):
             result = wx.MessageBox("This will set the current profile to be used as a template when making a new profile.  Continue?", "Save As Default", wx.YES_NO)
             if result == wx.NO: return
 
-        # stash away our current values
-        currName = self.Name()
-        filename = self.Filename
-        self.Freeze()
         try:
             # so much could go wrong.
-            self.General.SetState('Name', '')
             self.Filename = None
             jsonstring = self.AsJSON(small = True)
             zipstring = codecs.encode(jsonstring.encode('utf-8'), 'zlib')
@@ -140,11 +139,6 @@ class Profile(wx.Notebook):
         except Exception as e:
             # Let us know if it did
             wx.LogError(f"Failed to write default profile: {e}")
-        finally:
-            # clean up our stashed state
-            self.General.SetState('Name', currName)
-            self.Filename = filename
-            self.Thaw()
 
     def GetDefaultProfileJSON(self, _ = None):
         jsonstring = None
@@ -160,7 +154,7 @@ class Profile(wx.Notebook):
 
         return jsonstring
 
-    def LoadFromDefault(self, _ = None):
+    def LoadFromDefault(self, newname):
         FoundOldDefaultProfile = False
         # Try to get it from prefs
         jsonstring = self.GetDefaultProfileJSON()
@@ -173,9 +167,19 @@ class Profile(wx.Notebook):
 
         self.doLoadFromJSON(jsonstring)
 
+        if not newname:
+            wx.LogError(f"Error, got into LoadFromDefault without a newname specified")
+        self.Filename = self.ProfilePath() / f"{newname}.bcp"
+
         # if we found one the file way, migrate it to the new way
         if FoundOldDefaultProfile:
             self.SaveAsDefault(prompt = False)
+
+        self.Parent.SetTitle(f"BindControl: {self.Name()}")
+        # now we have a named profile that we haven't saved.
+        # Set it as "Modified" so we get prompted to save it.
+        self.SetModified()
+
 
     def SaveToFile(self, _ = None):
         try:
@@ -199,7 +203,6 @@ class Profile(wx.Notebook):
                 pathname = pathname + '.bcp'
 
             self.Filename = Path(pathname)
-            self.General.SetState('Name', self.Filename.stem)
 
             return self.doSaveToFile()
 
@@ -230,6 +233,8 @@ class Profile(wx.Notebook):
             self.ClearModified()
         except Exception as e:
             wx.LogError(f"Problem saving to profile {savefile}: {e}")
+
+        self.Parent.SetTitle(f"BindControl: {self.Name()}")
 
     def AsJSON(self, small = False):
         savedata : Dict[str, Any] = {}
@@ -310,6 +315,7 @@ class Profile(wx.Notebook):
         wx.ConfigBase.Get().Write('LastProfile', pathname)
         wx.ConfigBase.Get().Flush()
         wx.LogMessage(f"Loaded profile {pathname}")
+        self.Parent.SetTitle(f"BindControl: {self.Name()}")
 
     def doLoadFromJSON(self, jsonstring):
         if not jsonstring: return
@@ -354,10 +360,10 @@ class Profile(wx.Notebook):
                     control.SetSelection(value if value else 0)
                 elif isinstance(control, wx.CheckBox):
                     control.SetValue(value if value else False)
-                elif isinstance(control, cgStaticText):
-                    continue
                 elif isinstance(control, cgSpinCtrl) or isinstance(control, cgSpinCtrlDouble):
                     control.SetValue(value if value else page.Init.get(controlname, 0))
+                elif isinstance(control, wx.StaticText):
+                    control.SetLabel(value if value else '')
                 else:
                     control.SetValue(value if value else '')
 
@@ -417,7 +423,7 @@ class Profile(wx.Notebook):
 
 
     def WriteBindFiles(self):
-        profilename = self.General.GetState('Name')
+        profilename = self.Name()
         if len(profilename) == 0 or re.search(" ", profilename):
             wx.MessageBox("Profile Name is not valid, please correct this.")
             self.ChangeSelection(0)

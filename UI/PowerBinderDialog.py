@@ -172,6 +172,7 @@ class PowerBinderDialog(wx.Dialog):
 
     def UpdateBindStringDisplay(self):
         self.BindStringDisplay.SetValue(self.MakeBindString())
+        self.BindStringDisplay.SetToolTip(self.MakeBindString())
 
     def MakeBindString(self):
         cmdBindStrings = []
@@ -188,7 +189,7 @@ class PowerBinderDialog(wx.Dialog):
         self.EditDialog.Layout()
         self.EditDialog.Fit()
 
-        self.EditDialog.SetTitle(f'Editing Step "{chosenName}"')
+        self.EditDialog.SetTitle(f'Editing Step "{commandRevClasses[type(command)]}"')
         retval = self.EditDialog.ShowModal()
 
         self.EditDialog.mainSizer.Hide(command.UI)

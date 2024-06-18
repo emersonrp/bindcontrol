@@ -167,16 +167,21 @@ class Main(wx.Frame):
         self.Sizer.Add(self.Logger.InfoBar, 0, wx.EXPAND)
 
         # Bottom Buttons
+        # BUTTONS
+        ProfDirButton = wx.Button(self, -1, "Set Binds Location")
+        ProfDirButton.SetToolTip("Configure the location where this Profile will write bindfiles")
         WriteButton = wx.Button(self, -1, "Write Binds")
-        WriteButton.SetToolTip("This will write out the bindfiles to the configured binds directory.")
+        WriteButton.SetToolTip("Write out the bindfiles to the configured binds directory")
         DeleteButton = wx.Button(self, -1, "Delete All Binds")
-        DeleteButton.SetToolTip("This will delete all BindControl-managed files in the configured binds directory.")
+        DeleteButton.SetToolTip("Delete all BindControl-managed files in the configured binds directory")
         writeSizer = wx.BoxSizer(wx.HORIZONTAL)
+        writeSizer.Add(ProfDirButton, 0, wx.EXPAND)
         writeSizer.Add(WriteButton, 1, wx.EXPAND)
         writeSizer.Add(DeleteButton, 0, wx.EXPAND)
         self.Sizer.Add(writeSizer,  0, wx.EXPAND | wx.ALL, 10)
-        WriteButton .Bind(wx.EVT_BUTTON, self.OnWriteBindsButton)
-        DeleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteBindsButton)
+        ProfDirButton.Bind(wx.EVT_BUTTON, self.OnProfDirButton)
+        WriteButton  .Bind(wx.EVT_BUTTON, self.OnWriteBindsButton)
+        DeleteButton .Bind(wx.EVT_BUTTON, self.OnDeleteBindsButton)
 
         # Do not SetSizerAndFit() - Fit() is poison
         self.SetSizer(self.Sizer)
@@ -231,6 +236,39 @@ class Main(wx.Frame):
     def OnProfileSave(self, evt)      : self.Profile.doSaveToFile(evt)
     def OnProfileSaveAs(self, evt)    : self.Profile.SaveToFile(evt)
     def OnProfileSaveDefault(self, _) : self.Profile.SaveAsDefault()
+
+    def OnProfDirButton(self, _):
+        ProfDirDialog = wx.Dialog(self, -1, "Set Binds Location")
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        ProfDirDialog.SetSizer(sizer)
+
+        sizer.Add(wx.StaticText(ProfDirDialog, -1, "Select the directory where this profile will write its bindfiles:"), 1, wx.EXPAND|wx.ALL, 10)
+
+        config = wx.ConfigBase.Get()
+        bindpath = config.Read('BindPath')
+        separator = "\\" if platform.system() == "Windows" else "/"
+
+        dirSizer = wx.BoxSizer(wx.HORIZONTAL)
+        dirSizer.Add(wx.StaticText(ProfDirDialog, -1,
+                    f"{bindpath}{separator}"), 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
+        PathText = wx.TextCtrl(ProfDirDialog, -1, value = self.Profile.ProfileBindsDir)
+        dirSizer.Add(PathText, 1, wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 10)
+
+        sizer.Add(dirSizer, 1, wx.EXPAND)
+
+        buttonsizer = ProfDirDialog.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL)
+
+        sizer.Add(buttonsizer, 1, wx.EXPAND|wx.ALL, 10)
+
+        ProfDirDialog.Layout()
+
+        with ProfDirDialog as dlg:
+            result = dlg.ShowModal()
+            if result == wx.ID_OK:
+                print(f"OK {PathText.GetValue()}")
+            else:
+                print("Cancel")
 
     def OnWriteBindsButton(self, _):
         self.Profile.WriteBindFiles()

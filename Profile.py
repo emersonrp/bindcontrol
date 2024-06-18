@@ -77,7 +77,7 @@ class Profile(wx.Notebook):
     def Archetype(self)    : return self.General.GetState('Archetype')
     def ResetFile(self)    : return self.GetBindFile("reset.txt")
     def BindsDir(self)     :
-        return Path(wx.ConfigBase.Get().Read('BindPath')) / self.Name()
+        return Path(wx.ConfigBase.Get().Read('BindPath')) / self.ProfileBindsDir
     def GameBindsDir(self) :
         gbp = wx.ConfigBase.Get().Read('GameBindPath')
         if gbp: return PureWindowsPath(gbp) / self.Name()
@@ -245,7 +245,6 @@ class Profile(wx.Notebook):
 
         self.ProfilePath().mkdir( parents = True, exist_ok = True )
 
-        #self.Filename = self.ProfilePath() / Path(profilename + ".bcp")
         if not self.Filename:
             raise Exception(f"No Filename set in Profile {self.Name()}!  Aborting save.")
         savefile = self.Filename
@@ -460,10 +459,8 @@ class Profile(wx.Notebook):
 
 
     def WriteBindFiles(self):
-        profilename = self.Name()
-        if len(profilename) == 0 or re.search(" ", profilename):
-            wx.MessageBox("Profile Name is not valid, please correct this.")
-            self.ChangeSelection(0)
+        if not self.ProfileBindsDir:
+            wx.MessageBox("Profile Binds Directory is not valid, please correct this.")
             return
 
         # Start by making reset load itself.  This might get overridden with

@@ -20,7 +20,7 @@ from Page.Mastermind import Mastermind
 from Page.CustomBinds import CustomBinds
 
 import UI
-from UI.ControlGroup import cgStaticText, cgSpinCtrl, cgSpinCtrlDouble
+from UI.ControlGroup import cgSpinCtrl, cgSpinCtrlDouble
 from UI.SimpleBindPane import SimpleBindPane
 from UI.BufferBindPane import BufferBindPane
 from UI.ComplexBindPane import ComplexBindPane
@@ -116,6 +116,33 @@ class Profile(wx.Notebook):
 
     def SetModified  (self, _ = None): self.Modified = True
     def ClearModified(self, _ = None): self.Modified = False
+
+    # come up with a sane default binds directory name for this profile
+    def GenerateBindsDirectoryName(self):
+        # start with just the ASCII characters in the name
+        # TODO - This could cause trouble if someone has some weird all-Unicode name
+        profileName = str(self.Name().encode('ascii', 'ignore'))
+
+        # by default, let's just use the first four letters of the Name():
+        bindsdirname = profileName[:4]
+
+        # but let's try more clever things, too:
+
+        # First let's see if we have multiple words:
+        namewords = profileName.split()
+        if len(namewords) > 1:
+            firstletters = [w[:1] for w in namewords]
+            bindsdirname = ''.join(firstletters)
+
+        # let's see if we have more than one capital letter, if so try that.
+        else:
+            capitalletters = re.findall(r'[A-Z]', profileName)
+            if len(capitalletters) > 1:
+                bindsdirname = ''.join(capitalletters)
+
+        # We're gonna lowercase this because Windows is case-insensitive
+        return bindsdirname.lower()
+
 
     ###################
     # Profile Save/Load

@@ -3,7 +3,7 @@ import re
 import UI
 from BLF import BLF
 from Help import HelpButton
-from UI.KeySelectDialog import bcKeyButton
+from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 
 # Sandolphan / Khaiba's guide to these controls found at:
 # https://guidescroll.com/2011/07/city-of-heroes-mastermind-numeric-keypad-pet-controls/
@@ -356,10 +356,10 @@ class Mastermind(Page):
         petnpenable.SetSizer(petnpenablesizer)
         petnpenablecb = wx.CheckBox(petnpenable, -1, 'Enable Prev/Next Pet Select Binds')
         petnpenablecb.SetToolTip( wx.ToolTip('Check this to enable the Prev/Next Pet Select Binds') )
-        petnpenablecb.Bind(wx.EVT_CHECKBOX, self.OnPetNPEnable)
+        petnpenablecb.Bind(wx.EVT_CHECKBOX, self.OnPetNPChange)
         self.Ctrls['PetNPEnable'] = petnpenablecb
         petnpenablecb.SetValue(self.Init['PetNPEnable'])
-        petnphelpbutton = HelpButton(petnpenable, 'PetOneKeyBinds.html')
+        petnphelpbutton = HelpButton(petnpenable, 'PetPrevNextBinds.html')
         petnpenablesizer.Add(petnpenablecb, 0, wx.ALIGN_CENTER_VERTICAL)
         petnpenablesizer.Add(petnphelpbutton, 0)
 
@@ -376,6 +376,7 @@ class Mastermind(Page):
                 ctlType = 'keybutton',
                 tooltip = b[1],
             )
+            self.Ctrls[b[0]].Bind(EVT_KEY_CHANGED, self.OnPetNPChange)
 
         # Bring it all together
         self.MainSizer.Add(PetNames, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 16)
@@ -403,7 +404,7 @@ class Mastermind(Page):
         self.PetNameLabel.Enable(bool(arch == "Mastermind" and pset))
         self.PetKeyLabel .Enable(bool(arch == "Mastermind" and pset))
         self.OnPetCmdEnable()
-        self.OnPetNPEnable()
+        self.OnPetNPChange()
 
     def OnPetCmdEnable(self, evt = None):
         self.Freeze()
@@ -413,23 +414,37 @@ class Mastermind(Page):
                 command['ctrlName'], command['ctrlName']+"ResponseMethod", command['ctrlName']+"Response"
             ])
         self.EnableControls(enabled,
-            [ 'PetChatToggle'   ,
+            ['PetChatToggle'    ,
              'PetBodyguard'     , 'PetBodyguardResponseMethod'     , 'PetBodyguardResponse'     ,
              'PetBodyguardStay' , 'PetBodyguardStayResponseMethod' , 'PetBodyguardStayResponse' ,
              'PetBodyguardGoto' , 'PetBodyguardGotoResponseMethod' , 'PetBodyguardGotoResponse' ,
             ])
+        # now re-check the BG stuff that we just enabled.
         self.OnBGCheckboxes()
         self.Thaw()
         if evt: evt.Skip()
 
-    def OnPetNPEnable(self, evt = None):
-        enabled = bool(self.GetState('PetNPEnable'))
+    def OnPetNPChange(self, evt = None):
+        enabled = self.GetState('PetNPEnable')
         self.EnableControls(enabled, ['SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize'])
+        if enabled:
+            for ctrlname in ['SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize']:
+                ctrl = self.Ctrls[ctrlname]
+                if ctrl.Key:
+                    ctrl.RemoveError('undef')
+                else:
+                    label = ctrl.CtlLabel.GetLabel().strip(':')
+                    ctrl.AddError('undef', f'"{label}" must be set if Prev/Next binds are enabled.  These will not be written to the bindfiles until this is corrected.')
+        else:
+            for ctrlname in ['SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize']:
+                ctrl = self.Ctrls[ctrlname]
+                ctrl.RemoveError('undef')
         if evt: evt.Skip()
 
-    def OnNameTextChange(self, evt):
+    def OnNameTextChange(self, evt = None):
         self.CheckBGModeNames()
         self.CheckNamesAreUnique()
+        if evt: evt.Skip()
 
     def OnBGCheckboxes(self, evt = None):
         petcmdenabled = self.GetState('PetCmdEnable')
@@ -943,7 +958,10 @@ class Mastermind(Page):
             )
 
         ### Prev / next pet binds
-        if self.GetState('PetNPEnable'):
+        if (self.GetState('PetNPEnable') and
+            self.GetState('IncPetSize') and self.GetState('DecPetSize') and
+            self.GetState('SelNextPet') and self.GetState('SelPrevPet')
+        ):
             self.psCreateSet(6,0,self.Profile.ResetFile())
             for tsize in 1,2,3,4,5,6:
                 for tsel in range(0,tsize+1):

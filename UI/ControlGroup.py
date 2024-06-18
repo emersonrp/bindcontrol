@@ -172,15 +172,9 @@ class CGControlMixin:
     GetContainingSizer     : Callable
     SetBackgroundColour    : Callable
     SetOwnBackgroundColour : Callable
-    CtlLabel               : ST.GenStaticText | wx.StaticText | None
-    Page                   : bcPage|None
-    Data                   : Any
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.CtlLabel : ST.GenStaticText | wx.StaticText | None = None
-        self.Page = None
-        self.Data = None
+    CtlLabel               : ST.GenStaticText | wx.StaticText | None = None
+    Page                   : bcPage|None = None
+    Data                   : Any = None
 
     def Enable(self, enable = True):
         super().Enable(enable) # pyright: ignore

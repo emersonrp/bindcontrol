@@ -225,9 +225,8 @@ class Main(wx.Frame):
         with ProfDirDialog as dlg:
             result = dlg.ShowModal()
             if result == wx.ID_OK:
-                print(f"OK {PathText.GetValue()}")
-            else:
-                print("Cancel")
+                # TODO -- "thingie changed, would you like to delete the old dir?"
+                self.Profile.ProfileBindsDir = PathText.GetValue()
 
     def OnWriteBindsButton(self, _):
         self.Profile.WriteBindFiles()

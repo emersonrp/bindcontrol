@@ -224,18 +224,19 @@ class Main(wx.Frame):
 
         ProfDirDialog.Layout()
 
+        PathText.ClearErrors() # whyyyy?
         with ProfDirDialog as dlg:
             result = dlg.ShowModal()
             if result == wx.ID_OK:
                 newvalue = PathText.GetValue()
-                # call us again if we have nothing in there.
-                if not newvalue: return self.OnProfDirButton()
+                # call us again if we tried to OK an error state
+                if PathText.HasErrors(): return self.OnProfDirButton()
                 # TODO -- "thingie changed, would you like to delete the old dir?"
                 self.Profile.ProfileBindsDir = newvalue
 
         # need this out here in case we cancelled on a previously-blank one.
         # This is very very unlikely to happen and awful if it does.
-        if not self.Profile.ProfileBindsDir: self.OnProfDirButton()
+        if PathText.HasErrors(): return self.OnProfDirButton()
 
     def OnPathTextChanged(self, evt):
         textctrl = evt.EventObject
@@ -245,6 +246,15 @@ class Main(wx.Frame):
             textctrl.AddError('undef', 'You must specify a short, unique bindfile directory name.')
         else:
             textctrl.RemoveError('undef')
+
+        if value.upper() in [
+            'CON', 'PRN', 'AUX', 'NUL',
+            'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'COM0',
+            'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9', 'LPT0',
+        ]:
+            textctrl.AddError('reserved', 'The name you have selected is a reserved filename in Windows.  Please select another.')
+        else:
+            textctrl.RemoveError('reserved')
 
     def OnWriteBindsButton(self, _):
         self.Profile.WriteBindFiles()

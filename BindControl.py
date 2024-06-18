@@ -12,6 +12,7 @@ from pathlib import Path
 from Profile import Profile
 from UI.PrefsDialog import PrefsDialog
 from Help import ShowHelpWindow
+from UI.ControlGroup import cgTextCtrl
 
 ###################
 # Main Window Class
@@ -237,7 +238,7 @@ class Main(wx.Frame):
     def OnProfileSaveAs(self, evt)    : self.Profile.SaveToFile(evt)
     def OnProfileSaveDefault(self, _) : self.Profile.SaveAsDefault()
 
-    def OnProfDirButton(self, _):
+    def OnProfDirButton(self, _ = None):
         ProfDirDialog = wx.Dialog(self, -1, "Set Binds Location")
 
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -252,8 +253,9 @@ class Main(wx.Frame):
         dirSizer = wx.BoxSizer(wx.HORIZONTAL)
         dirSizer.Add(wx.StaticText(ProfDirDialog, -1,
                     f"{bindpath}{separator}"), 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
-        PathText = wx.TextCtrl(ProfDirDialog, -1, value = self.Profile.ProfileBindsDir)
+        PathText = cgTextCtrl(ProfDirDialog, -1, value = self.Profile.ProfileBindsDir)
         dirSizer.Add(PathText, 1, wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 10)
+        PathText.Bind(wx.EVT_TEXT, self.OnPathTextChanged)
 
         sizer.Add(dirSizer, 1, wx.EXPAND)
 
@@ -266,8 +268,24 @@ class Main(wx.Frame):
         with ProfDirDialog as dlg:
             result = dlg.ShowModal()
             if result == wx.ID_OK:
+                newvalue = PathText.GetValue()
+                # call us again if we have nothing in there.
+                if not newvalue: return self.OnProfDirButton()
                 # TODO -- "thingie changed, would you like to delete the old dir?"
-                self.Profile.ProfileBindsDir = PathText.GetValue()
+                self.Profile.ProfileBindsDir = newvalue
+
+        # need this out here in case we cancelled on a previously-blank one.
+        # This is very very unlikely to happen and awful if it does.
+        if not self.Profile.ProfileBindsDir: self.OnProfDirButton()
+
+    def OnPathTextChanged(self, evt):
+        textctrl = evt.EventObject
+        value = textctrl.GetValue()
+
+        if not value:
+            textctrl.AddError('undef', 'You must specify a short, unique bindfile directory name.')
+        else:
+            textctrl.RemoveError('undef')
 
     def OnWriteBindsButton(self, _):
         self.Profile.WriteBindFiles()

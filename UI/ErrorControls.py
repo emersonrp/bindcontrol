@@ -2,15 +2,12 @@ from typing import Callable
 import wx
 # Mixin to handle setting/showing errors and tooltips
 class ErrorControlMixin:
+    Errors                 : dict     = {}
+    Warnings               : dict     = {}
+    DefaultToolTip         : str      = ''
     SetBackgroundColour    : Callable
     SetOwnBackgroundColour : Callable
     SetToolTip             : Callable
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.Errors         : dict = {}
-        self.Warnings       : dict = {}
-        self.DefaultToolTip : str = ''
 
     def Enable(self, enable = True):
         super().Enable(enable) # pyright: ignore

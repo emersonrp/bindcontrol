@@ -123,7 +123,7 @@ class Profile(wx.Notebook):
     def GenerateBindsDirectoryName(self):
         # start with just the ASCII characters in the name
         # TODO - This could cause trouble if someone has some weird all-Unicode name
-        profileName = self.Name().encode('ascii', 'ignore').decode('ascii')
+        profileName = re.sub(r'\W+', '', self.Name())
 
         # by default, let's just use the first four letters of the Name():
         bindsdirname = profileName[:4]
@@ -141,6 +141,13 @@ class Profile(wx.Notebook):
             capitalletters = re.findall(r'[A-Z]', profileName)
             if len(capitalletters) > 1:
                 bindsdirname = ''.join(capitalletters)
+
+        # MSDOS still haunts us
+        if bindsdirname.upper() in [
+            'CON', 'PRN', 'AUX', 'NUL',
+            'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'COM0',
+            'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9', 'LPT0',
+        ]: bindsdirname = ''
 
         # We're gonna lowercase this because Windows is case-insensitive
         return bindsdirname.lower()
@@ -197,22 +204,26 @@ class Profile(wx.Notebook):
         self.doLoadFromJSON(jsonstring)
 
         if not newname:
-            wx.LogError(f"Error, got into LoadFromDefault without a newname specified")
+            raise Exception(f"Error, got into LoadFromDefault without a newname specified")
         self.Filename = self.ProfilePath() / f"{newname}.bcp"
 
         # if we found one the file way, migrate it to the new way
+        # TODO someday maybe remove this but not for a while
         if FoundOldDefaultProfile:
             self.SaveAsDefault(prompt = False)
 
         # TODO - here's where we should check if that bindsdir exists
         # already and do something, append "1" or something?
         self.ProfileBindsDir = self.GenerateBindsDirectoryName()
+        if not self.ProfileBindsDir:
+            # This happens if GenerateBindsDirectoryName can't come up with something sane
+            self.Parent.OnProfDirButton()
 
         self.Parent.SetTitle(f"BindControl: {self.Name()}")
+
         # now we have a named profile that we haven't saved.
         # Set it as "Modified" so we get prompted to save it.
         self.SetModified()
-
 
     def SaveToFile(self, _ = None):
         try:
@@ -260,6 +271,7 @@ class Profile(wx.Notebook):
         except Exception as e:
             wx.LogError(f"Problem saving to profile {savefile}: {e}")
 
+        # TODO I can't remember why we do this on save but I'm scared to remove it
         self.Parent.SetTitle(f"BindControl: {self.Name()}")
 
     def AsJSON(self, small = False):

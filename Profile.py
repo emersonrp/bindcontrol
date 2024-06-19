@@ -152,6 +152,10 @@ class Profile(wx.Notebook):
             'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9', 'LPT0',
         ]: bindsdirname = ''
 
+        # finally, if it's too short (1 character, ie they only had a single [a-z0-9]
+        # in the original profilename), let's empty it to force an error
+        if len(bindsdirname) < 2: bindsdirname = ''
+
         # We're gonna lowercase this because Windows is case-insensitive
         return bindsdirname.lower()
 

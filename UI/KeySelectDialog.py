@@ -499,7 +499,7 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         # This might be overloading "AlwaysShorten", but:
         style = wx.BU_EXACTFIT if self.AlwaysShorten else 0
 
-        wx.Button.__init__(self, parent, id, style = style)
+        super().__init__(parent, id, style = style)
 
         self.SetLabel(self.Key)
 

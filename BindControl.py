@@ -209,17 +209,17 @@ class Main(wx.Frame):
                 self.Profile.doSaveToFile()
             elif result == wx.CANCEL:
                 return
+
+        dlg = wx.TextEntryDialog(self, 'Enter name for new profile:')
+        if dlg.ShowModal() == wx.ID_OK:
+            # check if we already have a bind named that.  Complex Binds use the name as
+            # part of the bindfiles' filenames, so we can't have dupes
+            newname = dlg.GetValue()
+        else:
+            return
+
         self.Freeze()
-
         try:
-            dlg = wx.TextEntryDialog(self, 'Enter name for new profile:')
-            if dlg.ShowModal() == wx.ID_OK:
-                # check if we already have a bind named that.  Complex Binds use the name as
-                # part of the bindfiles' filenames, so we can't have dupes
-                newname = dlg.GetValue()
-            else:
-                return
-
             self.Sizer.Remove(0)
             self.Profile.Destroy()
 

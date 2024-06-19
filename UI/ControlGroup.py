@@ -172,9 +172,12 @@ class CGControlMixin:
     GetContainingSizer     : Callable
     SetBackgroundColour    : Callable
     SetOwnBackgroundColour : Callable
-    CtlLabel               : ST.GenStaticText | wx.StaticText | None = None
-    Page                   : bcPage|None = None
-    Data                   : Any = None
+
+    def __init__(self, *args, **kwargs):
+        self.CtlLabel : ST.GenStaticText | wx.StaticText | None = None
+        self.Page     : bcPage|None                             = None
+        self.Data     : Any                                     = None
+        super().__init__(*args, **kwargs)
 
     def Enable(self, enable = True):
         super().Enable(enable) # pyright: ignore
@@ -194,17 +197,30 @@ class CGControlMixin:
             self.CtlLabel.SetToolTip(tooltip)
 
 # Miniclasses to use mixins
-class cgbcKeyButton     (CGControlMixin,                    bcKeyButton)         : pass
-class cgComboBox        (CGControlMixin, ErrorControlMixin, wx.ComboBox)         : pass
-class cgBMComboBox      (CGControlMixin, ErrorControlMixin, BitmapComboBox)      : pass
-class cgTextCtrl        (CGControlMixin, ErrorControlMixin, wx.TextCtrl)         : pass
-class cgStaticText      (CGControlMixin, ErrorControlMixin, wx.StaticText)       : pass
-class cgCheckBox        (CGControlMixin, ErrorControlMixin, wx.CheckBox)         : pass
-class cgSpinCtrl        (CGControlMixin, ErrorControlMixin, wx.SpinCtrl)         : pass
-class cgSpinCtrlDouble  (CGControlMixin, ErrorControlMixin, wx.SpinCtrlDouble)   : pass
-class cgDirPickerCtrl   (CGControlMixin, ErrorControlMixin, wx.DirPickerCtrl)    : pass
-class cgColourPickerCtrl(CGControlMixin, ErrorControlMixin, wx.ColourPickerCtrl) : pass
+class cgbcKeyButton     (CGControlMixin,                    bcKeyButton)         :
+    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
+class cgButton          (CGControlMixin, ErrorControlMixin, wx.Button)           :
+    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
+class cgComboBox        (CGControlMixin, ErrorControlMixin, wx.ComboBox)         :
+    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
+class cgBMComboBox      (CGControlMixin, ErrorControlMixin, BitmapComboBox)      :
+    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
+class cgTextCtrl        (CGControlMixin, ErrorControlMixin, wx.TextCtrl)         :
+    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
+class cgStaticText      (CGControlMixin, ErrorControlMixin, wx.StaticText)       :
+    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
+class cgCheckBox        (CGControlMixin, ErrorControlMixin, wx.CheckBox)         :
+    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
+class cgSpinCtrl        (CGControlMixin, ErrorControlMixin, wx.SpinCtrl)         :
+    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
+class cgSpinCtrlDouble  (CGControlMixin, ErrorControlMixin, wx.SpinCtrlDouble)   :
+    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
+class cgDirPickerCtrl   (CGControlMixin, ErrorControlMixin, wx.DirPickerCtrl)    :
+    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
+class cgColourPickerCtrl(CGControlMixin, ErrorControlMixin, wx.ColourPickerCtrl) :
+    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
 class cgChoice          (CGControlMixin, ErrorControlMixin, wx.Choice)           :
+    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
     def ShowEntryIf(self, entry: str, condition: bool):
         idx    = self.FindString(entry)
         exists = idx != wx.NOT_FOUND

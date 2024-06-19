@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import sys, os, platform
+import sys, os, platform, re
 
 import wx
 import wx.lib.mixins.inspection
@@ -276,6 +276,11 @@ class Main(wx.Frame):
             textctrl.AddError('undef', 'You must specify a short, unique bindfile directory name.')
         else:
             textctrl.RemoveError('undef')
+
+        if re.search(r'\s', value):
+            textctrl.AddError('spaces', 'The binds directory cannot contain spaces.')
+        else:
+            textctrl.RemoveError('spaces')
 
         # TODO this is two places, make it a helper method somewhere
         if value.upper() in [

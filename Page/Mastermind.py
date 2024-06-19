@@ -392,12 +392,13 @@ class Mastermind(Page):
         pset = self.Profile.General.GetState('Primary')
 
         if self.Profile.General.GetState('Name'): # profile is loaded
-            names = self.MMPowerSets[ self.Profile.General.GetState('Primary') ]['names']
-            for i in (1,2,3,4,5,6):
-                value = names[i-1]
-                currvalue = self.GetState(f'Pet{i}Name')
-                if not currvalue or currvalue == '':
-                    self.SetState(f'Pet{i}Name', value)
+            if arch == 'Mastermind':
+                names = self.MMPowerSets[ self.Profile.General.GetState('Primary') ]['names']
+                for i in (1,2,3,4,5,6):
+                    value = names[i-1]
+                    currvalue = self.GetState(f'Pet{i}Name')
+                    if not currvalue or currvalue == '':
+                        self.SetState(f'Pet{i}Name', value)
 
         for _, control in self.Ctrls.items():
             control.Enable(bool(arch == "Mastermind" and pset))
@@ -476,28 +477,34 @@ class Mastermind(Page):
                     ctrl.AddError('undef', 'By-Name selection and Bodyguard Mode require the pet name be filled in.')
 
     def CheckNamesAreUnique(self):
-        names = []
-        wasMultiWord = [False] * 6
-        for i in (1,2,3,4,5,6):
-            ctrl = self.Ctrls[f'Pet{i}Name']
-            value = ctrl.GetValue()
-            # if we contain multiple words, use the longest
-            words = value.split()
-            if len(words) > 1:
-                wasMultiWord[i-1] = True
-                value = max(words, key = len)
-            names.append(value)
+        if (self.Profile.Archetype() == "Mastermind"):
+            names = []
+            wasMultiWord = [False] * 6
+            for i in (1,2,3,4,5,6):
+                ctrl = self.Ctrls[f'Pet{i}Name']
+                value = ctrl.GetValue()
+                # if we contain multiple words, use the longest
+                words = value.split()
+                if len(words) > 1:
+                    wasMultiWord[i-1] = True
+                    value = max(words, key = len)
+                names.append(value)
 
-        # we stash this away every time we calculate it so we can
-        # extract it trivially when we write binds
-        self.uniqueNames = FindSmallestUniqueSubstring(names)
-        for i in (1,2,3,4,5,6):
-            ctrl = self.Ctrls[f'Pet{i}Name']
-            if self.uniqueNames[i-1]:
+            # we stash this away every time we calculate it so we can
+            # extract it trivially when we write binds
+            self.uniqueNames = FindSmallestUniqueSubstring(names)
+            for i in (1,2,3,4,5,6):
+                ctrl = self.Ctrls[f'Pet{i}Name']
+                if self.uniqueNames[i-1]:
+                    ctrl.RemoveError('unique')
+                else:
+                    MWWarning = "  BindControl only uses the longest word of a multi-word name." if wasMultiWord[i-1] else ""
+                    ctrl.AddError('unique', f'This pet name is not different enough to identify it uniquely.{MWWarning}')
+        else:
+            for i in (1,2,3,4,5,6):
+                ctrl = self.Ctrls[f'Pet{i}Name']
                 ctrl.RemoveError('unique')
-            else:
-                MWWarning = "  BindControl only uses the longest word of a multi-word name." if wasMultiWord[i-1] else ""
-                ctrl.AddError('unique', f'This pet name is not different enough to identify it uniquely.{MWWarning}')
+
 
     ### BIND CREATION METHODS
 

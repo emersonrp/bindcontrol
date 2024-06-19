@@ -76,8 +76,7 @@ class Profile(wx.Notebook):
             return ''
     def Archetype(self)    : return self.General.GetState('Archetype')
     def ResetFile(self)    : return self.GetBindFile("reset.txt")
-    def BindsDir(self)     :
-        return Path(wx.ConfigBase.Get().Read('BindPath')) / self.ProfileBindsDir
+    def BindsDir(self)     : return Path(wx.ConfigBase.Get().Read('BindPath')) / self.ProfileBindsDir
     def GameBindsDir(self) :
         gbp = wx.ConfigBase.Get().Read('GameBindPath')
         if gbp: return PureWindowsPath(gbp) / self.ProfileBindsDir
@@ -353,6 +352,9 @@ class Profile(wx.Notebook):
                 jsonstring = file.read_text()
                 self.doLoadFromJSON(jsonstring)
             except Exception as e:
+                # TODO we're probably in a weird state here, maybe halfway loaded one
+                # profile on top of another.  This should probably be a fatalish error,
+                # but we don't just want to re-raise and crash.  Hmm ponder, ponder.
                 wx.LogError(f"Profile {pathname} could not be loaded: {e}")
                 return None
 
@@ -396,11 +398,10 @@ class Profile(wx.Notebook):
                 # look up what type of control it is to know how to update its value
                 if isinstance(control, wx.DirPickerCtrl):
                     control.SetPath(value if value else '')
-                elif isinstance(control, bcKeyButton):
-                    control.SetLabel(value if value else '')
-                    control.Key = value if value else ''
                 elif isinstance(control, wx.Button):
                     control.SetLabel(value if value else '')
+                    if isinstance(control, bcKeyButton):
+                        control.Key = value if value else ''
                 elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
                     control.SetColour(value)
                     if isinstance(control, csel.ColourSelect):
@@ -429,7 +430,7 @@ class Profile(wx.Notebook):
                 prim = data['General'].get('Primary', None)
                 if isinstance(prim, str):
                     prim = page.Ctrls['Primary'].FindString(prim)
-                page.Ctrls['Primary']  .SetSelection(prim)
+                page.Ctrls['Primary'].SetSelection(prim)
 
                 seco = data['General'].get('Secondary', None)
                 if isinstance(seco, str):
@@ -463,7 +464,6 @@ class Profile(wx.Notebook):
                     cbpage.AddBindToPage(bindpane = bindpane)
         self.ClearModified()
 
-
     #####################
     # Bind file functions
     def GetBindFile(self, *filename):
@@ -475,7 +475,6 @@ class Profile(wx.Notebook):
             self.BindFiles[filename_key] = BindFile(self, *filename)
 
         return self.BindFiles[filename_key]
-
 
     def WriteBindFiles(self):
         if not self.ProfileBindsDir:
@@ -734,7 +733,8 @@ class DeleteDoneDialog(wx.Dialog):
 
         sizer.Add(
             wx.StaticText(self, label = f"Alternatively, you can Write Binds again at this point for a fresh set of bindfiles.", style = wx.ALIGN_CENTER),
-            1, wx.EXPAND|wx.ALL, 10
+            0, wx.EXPAND|wx.ALL, 10
         )
-        sizer.Add( self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10)
+        sizer.Add(self.CreateButtonSizer(wx.OK), 0, wx.ALL|wx.ALIGN_RIGHT, 10)
+
         self.SetSizerAndFit(sizer)

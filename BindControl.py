@@ -277,6 +277,11 @@ class Main(wx.Frame):
         else:
             textctrl.RemoveError('undef')
 
+        if re.search(r'[^A-Za-z0-9_]', value):
+            textctrl.AddError('unicode', 'The binds directory must contain only A-Z, a-z, 0-9, and _ characters.')
+        else:
+            textctrl.RemoveError('unicode')
+
         if re.search(r'\s', value):
             textctrl.AddError('spaces', 'The binds directory cannot contain spaces.')
         else:

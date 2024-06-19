@@ -82,7 +82,7 @@ class Profile(wx.Notebook):
         return Path(wx.ConfigBase.Get().Read('BindPath')) / self.ProfileBindsDir
     def GameBindsDir(self) :
         gbp = wx.ConfigBase.Get().Read('GameBindPath')
-        if gbp: return PureWindowsPath(gbp) / self.Name()
+        if gbp: return PureWindowsPath(gbp) / self.ProfileBindsDir
         return self.BindsDir()
 
     def HasPowerPool(self, poolname):

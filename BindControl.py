@@ -12,7 +12,7 @@ from pathlib import Path
 from Profile import Profile
 from UI.PrefsDialog import PrefsDialog
 from Help import ShowHelpWindow
-from UI.ControlGroup import cgTextCtrl
+from UI.ControlGroup import cgTextCtrl, cgButton
 
 ###################
 # Main Window Class
@@ -169,18 +169,18 @@ class Main(wx.Frame):
 
         # Bottom Buttons
         # BUTTONS
-        ProfDirButton = wx.Button(self, -1, "Set Binds Location")
-        ProfDirButton.SetToolTip("Configure the location where this Profile will write bindfiles")
+        self.ProfDirButton = cgButton(self, -1, "Set Binds Location")
+        self.ProfDirButton.SetToolTip("Configure the location where this Profile will write bindfiles")
         WriteButton = wx.Button(self, -1, "Write Binds")
         WriteButton.SetToolTip("Write out the bindfiles to the configured binds directory")
         DeleteButton = wx.Button(self, -1, "Delete All Binds")
         DeleteButton.SetToolTip("Delete all BindControl-managed files in the configured binds directory")
         writeSizer = wx.BoxSizer(wx.HORIZONTAL)
-        writeSizer.Add(ProfDirButton, 0, wx.EXPAND)
+        writeSizer.Add(self.ProfDirButton, 0, wx.EXPAND)
         writeSizer.Add(WriteButton, 1, wx.EXPAND)
         writeSizer.Add(DeleteButton, 0, wx.EXPAND)
         self.Sizer.Add(writeSizer,  0, wx.EXPAND | wx.ALL, 10)
-        ProfDirButton.Bind(wx.EVT_BUTTON, self.OnProfDirButton)
+        self.ProfDirButton.Bind(wx.EVT_BUTTON, self.OnProfDirButton)
         WriteButton  .Bind(wx.EVT_BUTTON, self.OnWriteBindsButton)
         DeleteButton .Bind(wx.EVT_BUTTON, self.OnDeleteBindsButton)
 
@@ -200,6 +200,7 @@ class Main(wx.Frame):
             self.SetPosition((config.ReadInt('WinX'), config.ReadInt('WinY')))
 
         self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
+        self.CheckProfDirButtonErrors()
 
     def OnNewProfile(self, _):
         if self.Profile and self.Profile.Modified:
@@ -230,10 +231,13 @@ class Main(wx.Frame):
         except Exception as e:
             wx.LogError(f"Something broke in new profile: {e}.  This is a bug.")
         finally:
+            self.CheckProfDirButtonErrors()
             self.Layout()
             self.Thaw()
 
-    def OnProfileLoad(self, evt)      : self.Profile.LoadFromFile(evt)
+    def OnProfileLoad(self, evt):
+        self.Profile.LoadFromFile(evt)
+        self.CheckProfDirButtonErrors()
     def OnProfileSave(self, evt)      : self.Profile.doSaveToFile(evt)
     def OnProfileSaveAs(self, evt)    : self.Profile.SaveToFile(evt)
     def OnProfileSaveDefault(self, _) : self.Profile.SaveAsDefault()
@@ -244,7 +248,7 @@ class Main(wx.Frame):
         sizer = wx.BoxSizer(wx.VERTICAL)
         ProfDirDialog.SetSizer(sizer)
 
-        sizer.Add(wx.StaticText(ProfDirDialog, -1, "Select the directory where this profile will write its bindfiles:"), 1, wx.EXPAND|wx.ALL, 10)
+        sizer.Add(wx.StaticText(ProfDirDialog, -1, "Select the location where this profile will write its bindfiles:"), 1, wx.EXPAND|wx.ALL, 10)
 
         config = wx.ConfigBase.Get()
         bindpath = config.Read('BindPath')
@@ -259,6 +263,8 @@ class Main(wx.Frame):
 
         sizer.Add(dirSizer, 1, wx.EXPAND)
 
+        sizer.Add(wx.StaticText(ProfDirDialog, -1, "Changing this value will automatically save the Profile,\nincluding any other changes you have made."), 1, wx.EXPAND|wx.ALL, 10)
+
         buttonsizer = ProfDirDialog.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL)
 
         sizer.Add(buttonsizer, 1, wx.EXPAND|wx.ALL, 10)
@@ -266,18 +272,42 @@ class Main(wx.Frame):
         ProfDirDialog.Layout()
 
         PathText.ClearErrors() # whyyyy?
+        ### TODO - instead of re-calling OnProfDirButton() from scratch each time, break this dialog-show
+        ### out into its own method and just re-show the dialog as needed.  Maybe this all wants its own class.
         with ProfDirDialog as dlg:
             result = dlg.ShowModal()
             if result == wx.ID_OK:
                 newvalue = PathText.GetValue()
                 # call us again if we tried to OK an error state
                 if PathText.HasErrors(): return self.OnProfDirButton()
-                # TODO -- "thingie changed, would you like to delete the old dir?"
+                # if we changed the directory, offer to delete the old one.
+                if self.Profile.ProfileBindsDir and (newvalue != self.Profile.ProfileBindsDir):
+                    answer = wx.MessageBox(
+                            f'Binds Location changed.  Delete old binds directory {self.Profile.BindsDir()}?',
+                            'Binds Location Changed',wx.YES_NO, self
+                    )
+                    if answer == wx.YES:
+                        self.Profile.doDeleteBindFiles(self.Profile.AllBindFiles())
                 self.Profile.ProfileBindsDir = newvalue
+                self.Profile.doSaveToFile()
 
         # need this out here in case we cancelled on a previously-blank one.
         # This is very very unlikely to happen and awful if it does.
         if PathText.HasErrors(): return self.OnProfDirButton()
+
+        self.CheckProfDirButtonErrors()
+
+    def CheckProfDirButtonErrors(self):
+        if self.Profile.ProfileBindsDir:
+            self.ProfDirButton.RemoveError('undef')
+        else:
+            self.ProfDirButton.AddError('undef', 'Your binds directory is unset.  Binds cannot be written.')
+
+        if len(self.Profile.ProfileBindsDir) <= 8:
+            self.ProfDirButton.RemoveWarning('toolong')
+        else:
+            self.ProfDirButton.AddWarning('toolong', 'Your binds directory name is rather long.  This is not an error but can lead to some binds being too long for the game to use.')
+
 
     def OnPathTextChanged(self, evt):
         textctrl = evt.EventObject
@@ -288,6 +318,7 @@ class Main(wx.Frame):
         else:
             textctrl.RemoveError('undef')
 
+        # TODO this is two places, make it a helper method somewhere
         if value.upper() in [
             'CON', 'PRN', 'AUX', 'NUL',
             'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'COM0',

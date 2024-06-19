@@ -287,7 +287,7 @@ class Main(wx.Frame):
                             'Binds Location Changed',wx.YES_NO, self
                     )
                     if answer == wx.YES:
-                        self.Profile.doDeleteBindFiles(self.Profile.AllBindFiles())
+                        self.Profile.DeleteBindFiles()
                 self.Profile.ProfileBindsDir = newvalue
                 self.Profile.doSaveToFile()
 

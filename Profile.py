@@ -79,7 +79,8 @@ class Profile(wx.Notebook):
 
     def HasPowerPool(self, poolname):
         for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
-            if self.General.Ctrls[picker].GetString(self.General.Ctrls[picker].GetSelection()) == poolname:
+            pctrl = self.General.Ctrls[picker]
+            if pctrl.GetString(pctrl.GetSelection()) == poolname:
                 return True
         return False
 

@@ -388,22 +388,25 @@ class Mastermind(Page):
         self.SynchronizeUI()
 
     def SynchronizeUI(self):
-        arch = self.Profile.General.GetState('Archetype')
+        ismm = self.Profile.Archetype() == "Mastermind"
         pset = self.Profile.General.GetState('Primary')
 
-        if self.Profile.General.GetState('Name'): # profile is loaded
-            if arch == 'Mastermind':
-                names = self.MMPowerSets[ self.Profile.General.GetState('Primary') ]['names']
-                for i in (1,2,3,4,5,6):
-                    value = names[i-1]
-                    currvalue = self.GetState(f'Pet{i}Name')
-                    if not currvalue or currvalue == '':
-                        self.SetState(f'Pet{i}Name', value)
+        # TODO let's not do this for now -- we should instead maybe do a "fill with
+        # default" button?  In any case, currently if we pick MM, we get beast names
+        # loaded immediately, then they're full and don't update when we select Robots or w/e
+        #
+        # if self.Profile.General.GetState('Name'): # profile is loaded
+        #     if ismm:
+        #         names = self.MMPowerSets[ self.Profile.General.GetState('Primary') ]['names']
+        #         for i in (1,2,3,4,5,6):
+        #             value = names[i-1]
+        #             currvalue = self.GetState(f'Pet{i}Name')
+        #             if not currvalue or currvalue == '':
+        #                 self.SetState(f'Pet{i}Name', value)
 
-        for _, control in self.Ctrls.items():
-            control.Enable(bool(arch == "Mastermind" and pset))
-        self.PetNameLabel.Enable(bool(arch == "Mastermind" and pset))
-        self.PetKeyLabel .Enable(bool(arch == "Mastermind" and pset))
+        for control in self.Ctrls.values(): control.Enable(bool(ismm and pset))
+        self.PetNameLabel.Enable(bool(ismm and pset))
+        self.PetKeyLabel .Enable(bool(ismm and pset))
         self.OnPetCmdEnable()
         self.OnPetNPChange()
 

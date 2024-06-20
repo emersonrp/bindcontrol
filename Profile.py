@@ -222,7 +222,7 @@ class Profile(wx.Notebook):
             # This happens if GenerateBindsDirectoryName can't come up with something sane
             self.Parent.OnProfDirButton()
 
-        self.Parent.SetTitle(f"BindControl: {self.Name()}")
+        self.SetTitle()
 
         # now we have a named profile that we haven't saved.
         # Set it as "Modified" so we get prompted to save it.
@@ -249,9 +249,15 @@ class Profile(wx.Notebook):
             if not re.search(r'\.bcp$', pathname, flags = re.I):
                 pathname = pathname + '.bcp'
 
+            # set up our innards to be the new file
             self.Filename = Path(pathname)
+            self.ProfileBindsDir = self.GenerateBindsDirectoryName()
 
-            return self.doSaveToFile()
+            # save the new file
+            self.doSaveToFile()
+
+            # make sure we're all set up as whatever we just saved as
+            self.doLoadFromFile(str(self.Filename))
 
     def doSaveToFile(self, _ = None):
         if not self.Filename:
@@ -274,8 +280,8 @@ class Profile(wx.Notebook):
         except Exception as e:
             wx.LogError(f"Problem saving to profile {savefile}: {e}")
 
-        # TODO I can't remember why we do this on save but I'm scared to remove it
-        self.Parent.SetTitle(f"BindControl: {self.Name()}")
+        # We do this on save because we might have done "Save As" and we're now a new file
+        self.SetTitle()
 
     def AsJSON(self, small = False):
         savedata : Dict[str, Any] = {}
@@ -368,7 +374,7 @@ class Profile(wx.Notebook):
         wx.ConfigBase.Get().Write('LastProfile', pathname)
         wx.ConfigBase.Get().Flush()
         wx.LogMessage(f"Loaded profile {pathname}")
-        self.Parent.SetTitle(f"BindControl: {self.Name()}")
+        self.SetTitle()
 
     def doLoadFromJSON(self, jsonstring):
         if not jsonstring: return
@@ -462,7 +468,14 @@ class Profile(wx.Notebook):
 
                 if bindpane:
                     cbpage.AddBindToPage(bindpane = bindpane)
+
+        # finally, set the profile name on the General page
         self.ClearModified()
+
+    def SetTitle(self):
+        self.Parent.SetTitle(f"BindControl: {self.Name()}")
+        self.General.NameDisplay.SetLabel(self.Name())
+        self.General.Layout()
 
     #####################
     # Bind file functions

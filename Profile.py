@@ -361,10 +361,13 @@ class Profile(wx.Notebook):
                 else:
                     control.SetValue(value if value else '')
 
+            page.SynchronizeUI()
+
+            # Do this after SynchronizeUI for General because SynchronizeUI will blow away our powerset
+            # picks when we re-fill those pickers from the archetype.
             if pagename == 'General':
                 page.IncarnateBox.FillWith(data)
                 # Re-fill Primary and Secondary pickers, honoring old numeric indices if needed
-                page.OnPickArchetype()
                 prim = data['General'].get('Primary', None)
                 if isinstance(prim, str):
                     prim = page.Ctrls['Primary'].FindString(prim)
@@ -379,8 +382,6 @@ class Profile(wx.Notebook):
                 if isinstance(epic, str):
                     epic = page.Ctrls['Epic'].FindString(epic)
                 page.Ctrls['Epic'].SetSelection(epic)
-            else:
-                page.SynchronizeUI()  # this clears/repops the Primary/Secondary pickers on 'General' so don't do it there
 
         cbpage = getattr(self, "CustomBinds")
         if cbpage:

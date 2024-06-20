@@ -1,6 +1,13 @@
 from typing import Dict, Any
 
-Alignments = ['Hero', 'Villain', 'Vigilante', 'Rogue']
+Alignments = [
+    'Hero',
+    'Villain',
+    'Vigilante',
+    'Rogue',
+    'Resistance',
+    'Loyalist',
+]
 
 Origins = ['Magic','Mutation','Natural','Science','Technology']
 

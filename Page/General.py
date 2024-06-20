@@ -257,11 +257,14 @@ class General(Page):
 
     ### EVENT HANDLERS
     def OnPickAlignment(self, evt = None):
+        # TODO put this in Gamedata?
         bgcolor = {
-            'Hero' : (220, 220, 255),
-            'Villain' : (255, 220, 220),
-            'Vigilante' : (225, 225, 200),
-            'Rogue' : (200, 200, 200),
+            'Hero'       : (124, 129, 145),
+            'Villain'    : (180, 117, 111),
+            'Vigilante'  : (241, 213, 114),
+            'Rogue'      : (180, 180, 180),
+            'Resistance' : ( 30, 240, 255),
+            'Loyalist'   : (255, 226,  56),
         }[self.GetState('Alignment')]
         self.nameBox.SetBackgroundColour(bgcolor)
         self.NameDisplay.SetBackgroundColour(bgcolor)

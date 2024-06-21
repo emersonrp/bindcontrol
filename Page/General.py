@@ -268,6 +268,9 @@ class General(Page):
         }[self.GetState('Alignment')]
         self.nameBox.SetBackgroundColour(bgcolor)
         self.NameDisplay.SetBackgroundColour(bgcolor)
+        # Have to do this dance to make the colors refresh on Windows.  Ugh.
+        self.nameBox.Show(False)
+        self.nameBox.Show(True)
 
         if evt: evt.Skip()
 

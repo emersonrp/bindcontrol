@@ -52,20 +52,9 @@ class Main(wx.Frame):
 
         self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
-        # Start with a new profile
-
+        # start with an emptyish profile, just to have a functional object at all
         self.Profile = Profile(self)
-
         self.Sizer.Add(self.Profile, 1, wx.EXPAND)
-
-        # load up the last one if the pref says to and if it's there
-        if config.Read('StartWith') == 'Last Profile':
-            filename = config.Read('LastProfile')
-            if filename:
-                self.Profile.doLoadFromFile(filename)
-
-
-        self.PrefsDialog = PrefsDialog(self)
 
         # "Profile" Menu
         ProfMenu = wx.Menu()
@@ -159,9 +148,21 @@ class Main(wx.Frame):
             self.SetPosition((config.ReadInt('WinX'), config.ReadInt('WinY')))
 
         self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
+
+        self.PrefsDialog = PrefsDialog(self)
+
+        # Finally, load up the last one if the pref says to and if it's there
+        if config.Read('StartWith') == 'Last Profile':
+            filename = config.Read('LastProfile')
+            if filename:
+                self.Profile.doLoadFromFile(filename)
+        # otherwise make a new one.  TODO this deletes our fresh one and makes a new fresh one.
+        else:
+            self.OnNewProfile()
+
         self.CheckProfDirButtonErrors()
 
-    def OnNewProfile(self, _):
+    def OnNewProfile(self, _ = None):
         if self.Profile and self.Profile.Modified:
             result = wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
             if result == wx.YES:

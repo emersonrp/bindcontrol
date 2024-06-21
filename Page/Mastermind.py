@@ -236,6 +236,11 @@ class Mastermind(Page):
             PetInner.Add(petcb,  (3,i), flag=wx.EXPAND|wx.ALIGN_CENTER)
             PetInner.AddGrowableCol(i)
 
+        nameDefaultButton = wx.Button(PetNameSB, -1, 'Defaults')
+        nameDefaultButton.SetToolTip('Set your pet names to the default values for your powerset.')
+        nameDefaultButton.Bind(wx.EVT_BUTTON, self.OnNameDefaultButton)
+        PetInner.Add(nameDefaultButton, (1,7), flag = wx.EXPAND)
+
         petcmdenable = wx.Panel(self)
         petcmdenablesizer = wx.BoxSizer(wx.HORIZONTAL)
         petcmdenable.SetSizer(petcmdenablesizer)
@@ -390,6 +395,13 @@ class Mastermind(Page):
         self.PetKeyLabel .Enable(bool(ismm and pset))
         self.OnPetCmdEnable()
         self.OnPetNPChange()
+
+    def OnNameDefaultButton(self, _ = None):
+        result = wx.MessageBox("This will set your pet names to the default values for your powerset.  They will likely need to be changed to make by-name selection and Bodyguard Mode binds work.  Continue?", "Set To Default", wx.YES_NO)
+        if result == wx.NO: return
+        defaults = self.MMPowerSets[self.Profile.Primary()]['names']
+        for i, petname in enumerate(defaults):
+            self.SetState(f'Pet{i+1}Name', petname)
 
     def OnPetCmdEnable(self, evt = None):
         self.Freeze()

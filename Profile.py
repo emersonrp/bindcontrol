@@ -69,6 +69,8 @@ class Profile(wx.Notebook):
     # Convenience / JIT accessors
     def Name(self)         : return self.General.GetState('Name')
     def Archetype(self)    : return self.General.GetState('Archetype')
+    def Primary(self)      : return self.General.GetState('Primary')
+    def Secondary(self)    : return self.General.GetState('Secondary')
     def ResetFile(self)    : return self.GetBindFile("reset.txt")
     def BindsDir(self)     :
         return Path(wx.ConfigBase.Get().Read('BindPath')) / self.Name()

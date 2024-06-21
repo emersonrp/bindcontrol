@@ -259,8 +259,8 @@ class General(Page):
     def OnPickAlignment(self, evt = None):
         # TODO put this in Gamedata?
         bgcolor = {
-            'Hero'       : (124, 129, 145),
-            'Villain'    : (180, 117, 111),
+            'Hero'       : ( 35, 130, 212),
+            'Villain'    : (225,  65,  65),
             'Vigilante'  : (241, 213, 114),
             'Rogue'      : (180, 180, 180),
             'Resistance' : ( 30, 240, 255),

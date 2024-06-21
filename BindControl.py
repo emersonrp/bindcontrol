@@ -199,7 +199,8 @@ class Main(wx.Frame):
                 self.Profile.doLoadFromFile(filename)
         # otherwise make a new one.  TODO this deletes our fresh one and makes a new fresh one.
         else:
-            self.OnNewProfile()
+            if self.OnNewProfile() == wx.ID_CANCEL:
+                self.Close()
 
         self.CheckProfDirButtonErrors()
 
@@ -211,13 +212,14 @@ class Main(wx.Frame):
             elif result == wx.CANCEL:
                 return
 
-        dlg = wx.TextEntryDialog(self, 'Enter name for new profile:')
-        if dlg.ShowModal() == wx.ID_OK:
-            # check if we already have a bind named that.  Complex Binds use the name as
-            # part of the bindfiles' filenames, so we can't have dupes
-            newname = dlg.GetValue()
-        else:
-            return
+        with wx.TextEntryDialog(self, message = 'Enter name for new profile, for instance, the name of a character:', caption = "New Profile") as dlg:
+            result = dlg.ShowModal()
+            if result == wx.ID_OK:
+                # check if we already have a bind named that.  Complex Binds use the name as
+                # part of the bindfiles' filenames, so we can't have dupes
+                newname = dlg.GetValue()
+            else:
+                return result
 
         self.Freeze()
         try:
@@ -228,6 +230,7 @@ class Main(wx.Frame):
             self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
 
             self.Profile.LoadFromDefault(newname)
+            wx.LogMessage(f'Created New Profile "{newname}".')
 
         except Exception as e:
             wx.LogError(f"Something broke in new profile: {e}.  This is a bug.")
@@ -445,7 +448,7 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         self.Profile = self.Main.Profile
 
         # TODO bootstrapping problem, can't do this inside Profile's "__init__" because
-        # it needs to be defined deep inside its innards.  This is amateur hour stuff sigh.
+        # Profile needs to be defined/initialized deep inside its innards.
         self.Profile.CheckAllConflicts()
 
         self.Main.Show()

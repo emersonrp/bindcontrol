@@ -375,20 +375,7 @@ class Mastermind(Page):
 
     def SynchronizeUI(self):
         ismm = self.Profile.Archetype() == "Mastermind"
-        pset = self.Profile.General.GetState('Primary')
-
-        # TODO let's not do this for now -- we should instead maybe do a "fill with
-        # default" button?  In any case, currently if we pick MM, we get beast names
-        # loaded immediately, then they're full and don't update when we select Robots or w/e
-        #
-        # if self.Profile.General.GetState('Name'): # profile is loaded
-        #     if ismm:
-        #         names = self.MMPowerSets[ self.Profile.General.GetState('Primary') ]['names']
-        #         for i in (1,2,3,4,5,6):
-        #             value = names[i-1]
-        #             currvalue = self.GetState(f'Pet{i}Name')
-        #             if not currvalue or currvalue == '':
-        #                 self.SetState(f'Pet{i}Name', value)
+        pset = self.Profile.Primary()
 
         for control in self.Ctrls.values(): control.Enable(bool(ismm and pset))
         self.PetNameLabel.Enable(bool(ismm and pset))
@@ -399,9 +386,11 @@ class Mastermind(Page):
     def OnNameDefaultButton(self, _ = None):
         result = wx.MessageBox("This will set your pet names to the default values for your powerset.  They will likely need to be changed to make by-name selection and Bodyguard Mode binds work.  Continue?", "Set To Default", wx.YES_NO)
         if result == wx.NO: return
-        defaults = self.MMPowerSets[self.Profile.Primary()]['names']
-        for i, petname in enumerate(defaults):
-            self.SetState(f'Pet{i+1}Name', petname)
+        primary = self.Profile.Primary()
+        if primary:
+            defaults = self.MMPowerSets[primary]['names']
+            for i, petname in enumerate(defaults):
+                self.SetState(f'Pet{i+1}Name', petname)
 
     def OnPetCmdEnable(self, evt = None):
         self.Freeze()
@@ -438,8 +427,8 @@ class Mastermind(Page):
         if evt: evt.Skip()
 
     def OnNameTextChange(self, evt = None):
-        self.CheckBGModeNames()
-        self.CheckNamesAreUnique()
+        self.CheckUndefNames()
+        self.CheckUniqueNames()
         if evt: evt.Skip()
 
     def OnBGCheckboxes(self, evt = None):
@@ -456,12 +445,12 @@ class Mastermind(Page):
         for petid in [1,2,3,4,5,6]:
             self.Ctrls[f"Pet{petid}Bodyguard"].Enable(petcmdenabled and bgEnabled)
 
-        self.CheckBGModeNames()
-        self.CheckNamesAreUnique()
+        self.CheckUndefNames()
+        self.CheckUniqueNames()
 
         if evt: evt.Skip()
 
-    def CheckBGModeNames(self):
+    def CheckUndefNames(self):
         if self.GetState('PetBodyguardEnabled'):
             for i in (1,2,3,4,5,6):
                 ctrl = self.Ctrls[f'Pet{i}Name']
@@ -470,7 +459,7 @@ class Mastermind(Page):
                 else:
                     ctrl.AddError('undef', 'By-Name selection and Bodyguard Mode require the pet name be filled in.')
 
-    def CheckNamesAreUnique(self):
+    def CheckUniqueNames(self):
         if (self.Profile.Archetype() == "Mastermind"):
             names = []
             wasMultiWord = [False] * 6

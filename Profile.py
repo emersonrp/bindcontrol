@@ -256,6 +256,9 @@ class Profile(wx.Notebook):
             # set up our innards to be the new file
             self.Filename = Path(pathname)
             self.ProfileBindsDir = self.GenerateBindsDirectoryName()
+            if not self.ProfileBindsDir:
+                # This happens if GenerateBindsDirectoryName can't come up with something sane
+                self.Parent.OnProfDirButton()
 
             # save the new file
             self.doSaveToFile()
@@ -493,13 +496,52 @@ class Profile(wx.Notebook):
 
         return self.BindFiles[key]
 
+    # making this "not mine" so we can return False if everything's fine,
+    # or the existing Profile name if something's wrong
+    def BindsDirNotMine(self):
+        IDFile = self.ProfileIDFile()
+        if IDFile:
+            # If the file is even there...
+            if IDFile.exists():
+                profilename = IDFile.read_text()
+
+                if profilename == self.Name():
+                    # OK, this is our bindsdir, great
+                    return False
+                else:
+                    # Oh noes someone else has written binds here, return the name
+                    return profilename
+            else:
+                # the file doesn't exist, so bindsdir has not been claimed by another profile
+                return False
+        else:
+            raise Exception("Profile.ProfileIDFile() returned nothing, not checking IDFile!")
+
     def WriteBindFiles(self):
         if not self.ProfileBindsDir:
             wx.MessageBox("Profile Binds Directory is not valid, please correct this.")
             return
 
-        # Start by making reset load itself.  This might get overridden with
-        # more elaborate load strings in like MovementPowers, but this is the safety
+        # Create the BindsDir if it doesn't exist
+        try:
+            self.BindsDir().mkdir(parents = True, exist_ok = True)
+        except Exception as e:
+            wx.LogError("Can't make binds directory {self.BindsDir()}: {e}")
+            return
+
+
+        # TODO!!!  check self.BindsDirNotMine(), if we're somebody elses, wx.MessageBox
+        # an "Are you sure?" notion, bail out if not.
+
+        # write the ProfileID file that identifies this directory as "belonging to" this profile
+        try:
+            self.ProfileIDFile().write_text(self.Name())
+        except Exception as e:
+            wx.LogError("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
+            return
+
+        # Start by making the bind to make the reset load itself.  This might get overridden with
+        # more elaborate load strings in like MovementPowers, but this is the safety fallback
 
         config = wx.ConfigBase.Get()
         resetfile = self.ResetFile()
@@ -561,7 +603,7 @@ class Profile(wx.Notebook):
         self.BindFiles = {}
 
     def AllBindFiles(self):
-        files = [self.ResetFile()]
+        files = [self.ResetFile(), self.ProfileIDFile()]
         dirs  = []
         for pageName in self.Pages:
             page = getattr(self, pageName)

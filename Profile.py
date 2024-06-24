@@ -500,7 +500,7 @@ class Profile(wx.Notebook):
         if IDFile:
             # If the file is even there...
             if IDFile.exists():
-                profilename = IDFile.read_text()
+                profilename = IDFile.read_text().strip()
 
                 if profilename == self.Name():
                     # OK, this is our bindsdir, great
@@ -524,17 +524,22 @@ class Profile(wx.Notebook):
             self.BindsDir().mkdir(parents = True, exist_ok = True)
         except Exception as e:
             wx.LogError("Can't make binds directory {self.BindsDir()}: {e}")
+            wx.MessageBox("Can't make binds directory {self.BindsDir()}: {e}")
             return
 
 
-        # TODO!!!  check self.BindsDirNotMine(), if we're somebody elses, wx.MessageBox
-        # an "Are you sure?" notion, bail out if not.
+        otherProfile = self.BindsDirNotMine()
+        if otherProfile:
+            # this directory belongs to someone else
+            answer = wx.MessageBox(f"The binds directory {self.BindsDir()} contains binds from the profile \"{otherProfile}\" -- overwrite?", "Confirm", wx.YES_NO)
+            if answer == wx.NO: return
 
         # write the ProfileID file that identifies this directory as "belonging to" this profile
         try:
             self.ProfileIDFile().write_text(self.Name())
         except Exception as e:
             wx.LogError("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
+            wx.MessageBox("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
             return
 
         # Start by making the bind to make the reset load itself.  This might get overridden with
@@ -597,7 +602,7 @@ class Profile(wx.Notebook):
         self.BindFiles = {}
 
     def AllBindFiles(self):
-        files = [self.ResetFile(), self.ProfileIDFile()]
+        files = [self.ResetFile()]
         dirs  = []
         for pageName in self.Pages:
             page = getattr(self, pageName)
@@ -662,6 +667,13 @@ class Profile(wx.Notebook):
 
             dlg.Update(progress, str(file.Path))
             progress = progress + 1
+
+
+        # remove the ProfileID file
+        try:
+            self.ProfileIDFile().unlink()
+        except Exception as e:
+            wx.LogMessage(f"Can't delete ProfileID file: {e}")
 
         # try the directories
         for bdir in bindfiles['dirs']:

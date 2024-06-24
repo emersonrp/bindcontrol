@@ -433,8 +433,9 @@ class Profile(wx.Notebook):
         feedback = 't $name, Resetting keybinds.'
         resetfile.SetBind(config.Read('ResetKey'), "Reset Key", "Preferences", [keybindreset , feedback, resetfile.BLF()])
 
-        errors = donefiles = 0
-        #
+        errors = 0
+        donefiles = 0
+
         # Go to each page....
         for pageName in self.Pages:
             page = getattr(self, pageName)
@@ -454,19 +455,18 @@ class Profile(wx.Notebook):
         dlg = wx.ProgressDialog('Writing Bind Files','',
             maximum = totalfiles, style=wx.PD_APP_MODAL|wx.PD_AUTO_HIDE)
 
-        for filename, bindfile in self.BindFiles.items():
+        for bindfile in self.BindFiles.values():
             try:
-                donefiles += 1
                 bindfile.Write()
+                donefiles += 1
             except Exception as e:
                 if config.ReadBool('CrashOnBindError'):
                     raise e
                 else:
-                    wx.LogError(f"Failed to write bindfile {filename}: {e}")
-                    donefiles -= 1
+                    wx.LogError(f"Failed to write bindfile {bindfile.Path}: {e}")
                     errors += 1
 
-            dlg.Update(donefiles, filename)
+            dlg.Update(donefiles, str(bindfile.Path))
 
         dlg.Destroy()
 

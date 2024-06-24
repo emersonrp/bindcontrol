@@ -1,5 +1,5 @@
 import re
-from pathlib import Path, PureWindowsPath
+from pathlib import PurePath, Path, PureWindowsPath
 from typing import Dict, Any
 import json
 import codecs
@@ -406,15 +406,14 @@ class Profile(wx.Notebook):
 
     #####################
     # Bind file functions
-    def GetBindFile(self, *filename):
-        # Store them internally as a simple string
-        # but send BindFile the list of path parts
-        filename_key = "!!".join(filename)
+    def GetBindFile(self, *filebits):
+        filepath = PurePath(*filebits)
+        key = str(filepath)
 
-        if not self.BindFiles.get(filename_key, None):
-            self.BindFiles[filename_key] = BindFile(self, *filename)
+        if not self.BindFiles.get(key, None):
+            self.BindFiles[key] = BindFile(self, filepath)
 
-        return self.BindFiles[filename_key]
+        return self.BindFiles[key]
 
 
     def WriteBindFiles(self):

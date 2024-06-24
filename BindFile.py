@@ -1,6 +1,6 @@
 import re
 import inspect
-from pathlib import Path, PureWindowsPath
+from pathlib import PurePath, Path, PureWindowsPath
 from BLF import BLF
 
 class KeyBind():
@@ -34,14 +34,14 @@ class KeyBind():
 
 class BindFile():
 
-    def __init__(self, profile, *pathbits):
+    def __init__(self, profile, pathbits:PurePath):
 
         self.Profile      = profile
         self.BindsDir     = profile.BindsDir()
         self.GameBindsDir = profile.GameBindsDir()
 
-        self.Path     = Path           (self.BindsDir,     *pathbits)
-        self.GamePath = PureWindowsPath(self.GameBindsDir, *pathbits)
+        self.Path     = Path           (self.BindsDir,     pathbits)
+        self.GamePath = PureWindowsPath(self.GameBindsDir, pathbits)
 
         self.KeyBinds = {}
 

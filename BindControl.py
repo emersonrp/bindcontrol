@@ -181,7 +181,7 @@ class Main(wx.Frame):
             self.Profile.LoadFromDefault()
 
         except Exception as e:
-            wx.LogError(f"Something broke in new profile: {e}")
+            wx.LogError(f"Something broke in new profile: {e}.  This is a bug.")
         finally:
             self.Layout()
             self.Thaw()

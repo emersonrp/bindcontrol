@@ -70,6 +70,9 @@ class PrefsDialog(wx.Dialog):
         self.StartWithLastProfile.SetToolTip("Load the last profile you were working with when you start the program.")
         generalSizer.Add (self.StartWithLastProfile, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
+        setattr(StartWithLastProfileLabel, 'CB', self.StartWithLastProfile)
+        StartWithLastProfileLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
+
         ProfilePathLabel = wx.StaticText(generalPanel, label = "Path for saved profiles:")
         generalSizer.Add( ProfilePathLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ProfileDirPicker = wx.DirPickerCtrl(generalPanel, path = config.Read('ProfilePath'))

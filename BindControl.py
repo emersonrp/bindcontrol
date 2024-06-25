@@ -200,6 +200,7 @@ class Main(wx.Frame):
         # otherwise make a new one.  TODO this deletes our fresh one and makes a new fresh one.
         else:
             if self.OnNewProfile() == wx.ID_CANCEL:
+                # TODO - maybe message box "You need to pick a profile name"
                 self.Close()
 
         self.CheckProfDirButtonErrors()
@@ -212,14 +213,21 @@ class Main(wx.Frame):
             elif result == wx.CANCEL:
                 return
 
-        with wx.TextEntryDialog(self, message = 'Enter name for new profile, for instance, the name of a character:', caption = "New Profile") as dlg:
-            result = dlg.ShowModal()
-            if result == wx.ID_OK:
-                # check if we already have a bind named that.  Complex Binds use the name as
-                # part of the bindfiles' filenames, so we can't have dupes
-                newname = dlg.GetValue()
-            else:
-                return result
+        # loop eternally until we get a name we like
+        while True:
+            with wx.TextEntryDialog(self, message = 'Enter name for new profile, for instance, the name of a character:', caption = "New Profile") as dlg:
+                result = dlg.ShowModal()
+                if result == wx.ID_OK:
+                    newname = dlg.GetValue()
+                    if not newname:
+                        continue
+                    checkprofile = self.Profile.ProfilePath() / f"{newname}.bcp"
+                    if checkprofile.exists():
+                        wx.MessageBox(f"A profile called {newname} already exists.  Please select another name.")
+                        continue
+                    break
+                else:
+                    return result
 
         self.Freeze()
         try:

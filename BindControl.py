@@ -466,7 +466,7 @@ class Main(wx.Frame):
             config.WriteBool('FlushAllBinds', self.PrefsDialog.FlushAllBinds.GetValue())
             config.Write('ResetKey', self.PrefsDialog.ResetKey.GetLabel())
 
-            config.Write('StartWithLastProfile', self.PrefsDialog.StartWithLastProfile.GetValue())
+            config.WriteBool('StartWithLastProfile', self.PrefsDialog.StartWithLastProfile.GetValue())
             config.Write('ProfilePath', self.PrefsDialog.ProfileDirPicker.GetPath())
 
             config.WriteBool('SaveSizeAndPosition', self.PrefsDialog.SaveSizeAndPosition.GetValue())
@@ -547,6 +547,8 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         import builtins
         import functools
         builtins.print = functools.partial(print, flush=True)
+
+        self.Profile = None  # needed inside Main()
 
         self.Init()
         self.Main = Main(None)

@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 import sys, os, platform, re
+from pathlib import Path, PureWindowsPath
 
 import wx
 import wx.lib.mixins.inspection
 import wx.adv
 import wx.html
-from bcVersion import current_version
 
-from pathlib import Path, PureWindowsPath
+from bcVersion import current_version
+from Icon import GetIcon
 from Profile import Profile
 from UI.PrefsDialog import PrefsDialog
 from Help import ShowHelpWindow
@@ -20,6 +21,9 @@ class Main(wx.Frame):
 
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, title = "BindControl")
+
+        self.Profile = None
+        self.StartupPanel = None
 
         self.about_info = None
 
@@ -42,29 +46,29 @@ class Main(wx.Frame):
         if not config.Exists('ResetKey')            : config.Write('ResetKey', 'LCTRL+R')
         if not config.Exists('UseSplitModKeys')     : config.WriteBool('UseSplitModKeys', False)
         if not config.Exists('FlushAllBinds')       : config.WriteBool('FlushAllBinds', True)
-        if not config.Exists('StartWith')           : config.Write('StartWith', 'Last Profile')
+        if not config.Exists('StartWithLastProfile'): config.WriteBool('StartWithLastProfile', True)
         if not config.Exists('ProfilePath')         : config.Write('ProfilePath', str(Path.home() / "Documents" / "bindcontrol"))
         if not config.Exists('SaveSizeAndPosition') : config.WriteBool('SaveSizeAndPosition', True)
         if not config.Exists('VerboseBLF')          : config.WriteBool('VerboseBLF', False)
         if not config.Exists('CrashOnBindError')    : config.WriteBool('CrashOnBindError', False)
         if not config.Exists('ShowInspector')       : config.WriteBool('ShowInspector', False)
+        # migrate old "start with" preference.  Maybe remove this someday
+        if config.Exists('StartWith'):
+            config.WriteBool('StartWithLastProfile', config.Read('StartWith') == "Last Profile")
+            config.DeleteEntry('StartWith')
         config.Flush()
 
         self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
-        # start with an emptyish profile, just to have a functional object at all
-        self.Profile = Profile(self)
-        self.Sizer.Add(self.Profile, 1, wx.EXPAND)
-
         # "Profile" Menu
         ProfMenu = wx.Menu()
 
-        Profile_new         = ProfMenu.Append(-1, "New Profile", "Create a new profile")
-        Profile_load        = ProfMenu.Append(-1, "Load Profile...", "Load an existing profile")
-        Profile_save        = ProfMenu.Append(-1, "&Save Profile\tCTRL-S", "Save the current profile")
-        Profile_saveas      = ProfMenu.Append(-1, "Save Profile As...", "Save the current profile under a new filename")
+        Profile_new         = ProfMenu.Append(wx.ID_NEW, "&New Profile\tCTRL-N", "Create a new profile")
+        Profile_load        = ProfMenu.Append(wx.ID_OPEN, "&Load Profile...\tCTRL-L", "Load an existing profile")
+        self.Profile_save   = ProfMenu.Append(wx.ID_SAVE, "&Save Profile\tCTRL-S", "Save the current profile")
+        self.Profile_saveas = ProfMenu.Append(wx.ID_SAVEAS, "Save Profile As...", "Save the current profile under a new filename")
         ProfMenu.AppendSeparator()
-        Profile_savedefault = ProfMenu.Append(-1, "Save Profile As Default", "Save the current profile as the default for new profiles")
+        self.Profile_savedefault = ProfMenu.Append(wx.ID_ANY, "Save Profile As Default", "Save the current profile as the default for new profiles")
         ProfMenu.AppendSeparator()
         Profile_preferences = ProfMenu.Append(wx.ID_PREFERENCES, "&Preferences", "Configure BindControl")
         Profile_exit  = ProfMenu.Append(wx.ID_EXIT)
@@ -72,17 +76,16 @@ class Main(wx.Frame):
         # "Help" Menu
         HelpMenu = wx.Menu()
 
-        Help_manual  = HelpMenu.Append(-1,"Manual","User's Manual")
-        Help_faq     = HelpMenu.Append(-1,"FAQ","Frequently Asked Questions")
-        Help_files   = HelpMenu.Append(-1,"Files","About BindControl's Output Files")
-        Help_license = HelpMenu.Append(-1,"License Info","")
-        Help_about   = HelpMenu.Append(wx.ID_ABOUT)
-
+        Help_manual  = HelpMenu.Append(wx.ID_ANY,"Manual","User's Manual")
+        Help_faq     = HelpMenu.Append(wx.ID_ANY,"FAQ","Frequently Asked Questions")
         Help_faq.Enable(False)
+        Help_files   = HelpMenu.Append(wx.ID_ANY,"Files","About BindControl's Output Files")
+        Help_license = HelpMenu.Append(wx.ID_ANY,"License Info","")
+        Help_about   = HelpMenu.Append(wx.ID_ABOUT)
 
         LogMenu = wx.Menu()
 
-        Log_window = LogMenu.Append(-1, "Log Window", "Show the log window")
+        Log_window = LogMenu.Append(wx.ID_ANY, "Log Window", "Show the log window")
 
         # cram the separate menus into a menubar
         MenuBar = wx.MenuBar()
@@ -94,11 +97,11 @@ class Main(wx.Frame):
         self.SetMenuBar(MenuBar)
 
         # MENUBAR EVENTS
-        self.Bind(wx.EVT_MENU , self.OnNewProfile          , Profile_new)
+        self.Bind(wx.EVT_MENU , self.OnProfileNew          , Profile_new)
         self.Bind(wx.EVT_MENU , self.OnProfileLoad         , Profile_load)
-        self.Bind(wx.EVT_MENU , self.OnProfileSave         , Profile_save)
-        self.Bind(wx.EVT_MENU , self.OnProfileSaveAs       , Profile_saveas)
-        self.Bind(wx.EVT_MENU , self.OnProfileSaveDefault  , Profile_savedefault)
+        self.Bind(wx.EVT_MENU , self.OnProfileSave         , self.Profile_save)
+        self.Bind(wx.EVT_MENU , self.OnProfileSaveAs       , self.Profile_saveas)
+        self.Bind(wx.EVT_MENU , self.OnProfileSaveDefault  , self.Profile_savedefault)
         self.Bind(wx.EVT_MENU , self.OnMenuPrefsDialog     , Profile_preferences)
         self.Bind(wx.EVT_MENU , self.OnMenuExitApplication , Profile_exit)
 
@@ -119,30 +122,46 @@ class Main(wx.Frame):
         # BUTTONS
         self.ProfDirButton = cgButton(self, -1, "Set Binds Location")
         self.ProfDirButton.SetToolTip("Configure the location where this Profile will write bindfiles")
-        WriteButton = wx.Button(self, -1, "Write Binds")
-        WriteButton.SetToolTip("Write out the bindfiles to the configured binds directory")
-        DeleteButton = wx.Button(self, -1, "Delete All Binds")
-        DeleteButton.SetToolTip("Delete all BindControl-managed files in the configured binds directory")
+        self.WriteButton = wx.Button(self, -1, "Write Binds")
+        self.WriteButton.SetToolTip("Write out the bindfiles to the configured binds directory")
+        self.DeleteButton = wx.Button(self, -1, "Delete All Binds")
+        self.DeleteButton.SetToolTip("Delete all BindControl-managed files in the configured binds directory")
         writeSizer = wx.BoxSizer(wx.HORIZONTAL)
         writeSizer.Add(self.ProfDirButton, 0, wx.EXPAND)
-        writeSizer.Add(WriteButton, 1, wx.EXPAND)
-        writeSizer.Add(DeleteButton, 0, wx.EXPAND)
-        self.Sizer.Add(writeSizer,  0, wx.EXPAND | wx.ALL, 10)
+        writeSizer.Add(self.WriteButton, 1, wx.EXPAND)
+        writeSizer.Add(self.DeleteButton, 0, wx.EXPAND)
         self.ProfDirButton.Bind(wx.EVT_BUTTON, self.OnProfDirButton)
-        WriteButton  .Bind(wx.EVT_BUTTON, self.OnWriteBindsButton)
-        DeleteButton .Bind(wx.EVT_BUTTON, self.OnDeleteBindsButton)
+        self.WriteButton  .Bind(wx.EVT_BUTTON, self.OnWriteBindsButton)
+        self.DeleteButton .Bind(wx.EVT_BUTTON, self.OnDeleteBindsButton)
 
         # Do not SetSizerAndFit() - Fit() is poison
         self.SetSizer(self.Sizer)
 
+        # Finally, load up the last one if the pref says to and if it's there
+        filename = config.Read('LastProfile')
+        if (config.Read('StartWith') == 'Last Profile' or config.ReadBool('StartWithLastProfile')) and filename:
+            self.Profile = Profile(self)
+            self.Profile.doLoadFromFile(filename)
+            self.Sizer.Add(self.Profile, 1, wx.EXPAND)
+            self.CheckProfDirButtonErrors()
+
+        # otherwise show the two big buttons
+        else:
+            self.StartupPanel = self.MakeStartupPanel()
+            self.Sizer.Add(self.StartupPanel, 1, wx.EXPAND)
+
+        self.Sizer.Add(writeSizer,  0, wx.EXPAND | wx.ALL, 10)
+
+        (width, height) = (1100, 800)
         if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinH') and config.HasEntry('WinW'):
             height = config.ReadInt('WinH')
             width  = config.ReadInt('WinW')
-        else:
+        elif self.Profile:
             height = self.Profile.GetBestSize().height
             width  = self.Profile.GetBestSize().width + 24 # account for Profile's padding
 
-        self.SetSize((width, height))
+        if width and height:
+            self.SetSize((width, height))
 
         if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinX') and config.HasEntry('WinY'):
             self.SetPosition((config.ReadInt('WinX'), config.ReadInt('WinY')))
@@ -151,27 +170,48 @@ class Main(wx.Frame):
 
         self.PrefsDialog = PrefsDialog(self)
 
-        # Finally, load up the last one if the pref says to and if it's there
-        if config.Read('StartWith') == 'Last Profile':
-            filename = config.Read('LastProfile')
-            if filename:
-                self.Profile.doLoadFromFile(filename)
-        # otherwise make a new one.  TODO this deletes our fresh one and makes a new fresh one.
-        else:
-            if self.OnNewProfile() == wx.ID_CANCEL:
-                # TODO - maybe message box "You need to pick a profile name"
-                self.Close()
+        self.SetupProfileUI()
 
-        self.CheckProfDirButtonErrors()
+    # This is the two-button "start new profile" vs "load existing profile" panel
+    def MakeStartupPanel(self):
+        StartupPanel = wx.Panel(self)
 
-    def OnNewProfile(self, _ = None):
-        if self.Profile and self.Profile.Modified:
-            result = wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
-            if result == wx.YES:
-                self.Profile.doSaveToFile()
-            elif result == wx.CANCEL:
-                return
+        StartupSizer = wx.BoxSizer(wx.VERTICAL)
 
+        ButtonSizer = wx.GridSizer(2, 10, 10)
+        newButton  = wx.Button(StartupPanel, -1, "Start New Profile")
+        newButton.SetBitmap(GetIcon('UI/new_profile'))
+        newButton.SetBitmapPosition(wx.TOP)
+        loadButton = wx.Button(StartupPanel, -1, "Load Existing Profile")
+        loadButton.SetBitmap(GetIcon('UI/load_profile'))
+        loadButton.SetBitmapPosition(wx.TOP)
+        ButtonSizer.Add(newButton, 1, wx.EXPAND)
+        ButtonSizer.Add(loadButton, 1, wx.EXPAND)
+
+        newButton.Bind(wx.EVT_BUTTON, self.OnProfileNew)
+        loadButton.Bind(wx.EVT_BUTTON, self.OnProfileLoad)
+
+        StartupSizer.AddStretchSpacer(1)
+        StartupSizer.Add(ButtonSizer, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, 50)
+        StartupSizer.AddStretchSpacer(1)
+
+        StartupPanel.SetSizer(StartupSizer)
+        StartupPanel.Layout()
+
+        return StartupPanel
+
+    def SetupProfileUI(self):
+        enable = self.Profile != None
+        self.Profile_save.Enable(enable)
+        self.Profile_saveas.Enable(enable)
+        self.Profile_savedefault.Enable(enable)
+        self.ProfDirButton.Enable(enable)
+        # TODO - do smarter things with enabling the write and delete buttons
+        self.WriteButton.Enable(enable)
+        self.DeleteButton.Enable(enable)
+
+    def OnProfileNew(self, _ = None):
+        self.CheckIfProfileNeedsSaving()
         # loop eternally until we get a name we like
         while True:
             with wx.TextEntryDialog(self, message = 'Enter name for new profile, for instance, the name of a character:', caption = "New Profile") as dlg:
@@ -180,7 +220,7 @@ class Main(wx.Frame):
                     newname = dlg.GetValue()
                     if not newname:
                         continue
-                    checkprofile = self.Profile.ProfilePath() / f"{newname}.bcp"
+                    checkprofile = Path(wx.ConfigBase.Get().Read('ProfilePath'))/ f"{newname}.bcp"
                     if checkprofile.exists():
                         wx.MessageBox(f"A profile called {newname} already exists.  Please select another name.")
                         continue
@@ -191,7 +231,8 @@ class Main(wx.Frame):
         self.Freeze()
         try:
             self.Sizer.Remove(0)
-            self.Profile.Destroy()
+            if self.Profile:
+                self.Profile.Destroy()
 
             self.Profile = Profile(self)
             self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
@@ -202,18 +243,58 @@ class Main(wx.Frame):
         except Exception as e:
             wx.LogError(f"Something broke in new profile: {e}")
         finally:
+            self.SetupProfileUI()
             self.CheckProfDirButtonErrors()
             self.Layout()
             self.Thaw()
 
     def OnProfileLoad(self, evt):
-        self.Profile.LoadFromFile(evt)
+        self.CheckIfProfileNeedsSaving()
+
+        try:
+            # Start with a "detached" profile that we'll load into and then insert
+            newProfile = Profile(self)
+
+            # Try to load;  if the user hits "cancel" go back to where we were
+            if not newProfile.LoadFromFile(evt):
+                newProfile.Destroy()
+                return
+
+            # OK, we're either at the startup panel or we have a profile.  Either way, remove it:
+            self.Sizer.Remove(0)
+
+            # delete any existing Profile and all its subwidgets and geegaws
+            if self.Profile: self.Profile.Destroy()
+
+            # and set up our new profile as the current one
+            self.Profile = newProfile
+            self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
+            self.Layout()
+
+        except Exception as e:
+            wx.LogError(f"Something broke while setting up profile load: {e}")
+            return
+
+        # OK, we made it, set up the UI bits etc.
+        self.SetupProfileUI()
         self.CheckProfDirButtonErrors()
-    def OnProfileSave(self, evt)      : self.Profile.doSaveToFile(evt)
-    def OnProfileSaveAs(self, evt)    : self.Profile.SaveToFile(evt)
-    def OnProfileSaveDefault(self, _) : self.Profile.SaveAsDefault()
+        wx.ConfigBase.Get().Write('LastProfile', str(newProfile.Filename))
+        wx.ConfigBase.Get().Flush()
+
+    def OnProfileSave(self, evt):
+        if not self.Profile: return
+        self.Profile.doSaveToFile(evt)
+
+    def OnProfileSaveAs(self, evt):
+        if not self.Profile: return
+        self.Profile.SaveToFile(evt)
+
+    def OnProfileSaveDefault(self, _):
+        if not self.Profile: return
+        self.Profile.SaveAsDefault()
 
     def OnProfDirButton(self, _ = None):
+        if not self.Profile: return # should try not to get here in the first place
         ProfDirDialog = wx.Dialog(self, -1, "Set Binds Location")
 
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -268,7 +349,16 @@ class Main(wx.Frame):
 
         self.CheckProfDirButtonErrors()
 
+    def CheckIfProfileNeedsSaving(self):
+        if self.Profile and self.Profile.Modified:
+            result = wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
+            if result == wx.YES:
+                self.Profile.doSaveToFile()
+            elif result == wx.CANCEL:
+                return
+
     def CheckProfDirButtonErrors(self):
+        if not self.Profile: return
         if self.Profile.ProfileBindsDir:
             self.ProfDirButton.RemoveError('undef')
         else:
@@ -317,9 +407,11 @@ class Main(wx.Frame):
                 textctrl.RemoveWarning('exists')
 
     def OnWriteBindsButton(self, _):
+        if not self.Profile: return
         self.Profile.WriteBindFiles()
 
     def OnDeleteBindsButton(self, _):
+        if not self.Profile: return
         self.Profile.DeleteBindFiles()
 
     def OnMenuPrefsDialog(self, _):
@@ -332,8 +424,7 @@ class Main(wx.Frame):
             config.WriteBool('FlushAllBinds', self.PrefsDialog.FlushAllBinds.GetValue())
             config.Write('ResetKey', self.PrefsDialog.ResetKey.GetLabel())
 
-            startwith = "New Profile" if self.PrefsDialog.StartWithNewProfile.GetValue() else "Last Profile"
-            config.Write('StartWith', startwith)
+            config.Write('StartWithLastProfile', self.PrefsDialog.StartWithLastProfile.GetValue())
             config.Write('ProfilePath', self.PrefsDialog.ProfileDirPicker.GetPath())
 
             config.WriteBool('SaveSizeAndPosition', self.PrefsDialog.SaveSizeAndPosition.GetValue())
@@ -390,7 +481,7 @@ class Main(wx.Frame):
         ShowHelpWindow(self, 'OutputFiles.html')
 
     def OnWindowClosing(self, evt):
-        if self.Profile.Modified:
+        if self.Profile and self.Profile.Modified:
             result = wx.MessageBox("Profile not saved, save now?", "Profile modified",wx.YES_NO|wx.CANCEL)
             if result == wx.YES:
                 self.Profile.doSaveToFile()
@@ -414,15 +505,14 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         import functools
         builtins.print = functools.partial(print, flush=True)
 
-        self.Profile = None
-
         self.Init()
         self.Main = Main(None)
         self.Profile = self.Main.Profile
 
         # TODO bootstrapping problem, can't do this inside Profile's "__init__" because
         # Profile needs to be defined/initialized deep inside its innards.
-        self.Profile.CheckAllConflicts()
+        if self.Profile:
+            self.Profile.CheckAllConflicts()
 
         self.Main.Show()
 

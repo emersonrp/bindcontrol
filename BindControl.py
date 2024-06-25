@@ -231,8 +231,11 @@ class Main(wx.Frame):
         self.Freeze()
         try:
             self.Sizer.Remove(0)
-            if self.Profile:
-                self.Profile.Destroy()
+
+            if self.Profile: self.Profile.Destroy()
+
+            # destroy the Startup Panel if it's there.  This is only needed on Windows dunno why.
+            if self.StartupPanel: self.StartupPanel.Destroy()
 
             self.Profile = Profile(self)
             self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
@@ -260,11 +263,16 @@ class Main(wx.Frame):
                 newProfile.Destroy()
                 return
 
+            self.Freeze()
+
             # OK, we're either at the startup panel or we have a profile.  Either way, remove it:
             self.Sizer.Remove(0)
 
             # delete any existing Profile and all its subwidgets and geegaws
             if self.Profile: self.Profile.Destroy()
+
+            # destroy the Startup Panel if it's there.  This is only needed on Windows dunno why.
+            if self.StartupPanel: self.StartupPanel.Destroy()
 
             # and set up our new profile as the current one
             self.Profile = newProfile
@@ -274,6 +282,9 @@ class Main(wx.Frame):
         except Exception as e:
             wx.LogError(f"Something broke while setting up profile load: {e}")
             return
+
+        finally:
+            self.Thaw()
 
         # OK, we made it, set up the UI bits etc.
         self.SetupProfileUI()

@@ -125,8 +125,8 @@ class Profile(wx.Notebook):
         # TODO - This could cause trouble if someone has some weird all-Unicode name
         profileName = re.sub(r'\W+', '', self.Name())
 
-        # by default, let's just use the first four letters of the Name():
-        bindsdirname = profileName[:4]
+        # by default, let's just use the first five letters of the Name():
+        bindsdirname = profileName[:5]
 
         # but let's try more clever things, too:
 
@@ -143,11 +143,8 @@ class Profile(wx.Notebook):
                 bindsdirname = ''.join(capitalletters)
 
         # MSDOS still haunts us
-        if bindsdirname.upper() in [
-            'CON', 'PRN', 'AUX', 'NUL',
-            'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'COM0',
-            'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9', 'LPT0',
-        ]: bindsdirname = ''
+        if PureWindowsPath(bindsdirname).is_reserved():
+            bindsdirname = ''
 
         # finally, if it's too short (1 character, ie they only had a single [a-z0-9]
         # in the original profilename), let's empty it to force an error

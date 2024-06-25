@@ -7,7 +7,7 @@ import wx.adv
 import wx.html
 from bcVersion import current_version
 
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from Profile import Profile
 from UI.PrefsDialog import PrefsDialog
 from Help import ShowHelpWindow
@@ -299,15 +299,22 @@ class Main(wx.Frame):
         else:
             textctrl.RemoveError('spaces')
 
-        # TODO this is two places, make it a helper method somewhere
-        if value.upper() in [
-            'CON', 'PRN', 'AUX', 'NUL',
-            'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'COM0',
-            'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9', 'LPT0',
-        ]:
+        if PureWindowsPath(value).is_reserved():
             textctrl.AddError('reserved', 'The name you have selected is a reserved filename in Windows.  Please select another.')
         else:
             textctrl.RemoveError('reserved')
+
+        if value: # don't do this check if it's blank
+            exists = False
+            # look at the existing bindsdirs and see if we match
+            for bindsdir in Path(wx.ConfigBase.Get().Read('BindPath')).glob('*'):
+                if bindsdir.name.lower() == value.lower():
+                    exists = True
+                    break
+            if exists:
+                textctrl.AddWarning('exists', 'The directory you have selected exists, and might be managed by another profile.  This is not an error, but be sure this is where you want to save your binds.')
+            else:
+                textctrl.RemoveWarning('exists')
 
     def OnWriteBindsButton(self, _):
         self.Profile.WriteBindFiles()

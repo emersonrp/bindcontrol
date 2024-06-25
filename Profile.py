@@ -348,11 +348,12 @@ class Profile(wx.Notebook):
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 wx.LogMessage("User canceled loading profile")
-                return     # the user changed their mind
+                return False     # the user changed their mind
 
             # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
             self.doLoadFromFile(pathname)
+            return True
 
     def doLoadFromFile(self, pathname):
         with Path(pathname) as file:
@@ -375,8 +376,6 @@ class Profile(wx.Notebook):
         if not self.ProfileBindsDir:
             self.ProfileBindsDir = self.Filename.stem
 
-        wx.ConfigBase.Get().Write('LastProfile', pathname)
-        wx.ConfigBase.Get().Flush()
         wx.LogMessage(f"Loaded profile {pathname}")
         self.SetTitle()
 

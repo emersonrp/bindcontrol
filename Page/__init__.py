@@ -33,7 +33,7 @@ class Page(wx.ScrolledWindow):
     def GetState(self, key):
         control = self.Ctrls.get(key, None)
         if not control:
-            wx.LogError(f"Unknown control in GetState: {key}")
+            wx.LogWarning(f"Unknown control in GetState: {key} - this is a bug.")
             return ''
         # We might be tempted to short-circuit out if the control is not enabled
         # but that breaks things terribly during window init.  Might be worth tracking
@@ -53,14 +53,14 @@ class Page(wx.ScrolledWindow):
         elif getattr(control, 'GetPath', None):
             return control.GetPath()
         else:
-            wx.LogError(f"{control} has no GetValue()")
+            wx.LogError(f"{control} has no GetValue() - this is a bug.")
             return ''
 
     def SetState(self, key, value):
         control = self.Ctrls.get(key, None)
 
         if not control:
-            wx.LogError(f"Got into SetState for key {key} with no control")
+            wx.LogError(f"Got into SetState for key {key} with no control - this is a bug.")
             return
 
         if isinstance(control, wx.Button):
@@ -75,7 +75,7 @@ class Page(wx.ScrolledWindow):
         elif getattr(control, 'SetPath', None):
             return control.SetPath(value)
         else:
-            wx.LogError(f"{control} has no SetValue()")
+            wx.LogError(f"{control} has no SetValue() - this is a bug.")
 
 
     # disable controls by name
@@ -100,9 +100,8 @@ class Page(wx.ScrolledWindow):
         return 'Help not currently implemented here.'
 
     # return a list of all bindfiles
-    # TODO - list of filenames?  list of actual BindFile objects?
     def AllBindFiles(self):
-        wx.LogError("AllBindFiles called on parent Page, needs implementing somewhere.")
+        wx.LogWarning(f"AllBindFiles called on parent Page, needs implementing in {type(self).__name__}.")
         return {
             'files' : [],
             'dirs'  : [],

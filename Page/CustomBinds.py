@@ -63,7 +63,7 @@ class CustomBinds(Page):
     def AddBindToPage(self, bindpane = None):
 
         if not bindpane:
-            wx.LogError("Something tried to add an empty bindpane to the page")
+            wx.LogError("Something tried to add an empty bindpane to the page.  This is a bug.")
             return
 
         if not bindpane.Title: # this is from a "New Bind" button
@@ -116,7 +116,7 @@ class CustomBinds(Page):
         if not bindpane:
             bindpane = evt.GetEventObject().BindPane
         if not bindpane:
-            wx.LogError("Tried to set a BindPane label without a bindpane!")
+            wx.LogError("Tried to set a BindPane label without a bindpane.  This is a bug.")
             return
 
         # freeze and thaw to jump thru some hoops to make the title display update on Windows

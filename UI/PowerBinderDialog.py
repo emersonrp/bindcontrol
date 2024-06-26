@@ -80,7 +80,7 @@ class PowerBinderDialog(wx.Dialog):
             for type, data in item.items():
                 commandClass = commandClasses.get(type, None)
                 if not commandClass:
-                    wx.LogError(f"Profile contained unknown custom bind command class {type}!")
+                    wx.LogError(f"Profile contained unknown custom bind command class {type}; ignoring it and continuing.")
                     return
                 newCommand = commandClass(self.EditDialog, data)
                 index = self.RearrangeList.Append(newCommand.MakeListEntryString())
@@ -1252,7 +1252,7 @@ class UsePowerCmd(PowerBindCmd):
         elif self.usePowerRBOff.GetValue():
             method = "powexectoggleoff"
         else:
-            wx.LogError('PowerBindCmd "UsePowerCmd" got an impossible value for toggle/on/off')
+            wx.LogWarning('PowerBindCmd "UsePowerCmd" got an impossible value for toggle/on/off')
             return ''
 
         return f"{method} {self.usePowerName.GetLabel()}"

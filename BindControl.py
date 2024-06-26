@@ -7,7 +7,9 @@ import wx.lib.mixins.inspection
 import wx.adv
 import wx.html
 
+from bcLogging import bcLogging
 from bcVersion import current_version
+
 from Icon import GetIcon
 from Profile import Profile
 from UI.PrefsDialog import PrefsDialog
@@ -26,10 +28,6 @@ class Main(wx.Frame):
         self.StartupPanel = None
 
         self.about_info = None
-
-        self.LogWindow = wx.LogWindow(self, "Log Window", show = False, passToOld = False)
-        self.LogWindow.SetLogLevel(wx.LOG_Message)
-        self.LogWindow.GetFrame().SetSize(1000,300)
 
         config = wx.FileConfig('bindcontrol')
         wx.ConfigBase.Set(config)
@@ -52,11 +50,20 @@ class Main(wx.Frame):
         if not config.Exists('VerboseBLF')          : config.WriteBool('VerboseBLF', False)
         if not config.Exists('CrashOnBindError')    : config.WriteBool('CrashOnBindError', False)
         if not config.Exists('ShowInspector')       : config.WriteBool('ShowInspector', False)
+        if not config.Exists('ShowDebugMessages')   : config.WriteBool('ShowDebugMessages', False)
         # migrate old "start with" preference.  Maybe remove this someday
         if config.Exists('StartWith'):
             config.WriteBool('StartWithLastProfile', config.Read('StartWith') == "Last Profile")
             config.DeleteEntry('StartWith')
+
         config.Flush()
+
+        # set up the custom logger with the infobar
+        self.Logger = bcLogging(self)
+        if config.ReadBool('ShowDebugMessage'):
+            wx.Log.SetLogLevel(wx.LOG_Debug)
+        else:
+            wx.Log.SetLogLevel(wx.LOG_Status)
 
         self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -126,6 +133,10 @@ class Main(wx.Frame):
         self.WriteButton.SetToolTip("Write out the bindfiles to the configured binds directory")
         self.DeleteButton = wx.Button(self, -1, "Delete All Binds")
         self.DeleteButton.SetToolTip("Delete all BindControl-managed files in the configured binds directory")
+
+        # Infobar for showing errors and other messages
+        self.Sizer.Add(self.Logger.InfoBar, 0, wx.EXPAND)
+
         writeSizer = wx.BoxSizer(wx.HORIZONTAL)
         writeSizer.Add(self.ProfDirButton, 0, wx.EXPAND)
         writeSizer.Add(self.WriteButton, 1, wx.EXPAND)
@@ -244,7 +255,7 @@ class Main(wx.Frame):
             wx.LogMessage(f'Created New Profile "{newname}".')
 
         except Exception as e:
-            wx.LogError(f"Something broke in new profile: {e}")
+            wx.LogError(f"Something broke in new profile: {e}.  This is a bug.")
         finally:
             self.SetupProfileUI()
             self.CheckProfDirButtonErrors()
@@ -380,7 +391,6 @@ class Main(wx.Frame):
         else:
             self.ProfDirButton.AddWarning('toolong', 'Your binds directory name is rather long.  This is not an error but can lead to some binds being too long for the game to use.')
 
-
     def OnPathTextChanged(self, evt):
         textctrl = evt.EventObject
         value = textctrl.GetValue()
@@ -450,6 +460,7 @@ class Main(wx.Frame):
             config.WriteBool('VerboseBLF', self.PrefsDialog.VerboseBLF.GetValue())
             config.WriteBool('CrashOnBindError', self.PrefsDialog.CrashOnBindError.GetValue())
             config.WriteBool('ShowInspector', self.PrefsDialog.ShowInspector.GetValue())
+            config.WriteBool('ShowDebugMessages', self.PrefsDialog.ShowDebugMessages.GetValue())
 
             config.Flush()
 
@@ -477,7 +488,7 @@ class Main(wx.Frame):
         wx.adv.AboutBox(self.about_info)
 
     def OnMenuLogWindow(self, _):
-        self.LogWindow.Show()
+        self.Logger.LogWindow.Show()
 
     def OnMenuExitApplication(self, _):
         self.Close()

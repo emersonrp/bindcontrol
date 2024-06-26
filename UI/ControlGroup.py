@@ -33,7 +33,7 @@ class ControlGroup(wx.StaticBoxSizer):
         ):
 
         if not ctlName:
-            wx.LogError(f"Tried to make a labeled control without a CtlName!")
+            wx.LogError(f"Tried to make a labeled control without a CtlName.  This is a bug.")
             raise(Exception)
 
         Init      = self.Page.Init
@@ -125,7 +125,7 @@ class ControlGroup(wx.StaticBoxSizer):
             control = cgColourPickerCtrl( CtlParent, -1, contents, size = (30,30))
 
         else:
-            wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}")
+            wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}.  This is a bug.")
             raise Exception
 
         # stash away the page that the control belongs to

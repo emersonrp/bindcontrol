@@ -230,7 +230,8 @@ class Profile(wx.Notebook):
         try:
             self.ProfilePath().mkdir( parents = True, exist_ok = True )
         except Exception as e:
-            wx.LogError(f"Can't make Profile path {self.ProfilePath()} - {e}")
+            wx.LogError(f"Can't make Profile path {self.ProfilePath()} - {e}.  Aborting Save.")
+            return
 
         with wx.FileDialog(self, "Save Profile file",
                 wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
@@ -561,7 +562,7 @@ class Profile(wx.Notebook):
                 if config.ReadBool('CrashOnBindError'):
                     raise e
                 else:
-                    wx.LogError(f"Error populating bind file: {e}")
+                    wx.LogMessage(f"Error populating bind file: {e}")
                     errors += 1
 
         # Now we have them here and can iterate them
@@ -577,7 +578,7 @@ class Profile(wx.Notebook):
                 if config.ReadBool('CrashOnBindError'):
                     raise e
                 else:
-                    wx.LogError(f"Failed to write bindfile {bindfile.Path}: {e}")
+                    wx.LogMessage(f"Failed to write bindfile {bindfile.Path}: {e}")
                     errors += 1
 
             dlg.Update(donefiles, str(bindfile.Path))
@@ -641,7 +642,7 @@ class Profile(wx.Notebook):
             return
 
         if not bindfiles:
-            wx.LogError("Tried to doDeleteBindFiles with no bindfiles.  Bailing.")
+            wx.LogError("Tried to doDeleteBindFiles with no bindfiles.  Please report this as a bug.  Bailing.")
             return
 
         # bindfiles is generated using someone's AllBindFiles(), which uses
@@ -656,7 +657,7 @@ class Profile(wx.Notebook):
         removed = 0
         for file in bindfiles['files']:
             if not file.Path.is_relative_to(bindpath):
-                wx.LogError(f"Bindfile {file.Path} not in {bindpath}, skipping deletion!")
+                wx.LogWarning(f"Bindfile {file.Path} not in {bindpath}, skipping deletion!")
             elif file.Path.is_file():
                 file.Path.unlink()
                 removed = removed + 1

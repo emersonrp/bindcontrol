@@ -300,14 +300,14 @@ class Main(wx.Frame):
             # Start with a "detached" profile that we'll load into and then insert
             newProfile = Profile.Profile(self)
 
-            # Try to load;  if the user hits "cancel" go back to where we were
+            # Try to load;  if the user hits "cancel" or the load fails, go back to where we were
             if not newProfile.LoadFromFile(evt):
                 newProfile.Destroy()
                 return
 
             self.Freeze()
 
-            # OK, we're either at the startup panel or we have a profile.  Either way, remove it:
+            # OK, we're either at the startup panel or we have an existing profile.  Either way, remove it:
             self.Sizer.Remove(0)
 
             # delete any existing Profile and all its subwidgets and geegaws
@@ -326,7 +326,7 @@ class Main(wx.Frame):
             return
 
         finally:
-            self.Thaw()
+            if self.IsFrozen(): self.Thaw()
 
         # OK, we made it, set up the UI bits etc.
         self.SetupProfileUI()
@@ -386,13 +386,15 @@ class Main(wx.Frame):
                 # call us again if we tried to OK an error state
                 if PathText.HasErrors(): return self.OnProfDirButton()
                 # if we changed the directory, offer to delete the old one.
+
                 otherprofile = Profile.CheckProfileForBindsDir(self.Profile.ProfileBindsDir)
                 if (
+                    # we changed it to a new value:
                     self.Profile.ProfileBindsDir and (newvalue != self.Profile.ProfileBindsDir)
                         and
+                    # the old one isn't owned by another profile:
                     ((not otherprofile) or (otherprofile and (otherprofile == self.Profile.Name())))
                 ):
-                    # TODO - don't do this if our old dir is marked as owned by another profile.
                     answer = wx.MessageBox(
                             f'Binds Location changed.  Delete old binds directory {self.Profile.BindsDir()}?',
                             'Binds Location Changed',wx.YES_NO, self

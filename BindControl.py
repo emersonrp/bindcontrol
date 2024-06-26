@@ -362,7 +362,7 @@ class Main(wx.Frame):
         dirSizer = wx.BoxSizer(wx.HORIZONTAL)
         dirSizer.Add(wx.StaticText(ProfDirDialog, -1,
                     f"{bindpath}{separator}"), 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
-        PathText = cgTextCtrl(ProfDirDialog, -1, value = self.Profile.ProfileBindsDir)
+        PathText = cgTextCtrl(ProfDirDialog, -1)
         dirSizer.Add(PathText, 1, wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 10)
         PathText.Bind(wx.EVT_TEXT, self.OnPathTextChanged)
 
@@ -377,9 +377,9 @@ class Main(wx.Frame):
         ProfDirDialog.Layout()
 
         PathText.ClearErrors() # whyyyy?
-        ### TODO - instead of re-calling OnProfDirButton() from scratch each time, break this dialog-show
-        ### out into its own method and just re-show the dialog as needed.  Maybe this all wants its own class.
+
         with ProfDirDialog as dlg:
+            PathText.SetValue(self.Profile.ProfileBindsDir) # do this here to trigger wx.EVT_TEXT
             result = dlg.ShowModal()
             if result == wx.ID_OK:
                 newvalue = PathText.GetValue()
@@ -422,6 +422,12 @@ class Main(wx.Frame):
         else:
             self.ProfDirButton.AddWarning('toolong', 'Your binds directory name is rather long.  This is not an error but can lead to some binds being too long for the game to use.')
 
+        if Profile.CheckProfileForBindsDir(self.Profile.ProfileBindsDir) != self.Profile.Name():
+            self.ProfDirButton.AddWarning('owned', 'The binds directory you have chosen is marked as owned by another profile.  This is not an error, but be sure this is what you want to do.')
+        else:
+            self.ProfDirButton.RemoveWarning('owned')
+
+        self.DeleteButton.Enable(not self.ProfDirButton.HasErrors())
 
     def OnPathTextChanged(self, evt):
         textctrl = evt.EventObject

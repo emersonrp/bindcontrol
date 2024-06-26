@@ -355,7 +355,13 @@ class Main(wx.Frame):
                 # call us again if we tried to OK an error state
                 if PathText.HasErrors(): return self.OnProfDirButton()
                 # if we changed the directory, offer to delete the old one.
-                if self.Profile.ProfileBindsDir and (newvalue != self.Profile.ProfileBindsDir):
+                otherprofile = Profile.CheckProfileForBindsDir(self.Profile.ProfileBindsDir)
+                if (
+                    self.Profile.ProfileBindsDir and (newvalue != self.Profile.ProfileBindsDir)
+                        and
+                    ((not otherprofile) or (otherprofile and (otherprofile == self.Profile.Name())))
+                ):
+                    # TODO - don't do this if our old dir is marked as owned by another profile.
                     answer = wx.MessageBox(
                             f'Binds Location changed.  Delete old binds directory {self.Profile.BindsDir()}?',
                             'Binds Location Changed',wx.YES_NO, self
@@ -391,21 +397,21 @@ class Main(wx.Frame):
         else:
             self.ProfDirButton.AddWarning('toolong', 'Your binds directory name is rather long.  This is not an error but can lead to some binds being too long for the game to use.')
 
-        if Profile.CheckProfileForBindsDir(self.Profile.ProfileBindsDir) != self.Profile.Name():
-            self.ProfDirButton.AddWarning('owned', 'The binds directory you have chosen is marked as owned by another profile.  This is not an error, but be sure this is what you want to do.')
+        otherprofile = Profile.CheckProfileForBindsDir(self.Profile.ProfileBindsDir)
+        if otherprofile and (otherprofile != self.Profile.Name()):
+            self.ProfDirButton.AddWarning('owned', f'The binds directory you have chosen is marked as owned by the profile "{otherprofile}."  This is not an error, but be sure this is what you want to do.')
         else:
             self.ProfDirButton.RemoveWarning('owned')
 
         self.DeleteButton.Enable(not self.ProfDirButton.HasErrors())
-
-
+        self.WriteButton.Enable(not self.ProfDirButton.HasErrors())
 
     def OnPathTextChanged(self, evt):
         textctrl = evt.EventObject
         value = textctrl.GetValue()
 
         if not value:
-            textctrl.AddError('undef', 'You must specify a short, unique bindfile directory name.')
+            textctrl.AddError('undef', 'You must specify a bindfile directory name.')
         else:
             textctrl.RemoveError('undef')
 
@@ -428,7 +434,9 @@ class Main(wx.Frame):
             exists = None
             # look at the existing bindsdirs and see if we match
             for bindsdir in Profile.GetAllProfileBindsDirs():
+                # check case-insensitive because Windows
                 if bindsdir.lower() == value.lower():
+                    # but stash it away as the case-sensitive version because Linux
                     exists = bindsdir
                     break
             if exists and self.Profile and (Profile.CheckProfileForBindsDir(exists) != self.Profile.Name()):

@@ -5,6 +5,7 @@ import wx
 import wx.lib.mixins.inspection
 import wx.adv
 import wx.html
+from bcLogging import bcLogging
 from bcVersion import current_version
 
 from pathlib import Path
@@ -21,10 +22,6 @@ class Main(wx.Frame):
         wx.Frame.__init__(self, parent, title = "BindControl")
 
         self.about_info = None
-
-        self.LogWindow = wx.LogWindow(self, "Log Window", show = False, passToOld = False)
-        self.LogWindow.SetLogLevel(wx.LOG_Message)
-        self.LogWindow.GetFrame().SetSize(1000,300)
 
         config = wx.FileConfig('bindcontrol')
         wx.ConfigBase.Set(config)
@@ -47,7 +44,15 @@ class Main(wx.Frame):
         if not config.Exists('VerboseBLF')          : config.WriteBool('VerboseBLF', False)
         if not config.Exists('CrashOnBindError')    : config.WriteBool('CrashOnBindError', False)
         if not config.Exists('ShowInspector')       : config.WriteBool('ShowInspector', False)
+        if not config.Exists('ShowDebugMessages')   : config.WriteBool('ShowDebugMessages', False)
         config.Flush()
+
+        # set up the custom logger with the infobar
+        self.Logger = bcLogging(self)
+        if config.ReadBool('ShowDebugMessage'):
+            wx.Log.SetLogLevel(wx.LOG_Debug)
+        else:
+            wx.Log.SetLogLevel(wx.LOG_Status)
 
         self.Sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -126,7 +131,10 @@ class Main(wx.Frame):
         self.AppIcon.AddIcon(filename, wx.BITMAP_TYPE_ANY)
         self.SetIcons(self.AppIcon)
 
-        # WRITE BUTTON
+        # Infobar for showing errors and other messages
+        self.Sizer.Add(self.Logger.InfoBar, 0, wx.EXPAND)
+
+        # Bottom Buttons
         WriteButton = wx.Button(self, -1, "Write Binds")
         WriteButton.SetToolTip("This will write out the bindfiles to the configured binds directory.")
         DeleteButton = wx.Button(self, -1, "Delete All Binds")
@@ -173,7 +181,7 @@ class Main(wx.Frame):
             self.Profile.LoadFromDefault()
 
         except Exception as e:
-            wx.LogError(f"Something broke in new profile: {e}")
+            wx.LogError(f"Something broke in new profile: {e}.  This is a bug.")
         finally:
             self.Layout()
             self.Thaw()
@@ -215,6 +223,7 @@ class Main(wx.Frame):
             config.WriteBool('VerboseBLF', self.PrefsDialog.VerboseBLF.GetValue())
             config.WriteBool('CrashOnBindError', self.PrefsDialog.CrashOnBindError.GetValue())
             config.WriteBool('ShowInspector', self.PrefsDialog.ShowInspector.GetValue())
+            config.WriteBool('ShowDebugMessages', self.PrefsDialog.ShowDebugMessages.GetValue())
 
             config.Flush()
 
@@ -242,7 +251,7 @@ class Main(wx.Frame):
         wx.adv.AboutBox(self.about_info)
 
     def OnMenuLogWindow(self, _):
-        self.LogWindow.Show()
+        self.Logger.LogWindow.Show()
 
     def OnMenuExitApplication(self, _):
         self.Close()

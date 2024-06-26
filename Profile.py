@@ -1,5 +1,5 @@
 import re
-from pathlib import Path, PureWindowsPath
+from pathlib import PurePath, Path, PureWindowsPath
 from typing import Dict, Any
 import json
 import codecs
@@ -184,7 +184,8 @@ class Profile(wx.Notebook):
         try:
             self.ProfilePath().mkdir( parents = True, exist_ok = True )
         except Exception as e:
-            wx.LogError(f"Can't make Profile path {self.ProfilePath()} - {e}")
+            wx.LogError(f"Can't make Profile path {self.ProfilePath()} - {e}.  Aborting Save.")
+            return
 
         with wx.FileDialog(self, "Save Profile file",
                 wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
@@ -409,15 +410,14 @@ class Profile(wx.Notebook):
 
     #####################
     # Bind file functions
-    def GetBindFile(self, *filename):
-        # Store them internally as a simple string
-        # but send BindFile the list of path parts
-        filename_key = "!!".join(filename)
+    def GetBindFile(self, *filebits):
+        filepath = PurePath(*filebits)
+        key = str(filepath)
 
-        if not self.BindFiles.get(filename_key, None):
-            self.BindFiles[filename_key] = BindFile(self, *filename)
+        if not self.BindFiles.get(key, None):
+            self.BindFiles[key] = BindFile(self, filepath)
 
-        return self.BindFiles[filename_key]
+        return self.BindFiles[key]
 
 
     def WriteBindFiles(self):
@@ -436,8 +436,9 @@ class Profile(wx.Notebook):
         feedback = 't $name, Resetting keybinds.'
         resetfile.SetBind(config.Read('ResetKey'), "Reset Key", "Preferences", [keybindreset , feedback, resetfile.BLF()])
 
-        errors = donefiles = 0
-        #
+        errors = 0
+        donefiles = 0
+
         # Go to each page....
         for pageName in self.Pages:
             page = getattr(self, pageName)
@@ -449,7 +450,7 @@ class Profile(wx.Notebook):
                 if config.ReadBool('CrashOnBindError'):
                     raise e
                 else:
-                    wx.LogError(f"Error populating bind file: {e}")
+                    wx.LogMessage(f"Error populating bind file: {e}")
                     errors += 1
 
         # Now we have them here and can iterate them
@@ -457,19 +458,18 @@ class Profile(wx.Notebook):
         dlg = wx.ProgressDialog('Writing Bind Files','',
             maximum = totalfiles, style=wx.PD_APP_MODAL|wx.PD_AUTO_HIDE)
 
-        for filename, bindfile in self.BindFiles.items():
+        for bindfile in self.BindFiles.values():
             try:
-                donefiles += 1
                 bindfile.Write()
+                donefiles += 1
             except Exception as e:
                 if config.ReadBool('CrashOnBindError'):
                     raise e
                 else:
-                    wx.LogError(f"Failed to write bindfile {filename}: {e}")
-                    donefiles -= 1
+                    wx.LogMessage(f"Failed to write bindfile {bindfile.Path}: {e}")
                     errors += 1
 
-            dlg.Update(donefiles, filename)
+            dlg.Update(donefiles, str(bindfile.Path))
 
         dlg.Destroy()
 
@@ -530,7 +530,7 @@ class Profile(wx.Notebook):
             return
 
         if not bindfiles:
-            wx.LogError("Tried to doDeleteBindFiles with no bindfiles.  Bailing.")
+            wx.LogError("Tried to doDeleteBindFiles with no bindfiles.  Please report this as a bug.  Bailing.")
             return
 
         # bindfiles is generated using someone's AllBindFiles(), which uses
@@ -545,7 +545,7 @@ class Profile(wx.Notebook):
         removed = 0
         for file in bindfiles['files']:
             if not file.Path.is_relative_to(bindpath):
-                wx.LogError(f"Bindfile {file.Path} not in {bindpath}, skipping deletion!")
+                wx.LogWarning(f"Bindfile {file.Path} not in {bindpath}, skipping deletion!")
             elif file.Path.is_file():
                 file.Path.unlink()
                 removed = removed + 1

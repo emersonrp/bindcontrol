@@ -19,6 +19,8 @@ class PrefsDialog(wx.Dialog):
 
         notebook = wx.Notebook(self)
 
+        statictextclass = wx.StaticText if platform.system() == "Windows" else ST.GenStaticText
+
         ###
         # GENERAL PANEL
         ###
@@ -43,7 +45,7 @@ class PrefsDialog(wx.Dialog):
         UI.Labels.update({ 'ResetKey': 'Binds Reset Key'})
         generalSizer.Add( self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)
 
-        splitKeyLabel = ST.GenStaticText(generalPanel, label = "Bind left and right modifier keys separately:")
+        splitKeyLabel = statictextclass(generalPanel, label = "Bind left and right modifier keys separately:")
         generalSizer.Add( splitKeyLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.UseSplitModKeys = wx.CheckBox(generalPanel)
         self.UseSplitModKeys.SetValue(config.ReadBool('UseSplitModKeys'))
@@ -53,7 +55,7 @@ class PrefsDialog(wx.Dialog):
         setattr(splitKeyLabel, 'CB', self.UseSplitModKeys)
         splitKeyLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
-        flushBindsLabel = ST.GenStaticText(generalPanel, label = "Reset all binds to default before reapplying:")
+        flushBindsLabel = statictextclass(generalPanel, label = "Reset all binds to default before reapplying:")
         generalSizer.Add( flushBindsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.FlushAllBinds = wx.CheckBox(generalPanel)
         self.FlushAllBinds.SetValue(config.ReadBool('FlushAllBinds'))
@@ -80,7 +82,7 @@ class PrefsDialog(wx.Dialog):
         self.ProfileDirPicker.SetToolTip('Profiles will be saved to this location.')
         generalSizer.Add( self.ProfileDirPicker, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
-        SaveSizeLabel = ST.GenStaticText(generalPanel, label = "Save size and position of BindControl window:")
+        SaveSizeLabel = statictextclass(generalPanel, label = "Save size and position of BindControl window:")
         generalSizer.Add( SaveSizeLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.SaveSizeAndPosition = wx.CheckBox(generalPanel)
         self.SaveSizeAndPosition.SetValue(config.ReadBool('SaveSizeAndPosition'))
@@ -99,9 +101,9 @@ class PrefsDialog(wx.Dialog):
         controllerSizer = wx.FlexGridSizer(3,0,0)
 
         # Controller name display
-        controllerNameLabel = ST.GenStaticText(controllerPanel, label = 'Controller:')
+        controllerNameLabel = statictextclass(controllerPanel, label = 'Controller:')
         controllerSizer.Add( controllerNameLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
-        controllerName = ST.GenStaticText(controllerPanel, label = 'No controller detected!')
+        controllerName = statictextclass(controllerPanel, label = 'No controller detected!')
         if controller.GetNumberJoysticks() > 0:
             controllerName.SetLabel(controller.GetProductName())
         controllerSizer.Add( controllerName, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
@@ -110,7 +112,7 @@ class PrefsDialog(wx.Dialog):
 
         # Pickers for controller_modifiers
         possible_mods = controller.ListOfPossibleMods()
-        controllerModsLabel = ST.GenStaticText(controllerPanel, label = 'Controller Modifiers:')
+        controllerModsLabel = statictextclass(controllerPanel, label = 'Controller Modifiers:')
         controllerSizer.Add( controllerModsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ControllerModPicker1 = controllerModPicker(controllerPanel, choices = possible_mods)
         self.ControllerModPicker1.SetSelection(self.ControllerModPicker1.FindString(config.Read('ControllerMod1')))
@@ -120,7 +122,7 @@ class PrefsDialog(wx.Dialog):
         controllerSizer.Add(self.ControllerModPicker2, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         # Pickers for extra_modifiers
-        extraModsLabel = ST.GenStaticText(controllerPanel, label = 'Extra Modifiers:')
+        extraModsLabel = statictextclass(controllerPanel, label = 'Extra Modifiers:')
         controllerSizer.Add( extraModsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ExtraModPicker1 = controllerModPicker(controllerPanel, choices = possible_mods)
         self.ExtraModPicker1.SetSelection(self.ExtraModPicker1.FindString(config.Read('ExtraMod1')))
@@ -144,7 +146,7 @@ class PrefsDialog(wx.Dialog):
         debugPanel = wx.Panel(notebook)
         debugSizer = wx.FlexGridSizer(2,0,0)
 
-        verboseBLFLabel = ST.GenStaticText(debugPanel, label = "Verbose feedback when loading bind file:")
+        verboseBLFLabel = statictextclass(debugPanel, label = "Verbose in-game feedback when loading bind file:")
         debugSizer.Add( verboseBLFLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.VerboseBLF = wx.CheckBox(debugPanel)
         self.VerboseBLF.SetValue(config.ReadBool('VerboseBLF'))
@@ -155,7 +157,7 @@ class PrefsDialog(wx.Dialog):
         setattr(verboseBLFLabel, 'CB', self.VerboseBLF)
         verboseBLFLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
-        crashOnBindErrorLabel = ST.GenStaticText(debugPanel, label = "Crash on write-binds error:")
+        crashOnBindErrorLabel = statictextclass(debugPanel, label = "Crash on write-binds error:")
         debugSizer.Add( crashOnBindErrorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.CrashOnBindError = wx.CheckBox(debugPanel)
         self.CrashOnBindError.SetValue(config.ReadBool('CrashOnBindError'))
@@ -166,7 +168,7 @@ class PrefsDialog(wx.Dialog):
         setattr(crashOnBindErrorLabel, 'CB', self.CrashOnBindError)
         crashOnBindErrorLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
-        showInspectorLabel = ST.GenStaticText(debugPanel, label = "Show Widget Inspector:")
+        showInspectorLabel = statictextclass(debugPanel, label = "Show Widget Inspector:")
         debugSizer.Add( showInspectorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.ShowInspector = wx.CheckBox(debugPanel)
         self.ShowInspector.SetValue(config.ReadBool('ShowInspector'))
@@ -176,6 +178,17 @@ class PrefsDialog(wx.Dialog):
         debugSizer.Add( self.ShowInspector, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
         setattr(showInspectorLabel, 'CB', self.ShowInspector)
         showInspectorLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
+
+        showDebugMessagesLabel = statictextclass(debugPanel, label = "Show debug messages in log window.")
+        debugSizer.Add( showDebugMessagesLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        self.ShowDebugMessages = wx.CheckBox(debugPanel)
+        self.ShowDebugMessages.SetValue(config.ReadBool('ShowDebugMessages'))
+        tooltip = "Show all debug messages in the Log Window.  This is harmless but might be spammy in some circumstances.  If you never look at the log window, you don't need to worry about this."
+        showDebugMessagesLabel.SetToolTip(tooltip)
+        self.ShowDebugMessages.SetToolTip(tooltip)
+        debugSizer.Add( self.ShowDebugMessages, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+        setattr(showDebugMessagesLabel, 'CB', self.ShowDebugMessages)
+        showDebugMessagesLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
         debugPanel.SetSizerAndFit(debugSizer)
 

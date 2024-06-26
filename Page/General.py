@@ -224,7 +224,7 @@ class General(Page):
         arch = self.GetState('Archetype')
 
         if not arch:
-            wx.LogError("Got into OnPickArchetype with arch not set, bailing.")
+            wx.LogError("Got into OnPickArchetype with arch not set, bailing.  This is a bug.")
             return
 
         self.Ctrls['Primary'].Clear()

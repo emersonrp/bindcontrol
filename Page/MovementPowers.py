@@ -1639,7 +1639,7 @@ class MovementPowers(Page):
 
         config = wx.ConfigBase.Get()
 
-        keybindreset = 'keybind_reset$$' if config.ReadBool('FlushAllBinds') else ''
+        keybindreset = 'keybind_reset' if config.ReadBool('FlushAllBinds') else ''
         curfile.SetBind(config.Read('ResetKey'), UI.Labels['ResetKey'], self,
             [
                 keybindreset,

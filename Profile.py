@@ -345,6 +345,7 @@ class Profile(wx.Notebook):
 
         savedata['CustomBinds'] = []
         customPage = getattr(self, 'CustomBinds')
+        # TODO - walking the sizer/widget tree like this is fragile.
         for pane in customPage.PaneSizer.GetChildren():
             bindui = pane.GetSizer().GetChildren()
             if bindui:
@@ -369,32 +370,32 @@ class Profile(wx.Notebook):
 
             # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
-            self.doLoadFromFile(pathname)
-            return True
+            return self.doLoadFromFile(pathname)
 
     def doLoadFromFile(self, pathname):
         with Path(pathname) as file:
             try:
                 # clear out the PBD in case we already had one but this loadfile doesn't.
+                # TODO - now we always(?) load into a fresh profile object so don't need to do this?
                 self.ProfileBindsDir = ''
+
                 jsonstring = file.read_text()
                 self.doLoadFromJSON(jsonstring)
             except Exception as e:
-                # TODO we're probably in a weird state here, maybe halfway loaded one
-                # profile on top of another.  This should probably be a fatalish error,
-                # but we don't just want to re-raise and crash.  Hmm ponder, ponder.
                 wx.LogError(f"Profile {pathname} could not be loaded: {e}")
-                return None
+                return False
 
         self.Filename = Path(pathname)
-        # NEW - if we're loading a profile from before when we stored the
-        # ProfileBindsDir in it, set that to the filename.
 
+        # if we're loading a profile from before when we stored the
+        # ProfileBindsDir in it, generate one.
         if not self.ProfileBindsDir:
-            self.ProfileBindsDir = self.Filename.stem
+            self.ProfileBindsDir = self.GenerateBindsDirectoryName()
+            self.SetModified()
 
         wx.LogMessage(f"Loaded profile {pathname}")
         self.SetTitle()
+        return True
 
     def doLoadFromJSON(self, jsonstring):
         if not jsonstring: return

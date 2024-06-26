@@ -55,7 +55,7 @@ class Page(wx.ScrolledWindow):
         elif getattr(control, 'GetPath', None):
             return control.GetPath()
         else:
-            wx.LogError(f"control '{key}' has no GetValue() - this is a bug.")
+            wx.LogError(f"control '{key}' has no GetValue() - this is a bug")
             return ''
 
     def SetState(self, key, value):

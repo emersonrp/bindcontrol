@@ -9,7 +9,7 @@ import wx.html
 from bcLogging import bcLogging
 from bcVersion import current_version
 from Icon import GetIcon
-from Profile import Profile
+import Profile
 from UI.PrefsDialog import PrefsDialog
 from Help import ShowHelpWindow
 from UI.ControlGroup import cgTextCtrl, cgButton
@@ -182,7 +182,7 @@ class Main(wx.Frame):
         # Finally, load up the last one if the pref says to and if it's there
         filename = config.Read('LastProfile')
         if (config.Read('StartWith') == 'Last Profile' or config.ReadBool('StartWithLastProfile')) and filename:
-            self.Profile = Profile(self)
+            self.Profile = Profile.Profile(self)
             self.Profile.doLoadFromFile(filename)
             self.Sizer.Add(self.Profile, 1, wx.EXPAND)
             self.CheckProfDirButtonErrors()
@@ -279,7 +279,7 @@ class Main(wx.Frame):
             # destroy the Startup Panel if it's there.  This is only needed on Windows dunno why.
             if self.StartupPanel: self.StartupPanel.Destroy()
 
-            self.Profile = Profile(self)
+            self.Profile = Profile.Profile(self)
             self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
 
             self.Profile.LoadFromDefault(newname)
@@ -298,7 +298,7 @@ class Main(wx.Frame):
 
         try:
             # Start with a "detached" profile that we'll load into and then insert
-            newProfile = Profile(self)
+            newProfile = Profile.Profile(self)
 
             # Try to load;  if the user hits "cancel" go back to where we were
             if not newProfile.LoadFromFile(evt):
@@ -448,13 +448,13 @@ class Main(wx.Frame):
             textctrl.RemoveError('reserved')
 
         if value: # don't do this check if it's blank
-            exists = False
+            exists = None
             # look at the existing bindsdirs and see if we match
-            for bindsdir in Path(wx.ConfigBase.Get().Read('BindPath')).glob('*'):
-                if bindsdir.name.lower() == value.lower():
-                    exists = True
+            for bindsdir in Profile.GetAllProfileBindsDirs():
+                if bindsdir.lower() == value.lower():
+                    exists = bindsdir
                     break
-            if exists:
+            if exists and self.Profile and (Profile.CheckProfileForBindsDir(exists) != self.Profile.Name()):
                 textctrl.AddWarning('exists', 'The directory you have selected exists, and might be managed by another profile.  This is not an error, but be sure this is where you want to save your binds.')
             else:
                 textctrl.RemoveWarning('exists')

@@ -26,6 +26,25 @@ from UI.BufferBindPane import BufferBindPane
 from UI.ComplexBindPane import ComplexBindPane
 from UI.KeySelectDialog import bcKeyButton
 
+# Non-instance method to examine an arbitrary profile binds dir for its associated profile name
+def CheckProfileForBindsDir(bindsdir):
+    IDFile = Path(wx.ConfigBase.Get().Read('BindPath')) / bindsdir / 'bcprofileid.txt'
+    if IDFile:
+        # If the file is even there...
+        if IDFile.exists():
+            return IDFile.read_text().strip()
+
+# Non-instance method to get all profile binds dirs as a list of strings.
+#
+# Might want to case-mangle these in calling code if checking against them, but
+# let's not do it inside here in case we want to touch them directly on Linux
+# etc where changing the case inside here would be bad.
+def GetAllProfileBindsDirs():
+    alldirs = []
+    for bindsdir in Path(wx.ConfigBase.Get().Read('BindPath')).glob('*'):
+        alldirs.append(bindsdir.name)
+    return alldirs
+
 class Profile(wx.Notebook):
 
     def __init__(self, parent, loadfile = None):

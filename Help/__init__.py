@@ -49,7 +49,7 @@ class HelpPopup(wx.PopupTransientWindow):
 
         self.panel = wx.Panel(self)
         self.panel.SetBackgroundColour([127,127,127])
-        manualhtml = HelpHTMLWindow(self.panel, filename, size = (600, 300))
+        manualhtml = HelpHTMLWindow(self.panel, filename, size = (600, 100))
 
         manualsizer = wx.BoxSizer(wx.VERTICAL)
         manualsizer.Add(manualhtml, 1, wx.EXPAND|wx.ALL, 3)

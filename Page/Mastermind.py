@@ -671,6 +671,8 @@ class Mastermind(Page):
             self.mmSubBind(cbosfile , "tier3" , powers['bos'] , powers)
 
         ### By-name select binds.
+        # TODO -- make BC generate a BLF file for each pet that points the Sandolphan binds at just that
+        # pet if it is selected.  This will properly integrate these two schemes.
         for i in [1,2,3,4,5,6]:
             ResetFile.SetBind(
                 self.Ctrls[f"PetSelect{i}"].MakeFileKeyBind(f"petselectname {self.uniqueNames[i-1]}")
@@ -684,6 +686,7 @@ class Mastermind(Page):
             self.psCreateSet(6,0,self.Profile.ResetFile())
             for tsize in 1,2,3,4,5,6:
                 for tsel in range(0,tsize+1):
+                    # TODO also BLF the each-pet file mentioned in the above TODO
                     file = self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt")
                     self.psCreateSet(tsize,tsel,file)
 
@@ -714,7 +717,7 @@ class Mastermind(Page):
     def GetChatMethod(self, control, target = 'all'):
         chatdesc = self.GetState(control)
         powers   = self.MMPowerSets[ self.Profile.General.GetState('Primary') ]['powers']
-        # This is terrible, I accidentally optimized away the original way of doing this.
+        # TODO - make this also take an individual pet (number?) as an option
         if target == "all": petsay = "petsayall "
         else:               petsay = "petsaypow " + powers[target] + " "
 

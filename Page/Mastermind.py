@@ -239,6 +239,7 @@ class Mastermind(Page):
         nameDefaultButton.SetToolTip('Set your pet names to the default values for your powerset.')
         nameDefaultButton.Bind(wx.EVT_BUTTON, self.OnNameDefaultButton)
         PetInner.Add(nameDefaultButton, (1,7), flag = wx.EXPAND)
+        PetInner.Add(HelpButton(PetNameSB, 'PetNames.html'), (2,7), flag = wx.ALIGN_CENTER)
 
         petcmdenable = wx.Panel(self)
         petcmdenablesizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -567,8 +568,6 @@ class Mastermind(Page):
         else                    : petcom =  'petcomall'
         for cmd in ('Aggressive','Defensive','Passive', 'Attack','Follow','Goto', 'Stay'):
             file.SetBind(self.Ctrls[f"Pet{cmd}"].MakeFileKeyBind(f"{petcom} {cmd}"))
-
-        file.SetBind(self.Ctrls['PetBodyguard'].MakeFileKeyBind('nop'))
 
         file.SetBind(self.Ctrls['PetChatToggle'].MakeFileKeyBind(['tell $name, Chatty Mode', profile.GetBindFile('mmb','c' + fn + '.txt').BLF()]))
 

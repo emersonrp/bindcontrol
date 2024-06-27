@@ -360,10 +360,12 @@ class Mastermind(Page):
         arch = self.Profile.General.GetState('Archetype')
         pset = self.Profile.General.GetState('Primary')
 
+        valid_archetypes = ["Mastermind", "Controller", "Dominator", "Arachnos Soldier"]
+
         for _, control in self.Ctrls.items():
-            control.Enable(bool(arch == "Mastermind" and pset))
-        self.PetNameLabel.Enable(bool(arch == "Mastermind" and pset))
-        self.PetKeyLabel .Enable(bool(arch == "Mastermind" and pset))
+            control.Enable(bool(arch in valid_archetypes and pset))
+        self.PetNameLabel.Enable(bool(arch in valid_archetypes and pset))
+        self.PetKeyLabel.Enable(bool(arch in valid_archetypes and pset))
         self.OnPetCmdEnable()
         self.OnPetSelEnable()
         self.OnPetNPEnable()

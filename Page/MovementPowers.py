@@ -93,11 +93,10 @@ class MovementPowers(Page):
             'DwarfMode'       : "]",
             'DwarfTray'       : "5",
 
-
             'TempEnable'      : False,
-            'TempTray'        : "6",
-            'TempTraySwitch'  : "",
+            'TempPower'       : '',  # New key for named temporary movement power
             'TempMode'        : "",
+
         }
 
     def BuildPage(self):
@@ -295,12 +294,10 @@ class MovementPowers(Page):
 
         ##### TEMP TRAVEL POWERS
         self.tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
-        # if (temp travel powers exist)?  Should this be "custom"?
         self.tempSizer.AddControl( ctlName = 'TempEnable', ctlType = 'checkbox',)
         self.Ctrls['TempEnable'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.tempSizer.AddControl( ctlName = 'TempPower', ctlType = 'choice', contents = GameData.TempPowers, tooltip = "Select the temporary movement power to use.")
         self.tempSizer.AddControl( ctlName = 'TempMode', ctlType = 'keybutton',)
-        self.tempSizer.AddControl( ctlName = 'TempTray', ctlType = 'spinbox', contents = [1, 8],)
-        self.tempSizer.AddControl( ctlName = 'TempTraySwitch', ctlType = 'keybutton',)
         self.rightColumn.Add(self.tempSizer, 0, wx.EXPAND)
 
         ##### SUPER SPEED
@@ -425,7 +422,7 @@ class MovementPowers(Page):
             c['DetailMove'].Enable(self.GetState('ChangeDetail'))
 
             c['TempMode'].Enable(self.GetState('TempEnable'))
-            c['TempTray'].Enable(self.GetState('TempEnable'))
+            c['TempPower'].Enable(self.GetState('TempEnable'))
             c['TempTraySwitch'].Enable(self.GetState('TempEnable'))
 
             ### SHOW/HIDE CONTROL GROUPS BASED ON POWER POOL PICKS
@@ -564,13 +561,13 @@ class MovementPowers(Page):
             c['DwarfMode'].Enable(self.GetState('UseDwarf'))
             c['DwarfTray'].Enable(self.GetState('UseDwarf'))
 
-            # TODO - for now, hide temp travel power stuff;
-            # redo later using named power instead of trayslots
+            # Update temp travel power controls to use named powers
             tempGridSizer = self.tempSizer.GetChildren()[0].GetSizer()
             for ctrl in tempGridSizer.GetChildren():
-                ctrl.GetWindow().Enable(False)
-            self.rightColumn.Hide(self.tempSizer)
-            # end TODO temp sizer
+                win = ctrl.GetWindow()
+                if win:
+                    win.Enable(self.GetState('TempEnable'))
+            self.rightColumn.Show(self.tempSizer, self.GetState('TempEnable'))
 
             # show/hide kheldian-influenced controls depending on selected archetype;
             kheldianGridSizer = self.kheldianSizer.GetChildren()[0].GetSizer()
@@ -740,7 +737,7 @@ class MovementPowers(Page):
 
         if (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"af",curfile,turnoff,fix)
         if (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"aj",curfile,turnoff,patha,gamepatha)
-        if (modestr != "Temp")      : self.makeTempModeKey(profile,t,"ar",curfile,turnoff)
+        if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
 
         self.sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight)
 
@@ -769,7 +766,7 @@ class MovementPowers(Page):
 
         if (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"ff",curfile,turnoff,fix)
         if (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"fj",curfile,turnoff, pathf, gamepathf)
-        if (modestr != "Temp")      : self.makeTempModeKey(profile,t,"fr",curfile,turnoff)
+        if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
 
         curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('nop'))
 
@@ -814,19 +811,19 @@ class MovementPowers(Page):
         if self.GetState('Feedback'): feedback = '$$t $name, Temp Mode'
         else:                         feedback = ''
 
-        trayslot = f"1 {self.GetState('TempTray')}"
+        power_name = self.GetState('TempPower')
 
         if (bl == "r"):
             bindload = t.BLF('t')
-            cur.SetBind(key, name, self, t.ini + self.actPower_name(trayslot,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+            cur.SetBind(key, name, self, t.ini + self.actPower_name(power_name,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
         elif (bl == "ar"):
             bindload  = t.BLF('at')
             bindload2 = t.BLF('at','_t')
             tgl = p.GetBindFile(bindload2)
-            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower_name(trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + bindload2)
+            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower_name(power_name,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + bindload2)
             tgl.SetBind(key, name, self, "- $$" + feedback + bindload)
         else:
-            cur.SetBind(key, name, self, t.ini + self.actPower_name(trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('ft'))
+            cur.SetBind(key, name, self, t.ini + self.actPower_name(power_name,toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('ft'))
 
         t.ini = ''
 

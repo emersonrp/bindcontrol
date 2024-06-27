@@ -70,6 +70,11 @@ class Mastermind(Page):
                 'ctrlName'      : 'PetStay',
                 'tooltipdetail' : 'order your selected pets to Stay at their current location',
             },
+            {
+                'label'      : 'Bodyguard',
+                'ctrlName'      : 'PetBodyguard',
+                'tooltipdetail' : 'order your Bodyguard pets to enter Bodyguard Mode',
+            },
         )
 
     def __init__(self, parent):
@@ -122,15 +127,9 @@ class Mastermind(Page):
             'PetStayResponse' : 'Holding this Position.',
             'PetStayResponseMethod' : 'Petsay',
 
-            'PetBodyguardEnabled' : False,
-
-            'PetBodyguardFollow' : 'MULTIPLY',
-            'PetBodyguardFollowResponse' : 'Bodyguarding.',
-            'PetBodyguardFollowResponseMethod' : 'Petsay',
-
-            'PetBodyguardStay' : '',
-            'PetBodyguardStayResponse' : 'Covering this Location.',
-            'PetBodyguardStayResponseMethod' : 'Petsay',
+            'PetBodyguard' : 'MULTIPLY',
+            'PetBodyguardResponse' : 'Bodyguarding.',
+            'PetBodyguardResponseMethod' : 'Petsay',
 
             'PetCmdEnable': False,
 
@@ -277,63 +276,7 @@ class Mastermind(Page):
         petCommandsKeys.AddControl(
             ctlName = 'PetChatToggle',
             ctlType = 'keybutton',
-            tooltip = 'Choose the key combo that will toggle your pets\' Chatty Mode',
-        )
-
-        ### Bodyguard mode controls packed into the spacer differently
-        # add some space above it
-        for i in [1,2,3,4,5,6,7,8]:
-            petCommandsKeys.AddControl( ctlName = f'spacer{i}', ctlType = 'statictext', noLabel = True,)
-
-        bgCB = petCommandsKeys.AddControl(
-            noLabel  = True,
-            ctlName  = 'PetBodyguardEnabled',
-            ctlType  = 'checkbox',
-            contents = 'Enable Bodyguard Mode Binds',
-            tooltip  = 'Check this to enable the Bodyguard Mode Binds',
-        )
-        bgCB.Bind(wx.EVT_CHECKBOX, self.OnBGCheckboxes)
-
-        staticbox = petCommandsKeys.GetStaticBox()
-        petCommandsKeys.InnerSizer.Add(HelpButton(staticbox, "BodyguardBinds.html"))
-
-        # add another spacer row below.  This is ugly
-        for i in [1,2,3,4,5,6,7,8]:
-            petCommandsKeys.AddControl( ctlName = f'spacer{i}', ctlType = 'statictext', noLabel = True,)
-
-        petCommandsKeys.AddControl(
-            ctlType = 'keybutton',
-            ctlName = 'PetBodyguardFollow',
-            tooltip = 'Choose the key combo that will put your designated pets into Bodyguard mode',
-        )
-        petCommandsKeys.AddControl(
-            ctlName = 'PetBodyguardFollowResponseMethod',
-            ctlType = 'combobox',
-            contents = [ "Local", "Self-tell", "Petsay", "---", ],
-            tooltip = 'Choose how your pets will respond when they are in chatty mode and you put your designated pets into Bodyguard mode',
-        )
-        petCommandsKeys.AddControl(
-            noLabel = True,
-            ctlName = "PetBodyguardFollowResponse",
-            ctlType = "text",
-            tooltip = 'Choose the chat response your pets give when you put your designated pets into Bodyguard mode',
-        )
-        petCommandsKeys.AddControl(
-            ctlName = 'PetBodyguardStay',
-            ctlType = 'keybutton',
-            tooltip = 'Choose the key combo that will command your bodyguards to stay at their current location',
-        )
-        petCommandsKeys.AddControl(
-            ctlName = 'PetBodyguardStayResponseMethod',
-            ctlType = 'combobox',
-            contents = [ "Local", "Self-tell", "Petsay", "---", ],
-            tooltip = 'Choose how your bodyguards will respond when they are in chatty mode and you order them to stay at their current location',
-        )
-        petCommandsKeys.AddControl(
-            noLabel = True,
-            ctlName = "PetBodyguardStayResponse",
-            ctlType = 'text',
-            tooltip = 'Choose the chat response your bodyguards give when you order them to stay at their current location',
+            tooltip = 'Choose the key combo that will toggle your pets\' chattiness level',
         )
         #
         # Pet Next/Prev select binds
@@ -401,8 +344,7 @@ class Mastermind(Page):
             ])
         self.EnableControls(enabled ,
             ['PetChatToggle'        ,
-             'PetBodyguardFollow'   , 'PetBodyguardFollowResponseMethod' , 'PetBodyguardFollowResponse' ,
-             'PetBodyguardStay'     , 'PetBodyguardStayResponseMethod'   , 'PetBodyguardStayResponse'   ,
+             'PetBodyguard'   , 'PetBodyguardResponseMethod' , 'PetBodyguardResponse' ,
             ])
         # now re-check the BG stuff that we just enabled.
         self.OnBGCheckboxes()
@@ -434,16 +376,13 @@ class Mastermind(Page):
     def OnBGCheckboxes(self, evt = None):
         petcmdenabled = self.GetState('PetCmdEnable')
 
-        bgEnabled = self.GetState('PetBodyguardEnabled')
-
         for c in [
-            'PetBodyguardFollow' , 'PetBodyguardFollowResponseMethod' , 'PetBodyguardFollowResponse' ,
-            'PetBodyguardStay'   , 'PetBodyguardStayResponseMethod'   , 'PetBodyguardStayResponse'   ,
+            'PetBodyguard' , 'PetBodyguardResponseMethod' , 'PetBodyguardResponse' ,
         ]:
-            self.Ctrls[c].Enable(petcmdenabled and bgEnabled)
+            self.Ctrls[c].Enable(petcmdenabled)
 
         for petid in [1,2,3,4,5,6]:
-            self.Ctrls[f"Pet{petid}Bodyguard"].Enable(petcmdenabled and bgEnabled)
+            self.Ctrls[f"Pet{petid}Bodyguard"].Enable(petcmdenabled)
 
         self.CheckUndefNames()
         self.CheckUniqueNames()
@@ -451,13 +390,12 @@ class Mastermind(Page):
         if evt: evt.Skip()
 
     def CheckUndefNames(self):
-        if self.GetState('PetBodyguardEnabled'):
-            for i in (1,2,3,4,5,6):
-                ctrl = self.Ctrls[f'Pet{i}Name']
-                if ctrl.GetValue():
-                    ctrl.RemoveError('undef')
-                else:
-                    ctrl.AddError('undef', 'By-Name selection and Bodyguard Mode require the pet name be filled in.')
+        for i in (1,2,3,4,5,6):
+            ctrl = self.Ctrls[f'Pet{i}Name']
+            if ctrl.GetValue():
+                ctrl.RemoveError('undef')
+            else:
+                ctrl.AddError('undef', 'By-Name selection and Bodyguard Mode require the pet name be filled in.')
 
     def CheckUniqueNames(self):
         if (self.Profile.Archetype() == "Mastermind"):
@@ -493,11 +431,9 @@ class Mastermind(Page):
 
     # set selected pets to BG Mode, chatty version
     def mmBGSelBind(self, file, PetBodyguardResponse, powers):
-        if not self.GetState('PetBodyguardEnabled'): return
-
         bgset = []
         bgsay = []
-        method = self.GetChatMethod(f"PetBodyguardFollowResponseMethod")
+        method = self.GetChatMethod(f"PetBodyguardResponseMethod")
         (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
 
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
@@ -564,35 +500,34 @@ class Mastermind(Page):
             if (tier3bg == 1):
                 bgset.append(f"petcompow {powers['bos']} def fol")
 
-        file.SetBind(self.Ctrls['PetBodyguardFollow'].MakeFileKeyBind(bgsay + bgset))
+        file.SetBind(self.Ctrls['PetBodyguard'].MakeFileKeyBind(bgsay + bgset))
 
     # Set selected pets to BG Mode, quiet version
     def mmQuietBGSelBind(self, file, powers):
-        if (self.GetState('PetBodyguardEnabled')):
-            bgset = []
-            (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
-            #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
-            if ((tier1bg + tier2bg + tier3bg) == 6):
-                bgset = ["petcomall def fol"]
+        bgset = []
+        (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
+        #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
+        if ((tier1bg + tier2bg + tier3bg) == 6):
+            bgset = ["petcomall def fol"]
+        else :
+            if (tier1bg == 3):
+                bgset.append(f"petcompow {powers['min']} def fol")
             else :
-                if (tier1bg == 3):
-                    bgset.append(f"petcompow {powers['min']} def fol")
-                else :
-                    #  use petsayname commands for those tier1s that are bodyguards.
-                    if (self.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[0]} def fol")
-                    if (self.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[1]} def fol")
-                    if (self.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[2]} def fol")
+                #  use petsayname commands for those tier1s that are bodyguards.
+                if (self.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[0]} def fol")
+                if (self.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[1]} def fol")
+                if (self.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[2]} def fol")
 
-                if (tier2bg == 2):
-                    bgset.append(f"petcompow {powers['lts']} def fol")
-                else :
-                    if (self.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[3]} def fol")
-                    if (self.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[4]} def fol")
+            if (tier2bg == 2):
+                bgset.append(f"petcompow {powers['lts']} def fol")
+            else :
+                if (self.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[3]} def fol")
+                if (self.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[4]} def fol")
 
-                if (tier3bg == 1):
-                    bgset.append(f"petcompow {powers['bos']} def fol")
+            if (tier3bg == 1):
+                bgset.append(f"petcompow {powers['bos']} def fol")
 
-            file.SetBind(self.Ctrls['PetBodyguardFollow'].MakeFileKeyBind(bgset))
+        file.SetBind(self.Ctrls['PetBodyguard'].MakeFileKeyBind(bgset))
 
     # set up "all" and "tierx" files with command binds, chatty version
     def mmSubBind(self, file, fn, grp, powers):
@@ -607,14 +542,14 @@ class Mastermind(Page):
         file.SetBind(self.Ctrls['PetSelectBoss'].MakeFileKeyBind([
             self.GetChatString('SelectBoss', 'bos'), profile.GetBindFile('mmb','ctier3.txt').BLF()]))
 
-        # TODO BodyguardStay also needs to go here(?)
-        bgresponse = self.GetState('PetBodyguardFollowResponse') if self.GetChatString(f"BodyguardFollow") else ''
-        self.mmBGSelBind(file,bgresponse,powers)
+        bgfresponse = self.GetState('PetBodyguardResponse') if self.GetChatString(f"Bodyguard") else ''
+        self.mmBGSelBind(file,bgfresponse,powers)
 
-        if grp: petcom = f"$$petcompow {grp}"
-        else:   petcom =  "$$petcomall"
+        if isinstance(grp, int) : petcom = f"petcomname {self.uniqueNames[grp-1]}"
+        elif grp                : petcom = f"petcompow {grp}"
+        else                    : petcom =  'petcomall'
         for cmd in ('Aggressive','Defensive','Passive', 'Attack','Follow','Goto', 'Stay'):
-            file.SetBind(self.Ctrls[f"Pet{cmd}"].MakeFileKeyBind(self.GetChatString(cmd) + f" {petcom} {cmd}"))
+            file.SetBind(self.Ctrls[f"Pet{cmd}"].MakeFileKeyBind(self.GetChatString(cmd, grp or 'all') + f" {petcom} {cmd}"))
 
         file.SetBind(self.Ctrls['PetChatToggle'].MakeFileKeyBind(['tell $name, Non-Chatty Mode', profile.GetBindFile('mmb',f"{fn}.txt").BLF()]))
 
@@ -627,13 +562,13 @@ class Mastermind(Page):
         file.SetBind(self.Ctrls['PetSelectBoss']       .MakeFileKeyBind(profile.GetBindFile('mmb','tier3.txt').BLF()))
         self.mmQuietBGSelBind(file, powers)
 
-        if grp: petcom = f"petcompow {grp}"
-        else:   petcom =  'petcomall'
+        if isinstance(grp, int) : petcom = f"petcomname {self.uniqueNames[grp-1]}"
+        elif grp                : petcom = f"petcompow {grp}"
+        else                    : petcom =  'petcomall'
         for cmd in ('Aggressive','Defensive','Passive', 'Attack','Follow','Goto', 'Stay'):
             file.SetBind(self.Ctrls[f"Pet{cmd}"].MakeFileKeyBind(f"{petcom} {cmd}"))
 
-        if (self.GetState('PetBodyguardEnabled')):
-            file.SetBind(self.Ctrls['PetBodyguardStay'].MakeFileKeyBind('nop'))
+        file.SetBind(self.Ctrls['PetBodyguard'].MakeFileKeyBind('nop'))
 
         file.SetBind(self.Ctrls['PetChatToggle'].MakeFileKeyBind(['tell $name, Chatty Mode', profile.GetBindFile('mmb','c' + fn + '.txt').BLF()]))
 
@@ -658,6 +593,9 @@ class Mastermind(Page):
             self.mmQuietSubBind(minfile , "tier1" , powers['min'] , powers)
             self.mmQuietSubBind(ltsfile , "tier2" , powers['lts'] , powers)
             self.mmQuietSubBind(bosfile , "tier3" , powers['bos'] , powers)
+            for pet in (1,2,3,4,5,6):
+                petfile = profile.GetBindFile('mmb', f"pet{pet}.txt")
+                self.mmQuietSubBind(petfile, f"pet{pet}", pet, powers)
 
             #### "Chatty" versions
             callfile = profile.GetBindFile('mmb','call.txt')
@@ -669,14 +607,33 @@ class Mastermind(Page):
             self.mmSubBind(cminfile , "tier1" , powers['min'] , powers)
             self.mmSubBind(cltsfile , "tier2" , powers['lts'] , powers)
             self.mmSubBind(cbosfile , "tier3" , powers['bos'] , powers)
+            for pet in (1,2,3,4,5,6):
+                petfile = profile.GetBindFile('mmb', f"cpet{pet}.txt")
+                self.mmSubBind(petfile, f"pet{pet}", pet, powers)
+
 
         ### By-name select binds.
-        # TODO -- make BC generate a BLF file for each pet that points the Sandolphan binds at just that
-        # pet if it is selected.  This will properly integrate these two schemes.
-        for i in [1,2,3,4,5,6]:
+        # TODO - would this make more sense fully integrated into mm(Quiet)SubBind?
+        for pet in [1,2,3,4,5,6]:
+            feedback = self.GetChatString('SelectAll', pet)
             ResetFile.SetBind(
-                self.Ctrls[f"PetSelect{i}"].MakeFileKeyBind(f"petselectname {self.uniqueNames[i-1]}")
+                self.Ctrls[f"PetSelect{pet}"].MakeFileKeyBind(
+                    [feedback, f"petselectname {self.uniqueNames[pet-1]}", profile.GetBindFile('mmb', f"cpet{pet}.txt").BLF()]
+                )
             )
+            for otherpet in (1,2,3,4,5,6):
+                cpetfile = profile.GetBindFile('mmb', f"cpet{otherpet}.txt")
+                petfile  = profile.GetBindFile('mmb', f"pet{otherpet}.txt")
+                cpetfile.SetBind(
+                    self.Ctrls[f"PetSelect{pet}"].MakeFileKeyBind(
+                        [feedback, f"petselectname {self.uniqueNames[pet-1]}", profile.GetBindFile('mmb', f"cpet{pet}.txt").BLF()]
+                    )
+                )
+                petfile.SetBind(
+                    self.Ctrls[f"PetSelect{pet}"].MakeFileKeyBind(
+                        [f"petselectname {self.uniqueNames[pet-1]}", profile.GetBindFile('mmb', f"pet{pet}.txt").BLF()]
+                    )
+                )
 
         ### Prev / next pet binds
         if (self.GetState('PetNPEnable') and
@@ -694,7 +651,6 @@ class Mastermind(Page):
         # tsize is the size of the team at the moment
         # tpos is the position of the player at the moment, or 0 if unknown
         # tsel is the currently selected team member as far as the bind knows, or 0 if unknown
-        #file.SetBind(self.reset,'tell $name, Re-Loaded Prev/Next Team Select Bind.$${BLF()} {self.Profile.GameBindsDir()}\\petsel\\10.txt')
         if tsize < 6:
             file.SetBind(self.GetState('IncPetSize'), self, UI.Labels['IncPetSize'], f'tell $name, [{tsize+1} Pet]$${BLF()} {self.Profile.GameBindsDir()}\\petsel\\{tsize+1}{tsel}.txt')
         else:
@@ -714,12 +670,11 @@ class Mastermind(Page):
             file.SetBind(self.GetState('SelNextPet'), self, UI.Labels['SelNextPet'], f'petselect {selnext-1}$${BLF()} {self.Profile.GameBindsDir()}\\petsel\\{tsize}{selnext}.txt')
             file.SetBind(self.GetState('SelPrevPet'), self, UI.Labels['SelPrevPet'], f'petselect {selprev-1}$${BLF()} {self.Profile.GameBindsDir()}\\petsel\\{tsize}{selprev}.txt')
 
-    def GetChatMethod(self, control, target = 'all'):
+    def GetChatMethod(self, control, target:str|int = 'all'):
         chatdesc = self.GetState(control)
-        powers   = self.MMPowerSets[ self.Profile.General.GetState('Primary') ]['powers']
-        # TODO - make this also take an individual pet (number?) as an option
-        if target == "all": petsay = "petsayall "
-        else:               petsay = "petsaypow " + powers[target] + " "
+        if target == "all"           : petsay = "petsayall "
+        elif isinstance(target, int) : petsay = f"petsayname {self.uniqueNames[target-1]} "
+        else                         : petsay = f"petsaypow {target} "
 
         return {
             'Local'     : 'local ',
@@ -728,7 +683,7 @@ class Mastermind(Page):
             '---'       : '',
         }[chatdesc]
 
-    def GetChatString(self, cmd, target = 'all'):
+    def GetChatString(self, cmd, target:str|int = 'all'):
         response = ''
         method = self.GetChatMethod(f'Pet{cmd}ResponseMethod', target)
         if method:
@@ -796,10 +751,8 @@ class Mastermind(Page):
         'PetGotoResponseMethod'              : "Pet Response",
         'PetStayResponseMethod'              : "Pet Response",
         'PetChatToggle'                      : "Pet Chatty Mode Toggle",
-        'PetBodyguardFollow'                 : "Bodyguard Follow",
-        'PetBodyguardFollowResponseMethod'   : "Pet Response",
-        'PetBodyguardStay'                   : "Bodyguard Stay",
-        'PetBodyguardStayResponseMethod'     : "Pet Response",
+        'PetBodyguard'                       : "Bodyguard Mode",
+        'PetBodyguardResponseMethod'         : "Pet Response",
         'PetNPEnable'                        : 'Enable Prev/Next Pet Binds',
         'SelNextPet'                         : "Select Next Pet",
         'SelPrevPet'                         : "Select Previous Pet",

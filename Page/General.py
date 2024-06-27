@@ -219,6 +219,13 @@ class General(Page):
 
         return
 
+    # we only fiddle with ResetFile, which is already taken care of.
+    def AllBindFiles(self):
+        return {
+            'files' : [],
+            'dirs'  : [],
+        }
+
     ### EVENT HANDLERS
     def OnPickArchetype(self, evt = {}):
         arch = self.GetState('Archetype')

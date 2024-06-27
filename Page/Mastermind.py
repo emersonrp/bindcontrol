@@ -537,11 +537,11 @@ class Mastermind(Page):
         file.SetBind(self.Ctrls['PetSelectAll'].MakeFileKeyBind([
             self.GetChatString('SelectAll'), profile.GetBindFile('mmb','call.txt').BLF()]))
         file.SetBind(self.Ctrls['PetSelectMinions'].MakeFileKeyBind([
-            self.GetChatString('SelectMinions', 'min'), profile.GetBindFile('mmb','ctier1.txt').BLF()]))
+            self.GetChatString('SelectMinions', powers['min']), profile.GetBindFile('mmb','ctier1.txt').BLF()]))
         file.SetBind(self.Ctrls['PetSelectLieutenants'].MakeFileKeyBind([
-            self.GetChatString('SelectLieutenants', 'lts'), profile.GetBindFile('mmb','ctier2.txt').BLF()]))
+            self.GetChatString('SelectLieutenants', powers['lts']), profile.GetBindFile('mmb','ctier2.txt').BLF()]))
         file.SetBind(self.Ctrls['PetSelectBoss'].MakeFileKeyBind([
-            self.GetChatString('SelectBoss', 'bos'), profile.GetBindFile('mmb','ctier3.txt').BLF()]))
+            self.GetChatString('SelectBoss', powers['bos']), profile.GetBindFile('mmb','ctier3.txt').BLF()]))
 
         bgfresponse = self.GetState('PetBodyguardResponse') if self.GetChatString(f"Bodyguard") else ''
         self.mmBGSelBind(file,bgfresponse,powers)
@@ -550,7 +550,7 @@ class Mastermind(Page):
         elif grp                : petcom = f"petcompow {grp}"
         else                    : petcom =  'petcomall'
         for cmd in ('Aggressive','Defensive','Passive', 'Attack','Follow','Goto', 'Stay'):
-            file.SetBind(self.Ctrls[f"Pet{cmd}"].MakeFileKeyBind(self.GetChatString(cmd, grp or 'all') + f" {petcom} {cmd}"))
+            file.SetBind(self.Ctrls[f"Pet{cmd}"].MakeFileKeyBind([self.GetChatString(cmd, grp or 'all'), f" {petcom} {cmd}"]))
 
         file.SetBind(self.Ctrls['PetChatToggle'].MakeFileKeyBind(['tell $name, Non-Chatty Mode', profile.GetBindFile('mmb',f"{fn}.txt").BLF()]))
 

@@ -706,11 +706,13 @@ class Mastermind(Page):
         files = []
         # not clear that all of these are used but let's be thorough
         for fn in [
-            'all'     , 'tier1'    , 'tier2'    , 'tier3'   ,
-            'alla'    , 'tier1a'   , 'tier2a'   , 'tier3a'  ,
-            'call'    , 'ctier1'   , 'ctier2'   , 'ctier3'  ,
-            'calla'   , 'ctier1a'  , 'ctier2a'  , 'ctier3a' ,
-            'bga'     , 'cbga'     , 'cbgb'     ,
+            'all'   , 'tier1'   , 'tier2'   , 'tier3'   ,
+            'alla'  , 'tier1a'  , 'tier2a'  , 'tier3a'  ,
+            'call'  , 'ctier1'  , 'ctier2'  , 'ctier3'  ,
+            'calla' , 'ctier1a' , 'ctier2a' , 'ctier3a' ,
+            'bga'   , 'cbga'    , 'cbgb'    ,
+            'pet1'  , 'pet2'    , 'pet3'    , 'pet4'    , 'pet5'  , 'pet6'  ,
+            'cpet1' , 'cpet2'   , 'cpet3'   , 'cpet4'   , 'cpet5' , 'cpet6' ,
             # these next three are old but we'll keep them in the list for now
             'bguarda' , 'cbguarda' , 'cbguardb' ,
         ]:

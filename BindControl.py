@@ -23,6 +23,36 @@ class Main(wx.Frame):
 
         self.about_info = None
 
+        # TODO - most (NOT ALL) of this code can be deleted eventually.
+        if platform.system() == "Linux":
+            # First connect with the old-style .bindcontrol if it's there.
+            oldconfig = wx.FileConfig('bindcontrol')
+            # Set up XDG.  KEEP THIS LINE even if we remove the migration code
+            wx.StandardPaths.Get().SetFileLayout(wx.StandardPaths.Get().FileLayout.FileLayout_XDG)
+            # Then connect to the new location
+            config = wx.FileConfig('bindcontrol')
+            if oldconfig.Exists('ResetKey'):
+                wx.LogMessage("Migrating old-style .bindcontrol config to XDG path")
+                entries = {}
+                more, value, index = oldconfig.GetFirstEntry()
+                while more:
+                    entries[value] = oldconfig.GetEntryType(value)
+                    more, value, index = oldconfig.GetNextEntry(index)
+
+                for entry, type in entries.items():
+                    if type == wx.ConfigBase.Get().EntryType.Type_String:
+                        config.Write(entry, oldconfig.Read(entry))
+                    elif type == wx.ConfigBase.Get().EntryType.Type_Boolean:
+                        config.WriteBool(entry, oldconfig.ReadBool(entry))
+                    elif type == wx.ConfigBase.Get().EntryType.Type_Integer:
+                        config.WriteInt(entry, oldconfig.ReadInt(entry))
+                    elif type == wx.ConfigBase.Get().EntryType.Type_Float:
+                        config.WriteFloat(entry, oldconfig.ReadFloat(entry))
+
+                config.Flush()
+                oldconfig.DeleteAll()
+
+        # OK, all that ugliness out of the way, re-open config and let's proceed.
         config = wx.FileConfig('bindcontrol')
         wx.ConfigBase.Set(config)
         # Check each config bit for existence and set to default if no
@@ -39,12 +69,14 @@ class Main(wx.Frame):
         if not config.Exists('UseSplitModKeys')     : config.WriteBool('UseSplitModKeys', False)
         if not config.Exists('FlushAllBinds')       : config.WriteBool('FlushAllBinds', True)
         if not config.Exists('StartWith')           : config.Write('StartWith', 'Last Profile')
-        if not config.Exists('ProfilePath')         : config.Write('ProfilePath', str(Path.home() / "Documents" / "bindcontrol"))
+        if not config.Exists('ProfilePath')         : config.Write('ProfilePath', str(Path(wx.StandardPaths.Get().GetDocumentsDir()) / "bindcontrol"))
         if not config.Exists('SaveSizeAndPosition') : config.WriteBool('SaveSizeAndPosition', True)
         if not config.Exists('VerboseBLF')          : config.WriteBool('VerboseBLF', False)
         if not config.Exists('CrashOnBindError')    : config.WriteBool('CrashOnBindError', False)
         if not config.Exists('ShowInspector')       : config.WriteBool('ShowInspector', False)
         if not config.Exists('ShowDebugMessages')   : config.WriteBool('ShowDebugMessages', False)
+        if not config.Exists('WinH')                : config.WriteInt('WinH', 1000)
+        if not config.Exists('WinW')                : config.WriteInt('WinW', 1000)
         config.Flush()
 
         # set up the custom logger with the infobar

@@ -546,8 +546,8 @@ class Mastermind(Page):
         bgfresponse = self.GetState('PetBodyguardResponse') if self.GetChatString(f"Bodyguard") else ''
         self.mmBGSelBind(file,bgfresponse,powers)
 
-        if isinstance(grp, int) : petcom = f"petcomname {self.uniqueNames[grp-1]}"
-        elif grp                : petcom = f"petcompow {grp}"
+        if   grp == 'sel'       : petcom =  'petcom'
+        elif grp                : petcom = f'petcompow {grp}'
         else                    : petcom =  'petcomall'
         for cmd in ('Aggressive','Defensive','Passive', 'Attack','Follow','Goto', 'Stay'):
             file.SetBind(self.Ctrls[f"Pet{cmd}"].MakeFileKeyBind([self.GetChatString(cmd, grp or 'all'), f" {petcom} {cmd}"]))
@@ -563,7 +563,7 @@ class Mastermind(Page):
         file.SetBind(self.Ctrls['PetSelectBoss']       .MakeFileKeyBind(profile.GetBindFile('mmb','tier3.txt').BLF()))
         self.mmQuietBGSelBind(file, powers)
 
-        if isinstance(grp, int) : petcom = f"petcomname {self.uniqueNames[grp-1]}"
+        if   grp == 'sel'       : petcom =  'petcom'
         elif grp                : petcom = f"petcompow {grp}"
         else                    : petcom =  'petcomall'
         for cmd in ('Aggressive','Defensive','Passive', 'Attack','Follow','Goto', 'Stay'):
@@ -587,29 +587,26 @@ class Mastermind(Page):
             minfile = profile.GetBindFile('mmb','tier1.txt')
             ltsfile = profile.GetBindFile('mmb','tier2.txt')
             bosfile = profile.GetBindFile('mmb','tier3.txt')
+            selfile = profile.GetBindFile('mmb','sel.txt')
 
             self.mmQuietSubBind(allfile , "all"   , None          , powers)
             self.mmQuietSubBind(minfile , "tier1" , powers['min'] , powers)
             self.mmQuietSubBind(ltsfile , "tier2" , powers['lts'] , powers)
             self.mmQuietSubBind(bosfile , "tier3" , powers['bos'] , powers)
-            for pet in (1,2,3,4,5,6):
-                petfile = profile.GetBindFile('mmb', f"pet{pet}.txt")
-                self.mmQuietSubBind(petfile, f"pet{pet}", pet, powers)
+            self.mmQuietSubBind(selfile , "sel"   , 'sel'         , powers)
 
             #### "Chatty" versions
             callfile = profile.GetBindFile('mmb','call.txt')
             cminfile = profile.GetBindFile('mmb','ctier1.txt')
             cltsfile = profile.GetBindFile('mmb','ctier2.txt')
             cbosfile = profile.GetBindFile('mmb','ctier3.txt')
+            cselfile = profile.GetBindFile('mmb','csel.txt')
 
             self.mmSubBind(callfile , "all"   , None          , powers)
             self.mmSubBind(cminfile , "tier1" , powers['min'] , powers)
             self.mmSubBind(cltsfile , "tier2" , powers['lts'] , powers)
             self.mmSubBind(cbosfile , "tier3" , powers['bos'] , powers)
-            for pet in (1,2,3,4,5,6):
-                petfile = profile.GetBindFile('mmb', f"cpet{pet}.txt")
-                self.mmSubBind(petfile, f"pet{pet}", pet, powers)
-
+            self.mmSubBind(cselfile , "sel"   , 'sel'         , powers)
 
         ### By-name select binds.
         # TODO - would this make more sense fully integrated into mm(Quiet)SubBind?
@@ -617,22 +614,9 @@ class Mastermind(Page):
             feedback = self.GetChatString('SelectAll', pet)
             ResetFile.SetBind(
                 self.Ctrls[f"PetSelect{pet}"].MakeFileKeyBind(
-                    [feedback, f"petselectname {self.uniqueNames[pet-1]}", profile.GetBindFile('mmb', f"cpet{pet}.txt").BLF()]
+                    [feedback, f"petselectname {self.uniqueNames[pet-1]}", profile.GetBindFile('mmb', f"csel.txt").BLF()]
                 )
             )
-            for otherpet in (1,2,3,4,5,6):
-                cpetfile = profile.GetBindFile('mmb', f"cpet{otherpet}.txt")
-                petfile  = profile.GetBindFile('mmb', f"pet{otherpet}.txt")
-                cpetfile.SetBind(
-                    self.Ctrls[f"PetSelect{pet}"].MakeFileKeyBind(
-                        [feedback, f"petselectname {self.uniqueNames[pet-1]}", profile.GetBindFile('mmb', f"cpet{pet}.txt").BLF()]
-                    )
-                )
-                petfile.SetBind(
-                    self.Ctrls[f"PetSelect{pet}"].MakeFileKeyBind(
-                        [f"petselectname {self.uniqueNames[pet-1]}", profile.GetBindFile('mmb', f"pet{pet}.txt").BLF()]
-                    )
-                )
 
         ### Prev / next pet binds
         if (self.GetState('PetNPEnable') and
@@ -642,14 +626,14 @@ class Mastermind(Page):
             self.psCreateSet(6,0,self.Profile.ResetFile())
             for tsize in 1,2,3,4,5,6:
                 for tsel in range(0,tsize+1):
-                    # TODO also BLF the each-pet file mentioned in the above TODO
                     file = self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt")
                     self.psCreateSet(tsize,tsel,file)
 
     def psCreateSet(self, tsize, tsel, file):
         # tsize is the size of the team at the moment
-        # tpos is the position of the player at the moment, or 0 if unknown
         # tsel is the currently selected team member as far as the bind knows, or 0 if unknown
+
+        # TODO also BLF the correct (c)petX.txt file.  TODO - does the game honor two blf statements in a bind?
         if tsize < 6:
             file.SetBind(self.GetState('IncPetSize'), self, UI.Labels['IncPetSize'], f'tell $name, [{tsize+1} Pet]$${BLF()} {self.Profile.GameBindsDir()}\\petsel\\{tsize+1}{tsel}.txt')
         else:
@@ -672,6 +656,7 @@ class Mastermind(Page):
     def GetChatMethod(self, control, target:str|int = 'all'):
         chatdesc = self.GetState(control)
         if target == "all"           : petsay = "petsayall "
+        elif target == 'sel'         : petsay = "petsay "
         elif isinstance(target, int) : petsay = f"petsayname {self.uniqueNames[target-1]} "
         else                         : petsay = f"petsaypow {target} "
 
@@ -710,9 +695,8 @@ class Mastermind(Page):
             'alla'  , 'tier1a'  , 'tier2a'  , 'tier3a'  ,
             'call'  , 'ctier1'  , 'ctier2'  , 'ctier3'  ,
             'calla' , 'ctier1a' , 'ctier2a' , 'ctier3a' ,
+            'sel'   , 'csel',
             'bga'   , 'cbga'    , 'cbgb'    ,
-            'pet1'  , 'pet2'    , 'pet3'    , 'pet4'    , 'pet5'  , 'pet6'  ,
-            'cpet1' , 'cpet2'   , 'cpet3'   , 'cpet4'   , 'cpet5' , 'cpet6' ,
             # these next three are old but we'll keep them in the list for now
             'bguarda' , 'cbguarda' , 'cbguardb' ,
         ]:

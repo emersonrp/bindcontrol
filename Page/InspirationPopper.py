@@ -298,4 +298,9 @@ class InspirationPopper(Page):
                 UI.Labels[f"{tab}{order}{Insp}Foreground"] = "Text"
                 UI.Labels[f"{tab}{order}{Insp}Background"] = "Background"
 
-
+    # we only fiddle with ResetFile, which is already taken care of.
+    def AllBindFiles(self):
+        return {
+            'files' : [],
+            'dirs'  : [],
+        }

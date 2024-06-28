@@ -260,7 +260,6 @@ class Gameplay(Page):
             if self.GetState('Tray4Enabled'):
                 ResetFile.SetBind(self.Ctrls[f"Tray4Button{button}"].MakeFileKeyBind(f"powexec_serverslot {slotbutton}"))
 
-
         ### Team / Pet Select
         if self.GetState('TPSEnable'):
             if (self.GetState('TPSSelMode') != "Pets Only"
@@ -313,6 +312,8 @@ class Gameplay(Page):
         ResetFile.SetBind(self.Ctrls['InviteTarget']   .MakeFileKeyBind('invite $target'))
         ResetFile.SetBind(self.Ctrls['FPSBindKey']     .MakeFileKeyBind('++showfps'))
         ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
+
+        return True
 
     def AllBindFiles(self):
         files = [self.Profile.GetBindFile("teamsel", "reset.txt")]

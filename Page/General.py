@@ -217,7 +217,7 @@ class General(Page):
         ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
         ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
 
-        return
+        return True
 
     # we only fiddle with ResetFile, which is already taken care of.
     def AllBindFiles(self):
@@ -276,7 +276,7 @@ class General(Page):
                     nc.SetToolTip("The profile name cannot contain spaces.")
             else:
                 nc.SetBackgroundColour(wx.NullColour)
-                nc.SetToolTip(None)
+                nc.SetToolTip('')
         evt.Skip()
 
 

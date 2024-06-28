@@ -566,14 +566,14 @@ class MovementPowers(Page):
 
             # TODO - for now, hide temp travel power stuff;
             # redo later using named power instead of trayslots
-            tempGridSizer = self.tempSizer.GetChildren()[0].GetSizer()
+            tempGridSizer = self.tempSizer.InnerSizer
             for ctrl in tempGridSizer.GetChildren():
                 ctrl.GetWindow().Enable(False)
             self.rightColumn.Hide(self.tempSizer)
             # end TODO temp sizer
 
             # show/hide kheldian-influenced controls depending on selected archetype;
-            kheldianGridSizer = self.kheldianSizer.GetChildren()[0].GetSizer()
+            kheldianGridSizer = self.kheldianSizer.InnerSizer
             if (self.isKheldian()):
                 # show kheldian sizer, enable controls
                 for ctrl in kheldianGridSizer.GetChildren():
@@ -1280,6 +1280,7 @@ class MovementPowers(Page):
             ttp_on = profile.GetBindFile("ttp","ttp_on.txt")
             ttp_on.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+first$$-first$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
 
+        return True
 
     def doSpeedOnDemandBinds(self, t):
         profile   = self.Profile

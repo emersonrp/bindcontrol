@@ -69,6 +69,8 @@ class Profile(wx.Notebook):
     # Convenience / JIT accessors
     def Name(self)         : return self.General.GetState('Name')
     def Archetype(self)    : return self.General.GetState('Archetype')
+    def Primary(self)      : return self.General.GetState('Primary')
+    def Secondary(self)    : return self.General.GetState('Secondary')
     def ResetFile(self)    : return self.GetBindFile("reset.txt")
     def BindsDir(self)     :
         return Path(wx.ConfigBase.Get().Read('BindPath')) / self.Name()
@@ -79,7 +81,8 @@ class Profile(wx.Notebook):
 
     def HasPowerPool(self, poolname):
         for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
-            if self.General.Ctrls[picker].GetString(self.General.Ctrls[picker].GetSelection()) == poolname:
+            pctrl = self.General.Ctrls[picker]
+            if pctrl.GetString(pctrl.GetSelection()) == poolname:
                 return True
         return False
 
@@ -442,7 +445,10 @@ class Profile(wx.Notebook):
 
             # ... and tell it to gather up binds and put them into bindfiles.
             try:
-                page.PopulateBindFiles()
+                success = page.PopulateBindFiles()
+                if not success:
+                    wx.LogError(f'An error on the "{pageName}" tab caused WriteBinds to fail.')
+                    return
             except Exception as e:
                 if config.ReadBool('CrashOnBindError'):
                     raise e

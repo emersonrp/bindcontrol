@@ -216,6 +216,7 @@ class CustomBinds(Page):
     def PopulateBindFiles(self):
         for pane in self.Panes:
             pane.PopulateBindFiles()
+        return True
 
     def AllBindFiles(self):
         files = []

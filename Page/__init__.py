@@ -93,8 +93,8 @@ class Page(wx.ScrolledWindow):
 
     # create and fill the BindFile object with Bind objects
     # NB - no state should be kept in the page
-    def PopulateBindFiles(self):
-        return
+    def PopulateBindFiles(self) -> bool:
+        return True
 
     def HelpText(self):
         return 'Help not currently implemented here.'

@@ -353,7 +353,7 @@ class Mastermind(Page):
         if evt: evt.Skip()
 
     def OnPetNPChange(self, evt = None):
-        enabled = self.GetState('PetNPEnable')
+        enabled = self.GetState('PetNPEnable') and self.Profile.Archetype() == "Mastermind"
         self.EnableControls(enabled, ['SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize'])
         if enabled:
             for ctrlname in ['SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize']:

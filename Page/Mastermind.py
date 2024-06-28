@@ -1,7 +1,6 @@
 import wx
 import re
 import UI
-from BLF import BLF
 from Help import HelpButton
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 
@@ -338,17 +337,18 @@ class Mastermind(Page):
 
     def OnPetCmdEnable(self, evt = None):
         self.Freeze()
-        enabled = self.GetState('PetCmdEnable')
+        enabled = self.GetState('PetCmdEnable') and self.Profile.Archetype() == "Mastermind"
         for command in self.petCommandKeyDefinitions:
             self.EnableControls(enabled, [
                 command['ctrlName'], command['ctrlName']+"ResponseMethod", command['ctrlName']+"Response"
             ])
-        self.EnableControls(enabled ,
-            ['PetChatToggle'        ,
-             'PetBodyguard'   , 'PetBodyguardResponseMethod' , 'PetBodyguardResponse' ,
-            ])
-        # now re-check the BG stuff that we just enabled.
-        self.OnBGCheckboxes()
+        self.EnableControls(enabled , ['PetChatToggle', ])
+
+        for petid in [1,2,3,4,5,6]:
+            self.Ctrls[f"Pet{petid}Bodyguard"].Enable(enabled)
+
+        self.CheckUndefNames()
+        self.CheckUniqueNames()
         self.Thaw()
         if evt: evt.Skip()
 
@@ -372,22 +372,6 @@ class Mastermind(Page):
     def OnNameTextChange(self, evt = None):
         self.CheckUndefNames()
         self.CheckUniqueNames()
-        if evt: evt.Skip()
-
-    def OnBGCheckboxes(self, evt = None):
-        petcmdenabled = self.GetState('PetCmdEnable')
-
-        for c in [
-            'PetBodyguard' , 'PetBodyguardResponseMethod' , 'PetBodyguardResponse' ,
-        ]:
-            self.Ctrls[c].Enable(petcmdenabled)
-
-        for petid in [1,2,3,4,5,6]:
-            self.Ctrls[f"Pet{petid}Bodyguard"].Enable(petcmdenabled)
-
-        self.CheckUndefNames()
-        self.CheckUniqueNames()
-
         if evt: evt.Skip()
 
     def CheckUndefNames(self):
@@ -575,6 +559,8 @@ class Mastermind(Page):
 
         profile = self.Profile
         ResetFile = profile.ResetFile()
+
+        if not profile.Archetype() == 'Mastermind': return True
 
         for i in (1,2,3,4,5,6):
             ctrl = self.Ctrls[f'Pet{i}Name']

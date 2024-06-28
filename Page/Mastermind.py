@@ -576,6 +576,13 @@ class Mastermind(Page):
         profile = self.Profile
         ResetFile = profile.ResetFile()
 
+        for i in (1,2,3,4,5,6):
+            ctrl = self.Ctrls[f'Pet{i}Name']
+            if ctrl.IsEnabled() and ctrl.HasAnyError():
+                result = wx.MessageBox("One or more of your pet names has errors.  You can continue to write these binds but they are likely not to work well in-game.  Continue?", "Name Error", wx.YES_NO)
+                if result == wx.NO: return False
+                break
+
         ### Sandolphan binds
         if self.GetState('PetCmdEnable'):
             powers = self.MMPowerSets[ profile.General.GetState('Primary') ]['powers']
@@ -628,6 +635,8 @@ class Mastermind(Page):
                 for tsel in range(0,tsize+1):
                     file = self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt")
                     self.psCreateSet(tsize,tsel,file)
+
+        return True
 
     def psCreateSet(self, tsize, tsel, file):
         # tsize is the size of the team at the moment

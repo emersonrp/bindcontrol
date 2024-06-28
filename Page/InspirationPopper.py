@@ -288,6 +288,8 @@ class InspirationPopper(Page):
                 if self.GetState('EnableRevInspBinds'):
                     ResetFile.SetBind(self.Ctrls[f"{tab}Rev{Insp}Key"].MakeFileKeyBind(reverseOrder))
 
+        return True
+
     UI.Labels['Enable'] = "Enable Inspiration Popper"
 
     for tab in tabs:

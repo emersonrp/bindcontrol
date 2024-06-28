@@ -445,7 +445,10 @@ class Profile(wx.Notebook):
 
             # ... and tell it to gather up binds and put them into bindfiles.
             try:
-                page.PopulateBindFiles()
+                success = page.PopulateBindFiles()
+                if not success:
+                    wx.LogError(f'An error on the "{pageName}" tab caused WriteBinds to fail.')
+                    return
             except Exception as e:
                 if config.ReadBool('CrashOnBindError'):
                     raise e

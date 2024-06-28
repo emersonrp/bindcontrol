@@ -1280,6 +1280,7 @@ class MovementPowers(Page):
             ttp_on = profile.GetBindFile("ttp","ttp_on.txt")
             ttp_on.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+first$$-first$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
 
+        return True
 
     def doSpeedOnDemandBinds(self, t):
         profile   = self.Profile

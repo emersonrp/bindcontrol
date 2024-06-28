@@ -550,7 +550,7 @@ class Mastermind(Page):
         elif grp                : petcom = f'petcompow {grp}'
         else                    : petcom =  'petcomall'
         for cmd in ('Aggressive','Defensive','Passive', 'Attack','Follow','Goto', 'Stay'):
-            file.SetBind(self.Ctrls[f"Pet{cmd}"].MakeFileKeyBind([self.GetChatString(cmd, grp or 'all'), f" {petcom} {cmd}"]))
+            file.SetBind(self.Ctrls[f"Pet{cmd}"].MakeFileKeyBind([self.GetChatString(cmd, grp or 'all'), f"{petcom} {cmd}"]))
 
         file.SetBind(self.Ctrls['PetChatToggle'].MakeFileKeyBind(['tell $name, Non-Chatty Mode', profile.BLF('mmb',f"{fn}.txt")]))
 

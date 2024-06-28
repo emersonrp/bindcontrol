@@ -385,15 +385,9 @@ class Mastermind(Page):
     def CheckUniqueNames(self):
         if (self.Profile.Archetype() == "Mastermind"):
             names = []
-            wasMultiWord = [False] * 6
             for i in (1,2,3,4,5,6):
                 ctrl = self.Ctrls[f'Pet{i}Name']
-                value = ctrl.GetValue()
-                # if we contain multiple words, use the longest
-                words = value.split()
-                if len(words) > 1:
-                    wasMultiWord[i-1] = True
-                    value = max(words, key = len)
+                value = ctrl.GetValue().strip() # don't allow whitespace at the ends
                 names.append(value)
 
             # we stash this away every time we calculate it so we can
@@ -404,8 +398,7 @@ class Mastermind(Page):
                 if self.uniqueNames[i-1]:
                     ctrl.RemoveError('unique')
                 else:
-                    MWWarning = "  BindControl only uses the longest word of a multi-word name." if wasMultiWord[i-1] else ""
-                    ctrl.AddError('unique', f'This pet name is not different enough to identify it uniquely.{MWWarning}')
+                    ctrl.AddError('unique', f'This pet name is not different enough to identify it uniquely.')
         else:
             for i in (1,2,3,4,5,6):
                 ctrl = self.Ctrls[f'Pet{i}Name']
@@ -778,6 +771,9 @@ def FindSmallestUniqueSubstring(names):
 
                 if not foundMatch:
                     ### This substr works!
+                    # If it contains a space, put "" around it
+                    if re.match(r'\s', substr):
+                        substr = f'"{substr}"'
                     uniqueNames[nameInd] = substr
                     break
             else:

@@ -555,12 +555,21 @@ class Mastermind(Page):
 
         if not profile.Archetype() == 'Mastermind': return True
 
+        needUniqueNames = False
         for i in (1,2,3,4,5,6):
-            ctrl = self.Ctrls[f'Pet{i}Name']
-            if ctrl.IsEnabled() and ctrl.HasAnyError():
-                result = wx.MessageBox("One or more of your pet names has errors.  You can continue to write these binds but they are likely not to work well in-game.  Continue?", "Name Error", wx.YES_NO)
-                if result == wx.NO: return False
+            if self.Ctrls[f'PetSelect{i}'].GetLabel():
+                needUniqueNames = True
                 break
+        if self.Ctrls['PetBodyguard'].GetLabel():
+            needUniqueNames = True
+
+        if needUniqueNames:
+            for i in (1,2,3,4,5,6):
+                ctrl = self.Ctrls[f'Pet{i}Name']
+                if ctrl.IsEnabled() and ctrl.HasAnyError():
+                    result = wx.MessageBox("One or more of your pet names has errors.  You can continue to write these binds but they are likely not to work well in-game.  Continue?", "Name Error", wx.YES_NO)
+                    if result == wx.NO: return False
+                    break
 
         ### Sandolphan binds
         if self.GetState('PetCmdEnable'):

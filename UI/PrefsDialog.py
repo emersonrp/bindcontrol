@@ -2,9 +2,11 @@ import platform
 
 import wx
 import wx.lib.stattext as ST
+from pathlib import Path
 import UI
 from Help import HelpButton
 from UI.KeySelectDialog import bcKeyButton
+from UI.ControlGroup import cgDirPickerCtrl
 from bcController import bcController
 
 class PrefsDialog(wx.Dialog):
@@ -27,9 +29,16 @@ class PrefsDialog(wx.Dialog):
         generalPanel = wx.Panel(notebook)
         generalSizer = wx.FlexGridSizer(2,0,0)
 
+        generalSizer.Add( wx.StaticText(generalPanel, label = 'Game Directory:') , 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        self.gameDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('GamePath'))
+        self.gameDirPicker.SetToolTip('This is where your game is installed.  This will be used to install popmenus and custom windows.')
+        self.gameDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.onDirPickerChange)
+        generalSizer.Add( self.gameDirPicker, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+
         generalSizer.Add( wx.StaticText(generalPanel, label = 'Base Binds Directory:') , 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
-        self.bindsDirPicker = wx.DirPickerCtrl(generalPanel, path = config.Read('BindPath'))
+        self.bindsDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('BindPath'))
         self.bindsDirPicker.SetToolTip('Bind files will be written to this folder, inside a profile-specific subfolder.  Keeping this path as short as possible is strongly recommended.')
+        self.bindsDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.onDirPickerChange)
         generalSizer.Add( self.bindsDirPicker, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         self.gameBindsDirPicker = None
@@ -77,8 +86,9 @@ class PrefsDialog(wx.Dialog):
 
         ProfilePathLabel = wx.StaticText(generalPanel, label = "Path for saved profiles:")
         generalSizer.Add( ProfilePathLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
-        self.ProfileDirPicker = wx.DirPickerCtrl(generalPanel, path = config.Read('ProfilePath'))
+        self.ProfileDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('ProfilePath'))
         self.ProfileDirPicker.SetToolTip('Profiles will be saved to this location.')
+        self.ProfileDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.onDirPickerChange)
         generalSizer.Add( self.ProfileDirPicker, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         SaveSizeLabel = statictextclass(generalPanel, label = "Save size and position of BindControl window:")
@@ -207,6 +217,19 @@ class PrefsDialog(wx.Dialog):
         overallSizer.Add(paddingSizer, 0, wx.ALL|wx.EXPAND)
 
         self.SetSizerAndFit(overallSizer)
+
+    def onDirPickerChange(self, evt = None):
+        gamedir = Path(self.gameDirPicker.GetPath())
+        if gamedir.is_dir():
+            self.gameDirPicker.RemoveError('exists')
+        else:
+            self.gameDirPicker.AddError('exists', f'The directory "{gamedir}" does not exist.')
+        # TODO - check for bin/ and assets/ for HC dir
+
+        # TODO - other two pickers
+
+        if evt: evt.Skip()
+
 
     def onCBLabelClick(self, evt):
         cblabel = evt.EventObject

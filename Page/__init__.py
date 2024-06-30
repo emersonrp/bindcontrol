@@ -11,7 +11,6 @@
 
 import wx
 import wx.lib.colourselect as csel
-import wx.lib.scrolledpanel as scrolled
 from UI.KeySelectDialog import bcKeyButton
 
 class Page(wx.ScrolledWindow):

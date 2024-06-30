@@ -61,6 +61,12 @@ class Main(wx.Frame):
         config = wx.FileConfig('bindcontrol')
         wx.ConfigBase.Set(config)
         # Check each config bit for existence and set to default if no
+        if not config.Exists('GamePath'):
+            if platform.system() == 'Windows':
+                gamepath = "C:\\Games\\HC\\"
+            else:
+                gamepath = str(Path.home() / '.wine' / 'drive_c' / 'Games' / 'HC')
+            config.Write('GamePath', gamepath)
         if not config.Exists('BindPath'):
             if platform.system() == 'Windows':
                 bindpath = "C:\\coh\\"

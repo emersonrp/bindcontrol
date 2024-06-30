@@ -203,8 +203,28 @@ class Mastermind(Page):
 
     def BuildPage(self):
 
+        BindStyleNotebook = wx.Notebook(self, wx.ID_ANY, style = wx.NB_TOP)
+
+        SandolphanPage = self.SandolphanBindsPage(BindStyleNotebook)
+        qwyNumpadPage  = self.qwyNumpadBindsPage(BindStyleNotebook)
+
+        BindStyleNotebook.AddPage(SandolphanPage, "Sandolphan Binds")
+        BindStyleNotebook.AddPage(qwyNumpadPage, "qwy Numpad Controls Binds")
+
+        # TODO this is just for testing, remove it:
+        BindStyleNotebook.ChangeSelection(1)
+
+        self.MainSizer.Add(BindStyleNotebook, 1, wx.EXPAND)
+
+        self.SynchronizeUI()
+
+    def SandolphanBindsPage(self, parent):
+        SandolphanPage = wx.ScrolledWindow(parent, wx.ID_ANY)
+        SandolphanSizer = wx.BoxSizer(wx.VERTICAL)
+        SandolphanPage.SetSizer(SandolphanSizer)
+
         # get the pet names and binds to select them directly
-        PetNames  = wx.StaticBoxSizer(wx.VERTICAL, self, label = "Pet Names and By-Name Keybinds")
+        PetNames  = wx.StaticBoxSizer(wx.HORIZONTAL, SandolphanPage, label = "Pet Names and By-Name Keybinds")
         PetNameSB = PetNames.GetStaticBox()
         PetInner = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -274,7 +294,7 @@ class Mastermind(Page):
         petcmdenablesizer.Add(petcmdhelpbutton, 0)
 
         # Iterate the data structure at the top and make the grid of controls for the basic pet binds
-        petCommandsKeys = ControlGroup(self, self, width = 5,
+        petCommandsKeys = ControlGroup(SandolphanPage, self, width = 5,
                                        label = "Pet Action Binds", flexcols = [4], topcontent = petcmdenable)
         for command in self.petCommandKeyDefinitions:
             petCommandsKeys.AddControl(
@@ -319,7 +339,7 @@ class Mastermind(Page):
         petnpenablesizer.Add(petnpenablecb, 0, wx.ALIGN_CENTER_VERTICAL)
         petnpenablesizer.Add(petnphelpbutton, 0)
 
-        PetSelBox = ControlGroup(self, self, label="Prev/Next Pet Select Binds",
+        PetSelBox = ControlGroup(SandolphanPage, self, label="Prev/Next Pet Select Binds",
                                  width=8, flexcols=[1,3,5,7], topcontent = petnpenable)
         for b in (
             ['SelNextPet', 'Choose the key that will select the next pet from the currently selected one'],
@@ -335,11 +355,69 @@ class Mastermind(Page):
             self.Ctrls[b[0]].Bind(EVT_KEY_CHANGED, self.OnPetNPChange)
 
         # Bring it all together
-        self.MainSizer.Add(PetNames, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
-        self.MainSizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 10)
-        self.MainSizer.AddSpacer(10)
+        SandolphanSizer.Add(PetNames, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 16)
+        SandolphanSizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 16)
+        SandolphanSizer.AddSpacer(16)
 
-        self.MainSizer.Add(PetSelBox, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+        SandolphanSizer.Add(PetSelBox, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 16)
+
+        return SandolphanPage
+
+    def qwyNumpadBindsPage(self, parent):
+        qwyNumpadPage = wx.Panel(parent, wx.ID_ANY)
+        qwyNumpadSizer = wx.BoxSizer(wx.VERTICAL)
+        qwyNumpadPage.SetSizer(qwyNumpadSizer)
+
+        import wx.lib.agw.ultimatelistctrl as ulc
+        ButtonGrid = ulc.UltimateListCtrl(qwyNumpadPage,
+                    agwStyle = ulc.ULC_VRULES|ulc.ULC_HRULES|ulc.ULC_NO_HIGHLIGHT|ulc.ULC_REPORT)
+
+        # OK, let's make this thing happen
+
+        # column headers
+        for i, name in enumerate(['Key', 'No Chord', 'ALT+', 'SHIFT+', 'CTRL+']):
+            ButtonGrid.InsertColumn(i, name)
+
+        contents = [
+            ['NUMLOCK', '-', '-', '-', '-'],
+            ['DIVIDE', 'all pet say', 'all minions say', 'all Lieutenants say', 'boss says'],
+            ['MULTIPLY', 'open popmenu', 'toggle custom window', '', ''],
+            ['SUBTRACT', 'all follow', 'all def follow', 'all agg follow', 'all pas follow'],
+            ['NUMPAD9', 'all goto', 'all def goto', 'all agg goto', 'all pas goto'],
+            ['NUMPAD8', 'all attack', 'all def attack', 'all agg attack', 'all pas attack'],
+            ['NUMPAD7', 'all stay', 'all def stay', 'all agg stay', 'all pas stay', ],
+            ['NUMPAD6', 'all passive', 'select boss', '', ''],
+            ['NUMPAD5', 'all aggressive', 'select lieutenant 2', '', ''],
+            ['NUMPAD4', 'all defense', 'select lieutenant 1', '', '', ],
+            ['NUMPAD3', 'select boss', 'select minion 3', 'summon boss', 'dismiss boss'],
+            ['NUMPAD2', 'select lieutenants', 'select minion 2', 'summon lieutenants', 'dismiss lieutenants'],
+            ['NUMPAD1', 'select minions', 'select minion 1', 'summon minions', 'dismiss minions'],
+            ['NUMPAD0', 'select all', '', 'dismiss target', 'dismiss all'],
+            ['ADD', 'roll upgrades', '', '', ''],
+            ['NUMPADENTER', 'pet heal targeted', '', '', ''],
+            ['DECIMAL', 'target next pet all', 'target next minion',' target next lieutenant', 'target boss'],
+        ]
+
+        for row in contents:
+            ButtonGrid.Append(row)
+
+        for i in (0,1,2,3,4):
+            ButtonGrid.SetColumnWidth(i, wx.LIST_AUTOSIZE)
+
+        # This is awful
+        rect = ButtonGrid.GetItemRect(0)
+        height = rect.height * (ButtonGrid.GetItemCount()+2)
+        width = rect.width
+        ButtonGrid.SetMinSize((width, height))
+        ButtonGrid.SetAutoLayout(True)
+
+        qwyNumpadSizer.AddStretchSpacer(1)
+        qwyNumpadSizer.Add(ButtonGrid, 0, wx.ALIGN_CENTER)
+        qwyNumpadSizer.AddStretchSpacer(1)
+
+        qwyNumpadPage.Layout()
+
+        return qwyNumpadPage
 
     def SynchronizeUI(self):
         ismm = self.Profile.Archetype() == "Mastermind"

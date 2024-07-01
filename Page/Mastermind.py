@@ -10,6 +10,7 @@ from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 # Originally: https://web.archive.org/web/20120904222729/http://boards.cityofheroes.com/showthread.php?t=117256
 
 from Page import Page
+from Page.MM.qwyBinds import qwyBinds
 from UI.ControlGroup import ControlGroup, cgTextCtrl
 
 class Mastermind(Page):
@@ -206,7 +207,7 @@ class Mastermind(Page):
         BindStyleNotebook = wx.Notebook(self, wx.ID_ANY, style = wx.NB_TOP)
 
         SandolphanPage = self.SandolphanBindsPage(BindStyleNotebook)
-        qwyNumpadPage  = self.qwyNumpadBindsPage(BindStyleNotebook)
+        qwyNumpadPage  = qwyBinds(BindStyleNotebook)
 
         BindStyleNotebook.AddPage(SandolphanPage, "Sandolphan Binds")
         BindStyleNotebook.AddPage(qwyNumpadPage, "qwy Numpad Controls Binds")
@@ -362,62 +363,6 @@ class Mastermind(Page):
         SandolphanSizer.Add(PetSelBox, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 16)
 
         return SandolphanPage
-
-    def qwyNumpadBindsPage(self, parent):
-        qwyNumpadPage = wx.Panel(parent, wx.ID_ANY)
-        qwyNumpadSizer = wx.BoxSizer(wx.VERTICAL)
-        qwyNumpadPage.SetSizer(qwyNumpadSizer)
-
-        import wx.lib.agw.ultimatelistctrl as ulc
-        ButtonGrid = ulc.UltimateListCtrl(qwyNumpadPage,
-                    agwStyle = ulc.ULC_VRULES|ulc.ULC_HRULES|ulc.ULC_NO_HIGHLIGHT|ulc.ULC_REPORT)
-
-        # OK, let's make this thing happen
-
-        # column headers
-        for i, name in enumerate(['Key', 'No Chord', 'ALT+', 'SHIFT+', 'CTRL+']):
-            ButtonGrid.InsertColumn(i, name)
-
-        contents = [
-            ['NUMLOCK', '-', '-', '-', '-'],
-            ['DIVIDE', 'all pet say', 'all minions say', 'all Lieutenants say', 'boss says'],
-            ['MULTIPLY', 'open popmenu', 'toggle custom window', '', ''],
-            ['SUBTRACT', 'all follow', 'all def follow', 'all agg follow', 'all pas follow'],
-            ['NUMPAD9', 'all goto', 'all def goto', 'all agg goto', 'all pas goto'],
-            ['NUMPAD8', 'all attack', 'all def attack', 'all agg attack', 'all pas attack'],
-            ['NUMPAD7', 'all stay', 'all def stay', 'all agg stay', 'all pas stay', ],
-            ['NUMPAD6', 'all passive', 'select boss', '', ''],
-            ['NUMPAD5', 'all aggressive', 'select lieutenant 2', '', ''],
-            ['NUMPAD4', 'all defense', 'select lieutenant 1', '', '', ],
-            ['NUMPAD3', 'select boss', 'select minion 3', 'summon boss', 'dismiss boss'],
-            ['NUMPAD2', 'select lieutenants', 'select minion 2', 'summon lieutenants', 'dismiss lieutenants'],
-            ['NUMPAD1', 'select minions', 'select minion 1', 'summon minions', 'dismiss minions'],
-            ['NUMPAD0', 'select all', '', 'dismiss target', 'dismiss all'],
-            ['ADD', 'roll upgrades', '', '', ''],
-            ['NUMPADENTER', 'pet heal targeted', '', '', ''],
-            ['DECIMAL', 'target next pet all', 'target next minion',' target next lieutenant', 'target boss'],
-        ]
-
-        for row in contents:
-            ButtonGrid.Append(row)
-
-        for i in (0,1,2,3,4):
-            ButtonGrid.SetColumnWidth(i, wx.LIST_AUTOSIZE)
-
-        # This is awful
-        rect = ButtonGrid.GetItemRect(0)
-        height = rect.height * (ButtonGrid.GetItemCount()+2)
-        width = rect.width
-        ButtonGrid.SetMinSize(wx.Size(width, height))
-        ButtonGrid.SetAutoLayout(True)
-
-        qwyNumpadSizer.AddStretchSpacer(1)
-        qwyNumpadSizer.Add(ButtonGrid, 0, wx.ALIGN_CENTER)
-        qwyNumpadSizer.AddStretchSpacer(1)
-
-        qwyNumpadPage.Layout()
-
-        return qwyNumpadPage
 
     def SynchronizeUI(self):
         ismm = self.Profile.Archetype() == "Mastermind"

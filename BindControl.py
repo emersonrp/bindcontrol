@@ -515,6 +515,7 @@ class Main(wx.Frame):
     def OnMenuPrefsDialog(self, _):
         if self.PrefsDialog.ShowModal() == wx.ID_OK:
             config = wx.ConfigBase.Get()
+            config.Write('GamePath', self.PrefsDialog.gameDirPicker.GetPath())
             config.Write('BindPath', self.PrefsDialog.bindsDirPicker.GetPath())
             if self.PrefsDialog.gameBindsDirPicker:
                 config.Write('GameBindPath', self.PrefsDialog.gameBindsDirPicker.GetValue())

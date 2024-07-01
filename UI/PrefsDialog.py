@@ -33,20 +33,20 @@ class PrefsDialog(wx.Dialog):
         self.gameDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('GamePath'))
         self.gameDirPicker.SetToolTip('This is where your game is installed.  This will be used to install popmenus and custom windows.')
         self.gameDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.onDirPickerChange)
-        generalSizer.Add( self.gameDirPicker, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        generalSizer.Add( self.gameDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         generalSizer.Add( wx.StaticText(generalPanel, label = 'Base Binds Directory:') , 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.bindsDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('BindPath'))
         self.bindsDirPicker.SetToolTip('Bind files will be written to this folder, inside a profile-specific subfolder.  Keeping this path as short as possible is strongly recommended.')
         self.bindsDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.onDirPickerChange)
-        generalSizer.Add( self.bindsDirPicker, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        generalSizer.Add( self.bindsDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         self.gameBindsDirPicker = None
         if (platform.system() != 'Windows'):
             generalSizer.Add( wx.StaticText(generalPanel, label = "In-Game Binds Directory:") , 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
             self.gameBindsDirPicker = wx.TextCtrl(generalPanel, value = config.Read('GameBindPath'))
             self.gameBindsDirPicker.SetToolTip('When playing via Wine, the game\'s file paths will be different than the native ones.  Put a Windows path into this box that describes where Wine will find the above directory.  Keeping this path as short as possible is strongly recommended.')
-            generalSizer.Add( self.gameBindsDirPicker, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+            generalSizer.Add( self.gameBindsDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
         generalSizer.Add( wx.StaticText(generalPanel, label = "Binds Reset Key:"), 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ResetKey = bcKeyButton(generalPanel, -1, init ={ 'CtlName': 'ResetKey', })
@@ -54,7 +54,7 @@ class PrefsDialog(wx.Dialog):
         UI.Labels.update({ 'ResetKey': 'Binds Reset Key'})
         generalSizer.Add( self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)
 
-        splitKeyLabel = statictextclass(generalPanel, label = "Bind left and right modifier keys separately:")
+        splitKeyLabel = statictextclass(generalPanel, label = "Bind L/R modifier keys separately:")
         generalSizer.Add( splitKeyLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.UseSplitModKeys = wx.CheckBox(generalPanel)
         self.UseSplitModKeys.SetValue(config.ReadBool('UseSplitModKeys'))
@@ -64,7 +64,7 @@ class PrefsDialog(wx.Dialog):
         setattr(splitKeyLabel, 'CB', self.UseSplitModKeys)
         splitKeyLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
-        flushBindsLabel = statictextclass(generalPanel, label = "Reset all binds to default before reapplying:")
+        flushBindsLabel = statictextclass(generalPanel, label = "Reset binds to default when loading:")
         generalSizer.Add( flushBindsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.FlushAllBinds = wx.CheckBox(generalPanel)
         self.FlushAllBinds.SetValue(config.ReadBool('FlushAllBinds'))
@@ -89,9 +89,9 @@ class PrefsDialog(wx.Dialog):
         self.ProfileDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('ProfilePath'))
         self.ProfileDirPicker.SetToolTip('Profiles will be saved to this location.')
         self.ProfileDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.onDirPickerChange)
-        generalSizer.Add( self.ProfileDirPicker, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        generalSizer.Add( self.ProfileDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
-        SaveSizeLabel = statictextclass(generalPanel, label = "Save size and position of BindControl window:")
+        SaveSizeLabel = statictextclass(generalPanel, label = "Save size and position of window:")
         generalSizer.Add( SaveSizeLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.SaveSizeAndPosition = wx.CheckBox(generalPanel)
         self.SaveSizeAndPosition.SetValue(config.ReadBool('SaveSizeAndPosition'))
@@ -99,7 +99,7 @@ class PrefsDialog(wx.Dialog):
         generalSizer.Add( self.SaveSizeAndPosition, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
         setattr(SaveSizeLabel, 'CB', self.SaveSizeAndPosition)
-        SaveSizeLabel.Bind( wx.EVT_LEFT_DOWN, self.onSSAPLabelClick )
+        SaveSizeLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
         generalPanel.SetSizerAndFit(generalSizer)
 
@@ -218,25 +218,36 @@ class PrefsDialog(wx.Dialog):
 
         self.SetSizerAndFit(overallSizer)
 
+        self.onDirPickerChange()
+
     def onDirPickerChange(self, evt = None):
         gamedir = Path(self.gameDirPicker.GetPath())
         if gamedir.is_dir():
             self.gameDirPicker.RemoveError('exists')
+            if Path(gamedir / 'bin').is_dir() and Path(gamedir / 'assets').is_dir():
+                self.gameDirPicker.RemoveWarning('wrongdir')
+            else:
+                self.gameDirPicker.AddWarning('wrongdir', f'The directory "{gamedir}" doesn\'t seem to have a Homecoming installation in it.  BindControl only currently supports popmenus and custom windows with Homecoming installations.  Keybinds will still work.')
         else:
             self.gameDirPicker.AddError('exists', f'The directory "{gamedir}" does not exist.')
-        # TODO - check for bin/ and assets/ for HC dir
 
-        # TODO - other two pickers
+
+        bindsdir = Path(self.bindsDirPicker.GetPath())
+        if bindsdir.is_dir():
+            self.bindsDirPicker.RemoveError('exists')
+        else:
+            self.bindsDirPicker.AddError('exists', f'The directory "{bindsdir}" does not exist.')
+
+        profiledir = Path(self.ProfileDirPicker.GetPath())
+        if profiledir.is_dir():
+            self.ProfileDirPicker.RemoveError('exists')
+        else:
+            self.ProfileDirPicker.AddError('exists', f'The directory "{profiledir}" does not exist.')
 
         if evt: evt.Skip()
 
 
     def onCBLabelClick(self, evt):
-        cblabel = evt.EventObject
-        cblabel.CB.SetValue(not cblabel.CB.IsChecked())
-        evt.Skip()
-
-    def onSSAPLabelClick(self, evt):
         cblabel = evt.EventObject
         cblabel.CB.SetValue(not cblabel.CB.IsChecked())
         evt.Skip()

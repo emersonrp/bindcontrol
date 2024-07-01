@@ -62,9 +62,6 @@ class ErrorControlMixin:
         self.SetErrorToolTip()
         self.Refresh()
 
-    def StylingTarget(self):
-        return self.GetTextCtrl() if (isinstance(self, wx.PickerBase) and self.HasTextCtrl()) else self
-
     # Do some dancing in here to make sure multi-line text controls get their contents updated
     def SetFullBackgroundColour(self, colour):
         target = self.StylingTarget()
@@ -75,6 +72,9 @@ class ErrorControlMixin:
             [start, end] = target.GetSelection()
             target.SetStyle(start, end, newstyle)
             target.SelectNone()
+
+    def StylingTarget(self):
+        return self.GetTextCtrl() if (isinstance(self, wx.PickerBase) and self.HasTextCtrl()) else self
 
     def SetErrorToolTip(self):
         tipstrings = list(self.Errors.values()) + list(self.Warnings.values())

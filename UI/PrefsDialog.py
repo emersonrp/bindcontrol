@@ -106,7 +106,7 @@ class PrefsDialog(wx.Dialog):
         generalSizer.Add(self.ProfileDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         SaveSizeLabel = statictextclass(generalPanel, label = "Save size / position of window:")
-        generalSizer.Add(SaveSizeLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        generalSizer.Add(SaveSizeLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.SaveSizeAndPosition = wx.CheckBox(generalPanel)
         self.SaveSizeAndPosition.SetValue(config.ReadBool('SaveSizeAndPosition'))
         self.SaveSizeAndPosition.SetToolTip("Save the size and position of the BindControl window between sessions.")
@@ -339,3 +339,6 @@ class PrefsDialog(wx.Dialog):
                 # and highlight buttons as needed in case we fiddled with ReseyKey
                 profile.CheckAllConflicts()
 
+class controllerModPicker(wx.Choice):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

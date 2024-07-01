@@ -408,7 +408,7 @@ class Mastermind(Page):
         rect = ButtonGrid.GetItemRect(0)
         height = rect.height * (ButtonGrid.GetItemCount()+2)
         width = rect.width
-        ButtonGrid.SetMinSize((width, height))
+        ButtonGrid.SetMinSize(wx.Size(width, height))
         ButtonGrid.SetAutoLayout(True)
 
         qwyNumpadSizer.AddStretchSpacer(1)

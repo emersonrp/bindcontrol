@@ -18,7 +18,7 @@ from Page.MovementPowers import MovementPowers
 from Page.InspirationPopper import InspirationPopper
 from Page.Mastermind import Mastermind
 from Page.CustomBinds import CustomBinds
-from Page.Popmenu import Popmenu
+from Page.PopmenuEditor import PopmenuEditor
 
 import UI
 from UI.ControlGroup import cgSpinCtrl, cgSpinCtrlDouble
@@ -70,7 +70,7 @@ class Profile(wx.Notebook):
         self.MovementPowers    = self.CreatePage(MovementPowers(self))
         self.InspirationPopper = self.CreatePage(InspirationPopper(self))
         self.Mastermind        = self.CreatePage(Mastermind(self))
-        self.Popmenu           = self.CreatePage(Popmenu(self))
+        self.PopmenuEditor     = self.CreatePage(PopmenuEditor(self))
 
         # bind all control events so we can decide that we're modified.
         for evt in [

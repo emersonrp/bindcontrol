@@ -216,7 +216,10 @@ class cgSpinCtrl        (CGControlMixin, ErrorControlMixin, wx.SpinCtrl)        
 class cgSpinCtrlDouble  (CGControlMixin, ErrorControlMixin, wx.SpinCtrlDouble)   :
     def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
 class cgDirPickerCtrl   (CGControlMixin, ErrorControlMixin, wx.DirPickerCtrl)    :
-    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, style = wx.DIRP_USE_TEXTCTRL|wx.DIRP_SMALL, **kwargs)
+        self.SetTextCtrlProportion(1)
+        self.GetTextCtrl().SetEditable(False)
 class cgColourPickerCtrl(CGControlMixin, ErrorControlMixin, wx.ColourPickerCtrl) :
     def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
 class cgChoice          (CGControlMixin, ErrorControlMixin, wx.Choice)           :

@@ -76,6 +76,8 @@ class Popmenu(FM.FlatMenu):
         self.AppendSeparator()
         self.Append(wx.ID_ANY, "Connor is cute")
 
+        self.MenuStructure = {}
+
     def WriteToFile(self, filename):
         ...
 
@@ -87,7 +89,7 @@ class Popmenu(FM.FlatMenu):
 
         contents = PopmenuFile.read_text()
 
-        ParsedMenu = self.ParseMenuStructure(contents)
+        self.MenuStructure = self.ParseMenuStructure(contents)
 
 
     def ParseMenuStructure(self, data):
@@ -103,22 +105,72 @@ class Popmenu(FM.FlatMenu):
             elif line == "Divider":
                 ParsedMenu.append('Divider')
             elif line == "LockedOption":
-                # TODO scoop out everything between { and } lines into LockedData
                 LockedData = self.GetBracketedChunk(lines)
-                ParsedMenu.append(self.ParseLockedOption(LockedData))
-            elif re.match(r'^Menu\s+(.*)', line):
-                # TODO scoop out everything between { and } lines into LockedData
+                if not LockedData:
+                    wx.LogError("Unable to load popmenu from data - malformed LockedOption section, canceling")
+                    return {}
+                ParsedMenu.append({'LockedOption' : self.ParseLockedOption(LockedData)})
+            elif re.match(r'Title\s+(.*)', line):
+                ParsedMenu.append({'Title', line})
+            elif re.match(r'Menu\s+(.*)', line):
                 SubMenuData = self.GetBracketedChunk(lines)
-                ParsedMenu.append(self.ParseMenuStructure(SubMenuData))
-            elif re.match(r'^Option\s+(.*)', line):
-                ...
-            elif re.match(r'^Title\s+(.*)', line):
-                ...
+                if not SubMenuData:
+                    wx.LogError("Unable to load popmenu from data - malformed submenu section, canceling")
+                    return {}
+                ParsedMenu.append({line : self.ParseMenuStructure(SubMenuData)})
+            elif match := re.match(r'Option\s+(.*)', line):
+                OptionData = match.group(1)
+                #
+                # TODO - do popmenus ever use single quotes?
+                if re.match(r'"', OptionData):
+                    splitmatch = re.match(r'"(^"+)"\s+(.*)', OptionData)
+                else:
+                    splitmatch = re.match(r'([^\s+])\s+(.*)', OptionData)
+                if splitmatch:
+                    Optname, OptPayload = splitmatch.group(1,2)
+                else:
+                    wx.LogError(f'Invalid "Option" clause in popmenu: "{OptionData}", canceling')
+                    return {}
+
+                if re.match(r'"', OptPayload):
+                    OptPayload = OptPayload.strip('"')
+                elif plmatch := re.match(r'<&(.*)&>', OptPayload):
+                    OptPayload = plmatch.group(1)
+
+                ParsedMenu.append({'Option' : {Optname : OptPayload}})
 
         return ParsedMenu
 
-    def ParseLockedOption(self, data):
-        ...
+    def ParseLockedOption(self, lines):
+        LockedOptions = []
+        for line in lines:
+            linematch = re.match(r'(\w+)\s+(.*)', line)
+            if not linematch:
+                wx.LogError(f'Malformed line in LockedOption section: "{line}", canceling')
+                return []
 
-    def GetBracketedChunk(self, data):
-        ...
+            OptName, OptPayload = linematch.group(1,2)
+
+            if not OptName in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady'):
+                wx.LogError(f'Unknown keyword "{OptName}" in LockedOption section, canceling')
+                return []
+
+            LockedOptions.append({OptName : OptPayload})
+
+        return LockedOptions
+
+    # TODO this should alter 'lines' as we go, dropping the {} and capturing everything between into BracketedChunk
+    def GetBracketedChunk(self, lines):
+        BracketedChunk = []
+
+        firstline = lines.pop().strip()
+        if firstline != "{":
+            wx.LogError(f'Malformed popmenu file:  expected "{{", got "{firstline}"')
+            return False
+
+        line = lines.pop().strip()
+        while line != "}":
+            BracketedChunk.append(line)
+            line = lines.pop().strip()
+
+        return BracketedChunk

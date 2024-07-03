@@ -34,6 +34,7 @@ class PopmenuEditor(Page):
         MenuListSizer.Add(RenMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         self.MenuListBox = wx.ListBox(MenuList, style = wx.LB_SINGLE)
         MenuListSizer.Add(self.MenuListBox, 1, wx.EXPAND|wx.ALL, 6)
+        self.MenuListBox.Bind(wx.EVT_LISTBOX, self.OnListSelect)
 
         LoadMenuButton.Bind(wx.EVT_BUTTON, self.OnLoadButton)
 
@@ -90,6 +91,10 @@ class PopmenuEditor(Page):
                 self.MenuListBox.SetSelection(idx)
                 self.CurrentMenu = newmenu
 
+    def OnListSelect(self, evt):
+        idx = evt.GetSelection()
+        menu = self.MenuListBox.GetClientData(idx)
+        self.CurrentMenu = menu
 
 class Popmenu(FM.FlatMenu):
     def __init__(self, parent):
@@ -133,7 +138,7 @@ class Popmenu(FM.FlatMenu):
                 # return from recursive call, which was made down below when we found a "Menu"
                 return ParsedMenu
             elif line == "Divider":
-                ParsedMenu.append('Divider')
+                ParsedMenu.append({'Divider' : None})
             elif line == "LockedOption":
 
                 LockedData = []
@@ -146,7 +151,7 @@ class Popmenu(FM.FlatMenu):
                     LockedData.append(nextline)
                     nextline = lines.pop(0).strip()
 
-                LockedOptions = []
+                LockedOptions = {}
                 for lockedline in LockedData:
                     linematch = re.match(r'(\w+)\s+(.*)', lockedline)
                     if not linematch:
@@ -155,16 +160,17 @@ class Popmenu(FM.FlatMenu):
 
                     OptName, OptPayload = linematch.group(1,2)
                     OptName = OptName.strip('"')
+                    OptPayload = OptPayload.strip('"')
 
                     if not OptName in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady'):
                         wx.LogError(f'Unknown keyword "{OptName}" in LockedOption section, canceling')
                         return {}
 
-                    LockedOptions.append({OptName : OptPayload})
+                    LockedOptions[OptName] = OptPayload
 
                 ParsedMenu.append({'LockedOption' : LockedOptions})
             elif match := re.match(r'Title\s+(.*)', line):
-                ParsedMenu.append({'Title', match[1].strip('"')})
+                ParsedMenu.append({'Title' : match[1].strip('"')})
             elif match := re.match(r'Menu\s+(.*)', line):
                 MenuName = match.group(1).strip('"')
                 if lines.pop(0).strip() != '{':
@@ -200,14 +206,14 @@ class Popmenu(FM.FlatMenu):
         for entry in structure:
             [(entrytype, data)] = entry.items()
             if entrytype == "Title":
-                item = FM.FlatMenuItem(self, label = data)
+                item = FM.FlatMenuItem(self, wx.ID_ANY, label = data)
                 item.Enable(False)
                 self.AppendItem(item)
             elif entrytype == "Divider":
                 self.AppendSeparator()
             elif entrytype == "Option":
                 [(optname, optstring)] = data.items()
-                item = FM.FlatMenuItem(self, label = optname)
+                item = FM.FlatMenuItem(self, wx.ID_ANY, label = optname)
                 setattr(item, 'Data', optstring)
                 self.AppendItem(item)
             elif entrytype == "LockedOption":
@@ -216,7 +222,7 @@ class Popmenu(FM.FlatMenu):
                     wx.LogError("There was a LockedOption with no DisplayName, that's bad, canceling")
                     self.Clear()
                     return
-                item = FM.FlatMenuItem(self, label = optname)
+                item = FM.FlatMenuItem(self, wx.ID_ANY, label = optname)
                 setattr(item, 'Data', data)
                 self.AppendItem(item)
             elif entrytype == "Menu":

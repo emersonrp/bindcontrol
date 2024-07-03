@@ -1,3 +1,4 @@
+import pprint
 import wx
 from Page import Page
 
@@ -5,11 +6,12 @@ from pathlib import Path
 import re
 
 import wx.lib.agw.flatmenu as FM
-from wx.lib.gizmos import TreeListCtrl
 
 class PopmenuEditor(Page):
     def __init__(self, parent):
         super().__init__(parent)
+
+        self.CurrentMenu = None
 
         Sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(Sizer)
@@ -30,9 +32,8 @@ class PopmenuEditor(Page):
         MenuListSizer.Add(LoadMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(DelMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(RenMenuButton, 0, wx.EXPAND|wx.ALL, 6)
-        MenuListBox = wx.ListBox(MenuList, style = wx.LB_SINGLE)
-        MenuListBox.Insert(['Test Item', 'Popmenu', 'Connor is good'], 0)
-        MenuListSizer.Add(MenuListBox, 1, wx.EXPAND|wx.ALL, 6)
+        self.MenuListBox = wx.ListBox(MenuList, style = wx.LB_SINGLE)
+        MenuListSizer.Add(self.MenuListBox, 1, wx.EXPAND|wx.ALL, 6)
 
         LoadMenuButton.Bind(wx.EVT_BUTTON, self.OnLoadButton)
 
@@ -46,7 +47,13 @@ class PopmenuEditor(Page):
         MEButtonSizer.Add(wx.Button(self.MenuEditor, label = "Insert Submenu"), 0, wx.EXPAND|wx.ALL, 6)
         MESizer.Add(MEButtonSizer, 0, wx.ALIGN_CENTER|wx.BOTTOM, 15)
 
-        MESizer.Add(wx.Panel(self.MenuEditor))
+        MiddlePanel = wx.Panel(self.MenuEditor)
+        MiddleSizer = wx.BoxSizer(wx.VERTICAL)
+        MiddlePanel.SetSizer(MiddleSizer)
+        MESizer.Add(MiddlePanel)
+        TestMenuButton = wx.Button(MiddlePanel, label = "Test Current Popmenu")
+        TestMenuButton.Bind(wx.EVT_BUTTON, self.OnTestMenuButton)
+        MiddleSizer.Add(TestMenuButton, 0, wx.ALL, 10)
 
         splitter.SplitVertically(MenuList, self.MenuEditor, LeftPanelWidth)
 
@@ -62,8 +69,14 @@ class PopmenuEditor(Page):
 
         self.Layout()
 
+    def OnTestMenuButton(self, evt):
+        if self.CurrentMenu:
+            self.CurrentMenu.Popup(wx.GetMousePosition())
+        evt.Skip()
+
     def OnLoadButton(self, _):
         with wx.FileDialog(self, "Load Popmenu file", wildcard="MNU files (*.mnu)|*.mnu",
+                                            defaultDir = '/home/emerson/Downloads',   # TODO TODO TODO remove this line
                        style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 return
@@ -71,18 +84,16 @@ class PopmenuEditor(Page):
             newmenu = Popmenu(self)
             newmenu.ReadFromFile(fileDialog.GetPath())
 
-#            import pprint
-#            pprint.pp(newmenu.MenuStructure, width = 300)
+            if newmenu and newmenu.MenuStructure:
+                idx = self.MenuListBox.Append(newmenu.Title)
+                self.MenuListBox.SetClientData(idx, newmenu)
+                self.MenuListBox.SetSelection(idx)
+                self.CurrentMenu = newmenu
 
 
 class Popmenu(FM.FlatMenu):
     def __init__(self, parent):
         super().__init__(parent)
-
-        self.Append(wx.ID_ANY, "Test 1")
-        self.Append(wx.ID_ANY, "Menu Item 2")
-        self.AppendSeparator()
-        self.Append(wx.ID_ANY, "Connor is cute")
 
         self.MenuStructure = {}
 
@@ -97,7 +108,19 @@ class Popmenu(FM.FlatMenu):
 
         contents = PopmenuFile.read_text()
 
-        self.MenuStructure = self.ParseMenuStructure(contents.splitlines())
+        MenuStructure = self.ParseMenuStructure(contents.splitlines())
+
+        pprint.pp(MenuStructure)
+
+        # detangle the outermost husk that ParseMenuStructure wraps everything in...
+        # This is -terrible- and super fragile.
+        if MenuStructure:
+            self.Title = list(MenuStructure[0]['Menu'].keys())[0]
+            self.MenuStructure = MenuStructure
+
+        else:
+            wx.LogError("Something went wrong in ReadFromFile, no MenuStructure returned!")
+            return
 
 
     def ParseMenuStructure(self, lines):
@@ -136,6 +159,7 @@ class Popmenu(FM.FlatMenu):
                         return {}
 
                     OptName, OptPayload = linematch.group(1,2)
+                    OptName = OptName.strip('"')
 
                     if not OptName in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady'):
                         wx.LogError(f'Unknown keyword "{OptName}" in LockedOption section, canceling')
@@ -144,14 +168,14 @@ class Popmenu(FM.FlatMenu):
                     LockedOptions.append({OptName : OptPayload})
 
                 ParsedMenu.append({'LockedOption' : LockedOptions})
-            elif re.match(r'Title\s+(.*)', line):
-                ParsedMenu.append({'Title', line})
+            elif match := re.match(r'Title\s+(.*)', line):
+                ParsedMenu.append({'Title', match[1].strip('"')})
             elif match := re.match(r'Menu\s+(.*)', line):
                 MenuName = match.group(1)
                 if lines.pop(0).strip() != '{':
                     wx.LogError("Menu statement not followed by a '{', canceling")
                     return False
-                ParsedMenu.append({'Menu' : {MenuName : self.ParseMenuStructure(lines)}})
+                ParsedMenu.append({'Menu' : {MenuName.strip('"') : self.ParseMenuStructure(lines)}})
             elif match := re.match(r'Option\s+(.*)', line):
                 OptionData = match.group(1)
                 #
@@ -171,6 +195,6 @@ class Popmenu(FM.FlatMenu):
                 elif plmatch := re.match(r'<&(.*)&>', OptPayload):
                     OptPayload = plmatch.group(1)
 
-                ParsedMenu.append({'Option' : {Optname : OptPayload}})
+                ParsedMenu.append({'Option' : {Optname.strip('"') : OptPayload}})
 
         return ParsedMenu

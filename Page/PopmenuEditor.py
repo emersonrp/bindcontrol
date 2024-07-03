@@ -34,11 +34,11 @@ class PopmenuEditor(Page):
         MenuListBox.Insert(['Test Item', 'Popmenu', 'Connor is good'], 0)
         MenuListSizer.Add(MenuListBox, 1, wx.EXPAND|wx.ALL, 6)
 
+        LoadMenuButton.Bind(wx.EVT_BUTTON, self.OnLoadButton)
+
         self.MenuEditor = wx.Panel(splitter)
         MESizer = wx.BoxSizer(wx.VERTICAL)
         self.MenuEditor.SetSizer(MESizer)
-        self.MenuEditor.Bind(wx.EVT_LEFT_DOWN, self.OnPanelClick)
-        self.MenuEditor.Bind(wx.EVT_RIGHT_DOWN, self.OnPanelClick)
 
         MEButtonSizer = wx.BoxSizer(wx.HORIZONTAL)
         MEButtonSizer.Add(wx.Button(self.MenuEditor, label = "Insert Item"), 0, wx.EXPAND|wx.ALL, 6)
@@ -46,7 +46,6 @@ class PopmenuEditor(Page):
         MEButtonSizer.Add(wx.Button(self.MenuEditor, label = "Insert Submenu"), 0, wx.EXPAND|wx.ALL, 6)
         MESizer.Add(MEButtonSizer, 0, wx.ALIGN_CENTER|wx.BOTTOM, 15)
 
-        self.MenuTree = Popmenu(self.MenuEditor)
         MESizer.Add(wx.Panel(self.MenuEditor))
 
         splitter.SplitVertically(MenuList, self.MenuEditor, LeftPanelWidth)
@@ -63,9 +62,18 @@ class PopmenuEditor(Page):
 
         self.Layout()
 
-    def OnPanelClick(self, evt):
-        self.MenuTree.Popup(wx.GetMousePosition())
-        evt.Skip()
+    def OnLoadButton(self, _):
+        with wx.FileDialog(self, "Load Popmenu file", wildcard="MNU files (*.mnu)|*.mnu",
+                       style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return
+
+            newmenu = Popmenu(self)
+            newmenu.ReadFromFile(fileDialog.GetPath())
+
+#            import pprint
+#            pprint.pp(newmenu.MenuStructure, width = 300)
+
 
 class Popmenu(FM.FlatMenu):
     def __init__(self, parent):
@@ -89,43 +97,69 @@ class Popmenu(FM.FlatMenu):
 
         contents = PopmenuFile.read_text()
 
-        self.MenuStructure = self.ParseMenuStructure(contents)
+        self.MenuStructure = self.ParseMenuStructure(contents.splitlines())
 
 
-    def ParseMenuStructure(self, data):
+    def ParseMenuStructure(self, lines):
 
         ParsedMenu = []
 
-        lines = data.splitlines()
-
         while lines:
-            line = lines.pop().strip()
+            line = lines.pop(0).strip()
+
+            line = re.sub(r'\s*//.*', '', line) # remove comments
+
             if line == '':
                 continue
+            elif line == "}":
+                # return from recursive call, which was made down below when we found a "Menu"
+                return ParsedMenu
             elif line == "Divider":
                 ParsedMenu.append('Divider')
             elif line == "LockedOption":
-                LockedData = self.GetBracketedChunk(lines)
-                if not LockedData:
-                    wx.LogError("Unable to load popmenu from data - malformed LockedOption section, canceling")
+
+                LockedData = []
+                firstline = lines.pop(0).strip()
+                if firstline != "{":
+                    wx.LogError(f'Malformed LockedOption section:  expected "{{", got "{firstline}", canceling')
                     return {}
-                ParsedMenu.append({'LockedOption' : self.ParseLockedOption(LockedData)})
+                nextline = lines.pop(0).strip()
+                while nextline != "}":
+                    LockedData.append(nextline)
+                    nextline = lines.pop(0).strip()
+
+                LockedOptions = []
+                for lockedline in LockedData:
+                    linematch = re.match(r'(\w+)\s+(.*)', lockedline)
+                    if not linematch:
+                        wx.LogError(f'Malformed line in LockedOption section: "{line}", canceling')
+                        return {}
+
+                    OptName, OptPayload = linematch.group(1,2)
+
+                    if not OptName in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady'):
+                        wx.LogError(f'Unknown keyword "{OptName}" in LockedOption section, canceling')
+                        return {}
+
+                    LockedOptions.append({OptName : OptPayload})
+
+                ParsedMenu.append({'LockedOption' : LockedOptions})
             elif re.match(r'Title\s+(.*)', line):
                 ParsedMenu.append({'Title', line})
-            elif re.match(r'Menu\s+(.*)', line):
-                SubMenuData = self.GetBracketedChunk(lines)
-                if not SubMenuData:
-                    wx.LogError("Unable to load popmenu from data - malformed submenu section, canceling")
-                    return {}
-                ParsedMenu.append({line : self.ParseMenuStructure(SubMenuData)})
+            elif match := re.match(r'Menu\s+(.*)', line):
+                MenuName = match.group(1)
+                if lines.pop(0).strip() != '{':
+                    wx.LogError("Menu statement not followed by a '{', canceling")
+                    return False
+                ParsedMenu.append({'Menu' : {MenuName : self.ParseMenuStructure(lines)}})
             elif match := re.match(r'Option\s+(.*)', line):
                 OptionData = match.group(1)
                 #
                 # TODO - do popmenus ever use single quotes?
                 if re.match(r'"', OptionData):
-                    splitmatch = re.match(r'"(^"+)"\s+(.*)', OptionData)
+                    splitmatch = re.match(r'"([^"]+)"\s+(.*)', OptionData)
                 else:
-                    splitmatch = re.match(r'([^\s+])\s+(.*)', OptionData)
+                    splitmatch = re.match(r'([^\s]+)\s+(.*)', OptionData)
                 if splitmatch:
                     Optname, OptPayload = splitmatch.group(1,2)
                 else:
@@ -140,37 +174,3 @@ class Popmenu(FM.FlatMenu):
                 ParsedMenu.append({'Option' : {Optname : OptPayload}})
 
         return ParsedMenu
-
-    def ParseLockedOption(self, lines):
-        LockedOptions = []
-        for line in lines:
-            linematch = re.match(r'(\w+)\s+(.*)', line)
-            if not linematch:
-                wx.LogError(f'Malformed line in LockedOption section: "{line}", canceling')
-                return []
-
-            OptName, OptPayload = linematch.group(1,2)
-
-            if not OptName in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady'):
-                wx.LogError(f'Unknown keyword "{OptName}" in LockedOption section, canceling')
-                return []
-
-            LockedOptions.append({OptName : OptPayload})
-
-        return LockedOptions
-
-    # TODO this should alter 'lines' as we go, dropping the {} and capturing everything between into BracketedChunk
-    def GetBracketedChunk(self, lines):
-        BracketedChunk = []
-
-        firstline = lines.pop().strip()
-        if firstline != "{":
-            wx.LogError(f'Malformed popmenu file:  expected "{{", got "{firstline}"')
-            return False
-
-        line = lines.pop().strip()
-        while line != "}":
-            BracketedChunk.append(line)
-            line = lines.pop().strip()
-
-        return BracketedChunk

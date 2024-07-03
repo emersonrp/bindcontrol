@@ -212,34 +212,54 @@ class Popmenu(FM.FlatMenu):
         for entry in structure:
             [(entrytype, data)] = entry.items()
             if entrytype == "Title":
-                item = FM.FlatMenuItem(self, wx.ID_ANY, label = data)
-                item.Enable(False)
-                item.SetContextMenu(self.ContextMenu)
-                self.AppendItem(item)
+                self.AppendItem(PETitle(self, wx.ID_ANY, label = data))
+
             elif entrytype == "Divider":
-                item = FM.FlatMenuItem(self, wx.ID_ANY, kind = wx.ITEM_SEPARATOR)
-                item.SetContextMenu(self.ContextMenu)
-                self.AppendItem(item)
+                self.AppendItem(PEDivider(self, wx.ID_ANY, kind = wx.ITEM_SEPARATOR))
+
             elif entrytype == "Option":
-                [(optname, optstring)] = data.items()
-                item = FM.FlatMenuItem(self, wx.ID_ANY, label = optname)
-                item.SetContextMenu(self.ContextMenu)
-                setattr(item, 'Data', optstring)
-                self.AppendItem(item)
+                self.AppendItem(PEOption(self, wx.ID_ANY, data = data))
+
             elif entrytype == "LockedOption":
                 optname = data['DisplayName']
                 if not optname:
                     wx.LogError("There was a LockedOption with no DisplayName, that's bad, canceling")
                     self.Clear()
                     return
-                item = FM.FlatMenuItem(self, wx.ID_ANY, label = optname)
-                setattr(item, 'Data', data)
-                item.SetContextMenu(self.ContextMenu)
-                self.AppendItem(item)
+                self.AppendItem(PELockedOption(self, wx.ID_ANY, data = data))
+
             elif entrytype == "Menu":
-                [(menuname, menustruct)] = data.items()
-                submenu = Popmenu(self.Parent)
-                submenu.BuildMenuFromStructure(menustruct)
-                item = FM.FlatMenuItem(self, wx.ID_ANY, label = menuname, subMenu = submenu)
-                item.SetContextMenu(self.ContextMenu)
-                self.AppendItem(item)
+                self.AppendItem(PEMenu(self, wx.ID_ANY, data = data))
+
+class PEMenuItem(FM.FlatMenuItem):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.Parent = parent
+        self.SetContextMenu(parent.ContextMenu)
+
+class PEMenu(PEMenuItem):
+    def __init__(self, *args, data = {}, **kwargs):
+        [(menuname, menustruct)] = data.items()
+        super().__init__(*args, label = menuname, **kwargs)
+        submenu = Popmenu(self.Parent)
+        submenu.BuildMenuFromStructure(menustruct)
+        self.SetSubMenu(submenu)
+
+class PETitle(PEMenuItem):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.Enable(False)
+
+class PEDivider(PEMenuItem): ...
+
+class PEOption(PEMenuItem):
+    def __init__(self, *args, data = {}, **kwargs):
+        [(optname, optstring)] = data.items()
+        self.Data = optstring
+        super().__init__(*args, label = optname, **kwargs)
+
+class PELockedOption(PEMenuItem):
+    def __init__(self, *args, data = {}, **kwargs):
+        self.Data = data
+        super().__init__(*args, label = data['DisplayName'], **kwargs)

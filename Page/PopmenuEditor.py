@@ -96,15 +96,38 @@ class PopmenuEditor(Page):
         menu = self.MenuListBox.GetClientData(idx)
         self.CurrentMenu = menu
 
+class Popmenu_ContextMenu(FM.FlatMenu):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.Append(wx.ID_ANY, "Edit")
+        self.Append(wx.ID_ANY, "Delete")
+        self.Append(wx.ID_ANY, "Move Up")
+        self.Append(wx.ID_ANY, "Move Down")
+
+        self.ParentMenu = parent
+        self.CurrentMenuItem = None
+
+        self.Bind(wx.EVT_MENU, self.OnContextEdit)
+
+    def OnContextEdit(self, _):
+        if self.CurrentMenuItem:
+            print(f"Got into edit, my Item is {self.CurrentMenuItem} which I think is {self.CurrentMenuItem.GetLabel()}")
+
+
 class Popmenu(FM.FlatMenu):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.ContextMenu = FM.FlatMenu(parent)
-        self.ContextMenu.Append(wx.ID_ANY, "Edit")
-        self.ContextMenu.Append(wx.ID_ANY, "Delete")
-        self.ContextMenu.Append(wx.ID_ANY, "Move Up")
-        self.ContextMenu.Append(wx.ID_ANY, "Move Down")
+        self.ContextMenu = Popmenu_ContextMenu(self)
+
+
+    # hook the right click behavior to tell ContextMenu who got right-clicked
+    def ProcessMouseRClick(self, pos):
+        (result, menuid) = self.HitTest(pos)
+        if result == FM.MENU_HT_ITEM:
+            self.ContextMenu.CurrentMenuItem = self.GetMenuItems()[menuid]
+        super().ProcessMouseRClick(pos)
 
     def WriteToFile(self, filename):
         ...
@@ -174,6 +197,11 @@ class Popmenu(FM.FlatMenu):
 
                     LockedOptions[OptName] = OptPayload
 
+                optname = LockedOptions['DisplayName']
+                if not optname:
+                    wx.LogError("There was a LockedOption with no DisplayName, that's bad, canceling")
+                    return
+
                 ParsedMenu.append({'LockedOption' : LockedOptions})
             elif match := re.match(r'Title\s+(.*)', line):
                 ParsedMenu.append({'Title' : match[1].strip('"')})
@@ -210,56 +238,47 @@ class Popmenu(FM.FlatMenu):
         self.Clear()
 
         for entry in structure:
-            [(entrytype, data)] = entry.items()
-            if entrytype == "Title":
-                self.AppendItem(PETitle(self, wx.ID_ANY, label = data))
-
-            elif entrytype == "Divider":
-                self.AppendItem(PEDivider(self, wx.ID_ANY, kind = wx.ITEM_SEPARATOR))
-
-            elif entrytype == "Option":
-                self.AppendItem(PEOption(self, wx.ID_ANY, data = data))
-
-            elif entrytype == "LockedOption":
-                optname = data['DisplayName']
-                if not optname:
-                    wx.LogError("There was a LockedOption with no DisplayName, that's bad, canceling")
-                    self.Clear()
-                    return
-                self.AppendItem(PELockedOption(self, wx.ID_ANY, data = data))
-
-            elif entrytype == "Menu":
-                self.AppendItem(PEMenu(self, wx.ID_ANY, data = data))
+            [(entrytype, entrydata)] = entry.items()
+            self.AppendItem(itemclasses[entrytype](self, entrydata))
 
 class PEMenuItem(FM.FlatMenuItem):
-    def __init__(self, parent, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+    def __init__(self, parent, data, **kwargs):
+        super().__init__(parent, wx.ID_ANY, **kwargs)
 
         self.Parent = parent
         self.SetContextMenu(parent.ContextMenu)
+        self.Data = data
 
 class PEMenu(PEMenuItem):
-    def __init__(self, *args, data = {}, **kwargs):
+    def __init__(self, parent, data):
         [(menuname, menustruct)] = data.items()
-        super().__init__(*args, label = menuname, **kwargs)
+        super().__init__(parent, label = menuname, data = data)
         submenu = Popmenu(self.Parent)
         submenu.BuildMenuFromStructure(menustruct)
         self.SetSubMenu(submenu)
 
 class PETitle(PEMenuItem):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent, data):
+        super().__init__(parent, label = data, data = data)
         self.Enable(False)
 
-class PEDivider(PEMenuItem): ...
+class PEDivider(PEMenuItem):
+    def __init__(self, parent, data):
+        super().__init__(parent, data, kind = wx.ITEM_SEPARATOR)
 
 class PEOption(PEMenuItem):
-    def __init__(self, *args, data = {}, **kwargs):
-        [(optname, optstring)] = data.items()
-        self.Data = optstring
-        super().__init__(*args, label = optname, **kwargs)
+    def __init__(self, parent, data):
+        [(optname, _)] = data.items()
+        super().__init__(parent, data, label = optname)
 
 class PELockedOption(PEMenuItem):
-    def __init__(self, *args, data = {}, **kwargs):
-        self.Data = data
-        super().__init__(*args, label = data['DisplayName'], **kwargs)
+    def __init__(self, parent, data):
+        super().__init__(parent, data, label = data['DisplayName'])
+
+itemclasses = {
+    'Title'        : PETitle,
+    'Divider'      : PEDivider,
+    'Option'       : PEOption,
+    'LockedOption' : PELockedOption,
+    'Menu'         : PEMenu,
+}

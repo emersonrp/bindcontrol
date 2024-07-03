@@ -84,7 +84,7 @@ class PopmenuEditor(Page):
             newmenu = Popmenu(self)
             newmenu.ReadFromFile(fileDialog.GetPath())
 
-            if newmenu and newmenu.MenuStructure:
+            if newmenu:
                 idx = self.MenuListBox.Append(newmenu.Title)
                 self.MenuListBox.SetClientData(idx, newmenu)
                 self.MenuListBox.SetSelection(idx)
@@ -94,8 +94,6 @@ class PopmenuEditor(Page):
 class Popmenu(FM.FlatMenu):
     def __init__(self, parent):
         super().__init__(parent)
-
-        self.MenuStructure = {}
 
     def WriteToFile(self, filename):
         ...
@@ -110,21 +108,18 @@ class Popmenu(FM.FlatMenu):
 
         MenuStructure = self.ParseMenuStructure(contents.splitlines())
 
-        pprint.pp(MenuStructure)
-
         # detangle the outermost husk that ParseMenuStructure wraps everything in...
         # This is -terrible- and super fragile.
         if MenuStructure:
             self.Title = list(MenuStructure[0]['Menu'].keys())[0]
-            self.MenuStructure = MenuStructure
+
+            self.BuildMenuFromStructure(list(MenuStructure[0]['Menu'].values())[0])
 
         else:
             wx.LogError("Something went wrong in ReadFromFile, no MenuStructure returned!")
             return
 
-
     def ParseMenuStructure(self, lines):
-
         ParsedMenu = []
 
         while lines:
@@ -171,11 +166,11 @@ class Popmenu(FM.FlatMenu):
             elif match := re.match(r'Title\s+(.*)', line):
                 ParsedMenu.append({'Title', match[1].strip('"')})
             elif match := re.match(r'Menu\s+(.*)', line):
-                MenuName = match.group(1)
+                MenuName = match.group(1).strip('"')
                 if lines.pop(0).strip() != '{':
                     wx.LogError("Menu statement not followed by a '{', canceling")
-                    return False
-                ParsedMenu.append({'Menu' : {MenuName.strip('"') : self.ParseMenuStructure(lines)}})
+                    return {}
+                ParsedMenu.append({'Menu' : {MenuName : self.ParseMenuStructure(lines)}})
             elif match := re.match(r'Option\s+(.*)', line):
                 OptionData = match.group(1)
                 #
@@ -198,3 +193,34 @@ class Popmenu(FM.FlatMenu):
                 ParsedMenu.append({'Option' : {Optname.strip('"') : OptPayload}})
 
         return ParsedMenu
+
+    def BuildMenuFromStructure(self, structure):
+        self.Clear()
+
+        for entry in structure:
+            [(entrytype, data)] = entry.items()
+            if entrytype == "Title":
+                item = FM.FlatMenuItem(self, label = data)
+                item.Enable(False)
+                self.AppendItem(item)
+            elif entrytype == "Divider":
+                self.AppendSeparator()
+            elif entrytype == "Option":
+                [(optname, optstring)] = data.items()
+                item = FM.FlatMenuItem(self, label = optname)
+                setattr(item, 'Data', optstring)
+                self.AppendItem(item)
+            elif entrytype == "LockedOption":
+                optname = data['DisplayName']
+                if not optname:
+                    wx.LogError("There was a LockedOption with no DisplayName, that's bad, canceling")
+                    self.Clear()
+                    return
+                item = FM.FlatMenuItem(self, label = optname)
+                setattr(item, 'Data', data)
+                self.AppendItem(item)
+            elif entrytype == "Menu":
+                [(menuname, menustruct)] = data.items()
+                submenu = Popmenu(self.Parent)
+                submenu.BuildMenuFromStructure(menustruct)
+                self.AppendMenu(wx.ID_ANY, menuname, submenu)

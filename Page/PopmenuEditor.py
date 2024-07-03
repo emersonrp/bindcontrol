@@ -100,6 +100,12 @@ class Popmenu(FM.FlatMenu):
     def __init__(self, parent):
         super().__init__(parent)
 
+        self.ContextMenu = FM.FlatMenu(parent)
+        self.ContextMenu.Append(wx.ID_ANY, "Edit")
+        self.ContextMenu.Append(wx.ID_ANY, "Delete")
+        self.ContextMenu.Append(wx.ID_ANY, "Move Up")
+        self.ContextMenu.Append(wx.ID_ANY, "Move Down")
+
     def WriteToFile(self, filename):
         ...
 
@@ -208,12 +214,16 @@ class Popmenu(FM.FlatMenu):
             if entrytype == "Title":
                 item = FM.FlatMenuItem(self, wx.ID_ANY, label = data)
                 item.Enable(False)
+                item.SetContextMenu(self.ContextMenu)
                 self.AppendItem(item)
             elif entrytype == "Divider":
-                self.AppendSeparator()
+                item = FM.FlatMenuItem(self, wx.ID_ANY, kind = wx.ITEM_SEPARATOR)
+                item.SetContextMenu(self.ContextMenu)
+                self.AppendItem(item)
             elif entrytype == "Option":
                 [(optname, optstring)] = data.items()
                 item = FM.FlatMenuItem(self, wx.ID_ANY, label = optname)
+                item.SetContextMenu(self.ContextMenu)
                 setattr(item, 'Data', optstring)
                 self.AppendItem(item)
             elif entrytype == "LockedOption":
@@ -224,9 +234,12 @@ class Popmenu(FM.FlatMenu):
                     return
                 item = FM.FlatMenuItem(self, wx.ID_ANY, label = optname)
                 setattr(item, 'Data', data)
+                item.SetContextMenu(self.ContextMenu)
                 self.AppendItem(item)
             elif entrytype == "Menu":
                 [(menuname, menustruct)] = data.items()
                 submenu = Popmenu(self.Parent)
                 submenu.BuildMenuFromStructure(menustruct)
-                self.AppendMenu(wx.ID_ANY, menuname, submenu)
+                item = FM.FlatMenuItem(self, wx.ID_ANY, label = menuname, subMenu = submenu)
+                item.SetContextMenu(self.ContextMenu)
+                self.AppendItem(item)

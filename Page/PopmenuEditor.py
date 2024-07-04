@@ -120,7 +120,7 @@ class Popmenu(FM.FlatMenu):
         super().__init__(parent)
 
         self.ContextMenu = Popmenu_ContextMenu(self)
-
+        self.Title = ''
 
     # hook the right click behavior to tell ContextMenu who got right-clicked
     def ProcessMouseRClick(self, pos):
@@ -140,22 +140,27 @@ class Popmenu(FM.FlatMenu):
 
         contents = PopmenuFile.read_text()
 
-        MenuStructure = self.ParseMenuStructure(contents.splitlines())
+        self.BuildFromLines(contents.splitlines(), True)
 
-        # detangle the outermost husk that ParseMenuStructure wraps everything in...
-        # This is -terrible- and super fragile.
-        if MenuStructure:
-            self.Title = list(MenuStructure[0]['Menu'].keys())[0]
 
-            self.BuildMenuFromStructure(list(MenuStructure[0]['Menu'].values())[0])
+    def BuildFromLines(self, lines, is_main_request = False):
 
-        else:
-            wx.LogError("Something went wrong in ReadFromFile, no MenuStructure returned!")
-            return
+        if is_main_request:  # this is the top level request, peel off the outside layers
+            while lines:
+                line = lines.pop(0).strip()
+                line = re.sub(r'\s*//.*', '', line) # remove comments
 
-    def ParseMenuStructure(self, lines):
-        ParsedMenu = []
+                if line == '': continue
+                elif match := re.match(r'Menu\s+(.*)', line):
+                    self.Title = match.group(1).strip('"')
 
+                    if lines.pop(0).strip() != '{':
+                        wx.LogError("Menu statement not followed by a '{', canceling")
+                        return
+                    else:
+                        break
+
+        # OK, we should be into the juicy innards of the file.  Push "lines" through it
         while lines:
             line = lines.pop(0).strip()
 
@@ -165,9 +170,9 @@ class Popmenu(FM.FlatMenu):
                 continue
             elif line == "}":
                 # return from recursive call, which was made down below when we found a "Menu"
-                return ParsedMenu
+                return
             elif line == "Divider":
-                ParsedMenu.append({'Divider' : None})
+                self.AppendItem(PEDivider(self, {}))
             elif line == "LockedOption":
 
                 LockedData = []
@@ -202,15 +207,17 @@ class Popmenu(FM.FlatMenu):
                     wx.LogError("There was a LockedOption with no DisplayName, that's bad, canceling")
                     return
 
-                ParsedMenu.append({'LockedOption' : LockedOptions})
+                self.AppendItem(PELockedOption(self, LockedOptions))
             elif match := re.match(r'Title\s+(.*)', line):
-                ParsedMenu.append({'Title' : match[1].strip('"')})
+                self.AppendItem(PETitle(self, match.group(1).strip('"')))
             elif match := re.match(r'Menu\s+(.*)', line):
                 MenuName = match.group(1).strip('"')
                 if lines.pop(0).strip() != '{':
                     wx.LogError("Menu statement not followed by a '{', canceling")
                     return {}
-                ParsedMenu.append({'Menu' : {MenuName : self.ParseMenuStructure(lines)}})
+                newMenu = Popmenu(self)
+                newMenu.BuildFromLines(lines)
+                self.AppendItem(PEMenu(self, {MenuName: newMenu}))
             elif match := re.match(r'Option\s+(.*)', line):
                 OptionData = match.group(1)
                 #
@@ -230,16 +237,7 @@ class Popmenu(FM.FlatMenu):
                 elif plmatch := re.match(r'<&(.*)&>', OptPayload):
                     OptPayload = plmatch.group(1)
 
-                ParsedMenu.append({'Option' : {Optname.strip('"') : OptPayload}})
-
-        return ParsedMenu
-
-    def BuildMenuFromStructure(self, structure):
-        self.Clear()
-
-        for entry in structure:
-            [(entrytype, entrydata)] = entry.items()
-            self.AppendItem(itemclasses[entrytype](self, entrydata))
+                self.AppendItem(PEOption(self, {Optname.strip('"') : OptPayload}))
 
 class PEMenuItem(FM.FlatMenuItem):
     def __init__(self, parent, data, **kwargs):
@@ -251,10 +249,8 @@ class PEMenuItem(FM.FlatMenuItem):
 
 class PEMenu(PEMenuItem):
     def __init__(self, parent, data):
-        [(menuname, menustruct)] = data.items()
+        [(menuname, submenu)] = data.items()
         super().__init__(parent, label = menuname, data = data)
-        submenu = Popmenu(self.Parent)
-        submenu.BuildMenuFromStructure(menustruct)
         self.SetSubMenu(submenu)
 
 class PETitle(PEMenuItem):

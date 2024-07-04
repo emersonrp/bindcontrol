@@ -164,14 +164,15 @@ class Main(wx.Frame):
         # BUTTONS
         self.ProfDirButton = cgButton(self, -1, "Set Binds Location")
         self.ProfDirButton.SetToolTip("Configure the location where this Profile will write bindfiles")
+        self.ProfDirButton.DefaultToolTip = "Configure the location where this Profile will write bindfiles"
         self.WriteButton = wx.Button(self, -1, "Write Binds")
         self.WriteButton.SetToolTip("Write out the bindfiles to the configured binds directory")
         self.DeleteButton = wx.Button(self, -1, "Delete All Binds")
         self.DeleteButton.SetToolTip("Delete all BindControl-managed files in the configured binds directory")
-        writeSizer = wx.BoxSizer(wx.HORIZONTAL)
-        writeSizer.Add(self.ProfDirButton, 0, wx.EXPAND)
-        writeSizer.Add(self.WriteButton, 1, wx.EXPAND)
-        writeSizer.Add(self.DeleteButton, 0, wx.EXPAND)
+        BottomButtonSizer = wx.BoxSizer(wx.HORIZONTAL)
+        BottomButtonSizer.Add(self.ProfDirButton, 0, wx.EXPAND)
+        BottomButtonSizer.Add(self.WriteButton, 1, wx.EXPAND)
+        BottomButtonSizer.Add(self.DeleteButton, 0, wx.EXPAND)
         self.ProfDirButton.Bind(wx.EVT_BUTTON, self.OnProfDirButton)
         self.WriteButton  .Bind(wx.EVT_BUTTON, self.OnWriteBindsButton)
         self.DeleteButton .Bind(wx.EVT_BUTTON, self.OnDeleteBindsButton)
@@ -184,15 +185,15 @@ class Main(wx.Frame):
         if (config.Read('StartWith') == 'Last Profile' or config.ReadBool('StartWithLastProfile')) and filename:
             self.Profile = Profile.Profile(self)
             self.Profile.doLoadFromFile(filename)
-            self.Sizer.Add(self.Profile, 1, wx.EXPAND)
+            self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
             self.CheckProfDirButtonErrors()
 
         # otherwise show the two big buttons
         else:
             self.StartupPanel = self.MakeStartupPanel()
-            self.Sizer.Add(self.StartupPanel, 1, wx.EXPAND)
+            self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
 
-        self.Sizer.Add(writeSizer,  0, wx.EXPAND | wx.ALL, 10)
+        self.Sizer.Add(BottomButtonSizer,  0, wx.EXPAND | wx.ALL, 10)
 
         (width, height) = (1100, 800)
         if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinH') and config.HasEntry('WinW'):

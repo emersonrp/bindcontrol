@@ -1171,8 +1171,10 @@ class MovementPowers(Page):
             if (self.GetState('UseDwarf')):
                 novafile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"t $name, Changing to {Dwarf} Form{fullstop}{t.off}{Nova}{t.on}{Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
 
-            if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + HumanFormShield
-            else:                                  humpower = ''
+            humpower = ''
+            # TODO this control went missing
+            #if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + HumanFormShield
+            #else:                                  humpower = ''
             novafile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Nova}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
 
             novafile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind("+forward"))
@@ -1200,8 +1202,10 @@ class MovementPowers(Page):
             if (self.GetState('UseNova')):
                 dwrffile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"t $name, Changing to {Nova} Form{fullstop}$$powexectoggleoff {Dwarf}$$powexectoggleon {Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
-            if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + HumanFormShield
-            else:                                  humpower = ''
+            humpower = ''
+            # TODO this control went missing
+            #if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + HumanFormShield
+            #else:                                  humpower = ''
             dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Dwarf}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
 
             dwrffile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind("+forward"))

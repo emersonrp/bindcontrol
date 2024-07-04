@@ -93,11 +93,12 @@ class Profile(wx.Notebook):
             return self.Filename.stem
         else:
             return ''
-    def Archetype(self)    : return self.General.GetState('Archetype')
-    def Primary(self)      : return self.General.GetState('Primary')
-    def Secondary(self)    : return self.General.GetState('Secondary')
-    def ResetFile(self)    : return self.GetBindFile("reset.txt")
-    def BindsDir(self)     : return Path(wx.ConfigBase.Get().Read('BindPath')) / self.ProfileBindsDir
+    def Archetype(self)     : return self.General.GetState('Archetype')
+    def Primary(self)       : return self.General.GetState('Primary')
+    def Secondary(self)     : return self.General.GetState('Secondary')
+    def ResetFile(self)     : return self.GetBindFile("reset.txt")
+    def ProfileIDFile(self) : return self.BindsDir() / 'bcprofileid.txt'
+    def BindsDir(self)      : return Path(wx.ConfigBase.Get().Read('BindPath')) / self.ProfileBindsDir
     def GameBindsDir(self) :
         gbp = wx.ConfigBase.Get().Read('GameBindPath')
         if gbp: return PureWindowsPath(gbp) / self.ProfileBindsDir

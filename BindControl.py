@@ -396,7 +396,7 @@ class Main(wx.Frame):
                     ((not otherprofile) or (otherprofile and (otherprofile == self.Profile.Name())))
                 ):
                     answer = wx.MessageBox(
-                            f'Binds Location changed.  Delete old binds directory {self.Profile.BindsDir()}?',
+                            f'Binds Location changed.  Delete all binds in old binds directory?\n{self.Profile.BindsDir()}',
                             'Binds Location Changed',wx.YES_NO, self
                     )
                     if answer == wx.YES:

@@ -298,10 +298,8 @@ class PEMenuItem(FM.FlatMenuItem):
 
     def ShowEditor(self):
         if self.Editor:
-            result = self.Editor.ShowModal()
-            if result == wx.CANCEL:
-                return
-            self.OnEditorUpdate()
+            if self.Editor.ShowModal() == wx.ID_OK:
+                self.OnEditorUpdate()
         else:
             wx.LogError(f"Tried to edit {type(self).__name__} which has no self.Editor")
 
@@ -316,7 +314,7 @@ class PEMenuItem(FM.FlatMenuItem):
 class PEMenu(PEMenuItem):
     def __init__(self, parent, data):
         [(menuname, submenu)] = data.items()
-        super().__init__(parent, label = menuname, data = data)
+        super().__init__(parent, data, label = menuname)
         self.SetSubMenu(submenu)
 
     def EditorDialog(self):
@@ -336,7 +334,7 @@ class PEMenu(PEMenuItem):
 
 class PETitle(PEMenuItem):
     def __init__(self, parent, data):
-        super().__init__(parent, label = data, data = data)
+        super().__init__(parent, data, label = data)
         self.Enable(False)
 
     def EditorDialog(self):
@@ -354,11 +352,43 @@ class PEDivider(PEMenuItem):
         super().__init__(parent, data, kind = wx.ITEM_SEPARATOR)
 
     def EditorDialog(self): return None
+    def OnEditorUpdate(self): wx.LogError("Called OnEditorUpdate for a PEDivider, how did you get here?  This is a bug.")
 
 class PEOption(PEMenuItem):
     def __init__(self, parent, data):
         [(optname, _)] = data.items()
         super().__init__(parent, data, label = optname)
+
+    def EditorDialog(self):
+        dialog = wx.Dialog(self.Parent, title = "Editing option item",)
+        dlgSizer = wx.BoxSizer(wx.VERTICAL)
+        dialog.SetSizer(dlgSizer)
+
+        fieldSizer = wx.FlexGridSizer(2, 2, 5)
+        fieldSizer.AddGrowableCol(1)
+        [(optname, optstring)] = self.Data.items()
+        fieldSizer.Add(wx.StaticText(dialog, label = "Name:", style = wx.ALIGN_RIGHT), 0, wx.ALIGN_CENTER_VERTICAL)
+        self.NameField = wx.TextCtrl(dialog, value = optname)
+        fieldSizer.Add(self.NameField, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
+        fieldSizer.Add(wx.StaticText(dialog, label = "Value:", style = wx.ALIGN_RIGHT), 0, wx.ALIGN_CENTER_VERTICAL)
+        self.ValueField = wx.TextCtrl(dialog, value = optstring)
+        fieldSizer.Add(self.ValueField, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
+
+        buttons = dialog.CreateButtonSizer(wx.OK|wx.CANCEL)
+
+        dlgSizer.Add(fieldSizer, 1, wx.EXPAND|wx.ALL, 10)
+        dlgSizer.Add(buttons,    0, wx.EXPAND|wx.ALL, 10)
+
+        return dialog
+
+    def OnEditorUpdate(self):
+        newlabel = self.NameField.GetValue()
+        newvalue = self.ValueField.GetValue()
+
+        self.Data = {newlabel : newvalue}
+        self.SetText(newlabel)
+        self.Parent.UpdateItem(self)
+
 
 class PELockedOption(PEMenuItem):
     def __init__(self, parent, data):

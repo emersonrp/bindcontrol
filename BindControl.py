@@ -473,8 +473,11 @@ class Main(wx.Frame):
                     # but stash it away as the case-sensitive version because Linux
                     exists = bindsdir
                     break
-            if exists and self.Profile and (Profile.CheckProfileForBindsDir(exists) != self.Profile.Name()):
-                textctrl.AddWarning('exists', 'The directory you have selected exists, and might be managed by another profile.  This is not an error, but be sure this is where you want to save your binds.')
+            if exists and self.Profile:
+                existingProfile = Profile.CheckProfileForBindsDir(exists)
+                if existingProfile != self.Profile.Name():
+                    existingProfileWarning = f', and is managed by the profile {existingProfile}' if existingProfile else ''
+                    textctrl.AddWarning('exists', f'The directory you have selected already exists{existingProfileWarning}.  This is not an error, but be sure this is where you want to save your binds.')
             else:
                 textctrl.RemoveWarning('exists')
 

@@ -153,12 +153,12 @@ class Profile(wx.Notebook):
         namewords = profileName.split()
         if len(namewords) > 1 and len(namewords) < 6:
             firstletters = [w[:1] for w in namewords]
-            bindsdircandidates.add(''.join(firstletters))
+            bindsdircandidates.add(''.join(firstletters).lower())
 
         # let's see if we have more than one capital letter / numeral, if so try that.
         capitalletters = re.findall(r'[A-Z0-9]', profileName)
         if len(capitalletters) > 1 and len(capitalletters) < 6:
-            bindsdircandidates.add(''.join(capitalletters))
+            bindsdircandidates.add(''.join(capitalletters).lower())
 
         # Let's also fall back on the first (non-space) five of the profileName as an option
         fallback = re.sub(r'\s+', '', profileName)[:5].lower()
@@ -167,7 +167,8 @@ class Profile(wx.Notebook):
         if existingProfile and (existingProfile != self.Name()):
             fallback = ''
 
-        for bdc in bindsdircandidates:
+        # make a list() because we alter the bindsdircandidates set as we go
+        for bdc in list(bindsdircandidates):
             # MSDOS still haunts us
             if PureWindowsPath(bdc).is_reserved():
                 bindsdircandidates.remove(bdc)

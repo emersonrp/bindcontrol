@@ -143,37 +143,49 @@ class Profile(wx.Notebook):
 
     # come up with a sane default binds directory name for this profile
     def GenerateBindsDirectoryName(self):
-        # start with just the ASCII characters in the name
+        bindsdircandidates = set()
+        # start with just the ASCII a-zA-Z0-9_ and space characters in the name
+        # We keep the spaces initially so the multi-word thing works at all.
         # TODO - This could cause trouble if someone has some weird all-Unicode name
-        profileName = re.sub(r'\W+', '', self.Name())
-
-        # by default, let's just use the first five letters of the Name():
-        bindsdirname = profileName[:5]
-
-        # but let's try more clever things, too:
+        profileName = re.sub(r'[^\w ]+', '', self.Name(), flags = re.ASCII)
 
         # First let's see if we have multiple words:
         namewords = profileName.split()
-        if len(namewords) > 1:
+        if len(namewords) > 1 and len(namewords) < 6:
             firstletters = [w[:1] for w in namewords]
-            bindsdirname = ''.join(firstletters)
+            bindsdircandidates.add(''.join(firstletters))
 
-        # let's see if we have more than one capital letter, if so try that.
-        else:
-            capitalletters = re.findall(r'[A-Z]', profileName)
-            if len(capitalletters) > 1:
-                bindsdirname = ''.join(capitalletters)
+        # let's see if we have more than one capital letter / numeral, if so try that.
+        capitalletters = re.findall(r'[A-Z0-9]', profileName)
+        if len(capitalletters) > 1 and len(capitalletters) < 6:
+            bindsdircandidates.add(''.join(capitalletters))
 
-        # MSDOS still haunts us
-        if PureWindowsPath(bindsdirname).is_reserved():
-            bindsdirname = ''
+        # Let's also fall back on the first (non-space) five of the profileName as an option
+        fallback = re.sub(r'\s+', '', profileName)[:5].lower()
+        # ...if it's not already someone else's
+        existingProfile = CheckProfileForBindsDir(fallback)
+        if existingProfile and (existingProfile != self.Name()):
+            fallback = ''
 
-        # finally, if it's too short (1 character, ie they only had a single [a-z0-9]
-        # in the original profilename), let's empty it to force an error
-        if len(bindsdirname) < 2: bindsdirname = ''
+        for bdc in bindsdircandidates:
+            # MSDOS still haunts us
+            if PureWindowsPath(bdc).is_reserved():
+                bindsdircandidates.remove(bdc)
 
+            # if it's too short (1 character) let's not
+            # This probably can't happen but sanity-checking is good
+            if len(bdc) < 2: bindsdircandidates.remove(bdc)
+
+            # check if it already exists and belongs to someone else
+            existingProfile = CheckProfileForBindsDir(bdc)
+            if existingProfile and (existingProfile != self.Name()):
+                bindsdircandidates.remove(bdc)
+
+        # OK, we should have zero, one, or two candidates of no more than five letters.
+        # Pick the longest one; fall back on first-five if it was zero candidates
+        #
         # We're gonna lowercase this because Windows is case-insensitive
-        return bindsdirname.lower()
+        return max(bindsdircandidates, key = len).lower() or fallback
 
 
     ###################
@@ -235,8 +247,6 @@ class Profile(wx.Notebook):
         if FoundOldDefaultProfile:
             self.SaveAsDefault(prompt = False)
 
-        # TODO - here's where we should check if that bindsdir exists
-        # already and do something, append "1" or something?
         self.ProfileBindsDir = self.GenerateBindsDirectoryName()
         if not self.ProfileBindsDir:
             # This happens if GenerateBindsDirectoryName can't come up with something sane

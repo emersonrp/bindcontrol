@@ -102,6 +102,7 @@ class Popmenu(FM.FlatMenu):
         (result, menuid) = self.HitTest(pos)
         if result == FM.MENU_HT_ITEM:
             self.ContextMenu.CurrentMenuItem = self.GetMenuItems()[menuid]
+            # TODO - "if CurrentMenuItem has an editor, enable the "Edit" menu item, otherwise disable
         super().ProcessMouseRClick(pos)
 
     def WriteToFile(self, filename):
@@ -286,7 +287,7 @@ class Popmenu_ContextMenu(FM.FlatMenu):
         menuid = evt.GetId()
         print(f"Got {menuid} which is {self.FindItem(menuid)} which is called {self.FindItem(menuid).GetLabel()}")
 
-# Base Class
+# Base Menu Item Class
 class PEMenuItem(FM.FlatMenuItem):
     def __init__(self, parent, data, **kwargs):
         super().__init__(parent, wx.ID_ANY, **kwargs)
@@ -309,6 +310,10 @@ class PEMenuItem(FM.FlatMenuItem):
 
     def OnEditorUpdate(self):
         wx.LogError(f"Editor update not implemented for {type(self).__name__}")
+
+    def Serialize(self):
+        wx.LogError(f"Serialize not implemented yet for {type(self).__name__}")
+        return ""
 
 # subclasses
 class PEMenu(PEMenuItem):

@@ -51,7 +51,7 @@ class ControlGroup(wx.StaticBoxSizer):
         if not noLabel:
             # This ST.GenStaticText is so we can intercept clicks on it, but
             # the background color is wrong on Windows in a way I can't work out,
-            # and clicks work on Windows anyway, so...
+            # and clicks work with wx.StaticText on Windows anyway, so...
             if platform.system() != 'Windows':
                 CtlLabel = ST.GenStaticText(CtlParent, -1, label + ':')
             else:
@@ -103,7 +103,7 @@ class ControlGroup(wx.StaticBoxSizer):
                 control.Bind(wx.EVT_CHOICE, callback )
 
         elif ctlType == ('statictext'):
-            control = cgStaticText(CtlParent, -1, contents)
+            control = cgStaticText(CtlParent, -1, Init.get(ctlName, ''))
 
         elif ctlType == ('checkbox'):
             control = cgCheckBox(CtlParent, -1, contents)

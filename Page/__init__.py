@@ -48,12 +48,14 @@ class Page(wx.ScrolledWindow):
             else        : return ''
         elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
             return control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
+        elif isinstance(control, wx.StaticText):
+            return control.GetLabel()
         elif getattr(control, 'GetValue', None):
             return control.GetValue()
         elif getattr(control, 'GetPath', None):
             return control.GetPath()
         else:
-            wx.LogError(f"{control} has no GetValue() - this is a bug.")
+            wx.LogError(f"control '{key}' has no GetValue() - this is a bug")
             return ''
 
     def SetState(self, key, value):
@@ -70,6 +72,8 @@ class Page(wx.ScrolledWindow):
                 value = control.FindString(value)
                 if value == wx.NOT_FOUND: value = 0
             return control.SetSelection(value)
+        elif isinstance(control, wx.StaticText):
+            return control.SetLabel(value)
         elif getattr(control, 'SetValue', None):
             return control.SetValue(value)
         elif getattr(control, 'SetPath', None):

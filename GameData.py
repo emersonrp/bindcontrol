@@ -1,5 +1,14 @@
 from typing import Dict, Any
 
+Alignments = [
+    'Hero',
+    'Villain',
+    'Vigilante',
+    'Rogue',
+    'Resistance',
+    'Loyalist',
+]
+
 Origins = ['Magic','Mutation','Natural','Science','Technology']
 
 Archetypes: Dict[Any, Any] = {

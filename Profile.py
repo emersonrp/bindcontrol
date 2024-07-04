@@ -20,21 +20,41 @@ from Page.Mastermind import Mastermind
 from Page.CustomBinds import CustomBinds
 
 import UI
-from UI.ControlGroup import cgStaticText, cgSpinCtrl, cgSpinCtrlDouble
+from UI.ControlGroup import cgSpinCtrl, cgSpinCtrlDouble
 from UI.SimpleBindPane import SimpleBindPane
 from UI.BufferBindPane import BufferBindPane
 from UI.ComplexBindPane import ComplexBindPane
 from UI.KeySelectDialog import bcKeyButton
+
+# Non-instance method to examine an arbitrary profile binds dir for its associated profile name
+def CheckProfileForBindsDir(bindsdir):
+    IDFile = Path(wx.ConfigBase.Get().Read('BindPath')) / bindsdir / 'bcprofileid.txt'
+    if IDFile:
+        # If the file is even there...
+        if IDFile.exists():
+            return IDFile.read_text().strip()
+
+# Non-instance method to get all profile binds dirs as a list of strings.
+#
+# Might want to case-mangle these in calling code if checking against them, but
+# let's not do it inside here in case we want to touch them directly on Linux
+# etc where changing the case inside here would be bad.
+def GetAllProfileBindsDirs():
+    alldirs = []
+    for bindsdir in Path(wx.ConfigBase.Get().Read('BindPath')).glob('*'):
+        alldirs.append(bindsdir.name)
+    return alldirs
 
 class Profile(wx.Notebook):
 
     def __init__(self, parent, loadfile = None):
         wx.Notebook.__init__(self, parent, style = wx.NB_TOP, name = "Profile")
 
-        self.BindFiles : dict      = {}
-        self.Pages     : list      = []
-        self.Modified  : bool      = False
-        self.Filename  : Path|None = None
+        self.BindFiles       : dict      = {}
+        self.Pages           : list      = []
+        self.Modified        : bool      = False
+        self.Filename        : Path|None = None
+        self.ProfileBindsDir : str       = ''
 
         # Add the individual tabs, in order.
         self.General           = self.CreatePage(General(self))
@@ -53,6 +73,7 @@ class Profile(wx.Notebook):
 
         if loadfile: self.doLoadFromFile(loadfile)
 
+
     def CreatePage(self, module):
         module.BuildPage()
         module.SetScrollRate(10,10)
@@ -67,16 +88,20 @@ class Profile(wx.Notebook):
 
     #####
     # Convenience / JIT accessors
-    def Name(self)         : return self.General.GetState('Name')
-    def Archetype(self)    : return self.General.GetState('Archetype')
-    def Primary(self)      : return self.General.GetState('Primary')
-    def Secondary(self)    : return self.General.GetState('Secondary')
-    def ResetFile(self)    : return self.GetBindFile("reset.txt")
-    def BindsDir(self)     :
-        return Path(wx.ConfigBase.Get().Read('BindPath')) / self.Name()
+    def Name(self)         :
+        if self.Filename:
+            return self.Filename.stem
+        else:
+            return ''
+    def Archetype(self)     : return self.General.GetState('Archetype')
+    def Primary(self)       : return self.General.GetState('Primary')
+    def Secondary(self)     : return self.General.GetState('Secondary')
+    def ResetFile(self)     : return self.GetBindFile("reset.txt")
+    def ProfileIDFile(self) : return self.BindsDir() / 'bcprofileid.txt'
+    def BindsDir(self)      : return Path(wx.ConfigBase.Get().Read('BindPath')) / self.ProfileBindsDir
     def GameBindsDir(self) :
         gbp = wx.ConfigBase.Get().Read('GameBindPath')
-        if gbp: return PureWindowsPath(gbp) / self.Name()
+        if gbp: return PureWindowsPath(gbp) / self.ProfileBindsDir
         return self.BindsDir()
 
     def HasPowerPool(self, poolname):
@@ -116,6 +141,41 @@ class Profile(wx.Notebook):
     def SetModified  (self, _ = None): self.Modified = True
     def ClearModified(self, _ = None): self.Modified = False
 
+    # come up with a sane default binds directory name for this profile
+    def GenerateBindsDirectoryName(self):
+        # start with just the ASCII characters in the name
+        # TODO - This could cause trouble if someone has some weird all-Unicode name
+        profileName = re.sub(r'\W+', '', self.Name())
+
+        # by default, let's just use the first five letters of the Name():
+        bindsdirname = profileName[:5]
+
+        # but let's try more clever things, too:
+
+        # First let's see if we have multiple words:
+        namewords = profileName.split()
+        if len(namewords) > 1:
+            firstletters = [w[:1] for w in namewords]
+            bindsdirname = ''.join(firstletters)
+
+        # let's see if we have more than one capital letter, if so try that.
+        else:
+            capitalletters = re.findall(r'[A-Z]', profileName)
+            if len(capitalletters) > 1:
+                bindsdirname = ''.join(capitalletters)
+
+        # MSDOS still haunts us
+        if PureWindowsPath(bindsdirname).is_reserved():
+            bindsdirname = ''
+
+        # finally, if it's too short (1 character, ie they only had a single [a-z0-9]
+        # in the original profilename), let's empty it to force an error
+        if len(bindsdirname) < 2: bindsdirname = ''
+
+        # We're gonna lowercase this because Windows is case-insensitive
+        return bindsdirname.lower()
+
+
     ###################
     # Profile Save/Load
     def ProfilePath(self):
@@ -126,13 +186,8 @@ class Profile(wx.Notebook):
             result = wx.MessageBox("This will set the current profile to be used as a template when making a new profile.  Continue?", "Save As Default", wx.YES_NO)
             if result == wx.NO: return
 
-        # stash away our current values
-        currName = self.Name()
-        filename = self.Filename
-        self.Freeze()
         try:
             # so much could go wrong.
-            self.General.SetState('Name', '')
             self.Filename = None
             jsonstring = self.AsJSON(small = True)
             zipstring = codecs.encode(jsonstring.encode('utf-8'), 'zlib')
@@ -143,11 +198,6 @@ class Profile(wx.Notebook):
         except Exception as e:
             # Let us know if it did
             wx.LogError(f"Failed to write default profile: {e}")
-        finally:
-            # clean up our stashed state
-            self.General.SetState('Name', currName)
-            self.Filename = filename
-            self.Thaw()
 
     def GetDefaultProfileJSON(self, _ = None):
         jsonstring = None
@@ -163,7 +213,7 @@ class Profile(wx.Notebook):
 
         return jsonstring
 
-    def LoadFromDefault(self, _ = None):
+    def LoadFromDefault(self, newname):
         FoundOldDefaultProfile = False
         # Try to get it from prefs
         jsonstring = self.GetDefaultProfileJSON()
@@ -176,9 +226,27 @@ class Profile(wx.Notebook):
 
         self.doLoadFromJSON(jsonstring)
 
+        if not newname:
+            raise Exception(f"Error, got into LoadFromDefault without a newname specified")
+        self.Filename = self.ProfilePath() / f"{newname}.bcp"
+
         # if we found one the file way, migrate it to the new way
+        # TODO someday maybe remove this but not for a while
         if FoundOldDefaultProfile:
             self.SaveAsDefault(prompt = False)
+
+        # TODO - here's where we should check if that bindsdir exists
+        # already and do something, append "1" or something?
+        self.ProfileBindsDir = self.GenerateBindsDirectoryName()
+        if not self.ProfileBindsDir:
+            # This happens if GenerateBindsDirectoryName can't come up with something sane
+            self.Parent.OnProfDirButton()
+
+        self.SetTitle()
+
+        # now we have a named profile that we haven't saved.
+        # Set it as "Modified" so we get prompted to save it.
+        self.SetModified()
 
     def SaveToFile(self, _ = None):
         try:
@@ -202,24 +270,25 @@ class Profile(wx.Notebook):
             if not re.search(r'\.bcp$', pathname, flags = re.I):
                 pathname = pathname + '.bcp'
 
+            # set up our innards to be the new file
             self.Filename = Path(pathname)
-            self.General.SetState('Name', self.Filename.stem)
+            self.ProfileBindsDir = self.GenerateBindsDirectoryName()
+            if not self.ProfileBindsDir:
+                # This happens if GenerateBindsDirectoryName can't come up with something sane
+                self.Parent.OnProfDirButton()
 
-            return self.doSaveToFile()
+            # save the new file
+            self.doSaveToFile()
+
+            # make sure we're all set up as whatever we just saved as
+            self.doLoadFromFile(str(self.Filename))
 
     def doSaveToFile(self, _ = None):
         if not self.Filename:
             return self.SaveToFile()
 
-        profilename = self.Name()
-        if len(profilename) == 0 or re.search(" ", profilename):
-            wx.MessageBox("Profile Name is not valid, please correct this.")
-            self.ChangeSelection(0)
-            return False
-
         self.ProfilePath().mkdir( parents = True, exist_ok = True )
 
-        #self.Filename = self.ProfilePath() / Path(profilename + ".bcp")
         if not self.Filename:
             raise Exception(f"No Filename set in Profile {self.Name()}!  Aborting save.")
         savefile = self.Filename
@@ -235,8 +304,12 @@ class Profile(wx.Notebook):
         except Exception as e:
             wx.LogError(f"Problem saving to profile {savefile}: {e}")
 
+        # We do this on save because we might have done "Save As" and we're now a new file
+        self.SetTitle()
+
     def AsJSON(self, small = False):
         savedata : Dict[str, Any] = {}
+        savedata['ProfileBindsDir'] = self.ProfileBindsDir
         for pagename in self.Pages:
             savedata[pagename] = {}
             if pagename == "CustomBinds": continue
@@ -275,6 +348,7 @@ class Profile(wx.Notebook):
 
         savedata['CustomBinds'] = []
         customPage = getattr(self, 'CustomBinds')
+        # TODO - walking the sizer/widget tree like this is fragile.
         for pane in customPage.PaneSizer.GetChildren():
             bindui = pane.GetSizer().GetChildren()
             if bindui:
@@ -295,25 +369,36 @@ class Profile(wx.Notebook):
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 wx.LogMessage("User canceled loading profile")
-                return     # the user changed their mind
+                return False     # the user changed their mind
 
             # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
-            self.doLoadFromFile(pathname)
+            return self.doLoadFromFile(pathname)
 
     def doLoadFromFile(self, pathname):
         with Path(pathname) as file:
             try:
+                # clear out the PBD in case we already had one but this loadfile doesn't.
+                # TODO - now we always(?) load into a fresh profile object so don't need to do this?
+                self.ProfileBindsDir = ''
+
                 jsonstring = file.read_text()
                 self.doLoadFromJSON(jsonstring)
             except Exception as e:
                 wx.LogError(f"Profile {pathname} could not be loaded: {e}")
-                return None
+                return False
 
         self.Filename = Path(pathname)
-        wx.ConfigBase.Get().Write('LastProfile', pathname)
-        wx.ConfigBase.Get().Flush()
+
+        # if we're loading a profile from before when we stored the
+        # ProfileBindsDir in it, generate one.
+        if not self.ProfileBindsDir:
+            self.ProfileBindsDir = self.GenerateBindsDirectoryName()
+            self.SetModified()
+
         wx.LogMessage(f"Loaded profile {pathname}")
+        self.SetTitle()
+        return True
 
     def doLoadFromJSON(self, jsonstring):
         if not jsonstring: return
@@ -322,6 +407,10 @@ class Profile(wx.Notebook):
 
         # load old Profiles pre-rename of "Movement Powers" tab
         if 'SoD' in data: data['MovementPowers'] = data['SoD']
+
+        # we store the ProfileBindsDir outside of the sections
+        if data.get('ProfileBindsDir', None):
+            self.ProfileBindsDir = data['ProfileBindsDir']
 
         for pagename in self.Pages:
             if pagename == "CustomBinds": continue
@@ -339,11 +428,10 @@ class Profile(wx.Notebook):
                 # look up what type of control it is to know how to update its value
                 if isinstance(control, wx.DirPickerCtrl):
                     control.SetPath(value if value else '')
-                elif isinstance(control, bcKeyButton):
-                    control.SetLabel(value if value else '')
-                    control.Key = value if value else ''
                 elif isinstance(control, wx.Button):
                     control.SetLabel(value if value else '')
+                    if isinstance(control, bcKeyButton):
+                        control.Key = value if value else ''
                 elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
                     control.SetColour(value)
                     if isinstance(control, csel.ColourSelect):
@@ -358,10 +446,10 @@ class Profile(wx.Notebook):
                     control.SetSelection(value if value else 0)
                 elif isinstance(control, wx.CheckBox):
                     control.SetValue(value if value else False)
-                elif isinstance(control, cgStaticText):
-                    continue
                 elif isinstance(control, cgSpinCtrl) or isinstance(control, cgSpinCtrlDouble):
                     control.SetValue(value if value else page.Init.get(controlname, 0))
+                elif isinstance(control, wx.StaticText):
+                    control.SetLabel(value if value else '')
                 else:
                     control.SetValue(value if value else '')
 
@@ -375,7 +463,7 @@ class Profile(wx.Notebook):
                 prim = data['General'].get('Primary', None)
                 if isinstance(prim, str):
                     prim = page.Ctrls['Primary'].FindString(prim)
-                page.Ctrls['Primary']  .SetSelection(prim)
+                page.Ctrls['Primary'].SetSelection(prim)
 
                 seco = data['General'].get('Secondary', None)
                 if isinstance(seco, str):
@@ -405,8 +493,14 @@ class Profile(wx.Notebook):
 
                 if bindpane:
                     cbpage.AddBindToPage(bindpane = bindpane)
+
+        # finally, set the profile name on the General page
         self.ClearModified()
 
+    def SetTitle(self):
+        self.Parent.SetTitle(f"BindControl: {self.Name()}")
+        self.General.NameDisplay.SetLabel(self.Name())
+        self.General.Layout()
 
     #####################
     # Bind file functions
@@ -419,16 +513,57 @@ class Profile(wx.Notebook):
 
         return self.BindFiles[key]
 
+    # making this "not mine" so we can return False if everything's fine,
+    # or the existing Profile name if something's wrong
+    def BindsDirNotMine(self):
+        IDFile = self.ProfileIDFile()
+        if IDFile:
+            # If the file is even there...
+            if IDFile.exists():
+                profilename = IDFile.read_text().strip()
+
+                if profilename == self.Name():
+                    # OK, this is our bindsdir, great
+                    return False
+                else:
+                    # Oh noes someone else has written binds here, return the name
+                    return profilename
+            else:
+                # the file doesn't exist, so bindsdir has not been claimed by another profile
+                return False
+        else:
+            raise Exception("Profile.ProfileIDFile() returned nothing, not checking IDFile!")
 
     def WriteBindFiles(self):
-        profilename = self.General.GetState('Name')
-        if len(profilename) == 0 or re.search(" ", profilename):
-            wx.MessageBox("Profile Name is not valid, please correct this.")
-            self.ChangeSelection(0)
+        if not self.ProfileBindsDir:
+            wx.MessageBox("Profile Binds Directory is not valid, please correct this.")
             return
 
-        # Start by making reset load itself.  This might get overridden with
-        # more elaborate load strings in like MovementPowers, but this is the safety
+        # Create the BindsDir if it doesn't exist
+        try:
+            self.BindsDir().mkdir(parents = True, exist_ok = True)
+        except Exception as e:
+            wx.LogError("Can't make binds directory {self.BindsDir()}: {e}")
+            wx.MessageBox("Can't make binds directory {self.BindsDir()}: {e}")
+            return
+
+
+        otherProfile = self.BindsDirNotMine()
+        if otherProfile:
+            # this directory belongs to someone else
+            answer = wx.MessageBox(f"The binds directory {self.BindsDir()} contains binds from the profile \"{otherProfile}\" -- overwrite?", "Confirm", wx.YES_NO)
+            if answer == wx.NO: return
+
+        # write the ProfileID file that identifies this directory as "belonging to" this profile
+        try:
+            self.ProfileIDFile().write_text(self.Name())
+        except Exception as e:
+            wx.LogError("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
+            wx.MessageBox("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
+            return
+
+        # Start by making the bind to make the reset load itself.  This might get overridden with
+        # more elaborate load strings in like MovementPowers, but this is the safety fallback
 
         config = wx.ConfigBase.Get()
         resetfile = self.ResetFile()
@@ -556,6 +691,13 @@ class Profile(wx.Notebook):
             dlg.Update(progress, str(file.Path))
             progress = progress + 1
 
+
+        # remove the ProfileID file
+        try:
+            self.ProfileIDFile().unlink()
+        except Exception as e:
+            wx.LogMessage(f"Can't delete ProfileID file: {e}")
+
         # try the directories
         for bdir in bindfiles['dirs']:
             dirpath = Path(self.BindsDir() / bdir)
@@ -682,7 +824,8 @@ class DeleteDoneDialog(wx.Dialog):
 
         sizer.Add(
             wx.StaticText(self, label = f"Alternatively, you can Write Binds again at this point for a fresh set of bindfiles.", style = wx.ALIGN_CENTER),
-            1, wx.EXPAND|wx.ALL, 10
+            0, wx.EXPAND|wx.ALL, 10
         )
-        sizer.Add( self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10)
+        sizer.Add(self.CreateButtonSizer(wx.OK), 0, wx.ALL|wx.ALIGN_RIGHT, 10)
+
         self.SetSizerAndFit(sizer)

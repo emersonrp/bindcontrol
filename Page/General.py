@@ -1,11 +1,11 @@
 # UI / logic for the 'general' panel
-import re
 import wx
+import wx.lib.stattext as ST
 import UI
 from Icon import GetIcon
-from GameData import Archetypes, Origins, MiscPowers
+from GameData import Alignments, Archetypes, Origins, MiscPowers
 
-from UI.ControlGroup import ControlGroup, cgTextCtrl
+from UI.ControlGroup import ControlGroup
 from UI.IncarnateBox import IncarnateBox
 from UI.ChatColorPicker import ChatColorPicker, ChatColors
 
@@ -16,7 +16,7 @@ class General(Page):
         Page.__init__(self, parent)
 
         self.Init = {
-            'Name': 'Profile',
+            'Alignment' : 'Hero',
             'Origin': "Magic",
             'Archetype': 'Mastermind',
             'Primary': '',
@@ -43,20 +43,47 @@ class General(Page):
 
         topSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        powersBox = ControlGroup(self, self, 'Powers and Info')
-        self.NameCtrl = powersBox.AddControl(
-            ctlName = 'Name',
-            ctlType = 'text',
+        powersBox = ControlGroup(self, self, 'Powers')
+
+        # first the hand-rolled "Profile" + profilename
+        ProfileLabel = wx.StaticText(powersBox.GetStaticBox(), -1, "")
+        ProfileLabel.SetLabelMarkup("<b>Profile:</b>")
+        powersBox.InnerSizer.Add(ProfileLabel, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+
+        self.nameBox = wx.Panel(powersBox.GetStaticBox())
+        nameSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.nameBox.SetSizer(nameSizer)
+
+        self.OriginIcon    = wx.StaticBitmap(self.nameBox, size = (32, 32))
+        self.NameDisplay   = ST.GenStaticText(self.nameBox, -1, "", style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.ArchetypeIcon = wx.StaticBitmap(self.nameBox, size = (32,32))
+
+        self.NameDisplay.SetFont(wx.Font(wx.FontInfo().Bold()))
+
+        nameSizer.Add(self.OriginIcon, 0, wx.ALL, 6)
+        nameSizer.Add(self.NameDisplay, 1, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 6)
+        nameSizer.Add(self.ArchetypeIcon, 0, wx.ALL, 6)
+
+        powersBox.InnerSizer.Add(self.nameBox, 1, wx.EXPAND)
+
+        alignmentchoices = []
+        for Alignment in Alignments:
+            alignmentchoices.append([Alignment, GetIcon(f"Alignments/{Alignment}")])
+        alignmentpicker = powersBox.AddControl(
+            ctlName = 'Alignment',
+            ctlType  = 'choice',
+            contents = Alignments,
+            callback = self.OnPickAlignment,
         )
-        self.NameCtrl.Bind(wx.EVT_TEXT, self.OnNameCtrlChanged)
+        alignmentpicker.SetMinSize([200,-1])
 
         originchoices = []
         for Origin in Origins:
             originchoices.append([Origin, GetIcon(f"Origins/{Origin}")])
         originpicker = powersBox.AddControl(
             ctlName = 'Origin',
-            ctlType = 'bmcombo',
-            contents = originchoices,
+            ctlType = 'choice',
+            contents = Origins,
             callback = self.OnPickOrigin,
         )
         originpicker.SetMinSize([200,-1])
@@ -66,8 +93,8 @@ class General(Page):
             archchoices.append([Arch, GetIcon(f"Archetypes/{Arch}")])
         archpicker = powersBox.AddControl(
             ctlName = 'Archetype',
-            ctlType = 'bmcombo',
-            contents = archchoices,
+            ctlType = 'choice',
+            contents = sorted(Archetypes),
             callback = self.OnPickArchetype,
         )
         archpicker.SetMinSize([200,-1])
@@ -187,6 +214,8 @@ class General(Page):
         self.SynchronizeUI()
 
     def SynchronizeUI(self):
+        self.OnPickAlignment()
+        self.OnPickOrigin()
         self.OnPickArchetype()
         self.OnTypeEnable()
         self.OnColorEnable()
@@ -227,7 +256,25 @@ class General(Page):
         }
 
     ### EVENT HANDLERS
-    def OnPickArchetype(self, evt = {}):
+    def OnPickAlignment(self, evt = None):
+        # TODO put this in Gamedata?
+        bgcolor = {
+            'Hero'       : ( 35, 130, 212),
+            'Villain'    : (225,  65,  65),
+            'Vigilante'  : (241, 213, 114),
+            'Rogue'      : (180, 180, 180),
+            'Resistance' : ( 30, 240, 255),
+            'Loyalist'   : (255, 226,  56),
+        }[self.GetState('Alignment')]
+        self.nameBox.SetBackgroundColour(bgcolor)
+        self.NameDisplay.SetBackgroundColour(bgcolor)
+        # Have to do this dance to make the colors refresh on Windows.  Ugh.
+        self.nameBox.Show(False)
+        self.nameBox.Show(True)
+
+        if evt: evt.Skip()
+
+    def OnPickArchetype(self, evt = None):
         arch = self.GetState('Archetype')
 
         if not arch:
@@ -259,29 +306,13 @@ class General(Page):
         if getattr(self.Profile, 'MovementPowers', None):
             self.Profile.MovementPowers.SynchronizeUI()
 
-        #self.Fit() # this was making the "General" tab de-center on Load Profile on Windows
+        self.ArchetypeIcon.SetBitmap(GetIcon("Archetypes/" + arch))
+
         if evt: evt.Skip()
 
-
-    # Event handlers
-    def OnNameCtrlChanged(self, evt):
-        nc = self.NameCtrl
-        if isinstance(nc, cgTextCtrl):
-            text = nc.GetValue()
-            if len(text) == 0 or re.search(" ", text):
-                nc.SetBackgroundColour((255,200,200))
-                if len(text) == 0:
-                    nc.SetToolTip("The profile name cannot be empty.")
-                else:
-                    nc.SetToolTip("The profile name cannot contain spaces.")
-            else:
-                nc.SetBackgroundColour(wx.NullColour)
-                nc.SetToolTip('')
-        evt.Skip()
-
-
-    def OnPickOrigin(self, evt):
-        evt.Skip()
+    def OnPickOrigin(self, evt = None):
+        self.OriginIcon.SetBitmap(GetIcon('Origins/' + self.GetState('Origin')))
+        if evt: evt.Skip()
 
     def OnPickPoolPower(self, evt):
         self.Profile.MovementPowers.SynchronizeUI()

@@ -11,7 +11,7 @@
         <h1>Concepts</h1>
 
             <h3>Profiles</h3>
-            <p>A Profile is a configuration of keybinds managed by BindControl.  A profile is always loaded in BindControl, be it a new profile or one that's been loaded from a save file.  Any editing or modifications done to the keybinds can be saved in the profile, or in a new profile.  Profiles are named, typically with short names for reasons discussed later.</p>
+            <p>A Profile is a configuration of keybinds managed by BindControl.  A profile is always loaded in BindControl, be it a new profile or one that's been loaded from a save file.</p>
 
             <h3>KeyBinds / BindFiles</h3>
             <p>A Keybind is a mapping of a command or string of commands to a key or mouse button.  BindControl offers a variety of ways to create and maintain key binds, and writes them to BindFiles which City of Heroes loads to "install" the keybinds.  Keybinds have various constraints on their contents and length, but BindControl attempts to help wrangle these and produce valid, useful keybinds.</p>
@@ -31,10 +31,13 @@
             <h3>Binds Directory</h3>
             <p>Once you have your profile set up, BindControl will need to write the resulting bindfiles somewhere where City of Heroes will be able to load them.  Because keybinds have a limited length, and because many of the features of BindControl involve loading other bindfiles from keybinds, it is <b>strongly</b> recommended to keep the path to the Binds Directory as short as possible to minimize the length of the filename to load.  Historically, c:\coh\ was used by citybinder, and this is still a great place to place keybinds if possible.</p>
 
-            <p>Additionally, if multiple sets of bindfiles are desired, they can be saved inside individual profile directories in the Binds Directory.  For this reason, it is also strongly recommended to keep Profile names short, and not to use spaces in Profile names.</p>
+            <p>Keybinds will be saved in a profile-specific subdirectory of the main Binds Directory.  Because of game limitations, it's recommended to keep the profile subdirectory name short.  BindControl will automatically generate a short name for your new profile, but the directory can be changed using the "Set Binds Location" button at the lower left at any time.</p>
 
             <h3>The "Write Binds" button</h3>
             <p>The "Write Binds" button is always available across the bottom of the window, and will attempt to write the bindfiles as currently configured in the profile.  If it encounters any errors, it will say so and present a log window that might help figure out what went wrong.  Typically this will not happen.  Writing binds takes almost no time and has little overhead, so feel free to iterate your config, write the files, and test them in-game over and over as needed.</p>
+
+            <h3>Deleting Keybinds</h3>
+            <p>The "Delete All Keybinds" button in the lower right will delete all BindControl-generated files in your profile-specific binds directory, and remove that directory if it is then empty.  This can be used to keep your binds directory clean if you change your configuration and want to re-write a new set of bind files, or if you just don't want to use that profile any more.  BindControl takes great pains not to delete anything that it didn't, itself, create, so if you keep other things in your binds directory, they should be safe.</p>
 
         <h1>Pages</h1>
             <h3>Preferences</h3>
@@ -62,16 +65,23 @@
 
             <p>This feature works by calling the <code>/keybinds_reset</code> slash command, which will reset your binds to whatever Keybind Profile you have selected in the game's "Keybinding" options tab.</p>
 
-            <p><u>On startup, start with</u></p>
-            <p>This enables you to select whether you'd like BindControl to start up with a fresh profile each time, or if you'd prefer to keep working with the last profile you saved.  By default it is set to the latter.</p>
+            <p><u>On startup, load last used profile</u></p>
+            <p>This enables you to select whether you'd like BindControl to start up with the last profile you were working with.  If you deselect this checkbox, at startup BindControl will offer to create a new profile or load an existing one.</p>
+
+            <p><u>Path for saved profiles</u></p>
+            <p>By default, BindControl will save profiles in a 'bindcontrol' directory inside your Documents directory.  You can change this location here.</p>
+
+            <p><u>Save size and position of BindControl window</u></p>
+            <p>This is on by default.  If you turn this off, BindControl will open up at a default size, in a position determined by your operating system.</p>
 
             <h3 name="General">General</h3>
             <p>The General page contains the Profile name, as well as information about the archetype and powers available for this profile.  This information is used to help pick powers inside PowerBinder and other places, as well as to enable and configure the Speed-on-Demand and Mastermind pet binds.</p>
 
             <h3 name="Gameplay">Gameplay</h3>
             <p>The Gameplay page offers various quality-of-life binds and bind systems.</p>
-            <p>Most notably, there is a combined Team/Pet selector system, as well as a scheme for enabling next/previous teammember selection.</p>
-            <p>In addition, there are binds to quit to desktop, to invite your target to a group, and turn on and off the FPS Meter and the Netgraph.</p>
+            <p>At the top, you can bind the keys used to activate the various slots in the main power trays.  You can use the "Fill" button to fill that row's buttons with 1-0, or hold down a modifier key such as Alt to fill the buttons with, for instance, Alt-1 - Alt 0.</p>
+            <p>Additionaly, there is a combined Team/Pet selector system, as well as a scheme for enabling next/previous teammember selection.</p>
+            <p>There are binds to quit to desktop, to invite your target to a group, and turn on and off the FPS Meter and the Netgraph.</p>
             <p>Finally, there are chat binds that can start chat commands in various ways, as well as optionally showing a "typing" indicator</p>
 
             <h3 name="CustomBinds">Custom Binds</h3>
@@ -117,11 +127,12 @@
 
             <h3 name="Mastermind">Mastermind / Pet Binds</h3>
 
-            <p>This page contains a set of binds to select individual pets by name.  This requires you tell BindControl the names of your pets, and that their names not contain spaces.  The game will do a "best match" on the name you provide, so short unique substrings of longer names can help here.  For instance, for a pet named "Stan The Man," unless you have another pet named with the phrase "stan" in it somewhere, "stan" would be a good choice for BindControl to use.</p>
+            <p>This page contains a set of binds to select individual pets by name.  This requires you tell BindControl the names of your pets.  The game will do a "best-match" when asked to command a pet by-name, and BindControl can determine whether your pet names are different enough to identify each pet uniquely.  To use the by-name binds, as well as Bodyguard Mode, you need to set your pets in-game to unique names, and tell BindControl what these names are.</p>
 
-            <p>The Pet Action binds offer one-key selection of groups of Mastermind pets as well as one-key orders for stance and action. By default it uses the numeric keypad, but they can of course be rebound anywhere.  Each key optionally can give feedback via self-/tell, local chat, or petsay.</p>
+            <p>The "Sandolphan" Pet Action binds offer one-key selection of groups of Mastermind pets as well as one-key orders for stance and action that apply to the selected pet(s). By default it uses the numeric keypad, but they can of course be rebound anywhere.  Each key optionally can give feedback via self-/tell, local chat, or petsay.</p>
 
-            <p>In addition, the binds support having any subset of your pets flagged for Bodyguard Mode, which can be toggle on and off.  If toggled on, the indicated pets will go into Bodyguard Mode (Defensive+Follow) and the stance and command keys will only apply to the remaining pets.  <strike>There is also the option to order your non-Bodyguard pets to Attack or Goto</strike> - <i>this is not working as intended</i>.</p>
+            <p>In addition, the binds support having any subset of your pets flagged for Bodyguard Mode.  When the key is pressed, the indicated pets will go into Bodyguard Mode (Defensive+Follow).  Giving any other order to a Bodyguard will take that pet out of Bodyguard Mode until the key is pressed again.</p>
+
             <p>Finally, the page offers a set of binds to select your "next" or "previous" pet, for quickly iterating through your pets for buffing, for instance.  There are also keybinds to set the binds' idea of what your pet group size is.  This is so that the binds can "wrap around" from the last pet to the first and vice versa, and is necessary because keybinds can't know, without being told, how many pets you have active.</p>
 
         <h1>Troubleshooting</h1>

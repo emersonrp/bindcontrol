@@ -44,8 +44,16 @@ class ErrorControlMixin:
             self.SetOwnBackgroundColour((255,255,200))
         self.SetErrorToolTip()
 
-    def HasAnyError(self):
-        return self.Errors != {}
+    # TODO pick one of these next two and stick with it
+    def HasAnyError(self): return self.Errors != {}
+
+    def HasErrors(self): return bool(self.Errors)
+
+    def ClearErrors(self):
+        # get a list first b/c we change it in the loop
+        errors = list(self.Errors)
+        for error in errors: self.RemoveError(error)
+        self.SetErrorToolTip()
 
     def SetErrorToolTip(self):
         tipstrings = list(self.Errors.values()) + list(self.Warnings.values())

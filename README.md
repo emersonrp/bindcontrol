@@ -42,9 +42,9 @@ Features
     * Optional /say feedback with per-inspiration custom colors
 * Mastermind / Pet Binds
     * Select pets by power level: all, minions, lieutenants, and boss
-    * Orders for aggressive / defensive / passive stances; attack, follow, go to, and stay
+    * Orders for aggressive / defensive / passive stances; attack, follow, go to, and stay, for all or selected pets
     * Pets can give feedback on each order;  chattiness can be toggled via keybind
-    * "Bodyguard mode" shortcuts -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress
+    * "Bodyguard mode" shortcut -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress
     * By-name pet selection
     * Next-pet / previous-pet binds
 
@@ -71,6 +71,8 @@ Windows users:  try the ZIP file from the [latest release](https://github.com/em
 
 MacOS users:  an experimental binary release has been made available.  It is not signed and/or notarized, and might or might not work at all.  Any feedback is encouraged.
 
+Linux users:  an *extremely* experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.
+
 <b>If you receive malware warnings</b>, please read <a href="Help/MalwareWarnings.md">my comments on that issue</a>.
 
 Running From Source
@@ -79,7 +81,7 @@ Running From Source
 ### Dependencies
 
 1. [Python](https://www.python.org) version 3.10 or later
-2. [wxPython](https://www.wxpython.org) version 4.1 or later
+2. [wxPython](https://www.wxpython.org) version 4.2 or later
 
 * Windows users, follow the instructions on the above sites' download pages to install Python and wxPython.
 
@@ -89,7 +91,7 @@ Running From Source
 
 ### Getting and running the code
 
-* Clone this repo.
+* Clone this repo, or download the source as a ZIP file
 
 * Windows (and possibly Mac) users:  Double-click `BindControl.py` in the top-level folder
 

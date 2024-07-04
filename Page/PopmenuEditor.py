@@ -96,25 +96,6 @@ class PopmenuEditor(Page):
         menu = self.MenuListBox.GetClientData(idx)
         self.CurrentMenu = menu
 
-class Popmenu_ContextMenu(FM.FlatMenu):
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        self.Append(wx.ID_ANY, "Edit")
-        self.Append(wx.ID_ANY, "Delete")
-        self.Append(wx.ID_ANY, "Move Up")
-        self.Append(wx.ID_ANY, "Move Down")
-
-        self.ParentMenu = parent
-        self.CurrentMenuItem = None
-
-        self.Bind(wx.EVT_MENU, self.OnContextEdit)
-
-    def OnContextEdit(self, _):
-        if self.CurrentMenuItem:
-            print(f"Got into edit, my Item is {self.CurrentMenuItem} which I think is {self.CurrentMenuItem.GetLabel()}")
-
-
 class Popmenu(FM.FlatMenu):
     def __init__(self, parent):
         super().__init__(parent)
@@ -238,6 +219,59 @@ class Popmenu(FM.FlatMenu):
                     OptPayload = plmatch.group(1)
 
                 self.AppendItem(PEOption(self, {Optname.strip('"') : OptPayload}))
+
+class Popmenu_ContextMenu(FM.FlatMenu):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        editMenu   = FM.FlatMenuItem(self, wx.ID_ANY, "Edit")
+        deleteMenu = FM.FlatMenuItem(self, wx.ID_ANY, "Delete")
+        moveUpMenu = FM.FlatMenuItem(self, wx.ID_ANY, "Move Up")
+        moveDnMenu = FM.FlatMenuItem(self, wx.ID_ANY, "Move Down")
+        self.AppendItem(editMenu)
+        self.AppendItem(deleteMenu)
+        self.AppendItem(moveUpMenu)
+        self.AppendItem(moveDnMenu)
+
+        self.ParentMenu = parent
+        self.CurrentMenuItem = None
+
+        self.Bind(wx.EVT_MENU, self.OnContextEdit, editMenu)
+        self.Bind(wx.EVT_MENU, self.OnContextDelete, deleteMenu)
+        self.Bind(wx.EVT_MENU, self.OnContextMoveUp, moveUpMenu)
+        self.Bind(wx.EVT_MENU, self.OnContextMoveDown, moveDnMenu)
+
+    def OnContextEdit(self, _):
+        if cmi := self.CurrentMenuItem:
+            wx.MessageBox(f'Edit not yet implemented;  would be editing "{cmi.GetLabel()}"', "Edit Item")
+        else:
+            wx.LogError("Context menu had no menu item to work with -- this is a bug!")
+
+    def OnContextDelete(self, _):
+        if cmi := self.CurrentMenuItem:
+            result = wx.MessageBox(f'About to delete menu item "{cmi.GetLabel()}" -- this cannot be undone.  Continue?', "Delete Menu Item", wx.YES_NO)
+            if result == wx.NO: return
+
+            self.ParentMenu.DestroyItem(cmi)
+            self.CurrentMenuItem = None
+        else:
+            wx.LogError("Context menu had no menu item to work with -- this is a bug!")
+
+    def OnContextMoveUp(self, _):
+        if cmi := self.CurrentMenuItem:
+            currentPosition = self.ParentMenu.FindMenuItemPosSimple(cmi)
+            self.ParentMenu.Remove(cmi)
+            self.ParentMenu.InsertItem(currentPosition - 1, cmi)
+        else:
+            wx.LogError("Context menu had no menu item to work with -- this is a bug!")
+
+    def OnContextMoveDown(self, _):
+        if cmi := self.CurrentMenuItem:
+            currentPosition = self.ParentMenu.FindMenuItemPosSimple(cmi)
+            self.ParentMenu.Remove(cmi)
+            self.ParentMenu.InsertItem(currentPosition + 1, cmi)
+        else:
+            wx.LogError("Context menu had no menu item to work with -- this is a bug!")
 
 class PEMenuItem(FM.FlatMenuItem):
     def __init__(self, parent, data, **kwargs):

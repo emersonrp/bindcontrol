@@ -252,7 +252,7 @@ class Popmenu_ContextMenu(FM.FlatMenu):
 
     def OnContextEdit(self, _):
         if cmi := self.CurrentMenuItem:
-            wx.MessageBox(f'Edit not yet implemented;  would be editing "{cmi.GetLabel()}"', "Edit Item")
+            cmi.ShowEditor()
         else:
             wx.LogError("Context menu had no menu item to work with -- this is a bug!")
 
@@ -286,28 +286,74 @@ class Popmenu_ContextMenu(FM.FlatMenu):
         menuid = evt.GetId()
         print(f"Got {menuid} which is {self.FindItem(menuid)} which is called {self.FindItem(menuid).GetLabel()}")
 
+# Base Class
 class PEMenuItem(FM.FlatMenuItem):
     def __init__(self, parent, data, **kwargs):
         super().__init__(parent, wx.ID_ANY, **kwargs)
 
-        self.Parent = parent
         self.SetContextMenu(parent.ContextMenu)
-        self.Data = data
+        self.Parent = parent
+        self.Data   = data
+        self.Editor = self.EditorDialog()
 
+    def ShowEditor(self):
+        if self.Editor:
+            result = self.Editor.ShowModal()
+            if result == wx.CANCEL:
+                return
+            self.OnEditorUpdate()
+        else:
+            wx.LogError(f"Tried to edit {type(self).__name__} which has no self.Editor")
+
+    def EditorDialog(self) -> wx.Dialog|None:
+        wx.LogError(f"Editor not implemented for {type(self).__name__}")
+        return None
+
+    def OnEditorUpdate(self):
+        wx.LogError(f"Editor update not implemented for {type(self).__name__}")
+
+# subclasses
 class PEMenu(PEMenuItem):
     def __init__(self, parent, data):
         [(menuname, submenu)] = data.items()
         super().__init__(parent, label = menuname, data = data)
         self.SetSubMenu(submenu)
 
+    def EditorDialog(self):
+        return wx.TextEntryDialog(self.Parent, message = "Menu Name:",
+                                  caption = "Editing menu item", value = self.GetText())
+
+    def OnEditorUpdate(self):
+        newlabel = self.Editor.GetValue() # pyright: ignore
+        oldlabel = self.GetText()
+        if oldlabel in self.Data:
+            self.Data[newlabel] = self.Data[oldlabel]
+            del self.Data[oldlabel]
+        else:
+            wx.LogError(f"Something went wrong trying to update a PEMenu: no such key {oldlabel}")
+        self.SetText(newlabel)
+        self.Parent.UpdateItem(self)
+
 class PETitle(PEMenuItem):
     def __init__(self, parent, data):
         super().__init__(parent, label = data, data = data)
         self.Enable(False)
 
+    def EditorDialog(self):
+        return wx.TextEntryDialog(self.Parent, message = "Title:",
+                                  caption = "Editing title item", value = self.GetLabel())
+
+    def OnEditorUpdate(self):
+        newlabel = self.Editor.GetValue() # pyright: ignore
+        self.Data = newlabel
+        self.SetText(newlabel)
+        self.Parent.UpdateItem(self)
+
 class PEDivider(PEMenuItem):
     def __init__(self, parent, data):
         super().__init__(parent, data, kind = wx.ITEM_SEPARATOR)
+
+    def EditorDialog(self): return None
 
 class PEOption(PEMenuItem):
     def __init__(self, parent, data):

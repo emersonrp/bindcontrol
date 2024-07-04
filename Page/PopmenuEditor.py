@@ -1,4 +1,3 @@
-import pprint
 import wx
 from Page import Page
 
@@ -41,20 +40,15 @@ class PopmenuEditor(Page):
         self.MenuEditor = wx.Panel(splitter)
         MESizer = wx.BoxSizer(wx.VERTICAL)
         self.MenuEditor.SetSizer(MESizer)
+        TestMenuButton = wx.Button(self.MenuEditor, label = "Test Current Popmenu")
+        TestMenuButton.Bind(wx.EVT_BUTTON, self.OnTestMenuButton)
+        MESizer.Add(TestMenuButton, 0, wx.ALL, 10)
 
-        MEButtonSizer = wx.BoxSizer(wx.HORIZONTAL)
-        MEButtonSizer.Add(wx.Button(self.MenuEditor, label = "Insert Item"), 0, wx.EXPAND|wx.ALL, 6)
-        MEButtonSizer.Add(wx.Button(self.MenuEditor, label = "Insert Separator"), 0, wx.EXPAND|wx.ALL, 6)
-        MEButtonSizer.Add(wx.Button(self.MenuEditor, label = "Insert Submenu"), 0, wx.EXPAND|wx.ALL, 6)
-        MESizer.Add(MEButtonSizer, 0, wx.ALIGN_CENTER|wx.BOTTOM, 15)
-
+        # This should contain the instructions
         MiddlePanel = wx.Panel(self.MenuEditor)
         MiddleSizer = wx.BoxSizer(wx.VERTICAL)
         MiddlePanel.SetSizer(MiddleSizer)
-        MESizer.Add(MiddlePanel)
-        TestMenuButton = wx.Button(MiddlePanel, label = "Test Current Popmenu")
-        TestMenuButton.Bind(wx.EVT_BUTTON, self.OnTestMenuButton)
-        MiddleSizer.Add(TestMenuButton, 0, wx.ALL, 10)
+        MESizer.Add(MiddlePanel, 1, wx.EXPAND|wx.ALL, 10)
 
         splitter.SplitVertically(MenuList, self.MenuEditor, LeftPanelWidth)
 
@@ -224,22 +218,37 @@ class Popmenu_ContextMenu(FM.FlatMenu):
     def __init__(self, parent):
         super().__init__(parent)
 
-        editMenu   = FM.FlatMenuItem(self, wx.ID_ANY, "Edit")
-        deleteMenu = FM.FlatMenuItem(self, wx.ID_ANY, "Delete")
-        moveUpMenu = FM.FlatMenuItem(self, wx.ID_ANY, "Move Up")
-        moveDnMenu = FM.FlatMenuItem(self, wx.ID_ANY, "Move Down")
-        self.AppendItem(editMenu)
-        self.AppendItem(deleteMenu)
-        self.AppendItem(moveUpMenu)
-        self.AppendItem(moveDnMenu)
+        EditMenuItem   = FM.FlatMenuItem(self, wx.ID_ANY, "Edit")
+        DeleteMenuItem = FM.FlatMenuItem(self, wx.ID_ANY, "Delete")
+        MoveUpMenuItem = FM.FlatMenuItem(self, wx.ID_ANY, "Move Up")
+        MoveDnMenuItem = FM.FlatMenuItem(self, wx.ID_ANY, "Move Down")
+
+        InsertMenu = FM.FlatMenu(self)
+        MenuMenuItem = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "Submenu")
+        TitleMenuItem = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "Title")
+        OptionMenuItem = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "Option")
+        LockedOptMenuItem = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "LockedOption")
+        DividerMenuItem = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "Divider")
+        InsertMenu.AppendItem(MenuMenuItem)
+        InsertMenu.AppendItem(TitleMenuItem)
+        InsertMenu.AppendItem(OptionMenuItem)
+        InsertMenu.AppendItem(LockedOptMenuItem)
+        InsertMenu.AppendItem(DividerMenuItem)
+
+        self.AppendItem(EditMenuItem)
+        self.AppendItem(DeleteMenuItem)
+        self.AppendItem(MoveUpMenuItem)
+        self.AppendItem(MoveDnMenuItem)
+        self.AppendSubMenu(InsertMenu, 'Insert')
 
         self.ParentMenu = parent
         self.CurrentMenuItem = None
 
-        self.Bind(wx.EVT_MENU, self.OnContextEdit, editMenu)
-        self.Bind(wx.EVT_MENU, self.OnContextDelete, deleteMenu)
-        self.Bind(wx.EVT_MENU, self.OnContextMoveUp, moveUpMenu)
-        self.Bind(wx.EVT_MENU, self.OnContextMoveDown, moveDnMenu)
+        self.Bind(wx.EVT_MENU, self.OnContextEdit, EditMenuItem)
+        self.Bind(wx.EVT_MENU, self.OnContextDelete, DeleteMenuItem)
+        self.Bind(wx.EVT_MENU, self.OnContextMoveUp, MoveUpMenuItem)
+        self.Bind(wx.EVT_MENU, self.OnContextMoveDown, MoveDnMenuItem)
+        InsertMenu.Bind(wx.EVT_MENU, self.OnContextInsert)
 
     def OnContextEdit(self, _):
         if cmi := self.CurrentMenuItem:
@@ -272,6 +281,10 @@ class Popmenu_ContextMenu(FM.FlatMenu):
             self.ParentMenu.InsertItem(currentPosition + 1, cmi)
         else:
             wx.LogError("Context menu had no menu item to work with -- this is a bug!")
+
+    def OnContextInsert(self, evt):
+        menuid = evt.GetId()
+        print(f"Got {menuid} which is {self.FindItem(menuid)} which is called {self.FindItem(menuid).GetLabel()}")
 
 class PEMenuItem(FM.FlatMenuItem):
     def __init__(self, parent, data, **kwargs):

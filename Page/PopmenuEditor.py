@@ -1,5 +1,6 @@
 import wx
 from Page import Page
+from UI.ControlGroup import cgTextCtrl
 
 from pathlib import Path
 import re
@@ -172,7 +173,7 @@ class Popmenu(FM.FlatMenu):
                     OptName = OptName.strip('"')
                     OptPayload = OptPayload.strip('"')
 
-                    if not OptName in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady'):
+                    if not OptName in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady', 'PowerOwned',):
                         wx.LogError(f'Unknown keyword "{OptName}" in LockedOption section, canceling')
                         return {}
 
@@ -329,7 +330,7 @@ class PEMenu(PEMenuItem):
 
     def EditorDialog(self):
         return wx.TextEntryDialog(self.Parent, message = "Menu Name:",
-                                  caption = "Editing menu item", value = self.GetText())
+                                  caption = "Editing Menu item", value = self.GetText())
 
     def OnEditorUpdate(self):
         newlabel = self.Editor.GetValue() # pyright: ignore
@@ -350,7 +351,7 @@ class PETitle(PEMenuItem):
 
     def EditorDialog(self):
         return wx.TextEntryDialog(self.Parent, message = "Title:",
-                                  caption = "Editing title item", value = self.GetLabel())
+                                  caption = "Editing Title item", value = self.GetLabel())
 
     def OnEditorUpdate(self):
         newlabel = self.Editor.GetValue() # pyright: ignore
@@ -371,7 +372,7 @@ class PEOption(PEMenuItem):
         super().__init__(parent, data, label = optname)
 
     def EditorDialog(self):
-        dialog = wx.Dialog(self.Parent, title = "Editing option item",)
+        dialog = wx.Dialog(self.Parent, title = "Editing Option item",)
         dlgSizer = wx.BoxSizer(wx.VERTICAL)
         dialog.SetSizer(dlgSizer)
 
@@ -404,6 +405,64 @@ class PEOption(PEMenuItem):
 class PELockedOption(PEMenuItem):
     def __init__(self, parent, data):
         super().__init__(parent, data, label = data['DisplayName'])
+
+    def EditorDialog(self):
+        self.Ctrls = {}
+        dialog = wx.Dialog(self.Parent, title = "Editing LockedOption item")
+        paddingsizer = wx.BoxSizer(wx.VERTICAL)
+        dialog.SetSizer(paddingsizer)
+
+        sbsizer = wx.StaticBoxSizer(wx.VERTICAL, dialog, label = "LockedOption parameters")
+
+        staticbox = sbsizer.GetStaticBox()
+
+        gridsizer = wx.FlexGridSizer(2, 2, 5)
+        for ctrl in ['DisplayName', 'Command', 'Icon', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'PowerReady', 'PowerOwned']:
+            gridsizer.Add(wx.StaticText(staticbox, label = ctrl, style=wx.ALIGN_RIGHT), 0, wx.ALIGN_CENTER)
+            self.Ctrls[ctrl] = cgTextCtrl(staticbox, size = (400, -1), value = self.Data.get(ctrl, ''))
+            self.Ctrls[ctrl].Bind(wx.EVT_TEXT, self.CheckEditorFields)
+            gridsizer.Add(self.Ctrls[ctrl], 1, wx.EXPAND)
+
+        buttons = dialog.CreateButtonSizer(wx.OK|wx.CANCEL)
+
+        sbsizer.Add(gridsizer, 1, wx.EXPAND|wx.ALL, 10)
+
+        paddingsizer.Add(sbsizer, 1, wx.TOP|wx.RIGHT|wx.LEFT, 16)
+        paddingsizer.Add(buttons, 0, wx.EXPAND|wx.ALL, 16)
+
+        self.CheckEditorFields()
+        dialog.Fit()
+
+        return dialog
+
+    def CheckEditorFields(self, _ = None):
+        c = self.Ctrls
+        if c['DisplayName'].GetValue() == '':
+            c['DisplayName'].AddError('undef', 'DisplayName is mandatory')
+        else:
+            c['DisplayName'].RemoveError('undef')
+
+        AllUnset = True
+        AtLeastOne = ['Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'PowerReady', 'PowerOwned']
+        for ctrl in AtLeastOne:
+            if c[ctrl].GetValue() != '':
+                AllUnset = False
+                break
+
+        for ctrl in AtLeastOne:
+            if AllUnset:
+                c[ctrl].AddError('unset', 'At least one of Authbit, Badge, RewardToken, StoreProduct, PowerReady, or PowerOwned must be set')
+            else:
+                c[ctrl].RemoveError('unset')
+
+    def OnEditorUpdate(self):
+        data = {}
+        for ctrl in ['DisplayName', 'Command', 'Icon', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'PowerReady', 'PowerOwned']:
+            data[ctrl] = self.Ctrls[ctrl].GetValue()
+
+        self.Data = data
+        self.SetText(data['DisplayName'])
+        self.Parent.UpdateItem(self)
 
 itemclasses = {
     'Title'        : PETitle,

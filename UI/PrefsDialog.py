@@ -7,7 +7,7 @@ from pathlib import Path
 import UI
 from Help import HelpButton
 from UI.KeySelectDialog import bcKeyButton
-from UI.ControlGroup import cgDirPickerCtrl
+from UI.ControlGroup import cgDirPickerCtrl, cgTextCtrl
 from bcController import bcController
 
 class PrefsDialog(wx.Dialog):
@@ -45,8 +45,9 @@ class PrefsDialog(wx.Dialog):
         self.gameBindsDirPicker = None
         if (platform.system() != 'Windows'):
             generalSizer.Add( wx.StaticText(generalPanel, label = "In-Game Binds Directory:") , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
-            self.gameBindsDirPicker = wx.TextCtrl(generalPanel, value = config.Read('GameBindPath'))
+            self.gameBindsDirPicker = cgTextCtrl(generalPanel, value = config.Read('GameBindPath'))
             self.gameBindsDirPicker.SetToolTip('When playing via Wine, the in-game file paths will be different than the native ones.  Put a Windows path into this box that describes where Wine will find the above directory.  Keeping this path as short as possible is strongly recommended.  Check the Manual for more information.')
+            self.gameBindsDirPicker.Bind(wx.EVT_TEXT, self.OnGameBindsDirPickerChanged)
             generalSizer.Add( self.gameBindsDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
         generalSizer.Add( wx.StaticText(generalPanel, label = "Binds Reset Key:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
@@ -220,6 +221,7 @@ class PrefsDialog(wx.Dialog):
         self.SetSizerAndFit(overallSizer)
 
         self.onDirPickerChange()
+        self.OnGameBindsDirPickerChanged()
 
     def onDirPickerChange(self, evt = None):
         gamedir = Path(self.gameDirPicker.GetPath())
@@ -232,16 +234,17 @@ class PrefsDialog(wx.Dialog):
         else:
             self.gameDirPicker.AddError('exists', f'The directory "{gamedir}" does not exist.  This is required if you wish to use the popmenu editor.')
 
-
         bindsdir = Path(self.bindsDirPicker.GetPath())
         if bindsdir.is_dir():
             self.bindsDirPicker.RemoveError('exists')
         else:
             self.bindsDirPicker.AddError('exists', f'The directory "{bindsdir}" does not exist.')
-        if re.search(r'\s+', str(bindsdir)):
-            self.bindsDirPicker.AddError('spaces', 'The binds directory name cannot contain spaces.')
-        else:
-            self.bindsDirPicker.RemoveError('spaces')
+
+        if platform.system() == 'Windows':
+            if re.search(r'\s+', str(bindsdir)):
+                self.bindsDirPicker.AddError('spaces', 'The binds directory name cannot contain spaces.')
+            else:
+                self.bindsDirPicker.RemoveError('spaces')
 
         profiledir = Path(self.ProfileDirPicker.GetPath())
         if profiledir.is_dir():
@@ -251,6 +254,12 @@ class PrefsDialog(wx.Dialog):
 
         if evt: evt.Skip()
 
+    def OnGameBindsDirPickerChanged(self, _ = None):
+        if gbdp := self.gameBindsDirPicker:
+            if re.search(r'\s+', gbdp.GetValue()):
+                gbdp.AddError('spaces', 'The game binds directory cannot contain spaces.  Please check the manual for more information.')
+            else:
+                gbdp.RemoveError('spaces')
 
     def onCBLabelClick(self, evt):
         cblabel = evt.EventObject

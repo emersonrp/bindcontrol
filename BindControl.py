@@ -114,12 +114,13 @@ class Main(wx.Frame):
         # "Help" Menu
         HelpMenu = wx.Menu()
 
-        Help_manual  = HelpMenu.Append(wx.ID_ANY,"Manual","User's Manual")
-        Help_faq     = HelpMenu.Append(wx.ID_ANY,"FAQ","Frequently Asked Questions")
+        Help_manual   = HelpMenu.Append(wx.ID_ANY,"Manual","User's Manual")
+        Help_faq      = HelpMenu.Append(wx.ID_ANY,"FAQ","Frequently Asked Questions")
         Help_faq.Enable(False)
-        Help_files   = HelpMenu.Append(wx.ID_ANY,"Files","About BindControl's Output Files")
-        Help_license = HelpMenu.Append(wx.ID_ANY,"License Info","")
-        Help_about   = HelpMenu.Append(wx.ID_ABOUT)
+        Help_files    = HelpMenu.Append(wx.ID_ANY,"Files","About BindControl's Output Files")
+        Help_bindDirs = HelpMenu.Append(wx.ID_ANY, "Bind Directories", "Location of each Profile's bind files")
+        Help_license  = HelpMenu.Append(wx.ID_ANY,"License Info","")
+        Help_about    = HelpMenu.Append(wx.ID_ABOUT)
 
         LogMenu = wx.Menu()
 
@@ -146,8 +147,9 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnHelpManual, Help_manual)
         self.Bind(wx.EVT_MENU, None, Help_faq)
         self.Bind(wx.EVT_MENU, self.OnHelpFiles, Help_files)
+        self.Bind(wx.EVT_MENU, self.OnHelpBindDirs, Help_bindDirs)
         self.Bind(wx.EVT_MENU, self.OnHelpLicense, Help_license)
-        self.Bind(wx.EVT_MENU, self.OnMenuAboutBox,      Help_about)
+        self.Bind(wx.EVT_MENU, self.OnMenuAboutBox, Help_about)
 
         self.Bind(wx.EVT_MENU, self.OnMenuLogWindow, Log_window)
 
@@ -212,6 +214,7 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
 
         self.PrefsDialog = PrefsDialog(self)
+        self.BindDirsWindow = None
 
         self.SetupProfileUI()
 
@@ -519,6 +522,8 @@ class Main(wx.Frame):
             config.Flush()
 
     def OnMenuAboutBox(self, _):
+        from datetime import datetime
+        this_year = datetime.now().year
         if self.about_info is None:
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
@@ -529,13 +534,13 @@ class Main(wx.Frame):
 
                 "Based on CityBinder 0.76, Copyright (c) 2005-2006 Jeff Sheets, and CityBinder for Homecoming 0.2, Copyright (c) 2021-2023 tailcoat\n\n"
 
-                "Speed-On-Demand binds were originally created by Gnarley's Speed On Demand Binds Program.  Advanced Teleport Binds originally by DrLetharga, updated for Homecoming by emerson.\n\n"
+                "Speed-On-Demand binds were originally created by Gnarley's Speed On Demand Binds Program, updated for Homecoming by emerson.  Advanced Teleport Binds originally by DrLetharga, updated for Homecoming by emerson.\n\n"
 
-                "Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko.\n\n"
+                "Mastermind binds originally by Sandolphan in CoV beta, later updated by Konoko and emerson.\n\n"
 
                 "Inspiration Popper design adapted from CityBinder for Homecoming by Tailcoat."
             ))
-            info.SetCopyright('(c) 2010-2024 R Pickett <emerson@hayseed.net>')
+            info.SetCopyright(f'(c) 2010-{this_year} R Pickett <emerson@hayseed.net>')
             info.SetWebSite('https://github.com/emersonrp/bindcontrol')
             self.about_info = info
 
@@ -555,6 +560,43 @@ class Main(wx.Frame):
 
     def OnHelpFiles(self, _):
         ShowHelpWindow(self, 'OutputFiles.html')
+
+    def OnHelpBindDirs(self, _):
+        window = wx.MiniFrame(self, title = "Bind Directories", style = wx.TINY_CAPTION|wx.CLOSE_BOX|wx.CAPTION)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        window.SetSizer(sizer)
+
+        bindpath = wx.ConfigBase.Get().Read('BindPath')
+        sizer.Add(mainlabel := wx.StaticText(window), 0, wx.TOP|wx.ALIGN_CENTER, 16)
+        mainlabel.SetLabelMarkup(f"In your bind path: <b>{bindpath}</b>\n"+
+                                 "the following binds directories were found,\n" +
+                                 "and are managed by the following profiles:")
+
+        listspacer = wx.BoxSizer(wx.HORIZONTAL)
+        listsizer = wx.FlexGridSizer(2, -1, 5)
+        listsizer.Add(dirlabel := wx.StaticText(window))
+        dirlabel.SetLabelMarkup('<b>Directory</b>')
+        listsizer.Add(proflabel := wx.StaticText(window))
+        proflabel.SetLabelMarkup('<b>Managing Profile</b>')
+
+        for binddir in sorted(Profile.GetAllProfileBindsDirs(), key = str.casefold):
+            listsizer.Add(wx.StaticText(window, label = binddir), 0, wx.ALL, 3)
+            listsizer.Add(wx.StaticText(window, label = str(Profile.CheckProfileForBindsDir(binddir))), 0, wx.ALL, 3)
+
+        listspacer.AddStretchSpacer(1)
+        listspacer.Add(listsizer, 2, wx.EXPAND)
+        listspacer.AddStretchSpacer(1)
+
+        sizer.Add(listspacer, 1, wx.EXPAND|wx.ALL, 16)
+
+        window.Fit()
+        window.Show()
+        window.Bind(wx.EVT_SHOW, self.OnBindDirsWindowShow)
+
+    # blow up the window when we hide it since we make a new one each time to keep the info fresh
+    def OnBindDirsWindowShow(self, evt):
+        if (window := evt.EventObject) and not evt.IsShown():
+            window.Destroy()
 
     def OnWindowClosing(self, evt):
         if self.Profile and self.Profile.Modified:

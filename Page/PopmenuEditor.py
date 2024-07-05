@@ -242,7 +242,6 @@ class Popmenu_ContextMenu(FM.FlatMenu):
         self.AppendItem(self.MoveDnMenuItem)
         self.AppendSubMenu(InsertMenu, 'Insert')
 
-        self.ParentMenu = parent
         self.CurrentMenuItem = None
 
         self.Bind(wx.EVT_MENU, self.OnContextEdit, self.EditMenuItem)
@@ -260,38 +259,38 @@ class Popmenu_ContextMenu(FM.FlatMenu):
     def OnContextEdit(self, _):
         if cmi := self.CurrentMenuItem:
             cmi.ShowEditor()
-        else:
-            wx.LogError("Context menu had no menu item to work with -- this is a bug!")
 
     def OnContextDelete(self, _):
         if cmi := self.CurrentMenuItem:
             result = wx.MessageBox(f'About to delete menu item "{cmi.GetLabel()}" -- this cannot be undone.  Continue?', "Delete Menu Item", wx.YES_NO)
             if result == wx.NO: return
 
-            self.ParentMenu.DestroyItem(cmi)
+            self.Parent.DestroyItem(cmi)
             self.CurrentMenuItem = None
-        else:
-            wx.LogError("Context menu had no menu item to work with -- this is a bug!")
 
     def OnContextMoveUp(self, _):
         if cmi := self.CurrentMenuItem:
-            currentPosition = self.ParentMenu.FindMenuItemPosSimple(cmi)
-            self.ParentMenu.Remove(cmi)
-            self.ParentMenu.InsertItem(currentPosition - 1, cmi)
-        else:
-            wx.LogError("Context menu had no menu item to work with -- this is a bug!")
+            currentPosition = self.Parent.FindMenuItemPosSimple(cmi)
+            self.Parent.Remove(cmi)
+            self.Parent.InsertItem(currentPosition - 1, cmi)
 
     def OnContextMoveDown(self, _):
         if cmi := self.CurrentMenuItem:
-            currentPosition = self.ParentMenu.FindMenuItemPosSimple(cmi)
-            self.ParentMenu.Remove(cmi)
-            self.ParentMenu.InsertItem(currentPosition + 1, cmi)
-        else:
-            wx.LogError("Context menu had no menu item to work with -- this is a bug!")
+            currentPosition = self.Parent.FindMenuItemPosSimple(cmi)
+            self.Parent.Remove(cmi)
+            self.Parent.InsertItem(currentPosition + 1, cmi)
 
     def OnContextInsert(self, evt):
         menuid = evt.GetId()
-        print(f"Got {menuid} which is {self.FindItem(menuid)} which is called {self.FindItem(menuid).GetLabel()}")
+        if item := self.FindItem(menuid):
+            data = {}
+            # TODO how do we insert something into an empty submenu?  This is a problem.
+            if item.GetLabel() == "Submenu": data = {'' : Popmenu(self.Parent)}
+            menuitemclass = itemclasses.get(item.GetLabel(), None)
+            newitem = menuitemclass(self.Parent, data)
+            index = self.Parent.FindMenuItemPosSimple(self.CurrentMenuItem)
+            self.Parent.InsertItem(index + 1, newitem)
+            newitem.ShowEditor()
 
 # Base Menu Item Class
 class PEMenuItem(FM.FlatMenuItem):
@@ -412,4 +411,5 @@ itemclasses = {
     'Option'       : PEOption,
     'LockedOption' : PELockedOption,
     'Menu'         : PEMenu,
+    'Submenu'      : PEMenu,
 }

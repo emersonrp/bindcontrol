@@ -1,4 +1,5 @@
 import platform
+import re
 
 import wx
 import wx.lib.stattext as ST
@@ -29,33 +30,33 @@ class PrefsDialog(wx.Dialog):
         generalPanel = wx.Panel(notebook)
         generalSizer = wx.FlexGridSizer(2,0,0)
 
-        generalSizer.Add( wx.StaticText(generalPanel, label = 'Game Directory:') , 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
-        self.gameDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('GamePath'))
-        self.gameDirPicker.SetToolTip('This is where your game is installed.  This will be used to install popmenus and custom windows.')
+        generalSizer.Add( wx.StaticText(generalPanel, label = 'Game Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        self.gameDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('GamePath'), size = (300, -1))
+        self.gameDirPicker.SetToolTip('This is where your game is installed.  This will be used to install popmenus.')
         self.gameDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.onDirPickerChange)
         generalSizer.Add( self.gameDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
-        generalSizer.Add( wx.StaticText(generalPanel, label = 'Base Binds Directory:') , 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
-        self.bindsDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('BindPath'))
+        generalSizer.Add( wx.StaticText(generalPanel, label = 'Base Binds Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        self.bindsDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('BindPath'), size = (300, -1))
         self.bindsDirPicker.SetToolTip('Bind files will be written to this folder, inside a profile-specific subfolder.  Keeping this path as short as possible is strongly recommended.')
         self.bindsDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.onDirPickerChange)
         generalSizer.Add( self.bindsDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         self.gameBindsDirPicker = None
         if (platform.system() != 'Windows'):
-            generalSizer.Add( wx.StaticText(generalPanel, label = "In-Game Binds Directory:") , 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+            generalSizer.Add( wx.StaticText(generalPanel, label = "In-Game Binds Directory:") , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
             self.gameBindsDirPicker = wx.TextCtrl(generalPanel, value = config.Read('GameBindPath'))
-            self.gameBindsDirPicker.SetToolTip('When playing via Wine, the game\'s file paths will be different than the native ones.  Put a Windows path into this box that describes where Wine will find the above directory.  Keeping this path as short as possible is strongly recommended.')
+            self.gameBindsDirPicker.SetToolTip('When playing via Wine, the in-game file paths will be different than the native ones.  Put a Windows path into this box that describes where Wine will find the above directory.  Keeping this path as short as possible is strongly recommended.  Check the Manual for more information.')
             generalSizer.Add( self.gameBindsDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
-        generalSizer.Add( wx.StaticText(generalPanel, label = "Binds Reset Key:"), 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        generalSizer.Add( wx.StaticText(generalPanel, label = "Binds Reset Key:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ResetKey = bcKeyButton(generalPanel, -1, init ={ 'CtlName': 'ResetKey', })
         self.ResetKey.SetLabel( config.Read('ResetKey') )
         UI.Labels.update({ 'ResetKey': 'Binds Reset Key'})
         generalSizer.Add( self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)
 
-        splitKeyLabel = statictextclass(generalPanel, label = "Bind L/R modifier keys separately:")
-        generalSizer.Add( splitKeyLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        splitKeyLabel = statictextclass(generalPanel, label = "Bind L/R mod keys separately:")
+        generalSizer.Add( splitKeyLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.UseSplitModKeys = wx.CheckBox(generalPanel)
         self.UseSplitModKeys.SetValue(config.ReadBool('UseSplitModKeys'))
         self.UseSplitModKeys.SetToolTip("This allows the left and right modifier keys to be bound separately if on the \"right-hand\" side of a bind.  Check the Manual for more information.")
@@ -64,8 +65,8 @@ class PrefsDialog(wx.Dialog):
         setattr(splitKeyLabel, 'CB', self.UseSplitModKeys)
         splitKeyLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
-        flushBindsLabel = statictextclass(generalPanel, label = "Reset binds to default when loading:")
-        generalSizer.Add( flushBindsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        flushBindsLabel = statictextclass(generalPanel, label = "Set binds to default on reset:")
+        generalSizer.Add( flushBindsLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.FlushAllBinds = wx.CheckBox(generalPanel)
         self.FlushAllBinds.SetValue(config.ReadBool('FlushAllBinds'))
         self.FlushAllBinds.SetToolTip("Set all binds to City of Heroes' default before applying BindControl's binds.  Uncheck this if you have added any binds into the game that are not managed by BindControl.")
@@ -75,7 +76,7 @@ class PrefsDialog(wx.Dialog):
         flushBindsLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
         StartWithLastProfileLabel = wx.StaticText(generalPanel, label = "On startup, load last used profile:")
-        generalSizer.Add( StartWithLastProfileLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        generalSizer.Add( StartWithLastProfileLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.StartWithLastProfile = wx.CheckBox(generalPanel)
         self.StartWithLastProfile.SetValue(config.ReadBool('StartWithLastProfile'))
         self.StartWithLastProfile.SetToolTip("Load the last profile you were working with when you start the program.")
@@ -85,14 +86,14 @@ class PrefsDialog(wx.Dialog):
         StartWithLastProfileLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
 
         ProfilePathLabel = wx.StaticText(generalPanel, label = "Path for saved profiles:")
-        generalSizer.Add( ProfilePathLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
-        self.ProfileDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('ProfilePath'))
+        generalSizer.Add( ProfilePathLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        self.ProfileDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('ProfilePath'), size = (300, -1))
         self.ProfileDirPicker.SetToolTip('Profiles will be saved to this location.')
         self.ProfileDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.onDirPickerChange)
         generalSizer.Add( self.ProfileDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
-        SaveSizeLabel = statictextclass(generalPanel, label = "Save size and position of window:")
-        generalSizer.Add( SaveSizeLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        SaveSizeLabel = statictextclass(generalPanel, label = "Save size / position of window:")
+        generalSizer.Add( SaveSizeLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.SaveSizeAndPosition = wx.CheckBox(generalPanel)
         self.SaveSizeAndPosition.SetValue(config.ReadBool('SaveSizeAndPosition'))
         self.SaveSizeAndPosition.SetToolTip("Save the size and position of the BindControl window between sessions.")
@@ -227,9 +228,9 @@ class PrefsDialog(wx.Dialog):
             if Path(gamedir / 'bin').is_dir() and Path(gamedir / 'assets').is_dir():
                 self.gameDirPicker.RemoveWarning('wrongdir')
             else:
-                self.gameDirPicker.AddWarning('wrongdir', f'The directory "{gamedir}" doesn\'t seem to have a Homecoming installation in it.  BindControl only currently supports popmenus and custom windows with Homecoming installations.  Keybinds will still work.')
+                self.gameDirPicker.AddWarning('wrongdir', f'The directory "{gamedir}" doesn\'t seem to have a Homecoming installation in it.  BindControl only currently supports popmenus with Homecoming installations.  Keybinds will still work.')
         else:
-            self.gameDirPicker.AddError('exists', f'The directory "{gamedir}" does not exist.')
+            self.gameDirPicker.AddError('exists', f'The directory "{gamedir}" does not exist.  This is required if you wish to use the popmenu editor.')
 
 
         bindsdir = Path(self.bindsDirPicker.GetPath())
@@ -237,6 +238,10 @@ class PrefsDialog(wx.Dialog):
             self.bindsDirPicker.RemoveError('exists')
         else:
             self.bindsDirPicker.AddError('exists', f'The directory "{bindsdir}" does not exist.')
+        if re.search(r'\s+', str(bindsdir)):
+            self.bindsDirPicker.AddError('spaces', 'The binds directory name cannot contain spaces.')
+        else:
+            self.bindsDirPicker.RemoveError('spaces')
 
         profiledir = Path(self.ProfileDirPicker.GetPath())
         if profiledir.is_dir():

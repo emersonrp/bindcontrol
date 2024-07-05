@@ -72,7 +72,7 @@ class PopmenuEditor(Page):
 
     def OnLoadButton(self, _):
         with wx.FileDialog(self, "Load Popmenu file", wildcard="MNU files (*.mnu)|*.mnu",
-                                            defaultDir = '/home/emerson/Downloads',   # TODO TODO TODO remove this line
+                                            defaultDir = '/home/emerson/Downloads/menus',   # TODO TODO TODO remove this line
                        style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 return
@@ -124,29 +124,33 @@ class Popmenu(FM.FlatMenu):
 
     def BuildFromLines(self, lines, is_main_request = False):
 
+
         if is_main_request:  # this is the top level request, peel off the outside layers
+            # first let's clean our data
+            newlines = []
+            while lines:
+                line = lines.pop(0)
+                line = re.sub(r'\s*//.*', '', line) # remove comments
+                if line != '}' and re.search('}', line):
+                    line = re.sub(r'\s*}$', '', line)
+                    lines.insert(0, '}')
+                line = line.strip()
+
+                if line: newlines.append(line)
+            lines = newlines
+
             while lines:
                 line = lines.pop(0).strip()
-                line = re.sub(r'\s*//.*', '', line) # remove comments
 
-                if line == '': continue
-                elif match := re.match(r'Menu\s+(.*)', line):
+                if match := re.match(r'Menu\s+(.*)', line):
                     self.Title = match.group(1).strip('"')
                     break
 
         # OK, we should be into the juicy innards of the file.  Push the rest of "lines" through it
         while lines:
-            line = lines.pop(0).strip()
+            line = lines.pop(0)
 
-            line = re.sub(r'\s*//.*', '', line) # remove comments
-
-            # In the wild, there's at least one popmenu file that sticks the } at the end of an
-            # otherwise-valid and -necessary line.  So if we see that, make it work.
-            if (line != '}') and re.search('}', line):
-                line = re.sub(r'\s*}$', '', line)
-                lines.insert(0, '}')
-
-            if line == '' or line == '{':
+            if line == '{':
                 continue
             elif line == "}":
                 # return from recursive call, which was made down below when we found a "Menu"
@@ -155,18 +159,14 @@ class Popmenu(FM.FlatMenu):
                 self.AppendItem(PEDivider(self, {}))
             elif line == "LockedOption":
                 LockedData = []
-                firstline = lines.pop(0).strip()
+                firstline = lines.pop(0)
                 if firstline != "{":
                     wx.LogError(f'Malformed LockedOption section:  expected "{{", got "{firstline}", canceling')
                     return {}
-                nextline = lines.pop(0).strip()
+                nextline = lines.pop(0)
                 while nextline and nextline != "}":
-                    # again, in case there's a } inline instead of on its own line;  yes this happens in the wild
-                    if re.search('}', nextline):
-                        nextline = re.sub(r'\s*}$', '', nextline)
-                        lines.insert(0, '}')
                     LockedData.append(nextline)
-                    nextline = lines.pop(0).strip()
+                    nextline = lines.pop(0)
 
                 LockedOptions = {}
                 for lockedline in LockedData:
@@ -206,15 +206,17 @@ class Popmenu(FM.FlatMenu):
                 #
                 # TODO - do popmenus ever use single quotes?
                 if re.match(r'"', OptionData):
-                    splitmatch = re.match(r'"([^"]+)"\s+(.*)', OptionData)
+                    splitmatch = re.match(r'"([^"]+)"(\s+(.*))?', OptionData)
                 else:
-                    splitmatch = re.match(r'([^\s]+)\s+(.*)', OptionData)
+                    splitmatch = re.match(r'([^\s]+)\(s+(.*))?', OptionData)
                 if splitmatch:
-                    Optname, OptPayload = splitmatch.group(1,2)
+                    Optname, OptPayload = splitmatch.group(1,3)
                 else:
                     wx.LogError(f'Invalid "Option" clause in popmenu: "{OptionData}", canceling')
                     return {}
 
+                # "mission_helper.mnu" has Options with a name but no payload.  Ugly but we support now.
+                OptPayload = OptPayload or ''
                 if re.match(r'"', OptPayload):
                     OptPayload = OptPayload.strip('"')
                 elif plmatch := re.match(r'<&(.*)&>', OptPayload):

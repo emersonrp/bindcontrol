@@ -78,7 +78,10 @@ class PopmenuEditor(Page):
                 return
 
             newmenu = Popmenu(self)
-            newmenu.ReadFromFile(fileDialog.GetPath())
+            with wx.WindowDisabler():
+                wait = wx.BusyInfo("Loading...")
+                wx.GetApp().Yield()
+                newmenu.ReadFromFile(fileDialog.GetPath())
 
             if newmenu:
                 idx = self.MenuListBox.Append(newmenu.Title)

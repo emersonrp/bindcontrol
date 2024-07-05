@@ -122,7 +122,6 @@ class Popmenu(FM.FlatMenu):
 
         self.BuildFromLines(contents.splitlines(), True)
 
-
     def BuildFromLines(self, lines, is_main_request = False):
 
         if is_main_request:  # this is the top level request, peel off the outside layers
@@ -133,20 +132,21 @@ class Popmenu(FM.FlatMenu):
                 if line == '': continue
                 elif match := re.match(r'Menu\s+(.*)', line):
                     self.Title = match.group(1).strip('"')
+                    break
 
-                    if lines.pop(0).strip() != '{':
-                        wx.LogError("Menu statement not followed by a '{', canceling")
-                        return
-                    else:
-                        break
-
-        # OK, we should be into the juicy innards of the file.  Push "lines" through it
+        # OK, we should be into the juicy innards of the file.  Push the rest of "lines" through it
         while lines:
             line = lines.pop(0).strip()
 
             line = re.sub(r'\s*//.*', '', line) # remove comments
 
-            if line == '':
+            # In the wild, there's at least one popmenu file that sticks the } at the end of an
+            # otherwise-valid and -necessary line.  So if we see that, make it work.
+            if (line != '}') and re.search('}', line):
+                line = re.sub(r'\s*}$', '', line)
+                lines.insert(0, '}')
+
+            if line == '' or line == '{':
                 continue
             elif line == "}":
                 # return from recursive call, which was made down below when we found a "Menu"
@@ -154,30 +154,35 @@ class Popmenu(FM.FlatMenu):
             elif line == "Divider":
                 self.AppendItem(PEDivider(self, {}))
             elif line == "LockedOption":
-
                 LockedData = []
                 firstline = lines.pop(0).strip()
                 if firstline != "{":
                     wx.LogError(f'Malformed LockedOption section:  expected "{{", got "{firstline}", canceling')
                     return {}
                 nextline = lines.pop(0).strip()
-                while nextline != "}":
+                while nextline and nextline != "}":
+                    # again, in case there's a } inline instead of on its own line;  yes this happens in the wild
+                    if re.search('}', nextline):
+                        nextline = re.sub(r'\s*}$', '', nextline)
+                        lines.insert(0, '}')
                     LockedData.append(nextline)
                     nextline = lines.pop(0).strip()
 
                 LockedOptions = {}
                 for lockedline in LockedData:
-                    linematch = re.match(r'(\w+)\s+(.*)', lockedline)
+                    linematch = re.match(r'(\w+)(\s+(.*))?', lockedline)
                     if not linematch:
                         wx.LogError(f'Malformed line in LockedOption section: "{line}", canceling')
                         return {}
 
-                    OptName, OptPayload = linematch.group(1,2)
+                    OptName, OptPayload = linematch.group(1,3)
                     OptName = OptName.strip('"')
-                    OptPayload = OptPayload.strip('"')
+                    OptPayload = str(OptPayload).strip('"')
+
+                    OptName = self.NormalizeOptName(OptName)
 
                     if not OptName in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady', 'PowerOwned',):
-                        wx.LogError(f'Unknown keyword "{OptName}" in LockedOption section, canceling')
+                        wx.LogError(f'Unknown keyword "{OptName}" with payload "{OptPayload}" in LockedOption section {LockedOptions["DisplayName"]}, canceling')
                         return {}
 
                     LockedOptions[OptName] = OptPayload
@@ -192,10 +197,8 @@ class Popmenu(FM.FlatMenu):
                 self.AppendItem(PETitle(self, match.group(1).strip('"')))
             elif match := re.match(r'Menu\s+(.*)', line):
                 MenuName = match.group(1).strip('"')
-                if lines.pop(0).strip() != '{':
-                    wx.LogError("Menu statement not followed by a '{', canceling")
-                    return {}
                 newMenu = Popmenu(self)
+                newMenu.Title = MenuName
                 newMenu.BuildFromLines(lines)
                 self.AppendItem(PEMenu(self, {MenuName: newMenu}))
             elif match := re.match(r'Option\s+(.*)', line):
@@ -218,6 +221,11 @@ class Popmenu(FM.FlatMenu):
                     OptPayload = plmatch.group(1)
 
                 self.AppendItem(PEOption(self, {Optname.strip('"') : OptPayload}))
+
+    def NormalizeOptName(self, optname):
+        for opt in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady', 'PowerOwned',):
+            if optname.lower() == opt.lower():
+                return opt
 
 class Popmenu_ContextMenu(FM.FlatMenu):
     def __init__(self, parent):

@@ -99,10 +99,10 @@ class Popmenu(FM.FlatMenu):
 
     # hook the right click behavior to tell ContextMenu who got right-clicked
     def ProcessMouseRClick(self, pos):
+        cm = self.ContextMenu
         (result, menuid) = self.HitTest(pos)
         if result == FM.MENU_HT_ITEM:
-            self.ContextMenu.CurrentMenuItem = self.GetMenuItems()[menuid]
-            # TODO - "if CurrentMenuItem has an editor, enable the "Edit" menu item, otherwise disable
+            cm.ConfigureForMenuItem(menuid)
         super().ProcessMouseRClick(pos)
 
     def WriteToFile(self, filename):
@@ -219,37 +219,43 @@ class Popmenu_ContextMenu(FM.FlatMenu):
     def __init__(self, parent):
         super().__init__(parent)
 
-        EditMenuItem   = FM.FlatMenuItem(self, wx.ID_ANY, "Edit")
-        DeleteMenuItem = FM.FlatMenuItem(self, wx.ID_ANY, "Delete")
-        MoveUpMenuItem = FM.FlatMenuItem(self, wx.ID_ANY, "Move Up")
-        MoveDnMenuItem = FM.FlatMenuItem(self, wx.ID_ANY, "Move Down")
+        self.EditMenuItem   = FM.FlatMenuItem(self, wx.ID_ANY, "Edit")
+        self.DeleteMenuItem = FM.FlatMenuItem(self, wx.ID_ANY, "Delete")
+        self.MoveUpMenuItem = FM.FlatMenuItem(self, wx.ID_ANY, "Move Up")
+        self.MoveDnMenuItem = FM.FlatMenuItem(self, wx.ID_ANY, "Move Down")
 
-        InsertMenu = FM.FlatMenu(self)
-        MenuMenuItem = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "Submenu")
-        TitleMenuItem = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "Title")
-        OptionMenuItem = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "Option")
+        InsertMenu        = FM.FlatMenu(self)
+        MenuMenuItem      = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "Submenu")
+        TitleMenuItem     = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "Title")
+        OptionMenuItem    = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "Option")
         LockedOptMenuItem = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "LockedOption")
-        DividerMenuItem = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "Divider")
+        DividerMenuItem   = FM.FlatMenuItem(InsertMenu, wx.ID_ANY, "Divider")
         InsertMenu.AppendItem(MenuMenuItem)
         InsertMenu.AppendItem(TitleMenuItem)
         InsertMenu.AppendItem(OptionMenuItem)
         InsertMenu.AppendItem(LockedOptMenuItem)
         InsertMenu.AppendItem(DividerMenuItem)
 
-        self.AppendItem(EditMenuItem)
-        self.AppendItem(DeleteMenuItem)
-        self.AppendItem(MoveUpMenuItem)
-        self.AppendItem(MoveDnMenuItem)
+        self.AppendItem(self.EditMenuItem)
+        self.AppendItem(self.DeleteMenuItem)
+        self.AppendItem(self.MoveUpMenuItem)
+        self.AppendItem(self.MoveDnMenuItem)
         self.AppendSubMenu(InsertMenu, 'Insert')
 
         self.ParentMenu = parent
         self.CurrentMenuItem = None
 
-        self.Bind(wx.EVT_MENU, self.OnContextEdit, EditMenuItem)
-        self.Bind(wx.EVT_MENU, self.OnContextDelete, DeleteMenuItem)
-        self.Bind(wx.EVT_MENU, self.OnContextMoveUp, MoveUpMenuItem)
-        self.Bind(wx.EVT_MENU, self.OnContextMoveDown, MoveDnMenuItem)
+        self.Bind(wx.EVT_MENU, self.OnContextEdit, self.EditMenuItem)
+        self.Bind(wx.EVT_MENU, self.OnContextDelete, self.DeleteMenuItem)
+        self.Bind(wx.EVT_MENU, self.OnContextMoveUp, self.MoveUpMenuItem)
+        self.Bind(wx.EVT_MENU, self.OnContextMoveDown, self.MoveDnMenuItem)
         InsertMenu.Bind(wx.EVT_MENU, self.OnContextInsert)
+
+    def ConfigureForMenuItem(self, menuid):
+        self.CurrentMenuItem = self.Parent.GetMenuItems()[menuid]
+        self.EditMenuItem.Enable(self.CurrentMenuItem.Editor != None)
+        self.MoveUpMenuItem.Enable(menuid != 0)
+        self.MoveDnMenuItem.Enable(menuid != len(self.Parent.GetMenuItems())-1)
 
     def OnContextEdit(self, _):
         if cmi := self.CurrentMenuItem:
@@ -340,7 +346,8 @@ class PEMenu(PEMenuItem):
 class PETitle(PEMenuItem):
     def __init__(self, parent, data):
         super().__init__(parent, data, label = data)
-        self.Enable(False)
+        self.SetFont(wx.Font(wx.FontInfo().Italic()))
+        self.SetTextColour((128,128,128))
 
     def EditorDialog(self):
         return wx.TextEntryDialog(self.Parent, message = "Title:",

@@ -185,7 +185,7 @@ class Profile(wx.Notebook):
         # Pick the longest one; fall back on first-five if it was zero candidates
         #
         # We're gonna lowercase this because Windows is case-insensitive
-        return max(bindsdircandidates, key = len).lower() or fallback
+        return max(bindsdircandidates, key = len).lower() if bindsdircandidates else fallback
 
 
     ###################

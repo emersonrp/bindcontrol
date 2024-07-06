@@ -151,7 +151,6 @@ class Popmenu(FM.FlatMenu):
 
         # Just in case we didn't finish the dialog for some reason, finish it
         Popmenu.ProgressDialog.Update(Popmenu.ProgressDialog.GetRange())
-        Popmenu.Progress = 0
 
     def BuildFromLines(self, lines, request_type = ''):
         is_main_request = request_type == "main"
@@ -180,14 +179,13 @@ class Popmenu(FM.FlatMenu):
 
         # Let's instantiate the Progress Dialog iff we're the main request
         if is_main_request:
-            Popmenu.ProgressDialog = wx.ProgressDialog('Loading', f'Loading popmenu "{self.Title}"...', len(lines))
-            Popmenu.ProgressDialog.Show()
+            Popmenu.ProgressDialog = wx.ProgressDialog('Loading', f'Loading popmenu "{self.Title}"...', len(lines),
+                                                      style = wx.PD_APP_MODAL|wx.PD_AUTO_HIDE|wx.PD_REMAINING_TIME)
 
         # OK, we should be into the juicy innards of the file.  Push the rest of "lines" through it
         while lines:
             line = lines.pop(0)
-            Popmenu.Progress = Popmenu.Progress + 1
-            Popmenu.ProgressDialog.Update(Popmenu.Progress)
+            Popmenu.ProgressDialog.Update(Popmenu.ProgressDialog.GetValue() + 1)
 
             if is_lock_request:  # we're in a lockedoption subrequest, act differently
                 if   line == '{': continue
@@ -314,7 +312,7 @@ class Popmenu_ContextMenu(FM.FlatMenu):
 
     def ConfigureForMenuItem(self, menu, menuid):
         self.CurrentMenuItem = menu.GetMenuItems()[menuid]
-        self.EditMenuItem.Enable(self.CurrentMenuItem.Editor != None)
+        self.EditMenuItem.Enable(self.CurrentMenuItem.HasEditor())
         self.MoveUpMenuItem.Enable(menuid != 0)
         self.MoveDnMenuItem.Enable(menuid != len(self.Parent.GetMenuItems())-1)
         # TODO - would prefer Show() to Enable() but Show doesn't work.
@@ -373,18 +371,18 @@ class PEMenuItem(FM.FlatMenuItem):
         self.SetContextMenu(parent.ContextMenu)
         self.Parent = parent
         self.Data   = data
-        self.Editor = self.EditorDialog()
+        self.Editor = None
 
     def ShowEditor(self):
+        self.Editor = self.Editor or self.EditorDialog()
         if self.Editor:
             if self.Editor.ShowModal() == wx.ID_OK:
                 self.OnEditorUpdate()
         else:
             wx.LogError(f"Tried to edit {type(self).__name__} which has no self.Editor")
 
-    def EditorDialog(self) -> wx.Dialog|None:
-        wx.LogError(f"Editor not implemented for {type(self).__name__}")
-        return None
+    def HasEditor(self):
+        return hasattr(self, 'EditorDialog') and callable(getattr(self, 'EditorDialog'))
 
     def OnEditorUpdate(self):
         wx.LogError(f"Editor update not implemented for {type(self).__name__}")
@@ -434,9 +432,6 @@ class PETitle(PEMenuItem):
 class PEDivider(PEMenuItem):
     def __init__(self, parent, data):
         super().__init__(parent, data, kind = wx.ITEM_SEPARATOR)
-
-    def EditorDialog(self): return None
-    def OnEditorUpdate(self): wx.LogError("Called OnEditorUpdate for a PEDivider, how did you get here?  This is a bug.")
 
 class PEOption(PEMenuItem):
     def __init__(self, parent, data):

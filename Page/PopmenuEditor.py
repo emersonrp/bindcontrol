@@ -45,17 +45,20 @@ class PopmenuEditor(Page):
         ButtonPanel = wx.Panel(self.MenuEditor)
         ButtonSizer = wx.BoxSizer(wx.HORIZONTAL)
         ButtonPanel.SetSizer(ButtonSizer)
-        TestMenuButton = wx.Button(ButtonPanel, label = "Test Current Popmenu")
-        TestMenuButton.Bind(wx.EVT_BUTTON, self.OnTestMenuButton)
-        ButtonSizer.Add(TestMenuButton, 1, wx.EXPAND|wx.ALL, 6)
+        self.TestMenuButton = wx.Button(ButtonPanel, label = "Test Current Popmenu")
+        self.TestMenuButton.Bind(wx.EVT_BUTTON, self.OnTestMenuButton)
+        self.TestMenuButton.Enable(False)
+        ButtonSizer.Add(self.TestMenuButton, 1, wx.EXPAND|wx.ALL, 6)
 
-        WriteMenuButton = wx.Button(ButtonPanel, label = "Write Popmenu")
-        WriteMenuButton.Bind(wx.EVT_BUTTON, self.OnWriteMenuButton)
-        ButtonSizer.Add(WriteMenuButton, 1, wx.EXPAND|wx.ALL, 6)
+        self.WriteMenuButton = wx.Button(ButtonPanel, label = "Write Popmenu")
+        self.WriteMenuButton.Bind(wx.EVT_BUTTON, self.OnWriteMenuButton)
+        self.WriteMenuButton.Enable(False)
+        ButtonSizer.Add(self.WriteMenuButton, 1, wx.EXPAND|wx.ALL, 6)
 
-        MacroButton = wx.Button(ButtonPanel, label = "Generate Macro")
-        MacroButton.Bind(wx.EVT_BUTTON, self.OnMacroButton)
-        ButtonSizer.Add(MacroButton, 1, wx.EXPAND|wx.ALL, 6)
+        self.MacroButton = wx.Button(ButtonPanel, label = "Generate Macro")
+        self.MacroButton.Bind(wx.EVT_BUTTON, self.OnMacroButton)
+        self.MacroButton.Enable(False)
+        ButtonSizer.Add(self.MacroButton, 1, wx.EXPAND|wx.ALL, 6)
 
         MESizer.Add(ButtonPanel, 0, wx.ALL|wx.EXPAND, 10)
 
@@ -99,12 +102,19 @@ class PopmenuEditor(Page):
                 idx = self.MenuListBox.Append(newmenu.Title)
                 self.MenuListBox.SetClientData(idx, newmenu)
                 self.MenuListBox.SetSelection(idx)
+                self.ToggleTopButtons(True)
                 self.CurrentMenu = newmenu
 
     def OnListSelect(self, evt):
         idx = evt.GetSelection()
         menu = self.MenuListBox.GetClientData(idx)
         self.CurrentMenu = menu
+        self.ToggleTopButtons(idx != wx.NOT_FOUND)
+
+    def ToggleTopButtons(self, show):
+        self.TestMenuButton.Enable(show)
+        self.WriteMenuButton.Enable(show)
+        self.MacroButton.Enable(show)
 
 class Popmenu(FM.FlatMenu):
     ContextMenu = None

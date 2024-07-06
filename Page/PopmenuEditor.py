@@ -72,16 +72,16 @@ class PopmenuEditor(Page):
 
     def OnLoadButton(self, _):
         with wx.FileDialog(self, "Load Popmenu file", wildcard="MNU files (*.mnu)|*.mnu",
-                                            defaultDir = '/home/emerson/Downloads/menus',   # TODO TODO TODO remove this line
+                           defaultDir = f'{wx.GetHomeDir()}/Downloads/menus',   # TODO TODO TODO remove this line
                        style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 return
 
             newmenu = Popmenu(self)
-            with wx.WindowDisabler():
-                wait = wx.BusyInfo("Loading...")
-                wx.GetApp().Yield()
-                newmenu.ReadFromFile(fileDialog.GetPath())
+            #with wx.WindowDisabler():
+                #_ = wx.BusyInfo("Loading...")
+                #wx.GetApp().Yield()
+            newmenu.ReadFromFile(fileDialog.GetPath())
 
             if newmenu:
                 idx = self.MenuListBox.Append(newmenu.Title)
@@ -96,6 +96,8 @@ class PopmenuEditor(Page):
 
 class Popmenu(FM.FlatMenu):
     ContextMenu = None
+    ProgressDialog = None
+    Progress = 0
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -124,18 +126,21 @@ class Popmenu(FM.FlatMenu):
 
         self.BuildFromLines(contents.splitlines(), True)
 
+        Popmenu.ProgressDialog.Update(Popmenu.ProgressDialog.GetRange())
+        Popmenu.Progress = 0
+
     def BuildFromLines(self, lines, is_main_request = False):
 
         if is_main_request:  # this is the top level request, peel off the outside layers
             # first let's clean our data
             newlines = []
             while lines:
-                line = lines.pop(0)
+                line = lines.pop(0).strip()
                 line = re.sub(r'\s*//.*', '', line) # remove comments
                 if line != '}' and re.search('}$', line):
                     line = re.sub(r'\s*}$', '', line)
                     lines.insert(0, '}')
-                line = line.strip()
+                line = line.strip() # once more with feeling
 
                 if line: newlines.append(line)
             lines = newlines
@@ -147,9 +152,16 @@ class Popmenu(FM.FlatMenu):
                     self.Title = match.group(1).strip('"')
                     break
 
+        # Let's instantiate the Progress Dialog iff we're the main request
+        if is_main_request:
+            Popmenu.ProgressDialog = wx.ProgressDialog('Loading', f'Loading popmenu "{self.Title}"...', len(lines))
+            Popmenu.ProgressDialog.Show()
+
         # OK, we should be into the juicy innards of the file.  Push the rest of "lines" through it
         while lines:
             line = lines.pop(0)
+            Popmenu.Progress = Popmenu.Progress + 1
+            Popmenu.ProgressDialog.Update(Popmenu.Progress)
 
             if line == '{':
                 continue
@@ -161,11 +173,17 @@ class Popmenu(FM.FlatMenu):
             elif line == "LockedOption":
                 LockedData = []
                 firstline = lines.pop(0)
+                Popmenu.Progress = Popmenu.Progress + 1
+                Popmenu.ProgressDialog.Update(Popmenu.Progress)
                 if firstline != "{":
                     wx.LogError(f'Malformed LockedOption section:  expected "{{", got "{firstline}", canceling')
                     return {}
                 nextline = lines.pop(0)
+                Popmenu.Progress = Popmenu.Progress + 1
+                Popmenu.ProgressDialog.Update(Popmenu.Progress)
                 while nextline and nextline != "}":
+                    Popmenu.Progress = Popmenu.Progress + 1
+                    Popmenu.ProgressDialog.Update(Popmenu.Progress)
                     LockedData.append(nextline)
                     nextline = lines.pop(0)
 
@@ -328,8 +346,7 @@ class Popmenu_ContextMenu(FM.FlatMenu):
             if item.GetLabel() == "Submenu": data = {'' : Popmenu(self.Parent)}
             menuitemclass = itemclasses.get(item.GetLabel(), None)
             newitem = menuitemclass(self.Parent, data)
-            index = self.Parent.FindMenuItemPosSimple(self.CurrentMenuItem)
-            self.CurrentMenuItem.GetSubMenu().AppendItem(newitem)
+            self.CurrentMenuItem.GetSubMenu().AppendItem(newitem) # pyright: ignore
             newitem.ShowEditor()
 
 # Base Menu Item Class

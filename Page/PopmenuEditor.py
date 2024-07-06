@@ -1,6 +1,7 @@
 import wx
 from Page import Page
 from UI.ControlGroup import cgTextCtrl
+from typing import Callable
 
 from pathlib import Path
 import re
@@ -150,7 +151,10 @@ class Popmenu(FM.FlatMenu):
         self.BuildFromLines(contents.splitlines(), 'main')
 
         # Just in case we didn't finish the dialog for some reason, finish it
-        Popmenu.ProgressDialog.Update(Popmenu.ProgressDialog.GetRange())
+        if Popmenu.ProgressDialog:
+            Popmenu.ProgressDialog.Update(Popmenu.ProgressDialog.GetRange())
+            Popmenu.ProgressDialog.Destroy()
+            Popmenu.ProgressDialog = None
 
     def BuildFromLines(self, lines, request_type = ''):
         is_main_request = request_type == "main"
@@ -185,7 +189,8 @@ class Popmenu(FM.FlatMenu):
         # OK, we should be into the juicy innards of the file.  Push the rest of "lines" through it
         while lines:
             line = lines.pop(0)
-            Popmenu.ProgressDialog.Update(Popmenu.ProgressDialog.GetValue() + 1)
+            if Popmenu.ProgressDialog:
+                Popmenu.ProgressDialog.Update(Popmenu.ProgressDialog.GetValue() + 1)
 
             if is_lock_request:  # we're in a lockedoption subrequest, act differently
                 if   line == '{': continue
@@ -365,13 +370,16 @@ class Popmenu_ContextMenu(FM.FlatMenu):
 
 # Base Menu Item Class
 class PEMenuItem(FM.FlatMenuItem):
-    def __init__(self, parent, data, **kwargs):
-        super().__init__(parent, wx.ID_ANY, **kwargs)
+    EditorDialog: Callable
+    TitleFont = None
+    def __init__(self, parent, data, label = '', kind = wx.ITEM_NORMAL):
+        super().__init__(parent, wx.ID_ANY, label = label, kind = kind)
 
         self.SetContextMenu(parent.ContextMenu)
         self.Parent = parent
         self.Data   = data
         self.Editor = None
+        PEMenuItem.TitleFont = PEMenuItem.TitleFont or wx.Font(wx.FontInfo().Bold())
 
     def ShowEditor(self):
         self.Editor = self.Editor or self.EditorDialog()
@@ -416,7 +424,7 @@ class PEMenu(PEMenuItem):
 class PETitle(PEMenuItem):
     def __init__(self, parent, data):
         super().__init__(parent, data, label = data)
-        self.SetFont(wx.Font(wx.FontInfo().Bold()))
+        self.SetFont(PEMenuItem.TitleFont)
         self.SetTextColour((128,128,128))
 
     def EditorDialog(self):

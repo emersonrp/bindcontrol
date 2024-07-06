@@ -132,7 +132,7 @@ class Popmenu(FM.FlatMenu):
             while lines:
                 line = lines.pop(0)
                 line = re.sub(r'\s*//.*', '', line) # remove comments
-                if line != '}' and re.search('}', line):
+                if line != '}' and re.search('}$', line):
                     line = re.sub(r'\s*}$', '', line)
                     lines.insert(0, '}')
                 line = line.strip()
@@ -385,7 +385,7 @@ class PEMenu(PEMenuItem):
 class PETitle(PEMenuItem):
     def __init__(self, parent, data):
         super().__init__(parent, data, label = data)
-        self.SetFont(wx.Font(wx.FontInfo().Italic()))
+        self.SetFont(wx.Font(wx.FontInfo().Bold()))
         self.SetTextColour((128,128,128))
 
     def EditorDialog(self):

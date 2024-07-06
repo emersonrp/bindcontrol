@@ -41,9 +41,23 @@ class PopmenuEditor(Page):
         self.MenuEditor = wx.Panel(splitter)
         MESizer = wx.BoxSizer(wx.VERTICAL)
         self.MenuEditor.SetSizer(MESizer)
-        TestMenuButton = wx.Button(self.MenuEditor, label = "Test Current Popmenu")
+
+        ButtonPanel = wx.Panel(self.MenuEditor)
+        ButtonSizer = wx.BoxSizer(wx.HORIZONTAL)
+        ButtonPanel.SetSizer(ButtonSizer)
+        TestMenuButton = wx.Button(ButtonPanel, label = "Test Current Popmenu")
         TestMenuButton.Bind(wx.EVT_BUTTON, self.OnTestMenuButton)
-        MESizer.Add(TestMenuButton, 0, wx.ALL, 10)
+        ButtonSizer.Add(TestMenuButton, 1, wx.EXPAND|wx.ALL, 6)
+
+        WriteMenuButton = wx.Button(ButtonPanel, label = "Write Popmenu")
+        WriteMenuButton.Bind(wx.EVT_BUTTON, self.OnWriteMenuButton)
+        ButtonSizer.Add(WriteMenuButton, 1, wx.EXPAND|wx.ALL, 6)
+
+        MacroButton = wx.Button(ButtonPanel, label = "Generate Macro")
+        MacroButton.Bind(wx.EVT_BUTTON, self.OnMacroButton)
+        ButtonSizer.Add(MacroButton, 1, wx.EXPAND|wx.ALL, 6)
+
+        MESizer.Add(ButtonPanel, 0, wx.ALL|wx.EXPAND, 10)
 
         # This should contain the instructions
         MiddlePanel = wx.Panel(self.MenuEditor)
@@ -53,15 +67,7 @@ class PopmenuEditor(Page):
 
         splitter.SplitVertically(MenuList, self.MenuEditor, LeftPanelWidth)
 
-        ButtonPanel = wx.Panel(self)
-        ButtonSizer = wx.StaticBoxSizer(wx.VERTICAL, ButtonPanel)
-        ButtonPanel.SetSizer(ButtonSizer)
-        ButtonParent = ButtonSizer.GetStaticBox()
-        ButtonSizer.Add(wx.Button(ButtonParent, label = "Write Popmenu"), 0, wx.EXPAND|wx.ALL, 6)
-        ButtonSizer.Add(wx.Button(ButtonParent, label = "Generate Macro"), 0, wx.EXPAND|wx.ALL, 6)
-
         Sizer.Add(splitter, 1, wx.EXPAND)
-        Sizer.Add(ButtonPanel, 0, wx.EXPAND|wx.BOTTOM|wx.LEFT|wx.RIGHT, 6)
 
         self.Layout()
 
@@ -69,6 +75,12 @@ class PopmenuEditor(Page):
         if self.CurrentMenu:
             self.CurrentMenu.Popup(wx.GetMousePosition())
         evt.Skip()
+
+    def OnWriteMenuButton(self, evt):
+        ...
+
+    def OnMacroButton(self, evt):
+        ...
 
     def OnLoadButton(self, _):
         with wx.FileDialog(self, "Load Popmenu file", wildcard="MNU files (*.mnu)|*.mnu",

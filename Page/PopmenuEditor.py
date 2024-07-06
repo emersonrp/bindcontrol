@@ -95,18 +95,20 @@ class PopmenuEditor(Page):
         self.CurrentMenu = menu
 
 class Popmenu(FM.FlatMenu):
+    ContextMenu = None
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.ContextMenu = Popmenu_ContextMenu(self)
+        # Let's make just one context menu for the whole class
+        Popmenu.ContextMenu = Popmenu.ContextMenu or Popmenu_ContextMenu(self)
         self.Title = ''
 
     # hook the right click behavior to tell ContextMenu who got right-clicked
     def ProcessMouseRClick(self, pos):
-        cm = self.ContextMenu
+        cm = Popmenu.ContextMenu
         (result, menuid) = self.HitTest(pos)
         if result == FM.MENU_HT_ITEM:
-            cm.ConfigureForMenuItem(menuid)
+            if cm: cm.ConfigureForMenuItem(self, menuid)
         super().ProcessMouseRClick(pos)
 
     def WriteToFile(self, filename):
@@ -124,7 +126,6 @@ class Popmenu(FM.FlatMenu):
 
     def BuildFromLines(self, lines, is_main_request = False):
 
-
         if is_main_request:  # this is the top level request, peel off the outside layers
             # first let's clean our data
             newlines = []
@@ -140,7 +141,7 @@ class Popmenu(FM.FlatMenu):
             lines = newlines
 
             while lines:
-                line = lines.pop(0).strip()
+                line = lines.pop(0)
 
                 if match := re.match(r'Menu\s+(.*)', line):
                     self.Title = match.group(1).strip('"')
@@ -203,7 +204,6 @@ class Popmenu(FM.FlatMenu):
                 self.AppendItem(PEMenu(self, {MenuName: newMenu}))
             elif match := re.match(r'Option\s+(.*)', line):
                 OptionData = match.group(1)
-                #
                 # TODO - do popmenus ever use single quotes?
                 if re.match(r'"', OptionData):
                     splitmatch = re.match(r'"([^"]+)"(\s+(.*))?', OptionData)
@@ -214,14 +214,12 @@ class Popmenu(FM.FlatMenu):
                 else:
                     wx.LogError(f'Invalid "Option" clause in popmenu: "{OptionData}", canceling')
                     return {}
-
                 # "mission_helper.mnu" has Options with a name but no payload.  Ugly but we support now.
                 OptPayload = OptPayload or ''
                 if re.match(r'"', OptPayload):
                     OptPayload = OptPayload.strip('"')
                 elif plmatch := re.match(r'<&(.*)&>', OptPayload):
                     OptPayload = plmatch.group(1)
-
                 self.AppendItem(PEOption(self, {Optname.strip('"') : OptPayload}))
 
     def NormalizeOptName(self, optname):
@@ -250,11 +248,26 @@ class Popmenu_ContextMenu(FM.FlatMenu):
         InsertMenu.AppendItem(LockedOptMenuItem)
         InsertMenu.AppendItem(DividerMenuItem)
 
+        SubInsertMenu        = FM.FlatMenu(self)
+        SubMenuMenuItem      = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "Submenu")
+        SubTitleMenuItem     = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "Title")
+        SubOptionMenuItem    = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "Option")
+        SubLockedOptMenuItem = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "LockedOption")
+        SubDividerMenuItem   = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "Divider")
+        SubInsertMenu.AppendItem(SubMenuMenuItem)
+        SubInsertMenu.AppendItem(SubTitleMenuItem)
+        SubInsertMenu.AppendItem(SubOptionMenuItem)
+        SubInsertMenu.AppendItem(SubLockedOptMenuItem)
+        SubInsertMenu.AppendItem(SubDividerMenuItem)
+
         self.AppendItem(self.EditMenuItem)
         self.AppendItem(self.DeleteMenuItem)
         self.AppendItem(self.MoveUpMenuItem)
         self.AppendItem(self.MoveDnMenuItem)
         self.AppendSubMenu(InsertMenu, 'Insert')
+        self.SubInsertMenuItem = FM.FlatMenuItem(self, wx.ID_ANY, 'Insert into Submenu')
+        self.SubInsertMenuItem.SetSubMenu(SubInsertMenu)
+        self.AppendItem(self.SubInsertMenuItem)
 
         self.CurrentMenuItem = None
 
@@ -263,12 +276,15 @@ class Popmenu_ContextMenu(FM.FlatMenu):
         self.Bind(wx.EVT_MENU, self.OnContextMoveUp, self.MoveUpMenuItem)
         self.Bind(wx.EVT_MENU, self.OnContextMoveDown, self.MoveDnMenuItem)
         InsertMenu.Bind(wx.EVT_MENU, self.OnContextInsert)
+        SubInsertMenu.Bind(wx.EVT_MENU, self.OnContextSubInsert)
 
-    def ConfigureForMenuItem(self, menuid):
-        self.CurrentMenuItem = self.Parent.GetMenuItems()[menuid]
+    def ConfigureForMenuItem(self, menu, menuid):
+        self.CurrentMenuItem = menu.GetMenuItems()[menuid]
         self.EditMenuItem.Enable(self.CurrentMenuItem.Editor != None)
         self.MoveUpMenuItem.Enable(menuid != 0)
         self.MoveDnMenuItem.Enable(menuid != len(self.Parent.GetMenuItems())-1)
+        # TODO - would prefer Show() to Enable() but Show doesn't work.
+        self.SubInsertMenuItem.Enable(self.CurrentMenuItem.IsSubMenu())
 
     def OnContextEdit(self, _):
         if cmi := self.CurrentMenuItem:
@@ -298,12 +314,22 @@ class Popmenu_ContextMenu(FM.FlatMenu):
         menuid = evt.GetId()
         if item := self.FindItem(menuid):
             data = {}
-            # TODO how do we insert something into an empty submenu?  This is a problem.
             if item.GetLabel() == "Submenu": data = {'' : Popmenu(self.Parent)}
             menuitemclass = itemclasses.get(item.GetLabel(), None)
             newitem = menuitemclass(self.Parent, data)
             index = self.Parent.FindMenuItemPosSimple(self.CurrentMenuItem)
             self.Parent.InsertItem(index + 1, newitem)
+            newitem.ShowEditor()
+
+    def OnContextSubInsert(self, evt):
+        menuid = evt.GetId()
+        if item := self.FindItem(menuid):
+            data = {}
+            if item.GetLabel() == "Submenu": data = {'' : Popmenu(self.Parent)}
+            menuitemclass = itemclasses.get(item.GetLabel(), None)
+            newitem = menuitemclass(self.Parent, data)
+            index = self.Parent.FindMenuItemPosSimple(self.CurrentMenuItem)
+            self.CurrentMenuItem.GetSubMenu().AppendItem(newitem)
             newitem.ShowEditor()
 
 # Base Menu Item Class

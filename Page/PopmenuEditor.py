@@ -165,7 +165,8 @@ class Popmenu(FM.FlatMenu):
             newlines = []
             while lines:
                 line = lines.pop(0).strip()
-                line = re.sub(r'\s*//.*', '', line) # remove comments
+                if re.search(r'(?<!\:)//', line):
+                    line = re.sub(r'\s*//.*', '', line) # remove comments
                 if line != '}' and re.search('}$', line):
                     line = re.sub(r'\s*}$', '', line)
                     lines.insert(0, '}')

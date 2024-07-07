@@ -6,7 +6,7 @@ from typing import Callable
 from pathlib import Path
 import re
 
-import wx.lib.agw.flatmenu as FM
+import FM.flatmenu as FM
 
 class PopmenuEditor(Page):
     def __init__(self, parent):

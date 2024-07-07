@@ -165,9 +165,12 @@ class Popmenu(FM.FlatMenu):
             newlines = []
             while lines:
                 line = lines.pop(0).strip()
+                # first, match for any non-URL '//' in there
                 if re.search(r'(?<!\:)//', line):
                     line = re.sub(r'\s*//.*', '', line) # remove comments
+                # Then, look for } at the end of a content-filled line
                 if line != '}' and re.search('}$', line):
+                    # and if so, snip it off and insert a '}' line instead
                     line = re.sub(r'\s*}$', '', line)
                     lines.insert(0, '}')
                 line = line.strip() # once more with feeling
@@ -351,23 +354,23 @@ class Popmenu_ContextMenu(FM.FlatMenu):
     def OnContextInsert(self, evt):
         menuid = evt.GetId()
         if item := self.FindItem(menuid):
-            data = {}
-            if item.GetLabel() == "Submenu": data = {'' : Popmenu(self.Parent)}
-            menuitemclass = itemclasses.get(item.GetLabel(), None)
-            newitem = menuitemclass(self.Parent, data)
-            index = self.Parent.FindMenuItemPosSimple(self.CurrentMenuItem)
-            self.Parent.InsertItem(index + 1, newitem)
-            newitem.ShowEditor()
+            if newitem := self.MakeNewItemForInsert(item):
+                index = self.Parent.FindMenuItemPosSimple(self.CurrentMenuItem)
+                self.Parent.InsertItem(index + 1, newitem)
 
     def OnContextSubInsert(self, evt):
         menuid = evt.GetId()
         if item := self.FindItem(menuid):
-            data = {}
-            if item.GetLabel() == "Submenu": data = {'' : Popmenu(self.Parent)}
-            menuitemclass = itemclasses.get(item.GetLabel(), None)
-            newitem = menuitemclass(self.Parent, data)
-            self.CurrentMenuItem.GetSubMenu().AppendItem(newitem) # pyright: ignore
-            newitem.ShowEditor()
+            if newitem := self.MakeNewItemForInsert(item):
+                self.CurrentMenuItem.GetSubMenu().AppendItem(newitem) # pyright: ignore
+
+    def MakeNewItemForInsert(self, item):
+        data = {}
+        if item.GetLabel() == "Submenu": data = {'' : Popmenu(self.Parent)}
+        menuitemclass = itemclasses.get(item.GetLabel(), None)
+        newitem = menuitemclass(self.Parent, data)
+        return newitem.ShowEditor()
+
 
 # Base Menu Item Class
 class PEMenuItem(FM.FlatMenuItem):
@@ -387,8 +390,11 @@ class PEMenuItem(FM.FlatMenuItem):
         if self.Editor:
             if self.Editor.ShowModal() == wx.ID_OK:
                 self.OnEditorUpdate()
+                return self
+            else:
+                return False
         else:
-            wx.LogError(f"Tried to edit {type(self).__name__} which has no self.Editor")
+            wx.LogError(f"Tried to edit {type(self).__name__} which has no self.Editor - this is a bug")
 
     def HasEditor(self):
         return hasattr(self, 'EditorDialog') and callable(getattr(self, 'EditorDialog'))

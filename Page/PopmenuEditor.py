@@ -377,8 +377,8 @@ class Popmenu_SubContextMenu(Popmenu_ContextMenu):
 class PEMenuItem(FM.FlatMenuItem):
     EditorDialog: Callable
     TitleFont = None
-    def __init__(self, parent, data, label = '', kind = wx.ITEM_NORMAL):
-        super().__init__(parent, wx.ID_ANY, label = label, kind = kind)
+    def __init__(self, parent, data, label = ''):
+        super().__init__(parent, wx.ID_ANY, label = label)
 
         self.SetContextMenu(parent.ContextMenu)
         self.Parent = parent
@@ -457,7 +457,7 @@ class PETitle(PEMenuItem):
 
 class PEDivider(PEMenuItem):
     def __init__(self, parent, data):
-        super().__init__(parent, data, kind = wx.ITEM_SEPARATOR)
+        super().__init__(parent, data, label = "--------------------")
 
 class PEOption(PEMenuItem):
     def __init__(self, parent, data = {'': ''}):

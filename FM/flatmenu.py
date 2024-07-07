@@ -135,7 +135,6 @@ class FMRenderer(object):
         """ Default class constructor. """
 
         self.separatorHeight = 5
-        self.highlightCheckAndRadio = False
         self.scrollBarButtons = False   # Display scrollbar buttons if the menu doesn't fit on the screen
                                         # otherwise default to up and down arrow menu items
 
@@ -363,36 +362,6 @@ class FMRenderer(object):
 
             yy = rect.y + (rect.height - imgHeight)//2
             dc.DrawBitmap(bmp, xx, yy, True)
-
-        if item.GetKind() == wx.ITEM_CHECK:
-
-            # Checkable item
-            if item.IsChecked():
-
-                # Draw surrounding rectangle around the selection box
-                xx = rect.x + 1
-                yy = rect.y + 1
-                rr = wx.Rect(xx, yy, rect.height-2, rect.height-2)
-
-                if not selected and self.highlightCheckAndRadio:
-                    self.DrawButton(dc, rr, ControlFocus)
-
-                dc.DrawBitmap(item._checkMarkBmp, rr.x + (rr.width - 16)//2, rr.y + (rr.height - 16)//2, True)
-
-        if item.GetKind() == wx.ITEM_RADIO:
-
-            # Checkable item
-            if item.IsChecked():
-
-                # Draw surrounding rectangle around the selection box
-                xx = rect.x + 1
-                yy = rect.y + 1
-                rr = wx.Rect(xx, yy, rect.height-2, rect.height-2)
-
-                if not selected and self.highlightCheckAndRadio:
-                    self.DrawButton(dc, rr, ControlFocus)
-
-                dc.DrawBitmap(item._radioMarkBmp, rr.x + (rr.width - 16)//2, rr.y + (rr.height - 16)//2, True)
 
         # Draw text - without accelerators
         text = item.GetLabel()
@@ -1363,8 +1332,7 @@ class FlatMenuItem(object):
          key can be specified using the ampersand '&' character. In order to embed
          an ampersand character in the menu item text, the ampersand must be doubled;
         :param string `helpString`: optional help string that will be shown on the status bar;
-        :param integer `kind`: may be ``wx.ITEM_SEPARATOR``, ``wx.ITEM_NORMAL``, ``wx.ITEM_CHECK``
-         or ``wx.ITEM_RADIO``;
+        :param integer `kind`: may be ``wx.ITEM_SEPARATOR``, ``wx.ITEM_NORMAL``
         :param `subMenu`: if not ``None``, the sub menu this item belongs to (an instance of :class:`FlatMenu`);
         :param `normalBmp`: normal bitmap to draw to the side of the text, this bitmap
          is used when the menu is enabled (an instance of :class:`wx.Bitmap`);
@@ -1387,7 +1355,6 @@ class FlatMenuItem(object):
         self._normalBmp = normalBmp
         self._disabledBmp = disabledBmp
         self._hotBmp = hotBmp
-        self._bIsChecked = False
         self._bIsEnabled = True
         self._mnemonicIdx = wx.NOT_FOUND
         self._isAttachedToMenu = False
@@ -1400,15 +1367,6 @@ class FlatMenuItem(object):
         self._textColour = None
 
         self.SetLabel(self._text)
-
-        if not hasattr(FlatMenuItem, '_checkMarkBmp'):
-            FlatMenuItem._checkMarkBmp = wx.Bitmap(check_mark_xpm)
-            FlatMenuItem._checkMarkBmp.SetMask(wx.Mask(self._checkMarkBmp, wx.WHITE))
-            FlatMenuItem._radioMarkBmp = wx.Bitmap(radio_item_xpm)
-            FlatMenuItem._radioMarkBmp.SetMask(wx.Mask(self._radioMarkBmp, wx.WHITE))
-
-
-
 
     def SetLongHelp(self, help):
         """
@@ -1486,7 +1444,6 @@ class FlatMenuItem(object):
     def GetKind(self):
         """
         Returns the menu item kind, can be one of ``wx.ITEM_SEPARATOR``, ``wx.ITEM_NORMAL``,
-        ``wx.ITEM_CHECK`` or ``wx.ITEM_RADIO``.
         """
 
         return self._kind
@@ -1530,29 +1487,6 @@ class FlatMenuItem(object):
         """ Returns the sub-menu of this menu item (if any). """
 
         return self._subMenu
-
-
-    def IsCheckable(self):
-        """ Returns ``True`` if this item is of type ``wx.ITEM_CHECK``, ``False`` otherwise. """
-
-        return self._kind == wx.ITEM_CHECK
-
-
-    def IsChecked(self):
-        """
-        Returns whether an item is checked or not.
-
-        :note: This method is meaningful only for items of kind ``wx.ITEM_CHECK`` or
-         ``wx.ITEM_RADIO``.
-        """
-
-        return self._bIsChecked
-
-
-    def IsRadioItem(self):
-        """ Returns ``True`` if this item is of type ``wx.ITEM_RADIO``, ``False`` otherwise. """
-
-        return self._kind == wx.ITEM_RADIO
 
 
     def IsEnabled(self):
@@ -1766,32 +1700,6 @@ class FlatMenuItem(object):
         return mnemonic.lower()
 
 
-    def Check(self, check=True):
-        """
-        Checks or unchecks the menu item.
-
-        :param bool `check`: ``True`` to check the menu item, ``False`` to uncheck it.
-
-        :note: This method is meaningful only for menu items of ``wx.ITEM_CHECK``
-         or ``wx.ITEM_RADIO`` kind.
-        """
-
-        if self.IsRadioItem() and not self._isAttachedToMenu:
-
-            # radio items can be checked only after they are attached to menu
-            return
-
-        self._bIsChecked = check
-
-        # update group
-        if self.IsRadioItem() and check:
-            self._groupPtr.SetSelection(self)
-
-        # Our parent menu might want to do something with this change
-        if self._parentMenu:
-            self._parentMenu.UpdateItem(self)
-
-
     def SetFont(self, font=None):
         """
         Sets the :class:`FlatMenuItem` font.
@@ -1927,9 +1835,6 @@ class FlatMenu(FlatMenuBase):
 
         # Adjust menu position and show it
         FlatMenuBase.Popup(self, pt, parent)
-
-        artMgr = ArtManager.Get()
-        artMgr.MakeWindowTransparent(self, artMgr.GetTransparency())
 
         # Replace the event handler of the active window to direct
         # all keyboard events to us and the focused window to direct char events to us
@@ -2093,8 +1998,6 @@ class FlatMenu(FlatMenuBase):
             accel.Set(accel.GetFlags(), accel.GetKeyCode(), menuItem.GetId())
             self._accelArray.append(accel)
 
-        self.UpdateRadioGroup(menuItem)
-
         return menuItem
 
 
@@ -2154,8 +2057,7 @@ class FlatMenu(FlatMenuBase):
 
         # In case the item has image & is type radio or check, we need double size
         # left margin
-        factor = (((menuItem.GetBitmap() != wx.NullBitmap) and \
-                   (menuItem.IsCheckable() or (menuItem.GetKind() == wx.ITEM_RADIO))) and [2] or [1])[0]
+        factor = 1
 
         if factor == 2:
 
@@ -2211,31 +2113,6 @@ class FlatMenu(FlatMenuBase):
         """ Returns the height of a particular item, in pixels. """
 
         return self._itemHeight
-
-
-    def AppendCheckItem(self, id, item, helpString=""):
-        """
-        Adds a checkable item to the end of the menu.
-
-        :see: :meth:`~FlatMenu.Append` for the explanation of the input parameters.
-        """
-
-        newItem = FlatMenuItem(self, id, item, helpString, wx.ITEM_CHECK)
-        return self.AppendItem(newItem)
-
-
-    def AppendRadioItem(self, id, item, helpString=""):
-        """
-        Adds a radio item to the end of the menu.
-
-        All consequent radio items form a group and when an item in the group is
-        checked, all the others are automatically unchecked.
-
-        :see: :meth:`~FlatMenu.Append` for the explanation of the input parameters.
-        """
-
-        newItem = FlatMenuItem(self, id, item, helpString, wx.ITEM_RADIO)
-        return self.AppendItem(newItem)
 
 
     def AppendSeparator(self):
@@ -3059,19 +2936,6 @@ class FlatMenu(FlatMenuBase):
             self.TryOpenSubMenu(itemIdx)
             return
 
-        if item.IsRadioItem():
-            # if the radio item is already checked,
-            # just send command event. Else, check it, uncheck the current
-            # checked item in the radio item group, and send command event
-            if not item.IsChecked():
-                item._groupPtr.SetSelection(item)
-
-        elif item.IsCheckable():
-
-            item.Check(not item.IsChecked())
-            dc = wx.ClientDC(self)
-            self.DrawSelection(dc)
-
         if not item.IsSubMenu():
 
             self.Dismiss(True, False)
@@ -3130,10 +2994,6 @@ class FlatMenu(FlatMenuBase):
             # Remove the menu item
             item = menuParent._itemsArr[idx]
             menuParent._itemsArr.pop(idx)
-
-            # update group
-            if item._groupPtr and item.IsRadioItem():
-                item._groupPtr.Remove(item)
 
             # Resize the menu
             menuParent.ResizeMenu()
@@ -3223,38 +3083,7 @@ class FlatMenu(FlatMenuBase):
         # Recalculate the menu geometry
         self.ResizeMenu()
 
-        # Update radio groups
-        self.UpdateRadioGroup(item)
-
         return item
-
-
-    def UpdateRadioGroup(self, item):
-        """
-        Updates a group of radio items.
-
-        :param `item`: an instance of :class:`FlatMenuItem`.
-        """
-
-        if item.IsRadioItem():
-
-            # Update radio groups in case this item is a radio item
-            sibling = self.GetSiblingGroupItem(item)
-            if sibling:
-
-                item._groupPtr = sibling._groupPtr
-                item._groupPtr.Add(item)
-
-                if item.IsChecked():
-
-                    item._groupPtr.SetSelection(item)
-
-            else:
-
-                # first item in group
-                item._groupPtr = FlatMenuItemGroup()
-                item._groupPtr.Add(item)
-                item._groupPtr.SetSelection(item)
 
 
     def ResizeMenu(self):
@@ -3498,10 +3327,6 @@ class FlatMenu(FlatMenuBase):
         # Create the event
         event = wx.CommandEvent(wxEVT_FLAT_MENU_SELECTED, item.GetId())
 
-        # For checkable item, set the IsChecked() value
-        if item.IsCheckable():
-            event.SetInt((item.IsChecked() and [1] or [0])[0])
-
         event.SetEventObject(self)
 
         if self._owner:
@@ -3525,10 +3350,6 @@ class FlatMenu(FlatMenuBase):
         # Create the event
         event = FlatMenuEvent((over and [wxEVT_FLAT_MENU_ITEM_MOUSE_OVER] or [wxEVT_FLAT_MENU_ITEM_MOUSE_OUT])[0], item.GetId())
 
-        # For checkable item, set the IsChecked() value
-        if item.IsCheckable():
-            event.SetInt((item.IsChecked() and [1] or [0])[0])
-
         event.SetEventObject(self)
 
         if self._owner:
@@ -3551,7 +3372,6 @@ class FlatMenu(FlatMenuBase):
         item = self._itemsArr[itemIdx]
         event = wx.UpdateUIEvent(item.GetId())
 
-        event.Check(item.IsChecked())
         event.Enable(item.IsEnabled())
         event.SetText(item.GetText())
         event.SetEventObject(self)
@@ -3561,7 +3381,6 @@ class FlatMenu(FlatMenuBase):
         else:
             self.GetEventHandler().ProcessEvent(event)
 
-        item.Check(event.GetChecked())
         item.SetLabel(event.GetText())
         item.Enable(event.GetEnabled())
 
@@ -3658,9 +3477,6 @@ class FlatMenu(FlatMenuBase):
         pos = self.FindMenuItemPosSimple(item)
         if pos in [wx.NOT_FOUND, 0]:
             return None
-
-        if self._itemsArr[pos-1].IsRadioItem():
-            return self._itemsArr[pos-1]
 
         return None
 

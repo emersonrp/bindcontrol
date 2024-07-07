@@ -74,6 +74,8 @@ class Profile(wx.Notebook):
 
         if loadfile: self.doLoadFromFile(loadfile)
 
+        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, parent.OnPageChanged)
+
 
     def CreatePage(self, module):
         module.BuildPage()
@@ -137,7 +139,6 @@ class Profile(wx.Notebook):
                 if isinstance(ctrl, bcKeyButton):
                     if not ctrl.IsThisEnabled(): continue
                     ctrl.CheckConflicts()
-
 
     def SetModified  (self, _ = None): self.Modified = True
     def ClearModified(self, _ = None): self.Modified = False

@@ -171,14 +171,16 @@ class Main(wx.Frame):
 
         # Bottom Buttons
         # BUTTONS
-        self.ProfDirButton = cgButton(self, -1, "Set Binds Location")
+        self.BottomButtonPanel = wx.Panel(self)
+        self.ProfDirButton = cgButton(self.BottomButtonPanel, -1, "Set Binds Location")
         self.ProfDirButton.SetToolTip("Configure the location where this Profile will write bindfiles")
         self.ProfDirButton.DefaultToolTip = "Configure the location where this Profile will write bindfiles"
-        self.WriteButton = wx.Button(self, -1, "Write Binds")
+        self.WriteButton = wx.Button(self.BottomButtonPanel, -1, "Write Binds")
         self.WriteButton.SetToolTip("Write out the bindfiles to the configured binds directory")
-        self.DeleteButton = wx.Button(self, -1, "Delete All Binds")
+        self.DeleteButton = wx.Button(self.BottomButtonPanel, -1, "Delete All Binds")
         self.DeleteButton.SetToolTip("Delete all BindControl-managed files in the configured binds directory")
         BottomButtonSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.BottomButtonPanel.SetSizer(BottomButtonSizer)
         BottomButtonSizer.Add(self.ProfDirButton, 0, wx.EXPAND)
         BottomButtonSizer.Add(self.WriteButton, 1, wx.EXPAND)
         BottomButtonSizer.Add(self.DeleteButton, 0, wx.EXPAND)
@@ -186,7 +188,7 @@ class Main(wx.Frame):
         self.WriteButton  .Bind(wx.EVT_BUTTON, self.OnWriteBindsButton)
         self.DeleteButton .Bind(wx.EVT_BUTTON, self.OnDeleteBindsButton)
 
-        self.Sizer.Add(BottomButtonSizer,  0, wx.EXPAND | wx.ALL, 10)
+        self.Sizer.Add(self.BottomButtonPanel,  0, wx.EXPAND | wx.ALL, 10)
 
         # Do not SetSizerAndFit() - Fit() is poison
         self.SetSizer(self.Sizer)
@@ -271,6 +273,10 @@ class Main(wx.Frame):
         # TODO - do smarter things with enabling the write and delete buttons
         self.WriteButton.Enable(enable)
         self.DeleteButton.Enable(enable)
+
+    def OnPageChanged(self, evt):
+        self.BottomButtonPanel.Show(not evt.GetSelection() == 6)
+        self.Layout()
 
     def OnProfileNew(self, _ = None):
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return

@@ -10,7 +10,7 @@ import FM.flatmenu as FM
 
 class PopmenuEditor(Page):
     def __init__(self, parent):
-        super().__init__(parent)
+        super().__init__(parent, bind_events = False)
 
         self.CurrentMenu = None
 

@@ -16,7 +16,7 @@ from UI.KeySelectDialog import bcKeyButton
 
 class Page(wx.ScrolledWindow):
 
-    def __init__(self, parent):
+    def __init__(self, parent, bind_events = True):
         wx.ScrolledWindow.__init__(self, parent)
 
         self.MainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -29,6 +29,14 @@ class Page(wx.ScrolledWindow):
         self.TabTitle = type(self).__name__
 
         self.Ctrls = {}
+
+        # bind all control events so we can decide that we're modified.
+        if bind_events:
+            for evt in [
+                wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
+                wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU,
+            ]:
+                self.Bind(evt, self.Profile.SetModified)
 
     def GetState(self, key):
         control = self.Ctrls.get(key, None)

@@ -284,16 +284,6 @@ class ArtManager(wx.EvtHandler):
         self.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.OnSysColourChange)
 
 
-    def GetTransparency(self):
-        """
-        Returns the alpha channel value for transparent windows.
-
-        :return: An integer representing the alpha channel value.
-        """
-
-        return self._transparency
-
-
     def ConvertToBitmap(self, xpm, alpha=None):
         """
         Convert the given image to a bitmap, optionally overlaying an alpha
@@ -454,54 +444,6 @@ class ArtManager(wx.EvtHandler):
             return
 
         dc.GradientFillLinear(rect, startColour, endColour, direction)
-
-
-    def PaintGradientRegion(self, dc, region, startColour, endColour, vertical=True):
-        """
-        Paint a region with gradient colouring.
-
-        :param `dc`: an instance of :class:`wx.DC`;
-        :param `region`: a region to be filled with gradient shading (an instance of
-         :class:`Region`);
-        :param wx.Colour `startColour`: the first colour of the gradient shading;
-        :param wx.Colour `endColour`: the second colour of the gradient shading;
-        :param bool `vertical`: ``True`` for gradient colouring in the vertical direction,
-         ``False`` for horizontal shading.
-
-        """
-
-        # The way to achieve non-rectangle
-        memDC = wx.MemoryDC()
-        rect = region.GetBox()
-        bitmap = wx.Bitmap(rect.width, rect.height)
-        memDC.SelectObject(bitmap)
-
-        # Colour the whole rectangle with gradient
-        rr = wx.Rect(0, 0, rect.width, rect.height)
-        self.PaintStraightGradientBox(memDC, rr, startColour, endColour, vertical)
-
-        # Convert the region to a black and white bitmap with the white pixels being inside the region
-        # we draw the bitmap over the gradient coloured rectangle, with mask set to white,
-        # this will cause our region to be coloured with the gradient, while area outside the
-        # region will be painted with black. then we simply draw the bitmap to the dc with mask set to
-        # black
-        tmpRegion = wx.Region(rect.x, rect.y, rect.width, rect.height)
-        tmpRegion.Offset(-rect.x, -rect.y)
-        regionBmp = tmpRegion.ConvertToBitmap()
-        regionBmp.SetMask(wx.Mask(regionBmp, wx.WHITE))
-
-        # The function ConvertToBitmap() return a rectangle bitmap
-        # which is shorter by 1 pixl on the height and width (this is correct behavior, since
-        # DrawLine does not include the second point as part of the line)
-        # we fix this issue by drawing our own line at the bottom and left side of the rectangle
-        memDC.SetPen(wx.BLACK_PEN)
-        memDC.DrawBitmap(regionBmp, 0, 0, True)
-        memDC.DrawLine(0, rr.height - 1, rr.width, rr.height - 1)
-        memDC.DrawLine(rr.width - 1, 0, rr.width - 1, rr.height)
-
-        memDC.SelectObject(wx.NullBitmap)
-        bitmap.SetMask(wx.Mask(bitmap, wx.BLACK))
-        dc.DrawBitmap(bitmap, rect.x, rect.y, True)
 
 
     def PaintDiagonalGradientBox(self, dc, rect, startColour, endColour,
@@ -935,101 +877,6 @@ class ArtManager(wx.EvtHandler):
         return startLocationX, startLocationY, fixedText
 
 
-    def DrawTextAndBitmap(self, dc, rect, text, enable=True, font=wx.NullFont,
-                          fontColour=wx.BLACK, bitmap=wx.NullBitmap,
-                          grayBitmap=wx.NullBitmap, style=0):
-        """
-        Draws the text & bitmap on the input dc.
-
-        :param `dc`: an instance of :class:`wx.DC`;
-        :param wx.Rect `rect`: the text and bitmap client rectangle;
-        :param string `text`: the button label;
-        :param bool `enable`: ``True`` if the button is enabled, ``False`` otherwise;
-        :param `font`: the font to use to draw the text, an instance of :class:`wx.Font`;
-        :param `fontColour`: the colour to use to draw the text, an instance of
-         :class:`wx.Colour`;
-        :param `bitmap`: the bitmap associated with the button, an instance of :class:`wx.Bitmap`;
-        :param `grayBitmap`: a greyed-out version of the input `bitmap` representing
-         a disabled bitmap, an instance of :class:`wx.Bitmap`;
-        :param integer `style`: the button style.
-
-        :see: :meth:`~ArtManager.GetBitmapStartLocation` for a list of valid button styles.
-        """
-
-        # enable colours
-        if enable:
-            dc.SetTextForeground(fontColour)
-        else:
-            dc.SetTextForeground(wx.SystemSettings.GetColour(wx.SYS_COLOUR_GRAYTEXT))
-
-        # set the font
-
-        if font == wx.NullFont:
-            font = wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT)
-
-        dc.SetFont(font)
-
-        startLocationX = startLocationY = 0
-
-        if bitmap != wx.NullBitmap:
-
-            # calculate the bitmap start location
-            startLocationX, startLocationY = self.GetBitmapStartLocation(dc, rect, bitmap, text, style)
-
-            # draw the bitmap
-            if enable:
-                dc.DrawBitmap(bitmap, startLocationX, startLocationY, True)
-            else:
-                dc.DrawBitmap(grayBitmap, startLocationX, startLocationY, True)
-
-        # calculate the text start location
-        location, labelOnly = self.GetAccelIndex(text)
-        startLocationX, startLocationY, fixedText = self.GetTextStartLocation(dc, rect, bitmap, labelOnly, style)
-
-        # after all the calculations are finished, it is time to draw the text
-        # underline the first letter that is marked with a '&'
-        if location == -1 or font.GetUnderlined() or location >= len(fixedText):
-            # draw the text
-            dc.DrawText(fixedText, startLocationX, startLocationY)
-
-        else:
-
-            # underline the first '&'
-            before = fixedText[0:location]
-            underlineLetter = fixedText[location]
-            after = fixedText[location+1:]
-
-            # before
-            dc.DrawText(before, startLocationX, startLocationY)
-
-            # underlineLetter
-            if "__WXGTK__" not in wx.Platform:
-                w1, h = dc.GetTextExtent(before)
-                font.SetUnderlined(True)
-                dc.SetFont(font)
-                dc.DrawText(underlineLetter, startLocationX + w1, startLocationY)
-            else:
-                w1, h = dc.GetTextExtent(before)
-                dc.DrawText(underlineLetter, startLocationX + w1, startLocationY)
-
-                # Draw the underline ourselves since using the Underline in GTK,
-                # causes the line to be too close to the letter
-                uderlineLetterW, uderlineLetterH = dc.GetTextExtent(underlineLetter)
-
-                curPen = dc.GetPen()
-                dc.SetPen(wx.BLACK_PEN)
-
-                dc.DrawLine(startLocationX + w1, startLocationY + uderlineLetterH - 2,
-                            startLocationX + w1 + uderlineLetterW, startLocationY + uderlineLetterH - 2)
-                dc.SetPen(curPen)
-
-            # after
-            w2, h = dc.GetTextExtent(underlineLetter)
-            font.SetUnderlined(False)
-            dc.SetFont(font)
-            dc.DrawText(after, startLocationX + w1 + w2, startLocationY)
-
-
     def GetMenuFaceColour(self):
         """
         Returns the colour used for the menu foreground.
@@ -1101,22 +948,6 @@ class ArtManager(wx.EvtHandler):
         return indexAccel, labelOnly
 
 
-    def GetThemeBaseColour(self, useLightColours=True):
-        """
-        Returns the theme (Blue, Silver, Green etc.) base colour, if no theme is active
-        it return the active caption colour, lighter in 30%.
-
-        :param bool `useLightColours`: ``True`` to use light colours, ``False`` otherwise.
-
-        :return: An instance of :class:`wx.Colour`.
-        """
-
-        if not useLightColours and not self.IsDark(self.FrameColour()):
-            return wx.Colour("GOLD")
-        else:
-            return self.LightColour(self.FrameColour(), 30)
-
-
     def GetAlignBuffer(self):
         """
         Return the padding buffer for a text or bitmap.
@@ -1125,16 +956,6 @@ class ArtManager(wx.EvtHandler):
         """
 
         return self._alignmentBuffer
-
-
-    def SetMenuTheme(self, theme):
-        """
-        Set the menu theme, possible values (StyleXP).
-
-        :param string `theme`: a rendering theme class, `StyleXP`
-        """
-
-        self._menuTheme = theme
 
 
     def GetMenuTheme(self):
@@ -1147,32 +968,6 @@ class ArtManager(wx.EvtHandler):
         return self._menuTheme
 
 
-    def AddMenuTheme(self, render):
-        """
-        Adds a new theme to the stock.
-
-        :param `render`: a rendering theme class, which must be derived from
-         :class:`RendererBase`.
-
-        :return: An integer representing the size of the renderers dictionary.
-        """
-
-        # Add new theme
-        lastRenderer = len(self._renderers)
-        self._renderers[lastRenderer] = render
-
-        return lastRenderer
-
-
-    def GetMenuBgFactor(self):
-        """
-        Gets the visibility depth of the menu in Metallic style.
-        The higher the value, the menu bar will look more raised
-        """
-
-        return self._menuBgFactor
-
-
     def InitColours(self):
         """ Initialise the colour map. """
 
@@ -1180,27 +975,3 @@ class ArtManager(wx.EvtHandler):
                                  _("Dark"): wx.BLACK,
                                  _("Dark Olive Green"): wx.Colour("DARK OLIVE GREEN"),
                                  _("Generic"): wx.SystemSettings.GetColour(wx.SYS_COLOUR_ACTIVECAPTION)}
-
-
-    def GetColourSchemes(self):
-        """
-        Returns the available colour schemes.
-
-        :return: A list of strings representing the available colour schemes.
-        """
-
-        return list(self._colourSchemeMap)
-
-
-    def CreateGreyBitmap(self, bmp):
-        """
-        Creates a grey bitmap image from the input bitmap.
-
-        :param `bmp`: a valid :class:`wx.Bitmap` object to be greyed out.
-
-        :return: A greyed-out representation of the input bitmap, an instance of :class:`wx.Bitmap`.
-        """
-
-        img = bmp.ConvertToImage()
-        return wx.Bitmap(img.ConvertToGreyscale())
-

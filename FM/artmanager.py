@@ -328,13 +328,6 @@ class ArtManager(wx.EvtHandler):
     def Initialize(self):
         """ Initializes the bitmaps and colours. """
 
-        # create wxBitmaps from the xpm's
-        self._rightBottomCorner = self.ConvertToBitmap(shadow_center_xpm, shadow_center_alpha)
-        self._bottom = self.ConvertToBitmap(shadow_bottom_xpm, shadow_bottom_alpha)
-        self._bottomLeft = self.ConvertToBitmap(shadow_bottom_left_xpm, shadow_bottom_left_alpha)
-        self._rightTop = self.ConvertToBitmap(shadow_right_top_xpm, shadow_right_top_alpha)
-        self._right = self.ConvertToBitmap(shadow_right_xpm, shadow_right_alpha)
-
         # initialise the colour map
         self.InitColours()
 

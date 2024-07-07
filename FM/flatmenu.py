@@ -170,10 +170,6 @@ class FMRenderer(object):
         bmp.SetMask(wx.Mask(bmp, wx.Colour(0, 128, 128)))
         self._bitmaps.update({"arrow_up": bmp})
 
-        self._toolbarSeparatorBitmap = wx.NullBitmap
-        self.raiseToolbar = False
-
-
     def SetMenuHighlightColour(self,colour):
         """
         Set the colour to highlight focus on the menu.
@@ -267,29 +263,6 @@ class FMRenderer(object):
 
         return wx.Bitmap(img)
 
-    def DrawSeparator(self, dc, xCoord, yCoord, textX, sepWidth):
-        """
-        Draws a separator inside a :class:`FlatMenu`.
-
-        :param `dc`: an instance of :class:`wx.DC`;
-        :param integer `xCoord`: the current x position where to draw the separator;
-        :param integer `yCoord`: the current y position where to draw the separator;
-        :param integer `textX`: the menu item label x position;
-        :param integer `sepWidth`: the width of the separator, in pixels.
-        """
-
-        dcsaver = DCSaver(dc)
-        sepRect1 = wx.Rect(xCoord + textX, yCoord + 1, sepWidth//2, 1)
-        sepRect2 = wx.Rect(xCoord + textX + sepWidth//2, yCoord + 1, sepWidth//2-1, 1)
-
-        artMgr = ArtManager.Get()
-        backColour = artMgr.GetMenuFaceColour()
-        lightColour = wx.Colour("LIGHT GREY")
-
-        artMgr.PaintStraightGradientBox(dc, sepRect1, backColour, lightColour, False)
-        artMgr.PaintStraightGradientBox(dc, sepRect2, lightColour, backColour, False)
-
-
     def DrawMenuItem(self, item, dc, xCoord, yCoord, imageMarginX, markerMarginX, textX, rightMarginX, selected=False, backgroundImage=None):
         """
         Draws the menu item.
@@ -331,37 +304,13 @@ class FMRenderer(object):
             dc.SetBrush(backBrush)
             dc.DrawRectangle(rect)
 
-        # check if separator
-        if item.IsSeparator():
-            # Separator is a small grey line separating between menu items.
-            sepWidth = xCoord + menuWidth - textX - 1
-            self.DrawSeparator(dc, xCoord, yCoord, textX, sepWidth)
-            return
-
         # Keep the item rect
         item._rect = itemRect
-
-        # Get the bitmap base on the item state (disabled, selected ..)
-        bmp = item.GetSuitableBitmap(selected)
 
         # First we draw the selection rectangle
         if selected:
             self.DrawMenuButton(dc, rect.Deflate(1,0), ControlFocus)
             #copy.Inflate(0, menubar._spacer)
-
-        if bmp.IsOk():
-
-            # Calculate the position to place the image
-            imgHeight = bmp.GetHeight()
-            imgWidth  = bmp.GetWidth()
-
-            if imageMarginX == 0:
-                xx = rect.x + (leftMarginWidth - imgWidth)//2
-            else:
-                xx = rect.x + ((leftMarginWidth - rect.height) - imgWidth)//2 + rect.height
-
-            yy = rect.y + (rect.height - imgHeight)//2
-            dc.DrawBitmap(bmp, xx, yy, True)
 
         # Draw text - without accelerators
         text = item.GetLabel()
@@ -1496,45 +1445,15 @@ class FlatMenuItem(object):
 
 
     def IsSeparator(self):
-        """ Returns ``True`` if this item is of type ``wx.ITEM_SEPARATOR``, ``False`` otherwise. """
+        """ Returns ``False`` """
 
-        return self._id == wx.ID_SEPARATOR
+        return False
 
 
     def IsSubMenu(self):
         """ Returns whether an item is a sub-menu or not. """
 
         return self._subMenu is not None
-
-
-    def SetNormalBitmap(self, bmp):
-        """
-        Sets the menu item normal bitmap.
-
-        :param `bmp`: an instance of :class:`wx.Bitmap`.
-        """
-
-        self._normalBmp = bmp
-
-
-    def SetDisabledBitmap(self, bmp):
-        """
-        Sets the menu item disabled bitmap.
-
-        :param `bmp`: an instance of :class:`wx.Bitmap`.
-        """
-
-        self._disabledBmp = bmp
-
-
-    def SetHotBitmap(self, bmp):
-        """
-        Sets the menu item hot bitmap.
-
-        :param `bmp`: an instance of :class:`wx.Bitmap`.
-        """
-
-        self._hotBmp = bmp
 
 
     def SetHelp(self, helpString):
@@ -1610,30 +1529,7 @@ class FlatMenuItem(object):
     def GetHeight(self):
         """ Returns the menu item height, in pixels. """
 
-        if self.IsSeparator():
-            return self._parentMenu.GetRenderer().separatorHeight
-        else:
-            return self._parentMenu._itemHeight
-
-
-    def GetSuitableBitmap(self, selected):
-        """
-        Gets the bitmap that should be used based on the item state.
-
-        :param bool `selected`: ``True`` if this menu item is currently hovered by the mouse,
-         ``False`` otherwise.
-        """
-
-        normalBmp = self._normalBmp
-        gBmp = (self._disabledBmp.IsOk() and [self._disabledBmp] or [self._normalBmp])[0]
-        hotBmp = (self._hotBmp.IsOk() and [self._hotBmp] or [self._normalBmp])[0]
-
-        if not self.IsEnabled():
-            return gBmp
-        elif selected:
-            return hotBmp
-        else:
-            return normalBmp
+        return self._parentMenu._itemHeight
 
 
     def SetLabel(self, text):
@@ -1979,10 +1875,7 @@ class FlatMenu(FlatMenuBase):
             if indx >= switch:
                 break
 
-            if item.IsSeparator():
-                menuHeight += self.GetRenderer().separatorHeight
-            else:
-                menuHeight += self._itemHeight
+            menuHeight += self._itemHeight
 
         self.SetSize(wx.Size(self._menuWidth*self._numCols, menuHeight+4))
 
@@ -2113,24 +2006,6 @@ class FlatMenu(FlatMenuBase):
         """ Returns the height of a particular item, in pixels. """
 
         return self._itemHeight
-
-
-    def AppendSeparator(self):
-        """ Appends a separator item to the end of this menu. """
-
-        newItem = FlatMenuItem(self)
-        return self.AppendItem(newItem)
-
-
-    def InsertSeparator(self, pos):
-        """
-        Inserts a separator at the given position.
-
-        :param integer `pos`: the index at which we want to insert the separator.
-        """
-
-        newItem = FlatMenuItem(self)
-        return self.InsertItem(pos, newItem)
 
 
     def Dismiss(self, dismissParent, resetOwner):
@@ -2392,8 +2267,6 @@ class FlatMenu(FlatMenuBase):
         for i in range(len(self._itemsArr)):
 
             item = self._itemsArr[i]
-            if item.IsSeparator():
-                continue
             num += 1
             singleItemIdx = i
 
@@ -2924,7 +2797,7 @@ class FlatMenu(FlatMenuBase):
 
         item = self._itemsArr[itemIdx]
 
-        if not item.IsEnabled() or item.IsSeparator():
+        if not item.IsEnabled():
             return
 
         # Close sub-menu if needed

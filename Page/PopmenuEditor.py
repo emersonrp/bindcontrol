@@ -119,22 +119,24 @@ class PopmenuEditor(Page):
 
 class Popmenu(FM.FlatMenu):
     ContextMenu = None
+    SubContextMenu = None
     ProgressDialog = None
     Progress = 0
     def __init__(self, parent):
         super().__init__(parent)
 
-        # Let's make just one context menu for the whole class
-        Popmenu.ContextMenu = Popmenu.ContextMenu or Popmenu_ContextMenu(self)
-        self.Title = ''
-        self.LockedData = []
+        # Let's make just one of each context menu for the whole class
+        Popmenu.ContextMenu    = Popmenu.ContextMenu    or Popmenu_ContextMenu(self)
+        Popmenu.SubContextMenu = Popmenu.SubContextMenu or Popmenu_SubContextMenu(self)
+        self.Title             = ''
+        self.LockedData        = []
 
     # hook the right click behavior to tell ContextMenu who got right-clicked
     def ProcessMouseRClick(self, pos):
-        cm = Popmenu.ContextMenu
         (result, menuid) = self.HitTest(pos)
         if result == FM.MENU_HT_ITEM:
-            if cm: cm.ConfigureForMenuItem(self, menuid)
+            menuitem = self.GetMenuItems()[menuid]
+            if menuitem: menuitem.ConfigureContextMenu()
         super().ProcessMouseRClick(pos)
 
     def WriteToFile(self, filename):
@@ -289,26 +291,11 @@ class Popmenu_ContextMenu(FM.FlatMenu):
         InsertMenu.AppendItem(LockedOptMenuItem)
         InsertMenu.AppendItem(DividerMenuItem)
 
-        SubInsertMenu        = FM.FlatMenu(self)
-        SubMenuMenuItem      = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "Submenu")
-        SubTitleMenuItem     = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "Title")
-        SubOptionMenuItem    = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "Option")
-        SubLockedOptMenuItem = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "LockedOption")
-        SubDividerMenuItem   = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "Divider")
-        SubInsertMenu.AppendItem(SubMenuMenuItem)
-        SubInsertMenu.AppendItem(SubTitleMenuItem)
-        SubInsertMenu.AppendItem(SubOptionMenuItem)
-        SubInsertMenu.AppendItem(SubLockedOptMenuItem)
-        SubInsertMenu.AppendItem(SubDividerMenuItem)
-
         self.AppendItem(self.EditMenuItem)
         self.AppendItem(self.DeleteMenuItem)
         self.AppendItem(self.MoveUpMenuItem)
         self.AppendItem(self.MoveDnMenuItem)
         self.AppendSubMenu(InsertMenu, 'Insert')
-        self.SubInsertMenuItem = FM.FlatMenuItem(self, wx.ID_ANY, 'Insert into Submenu')
-        self.SubInsertMenuItem.SetSubMenu(SubInsertMenu)
-        self.AppendItem(self.SubInsertMenuItem)
 
         self.CurrentMenuItem = None
 
@@ -317,15 +304,6 @@ class Popmenu_ContextMenu(FM.FlatMenu):
         self.Bind(wx.EVT_MENU, self.OnContextMoveUp, self.MoveUpMenuItem)
         self.Bind(wx.EVT_MENU, self.OnContextMoveDown, self.MoveDnMenuItem)
         InsertMenu.Bind(wx.EVT_MENU, self.OnContextInsert)
-        SubInsertMenu.Bind(wx.EVT_MENU, self.OnContextSubInsert)
-
-    def ConfigureForMenuItem(self, menu, menuid):
-        self.CurrentMenuItem = menu.GetMenuItems()[menuid]
-        self.EditMenuItem.Enable(self.CurrentMenuItem.HasEditor())
-        self.MoveUpMenuItem.Enable(menuid != 0)
-        self.MoveDnMenuItem.Enable(menuid != len(self.Parent.GetMenuItems())-1)
-        # TODO - would prefer Show() to Enable() but Show doesn't work.
-        self.SubInsertMenuItem.Enable(self.CurrentMenuItem.IsSubMenu())
 
     def OnContextEdit(self, _):
         if cmi := self.CurrentMenuItem:
@@ -358,18 +336,40 @@ class Popmenu_ContextMenu(FM.FlatMenu):
                 index = self.Parent.FindMenuItemPosSimple(self.CurrentMenuItem)
                 self.Parent.InsertItem(index + 1, newitem)
 
-    def OnContextSubInsert(self, evt):
-        menuid = evt.GetId()
-        if item := self.FindItem(menuid):
-            if newitem := self.MakeNewItemForInsert(item):
-                self.CurrentMenuItem.GetSubMenu().AppendItem(newitem) # pyright: ignore
-
     def MakeNewItemForInsert(self, item):
         data = {}
         if item.GetLabel() == "Submenu": data = {'' : Popmenu(self.Parent)}
         menuitemclass = itemclasses.get(item.GetLabel(), None)
         newitem = menuitemclass(self.Parent, data)
         return newitem.ShowEditor()
+
+class Popmenu_SubContextMenu(Popmenu_ContextMenu):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        SubInsertMenu        = FM.FlatMenu(self)
+        SubMenuMenuItem      = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "Submenu")
+        SubTitleMenuItem     = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "Title")
+        SubOptionMenuItem    = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "Option")
+        SubLockedOptMenuItem = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "LockedOption")
+        SubDividerMenuItem   = FM.FlatMenuItem(SubInsertMenu, wx.ID_ANY, "Divider")
+        SubInsertMenu.AppendItem(SubMenuMenuItem)
+        SubInsertMenu.AppendItem(SubTitleMenuItem)
+        SubInsertMenu.AppendItem(SubOptionMenuItem)
+        SubInsertMenu.AppendItem(SubLockedOptMenuItem)
+        SubInsertMenu.AppendItem(SubDividerMenuItem)
+
+        self.SubInsertMenuItem = FM.FlatMenuItem(self, wx.ID_ANY, 'Insert into Submenu')
+        self.SubInsertMenuItem.SetSubMenu(SubInsertMenu)
+        self.AppendItem(self.SubInsertMenuItem)
+
+        SubInsertMenu.Bind(wx.EVT_MENU, self.OnContextSubInsert)
+
+    def OnContextSubInsert(self, evt):
+        menuid = evt.GetId()
+        if item := self.FindItem(menuid):
+            if newitem := self.MakeNewItemForInsert(item):
+                self.CurrentMenuItem.GetSubMenu().AppendItem(newitem) # pyright: ignore
 
 
 # Base Menu Item Class
@@ -384,6 +384,14 @@ class PEMenuItem(FM.FlatMenuItem):
         self.Data   = data
         self.Editor = None
         PEMenuItem.TitleFont = PEMenuItem.TitleFont or wx.Font(wx.FontInfo().Bold())
+
+    def ConfigureContextMenu(self):
+        if cm := self.GetContextMenu():
+            cm.CurrentMenuItem = self
+            cm.EditMenuItem.Enable(self.HasEditor())
+            menuid = self.Parent.FindMenuItemPosSimple(self)
+            cm.MoveUpMenuItem.Enable(menuid != 0)
+            cm.MoveDnMenuItem.Enable(menuid != len(self.Parent.GetMenuItems())-1)
 
     def ShowEditor(self):
         self.Editor = self.Editor or self.EditorDialog()
@@ -412,6 +420,7 @@ class PEMenu(PEMenuItem):
         [(menuname, submenu)] = data.items()
         super().__init__(parent, data, label = menuname)
         self.SetSubMenu(submenu)
+        self.SetContextMenu(parent.SubContextMenu)
 
     def EditorDialog(self):
         return wx.TextEntryDialog(self.Parent, message = "Menu Name:",

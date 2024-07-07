@@ -337,8 +337,9 @@ class Popmenu_ContextMenu(FM.FlatMenu):
                 self.Parent.InsertItem(index + 1, newitem)
 
     def MakeNewItemForInsert(self, item):
-        data = {}
-        if item.GetLabel() == "Submenu": data = {'' : Popmenu(self.Parent)}
+        if   item.GetLabel() == "Submenu": data = {'' : Popmenu(self.Parent)}
+        elif item.GetLabel() == "Option":  data = {'': ''}
+        else: data = {}
         menuitemclass = itemclasses.get(item.GetLabel(), None)
         newitem = menuitemclass(self.Parent, data)
         return newitem.ShowEditor()
@@ -394,6 +395,7 @@ class PEMenuItem(FM.FlatMenuItem):
             cm.MoveDnMenuItem.Enable(menuid != len(self.Parent.GetMenuItems())-1)
 
     def ShowEditor(self):
+        if not self.HasEditor(): return self
         self.Editor = self.Editor or self.EditorDialog()
         if self.Editor:
             if self.Editor.ShowModal() == wx.ID_OK:
@@ -458,9 +460,9 @@ class PEDivider(PEMenuItem):
         super().__init__(parent, data, kind = wx.ITEM_SEPARATOR)
 
 class PEOption(PEMenuItem):
-    def __init__(self, parent, data):
+    def __init__(self, parent, data = {'': ''}):
         [(optname, _)] = data.items()
-        super().__init__(parent, data, label = optname)
+        super().__init__(parent, data, label = optname or '')
 
     def EditorDialog(self):
         dialog = wx.Dialog(self.Parent, title = "Editing Option item",)
@@ -495,7 +497,8 @@ class PEOption(PEMenuItem):
 
 class PELockedOption(PEMenuItem):
     def __init__(self, parent, data):
-        super().__init__(parent, data, label = data['DisplayName'])
+        name = data.get('DisplayName', '')
+        super().__init__(parent, data, label = name)
 
     def EditorDialog(self):
         self.Ctrls = {}
@@ -521,15 +524,19 @@ class PELockedOption(PEMenuItem):
         paddingsizer.Add(sbsizer, 1, wx.TOP|wx.RIGHT|wx.LEFT, 16)
         paddingsizer.Add(buttons, 0, wx.EXPAND|wx.ALL, 16)
 
+        # TODO - on submit, check editor fields, don't submit if error.
+
         self.CheckEditorFields()
         dialog.Fit()
 
         return dialog
 
     def CheckEditorFields(self, _ = None):
+        hasError = False
         c = self.Ctrls
         if c['DisplayName'].GetValue() == '':
             c['DisplayName'].AddError('undef', 'DisplayName is mandatory')
+            hasError = True
         else:
             c['DisplayName'].RemoveError('undef')
 
@@ -543,8 +550,11 @@ class PELockedOption(PEMenuItem):
         for ctrl in AtLeastOne:
             if AllUnset:
                 c[ctrl].AddError('unset', 'At least one of Authbit, Badge, RewardToken, StoreProduct, PowerReady, or PowerOwned must be set')
+                hasError = True
             else:
                 c[ctrl].RemoveError('unset')
+
+        return hasError
 
     def OnEditorUpdate(self):
         data = {}

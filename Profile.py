@@ -42,7 +42,8 @@ def CheckProfileForBindsDir(bindsdir):
 def GetAllProfileBindsDirs():
     alldirs = []
     for bindsdir in Path(wx.ConfigBase.Get().Read('BindPath')).glob('*'):
-        alldirs.append(bindsdir.name)
+        if bindsdir.is_dir():
+            alldirs.append(bindsdir.name)
     return alldirs
 
 class Profile(wx.Notebook):

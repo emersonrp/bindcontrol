@@ -75,7 +75,7 @@ Running From Source
 
 ### Dependencies
 
-1. [Python](https://www.python.org) version 3.10 or later
+1. [Python](https://www.python.org) version 3.12 or later
 2. [wxPython](https://www.wxpython.org) version 4.2 or later
 
 *Windows users*:  follow the instructions on the above sites' download pages to install Python and wxPython.

@@ -13,6 +13,7 @@ class PopmenuEditor(Page):
         super().__init__(parent, bind_events = False)
 
         self.CurrentMenu = None
+        self.MenuList = {}  # dict for menu objects for left-side list
 
         Sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(Sizer)
@@ -35,9 +36,9 @@ class PopmenuEditor(Page):
         MenuListSizer.Add(LoadMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(DelMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(RenMenuButton, 0, wx.EXPAND|wx.ALL, 6)
-        self.MenuListView = wx.ListView(MenuList, style = wx.LC_SINGLE_SEL|wx.LC_LIST)
-        MenuListSizer.Add(self.MenuListView, 1, wx.EXPAND|wx.ALL, 6)
-        self.MenuListView.Bind(wx.EVT_LISTBOX, self.OnListSelect)
+        self.MenuListCtrl = wx.ListCtrl(MenuList, style = wx.LC_SINGLE_SEL|wx.LC_LIST)
+        MenuListSizer.Add(self.MenuListCtrl, 1, wx.EXPAND|wx.ALL, 6)
+        self.MenuListCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListSelect)
 
         LoadGameMenusButton.Bind(wx.EVT_BUTTON, self.OnLoadGameMenusButton)
         LoadMenuButton.Bind(wx.EVT_BUTTON, self.OnLoadButton)
@@ -90,18 +91,17 @@ class PopmenuEditor(Page):
         ...
 
     def OnLoadGameMenusButton(self, _):
-        # TODO - iterate the directory, find all files, parse them for menuname
         # TODO "parse them for menu name" could be DRYed up with BuildFromLines?
-        # TODO insert the menu name in the list, in like italics to show it's not loaded
-        # TODO bind list selection to loading down in OnListSelect
         gamepath = Path(wx.ConfigBase.Get().Read('GamePath'))
-        # TODO - 'English' below needs to be selectable in the UI somehow
-        menupath = gamepath / 'data' / 'Texts' / 'English' / 'Menus'
+        gamelang = wx.ConfigBase.Get().Read('GameLang')
+        # TODO - for case-sensitivity things, instead iterate these and glob(x, case_sensitive = False)
+        menupath = gamepath / 'data' / 'Texts' / gamelang / 'Menus'
         if not gamepath.is_dir():
             wx.MessageBox("Your Game Directory is not set up correctly.  Please visit the Preferences dialog.")
             return
-        elif not menupath.is_dir() or not menupath.glob('*.mnu', case_sensitive = False):
-            wx.MessageBox("There are no menus installed to the Game Directory.  Try opening a menu file directly and writing it to the Game Directory.")
+
+        if not menupath.is_dir() or not list(menupath.glob('*.mnu', case_sensitive = False)):
+            wx.MessageBox(f"There are no menus installed to the Game Directory.  Try opening a menu file directly and writing it to the Game Directory, or copying menus to {menupath} manually.")
             return
 
         unloadedFont = wx.Font(wx.FontInfo().Italic())
@@ -110,13 +110,13 @@ class PopmenuEditor(Page):
                 menuname = ''
                 while not menuname:
                     line = f.readline().strip()
-                    if match := re.search(r'Menu\s+(.*)', line):
+                    if match := re.match(r'Menu\s+(.*)', line):
                         menuname = match.group(1).strip('"')
 
-                idx = self.MenuListView.Append([menuname])
-                item = self.MenuListView.GetItem(idx)
-                item.SetFont(unloadedFont)
-                item.SetData({'filename': str(menufile)})
+                item = self.MenuListCtrl.Append([menuname])
+                self.MenuListCtrl.SetItemFont(item, unloadedFont)
+                self.MenuListCtrl.SetItemData(item, menuID := wx.NewId())
+                self.MenuList[menuID] = {'filename': str(menufile)}
 
                 f.close()
 
@@ -131,24 +131,30 @@ class PopmenuEditor(Page):
             newmenu.ReadFromFile(fileDialog.GetPath())
 
             if newmenu:
-                idx = self.MenuListView.Append([newmenu.Title])
-                item = self.MenuListView.GetItem(idx)
-                item.SetData({'filename': fileDialog.GetPath(), 'menu': newmenu})
-                self.MenuListView.Select(item)
+                item = self.MenuListCtrl.Append([newmenu.Title])
+                self.MenuList[menuID := wx.NewId()] = {'filename': fileDialog.GetPath(), 'menu': newmenu}
+                self.MenuListCtrl.SetItemData(item, menuID)
+                self.MenuListCtrl.Select(item)
                 self.ToggleTopButtons(True)
                 self.CurrentMenu = newmenu
 
     def OnListSelect(self, evt):
-        idx = evt.GetSelection()
-        item = self.MenuListView.GetItem(idx)
-        info = self.MenuListView.GetItemData(item)
+        item = evt.GetIndex()
+        info = self.MenuList.get(self.MenuListCtrl.GetItemData(item), {})
         if menu := info.get('menu', None):
             self.CurrentMenu = menu
-            self.ToggleTopButtons(idx != wx.NOT_FOUND)
+            self.ToggleTopButtons(item != None)
         elif filename := info.get('filename', None):
-            # TODO - load file into menu
-            # TODO do whatever UI thing is right to indicate this one is loaded
-            ...
+            newmenu = Popmenu(self)
+            newmenu.ReadFromFile(filename)
+            if newmenu:
+                self.MenuList[self.MenuListCtrl.GetItemData(item)] = {'filename': filename, 'menu': newmenu}
+                self.MenuListCtrl.SetItemFont(item, wx.Font(wx.FontInfo().Italic(False)))
+                self.ToggleTopButtons(True)
+                self.CurrentMenu = newmenu
+        else:
+            wx.LogError("Something was in the menu list that had no filename or menu attached.  This is a bug.")
+        if evt: evt.Skip()
 
     def ToggleTopButtons(self, show):
         self.TestMenuButton.Enable(show)

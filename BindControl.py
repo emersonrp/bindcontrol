@@ -67,6 +67,7 @@ class Main(wx.Frame):
             else:
                 gamepath = str(Path.home() / '.wine' / 'drive_c' / 'Games' / 'HC')
             config.Write('GamePath', gamepath)
+        if not config.Exists('GameLang'): config.Write('GameLang', 'English')
         if not config.Exists('BindPath'):
             if platform.system() == 'Windows':
                 bindpath = "C:\\coh\\"
@@ -522,6 +523,7 @@ class Main(wx.Frame):
         if self.PrefsDialog.ShowModal() == wx.ID_OK:
             config = wx.ConfigBase.Get()
             config.Write('GamePath', self.PrefsDialog.gameDirPicker.GetPath())
+            config.Write('GameLang', self.PrefsDialog.gameLangPicker.GetStringSelection())
             config.Write('BindPath', self.PrefsDialog.bindsDirPicker.GetPath())
             if self.PrefsDialog.gameBindsDirPicker:
                 config.Write('GameBindPath', self.PrefsDialog.gameBindsDirPicker.GetValue())

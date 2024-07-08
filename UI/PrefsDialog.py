@@ -36,6 +36,12 @@ class PrefsDialog(wx.Dialog):
         self.gameDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.onDirPickerChange)
         generalSizer.Add( self.gameDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
+        generalSizer.Add( wx.StaticText(generalPanel, label = 'Game Language:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        self.gameLangPicker = wx.Choice(generalPanel, choices = ['ChineseTraditional','English','French','German','Japanese','Korean','uk'])
+        self.gameLangPicker.SetSelection(self.gameLangPicker.FindString(config.Read('GameLang')))
+        self.gameLangPicker.SetToolTip('The language of your installed game.  This is necessary to locate popmenus correctly.')
+        generalSizer.Add( self.gameLangPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+
         generalSizer.Add( wx.StaticText(generalPanel, label = 'Base Binds Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.bindsDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('BindPath'), size = (300, -1))
         self.bindsDirPicker.SetToolTip('Bind files will be written to this folder, inside a profile-specific subfolder.  Keeping this path as short as possible is strongly recommended.')

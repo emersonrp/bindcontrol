@@ -36,7 +36,8 @@ class PopmenuEditor(Page):
         MenuListSizer.Add(LoadMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(DelMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(RenMenuButton, 0, wx.EXPAND|wx.ALL, 6)
-        self.MenuListCtrl = wx.ListCtrl(MenuList, style = wx.LC_SINGLE_SEL|wx.LC_LIST)
+        self.MenuListCtrl = wx.ListCtrl(MenuList, style = wx.LC_SINGLE_SEL|wx.LC_REPORT)
+        self.MenuListCtrl.AppendColumn('Menu', width = LeftPanelWidth - 12)
         MenuListSizer.Add(self.MenuListCtrl, 1, wx.EXPAND|wx.ALL, 6)
         self.MenuListCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListSelect)
 
@@ -192,7 +193,15 @@ class Popmenu(FM.FlatMenu):
             wx.LogError(f"Tried to edit a missing or non-file popmenu: {filename}")
             return {}
 
-        contents = PopmenuFile.read_text()
+        try:
+            contents = PopmenuFile.read_text()
+        except Exception:
+            try:
+                contents = PopmenuFile.read_text(encoding = 'cp1252')
+            except Exception:
+                wx.LogError(f'Invalid characters found in file {filename} - canceling')
+                return
+
 
         self.BuildFromLines(contents.splitlines(), 'main')
 
@@ -249,8 +258,8 @@ class Popmenu(FM.FlatMenu):
                     for lockedline in self.LockedData:
                         linematch = re.match(r'(\w+)(\s+(.*))?', lockedline)
                         if not linematch:
-                            wx.LogError(f'Malformed line in LockedOption section: "{line}", canceling')
-                            return {}
+                            wx.LogWarning(f'Malformed line in LockedOption section: "{line}", skipping')
+                            continue
 
                         OptName, OptPayload = linematch.group(1,3)
                         OptName = OptName.strip('"')
@@ -259,14 +268,14 @@ class Popmenu(FM.FlatMenu):
                         OptName = self.NormalizeOptName(OptName)
 
                         if not OptName in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady', 'PowerOwned',):
-                            wx.LogError(f'Unknown keyword "{OptName}" with payload "{OptPayload}" in LockedOption section {LockedOptions["DisplayName"]}, canceling')
-                            return {}
+                            wx.LogWarning(f'Unknown keyword "{OptName}" with payload "{OptPayload}" in LockedOption section {LockedOptions["DisplayName"]}, skipping it')
+                            continue
 
                         LockedOptions[OptName] = OptPayload
 
                     optname = LockedOptions['DisplayName']
                     if not optname:
-                        wx.LogError("There was a LockedOption with no DisplayName, that's bad, canceling")
+                        wx.LogWarning("There was a LockedOption with no DisplayName, skipping LockedOption section")
                         return
 
                     self.AppendItem(PELockedOption(self, LockedOptions))

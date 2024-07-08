@@ -34,6 +34,11 @@ def CheckProfileForBindsDir(bindsdir):
         if IDFile.exists():
             return IDFile.read_text().strip()
 
+# Non-instance method to get a Path object given a profile name
+def GetProfileFileForName(name):
+    file = Path(wx.ConfigBase.Get().Read('ProfilePath')) / f"{name}.bcp"
+    return file if file.is_file() else None
+
 # Non-instance method to get all profile binds dirs as a list of strings.
 #
 # Might want to case-mangle these in calling code if checking against them, but

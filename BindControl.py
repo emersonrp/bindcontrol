@@ -258,7 +258,7 @@ class Main(wx.Frame):
         self.DeleteButton.Enable(enable)
 
     def OnProfileNew(self, _ = None):
-        self.CheckIfProfileNeedsSaving()
+        if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
         # loop eternally until we get a name we like
         while True:
             with wx.TextEntryDialog(self, message = 'Enter name for new profile, for instance, the name of a character:', caption = "New Profile") as dlg:
@@ -299,17 +299,21 @@ class Main(wx.Frame):
             self.Thaw()
 
     def OnProfileLoad(self, evt):
-        self.CheckIfProfileNeedsSaving()
+        if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
 
+        # Start with a "detached" profile that we'll load into and then insert
+        newProfile = Profile.Profile(self)
+
+        # Try to load;  if the user hits "cancel" or the load fails, go back to where we were
+        if not newProfile.LoadFromFile(evt):
+            newProfile.Destroy()
+            return
+
+        self.InsertProfile(newProfile)
+
+    # we use this in the Binds Directory Window also
+    def InsertProfile(self, newProfile):
         try:
-            # Start with a "detached" profile that we'll load into and then insert
-            newProfile = Profile.Profile(self)
-
-            # Try to load;  if the user hits "cancel" or the load fails, go back to where we were
-            if not newProfile.LoadFromFile(evt):
-                newProfile.Destroy()
-                return
-
             self.Freeze()
 
             # OK, we're either at the startup panel or we have an existing profile.  Either way, remove it:
@@ -416,12 +420,12 @@ class Main(wx.Frame):
         self.CheckProfDirButtonErrors()
 
     def CheckIfProfileNeedsSaving(self):
+        result = wx.OK
         if self.Profile and self.Profile.Modified:
             result = wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
             if result == wx.YES:
                 self.Profile.doSaveToFile()
-            elif result == wx.CANCEL:
-                return
+        return result
 
     def CheckProfDirButtonErrors(self):
         if not self.Profile: return
@@ -562,23 +566,13 @@ class Main(wx.Frame):
     def OnHelpFiles(self, _):
         ShowHelpWindow(self, 'OutputFiles.html')
 
+    # TODO - make just one window instead of a new one every time the menu item is picked
     def OnHelpBindDirs(self, _):
         window = BindDirsWindow(self, title = "Bind Directories", style = wx.TINY_CAPTION|wx.CLOSE_BOX|wx.CAPTION)
         window.Show()
-        window.Bind(wx.EVT_SHOW, self.OnBindDirsWindowShow)
-
-    # blow up the window when we hide it since we make a new one each time to keep the info fresh
-    def OnBindDirsWindowShow(self, evt):
-        if (window := evt.EventObject) and not evt.IsShown():
-            window.Destroy()
 
     def OnWindowClosing(self, evt):
-        if self.Profile and self.Profile.Modified:
-            result = wx.MessageBox("Profile not saved, save now?", "Profile modified",wx.YES_NO|wx.CANCEL)
-            if result == wx.YES:
-                self.Profile.doSaveToFile()
-            elif result == wx.CANCEL:
-                return
+        if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
 
         config = wx.ConfigBase.Get()
         if config.ReadBool('SaveSizeAndPosition'):

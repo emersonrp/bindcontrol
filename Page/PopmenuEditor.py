@@ -4,6 +4,7 @@ from UI.ControlGroup import cgTextCtrl
 from typing import Callable
 
 from pathlib import Path
+from datetime import datetime
 import re
 
 import FM.flatmenu as FM
@@ -86,7 +87,44 @@ class PopmenuEditor(Page):
         evt.Skip()
 
     def OnWriteMenuButton(self, _):
-        ...
+        gamepath = Path(wx.ConfigBase.Get().Read('GamePath'))
+        if not gamepath.is_dir():
+            wx.MessageBox("Your Game Directory is not set up correctly.  Please visit the Preferences dialog.")
+            return
+
+        # TODO - for case-sensitivity things, instead iterate these and glob(x, case_sensitive = False)
+        gamelang = wx.ConfigBase.Get().Read('GameLang')
+        menupath = gamepath / 'data' / 'Texts' / gamelang / 'Menus'
+        if not menupath.is_dir():
+            if wx.MessageBox(f'Menu directory {menupath} does not exist.  Create?', 'No Menu Dir', wx.YES_NO) == wx.NO:
+                return
+            menupath.mkdir(parents = True)
+
+        cm = self.CurrentMenu
+        if cm:
+            filepath = menupath / f"{cm.Title}.mnu"
+            if filepath.is_file():
+                mlc = self.MenuListCtrl
+                # isn't there some easier way to get the item from mlc?
+                info = self.MenuList.get(mlc.GetItemData(mlc.FindItem(-1, cm.Title)), {})
+                if not info:
+                    wx.LogError(f"Can't get info for current menu {cm.Title}")
+                    return
+                if info['filename'] != str(filepath):
+                    if wx.MessageBox(f'The file "{filepath}" already exists and was not the source of this menu.  Overwrite?', 'Menu Exists', wx.YES_NO) == wx.NO:
+                        return
+
+            # OK, we have sanity-checked (TODO: there might be more of this to come) - let's write the file.
+            result = None
+            try:
+                firstline = f'// "{cm.Title}" - Written by BindControl {datetime.now()}'
+                result = cm.WriteToFile(filepath, [firstline])
+            except Exception as e:
+                wx.LogError(f"Something broke inside WriteToFile: {e}")
+            print(f"WriteToFile returned {result}")
+
+        else: # cm is falsey
+            wx.LogError("No current menu to save, canceling.  This is a bug.")
 
     # TODO - we should really make an icon picker, yes, with every icon in the game.
     # This should use the in-game texture name as the icon name, which will involve
@@ -107,13 +145,13 @@ class PopmenuEditor(Page):
     def OnLoadGameMenusButton(self, _):
         # TODO "parse them for menu name" could be DRYed up with BuildFromLines?
         gamepath = Path(wx.ConfigBase.Get().Read('GamePath'))
-        gamelang = wx.ConfigBase.Get().Read('GameLang')
-        # TODO - for case-sensitivity things, instead iterate these and glob(x, case_sensitive = False)
-        menupath = gamepath / 'data' / 'Texts' / gamelang / 'Menus'
         if not gamepath.is_dir():
             wx.MessageBox("Your Game Directory is not set up correctly.  Please visit the Preferences dialog.")
             return
 
+        # TODO - for case-sensitivity things, instead iterate these and glob(x, case_sensitive = False)
+        gamelang = wx.ConfigBase.Get().Read('GameLang')
+        menupath = gamepath / 'data' / 'Texts' / gamelang / 'Menus'
         if not menupath.is_dir() or not list(menupath.glob('*.mnu', case_sensitive = False)):
             wx.MessageBox(f"There are no menus installed to the Game Directory.  Try opening a menu file directly and writing it to the Game Directory, or copying menus to {menupath} manually.")
             return
@@ -146,7 +184,8 @@ class PopmenuEditor(Page):
 
             if newmenu:
                 item = self.MenuListCtrl.Append([newmenu.Title])
-                self.MenuList[menuID := wx.NewId()] = {'filename': fileDialog.GetPath(), 'menu': newmenu}
+                # just put the menu in -- 'filename' I think wants to be the name in the menudir.  I think.
+                self.MenuList[menuID := wx.NewId()] = {'menu': newmenu}
                 self.MenuListCtrl.SetItemData(item, menuID)
                 self.MenuListCtrl.Select(item)
                 self.ToggleTopButtons(True)
@@ -200,8 +239,48 @@ class Popmenu(FM.FlatMenu):
             if menuitem: menuitem.ConfigureContextMenu()
         super().ProcessMouseRClick(pos)
 
-    def WriteToFile(self, filename):
-        ...
+    # recursive method to write the file to <filepath> -- no sanity-checking is done inside here.
+    def WriteToFile(self, filepath, outputlines = [], indentlevel = 0):
+        # if we're just starting out, insert the initial two lines
+        indent = "    " * indentlevel
+        outputlines.append(f'{indent}Menu "{self.Title}"')
+        outputlines.append(f'{indent}{{')
+        indentlevel += 1
+        indent = "    " * indentlevel
+        # TODO - walk down the menu.  Write out option strings, title strings, divider strings.
+        for menuitem in self.GetMenuItems():
+            if isinstance(menuitem, PEDivider):
+                outputlines.append(f"{indent}Divider")
+            elif isinstance(menuitem, PETitle):
+                outputlines.append(f'{indent}Title "{menuitem.Data}"')
+            elif isinstance(menuitem, PEOption):
+                [(optname, optpayload)] = menuitem.Data.items()
+                if re.search('"', optpayload):
+                    optpayload = f"<&{optpayload}&>"
+                else:
+                    optpayload = f'"{optpayload}"'
+                outputlines.append(f'{indent}Option "{optname}" {optpayload}')
+            # TODO - if it's a submenu, increment a global indent, call ourselves recursively
+            elif isinstance(menuitem, PEMenu):
+                [(subname, submenu)] = menuitem.Data.items()
+                if submenu:
+                    submenu.WriteToFile(filepath, outputlines, indentlevel)
+                else:
+                    raise Exception(f"Submenu entry {subname} had no menu attached.  This is a bug.")
+            # TODO - if it's a LockedOption, pull out the data blob and write { + several lines + }
+            elif isinstance(menuitem, PELockedOption):
+                outputlines.append(f"{indent}LockedOption")
+                outputlines.append(f"{indent}{{")
+                for (LOName, LOStuff) in menuitem.Data.items():
+                    outputlines.append(f"{indent}    {LOName} {LOStuff}")
+                outputlines.append(f"{indent}}}")
+            else:
+                raise Exception(f"There was a mystery item inside menu {self.Title}, canceling write.  This is a bug.")
+        indentlevel -= 1
+        indent = "    " * indentlevel
+        outputlines.append(f"{indent}}}")
+
+        wx.MessageBox("Writing to file is not yet completely implemented.  Soon.", "Not Implemented")
 
     def ReadFromFile(self, filename:str|Path):
         PopmenuFile = Path(filename)
@@ -327,7 +406,7 @@ class Popmenu(FM.FlatMenu):
                         wx.LogError(f'Invalid "Option" clause in popmenu: "{OptionData}", canceling')
                         return {}
                     # "mission_helper.mnu" has Options with a name but no payload.  Ugly but we support now.
-                    OptPayload = OptPayload or ''
+                    OptPayload = OptPayload or 'nop'
                     if re.match(r'"', OptPayload):
                         OptPayload = OptPayload.strip('"')
                     elif plmatch := re.match(r'<&(.*)&>', OptPayload):

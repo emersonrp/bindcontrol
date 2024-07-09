@@ -19,6 +19,11 @@ class PopmenuEditor(Page):
         Sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(Sizer)
 
+
+        self.LoadedMenuFont = wx.Font(wx.FontInfo().Italic(False).Bold(False))
+        self.UnloadedMenuFont = wx.Font(wx.FontInfo().Italic())
+        self.ModifiedMenuFont = wx.Font(wx.FontInfo().Bold())
+
         LeftPanelWidth = 250 # TODO do this less stupid
 
         splitter = wx.SplitterWindow(self, style = wx.VERTICAL)
@@ -29,21 +34,22 @@ class PopmenuEditor(Page):
         MenuList.SetSizer(MenuListSizer)
         NewMenuButton = wx.Button(MenuList, label = "New Menu")
         LoadGameMenusButton = wx.Button(MenuList, label = "Load Menus from Data Dir")
-        LoadMenuButton = wx.Button(MenuList, label = "Load Menu File")
-        DelMenuButton = wx.Button(MenuList, label = "Delete Menu")
-        RenMenuButton = wx.Button(MenuList, label = "Rename Menu")
+        LoadMenuButton = wx.Button(MenuList, label = "Load Individual Menu File")
+        # TODO this button will want some extra Enable() logic
+        DeleteMenuButton = wx.Button(MenuList, label = "Delete Menu from Data Dir")
         MenuListSizer.Add(NewMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(LoadGameMenusButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(LoadMenuButton, 0, wx.EXPAND|wx.ALL, 6)
-        MenuListSizer.Add(DelMenuButton, 0, wx.EXPAND|wx.ALL, 6)
-        MenuListSizer.Add(RenMenuButton, 0, wx.EXPAND|wx.ALL, 6)
+        MenuListSizer.Add(DeleteMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         self.MenuListCtrl = wx.ListCtrl(MenuList, style = wx.LC_SINGLE_SEL|wx.LC_REPORT)
         self.MenuListCtrl.AppendColumn('Menu', width = LeftPanelWidth - 12)
         MenuListSizer.Add(self.MenuListCtrl, 1, wx.EXPAND|wx.ALL, 6)
         self.MenuListCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListSelect)
 
+        NewMenuButton.Bind(wx.EVT_BUTTON, self.OnNewMenuButton)
         LoadGameMenusButton.Bind(wx.EVT_BUTTON, self.OnLoadGameMenusButton)
-        LoadMenuButton.Bind(wx.EVT_BUTTON, self.OnLoadButton)
+        LoadMenuButton.Bind(wx.EVT_BUTTON, self.OnLoadMenuButton)
+        DeleteMenuButton.Bind(wx.EVT_BUTTON, self.OnDeleteMenuButton)
 
         self.MenuEditor = wx.Panel(splitter)
         MESizer = wx.BoxSizer(wx.VERTICAL)
@@ -118,7 +124,7 @@ class PopmenuEditor(Page):
             result = None
             try:
                 # reapply the credits to the file, then push through the menu
-                initiallines = cm.CreditComments
+                initiallines = list(cm.CreditComments)
                 initiallines.append('')
                 initiallines.append(f'// Saved from BindControl {datetime.now()}')
                 result = cm.WriteToFile(filepath, initiallines)
@@ -145,6 +151,9 @@ class PopmenuEditor(Page):
 
                 dlg.ShowModal()
 
+    def OnNewMenuButton(self, _):
+        ...
+
     def OnLoadGameMenusButton(self, _):
         # TODO "parse them for menu name" could be DRYed up with BuildFromLines?
         gamepath = Path(wx.ConfigBase.Get().Read('GamePath'))
@@ -159,7 +168,6 @@ class PopmenuEditor(Page):
             wx.MessageBox(f"There are no menus installed to the Game Directory.  Try opening a menu file directly and writing it to the Game Directory, or copying menus to {menupath} manually.")
             return
 
-        unloadedFont = wx.Font(wx.FontInfo().Italic())
         for menufile in sorted(menupath.glob('*.mnu', case_sensitive = False)):
             with menufile.open() as f:
                 menuname = ''
@@ -169,13 +177,13 @@ class PopmenuEditor(Page):
                         menuname = match.group(1).strip('"')
 
                 item = self.MenuListCtrl.Append([menuname])
-                self.MenuListCtrl.SetItemFont(item, unloadedFont)
+                self.MenuListCtrl.SetItemFont(item, self.UnloadedMenuFont)
                 self.MenuListCtrl.SetItemData(item, menuID := wx.NewId())
                 self.MenuList[menuID] = {'filename': str(menufile)}
 
                 f.close()
 
-    def OnLoadButton(self, _):
+    def OnLoadMenuButton(self, _):
         with wx.FileDialog(self, "Load Popmenu file", wildcard="MNU files (*.mnu)|*.mnu",
                            defaultDir = f'{wx.GetHomeDir()}/Downloads/menus',   # TODO TODO TODO remove this line
                        style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
@@ -194,6 +202,9 @@ class PopmenuEditor(Page):
                 self.ToggleTopButtons(True)
                 self.CurrentMenu = newmenu
 
+    def OnDeleteMenuButton(self, evt):
+        ...
+
     def OnListSelect(self, evt):
         item = evt.GetIndex()
         info = self.MenuList.get(self.MenuListCtrl.GetItemData(item), {})
@@ -204,7 +215,7 @@ class PopmenuEditor(Page):
             newmenu.ReadFromFile(filename)
             if newmenu:
                 self.MenuList[self.MenuListCtrl.GetItemData(item)] = {'filename': filename, 'menu': newmenu}
-                self.MenuListCtrl.SetItemFont(item, wx.Font(wx.FontInfo().Italic(False)))
+                self.MenuListCtrl.SetItemFont(item, self.LoadedMenuFont)
                 self.CurrentMenu = newmenu
         else:
             wx.LogError("Something was in the menu list that had no filename or menu attached.  This is a bug.")
@@ -234,6 +245,19 @@ class Popmenu(FM.FlatMenu):
         self.Title             = ''
         self.LockedData        = []
         self.CreditComments    = []  # top-level popmenus we keep the opening comments for credit's sake
+        self.Modified          = False
+
+    def SetModified(self, modified = True):
+        # pass this up from submenus.  There's probably a more correct way to do this
+        if isinstance(self.Parent, Popmenu):
+            self.Parent.SetModified(modified)
+        else:
+            self.Modified = modified
+            # TODO - we are the topmost menu, dig through the list on the left and update our display
+            mlc = self.Parent.MenuListCtrl
+            item = mlc.FindItem(-1, self.Title)
+            font = (self.Parent.ModifiedMenuFont if modified else self.Parent.LoadedMenuFont)
+            mlc.SetItemFont(item, font)
 
     # hook the right click behavior to tell ContextMenu who got right-clicked
     def ProcessMouseRClick(self, pos):
@@ -284,6 +308,9 @@ class Popmenu(FM.FlatMenu):
         indent = "    " * indentlevel
         outputlines.append(f"{indent}}}")
 
+        if indentlevel > 0: return
+
+        self.SetModified(False)
         wx.MessageBox("Writing to file is not yet completely implemented.  Soon.", "Not Implemented")
 
     def ReadFromFile(self, filename:str|Path):
@@ -471,7 +498,8 @@ class Popmenu_ContextMenu(FM.FlatMenu):
 
     def OnContextEdit(self, _):
         if cmi := self.CurrentMenuItem:
-            cmi.ShowEditor()
+            if cmi.ShowEditor():
+                self.Parent.SetModified()
 
     def OnContextDelete(self, _):
         if cmi := self.CurrentMenuItem:
@@ -479,6 +507,7 @@ class Popmenu_ContextMenu(FM.FlatMenu):
             if result == wx.NO: return
 
             self.Parent.DestroyItem(cmi)
+            self.Parent.SetModified()
             self.CurrentMenuItem = None
 
     def OnContextMoveUp(self, _):
@@ -486,12 +515,14 @@ class Popmenu_ContextMenu(FM.FlatMenu):
             currentPosition = self.Parent.FindMenuItemPosSimple(cmi)
             self.Parent.Remove(cmi)
             self.Parent.InsertItem(currentPosition - 1, cmi)
+            self.Parent.SetModified()
 
     def OnContextMoveDown(self, _):
         if cmi := self.CurrentMenuItem:
             currentPosition = self.Parent.FindMenuItemPosSimple(cmi)
             self.Parent.Remove(cmi)
             self.Parent.InsertItem(currentPosition + 1, cmi)
+            self.Parent.SetModified()
 
     def OnContextInsert(self, evt):
         menuid = evt.GetId()
@@ -499,6 +530,7 @@ class Popmenu_ContextMenu(FM.FlatMenu):
             if newitem := self.MakeNewItemForInsert(item):
                 index = self.Parent.FindMenuItemPosSimple(self.CurrentMenuItem)
                 self.Parent.InsertItem(index + 1, newitem)
+                self.Parent.SetModified()
 
     def MakeNewItemForInsert(self, item):
         if   item.GetLabel() == "Submenu": data = {'' : Popmenu(self.Parent)}

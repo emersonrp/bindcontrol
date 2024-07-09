@@ -117,8 +117,11 @@ class PopmenuEditor(Page):
             # OK, we have sanity-checked (TODO: there might be more of this to come) - let's write the file.
             result = None
             try:
-                firstline = f'// "{cm.Title}" - Written by BindControl {datetime.now()}'
-                result = cm.WriteToFile(filepath, [firstline])
+                # reapply the credits to the file, then push through the menu
+                initiallines = cm.CreditComments
+                initiallines.append('')
+                initiallines.append(f'// Saved from BindControl {datetime.now()}')
+                result = cm.WriteToFile(filepath, initiallines)
             except Exception as e:
                 wx.LogError(f"Something broke inside WriteToFile: {e}")
             print(f"WriteToFile returned {result}")
@@ -230,6 +233,7 @@ class Popmenu(FM.FlatMenu):
         Popmenu.SubContextMenu = Popmenu.SubContextMenu or Popmenu_SubContextMenu(self)
         self.Title             = ''
         self.LockedData        = []
+        self.CreditComments    = []  # top-level popmenus we keep the opening comments for credit's sake
 
     # hook the right click behavior to tell ContextMenu who got right-clicked
     def ProcessMouseRClick(self, pos):
@@ -313,24 +317,36 @@ class Popmenu(FM.FlatMenu):
         if is_main_request:  # this is the top level request, peel off the outside layers
             # first let's clean our data
             newlines = []
+            foundFirstMenu = False
             while lines:
                 line = lines.pop(0).strip()
-                # first, match for any non-URL '//' in there
+
+                # collect the initial // comments into the credits before snipping them
+                if not foundFirstMenu:
+                    if re.match(r'//', line):
+                        self.CreditComments.append(line)
+                    if re.match(r'Menu\s+(.*)', line):
+                        foundFirstMenu = True
+
+                # next, match for any non-URL '//' in there
                 if re.search(r'(?<!\:)//', line):
-                    line = re.sub(r'\s*//.*', '', line) # remove comments
+                    # and remove comments
+                    line = re.sub(r'\s*//.*', '', line)
+
                 # Then, look for } at the end of a content-filled line
                 if line != '}' and re.search('}$', line):
-                    # and if so, snip it off and insert a '}' line instead
+                    # and if it's there, snip it off and insert a '}' line instead
                     line = re.sub(r'\s*}$', '', line)
                     lines.insert(0, '}')
                 line = line.strip() # once more with feeling
 
                 if line: newlines.append(line)
+
             lines = newlines
 
+            # now start over.  Look for the initial "Menu" which should be near or at the top now.
             while lines:
                 line = lines.pop(0)
-
                 if match := re.match(r'Menu\s+(.*)', line):
                     self.Title = match.group(1).strip('"')
                     break

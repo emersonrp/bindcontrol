@@ -51,12 +51,12 @@ class PopmenuEditor(Page):
         ButtonPanel = wx.Panel(self.MenuEditor)
         ButtonSizer = wx.BoxSizer(wx.HORIZONTAL)
         ButtonPanel.SetSizer(ButtonSizer)
-        self.TestMenuButton = wx.Button(ButtonPanel, label = "Test Current Popmenu")
+        self.TestMenuButton = wx.Button(ButtonPanel, label = "Test Current Menu")
         self.TestMenuButton.Bind(wx.EVT_BUTTON, self.OnTestMenuButton)
         self.TestMenuButton.Enable(False)
         ButtonSizer.Add(self.TestMenuButton, 1, wx.EXPAND|wx.ALL, 6)
 
-        self.WriteMenuButton = wx.Button(ButtonPanel, label = "Write Popmenu to Data Dir")
+        self.WriteMenuButton = wx.Button(ButtonPanel, label = "Write Menu to Data Dir")
         self.WriteMenuButton.Bind(wx.EVT_BUTTON, self.OnWriteMenuButton)
         self.WriteMenuButton.Enable(False)
         ButtonSizer.Add(self.WriteMenuButton, 1, wx.EXPAND|wx.ALL, 6)
@@ -88,8 +88,21 @@ class PopmenuEditor(Page):
     def OnWriteMenuButton(self, _):
         ...
 
+    # TODO - we should really make an icon picker, yes, with every icon in the game.
+    # This should use the in-game texture name as the icon name, which will involve
+    # moving hundreds of wee files.  Eventually.  Until then, just a basic macro builder
     def OnMacroButton(self, _):
-        ...
+        cm = self.CurrentMenu
+        if cm:
+            with wx.Dialog(self, title = f"Macro for {cm.Title}",) as dlg:
+                sizer = wx.BoxSizer(wx.VERTICAL)
+                sizer.Add(wx.StaticText(dlg, label = "Paste the following into the game to create your macro button:"), 1, wx.EXPAND|wx.ALL, 10)
+                sizer.Add(wx.TextCtrl(dlg, value = f"/macro {cm.Title} popmenu {cm.Title}", style = wx.TE_READONLY), 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+                sizer.Add(dlg.CreateButtonSizer(wx.OK), 1, wx.EXPAND|wx.ALL, 10)
+                dlg.SetSizerAndFit(sizer)
+                dlg.Layout()
+
+                dlg.ShowModal()
 
     def OnLoadGameMenusButton(self, _):
         # TODO "parse them for menu name" could be DRYed up with BuildFromLines?
@@ -144,17 +157,20 @@ class PopmenuEditor(Page):
         info = self.MenuList.get(self.MenuListCtrl.GetItemData(item), {})
         if menu := info.get('menu', None):
             self.CurrentMenu = menu
-            self.ToggleTopButtons(item != None)
         elif filename := info.get('filename', None):
             newmenu = Popmenu(self)
             newmenu.ReadFromFile(filename)
             if newmenu:
                 self.MenuList[self.MenuListCtrl.GetItemData(item)] = {'filename': filename, 'menu': newmenu}
                 self.MenuListCtrl.SetItemFont(item, wx.Font(wx.FontInfo().Italic(False)))
-                self.ToggleTopButtons(True)
                 self.CurrentMenu = newmenu
         else:
             wx.LogError("Something was in the menu list that had no filename or menu attached.  This is a bug.")
+
+        if self.CurrentMenu:
+            self.ToggleTopButtons(True)
+            self.TestMenuButton.SetLabel(f'Test "{self.MenuListCtrl.GetItemText(item)}"')
+
         if evt: evt.Skip()
 
     def ToggleTopButtons(self, show):

@@ -9,6 +9,28 @@ import re
 
 import FM.flatmenu as FM
 
+def GetMenuPathForGamePath(gamepath):
+    gamelang = wx.ConfigBase.Get().Read('GameLang')
+    menupath = gamepath
+    pathparts = ['data', 'Texts', gamelang, 'Menus']
+    # Here's a wacky thing we do for Linux / Mac users:
+    while pathparts:
+        # walk through the parts and find them non-case-sensitively
+        pathpart = pathparts.pop(0)
+        pathglob = sorted(menupath.glob(pathpart, case_sensitive = False))
+        # if we have it, march on
+        if pathglob:
+            menupath = pathglob[0]
+        # Otherwise, glom the rest on there and offer to make the path.
+        else:
+            menupath = menupath.joinpath(pathpart, *pathparts)
+            if wx.MessageBox(f'Menu directory {menupath} does not exist.  Create?', 'No Menu Dir', wx.YES_NO) == wx.NO:
+                return
+            menupath.mkdir(parents = True)
+            break
+
+    return menupath
+
 class PopmenuEditor(Page):
     def __init__(self, parent):
         super().__init__(parent, bind_events = False)
@@ -98,20 +120,14 @@ class PopmenuEditor(Page):
             wx.MessageBox("Your Game Directory is not set up correctly.  Please visit the Preferences dialog.")
             return
 
-        # TODO - for case-sensitivity things, instead iterate these and glob(x, case_sensitive = False)
-        gamelang = wx.ConfigBase.Get().Read('GameLang')
-        menupath = gamepath / 'data' / 'Texts' / gamelang / 'Menus'
-        if not menupath.is_dir():
-            if wx.MessageBox(f'Menu directory {menupath} does not exist.  Create?', 'No Menu Dir', wx.YES_NO) == wx.NO:
-                return
-            menupath.mkdir(parents = True)
+        if not (menupath := GetMenuPathForGamePath(gamepath)):
+            return
 
         cm = self.CurrentMenu
         if cm:
             filepath = menupath / f"{cm.Title}.mnu"
             if filepath.is_file():
                 mlc = self.MenuListCtrl
-                # isn't there some easier way to get the item from mlc?
                 info = self.MenuList.get(mlc.GetItemData(mlc.FindItem(-1, cm.Title)), {})
                 if not info:
                     wx.LogError(f"Can't get info for current menu {cm.Title}")
@@ -161,11 +177,9 @@ class PopmenuEditor(Page):
             wx.MessageBox("Your Game Directory is not set up correctly.  Please visit the Preferences dialog.")
             return
 
-        # TODO - for case-sensitivity things, instead iterate these and glob(x, case_sensitive = False)
-        gamelang = wx.ConfigBase.Get().Read('GameLang')
-        menupath = gamepath / 'data' / 'Texts' / gamelang / 'Menus'
-        if not menupath.is_dir() or not list(menupath.glob('*.mnu', case_sensitive = False)):
-            wx.MessageBox(f"There are no menus installed to the Game Directory.  Try opening a menu file directly and writing it to the Game Directory, or copying menus to {menupath} manually.")
+        menupath = GetMenuPathForGamePath(gamepath)
+        if not menupath or not menupath.is_dir() or not list(menupath.glob('*.mnu', case_sensitive = False)):
+            wx.MessageBox(f"There are no menus installed to the Menu Directory.  Try opening a menu file directly and writing it to the Menu Directory, or copying menus to {menupath} manually.")
             return
 
         for menufile in sorted(menupath.glob('*.mnu', case_sensitive = False)):

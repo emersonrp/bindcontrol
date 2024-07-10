@@ -199,7 +199,7 @@ class PopmenuEditor(Page):
 
     def OnLoadMenuButton(self, _):
         with wx.FileDialog(self, "Load Popmenu file", wildcard="MNU files (*.mnu)|*.mnu",
-                           defaultDir = f'{wx.GetHomeDir()}/Downloads/menus',   # TODO TODO TODO remove this line
+                           defaultDir = f'{wx.GetHomeDir()}/Downloads/menus',   # TODO remove this line
                        style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 return
@@ -267,7 +267,6 @@ class Popmenu(FM.FlatMenu):
             self.Parent.SetModified(modified)
         else:
             self.Modified = modified
-            # TODO - we are the topmost menu, dig through the list on the left and update our display
             mlc = self.Parent.MenuListCtrl
             item = mlc.FindItem(-1, self.Title)
             font = (self.Parent.ModifiedMenuFont if modified else self.Parent.LoadedMenuFont)
@@ -289,7 +288,6 @@ class Popmenu(FM.FlatMenu):
         outputlines.append(f'{indent}{{')
         indentlevel += 1
         indent = "    " * indentlevel
-        # TODO - walk down the menu.  Write out option strings, title strings, divider strings.
         for menuitem in self.GetMenuItems():
             if isinstance(menuitem, PEDivider):
                 outputlines.append(f"{indent}Divider")
@@ -302,14 +300,12 @@ class Popmenu(FM.FlatMenu):
                 else:
                     optpayload = f'"{optpayload}"'
                 outputlines.append(f'{indent}Option "{optname}" {optpayload}')
-            # TODO - if it's a submenu, increment a global indent, call ourselves recursively
             elif isinstance(menuitem, PEMenu):
                 [(subname, submenu)] = menuitem.Data.items()
                 if submenu:
                     submenu.WriteToFile(filepath, outputlines, indentlevel)
                 else:
                     raise Exception(f"Submenu entry {subname} had no menu attached.  This is a bug.")
-            # TODO - if it's a LockedOption, pull out the data blob and write { + several lines + }
             elif isinstance(menuitem, PELockedOption):
                 outputlines.append(f"{indent}LockedOption")
                 outputlines.append(f"{indent}{{")
@@ -452,7 +448,6 @@ class Popmenu(FM.FlatMenu):
                     self.AppendItem(PEMenu(self, {MenuName: newMenu}))
                 elif match := re.match(r'Option\s+(.*)', line):
                     OptionData = match.group(1)
-                    # TODO - do popmenus ever use single quotes?
                     if re.match(r'"', OptionData):
                         splitmatch = re.match(r'"([^"]+)"(\s+(.*))?', OptionData)
                     else:
@@ -724,7 +719,7 @@ class PELockedOption(PEMenuItem):
         for ctrl in ['DisplayName', 'Command', 'Icon', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'PowerReady', 'PowerOwned']:
             gridsizer.Add(wx.StaticText(staticbox, label = ctrl, style=wx.ALIGN_RIGHT), 0, wx.ALIGN_CENTER)
             self.Ctrls[ctrl] = cgTextCtrl(staticbox, size = (400, -1), value = self.Data.get(ctrl, ''))
-            self.Ctrls[ctrl].Bind(wx.EVT_TEXT, self.CheckEditorFields)
+            self.Ctrls[ctrl].Bind(wx.EVT_TEXT, self.CheckEditorFieldsForError)
             gridsizer.Add(self.Ctrls[ctrl], 1, wx.EXPAND)
 
         buttons = dialog.CreateButtonSizer(wx.OK|wx.CANCEL)
@@ -734,14 +729,18 @@ class PELockedOption(PEMenuItem):
         paddingsizer.Add(sbsizer, 1, wx.TOP|wx.RIGHT|wx.LEFT, 16)
         paddingsizer.Add(buttons, 0, wx.EXPAND|wx.ALL, 16)
 
-        # TODO - on submit, check editor fields, don't submit if error.
+        dialog.Bind(wx.EVT_BUTTON, self.OnOKButton, id = wx.ID_OK)
 
-        self.CheckEditorFields()
+        self.CheckEditorFieldsForError()
         dialog.Fit()
 
         return dialog
 
-    def CheckEditorFields(self, _ = None):
+    def OnOKButton(self, evt):
+        if self.CheckEditorFieldsForError(): return
+        evt.Skip()
+
+    def CheckEditorFieldsForError(self, _ = None):
         hasError = False
         c = self.Ctrls
         if c['DisplayName'].GetValue() == '':

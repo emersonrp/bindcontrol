@@ -1696,8 +1696,10 @@ class FlatMenu(FlatMenuBase):
 
 
     def Destroy(self, *args, **kwargs):
-        self.Clear()
-        super().Destroy(*args, **kwargs)
+        try:
+            self.Clear()
+        finally:
+            return super().Destroy(*args, **kwargs)
 
     def Popup(self, pt, owner=None, parent=None):
         """

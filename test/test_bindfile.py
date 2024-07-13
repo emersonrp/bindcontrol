@@ -9,4 +9,8 @@ def test_keybind():
     assert kb2.GetKeyBindString() == 'A "First$$Second$$Third"\n', "GetKeybindString correctly strips extra $$"
 
     kb3 = kb.MakeFileKeyBind("$$unbind_all$$up 1$$emote wave")
-    assert kb3.GetKeyBindString() == 'A "unbind_all$$up 1$$emote wave"\n', "GetKeyBindString correctlt strips leading $$"
+    assert kb3.GetKeyBindString() == 'A "unbind_all$$up 1$$emote wave"\n', "GetKeyBindString correctly strips leading $$"
+
+def test_bindfile():
+    # TODO - this requires having a valid Profile which requires a whole window currently.  This is suboptimal.
+    ...

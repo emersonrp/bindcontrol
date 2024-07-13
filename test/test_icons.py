@@ -108,4 +108,4 @@ def test_inspiration_icons_exist():
                 if filename in filecheck: filecheck.remove(filename)
 
 def test_no_extra_icons():
-    assert not filecheck, f"{len(filecheck)} extra icons exist:"
+    assert not filecheck, f"{len(filecheck)} extra icons exist: {filecheck}"

@@ -634,6 +634,8 @@ class Profile(wx.Notebook):
             msg = f"{donefiles} of {totalfiles} bind files written successfully."
 
         with WriteDoneDialog(self, msg = msg) as dlg:
+            dlg.Show()
+            dlg.Raise()
             dlg.ShowModal()
             if errors:
                 wx.App.Get().Main.LogWindow.Show()

@@ -187,9 +187,14 @@ class Main(wx.Frame):
         filename = config.Read('LastProfile')
         if (config.Read('StartWith') == 'Last Profile' or config.ReadBool('StartWithLastProfile')) and filename:
             self.Profile = Profile.Profile(self)
-            self.Profile.doLoadFromFile(filename)
-            self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
-            self.CheckProfDirButtonErrors()
+            if self.Profile.doLoadFromFile(filename):
+                self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
+                self.CheckProfDirButtonErrors()
+            else:
+                self.Profile.Destroy()
+                self.Profile = None
+                self.StartupPanel = self.MakeStartupPanel()
+                self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
 
         # otherwise show the two big buttons
         else:

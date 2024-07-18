@@ -167,8 +167,19 @@ class PopmenuEditor(Page):
 
                 dlg.ShowModal()
 
+    # TODO - should we disallow duplicate menu titles/names?
     def OnNewMenuButton(self, _):
-        ...
+        with wx.TextEntryDialog(self, "Enter new menu name", "New Menu") as dlg:
+            if dlg.ShowModal() == wx.ID_OK:
+                newmenuname = dlg.GetValue()
+                newmenu = Popmenu(self)
+                newmenu.Title = newmenuname
+                newmenu.AppendItem(PETitle(newmenu, newmenuname))
+                listitem = self.MenuListCtrl.Append([newmenuname])
+                self.MenuListCtrl.SetItemFont(listitem, self.ModifiedMenuFont)
+                self.MenuListCtrl.SetItemData(listitem, menuID := wx.NewId())
+                self.MenuList[menuID] = {'menu' : newmenu}
+
 
     def OnLoadGameMenusButton(self, _):
         # TODO "parse them for menu name" could be DRYed up with BuildFromLines?
@@ -546,8 +557,12 @@ class Popmenu_ContextMenu(FM.FlatMenu):
         elif item.GetLabel() == "Option":  data = {'': ''}
         else: data = {}
         menuitemclass = itemclasses.get(item.GetLabel(), None)
-        newitem = menuitemclass(self.Parent, data)
-        return newitem.ShowEditor()
+        if menuitemclass:
+            newitem = menuitemclass(self.Parent, data)
+            return newitem.ShowEditor()
+        else:
+            wx.LogError(f"Unknown new menu item {item.GetLabel()}: this is a bug!")
+            return False
 
 class Popmenu_SubContextMenu(Popmenu_ContextMenu):
     def __init__(self, parent):

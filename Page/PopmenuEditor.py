@@ -146,7 +146,6 @@ class PopmenuEditor(Page):
                 result = cm.WriteToFile(filepath, initiallines)
             except Exception as e:
                 wx.LogError(f"Something broke inside WriteToFile: {e}")
-            print(f"WriteToFile returned {result}")
 
         else: # cm is falsey
             wx.LogError("No current menu to save, canceling.  This is a bug.")
@@ -181,6 +180,7 @@ class PopmenuEditor(Page):
                 self.MenuList[menuID] = {'menu' : newmenu}
 
 
+    # TODO - doing this twice gives us a second list under the first one, etc.
     def OnLoadGameMenusButton(self, _):
         # TODO "parse them for menu name" could be DRYed up with BuildFromLines?
         gamepath = Path(wx.ConfigBase.Get().Read('GamePath'))
@@ -257,10 +257,9 @@ class PopmenuEditor(Page):
         self.MacroButton.Enable(show)
 
 class Popmenu(FM.FlatMenu):
-    ContextMenu = None
+    ContextMenu    = None
     SubContextMenu = None
     ProgressDialog = None
-    Progress = 0
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -331,8 +330,13 @@ class Popmenu(FM.FlatMenu):
 
         if indentlevel > 0: return
 
-        self.SetModified(False)
-        wx.MessageBox("Writing to file is not yet completely implemented.  Soon.", "Not Implemented")
+        outputfile = Path(filepath)
+        try:
+            # Let's \r\n so we're writing Windows files in all cases
+            outputfile.write_text('\r\n'.join(outputlines), newline = '')
+            self.SetModified(False)
+        except Exception as e:
+            wx.LogError(f"Something went wrong writing to {filepath}: {e}")
 
     def ReadFromFile(self, filename:str|Path):
         PopmenuFile = Path(filename)

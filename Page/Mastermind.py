@@ -133,6 +133,7 @@ class Mastermind(Page):
             'PetCmdEnable': False,
 
             'PetChatToggle' : 'LALT+M',
+            'PetChattyDefault' : True,
             'PetSelect1' : '',
             'PetSelect2' : '',
             'PetSelect3' : '',
@@ -278,6 +279,11 @@ class Mastermind(Page):
             ctlType = 'keybutton',
             tooltip = 'Choose the key combo that will toggle your pets\' chattiness level',
         )
+        petCommandsKeys.AddControl(
+            ctlName = 'PetChattyDefault',
+            ctlType = "checkbox",
+            tooltip = "Choose whether pets are chatty or silent after a binds reset",
+        )
         #
         # Pet Next/Prev select binds
         petnpenable = wx.Panel(self)
@@ -342,7 +348,7 @@ class Mastermind(Page):
             self.EnableControls(enabled, [
                 command['ctrlName'], command['ctrlName']+"ResponseMethod", command['ctrlName']+"Response"
             ])
-        self.EnableControls(enabled , ['PetChatToggle', ])
+        self.EnableControls(enabled , ['PetChatToggle', 'PetChattyDefault', ])
 
         for petid in [1,2,3,4,5,6]:
             self.Ctrls[f"Pet{petid}Bodyguard"].Enable(enabled)
@@ -575,7 +581,10 @@ class Mastermind(Page):
         if self.GetState('PetCmdEnable'):
             powers = self.MMPowerSets[ profile.General.GetState('Primary') ]['powers']
 
-            self.mmSubBind(ResetFile, "all", None, powers)
+            if self.GetState('PetChattyDefault'):
+                self.mmSubBind(ResetFile, "all", None, powers)
+            else:
+                self.mmQuietSubBind(ResetFile, "all", None, powers)
 
             #### "Quiet" versions
             allfile = profile.GetBindFile('mmb','all.txt')
@@ -606,10 +615,14 @@ class Mastermind(Page):
         ### By-name select binds.
         # TODO - would this make more sense fully integrated into mm(Quiet)SubBind?
         for pet in [1,2,3,4,5,6]:
-            feedback = self.GetChatString('SelectAll', pet)
+            feedback = ''
+            selfile = "sel.txt"
+            if self.GetState('PetChattyDefault'):
+                feedback = self.GetChatString('SelectAll', pet)
+                selfile = "csel.txt"
             ResetFile.SetBind(
                 self.Ctrls[f"PetSelect{pet}"].MakeFileKeyBind(
-                    [feedback, f"petselectname {self.uniqueNames[pet-1]}", profile.BLF('mmb', f"csel.txt")]
+                    [feedback, f"petselectname {self.uniqueNames[pet-1]}", profile.BLF('mmb', selfile)]
                 )
             )
 
@@ -618,7 +631,7 @@ class Mastermind(Page):
             self.GetState('IncPetSize') and self.GetState('DecPetSize') and
             self.GetState('SelNextPet') and self.GetState('SelPrevPet')
         ):
-            self.psCreateSet(6,0,self.Profile.ResetFile())
+            self.psCreateSet(6,0,ResetFile)
             for tsize in 1,2,3,4,5,6:
                 for tsel in range(0,tsize+1):
                     file = self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt")
@@ -747,6 +760,7 @@ class Mastermind(Page):
         'PetGotoResponseMethod'              : "Pet Response",
         'PetStayResponseMethod'              : "Pet Response",
         'PetChatToggle'                      : "Pet Chatty Mode Toggle",
+        'PetChattyDefault'                   : "Chatty is Default",
         'PetBodyguard'                       : "Bodyguard Mode",
         'PetBodyguardResponseMethod'         : "Pet Response",
         'PetNPEnable'                        : 'Enable Prev/Next Pet Binds',

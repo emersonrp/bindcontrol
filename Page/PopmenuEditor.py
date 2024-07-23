@@ -55,12 +55,12 @@ class PopmenuEditor(Page):
         MenuListSizer = wx.BoxSizer(wx.VERTICAL)
         MenuList.SetSizer(MenuListSizer)
         NewMenuButton = wx.Button(MenuList, label = "New Menu")
-        LoadGameMenusButton = wx.Button(MenuList, label = "Load Menus from Data Dir")
+        self.LoadGameMenusButton = wx.Button(MenuList, label = "Load Menus from Data Dir")
         LoadMenuButton = wx.Button(MenuList, label = "Load Individual Menu File")
         # TODO this button will want some extra Enable() logic
         DeleteMenuButton = wx.Button(MenuList, label = "Delete Menu from Data Dir")
         MenuListSizer.Add(NewMenuButton, 0, wx.EXPAND|wx.ALL, 6)
-        MenuListSizer.Add(LoadGameMenusButton, 0, wx.EXPAND|wx.ALL, 6)
+        MenuListSizer.Add(self.LoadGameMenusButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(LoadMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(DeleteMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         self.MenuListCtrl = wx.ListCtrl(MenuList, style = wx.LC_SINGLE_SEL|wx.LC_REPORT)
@@ -69,7 +69,7 @@ class PopmenuEditor(Page):
         self.MenuListCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListSelect)
 
         NewMenuButton.Bind(wx.EVT_BUTTON, self.OnNewMenuButton)
-        LoadGameMenusButton.Bind(wx.EVT_BUTTON, self.OnLoadGameMenusButton)
+        self.LoadGameMenusButton.Bind(wx.EVT_BUTTON, self.OnLoadGameMenusButton)
         LoadMenuButton.Bind(wx.EVT_BUTTON, self.OnLoadMenuButton)
         DeleteMenuButton.Bind(wx.EVT_BUTTON, self.OnDeleteMenuButton)
 
@@ -137,13 +137,12 @@ class PopmenuEditor(Page):
                         return
 
             # OK, we have sanity-checked (TODO: there might be more of this to come) - let's write the file.
-            result = None
             try:
                 # reapply the credits to the file, then push through the menu
                 initiallines = list(cm.CreditComments)
                 initiallines.append('')
                 initiallines.append(f'// Saved from BindControl {datetime.now()}')
-                result = cm.WriteToFile(filepath, initiallines)
+                cm.WriteToFile(filepath, initiallines)
             except Exception as e:
                 wx.LogError(f"Something broke inside WriteToFile: {e}")
 
@@ -207,6 +206,7 @@ class PopmenuEditor(Page):
                 self.MenuList[menuID] = {'filename': str(menufile)}
 
                 f.close()
+        self.LoadGameMenusButton.Disable()
 
     def OnLoadMenuButton(self, _):
         with wx.FileDialog(self, "Load Popmenu file", wildcard="MNU files (*.mnu)|*.mnu",
@@ -282,6 +282,17 @@ class Popmenu(FM.FlatMenu):
             font = (self.Parent.ModifiedMenuFont if modified else self.Parent.LoadedMenuFont)
             mlc.SetItemFont(item, font)
 
+    def Dismiss(self, dismissParent = False, resetOwner = False):
+        # TODO - here's where we need to come up with logic not to dismiss
+        # just because a menu item got clicked.  But when -do- we dismiss?
+        # This is going to be fiddly.
+
+        # First stab - did we click on a menu item?  Don't close that menu, if so
+        # TODO this sorta works but breaks if we right-click and edit/delete/etc
+        # (result, _) = self.HitTest(self.ScreenToClient(wx.GetMousePosition()))
+        # if result != FM.MENU_HT_ITEM:
+             super().Dismiss(dismissParent, resetOwner)
+
     # hook the right click behavior to tell ContextMenu who got right-clicked
     def ProcessMouseRClick(self, pos):
         (result, menuid) = self.HitTest(pos)
@@ -348,10 +359,13 @@ class Popmenu(FM.FlatMenu):
             contents = PopmenuFile.read_text()
         except Exception:
             try:
-                contents = PopmenuFile.read_text(encoding = 'cp1252')
+                contents = PopmenuFile.read_text(encoding = 'latin_1')
             except Exception:
-                wx.LogError(f'Invalid characters found in file {filename} - canceling')
-                return
+                try:
+                    contents = PopmenuFile.read_text(encoding = 'cp1252')
+                except Exception as e:
+                    wx.LogError(f'Invalid characters found in file {filename}: {e} - canceling')
+                    return
 
 
         self.BuildFromLines(contents.splitlines(), 'main')

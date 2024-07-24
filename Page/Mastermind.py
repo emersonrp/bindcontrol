@@ -404,7 +404,7 @@ class Mastermind(Page):
                 if self.uniqueNames[i-1]:
                     ctrl.RemoveError('unique')
                 else:
-                    ctrl.AddError('unique', f'This pet name is not different enough to identify it uniquely.')
+                    ctrl.AddError('unique', f'This pet name is not different enough to identify it uniquely.  This is likely to cause issues with by-name and bodyguard binds.')
         else:
             for i in (1,2,3,4,5,6):
                 ctrl = self.Ctrls[f'Pet{i}Name']

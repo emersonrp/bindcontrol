@@ -144,11 +144,7 @@ class PopmenuEditor(Page):
 
             # OK, we have sanity-checked (TODO: there might be more of this to come) - let's write the file.
             try:
-                # reapply the credits to the file, then push through the menu
-                initiallines = list(cm.CreditComments)
-                initiallines.append('')
-                initiallines.append(f'// Saved from BindControl {datetime.now()}')
-                cm.WriteToFile(filepath, initiallines)
+                cm.WriteToFile(filepath)
             except Exception as e:
                 wx.LogError(f"Something broke inside WriteToFile: {e}")
 
@@ -334,12 +330,24 @@ class Popmenu(FM.FlatMenu):
 
     # recursive method to write the file to <filepath> -- no sanity-checking is done inside here.
     def WriteToFile(self, filepath, outputlines = [], indentlevel = 0):
-        # if we're just starting out, insert the initial two lines
+        # If this is the outermost request (indent == 0), add the credits
+        if indentlevel == 0:
+            if outputlines:
+                wx.LogError("top level WriteToFile got outputlines - this is a bug")
+                return
+
+            outputlines = self.CreditComments
+            outputlines.append('')
+            outputlines.append(f'// Saved from BindControl {datetime.now()}')
+
+        # top of each "menu" clause, insert the initial two lines
         indent = "    " * indentlevel
         outputlines.append(f'{indent}Menu "{self.Title}"')
         outputlines.append(f'{indent}{{')
         indentlevel += 1
         indent = "    " * indentlevel
+
+        # now loop
         for menuitem in self.GetMenuItems():
             if isinstance(menuitem, PEDivider):
                 outputlines.append(f"{indent}Divider")

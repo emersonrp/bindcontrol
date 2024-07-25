@@ -9,7 +9,12 @@ import re
 
 import FM.flatmenu as FM
 
-def GetMenuPathForGamePath(gamepath):
+def GetMenuPathForGamePath(gamepath = None):
+    gamepath = gamepath or Path(wx.ConfigBase.Get().Read('GamePath'))
+    if not gamepath.is_dir():
+        wx.MessageBox("Your Game Directory is not set up correctly.  Please visit the Preferences dialog.")
+        return
+
     gamelang = wx.ConfigBase.Get().Read('GameLang')
     menupath = gamepath
     pathparts = ['data', 'Texts', gamelang, 'Menus']
@@ -54,16 +59,18 @@ class PopmenuEditor(Page):
         MenuList = wx.Panel(splitter)
         MenuListSizer = wx.BoxSizer(wx.VERTICAL)
         MenuList.SetSizer(MenuListSizer)
-        NewMenuButton = wx.Button(MenuList, label = "New Menu")
+
+        NewMenuButton            = wx.Button(MenuList, label = "Create New Menu")
         self.LoadGameMenusButton = wx.Button(MenuList, label = "Load Menus from Game Dir")
-        LoadMenuButton = wx.Button(MenuList, label = "Load Individual Menu File")
-        # TODO this button will want some extra Enable() logic
-        self.DeleteMenuButton = wx.Button(MenuList, label = "Delete Menu from Game Dir")
+        ImportMenuButton         = wx.Button(MenuList, label = "Import Menu File to Game Dir")
+        self.DeleteMenuButton    = wx.Button(MenuList, label = "Delete Menu from Game Dir")
         self.DeleteMenuButton.Enable(False)
+
         MenuListSizer.Add(NewMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(self.LoadGameMenusButton, 0, wx.EXPAND|wx.ALL, 6)
-        MenuListSizer.Add(LoadMenuButton, 0, wx.EXPAND|wx.ALL, 6)
+        MenuListSizer.Add(ImportMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(self.DeleteMenuButton, 0, wx.EXPAND|wx.ALL, 6)
+
         self.MenuListCtrl = wx.ListCtrl(MenuList, style = wx.LC_SINGLE_SEL|wx.LC_REPORT)
         self.MenuListCtrl.AppendColumn('Menu', width = LeftPanelWidth - 12)
         MenuListSizer.Add(self.MenuListCtrl, 1, wx.EXPAND|wx.ALL, 6)
@@ -71,7 +78,7 @@ class PopmenuEditor(Page):
 
         NewMenuButton.Bind(wx.EVT_BUTTON, self.OnNewMenuButton)
         self.LoadGameMenusButton.Bind(wx.EVT_BUTTON, self.OnLoadGameMenusButton)
-        LoadMenuButton.Bind(wx.EVT_BUTTON, self.OnLoadMenuButton)
+        ImportMenuButton.Bind(wx.EVT_BUTTON, self.OnImportMenuButton)
         self.DeleteMenuButton.Bind(wx.EVT_BUTTON, self.OnDeleteMenuButton)
 
         self.MenuEditor = wx.Panel(splitter)
@@ -110,18 +117,16 @@ class PopmenuEditor(Page):
 
         self.Layout()
 
+        # TODO - auto-load the list from the data dir if and when we switch to this tab
+
     def OnTestMenuButton(self, evt):
         if self.CurrentMenu:
             self.CurrentMenu.Popup(wx.GetMousePosition())
         evt.Skip()
 
     def OnWriteMenuButton(self, _):
-        gamepath = Path(wx.ConfigBase.Get().Read('GamePath'))
-        if not gamepath.is_dir():
-            wx.MessageBox("Your Game Directory is not set up correctly.  Please visit the Preferences dialog.")
-            return
-
-        if not (menupath := GetMenuPathForGamePath(gamepath)):
+        # GetMenuPathForGamePath shows its own errors
+        if not (menupath := GetMenuPathForGamePath()):
             return
 
         cm = self.CurrentMenu
@@ -181,15 +186,11 @@ class PopmenuEditor(Page):
 
 
     def OnLoadGameMenusButton(self, _):
-        # TODO "parse them for menu name" could be DRYed up with BuildFromLines?
-        gamepath = Path(wx.ConfigBase.Get().Read('GamePath'))
-        if not gamepath.is_dir():
-            wx.MessageBox("Your Game Directory is not set up correctly.  Please visit the Preferences dialog.")
-            return
+        # GetMenuPathForGamePath shows its own errors
+        menupath = GetMenuPathForGamePath()
 
-        menupath = GetMenuPathForGamePath(gamepath)
         if not menupath or not menupath.is_dir() or not list(menupath.glob('*.mnu', case_sensitive = False)):
-            wx.MessageBox(f"There are no menus installed to the Menu Directory.  Try opening a menu file directly and writing it to the Menu Directory, or copying menus to {menupath} manually.")
+            wx.MessageBox(f"There are no menus installed to the Menu Directory.  Try importing a menu file, or copying menus to {menupath} manually.")
             return
 
         for menufile in sorted(menupath.glob('*.mnu', case_sensitive = False)):
@@ -213,23 +214,33 @@ class PopmenuEditor(Page):
         # TODO - or maybe just load everything from the menu dir at start time?
         self.LoadGameMenusButton.Disable()
 
-    def OnLoadMenuButton(self, _):
-        with wx.FileDialog(self, "Load Popmenu file", wildcard="MNU files (*.mnu)|*.mnu",
+    def OnImportMenuButton(self, _):
+        # GetMenuPathForGamePath shows its own errors
+        if not (menupath := GetMenuPathForGamePath()):
+            return
+
+        with wx.FileDialog(self, "Import Popmenu file", wildcard="MNU files (*.mnu)|*.mnu",
                        style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 return
 
+            origfilepath = fileDialog.GetPath()
             newmenu = Popmenu(self)
-            newmenu.ReadFromFile(fileDialog.GetPath())
+            newmenu.ReadFromFile(origfilepath)
 
             if newmenu:
-                item = self.MenuListCtrl.Append([newmenu.Title])
-                # just put the menu in -- 'filename' I think wants to be the name in the menudir.  I think.
-                self.MenuList[menuID := wx.NewId()] = {'menu': newmenu}
-                self.MenuListCtrl.SetItemData(item, menuID)
-                self.MenuListCtrl.Select(item)
-                self.ToggleTopButtons(True)
-                self.CurrentMenu = newmenu
+                filepath = menupath / Path(origfilepath).name
+                try:
+                    newmenu.WriteToFile(filepath)
+                    item = self.MenuListCtrl.Append([newmenu.Title])
+                    self.MenuList[menuID := wx.NewId()] = {'menu': newmenu, 'filename': str(filepath)}
+                    self.MenuListCtrl.SetItemData(item, menuID)
+                    self.MenuListCtrl.Select(item)
+                    self.ToggleTopButtons(True)
+                    self.CurrentMenu = newmenu
+                except Exception as e:
+                    wx.LogError(f"Something went wrong importing menu file: {e}")
+
 
     def OnDeleteMenuButton(self, _):
         mlc = self.MenuListCtrl

@@ -6,6 +6,7 @@ from typing import Callable
 from pathlib import Path
 from datetime import datetime
 import re
+import platform
 
 import FM.flatmenu as FM
 
@@ -222,9 +223,7 @@ class PopmenuEditor(Page):
 
             origfilepath = fileDialog.GetPath()
             newmenu = Popmenu(self)
-            newmenu.ReadFromFile(origfilepath)
-
-            if newmenu:
+            if newmenu.ReadFromFile(origfilepath):
                 filepath = menupath / Path(origfilepath).name
                 item = None
                 try:
@@ -263,17 +262,22 @@ class PopmenuEditor(Page):
             self.CurrentMenu = menu
         elif filename := info.get('filename', None):
             newmenu = Popmenu(self)
-            newmenu.ReadFromFile(filename)
-            if newmenu:
+            if newmenu.ReadFromFile(filename):
                 self.MenuList[self.MenuListCtrl.GetItemData(item)] = {'filename': filename, 'menu': newmenu}
                 self.MenuListCtrl.SetItemFont(item, self.LoadedMenuFont)
                 self.CurrentMenu = newmenu
+            else:
+                del newmenu
+                self.CurrentMenu = None
         else:
             wx.LogError("Something was in the menu list that had no filename or menu attached.  This is a bug.")
 
         if self.CurrentMenu:
             self.ToggleTopButtons(True)
             self.TestMenuButton.SetLabel(f'Test "{self.MenuListCtrl.GetItemText(item)}"')
+        else:
+            self.ToggleTopButtons(False)
+            self.TestMenuButton.SetLabel("Test Current Menu")
 
         if evt: evt.Skip()
 
@@ -404,16 +408,23 @@ class Popmenu(FM.FlatMenu):
                     contents = PopmenuFile.read_text(encoding = 'cp1252')
                 except Exception as e:
                     wx.LogError(f'Invalid characters found in file {filename}: {e} - canceling')
-                    return
+                    return False
 
+        lines = contents.splitlines()
+        # Windows only can use ~ 30K unique IDs.  BadgeReporterExtended.mnu will crash it
+        if platform.system() == 'Windows' and len(lines) > 27000:
+            result = wx.MessageBox("This menu file is pathologically large.  Attempting to load it may cause strange behaviors or even crash BindControl.  Continue?", "Menu too large", wx.YES_NO)
+            if result == wx.NO: return False
 
-        self.BuildFromLines(contents.splitlines(), 'main')
+        self.BuildFromLines(lines, 'main')
 
         # Just in case we didn't finish the dialog for some reason, finish it
         if Popmenu.ProgressDialog:
             Popmenu.ProgressDialog.Update(Popmenu.ProgressDialog.GetRange())
             Popmenu.ProgressDialog.Destroy()
             Popmenu.ProgressDialog = None
+
+        return True
 
     def BuildFromLines(self, lines, request_type = ''):
         is_main_request = request_type == "main"

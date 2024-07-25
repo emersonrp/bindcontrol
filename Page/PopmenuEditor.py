@@ -46,7 +46,7 @@ class PopmenuEditor(Page):
         self.UnloadedMenuFont = wx.Font(wx.FontInfo().Italic())
         self.ModifiedMenuFont = wx.Font(wx.FontInfo().Bold())
 
-        LeftPanelWidth = 250 # TODO do this less stupid
+        LeftPanelWidth = 250
 
         splitter = wx.SplitterWindow(self, style = wx.VERTICAL)
         splitter.SetMinimumPaneSize(LeftPanelWidth)
@@ -55,14 +55,15 @@ class PopmenuEditor(Page):
         MenuListSizer = wx.BoxSizer(wx.VERTICAL)
         MenuList.SetSizer(MenuListSizer)
         NewMenuButton = wx.Button(MenuList, label = "New Menu")
-        self.LoadGameMenusButton = wx.Button(MenuList, label = "Load Menus from Data Dir")
+        self.LoadGameMenusButton = wx.Button(MenuList, label = "Load Menus from Game Dir")
         LoadMenuButton = wx.Button(MenuList, label = "Load Individual Menu File")
         # TODO this button will want some extra Enable() logic
-        DeleteMenuButton = wx.Button(MenuList, label = "Delete Menu from Data Dir")
+        self.DeleteMenuButton = wx.Button(MenuList, label = "Delete Menu from Game Dir")
+        self.DeleteMenuButton.Enable(False)
         MenuListSizer.Add(NewMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(self.LoadGameMenusButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(LoadMenuButton, 0, wx.EXPAND|wx.ALL, 6)
-        MenuListSizer.Add(DeleteMenuButton, 0, wx.EXPAND|wx.ALL, 6)
+        MenuListSizer.Add(self.DeleteMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         self.MenuListCtrl = wx.ListCtrl(MenuList, style = wx.LC_SINGLE_SEL|wx.LC_REPORT)
         self.MenuListCtrl.AppendColumn('Menu', width = LeftPanelWidth - 12)
         MenuListSizer.Add(self.MenuListCtrl, 1, wx.EXPAND|wx.ALL, 6)
@@ -71,7 +72,7 @@ class PopmenuEditor(Page):
         NewMenuButton.Bind(wx.EVT_BUTTON, self.OnNewMenuButton)
         self.LoadGameMenusButton.Bind(wx.EVT_BUTTON, self.OnLoadGameMenusButton)
         LoadMenuButton.Bind(wx.EVT_BUTTON, self.OnLoadMenuButton)
-        DeleteMenuButton.Bind(wx.EVT_BUTTON, self.OnDeleteMenuButton)
+        self.DeleteMenuButton.Bind(wx.EVT_BUTTON, self.OnDeleteMenuButton)
 
         self.MenuEditor = wx.Panel(splitter)
         MESizer = wx.BoxSizer(wx.VERTICAL)
@@ -179,7 +180,6 @@ class PopmenuEditor(Page):
                 self.MenuList[menuID] = {'menu' : newmenu}
 
 
-    # TODO - doing this twice gives us a second list under the first one, etc.
     def OnLoadGameMenusButton(self, _):
         # TODO "parse them for menu name" could be DRYed up with BuildFromLines?
         gamepath = Path(wx.ConfigBase.Get().Read('GamePath'))
@@ -206,11 +206,15 @@ class PopmenuEditor(Page):
                 self.MenuList[menuID] = {'filename': str(menufile)}
 
                 f.close()
+        # TODO - disable the button if we've used it once, otherwise we can get everything
+        # loaded twice or more.  This might be better mitigated with making it so menu names
+        # have to be unique, but this is the simple stab at it, just disable the button
+        # once we've loaded everything once.
+        # TODO - or maybe just load everything from the menu dir at start time?
         self.LoadGameMenusButton.Disable()
 
     def OnLoadMenuButton(self, _):
         with wx.FileDialog(self, "Load Popmenu file", wildcard="MNU files (*.mnu)|*.mnu",
-                           defaultDir = f'{wx.GetHomeDir()}/Downloads/menus',   # TODO remove this line
                        style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 return
@@ -227,8 +231,20 @@ class PopmenuEditor(Page):
                 self.ToggleTopButtons(True)
                 self.CurrentMenu = newmenu
 
-    def OnDeleteMenuButton(self, evt):
-        ...
+    def OnDeleteMenuButton(self, _):
+        mlc = self.MenuListCtrl
+        selection = mlc.GetFirstSelected()
+        menuname = mlc.GetItemText(selection)
+        info = self.MenuList.get(mlc.GetItemData(selection), {})
+
+        result = wx.MessageBox(f'This will delete "{menuname}" from this list, and from the game directory.  This cannot be undone.  Continue?', "Delete Menu Item", wx.YES_NO)
+        if result == wx.NO: return
+
+        if filename := info.get('filename', None):
+            # TODO do we want any further sanity checking?
+            Path(filename).unlink(missing_ok = True)
+
+        mlc.DeleteItem(selection)
 
     def OnListSelect(self, evt):
         item = evt.GetIndex()
@@ -255,6 +271,7 @@ class PopmenuEditor(Page):
         self.TestMenuButton.Enable(show)
         self.WriteMenuButton.Enable(show)
         self.MacroButton.Enable(show)
+        self.DeleteMenuButton.Enable(show)
 
 class Popmenu(FM.FlatMenu):
     ContextMenu    = None

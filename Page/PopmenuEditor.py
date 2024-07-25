@@ -230,16 +230,19 @@ class PopmenuEditor(Page):
 
             if newmenu:
                 filepath = menupath / Path(origfilepath).name
+                item = None
                 try:
-                    newmenu.WriteToFile(filepath)
                     item = self.MenuListCtrl.Append([newmenu.Title])
                     self.MenuList[menuID := wx.NewId()] = {'menu': newmenu, 'filename': str(filepath)}
                     self.MenuListCtrl.SetItemData(item, menuID)
                     self.MenuListCtrl.Select(item)
                     self.ToggleTopButtons(True)
                     self.CurrentMenu = newmenu
+                    newmenu.WriteToFile(filepath)
                 except Exception as e:
                     wx.LogError(f"Something went wrong importing menu file: {e}")
+                    if item:
+                        self.MenuListCtrl.DeleteItem(item)
 
 
     def OnDeleteMenuButton(self, _):

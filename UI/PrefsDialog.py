@@ -33,7 +33,7 @@ class PrefsDialog(wx.Dialog):
         generalSizer.Add( wx.StaticText(generalPanel, label = 'Game Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.gameDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('GamePath'), size = (300, -1))
         self.gameDirPicker.SetToolTip('This is where your game is installed.  This will be used to install popmenus.')
-        self.gameDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.onDirPickerChange)
+        self.gameDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
         generalSizer.Add( self.gameDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         generalSizer.Add( wx.StaticText(generalPanel, label = 'Game Language:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
@@ -45,7 +45,7 @@ class PrefsDialog(wx.Dialog):
         generalSizer.Add( wx.StaticText(generalPanel, label = 'Base Binds Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.bindsDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('BindPath'), size = (300, -1))
         self.bindsDirPicker.SetToolTip('Bind files will be written to this folder, inside a profile-specific subfolder.  Keeping this path as short as possible is strongly recommended.')
-        self.bindsDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.onDirPickerChange)
+        self.bindsDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
         generalSizer.Add( self.bindsDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         self.gameBindsDirPicker = None
@@ -70,7 +70,7 @@ class PrefsDialog(wx.Dialog):
         generalSizer.Add( self.UseSplitModKeys, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
         setattr(splitKeyLabel, 'CB', self.UseSplitModKeys)
-        splitKeyLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
+        splitKeyLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
 
         flushBindsLabel = statictextclass(generalPanel, label = "Set binds to default on reset:")
         generalSizer.Add( flushBindsLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
@@ -80,7 +80,7 @@ class PrefsDialog(wx.Dialog):
         generalSizer.Add( self.FlushAllBinds, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
         setattr(flushBindsLabel, 'CB', self.FlushAllBinds)
-        flushBindsLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
+        flushBindsLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
 
         StartWithLastProfileLabel = wx.StaticText(generalPanel, label = "On startup, load last used profile:")
         generalSizer.Add( StartWithLastProfileLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
@@ -90,13 +90,13 @@ class PrefsDialog(wx.Dialog):
         generalSizer.Add (self.StartWithLastProfile, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         setattr(StartWithLastProfileLabel, 'CB', self.StartWithLastProfile)
-        StartWithLastProfileLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
+        StartWithLastProfileLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
 
         ProfilePathLabel = wx.StaticText(generalPanel, label = "Path for saved profiles:")
         generalSizer.Add( ProfilePathLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ProfileDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('ProfilePath'), size = (300, -1))
         self.ProfileDirPicker.SetToolTip('Profiles will be saved to this location.')
-        self.ProfileDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.onDirPickerChange)
+        self.ProfileDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
         generalSizer.Add( self.ProfileDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         SaveSizeLabel = statictextclass(generalPanel, label = "Save size / position of window:")
@@ -107,7 +107,7 @@ class PrefsDialog(wx.Dialog):
         generalSizer.Add( self.SaveSizeAndPosition, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
         setattr(SaveSizeLabel, 'CB', self.SaveSizeAndPosition)
-        SaveSizeLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
+        SaveSizeLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
 
         generalPanel.SetSizerAndFit(generalSizer)
 
@@ -131,27 +131,27 @@ class PrefsDialog(wx.Dialog):
         possible_mods = controller.ListOfPossibleMods()
         controllerModsLabel = statictextclass(controllerPanel, label = 'Controller Modifiers:')
         controllerSizer.Add( controllerModsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
-        self.ControllerModPicker1 = controllerModPicker(controllerPanel, choices = possible_mods)
+        self.ControllerModPicker1 = wx.Choice(controllerPanel, choices = possible_mods)
         self.ControllerModPicker1.SetSelection(self.ControllerModPicker1.FindString(config.Read('ControllerMod1')))
         controllerSizer.Add(self.ControllerModPicker1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
-        self.ControllerModPicker2 = controllerModPicker(controllerPanel, choices = possible_mods)
+        self.ControllerModPicker2 = wx.Choice(controllerPanel, choices = possible_mods)
         self.ControllerModPicker2.SetSelection(self.ControllerModPicker2.FindString(config.Read('ControllerMod2')))
         controllerSizer.Add(self.ControllerModPicker2, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         # Pickers for extra_modifiers
         extraModsLabel = statictextclass(controllerPanel, label = 'Extra Modifiers:')
         controllerSizer.Add( extraModsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
-        self.ExtraModPicker1 = controllerModPicker(controllerPanel, choices = possible_mods)
+        self.ExtraModPicker1 = wx.Choice(controllerPanel, choices = possible_mods)
         self.ExtraModPicker1.SetSelection(self.ExtraModPicker1.FindString(config.Read('ExtraMod1')))
         controllerSizer.Add(self.ExtraModPicker1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
-        self.ExtraModPicker2 = controllerModPicker(controllerPanel, choices = possible_mods)
+        self.ExtraModPicker2 = wx.Choice(controllerPanel, choices = possible_mods)
         self.ExtraModPicker2.SetSelection(self.ExtraModPicker2.FindString(config.Read('ExtraMod2')))
         controllerSizer.Add(self.ExtraModPicker2, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
         controllerSizer.Add(wx.StaticText(controllerPanel, label = ''))
-        self.ExtraModPicker3 = controllerModPicker(controllerPanel, choices = possible_mods)
+        self.ExtraModPicker3 = wx.Choice(controllerPanel, choices = possible_mods)
         self.ExtraModPicker3.SetSelection(self.ExtraModPicker3.FindString(config.Read('ExtraMod3')))
         controllerSizer.Add(self.ExtraModPicker3, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
-        self.ExtraModPicker4 = controllerModPicker(controllerPanel, choices = possible_mods)
+        self.ExtraModPicker4 = wx.Choice(controllerPanel, choices = possible_mods)
         self.ExtraModPicker4.SetSelection(self.ExtraModPicker4.FindString(config.Read('ExtraMod4')))
         controllerSizer.Add(self.ExtraModPicker4, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
@@ -172,7 +172,7 @@ class PrefsDialog(wx.Dialog):
         self.VerboseBLF.SetToolTip(tooltip)
         debugSizer.Add( self.VerboseBLF, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
         setattr(verboseBLFLabel, 'CB', self.VerboseBLF)
-        verboseBLFLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
+        verboseBLFLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
 
         crashOnBindErrorLabel = statictextclass(debugPanel, label = "Crash on write-binds error:")
         debugSizer.Add( crashOnBindErrorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
@@ -183,7 +183,7 @@ class PrefsDialog(wx.Dialog):
         self.CrashOnBindError.SetToolTip(tooltip)
         debugSizer.Add( self.CrashOnBindError, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
         setattr(crashOnBindErrorLabel, 'CB', self.CrashOnBindError)
-        crashOnBindErrorLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
+        crashOnBindErrorLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
 
         showInspectorLabel = statictextclass(debugPanel, label = "Show Widget Inspector:")
         debugSizer.Add( showInspectorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
@@ -194,7 +194,7 @@ class PrefsDialog(wx.Dialog):
         self.ShowInspector.SetToolTip(tooltip)
         debugSizer.Add( self.ShowInspector, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
         setattr(showInspectorLabel, 'CB', self.ShowInspector)
-        showInspectorLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
+        showInspectorLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
 
         showDebugMessagesLabel = statictextclass(debugPanel, label = "Show debug messages in log window.")
         debugSizer.Add( showDebugMessagesLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
@@ -205,7 +205,7 @@ class PrefsDialog(wx.Dialog):
         self.ShowDebugMessages.SetToolTip(tooltip)
         debugSizer.Add( self.ShowDebugMessages, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
         setattr(showDebugMessagesLabel, 'CB', self.ShowDebugMessages)
-        showDebugMessagesLabel.Bind( wx.EVT_LEFT_DOWN, self.onCBLabelClick )
+        showDebugMessagesLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
 
         debugPanel.SetSizerAndFit(debugSizer)
 
@@ -226,10 +226,10 @@ class PrefsDialog(wx.Dialog):
 
         self.SetSizerAndFit(overallSizer)
 
-        self.onDirPickerChange()
+        self.OnDirPickerChange()
         self.OnGameBindsDirPickerChanged()
 
-    def onDirPickerChange(self, evt = None):
+    def OnDirPickerChange(self, evt = None):
         gamedir = Path(self.gameDirPicker.GetPath())
         if gamedir.is_dir():
             self.gameDirPicker.RemoveError('exists')
@@ -267,11 +267,38 @@ class PrefsDialog(wx.Dialog):
             else:
                 gbdp.RemoveError('spaces')
 
-    def onCBLabelClick(self, evt):
+    def OnCBLabelClick(self, evt):
         cblabel = evt.EventObject
         cblabel.CB.SetValue(not cblabel.CB.IsChecked())
         evt.Skip()
 
-class controllerModPicker(wx.Choice):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def ShowAndUpdatePrefs(self):
+        if self.ShowModal() == wx.ID_OK:
+            config = wx.ConfigBase.Get()
+            config.Write('GamePath', self.gameDirPicker.GetPath())
+            config.Write('GameLang', self.gameLangPicker.GetStringSelection())
+            config.Write('BindPath', self.bindsDirPicker.GetPath())
+            if self.gameBindsDirPicker:
+                config.Write('GameBindPath', self.gameBindsDirPicker.GetValue())
+            config.WriteBool('UseSplitModKeys', self.UseSplitModKeys.GetValue())
+            config.WriteBool('FlushAllBinds', self.FlushAllBinds.GetValue())
+            config.Write('ResetKey', self.ResetKey.GetLabel())
+
+            config.WriteBool('StartWithLastProfile', self.StartWithLastProfile.GetValue())
+            config.Write('ProfilePath', self.ProfileDirPicker.GetPath())
+
+            config.WriteBool('SaveSizeAndPosition', self.SaveSizeAndPosition.GetValue())
+
+            config.Write('ControllerMod1', self.ControllerModPicker1.GetStringSelection())
+            config.Write('ControllerMod2', self.ControllerModPicker2.GetStringSelection())
+            config.Write('ExtraMod1', self.ExtraModPicker1.GetStringSelection())
+            config.Write('ExtraMod2', self.ExtraModPicker2.GetStringSelection())
+            config.Write('ExtraMod3', self.ExtraModPicker3.GetStringSelection())
+            config.Write('ExtraMod4', self.ExtraModPicker4.GetStringSelection())
+
+            config.WriteBool('VerboseBLF', self.VerboseBLF.GetValue())
+            config.WriteBool('CrashOnBindError', self.CrashOnBindError.GetValue())
+            config.WriteBool('ShowInspector', self.ShowInspector.GetValue())
+            config.WriteBool('ShowDebugMessages', self.ShowDebugMessages.GetValue())
+
+            config.Flush()

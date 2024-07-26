@@ -232,7 +232,8 @@ class Main(wx.Frame):
         if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinX') and config.HasEntry('WinY'):
             self.SetPosition((config.ReadInt('WinX'), config.ReadInt('WinY')))
 
-        self.PrefsDialog = PrefsDialog(self)
+        self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
+
         self.BindDirsWindow = None
 
         self.SetupProfileUI()
@@ -519,36 +520,9 @@ class Main(wx.Frame):
         if not self.Profile: return
         self.Profile.DeleteBindFiles()
 
-    def OnMenuPrefsDialog(self, _):
-        if self.PrefsDialog.ShowModal() == wx.ID_OK:
-            config = wx.ConfigBase.Get()
-            config.Write('GamePath', self.PrefsDialog.gameDirPicker.GetPath())
-            config.Write('GameLang', self.PrefsDialog.gameLangPicker.GetStringSelection())
-            config.Write('BindPath', self.PrefsDialog.bindsDirPicker.GetPath())
-            if self.PrefsDialog.gameBindsDirPicker:
-                config.Write('GameBindPath', self.PrefsDialog.gameBindsDirPicker.GetValue())
-            config.WriteBool('UseSplitModKeys', self.PrefsDialog.UseSplitModKeys.GetValue())
-            config.WriteBool('FlushAllBinds', self.PrefsDialog.FlushAllBinds.GetValue())
-            config.Write('ResetKey', self.PrefsDialog.ResetKey.GetLabel())
-
-            config.WriteBool('StartWithLastProfile', self.PrefsDialog.StartWithLastProfile.GetValue())
-            config.Write('ProfilePath', self.PrefsDialog.ProfileDirPicker.GetPath())
-
-            config.WriteBool('SaveSizeAndPosition', self.PrefsDialog.SaveSizeAndPosition.GetValue())
-
-            config.Write('ControllerMod1', self.PrefsDialog.ControllerModPicker1.GetStringSelection())
-            config.Write('ControllerMod2', self.PrefsDialog.ControllerModPicker2.GetStringSelection())
-            config.Write('ExtraMod1', self.PrefsDialog.ExtraModPicker1.GetStringSelection())
-            config.Write('ExtraMod2', self.PrefsDialog.ExtraModPicker2.GetStringSelection())
-            config.Write('ExtraMod3', self.PrefsDialog.ExtraModPicker3.GetStringSelection())
-            config.Write('ExtraMod4', self.PrefsDialog.ExtraModPicker4.GetStringSelection())
-
-            config.WriteBool('VerboseBLF', self.PrefsDialog.VerboseBLF.GetValue())
-            config.WriteBool('CrashOnBindError', self.PrefsDialog.CrashOnBindError.GetValue())
-            config.WriteBool('ShowInspector', self.PrefsDialog.ShowInspector.GetValue())
-            config.WriteBool('ShowDebugMessages', self.PrefsDialog.ShowDebugMessages.GetValue())
-
-            config.Flush()
+    def OnMenuPrefsDialog(self, _ = None):
+        with PrefsDialog(self) as dlg:
+            dlg.ShowAndUpdatePrefs()
 
     def OnMenuAboutBox(self, _):
         from datetime import datetime

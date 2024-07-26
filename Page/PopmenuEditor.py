@@ -209,9 +209,6 @@ class PopmenuEditor(Page):
         else: # cm is falsey
             wx.LogError("No current menu to save, canceling.  This is a bug.")
 
-    # TODO - we should really make an icon picker, yes, with every icon in the game.
-    # This should use the in-game texture name as the icon name, which will involve
-    # moving hundreds of wee files.  Eventually.  Until then, just a basic macro builder
     def OnMacroButton(self, _):
         cm = self.CurrentMenu
         if cm:
@@ -225,18 +222,22 @@ class PopmenuEditor(Page):
 
                 dlg.ShowModal()
 
-    # TODO - should we disallow duplicate menu titles/names?
-    def OnNewMenuButton(self, _):
+    def OnNewMenuButton(self, _ = None):
+        mlc = self.MenuListCtrl
         with wx.TextEntryDialog(self, "Enter new menu name", "New Menu") as dlg:
             if dlg.ShowModal() == wx.ID_OK:
                 newmenuname = dlg.GetValue()
-                newmenu = Popmenu(self)
-                newmenu.Title = newmenuname
-                newmenu.AppendItem(PETitle(newmenu, newmenuname))
-                listitem = self.MenuListCtrl.Append([newmenuname])
-                self.MenuListCtrl.SetItemFont(listitem, self.ModifiedMenuFont)
-                self.MenuListCtrl.SetItemData(listitem, menuID := wx.NewId())
-                self.MenuList[menuID] = {'menu' : newmenu}
+                if mlc.FindItem(-1, newmenuname) != wx.NOT_FOUND:
+                    wx.MessageBox(f'There already exists a menu called "{newmenuname}" - please select a different name.', "Menu Already Exists", wx.OK)
+                    return self.OnNewMenuButton()
+                else:
+                    newmenu = Popmenu(self)
+                    newmenu.Title = newmenuname
+                    newmenu.AppendItem(PETitle(newmenu, newmenuname))
+                    listitem = mlc.Append([newmenuname])
+                    mlc.SetItemFont(listitem, self.ModifiedMenuFont)
+                    mlc.SetItemData(listitem, menuID := wx.NewId())
+                    self.MenuList[menuID] = {'menu' : newmenu}
 
 
     def LoadMenusFromMenuDir(self):
@@ -294,7 +295,7 @@ class PopmenuEditor(Page):
         menuname = mlc.GetItemText(selection)
         info = self.MenuList.get(mlc.GetItemData(selection), {})
 
-        result = wx.MessageBox(f'This will delete "{menuname}" from this list, and from the game directory.  This cannot be undone.  Continue?', "Delete Menu Item", wx.YES_NO)
+        result = wx.MessageBox(f'This will delete "{menuname}" from this list, and from the menu directory.  This cannot be undone.  Continue?', "Delete Menu Item", wx.YES_NO)
         if result == wx.NO: return
 
         if filename := info.get('filename', None):

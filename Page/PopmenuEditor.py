@@ -95,7 +95,7 @@ class PopmenuEditor(Page):
         self.TestMenuButton.Enable(False)
         ButtonSizer.Add(self.TestMenuButton, 1, wx.EXPAND|wx.ALL, 6)
 
-        self.WriteMenuButton = wx.Button(ButtonPanel, label = "Write Menu to Data Dir")
+        self.WriteMenuButton = wx.Button(ButtonPanel, label = "Write Menu")
         self.WriteMenuButton.Bind(wx.EVT_BUTTON, self.OnWriteMenuButton)
         self.WriteMenuButton.Enable(False)
         ButtonSizer.Add(self.WriteMenuButton, 1, wx.EXPAND|wx.ALL, 6)
@@ -116,7 +116,7 @@ class PopmenuEditor(Page):
         self.CheckGameDirBox.SetBackgroundColour((255,200,200))
         CheckGameDirSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.CheckGameDirBox.SetSizer(CheckGameDirSizer)
-        CheckGameDirText = wx.StaticText(self.CheckGameDirBox, label = "Your game directory is not set up correctly.  Please visit the Preferences dialog.")
+        CheckGameDirText = wx.StaticText(self.CheckGameDirBox, label = "Your game directory is not set up correctly.  This is required for the Popmenu Editor to work.  Please visit the Preferences dialog.")
         CheckGameDirSizer.Add(CheckGameDirText, 1, wx.ALIGN_CENTER|wx.ALL, 10)
         OpenPrefsButton = wx.Button(self.CheckGameDirBox, label = "Open Preferences")
         OpenPrefsButton.Bind(wx.EVT_BUTTON, self.OnOpenPrefsButton)
@@ -124,6 +124,16 @@ class PopmenuEditor(Page):
         self.CheckGameDirBox.Hide()
 
         self.CheckMenuDirBox = wx.Panel(MiddlePanel)
+        self.CheckMenuDirBox.SetBackgroundColour((255,200,200))
+        CheckMenuDirSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.CheckMenuDirBox.SetSizer(CheckMenuDirSizer)
+        CheckMenuDirText = wx.StaticText(self.CheckMenuDirBox, label = "Your Popmenu directory does not exist.  BindControl can create it for you.")
+        CheckMenuDirSizer.Add(CheckMenuDirText, 1, wx.ALIGN_CENTER|wx.ALL, 10)
+        CreateDirButton = wx.Button(self.CheckMenuDirBox, label = "Create Directory")
+        CreateDirButton.Bind(wx.EVT_BUTTON, GetMenuPathForGamePath)
+        CheckMenuDirSizer.Add(CreateDirButton,  0, wx.EXPAND|wx.ALL, 10)
+        self.CheckMenuDirBox.Hide()
+
         self.InstructionBox = HelpHTMLWindow(MiddlePanel, "PopmenuInstructions.html", size = wx.DefaultSize)
 
         MiddleSizer.Add(self.CheckGameDirBox, 0, wx.EXPAND|wx.ALL, 15)
@@ -152,11 +162,12 @@ class PopmenuEditor(Page):
             self.CheckGameDirBox.Show()
             NoErrors = False
 
-        if GetMenuPathForGamePath():
-            self.CheckMenuDirBox.Hide()
-        else:
-            self.CheckMenuDirBox.Show()
-            NoErrors = False
+        if NoErrors:
+            if GetMenuPathForGamePath():
+                self.CheckMenuDirBox.Hide()
+            else:
+                self.CheckMenuDirBox.Show()
+                NoErrors = False
 
         # TODO - if we have no installed menus, this will try again and again
         # every time we switch to the tab.  That's not a dealbreaker I guess

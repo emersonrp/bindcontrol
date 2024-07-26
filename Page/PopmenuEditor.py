@@ -224,21 +224,14 @@ class PopmenuEditor(Page):
 
     def OnNewMenuButton(self, _ = None):
         mlc = self.MenuListCtrl
-        with wx.TextEntryDialog(self, "Enter new menu name", "New Menu") as dlg:
-            if dlg.ShowModal() == wx.ID_OK:
-                newmenuname = dlg.GetValue()
-                if mlc.FindItem(-1, newmenuname) != wx.NOT_FOUND:
-                    wx.MessageBox(f'There already exists a menu called "{newmenuname}" - please select a different name.', "Menu Already Exists", wx.OK)
-                    return self.OnNewMenuButton()
-                else:
-                    newmenu = Popmenu(self)
-                    newmenu.Title = newmenuname
-                    newmenu.AppendItem(PETitle(newmenu, newmenuname))
-                    listitem = mlc.Append([newmenuname])
-                    mlc.SetItemData(listitem, menuID := wx.NewId())
-                    self.MenuList[menuID] = {'menu' : newmenu}
-                    newmenu.SetModified()
-
+        newmenuname = self.GetNewMenuName()
+        newmenu = Popmenu(self)
+        newmenu.Title = newmenuname
+        newmenu.AppendItem(PETitle(newmenu, newmenuname))
+        listitem = mlc.Append([newmenuname])
+        mlc.SetItemData(listitem, menuID := wx.NewId())
+        self.MenuList[menuID] = {'menu' : newmenu}
+        newmenu.SetModified()
 
     def LoadMenusFromMenuDir(self):
         # GetMenuPathForGamePath shows its own errors
@@ -260,6 +253,18 @@ class PopmenuEditor(Page):
 
                     f.close()
 
+    def GetNewMenuName(self, dupe_menu_name = None):
+        if dupe_menu_name:
+            wx.MessageBox(f'There already exists a menu called "{dupe_menu_name}" - please select a different name.', "Menu Already Exists", wx.OK)
+
+        with wx.TextEntryDialog(self, "Enter new menu name", "New Menu") as dlg:
+            if dlg.ShowModal() == wx.ID_OK:
+                newmenuname = dlg.GetValue()
+                if self.MenuListCtrl.FindItem(-1, newmenuname) != wx.NOT_FOUND:
+                    return self.GetNewMenuName(dupe_menu_name = newmenuname)
+                else:
+                    return newmenuname
+
     def OnImportMenuButton(self, _):
         # GetMenuPathForGamePath shows its own errors
         if not (menupath := GetMenuPathForGamePath()):
@@ -275,6 +280,9 @@ class PopmenuEditor(Page):
             if newmenu.ReadFromFile(origfilepath):
                 filepath = menupath / Path(origfilepath).name
                 item = None
+                if self.MenuListCtrl.FindItem(-1, newmenu.Title) != wx.NOT_FOUND:
+                    newmenu.Title = self.GetNewMenuName(dupe_menu_name = newmenu.Title)
+
                 try:
                     item = self.MenuListCtrl.Append([newmenu.Title])
                     self.MenuList[menuID := wx.NewId()] = {'menu': newmenu, 'filename': str(filepath)}

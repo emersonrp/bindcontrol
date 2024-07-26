@@ -235,9 +235,9 @@ class PopmenuEditor(Page):
                     newmenu.Title = newmenuname
                     newmenu.AppendItem(PETitle(newmenu, newmenuname))
                     listitem = mlc.Append([newmenuname])
-                    mlc.SetItemFont(listitem, self.ModifiedMenuFont)
                     mlc.SetItemData(listitem, menuID := wx.NewId())
                     self.MenuList[menuID] = {'menu' : newmenu}
+                    newmenu.SetModified()
 
 
     def LoadMenusFromMenuDir(self):

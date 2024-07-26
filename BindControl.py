@@ -277,7 +277,12 @@ class Main(wx.Frame):
         self.DeleteButton.Enable(enable)
 
     def OnPageChanged(self, evt):
-        self.BottomButtonPanel.Show(not evt.GetSelection() == 6)
+        if evt.GetSelection() == 6:
+            self.BottomButtonPanel.Hide()
+            if self.Profile:
+                self.Profile.PopmenuEditor.SynchronizeUI()
+        else:
+            self.BottomButtonPanel.Show(True)
         self.Layout()
 
     def OnProfileNew(self, _ = None):

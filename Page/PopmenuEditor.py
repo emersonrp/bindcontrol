@@ -1,6 +1,8 @@
 import wx
 from Page import Page
+from Help import HelpHTMLWindow
 from UI.ControlGroup import cgTextCtrl
+from UI.PrefsDialog import PrefsDialog
 from typing import Callable
 
 from pathlib import Path
@@ -62,13 +64,11 @@ class PopmenuEditor(Page):
         MenuList.SetSizer(MenuListSizer)
 
         NewMenuButton            = wx.Button(MenuList, label = "Create New Menu")
-        self.LoadGameMenusButton = wx.Button(MenuList, label = "Load Menus from Game Dir")
         ImportMenuButton         = wx.Button(MenuList, label = "Import Menu File to Game Dir")
         self.DeleteMenuButton    = wx.Button(MenuList, label = "Delete Menu from Game Dir")
         self.DeleteMenuButton.Enable(False)
 
         MenuListSizer.Add(NewMenuButton, 0, wx.EXPAND|wx.ALL, 6)
-        MenuListSizer.Add(self.LoadGameMenusButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(ImportMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(self.DeleteMenuButton, 0, wx.EXPAND|wx.ALL, 6)
 
@@ -78,7 +78,6 @@ class PopmenuEditor(Page):
         self.MenuListCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListSelect)
 
         NewMenuButton.Bind(wx.EVT_BUTTON, self.OnNewMenuButton)
-        self.LoadGameMenusButton.Bind(wx.EVT_BUTTON, self.OnLoadGameMenusButton)
         ImportMenuButton.Bind(wx.EVT_BUTTON, self.OnImportMenuButton)
         self.DeleteMenuButton.Bind(wx.EVT_BUTTON, self.OnDeleteMenuButton)
 
@@ -110,6 +109,25 @@ class PopmenuEditor(Page):
         MiddlePanel = wx.Panel(self.MenuEditor)
         MiddleSizer = wx.BoxSizer(wx.VERTICAL)
         MiddlePanel.SetSizer(MiddleSizer)
+
+        self.CheckGameDirBox = wx.Panel(MiddlePanel)
+        self.CheckGameDirBox.SetBackgroundColour((255,200,200))
+        CheckGameDirSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.CheckGameDirBox.SetSizer(CheckGameDirSizer)
+        CheckGameDirText = wx.StaticText(self.CheckGameDirBox, label = "Your game directory is not set up correctly.  Please visit the Preferences dialog.")
+        CheckGameDirSizer.Add(CheckGameDirText, 1, wx.ALIGN_CENTER|wx.ALL, 10)
+        OpenPrefsButton = wx.Button(self.CheckGameDirBox, label = "Open Preferences")
+        OpenPrefsButton.Bind(wx.EVT_BUTTON, self.OnOpenPrefsButton)
+        CheckGameDirSizer.Add(OpenPrefsButton,  0, wx.EXPAND|wx.ALL, 10)
+        self.CheckGameDirBox.Hide()
+
+        self.CheckMenuDirBox = wx.Panel(MiddlePanel)
+        self.InstructionBox = HelpHTMLWindow(MiddlePanel, "PopmenuInstructions.html", size = wx.DefaultSize)
+
+        MiddleSizer.Add(self.CheckGameDirBox, 0, wx.EXPAND|wx.ALL, 15)
+        MiddleSizer.Add(self.CheckMenuDirBox, 0, wx.EXPAND|wx.ALL, 15)
+        MiddleSizer.Add(self.InstructionBox,  1, wx.EXPAND|wx.ALL, 25)
+
         MESizer.Add(MiddlePanel, 1, wx.EXPAND|wx.ALL, 10)
 
         splitter.SplitVertically(MenuList, self.MenuEditor, LeftPanelWidth)
@@ -118,7 +136,23 @@ class PopmenuEditor(Page):
 
         self.Layout()
 
-        # TODO - auto-load the list from the data dir if and when we switch to this tab
+    def OnOpenPrefsButton(self, _):
+        with PrefsDialog(self) as dlg:
+            dlg.ShowAndUpdatePrefs()
+        self.SynchronizeUI()
+
+    def SynchronizeUI(self, _ = None):
+        NoErrors = True
+        gamepath = Path(wx.ConfigBase.Get().Read('GamePath'))
+        if not gamepath.is_dir():
+            self.CheckGameDirBox.Show()
+            NoErrors = False
+
+        # TODO - check / display the middle panel statuses and so forth
+
+        # TODO - if we have no installed menus, this will try again and again.
+        if NoErrors and (self.MenuListCtrl.GetItemCount() == 0):
+            self.LoadMenusFromMenuDir()
 
     def OnTestMenuButton(self, evt):
         if self.CurrentMenu:
@@ -182,34 +216,25 @@ class PopmenuEditor(Page):
                 self.MenuList[menuID] = {'menu' : newmenu}
 
 
-    def OnLoadGameMenusButton(self, _):
+    def LoadMenusFromMenuDir(self):
         # GetMenuPathForGamePath shows its own errors
         menupath = GetMenuPathForGamePath()
 
-        if not menupath or not menupath.is_dir() or not list(menupath.glob('*.mnu', case_sensitive = False)):
-            wx.MessageBox(f"There are no menus installed to the Menu Directory.  Try importing a menu file, or copying menus to {menupath} manually.")
-            return
+        if menupath:
+            for menufile in sorted(menupath.glob('*.mnu', case_sensitive = False)):
+                with menufile.open() as f:
+                    menuname = ''
+                    while not menuname:
+                        line = f.readline().strip()
+                        if match := re.match(r'Menu\s+(.*)', line):
+                            menuname = match.group(1).strip('"')
 
-        for menufile in sorted(menupath.glob('*.mnu', case_sensitive = False)):
-            with menufile.open() as f:
-                menuname = ''
-                while not menuname:
-                    line = f.readline().strip()
-                    if match := re.match(r'Menu\s+(.*)', line):
-                        menuname = match.group(1).strip('"')
+                    item = self.MenuListCtrl.Append([menuname])
+                    self.MenuListCtrl.SetItemFont(item, self.UnloadedMenuFont)
+                    self.MenuListCtrl.SetItemData(item, menuID := wx.NewId())
+                    self.MenuList[menuID] = {'filename': str(menufile)}
 
-                item = self.MenuListCtrl.Append([menuname])
-                self.MenuListCtrl.SetItemFont(item, self.UnloadedMenuFont)
-                self.MenuListCtrl.SetItemData(item, menuID := wx.NewId())
-                self.MenuList[menuID] = {'filename': str(menufile)}
-
-                f.close()
-        # TODO - disable the button if we've used it once, otherwise we can get everything
-        # loaded twice or more.  This might be better mitigated with making it so menu names
-        # have to be unique, but this is the simple stab at it, just disable the button
-        # once we've loaded everything once.
-        # TODO - or maybe just load everything from the menu dir at start time?
-        self.LoadGameMenusButton.Disable()
+                    f.close()
 
     def OnImportMenuButton(self, _):
         # GetMenuPathForGamePath shows its own errors

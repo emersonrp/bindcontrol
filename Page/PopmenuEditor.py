@@ -63,22 +63,24 @@ class PopmenuEditor(Page):
         MenuListSizer = wx.BoxSizer(wx.VERTICAL)
         MenuList.SetSizer(MenuListSizer)
 
-        NewMenuButton            = wx.Button(MenuList, label = "Create New Menu")
-        ImportMenuButton         = wx.Button(MenuList, label = "Import Menu File to Game Dir")
+        self.NewMenuButton       = wx.Button(MenuList, label = "Create New Menu")
+        self.ImportMenuButton    = wx.Button(MenuList, label = "Import Menu File to Game Dir")
         self.DeleteMenuButton    = wx.Button(MenuList, label = "Delete Menu from Game Dir")
+        self.NewMenuButton.Enable(False)
+        self.ImportMenuButton.Enable(False)
         self.DeleteMenuButton.Enable(False)
 
-        MenuListSizer.Add(NewMenuButton, 0, wx.EXPAND|wx.ALL, 6)
-        MenuListSizer.Add(ImportMenuButton, 0, wx.EXPAND|wx.ALL, 6)
+        MenuListSizer.Add(self.NewMenuButton, 0, wx.EXPAND|wx.ALL, 6)
+        MenuListSizer.Add(self.ImportMenuButton, 0, wx.EXPAND|wx.ALL, 6)
         MenuListSizer.Add(self.DeleteMenuButton, 0, wx.EXPAND|wx.ALL, 6)
 
         self.MenuListCtrl = wx.ListCtrl(MenuList, style = wx.LC_SINGLE_SEL|wx.LC_REPORT)
-        self.MenuListCtrl.AppendColumn('Menu', width = LeftPanelWidth - 12)
+        self.MenuListCtrl.AppendColumn('Installed Menus', width = LeftPanelWidth - 12)
         MenuListSizer.Add(self.MenuListCtrl, 1, wx.EXPAND|wx.ALL, 6)
         self.MenuListCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListSelect)
 
-        NewMenuButton.Bind(wx.EVT_BUTTON, self.OnNewMenuButton)
-        ImportMenuButton.Bind(wx.EVT_BUTTON, self.OnImportMenuButton)
+        self.NewMenuButton.Bind(wx.EVT_BUTTON, self.OnNewMenuButton)
+        self.ImportMenuButton.Bind(wx.EVT_BUTTON, self.OnImportMenuButton)
         self.DeleteMenuButton.Bind(wx.EVT_BUTTON, self.OnDeleteMenuButton)
 
         self.MenuEditor = wx.Panel(splitter)
@@ -144,15 +146,25 @@ class PopmenuEditor(Page):
     def SynchronizeUI(self, _ = None):
         NoErrors = True
         gamepath = Path(wx.ConfigBase.Get().Read('GamePath'))
-        if not gamepath.is_dir():
+        if gamepath.is_dir():
+            self.CheckGameDirBox.Hide()
+        else:
             self.CheckGameDirBox.Show()
             NoErrors = False
 
-        # TODO - check / display the middle panel statuses and so forth
+        if GetMenuPathForGamePath():
+            self.CheckMenuDirBox.Hide()
+        else:
+            self.CheckMenuDirBox.Show()
+            NoErrors = False
 
-        # TODO - if we have no installed menus, this will try again and again.
+        # TODO - if we have no installed menus, this will try again and again
+        # every time we switch to the tab.  That's not a dealbreaker I guess
         if NoErrors and (self.MenuListCtrl.GetItemCount() == 0):
             self.LoadMenusFromMenuDir()
+
+        self.NewMenuButton.Enable(NoErrors)
+        self.ImportMenuButton.Enable(NoErrors)
 
     def OnTestMenuButton(self, evt):
         if self.CurrentMenu:

@@ -335,6 +335,14 @@ class PopmenuEditor(Page):
         self.MacroButton.Enable(show)
         self.DeleteMenuButton.Enable(show)
 
+    def CheckForModifiedMenus(self):
+        mlc = self.MenuListCtrl
+        for item in range(0, mlc.GetItemCount()):
+            info = self.MenuList.get(mlc.GetItemData(item), {})
+            menu = info.get('menu', None)
+            if menu and menu.Modified:
+                return True
+
 class Popmenu(FM.FlatMenu):
     ContextMenu    = None
     SubContextMenu = None

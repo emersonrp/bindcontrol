@@ -449,10 +449,16 @@ class Main(wx.Frame):
 
     def CheckIfProfileNeedsSaving(self):
         result = wx.OK
-        if self.Profile and self.Profile.Modified:
-            result = wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
-            if result == wx.YES:
-                self.Profile.doSaveToFile()
+        if self.Profile:
+            if self.Profile.Modified:
+                result = wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
+                if result == wx.YES:
+                    self.Profile.doSaveToFile()
+            if self.Profile.PopmenuEditor.CheckForModifiedMenus():
+                result = wx.MessageBox("Some popmenus contain unsaved changes, return to editor?", "Popmenus modified", wx.YES_NO)
+                if result == wx.YES:
+                    result = wx.CANCEL
+                    self.Profile.SetSelection(6) # TODO - hardcoded "6" is ugly but meh
         return result
 
     def CheckProfDirButtonErrors(self):

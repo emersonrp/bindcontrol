@@ -45,18 +45,17 @@ class Gameplay(Page):
             'Tray3Enabled' : False,
             'Tray4Enabled' : False,
         }
-        for tray in (3,2,1):
-            mod = ['', '', 'ALT+', 'SHIFT+'][tray]
+        for tray in (4,3,2,1):
+            mod = ['', '', 'ALT+', 'SHIFT+', 'CTRL+'][tray]
+            name = ['', 'Main', 'Secondary', 'Tertiary', 'Server'][tray]
+            self.Init[f"Tray{tray}Next"] = ''
+            self.Init[f"Tray{tray}Prev"] = ''
+            UI.Labels[f"Tray{tray}Next"] = "Next Tray"
+            UI.Labels[f"Tray{tray}Prev"] = "Previous Tray"
             for button in (1,2,3,4,5,6,7,8,9,0):
                 ctlname = f'Tray{tray}Button{button}'
                 self.Init[ctlname] = f"{mod}{button}"
-                UI.Labels[ctlname] = f"Tray {tray}, Button {button}"
-
-        for button in (1,2,3,4,5,6,7,8,9,0):
-            ctlname = f'Tray4Button{button}'
-            self.Init[ctlname] = f"CTRL+{button}"
-            UI.Labels[ctlname] = f"Server Tray, Button {button}"
-
+                UI.Labels[ctlname] = f"{name} Tray, Button {button}"
 
     def BuildPage(self):
 
@@ -71,29 +70,11 @@ class Gameplay(Page):
             self.FillTrayButtons[b].Bind(wx.EVT_BUTTON, self.OnFillTray)
             self.FillTrayButtons[b].SetToolTip("Fill the buttons with the numbers 1 - 0.  Hold a modifier key while clicking to use that modifier key in the binds.")
 
-        trayGridSizer = wx.FlexGridSizer(12,4,0)
-        # server tray at the top
-        checkbox = wx.CheckBox(staticbox, wx.ID_ANY, label = f"Server Tray")
-        checkbox.SetValue(self.Init.get(f'Tray4Enabled', False))
-        checkbox.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.Ctrls[f'Tray4Enabled'] = checkbox
-        trayGridSizer.Add(checkbox, 0, wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5)
+        trayGridSizer = wx.FlexGridSizer(14,4,0)
 
-        for button in (1,2,3,4,5,6,7,8,9,0):
-            ctlname = f'Tray4Button{button}'
-            traybutton = bcKeyButton(staticbox, wx.ID_ANY, init = {
-                'CtlName'       : ctlname,
-                'Key'           : self.Init[ctlname],
-                'AlwaysShorten' : True,
-            })
-            self.Ctrls[ctlname] = traybutton
-
-            trayGridSizer.Add(traybutton, 1, wx.EXPAND)
-        trayGridSizer.Add(self.FillTrayButtons[4], 1, wx.EXPAND|wx.LEFT, 10)
-
-        # Then the three main trays
-        for tray in (3,2,1):
-            checkbox = wx.CheckBox(staticbox, wx.ID_ANY, label = f"Tray {tray}")
+        for tray in (4,3,2,1):
+            label = ['', 'Main', 'Secondary', 'Tertiary', 'Server'][tray]
+            checkbox = wx.CheckBox(staticbox, wx.ID_ANY, label = f"{label} Tray")
             checkbox.SetValue(self.Init.get(f'Tray{tray}Enabled', False))
             checkbox.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
             self.Ctrls[f'Tray{tray}Enabled'] = checkbox
@@ -109,7 +90,17 @@ class Gameplay(Page):
                 self.Ctrls[ctlname] = traybutton
 
                 trayGridSizer.Add(traybutton, 1, wx.EXPAND)
-            trayGridSizer.Add(self.FillTrayButtons[tray], 1, wx.EXPAND|wx.LEFT, 10)
+            trayGridSizer.Add(self.FillTrayButtons[tray], 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+            if tray == 4:
+                trayGridSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Prev Tray"), 1, wx.ALIGN_CENTER|wx.LEFT, 6)
+                trayGridSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Next Tray"), 1, wx.ALIGN_CENTER|wx.LEFT, 6)
+            else:
+                prevbutton = bcKeyButton(staticbox, wx.ID_ANY, init = { 'CtlName' : f"Tray{tray}Prev",})
+                self.Ctrls[f"Tray{tray}Prev"] = prevbutton
+                nextbutton = bcKeyButton(staticbox, wx.ID_ANY, init = { 'CtlName' : f"Tray{tray}Next",})
+                self.Ctrls[f"Tray{tray}Next"] = nextbutton
+                trayGridSizer.Add(prevbutton, 1, wx.ALIGN_CENTER)
+                trayGridSizer.Add(nextbutton, 1, wx.ALIGN_CENTER)
 
         traySizer.Add(trayGridSizer, 0, wx.ALL, 10)
         traygridbutton = HelpButton(staticbox, 'PowerTrayButtons.html')
@@ -216,6 +207,9 @@ class Gameplay(Page):
             self.FillTrayButtons[tray].Enable(self.GetState(f"Tray{tray}Enabled"))
             for button in (1,2,3,4,5,6,7,8,9,0):
                 self.Ctrls[f"Tray{tray}Button{button}"].Enable(self.GetState(f'Tray{tray}Enabled'))
+            if tray != 4:
+                self.Ctrls[f"Tray{tray}Prev"].Enable(self.GetState(f"Tray{tray}Enabled"))
+                self.Ctrls[f"Tray{tray}Next"].Enable(self.GetState(f"Tray{tray}Enabled"))
         self.Profile.CheckAllConflicts()
         if evt: evt.Skip()
 
@@ -259,6 +253,16 @@ class Gameplay(Page):
                 ResetFile.SetBind(self.Ctrls[f"Tray3Button{button}"].MakeFileKeyBind(f"powexec_alt2slot {slotbutton}"))
             if self.GetState('Tray4Enabled'):
                 ResetFile.SetBind(self.Ctrls[f"Tray4Button{button}"].MakeFileKeyBind(f"powexec_serverslot {slotbutton}"))
+
+        if self.GetState('Tray1Enabled'):
+            ResetFile.SetBind(self.Ctrls[f"Tray1Prev"].MakeFileKeyBind("prev_tray"))
+            ResetFile.SetBind(self.Ctrls[f"Tray1Next"].MakeFileKeyBind("next_tray"))
+        if self.GetState('Tray2Enabled'):
+            ResetFile.SetBind(self.Ctrls[f"Tray2Prev"].MakeFileKeyBind("prev_tray_alt"))
+            ResetFile.SetBind(self.Ctrls[f"Tray2Next"].MakeFileKeyBind("next_tray_alt"))
+        if self.GetState('Tray3Enabled'):
+            ResetFile.SetBind(self.Ctrls[f"Tray3Prev"].MakeFileKeyBind("prev_tray_alt2"))
+            ResetFile.SetBind(self.Ctrls[f"Tray3Next"].MakeFileKeyBind("next_tray_alt2"))
 
         ### Team / Pet Select
         if self.GetState('TPSEnable'):

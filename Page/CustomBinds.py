@@ -189,6 +189,7 @@ class CustomBinds(Page):
         self.PaneSizer.Remove(sizer)
         self.Panes.remove(delButton.BindPane)
         delButton.BindPane.Destroy()
+        self.Profile.CheckAllConflicts()
         self.Layout()
         evt.Skip()
 

@@ -86,7 +86,7 @@ class PowerBinderDialog(wx.Dialog):
                 index = self.RearrangeList.Append(newCommand.MakeListEntryString())
                 self.RearrangeList.SetClientData(index, newCommand)
                 if newCommand.UI:
-                    self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10)
+                    self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALL|wx.EXPAND, 10)
                     self.EditDialog.mainSizer.Hide(newCommand.UI)
         self.UpdateBindStringDisplay()
 
@@ -148,7 +148,7 @@ class PowerBinderDialog(wx.Dialog):
 
         # show the edit dialog if this command needs it
         if newCommand.UI:
-            self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 10)
+            self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALL|wx.EXPAND, 10)
             if (self.ShowEditDialogFor(newCommand, chosenName) == wx.ID_CANCEL):
                 return
 

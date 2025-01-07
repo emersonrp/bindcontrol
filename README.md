@@ -16,7 +16,7 @@ Features
 
 * Runs on Windows, MacOS, and Linux
 * Separate profiles for different characters, archetypes, or situations
-* Controller support (WIP, binds created with a controller work perfectly, but BindControl itself sometimes has trouble detecting controller input to create such binds)
+* Controller support
 * Basic Gameplay Binds
     * One-key next-teammate / previous-teammate selection, with support for setting team size and optionally skipping the player in the next/previous rotation
     * Rebind the keys for the in-game power tray buttons
@@ -53,27 +53,22 @@ TODO
 
 * Attempt to make every slash command in the game available in some way, typically via PowerBinder
 * Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment
-* Bodyguard mode, as implemented in citybinder, doesn't work as intended, and might not be able to due to game restrictions
+* "Bodyguard mode" as implemented in citybinder doesn't work as intended, and might not be able to due to game restrictions
 * Investigate improvements to Mastermind binds to clarify and expand the behavior
 * More error detection and handling
 * Temporary powers in speed-on-demand
-* Roll standalone binaries for Windows, MacOS, Linux - partially implemented
-    * Windows binary distribution of Python apps can trigger <a href="Help/MalwareWarnings.md">anti-malware warnings</a>
-    * MacOS binaries need signing and notarization;  I release them anyway for the brave
-    * Linux binaries might be possible with some container scheme
 * More and better help text and documentation
 * Fix bugs as found
+* More internal work on initialization order of objects to speed up start time and avoid bootstrapping problems
 
 Using Binary Releases
 ---------------------
 
-Windows users:  try the ZIP file from the [latest release](https://github.com/emersonrp/bindcontrol/releases), and give feedback.  If that works for you, it's the quickest path to victory.
+*Windows users*:  try the ZIP file from the [latest release](https://github.com/emersonrp/bindcontrol/releases), and give feedback.  If that works for you, it's the quickest path to victory.  <b>If you receive malware warnings</b>, please read <a href="Help/MalwareWarnings.md">my comments on that issue</a>.
 
-MacOS users:  an experimental binary release has been made available.  It is not signed and/or notarized, and might or might not work at all.  Any feedback is encouraged.
+*MacOS users*:  an experimental binary release has been made available.  It is not signed and/or notarized, and might or might not work at all.  Any feedback is encouraged.
 
-Linux users:  an *extremely* experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.
-
-<b>If you receive malware warnings</b>, please read <a href="Help/MalwareWarnings.md">my comments on that issue</a>.
+*Linux users*:  an experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.
 
 Running From Source
 -------------------
@@ -83,15 +78,15 @@ Running From Source
 1. [Python](https://www.python.org) version 3.10 or later
 2. [wxPython](https://www.wxpython.org) version 4.2 or later
 
-* Windows users, follow the instructions on the above sites' download pages to install Python and wxPython.
+*Windows users*:  follow the instructions on the above sites' download pages to install Python and wxPython.
 
-* MacOS users, I recommend following the instructions in [this article at opensource.com](https://www.opensource.com/article/19/5/python-3-default-mac) to get Python 3 installed and working by default.  Once everything is working, you will want to run `pip3 install wxPython`.
+*MacOS users*:  I recommend following the instructions in [this article at opensource.com](https://www.opensource.com/article/19/5/python-3-default-mac) to get Python 3 installed and working by default.  Once everything is working, you will want to run `pip3 install wxPython`.
 
-* Linux users, install your distribution's packages for Python 3 and wxPython.
+*Linux users*:  install your distribution's packages for Python 3 and wxPython.
 
 ### Getting and running the code
 
-* Clone this repo, or download the source as a ZIP file
+* Clone this repo, or download the source as a ZIP file and unzip it somewhere
 
 * Windows (and possibly Mac) users:  Double-click `BindControl.py` in the top-level folder
 
@@ -127,7 +122,7 @@ The improved Inspiration Popper design was gratefully adapted from an unreleased
 Github Actions for automated building of binary releases graciously provided by <a href="https://github.com/JamzTheMan">JamzTheMan</a>.
 
 Additional feedback and suggestions provided in the <a href="https://forums.homecomingservers.com/topic/38674-bindcontrol-alternative-to-citybinder/">Homecoming Forums thread</a> and in <a href="https://github.com/emersonrp/bindcontrol/issues">Github issues</a> by:<br>
-DevoDog68, BlackSpectre, Premmy, kenlon, Lumenia, xizar, autobotpinto
+DevoDog68, BlackSpectre, Premmy, kenlon, Lumenia, xizar, autobotpinto, jtoya85
 
 
 License

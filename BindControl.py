@@ -180,10 +180,18 @@ class Main(wx.Frame):
         self.WriteButton  .Bind(wx.EVT_BUTTON, self.OnWriteBindsButton)
         self.DeleteButton .Bind(wx.EVT_BUTTON, self.OnDeleteBindsButton)
 
+        self.Sizer.Add(BottomButtonSizer,  0, wx.EXPAND | wx.ALL, 10)
+
         # Do not SetSizerAndFit() - Fit() is poison
         self.SetSizer(self.Sizer)
 
-        # Finally, load up the last one if the pref says to and if it's there
+        self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
+
+    def SetupProfile(self):
+
+        config = wx.FileConfig('bindcontrol')
+
+        # Load up the last profile if the pref says to and if it's there
         filename = config.Read('LastProfile')
         if (config.Read('StartWith') == 'Last Profile' or config.ReadBool('StartWithLastProfile')) and filename:
             self.Profile = Profile.Profile(self)
@@ -201,8 +209,6 @@ class Main(wx.Frame):
             self.StartupPanel = self.MakeStartupPanel()
             self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
 
-        self.Sizer.Add(BottomButtonSizer,  0, wx.EXPAND | wx.ALL, 10)
-
         (width, height) = (1100, 800)
         if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinH') and config.HasEntry('WinW'):
             height = config.ReadInt('WinH')
@@ -216,8 +222,6 @@ class Main(wx.Frame):
 
         if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinX') and config.HasEntry('WinY'):
             self.SetPosition((config.ReadInt('WinX'), config.ReadInt('WinY')))
-
-        self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
 
         self.PrefsDialog = PrefsDialog(self)
         self.BindDirsWindow = None
@@ -600,6 +604,7 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
 
         self.Init()
         self.Main = Main(None)
+        self.Main.SetupProfile()
 
         # TODO bootstrapping problem, can't do this inside Profile's "__init__" because
         # Profile needs to be defined/initialized deep inside its innards.

@@ -214,7 +214,7 @@ class PowerBinderButton(wx.Button):
             bindString = dlg.MakeBindString()
             if bindString != self.tgtTxtCtrl.GetValue():
                 self.tgtTxtCtrl.SetValue(bindString)
-                wx.App.Get().Profile.SetModified()
+                wx.App.Get().Main.Profile.SetModified()
 
     def LoadFromData(self, data):
         self.PowerBinderDialog().LoadFromData(data)
@@ -513,7 +513,7 @@ class BuffDisplayCmd(PowerBindCmd):
         return groupSizer
 
     def CalculateValue(self):
-        page = wx.App.Get().Profile.CustomBinds
+        page = wx.App.Get().Main.Profile.CustomBinds
 
         total = 0
 
@@ -1437,7 +1437,7 @@ class WindowSaveLoadCmd(PowerBindCmd):
         sizer.Add(self.CommandChoice, 0, wx.ALL, 5)
 
         self.FilePath = wx.TextCtrl(dialog, -1, size = (400, -1),
-            value = str(wx.App.Get().Profile.GameBindsDir() / 'windows.txt'))
+            value = str(wx.App.Get().Main.Profile.GameBindsDir() / 'windows.txt'))
         sizer.Add(self.FilePath, 0, wx.ALL, 5)
 
         return sizer

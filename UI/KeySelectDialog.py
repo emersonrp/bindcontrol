@@ -329,7 +329,7 @@ class KeySelectDialog(wx.Dialog):
         self.Layout()
 
     def CheckConflicts(self):
-        Profile = wx.App.Get().Profile
+        Profile = wx.App.Get().Main.Profile
         if Profile:
             conflicts = self.Button.CheckConflicts(self.Binding)
             if conflicts:
@@ -508,7 +508,7 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
     def onKeyChanged(self, _):
-        wx.App.Get().Profile.CheckAllConflicts()
+        wx.App.Get().Main.Profile.CheckAllConflicts()
 
     def ClearButton(self, _):
         self.SetLabel("")
@@ -537,7 +537,7 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.SetLabelMarkup(label)
 
     def CheckConflicts(self, newbinding = None):
-        Profile = wx.App.Get().Profile
+        Profile = wx.App.Get().Main.Profile
         if Profile:
             conflicts = Profile.CheckConflict(newbinding or self.Key, self.CtlName)
             if conflicts:
@@ -551,7 +551,7 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
 
     def KeySelectEventHandler(self, evt):
         button = evt.EventObject
-        Profile = wx.App.Get().Profile
+        Profile = wx.App.Get().Main.Profile
 
         existingKey = button.Key
 

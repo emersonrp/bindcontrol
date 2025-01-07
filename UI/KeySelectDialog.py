@@ -312,9 +312,9 @@ class KeySelectDialog(wx.Dialog):
         elif (event.LeftIsDown() and event.RightIsDown()):
             self.KeySlot = "MOUSECHORD"
         elif (event.ButtonDClick()):
-            self.KeySlot = "DCLICK" + str(event.GetButton())
+            self.KeySlot = self.Keymap["DCLICK" + str(event.GetButton())]
         else:
-            self.KeySlot = "BUTTON" + str(event.GetButton())
+            self.KeySlot = self.Keymap["BUTTON" + str(event.GetButton())]
 
         self.buildBind()
 

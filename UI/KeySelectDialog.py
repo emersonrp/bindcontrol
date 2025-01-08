@@ -514,27 +514,30 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.SetLabel("")
         self.Key = ""
         wx.PostEvent(self, KeyChanged())
+        wx.App.Get().Main.Profile.SetModified()
 
     def MakeFileKeyBind(self, contents):
         return KeyBind(self.Key, self.CtlLabel, self.Page, contents)
 
     def SetLabel(self, label):
         # if we have a long label or AlwaysShorten, smallify, and abbreviate if we have a mod key
-        if re.search(r'\+\w\w\w\w\w', label) or len(label) > 12 or self.AlwaysShorten:
-            if self.AlwaysShorten:
-                label = re.sub(r'SHIFT\+', 'S+', label)
-                label = re.sub(r'CTRL\+', 'C+', label)
-                label = re.sub(r'ALT\+', 'A+', label)
-            else:
-                label = re.sub(r'SHIFT\+', 'Sh+', label)
-                label = re.sub(r'CTRL\+', 'Ctl+', label)
-                label = re.sub(r'ALT\+', 'Alt+', label)
-            label = re.sub(r'DOUBLECLICK', 'DCLICK', label)
-            label = re.sub(r'Trigger', 'Trig', label)
-            label = re.sub(r'LeftBumper', 'LBump', label)
-            label = re.sub(r'RightBumper', 'RBump', label)
-            label = f"<small>{label}</small>"
+        if label: # don't do all this if we're clearing the label
+            if re.search(r'\+\w\w\w\w\w', label) or len(label) > 12 or self.AlwaysShorten:
+                if self.AlwaysShorten:
+                    label = re.sub(r'SHIFT\+', 'S+', label)
+                    label = re.sub(r'CTRL\+', 'C+', label)
+                    label = re.sub(r'ALT\+', 'A+', label)
+                else:
+                    label = re.sub(r'SHIFT\+', 'Sh+', label)
+                    label = re.sub(r'CTRL\+', 'Ctl+', label)
+                    label = re.sub(r'ALT\+', 'Alt+', label)
+                label = re.sub(r'DOUBLECLICK', 'DCLICK', label)
+                label = re.sub(r'Trigger', 'Trig', label)
+                label = re.sub(r'LeftBumper', 'LBump', label)
+                label = re.sub(r'RightBumper', 'RBump', label)
+                label = f"<small>{label}</small>"
         self.SetLabelMarkup(label)
+        self.Update()
 
     def CheckConflicts(self, newbinding = None):
         Profile = wx.App.Get().Main.Profile

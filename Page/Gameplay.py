@@ -3,7 +3,7 @@ import UI
 from BLF import BLF
 from Help import HelpButton
 
-from UI.ControlGroup import ControlGroup
+from UI.ControlGroup import ControlGroup, cgChoice
 from UI.KeySelectDialog import bcKeyButton
 from Page import Page
 
@@ -60,8 +60,26 @@ class Gameplay(Page):
     def BuildPage(self):
 
         ##### Power Tray Buttons
-        traySizer = wx.StaticBoxSizer(wx.HORIZONTAL, self, label = 'Power Tray Buttons')
+        traySizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = 'Power Tray Buttons')
         staticbox = traySizer.GetStaticBox()
+
+        # Keybind Profile picker
+        KBProfileSizer = wx.BoxSizer(wx.HORIZONTAL)
+        KBProfileSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Keybind Profile:"), 0, wx.ALIGN_CENTER_VERTICAL, 5)
+        KBProfilePicker = cgChoice(staticbox, wx.ID_ANY, choices = ['Modern', 'Joystick', 'Classic', 'Launch (Issue 0)'])
+        KBProfilePicker.SetSelection(0)
+        UI.Labels['KBProfile'] = "Keybind Profile"
+        self.Ctrls['KBProfile'] = KBProfilePicker
+        KBProfilePicker.SetToolTipString("This should be set to match the Keybind Profile you have set in the in-game options.")
+        KBProfileSizer.Add(KBProfilePicker, 0, wx.ALIGN_CENTER_VERTICAL, 5)
+
+        traySizer.Add(KBProfileSizer, 0, wx.ALL, 10)
+
+        # Horizontal sizer for "help" button
+        GridHelpSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Tray Grid
+        trayGridSizer = wx.FlexGridSizer(14,4,0)
 
         self.FillTrayButtons = {}
         for b in (1,2,3,4):
@@ -69,8 +87,6 @@ class Gameplay(Page):
             setattr(self.FillTrayButtons[b], 'Tray', b)
             self.FillTrayButtons[b].Bind(wx.EVT_BUTTON, self.OnFillTray)
             self.FillTrayButtons[b].SetToolTip("Fill the buttons with the numbers 1 - 0.  Hold a modifier key while clicking to use that modifier key in the binds.")
-
-        trayGridSizer = wx.FlexGridSizer(14,4,0)
 
         for tray in (4,3,2,1):
             label = ['', 'Main', 'Secondary', 'Tertiary', 'Server'][tray]
@@ -102,9 +118,11 @@ class Gameplay(Page):
                 trayGridSizer.Add(prevbutton, 1, wx.ALIGN_CENTER)
                 trayGridSizer.Add(nextbutton, 1, wx.ALIGN_CENTER)
 
-        traySizer.Add(trayGridSizer, 0, wx.ALL, 10)
+        GridHelpSizer.Add(trayGridSizer, 0, wx.ALL, 10)
         traygridbutton = HelpButton(staticbox, 'PowerTrayButtons.html')
-        traySizer.Add(traygridbutton, 0, wx.ALL, 10)
+        GridHelpSizer.Add(traygridbutton, 0, wx.ALL, 10)
+
+        traySizer.Add(GridHelpSizer, 0, wx.ALL, 10)
 
         # Bottom Sizer for narrower boxes
         bottomSizer = wx.BoxSizer(wx.HORIZONTAL)

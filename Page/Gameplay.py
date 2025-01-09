@@ -141,7 +141,7 @@ class Gameplay(Page):
         KBProfilePicker.SetSelection(0)
         UI.Labels['KBProfile'] = "Keybind Profile"
         self.Ctrls['KBProfile'] = KBProfilePicker
-        KBProfilePicker.SetToolTipString("This should be set to match the Keybind Profile you have set in the in-game options.")
+        KBProfilePicker.SetToolTip("This should be set to match the Keybind Profile you have set in the in-game options.")
         KBProfileSizer.Add(KBProfilePicker, 0, wx.ALIGN_CENTER_VERTICAL, 10)
 
         KeepExistingCB = wx.CheckBox(staticbox, wx.ID_ANY, "Keep Existing / Default Tray Binds")
@@ -290,30 +290,19 @@ class Gameplay(Page):
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()
 
-        KBProfile = self.KeybindProfiles[self.GetState('KBProfile')]
-
         ### Tray buttons
         for button in (1,2,3,4,5,6,7,8,9,0):
             slotbutton = button if button != 0 else 10
             if self.GetState('Tray1Enabled'):
                 ResetFile.SetBind(self.Ctrls[f"Tray1Button{button}"].MakeFileKeyBind(f"powexec_slot {slotbutton}"))
             if self.GetState('Tray2Enabled'):
-                if self.GetState("KeepExisting") == False:
-                    DefModKey = KBProfile.get('Secondary', None)
-                    if DefModKey and self.GetState(f"Tray2Button{button}") != f"{DefModKey}+{button}":
-                        ResetFile.SetBind(KeyBind(f"{DefModKey}+{button}", "", self, "nop"))
+                self.CheckForDefaultKeyToClear('Secondary', 2, button)
                 ResetFile.SetBind(self.Ctrls[f"Tray2Button{button}"].MakeFileKeyBind(f"powexec_altslot {slotbutton}"))
             if self.GetState('Tray3Enabled'):
-                if self.GetState("KeepExisting") == False:
-                    DefModKey = KBProfile.get('Tertiary', None)
-                    if DefModKey and self.GetState(f"Tray3Button{button}") != f"{DefModKey}+{button}":
-                        ResetFile.SetBind(KeyBind(f"{DefModKey}+{button}", "", self, "nop"))
+                self.CheckForDefaultKeyToClear('Tertiary', 3, button)
                 ResetFile.SetBind(self.Ctrls[f"Tray3Button{button}"].MakeFileKeyBind(f"powexec_alt2slot {slotbutton}"))
             if self.GetState('Tray4Enabled'):
-                if self.GetState("KeepExisting") == False:
-                    DefModKey = KBProfile.get('Server', None)
-                    if DefModKey and self.GetState(f"Tray4Button{button}") != f"{DefModKey}+{button}":
-                        ResetFile.SetBind(KeyBind(f"{DefModKey}+{button}", "", self, "nop"))
+                self.CheckForDefaultKeyToClear('Server', 4, button)
                 ResetFile.SetBind(self.Ctrls[f"Tray4Button{button}"].MakeFileKeyBind(f"powexec_serverslot {slotbutton}"))
 
         if self.GetState('Tray1Enabled'):
@@ -380,6 +369,14 @@ class Gameplay(Page):
         ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
 
         return True
+
+    def CheckForDefaultKeyToClear(self, trayname, traynum, button):
+        if self.GetState("KeepExisting") == False:
+            if KBProfile := self.KeybindProfiles.get(self.GetState('KBProfile'), None):
+                if DefModKey := KBProfile.get(trayname, None):
+                    DefKey = f"{DefModKey}+{button}"
+                    if self.GetState(f"Tray{traynum}Button{button}") != DefKey and not self.Profile.CheckConflict(DefKey, ''):
+                        self.Profile.ResetFile().SetBind(KeyBind(DefKey, "", self, "nop"))
 
     def AllBindFiles(self):
         files = [self.Profile.GetBindFile("teamsel", "reset.txt")]

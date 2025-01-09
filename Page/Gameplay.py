@@ -63,17 +63,6 @@ class Gameplay(Page):
         traySizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = 'Power Tray Buttons')
         staticbox = traySizer.GetStaticBox()
 
-        # Keybind Profile picker
-        KBProfileSizer = wx.BoxSizer(wx.HORIZONTAL)
-        KBProfileSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Keybind Profile:"), 0, wx.ALIGN_CENTER_VERTICAL, 5)
-        KBProfilePicker = cgChoice(staticbox, wx.ID_ANY, choices = ['Modern', 'Joystick', 'Classic', 'Launch (Issue 0)'])
-        KBProfilePicker.SetSelection(0)
-        UI.Labels['KBProfile'] = "Keybind Profile"
-        self.Ctrls['KBProfile'] = KBProfilePicker
-        KBProfilePicker.SetToolTipString("This should be set to match the Keybind Profile you have set in the in-game options.")
-        KBProfileSizer.Add(KBProfilePicker, 0, wx.ALIGN_CENTER_VERTICAL, 5)
-
-        traySizer.Add(KBProfileSizer, 0, wx.ALL, 10)
 
         # Horizontal sizer for "help" button
         GridHelpSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -124,6 +113,27 @@ class Gameplay(Page):
 
         traySizer.Add(GridHelpSizer, 0, wx.ALL, 10)
 
+        # Keybind Profile picker
+        KBProfileSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        KBProfileSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Keybind Profile:"), 0, wx.ALIGN_CENTER_VERTICAL, 10)
+        KBProfilePicker = cgChoice(staticbox, wx.ID_ANY, choices = ['Modern', 'Joystick', 'Classic', 'Launch (Issue 0)'])
+        KBProfilePicker.SetSelection(0)
+        UI.Labels['KBProfile'] = "Keybind Profile"
+        self.Ctrls['KBProfile'] = KBProfilePicker
+        KBProfilePicker.SetToolTipString("This should be set to match the Keybind Profile you have set in the in-game options.")
+        KBProfileSizer.Add(KBProfilePicker, 0, wx.ALIGN_CENTER_VERTICAL, 10)
+
+        KeepExistingCB = wx.CheckBox(staticbox, wx.ID_ANY, "Keep Existing / Default Tray Binds")
+        KeepExistingCB.SetValue(False)
+        UI.Labels['KeepExisting'] = "Keep Existing / Default Tray Binds"
+        self.Ctrls['KeepExisting'] = KeepExistingCB
+        KBProfileSizer.Add(KeepExistingCB, 0, wx.ALIGN_CENTER_VERTICAL, 10)
+
+        KBProfileSizer.Add(HelpButton(staticbox, 'KeepExistingTrayBinds.html'), 0, wx.ALIGN_CENTER_VERTICAL, 5)
+
+
+        traySizer.Add(KBProfileSizer, 0, wx.ALL, 10)
         # Bottom Sizer for narrower boxes
         bottomSizer = wx.BoxSizer(wx.HORIZONTAL)
 

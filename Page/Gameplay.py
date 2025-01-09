@@ -3,6 +3,8 @@ import UI
 from BLF import BLF
 from Help import HelpButton
 
+from BindFile import KeyBind
+
 from UI.ControlGroup import ControlGroup, cgChoice
 from UI.KeySelectDialog import bcKeyButton
 from Page import Page
@@ -56,6 +58,24 @@ class Gameplay(Page):
                 ctlname = f'Tray{tray}Button{button}'
                 self.Init[ctlname] = f"{mod}{button}"
                 UI.Labels[ctlname] = f"{name} Tray, Button {button}"
+
+        self.KeybindProfiles = {
+            'Modern': {
+                'Secondary' : 'ALT',
+                'Tertiary'  : 'SHIFT',
+                'Server'    : 'CTRL',
+            },
+            'Classic': {
+                'Secondary' : 'ALT',
+                'Tertiary'  : 'CTRL',
+            },
+            'Joystick': {
+                'Secondary' : 'ALT',
+            },
+            'Launch (Issue 0)': {
+                'Secondary' : 'ALT',
+            },
+        }
 
     def BuildPage(self):
 
@@ -270,16 +290,30 @@ class Gameplay(Page):
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()
 
+        KBProfile = self.KeybindProfiles[self.GetState('KBProfile')]
+
         ### Tray buttons
         for button in (1,2,3,4,5,6,7,8,9,0):
             slotbutton = button if button != 0 else 10
             if self.GetState('Tray1Enabled'):
                 ResetFile.SetBind(self.Ctrls[f"Tray1Button{button}"].MakeFileKeyBind(f"powexec_slot {slotbutton}"))
             if self.GetState('Tray2Enabled'):
+                if self.GetState("KeepExisting") == False:
+                    DefModKey = KBProfile.get('Secondary', None)
+                    if DefModKey and self.GetState(f"Tray2Button{button}") != f"{DefModKey}+{button}":
+                        ResetFile.SetBind(KeyBind(f"{DefModKey}+{button}", "", self, "nop"))
                 ResetFile.SetBind(self.Ctrls[f"Tray2Button{button}"].MakeFileKeyBind(f"powexec_altslot {slotbutton}"))
             if self.GetState('Tray3Enabled'):
+                if self.GetState("KeepExisting") == False:
+                    DefModKey = KBProfile.get('Tertiary', None)
+                    if DefModKey and self.GetState(f"Tray3Button{button}") != f"{DefModKey}+{button}":
+                        ResetFile.SetBind(KeyBind(f"{DefModKey}+{button}", "", self, "nop"))
                 ResetFile.SetBind(self.Ctrls[f"Tray3Button{button}"].MakeFileKeyBind(f"powexec_alt2slot {slotbutton}"))
             if self.GetState('Tray4Enabled'):
+                if self.GetState("KeepExisting") == False:
+                    DefModKey = KBProfile.get('Server', None)
+                    if DefModKey and self.GetState(f"Tray4Button{button}") != f"{DefModKey}+{button}":
+                        ResetFile.SetBind(KeyBind(f"{DefModKey}+{button}", "", self, "nop"))
                 ResetFile.SetBind(self.Ctrls[f"Tray4Button{button}"].MakeFileKeyBind(f"powexec_serverslot {slotbutton}"))
 
         if self.GetState('Tray1Enabled'):

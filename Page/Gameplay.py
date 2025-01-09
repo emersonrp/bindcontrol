@@ -3,7 +3,9 @@ import UI
 from BLF import BLF
 from Help import HelpButton
 
-from UI.ControlGroup import ControlGroup
+from BindFile import KeyBind
+
+from UI.ControlGroup import ControlGroup, cgChoice
 from UI.KeySelectDialog import bcKeyButton
 from Page import Page
 
@@ -57,11 +59,36 @@ class Gameplay(Page):
                 self.Init[ctlname] = f"{mod}{button}"
                 UI.Labels[ctlname] = f"{name} Tray, Button {button}"
 
+        self.KeybindProfiles = {
+            'Modern': {
+                'Secondary' : 'ALT',
+                'Tertiary'  : 'SHIFT',
+                'Server'    : 'CTRL',
+            },
+            'Classic': {
+                'Secondary' : 'ALT',
+                'Tertiary'  : 'CTRL',
+            },
+            'Joystick': {
+                'Secondary' : 'ALT',
+            },
+            'Launch (Issue 0)': {
+                'Secondary' : 'ALT',
+            },
+        }
+
     def BuildPage(self):
 
         ##### Power Tray Buttons
-        traySizer = wx.StaticBoxSizer(wx.HORIZONTAL, self, label = 'Power Tray Buttons')
+        traySizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = 'Power Tray Buttons')
         staticbox = traySizer.GetStaticBox()
+
+
+        # Horizontal sizer for "help" button
+        GridHelpSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Tray Grid
+        trayGridSizer = wx.FlexGridSizer(14,4,0)
 
         self.FillTrayButtons = {}
         for b in (1,2,3,4):
@@ -69,8 +96,6 @@ class Gameplay(Page):
             setattr(self.FillTrayButtons[b], 'Tray', b)
             self.FillTrayButtons[b].Bind(wx.EVT_BUTTON, self.OnFillTray)
             self.FillTrayButtons[b].SetToolTip("Fill the buttons with the numbers 1 - 0.  Hold a modifier key while clicking to use that modifier key in the binds.")
-
-        trayGridSizer = wx.FlexGridSizer(14,4,0)
 
         for tray in (4,3,2,1):
             label = ['', 'Main', 'Secondary', 'Tertiary', 'Server'][tray]
@@ -102,10 +127,33 @@ class Gameplay(Page):
                 trayGridSizer.Add(prevbutton, 1, wx.ALIGN_CENTER)
                 trayGridSizer.Add(nextbutton, 1, wx.ALIGN_CENTER)
 
-        traySizer.Add(trayGridSizer, 0, wx.ALL, 10)
+        GridHelpSizer.Add(trayGridSizer, 0, wx.ALL, 10)
         traygridbutton = HelpButton(staticbox, 'PowerTrayButtons.html')
-        traySizer.Add(traygridbutton, 0, wx.ALL, 10)
+        GridHelpSizer.Add(traygridbutton, 0, wx.ALL, 10)
 
+        traySizer.Add(GridHelpSizer, 0, wx.ALL, 10)
+
+        # Keybind Profile picker
+        KBProfileSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        KBProfileSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Keybind Profile:"), 0, wx.ALIGN_CENTER_VERTICAL, 10)
+        KBProfilePicker = cgChoice(staticbox, wx.ID_ANY, choices = ['Modern', 'Joystick', 'Classic', 'Launch (Issue 0)'])
+        KBProfilePicker.SetSelection(0)
+        UI.Labels['KBProfile'] = "Keybind Profile"
+        self.Ctrls['KBProfile'] = KBProfilePicker
+        KBProfilePicker.SetToolTip("This should be set to match the Keybind Profile you have set in the in-game options.")
+        KBProfileSizer.Add(KBProfilePicker, 0, wx.ALIGN_CENTER_VERTICAL, 10)
+
+        KeepExistingCB = wx.CheckBox(staticbox, wx.ID_ANY, "Keep Existing / Default Tray Binds")
+        KeepExistingCB.SetValue(False)
+        UI.Labels['KeepExisting'] = "Keep Existing / Default Tray Binds"
+        self.Ctrls['KeepExisting'] = KeepExistingCB
+        KBProfileSizer.Add(KeepExistingCB, 0, wx.ALIGN_CENTER_VERTICAL, 10)
+
+        KBProfileSizer.Add(HelpButton(staticbox, 'KeepExistingTrayBinds.html'), 0, wx.ALIGN_CENTER_VERTICAL, 5)
+
+
+        traySizer.Add(KBProfileSizer, 0, wx.ALL, 10)
         # Bottom Sizer for narrower boxes
         bottomSizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -248,10 +296,13 @@ class Gameplay(Page):
             if self.GetState('Tray1Enabled'):
                 ResetFile.SetBind(self.Ctrls[f"Tray1Button{button}"].MakeFileKeyBind(f"powexec_slot {slotbutton}"))
             if self.GetState('Tray2Enabled'):
+                self.CheckForDefaultKeyToClear('Secondary', 2, button)
                 ResetFile.SetBind(self.Ctrls[f"Tray2Button{button}"].MakeFileKeyBind(f"powexec_altslot {slotbutton}"))
             if self.GetState('Tray3Enabled'):
+                self.CheckForDefaultKeyToClear('Tertiary', 3, button)
                 ResetFile.SetBind(self.Ctrls[f"Tray3Button{button}"].MakeFileKeyBind(f"powexec_alt2slot {slotbutton}"))
             if self.GetState('Tray4Enabled'):
+                self.CheckForDefaultKeyToClear('Server', 4, button)
                 ResetFile.SetBind(self.Ctrls[f"Tray4Button{button}"].MakeFileKeyBind(f"powexec_serverslot {slotbutton}"))
 
         if self.GetState('Tray1Enabled'):
@@ -318,6 +369,14 @@ class Gameplay(Page):
         ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
 
         return True
+
+    def CheckForDefaultKeyToClear(self, trayname, traynum, button):
+        if self.GetState("KeepExisting") == False:
+            if KBProfile := self.KeybindProfiles.get(self.GetState('KBProfile'), None):
+                if DefModKey := KBProfile.get(trayname, None):
+                    DefKey = f"{DefModKey}+{button}"
+                    if self.GetState(f"Tray{traynum}Button{button}") != DefKey and not self.Profile.CheckConflict(DefKey, ''):
+                        self.Profile.ResetFile().SetBind(KeyBind(DefKey, "", self, "nop"))
 
     def AllBindFiles(self):
         files = [self.Profile.GetBindFile("teamsel", "reset.txt")]

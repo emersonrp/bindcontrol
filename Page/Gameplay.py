@@ -136,21 +136,24 @@ class Gameplay(Page):
         # Keybind Profile picker
         KBProfileSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        KBProfileSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Keybind Profile:"), 0, wx.ALIGN_CENTER_VERTICAL, 10)
+        KBProfileText = wx.StaticText(staticbox, wx.ID_ANY, "Keybind Profile:")
+        KBProfileSizer.Add(KBProfileText, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
         KBProfilePicker = cgChoice(staticbox, wx.ID_ANY, choices = ['Modern', 'Joystick', 'Classic', 'Launch (Issue 0)'])
         KBProfilePicker.SetSelection(0)
+        KBProfilePicker.CtlLabel = KBProfileText
         UI.Labels['KBProfile'] = "Keybind Profile"
         self.Ctrls['KBProfile'] = KBProfilePicker
         KBProfilePicker.SetToolTip("This should be set to match the Keybind Profile you have set in the in-game options.")
-        KBProfileSizer.Add(KBProfilePicker, 0, wx.ALIGN_CENTER_VERTICAL, 10)
+        KBProfileSizer.Add(KBProfilePicker, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
 
         KeepExistingCB = wx.CheckBox(staticbox, wx.ID_ANY, "Keep Existing / Default Tray Binds")
         KeepExistingCB.SetValue(False)
         UI.Labels['KeepExisting'] = "Keep Existing / Default Tray Binds"
         self.Ctrls['KeepExisting'] = KeepExistingCB
-        KBProfileSizer.Add(KeepExistingCB, 0, wx.ALIGN_CENTER_VERTICAL, 10)
+        KeepExistingCB.SetToolTip("Check this box to keep existing power tray binds in addition to BindControl-generated binds.  Check the help button to the right for more information.")
+        KBProfileSizer.Add(KeepExistingCB, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
 
-        KBProfileSizer.Add(HelpButton(staticbox, 'KeepExistingTrayBinds.html'), 0, wx.ALIGN_CENTER_VERTICAL, 5)
+        KBProfileSizer.Add(HelpButton(staticbox, 'KeepExistingTrayBinds.html'), 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 5)
 
 
         traySizer.Add(KBProfileSizer, 0, wx.ALL, 10)
@@ -259,6 +262,9 @@ class Gameplay(Page):
                 self.Ctrls[f"Tray{tray}Prev"].Enable(self.GetState(f"Tray{tray}Enabled"))
                 self.Ctrls[f"Tray{tray}Next"].Enable(self.GetState(f"Tray{tray}Enabled"))
         self.Profile.CheckAllConflicts()
+        AnyTray = self.GetState('Tray1Enabled') or self.GetState('Tray2Enabled') or self.GetState('Tray3Enabled') or self.GetState('Tray4Enabled')
+        self.Ctrls['KeepExisting'].Enable(AnyTray)
+
         if evt: evt.Skip()
 
     def OnFillTray(self, evt):

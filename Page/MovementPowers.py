@@ -75,7 +75,7 @@ class MovementPowers(Page):
 
             'HasTTP'          : False,
             'TTPBindKey'      : '',
-            'TTPComboKey'     : 'LSHIFT+LCTRL',
+            'TTPComboKey'     : 'SHIFT+LCTRL',
             'TTPTPGFly'       : False,
 
             'TPHideWindows'   : True,

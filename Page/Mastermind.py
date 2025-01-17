@@ -132,7 +132,7 @@ class Mastermind(Page):
 
             'PetCmdEnable': False,
 
-            'PetChatToggle' : 'LALT+M',
+            'PetChatToggle' : 'ALT+M',
             'PetChattyDefault' : True,
             'PetSelect1' : '',
             'PetSelect2' : '',

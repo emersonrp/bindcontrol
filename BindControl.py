@@ -70,7 +70,7 @@ class Main(wx.Frame):
         if not config.Exists('GameBindPath'):
             if platform.system() != 'Windows':
                 config.Write('GameBindPath', "c:\\coh\\")
-        if not config.Exists('ResetKey')            : config.Write('ResetKey', 'LCTRL+R')
+        if not config.Exists('ResetKey')            : config.Write('ResetKey', 'CTRL+R')
         if not config.Exists('UseSplitModKeys')     : config.WriteBool('UseSplitModKeys', False)
         if not config.Exists('FlushAllBinds')       : config.WriteBool('FlushAllBinds', True)
         if not config.Exists('ProfilePath')         : config.Write('ProfilePath', str(Path(wx.StandardPaths.Get().GetDocumentsDir()) / "bindcontrol"))

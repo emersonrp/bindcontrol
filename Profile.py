@@ -638,7 +638,7 @@ class Profile(wx.Notebook):
             dlg.Raise()
             dlg.ShowModal()
             if errors:
-                wx.App.Get().Main.LogWindow.Show()
+                wx.App.Get().Main.Logger.LogWindow.Show()
 
         # clear out our state
         self.BindFiles = {}

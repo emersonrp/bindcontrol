@@ -7,7 +7,7 @@ from GameData import Alignments, Archetypes, Origins, MiscPowers
 
 from UI.ControlGroup import ControlGroup
 from UI.IncarnateBox import IncarnateBox
-from UI.ChatColorPicker import ChatColorPicker, ChatColors
+# from UI.ChatColorPicker import ChatColorPicker, ChatColors
 
 from Page import Page
 
@@ -27,7 +27,7 @@ class General(Page):
             'Pool3': '',
             'Pool4': '',
 
-            'ChatEnable' : True,
+            'ChatEnable' : False,
             'StartChat'  : 'ENTER',
             'SlashChat'  : '/',
             'StartEmote' : ';',
@@ -143,21 +143,21 @@ class General(Page):
 
         ChatSizer = wx.BoxSizer(wx.VERTICAL)
 
-        ### Chat Color Picker
-        ChatColorSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Chat Colors")
-        ChatColorEnable = wx.CheckBox(ChatColorSizer.GetStaticBox(), -1, 'Use Custom Chat Colors')
-        ChatColorEnable.SetToolTip( wx.ToolTip('Check this to select custom colors for your chat messages'))
-        setattr(ChatColorEnable, "CtlName", "ChatColorEnable")
-        self.Ctrls['ChatColorEnable'] = ChatColorEnable
-        ChatColorEnable.Bind(wx.EVT_CHECKBOX, self.OnColorEnable)
-        ChatColors = ChatColorPicker(ChatColorSizer.GetStaticBox(), self, 'Chat', {
-            'border'     : wx.BLACK,
-            'background' : wx.WHITE,
-            'text'       : wx.BLACK,
-        })
-        ChatColorSizer.Add(ChatColorEnable, 0, wx.ALL, 6)
-        ChatColorSizer.Add(ChatColors, 0, wx.ALL, 10)
-        ChatSizer.Add(ChatColorSizer, 0)
+        # ### Chat Color Picker
+        # ChatColorSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Chat Colors")
+        # ChatColorEnable = wx.CheckBox(ChatColorSizer.GetStaticBox(), -1, 'Use Custom Chat Colors')
+        # ChatColorEnable.SetToolTip( wx.ToolTip('Check this to select custom colors for your chat messages'))
+        # setattr(ChatColorEnable, "CtlName", "ChatColorEnable")
+        # self.Ctrls['ChatColorEnable'] = ChatColorEnable
+        # ChatColorEnable.Bind(wx.EVT_CHECKBOX, self.OnColorEnable)
+        # ChatColors = ChatColorPicker(ChatColorSizer.GetStaticBox(), self, 'Chat', {
+        #     'border'     : wx.BLACK,
+        #     'background' : wx.WHITE,
+        #     'text'       : wx.BLACK,
+        # })
+        # ChatColorSizer.Add(ChatColorEnable, 0, wx.ALL, 6)
+        # ChatColorSizer.Add(ChatColors, 0, wx.ALL, 10)
+        # ChatSizer.Add(ChatColorSizer, 0)
 
         ## Typing Notifier
         TNSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Typing Notifier")
@@ -185,7 +185,8 @@ class General(Page):
         chatBindBox = ControlGroup(self, self, 'Chat Binds')
 
         for b in (
-            ['StartChat',  'Activates the Chat bar with notifier and custom colors if selected'],
+                # ['StartChat',  'Activates the Chat bar with notifier and custom colors if selected'],
+            ['StartChat',  'Activates the Chat bar with notifier if selected'],
             ['SlashChat',  'Activates the Chat bar with notifier and a slash already typed'],
             ['StartEmote', 'Activates the Chat bar with notifier and "/em" already typed'],
             ['AutoReply',  'AutoReplies to incoming tells with notifier'],
@@ -218,26 +219,26 @@ class General(Page):
         self.OnPickOrigin()
         self.OnPickArchetype()
         self.OnTypeEnable()
-        self.OnColorEnable()
+        # self.OnColorEnable()
 
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()
 
         colorstring = ''
-        if self.GetState('ChatColorEnable'):
-            colorstring = ChatColors(
-                self.GetState('ChatForeground'),
-                self.GetState('ChatBackground'),
-                self.GetState('ChatBorder'),
-            )
+        # if self.GetState('ChatColorEnable'):
+        #     colorstring = ChatColors(
+        #         self.GetState('ChatForeground'),
+        #         self.GetState('ChatBackground'),
+        #         self.GetState('ChatBorder'),
+        #     )
 
         notifier = ''
         if self.GetState('TypingNotifierEnable'):
             notifier = 'afk ' + self.GetState('TypingNotifier')
 
         startchatcommand = "startchat "
-        if self.GetState('ChatColorEnable'):
-            startchatcommand = "beginchat "
+        # if self.GetState('ChatColorEnable'):
+            # startchatcommand = "beginchat "
 
         ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', startchatcommand + colorstring]))
         ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeFileKeyBind([notifier, 'show chat', 'slashchat']))
@@ -328,10 +329,10 @@ class General(Page):
     def OnPickEpicPowerSet(self, evt):
         evt.Skip()
 
-    def OnColorEnable(self, evt = None):
-        colorsenabled = self.GetState('ChatColorEnable')
-        self.EnableControls(colorsenabled, ['ChatBorder', 'ChatBackground', 'ChatForeground'])
-        if evt: evt.Skip()
+    # def OnColorEnable(self, evt = None):
+    #     colorsenabled = self.GetState('ChatColorEnable')
+    #     self.EnableControls(colorsenabled, ['ChatBorder', 'ChatBackground', 'ChatForeground'])
+    #     if evt: evt.Skip()
 
     def OnTypeEnable(self, evt = None):
         typeenabled = self.GetState('TypingNotifierEnable')

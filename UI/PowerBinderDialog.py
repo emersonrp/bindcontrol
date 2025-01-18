@@ -969,6 +969,8 @@ class EmoteCmd(PowerBindCmd):
 ####### Load Binds Directory
 class LoadBindsDir(PowerBindCmd):
     def BuildUI(self, dialog):
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+
         lbSizer = wx.BoxSizer(wx.HORIZONTAL)
         lbText = wx.StaticText(dialog, -1, "Load Binds Directory:")
         lbSizer.Add(lbText, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
@@ -978,7 +980,14 @@ class LoadBindsDir(PowerBindCmd):
         self.lbPicker = wx.Choice(dialog, -1, choices = sorted(profiles))
         lbSizer.Add(self.lbPicker, 1, wx.ALIGN_CENTER_VERTICAL)
 
-        return lbSizer
+        mainSizer.Add(lbSizer, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5)
+
+        self.lbResetCB = wx.CheckBox(dialog, -1, "Reset All Keybinds Before Loading")
+        self.lbResetCB.SetValue(True)
+
+        mainSizer.Add(self.lbResetCB, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5)
+
+        return mainSizer
 
     def MakeBindString(self):
         # TODO -- add a "reset binds when loading" checkbox to this UI and honor it with keybind_reset
@@ -988,14 +997,21 @@ class LoadBindsDir(PowerBindCmd):
         else:
             bindpath = config.Read('BindPath')
 
+        reset = ""
+        if self.lbResetCB.GetValue():
+            reset = "keybind_reset$$"
+
         resetfilepath = PureWindowsPath(bindpath) / self.lbPicker.GetString(self.lbPicker.GetSelection()) / 'reset.txt'
-        return 'bindloadfile ' + str(resetfilepath)
+        return reset + 'bindloadfile ' + str(resetfilepath)
 
     def Serialize(self):
-        return {'LoadBindProfile' : self.lbPicker.GetString(self.lbPicker.GetSelection())}
+        return {'LoadBindProfile' : self.lbPicker.GetString(self.lbPicker.GetSelection()),
+                'ResetKeybinds'   : self.lbResetCB.GetValue(),
+                }
 
     def Deserialize(self, init):
         if init.get('LoadBindProfile', ''): self.lbPicker.SetStringSelection(init['LoadBindProfile'])
+        self.lbResetCB.SetValue(init.get('ResetKeybinds', False))
 
 ####### Power Abort
 class PowerAbortCmd(PowerBindCmd):

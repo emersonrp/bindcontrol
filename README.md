@@ -1,5 +1,4 @@
-BindControl
-===========
+# BindControl
 
 BindControl is a helper app for creating and maintaining keybinds for City of Heroes.
 
@@ -9,10 +8,9 @@ During City of Heroes' original run, CityBinder was the go-to app for keybinds. 
 
 I worked on it on-and-off for the remainder of the original run of the game, then shelved it, ostensibly forever.  Now here in the age of the SCORE, Homecoming, and other servers, it once again has value, so I've dusted it off and continued to add features and modernize it.
 
-With Homecoming recently securing the licensing for City of Heroes from NCSoft, development of the game and its ecosystem, BindControl included, is likely to remain very Homecoming-centric in the near to medium term.  Recent changes to BindControl's Speed on Demand code incorporate changes made specifically in Homecoming Issue 27, and while it will probably continue to work elsewhere, I don't currently have a presence on these other servers to test and validate.  Please feel free to open issues for non-Homecoming servers, but know that they might not receive as much attention as Homecoming-specific ones do.
+With Homecoming recently [securing the licensing](https://forums.homecomingservers.com/topic/47223-ncsoft-homecoming-license-announcement/) for City of Heroes from NCSoft, development of the game and its ecosystem, BindControl included, is likely to remain very Homecoming-centric in the near to medium term.  Recent updates to BindControl's Speed on Demand code incorporate [changes made in Homecoming Issue 27, Page 2](https://homecoming.wiki/wiki/Issue_27_Page_2#Travel_Power_Updates), and while BindControl will continue to work on non-Homecoming servers to a greater or lesser degree, I don't currently have a presence on these other servers to test and validate.  Please feel free to open issues for non-Homecoming servers, but know that they might not receive as much attention as Homecoming-specific ones do.
 
-Features
---------
+## Features
 
 * Runs on Windows, MacOS, and Linux
 * Separate profiles for different characters, archetypes, or situations
@@ -21,39 +19,41 @@ Features
     * One-key next-teammate / previous-teammate selection, with support for setting team size and optionally skipping the player in the next/previous rotation
     * Rebind the keys for the in-game power tray buttons
     * Various helpful shortcut binds, "Quit to Desktop", "Invite Target", "Show FPS", "Show Netgraph" - more to come
-    * Chat binds with optional 'typing' notifier and custom chat colors
+    * Chat binds with optional 'typing' notifier
 
 * Custom Binds
     * Create simple binds using PowerBinder, a flexible tool for stringing together arbitrary commands for keybinding
     * Complex binds, chains of PowerBinder actions that fire sequentially on multiple presses of a keybind
     * Buffer binds, allowing quick one-key buffing of each teammate and/or pet
+
 * Movement / Speed-on-Demand
-    * Speed-on-Demand based on [citybinder](http://sourceforge.net/projects/citybinder/) and the original Gnarly's SoD keybinds
+    * Speed-on-Demand based on [CityBinder](http://sourceforge.net/projects/citybinder/) and the original Gnarly's SoD keybinds
     * Supports all formal travel powers:  Fly, Mystic Flight, Group Fly, Super Jump, Mighty Leap, Super Speed, Speed of Sound, Teleport, and Team Teleport
-    * Secondary travel powers like Mystic Flight's "Translocation" are starting to be better integrated
-    * Supports [Homecoming travel power changes](https://forums.homecomingservers.com/topic/27807-travel-power-updates-in-issue-27-page-2/) - WIP but functional
+    * Secondary / server tray travel powers like Super Jump's "Double Jump" and Mystic Flight's "Translocation" are starting to be better integrated
     * Homecoming's <code>powexec_location cursor</code> feature incorporated into Teleport binds, with "teleport immediately" and "teleport on key release" options available
     * Kheldian form toggles;  Kheldian movement powers incorporated into Speed-on-Demand
     * One-key reset in case SoD binds get tangled up
+
 * Inspiration Popper
     * By-type; dual and team inspirations supported
     * Option to use or skip "super" inspirations
     * Largest-first or smallest-first
     * Optional /say feedback with per-inspiration custom colors
+
 * Mastermind / Pet Binds
     * Select pets by power level: all, minions, lieutenants, and boss
     * Orders for aggressive / defensive / passive stances; attack, follow, go to, and stay, for all or selected pets
     * Pets can give feedback on each order;  chattiness can be toggled via keybind
-    * "Bodyguard mode" shortcut -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress
+    * "Bodyguard mode" shortcut -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress[^1]
     * By-name pet selection
     * Next-pet / previous-pet binds
 
-TODO
-----
+## TODO
 
 * Attempt to make every slash command in the game available in some way, typically via PowerBinder
 * Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment
-* "Bodyguard mode" as implemented in citybinder doesn't work as intended, and might not be able to due to game restrictions
+* The Movement Powers page is a confusing forest of checkboxes, dating from the original CityBinder layout and needs some layout and documentation work.
+* "Bodyguard mode" as implemented in CityBinder doesn't work as intended, and might not be able to due to game restrictions
 * Investigate improvements to Mastermind binds to clarify and expand the behavior
 * More error detection and handling
 * Temporary powers in speed-on-demand
@@ -61,19 +61,20 @@ TODO
 * Fix bugs as found
 * More internal work on initialization order of objects to speed up start time and avoid bootstrapping problems
 
-Using Binary Releases
----------------------
+## Using Binary Releases
 
-*Windows users*:  try the ZIP file from the [latest release](https://github.com/emersonrp/bindcontrol/releases), and give feedback.  If that works for you, it's the quickest path to victory.  <b>If you receive malware warnings</b>, please read <a href="Help/MalwareWarnings.md">my comments on that issue</a>.
+Binary releases of Python applications are a bit finicky and fragile, but are provided on the [latest release page](https://github.com/emersonrp/bindcontrol/releases).  Feel free to try them, but if you have any trouble, skip down to [Running From Source](#runningfromsource) below for an alternative, very deterministic, way of running BindControl.
+
+*Windows users*:  try the ZIP file and give feedback.  If that works for you, it's the quickest path to victory.  <b>If you receive malware warnings when downloading</b>, please read <a href="Help/MalwareWarnings.md">my comments on that issue</a>.
 
 *MacOS users*:  an experimental binary release has been made available.  It is not signed and/or notarized, and might or might not work at all.  Any feedback is encouraged.
 
-*Linux users*:  an experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.
+*Linux users*:  an experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.  It's built using Github's "ubuntu-latest" environment, which may or may not be completely compatible with other distributions and versions.[^2]
 
-Running From Source
--------------------
+<a id="runningfromsource"></a>
+## Running From Source
 
-### Dependencies
+### Step 1 - Dependencies
 
 1. [Python](https://www.python.org) version 3.10 or later
 2. [wxPython](https://www.wxpython.org) version 4.2 or later
@@ -84,22 +85,21 @@ Running From Source
 
 *Linux users*:  install your distribution's packages for Python 3 and wxPython.
 
-### Getting and running the code
+### Step 2 - Getting and running the code
 
-* Clone this repo, or download the source as a ZIP file and unzip it somewhere
+* Clone this repo, or download the source as a ZIP file and unzip it somewhere[^3]
 
 * Windows (and possibly Mac) users:  Double-click `BindControl.py` in the top-level folder
 
 * Mac / Linux users: In a terminal, `cd` to where you put the BindControl source, then `python BindControl.py`.  Some distributions might need `python3` instead of `python`.
 
-Credits
--------
+## Credits
 
 BindControl is in many places a direct port of [CityBinder](http://sourceforge.net/projects/citybinder/) code, and in most other places was extremely influenced by it.  Keybinding code drew from similar code in [PADRE](https://padre.perlide.org/).
 
-Various newer functionality was added to [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by tailcoat, who kindly provided his source code and permission to adapt for use with BindControl, as well as offered suggestions and advice for improvements.
+Various newer functionality was added to [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by Tailcoat, who kindly provided his source code and permission to adapt for use with BindControl, as well as offered suggestions and advice for improvements.
 
-Citybinder's acknowledgements are reproduced below:
+CityBinder's acknowledgements are reproduced below:
 ```
     Obviously, without Cryptic and NCSoft to have created/funded/published
     City of Heroes and City of Villains, there would be no point to this
@@ -119,16 +119,21 @@ Citybinder's acknowledgements are reproduced below:
 
 The improved Inspiration Popper design was gratefully adapted from an unreleased version of [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by Tailcoat.
 
-Github Actions for automated building of binary releases graciously provided by <a href="https://github.com/JamzTheMan">JamzTheMan</a>.
+Github Actions for automated building of binary releases provided by <a href="https://github.com/JamzTheMan">JamzTheMan</a>.
 
 Additional feedback and suggestions provided in the <a href="https://forums.homecomingservers.com/topic/38674-bindcontrol-alternative-to-citybinder/">Homecoming Forums thread</a> and in <a href="https://github.com/emersonrp/bindcontrol/issues">Github issues</a> by:<br>
 DevoDog68, BlackSpectre, Premmy, kenlon, Lumenia, xizar, autobotpinto, jtoya85
 
 
-License
--------
+## License
 
 BindControl is licensed under the <a href="Help/LICENSE.html">GPL version 3</a> or later.
 
 
 emerson@hayseed.net
+
+[^1] Bodyguard Mode is based on CityBinder's original implementation, which no longer works exactly as intended in all circumstances.  It's not clear whether it ever did completely work.  It will be modified in a future release, and possibly removed, depending on what workarounds can be found.
+
+[^2] For instance, I run Manjaro, and have to install "libtiff5" from AUR to make the binary release work.
+
+[^3] If you are familiar at all with git or github, cloning the repo is the recommended action here -- this makes it easier and quicker to get new changes when they arrive, as well as allows access to incremental between-release changes and experimental branches.

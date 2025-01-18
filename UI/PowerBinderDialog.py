@@ -6,7 +6,9 @@ from UI.ControlGroup import ControlGroup
 from UI.PowerPicker import PowerPicker
 import wx.adv
 from wx.adv import BitmapComboBox, EditableListBox
+from pathlib import PureWindowsPath, Path
 import GameData
+import Profile
 from Icon import GetIcon
 
 class PowerBinderDialog(wx.Dialog):
@@ -964,6 +966,37 @@ class EmoteCmd(PowerBindCmd):
     def Deserialize(self, init):
         if init.get('emoteName', ''): self.emoteName.SetLabel(init['emoteName'])
 
+####### Load Binds Directory
+class LoadBindsDir(PowerBindCmd):
+    def BuildUI(self, dialog):
+        lbSizer = wx.BoxSizer(wx.HORIZONTAL)
+        lbText = wx.StaticText(dialog, -1, "Load Binds Directory:")
+        lbSizer.Add(lbText, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+
+        profiles = Profile.GetAllProfileBindsDirs()
+
+        self.lbPicker = wx.Choice(dialog, -1, choices = sorted(profiles))
+        lbSizer.Add(self.lbPicker, 1, wx.ALIGN_CENTER_VERTICAL)
+
+        return lbSizer
+
+    def MakeBindString(self):
+        # TODO -- add a "reset binds when loading" checkbox to this UI and honor it with keybind_reset
+        config = wx.ConfigBase.Get()
+        if config.Exists('GameBindPath'):
+            bindpath = config.Read('GameBindPath')
+        else:
+            bindpath = config.Read('BindPath')
+
+        resetfilepath = PureWindowsPath(bindpath) / self.lbPicker.GetString(self.lbPicker.GetSelection()) / 'reset.txt'
+        return 'bindloadfile ' + str(resetfilepath)
+
+    def Serialize(self):
+        return {'LoadBindProfile' : self.lbPicker.GetString(self.lbPicker.GetSelection())}
+
+    def Deserialize(self, init):
+        if init.get('LoadBindProfile', ''): self.lbPicker.SetStringSelection(init['LoadBindProfile'])
+
 ####### Power Abort
 class PowerAbortCmd(PowerBindCmd):
     def MakeBindString(self):
@@ -1496,6 +1529,7 @@ commandClasses = {
     'Custom Bind'              : CustomBindCmd,
     'Emote'                    : EmoteCmd,
     'Graphics Settings'        : GraphicsCmd,
+    'Load Binds Directory'     : LoadBindsDir,
     'Movement Commands'        : MovementCmd,
     'Power Abort'              : PowerAbortCmd,
     'Power Unqueue'            : PowerUnqueueCmd,

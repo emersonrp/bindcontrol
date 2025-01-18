@@ -118,15 +118,17 @@ CityBinder's acknowledgements are reproduced below:
 
 The improved Inspiration Popper design was gratefully adapted from an unreleased version of [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by Tailcoat.
 
-Github Actions for automated building of binary releases provided by <a href="https://github.com/JamzTheMan">JamzTheMan</a>.
+Github Actions for automated building of binary releases provided by [JamzTheMan](https://github.com/JamzTheMan).
 
-Additional feedback and suggestions provided in the <a href="https://forums.homecomingservers.com/topic/38674-bindcontrol-alternative-to-citybinder/">Homecoming Forums thread</a> and in <a href="https://github.com/emersonrp/bindcontrol/issues">Github issues</a> by:<br>
+Additional feedback and suggestions provided in the [Homecoming Forums thread](https://forums.homecomingservers.com/topic/38674-bindcontrol-alternative-to-citybinder) and in [Github issues](https://github.com/emersonrp/bindcontrol/issues) by:<br>
 DevoDog68, BlackSpectre, Premmy, kenlon, Lumenia, xizar, autobotpinto, jtoya85
+
+Icons / graphics are from Microsoft's Fluent icons collection, by way of [Colton Griffith's Fluent Icons viewer](https://fluenticons.co/outlined/).
 
 
 ## License
 
-BindControl is licensed under the <a href="Help/LICENSE.html">GPL version 3</a> or later.
+BindControl is licensed under the [GPL version 3](LICENSE) or later.
 
 
 emerson@hayseed.net

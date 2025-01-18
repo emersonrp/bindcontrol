@@ -148,6 +148,9 @@ class PowerBinderDialog(wx.Dialog):
         # detach the command object and instead glue it to self.RearrangeList
         newCommand = self.bindChoice.DetachClientObject(chosenSel)
 
+        # Deselect the step from the picker in all cases
+        self.bindChoice.SetSelection(wx.NOT_FOUND)
+
         # show the edit dialog if this command needs it
         if newCommand.UI:
             self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALL|wx.EXPAND, 10)
@@ -158,7 +161,6 @@ class PowerBinderDialog(wx.Dialog):
         self.RearrangeList.Select(newBindIndex)
         self.RearrangeList.SetClientData(newBindIndex, newCommand)
 
-        self.bindChoice.SetSelection(wx.NOT_FOUND)
         self.OnListSelect(evt)
         self.UpdateBindStringDisplay()
 

@@ -63,7 +63,7 @@ With Homecoming recently [securing the licensing](https://forums.homecomingserve
 
 ## Using Binary Releases
 
-Binary releases of Python applications are a bit finicky and fragile, but are provided on the [latest release page](https://github.com/emersonrp/bindcontrol/releases).  Feel free to try them, but if you have any trouble, skip down to [Running From Source](#runningfromsource) below for an alternative, very deterministic, way of running BindControl.
+Binary releases of Python applications are a bit finicky and fragile, but are provided on the [latest release page](https://github.com/emersonrp/bindcontrol/releases).  Feel free to try them, but if you have any trouble, skip down to [Running From Source](#running-from-source) below for an alternative, very deterministic, way of running BindControl.
 
 *Windows users*:  try the ZIP file and give feedback.  If that works for you, it's the quickest path to victory.  <b>If you receive malware warnings when downloading</b>, please read <a href="Help/MalwareWarnings.md">my comments on that issue</a>.
 
@@ -71,7 +71,6 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 
 *Linux users*:  an experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.  It's built using Github's "ubuntu-latest" environment, which may or may not be completely compatible with other distributions and versions.[^2]
 
-<a id="runningfromsource"></a>
 ## Running From Source
 
 ### Step 1 - Dependencies

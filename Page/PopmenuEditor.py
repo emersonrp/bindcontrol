@@ -225,13 +225,14 @@ class PopmenuEditor(Page):
     def OnNewMenuButton(self, _ = None):
         mlc = self.MenuListCtrl
         newmenuname = self.GetNewMenuName()
-        newmenu = Popmenu(self)
-        newmenu.Title = newmenuname
-        newmenu.AppendItem(PETitle(newmenu, newmenuname))
-        listitem = mlc.Append([newmenuname])
-        mlc.SetItemData(listitem, menuID := wx.NewId())
-        self.MenuList[menuID] = {'menu' : newmenu}
-        newmenu.SetModified()
+        if newmenuname:
+            newmenu = Popmenu(self)
+            newmenu.Title = newmenuname
+            newmenu.AppendItem(PETitle(newmenu, newmenuname))
+            listitem = mlc.Append([newmenuname])
+            mlc.SetItemData(listitem, menuID := wx.NewId())
+            self.MenuList[menuID] = {'menu' : newmenu}
+            newmenu.SetModified()
 
     def LoadMenusFromMenuDir(self):
         # GetMenuPathForGamePath shows its own errors

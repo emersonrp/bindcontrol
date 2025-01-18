@@ -132,8 +132,8 @@ BindControl is licensed under the <a href="Help/LICENSE.html">GPL version 3</a> 
 
 emerson@hayseed.net
 
-[^1] Bodyguard Mode is based on CityBinder's original implementation, which no longer works exactly as intended in all circumstances.  It's not clear whether it ever did completely work.  It will be modified in a future release, and possibly removed, depending on what workarounds can be found.
+[^1]: Bodyguard Mode is based on CityBinder's original implementation, which no longer works exactly as intended in all circumstances.  It's not clear whether it ever did completely work.  It will be modified in a future release, and possibly removed, depending on what workarounds can be found.
 
-[^2] For instance, I run Manjaro, and have to install "libtiff5" from AUR to make the binary release work.
+[^2]: For instance, I run Manjaro, and have to install "libtiff5" from AUR to make the binary release work.
 
-[^3] If you are familiar at all with git or github, cloning the repo is the recommended action here -- this makes it easier and quicker to get new changes when they arrive, as well as allows access to incremental between-release changes and experimental branches.
+[^3]: If you are familiar at all with git or github, cloning the repo is the recommended action here -- this makes it easier and quicker to get new changes when they arrive, as well as allows access to incremental between-release changes and experimental branches.

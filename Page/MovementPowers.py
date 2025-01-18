@@ -481,7 +481,7 @@ class MovementPowers(Page):
             c['SpeedSpecialKey'].Show(False)
             if (self.GetState('SpeedPower') == "Super Speed"):
                 c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
-                c['SpeedSpecialPower'].SetValue('Speed Phase')
+                c['SpeedSpecialPower'].SetValue('SpeedPhase')
                 c['SpeedSpecialKey'].Show()
 
             ### JUMP POWERS
@@ -505,7 +505,7 @@ class MovementPowers(Page):
                 c['JumpSpecialKey'].Show()
             elif (self.GetState('JumpPower') == "Super Jump"):
                 c['JumpSpecialKey'].CtlLabel.SetLabel('Double Jump:')
-                c['JumpSpecialPower'].SetValue('Double Jump')
+                c['JumpSpecialPower'].SetValue('Double_Jump')
                 c['JumpSpecialKey'].Show()
 
             ### FLIGHT POWERS
@@ -530,7 +530,7 @@ class MovementPowers(Page):
             c['FlySpecialKey'].Show(False)
             if (self.GetState('FlyPower') == "Fly"):
                 c['FlySpecialKey'].CtlLabel.SetLabel('Afterburner:')
-                c['FlySpecialPower'].SetValue('Afterburner')
+                c['FlySpecialPower'].SetValue('fly_boost') # "afterburner" has overloaded meaning.
                 c['FlySpecialKey'].Show()
 
             if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.GetState('HasHover'))):

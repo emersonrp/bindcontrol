@@ -4,9 +4,10 @@ import UI
 import UI.EmotePicker
 from UI.ControlGroup import ControlGroup
 from UI.PowerPicker import PowerPicker
+from Help import HelpButton
 import wx.adv
 from wx.adv import BitmapComboBox, EditableListBox
-from pathlib import PureWindowsPath, Path
+from pathlib import PureWindowsPath
 import GameData
 import Profile
 from Icon import GetIcon
@@ -26,6 +27,7 @@ class PowerBinderDialog(wx.Dialog):
         self.bindChoice = wx.Choice(self, -1, choices = [cmd for cmd in commandClasses])
         self.bindChoice.Bind(wx.EVT_CHOICE, self.OnBindChoice)
         choiceSizer.Add(self.bindChoice, 1, wx.LEFT, 10)
+        choiceSizer.Add(HelpButton(self, "PowerBinder.html", type="window"), 0, wx.LEFT, 10)
         sizer.Add(choiceSizer, 1, wx.EXPAND|wx.BOTTOM, 10)
 
         rearrangeCtrl = wx.BoxSizer(wx.HORIZONTAL)
@@ -200,11 +202,10 @@ class PowerBinderDialog(wx.Dialog):
 
         self.EditDialog.mainSizer.Hide(command.UI)
 
-        return retval
+class PowerBinderButton(wx.BitmapButton):
 
-class PowerBinderButton(wx.Button):
     def __init__(self, parent, tgtTxtCtrl, init = {}):
-        wx.Button.__init__(self, parent, -1, label = "...")
+        wx.BitmapButton.__init__(self, parent, -1, bitmap = GetIcon('UI/gear'))
         self.Init = init
         self.Dialog = None
 
@@ -214,7 +215,7 @@ class PowerBinderButton(wx.Button):
 
     def PowerBinderEventHandler(self, _):
         dlg = self.PowerBinderDialog()
-        if (self.tgtTxtCtrl and dlg.ShowModal() == wx.ID_OK):
+        if (self.tgtTxtCtrl and dlg.Show() == wx.ID_OK):
             bindString = dlg.MakeBindString()
             if bindString != self.tgtTxtCtrl.GetValue():
                 self.tgtTxtCtrl.SetValue(bindString)

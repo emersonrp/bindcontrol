@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <title>PowerBinder</title>
+    </head>
+
+    <body>
+        <h1>PowerBinder</h1>
+
+        <p>PowerBinder is a powerful and flexible tool for creating keybinds with multiple commands or actions.  It can, for instance, create a keybind that will change your costume, say something to your teammates, load a different BindControl profile, and change your window colors to match your new costume, all with a single press of a key.</p>
+
+        <p>It's also useful for simpler keybinds where the syntax of the slash command might be fiddly or complicated -- PowerBinder hides all of this complication behind simple dialog boxes and controls.</p>
+
+        <p><b>NOTE</b> that City of Heroes only allows a single power activation per keybind.  While PowerBinder will allow you to create keybinds that have multiple power activations in them, the game will only honor one of them, so the results might not be what you expect.</p>
+
+        <p><u>The Main Window</u></p>
+
+        <p>PowerBinder's main window features a list of "steps" that will be added to the keybind in order.  You can add steps with the "Add Step" picker at the top, and rearrange, edit, and delete existing steps using the buttons on the right.  The read-only text box at the bottom shows the actual current contents of the keybind.</p>
+
+        <p><u>Steps</u></p>
+
+        <p>PowerBinder creates keybinds from a sequence of steps.  A step typically consists of a single slash command plus the various options that command might require.  A given step might, for instance, specify a chat command, or toggle in and out of supergroup mode, or activate a given power.  Each type of step has its own UI for configuring it, apart from a few very simple step types.</p>
+
+        <p>Current step types include:</p>
+
+        <blockquote>
+        <dl>
+            <dt>Attribute Monitor</dt>
+                <dd>Activate the monitoring of one or more attributes in the game's <a href="https://homecoming.wiki/wiki/Attribute_Monitor_Window">Attribute Monitor Window</a>.</dd>
+            <dt>Auto Power</dt>
+                <dd>Select the power that is being auto-fired on cooldown.</dd>
+            <dt>Away From Keyboard</dt>
+                <dd>Set the player AFK, with an optional message.</dd>
+            <dt>Buff Display Settings</dt>
+                <dd>Change the configuration of the display of buff icons for self, group, and pets.</dd>
+            <dt>Chat Command</dt>
+                <dd>Send a message to a selected chat channel, optionally with custom chat colors.</dd>
+            <dt>Chat Command (Global)</dt>
+                <dd>Send a message to a specified chat channel (including custom ones created with <code>/chat_create</code>).</dd>
+            <dt>Costume Change</dt>
+                <dd>Change into a selected costume, optionally using a selected costume change emote.</dd>
+            <dt>Custom Bind</dt>
+                <dd>Type your own command as a step.  This is useful for slash commands not currently supported by PowerBinder.</dd>
+            <dt>Emote</dt>
+                <dd>Perform the selected emote.</dd>
+            <dt>Graphics Settings</dt>
+                <dd>Change various settings related to graphics and rendering, including bloom, lod, scale, and others.</dd>
+            <dt>Load Binds Directory</dt>
+                <dd>Load the <code>reset.txt</code> file from a selected binds directory.  This can be used to change keybinds in-game to a different BindControl Profile, possibly in the case of changing specs.  You can also create small "partial" profiles and load them without resetting all keybinds, allowing for complex configurations of keybinds.</dd>
+            <dt>Movement Commands</dt>
+                <dd>Perform one of the standard movement commands.  These are usually managed via the Movement Powers tab, but can be added to a PowerBinder bind if desired.</dd>
+            <dt>Power Abort</dt>
+                <dd>Cancel the auto power and the currently queued power.</dd>
+            <dt>Power Unqueue</dt>
+                <dd>Cancel the currently queued power.</dd>
+            <dt>SG Mode Toggle</dt>
+                <dd>Toggle "Supergroup Mode."</dd>
+            <dt>Target Custom</dt>
+                <dd>Target something by name, specifying Near / Far / Next / Prev, as well as various categories (friend, alive, base, etc) to use for matching.</dd>
+            <dt>Target Enemy</dt>
+                <dd>Target an enemy by name, specifying Near / Far / Next / Prev.</dd>
+            <dt>Target Friend</dt>
+                <dd>Target a friendly by name, specifying Near / Far / Next / Prev.</dd>
+            <dt>Team/Pet Select</dt>
+                <dd>Select a specified team member or pet by number.</dd>
+            <dt>Unselect</dt>
+                <dd>Unselect any selected target.</dd>
+            <dt>Use Insp By Name</dt>
+                <dd>Use an inspiration specified by name (Respite, Good Luck, etc).</dd>
+            <dt>Use Insp From Row/Column</dt>
+                <dd>Use an inspiration by activating a particular row and slot in the inspiration tray.</dd>
+            <dt>Use Power</dt>
+                <dd>Use or cancel a power by name, optionally as a toggle.  Available powers are selected based on the powersets defined in the General tab.</dd>
+            <dt>Use Power From Tray</dt>
+                <dd>Activate the power in a specific slot of a specific power tray.</dd>
+            <dt>Window Color</dt>
+                <dd>Set the game's global window color settings to a specified RGBA value.</dd>
+            <dt>Window Save / Load</dt>
+                <dd>Save or load window settings from a specified file.</dd>
+            <dt>Window Toggle</dt>
+                <dd>Toggle the visibility of a selected game window.</dd>
+        </dl>
+        <blockquote>

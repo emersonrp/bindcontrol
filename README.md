@@ -1,6 +1,6 @@
 # BindControl
 
-BindControl is a helper app for creating and maintaining keybinds for City of Heroes.
+BindControl is a helper app for creating and maintaining keybinds and popmenus for City of Heroes.
 
 It is an enhanced port of Konoko and Monorail's [CityBinder 0.76](http://sourceforge.net/projects/citybinder/), using Python and the WxWidgets UI toolkit.
 
@@ -48,24 +48,30 @@ With Homecoming recently [securing the licensing](https://forums.homecomingserve
     * By-name pet selection
     * Next-pet / previous-pet binds
 
+* Popmenu Editor (beta)
+    * Install, edit, and delete popmenus in the correct game folder
+    * Easy GUI editing and testing of popmenus
+    * Generate macros to make popmenu buttons in-game
+
 ## TODO
 
-* Attempt to make every slash command in the game available in some way, typically via PowerBinder
-* Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment
+* Attempt to make every reasonable slash command in the game available in some way, typically via PowerBinder.  What qualifies as a "reasonable slash command" is yet to be determined.
+* Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment.
 * The Movement Powers page is a confusing forest of checkboxes, dating from the original CityBinder layout and needs some layout and documentation work.
-* "Bodyguard mode" as implemented in CityBinder doesn't work as intended, and might not be able to due to game restrictions
-* Investigate improvements to Mastermind binds to clarify and expand the behavior
-* More error detection and handling
-* Temporary powers in speed-on-demand
-* More and better help text and documentation
-* Fix bugs as found
-* More internal work on initialization order of objects to speed up start time and avoid bootstrapping problems
+* "Bodyguard mode" as implemented in CityBinder doesn't work as intended, and might not be able to due to game restrictions.
+* Investigate improvements to Mastermind binds to clarify and expand the behavior.
+* The popmenu editor, on Windows, simply can't load pathologically large popmenus (tens of thousands of entries).  This is a hard limit on the wx toolkit imposed by Windows itself, and can't be worked around in any way I can see.  As there exist at least two menus this large "in the wild," further investigation is merited.
+* More error detection and handling.
+* Temporary powers in speed-on-demand.
+* More and better help text and documentation.
+* Fix bugs as found.
+* More internal work on initialization order of objects to speed up start time and avoid bootstrapping problems.
 
 ## Using Binary Releases
 
 Binary releases of Python applications are a bit finicky and fragile, but are provided on the [latest release page](https://github.com/emersonrp/bindcontrol/releases).  Feel free to try them, but if you have any trouble, skip down to [Running From Source](#running-from-source) below for an alternative, very deterministic, way of running BindControl.
 
-*Windows users*:  try the ZIP file and give feedback.  If that works for you, it's the quickest path to victory.  <b>If you receive malware warnings when downloading</b>, please read <a href="Help/MalwareWarnings.md">my comments on that issue</a>.
+*Windows users*:  try the ZIP file and give feedback.  If that works for you, it's the quickest path to victory.  <b>If you receive malware warnings when downloading</b>, please read [my comments on that issue](Help/MalwareWarnings.md).
 
 *MacOS users*:  an experimental binary release has been made available.  It is not signed and/or notarized, and might or might not work at all.  Any feedback is encouraged.
 

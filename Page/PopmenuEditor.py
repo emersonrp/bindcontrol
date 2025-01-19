@@ -361,6 +361,8 @@ class Popmenu(FM.FlatMenu):
         super().__init__(parent)
 
         # Let's make just one of each context menu for the whole class
+        # TODO -- oh nope this might be the problem where a context menu on menus loaded after
+        # the first one all affect the first one only.
         Popmenu.ContextMenu    = Popmenu.ContextMenu    or Popmenu_ContextMenu(self)
         Popmenu.SubContextMenu = Popmenu.SubContextMenu or Popmenu_SubContextMenu(self)
         self.Title             = ''
@@ -653,50 +655,52 @@ class Popmenu_ContextMenu(FM.FlatMenu):
     def OnContextEdit(self, _):
         if cmi := self.CurrentMenuItem:
             if cmi.ShowEditor():
-                self.Parent.SetModified()
+                cmi.Parent.SetModified()
 
     def OnContextDelete(self, _):
         if cmi := self.CurrentMenuItem:
             result = wx.MessageBox(f'About to delete menu item "{cmi.GetLabel()}" -- this cannot be undone.  Continue?', "Delete Menu Item", wx.YES_NO)
             if result == wx.NO: return
 
-            self.Parent.DestroyItem(cmi)
-            self.Parent.SetModified()
+            cmi.Parent.DestroyItem(cmi)
+            cmi.Parent.SetModified()
             self.CurrentMenuItem = None
 
     def OnContextMoveUp(self, _):
         if cmi := self.CurrentMenuItem:
-            currentPosition = self.Parent.FindMenuItemPosSimple(cmi)
-            self.Parent.Remove(cmi)
-            self.Parent.InsertItem(currentPosition - 1, cmi)
-            self.Parent.SetModified()
+            currentPosition = cmi.Parent.FindMenuItemPosSimple(cmi)
+            cmi.Parent.Remove(cmi)
+            cmi.Parent.InsertItem(currentPosition - 1, cmi)
+            cmi.Parent.SetModified()
 
     def OnContextMoveDown(self, _):
         if cmi := self.CurrentMenuItem:
-            currentPosition = self.Parent.FindMenuItemPosSimple(cmi)
-            self.Parent.Remove(cmi)
-            self.Parent.InsertItem(currentPosition + 1, cmi)
-            self.Parent.SetModified()
+            currentPosition = cmi.Parent.FindMenuItemPosSimple(cmi)
+            cmi.Parent.Remove(cmi)
+            cmi.Parent.InsertItem(currentPosition + 1, cmi)
+            cmi.Parent.SetModified()
 
     def OnContextInsert(self, evt):
         menuid = evt.GetId()
         if item := self.FindItem(menuid):
-            if newitem := self.MakeNewItemForInsert(item):
-                index = self.Parent.FindMenuItemPosSimple(self.CurrentMenuItem)
-                self.Parent.InsertItem(index + 1, newitem)
-                self.Parent.SetModified()
+            if cmi := self.CurrentMenuItem:
+                if newitem := self.MakeNewItemForInsert(item):
+                    index = cmi.Parent.FindMenuItemPosSimple(cmi)
+                    cmi.Parent.InsertItem(index + 1, newitem)
+                    cmi.Parent.SetModified()
 
     def MakeNewItemForInsert(self, item):
-        if   item.GetLabel() == "Submenu": data = {'' : Popmenu(self.Parent)}
-        elif item.GetLabel() == "Option":  data = {'': ''}
-        else: data = {}
-        menuitemclass = itemclasses.get(item.GetLabel(), None)
-        if menuitemclass:
-            newitem = menuitemclass(self.Parent, data)
-            return newitem.ShowEditor()
-        else:
-            wx.LogError(f"Unknown new menu item {item.GetLabel()}: this is a bug!")
-            return False
+        if cmi := self.CurrentMenuItem:
+            if   item.GetLabel() == "Submenu": data = {'' : Popmenu(cmi.Parent)}
+            elif item.GetLabel() == "Option":  data = {'': ''}
+            else: data = {}
+            menuitemclass = itemclasses.get(item.GetLabel(), None)
+            if menuitemclass:
+                newitem = menuitemclass(cmi.Parent, data)
+                return newitem.ShowEditor()
+            else:
+                wx.LogError(f"Unknown new menu item {item.GetLabel()}: this is a bug!")
+                return False
 
 class Popmenu_SubContextMenu(Popmenu_ContextMenu):
     def __init__(self, parent):

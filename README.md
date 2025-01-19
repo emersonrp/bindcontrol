@@ -10,6 +10,8 @@ I worked on it on-and-off for the remainder of the original run of the game, the
 
 With Homecoming recently [securing the licensing](https://forums.homecomingservers.com/topic/47223-ncsoft-homecoming-license-announcement/) for City of Heroes from NCSoft, development of the game and its ecosystem, BindControl included, is likely to remain very Homecoming-centric in the near to medium term.  Recent updates to BindControl's Speed on Demand code incorporate [changes made in Homecoming Issue 27, Page 2](https://homecoming.wiki/wiki/Issue_27_Page_2#Travel_Power_Updates), and while BindControl will continue to work on non-Homecoming servers to a greater or lesser degree, I don't currently have a presence on these other servers to test and validate.  Please feel free to open issues for non-Homecoming servers, but know that they might not receive as much attention as Homecoming-specific ones do.
 
+![BindControl](https://github.com/user-attachments/assets/3761cd12-0620-4c61-a436-4e5d32770e79)
+
 ## Features
 
 * Runs on Windows, MacOS, and Linux

@@ -92,6 +92,7 @@ class PopmenuEditor(Page):
         ButtonPanel.SetSizer(ButtonSizer)
         self.TestMenuButton = wx.Button(ButtonPanel, label = "Test Current Menu")
         self.TestMenuButton.Bind(wx.EVT_BUTTON, self.OnTestMenuButton)
+        self.TestMenuButton.Bind(wx.EVT_RIGHT_DOWN, self.OnTestMenuButton)
         self.TestMenuButton.Enable(False)
         ButtonSizer.Add(self.TestMenuButton, 1, wx.EXPAND|wx.ALL, 6)
 

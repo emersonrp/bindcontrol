@@ -13,11 +13,12 @@ import Profile
 from Icon import GetIcon
 
 class PowerBinderDialog(wx.Dialog):
-    def __init__(self, parent, init = {}):
+    def __init__(self, parent, button, init = {}):
         wx.Dialog.__init__(self, parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
         self.Page = parent.Page
         self.EditDialog = PowerBinderEditDialog(self)
+        self.Button = button
 
         sizer = wx.BoxSizer(wx.VERTICAL);
         self.mainSizer = sizer
@@ -65,7 +66,11 @@ class PowerBinderDialog(wx.Dialog):
 
         sizer.Add(choiceSizer, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 16)
 
-        sizer.Add(self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL|wx.HELP), 0, wx.EXPAND)
+        sizer.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND)
+
+        # need to dig around and get the OK button since we show this dialog modelessly now.
+        okButton = self.FindWindow(self.GetAffirmativeId())
+        okButton.Bind(wx.EVT_BUTTON, self.OnOKButton)
 
         # Wrap everything in a vbox to add some padding
         vbox = wx.BoxSizer(wx.VERTICAL);
@@ -104,6 +109,14 @@ class PowerBinderDialog(wx.Dialog):
             data.append({commandClassName: cmdObject.Serialize()})
             index = index + 1
         return data
+
+    def OnOKButton(self, _):
+        if self.Button.tgtTxtCtrl:
+            bindString = self.MakeBindString()
+            if bindString != self.Button.tgtTxtCtrl.GetValue():
+                self.Button.tgtTxtCtrl.SetValue(bindString)
+                wx.App.Get().Main.Profile.SetModified()
+            self.Close()
 
     def OnRearrangeDelete(self, _):
         current = self.RearrangeList.GetSelection()
@@ -198,7 +211,7 @@ class PowerBinderDialog(wx.Dialog):
         self.EditDialog.Fit()
 
         self.EditDialog.SetTitle(f'Editing Step "{commandRevClasses[type(command)]}"')
-        retval = self.EditDialog.ShowModal()
+        self.EditDialog.ShowModal()
 
         self.EditDialog.mainSizer.Hide(command.UI)
 
@@ -214,12 +227,7 @@ class PowerBinderButton(wx.BitmapButton):
         self.SetToolTip("Launch PowerBinder")
 
     def PowerBinderEventHandler(self, _):
-        dlg = self.PowerBinderDialog()
-        if (self.tgtTxtCtrl and dlg.Show() == wx.ID_OK):
-            bindString = dlg.MakeBindString()
-            if bindString != self.tgtTxtCtrl.GetValue():
-                self.tgtTxtCtrl.SetValue(bindString)
-                wx.App.Get().Main.Profile.SetModified()
+        self.PowerBinderDialog().Show()
 
     def LoadFromData(self, data):
         self.PowerBinderDialog().LoadFromData(data)
@@ -229,7 +237,7 @@ class PowerBinderButton(wx.BitmapButton):
 
     def PowerBinderDialog(self):
         if not self.Dialog:
-            self.Dialog = PowerBinderDialog(self.Parent, self.Init)
+            self.Dialog = PowerBinderDialog(self.Parent, self, self.Init)
         return self.Dialog
 
 
@@ -993,7 +1001,10 @@ class LoadBindsDir(PowerBindCmd):
         return mainSizer
 
     def MakeBindString(self):
-        # TODO -- add a "reset binds when loading" checkbox to this UI and honor it with keybind_reset
+
+        # If the specified binds directory disappeared between runs, we'd crash, so handle that.
+        if self.lbPicker.GetSelection() == wx.NOT_FOUND: return ''
+
         config = wx.ConfigBase.Get()
         if config.Exists('GameBindPath'):
             bindpath = config.Read('GameBindPath')
@@ -1013,7 +1024,7 @@ class LoadBindsDir(PowerBindCmd):
                 }
 
     def Deserialize(self, init):
-        if init.get('LoadBindProfile', ''): self.lbPicker.SetStringSelection(init['LoadBindProfile'])
+        if init.get('LoadBindProfile', ''): self.lbPicker.SetSelection(self.lbPicker.FindString(init['LoadBindProfile']))
         self.lbResetCB.SetValue(init.get('ResetKeybinds', False))
 
 ####### Power Abort

@@ -117,11 +117,11 @@ class PopmenuEditor(Page):
         self.CheckGameDirBox.SetBackgroundColour((255,200,200))
         CheckGameDirSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.CheckGameDirBox.SetSizer(CheckGameDirSizer)
-        CheckGameDirText = wx.StaticText(self.CheckGameDirBox, label = "Your game directory is not set up correctly.  This is required for the Popmenu Editor to work.  Please visit the Preferences dialog.")
+        CheckGameDirText = wx.StaticText(self.CheckGameDirBox, label = "Your game directory is not set up correctly.\nThis is required for the Popmenu Editor to work.\nPlease visit the Preferences dialog.")
         CheckGameDirSizer.Add(CheckGameDirText, 1, wx.ALIGN_CENTER|wx.ALL, 10)
         OpenPrefsButton = wx.Button(self.CheckGameDirBox, label = "Open Preferences")
         OpenPrefsButton.Bind(wx.EVT_BUTTON, self.OnOpenPrefsButton)
-        CheckGameDirSizer.Add(OpenPrefsButton,  0, wx.EXPAND|wx.ALL, 10)
+        CheckGameDirSizer.Add(OpenPrefsButton,  0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 10)
         self.CheckGameDirBox.Hide()
 
         self.CheckMenuDirBox = wx.Panel(MiddlePanel)

@@ -361,8 +361,6 @@ class Popmenu(FM.FlatMenu):
         super().__init__(parent)
 
         # Let's make just one of each context menu for the whole class
-        # TODO -- oh nope this might be the problem where a context menu on menus loaded after
-        # the first one all affect the first one only.
         Popmenu.ContextMenu    = Popmenu.ContextMenu    or Popmenu_ContextMenu(self)
         Popmenu.SubContextMenu = Popmenu.SubContextMenu or Popmenu_SubContextMenu(self)
         self.Title             = ''
@@ -381,15 +379,19 @@ class Popmenu(FM.FlatMenu):
             font = (self.Parent.ModifiedMenuFont if modified else self.Parent.LoadedMenuFont)
             mlc.SetItemFont(item, font)
 
-    def Dismiss(self, dismissParent = False, resetOwner = False):
+    def Dismiss(self, dismissParent = False, resetOwner = False, forceDismiss = False):
         # TODO - here's where we need to come up with logic not to dismiss
         # just because a menu item got clicked.  But when -do- we dismiss?
         # This is going to be fiddly.
 
         # First stab - did we click on a menu item?  Don't close that menu, if so
         # TODO this sorta works but breaks if we right-click and edit/delete/etc
-        # (result, _) = self.HitTest(self.ScreenToClient(wx.GetMousePosition()))
-        # if result != FM.MENU_HT_ITEM:
+        if forceDismiss:
+            super().Dismiss(True, resetOwner)
+            return
+
+        (result, _) = self.HitTest(self.ScreenToClient(wx.GetMousePosition()))
+        if result != FM.MENU_HT_ITEM:
              super().Dismiss(dismissParent, resetOwner)
 
     # hook the right click behavior to tell ContextMenu who got right-clicked
@@ -654,11 +656,13 @@ class Popmenu_ContextMenu(FM.FlatMenu):
 
     def OnContextEdit(self, _):
         if cmi := self.CurrentMenuItem:
+            cmi.Parent.Dismiss(forceDismiss = True)
             if cmi.ShowEditor():
                 cmi.Parent.SetModified()
 
     def OnContextDelete(self, _):
         if cmi := self.CurrentMenuItem:
+            cmi.Parent.Dismiss(forceDismiss = True)
             result = wx.MessageBox(f'About to delete menu item "{cmi.GetLabel()}" -- this cannot be undone.  Continue?', "Delete Menu Item", wx.YES_NO)
             if result == wx.NO: return
 
@@ -684,6 +688,7 @@ class Popmenu_ContextMenu(FM.FlatMenu):
         menuid = evt.GetId()
         if item := self.FindItem(menuid):
             if cmi := self.CurrentMenuItem:
+                cmi.Parent.Dismiss(forceDismiss = True)
                 if newitem := self.MakeNewItemForInsert(item):
                     index = cmi.Parent.FindMenuItemPosSimple(cmi)
                     cmi.Parent.InsertItem(index + 1, newitem)

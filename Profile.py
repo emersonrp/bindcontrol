@@ -18,6 +18,7 @@ from Page.MovementPowers import MovementPowers
 from Page.InspirationPopper import InspirationPopper
 from Page.Mastermind import Mastermind
 from Page.CustomBinds import CustomBinds
+from Page.PopmenuEditor import PopmenuEditor
 
 import UI
 from UI.ControlGroup import cgSpinCtrl, cgSpinCtrlDouble
@@ -69,15 +70,11 @@ class Profile(wx.Notebook):
         self.MovementPowers    = self.CreatePage(MovementPowers(self))
         self.InspirationPopper = self.CreatePage(InspirationPopper(self))
         self.Mastermind        = self.CreatePage(Mastermind(self))
-
-        # bind all control events so we can decide that we're modified.
-        for evt in [
-            wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
-            wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU,
-        ]:
-            self.Bind(evt, self.SetModified)
+        self.PopmenuEditor     = self.CreatePage(PopmenuEditor(self))
 
         if loadfile: self.doLoadFromFile(loadfile)
+
+        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, parent.OnPageChanged)
 
 
     def CreatePage(self, module):
@@ -142,7 +139,6 @@ class Profile(wx.Notebook):
                 if isinstance(ctrl, bcKeyButton):
                     if not ctrl.IsThisEnabled(): continue
                     ctrl.CheckConflicts()
-
 
     def SetModified  (self, _ = None): self.Modified = True
     def ClearModified(self, _ = None): self.Modified = False

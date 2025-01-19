@@ -61,6 +61,13 @@ class Main(wx.Frame):
         config = wx.FileConfig('bindcontrol')
         wx.ConfigBase.Set(config)
         # Check each config bit for existence and set to default if no
+        if not config.Exists('GamePath'):
+            if platform.system() == 'Windows':
+                gamepath = "C:\\Games\\HC\\"
+            else:
+                gamepath = str(Path.home() / '.wine' / 'drive_c' / 'Games' / 'HC')
+            config.Write('GamePath', gamepath)
+        if not config.Exists('GameLang'): config.Write('GameLang', 'English')
         if not config.Exists('BindPath'):
             if platform.system() == 'Windows':
                 bindpath = "C:\\coh\\"
@@ -165,14 +172,16 @@ class Main(wx.Frame):
 
         # Bottom Buttons
         # BUTTONS
-        self.ProfDirButton = cgButton(self, -1, "Set Binds Location")
+        self.BottomButtonPanel = wx.Panel(self)
+        self.ProfDirButton = cgButton(self.BottomButtonPanel, -1, "Set Binds Location")
         self.ProfDirButton.SetToolTip("Configure the location where this Profile will write bindfiles")
         self.ProfDirButton.DefaultToolTip = "Configure the location where this Profile will write bindfiles"
-        self.WriteButton = wx.Button(self, -1, "Write Binds")
+        self.WriteButton = wx.Button(self.BottomButtonPanel, -1, "Write Binds")
         self.WriteButton.SetToolTip("Write out the bindfiles to the configured binds directory")
-        self.DeleteButton = wx.Button(self, -1, "Delete All Binds")
+        self.DeleteButton = wx.Button(self.BottomButtonPanel, -1, "Delete All Binds")
         self.DeleteButton.SetToolTip("Delete all BindControl-managed files in the configured binds directory")
         BottomButtonSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.BottomButtonPanel.SetSizer(BottomButtonSizer)
         BottomButtonSizer.Add(self.ProfDirButton, 0, wx.EXPAND)
         BottomButtonSizer.Add(self.WriteButton, 1, wx.EXPAND)
         BottomButtonSizer.Add(self.DeleteButton, 0, wx.EXPAND)
@@ -180,7 +189,7 @@ class Main(wx.Frame):
         self.WriteButton  .Bind(wx.EVT_BUTTON, self.OnWriteBindsButton)
         self.DeleteButton .Bind(wx.EVT_BUTTON, self.OnDeleteBindsButton)
 
-        self.Sizer.Add(BottomButtonSizer,  0, wx.EXPAND | wx.ALL, 10)
+        self.Sizer.Add(self.BottomButtonPanel,  0, wx.EXPAND | wx.ALL, 10)
 
         # Do not SetSizerAndFit() - Fit() is poison
         self.SetSizer(self.Sizer)
@@ -223,7 +232,8 @@ class Main(wx.Frame):
         if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinX') and config.HasEntry('WinY'):
             self.SetPosition((config.ReadInt('WinX'), config.ReadInt('WinY')))
 
-        self.PrefsDialog = PrefsDialog(self)
+        self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
+
         self.BindDirsWindow = None
 
         self.SetupProfileUI()
@@ -265,6 +275,15 @@ class Main(wx.Frame):
         # TODO - do smarter things with enabling the write and delete buttons
         self.WriteButton.Enable(enable)
         self.DeleteButton.Enable(enable)
+
+    def OnPageChanged(self, evt):
+        if evt.GetSelection() == 6:
+            self.BottomButtonPanel.Hide()
+            if self.Profile:
+                self.Profile.PopmenuEditor.SynchronizeUI()
+        else:
+            self.BottomButtonPanel.Show(True)
+        self.Layout()
 
     def OnProfileNew(self, _ = None):
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
@@ -430,10 +449,16 @@ class Main(wx.Frame):
 
     def CheckIfProfileNeedsSaving(self):
         result = wx.OK
-        if self.Profile and self.Profile.Modified:
-            result = wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
-            if result == wx.YES:
-                self.Profile.doSaveToFile()
+        if self.Profile:
+            if self.Profile.Modified:
+                result = wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
+                if result == wx.YES:
+                    self.Profile.doSaveToFile()
+            if self.Profile.PopmenuEditor.CheckForModifiedMenus():
+                result = wx.MessageBox("Some popmenus contain unsaved changes, return to editor?", "Popmenus modified", wx.YES_NO)
+                if result == wx.YES:
+                    result = wx.CANCEL
+                    self.Profile.SetSelection(6) # TODO - hardcoded "6" is ugly but meh
         return result
 
     def CheckProfDirButtonErrors(self):
@@ -506,34 +531,9 @@ class Main(wx.Frame):
         if not self.Profile: return
         self.Profile.DeleteBindFiles()
 
-    def OnMenuPrefsDialog(self, _):
-        if self.PrefsDialog.ShowModal() == wx.ID_OK:
-            config = wx.ConfigBase.Get()
-            config.Write('BindPath', self.PrefsDialog.bindsDirPicker.GetPath())
-            if self.PrefsDialog.gameBindsDirPicker:
-                config.Write('GameBindPath', self.PrefsDialog.gameBindsDirPicker.GetValue())
-            config.WriteBool('UseSplitModKeys', self.PrefsDialog.UseSplitModKeys.GetValue())
-            config.WriteBool('FlushAllBinds', self.PrefsDialog.FlushAllBinds.GetValue())
-            config.Write('ResetKey', self.PrefsDialog.ResetKey.GetLabel())
-
-            config.WriteBool('StartWithLastProfile', self.PrefsDialog.StartWithLastProfile.GetValue())
-            config.Write('ProfilePath', self.PrefsDialog.ProfileDirPicker.GetPath())
-
-            config.WriteBool('SaveSizeAndPosition', self.PrefsDialog.SaveSizeAndPosition.GetValue())
-
-            config.Write('ControllerMod1', self.PrefsDialog.ControllerModPicker1.GetStringSelection())
-            config.Write('ControllerMod2', self.PrefsDialog.ControllerModPicker2.GetStringSelection())
-            config.Write('ExtraMod1', self.PrefsDialog.ExtraModPicker1.GetStringSelection())
-            config.Write('ExtraMod2', self.PrefsDialog.ExtraModPicker2.GetStringSelection())
-            config.Write('ExtraMod3', self.PrefsDialog.ExtraModPicker3.GetStringSelection())
-            config.Write('ExtraMod4', self.PrefsDialog.ExtraModPicker4.GetStringSelection())
-
-            config.WriteBool('VerboseBLF', self.PrefsDialog.VerboseBLF.GetValue())
-            config.WriteBool('CrashOnBindError', self.PrefsDialog.CrashOnBindError.GetValue())
-            config.WriteBool('ShowInspector', self.PrefsDialog.ShowInspector.GetValue())
-            config.WriteBool('ShowDebugMessages', self.PrefsDialog.ShowDebugMessages.GetValue())
-
-            config.Flush()
+    def OnMenuPrefsDialog(self, _ = None):
+        with PrefsDialog(self) as dlg:
+            dlg.ShowAndUpdatePrefs()
 
     def OnMenuAboutBox(self, _):
         from datetime import datetime

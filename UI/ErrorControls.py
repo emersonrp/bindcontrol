@@ -5,6 +5,8 @@ class ErrorControlMixin:
     SetBackgroundColour    : Callable
     SetOwnBackgroundColour : Callable
     SetToolTip             : Callable
+    GetTextCtrl            : Callable
+    HasTextCtrl            : Callable
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -19,29 +21,29 @@ class ErrorControlMixin:
 
     def AddWarning(self, errname, tooltip = None):
         if not self.Errors:
-            self.SetBackgroundColour((255,255,200))
+            self.StylingTarget().SetBackgroundColour((255,255,200))
         self.Warnings[errname] = tooltip
         self.SetErrorToolTip()
 
     def RemoveWarning(self, errname):
         self.Warnings.pop(errname, None)
         if not self.Errors and not self.Warnings:
-            self.SetOwnBackgroundColour(wx.NullColour)
+            self.StylingTarget().SetOwnBackgroundColour(wx.NullColour)
         elif not self.Errors:
-            self.SetOwnBackgroundColour((255,255,200))
+            self.StylingTarget().SetOwnBackgroundColour((255,255,200))
         self.SetErrorToolTip()
 
     def AddError(self, errname, tooltip = None):
-        self.SetBackgroundColour((255,200,200))
+        self.StylingTarget().SetBackgroundColour((255,200,200))
         self.Errors[errname] = tooltip
         self.SetErrorToolTip()
 
     def RemoveError(self, errname):
         self.Errors.pop(errname, None)
         if not self.Errors and not self.Warnings:
-            self.SetOwnBackgroundColour(wx.NullColour)
+            self.StylingTarget().SetOwnBackgroundColour(wx.NullColour)
         elif not self.Errors:
-            self.SetOwnBackgroundColour((255,255,200))
+            self.StylingTarget().SetOwnBackgroundColour((255,255,200))
         self.SetErrorToolTip()
 
     # TODO pick one of these next two and stick with it
@@ -54,6 +56,9 @@ class ErrorControlMixin:
         errors = list(self.Errors)
         for error in errors: self.RemoveError(error)
         self.SetErrorToolTip()
+
+    def StylingTarget(self):
+        return self.GetTextCtrl() if (isinstance(self, wx.PickerBase) and self.HasTextCtrl()) else self
 
     def SetErrorToolTip(self):
         tipstrings = list(self.Errors.values()) + list(self.Warnings.values())

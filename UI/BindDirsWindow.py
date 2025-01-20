@@ -41,23 +41,24 @@ class BindDirsWindow(wx.MiniFrame):
             listsizer.Add(statictextclass(panel, label = binddir), 0, wx.ALL, 3)
             label = Profile.CheckProfileForBindsDir(binddir)
             dirname = statictextclass(panel, label = label or '')
+            dirname.SetCursor(wx.Cursor(wx.CURSOR_HAND))
             if not label:
                 dirname.SetForegroundColour((128,128,128))
                 dirname.SetFont(unmgdFont)
                 dirname.SetLabelMarkup('-unmanaged-')
-                dirname.SetToolTip(f'No known profile is managing this directory.')
+                dirname.SetToolTip(f'No known Profile is managing this directory.  Click to select an existing Profile to manage it.')
+                dirname.SetCursor(wx.Cursor(wx.CURSOR_HAND))
+                dirname.Bind(wx.EVT_LEFT_DOWN, partial(self.OnPickProfileClick, dirname = binddir))
             else:
                 if file := Profile.GetProfileFileForName(label):
                     dirname.SetFont(linkFont)
                     dirname.SetForegroundColour((0,0,255))
-                    dirname.SetToolTip(f'Click to load profile "{label}"')
+                    dirname.SetToolTip(f'Click to load Profile "{label}"')
                     dirname.SetCursor(wx.Cursor(wx.CURSOR_HAND))
-                    # TODO Bind to a partial with 'file' in it
                     dirname.Bind(wx.EVT_LEFT_DOWN, partial(self.OnProfileClick, file = file))
                 else:
                     dirname.SetForegroundColour((255,0,0))
-                    dirname.SetToolTip(f'The profile "{label}" isn\'t available to be loaded.')
-
+                    dirname.SetToolTip(f'The managing Profile "{label}" isn\'t available to be loaded.')
 
             listsizer.Add(dirname, 0, wx.ALL, 3)
 
@@ -72,6 +73,22 @@ class BindDirsWindow(wx.MiniFrame):
         self.Fit()
 
         self.Bind(wx.EVT_SHOW, self.OnShow)
+
+    def OnPickProfileClick(self, _, dirname):
+        message = f'Select a BindControl Profile to manage the "{dirname}" directory'
+        defaultdir = wx.ConfigBase.Get().Read('ProfilePath')
+        if not defaultdir:
+            return
+        wildcard = "BindControl Profiles (*.bcp)|*.bcp"
+        dlg = wx.FileDialog(self, message, defaultdir, wildcard = wildcard, style = wx.FD_OPEN|wx.FD_FILE_MUST_EXIST)
+        if dlg.ShowModal() == wx.ID_OK:
+            profilename = dlg.GetFilename()[:-4]
+            confirmdlg = wx.MessageDialog(self, f'Assign the Profile "{profilename}" to manage the "{dirname}" directory?', style = wx.OK|wx.CANCEL)
+            if confirmdlg.ShowModal() == wx.ID_OK:
+                # create BindsDir / dirname / bcprofileid.txt with profilename in it
+                # somehow update the contents of self to reflect the new reality, maybe just twiddle the one label that was clicked.
+                # Oh God somehow open up the profile and set its ProfileBindsDir, without loading the whole thing.
+                ...
 
     def OnProfileClick(self, _, file):
         if self.Parent.CheckIfProfileNeedsSaving() == wx.CANCEL: return

@@ -63,9 +63,9 @@ class Main(wx.Frame):
         # Check each config bit for existence and set to default if no
         if not config.Exists('GamePath'):
             if platform.system() == 'Windows':
-                gamepath = "C:\\Games\\HC\\"
+                gamepath = "C:\\Games\\Homecoming\\"
             else:
-                gamepath = str(Path.home() / '.wine' / 'drive_c' / 'Games' / 'HC')
+                gamepath = str(Path.home() / '.wine' / 'drive_c' / 'Games' / 'Homecoming')
             config.Write('GamePath', gamepath)
         if not config.Exists('GameLang'): config.Write('GameLang', 'English')
         if not config.Exists('BindPath'):

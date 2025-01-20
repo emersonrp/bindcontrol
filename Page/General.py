@@ -337,6 +337,11 @@ class General(Page):
     def OnTypeEnable(self, evt = None):
         typeenabled = self.GetState('TypingNotifierEnable')
         self.EnableControls(typeenabled, ['TypingNotifier'])
+        if typeenabled:
+            self.Ctrls['StartChat'].CtlLabel.SetLabel('Start Chat (with Notifier):')
+        else:
+            self.Ctrls['StartChat'].CtlLabel.SetLabel('Start Chat:')
+        self.Layout()
         if evt: evt.Skip()
 
     UI.Labels.update({

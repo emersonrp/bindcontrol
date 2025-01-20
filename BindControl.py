@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys, os, platform, re
-from pathlib import Path, PureWindowsPath
+from pathlib import Path
 
 import wx
 import wx.lib.mixins.inspection
@@ -395,6 +395,7 @@ class Main(wx.Frame):
         config = wx.ConfigBase.Get()
         bindpath = config.Read('BindPath')
         separator = "\\" if platform.system() == "Windows" else "/"
+        if bindpath[-1:] == separator: separator = ''
 
         dirSizer = wx.BoxSizer(wx.HORIZONTAL)
         dirSizer.Add(wx.StaticText(ProfDirDialog, -1,
@@ -443,6 +444,10 @@ class Main(wx.Frame):
 
         # need this out here in case we cancelled on a previously-blank one.
         # This is very very unlikely to happen and awful if it does.
+        #
+        # TODO-ish:  if they erase an existing valid one or otherwise cause an
+        # error, and then hit "cancel" this gets triggered, which is not
+        # perfect - this logic needs a little smartening.
         if PathText.HasErrors(): return self.OnProfDirButton()
 
         self.CheckProfDirButtonErrors()
@@ -501,10 +506,11 @@ class Main(wx.Frame):
         else:
             textctrl.RemoveError('spaces')
 
-        if PureWindowsPath(value).is_reserved():
-            textctrl.AddError('reserved', 'The name you have selected is a reserved filename in Windows.  Please select another.')
-        else:
-            textctrl.RemoveError('reserved')
+        if platform.system() == 'Windows':
+            if os.path.isreserved(value):
+                textctrl.AddError('reserved', 'The name you have selected is a reserved filename in Windows.  Please select another.')
+            else:
+                textctrl.RemoveError('reserved')
 
         if value: # don't do this check if it's blank
             exists = None

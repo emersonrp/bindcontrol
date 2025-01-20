@@ -7,6 +7,7 @@ class ErrorControlMixin:
     SetToolTip             : Callable
     GetTextCtrl            : Callable
     HasTextCtrl            : Callable
+    Refresh                 : Callable
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,6 +25,7 @@ class ErrorControlMixin:
             self.StylingTarget().SetBackgroundColour((255,255,200))
         self.Warnings[errname] = tooltip
         self.SetErrorToolTip()
+        self.Refresh()
 
     def RemoveWarning(self, errname):
         self.Warnings.pop(errname, None)
@@ -32,11 +34,13 @@ class ErrorControlMixin:
         elif not self.Errors:
             self.StylingTarget().SetOwnBackgroundColour((255,255,200))
         self.SetErrorToolTip()
+        self.Refresh()
 
     def AddError(self, errname, tooltip = None):
         self.StylingTarget().SetBackgroundColour((255,200,200))
         self.Errors[errname] = tooltip
         self.SetErrorToolTip()
+        self.Refresh()
 
     def RemoveError(self, errname):
         self.Errors.pop(errname, None)
@@ -45,6 +49,7 @@ class ErrorControlMixin:
         elif not self.Errors:
             self.StylingTarget().SetOwnBackgroundColour((255,255,200))
         self.SetErrorToolTip()
+        self.Refresh()
 
     # TODO pick one of these next two and stick with it
     def HasAnyError(self): return self.Errors != {}
@@ -56,6 +61,7 @@ class ErrorControlMixin:
         errors = list(self.Errors)
         for error in errors: self.RemoveError(error)
         self.SetErrorToolTip()
+        self.Refresh()
 
     def StylingTarget(self):
         return self.GetTextCtrl() if (isinstance(self, wx.PickerBase) and self.HasTextCtrl()) else self

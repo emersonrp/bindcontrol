@@ -327,6 +327,12 @@ class Main(wx.Frame):
     def OnProfileLoad(self, evt):
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
 
+        # TODO - this Profile.Profile() step takes a while on Windows, before
+        # the actual Load File dialog appears.  Can we make maybe a
+        # Profile.LoadFromFile() class method that shows the dialog THEN does
+        # the initializing and loading?  This should probably be a class method
+        # anyway, yes.
+
         # Start with a "detached" profile that we'll load into and then insert
         newProfile = Profile.Profile(self)
 
@@ -607,13 +613,17 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         self.Profile = None  # needed inside Main()
 
         self.Init()
-        self.Main = Main(None)
-        self.Main.SetupProfile()
+        with wx.WindowDisabler():
+            _ = wx.BusyInfo('Initializing...')
+            wx.GetApp().Yield()
 
-        # TODO bootstrapping problem, can't do this inside Profile's "__init__" because
-        # Profile needs to be defined/initialized deep inside its innards.
-        if self.Main.Profile:
-            self.Main.Profile.CheckAllConflicts()
+            self.Main = Main(None)
+            self.Main.SetupProfile()
+
+            # TODO bootstrapping problem, can't do this inside Profile's "__init__" because
+            # Profile needs to be defined/initialized deep inside its innards.
+            if self.Main.Profile:
+                self.Main.Profile.CheckAllConflicts()
 
         self.Main.Show()
 

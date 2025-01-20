@@ -389,17 +389,17 @@ class Profile(wx.Notebook):
             return self.doLoadFromFile(pathname)
 
     def doLoadFromFile(self, pathname):
-        with Path(pathname) as file:
-            try:
-                # clear out the PBD in case we already had one but this loadfile doesn't.
-                # TODO - now we always(?) load into a fresh profile object so don't need to do this?
-                self.ProfileBindsDir = ''
+        file = Path(pathname)
+        try:
+            # clear out the PBD in case we already had one but this loadfile doesn't.
+            # TODO - now we always(?) load into a fresh profile object so don't need to do this?
+            self.ProfileBindsDir = ''
 
-                jsonstring = file.read_text()
-                self.doLoadFromJSON(jsonstring)
-            except Exception as e:
-                wx.LogError(f"Profile {pathname} could not be loaded: {e}")
-                return False
+            jsonstring = file.read_text()
+            self.doLoadFromJSON(jsonstring)
+        except Exception as e:
+            wx.LogError(f"Profile {pathname} could not be loaded: {e}")
+            return False
 
         self.Filename = Path(pathname)
 

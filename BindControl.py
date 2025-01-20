@@ -232,8 +232,6 @@ class Main(wx.Frame):
         if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinX') and config.HasEntry('WinY'):
             self.SetPosition((config.ReadInt('WinX'), config.ReadInt('WinY')))
 
-        self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
-
         self.BindDirsWindow = None
 
         self.SetupProfileUI()

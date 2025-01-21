@@ -45,6 +45,7 @@ class PopmenuEditor(Page):
 
         self.CurrentMenu = None
         self.MenuList = {}  # dict for menu objects for left-side list
+        self.TabTitle = "Popmenu Editor"
 
         Sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(Sizer)

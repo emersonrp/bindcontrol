@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys, os, platform, re
 from pathlib import Path
+import webbrowser
 
 import wx
 import wx.lib.mixins.inspection
@@ -123,8 +124,7 @@ class Main(wx.Frame):
         HelpMenu = wx.Menu()
 
         Help_manual   = HelpMenu.Append(wx.ID_ANY,"Manual","User's Manual")
-        Help_faq      = HelpMenu.Append(wx.ID_ANY,"FAQ","Frequently Asked Questions")
-        Help_faq.Enable(False)
+        Help_guide    = HelpMenu.Append(wx.ID_ANY,"Getting Started","Getting Started Guide on the BindControl wiki")
         Help_files    = HelpMenu.Append(wx.ID_ANY,"Files","About BindControl's Output Files")
         Help_bindDirs = HelpMenu.Append(wx.ID_ANY, "Bind Directories", "Location of each Profile's bind files")
         Help_license  = HelpMenu.Append(wx.ID_ANY,"License Info","")
@@ -153,7 +153,7 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU , self.OnMenuExitApplication , Profile_exit)
 
         self.Bind(wx.EVT_MENU, self.OnHelpManual, Help_manual)
-        self.Bind(wx.EVT_MENU, None, Help_faq)
+        self.Bind(wx.EVT_MENU, self.OnHelpGettingStarted, Help_guide)
         self.Bind(wx.EVT_MENU, self.OnHelpFiles, Help_files)
         self.Bind(wx.EVT_MENU, self.OnHelpBindDirs, Help_bindDirs)
         self.Bind(wx.EVT_MENU, self.OnHelpLicense, Help_license)
@@ -568,6 +568,9 @@ class Main(wx.Frame):
 
     def OnHelpManual(self, _):
         ShowHelpWindow(self, 'Manual.html')
+
+    def OnHelpGettingStarted(self, _):
+        webbrowser.open('https://github.com/emersonrp/bindcontrol/wiki/Getting-Started-With-BindControl')
 
     def OnHelpLicense(self, _):
         ShowHelpWindow(self, 'LICENSE.html')

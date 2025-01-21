@@ -44,14 +44,6 @@ class InspirationPopper(Page):
             'SingleBreakFreeKey'       : "SHIFT+E",
             'SingleResistDamageKey'    : "SHIFT+SPACE",
             'SingleResurrectionKey'    : "SHIFT+TILDE",
-            'SingleRevAccuracyKey'     : "",
-            'SingleRevHealthKey'       : "",
-            'SingleRevDamageKey'       : "",
-            'SingleRevEnduranceKey'    : "",
-            'SingleRevDefenseKey'      : "",
-            'SingleRevBreakFreeKey'    : "",
-            'SingleRevResistDamageKey' : "",
-            'SingleRevResurrectionKey' : "",
         })
 
     def BuildPage(self):
@@ -98,13 +90,13 @@ class InspirationPopper(Page):
         self.enableTellsCB.Bind(wx.EVT_CHECKBOX, self.OnEnableTellCB)
 
         optionButtonBox = wx.BoxSizer(wx.HORIZONTAL)
-        profileChatColorButton = wx.Button(optionsBox.GetStaticBox(), label = "Profile's Chat Colors")
-        profileChatColorButton.SetToolTip("Set self-/tell colors to the default profile chat colors")
+        # profileChatColorButton = wx.Button(optionsBox.GetStaticBox(), label = "Profile's Chat Colors")
+        # profileChatColorButton.SetToolTip("Set self-/tell colors to the default profile chat colors")
         byInspColorButton      = wx.Button(optionsBox.GetStaticBox(), label = "Color-coded")
-        byInspColorButton     .SetToolTip("Set self-/tell colors to colored according to inspiration type")
-        optionButtonBox.Add(profileChatColorButton, 1, wx.ALL, 10)
+        byInspColorButton     .SetToolTip("Reset self-/tell colors according to inspiration type")
+        # optionButtonBox.Add(profileChatColorButton, 1, wx.ALL, 10)
         optionButtonBox.Add(byInspColorButton,      1, wx.ALL, 10)
-        profileChatColorButton.Bind(wx.EVT_BUTTON, self.OnProfileChatColorButton)
+        # profileChatColorButton.Bind(wx.EVT_BUTTON, self.OnProfileChatColorButton)
         byInspColorButton     .Bind(wx.EVT_BUTTON, self.OnByInspColorButton)
 
         optionsBox.Add(optionButtonBox)
@@ -295,10 +287,10 @@ class InspirationPopper(Page):
     for tab in tabs:
         for order in ("", "Rev"):
             for Insp in Inspirations[tab]:
-                UI.Labels[f"{tab}{order}{Insp}Key"]        = f"{Insp} Key"
-                UI.Labels[f"{tab}{order}{Insp}Border"]     = "Border"
-                UI.Labels[f"{tab}{order}{Insp}Foreground"] = "Text"
-                UI.Labels[f"{tab}{order}{Insp}Background"] = "Background"
+                InspDesc = Insp
+                if InspDesc == "ResistDamage": InspDesc = "Resist Damage"
+                if InspDesc == "BreakFree"   : InspDesc = "Break Free"
+                UI.Labels[f"{tab}{order}{Insp}Key"]        = f"{InspDesc} Key"
 
     # we only fiddle with ResetFile, which is already taken care of.
     def AllBindFiles(self):

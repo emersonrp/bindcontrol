@@ -27,7 +27,7 @@ from UI.BufferBindPane import BufferBindPane
 from UI.ComplexBindPane import ComplexBindPane
 from UI.KeySelectDialog import bcKeyButton
 
-# Non-instance method to examine an arbitrary profile binds dir for its associated profile name
+# class method to examine an arbitrary profile binds dir for its associated profile name
 def CheckProfileForBindsDir(bindsdir):
     IDFile = Path(wx.ConfigBase.Get().Read('BindPath')) / bindsdir / 'bcprofileid.txt'
     if IDFile:
@@ -35,12 +35,12 @@ def CheckProfileForBindsDir(bindsdir):
         if IDFile.exists():
             return IDFile.read_text().strip()
 
-# Non-instance method to get a Path object given a profile name
+# class method to get a Path object given a profile name
 def GetProfileFileForName(name):
     file = Path(wx.ConfigBase.Get().Read('ProfilePath')) / f"{name}.bcp"
     return file if file.is_file() else None
 
-# Non-instance method to get all profile binds dirs as a list of strings.
+# class method to get all profile binds dirs as a list of strings.
 #
 # Might want to case-mangle these in calling code if checking against them, but
 # let's not do it inside here in case we want to touch them directly on Linux
@@ -51,6 +51,34 @@ def GetAllProfileBindsDirs():
         if bindsdir.is_dir():
             alldirs.append(bindsdir.name)
     return alldirs
+
+# class method to create and load a Profile from a file-open dialog
+def LoadFromFile(parent):
+    with wx.FileDialog(parent, "Open Profile file",
+            wildcard   = "Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
+            defaultDir = str(ProfilePath()),
+            style      = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+
+        if fileDialog.ShowModal() == wx.ID_CANCEL:
+            wx.LogMessage("User canceled loading profile")
+            return False     # the user changed their mind
+
+        with wx.WindowDisabler():
+            _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(parent).Text('Loading...'))
+            wx.GetApp().Yield()
+
+            newProfile = Profile(parent)
+
+            # Proceed loading the file chosen by the user
+            pathname = fileDialog.GetPath()
+            if newProfile.doLoadFromFile(pathname):
+                return newProfile
+            else:
+                newProfile.Destroy()
+
+# class method to return the current Profile Path
+def ProfilePath():
+    return Path(wx.ConfigBase.Get().Read('ProfilePath'))
 
 class Profile(wx.Notebook):
 
@@ -193,9 +221,6 @@ class Profile(wx.Notebook):
 
     ###################
     # Profile Save/Load
-    def ProfilePath(self):
-        return Path(wx.ConfigBase.Get().Read('ProfilePath'))
-
     def SaveAsDefault(self, prompt = True):
         if prompt:
             result = wx.MessageBox("This will set the current profile to be used as a template when making a new profile.  Continue?", "Save As Default", wx.YES_NO)
@@ -234,7 +259,7 @@ class Profile(wx.Notebook):
         jsonstring = self.GetDefaultProfileJSON()
         if not jsonstring:
             # Otherwise look for the file way
-            oldDefaultProfile = self.ProfilePath() / "Default.bcp"
+            oldDefaultProfile = ProfilePath() / "Default.bcp"
             if oldDefaultProfile.exists():
                 FoundOldDefaultProfile = True
                 jsonstring = oldDefaultProfile.read_text()
@@ -243,7 +268,7 @@ class Profile(wx.Notebook):
 
         if not newname:
             raise Exception(f"Error, got into LoadFromDefault without a newname specified")
-        self.Filename = self.ProfilePath() / f"{newname}.bcp"
+        self.Filename = ProfilePath() / f"{newname}.bcp"
 
         # if we found one the file way, migrate it to the new way
         # TODO someday maybe remove this but not for a while
@@ -263,14 +288,14 @@ class Profile(wx.Notebook):
 
     def SaveToFile(self, _ = None):
         try:
-            self.ProfilePath().mkdir( parents = True, exist_ok = True )
+            ProfilePath().mkdir( parents = True, exist_ok = True )
         except Exception as e:
-            wx.LogError(f"Can't make Profile path {self.ProfilePath()} - {e}.  Aborting Save.")
+            wx.LogError(f"Can't make Profile path {ProfilePath()} - {e}.  Aborting Save.")
             return
 
         with wx.FileDialog(self, "Save Profile file",
                 wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
-                defaultDir = str(self.ProfilePath()),
+                defaultDir = str(ProfilePath()),
                 defaultFile = self.Name(),
                 style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
 
@@ -300,7 +325,7 @@ class Profile(wx.Notebook):
         if not self.Filename:
             return self.SaveToFile()
 
-        self.ProfilePath().mkdir( parents = True, exist_ok = True )
+        ProfilePath().mkdir( parents = True, exist_ok = True )
 
         if not self.Filename:
             raise Exception(f"No Filename set in Profile {self.Name()}!  Aborting save.")
@@ -373,20 +398,6 @@ class Profile(wx.Notebook):
             return json.dumps(savedata, separators = (',', ':'))
         else:
             return json.dumps(savedata, indent=2)
-
-    def LoadFromFile(self, _):
-        with wx.FileDialog(self, "Open Profile file",
-                wildcard   = "Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
-                defaultDir = str(self.ProfilePath()),
-                style      = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
-
-            if fileDialog.ShowModal() == wx.ID_CANCEL:
-                wx.LogMessage("User canceled loading profile")
-                return False     # the user changed their mind
-
-            # Proceed loading the file chosen by the user
-            pathname = fileDialog.GetPath()
-            return self.doLoadFromFile(pathname)
 
     def doLoadFromFile(self, pathname):
         file = Path(pathname)

@@ -324,24 +324,14 @@ class Main(wx.Frame):
             self.Layout()
             self.Thaw()
 
-    def OnProfileLoad(self, evt):
+    def OnProfileLoad(self, _):
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
 
-        # TODO - this Profile.Profile() step takes a while on Windows, before
-        # the actual Load File dialog appears.  Can we make maybe a
-        # Profile.LoadFromFile() class method that shows the dialog THEN does
-        # the initializing and loading?  This should probably be a class method
-        # anyway, yes.
-
-        # Start with a "detached" profile that we'll load into and then insert
-        newProfile = Profile.Profile(self)
+        newProfile = Profile.LoadFromFile(self)
 
         # Try to load;  if the user hits "cancel" or the load fails, go back to where we were
-        if not newProfile.LoadFromFile(evt):
-            newProfile.Destroy()
-            return
-
-        self.InsertProfile(newProfile)
+        if newProfile:
+            self.InsertProfile(newProfile)
 
     # we use this in the Binds Directory Window also
     def InsertProfile(self, newProfile):

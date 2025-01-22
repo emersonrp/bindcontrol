@@ -44,7 +44,7 @@ class PopmenuEditor(Page):
         super().__init__(parent, bind_events = False)
 
         self.CurrentMenu = None
-        self.MenuList = {}  # dict for menu objects for left-side list
+        self.MenuIDList = {}  # dict for menu objects for left-side list
         self.TabTitle = "Popmenu Editor"
 
         Sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -195,7 +195,7 @@ class PopmenuEditor(Page):
             filepath = menupath / f"{cm.Title}.mnu"
             if filepath.is_file():
                 mlc = self.MenuListCtrl
-                info = self.MenuList.get(mlc.GetItemData(mlc.FindItem(-1, cm.Title)), {})
+                info = self.MenuIDList.get(mlc.GetItemData(mlc.FindItem(-1, cm.Title)), {})
                 if not info:
                     wx.LogError(f"Can't get info for current menu {cm.Title}")
                     return
@@ -232,9 +232,10 @@ class PopmenuEditor(Page):
             newmenu = Popmenu(self)
             newmenu.Title = newmenuname
             newmenu.AppendItem(PETitle(newmenu, newmenuname))
+            # TODO - walk the existing names and insert this into the right place instead of at the end
             listitem = mlc.Append([newmenuname])
             mlc.SetItemData(listitem, menuID := wx.NewId())
-            self.MenuList[menuID] = {'menu' : newmenu}
+            self.MenuIDList[menuID] = {'menu' : newmenu}
             newmenu.SetModified()
 
     def LoadMenusFromMenuDir(self):
@@ -253,7 +254,7 @@ class PopmenuEditor(Page):
                     item = self.MenuListCtrl.Append([menuname])
                     self.MenuListCtrl.SetItemFont(item, self.UnloadedMenuFont)
                     self.MenuListCtrl.SetItemData(item, menuID := wx.NewId())
-                    self.MenuList[menuID] = {'filename': str(menufile)}
+                    self.MenuIDList[menuID] = {'filename': str(menufile)}
 
                     f.close()
 
@@ -268,6 +269,8 @@ class PopmenuEditor(Page):
                     return self.GetNewMenuName(dupe_menu_name = newmenuname)
                 else:
                     return newmenuname
+            else:
+                return wx.ID_CANCEL
 
     def OnImportMenuButton(self, _):
         # GetMenuPathForGamePath shows its own errors
@@ -285,11 +288,16 @@ class PopmenuEditor(Page):
                 filepath = menupath / Path(origfilepath).name
                 item = None
                 if self.MenuListCtrl.FindItem(-1, newmenu.Title) != wx.NOT_FOUND:
-                    newmenu.Title = self.GetNewMenuName(dupe_menu_name = newmenu.Title)
+                    newtitle = self.GetNewMenuName(dupe_menu_name = newmenu.Title)
+                    if newtitle == wx.ID_CANCEL:
+                        return
+                    else:
+                        newmenu.Title = newtitle
 
                 try:
+                    # TODO - walk the existing names and insert this into the right place instead of at the end
                     item = self.MenuListCtrl.Append([newmenu.Title])
-                    self.MenuList[menuID := wx.NewId()] = {'menu': newmenu, 'filename': str(filepath)}
+                    self.MenuIDList[menuID := wx.NewId()] = {'menu': newmenu, 'filename': str(filepath)}
                     self.MenuListCtrl.SetItemData(item, menuID)
                     self.MenuListCtrl.Select(item)
                     self.ToggleTopButtons(True)
@@ -305,7 +313,7 @@ class PopmenuEditor(Page):
         mlc = self.MenuListCtrl
         selection = mlc.GetFirstSelected()
         menuname = mlc.GetItemText(selection)
-        info = self.MenuList.get(mlc.GetItemData(selection), {})
+        info = self.MenuIDList.get(mlc.GetItemData(selection), {})
 
         result = wx.MessageBox(f'This will delete "{menuname}" from this list, and from the menu directory.  This cannot be undone.  Continue?', "Delete Menu Item", wx.YES_NO)
         if result == wx.NO: return
@@ -325,13 +333,13 @@ class PopmenuEditor(Page):
 
     def OnListSelect(self, evt):
         item = evt.GetIndex()
-        info = self.MenuList.get(self.MenuListCtrl.GetItemData(item), {})
+        info = self.MenuIDList.get(self.MenuListCtrl.GetItemData(item), {})
         if menu := info.get('menu', None):
             self.CurrentMenu = menu
         elif filename := info.get('filename', None):
             newmenu = Popmenu(self)
             if newmenu.ReadFromFile(filename):
-                self.MenuList[self.MenuListCtrl.GetItemData(item)] = {'filename': filename, 'menu': newmenu}
+                self.MenuIDList[self.MenuListCtrl.GetItemData(item)] = {'filename': filename, 'menu': newmenu}
                 self.MenuListCtrl.SetItemFont(item, self.LoadedMenuFont)
                 self.CurrentMenu = newmenu
             else:
@@ -362,7 +370,7 @@ class PopmenuEditor(Page):
     def CheckForModifiedMenus(self):
         mlc = self.MenuListCtrl
         for item in range(0, mlc.GetItemCount()):
-            info = self.MenuList.get(mlc.GetItemData(item), {})
+            info = self.MenuIDList.get(mlc.GetItemData(item), {})
             menu = info.get('menu', None)
             if menu and menu.Modified:
                 return True

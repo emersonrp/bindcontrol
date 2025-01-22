@@ -79,6 +79,7 @@ class PopmenuEditor(Page):
         self.MenuListCtrl.AppendColumn('Installed Menus', width = LeftPanelWidth - 12)
         MenuListSizer.Add(self.MenuListCtrl, 1, wx.EXPAND|wx.ALL, 6)
         self.MenuListCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListSelect)
+        self.MenuListCtrl.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.OnListDeselect)
 
         self.NewMenuButton.Bind(wx.EVT_BUTTON, self.OnNewMenuButton)
         self.ImportMenuButton.Bind(wx.EVT_BUTTON, self.OnImportMenuButton)
@@ -314,6 +315,13 @@ class PopmenuEditor(Page):
             Path(filename).unlink(missing_ok = True)
 
         mlc.DeleteItem(selection)
+        self.ToggleTopButtons(False)
+        self.TestMenuButton.SetLabel("Test Current Menu")
+
+    def OnListDeselect(self, _):
+        if self.MenuListCtrl.GetSelectedItemCount() == 0:
+            self.TestMenuButton.SetLabel("Test Current Menu")
+            self.ToggleTopButtons(False)
 
     def OnListSelect(self, evt):
         item = evt.GetIndex()
@@ -333,11 +341,15 @@ class PopmenuEditor(Page):
             wx.LogError("Something was in the menu list that had no filename or menu attached.  This is a bug.")
 
         if self.CurrentMenu:
-            self.ToggleTopButtons(True)
             self.TestMenuButton.SetLabel(f'Test "{self.MenuListCtrl.GetItemText(item)}"')
+            self.ToggleTopButtons(True)
         else:
-            self.ToggleTopButtons(False)
             self.TestMenuButton.SetLabel("Test Current Menu")
+            self.ToggleTopButtons(False)
+
+        # even if we didn't load the menu, ie, pathologically large or broken, allow us to delete it
+        if item:
+            self.DeleteMenuButton.Enable(True)
 
         if evt: evt.Skip()
 

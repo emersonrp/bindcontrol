@@ -10,6 +10,8 @@ from pathlib import Path
 from datetime import datetime
 import re
 import platform
+import webbrowser
+from functools import partial
 
 import FM.flatmenu as FM
 
@@ -917,12 +919,42 @@ class PELockedOption(PEMenuItem):
 
         staticbox = sbsizer.GetStaticBox()
 
-        gridsizer = wx.FlexGridSizer(2, 2, 5)
-        for ctrl in ['DisplayName', 'Command', 'Icon', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'PowerReady', 'PowerOwned']:
-            gridsizer.Add(wx.StaticText(staticbox, label = ctrl, style=wx.ALIGN_RIGHT), 0, wx.ALIGN_CENTER)
+        gridsizer = wx.GridBagSizer(5, 5)
+        row = 0
+        for ctrl in ['DisplayName', 'Command', 'Icon']:
+            gridsizer.Add(wx.StaticText(staticbox, label = ctrl, style=wx.ALIGN_RIGHT), pos = (row, 0), flag = wx.ALIGN_CENTER)
             self.Ctrls[ctrl] = cgTextCtrl(staticbox, size = (400, -1), value = self.Data.get(ctrl, ''))
             self.Ctrls[ctrl].Bind(wx.EVT_TEXT, self.CheckEditorFieldsForError)
-            gridsizer.Add(self.Ctrls[ctrl], 1, wx.EXPAND)
+            span = (1,1) if ctrl == 'Icon' else (1,2)
+            gridsizer.Add(self.Ctrls[ctrl], pos = (row, 1), span = span, flag = wx.EXPAND)
+            row = row + 1
+
+        IconButton = wx.BitmapButton(staticbox, -1, bitmap = GetIcon('UI/search'))
+        gridsizer.Add(IconButton, pos = (2,2))
+        IconButton.Bind(wx.EVT_BUTTON, partial(webbrowser.open, 'https://homecoming.wiki/wiki/Macro_image_(Slash_Command)'))
+
+        gridsizer.Add(wx.StaticLine(staticbox, wx.ID_ANY, style = wx.LI_HORIZONTAL), pos = (row, 1), flag = wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, border = 10)
+        row = row + 1
+
+        URLs = {
+            'Authbit'      : 'https://homecoming.wiki/wiki/Popmenu_(Slash_Command)/List_of_Authbit_Identifiers',
+            'Badge'        : 'https://homecoming.wiki/wiki/Settitle_(Slash_Command)/listing',
+            'RewardToken'  : 'https://homecoming.wiki/wiki/Popmenu_(Slash_Command)/List_of_RewardToken_Identifiers',
+            'StoreProduct' : 'https://homecoming.wiki/wiki/Popmenu_(Slash_Command)/List_of_StoreProduct_Identifiers',
+            'PowerReady'   : 'https://cod.uberguy.net/html/index.html',
+            'PowerOwned'   : 'https://cod.uberguy.net/html/index.html',
+        }
+
+        for ctrl in ['Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'PowerReady', 'PowerOwned']:
+            gridsizer.Add(wx.StaticText(staticbox, label = ctrl, style=wx.ALIGN_RIGHT), pos = (row, 0), flag = wx.ALIGN_CENTER)
+            self.Ctrls[ctrl] = cgTextCtrl(staticbox, size = (400, -1), value = self.Data.get(ctrl, ''))
+            self.Ctrls[ctrl].Bind(wx.EVT_TEXT, self.CheckEditorFieldsForError)
+            gridsizer.Add(self.Ctrls[ctrl], pos = (row, 1), flag = wx.EXPAND)
+            srchbutton = wx.BitmapButton(staticbox, -1, bitmap = GetIcon('UI/search'))
+            gridsizer.Add(srchbutton, pos = (row,2))
+            srchbutton.Bind(wx.EVT_BUTTON, partial(webbrowser.open, URLs[ctrl]))
+            row = row + 1
+
 
         buttons = dialog.CreateButtonSizer(wx.OK|wx.CANCEL)
 

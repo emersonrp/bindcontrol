@@ -3,6 +3,7 @@ from Page import Page
 from Help import HelpHTMLWindow
 from UI.ControlGroup import cgTextCtrl
 from UI.PrefsDialog import PrefsDialog
+from Icon import GetIcon
 from typing import Callable
 
 from pathlib import Path
@@ -218,13 +219,34 @@ class PopmenuEditor(Page):
             with wx.Dialog(self, title = f"Macro for {cm.Title}",) as dlg:
                 sizer = wx.BoxSizer(wx.VERTICAL)
                 sizer.Add(wx.StaticText(dlg, label = "Paste the following into the game to create your macro button:"), 1, wx.EXPAND|wx.ALL, 10)
-                sizer.Add(wx.TextCtrl(dlg, value = f"/macro {cm.Title} popmenu {cm.Title}", style = wx.TE_READONLY), 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+
+                textBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
+                textCtrl = wx.TextCtrl(dlg, value = f"/macro {cm.Title} popmenu {cm.Title}",
+                                       style = wx.TE_READONLY|wx.TE_CENTER)
+                textCtrl.SetFont(
+                    wx.Font(9, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = 'Courier')
+                )
+                textBoxSizer.Add(textCtrl, 1, wx.EXPAND)
+                copyButton = wx.BitmapButton(dlg, bitmap = GetIcon('UI/copy'))
+                setattr(copyButton, 'textctrl', textCtrl)
+                textBoxSizer.Add(copyButton, 0)
+                copyButton.Bind(wx.EVT_BUTTON, self.doTextCopy)
+
+                sizer.Add(textBoxSizer, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
                 sizer.Add(dlg.CreateButtonSizer(wx.OK), 1, wx.EXPAND|wx.ALL, 10)
                 dlg.SetSizerAndFit(sizer)
                 dlg.Layout()
 
                 dlg.ShowModal()
 
+    def doTextCopy(self, evt):
+        dataObj = wx.TextDataObject(evt.EventObject.textctrl.GetValue())
+        if wx.TheClipboard.Open():
+            wx.TheClipboard.SetData(dataObj)
+            wx.TheClipboard.Flush()
+            wx.TheClipboard.Close()
+        else:
+            wx.MessageBox("Couldn't open the clipboard for copying")
     def OnNewMenuButton(self, _ = None):
         mlc = self.MenuListCtrl
         newmenuname = self.GetNewMenuName()

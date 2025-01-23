@@ -1477,6 +1477,7 @@ class WindowColorCmd(PowerBindCmd):
         self.GReadout.SetValue(Gval)
         self.BReadout.SetValue(Bval)
         self.AReadout.SetValue(Aval)
+        self.ColorBorder.Refresh()
 
     def UpdateFromText(self, _ = None):
         Rval = self.RReadout.GetValue()
@@ -1489,6 +1490,7 @@ class WindowColorCmd(PowerBindCmd):
         self.GSlider.SetValue(Gval)
         self.BSlider.SetValue(Bval)
         self.ASlider.SetValue(Aval)
+        self.ColorBorder.Refresh()
 
 ####### Window Save / Load
 class WindowSaveLoadCmd(PowerBindCmd):

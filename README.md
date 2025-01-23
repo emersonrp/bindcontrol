@@ -1,5 +1,7 @@
 # BindControl
 
+<b>NEW!</b>  Check out the new work-in-progress [Getting Started with BindControl](https://github.com/emersonrp/bindcontrol/wiki/Getting-Started-With-BindControl) on the wiki!
+
 BindControl is a helper app for creating and maintaining keybinds and popmenus for City of Heroes.
 
 It is an enhanced port of Konoko and Monorail's [CityBinder 0.76](http://sourceforge.net/projects/citybinder/), using Python and the WxWidgets UI toolkit.

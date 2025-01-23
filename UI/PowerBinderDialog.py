@@ -89,13 +89,15 @@ class PowerBinderDialog(wx.Dialog):
             for type, data in item.items():
                 commandClass = commandClasses.get(type, None)
                 if not commandClass:
-                    wx.LogError(f"Profile contained unknown custom bind command class {type}; ignoring it and continuing.")
-                    return
+                    commandClass = deprecatedCommandClasses.get(type, None)
+                    if not commandClass:
+                        wx.LogError(f"Profile contained unknown custom bind command class {type}; ignoring it and continuing.")
+                        continue
                 newCommand = commandClass(self.EditDialog, data)
                 index = self.RearrangeList.Append(newCommand.MakeListEntryString())
                 self.RearrangeList.SetClientData(index, newCommand)
                 if newCommand.UI:
-                    self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALL|wx.EXPAND, 10)
+                    self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10)
                     self.EditDialog.mainSizer.Hide(newCommand.UI)
         self.UpdateBindStringDisplay()
 
@@ -1037,10 +1039,48 @@ class PowerUnqueueCmd(PowerBindCmd):
     def MakeBindString(self):
         return 'powexecunqueue'
 
-####### SG Mode Toggle
-class SGModeToggleCmd(PowerBindCmd):
+####### SG Mode
+class SGModeCmd(PowerBindCmd):
+    def BuildUI(self, dialog):
+        sgmodeSizer = wx.BoxSizer(wx.HORIZONTAL)
+        sgmodeSizer.Add(wx.StaticText(dialog, -1, "Supergroup Mode:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
+
+        self.sgmodeToggleRB = wx.RadioButton(dialog, -1, "Toggle", style = wx.RB_GROUP)
+        self.sgmodeOnRB     = wx.RadioButton(dialog, -1, "On")
+        self.sgmodeOffRB    = wx.RadioButton(dialog, -1, "Off")
+
+        sgmodeSizer.Add(self.sgmodeToggleRB, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
+        sgmodeSizer.Add(self.sgmodeOnRB, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
+        sgmodeSizer.Add(self.sgmodeOffRB, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        return sgmodeSizer
+
     def MakeBindString(self):
-        return 'sgmode'
+        if self.sgmodeOnRB.GetValue():
+            return 'sgmodeset 1'
+        elif self.sgmodeOffRB.GetValue():
+            return 'sgmodeset 0'
+        else:
+            return 'sgmode'
+
+    def Serialize(self):
+        if self.sgmodeOnRB.GetValue():
+            val = "On"
+        elif self.sgmodeOffRB.GetValue():
+            val = "Off"
+        else:
+            val = "Toggle"
+
+        return {"value" : val}
+
+    def Deserialize(self, init):
+        val = init.get('value', '')
+        if val == "On":
+            self.sgmodeOnRB.SetValue(True)
+        elif val == "Off":
+            self.sgmodeOffRB.SetValue(True)
+        else:
+            self.sgmodeToggleRB.SetValue(True)
 
 ####### Target Custom
 class TargetCustomCmd(PowerBindCmd):
@@ -1565,7 +1605,7 @@ commandClasses = {
     'Movement Commands'        : MovementCmd,
     'Power Abort'              : PowerAbortCmd,
     'Power Unqueue'            : PowerUnqueueCmd,
-    'SG Mode Toggle'           : SGModeToggleCmd,
+    'Supergroup Mode'          : SGModeCmd,
     'Target Custom'            : TargetCustomCmd,
     'Target Enemy'             : TargetEnemyCmd,
     'Target Friend'            : TargetFriendCmd,
@@ -1578,5 +1618,8 @@ commandClasses = {
     'Window Color'             : WindowColorCmd,
     'Window Save / Load'       : WindowSaveLoadCmd,
     'Window Toggle'            : WindowToggleCmd,
+}
+deprecatedCommandClasses = {
+    'SG Mode Toggle' : SGModeCmd,
 }
 commandRevClasses = {v: k for k, v in commandClasses.items()}

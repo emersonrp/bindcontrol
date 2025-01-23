@@ -718,7 +718,7 @@ class CostumeChangeCmd(PowerBindCmd):
         costumeChangeSizer = wx.BoxSizer(wx.HORIZONTAL)
         costumeChangeSizer.Add(wx.StaticText(dialog, -1, "Costume:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         self.costumeChangeCostume = wx.Choice(dialog, -1,
-               choices = ["First", "Second", "Third", "Fourth", "Fifth"])
+               choices = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth"])
         self.costumeChangeCostume.SetSelection(0)
         costumeChangeSizer.Add(self.costumeChangeCostume, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
@@ -732,7 +732,7 @@ class CostumeChangeCmd(PowerBindCmd):
         return costumeChangeSizer
 
     def MakeBindString(self):
-        costumeNumber = self.costumeChangeCostume.GetSelection() + 1
+        costumeNumber = self.costumeChangeCostume.GetSelection()
         costumeEmote  = self.costumeChangeEmote.GetSelection()
 
         if costumeEmote: # None, or 0 == "- None -"

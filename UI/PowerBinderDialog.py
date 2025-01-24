@@ -19,15 +19,19 @@ class PowerBinderDialog(wx.Dialog):
         self.Page = parent.Page
         self.EditDialog = PowerBinderEditDialog(self)
         self.Button = button
+        self.AddStepMenu = None
 
         sizer = wx.BoxSizer(wx.VERTICAL);
         self.mainSizer = sizer
 
         choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
-        choiceSizer.Add(wx.StaticText(self, -1, "Add Step:"), 0, wx.ALIGN_CENTER_VERTICAL)
-        self.bindChoice = wx.Choice(self, -1, choices = [cmd for cmd in commandClasses])
-        self.bindChoice.Bind(wx.EVT_CHOICE, self.OnBindChoice)
-        choiceSizer.Add(self.bindChoice, 1, wx.LEFT, 10)
+        # choiceSizer.Add(wx.StaticText(self, -1, "Add Step:"), 0, wx.ALIGN_CENTER_VERTICAL)
+        # self.bindChoice = wx.Choice(self, -1, choices = [cmd for cmd in commandClasses])
+        # self.bindChoice.Bind(wx.EVT_CHOICE, self.OnBindChoice)
+        #choiceSizer.Add(self.bindChoice, 1, wx.LEFT, 10)
+        AddStepButton = wx.Button(self, -1, 'Add Step')
+        AddStepButton.Bind(wx.EVT_BUTTON, self.OnAddStepButton)
+        choiceSizer.Add(AddStepButton, 1, wx.LEFT, 10)
         choiceSizer.Add(HelpButton(self, "PowerBinder.html", type="window"), 0, wx.LEFT, 10)
         sizer.Add(choiceSizer, 1, wx.EXPAND|wx.BOTTOM, 10)
 
@@ -111,6 +115,13 @@ class PowerBinderDialog(wx.Dialog):
             data.append({commandClassName: cmdObject.Serialize()})
             index = index + 1
         return data
+
+    def OnAddStepButton(self, evt):
+        button = evt.EventObject
+        if not self.AddStepMenu:
+            self.AddStepMenu = PowerBinderAddStepMenu()
+        button.PopupMenu(self.AddStepMenu)
+
 
     def OnOKButton(self, _):
         if self.Button.tgtTxtCtrl:
@@ -274,7 +285,7 @@ class PowerBindCmd():
 
     # Methods to override
     def BuildUI(self, dialog) -> wx.Sizer|None : return None
-    def MakeBindString(self) -> str            : return str('')
+    def MakeBindString(self) -> str            : return ''
     def Serialize(self) -> dict                : return {}
     def Deserialize(self, init)                : return
 
@@ -1590,37 +1601,100 @@ class WindowToggleCmd(PowerBindCmd):
     def Deserialize(self, init):
         if init.get('window', ''): self.windowToggleTray.SetSelection(init['window'])
 
+class PowerBinderAddStepMenu(wx.Menu):
+    def __init__(self):
+        super().__init__()
+
+        # Must always add to this list when adding a new command class above
+        menuStructure = {
+                'Graphics / UI' : [
+                    'Attribute Monitor',
+                    'Buff Display Settings',
+                    'Graphics Settings',
+                    'Window Color',
+                    'Window Save / Load',
+                    'Window Toggle',
+                    ],
+                'Inspirations' : [
+                    'Use Inspiration By Name',
+                    'Use Inspiration From Row/Column',
+                    ],
+                'Powers' : [
+                    'Auto Power',
+                    'Power Abort',
+                    'Power Unqueue',
+                    'Use Power',
+                    'Use Power From Tray',
+                    ],
+                'Social' : [
+                    'Away From Keyboard',
+                    'Chat Command',
+                    'Chat Command (Global)',
+                    'Costume Change',
+                    'Emote',
+                    'Supergroup Mode',
+                    ],
+                'Targeting' : [
+                    'Target Custom',
+                    'Target Enemy',
+                    'Target Frield',
+                    'Team/Pet Select',
+                    'Unselect',
+                    ],
+                'Misc' : [
+                    'Load Binds Directory',
+                    'Movement Commands',
+                    ],
+                # 'Custom Bind',  # we're going to add "Custom Bind" in by hand at the end,
+                                  # but I'm leaving it here to remind myself that we do that.
+                }
+
+        for subname in menuStructure:
+            submenu = wx.Menu()
+            self.AppendSubMenu(submenu, subname)
+            for classname in menuStructure[subname]:
+                submenu.Append(wx.ID_ANY, classname)
+
+        self.Append(wx.ID_ANY, 'Custom Bind')
+
+
+
 # Must always add to this list when adding a new command class above
 commandClasses = {
-    'Auto Power'               : AutoPowerCmd,
-    'Away From Keyboard'       : AFKCmd,
-    'Attribute Monitor'        : AttributeMonitorCmd,
-    'Buff Display Settings'    : BuffDisplayCmd,
-    'Chat Command'             : ChatCmd,
-    'Chat Command (Global)'    : ChatGlobalCmd,
-    'Costume Change'           : CostumeChangeCmd,
-    'Custom Bind'              : CustomBindCmd,
-    'Emote'                    : EmoteCmd,
-    'Graphics Settings'        : GraphicsCmd,
-    'Load Binds Directory'     : LoadBindsDir,
-    'Movement Commands'        : MovementCmd,
-    'Power Abort'              : PowerAbortCmd,
-    'Power Unqueue'            : PowerUnqueueCmd,
-    'Supergroup Mode'          : SGModeCmd,
-    'Target Custom'            : TargetCustomCmd,
-    'Target Enemy'             : TargetEnemyCmd,
-    'Target Friend'            : TargetFriendCmd,
-    'Team/Pet Select'          : TeamPetSelectCmd,
-    'Unselect'                 : UnselectCmd,
-    'Use Insp By Name'         : UseInspByNameCmd,
-    'Use Insp From Row/Column' : UseInspRowColCmd,
-    'Use Power'                : UsePowerCmd,
-    'Use Power From Tray'      : UsePowerFromTrayCmd,
-    'Window Color'             : WindowColorCmd,
-    'Window Save / Load'       : WindowSaveLoadCmd,
-    'Window Toggle'            : WindowToggleCmd,
+    'Auto Power'                      : AutoPowerCmd,
+    'Away From Keyboard'              : AFKCmd,
+    'Attribute Monitor'               : AttributeMonitorCmd,
+    'Buff Display Settings'           : BuffDisplayCmd,
+    'Chat Command'                    : ChatCmd,
+    'Chat Command (Global)'           : ChatGlobalCmd,
+    'Costume Change'                  : CostumeChangeCmd,
+    'Custom Bind'                     : CustomBindCmd,
+    'Emote'                           : EmoteCmd,
+    'Graphics Settings'               : GraphicsCmd,
+    'Load Binds Directory'            : LoadBindsDir,
+    'Movement Commands'               : MovementCmd,
+    'Power Abort'                     : PowerAbortCmd,
+    'Power Unqueue'                   : PowerUnqueueCmd,
+    'Supergroup Mode'                 : SGModeCmd,
+    'Target Custom'                   : TargetCustomCmd,
+    'Target Enemy'                    : TargetEnemyCmd,
+    'Target Friend'                   : TargetFriendCmd,
+    'Team/Pet Select'                 : TeamPetSelectCmd,
+    'Unselect'                        : UnselectCmd,
+    'Use Inspiration By Name'         : UseInspByNameCmd,
+    'Use Inspiration From Row/Column' : UseInspRowColCmd,
+    'Use Power'                       : UsePowerCmd,
+    'Use Power From Tray'             : UsePowerFromTrayCmd,
+    'Window Color'                    : WindowColorCmd,
+    'Window Save / Load'              : WindowSaveLoadCmd,
+    'Window Toggle'                   : WindowToggleCmd,
 }
+# use these when we rename a commandClass so that old Profiles will still load correctly.
+# If we've also updated the class, we need to try to make sure the new class will still
+# Deserialize the legacy data, or at least not crash.
 deprecatedCommandClasses = {
     'SG Mode Toggle' : SGModeCmd,
+    'Use Insp By Name' : UseInspByNameCmd,
+    'Use Insp From Row/Column' : UseInspRowColCmd,
 }
 commandRevClasses = {v: k for k, v in commandClasses.items()}

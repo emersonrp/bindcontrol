@@ -19,7 +19,7 @@ class PowerBinderDialog(wx.Dialog):
         self.Page = parent.Page
         self.EditDialog = PowerBinderEditDialog(self)
         self.Button = button
-        self.AddStepMenu = None
+        self.AddStepMenu = self.makeAddStepMenu()
 
         sizer = wx.BoxSizer(wx.VERTICAL);
         self.mainSizer = sizer
@@ -31,6 +31,7 @@ class PowerBinderDialog(wx.Dialog):
         #choiceSizer.Add(self.bindChoice, 1, wx.LEFT, 10)
         AddStepButton = wx.Button(self, -1, 'Add Step')
         AddStepButton.Bind(wx.EVT_BUTTON, self.OnAddStepButton)
+        AddStepButton.Bind(wx.EVT_MENU,   self.OnAddStepMenu)
         choiceSizer.Add(AddStepButton, 1, wx.LEFT, 10)
         choiceSizer.Add(HelpButton(self, "PowerBinder.html", type="window"), 0, wx.LEFT, 10)
         sizer.Add(choiceSizer, 1, wx.EXPAND|wx.BOTTOM, 10)
@@ -119,7 +120,7 @@ class PowerBinderDialog(wx.Dialog):
     def OnAddStepButton(self, evt):
         button = evt.EventObject
         if not self.AddStepMenu:
-            self.AddStepMenu = PowerBinderAddStepMenu()
+            self.AddStepMenu = self.makeAddStepMenu()
         button.PopupMenu(self.AddStepMenu)
 
 
@@ -163,26 +164,20 @@ class PowerBinderDialog(wx.Dialog):
             print("cmdObject was None")
         self.UpdateBindStringDisplay()
 
-    # OnBindChoice creates a new step and adds it to the rearrangelist
-    def OnBindChoice(self, evt):
-        chosenSel  = self.bindChoice.GetSelection()
-        chosenName = self.bindChoice.GetString(chosenSel)
+    # OnAddStepMenu creates a new step and adds it to the rearrangelist
+    def OnAddStepMenu(self, evt):
+        menuitem = self.AddStepMenu.FindItemById(evt.GetId())
+        chosenName = menuitem.GetItemLabel()
 
         # make a new command object, attached to the parent dialog
-        newCommand = commandClasses[chosenName]
-        cmdObject = newCommand(self.EditDialog)
-        self.bindChoice.SetClientData(chosenSel, cmdObject)
-
-        # detach the command object and instead glue it to self.RearrangeList
-        newCommand = self.bindChoice.DetachClientObject(chosenSel)
-
-        # Deselect the step from the picker in all cases
-        self.bindChoice.SetSelection(wx.NOT_FOUND)
+        newCommandClass = commandClasses[chosenName]
+        newCommand = newCommandClass(self.EditDialog)
 
         # show the edit dialog if this command needs it
         if newCommand.UI:
             self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALL|wx.EXPAND, 10)
             if (self.ShowEditDialogFor(newCommand, chosenName) == wx.ID_CANCEL):
+                newCommand.Destroy()
                 return
 
         newBindIndex = self.RearrangeList.Append(newCommand.MakeListEntryString())
@@ -227,6 +222,64 @@ class PowerBinderDialog(wx.Dialog):
         self.EditDialog.ShowModal()
 
         self.EditDialog.mainSizer.Hide(command.UI)
+
+    def makeAddStepMenu(self):
+
+        stepMenu = wx.Menu()
+
+        # Must always add to this list when adding a new command class above
+        menuStructure = {
+                'Graphics / UI' : [
+                    'Attribute Monitor',
+                    'Buff Display Settings',
+                    'Graphics Settings',
+                    'Window Color',
+                    'Window Save / Load',
+                    'Window Toggle',
+                    ],
+                'Inspirations' : [
+                    'Use Inspiration By Name',
+                    'Use Inspiration From Row/Column',
+                    ],
+                'Powers' : [
+                    'Auto Power',
+                    'Power Abort',
+                    'Power Unqueue',
+                    'Use Power',
+                    'Use Power From Tray',
+                    ],
+                'Social' : [
+                    'Away From Keyboard',
+                    'Chat Command',
+                    'Chat Command (Global)',
+                    'Costume Change',
+                    'Emote',
+                    'Supergroup Mode',
+                    ],
+                'Targeting' : [
+                    'Target Custom',
+                    'Target Enemy',
+                    'Target Frield',
+                    'Team/Pet Select',
+                    'Unselect',
+                    ],
+                'Misc' : [
+                    'Load Binds Directory',
+                    'Movement Commands',
+                    ],
+                # 'Custom Bind',  # we're going to add "Custom Bind" in by hand at the end,
+                                  # but I'm leaving it here to remind myself that we do that.
+                }
+
+        for subname in menuStructure:
+            submenu = wx.Menu()
+            stepMenu.AppendSubMenu(submenu, subname)
+            for classname in menuStructure[subname]:
+                submenu.Append(wx.ID_ANY, classname)
+
+        stepMenu.Append(wx.ID_ANY, 'Custom Bind')
+
+        return stepMenu
 
 class PowerBinderButton(wx.BitmapButton):
 
@@ -1601,61 +1654,6 @@ class WindowToggleCmd(PowerBindCmd):
     def Deserialize(self, init):
         if init.get('window', ''): self.windowToggleTray.SetSelection(init['window'])
 
-class PowerBinderAddStepMenu(wx.Menu):
-    def __init__(self):
-        super().__init__()
-
-        # Must always add to this list when adding a new command class above
-        menuStructure = {
-                'Graphics / UI' : [
-                    'Attribute Monitor',
-                    'Buff Display Settings',
-                    'Graphics Settings',
-                    'Window Color',
-                    'Window Save / Load',
-                    'Window Toggle',
-                    ],
-                'Inspirations' : [
-                    'Use Inspiration By Name',
-                    'Use Inspiration From Row/Column',
-                    ],
-                'Powers' : [
-                    'Auto Power',
-                    'Power Abort',
-                    'Power Unqueue',
-                    'Use Power',
-                    'Use Power From Tray',
-                    ],
-                'Social' : [
-                    'Away From Keyboard',
-                    'Chat Command',
-                    'Chat Command (Global)',
-                    'Costume Change',
-                    'Emote',
-                    'Supergroup Mode',
-                    ],
-                'Targeting' : [
-                    'Target Custom',
-                    'Target Enemy',
-                    'Target Frield',
-                    'Team/Pet Select',
-                    'Unselect',
-                    ],
-                'Misc' : [
-                    'Load Binds Directory',
-                    'Movement Commands',
-                    ],
-                # 'Custom Bind',  # we're going to add "Custom Bind" in by hand at the end,
-                                  # but I'm leaving it here to remind myself that we do that.
-                }
-
-        for subname in menuStructure:
-            submenu = wx.Menu()
-            self.AppendSubMenu(submenu, subname)
-            for classname in menuStructure[subname]:
-                submenu.Append(wx.ID_ANY, classname)
-
-        self.Append(wx.ID_ANY, 'Custom Bind')
 
 
 

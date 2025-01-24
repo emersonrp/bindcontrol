@@ -16,6 +16,8 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
         self.IconFilename = ''
         self.Errors = {}
+        self.Warnings = {}
+        self.DefaultToolTip = ""
         self.Picker = None
 
     def OnPowerPicker(self, _):

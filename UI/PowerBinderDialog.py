@@ -223,6 +223,7 @@ class PowerBinderButton(wx.BitmapButton):
         wx.BitmapButton.__init__(self, parent, -1, bitmap = GetIcon('UI/gear'))
         self.Init = init
         self.Dialog = None
+        self.DialogParent = parent
 
         self.tgtTxtCtrl = tgtTxtCtrl
         self.Bind(wx.EVT_BUTTON, self.PowerBinderEventHandler)
@@ -239,7 +240,7 @@ class PowerBinderButton(wx.BitmapButton):
 
     def PowerBinderDialog(self):
         if not self.Dialog:
-            self.Dialog = PowerBinderDialog(self.Parent, self, self.Init)
+            self.Dialog = PowerBinderDialog(self.DialogParent, self, self.Init)
         return self.Dialog
 
 

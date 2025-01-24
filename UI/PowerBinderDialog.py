@@ -158,7 +158,7 @@ class PowerBinderDialog(wx.Dialog):
             pass
 
         if cmdObject:
-            self.ShowEditDialogFor(cmdObject, self.RearrangeList.GetString(index))
+            self.ShowEditDialogFor(cmdObject)
             self.RearrangeList.SetString(index, cmdObject.MakeListEntryString())
         else:
             print("cmdObject was None")
@@ -176,18 +176,18 @@ class PowerBinderDialog(wx.Dialog):
         # show the edit dialog if this command needs it
         if newCommand.UI:
             self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALL|wx.EXPAND, 10)
-            if (self.ShowEditDialogFor(newCommand, chosenName) == wx.ID_CANCEL):
-                newCommand.Destroy()
+            if (self.ShowEditDialogFor(newCommand) == wx.ID_CANCEL):
+                self.EditDialog.mainSizer.Remove(newCommand.UI)
                 return
 
         newBindIndex = self.RearrangeList.Append(newCommand.MakeListEntryString())
         self.RearrangeList.Select(newBindIndex)
         self.RearrangeList.SetClientData(newBindIndex, newCommand)
 
-        self.OnListSelect(evt)
+        self.OnListSelect()
         self.UpdateBindStringDisplay()
 
-    def OnListSelect(self, _):
+    def OnListSelect(self, _ = None):
         selected = self.RearrangeList.GetSelection()
 
         if selected != wx.NOT_FOUND:
@@ -210,7 +210,7 @@ class PowerBinderDialog(wx.Dialog):
         bindstring = ('$$'.join(cmdBindStrings))
         return bindstring
 
-    def ShowEditDialogFor(self, command, chosenName):
+    def ShowEditDialogFor(self, command):
         if not command.UI: return
 
         self.EditDialog.mainSizer.Show(command.UI)
@@ -219,57 +219,15 @@ class PowerBinderDialog(wx.Dialog):
         self.EditDialog.Fit()
 
         self.EditDialog.SetTitle(f'Editing Step "{commandRevClasses[type(command)]}"')
-        self.EditDialog.ShowModal()
+        returnval = self.EditDialog.ShowModal()
 
         self.EditDialog.mainSizer.Hide(command.UI)
+
+        return returnval
 
     def makeAddStepMenu(self):
 
         stepMenu = wx.Menu()
-
-        # Must always add to this list when adding a new command class above
-        menuStructure = {
-                'Graphics / UI' : [
-                    'Attribute Monitor',
-                    'Buff Display Settings',
-                    'Graphics Settings',
-                    'Window Color',
-                    'Window Save / Load',
-                    'Window Toggle',
-                    ],
-                'Inspirations' : [
-                    'Use Inspiration By Name',
-                    'Use Inspiration From Row/Column',
-                    ],
-                'Powers' : [
-                    'Auto Power',
-                    'Power Abort',
-                    'Power Unqueue',
-                    'Use Power',
-                    'Use Power From Tray',
-                    ],
-                'Social' : [
-                    'Away From Keyboard',
-                    'Chat Command',
-                    'Chat Command (Global)',
-                    'Costume Change',
-                    'Emote',
-                    'Supergroup Mode',
-                    ],
-                'Targeting' : [
-                    'Target Custom',
-                    'Target Enemy',
-                    'Target Frield',
-                    'Team/Pet Select',
-                    'Unselect',
-                    ],
-                'Misc' : [
-                    'Load Binds Directory',
-                    'Movement Commands',
-                    ],
-                # 'Custom Bind',  # we're going to add "Custom Bind" in by hand at the end,
-                                  # but I'm leaving it here to remind myself that we do that.
-                }
 
         for subname in menuStructure:
             submenu = wx.Menu()
@@ -1655,7 +1613,49 @@ class WindowToggleCmd(PowerBindCmd):
         if init.get('window', ''): self.windowToggleTray.SetSelection(init['window'])
 
 
-
+# Must always add to this list when adding a new command class above
+menuStructure = {
+        'Graphics / UI' : [
+            'Attribute Monitor',
+            'Buff Display Settings',
+            'Graphics Settings',
+            'Window Color',
+            'Window Save / Load',
+            'Window Toggle',
+            ],
+        'Inspirations' : [
+            'Use Inspiration By Name',
+            'Use Inspiration From Row/Column',
+            ],
+        'Powers' : [
+            'Auto Power',
+            'Power Abort',
+            'Power Unqueue',
+            'Use Power',
+            'Use Power From Tray',
+            ],
+        'Social' : [
+            'Away From Keyboard',
+            'Chat Command',
+            'Chat Command (Global)',
+            'Costume Change',
+            'Emote',
+            'Supergroup Mode',
+            ],
+        'Targeting' : [
+            'Target Custom',
+            'Target Enemy',
+            'Target Frield',
+            'Team/Pet Select',
+            'Unselect',
+            ],
+        'Misc' : [
+            'Load Binds Directory',
+            'Movement Commands',
+            ],
+        # 'Custom Bind',  # we're going to add "Custom Bind" in by hand at the end,
+                          # but I'm leaving it here to remind myself that we do that.
+        }
 
 # Must always add to this list when adding a new command class above
 commandClasses = {

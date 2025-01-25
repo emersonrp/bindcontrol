@@ -1656,12 +1656,12 @@ class WindowToggleCmd(PowerBindCmd):
         windowToggleSizer.Add(self.windowToggleTray, 1, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
 
         self.windowToggleRB = wx.RadioButton(dialog, -1, "Toggle", style = wx.RB_GROUP)
-        self.windowOnRB     = wx.RadioButton(dialog, -1, "On")
-        self.windowOffRB    = wx.RadioButton(dialog, -1, "Off")
+        self.windowShowRB   = wx.RadioButton(dialog, -1, "Show")
+        self.windowHideRB   = wx.RadioButton(dialog, -1, "Hide")
 
         windowToggleSizer.Add(self.windowToggleRB, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
-        windowToggleSizer.Add(self.windowOnRB,     0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
-        windowToggleSizer.Add(self.windowOffRB,    0, wx.ALIGN_CENTER_VERTICAL, 0)
+        windowToggleSizer.Add(self.windowShowRB,   0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
+        windowToggleSizer.Add(self.windowHideRB,   0, wx.ALIGN_CENTER_VERTICAL, 0)
 
         return windowToggleSizer
 
@@ -1671,9 +1671,9 @@ class WindowToggleCmd(PowerBindCmd):
         windowdesc = choice.GetString(index)
         windowname = self.WindowNames[windowdesc]
 
-        if self.windowOnRB.GetValue():
+        if self.windowShowRB.GetValue():
             return 'show ' + windowname
-        elif self.windowOffRB.GetValue():
+        elif self.windowHideRB.GetValue():
             return 'windowhide ' + windowname
         else:
             if shortcmd := self.ShortToggleCommands.get(windowdesc, None):
@@ -1683,24 +1683,34 @@ class WindowToggleCmd(PowerBindCmd):
 
 
     def Serialize(self):
-        if self.windowOnRB.GetValue():
-            val = "On"
-        elif self.windowOffRB.GetValue():
-            val = "Off"
+        choice = self.windowToggleTray
+        if self.windowShowRB.GetValue():
+            action = "Show"
+        elif self.windowHideRB.GetValue():
+            action = "Hide"
         else:
-            val = "Toggle"
+            action = "Toggle"
         return {
-                'window': self.windowToggleTray.GetSelection(),
-                'action': val,
+                'window': choice.GetString(choice.GetSelection()),
+                'action': action,
                 }
 
     def Deserialize(self, init):
-        if init.get('window', ''): self.windowToggleTray.SetSelection(init['window'])
-        val = init.get('action', '')
-        if val == "On":
-            self.windowOnRB.SetValue(True)
-        elif val == "Off":
-            self.windowOffRB.SetValue(True)
+        choice = self.windowToggleTray
+        if window := init.get('window', ''):
+            if isinstance(window, int):
+                choice.SetSelection(window)
+            else:
+                choice.SetSelection(choice.FindString(window))
+
+        if choice.GetSelection() == wx.NOT_FOUND:
+            choice.SetSelection(0)
+
+        action = init.get('action', '')
+        if action == "Show":
+            self.windowShowRB.SetValue(True)
+        elif action == "Hide":
+            self.windowHideRB.SetValue(True)
         else:
             self.windowToggleRB.SetValue(True)
 

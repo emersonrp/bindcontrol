@@ -65,6 +65,7 @@ class ComplexBindPane(CustomBindPaneParent):
         border.Add(self.BindSizer, 1, wx.EXPAND|wx.ALL, 10)
         pane.SetSizer(border)
 
+        self.RenumberSteps()
         self.checkIfWellFormed()
 
     def onContentsChanged(self, _):
@@ -111,22 +112,44 @@ class ComplexBindPane(CustomBindPaneParent):
         step = BindStep(self, stepNumber, stepdata)
         self.BindStepSizer.Insert(self.BindStepSizer.GetItemCount()-1, step, 0, wx.EXPAND)
         self.Steps.append(step)
-        self.Page.Layout()
         self.Profile.SetModified()
+        self.RenumberSteps()
+
+    def onMoveUpButton(self, evt):
+        button = evt.GetEventObject()
+        step = button.GetParent()
+        idx = self.Steps.index(step)
+        self.BindStepSizer.Detach(idx)
+        self.BindStepSizer.Insert(idx-1, self.Steps[idx], 0, wx.EXPAND)
+        self.Steps[idx], self.Steps[idx-1] = self.Steps[idx-1], self.Steps[idx]
+        self.Profile.SetModified()
+        self.RenumberSteps()
+
+    def onMoveDownButton(self, evt):
+        button = evt.GetEventObject()
+        step = button.GetParent()
+        idx = self.Steps.index(step)
+        self.BindStepSizer.Detach(idx)
+        self.BindStepSizer.Insert(idx+1, self.Steps[idx], 0, wx.EXPAND)
+        self.Steps[idx], self.Steps[idx+1] = self.Steps[idx+1], self.Steps[idx]
+        self.Profile.SetModified()
+        self.RenumberSteps()
 
     def onDelButton(self, evt):
-        button = evt.EventObject
+        button = evt.GetEventObject()
         step = button.GetParent()
         self.Steps.remove(step)
         step.Destroy()
-        self.RenumberSteps()
-        self.Page.Layout()
         self.Profile.SetModified()
+        self.RenumberSteps()
 
     def RenumberSteps(self):
         for i, step in enumerate(self.Steps, start = 1):
+            step.moveUpButton.Enable(i > 1)
+            step.moveDownButton.Enable(i < len(self.Steps))
             step.StepLabel.SetLabel(f"Step {i}:")
-        #self.Layout()
+        self.BindSizer.Layout()
+
 
     def PopulateBindFiles(self):
         if not self.checkIfWellFormed():
@@ -177,9 +200,16 @@ class BindStep(wx.Panel):
         sizer.Add(BindContents, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
         self.BindContents.Bind(wx.EVT_TEXT, parent.onContentsChanged)
 
-        PowerBinder = PowerBinderButton(self, BindContents, step.get('powerbinderdata', {}))
-        self.PowerBinder = PowerBinder
-        sizer.Add(PowerBinder, 0)
+        self.PowerBinder = PowerBinderButton(self, BindContents, step.get('powerbinderdata', {}))
+        sizer.Add(self.PowerBinder, 0)
+
+        self.moveUpButton = wx.Button(self, -1, '\u25B2', size = (40, -1))
+        self.moveUpButton.Bind(wx.EVT_BUTTON, parent.onMoveUpButton)
+        sizer.Add(self.moveUpButton, 0)
+
+        self.moveDownButton = wx.Button(self, -1, '\u25BC', size = (40, -1))
+        self.moveDownButton.Bind(wx.EVT_BUTTON, parent.onMoveDownButton)
+        sizer.Add(self.moveDownButton, 0)
 
         delButton = wx.Button(self, -1, "X", size = (40,-1))
         delButton.SetForegroundColour(wx.RED)

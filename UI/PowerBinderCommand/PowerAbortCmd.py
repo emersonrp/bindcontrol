@@ -1,5 +1,5 @@
 import wx
-import re, os, sys
+import re
 import UI
 import UI.EmotePicker
 from UI.ControlGroup import ControlGroup
@@ -7,8 +7,7 @@ from UI.PowerPicker import PowerPicker
 from Help import HelpButton
 import wx.adv
 from wx.adv import BitmapComboBox, EditableListBox
-from pathlib import Path, PureWindowsPath
-import importlib
+from pathlib import PureWindowsPath
 import GameData
 import Profile
 from Icon import GetIcon
@@ -18,9 +17,6 @@ class PowerBinderDialog(wx.Dialog):
         wx.Dialog.__init__(self, parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
         self.Page = parent.Page
-
-        self.LoadModules()
-
         self.EditDialog = PowerBinderEditDialog(self)
         self.Button = button
         self.AddStepMenu = self.makeAddStepMenu()
@@ -28,8 +24,11 @@ class PowerBinderDialog(wx.Dialog):
         sizer = wx.BoxSizer(wx.VERTICAL);
         self.mainSizer = sizer
 
-
         choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
+        # choiceSizer.Add(wx.StaticText(self, -1, "Add Step:"), 0, wx.ALIGN_CENTER_VERTICAL)
+        # self.bindChoice = wx.Choice(self, -1, choices = [cmd for cmd in commandClasses])
+        # self.bindChoice.Bind(wx.EVT_CHOICE, self.OnBindChoice)
+        #choiceSizer.Add(self.bindChoice, 1, wx.LEFT, 10)
         AddStepButton = wx.Button(self, -1, 'Add Step')
         AddStepButton.Bind(wx.EVT_BUTTON, self.OnAddStepButton)
         AddStepButton.Bind(wx.EVT_MENU,   self.OnAddStepMenu)
@@ -89,39 +88,6 @@ class PowerBinderDialog(wx.Dialog):
 
         # if we are loading from profile, ie, have "init", build the list from it
         if init: self.LoadFromData(init)
-
-    # Load plugins / modules from UI/PowerBinderCommand directory
-    def LoadModules(self):
-        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-        path = Path(base_path) / 'PowerBinderCommand'
-        print(f"Looking for modules in {path}")
-        for package_file in sorted(path.glob('*.py')):
-            package = package_file.stem
-            if package == '__init__': continue # TODO - fix up glob() to dtrt instead
-            print(f"Importing package {package}")
-
-            # do the actual importing
-            mod = importlib.import_module('UI.PowerBinderCommand.' + package)
-
-            if modclass := getattr(mod, package, None):
-
-                # put the class into menuStructure, commandClasses, and commandRevClasses
-                if modName := getattr(modclass, 'Name', ''):
-                    commandClasses[modName] = modclass
-                    commandRevClasses[modclass] = modName
-                else:
-                    print(f"Class {modclass} didn't define 'Name' - this is a bug")
-
-                if modMenu := getattr(modclass, 'Menu', ''):
-                    menuStructure[modMenu].append(modName)
-                else:
-                    print(f"Module {modclass} didn't define 'Menu' - this is probably a bug")
-
-                if depName := getattr(modclass, 'DeprecatedName', ''):
-                    deprecatedCommandClasses[depName] = modclass
-
-            else:
-                print(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
     def LoadFromData(self, init):
         for item in init:
@@ -1748,17 +1714,87 @@ class WindowToggleCmd(PowerBindCmd):
         else:
             self.windowToggleRB.SetValue(True)
 
+
+# Must always add to this list when adding a new command class above
 menuStructure = {
-        'Graphics / UI' : [ ],
-        'Inspirations'  : [ ],
-        'Powers'        : [ ],
-        'Social'        : [ ],
-        'Targeting'     : [ ],
-        'Misc'          : [ ],
+        'Graphics / UI' : [
+            'Attribute Monitor',
+            'Buff Display Settings',
+            'Graphics Settings',
+            'Window Color',
+            'Window Save / Load',
+            'Window Toggle',
+            ],
+        'Inspirations' : [
+            'Use Inspiration By Name',
+            'Use Inspiration From Row/Column',
+            ],
+        'Powers' : [
+            'Auto Power',
+            'Power Abort',
+            'Power Unqueue',
+            'Use Power',
+            'Use Power From Tray',
+            ],
+        'Social' : [
+            'Away From Keyboard',
+            'Chat Command',
+            'Chat Command (Global)',
+            'Costume Change',
+            'Emote',
+            'Supergroup Mode',
+            ],
+        'Targeting' : [
+            'Target Custom',
+            'Target Enemy',
+            'Target Frield',
+            'Team/Pet Select',
+            'Unselect',
+            ],
+        'Misc' : [
+            'Load Binds Directory',
+            'Movement Commands',
+            ],
         # 'Custom Bind',  # we're going to add "Custom Bind" in by hand at the end,
                           # but I'm leaving it here to remind myself that we do that.
         }
-commandClasses = {}
-commandRevClasses = {}
-deprecatedCommandClasses = {}
 
+# Must always add to this list when adding a new command class above
+commandClasses = {
+    'Auto Power'                      : AutoPowerCmd,
+    'Away From Keyboard'              : AFKCmd,
+    'Attribute Monitor'               : AttributeMonitorCmd,
+    'Buff Display Settings'           : BuffDisplayCmd,
+    'Chat Command'                    : ChatCmd,
+    'Chat Command (Global)'           : ChatGlobalCmd,
+    'Costume Change'                  : CostumeChangeCmd,
+    'Custom Bind'                     : CustomBindCmd,
+    'Emote'                           : EmoteCmd,
+    'Graphics Settings'               : GraphicsCmd,
+    'Load Binds Directory'            : LoadBindsDir,
+    'Movement Commands'               : MovementCmd,
+    'Power Abort'                     : PowerAbortCmd,
+    'Power Unqueue'                   : PowerUnqueueCmd,
+    'Supergroup Mode'                 : SGModeCmd,
+    'Target Custom'                   : TargetCustomCmd,
+    'Target Enemy'                    : TargetEnemyCmd,
+    'Target Friend'                   : TargetFriendCmd,
+    'Team/Pet Select'                 : TeamPetSelectCmd,
+    'Unselect'                        : UnselectCmd,
+    'Use Inspiration By Name'         : UseInspByNameCmd,
+    'Use Inspiration From Row/Column' : UseInspRowColCmd,
+    'Use Power'                       : UsePowerCmd,
+    'Use Power From Tray'             : UsePowerFromTrayCmd,
+    'Window Color'                    : WindowColorCmd,
+    'Window Save / Load'              : WindowSaveLoadCmd,
+    'Window Toggle'                   : WindowToggleCmd,
+}
+# use these when we rename a commandClass so that old Profiles will still load correctly.
+# If we've also updated the class, we need to try to make sure the new class will still
+# Deserialize the legacy data, or at least not crash.
+deprecatedCommandClasses = {
+    'SG Mode Toggle' : SGModeCmd,
+    'Use Insp By Name' : UseInspByNameCmd,
+    'Use Insp From Row/Column' : UseInspRowColCmd,
+}
+commandRevClasses = {v: k for k, v in commandClasses.items()}

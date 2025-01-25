@@ -1587,30 +1587,122 @@ class WindowSaveLoadCmd(PowerBindCmd):
 ####### Window Toggle
 class WindowToggleCmd(PowerBindCmd):
     def BuildUI(self, dialog):
-        windows = [ 'Actions', 'Badge', 'ChanSearch', 'Chat', 'Chat0', 'Chat1', 'Chat2', 'Chat3',
-            'Chat4', 'Clue', 'Combatmonitor', 'Combatnumbers', 'Compass', 'Compose', 'Contact',
-            'Costume', 'Email', 'Enhancements', 'Friend', 'Group', 'Help', 'Info', 'Inspirations',
-            'Map', 'Mission', 'Nav', 'Options', 'Pet', 'Power', 'PowerList', 'Recipes', 'Salvage',
-            'Search', 'Supergroup', 'Team', 'Target', 'Tray', ]
+        self.WindowNames = {
+                'Actions'           : 'actions',
+                'Auction House'     : 'ah',
+                'Badge'             : 'badge',
+                'Channel Search'    : 'chansearch',
+                'Chat'              : 'chat',
+                'Custom Chat 1'     : 'chat1',
+                'Custom Chat 2'     : 'chat2',
+                'Custom Chat 3'     : 'chat3',
+                'Custom Chat 4'     : 'chat4',
+                'Clues'             : 'clue',
+                'Combat Numbers'    : 'combatnumbers',
+                'Contacts'          : 'contact',
+                'Contact Finder'    : 'contactfinder',
+                'Costumes'          : 'costume',
+                'Email'             : 'email',
+                'Enhancements'      : 'enhancements',
+                'Friends'           : 'friend',
+                'Group'             : 'group',
+                'Help'              : 'helpwindow',
+                'Incarnate'         : 'incarnate',
+                'Inspirations'      : 'insp',
+                'League'            : 'league',
+                'LFG'               : 'lfg',
+                'Map'               : 'map',
+                'Mission'           : 'mission',
+                'Nav / Compass'     : 'nav',
+                'Options'           : 'options',
+                'Pets'              : 'pet',
+                'Petition'          : 'petition',
+                'Power Tray'        : 'powers',
+                'Power List'        : 'powerlist',
+                'Quit'              : 'quit',
+                'Recipes'           : 'recipe',
+                'Salvage'           : 'salvage',
+                'Search'            : 'search',
+                'Supergroup'        : 'sg',
+                'Target'            : 'target',
+                'Team'              : 'team',
+                'Tray'              : 'tray',
+                'Tray1'             : 'tray1',
+                'Tray2'             : 'tray2',
+                'Tray3'             : 'tray3',
+                'Tray4'             : 'tray4',
+                'Tray5'             : 'tray5',
+                'Tray6'             : 'tray6',
+                'Tray7'             : 'tray7',
+                'Tray8'             : 'tray8',
+                'Vault'             : 'vault',
+            }
+
+        self.ShortToggleCommands = {
+                'Auction House'     : 'ah',
+                'Chat'              : 'chat',
+                'Help'              : 'helpwindow',
+                'Map'               : 'map',
+                'Nav / Compass'     : 'nav',
+                'Power Tray'        : 'powers',
+                'Target'            : 'target',
+                'Tray'              : 'tray',
+            }
+
         windowToggleSizer = wx.BoxSizer(wx.HORIZONTAL)
-        windowToggleSizer.Add(wx.StaticText(dialog, -1, "Window:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
-        self.windowToggleTray = wx.Choice(dialog, -1, choices = windows)
+        windowToggleSizer.Add(wx.StaticText(dialog, -1, "Window:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
+        self.windowToggleTray = wx.Choice(dialog, -1, choices = list(self.WindowNames.keys()))
         self.windowToggleTray.SetSelection(0)
-        windowToggleSizer.Add(self.windowToggleTray, 1, wx.ALIGN_CENTER_VERTICAL)
+        windowToggleSizer.Add(self.windowToggleTray, 1, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
+
+        self.windowToggleRB = wx.RadioButton(dialog, -1, "Toggle", style = wx.RB_GROUP)
+        self.windowOnRB     = wx.RadioButton(dialog, -1, "On")
+        self.windowOffRB    = wx.RadioButton(dialog, -1, "Off")
+
+        windowToggleSizer.Add(self.windowToggleRB, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
+        windowToggleSizer.Add(self.windowOnRB,     0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
+        windowToggleSizer.Add(self.windowOffRB,    0, wx.ALIGN_CENTER_VERTICAL, 0)
 
         return windowToggleSizer
 
     def MakeBindString(self):
         choice = self.windowToggleTray
         index  = choice.GetSelection()
-        window = choice.GetString(index)
-        return "windowtoggle " + window.lower()
+        windowdesc = choice.GetString(index)
+        windowname = self.WindowNames[windowdesc]
+
+        if self.windowOnRB.GetValue():
+            return 'show ' + windowname
+        elif self.windowOffRB.GetValue():
+            return 'windowhide ' + windowname
+        else:
+            if shortcmd := self.ShortToggleCommands.get(windowdesc, None):
+                return shortcmd
+            else:
+                return 'toggle ' + windowname
+
 
     def Serialize(self):
-        return { 'window': self.windowToggleTray.GetSelection() }
+        if self.windowOnRB.GetValue():
+            val = "On"
+        elif self.windowOffRB.GetValue():
+            val = "Off"
+        else:
+            val = "Toggle"
+        return {
+                'window': self.windowToggleTray.GetSelection(),
+                'action': val,
+                }
 
     def Deserialize(self, init):
         if init.get('window', ''): self.windowToggleTray.SetSelection(init['window'])
+        val = init.get('action', '')
+        if val == "On":
+            self.windowOnRB.SetValue(True)
+        elif val == "Off":
+            self.windowOffRB.SetValue(True)
+        else:
+            self.windowToggleRB.SetValue(True)
 
 
 # Must always add to this list when adding a new command class above

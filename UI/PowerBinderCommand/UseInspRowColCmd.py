@@ -5,6 +5,7 @@ from UI.PowerBinderCommand import PowerBinderCommand
 class UseInspRowColCmd(PowerBinderCommand):
     Name = "Use Inspiration From Row/Column"
     Menu = "Inspirations"
+    DeprecatedName = "Use Insp From Row/Column"
 
     def BuildUI(self, dialog):
         useInspRowColumnSizer = wx.BoxSizer(wx.HORIZONTAL)

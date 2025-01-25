@@ -9,6 +9,7 @@ from UI.PowerBinderCommand import PowerBinderCommand
 class UseInspByNameCmd(PowerBinderCommand):
     Name = "Use Inspiration By Name"
     Menu = "Inspirations"
+    DeprecatedName = "Use Insp By Name"
 
     def BuildUI(self, dialog):
         useInspByNameSizer = wx.BoxSizer(wx.HORIZONTAL)

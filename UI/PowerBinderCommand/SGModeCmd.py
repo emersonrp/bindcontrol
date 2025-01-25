@@ -5,6 +5,7 @@ from UI.PowerBinderCommand import PowerBinderCommand
 class SGModeCmd(PowerBinderCommand):
     Name = "Supergroup Mode"
     Menu = "Social"
+    DeprecatedName = "SG Mode Toggle"
 
     def BuildUI(self, dialog):
         sgmodeSizer = wx.BoxSizer(wx.HORIZONTAL)

@@ -87,7 +87,7 @@ class PowerBinderDialog(wx.Dialog):
         path = Path(base_path) / 'PowerBinderCommand'
         for package_file in sorted(path.glob('*.py')):
             package = package_file.stem
-            if package == '__init__': continue # TODO - fix up glob() to dtrt instead
+            if package == '__init__': continue
 
             modstr = "UI.PowerBinderCommand." + package
             # check if we've already loaded this one, if so, we've done this before, bail out
@@ -105,6 +105,7 @@ class PowerBinderDialog(wx.Dialog):
                 else:
                     print(f"Class {modclass} didn't define 'Name' - this is a bug")
 
+                # TODO?  If we ever rename something more than once, we'll need this to be a list
                 if depName := getattr(modclass, 'DeprecatedName', ''):
                     deprecatedCommandClasses[depName] = modclass
 
@@ -114,7 +115,7 @@ class PowerBinderDialog(wx.Dialog):
                 if modMenu := getattr(modclass, 'Menu', ''):
                     menuStructure[modMenu].append(modName)
                 else:
-                    print(f"Module {modclass} didn't define 'Menu' - this is probably a bug")
+                    print(f"Module {modclass} didn't define 'Menu' - this is a bug")
 
             else:
                 print(f"Module {mod} didn't define a class of the same name - this is a bug!")

@@ -10,3 +10,5 @@ with zipfile.ZipFile('icons/Icons.zip', 'w') as iconzip:
             iconzip.write(icon, icon.relative_to('icons'))
 
     iconzip.write('icons/Help.png', 'Help.png')
+
+    iconzip.close()

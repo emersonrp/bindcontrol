@@ -89,8 +89,11 @@ class PowerBinderDialog(wx.Dialog):
 
     # Load plugins / modules from UI/PowerBinderCommand directory
     def LoadModules(self):
-        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-        path = Path(base_path) / 'PowerBinderCommand'
+        if base_path := getattr(sys, '_MEIPASS', None):
+            path = Path(base_path) / 'UI' / 'PowerBinderCommand'
+        else:
+            path = Path(os.path.dirname(os.path.abspath(__file__))) / 'PowerBinderCommand'
+
         for package_file in sorted(path.glob('*.py')):
             package = package_file.stem
             if package == '__init__': continue

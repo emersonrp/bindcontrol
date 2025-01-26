@@ -1,10 +1,6 @@
 import PyInstaller.__main__
-import platform, subprocess
+import platform
 from pathlib import Path
-
-version = subprocess.run(['git', 'describe', '--tags'], stdout=subprocess.PIPE).stdout.decode('utf-8').rstrip('\r\n')
-versionfile = Path('version.txt')
-versionfile.write_text(version)
 
 sep = ';' if platform.system() == "Windows" else ":"
 
@@ -13,7 +9,8 @@ params = [
     '--noconsole',
     '--noconfirm',
     '--clean',
-    f'--add-data=icons{sep}icons',
+    f'--add-data=icons/Icons.zip{sep}icons/',
+    f'--add-data=icons/BindControl.ico{sep}icons/',
     f'--add-data=Help{sep}Help',
     f'--add-data=version.txt{sep}.',
     f'--add-data=UI/PowerBinderCommand{sep}PowerBinderCommand',
@@ -36,8 +33,6 @@ elif platform.system() == 'Linux':
     params.append('--strip')
 else:
     params.append('-i=icons/BindControl.ico')
-
-
 
 path = Path('UI/PowerBinderCommand')
 for package_file in sorted(path.glob('*.py')):

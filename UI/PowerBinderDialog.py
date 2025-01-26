@@ -56,8 +56,7 @@ class PowerBinderDialog(wx.Dialog):
 
         choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.BindStringDisplay = cgTextCtrl(self, -1)
-        self.BindStringDisplay.Disable()
+        self.BindStringDisplay = cgTextCtrl(self, -1, style=wx.TE_READONLY)
         choiceSizer.Add(wx.StaticText(self, -1, "Bind String:"), 0,
                         wx.ALIGN_CENTER_VERTICAL)
         choiceSizer.Add(self.BindStringDisplay, 1, wx.LEFT, 10)
@@ -81,6 +80,13 @@ class PowerBinderDialog(wx.Dialog):
 
         # if we are loading from profile, ie, have "init", build the list from it
         if init: self.LoadFromData(init)
+
+
+    def Show(self, show = True):
+        bindstring = self.MakeBindString()
+        if bindstring != self.Button.tgtTxtCtrl.GetValue():
+            self.BindStringDisplay.AddError('nomatch', "The PowerBinder configuration doesn't match the bind string saved with the profile.  Check that the PowerBinder dialog is configured correctly before pressing 'OK' as this will overwrite the saved bind string.")
+        super().Show(show)
 
     # Load plugins / modules from UI/PowerBinderCommand directory
     def LoadModules(self):
@@ -159,6 +165,7 @@ class PowerBinderDialog(wx.Dialog):
     def OnOKButton(self, _):
         if self.Button.tgtTxtCtrl:
             bindString = self.MakeBindString()
+            self.BindStringDisplay.RemoveError('nomatch')
             if bindString != self.Button.tgtTxtCtrl.GetValue():
                 self.Button.tgtTxtCtrl.SetValue(bindString)
                 wx.App.Get().Main.Profile.SetModified()
@@ -232,6 +239,10 @@ class PowerBinderDialog(wx.Dialog):
     def UpdateBindStringDisplay(self):
         bindstring = self.MakeBindString()
         self.BindStringDisplay.SetValue(bindstring)
+
+        # If they made any change, assume they're moving on with their lives and stop bugging about it not matching.
+        self.BindStringDisplay.RemoveError('nomatch')
+
         if len(bindstring) > 255:
             self.BindStringDisplay.AddError('toolong', 'This bind string is longer than the maximum 255 characters and will likely not work as expected, if at all.')
         else:

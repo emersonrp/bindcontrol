@@ -13,17 +13,17 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            CMD_BUILD: tools/build.py
+            CMD_BUILD: python tools/build.py
             CMD_VERIFY: dir dist/BindControl
             CMD_PREZIP: echo
             FILE_NAME: BindControl-${{ github.ref_name }}_windows.zip
           - os: macos-14
-            CMD_BUILD:  tools/build.py
+            CMD_BUILD:  python tools/build.py
             CMD_VERIFY: ls -la dist/BindControl.app
             CMD_PREZIP: rm -rf dist/BindControl
             FILE_NAME: BindControl-${{ github.ref_name }}_macos.zip
           - os: ubuntu-latest
-            CMD_BUILD: tools/build.py
+            CMD_BUILD: python tools/build.py
             CMD_VERIFY: ls -la dist/BindControl
             FILE_NAME: BindControl-${{ github.ref_name }}_linux.zip
 

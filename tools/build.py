@@ -6,14 +6,16 @@ version = subprocess.run(['git', 'describe', '--tags'], stdout=subprocess.PIPE).
 versionfile = Path('version.txt')
 versionfile.write_text(version)
 
+sep = ';' if platform.system() == "Windows" else ":"
+
 params = [
     'BindControl.py',
     '--noconfirm',
     '--clean',
-    '--add-data=icons;icons',
-    '--add-data=Help;Help',
-    '--add-data=version.txt;.',
-    '--add-data=UI/PowerBinderCommand;PowerBinderCommand',
+    f'--add-data=icons{sep}icons',
+    f'--add-data=Help{sep}Help',
+    f'--add-data=version.txt{sep}.',
+    f'--add-data=UI/PowerBinderCommand{sep}PowerBinderCommand',
     '--exclude-module=_bz2',
     '--exclude-module=_ctypes',
     '--exclude-module=_decimal',

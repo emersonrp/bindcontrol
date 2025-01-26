@@ -10,6 +10,7 @@ sep = ';' if platform.system() == "Windows" else ":"
 
 params = [
     'BindControl.py',
+    '--noconsole',
     '--noconfirm',
     '--clean',
     f'--add-data=icons{sep}icons',
@@ -27,8 +28,15 @@ params = [
 
 if platform.system() == "Darwin":
     params.append('-i=tools/bcicon/BindControl.icns')
+    params.append('--onedir')
+    params.append('--windowed')
+    params.append('--strip')
+elif platform.system() == 'Linux':
+    params.append('-i=icons/BindControl.ico')
+    params.append('--strip')
 else:
     params.append('-i=icons/BindControl.ico')
+
 
 
 path = Path('UI/PowerBinderCommand')

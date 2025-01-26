@@ -13,17 +13,17 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            CMD_BUILD: pyinstaller -i icons/BindControl.ico --noconsole --noconfirm --clean --add-data icons:icons --add-data Help:Help --add-data version.txt:. --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --exclude-module _socket --exclude-module _ssl BindControl.py
+            CMD_BUILD: tools/build.py
             CMD_VERIFY: dir dist/BindControl
             CMD_PREZIP: echo
             FILE_NAME: BindControl-${{ github.ref_name }}_windows.zip
           - os: macos-14
-            CMD_BUILD:  pyinstaller -i tools/bcicon/BindControl.icns --onedir --windowed --noconsole --strip --noconfirm --clean --add-data icons:icons --add-data Help:Help --add-data version.txt:. --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --exclude-module _socket --exclude-module _ssl --exclude-module numpy BindControl.py
+            CMD_BUILD:  tools/build.py
             CMD_VERIFY: ls -la dist/BindControl.app
             CMD_PREZIP: rm -rf dist/BindControl
             FILE_NAME: BindControl-${{ github.ref_name }}_macos.zip
           - os: ubuntu-latest
-            CMD_BUILD: pyinstaller -i icons/BindControl.ico --noconsole --noconfirm --clean --strip --add-data icons:icons --add-data Help:Help --add-data version.txt:. --exclude-module _bz2 --exclude-module _ctypes --exclude-module _decimal --exclude-module _hashlib --exclude-module _lzma --exclude-module _socket --exclude-module _ssl BindControl.py
+            CMD_BUILD: tools/build.py
             CMD_VERIFY: ls -la dist/BindControl
             FILE_NAME: BindControl-${{ github.ref_name }}_linux.zip
 

@@ -3,6 +3,7 @@ import os, sys, importlib
 from Help import HelpButton
 from Icon import GetIcon
 from pathlib import Path
+from UI.ControlGroup import cgTextCtrl
 
 class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent, button, init = {}):
@@ -55,7 +56,7 @@ class PowerBinderDialog(wx.Dialog):
 
         choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.BindStringDisplay = wx.TextCtrl(self, -1)
+        self.BindStringDisplay = cgTextCtrl(self, -1)
         self.BindStringDisplay.Disable()
         choiceSizer.Add(wx.StaticText(self, -1, "Bind String:"), 0,
                         wx.ALIGN_CENTER_VERTICAL)
@@ -229,8 +230,13 @@ class PowerBinderDialog(wx.Dialog):
                 self.EditButton.Disable()
 
     def UpdateBindStringDisplay(self):
-        self.BindStringDisplay.SetValue(self.MakeBindString())
-        self.BindStringDisplay.SetToolTip(self.MakeBindString())
+        bindstring = self.MakeBindString()
+        self.BindStringDisplay.SetValue(bindstring)
+        if len(bindstring) > 255:
+            self.BindStringDisplay.AddError('toolong', 'This bind string is longer than the maximum 255 characters and will likely not work as expected, if at all.')
+        else:
+            self.BindStringDisplay.RemoveError('toolong')
+            self.BindStringDisplay.SetToolTip(bindstring)
 
     def MakeBindString(self):
         cmdBindStrings = []

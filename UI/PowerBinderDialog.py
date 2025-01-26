@@ -10,10 +10,11 @@ class PowerBinderDialog(wx.Dialog):
         wx.Dialog.__init__(self, parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
         self.Page = parent.Page
+        self.CurrentState = init
 
         self.LoadModules()
 
-        self.EditDialog = PowerBinderEditDialog(self)
+        self.EditDialog = None # make this at dialog-show time in LoadFromCurrentState
         self.Button = button
         self.AddStepMenu = self.makeAddStepMenu()
 
@@ -76,17 +77,15 @@ class PowerBinderDialog(wx.Dialog):
         self.SetSizerAndFit(vbox);
         self.Layout()
         self.Fit()
-        self.SetFocus()
-
-        # if we are loading from profile, ie, have "init", build the list from it
-        if init: self.LoadFromData(init)
-
 
     def Show(self, show = True):
-        bindstring = self.MakeBindString()
-        if bindstring != self.Button.tgtTxtCtrl.GetValue():
-            self.BindStringDisplay.AddError('nomatch', "The PowerBinder configuration doesn't match the bind string saved with the profile.  Check that the PowerBinder dialog is configured correctly before pressing 'OK' as this will overwrite the saved bind string.")
+        if show:
+            self.LoadFromCurrentState()
+            bindstring = self.MakeBindString()
+            if bindstring != self.Button.tgtTxtCtrl.GetValue():
+                self.BindStringDisplay.AddError('nomatch', "The PowerBinder configuration doesn't match the bind string saved with the profile.  Check that the PowerBinder dialog is configured correctly before pressing 'OK' as this will overwrite the saved bind string.")
         super().Show(show)
+        self.SetFocus()
 
     # Load plugins / modules from UI/PowerBinderCommand directory
     def LoadModules(self):
@@ -127,8 +126,12 @@ class PowerBinderDialog(wx.Dialog):
             else:
                 print(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
-    def LoadFromData(self, init):
-        for item in init:
+    def LoadFromCurrentState(self):
+        if self.EditDialog: self.EditDialog.Destroy()
+        self.EditDialog = PowerBinderEditDialog(self)
+        self.RearrangeList.Clear()
+
+        for item in self.CurrentState:
             for type, data in item.items():
                 commandClass = commandClasses.get(type, None)
                 if not commandClass:
@@ -145,14 +148,22 @@ class PowerBinderDialog(wx.Dialog):
         self.UpdateBindStringDisplay()
 
     def SaveToData(self):
+        # initialize this from CurrentState in case we just tried to save the profile
+        # without ever having Show()ed the dialog and therefore haven't ever populated it.
+        self.LoadFromCurrentState()
+        return self.GetCurrentState()
+
+    def GetCurrentState(self):
         data = []
-        index = 0
-        for _ in self.RearrangeList.GetItems():
+        for index in range(self.RearrangeList.GetCount()):
             # check whether we have an object already attached to this choice
-            cmdObject = self.RearrangeList.GetClientData(index)
-            commandClassName = commandRevClasses[type(cmdObject)]
-            data.append({commandClassName: cmdObject.Serialize()})
-            index = index + 1
+            if cmdObject := self.RearrangeList.GetClientData(index):
+                if commandClassName := commandRevClasses[type(cmdObject)]:
+                    data.append({commandClassName: cmdObject.Serialize()})
+                else:
+                    wx.LogError(f"Unknown command object type in SaveToData: {cmdObject}.  This is a bug.")
+            else:
+                wx.LogError(f"Item at index {index} in PowerBinder's RearrangeList didn't have Client Data.  This is a bug.")
         return data
 
     def OnAddStepButton(self, evt):
@@ -161,7 +172,6 @@ class PowerBinderDialog(wx.Dialog):
             self.AddStepMenu = self.makeAddStepMenu()
         button.PopupMenu(self.AddStepMenu)
 
-
     def OnOKButton(self, _):
         if self.Button.tgtTxtCtrl:
             bindString = self.MakeBindString()
@@ -169,7 +179,8 @@ class PowerBinderDialog(wx.Dialog):
             if bindString != self.Button.tgtTxtCtrl.GetValue():
                 self.Button.tgtTxtCtrl.SetValue(bindString)
                 wx.App.Get().Main.Profile.SetModified()
-            self.Close()
+        self.CurrentState = self.GetCurrentState()
+        self.Close()
 
     def OnRearrangeDelete(self, _):
         current = self.RearrangeList.GetSelection()

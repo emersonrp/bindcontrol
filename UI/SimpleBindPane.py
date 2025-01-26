@@ -67,9 +67,11 @@ class SimpleBindPane(CustomBindPaneParent):
         self.checkIfWellFormed()
 
     def onContentsChanged(self, _):
+        self.Profile.SetModified()
         self.checkIfWellFormed()
 
     def onKeyChanged(self, _):
+        self.Profile.SetModified()
         self.checkIfWellFormed()
         if self.Profile:
             self.Profile.CheckAllConflicts()

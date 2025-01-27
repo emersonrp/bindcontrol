@@ -756,7 +756,33 @@ MiscPowers: Dict[str, dict] = {
             'Powers': [ 'Genome', 'Core Genome', 'Radial Genome', 'Total Core Graft', 'Partial Core Graft',
                        'Partial Radial Graft', 'Total Radial Graft', 'Core Embodiment', 'Radial Embodiment', ],
         },
-    }
+    },
+    'Temp' : {
+        # This is from a long session squinting at:
+        # https://cod.uberguy.net/html/powerset.html?pset=temporary_powers.temporary_powers
+        # This seems to be all temporary powers that might constitute activateable travel powers.
+        'Movement': [
+            "Antigravity Matrix",
+            "Analyst's Teleporter",
+            "Buoyant Membrane",
+            "Goldbricker Rocket Pack",
+            "Holiday Rocket Pack",
+            "Jaunt Initializer",
+            "Jet Pack",
+            "Jetpack", # yes, that"s a different temp power
+            "Jump Pack",
+            "LKT-1700 Rocket Pack",
+            "Longbow Jetpack",
+            "Low-G Pack",
+            "Manifold Resonator",
+            "Nictus Shadow Step",
+            "Phase Flight",
+            "Raptor Pack",
+            "Traveler's Jet Pack",
+            "Sky Raider Flight Pack",
+            "Zero-G Pack",
+        ],
+    },
 }
 
 SprintPowers = [

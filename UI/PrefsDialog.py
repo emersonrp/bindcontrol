@@ -57,8 +57,9 @@ class PrefsDialog(wx.Dialog):
             generalSizer.Add( self.gameBindsDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
         generalSizer.Add( wx.StaticText(generalPanel, label = "Binds Reset Key:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
-        self.ResetKey = bcKeyButton(generalPanel, -1, init ={ 'CtlName': 'ResetKey', })
-        self.ResetKey.SetLabel( config.Read('ResetKey') )
+        resetKey = config.Read('ResetKey')
+        self.ResetKey = bcKeyButton(generalPanel, -1, init ={ 'CtlName': 'ResetKey', 'Key' : resetKey })
+        self.ResetKey.SetLabel( resetKey )
         UI.Labels.update({ 'ResetKey': 'Binds Reset Key'})
         generalSizer.Add( self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)
 

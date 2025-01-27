@@ -72,6 +72,7 @@ def LoadFromFile(parent):
             # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
             if newProfile.doLoadFromFile(pathname):
+                newProfile.CheckAllConflicts()
                 return newProfile
             else:
                 newProfile.Destroy()
@@ -518,7 +519,6 @@ class Profile(wx.Notebook):
                 if bindpane:
                     cbpage.AddBindToPage(bindpane = bindpane)
 
-        # finally, set the profile name on the General page
         self.ClearModified()
 
     def SetTitle(self):

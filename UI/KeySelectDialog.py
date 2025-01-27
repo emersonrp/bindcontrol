@@ -8,6 +8,8 @@ import wx.html
 import wx.lib.stattext as ST
 import wx.lib.newevent
 
+import Page
+
 import UI
 from UI.ErrorControls import ErrorControlMixin
 from bcController import bcController
@@ -493,13 +495,20 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.CtlName  : str                                     = init.get('CtlName', None)
         self.CtlLabel : ST.GenStaticText | wx.StaticText | None = init.get('CtlLabel', None)
         self.Key      : str                                     = init.get('Key', '')
-        self.Page                                               = parent
         self.AlwaysShorten : bool                               = init.get('AlwaysShorten', False)
 
         # This might be overloading "AlwaysShorten", but:
         style = wx.BU_EXACTFIT if self.AlwaysShorten else 0
 
         super().__init__(parent, id, style = style)
+
+        thing = self.GetParent()
+        while not isinstance(thing, Page.Page):
+            thing = thing.GetParent()
+            # we use these in the prefs dialog, so this happens there
+            if not thing: break
+
+        self.Page = thing
 
         self.SetLabel(self.Key)
 
@@ -508,13 +517,13 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
     def onKeyChanged(self, _):
-        wx.App.Get().Main.Profile.CheckAllConflicts()
+        if self.Page: self.Page.Profile.CheckAllConflicts()
 
     def ClearButton(self, _):
         self.SetLabel("")
         self.Key = ""
         wx.PostEvent(self, KeyChanged())
-        wx.App.Get().Main.Profile.SetModified()
+        if self.Page: self.Page.Profile.SetModified()
 
     def MakeFileKeyBind(self, contents):
         return KeyBind(self.Key, self.CtlLabel, self.Page, contents)
@@ -540,27 +549,28 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.Update()
 
     def CheckConflicts(self, newbinding = None):
-        Profile = wx.App.Get().Main.Profile
-        if Profile:
-            conflicts = Profile.CheckConflict(newbinding or self.Key, self.CtlName)
-            if conflicts:
-                conflictStrings = []
-                for conflict in conflicts:
-                    conflictStrings.append(f'This key conflicts with \"{conflict["ctrl"]}\" on the \"{conflict["page"]}\" tab.')
-                self.AddError('conflict', '\n'.join(conflictStrings))
-            else:
-                self.RemoveError('conflict')
-            return conflicts
+        if self.Page:
+            Profile = self.Page.Profile
+            if Profile:
+                conflicts = Profile.CheckConflict(newbinding or self.Key, self.CtlName)
+                if conflicts:
+                    conflictStrings = []
+                    for conflict in conflicts:
+                        conflictStrings.append(f'This key conflicts with \"{conflict["ctrl"]}\" on the \"{conflict["page"]}\" tab.')
+                    self.AddError('conflict', '\n'.join(conflictStrings))
+                else:
+                    self.RemoveError('conflict')
+                return conflicts
 
     def KeySelectEventHandler(self, evt):
         button = evt.EventObject
-        Profile = wx.App.Get().Main.Profile
 
         existingKey = button.Key
 
         with KeySelectDialog(button) as dlg:
             newKey = ''
-            if(dlg.ShowModal() == wx.ID_OK): newKey = dlg.Binding
+            if(dlg.ShowModal() == wx.ID_OK):
+                newKey = dlg.Binding
 
             # re-label the button / set its state
             if newKey:
@@ -568,7 +578,8 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
                 button.SetLabel(newKey)
                 wx.PostEvent(button, KeyChanged())
 
-                if existingKey != newKey:
-                    Profile.SetModified()
+                if self.Page and existingKey != newKey:
+                    self.Page.Profile.SetModified()
 
-            Profile.CheckAllConflicts()
+            if self.Page:
+                self.Page.Profile.CheckAllConflicts()

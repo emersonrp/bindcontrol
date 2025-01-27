@@ -7,7 +7,7 @@ class ErrorControlMixin:
     SetToolTip             : Callable
     GetTextCtrl            : Callable
     HasTextCtrl            : Callable
-    Refresh                 : Callable
+    Refresh                : Callable
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

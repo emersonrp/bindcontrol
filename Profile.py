@@ -169,8 +169,12 @@ class Profile(wx.Notebook):
                     if not ctrl.IsThisEnabled(): continue
                     ctrl.CheckConflicts()
 
-    def SetModified  (self, _ = None): self.Modified = True
-    def ClearModified(self, _ = None): self.Modified = False
+    def SetModified  (self, _ = None):
+        self.Parent.SetTitle(f"BindControl: {self.Name()} (*)")
+        self.Modified = True
+    def ClearModified(self, _ = None):
+        self.Parent.SetTitle(f"BindControl: {self.Name()}")
+        self.Modified = False
 
     # come up with a sane default binds directory name for this profile
     def GenerateBindsDirectoryName(self):

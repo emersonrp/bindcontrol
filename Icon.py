@@ -3,6 +3,8 @@ import re
 import os
 import sys
 import base64
+import zipfile
+from pathlib import Path
 from typing import Dict
 
 class Icon(wx.Bitmap):
@@ -26,12 +28,25 @@ def GetIcon(name = '', powerset = '', power = ''):
 
     if not name in Icons:
         base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-        filename = f"{base_path}/icons/{name}.png"
-        if os.path.exists(filename):
-            Icons[name] = Icon( wx.Image( filename, wx.BITMAP_TYPE_ANY, -1,))
-            Icons[name].Filename = name
-        else:
-            print(f"Missing icon: {name}")
+
+        iconzippath = Path(base_path) / 'icons' / 'Icons.zip'
+        if iconzippath.exists():
+
+            with zipfile.ZipFile(iconzippath) as iconzip:
+                try:
+                    icondata = iconzip.read(f"{name}.png")
+                    Icons[name] = Icon( wx.Bitmap.NewFromPNGData(icondata, len(icondata)))
+                    Icons[name].Filename = name
+                except Exception as e:
+                    wx.LogError(f"Loading icon {name} failed: {e}.  This is a bug.")
+
+        else:  # we don't have the ZIP file, so maybe we're running directly from source
+            filename = f"{base_path}/icons/{name}.png"
+            if os.path.exists(filename):
+                Icons[name] = Icon( wx.Image( filename, wx.BITMAP_TYPE_ANY, -1,))
+                Icons[name].Filename = name
+            else:
+                print(f"Missing icon: {name}")
 
     return Icons.get(name, Icons['Empty'])
 

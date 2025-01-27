@@ -55,6 +55,7 @@ jobs:
       - name: Create Executable
         run: |
           echo "${{ github.ref_name }}" > version.txt
+          python tools/zip_icons.py
           ${{ matrix.CMD_BUILD }}
 
       - name: Create Zip Archive

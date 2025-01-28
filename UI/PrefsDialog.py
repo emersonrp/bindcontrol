@@ -60,7 +60,6 @@ class PrefsDialog(wx.Dialog):
         resetKey = config.Read('ResetKey')
         self.ResetKey = bcKeyButton(generalPanel, -1, init ={ 'CtlName': 'ResetKey', 'Key' : resetKey })
         self.ResetKey.SetLabel( resetKey )
-        UI.Labels.update({ 'ResetKey': 'Binds Reset Key'})
         generalSizer.Add( self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)
 
         splitKeyLabel = statictextclass(generalPanel, label = "Bind L/R mod keys separately:")

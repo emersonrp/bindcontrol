@@ -640,7 +640,7 @@ class Profile(wx.Notebook):
         dlg.Destroy()
 
         if errors:
-            msg = f"{donefiles} of {totalfiles} bind files written, but there were {errors} errors.  Check the log."
+            msg = f"{donefiles} of {totalfiles} bind files written.\n\nThere were {errors} errors!  Check the log."
         else:
             msg = f"{donefiles} of {totalfiles} bind files written successfully."
 
@@ -757,18 +757,15 @@ class Profile(wx.Notebook):
         return removed
 
 class WriteDoneDialog(wx.Dialog):
-    def __init__(self, parent, msg = ''):
+    def __init__(self, parent, msg = 'Bindfiles written.'):
         wx.Dialog.__init__(self, parent, title = "Bindfiles Written")
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
         msg = msg + (
             "\n\n"
-            "If you are updating existing installed BindControl binds,\n"
-            f"you can press \"{wx.ConfigBase.Get().Read('ResetKey')}\" in-game to load your new binds.\n"
-            "\n"
-            "If this is a new set of keybinds, log on to the character\n"
-            "you made them for and type into the chat window:"
+            "You should now log on to the character you made\n"
+            "them for and type or paste into the chat window:"
         )
         sizer.Add(
             wx.StaticText(self, label = msg, style = wx.ALIGN_CENTER),

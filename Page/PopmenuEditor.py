@@ -399,6 +399,12 @@ class PopmenuEditor(Page):
             if menu and menu.Modified:
                 return True
 
+    def AllBindFiles(self):
+        return {
+            'files' : [],
+            'dirs'  : [],
+        }
+
 class Popmenu(FM.FlatMenu):
     ContextMenu    = None
     SubContextMenu = None

@@ -255,14 +255,14 @@ class MovementPowers(Page):
            tooltip = 'Automatically engage mouselook while movement keys are pressed',)
         detailSizer.AddControl( ctlName = 'ChangeCamera', ctlType = 'checkbox',
             tooltip = "Change the camera distance while moving")
-        self.Ctrls['ChangeCamera'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls['ChangeCamera'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
         detailSizer.AddControl( ctlName = 'CamdistBase', ctlType = 'spinbox', contents = (1, 100),
             tooltip = "Set the camera distance to use while stationary")
         detailSizer.AddControl( ctlName = 'CamdistMove', ctlType = 'spinbox', contents = (1, 100),
             tooltip = "Set the camera distance to use while moving")
         detailSizer.AddControl( ctlName = 'ChangeDetail', ctlType = 'checkbox',
             tooltip = "Change the game's detail level while moving")
-        self.Ctrls['ChangeDetail'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls['ChangeDetail'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
         detailSizer.AddControl( ctlName = 'DetailBase', ctlType = 'spinboxfractional', contents = (0, 1),
             tooltip = "Set the detail level to use while stationary")
         detailSizer.AddControl( ctlName = 'DetailMove', ctlType = 'spinboxfractional', contents = (0, 1),
@@ -276,14 +276,14 @@ class MovementPowers(Page):
             tooltip = "Select the powers tray to change to when in human form")
         self.kheldianSizer.AddControl( ctlName = 'UseNova', ctlType = 'checkbox',
             tooltip = "Use a key to toggle between Nova and human form")
-        self.Ctrls['UseNova'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls['UseNova'].Bind(wx.EVT_CHECKBOX, self.OnKheldianChanged)
         self.kheldianSizer.AddControl( ctlName = 'NovaMode', ctlType = 'keybutton',
             tooltip = "Select the key to toggle between Nova and human form")
         self.kheldianSizer.AddControl( ctlName = 'NovaTray', ctlType = 'spinbox', contents = [1, 8],
             tooltip = "Select the powers tray to change to when in Nova form")
         self.kheldianSizer.AddControl( ctlName = 'UseDwarf', ctlType = 'checkbox',
             tooltip = "Use a key to toggle between Dwarf and human form")
-        self.Ctrls['UseDwarf'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls['UseDwarf'].Bind(wx.EVT_CHECKBOX, self.OnKheldianChanged)
         self.kheldianSizer.AddControl( ctlName = 'DwarfMode', ctlType = 'keybutton',
             tooltip = "Select the key to toggle between Dwarf and human form")
         self.kheldianSizer.AddControl( ctlName = 'DwarfTray', ctlType = 'spinbox', contents = [1, 8],
@@ -295,21 +295,21 @@ class MovementPowers(Page):
 
         SoDSizer.AddControl( ctlName = 'EnableSoD', ctlType = 'checkbox',
             tooltip = "Enable Speed on Demand behavior for the movement keys, above")
-        self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'choice',
             contents = ('No SoD','Sprint','Speed','Jump','Fly'),
             tooltip = "Select the Speed on Demand mode the movement keys will use by default")
-        self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
+        self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl( ctlName = 'SprintPower', ctlType = 'choice',
             contents = GameData.SprintPowers,
             tooltip = "Select the power to use for Sprint Speed on Demand")
         SoDSizer.AddControl( ctlName = 'NonSoDEnable', ctlType = 'checkbox',
             tooltip = "Use a key to toggle whether Speed on Demand is active")
-        self.Ctrls['NonSoDEnable'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls['NonSoDEnable'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl( ctlName = 'NonSoDMode', ctlType = 'keybutton',
             tooltip = "Select the key to toggle Speed on Demand")
         SoDSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',)
-        self.Ctrls['SprintSoD'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls['SprintSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl( ctlName = 'SprintMode', ctlType = 'keybutton',)
         SoDSizer.AddControl( ctlName = 'MouseChord', ctlType = 'checkbox',)
         SoDSizer.AddControl( ctlName = 'Feedback', ctlType = 'checkbox',
@@ -331,7 +331,7 @@ class MovementPowers(Page):
         self.superSpeedSizer = ControlGroup(self, self, 'Speed')
         self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the super speed power to use with the keybinds in this section")
-        self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
+        self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
         self.superSpeedSizer.AddControl( ctlName = 'SpeedMode', ctlType = 'keybutton',
             tooltip = "Enter Speed on Demand Super Speed Mode")
         self.superSpeedSizer.AddControl( ctlName = 'SpeedSpecialKey', ctlType = 'keybutton',)
@@ -345,13 +345,13 @@ class MovementPowers(Page):
         self.superJumpSizer = ControlGroup(self, self, 'Jumping')
         self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the jump power to use with the keybinds in this section")
-        self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
+        self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
         self.superJumpSizer.AddControl( ctlName = 'HasCJ', ctlType = 'checkbox',
             tooltip = "Should the binds use Combat Jumping as a defense / stationary power?")
-        self.Ctrls['HasCJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls['HasCJ'].Bind(wx.EVT_CHECKBOX, self.OnJumpChanged)
         self.superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',
             tooltip = "Use the Jump Mode key as a simple Super Jump / Combat Jumping toggle.  This will toggle on and off either power if it is the only one available")
-        self.Ctrls['SimpleSJCJ'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls['SimpleSJCJ'].Bind(wx.EVT_CHECKBOX, self.OnJumpChanged)
         self.superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',
             tooltip = "Enter Speed on Demand Jump Mode")
         self.superJumpSizer.AddControl( ctlName = 'JumpSpecialKey', ctlType = 'keybutton',)
@@ -361,15 +361,15 @@ class MovementPowers(Page):
         self.flySizer = ControlGroup(self, self, 'Flight')
         self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the flight power to use with the keybinds in this section")
-        self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
+        self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
         self.flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',)
-        self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.OnFlightChanged)
         self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',
             tooltip = "Enter Speed on Demand Fly Mode")
         self.flySizer.AddControl( ctlName = 'FlySpecialKey', ctlType = 'keybutton',)
         self.flySizer.AddControl( ctlName = 'HasGFly', ctlType = 'checkbox',
             tooltip = "Enable Group Fly-related keybinds")
-        self.Ctrls['HasGFly'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls['HasGFly'].Bind(wx.EVT_CHECKBOX, self.OnFlightChanged)
         self.flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',
             tooltip = "Enter Group Fly Speed on Demand Mode")
         self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
@@ -378,7 +378,7 @@ class MovementPowers(Page):
         self.teleportSizer = ControlGroup(self, self, 'Teleport')
         self.teleportSizer.AddControl(ctlName = "TPPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the teleport power to use with the keybinds in this section")
-        self.Ctrls['TPPower'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
+        self.Ctrls['TPPower'].Bind(wx.EVT_CHOICE, self.OnTeleportChanged)
         self.teleportSizer.AddControl( ctlName = "TPBindKey", ctlType = 'keybutton',
             tooltip = 'Immediately teleport to the cursor position without showing a destination reticle.', )
         self.teleportSizer.AddControl( ctlName = "TPComboKey", ctlType = 'keybutton',
@@ -387,7 +387,7 @@ class MovementPowers(Page):
             tooltip = "Activate the Hover power after teleporting")
         self.teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',
             tooltip = "Enable Team Teleport-related keybinds")
-        self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.OnTeleportChanged)
         self.teleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton',
             tooltip = "Immediately Team Teleport to the cursor position without showing a destination reticle")
         self.teleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton',
@@ -410,115 +410,45 @@ class MovementPowers(Page):
         if not isinstance(control, wx.Choice): return
         if control.GetCount() == 2: control.SetSelection(1)
 
-    def SynchronizeUI(self, evt = None):
-        self.Freeze()
+    def ShowControlGroup(self, group, show = True):
+        if self.rightColumn.GetItem(group):
+            self.rightColumn.Show(group, show)
+        elif self.leftColumn.GetItem(group):
+            self.leftColumn.Show(group, show)
+        else:
+            wx.LogError(f"Tried to show/hide {group} which is in neither column.  This is a bug.")
+        for ctrl in group.GetChildren():
+            win = ctrl.GetWindow()
+            if win: win.Enable(show)
 
-        try:
-            c = self.Ctrls
+    def OnDetailsCameraChanged(self, evt = None):
+        c = self.Ctrls
+        c['CamdistBase'].Enable(self.GetState('ChangeCamera'))
+        c['CamdistMove'].Enable(self.GetState('ChangeCamera'))
 
-            c['TempMode'].Enable(self.GetState('TempEnable'))
-            c['TempTray'].Enable(self.GetState('TempEnable'))
-            c['TempTraySwitch'].Enable(self.GetState('TempEnable'))
+        c['DetailBase'].Enable(self.GetState('ChangeDetail'))
+        c['DetailMove'].Enable(self.GetState('ChangeDetail'))
+        if evt: evt.Skip()
 
-            ### SHOW/HIDE CONTROL GROUPS BASED ON POWER POOL PICKS
-            archetype = self.Profile.Archetype()
-            if (self.Profile.HasPowerPool('Flight')
-                        or self.Profile.HasPowerPool('Sorcery')
-                        or archetype == "Peacebringer"):
-                self.rightColumn.Show(self.flySizer, True)
-            else:
-                self.rightColumn.Show(self.flySizer, False)
-                for ctrl in self.flySizer.GetChildren():
-                    win = ctrl.GetWindow()
-                    if win: win.Enable(False)
+    def OnSpeedOnDemandChanged(self, evt = None):
+        c = self.Ctrls
+        for ctrl in ['DefaultMode', 'SprintPower', 'NonSoDEnable', 'SprintSoD', 'MouseChord', 'Feedback']:
+            c[ctrl].Enable(self.GetState('EnableSoD'))
+        c['NonSoDMode'].Enable(self.GetState('EnableSoD') and self.GetState('NonSoDEnable'))
+        c['SprintMode'].Enable(self.GetState('EnableSoD') and self.GetState('SprintSoD') and self.DefaultMode() != "Sprint")
+        if evt: evt.Skip()
 
-            if (self.Profile.HasPowerPool('Leaping') or self.Profile.HasPowerPool('Force of Will')):
-                self.rightColumn.Show(self.superJumpSizer, True)
-            else:
-                self.rightColumn.Show(self.superJumpSizer, False)
-                for ctrl in self.superJumpSizer.GetChildren():
-                    win = ctrl.GetWindow()
-                    if win: win.Enable(False)
+    def OnFlightChanged(self, evt = None):
+        c = self.Ctrls
+        archetype = self.Profile.Archetype()
 
-            if (self.Profile.HasPowerPool('Speed') or self.Profile.HasPowerPool('Experimentation')):
-                self.rightColumn.Show(self.superSpeedSizer, True)
-            else:
-                self.rightColumn.Show(self.superSpeedSizer, False)
-                for ctrl in self.superSpeedSizer.GetChildren():
-                    win = ctrl.GetWindow()
-                    if win: win.Enable(False)
-
-            if (self.Profile.HasPowerPool('Teleportation')
-                        or self.Profile.HasPowerPool('Sorcery')
-                        or self.Profile.HasPowerPool('Experimentation')
-                        or archetype == "Warshade"):
-                self.rightColumn.Show(self.teleportSizer, True)
-            else:
-                self.rightColumn.Show(self.teleportSizer, False)
-                for ctrl in self.teleportSizer.GetChildren():
-                    win = ctrl.GetWindow()
-                    if win: win.Enable(False)
-
-            ### DETAILS / CAMERA GROUP
-            c['CamdistBase'].Enable(self.GetState('ChangeCamera'))
-            c['CamdistMove'].Enable(self.GetState('ChangeCamera'))
-
-            c['DetailBase'].Enable(self.GetState('ChangeDetail'))
-            c['DetailMove'].Enable(self.GetState('ChangeDetail'))
-
-            ### SPEED ON DEMAND GROUP
-            for ctrl in ['DefaultMode', 'SprintPower', 'NonSoDEnable', 'NonSoDMode', 'SprintSoD',
-                         'SprintMode', 'MouseChord', 'Feedback']:
-                c[ctrl].Enable(self.GetState('EnableSoD'))
-            c['NonSoDMode'].Enable(self.GetState('NonSoDEnable'))
-            c['SprintMode'].Enable(self.GetState('SprintSoD') and self.DefaultMode() != "Sprint")
-
-            ### SPEED POWERS
-            c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPowerPool('Experimentation'))
-            c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPowerPool('Speed'))
-
-            self.PrePickLonePower(c['SpeedPower'])
-
-            c['SpeedMode'].Enable(bool(self.GetState('SpeedPower')) and self.DefaultMode() != "Speed")
-            c['SSMobileOnly'].Enable(bool(self.GetState('SpeedPower')))
-            c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
-            c['SpeedSpecialKey'].Show(bool(self.GetState('SpeedPower')))
-
-            c['SpeedSpecialKey'].Show(False)
-            if (self.GetState('SpeedPower') == "Super Speed"):
-                c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
-                c['SpeedSpecialPower'].SetValue('SpeedPhase')
-                c['SpeedSpecialKey'].Show()
-
-            ### JUMP POWERS
-            c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPowerPool('Force of Will'))
-            c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPowerPool('Leaping'))
-
-            self.PrePickLonePower(c['JumpPower'])
-
-            c['HasCJ'].Enable(self.Profile.HasPowerPool('Leaping'))
-            c['SimpleSJCJ'].Enable(bool(self.GetState('JumpPower') or self.GetState('HasCJ')))
-            c['JumpMode']  .Enable(bool(
-                    self.DefaultMode() != "Jump"
-                        and
-                    (self.GetState('JumpPower') or self.GetState('HasCJ') or self.GetState('SimpleSJCJ'))
-                ))
-
-            c['JumpSpecialKey'].Show(False)
-            if (self.GetState('JumpPower') == "Mighty Leap"):
-                c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
-                c['JumpSpecialPower'].SetValue('Takeoff')
-                c['JumpSpecialKey'].Show()
-            elif (self.GetState('JumpPower') == "Super Jump"):
-                c['JumpSpecialKey'].CtlLabel.SetLabel('Double Jump:')
-                c['JumpSpecialPower'].SetValue('Double_Jump')
-                c['JumpSpecialKey'].Show()
-
-            ### FLIGHT POWERS
+        if (self.Profile.HasPowerPool('Flight')
+                    or self.Profile.HasPowerPool('Sorcery')
+                    or archetype == "Peacebringer"):
+            self.ShowControlGroup(self.flySizer)
             c['FlyPower'].ShowEntryIf("Fly",           self.Profile.HasPowerPool("Flight"))
             c['FlyPower'].ShowEntryIf("Mystic Flight", self.Profile.HasPowerPool("Sorcery"))
             c['FlyPower'].ShowEntryIf("Energy Flight", archetype == "Peacebringer")
-
             self.PrePickLonePower(c['FlyPower'])
 
             c['FlyMode'].Enable(bool(self.GetState('FlyPower') or self.GetState('HoverPower'))
@@ -533,69 +463,146 @@ class MovementPowers(Page):
                 c['HasHover'].SetToolTip('Use Hover as a defense / stationary power')
                 c['HoverPower'].SetValue('Hover')
 
-            c['FlySpecialKey'].Show(False)
-            if (self.GetState('FlyPower') == "Fly"):
-                c['FlySpecialKey'].CtlLabel.SetLabel('Afterburner:')
-                c['FlySpecialPower'].SetValue('fly_boost') # "afterburner" has overloaded meaning.
-                c['FlySpecialKey'].Show()
+            try: # try/except here because we Freeze to prevent flicker and what if it breaks?
+                self.Freeze()
+                c['FlySpecialKey'].Show(False)
+                if (self.GetState('FlyPower') == "Fly"):
+                    c['FlySpecialKey'].CtlLabel.SetLabel('Afterburner:')
+                    c['FlySpecialPower'].SetValue('fly_boost') # "afterburner" has overloaded meaning.
+                    c['FlySpecialKey'].Show()
 
-            if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.GetState('HasHover'))):
-                c['FlySpecialKey'].CtlLabel.SetLabel('Quantum Maneuvers:')
-                c['FlySpecialPower'].SetValue('Quantum Maneuvers')
-                c['FlySpecialKey'].Show()
+                if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.GetState('HasHover'))):
+                    c['FlySpecialKey'].CtlLabel.SetLabel('Quantum Maneuvers:')
+                    c['FlySpecialPower'].SetValue('Quantum Maneuvers')
+                    c['FlySpecialKey'].Show()
+            except Exception:
+                pass
+            finally:
+                self.Thaw()
 
             c['HasGFly'].Enable(self.Profile.HasPowerPool('Flight'))
             c['GFlyMode'].Enable(self.hasGFly())
+        else:
+            self.ShowControlGroup(self.flySizer, False)
+        if evt: evt.Skip()
 
-            ### TELEPORT POWERS
+    def OnJumpChanged(self, evt = None):
+        c = self.Ctrls
+        if (self.Profile.HasPowerPool('Leaping') or self.Profile.HasPowerPool('Force of Will')):
+            self.ShowControlGroup(self.superJumpSizer)
+            c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPowerPool('Force of Will'))
+            c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPowerPool('Leaping'))
+            self.PrePickLonePower(c['JumpPower'])
+
+            c['JumpMode']  .Enable(bool(
+                    self.DefaultMode() != "Jump"
+                        and
+                    (self.GetState('JumpPower') or self.GetState('HasCJ') or self.GetState('SimpleSJCJ'))
+                ))
+            c['HasCJ'].Enable(self.Profile.HasPowerPool('Leaping'))
+            c['SimpleSJCJ'].Enable(bool(self.GetState('JumpPower') or self.GetState('HasCJ')))
+            c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
+
+            if (self.GetState('JumpPower') == "Mighty Leap"):
+                c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
+                c['JumpSpecialPower'].SetValue('Takeoff')
+                c['JumpSpecialKey'].Show()
+            elif (self.GetState('JumpPower') == "Super Jump"):
+                c['JumpSpecialKey'].CtlLabel.SetLabel('Double Jump:')
+                c['JumpSpecialPower'].SetValue('Double_Jump')
+                c['JumpSpecialKey'].Show()
+            else:
+                c['JumpSpecialKey'].Show(False)
+        else:
+            self.ShowControlGroup(self.superJumpSizer, False)
+        if evt: evt.Skip()
+
+    def OnSpeedChanged(self, evt = None):
+        c = self.Ctrls
+        if (self.Profile.HasPowerPool('Speed') or self.Profile.HasPowerPool('Experimentation')):
+            self.ShowControlGroup(self.superSpeedSizer)
+            c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPowerPool('Experimentation'))
+            c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPowerPool('Speed'))
+            self.PrePickLonePower(c['SpeedPower'])
+            c['SpeedMode'].Enable(bool(self.GetState('SpeedPower')) and self.DefaultMode() != "Speed")
+            c['SSMobileOnly'].Enable(bool(self.GetState('SpeedPower')))
+            c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
+
+            if (self.GetState('SpeedPower') == "Super Speed"):
+                c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
+                c['SpeedSpecialPower'].SetValue('SpeedPhase')
+                c['SpeedSpecialKey'].Show()
+            else:
+                c['SpeedSpecialKey'].Show(False)
+        else:
+            self.ShowControlGroup(self.superSpeedSizer, False)
+        if evt: evt.Skip()
+
+    def OnTeleportChanged(self, evt = None):
+        c = self.Ctrls
+        archetype = self.Profile.Archetype()
+
+        if (self.Profile.HasPowerPool('Teleportation')
+                    or self.Profile.HasPowerPool('Sorcery')
+                    or self.Profile.HasPowerPool('Experimentation')
+                    or archetype == "Warshade"):
+            self.ShowControlGroup(self.teleportSizer)
             c['TPPower'].ShowEntryIf('Teleport',      self.Profile.HasPowerPool('Teleportation'))
             c['TPPower'].ShowEntryIf('Translocation', self.Profile.HasPowerPool('Sorcery'))
             c['TPPower'].ShowEntryIf('Jaunt',         self.Profile.HasPowerPool('Experimentation')
                                                         and self.GetState('SpeedPower') == "Speed of Sound")
             c['TPPower'].ShowEntryIf('Shadow Step',   archetype == "Warshade")
-
             self.PrePickLonePower(c['TPPower'])
-
             c['TPBindKey'].Enable(self.GetState('TPPower') != '')
             c['TPComboKey'].Enable(self.GetState('TPPower') != '')
             c['TPTPHover'].Show((self.GetState('TPPower') != '') and self.hasHover())
-
             c['HasTTP']     .Show(self.Profile.HasPowerPool('Teleportation'))
             c['TTPBindKey'] .Show(c['HasTTP'].IsShown() and self.GetState('HasTTP'))
             c['TTPComboKey'].Show(c['HasTTP'].IsShown() and self.GetState('HasTTP'))
             c['TTPTPGFly']  .Show(c['HasTTP'].IsShown() and self.GetState('HasTTP') and self.hasGFly())
+        else:
+            self.ShowControlGroup(self.teleportSizer, False)
+        if evt: evt.Skip()
+
+    def OnKheldianChanged(self, evt = None):
+        c = self.Ctrls
+        if (self.isKheldian()):
+            # show kheldian sizer, enable controls
+            self.ShowControlGroup(self.kheldianSizer)
 
             c['NovaMode'].Enable(self.GetState('UseNova'))
             c['NovaTray'].Enable(self.GetState('UseNova'))
             c['DwarfMode'].Enable(self.GetState('UseDwarf'))
             c['DwarfTray'].Enable(self.GetState('UseDwarf'))
+        else:
+            self.ShowControlGroup(self.kheldianSizer, False)
+        if evt: evt.Skip()
+
+    def SynchronizeUI(self, evt = None):
+        self.Freeze()
+
+        try:
+            self.OnDetailsCameraChanged()
+
+            self.OnKheldianChanged()
+
+            self.OnSpeedOnDemandChanged()
+
+            self.OnFlightChanged()
+
+            self.OnJumpChanged()
+
+            self.OnSpeedChanged()
+
+            self.OnTeleportChanged()
 
             # TODO - for now, hide temp travel power stuff;
             # redo later using named power instead of trayslots
-            tempGridSizer = self.tempSizer.InnerSizer
-            for ctrl in tempGridSizer.GetChildren():
-                ctrl.GetWindow().Enable(False)
-            self.rightColumn.Hide(self.tempSizer)
+            self.ShowControlGroup(self.tempSizer, False)
+            #c['TempMode'].Enable(self.GetState('TempEnable'))
+            #c['TempTray'].Enable(self.GetState('TempEnable'))
+            #c['TempTraySwitch'].Enable(self.GetState('TempEnable'))
             # end TODO temp sizer
-
-            # show/hide kheldian-influenced controls depending on selected archetype;
-            kheldianGridSizer = self.kheldianSizer.InnerSizer
-            if (self.isKheldian()):
-                # show kheldian sizer, enable controls
-                for ctrl in kheldianGridSizer.GetChildren():
-                    ctrl.GetWindow().Enable(True)
-                self.leftColumn.Show(self.kheldianSizer)
-
-                c['NovaMode'].Enable(self.GetState('UseNova'))
-                c['NovaTray'].Enable(self.GetState('UseNova'))
-                c['DwarfMode'].Enable(self.GetState('UseDwarf'))
-                c['DwarfTray'].Enable(self.GetState('UseDwarf'))
-
-            else:
-                # hide kheldiansizer, disable controls
-                for ctrl in kheldianGridSizer.GetChildren():
-                    ctrl.GetWindow().Enable(False)
-                self.leftColumn.Hide(self.kheldianSizer)
 
         except Exception as e:
             print(f"Something blowed up in SoD SynchronizeUI:  {e}")
@@ -2286,7 +2293,7 @@ UI.Labels.update( {
     'TPHideWindows'  : 'Hide Windows when Teleporting',
 
     'JumpPower'        : "Primary Jump Power",
-    'HasCJ'            : 'Player has Combat Jumping',
+    'HasCJ'            : 'Has Combat Jumping',
     'JumpMode'         : 'Toggle Jump Mode',
     'SimpleSJCJ'       : 'Simple Combat Jumping / Super Jump Toggle',
     'JumpSpecialKey'   : '',
@@ -2300,19 +2307,19 @@ UI.Labels.update( {
     'SpeedSpecialPower' : '', # Hidden
 
     'FlyPower'        : "Primary Flight Power",
-    'HasHover'        : "Player has Hover",
-    'HasGFly'         : 'Player has Group Fly',
+    'HasHover'        : "Has Hover",
+    'HasGFly'         : 'Has Group Fly',
     'FlyMode'         : 'Toggle Fly Mode',
     'FlySpecialKey'   : 'Afterburner',
     'FlySpecialPower' : '', # hidden
     'GFlyMode'        : 'Toggle Group Fly Mode',
 
-    'TPPower'        : 'TeleportPower',
+    'TPPower'        : 'Teleport Power',
     'TPBindKey'      : 'Teleport to Cursor Immediately',
     'TPComboKey'     : 'Teleport to Cursor on Key Release',
     'TPTPHover'      : 'Hover when Teleporting',
 
-    'HasTTP'         : 'Player has Team Teleport',
+    'HasTTP'         : 'Has Team Teleport',
     'TTPBindKey'     : 'Team Teleport to Cursor',
     'TTPComboKey'    : 'Show Team Teleport Reticle',
     'TTPTPGFly'      : 'Group Fly when Team Teleporting',

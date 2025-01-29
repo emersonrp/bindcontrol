@@ -1353,107 +1353,95 @@ class MovementPowers(Page):
         t.basepath     = profile.BindsDir()
         t.gamebasepath = profile.GameBindsDir()
 
-        t.path     = t.basepath     / 'R' / 'R'
+        t.path     = t.basepath     / 'R' / 'R' # run
         t.gamepath = t.gamebasepath / 'R' / 'R'
         t.bl       = f"$${BLF()} {t.gamepath}"
 
-        t.patha     = t.basepath     / 'F' / 'F' # air subfolder and base filename
+        t.patha     = t.basepath     / 'F' / 'F' # fly
         t.gamepatha = t.gamebasepath / 'F' / 'F'
         t.bla       = f"$${BLF()} {t.gamepatha}"
 
-        t.pathj     = t.basepath     / 'J' / 'J'
+        t.pathj     = t.basepath     / 'J' / 'J' # jump
         t.gamepathj = t.gamebasepath / 'J' / 'J'
         t.blj       = f"$${BLF()} {t.gamepathj}"
 
-        t.paths     = t.basepath     / 'S' / 'S'
+        t.paths     = t.basepath     / 'S' / 'S' # speed
         t.gamepaths = t.gamebasepath / 'S' / 'S'
         t.bls       = f"$${BLF()} {t.gamepaths}"
 
-        #t.pathga     = t.basepath     / 'GF' / 'GF' # air subfolder and base filename
+        #t.pathga     = t.basepath     / 'GF' / 'GF' # group fly
         #t.gamepathga = t.gamebasepath / 'GF' / 'GF'
         #t.blga       = f"$${BLF()} {t.gamepathga}"
 
-        t.pathn     = t.basepath     / 'N' / 'N' # ground subfolder and base filename.
+        t.pathn     = t.basepath     / 'N' / 'N' # normal / non-sod
         t.gamepathn = t.gamebasepath / 'N' / 'N'
         t.bln       = f"$${BLF()} {t.gamepathn}"
 
-        t.patht     = t.basepath     / 'T' / 'T' # ground subfolder and base filename.
+        t.patht     = t.basepath     / 'T' / 'T' # temp
         t.gamepatht = t.gamebasepath / 'T' / 'T'
         t.blt       = f"$${BLF()} {t.gamepatht}"
 
-        t.pathq     = t.basepath     / 'Q' / 'Q' # ground subfolder and base filename.
-        t.gamepathq = t.gamebasepath / 'Q' / 'Q'
-        t.blq       = f"$${BLF()} {t.gamepathq}"
-
-        t.pathgr     = t.basepath     / 'AR' / 'AR'  # ground autorun subfolder and base filename
+        t.pathgr     = t.basepath     / 'AR' / 'AR'  # autorun ground
         t.gamepathgr = t.gamebasepath / 'AR' / 'AR'
         t.blgr       = f"$${BLF()} {t.gamepathgr}"
 
-        t.pathaf     = t.basepath     / 'AF' / 'AF'  # air autorun subfolder and base filename
+        t.pathaf     = t.basepath     / 'AF' / 'AF'  # autorun flight
         t.gamepathaf = t.gamebasepath / 'AF' / 'AF'
         t.blaf       = f"$${BLF()} {t.gamepathaf}"
 
-        t.pathaj     = t.basepath     / 'AJ' / 'AJ'
+        t.pathaj     = t.basepath     / 'AJ' / 'AJ'  # autorun jump
         t.gamepathaj = t.gamebasepath / 'AJ' / 'AJ'
         t.blaj       = f"$${BLF()} {t.gamepathaj}"
 
-        t.pathas     = t.basepath     / 'AS' / 'AS'
+        t.pathas     = t.basepath     / 'AS' / 'AS'  # autorun speed
         t.gamepathas = t.gamebasepath / 'AS' / 'AS'
         t.blas       = f"$${BLF()} {t.gamepathas}"
 
-        #t.pathgaf     = t.basepath     / 'GAF' / 'GAF'  # air autorun subfolder and base filename
+        #t.pathgaf     = t.basepath     / 'GAF' / 'GAF'  # autorun group fly
         #t.gamepathgaf = t.gamebasepath / 'GAF' / 'GAF'
         #t.blgaf       = f"$${BLF()} {t.gamepathgaf}"
 
-        t.pathan     = t.basepath     / 'AN' / 'AN' # ground subfolder and base filename.
+        t.pathan     = t.basepath     / 'AN' / 'AN' # autorun normal / non-sod
         t.gamepathan = t.gamebasepath / 'AN' / 'AN'
         t.blan       = f"$${BLF()} {t.gamepathan}"
 
-        t.pathat     = t.basepath     / 'AT' / 'AT' # ground subfolder and base filename.
+        t.pathat     = t.basepath     / 'AT' / 'AT' # autorun temp
         t.gamepathat = t.gamebasepath / 'AT' / 'AT'
         t.blat       = f"$${BLF()} {t.gamepathat}"
 
-        t.pathaq     = t.basepath     / 'AQ' / 'AQ' # ground subfolder and base filename.
-        t.gamepathaq = t.gamebasepath / 'AQ' / 'AQ'
-        t.blaq       = f"$${BLF()} {t.gamepathaq}"
-
-        t.pathfr     = t.basepath     / 'FR' / 'FR'  # Follow Run subfolder and base filename
+        t.pathfr     = t.basepath     / 'FR' / 'FR'  # Follow Run
         t.gamepathfr = t.gamebasepath / 'FR' / 'FR'
         t.blfr       = f"$${BLF()} {t.gamepathfr}"
 
-        t.pathff     = t.basepath     / 'FF' / 'FF'  # Follow Fly subfolder and base filename
+        t.pathff     = t.basepath     / 'FF' / 'FF'  # Follow Fly
         t.gamepathff = t.gamebasepath / 'FF' / 'FF'
         t.blff       = f"$${BLF()} {t.gamepathff}"
 
-        t.pathfj     = t.basepath     / 'FJ' / 'FJ'
+        t.pathfj     = t.basepath     / 'FJ' / 'FJ'  # Follow Jump
         t.gamepathfj = t.gamebasepath / 'FJ' / 'FJ'
         t.blfj       = f"$${BLF()} {t.gamepathfj}"
 
-        t.pathfs     = t.basepath     / 'FS' / 'FS'
+        t.pathfs     = t.basepath     / 'FS' / 'FS'  # Follow Speed
         t.gamepathfs = t.gamebasepath / 'FS' / 'FS'
         t.blfs       = f"$${BLF()} {t.gamepathfs}"
 
-        #t.pathgff     = t.basepath     / 'GFF' / 'GFF'  # Follow Fly subfolder and base filename
+        #t.pathgff     = t.basepath     / 'GFF' / 'GFF'  # Follow Group Fly
         #t.gamepathgff = t.gamebasepath / 'GFF' / 'GFF'
         #t.blgff       = f"$${BLF()} {t.gamepathgff}"
 
-        t.pathfn     = t.basepath     / 'FN' / 'FN' # ground subfolder and base filename.
+        t.pathfn     = t.basepath     / 'FN' / 'FN' # Follow normal / non-sod
         t.gamepathfn = t.gamebasepath / 'FN' / 'FN'
         t.blfn       = f"$${BLF()} {t.gamepathfn}"
 
-        t.pathft     = t.basepath     / 'FT' / 'FT' # ground subfolder and base filename.
+        t.pathft     = t.basepath     / 'FT' / 'FT' # Follow temp
         t.gamepathft = t.gamebasepath / 'FT' / 'FT'
         t.blft       = f"$${BLF()} {t.gamepathat}"
 
-        t.pathfq     = t.basepath     / 'FQ' / 'FQ' # ground subfolder and base filename.
-        t.gamepathfq = t.gamebasepath / 'FQ' / 'FQ'
-        t.blfq       = f"$${BLF()} {t.gamepathfq}"
-
-        t.pathbo     = t.basepath     / 'BO' / 'BO'  # Blastoff Fly subfolder and base filename
+        t.pathbo     = t.basepath     / 'BO' / 'BO'  # Blastoff Fly
         t.gamepathbo = t.gamebasepath / 'BO' / 'BO'
         t.blbo       = f"$${BLF()} {t.gamepathbo}"
 
-        t.pathgbo     = t.basepath     / 'GBO' / 'GBO'  # Blastoff Group Fly subfolder and base filename
+        t.pathgbo     = t.basepath     / 'GBO' / 'GBO'  # Blastoff Group Fly
         t.gamepathgbo = t.gamebasepath / 'GBO' / 'GBO'
         t.blgbo       = f"$${BLF()} {t.gamepathgbo}"
 
@@ -2197,11 +2185,6 @@ class MovementPowers(Page):
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
         curfile.SetBind(key, "SetDown Fix", self, '+down' + feedback + profile.BLF(gamefilename))
 
-    def onCBLabelClick(self, evt):
-        cblabel = evt.EventObject
-        cblabel.control.SetValue(not cblabel.control.IsChecked())
-        evt.Skip()
-
 
     ### convenience methods
     def DefaultMode(self):
@@ -2222,9 +2205,9 @@ class MovementPowers(Page):
     def AllBindFiles(self):
         files = []
         dirs  = [
-                'R'  , 'F'   , 'J'  , 'S'  , 'N'  , 'T'  , 'Q'  ,
-                'AR' , 'AF'  , 'AJ' , 'AS' , 'AN' , 'AT' , 'AQ' ,
-                'FR' , 'FF'  , 'FJ' , 'FS' , 'FN' , 'FT' , 'FQ' ,
+                'R'  , 'F'   , 'J'  , 'S'  , 'N'  , 'T'  ,
+                'AR' , 'AF'  , 'AJ' , 'AS' , 'AN' , 'AT' ,
+                'FR' , 'FF'  , 'FJ' , 'FS' , 'FN' , 'FT' ,
                 'BO' , 'GBO' ,
         ]
         for dir in dirs:
@@ -2401,7 +2384,6 @@ class tObject(dict):
         self.blaf  :str = ''
         self.blaj  :str = ''
         self.blan  :str = ''
-        self.blaq  :str = ''
         self.blas  :str = ''
         self.blat  :str = ''
         self.blbo  :str = ''
@@ -2409,7 +2391,6 @@ class tObject(dict):
         self.blff  :str = ''
         self.blfn  :str = ''
         self.blfj  :str = ''
-        self.blfq  :str = ''
         self.blfs  :str = ''
         self.blft  :str = ''
         self.blfr  :str = ''
@@ -2420,7 +2401,6 @@ class tObject(dict):
         self.blgff :str = ''
         self.blj   :str = ''
         self.bln   :str = ''
-        self.blq   :str = ''
         self.bls   :str = ''
         self.blt   :str = ''
 
@@ -2429,7 +2409,6 @@ class tObject(dict):
         self.pathaf  :Path = Path()
         self.pathaj  :Path = Path()
         self.pathan  :Path = Path()
-        self.pathaq  :Path = Path()
         self.pathas  :Path = Path()
         self.pathat  :Path = Path()
         self.pathbo  :Path = Path()
@@ -2437,7 +2416,6 @@ class tObject(dict):
         self.pathff  :Path = Path()
         self.pathfn  :Path = Path()
         self.pathfj  :Path = Path()
-        self.pathfq  :Path = Path()
         self.pathfs  :Path = Path()
         self.pathft  :Path = Path()
         self.pathfr  :Path = Path()
@@ -2448,7 +2426,6 @@ class tObject(dict):
         self.pathgr  :Path = Path()
         self.pathj   :Path = Path()
         self.pathn   :Path = Path()
-        self.pathq   :Path = Path()
         self.paths   :Path = Path()
         self.patht   :Path = Path()
 
@@ -2457,7 +2434,6 @@ class tObject(dict):
         self.gamepathaf :PureWindowsPath = PureWindowsPath()
         self.gamepathaj :PureWindowsPath = PureWindowsPath()
         self.gamepathan :PureWindowsPath = PureWindowsPath()
-        self.gamepathaq :PureWindowsPath = PureWindowsPath()
         self.gamepathas :PureWindowsPath = PureWindowsPath()
         self.gamepathat :PureWindowsPath = PureWindowsPath()
         self.gamepathbo :PureWindowsPath = PureWindowsPath()
@@ -2465,7 +2441,6 @@ class tObject(dict):
         self.gamepathff :PureWindowsPath = PureWindowsPath()
         self.gamepathfn :PureWindowsPath = PureWindowsPath()
         self.gamepathfj :PureWindowsPath = PureWindowsPath()
-        self.gamepathfq :PureWindowsPath = PureWindowsPath()
         self.gamepathfs :PureWindowsPath = PureWindowsPath()
         self.gamepathft :PureWindowsPath = PureWindowsPath()
         self.gamepathfr :PureWindowsPath = PureWindowsPath()
@@ -2474,7 +2449,6 @@ class tObject(dict):
         self.gamepathgr :PureWindowsPath = PureWindowsPath()
         self.gamepathj  :PureWindowsPath = PureWindowsPath()
         self.gamepathn  :PureWindowsPath = PureWindowsPath()
-        self.gamepathq  :PureWindowsPath = PureWindowsPath()
         self.gamepaths  :PureWindowsPath = PureWindowsPath()
         self.gamepatht  :PureWindowsPath = PureWindowsPath()
 

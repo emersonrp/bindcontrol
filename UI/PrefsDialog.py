@@ -4,7 +4,6 @@ import re
 import wx
 import wx.lib.stattext as ST
 from pathlib import Path
-import UI
 from Help import HelpButton
 from UI.KeySelectDialog import bcKeyButton
 from UI.ControlGroup import cgDirPickerCtrl, cgTextCtrl
@@ -71,6 +70,14 @@ class PrefsDialog(wx.Dialog):
 
         setattr(splitKeyLabel, 'CB', self.UseSplitModKeys)
         splitKeyLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
+
+        serverLabel = statictextclass(generalPanel, label = "Game Server:")
+        generalSizer.Add( serverLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        self.Server = wx.Choice(generalPanel, choices = ['Homecoming', 'Rebirth'])
+        serverRtn = self.Server.SetSelection(self.Server.FindString(config.Read('Server')))
+        if serverRtn == wx.NOT_FOUND: self.Server.SetSelection(0)
+        self.Server.SetToolTip("Select whether you are playing on Homecoming or Rebirth.  This will affect your Archetype and power choices.")
+        generalSizer.Add( self.Server, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
         flushBindsLabel = statictextclass(generalPanel, label = "Set binds to default on reset:")
         generalSizer.Add( flushBindsLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
@@ -286,6 +293,8 @@ class PrefsDialog(wx.Dialog):
 
             config.WriteBool('StartWithLastProfile', self.StartWithLastProfile.GetValue())
             config.Write('ProfilePath', self.ProfileDirPicker.GetPath())
+
+            config.Write('Server', self.Server.GetStringSelection())
 
             config.WriteBool('SaveSizeAndPosition', self.SaveSizeAndPosition.GetValue())
 

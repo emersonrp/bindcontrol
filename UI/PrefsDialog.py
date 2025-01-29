@@ -5,6 +5,7 @@ import wx
 import wx.lib.stattext as ST
 from pathlib import Path
 from Help import HelpButton
+import GameData
 from UI.KeySelectDialog import bcKeyButton
 from UI.ControlGroup import cgDirPickerCtrl, cgTextCtrl
 from bcController import bcController
@@ -77,6 +78,7 @@ class PrefsDialog(wx.Dialog):
         serverRtn = self.Server.SetSelection(self.Server.FindString(config.Read('Server')))
         if serverRtn == wx.NOT_FOUND: self.Server.SetSelection(0)
         self.Server.SetToolTip("Select whether you are playing on Homecoming or Rebirth.  This will affect your Archetype and power choices.")
+        self.Server.Bind(wx.EVT_CHOICE, self.OnServerChanged)
         generalSizer.Add( self.Server, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
         flushBindsLabel = statictextclass(generalPanel, label = "Set binds to default on reset:")
@@ -235,6 +237,13 @@ class PrefsDialog(wx.Dialog):
 
         self.OnDirPickerChange()
         self.OnGameBindsDirPickerChanged()
+
+    def OnServerChanged(self, evt):
+        config = wx.ConfigBase.Get()
+        newval = self.Server.GetStringSelection()
+        if newval != config.Read('Server'):
+            wx.MessageBox("You will need to restart BindControl to finish changing your server.")
+        if evt: evt.Skip()
 
     def OnDirPickerChange(self, evt = None):
         gamedir = Path(self.gameDirPicker.GetPath())

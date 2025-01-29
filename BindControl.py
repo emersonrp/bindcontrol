@@ -10,6 +10,7 @@ import wx.html
 from bcLogging import bcLogging
 from bcVersion import current_version
 from Icon import GetIcon
+import GameData
 import Profile
 from UI.BindDirsWindow import BindDirsWindow
 from UI.PrefsDialog import PrefsDialog
@@ -90,6 +91,7 @@ class Main(wx.Frame):
         if not config.Exists('ShowDebugMessages')   : config.WriteBool('ShowDebugMessages', False)
         if not config.Exists('WinH')                : config.WriteInt('WinH', 1000)
         if not config.Exists('WinW')                : config.WriteInt('WinW', 1000)
+        if not config.Exists('Server')              : config.Write('Server', 'Homecoming')
 
         # migrate old "start with" preference.  Maybe remove this someday
         if config.Exists('StartWith'):
@@ -97,6 +99,10 @@ class Main(wx.Frame):
             config.DeleteEntry('StartWith')
 
         config.Flush()
+
+        # set up GameData very early
+        server = config.Read('Server')
+        GameData.SetupGameData(server)
 
         # set up the custom logger with the infobar
         self.Logger = bcLogging(self)

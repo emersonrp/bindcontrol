@@ -35,5 +35,3 @@ def SetupGameData(server = "Homecoming"):
         GameData.DefaultBinds = GameData.Homecoming.DefaultBinds
         GameData.Emotes = GameData.Homecoming.Emotes
 
-# first time through, set us up.  This is temporary we hope.
-if Archetypes == {}: SetupGameData()

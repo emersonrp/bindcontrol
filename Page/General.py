@@ -3,7 +3,7 @@ import wx
 import wx.lib.stattext as ST
 import UI
 from Icon import GetIcon
-from GameData import Alignments, Archetypes, Origins, MiscPowers
+import GameData
 
 from UI.ControlGroup import ControlGroup
 from UI.IncarnateBox import IncarnateBox
@@ -67,34 +67,34 @@ class General(Page):
         powersBox.InnerSizer.Add(self.nameBox, 1, wx.EXPAND)
 
         alignmentchoices = []
-        for Alignment in Alignments:
+        for Alignment in GameData.Alignments:
             alignmentchoices.append([Alignment, GetIcon(f"Alignments/{Alignment}")])
         alignmentpicker = powersBox.AddControl(
             ctlName = 'Alignment',
             ctlType  = 'choice',
-            contents = Alignments,
+            contents = GameData.Alignments,
             callback = self.OnPickAlignment,
         )
         alignmentpicker.SetMinSize([200,-1])
 
         originchoices = []
-        for Origin in Origins:
+        for Origin in GameData.Origins:
             originchoices.append([Origin, GetIcon(f"Origins/{Origin}")])
         originpicker = powersBox.AddControl(
             ctlName = 'Origin',
             ctlType = 'choice',
-            contents = Origins,
+            contents = GameData.Origins,
             callback = self.OnPickOrigin,
         )
         originpicker.SetMinSize([200,-1])
 
         archchoices = []
-        for Arch in sorted(Archetypes):
+        for Arch in sorted(GameData.Archetypes):
             archchoices.append([Arch, GetIcon(f"Archetypes/{Arch}")])
         archpicker = powersBox.AddControl(
             ctlName = 'Archetype',
             ctlType = 'choice',
-            contents = sorted(Archetypes),
+            contents = sorted(GameData.Archetypes),
             callback = self.OnPickArchetype,
         )
         archpicker.SetMinSize([200,-1])
@@ -114,7 +114,7 @@ class General(Page):
             ctlType = 'choice',
             callback = self.OnPickEpicPowerSet,
         )
-        poolcontents = sorted(MiscPowers['Pool'])
+        poolcontents = sorted(GameData.MiscPowers['Pool'])
         poolcontents.insert(0, '')
         powersBox.AddControl(
             ctlName = 'Pool1',
@@ -286,9 +286,9 @@ class General(Page):
         self.Ctrls['Secondary'].Clear()
         self.Ctrls['Epic'].Clear()
 
-        Primaries   = Archetypes[arch]['Primary']
-        Secondaries = Archetypes[arch]['Secondary']
-        Epix        = Archetypes[arch]['Epic']
+        Primaries   = GameData.Archetypes[arch]['Primary']
+        Secondaries = GameData.Archetypes[arch]['Secondary']
+        Epix        = GameData.Archetypes[arch]['Epic']
 
         self.Ctrls['Epic'].Append('') # allow us to deselect epic pool
 

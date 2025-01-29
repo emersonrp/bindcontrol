@@ -1,19 +1,7 @@
 from typing import Dict, Any
 
-Alignments = [
-    'Hero',
-    'Villain',
-    'Vigilante',
-    'Rogue',
-    'Resistance',
-    'Loyalist',
-]
-
-Origins = ['Magic','Mutation','Natural','Science','Technology']
-
 Archetypes: Dict[Any, Any] = {
     'Arachnos Soldier': {
-        'Faction': 'V',
         'Epic': {
             'Leviathan Mastery' : [ 'Spirit Shark', 'School of Sharks', 'Arctic Breath', 'Bile Spray', 'Summon Guardian', ],
             'Mace Mastery'      : [ 'Mace Blast', 'Web Envelope', 'Disruptor Blast', 'Shatter Armor', 'Summon Blaster', ],
@@ -36,7 +24,6 @@ Archetypes: Dict[Any, Any] = {
         },
     },
     'Arachnos Widow': {
-        'Faction': 'V',
         'Epic': {
             'Leviathan Mastery' : [ 'Spirit Shark', 'School of Sharks', 'Arctic Breath', 'Bile Spray', 'Summon Guardian', ],
             'Mace Mastery'      : [ 'Mace Blast', 'Web Envelope', 'Disruptor Blast', 'Shatter Armor', 'Summon Blaster', ],
@@ -60,7 +47,6 @@ Archetypes: Dict[Any, Any] = {
         },
     },
     'Blaster': {
-        'Faction': 'H',
         'Epic': {
             'Ice Mastery'       : [ 'Snow Storm', 'Flash Freeze', 'Frozen Armor', 'Hoarfrost', 'Hibernate', ],
             'Dark Mastery'       : [ 'Murky Cloud', 'Fearsome Stare', 'Possess', 'Black Hole', 'Soul Consumption', ],
@@ -111,7 +97,6 @@ Archetypes: Dict[Any, Any] = {
         },
     },
     'Brute': {
-        'Faction': 'V',
         'Epic': {
             'Ice Mastery'    : [ 'Chillblain', 'Block of Ice', 'Ice Blast', 'Shiver', 'Ice Storm', ],
             'Dark Mastery'      : [ 'Penumbral Grasp', 'Petrifying Gaze', 'Dark Blast', 'Night Fall', 'Tar Patch', ],
@@ -166,7 +151,6 @@ Archetypes: Dict[Any, Any] = {
         },
     },
     'Controller': {
-        'Faction': 'H',
         'Epic': {
             'Dark Mastery'          : [ 'Murky Cloud', 'Dark Blast', 'Umbral Torrent', 'Midnight Grasp', 'Soul Consumption' ],
             'Fire Mastery'          : [ 'Fire Blast', 'Fire Ball', 'Fire Shield', 'Rise of the Phoenix', 'Consume', ],
@@ -215,7 +199,6 @@ Archetypes: Dict[Any, Any] = {
         },
     },
     'Corruptor': {
-        'Faction': 'V',
         'Epic': {
             'Dark Mastery'        : [ 'Oppressive Gloom', 'Dark Consumption', 'Dark Embrace', 'Soul Transfer', 'Spirit Drain', ],
             'Electricity Mastery' : [ 'Electric Fence', 'Thunder Strike', 'Charged Armor', 'Shocking Bolt', 'Power Sink', ],
@@ -267,7 +250,6 @@ Archetypes: Dict[Any, Any] = {
         },
     },
     'Defender': {
-        'Faction': 'H',
         'Epic': {
             'Dark Mastery'        : [ 'Oppressive Gloom', 'Dark Consumption', 'Dark Embrace', 'Soul Transfer', 'Spirit Drain', ],
             'Electricity Mastery' : [ 'Electric Fence', 'Thunder Strike', 'Charged Armor', 'Shocking Bolt', 'Power Sink', ],
@@ -320,7 +302,6 @@ Archetypes: Dict[Any, Any] = {
         },
     },
     'Dominator': {
-        'Faction': 'V',
         'Epic': {
             'Dark Mastery'          : [ 'Murky Cloud', 'Tar Patch', 'Darkest Night', 'Umbral Torrent', 'Soul Consumption', ],
             'Fire Mastery'          : [ 'Rain of Fire', 'Fire Ball', 'Fire Shield', 'Rise of the Phoenix', 'Melt Armor', ],
@@ -364,7 +345,6 @@ Archetypes: Dict[Any, Any] = {
         },
     },
     'Mastermind': {
-        'Faction': 'V',
         'Epic': {
             'Ice Mastery'     : [ 'Ice Blast', 'Flash Freeze', 'Hoarfrost', 'Frozen Armor', 'Hibernate', ],
             'Electricity Mastery'    : [ 'Static Discharge', 'Electric Shackles', 'Thunder Strike', 'Surge of Power', 'EM Pulse', ],
@@ -407,7 +387,6 @@ Archetypes: Dict[Any, Any] = {
         },
     },
     'Peacebringer': {
-        'Faction': 'H',
         'Epic': {},
         'Dependent': {
             'Bright Nova': [ 'Bright Nova Bolt', 'Bright Nova Blast', 'Bright Nova Scatter', 'Bright Nova Detonation', ],
@@ -428,7 +407,6 @@ Archetypes: Dict[Any, Any] = {
         },
     },
     'Scrapper': {
-        'Faction': 'H',
         'Epic': {
             'Fire Mastery'     : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
             'Energy Mastery'      : [ 'Conserve Power', 'Focused Accuracy', 'Laser Beam Eyes', 'Physical Perfection', 'Energy Torrent', ],
@@ -531,7 +509,6 @@ Archetypes: Dict[Any, Any] = {
         },
     },
     'Stalker': {
-        'Faction': 'V',
         'Epic': {
             'Fire Mastery'     : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
             'Energy Mastery'      : [ 'Superior Conditioning', 'Focused Accuracy', 'Laser Beam Eyes', 'Physical Perfection', 'Energy Torrent', ],
@@ -583,7 +560,6 @@ Archetypes: Dict[Any, Any] = {
         },
     },
     'Tanker': {
-        'Faction': 'H',
         'Epic': {
             'Ice Mastery'    : [ 'Chillblain', 'Block of Ice', 'Ice Blast', 'Shiver', 'Ice Storm', ],
             'Dark Mastery'      : [ 'Penumbral Grasp', 'Petrifying Gaze', 'Dark Blast', 'Night Fall', 'Tar Patch', ],
@@ -636,7 +612,6 @@ Archetypes: Dict[Any, Any] = {
         },
     },
     'Warshade': {
-        'Faction': 'H',
         'Epic': {},
         'Dependent': {
             'Black Dwarf': [ 'Black Dwarf Strike', 'Black Dwarf Smite', 'Black Dwarf Mire', 'Black Dwarf Drain', 'Black Dwarf Step', 'Black Dwarf Antagonize', ],

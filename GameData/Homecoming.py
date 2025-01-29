@@ -615,7 +615,7 @@ Archetypes: Dict[Any, Any] = {
         'Epic': {},
         'Dependent': {
             'Black Dwarf': [ 'Black Dwarf Strike', 'Black Dwarf Smite', 'Black Dwarf Mire', 'Black Dwarf Drain', 'Black Dwarf Step', 'Black Dwarf Antagonize', ],
-            'Dark Nova': [ 'Dark Nova Blast', 'Dark Nova Bolt', 'Dark Nova Detonation', 'Dark Nova Emmanation', ],
+            'Dark Nova': [ 'Dark Nova Blast', 'Dark Nova Bolt', 'Dark Nova Detonation', 'Dark Nova Emanation', ],
         },
         'Inherent': {
             'Inherent': [ 'Shadow Recall', 'Shadow Step', ],

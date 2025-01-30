@@ -111,7 +111,7 @@ Archetypes: Dict[Any, Any] = {
             'Psionic Melee'    : [ 'Mental Strike', 'Psi Blade', 'Telekinetic Blow', 'Concentration', 'Psi Blade Sweep', 'Taunt', 'Boggle', 'Greater Psi Blade', 'Mass Levitate', ],
             'Radiation Melee'  : [ 'Contaminated Strike', 'Radioactive Smash', 'Proton Sweep', 'Fusion', 'Radiation Siphon', 'Taunt', 'Irradiated Ground', 'Devastating Blow', 'Atom Smasher', ],
             'Savage Melee'     : [ 'Savage Strike', 'Maiming Slash', 'Shred', 'Vicious Slash', 'Rending Flurry', 'Taunt', 'Blood Thirst', 'Hemorrhage', 'Savage Leap', ],
-            'Staff Fighting'   : [ 'Mercurial Blow', 'Precise Strike', 'Guarded Spin', 'Eye of the Storm', 'Staff Mastery', 'Taunt', 'Serpent\'s Reach', 'Innocuous Strikes', 'Sky Splitter', ],
+            'Staff Fighting'   : [ 'Mercurial Blow', 'Precise Strike', 'Guarded Spin', 'Eye of the Storm', 'Taunt', 'Serpent\'s Reach', 'Innocuous Strikes', 'Sky Splitter', 'Form of the Body', 'Form of the Mind', 'Form of the Soul',  ],
             'Stone Melee'      : [ 'Stone Fist', 'Stone Mallet', 'Heavy Mallet', 'Build Up', 'Fault', 'Taunt', 'Seismic Smash', 'Hurl Boulder', 'Tremor', ],
             'Street Justice'   : [ 'Initial Strike', 'Heavy Blow', 'Sweeping Cross', 'Combat Readiness', 'Rib Cracker', 'Taunt', 'Spinning Strike', 'Shin Breaker', 'Crushing Uppercut', ],
             'Super Strength'   : [ 'Jab', 'Punch', 'Haymaker', 'Hand Clap', 'Knockout Blow', 'Taunt', 'Rage', 'Hurl', 'Foot Stomp', ],

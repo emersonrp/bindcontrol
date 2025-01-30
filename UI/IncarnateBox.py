@@ -65,10 +65,11 @@ class IncarnateBox(wx.StaticBoxSizer):
         incarnate = data['General'].get('Incarnate', None)
         if incarnate:
             for boxname, contents in incarnate.items():
-                box = getattr(self, boxname.lower() + "Inc")
-                box.IncName.SetLabel(contents['power'])
-                box.IncIcon.SetBitmapLabel(GetIcon(contents['iconfile']))
-                box.IconFilename = contents['iconfile']
+                box = getattr(self, boxname.lower() + "Inc", None)
+                if box:
+                    box.IncName.SetLabel(contents['power'])
+                    box.IncIcon.SetBitmapLabel(GetIcon(contents['iconfile']))
+                    box.IconFilename = contents['iconfile']
 
     def GetData(self):
         incarnatedata = {}

@@ -351,7 +351,7 @@ Archetypes: Dict[Any, Any] = {
     },
     'Mastermind': {
         'Epic': {
-            'Charge Mastery'    : [ 'Static Discharge', 'Electric Shackles', 'Surge of Power', 'Thunder Strike', 'ESD', ],
+            'Charge Mastery'    : [ 'Static Discharge', 'Electric Shackles', 'Surge of Power', 'Thunder Strike', 'EM Pulse', ],
             'Chill Mastery'     : [ 'Ice Blast', 'Flash Freeze', 'Hoarfrost', 'Frozen Armor', 'Hibernate', ],
             'Field Mastery'     : [ 'Power Blast', 'Temp Invulnerability', 'Energy Torrent', 'Explosive Blast', 'Force of Nature', ],
             'Heat Mastery'      : [ 'Bonfire', 'Fire Blast', 'Fire Ball', 'Char', 'Rise of the Phoenix', ],
@@ -505,7 +505,7 @@ Archetypes: Dict[Any, Any] = {
             'Energy Mastery'    : [ 'Conserve Power', 'Focused Accuracy', 'Laser Beam Eyes', 'Physical Perfection', 'Energy Torrent', ],
             'Leviathan Mastery' : [ 'Spirit Shark', 'School of Sharks', 'Arctic Breath', 'Bile Spray', 'Summon Guardian', ],
             'Mace Mastery'      : [ 'Mace Blast', 'Web Envelope', 'Disruptor Blast', 'Focused Accuracy', 'Summon Blaster', ],
-            'Martial Prowess'   : [ 'Battle Hardness', 'Throwing Dagger', 'Bodkin Bolt', 'Art of War', 'Valiance', ],
+            'Martial Prowess'   : [ 'Battle Hardened', 'Throwing Dagger', 'Bodkin Bolt', 'Art of War', 'Valiance', ],
             'Mu Mastery'        : [ 'Mu Lightning', 'Electrifying Fences', 'Ball Lightning', 'Static Discharge', 'Summon Striker', ],
             'Pyre Mastery'      : [ 'Ring of Fire', 'Char', 'Fire Blast', 'Melt Armor', 'Fire Ball', ],
             'Soul Mastery'      : [ 'Gloom', 'Soul Tentacles', 'Darkest Night', 'Dark Obliteration', 'Summon Widow', ],

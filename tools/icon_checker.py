@@ -57,7 +57,17 @@ for server in ('Homecoming', 'Rebirth'):
         for category in ['Primary', 'Secondary', 'Epic']:
             for powerset, powers in archdata[category].items():
                 powerset = re.sub(r'\W+', '', powerset)
-                for power in sorted(powers):
+                for power in powers:
+                    if isinstance(power, dict):
+                        [(power, items)] = power.items()
+                        for p in items:
+                            p = re.sub(r'\W+', '', p)
+                            filename = f"{powerset}_{p}.png"
+                            if not os.path.exists(f"{parentdir}/icons/Powers/{filename}"):
+                                print(f"{server} {archname}: {filename}")
+                                count = count + 1
+                            else:
+                                if filename in filecheck: filecheck.remove(filename)
                     power = re.sub(r'\W+', '', power)
                     filename = f"{powerset}_{power}.png"
                     if not os.path.exists(f"{parentdir}/icons/Powers/{filename}"):

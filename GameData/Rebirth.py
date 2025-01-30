@@ -701,9 +701,9 @@ MiscPowers: Dict[str, dict] = {
                        'Partial Radial Graft', 'Total Radial Graft', 'Core Embodiment', 'Radial Embodiment', ],
         },
         'Genesis': {
-            'Types': [ 'Agility', 'Cardiac', 'Nerve', 'Resilient', ],
-            'Powers' : [ 'Boost', 'Core Boost', 'Radial Boost', 'Total Core Revamp', 'Partial Core Revamp',
-                        'Total Radial Revamp', 'Partial Radial Revamp', 'Core Paragon', 'Radial Paragon', ],
+            'Types': [ 'Data', 'Fate', 'Socket', 'Verdict', ],
+            'Powers' : [ 'Genesis', 'Core Genesis', 'Radial Genesis', 'Total Core Genesis', 'Partial Core Genesis',
+                        'Total Radial Genesis', 'Partial Radial Genesis', 'Core Flawless Genesis', 'Radial Flawless Genesis', ],
         },
     }
 }

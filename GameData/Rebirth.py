@@ -339,7 +339,7 @@ Archetypes: Dict[Any, Any] = {
             'Dark Composition': [ 'Dark Embrace', 'Twilight Grasp', 'Tar Patch', 'Obsidian Shield', 'Murky Haze', 'Shadow Fall', 'Cloak of Fear', 'Soul Absorption', 'Howling Twilight', ],
             'Energy Composition': [ 'Kinetic Shield', 'Siphon Power', 'Power Shield', 'Entropy Shield', 'Inertial Siphon', 'Mass Energize', 'Kinetic Dampening', 'Transference', 'Fulcrum Flip', ],
             'Fiery Composition' : [ 'Fire Shield', 'Soothing Flames', 'Temperature Protection', 'Plasma Shield', 'Consume', 'Reforge', 'Heat Exhaustion', 'Melt Armor', 'Phoenix Awakening', ],
-            'Force Composition': [ 'Temp Invulnerability', 'Force Bolt', 'Force Affinity', 'Dispersion Bubble', 'Force Barrier', 'Containment Shell', 'Repulsion Bombs', 'Force Shielding', 'Suppression Field', ],
+            'Force Composition': [ 'Temp Invulnerability', 'Force Bolt', 'Force Affinity', 'Dispersion Bubble', 'Force Barrier', 'Containment Shell', 'Repulsion Bomb', 'Force Shielding', 'Suppression Field', ],
             'Ice Composition': [ 'Frost Armor', 'Infrigidate', 'Ice Pack', 'Wet Ice', 'Glacial Armor', 'Arctic Fog', 'Chilling Embrace', 'Sleet', 'Heat Loss', ],
             'Infiltrator Training': [ 'Combat Reflexes', 'Web Grenade', 'Danger Sense', 'Trained Mind', 'Poison Trap', 'Intrusion', 'Seeker Drones', 'Blinding Powder', 'Shredder Mine', ],
             'Organic Composition': [ 'Hardened Carapace', 'Regrowth', 'Environmental Modification', 'Inexhaustible', 'Wild Growth', 'Evolving Armor', 'DNA Siphon', 'Wild Bastion', 'Overgrowth', ],

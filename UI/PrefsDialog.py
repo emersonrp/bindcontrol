@@ -72,13 +72,12 @@ class PrefsDialog(wx.Dialog):
         setattr(splitKeyLabel, 'CB', self.UseSplitModKeys)
         splitKeyLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
 
-        serverLabel = statictextclass(generalPanel, label = "Game Server:")
+        serverLabel = statictextclass(generalPanel, label = "Default Game Server:")
         generalSizer.Add( serverLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.Server = wx.Choice(generalPanel, choices = ['Homecoming', 'Rebirth'])
         serverRtn = self.Server.SetSelection(self.Server.FindString(config.Read('Server')))
         if serverRtn == wx.NOT_FOUND: self.Server.SetSelection(0)
-        self.Server.SetToolTip("Select whether you are playing on Homecoming or Rebirth.  This will affect your Archetype and power choices.")
-        self.Server.Bind(wx.EVT_CHOICE, self.OnServerChanged)
+        self.Server.SetToolTip("Select whether you are playing on Homecoming or Rebirth.  This will affect your Archetype and power choices.  You can change this setting per-Profile.")
         generalSizer.Add( self.Server, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
 
         flushBindsLabel = statictextclass(generalPanel, label = "Set binds to default on reset:")
@@ -237,13 +236,6 @@ class PrefsDialog(wx.Dialog):
 
         self.OnDirPickerChange()
         self.OnGameBindsDirPickerChanged()
-
-    def OnServerChanged(self, evt):
-        config = wx.ConfigBase.Get()
-        newval = self.Server.GetStringSelection()
-        if newval != config.Read('Server'):
-            wx.MessageBox("You will need to restart BindControl to finish changing your server.")
-        if evt: evt.Skip()
 
     def OnDirPickerChange(self, evt = None):
         gamedir = Path(self.gameDirPicker.GetPath())

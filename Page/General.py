@@ -2,6 +2,7 @@
 import wx
 import wx.lib.stattext as ST
 import UI
+import Profile
 from Icon import GetIcon
 import GameData
 
@@ -158,6 +159,11 @@ class General(Page):
         # ChatColorSizer.Add(ChatColorEnable, 0, wx.ALL, 6)
         # ChatColorSizer.Add(ChatColors, 0, wx.ALL, 10)
         # ChatSizer.Add(ChatColorSizer, 0)
+
+        ### Server picker
+        self.ServerBtns = wx.RadioBox(self, -1, 'Server', choices = ['Homecoming', 'Rebirth'])
+        self.ServerBtns.Bind(wx.EVT_RADIOBOX, self.OnServerChange)
+        ChatSizer.Add(self.ServerBtns, 0, wx.EXPAND)
 
         ## Typing Notifier
         TNSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Typing Notifier")
@@ -343,6 +349,19 @@ class General(Page):
             self.Ctrls['StartChat'].CtlLabel.SetLabel('Start Chat:')
         self.Layout()
         if evt: evt.Skip()
+
+    def OnServerChange(self, evt):
+        radiobox = evt.GetEventObject()
+        server = self.Profile.Server
+
+        if radiobox.GetString(radiobox.GetSelection()) != server:
+            if wx.MessageBox('Changing server requires saving and reloading the Profile.  Continue?', 'Changing Server', wx.YES_NO, self) == wx.YES:
+                mainwindow = wx.App.Get().Main
+                self.Profile.doSaveToFile()
+                newProfile = Profile.LoadFromFile(mainwindow, self.Profile.Filename)
+                mainwindow.InsertProfile(newProfile)
+            else:
+                radiobox.SetSelection(radiobox.FindString(server))
 
     UI.Labels.update({
         'Pool1'           : "Power Pool 1",

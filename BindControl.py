@@ -100,10 +100,6 @@ class Main(wx.Frame):
 
         config.Flush()
 
-        # set up GameData very early
-        server = config.Read('Server')
-        GameData.SetupGameData(server)
-
         # set up the custom logger with the infobar
         self.Logger = bcLogging(self)
         if config.ReadBool('ShowDebugMessage'):

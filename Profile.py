@@ -7,6 +7,8 @@ import base64
 import wx
 import wx.lib.colourselect as csel
 
+import GameData
+
 from BindFile import BindFile
 from BLF import BLF
 
@@ -52,29 +54,29 @@ def GetAllProfileBindsDirs():
             alldirs.append(bindsdir.name)
     return alldirs
 
-# class method to create and load a Profile from a file-open dialog
-def LoadFromFile(parent):
-    with wx.FileDialog(parent, "Open Profile file",
-            wildcard   = "Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
-            defaultDir = str(ProfilePath()),
-            style      = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+# class method to create and load a Profile from a Path or file-open dialog
+def LoadFromFile(parent, pathname = None):
+    if not pathname:
+        with wx.FileDialog(parent, "Open Profile file",
+                wildcard   = "Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
+                defaultDir = str(ProfilePath()),
+                style      = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 
-        if fileDialog.ShowModal() == wx.ID_CANCEL:
-            wx.LogMessage("User canceled loading profile")
-            return False     # the user changed their mind
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                wx.LogMessage("User canceled loading profile")
+                return False     # the user changed their mind
 
-        with wx.WindowDisabler():
-            _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(parent).Text('Loading...'))
-            wx.GetApp().Yield()
-
-            # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
 
-            if newProfile := Profile(parent, loadfile = pathname):
-                newProfile.CheckAllConflicts()
-                return newProfile
-            else:
-                newProfile.Destroy()
+    with wx.WindowDisabler():
+        _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(parent).Text('Loading...'))
+        wx.GetApp().Yield()
+
+        if newProfile := Profile(parent, loadfile = pathname):
+            newProfile.CheckAllConflicts()
+            return newProfile
+        else:
+            newProfile.Destroy()
 
 # class method to return the current Profile Path
 def ProfilePath():
@@ -92,8 +94,12 @@ class Profile(wx.Notebook):
         self.ProfileBindsDir : str       = ''
 
         data = None
+        self.Server = "Homecoming"
         if self.Filename and self.Filename.exists():
             data = json.loads(Path(self.Filename).read_text())
+            self.Server = data.get('Server', 'Homecoming')
+
+        GameData.SetupGameData(self.Server)
 
         # Add the individual tabs, in order.
         self.General           = self.CreatePage(General(self))
@@ -392,6 +398,8 @@ class Profile(wx.Notebook):
                 if incarnatedata:
                     savedata[pagename]['Incarnate'] = incarnatedata
 
+                savedata['Server'] = page.ServerBtns.GetString(page.ServerBtns.GetSelection())
+
         savedata['CustomBinds'] = []
         customPage = getattr(self, 'CustomBinds')
         # TODO - walking the sizer/widget tree like this is fragile.
@@ -500,6 +508,9 @@ class Profile(wx.Notebook):
                 if isinstance(epic, str):
                     epic = page.Ctrls['Epic'].FindString(epic)
                 page.Ctrls['Epic'].SetSelection(epic)
+
+                # And while we're in "General" make sure the "Server" picker is set right
+                page.ServerBtns.SetSelection(page.ServerBtns.FindString(self.Server))
 
         cbpage = getattr(self, "CustomBinds")
         if cbpage:

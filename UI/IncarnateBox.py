@@ -9,12 +9,13 @@ class IncarnateBox(wx.StaticBoxSizer):
         wx.StaticBoxSizer.__init__(self, wx.HORIZONTAL, parent, 'Incarnate Powers')
 
         staticbox = self.GetStaticBox()
+        self.Profile = parent.Profile
 
         incarnateSizer = wx.GridBagSizer(4, 4)
 
         self.Add(incarnateSizer, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
 
-        server = wx.ConfigBase.Get().Read('Server') or "Homecoming"
+        server = self.Profile.Server
 
         if server == "Rebirth":
             self.genesisInc = IncarnatePicker(staticbox, label = "Genesis")
@@ -44,7 +45,7 @@ class IncarnateBox(wx.StaticBoxSizer):
         incarnateSizer.AddGrowableCol(3)
 
     def GetPowers(self):
-        server = wx.ConfigBase.Get().Read('Server') or "Homecoming"
+        server = self.Profile.Server
         powers = []
 
         boxes = [self.hybridInc, self.loreInc, self.destinyInc, self.judgementInc, self.interfaceInc, self.alphaInc]
@@ -73,7 +74,7 @@ class IncarnateBox(wx.StaticBoxSizer):
 
     def GetData(self):
         incarnatedata = {}
-        server = wx.ConfigBase.Get().Read('Server') or "Homecoming"
+        server = self.Profile.Server
 
         boxes = [self.hybridInc, self.loreInc, self.destinyInc, self.judgementInc, self.interfaceInc, self.alphaInc]
         if server == "Rebirth":

@@ -53,7 +53,7 @@ class BindDirsWindow(wx.MiniFrame):
                     dirname.SetToolTip(f'Click to load profile "{label}"')
                     dirname.SetCursor(wx.Cursor(wx.CURSOR_HAND))
                     # TODO Bind to a partial with 'file' in it
-                    dirname.Bind(wx.EVT_LEFT_DOWN, partial(self.OnProfileClick, file = file))
+                    dirname.Bind(wx.EVT_LEFT_DOWN, partial(self.OnProfileClick, file = file, label = label))
                 else:
                     dirname.SetForegroundColour((255,0,0))
                     dirname.SetToolTip(f'The profile "{label}" isn\'t available to be loaded.')
@@ -73,16 +73,14 @@ class BindDirsWindow(wx.MiniFrame):
 
         self.Bind(wx.EVT_SHOW, self.OnShow)
 
-    def OnProfileClick(self, _, file):
+    def OnProfileClick(self, _, file, label):
         if self.Parent.CheckIfProfileNeedsSaving() == wx.CANCEL: return
 
         # Offer some feedback that we did anything.
         with wx.WindowDisabler():
-            _ = wx.BusyInfo('Loading...')
+            _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(self).Text(f'Loading {label}...'))
             wx.GetApp().Yield()
-            newProfile = Profile.Profile(self.Parent)
-
-            newProfile.doLoadFromFile(file)
+            newProfile = Profile.Profile(self.Parent, loadfile = file)
 
             self.Parent.InsertProfile(newProfile)
 

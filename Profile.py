@@ -67,11 +67,10 @@ def LoadFromFile(parent):
             _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(parent).Text('Loading...'))
             wx.GetApp().Yield()
 
-            newProfile = Profile(parent)
-
             # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
-            if newProfile.doLoadFromFile(pathname):
+
+            if newProfile := Profile(parent, loadfile = pathname):
                 newProfile.CheckAllConflicts()
                 return newProfile
             else:
@@ -89,8 +88,12 @@ class Profile(wx.Notebook):
         self.BindFiles       : dict      = {}
         self.Pages           : list      = []
         self.Modified        : bool      = False
-        self.Filename        : Path|None = None
+        self.Filename        : Path|None = Path(loadfile) if loadfile else None
         self.ProfileBindsDir : str       = ''
+
+        data = None
+        if self.Filename and self.Filename.exists():
+            data = json.loads(Path(self.Filename).read_text())
 
         # Add the individual tabs, in order.
         self.General           = self.CreatePage(General(self))
@@ -101,10 +104,9 @@ class Profile(wx.Notebook):
         self.Mastermind        = self.CreatePage(Mastermind(self))
         self.PopmenuEditor     = self.CreatePage(PopmenuEditor(self))
 
-        if loadfile: self.doLoadFromFile(loadfile)
+        if data: self.buildFromData(data)
 
         self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, parent.OnPageChanged)
-
 
     def CreatePage(self, module):
         module.BuildPage()
@@ -259,6 +261,11 @@ class Profile(wx.Notebook):
         return jsonstring
 
     def LoadFromDefault(self, newname):
+
+        if not newname:
+            raise Exception(f"Error, got into LoadFromDefault without a newname specified")
+        self.Filename = ProfilePath() / f"{newname}.bcp"
+
         FoundOldDefaultProfile = False
         # Try to get it from prefs
         jsonstring = self.GetDefaultProfileJSON()
@@ -268,12 +275,10 @@ class Profile(wx.Notebook):
             if oldDefaultProfile.exists():
                 FoundOldDefaultProfile = True
                 jsonstring = oldDefaultProfile.read_text()
+            else:
+                jsonstring = "{}"
 
-        self.doLoadFromJSON(jsonstring)
-
-        if not newname:
-            raise Exception(f"Error, got into LoadFromDefault without a newname specified")
-        self.Filename = ProfilePath() / f"{newname}.bcp"
+        self.buildFromData(json.loads(jsonstring))
 
         # if we found one the file way, migrate it to the new way
         # TODO someday maybe remove this but not for a while
@@ -284,8 +289,6 @@ class Profile(wx.Notebook):
         if not self.ProfileBindsDir:
             # This happens if GenerateBindsDirectoryName can't come up with something sane
             self.Parent.OnProfDirButton()
-
-        self.SetTitle()
 
         # now we have a named profile that we haven't saved.
         # Set it as "Modified" so we get prompted to save it.
@@ -405,14 +408,9 @@ class Profile(wx.Notebook):
             return json.dumps(savedata, indent=2)
 
     def doLoadFromFile(self, pathname):
-        file = Path(pathname)
         try:
-            # clear out the PBD in case we already had one but this loadfile doesn't.
-            # TODO - now we always(?) load into a fresh profile object so don't need to do this?
-            self.ProfileBindsDir = ''
-
-            jsonstring = file.read_text()
-            self.doLoadFromJSON(jsonstring)
+            data = json.loads(Path(pathname).read_text())
+            self.buildFromData(data)
         except Exception as e:
             wx.LogError(f"Profile {pathname} could not be loaded: {e}")
             return False
@@ -426,13 +424,12 @@ class Profile(wx.Notebook):
             self.SetModified()
 
         wx.LogMessage(f"Loaded profile {pathname}")
-        self.SetTitle()
         return True
 
-    def doLoadFromJSON(self, jsonstring):
-        if not jsonstring: return
+    def buildFromData(self, data):
+        self.SetTitle() # Do this even if we have no data
 
-        data = json.loads(jsonstring)
+        if data == {}: return
 
         # load old Profiles pre-rename of "Movement Powers" tab
         if 'SoD' in data: data['MovementPowers'] = data['SoD']

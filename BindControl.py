@@ -209,12 +209,11 @@ class Main(wx.Frame):
         # Load up the last profile if the pref says to and if it's there
         filename = config.Read('LastProfile')
         if (config.Read('StartWith') == 'Last Profile' or config.ReadBool('StartWithLastProfile')) and filename:
-            self.Profile = Profile.Profile(self)
-            if self.Profile.doLoadFromFile(filename):
+            if profile := Profile.Profile(self, filename):
+                self.Profile = profile
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
                 self.CheckProfDirButtonErrors()
             else:
-                self.Profile.Destroy()
                 self.Profile = None
                 self.StartupPanel = self.MakeStartupPanel()
                 self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
@@ -309,18 +308,22 @@ class Main(wx.Frame):
 
         self.Freeze()
         try:
-            self.Sizer.Remove(0)
+            with wx.WindowDisabler():
+                _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(self).Text(f'Creating New Profile {newname}...'))
+                wx.GetApp().Yield()
 
-            if self.Profile: self.Profile.Destroy()
+                self.Sizer.Remove(0)
 
-            # destroy the Startup Panel if it's there.  This is only needed on Windows dunno why.
-            if self.StartupPanel: self.StartupPanel.Destroy()
+                if self.Profile: self.Profile.Destroy()
 
-            self.Profile = Profile.Profile(self)
-            self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
+                # destroy the Startup Panel if it's there.  This is only needed on Windows dunno why.
+                if self.StartupPanel: self.StartupPanel.Destroy()
 
-            self.Profile.LoadFromDefault(newname)
-            wx.LogMessage(f'Created New Profile "{newname}".')
+                self.Profile = Profile.Profile(self)
+                self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
+
+                self.Profile.LoadFromDefault(newname)
+                wx.LogMessage(f'Created New Profile "{newname}".')
 
         except Exception as e:
             wx.LogError(f"Something broke in new profile: {e}.  This is a bug.")
@@ -456,7 +459,7 @@ class Main(wx.Frame):
         result = wx.OK
         if self.Profile:
             if self.Profile.Modified:
-                result = wx.MessageBox("Profile not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
+                result = wx.MessageBox(f"Profile {self.Profile.Name()} not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
                 if result == wx.YES:
                     self.Profile.doSaveToFile()
             if self.Profile.PopmenuEditor.CheckForModifiedMenus():
@@ -613,7 +616,7 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
 
         self.Init()
         with wx.WindowDisabler():
-            _ = wx.BusyInfo('Initializing...')
+            _ = wx.BusyInfo('Initializing BindControl...')
             wx.GetApp().Yield()
 
             self.Main = Main(None)

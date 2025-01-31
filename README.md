@@ -2,6 +2,8 @@
 
 <b>NEW!</b>  Check out the new work-in-progress [Getting Started with BindControl](https://github.com/emersonrp/bindcontrol/wiki/Getting-Started-With-BindControl) on the wiki!
 
+<b>NEW!</b>  BindControl now has beta support for Rebirth!  Come set up keybinds for your Guardian!
+
 <hr>
 
 BindControl is a helper app for creating and maintaining keybinds and popmenus for City of Heroes.
@@ -12,7 +14,7 @@ During City of Heroes' original run, CityBinder was the go-to app for keybinds. 
 
 I worked on it on-and-off for the remainder of the original run of the game, then shelved it, ostensibly forever.  Now here in the age of the SCORE, Homecoming, and other servers, it once again has value, so I've dusted it off and continued to add features and modernize it.
 
-With Homecoming recently [securing the licensing](https://forums.homecomingservers.com/topic/47223-ncsoft-homecoming-license-announcement/) for City of Heroes from NCSoft, development of the game and its ecosystem, BindControl included, is likely to remain very Homecoming-centric in the near to medium term.  Recent updates to BindControl's Speed on Demand code incorporate [changes made in Homecoming Issue 27, Page 2](https://homecoming.wiki/wiki/Issue_27_Page_2#Travel_Power_Updates), and while BindControl will continue to work on non-Homecoming servers to a greater or lesser degree, I don't currently have a presence on these other servers to test and validate.  Please feel free to open issues for non-Homecoming servers, but know that they might not receive as much attention as Homecoming-specific ones do.
+BindControl is and has been developed on Homecoming, and best supports that.  Recently, beta support for Rebirth has been added, supporting archetypes, powersets, the Genesis Incarnate slot, and more.  This support is solid but is a work in progress -- Rebirth players, check it out and file issues as you find bugs!
 
 ![BindControl](https://github.com/user-attachments/assets/3761cd12-0620-4c61-a436-4e5d32770e79)
 
@@ -61,9 +63,10 @@ With Homecoming recently [securing the licensing](https://forums.homecomingserve
 
 ## TODO
 
-* Attempt to make every reasonable slash command in the game available in some way, typically via PowerBinder.  What qualifies as a "reasonable slash command" is yet to be determined.
+* Especially in the Movement Powers section, there are still some Homecoming-specific notions hard-coded into BindControl.  I'm working on finding and fixing these, but any bug reports and other feedback from Rebirth players would be very welcomed.
+* The hope is to make every reasonable slash command in the game available in some way, typically via PowerBinder.  What qualifies as a "reasonable slash command" is yet to be determined.
 * Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment.
-* The Movement Powers page is a confusing forest of checkboxes, dating from the original CityBinder layout and needs some layout and documentation work.
+* The Movement Powers page is a confusing forest of checkboxes, dating from the original CityBinder layout and needs some layout and documentation work <i>(WIP)</i>.
 * "Bodyguard mode" as implemented in CityBinder doesn't work as intended, and might not be able to due to game restrictions.
 * Investigate improvements to Mastermind binds to clarify and expand the behavior.
 * The popmenu editor, on Windows, simply can't load pathologically large popmenus (tens of thousands of entries).  This is a hard limit on the wx toolkit imposed by Windows itself, and can't be worked around in any way I can see.  As there exist at least two menus this large "in the wild," further investigation is merited.
@@ -71,7 +74,7 @@ With Homecoming recently [securing the licensing](https://forums.homecomingserve
 * Temporary powers in speed-on-demand.
 * More and better help text and documentation.
 * Fix bugs as found.
-* More internal work on initialization order of objects to speed up start time and avoid bootstrapping problems.
+* More internal work on initialization order of objects to speed up start time and avoid bootstrapping problems <i>(WIP)</i>.
 
 ## Using Binary Releases
 

@@ -360,8 +360,8 @@ class General(Page):
             if self.Profile.Server == 'Rebirth':
                 arch = self.GetState('Archetype')
                 if arch == 'Peacebringer' or arch == 'Warshade':
-                    poolcontents.remove('Flight')
-                    poolcontents.remove('Teleportation')
+                    if 'Flight' in poolcontents: poolcontents.remove('Flight')
+                    if 'Teleportation' in poolcontents: poolcontents.remove('Teleportation')
 
             picker.SetItems(poolcontents)
             picker.SetSelection(picker.FindString(curval))

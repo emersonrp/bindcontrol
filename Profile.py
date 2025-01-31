@@ -148,8 +148,9 @@ class Profile(wx.Notebook):
     def HasPowerPool(self, poolname):
         for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
             pctrl = self.General.Ctrls[picker]
-            if pctrl.GetString(pctrl.GetSelection()) == poolname:
-                return True
+            if sel := pctrl.GetSelection() != wx.NOT_FOUND:
+                if pctrl.GetString(sel) == poolname:
+                    return True
         return False
 
     def BLF(self, *args):

@@ -308,6 +308,9 @@ class General(Page):
 
         self.Ctrls['Epic'].Enable(arch != "Peacebringer" and arch != "Warshade")
 
+        if arch == "Peacebringer" or arch == "Warshade":
+            self.UpdatePoolPickers()
+
         if getattr(self.Profile, 'Mastermind', None):
             self.Profile.Mastermind.SynchronizeUI()
         if getattr(self.Profile, 'MovementPowers', None):
@@ -322,8 +325,46 @@ class General(Page):
         if evt: evt.Skip()
 
     def OnPickPoolPower(self, evt):
+        self.UpdatePoolPickers()
         self.Profile.MovementPowers.SynchronizeUI()
         evt.Skip()
+
+    def UpdatePoolPickers(self):
+        c = self.Ctrls
+        pickedPools = []
+
+        for pickername in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
+            if val := self.GetState(pickername):
+                pickedPools.append(val)
+
+        for pickername in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
+            curval = self.GetState(pickername)
+            picker = c[pickername]
+            # rebuild the base list
+            poolcontents = sorted(GameData.MiscPowers['Pool'])
+            poolcontents.insert(0, '')
+            # if we've already picked this pool, remove it (unless it's ours in the first place)
+            for pp in pickedPools:
+                if pp and pp != curval: poolcontents.remove(pp)
+
+            # check the mutually-exclusive power pools.
+            specializedPools = ['Experimentation', 'Force of Will', 'Gadgetry', 'Sorcery']
+            for sp in specializedPools:
+                # if we've selected one of these...
+                if sp in pickedPools:
+                    #...remove each of the other ones from poolcontents
+                    for s in specializedPools:
+                        if sp != s:
+                            if s in poolcontents: poolcontents.remove(s)
+
+            if self.Profile.Server == 'Rebirth':
+                arch = self.GetState('Archetype')
+                if arch == 'Peacebringer' or arch == 'Warshade':
+                    poolcontents.remove('Flight')
+                    poolcontents.remove('Teleportation')
+
+            picker.SetItems(poolcontents)
+            picker.SetSelection(picker.FindString(curval))
 
     def OnPickPrimaryPowerSet(self, evt):
         self.Profile.Mastermind.SynchronizeUI()

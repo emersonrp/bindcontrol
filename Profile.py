@@ -94,7 +94,8 @@ class Profile(wx.Notebook):
         self.ProfileBindsDir : str       = ''
 
         data = None
-        self.Server = "Homecoming"
+        self.Server = 'Homecoming'
+
         if self.Filename and self.Filename.exists():
             data = json.loads(Path(self.Filename).read_text())
             self.Server = data.get('Server', 'Homecoming')

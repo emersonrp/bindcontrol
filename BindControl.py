@@ -91,7 +91,6 @@ class Main(wx.Frame):
         if not config.Exists('ShowDebugMessages')   : config.WriteBool('ShowDebugMessages', False)
         if not config.Exists('WinH')                : config.WriteInt('WinH', 1000)
         if not config.Exists('WinW')                : config.WriteInt('WinW', 1000)
-        if not config.Exists('Server')              : config.Write('Server', 'Homecoming')
 
         # migrate old "start with" preference.  Maybe remove this someday
         if config.Exists('StartWith'):

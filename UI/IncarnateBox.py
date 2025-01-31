@@ -18,14 +18,14 @@ class IncarnateBox(wx.StaticBoxSizer):
         server = self.Profile.Server
 
         if server == "Rebirth":
-            self.genesisInc = IncarnatePicker(staticbox, label = "Genesis")
+            self.genesisInc = IncarnatePicker(staticbox, profile = self.Profile, label = "Genesis")
 
-        self.hybridInc    = IncarnatePicker(staticbox, label = "Hybrid")
-        self.loreInc      = IncarnatePicker(staticbox, label = "Lore")
-        self.destinyInc   = IncarnatePicker(staticbox, label = "Destiny")
-        self.judgementInc = IncarnatePicker(staticbox, label = "Judgement")
-        self.interfaceInc = IncarnatePicker(staticbox, label = "Interface")
-        self.alphaInc     = IncarnatePicker(staticbox, label = "Alpha")
+        self.hybridInc    = IncarnatePicker(staticbox, profile = self.Profile, label = "Hybrid")
+        self.loreInc      = IncarnatePicker(staticbox, profile = self.Profile, label = "Lore")
+        self.destinyInc   = IncarnatePicker(staticbox, profile = self.Profile, label = "Destiny")
+        self.judgementInc = IncarnatePicker(staticbox, profile = self.Profile, label = "Judgement")
+        self.interfaceInc = IncarnatePicker(staticbox, profile = self.Profile, label = "Interface")
+        self.alphaInc     = IncarnatePicker(staticbox, profile = self.Profile, label = "Alpha")
 
         if server == "Rebirth":
             incarnateSizer.Add(self.hybridInc,    [0,0], [1,2], wx.EXPAND|wx.LEFT, 12)
@@ -90,10 +90,11 @@ class IncarnateBox(wx.StaticBoxSizer):
 
 import wx.lib.buttons as buttons
 class IncarnatePicker(wx.StaticBoxSizer):
-    def __init__(self, parent, label = ""):
+    def __init__(self, parent, profile, label = ""):
         wx.StaticBoxSizer.__init__(self, wx.HORIZONTAL, parent, label = label)
         staticbox = self.GetStaticBox()
 
+        self.Profile = profile
         self.Label = label
         self.IconFilename = ''
         self.PopupMenu = self.BuildMenu(label)
@@ -123,6 +124,8 @@ class IncarnatePicker(wx.StaticBoxSizer):
         self.IncName.SetLabel(menuitem.GetItemLabel())
         self.IncIcon.SetBitmapLabel(menuitem.GetBitmapBundle().GetBitmap(wx.Size(32,32)))
         self.IconFilename = menuitem.IconFilename
+
+        self.Profile.SetModified()
 
         # Yes both of the self.Layout() are necessary to do the sizing / wrap dance.
         self.Layout()

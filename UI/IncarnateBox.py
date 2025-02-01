@@ -97,8 +97,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
         self.Profile = profile
         self.Label = label
         self.IconFilename = ''
-        self.PopupMenu = self.BuildMenu(label)
-        self.PopupMenu.Bind(wx.EVT_MENU, self.OnMenuSelection)
+        self.PopupMenu = None
 
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -115,6 +114,9 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
     def OnButtonPress(self, evt):
         button = evt.EventObject
+        if not self.PopupMenu:
+            self.PopupMenu = self.BuildMenu(self.Label)
+            self.PopupMenu.Bind(wx.EVT_MENU, self.OnMenuSelection)
 
         button.PopupMenu(self.PopupMenu)
 

@@ -5,7 +5,6 @@ import wx
 import wx.lib.stattext as ST
 from pathlib import Path
 from Help import HelpButton
-import GameData
 from UI.KeySelectDialog import bcKeyButton
 from UI.ControlGroup import cgDirPickerCtrl, cgTextCtrl
 from bcController import bcController
@@ -233,10 +232,18 @@ class PrefsDialog(wx.Dialog):
         gamedir = Path(self.gameDirPicker.GetPath())
         if gamedir.is_dir():
             self.gameDirPicker.RemoveError('exists')
-            if Path(gamedir / 'bin').is_dir() and Path(gamedir / 'assets').is_dir():
+
+            if (
+                    # Homecoming
+                    (Path(gamedir / 'bin').is_dir() and Path(gamedir / 'assets').is_dir())
+                    or
+                    # Rebirth
+                    (Path(gamedir / 'Rebirth.exe').is_file())
+                ):
                 self.gameDirPicker.RemoveWarning('wrongdir')
             else:
-                self.gameDirPicker.AddWarning('wrongdir', f'The directory "{gamedir}" doesn\'t seem to have a Homecoming installation in it.  BindControl only currently supports popmenus with Homecoming installations.  Keybinds will still work.')
+                self.gameDirPicker.AddWarning('wrongdir', f'The directory "{gamedir}" doesn\'t seem to have a City of Heroes isntallation.  BindControl only currently supports popmenus with Homecoming and Rebirth installations.  Keybinds will still work.')
+
         else:
             self.gameDirPicker.AddError('exists', f'The directory "{gamedir}" does not exist.  This is required if you wish to use the popmenu editor.')
 
@@ -302,3 +309,9 @@ class PrefsDialog(wx.Dialog):
             config.WriteBool('ShowDebugMessages', self.ShowDebugMessages.GetValue())
 
             config.Flush()
+
+            # just in case we fiddled with the GameDir, repopulate the PopmenuEditor list
+            # This is way ugly
+            if profile := wx.App.Get().Main.Profile:
+                profile.PopmenuEditor.SynchronizeUI()
+

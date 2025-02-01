@@ -157,7 +157,6 @@ class PopmenuEditor(Page):
     def OnOpenPrefsButton(self, _):
         with PrefsDialog(self) as dlg:
             dlg.ShowAndUpdatePrefs()
-        self.SynchronizeUI()
 
     def SynchronizeUI(self, _ = None):
         NoErrors = True
@@ -175,9 +174,8 @@ class PopmenuEditor(Page):
                 self.CheckMenuDirBox.Show()
                 NoErrors = False
 
-        # TODO - if we have no installed menus, this will try again and again
-        # every time we switch to the tab.  That's not a dealbreaker I guess
-        if NoErrors and (self.MenuListCtrl.GetItemCount() == 0):
+        # TODO - We do this every time we activate the tab.  That's not a dealbreaker I guess.
+        if NoErrors:
             self.LoadMenusFromMenuDir()
 
         self.NewMenuButton.Enable(NoErrors)
@@ -267,6 +265,7 @@ class PopmenuEditor(Page):
         menupath = GetMenuPathForGamePath()
 
         if menupath:
+            self.MenuListCtrl.DeleteAllItems()
             for menufile in sorted(menupath.glob('*.mnu', case_sensitive = False)):
                 with menufile.open() as f:
                     menuname = ''
@@ -281,6 +280,7 @@ class PopmenuEditor(Page):
                     self.MenuIDList[menuID] = {'filename': str(menufile)}
 
                     f.close()
+            self.MenuListCtrl.Refresh()
 
     def GetNewMenuName(self, dupe_menu_name = None):
         if dupe_menu_name:

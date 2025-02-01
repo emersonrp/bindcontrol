@@ -10,6 +10,7 @@ import wx.html
 from bcLogging import bcLogging
 from bcVersion import current_version
 from Icon import GetIcon
+import GameData
 import Profile
 from UI.BindDirsWindow import BindDirsWindow
 from UI.PrefsDialog import PrefsDialog

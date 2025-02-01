@@ -4,7 +4,7 @@ from typing import Dict, Any
 import UI
 import Icon
 from Page import Page
-from GameData import Inspirations
+import GameData
 from UI.ChatColorPicker import ChatColorPicker, ChatColors
 from UI.KeySelectDialog import bcKeyButton
 
@@ -24,8 +24,9 @@ class InspirationPopper(Page):
 
         self.Init : Dict[str, Any] = {}
 
+    def BuildPage(self):
         for tab in tabs:
-            for name, Insp in Inspirations[tab].items():
+            for name, Insp in GameData.Inspirations[tab].items():
                 self.Init[f'{tab}{name}Key']        = ""
                 self.Init[f'{tab}Rev{name}Key']     = ""
                 self.Init[f"{tab}{name}Border"]     = Insp['dkcolor']
@@ -46,7 +47,16 @@ class InspirationPopper(Page):
             'SingleResurrectionKey'    : "SHIFT+TILDE",
         })
 
-    def BuildPage(self):
+        UI.Labels['Enable'] = "Enable Inspiration Popper"
+
+        for tab in tabs:
+            for order in ("", "Rev"):
+                for Insp in GameData.Inspirations[tab]:
+                    InspDesc = Insp
+                    if InspDesc == "ResistDamage": InspDesc = "Resist Damage"
+                    if InspDesc == "BreakFree"   : InspDesc = "Break Free"
+                    UI.Labels[f"{tab}{order}{Insp}Key"]        = f"{InspDesc} Key"
+
         centeringSizer = wx.BoxSizer(wx.VERTICAL)
 
         optionsSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -125,7 +135,7 @@ class InspirationPopper(Page):
             RevInspRows.AddGrowableCol(1)
             RevInspBox.Add(RevInspRows, 1, wx.ALL|wx.EXPAND, 10)
 
-            for Insp, InspData in Inspirations[tab].items():
+            for Insp, InspData in GameData.Inspirations[tab].items():
                 for order in ("", "Rev"):
                     rowSet = RevInspRows if order else InspRows
                     box    = RevInspBox  if order else InspBox
@@ -177,7 +187,7 @@ class InspirationPopper(Page):
         dkcolor = self.Profile.General.GetState('ChatForeground')
         ltcolor = self.Profile.General.GetState('ChatBackground')
         for tab in tabs:
-            for Insp in Inspirations[tab]:
+            for Insp in GameData.Inspirations[tab]:
                 for order in ("", "Rev"):
                     self.Ctrls[f'{tab}{order}{Insp}Border']    .SetColour(dkcolor)
                     self.Ctrls[f'{tab}{order}{Insp}Background'].SetColour(ltcolor)
@@ -187,7 +197,7 @@ class InspirationPopper(Page):
 
     def OnByInspColorButton(self, _):
         for tab in tabs:
-            for Insp, InspData in Inspirations[tab].items():
+            for Insp, InspData in GameData.Inspirations[tab].items():
                 for order in ("", "Rev"):
                     # reverse the colors if we're doing team inspirations
                     ltcolor = 'ltcolor'; dkcolor = 'dkcolor'
@@ -204,7 +214,7 @@ class InspirationPopper(Page):
     def OnEnableCB(self, evt = None):
         controls = []
         for tab in tabs:
-            for Insp in Inspirations[tab]:
+            for Insp in GameData.Inspirations[tab]:
                 controls.append(f"{tab}{Insp}Key")
                 controls.append(f"{tab}{Insp}Border")
                 controls.append(f"{tab}{Insp}Background")
@@ -220,7 +230,7 @@ class InspirationPopper(Page):
     def OnEnableRevCB(self, evt = None):
         controls = []
         for tab in tabs:
-            for Insp in Inspirations[tab]:
+            for Insp in GameData.Inspirations[tab]:
                 controls.append(f"{tab}Rev{Insp}Key")
                 controls.append(f"{tab}Rev{Insp}Border")
                 controls.append(f"{tab}Rev{Insp}Background")
@@ -238,7 +248,7 @@ class InspirationPopper(Page):
         controls = []
         revcontrols = []
         for tab in tabs:
-            for Insp in Inspirations[tab]:
+            for Insp in GameData.Inspirations[tab]:
                 controls.append(f"{tab}{Insp}Border")
                 controls.append(f"{tab}{Insp}Background")
                 controls.append(f"{tab}{Insp}Foreground")
@@ -255,9 +265,9 @@ class InspirationPopper(Page):
         ResetFile = self.Profile.ResetFile()
 
         for tab in tabs:
-            for Insp in sorted(Inspirations[tab]):
+            for Insp in sorted(GameData.Inspirations[tab]):
 
-                tiers = Inspirations[tab][Insp]['tiers']
+                tiers = GameData.Inspirations[tab][Insp]['tiers']
                 # "reverse" order is as it is in gamebinds, smallest first
                 reverseOrder = list(map(lambda s: f"inspexecname {s}", tiers))
                 # If we don't want to use Super Insps, trim them from the end of the reverse list
@@ -281,16 +291,6 @@ class InspirationPopper(Page):
                     ResetFile.SetBind(self.Ctrls[f"{tab}Rev{Insp}Key"].MakeFileKeyBind(reverseOrder))
 
         return True
-
-    UI.Labels['Enable'] = "Enable Inspiration Popper"
-
-    for tab in tabs:
-        for order in ("", "Rev"):
-            for Insp in Inspirations[tab]:
-                InspDesc = Insp
-                if InspDesc == "ResistDamage": InspDesc = "Resist Damage"
-                if InspDesc == "BreakFree"   : InspDesc = "Break Free"
-                UI.Labels[f"{tab}{order}{Insp}Key"]        = f"{InspDesc} Key"
 
     # we only fiddle with ResetFile, which is already taken care of.
     def AllBindFiles(self):

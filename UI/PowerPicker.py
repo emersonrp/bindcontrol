@@ -56,12 +56,29 @@ class PowerPickerMenu(wx.Menu):
 
             powers = archdata[category][powerset]
             for power in powers:
-                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
-                icon = GetIcon(powerset = powerset, power = power)
-                if icon:
-                    menuitem.SetBitmap(icon)
-                    setattr(menuitem, 'IconFilename', icon.Filename)
-                submenu.Append(menuitem)
+                if isinstance(power, dict):
+                    [(subsubname, items)] = power.items()
+                    subsubmenu = wx.Menu()
+                    for power in items:
+                        menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
+                        icon = GetIcon(powerset = powerset, power = power)
+                        if icon:
+                            menuitem.SetBitmap(icon)
+                            setattr(menuitem, 'IconFilename', icon.Filename)
+                        subsubmenu.Append(menuitem)
+                    subitem = submenu.AppendSubMenu(subsubmenu, subsubname)
+                    icon = GetIcon(powerset = powerset, power = subsubname)
+                    if icon:
+                        subitem.SetBitmap(icon)
+                        setattr(subitem, 'IconFilename', icon.Filename)
+
+                else:
+                    menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
+                    icon = GetIcon(powerset = powerset, power = power)
+                    if icon:
+                        menuitem.SetBitmap(icon)
+                        setattr(menuitem, 'IconFilename', icon.Filename)
+                    submenu.Append(menuitem)
 
         # Pool powers
         for poolpicker in ["Pool1", "Pool2", "Pool3", "Pool4"]:

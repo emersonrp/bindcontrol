@@ -4,8 +4,8 @@ import re
 import wx
 import wx.lib.stattext as ST
 from pathlib import Path
-import UI
 from Help import HelpButton
+import GameData
 from UI.KeySelectDialog import bcKeyButton
 from UI.ControlGroup import cgDirPickerCtrl, cgTextCtrl
 from bcController import bcController

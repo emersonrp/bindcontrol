@@ -2,8 +2,9 @@
 import wx
 import wx.lib.stattext as ST
 import UI
+import Profile
 from Icon import GetIcon
-from GameData import Alignments, Archetypes, Origins, MiscPowers
+import GameData
 
 from UI.ControlGroup import ControlGroup
 from UI.IncarnateBox import IncarnateBox
@@ -67,34 +68,34 @@ class General(Page):
         powersBox.InnerSizer.Add(self.nameBox, 1, wx.EXPAND)
 
         alignmentchoices = []
-        for Alignment in Alignments:
+        for Alignment in GameData.Alignments:
             alignmentchoices.append([Alignment, GetIcon(f"Alignments/{Alignment}")])
         alignmentpicker = powersBox.AddControl(
             ctlName = 'Alignment',
             ctlType  = 'choice',
-            contents = Alignments,
+            contents = GameData.Alignments,
             callback = self.OnPickAlignment,
         )
         alignmentpicker.SetMinSize([200,-1])
 
         originchoices = []
-        for Origin in Origins:
+        for Origin in GameData.Origins:
             originchoices.append([Origin, GetIcon(f"Origins/{Origin}")])
         originpicker = powersBox.AddControl(
             ctlName = 'Origin',
             ctlType = 'choice',
-            contents = Origins,
+            contents = GameData.Origins,
             callback = self.OnPickOrigin,
         )
         originpicker.SetMinSize([200,-1])
 
         archchoices = []
-        for Arch in sorted(Archetypes):
+        for Arch in sorted(GameData.Archetypes):
             archchoices.append([Arch, GetIcon(f"Archetypes/{Arch}")])
         archpicker = powersBox.AddControl(
             ctlName = 'Archetype',
             ctlType = 'choice',
-            contents = sorted(Archetypes),
+            contents = sorted(GameData.Archetypes),
             callback = self.OnPickArchetype,
         )
         archpicker.SetMinSize([200,-1])
@@ -114,7 +115,7 @@ class General(Page):
             ctlType = 'choice',
             callback = self.OnPickEpicPowerSet,
         )
-        poolcontents = sorted(MiscPowers['Pool'])
+        poolcontents = sorted(GameData.MiscPowers['Pool'])
         poolcontents.insert(0, '')
         powersBox.AddControl(
             ctlName = 'Pool1',
@@ -158,6 +159,11 @@ class General(Page):
         # ChatColorSizer.Add(ChatColorEnable, 0, wx.ALL, 6)
         # ChatColorSizer.Add(ChatColors, 0, wx.ALL, 10)
         # ChatSizer.Add(ChatColorSizer, 0)
+
+        ### Server picker
+        self.ServerBtns = wx.RadioBox(self, -1, 'Server', choices = ['Homecoming', 'Rebirth'])
+        self.ServerBtns.Bind(wx.EVT_RADIOBOX, self.OnServerChange)
+        ChatSizer.Add(self.ServerBtns, 0, wx.EXPAND)
 
         ## Typing Notifier
         TNSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Typing Notifier")
@@ -286,9 +292,9 @@ class General(Page):
         self.Ctrls['Secondary'].Clear()
         self.Ctrls['Epic'].Clear()
 
-        Primaries   = Archetypes[arch]['Primary']
-        Secondaries = Archetypes[arch]['Secondary']
-        Epix        = Archetypes[arch]['Epic']
+        Primaries   = GameData.Archetypes[arch]['Primary']
+        Secondaries = GameData.Archetypes[arch]['Secondary']
+        Epix        = GameData.Archetypes[arch]['Epic']
 
         self.Ctrls['Epic'].Append('') # allow us to deselect epic pool
 
@@ -301,6 +307,9 @@ class General(Page):
         self.Ctrls['Epic'].SetSelection(0)
 
         self.Ctrls['Epic'].Enable(arch != "Peacebringer" and arch != "Warshade")
+
+        if arch == "Peacebringer" or arch == "Warshade":
+            self.UpdatePoolPickers()
 
         if getattr(self.Profile, 'Mastermind', None):
             self.Profile.Mastermind.SynchronizeUI()
@@ -316,8 +325,46 @@ class General(Page):
         if evt: evt.Skip()
 
     def OnPickPoolPower(self, evt):
+        self.UpdatePoolPickers()
         self.Profile.MovementPowers.SynchronizeUI()
         evt.Skip()
+
+    def UpdatePoolPickers(self):
+        c = self.Ctrls
+        pickedPools = []
+
+        for pickername in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
+            if val := self.GetState(pickername):
+                pickedPools.append(val)
+
+        for pickername in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
+            curval = self.GetState(pickername)
+            picker = c[pickername]
+            # rebuild the base list
+            poolcontents = sorted(GameData.MiscPowers['Pool'])
+            poolcontents.insert(0, '')
+            # if we've already picked this pool, remove it (unless it's ours in the first place)
+            for pp in pickedPools:
+                if pp and pp != curval: poolcontents.remove(pp)
+
+            # check the mutually-exclusive power pools.
+            specializedPools = ['Experimentation', 'Force of Will', 'Gadgetry', 'Sorcery']
+            for sp in specializedPools:
+                # if we've selected one of these...
+                if sp in pickedPools:
+                    #...remove each of the other ones from poolcontents
+                    for s in specializedPools:
+                        if sp != s:
+                            if s in poolcontents: poolcontents.remove(s)
+
+            if self.Profile.Server == 'Rebirth':
+                arch = self.GetState('Archetype')
+                if arch == 'Peacebringer' or arch == 'Warshade':
+                    if 'Flight' in poolcontents: poolcontents.remove('Flight')
+                    if 'Teleportation' in poolcontents: poolcontents.remove('Teleportation')
+
+            picker.SetItems(poolcontents)
+            picker.SetSelection(picker.FindString(curval))
 
     def OnPickPrimaryPowerSet(self, evt):
         self.Profile.Mastermind.SynchronizeUI()
@@ -343,6 +390,19 @@ class General(Page):
             self.Ctrls['StartChat'].CtlLabel.SetLabel('Start Chat:')
         self.Layout()
         if evt: evt.Skip()
+
+    def OnServerChange(self, evt):
+        radiobox = evt.GetEventObject()
+        server = self.Profile.Server
+
+        if radiobox.GetString(radiobox.GetSelection()) != server:
+            if wx.MessageBox('Changing server requires saving and reloading the Profile.  Continue?', 'Changing Server', wx.YES_NO, self) == wx.YES:
+                mainwindow = wx.App.Get().Main
+                self.Profile.doSaveToFile()
+                newProfile = Profile.LoadFromFile(mainwindow, self.Profile.Filename)
+                mainwindow.InsertProfile(newProfile)
+            else:
+                radiobox.SetSelection(radiobox.FindString(server))
 
     UI.Labels.update({
         'Pool1'           : "Power Pool 1",

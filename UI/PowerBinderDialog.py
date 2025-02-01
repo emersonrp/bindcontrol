@@ -225,7 +225,7 @@ class PowerBinderDialog(wx.Dialog):
         newCommand = newCommandClass(self.EditDialog)
 
         # show the edit dialog if this command needs it
-        if newCommand.UI:
+        if newCommand.UI and self.EditDialog:
             self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALL|wx.EXPAND, 10)
             if (self.ShowEditDialogFor(newCommand) == wx.ID_CANCEL):
                 self.EditDialog.mainSizer.Remove(newCommand.UI)
@@ -271,7 +271,7 @@ class PowerBinderDialog(wx.Dialog):
         return bindstring
 
     def ShowEditDialogFor(self, command):
-        if not command.UI: return
+        if not command.UI or not self.EditDialog: return
 
         self.EditDialog.mainSizer.Show(command.UI)
 
@@ -313,9 +313,6 @@ class PowerBinderButton(wx.BitmapButton):
 
     def PowerBinderEventHandler(self, _):
         self.PowerBinderDialog().Show()
-
-    def LoadFromData(self, data):
-        self.PowerBinderDialog().LoadFromData(data)
 
     def SaveToData(self):
         return self.PowerBinderDialog().SaveToData()

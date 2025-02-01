@@ -34,7 +34,7 @@ import wx.lib.colourutils as colourutils
 import io
 
 from .artmanager import ArtManager, DCSaver
-from .fmresources import *
+from wx.lib.agw.fmresources import * # pyright: ignore
 
 # FlatMenu styles
 FM_OPT_IS_LCD = 1
@@ -404,6 +404,9 @@ class FMRenderer(object):
         elif state == ControlPressed:
             penColour   = self.menuBarPressedBorderColour
             brushColour = self.menuBarPressedFaceColour
+        else:
+            penColour   = self.menuFaceColour
+            brushColour = self.menuBarFaceColour
 
         dcsaver = DCSaver(dc)
         dc.SetPen(wx.Pen(penColour))
@@ -427,6 +430,9 @@ class FMRenderer(object):
         elif state == ControlPressed:
             penColour   = self.menuPressedBorderColour
             brushColour = self.menuPressedFaceColour
+        else:
+            penColour   = self.menuFaceColour
+            brushColour = self.menuFaceColour
 
         dcsaver = DCSaver(dc)
         dc.SetPen(wx.Pen(penColour))
@@ -754,7 +760,7 @@ class MenuEntryInfo(object):
 # Class ShadowPopupWindow
 # ---------------------------------------------------------------------------- #
 
-class ShadowPopupWindow(mcPopupWindow if wx.Platform == '__WXMAC__' else wx.PopupWindow):
+class ShadowPopupWindow(mcPopupWindow if wx.Platform == '__WXMAC__' else wx.PopupWindow): # pyright: ignore
     """ Base class for generic :class:`FlatMenu` derived from :class:`PopupWindow`. """
 
     def __init__(self, parent=None):
@@ -1015,8 +1021,8 @@ class FlatMenuBase(ShadowPopupWindow):
             event.SetEventObject(self)
 
             # Send it
-            if self.GetMenuOwner():
-                self.GetMenuOwner().GetEventHandler().ProcessEvent(event)
+            if mo := self.GetMenuOwner():
+                mo.GetEventHandler().ProcessEvent(event)
             else:
                 self.GetEventHandler().ProcessEvent(event)
 
@@ -1672,7 +1678,7 @@ class FlatMenu(FlatMenuBase):
         self._resizeMenu = True
         self._shiftePos = 0
         self._first = 0
-        self._mb_submenu = 0
+        self._mb_submenu = None
         self._is_dismiss = False
         self._numCols = 1
         self._backgroundImage = None
@@ -1701,7 +1707,7 @@ class FlatMenu(FlatMenuBase):
         finally:
             return super().Destroy(*args, **kwargs)
 
-    def Popup(self, pt, owner=None, parent=None):
+    def Popup(self, pt, parent=None, owner=None):
         """
         Pops up the menu.
 
@@ -2518,7 +2524,7 @@ class FlatMenu(FlatMenuBase):
             pos.y = item.GetRect().GetY()
             self._clearCurrentSelection = False
             self._openedSubMenu = context_menu
-            context_menu.Popup(self.ScreenToClient(wx.GetMousePosition()), self._owner, self)
+            context_menu.Popup(self.ScreenToClient(wx.GetMousePosition()), owner = self._owner, parent = self)
             return True
 
         return False
@@ -2841,7 +2847,7 @@ class FlatMenu(FlatMenuBase):
             pos.y = item.GetRect().GetY()
             self._clearCurrentSelection = False
             self._openedSubMenu = item.GetSubMenu()
-            item.GetSubMenu().Popup(pos, self._owner, self)
+            item.GetSubMenu().Popup(pos, owner = self._owner, parent = self)
 
             # Select the first child
             if selectFirst:
@@ -2864,7 +2870,7 @@ class FlatMenu(FlatMenuBase):
         idx = wx.NOT_FOUND
         idx, menuParent = self.FindMenuItemPos(id)
 
-        if idx != wx.NOT_FOUND:
+        if idx != wx.NOT_FOUND and menuParent:
 
             # Remove the menu item
             item = menuParent._itemsArr[idx]
@@ -2885,7 +2891,7 @@ class FlatMenu(FlatMenuBase):
         :param `item`: can be either a menu item identifier or a plain :class:`FlatMenuItem`.
         """
 
-        if not isinstance(item, (wx.StandardID, int)):
+        if not isinstance(item, int):
             item = item.GetId()
 
         return self._RemoveById(item)
@@ -2912,7 +2918,7 @@ class FlatMenu(FlatMenuBase):
         :param `item`: can be either a menu item identifier or a plain :class:`FlatMenuItem`.
         """
 
-        if not isinstance(item, (wx.StandardID, int)):
+        if not isinstance(item, int):
             item = item.GetId()
 
         self._DestroyById(item)
@@ -3026,7 +3032,7 @@ class FlatMenu(FlatMenuBase):
         if menu:
 
             idx, menu = self.FindMenuItemPos(itemId, menu)
-            if idx != wx.NOT_FOUND:
+            if idx != wx.NOT_FOUND and menu:
                 return menu._itemsArr[idx]
             else:
                 return None
@@ -3034,7 +3040,7 @@ class FlatMenu(FlatMenuBase):
         else:
 
             idx, parentMenu = self.FindMenuItemPos(itemId, None)
-            if idx != wx.NOT_FOUND:
+            if idx != wx.NOT_FOUND and parentMenu:
                 return parentMenu._itemsArr[idx]
             else:
                 return None
@@ -3049,7 +3055,7 @@ class FlatMenu(FlatMenuBase):
         """
 
         item = self.FindItem(itemId)
-        item.SetFont(font)
+        if item: item.SetFont(font)
 
 
     def GetItemFont(self, itemId):
@@ -3060,7 +3066,7 @@ class FlatMenu(FlatMenuBase):
         """
 
         item = self.FindItem(itemId)
-        return item.GetFont()
+        if item: return item.GetFont()
 
 
     def SetItemTextColour(self, itemId, colour=None):
@@ -3072,7 +3078,7 @@ class FlatMenu(FlatMenuBase):
         """
 
         item = self.FindItem(itemId)
-        item.SetTextColour(colour)
+        if item: item.SetTextColour(colour)
 
 
     def GetItemTextColour(self, itemId):
@@ -3083,7 +3089,7 @@ class FlatMenu(FlatMenuBase):
         """
 
         item = self.FindItem(itemId)
-        return item.GetTextColour()
+        if item: return item.GetTextColour()
 
 
     def SetLabel(self, itemId, label):
@@ -3097,8 +3103,8 @@ class FlatMenu(FlatMenuBase):
         """
 
         item = self.FindItem(itemId)
-        item.SetLabel(label)
-        item.SetText(label)
+        if item: item.SetLabel(label)
+        if item: item.SetText(label)
 
         self.ResizeMenu()
 
@@ -3113,7 +3119,7 @@ class FlatMenu(FlatMenuBase):
         """
 
         item = self.FindItem(itemId)
-        return item.GetText()
+        if item: return item.GetText()
 
 
     def FindMenuItemPos(self, itemId, menu=None):
@@ -3162,9 +3168,9 @@ class FlatMenu(FlatMenuBase):
         if n == 0:
             return wx.NullAcceleratorTable
 
-        entries = [wx.AcceleratorEntry() for ii in range(n)]
+        entries = [wx.AcceleratorEntry() for _ in range(n)]
 
-        for counter in len(entries):
+        for counter in range(len(entries)):
             entries[counter] = self._accelArray[counter]
 
         table = wx.AcceleratorTable(entries)
@@ -3364,13 +3370,9 @@ class FlatMenu(FlatMenuBase):
             self._first += 1
             self.Refresh()
 
-            return True
-
         else:
             if self._downButton:
                 self._downButton.GetTimer().Stop()
-
-            return False
 
 
     def ScrollUp(self):
@@ -3380,17 +3382,14 @@ class FlatMenu(FlatMenuBase):
             if self._upButton:
                 self._upButton.GetTimer().Stop()
 
-            return False
-
         else:
 
             self._first -= 1
             self.Refresh()
-            return True
 
 
     # Not used anymore
-    def TryScrollButtons(self, event):
+    def TryScrollButtons(self, _):
         """ Used internally. """
 
         return False

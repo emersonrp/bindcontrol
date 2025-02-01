@@ -4,11 +4,10 @@ This module contains drawing routines and customizations for the AGW widgets
 """
 
 import wx
-import random
 
 from io import BytesIO
 
-from .fmresources import *
+from wx.lib.agw.fmresources import * # pyright: ignore
 
 # ---------------------------------------------------------------------------- #
 # Class DCSaver
@@ -65,7 +64,7 @@ class RendererBase(object):
         """
 
         # Keep old pen and brush
-        dcsaver = DCSaver(dc)
+        _ = DCSaver(dc)
         dc.SetPen(wx.Pen(penColour))
         dc.SetBrush(wx.Brush(brushColour))
         dc.DrawRectangle(rect)
@@ -109,7 +108,7 @@ class RendererBase(object):
         """
 
         # Keep old pen and brush
-        dcsaver = DCSaver(dc)
+        _ = DCSaver(dc)
 
         # lower right size
         dc.SetPen(wx.Pen(penColour))
@@ -175,7 +174,7 @@ class RendererXP(RendererBase):
         RendererBase.__init__(self)
 
 
-    def DrawButton(self, dc, rect, state, input=None):
+    def DrawButton(self, dc, rect, state, input=False):
         """
         Draws a button using the XP theme.
 
@@ -185,20 +184,19 @@ class RendererXP(RendererBase):
         :param `input`: a flag used to call the right method.
         """
 
-        if input is None or type(input) == type(False):
-            self.DrawButtonTheme(dc, rect, state, input)
-        else:
+        if input:
             self.DrawButtonColour(dc, rect, state, input)
+        else:
+            self.DrawButtonTheme(dc, rect, state)
 
 
-    def DrawButtonTheme(self, dc, rect, state, useLightColours=None):
+    def DrawButtonTheme(self, dc, rect, state):
         """
         Draws a button using the XP theme.
 
         :param `dc`: an instance of :class:`wx.DC`;
         :param wx.Rect `rect`: the button's client rectangle;
         :param integer `state`: the button state;
-        :param bool `useLightColours`: ``True`` to use light colours, ``False`` otherwise.
         """
 
         # switch according to the status
@@ -227,7 +225,7 @@ class RendererXP(RendererBase):
         """
 
         # switch according to the status
-        if statet == ControlFocus:
+        if state == ControlFocus:
             penColour = colour
             brushColour = ArtManager.Get().LightColour(colour, 75)
         elif state == ControlPressed:
@@ -265,7 +263,7 @@ class ArtManager(wx.EvtHandler):
     _alignmentBuffer = 7
     _menuTheme = StyleXP
     _verticalGradient = False
-    _renderers = {StyleXP: None,}
+    _renderers = {}
     _bmpShadowEnabled = False
     _drowMBBorder = True
     _menuBgFactor = 5
@@ -350,36 +348,33 @@ class ArtManager(wx.EvtHandler):
         return self._bitmaps.get(name, wx.NullBitmap)
 
 
-    def Get(self):
+    @classmethod
+    def Get(cls):
         """
         Accessor to the unique art manager object.
 
         :return: A unique instance of :class:`ArtManager`.
         """
 
-        if not hasattr(self, "_instance"):
+        if not hasattr(cls, "_instance"):
 
-            self._instance = ArtManager()
-            self._instance.Initialize()
+            cls._instance = ArtManager()
+            cls._instance.Initialize()
 
             # Initialize the renderers map
-            self._renderers[StyleXP] = RendererXP()
+            cls._renderers[StyleXP] = RendererXP()
 
-        return self._instance
+        return cls._instance
 
-    Get = classmethod(Get)
-
-    def Free(self):
+    @classmethod
+    def Free(cls):
         """ Destructor for the unique art manager object. """
 
-        if hasattr(self, "_instance"):
+        if hasattr(cls, "_instance"):
 
-            del self._instance
+            del cls._instance
 
-    Free = classmethod(Free)
-
-
-    def OnSysColourChange(self, event):
+    def OnSysColourChange(self, _):
         """
         Handles the ``wx.EVT_SYS_COLOUR_CHANGED`` event for :class:`ArtManager`.
 
@@ -431,7 +426,7 @@ class ArtManager(wx.EvtHandler):
          ``False`` for horizontal shading.
         """
 
-        dcsaver = DCSaver(dc)
+        _ = DCSaver(dc)
 
         if vertical:
             high = rect.GetHeight()-1
@@ -655,7 +650,7 @@ class ArtManager(wx.EvtHandler):
 
         fixedText = ""
 
-        textW, textH = dc.GetTextExtent(text)
+        textW, _ = dc.GetTextExtent(text)
 
         if rectSize >= textW:
             return text
@@ -663,12 +658,12 @@ class ArtManager(wx.EvtHandler):
         # The text does not fit in the designated area,
         # so we need to truncate it a bit
         suffix = ".."
-        w, h = dc.GetTextExtent(suffix)
+        w, _ = dc.GetTextExtent(suffix)
         rectSize -= w
 
-        for i in range(textLen, -1, -1):
+        for _ in range(textLen, -1, -1):
 
-            textW, textH = dc.GetTextExtent(tempText)
+            textW, _ = dc.GetTextExtent(tempText)
             if rectSize >= textW:
                 fixedText = tempText
                 fixedText += ".."
@@ -689,7 +684,7 @@ class ArtManager(wx.EvtHandler):
         """
 
         if input is None or type(input) == type(False):
-            self.DrawButtonTheme(dc, rect, theme, state, input)
+            self.DrawButtonTheme(dc, rect, theme, state, False)
         else:
             self.DrawButtonColour(dc, rect, theme, state, input)
 
@@ -705,10 +700,10 @@ class ArtManager(wx.EvtHandler):
         :param bool  `useLightColours`: ``True`` to use light colours, ``False`` otherwise.
         """
 
-        renderer = self._renderers[theme]
 
         # Set background colour if non given by caller
-        renderer.DrawButton(dc, rect, state, useLightColours)
+        if renderer := self._renderers[theme]:
+            renderer.DrawButton(dc, rect, state, useLightColours)
 
 
     def DrawButtonColour(self, dc, rect, theme, state, colour):
@@ -722,8 +717,8 @@ class ArtManager(wx.EvtHandler):
         :param `colour`: a valid :class:`wx.Colour` instance.
         """
 
-        renderer = self._renderers[theme]
-        renderer.DrawButton(dc, rect, state, colour)
+        if renderer := self._renderers[theme]:
+            renderer.DrawButton(dc, rect, state, colour)
 
 
     def GetBitmapStartLocation(self, dc, rect, bitmap, text="", style=0):
@@ -884,8 +879,8 @@ class ArtManager(wx.EvtHandler):
         :return: An instance of :class:`wx.Colour`.
         """
 
-        renderer = self._renderers[self.GetMenuTheme()]
-        return renderer.GetMenuFaceColour()
+        if renderer := self._renderers[self.GetMenuTheme()]:
+            return renderer.GetMenuFaceColour()
 
 
     def GetTextColourEnable(self):
@@ -895,8 +890,8 @@ class ArtManager(wx.EvtHandler):
         :return: An instance of :class:`wx.Colour`.
         """
 
-        renderer = self._renderers[self.GetMenuTheme()]
-        return renderer.GetTextColourEnable()
+        if renderer := self._renderers[self.GetMenuTheme()]:
+            return renderer.GetTextColourEnable()
 
 
     def GetTextColourDisable(self):
@@ -906,8 +901,8 @@ class ArtManager(wx.EvtHandler):
         :return: An instance of :class:`wx.Colour`.
         """
 
-        renderer = self._renderers[self.GetMenuTheme()]
-        return renderer.GetTextColourDisable()
+        if renderer := self._renderers[self.GetMenuTheme()]:
+            return renderer.GetTextColourDisable()
 
 
     def GetFont(self):

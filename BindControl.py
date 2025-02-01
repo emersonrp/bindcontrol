@@ -505,7 +505,7 @@ class Main(wx.Frame):
             textctrl.RemoveError('spaces')
 
         if platform.system() == 'Windows':
-            if os.path.isreserved(value):
+            if os.path.isreserved(value): # pyright: ignore
                 textctrl.AddError('reserved', 'The name you have selected is a reserved filename in Windows.  Please select another.')
             else:
                 textctrl.RemoveError('reserved')

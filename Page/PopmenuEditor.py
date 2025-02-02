@@ -13,7 +13,7 @@ import platform
 import webbrowser
 from functools import partial
 
-import FM.flatmenu as FM
+import wx.lib.agw.flatmenu as FM
 
 def GetMenuPathForGamePath(gamepath = None):
     gamepath = gamepath or Path(wx.ConfigBase.Get().Read('GamePath'))

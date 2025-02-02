@@ -1,16 +1,27 @@
 #!/usr/bin/env python3
-import sys, os, platform, re
+import sys
+
+MIN_PYTHON = (3, 13)
+if sys.version_info < MIN_PYTHON:
+    sys.exit("Python %s.%s or later is required.\n" % MIN_PYTHON)
+
+import wx, re
+
+MIN_WX = (4, 2, 2)
+wxver = tuple(map(int, re.split(r'\.', wx.__version__))) # oogly
+if wxver < MIN_WX:
+    sys.exit("wxPython %s.%s.%s or later is required.\n" % MIN_WX)
+
+import os, platform
 from pathlib import Path
 import webbrowser
 
-import wx
 import wx.lib.mixins.inspection
 import wx.adv
 import wx.html
 from bcLogging import bcLogging
 from bcVersion import current_version
 from Icon import GetIcon
-import GameData
 import Profile
 from UI.BindDirsWindow import BindDirsWindow
 from UI.PrefsDialog import PrefsDialog

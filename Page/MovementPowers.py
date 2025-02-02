@@ -403,8 +403,6 @@ class MovementPowers(Page):
 
         self.MainSizer.Add(topSizer, flag = wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
 
-        self.SynchronizeUI()
-
     # If we have two items, blank plus one power, pre-set it to the one power
     def PrePickLonePower(self, control):
         if not isinstance(control, wx.Choice): return
@@ -579,6 +577,7 @@ class MovementPowers(Page):
         if evt: evt.Skip()
 
     def SynchronizeUI(self, evt = None):
+        print("HERE I AM")
         self.Freeze()
 
         try:
@@ -1248,7 +1247,7 @@ class MovementPowers(Page):
                 if (t.tphover != ''):
                     tphovermodeswitch = t.bla + "000000.txt"
 
-                dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexec_location cursor ' + dwarfTPPower))
+                dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexeclocation cursor ' + dwarfTPPower))
                 dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on.txt')))
 
                 tp_off = profile.GetBindFile("dtp","tp_off.txt")
@@ -1281,7 +1280,7 @@ class MovementPowers(Page):
             if (t.tphover != ''):
                 tphovermodeswitch = t.bla + "000000.txt"
 
-            ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexec_location cursor ' + normalTPPower))
+            ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexeclocation cursor ' + normalTPPower))
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
 
             tp_off = profile.GetBindFile("tp","tp_off.txt")

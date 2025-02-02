@@ -218,8 +218,6 @@ class General(Page):
 
         self.MainSizer.Add(centeringSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
-        self.SynchronizeUI()
-
     def SynchronizeUI(self):
         self.OnPickAlignment()
         self.OnPickOrigin()
@@ -399,7 +397,7 @@ class General(Page):
             if wx.MessageBox('Changing server requires saving and reloading the Profile.  Continue?', 'Changing Server', wx.YES_NO, self) == wx.YES:
                 mainwindow = wx.App.Get().Main
                 self.Profile.doSaveToFile()
-                newProfile = Profile.LoadFromFile(mainwindow, self.Profile.Filename)
+                newProfile = Profile.Profile(mainwindow, filename = self.Profile.Filename)
                 mainwindow.InsertProfile(newProfile)
             else:
                 radiobox.SetSelection(radiobox.FindString(server))

@@ -80,7 +80,7 @@ class BindDirsWindow(wx.MiniFrame):
         with wx.WindowDisabler():
             _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(self).Text(f'Loading {label}...'))
             wx.GetApp().Yield()
-            newProfile = Profile.Profile(self.Parent, loadfile = file)
+            newProfile = Profile.Profile(self.Parent, filename = file)
 
             self.Parent.InsertProfile(newProfile)
 

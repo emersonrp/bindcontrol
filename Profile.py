@@ -1,4 +1,4 @@
-import re
+import re, os, platform
 from pathlib import PurePath, Path, PureWindowsPath
 from typing import Dict, Any
 import json
@@ -54,25 +54,24 @@ def GetAllProfileBindsDirs():
             alldirs.append(bindsdir.name)
     return alldirs
 
-# class method to create and load a Profile from a Path or file-open dialog
-def LoadFromFile(parent, pathname = None):
-    if not pathname:
-        with wx.FileDialog(parent, "Open Profile file",
-                wildcard   = "Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
-                defaultDir = str(ProfilePath()),
-                style      = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+# class method to load a Profile from a file-open dialog
+def LoadFromFile(parent):
+    with wx.FileDialog(parent, "Open Profile file",
+            wildcard   = "Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
+            defaultDir = str(ProfilePath()),
+            style      = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 
-            if fileDialog.ShowModal() == wx.ID_CANCEL:
-                wx.LogMessage("User canceled loading profile")
-                return False     # the user changed their mind
+        if fileDialog.ShowModal() == wx.ID_CANCEL:
+            wx.LogMessage("User canceled loading profile")
+            return False     # the user changed their mind
 
-            pathname = fileDialog.GetPath()
+        pathname = fileDialog.GetPath()
 
     with wx.WindowDisabler():
         _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(parent).Text('Loading...'))
         wx.GetApp().Yield()
 
-        if newProfile := Profile(parent, loadfile = pathname):
+        if newProfile := Profile(parent, filename = pathname):
             newProfile.CheckAllConflicts()
             return newProfile
         else:
@@ -84,22 +83,38 @@ def ProfilePath():
 
 class Profile(wx.Notebook):
 
-    def __init__(self, parent, loadfile = None):
+    def __init__(self, parent, filename = None, newname = None):
         wx.Notebook.__init__(self, parent, style = wx.NB_TOP, name = "Profile")
 
         self.BindFiles       : dict      = {}
         self.Pages           : list      = []
         self.Modified        : bool      = False
-        self.Filename        : Path|None = Path(loadfile) if loadfile else None
+        self.Filename        : Path|None = Path(filename) if filename else None
         self.ProfileBindsDir : str       = ''
 
-        data = None
+        data = {}
         self.Server = 'Homecoming'
 
+        # are we wanting to load this one from a file?
         if self.Filename and self.Filename.exists():
             data = json.loads(Path(self.Filename).read_text())
-            self.Server = data.get('Server', 'Homecoming')
 
+        # No?  Then it ought to be a new profile, and we ought to have passed in a name
+        elif newname:
+            self.Filename = ProfilePath() / f"{newname}.bcp"
+            jsonstring = self.GetDefaultProfileJSON()
+            if jsonstring:
+                data = json.loads(jsonstring)
+
+            self.ProfileBindsDir = self.GenerateBindsDirectoryName()
+            if not self.ProfileBindsDir:
+                # This happens if GenerateBindsDirectoryName can't come up with something sane
+                self.Parent.OnProfDirButton()
+
+        else:
+            raise Exception("Error: Profile created with neither filename or newname.  This is a bug.")
+
+        if data: self.Server = data.get('Server', 'Homecoming')
         GameData.SetupGameData(self.Server)
 
         # Add the individual tabs, in order.
@@ -111,7 +126,10 @@ class Profile(wx.Notebook):
         self.Mastermind        = self.CreatePage(Mastermind(self))
         self.PopmenuEditor     = self.CreatePage(PopmenuEditor(self))
 
-        if data: self.buildFromData(data)
+        self.buildFromData(data)
+
+        if newname:    self.SetModified()
+        elif filename: self.ClearModified()
 
         self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, parent.OnPageChanged)
 
@@ -148,7 +166,7 @@ class Profile(wx.Notebook):
     def HasPowerPool(self, poolname):
         for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
             pctrl = self.General.Ctrls[picker]
-            if sel := pctrl.GetSelection() != wx.NOT_FOUND:
+            if (sel := pctrl.GetSelection()) != wx.NOT_FOUND:
                 if pctrl.GetString(sel) == poolname:
                     return True
         return False
@@ -215,7 +233,7 @@ class Profile(wx.Notebook):
         # make a list() because we alter the bindsdircandidates set as we go
         for bdc in list(bindsdircandidates):
             # MSDOS still haunts us
-            if PureWindowsPath(bdc).is_reserved():
+            if platform.system() == "Windows" and os.path.is_reserved(bdc): # pyright: ignore
                 bindsdircandidates.remove(bdc)
 
             # if it's too short (1 character) let's not
@@ -229,6 +247,8 @@ class Profile(wx.Notebook):
 
         # OK, we should have zero, one, or two candidates of no more than five letters.
         # Pick the longest one; fall back on first-five if it was zero candidates
+        #
+        # We might still return '' if we just failed, so check for that in calling code.
         #
         # We're gonna lowercase this because Windows is case-insensitive
         return max(bindsdircandidates, key = len).lower() if bindsdircandidates else fallback
@@ -254,7 +274,7 @@ class Profile(wx.Notebook):
             # Let us know if it did
             wx.LogError(f"Failed to write default profile: {e}")
 
-    def GetDefaultProfileJSON(self, _ = None):
+    def GetDefaultProfileJSON(self):
         jsonstring = None
 
         # If we have it already saved the new way
@@ -268,41 +288,7 @@ class Profile(wx.Notebook):
 
         return jsonstring
 
-    def LoadFromDefault(self, newname):
-
-        if not newname:
-            raise Exception(f"Error, got into LoadFromDefault without a newname specified")
-        self.Filename = ProfilePath() / f"{newname}.bcp"
-
-        FoundOldDefaultProfile = False
-        # Try to get it from prefs
-        jsonstring = self.GetDefaultProfileJSON()
-        if not jsonstring:
-            # Otherwise look for the file way
-            oldDefaultProfile = ProfilePath() / "Default.bcp"
-            if oldDefaultProfile.exists():
-                FoundOldDefaultProfile = True
-                jsonstring = oldDefaultProfile.read_text()
-            else:
-                jsonstring = "{}"
-
-        self.buildFromData(json.loads(jsonstring))
-
-        # if we found one the file way, migrate it to the new way
-        # TODO someday maybe remove this but not for a while
-        if FoundOldDefaultProfile:
-            self.SaveAsDefault(prompt = False)
-
-        self.ProfileBindsDir = self.GenerateBindsDirectoryName()
-        if not self.ProfileBindsDir:
-            # This happens if GenerateBindsDirectoryName can't come up with something sane
-            self.Parent.OnProfDirButton()
-
-        # now we have a named profile that we haven't saved.
-        # Set it as "Modified" so we get prompted to save it.
-        self.SetModified()
-
-    def SaveToFile(self, _ = None):
+    def SaveToFile(self):
         try:
             ProfilePath().mkdir( parents = True, exist_ok = True )
         except Exception as e:
@@ -337,7 +323,7 @@ class Profile(wx.Notebook):
             # make sure we're all set up as whatever we just saved as
             self.doLoadFromFile(str(self.Filename))
 
-    def doSaveToFile(self, _ = None):
+    def doSaveToFile(self):
         if not self.Filename:
             return self.SaveToFile()
 
@@ -372,6 +358,7 @@ class Profile(wx.Notebook):
             for controlname, control in page.Ctrls.items():
                 # Save disabled controls' states, too, so as not to lose config
                 # if someone, say, turns on "disable self tell" with a bunch of custom colors defined
+
                 # look up what type of control it is to know how to extract its value
                 if isinstance(control, wx.DirPickerCtrl):
                     value = control.GetPath()
@@ -437,64 +424,61 @@ class Profile(wx.Notebook):
         return True
 
     def buildFromData(self, data):
-        self.SetTitle() # Do this even if we have no data
-
-        if data == {}: return
+        self.SetTitle()
 
         # load old Profiles pre-rename of "Movement Powers" tab
-        if 'SoD' in data: data['MovementPowers'] = data['SoD']
+        if data and 'SoD' in data: data['MovementPowers'] = data['SoD']
 
         # we store the ProfileBindsDir outside of the sections
-        if data.get('ProfileBindsDir', None):
+        if data and data.get('ProfileBindsDir', None):
             self.ProfileBindsDir = data['ProfileBindsDir']
 
-        for pagename in self.Pages:
-            if pagename == "CustomBinds": continue
+        for pagename in ['General', 'Gameplay', 'MovementPowers', 'InspirationPopper', 'Mastermind', 'PopmenuEditor']:
             page = getattr(self, pagename)
-            for controlname, control in page.Ctrls.items():
-
-                value = None
-                if pagename in data:
+            if data and pagename in data:
+                for controlname, control in page.Ctrls.items():
+                    value = None
                     if controlname in data[pagename]:
                         value = data[pagename].get(controlname, None)
                     # if we don't have a given control in the load data, skip it completely --
                     # it should already have the default value from Init
                     else: continue
 
-                # look up what type of control it is to know how to update its value
-                if isinstance(control, wx.DirPickerCtrl):
-                    control.SetPath(value if value else '')
-                elif isinstance(control, wx.Button):
-                    control.SetLabel(value if value else '')
-                    if isinstance(control, bcKeyButton):
-                        control.Key = value if value else ''
-                elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
-                    control.SetColour(value)
-                    if isinstance(control, csel.ColourSelect):
-                        wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
-                elif isinstance(control, wx.Choice):
-                    # we used to save the numerical selection which could break if the contents
-                    # of a picker changed between runs, like, say, if new powersets appeared.
-                    # we still check whether we have a numerical value so we can load old profiles.
-                    if isinstance(value, str):
-                        value = control.FindString(value)
-                        if value == wx.NOT_FOUND: value = 0
-                    control.SetSelection(value if value else 0)
-                elif isinstance(control, wx.CheckBox):
-                    control.SetValue(value if value else False)
-                elif isinstance(control, cgSpinCtrl) or isinstance(control, cgSpinCtrlDouble):
-                    control.SetValue(value if value else page.Init.get(controlname, 0))
-                elif isinstance(control, wx.StaticText):
-                    control.SetLabel(value if value else '')
-                else:
-                    control.SetValue(value if value else '')
+                    # look up what type of control it is to know how to update its value
+                    if isinstance(control, wx.DirPickerCtrl):
+                        control.SetPath(value if value else '')
+                    elif isinstance(control, wx.Button):
+                        control.SetLabel(value if value else '')
+                        if isinstance(control, bcKeyButton):
+                            control.Key = value if value else ''
+                    elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
+                        control.SetColour(value)
+                        if isinstance(control, csel.ColourSelect):
+                            wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
+                    elif isinstance(control, wx.Choice):
+                        # we used to save the numerical selection which could break if the contents
+                        # of a picker changed between runs, like, say, if new powersets appeared.
+                        # we still check whether we have a numerical value so we can load old profiles.
+                        if isinstance(value, str):
+                            value = control.FindString(value)
+                            if value == wx.NOT_FOUND: value = 0
+                        control.SetSelection(value if value else 0)
+                    elif isinstance(control, wx.CheckBox):
+                        control.SetValue(value if value else False)
+                    elif isinstance(control, cgSpinCtrl) or isinstance(control, cgSpinCtrlDouble):
+                        control.SetValue(value if value else page.Init.get(controlname, 0))
+                    elif isinstance(control, wx.StaticText):
+                        control.SetLabel(value if value else '')
+                    else:
+                        control.SetValue(value if value else '')
 
             page.SynchronizeUI()
 
             # Do this after SynchronizeUI for General because SynchronizeUI will blow away our powerset
             # picks when we re-fill those pickers from the archetype.
-            if pagename == 'General':
+            if data and pagename == 'General':
                 page.IncarnateBox.FillWith(data)
+
                 # Re-fill Primary and Secondary pickers, honoring old numeric indices if needed
                 prim = data['General'].get('Primary', None)
                 if isinstance(prim, str):
@@ -514,8 +498,10 @@ class Profile(wx.Notebook):
                 # And while we're in "General" make sure the "Server" picker is set right
                 page.ServerBtns.SetSelection(page.ServerBtns.FindString(self.Server))
 
+            page.Layout()
+
         cbpage = getattr(self, "CustomBinds")
-        if cbpage:
+        if data and cbpage:
             cbpage.scrolledPanel.DestroyChildren()
             cbpage.Ctrls = {}
             cbpage.Panes = []
@@ -532,8 +518,6 @@ class Profile(wx.Notebook):
 
                 if bindpane:
                     cbpage.AddBindToPage(bindpane = bindpane)
-
-        self.ClearModified()
 
     def SetTitle(self):
         self.Parent.SetTitle(f"BindControl: {self.Name()}")

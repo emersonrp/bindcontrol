@@ -1246,7 +1246,7 @@ class MovementPowers(Page):
                 if (t.tphover != ''):
                     tphovermodeswitch = t.bla + "000000.txt"
 
-                dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexeclocation cursor ' + dwarfTPPower))
+                dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexec_location cursor ' + dwarfTPPower))
                 dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on.txt')))
 
                 tp_off = profile.GetBindFile("dtp","tp_off.txt")
@@ -1279,7 +1279,7 @@ class MovementPowers(Page):
             if (t.tphover != ''):
                 tphovermodeswitch = t.bla + "000000.txt"
 
-            ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexeclocation cursor ' + normalTPPower))
+            ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexec_location cursor ' + normalTPPower))
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
 
             tp_off = profile.GetBindFile("tp","tp_off.txt")

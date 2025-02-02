@@ -577,7 +577,6 @@ class MovementPowers(Page):
         if evt: evt.Skip()
 
     def SynchronizeUI(self, evt = None):
-        print("HERE I AM")
         self.Freeze()
 
         try:

@@ -403,8 +403,6 @@ class MovementPowers(Page):
 
         self.MainSizer.Add(topSizer, flag = wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
 
-        self.SynchronizeUI()
-
     # If we have two items, blank plus one power, pre-set it to the one power
     def PrePickLonePower(self, control):
         if not isinstance(control, wx.Choice): return

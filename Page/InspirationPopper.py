@@ -175,9 +175,6 @@ class InspirationPopper(Page):
 
         self.MainSizer.Add(centeringSizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
-        self.SynchronizeUI()
-
-
     def SynchronizeUI(self):
         self.OnEnableCB()
         self.OnEnableRevCB()

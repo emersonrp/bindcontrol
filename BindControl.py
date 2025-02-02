@@ -314,11 +314,10 @@ class Main(wx.Frame):
                 # destroy the Startup Panel if it's there.  This is only needed on Windows dunno why.
                 if self.StartupPanel: self.StartupPanel.Destroy()
 
-                self.Profile = Profile.Profile(self)
-                self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
-
-                self.Profile.LoadFromDefault(newname)
+                self.Profile = Profile.Profile(self, newname = newname)
                 wx.LogMessage(f'Created New Profile "{newname}".')
+
+                self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
 
         except Exception as e:
             wx.LogError(f"Something broke in new profile: {e}.  This is a bug.")
@@ -369,13 +368,13 @@ class Main(wx.Frame):
         wx.ConfigBase.Get().Write('LastProfile', str(newProfile.Filename))
         wx.ConfigBase.Get().Flush()
 
-    def OnProfileSave(self, evt):
+    def OnProfileSave(self, _):
         if not self.Profile: return
-        self.Profile.doSaveToFile(evt)
+        self.Profile.doSaveToFile()
 
-    def OnProfileSaveAs(self, evt):
+    def OnProfileSaveAs(self, _):
         if not self.Profile: return
-        self.Profile.SaveToFile(evt)
+        self.Profile.SaveToFile()
 
     def OnProfileSaveDefault(self, _):
         if not self.Profile: return
@@ -442,6 +441,7 @@ class Main(wx.Frame):
 
         # need this out here in case we cancelled on a previously-blank one.
         # This is very very unlikely to happen and awful if it does.
+        # TODO: yes later on I see that this is indeed awful.  Fix it.
         #
         # TODO-ish:  if they erase an existing valid one or otherwise cause an
         # error, and then hit "cancel" this gets triggered, which is not

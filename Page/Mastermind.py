@@ -320,8 +320,6 @@ class Mastermind(Page):
 
         self.MainSizer.Add(PetSelBox, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
-        self.SynchronizeUI()
-
     def SynchronizeUI(self):
         ismm = self.Profile.Archetype() == "Mastermind"
         pset = self.Profile.Primary()

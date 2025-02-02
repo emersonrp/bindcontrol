@@ -249,8 +249,6 @@ class Gameplay(Page):
         self.MainSizer.Add(traySizer,   flag = wx.ALL|          wx.ALIGN_CENTER_HORIZONTAL, border = 16)
         self.MainSizer.Add(bottomSizer, flag = wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
 
-        self.SynchronizeUI()
-
     def SynchronizeUI(self, evt = None):
         self.OnTPSEnable()
         self.OnTeamEnable()

@@ -233,7 +233,7 @@ class Profile(wx.Notebook):
         # make a list() because we alter the bindsdircandidates set as we go
         for bdc in list(bindsdircandidates):
             # MSDOS still haunts us
-            if platform.system() == "Windows" and os.path.is_reserved(bdc): # pyright: ignore
+            if platform.system() == "Windows" and os.path.isreserved(bdc): # pyright: ignore
                 bindsdircandidates.remove(bdc)
 
             # if it's too short (1 character) let's not

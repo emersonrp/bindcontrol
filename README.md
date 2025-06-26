@@ -78,13 +78,13 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
 
 ## Using Binary Releases
 
-Binary releases of Python applications are a bit finicky and fragile, but are provided on the [latest release page](https://github.com/emersonrp/bindcontrol/releases).  Feel free to try them, but if you have any trouble, skip down to [Running From Source](#running-from-source) below for an alternative, very deterministic, way of running BindControl.
+Binary releases of Python applications are a bit finicky and fragile, but are provided on the [latest release page](https://github.com/emersonrp/bindcontrol/releases).  Feel free to try them, but if you have any trouble, skip down to [Running From Source](#running-from-source) below for an alternative, very deterministic, way of running BindControl.  Any feedback on your experience with the binary releases is welcome and encouraged.
 
-*Windows users*:  try the ZIP file and give feedback.  If that works for you, it's the quickest path to victory.  <b>If you receive malware warnings when downloading</b>, please read [my comments on that issue](Help/MalwareWarnings.md).
+*Windows users*:  Try the ZIP file.  If that works for you, it's the quickest path to victory.  ***If you receive malware warnings when downloading***, please read [my comments on that issue](Help/MalwareWarnings.md).
 
-*MacOS users*:  an experimental binary release has been made available.  It is not signed and/or notarized, and might or might not work at all.  Any feedback is encouraged.
+*MacOS users*:  An experimental binary release has been made available.  It is not signed and/or notarized, and might or might not work at all.
 
-*Linux users*:  an experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.  It's built using Github's "ubuntu-latest" environment, which may or may not be completely compatible with other distributions and versions.[^2]
+*Linux users*:  An experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.  It's built using Github's "ubuntu-latest" environment, which may or may not be completely compatible with other distributions and versions.[^2]
 
 ## Running From Source
 
@@ -96,7 +96,7 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 *Windows users*:  follow the instructions on the above sites' download pages to install Python and wxPython.
 
 *MacOS users*:
-* Pre-Catalina:  I recommend following the instructions in [this article at opensource.com](https://www.opensource.com/article/19/5/python-3-default-mac) to get Python 3 installed and working by default.  Once everything is working, you will want to run `pip3 install wxPython`.
+* Pre-Catalina:  I recommend following the instructions in [this article at opensource.com](https://www.opensource.com/article/19/5/python-3-default-mac) to get Python 3 installed and working as the default Python.  Once Python 3 is working, you will want to run `pip3 install wxPython`.
 * Catalina and later: follow the instructions on the above sites' download pages to install Python and wxPython.
 
 *Linux users*:  install your distribution's packages for Python 3 and wxPython.
@@ -105,9 +105,12 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 
 * Clone this repo, or download the source as a ZIP file and unzip it somewhere[^3]
 
-* Windows (and possibly Mac) users:  Double-click `BindControl.py` in the top-level folder
+* Double-click `BindControl.py` in the top-level folder in your explorer / file manager / Finder / etc.  This should work if you have Python correctly installed.
 
-* Mac / Linux users: In a terminal, `cd` to where you put the BindControl source, then `python BindControl.py`.  Some distributions might need `python3` instead of `python`.
+* Alternatively: In a terminal, `cd` into the `bindcontrol` directory, then:
+    + Windows: `py BindControl.py`
+    + Linux: `./BindControl.py`
+    + MacOS: `python3 BindControl.py`
 
 ## Credits
 

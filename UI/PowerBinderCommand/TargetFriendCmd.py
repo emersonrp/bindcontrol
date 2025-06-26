@@ -20,7 +20,16 @@ class TargetFriendCmd(PowerBinderCommand):
         choice = self.targetFriendModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
-        return "targetfriend" + mode.lower()
+
+        if self.Profile.Server == "Homecoming":
+            return "targetfriend" + mode.lower()
+        else: # Rebirth
+            return {
+                'Near' : 'tgf_n',
+                'Far'  : 'tgf_f',
+                'Next' : 'tgf_x',
+                'Prev' : 'tgf_p',
+            }[mode]
 
     def Serialize(self):
         return { 'mode' : self.targetFriendModeChoice.GetSelection() }

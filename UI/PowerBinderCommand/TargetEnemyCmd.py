@@ -20,7 +20,16 @@ class TargetEnemyCmd(PowerBinderCommand):
         choice = self.targetEnemyModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
-        return "targetenemy" + mode.lower()
+
+        if self.Profile.Server == "Homecoming":
+            return "targetenemy" + mode.lower()
+        else: # Rebirth
+            return {
+                'Near' : 'tge_n',
+                'Far'  : 'tge_f',
+                'Next' : 'tge_x',
+                'Prev' : 'tge_p',
+            }[mode]
 
     def Serialize(self):
         return { 'mode' : self.targetEnemyModeChoice.GetSelection() }

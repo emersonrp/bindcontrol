@@ -90,12 +90,14 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 
 ### Step 1 - Dependencies
 
-1. [Python](https://www.python.org) version 3.12 or later
-2. [wxPython](https://www.wxpython.org) version 4.2 or later
+1. [Python](https://www.python.org) version 3.13 or later
+2. [wxPython](https://www.wxpython.org) version 4.2.2 or later
 
 *Windows users*:  follow the instructions on the above sites' download pages to install Python and wxPython.
 
-*MacOS users*:  I recommend following the instructions in [this article at opensource.com](https://www.opensource.com/article/19/5/python-3-default-mac) to get Python 3 installed and working by default.  Once everything is working, you will want to run `pip3 install wxPython`.
+*MacOS users*:
+* Pre-Catalina:  I recommend following the instructions in [this article at opensource.com](https://www.opensource.com/article/19/5/python-3-default-mac) to get Python 3 installed and working by default.  Once everything is working, you will want to run `pip3 install wxPython`.
+* Catalina and later: follow the instructions on the above sites' download pages to install Python and wxPython.
 
 *Linux users*:  install your distribution's packages for Python 3 and wxPython.
 

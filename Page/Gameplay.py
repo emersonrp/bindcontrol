@@ -20,36 +20,18 @@ class Gameplay(Page):
             self.NumTrays = 4
             self.TrayLabels = ['', 'First', 'Second', 'Third', 'Server']
             self.KeybindProfiles = {
-                'Modern': {
-                    'Second' : 'ALT',
-                    'Third'  : 'SHIFT',
-                    'Server' : 'CTRL',
-                },
-                'Classic': {
-                    'Second' : 'ALT',
-                    'Third'  : 'CTRL',
-                },
-                'Joystick': {
-                    'Second' : 'ALT',
-                },
-                'Launch (Issue 0)': {
-                    'Second' : 'ALT',
-                },
+                'Modern'           : ['','','ALT','SHIFT','CTRL'],
+                'Classic'          : ['','','ALT','CTRL',''],
+                'Joystick'         : ['','','ALT','',''],
+                'Launch (Issue 0)' : ['','','ALT','',''],
             }
         else: # Rebirth
             self.NumTrays = 5
             self.TrayLabels = ['', 'First', 'Second', 'Third', 'Fourth', 'Server']
             self.KeybindProfiles = {
-                'Default': {
-                    'Second' : 'ALT',
-                    'Third'  : 'CTRL',
-                },
-                'Joystick': {
-                    'Second' : 'ALT',
-                },
-                'Original': {
-                    'Second' : 'ALT',
-                },
+                'Default'  : ['','','ALT','CTRL',''],
+                'Joystick' : ['','','ALT','',''],
+                'Original' : ['','','ALT','',''],
             }
 
         self.Init = {
@@ -269,6 +251,7 @@ class Gameplay(Page):
     def SynchronizeUI(self, evt = None):
         self.OnTPSEnable()
         self.OnTeamEnable()
+        AnyTray = False
         for tray in (range(1,self.NumTrays+1)):
             self.FillTrayButtons[tray].Enable(self.GetState(f"Tray{tray}Enabled"))
             for button in (1,2,3,4,5,6,7,8,9,0):
@@ -276,9 +259,12 @@ class Gameplay(Page):
             if tray != self.NumTrays:
                 self.Ctrls[f"Tray{tray}Prev"].Enable(self.GetState(f"Tray{tray}Enabled"))
                 self.Ctrls[f"Tray{tray}Next"].Enable(self.GetState(f"Tray{tray}Enabled"))
-        self.Profile.CheckAllConflicts()
-        AnyTray = self.GetState('Tray1Enabled') or self.GetState('Tray2Enabled') or self.GetState('Tray3Enabled') or self.GetState('Tray4Enabled')
+            if self.GetState(f'Tray{tray}Enabled'):
+                AnyTray = True
         self.Ctrls['KeepExisting'].Enable(AnyTray)
+
+        # TODO -- If we switch the Keybind Profile Picker, re-assign all DISABLED / UNASSIGNED
+        # controls to the appropriate defaults.  This is probably going to be fiddly.
 
         if evt: evt.Skip()
 

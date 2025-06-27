@@ -16,6 +16,42 @@ class Gameplay(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
         self.TabTitle = "Gameplay"
+        if self.Profile.Server == 'Homecoming':
+            self.NumTrays = 4
+            self.TrayLabels = ['', 'First', 'Second', 'Third', 'Server']
+            self.KeybindProfiles = {
+                'Modern': {
+                    'Second' : 'ALT',
+                    'Third'  : 'SHIFT',
+                    'Server' : 'CTRL',
+                },
+                'Classic': {
+                    'Second' : 'ALT',
+                    'Third'  : 'CTRL',
+                },
+                'Joystick': {
+                    'Second' : 'ALT',
+                },
+                'Launch (Issue 0)': {
+                    'Second' : 'ALT',
+                },
+            }
+        else: # Rebirth
+            self.NumTrays = 5
+            self.TrayLabels = ['', 'First', 'Second', 'Third', 'Fourth', 'Server']
+            self.KeybindProfiles = {
+                'Default': {
+                    'Second' : 'ALT',
+                    'Third'  : 'CTRL',
+                },
+                'Joystick': {
+                    'Second' : 'ALT',
+                },
+                'Original': {
+                    'Second' : 'ALT',
+                },
+            }
+
         self.Init = {
             'TPSEnable'   : False,
             'TPSSelMode'  : "Teammates, then pets",
@@ -47,9 +83,9 @@ class Gameplay(Page):
             'Tray3Enabled' : False,
             'Tray4Enabled' : False,
         }
-        for tray in (4,3,2,1):
-            mod = ['', '', 'ALT+', 'SHIFT+', 'CTRL+'][tray]
-            name = ['', 'Main', 'Secondary', 'Tertiary', 'Server'][tray]
+        for tray in (range(self.NumTrays, 0, -1)):
+            mod = ['', '', 'ALT+', 'SHIFT+', 'CTRL+', ''][tray]
+            name = self.TrayLabels[tray]
             self.Init[f"Tray{tray}Next"] = ''
             self.Init[f"Tray{tray}Prev"] = ''
             UI.Labels[f"Tray{tray}Next"] = "Next Tray"
@@ -59,30 +95,11 @@ class Gameplay(Page):
                 self.Init[ctlname] = f"{mod}{button}"
                 UI.Labels[ctlname] = f"{name} Tray, Button {button}"
 
-        self.KeybindProfiles = {
-            'Modern': {
-                'Secondary' : 'ALT',
-                'Tertiary'  : 'SHIFT',
-                'Server'    : 'CTRL',
-            },
-            'Classic': {
-                'Secondary' : 'ALT',
-                'Tertiary'  : 'CTRL',
-            },
-            'Joystick': {
-                'Secondary' : 'ALT',
-            },
-            'Launch (Issue 0)': {
-                'Secondary' : 'ALT',
-            },
-        }
-
     def BuildPage(self):
 
         ##### Power Tray Buttons
         traySizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = 'Power Tray Buttons')
         staticbox = traySizer.GetStaticBox()
-
 
         # Horizontal sizer for "help" button
         GridHelpSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -91,14 +108,14 @@ class Gameplay(Page):
         trayGridSizer = wx.FlexGridSizer(14,4,0)
 
         self.FillTrayButtons = {}
-        for b in (1,2,3,4):
+        for b in (range(1,self.NumTrays+1)):
             self.FillTrayButtons[b] = wx.Button(staticbox, wx.ID_ANY, "Fill")
             setattr(self.FillTrayButtons[b], 'Tray', b)
             self.FillTrayButtons[b].Bind(wx.EVT_BUTTON, self.OnFillTray)
             self.FillTrayButtons[b].SetToolTip("Fill the buttons with the numbers 1 - 0.  Hold a modifier key while clicking to use that modifier key in the binds.")
 
-        for tray in (4,3,2,1):
-            label = ['', 'Main', 'Secondary', 'Tertiary', 'Server'][tray]
+        for tray in (range(self.NumTrays, 0, -1)):
+            label = self.TrayLabels[tray]
             checkbox = wx.CheckBox(staticbox, wx.ID_ANY, label = f"{label} Tray")
             checkbox.SetValue(self.Init.get(f'Tray{tray}Enabled', False))
             checkbox.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
@@ -116,7 +133,7 @@ class Gameplay(Page):
 
                 trayGridSizer.Add(traybutton, 1, wx.EXPAND)
             trayGridSizer.Add(self.FillTrayButtons[tray], 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
-            if tray == 4:
+            if tray == self.NumTrays:
                 trayGridSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Prev Tray"), 1, wx.ALIGN_CENTER|wx.LEFT, 6)
                 trayGridSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Next Tray"), 1, wx.ALIGN_CENTER|wx.LEFT, 6)
             else:
@@ -138,7 +155,7 @@ class Gameplay(Page):
 
         KBProfileText = wx.StaticText(staticbox, wx.ID_ANY, "Keybind Profile:")
         KBProfileSizer.Add(KBProfileText, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
-        KBProfilePicker = cgChoice(staticbox, wx.ID_ANY, choices = ['Modern', 'Joystick', 'Classic', 'Launch (Issue 0)'])
+        KBProfilePicker = cgChoice(staticbox, wx.ID_ANY, choices = list(self.KeybindProfiles.keys()))
         KBProfilePicker.SetSelection(0)
         KBProfilePicker.CtlLabel = KBProfileText
         UI.Labels['KBProfile'] = "Keybind Profile"
@@ -252,11 +269,11 @@ class Gameplay(Page):
     def SynchronizeUI(self, evt = None):
         self.OnTPSEnable()
         self.OnTeamEnable()
-        for tray in (1,2,3,4):
+        for tray in (range(1,self.NumTrays+1)):
             self.FillTrayButtons[tray].Enable(self.GetState(f"Tray{tray}Enabled"))
             for button in (1,2,3,4,5,6,7,8,9,0):
                 self.Ctrls[f"Tray{tray}Button{button}"].Enable(self.GetState(f'Tray{tray}Enabled'))
-            if tray != 4:
+            if tray != self.NumTrays:
                 self.Ctrls[f"Tray{tray}Prev"].Enable(self.GetState(f"Tray{tray}Enabled"))
                 self.Ctrls[f"Tray{tray}Next"].Enable(self.GetState(f"Tray{tray}Enabled"))
         self.Profile.CheckAllConflicts()
@@ -293,6 +310,7 @@ class Gameplay(Page):
 
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()
+        server = self.Profile.Server
 
         ### Tray buttons
         for button in (1,2,3,4,5,6,7,8,9,0):
@@ -300,14 +318,17 @@ class Gameplay(Page):
             if self.GetState('Tray1Enabled'):
                 ResetFile.SetBind(self.Ctrls[f"Tray1Button{button}"].MakeFileKeyBind(f"powexec_slot {slotbutton}"))
             if self.GetState('Tray2Enabled'):
-                self.CheckForDefaultKeyToClear('Secondary', 2, button)
-                ResetFile.SetBind(self.Ctrls[f"Tray2Button{button}"].MakeFileKeyBind(f"powexec_altslot {slotbutton}"))
+                self.CheckForDefaultKeyToClear('Second', 2, button)
+                pe_as = "powexec_altslot" if server == "Homecoming" else "px_at1"
+                ResetFile.SetBind(self.Ctrls[f"Tray2Button{button}"].MakeFileKeyBind(f"{pe_as} {slotbutton}"))
             if self.GetState('Tray3Enabled'):
-                self.CheckForDefaultKeyToClear('Tertiary', 3, button)
-                ResetFile.SetBind(self.Ctrls[f"Tray3Button{button}"].MakeFileKeyBind(f"powexec_alt2slot {slotbutton}"))
+                self.CheckForDefaultKeyToClear('Third', 3, button)
+                pe_a2 = "powexec_alt2slot" if server == "Homecoming" else "px_at2"
+                ResetFile.SetBind(self.Ctrls[f"Tray3Button{button}"].MakeFileKeyBind(f"{pe_a2} {slotbutton}"))
             if self.GetState('Tray4Enabled'):
                 self.CheckForDefaultKeyToClear('Server', 4, button)
-                ResetFile.SetBind(self.Ctrls[f"Tray4Button{button}"].MakeFileKeyBind(f"powexec_serverslot {slotbutton}"))
+                pe_ss = 'powexec_serverslot' if server == "Homecoming" else 'px_sv'
+                ResetFile.SetBind(self.Ctrls[f"Tray4Button{button}"].MakeFileKeyBind(f"{pe_ss} {slotbutton}"))
 
         if self.GetState('Tray1Enabled'):
             ResetFile.SetBind(self.Ctrls[f"Tray1Prev"].MakeFileKeyBind("prev_tray"))

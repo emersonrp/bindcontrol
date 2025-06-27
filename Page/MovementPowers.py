@@ -13,6 +13,13 @@ class MovementPowers(Page):
 
         self.TabTitle = "Movement / Speed on Demand"
 
+        # A few things that are server-specific.  If we change servers, we reload the profile
+        # so this is safe to do in __init__
+        server = self.Profile.Server
+        self.togon   = "powexectoggleon"  if server == "Homecoming" else "px_tgon"
+        self.togoff  = "powexectoggleoff" if server == "Homecoming" else "px_tgof"
+        self.unqueue = "powexecunqueue"   if server == "Homecoming" else "px_uq"
+
         self.Init: Dict[str, Any] = {
             'EnableSoD'       : False,
 
@@ -1078,7 +1085,7 @@ class MovementPowers(Page):
         if (self.hasHover() and not self.GetState('FlyPower')):
             t.canhov = True
             t.flyx   = self.GetState('HoverPower')
-            if (self.GetState('TPTPHover')): t.tphover = f'$$powexectoggleon {self.GetState("HoverPower")}'
+            if (self.GetState('TPTPHover')): t.tphover = f'$${self.togon} {self.GetState("HoverPower")}'
         # fly, no hover
         elif (not self.hasHover() and bool(self.GetState('FlyPower'))):
             t.canfly = True
@@ -1088,7 +1095,7 @@ class MovementPowers(Page):
             t.canhov = True
             t.canfly = True
             t.fly    = self.GetState('FlyPower')
-            if (self.GetState('TPTPHover')): t.tphover = f'$$powexectoggleon {self.GetState("HoverPower")}'
+            if (self.GetState('TPTPHover')): t.tphover = f'$${self.togon} {self.GetState("HoverPower")}'
 
         if ((profile.Archetype() == "Peacebringer") and self.GetState('FlyQFly')):
             t.canqfly = True
@@ -1096,7 +1103,7 @@ class MovementPowers(Page):
         if (self.GetState('HasGFly')):
             t.cangfly = True
             t.gfly    = "Group Fly"
-            if (self.GetState('TTPTPGFly')): t.ttpgfly = '$$powexectoggleon Group Fly'
+            if (self.GetState('TTPTPGFly')): t.ttpgfly = f'$${self.togon} Group Fly'
 
         if (self.GetState('SpeedPower')):
             t.sprint = self.GetState('SprintPower')
@@ -1191,9 +1198,9 @@ class MovementPowers(Page):
 
             humpower = ''
             # TODO this control went missing
-            #if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + HumanFormShield
+            #if self.GetState('UseHumanFormPower'): humpower = f'$${self.togon} ' + HumanFormShield
             #else:                                  humpower = ''
-            novafile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Nova}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
+            novafile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"t $name, Changing to Human Form, SoD Mode{fullstop}$${self.togoff} {Nova}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
 
             novafile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind("+forward"))
             novafile.SetBind(self.Ctrls['Left'].MakeFileKeyBind("+left"))
@@ -1215,16 +1222,16 @@ class MovementPowers(Page):
             novafile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("follow"))
 
         if (self.isKheldian() and self.GetState('UseDwarf')):
-            ResetFile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"t $name, Changing to {Dwarf} Form{fullstop}$$powexectoggleon {Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
+            ResetFile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"t $name, Changing to {Dwarf} Form{fullstop}$${self.togon} {Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
             dwrffile = profile.GetBindFile("dwarf.txt")
             if (self.GetState('UseNova')):
-                dwrffile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"t $name, Changing to {Nova} Form{fullstop}$$powexectoggleoff {Dwarf}$$powexectoggleon {Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
+                dwrffile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"t $name, Changing to {Nova} Form{fullstop}$${self.togoff} {Dwarf}$${self.togon} {Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
             humpower = ''
             # TODO this control went missing
-            #if self.GetState('UseHumanFormPower'): humpower = '$$powexectoggleon ' + HumanFormShield
+            #if self.GetState('UseHumanFormPower'): humpower = f'$${self.togon} ' + HumanFormShield
             #else:                                  humpower = ''
-            dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"t $name, Changing to Human Form, SoD Mode{fullstop}$$powexectoggleoff {Dwarf}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
+            dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"t $name, Changing to Human Form, SoD Mode{fullstop}$${self.togoff} {Dwarf}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
 
             dwrffile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind("+forward"))
             dwrffile.SetBind(self.Ctrls['Left'].MakeFileKeyBind("+left"))
@@ -1255,7 +1262,7 @@ class MovementPowers(Page):
                 tp_on = profile.GetBindFile("dtp","tp_on.txt")
                 zoomin = t.detailhi + t.runcamdist
                 if (t.tphover): zoomin = ''
-                tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecunqueue$$powexeclocation cursor ' + dwarfTPPower + zoomin + windowshow + profile.BLF('dtp','tp_off.txt') + tphovermodeswitch))
+                tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$$powexeclocation cursor ' + dwarfTPPower + zoomin + windowshow + profile.BLF('dtp','tp_off.txt') + tphovermodeswitch))
 
         ###
         ###### End Kheldian power setup
@@ -1288,7 +1295,7 @@ class MovementPowers(Page):
             tp_on = profile.GetBindFile("tp","tp_on.txt")
             zoomin = t.detailhi + t.runcamdist
             if (t.tphover): zoomin = ''
-            tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecunqueue$$powexeclocation cursor ' + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
+            tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$$powexeclocation cursor ' + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
 
         # normal non-peacebringer team teleport binds
         if (self.GetState('HasTTP') and not (archetype == "Peacebringer") and teamTPPower) :
@@ -1300,7 +1307,7 @@ class MovementPowers(Page):
             ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on.txt')))
 
             ttp_on = profile.GetBindFile("ttp","ttp_on.txt")
-            ttp_on.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+first$$-first$$powexecunqueue' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
+            ttp_on.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
 
         return True
 
@@ -1316,7 +1323,7 @@ class MovementPowers(Page):
                         ResetFile.BLF(),
                         'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
                         'powexecname Sprint',
-                        'powexecunqueue',
+                        self.unqueue,
                         't $name, Binds Reset',
                     ])
 
@@ -2127,15 +2134,15 @@ class MovementPowers(Page):
             for w in off:
                 if (w and w != on and not (w in offpower)):
                     offpower.add(w)
-                    s = s + '$$powexectoggleoff ' + w
+                    s = s + f'$${self.togoff} {w}'
 
         else:
             if (off and off != '' and (off != on) and not (off in offpower)):
                 offpower.add(off)
-                s = s + '$$powexectoggleoff ' + off
+                s = s + f'$${self.togoff} {off}'
 
         if (on and on != ''):
-            s = s + '$$powexectoggleon ' + on
+            s = s + f'$${self.togon} {on}'
 
         if start: s = s[2:]
         return s
@@ -2153,7 +2160,7 @@ class MovementPowers(Page):
                         s = s + '$$powexecname ' + w
 
         if (s != ''):
-            s = s + '$$powexecunqueue'
+            s = s + f'$${self.unqueue}'
 
         if (on and on != ''):
             s = s + '$$powexecname ' + on + '$$powexecname ' + on
@@ -2340,8 +2347,8 @@ class tObject(dict):
         self.canjmp       :bool = False
         self.tphover      :str = ''
         self.ttpgfly      :str = ''
-        self.on           :str = '$$powexectoggleon '
-        self.off          :str = '$$powexectoggleoff '
+        self.on           :str = f'$${self.togon} '
+        self.off          :str = f'$${self.togoff} '
         self.playerturn   :str = ''
         self.mouselookon  :str = ''
         self.mouselookoff :str = ''

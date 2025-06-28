@@ -16,7 +16,7 @@ class Gameplay(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
         self.TabTitle = "Gameplay"
-        print(f"server is {self.Profile.Server}")
+
         if self.Profile.Server == 'Homecoming':
             self.NumTrays = 4
             self.TrayLabels = ['', 'First', 'Second', 'Third', 'Server']

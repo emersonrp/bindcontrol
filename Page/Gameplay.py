@@ -16,6 +16,7 @@ class Gameplay(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
         self.TabTitle = "Gameplay"
+        print(f"server is {self.Profile.Server}")
         if self.Profile.Server == 'Homecoming':
             self.NumTrays = 4
             self.TrayLabels = ['', 'First', 'Second', 'Third', 'Server']
@@ -29,9 +30,9 @@ class Gameplay(Page):
             self.NumTrays = 5
             self.TrayLabels = ['', 'First', 'Second', 'Third', 'Fourth', 'Server']
             self.KeybindProfiles = {
-                'Default'  : ['','','ALT','CTRL',''],
-                'Joystick' : ['','','ALT','',''],
-                'Original' : ['','','ALT','',''],
+                'Default'  : ['','','ALT','CTRL','',''],
+                'Joystick' : ['','','ALT','','',''],
+                'Original' : ['','','ALT','','',''],
             }
 
         self.Init = {
@@ -143,6 +144,7 @@ class Gameplay(Page):
         UI.Labels['KBProfile'] = "Keybind Profile"
         self.Ctrls['KBProfile'] = KBProfilePicker
         KBProfilePicker.SetToolTip("This should be set to match the Keybind Profile you have set in the in-game options.")
+        KBProfilePicker.Bind( wx.EVT_CHOICE, self.OnKeybindProfilePicker )
         KBProfileSizer.Add(KBProfilePicker, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
 
         KeepExistingCB = wx.CheckBox(staticbox, wx.ID_ANY, "Keep Existing / Default Tray Binds")
@@ -263,10 +265,23 @@ class Gameplay(Page):
                 AnyTray = True
         self.Ctrls['KeepExisting'].Enable(AnyTray)
 
-        # TODO -- If we switch the Keybind Profile Picker, re-assign all DISABLED / UNASSIGNED
-        # controls to the appropriate defaults.  This is probably going to be fiddly.
+        self.OnKeybindProfilePicker()
 
         if evt: evt.Skip()
+
+    def OnKeybindProfilePicker(self, evt = None):
+        pickerval = self.GetState('KBProfile')
+        for tray in (range(1,self.NumTrays+1)):
+            if self.GetState(f"Tray{tray}Enabled"): continue # skip trays we might have changed values for
+            modkey = self.KeybindProfiles[pickerval][tray]
+            for button in (1,2,3,4,5,6,7,8,9,0):
+                if modkey:
+                    buttonval = f"{modkey}+{button}"
+                elif tray == 1:
+                    buttonval = str(button)
+                else:
+                    buttonval = ""
+                self.Ctrls[f"Tray{tray}Button{button}"].SetLabel(buttonval)
 
     def OnFillTray(self, evt):
         evtbutton = evt.EventObject

@@ -91,6 +91,7 @@ class Profile(wx.Notebook):
         self.Modified        : bool      = False
         self.Filename        : Path|None = Path(filename) if filename else None
         self.ProfileBindsDir : str       = ''
+        self.LastModTime     : int       = 0
 
         data = {}
         self.Server = 'Homecoming'
@@ -98,6 +99,7 @@ class Profile(wx.Notebook):
         # are we wanting to load this one from a file?
         if self.Filename and self.Filename.exists():
             data = json.loads(Path(self.Filename).read_text())
+            self.LastModTime = self.Filename.stat().st_mtime_ns
 
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
         elif newname:
@@ -336,9 +338,16 @@ class Profile(wx.Notebook):
         dumpstring = self.AsJSON()
 
         try:
+            # check that we haven't updated the file from another copy of BindControl
+            if savefile.exists():
+                if savefile.stat().st_mtime_ns > self.LastModTime:
+                    result = wx.MessageBox(f"Profile file {savefile} has changed since last save.  Continuing may overwrite changes.  Continue?", "File Modified", wx.YES_NO)
+                    if result == wx.NO: return
+
             wx.ConfigBase.Get().Write('LastProfile', str(savefile))
             savefile.touch() # make sure there's one there.
             savefile.write_text(dumpstring)
+            self.LastModTime = savefile.stat().st_mtime_ns
             wx.LogMessage(f"Wrote profile {savefile}")
             self.ClearModified()
         except Exception as e:

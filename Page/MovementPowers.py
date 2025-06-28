@@ -115,8 +115,8 @@ class MovementPowers(Page):
             })
         else:
             UI.Labels.update({
-                'TPBindKey'      : 'Show Teleport Destination Reticle',
-                'TTPBindKey'     : 'Show Team Teleport Destination Reticle',
+                'TPBindKey'      : 'Activate Teleport Power',
+                'TTPBindKey'     : 'Activate Team Teleport Power',
             })
 
     def BuildPage(self):
@@ -1316,7 +1316,7 @@ class MovementPowers(Page):
             tp_on = profile.GetBindFile("tp","tp_on.txt")
             zoomin = t.detailhi + t.runcamdist
             if (t.tphover): zoomin = ''
-            tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$$powexecname ' + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
+            tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$$' + tpActivator + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
 
         # normal non-peacebringer team teleport binds
         if (self.GetState('HasTTP') and not (archetype == "Peacebringer") and teamTPPower) :
@@ -1328,7 +1328,7 @@ class MovementPowers(Page):
             ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on.txt')))
 
             ttp_on = profile.GetBindFile("ttp","ttp_on.txt")
-            ttp_on.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
+            ttp_on.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$$' + tpActivator + teamTPPower + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
 
         return True
 
@@ -1343,6 +1343,7 @@ class MovementPowers(Page):
                         keybindreset,
                         ResetFile.BLF(),
                         'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
+                        'show health', 'show chat', 'show target', 'show tray', 'show nav',
                         'powexecname Sprint',
                         self.unqueue,
                         't $name, Binds Reset',
@@ -2348,6 +2349,9 @@ UI.Labels.update( {
 class tObject(dict):
     def __init__(self, profile):
         from Profile import Profile
+        self.togon   = "powexectoggleon"  if profile.Server == "Homecoming" else "px_tgon"
+        self.togoff  = "powexectoggleoff" if profile.Server == "Homecoming" else "px_tgof"
+
         self.profile      :Profile = profile
         self.ini          :str = ''
         self.sprint       :str = ''

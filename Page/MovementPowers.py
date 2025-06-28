@@ -6,6 +6,7 @@ from typing import Dict, Any
 from BLF import BLF
 from Page import Page
 from UI.ControlGroup import ControlGroup, bcKeyButton
+from UI.KeySelectDialog import EVT_KEY_CHANGED
 
 class MovementPowers(Page):
     def __init__(self, parent):
@@ -80,10 +81,12 @@ class MovementPowers(Page):
             'TPPower'         : '',
             'TPBindKey'       : '',
             'TPComboKey'      : 'LSHIFT',
+            'TPExecuteKey'    : 'LSHIFT+BUTTON1',
 
             'HasTTP'          : False,
             'TTPBindKey'      : '',
-            'TTPComboKey'     : 'SHIFT+LCTRL',
+            'TTPComboKey'     : 'LCTRL',
+            'TTPExecuteKey'   : 'LCTRL+BUTTON1',
             'TTPTPGFly'       : False,
 
             'TPHideWindows'   : True,
@@ -407,6 +410,8 @@ class MovementPowers(Page):
             tpcTooltip = 'Show target marker on keypress;  click to teleport.'
         self.teleportSizer.AddControl( ctlName = "TPBindKey", ctlType = 'keybutton', tooltip = tpTooltip)
         self.teleportSizer.AddControl( ctlName = "TPComboKey", ctlType = 'keybutton', tooltip = tpcTooltip)
+        self.Ctrls['TPComboKey'].Bind(EVT_KEY_CHANGED, self.OnTPComboKey)
+        self.teleportSizer.AddControl( ctlName = "TPExecuteKey", ctlType = 'keybutton')
         self.teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',
             tooltip = "Activate the Hover power after teleporting")
         self.teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',
@@ -420,6 +425,8 @@ class MovementPowers(Page):
             ttpcTooltip = "Show target marker on keypress;  click to team teleport."
         self.teleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton', tooltip = ttpTooltip)
         self.teleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton', tooltip = ttpcTooltip)
+        self.Ctrls['TTPComboKey'].Bind(EVT_KEY_CHANGED, self.OnTTPComboKey)
+        self.teleportSizer.AddControl( ctlName = "TTPExecuteKey", ctlType = 'keybutton')
         self.teleportSizer.AddControl( ctlName = 'TTPTPGFly', ctlType = 'checkbox',
             tooltip = "Activate the Group Fly power after Team Teleporting")
         self.teleportSizer.AddControl( ctlName = 'TPHideWindows', ctlType = 'checkbox',
@@ -446,6 +453,16 @@ class MovementPowers(Page):
         for ctrl in group.GetChildren():
             win = ctrl.GetWindow()
             if win: win.Enable(show)
+
+    def OnTPComboKey(self, evt = None):
+        ComboKey = self.GetState('TPComboKey')
+        self.Ctrls['TPExecuteKey'].SetLabel(ComboKey + "+BUTTON1")
+        if evt: evt.Skip()
+
+    def OnTTPComboKey(self, evt = None):
+        ComboKey = self.GetState('TTPComboKey')
+        self.Ctrls['TTPExecuteKey'].SetLabel(ComboKey + "+BUTTON1")
+        if evt: evt.Skip()
 
     def OnDetailsCameraChanged(self, evt = None):
         c = self.Ctrls
@@ -586,6 +603,12 @@ class MovementPowers(Page):
             c['TTPBindKey'] .Show(c['HasTTP'].IsShown() and self.GetState('HasTTP'))
             c['TTPComboKey'].Show(c['HasTTP'].IsShown() and self.GetState('HasTTP'))
             c['TTPTPGFly']  .Show(c['HasTTP'].IsShown() and self.GetState('HasTTP') and self.hasGFly())
+
+            # The two 'execute' keys are always hidden as they are magical.
+            # They are only for the complicated Rebirth Combo Teleport scheme and might
+            # be able to be completely hidden behind "if server" logic eventually.
+            c['TPExecuteKey'].Show(False)
+            c['TTPExecuteKey'].Show(False)
         else:
             self.ShowControlGroup(self.teleportSizer, False)
         if evt: evt.Skip()
@@ -1240,7 +1263,9 @@ class MovementPowers(Page):
 
             # no teleport while nova
             novafile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('nop'))
-            novafile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind( 'nop'))
+            novafile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
+            if server == 'Rebirth':
+                novafile.SetBind(self.Ctrls['TPExecuteKey'].MakeFileKeyBind('nop'))
 
             novafile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("follow"))
 
@@ -1277,16 +1302,26 @@ class MovementPowers(Page):
                     tphovermodeswitch = t.bla + "000000.txt"
 
                 dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind(tpActivator + dwarfTPPower))
-                dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on.txt')))
 
                 tp_off = profile.GetBindFile("dtp","tp_off.txt")
-                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on.txt')))
+                tp_on1 = profile.GetBindFile("dtp","tp_on1.txt")
+                zoomin = '' if t.tphover else t.detailhi + t.runcamdist
 
-                tp_on = profile.GetBindFile("dtp","tp_on.txt")
-                zoomin = t.detailhi + t.runcamdist
-                if (t.tphover): zoomin = ''
-                tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$${tpActivator}' + dwarfTPPower + zoomin + windowshow + profile.BLF('dtp','tp_off.txt') + tphovermodeswitch))
+                dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
+                if server == 'Homecoming':
+                    tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
 
+                    tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$$powexeclocation cursor' + dwarfTPPower + zoomin + windowshow + profile.BLF('dtp','tp_off.txt') + tphovermodeswitch))
+
+                else:  # server == Rebirth
+                    tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+ $$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
+                    tp_off.SetBind(self.Ctrls['TPExecuteKey'].MakeFileKeyBind('nop'))
+
+                    tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'- {self.unqueue}' + zoomin + windowshow + profile.BLF('dtp','tp_off.txt') + tphovermodeswitch))
+                    tp_on1.SetBind(self.Ctrls['TPExecuteKey'].MakeFileKeyBind('+ ' + profile.BLF('dtp','tp_on2.txt')))
+
+                    tp_on2 = profile.GetBindFile("dtp","tp_on2.txt")
+                    tp_on2.SetBind(self.Ctrls['TPExecuteKey'].MakeFileKeyBind('- $$powexecname ' + dwarfTPPower + profile.BLF('dtp','tp_on1.txt')))
         ###
         ###### End Kheldian power setup
 
@@ -1300,8 +1335,10 @@ class MovementPowers(Page):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind(f'powexecname Combat Jumping'))
 
         if (not normalTPPower):
-            ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind( 'nop'))
+            ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('nop'))
+            if server == "Rebirth":
+                ResetFile.SetBind(self.Ctrls['TPExecuteKey'].MakeFileKeyBind('nop'))
 
         # Normal non-peacebringer teleport binds
         if (normalTPPower and not (archetype == "Peacebringer")):
@@ -1310,27 +1347,54 @@ class MovementPowers(Page):
                 tphovermodeswitch = t.bla + "000000.txt"
 
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind(tpActivator + normalTPPower))
-            ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
-
             tp_off = profile.GetBindFile("tp","tp_off.txt")
-            tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
+            tp_on1 = profile.GetBindFile("tp","tp_on1.txt")
+            zoomin = '' if t.tphover else t.detailhi + t.runcamdist
 
-            tp_on = profile.GetBindFile("tp","tp_on.txt")
-            zoomin = t.detailhi + t.runcamdist
-            if (t.tphover): zoomin = ''
-            tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$$' + tpActivator + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
+            if server == 'Homecoming':
+                ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
+
+                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
+
+                tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$$' + tpActivator + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
+
+            else: # server == Rebirth
+                ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+ $$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
+                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+ $$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
+                tp_off.SetBind(self.Ctrls['TPExecuteKey'].MakeFileKeyBind('nop'))
+
+                tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'- $${self.unqueue}' + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
+                tp_on1.SetBind(self.Ctrls['TPExecuteKey'].MakeFileKeyBind('+' + profile.BLF('tp','tp_on2.txt')))
+
+                tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
+                tp_on2.SetBind(self.Ctrls['TPExecuteKey'].MakeFileKeyBind('-$$powexecname ' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
 
         # normal non-peacebringer team teleport binds
         if (self.GetState('HasTTP') and not (archetype == "Peacebringer") and teamTPPower) :
 
             ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind(tpActivator + teamTPPower))
-            ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on.txt')))
 
             ttp_off = profile.GetBindFile("ttp","ttp_off.txt")
-            ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on.txt')))
+            ttp_on1 = profile.GetBindFile("ttp","ttp_on1.txt")
 
-            ttp_on = profile.GetBindFile("ttp","ttp_on.txt")
-            ttp_on.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$$' + tpActivator + teamTPPower + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
+            if server == 'Homecoming':
+                ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
+
+                ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
+
+                ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$$' + tpActivator + teamTPPower + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
+
+            else:
+                ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+ $$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
+
+                ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+ $$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
+                ttp_off.SetBind(self.Ctrls['TPExecuteKey'].MakeFileKeyBind('nop'))
+
+                ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind(f'- $${self.unqueue}' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
+                ttp_on1.SetBind(self.Ctrls['TPExecuteKey'].MakeFileKeyBind('+' + profile.BLF('ttp','ttp_on2.txt')))
+
+                ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
+                ttp_on2.SetBind(self.Ctrls['TPExecuteKey'].MakeFileKeyBind('-$$powexecname ' + normalTPPower + profile.BLF('ttp','ttp_on1.txt')))
 
         return True
 
@@ -1691,6 +1755,7 @@ class MovementPowers(Page):
             [
                 keybindreset,
                 'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
+                # 'show health', 'show chat', 'show target', 'show tray', 'show nav',
                 str(turnoff),
                 't $name, Binds Reset',
                 curfile.BaseReset(),
@@ -2256,15 +2321,21 @@ class MovementPowers(Page):
         files.append(self.Profile.GetBindFile('dwarf.txt'))
 
         dirs.append('dtp')
-        files.append(self.Profile.GetBindFile('dtp', 'tp_on.txt'))
+        files.append(self.Profile.GetBindFile('dtp', 'tp_on.txt')) # historical
+        files.append(self.Profile.GetBindFile('dtp', 'tp_on1.txt'))
+        files.append(self.Profile.GetBindFile('dtp', 'tp_on2.txt'))
         files.append(self.Profile.GetBindFile('dtp', 'tp_off.txt'))
 
         dirs.append('tp')
-        files.append(self.Profile.GetBindFile('tp', 'tp_on.txt'))
+        files.append(self.Profile.GetBindFile('tp', 'tp_on.txt')) # historical
+        files.append(self.Profile.GetBindFile('tp', 'tp_on1.txt'))
+        files.append(self.Profile.GetBindFile('tp', 'tp_on2.txt'))
         files.append(self.Profile.GetBindFile('tp', 'tp_off.txt'))
 
         dirs.append('ttp')
-        files.append(self.Profile.GetBindFile('ttp', 'ttp_on.txt'))
+        files.append(self.Profile.GetBindFile('ttp', 'ttp_on.txt')) # historical
+        files.append(self.Profile.GetBindFile('ttp', 'ttp_on1.txt'))
+        files.append(self.Profile.GetBindFile('ttp', 'ttp_on2.txt'))
         files.append(self.Profile.GetBindFile('ttp', 'ttp_off.txt'))
 
         return {

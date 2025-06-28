@@ -400,28 +400,30 @@ class MovementPowers(Page):
             tooltip = "Select the teleport power to use with the keybinds in this section")
         self.Ctrls['TPPower'].Bind(wx.EVT_CHOICE, self.OnTeleportChanged)
         if server == "Homecoming":
-            tpTooltip = 'Immediately teleport to the cursor position without showing a destination reticle.'
+            tpTooltip = 'Immediately teleport to the cursor position without showing a target marker.'
+            tpcTooltip = 'Show target marker on keypress;  teleport to marker on key release.'
         else:
-            tpTooltip = 'Initiate teleport power, showing destination reticle.'
+            tpTooltip = 'Initiate teleport power, showing target marker.'
+            tpcTooltip = 'Show target marker on keypress;  click to teleport.'
         self.teleportSizer.AddControl( ctlName = "TPBindKey", ctlType = 'keybutton', tooltip = tpTooltip)
-        self.teleportSizer.AddControl( ctlName = "TPComboKey", ctlType = 'keybutton',
-            tooltip = 'Show teleport reticle on keypress;  teleport to reticle on key release.', )
+        self.teleportSizer.AddControl( ctlName = "TPComboKey", ctlType = 'keybutton', tooltip = tpcTooltip)
         self.teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',
             tooltip = "Activate the Hover power after teleporting")
         self.teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',
             tooltip = "Enable Team Teleport-related keybinds")
         self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.OnTeleportChanged)
         if server == "Homecoming":
-            ttpTooltip = "Immediately Team Teleport to the cursor position without showing a destination reticle."
+            ttpTooltip = "Immediately Team Teleport to the cursor position without showing a target marker."
+            ttpcTooltip = "Show target marker on keypress;  Team Teleport to marker on key release."
         else:
-            ttpTooltip = "Initiate Team Teleport, showing destination reticle."
+            ttpTooltip = "Initiate Team Teleport, showing target marker."
+            ttpcTooltip = "Show target marker on keypress;  click to team teleport."
         self.teleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton', tooltip = ttpTooltip)
-        self.teleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton',
-            tooltip = "Show Team Teleport reticle on keypress;  Team Teleport to reticle on key release.",)
+        self.teleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton', tooltip = ttpcTooltip)
         self.teleportSizer.AddControl( ctlName = 'TTPTPGFly', ctlType = 'checkbox',
             tooltip = "Activate the Group Fly power after Team Teleporting")
         self.teleportSizer.AddControl( ctlName = 'TPHideWindows', ctlType = 'checkbox',
-            tooltip = 'Hide most UI elements while a teleport reticle is visible.', )
+            tooltip = 'Hide most UI elements while holding target marker key.', )
         self.rightColumn.Add(self.teleportSizer, 0, wx.EXPAND)
 
         topSizer.Add(self.leftColumn, 0, wx.ALL, 3)
@@ -1349,7 +1351,7 @@ class MovementPowers(Page):
                         't $name, Binds Reset',
                     ])
 
-        # Disabling, for now, this set of warning dialogs, on the possibly-mistaken notion that
+        # TODO - Disabling, for now, this set of warning dialogs, on the possibly-mistaken notion that
         # I can get the UI to be clearer about this so that these intrusive popups aren't needed.
 
         #if (self.DefaultMode() == "NonSoD"):
@@ -2300,7 +2302,6 @@ UI.Labels.update( {
     'ChangeDetail'   : 'Change graphics detail level when moving',
     'DetailBase'     : 'Base Detail Level',
     'DetailMove'     : 'Travelling Detail Level',
-    'TPHideWindows'  : 'Hide Windows when Teleporting',
 
     'JumpPower'        : "Primary Jump Power",
     'HasCJ'            : 'Has Combat Jumping',
@@ -2325,12 +2326,12 @@ UI.Labels.update( {
     'GFlyMode'        : 'Toggle Group Fly Mode',
 
     'TPPower'        : 'Teleport Power',
-    'TPComboKey'     : 'Teleport to Reticle on Key Release',
+    'TPComboKey'     : 'Hold to Show Teleport Target Marker',
     'TPTPHover'      : 'Hover when Teleporting',
-
     'HasTTP'         : 'Has Team Teleport',
-    'TTPComboKey'    : 'Team Teleport to Reticle on Key Release',
+    'TTPComboKey'    : 'Hold to Show Team Teleport Target Marker',
     'TTPTPGFly'      : 'Group Fly when Team Teleporting',
+    'TPHideWindows'  : 'Hide Windows when Holding Target Marker Key',
 
     'TempEnable'     : 'Enable Temp Travel Mode',
     'TempMode'       : 'Toggle Temp Mode',

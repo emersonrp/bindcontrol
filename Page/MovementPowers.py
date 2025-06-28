@@ -108,7 +108,20 @@ class MovementPowers(Page):
             'TempMode'        : "",
         }
 
+        if self.Profile.Server == "Homecoming":
+            UI.Labels.update({
+                'TPBindKey'      : 'Teleport to Cursor Immediately',
+                'TTPBindKey'     : 'Team Teleport to Cursor Immediately',
+            })
+        else:
+            UI.Labels.update({
+                'TPBindKey'      : 'Show Teleport Destination Reticle',
+                'TTPBindKey'     : 'Show Team Teleport Destination Reticle',
+            })
+
     def BuildPage(self):
+
+        server = self.Profile.Server
 
         topSizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -301,7 +314,7 @@ class MovementPowers(Page):
         SoDSizer = ControlGroup(self, self, 'Speed on Demand Settings')
 
         SoDSizer.AddControl( ctlName = 'EnableSoD', ctlType = 'checkbox',
-            tooltip = "Enable Speed on Demand behavior for the movement keys, above")
+            tooltip = "Enable Speed on Demand behavior for the movement keys")
         self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'choice',
             contents = ('No SoD','Sprint','Speed','Jump','Fly'),
@@ -386,8 +399,11 @@ class MovementPowers(Page):
         self.teleportSizer.AddControl(ctlName = "TPPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the teleport power to use with the keybinds in this section")
         self.Ctrls['TPPower'].Bind(wx.EVT_CHOICE, self.OnTeleportChanged)
-        self.teleportSizer.AddControl( ctlName = "TPBindKey", ctlType = 'keybutton',
-            tooltip = 'Immediately teleport to the cursor position without showing a destination reticle.', )
+        if server == "Homecoming":
+            tpTooltip = 'Immediately teleport to the cursor position without showing a destination reticle.'
+        else:
+            tpTooltip = 'Initiate teleport power, showing destination reticle.'
+        self.teleportSizer.AddControl( ctlName = "TPBindKey", ctlType = 'keybutton', tooltip = tpTooltip)
         self.teleportSizer.AddControl( ctlName = "TPComboKey", ctlType = 'keybutton',
             tooltip = 'Show teleport reticle on keypress;  teleport to reticle on key release.', )
         self.teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',
@@ -395,8 +411,11 @@ class MovementPowers(Page):
         self.teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',
             tooltip = "Enable Team Teleport-related keybinds")
         self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.OnTeleportChanged)
-        self.teleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton',
-            tooltip = "Immediately Team Teleport to the cursor position without showing a destination reticle")
+        if server == "Homecoming":
+            ttpTooltip = "Immediately Team Teleport to the cursor position without showing a destination reticle."
+        else:
+            ttpTooltip = "Initiate Team Teleport, showing destination reticle."
+        self.teleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton', tooltip = ttpTooltip)
         self.teleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton',
             tooltip = "Show Team Teleport reticle on keypress;  Team Teleport to reticle on key release.",)
         self.teleportSizer.AddControl( ctlName = 'TTPTPGFly', ctlType = 'checkbox',
@@ -1031,6 +1050,8 @@ class MovementPowers(Page):
     def PopulateBindFiles(self):
         profile   = self.Profile
         ResetFile = profile.ResetFile()
+        server = self.Profile.Server
+        tpActivator = "powexeclocation cursor " if server == 'Homecoming' else "powexecname "
 
         # set up the "t" object that drives approximately everything
         t = tObject(profile)
@@ -1253,7 +1274,7 @@ class MovementPowers(Page):
                 if (t.tphover != ''):
                     tphovermodeswitch = t.bla + "000000.txt"
 
-                dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexec_location cursor ' + dwarfTPPower))
+                dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind(tpActivator + dwarfTPPower))
                 dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on.txt')))
 
                 tp_off = profile.GetBindFile("dtp","tp_off.txt")
@@ -1262,7 +1283,7 @@ class MovementPowers(Page):
                 tp_on = profile.GetBindFile("dtp","tp_on.txt")
                 zoomin = t.detailhi + t.runcamdist
                 if (t.tphover): zoomin = ''
-                tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$$powexeclocation cursor ' + dwarfTPPower + zoomin + windowshow + profile.BLF('dtp','tp_off.txt') + tphovermodeswitch))
+                tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$${tpActivator}' + dwarfTPPower + zoomin + windowshow + profile.BLF('dtp','tp_off.txt') + tphovermodeswitch))
 
         ###
         ###### End Kheldian power setup
@@ -1286,7 +1307,7 @@ class MovementPowers(Page):
             if (t.tphover != ''):
                 tphovermodeswitch = t.bla + "000000.txt"
 
-            ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('powexec_location cursor ' + normalTPPower))
+            ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind(tpActivator + normalTPPower))
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on.txt')))
 
             tp_off = profile.GetBindFile("tp","tp_off.txt")
@@ -1295,12 +1316,12 @@ class MovementPowers(Page):
             tp_on = profile.GetBindFile("tp","tp_on.txt")
             zoomin = t.detailhi + t.runcamdist
             if (t.tphover): zoomin = ''
-            tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$$powexeclocation cursor ' + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
+            tp_on.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind(f'+first$$-first$${self.unqueue}$$powexecname ' + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
 
         # normal non-peacebringer team teleport binds
         if (self.GetState('HasTTP') and not (archetype == "Peacebringer") and teamTPPower) :
 
-            ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind('powexeclocation cursor ' + teamTPPower))
+            ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeFileKeyBind(tpActivator + teamTPPower))
             ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeFileKeyBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on.txt')))
 
             ttp_off = profile.GetBindFile("ttp","ttp_off.txt")
@@ -2303,12 +2324,10 @@ UI.Labels.update( {
     'GFlyMode'        : 'Toggle Group Fly Mode',
 
     'TPPower'        : 'Teleport Power',
-    'TPBindKey'      : 'Teleport to Cursor Immediately',
     'TPComboKey'     : 'Teleport to Cursor on Key Release',
     'TPTPHover'      : 'Hover when Teleporting',
 
     'HasTTP'         : 'Has Team Teleport',
-    'TTPBindKey'     : 'Team Teleport to Cursor',
     'TTPComboKey'    : 'Show Team Teleport Reticle',
     'TTPTPGFly'      : 'Group Fly when Team Teleporting',
 

@@ -1409,7 +1409,6 @@ class MovementPowers(Page):
                         keybindreset,
                         ResetFile.BLF(),
                         'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
-                        'show health', 'show chat', 'show target', 'show tray', 'show nav',
                         'powexecname Sprint',
                         self.unqueue,
                         't $name, Binds Reset',
@@ -1755,7 +1754,6 @@ class MovementPowers(Page):
             [
                 keybindreset,
                 'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
-                # 'show health', 'show chat', 'show target', 'show tray', 'show nav',
                 str(turnoff),
                 't $name, Binds Reset',
                 curfile.BaseReset(),

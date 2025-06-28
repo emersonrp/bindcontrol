@@ -63,7 +63,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
 
 ## TODO
 
-* Especially in the Movement Powers section, there are still some Homecoming-specific notions hard-coded into BindControl.  I'm working on finding and fixing these, but any bug reports and other feedback from Rebirth players would be very welcomed.
+* It's gotten a lot better, but there are still some Homecoming-specific notions hard-coded into BindControl.  I'm working on finding and fixing these, but any bug reports and other feedback from Rebirth players would be very welcomed.
 * The hope is to make every reasonable slash command in the game available in some way, typically via PowerBinder.  What qualifies as a "reasonable slash command" is yet to be determined.
 * Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment.
 * The Movement Powers page is a confusing forest of checkboxes, dating from the original CityBinder layout and needs some layout and documentation work <i>(WIP)</i>.

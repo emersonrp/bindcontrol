@@ -2324,11 +2324,11 @@ UI.Labels.update( {
     'GFlyMode'        : 'Toggle Group Fly Mode',
 
     'TPPower'        : 'Teleport Power',
-    'TPComboKey'     : 'Teleport to Cursor on Key Release',
+    'TPComboKey'     : 'Teleport to Reticle on Key Release',
     'TPTPHover'      : 'Hover when Teleporting',
 
     'HasTTP'         : 'Has Team Teleport',
-    'TTPComboKey'    : 'Show Team Teleport Reticle',
+    'TTPComboKey'    : 'Team Teleport to Reticle on Key Release',
     'TTPTPGFly'      : 'Group Fly when Team Teleporting',
 
     'TempEnable'     : 'Enable Temp Travel Mode',

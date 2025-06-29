@@ -329,17 +329,21 @@ class Gameplay(Page):
             if self.GetState('Tray1Enabled'):
                 ResetFile.SetBind(self.Ctrls[f"Tray1Button{button}"].MakeFileKeyBind(f"powexec_slot {slotbutton}"))
             if self.GetState('Tray2Enabled'):
-                self.CheckForDefaultKeyToClear('Second', 2, button)
+                self.CheckForDefaultKeyToClear(2, button)
                 pe_as = "powexec_altslot" if server == "Homecoming" else "px_at1"
                 ResetFile.SetBind(self.Ctrls[f"Tray2Button{button}"].MakeFileKeyBind(f"{pe_as} {slotbutton}"))
             if self.GetState('Tray3Enabled'):
-                self.CheckForDefaultKeyToClear('Third', 3, button)
+                self.CheckForDefaultKeyToClear(3, button)
                 pe_a2 = "powexec_alt2slot" if server == "Homecoming" else "px_at2"
                 ResetFile.SetBind(self.Ctrls[f"Tray3Button{button}"].MakeFileKeyBind(f"{pe_a2} {slotbutton}"))
             if self.GetState('Tray4Enabled'):
-                self.CheckForDefaultKeyToClear('Server', 4, button)
-                pe_ss = 'powexec_serverslot' if server == "Homecoming" else 'px_sv'
+                self.CheckForDefaultKeyToClear(4, button)
+                pe_ss = 'powexec_serverslot' if server == "Homecoming" else 'px_at3'
                 ResetFile.SetBind(self.Ctrls[f"Tray4Button{button}"].MakeFileKeyBind(f"{pe_ss} {slotbutton}"))
+            if self.Ctrls.get('Tray5Enabled', None) and self.GetState('Tray5Enabled'):
+                self.CheckForDefaultKeyToClear(5, button)
+                pe_ss = 'px_sv'  # Rebirth only
+                ResetFile.SetBind(self.Ctrls[f"Tray5Button{button}"].MakeFileKeyBind(f"{pe_ss} {slotbutton}"))
 
         if self.GetState('Tray1Enabled'):
             ResetFile.SetBind(self.Ctrls[f"Tray1Prev"].MakeFileKeyBind("prev_tray"))
@@ -406,10 +410,10 @@ class Gameplay(Page):
 
         return True
 
-    def CheckForDefaultKeyToClear(self, trayname, traynum, button):
+    def CheckForDefaultKeyToClear(self, traynum, button):
         if self.GetState("KeepExisting") == False:
             if KBProfile := self.KeybindProfiles.get(self.GetState('KBProfile'), None):
-                if DefModKey := KBProfile.get(trayname, None):
+                if DefModKey := KBProfile[traynum]:
                     DefKey = f"{DefModKey}+{button}"
                     if self.GetState(f"Tray{traynum}Button{button}") != DefKey and not self.Profile.CheckConflict(DefKey, ''):
                         self.Profile.ResetFile().SetBind(KeyBind(DefKey, "", self, "nop"))

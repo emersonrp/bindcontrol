@@ -149,6 +149,19 @@ class PowerPickerMenu(wx.Menu):
                     setattr(menuitem, 'IconFilename', icon.Filename)
                 smartmenu.Append(menuitem)
 
+        petpowers = GameData.MiscPowers['General']['Vanity Pets']
+        if petpowers:
+            petmenu = wx.Menu()
+            submenu.AppendSubMenu(petmenu, "Vanity Pets")
+            # TODO - Add in subsubsubsubmenus like 'A-H' 'I-M' etc.
+            for power in petpowers:
+                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
+                icon = GetIcon(powerset = 'Misc', power = power)
+                if icon:
+                    menuitem.SetBitmap(icon)
+                    setattr(menuitem, 'IconFilename', icon.Filename)
+                petmenu.Append(menuitem)
+
     def OnMenuSelection(self, evt):
         menuitem = self.FindItemById(evt.GetId())
         label = menuitem.GetItemLabel()

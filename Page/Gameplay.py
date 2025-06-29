@@ -281,7 +281,13 @@ class Gameplay(Page):
                     buttonval = str(button)
                 else:
                     buttonval = ""
+
+                # don't fill in the default value if we're using it somewhere else.
+                if self.Profile.CheckConflict(buttonval, ''): buttonval = ""
+
                 self.Ctrls[f"Tray{tray}Button{button}"].SetLabel(buttonval)
+
+        if evt: evt.Skip()
 
     def OnFillTray(self, evt):
         evtbutton = evt.EventObject

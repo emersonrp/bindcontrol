@@ -518,6 +518,9 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
 
     def onKeyChanged(self, _):
         if self.Page: self.Page.Profile.CheckAllConflicts()
+        # Let's try this out -- every time we pick a new key, update the trays'
+        # default-keys display just in case we've mashed over one of them now.
+        if self.Page: self.Page.Profile.Gameplay.OnKeybindProfilePicker()
 
     def ClearButton(self, _):
         self.SetLabel("")

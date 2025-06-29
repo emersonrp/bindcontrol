@@ -271,8 +271,12 @@ class Gameplay(Page):
 
     def OnKeybindProfilePicker(self, evt = None):
         pickerval = self.GetState('KBProfile')
+
+        # Fill in the disabled / default keys on the powertray slots with their
+        # default values, basically informationally.
         for tray in (range(1,self.NumTrays+1)):
-            if self.GetState(f"Tray{tray}Enabled"): continue # skip trays we might have changed values for
+            # skip trays we have activated and therefore might have changed values for
+            if self.GetState(f"Tray{tray}Enabled"): continue
             modkey = self.KeybindProfiles[pickerval][tray]
             for button in (1,2,3,4,5,6,7,8,9,0):
                 if modkey:

@@ -6,6 +6,7 @@ from Help import HelpButton
 from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
+from UI.BindWizard      import BindWizard
 
 class CustomBinds(Page):
     def __init__(self, parent):
@@ -23,14 +24,20 @@ class CustomBinds(Page):
         newSimpleBindButton.Bind(wx.EVT_BUTTON, self.OnNewSimpleBindButton)
         buttonSizer.Add(newSimpleBindButton, wx.ALIGN_CENTER)
         buttonSizer.Add(HelpButton(self, 'SimpleBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
+
         newComplexBindButton = wx.Button(self, -1, "New Complex Bind")
         newComplexBindButton.Bind(wx.EVT_BUTTON, self.OnNewComplexBindButton)
         buttonSizer.Add(newComplexBindButton, wx.ALIGN_CENTER)
         buttonSizer.Add(HelpButton(self, 'ComplexBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
+
         newBufferBindButton = wx.Button(self, -1, "New Buffer Bind")
         newBufferBindButton.Bind(wx.EVT_BUTTON, self.OnNewBufferBindButton)
         buttonSizer.Add(newBufferBindButton, wx.ALIGN_CENTER)
-        buttonSizer.Add(HelpButton(self, 'BufferBinds.html'), 0, wx.ALIGN_CENTER)
+        buttonSizer.Add(HelpButton(self, 'BufferBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
+
+        launchBindWizardButton = wx.Button(self, -1, "Launch Custom Bind Wizard")
+        launchBindWizardButton.Bind(wx.EVT_BUTTON, self.OnBindWizard)
+        buttonSizer.Add(launchBindWizardButton, wx.ALIGN_CENTER)
 
         # a scrollable window and sizer for the collection of collapsible panes
         self.PaneSizer     = wx.BoxSizer(wx.VERTICAL)
@@ -59,6 +66,13 @@ class CustomBinds(Page):
     def OnNewBufferBindButton(self, evt):
         self.AddBindToPage(bindpane = BufferBindPane(self))
         evt.Skip()
+
+    def OnBindWizard(self, evt = None):
+        bw = BindWizard(self)
+
+        bw.Show()
+
+        if evt: evt.Skip()
 
     def AddBindToPage(self, bindpane = None):
 

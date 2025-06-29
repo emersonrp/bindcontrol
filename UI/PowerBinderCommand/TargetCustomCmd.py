@@ -32,6 +32,10 @@ class TargetCustomCmd(PowerBinderCommand):
         targetCustomSizer.Add(self.targetCustomCBBaseItems, (4,0))
         self.targetCustomCBNotBaseItems = wx.CheckBox(dialog, -1, "Not Base Items")
         targetCustomSizer.Add(self.targetCustomCBNotBaseItems, (4,1))
+        self.targetCustomCBTeammates = wx.CheckBox(dialog, -1, "Teammates")
+        targetCustomSizer.Add(self.targetCustomCBTeammates, (5,0))
+        self.targetCustomCBNotTeammates = wx.CheckBox(dialog, -1, "Not Teammates")
+        targetCustomSizer.Add(self.targetCustomCBNotTeammates, (5,1))
 
         targetCustomSizer.AddGrowableCol(2)
 
@@ -41,43 +45,76 @@ class TargetCustomCmd(PowerBinderCommand):
         choice = self.targetCustomModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
-        targetCommand = "targetcustom" + mode.lower()
 
-        enemy    = " enemy"    if self.targetCustomCBEnemies.      IsChecked() else ""
-        friend   = " friend"   if self.targetCustomCBFriends.      IsChecked() else ""
-        defeated = " defeated" if self.targetCustomCBDefeated.     IsChecked() else ""
-        alive    = " alive"    if self.targetCustomCBAlive.        IsChecked() else ""
-        mypet    = " mypet"    if self.targetCustomCBMyPets.       IsChecked() else ""
-        notmypet = " notmypet" if self.targetCustomCBNotMyPets.    IsChecked() else ""
-        base     = " base"     if self.targetCustomCBBaseItems.    IsChecked() else ""
-        notbase  = " notbase"  if self.targetCustomCBNotBaseItems. IsChecked() else ""
+        if self.Profile.Server == 'Homecoming':
+            targetCommand = "targetcustom" + mode.lower()
+        else: # Rebirth
+            targetCommand = "tgt_" + {
+                'Near' : 'n',
+                'Far'  : 'f',
+                'Next' : 'x',
+                'Prev' : 'p'
+            }[mode]
+
+        enemy       = self.GetServerCommand("enemy")       if self.targetCustomCBEnemies.     IsChecked() else ""
+        friend      = self.GetServerCommand("friend")      if self.targetCustomCBFriends.     IsChecked() else ""
+        defeated    = self.GetServerCommand("defeated")    if self.targetCustomCBDefeated.    IsChecked() else ""
+        alive       = self.GetServerCommand("alive")       if self.targetCustomCBAlive.       IsChecked() else ""
+        mypet       = self.GetServerCommand("mypet")       if self.targetCustomCBMyPets.      IsChecked() else ""
+        notmypet    = self.GetServerCommand("notmypet")    if self.targetCustomCBNotMyPets.   IsChecked() else ""
+        base        = self.GetServerCommand("base")        if self.targetCustomCBBaseItems.   IsChecked() else ""
+        notbase     = self.GetServerCommand("notbase")     if self.targetCustomCBNotBaseItems.IsChecked() else ""
+        teammate    = self.GetServerCommand("teammate")    if self.targetCustomCBTeammates.   IsChecked() else ""
+        notteammate = self.GetServerCommand("notteammate") if self.targetCustomCBNotTeammates.IsChecked() else ""
 
         name = self.targetCustomOptionalName.GetValue()
 
-        return f"{targetCommand}{enemy}{friend}{defeated}{alive}{mypet}{notmypet}{base}{notbase} {name}"
+        return f"{targetCommand}{enemy}{friend}{defeated}{alive}{mypet}{notmypet}{base}{notbase}{teammate}{notteammate} {name}"
 
     def Serialize(self):
         return {
-            'mode'     : self.targetCustomModeChoice.GetSelection(),
-            'enemy'    : self.targetCustomCBEnemies.     IsChecked(),
-            'friend'   : self.targetCustomCBFriends.     IsChecked(),
-            'defeated' : self.targetCustomCBDefeated.    IsChecked(),
-            'alive'    : self.targetCustomCBAlive.       IsChecked(),
-            'mypet'    : self.targetCustomCBMyPets.      IsChecked(),
-            'notmypet' : self.targetCustomCBNotMyPets.   IsChecked(),
-            'base'     : self.targetCustomCBBaseItems.   IsChecked(),
-            'notbase'  : self.targetCustomCBNotBaseItems.IsChecked(),
-            'name'     : self.targetCustomOptionalName.GetValue(),
+            'mode'        : self.targetCustomModeChoice.GetSelection(),
+            'enemy'       : self.targetCustomCBEnemies.     IsChecked(),
+            'friend'      : self.targetCustomCBFriends.     IsChecked(),
+            'defeated'    : self.targetCustomCBDefeated.    IsChecked(),
+            'alive'       : self.targetCustomCBAlive.       IsChecked(),
+            'mypet'       : self.targetCustomCBMyPets.      IsChecked(),
+            'notmypet'    : self.targetCustomCBNotMyPets.   IsChecked(),
+            'base'        : self.targetCustomCBBaseItems.   IsChecked(),
+            'notbase'     : self.targetCustomCBNotBaseItems.IsChecked(),
+            'teammate'    : self.targetCustomCBTeammates.   IsChecked(),
+            'notteammate' : self.targetCustomCBNotTeammates.IsChecked(),
+            'name'        : self.targetCustomOptionalName.GetValue(),
         }
 
     def Deserialize(self, init):
-        if init.get('mode'    , ''): self.targetCustomModeChoice.SetSelection(init['mode'])
-        if init.get('enemy'   , ''): self.targetCustomCBEnemies.     SetValue(init['enemy'])
-        if init.get('friend'  , ''): self.targetCustomCBFriends.     SetValue(init['friend'])
-        if init.get('defeated', ''): self.targetCustomCBDefeated.    SetValue(init['defeated'])
-        if init.get('alive'   , ''): self.targetCustomCBAlive.       SetValue(init['alive'])
-        if init.get('mypet'   , ''): self.targetCustomCBMyPets.      SetValue(init['mypet'])
-        if init.get('notmypet', ''): self.targetCustomCBNotMyPets.   SetValue(init['notmypet'])
-        if init.get('base'    , ''): self.targetCustomCBBaseItems.   SetValue(init['base'])
-        if init.get('notbase' , ''): self.targetCustomCBNotBaseItems.SetValue(init['notbase'])
-        if init.get('name'    , ''): self.targetCustomOptionalName.SetValue(init['name'])
+        if init.get('mode'        , ''): self.targetCustomModeChoice.SetSelection(init['mode'])
+        if init.get('enemy'       , ''): self.targetCustomCBEnemies.     SetValue(init['enemy'])
+        if init.get('friend'      , ''): self.targetCustomCBFriends.     SetValue(init['friend'])
+        if init.get('defeated'    , ''): self.targetCustomCBDefeated.    SetValue(init['defeated'])
+        if init.get('alive'       , ''): self.targetCustomCBAlive.       SetValue(init['alive'])
+        if init.get('mypet'       , ''): self.targetCustomCBMyPets.      SetValue(init['mypet'])
+        if init.get('notmypet'    , ''): self.targetCustomCBNotMyPets.   SetValue(init['notmypet'])
+        if init.get('base'        , ''): self.targetCustomCBBaseItems.   SetValue(init['base'])
+        if init.get('notbase'     , ''): self.targetCustomCBNotBaseItems.SetValue(init['notbase'])
+        if init.get('teammate'    , ''): self.targetCustomCBTeammates.   SetValue(init['teammate'])
+        if init.get('notteammate' , ''): self.targetCustomCBNotTeammates.SetValue(init['notteammate'])
+        if init.get('name'        , ''): self.targetCustomOptionalName.SetValue(init['name'])
+
+    def GetServerCommand(self, command):
+        server = self.Profile.Server
+        if server == 'Homecoming': return f" {command}"
+
+        # Rebirth abbreviations
+        return {
+            'enemy'       : ' em',
+            'friend'      : ' fd',
+            'defeated'    : ' dd',
+            'alive'       : ' ae',
+            'mypet'       : ' mp',
+            'notmypet'    : ' np',
+            'base'        : ' bc',
+            'notbase'     : ' bn',
+            'teammate'    : ' tm',
+            'notteammate' : ' tn',
+        }[command]

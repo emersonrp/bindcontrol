@@ -29,11 +29,17 @@ class PrefsDialog(wx.Dialog):
         generalPanel = wx.Panel(notebook)
         generalSizer = wx.FlexGridSizer(2,0,0)
 
-        generalSizer.Add( wx.StaticText(generalPanel, label = 'Game Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        generalSizer.Add( wx.StaticText(generalPanel, label = 'Homecoming Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.gameDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('GamePath'), size = (300, -1))
-        self.gameDirPicker.SetToolTip('This is where your game is installed.  This will be used to install popmenus.')
+        self.gameDirPicker.DefaultToolTip = 'This is where Homecoming is installed.  This will be used to install popmenus, and is optional.'
         self.gameDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
         generalSizer.Add( self.gameDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+
+        generalSizer.Add( wx.StaticText(generalPanel, label = 'Rebirth Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        self.gameDirRebirthPicker = cgDirPickerCtrl(generalPanel, path = config.Read('GameRebirthPath'), size = (300, -1))
+        self.gameDirRebirthPicker.DefaultToolTip = 'This is where Rebirth is installed.  This will be used to install popmenus, and is optional.'
+        self.gameDirRebirthPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
+        generalSizer.Add( self.gameDirRebirthPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         generalSizer.Add( wx.StaticText(generalPanel, label = 'Game Language:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.gameLangPicker = wx.Choice(generalPanel, choices = ['ChineseTraditional','English','French','German','Japanese','Korean','uk'])
@@ -229,23 +235,37 @@ class PrefsDialog(wx.Dialog):
         self.OnGameBindsDirPickerChanged()
 
     def OnDirPickerChange(self, evt = None):
+        # Check the gamedir picker
         gamedir = Path(self.gameDirPicker.GetPath())
-        if gamedir.is_dir():
-            self.gameDirPicker.RemoveError('exists')
+        if gamedir.is_absolute():
+            if gamedir.is_dir():
+                self.gameDirPicker.RemoveError('exists')
 
-            if (
-                    # Homecoming
-                    (Path(gamedir / 'bin').is_dir() and Path(gamedir / 'assets').is_dir())
-                    or
-                    # Rebirth
-                    (Path(gamedir / 'Rebirth.exe').is_file())
-                ):
-                self.gameDirPicker.RemoveWarning('wrongdir')
+                if ( Path(gamedir / 'bin').is_dir() and Path(gamedir / 'assets').is_dir()):
+                    self.gameDirPicker.RemoveWarning('wrongdir')
+                else:
+                    self.gameDirPicker.AddWarning('wrongdir', f'The directory "{gamedir}" doesn\'t seem to have a Homecoming installation.  BindControl needs this to install popmenus for Homecoming-based Profiles.  Keybinds will still work, and this setting is optional.')
+
             else:
-                self.gameDirPicker.AddWarning('wrongdir', f'The directory "{gamedir}" doesn\'t seem to have a City of Heroes isntallation.  BindControl only currently supports popmenus with Homecoming and Rebirth installations.  Keybinds will still work.')
-
+                self.gameDirPicker.AddError('exists', f'The directory "{gamedir}" does not exist.  This is required if you wish to use the popmenu editor with Homecoming installations, but is otherwise optional.')
         else:
-            self.gameDirPicker.AddError('exists', f'The directory "{gamedir}" does not exist.  This is required if you wish to use the popmenu editor.')
+            self.gameDirPicker.ClearErrors()
+
+        # Check the rebirthdir picker
+        rebirthdir = Path(self.gameDirRebirthPicker.GetPath())
+        if rebirthdir.is_absolute():
+            if rebirthdir.is_dir():
+                self.gameDirRebirthPicker.RemoveError('exists')
+
+                if (Path(rebirthdir / 'Rebirth.exe').is_file()):
+                    self.gameDirRebirthPicker.RemoveWarning('wrongdir')
+                else:
+                    self.gameDirRebirthPicker.AddWarning('wrongdir', f'The directory "{rebirthdir}" doesn\'t seem to have a Rebirth installation.  BindControl needs this to install popmenus for Rebirth-based Profiles.  Keybinds will still work, and this setting is optional.')
+
+            else:
+                self.gameDirRebirthPicker.AddError('exists', f'The directory "{rebirthdir}" does not exist.  This is required if you wish to use the popmenu editor with Rebirth installations, but is otherwise optional.')
+        else:
+            self.gameDirRebirthPicker.ClearErrors()
 
         bindsdir = Path(self.bindsDirPicker.GetPath())
         if bindsdir.is_dir():
@@ -283,6 +303,7 @@ class PrefsDialog(wx.Dialog):
         if self.ShowModal() == wx.ID_OK:
             config = wx.ConfigBase.Get()
             config.Write('GamePath', self.gameDirPicker.GetPath())
+            config.Write('GameRebirthPath', self.gameDirRebirthPicker.GetPath())
             config.Write('GameLang', self.gameLangPicker.GetStringSelection())
             config.Write('BindPath', self.bindsDirPicker.GetPath())
             if self.gameBindsDirPicker:

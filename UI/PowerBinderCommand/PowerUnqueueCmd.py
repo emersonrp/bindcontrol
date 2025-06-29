@@ -6,4 +6,4 @@ class PowerUnqueueCmd(PowerBinderCommand):
     Menu = "Powers"
 
     def MakeBindString(self):
-        return 'powexecunqueue'
+        return 'powexecunqueue' if self.Profile.Server == "Homecoming" else 'px_uq'

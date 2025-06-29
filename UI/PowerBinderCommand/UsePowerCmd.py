@@ -29,12 +29,13 @@ class UsePowerCmd(PowerBinderCommand):
         return outerSizer
 
     def MakeBindString(self):
+        server = self.Profile.Server
         if self.usePowerRBToggle.GetValue():
             method = "powexecname"
         elif self.usePowerRBOn.GetValue():
-            method = "powexectoggleon"
+            method = "powexectoggleon" if server == "Homecoming" else "px_tgon"
         elif self.usePowerRBOff.GetValue():
-            method = "powexectoggleoff"
+            method = "powexectoggleoff" if server == "Homecoming" else "px_tgof"
         else:
             wx.LogWarning('PowerBindCmd "UsePowerCmd" got an impossible value for toggle/on/off')
             return ''

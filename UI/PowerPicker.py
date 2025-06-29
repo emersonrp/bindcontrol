@@ -110,57 +110,29 @@ class PowerPickerMenu(wx.Menu):
                 submenu.Append(menuitem)
 
         # Misc / Inherent Powers
-        submenu = wx.Menu()
+        submenu = self.MakeRecursiveMenu(GameData.MiscPowers)
         self.AppendSubMenu(submenu, "Misc")
 
-        accoladepowers = GameData.MiscPowers['Badge']['Accolade']
-        if accoladepowers:
-            accolademenu = wx.Menu()
-            submenu.AppendSubMenu(accolademenu, "Accolade")
-            for power in accoladepowers:
-                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
-                icon = GetIcon(powerset = 'Misc', power = power)
-                if icon:
-                    menuitem.SetBitmap(icon)
-                    setattr(menuitem, 'IconFilename', icon.Filename)
-                accolademenu.Append(menuitem)
+    def MakeRecursiveMenu(self, menustruct):
+        print(f"menustruct is {menustruct}")
+        menu = wx.Menu()
 
-        inherentpowers = GameData.MiscPowers['General']['Inherent']
-        if inherentpowers:
-            inherentmenu = wx.Menu()
-            submenu.AppendSubMenu(inherentmenu, "Inherent")
-            for power in inherentpowers:
-                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
-                icon = GetIcon(powerset = 'Misc', power = power)
-                if icon:
-                    menuitem.SetBitmap(icon)
-                    setattr(menuitem, 'IconFilename', icon.Filename)
-                inherentmenu.Append(menuitem)
+        for name, data in menustruct.items():
+            if isinstance(data, dict):
+                print(f"got a dict {data}")
+                submenu = self.MakeRecursiveMenu(data)
+                menu.AppendSubMenu(submenu, name)
+            elif isinstance(data, list):
+                print(f"got a list {data}")
+                for item in data:
+                    menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
+                    icon = GetIcon(powerset = 'Misc', power = item)
+                    if icon:
+                        menuitem.SetBitmap(icon)
+                        setattr(menuitem, 'IconFilename', icon.Filename)
+                    menu.Append(menuitem)
 
-        smartpowers = GameData.MiscPowers['General']['SMART']
-        if smartpowers:
-            smartmenu = wx.Menu()
-            submenu.AppendSubMenu(smartmenu, "SMART")
-            for power in smartpowers:
-                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
-                icon = GetIcon(powerset = 'Misc', power = power)
-                if icon:
-                    menuitem.SetBitmap(icon)
-                    setattr(menuitem, 'IconFilename', icon.Filename)
-                smartmenu.Append(menuitem)
-
-        petpowers = GameData.MiscPowers['General']['Vanity Pets']
-        if petpowers:
-            petmenu = wx.Menu()
-            submenu.AppendSubMenu(petmenu, "Vanity Pets")
-            # TODO - Add in subsubsubsubmenus like 'A-H' 'I-M' etc.
-            for power in petpowers:
-                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
-                icon = GetIcon(powerset = 'Misc', power = power)
-                if icon:
-                    menuitem.SetBitmap(icon)
-                    setattr(menuitem, 'IconFilename', icon.Filename)
-                petmenu.Append(menuitem)
+        return menu
 
     def OnMenuSelection(self, evt):
         menuitem = self.FindItemById(evt.GetId())

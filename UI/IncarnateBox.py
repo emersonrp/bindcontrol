@@ -146,7 +146,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
     def BuildMenu(self, slot):
         menu = wx.Menu()
 
-        incData = GameData.MiscPowers['Incarnate'][slot]
+        incData = GameData.IncarnatePowers[slot]
 
         for type in incData['Types']:
             submenu = wx.Menu()

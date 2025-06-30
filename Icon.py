@@ -14,7 +14,7 @@ class Icon(wx.Bitmap):
         self.Filename = ""
 
 Icons: Dict[str, Icon] = { }
-def GetIcon(name = '', powerset = '', power = ''):
+def GetIcon(name = '', powerset = '', power = '', silent = False):
 
     # If we haven't initialized the empty/fallback icon, do that now.
     if not 'Empty' in Icons:
@@ -46,7 +46,7 @@ def GetIcon(name = '', powerset = '', power = ''):
                 Icons[name] = Icon( wx.Image( filename, wx.BITMAP_TYPE_ANY, -1,))
                 Icons[name].Filename = name
             else:
-                print(f"Missing icon: {name}")
+                if not silent: print(f"Missing icon: {name}")
 
     return Icons.get(name, Icons['Empty'])
 

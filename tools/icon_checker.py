@@ -29,6 +29,23 @@ Aliases = {
     "Warworks"            : "WarWorks",
 }
 
+def RecurseMiscPowers(menustruct):
+    powerlist = []
+
+    for data in menustruct.values():
+        if isinstance(data, dict):
+            plist = RecurseMiscPowers(data)
+            powerlist.extend(plist)
+        elif isinstance(data, list):
+            for item in data:
+                if isinstance(item, str):
+                    powerlist.append(item)
+                else:
+                    plist = RecurseMiscPowers(item)
+                    powerlist.extend(plist)
+
+    return powerlist
+
 count = 0
 filecheck = set()
 for filename in [f for f in os.listdir(f"{parentdir}/icons/Archetypes/") if f.endswith('png')]:
@@ -86,7 +103,7 @@ for server in ('Homecoming', 'Rebirth'):
             if filename in filecheck: filecheck.remove(filename)
 
     # Pool Powers
-    for poolname, pool in GameData.MiscPowers['Pool'].items():
+    for poolname, pool in GameData.PoolPowers.items():
         for power in pool:
 
             power = re.sub(r'\W+', '', power)
@@ -99,7 +116,7 @@ for server in ('Homecoming', 'Rebirth'):
                 if filename in filecheck: filecheck.remove(filename)
 
     # Incarnate Powers
-    for slot, slotdata in GameData.MiscPowers['Incarnate'].items():
+    for slot, slotdata in GameData.IncarnatePowers.items():
         for type in slotdata['Types']:
             aliasedtype = Aliases.get(type, type)
             for rarity in ['Common', 'Uncommon', 'Rare', 'VeryRare']:
@@ -111,8 +128,7 @@ for server in ('Homecoming', 'Rebirth'):
                     if filename in filecheck: filecheck.remove(filename)
 
     # Misc Powers
-    # TODO generalize this more?
-    miscpowerlist = GameData.MiscPowers['Badge']['Accolade'] + GameData.MiscPowers['General']['Inherent'] + GameData.MiscPowers['General']['SMART']
+    miscpowerlist = RecurseMiscPowers(GameData.MiscPowers)
     for power in miscpowerlist:
         power = re.sub(r'\W+', '', power)
         filename = f"Misc_{power}.png"

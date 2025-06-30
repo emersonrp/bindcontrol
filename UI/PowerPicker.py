@@ -15,9 +15,6 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         self.Bind(wx.EVT_BUTTON, self.OnPowerPicker)
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
         self.IconFilename = ''
-        self.Errors = {}
-        self.Warnings = {}
-        self.DefaultToolTip = ""
         self.Picker = None
 
     def OnPowerPicker(self, _):
@@ -43,8 +40,7 @@ class PowerPickerMenu(wx.Menu):
 
     def BuildMenu(self):
 
-        profile = wx.Window.FindWindowByName("Profile")
-        gen = profile.General
+        gen = wx.App.Get().Main.Profile.General
 
         # primary / secondary / epic powers
         archdata = GameData.Archetypes[gen.GetState('Archetype')]
@@ -87,7 +83,7 @@ class PowerPickerMenu(wx.Menu):
                 submenu = wx.Menu()
                 self.AppendSubMenu(submenu, "Pool: " + poolname)
 
-                powers = GameData.MiscPowers['Pool'][poolname]
+                powers = GameData.PoolPowers[poolname]
                 for power in powers:
                     menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
                     icon = GetIcon(powerset = poolname, power = power)
@@ -109,45 +105,29 @@ class PowerPickerMenu(wx.Menu):
                     setattr(menuitem, 'IconFilename', power['iconfilename'])
                 submenu.Append(menuitem)
 
-        # Misc / Inherent Powers
-        submenu = wx.Menu()
+        # Misc Powers
+        submenu = self.MakeRecursiveMenu(GameData.MiscPowers)
         self.AppendSubMenu(submenu, "Misc")
 
-        accoladepowers = GameData.MiscPowers['Badge']['Accolade']
-        if accoladepowers:
-            accolademenu = wx.Menu()
-            submenu.AppendSubMenu(accolademenu, "Accolade")
-            for power in accoladepowers:
-                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
-                icon = GetIcon(powerset = 'Misc', power = power)
-                if icon:
-                    menuitem.SetBitmap(icon)
-                    setattr(menuitem, 'IconFilename', icon.Filename)
-                accolademenu.Append(menuitem)
+    def MakeRecursiveMenu(self, menustruct):
+        menu = wx.Menu()
 
-        inherentpowers = GameData.MiscPowers['General']['Inherent']
-        if inherentpowers:
-            inherentmenu = wx.Menu()
-            submenu.AppendSubMenu(inherentmenu, "Inherent")
-            for power in inherentpowers:
-                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
-                icon = GetIcon(powerset = 'Misc', power = power)
-                if icon:
-                    menuitem.SetBitmap(icon)
-                    setattr(menuitem, 'IconFilename', icon.Filename)
-                inherentmenu.Append(menuitem)
+        for name, data in menustruct.items():
+            if isinstance(data, dict):
+                submenu = self.MakeRecursiveMenu(data)
+                menu.AppendSubMenu(submenu, name)
+            elif isinstance(data, list):
+                submenu = wx.Menu()
+                for item in data:
+                    menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
+                    icon = GetIcon(powerset = 'Misc', power = item, silent = True)
+                    if icon:
+                        menuitem.SetBitmap(icon)
+                        setattr(menuitem, 'IconFilename', icon.Filename)
+                    submenu.Append(menuitem)
+                menu.AppendSubMenu(submenu, name)
 
-        smartpowers = GameData.MiscPowers['General']['SMART']
-        if smartpowers:
-            smartmenu = wx.Menu()
-            submenu.AppendSubMenu(smartmenu, "SMART")
-            for power in smartpowers:
-                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
-                icon = GetIcon(powerset = 'Misc', power = power)
-                if icon:
-                    menuitem.SetBitmap(icon)
-                    setattr(menuitem, 'IconFilename', icon.Filename)
-                smartmenu.Append(menuitem)
+        return menu
 
     def OnMenuSelection(self, evt):
         menuitem = self.FindItemById(evt.GetId())

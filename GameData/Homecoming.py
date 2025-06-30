@@ -769,7 +769,7 @@ MiscPowers = {
             ]
     },
     'Vanity Pets' : {
-        'A-H' : [
+        'A-L' : [
             'Pet: Arachnos Drone',
             'Pet: Black Wolf',
             'Pet: Camera Drone',
@@ -781,15 +781,13 @@ MiscPowers = {
             'Demon Pet',
             'Pet: German Shepherd',
             'Pet: Hamidon Bud',
-            ],
-        'I-L' : [
             'Pet: Image of the Well',
             'Pet: Leprechaun',
             'Pet: Liger',
             'Pet: Lion',
             'Pet: Lioness',
             ],
-        'M-P' : [
+        'M' : [
             'Pet: Mekman',
             'Mekman Pet',
             # 'Pet: Miniature Vanguard Assault Suit', # Not in City of Data
@@ -831,10 +829,10 @@ MiscPowers = {
             'Pet: Mini Tyrant',
             'Pet: Mini U\'kon Gr\'ai',
             'Pet: Mystic Lantern',
+            ],
+        'N-Z' : [
             'Pet: Police Drone',
             'Pet: Praetorian Battle Orb',
-            ],
-        'R-Z' : [
             'Pet: Redcap Rascal',
             'Redcap Pet',
             'Pet: Rikti Drone',

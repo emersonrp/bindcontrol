@@ -80,10 +80,10 @@ class KeySelectDialog(wx.Dialog):
         # is this ugly?
         sizer = wx.BoxSizer(wx.VERTICAL);
 
-        self.kbDesc = wx.StaticText     ( self, -1, desc,          style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
-        self.kbBind = wx.html.HtmlWindow( self, -1, size=(450,60), style=wx.html.HW_SCROLLBAR_NEVER)
+        self.kbDesc = wx.StaticText     ( self, -1, desc,                 style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
+        self.kbBind = wx.html.HtmlWindow( self, -1, size=wx.Size(450,60), style=wx.html.HW_SCROLLBAR_NEVER)
         self.kbBind.SetHTMLBackgroundColour( wx.WHITE )
-        self.kbErr  = wx.StaticText     ( self, -1, " ",           style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
+        self.kbErr  = wx.StaticText     ( self, -1, " ",                  style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
 
         self.ShowBind()
 
@@ -340,7 +340,7 @@ class KeySelectDialog(wx.Dialog):
                     conflictStrings.append(f'Conflict with "{conflict["ctrl"]}" on {conflict["page"]} page.')
                 self.kbErr.SetForegroundColour(wx.RED)
                 self.kbErr.SetLabel("\n".join(conflictStrings))
-                self.kbBind.SetHTMLBackgroundColour((255,200,200))
+                self.kbBind.SetHTMLBackgroundColour(wx.Colour(255,200,200))
             else:
                 self.kbErr.SetForegroundColour(wx.NullColour)
                 self.kbErr.SetLabel(" ")

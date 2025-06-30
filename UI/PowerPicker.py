@@ -11,7 +11,7 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         wx.Button.__init__(self, parent)
 
         self.SetLabel('...')
-        self.SetMinSize((-1, 40))
+        self.SetMinSize(wx.Size(-1, 40))
         self.Bind(wx.EVT_BUTTON, self.OnPowerPicker)
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
         self.IconFilename = ''

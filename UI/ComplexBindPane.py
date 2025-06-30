@@ -205,15 +205,15 @@ class BindStep(wx.Panel):
         self.PowerBinder = PowerBinderButton(self, BindContents, step.get('powerbinderdata', {}))
         sizer.Add(self.PowerBinder, 0)
 
-        self.moveUpButton = wx.Button(self, -1, '\u25B2', size = (40, -1))
+        self.moveUpButton = wx.Button(self, -1, '\u25B2', size = wx.Size(40, -1))
         self.moveUpButton.Bind(wx.EVT_BUTTON, parent.onMoveUpButton)
         sizer.Add(self.moveUpButton, 0)
 
-        self.moveDownButton = wx.Button(self, -1, '\u25BC', size = (40, -1))
+        self.moveDownButton = wx.Button(self, -1, '\u25BC', size = wx.Size(40, -1))
         self.moveDownButton.Bind(wx.EVT_BUTTON, parent.onMoveDownButton)
         sizer.Add(self.moveDownButton, 0)
 
-        delButton = wx.Button(self, -1, "X", size = (40,-1))
+        delButton = wx.Button(self, -1, "X", size = wx.Size(40,-1))
         delButton.SetForegroundColour(wx.RED)
         delButton.Bind(wx.EVT_BUTTON, parent.onDelButton)
         sizer.Add(delButton, 0)

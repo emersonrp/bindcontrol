@@ -238,10 +238,10 @@ class Main(wx.Frame):
             width  = self.Profile.GetBestSize().width + 24 # account for Profile's padding
 
         if width and height:
-            self.SetSize((width, height))
+            self.SetSize((wx.Size(width, height)))
 
         if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinX') and config.HasEntry('WinY'):
-            self.SetPosition((config.ReadInt('WinX'), config.ReadInt('WinY')))
+            self.SetPosition(wx.Point((config.ReadInt('WinX'), config.ReadInt('WinY'))))
 
         self.BindDirsWindow = None
 

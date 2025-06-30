@@ -801,7 +801,7 @@ class WriteDoneDialog(wx.Dialog):
         sizer.Add(blfSizer, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
         ### "Files Written" list
-        fileslist = wx.TextCtrl(self, id = wx.ID_ANY, size=(-1,150),
+        fileslist = wx.TextCtrl(self, id = wx.ID_ANY, size = wx.Size(-1, 150),
                                 value = "reset.txt\n", style = wx.TE_READONLY|wx.TE_MULTILINE)
         for filename in sorted(parent.BindFiles.keys()):
             if filename == "reset.txt": continue

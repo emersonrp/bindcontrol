@@ -9,10 +9,10 @@ class WindowColorCmd(PowerBinderCommand):
     def BuildUI(self, dialog):
         windowColorSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.ColorBorder  = wx.Panel(dialog, -1, size = (150, 150))
+        self.ColorBorder  = wx.Panel(dialog, -1, size = wx.Size(150, 150))
         borderSizer = wx.BoxSizer(wx.VERTICAL)
         self.ColorBorder.SetSizer(borderSizer)
-        self.ColorDisplay = wx.StaticText(self.ColorBorder, -1, size = (140, 140))
+        self.ColorDisplay = wx.StaticText(self.ColorBorder, -1, size = wx.Size(140, 140))
         borderSizer.Add(self.ColorDisplay, 0, wx.ALL, 5)
 
         windowColorSizer.Add(self.ColorBorder, 0, wx.ALIGN_CENTER|wx.RIGHT, 15)
@@ -20,7 +20,7 @@ class WindowColorCmd(PowerBinderCommand):
         RGBASizer = wx.FlexGridSizer(3, 4, 5)
 
         RGBASizer.Add(wx.StaticText(dialog, label = "R:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
-        self.RSlider = wx.Slider(dialog, -1, size = (300, -1), value = 36, minValue = 0, maxValue = 255)
+        self.RSlider = wx.Slider(dialog, -1, size = wx.Size(300, -1), value = 36, minValue = 0, maxValue = 255)
         self.RSlider.Bind(wx.EVT_SCROLL, self.UpdateFromSlider)
         RGBASizer.Add(self.RSlider, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
         self.RReadout = wx.SpinCtrl(dialog, -1, initial = 128, min = 0, max = 255)
@@ -28,7 +28,7 @@ class WindowColorCmd(PowerBinderCommand):
         RGBASizer.Add(self.RReadout, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
 
         RGBASizer.Add(wx.StaticText(dialog, label = "G:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
-        self.GSlider = wx.Slider(dialog, -1, size = (300, -1), value = 145, minValue = 0, maxValue = 255)
+        self.GSlider = wx.Slider(dialog, -1, size = wx.Size(300, -1), value = 145, minValue = 0, maxValue = 255)
         self.GSlider.Bind(wx.EVT_SCROLL, self.UpdateFromSlider)
         RGBASizer.Add(self.GSlider, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
         self.GReadout = wx.SpinCtrl(dialog, -1, initial = 128, min = 0, max = 255)
@@ -36,7 +36,7 @@ class WindowColorCmd(PowerBinderCommand):
         RGBASizer.Add(self.GReadout, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
 
         RGBASizer.Add(wx.StaticText(dialog, label = "B:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
-        self.BSlider = wx.Slider(dialog, -1, size = (300, -1), value = 255, minValue = 0, maxValue = 255)
+        self.BSlider = wx.Slider(dialog, -1, size = wx.Size(300, -1), value = 255, minValue = 0, maxValue = 255)
         self.BSlider.Bind(wx.EVT_SCROLL, self.UpdateFromSlider)
         RGBASizer.Add(self.BSlider, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
         self.BReadout = wx.SpinCtrl(dialog, -1, initial = 128, min = 0, max = 255)
@@ -44,7 +44,7 @@ class WindowColorCmd(PowerBinderCommand):
         RGBASizer.Add(self.BReadout, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
 
         RGBASizer.Add(wx.StaticText(dialog, label = "A:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
-        self.ASlider = wx.Slider(dialog, -1, size = (300, -1), value = 255, minValue = 0, maxValue = 255)
+        self.ASlider = wx.Slider(dialog, -1, size = wx.Size(300, -1), value = 255, minValue = 0, maxValue = 255)
         self.ASlider.Bind(wx.EVT_SCROLL, self.UpdateFromSlider)
         RGBASizer.Add(self.ASlider, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
         self.AReadout = wx.SpinCtrl(dialog, -1, initial = 128, min = 0, max = 255)
@@ -84,8 +84,8 @@ class WindowColorCmd(PowerBinderCommand):
         Gval = self.GSlider.GetValue()
         Bval = self.BSlider.GetValue()
         Aval = self.ASlider.GetValue()
-        self.ColorBorder.SetBackgroundColour((Rval, Gval, Bval))
-        self.ColorDisplay.SetBackgroundColour((Aval, Aval, Aval))
+        self.ColorBorder.SetBackgroundColour(wx.Colour(Rval, Gval, Bval))
+        self.ColorDisplay.SetBackgroundColour(wx.Colour(Aval, Aval, Aval))
         self.RReadout.SetValue(Rval)
         self.GReadout.SetValue(Gval)
         self.BReadout.SetValue(Bval)
@@ -97,8 +97,8 @@ class WindowColorCmd(PowerBinderCommand):
         Gval = self.GReadout.GetValue()
         Bval = self.BReadout.GetValue()
         Aval = self.AReadout.GetValue()
-        self.ColorBorder.SetBackgroundColour((Rval, Gval, Bval))
-        self.ColorDisplay.SetBackgroundColour((Aval, Aval, Aval))
+        self.ColorBorder.SetBackgroundColour(wx.Colour(Rval, Gval, Bval))
+        self.ColorDisplay.SetBackgroundColour(wx.Colour(Aval, Aval, Aval))
         self.RSlider.SetValue(Rval)
         self.GSlider.SetValue(Gval)
         self.BSlider.SetValue(Bval)

@@ -42,20 +42,20 @@ class BindDirsWindow(wx.MiniFrame):
             label = Profile.CheckProfileForBindsDir(binddir)
             dirname = statictextclass(panel, label = label or '')
             if not label:
-                dirname.SetForegroundColour((128,128,128))
+                dirname.SetForegroundColour(wx.Colour(128,128,128))
                 dirname.SetFont(unmgdFont)
                 dirname.SetLabelMarkup('-unmanaged-')
                 dirname.SetToolTip(f'No known profile is managing this directory.')
             else:
                 if file := Profile.GetProfileFileForName(label):
                     dirname.SetFont(linkFont)
-                    dirname.SetForegroundColour((0,0,255))
+                    dirname.SetForegroundColour(wx.Colour(0,0,255))
                     dirname.SetToolTip(f'Click to load profile "{label}"')
                     dirname.SetCursor(wx.Cursor(wx.CURSOR_HAND))
                     # TODO Bind to a partial with 'file' in it
                     dirname.Bind(wx.EVT_LEFT_DOWN, partial(self.OnProfileClick, file = file, label = label))
                 else:
-                    dirname.SetForegroundColour((255,0,0))
+                    dirname.SetForegroundColour(wx.Colour(255,0,0))
                     dirname.SetToolTip(f'The profile "{label}" isn\'t available to be loaded.')
 
 

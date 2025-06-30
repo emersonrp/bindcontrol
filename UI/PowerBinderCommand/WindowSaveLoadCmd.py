@@ -13,7 +13,7 @@ class WindowSaveLoadCmd(PowerBinderCommand):
         self.CommandChoice.SetSelection(0)
         sizer.Add(self.CommandChoice, 0, wx.ALL, 5)
 
-        self.FilePath = wx.TextCtrl(dialog, -1, size = (400, -1),
+        self.FilePath = wx.TextCtrl(dialog, -1, size = wx.Size(400, -1),
             value = str(wx.App.Get().Main.Profile.GameBindsDir() / 'windows.txt'))
         sizer.Add(self.FilePath, 0, wx.ALL, 5)
 

@@ -180,8 +180,8 @@ class CGControlMixin:
         super().__init__(*args, **kwargs)
 
     def Enable(self, enable = True):
-        super().Enable(enable) # pyright: ignore
         if self.CtlLabel: self.CtlLabel.Enable(enable)
+        return super().Enable(enable) # pyright: ignore
 
     def Show(self, show = True):
         self.GetContainingSizer().Show(self, show = show)
@@ -190,11 +190,12 @@ class CGControlMixin:
             self.GetContainingSizer().Show(self.CtlLabel, show = show)
             self.CtlLabel.Enable(show)
         if self.Page: self.Page.Layout()
+        return True
 
     def SetToolTip(self, tooltip):
-        super().SetToolTip(tooltip) # pyright: ignore
         if self.CtlLabel:
             self.CtlLabel.SetToolTip(tooltip)
+        return super().SetToolTip(tooltip) # pyright: ignore
 
 # Miniclasses to use mixins
 class cgbcKeyButton     (CGControlMixin,                    bcKeyButton)         :

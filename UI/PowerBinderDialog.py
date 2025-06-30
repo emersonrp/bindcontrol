@@ -32,7 +32,7 @@ class PowerBinderDialog(wx.Dialog):
 
         rearrangeCtrl = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.RearrangeList = wx.RearrangeList(self, -1, size=(550,400))
+        self.RearrangeList = wx.RearrangeList(self, -1, size = wx.Size(550,400))
         self.RearrangeList.Bind(wx.EVT_LISTBOX, self.OnListSelect)
         self.RearrangeList.Bind(wx.EVT_LISTBOX_DCLICK, self.OnRearrangeEdit)
         rearrangeCtrl.Add(self.RearrangeList, 1)
@@ -84,8 +84,9 @@ class PowerBinderDialog(wx.Dialog):
             bindstring = self.MakeBindString()
             if bindstring != self.Button.tgtTxtCtrl.GetValue():
                 self.BindStringDisplay.AddError('nomatch', "The PowerBinder configuration doesn't match the bind string saved with the profile.  Check that the PowerBinder dialog is configured correctly before pressing 'OK' as this will overwrite the saved bind string.")
-        super().Show(show)
+        retval = super().Show(show)
         self.SetFocus()
+        return retval
 
     # Load plugins / modules from UI/PowerBinderCommand directory
     def LoadModules(self):
@@ -331,7 +332,7 @@ class PowerBinderEditDialog(wx.Dialog):
         outerSizer = wx.BoxSizer(wx.VERTICAL)
 
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
-        self.mainSizer.SetMinSize([500, 150])
+        self.mainSizer.SetMinSize(wx.Size(500, 150))
 
         self.Page = parent.Page
 

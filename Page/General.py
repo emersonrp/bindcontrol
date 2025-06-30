@@ -8,7 +8,6 @@ import GameData
 
 from UI.ControlGroup import ControlGroup
 from UI.IncarnateBox import IncarnateBox
-# from UI.ChatColorPicker import ChatColorPicker, ChatColors
 
 from Page import Page
 
@@ -55,9 +54,9 @@ class General(Page):
         nameSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.nameBox.SetSizer(nameSizer)
 
-        self.OriginIcon    = wx.StaticBitmap(self.nameBox, size = (32, 32))
+        self.OriginIcon    = wx.StaticBitmap(self.nameBox, size = wx.Size(32, 32))
         self.NameDisplay   = ST.GenStaticText(self.nameBox, -1, "", style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        self.ArchetypeIcon = wx.StaticBitmap(self.nameBox, size = (32,32))
+        self.ArchetypeIcon = wx.StaticBitmap(self.nameBox, size = wx.Size(32,32))
 
         self.NameDisplay.SetFont(wx.Font(wx.FontInfo().Bold()))
 
@@ -76,7 +75,7 @@ class General(Page):
             contents = GameData.Alignments,
             callback = self.OnPickAlignment,
         )
-        alignmentpicker.SetMinSize([200,-1])
+        alignmentpicker.SetMinSize(wx.Size(200,-1))
 
         originchoices = []
         for Origin in GameData.Origins:
@@ -87,7 +86,7 @@ class General(Page):
             contents = GameData.Origins,
             callback = self.OnPickOrigin,
         )
-        originpicker.SetMinSize([200,-1])
+        originpicker.SetMinSize(wx.Size(200,-1))
 
         archchoices = []
         for Arch in sorted(GameData.Archetypes):
@@ -98,7 +97,7 @@ class General(Page):
             contents = sorted(GameData.Archetypes),
             callback = self.OnPickArchetype,
         )
-        archpicker.SetMinSize([200,-1])
+        archpicker.SetMinSize(wx.Size(200,-1))
 
         powersBox.AddControl(
             ctlName = 'Primary',
@@ -263,14 +262,14 @@ class General(Page):
     ### EVENT HANDLERS
     def OnPickAlignment(self, evt = None):
         # TODO put this in Gamedata?
-        bgcolor = {
+        bgcolor = wx.Colour({
             'Hero'       : ( 35, 130, 212),
             'Villain'    : (225,  65,  65),
             'Vigilante'  : (241, 213, 114),
             'Rogue'      : (180, 180, 180),
             'Resistance' : ( 30, 240, 255),
             'Loyalist'   : (255, 226,  56),
-        }[self.GetState('Alignment')]
+        }[self.GetState('Alignment')])
         self.nameBox.SetBackgroundColour(bgcolor)
         self.NameDisplay.SetBackgroundColour(bgcolor)
         # Have to do this dance to make the colors refresh on Windows.  Ugh.

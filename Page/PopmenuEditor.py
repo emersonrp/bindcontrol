@@ -92,7 +92,7 @@ class PopmenuEditor(Page):
         MiddlePanel.SetSizer(MiddleSizer)
 
         self.CheckGameDirBox = wx.Panel(MiddlePanel)
-        self.CheckGameDirBox.SetBackgroundColour((255,200,200))
+        self.CheckGameDirBox.SetBackgroundColour(wx.Colour(255,200,200))
         CheckGameDirSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.CheckGameDirBox.SetSizer(CheckGameDirSizer)
         CheckGameDirText = wx.StaticText(self.CheckGameDirBox, label = "Your game directory is not set up correctly.\nThis is required for the Popmenu Editor to work.\nPlease visit the Preferences dialog.")
@@ -103,7 +103,7 @@ class PopmenuEditor(Page):
         self.CheckGameDirBox.Hide()
 
         self.CheckMenuDirBox = wx.Panel(MiddlePanel)
-        self.CheckMenuDirBox.SetBackgroundColour((255,200,200))
+        self.CheckMenuDirBox.SetBackgroundColour(wx.Colour(255,200,200))
         CheckMenuDirSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.CheckMenuDirBox.SetSizer(CheckMenuDirSizer)
         CheckMenuDirText = wx.StaticText(self.CheckMenuDirBox, label = "Your Popmenu directory does not exist.  BindControl can create it for you.")

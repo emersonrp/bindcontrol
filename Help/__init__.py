@@ -29,7 +29,7 @@ class HelpHTMLWindow(wx.html.HtmlWindow):
 
 class HelpWindow(wx.MiniFrame):
     def __init__(self, parent, filename):
-        wx.MiniFrame.__init__(self, parent, title = filename, size = (800, 600),
+        wx.MiniFrame.__init__(self, parent, title = filename, size = wx.Size(800, 600),
             style = wx.TINY_CAPTION|wx.DEFAULT_FRAME_STYLE)
 
         manualhtml = HelpHTMLWindow(self, filename)
@@ -48,7 +48,7 @@ class HelpPopup(wx.PopupTransientWindow):
         wx.PopupTransientWindow.__init__(self, parent)
 
         self.panel = wx.Panel(self)
-        self.panel.SetBackgroundColour([127,127,127])
+        self.panel.SetBackgroundColour(wx.Colour([127,127,127]))
         manualhtml = HelpHTMLWindow(self.panel, filename, size = (600, 100))
 
         manualsizer = wx.BoxSizer(wx.VERTICAL)
@@ -97,6 +97,6 @@ def ShowHelpPopup(self, filename, event):
     btn = event.GetEventObject()
     pos = btn.ClientToScreen( (0,0) )
     sz =  btn.GetSize()
-    HelpPopups[filename].Position(pos, (0, sz[1]))
+    HelpPopups[filename].Position(pos, wx.Size(0, sz[1]))
     HelpPopups[filename].Popup()
 

@@ -4,6 +4,12 @@ from pathlib import Path
 
 import wx
 
+wizardClasses = {
+        'test' : 'asdf',
+        'whee' : 'fubble',
+        'lolz' : 'testtest',
+        }
+
 class BindWizard(wx.Dialog):
     def __init__(self, parent):
 
@@ -11,7 +17,15 @@ class BindWizard(wx.Dialog):
 
         self.LoadModules()
 
-        bwSizer = wx.BoxSizer(wx.VERTICAL)
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+
+        wcSizer = wx.BoxSizer(wx.VERTICAL)
+        for wizClass in wizardClasses.keys():
+            wcSizer.Add(wx.Button(self, wx.ID_ANY, label = wizClass), 1, wx.EXPAND)
+
+        mainSizer.Add(wcSizer, 1, wx.EXPAND|wx.ALL, 10)
+
+        self.SetSizer(mainSizer)
 
 
     # Load plugins / modules from UI/BindWizard directory
@@ -32,7 +46,6 @@ class BindWizard(wx.Dialog):
 
             if modclass := getattr(mod, package, None):
 
-                # put the class into menuStructure, commandClasses, and commandRevClasses
                 if modName := getattr(modclass, 'Name', ''):
                     wizardClasses[modName] = modclass
                 else:
@@ -41,5 +54,3 @@ class BindWizard(wx.Dialog):
             else:
                 print(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
-
-wizardClasses = {}

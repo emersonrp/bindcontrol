@@ -4,11 +4,7 @@ from pathlib import Path
 
 import wx
 
-wizardClasses = {
-        'test' : 'asdf',
-        'whee' : 'fubble',
-        'lolz' : 'testtest',
-        }
+wizards = {}
 
 class BindWizard(wx.Dialog):
     def __init__(self, parent):
@@ -20,8 +16,11 @@ class BindWizard(wx.Dialog):
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
         wcSizer = wx.BoxSizer(wx.VERTICAL)
-        for wizClass in wizardClasses.keys():
-            wcSizer.Add(wx.Button(self, wx.ID_ANY, label = wizClass), 1, wx.EXPAND)
+        for wizClass in wizards.keys():
+            wizbutton = wx.Button(self, wx.ID_ANY, label = wizClass)
+            wizbutton.SetToolTip(wizards[wizClass].WizToolTip)
+            wcSizer.Add(wizbutton, 1, wx.EXPAND)
+            wizbutton.Bind(wx.EVT_BUTTON, wizards[wizClass].ShowWizard)
 
         mainSizer.Add(wcSizer, 1, wx.EXPAND|wx.ALL, 10)
 
@@ -30,8 +29,7 @@ class BindWizard(wx.Dialog):
 
     # Load plugins / modules from UI/BindWizard directory
     def LoadModules(self):
-        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-        path = Path(base_path) / 'BindWizard'
+        path = Path(getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__))))
 
         for package_file in sorted(path.glob('*.py')):
             package = package_file.stem
@@ -46,11 +44,21 @@ class BindWizard(wx.Dialog):
 
             if modclass := getattr(mod, package, None):
 
-                if modName := getattr(modclass, 'Name', ''):
-                    wizardClasses[modName] = modclass
+                if modName := getattr(modclass, 'WizardName', ''):
+                    wizards[modName] = modclass
                 else:
                     print(f"Class {modclass} didn't define 'Name' - this is a bug")
-
             else:
                 print(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
+
+class WizardParent():
+    WizardName = ''
+    WizToolTip = ''
+    WizDialog  = None
+
+    def __init__(self):
+        ...
+
+    def ShowWizard(self, init = {}):
+        ...

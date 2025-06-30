@@ -14,6 +14,7 @@ params = [
     f'--add-data=Help{sep}Help',
     f'--add-data=version.txt{sep}.',
     f'--add-data=UI/PowerBinderCommand{sep}PowerBinderCommand',
+    f'--add-data=UI/BindWizard{sep}BindWizard',
     '--exclude-module=_bz2',
     '--exclude-module=_ctypes',
     '--exclude-module=_decimal',
@@ -38,6 +39,12 @@ path = Path('UI/PowerBinderCommand')
 for package_file in sorted(path.glob('*.py')):
     if package_file.stem == '__init__': continue
     modstr = "UI.PowerBinderCommand." + package_file.stem
+    params.append(f'--hidden-import={modstr}')
+
+path = Path('UI/BindWizard')
+for package_file in sorted(path.glob('*.py')):
+    if package_file.stem == '__init__': continue
+    modstr = "UI.BindWizard." + package_file.stem
     params.append(f'--hidden-import={modstr}')
 
 PyInstaller.__main__.run(params)

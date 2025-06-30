@@ -15,9 +15,6 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         self.Bind(wx.EVT_BUTTON, self.OnPowerPicker)
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
         self.IconFilename = ''
-        self.Errors = {}
-        self.Warnings = {}
-        self.DefaultToolTip = ""
         self.Picker = None
 
     def OnPowerPicker(self, _):
@@ -43,8 +40,7 @@ class PowerPickerMenu(wx.Menu):
 
     def BuildMenu(self):
 
-        profile = wx.Window.FindWindowByName("Profile")
-        gen = profile.General
+        gen = wx.App.Get().Main.Profile.General
 
         # primary / secondary / epic powers
         archdata = GameData.Archetypes[gen.GetState('Archetype')]

@@ -2,7 +2,7 @@ import wx
 import re
 from wx.adv import BitmapComboBox
 import GameData
-from Icon import GetIcon
+from Icon import GetIconBitmap
 from UI.PowerBinderCommand import PowerBinderCommand
 
 ####### Use Insp By Name
@@ -20,7 +20,7 @@ class UseInspByNameCmd(PowerBinderCommand):
             for _, info in types.items():
                 for insp in info['tiers']:
                     name = re.sub(' ', '', str(insp))
-                    icon = GetIcon(f'Inspirations/{name}')
+                    icon = GetIconBitmap(f'Inspirations/{name}')
                     self.useInspByNameModeChoice.Append(insp, icon)
         self.useInspByNameModeChoice.SetSelection(0)
         useInspByNameSizer.Add(self.useInspByNameModeChoice, 1, wx.ALIGN_CENTER_VERTICAL)

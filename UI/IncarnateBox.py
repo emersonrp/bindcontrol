@@ -1,6 +1,6 @@
 import wx
 import re
-from Icon import GetIcon
+from Icon import GetIcon,GetIconBitmap
 
 import GameData
 
@@ -69,7 +69,7 @@ class IncarnateBox(wx.StaticBoxSizer):
                 box = getattr(self, boxname.lower() + "Inc", None)
                 if box:
                     box.IncName.SetLabel(contents['power'])
-                    box.IncIcon.SetBitmapLabel(GetIcon(contents['iconfile']))
+                    box.IncIcon.SetBitmapLabel(GetIconBitmap(contents['iconfile']))
                     box.IconFilename = contents['iconfile']
 
     def GetData(self):
@@ -101,7 +101,8 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.IncIcon = buttons.ThemedGenBitmapButton(staticbox, bitmap = GetIcon('Empty'), size=wx.Size(39,40))
+        # "Themed" GenBitmapButton looks flat etc the way we want it to.
+        self.IncIcon = buttons.ThemedGenBitmapButton(staticbox, bitmap = GetIconBitmap('Empty'), size=wx.Size(39,40))
         setattr(self.IncIcon, 'Picker', self)
         self.IncIcon.Bind(wx.EVT_BUTTON, self.OnButtonPress)
         self.IncIcon.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
@@ -138,7 +139,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
     def OnRightClick(self, evt):
         button = evt.EventObject
-        button.SetBitmapLabel(GetIcon('Empty'))
+        button.SetBitmapLabel(GetIconBitmap('Empty'))
         button.Picker.IncName.SetLabel('')
         button.Layout()
         evt.Skip()

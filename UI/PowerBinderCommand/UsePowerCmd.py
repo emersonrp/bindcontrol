@@ -49,6 +49,7 @@ class UsePowerCmd(PowerBinderCommand):
             method = "powexectoggleoff"
         else:
             method = "powexecname"
+
         return {
             'method': method,
             'pname' : self.usePowerName.GetLabel(),
@@ -64,4 +65,6 @@ class UsePowerCmd(PowerBinderCommand):
         else:
             self.usePowerRBToggle.SetValue(True)
         if init.get('pname', ''): self.usePowerName.SetLabel(init['pname'])
-        if init.get('picon', ''): self.usePowerName.SetBitmap(GetIcon(init['picon']))
+        if init.get('picon', ''):
+            self.usePowerName.SetBitmap(GetIcon(init['picon']))
+            self.usePowerName.IconFilename = init['picon']

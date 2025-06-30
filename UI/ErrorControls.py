@@ -16,9 +16,9 @@ class ErrorControlMixin:
         self.DefaultToolTip : str = ''
 
     def Enable(self, enable = True):
-        super().Enable(enable) # pyright: ignore
         if enable == False:
             self.RemoveError('conflict')
+        return super().Enable(enable) # pyright: ignore
 
     def AddWarning(self, errname, tooltip = None):
         if not self.Errors:

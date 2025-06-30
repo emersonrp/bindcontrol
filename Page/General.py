@@ -115,7 +115,7 @@ class General(Page):
             ctlType = 'choice',
             callback = self.OnPickEpicPowerSet,
         )
-        poolcontents = sorted(GameData.MiscPowers['Pool'])
+        poolcontents = sorted(GameData.PoolPowers)
         poolcontents.insert(0, '')
         powersBox.AddControl(
             ctlName = 'Pool1',

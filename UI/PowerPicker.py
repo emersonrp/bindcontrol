@@ -87,7 +87,7 @@ class PowerPickerMenu(wx.Menu):
                 submenu = wx.Menu()
                 self.AppendSubMenu(submenu, "Pool: " + poolname)
 
-                powers = GameData.MiscPowers['Pool'][poolname]
+                powers = GameData.PoolPowers[poolname]
                 for power in powers:
                     menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
                     icon = GetIcon(powerset = poolname, power = power)
@@ -109,28 +109,27 @@ class PowerPickerMenu(wx.Menu):
                     setattr(menuitem, 'IconFilename', power['iconfilename'])
                 submenu.Append(menuitem)
 
-        # Misc / Inherent Powers
+        # Misc Powers
         submenu = self.MakeRecursiveMenu(GameData.MiscPowers)
         self.AppendSubMenu(submenu, "Misc")
 
     def MakeRecursiveMenu(self, menustruct):
-        print(f"menustruct is {menustruct}")
         menu = wx.Menu()
 
         for name, data in menustruct.items():
             if isinstance(data, dict):
-                print(f"got a dict {data}")
                 submenu = self.MakeRecursiveMenu(data)
                 menu.AppendSubMenu(submenu, name)
             elif isinstance(data, list):
-                print(f"got a list {data}")
+                submenu = wx.Menu()
                 for item in data:
                     menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
-                    icon = GetIcon(powerset = 'Misc', power = item)
+                    icon = GetIcon(powerset = 'Misc', power = item, silent = True)
                     if icon:
                         menuitem.SetBitmap(icon)
                         setattr(menuitem, 'IconFilename', icon.Filename)
-                    menu.Append(menuitem)
+                    submenu.Append(menuitem)
+                menu.AppendSubMenu(submenu, name)
 
         return menu
 

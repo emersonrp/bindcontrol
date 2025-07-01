@@ -74,7 +74,7 @@ class BindDirsWindow(wx.MiniFrame):
         self.Bind(wx.EVT_SHOW, self.OnShow)
 
     def OnProfileClick(self, _, file, label):
-        if self.Parent.CheckIfProfileNeedsSaving() == wx.CANCEL: return
+        if self.Parent.CheckIfProfileNeedsSaving() == wx.CANCEL: return # pyright: ignore
 
         # Offer some feedback that we did anything.
         with wx.WindowDisabler():
@@ -82,7 +82,7 @@ class BindDirsWindow(wx.MiniFrame):
             wx.GetApp().Yield()
             newProfile = Profile.Profile(self.Parent, filename = file)
 
-            self.Parent.InsertProfile(newProfile)
+            self.Parent.InsertProfile(newProfile) # pyright: ignore
 
     # blow up the window when we hide it since we make a new one each time to keep the info fresh
     def OnShow(self, evt):

@@ -32,7 +32,7 @@ class BufferBindPane(CustomBindPaneParent):
 
     def BuildBindUI(self, page):
         pane = self.GetPane()
-        pane.Page = page
+        setattr(pane, 'Page', page)
 
         # Doing this UI here since we need Title to be set to get MakeCtlName right
         for i in (1,2,3,4,5,6,7,8):

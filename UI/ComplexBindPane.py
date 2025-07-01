@@ -29,7 +29,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
     def BuildBindUI(self, page):
         pane = self.GetPane()
-        pane.Page = self.Page
+        setattr(pane, 'Page', page)
 
         self.BindSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BindStepSizer = wx.BoxSizer(wx.VERTICAL)

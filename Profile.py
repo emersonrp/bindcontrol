@@ -92,9 +92,9 @@ class Profile(wx.Notebook):
         self.Filename        : Path|None = Path(filename) if filename else None
         self.ProfileBindsDir : str       = ''
         self.LastModTime     : int       = 0
+        self.Server          : str       = 'Homecoming'
 
         data = {}
-        self.Server = 'Homecoming'
 
         # are we wanting to load this one from a file?
         if self.Filename and self.Filename.exists():
@@ -149,11 +149,7 @@ class Profile(wx.Notebook):
 
     #####
     # Convenience / JIT accessors
-    def ProfileName(self)         :
-        if self.Filename:
-            return self.Filename.stem
-        else:
-            return ''
+    def ProfileName(self)   : return self.Filename.stem if self.Filename else ''
     def Archetype(self)     : return self.General.GetState('Archetype')
     def Primary(self)       : return self.General.GetState('Primary')
     def Secondary(self)     : return self.General.GetState('Secondary')
@@ -161,9 +157,10 @@ class Profile(wx.Notebook):
     def ProfileIDFile(self) : return self.BindsDir() / 'bcprofileid.txt'
     def BindsDir(self)      : return Path(wx.ConfigBase.Get().Read('BindPath')) / self.ProfileBindsDir
     def GameBindsDir(self) :
-        gbp = wx.ConfigBase.Get().Read('GameBindPath')
-        if gbp: return PureWindowsPath(gbp) / self.ProfileBindsDir
-        return self.BindsDir()
+        if gbp := wx.ConfigBase.Get().Read('GameBindPath'):
+            return PureWindowsPath(gbp) / self.ProfileBindsDir
+        else:
+            return self.BindsDir()
 
     def HasPowerPool(self, poolname):
         for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
@@ -200,10 +197,10 @@ class Profile(wx.Notebook):
                     ctrl.CheckConflicts()
 
     def SetModified  (self, _ = None):
-        self.Parent.SetTitle(f"BindControl: {self.ProfileName()} (*)")
+        self.Parent.SetTitle(f"BindControl: {self.ProfileName()} (*)") # pyright: ignore
         self.Modified = True
     def ClearModified(self, _ = None):
-        self.Parent.SetTitle(f"BindControl: {self.ProfileName()}")
+        self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore
         self.Modified = False
 
     # come up with a sane default binds directory name for this profile
@@ -317,7 +314,7 @@ class Profile(wx.Notebook):
             self.ProfileBindsDir = self.GenerateBindsDirectoryName()
             if not self.ProfileBindsDir:
                 # This happens if GenerateBindsDirectoryName can't come up with something sane
-                self.Parent.OnProfDirButton()
+                self.Parent.OnProfDirButton() # pyright: ignore
 
             # save the new file
             self.doSaveToFile()
@@ -529,7 +526,7 @@ class Profile(wx.Notebook):
                     cbpage.AddBindToPage(bindpane = bindpane)
 
     def SetTitle(self):
-        self.Parent.SetTitle(f"BindControl: {self.ProfileName()}")
+        self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore
         self.General.NameDisplay.SetLabel(self.ProfileName())
         self.General.Layout()
 

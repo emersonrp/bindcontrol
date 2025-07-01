@@ -135,5 +135,5 @@ class PowerPickerMenu(wx.Menu):
         bitmap = menuitem.GetBitmapBundle()
         self.Button.SetLabel(label)
         self.Button.SetBitmap(bitmap)
-        self.Button.IconFilename = menuitem.IconFilename
+        self.Button.IconFilename = getattr(menuitem, 'IconFilename')
         wx.PostEvent(self.Button, PowerChanged())

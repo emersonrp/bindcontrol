@@ -734,9 +734,9 @@ MiscPowers = {
             'Mission Transporter',
             'Base Transporter',
             'Supergroup Portal',
+            'Assemble the Team',
             ],
         'Attacks' : [
-            'Assemble the Team',
             'Ghost Slaying Axe',
             'Sands of Mu',
             'Nemesis Staff',

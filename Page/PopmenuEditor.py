@@ -234,7 +234,7 @@ class PopmenuEditor(Page):
                     wx.Font(9, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = 'Courier')
                 )
                 textBoxSizer.Add(textCtrl, 1, wx.EXPAND)
-                copyButton = wx.BitmapButton(dlg, bitmap = GetIcon('UI/copy'))
+                copyButton = wx.BitmapButton(dlg, bitmap = GetIcon('UI', 'copy'))
                 setattr(copyButton, 'textctrl', textCtrl)
                 textBoxSizer.Add(copyButton, 0)
                 copyButton.Bind(wx.EVT_BUTTON, self.doTextCopy)
@@ -942,7 +942,7 @@ class PELockedOption(PEMenuItem):
             gridsizer.Add(self.Ctrls[ctrl], pos = (row, 1), span = span, flag = wx.EXPAND)
             row = row + 1
 
-        IconButton = wx.BitmapButton(staticbox, -1, bitmap = GetIcon('UI/search'))
+        IconButton = wx.BitmapButton(staticbox, -1, bitmap = GetIcon('UI', 'search'))
         gridsizer.Add(IconButton, pos = (2,2))
         IconButton.Bind(wx.EVT_BUTTON, partial(webbrowser.open, 'https://homecoming.wiki/wiki/Macro_image_(Slash_Command)'))
 
@@ -963,7 +963,7 @@ class PELockedOption(PEMenuItem):
             self.Ctrls[ctrl] = cgTextCtrl(staticbox, size = (400, -1), value = self.Data.get(ctrl, ''))
             self.Ctrls[ctrl].Bind(wx.EVT_TEXT, self.CheckEditorFieldsForError)
             gridsizer.Add(self.Ctrls[ctrl], pos = (row, 1), flag = wx.EXPAND)
-            srchbutton = wx.BitmapButton(staticbox, -1, bitmap = GetIcon('UI/search'))
+            srchbutton = wx.BitmapButton(staticbox, -1, bitmap = GetIcon('UI', 'search'))
             gridsizer.Add(srchbutton, pos = (row,2))
             srchbutton.Bind(wx.EVT_BUTTON, partial(webbrowser.open, URLs[ctrl]))
             row = row + 1

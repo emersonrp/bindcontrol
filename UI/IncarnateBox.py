@@ -160,10 +160,9 @@ class IncarnatePicker(wx.StaticBoxSizer):
                 # aliases for the Lore types ie "Polar Lights" => "Lights" to match the icons
                 aliasedtype = Aliases.get(type, type)
 
-                iconname = f"Incarnate/Incarnate_{slot}_{aliasedtype}_{rarity}"
-                icon = GetIcon(iconname)
+                icon = GetIcon('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}')
                 if icon: menuitem.SetBitmap(icon)
-                setattr(menuitem, 'IconFilename', iconname)
+                setattr(menuitem, 'IconFilename', icon.Filename)
 
                 submenu.Append(menuitem)
 

@@ -66,9 +66,6 @@ class General(Page):
 
         powersBox.InnerSizer.Add(self.nameBox, 1, wx.EXPAND)
 
-        alignmentchoices = []
-        for Alignment in GameData.Alignments:
-            alignmentchoices.append([Alignment, GetIcon(f"Alignments/{Alignment}")])
         alignmentpicker = powersBox.AddControl(
             ctlName = 'Alignment',
             ctlType  = 'choice',
@@ -77,9 +74,6 @@ class General(Page):
         )
         alignmentpicker.SetMinSize(wx.Size(200,-1))
 
-        originchoices = []
-        for Origin in GameData.Origins:
-            originchoices.append([Origin, GetIcon(f"Origins/{Origin}")])
         originpicker = powersBox.AddControl(
             ctlName = 'Origin',
             ctlType = 'choice',
@@ -88,9 +82,6 @@ class General(Page):
         )
         originpicker.SetMinSize(wx.Size(200,-1))
 
-        archchoices = []
-        for Arch in sorted(GameData.Archetypes):
-            archchoices.append([Arch, GetIcon(f"Archetypes/{Arch}")])
         archpicker = powersBox.AddControl(
             ctlName = 'Archetype',
             ctlType = 'choice',
@@ -313,12 +304,12 @@ class General(Page):
         if getattr(self.Profile, 'MovementPowers', None):
             self.Profile.MovementPowers.SynchronizeUI()
 
-        self.ArchetypeIcon.SetBitmap(GetIcon("Archetypes/" + arch))
+        self.ArchetypeIcon.SetBitmap(GetIcon("Archetypes", arch))
 
         if evt: evt.Skip()
 
     def OnPickOrigin(self, evt = None):
-        self.OriginIcon.SetBitmap(GetIcon('Origins/' + self.GetState('Origin')))
+        self.OriginIcon.SetBitmap(GetIcon('Origins', self.GetState('Origin')))
         if evt: evt.Skip()
 
     def OnPickPoolPower(self, evt):

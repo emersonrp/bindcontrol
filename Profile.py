@@ -790,7 +790,7 @@ class WriteDoneDialog(wx.Dialog):
             )
         )
         blfSizer.Add(textCtrl, 1, wx.EXPAND)
-        copyButton = wx.BitmapButton(self, bitmap = GetIcon('UI/copy'))
+        copyButton = wx.BitmapButton(self, bitmap = GetIcon('UI', 'copy'))
         copyButton.SetToolTip('Copy text')
         setattr(copyButton, 'textctrl', textCtrl)
         blfSizer.Add(copyButton, 0)

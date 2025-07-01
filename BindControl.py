@@ -229,10 +229,10 @@ class Main(wx.Frame):
 
         ButtonSizer = wx.GridSizer(2, 10, 10)
         newButton  = wx.Button(StartupPanel, -1, "Start New Profile")
-        newButton.SetBitmap(GetIcon('UI/new_profile'))
+        newButton.SetBitmap(GetIcon('UI', 'new_profile'))
         newButton.SetBitmapPosition(wx.TOP)
         loadButton = wx.Button(StartupPanel, -1, "Load Existing Profile")
-        loadButton.SetBitmap(GetIcon('UI/load_profile'))
+        loadButton.SetBitmap(GetIcon('UI', 'load_profile'))
         loadButton.SetBitmapPosition(wx.TOP)
         ButtonSizer.Add(newButton, 1, wx.EXPAND)
         ButtonSizer.Add(loadButton, 1, wx.EXPAND)

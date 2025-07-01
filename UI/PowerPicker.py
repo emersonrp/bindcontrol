@@ -27,7 +27,7 @@ class PowerPicker(ErrorControlMixin, wx.Button):
     def OnRightClick(self, _):
         self.SetLabel('...')
         self.IconFilename = ''
-        self.SetBitmapLabel(GetIcon('Empty'))
+        self.SetBitmapLabel(GetIcon('Powers', 'Empty'))
         wx.PostEvent(self, PowerChanged())
 
 class PowerPickerMenu(wx.Menu):
@@ -57,20 +57,20 @@ class PowerPickerMenu(wx.Menu):
                     subsubmenu = wx.Menu()
                     for power in items:
                         menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
-                        icon = GetIcon(powerset = powerset, power = power)
+                        icon = GetIcon('Powers', powerset, power)
                         if icon:
                             menuitem.SetBitmap(icon)
                             setattr(menuitem, 'IconFilename', icon.Filename)
                         subsubmenu.Append(menuitem)
                     subitem = submenu.AppendSubMenu(subsubmenu, subsubname)
-                    icon = GetIcon(powerset = powerset, power = subsubname)
+                    icon = GetIcon('Powers', powerset, subsubname)
                     if icon:
                         subitem.SetBitmap(icon)
                         setattr(subitem, 'IconFilename', icon.Filename)
 
                 else:
                     menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
-                    icon = GetIcon(powerset = powerset, power = power)
+                    icon = GetIcon('Powers', powerset, power)
                     if icon:
                         menuitem.SetBitmap(icon)
                         setattr(menuitem, 'IconFilename', icon.Filename)
@@ -86,7 +86,7 @@ class PowerPickerMenu(wx.Menu):
                 powers = GameData.PoolPowers[poolname]
                 for power in powers:
                     menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
-                    icon = GetIcon(powerset = poolname, power = power)
+                    icon = GetIcon('Powers', poolname,  power)
                     if icon:
                         menuitem.SetBitmap(icon)
                         setattr(menuitem, 'IconFilename', icon.Filename)
@@ -120,7 +120,7 @@ class PowerPickerMenu(wx.Menu):
                 submenu = wx.Menu()
                 for item in data:
                     menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
-                    icon = GetIcon(powerset = 'Misc', power = item)
+                    icon = GetIcon('Powers', 'Misc', item)
                     if icon:
                         menuitem.SetBitmap(icon)
                         setattr(menuitem, 'IconFilename', icon.Filename)

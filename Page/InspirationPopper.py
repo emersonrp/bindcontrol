@@ -121,7 +121,7 @@ class InspirationPopper(Page):
         InspTabs.AssignImageList(il)
         for tab, tabname in tabs.items():
             tabpanel = wx.Panel(InspTabs)
-            idx1 = il.Add(Icon.GetIcon(f"UI/Insp{tab}").GetBitmap(wx.Size(32,32)))
+            idx1 = il.Add(Icon.GetIcon("UI", f"Insp{tab}").GetBitmap(wx.Size(32,32)))
             InspTabs.AddPage(tabpanel, tabname, imageId = idx1)
             tabsizer = wx.BoxSizer(wx.VERTICAL)
 

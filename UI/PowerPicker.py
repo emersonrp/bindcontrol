@@ -1,4 +1,5 @@
 import wx
+import re
 import GameData
 from Icon import GetIcon
 from UI.ErrorControls import ErrorControlMixin
@@ -125,7 +126,8 @@ class PowerPickerMenu(wx.Menu):
                 submenu = wx.Menu()
                 for item in data:
                     menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
-                    icon = GetIcon('Powers', 'Misc', item)
+                    item, iconlist = self.SplitNameAndIcon(item)
+                    icon = GetIcon('Powers', 'Misc', *iconlist)
                     if icon:
                         menuitem.SetBitmap(icon)
                         setattr(menuitem, 'IconFilename', icon.Filename)
@@ -142,3 +144,11 @@ class PowerPickerMenu(wx.Menu):
         self.Button.SetBitmap(bitmap)
         self.Button.IconFilename = getattr(menuitem, 'IconFilename')
         wx.PostEvent(self.Button, PowerChanged())
+
+    def SplitNameAndIcon(self, namestr):
+        if re.search(r'\|', namestr):
+            name, iconstr = re.split(r'\|', namestr)
+            iconlist = re.split(r'_', iconstr)
+            return [name, iconlist]
+        else:
+            return [namestr, [namestr]]

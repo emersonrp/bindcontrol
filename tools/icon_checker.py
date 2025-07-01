@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import inspect
+from pathlib import Path
 
 
 currframe = inspect.currentframe()
@@ -46,27 +47,37 @@ def RecurseMiscPowers(menustruct):
 
     return powerlist
 
+def SplitNameAndIcon(namestr):
+    if re.search(r'\|', namestr):
+        name, iconstr = re.split(r'\|', namestr)
+        iconlist = re.split(r'_', iconstr)
+        return [name, iconlist]
+    else:
+        return [namestr, [namestr]]
+
 count = 0
 filecheck = set()
-for filename in [f for f in os.listdir(f"{parentdir}/icons/Archetypes/") if f.endswith('png')]:
-    filecheck.add(os.path.basename(filename))
-for filename in [f for f in os.listdir(f"{parentdir}/icons/Origins/") if f.endswith('png')]:
-    filecheck.add(os.path.basename(filename))
-for filename in [f for f in os.listdir(f"{parentdir}/icons/Powers/") if f.endswith('png')]:
-    filecheck.add(os.path.basename(filename))
-for filename in [f for f in os.listdir(f"{parentdir}/icons/Incarnate/") if f.endswith('png')]:
-    filecheck.add(os.path.basename(filename))
-for filename in [f for f in os.listdir(f"{parentdir}/icons/Inspirations/") if f.endswith('png')]:
-    filecheck.add(os.path.basename(filename))
+for filename in Path(f"{parentdir}/icons/Archetypes/").glob('**/*.png'):
+    filecheck.add(filename)
+for filename in Path(f"{parentdir}/icons/Origins/").glob('**/*.png'):
+    filecheck.add(filename)
+for filename in Path(f"{parentdir}/icons/Powers/").glob('**/*.png'):
+    filecheck.add(filename)
+for filename in Path(f"{parentdir}/icons/Incarnate/").glob('**/*.png'):
+    filecheck.add(filename)
+for filename in Path(f"{parentdir}/icons/Inspirations/").glob('**/*.png'):
+    filecheck.add(filename)
+
+icondir = Path(parentdir) / 'icons'
 
 for server in ('Homecoming', 'Rebirth'):
     GameData.SetupGameData(server)
 
     # Archetype, Primary, and Secondary
     for archname, archdata in GameData.Archetypes.items():
-        archfn = f"{archname}.png"
-        if not os.path.exists(f"{parentdir}/icons/Archetypes/{archfn}"):
-            print(f"{archfn}")
+        archname = re.sub(r'\W+', '', archname)
+        archfn = icondir / 'Archetypes' / f"{archname}.png"
+        if not archfn.exists():
             count = count + 1
         else:
             if archfn in filecheck: filecheck.remove(archfn)
@@ -79,25 +90,25 @@ for server in ('Homecoming', 'Rebirth'):
                         [(power, items)] = power.items()
                         for p in items:
                             p = re.sub(r'\W+', '', p)
-                            filename = f"{powerset}_{p}.png"
-                            if not os.path.exists(f"{parentdir}/icons/Powers/{filename}"):
+                            filename = icondir / 'Powers' / powerset / f"{p}.png"
+                            if not filename.exists():
                                 print(f"{server} {archname}: {filename}")
                                 count = count + 1
                             else:
                                 if filename in filecheck: filecheck.remove(filename)
                     power = re.sub(r'\W+', '', power)
-                    filename = f"{powerset}_{power}.png"
-                    if not os.path.exists(f"{parentdir}/icons/Powers/{filename}"):
-                        print(f"{server} {archname}: {filename}")
+                    filename = icondir / 'Powers' / powerset / f"{power}.png"
+                    if not filename.exists():
+                        print(f"{server} {archname}: {filename.relative_to(icondir)}")
                         count = count + 1
                     else:
                         if filename in filecheck: filecheck.remove(filename)
 
     # Origins
     for origin in GameData.Origins:
-        filename = f"{origin}.png"
-        if not os.path.exists(f"{parentdir}/icons/Origins/{filename}"):
-            print(f"{server} Origin: {filename}")
+        filename = icondir / 'Origins' / f"{origin}.png"
+        if not filename.exists():
+            print(f"{server} Origin: {filename.relative_to(icondir)}")
             count = count + 1
         else:
             if filename in filecheck: filecheck.remove(filename)
@@ -108,9 +119,9 @@ for server in ('Homecoming', 'Rebirth'):
 
             power = re.sub(r'\W+', '', power)
             poolname = re.sub(r'\W+', '', poolname)
-            filename = f"{poolname}_{power}.png"
-            if not os.path.exists(f"{parentdir}/icons/Powers/{filename}"):
-                print(f"{server} Pool Power: {filename}")
+            filename = icondir / 'Powers' / poolname / f"{power}.png"
+            if not filename.exists():
+                print(f"{server} Pool Power: {filename.relative_to(icondir)}")
                 count = count + 1
             else:
                 if filename in filecheck: filecheck.remove(filename)
@@ -120,9 +131,9 @@ for server in ('Homecoming', 'Rebirth'):
         for type in slotdata['Types']:
             aliasedtype = Aliases.get(type, type)
             for rarity in ['Common', 'Uncommon', 'Rare', 'VeryRare']:
-                filename = f"Incarnate_{slot}_{aliasedtype}_{rarity}.png"
-                if not os.path.exists(f"{parentdir}/icons/Incarnate/{filename}"):
-                    print(f"{server} Incarnate: {filename}")
+                filename = icondir / 'Incarnate' / f"Incarnate_{slot}_{aliasedtype}_{rarity}.png"
+                if not filename.exists():
+                    print(f"{server} Incarnate: {filename.relative_to(icondir)}")
                     count = count + 1
                 else:
                     if filename in filecheck: filecheck.remove(filename)
@@ -130,10 +141,12 @@ for server in ('Homecoming', 'Rebirth'):
     # Misc Powers
     miscpowerlist = RecurseMiscPowers(GameData.MiscPowers)
     for power in miscpowerlist:
-        power = re.sub(r'\W+', '', power)
-        filename = f"Misc_{power}.png"
-        if not os.path.exists(f"{parentdir}/icons/Powers/{filename}"):
-            print(f"{server} Misc Power: {filename}")
+        power = re.sub(r'[^\w|]+', '', power)
+        _, icon = SplitNameAndIcon(power)
+        icon = '_'.join(icon)
+        filename = icondir / 'Powers' / 'Misc' / f"{icon}.png"
+        if not filename.exists():
+            print(f"{server} Misc Power: {filename.relative_to(icondir)}")
             count = count + 1
         else:
             if filename in filecheck: filecheck.remove(filename)
@@ -143,9 +156,9 @@ for server in ('Homecoming', 'Rebirth'):
         for _, data in type.items():
             for insp in data['tiers']:
                 insp = re.sub(r'\W+', '',  insp)
-                filename = f"{insp}.png"
-                if not os.path.exists(f"{parentdir}/icons/Inspirations/{filename}"):
-                    print(f"{server} Inspirations: {filename}")
+                filename = icondir / 'Inspirations' / f"{insp}.png"
+                if not filename.exists():
+                    print(f"{server} Inspirations: {filename.relative_to(icondir)}")
                     count = count + 1
                 else:
                     if filename in filecheck: filecheck.remove(filename)
@@ -157,7 +170,7 @@ if count: print(f"Total of {count} missing icons")
 
 if filecheck:
     for fn in sorted(filecheck):
-        print(f"Extra icon file: {fn}")
+        print(f"Extra icon file: {fn.relative_to(icondir)}")
     print(f"Total of {len(filecheck)} extra icons")
 
 if not (count or filecheck):

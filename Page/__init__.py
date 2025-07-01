@@ -107,9 +107,6 @@ class Page(wx.ScrolledWindow):
     def PopulateBindFiles(self) -> bool:
         return True
 
-    def HelpText(self):
-        return 'Help not currently implemented here.'
-
     # return a list of all bindfiles
     def AllBindFiles(self):
         wx.LogWarning(f"AllBindFiles called on parent Page, needs implementing in {type(self).__name__}.")

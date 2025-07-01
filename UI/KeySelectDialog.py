@@ -517,16 +517,16 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
     def onKeyChanged(self, _):
-        if self.Page: self.Page.Profile.CheckAllConflicts()
+        wx.App.Get().Main.Profile.CheckAllConflicts()
         # Let's try this out -- every time we pick a new key, update the trays'
         # default-keys display just in case we've mashed over one of them now.
-        if self.Page: self.Page.Profile.Gameplay.OnKeybindProfilePicker()
+        wx.App.Get().Main.Profile.Gameplay.OnKeybindProfilePicker()
 
     def ClearButton(self, _):
         self.SetLabel("")
         self.Key = ""
         wx.PostEvent(self, KeyChanged())
-        if self.Page: self.Page.Profile.SetModified()
+        wx.App.Get().Main.Profile.SetModified()
 
     def MakeFileKeyBind(self, contents):
         return KeyBind(self.Key, self.CtlLabel, self.Page, contents)
@@ -552,18 +552,17 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.Update()
 
     def CheckConflicts(self, newbinding = None):
-        if self.Page:
-            Profile = self.Page.Profile
-            if Profile:
-                conflicts = Profile.CheckConflict(newbinding or self.Key, self.CtlName)
-                if conflicts:
-                    conflictStrings = []
-                    for conflict in conflicts:
-                        conflictStrings.append(f'This key conflicts with \"{conflict["ctrl"]}\" on the \"{conflict["page"]}\" tab.')
-                    self.AddError('conflict', '\n'.join(conflictStrings))
-                else:
-                    self.RemoveError('conflict')
-                return conflicts
+        Profile = wx.App.Get().Main.Profile
+        if Profile:
+            conflicts = Profile.CheckConflict(newbinding or self.Key, self.CtlName)
+            if conflicts:
+                conflictStrings = []
+                for conflict in conflicts:
+                    conflictStrings.append(f'This key conflicts with \"{conflict["ctrl"]}\" on the \"{conflict["page"]}\" tab.')
+                self.AddError('conflict', '\n'.join(conflictStrings))
+            else:
+                self.RemoveError('conflict')
+            return conflicts
 
     def KeySelectEventHandler(self, evt):
         button = evt.EventObject
@@ -581,8 +580,7 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
                 button.SetLabel(newKey)
                 wx.PostEvent(button, KeyChanged())
 
-                if self.Page and existingKey != newKey:
-                    self.Page.Profile.SetModified()
+                if existingKey != newKey:
+                    wx.App.Get().Main.Profile.SetModified()
 
-            if self.Page:
-                self.Page.Profile.CheckAllConflicts()
+            wx.App.Get().Main.Profile.CheckAllConflicts()

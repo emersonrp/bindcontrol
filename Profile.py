@@ -111,7 +111,7 @@ class Profile(wx.Notebook):
             self.ProfileBindsDir = self.GenerateBindsDirectoryName()
             if not self.ProfileBindsDir:
                 # This happens if GenerateBindsDirectoryName can't come up with something sane
-                self.Parent.OnProfDirButton()
+                parent.OnProfDirButton()
 
         else:
             raise Exception("Error: Profile created with neither filename or newname.  This is a bug.")
@@ -149,7 +149,7 @@ class Profile(wx.Notebook):
 
     #####
     # Convenience / JIT accessors
-    def Name(self)         :
+    def ProfileName(self)         :
         if self.Filename:
             return self.Filename.stem
         else:
@@ -200,10 +200,10 @@ class Profile(wx.Notebook):
                     ctrl.CheckConflicts()
 
     def SetModified  (self, _ = None):
-        self.Parent.SetTitle(f"BindControl: {self.Name()} (*)")
+        self.Parent.SetTitle(f"BindControl: {self.ProfileName()} (*)")
         self.Modified = True
     def ClearModified(self, _ = None):
-        self.Parent.SetTitle(f"BindControl: {self.Name()}")
+        self.Parent.SetTitle(f"BindControl: {self.ProfileName()}")
         self.Modified = False
 
     # come up with a sane default binds directory name for this profile
@@ -212,7 +212,7 @@ class Profile(wx.Notebook):
         # start with just the ASCII a-zA-Z0-9_ and space characters in the name
         # We keep the spaces initially so the multi-word thing works at all.
         # TODO - This could cause trouble if someone has some weird all-Unicode name
-        profileName = re.sub(r'[^\w ]+', '', self.Name(), flags = re.ASCII)
+        profileName = re.sub(r'[^\w ]+', '', self.ProfileName(), flags = re.ASCII)
 
         # First let's see if we have multiple words:
         namewords = profileName.split()
@@ -229,7 +229,7 @@ class Profile(wx.Notebook):
         fallback = re.sub(r'\s+', '', profileName)[:5].lower()
         # ...if it's not already someone else's
         existingProfile = CheckProfileForBindsDir(fallback)
-        if existingProfile and (existingProfile != self.Name()):
+        if existingProfile and (existingProfile != self.ProfileName()):
             fallback = ''
 
         # make a list() because we alter the bindsdircandidates set as we go
@@ -244,7 +244,7 @@ class Profile(wx.Notebook):
 
             # check if it already exists and belongs to someone else
             existingProfile = CheckProfileForBindsDir(bdc)
-            if existingProfile and (existingProfile != self.Name()):
+            if existingProfile and (existingProfile != self.ProfileName()):
                 bindsdircandidates.remove(bdc)
 
         # OK, we should have zero, one, or two candidates of no more than five letters.
@@ -268,7 +268,7 @@ class Profile(wx.Notebook):
             self.Filename = None
             jsonstring = self.AsJSON(small = True)
             zipstring = codecs.encode(jsonstring.encode('utf-8'), 'zlib')
-            b64string = base64.b64encode(zipstring)
+            b64string = base64.b64encode(zipstring).decode('ascii')
 
             wx.ConfigBase.Get().Write('DefaultProfile', b64string)
             wx.ConfigBase.Get().Flush()
@@ -300,7 +300,7 @@ class Profile(wx.Notebook):
         with wx.FileDialog(self, "Save Profile file",
                 wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
                 defaultDir = str(ProfilePath()),
-                defaultFile = self.Name(),
+                defaultFile = self.ProfileName(),
                 style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
@@ -332,7 +332,7 @@ class Profile(wx.Notebook):
         ProfilePath().mkdir( parents = True, exist_ok = True )
 
         if not self.Filename:
-            raise Exception(f"No Filename set in Profile {self.Name()}!  Aborting save.")
+            raise Exception(f"No Filename set in Profile {self.ProfileName()}!  Aborting save.")
         savefile = self.Filename
 
         dumpstring = self.AsJSON()
@@ -529,8 +529,8 @@ class Profile(wx.Notebook):
                     cbpage.AddBindToPage(bindpane = bindpane)
 
     def SetTitle(self):
-        self.Parent.SetTitle(f"BindControl: {self.Name()}")
-        self.General.NameDisplay.SetLabel(self.Name())
+        self.Parent.SetTitle(f"BindControl: {self.ProfileName()}")
+        self.General.NameDisplay.SetLabel(self.ProfileName())
         self.General.Layout()
 
     #####################
@@ -553,7 +553,7 @@ class Profile(wx.Notebook):
             if IDFile.exists():
                 profilename = IDFile.read_text().strip()
 
-                if profilename == self.Name():
+                if profilename == self.ProfileName():
                     # OK, this is our bindsdir, great
                     return False
                 else:
@@ -587,7 +587,7 @@ class Profile(wx.Notebook):
 
         # write the ProfileID file that identifies this directory as "belonging to" this profile
         try:
-            self.ProfileIDFile().write_text(self.Name())
+            self.ProfileIDFile().write_text(self.ProfileName())
         except Exception as e:
             wx.LogError("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
             wx.MessageBox("Can't write Profile ID file {self.ProfileIDFile()}: {e}")

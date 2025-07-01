@@ -413,7 +413,7 @@ class Main(wx.Frame):
                     self.Profile.ProfileBindsDir and (newvalue != self.Profile.ProfileBindsDir)
                         and
                     # the old one isn't owned by another profile:
-                    ((not otherprofile) or (otherprofile and (otherprofile == self.Profile.Name())))
+                    ((not otherprofile) or (otherprofile and (otherprofile == self.Profile.ProfileName())))
                 ):
                     answer = wx.MessageBox(
                             f'Binds Location changed.  Delete all binds in old binds directory?\n{self.Profile.BindsDir()}',
@@ -439,7 +439,7 @@ class Main(wx.Frame):
         result = wx.OK
         if self.Profile:
             if self.Profile.Modified:
-                result = wx.MessageBox(f"Profile {self.Profile.Name()} not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
+                result = wx.MessageBox(f"Profile {self.Profile.ProfileName()} not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
                 if result == wx.YES:
                     self.Profile.doSaveToFile()
             if self.Profile.PopmenuEditor.CheckForModifiedMenus():
@@ -462,7 +462,7 @@ class Main(wx.Frame):
             self.ProfDirButton.AddWarning('toolong', 'Your binds directory name is rather long.  This is not an error but can lead to some binds being too long for the game to use.')
 
         otherprofile = Profile.CheckProfileForBindsDir(self.Profile.ProfileBindsDir)
-        if otherprofile and (otherprofile != self.Profile.Name()):
+        if otherprofile and (otherprofile != self.Profile.ProfileName()):
             self.ProfDirButton.AddWarning('owned', f'The binds directory you have chosen is marked as owned by the profile "{otherprofile}."  This is not an error, but be sure this is what you want to do.')
         else:
             self.ProfDirButton.RemoveWarning('owned')
@@ -506,7 +506,7 @@ class Main(wx.Frame):
                     break
             if exists and self.Profile:
                 existingProfile = Profile.CheckProfileForBindsDir(exists)
-                if existingProfile != self.Profile.Name():
+                if existingProfile != self.Profile.ProfileName():
                     existingProfileWarning = f', and is managed by the profile {existingProfile}' if existingProfile else ''
                     textctrl.AddWarning('exists', f'The directory you have selected already exists{existingProfileWarning}.  This is not an error, but be sure this is where you want to save your binds.')
             else:

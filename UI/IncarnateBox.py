@@ -28,16 +28,16 @@ class IncarnateBox(wx.StaticBoxSizer):
         self.alphaInc     = IncarnatePicker(staticbox, profile = self.Profile, label = "Alpha")
 
         if server == "Rebirth":
-            incarnateSizer.Add(self.hybridInc,    [0,0], [1,2], wx.EXPAND|wx.LEFT, 12)
-            incarnateSizer.Add(self.genesisInc,   [0,2], [1,2], wx.EXPAND|wx.RIGHT, 12)
+            incarnateSizer.Add(self.hybridInc,    wx.GBPosition(0,0), wx.GBSpan(1,2), wx.EXPAND|wx.LEFT, 12)
+            incarnateSizer.Add(self.genesisInc,   wx.GBPosition(0,2), wx.GBSpan(1,2), wx.EXPAND|wx.RIGHT, 12)
         else:
-            incarnateSizer.Add(self.hybridInc,    [0,1], [1,2], wx.EXPAND)
+            incarnateSizer.Add(self.hybridInc,    wx.GBPosition(0,1), wx.GBSpan(1,2), wx.EXPAND)
 
-        incarnateSizer.Add(self.loreInc,      [1,0], [1,2], wx.EXPAND|wx.LEFT, 12)
-        incarnateSizer.Add(self.destinyInc,   [1,2], [1,2], wx.EXPAND|wx.RIGHT, 12)
-        incarnateSizer.Add(self.judgementInc, [2,0], [1,2], wx.EXPAND|wx.LEFT, 12)
-        incarnateSizer.Add(self.interfaceInc, [2,2], [1,2], wx.EXPAND|wx.RIGHT, 12)
-        incarnateSizer.Add(self.alphaInc,     [3,1], [1,2], wx.EXPAND|wx.BOTTOM, 12)
+        incarnateSizer.Add(self.loreInc,      wx.GBPosition(1,0), wx.GBSpan(1,2), wx.EXPAND|wx.LEFT, 12)
+        incarnateSizer.Add(self.destinyInc,   wx.GBPosition(1,2), wx.GBSpan(1,2), wx.EXPAND|wx.RIGHT, 12)
+        incarnateSizer.Add(self.judgementInc, wx.GBPosition(2,0), wx.GBSpan(1,2), wx.EXPAND|wx.LEFT, 12)
+        incarnateSizer.Add(self.interfaceInc, wx.GBPosition(2,2), wx.GBSpan(1,2), wx.EXPAND|wx.RIGHT, 12)
+        incarnateSizer.Add(self.alphaInc,     wx.GBPosition(3,1), wx.GBSpan(1,2), wx.EXPAND|wx.BOTTOM, 12)
 
         incarnateSizer.AddGrowableCol(0)
         incarnateSizer.AddGrowableCol(1)

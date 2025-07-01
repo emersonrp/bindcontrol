@@ -1,3 +1,4 @@
+# pyright: reportIncompatibleMethodOverride=false
 from typing import Any, Callable
 import platform
 

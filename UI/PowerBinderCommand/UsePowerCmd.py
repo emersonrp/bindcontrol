@@ -9,24 +9,26 @@ class UsePowerCmd(PowerBinderCommand):
     Menu = "Powers"
 
     def BuildUI(self, dialog):
-        outerSizer = wx.BoxSizer(wx.HORIZONTAL)
+        usePowerSizer = wx.FlexGridSizer(2, 2, 5, 5)
+        usePowerSizer.AddGrowableCol(1)
 
-        usePowerSizer = wx.GridBagSizer(5,5)
-        usePowerSizer.Add(wx.StaticText(dialog, -1, "Method:"), (0,0), flag=wx.ALIGN_CENTER_VERTICAL)
-        self.usePowerRBToggle = wx.RadioButton(dialog, -1, "Toggle", style=wx.RB_GROUP|wx.ALIGN_CENTER_VERTICAL)
-        usePowerSizer.Add(self.usePowerRBToggle, (0,1))
-        self.usePowerRBOn = wx.RadioButton(dialog, -1, "On", style=wx.ALIGN_CENTER_VERTICAL)
-        usePowerSizer.Add(self.usePowerRBOn, (0,2))
-        self.usePowerRBOff = wx.RadioButton(dialog, -1, "Off", style=wx.ALIGN_CENTER_VERTICAL)
-        usePowerSizer.Add(self.usePowerRBOff, (0,3))
-        usePowerSizer.Add(wx.StaticText(dialog, -1, "Power:"), (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
+        usePowerSizer.Add(wx.StaticText(dialog, -1, "Method:"), flag = wx.ALIGN_CENTER_VERTICAL)
+
+        rbSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.usePowerRBToggle = wx.RadioButton(dialog, -1, "Toggle", style = wx.ALIGN_CENTER_VERTICAL)
+        rbSizer.Add(self.usePowerRBToggle, 1)
+        self.usePowerRBOn = wx.RadioButton(dialog, -1, "On", style = wx.ALIGN_CENTER_VERTICAL)
+        rbSizer.Add(self.usePowerRBOn, 1)
+        self.usePowerRBOff = wx.RadioButton(dialog, -1, "Off", style = wx.ALIGN_CENTER_VERTICAL)
+        rbSizer.Add(self.usePowerRBOff, 1)
+
+        usePowerSizer.Add(rbSizer, 1, flag = wx.EXPAND)
+
+        usePowerSizer.Add(wx.StaticText(dialog, -1, "Power:"), flag = wx.ALIGN_CENTER_VERTICAL)
         self.usePowerName = PowerPicker(dialog)
-        usePowerSizer.Add(self.usePowerName, (1,1), (1,3), flag=wx.EXPAND)
-        usePowerSizer.AddGrowableCol(3)
+        usePowerSizer.Add(self.usePowerName, 1, flag = wx.EXPAND)
 
-        outerSizer.Add(usePowerSizer, 1, wx.ALIGN_CENTER_VERTICAL)
-
-        return outerSizer
+        return usePowerSizer
 
     def MakeBindString(self):
         server = self.Profile.Server

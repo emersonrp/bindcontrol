@@ -14,6 +14,7 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         self.SetMinSize(wx.Size(-1, 40))
         self.Bind(wx.EVT_BUTTON, self.OnPowerPicker)
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
+        self.Bind(EVT_POWER_CHANGED, self.OnPowerChanged)
         self.IconFilename = ''
         self.Picker = None
 
@@ -29,6 +30,10 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         self.IconFilename = ''
         self.SetBitmapLabel(GetIcon('Powers', 'Empty'))
         wx.PostEvent(self, PowerChanged())
+
+    def OnPowerChanged(self, _):
+        self.Parent.Layout()
+
 
 class PowerPickerMenu(wx.Menu):
 

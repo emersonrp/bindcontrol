@@ -35,7 +35,7 @@ def GetIcon(*args):
 
             with zipfile.ZipFile(iconzippath) as iconzip:
                 try:
-                    icondata = iconzip.read(f"{iconpathstr}.png")
+                    icondata = iconzip.read(f"{iconpathstr}")
                     Icons[iconpathstr] = Icon( wx.Bitmap.NewFromPNGData(icondata, len(icondata)))
                     Icons[iconpathstr].Filename = iconpathstr
                 except Exception as e:

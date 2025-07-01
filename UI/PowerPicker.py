@@ -125,8 +125,8 @@ class PowerPickerMenu(wx.Menu):
             elif isinstance(data, list):
                 submenu = wx.Menu()
                 for item in data:
-                    menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
                     item, iconlist = self.SplitNameAndIcon(item)
+                    menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
                     icon = GetIcon('Powers', 'Misc', *iconlist)
                     if icon:
                         menuitem.SetBitmap(icon)

@@ -34,14 +34,11 @@ class KeyBind():
 
 class BindFile():
 
-    def __init__(self, profile, pathbits:PurePath):
+    def __init__(self, bindsdir, gamebindsdir, pathbits:PurePath):
 
-        self.Profile      = profile
-        self.BindsDir     = profile.BindsDir()
-        self.GameBindsDir = profile.GameBindsDir()
-
-        self.Path     = Path           (self.BindsDir,     pathbits)
-        self.GamePath = PureWindowsPath(self.GameBindsDir, pathbits)
+        self.Path         = Path           (bindsdir, pathbits)
+        self.GameBindsDir = gamebindsdir
+        self.GamePath     = PureWindowsPath(self.GameBindsDir, pathbits)
 
         self.KeyBinds = {}
 

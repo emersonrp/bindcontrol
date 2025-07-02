@@ -1,4 +1,5 @@
 from BindFile import KeyBind, BindFile
+from pathlib import Path
 
 def test_keybind():
     kb = KeyBind('A', 'Test A', object(), ['One', 'Two', 'Three'])
@@ -12,5 +13,20 @@ def test_keybind():
     assert kb3.GetKeyBindString() == 'A "unbind_all$$up 1$$emote wave"\n', "GetKeyBindString correctly strips leading $$"
 
 def test_bindfile():
-    # TODO - this requires having a valid Profile which requires a whole window currently.  This is suboptimal.
-    ...
+    bf = BindFile('/tmp', 'c:\\tmp', Path('test', 'test'))
+
+    kb = KeyBind('A', 'Test A', object(), ['One', 'Two', 'Three'])
+    bf.SetBind(kb)
+    assert bf.KeyBinds['A'] == kb, "BindFile correctly sets KeyBinds from object"
+
+    bf.SetBind('B', 'Test B', object(), "This is a test")
+    assert isinstance(bf.KeyBinds['B'], KeyBind), "BindFile correctly creates KeyBind when SetBind called with strings"
+
+    bf.Write()
+    written_file = Path('/tmp','test','test')
+    assert written_file.exists(), "BindFile correctly writes a file"
+
+    contents = written_file.read_text()
+    assert contents == 'A "One$$Two$$Three"\nB "This is a test"\n', "BindFile's contents are as expected"
+
+    written_file.unlink()

@@ -537,7 +537,7 @@ class Profile(wx.Notebook):
         key = str(filepath)
 
         if not self.BindFiles.get(key, None):
-            self.BindFiles[key] = BindFile(self, filepath)
+            self.BindFiles[key] = BindFile(self.BindsDir(), self.GameBindsDir(), filepath)
 
         return self.BindFiles[key]
 

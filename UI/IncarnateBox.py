@@ -45,24 +45,6 @@ class IncarnateBox(wx.StaticBoxSizer):
         incarnateSizer.AddGrowableCol(2)
         incarnateSizer.AddGrowableCol(3)
 
-    def GetPowers(self):
-        server = self.Profile.Server
-        powers = []
-
-        boxes = [self.hybridInc, self.loreInc, self.destinyInc, self.judgementInc, self.interfaceInc, self.alphaInc]
-        if server == "Rebirth":
-            boxes.append(self.genesisInc)
-
-        for box in boxes:
-            name = box.IncName.GetLabel()
-            if name:
-                powers.append({
-                    'name'         : name,
-                    'icon'         : box.IncIcon.GetBitmapLabel(),
-                    'iconfilename' : box.IconFilename,
-                })
-        return powers
-
     def FillWith(self, data):
         incarnate = data['General'].get('Incarnate', None)
         if incarnate:

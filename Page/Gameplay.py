@@ -56,10 +56,11 @@ class Gameplay(Page):
             'DecTeamPos'  : '',
             'TeamReset'   : '',
 
-            'QuitToDesktop' : '',
-            'InviteTarget'  : '',
+            'QuitToDesktop'   : '',
+            'InviteTarget'    : '',
             'FPSBindKey'      : '',
             'NetgraphBindKey' : '',
+            'ToggleRP'        : '',
 
             'Tray1Enabled' : False,
             'Tray2Enabled' : False,
@@ -236,6 +237,7 @@ class Gameplay(Page):
             ['InviteTarget'    , 'Choose the key that will invite your target to a group'] ,
             ['FPSBindKey'      , 'Choose the key that will toggle the FPS Display']        ,
             ['NetgraphBindKey' , 'Choose the key that will toggle the Netgraph Display']   ,
+            ['ToggleRP'        , 'Toggle your "Roleplaying" status / tag / name block' ]   ,
         ):
             HelpfulSizer.AddControl(
                 ctlName = b[0],
@@ -412,6 +414,7 @@ class Gameplay(Page):
         ResetFile.SetBind(self.Ctrls['InviteTarget']   .MakeFileKeyBind('invite $target'))
         ResetFile.SetBind(self.Ctrls['FPSBindKey']     .MakeFileKeyBind('++showfps'))
         ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
+        ResetFile.SetBind(self.Ctrls['ToggleRP']       .MakeFileKeyBind('roleplaying'))
 
         return True
 
@@ -505,11 +508,11 @@ class Gameplay(Page):
         'DecTeamPos'  : "Decrease Team Position",
         'TeamReset'   : "Reset Team Rotation",
 
-        'QuitToDesktop' : 'Quit to Desktop',
-        'InviteTarget'  : 'Invite Target to Group',
-
+        'QuitToDesktop'   : "Quit to Desktop",
+        'InviteTarget'    : "Invite Target to Group",
         'FPSBindKey'      : "Toggle FPS Display",
         'NetgraphBindKey' : "Toggle Netgraph Display",
+        'ToggleRP'        : "Toggle Roleplaying Status",
     })
 
     for i in range(1,9):

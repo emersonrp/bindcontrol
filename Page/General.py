@@ -32,10 +32,11 @@ class General(Page):
             'SlashChat'  : '/',
             'StartEmote' : ';',
             'AutoReply'  : 'BACKSPACE',
+            'TellLast'   : 'SHIFT+BACKSPACE',
             'TellTarget' : 'COMMA',
             'QuickChat'  : "'",
 
-            'TypingNotifierEnable' : 1,
+            'TypingNotifierEnable' : True,
             'TypingNotifier'       : 'typing',
         }
 
@@ -186,6 +187,7 @@ class General(Page):
             ['SlashChat',  'Activates the Chat bar with notifier and a slash already typed'],
             ['StartEmote', 'Activates the Chat bar with notifier and "/em" already typed'],
             ['AutoReply',  'AutoReplies to incoming tells with notifier'],
+            ['TellLast',   'Starts a /tell to the last player you sent a /tell, with notifier'],
             ['TellTarget', 'Starts a /tell to your current target with notifier'],
             ['QuickChat',  'Pops up QuickChat menu, with notifier'],
         ):
@@ -238,6 +240,7 @@ class General(Page):
         ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeFileKeyBind([notifier, 'show chat', 'slashchat']))
         ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind([notifier, 'show chatem ' + notifier]))
         ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeFileKeyBind([notifier, 'autoreply']))
+        ResetFile.SetBind(self.Ctrls['TellLast']  .MakeFileKeyBind([notifier, 'show chat', 'beginchat /tl ']))
         ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
         ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
 
@@ -402,6 +405,7 @@ class General(Page):
         'SlashChat'            : 'Start Chat (with "/")',
         'StartEmote'           : 'Begin emote (types "/em")',
         'AutoReply'            : 'AutoReply to incoming /tell',
+        'TellLast'             : 'Send /tell to the last player you sent a /tell to',
         'TellTarget'           : 'Send /tell to current target',
         'QuickChat'            : 'Pop up QuickChat menu',
 

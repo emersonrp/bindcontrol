@@ -354,6 +354,11 @@ class Gameplay(Page):
         if self.GetState('Tray3Enabled'):
             ResetFile.SetBind(self.Ctrls[f"Tray3Prev"].MakeFileKeyBind("prev_tray_alt2"))
             ResetFile.SetBind(self.Ctrls[f"Tray3Next"].MakeFileKeyBind("next_tray_alt2"))
+        # TODO: log into Rebirth and verify that prev/next_tray_alt3 work.
+        if server == "Rebirth" and self.GetState('Tray4Enabled'):
+            ResetFile.SetBind(self.Ctrls[f"Tray4Prev"].MakeFileKeyBind("prev_tray_alt3"))
+            ResetFile.SetBind(self.Ctrls[f"Tray4Next"].MakeFileKeyBind("next_tray_alt3"))
+
 
         ### Team / Pet Select
         if self.GetState('TPSEnable'):

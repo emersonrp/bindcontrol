@@ -5,7 +5,6 @@ import sys
 import inspect
 from pathlib import Path
 
-
 currframe = inspect.currentframe()
 if currframe:
     currentdir = os.path.dirname(os.path.abspath(inspect.getfile(currframe)))
@@ -15,20 +14,7 @@ else:
     exit()
 
 import GameData
-
-# from UI/IncarnateBox - TODO - put this in GameData or somewhere?
-Aliases = {
-    "Banished Pantheon"   : "Banished",
-    "Carnival of Shadows" : "Carnival",
-    "Cimerorans"          : "Cimeroran",
-    "Knives of Vengeance" : "Knives",
-    "Phantom"             : "Phantoms",
-    "Polar Lights"        : "Lights",
-    "Robotic Drones"      : "Drones",
-    "Storm Elementals"    : "Elementals",
-    "Talons of Vengeance" : "Talons",
-    "Warworks"            : "WarWorks",
-}
+from Util.Incarnate import Aliases
 
 def RecurseMiscPowers(menustruct):
     powerlist = []

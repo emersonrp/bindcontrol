@@ -3,6 +3,7 @@ import re
 import GameData
 from Icon import GetIcon
 from UI.ErrorControls import ErrorControlMixin
+from Util.Incarnate import Rarities, Aliases
 
 import wx.lib.newevent
 PowerChanged, EVT_POWER_CHANGED = wx.lib.newevent.NewEvent()
@@ -99,17 +100,27 @@ class PowerPickerMenu(wx.Menu):
                     submenu.Append(menuitem)
 
         # Incarnate Powers
-        submenu = wx.Menu()
-        incPowers = gen.IncarnateBox.GetPowers()
-        if incPowers:
-            self.AppendSubMenu(submenu, "Incarnate")
-            for power in incPowers:
-                menuitem = wx.MenuItem(id = wx.ID_ANY, text = power['name'])
-                icon = power['icon']
-                if icon:
-                    menuitem.SetBitmap(icon)
-                    setattr(menuitem, 'IconFilename', power['iconfilename'])
-                submenu.Append(menuitem)
+        menu = wx.Menu()
+        for slot, slotdata in GameData.IncarnatePowers.items():
+            submenu = wx.Menu()
+            menu.AppendSubMenu(submenu, slot)
+            for type in slotdata['Types']:
+                subsubmenu = wx.Menu()
+                submenu.AppendSubMenu(subsubmenu, type)
+
+                for index, power in enumerate(slotdata['Powers']):
+                    menuitem = wx.MenuItem(id = wx.ID_ANY, text = f"{type} {power}")
+                    rarity = Rarities[ index ]
+
+                    # aliases for the Lore types ie "Polar Lights" => "Lights" to match the icons
+                    aliasedtype = Aliases.get(type, type)
+
+                    if icon := GetIcon('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}'):
+                        menuitem.SetBitmap(icon)
+                        setattr(menuitem, 'IconFilename', icon.Filename)
+
+                    subsubmenu.Append(menuitem)
+        self.AppendSubMenu(menu, "Incarnate")
 
         # Misc Powers
         submenu = self.MakeRecursiveMenu(GameData.MiscPowers)

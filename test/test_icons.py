@@ -4,6 +4,7 @@ import re
 import sys
 import inspect
 from pathlib import Path
+from Util.Incarnate import Aliases
 
 
 currframe = inspect.currentframe()
@@ -17,20 +18,6 @@ else:
 
 import GameData
 GameData.SetupGameData()
-
-# from UI/IncarnateBox - TODO - put this in GameData or somewhere?
-Aliases = {
-    "Banished Pantheon"   : "Banished",
-    "Carnival of Shadows" : "Carnival",
-    "Cimerorans"          : "Cimeroran",
-    "Knives of Vengeance" : "Knives",
-    "Phantom"             : "Phantoms",
-    "Polar Lights"        : "Lights",
-    "Robotic Drones"      : "Drones",
-    "Storm Elementals"    : "Elementals",
-    "Talons of Vengeance" : "Talons",
-    "Warworks"            : "WarWorks",
-}
 
 def RecurseMiscPowers(menustruct):
     powerlist = []

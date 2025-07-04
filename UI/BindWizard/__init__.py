@@ -9,18 +9,19 @@ wizards = {}
 class BindWizard(wx.Dialog):
     def __init__(self, parent):
 
-        wx.Dialog.__init__(self, parent, -1, 'Bind Wizard')
+        super().__init__(parent, -1, 'Bind Wizard')
 
         self.LoadModules()
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
         wcSizer = wx.BoxSizer(wx.VERTICAL)
-        for wizClass in wizards.keys():
-            wizbutton = wx.Button(self, wx.ID_ANY, label = wizClass)
-            wizbutton.SetToolTip(wizards[wizClass].WizToolTip)
+        for classname, wizClass in wizards.items():
+            wizbutton = wx.Button(self, wx.ID_ANY, label = classname)
+            wizbutton.SetToolTip(wizClass.WizToolTip)
             wcSizer.Add(wizbutton, 1, wx.EXPAND)
-            wizbutton.Bind(wx.EVT_BUTTON, wizards[wizClass].ShowWizard)
+            setattr(wizbutton, 'WizClass', wizClass)
+            wizbutton.Bind(wx.EVT_BUTTON, self.ShowWizard)
 
         mainSizer.Add(wcSizer, 1, wx.EXPAND|wx.ALL, 10)
 
@@ -51,14 +52,28 @@ class BindWizard(wx.Dialog):
             else:
                 print(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
+    def ShowWizard(self, evt):
+        if evt: evt.Skip()
+        button = evt.GetEventObject()
+        wizclass = button.WizClass
+        wizard = wizclass(self)
+        wizard.ShowModal()
 
-class WizardParent():
+class WizardParent(wx.Dialog):
     WizardName = ''
     WizToolTip = ''
-    WizDialog  = None
 
-    def __init__(self):
-        ...
+    def __init__(self, parent):
+        super().__init__(parent)
 
-    def ShowWizard(self, init = {}):
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+
+        wizsizer = self.BuildUI()
+
+        mainSizer.Add(wizsizer, 1, wx.EXPAND)
+        mainSizer.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 10)
+
+        self.SetSizerAndFit(mainSizer)
+
+    def BuildUI(self) -> wx.Sizer:
         ...

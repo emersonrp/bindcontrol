@@ -35,7 +35,7 @@ class Page(wx.ScrolledWindow):
                 wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
                 wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU, wx.EVT_RADIOBUTTON,
             ]:
-                self.Bind(evt, self.Profile.SetModified)
+                self.Bind(evt, self.OnCommandEvent)
 
     def GetState(self, key):
         control = self.Ctrls.get(key, None)
@@ -88,6 +88,10 @@ class Page(wx.ScrolledWindow):
         else:
             wx.LogError(f"{control} has no SetValue() - this is a bug.")
 
+    def OnCommandEvent(self, evt):
+        if evt: evt.Skip()
+        # TODO:  "unless (some way to opt things out of this), then..."
+        self.Profile.SetModified()
 
     # disable controls by name
     def EnableControls(self, enabled, names):

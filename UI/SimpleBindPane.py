@@ -1,4 +1,3 @@
-import re
 import wx
 import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent

@@ -1,32 +1,40 @@
 import os, sys
 import importlib
 from pathlib import Path
+from UI.CustomBindPaneParent import CustomBindPaneParent
 
 import wx
 
 wizards = {}
 
-class BindWizard(wx.Dialog):
+class WizardBindPane(CustomBindPaneParent):
+    def __init__(self, page, wizClass, init = {}):
+        super().__init__(page, init)
+
+        self.WizClass = wizClass
+
+class BindWizardDialog(wx.Dialog):
     def __init__(self, parent):
 
         super().__init__(parent, -1, 'Bind Wizard')
 
         self.LoadModules()
+        self.WizClass = None
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
         wcSizer = wx.BoxSizer(wx.VERTICAL)
+        wcSizer.Add(wx.StaticText(self, wx.ID_ANY, 'Select a Bind Wizard to run:'), 0, wx.EXPAND|wx.BOTTOM, 20)
         for classname, wizClass in wizards.items():
             wizbutton = wx.Button(self, wx.ID_ANY, label = classname)
             wizbutton.SetToolTip(wizClass.WizToolTip)
             wcSizer.Add(wizbutton, 1, wx.EXPAND)
             setattr(wizbutton, 'WizClass', wizClass)
-            wizbutton.Bind(wx.EVT_BUTTON, self.ShowWizard)
+            wizbutton.Bind(wx.EVT_BUTTON, self.OnWizButton)
 
-        mainSizer.Add(wcSizer, 1, wx.EXPAND|wx.ALL, 10)
+        mainSizer.Add(wcSizer, 1, wx.EXPAND|wx.ALL, 20)
 
         self.SetSizer(mainSizer)
-
 
     # Load plugins / modules from UI/BindWizard directory
     def LoadModules(self):
@@ -52,28 +60,26 @@ class BindWizard(wx.Dialog):
             else:
                 print(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
-    def ShowWizard(self, evt):
+    def OnWizButton(self, evt):
         if evt: evt.Skip()
-        button = evt.GetEventObject()
-        wizclass = button.WizClass
-        wizard = wizclass(self)
-        wizard.ShowModal()
+        self.WizClass = evt.GetEventObject().WizClass
+        self.Hide()
 
 class WizardParent(wx.Dialog):
     WizardName = ''
     WizToolTip = ''
 
-    def __init__(self, parent):
+    def __init__(self, parent, init = {}):
         super().__init__(parent)
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
-        wizsizer = self.BuildUI()
+        wizsizer = self.BuildUI(init)
 
         mainSizer.Add(wizsizer, 1, wx.EXPAND)
         mainSizer.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 10)
 
         self.SetSizerAndFit(mainSizer)
 
-    def BuildUI(self) -> wx.Sizer:
+    def BuildUI(self, init) -> wx.Sizer:
         ...

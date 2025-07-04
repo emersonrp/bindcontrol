@@ -6,7 +6,7 @@ from Help import HelpButton
 from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
-from UI.BindWizard      import BindWizard
+from UI.BindWizard      import BindWizardDialog,WizardBindPane
 
 class CustomBinds(Page):
     def __init__(self, parent):
@@ -36,7 +36,7 @@ class CustomBinds(Page):
         buttonSizer.Add(HelpButton(self, 'BufferBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
 
         launchBindWizardButton = wx.Button(self, -1, "Launch Custom Bind Wizard")
-        launchBindWizardButton.Bind(wx.EVT_BUTTON, self.OnBindWizard)
+        launchBindWizardButton.Bind(wx.EVT_BUTTON, self.OnBindWizardButton)
         buttonSizer.Add(launchBindWizardButton, wx.ALIGN_CENTER)
 
         # a scrollable window and sizer for the collection of collapsible panes
@@ -67,10 +67,12 @@ class CustomBinds(Page):
         self.AddBindToPage(bindpane = BufferBindPane(self))
         evt.Skip()
 
-    def OnBindWizard(self, evt = None):
-        bw = BindWizard(self)
-
-        bw.Show()
+    def OnBindWizardButton(self, evt = None):
+        with BindWizardDialog(self) as bwd:
+            bwd.ShowModal()
+            if wizClass := bwd.WizClass:
+                self.AddBindToPage(bindpane = WizardBindPane(self, wizClass))
+        if evt: evt.Skip()
 
         if evt: evt.Skip()
 

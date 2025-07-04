@@ -105,21 +105,21 @@ class CustomBinds(Page):
         deleteButton.SetForegroundColour(wx.RED)
         setattr(deleteButton, "BindPane", bindpane)
         setattr(deleteButton, "BindSizer", bindSizer)
-        setattr(bindpane,     "DelButton", deleteButton)
+        bindpane.DelButton = deleteButton
         deleteButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
         buttonSizer.Add(deleteButton)
 
         renameButton = wx.BitmapButton(self.scrolledPanel, -1, bitmap = GetIcon('UI', 'rename'))
         setattr(renameButton, "BindPane", bindpane)
-        setattr(bindpane,     "RenButton", renameButton)
+        bindpane.RenButton = renameButton
         renameButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
         renameButton.Bind(wx.EVT_BUTTON, self.SetBindPaneLabel)
         buttonSizer.Add(renameButton)
 
         duplicateButton = wx.BitmapButton(self.scrolledPanel, -1, bitmap = GetIcon('UI', 'copy'))
         setattr(duplicateButton, "BindPane", bindpane)
-        setattr(bindpane,        "DupButton", duplicateButton)
+        bindpane.DupButton = duplicateButton
         duplicateButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
         duplicateButton.Bind(wx.EVT_BUTTON, self.OnDuplicateButton)
         buttonSizer.Add(duplicateButton)

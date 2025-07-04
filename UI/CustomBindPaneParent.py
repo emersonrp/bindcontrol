@@ -13,6 +13,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         self.Profile = page.Profile
         self.Init    = init
         self.Title   = init.get('Title', '')
+        self.Abort   = False # set in __init__ if we should bail out.
         self.SetLabel(self.Title)
 
         self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT))

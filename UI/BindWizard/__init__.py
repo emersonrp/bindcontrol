@@ -9,9 +9,22 @@ wizards = {}
 
 class WizardBindPane(CustomBindPaneParent):
     def __init__(self, page, wizClass, init = {}):
+
         super().__init__(page, init)
 
         self.WizClass = wizClass
+
+        if not init:
+            # show wizard
+            with wizClass(self) as wizard:
+                result = wizard.ShowModal()
+                if result == wx.ID_CANCEL:
+                    self.Abort = True
+                    return
+
+                # "else"
+                # set things up, init?  innards?
+
 
 class BindWizardDialog(wx.Dialog):
     def __init__(self, parent):

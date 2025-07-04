@@ -74,12 +74,14 @@ class CustomBinds(Page):
                 self.AddBindToPage(bindpane = WizardBindPane(self, wizClass))
         if evt: evt.Skip()
 
-        if evt: evt.Skip()
-
     def AddBindToPage(self, bindpane = None):
 
         if not bindpane:
             wx.LogError("Something tried to add an empty bindpane to the page.  This is a bug.")
+            return
+
+        if bindpane.Abort: # used in WizardBindPane to bail if we cancel
+            bindpane.Destroy()
             return
 
         if not bindpane.Title: # this is from a "New Bind" button

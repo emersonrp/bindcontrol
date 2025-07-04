@@ -11,6 +11,8 @@ class SimpleBindPane(CustomBindPaneParent):
     def __init__(self, page, init = {}):
         CustomBindPaneParent.__init__(self, page, init)
 
+        self.Description = "Simple Bind"
+
         self.PowerBinderBtn = None
 
     def Serialize(self):

@@ -12,7 +12,8 @@ class WizardBindPane(CustomBindPaneParent):
 
         super().__init__(page, init)
 
-        self.WizClass = wizClass
+        self.WizClass    = wizClass
+        self.Description = wizClass.WizardName
 
         if not init:
             # show wizard
@@ -24,6 +25,16 @@ class WizardBindPane(CustomBindPaneParent):
 
                 # "else"
                 # set things up, init?  innards?
+                #
+                self.Bind(wx.EVT_LEFT_DOWN, self.OnClickPane)
+
+    def OnClickPane(self, evt):
+        init = self.Serialize()
+        with self.WizClass(self, init) as wizard:
+            ...
+            wizard.ShowModal()
+
+        evt.Skip()
 
 
 class BindWizardDialog(wx.Dialog):
@@ -79,8 +90,8 @@ class BindWizardDialog(wx.Dialog):
         self.Hide()
 
 class WizardParent(wx.Dialog):
-    WizardName = ''
-    WizToolTip = ''
+    WizardName  = ''
+    WizToolTip  = ''
 
     def __init__(self, parent, init = {}):
         super().__init__(parent)

@@ -10,6 +10,8 @@ class ComplexBindPane(CustomBindPaneParent):
     def __init__(self, page, init = {}):
         CustomBindPaneParent.__init__(self, page, init)
 
+        self.Description = "Complex Bind"
+
         self.Steps = []
 
     def Serialize(self):

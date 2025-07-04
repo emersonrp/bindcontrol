@@ -14,6 +14,7 @@ class BufferBindPane(CustomBindPaneParent):
         CustomBindPaneParent.__init__(self, page, init)
 
         self.PassedInit = init
+        self.Description = "Buffer Bind"
 
         self.Init = {
             'BuffChat1'       : '',

@@ -143,7 +143,9 @@ class CustomBinds(Page):
         # marshal up the files to delete, before we change the name
         deletefiles = None if new else bindpane.AllBindFiles()
         try:
-            dlg = wx.TextEntryDialog(self, 'Enter name for bind')
+            if bindDesc := bindpane.Description:
+                bindDesc = f' "{bindDesc}"'
+            dlg = wx.TextEntryDialog(self, f'Enter name for{bindDesc} bind:')
             if bindpane.Title:
                 dlg.SetValue(bindpane.Title)
             if dlg.ShowModal() == wx.ID_OK:

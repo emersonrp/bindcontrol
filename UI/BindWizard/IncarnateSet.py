@@ -20,9 +20,17 @@ class IncarnateSet(WizardParent):
         self.SetTitle(f"Incarnate Set{setName}")
 
         self.IncarnateBox = IncarnateBox(self, wx.App.Get().Main.Profile.Server)
+        if incdata := init.get('WizData', None):
+            self.IncarnateBox.FillWith(incdata)
         mainSizer.Add(self.IncarnateBox, 1, wx.EXPAND|wx.ALL, 10)
 
         return mainSizer
+
+    def Serialize(self):
+        return {
+            'IncData' : self.GetData(),
+            'BindKey' : self.BindKeyCtrl.Key,
+        }
 
     def GetData(self):
         return self.IncarnateBox.GetData()
@@ -49,16 +57,16 @@ class IncarnateSet(WizardParent):
         panelSizer.Add(listSizer, 1, wx.ALIGN_CENTER|wx.ALL, 15)
 
         BindSizer = wx.BoxSizer(wx.HORIZONTAL)
-        BindKeyCtrl = bcKeyButton(panel, -1, {
+        self.BindKeyCtrl = bcKeyButton(panel, -1, {
             'CtlName' : collPane.MakeCtlName("BindKey"),
             'Page'    : collPane.Page,
             'Key'     : collPane.Init.get('Key', ''),
         })
-        BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.OnKeyChanged)
+        self.BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.OnKeyChanged)
         BindSizer.Add(wx.StaticText(panel, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
-        BindSizer.Add(BindKeyCtrl,                          0, wx.ALIGN_CENTER_VERTICAL)
-        collPane.Page.Ctrls[BindKeyCtrl.CtlName] = BindKeyCtrl
-        UI.Labels[BindKeyCtrl.CtlName] = f'Simple Bind "{self.Title}"'
+        BindSizer.Add(self.BindKeyCtrl,                      0, wx.ALIGN_CENTER_VERTICAL)
+        collPane.Page.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
+        UI.Labels[self.BindKeyCtrl.CtlName] = f'Simple Bind "{self.Title}"'
 
         panelSizer.Add(BindSizer, 0, wx.EXPAND|wx.ALL, 15)
         panel.SetSizer(panelSizer)

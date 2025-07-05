@@ -1,4 +1,5 @@
 from UI.CustomBindPaneParent import CustomBindPaneParent
+from UI.BindWizard import wizpkgs
 
 import wx
 
@@ -22,6 +23,15 @@ class WizardBindPane(CustomBindPaneParent):
             init = self.Wizard.GetData()
 
         self.Init = init
+
+    def Serialize(self):
+        data = {
+            'Type'     : 'WizardBind',
+            'Title'    : self.Title,
+            'WizClass' : wizpkgs[self.WizClass],
+            'WizData'  : self.Wizard.Serialize(),
+        }
+        return data
 
     def BuildBindUI(self, page):
         # if the pane already has stuff, clear it out

@@ -4,6 +4,7 @@ from pathlib import Path
 import wx
 
 wizards = {}
+wizpkgs = {}
 
 class WizardParent(wx.Dialog):
     WizardName  = ''
@@ -72,6 +73,7 @@ class WizPickerDialog(wx.Dialog):
 
                 if modName := getattr(modclass, 'WizardName', ''):
                     wizards[modName] = modclass
+                    wizpkgs[modclass] = package
                 else:
                     print(f"Class {modclass} didn't define 'Name' - this is a bug")
             else:

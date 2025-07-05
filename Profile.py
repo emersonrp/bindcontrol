@@ -483,7 +483,8 @@ class Profile(wx.Notebook):
             # Do this after SynchronizeUI for General because SynchronizeUI will blow away our powerset
             # picks when we re-fill those pickers from the archetype.
             if data and pagename == 'General':
-                page.IncarnateBox.FillWith(data)
+                if incdata := data['General'].get('Incarnate', None):
+                    page.IncarnateBox.FillWith(incdata)
 
                 # Re-fill Primary and Secondary pickers, honoring old numeric indices if needed
                 prim = data['General'].get('Primary', None)

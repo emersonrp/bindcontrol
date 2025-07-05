@@ -6,7 +6,8 @@ from Help import HelpButton
 from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
-from UI.BindWizard      import BindWizardDialog,WizardBindPane
+from UI.WizardBindPane  import WizardBindPane
+from UI.BindWizard      import WizPickerDialog
 
 class CustomBinds(Page):
     def __init__(self, parent):
@@ -68,7 +69,7 @@ class CustomBinds(Page):
         evt.Skip()
 
     def OnBindWizardButton(self, evt = None):
-        with BindWizardDialog(self) as bwd:
+        with WizPickerDialog(self) as bwd:
             bwd.ShowModal()
             if wizClass := bwd.WizClass:
                 self.AddBindToPage(bindpane = WizardBindPane(self, wizClass))

@@ -1,43 +1,36 @@
 import os, sys
 import importlib
 from pathlib import Path
-from UI.CustomBindPaneParent import CustomBindPaneParent
-
 import wx
 
 wizards = {}
 
-class WizardBindPane(CustomBindPaneParent):
-    def __init__(self, page, wizClass, init = {}):
+class WizardParent(wx.Dialog):
+    WizardName  = ''
+    WizToolTip  = ''
 
-        super().__init__(page, init)
+    def __init__(self, parent, init = {}):
+        super().__init__(parent)
 
-        self.WizClass    = wizClass
-        self.Description = wizClass.WizardName
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
 
-        if not init:
-            # show wizard
-            with wizClass(self) as wizard:
-                result = wizard.ShowModal()
-                if result == wx.ID_CANCEL:
-                    self.Abort = True
-                    return
+        wizsizer = self.BuildUI(init)
 
-                # "else"
-                # set things up, init?  innards?
-                #
-                self.Bind(wx.EVT_LEFT_DOWN, self.OnClickPane)
+        mainSizer.Add(wizsizer, 1, wx.EXPAND)
+        mainSizer.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 10)
 
-    def OnClickPane(self, evt):
-        init = self.Serialize()
-        with self.WizClass(self, init) as wizard:
-            ...
-            wizard.ShowModal()
+        self.SetSizerAndFit(mainSizer)
 
-        evt.Skip()
+    def BuildUI(self, init) -> wx.Sizer:
+        ...
 
+    def PaneContents(self, collPane) -> wx.Sizer:
+        ...
 
-class BindWizardDialog(wx.Dialog):
+    def GetData(self) -> dict:
+        ...
+
+class WizPickerDialog(wx.Dialog):
     def __init__(self, parent):
 
         super().__init__(parent, -1, 'Bind Wizard')
@@ -54,7 +47,7 @@ class BindWizardDialog(wx.Dialog):
             wizbutton.SetToolTip(wizClass.WizToolTip)
             wcSizer.Add(wizbutton, 1, wx.EXPAND)
             setattr(wizbutton, 'WizClass', wizClass)
-            wizbutton.Bind(wx.EVT_BUTTON, self.OnWizButton)
+            wizbutton.Bind(wx.EVT_BUTTON, self.OnWizPicked)
 
         mainSizer.Add(wcSizer, 1, wx.EXPAND|wx.ALL, 20)
 
@@ -84,26 +77,7 @@ class BindWizardDialog(wx.Dialog):
             else:
                 print(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
-    def OnWizButton(self, evt):
+    def OnWizPicked(self, evt):
         if evt: evt.Skip()
         self.WizClass = evt.GetEventObject().WizClass
         self.Hide()
-
-class WizardParent(wx.Dialog):
-    WizardName  = ''
-    WizToolTip  = ''
-
-    def __init__(self, parent, init = {}):
-        super().__init__(parent)
-
-        mainSizer = wx.BoxSizer(wx.VERTICAL)
-
-        wizsizer = self.BuildUI(init)
-
-        mainSizer.Add(wizsizer, 1, wx.EXPAND)
-        mainSizer.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 10)
-
-        self.SetSizerAndFit(mainSizer)
-
-    def BuildUI(self, init) -> wx.Sizer:
-        ...

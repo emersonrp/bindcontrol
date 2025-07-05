@@ -32,7 +32,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
     def BuildBindUI(self, page):
         # build the UI needed to edit/create this bind, and shim
         # it into 'page'
-        pass
+        ...
 
     def PopulateBindFiles(self):
         print(f"Inside {self.bindclass} PopulateBindFiles")

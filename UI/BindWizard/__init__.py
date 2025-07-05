@@ -24,7 +24,7 @@ class WizardParent(wx.Dialog):
     def BuildUI(self, init) -> wx.Sizer:
         ...
 
-    def PaneContents(self, collPane) -> wx.Sizer:
+    def PaneContents(self, collPane) -> wx.Panel:
         ...
 
     def GetData(self) -> dict:

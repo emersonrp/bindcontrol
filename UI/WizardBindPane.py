@@ -10,6 +10,7 @@ class WizardBindPane(CustomBindPaneParent):
         self.WizClass    = wizClass
         self.Description = wizClass.WizardName
         self.Wizard      = wizClass(self, init)
+        self.Page        = page
 
         if not init:
             # show wizard
@@ -21,21 +22,27 @@ class WizardBindPane(CustomBindPaneParent):
             init = self.Wizard.GetData()
 
         self.Init = init
-        self.Bind(wx.EVT_LEFT_DOWN, self.OnClickPane)
-
-    def OnClickPane(self, evt):
-        self.Wizard.ShowModal(self.Init)
-        evt.Skip()
 
     def BuildBindUI(self, page):
+        # if the pane already has stuff, clear it out
         pane = self.GetPane()
-        setattr(pane, 'Page', page)
+        if mainSizer := pane.GetSizer():
+            for item in range(mainSizer.GetItemCount()):
+                mainSizer.Hide(item)
+                mainSizer.Detach(item)
+            pane.Layout()
+        else:
+            mainSizer = wx.BoxSizer(wx.VERTICAL)
+            pane.SetSizer(mainSizer)
 
         # Get the juicy innards from the Wizard class and put them in the bindpane
         PaneContents = self.Wizard.PaneContents(self)
 
-        mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.Add(PaneContents, 1, wx.EXPAND|wx.ALL, 10)
 
-        pane.SetSizer(mainSizer)
         pane.Layout()
+
+    def ReshowWizard(self, evt):
+        if self.Wizard.ShowModal() == wx.ID_OK:
+            self.BuildBindUI(None)
+        evt.Skip()

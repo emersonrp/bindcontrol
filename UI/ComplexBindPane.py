@@ -150,8 +150,7 @@ class ComplexBindPane(CustomBindPaneParent):
             step.moveUpButton.Enable(i > 1)
             step.moveDownButton.Enable(i < len(self.Steps))
             step.StepLabel.SetLabel(f"Step {i}:")
-        self.BindSizer.Layout()
-
+        self.Page.Layout()
 
     def PopulateBindFiles(self):
         if not self.checkIfWellFormed():

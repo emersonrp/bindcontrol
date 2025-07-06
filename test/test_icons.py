@@ -17,7 +17,6 @@ else:
     exit()
 
 import GameData
-GameData.SetupGameData()
 
 def RecurseMiscPowers(menustruct):
     powerlist = []

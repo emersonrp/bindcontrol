@@ -199,7 +199,7 @@ class General(Page):
         ChatSizer.Add(chatBindBox, 1, wx.EXPAND)
 
         ### Incarnate interface
-        self.IncarnateBox = IncarnateBox(self)
+        self.IncarnateBox = IncarnateBox(self, self.Profile.Server)
 
         topSizer.Add(powersBox, 0, wx.RIGHT|wx.EXPAND, 10)
         topSizer.Add(ChatSizer, 0,          wx.EXPAND, 0)

@@ -405,7 +405,7 @@ class General(Page):
         'SlashChat'            : 'Start Chat (with "/")',
         'StartEmote'           : 'Begin emote (types "/em")',
         'AutoReply'            : 'AutoReply to incoming /tell',
-        'TellLast'             : 'Send /tell to the last player you sent a /tell to',
+        'TellLast'             : 'Send /tell to the last player you sent a /tell',
         'TellTarget'           : 'Send /tell to current target',
         'QuickChat'            : 'Pop up QuickChat menu',
 

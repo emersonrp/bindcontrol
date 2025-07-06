@@ -1334,6 +1334,8 @@ class MovementPowers(Page):
             elif (self.GetState('HasCJ')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeFileKeyBind(f'powexecname Combat Jumping'))
 
+        # TODO - this is making 'nop' binds even when teleport is completely disabled.
+        # That's not right but I'm not in a space to track it down and fix it yet.
         if (not normalTPPower):
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeFileKeyBind('nop'))
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeFileKeyBind('nop'))

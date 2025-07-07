@@ -53,15 +53,12 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /clearchat  | Clear all chat buffers  |
 | /clear_petnames  | Clear the names of all your named pets  |
 | /clearRewardChoice  | Choose "no reward" in the current reward choice list.  |
-| /clear_tray  | Removes all power icons from all power trays; preserves macros  |
-| /cmdlist  | Prints out most slash commands in the chat window  |
 | /coalition_cancel supergroup  | Cancel coalition with a supergroup.  |
 | /coalition_invite player  | Invite player's supergroup to join coalition. Alias: /ci  |
 | /coalition_mintalkrank supergroup_ID [0-1]  | Sets the Hear Leaders Only setting that prevents your supergroup members from hearing anyone other than the leader from the coalition supergroup.  |
 | /coalition_nosend supergroup_ID [0-1]  | Stop your supergroup from sending coalition chat to an ally supergroup.  |
 | /coalition_sg_mintalkrank [0-1]  | Sets the Leader Chat Only setting that restricts coalition chat to your supergroup's leader only.  |
-| /comment  | Set or erase search comment. Alias: /get_comment  |
-| /compatiblecursors  | Enables useage of basic Windows mouse cursors instead of graphical cursors (command line option)  |
+| /comment  | Set or erase search comment. |
 | /conprint string  | Echo <string> to the console (System chat channel)  |
 | /contactfinder_selectcurrent  | Selects the contact currently detailed in the Contact Finder window.  |
 | /contactfinder_showcurrent  | Shows the current contact in the Contact Finder window.  |
@@ -105,30 +102,24 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /enterbasefrompasscode passcode  | Enter the Supergroup Base associated with the provided passcode.  |
 | /enter_base_from_sgid SGID number  | When the Base Entry Selection window is open, enters the Supergroup Base associated with the provided supergroup ID number.  |
 | /enterdoor coordinates map_ID  | Request a click on a door.  |
-| /estrange character  | Alias for /unfriend  |
 | /exitlaunch FilePath  | Set program to run when game exits  |
 | /extra_modifiers [mod1] [mod2] [mod3] [mod4]  | Allows setting up to four extra modifiers on a controller/gamepad.  |
 | /face  | Turn player to face target  |
-| /findmember  | Alias for /search  |
-| /fl  | Alias for /friendlist  |
+| /fl  | Display friend list. Alias: /fl  |
 | /follow  | Toggle follow mode (/cmdlist says that follow takes an argument (0 or 1), it does not)  |
 | /friend character  | Add character to friend list  |
-| /friendlist  | Display friend list. Alias: /fl  |
 | /fullRelight  | Do not cap number of world object vertices to relight per frame  |
 | /fullscreen [0-1]  | Sets video mode to fullscreen  |
-| /gamereturn  | Alias for /Window_close_extra.  |
+| /gamereturn  | Close all dialogs and non-essential windows. |
 | /getallarenastats  | Get all your arena combat statistics, more comprehensive display.  |
-| /getarenastats  | Get your arena stats. Alias: /getratedarenastats  |
-| /get_comment  | Alias for /comment.  |
+| /getarenastats  | Get your arena stats. |
 | /getglobalname localname  | Given the name of a character, this command will tell you the player's global name  |
 | /get_local_invite globalname  | Invite a player to your team using their global name  |
 | /get_local_league_invite globalname  | Invite a player to your league using their global name  |
 | /getlocalname globalname  | Given a global name, this command will tell you the name of a player's currently logged on character  |
 | /getpos  | Alias for /loc  |
-| /getratedarenastats  | Get your arena combat statistics. Alias: /getarenastats  |
 | /gfriend name  | Add a player to your global friends list.  |
 | /gfriends  | Display all members of your global friends list  |
-| /ghide  | Alias for /hide.  |
 | /gignore username  | Alias for /ignore.  |
 | /gignoring  | Alias for /ignorelist  |
 | /ginvite channel_name username  | Alias for /chan_invite  |
@@ -140,10 +131,9 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /goto_trays_tray row tray  | Go to specified tray slot (1-3) and power tray (1 to 9).  |
 | /graphfps number  | Graph current framerate (1 = SWAP, 2 = GPU, 4 = CPU, 8 = SLI).  |
 | /gunfriend name  | Remove player from global friends list. Alias: /gunfriend_player  |
-| /gunhide  | Alias for /hide  |
 | /gunignore username  | Removes a player from your global ignore list.  |
 | /hardconsts  | Use hard shader constants instead of Cg to setup shader params  |
-| /hide  | Opens the hide options dialog window. Alias: /ghide  |
+| /hide  | Opens the hide options dialog window. |
 | /hide_all  | Hides you completely from all other players, similar to the old /hide functionality  |
 | /hide_friends  | Hide from server friends  |
 | /hide_gchannels  | Hide from global chat channels  |
@@ -294,18 +284,16 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /reduce_mip  | Reduces the resolution of textures to only use the reduced (mip-map) textures. Must pass as command line arg -reduce_mip or you need to subsequently run unloadgfx  |
 | /release  | Activate medicom unit for emergency medical transport when defeated  |
 | /release_pets  | Release your current pets  |
-| /reloadgfx  | Alias for /unloadgfx.  |
 | /renderscalex  | Changes the horizontal scale at which the 3D world is rendered relative to your screen size  |
 | /renderscaley  | Changes the vertical scale at which the 3D world is rendered relative to your screen size  |
 | /rendersize  | Changes the size at which the 3D world is rendered  |
-| /requestexitmission number  | Leave the mission once it is completed. It requires a number argument, but the number doesn't seem to do anything. This command does not appear on the /cmdlist.  |
+| /requestexitmission number  | Leave the mission once it is completed. It requires a number argument, but the number doesn't seem to do anything. |
 | /respec  | Go to the power respecification screen if you have a free respec  |
 | /respec_status  | Find out how many respecs are available.  |
 | /roll parameter  | Displays a random number within the specified range in the Emotes chat channel.  |
 | /salvage_open item  | Opens the specified Super Pack salvage item.  |
 | /screen resolution  | Sets X and Y screen dimensions.  |
-| /sea character  | Alias for /search  |
-| /search options  | Find a character. Aliases: /sea, /findmember  |
+| /sea options  | Find a character. |
 | /select_build [1-3]  | Select a Build from anywhere.  |
 | /send channel message  | Alias for /chan_send  |
 | /servertime  | Displays the current server's time in the System chat channel.  |
@@ -315,8 +303,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /set_difficulty_team_size size  | Sets the team size part of your Notoriety  |
 | /sethelperstatus [1-4]  | Sets your helper status. 1 = help me, 2 = mentor, 3 = off, 4=roleplaying  |
 | /set_powerinfo_class  | Brings up context menu for choosing archetype for power info display.  |
-| /set_title number  | Set badge title by number, if you do not have the specified badge your current badge title will be cleared. Alias: /set_title_id  |
-| /set_title_id  | Set badge title (uses badge ID). Although their internal commands are slightly different, this command is basically an alias of the /set_title command. The two commands do the exact same thing in the exact same way.  |
+| /set_title number  | Set badge title by number, if you do not have the specified badge your current badge title will be cleared. |
 | /sg_enter_passcode  | When the Base Entry Selection window is open, opens a secondary window to enter a Supergroup Base Access Passcode.  |
 | /sgi character  | Alias for /sginvite  |
 | /sginvite character  | Invite character to join supergroup. Alias: /sgi  |
@@ -387,7 +374,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /unbind keyname  | Unbinds a bound key (resets it to default).  |
 | /unbind_all  | Resets keybinds, returning all keys to their default bindings.  |
 | /unfriend character  | Remove character from friends list. Alias: /estrange  |
-| /unhide  | Alias for /hide.  |
 | /unhide_all  | Stop hiding from all other players and allow them to see whether you are online  |
 | /unhide_friends  | Stop hiding from server friends  |
 | /unhide_gchannels  | Stop hiding from global chat channels  |
@@ -413,14 +399,12 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /whereami  | Tells the names of your current Server, Zone, and map coordinates.  |
 | /who name  | Searches for character name.  |
 | /whoall  | List who's on the current map, in the System chat channel.  |
-| /window_close_extra  | Close all dialogs and non-essential windows. Alias: /gamereturn  |
 | /window_names  | Lists the names of most windows exposed to players.  |
 | /window_resetall  | Resets all window locations, sizes, and visibility to their defaults.  |
 | /window_scale  | Change a single window scale.  |
 | /zoomin +, ++, or [0-1]  | Zoom camera in and lock.  |
 | /zoomout +, ++, or [0-1]  | Zoom camera out and lock.  |
-  |
-  |
+
 
 ## Not Likely to Implement
 
@@ -457,6 +441,9 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /base_undo  | Reverse your last action while in the SG base editor. (Ctrl-Z)  |
 | /center  | While supergroup base editing, center alt on spot indicated. (Left-Doubleclick).  |
 | /centersel  | Center on current selection (base editor).  |
+| /clear_tray  | Removes all power icons from all power trays; preserves macros  |
+| /cmdlist  | Prints out most slash commands in the chat window  |
+| /compatiblecursors  | Enables useage of basic Windows mouse cursors instead of graphical cursors (command line option)  |
 | /editbase [1/0]  | Turns supergroup base editor on or off.  |
 | /grid_snap number  | Sets item placement grid size while in the SG base editor.  |
 | /grid_snap_cycle  | Cycles through object placement grid sizes while in the SG base editor. (F1)  |
@@ -471,7 +458,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /sg_music filename  | Sets a sound file to play over the music channel in a supergroup base.  |
 
 
-## Slash Commands With Unknown Functionality †  |
+## Slash Commands With Unknown Functionality
 
 | Bind | Description |
 |------|-------------|

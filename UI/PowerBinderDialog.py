@@ -277,8 +277,6 @@ class PowerBinderDialog(wx.Dialog):
 
         self.EditDialog.mainSizer.Show(command.UI)
 
-        self.EditDialog.Fit()
-        self.EditDialog.Layout()
         self.EditDialog.mainSizer.Fit(self.EditDialog)
 
         self.EditDialog.SetTitle(f'Editing Step "{commandRevClasses[type(command)]}"')

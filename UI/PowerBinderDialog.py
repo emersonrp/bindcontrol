@@ -270,6 +270,8 @@ class PowerBinderDialog(wx.Dialog):
         bindstring = ('$$'.join(cmdBindStrings))
         return bindstring
 
+    # TODO - this is all reaching down into the innards of EditDialog and should probably
+    # instead be a method on that class.
     def ShowEditDialogFor(self, command):
         if not command.UI or not self.EditDialog: return
 
@@ -277,6 +279,7 @@ class PowerBinderDialog(wx.Dialog):
 
         self.EditDialog.Fit()
         self.EditDialog.Layout()
+        self.EditDialog.mainSizer.Fit(self.EditDialog)
 
         self.EditDialog.SetTitle(f'Editing Step "{commandRevClasses[type(command)]}"')
         returnval = self.EditDialog.ShowModal()

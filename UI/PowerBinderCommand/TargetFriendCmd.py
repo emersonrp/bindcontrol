@@ -7,6 +7,8 @@ class TargetFriendCmd(PowerBinderCommand):
     Menu = "Targeting"
 
     def BuildUI(self, dialog):
+        CenteringSizer = wx.BoxSizer(wx.VERTICAL)
+
         targetFriendSizer = wx.BoxSizer(wx.HORIZONTAL)
         targetFriendSizer.Add(wx.StaticText(dialog, -1, "Target Friend:"), 0,
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
@@ -14,7 +16,8 @@ class TargetFriendCmd(PowerBinderCommand):
         self.targetFriendModeChoice.SetSelection(0)
         targetFriendSizer.Add(self.targetFriendModeChoice, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        return targetFriendSizer
+        CenteringSizer.Add(targetFriendSizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
+        return CenteringSizer
 
     def MakeBindString(self):
         choice = self.targetFriendModeChoice

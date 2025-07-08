@@ -7,6 +7,8 @@ class TargetEnemyCmd(PowerBinderCommand):
     Menu = "Targeting"
 
     def BuildUI(self, dialog):
+        CenteringSizer = wx.BoxSizer(wx.VERTICAL)
+
         targetEnemySizer = wx.BoxSizer(wx.HORIZONTAL)
         targetEnemySizer.Add(wx.StaticText(dialog, -1, "Target Enemy:"), 0,
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
@@ -14,7 +16,8 @@ class TargetEnemyCmd(PowerBinderCommand):
         self.targetEnemyModeChoice.SetSelection(0)
         targetEnemySizer.Add(self.targetEnemyModeChoice, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        return targetEnemySizer
+        CenteringSizer.Add(targetEnemySizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
+        return CenteringSizer
 
     def MakeBindString(self):
         choice = self.targetEnemyModeChoice

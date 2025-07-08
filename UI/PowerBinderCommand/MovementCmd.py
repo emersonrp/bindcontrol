@@ -7,16 +7,20 @@ class MovementCmd(PowerBinderCommand):
     Menu = "Misc"
 
     def BuildUI(self, dialog):
+        centeringSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.plusbutton = wx.RadioButton(dialog, label = "+", style=wx.RB_GROUP|wx.ALIGN_CENTER_VERTICAL)
+        self.plusbutton.SetToolTip('"+" activates movement in the indicated direction while the key is held down, and deactivates it on release')
         sizer.Add(self.plusbutton, 0, wx.ALIGN_CENTER_VERTICAL)
         self.plusbutton.SetValue(True)
 
         self.plusplusbutton = wx.RadioButton(dialog, label = "++", style=wx.ALIGN_CENTER_VERTICAL)
+        self.plusplusbutton.SetToolTip('"++" toggles movement in the indicated direction on or off when the key is pressed')
         sizer.Add(self.plusplusbutton, 0, wx.ALIGN_CENTER_VERTICAL)
 
         self.minusbutton = wx.RadioButton(dialog, label = '-', style=wx.ALIGN_CENTER_VERTICAL)
+        self.minusbutton.SetToolTip('"-" turns off movement in the indicated direction;  identical to "0"')
         sizer.Add(self.minusbutton, 0, wx.ALIGN_CENTER_VERTICAL)
 
         self.commandchoice = wx.Choice(dialog, choices = [
@@ -27,12 +31,15 @@ class MovementCmd(PowerBinderCommand):
         self.commandchoice.SetSelection(0)
 
         self.zerobutton = wx.RadioButton(dialog, label = "0", style=wx.ALIGN_CENTER_VERTICAL)
+        self.zerobutton.SetToolTip('"0" turns off movement in the indicated direction;  identical to "-"')
         sizer.Add(self.zerobutton, 0, wx.ALIGN_CENTER_VERTICAL)
 
         self.onebutton = wx.RadioButton(dialog, label = "1", style=wx.ALIGN_CENTER_VERTICAL)
+        self.onebutton.SetToolTip('"1" turns on movement in the indicated direction')
         sizer.Add(self.onebutton, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        return sizer
+        centeringSizer.Add(sizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
+        return centeringSizer
 
     def MakeBindString(self):
         pre = post = ''

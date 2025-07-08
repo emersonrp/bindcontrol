@@ -7,6 +7,8 @@ class TeamPetSelectCmd(PowerBinderCommand):
     Menu = "Targeting"
 
     def BuildUI(self, dialog):
+        CenteringSizer = wx.BoxSizer(wx.VERTICAL)
+
         teamPetSelectSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.teamPetSelectTeamRB = wx.RadioButton(dialog, -1, "Teammate", style=wx.RB_GROUP|wx.ALIGN_CENTER_VERTICAL)
@@ -20,7 +22,8 @@ class TeamPetSelectCmd(PowerBinderCommand):
         self.teamPetSelectNumber.SetSelection(0)
         teamPetSelectSizer.Add(self.teamPetSelectNumber, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        return teamPetSelectSizer
+        CenteringSizer.Add(teamPetSelectSizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
+        return CenteringSizer
 
     def MakeBindString(self):
         teamOrPet = 'team' if self.teamPetSelectTeamRB.GetValue() else 'pet'

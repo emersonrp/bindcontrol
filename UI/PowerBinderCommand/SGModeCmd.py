@@ -8,6 +8,7 @@ class SGModeCmd(PowerBinderCommand):
     DeprecatedName = "SG Mode Toggle"
 
     def BuildUI(self, dialog):
+        CenteringSizer = wx.BoxSizer(wx.VERTICAL)
         sgmodeSizer = wx.BoxSizer(wx.HORIZONTAL)
         sgmodeSizer.Add(wx.StaticText(dialog, -1, "Supergroup Mode:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
 
@@ -19,7 +20,8 @@ class SGModeCmd(PowerBinderCommand):
         sgmodeSizer.Add(self.sgmodeOnRB, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
         sgmodeSizer.Add(self.sgmodeOffRB, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        return sgmodeSizer
+        CenteringSizer.Add(sgmodeSizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
+        return CenteringSizer
 
     def MakeBindString(self):
         if self.sgmodeOnRB.GetValue():

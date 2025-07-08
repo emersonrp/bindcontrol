@@ -8,6 +8,8 @@ class UseInspRowColCmd(PowerBinderCommand):
     DeprecatedName = "Use Insp From Row/Column"
 
     def BuildUI(self, dialog):
+        CenteringSizer = wx.BoxSizer(wx.VERTICAL)
+
         useInspRowColumnSizer = wx.BoxSizer(wx.HORIZONTAL)
         useInspRowColumnSizer.Add(wx.StaticText(dialog, -1, "Row:"), 0,
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
@@ -20,7 +22,8 @@ class UseInspRowColCmd(PowerBinderCommand):
         self.useInspRowColumnCol.SetSelection(0)
         useInspRowColumnSizer.Add(self.useInspRowColumnCol, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        return useInspRowColumnSizer
+        CenteringSizer.Add(useInspRowColumnSizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
+        return CenteringSizer
 
     def MakeBindString(self):
         row = self.useInspRowColumnRow.GetSelection()+1

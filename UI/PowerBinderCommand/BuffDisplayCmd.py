@@ -54,7 +54,7 @@ class BuffDisplayCmd(PowerBinderCommand):
                     data = data,
                 )
 
-            groupSizer.Add(self.Groups[group])
+            groupSizer.Add(self.Groups[group], 1, wx.ALL, 10)
 
         return groupSizer
 

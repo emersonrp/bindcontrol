@@ -7,33 +7,30 @@ class ScreenshotCmd(PowerBinderCommand):
     Menu = "Graphics / UI"
 
     def BuildUI(self, dialog):
-        ScreenshotSizer = wx.FlexGridSizer(4, 2, 5, 5)
-        ScreenshotSizer.AddGrowableCol(1)
+        CenteringSizer = wx.BoxSizer(wx.VERTICAL)
+        ScreenshotSizer = wx.BoxSizer(wx.VERTICAL)
 
-        ScreenshotSizer.Add(wx.StaticText(dialog, -1, "Format:"), flag = wx.ALIGN_CENTER_VERTICAL)
 
         rbSizer = wx.BoxSizer(wx.HORIZONTAL)
+        rbSizer.Add(wx.StaticText(dialog, -1, "Format:"), 0, flag = wx.ALIGN_CENTER_VERTICAL)
         self.ScreenshotJPG = wx.RadioButton(dialog, -1, "JPG", style = wx.ALIGN_CENTER_VERTICAL)
-        rbSizer.Add(self.ScreenshotJPG, 1)
+        rbSizer.Add(self.ScreenshotJPG, 0, flag = wx.ALIGN_CENTER_VERTICAL)
         self.ScreenshotTGA = wx.RadioButton(dialog, -1, "TGA", style = wx.ALIGN_CENTER_VERTICAL)
-        rbSizer.Add(self.ScreenshotTGA, 1)
+        rbSizer.Add(self.ScreenshotTGA, 0, flag = wx.ALIGN_CENTER_VERTICAL)
 
-        ScreenshotSizer.Add(rbSizer, 1, flag = wx.EXPAND)
+        ScreenshotSizer.Add(rbSizer, 1, flag = wx.ALIGN_CENTER_HORIZONTAL)
 
-        ScreenshotSizer.Add(wx.StaticText(dialog, -1, ""))
-        self.ScreenshotHideUI = wx.CheckBox(dialog, -1, "Hide UI while taking screenshot")
+        self.ScreenshotHideUI = wx.CheckBox(dialog, -1, "Hide UI during screenshot")
         ScreenshotSizer.Add(self.ScreenshotHideUI, 1, flag = wx.EXPAND)
 
-        return ScreenshotSizer
+        CenteringSizer.Add(ScreenshotSizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
+        return CenteringSizer
 
     def MakeBindString(self):
-        if self.ScreenshotJPG.GetValue():
-            command = "screenshot"
-        elif self.ScreenshotTGA.GetValue():
+        if self.ScreenshotTGA.GetValue():
             command = "screenshottga"
         else:
-            wx.LogWarning('PowerBindCmd "Screenshot" got an impossible value for jpg/tga')
-            return ''
+            command = "screenshot"
 
         hideUIText = "screenshotui 0$$" if self.ScreenshotHideUI.IsChecked() else ""
 

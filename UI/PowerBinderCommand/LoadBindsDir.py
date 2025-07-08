@@ -13,11 +13,13 @@ class LoadBindsDir(PowerBinderCommand):
 
         lbSizer = wx.BoxSizer(wx.HORIZONTAL)
         lbText = wx.StaticText(dialog, -1, "Load Binds Directory:")
+        lbText.SetToolTip('Select an existing profile directory from which to load a set of bind files')
         lbSizer.Add(lbText, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
 
         profiles = Profile.GetAllProfileBindsDirs()
 
         self.lbPicker = wx.Choice(dialog, -1, choices = sorted(profiles))
+        self.lbPicker.SetToolTip('Select an existing profile directory from which to load a set of bind files')
         lbSizer.Add(self.lbPicker, 1, wx.ALIGN_CENTER_VERTICAL)
 
         mainSizer.Add(lbSizer, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5)

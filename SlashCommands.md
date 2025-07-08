@@ -18,12 +18,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /boost_convert | Converts the specified enhancement into a different enhancement. |
 | /build_save | Saves the current character build (Name, Level, Archetype, Origin, Powers and Slotted Enhancements) to build.txt |
 | /build_save_file filename | Saves the current character build (Name, Level, Archetype, Origin, Powers and Slotted Enhancements) to a specified file |
-| /camdist distance | Sets the distance in feet that the third person camera pulls back behind the player |
-| /camdistadjust | Adjusts the camera distance relative to the current camera distance. |
-| /camreset | Camreset is bound to the PageDown key (default) to reset the camera behind the player |
-| /camrotate | Camrotate is bound to the PageUp key to allow controlled camera rotation around the player using the mouse. |
-| /camturn | Turn camera to match player |
-| /canlook | Alias for /mouse_look. |
 | /chan_create channel | Create a new chat channel |
 | /chan_desc channel description | Set the channel's description |
 | /change_handle new_global | Change your global user name, if allowed. |
@@ -195,8 +189,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /loc | Get coordinates of current location on the map. Alias: /getpos |
 | /localtime | Displays your local time (the time on your computer) in the System chat channel. |
 | /logchat | Toggle chat logging |
-| /lookdown | Pitch camera down |
-| /lookup | Pitch camera up |
 | /loudstacking [0-1] | Enable old eardrum-busting sound stacking. |
 | /ma message | Alias for /mission_architect |
 | /macro name command | Add a macro to first empty slot |
@@ -223,7 +215,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /mmscrollsettoggleregion [0-3] | Displays the specified editing screen while creating or editing a mission in the Mission Architect. Alias: /mmscrollsetviewlist |
 | /mmscrollsetviewlist | Alias for /mmscrollsettoggleregion. |
 | /mouse_invert | While using mouselook, makes the camera pitch down when the mouse moves down. |
-| /mouse_look | Command key for mouselook (AKA free look). Use the mouse to rotate a character's 3D view in all directions. Alias: /canlook. |
 | /mouse_speed | Scale factor for mouse look |
 | /myhandle | Display your chat handle (global name) |
 | /mypurchases | Show the list of purchases you have access to |
@@ -353,7 +344,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /team_quit_internal | Quits a team without offering a confirmation dialog, even if in task force, flashback, or Architect modes. |
 | /texaniso | Sets the amount of anisotropic filtering to use, reloads textures |
 | /texLodBias | Reduces the texture LOD bias for better compatibility with anisotropic filtering (values from 0 - 2 are valid) |
-| /third | Toggles between first and third person camera views. |
 | /thumbtack x y z | Adds a thumbtack to the map at the specified X/Y/Z coordinates |
 | /title_change | Opens the Title selection menu. |
 | /tll character_name, message | Send a message to a character's league leader. |
@@ -439,6 +429,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /base_redo | Reverse your last Undo and/or repeat action while in the SG base editor. (Ctrl-Y) |
 | /base_select | Select base object. |
 | /base_undo | Reverse your last action while in the SG base editor. (Ctrl-Z) |
+| /camdistadjust | Adjusts the camera distance relative to the current camera distance. |
 | /center | While supergroup base editing, center alt on spot indicated. (Left-Doubleclick). |
 | /centersel | Center on current selection (base editor). |
 | /clear_tray | Removes all power icons from all power trays; preserves macros |

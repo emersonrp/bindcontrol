@@ -7,46 +7,48 @@ class GraphicsCmd(PowerBinderCommand):
     Menu = "Graphics / UI"
 
     def BuildUI(self, dialog):
+        centeringSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = wx.FlexGridSizer(2)
 
         self.visscalecb = wx.CheckBox(dialog, label = "visscale")
-        sizer.Add(self.visscalecb)
+        sizer.Add(self.visscalecb, 0, wx.ALIGN_CENTER_VERTICAL)
         self.visscalesc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.5, max = 10, inc = 0.1)
-        sizer.Add(self.visscalesc)
+        sizer.Add(self.visscalesc, 1, wx.ALIGN_CENTER_VERTICAL)
 
         self.dofweightcb = wx.CheckBox(dialog, label = "dofweight")
-        sizer.Add(self.dofweightcb)
+        sizer.Add(self.dofweightcb, 0, wx.ALIGN_CENTER_VERTICAL)
         self.dofweightsc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.5, max = 2.0, inc = 0.1)
-        sizer.Add(self.dofweightsc)
+        sizer.Add(self.dofweightsc, 1, wx.ALIGN_CENTER_VERTICAL)
 
         self.fsaacb = wx.CheckBox(dialog, label = "fsaa")
-        sizer.Add(self.fsaacb)
+        sizer.Add(self.fsaacb, 0, wx.ALIGN_CENTER_VERTICAL)
         self.fsaach = wx.Choice(dialog, choices = ["0", "2", "4", "8"])
         self.fsaach.SetSelection(0)
-        sizer.Add(self.fsaach)
+        sizer.Add(self.fsaach, 1, wx.ALIGN_CENTER_VERTICAL)
 
         self.bloomscalecb = wx.CheckBox(dialog, label = "bloomscale")
-        sizer.Add(self.bloomscalecb)
+        sizer.Add(self.bloomscalecb, 0, wx.ALIGN_CENTER_VERTICAL)
         self.bloomscalech = wx.Choice(dialog, choices = ["2", "4"])
         self.bloomscalech.SetSelection(0)
-        sizer.Add(self.bloomscalech)
+        sizer.Add(self.bloomscalech, 1, wx.ALIGN_CENTER_VERTICAL)
 
         self.bloomweightcb = wx.CheckBox(dialog, label = "bloomweight")
-        sizer.Add(self.bloomweightcb)
+        sizer.Add(self.bloomweightcb, 0, wx.ALIGN_CENTER_VERTICAL)
         self.bloomweightsc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.0, max = 2.0, inc = 0.1)
-        sizer.Add(self.bloomweightsc)
+        sizer.Add(self.bloomweightsc, 1, wx.ALIGN_CENTER_VERTICAL)
 
         self.lodbiascb = wx.CheckBox(dialog, label = "lodbias")
-        sizer.Add(self.lodbiascb)
+        sizer.Add(self.lodbiascb, 0, wx.ALIGN_CENTER_VERTICAL)
         self.lodbiassc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.3, max = 20.0, inc = 0.1)
-        sizer.Add(self.lodbiassc)
+        sizer.Add(self.lodbiassc, 1, wx.ALIGN_CENTER_VERTICAL)
 
         self.renderscalecb = wx.CheckBox(dialog, label = "renderscale")
-        sizer.Add(self.renderscalecb)
+        sizer.Add(self.renderscalecb, 0, wx.ALIGN_CENTER_VERTICAL)
         self.renderscalesc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.1, max = 20.0, inc = 0.1)
-        sizer.Add(self.renderscalesc)
+        sizer.Add(self.renderscalesc, 1, wx.ALIGN_CENTER_VERTICAL)
 
-        return sizer
+        centeringSizer.Add(sizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
+        return centeringSizer
 
     def MakeBindString(self):
         # choice 1, do this one at a time by hand;  choice 2, hack up some data-driven iterable.  I choose 1.

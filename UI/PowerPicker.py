@@ -10,7 +10,7 @@ PowerChanged, EVT_POWER_CHANGED = wx.lib.newevent.NewEvent()
 
 class PowerPicker(ErrorControlMixin, wx.Button):
     def __init__(self, parent):
-        wx.Button.__init__(self, parent)
+        super().__init__(parent)
 
         self.SetLabel('...')
         self.SetMinSize(wx.Size(-1, 40))

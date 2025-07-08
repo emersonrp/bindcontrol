@@ -1,4 +1,5 @@
 import wx
+from pathlib import Path
 from Icon import GetIcon
 
 from Page import Page
@@ -6,6 +7,8 @@ from Help import HelpButton
 from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
+from UI.WizardBindPane  import WizardBindPane
+from UI.BindWizard      import WizPickerDialog
 
 class CustomBinds(Page):
     def __init__(self, parent):
@@ -23,14 +26,21 @@ class CustomBinds(Page):
         newSimpleBindButton.Bind(wx.EVT_BUTTON, self.OnNewSimpleBindButton)
         buttonSizer.Add(newSimpleBindButton, wx.ALIGN_CENTER)
         buttonSizer.Add(HelpButton(self, 'SimpleBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
+
         newComplexBindButton = wx.Button(self, -1, "New Complex Bind")
         newComplexBindButton.Bind(wx.EVT_BUTTON, self.OnNewComplexBindButton)
         buttonSizer.Add(newComplexBindButton, wx.ALIGN_CENTER)
         buttonSizer.Add(HelpButton(self, 'ComplexBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
+
         newBufferBindButton = wx.Button(self, -1, "New Buffer Bind")
         newBufferBindButton.Bind(wx.EVT_BUTTON, self.OnNewBufferBindButton)
         buttonSizer.Add(newBufferBindButton, wx.ALIGN_CENTER)
-        buttonSizer.Add(HelpButton(self, 'BufferBinds.html'), 0, wx.ALIGN_CENTER)
+        buttonSizer.Add(HelpButton(self, 'BufferBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
+
+        launchBindWizardButton = wx.Button(self, -1, "Launch Custom Bind Wizard")
+        launchBindWizardButton.Bind(wx.EVT_BUTTON, self.OnBindWizardButton)
+        buttonSizer.Add(launchBindWizardButton, wx.ALIGN_CENTER)
+        buttonSizer.Add(HelpButton(self, 'WizardBinds.html'), 0, wx.ALIGN_CENTER, 5)
 
         # a scrollable window and sizer for the collection of collapsible panes
         self.PaneSizer     = wx.BoxSizer(wx.VERTICAL)
@@ -60,10 +70,21 @@ class CustomBinds(Page):
         self.AddBindToPage(bindpane = BufferBindPane(self))
         evt.Skip()
 
+    def OnBindWizardButton(self, evt = None):
+        with WizPickerDialog(self) as bwd:
+            bwd.ShowModal()
+            if wizClass := bwd.WizClass:
+                self.AddBindToPage(bindpane = WizardBindPane(self, wizClass))
+        if evt: evt.Skip()
+
     def AddBindToPage(self, bindpane = None):
 
         if not bindpane:
             wx.LogError("Something tried to add an empty bindpane to the page.  This is a bug.")
+            return
+
+        if bindpane.Abort: # used in WizardBindPane to bail if we cancel
+            bindpane.Destroy()
             return
 
         if not bindpane.Title: # this is from a "New Bind" button
@@ -87,21 +108,21 @@ class CustomBinds(Page):
         deleteButton.SetForegroundColour(wx.RED)
         setattr(deleteButton, "BindPane", bindpane)
         setattr(deleteButton, "BindSizer", bindSizer)
-        setattr(bindpane,     "DelButton", deleteButton)
+        bindpane.DelButton = deleteButton
         deleteButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
         buttonSizer.Add(deleteButton)
 
         renameButton = wx.BitmapButton(self.scrolledPanel, -1, bitmap = GetIcon('UI', 'rename'))
         setattr(renameButton, "BindPane", bindpane)
-        setattr(bindpane,     "RenButton", renameButton)
+        bindpane.RenButton = renameButton
         renameButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
         renameButton.Bind(wx.EVT_BUTTON, self.SetBindPaneLabel)
         buttonSizer.Add(renameButton)
 
         duplicateButton = wx.BitmapButton(self.scrolledPanel, -1, bitmap = GetIcon('UI', 'copy'))
         setattr(duplicateButton, "BindPane", bindpane)
-        setattr(bindpane,        "DupButton", duplicateButton)
+        bindpane.DupButton = duplicateButton
         duplicateButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
         duplicateButton.Bind(wx.EVT_BUTTON, self.OnDuplicateButton)
         buttonSizer.Add(duplicateButton)
@@ -125,7 +146,9 @@ class CustomBinds(Page):
         # marshal up the files to delete, before we change the name
         deletefiles = None if new else bindpane.AllBindFiles()
         try:
-            dlg = wx.TextEntryDialog(self, 'Enter name for bind')
+            if bindDesc := bindpane.Description:
+                bindDesc = f' "{bindDesc}"'
+            dlg = wx.TextEntryDialog(self, f'Enter name for{bindDesc} bind:')
             if bindpane.Title:
                 dlg.SetValue(bindpane.Title)
             if dlg.ShowModal() == wx.ID_OK:
@@ -219,18 +242,36 @@ class CustomBinds(Page):
             pane.PopulateBindFiles()
         return True
 
+    # TODO - this only gets cbonds and wiz stuff if there is a cbind or wiz pane
+    # currently in the page.  This is not right.
     def AllBindFiles(self):
         files = []
         dirs  = []
-        for pane in self.Panes:
-            bfs = pane.AllBindFiles()
-            if bfs:
-                files.extend(bfs['files'])
-                dirs .extend(bfs['dirs'])
+        for dir in ['cbinds', 'buff', 'wiz']:
+            fpbd = self.FullPaneBindsDir(dir)
+            if fpbd:
+                files.extend(fpbd['files'])
+                dirs .extend(fpbd['dirs'])
 
         return {
             'files' : files,
             'dirs'  : dirs,
+        }
+
+    def FullPaneBindsDir(self, dir):
+        files = []
+        dirs  = [dir]
+        panebindsdir = Path(self.Profile.BindsDir(), dir)
+        if panebindsdir.is_dir():
+            for item in panebindsdir.glob('**/*'):
+                if item.is_file():
+                    files.append(self.Profile.GetBindFile(dir, item.name))
+                elif item.is_dir():
+                    dirs.append(item)
+
+        return {
+            'files' : files,
+            'dirs'  : [dir],
         }
 
 class BindDeletionDialog(wx.Dialog):

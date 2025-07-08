@@ -14,6 +14,7 @@ class BufferBindPane(CustomBindPaneParent):
         CustomBindPaneParent.__init__(self, page, init)
 
         self.PassedInit = init
+        self.Description = "Buffer Bind"
 
         self.Init = {
             'BuffChat1'       : '',
@@ -188,8 +189,8 @@ class BufferBindPane(CustomBindPaneParent):
             for j in [1,2,3,4,5,6,7,8]:
                 teamkey = self.Ctrls[self.MakeCtlName(f"Team{j}BuffKey")].Key
                 if not teamkey: continue
-                filebase = profile.BindsDir()     / f"buff{title}" / f"bufft{j}"
-                gamebase = profile.GameBindsDir() / f"buff{title}" / f"bufft{j}"
+                filebase = profile.BindsDir()     / 'buff' / f"{title}_t{j}"
+                gamebase = profile.GameBindsDir() / 'buff' / f"{title}_t{j}"
                 afile = profile.GetBindFile(f"{filebase}a.txt")
                 bfile = profile.GetBindFile(f"{filebase}b.txt")
                 afile.SetBind(    teamkey, self.Page, self.Title, [f'teamselect {j}', selchat, f'{BLF()} {gamebase}b.txt'])
@@ -210,8 +211,8 @@ class BufferBindPane(CustomBindPaneParent):
             for j in [1,2,3,4,5,6]:
                 petkey = self.Ctrls[self.MakeCtlName(f"Pet{j}BuffKey")].Key
                 if not petkey: continue
-                filebase = profile.BindsDir()     / f"buff{title}" / f"buffp{j}"
-                gamebase = profile.GameBindsDir() / f"buff{title}" / f"buffp{j}"
+                filebase = profile.BindsDir()     / 'buff' / f"{title}_p{j}"
+                gamebase = profile.GameBindsDir() / 'buff' / f"{title}_p{j}"
                 afile = profile.GetBindFile(f"{filebase}a.txt")
                 bfile = profile.GetBindFile(f"{filebase}b.txt")
                 afile.SetBind    (petkey, self.Page, self.Title, [f'petselect {j-1}', selchat, f'{BLF()} {gamebase}b.txt'])
@@ -272,24 +273,6 @@ class BufferBindPane(CustomBindPaneParent):
             data[f'Pet{i}BuffKey']  = self.Ctrls[self.MakeCtlName(f'Pet{i}BuffKey')].Key
 
         return data
-
-    def AllBindFiles(self):
-        files = []
-        title = re.sub(r'\W+', '', self.Title)
-        for j in [1,2,3,4,5,6,7,8]:
-            filebase = self.Profile.BindsDir() / f"buff{title}" / f"bufft{j}"
-            for k in ['a','b','c','d']:
-                files.append(self.Profile.GetBindFile(f"{filebase}{k}.txt"))
-
-        for j in [1,2,3,4,5,6]:
-            filebase = self.Profile.BindsDir() / f"buff{title}" / f"buffp{j}"
-            for k in ['a','b','c','d']:
-                files.append(self.Profile.GetBindFile(f"{filebase}{k}.txt"))
-
-        return {
-            'files' : files,
-            'dirs'  : [f"buff{title}"],
-        }
 
     def checkIfWellFormed(self):
         return self.CheckAnyKeyPicked() and self.CheckAnyPowerPicked()

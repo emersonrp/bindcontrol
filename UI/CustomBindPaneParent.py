@@ -8,11 +8,16 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         wx.CollapsiblePane.__init__(self, page.scrolledPanel,
                 style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
-        self.Ctrls   = {}
-        self.Page    = page
-        self.Profile = page.Profile
-        self.Init    = init
-        self.Title   = init.get('Title', '')
+        self.Ctrls       = {}
+        self.Page        = page
+        self.Profile     = page.Profile
+        self.Init        = init
+        self.Title       = init.get('Title', '')
+        self.Description = ''
+        self.Abort       = False # set in __init__ if we should bail out.
+        self.DelButton   = None
+        self.RenButton   = None
+        self.DupButton   = None
         self.SetLabel(self.Title)
 
         self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT))
@@ -27,7 +32,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
     def BuildBindUI(self, page):
         # build the UI needed to edit/create this bind, and shim
         # it into 'page'
-        pass
+        ...
 
     def PopulateBindFiles(self):
         print(f"Inside {self.bindclass} PopulateBindFiles")
@@ -39,7 +44,11 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         print(f"Inside {self.bindclass} Serialize, please override")
         return {}
 
-    def OnPaneChanged(self, _):
+    def OnPaneChanged(self, evt):
+        IsCollapsed = evt.GetCollapsed()
+        if self.DelButton: self.DelButton.Show(not IsCollapsed)
+        if self.RenButton: self.RenButton.Show(not IsCollapsed)
+        if self.DupButton: self.DupButton.Show(not IsCollapsed)
         self.Page.Layout()
 
     # this is called when we duplicate a bind.  We'll want to clear any keybuttons
@@ -62,9 +71,3 @@ class CustomBindPaneParent(wx.CollapsiblePane):
                 [_, _, name] = re.split(r'_', ctrlname)
                 self.Ctrls[self.MakeCtlName(name)] = ctrl
                 del(self.Ctrls[ctrlname])
-
-    def AllBindFiles(self):
-        return {
-            'files' : [],
-            'dirs'  : [],
-        }

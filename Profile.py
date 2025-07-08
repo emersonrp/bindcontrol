@@ -27,6 +27,8 @@ from UI.ControlGroup import cgSpinCtrl, cgSpinCtrlDouble
 from UI.SimpleBindPane import SimpleBindPane
 from UI.BufferBindPane import BufferBindPane
 from UI.ComplexBindPane import ComplexBindPane
+from UI.WizardBindPane import WizardBindPane
+from UI.BindWizard import wizards
 from UI.KeySelectDialog import bcKeyButton
 
 # class method to examine an arbitrary profile binds dir for its associated profile name
@@ -483,7 +485,8 @@ class Profile(wx.Notebook):
             # Do this after SynchronizeUI for General because SynchronizeUI will blow away our powerset
             # picks when we re-fill those pickers from the archetype.
             if data and pagename == 'General':
-                page.IncarnateBox.FillWith(data)
+                if incdata := data['General'].get('Incarnate', None):
+                    page.IncarnateBox.FillWith(incdata)
 
                 # Re-fill Primary and Secondary pickers, honoring old numeric indices if needed
                 prim = data['General'].get('Primary', None)
@@ -521,6 +524,11 @@ class Profile(wx.Notebook):
                     bindpane = BufferBindPane(cbpage, init = custombind)
                 elif custombind['Type'] == "ComplexBind":
                     bindpane = ComplexBindPane(cbpage, init = custombind)
+                elif custombind['Type'] == "WizardBind":
+                    if wizClass := wizards.get(custombind['WizClass'], None):
+                        bindpane = WizardBindPane(cbpage, wizClass, init = custombind)
+                    else:
+                        wx.LogError(f"Tried to load WizardBind with unknown class {custombind['WizClass']} - probably a bug!")
 
                 if bindpane:
                     cbpage.AddBindToPage(bindpane = bindpane)

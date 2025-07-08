@@ -6,29 +6,27 @@ from Util.Incarnate import Rarities, Aliases
 import GameData
 
 class IncarnateBox(wx.StaticBoxSizer):
-    def __init__(self, parent):
+    def __init__(self, parent, server):
         wx.StaticBoxSizer.__init__(self, wx.HORIZONTAL, parent, 'Incarnate Powers')
 
         staticbox = self.GetStaticBox()
-        self.Profile = parent.Profile
+        self.Server = server
 
         incarnateSizer = wx.GridBagSizer(4, 4)
 
         self.Add(incarnateSizer, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
 
-        server = self.Profile.Server
+        if self.Server == "Rebirth":
+            self.genesisInc = IncarnatePicker(staticbox, label = "Genesis")
 
-        if server == "Rebirth":
-            self.genesisInc = IncarnatePicker(staticbox, profile = self.Profile, label = "Genesis")
+        self.hybridInc    = IncarnatePicker(staticbox, label = "Hybrid")
+        self.loreInc      = IncarnatePicker(staticbox, label = "Lore")
+        self.destinyInc   = IncarnatePicker(staticbox, label = "Destiny")
+        self.judgementInc = IncarnatePicker(staticbox, label = "Judgement")
+        self.interfaceInc = IncarnatePicker(staticbox, label = "Interface")
+        self.alphaInc     = IncarnatePicker(staticbox, label = "Alpha")
 
-        self.hybridInc    = IncarnatePicker(staticbox, profile = self.Profile, label = "Hybrid")
-        self.loreInc      = IncarnatePicker(staticbox, profile = self.Profile, label = "Lore")
-        self.destinyInc   = IncarnatePicker(staticbox, profile = self.Profile, label = "Destiny")
-        self.judgementInc = IncarnatePicker(staticbox, profile = self.Profile, label = "Judgement")
-        self.interfaceInc = IncarnatePicker(staticbox, profile = self.Profile, label = "Interface")
-        self.alphaInc     = IncarnatePicker(staticbox, profile = self.Profile, label = "Alpha")
-
-        if server == "Rebirth":
+        if self.Server == "Rebirth":
             incarnateSizer.Add(self.hybridInc,    wx.GBPosition(0,0), wx.GBSpan(1,2), wx.EXPAND|wx.LEFT, 12)
             incarnateSizer.Add(self.genesisInc,   wx.GBPosition(0,2), wx.GBSpan(1,2), wx.EXPAND|wx.RIGHT, 12)
         else:
@@ -45,8 +43,7 @@ class IncarnateBox(wx.StaticBoxSizer):
         incarnateSizer.AddGrowableCol(2)
         incarnateSizer.AddGrowableCol(3)
 
-    def FillWith(self, data):
-        incarnate = data['General'].get('Incarnate', None)
+    def FillWith(self, incarnate):
         if incarnate:
             for boxname, contents in incarnate.items():
                 box = getattr(self, boxname.lower() + "Inc", None)
@@ -57,10 +54,9 @@ class IncarnateBox(wx.StaticBoxSizer):
 
     def GetData(self):
         incarnatedata = {}
-        server = self.Profile.Server
 
         boxes = [self.hybridInc, self.loreInc, self.destinyInc, self.judgementInc, self.interfaceInc, self.alphaInc]
-        if server == "Rebirth":
+        if self.Server == "Rebirth":
             boxes.append(self.genesisInc)
 
         for box in boxes:
@@ -73,11 +69,10 @@ class IncarnateBox(wx.StaticBoxSizer):
 
 import wx.lib.buttons as buttons
 class IncarnatePicker(wx.StaticBoxSizer):
-    def __init__(self, parent, profile, label = ""):
+    def __init__(self, parent, label = ""):
         wx.StaticBoxSizer.__init__(self, wx.HORIZONTAL, parent, label = label)
         staticbox = self.GetStaticBox()
 
-        self.Profile = profile
         self.Label = label
         self.IconFilename = ''
         self.PopupMenu = None
@@ -110,8 +105,6 @@ class IncarnatePicker(wx.StaticBoxSizer):
         self.IncName.SetLabel(menuitem.GetItemLabel())
         self.IncIcon.SetBitmapLabel(menuitem.GetBitmapBundle().GetBitmap(wx.Size(32,32)))
         self.IconFilename = menuitem.IconFilename
-
-        self.Profile.SetModified()
 
         # Yes both of the self.Layout() are necessary to do the sizing / wrap dance.
         self.Layout()

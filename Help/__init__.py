@@ -8,7 +8,7 @@ from Icon import GetIcon
 
 class HelpHTMLWindow(wx.html.HtmlWindow):
     def __init__(self, parent, filename, size = (800, 600)):
-        wx.html.HtmlWindow.__init__(self, parent, size = size)
+        super().__init__(parent, size = size)
 
         base_path = getattr(sys, '_MEIPASS', '')
         if base_path:
@@ -29,7 +29,7 @@ class HelpHTMLWindow(wx.html.HtmlWindow):
 
 class HelpWindow(wx.MiniFrame):
     def __init__(self, parent, filename):
-        wx.MiniFrame.__init__(self, parent, title = filename, size = wx.Size(800, 600),
+        super().__init__(parent, title = filename, size = wx.Size(800, 600),
             style = wx.TINY_CAPTION|wx.DEFAULT_FRAME_STYLE)
 
         manualhtml = HelpHTMLWindow(self, filename)
@@ -45,7 +45,7 @@ class HelpWindow(wx.MiniFrame):
 
 class HelpPopup(wx.PopupTransientWindow):
     def __init__(self, parent, filename):
-        wx.PopupTransientWindow.__init__(self, parent)
+        super().__init__(parent)
 
         self.panel = wx.Panel(self)
         self.panel.SetBackgroundColour(wx.Colour([127,127,127]))
@@ -69,7 +69,7 @@ class HelpPopup(wx.PopupTransientWindow):
 
 class HelpButton(wx.BitmapButton):
     def __init__(self, parent, filename, type = "popup"):
-        wx.BitmapButton.__init__(self, parent, -1, GetIcon('Help'))
+        super().__init__(parent, -1, GetIcon('Help'))
         self.Filename = filename
         self.WinType = type
 
@@ -94,9 +94,18 @@ def ShowHelpPopup(self, filename, event):
     if not HelpPopups.get(filename, None):
         HelpPopups[filename] = HelpPopup(self, filename)
 
+    popup = HelpPopups[filename]
+
     btn = event.GetEventObject()
     pos = btn.ClientToScreen( (0,0) )
     sz =  btn.GetSize()
-    HelpPopups[filename].Position(pos, wx.Size(0, sz[1]))
-    HelpPopups[filename].Popup()
+
+    xcoord = 0
+    # if the button is placed on the right half of the window...
+    if btn.GetPosition().x > (wx.App.Get().Main.GetSize().GetWidth() / 2):
+        # ... place the popup so it shows up below and left instead of below and right.
+        xcoord = sz[0] - (popup.GetSize().GetWidth()) # (right edge of button - width of popup)
+
+    popup.Position(pos, wx.Size(xcoord, sz[1] + 5)) # 5 padding below button
+    popup.Popup()
 

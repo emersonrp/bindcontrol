@@ -199,7 +199,7 @@ class General(Page):
         ChatSizer.Add(chatBindBox, 1, wx.EXPAND)
 
         ### Incarnate interface
-        self.IncarnateBox = IncarnateBox(self)
+        self.IncarnateBox = IncarnateBox(self, self.Profile.Server)
 
         topSizer.Add(powersBox, 0, wx.RIGHT|wx.EXPAND, 10)
         topSizer.Add(ChatSizer, 0,          wx.EXPAND, 0)
@@ -405,7 +405,7 @@ class General(Page):
         'SlashChat'            : 'Start Chat (with "/")',
         'StartEmote'           : 'Begin emote (types "/em")',
         'AutoReply'            : 'AutoReply to incoming /tell',
-        'TellLast'             : 'Send /tell to the last player you sent a /tell to',
+        'TellLast'             : 'Send /tell to the last player you sent a /tell',
         'TellTarget'           : 'Send /tell to current target',
         'QuickChat'            : 'Pop up QuickChat menu',
 

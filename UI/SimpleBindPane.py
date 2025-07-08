@@ -1,4 +1,3 @@
-import re
 import wx
 import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
@@ -11,6 +10,8 @@ from UI.ControlGroup import cgTextCtrl
 class SimpleBindPane(CustomBindPaneParent):
     def __init__(self, page, init = {}):
         CustomBindPaneParent.__init__(self, page, init)
+
+        self.Description = "Simple Bind"
 
         self.PowerBinderBtn = None
 

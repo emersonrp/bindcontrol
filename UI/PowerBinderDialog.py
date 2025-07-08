@@ -7,7 +7,7 @@ from UI.ControlGroup import cgTextCtrl
 
 class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent, button, init = {}):
-        wx.Dialog.__init__(self, parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
+        super().__init__(parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
         self.Page = parent.Page
         self.CurrentState = init
@@ -20,7 +20,6 @@ class PowerBinderDialog(wx.Dialog):
 
         sizer = wx.BoxSizer(wx.VERTICAL);
         self.mainSizer = sizer
-
 
         choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
         AddStepButton = wx.Button(self, -1, 'Add Step')
@@ -276,8 +275,8 @@ class PowerBinderDialog(wx.Dialog):
 
         self.EditDialog.mainSizer.Show(command.UI)
 
-        self.EditDialog.Layout()
         self.EditDialog.Fit()
+        self.EditDialog.Layout()
 
         self.EditDialog.SetTitle(f'Editing Step "{commandRevClasses[type(command)]}"')
         returnval = self.EditDialog.ShowModal()
@@ -303,7 +302,7 @@ class PowerBinderDialog(wx.Dialog):
 class PowerBinderButton(wx.BitmapButton):
 
     def __init__(self, parent, tgtTxtCtrl, init = {}):
-        wx.BitmapButton.__init__(self, parent, -1, bitmap = GetIcon('UI', 'gear'))
+        super().__init__(parent, -1, bitmap = GetIcon('UI', 'gear'))
         self.Init = init
         self.Dialog = None
         self.DialogParent = parent
@@ -326,7 +325,7 @@ class PowerBinderButton(wx.BitmapButton):
 
 class PowerBinderEditDialog(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "Edit Step",
+        super().__init__(parent, -1, "Edit Step",
            style = wx.DEFAULT_DIALOG_STYLE)
 
         outerSizer = wx.BoxSizer(wx.VERTICAL)

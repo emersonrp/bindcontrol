@@ -39,16 +39,26 @@ class General(Page):
             'TypingNotifier'       : 'typing',
 
             'QuitToDesktop'   : '',
-            'InviteTarget'    : '',
-            'NetgraphBindKey' : '',
+            'QuitToLogin'     : '',
+            'QuitToSelect'    : '',
+            'Sync'            : '',
+
             'ToggleRP'        : '',
+            'HelpHelpMe'      : '',
+            'HelpMentor'      : '',
+            'HelpOff'         : '',
+
+            'InviteTarget'    : '',
+            'SGInviteTarget'  : '',
+            'FriendTarget'    : '',
+            'GFriendTarget'   : '',
         }
 
     def BuildPage(self):
 
         topSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        powersBox = ControlGroup(self, self, 'Powers')
+        powersBox = ControlGroup(self, self, 'Character')
 
         # first the hand-rolled "Profile" + profilename
         ProfileLabel = wx.StaticText(powersBox.GetStaticBox(), -1, "")
@@ -137,23 +147,9 @@ class General(Page):
             callback = self.OnPickPoolPower,
         )
 
-        ChatSizer = wx.BoxSizer(wx.VERTICAL)
 
-        # ### Chat Color Picker
-        # ChatColorSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Chat Colors")
-        # ChatColorEnable = wx.CheckBox(ChatColorSizer.GetStaticBox(), -1, 'Use Custom Chat Colors')
-        # ChatColorEnable.SetToolTip( wx.ToolTip('Check this to select custom colors for your chat messages'))
-        # setattr(ChatColorEnable, "CtlName", "ChatColorEnable")
-        # self.Ctrls['ChatColorEnable'] = ChatColorEnable
-        # ChatColorEnable.Bind(wx.EVT_CHECKBOX, self.OnColorEnable)
-        # ChatColors = ChatColorPicker(ChatColorSizer.GetStaticBox(), self, 'Chat', {
-        #     'border'     : wx.BLACK,
-        #     'background' : wx.WHITE,
-        #     'text'       : wx.BLACK,
-        # })
-        # ChatColorSizer.Add(ChatColorEnable, 0, wx.ALL, 6)
-        # ChatColorSizer.Add(ChatColors, 0, wx.ALL, 10)
-        # ChatSizer.Add(ChatColorSizer, 0)
+        ### Chat Sizer
+        ChatSizer = wx.BoxSizer(wx.VERTICAL)
 
         ### Server picker
         ServerPickerSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Server")
@@ -204,25 +200,52 @@ class General(Page):
             )
         ChatSizer.Add(chatBindBox, 1, wx.EXPAND)
 
-        ### Helpful Binds
-        HelpfulSizer = ControlGroup(self, self, 'Helpful Binds')
+        ClientSizer = ControlGroup(self, self, 'Game Client Binds')
         for b in (
+            ['QuitToSelect'    , 'Choose the key that will quit to the character select screen'],
+            ['QuitToLogin'     , 'Choose the key that will quit to the login screen'],
             ['QuitToDesktop'   , 'Choose the key that will quit directly to the desktop']  ,
-            ['InviteTarget'    , 'Choose the key that will invite your target to a group'] ,
-            ['NetgraphBindKey' , 'Choose the key that will toggle the Netgraph Display']   ,
-            ['ToggleRP'        , 'Toggle your "Roleplaying" status / tag / name block' ]   ,
+            ['Sync'            , 'Choose the key that will attempt to sync with the game server'],
         ):
-            HelpfulSizer.AddControl(
+            ClientSizer.AddControl(
                 ctlName = b[0],
                 ctlType = 'keybutton',
                 tooltip = b[1],
             )
 
-        topSizer.Add(powersBox, 0, wx.RIGHT|wx.EXPAND, 10)
-        topSizer.Add(ChatSizer, 0,          wx.EXPAND, 0)
+        StatusSizer = ControlGroup(self, self, 'Character Status Binds')
+        for b in (
+             ['ToggleRP'        , 'Choose the key that will toggle your "Roleplaying" status / tag / name block' ],
+             ['HelpHelpMe'      , 'Choose the key that will set Help status to "Help Me"'],
+             ['HelpMentor'      , 'Choose the key that will set Help status to "Mentor"'],
+             ['HelpOff'         , 'Choose the key that will turn off Help status'],
+        ):
+            StatusSizer.AddControl(
+                ctlName = b[0],
+                ctlType = 'keybutton',
+                tooltip = b[1],
+            )
+
+        SocialSizer = ControlGroup(self, self, 'Social Binds')
+        for b in (
+            ['InviteTarget'    , 'Choose the key that will invite your target to a group'] ,
+            ['SGInviteTarget'  , 'Choose the key that will invite your target to your supergroup'] ,
+            ['FriendTarget'    , 'Choose the key that will add your target to your friends list'],
+            ['GFriendTarget'   , 'Choose the key that will add your target to your global friends list'],
+        ):
+            SocialSizer.AddControl(
+                ctlName = b[0],
+                ctlType = 'keybutton',
+                tooltip = b[1],
+            )
+
+        topSizer.Add(powersBox, 1, wx.RIGHT|wx.EXPAND, 10)
+        topSizer.Add(ChatSizer, 1,          wx.EXPAND, 0)
 
         bottomSizer = wx.BoxSizer(wx.HORIZONTAL)
-        bottomSizer.Add(HelpfulSizer, 1, wx.EXPAND, 0)
+        bottomSizer.Add(ClientSizer, 0, wx.EXPAND|wx.RIGHT, 10)
+        bottomSizer.Add(StatusSizer, 0, wx.EXPAND|wx.RIGHT, 10)
+        bottomSizer.Add(SocialSizer, 0, wx.EXPAND, 0)
 
         centeringSizer  = wx.BoxSizer(wx.VERTICAL)
         centeringSizer.Add(topSizer,           0, wx.TOP|wx.EXPAND, 10)
@@ -235,40 +258,37 @@ class General(Page):
         self.OnPickOrigin()
         self.OnPickArchetype()
         self.OnTypeEnable()
-        # self.OnColorEnable()
 
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()
-
-        colorstring = ''
-        # if self.GetState('ChatColorEnable'):
-        #     colorstring = ChatColors(
-        #         self.GetState('ChatForeground'),
-        #         self.GetState('ChatBackground'),
-        #         self.GetState('ChatBorder'),
-        #     )
 
         notifier = ''
         if self.GetState('TypingNotifierEnable'):
             notifier = 'afk ' + self.GetState('TypingNotifier')
 
-        startchatcommand = "startchat "
-        # if self.GetState('ChatColorEnable'):
-            # startchatcommand = "beginchat "
-
-        ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', startchatcommand + colorstring]))
+        ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', 'startchat']))
         ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeFileKeyBind([notifier, 'show chat', 'slashchat']))
-        ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind([notifier, 'show chatem ' + notifier]))
+        ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /em ']))
         ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeFileKeyBind([notifier, 'autoreply']))
         ResetFile.SetBind(self.Ctrls['TellLast']  .MakeFileKeyBind([notifier, 'show chat', 'beginchat /tl ']))
         ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
         ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
 
         ### Helpful Binds
-        ResetFile.SetBind(self.Ctrls['QuitToDesktop']  .MakeFileKeyBind('quit'))
-        ResetFile.SetBind(self.Ctrls['InviteTarget']   .MakeFileKeyBind('invite $target'))
-        ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
-        ResetFile.SetBind(self.Ctrls['ToggleRP']       .MakeFileKeyBind('roleplaying'))
+        ResetFile.SetBind(self.Ctrls['QuitToSelect'] .MakeFileKeyBind('quittocharacterselect'))
+        ResetFile.SetBind(self.Ctrls['QuitToLogin']  .MakeFileKeyBind('quittologin'))
+        ResetFile.SetBind(self.Ctrls['QuitToDesktop'].MakeFileKeyBind('quit'))
+        ResetFile.SetBind(self.Ctrls['Sync']         .MakeFileKeyBind('sync'))
+
+        ResetFile.SetBind(self.Ctrls['ToggleRP']  .MakeFileKeyBind('roleplaying'))
+        ResetFile.SetBind(self.Ctrls['HelpHelpMe'].MakeFileKeyBind('sethelperstatus 1'))
+        ResetFile.SetBind(self.Ctrls['HelpMentor'].MakeFileKeyBind('sethelperstatus 2'))
+        ResetFile.SetBind(self.Ctrls['HelpOff']   .MakeFileKeyBind('sethelperstatus 3'))
+
+        ResetFile.SetBind(self.Ctrls['InviteTarget']  .MakeFileKeyBind('i $target'))
+        ResetFile.SetBind(self.Ctrls['SGInviteTarget'].MakeFileKeyBind('sgi $target'))
+        ResetFile.SetBind(self.Ctrls['FriendTarget']  .MakeFileKeyBind('friend $target'))
+        ResetFile.SetBind(self.Ctrls['GFriendTarget'] .MakeFileKeyBind('gfriend $target'))
 
         return True
 
@@ -393,11 +413,6 @@ class General(Page):
     def OnPickEpicPowerSet(self, evt):
         evt.Skip()
 
-    # def OnColorEnable(self, evt = None):
-    #     colorsenabled = self.GetState('ChatColorEnable')
-    #     self.EnableControls(colorsenabled, ['ChatBorder', 'ChatBackground', 'ChatForeground'])
-    #     if evt: evt.Skip()
-
     def OnTypeEnable(self, evt = None):
         typeenabled = self.GetState('TypingNotifierEnable')
         self.EnableControls(typeenabled, ['TypingNotifier'])
@@ -439,4 +454,19 @@ class General(Page):
 
         'TypingNotifierEnable' : 'Enable Typing Notifier',
         'TypingNotifier'       : 'Typing Notifier',
+
+        'QuitToDesktop'   : "Quit to Desktop",
+        'QuitToSelect'    : "Quit to Character Select",
+        'QuitToLogin'     : "Quit to Login",
+        'Sync'            : "Synchronize with Game Server",
+
+        'ToggleRP'        : "Toggle Roleplaying Status",
+        'HelpHelpMe'      : 'Set "Help Me" Status',
+        'HelpMentor'      : 'Set "Mentor" Status',
+        'HelpOff'         : 'Disable Help Status',
+
+        'InviteTarget'    : "Invite Target to Group",
+        'SGInviteTarget'  : "Invite Target to Supergroup",
+        'FriendTarget'    : "Add Target to Friends",
+        'GFriendTarget'   : "Add Target to Global Friends",
     })

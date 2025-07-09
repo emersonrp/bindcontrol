@@ -481,11 +481,6 @@ class Gameplay(Page):
         'IncTeamPos'  : "Increase Team Position",
         'DecTeamPos'  : "Decrease Team Position",
         'TeamReset'   : "Reset Team Rotation",
-
-        'QuitToDesktop'   : "Quit to Desktop",
-        'InviteTarget'    : "Invite Target to Group",
-        'NetgraphBindKey' : "Toggle Netgraph Display",
-        'ToggleRP'        : "Toggle Roleplaying Status",
     })
 
     for i in range(1,9):

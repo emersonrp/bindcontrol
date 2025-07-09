@@ -210,15 +210,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /mouse_speed | Scale factor for mouse look |
 | /myhandle | Display your chat handle (global name) |
 | /mypurchases | Show the list of purchases you have access to |
-| /namecaptain name | Renames the 'Captain' supergroup rank |
-| /namecommander name | Renames the 'Commander' supergroup rank |
-| /nameenforcer name | Renames the 'Enforcer' supergroup rank |
-| /nameflunky name | Renames the 'Flunky' supergroup rank |
-| /nameleader name | Renames the 'Leader' supergroup rank |
-| /namelieutenant name | Renames the 'Lieutenant' supergroup rank |
-| /namemember name | Renames the 'Member' supergroup rank |
-| /nameoverlord name | Renames the 'Overlord' supergroup rank |
-| /nameringleader name | Renames the 'Ringleader' supergroup rank |
 | /name_scale [0.5-9+] | Change size of name info over players, NPCs and objects. |
 | /nametaskmaster name | Renames the 'Taskmaster' supergroup rank |
 | /neterrorcorrection [0-2] | Adjusts network error correction limits. |
@@ -227,7 +218,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /noBump | disable bump maps by forcing unperturbed normal |
 | /nojpg | Disables saving of .JPG files in image server mode ? |
 | /nojumprepeat | Disable jump auto-repeat |
-| /nop | Used to bind a keyboard key or button to do nothing. |
 | /noparticles [0-1] | Turn off particle graphics. |
 | /nosunflare | Disables sun flare for performance debugging |
 | /notga [0-1] | Disables saving of .TGA files in image server mode |
@@ -237,7 +227,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /option_save | Saves a list of current option settings to options.txt |
 | /option_save_file filename | Saves a list of current option settings to a file |
 | /option_toggle optionname | Toggles an option setting on or off. |
-| /petition message | Sends in-game user petition to customer support |
 | /petoptions | Displays pet option context menu |
 | /petrename name | Rename your current pet |
 | /petrename_name name | Rename the named pet |
@@ -251,7 +240,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /powexec_location power | One click automatic targeting of a ranged location area of effect |
 | /powexec_server_slot slot | Executes the specified power slot in the server-controlled tray. |
 | /powexec_slot slot | Executes the given power slot in the primary tray slot |
-| /prevshaders | Use previous Cg shader set found in 'cgfx/prev' subfolder for comparison/debugging |
 | /prev_trays_tray 1-3 | Go to previous power tray in the specified tray slot. |
 | /profiler_record file | Record client profiler information to specified file. |
 | /profiler_stop | Stop recording profiler information. |
@@ -316,7 +304,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /stopinactivedisplay | Stops rendering when the game is not the foreground application. |
 | /stopmonitorattribute string | Removes a display line from the combat Attribute Monitor. |
 | /stuck | Try to get unstuck if you are stuck in the geometry. |
-| /supporthardwarelights | Enable support for AlienFX/LightFX case lights. |
 | /suppressCloseFx | Hide all personal FX when the camera is closer than the suppressCloseFxDist |
 | /suppressCloseFxDist number | Within this camera distance, personal FX will be suppressed. |
 | /sync | Try to resync with the game server. |
@@ -351,7 +338,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /ttl character_name, message | Send a message to a character's team leader. |
 | /tut_votekick name | Start a vote kick request |
 | /tut_votekick_opinion [yes, no] | Give your opinion on the vote kick. |
-| /uiscale number | Enlarges or decreases the entire User Interface |
 | /unbind keyname | Unbinds a bound key (resets it to default). |
 | /unbind_all | Resets keybinds, returning all keys to their default bindings. |
 | /unfriend character | Remove character from friends list. Alias: /estrange |
@@ -433,6 +419,16 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /grid_snap number | Sets item placement grid size while in the SG base editor. |
 | /grid_snap_cycle | Cycles through object placement grid sizes while in the SG base editor. (F1) |
 | /mousedrag | Enable dragging object while using the SG base editor. |
+| /namecaptain name | Renames the 'Captain' supergroup rank |
+| /namecommander name | Renames the 'Commander' supergroup rank |
+| /nameenforcer name | Renames the 'Enforcer' supergroup rank |
+| /nameflunky name | Renames the 'Flunky' supergroup rank |
+| /nameleader name | Renames the 'Leader' supergroup rank |
+| /namelieutenant name | Renames the 'Lieutenant' supergroup rank |
+| /namemember name | Renames the 'Member' supergroup rank |
+| /nameoverlord name | Renames the 'Overlord' supergroup rank |
+| /nameringleader name | Renames the 'Ringleader' supergroup rank |
+| /prevshaders | Use previous Cg shader set found in 'cgfx/prev' subfolder for comparison/debugging |
 | /room_clip [0-1] | Enables or disables the room clipping option while in the SG base editor. Alias: /room_clip_cycle. (F3) |
 | /room_clip_cycle | Toggle wall clipping on and off while in the SG base editor. Alias: /room_clip. (F3) |
 | /rotate [0,1] | Rotate object 90 degrees while in the SG base editor. (R) or (Right-Click). |
@@ -441,6 +437,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /select_next | Select next present object in series while in the SG base editor. (Tab) |
 | /sell (base editor) | Sells (deletes) a base item while editing a supergroup base. |
 | /sg_music filename | Sets a sound file to play over the music channel in a supergroup base. |
+| /supporthardwarelights | Enable support for AlienFX/LightFX case lights. |
 | /thumbtack x y z | Adds a thumbtack to the map at the specified X/Y/Z coordinates |
 
 

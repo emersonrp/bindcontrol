@@ -7,7 +7,6 @@ from Icon import GetIcon
 import GameData
 
 from UI.ControlGroup import ControlGroup
-from UI.IncarnateBox import IncarnateBox
 
 from Page import Page
 
@@ -38,6 +37,11 @@ class General(Page):
 
             'TypingNotifierEnable' : True,
             'TypingNotifier'       : 'typing',
+
+            'QuitToDesktop'   : '',
+            'InviteTarget'    : '',
+            'NetgraphBindKey' : '',
+            'ToggleRP'        : '',
         }
 
     def BuildPage(self):
@@ -152,29 +156,31 @@ class General(Page):
         # ChatSizer.Add(ChatColorSizer, 0)
 
         ### Server picker
-        self.ServerBtns = wx.RadioBox(self, -1, 'Server', choices = ['Homecoming', 'Rebirth'])
-        self.ServerBtns.Bind(wx.EVT_RADIOBOX, self.OnServerChange)
-        ChatSizer.Add(self.ServerBtns, 0, wx.EXPAND)
+        ServerPickerSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Server")
+        ServerCenterSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.ServerH = wx.RadioButton(self, -1, 'Homecoming')
+        self.ServerR = wx.RadioButton(self, -1, 'Rebirth')
+        self.ServerH.Bind(wx.EVT_RADIOBUTTON, self.OnServerChange)
+        self.ServerR.Bind(wx.EVT_RADIOBUTTON, self.OnServerChange)
+        ServerCenterSizer.Add(self.ServerH, 0, wx.EXPAND|wx.ALL, 5)
+        ServerCenterSizer.Add(self.ServerR, 0, wx.EXPAND|wx.ALL, 5)
+        ServerPickerSizer.Add(ServerCenterSizer, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5)
+        ChatSizer.Add(ServerPickerSizer, 0, wx.EXPAND)
 
         ## Typing Notifier
-        TNSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Typing Notifier")
+        TNSizer = wx.StaticBoxSizer(wx.HORIZONTAL, self, "Typing Notifier")
         TNEnable = wx.CheckBox(TNSizer.GetStaticBox(), -1, 'Use Typing Notifier')
         TNEnable.SetToolTip(
                 wx.ToolTip('Check this to enable a floating "typing" notifier when you are typing into the chat box'))
         setattr(TNEnable, "CtlName", 'TypingNotifierEnable')
         TNEnable.Bind(wx.EVT_CHECKBOX, self.OnTypeEnable)
         self.Ctrls['TypingNotifierEnable'] = TNEnable
-        TNCtrlSizer = wx.BoxSizer(wx.HORIZONTAL)
-        TNLabel = wx.StaticText(TNSizer.GetStaticBox(), label = "Typing Notifier:", style=wx.ALIGN_RIGHT)
-        TN = wx.TextCtrl(TNSizer.GetStaticBox(), value = self.Init['TypingNotifier'], style=wx.TE_CENTER)
+        TN = wx.TextCtrl(TNSizer.GetStaticBox(), value = self.Init['TypingNotifier'], style = wx.TE_CENTER)
         setattr(TN, "CtlName", 'TypingNotifier')
-        setattr(TN, "CtlLabel", TNLabel)
         self.Ctrls['TypingNotifier'] = TN
-        TNCtrlSizer.Add(TNLabel, 1, wx.ALL|wx.ALIGN_CENTER, 6)
-        TNCtrlSizer.Add(TN,      1, wx.ALL, 6)
 
-        TNSizer.Add(TNEnable,    0, wx.ALL, 5)
-        TNSizer.Add(TNCtrlSizer, 0, wx.ALL|wx.EXPAND, 5)
+        TNSizer.Add(TNEnable, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
+        TNSizer.Add(TN,       1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
 
         ChatSizer.Add(TNSizer, 0, wx.TOP|wx.EXPAND, 6)
 
@@ -198,15 +204,29 @@ class General(Page):
             )
         ChatSizer.Add(chatBindBox, 1, wx.EXPAND)
 
-        ### Incarnate interface
-        self.IncarnateBox = IncarnateBox(self, self.Profile.Server)
+        ### Helpful Binds
+        HelpfulSizer = ControlGroup(self, self, 'Helpful Binds')
+        for b in (
+            ['QuitToDesktop'   , 'Choose the key that will quit directly to the desktop']  ,
+            ['InviteTarget'    , 'Choose the key that will invite your target to a group'] ,
+            ['NetgraphBindKey' , 'Choose the key that will toggle the Netgraph Display']   ,
+            ['ToggleRP'        , 'Toggle your "Roleplaying" status / tag / name block' ]   ,
+        ):
+            HelpfulSizer.AddControl(
+                ctlName = b[0],
+                ctlType = 'keybutton',
+                tooltip = b[1],
+            )
 
         topSizer.Add(powersBox, 0, wx.RIGHT|wx.EXPAND, 10)
         topSizer.Add(ChatSizer, 0,          wx.EXPAND, 0)
 
+        bottomSizer = wx.BoxSizer(wx.HORIZONTAL)
+        bottomSizer.Add(HelpfulSizer, 1, wx.EXPAND, 0)
+
         centeringSizer  = wx.BoxSizer(wx.VERTICAL)
         centeringSizer.Add(topSizer,           0, wx.TOP|wx.EXPAND, 10)
-        centeringSizer.Add(self.IncarnateBox,  0, wx.TOP|wx.EXPAND, 6)
+        centeringSizer.Add(bottomSizer,        0, wx.TOP|wx.EXPAND, 10)
 
         self.MainSizer.Add(centeringSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
@@ -243,6 +263,12 @@ class General(Page):
         ResetFile.SetBind(self.Ctrls['TellLast']  .MakeFileKeyBind([notifier, 'show chat', 'beginchat /tl ']))
         ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
         ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
+
+        ### Helpful Binds
+        ResetFile.SetBind(self.Ctrls['QuitToDesktop']  .MakeFileKeyBind('quit'))
+        ResetFile.SetBind(self.Ctrls['InviteTarget']   .MakeFileKeyBind('invite $target'))
+        ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
+        ResetFile.SetBind(self.Ctrls['ToggleRP']       .MakeFileKeyBind('roleplaying'))
 
         return True
 
@@ -383,10 +409,10 @@ class General(Page):
         if evt: evt.Skip()
 
     def OnServerChange(self, evt):
-        radiobox = evt.GetEventObject()
+        radiobutton = evt.GetEventObject()
         server = self.Profile.Server
 
-        if radiobox.GetString(radiobox.GetSelection()) != server:
+        if radiobutton.GetLabel() != server:
             if wx.MessageBox('Changing server requires saving and reloading the Profile.  Continue?', 'Changing Server', wx.YES_NO, self) == wx.YES:
                 mainwindow = wx.App.Get().Main
                 self.Profile.doSaveToFile()
@@ -394,7 +420,8 @@ class General(Page):
                 newProfile.buildFromData()
                 mainwindow.InsertProfile(newProfile)
             else:
-                radiobox.SetSelection(radiobox.FindString(server))
+                if radiobutton == self.ServerH: self.ServerR.SetValue(True)
+                if radiobutton == self.ServerR: self.ServerH.SetValue(True)
 
     UI.Labels.update({
         'Pool1'           : "Power Pool 1",

@@ -402,11 +402,7 @@ class Profile(wx.Notebook):
                 savedata[pagename][controlname] = value
 
             if pagename == "General":
-                incarnatedata = page.IncarnateBox.GetData()
-                if incarnatedata:
-                    savedata[pagename]['Incarnate'] = incarnatedata
-
-                savedata['Server'] = page.ServerBtns.GetString(page.ServerBtns.GetSelection())
+                savedata['Server'] = 'Homecoming' if page.ServerH.GetValue() else 'Rebirth'
 
         savedata['CustomBinds'] = []
         customPage = getattr(self, 'CustomBinds')
@@ -502,8 +498,6 @@ class Profile(wx.Notebook):
             # Do this after SynchronizeUI for General because SynchronizeUI will blow away our powerset
             # picks when we re-fill those pickers from the archetype.
             if data and pagename == 'General':
-                if incdata := data['General'].get('Incarnate', None):
-                    page.IncarnateBox.FillWith(incdata)
 
                 # Re-fill Primary and Secondary pickers, honoring old numeric indices if needed
                 prim = data['General'].get('Primary', None)
@@ -522,7 +516,10 @@ class Profile(wx.Notebook):
                 page.Ctrls['Epic'].SetSelection(epic)
 
                 # And while we're in "General" make sure the "Server" picker is set right
-                page.ServerBtns.SetSelection(page.ServerBtns.FindString(self.Server))
+                if self.Server == 'Homecoming':
+                    page.ServerH.SetValue(True)
+                else:
+                    page.ServerR.SetValue(True)
 
             page.Layout()
 

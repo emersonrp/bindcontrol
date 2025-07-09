@@ -56,11 +56,6 @@ class Gameplay(Page):
             'DecTeamPos'  : '',
             'TeamReset'   : '',
 
-            'QuitToDesktop'   : '',
-            'InviteTarget'    : '',
-            'NetgraphBindKey' : '',
-            'ToggleRP'        : '',
-
             'Tray1Enabled' : False,
             'Tray2Enabled' : False,
             'Tray3Enabled' : False,
@@ -233,22 +228,6 @@ class Gameplay(Page):
             )
         rightSizer.Add(TeamSelBox, 0, wx.EXPAND|wx.ALL, 10)
 
-        ### Helpful Binds
-        HelpfulSizer = ControlGroup(self, self, 'Helpful Binds')
-        for b in (
-            ['QuitToDesktop'   , 'Choose the key that will quit directly to the desktop']  ,
-            ['InviteTarget'    , 'Choose the key that will invite your target to a group'] ,
-            ['NetgraphBindKey' , 'Choose the key that will toggle the Netgraph Display']   ,
-            ['ToggleRP'        , 'Toggle your "Roleplaying" status / tag / name block' ]   ,
-        ):
-            HelpfulSizer.AddControl(
-                ctlName = b[0],
-                ctlType = 'keybutton',
-                tooltip = b[1],
-            )
-
-        rightSizer.Add(HelpfulSizer, 0, wx.EXPAND|wx.ALL, 10)
-
         bottomSizer.Add(leftSizer,  0, wx.ALL|wx.EXPAND, 10)
         bottomSizer.Add(rightSizer, 0, wx.ALL|wx.EXPAND, 10)
         self.MainSizer.Add(traySizer,   flag = wx.ALL|          wx.ALIGN_CENTER_HORIZONTAL, border = 16)
@@ -410,12 +389,6 @@ class Gameplay(Page):
                         if (tsel != tpos) or (tsel == 0):
                             file = self.Profile.GetBindFile('teamsel2', f'{tsize}{tpos}{tsel}.txt')
                             self.ts2CreateSet(tsize, tpos, tsel, file)
-
-        ### Helpful Binds
-        ResetFile.SetBind(self.Ctrls['QuitToDesktop']  .MakeFileKeyBind('quit'))
-        ResetFile.SetBind(self.Ctrls['InviteTarget']   .MakeFileKeyBind('invite $target'))
-        ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
-        ResetFile.SetBind(self.Ctrls['ToggleRP']       .MakeFileKeyBind('roleplaying'))
 
         return True
 

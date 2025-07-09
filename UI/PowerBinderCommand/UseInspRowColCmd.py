@@ -13,7 +13,7 @@ class UseInspRowColCmd(PowerBinderCommand):
         useInspRowColumnSizer = wx.BoxSizer(wx.HORIZONTAL)
         useInspRowColumnSizer.Add(wx.StaticText(dialog, -1, "Row:"), 0,
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
-        self.useInspRowColumnRow = wx.Choice(dialog, -1, choices=['1','2','3','4'], style=wx.ALIGN_CENTER_VERTICAL)
+        self.useInspRowColumnRow = wx.Choice(dialog, -1, choices=['1','2','3','4', 'Bottom'], style=wx.ALIGN_CENTER_VERTICAL)
         self.useInspRowColumnRow.SetSelection(0)
         useInspRowColumnSizer.Add(self.useInspRowColumnRow, 0, wx.ALIGN_CENTER_VERTICAL)
         useInspRowColumnSizer.Add(wx.StaticText(dialog, -1, "Column:"), 0,
@@ -29,7 +29,10 @@ class UseInspRowColCmd(PowerBinderCommand):
         row = self.useInspRowColumnRow.GetSelection()+1
         col = self.useInspRowColumnCol.GetSelection()+1
 
-        return f"inspexectray {col} {row}"
+        if row == 5:
+            return f"inspexec_slot {col}"
+        else:
+            return f"inspexectray {col} {row}"
 
     def Serialize(self):
         return {

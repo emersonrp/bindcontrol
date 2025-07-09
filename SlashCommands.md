@@ -356,9 +356,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /useCubemap number | Use cubemap |
 | /usedof | Use Depth of Field effects if available |
 | /usefp | Use a floating point render target for HDR lighting effects if available |
-| /usehdr | Use HDR lighting effects (Bloom/tonemapping) if available |
-| /useHQ number | Allow use of High Quality shader variants |
-| /userenderscale | Enables/disables render scaling feature |
 | /usewater | Use fancy water effects if available |
 | /watching | List all members of all chat channels that you belong to |
 | /wdw_load | Loads the default windows settings file wdw.txt onto your character. |
@@ -439,6 +436,8 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /sg_music filename | Sets a sound file to play over the music channel in a supergroup base. |
 | /supporthardwarelights | Enable support for AlienFX/LightFX case lights. |
 | /thumbtack x y z | Adds a thumbtack to the map at the specified X/Y/Z coordinates |
+| /useHQ number | Allow use of High Quality shader variants |
+| /userenderscale | Enables/disables render scaling feature |
 
 
 ## Slash Commands With Unknown Functionality

@@ -69,6 +69,14 @@ class GraphicsCmd(PowerBinderCommand):
         self.usecelshaderch.SetSelection(0)
         sizer.Add(self.usecelshaderch, 1, wx.ALIGN_CENTER_VERTICAL)
 
+        self.usehdrcb = wx.CheckBox(dialog, label = "usehdr")
+        self.usehdrcb.SetToolTip('Use HDR Lighting effects (bloom / tonemapping) if available')
+        sizer.Add(self.usehdrcb, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.usehdrch = wx.Choice(dialog, choices = ["0", "1"])
+        self.usehdrch.SetToolTip('Use HDR Lighting effects (bloom / tonemapping) if available')
+        self.usehdrch.SetSelection(0)
+        sizer.Add(self.usehdrch, 1, wx.ALIGN_CENTER_VERTICAL)
+
         centeringSizer.Add(sizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
         return centeringSizer
 
@@ -103,6 +111,12 @@ class GraphicsCmd(PowerBinderCommand):
             if usecelshaderselection != wx.NOT_FOUND:
                 usecelshadervalue = self.usecelshaderch.GetString(usecelshaderselection)
             bindstrings.append("usecelshader " + usecelshadervalue)
+        if self.usehdrcb.IsChecked():
+            usehdrvalue = ""
+            usehdrselection = self.usehdrch.GetSelection()
+            if usehdrselection != wx.NOT_FOUND:
+                usehdrvalue = self.usehdrch.GetString(usehdrselection)
+            bindstrings.append("usehdr " + usehdrvalue)
 
         return '$$'.join(bindstrings)
 
@@ -119,6 +133,10 @@ class GraphicsCmd(PowerBinderCommand):
         usecelshaderselection = self.usecelshaderch.GetSelection()
         if usecelshaderselection != wx.NOT_FOUND:
             usecelshadervalue = self.usecelshaderch.GetString(usecelshaderselection)
+        usehdrvalue = ""
+        usehdrselection = self.usehdrch.GetSelection()
+        if usehdrselection != wx.NOT_FOUND:
+            usehdrvalue = self.usehdrch.GetString(usehdrselection)
         return {
             'visscalecb'     : self.visscalecb.IsChecked(),
             'visscalesc'     : self.visscalesc.GetValue(),
@@ -136,6 +154,8 @@ class GraphicsCmd(PowerBinderCommand):
             'renderscalesc'  : self.renderscalesc.GetValue(),
             'usecelshadercb' : self.usecelshadercb.IsChecked(),
             'usecelshaderch' : usecelshadervalue,
+            'usehdrcb'       : self.usehdrcb.IsChecked(),
+            'usehdrch'       : usehdrvalue,
         }
 
     def Deserialize(self, init):
@@ -155,3 +175,5 @@ class GraphicsCmd(PowerBinderCommand):
         self.renderscalesc.SetValue(init.get('renderscalesc', 1.0))
         self.usecelshadercb.SetValue(init.get('usecelshadercb', False))
         self.usecelshaderch.SetSelection(self.usecelshaderch.FindString(init.get('usecelshaderch', '')))
+        self.usehdrcb.SetValue(init.get('usehdrcb', False))
+        self.usehdrch.SetSelection(self.usehdrch.FindString(init.get('usehdrch', '')))

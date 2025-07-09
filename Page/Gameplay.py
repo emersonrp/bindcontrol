@@ -58,7 +58,6 @@ class Gameplay(Page):
 
             'QuitToDesktop'   : '',
             'InviteTarget'    : '',
-            'FPSBindKey'      : '',
             'NetgraphBindKey' : '',
             'ToggleRP'        : '',
 
@@ -239,7 +238,6 @@ class Gameplay(Page):
         for b in (
             ['QuitToDesktop'   , 'Choose the key that will quit directly to the desktop']  ,
             ['InviteTarget'    , 'Choose the key that will invite your target to a group'] ,
-            ['FPSBindKey'      , 'Choose the key that will toggle the FPS Display']        ,
             ['NetgraphBindKey' , 'Choose the key that will toggle the Netgraph Display']   ,
             ['ToggleRP'        , 'Toggle your "Roleplaying" status / tag / name block' ]   ,
         ):
@@ -416,7 +414,6 @@ class Gameplay(Page):
         ### Helpful Binds
         ResetFile.SetBind(self.Ctrls['QuitToDesktop']  .MakeFileKeyBind('quit'))
         ResetFile.SetBind(self.Ctrls['InviteTarget']   .MakeFileKeyBind('invite $target'))
-        ResetFile.SetBind(self.Ctrls['FPSBindKey']     .MakeFileKeyBind('++showfps'))
         ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
         ResetFile.SetBind(self.Ctrls['ToggleRP']       .MakeFileKeyBind('roleplaying'))
 
@@ -514,7 +511,6 @@ class Gameplay(Page):
 
         'QuitToDesktop'   : "Quit to Desktop",
         'InviteTarget'    : "Invite Target to Group",
-        'FPSBindKey'      : "Toggle FPS Display",
         'NetgraphBindKey' : "Toggle Netgraph Display",
         'ToggleRP'        : "Toggle Roleplaying Status",
     })

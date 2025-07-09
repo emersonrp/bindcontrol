@@ -47,7 +47,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /coalition_mintalkrank supergroup_ID [0-1] | Sets the Hear Leaders Only setting that prevents your supergroup members from hearing anyone other than the leader from the coalition supergroup. |
 | /coalition_nosend supergroup_ID [0-1] | Stop your supergroup from sending coalition chat to an ally supergroup. |
 | /coalition_sg_mintalkrank [0-1] | Sets the Leader Chat Only setting that restricts coalition chat to your supergroup's leader only. |
-| /comment | Set or erase search comment. |
 | /conprint string | Echo <string> to the console (System chat channel) |
 | /contactfinder_selectcurrent | Selects the contact currently detailed in the Contact Finder window. |
 | /contactfinder_showcurrent | Shows the current contact in the Contact Finder window. |
@@ -55,7 +54,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /contactfinder_showprevious | Shows the previous contact in the Contact Finder window. |
 | /contactfinder_teleporttocurrent | Teleports you to the contact currently detailed in the Contact Finder window. |
 | /contextmenu menu_num | Activate a context menu slot. |
-| /controller_modifiers <first> <second> | Allows setting two controller buttons as modifiers on a gamepad |
 | /cooldown_indicator [0-3] | Sets cooldown timer onto tray icons: Recharge indicator setting (0=off, 1=bottom, 2=top, 3=center) Alias: /recharge_indicator |
 | /copychat tab | Copy the entire chat history from specified chat Tab into the clipboard |
 | /ctm [0-1] | Alias for /clicktomove |
@@ -203,16 +201,12 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /myhandle | Display your chat handle (global name) |
 | /mypurchases | Show the list of purchases you have access to |
 | /name_scale [0.5-9+] | Change size of name info over players, NPCs and objects. |
-| /nametaskmaster name | Renames the 'Taskmaster' supergroup rank |
 | /neterrorcorrection [0-2] | Adjusts network error correction limits. |
 | /netgraph [0-2] | Displays network connection information. 0 = disable, 1 = enable, 2 = see a large version. |
 | /next_trays_tray 1-3 | Go to next power tray located in the specified tray slot. |
-| /noBump | disable bump maps by forcing unperturbed normal |
-| /nojpg | Disables saving of .JPG files in image server mode ? |
 | /nojumprepeat | Disable jump auto-repeat |
 | /noparticles [0-1] | Turn off particle graphics. |
 | /nosunflare | Disables sun flare for performance debugging |
-| /notga [0-1] | Disables saving of .TGA files in image server mode |
 | /option_list | Lists names allowed for /option_set and /option_toggle |
 | /option_load | Reads a list of option settings from options.txt |
 | /option_load_file filename | Reads a list of option settings from a file |
@@ -228,7 +222,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /playerturn | Turn player to match camera |
 | /popmenu name | Opens a custom pop-up menu at the cursor's location |
 | /powers_togglealloff | Toggles off all currently active toggle powers |
-| /powexec_abort | Cancels the auto-attack power and the queued power |
 | /powexec_location power | One click automatic targeting of a ranged location area of effect |
 | /profiler_record file | Record client profiler information to specified file. |
 | /profiler_stop | Stop recording profiler information. |
@@ -391,6 +384,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /clear_tray | Removes all power icons from all power trays; preserves macros |
 | /cmdlist | Prints out most slash commands in the chat window |
 | /compatiblecursors | Enables useage of basic Windows mouse cursors instead of graphical cursors (command line option) |
+| /controller_modifiers <first> <second> | Allows setting two controller buttons as modifiers on a gamepad |
 | /controller_vmouse <LMB> <RMB> [MMB] [Snap] | Configures virtual mouse mode buttons on a gamepad |
 | /editbase [1/0] | Turns supergroup base editor on or off. |
 | /extra_modifiers [mod1] [mod2] [mod3] [mod4] | Allows setting up to four extra modifiers on a controller/gamepad. |
@@ -408,6 +402,10 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /namemember name | Renames the 'Member' supergroup rank |
 | /nameoverlord name | Renames the 'Overlord' supergroup rank |
 | /nameringleader name | Renames the 'Ringleader' supergroup rank |
+| /nametaskmaster name | Renames the 'Taskmaster' supergroup rank |
+| /noBump | disable bump maps by forcing unperturbed normal |
+| /nojpg | Disables saving of .JPG files in image server mode ? |
+| /notga [0-1] | Disables saving of .TGA files in image server mode |
 | /powexec_server_slot slot | Executes the specified power slot in the server-controlled tray. |
 | /powexec_slot slot | Executes the given power slot in the primary tray slot |
 | /prevshaders | Use previous Cg shader set found in 'cgfx/prev' subfolder for comparison/debugging |

@@ -14,7 +14,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /alttraysticky | Cycles through showing the secondary (Alt) and tertiary (Alt2) tray slots, and then hiding them. |
 | /assist | Change your current target to selected ally's or enemy's target |
 | /auc_loginupdate | Get status of auction inventory info to the player. Displays how many items were bought and sold in the Consignment House chat channel. |
-| /boost_convert | Converts the specified enhancement into a different enhancement. |
 | /build_save | Saves the current character build (Name, Level, Archetype, Origin, Powers and Slotted Enhancements) to build.txt |
 | /build_save_file filename | Saves the current character build (Name, Level, Archetype, Origin, Powers and Slotted Enhancements) to a specified file |
 | /chan_create channel | Create a new chat channel |
@@ -38,14 +37,13 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /chat_save | Saves a list of chat settings to chat.txt |
 | /chat_save_file filename | Saves a list of current chat settings to a file |
 | /chat_set channel_name | Changes the default channel in the chat window. |
-| /ci player | Alias for /coalition_invite |
+| /ci player | Invite player's supergroup to join coalition. |
 | /citytime | Displays the current in-game time in the System chat channel. |
 | /clearAttributeView | Clear a target's combat attributes from the Combat Attributes window. |
 | /clearchat | Clear all chat buffers |
 | /clear_petnames | Clear the names of all your named pets |
 | /clearRewardChoice | Choose "no reward" in the current reward choice list. |
 | /coalition_cancel supergroup | Cancel coalition with a supergroup. |
-| /coalition_invite player | Invite player's supergroup to join coalition. Alias: /ci |
 | /coalition_mintalkrank supergroup_ID [0-1] | Sets the Hear Leaders Only setting that prevents your supergroup members from hearing anyone other than the leader from the coalition supergroup. |
 | /coalition_nosend supergroup_ID [0-1] | Stop your supergroup from sending coalition chat to an ally supergroup. |
 | /coalition_sg_mintalkrank [0-1] | Sets the Leader Chat Only setting that restricts coalition chat to your supergroup's leader only. |
@@ -58,7 +56,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /contactfinder_teleporttocurrent | Teleports you to the contact currently detailed in the Contact Finder window. |
 | /contextmenu menu_num | Activate a context menu slot. |
 | /controller_modifiers <first> <second> | Allows setting two controller buttons as modifiers on a gamepad |
-| /controller_vmouse <LMB> <RMB> [MMB] [Snap] | Configures virtual mouse mode buttons on a gamepad |
 | /cooldown_indicator [0-3] | Sets cooldown timer onto tray icons: Recharge indicator setting (0=off, 1=bottom, 2=top, 3=center) Alias: /recharge_indicator |
 | /copychat tab | Copy the entire chat history from specified chat Tab into the clipboard |
 | /ctm [0-1] | Alias for /clicktomove |
@@ -166,11 +163,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /leagueWithdrawTeam | Withdraw you or your team from the current league without leaving the team |
 | /leaveLeague | Leave your current team and league. |
 | /leaveteam | Leave your current team |
-| /lfg_event_response yes/no | Accept an invitation to join an event (trial, task force, story arc, or holiday event). |
-| /lfg_remove_from_queue | Remove self or team from LFG queue. |
-| /lfg_request_event_list | Get LFG system event list. |
-| /lfgset number | Sets your "looking for group" status. |
-| /lfgtoggle | Toggle looking for group status. |
 | /li name | Alias for /league_invite |
 | /link_channel ChannelName | Activates Context Menu for a channel name. |
 | /link_info LinkName | Provides info window on matching power, inspiration, enhancement, recipe, or salvage item. |
@@ -238,21 +230,17 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /powers_togglealloff | Toggles off all currently active toggle powers |
 | /powexec_abort | Cancels the auto-attack power and the queued power |
 | /powexec_location power | One click automatic targeting of a ranged location area of effect |
-| /powexec_server_slot slot | Executes the specified power slot in the server-controlled tray. |
-| /powexec_slot slot | Executes the given power slot in the primary tray slot |
-| /prev_trays_tray 1-3 | Go to previous power tray in the specified tray slot. |
 | /profiler_record file | Record client profiler information to specified file. |
 | /profiler_stop | Stop recording profiler information. |
 | /profiling_memory | Set the number of MB of memory to use for profiling |
 | /promote character | Promote supergroup member one rank |
 | /quittocharacterselect | Quits to character select. |
 | /quittologin | Quits to login screen. |
-| /recharge_indicator [0-3] | Sets the position of the recharge timer on tray icons. Alias: /cooldown_indicator |
+| /recharge_indicator [0-3] | Sets the position of the recharge timer on tray icons. |
 | /recharge_timer_color | Sets the Recharge Timer Color. |
 | /recharge_timer_format | Sets the Recharge Timer Format. |
 | /recharge_timer_opacity | Sets the Recharge Timer Opacity. |
 | /recharge_timer_threshold | Enables the Power Recharge Timer and sets the threshold for when the timer will appear. |
-| /reduce_mip | Reduces the resolution of textures to only use the reduced (mip-map) textures. Must pass as command line arg -reduce_mip or you need to subsequently run unloadgfx |
 | /release | Activate medicom unit for emergency medical transport when defeated |
 | /release_pets | Release your current pets |
 | /renderscalex | Changes the horizontal scale at which the 3D world is rendered relative to your screen size |
@@ -276,17 +264,10 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /set_powerinfo_class | Brings up context menu for choosing archetype for power info display. |
 | /set_title number | Set badge title by number, if you do not have the specified badge your current badge title will be cleared. |
 | /sg_enter_passcode | When the Base Entry Selection window is open, opens a secondary window to enter a Supergroup Base Access Passcode. |
-| /sgi character | Alias for /sginvite |
-| /sginvite character | Invite character to join supergroup. Alias: /sgi |
-| /sgk character | Alias for /sgkick |
-| /sgkick character | Kick character from supergroup. Alias: /sgk |
+| /sgicharacter | Invite character to join supergroup. |
+| /sgk character | Kick character from supergroup. |
 | /sgkickyes name | Kick player from supergroup, without confirmation. |
 | /sgleave | Leave the current supergroup. |
-| /sgpasscode text | Creates a Base Access Passcode, used to enter a supergroup's base |
-| /sgsetdemotetimeout seconds | Sets the number of days a leader in your supergroup has to go without logging in before the leader is demoted. |
-| /sgsetdescription description | Sets your supergroup description. |
-| /sgsetmotd message | Sets the supergroup's message of the day. |
-| /sgsetmotto motto | Sets the supergroup's motto. |
 | /sgwho | Lists basic information about your supergroup and generates a list of all member characters sorted by supergroup rank. The list is displayed in the System chat channel. |
 | /shaderCache | Enable the shader cache |
 | /sheathe | Immediately puts away all weapons. |
@@ -307,7 +288,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /suppressCloseFx | Hide all personal FX when the camera is closer than the suppressCloseFxDist |
 | /suppressCloseFxDist number | Within this camera distance, personal FX will be suppressed. |
 | /sync | Try to resync with the game server. |
-| /synch | Alias for /sync |
 | /tabclose name | Close/delete chat tab |
 | /tabcreate window pane name | Create new chat tab. Specify window (0-4), pane(0 top, 1 bottom) and tab name. |
 | /tabglobalnext | Cycle forward through all chat tabs in all windows, will open the corresponding chat window if necessary |
@@ -319,13 +299,12 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /tailor_status | Find out how many free tailor sessions are available. |
 | /target_distance [0-1] | Sets displaying the distance between you and your target in the Target window. |
 | /target_name name | Targets next entity that matches the given name. |
-| /teamMoveToLeague LeaderName | Create a new league with the whole team. Alias: /tmtl |
 | /team_quit_internal | Quits a team without offering a confirmation dialog, even if in task force, flashback, or Architect modes. |
 | /texaniso | Sets the amount of anisotropic filtering to use, reloads textures |
 | /texLodBias | Reduces the texture LOD bias for better compatibility with anisotropic filtering (values from 0 - 2 are valid) |
 | /title_change | Opens the Title selection menu. |
 | /tll character_name, message | Send a message to a character's league leader. |
-| /tmtl LeaderName | Alias for /teamMoveToLeague |
+| /tmtl LeaderName | Create a new league with the whole team. |
 | /toggle_enemy | Cycles through targetable enemies starting with the closest |
 | /toggle_enemy_prev | Cycles through targetable enemies in reverse order |
 | /trade character | Invite character to trade, must have character targeted if no name is provided |
@@ -340,7 +319,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /tut_votekick_opinion [yes, no] | Give your opinion on the vote kick. |
 | /unbind keyname | Unbinds a bound key (resets it to default). |
 | /unbind_all | Resets keybinds, returning all keys to their default bindings. |
-| /unfriend character | Remove character from friends list. Alias: /estrange |
+| /unfriend character | Remove character from friends list. |
 | /unhide_all | Stop hiding from all other players and allow them to see whether you are online |
 | /unhide_friends | Stop hiding from server friends |
 | /unhide_gchannels | Stop hiding from global chat channels |
@@ -403,6 +382,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /base_redo | Reverse your last Undo and/or repeat action while in the SG base editor. (Ctrl-Y) |
 | /base_select | Select base object. |
 | /base_undo | Reverse your last action while in the SG base editor. (Ctrl-Z) |
+| /boost_convert | Converts the specified enhancement into a different enhancement. |
 | /camdistadjust | Adjusts the camera distance relative to the current camera distance. |
 | /center | While supergroup base editing, center alt on spot indicated. (Left-Doubleclick). |
 | /centersel | Center on current selection (base editor). |
@@ -411,10 +391,13 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /clear_tray | Removes all power icons from all power trays; preserves macros |
 | /cmdlist | Prints out most slash commands in the chat window |
 | /compatiblecursors | Enables useage of basic Windows mouse cursors instead of graphical cursors (command line option) |
+| /controller_vmouse <LMB> <RMB> [MMB] [Snap] | Configures virtual mouse mode buttons on a gamepad |
 | /editbase [1/0] | Turns supergroup base editor on or off. |
 | /extra_modifiers [mod1] [mod2] [mod3] [mod4] | Allows setting up to four extra modifiers on a controller/gamepad. |
 | /grid_snap number | Sets item placement grid size while in the SG base editor. |
 | /grid_snap_cycle | Cycles through object placement grid sizes while in the SG base editor. (F1) |
+| /lfg_event_response yes/no | Accept an invitation to join an event (trial, task force, story arc, or holiday event). |
+| /lfg_request_event_list | Get LFG system event list. |
 | /mousedrag | Enable dragging object while using the SG base editor. |
 | /namecaptain name | Renames the 'Captain' supergroup rank |
 | /namecommander name | Renames the 'Commander' supergroup rank |
@@ -425,7 +408,11 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /namemember name | Renames the 'Member' supergroup rank |
 | /nameoverlord name | Renames the 'Overlord' supergroup rank |
 | /nameringleader name | Renames the 'Ringleader' supergroup rank |
+| /powexec_server_slot slot | Executes the specified power slot in the server-controlled tray. |
+| /powexec_slot slot | Executes the given power slot in the primary tray slot |
 | /prevshaders | Use previous Cg shader set found in 'cgfx/prev' subfolder for comparison/debugging |
+| /prev_trays_tray 1-3 | Go to previous power tray in the specified tray slot. |
+| /reduce_mip | Reduces the resolution of textures to only use the reduced (mip-map) textures. Must pass as command line arg -reduce_mip or you need to subsequently run unloadgfx |
 | /room_clip [0-1] | Enables or disables the room clipping option while in the SG base editor. Alias: /room_clip_cycle. (F3) |
 | /room_clip_cycle | Toggle wall clipping on and off while in the SG base editor. Alias: /room_clip. (F3) |
 | /rotate [0,1] | Rotate object 90 degrees while in the SG base editor. (R) or (Right-Click). |
@@ -434,6 +421,11 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /select_next | Select next present object in series while in the SG base editor. (Tab) |
 | /sell (base editor) | Sells (deletes) a base item while editing a supergroup base. |
 | /sg_music filename | Sets a sound file to play over the music channel in a supergroup base. |
+| /sgpasscode text | Creates a Base Access Passcode, used to enter a supergroup's base |
+| /sgsetdemotetimeout seconds | Sets the number of days a leader in your supergroup has to go without logging in before the leader is demoted. |
+| /sgsetdescription description | Sets your supergroup description. |
+| /sgsetmotd message | Sets the supergroup's message of the day. |
+| /sgsetmotto motto | Sets the supergroup's motto. |
 | /supporthardwarelights | Enable support for AlienFX/LightFX case lights. |
 | /thumbtack x y z | Adds a thumbtack to the map at the specified X/Y/Z coordinates |
 | /useHQ number | Allow use of High Quality shader variants |

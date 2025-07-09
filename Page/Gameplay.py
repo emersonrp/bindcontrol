@@ -117,9 +117,10 @@ class Gameplay(Page):
 
                 trayGridSizer.Add(traybutton, 1, wx.EXPAND)
             trayGridSizer.Add(self.FillTrayButtons[tray], 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
-            if tray == self.NumTrays:
-                trayGridSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Prev Tray"), 1, wx.ALIGN_CENTER|wx.LEFT, 6)
-                trayGridSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Next Tray"), 1, wx.ALIGN_CENTER|wx.LEFT, 6)
+
+            if tray == self.NumTrays:  # is the server tray
+                trayGridSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Prev Tray"), 1, wx.ALIGN_CENTER)
+                trayGridSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Next Tray"), 1, wx.ALIGN_CENTER)
             else:
                 prevbutton = bcKeyButton(staticbox, wx.ID_ANY, init = { 'CtlName' : f"Tray{tray}Prev",})
                 self.Ctrls[f"Tray{tray}Prev"] = prevbutton
@@ -129,7 +130,10 @@ class Gameplay(Page):
                 trayGridSizer.Add(nextbutton, 1, wx.ALIGN_CENTER)
 
         GridHelpSizer.Add(trayGridSizer, 0, wx.ALL, 10)
-        traygridbutton = HelpButton(staticbox, 'PowerTrayButtons.html')
+        if self.Profile.Server == 'Rebirth':
+            traygridbutton = HelpButton(staticbox, 'PowerTrayButtonsRebirth.html')
+        else:
+            traygridbutton = HelpButton(staticbox, 'PowerTrayButtons.html')
         GridHelpSizer.Add(traygridbutton, 0, wx.ALL, 10)
 
         traySizer.Add(GridHelpSizer, 0, wx.ALL, 10)
@@ -255,12 +259,13 @@ class Gameplay(Page):
     def SynchronizeUI(self, evt = None):
         self.OnTPSEnable()
         self.OnTeamEnable()
+
         AnyTray = False
         for tray in (range(1,self.NumTrays+1)):
             self.FillTrayButtons[tray].Enable(self.GetState(f"Tray{tray}Enabled"))
             for button in (1,2,3,4,5,6,7,8,9,0):
                 self.Ctrls[f"Tray{tray}Button{button}"].Enable(self.GetState(f'Tray{tray}Enabled'))
-            if tray != self.NumTrays:
+            if tray != self.NumTrays:  # not the server tray
                 self.Ctrls[f"Tray{tray}Prev"].Enable(self.GetState(f"Tray{tray}Enabled"))
                 self.Ctrls[f"Tray{tray}Next"].Enable(self.GetState(f"Tray{tray}Enabled"))
             if self.GetState(f'Tray{tray}Enabled'):
@@ -356,7 +361,6 @@ class Gameplay(Page):
         if self.GetState('Tray3Enabled'):
             ResetFile.SetBind(self.Ctrls[f"Tray3Prev"].MakeFileKeyBind("prev_tray_alt2"))
             ResetFile.SetBind(self.Ctrls[f"Tray3Next"].MakeFileKeyBind("next_tray_alt2"))
-        # TODO: log into Rebirth and verify that prev/next_tray_alt3 work.
         if server == "Rebirth" and self.GetState('Tray4Enabled'):
             ResetFile.SetBind(self.Ctrls[f"Tray4Prev"].MakeFileKeyBind("prev_tray_alt3"))
             ResetFile.SetBind(self.Ctrls[f"Tray4Next"].MakeFileKeyBind("next_tray_alt3"))

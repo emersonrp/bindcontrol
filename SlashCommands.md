@@ -13,16 +13,13 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /alttray [0-1] | Show and lock the secondary (Alt) tray slot into the raised position or unlock and hide it. |
 | /alttraysticky | Cycles through showing the secondary (Alt) and tertiary (Alt2) tray slots, and then hiding them. |
 | /assist | Change your current target to selected ally's or enemy's target |
-| /assist_name player | Change your current target to specified ally's target |
 | /auc_loginupdate | Get status of auction inventory info to the player. Displays how many items were bought and sold in the Consignment House chat channel. |
 | /boost_convert | Converts the specified enhancement into a different enhancement. |
 | /build_save | Saves the current character build (Name, Level, Archetype, Origin, Powers and Slotted Enhancements) to build.txt |
 | /build_save_file filename | Saves the current character build (Name, Level, Archetype, Origin, Powers and Slotted Enhancements) to a specified file |
 | /chan_create channel | Create a new chat channel |
 | /chan_desc channel description | Set the channel's description |
-| /change_handle new_global | Change your global user name, if allowed. |
 | /chan_invite channel username | Invite a player or chat handle to a chat channel. Alias: /ginvite |
-| /chan_invitedeny channel name_string | Chat channel invite denied message. Appears to be an internal command. |
 | /chan_invite_gf channel | Invites your entire global friends list to a global chat channel |
 | /chan_invite_sg channel rank | Invite your entire Supergroup to a global chat channel. Only leaders may use this command. The rank parameter may be any of the ranks listed below. Alias: /ginvite_sg |
 | /chan_invite_team channel | Invites your entire team or Task Force to a Global chat channel |
@@ -97,7 +94,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /enter_base_from_sgid SGID number | When the Base Entry Selection window is open, enters the Supergroup Base associated with the provided supergroup ID number. |
 | /enterdoor coordinates map_ID | Request a click on a door. |
 | /exitlaunch FilePath | Set program to run when game exits |
-| /extra_modifiers [mod1] [mod2] [mod3] [mod4] | Allows setting up to four extra modifiers on a controller/gamepad. |
 | /face | Turn player to face target |
 | /fl | Display friend list. Alias: /fl |
 | /follow | Toggle follow mode (/cmdlist says that follow takes an argument (0 or 1), it does not) |
@@ -143,7 +139,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /ignorelist | Displays a list of ignored characters |
 | /ignore_spammer character | Ignore character and sends alert to customer service |
 | /imageServer | Sets game to Image Server mode. |
-| /incarnate_equip slotName powername | Equips the specified Incarnate Ability. |
 | /incarnate_unequip slotName powername | Unequips the specified Incarnate Ability. |
 | /incarnate_unequip_all | Unequips all equipped Incarnate Abilities. |
 | /incarnate_unequip_by_slot slotName | Unequips whatever ability is in the specified Incarnate slot. |
@@ -155,8 +150,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /insp_delete inspiration | Deletes an inspiration by name. |
 | /inspexec_pet_name insp_name petname | Gives an inspiration to the named pet |
 | /inspexec_pet_target insp_name | Gives an inspiration to the targeted pet |
-| /inspexec_slot [1-5] | Activate an inspiration slot in the first row (bottom, from left to right). Alias: /inspirationslot |
-| /inspirationslot | Alias for /inspexec_slot |
 | /interact | Interact with an object or entity in front of the player using a keyboard key (equivalent to left-click on object). |
 | /invite character | Invite character to join team. Alias: /i |
 | /k character | Alias for /kick |
@@ -196,7 +189,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /macroslot macro-slot# name command | Add a macro to specified power tray slot |
 | /mailview string | Sets which view to use (Inbox or Character Items) when on the Email window |
 | /makeleader character | Change the team leader to targeted character, must have character targeted if no name is provided. Alias: /ml |
-| /manage | Go to the enhancement management screen |
 | /maxAniso | Shows the maximum anisotropic your card allows |
 | /maxColorTrackerVerts number | Maximum number of world object vertices to relight per frame |
 | /maxfps | Sets the maximum limit for frames per second that a player's client can utilize, whether the game is in focus or not. |
@@ -344,7 +336,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /team_quit_internal | Quits a team without offering a confirmation dialog, even if in task force, flashback, or Architect modes. |
 | /texaniso | Sets the amount of anisotropic filtering to use, reloads textures |
 | /texLodBias | Reduces the texture LOD bias for better compatibility with anisotropic filtering (values from 0 - 2 are valid) |
-| /thumbtack x y z | Adds a thumbtack to the map at the specified X/Y/Z coordinates |
 | /title_change | Opens the Title selection menu. |
 | /tll character_name, message | Send a message to a character's league leader. |
 | /tmtl LeaderName | Alias for /teamMoveToLeague |
@@ -419,9 +410,9 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /architectsaveandtest | Save mission being edited and test |
 | /architect_save_compressed_costumes [0-1] | Toggle save file output to show compressed or uncompressed. |
 | /arena_invite player | Invite player to join your arena event. Alias: /ai |
-| /arenalist | Open the arena window from anywhere in the game |
 | /arena_local message | The Arena event window chat. |
 | /arena_score | Open the arena score window if you are in an Arena match. |
+| /assist_name player | Change your current target to specified ally's target |
 | /attach_cycle | Toggle object placement attachment (Floor, Wall, Ceiling, Surface) while in the SG base editor. (F5) |
 | /badgegrant BadgeGrantTag | Grants a character the specified badge (only works on Beta server) |
 | /base_default_sky number | Sets SG base editing default sky setting to one of 16 preset values |
@@ -432,10 +423,13 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /camdistadjust | Adjusts the camera distance relative to the current camera distance. |
 | /center | While supergroup base editing, center alt on spot indicated. (Left-Doubleclick). |
 | /centersel | Center on current selection (base editor). |
+| /chan_invitedeny channel name_string | Chat channel invite denied message. Appears to be an internal command. |
+| /change_handle new_global | Change your global user name, if allowed. |
 | /clear_tray | Removes all power icons from all power trays; preserves macros |
 | /cmdlist | Prints out most slash commands in the chat window |
 | /compatiblecursors | Enables useage of basic Windows mouse cursors instead of graphical cursors (command line option) |
 | /editbase [1/0] | Turns supergroup base editor on or off. |
+| /extra_modifiers [mod1] [mod2] [mod3] [mod4] | Allows setting up to four extra modifiers on a controller/gamepad. |
 | /grid_snap number | Sets item placement grid size while in the SG base editor. |
 | /grid_snap_cycle | Cycles through object placement grid sizes while in the SG base editor. (F1) |
 | /mousedrag | Enable dragging object while using the SG base editor. |
@@ -447,6 +441,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /select_next | Select next present object in series while in the SG base editor. (Tab) |
 | /sell (base editor) | Sells (deletes) a base item while editing a supergroup base. |
 | /sg_music filename | Sets a sound file to play over the music channel in a supergroup base. |
+| /thumbtack x y z | Adds a thumbtack to the map at the specified X/Y/Z coordinates |
 
 
 ## Slash Commands With Unknown Functionality

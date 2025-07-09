@@ -7,72 +7,78 @@ class WindowToggleCmd(PowerBinderCommand):
     Menu = "Graphics / UI"
 
     def BuildUI(self, dialog):
+        # Having a window name of '' means you can't open/close/toggle because there's a special command
         self.WindowNames = {
-                'Actions'           : 'actions',
-                'Auction House'     : 'ah',
-                'Badge'             : 'badge',
-                'Channel Search'    : 'chansearch',
-                'Chat'              : 'chat',
-                'Custom Chat 1'     : 'chat1',
-                'Custom Chat 2'     : 'chat2',
-                'Custom Chat 3'     : 'chat3',
-                'Custom Chat 4'     : 'chat4',
-                'Clues'             : 'clue',
-                'Combat Numbers'    : 'combatnumbers',
-                'Contacts'          : 'contact',
-                'Contact Finder'    : 'contactfinder',
-                'Costumes'          : 'costume',
-                'Email'             : 'email',
-                'Enhancements'      : 'enhancements',
-                'Friends'           : 'friend',
-                'Group'             : 'group',
-                'Help'              : 'helpwindow',
-                'Incarnate'         : 'incarnate',
-                'Inspirations'      : 'insp',
-                'League'            : 'league',
-                'LFG'               : 'lfg',
-                'Map'               : 'map',
-                'Mission'           : 'mission',
-                'Nav / Compass'     : 'nav',
-                'Options'           : 'options',
-                'Pets'              : 'pet',
-                'Petition'          : 'petition',
-                'Power Tray'        : 'powers',
-                'Power List'        : 'powerlist',
-                'Quit'              : 'quit',
-                'Recipes'           : 'recipe',
-                'Salvage'           : 'salvage',
-                'Search'            : 'search',
-                'Supergroup'        : 'sg',
-                'Target'            : 'target',
-                'Team'              : 'team',
-                'Tray'              : 'tray',
-                'Tray1'             : 'tray1',
-                'Tray2'             : 'tray2',
-                'Tray3'             : 'tray3',
-                'Tray4'             : 'tray4',
-                'Tray5'             : 'tray5',
-                'Tray6'             : 'tray6',
-                'Tray7'             : 'tray7',
-                'Tray8'             : 'tray8',
-                'Vault'             : 'vault',
+                'Actions'             : 'actions',
+                'Arena List'          : '',
+                'Auction House'       : 'ah',
+                'Badge'               : 'badge',
+                'Channel Search'      : 'chansearch',
+                'Chat'                : 'chat',
+                'Custom Chat 1'       : 'chat1',
+                'Custom Chat 2'       : 'chat2',
+                'Custom Chat 3'       : 'chat3',
+                'Custom Chat 4'       : 'chat4',
+                'Clues'               : 'clue',
+                'Combat Numbers'      : 'combatnumbers',
+                'Contacts'            : 'contact',
+                'Contact Finder'      : 'contactfinder',
+                'Costumes'            : 'costume',
+                'Email'               : 'email',
+                'Enhancements'        : 'enhancements',
+                'Friends'             : 'friend',
+                'Group'               : 'group',
+                'Help'                : 'helpwindow',
+                'Incarnate'           : 'incarnate',
+                'Inspirations'        : 'insp',
+                'League'              : 'league',
+                'LFG'                 : 'lfg',
+                'Manage Enhancements' : '',
+                'Map'                 : 'map',
+                'Mission'             : 'mission',
+                'Nav / Compass'       : 'nav',
+                'Options'             : 'options',
+                'Pets'                : 'pet',
+                'Petition'            : 'petition',
+                'Power Tray'          : 'powers',
+                'Power List'          : 'powerlist',
+                'Quit'                : 'quit',
+                'Recipes'             : 'recipe',
+                'Salvage'             : 'salvage',
+                'Search'              : 'search',
+                'Supergroup'          : 'sg',
+                'Target'              : 'target',
+                'Team'                : 'team',
+                'Tray'                : 'tray',
+                'Tray1'               : 'tray1',
+                'Tray2'               : 'tray2',
+                'Tray3'               : 'tray3',
+                'Tray4'               : 'tray4',
+                'Tray5'               : 'tray5',
+                'Tray6'               : 'tray6',
+                'Tray7'               : 'tray7',
+                'Tray8'               : 'tray8',
+                'Vault'               : 'vault',
             }
 
         self.ShortToggleCommands = {
-                'Auction House'     : 'ah',
-                'Chat'              : 'chat',
-                'Help'              : 'helpwindow',
-                'Map'               : 'map',
-                'Nav / Compass'     : 'nav',
-                'Power Tray'        : 'powers',
-                'Target'            : 'target',
-                'Tray'              : 'tray',
+                'Arena List'          : 'arenalist',
+                'Auction House'       : 'ah',
+                'Chat'                : 'chat',
+                'Help'                : 'helpwindow',
+                'Map'                 : 'map',
+                'Manage Enhancements' : 'manage',
+                'Nav / Compass'       : 'nav',
+                'Power Tray'          : 'powers',
+                'Target'              : 'target',
+                'Tray'                : 'tray',
             }
 
         windowToggleSizer = wx.BoxSizer(wx.HORIZONTAL)
         windowToggleSizer.Add(wx.StaticText(dialog, -1, "Window:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
         self.windowToggleTray = wx.Choice(dialog, -1, choices = list(self.WindowNames.keys()))
         self.windowToggleTray.SetSelection(0)
+        self.windowToggleTray.Bind(wx.EVT_CHOICE, self.OnWindowPicked)
         windowToggleSizer.Add(self.windowToggleTray, 1, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
 
         self.windowToggleRB = wx.RadioButton(dialog, -1, "Toggle", style = wx.RB_GROUP)
@@ -100,7 +106,6 @@ class WindowToggleCmd(PowerBinderCommand):
                 return shortcmd
             else:
                 return 'toggle ' + windowname
-
 
     def Serialize(self):
         choice = self.windowToggleTray
@@ -133,3 +138,12 @@ class WindowToggleCmd(PowerBinderCommand):
             self.windowHideRB.SetValue(True)
         else:
             self.windowToggleRB.SetValue(True)
+
+    def OnWindowPicked(self, evt):
+        if evt: evt.Skip()
+        wtt = self.windowToggleTray
+        enable = self.WindowNames[wtt.GetString(wtt.GetSelection())] != ''
+
+        self.windowShowRB.Enable(enable)
+        self.windowHideRB.Enable(enable)
+        self.windowToggleRB.Enable(enable)

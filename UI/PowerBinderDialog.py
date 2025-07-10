@@ -4,6 +4,7 @@ from Help import HelpButton
 from Icon import GetIcon
 from pathlib import Path
 from UI.ControlGroup import cgTextCtrl
+from UI.ErrorControls import ErrorControlMixin
 
 class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent, button, init = {}):
@@ -16,16 +17,16 @@ class PowerBinderDialog(wx.Dialog):
 
         self.EditDialog = None # make this at dialog-show time in LoadFromCurrentState
         self.Button = button
-        self.AddStepMenu = self.makeAddStepMenu()
+        self.AddCommandMenu = self.makeAddCommandMenu()
 
         sizer = wx.BoxSizer(wx.VERTICAL);
         self.mainSizer = sizer
 
         choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
-        AddStepButton = wx.Button(self, -1, 'Add Step')
-        AddStepButton.Bind(wx.EVT_BUTTON, self.OnAddStepButton)
-        AddStepButton.Bind(wx.EVT_MENU,   self.OnAddStepMenu)
-        choiceSizer.Add(AddStepButton, 1, wx.LEFT, 10)
+        AddCommandButton = wx.Button(self, -1, 'Add Command')
+        AddCommandButton.Bind(wx.EVT_BUTTON, self.OnAddCommandButton)
+        AddCommandButton.Bind(wx.EVT_MENU,   self.OnAddCommandMenu)
+        choiceSizer.Add(AddCommandButton, 1, wx.LEFT, 10)
         choiceSizer.Add(HelpButton(self, "PowerBinder.html", type="window"), 0, wx.LEFT, 10)
         sizer.Add(choiceSizer, 1, wx.EXPAND|wx.BOTTOM, 10)
 
@@ -56,7 +57,9 @@ class PowerBinderDialog(wx.Dialog):
 
         choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.BindStringDisplay = cgTextCtrl(self, -1, style=wx.TE_READONLY)
+        self.BindStringDisplay = cgTextCtrl(self, -1)
+        self.BindStringDisplay.Enable(False)
+        self.BindStringDisplay.SetHint("Add Commands to create a bind string")
         choiceSizer.Add(wx.StaticText(self, -1, "Bind String:"), 0,
                         wx.ALIGN_CENTER_VERTICAL)
         choiceSizer.Add(self.BindStringDisplay, 1, wx.LEFT, 10)
@@ -167,11 +170,11 @@ class PowerBinderDialog(wx.Dialog):
                 wx.LogError(f"Item at index {index} in PowerBinder's RearrangeList didn't have Client Data.  This is a bug.")
         return data
 
-    def OnAddStepButton(self, evt):
+    def OnAddCommandButton(self, evt):
         button = evt.EventObject
-        if not self.AddStepMenu:
-            self.AddStepMenu = self.makeAddStepMenu()
-        button.PopupMenu(self.AddStepMenu)
+        if not self.AddCommandMenu:
+            self.AddCommandMenu = self.makeAddCommandMenu()
+        button.PopupMenu(self.AddCommandMenu)
 
     def OnOKButton(self, _):
         if self.Button.tgtTxtCtrl:
@@ -215,9 +218,9 @@ class PowerBinderDialog(wx.Dialog):
             print("cmdObject was None")
         self.UpdateBindStringDisplay()
 
-    # OnAddStepMenu creates a new step and adds it to the rearrangelist
-    def OnAddStepMenu(self, evt):
-        menuitem = self.AddStepMenu.FindItemById(evt.GetId())
+    # OnAddCommandMenu creates a new Command and adds it to the rearrangelist
+    def OnAddCommandMenu(self, evt):
+        menuitem = self.AddCommandMenu.FindItemById(evt.GetId())
         chosenName = menuitem.GetItemLabel()
 
         # make a new command object, attached to the parent dialog
@@ -279,28 +282,28 @@ class PowerBinderDialog(wx.Dialog):
 
         self.EditDialog.mainSizer.Fit(self.EditDialog)
 
-        self.EditDialog.SetTitle(f'Editing Step "{commandRevClasses[type(command)]}"')
+        self.EditDialog.SetTitle(f'Editing Command "{commandRevClasses[type(command)]}"')
         returnval = self.EditDialog.ShowModal()
 
         self.EditDialog.mainSizer.Hide(command.UI)
 
         return returnval
 
-    def makeAddStepMenu(self):
+    def makeAddCommandMenu(self):
 
-        stepMenu = wx.Menu()
+        CommandMenu = wx.Menu()
 
         for subname in menuStructure:
             submenu = wx.Menu()
-            stepMenu.AppendSubMenu(submenu, subname)
+            CommandMenu.AppendSubMenu(submenu, subname)
             for classname in menuStructure[subname]:
                 submenu.Append(wx.ID_ANY, classname)
 
-        stepMenu.Append(wx.ID_ANY, 'Custom Bind')
+        CommandMenu.Append(wx.ID_ANY, 'Custom Bind')
 
-        return stepMenu
+        return CommandMenu
 
-class PowerBinderButton(wx.BitmapButton):
+class PowerBinderButton(ErrorControlMixin, wx.BitmapButton):
 
     def __init__(self, parent, tgtTxtCtrl, init = {}):
         super().__init__(parent, -1, bitmap = GetIcon('UI', 'gear'))
@@ -309,10 +312,10 @@ class PowerBinderButton(wx.BitmapButton):
         self.DialogParent = parent
 
         self.tgtTxtCtrl = tgtTxtCtrl
-        self.Bind(wx.EVT_BUTTON, self.PowerBinderEventHandler)
+        self.Bind(wx.EVT_BUTTON, self.OnClickPBB)
         self.SetToolTip("Launch PowerBinder")
 
-    def PowerBinderEventHandler(self, _):
+    def OnClickPBB(self, _):
         self.PowerBinderDialog().Show()
 
     def SaveToData(self):
@@ -326,7 +329,7 @@ class PowerBinderButton(wx.BitmapButton):
 
 class PowerBinderEditDialog(wx.Dialog):
     def __init__(self, parent):
-        super().__init__(parent, -1, "Edit Step",
+        super().__init__(parent, -1, "Edit Command",
            style = wx.DEFAULT_DIALOG_STYLE)
 
         outerSizer = wx.BoxSizer(wx.VERTICAL)

@@ -14,7 +14,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         self.Init        = init
         self.Title       = init.get('Title', '')
         self.Description = ''
-        self.Abort       = False # set in __init__ if we should bail out.
+        self.Abort       = False # set to True in subclass.__init__ if we should bail out.
         self.DelButton   = None
         self.RenButton   = None
         self.DupButton   = None

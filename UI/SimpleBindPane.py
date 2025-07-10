@@ -35,17 +35,18 @@ class SimpleBindPane(CustomBindPaneParent):
 
         BindSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        BindContentsCtrl = cgTextCtrl(pane, -1, self.Init.get('Contents', ''))
-        BindContentsCtrl.Bind(wx.EVT_TEXT, self.onContentsChanged)
+        BindContentsCtrl = cgTextCtrl(pane, -1, self.Init.get('Contents', ''), style = wx.TE_READONLY)
+        BindContentsCtrl.SetForegroundColour(wx.Colour(128,128,128))
+        BindContentsCtrl.SetHint('Use the PowerBinder button to the right to define this keybind')
+        self.Ctrls[self.MakeCtlName('BindContents')] = BindContentsCtrl
 
         powerbinderdata = self.Init.get('PowerBinderDlg', {})
 
-        BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"),              0, wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(BindContentsCtrl,                                       1, wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5)
+        BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"), 0, wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(BindContentsCtrl,                          1, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         pbb = PowerBinderButton(pane, BindContentsCtrl, powerbinderdata)
         BindSizer.Add(pbb, 0, wx.ALIGN_CENTER_VERTICAL)
         self.PowerBinderBtn = pbb
-        self.Ctrls[self.MakeCtlName('BindContents')] = BindContentsCtrl
 
         BindKeyCtrl = bcKeyButton(pane, -1, {
             'CtlName' : self.MakeCtlName("BindKey"),
@@ -54,10 +55,14 @@ class SimpleBindPane(CustomBindPaneParent):
         })
         BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
+        BindContentsCtrl.Bind(wx.EVT_TEXT, self.onContentsChanged)
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(BindKeyCtrl,                          0, wx.ALIGN_CENTER_VERTICAL)
         self.Ctrls[BindKeyCtrl.CtlName] = BindKeyCtrl
         UI.Labels[BindKeyCtrl.CtlName] = f'Simple Bind "{self.Title}"'
+
+        # gotta wait to bind this until pbb is defined/etc
+        BindContentsCtrl.Bind(wx.EVT_LEFT_DOWN, pbb.OnClickPBB)
 
         BindSizer.Layout()
 
@@ -66,6 +71,7 @@ class SimpleBindPane(CustomBindPaneParent):
         border.Add(BindSizer, 1, wx.EXPAND|wx.ALL, 10)
         pane.SetSizer(border)
         self.checkIfWellFormed()
+
 
     def onContentsChanged(self, _):
         self.Profile.SetModified()
@@ -83,11 +89,12 @@ class SimpleBindPane(CustomBindPaneParent):
         bc = self.Ctrls[self.MakeCtlName('BindContents')]
         bc.SetToolTip('')
 
-        if bc.GetValue():
-            bc.RemoveError('undef')
-        else:
-            bc.AddError('undef', 'The bind contents have not been defined.')
-            isWellFormed = False
+        if self.PowerBinderBtn:
+            if bc.GetValue():
+                self.PowerBinderBtn.RemoveError('undef')
+            else:
+                self.PowerBinderBtn.AddError('undef', 'The bind contents have not been defined.')
+                isWellFormed = False
 
         if len(bc.GetValue()) <= 255:
             bc.RemoveError('length')

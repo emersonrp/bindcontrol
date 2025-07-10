@@ -83,13 +83,12 @@ class ComplexBindPane(CustomBindPaneParent):
     def checkIfWellFormed(self):
         isWellFormed = True
 
-        # TODO - check each step for > 255 char
-        firststep = self.Steps[0].BindContents
+        firststep = self.Steps[0]
         fullsteps = list(filter(lambda x: x.BindContents.GetValue(), self.Steps))
         if fullsteps:
-            firststep.RemoveError('undef')
+            firststep.PowerBinder.RemoveError('undef')
         else:
-            firststep.AddError('undef', 'At least one step must be defined')
+            firststep.PowerBinder.AddError('undef', 'At least one step must be defined')
             isWellFormed = False
 
         stepsWellFormed = True
@@ -187,13 +186,17 @@ class BindStep(wx.Panel):
         self.StepLabel = StepLabel
         sizer.Add(StepLabel, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        BindContents = cgTextCtrl(self, -1, step.get('contents', ''))
-        self.BindContents = BindContents
-        sizer.Add(BindContents, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
+        self.BindContents = cgTextCtrl(self, -1, step.get('contents', ''), style = wx.TE_READONLY)
+        self.BindContents.SetForegroundColour(wx.Colour(128,128,128))
+        self.BindContents.SetHint('Use the PowerBinder button to the right to define this step')
+        sizer.Add(self.BindContents, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
         self.BindContents.Bind(wx.EVT_TEXT, parent.onContentsChanged)
 
-        self.PowerBinder = PowerBinderButton(self, BindContents, step.get('powerbinderdata', {}))
+        self.PowerBinder = PowerBinderButton(self, self.BindContents, step.get('powerbinderdata', {}))
         sizer.Add(self.PowerBinder, 0)
+
+        # we had to define the button before we could add this Bind
+        self.BindContents.Bind(wx.EVT_LEFT_DOWN, self.PowerBinder.OnClickPBB)
 
         self.moveUpButton = wx.Button(self, -1, '\u25B2', size = wx.Size(40, -1))
         self.moveUpButton.Bind(wx.EVT_BUTTON, parent.onMoveUpButton)

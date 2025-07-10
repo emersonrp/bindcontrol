@@ -402,7 +402,7 @@ class Profile(wx.Notebook):
                 savedata[pagename][controlname] = value
 
             if pagename == "General":
-                savedata['Server'] = 'Homecoming' if page.ServerH.GetValue() else 'Rebirth'
+                savedata['Server'] = page.ServerPicker.GetString(page.ServerPicker.GetSelection())
 
         savedata['CustomBinds'] = []
         customPage = getattr(self, 'CustomBinds')
@@ -516,10 +516,7 @@ class Profile(wx.Notebook):
                 page.Ctrls['Epic'].SetSelection(epic)
 
                 # And while we're in "General" make sure the "Server" picker is set right
-                if self.Server == 'Homecoming':
-                    page.ServerH.SetValue(True)
-                else:
-                    page.ServerR.SetValue(True)
+                page.ServerPicker.SetSelection(page.ServerPicker.FindString(self.Server))
 
             page.Layout()
 

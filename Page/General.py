@@ -1,9 +1,10 @@
 # UI / logic for the 'general' panel
 import wx
+import wx.adv
 import wx.lib.stattext as ST
 import UI
 import Profile
-from Icon import GetIcon
+from Icon import GetIconBitmap
 import GameData
 
 from UI.ControlGroup import ControlGroup
@@ -58,54 +59,48 @@ class General(Page):
 
     def BuildPage(self):
 
-        topSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.bannerPanel = wx.Panel(self)
+        bannerSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.bannerPanel.SetSizer(bannerSizer)
 
-        powersBox = ControlGroup(self, self, 'Character')
+        alignPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY)
+        for a in GameData.Alignments:
+            alignPicker.Append(a, GetIconBitmap('Alignments', a))
+        self.Ctrls['Alignment'] = alignPicker
+        alignPicker.Bind(wx.EVT_COMBOBOX, self.OnPickAlignment)
+        bannerSizer.Add(alignPicker, 1, wx.EXPAND|wx.ALL, 5)
 
-        # first the hand-rolled "Profile" + profilename
-        ProfileLabel = wx.StaticText(powersBox.GetStaticBox(), -1, "")
-        ProfileLabel.SetLabelMarkup("<b>Profile:</b>")
-        powersBox.InnerSizer.Add(ProfileLabel, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        originPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY)
+        for o in GameData.Origins:
+            originPicker.Append(o, GetIconBitmap('Origins', o))
+        self.Ctrls['Origin'] = originPicker
+        originPicker.Bind(wx.EVT_COMBOBOX, self.OnPickOrigin)
+        bannerSizer.Add(originPicker, 1, wx.EXPAND|wx.ALL, 5)
 
-        self.nameBox = wx.Panel(powersBox.GetStaticBox())
+        self.nameBox = wx.Panel(self.bannerPanel)
         nameSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.nameBox.SetSizer(nameSizer)
-
-        self.OriginIcon    = wx.StaticBitmap(self.nameBox, size = wx.Size(32, 32))
-        self.NameDisplay   = ST.GenStaticText(self.nameBox, -1, "", style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        self.ArchetypeIcon = wx.StaticBitmap(self.nameBox, size = wx.Size(32,32))
-
+        self.NameDisplay = ST.GenStaticText(self.nameBox, -1, "", style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.NameDisplay.SetFont(wx.Font(wx.FontInfo().Bold()))
-
-        nameSizer.Add(self.OriginIcon, 0, wx.ALL, 6)
         nameSizer.Add(self.NameDisplay, 1, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 6)
-        nameSizer.Add(self.ArchetypeIcon, 0, wx.ALL, 6)
+        bannerSizer.Add(self.nameBox, 1, wx.EXPAND|wx.ALL, 5)
 
-        powersBox.InnerSizer.Add(self.nameBox, 1, wx.EXPAND)
+        archetypePicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY)
+        for a in GameData.Archetypes:
+            archetypePicker.Append(a, GetIconBitmap('Archetypes', a))
+        self.Ctrls['Archetype'] = archetypePicker
+        archetypePicker.Bind(wx.EVT_COMBOBOX, self.OnPickArchetype)
+        bannerSizer.Add(archetypePicker, 1, wx.EXPAND|wx.ALL, 5)
 
-        alignmentpicker = powersBox.AddControl(
-            ctlName = 'Alignment',
-            ctlType  = 'choice',
-            contents = GameData.Alignments,
-            callback = self.OnPickAlignment,
-        )
-        alignmentpicker.SetMinSize(wx.Size(200,-1))
+        self.ServerPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY)
+        for s in ['Homecoming', 'Rebirth']:
+            self.ServerPicker.Append(s, GetIconBitmap('Servers', s))
+        self.Ctrls['Server'] = self.ServerPicker
+        self.ServerPicker.Bind(wx.EVT_COMBOBOX, self.OnServerChange)
+        bannerSizer.Add(self.ServerPicker, 1, wx.EXPAND|wx.ALL, 5)
 
-        originpicker = powersBox.AddControl(
-            ctlName = 'Origin',
-            ctlType = 'choice',
-            contents = GameData.Origins,
-            callback = self.OnPickOrigin,
-        )
-        originpicker.SetMinSize(wx.Size(200,-1))
-
-        archpicker = powersBox.AddControl(
-            ctlName = 'Archetype',
-            ctlType = 'choice',
-            contents = sorted(GameData.Archetypes),
-            callback = self.OnPickArchetype,
-        )
-        archpicker.SetMinSize(wx.Size(200,-1))
+        topSizer = wx.BoxSizer(wx.HORIZONTAL)
+        powersBox = ControlGroup(self, self, 'Powers')
 
         powersBox.AddControl(
             ctlName = 'Primary',
@@ -152,18 +147,6 @@ class General(Page):
 
         ### Chat Sizer
         ChatSizer = wx.BoxSizer(wx.VERTICAL)
-
-        ### Server picker
-        ServerPickerSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Server")
-        ServerCenterSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.ServerH = wx.RadioButton(self, -1, 'Homecoming')
-        self.ServerR = wx.RadioButton(self, -1, 'Rebirth')
-        self.ServerH.Bind(wx.EVT_RADIOBUTTON, self.OnServerChange)
-        self.ServerR.Bind(wx.EVT_RADIOBUTTON, self.OnServerChange)
-        ServerCenterSizer.Add(self.ServerH, 0, wx.EXPAND|wx.ALL, 5)
-        ServerCenterSizer.Add(self.ServerR, 0, wx.EXPAND|wx.ALL, 5)
-        ServerPickerSizer.Add(ServerCenterSizer, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5)
-        ChatSizer.Add(ServerPickerSizer, 0, wx.EXPAND)
 
         ## Typing Notifier
         TNSizer = wx.StaticBoxSizer(wx.HORIZONTAL, self, "Typing Notifier")
@@ -243,17 +226,18 @@ class General(Page):
                 tooltip = b[1],
             )
 
-        topSizer.Add(powersBox, 1, wx.RIGHT|wx.EXPAND, 10)
-        topSizer.Add(ChatSizer, 1,          wx.EXPAND, 0)
+        topSizer.Add(powersBox, 1, wx.EXPAND|wx.RIGHT, 10)
+        topSizer.Add(ChatSizer, 1, wx.EXPAND)
 
         bottomSizer = wx.BoxSizer(wx.HORIZONTAL)
-        bottomSizer.Add(ClientSizer, 0, wx.EXPAND|wx.RIGHT, 10)
-        bottomSizer.Add(StatusSizer, 0, wx.EXPAND|wx.RIGHT, 10)
-        bottomSizer.Add(SocialSizer, 0, wx.EXPAND, 0)
+        bottomSizer.Add(ClientSizer, 1, wx.EXPAND|wx.RIGHT, 10)
+        bottomSizer.Add(StatusSizer, 1, wx.EXPAND|wx.RIGHT, 10)
+        bottomSizer.Add(SocialSizer, 1, wx.EXPAND)
 
         centeringSizer  = wx.BoxSizer(wx.VERTICAL)
-        centeringSizer.Add(topSizer,           0, wx.TOP|wx.EXPAND, 10)
-        centeringSizer.Add(bottomSizer,        0, wx.TOP|wx.EXPAND, 10)
+        centeringSizer.Add(self.bannerPanel, 0, wx.EXPAND|wx.BOTTOM, 10)
+        centeringSizer.Add(topSizer,         0, wx.EXPAND)
+        centeringSizer.Add(bottomSizer,      0, wx.EXPAND|wx.TOP, 10)
 
         self.MainSizer.Add(centeringSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
@@ -316,7 +300,7 @@ class General(Page):
             'Resistance' : ( 30, 240, 255),
             'Loyalist'   : (255, 226,  56),
         }[self.GetState('Alignment')])
-        self.nameBox.SetBackgroundColour(bgcolor)
+        self.bannerPanel.SetBackgroundColour(bgcolor)
         self.NameDisplay.SetBackgroundColour(bgcolor)
         # Have to do this dance to make the colors refresh on Windows.  Ugh.
         self.nameBox.Show(False)
@@ -359,12 +343,9 @@ class General(Page):
         if getattr(self.Profile, 'MovementPowers', None):
             self.Profile.MovementPowers.SynchronizeUI()
 
-        self.ArchetypeIcon.SetBitmap(GetIcon("Archetypes", arch))
-
         if evt: evt.Skip()
 
     def OnPickOrigin(self, evt = None):
-        self.OriginIcon.SetBitmap(GetIcon('Origins', self.GetState('Origin')))
         if evt: evt.Skip()
 
     def OnPickPoolPower(self, evt):
@@ -430,10 +411,10 @@ class General(Page):
         if evt: evt.Skip()
 
     def OnServerChange(self, evt):
-        radiobutton = evt.GetEventObject()
+        if evt: evt.Skip()
         server = self.Profile.Server
 
-        if radiobutton.GetLabel() != server:
+        if self.ServerPicker.GetString(self.ServerPicker.GetSelection()) != server:
             if wx.MessageBox('Changing server requires saving and reloading the Profile.  Continue?', 'Changing Server', wx.YES_NO, self) == wx.YES:
                 mainwindow = wx.App.Get().Main
                 self.Profile.doSaveToFile()
@@ -441,8 +422,7 @@ class General(Page):
                 newProfile.buildFromData()
                 mainwindow.InsertProfile(newProfile)
             else:
-                if radiobutton == self.ServerH: self.ServerR.SetValue(True)
-                if radiobutton == self.ServerR: self.ServerH.SetValue(True)
+                self.ServerPicker.SetSelection(self.ServerPicker.FindString(server))
 
     UI.Labels.update({
         'Pool1'           : "Power Pool 1",

@@ -333,10 +333,10 @@ class Main(wx.Frame):
             self.Sizer.Remove(0)
 
             # delete any existing Profile and all its subwidgets and geegaws
-            if self.Profile: self.Profile.Destroy()
+            if self.Profile: self.Profile.DestroyLater()
 
             # destroy the Startup Panel if it's there.  This is only needed on Windows dunno why.
-            if self.StartupPanel: self.StartupPanel.Destroy()
+            if self.StartupPanel: self.StartupPanel.DestroyLater()
 
             # and set up our new profile as the current one
             self.Profile = newProfile

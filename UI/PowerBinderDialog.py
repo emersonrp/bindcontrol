@@ -119,8 +119,8 @@ class PowerBinderDialog(wx.Dialog):
                 if depName := getattr(modclass, 'DeprecatedName', ''):
                     deprecatedCommandClasses[depName] = modclass
 
-                # we treat "Custom Bind" specially in the menu, so skip the "Menu" step for it
-                if modName == "Custom Bind": continue
+                # we treat "Custom Command" specially in the menu, so skip the "Menu" step for it
+                if modName == "Custom Command": continue
 
                 if modMenu := getattr(modclass, 'Menu', ''):
                     menuStructure[modMenu].append(modName)
@@ -299,7 +299,7 @@ class PowerBinderDialog(wx.Dialog):
             for classname in menuStructure[subname]:
                 submenu.Append(wx.ID_ANY, classname)
 
-        CommandMenu.Append(wx.ID_ANY, 'Custom Bind')
+        CommandMenu.Append(wx.ID_ANY, 'Custom Command')
 
         return CommandMenu
 

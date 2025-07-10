@@ -102,7 +102,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /get_local_invite globalname | Invite a player to your team using their global name |
 | /get_local_league_invite globalname | Invite a player to your league using their global name |
 | /getlocalname globalname | Given a global name, this command will tell you the name of a player's currently logged on character |
-| /getpos | Alias for /loc |
 | /gfriend name | Add a player to your global friends list. |
 | /gfriends | Display all members of your global friends list |
 | /gignore username | Alias for /ignore. |
@@ -114,7 +113,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /goto_tray_alt number | Go to specified power tray number in the secondary (Alt) tray slot |
 | /goto_tray_alt2 number | Go to specified power tray number in the tertiary (Alt2) tray slot |
 | /goto_trays_tray row tray | Go to specified tray slot (1-3) and power tray (1 to 9). |
-| /graphfps number | Graph current framerate (1 = SWAP, 2 = GPU, 4 = CPU, 8 = SLI). |
 | /gunfriend name | Remove player from global friends list. Alias: /gunfriend_player |
 | /gunignore username | Removes a player from your global ignore list. |
 | /hardconsts | Use hard shader constants instead of Cg to setup shader params |
@@ -143,39 +141,31 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /inspexec_pet_name insp_name petname | Gives an inspiration to the named pet |
 | /inspexec_pet_target insp_name | Gives an inspiration to the targeted pet |
 | /interact | Interact with an object or entity in front of the player using a keyboard key (equivalent to left-click on object). |
-| /invite character | Invite character to join team. Alias: /i |
-| /k character | Alias for /kick |
+| /k character | Remove character from team.|
 | /keybind_reset | Alias for /unbind_all |
-| /kick character | Remove character from team. Alias: /k |
 | /kiosk number number | Pop up the kiosk info for the nearest kiosk. (Assuming you're close enough.) |
-| /lc message | Alias for /league |
-| /league message | Sends the specified message on the League chat channel. Aliases: /lc, /league_chat |
-| /league_chat message | Alias for /league |
-| /league_invite name | Invite a character to your league. Alias: /li |
-| /league_kick name | Kick player name from league. Alias: /lk |
-| /league_make_leader name | Change the league leader (must be league leader). Alias: /lml |
+| /lc message | Sends the specified message on the League chat channel. |
 | /leagueToggleTeamLock | Lock your team so members can not be added, moved, or swapped (must be team leader). |
 | /leagueWithdrawTeam | Withdraw you or your team from the current league without leaving the team |
 | /leaveLeague | Leave your current team and league. |
 | /leaveteam | Leave your current team |
-| /li name | Alias for /league_invite |
+| /li name | Invite a character to your league.|
 | /link_channel ChannelName | Activates Context Menu for a channel name. |
 | /link_info LinkName | Provides info window on matching power, inspiration, enhancement, recipe, or salvage item. |
 | /link_interact name | Activates context menu for a character name. |
 | /link_interact_global name string | Activates context menu for a player's global name. |
 | /listen_range number | Set the maximum range of local chat and emotes that you want to listen to. |
-| /lk name | Alias for /league_kick |
-| /lml name | Alias for /league_make_leader |
-| /loc | Get coordinates of current location on the map. Alias: /getpos |
+| /lk name | Kick player name from league.|
+| /lml name | Change the league leader (must be league leader).|
+| /loc | Get coordinates of current location on the map.|
 | /localtime | Displays your local time (the time on your computer) in the System chat channel. |
 | /logchat | Toggle chat logging |
 | /loudstacking [0-1] | Enable old eardrum-busting sound stacking. |
-| /ma message | Alias for /mission_architect |
+| /ma message | Send message to the Architect Chat channel.|
 | /macro name command | Add a macro to first empty slot |
 | /macro_image icon tooltip command | Add a macro with an existing icon to the first empty slot |
 | /macroslot macro-slot# name command | Add a macro to specified power tray slot |
 | /mailview string | Sets which view to use (Inbox or Character Items) when on the Email window |
-| /makeleader character | Change the team leader to targeted character, must have character targeted if no name is provided. Alias: /ml |
 | /maxAniso | Shows the maximum anisotropic your card allows |
 | /maxColorTrackerVerts number | Maximum number of world object vertices to relight per frame |
 | /maxfps | Sets the maximum limit for frames per second that a player's client can utilize, whether the game is in focus or not. |
@@ -183,14 +173,10 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /maxInactiveFps | Limits max frames per second while the game is not in the foreground. |
 | /maxrtframes number | How many frames ahead to allow buffering. |
 | /maxtexunits | Limits number of textures used, set to 4 to emulate GF 4/5 path |
-| /me | Alias for /emote |
 | /menu | Opens the main menu. |
 | /mergeInsp inspName inspName | Alias for /insp_combine. |
-| /mission_architect message | Send message to the Architect Chat channel. Alias: /ma |
-| /missionmake | Opens the Mission Architect to the My Creations tab while inside Architect Entertainment. Alias: /mmentry |
-| /missionsearch | Alias for /architect |
-| /ml character | Alias for /makeleader |
-| /mmentry | Alias for /missionmake. |
+| /ml character | Change the team leader to targeted character, must have character targeted if no name is provided.|
+| /mmentry | Opens the Mission Architect to the My Creations tab while inside Architect Entertainment.|
 | /mmscrollsettoggleregion [0-3] | Displays the specified editing screen while creating or editing a mission in the Mission Architect. Alias: /mmscrollsetviewlist |
 | /mmscrollsetviewlist | Alias for /mmscrollsettoggleregion. |
 | /mouse_invert | While using mouselook, makes the camera pitch down when the mouse moves down. |
@@ -199,7 +185,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /mypurchases | Show the list of purchases you have access to |
 | /name_scale [0.5-9+] | Change size of name info over players, NPCs and objects. |
 | /neterrorcorrection [0-2] | Adjusts network error correction limits. |
-| /netgraph [0-2] | Displays network connection information. 0 = disable, 1 = enable, 2 = see a large version. |
 | /next_trays_tray 1-3 | Go to next power tray located in the specified tray slot. |
 | /nojumprepeat | Disable jump auto-repeat |
 | /noparticles [0-1] | Turn off particle graphics. |
@@ -343,10 +328,10 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 
 | Bind | Description |
 |------|-------------|
-| /ai player | Alias for /arena_invite |
+| /ai player | Invite player to join your arena event.|
 | /angle_snap [0-359] | Sets the angle for snap drag rotation in degrees while editing a supergroup base. Default snap = 5, disable snap = 0 |
 | /angle_snap_cycle | Cycles through 8 standard angles for snap drag rotation (Off - 45 degrees). (F2) |
-| /architect | Activate the Mission Architect while inside Architect Entertainment. Alias: /missionsearch |
+| /architect | Activate the Mission Architect while inside Architect Entertainment.|
 | /architect_claim_tickets # | Claims # Architect tickets |
 | /architect_completemission | Complete the current mission while in Architect Test Mode |
 | /architectexit | Return to the mission maker (opens the mission architect window) |
@@ -361,7 +346,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /architectsaveandexit | Save mission being edited and return to search window |
 | /architectsaveandtest | Save mission being edited and test |
 | /architect_save_compressed_costumes [0-1] | Toggle save file output to show compressed or uncompressed. |
-| /arena_invite player | Invite player to join your arena event. Alias: /ai |
 | /arena_local message | The Arena event window chat. |
 | /arena_score | Open the arena score window if you are in an Arena match. |
 | /assist_name player | Change your current target to specified ally's target |

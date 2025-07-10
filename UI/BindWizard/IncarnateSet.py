@@ -4,6 +4,7 @@ import wx
 import UI
 import GameData
 from Icon import GetIcon
+from Help import ShowHelpWindow
 from UI.BindWizard import WizardParent
 from UI.IncarnateBox import IncarnateBox
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
@@ -147,3 +148,6 @@ class IncarnateSet(WizardParent):
                 profile.ResetFile().SetBind(self.BindKeyCtrl.MakeFileKeyBind(line))
             bindfile.SetBind(self.BindKeyCtrl.MakeFileKeyBind(line))
 
+    def ShowHelp(self, evt = None):
+        if evt: evt.Skip()
+        ShowHelpWindow(self, 'IncarnateWizard.html')

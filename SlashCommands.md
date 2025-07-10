@@ -116,17 +116,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /gunfriend name | Remove player from global friends list. Alias: /gunfriend_player |
 | /gunignore username | Removes a player from your global ignore list. |
 | /hardconsts | Use hard shader constants instead of Cg to setup shader params |
-| /hide | Opens the hide options dialog window. |
-| /hide_all | Hides you completely from all other players, similar to the old /hide functionality |
-| /hide_friends | Hide from server friends |
-| /hide_gchannels | Hide from global chat channels |
-| /hide_gfriends | Hide from global friends |
-| /hide_invite | Block all invite requests |
-| /hideprimarychat | Hide/unhide primary chat message windows. |
-| /hide_search | Hide from searches |
-| /hideset number | Hide from any combination of groups. |
-| /hide_sg | Hide from SuperGroup |
-| /hide_tell | Hide from tells (private messages) |
 | /i character | Alias for /invite |
 | /ignore character | Ignore character |
 | /ignorelist | Displays a list of ignored characters |
@@ -295,14 +284,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /unbind keyname | Unbinds a bound key (resets it to default). |
 | /unbind_all | Resets keybinds, returning all keys to their default bindings. |
 | /unfriend character | Remove character from friends list. |
-| /unhide_all | Stop hiding from all other players and allow them to see whether you are online |
-| /unhide_friends | Stop hiding from server friends |
-| /unhide_gchannels | Stop hiding from global chat channels |
-| /unhide_gfriends | Stop hiding from global friends |
-| /unhide_invite | Stop blocking invite requests |
-| /unhide_search | Stop hiding from searches |
-| /unhide_sg | Stop hiding from SuperGroup |
-| /unhide_tell | Stop hiding from tells (private messages) |
 | /unignore character | Unignore character |
 | /unlevelingpact | Bring up the dialog for quitting a leveling pact. |
 | /unloadgfx | unloads all textures (causing them to be reloaded dynamically). Alias: /reloadgfx |

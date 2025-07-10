@@ -74,7 +74,9 @@ class CustomBinds(Page):
         with WizPickerDialog(self) as bwd:
             bwd.ShowModal()
             if wizClass := bwd.WizClass:
-                self.AddBindToPage(bindpane = WizardBindPane(self, wizClass))
+                newWizBindPane = WizardBindPane(self, wizClass)
+                self.AddBindToPage(bindpane = newWizBindPane)
+                newWizBindPane.ShowWizard()
         if evt: evt.Skip()
 
     def AddBindToPage(self, bindpane = None):

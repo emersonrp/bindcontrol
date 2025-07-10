@@ -4,6 +4,7 @@ import wx
 import UI
 import GameData
 from Icon import GetIcon
+from Help import ShowHelpWindow
 from UI.BindWizard import WizardParent
 from UI.IncarnateBox import IncarnateBox
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
@@ -40,7 +41,7 @@ class IncarnateSet(WizardParent):
 
     def PaneContents(self):
         panel = wx.Panel(self.CollPane.GetPane())
-        panel.Bind(wx.EVT_LEFT_DOWN, self.CollPane.ReshowWizard)
+        panel.Bind(wx.EVT_LEFT_DOWN, self.CollPane.ShowWizard)
         panelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         listSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -51,10 +52,10 @@ class IncarnateSet(WizardParent):
                 bitmap = wx.GenericStaticBitmap(panel, wx.ID_ANY, icon)
                 bitmap.Bind(wx.EVT_ENTER_WINDOW, partial(self.OnHoverIcon, f"<b>{slot}</b>: {slotData['power']}"))
                 bitmap.Bind(wx.EVT_LEAVE_WINDOW, partial(self.OnHoverIcon, None))
-                bitmap.Bind(wx.EVT_LEFT_DOWN, self.CollPane.ReshowWizard)
+                bitmap.Bind(wx.EVT_LEFT_DOWN, self.CollPane.ShowWizard)
                 listSizer.Add(bitmap, 0, wx.ALL, 5)
         self.HoverDisplay = wx.StaticText(panel, wx.ID_ANY)
-        self.HoverDisplay.Bind(wx.EVT_LEFT_DOWN, self.CollPane.ReshowWizard)
+        self.HoverDisplay.Bind(wx.EVT_LEFT_DOWN, self.CollPane.ShowWizard)
         listSizer.Add(self.HoverDisplay, 1, wx.ALL, 10)
 
         panelSizer.Add(listSizer, 1, wx.ALIGN_CENTER|wx.ALL, 15)
@@ -147,3 +148,6 @@ class IncarnateSet(WizardParent):
                 profile.ResetFile().SetBind(self.BindKeyCtrl.MakeFileKeyBind(line))
             bindfile.SetBind(self.BindKeyCtrl.MakeFileKeyBind(line))
 
+    def ShowHelp(self, evt = None):
+        if evt: evt.Skip()
+        ShowHelpWindow(self, 'IncarnateWizard.html')

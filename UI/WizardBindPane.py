@@ -14,14 +14,6 @@ class WizardBindPane(CustomBindPaneParent):
 
         if init:
             init = init.get('WizData', {})
-        else:
-            # show wizard
-            result = self.Wizard.ShowModal()
-            if result == wx.ID_CANCEL:
-                self.Abort = True
-                return
-            # else fill up init
-            init = self.Wizard.GetData()
 
         self.Init = init
 
@@ -36,6 +28,10 @@ class WizardBindPane(CustomBindPaneParent):
 
     def PopulateBindFiles(self):
         self.Wizard.PopulateBindFiles()
+
+    # override if needed
+    def AllBindFiles(self):
+        return {}
 
     def BuildBindUI(self, page):
         # if the pane already has stuff, clear it out
@@ -54,7 +50,6 @@ class WizardBindPane(CustomBindPaneParent):
 
         pane.Layout()
 
-    def ReshowWizard(self, evt):
-        if self.Wizard.ShowModal() == wx.ID_OK:
-            self.BuildBindUI(None)
-        evt.Skip()
+    def ShowWizard(self, evt = None):
+        self.Wizard.Show()
+        if evt: evt.Skip()

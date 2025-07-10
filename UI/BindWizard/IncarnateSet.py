@@ -120,8 +120,11 @@ class IncarnateSet(WizardParent):
         fake_blf = profile.BLF('wiz', f'{title}X')
         extra_len = len(f"$$bindloadfilesilent {fake_blf}$$t $name, X of X, Press Again")
         for slot, data in incdata.items():
-            powername = re.sub(r' ', '_', data['power'])
-            incarnate_command = f'incarnate_equip {slot} {powername}'
+            if data['power'] == "Disable Slot":
+                incarnate_command = f'incarnateunequipbyslot {slot}'
+            else:
+                powername = re.sub(r' ', '_', data['power'])
+                incarnate_command = f'incarnate_equip {slot} {powername}'
             if len(incarnate_lines[-1]) == 0:
                 incarnate_lines[-1] = incarnate_command
             elif (len(incarnate_lines[-1]) + len(incarnate_command)) > (255 - extra_len):

@@ -142,4 +142,11 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
                 submenu.Append(menuitem)
 
+        menuitem = wx.MenuItem(id = wx.ID_ANY, text = "Disable Slot")
+        icon = GetIcon('Incarnate', 'Disable')
+        if icon: menuitem.SetBitmap(icon)
+        setattr(menuitem, 'IconFilename', icon.Filename)
+
+        menu.Append(menuitem)
+
         return menu

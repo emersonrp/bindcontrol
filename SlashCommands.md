@@ -134,9 +134,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /ignorelist | Displays a list of ignored characters |
 | /ignore_spammer character | Ignore character and sends alert to customer service |
 | /imageServer | Sets game to Image Server mode. |
-| /incarnate_unequip slotName powername | Unequips the specified Incarnate Ability. |
-| /incarnate_unequip_all | Unequips all equipped Incarnate Abilities. |
-| /incarnate_unequip_by_slot slotName | Unequips whatever ability is in the specified Incarnate slot. |
 | /info | Opens the info window for the current target (yourself if you have no target). |
 | /info_self | Opens the info window for yourself |
 | /info_self_tab tab_number | Opens the specified tab of the info window for yourself |
@@ -390,6 +387,8 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /extra_modifiers [mod1] [mod2] [mod3] [mod4] | Allows setting up to four extra modifiers on a controller/gamepad. |
 | /grid_snap number | Sets item placement grid size while in the SG base editor. |
 | /grid_snap_cycle | Cycles through object placement grid sizes while in the SG base editor. (F1) |
+| /incarnate_unequip slotName powername | Unequips the specified Incarnate Ability. |
+| /incarnate_unequip_all | Unequips all equipped Incarnate Abilities. |
 | /lfg_event_response yes/no | Accept an invitation to join an event (trial, task force, story arc, or holiday event). |
 | /lfg_request_event_list | Get LFG system event list. |
 | /mousedrag | Enable dragging object while using the SG base editor. |

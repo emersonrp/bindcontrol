@@ -52,6 +52,7 @@ class General(Page):
             'SGInviteTarget'  : '',
             'FriendTarget'    : '',
             'GFriendTarget'   : '',
+            'IgnoreTarget'    : '',
         }
 
     def BuildPage(self):
@@ -232,6 +233,7 @@ class General(Page):
             ['SGInviteTarget'  , 'Choose the key that will invite your target to your supergroup'] ,
             ['FriendTarget'    , 'Choose the key that will add your target to your friends list'],
             ['GFriendTarget'   , 'Choose the key that will add your target to your global friends list'],
+            ['IgnoreTarget'    , 'Choose the key that will ignore your current target'],
         ):
             SocialSizer.AddControl(
                 ctlName = b[0],
@@ -289,6 +291,7 @@ class General(Page):
         ResetFile.SetBind(self.Ctrls['SGInviteTarget'].MakeFileKeyBind('sgi $target'))
         ResetFile.SetBind(self.Ctrls['FriendTarget']  .MakeFileKeyBind('friend $target'))
         ResetFile.SetBind(self.Ctrls['GFriendTarget'] .MakeFileKeyBind('gfriend $target'))
+        ResetFile.SetBind(self.Ctrls['IgnoreTarget']  .MakeFileKeyBind('ignore $target'))
 
         return True
 
@@ -469,4 +472,5 @@ class General(Page):
         'SGInviteTarget'  : "Invite Target to Supergroup",
         'FriendTarget'    : "Add Target to Friends",
         'GFriendTarget'   : "Add Target to Global Friends",
+        'IgnoreTarget'    : "Ignore your Current Target",
     })

@@ -22,9 +22,9 @@
             <p>When editing a profile, BindControl divides various related groups of keybinds into Pages, accessible via tabs at the top of the application.  Pages include general Gameplay features, Custom Binds via PowerBinder, Mastermind pet control binds, and Movement Powers / Speed on Demand.  Each page will be discussed in greater detail below.</p>
 
             <h3>PowerBinder</h3>
-            <p>PowerBinder is a flexible tool for stringing together individual commands into custom KeyBinds.  It is the most open-ended tool in BindControl, and can help create fun and useful behavior including activating powers, emotes, and costume changes; targeting friends or foes by distance and name;  Chat commands and feedback;  and using Inspirations.  It additionally allows completely free-form commands to be added for the brave and experimental.</p>
+            <p>PowerBinder is a flexible tool for stringing together individual commands into custom KeyBinds.  It is the most open-ended tool in BindControl, and can help create fun and useful behavior including activating powers, emotes, and costume changes;  targeting friends or foes by distance and name;  chat commands and feedback;  graphics and UI changes;  using inspirations by name or slot;  and more.  It additionally allows completely free-form commands to be added for the brave and experimental.</p>
 
-            <p>PowerBinder will allow you to add multiple powers to a single bind, but because of game constraints, <b>only one power will be executed in a single bind</b>.  For more info on what is and is not possible with custom binds, check the Homecoming wiki for "<a href="https://homecoming.wiki/wiki/The_Incomplete_and_Unofficial_Guide_to_/bind">The Incomplete and Unofficial Guide to /bind</a>".</p>
+            <p>PowerBinder will allow you to add multiple powers to a single bind, but because of game constraints, <b>only one power can be executed in a single keypress</b>.  For more info on what is and is not possible with custom binds, check the Homecoming wiki for "<a href="https://homecoming.wiki/wiki/The_Incomplete_and_Unofficial_Guide_to_/bind">The Incomplete and Unofficial Guide to /bind</a>".</p>
 
             <p>PowerBinder is a concept borrowed wholesale from citybinder, and owes much to it.</p>
 
@@ -80,13 +80,16 @@
             <h3 name="General">General</h3>
             <p>The General page contains the Profile name, as well as information about the archetype and powers available for this profile.  This information is used to help pick powers inside PowerBinder and other places, as well as to enable and configure the Speed-on-Demand and Mastermind pet binds.</p>
 
-            <p>Additionally, there are chat binds that can start chat commands in various ways, as well as optionally showing a "typing" indicator</p>
+            <p>At the top right of the Page, you can select whether you are playing on Homecoming or Rebirth.  This informs some of BindControl's user interface, such as what Incarnate Slots are available, and which slash commands can be chosen.</p>
+
+            <p>There are chat binds that can start chat commands in various ways, as well as optionally showing a "typing" indicator</p>
+
+            <p> Finally, at the bottom, there are a variety of quick helpful keybinds for quitting the game, inviting or ignoring players, and other "low-hanging fruit" that you might find helpful and useful.</p>
 
             <h3 name="Gameplay">Gameplay</h3>
             <p>The Gameplay page offers various quality-of-life binds and bind systems.</p>
             <p>At the top, you can bind the keys used to activate the various slots in the main power trays.  You can use the "Fill" button to fill that row's buttons with 1-0, or hold down a modifier key such as Alt to fill the buttons with, for instance, Alt-1 - Alt 0.</p>
             <p>Additionaly, there is a combined Team/Pet selector system, as well as a scheme for enabling next/previous teammember selection.</p>
-            <p>There are binds to quit to desktop, to invite your target to a group, and turn on and off the FPS Meter and the Netgraph.</p>
 
             <h3 name="CustomBinds">Custom Binds</h3>
             <p>The Custom Binds page is where you'll create any bespoke binds you'd like that aren't covered by other pages and systems.</p>
@@ -99,7 +102,8 @@
             <p><u>Buffer Binds</u></p>
             <p>To add a new Buffer Bind set to the page, click the New Buffer Bind button at the top.  A buffer bind set contains one or more buffing powers that will be cast sequentially by multiple presses of the same keybind, and keybinds for each team member and/or pet that will perform the buff rotation on that target.</p>
 
-            <p><u><i>More Custom Bind Types to come...</i></u></p>
+            <p><u>Wizard Binds</u></p>
+            <p>BindControl now features the notion of a "Binds Wizard" which will guide you through creating elaborate or complicated keybinds that would be possible to do by hand with a Complex Bind, but would be fiddly and harder to maintain that way.  Currently the only Binds Wizard is "Incarnate Set" which will allow you to slot a complete or partial Incarnate Powers set using multiple presses of the bound key.</p>
 
             <h3 name="SoD">Movement / Speed on Demand</h3>
             <p>This page is where you configure movement keys as well as other movement features.  It is most typicallly used to configure <b>Speed On Demand.</b></p>
@@ -146,7 +150,6 @@
             <p><i>NOTE that you need to have configured the location of your game install in the Preferences dialog in order for this feature to work.  The tab will let you know if it's not set up correctly.</i></p>
 
             <p>The tab itself contains instructions for using the editor.</p>
-
 
         <h1>Troubleshooting</h1>
         <p><i>My binds aren't working as I'd expect, help!</i></p>

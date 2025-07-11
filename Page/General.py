@@ -53,6 +53,7 @@ class General(Page):
             'FriendTarget'    : '',
             'GFriendTarget'   : '',
             'IgnoreTarget'    : '',
+            'UnignoreTarget'  : '',
         }
 
     def BuildPage(self):
@@ -234,6 +235,7 @@ class General(Page):
             ['FriendTarget'    , 'Choose the key that will add your target to your friends list'],
             ['GFriendTarget'   , 'Choose the key that will add your target to your global friends list'],
             ['IgnoreTarget'    , 'Choose the key that will ignore your current target'],
+            ['UnignoreTarget'  , 'Choose the key that will unignore your current target'],
         ):
             SocialSizer.AddControl(
                 ctlName = b[0],
@@ -292,6 +294,7 @@ class General(Page):
         ResetFile.SetBind(self.Ctrls['FriendTarget']  .MakeFileKeyBind('friend $target'))
         ResetFile.SetBind(self.Ctrls['GFriendTarget'] .MakeFileKeyBind('gfriend $target'))
         ResetFile.SetBind(self.Ctrls['IgnoreTarget']  .MakeFileKeyBind('ignore $target'))
+        ResetFile.SetBind(self.Ctrls['UnignoreTarget'].MakeFileKeyBind('unignore $target'))
 
         return True
 
@@ -468,9 +471,10 @@ class General(Page):
         'HelpMentor'      : 'Set "Mentor" Status',
         'HelpOff'         : 'Disable Help Status',
 
-        'InviteTarget'    : "Invite Target to Group",
-        'SGInviteTarget'  : "Invite Target to Supergroup",
-        'FriendTarget'    : "Add Target to Friends",
-        'GFriendTarget'   : "Add Target to Global Friends",
-        'IgnoreTarget'    : "Ignore your Current Target",
+        'InviteTarget'   : "Invite Target to Group",
+        'SGInviteTarget' : "Invite Target to Supergroup",
+        'FriendTarget'   : "Add Target to Friends",
+        'GFriendTarget'  : "Add Target to Global Friends",
+        'IgnoreTarget'   : "Ignore your Current Target",
+        'UnignoreTarget' : "Unignore your Current Target",
     })

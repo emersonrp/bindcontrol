@@ -1,4 +1,5 @@
 import wx
+import wx.html
 from pathlib import Path
 from Icon import GetIcon
 
@@ -48,9 +49,19 @@ class CustomBinds(Page):
         self.scrolledPanel.SetScrollRate(10,10) # necessary to enable scrolling at all.
         self.scrolledPanel.SetSizer(self.PaneSizer)
 
+        # Panel to show if we have no bindpanes, describing what's going on here
+        BlankSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.BlankPanel = wx.Panel(self, wx.ID_ANY)
+        helptext = wx.StaticText(self.BlankPanel, wx.ID_ANY, style = wx.ALIGN_CENTER,
+                                 label = "Create a Custom Bind using the buttons above")
+        helptext.SetFont(wx.Font(wx.FontInfo(16).Bold()))
+        BlankSizer.Add(helptext, 1, wx.ALIGN_CENTER_VERTICAL)
+        self.BlankPanel.SetSizer(BlankSizer)
+        self.BlankPanel.Layout()
+
         # add the two parts of the layout, bottom one expandable
-        self.MainSizer.Add(buttonSizer,        0, wx.EXPAND|wx.BOTTOM, 16)
-        self.MainSizer.Add(self.scrolledPanel, 1, wx.EXPAND)
+        self.MainSizer.Add(buttonSizer,     0, wx.EXPAND|wx.BOTTOM, 16)
+        self.MainSizer.Add(self.BlankPanel, 1, wx.EXPAND)
 
         # disable scrolling on the main page's ScrolledWindow.
         # This is black magic, and may still act squirrely.
@@ -89,6 +100,13 @@ class CustomBinds(Page):
             self.SetBindPaneLabel(None, bindpane, new = True)
             if not bindpane: # clicked 'Cancel'
                 return
+
+        if len(self.Panes) == 0:
+            # the BlankWindow is still in there
+            self.BlankPanel.Hide()
+            self.scrolledPanel.Show()
+            self.MainSizer.Replace(self.BlankPanel, self.scrolledPanel)
+            self.MainSizer.Layout()
 
         self.Panes.append(bindpane)
 
@@ -196,6 +214,11 @@ class CustomBinds(Page):
         self.Panes.remove(delButton.BindPane)
         delButton.BindPane.DestroyLater()
         self.Profile.CheckAllConflicts()
+        if len(self.Panes) == 0:
+            # need to put back the blankpanel
+            self.scrolledPanel.Hide()
+            self.BlankPanel.Show()
+            self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
         self.Layout()
         evt.Skip()
 

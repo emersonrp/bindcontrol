@@ -89,7 +89,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /enterdoor coordinates map_ID | Request a click on a door. |
 | /exitlaunch FilePath | Set program to run when game exits |
 | /face | Turn player to face target |
-| /fl | Display friend list. Alias: /fl |
+| /fl | Display friend list. |
 | /follow | Toggle follow mode (/cmdlist says that follow takes an argument (0 or 1), it does not) |
 | /fullRelight | Do not cap number of world object vertices to relight per frame |
 | /fullscreen [0-1] | Sets video mode to fullscreen |
@@ -100,10 +100,8 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /get_local_invite globalname | Invite a player to your team using their global name |
 | /get_local_league_invite globalname | Invite a player to your league using their global name |
 | /getlocalname globalname | Given a global name, this command will tell you the name of a player's currently logged on character |
-| /gfriend name | Add a player to your global friends list. |
 | /gfriends | Display all members of your global friends list |
-| /gignore username | Alias for /ignore. |
-| /gignoring | Alias for /ignorelist |
+| /gignoring | Displays a list of ignored characters |
 | /ginvite channel_name username | Alias for /chan_invite |
 | /ginvite_sg channel_name rank | Alias for /chan_invite_sg |
 | /gmotd | View the game's global message again. |
@@ -112,10 +110,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /goto_tray_alt2 number | Go to specified power tray number in the tertiary (Alt2) tray slot |
 | /goto_trays_tray row tray | Go to specified tray slot (1-3) and power tray (1 to 9). |
 | /gunfriend name | Remove player from global friends list. Alias: /gunfriend_player |
-| /gunignore username | Removes a player from your global ignore list. |
 | /hardconsts | Use hard shader constants instead of Cg to setup shader params |
-| /ignore character | Ignore character |
-| /ignorelist | Displays a list of ignored characters |
 | /ignore_spammer character | Ignore character and sends alert to customer service |
 | /imageServer | Sets game to Image Server mode. |
 | /info | Opens the info window for the current target (yourself if you have no target). |
@@ -273,7 +268,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /unbind keyname | Unbinds a bound key (resets it to default). |
 | /unbind_all | Resets keybinds, returning all keys to their default bindings. |
 | /unfriend character | Remove character from friends list. |
-| /unignore character | Unignore character |
 | /unlevelingpact | Bring up the dialog for quitting a leveling pact. |
 | /unloadgfx | unloads all textures (causing them to be reloaded dynamically). Alias: /reloadgfx |
 | /useCubemap number | Use cubemap |

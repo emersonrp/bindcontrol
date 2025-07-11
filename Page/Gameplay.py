@@ -213,20 +213,20 @@ class Gameplay(Page):
 
         TeamSelBox = ControlGroup(self, self, 'Team Select')
         for b in (
-            ['SelPrevTeam' , 'Choose the key that will select the previous teammate from the currently selected one'] ,
-            ['SelNextTeam' , 'Choose the key that will select the next teammate from the currently selected one']     ,
-            ['DecTeamSize' , 'Choose the key that will decrease the size of your teammate rotation']                  ,
-            ['IncTeamSize' , 'Choose the key that will increase the size of your teammate rotation']                  ,
-            ['DecTeamPos'  , 'Choose the key that will move you to the next lower position in the team rotation']         ,
-            ['IncTeamPos'  , 'Choose the key that will move you to the next higher position in the team rotation']        ,
-            ['TeamReset'   , 'Choose the key that will reset your next/prev teammate binds to Solo / No Position']                             ,
+            ['SelPrevTeam', 'Choose the key that will select the previous teammate from the currently selected one'],
+            ['SelNextTeam', 'Choose the key that will select the next teammate from the currently selected one']    ,
+            ['DecTeamSize', 'Choose the key that will decrease the size of your teammate rotation']                 ,
+            ['IncTeamSize', 'Choose the key that will increase the size of your teammate rotation']                 ,
+            ['DecTeamPos' , 'Choose the key that will move you to the next lower position in the team rotation']    ,
+            ['IncTeamPos' , 'Choose the key that will move you to the next higher position in the team rotation']   ,
+            ['TeamReset'  , 'Choose the key that will reset your next/prev teammate binds to Solo / No Position']   ,
         ):
             TeamSelBox.AddControl(
                 ctlName = b[0],
                 ctlType = 'keybutton',
                 tooltip = b[1],
             )
-        rightSizer.Add(TeamSelBox, 0, wx.EXPAND|wx.ALL, 10)
+        rightSizer.Add(TeamSelBox, 1, wx.EXPAND|wx.ALL, 10)
 
         bottomSizer.Add(leftSizer,  0, wx.ALL|wx.EXPAND, 10)
         bottomSizer.Add(rightSizer, 0, wx.ALL|wx.EXPAND, 10)

@@ -242,10 +242,8 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /shownewtray | Opens an additional floating tray slot/power tray. |
 | /show_petnames | Displays the names of all your named pets |
 | /showtime [0-1] | Displays the in-game time of day on the screen. |
-| /slashchat | Starts chat-entry mode with a forward slash. |
 | /speak_range number | Set the maximum range that your local chat and emotes may carry. |
 | /speed_turn number | Changes the speed that your character turns while using keyboard keys. |
-| /startchat | Starts chat-entry mode |
 | /stopinactivedisplay | Stops rendering when the game is not the foreground application. |
 | /stopmonitorattribute string | Removes a display line from the combat Attribute Monitor. |
 | /stuck | Try to get unstuck if you are stuck in the geometry. |

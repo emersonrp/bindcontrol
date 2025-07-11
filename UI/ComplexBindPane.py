@@ -172,6 +172,17 @@ class ComplexBindPane(CustomBindPaneParent):
             if i == 1: resetfile.SetBind(key, self, title, cmd)
             cbindfile.SetBind(key, self, title, cmd)
 
+    def AllBindFiles(self):
+        files = []
+        title = re.sub(r'\W+', '', self.Title)
+        for i, _ in enumerate(self.Steps, start = 1):
+            files.append(self.Profile.GetBindFile('cbinds', f'{title}-{i}.txt'))
+
+        return {
+            'files' : files,
+            'dirs'  : ['cbinds'],
+        }
+
 class BindStep(wx.Panel):
     def __init__(self, parent, stepNumber, step):
 

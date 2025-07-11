@@ -147,11 +147,11 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.OnMenuLogWindow, Log_window)
 
-        self.AppIcon = wx.IconBundle()
+        AppIcon = wx.IconBundle()
         base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
         filename = f"{base_path}/icons/BindControl.ico"
-        self.AppIcon.AddIcon(filename, wx.BITMAP_TYPE_ANY)
-        self.SetIcons(self.AppIcon)
+        AppIcon.AddIcon(filename, wx.BITMAP_TYPE_ANY)
+        self.SetIcons(AppIcon)
 
         # Infobar for showing errors and other messages
         self.Sizer.Add(self.Logger.InfoBar, 0, wx.EXPAND)

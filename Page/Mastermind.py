@@ -235,10 +235,10 @@ class Mastermind(Page):
             PetInner.Add(petcb,  (3,i), flag=wx.EXPAND|wx.ALIGN_CENTER)
             PetInner.AddGrowableCol(i)
 
-        nameDefaultButton = wx.Button(PetNameSB, -1, 'Defaults')
-        nameDefaultButton.SetToolTip('Set your pet names to the default values for your powerset.')
-        nameDefaultButton.Bind(wx.EVT_BUTTON, self.OnNameDefaultButton)
-        PetInner.Add(nameDefaultButton, (1,7), flag = wx.EXPAND)
+        self.NameDefaultButton = wx.Button(PetNameSB, -1, 'Defaults')
+        self.NameDefaultButton.SetToolTip('Set your pet names to the default values for your powerset.')
+        self.NameDefaultButton.Bind(wx.EVT_BUTTON, self.OnNameDefaultButton)
+        PetInner.Add(self.NameDefaultButton, (1,7), flag = wx.EXPAND)
         PetInner.Add(HelpButton(PetNameSB, 'PetNames.html'), (2,7), flag = wx.ALIGN_CENTER)
 
         petcmdenable = wx.Panel(self)
@@ -325,8 +325,9 @@ class Mastermind(Page):
         pset = self.Profile.Primary()
 
         for control in self.Ctrls.values(): control.Enable(bool(ismm and pset))
-        self.PetNameLabel.Enable(bool(ismm and pset))
-        self.PetKeyLabel .Enable(bool(ismm and pset))
+        self.PetNameLabel     .Enable(bool(ismm and pset))
+        self.PetKeyLabel      .Enable(bool(ismm and pset))
+        self.NameDefaultButton.Enable(bool(ismm and pset))
         self.OnPetCmdEnable()
         self.OnPetNPChange()
 

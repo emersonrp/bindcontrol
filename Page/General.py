@@ -17,15 +17,15 @@ class General(Page):
 
         self.Init = {
             'Alignment' : 'Hero',
-            'Origin': "Magic",
-            'Archetype': 'Mastermind',
-            'Primary': '',
-            'Secondary': '',
-            'Epic': '',
-            'Pool1': '',
-            'Pool2': '',
-            'Pool3': '',
-            'Pool4': '',
+            'Origin'    : "Magic",
+            'Archetype' : 'Mastermind',
+            'Primary'   : '',
+            'Secondary' : '',
+            'Epic'      : '',
+            'Pool1'     : '',
+            'Pool2'     : '',
+            'Pool3'     : '',
+            'Pool4'     : '',
 
             'ChatEnable' : False,
             'StartChat'  : 'ENTER',
@@ -36,7 +36,7 @@ class General(Page):
             'TellTarget' : 'COMMA',
             'QuickChat'  : "'",
 
-            'TypingNotifierEnable' : True,
+            'TypingNotifierEnable' : False,
             'TypingNotifier'       : 'typing',
 
             'QuitToDesktop'   : '',
@@ -145,28 +145,28 @@ class General(Page):
         )
 
 
-        ### Chat Sizer
-        ChatSizer = wx.BoxSizer(wx.VERTICAL)
-
         ## Typing Notifier
-        TNSizer = wx.StaticBoxSizer(wx.HORIZONTAL, self, "Typing Notifier")
-        TNEnable = wx.CheckBox(TNSizer.GetStaticBox(), -1, 'Use Typing Notifier')
-        TNEnable.SetToolTip(
-                wx.ToolTip('Check this to enable a floating "typing" notifier when you are typing into the chat box'))
-        setattr(TNEnable, "CtlName", 'TypingNotifierEnable')
+        TNPanel = wx.Panel(self)
+        TNSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        TNEnable = wx.CheckBox(TNPanel, -1, 'Use Typing Notifier')
+        TNEnable.SetToolTip('Check this to enable a floating notifier when you are typing into the chat box')
+        setattr(TNEnable, 'CtlName', 'TypingNotifierEnable')
         TNEnable.Bind(wx.EVT_CHECKBOX, self.OnTypeEnable)
         self.Ctrls['TypingNotifierEnable'] = TNEnable
-        TN = wx.TextCtrl(TNSizer.GetStaticBox(), value = self.Init['TypingNotifier'], style = wx.TE_CENTER)
-        setattr(TN, "CtlName", 'TypingNotifier')
+
+        TN = wx.TextCtrl(TNPanel, value = self.Init['TypingNotifier'], style = wx.TE_CENTER)
+        TN.SetToolTip('The contents of the notifier that will float over your head as you type')
+        TN.SetHint('typing notifier contents')
+        setattr(TN, 'CtlName', 'TypingNotifier')
         self.Ctrls['TypingNotifier'] = TN
 
-        TNSizer.Add(TNEnable, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
+        TNSizer.Add(TNEnable, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
         TNSizer.Add(TN,       1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
-
-        ChatSizer.Add(TNSizer, 0, wx.TOP|wx.EXPAND, 6)
+        TNPanel.SetSizer(TNSizer)
 
         ### Chat binds
-        chatBindBox = ControlGroup(self, self, 'Chat Binds')
+        chatBindBox = ControlGroup(self, self, 'Chat Binds', topcontent = TNPanel)
 
         for b in (
                 # ['StartChat',  'Activates the Chat bar with notifier and custom colors if selected'],
@@ -183,7 +183,6 @@ class General(Page):
                 ctlType = 'keybutton',
                 tooltip = b[1],
             )
-        ChatSizer.Add(chatBindBox, 1, wx.EXPAND)
 
         ClientSizer = ControlGroup(self, self, 'Game Client Binds')
         for b in (
@@ -227,7 +226,7 @@ class General(Page):
             )
 
         topSizer.Add(powersBox, 1, wx.EXPAND|wx.RIGHT, 10)
-        topSizer.Add(ChatSizer, 1, wx.EXPAND)
+        topSizer.Add(chatBindBox, 1, wx.EXPAND)
 
         bottomSizer = wx.BoxSizer(wx.HORIZONTAL)
         bottomSizer.Add(ClientSizer, 1, wx.EXPAND|wx.RIGHT, 10)
@@ -403,10 +402,6 @@ class General(Page):
     def OnTypeEnable(self, evt = None):
         typeenabled = self.GetState('TypingNotifierEnable')
         self.EnableControls(typeenabled, ['TypingNotifier'])
-        if typeenabled:
-            self.Ctrls['StartChat'].CtlLabel.SetLabel('Start Chat (with Notifier):')
-        else:
-            self.Ctrls['StartChat'].CtlLabel.SetLabel('Start Chat:')
         self.Layout()
         if evt: evt.Skip()
 
@@ -425,6 +420,8 @@ class General(Page):
                 self.ServerPicker.SetSelection(self.ServerPicker.FindString(server))
 
     UI.Labels.update({
+        'Epic' : 'Epic / Patron',
+
         'Pool1'           : "Power Pool 1",
         'Pool2'           : "Power Pool 2",
         'Pool3'           : "Power Pool 3",

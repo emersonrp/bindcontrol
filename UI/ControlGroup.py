@@ -14,7 +14,8 @@ from UI.KeySelectDialog import bcKeyButton
 class ControlGroup(wx.StaticBoxSizer):
 
     def __init__(self, parent, page, label = '', width = 2, flexcols = [0], topcontent = None):
-        wx.StaticBoxSizer.__init__(self, wx.VERTICAL, parent, label = label)
+        super().__init__(wx.VERTICAL, parent, label = label)
+        self.vertCenteringSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.Page = page
 
@@ -25,17 +26,20 @@ class ControlGroup(wx.StaticBoxSizer):
 
         self.InnerSizer = wx.FlexGridSizer(width,3,3)
         for col in flexcols: self.InnerSizer.AddGrowableCol(col)
-        self.Add(self.InnerSizer, 1, wx.ALL|wx.EXPAND, 10)
+
+        self.vertCenteringSizer.Add(self.InnerSizer, 1, wx.ALIGN_CENTER_VERTICAL)
+        self.Add(self.vertCenteringSizer, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10)
 
     def AddControl(self,
-                   ctlType  : str = '',
-                   ctlName  : str = '',
-                   noLabel  : bool = False,
-                   contents : Any = '',
-                   tooltip  : str = '',
+                   ctlType  : str           = '',
+                   ctlName  : str           = '',
+                   noLabel  : bool          = False,
+                   contents : Any           = '',
+                   tooltip  : str           = '',
                    callback : Callable|None = None,
-                   label    : str = '',
-                   data     : Any = None,
+                   label    : str           = '',
+                   data     : Any           = None,
+                   size     : wx.Size       = wx.DefaultSize,
         ):
 
         if not ctlName:
@@ -59,7 +63,7 @@ class ControlGroup(wx.StaticBoxSizer):
                 CtlLabel = wx.StaticText(CtlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
-            control = cgbcKeyButton( CtlParent, -1, )
+            control = cgbcKeyButton( CtlParent, -1,)
             control.SetLabel(Init[ctlName])
             # push context onto the button, we'll thank me later
             control.CtlName = ctlName
@@ -67,7 +71,7 @@ class ControlGroup(wx.StaticBoxSizer):
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
             control = cgComboBox(
-                CtlParent, -1, Init[ctlName],
+                CtlParent, -1, Init[ctlName], size = size,
                 choices = contents or (), style = wx.CB_READONLY)
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback )
@@ -81,7 +85,7 @@ class ControlGroup(wx.StaticBoxSizer):
             control = cgBMComboBox(
                 CtlParent, -1, '',
                 style = wx.CB_READONLY,
-                choices = choices,
+                choices = choices, size = size,
             )
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback )
@@ -94,38 +98,38 @@ class ControlGroup(wx.StaticBoxSizer):
                 control.SetSelection(index)
 
         elif ctlType == ('text'):
-            control = cgTextCtrl(CtlParent, -1, Init[ctlName])
+            control = cgTextCtrl(CtlParent, -1, Init[ctlName], size = size)
 
         elif ctlType == ('choice'):
             contents = contents if contents else []
-            control = cgChoice(CtlParent, -1, choices = contents)
+            control = cgChoice(CtlParent, -1, choices = contents, size = size)
             control.SetSelection(control.FindString(Init[ctlName]))
             if callback:
                 control.Bind(wx.EVT_CHOICE, callback )
 
         elif ctlType == ('statictext'):
-            control = cgStaticText(CtlParent, -1, Init.get(ctlName, ''))
+            control = cgStaticText(CtlParent, -1, Init.get(ctlName, ''), size = size)
 
         elif ctlType == ('checkbox'):
-            control = cgCheckBox(CtlParent, -1, contents)
+            control = cgCheckBox(CtlParent, -1, contents, size = size)
             control.SetValue(bool(Init.get(ctlName, False)))
             padding = 6
             if callback:
                 control.Bind(wx.EVT_CHECKBOX, callback )
 
         elif ctlType == ('spinbox'):
-            control = cgSpinCtrl(CtlParent, -1)
+            control = cgSpinCtrl(CtlParent, -1, size = size)
             control.SetValue(Init[ctlName])
             control.SetRange(*contents)
 
         elif ctlType == ('spinboxfractional'):
-            control = cgSpinCtrlDouble(CtlParent, inc = 0.05)
+            control = cgSpinCtrlDouble(CtlParent, inc = 0.05, size = size)
             control.SetValue(Init[ctlName])
             control.SetRange(*contents)
 
         elif ctlType == ('dirpicker'):
             control = cgDirPickerCtrl(
-                CtlParent, -1, Init[ctlName], Init[ctlName],
+                CtlParent, -1, Init[ctlName], Init[ctlName], size = size,
             )
         elif ctlType == ('colorpicker'):
             control = cgColourPickerCtrl( CtlParent, -1, contents, size = (30,30))

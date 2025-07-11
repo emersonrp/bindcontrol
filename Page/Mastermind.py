@@ -273,6 +273,7 @@ class Mastermind(Page):
                 ctlName = command['ctrlName'] + "Response",
                 ctlType = "text",
                 tooltip = "Choose the chat response your pets give when you " + command['tooltipdetail'],
+                size    = wx.Size(500, -1),
             )
         petCommandsKeys.AddControl(
             ctlName = 'PetChatToggle',

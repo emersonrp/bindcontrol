@@ -22,7 +22,7 @@ def GetIcon(*args):
 
     pathbits = []
     for arg in args:
-        arg = re.sub(r'[^\w/.]+', '', arg)
+        arg = re.sub(r'[^\w\\/.]+', '', arg)
         pathbits.append(arg)
 
     iconpath    = Path(*pathbits).with_suffix('.png')
@@ -32,20 +32,20 @@ def GetIcon(*args):
 
         iconzippath = Path(base_path) / 'icons' / 'Icons.zip'
         if iconzippath.exists():
-
+            wx.LogInfo(f"Icon ZIP file {iconzippath} found -- using.")
             with zipfile.ZipFile(iconzippath) as iconzip:
                 try:
                     # as_posix is how we need this to index into the ZIPfile successfully on Windows
                     icondata = iconzip.read(iconpath.as_posix())
-                    Icons[iconpathstr] = Icon( wx.Bitmap.NewFromPNGData(icondata, len(icondata)))
+                    Icons[iconpathstr] = Icon(wx.Bitmap.NewFromPNGData(icondata, len(icondata)))
                     Icons[iconpathstr].Filename = iconpathstr
                 except Exception as e:
-                    wx.LogError(f"Loading icon {iconpathstr} failed: {e}.  This is a bug.")
+                    wx.LogError(f"Loading icon {iconpathstr} from ZIP file failed: {e}.  This is a bug.")
 
         else:  # we don't have the ZIP file, so maybe we're running directly from source
             filepath = Path(base_path) / 'icons' / iconpath
             if os.path.exists(filepath):
-                Icons[iconpathstr] = Icon( wx.Image( str(filepath), wx.BITMAP_TYPE_ANY, -1,))
+                Icons[iconpathstr] = Icon( wx.Image(str(filepath), wx.BITMAP_TYPE_ANY, -1,))
                 Icons[iconpathstr].Filename = iconpathstr
             # TODO - maybe put this behind an "if debug" sort of thing
             else:

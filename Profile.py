@@ -131,8 +131,8 @@ class Profile(wx.Notebook):
 
         # Add the individual tabs, in order.
         self.General           = self.CreatePage(General(self))
-        self.Gameplay          = self.CreatePage(Gameplay(self))
         self.CustomBinds       = self.CreatePage(CustomBinds(self))
+        self.Gameplay          = self.CreatePage(Gameplay(self))
         self.MovementPowers    = self.CreatePage(MovementPowers(self))
         self.InspirationPopper = self.CreatePage(InspirationPopper(self))
         self.Mastermind        = self.CreatePage(Mastermind(self))
@@ -204,9 +204,10 @@ class Profile(wx.Notebook):
                     if not ctrl.IsThisEnabled(): continue
                     ctrl.CheckConflicts()
 
-    def SetModified  (self, _ = None):
+    def SetModified(self, _ = None):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()} (*)") # pyright: ignore
         self.Modified = True
+
     def ClearModified(self, _ = None):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore
         self.Modified = False

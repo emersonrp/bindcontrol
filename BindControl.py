@@ -261,13 +261,16 @@ class Main(wx.Frame):
         self.DeleteButton.Enable(enable)
 
     def OnPageChanged(self, evt):
-        if evt.GetSelection() == 6:
-            self.BottomButtonPanel.Hide()
-            if self.Profile:
-                self.Profile.PopmenuEditor.SynchronizeUI()
-        else:
-            self.BottomButtonPanel.Show(True)
-        self.Layout()
+        if self.Profile:
+            tabnumber = evt.GetSelection()
+            tabname = self.Profile.GetPageText(tabnumber)
+            if tabname == "Popmenu Editor":
+                self.BottomButtonPanel.Hide()
+                if self.Profile:
+                    self.Profile.PopmenuEditor.SynchronizeUI()
+            else:
+                self.BottomButtonPanel.Show(True)
+            self.Layout()
 
     def OnProfileNew(self, _ = None):
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return

@@ -342,6 +342,13 @@ class General(Page):
         if getattr(self.Profile, 'MovementPowers', None):
             self.Profile.MovementPowers.SynchronizeUI()
 
+        if arch == "Mastermind":
+            if self.Profile.GetPageText(5) != self.Profile.Mastermind.TabTitle:
+                self.Profile.InsertPage(5, self.Profile.Mastermind, self.Profile.Mastermind.TabTitle)
+        else:
+            if self.Profile.GetPageText(5) == self.Profile.Mastermind.TabTitle:
+                self.Profile.RemovePage(5)
+
         if evt: evt.Skip()
 
     def OnPickOrigin(self, evt = None):

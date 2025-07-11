@@ -16,7 +16,7 @@ class WizardBindPane(CustomBindPaneParent):
             init = init.get('WizData', {})
         else:
             # show wizard
-            result = self.Wizard.Show()
+            result = self.Wizard.ShowModal()
             if result == wx.ID_CANCEL:
                 self.Abort = True
                 return
@@ -55,6 +55,6 @@ class WizardBindPane(CustomBindPaneParent):
         pane.Layout()
 
     def ReshowWizard(self, evt):
-        if self.Wizard.Show() == wx.ID_OK:
+        if self.Wizard.ShowModal() == wx.ID_OK:
             self.BuildBindUI(None)
         evt.Skip()

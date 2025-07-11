@@ -17,10 +17,7 @@ class WizardParent(wx.Dialog):
         wizsizer = self.BuildUI(init)
 
         mainSizer.Add(wizsizer, 1, wx.EXPAND)
-        buttonsizer = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL|wx.HELP)
-        helpbutton = self.FindWindow(wx.ID_HELP)
-        helpbutton.Bind(wx.EVT_BUTTON, self.ShowHelp)
-        mainSizer.Add(buttonsizer, 0, wx.EXPAND|wx.ALL, 10)
+        mainSizer.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 10)
 
         self.SetSizerAndFit(mainSizer)
 
@@ -31,9 +28,6 @@ class WizardParent(wx.Dialog):
         ...
 
     def GetData(self) -> dict:
-        ...
-
-    def ShowHelp(self, evt = None):
         ...
 
 class WizPickerDialog(wx.Dialog):
@@ -57,6 +51,8 @@ class WizPickerDialog(wx.Dialog):
         mainSizer.Add(wcSizer, 1, wx.EXPAND|wx.ALL, 20)
 
         self.SetSizer(mainSizer)
+
+
 
     def OnWizPicked(self, evt):
         if evt: evt.Skip()

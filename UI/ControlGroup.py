@@ -22,7 +22,7 @@ class ControlGroup(wx.StaticBoxSizer):
         # usually for an "enable this stuff" checkbox in a wx.Panel
         if topcontent:
             topcontent.Reparent(self.GetStaticBox())
-            self.Add(topcontent, 0, wx.ALL|wx.EXPAND, 10)
+            self.Add(topcontent, 0, wx.ALL|wx.EXPAND, 5)
 
         self.InnerSizer = wx.FlexGridSizer(width,3,3)
         for col in flexcols: self.InnerSizer.AddGrowableCol(col)

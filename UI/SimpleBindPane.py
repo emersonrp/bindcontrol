@@ -83,6 +83,8 @@ class SimpleBindPane(CustomBindPaneParent):
         if self.Profile:
             self.Profile.CheckAllConflicts()
 
+    def AllBindFiles(self): return {}
+
     def checkIfWellFormed(self):
         isWellFormed = True
 

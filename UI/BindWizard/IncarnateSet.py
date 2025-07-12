@@ -159,4 +159,4 @@ class IncarnateSet(WizardParent):
 
     def ShowHelp(self, evt = None):
         if evt: evt.Skip()
-        ShowHelpWindow(self, 'IncarnateWizard.html')
+        ShowHelpWindow(self.BindPane, 'IncarnateWizard.html')

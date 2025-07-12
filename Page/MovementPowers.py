@@ -350,6 +350,7 @@ class MovementPowers(Page):
         self.Ctrls['TempEnable'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         self.tempSizer.AddControl( ctlName = 'TempToggle', ctlType = 'keybutton',
                                   tooltip = "Select the key to use to toggle the chosen temp travel power")
+        self.Ctrls['TempToggle'].Bind(EVT_KEY_CHANGED, self.OnTempChanged)
         self.TempTravelPowerLabel = wx.StaticText(self.tempSizer.GetStaticBox(), wx.ID_ANY, "Temp Travel Power:", style = wx.ALIGN_RIGHT)
         self.TempTravelPowerLabel.SetToolTip('Select the temporary travel power to toggle using the keybind')
         self.tempSizer.InnerSizer.Add(self.TempTravelPowerLabel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
@@ -643,6 +644,20 @@ class MovementPowers(Page):
             self.ShowControlGroup(self.kheldianSizer, False)
         if evt: evt.Skip()
 
+    def OnTempChanged(self, evt = None):
+        tt = self.Ctrls['TempToggle']
+        enabled = bool(self.GetState('TempEnable'))
+
+        tt.Enable(enabled)
+        self.TempTravelPowerLabel.Enable(enabled)
+        self.TempTravelPowerPicker.Enable(enabled)
+        if enabled and not tt.GetLabel():
+            tt.AddError('unset', 'No Temp Travel Power BindKey has been set.')
+        else:
+            tt.RemoveError('unset')
+
+        if evt: evt.Skip()
+
     def OnTempTravelPowerPicked(self, evt):
         menu = evt.GetEventObject()
         menuitem = menu.FindItemById(evt.GetId())
@@ -685,10 +700,7 @@ class MovementPowers(Page):
 
             self.OnTeleportChanged()
 
-            self.ShowControlGroup(self.tempSizer, True)
-            self.Ctrls['TempToggle'].Enable(self.GetState('TempEnable'))
-            self.TempTravelPowerLabel.Enable(bool(self.GetState('TempEnable')))
-            self.TempTravelPowerPicker.Enable(bool(self.GetState('TempEnable')))
+            self.OnTempChanged()
 
         except Exception as e:
             print(f"Something blowed up in SoD SynchronizeUI:  {e}")

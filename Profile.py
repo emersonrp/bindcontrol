@@ -465,6 +465,7 @@ class Profile(wx.Notebook):
                         control.SetLabel(value['power'])
                         if iconfile := value['iconfile']:
                             control.SetBitmap(GetIcon(iconfile))
+                            control.IconFilename = iconfile
                         control.OnMenuSelection()
                     elif isinstance(control, wx.Button):
                         control.SetLabel(value if value else '')

@@ -84,7 +84,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
         setattr(self.IncIcon, 'Picker', self)
         self.IncIcon.Bind(wx.EVT_BUTTON, self.OnButtonPress)
         self.IncIcon.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
-        self.IncName = wx.StaticText(staticbox, wx.ID_ANY, style=wx.ALIGN_RIGHT)
+        self.IncName = wx.StaticText(staticbox, wx.ID_ANY, style=wx.ALIGN_RIGHT, size=wx.Size(310, -1))
 
         hsizer.Add(self.IncName, 1, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 6)
         hsizer.Add(self.IncIcon, 0, wx.ALIGN_CENTER_VERTICAL)

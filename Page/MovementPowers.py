@@ -1134,13 +1134,6 @@ class MovementPowers(Page):
             t.detailhi = f"$$visscale {self.GetState('DetailBase')}$$shadowvol 0$$ss 0"
             t.detaillo = f"$$visscale {self.GetState('DetailMove')}$$shadowvol 0$$ss 0"
 
-        if (self.GetState('TempEnable')):
-            temptogglefile1 = profile.GetBindFile("temptoggle1.txt")
-            temptogglefile2 = profile.GetBindFile("temptoggle2.txt")
-            temptogglefile2.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('-down$$gototray 1' + profile.BLF('temptoggle1.txt')))
-            temptogglefile1.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('+down$$gototray ' + self.GetState('TempTray') + profile.BLF('temptoggle2.txt')))
-            ResetFile.SetBind(self.Ctrls['TempTraySwitch'].MakeFileKeyBind('+down$$gototray ' + self.GetState('TempTray') + profile.BLF('temptoggle2.txt')))
-
         ## Combat Jumping / Super Jump
         if (self.GetState('HasCJ') and not self.GetState('JumpPower')):
             t.cancj = True
@@ -1157,6 +1150,12 @@ class MovementPowers(Page):
             t.canjmp = True
             t.cjmp   = "Combat Jumping"
             t.jump   = self.GetState('JumpPower')
+
+        # Temp Travel Power Toggle
+        if (self.GetState('TempEnable')):
+            if temppower := self.TempTravelPowerPicker.GetLabel():
+                if temppower != '...':
+                    ResetFile.SetBind(self.Ctrls['TempToggle'].MakeFileKeyBind(f'powexecname {temppower}'))
 
         ## Flying / hover
         t.hover  = self.GetState('HoverPower')

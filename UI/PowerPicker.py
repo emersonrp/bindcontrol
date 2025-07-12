@@ -18,13 +18,18 @@ class PowerPicker(ErrorControlMixin, wx.Button):
             self.SetMinSize(wx.Size(-1, 40))
         self.Bind(wx.EVT_BUTTON, self.OnPowerPicker)
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
-        self.Bind(EVT_POWER_CHANGED, self.OnPowerChanged)
         self.IconFilename = ''
         self.Picker = menu
+        if self.Picker:  # we've passed in our own menu, bind its behavior
+            self.Picker.Bind(wx.EVT_MENU, self.OnMenuSelection)
+
+        self.OnMenuSelection()
 
     def OnPowerPicker(self, _):
+        # if we didn't pass in a menu, make the normal full-on one
         if not self.Picker:
-            self.Picker = PowerPickerMenu(self)
+            self.Picker = PowerPickerMenu()
+            self.Picker.Bind(wx.EVT_MENU, self.OnMenuSelection)
             self.Picker.BuildMenu()
         self.PopupMenu(self.Picker)
         # TODO maybe it should update itself with the results from the menu
@@ -37,18 +42,26 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         self.SetLabel('...')
         self.IconFilename = ''
         self.SetBitmapLabel(GetIcon('Powers', 'Empty'))
-        wx.PostEvent(self, PowerChanged())
+        self.OnMenuSelection()
 
-    def OnPowerChanged(self, _):
-        self.Parent.Layout()
+    def OnMenuSelection(self, evt = None):
+        if evt:
+            menu = evt.GetEventObject()
+            menuitem = menu.FindItemById(evt.GetId())
+            label = menuitem.GetItemLabel()
+            bitmap = menuitem.GetBitmapBundle()
+            self.SetLabel(label)
+            self.SetBitmap(bitmap)
+            self.IconFilename = getattr(menuitem, 'IconFilename')
+
+        if self.GetLabel() == "...":
+            self.AddError('nopick', 'No power has been selected')
+        else:
+            self.RemoveError('nopick')
+
+        #self.Parent.Layout()
 
 class PowerPickerMenu(wx.Menu):
-
-    def __init__(self, button):
-        wx.Menu.__init__(self)
-
-        self.Button = button
-        self.Bind(wx.EVT_MENU, self.OnMenuSelection)
 
     def BuildMenu(self):
 
@@ -151,15 +164,6 @@ class PowerPickerMenu(wx.Menu):
                 menu.AppendSubMenu(submenu, name)
 
         return menu
-
-    def OnMenuSelection(self, evt):
-        menuitem = self.FindItemById(evt.GetId())
-        label = menuitem.GetItemLabel()
-        bitmap = menuitem.GetBitmapBundle()
-        self.Button.SetLabel(label)
-        self.Button.SetBitmap(bitmap)
-        self.Button.IconFilename = getattr(menuitem, 'IconFilename')
-        wx.PostEvent(self.Button, PowerChanged())
 
     def SplitNameAndIcon(self, namestr):
         if re.search(r'\|', namestr):

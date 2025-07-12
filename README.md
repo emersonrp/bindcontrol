@@ -40,6 +40,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
     * Secondary / server tray travel powers like Super Jump's "Double Jump" and Mystic Flight's "Translocation" are starting to be better integrated
     * Homecoming's <code>powexec_location cursor</code> feature incorporated into Teleport binds, with "teleport immediately" and "teleport on key release" options available
     * Kheldian form toggles;  Kheldian movement powers incorporated into Speed-on-Demand
+    * Simple Temporary Travel Power toggle keybind
     * One-key reset in case SoD binds get tangled up
 
 * Inspiration Popper
@@ -71,7 +72,6 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
 * Investigate improvements to Mastermind binds to clarify and expand the behavior.
 * The popmenu editor, on Windows, simply can't load pathologically large popmenus (tens of thousands of entries).  This is a hard limit on the wx toolkit imposed by Windows itself, and can't be worked around in any way I can see.  As there exist at least two menus this large "in the wild," further investigation is merited.
 * More error detection and handling.
-* Temporary powers in speed-on-demand.
 * More and better help text and documentation.
 * Fix bugs as found.
 * More internal work on initialization order of objects to speed up start time and avoid bootstrapping problems <i>(WIP)</i>.

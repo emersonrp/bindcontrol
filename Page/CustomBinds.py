@@ -152,49 +152,34 @@ class CustomBinds(Page):
             dlg.SetValue(bindpane.Title)
         if dlg.ShowModal() == wx.ID_OK:
             # freeze and thaw to jump thru some hoops to make the title display update on Windows
-            bindpane.Freeze()
-            try:
-                # check if we already have a bind named that.  Complex Binds use the name as
-                # part of the bindfiles' filenames, so we can't have dupes
-                title = dlg.GetValue()
-                for pane in self.Panes:
-                    if title == pane.Title:
-                        if pane != bindpane:
-                            # show an "oops" dialog and try again, this might not be perfect
-                            if bindpane.IsFrozen():  bindpane.Thaw()
-                            wx.MessageBox(f"A bind called {title} already exists!", "Error", wx.OK, self)
-                            self.SetBindPaneLabel(evt, bindpane, new)
-                        dlg.Destroy()
-                        return
+            # check if we already have a bind named that.  Complex Binds use the name as
+            # part of the bindfiles' filenames, so we can't have dupes
+            title = dlg.GetValue()
+            for pane in self.Panes:
+                if title == pane.Title:
+                    if pane != bindpane:
+                        # show an "oops" dialog and try again, this might not be perfect
+                        wx.MessageBox(f"A bind called {title} already exists!", "Error", wx.OK, self)
+                        self.SetBindPaneLabel(evt, bindpane, new)
+                    dlg.Destroy()
+                    return
 
-                bindpane.Title = title
-                bindpane.SetLabel(bindpane.Title)
-                if not new:
-                    bindpane.DelButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
-                    bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
-                    bindpane.DupButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
-                    bindpane.RenameCtrlsFrom(oldtitle)
-                    # if we have files to delete (we do, if not new) then delete them.
-                    if deletefiles:
-                        self.Profile.doDeleteBindFiles(deletefiles)
-                self.Profile.SetModified()
-            except Exception as e:
-                raise e
-            finally:
-                if bindpane:
-                    bindpane.Parent.Layout()
-                    if bindpane.IsFrozen(): bindpane.Thaw()
+            bindpane.Title = title
+            bindpane.SetLabel(bindpane.Title)
+            if not new:
+                bindpane.DelButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
+                bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
+                bindpane.DupButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
+                bindpane.RenameCtrlsFrom(oldtitle)
+                # if we have files to delete (we do, if not new) then delete them.
+                if deletefiles:
+                    self.Profile.doDeleteBindFiles(deletefiles)
+            self.Profile.SetModified()
+            self.Update()
         else:
             if new:
                 bindpane.Destroy()
 
-        if bindpane:
-            if bindpane.IsCollapsed():
-                bindpane.Expand()
-                bindpane.Collapse()
-            else:
-                bindpane.Collapse()
-                bindpane.Expand()
         dlg.Destroy()
 
     def OnDeleteButton(self, evt):

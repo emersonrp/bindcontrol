@@ -10,18 +10,18 @@ class WizardParent(wx.Dialog):
     def __init__(self, parent, init = {}):
         super().__init__(parent)
 
-        self.CollPane = parent
+        self.BindPane = parent
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
-        wizsizer = self.BuildUI(init)
+        mainSizer.Add(self.BuildUI(init), 1, wx.EXPAND)
 
-        mainSizer.Add(wizsizer, 1, wx.EXPAND)
         buttonsizer = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL|wx.HELP)
         helpbutton = self.FindWindow(wx.ID_HELP)
         helpbutton.Bind(wx.EVT_BUTTON, self.ShowHelp)
         okbutton = self.FindWindow(wx.ID_OK)
         okbutton.Bind(wx.EVT_BUTTON, self.RefreshUI)
+
         mainSizer.Add(buttonsizer, 0, wx.EXPAND|wx.ALL, 10)
 
         self.SetSizerAndFit(mainSizer)
@@ -40,7 +40,11 @@ class WizardParent(wx.Dialog):
 
     def RefreshUI(self, evt):
         evt.Skip()
-        self.CollPane.BuildBindUI(None)
+        self.BindPane.BuildBindUI(None)
+
+    def ShowWizard(self, evt = None):
+        self.Show(True)
+        if evt: evt.Skip()
 
 class WizPickerDialog(wx.Dialog):
     def __init__(self, parent):

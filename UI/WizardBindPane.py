@@ -49,7 +49,3 @@ class WizardBindPane(CustomBindPaneParent):
         mainSizer.Add(self.Wizard.PaneContents(), 1, wx.EXPAND|wx.ALL, 10)
 
         pane.Layout()
-
-    def ShowWizard(self, evt = None):
-        self.Wizard.Show()
-        if evt: evt.Skip()

@@ -40,8 +40,8 @@ class IncarnateSet(WizardParent):
         return self.IncarnateBox.GetData()
 
     def PaneContents(self):
-        panel = wx.Panel(self.CollPane.GetPane())
-        panel.Bind(wx.EVT_LEFT_DOWN, self.CollPane.ShowWizard)
+        panel = wx.Panel(self.BindPane.GetPane())
+        panel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         panelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         listSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -52,25 +52,25 @@ class IncarnateSet(WizardParent):
                 bitmap = wx.GenericStaticBitmap(panel, wx.ID_ANY, icon)
                 bitmap.Bind(wx.EVT_ENTER_WINDOW, partial(self.OnHoverIcon, f"<b>{slot}</b>: {slotData['power']}"))
                 bitmap.Bind(wx.EVT_LEAVE_WINDOW, partial(self.OnHoverIcon, None))
-                bitmap.Bind(wx.EVT_LEFT_DOWN, self.CollPane.ShowWizard)
+                bitmap.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
                 listSizer.Add(bitmap, 0, wx.ALL, 5)
         self.HoverDisplay = wx.StaticText(panel, wx.ID_ANY)
-        self.HoverDisplay.Bind(wx.EVT_LEFT_DOWN, self.CollPane.ShowWizard)
+        self.HoverDisplay.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         listSizer.Add(self.HoverDisplay, 1, wx.ALL, 10)
 
         panelSizer.Add(listSizer, 1, wx.ALIGN_CENTER|wx.ALL, 15)
 
-        bindkey = self.CollPane.Init.get('BindKey', '')
+        bindkey = self.BindPane.Init.get('BindKey', '')
         BindSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BindKeyCtrl = bcKeyButton(panel, -1, {
-            'CtlName' : self.CollPane.MakeCtlName("BindKey"),
-            'Page'    : self.CollPane.Page,
+            'CtlName' : self.BindPane.MakeCtlName("BindKey"),
+            'Page'    : self.BindPane.Page,
             'Key'     : bindkey,
         })
         self.BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.OnKeyChanged)
         BindSizer.Add(wx.StaticText(panel, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(self.BindKeyCtrl,                      0, wx.ALIGN_CENTER_VERTICAL)
-        self.CollPane.Page.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
+        self.BindPane.Page.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
         UI.Labels[self.BindKeyCtrl.CtlName] = f'Incarnate Set Bind "{self.Title}"'
 
         panelSizer.Add(BindSizer, 0, wx.EXPAND|wx.ALL, 15)
@@ -99,7 +99,7 @@ class IncarnateSet(WizardParent):
     def CheckIfWellFormed(self):
         isWellFormed = True
 
-        bk = self.CollPane.Page.Ctrls[self.CollPane.MakeCtlName('BindKey')]
+        bk = self.BindPane.Page.Ctrls[self.BindPane.MakeCtlName('BindKey')]
         if bk.Key:
             bk.RemoveError('undef')
         else:
@@ -117,7 +117,7 @@ class IncarnateSet(WizardParent):
 
         incdata = self.GetData()
         incarnate_lines = ['']
-        title = re.sub(r'\W+', '', self.CollPane.Title)
+        title = re.sub(r'\W+', '', self.BindPane.Title)
         fake_blf = profile.BLF('wiz', f'{title}X')
         extra_len = len(f"$$bindloadfilesilent {fake_blf}$$t $name, X of X, Press Again")
         for slot, data in incdata.items():

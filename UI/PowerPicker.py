@@ -9,23 +9,29 @@ import wx.lib.newevent
 PowerChanged, EVT_POWER_CHANGED = wx.lib.newevent.NewEvent()
 
 class PowerPicker(ErrorControlMixin, wx.Button):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, parent, menu = None, size = wx.DefaultSize):
+        print(f"size is {size}")
+        super().__init__(parent, size = size)
 
         self.SetLabel('...')
-        self.SetMinSize(wx.Size(-1, 40))
+        if size == wx.DefaultSize:
+            self.SetMinSize(wx.Size(-1, 40))
         self.Bind(wx.EVT_BUTTON, self.OnPowerPicker)
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
         self.Bind(EVT_POWER_CHANGED, self.OnPowerChanged)
         self.IconFilename = ''
-        self.Picker = None
+        self.Picker = menu
 
     def OnPowerPicker(self, _):
-        self.Picker = PowerPickerMenu(self)
-        self.Picker.BuildMenu()
+        if not self.Picker:
+            self.Picker = PowerPickerMenu(self)
+            self.Picker.BuildMenu()
         self.PopupMenu(self.Picker)
         # TODO maybe it should update itself with the results from the menu
         # instead of the menu reaching in and fiddling with it.  Maybe.
+        #
+        # TODO 2:  now that we possibly pass in our own menu, that's not
+        # quite as simple as all that.  Still, it seems more The Right Way.
 
     def OnRightClick(self, _):
         self.SetLabel('...')
@@ -35,7 +41,6 @@ class PowerPicker(ErrorControlMixin, wx.Button):
 
     def OnPowerChanged(self, _):
         self.Parent.Layout()
-
 
 class PowerPickerMenu(wx.Menu):
 

@@ -9,12 +9,15 @@ from Page import Page
 from Icon import GetIcon
 from UI.ControlGroup import ControlGroup, bcKeyButton
 from UI.KeySelectDialog import EVT_KEY_CHANGED
+from UI.PowerPicker import PowerPicker
 
 class MovementPowers(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
 
         self.TabTitle = "Movement / Speed on Demand"
+
+        self.TempTravelPowerMenu = None
 
         # A few things that are server-specific.  If we change servers, we reload the profile
         # so this is safe to do in __init__
@@ -342,10 +345,24 @@ class MovementPowers(Page):
 
         ##### TEMP TRAVEL POWERS
         self.tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
-        self.tempSizer.AddControl( ctlName = 'TempEnable', ctlType = 'checkbox',)
+        self.tempSizer.AddControl( ctlName = 'TempEnable', ctlType = 'checkbox',
+                                  tooltip = "Enable the Temp Travel Power toggle keybind")
         self.Ctrls['TempEnable'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.tempSizer.AddControl( ctlName = 'TempToggle', ctlType = 'keybutton',)
-        self.rightColumn.Add(self.tempSizer, 0, wx.EXPAND)
+        self.tempSizer.AddControl( ctlName = 'TempToggle', ctlType = 'keybutton',
+                                  tooltip = "Select the key to use to toggle the chosen temp travel power")
+        self.TempTravelPowerLabel = wx.StaticText(self.tempSizer.GetStaticBox(), wx.ID_ANY, "Temp Travel Power:", style = wx.ALIGN_RIGHT)
+        self.TempTravelPowerLabel.SetToolTip('Select the temporary travel power to toggle using the keybind')
+        self.tempSizer.InnerSizer.Add(self.TempTravelPowerLabel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+
+        temptravelPowerMenu = self.BuildTempTravelPowerMenu()
+        temptravelPowerMenu.Bind(wx.EVT_MENU, self.OnTempTravelPowerPicked)
+
+        self.TempTravelPowerPicker = PowerPicker(self.tempSizer.GetStaticBox(), menu = temptravelPowerMenu, size = wx.Size(230, 40))
+        self.TempTravelPowerPicker.SetToolTip('Select the temporary travel power to toggle using the keybind')
+        self.tempSizer.InnerSizer.Add(self.TempTravelPowerPicker, 1, wx.EXPAND)
+
+        self.tempSizer.Layout()
+        self.leftColumn.Add(self.tempSizer, 0, wx.EXPAND)
 
         ##### SUPER SPEED
         self.superSpeedSizer = ControlGroup(self, self, 'Speed')
@@ -624,6 +641,30 @@ class MovementPowers(Page):
             self.ShowControlGroup(self.kheldianSizer, False)
         if evt: evt.Skip()
 
+    def OnTempTravelPowerPicked(self, evt):
+        menu = evt.GetEventObject()
+        menuitem = menu.FindItemById(evt.GetId())
+        label = menuitem.GetItemLabel()
+        bitmap = menuitem.GetBitmapBundle()
+        self.TempTravelPowerPicker.SetLabel(label)
+        self.TempTravelPowerPicker.SetBitmap(bitmap)
+        setattr(self.TempTravelPowerPicker, 'IconFilename', getattr(menuitem, 'IconFilename'))
+
+    def BuildTempTravelPowerMenu(self):
+        menu = wx.Menu()
+        for item in GameData.TempTravelPowers:
+            if re.search(r'\|', item):
+                item, iconname = re.split(r'\|', item)
+            else:
+                iconname = item
+            menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
+            icon = GetIcon('Powers', 'Temp', iconname)
+            if icon:
+                menuitem.SetBitmap(icon)
+                setattr(menuitem, 'IconFilename', icon.Filename)
+            menu.Append(menuitem)
+        return menu
+
     def SynchronizeUI(self, evt = None):
         self.Freeze()
 
@@ -645,9 +686,9 @@ class MovementPowers(Page):
             # TODO - for now, hide temp travel power stuff;
             # redo later using named power instead of trayslots
             self.ShowControlGroup(self.tempSizer, True)
-            #c['TempMode'].Enable(self.GetState('TempEnable'))
-            #c['TempTray'].Enable(self.GetState('TempEnable'))
-            #c['TempTraySwitch'].Enable(self.GetState('TempEnable'))
+            self.Ctrls['TempToggle'].Enable(self.GetState('TempEnable'))
+            self.TempTravelPowerLabel.Enable(bool(self.GetState('TempEnable')))
+            self.TempTravelPowerPicker.Enable(bool(self.GetState('TempEnable')))
             # end TODO temp sizer
 
         except Exception as e:
@@ -2292,21 +2333,6 @@ class MovementPowers(Page):
 
     def isKheldian(self):
         return bool(self.Profile.Archetype() == "Warshade" or self.Profile.Archetype() == "Peacebringer")
-
-    def BuildTempPowerMenu(self):
-        menu = wx.Menu()
-        for item in GameData.TempTravelPowers:
-            if re.search(r'\|', item):
-                item, iconname = re.split(r'\|', item)
-            else:
-                iconname = item
-            menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
-            icon = GetIcon('Powers', 'Temp', iconname)
-            if icon:
-                menuitem.SetBitmap(icon)
-                setattr(menuitem, 'IconFilename', icon.Filename)
-            menu.Append(menuitem)
-        return menu
 
     def AllBindFiles(self):
         files = []

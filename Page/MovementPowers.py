@@ -1,3 +1,4 @@
+import re
 import wx
 import GameData
 import UI
@@ -5,6 +6,7 @@ from pathlib import Path, PureWindowsPath
 from typing import Dict, Any
 from BLF import BLF
 from Page import Page
+from Icon import GetIcon
 from UI.ControlGroup import ControlGroup, bcKeyButton
 from UI.KeySelectDialog import EVT_KEY_CHANGED
 
@@ -106,9 +108,7 @@ class MovementPowers(Page):
 
 
             'TempEnable'      : False,
-            'TempTray'        : "6",
-            'TempTraySwitch'  : "",
-            'TempMode'        : "",
+            'TempToggle'      : "",
         }
 
         if self.Profile.Server == "Homecoming":
@@ -342,12 +342,9 @@ class MovementPowers(Page):
 
         ##### TEMP TRAVEL POWERS
         self.tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
-        # if (temp travel powers exist)?  Should this be "custom"?
         self.tempSizer.AddControl( ctlName = 'TempEnable', ctlType = 'checkbox',)
         self.Ctrls['TempEnable'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.tempSizer.AddControl( ctlName = 'TempMode', ctlType = 'keybutton',)
-        self.tempSizer.AddControl( ctlName = 'TempTray', ctlType = 'spinbox', contents = [1, 8],)
-        self.tempSizer.AddControl( ctlName = 'TempTraySwitch', ctlType = 'keybutton',)
+        self.tempSizer.AddControl( ctlName = 'TempToggle', ctlType = 'keybutton',)
         self.rightColumn.Add(self.tempSizer, 0, wx.EXPAND)
 
         ##### SUPER SPEED
@@ -647,7 +644,7 @@ class MovementPowers(Page):
 
             # TODO - for now, hide temp travel power stuff;
             # redo later using named power instead of trayslots
-            self.ShowControlGroup(self.tempSizer, False)
+            self.ShowControlGroup(self.tempSizer, True)
             #c['TempMode'].Enable(self.GetState('TempEnable'))
             #c['TempTray'].Enable(self.GetState('TempEnable'))
             #c['TempTraySwitch'].Enable(self.GetState('TempEnable'))
@@ -706,7 +703,7 @@ class MovementPowers(Page):
             if (modestr != "GFly")        : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff,fix)
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
             if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path, gamepath)
-            if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
+            #if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
 
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
 
@@ -732,7 +729,7 @@ class MovementPowers(Page):
                 if (self.GetState('SprintSoD'))        : t.FlyMode = t.SprintMode
                 if (self.GetState('SpeedPower'))       : t.FlyMode = t.SpeedMode
                 if (t.canjmp)                          : t.FlyMode = t.JumpMode
-                if (self.GetState('TempEnable'))       : t.FlyMode = t.TempMode
+                #if (self.GetState('TempEnable'))       : t.FlyMode = t.TempMode
             self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
 
             t.ini = ''
@@ -763,7 +760,7 @@ class MovementPowers(Page):
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,self.sodSetDownFix)
             if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
             if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path,gamepath)
-            if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
+            #if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
         else:
             if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ])
             if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
@@ -774,7 +771,7 @@ class MovementPowers(Page):
 
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
             if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path,gamepath)
-            if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
+            #if (modestr != "Temp")        : self.makeTempModeKey  (profile,t,"r", curfile,turnoff)
 
         self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
         self.sodFollowKey(t,blf,curfile,mobile,stationary)
@@ -802,7 +799,7 @@ class MovementPowers(Page):
 
         if (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"af",curfile,turnoff,fix)
         if (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"aj",curfile,turnoff,patha,gamepatha)
-        if (modestr != "Temp")      : self.makeTempModeKey(profile,t,"ar",curfile,turnoff)
+        #if (modestr != "Temp")      : self.makeTempModeKey(profile,t,"ar",curfile,turnoff)
 
         self.sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight)
 
@@ -831,7 +828,7 @@ class MovementPowers(Page):
 
         if (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"ff",curfile,turnoff,fix)
         if (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"fj",curfile,turnoff, pathf, gamepathf)
-        if (modestr != "Temp")      : self.makeTempModeKey(profile,t,"fr",curfile,turnoff)
+        #if (modestr != "Temp")      : self.makeTempModeKey(profile,t,"fr",curfile,turnoff)
 
         curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('nop'))
 
@@ -867,30 +864,30 @@ class MovementPowers(Page):
                 cur.SetBind(key, name, self, t.ini + self.actPower_toggle(None,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
         t.ini = ''
 
-    def makeTempModeKey(self, p, t, bl, cur, toff):
-        key = t.TempMode
-        name = UI.Labels['TempMode']
-        if not self.Ctrls['TempMode'].IsEnabled(): return
-        if not key: return
-
-        if self.GetState('Feedback'): feedback = '$$t $name, Temp Mode'
-        else:                         feedback = ''
-
-        trayslot = f"1 {self.GetState('TempTray')}"
-
-        if (bl == "r"):
-            bindload = t.BLF('t')
-            cur.SetBind(key, name, self, t.ini + self.actPower_name(trayslot,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
-        elif (bl == "ar"):
-            bindload  = t.BLF('at')
-            bindload2 = t.BLF('at','_t')
-            tgl = p.GetBindFile(bindload2)
-            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower_name(trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + bindload2)
-            tgl.SetBind(key, name, self, "- $$" + feedback + bindload)
-        else:
-            cur.SetBind(key, name, self, t.ini + self.actPower_name(trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('ft'))
-
-        t.ini = ''
+#    def makeTempModeKey(self, p, t, bl, cur, toff):
+#        key = t.TempMode
+#        name = UI.Labels['TempMode']
+#        if not self.Ctrls['TempMode'].IsEnabled(): return
+#        if not key: return
+#
+#        if self.GetState('Feedback'): feedback = '$$t $name, Temp Mode'
+#        else:                         feedback = ''
+#
+#        trayslot = f"1 {self.GetState('TempTray')}"
+#
+#        if (bl == "r"):
+#            bindload = t.BLF('t')
+#            cur.SetBind(key, name, self, t.ini + self.actPower_name(trayslot,toff) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+#        elif (bl == "ar"):
+#            bindload  = t.BLF('at')
+#            bindload2 = t.BLF('at','_t')
+#            tgl = p.GetBindFile(bindload2)
+#            cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower_name(trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + t.dirs('DLR') + bindload2)
+#            tgl.SetBind(key, name, self, "- $$" + feedback + bindload)
+#        else:
+#            cur.SetBind(key, name, self, t.ini + self.actPower_name(trayslot,toff) + t.detaillo + t.flycamdist + '$$up 0' + feedback + t.BLF('ft'))
+#
+#        t.ini = ''
 
     def makeSprintModeKey(self, p, t, bl, cur, toff, fix, fb = ''):
         key = t.SprintMode
@@ -1547,7 +1544,7 @@ class MovementPowers(Page):
         if (self.DefaultMode() != "Jump")   : t.JumpMode   = self.GetState('JumpMode')
         if (self.DefaultMode() != "Speed")  : t.SpeedMode  = self.GetState('SpeedMode')
         if (self.DefaultMode() != "GFly")   : t.GFlyMode   = self.GetState('GFlyMode')
-        t.TempMode = self.GetState('TempMode')
+        #t.TempMode = self.GetState('TempMode')
 
         for space in (0,1):
             t.space = space
@@ -1711,26 +1708,26 @@ class MovementPowers(Page):
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
                                 # TODO TODO TODO - unsure yet whether Temp power are going to rely on EnableSoD
-                                if (self.GetState('EnableSoD') and self.GetState('TempEnable')):
-                                    trayslot = "1 " + self.GetState('TempTray')
-                                    setattr(t, self.DefaultMode() + "Mode", t.TempMode)
-                                    self.makeSoDFile({
-                                        't'          : t,
-                                        'bl'         : t.blt,
-                                        'bla'        : t.blat,
-                                        'blf'        : t.blft,
-                                        'path'       : t.patht,
-                                        'gamepath'   : t.gamepatht,
-                                        'patha'      : t.pathat,
-                                        'gamepatha'  : t.gamepathat,
-                                        'pathf'      : t.pathft,
-                                        'gamepathf'  : t.gamepathft,
-                                        'mobile'     : trayslot,
-                                        'stationary' : trayslot,
-                                        'modestr'    : "Temp",
-                                        'flight'     : t.fly,
-                                    })
-                                    setattr(t, self.DefaultMode() + "Mode", None)
+#                                if (self.GetState('EnableSoD') and self.GetState('TempEnable')):
+#                                    trayslot = "1 " + self.GetState('TempTray')
+#                                    setattr(t, self.DefaultMode() + "Mode", t.TempMode)
+#                                    self.makeSoDFile({
+#                                        't'          : t,
+#                                        'bl'         : t.blt,
+#                                        'bla'        : t.blat,
+#                                        'blf'        : t.blft,
+#                                        'path'       : t.patht,
+#                                        'gamepath'   : t.gamepatht,
+#                                        'patha'      : t.pathat,
+#                                        'gamepatha'  : t.gamepathat,
+#                                        'pathf'      : t.pathft,
+#                                        'gamepathf'  : t.gamepathft,
+#                                        'mobile'     : trayslot,
+#                                        'stationary' : trayslot,
+#                                        'modestr'    : "Temp",
+#                                        'flight'     : t.fly,
+#                                    })
+#                                    setattr(t, self.DefaultMode() + "Mode", None)
 
         t.space = t.X = t.W = t.S = t.A = t.D = 0
 
@@ -2296,6 +2293,21 @@ class MovementPowers(Page):
     def isKheldian(self):
         return bool(self.Profile.Archetype() == "Warshade" or self.Profile.Archetype() == "Peacebringer")
 
+    def BuildTempPowerMenu(self):
+        menu = wx.Menu()
+        for item in GameData.TempTravelPowers:
+            if re.search(r'\|', item):
+                item, iconname = re.split(r'\|', item)
+            else:
+                iconname = item
+            menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
+            icon = GetIcon('Powers', 'Temp', iconname)
+            if icon:
+                menuitem.SetBitmap(icon)
+                setattr(menuitem, 'IconFilename', icon.Filename)
+            menu.Append(menuitem)
+        return menu
+
     def AllBindFiles(self):
         files = []
         dirs  = [
@@ -2404,10 +2416,8 @@ UI.Labels.update( {
     'TTPTPGFly'      : 'Group Fly when Team Teleporting',
     'TPHideWindows'  : 'Hide Windows when Holding Target Marker Key',
 
-    'TempEnable'     : 'Enable Temp Travel Mode',
-    'TempMode'       : 'Toggle Temp Mode',
-    'TempTray'       : 'Temporary Travel Power Tray',
-    'TempTraySwitch' : "Tray Toggle",
+    'TempEnable'     : 'Enable Temp Travel Power Bind',
+    'TempToggle'     : 'Toggle Temp Travel Power',
 
     'HumanTray'      : 'Human Form Power Tray',
     'UseNova'        : 'Use Nova Form Toggle',
@@ -2457,7 +2467,7 @@ class tObject(dict):
         self.JumpMode     :str = ''
         self.SpeedMode    :str = ''
         self.GFlyMode     :str = ''
-        self.TempMode     :str = ''
+        #self.TempMode     :str = ''
         self.jumpifnocj   :str = ''
 
         self.space:int = 0

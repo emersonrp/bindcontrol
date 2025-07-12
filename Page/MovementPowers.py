@@ -359,6 +359,8 @@ class MovementPowers(Page):
 
         self.TempTravelPowerPicker = PowerPicker(self.tempSizer.GetStaticBox(), menu = temptravelPowerMenu, size = wx.Size(230, 40))
         self.TempTravelPowerPicker.SetToolTip('Select the temporary travel power to toggle using the keybind')
+        self.TempTravelPowerPicker.DefaultToolTip = 'Select the temporary travel power to toggle using the keybind'
+        self.Ctrls['TempTravelPowerPicker'] = self.TempTravelPowerPicker
         self.tempSizer.InnerSizer.Add(self.TempTravelPowerPicker, 1, wx.EXPAND)
 
         self.tempSizer.Layout()

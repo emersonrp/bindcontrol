@@ -30,6 +30,7 @@ from UI.ComplexBindPane import ComplexBindPane
 from UI.WizardBindPane import WizardBindPane
 from UI.BindWizard import wizards
 from UI.KeySelectDialog import bcKeyButton
+from UI.PowerPicker import PowerPicker
 
 # class method to examine an arbitrary profile binds dir for its associated profile name
 def CheckProfileForBindsDir(bindsdir):
@@ -370,6 +371,11 @@ class Profile(wx.Notebook):
                 # look up what type of control it is to know how to extract its value
                 if isinstance(control, wx.DirPickerCtrl):
                     value = control.GetPath()
+                elif isinstance(control, PowerPicker):
+                    value = {
+                        'power'    : control.GetLabel(),
+                        'iconfile' : control.IconFilename,
+                    }
                 elif isinstance(control, bcKeyButton):
                     value = control.Key
                 elif isinstance(control, wx.Button):
@@ -455,6 +461,11 @@ class Profile(wx.Notebook):
                     # look up what type of control it is to know how to update its value
                     if isinstance(control, wx.DirPickerCtrl):
                         control.SetPath(value if value else '')
+                    elif isinstance(control, PowerPicker):
+                        control.SetLabel(value['power'])
+                        if iconfile := value['iconfile']:
+                            control.SetBitmap(GetIcon(iconfile))
+                        control.OnMenuSelection()
                     elif isinstance(control, wx.Button):
                         control.SetLabel(value if value else '')
                         if isinstance(control, bcKeyButton):

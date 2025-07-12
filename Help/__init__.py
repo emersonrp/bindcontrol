@@ -96,16 +96,17 @@ def ShowHelpPopup(self, filename, event):
 
     popup = HelpPopups[filename]
 
-    btn = event.GetEventObject()
-    pos = btn.ClientToScreen( (0,0) )
-    sz =  btn.GetSize()
+    btn    = event.GetEventObject()
+    btnpos = btn.ClientToScreen((0,0))
+    btnsiz = btn.GetSize()
+    winpos = wx.App.Get().Main.ClientToScreen((0,0))
 
     xcoord = 0
     # if the button is placed on the right half of the window...
-    if btn.GetPosition().x > (wx.App.Get().Main.GetSize().GetWidth() / 2):
+    if btnpos.x > winpos.x + (wx.App.Get().Main.GetSize().GetWidth() / 2):
         # ... place the popup so it shows up below and left instead of below and right.
-        xcoord = sz[0] - (popup.GetSize().GetWidth()) # (right edge of button - width of popup)
+        xcoord = btnsiz.GetWidth() - (popup.GetSize().GetWidth()) # (right edge of button - width of popup)
 
-    popup.Position(pos, wx.Size(xcoord, sz[1] + 5)) # 5 padding below button
+    popup.Position(btnpos, wx.Size(xcoord, btnsiz.GetHeight() + 5)) # 5 padding below button
     popup.Popup()
 

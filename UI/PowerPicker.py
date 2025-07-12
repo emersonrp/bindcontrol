@@ -40,7 +40,7 @@ class PowerPicker(ErrorControlMixin, wx.Button):
     def OnRightClick(self, _):
         self.SetLabel('...')
         self.IconFilename = ''
-        self.SetBitmapLabel(GetIcon('Powers', 'Empty'))
+        self.SetBitmapLabel(GetIcon('Empty'))
         self.OnMenuSelection()
 
     def OnMenuSelection(self, evt = None):
@@ -53,7 +53,7 @@ class PowerPicker(ErrorControlMixin, wx.Button):
             self.SetBitmap(bitmap)
             self.IconFilename = getattr(menuitem, 'IconFilename')
 
-        if self.GetLabel() == "...":
+        if self.IsEnabled() and self.GetLabel() == "...":
             self.AddError('nopick', 'No power has been selected')
         else:
             self.RemoveError('nopick')

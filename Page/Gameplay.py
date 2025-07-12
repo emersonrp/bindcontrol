@@ -164,23 +164,25 @@ class Gameplay(Page):
         rightSizer = wx.BoxSizer(wx.VERTICAL)
 
         ##### Enable TPS Direct Select
+        tpsenablepanel = wx.Panel(self)
         tpsenablesizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        tpsenable = wx.CheckBox( self, -1, 'Enable Team/Pet Select')
-        tpsenable.SetToolTip( wx.ToolTip('Check this to enable the Combined Team/Pet Select Binds') )
+        tpsenable = wx.CheckBox(tpsenablepanel, -1, 'Enable Team/Pet Select')
+        tpsenable.SetToolTip('Check this to enable the Combined Team/Pet Select Binds')
         tpsenable.Bind(wx.EVT_CHECKBOX, self.OnTPSEnable)
         self.Ctrls['TPSEnable'] = tpsenable
         tpsenable.SetValue(self.Init['TPSEnable'])
 
-        tpshelpbutton = HelpButton(self, 'TPSBinds.html')
+        tpshelpbutton = HelpButton(tpsenablepanel, 'TPSBinds.html')
 
-        tpsenablesizer.Add(tpsenable, 0, wx.ALIGN_CENTER_VERTICAL)
-        tpsenablesizer.Add(tpshelpbutton, wx.ALIGN_RIGHT)
+        tpsenablesizer.Add(tpsenable, 1, wx.ALIGN_CENTER_VERTICAL)
+        tpsenablesizer.Add(tpshelpbutton, 0)
+        tpsenablepanel.SetSizer(tpsenablesizer)
 
-        leftSizer.Add(tpsenablesizer, 0, wx.ALL, 10)
+        #leftSizer.Add(tpsenablesizer, 0, wx.ALL, 10)
 
         ##### direct-select keys
-        TPSDirectBox = ControlGroup(self, self, 'Combined Team/Pet Select')
+        TPSDirectBox = ControlGroup(self, self, 'Combined Team/Pet Select', topcontent = tpsenablepanel)
 
         TPSDirectBox.AddControl(
             ctlName = 'TPSSelMode',
@@ -194,24 +196,26 @@ class Gameplay(Page):
                 ctlType = 'keybutton',
                 tooltip = f"Choose the key that will select team member / pet {selectid}",
             )
-        leftSizer.Add(TPSDirectBox, 0, wx.EXPAND|wx.ALL, 10)
+        leftSizer.Add(TPSDirectBox, 0, wx.EXPAND)
 
         ##### Next/Prev Team Select Binds
+        teamenablepanel = wx.Panel(self)
         teamenablesizer = wx.BoxSizer(wx.HORIZONTAL)
-        teamenable = wx.CheckBox( self, -1, 'Enable Team Select')
-        teamenable.SetToolTip( wx.ToolTip('Check this to enable the Next/Prev Team Select Binds') )
+        teamenable = wx.CheckBox(teamenablepanel, -1, 'Enable Team Select')
+        teamenable.SetToolTip('Check this to enable the Next/Prev Team Select Binds')
         teamenable.Bind(wx.EVT_CHECKBOX, self.OnTeamEnable)
         self.Ctrls['TeamEnable'] = teamenable
         teamenable.SetValue(self.Init['TeamEnable'])
 
-        teamhelpbutton = HelpButton(self, 'TeamSelectBinds.html')
+        teamhelpbutton = HelpButton(teamenablepanel, 'TeamSelectBinds.html')
 
-        teamenablesizer.Add(teamenable, 0, wx.ALIGN_CENTER_VERTICAL)
-        teamenablesizer.Add(teamhelpbutton, wx.ALIGN_RIGHT)
+        teamenablesizer.Add(teamenable, 1, wx.ALIGN_CENTER_VERTICAL)
+        teamenablesizer.Add(teamhelpbutton, 0)
+        teamenablepanel.SetSizer(teamenablesizer)
 
-        rightSizer.Add(teamenablesizer, 0, wx.ALL, 10)
+        #rightSizer.Add(teamenablesizer, 0, wx.ALL, 10)
 
-        TeamSelBox = ControlGroup(self, self, 'Team Select')
+        TeamSelBox = ControlGroup(self, self, 'Team Select', topcontent = teamenablepanel)
         for b in (
             ['SelPrevTeam', 'Choose the key that will select the previous teammate from the currently selected one'],
             ['SelNextTeam', 'Choose the key that will select the next teammate from the currently selected one']    ,
@@ -226,7 +230,7 @@ class Gameplay(Page):
                 ctlType = 'keybutton',
                 tooltip = b[1],
             )
-        rightSizer.Add(TeamSelBox, 1, wx.EXPAND|wx.ALL, 10)
+        rightSizer.Add(TeamSelBox, 1, wx.EXPAND)
 
         bottomSizer.Add(leftSizer,  0, wx.ALL|wx.EXPAND, 10)
         bottomSizer.Add(rightSizer, 0, wx.ALL|wx.EXPAND, 10)

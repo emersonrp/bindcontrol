@@ -33,7 +33,7 @@ class WizardBindPane(CustomBindPaneParent):
     def AllBindFiles(self):
         return {}
 
-    def BuildBindUI(self, _):
+    def BuildBindUI(self, page):
         # if the pane already has stuff, clear it out
         pane = self.GetPane()
         if mainSizer := pane.GetSizer():

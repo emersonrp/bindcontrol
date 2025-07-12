@@ -114,16 +114,16 @@ class BindFile():
                 raise Exception("Can't write to bindfile {self.Path}: {e}")
 
     # delete the bindfile.  THIS DOES NOT ASK FOR CONFIRMATION
-    def Delete(self):
-        if not self.Path:
-            raise Exception(f"Trying to delete a bindfile with empty Path")
-        # TODO do we actually want to check existence?  We want to pass a bunch of possible
-        # files through here but they might not all be there, almost certainly some won't
-        if not self.Path.exists():
-            raise Exception(f"Trying to delete nonexistant bindfile {self}")
-        if not re.match(self.Profile.BindsDir(), str(self.Path)):
-            raise Exception(f"Trying to delete a bindfile {self} not in {self.Profile.BindsDir()}!")
-
-        # TODO do we need more sanity checking?  Probably
-        #self.Path.unlink()
-        print(f"Would be deleting BindFile {self}")
+#    def Delete(self):
+#        if not self.Path:
+#            raise Exception(f"Trying to delete a bindfile with empty Path")
+#        # TODO do we actually want to check existence?  We want to pass a bunch of possible
+#        # files through here but they might not all be there, almost certainly some won't
+#        if not self.Path.exists():
+#            raise Exception(f"Trying to delete nonexistant bindfile {self}")
+#        if not re.match(self.Profile.BindsDir(), str(self.Path)):
+#            raise Exception(f"Trying to delete a bindfile {self} not in {self.Profile.BindsDir()}!")
+#
+#        # TODO do we need more sanity checking?  Probably
+#        #self.Path.unlink()
+#        print(f"Would be deleting BindFile {self}")

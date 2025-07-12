@@ -13,16 +13,20 @@ class IncarnateSet(WizardParent):
     WizardName  = 'Incarnate Powers Set'
     WizToolTip  = 'Create a keybind that, with multiple presses, will load a particular set of Incarnate Powers'
 
-    def BuildUI(self, init = {}):
+    def __init__(self, parent, init):
+        super().__init__(parent, init)
+        self.IncarnateBox = None
+
+    def BuildUI(self, dialog, init = {}):
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.SetMinSize(wx.Size(700,-1))
 
         if setName := init.get('Title', ''):
             setName = f' "{setName}"'
 
-        self.SetTitle(f"Incarnate Set{setName}")
+        dialog.SetTitle(f"Incarnate Set{setName}")
 
-        self.IncarnateBox = IncarnateBox(self, GameData.Server)
+        self.IncarnateBox = IncarnateBox(dialog, GameData.Server)
         if wizdata := init.get('WizData', None):
             if incdata := wizdata.get('IncData', None):
                 self.IncarnateBox.FillWith(incdata)
@@ -37,15 +41,16 @@ class IncarnateSet(WizardParent):
         }
 
     def GetData(self):
-        return self.IncarnateBox.GetData()
+        return self.IncarnateBox.GetData() if self.IncarnateBox else {}
 
     def PaneContents(self):
-        panel = wx.Panel(self.BindPane.GetPane())
+        bindpane = self.BindPane
+        panel = wx.Panel(bindpane.GetPane())
         panel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         panelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         listSizer = wx.BoxSizer(wx.HORIZONTAL)
-        incarnateData = self.IncarnateBox.GetData()
+        incarnateData = self.IncarnateBox.GetData() if self.IncarnateBox else self.Init.get('WizData', {}).get('IncData', {})
         for slot in ['Alpha', 'Interface', 'Judgement', 'Destiny', 'Lore', 'Hybrid', 'Genesis',]:
             if slotData := incarnateData.get(slot, None):
                 icon = GetIcon(slotData['iconfile'])
@@ -60,18 +65,18 @@ class IncarnateSet(WizardParent):
 
         panelSizer.Add(listSizer, 1, wx.ALIGN_CENTER|wx.ALL, 15)
 
-        bindkey = self.BindPane.Init.get('BindKey', '')
+        bindkey = bindpane.Init.get('BindKey', '')
         BindSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BindKeyCtrl = bcKeyButton(panel, -1, {
-            'CtlName' : self.BindPane.MakeCtlName("BindKey"),
-            'Page'    : self.BindPane.Page,
+            'CtlName' : bindpane.MakeCtlName("BindKey"),
+            'Page'    : bindpane.Page,
             'Key'     : bindkey,
         })
         self.BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.OnKeyChanged)
         BindSizer.Add(wx.StaticText(panel, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(self.BindKeyCtrl,                      0, wx.ALIGN_CENTER_VERTICAL)
-        self.BindPane.Page.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
-        UI.Labels[self.BindKeyCtrl.CtlName] = f'Incarnate Set Bind "{self.Title}"'
+        bindpane.Page.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
+        UI.Labels[self.BindKeyCtrl.CtlName] = f'Incarnate Set Bind "{bindpane.Title}"'
 
         panelSizer.Add(BindSizer, 0, wx.EXPAND|wx.ALL, 15)
         panel.SetSizer(panelSizer)
@@ -87,7 +92,7 @@ class IncarnateSet(WizardParent):
             self.HoverDisplay.SetLabelMarkup(markup)
         else:
             self.HoverDisplay.SetForegroundColour(wx.Colour(128, 128, 128))
-            self.HoverDisplay.SetLabelMarkup("Incarnate Power Set - Hover any icon for details")
+            self.HoverDisplay.SetLabelMarkup("Incarnate Power Set - Hover any icon for details;  click anywhere to edit")
         if evt: evt.Skip()
 
     def OnKeyChanged(self, _):
@@ -99,7 +104,11 @@ class IncarnateSet(WizardParent):
     def CheckIfWellFormed(self):
         isWellFormed = True
 
-        bk = self.BindPane.Page.Ctrls[self.BindPane.MakeCtlName('BindKey')]
+        bk = self.BindPane.Page.Ctrls.get(self.BindPane.MakeCtlName('BindKey'), None)
+        if not bk:
+            wx.LogError(f"BindKey missing from Ctrls in IncarnateSet.CheckIfWellFormed - this is a bug!")
+            return True
+
         if bk.Key:
             bk.RemoveError('undef')
         else:
@@ -110,7 +119,7 @@ class IncarnateSet(WizardParent):
 
     def PopulateBindFiles(self):
         if not self.CheckIfWellFormed():
-            wx.MessageBox(f"Incarnate Set Bind \"{self.Title}\" is not complete or has errors.  Not written to bindfile.")
+            wx.MessageBox(f"Incarnate Set Bind \"{self.Dialog().Title}\" is not complete or has errors.  Not written to bindfile.")
             return
 
         profile = wx.App.Get().Main.Profile

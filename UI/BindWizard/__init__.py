@@ -3,31 +3,35 @@ import importlib
 from pathlib import Path
 import wx
 
-class WizardParent(wx.Dialog):
-    WizardName  = ''
-    WizToolTip  = ''
-
-    def __init__(self, parent, init = {}):
-        super().__init__(parent)
-
+class WizardParent(object):
+    def __init__(self, parent, init):
         self.BindPane = parent
+        self.Init = init
+        self.WizardDialog = None
 
-        mainSizer = wx.BoxSizer(wx.VERTICAL)
+    def Dialog(self):
+        if not self.WizardDialog:
+            wd = wx.Dialog(self.BindPane)
+            mainSizer = wx.BoxSizer(wx.VERTICAL)
 
-        mainSizer.Add(self.BuildUI(init), 1, wx.EXPAND)
+            mainSizer.Add(self.BuildUI(wd, self.Init), 1, wx.EXPAND)
 
-        buttonsizer = self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL|wx.HELP)
-        helpbutton = self.FindWindow(wx.ID_HELP)
-        helpbutton.Bind(wx.EVT_BUTTON, self.ShowHelp)
-        okbutton = self.FindWindow(wx.ID_OK)
-        okbutton.Bind(wx.EVT_BUTTON, self.RefreshUI)
+            buttonsizer = wd.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL|wx.HELP)
+            helpbutton = wd.FindWindow(wx.ID_HELP)
+            helpbutton.Bind(wx.EVT_BUTTON, self.ShowHelp)
+            okbutton = wd.FindWindow(wx.ID_OK)
+            okbutton.Bind(wx.EVT_BUTTON, self.RefreshUI)
 
-        mainSizer.Add(buttonsizer, 0, wx.EXPAND|wx.ALL, 10)
+            mainSizer.Add(buttonsizer, 0, wx.EXPAND|wx.ALL, 10)
 
-        self.SetSizerAndFit(mainSizer)
+            wd.SetSizerAndFit(mainSizer)
 
-    def BuildUI(self, init) -> wx.Sizer:
-        ...
+            self.WizardDialog = wd
+        return self.WizardDialog
+
+    def ShowWizard(self, evt = None):
+        self.Dialog().Show(True)
+        if evt: evt.Skip()
 
     def PaneContents(self) -> wx.Panel:
         ...
@@ -38,13 +42,12 @@ class WizardParent(wx.Dialog):
     def ShowHelp(self, evt = None):
         ...
 
+    def BuildUI(self, dialog, init) -> wx.Sizer:
+        ...
+
     def RefreshUI(self, evt):
         evt.Skip()
         self.BindPane.BuildBindUI(None)
-
-    def ShowWizard(self, evt = None):
-        self.Show(True)
-        if evt: evt.Skip()
 
 class WizPickerDialog(wx.Dialog):
     def __init__(self, parent):

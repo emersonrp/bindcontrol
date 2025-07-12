@@ -632,6 +632,22 @@ PoolPowers = {
     'Gadgetry'        : [ 'Nano Net', 'Blaster Drone', 'Jetpack', 'Drone Barrage', 'Force Barrier', 'Turbo Boost', ],
 }
 
+TempTravelPowers = [
+    'Antigravity Matrix',
+    'Buoyant Membrane',
+    'Goldbricker Rocket Pack|AntigravityMatrix',
+    'Holiday Rocket Pack|AntigravityMatrix',
+    'Jaunt Initializer|ManifoldResonator',
+    'LKT-1700 Rocket Pack|AntigravityMatrix',
+    'Low-G Pack|JumpPack',
+    'Manifold Resonator',
+    'Nictus Shadow Step|ManifoldResonator',
+    'Raptor Pack',
+    'Sky Raider Flight Pack|AntigravityMatrix',
+    #'Temporary Power: Jet Pack', # TODO - is this the name of the power?  Or the recipe?
+    'Zero-G Pack|RaptorPack',
+]
+
 MiscPowers = {
     'Accolade': [
         'Core Attunement',

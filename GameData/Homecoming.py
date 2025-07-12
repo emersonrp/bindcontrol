@@ -692,6 +692,22 @@ PoolPowers = {
     'Teleportation'   : [ 'Teleport Target', 'Teleport', 'Combat Teleport', 'Fold Space', 'Team Teleport', ],
 }
 
+TempTravelPowers = [
+    'Antigravity Matrix',
+    'Buoyant Membrane',
+    'Goldbricker Rocket Pack|AntigravityMatrix',
+    'Holiday Rocket Pack|AntigravityMatrix',
+    'Jaunt Initializer|ManifoldResonator',
+    'LKT-1700 Rocket Pack|AntigravityMatrix',
+    'Low-G Pack|JumpPack',
+    'Manifold Resonator',
+    'Nictus Shadow Step|ManifoldResonator',
+    'Raptor Pack',
+    'Sky Raider Flight Pack|AntigravityMatrix',
+    #'Temporary Power: Jet Pack', # TODO - is this the name of the power?  Or the recipe?
+    'Zero-G Pack|RaptorPack',
+]
+
 # The structure of this chunk is directly used to build the PowerPicker menu.
 MiscPowers = {
     'Accolade': [

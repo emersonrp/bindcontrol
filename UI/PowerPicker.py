@@ -10,7 +10,6 @@ PowerChanged, EVT_POWER_CHANGED = wx.lib.newevent.NewEvent()
 
 class PowerPicker(ErrorControlMixin, wx.Button):
     def __init__(self, parent, menu = None, size = wx.DefaultSize):
-        print(f"size is {size}")
         super().__init__(parent, size = size)
 
         self.SetLabel('...')
@@ -58,8 +57,6 @@ class PowerPicker(ErrorControlMixin, wx.Button):
             self.AddError('nopick', 'No power has been selected')
         else:
             self.RemoveError('nopick')
-
-        #self.Parent.Layout()
 
 class PowerPickerMenu(wx.Menu):
 

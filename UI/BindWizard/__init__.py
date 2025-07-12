@@ -36,9 +36,6 @@ class WizardParent(object):
     def PaneContents(self) -> wx.Panel:
         ...
 
-    def GetData(self) -> dict:
-        ...
-
     def ShowHelp(self, evt = None):
         ...
 

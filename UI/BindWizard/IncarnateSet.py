@@ -36,12 +36,9 @@ class IncarnateSet(WizardParent):
 
     def Serialize(self):
         return {
-            'IncData' : self.GetData(),
+            'IncData' : self.Init.get('WizData', {}).get('IncData', {}),
             'BindKey' : self.BindKeyCtrl.Key,
         }
-
-    def GetData(self):
-        return self.IncarnateBox.GetData() if self.IncarnateBox else {}
 
     def PaneContents(self):
         bindpane = self.BindPane
@@ -50,7 +47,16 @@ class IncarnateSet(WizardParent):
         panelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         listSizer = wx.BoxSizer(wx.HORIZONTAL)
-        incarnateData = self.IncarnateBox.GetData() if self.IncarnateBox else self.Init.get('WizData', {}).get('IncData', {})
+        # Fill Init from the dialog, if it exists
+        if self.IncarnateBox:
+            if not self.Init.get('WizData', None):
+                self.Init['WizData'] = {}
+            newdata = self.IncarnateBox.GetData()
+            if self.Init['WizData']['IncData'] != newdata:
+                wx.App.Get().Main.Profile.SetModified()
+                self.Init['WizData']['IncData'] = newdata
+        # and then in either case, build the Pane from Init
+        incarnateData = self.Init.get('WizData', {}).get('IncData', {})
         for slot in ['Alpha', 'Interface', 'Judgement', 'Destiny', 'Lore', 'Hybrid', 'Genesis',]:
             if slotData := incarnateData.get(slot, None):
                 icon = GetIcon(slotData['iconfile'])
@@ -107,7 +113,7 @@ class IncarnateSet(WizardParent):
         bk = self.BindPane.Page.Ctrls.get(self.BindPane.MakeCtlName('BindKey'), None)
         if not bk:
             wx.LogError(f"BindKey missing from Ctrls in IncarnateSet.CheckIfWellFormed - this is a bug!")
-            return True
+            isWellFormed = False
 
         if bk.Key:
             bk.RemoveError('undef')
@@ -124,7 +130,7 @@ class IncarnateSet(WizardParent):
 
         profile = wx.App.Get().Main.Profile
 
-        incdata = self.GetData()
+        incdata = self.Init.get('WizData', {}).get('IncData', {})
         incarnate_lines = ['']
         title = re.sub(r'\W+', '', self.BindPane.Title)
         fake_blf = profile.BLF('wiz', f'{title}X')

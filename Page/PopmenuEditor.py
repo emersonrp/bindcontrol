@@ -43,13 +43,15 @@ class PopmenuEditor(Page):
         self.NewMenuButton       = wx.Button(MenuList, label = "Create New Menu")
         self.ImportMenuButton    = wx.Button(MenuList, label = "Import Menu File to Game Dir")
         self.DeleteMenuButton    = wx.Button(MenuList, label = "Delete Menu from Game Dir")
+        self.ReloadMenusButton   = wx.Button(MenuList, label = "Reload Menus from Game Dir")
         self.NewMenuButton.Enable(False)
         self.ImportMenuButton.Enable(False)
         self.DeleteMenuButton.Enable(False)
 
-        MenuListSizer.Add(self.NewMenuButton, 0, wx.EXPAND|wx.ALL, 6)
-        MenuListSizer.Add(self.ImportMenuButton, 0, wx.EXPAND|wx.ALL, 6)
-        MenuListSizer.Add(self.DeleteMenuButton, 0, wx.EXPAND|wx.ALL, 6)
+        MenuListSizer.Add(self.NewMenuButton,     0, wx.EXPAND|wx.ALL, 6)
+        MenuListSizer.Add(self.ImportMenuButton,  0, wx.EXPAND|wx.ALL, 6)
+        MenuListSizer.Add(self.DeleteMenuButton,  0, wx.EXPAND|wx.ALL, 6)
+        MenuListSizer.Add(self.ReloadMenusButton, 0, wx.EXPAND|wx.ALL, 6)
 
         self.MenuListCtrl = wx.ListCtrl(MenuList, style = wx.LC_SINGLE_SEL|wx.LC_REPORT)
         self.MenuListCtrl.AppendColumn('Installed Menus', width = LeftPanelWidth - 12)
@@ -57,9 +59,10 @@ class PopmenuEditor(Page):
         self.MenuListCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListSelect)
         self.MenuListCtrl.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.OnListDeselect)
 
-        self.NewMenuButton.Bind(wx.EVT_BUTTON, self.OnNewMenuButton)
-        self.ImportMenuButton.Bind(wx.EVT_BUTTON, self.OnImportMenuButton)
-        self.DeleteMenuButton.Bind(wx.EVT_BUTTON, self.OnDeleteMenuButton)
+        self.NewMenuButton    .Bind(wx.EVT_BUTTON, self.OnNewMenuButton)
+        self.ImportMenuButton .Bind(wx.EVT_BUTTON, self.OnImportMenuButton)
+        self.DeleteMenuButton .Bind(wx.EVT_BUTTON, self.OnDeleteMenuButton)
+        self.ReloadMenusButton.Bind(wx.EVT_BUTTON, self.OnReloadMenusButton)
 
         self.MenuEditor = wx.Panel(splitter)
         MESizer = wx.BoxSizer(wx.VERTICAL)
@@ -125,6 +128,10 @@ class PopmenuEditor(Page):
 
         Sizer.Add(splitter, 1, wx.EXPAND)
 
+        # Do this once, at startup.  DO NOT PUT THIS IN SynchronizeUI;  it can
+        # blow away unsaved changes with no recourse.
+        self.LoadMenusFromMenuDir()
+
         self.Layout()
 
     def GetValidGamePath(self):
@@ -180,10 +187,6 @@ class PopmenuEditor(Page):
             else:
                 self.CheckMenuDirBox.Show()
                 NoErrors = False
-
-        # TODO - We do this every time we activate the tab.  That's not a dealbreaker I guess.
-        if NoErrors:
-            self.LoadMenusFromMenuDir()
 
         self.NewMenuButton.Enable(NoErrors)
         self.ImportMenuButton.Enable(NoErrors)
@@ -256,6 +259,7 @@ class PopmenuEditor(Page):
             wx.TheClipboard.Close()
         else:
             wx.MessageBox("Couldn't open the clipboard for copying")
+
     def OnNewMenuButton(self, _ = None):
         mlc = self.MenuListCtrl
         newmenuname = self.GetNewMenuName()
@@ -268,6 +272,12 @@ class PopmenuEditor(Page):
             mlc.SetItemData(listitem, menuID := wx.NewId())
             self.MenuIDList[menuID] = {'menu' : newmenu}
             newmenu.SetModified()
+
+    def OnReloadMenusButton(self, _ = None):
+        if self.CheckForModifiedMenus():
+            if wx.MessageBox(f'One or more menus have unsaved changes.  Continuing will cause those changes to be lost.  Continue?', "Unsaved Changes", wx.YES_NO) == wx.NO:
+                return
+        self.LoadMenusFromMenuDir()
 
     def LoadMenusFromMenuDir(self):
         # self.GetMenuPathForGamePath shows its own errors
@@ -407,6 +417,7 @@ class PopmenuEditor(Page):
             menu = info.get('menu', None)
             if menu and menu.Modified:
                 return True
+        return False
 
     def AllBindFiles(self):
         return {

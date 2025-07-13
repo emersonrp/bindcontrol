@@ -3,7 +3,7 @@ import wx
 import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
-from UI.PowerBinderDialog import PowerBinderButton
+from UI.PowerBinder import PowerBinder
 from UI.ControlGroup import cgTextCtrl
 
 class ComplexBindPane(CustomBindPaneParent):
@@ -22,9 +22,9 @@ class ComplexBindPane(CustomBindPaneParent):
             'Steps': [],
         }
         for step in self.Steps:
-            if step.BindContents.GetValue():
+            if step.PowerBinder.GetValue():
                 data['Steps'].append({
-                    'contents'        : step.BindContents.GetValue(),
+                    'contents'        : step.PowerBinder.GetValue(),
                     'powerbinderdata' : step.PowerBinder.SaveToData()
                 })
         return data
@@ -84,7 +84,7 @@ class ComplexBindPane(CustomBindPaneParent):
         isWellFormed = True
 
         firststep = self.Steps[0]
-        fullsteps = list(filter(lambda x: x.BindContents.GetValue(), self.Steps))
+        fullsteps = list(filter(lambda x: x.PowerBinder.GetValue(), self.Steps))
         if fullsteps:
             firststep.PowerBinder.RemoveError('undef')
         else:
@@ -93,10 +93,10 @@ class ComplexBindPane(CustomBindPaneParent):
 
         stepsWellFormed = True
         for step in self.Steps:
-            if len(step.BindContents.GetValue()) <= 255:
-                step.BindContents.RemoveError('length')
+            if len(step.PowerBinder.GetValue()) <= 255:
+                step.PowerBinder.RemoveError('length')
             else:
-                step.BindContents.AddError('length', 'This step is longer than 255 characters, which will cause problems in-game.')
+                step.PowerBinder.AddError('length', 'This step is longer than 255 characters, which will cause problems in-game.')
                 stepsWellFormed = False
 
         if (not stepsWellFormed): isWellFormed = False
@@ -164,13 +164,13 @@ class ComplexBindPane(CustomBindPaneParent):
 
         resetfile = self.Profile.ResetFile()
         # fish out only the steps that have contents
-        fullsteps = list(filter(lambda x: x.BindContents.GetValue(), self.Steps))
+        fullsteps = list(filter(lambda x: x.PowerBinder.GetValue(), self.Steps))
         title = re.sub(r'\W+', '', self.Title)
         for i, step in enumerate(fullsteps, start = 1):
             cbindfile = self.Profile.GetBindFile("cbinds", f"{title}-{i}.txt")
             nextCycle = 1 if (i+1 > len(fullsteps)) else i+1
 
-            cmd = [step.BindContents.GetValue(), self.Profile.BLF(f'cbinds\\{title}-{nextCycle}.txt')]
+            cmd = [step.PowerBinder.GetValue(), self.Profile.BLF(f'cbinds\\{title}-{nextCycle}.txt')]
             key = self.Ctrls[self.MakeCtlName('BindKey')].Key
 
             if i == 1: resetfile.SetBind(key, self, title, cmd)
@@ -201,17 +201,10 @@ class BindStep(wx.Panel):
         self.StepLabel = StepLabel
         sizer.Add(StepLabel, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        self.BindContents = cgTextCtrl(self, -1, step.get('contents', ''), style = wx.TE_READONLY)
-        self.BindContents.SetForegroundColour(wx.Colour(128,128,128))
-        self.BindContents.SetHint('Use the PowerBinder button to the right to define this step')
-        sizer.Add(self.BindContents, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
-        self.BindContents.Bind(wx.EVT_TEXT, parent.onContentsChanged)
-
-        self.PowerBinder = PowerBinderButton(self, self.BindContents, step.get('powerbinderdata', {}))
-        sizer.Add(self.PowerBinder, 0)
-
-        # we had to define the button before we could add this Bind
-        self.BindContents.Bind(wx.EVT_LEFT_DOWN, self.PowerBinder.OnClickPBB)
+        self.PowerBinder = PowerBinder(self, step.get('powerbinderdata', {}))
+        self.PowerBinder.SetValue(step.get('contents', ''))
+        self.PowerBinder.Bind(wx.EVT_TEXT, parent.onContentsChanged)
+        sizer.Add(self.PowerBinder, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
 
         self.moveUpButton = wx.Button(self, -1, '\u25B2', size = wx.Size(40, -1))
         self.moveUpButton.Bind(wx.EVT_BUTTON, parent.onMoveUpButton)

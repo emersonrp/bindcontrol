@@ -56,6 +56,17 @@ class Gameplay(Page):
             'DecTeamPos'  : '',
             'TeamReset'   : '',
 
+            'Assist'     : '',
+            'Location'   : '',
+            'Interact'   : '',
+            'Menu'       : '',
+            'Release'    : '',
+            'GameReturn' : '',
+            'Sheathe'    : '',
+            'Stuck'      : '',
+            'DialogYes'  : '',
+            'DialogNo'   : '',
+
             'Tray1Enabled' : False,
             'Tray2Enabled' : False,
             'Tray3Enabled' : False,
@@ -160,9 +171,6 @@ class Gameplay(Page):
         # Bottom Sizer for narrower boxes
         bottomSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        leftSizer = wx.BoxSizer(wx.VERTICAL)
-        rightSizer = wx.BoxSizer(wx.VERTICAL)
-
         ##### Enable TPS Direct Select
         tpsenablepanel = wx.Panel(self)
         tpsenablesizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -179,7 +187,6 @@ class Gameplay(Page):
         tpsenablesizer.Add(tpshelpbutton, 0)
         tpsenablepanel.SetSizer(tpsenablesizer)
 
-        #leftSizer.Add(tpsenablesizer, 0, wx.ALL, 10)
 
         ##### direct-select keys
         TPSDirectBox = ControlGroup(self, self, 'Combined Team/Pet Select', topcontent = tpsenablepanel)
@@ -196,7 +203,6 @@ class Gameplay(Page):
                 ctlType = 'keybutton',
                 tooltip = f"Choose the key that will select team member / pet {selectid}",
             )
-        leftSizer.Add(TPSDirectBox, 0, wx.EXPAND)
 
         ##### Next/Prev Team Select Binds
         teamenablepanel = wx.Panel(self)
@@ -213,8 +219,6 @@ class Gameplay(Page):
         teamenablesizer.Add(teamhelpbutton, 0)
         teamenablepanel.SetSizer(teamenablesizer)
 
-        #rightSizer.Add(teamenablesizer, 0, wx.ALL, 10)
-
         TeamSelBox = ControlGroup(self, self, 'Team Select', topcontent = teamenablepanel)
         for b in (
             ['SelPrevTeam', 'Choose the key that will select the previous teammate from the currently selected one'],
@@ -230,10 +234,30 @@ class Gameplay(Page):
                 ctlType = 'keybutton',
                 tooltip = b[1],
             )
-        rightSizer.Add(TeamSelBox, 1, wx.EXPAND)
 
-        bottomSizer.Add(leftSizer,  0, wx.ALL|wx.EXPAND, 10)
-        bottomSizer.Add(rightSizer, 0, wx.ALL|wx.EXPAND, 10)
+        # Helpful Binds
+        HelpfulBox = ControlGroup(self, self, 'Miscellaneous Helpful Binds')
+        for b in (
+            ['Assist'     , 'Choose the key that will target your target\'s current target']                      ,
+            ['Location'   , 'Choose the key that will display your current coordinates in the chat window']       ,
+            ['Interact'   , 'Choose the key that will interact with the object or entity in front of you']        ,
+            ['Menu'       , 'Choose the key that will open the main menu']                                        ,
+            ['Release'    , 'Choose the key that will release you to the hospital after a defeat']                ,
+            ['GameReturn' , 'Choose the key that will close all extra windows and dialogs and return to the game'],
+            ['Sheathe'    , 'Choose the key that will put away your weapons']                                     ,
+            ['Stuck'      , 'Choose the key that will try to get you unstuck if you are stuck in geometry']       ,
+            ['DialogYes'  , 'Choose the key that will answer OK, Yes, or Accept to the current dialog']           ,
+            ['DialogNo'   , 'Choose the key that will answer OK, No, or Cancel to the current dialog']            ,
+        ):
+            HelpfulBox.AddControl(
+                ctlName = b[0],
+                ctlType = 'keybutton',
+                tooltip = b[1],
+            )
+
+        bottomSizer.Add(TPSDirectBox,  0, wx.ALL|wx.EXPAND, 10)
+        bottomSizer.Add(TeamSelBox,    0, wx.ALL|wx.EXPAND, 10)
+        bottomSizer.Add(HelpfulBox,    0, wx.ALL|wx.EXPAND, 10)
         self.MainSizer.Add(traySizer,   flag = wx.ALL|          wx.ALIGN_CENTER_HORIZONTAL, border = 16)
         self.MainSizer.Add(bottomSizer, flag = wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
 
@@ -485,7 +509,18 @@ class Gameplay(Page):
         'IncTeamPos'  : "Increase Team Position",
         'DecTeamPos'  : "Decrease Team Position",
         'TeamReset'   : "Reset Team Rotation",
+
+        'Assist'     : 'Assist Target',
+        'Location'   : "Show Coordinates",
+        'Menu'       : "Main Menu",
+        'Release'    : "Release to Hospital",
+        'GameReturn' : "Return to Game",
+        'Sheathe'    : "Sheathe Weapons",
+        'Stuck'      : "Try to Get Unstuck",
+        'DialogYes'  : "Answer Yes to Dialog",
+        'DialogNo'   : "Answer No to Dialog",
     })
 
     for i in range(1,9):
         UI.Labels[f'TeamSelect{i}'] = f"Select {ordinals[i-1]} Team Member / Pet"
+

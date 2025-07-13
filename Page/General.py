@@ -332,7 +332,7 @@ class General(Page):
             curval = self.GetState(pickername)
             picker = c[pickername]
             # rebuild the base list
-            poolcontents = sorted(GameData.MiscPowers['Pool'])
+            poolcontents = sorted(GameData.PoolPowers)
             poolcontents.insert(0, '')
             # if we've already picked this pool, remove it (unless it's ours in the first place)
             for pp in pickedPools:

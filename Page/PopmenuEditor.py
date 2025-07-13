@@ -200,16 +200,18 @@ class PopmenuEditor(Page):
 
         cm = self.CurrentMenu
         if cm:
-            filepath = menupath / f"{cm.Title}.mnu"
-            if filepath.is_file():
-                mlc = self.MenuListCtrl
-                info = self.MenuIDList.get(mlc.GetItemData(mlc.FindItem(-1, cm.Title)), {})
-                if not info:
-                    wx.LogError(f"Can't get info for current menu {cm.Title}")
+            # TODO - this is not right!  We need to get the filepath from the menulist, and
+            # use THAT.  Only generate this from first principles if it's a new menu
+            mlc = self.MenuListCtrl
+            info = self.MenuIDList.get(mlc.GetItemData(mlc.FindItem(-1, cm.Title)), {})
+            if not info:
+                wx.LogError(f"Can't get info for current menu {cm.Title}")
+                return
+            filepath = info.get('filename', menupath / f"{cm.Title}.mnu")
+
+            if info['filename'] != str(filepath):
+                if wx.MessageBox(f'The file "{filepath}" already exists and was not the source of this menu.  Overwrite?', 'Menu Exists', wx.YES_NO) == wx.NO:
                     return
-                if info['filename'] != str(filepath):
-                    if wx.MessageBox(f'The file "{filepath}" already exists and was not the source of this menu.  Overwrite?', 'Menu Exists', wx.YES_NO) == wx.NO:
-                        return
 
             # OK, we have sanity-checked (TODO: there might be more of this to come) - let's write the file.
             try:

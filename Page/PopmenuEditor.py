@@ -191,6 +191,8 @@ class PopmenuEditor(Page):
         self.NewMenuButton.Enable(NoErrors)
         self.ImportMenuButton.Enable(NoErrors)
 
+        self.ReloadMenusButton.Enable(bool(self.GetValidGamePath()))
+
     def OnTestMenuButton(self, evt):
         if self.CurrentMenu:
             self.CurrentMenu.Popup(wx.GetMousePosition())
@@ -280,8 +282,7 @@ class PopmenuEditor(Page):
         self.LoadMenusFromMenuDir()
 
     def LoadMenusFromMenuDir(self):
-        # self.GetMenuPathForGamePath shows its own errors
-        menupath = self.GetMenuPathForGamePath()
+        menupath = self.GetValidGamePath()
 
         if menupath:
             self.MenuListCtrl.DeleteAllItems()

@@ -22,7 +22,14 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         if self.Picker:  # we've passed in our own menu, bind its behavior
             self.Picker.Bind(wx.EVT_MENU, self.OnMenuSelection)
 
-        self.OnMenuSelection()
+        #self.OnMenuSelection()
+
+    # TODO - this business of literal "..." is ugly
+    def HasPowerPicked(self):
+        if self.GetLabel() != '...':
+            return self.GetLabel()
+        else:
+            return False
 
     def OnPowerPicker(self, _):
         # if we didn't pass in a menu, make the normal full-on one
@@ -53,10 +60,13 @@ class PowerPicker(ErrorControlMixin, wx.Button):
             self.SetBitmap(bitmap)
             self.IconFilename = getattr(menuitem, 'IconFilename')
 
-        if self.IsEnabled() and self.GetLabel() == "...":
-            self.AddError('nopick', 'No power has been selected')
-        else:
-            self.RemoveError('nopick')
+        # TODO we don't always want this and it's causing (me) confusion so I'm commenting it out for now
+        #if self.IsEnabled() and self.GetLabel() == "...":
+        #    self.AddError('nopower', 'No power has been selected')
+        #else:
+        #    self.RemoveError('nopower')
+
+        wx.PostEvent(self, PowerChanged())
 
 class PowerPickerMenu(wx.Menu):
 

@@ -1134,9 +1134,8 @@ class MovementPowers(Page):
 
         # Temp Travel Power Toggle
         if (self.GetState('TempEnable')):
-            if temppower := self.TempTravelPowerPicker.GetLabel():
-                if temppower != '...':
-                    ResetFile.SetBind(self.Ctrls['TempToggle'].MakeFileKeyBind(f'powexecname {temppower}'))
+            if temppower := self.TempTravelPowerPicker.HasPowerPicked():
+                ResetFile.SetBind(self.Ctrls['TempToggle'].MakeFileKeyBind(f'powexecname {temppower}'))
 
         ## Flying / hover
         t.hover  = self.GetState('HoverPower')

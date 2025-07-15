@@ -4,7 +4,7 @@ import zipfile
 from pathlib import Path
 
 with zipfile.ZipFile('icons/Icons.zip', 'w') as iconzip:
-    for subdir in ['Alignments', 'Archetypes', 'Incarnate', 'Inspirations', 'Origins', 'Powers', 'UI']:
+    for subdir in ['Alignments', 'Archetypes', 'Incarnate', 'Inspirations', 'Origins', 'Powers', 'UI', 'Servers']:
         subpath = Path('icons') / subdir
 
         for icon in subpath.glob('**/*.png'):

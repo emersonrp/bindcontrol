@@ -10,7 +10,7 @@ I worked on it on-and-off for the remainder of the original run of the game, the
 
 BindControl is and has been developed on Homecoming, and best supports that.  Recently, beta support for Rebirth has been added, supporting archetypes, powersets, the Genesis Incarnate slot, and more.  This support is solid but is a work in progress -- Rebirth players, check it out and file issues as you find bugs!
 
-![image](https://github.com/user-attachments/assets/3faeee00-9ba5-42fd-bf1b-112f7f0a58ef)
+<img width="917" height="912" alt="NewBCGeneralPage" src="https://github.com/user-attachments/assets/54eb29d5-7d06-469f-81ea-bb6a862cc105" />
 
 ## Features
 

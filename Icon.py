@@ -32,7 +32,7 @@ def GetIcon(*args):
 
         iconzippath = Path(base_path) / 'icons' / 'Icons.zip'
         if iconzippath.exists():
-            wx.LogInfo(f"Icon ZIP file {iconzippath} found -- using.")
+            wx.LogMessage(f"Icon ZIP file {iconzippath} found -- using.")
             with zipfile.ZipFile(iconzippath) as iconzip:
                 try:
                     # as_posix is how we need this to index into the ZIPfile successfully on Windows

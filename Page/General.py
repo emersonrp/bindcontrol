@@ -63,7 +63,8 @@ class General(Page):
         bannerSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.bannerPanel.SetSizer(bannerSizer)
 
-        alignPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY)
+        alignPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
+        alignPicker.Clear()
         for a in GameData.Alignments:
             alignPicker.Append(a, GetIconBitmap('Alignments', a))
         self.Ctrls['Alignment'] = alignPicker
@@ -71,7 +72,8 @@ class General(Page):
         alignPicker.Bind(wx.EVT_COMBOBOX, self.OnPickAlignment)
         bannerSizer.Add(alignPicker, 1, wx.EXPAND|wx.ALL, 5)
 
-        originPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY)
+        originPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
+        originPicker.Clear()
         for o in GameData.Origins:
             originPicker.Append(o, GetIconBitmap('Origins', o))
         self.Ctrls['Origin'] = originPicker
@@ -86,14 +88,16 @@ class General(Page):
         nameSizer.Add(self.NameDisplay, 1, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 6)
         bannerSizer.Add(self.nameBox, 1, wx.EXPAND|wx.ALL, 5)
 
-        archetypePicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY)
+        archetypePicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
+        archetypePicker.Clear()
         for a in GameData.Archetypes:
             archetypePicker.Append(a, GetIconBitmap('Archetypes', a))
         self.Ctrls['Archetype'] = archetypePicker
         archetypePicker.Bind(wx.EVT_COMBOBOX, self.OnPickArchetype)
         bannerSizer.Add(archetypePicker, 1, wx.EXPAND|wx.ALL, 5)
 
-        self.ServerPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY)
+        self.ServerPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
+        self.ServerPicker.Clear()
         for s in ['Homecoming', 'Rebirth']:
             self.ServerPicker.Append(s, GetIconBitmap('Servers', s))
         self.Ctrls['Server'] = self.ServerPicker

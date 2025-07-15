@@ -67,6 +67,7 @@ class General(Page):
         for a in GameData.Alignments:
             alignPicker.Append(a, GetIconBitmap('Alignments', a))
         self.Ctrls['Alignment'] = alignPicker
+        alignPicker.SetSelection(alignPicker.FindString(self.Init['Alignment']))
         alignPicker.Bind(wx.EVT_COMBOBOX, self.OnPickAlignment)
         bannerSizer.Add(alignPicker, 1, wx.EXPAND|wx.ALL, 5)
 
@@ -304,6 +305,8 @@ class General(Page):
         # Have to do this dance to make the colors refresh on Windows.  Ugh.
         self.nameBox.Show(False)
         self.nameBox.Show(True)
+        self.bannerPanel.Show(False)
+        self.bannerPanel.Show(True)
 
         if evt: evt.Skip()
 

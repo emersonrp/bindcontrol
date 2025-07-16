@@ -35,7 +35,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
         self.BindSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BindStepSizer = wx.BoxSizer(wx.VERTICAL)
-        AddBindStepButton = wx.Button(pane, -1, "Add Step...")
+        AddBindStepButton = wx.Button(pane, -1, "Add Step")
         AddBindStepButton.Bind(wx.EVT_BUTTON, self.onAddStepButton)
         self.BindStepSizer.Add(AddBindStepButton, 0, wx.TOP, 10)
         if self.Init.get('Steps', ''):
@@ -142,12 +142,13 @@ class ComplexBindPane(CustomBindPaneParent):
         button = evt.GetEventObject()
         step = button.GetParent()
         self.Steps.remove(step)
-        step.Destroy()
+        step.DestroyLater()
         self.Profile.SetModified()
         self.RenumberSteps()
 
     def RenumberSteps(self):
         for i, step in enumerate(self.Steps, start = 1):
+            step.delButton.Show(i>1) # don't even show the del button on step 1
             step.moveUpButton.Enable(i > 1)
             step.moveDownButton.Enable(i < len(self.Steps))
             step.StepLabel.SetLabel(f"Step {i}:")
@@ -217,9 +218,9 @@ class BindStep(wx.Panel):
         self.moveDownButton.Bind(wx.EVT_BUTTON, parent.onMoveDownButton)
         sizer.Add(self.moveDownButton, 0)
 
-        delButton = wx.Button(self, -1, "X", size = wx.Size(40,-1))
-        delButton.SetForegroundColour(wx.RED)
-        delButton.Bind(wx.EVT_BUTTON, parent.onDelButton)
-        sizer.Add(delButton, 0)
+        self.delButton = wx.Button(self, -1, "X", size = wx.Size(40,-1))
+        self.delButton.SetForegroundColour(wx.RED)
+        self.delButton.Bind(wx.EVT_BUTTON, parent.onDelButton)
+        sizer.Add(self.delButton, 0, flag = wx.RESERVE_SPACE_EVEN_IF_HIDDEN)
 
         self.SetSizer(sizer)

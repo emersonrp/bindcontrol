@@ -213,7 +213,7 @@ class CustomBinds(Page):
         self.PaneSizer.Remove(sizer)
         self.Panes.remove(delButton.BindPane)
         delButton.BindPane.DestroyLater()
-        self.Profile.CheckAllConflicts()
+        wx.CallAfter(self.Profile.CheckAllConflicts)
         if len(self.Panes) == 0:
             # need to put back the blankpanel
             self.scrolledPanel.Hide()

@@ -12,6 +12,39 @@ from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from Page import Page
 from UI.ControlGroup import ControlGroup, cgTextCtrl
 
+MMPowerSets = {
+    "Beast Mastery"   :{
+        'powers': { 'min' : 'wol',  'lts' : 'lio',  'bos' : 'dir',  },
+        'names':  [ 'Howler Wolf', 'Howler Wolf', 'Alpha Howler Wolf',
+                   'Lion', 'Lion', 'Dire Wolf' ],
+    },
+    "Demon Summoning" :{
+        'powers': { 'min' : 'lin',  'lts' : 'mons', 'bos' : 'pri',  },
+        'names' : [ 'Fiery Demonling', 'Cold Demonling', 'Hellfire Demonling',
+                   'Ember Demon', 'Hellfire Gargoyle', 'Demon Prince', ],
+    },
+    "Mercenaries"     :{
+        'powers': { 'min' : "sol",  'lts' : "spec", 'bos' : "com",  },
+        'names' : [ 'Soldier', 'Soldier', 'Medic', 'Spec Ops', 'Spec Ops', 'Commando'],
+    },
+    "Necromancy"      :{
+        'powers': { 'min' : "zom",  'lts' : "grav", 'bos' : "lich", },
+        'names' : [ 'Zombie', 'Zombie', 'Zombie', 'Grave Knight', 'Grave Knight', 'Lich' ],
+    },
+    "Ninjas"          :{
+        'powers': { 'min' : "gen",  'lts' : "joun", 'bos' : "oni",  },
+        'names' : [ 'Genin', 'Genin', 'Genin', 'Jounin', 'Jounin', 'Oni', ],
+    },
+    "Robotics"        :{
+        'powers': { 'min' : "dron", 'lts' : "prot", 'bos' : "ass",  },
+        'names' : [ 'Drone', 'Drone', 'Drone', 'Protector Bot', 'Protector Bot', 'Assault Bot', ],
+    },
+    "Thugs"           :{
+        'powers': { 'min' : "thu",  'lts' : "enf",  'bos' : "bru",  },
+        'names' : [ 'Punk', 'Punk', 'Arsonist', 'Enforcer', 'Enforcer', 'Bruiser', ],
+    },
+}
+
 class Mastermind(Page):
     petCommandKeyDefinitions = (
             {
@@ -162,38 +195,6 @@ class Mastermind(Page):
             'DecPetSize'  : '',
         }
         # TODO is this Gamedata?
-        self.MMPowerSets = {
-            "Beast Mastery"   :{
-                'powers': { 'min' : 'wol',  'lts' : 'lio',  'bos' : 'dir',  },
-                'names':  [ 'Howler Wolf', 'Howler Wolf', 'Alpha Howler Wolf',
-                           'Lion', 'Lion', 'Dire Wolf' ],
-            },
-            "Demon Summoning" :{
-                'powers': { 'min' : 'lin',  'lts' : 'mons', 'bos' : 'pri',  },
-                'names' : [ 'Fiery Demonling', 'Cold Demonling', 'Hellfire Demonling',
-                           'Ember Demon', 'Hellfire Gargoyle', 'Demon Prince', ],
-            },
-            "Mercenaries"     :{
-                'powers': { 'min' : "sol",  'lts' : "spec", 'bos' : "com",  },
-                'names' : [ 'Soldier', 'Soldier', 'Medic', 'Spec Ops', 'Spec Ops', 'Commando'],
-            },
-            "Necromancy"      :{
-                'powers': { 'min' : "zom",  'lts' : "grav", 'bos' : "lich", },
-                'names' : [ 'Zombie', 'Zombie', 'Zombie', 'Grave Knight', 'Grave Knight', 'Lich' ],
-            },
-            "Ninjas"          :{
-                'powers': { 'min' : "gen",  'lts' : "joun", 'bos' : "oni",  },
-                'names' : [ 'Genin', 'Genin', 'Genin', 'Jounin', 'Jounin', 'Oni', ],
-            },
-            "Robotics"        :{
-                'powers': { 'min' : "dron", 'lts' : "prot", 'bos' : "ass",  },
-                'names' : [ 'Drone', 'Drone', 'Drone', 'Protector Bot', 'Protector Bot', 'Assault Bot', ],
-            },
-            "Thugs"           :{
-                'powers': { 'min' : "thu",  'lts' : "enf",  'bos' : "bru",  },
-                'names' : [ 'Punk', 'Punk', 'Arsonist', 'Enforcer', 'Enforcer', 'Bruiser', ],
-            },
-        }
         self.TabTitle = "Mastermind / Pet Binds"
         self.uniqueNames = []
 
@@ -337,7 +338,7 @@ class Mastermind(Page):
         if result == wx.NO: return
         primary = self.Profile.Primary()
         if primary:
-            defaults = self.MMPowerSets[primary]['names']
+            defaults = MMPowerSets[primary]['names']
             for i, petname in enumerate(defaults):
                 self.SetState(f'Pet{i+1}Name', petname)
 
@@ -579,7 +580,7 @@ class Mastermind(Page):
 
         ### Sandolphan binds
         if self.GetState('PetCmdEnable'):
-            powers = self.MMPowerSets[ profile.General.GetState('Primary') ]['powers']
+            powers = MMPowerSets[ profile.General.GetState('Primary') ]['powers']
 
             if self.GetState('PetChattyDefault'):
                 self.mmSubBind(ResetFile, "all", None, powers)

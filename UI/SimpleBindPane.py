@@ -41,7 +41,7 @@ class SimpleBindPane(CustomBindPaneParent):
         pb.SetValue(self.Init.get('Contents', ''))
         pb.Bind(wx.EVT_TEXT, self.onContentsChanged)
         self.PowerBinder = pb
-        self.Ctrls['PowerBinder'] = pb
+        self.Ctrls[self.MakeCtlName('PowerBinder')] = pb
         BindSizer.Add(pb, 1, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
 
         BindKeyCtrl = bcKeyButton(pane, -1, {
@@ -109,6 +109,6 @@ class SimpleBindPane(CustomBindPaneParent):
             return
         resetfile = wx.App.Get().Main.Profile.ResetFile()
         bk = self.Ctrls[self.MakeCtlName('BindKey')]
-        pb = self.Ctrls[self.MakeCtlName('PowerBinder')]
+        pb = self.PowerBinder
 
         resetfile.SetBind(bk.Key, self.Title, self.Page, pb.GetValue())

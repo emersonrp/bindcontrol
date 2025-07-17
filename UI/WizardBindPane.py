@@ -29,9 +29,10 @@ class WizardBindPane(CustomBindPaneParent):
     def PopulateBindFiles(self):
         self.Wizard.PopulateBindFiles()
 
-    # override if needed
+    # implement in Wizard class if needed
     def AllBindFiles(self):
-        return {}
+        if hasattr(self.Wizard, 'AllBindFiles'):
+            return self.Wizard.AllBindFiles()
 
     def BuildBindUI(self, page):
         # if the pane already has stuff, clear it out

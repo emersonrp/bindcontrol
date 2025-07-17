@@ -266,7 +266,7 @@ class BindDeletionDialog(wx.Dialog):
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.Add(wx.StaticText(self, label = f'Delete Custom Bind "{bindpane.Title}"?'), 0, wx.ALL, 20)
 
-        if isinstance(bindpane, ComplexBindPane) or isinstance(bindpane, BufferBindPane):
+        if isinstance(bindpane, ComplexBindPane) or isinstance(bindpane, BufferBindPane) or isinstance(bindpane, WizardBindPane):
             self.DeleteFilesCB = wx.CheckBox(self, label = "Delete all associated bindfiles")
             self.DeleteFilesCB.SetValue(True)
             mainSizer.Add(self.DeleteFilesCB, 0, wx.ALL|wx.ALIGN_CENTER, 10)

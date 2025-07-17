@@ -52,7 +52,7 @@ class IncarnateSet(WizardParent):
             if not self.Init.get('WizData', None):
                 self.Init['WizData'] = {}
             newdata = self.IncarnateBox.GetData()
-            if self.Init['WizData']['IncData'] != newdata:
+            if self.Init['WizData'].get('IncData', {}) != newdata:
                 wx.App.Get().Main.Profile.SetModified()
                 self.Init['WizData']['IncData'] = newdata
         # and then in either case, build the Pane from Init
@@ -149,7 +149,7 @@ class IncarnateSet(WizardParent):
                 incarnate_lines[-1] = f'{incarnate_lines[-1]}$${incarnate_command}'
 
         for i, line in enumerate(incarnate_lines):
-            bindfile = profile.GetBindFile('wiz', f'{title}{i}')
+            bindfile = profile.GetBindFile('wiz', f'{title}{i}.txt')
 
             if (i+1 < len(incarnate_lines)):
                 nextfile = i+1
@@ -162,6 +162,19 @@ class IncarnateSet(WizardParent):
             if i == 0: # start with the reset file, too
                 profile.ResetFile().SetBind(self.BindKeyCtrl.MakeFileKeyBind(line))
             bindfile.SetBind(self.BindKeyCtrl.MakeFileKeyBind(line))
+
+    def AllBindFiles(self):
+        profile = wx.App.Get().Main.Profile
+        title = re.sub(r'\W+', '', self.BindPane.Title)
+
+        files = []
+
+        for i in range(6): # should not ever possibly be six steps, but....
+            files.append(profile.GetBindFile('wiz', f'{title}{i}.txt'))
+        return {
+            'files' : files,
+            'dirs'  : [],
+        }
 
     def ShowHelp(self, evt = None):
         if evt: evt.Skip()

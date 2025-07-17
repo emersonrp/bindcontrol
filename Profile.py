@@ -440,8 +440,7 @@ class Profile(wx.Notebook):
     def buildFromData(self, data):
         self.SetTitle()
 
-        # load old Profiles pre-rename of "Movement Powers" tab
-        if data and 'SoD' in data: data['MovementPowers'] = data['SoD']
+        data = self.MassageData(data)
 
         # we store the ProfileBindsDir outside of the sections
         if data and data.get('ProfileBindsDir', None):
@@ -544,6 +543,53 @@ class Profile(wx.Notebook):
 
                 if bindpane:
                     cbpage.AddBindToPage(bindpane = bindpane)
+
+    # This is for mashing old legacy profiles into the current state of affairs.
+    # Each step in here might eventually get deprecated but maybe not, there's
+    # little downside to doing all of this forever.
+    def MassageData(self, data):
+
+        # load old Profiles pre-rename of "Movement Powers" tab
+        if data and 'SoD' in data: data['MovementPowers'] = data['SoD']
+
+        # Massage old hardcoded-three-step BufferBinds into the new way
+        for i, custombind in enumerate(data['CustomBinds']):
+            if not custombind: continue
+
+            if custombind['Type'] == "BufferBind":
+                if power := custombind.get('BuffPower1', None):
+                    custombind['Buffs'] = [{
+                        'Power'   : power,
+                        'ChatTgt' : custombind.get('BuffChat1Tgt', ''),
+                        'Chat'    : custombind.get('BuffChat1', ''),
+                    }]
+                    del custombind['BuffPower1']
+                    del custombind['BuffChat1Tgt']
+                    del custombind['BuffChat1']
+
+                if power := custombind.get('BuffPower2', None):
+                    custombind['Buffs'].append({
+                        'Power'   : power,
+                        'ChatTgt' : custombind.get('BuffChat2Tgt', ''),
+                        'Chat'    : custombind.get('BuffChat2', ''),
+                    })
+                    del custombind['BuffPower2']
+                    del custombind['BuffChat2Tgt']
+                    del custombind['BuffChat2']
+
+                if power := custombind.get('BuffPower3', None):
+                    custombind['Buffs'].append({
+                        'Power'   : power,
+                        'ChatTgt' : custombind.get('BuffChat3Tgt', ''),
+                        'Chat'    : custombind.get('BuffChat3', ''),
+                    })
+                    del custombind['BuffPower3']
+                    del custombind['BuffChat3Tgt']
+                    del custombind['BuffChat3']
+
+                data['CustomBinds'][i] = custombind
+
+        return data
 
     def SetTitle(self):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore

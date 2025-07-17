@@ -12,7 +12,6 @@ class PowerPicker(ErrorControlMixin, wx.Button):
     def __init__(self, parent, menu = None, size = wx.DefaultSize):
         super().__init__(parent, size = size)
 
-        self.SetLabel('...')
         if size == wx.DefaultSize:
             self.SetMinSize(wx.Size(-1, 40))
         self.Bind(wx.EVT_BUTTON, self.OnPowerPicker)
@@ -24,9 +23,8 @@ class PowerPicker(ErrorControlMixin, wx.Button):
 
         #self.OnMenuSelection()
 
-    # TODO - this business of literal "..." is ugly
     def HasPowerPicked(self):
-        if self.GetLabel() != '...':
+        if self.GetLabel():
             return self.GetLabel()
         else:
             return False
@@ -45,7 +43,7 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         # quite as simple as all that.  Still, it seems more The Right Way.
 
     def OnRightClick(self, _):
-        self.SetLabel('...')
+        self.SetLabel('')
         self.IconFilename = ''
         self.SetBitmapLabel(GetIcon('Empty'))
         self.OnMenuSelection()
@@ -61,7 +59,7 @@ class PowerPicker(ErrorControlMixin, wx.Button):
             self.IconFilename = getattr(menuitem, 'IconFilename')
 
         # TODO we don't always want this and it's causing (me) confusion so I'm commenting it out for now
-        #if self.IsEnabled() and self.GetLabel() == "...":
+        #if self.IsEnabled() and self.HasPowerPicked():
         #    self.AddError('nopower', 'No power has been selected')
         #else:
         #    self.RemoveError('nopower')

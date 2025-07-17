@@ -6,6 +6,7 @@ import wx
 class WizardParent(object):
     def __init__(self, parent, init):
         self.BindPane = parent
+        self.Profile = parent.Profile
         self.Init = init
         self.WizardDialog = None
 

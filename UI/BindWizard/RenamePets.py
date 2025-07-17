@@ -5,6 +5,8 @@ from Help import ShowHelpWindow
 from Page.Mastermind import MMPowerSets
 from UI.BindWizard import WizardParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
+from UI.ControlGroup import cgTextCtrl
+from Util import FindSmallestUniqueSubstring
 
 class RenamePets(WizardParent):
     WizardName  = 'Rename Mastermind Pets'
@@ -14,8 +16,6 @@ class RenamePets(WizardParent):
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.SetMinSize(wx.Size(700,-1))
 
-        profile = wx.App.Get().Main.Profile
-
         if setName := init.get('Title', ''):
             setName = f' "{setName}"'
 
@@ -24,7 +24,7 @@ class RenamePets(WizardParent):
         topControlSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # we only care up to level 24 on Homecoming, up to 26 on Rebirth
-        maxValue = 24 if profile.Server == 'Homecoming' else 26
+        maxValue = 24 if self.Profile.Server == 'Homecoming' else 26
         self.LevelSlider = wx.Slider(dialog, minValue = 1, maxValue = maxValue, value = maxValue,
                                      style = wx.SL_LABELS|wx.SL_AUTOTICKS)
         self.LevelSlider.Bind(wx.EVT_SCROLL, self.OnLevelChanged)
@@ -35,28 +35,29 @@ class RenamePets(WizardParent):
 
         PetBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
 
+        # Groups are so we can put things in the right order.  This might not be The Way.
         Groups = {
             'min' : wx.StaticBoxSizer(wx.HORIZONTAL, dialog),
             'lts' : wx.StaticBoxSizer(wx.HORIZONTAL, dialog),
             'bos' : wx.StaticBoxSizer(wx.HORIZONTAL, dialog),
         }
+        self.Boxes = [
+            PetBox(Groups['min'], self, 1),
+            PetBox(Groups['min'], self, 2),
+            PetBox(Groups['min'], self, 3),
+            PetBox(Groups['lts'], self, 4),
+            PetBox(Groups['lts'], self, 5),
+            PetBox(Groups['bos'], self, 6),
+        ]
+        Groups['min'].Add(self.Boxes[0], 1, wx.EXPAND|wx.ALL, 5)
+        Groups['min'].Add(self.Boxes[1], 1, wx.EXPAND|wx.ALL, 5)
+        Groups['min'].Add(self.Boxes[2], 1, wx.EXPAND|wx.ALL, 5)
+        Groups['lts'].Add(self.Boxes[3], 1, wx.EXPAND|wx.ALL, 5)
+        Groups['lts'].Add(self.Boxes[4], 1, wx.EXPAND|wx.ALL, 5)
+        Groups['bos'].Add(self.Boxes[5], 1, wx.EXPAND|wx.ALL, 5)
 
-        minBox1 = PetBox(Groups['min'], self, 1)
-        minBox2 = PetBox(Groups['min'], self, 2)
-        minBox3 = PetBox(Groups['min'], self, 3)
-        ltsBox1 = PetBox(Groups['lts'], self, 4)
-        ltsBox2 = PetBox(Groups['lts'], self, 5)
-        bosBox  = PetBox(Groups['bos'], self, 6)
-
-        Groups['min'].Add(minBox1, 1, wx.EXPAND|wx.ALL, 5)
-        Groups['min'].Add(minBox2, 1, wx.EXPAND|wx.ALL, 5)
-        Groups['min'].Add(minBox3, 1, wx.EXPAND|wx.ALL, 5)
-        Groups['lts'].Add(ltsBox1, 1, wx.EXPAND|wx.ALL, 5)
-        Groups['lts'].Add(ltsBox2, 1, wx.EXPAND|wx.ALL, 5)
-        Groups['bos'].Add(bosBox , 1, wx.EXPAND|wx.ALL, 5)
-
-        petPowers = MMPowerSets[profile.Primary()]
-
+        # "revPowers" is ["min", "lts", "bos"] sorted by their power name for the current archetype
+        petPowers = MMPowerSets[self.Profile.Primary()]
         revPowers = dict(sorted(petPowers['powers'].items(), key = lambda item: item[1]))
         for grp in revPowers:
             PetBoxSizer.Add(Groups[grp], 0, wx.EXPAND|wx.ALL, 5)
@@ -99,9 +100,8 @@ class RenamePets(WizardParent):
         return panel
 
     def OnKeyChanged(self, _):
-        profile = wx.App.Get().Main.Profile
-        profile.SetModified()
-        profile.CheckAllConflicts()
+        self.Profile.SetModified()
+        self.Profile.CheckAllConflicts()
         self.CheckIfWellFormed()
 
     def CheckIfWellFormed(self):
@@ -125,16 +125,13 @@ class RenamePets(WizardParent):
             wx.MessageBox(f"Rename Pets Bind \"{self.Dialog().Title}\" is not complete or has errors.  Not written to bindfile.")
             return
 
-        profile = wx.App.Get().Main.Profile
-
     def AllBindFiles(self):
-        profile = wx.App.Get().Main.Profile
         title = re.sub(r'\W+', '', self.BindPane.Title)
 
         return {
             'files' : [
-                profile.GetBindFile('wiz', f'{title}1.txt'),
-                profile.GetBindFile('wiz', f'{title}2.txt'),
+                self.Profile.GetBindFile('wiz', f'{title}1.txt'),
+                self.Profile.GetBindFile('wiz', f'{title}2.txt'),
             ],
             'dirs'  : [],
         }
@@ -147,7 +144,40 @@ class RenamePets(WizardParent):
         if evt: evt.Skip()
 
     def OnPetNameChanged(self, evt = None):
-        if evt: evt:Skip()
+        self.CheckUndefNames()
+        self.CheckUniqueNames()
+        if evt: evt.Skip()
+
+    def CheckUndefNames(self):
+        for i in range(6):
+            ctrl = self.Boxes[i].PetName
+            if ctrl.GetValue():
+                ctrl.RemoveError('undef')
+            else:
+                ctrl.AddError('undef', 'By-Name selection and Bodyguard Mode require the pet name be filled in.')
+
+    def CheckUniqueNames(self):
+        if (self.Profile.Archetype() == "Mastermind"):
+            names = []
+            for i in range(6):
+                ctrl = self.Boxes[i].PetName
+                value = ctrl.GetValue().strip() # don't allow whitespace at the ends
+                names.append(value)
+
+            # we stash this away every time we calculate it so we can
+            # extract it trivially when we write binds
+            self.uniqueNames = FindSmallestUniqueSubstring(names)
+            for i in range(6):
+                ctrl = self.Boxes[i].PetName
+                if self.uniqueNames[i]:
+                    ctrl.RemoveError('unique')
+                else:
+                    ctrl.AddError('unique', f'This pet name is not different enough to identify it uniquely.  This is likely to cause issues with by-name and bodyguard binds.')
+        else:
+            for i in range(6):
+                ctrl = self.Boxes[i].PetName
+                ctrl.RemoveError('unique')
+
 
 class PetBox(wx.Panel):
     def __init__(self, parent, wizard, boxnum):
@@ -160,7 +190,7 @@ class PetBox(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
 
         sizer.Add(wx.StaticText(self, label = petPowers['names'][boxnum - 1]), wx.ALIGN_CENTER|wx.ALL, 5)
-        self.PetName = wx.TextCtrl(self, value = c[f'Pet{boxnum}Name'].GetValue(), style = wx.TE_CENTER)
+        self.PetName = cgTextCtrl(self, value = c[f'Pet{boxnum}Name'].GetValue(), style = wx.TE_CENTER)
         self.PetName.SetHint('New Pet Name')
         self.PetName.Bind(wx.EVT_TEXT, wizard.OnPetNameChanged)
         sizer.Add(self.PetName, 0, wx.EXPAND|wx.ALL, 5)

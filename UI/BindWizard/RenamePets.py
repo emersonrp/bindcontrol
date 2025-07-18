@@ -71,6 +71,21 @@ class RenamePets(WizardParent):
 
         return mainSizer
 
+    def RefreshUI(self, evt = None):
+        if evt: evt.Skip()
+        super().RefreshUI(evt)
+        # This gets called on wizard dialog "OK", so let's update the Mastermind Page
+        for i, box in enumerate(self.Boxes):
+            self.Profile.Mastermind.Ctrls[f"Pet{i+1}Name"].SetValue(box.PetName.GetValue())
+
+    def ShowWizard(self, evt = None):
+        if evt: evt.Skip()
+        super().ShowWizard(evt)
+        # Get the current value from the Mastermind Page every time we open the wizard
+        for i, box in enumerate(self.Boxes):
+            box.PetName.SetValue(self.Profile.Mastermind.Ctrls[f"Pet{i+1}Name"].GetValue())
+
+
     def Serialize(self):
         return {
             'IncData' : self.Init.get('WizData', {}).get('IncData', {}),

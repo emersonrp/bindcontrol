@@ -142,6 +142,13 @@ class RenamePets(WizardParent):
 
     def OnLevelChanged(self, evt = None):
         if evt: evt.Skip()
+        maxLevel = 24 if self.Profile.Server == 'Homecoming' else 26
+        lvl = self.LevelSlider.GetValue()
+        self.Boxes[1].Enable(lvl >= 6)
+        self.Boxes[2].Enable(lvl >= 18)
+        self.Boxes[3].Enable(lvl >= 12)
+        self.Boxes[4].Enable(lvl >= 24)
+        self.Boxes[5].Enable(lvl >= maxLevel)
 
     def OnPetNameChanged(self, evt = None):
         self.CheckUndefNames()
@@ -149,35 +156,28 @@ class RenamePets(WizardParent):
         if evt: evt.Skip()
 
     def CheckUndefNames(self):
-        for i in range(6):
-            ctrl = self.Boxes[i].PetName
+        for box in self.Boxes:
+            ctrl = box.PetName
             if ctrl.GetValue():
                 ctrl.RemoveError('undef')
             else:
                 ctrl.AddError('undef', 'By-Name selection and Bodyguard Mode require the pet name be filled in.')
 
     def CheckUniqueNames(self):
-        if (self.Profile.Archetype() == "Mastermind"):
-            names = []
-            for i in range(6):
-                ctrl = self.Boxes[i].PetName
-                value = ctrl.GetValue().strip() # don't allow whitespace at the ends
-                names.append(value)
+        names = []
+        for box in self.Boxes:
+            value = box.PetName.GetValue().strip() # don't allow whitespace at the ends
+            names.append(value)
 
-            # we stash this away every time we calculate it so we can
-            # extract it trivially when we write binds
-            self.uniqueNames = FindSmallestUniqueSubstring(names)
-            for i in range(6):
-                ctrl = self.Boxes[i].PetName
-                if self.uniqueNames[i]:
-                    ctrl.RemoveError('unique')
-                else:
-                    ctrl.AddError('unique', f'This pet name is not different enough to identify it uniquely.  This is likely to cause issues with by-name and bodyguard binds.')
-        else:
-            for i in range(6):
-                ctrl = self.Boxes[i].PetName
-                ctrl.RemoveError('unique')
-
+        # we stash this away every time we calculate it so we can
+        # extract it trivially when we write binds
+        # TODO - do we need to do this in the BindWizard?
+        self.uniqueNames = FindSmallestUniqueSubstring(names)
+        for i, box in enumerate(self.Boxes):
+            if self.uniqueNames[i]:
+                box.PetName.RemoveError('unique')
+            else:
+                box.PetName.AddError('unique', f'This pet name is not different enough to identify it uniquely.  This is likely to cause issues with by-name and bodyguard binds.')
 
 class PetBox(wx.Panel):
     def __init__(self, parent, wizard, boxnum):

@@ -12,6 +12,10 @@ class RenamePets(WizardParent):
     WizardName  = 'Rename Mastermind Pets'
     WizToolTip  = 'Create a keybind that will rename your pets in-game to match your BindControl configuration'
 
+    @classmethod
+    def CheckIfValidForProfile(cls, profile):
+        return profile.Archetype() == "Mastermind"
+
     def BuildUI(self, dialog, init = {}):
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.SetMinSize(wx.Size(700,-1))

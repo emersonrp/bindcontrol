@@ -47,6 +47,10 @@ class WizardParent(object):
         evt.Skip()
         self.BindPane.BuildBindUI(None)
 
+    @classmethod
+    def CheckIfValidForProfile(cls, profile):
+        return True
+
 class WizPickerDialog(wx.Dialog):
     def __init__(self, parent):
 
@@ -59,11 +63,12 @@ class WizPickerDialog(wx.Dialog):
         wcSizer = wx.BoxSizer(wx.VERTICAL)
         wcSizer.Add(wx.StaticText(self, wx.ID_ANY, 'Select a Bind Wizard to run:'), 0, wx.EXPAND|wx.BOTTOM, 20)
         for classname, wizClass in wizards.items():
-            wizbutton = wx.Button(self, wx.ID_ANY, label = classname)
-            wizbutton.SetToolTip(wizClass.WizToolTip)
-            wcSizer.Add(wizbutton, 1, wx.EXPAND)
-            setattr(wizbutton, 'WizClass', wizClass)
-            wizbutton.Bind(wx.EVT_BUTTON, self.OnWizPicked)
+            if wizClass.CheckIfValidForProfile(parent.Profile):
+                wizbutton = wx.Button(self, wx.ID_ANY, label = classname)
+                wizbutton.SetToolTip(wizClass.WizToolTip)
+                wcSizer.Add(wizbutton, 1, wx.EXPAND)
+                setattr(wizbutton, 'WizClass', wizClass)
+                wizbutton.Bind(wx.EVT_BUTTON, self.OnWizPicked)
 
         mainSizer.Add(wcSizer, 1, wx.EXPAND|wx.ALL, 20)
 

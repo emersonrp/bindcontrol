@@ -138,7 +138,7 @@ class RenamePets(WizardParent):
 
     def ShowHelp(self, evt = None):
         if evt: evt.Skip()
-        ShowHelpWindow(self.BindPane, 'PetRename.html')
+        ShowHelpWindow(self.BindPane, 'RenamePets.html')
 
     def OnLevelChanged(self, evt = None):
         if evt: evt.Skip()

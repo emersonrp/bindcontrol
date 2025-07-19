@@ -12,6 +12,10 @@ class RenamePets(WizardParent):
     WizardName  = 'Rename Mastermind Pets'
     WizToolTip  = 'Create a keybind that will rename your pets in-game to match your BindControl configuration'
 
+    def __init__(self, parent, init):
+        super().__init__(parent, init)
+        self.Boxes = []
+
     @classmethod
     def CheckIfValidForProfile(cls, profile):
         return profile.Archetype() == "Mastermind"
@@ -40,25 +44,8 @@ class RenamePets(WizardParent):
         PetBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # Groups are so we can put things in the right order.  This might not be The Way.
-        Groups = {
-            'min' : wx.StaticBoxSizer(wx.HORIZONTAL, dialog),
-            'lts' : wx.StaticBoxSizer(wx.HORIZONTAL, dialog),
-            'bos' : wx.StaticBoxSizer(wx.HORIZONTAL, dialog),
-        }
-        self.Boxes = [
-            PetBox(Groups['min'], self, 1),
-            PetBox(Groups['min'], self, 2),
-            PetBox(Groups['min'], self, 3),
-            PetBox(Groups['lts'], self, 4),
-            PetBox(Groups['lts'], self, 5),
-            PetBox(Groups['bos'], self, 6),
-        ]
-        Groups['min'].Add(self.Boxes[0], 1, wx.EXPAND|wx.ALL, 5)
-        Groups['min'].Add(self.Boxes[1], 1, wx.EXPAND|wx.ALL, 5)
-        Groups['min'].Add(self.Boxes[2], 1, wx.EXPAND|wx.ALL, 5)
-        Groups['lts'].Add(self.Boxes[3], 1, wx.EXPAND|wx.ALL, 5)
-        Groups['lts'].Add(self.Boxes[4], 1, wx.EXPAND|wx.ALL, 5)
-        Groups['bos'].Add(self.Boxes[5], 1, wx.EXPAND|wx.ALL, 5)
+        [Boxes, Groups] = self.CreateBoxGroups(dialog)
+        self.Boxes = Boxes
 
         # "revPowers" is ["min", "lts", "bos"] sorted by their power name for the current archetype
         petPowers = MMPowerSets[self.Profile.Primary()]
@@ -76,14 +63,16 @@ class RenamePets(WizardParent):
         super().RefreshUI(evt)
         # This gets called on wizard dialog "OK", so let's update the Mastermind Page
         for i, box in enumerate(self.Boxes):
-            self.Profile.Mastermind.Ctrls[f"Pet{i+1}Name"].SetValue(box.PetName.GetValue())
+            if box:
+                self.Profile.Mastermind.Ctrls[f"Pet{i+1}Name"].SetValue(box.PetName.GetValue())
 
     def ShowWizard(self, evt = None):
         if evt: evt.Skip()
         super().ShowWizard(evt)
         # Get the current value from the Mastermind Page every time we open the wizard
         for i, box in enumerate(self.Boxes):
-            box.PetName.SetValue(self.Profile.Mastermind.Ctrls[f"Pet{i+1}Name"].GetValue())
+            if box:
+                box.PetName.SetValue(self.Profile.Mastermind.Ctrls[f"Pet{i+1}Name"].GetValue())
 
 
     def Serialize(self):
@@ -92,11 +81,47 @@ class RenamePets(WizardParent):
             'BindKey' : self.BindKeyCtrl.Key,
         }
 
+    def CreateBoxGroups(self, parent, displayonly = False):
+        Groups = {
+            'min' : wx.StaticBoxSizer(wx.HORIZONTAL, parent),
+            'lts' : wx.StaticBoxSizer(wx.HORIZONTAL, parent),
+            'bos' : wx.StaticBoxSizer(wx.HORIZONTAL, parent),
+        }
+        Boxes = [
+            PetBox(Groups['min'], self, 1, displayonly),
+            PetBox(Groups['min'], self, 2, displayonly),
+            PetBox(Groups['min'], self, 3, displayonly),
+            PetBox(Groups['lts'], self, 4, displayonly),
+            PetBox(Groups['lts'], self, 5, displayonly),
+            PetBox(Groups['bos'], self, 6, displayonly),
+        ]
+        Groups['min'].Add(Boxes[0], 1, wx.EXPAND|wx.ALL, 5)
+        Groups['min'].Add(Boxes[1], 1, wx.EXPAND|wx.ALL, 5)
+        Groups['min'].Add(Boxes[2], 1, wx.EXPAND|wx.ALL, 5)
+        Groups['lts'].Add(Boxes[3], 1, wx.EXPAND|wx.ALL, 5)
+        Groups['lts'].Add(Boxes[4], 1, wx.EXPAND|wx.ALL, 5)
+        Groups['bos'].Add(Boxes[5], 1, wx.EXPAND|wx.ALL, 5)
+
+        return [Boxes, Groups]
+
     def PaneContents(self):
         bindpane = self.BindPane
         panel = wx.Panel(bindpane.GetPane())
         panel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         panelSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        contentsSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # TODO OMG DRY THIS UP SOMEHOW
+        #
+        # Groups are so we can put things in the right order.  This might not be The Way.
+        [_, Groups] = self.CreateBoxGroups(bindpane, displayonly = True)
+
+        # "revPowers" is ["min", "lts", "bos"] sorted by their power name for the current archetype
+        petPowers = MMPowerSets[self.Profile.Primary()]
+        revPowers = dict(sorted(petPowers['powers'].items(), key = lambda item: item[1]))
+        for grp in revPowers:
+            contentsSizer.Add(Groups[grp], 0, wx.EXPAND|wx.ALL, 5)
 
         bindkey = bindpane.Init.get('BindKey', '')
         BindSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -111,7 +136,8 @@ class RenamePets(WizardParent):
         bindpane.Page.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
         UI.Labels[self.BindKeyCtrl.CtlName] = f'Rename Pets Bind "{bindpane.Title}"'
 
-        panelSizer.Add(BindSizer, 0, wx.EXPAND|wx.ALL, 15)
+        panelSizer.Add(contentsSizer, 1, wx.EXPAND|wx.ALL, 10)
+        panelSizer.Add(BindSizer,     0, wx.EXPAND|wx.ALL, 15)
         panel.SetSizer(panelSizer)
 
         self.CheckIfWellFormed()
@@ -199,7 +225,7 @@ class RenamePets(WizardParent):
                 box.PetName.AddError('unique', f'This pet name is not different enough to identify it uniquely.  This is likely to cause issues with by-name and bodyguard binds.')
 
 class PetBox(wx.Panel):
-    def __init__(self, parent, wizard, boxnum):
+    def __init__(self, parent, wizard, boxnum, displayonly = False):
         super().__init__(parent.GetStaticBox())
 
         profile = wx.App.Get().Main.Profile
@@ -210,8 +236,12 @@ class PetBox(wx.Panel):
 
         sizer.Add(wx.StaticText(self, label = petPowers['names'][boxnum - 1]), wx.ALIGN_CENTER|wx.ALL, 5)
         self.PetName = cgTextCtrl(self, value = c[f'Pet{boxnum}Name'].GetValue(), style = wx.TE_CENTER)
-        self.PetName.SetHint('New Pet Name')
-        self.PetName.Bind(wx.EVT_TEXT, wizard.OnPetNameChanged)
         sizer.Add(self.PetName, 0, wx.EXPAND|wx.ALL, 5)
+
+        if displayonly:
+            self.PetName.SetEditable(False)
+        else:
+            self.PetName.Bind(wx.EVT_TEXT, wizard.OnPetNameChanged)
+            self.PetName.SetHint('New Pet Name')
 
         self.SetSizer(sizer)

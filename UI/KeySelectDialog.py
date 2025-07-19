@@ -496,18 +496,21 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.CtlLabel : ST.GenStaticText | wx.StaticText | None = init.get('CtlLabel', None)
         self.Key      : str                                     = init.get('Key', '')
         self.AlwaysShorten : bool                               = init.get('AlwaysShorten', False)
-
         # This might be overloading "AlwaysShorten", but:
         style = wx.BU_EXACTFIT if self.AlwaysShorten else 0
 
         super().__init__(parent, id, style = style)
 
+        if tt := init.get('ToolTip', ''):
+            self.DefaultToolTip = tt
+            self.SetToolTip(tt)
+
+        # Set self.Page to the nearest Page in the parent chain
         thing = self.GetParent()
         while not isinstance(thing, Page.Page):
             thing = thing.GetParent()
             # we use these in the prefs dialog, so this happens there
             if not thing: break
-
         self.Page = thing
 
         self.SetLabel(self.Key)

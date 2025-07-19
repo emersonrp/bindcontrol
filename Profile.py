@@ -557,6 +557,7 @@ class Profile(wx.Notebook):
             for evt in [
                 wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
                 wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU, wx.EVT_RADIOBUTTON,
+                wx.EVT_SLIDER,
             ]:
 
                 page.Bind(evt, page.OnCommandEvent)
@@ -697,7 +698,7 @@ class Profile(wx.Notebook):
             try:
                 success = page.PopulateBindFiles()
                 if not success:
-                    wx.LogError(f'An error on the "{pageName}" tab caused WriteBinds to fail.')
+                    wx.LogMessage(f'An error on the "{pageName}" tab caused WriteBinds to fail.')
                     return
             except Exception as e:
                 if config.ReadBool('CrashOnBindError'):

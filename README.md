@@ -50,12 +50,16 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
     * Optional /say feedback with per-inspiration custom colors
 
 * Mastermind / Pet Binds
-    * Select pets by power level: all, minions, lieutenants, and boss
-    * Orders for aggressive / defensive / passive stances; attack, follow, go to, and stay, for all or selected pets
-    * Pets can give feedback on each order;  chattiness can be toggled via keybind
-    * "Bodyguard mode" shortcut -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress[^1]
-    * By-name pet selection
-    * Next-pet / previous-pet binds
+    * Support for classic "Sandolphan" Mastermind binds
+        + Select pets by power level: all, minions, lieutenants, and boss
+        + Orders for aggressive / defensive / passive stances; attack, follow, go to, and stay, for all or selected pets
+        + Pets can give feedback on each order;  chattiness can be toggled via keybind
+    * Features to help name pets uniquely for by-name and bodyguard binds
+        * BindControl will detect and warn if names are inadequately different / unique for by-name use
+        * BindControl can create a keybind to rename your pets to match BindControl's config instead of doing it manually in-game
+    * By-name pet selection - <i>requires uniquely-named pets</i>
+    * "Bodyguard mode" shortcut -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress[^1] - <i>requires uniquely-named pets</i>
+    * Next-pet / previous-pet binds for quick buffing etc
 
 * Popmenu Editor (beta)
     * Install, edit, and delete popmenus in the correct game folder

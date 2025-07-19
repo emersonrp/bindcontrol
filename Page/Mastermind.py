@@ -79,8 +79,12 @@ class Mastermind(Page):
     def __init__(self, parent):
         Page.__init__(self, parent)
 
+        self.PetBoxes = []
+
         self.Init = {
             'Enable' : False,
+
+            'RenamePets' : '',
 
             'PetSelectAll' : 'NUMPAD0',
             'PetSelectAllResponse' : 'Orders?',
@@ -200,46 +204,62 @@ class Mastermind(Page):
     def BuildPage(self):
 
         # get the pet names and binds to select them directly
-        PetNames  = wx.StaticBoxSizer(wx.HORIZONTAL, self, label = "Pet Names and By-Name Keybinds")
+        PetNames  = wx.StaticBoxSizer(wx.VERTICAL, self, label = "Pet Names and By-Name Keybinds")
         PetNameSB = PetNames.GetStaticBox()
-        PetInner = wx.GridBagSizer(hgap = 5, vgap = 5)
-        PetNames.Add(PetInner, 1, wx.ALL|wx.EXPAND, 10)
-        self.PetNameLabel = wx.StaticText(PetNameSB, label = "Pet Name:")
-        self.PetKeyLabel  = wx.StaticText(PetNameSB, label = "Select by Name:")
-        PetInner.Add(self.PetNameLabel, (1,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-        PetInner.Add(self.PetKeyLabel,  (2,0), flag=wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+        PetInner = wx.BoxSizer(wx.HORIZONTAL)
 
-        for i in (1,2,3,4,5,6):
-            name = cgTextCtrl(PetNameSB, style = wx.TE_CENTRE)
+        for i in range(6):
+            petdesc = ['Minion 1', 'Minion 2', 'Minion 3', 'Lieutenant 1', 'Lieutenant 2', 'Boss'][i]
+            PBSB = wx.StaticBox(PetNameSB, style = wx.ALIGN_CENTER|wx.NO_BORDER, label = petdesc)
+            box = wx.StaticBoxSizer(PBSB, wx.VERTICAL)
+
+            name = cgTextCtrl(PBSB, style = wx.TE_CENTRE)
             setattr(name, "CtlLabel", None)
-            self.Ctrls[f'Pet{i}Name'] = name
+            self.Ctrls[f'Pet{i+1}Name'] = name
             name.Bind(wx.EVT_TEXT, self.OnNameTextChange)
 
-            petdesc = ['Minion Pet 1', 'Minion Pet 2', 'Minion Pet 3',
-                       'Lieutenant Pet 1', 'Lieutenant Pet 2', 'Boss Pet'][i-1]
-            label = wx.StaticText(PetNameSB, label = petdesc)
-            button = bcKeyButton(PetNameSB, -1, init = {
-                'CtlName'  : f'PetSelect{i}',
-                'CtlLabel' : label,
-                'Key'      : self.Init[f'PetSelect{i}'],
+            button = bcKeyButton(PBSB, -1, init = {
+                'CtlName'  : f'PetSelect{i+1}',
+                'ToolTip'  : f'Choose the key that will select {petdesc}',
+                'Key'      : self.Init[f'PetSelect{i+1}'],
             })
-            self.Ctrls[f'PetSelect{i}'] = button
+            self.Ctrls[f'PetSelect{i+1}'] = button
 
-            petcb = wx.CheckBox(PetNameSB, -1, "Bodyguard")
-            self.Ctrls[f"Pet{i}Bodyguard"] = petcb
+            petcb = wx.CheckBox(PBSB, -1, "Bodyguard")
+            self.Ctrls[f"Pet{i+1}Bodyguard"] = petcb
             petcb.SetToolTip(f"Select whether {petdesc} acts as Bodyguard when Bodyguard Mode is activated")
 
-            PetInner.Add(label,  (0,i), flag=wx.EXPAND|wx.ALIGN_CENTER)
-            PetInner.Add(name,   (1,i), flag=wx.EXPAND)
-            PetInner.Add(button, (2,i), flag=wx.EXPAND)
-            PetInner.Add(petcb,  (3,i), flag=wx.EXPAND|wx.ALIGN_CENTER)
-            PetInner.AddGrowableCol(i)
+            box.Add(name,   1, wx.EXPAND|wx.ALL, 3)
+            box.Add(button, 1, wx.EXPAND|wx.ALL, 3)
+            box.Add(petcb,  1, wx.ALIGN_CENTER|wx.ALL, 3)
 
-        self.NameDefaultButton = wx.Button(PetNameSB, -1, 'Defaults')
-        self.NameDefaultButton.SetToolTip('Set your pet names to the default values for your powerset.')
-        self.NameDefaultButton.Bind(wx.EVT_BUTTON, self.OnNameDefaultButton)
-        PetInner.Add(self.NameDefaultButton, (1,7), flag = wx.EXPAND)
-        PetInner.Add(HelpButton(PetNameSB, 'PetNames.html'), (2,7), flag = wx.ALIGN_CENTER)
+            PetInner.Add(box, 1, wx.EXPAND|wx.ALL, 3)
+            self.PetBoxes.append(box)
+
+        PetExtraCtrls = wx.BoxSizer(wx.HORIZONTAL)
+        maxValue = 24 if self.Profile.Server == 'Homecoming' else 26
+        self.LevelSlider = wx.Slider(PetNameSB, minValue = 1, maxValue = maxValue, value = maxValue,
+                                     style = wx.SL_VALUE_LABEL|wx.SL_AUTOTICKS)
+        self.LevelSlider.Bind(wx.EVT_SLIDER, self.OnLevelChanged)
+        self.LevelSlider.SetToolTip('Select the level of your Mastermind - set to max for higher levels')
+        self.Ctrls['MMLevel'] = self.LevelSlider
+
+        RenameLabel = wx.StaticText(PetNameSB, -1, 'Rename Pets:')
+        self.RenamePetsButton = bcKeyButton(PetNameSB, -1, init = {
+                'CtlName'  : 'RenamePets',
+                'Key'      : self.Init['RenamePets'],
+            })
+        self.RenamePetsButton.SetToolTip('Choose the key that will rename your pets, in-game, to match the names set in BindControl')
+        self.Ctrls['RenamePets'] = self.RenamePetsButton
+
+        PetExtraCtrls.Add(wx.StaticText(PetNameSB, -1, 'Mastermind Level:'), 0, wx.ALIGN_CENTER_VERTICAL)
+        PetExtraCtrls.Add(self.LevelSlider, 1, wx.ALIGN_CENTER_VERTICAL)
+        PetExtraCtrls.Add(RenameLabel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 10)
+        PetExtraCtrls.Add(self.RenamePetsButton, 0, wx.ALIGN_CENTER_VERTICAL)
+        PetExtraCtrls.Add(HelpButton(PetNameSB, 'PetNames.html'), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 10)
+
+        PetNames.Add(PetInner,      1, wx.EXPAND|wx.ALL, 10)
+        PetNames.Add(PetExtraCtrls, 0, wx.EXPAND|wx.ALL, 15)
 
         petcmdenable = wx.Panel(self)
         petcmdenablesizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -326,20 +346,22 @@ class Mastermind(Page):
         pset = self.Profile.Primary()
 
         for control in self.Ctrls.values(): control.Enable(bool(ismm and pset))
-        self.PetNameLabel     .Enable(bool(ismm and pset))
-        self.PetKeyLabel      .Enable(bool(ismm and pset))
-        self.NameDefaultButton.Enable(bool(ismm and pset))
+        self.RenamePetsButton.Enable(bool(ismm and pset))
         self.OnPetCmdEnable()
         self.OnPetNPChange()
+        self.OnLevelChanged()
 
-    def OnNameDefaultButton(self, _ = None):
-        result = wx.MessageBox("This will set your pet names to the default values for your powerset.  They will likely need to be changed to make by-name selection and Bodyguard Mode binds work.  Continue?", "Set To Default", wx.YES_NO)
-        if result == wx.NO: return
-        primary = self.Profile.Primary()
-        if primary:
-            defaults = self.MMPowerSets[primary]['names']
-            for i, petname in enumerate(defaults):
-                self.SetState(f'Pet{i+1}Name', petname)
+    def OnLevelChanged(self, evt = None):
+        if evt: evt.Skip()
+        bossLevel = 22 if self.Profile.Server == 'Homecoming' else 26
+        lvl = self.LevelSlider.GetValue()
+        self.PetBoxes[1].GetStaticBox().Enable(lvl >= 6)
+        self.PetBoxes[2].GetStaticBox().Enable(lvl >= 18)
+        self.PetBoxes[3].GetStaticBox().Enable(lvl >= 12)
+        self.PetBoxes[4].GetStaticBox().Enable(lvl >= 24)
+        self.PetBoxes[5].GetStaticBox().Enable(lvl >= bossLevel)
+        self.CheckUndefNames()
+        self.CheckUniqueNames()
 
     def OnPetCmdEnable(self, evt = None):
         self.Freeze()
@@ -383,6 +405,10 @@ class Mastermind(Page):
     def CheckUndefNames(self):
         for i in (1,2,3,4,5,6):
             ctrl = self.Ctrls[f'Pet{i}Name']
+            if not ctrl.IsEnabled():
+                ctrl.RemoveError('undef')
+                continue
+
             if ctrl.GetValue():
                 ctrl.RemoveError('undef')
             else:
@@ -401,6 +427,10 @@ class Mastermind(Page):
             self.uniqueNames = FindSmallestUniqueSubstring(names)
             for i in (1,2,3,4,5,6):
                 ctrl = self.Ctrls[f'Pet{i}Name']
+                if not ctrl.IsEnabled():
+                    ctrl.RemoveError('unique')
+                    continue
+
                 if self.uniqueNames[i-1]:
                     ctrl.RemoveError('unique')
                 else:
@@ -561,21 +591,59 @@ class Mastermind(Page):
 
         if not profile.Archetype() == 'Mastermind': return True
 
+        # First, deduce which "pet name boxes" need checking, and in what order.
+        OrderedPetBoxes = []
+        petPowers = self.MMPowerSets[self.Profile.Primary()]
+        # now order them by powername, alphabetically, to match the in-game pet list
+        revPowers = dict(sorted(petPowers['powers'].items(), key = lambda item: item[1]))
+        for grp in revPowers:
+            if grp == "min":
+                if self.PetBoxes[0].GetStaticBox().IsEnabled():
+                    OrderedPetBoxes.append([0, self.PetBoxes[0]])
+                if self.PetBoxes[1].GetStaticBox().IsEnabled():
+                    OrderedPetBoxes.append([1, self.PetBoxes[1]])
+                if self.PetBoxes[2].GetStaticBox().IsEnabled():
+                    OrderedPetBoxes.append([2, self.PetBoxes[2]])
+            elif grp == "lts":
+                if self.PetBoxes[3].GetStaticBox().IsEnabled():
+                    OrderedPetBoxes.append([3, self.PetBoxes[3]])
+                if self.PetBoxes[4].GetStaticBox().IsEnabled():
+                    OrderedPetBoxes.append([4, self.PetBoxes[4]])
+            elif grp == "bos":
+                if self.PetBoxes[5].GetStaticBox().IsEnabled():
+                    OrderedPetBoxes.append([5, self.PetBoxes[5]])
+
+        # Now complain if any of the needed boxes isn't unique
         needUniqueNames = False
-        for i in (1,2,3,4,5,6):
-            if self.Ctrls[f'PetSelect{i}'].GetLabel():
-                needUniqueNames = True
-                break
+        for i in range(6):
+            for [_, box] in OrderedPetBoxes:
+                if self.PetBoxes[i] == box:
+                    if self.Ctrls[f'PetSelect{i+1}'].GetLabel():
+                        needUniqueNames = True
+                        break
         if self.Ctrls['PetBodyguard'].GetLabel():
             needUniqueNames = True
 
         if needUniqueNames:
-            for i in (1,2,3,4,5,6):
-                ctrl = self.Ctrls[f'Pet{i}Name']
-                if ctrl.IsEnabled() and ctrl.HasAnyError():
-                    result = wx.MessageBox("One or more of your pet names has errors.  You can continue to write these binds but they are likely not to work well in-game.  Continue?", "Name Error", wx.YES_NO)
-                    if result == wx.NO: return False
-                    break
+            for i in range(6):
+                for [_, box] in OrderedPetBoxes:
+                    if self.PetBoxes[i] == box:
+                        ctrl = self.Ctrls[f'Pet{i+1}Name']
+                        if ctrl.IsEnabled() and ctrl.HasAnyError():
+                            result = wx.MessageBox("One or more of your pet names has errors.  You can continue to write these binds but they are likely not to work well in-game.  Continue?", "Name Error", wx.YES_NO)
+                            if result == wx.NO: return False
+                            break
+
+        # Finally, let's write the RenamePets Bind if we want it
+        if self.RenamePetsButton.GetLabel():
+            rpCommands = []
+            for i, pair in enumerate(OrderedPetBoxes):
+                if not pair: continue
+                (j, box) = pair
+                petnamebox = self.Ctrls[f'Pet{j+1}Name']
+                rpCommands.append(f'petselect {i}')
+                rpCommands.append(f'petrename "{petnamebox.GetValue()}"')
+                ResetFile.SetBind(self.RenamePetsButton.MakeFileKeyBind(rpCommands))
 
         ### Sandolphan binds
         if self.GetState('PetCmdEnable'):
@@ -698,7 +766,6 @@ class Mastermind(Page):
             response = method + self.GetState(f"Pet{cmd}Response")
         return response
 
-
     def CountBodyguards(self):
         tier1bg = 0
         tier2bg = 0
@@ -748,6 +815,13 @@ class Mastermind(Page):
         'Pet4Name'                           : "Fourth Pet's Name",
         'Pet5Name'                           : "Fifth Pet's Name",
         'Pet6Name'                           : "Sixth Pet's Name",
+        'PetSelect1'                         : "Select First Pet",
+        'PetSelect2'                         : "Select Second Pet",
+        'PetSelect3'                         : "Select Third Pet",
+        'PetSelect4'                         : "Select Fourth Pet",
+        'PetSelect5'                         : "Select Fifth Pet",
+        'PetSelect6'                         : "Select Sixth Pet",
+        'RenamePets'                         : "Rename Pets",
         'PetSelectAllResponseMethod'         : "Pet Response",
         'PetSelectMinionsResponseMethod'     : "Pet Response",
         'PetSelectLieutenantsResponseMethod' : "Pet Response",

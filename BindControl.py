@@ -190,8 +190,8 @@ class Main(wx.Frame):
         filename = config.Read('LastProfile')
         if (config.Read('StartWith') == 'Last Profile' or config.ReadBool('StartWithLastProfile')) and filename:
             if profile := Profile.Profile(self, filename):
-                profile.buildFromData()
                 self.Profile = profile
+                self.Profile.buildFromData()
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
                 self.CheckProfDirButtonErrors()
             else:

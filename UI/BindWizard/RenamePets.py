@@ -60,11 +60,11 @@ class RenamePets(WizardParent):
 
     def RefreshUI(self, evt = None):
         if evt: evt.Skip()
-        super().RefreshUI(evt)
         # This gets called on wizard dialog "OK", so let's update the Mastermind Page
         for i, box in enumerate(self.Boxes):
             if box:
                 self.Profile.Mastermind.Ctrls[f"Pet{i+1}Name"].SetValue(box.PetName.GetValue())
+        super().RefreshUI(evt)
 
     def ShowWizard(self, evt = None):
         if evt: evt.Skip()
@@ -115,7 +115,7 @@ class RenamePets(WizardParent):
         # TODO OMG DRY THIS UP SOMEHOW
         #
         # Groups are so we can put things in the right order.  This might not be The Way.
-        [_, Groups] = self.CreateBoxGroups(bindpane, displayonly = True)
+        [_, Groups] = self.CreateBoxGroups(panel, displayonly = True)
 
         # "revPowers" is ["min", "lts", "bos"] sorted by their power name for the current archetype
         petPowers = MMPowerSets[self.Profile.Primary()]

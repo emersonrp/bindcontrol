@@ -74,12 +74,8 @@ class RenamePets(WizardParent):
             if box:
                 box.PetName.SetValue(self.Profile.Mastermind.Ctrls[f"Pet{i+1}Name"].GetValue())
 
-
     def Serialize(self):
-        return {
-            'IncData' : self.Init.get('WizData', {}).get('IncData', {}),
-            'BindKey' : self.BindKeyCtrl.Key,
-        }
+        return { 'BindKey' : self.BindKeyCtrl.Key }
 
     def CreateBoxGroups(self, parent, displayonly = False):
         Groups = {
@@ -115,7 +111,14 @@ class RenamePets(WizardParent):
         # TODO OMG DRY THIS UP SOMEHOW
         #
         # Groups are so we can put things in the right order.  This might not be The Way.
-        [_, Groups] = self.CreateBoxGroups(panel, displayonly = True)
+        [Boxes, Groups] = self.CreateBoxGroups(panel, displayonly = True)
+
+        for box in Boxes:
+            box        .Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+            box.PetName.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+
+        for grp in Groups.values():
+            grp.GetStaticBox().Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
         # "revPowers" is ["min", "lts", "bos"] sorted by their power name for the current archetype
         petPowers = MMPowerSets[self.Profile.Primary()]

@@ -81,6 +81,7 @@ class BindDirsWindow(wx.MiniFrame):
             _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(self).Text(f'Loading {label}...'))
             wx.GetApp().Yield()
             newProfile = Profile.Profile(self.Parent, filename = file)
+            newProfile.buildFromData()
 
             self.Parent.InsertProfile(newProfile) # pyright: ignore
 

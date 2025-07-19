@@ -391,6 +391,7 @@ class General(Page):
                 mainwindow = wx.App.Get().Main
                 self.Profile.doSaveToFile()
                 newProfile = Profile.Profile(mainwindow, filename = self.Profile.Filename)
+                newProfile.buildFromData()
                 mainwindow.InsertProfile(newProfile)
             else:
                 radiobox.SetSelection(radiobox.FindString(server))

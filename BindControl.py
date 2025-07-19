@@ -190,6 +190,7 @@ class Main(wx.Frame):
         filename = config.Read('LastProfile')
         if (config.Read('StartWith') == 'Last Profile' or config.ReadBool('StartWithLastProfile')) and filename:
             if profile := Profile.Profile(self, filename):
+                profile.buildFromData()
                 self.Profile = profile
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
                 self.CheckProfDirButtonErrors()
@@ -300,6 +301,8 @@ class Main(wx.Frame):
                 if self.StartupPanel: self.StartupPanel.Destroy()
 
                 self.Profile = Profile.Profile(self, newname = newname)
+                self.Profile.buildFromData()
+                self.Profile.SetModified()
                 wx.LogMessage(f'Created New Profile "{newname}".')
 
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)

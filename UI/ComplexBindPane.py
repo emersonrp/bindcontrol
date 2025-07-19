@@ -40,9 +40,9 @@ class ComplexBindPane(CustomBindPaneParent):
         self.BindStepSizer.Add(AddBindStepButton, 0, wx.TOP, 10)
         if self.Init.get('Steps', ''):
             for step in self.Init['Steps']:
-                self.onAddStepButton(None, step)
+                self.doAddStep(step)
         else:
-            self.onAddStepButton()
+            self.doAddStep()
 
         self.BindSizer.Add (self.BindStepSizer, 1, wx.EXPAND)
 
@@ -111,11 +111,14 @@ class ComplexBindPane(CustomBindPaneParent):
         return isWellFormed
 
     def onAddStepButton(self, _ = None, stepdata = {}):
+        self.doAddStep(stepdata)
+        self.Profile.SetModified()
+
+    def doAddStep(self, stepdata = {}):
         stepNumber = self.BindStepSizer.GetItemCount() # already the next step because of the add button
         step = BindStep(self, stepNumber, stepdata)
         self.BindStepSizer.Insert(self.BindStepSizer.GetItemCount()-1, step, 0, wx.EXPAND)
         self.Steps.append(step)
-        self.Profile.SetModified()
         self.RenumberSteps()
 
     def onMoveUpButton(self, evt):

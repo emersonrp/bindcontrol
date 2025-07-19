@@ -75,6 +75,7 @@ def LoadFromFile(parent):
         wx.GetApp().Yield()
 
         if newProfile := Profile(parent, filename = pathname):
+            newProfile.buildFromData()
             newProfile.CheckAllConflicts()
             return newProfile
         else:
@@ -97,19 +98,25 @@ class Profile(wx.Notebook):
         self.LastModTime     : int       = 0
         self.Server          : str       = 'Homecoming'
 
-        data = {}
+        self.Data = {}
 
         # are we wanting to load this one from a file?
         if self.Filename and self.Filename.exists():
-            data = json.loads(Path(self.Filename).read_text())
-            self.LastModTime = self.Filename.stat().st_mtime_ns
+            if data := json.loads(Path(self.Filename).read_text()):
+                self.Data = data
+                self.LastModTime = self.Filename.stat().st_mtime_ns
+            else:
+                raise Exception(f"Something broke while loading profile {self.Filename}.  This is a bug.")
 
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
         elif newname:
             self.Filename = ProfilePath() / f"{newname}.bcp"
             jsonstring = self.GetDefaultProfileJSON()
             if jsonstring:
-                data = json.loads(jsonstring)
+                if data := json.loads(jsonstring):
+                    self.Data = data
+                else:
+                    raise Exception(f"Something broke while loading profile {self.Filename}.  This is a bug.")
 
             self.ProfileBindsDir = self.GenerateBindsDirectoryName()
             if not self.ProfileBindsDir:
@@ -119,7 +126,7 @@ class Profile(wx.Notebook):
         else:
             raise Exception("Error: Profile created with neither filename or newname.  This is a bug.")
 
-        if data: self.Server = data.get('Server', 'Homecoming')
+        self.Server = self.Data.get('Server', 'Homecoming')
         GameData.SetupGameData(self.Server)
 
         # Add the individual tabs, in order.
@@ -130,8 +137,6 @@ class Profile(wx.Notebook):
         self.InspirationPopper = self.CreatePage(InspirationPopper(self))
         self.Mastermind        = self.CreatePage(Mastermind(self))
         self.PopmenuEditor     = self.CreatePage(PopmenuEditor(self))
-
-        self.buildFromData(data)
 
         if newname:    self.SetModified()
         elif filename: self.ClearModified()
@@ -420,8 +425,8 @@ class Profile(wx.Notebook):
 
     def doLoadFromFile(self, pathname):
         try:
-            data = json.loads(Path(pathname).read_text())
-            self.buildFromData(data)
+            self.Data = json.loads(Path(pathname).read_text())
+            self.buildFromData()
         except Exception as e:
             wx.LogError(f"Profile {pathname} could not be loaded: {e}")
             return False
@@ -437,10 +442,11 @@ class Profile(wx.Notebook):
         wx.LogMessage(f"Loaded profile {pathname}")
         return True
 
-    def buildFromData(self, data):
+    def buildFromData(self):
         self.SetTitle()
 
-        data = self.MassageData(data)
+        self.MassageData()
+        data = self.Data
 
         # we store the ProfileBindsDir outside of the sections
         if data and data.get('ProfileBindsDir', None):
@@ -544,52 +550,67 @@ class Profile(wx.Notebook):
                 if bindpane:
                     cbpage.AddBindToPage(bindpane = bindpane)
 
+
+        # Finally, after loading all this stuff, THEN add the binds that toggle SetModified
+        for pagename in ['General', 'Gameplay', 'MovementPowers', 'InspirationPopper', 'Mastermind', 'PopmenuEditor']:
+            page = getattr(self, pagename)
+            for evt in [
+                wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
+                wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU, wx.EVT_RADIOBUTTON,
+            ]:
+
+                page.Bind(evt, page.OnCommandEvent)
+
     # This is for mashing old legacy profiles into the current state of affairs.
     # Each step in here might eventually get deprecated but maybe not, there's
     # little downside to doing all of this forever.
-    def MassageData(self, data):
+    def MassageData(self):
 
         # load old Profiles pre-rename of "Movement Powers" tab
-        if data and 'SoD' in data: data['MovementPowers'] = data['SoD']
+        if self.Data and 'SoD' in self.Data:
+            self.Data['MovementPowers'] = self.Data['SoD']
+            self.SetModified()
 
         # Massage old hardcoded-three-step BufferBinds into the new way
-        for i, custombind in enumerate(data['CustomBinds']):
-            if not custombind: continue
+        if self.Data and 'CustomBinds' in self.Data:
+            for i, custombind in enumerate(self.Data['CustomBinds']):
+                if not custombind: continue
 
-            if custombind['Type'] == "BufferBind":
-                if power := custombind.get('BuffPower1', None):
-                    custombind['Buffs'] = [{
-                        'Power'   : power,
-                        'ChatTgt' : custombind.get('BuffChat1Tgt', ''),
-                        'Chat'    : custombind.get('BuffChat1', ''),
-                    }]
-                    del custombind['BuffPower1']
-                    del custombind['BuffChat1Tgt']
-                    del custombind['BuffChat1']
+                if custombind.get('Type', '') == "BufferBind":
+                    if power := custombind.get('BuffPower1', None):
+                        self.SetModified()
+                        custombind['Buffs'] = [{
+                            'Power'   : power,
+                            'ChatTgt' : custombind.get('BuffChat1Tgt', ''),
+                            'Chat'    : custombind.get('BuffChat1', ''),
+                        }]
+                        del custombind['BuffPower1']
+                        del custombind['BuffChat1Tgt']
+                        del custombind['BuffChat1']
 
-                if power := custombind.get('BuffPower2', None):
-                    custombind['Buffs'].append({
-                        'Power'   : power,
-                        'ChatTgt' : custombind.get('BuffChat2Tgt', ''),
-                        'Chat'    : custombind.get('BuffChat2', ''),
-                    })
-                    del custombind['BuffPower2']
-                    del custombind['BuffChat2Tgt']
-                    del custombind['BuffChat2']
+                    if power := custombind.get('BuffPower2', None):
+                        self.SetModified()
+                        custombind['Buffs'].append({
+                            'Power'   : power,
+                            'ChatTgt' : custombind.get('BuffChat2Tgt', ''),
+                            'Chat'    : custombind.get('BuffChat2', ''),
+                        })
+                        del custombind['BuffPower2']
+                        del custombind['BuffChat2Tgt']
+                        del custombind['BuffChat2']
 
-                if power := custombind.get('BuffPower3', None):
-                    custombind['Buffs'].append({
-                        'Power'   : power,
-                        'ChatTgt' : custombind.get('BuffChat3Tgt', ''),
-                        'Chat'    : custombind.get('BuffChat3', ''),
-                    })
-                    del custombind['BuffPower3']
-                    del custombind['BuffChat3Tgt']
-                    del custombind['BuffChat3']
+                    if power := custombind.get('BuffPower3', None):
+                        self.SetModified()
+                        custombind['Buffs'].append({
+                            'Power'   : power,
+                            'ChatTgt' : custombind.get('BuffChat3Tgt', ''),
+                            'Chat'    : custombind.get('BuffChat3', ''),
+                        })
+                        del custombind['BuffPower3']
+                        del custombind['BuffChat3Tgt']
+                        del custombind['BuffChat3']
 
-                data['CustomBinds'][i] = custombind
-
-        return data
+                    self.Data['CustomBinds'][i] = custombind
 
     def SetTitle(self):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore

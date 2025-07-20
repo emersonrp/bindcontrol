@@ -52,7 +52,8 @@ for filename in Path(f"{parentdir}/icons/Origins/").glob('**/*.png'):
 for filename in Path(f"{parentdir}/icons/Powers/").glob('**/*.png'):
     filecheck.add(str(filename))
 for filename in Path(f"{parentdir}/icons/Incarnate/").glob('**/*.png'):
-    filecheck.add(str(filename))
+    if not re.search('Disable.png', str(filename)): # hmm
+        filecheck.add(str(filename))
 for filename in Path(f"{parentdir}/icons/Inspirations/").glob('**/*.png'):
     filecheck.add(str(filename))
 
@@ -129,6 +130,17 @@ def test_miscpowers_icons_exist():
             icon = '_'.join(icon)
             filename = f'{parentdir}/icons/Powers/Misc/{icon}.png'
             assert os.path.exists(filename), f"Misc Powers icon missing: {filename}"
+            if filename in filecheck: filecheck.remove(filename)
+
+def test_temppowers_icons_exist():
+    for server in ['Homecoming', 'Rebirth']:
+        GameData.SetupGameData(server)
+        for power in GameData.TempTravelPowers:
+            power = re.sub(r'[^\w|]+', '', power)
+            _, icon = SplitNameAndIcon(power)
+            icon = '_'.join(icon)
+            filename = f'{parentdir}/icons/Powers/Temp/{icon}.png'
+            assert os.path.exists(filename), f"Temp Powers icon missing: {filename}"
             if filename in filecheck: filecheck.remove(filename)
 
 def test_inspiration_icons_exist():

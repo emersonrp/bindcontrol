@@ -3,48 +3,53 @@
         <title>BindControl Manual</title>
     </head>
     <body>
-        <h1>Introduction</h1>
-            <p>BindControl is a tool to help create, modify, and maintain keybinds for City of Heroes.</p>
+        <h1>Introduction<hr></h1>
+
+            <p>BindControl is a tool to help create, modify, and maintain keybinds and popmenus for City of Heroes.</p>
             <p>It supports multiple profiles, allowing you to keep separate bind configurations per archetype or even per character.</p>
             <p>BindControl is intended for players who would prefer using a GUI tool, instead of a text editor, to create and manage their keybinds.  It can also create complex, multi-file keybind systems that would be near-impossible to create by hand.</p>
 
-        <h1>Concepts</h1>
+            <h1>Concepts<hr></h1>
 
             <h3>Profiles</h3>
-            <p>A Profile is a configuration of keybinds managed by BindControl.  A profile is always loaded in BindControl, be it a new profile or one that's been loaded from a save file.</p>
+            <p>A <b>Profile</b> is a configuration of keybinds managed by BindControl.  A Profile typically represents a set of keybinds for a particular character, but advanced users might make different Profiles for other situations, such as a separate set of binds for PvP.</p>
 
             <h3>KeyBinds / BindFiles</h3>
-            <p>A Keybind is a mapping of a command or string of commands to a key or mouse button.  BindControl offers a variety of ways to create and maintain key binds, and writes them to BindFiles which City of Heroes loads to "install" the keybinds.  Keybinds have various constraints on their contents and length, but BindControl attempts to help wrangle these and produce valid, useful keybinds.</p>
+            <p>A <b>Keybind</b> is a mapping of a command or string of commands to a key or mouse button.  BindControl offers a variety of ways to create and maintain keybinds, and writes them to <b>BindFiles</b> which City of Heroes loads to "install" the keybinds.  Keybinds have various constraints on their contents and length, but BindControl attempts to help wrangle these and produce valid, useful keybinds.</p>
 
-            <p>BindFiles install their KeyBinds when loaded, and a KeyBind can, when triggered, load a BindFile. This is leveraged in many places in BindControl to enable complex behavior using a limited number of keys.</p>
+            <p>BindFiles install their KeyBinds when loaded, and a KeyBind can, when triggered, load a differnt BindFile. This is leveraged in many places in BindControl to enable complex behavior using a limited number of keys.</p>
 
             <h3>Pages</h3>
-            <p>When editing a profile, BindControl divides various related groups of keybinds into Pages, accessible via tabs at the top of the application.  Pages include general Gameplay features, Custom Binds via PowerBinder, Mastermind pet control binds, and Movement Powers / Speed on Demand.  Each page will be discussed in greater detail below.</p>
+            <p>When editing a profile, BindControl divides various related groups of keybinds into <b>Pages</b>, accessible via tabs at the top of the application.  Pages include general Gameplay features, Custom Binds via PowerBinder, Mastermind pet control binds, and Movement Powers / Speed on Demand.  Each page will be discussed in greater detail below.</p>
 
             <h3>PowerBinder</h3>
-            <p>PowerBinder is a flexible tool for stringing together individual commands into custom KeyBinds.  It is the most open-ended tool in BindControl, and can help create fun and useful behavior including activating powers, emotes, and costume changes; targeting friends or foes by distance and name;  Chat commands and feedback;  and using Inspirations.  It additionally allows completely free-form commands to be added for the brave and experimental.</p>
+            <p><b>PowerBinder</b> is a flexible tool for stringing together individual commands into custom KeyBinds.  It is the most open-ended tool in BindControl, and can help create fun and useful behavior including activating powers, emotes, and costume changes;  targeting friends or foes by distance and name;  chat commands and feedback;  graphics and UI changes;  using inspirations by name or slot;  and more.  It additionally allows completely free-form commands to be added for the brave and experimental.</p>
 
-            <p>PowerBinder will allow you to add multiple powers to a single bind, but because of game constraints, <b>only one power will be executed in a single bind</b>.  For more info on what is and is not possible with custom binds, check the Homecoming wiki for "<a href="https://homecoming.wiki/wiki/The_Incomplete_and_Unofficial_Guide_to_/bind">The Incomplete and Unofficial Guide to /bind</a>".</p>
+            <p>PowerBinder will allow you to add multiple powers to a single bind, but because of game constraints, <b>only one power can be executed in a single keypress</b>.  For more info on what is and is not possible with custom binds, check the Homecoming wiki for "<a href="https://homecoming.wiki/wiki/The_Incomplete_and_Unofficial_Guide_to_/bind">The Incomplete and Unofficial Guide to /bind</a>".</p>
 
             <p>PowerBinder is a concept borrowed wholesale from citybinder, and owes much to it.</p>
 
             <h3>Binds Directory</h3>
-            <p>Once you have your profile set up, BindControl will need to write the resulting bindfiles somewhere where City of Heroes will be able to load them.  Because keybinds have a limited length, and because many of the features of BindControl involve loading other bindfiles from keybinds, it is <b>strongly</b> recommended to keep the path to the Binds Directory as short as possible to minimize the length of the filename to load.  Historically, c:\coh\ was used by citybinder, and this is still a great place to place keybinds if possible.</p>
+            <p>Once you have your profile set up, BindControl will need to write the resulting bindfiles somewhere where City of Heroes will be able to load them.  This location is the <b>Binds Directory</b>.  Because keybinds have a limited length, and because many of the features of BindControl involve loading other bindfiles from keybinds, it is <b>strongly</b> recommended to keep the path to the Binds Directory as short as possible to minimize the length of the filename to load.  Historically, c:\coh\ was used by citybinder, and this is still a great place to place keybinds if possible.</p>
 
             <p>Keybinds will be saved in a profile-specific subdirectory of the main Binds Directory.  Because of game limitations, it's recommended to keep the profile subdirectory name short.  BindControl will automatically generate a short name for your new profile, but the directory can be changed using the "Set Binds Location" button at the lower left at any time.</p>
 
-            <h3>The "Write Binds" button</h3>
-            <p>The "Write Binds" button is always available across the bottom of the window, and will attempt to write the bindfiles as currently configured in the profile.  If it encounters any errors, it will say so and present a log window that might help figure out what went wrong.  Typically this will not happen.  Writing binds takes almost no time and has little overhead, so feel free to iterate your config, write the files, and test them in-game over and over as needed.</p>
+            <h3>The Write Binds button</h3>
+            <p>The <b>Write Binds</b> button is always available across the bottom of the window, and will attempt to write the bindfiles as currently configured in the profile.  If it encounters any errors, it will say so and present a log window that might help figure out what went wrong.  Typically this will not happen.  Writing binds takes almost no time and has little overhead, so feel free to iterate your config, write the files, and test them in-game over and over as needed.</p>
 
             <h3>Deleting Keybinds</h3>
-            <p>The "Delete All Keybinds" button in the lower right will delete all BindControl-generated files in your profile-specific binds directory, and remove that directory if it is then empty.  This can be used to keep your binds directory clean if you change your configuration and want to re-write a new set of bind files, or if you just don't want to use that profile any more.  BindControl takes great pains not to delete anything that it didn't, itself, create, so if you keep other things in your binds directory, they should be safe.</p>
+            <p>The <b>Delete All Keybinds</b> button in the lower right will delete all BindControl-generated files in your profile-specific binds directory, and remove that directory if it is then empty.  This can be used to keep your binds directory clean if you change your configuration and want to re-write a new set of bind files, or if you just don't want to use that profile any more.  BindControl takes great pains not to delete anything that it didn't, itself, create, so if you keep other things in your binds directory, they should be safe.</p>
 
-        <h1>Pages</h1>
+            <h1>Pages<hr></h1>
             <h3>Preferences</h3>
             <p>The Preferences Dialog has several options that apply to BindControl globally and are not saved per-profile.</p>
 
-            <p><u>Game Directory</u></p>
-            <p>The directory where City of Heroes is installed.  This should be the directory the installer used to install the game, that contains, among other things, the <code>bin</code> and <code>assets</code> directories.</p>
+            <p><u>Homecoming Directory</u></p>
+            <p>The directory where City of Heroes Homecoming is installed.  This should be the directory that contains the <code>bin</code> and <code>assets</code> directories.  <i>This is for the use of the Popmenu Editor and is optional.</i></p>
+
+            <p><u>Rebirth Directory</u></p>
+            <p>The directory where City of Heroes Rebirth is installed.  This should be the directory that contains <code>Rebirth.exe</code>.  <i>This is for the use of the Popmenu Editor and is optional.</i></p>
+
 
             <p><u>Base Binds Directory</u></p>
             <p>This is where City of Heroes will find the bind files that BindControl sets up.  Because this path is used inside keybinds, which are length-limited, it needs to remain as short as possible, and contain no spaces.  c:\coh\ is the traditional choice, but you can set up any directory you like here.</p>
@@ -64,7 +69,7 @@
             <p>It can also be toggled on or off when binding a key, if you want to mix and match your side-specific and side-agnostic keybinds.  This is not super recommended, but you do you.</p>
 
             <p><u>Set all binds to default before reapplying</u></p>
-            <p>This adds a command to the Binds Reset Key behavior that returns <b>all</b> keybinds to the default state set up by City of Heroes, before applying the BindControl binds.  This can be useful in the case where you've accidentally bound some vital key to something strange and are having trouble getting back.  This is on by default, as the behavior when it's on is probably how you expect this all to work.  You can turn it off if you are adding key binds that are not managed by BindControl and that you don't want removed on reset.</p>
+            <p>This adds a command to the Binds Reset Key behavior that returns <b>all</b> keybinds to the default state set up by City of Heroes, before applying the BindControl binds.  This can be useful in the case where you've accidentally bound some vital key to something strange and are having trouble getting back.  This is on by default, as the behavior when it's on is probably how you expect this all to work.  You can turn it off if you are adding keybinds that are not managed by BindControl and that you don't want removed on reset.</p>
 
             <p>This feature works by calling the <code>/keybinds_reset</code> slash command, which will reset your binds to whatever Keybind Profile you have selected in the game's "Keybinding" options tab.</p>
 
@@ -80,16 +85,15 @@
             <h3 name="General">General</h3>
             <p>The General page contains the Profile name, as well as information about the archetype and powers available for this profile.  This information is used to help pick powers inside PowerBinder and other places, as well as to enable and configure the Speed-on-Demand and Mastermind pet binds.</p>
 
-            <p>Additionally, there are chat binds that can start chat commands in various ways, as well as optionally showing a "typing" indicator</p>
+            <p>At the top right of the Page, you can select whether this Profile is for Homecoming or for Rebirth.  This informs some of BindControl's user interface, such as what Incarnate Slots are available, and which slash commands can be chosen.</p>
 
-            <h3 name="Gameplay">Gameplay</h3>
-            <p>The Gameplay page offers various quality-of-life binds and bind systems.</p>
-            <p>At the top, you can bind the keys used to activate the various slots in the main power trays.  You can use the "Fill" button to fill that row's buttons with 1-0, or hold down a modifier key such as Alt to fill the buttons with, for instance, Alt-1 - Alt 0.</p>
-            <p>Additionaly, there is a combined Team/Pet selector system, as well as a scheme for enabling next/previous teammember selection.</p>
-            <p>There are binds to quit to desktop, to invite your target to a group, and turn on and off the FPS Meter and the Netgraph.</p>
+            <p>There are chat binds that can start chat commands in various ways, as well as optionally showing a "typing" indicator</p>
+
+            <p>Finally, at the bottom, there are a variety of quick helpful keybinds for quitting the game, inviting or ignoring players, and other "low-hanging fruit" that you might find helpful and useful.</p>
 
             <h3 name="CustomBinds">Custom Binds</h3>
-            <p>The Custom Binds page is where you'll create any bespoke binds you'd like that aren't covered by other pages and systems.</p>
+            <p>The Custom Binds page is where you'll create any bespoke binds you'd like that aren't covered by other pages and systems.  Much of BindControl's power is in the CustomBinds Page.  Check the Help buttons across the top for more information about each type of Custom Bind.</p>
+
             <p><u>Simple Binds</u></p>
             <p>To add a new Simple Bind to the page, click the New Simple Bind button at the top.  You'll be prompted to name your custom bind, and then presented with a small pane where you can select the key for the keybind and launch PowerBinder to create the bind string.  If the bind doesn't have both of these things complete, or ends up longer than 255 characters, when you attempt to Write Binds, an error will be raised and the bind will not be written to the bindfiles.</p>
 
@@ -99,7 +103,16 @@
             <p><u>Buffer Binds</u></p>
             <p>To add a new Buffer Bind set to the page, click the New Buffer Bind button at the top.  A buffer bind set contains one or more buffing powers that will be cast sequentially by multiple presses of the same keybind, and keybinds for each team member and/or pet that will perform the buff rotation on that target.</p>
 
-            <p><u><i>More Custom Bind Types to come...</i></u></p>
+            <p><u>Wizard Binds</u></p>
+            <p>BindControl now features the notion of a "Binds Wizard" which will guide you through creating elaborate or complicated keybinds that would be possible to do by hand with a Complex Bind, but would be fiddly and harder to maintain that way.  Currently the only Binds Wizard is "Incarnate Set" which will allow you to slot a complete or partial Incarnate Powers set using multiple presses of the bound key.</p>
+
+            <h3 name="Gameplay">Gameplay</h3>
+            <p>The Gameplay page offers various quality-of-life binds and bind systems.</p>
+            <p>At the top, you can bind the keys used to activate the various slots in the main power trays.  You can use the "Fill" button to fill that row's buttons with 1-0, or hold down a modifier key such as Alt to fill the buttons with, for instance, Alt-1 - Alt 0.</p>
+
+            <p>Below, there is a combined Team/Pet selector system, as well as a scheme for enabling next/previous teammember selection.</p>
+
+            <p>Additionally, there is a grab-bag selection of helpful commands you might find useful bound to a key.</p>
 
             <h3 name="SoD">Movement / Speed on Demand</h3>
             <p>This page is where you configure movement keys as well as other movement features.  It is most typicallly used to configure <b>Speed On Demand.</b></p>
@@ -116,13 +129,13 @@
 
             <p>It's possible to have the binds auto-select different detail levels and camera distance when moving.  This was historically used for lower-power GPUs during the mid-2000s but the settings can still help when running the game on a laptop or other old hardware, or just if it's your preference.</p>
 
-            <p>The available movement power configurations are informed by the power pool and archetype selections made on the <u>General</u> tab.</p>
+            <p>The available movement power configurations are informed by the power pool and archetype selections made on the <u>General</u> page.</p>
 
             <p>Additionally, if you have multiple travel power types, there is support for various useful combinations of powers, such as "Hover when Teleporting" which will enable a Hover power between teleports, and "Super Speed / Super Jump Mode" which will toggle on Super Jump when the jump button is pressed, and Super Speed when it is released.</p>
 
             <p>This page also contains support for the binds to change among the various Kheldian shapechange forms and automatically set up power trays and movement keys for each form.</p>
 
-            <p><i>Temporary travel powers will be added in a future version of BindControl.</i></p>
+            <p>At the bottom left, you can select a Temporary Travel Power that can be assigned a toggle key.  This is a simple on/off toggle, independent of the Speed-on-Demand system, and is on this page just as a convenience.</p>
 
             <h3 name="InspPopper">Inspiration Popper</h3>
             <p>The Inspiration Popper offers the ability to use classes of inspirations from a single key, either preferring smallest-first or largest-first.  That is to say, for instance, a single key can be bound to Accuracy inspirations, and it will try to use any accuracy inspiration in your inventory, starting with the most powerful.</p>
@@ -133,22 +146,23 @@
 
             <p>This page contains a set of binds to select individual pets by name.  This requires you tell BindControl the names of your pets.  The game will do a "best-match" when asked to command a pet by-name, and BindControl can determine whether your pet names are different enough to identify each pet uniquely.  To use the by-name binds, as well as Bodyguard Mode, you need to set your pets in-game to unique names, and tell BindControl what these names are.</p>
 
-            <p>The "Sandolphan" Pet Action binds offer one-key selection of groups of Mastermind pets as well as one-key orders for stance and action that apply to the selected pet(s). By default it uses the numeric keypad, but they can of course be rebound anywhere.  Each key optionally can give feedback via self-/tell, local chat, or petsay.</p>
+            <p>The "Sandolphan" Pet Action binds in the middle of the page offer one-key selection of groups of Mastermind pets as well as one-key orders for stance and action that apply to the selected pet(s). By default it uses the numeric keypad, but they can of course be rebound anywhere.  Each key optionally can give feedback via self-/tell, local chat, or petsay.</p>
 
             <p>In addition, the binds support having any subset of your pets flagged for Bodyguard Mode.  When the key is pressed, the indicated pets will go into Bodyguard Mode (Defensive+Follow).  Giving any other order to a Bodyguard will take that pet out of Bodyguard Mode until the key is pressed again.</p>
 
             <p>Finally, the page offers a set of binds to select your "next" or "previous" pet, for quickly iterating through your pets for buffing, for instance.  There are also keybinds to set the binds' idea of what your pet group size is.  This is so that the binds can "wrap around" from the last pet to the first and vice versa, and is necessary because keybinds can't know, without being told, how many pets you have active.</p>
 
+            <p><i>The Mastermind / Pet Binds page is only available if your Archetype is set to "Mastermind" on the General page.</i></p>
+
             <h3 name="PopmenuEditor">Popmenu Editor</h3>
 
-            <p>The Popmenu Editor tab allows you to install, manage, and edit <a href="https://homecoming.wiki/wiki/Popmenu_(Slash_Command)">Popmenus</a> for use in the game.</p>
+            <p>The Popmenu Editor page allows you to install, manage, and edit <a href="https://homecoming.wiki/wiki/Popmenu_(Slash_Command)">Popmenus</a> for use in the game.</p>
 
-            <p><i>NOTE that you need to have configured the location of your game install in the Preferences dialog in order for this feature to work.  The tab will let you know if it's not set up correctly.</i></p>
+            <p><i>NOTE that you need to have configured the location of your game install in the Preferences dialog in order for this feature to work.  The page will let you know if it's not set up correctly.</i></p>
 
-            <p>The tab itself contains instructions for using the editor.</p>
+            <p>The page itself contains instructions for using the editor.</p>
 
-
-        <h1>Troubleshooting</h1>
+        <h1>Troubleshooting<hr></h1>
         <p><i>My binds aren't working as I'd expect, help!</i></p>
         <p>First, double-check BindControl to make sure you have things set as you expect.  There are a lot of checkboxes and controls and keybind dialogs, and it's possible you accidentally changed something or forgot something.</p>
 
@@ -156,7 +170,7 @@
 
         <p>Finally, it's possible, even likely, that you've found a bug.  Please go to the <a href="https://github.com/emersonrp/bindcontrol/issues">BindControl Github page</a> and file an issue.</p>
 
-        <h1>Acknowledgements</h1>
+        <h1>Acknowledgements<hr></h1>
         <p>BindControl is a reimplementation of <a href="https://sourceforge.net/projects/citybinder/">citybinder 0.76</a> by konoko and monorail_jjs, with refinements and additions. It owes its existence, overall structure, and much internal logic to citybinder and wouldn't exist without it.<p>
 
         <p>Additionally, updates and improvements from <a href="https://sourceforge.net/projects/citybinder-for-homecoming/">CityBinder for Homecoming</a> have been added, per its author tailcoat's gracious permission.  tailcoat also made a prerelease version of CB4H available so that BindControl could implement improvements to the Inspiration Popper.</p>

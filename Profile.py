@@ -131,8 +131,8 @@ class Profile(wx.Notebook):
 
         # Add the individual tabs, in order.
         self.General           = self.CreatePage(General(self))
-        self.Gameplay          = self.CreatePage(Gameplay(self))
         self.CustomBinds       = self.CreatePage(CustomBinds(self))
+        self.Gameplay          = self.CreatePage(Gameplay(self))
         self.MovementPowers    = self.CreatePage(MovementPowers(self))
         self.InspirationPopper = self.CreatePage(InspirationPopper(self))
         self.Mastermind        = self.CreatePage(Mastermind(self))
@@ -204,9 +204,10 @@ class Profile(wx.Notebook):
                     if not ctrl.IsThisEnabled(): continue
                     ctrl.CheckConflicts()
 
-    def SetModified  (self, _ = None):
+    def SetModified(self, _ = None):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()} (*)") # pyright: ignore
         self.Modified = True
+
     def ClearModified(self, _ = None):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore
         self.Modified = False
@@ -402,11 +403,7 @@ class Profile(wx.Notebook):
                 savedata[pagename][controlname] = value
 
             if pagename == "General":
-                incarnatedata = page.IncarnateBox.GetData()
-                if incarnatedata:
-                    savedata[pagename]['Incarnate'] = incarnatedata
-
-                savedata['Server'] = page.ServerBtns.GetString(page.ServerBtns.GetSelection())
+                savedata['Server'] = page.ServerPicker.GetString(page.ServerPicker.GetSelection())
 
         savedata['CustomBinds'] = []
         customPage = getattr(self, 'CustomBinds')
@@ -502,8 +499,6 @@ class Profile(wx.Notebook):
             # Do this after SynchronizeUI for General because SynchronizeUI will blow away our powerset
             # picks when we re-fill those pickers from the archetype.
             if data and pagename == 'General':
-                if incdata := data['General'].get('Incarnate', None):
-                    page.IncarnateBox.FillWith(incdata)
 
                 # Re-fill Primary and Secondary pickers, honoring old numeric indices if needed
                 prim = data['General'].get('Primary', None)
@@ -522,7 +517,7 @@ class Profile(wx.Notebook):
                 page.Ctrls['Epic'].SetSelection(epic)
 
                 # And while we're in "General" make sure the "Server" picker is set right
-                page.ServerBtns.SetSelection(page.ServerBtns.FindString(self.Server))
+                page.ServerPicker.SetSelection(page.ServerPicker.FindString(self.Server))
 
             page.Layout()
 

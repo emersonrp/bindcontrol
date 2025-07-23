@@ -6,8 +6,31 @@ from pathlib import Path
 from UI.ControlGroup import cgTextCtrl
 from UI.ErrorControls import ErrorControlMixin
 
+class PowerBinder(ErrorControlMixin, wx.TextCtrl):
+
+    def __init__(self, parent, init = {}):
+        super().__init__(parent)
+        self.Init = init
+        self.Dialog = None
+        self.DialogParent = parent
+
+        self.SetHint("Click to define bind contents")
+
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnClickPB)
+
+    def OnClickPB(self, _):
+        self.PowerBinderDialog().Show()
+
+    def SaveToData(self):
+        return self.PowerBinderDialog().SaveToData()
+
+    def PowerBinderDialog(self):
+        if not self.Dialog:
+            self.Dialog = PowerBinderDialog(self.DialogParent, self, self.Init)
+        return self.Dialog
+
 class PowerBinderDialog(wx.Dialog):
-    def __init__(self, parent, button, init = {}):
+    def __init__(self, parent, powerbinder, init = {}):
         super().__init__(parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
         self.Page = parent.Page
@@ -16,7 +39,7 @@ class PowerBinderDialog(wx.Dialog):
         self.LoadModules()
 
         self.EditDialog = None # make this at dialog-show time in LoadFromCurrentState
-        self.Button = button
+        self.PowerBinder = powerbinder
         self.AddCommandMenu = self.makeAddCommandMenu()
 
         sizer = wx.BoxSizer(wx.VERTICAL);
@@ -84,7 +107,7 @@ class PowerBinderDialog(wx.Dialog):
         if show:
             self.LoadFromCurrentState()
             bindstring = self.MakeBindString()
-            if bindstring != self.Button.tgtTxtCtrl.GetValue():
+            if bindstring != self.PowerBinder.GetValue():
                 self.BindStringDisplay.AddError('nomatch', "The PowerBinder configuration doesn't match the bind string saved with the profile.  Check that the PowerBinder dialog is configured correctly before pressing 'OK' as this will overwrite the saved bind string.")
         retval = super().Show(show)
         self.SetFocus()
@@ -177,11 +200,11 @@ class PowerBinderDialog(wx.Dialog):
         button.PopupMenu(self.AddCommandMenu)
 
     def OnOKButton(self, _):
-        if self.Button.tgtTxtCtrl:
+        if self.PowerBinder:
             bindString = self.MakeBindString()
             self.BindStringDisplay.RemoveError('nomatch')
-            if bindString != self.Button.tgtTxtCtrl.GetValue():
-                self.Button.tgtTxtCtrl.SetValue(bindString)
+            if bindString != self.PowerBinder.GetValue():
+                self.PowerBinder.SetValue(bindString)
                 wx.App.Get().Main.Profile.SetModified()
         self.CurrentState = self.GetCurrentState()
         self.Close()
@@ -302,30 +325,6 @@ class PowerBinderDialog(wx.Dialog):
         CommandMenu.Append(wx.ID_ANY, 'Custom Command')
 
         return CommandMenu
-
-class PowerBinderButton(ErrorControlMixin, wx.BitmapButton):
-
-    def __init__(self, parent, tgtTxtCtrl, init = {}):
-        super().__init__(parent, -1, bitmap = GetIcon('UI', 'gear'))
-        self.Init = init
-        self.Dialog = None
-        self.DialogParent = parent
-
-        self.tgtTxtCtrl = tgtTxtCtrl
-        self.Bind(wx.EVT_BUTTON, self.OnClickPBB)
-        self.SetToolTip("Launch PowerBinder")
-
-    def OnClickPBB(self, _):
-        self.PowerBinderDialog().Show()
-
-    def SaveToData(self):
-        return self.PowerBinderDialog().SaveToData()
-
-    def PowerBinderDialog(self):
-        if not self.Dialog:
-            self.Dialog = PowerBinderDialog(self.DialogParent, self, self.Init)
-        return self.Dialog
-
 
 class PowerBinderEditDialog(wx.Dialog):
     def __init__(self, parent):

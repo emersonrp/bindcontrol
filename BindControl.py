@@ -147,11 +147,11 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.OnMenuLogWindow, Log_window)
 
-        self.AppIcon = wx.IconBundle()
+        AppIcon = wx.IconBundle()
         base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
         filename = f"{base_path}/icons/BindControl.ico"
-        self.AppIcon.AddIcon(filename, wx.BITMAP_TYPE_ANY)
-        self.SetIcons(self.AppIcon)
+        AppIcon.AddIcon(filename, wx.BITMAP_TYPE_ANY)
+        self.SetIcons(AppIcon)
 
         # Infobar for showing errors and other messages
         self.Sizer.Add(self.Logger.InfoBar, 0, wx.EXPAND)
@@ -261,13 +261,16 @@ class Main(wx.Frame):
         self.DeleteButton.Enable(enable)
 
     def OnPageChanged(self, evt):
-        if evt.GetSelection() == 6:
-            self.BottomButtonPanel.Hide()
-            if self.Profile:
-                self.Profile.PopmenuEditor.SynchronizeUI()
-        else:
-            self.BottomButtonPanel.Show(True)
-        self.Layout()
+        if self.Profile:
+            tabnumber = evt.GetSelection()
+            tabname = self.Profile.GetPageText(tabnumber)
+            if tabname == "Popmenu Editor":
+                self.BottomButtonPanel.Hide()
+                if self.Profile:
+                    self.Profile.PopmenuEditor.SynchronizeUI()
+            else:
+                self.BottomButtonPanel.Show(True)
+            self.Layout()
 
     def OnProfileNew(self, _ = None):
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
@@ -333,10 +336,10 @@ class Main(wx.Frame):
             self.Sizer.Remove(0)
 
             # delete any existing Profile and all its subwidgets and geegaws
-            if self.Profile: self.Profile.Destroy()
+            if self.Profile: self.Profile.DestroyLater()
 
             # destroy the Startup Panel if it's there.  This is only needed on Windows dunno why.
-            if self.StartupPanel: self.StartupPanel.Destroy()
+            if self.StartupPanel: self.StartupPanel.DestroyLater()
 
             # and set up our new profile as the current one
             self.Profile = newProfile

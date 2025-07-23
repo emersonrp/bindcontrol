@@ -1,11 +1,5 @@
 # BindControl
 
-<b>NEW!</b>  Check out the new work-in-progress [Getting Started with BindControl](https://github.com/emersonrp/bindcontrol/wiki/Getting-Started-With-BindControl) on the wiki!
-
-<b>NEW!</b>  BindControl now has beta support for Rebirth!  Come set up keybinds for your Guardian!
-
-<hr>
-
 BindControl is a helper app for creating and maintaining keybinds and popmenus for City of Heroes.
 
 It is an enhanced port of Konoko and Monorail's [CityBinder 0.76](http://sourceforge.net/projects/citybinder/), using Python and the WxWidgets UI toolkit.
@@ -16,7 +10,7 @@ I worked on it on-and-off for the remainder of the original run of the game, the
 
 BindControl is and has been developed on Homecoming, and best supports that.  Recently, beta support for Rebirth has been added, supporting archetypes, powersets, the Genesis Incarnate slot, and more.  This support is solid but is a work in progress -- Rebirth players, check it out and file issues as you find bugs!
 
-![image](https://github.com/user-attachments/assets/3faeee00-9ba5-42fd-bf1b-112f7f0a58ef)
+<img width="917" height="912" alt="NewBCGeneralPage" src="https://github.com/user-attachments/assets/54eb29d5-7d06-469f-81ea-bb6a862cc105" />
 
 ## Features
 
@@ -26,19 +20,20 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
 * Basic Gameplay Binds
     * One-key next-teammate / previous-teammate selection, with support for setting team size and optionally skipping the player in the next/previous rotation
     * Rebind the keys for the in-game power tray buttons
-    * Various helpful shortcut binds, "Quit to Desktop", "Invite Target", "Show FPS", "Show Netgraph" - more to come
+    * Many helpful binds directly supported - "Quit to Desktop," "Assist Target," "Show Coordinates," "Toggle Roleplaying Status," many many more
     * Chat binds with optional 'typing' notifier
 
 * Custom Binds
     * Create simple binds using PowerBinder, a flexible tool for stringing together arbitrary commands for keybinding
     * Complex binds, chains of PowerBinder actions that fire sequentially on multiple presses of a keybind
     * Buffer binds, allowing quick one-key buffing of each teammate and/or pet
+    * "Bind Wizards" - simple processes guiding you through creating elaborate or complicated bind schemes that would be difficult and/or fiddly to create and maintain by hand
 
 * Movement / Speed-on-Demand
     * Speed-on-Demand based on [CityBinder](http://sourceforge.net/projects/citybinder/) and the original Gnarly's SoD keybinds
     * Supports all formal travel powers:  Fly, Mystic Flight, Group Fly, Super Jump, Mighty Leap, Super Speed, Speed of Sound, Teleport, and Team Teleport
-    * Secondary / server tray travel powers like Super Jump's "Double Jump" and Mystic Flight's "Translocation" are starting to be better integrated
-    * Homecoming's <code>powexec_location cursor</code> feature incorporated into Teleport binds, with "teleport immediately" and "teleport on key release" options available
+    * Secondary / server tray travel powers like Super Jump's "Double Jump" and Mystic Flight's "Translocation" integrated
+    * Homecoming's <code>powexec_location cursor</code> incorporated into Teleport binds, with "teleport immediately" and "teleport on key release" options available
     * Kheldian form toggles;  Kheldian movement powers incorporated into Speed-on-Demand
     * Simple Temporary Travel Power toggle keybind
     * One-key reset in case SoD binds get tangled up
@@ -47,7 +42,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
     * By-type; dual and team inspirations supported
     * Option to use or skip "super" inspirations
     * Largest-first or smallest-first
-    * Optional /say feedback with per-inspiration custom colors
+    * Optional /say feedback with per-inspiration-type custom colors
 
 * Mastermind / Pet Binds
     * Support for classic "Sandolphan" Mastermind binds
@@ -69,7 +64,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
 ## TODO
 
 * It's gotten a lot better, but there are still some Homecoming-specific notions hard-coded into BindControl.  I'm working on finding and fixing these, but any bug reports and other feedback from Rebirth players would be very welcomed.
-* The hope is to make every reasonable slash command in the game available in some way, typically via PowerBinder.  What qualifies as a "reasonable slash command" is yet to be determined.
+* The hope is to make every reasonable slash command in the game available in some way, typically via PowerBinder.  What qualifies as a "reasonable slash command" is yet to be determined.  Check [the SlashCommands.md file](SlashCommands.md) for the current status
 * Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment.
 * The Movement Powers page is a confusing forest of checkboxes, dating from the original CityBinder layout and needs some layout and documentation work <i>(WIP)</i>.
 * "Bodyguard mode" as implemented in CityBinder doesn't work as intended, and might not be able to due to game restrictions.

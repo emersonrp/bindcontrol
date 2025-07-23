@@ -2,29 +2,28 @@ import wx
 import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
-from UI.PowerBinderDialog import PowerBinderButton
-from UI.ControlGroup import cgTextCtrl
+from UI.PowerBinder import PowerBinder
 
 ### CustomBind subclasses for the individual bind types
 
 class SimpleBindPane(CustomBindPaneParent):
     def __init__(self, page, init = {}):
-        CustomBindPaneParent.__init__(self, page, init)
+        super().__init__(page, init)
 
         self.Description = "Simple Bind"
 
-        self.PowerBinderBtn = None
+        self.PowerBinder = None
 
     def Serialize(self):
         data = {
             'Type'     : 'SimpleBind',
             'Title'    : self.Title,
-            'Contents' : self.Ctrls[self.MakeCtlName('BindContents')].GetValue(),
+            'Contents' : self.PowerBinder.GetValue() if self.PowerBinder else '',
             'Key'      : self.Ctrls[self.MakeCtlName('BindKey')].Key,
         }
-        if self.PowerBinderBtn:
-            if self.PowerBinderBtn.PowerBinderDialog():
-                data['PowerBinderDlg'] = self.PowerBinderBtn.PowerBinderDialog().SaveToData()
+        if self.PowerBinder:
+            if self.PowerBinder.PowerBinderDialog():
+                data['PowerBinderDlg'] = self.PowerBinder.PowerBinderDialog().SaveToData()
             else:
                 wx.LogWarning(f'Unable to save PowerBinder data for Simple Bind "{self.Title}"')
         return data
@@ -35,18 +34,15 @@ class SimpleBindPane(CustomBindPaneParent):
 
         BindSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        BindContentsCtrl = cgTextCtrl(pane, -1, self.Init.get('Contents', ''), style = wx.TE_READONLY)
-        BindContentsCtrl.SetForegroundColour(wx.Colour(128,128,128))
-        BindContentsCtrl.SetHint('Use the PowerBinder button to the right to define this keybind')
-        self.Ctrls[self.MakeCtlName('BindContents')] = BindContentsCtrl
-
         powerbinderdata = self.Init.get('PowerBinderDlg', {})
 
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"), 0, wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(BindContentsCtrl,                          1, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
-        pbb = PowerBinderButton(pane, BindContentsCtrl, powerbinderdata)
-        BindSizer.Add(pbb, 0, wx.ALIGN_CENTER_VERTICAL)
-        self.PowerBinderBtn = pbb
+        pb = PowerBinder(pane, powerbinderdata)
+        pb.SetValue(self.Init.get('Contents', ''))
+        pb.Bind(wx.EVT_TEXT, self.onContentsChanged)
+        self.PowerBinder = pb
+        self.Ctrls[self.MakeCtlName('PowerBinder')] = pb
+        BindSizer.Add(pb, 1, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
 
         BindKeyCtrl = bcKeyButton(pane, -1, {
             'CtlName' : self.MakeCtlName("BindKey"),
@@ -55,14 +51,10 @@ class SimpleBindPane(CustomBindPaneParent):
         })
         BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
-        BindContentsCtrl.Bind(wx.EVT_TEXT, self.onContentsChanged)
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(BindKeyCtrl,                          0, wx.ALIGN_CENTER_VERTICAL)
         self.Ctrls[BindKeyCtrl.CtlName] = BindKeyCtrl
         UI.Labels[BindKeyCtrl.CtlName] = f'Simple Bind "{self.Title}"'
-
-        # gotta wait to bind this until pbb is defined/etc
-        BindContentsCtrl.Bind(wx.EVT_LEFT_DOWN, pbb.OnClickPBB)
 
         BindSizer.Layout()
 
@@ -88,21 +80,19 @@ class SimpleBindPane(CustomBindPaneParent):
     def checkIfWellFormed(self):
         isWellFormed = True
 
-        bc = self.Ctrls[self.MakeCtlName('BindContents')]
-        bc.SetToolTip('')
-
-        if self.PowerBinderBtn:
-            if bc.GetValue():
-                self.PowerBinderBtn.RemoveError('undef')
+        if self.PowerBinder:
+            self.PowerBinder.SetToolTip('')
+            if self.PowerBinder.GetValue():
+                self.PowerBinder.RemoveError('undef')
             else:
-                self.PowerBinderBtn.AddError('undef', 'The bind contents have not been defined.')
+                self.PowerBinder.AddError('undef', 'The bind contents have not been defined.')
                 isWellFormed = False
 
-        if len(bc.GetValue()) <= 255:
-            bc.RemoveError('length')
-        else:
-            bc.AddError('length', 'This bind is longer than 255 characters, which will cause problems in-game.')
-            isWellFormed = False
+            if len(self.PowerBinder.GetValue()) <= 255:
+                self.PowerBinder.RemoveError('length')
+            else:
+                self.PowerBinder.AddError('length', 'This bind is longer than 255 characters, which will cause problems in-game.')
+                isWellFormed = False
 
         bk = self.Ctrls[self.MakeCtlName('BindKey')]
         if bk.Key:
@@ -119,6 +109,6 @@ class SimpleBindPane(CustomBindPaneParent):
             return
         resetfile = wx.App.Get().Main.Profile.ResetFile()
         bk = self.Ctrls[self.MakeCtlName('BindKey')]
-        bc = self.Ctrls[self.MakeCtlName('BindContents')]
+        pb = self.PowerBinder
 
-        resetfile.SetBind(bk.Key, self.Title, self.Page, bc.GetValue())
+        resetfile.SetBind(bk.Key, self.Title, self.Page, pb.GetValue())

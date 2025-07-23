@@ -12,7 +12,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /altinvite name | Adds other characters in your account to your supergroup. |
 | /alttray [0-1] | Show and lock the secondary (Alt) tray slot into the raised position or unlock and hide it. |
 | /alttraysticky | Cycles through showing the secondary (Alt) and tertiary (Alt2) tray slots, and then hiding them. |
-| /assist | Change your current target to selected ally's or enemy's target |
 | /auc_loginupdate | Get status of auction inventory info to the player. Displays how many items were bought and sold in the Consignment House chat channel. |
 | /build_save | Saves the current character build (Name, Level, Archetype, Origin, Powers and Slotted Enhancements) to build.txt |
 | /build_save_file filename | Saves the current character build (Name, Level, Archetype, Origin, Powers and Slotted Enhancements) to a specified file |
@@ -59,7 +58,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /ctm [0-1] | Alias for /clicktomove |
 | /ctm_invert [0-1] | Alias for /clicktomove. |
 | /ctmtoggle | Toggles click-to-move mode on or off. |
-| /cursorcache | Enable cursor cache for smoother cursor changes |
 | /custom_window name | Creates a custom window |
 | /custom_window_toggle name | Opens or closes a custom window |
 | /debug_disableautodismiss [0-1] | Enables you to turn on and off auto-dismissal of contacts. |
@@ -79,8 +77,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /demostop | Stop demo record/play. Alias: /demodump |
 | /demote character | Demote supergroup member one rank |
 | /dialog_answer choice | Answer dialog with button matching the provided text choice (ok, yes, no, cancel, accept, decline, join, etc.) |
-| /dialog_no | Answer OK, No, or Cancel to current dialog |
-| /dialog_yes | Answer OK, Yes, or Accept to current dialog |
 | /disable2d | Disables 2D sprite drawing |
 | /debug_disableautodismiss [0-1] | Enables you to turn on and off auto-dismissal of contacts. |
 | /emailheaders | Displays the number of local email messages in your inbox. |
@@ -90,22 +86,18 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /enterdoor coordinates map_ID | Request a click on a door. |
 | /exitlaunch FilePath | Set program to run when game exits |
 | /face | Turn player to face target |
-| /fl | Display friend list. Alias: /fl |
+| /fl | Display friend list. |
 | /follow | Toggle follow mode (/cmdlist says that follow takes an argument (0 or 1), it does not) |
-| /friend character | Add character to friend list |
 | /fullRelight | Do not cap number of world object vertices to relight per frame |
 | /fullscreen [0-1] | Sets video mode to fullscreen |
-| /gamereturn | Close all dialogs and non-essential windows. |
 | /getallarenastats | Get all your arena combat statistics, more comprehensive display. |
 | /getarenastats | Get your arena stats. |
 | /getglobalname localname | Given the name of a character, this command will tell you the player's global name |
 | /get_local_invite globalname | Invite a player to your team using their global name |
 | /get_local_league_invite globalname | Invite a player to your league using their global name |
 | /getlocalname globalname | Given a global name, this command will tell you the name of a player's currently logged on character |
-| /gfriend name | Add a player to your global friends list. |
 | /gfriends | Display all members of your global friends list |
-| /gignore username | Alias for /ignore. |
-| /gignoring | Alias for /ignorelist |
+| /gignoring | Displays a list of ignored characters |
 | /ginvite channel_name username | Alias for /chan_invite |
 | /ginvite_sg channel_name rank | Alias for /chan_invite_sg |
 | /gmotd | View the game's global message again. |
@@ -114,11 +106,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /goto_tray_alt2 number | Go to specified power tray number in the tertiary (Alt2) tray slot |
 | /goto_trays_tray row tray | Go to specified tray slot (1-3) and power tray (1 to 9). |
 | /gunfriend name | Remove player from global friends list. Alias: /gunfriend_player |
-| /gunignore username | Removes a player from your global ignore list. |
 | /hardconsts | Use hard shader constants instead of Cg to setup shader params |
-| /i character | Alias for /invite |
-| /ignore character | Ignore character |
-| /ignorelist | Displays a list of ignored characters |
 | /ignore_spammer character | Ignore character and sends alert to customer service |
 | /imageServer | Sets game to Image Server mode. |
 | /info | Opens the info window for the current target (yourself if you have no target). |
@@ -129,7 +117,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /insp_delete inspiration | Deletes an inspiration by name. |
 | /inspexec_pet_name insp_name petname | Gives an inspiration to the named pet |
 | /inspexec_pet_target insp_name | Gives an inspiration to the targeted pet |
-| /interact | Interact with an object or entity in front of the player using a keyboard key (equivalent to left-click on object). |
 | /k character | Remove character from team.|
 | /keybind_reset | Alias for /unbind_all |
 | /kiosk number number | Pop up the kiosk info for the nearest kiosk. (Assuming you're close enough.) |
@@ -146,11 +133,11 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /listen_range number | Set the maximum range of local chat and emotes that you want to listen to. |
 | /lk name | Kick player name from league.|
 | /lml name | Change the league leader (must be league leader).|
-| /loc | Get coordinates of current location on the map.|
 | /localtime | Displays your local time (the time on your computer) in the System chat channel. |
 | /logchat | Toggle chat logging |
 | /loudstacking [0-1] | Enable old eardrum-busting sound stacking. |
 | /ma message | Send message to the Architect Chat channel.|
+| /ma message | Send message to the Architect Chat channel. |
 | /macro name command | Add a macro to first empty slot |
 | /macro_image icon tooltip command | Add a macro with an existing icon to the first empty slot |
 | /macroslot macro-slot# name command | Add a macro to specified power tray slot |
@@ -162,7 +149,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /maxInactiveFps | Limits max frames per second while the game is not in the foreground. |
 | /maxrtframes number | How many frames ahead to allow buffering. |
 | /maxtexunits | Limits number of textures used, set to 4 to emulate GF 4/5 path |
-| /menu | Opens the main menu. |
 | /mergeInsp inspName inspName | Alias for /insp_combine. |
 | /ml character | Change the team leader to targeted character, must have character targeted if no name is provided.|
 | /mmentry | Opens the Mission Architect to the My Creations tab while inside Architect Entertainment.|
@@ -198,14 +184,11 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /profiler_stop | Stop recording profiler information. |
 | /profiling_memory | Set the number of MB of memory to use for profiling |
 | /promote character | Promote supergroup member one rank |
-| /quittocharacterselect | Quits to character select. |
-| /quittologin | Quits to login screen. |
 | /recharge_indicator [0-3] | Sets the position of the recharge timer on tray icons. |
 | /recharge_timer_color | Sets the Recharge Timer Color. |
 | /recharge_timer_format | Sets the Recharge Timer Format. |
 | /recharge_timer_opacity | Sets the Recharge Timer Opacity. |
 | /recharge_timer_threshold | Enables the Power Recharge Timer and sets the threshold for when the timer will appear. |
-| /release | Activate medicom unit for emergency medical transport when defeated |
 | /release_pets | Release your current pets |
 | /renderscalex | Changes the horizontal scale at which the 3D world is rendered relative to your screen size |
 | /renderscaley | Changes the vertical scale at which the 3D world is rendered relative to your screen size |
@@ -224,21 +207,17 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /set_difficulty_boss | Sets whether or not you encounter bosses while solo. See Notoriety |
 | /set_difficulty_level level | Sets the level part of your Notoriety |
 | /set_difficulty_team_size size | Sets the team size part of your Notoriety |
-| /sethelperstatus [1-4] | Sets your helper status. 1 = help me, 2 = mentor, 3 = off, 4=roleplaying |
 | /set_powerinfo_class | Brings up context menu for choosing archetype for power info display. |
 | /set_title number | Set badge title by number, if you do not have the specified badge your current badge title will be cleared. |
 | /sg_enter_passcode | When the Base Entry Selection window is open, opens a secondary window to enter a Supergroup Base Access Passcode. |
-| /sgicharacter | Invite character to join supergroup. |
 | /sgk character | Kick character from supergroup. |
 | /sgkickyes name | Kick player from supergroup, without confirmation. |
 | /sgleave | Leave the current supergroup. |
 | /sgwho | Lists basic information about your supergroup and generates a list of all member characters sorted by supergroup rank. The list is displayed in the System chat channel. |
 | /shaderCache | Enable the shader cache |
-| /sheathe | Immediately puts away all weapons. |
 | /show_bind key | Shows bind attached to specified key |
 | /show_bind_all | Prints a list of all apparent key bindings on a character |
 | /show_bind_all_file filename | Prints a list of all apparent key bindings on a character |
-| /showfps [0-3] | Show current framerate |
 | /shownewtray | Opens an additional floating tray slot/power tray. |
 | /show_petnames | Displays the names of all your named pets |
 | /showtime [0-1] | Displays the in-game time of day on the screen. |
@@ -246,10 +225,8 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /speed_turn number | Changes the speed that your character turns while using keyboard keys. |
 | /stopinactivedisplay | Stops rendering when the game is not the foreground application. |
 | /stopmonitorattribute string | Removes a display line from the combat Attribute Monitor. |
-| /stuck | Try to get unstuck if you are stuck in the geometry. |
 | /suppressCloseFx | Hide all personal FX when the camera is closer than the suppressCloseFxDist |
 | /suppressCloseFxDist number | Within this camera distance, personal FX will be suppressed. |
-| /sync | Try to resync with the game server. |
 | /tabclose name | Close/delete chat tab |
 | /tabcreate window pane name | Create new chat tab. Specify window (0-4), pane(0 top, 1 bottom) and tab name. |
 | /tabglobalnext | Cycle forward through all chat tabs in all windows, will open the corresponding chat window if necessary |
@@ -262,7 +239,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /target_distance [0-1] | Sets displaying the distance between you and your target in the Target window. |
 | /target_name name | Targets next entity that matches the given name. |
 | /team_quit_internal | Quits a team without offering a confirmation dialog, even if in task force, flashback, or Architect modes. |
-| /texaniso | Sets the amount of anisotropic filtering to use, reloads textures |
 | /texLodBias | Reduces the texture LOD bias for better compatibility with anisotropic filtering (values from 0 - 2 are valid) |
 | /title_change | Opens the Title selection menu. |
 | /tll character_name, message | Send a message to a character's league leader. |
@@ -282,10 +258,8 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /unbind keyname | Unbinds a bound key (resets it to default). |
 | /unbind_all | Resets keybinds, returning all keys to their default bindings. |
 | /unfriend character | Remove character from friends list. |
-| /unignore character | Unignore character |
 | /unlevelingpact | Bring up the dialog for quitting a leveling pact. |
 | /unloadgfx | unloads all textures (causing them to be reloaded dynamically). Alias: /reloadgfx |
-| /usecelshader number | Enables or disables the cel shader graphics setting |
 | /useCubemap number | Use cubemap |
 | /usedof | Use Depth of Field effects if available |
 | /usefp | Use a floating point render target for HDR lighting effects if available |
@@ -346,12 +320,14 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /compatiblecursors | Enables useage of basic Windows mouse cursors instead of graphical cursors (command line option) |
 | /controller_modifiers <first> <second> | Allows setting two controller buttons as modifiers on a gamepad |
 | /controller_vmouse <LMB> <RMB> [MMB] [Snap] | Configures virtual mouse mode buttons on a gamepad |
+| /cursorcache | Enable cursor cache for smoother cursor changes |
 | /editbase [1/0] | Turns supergroup base editor on or off. |
 | /extra_modifiers [mod1] [mod2] [mod3] [mod4] | Allows setting up to four extra modifiers on a controller/gamepad. |
 | /grid_snap number | Sets item placement grid size while in the SG base editor. |
 | /grid_snap_cycle | Cycles through object placement grid sizes while in the SG base editor. (F1) |
 | /incarnate_unequip slotName powername | Unequips the specified Incarnate Ability. |
 | /incarnate_unequip_all | Unequips all equipped Incarnate Abilities. |
+| /hardconsts | Use hard shader constants instead of Cg to setup shader params |
 | /lfg_event_response yes/no | Accept an invitation to join an event (trial, task force, story arc, or holiday event). |
 | /lfg_request_event_list | Get LFG system event list. |
 | /mousedrag | Enable dragging object while using the SG base editor. |
@@ -387,6 +363,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /sgsetmotd message | Sets the supergroup's message of the day. |
 | /sgsetmotto motto | Sets the supergroup's motto. |
 | /supporthardwarelights | Enable support for AlienFX/LightFX case lights. |
+| /texaniso | Sets the amount of anisotropic filtering to use, reloads textures |
 | /thumbtack x y z | Adds a thumbtack to the map at the specified X/Y/Z coordinates |
 | /useHQ number | Allow use of High Quality shader variants |
 | /userenderscale | Enables/disables render scaling feature |

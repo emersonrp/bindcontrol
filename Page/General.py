@@ -1,13 +1,13 @@
 # UI / logic for the 'general' panel
 import wx
+import wx.adv
 import wx.lib.stattext as ST
 import UI
 import Profile
-from Icon import GetIcon
+from Icon import GetIconBitmap
 import GameData
 
 from UI.ControlGroup import ControlGroup
-from UI.IncarnateBox import IncarnateBox
 
 from Page import Page
 
@@ -17,15 +17,15 @@ class General(Page):
 
         self.Init = {
             'Alignment' : 'Hero',
-            'Origin': "Magic",
-            'Archetype': 'Mastermind',
-            'Primary': '',
-            'Secondary': '',
-            'Epic': '',
-            'Pool1': '',
-            'Pool2': '',
-            'Pool3': '',
-            'Pool4': '',
+            'Origin'    : "Magic",
+            'Archetype' : 'Mastermind',
+            'Primary'   : '',
+            'Secondary' : '',
+            'Epic'      : '',
+            'Pool1'     : '',
+            'Pool2'     : '',
+            'Pool3'     : '',
+            'Pool4'     : '',
 
             'ChatEnable' : False,
             'StartChat'  : 'ENTER',
@@ -36,60 +36,76 @@ class General(Page):
             'TellTarget' : 'COMMA',
             'QuickChat'  : "'",
 
-            'TypingNotifierEnable' : True,
+            'TypingNotifierEnable' : False,
             'TypingNotifier'       : 'typing',
+
+            'QuitToDesktop'   : '',
+            'QuitToLogin'     : '',
+            'QuitToSelect'    : '',
+            'Sync'            : '',
+
+            'ToggleRP'        : '',
+            'HelpHelpMe'      : '',
+            'HelpMentor'      : '',
+            'HelpOff'         : '',
+
+            'InviteTarget'    : '',
+            'SGInviteTarget'  : '',
+            'FriendTarget'    : '',
+            'GFriendTarget'   : '',
+            'IgnoreTarget'    : '',
+            'UnignoreTarget'  : '',
         }
 
     def BuildPage(self):
 
-        topSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.bannerPanel = wx.Panel(self)
+        bannerSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.bannerPanel.SetSizer(bannerSizer)
 
-        powersBox = ControlGroup(self, self, 'Powers')
+        alignPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
+        alignPicker.Clear()
+        for a in GameData.Alignments:
+            alignPicker.Append(a, GetIconBitmap('Alignments', a))
+        self.Ctrls['Alignment'] = alignPicker
+        alignPicker.SetSelection(alignPicker.FindString(self.Init['Alignment']))
+        alignPicker.Bind(wx.EVT_COMBOBOX, self.OnPickAlignment)
+        bannerSizer.Add(alignPicker, 1, wx.EXPAND|wx.ALL, 5)
 
-        # first the hand-rolled "Profile" + profilename
-        ProfileLabel = wx.StaticText(powersBox.GetStaticBox(), -1, "")
-        ProfileLabel.SetLabelMarkup("<b>Profile:</b>")
-        powersBox.InnerSizer.Add(ProfileLabel, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        originPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
+        originPicker.Clear()
+        for o in GameData.Origins:
+            originPicker.Append(o, GetIconBitmap('Origins', o))
+        self.Ctrls['Origin'] = originPicker
+        originPicker.Bind(wx.EVT_COMBOBOX, self.OnPickOrigin)
+        bannerSizer.Add(originPicker, 1, wx.EXPAND|wx.ALL, 5)
 
-        self.nameBox = wx.Panel(powersBox.GetStaticBox())
+        self.nameBox = wx.Panel(self.bannerPanel)
         nameSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.nameBox.SetSizer(nameSizer)
-
-        self.OriginIcon    = wx.StaticBitmap(self.nameBox, size = wx.Size(32, 32))
-        self.NameDisplay   = ST.GenStaticText(self.nameBox, -1, "", style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        self.ArchetypeIcon = wx.StaticBitmap(self.nameBox, size = wx.Size(32,32))
-
+        self.NameDisplay = ST.GenStaticText(self.nameBox, -1, "", style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.NameDisplay.SetFont(wx.Font(wx.FontInfo().Bold()))
-
-        nameSizer.Add(self.OriginIcon, 0, wx.ALL, 6)
         nameSizer.Add(self.NameDisplay, 1, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 6)
-        nameSizer.Add(self.ArchetypeIcon, 0, wx.ALL, 6)
+        bannerSizer.Add(self.nameBox, 1, wx.EXPAND|wx.ALL, 5)
 
-        powersBox.InnerSizer.Add(self.nameBox, 1, wx.EXPAND)
+        archetypePicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
+        archetypePicker.Clear()
+        for a in GameData.Archetypes:
+            archetypePicker.Append(a, GetIconBitmap('Archetypes', a))
+        self.Ctrls['Archetype'] = archetypePicker
+        archetypePicker.Bind(wx.EVT_COMBOBOX, self.OnPickArchetype)
+        bannerSizer.Add(archetypePicker, 1, wx.EXPAND|wx.ALL, 5)
 
-        alignmentpicker = powersBox.AddControl(
-            ctlName = 'Alignment',
-            ctlType  = 'choice',
-            contents = GameData.Alignments,
-            callback = self.OnPickAlignment,
-        )
-        alignmentpicker.SetMinSize(wx.Size(200,-1))
+        self.ServerPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
+        self.ServerPicker.Clear()
+        for s in ['Homecoming', 'Rebirth']:
+            self.ServerPicker.Append(s, GetIconBitmap('Servers', s))
+        self.Ctrls['Server'] = self.ServerPicker
+        self.ServerPicker.Bind(wx.EVT_COMBOBOX, self.OnServerChange)
+        bannerSizer.Add(self.ServerPicker, 1, wx.EXPAND|wx.ALL, 5)
 
-        originpicker = powersBox.AddControl(
-            ctlName = 'Origin',
-            ctlType = 'choice',
-            contents = GameData.Origins,
-            callback = self.OnPickOrigin,
-        )
-        originpicker.SetMinSize(wx.Size(200,-1))
-
-        archpicker = powersBox.AddControl(
-            ctlName = 'Archetype',
-            ctlType = 'choice',
-            contents = sorted(GameData.Archetypes),
-            callback = self.OnPickArchetype,
-        )
-        archpicker.SetMinSize(wx.Size(200,-1))
+        topSizer = wx.BoxSizer(wx.HORIZONTAL)
+        powersBox = ControlGroup(self, self, 'Powers')
 
         powersBox.AddControl(
             ctlName = 'Primary',
@@ -133,53 +149,29 @@ class General(Page):
             callback = self.OnPickPoolPower,
         )
 
-        ChatSizer = wx.BoxSizer(wx.VERTICAL)
-
-        # ### Chat Color Picker
-        # ChatColorSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Chat Colors")
-        # ChatColorEnable = wx.CheckBox(ChatColorSizer.GetStaticBox(), -1, 'Use Custom Chat Colors')
-        # ChatColorEnable.SetToolTip( wx.ToolTip('Check this to select custom colors for your chat messages'))
-        # setattr(ChatColorEnable, "CtlName", "ChatColorEnable")
-        # self.Ctrls['ChatColorEnable'] = ChatColorEnable
-        # ChatColorEnable.Bind(wx.EVT_CHECKBOX, self.OnColorEnable)
-        # ChatColors = ChatColorPicker(ChatColorSizer.GetStaticBox(), self, 'Chat', {
-        #     'border'     : wx.BLACK,
-        #     'background' : wx.WHITE,
-        #     'text'       : wx.BLACK,
-        # })
-        # ChatColorSizer.Add(ChatColorEnable, 0, wx.ALL, 6)
-        # ChatColorSizer.Add(ChatColors, 0, wx.ALL, 10)
-        # ChatSizer.Add(ChatColorSizer, 0)
-
-        ### Server picker
-        self.ServerBtns = wx.RadioBox(self, -1, 'Server', choices = ['Homecoming', 'Rebirth'])
-        self.ServerBtns.Bind(wx.EVT_RADIOBOX, self.OnServerChange)
-        ChatSizer.Add(self.ServerBtns, 0, wx.EXPAND)
 
         ## Typing Notifier
-        TNSizer = wx.StaticBoxSizer(wx.VERTICAL, self, "Typing Notifier")
-        TNEnable = wx.CheckBox(TNSizer.GetStaticBox(), -1, 'Use Typing Notifier')
-        TNEnable.SetToolTip(
-                wx.ToolTip('Check this to enable a floating "typing" notifier when you are typing into the chat box'))
-        setattr(TNEnable, "CtlName", 'TypingNotifierEnable')
+        TNPanel = wx.Panel(self)
+        TNSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        TNEnable = wx.CheckBox(TNPanel, -1, 'Use Typing Notifier')
+        TNEnable.SetToolTip('Check this to enable a floating notifier when you are typing into the chat box')
+        setattr(TNEnable, 'CtlName', 'TypingNotifierEnable')
         TNEnable.Bind(wx.EVT_CHECKBOX, self.OnTypeEnable)
         self.Ctrls['TypingNotifierEnable'] = TNEnable
-        TNCtrlSizer = wx.BoxSizer(wx.HORIZONTAL)
-        TNLabel = wx.StaticText(TNSizer.GetStaticBox(), label = "Typing Notifier:", style=wx.ALIGN_RIGHT)
-        TN = wx.TextCtrl(TNSizer.GetStaticBox(), value = self.Init['TypingNotifier'], style=wx.TE_CENTER)
-        setattr(TN, "CtlName", 'TypingNotifier')
-        setattr(TN, "CtlLabel", TNLabel)
+
+        TN = wx.TextCtrl(TNPanel, value = self.Init['TypingNotifier'], style = wx.TE_CENTER)
+        TN.SetToolTip('The contents of the notifier that will float over your head as you type')
+        TN.SetHint('typing notifier contents')
+        setattr(TN, 'CtlName', 'TypingNotifier')
         self.Ctrls['TypingNotifier'] = TN
-        TNCtrlSizer.Add(TNLabel, 1, wx.ALL|wx.ALIGN_CENTER, 6)
-        TNCtrlSizer.Add(TN,      1, wx.ALL, 6)
 
-        TNSizer.Add(TNEnable,    0, wx.ALL, 5)
-        TNSizer.Add(TNCtrlSizer, 0, wx.ALL|wx.EXPAND, 5)
-
-        ChatSizer.Add(TNSizer, 0, wx.TOP|wx.EXPAND, 6)
+        TNSizer.Add(TNEnable, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
+        TNSizer.Add(TN,       1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
+        TNPanel.SetSizer(TNSizer)
 
         ### Chat binds
-        chatBindBox = ControlGroup(self, self, 'Chat Binds')
+        chatBindBox = ControlGroup(self, self, 'Chat Binds', topcontent = TNPanel)
 
         for b in (
                 # ['StartChat',  'Activates the Chat bar with notifier and custom colors if selected'],
@@ -196,17 +188,60 @@ class General(Page):
                 ctlType = 'keybutton',
                 tooltip = b[1],
             )
-        ChatSizer.Add(chatBindBox, 1, wx.EXPAND)
 
-        ### Incarnate interface
-        self.IncarnateBox = IncarnateBox(self, self.Profile.Server)
+        ClientSizer = ControlGroup(self, self, 'Game Client Binds')
+        for b in (
+            ['QuitToSelect'    , 'Choose the key that will quit to the character select screen'],
+            ['QuitToLogin'     , 'Choose the key that will quit to the login screen'],
+            ['QuitToDesktop'   , 'Choose the key that will quit directly to the desktop']  ,
+            ['Sync'            , 'Choose the key that will attempt to sync with the game server'],
+        ):
+            ClientSizer.AddControl(
+                ctlName = b[0],
+                ctlType = 'keybutton',
+                tooltip = b[1],
+            )
 
-        topSizer.Add(powersBox, 0, wx.RIGHT|wx.EXPAND, 10)
-        topSizer.Add(ChatSizer, 0,          wx.EXPAND, 0)
+        StatusSizer = ControlGroup(self, self, 'Character Status Binds')
+        for b in (
+             ['ToggleRP'        , 'Choose the key that will toggle your "Roleplaying" status / tag / name block' ],
+             ['HelpHelpMe'      , 'Choose the key that will set Help status to "Help Me"'],
+             ['HelpMentor'      , 'Choose the key that will set Help status to "Mentor"'],
+             ['HelpOff'         , 'Choose the key that will turn off Help status'],
+        ):
+            StatusSizer.AddControl(
+                ctlName = b[0],
+                ctlType = 'keybutton',
+                tooltip = b[1],
+            )
+
+        SocialSizer = ControlGroup(self, self, 'Social Binds')
+        for b in (
+            ['InviteTarget'    , 'Choose the key that will invite your target to a group'] ,
+            ['SGInviteTarget'  , 'Choose the key that will invite your target to your supergroup'] ,
+            ['FriendTarget'    , 'Choose the key that will add your target to your friends list'],
+            ['GFriendTarget'   , 'Choose the key that will add your target to your global friends list'],
+            ['IgnoreTarget'    , 'Choose the key that will ignore your current target'],
+            ['UnignoreTarget'  , 'Choose the key that will unignore your current target'],
+        ):
+            SocialSizer.AddControl(
+                ctlName = b[0],
+                ctlType = 'keybutton',
+                tooltip = b[1],
+            )
+
+        topSizer.Add(powersBox, 1, wx.EXPAND|wx.RIGHT, 10)
+        topSizer.Add(chatBindBox, 1, wx.EXPAND)
+
+        bottomSizer = wx.BoxSizer(wx.HORIZONTAL)
+        bottomSizer.Add(ClientSizer, 1, wx.EXPAND|wx.RIGHT, 10)
+        bottomSizer.Add(StatusSizer, 1, wx.EXPAND|wx.RIGHT, 10)
+        bottomSizer.Add(SocialSizer, 1, wx.EXPAND)
 
         centeringSizer  = wx.BoxSizer(wx.VERTICAL)
-        centeringSizer.Add(topSizer,           0, wx.TOP|wx.EXPAND, 10)
-        centeringSizer.Add(self.IncarnateBox,  0, wx.TOP|wx.EXPAND, 6)
+        centeringSizer.Add(self.bannerPanel, 0, wx.EXPAND|wx.BOTTOM, 10)
+        centeringSizer.Add(topSizer,         0, wx.EXPAND)
+        centeringSizer.Add(bottomSizer,      0, wx.EXPAND|wx.TOP, 10)
 
         self.MainSizer.Add(centeringSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
@@ -215,34 +250,39 @@ class General(Page):
         self.OnPickOrigin()
         self.OnPickArchetype()
         self.OnTypeEnable()
-        # self.OnColorEnable()
 
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()
-
-        colorstring = ''
-        # if self.GetState('ChatColorEnable'):
-        #     colorstring = ChatColors(
-        #         self.GetState('ChatForeground'),
-        #         self.GetState('ChatBackground'),
-        #         self.GetState('ChatBorder'),
-        #     )
 
         notifier = ''
         if self.GetState('TypingNotifierEnable'):
             notifier = 'afk ' + self.GetState('TypingNotifier')
 
-        startchatcommand = "startchat "
-        # if self.GetState('ChatColorEnable'):
-            # startchatcommand = "beginchat "
-
-        ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', startchatcommand + colorstring]))
+        ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', 'startchat']))
         ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeFileKeyBind([notifier, 'show chat', 'slashchat']))
-        ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind([notifier, 'show chatem ' + notifier]))
+        ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /em ']))
         ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeFileKeyBind([notifier, 'autoreply']))
         ResetFile.SetBind(self.Ctrls['TellLast']  .MakeFileKeyBind([notifier, 'show chat', 'beginchat /tl ']))
         ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
         ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
+
+        ### Helpful Binds
+        ResetFile.SetBind(self.Ctrls['QuitToSelect'] .MakeFileKeyBind('quittocharacterselect'))
+        ResetFile.SetBind(self.Ctrls['QuitToLogin']  .MakeFileKeyBind('quittologin'))
+        ResetFile.SetBind(self.Ctrls['QuitToDesktop'].MakeFileKeyBind('quit'))
+        ResetFile.SetBind(self.Ctrls['Sync']         .MakeFileKeyBind('sync'))
+
+        ResetFile.SetBind(self.Ctrls['ToggleRP']  .MakeFileKeyBind('roleplaying'))
+        ResetFile.SetBind(self.Ctrls['HelpHelpMe'].MakeFileKeyBind('sethelperstatus 1'))
+        ResetFile.SetBind(self.Ctrls['HelpMentor'].MakeFileKeyBind('sethelperstatus 2'))
+        ResetFile.SetBind(self.Ctrls['HelpOff']   .MakeFileKeyBind('sethelperstatus 3'))
+
+        ResetFile.SetBind(self.Ctrls['InviteTarget']  .MakeFileKeyBind('i $target'))
+        ResetFile.SetBind(self.Ctrls['SGInviteTarget'].MakeFileKeyBind('sgi $target'))
+        ResetFile.SetBind(self.Ctrls['FriendTarget']  .MakeFileKeyBind('friend $target'))
+        ResetFile.SetBind(self.Ctrls['GFriendTarget'] .MakeFileKeyBind('gfriend $target'))
+        ResetFile.SetBind(self.Ctrls['IgnoreTarget']  .MakeFileKeyBind('ignore $target'))
+        ResetFile.SetBind(self.Ctrls['UnignoreTarget'].MakeFileKeyBind('unignore $target'))
 
         return True
 
@@ -264,11 +304,13 @@ class General(Page):
             'Resistance' : ( 30, 240, 255),
             'Loyalist'   : (255, 226,  56),
         }[self.GetState('Alignment')])
-        self.nameBox.SetBackgroundColour(bgcolor)
+        self.bannerPanel.SetBackgroundColour(bgcolor)
         self.NameDisplay.SetBackgroundColour(bgcolor)
         # Have to do this dance to make the colors refresh on Windows.  Ugh.
         self.nameBox.Show(False)
         self.nameBox.Show(True)
+        self.bannerPanel.Show(False)
+        self.bannerPanel.Show(True)
 
         if evt: evt.Skip()
 
@@ -307,12 +349,16 @@ class General(Page):
         if getattr(self.Profile, 'MovementPowers', None):
             self.Profile.MovementPowers.SynchronizeUI()
 
-        self.ArchetypeIcon.SetBitmap(GetIcon("Archetypes", arch))
+        if arch == "Mastermind":
+            if self.Profile.GetPageText(5) != self.Profile.Mastermind.TabTitle:
+                self.Profile.InsertPage(5, self.Profile.Mastermind, self.Profile.Mastermind.TabTitle)
+        else:
+            if self.Profile.GetPageText(5) == self.Profile.Mastermind.TabTitle:
+                self.Profile.RemovePage(5)
 
         if evt: evt.Skip()
 
     def OnPickOrigin(self, evt = None):
-        self.OriginIcon.SetBitmap(GetIcon('Origins', self.GetState('Origin')))
         if evt: evt.Skip()
 
     def OnPickPoolPower(self, evt):
@@ -367,26 +413,17 @@ class General(Page):
     def OnPickEpicPowerSet(self, evt):
         evt.Skip()
 
-    # def OnColorEnable(self, evt = None):
-    #     colorsenabled = self.GetState('ChatColorEnable')
-    #     self.EnableControls(colorsenabled, ['ChatBorder', 'ChatBackground', 'ChatForeground'])
-    #     if evt: evt.Skip()
-
     def OnTypeEnable(self, evt = None):
         typeenabled = self.GetState('TypingNotifierEnable')
         self.EnableControls(typeenabled, ['TypingNotifier'])
-        if typeenabled:
-            self.Ctrls['StartChat'].CtlLabel.SetLabel('Start Chat (with Notifier):')
-        else:
-            self.Ctrls['StartChat'].CtlLabel.SetLabel('Start Chat:')
         self.Layout()
         if evt: evt.Skip()
 
     def OnServerChange(self, evt):
-        radiobox = evt.GetEventObject()
+        if evt: evt.Skip()
         server = self.Profile.Server
 
-        if radiobox.GetString(radiobox.GetSelection()) != server:
+        if self.ServerPicker.GetString(self.ServerPicker.GetSelection()) != server:
             if wx.MessageBox('Changing server requires saving and reloading the Profile.  Continue?', 'Changing Server', wx.YES_NO, self) == wx.YES:
                 mainwindow = wx.App.Get().Main
                 self.Profile.doSaveToFile()
@@ -394,9 +431,11 @@ class General(Page):
                 newProfile.buildFromData()
                 mainwindow.InsertProfile(newProfile)
             else:
-                radiobox.SetSelection(radiobox.FindString(server))
+                self.ServerPicker.SetSelection(self.ServerPicker.FindString(server))
 
     UI.Labels.update({
+        'Epic' : 'Epic / Patron',
+
         'Pool1'           : "Power Pool 1",
         'Pool2'           : "Power Pool 2",
         'Pool3'           : "Power Pool 3",
@@ -412,4 +451,21 @@ class General(Page):
 
         'TypingNotifierEnable' : 'Enable Typing Notifier',
         'TypingNotifier'       : 'Typing Notifier',
+
+        'QuitToDesktop'   : "Quit to Desktop",
+        'QuitToSelect'    : "Quit to Character Select",
+        'QuitToLogin'     : "Quit to Login",
+        'Sync'            : "Synchronize with Game Server",
+
+        'ToggleRP'        : "Toggle Roleplaying Status",
+        'HelpHelpMe'      : 'Set "Help Me" Status',
+        'HelpMentor'      : 'Set "Mentor" Status',
+        'HelpOff'         : 'Disable Help Status',
+
+        'InviteTarget'   : "Invite Target to Group",
+        'SGInviteTarget' : "Invite Target to Supergroup",
+        'FriendTarget'   : "Add Target to Friends",
+        'GFriendTarget'  : "Add Target to Global Friends",
+        'IgnoreTarget'   : "Ignore your Current Target",
+        'UnignoreTarget' : "Unignore your Current Target",
     })

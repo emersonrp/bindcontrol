@@ -56,10 +56,16 @@ class Gameplay(Page):
             'DecTeamPos'  : '',
             'TeamReset'   : '',
 
-            'QuitToDesktop'   : '',
-            'InviteTarget'    : '',
-            'NetgraphBindKey' : '',
-            'ToggleRP'        : '',
+            'Assist'     : '',
+            'Location'   : '',
+            'Interact'   : '',
+            'Menu'       : '',
+            'Release'    : '',
+            'GameReturn' : '',
+            'Sheathe'    : '',
+            'Stuck'      : '',
+            'DialogYes'  : '',
+            'DialogNo'   : '',
 
             'Tray1Enabled' : False,
             'Tray2Enabled' : False,
@@ -165,27 +171,25 @@ class Gameplay(Page):
         # Bottom Sizer for narrower boxes
         bottomSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        leftSizer = wx.BoxSizer(wx.VERTICAL)
-        rightSizer = wx.BoxSizer(wx.VERTICAL)
-
         ##### Enable TPS Direct Select
+        tpsenablepanel = wx.Panel(self)
         tpsenablesizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        tpsenable = wx.CheckBox( self, -1, 'Enable Team/Pet Select')
-        tpsenable.SetToolTip( wx.ToolTip('Check this to enable the Combined Team/Pet Select Binds') )
+        tpsenable = wx.CheckBox(tpsenablepanel, -1, 'Enable Team/Pet Select')
+        tpsenable.SetToolTip('Check this to enable the Combined Team/Pet Select Binds')
         tpsenable.Bind(wx.EVT_CHECKBOX, self.OnTPSEnable)
         self.Ctrls['TPSEnable'] = tpsenable
         tpsenable.SetValue(self.Init['TPSEnable'])
 
-        tpshelpbutton = HelpButton(self, 'TPSBinds.html')
+        tpshelpbutton = HelpButton(tpsenablepanel, 'TPSBinds.html')
 
-        tpsenablesizer.Add(tpsenable, 0, wx.ALIGN_CENTER_VERTICAL)
-        tpsenablesizer.Add(tpshelpbutton, wx.ALIGN_RIGHT)
+        tpsenablesizer.Add(tpsenable, 1, wx.ALIGN_CENTER_VERTICAL)
+        tpsenablesizer.Add(tpshelpbutton, 0)
+        tpsenablepanel.SetSizer(tpsenablesizer)
 
-        leftSizer.Add(tpsenablesizer, 0, wx.ALL, 10)
 
         ##### direct-select keys
-        TPSDirectBox = ControlGroup(self, self, 'Combined Team/Pet Select')
+        TPSDirectBox = ControlGroup(self, self, 'Combined Team/Pet Select', topcontent = tpsenablepanel)
 
         TPSDirectBox.AddControl(
             ctlName = 'TPSSelMode',
@@ -199,58 +203,61 @@ class Gameplay(Page):
                 ctlType = 'keybutton',
                 tooltip = f"Choose the key that will select team member / pet {selectid}",
             )
-        leftSizer.Add(TPSDirectBox, 0, wx.EXPAND|wx.ALL, 10)
 
         ##### Next/Prev Team Select Binds
+        teamenablepanel = wx.Panel(self)
         teamenablesizer = wx.BoxSizer(wx.HORIZONTAL)
-        teamenable = wx.CheckBox( self, -1, 'Enable Team Select')
-        teamenable.SetToolTip( wx.ToolTip('Check this to enable the Next/Prev Team Select Binds') )
+        teamenable = wx.CheckBox(teamenablepanel, -1, 'Enable Team Select')
+        teamenable.SetToolTip('Check this to enable the Next/Prev Team Select Binds')
         teamenable.Bind(wx.EVT_CHECKBOX, self.OnTeamEnable)
         self.Ctrls['TeamEnable'] = teamenable
         teamenable.SetValue(self.Init['TeamEnable'])
 
-        teamhelpbutton = HelpButton(self, 'TeamSelectBinds.html')
+        teamhelpbutton = HelpButton(teamenablepanel, 'TeamSelectBinds.html')
 
-        teamenablesizer.Add(teamenable, 0, wx.ALIGN_CENTER_VERTICAL)
-        teamenablesizer.Add(teamhelpbutton, wx.ALIGN_RIGHT)
+        teamenablesizer.Add(teamenable, 1, wx.ALIGN_CENTER_VERTICAL)
+        teamenablesizer.Add(teamhelpbutton, 0)
+        teamenablepanel.SetSizer(teamenablesizer)
 
-        rightSizer.Add(teamenablesizer, 0, wx.ALL, 10)
-
-        TeamSelBox = ControlGroup(self, self, 'Team Select')
+        TeamSelBox = ControlGroup(self, self, 'Team Select', topcontent = teamenablepanel)
         for b in (
-            ['SelPrevTeam' , 'Choose the key that will select the previous teammate from the currently selected one'] ,
-            ['SelNextTeam' , 'Choose the key that will select the next teammate from the currently selected one']     ,
-            ['DecTeamSize' , 'Choose the key that will decrease the size of your teammate rotation']                  ,
-            ['IncTeamSize' , 'Choose the key that will increase the size of your teammate rotation']                  ,
-            ['DecTeamPos'  , 'Choose the key that will move you to the next lower position in the team rotation']         ,
-            ['IncTeamPos'  , 'Choose the key that will move you to the next higher position in the team rotation']        ,
-            ['TeamReset'   , 'Choose the key that will reset your next/prev teammate binds to Solo / No Position']                             ,
+            ['SelPrevTeam', 'Choose the key that will select the previous teammate from the currently selected one'],
+            ['SelNextTeam', 'Choose the key that will select the next teammate from the currently selected one']    ,
+            ['DecTeamSize', 'Choose the key that will decrease the size of your teammate rotation']                 ,
+            ['IncTeamSize', 'Choose the key that will increase the size of your teammate rotation']                 ,
+            ['DecTeamPos' , 'Choose the key that will move you to the next lower position in the team rotation']    ,
+            ['IncTeamPos' , 'Choose the key that will move you to the next higher position in the team rotation']   ,
+            ['TeamReset'  , 'Choose the key that will reset your next/prev teammate binds to Solo / No Position']   ,
         ):
             TeamSelBox.AddControl(
                 ctlName = b[0],
                 ctlType = 'keybutton',
                 tooltip = b[1],
             )
-        rightSizer.Add(TeamSelBox, 0, wx.EXPAND|wx.ALL, 10)
 
-        ### Helpful Binds
-        HelpfulSizer = ControlGroup(self, self, 'Helpful Binds')
+        # Helpful Binds
+        HelpfulBox = ControlGroup(self, self, 'Miscellaneous Helpful Binds')
         for b in (
-            ['QuitToDesktop'   , 'Choose the key that will quit directly to the desktop']  ,
-            ['InviteTarget'    , 'Choose the key that will invite your target to a group'] ,
-            ['NetgraphBindKey' , 'Choose the key that will toggle the Netgraph Display']   ,
-            ['ToggleRP'        , 'Toggle your "Roleplaying" status / tag / name block' ]   ,
+            ['Assist'     , 'Choose the key that will target your target\'s current target']                      ,
+            ['Location'   , 'Choose the key that will display your current coordinates in the chat window']       ,
+            ['Interact'   , 'Choose the key that will interact with the object or entity in front of you']        ,
+            ['Menu'       , 'Choose the key that will open the main menu']                                        ,
+            ['Release'    , 'Choose the key that will release you to the hospital after a defeat']                ,
+            ['GameReturn' , 'Choose the key that will close all extra windows and dialogs and return to the game'],
+            ['Sheathe'    , 'Choose the key that will put away your weapons']                                     ,
+            ['Stuck'      , 'Choose the key that will try to get you unstuck if you are stuck in geometry']       ,
+            ['DialogYes'  , 'Choose the key that will answer OK, Yes, or Accept to the current dialog']           ,
+            ['DialogNo'   , 'Choose the key that will answer OK, No, or Cancel to the current dialog']            ,
         ):
-            HelpfulSizer.AddControl(
+            HelpfulBox.AddControl(
                 ctlName = b[0],
                 ctlType = 'keybutton',
                 tooltip = b[1],
             )
 
-        rightSizer.Add(HelpfulSizer, 0, wx.EXPAND|wx.ALL, 10)
-
-        bottomSizer.Add(leftSizer,  0, wx.ALL|wx.EXPAND, 10)
-        bottomSizer.Add(rightSizer, 0, wx.ALL|wx.EXPAND, 10)
+        bottomSizer.Add(TPSDirectBox,  0, wx.ALL|wx.EXPAND, 10)
+        bottomSizer.Add(TeamSelBox,    0, wx.ALL|wx.EXPAND, 10)
+        bottomSizer.Add(HelpfulBox,    0, wx.ALL|wx.EXPAND, 10)
         self.MainSizer.Add(traySizer,   flag = wx.ALL|          wx.ALIGN_CENTER_HORIZONTAL, border = 16)
         self.MainSizer.Add(bottomSizer, flag = wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
 
@@ -411,12 +418,6 @@ class Gameplay(Page):
                             file = self.Profile.GetBindFile('teamsel2', f'{tsize}{tpos}{tsel}.txt')
                             self.ts2CreateSet(tsize, tpos, tsel, file)
 
-        ### Helpful Binds
-        ResetFile.SetBind(self.Ctrls['QuitToDesktop']  .MakeFileKeyBind('quit'))
-        ResetFile.SetBind(self.Ctrls['InviteTarget']   .MakeFileKeyBind('invite $target'))
-        ResetFile.SetBind(self.Ctrls['NetgraphBindKey'].MakeFileKeyBind('++netgraph'))
-        ResetFile.SetBind(self.Ctrls['ToggleRP']       .MakeFileKeyBind('roleplaying'))
-
         return True
 
     def CheckForDefaultKeyToClear(self, traynum, button):
@@ -509,11 +510,17 @@ class Gameplay(Page):
         'DecTeamPos'  : "Decrease Team Position",
         'TeamReset'   : "Reset Team Rotation",
 
-        'QuitToDesktop'   : "Quit to Desktop",
-        'InviteTarget'    : "Invite Target to Group",
-        'NetgraphBindKey' : "Toggle Netgraph Display",
-        'ToggleRP'        : "Toggle Roleplaying Status",
+        'Assist'     : 'Assist Target',
+        'Location'   : "Show Coordinates",
+        'Menu'       : "Main Menu",
+        'Release'    : "Release to Hospital",
+        'GameReturn' : "Return to Game",
+        'Sheathe'    : "Sheathe Weapons",
+        'Stuck'      : "Try to Get Unstuck",
+        'DialogYes'  : "Answer Yes to Dialog",
+        'DialogNo'   : "Answer No to Dialog",
     })
 
     for i in range(1,9):
         UI.Labels[f'TeamSelect{i}'] = f"Select {ordinals[i-1]} Team Member / Pet"
+

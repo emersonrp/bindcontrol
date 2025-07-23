@@ -190,7 +190,7 @@ class PrefsDialog(wx.Dialog):
         setattr(crashOnBindErrorLabel, 'CB', self.CrashOnBindError)
         crashOnBindErrorLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
 
-        showInspectorLabel = statictextclass(debugPanel, label = "Show Widget Inspector:")
+        showInspectorLabel = statictextclass(debugPanel, label = "Show Widget Inspector (requires restart):")
         debugSizer.Add( showInspectorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
         self.ShowInspector = wx.CheckBox(debugPanel)
         self.ShowInspector.SetValue(config.ReadBool('ShowInspector'))

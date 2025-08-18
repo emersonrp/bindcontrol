@@ -143,6 +143,13 @@ class CustomBinds(Page):
         duplicateButton.Bind(wx.EVT_BUTTON, self.OnDuplicateButton)
         buttonSizer.Add(duplicateButton)
 
+        exportButton = wx.BitmapButton(self.scrolledPanel, -1, bitmap = GetIcon('UI', 'export'))
+        setattr(exportButton, "BindPane", bindpane)
+        bindpane.ExpButton = exportButton
+        exportButton.SetToolTip(f'Export bind "{bindpane.Title}"')
+        exportButton.Bind(wx.EVT_BUTTON, self.OnExportButton)
+        buttonSizer.Add(exportButton)
+
         bindSizer.Add(buttonSizer, 0, wx.LEFT, 10)
 
         self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), bindSizer, 0, wx.ALL|wx.EXPAND, 10)
@@ -242,6 +249,9 @@ class CustomBinds(Page):
         newbindpane.Title = None
         self.AddBindToPage(newbindpane)
         newbindpane.ClearKeyBinds()
+
+    def OnExportButton(self, evt):
+        ...
 
     def PopulateBindFiles(self):
         for pane in self.Panes:

@@ -10,7 +10,7 @@ from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
 from UI.WizardBindPane  import WizardBindPane
-from UI.BindWizard      import WizPickerDialog
+from UI.BindWizard      import WizPickerDialog,wizards
 
 class CustomBinds(Page):
     def __init__(self, parent):
@@ -42,7 +42,12 @@ class CustomBinds(Page):
         launchBindWizardButton = wx.Button(self, -1, "Launch Custom Bind Wizard")
         launchBindWizardButton.Bind(wx.EVT_BUTTON, self.OnBindWizardButton)
         buttonSizer.Add(launchBindWizardButton, wx.ALIGN_CENTER)
-        buttonSizer.Add(HelpButton(self, 'WizardBinds.html'), 0, wx.ALIGN_CENTER, 5)
+        buttonSizer.Add(HelpButton(self, 'WizardBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
+
+        importBindButton = wx.Button(self, -1, "Import Custom Bind")
+        importBindButton.Bind(wx.EVT_BUTTON, self.OnImportBindButton)
+        buttonSizer.Add(importBindButton, wx.ALIGN_CENTER)
+        buttonSizer.Add(HelpButton(self, 'ImportBind.html'), 0, wx.ALIGN_CENTER, 5)
 
         # a scrollable window and sizer for the collection of collapsible panes
         self.PaneSizer     = wx.BoxSizer(wx.VERTICAL)
@@ -90,6 +95,42 @@ class CustomBinds(Page):
                 self.AddBindToPage(bindpane = newWizBindPane)
                 newWizBindPane.Wizard.ShowWizard()
         if evt: evt.Skip()
+
+    def OnImportBindButton(self, evt):
+            # otherwise ask the user what new file to open
+        with wx.FileDialog(self, "Import Custom Bind",
+                           defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
+                           wildcard="BindControl Custom Bind files (*.bcb)|*.bcb|All files (*.*)|*.*",
+                           style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return     # the user changed their mind
+
+            # Proceed loading the file chosen by the user
+            filepath = Path(fileDialog.GetPath())
+            try:
+                bindjson = filepath.read_text()
+                binddata = json.loads(bindjson)
+                bindpane = None
+
+                if binddata['Type'] == "SimpleBind":
+                    bindpane = SimpleBindPane(self, init = binddata)
+                elif binddata['Type'] == "BufferBind":
+                    bindpane = BufferBindPane(self, init = binddata)
+                elif binddata['Type'] == "ComplexBind":
+                    bindpane = ComplexBindPane(self, init = binddata)
+                elif binddata['Type'] == "WizardBind":
+                    if wizClass := wizards.get(binddata['WizClass'], None):
+                        bindpane = WizardBindPane(self, wizClass, init = binddata)
+                else:
+                    raise(Exception("No valid custom bind found."))
+
+                if bindpane: self.AddBindToPage(bindpane = bindpane)
+
+            except Exception as e:
+                wx.LogError(f'Cannot import custom bind "{filepath.name}": {e}')
+
+        evt.Skip()
 
     def AddBindToPage(self, bindpane = None):
 

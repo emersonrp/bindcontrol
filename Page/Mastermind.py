@@ -629,7 +629,7 @@ class Mastermind(Page):
                 for [_, box] in OrderedPetBoxes:
                     if self.PetBoxes[i] == box:
                         ctrl = self.Ctrls[f'Pet{i+1}Name']
-                        if ctrl.IsEnabled() and ctrl.HasAnyError():
+                        if ctrl.IsEnabled() and ctrl.HasErrors():
                             result = wx.MessageBox("One or more of your pet names has errors.  You can continue to write these binds but they are likely not to work well in-game.  Continue?", "Name Error", wx.YES_NO)
                             if result == wx.NO: return False
                             break

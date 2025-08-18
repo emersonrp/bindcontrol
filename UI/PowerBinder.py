@@ -2,7 +2,8 @@ import wx
 import os, sys, importlib
 from Help import HelpButton
 from pathlib import Path
-from UI.ControlGroup import cgTextCtrl
+from wx.lib.expando import EVT_ETC_LAYOUT_NEEDED
+from UI.ControlGroup import cgExpandoTextCtrl
 from UI.ErrorControls import ErrorControlMixin
 
 class PowerBinder(ErrorControlMixin, wx.TextCtrl):
@@ -79,16 +80,15 @@ class PowerBinderDialog(wx.Dialog):
 
         sizer.Add(rearrangeCtrl, 0, wx.EXPAND|wx.TOP|wx.BOTTOM)
 
-        choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
+        bindStringPreviewSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.BindStringDisplay = cgTextCtrl(self, -1)
-        self.BindStringDisplay.Enable(False)
+        self.BindStringDisplay = cgExpandoTextCtrl(self, -1, style = wx.TE_READONLY)
         self.BindStringDisplay.SetHint("Add Commands to create a bind string")
-        choiceSizer.Add(wx.StaticText(self, -1, "Bind String:"), 0,
+        bindStringPreviewSizer.Add(wx.StaticText(self, -1, "Bind String:"), 0,
                         wx.ALIGN_CENTER_VERTICAL)
-        choiceSizer.Add(self.BindStringDisplay, 1, wx.LEFT, 10)
+        bindStringPreviewSizer.Add(self.BindStringDisplay, 1, wx.LEFT, 10)
 
-        sizer.Add(choiceSizer, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 16)
+        sizer.Add(bindStringPreviewSizer, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 16)
 
         sizer.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND)
 
@@ -100,9 +100,15 @@ class PowerBinderDialog(wx.Dialog):
         vbox = wx.BoxSizer(wx.VERTICAL);
         vbox.Add(sizer, 0, wx.EXPAND|wx.ALL, 10);
 
+        self.Bind(EVT_ETC_LAYOUT_NEEDED, self.OnBindPreviewResize)
+
         self.SetSizerAndFit(vbox);
         self.Layout()
+
+    def OnBindPreviewResize(self, evt):
         self.Fit()
+        self.Layout()
+        evt.Skip()
 
     def Show(self, show = True):
         if show:

@@ -2,8 +2,9 @@ from typing import Callable
 import wx
 # Mixin to handle setting/showing errors and tooltips
 class ErrorControlMixin:
+    GetBackgroundColour    : Callable
     SetBackgroundColour    : Callable
-    SetOwnBackgroundColour : Callable
+    SetDefaultStyle        : Callable
     SetToolTip             : Callable
     GetTextCtrl            : Callable
     HasTextCtrl            : Callable
@@ -14,6 +15,7 @@ class ErrorControlMixin:
         self.Errors         : dict = {}
         self.Warnings       : dict = {}
         self.DefaultToolTip : str = ''
+        self.BGColour       : wx.Colour = self.GetBackgroundColour()
 
     def Enable(self, enable = True):
         if enable == False:
@@ -22,7 +24,7 @@ class ErrorControlMixin:
 
     def AddWarning(self, errname, tooltip = None):
         if not self.Errors:
-            self.StylingTarget().SetBackgroundColour((255,255,200))
+            self.SetFullBackgroundColour((255,255,200))
         self.Warnings[errname] = tooltip
         self.SetErrorToolTip()
         self.Refresh()
@@ -30,14 +32,14 @@ class ErrorControlMixin:
     def RemoveWarning(self, errname):
         self.Warnings.pop(errname, None)
         if not self.Errors and not self.Warnings:
-            self.StylingTarget().SetOwnBackgroundColour(wx.NullColour)
+            self.SetFullBackgroundColour(self.BGColour)
         elif not self.Errors:
-            self.StylingTarget().SetOwnBackgroundColour((255,255,200))
+            self.SetFullBackgroundColour((255,255,200))
         self.SetErrorToolTip()
         self.Refresh()
 
     def AddError(self, errname, tooltip = None):
-        self.StylingTarget().SetBackgroundColour((255,200,200))
+        self.SetFullBackgroundColour((255,200,200))
         self.Errors[errname] = tooltip
         self.SetErrorToolTip()
         self.Refresh()
@@ -45,14 +47,11 @@ class ErrorControlMixin:
     def RemoveError(self, errname):
         self.Errors.pop(errname, None)
         if not self.Errors and not self.Warnings:
-            self.StylingTarget().SetOwnBackgroundColour(wx.NullColour)
+            self.SetFullBackgroundColour(self.BGColour)
         elif not self.Errors:
-            self.StylingTarget().SetOwnBackgroundColour((255,255,200))
+            self.SetFullBackgroundColour((255,255,200))
         self.SetErrorToolTip()
         self.Refresh()
-
-    # TODO pick one of these next two and stick with it
-    def HasAnyError(self): return self.Errors != {}
 
     def HasErrors(self): return bool(self.Errors)
 
@@ -65,6 +64,17 @@ class ErrorControlMixin:
 
     def StylingTarget(self):
         return self.GetTextCtrl() if (isinstance(self, wx.PickerBase) and self.HasTextCtrl()) else self
+
+    # Do some dancing in here to make sure multi-line text controls get their contents updated
+    def SetFullBackgroundColour(self, colour):
+        target = self.StylingTarget()
+        target.SetBackgroundColour(colour)
+        if isinstance(target, wx.TextCtrl) and target.IsMultiLine():
+            target.SelectAll()
+            newstyle = wx.TextAttr(wx.NullColour, target.GetBackgroundColour())
+            [start, end] = target.GetSelection()
+            target.SetStyle(start, end, newstyle)
+            target.SelectNone()
 
     def SetErrorToolTip(self):
         tipstrings = list(self.Errors.values()) + list(self.Warnings.values())

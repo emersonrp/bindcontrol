@@ -5,6 +5,7 @@ import platform
 import wx
 from wx.adv import BitmapComboBox
 import wx.lib.stattext as ST
+from wx.lib.expando import ExpandoTextCtrl
 
 from UI.ErrorControls import ErrorControlMixin
 from Page import Page as bcPage
@@ -212,6 +213,8 @@ class cgComboBox        (CGControlMixin, ErrorControlMixin, wx.ComboBox)        
 class cgBMComboBox      (CGControlMixin, ErrorControlMixin, BitmapComboBox)      :
     def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
 class cgTextCtrl        (CGControlMixin, ErrorControlMixin, wx.TextCtrl)         :
+    def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
+class cgExpandoTextCtrl (CGControlMixin, ErrorControlMixin, ExpandoTextCtrl)         :
     def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)
 class cgStaticText      (CGControlMixin, ErrorControlMixin, wx.StaticText)       :
     def __init__(self, *args, **kwargs): super().__init__(*args, **kwargs)

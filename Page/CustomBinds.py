@@ -1,15 +1,16 @@
 import wx
-import wx.html
+import re
 from pathlib import Path
-from Icon import GetIcon
+import json
 
+from Icon import GetIcon
 from Page import Page
 from Help import HelpButton
 from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
 from UI.WizardBindPane  import WizardBindPane
-from UI.BindWizard      import WizPickerDialog
+from UI.BindWizard      import WizPickerDialog,wizards
 
 class CustomBinds(Page):
     def __init__(self, parent):
@@ -41,7 +42,12 @@ class CustomBinds(Page):
         launchBindWizardButton = wx.Button(self, -1, "Launch Custom Bind Wizard")
         launchBindWizardButton.Bind(wx.EVT_BUTTON, self.OnBindWizardButton)
         buttonSizer.Add(launchBindWizardButton, wx.ALIGN_CENTER)
-        buttonSizer.Add(HelpButton(self, 'WizardBinds.html'), 0, wx.ALIGN_CENTER, 5)
+        buttonSizer.Add(HelpButton(self, 'WizardBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
+
+        importBindButton = wx.Button(self, -1, "Import Custom Bind")
+        importBindButton.Bind(wx.EVT_BUTTON, self.OnImportBindButton)
+        buttonSizer.Add(importBindButton, wx.ALIGN_CENTER)
+        buttonSizer.Add(HelpButton(self, 'ImportBind.html'), 0, wx.ALIGN_CENTER, 5)
 
         # a scrollable window and sizer for the collection of collapsible panes
         self.PaneSizer     = wx.BoxSizer(wx.VERTICAL)
@@ -89,6 +95,47 @@ class CustomBinds(Page):
                 self.AddBindToPage(bindpane = newWizBindPane)
                 newWizBindPane.Wizard.ShowWizard()
         if evt: evt.Skip()
+
+    def OnImportBindButton(self, evt):
+            # otherwise ask the user what new file to open
+        with wx.FileDialog(self, "Import Custom Bind",
+                           defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
+                           wildcard="BindControl Custom Bind files (*.bcb)|*.bcb|All files (*.*)|*.*",
+                           style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return     # the user changed their mind
+
+            # Proceed loading the file chosen by the user
+            filepath = Path(fileDialog.GetPath())
+            try:
+                bindjson = filepath.read_text()
+                binddata = json.loads(bindjson)
+                bindpane = None
+
+                # Might DRY this up with the nearly-identical code in Profile
+                if binddata['Type'] == "SimpleBind":
+                    bindpane = SimpleBindPane(self, init = binddata)
+                elif binddata['Type'] == "BufferBind":
+                    bindpane = BufferBindPane(self, init = binddata)
+                elif binddata['Type'] == "ComplexBind":
+                    bindpane = ComplexBindPane(self, init = binddata)
+                elif binddata['Type'] == "WizardBind":
+                    if wizClass := wizards.get(binddata['WizClass'], None):
+                        bindpane = WizardBindPane(self, wizClass, init = binddata)
+                else:
+                    raise(Exception("No valid custom bind found."))
+
+                if bindpane:
+                    self.AddBindToPage(bindpane = bindpane)
+                    existingBindsNames = [pane.Title for pane in self.Panes if pane != bindpane]
+                    if bindpane.Title in existingBindsNames:
+                        self.SetBindPaneLabel(None, bindpane, new = True)
+
+            except Exception as e:
+                wx.LogError(f'Cannot import custom bind "{filepath.name}": {e}')
+
+        evt.Skip()
 
     def AddBindToPage(self, bindpane = None):
 
@@ -143,6 +190,13 @@ class CustomBinds(Page):
         duplicateButton.Bind(wx.EVT_BUTTON, self.OnDuplicateButton)
         buttonSizer.Add(duplicateButton)
 
+        exportButton = wx.BitmapButton(self.scrolledPanel, -1, bitmap = GetIcon('UI', 'export'))
+        setattr(exportButton, "BindPane", bindpane)
+        bindpane.ExpButton = exportButton
+        exportButton.SetToolTip(f'Export bind "{bindpane.Title}"')
+        exportButton.Bind(wx.EVT_BUTTON, self.OnExportButton)
+        buttonSizer.Add(exportButton)
+
         bindSizer.Add(buttonSizer, 0, wx.LEFT, 10)
 
         self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), bindSizer, 0, wx.ALL|wx.EXPAND, 10)
@@ -184,6 +238,7 @@ class CustomBinds(Page):
                 bindpane.DelButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
                 bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
                 bindpane.DupButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
+                bindpane.ExpButton.SetToolTip(f'Export bind "{bindpane.Title}"')
                 bindpane.RenameCtrlsFrom(oldtitle)
                 # if we have files to delete (we do, if not new) then delete them.
                 if deletefiles:
@@ -192,7 +247,7 @@ class CustomBinds(Page):
             self.Update()
         else:
             if new:
-                bindpane.Destroy()
+                self.doDeleteBindPane(bindpane)
 
         dlg.Destroy()
 
@@ -206,13 +261,18 @@ class CustomBinds(Page):
                 # do the delete of the files
                 files = bindpane.AllBindFiles()
                 self.Profile.doDeleteBindFiles(files)
+        self.doDeleteBindPane(bindpane)
+        evt.Skip()
+
+    def doDeleteBindPane(self, bindpane):
+        delButton = bindpane.DelButton
         sizer = delButton.BindSizer
-        for ctrlname in delButton.BindPane.Ctrls:
+        for ctrlname in bindpane.Ctrls:
             if self.Ctrls.get(ctrlname, None) : del self.Ctrls[ctrlname]
         self.PaneSizer.Hide(sizer)
         self.PaneSizer.Remove(sizer)
-        self.Panes.remove(delButton.BindPane)
-        delButton.BindPane.DestroyLater()
+        self.Panes.remove(bindpane)
+        bindpane.DestroyLater()
         wx.CallAfter(self.Profile.CheckAllConflicts)
         if len(self.Panes) == 0:
             # need to put back the blankpanel
@@ -220,7 +280,6 @@ class CustomBinds(Page):
             self.BlankPanel.Show()
             self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
         self.Layout()
-        evt.Skip()
 
     def OnDuplicateButton(self, evt):
         oldbindpane = evt.EventObject.BindPane
@@ -242,6 +301,30 @@ class CustomBinds(Page):
         newbindpane.Title = None
         self.AddBindToPage(newbindpane)
         newbindpane.ClearKeyBinds()
+
+    def OnExportButton(self, evt):
+
+        bindpane = evt.GetEventObject().BindPane
+
+        shorttitle = re.sub(r'\W+', '', bindpane.Title)
+
+        with wx.FileDialog(self, f'Export Complex Bind "{bindpane.Title}"',
+                           defaultFile = f"{shorttitle}.bcb",
+                           defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
+                           wildcard = "BindControl Custom Bind Files (*.bcb)|*.bcb|All Files (*.*)|*.*",
+                           style = wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return
+
+            pathname = fileDialog.GetPath()
+            try:
+                filepath = Path(pathname)
+                binddata = bindpane.Serialize()
+                filepath.write_text(json.dumps(binddata, indent=2))
+
+            except Exception as e:
+                wx.LogError(f"Error exporting Complex Bind: {e}")
 
     def PopulateBindFiles(self):
         for pane in self.Panes:

@@ -16,6 +16,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         self.DelButton   = None
         self.RenButton   = None
         self.DupButton   = None
+        self.ExpButton   = None
         self.SetLabel(self.Title)
 
         self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT))
@@ -47,6 +48,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         if self.DelButton: self.DelButton.Show(not IsCollapsed)
         if self.RenButton: self.RenButton.Show(not IsCollapsed)
         if self.DupButton: self.DupButton.Show(not IsCollapsed)
+        if self.ExpButton: self.ExpButton.Show(not IsCollapsed)
         self.Page.Layout()
 
     # this is called when we duplicate a bind.  We'll want to clear any keybuttons

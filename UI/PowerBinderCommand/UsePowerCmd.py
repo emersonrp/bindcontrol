@@ -15,7 +15,7 @@ class UsePowerCmd(PowerBinderCommand):
         usePowerSizer.Add(wx.StaticText(dialog, -1, "Method:"), flag = wx.ALIGN_CENTER_VERTICAL)
 
         rbSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.usePowerRBToggle = wx.RadioButton(dialog, -1, "Toggle", style = wx.ALIGN_CENTER_VERTICAL)
+        self.usePowerRBToggle = wx.RadioButton(dialog, -1, "Toggle", style = wx.ALIGN_CENTER_VERTICAL|wx.RB_GROUP)
         rbSizer.Add(self.usePowerRBToggle, 1)
         self.usePowerRBOn = wx.RadioButton(dialog, -1, "On", style = wx.ALIGN_CENTER_VERTICAL)
         rbSizer.Add(self.usePowerRBOn, 1)

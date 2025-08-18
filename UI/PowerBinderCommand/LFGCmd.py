@@ -21,7 +21,7 @@ class LFGCmd(PowerBinderCommand):
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = wx.GridBagSizer(2, 4)
 
-        self.LFGSetRB = wx.RadioButton(dialog, wx.ID_ANY, label = "Looking for")
+        self.LFGSetRB = wx.RadioButton(dialog, wx.ID_ANY, label = "Looking for", style = wx.RB_GROUP)
         self.LFGSetRB.Bind(wx.EVT_RADIOBUTTON, self.SynchronizeUI)
         self.LFGSetRB.SetValue(True)
         sizer.Add(self.LFGSetRB, (0,0), (1,1), wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)

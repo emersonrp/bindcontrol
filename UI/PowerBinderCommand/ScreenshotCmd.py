@@ -13,7 +13,7 @@ class ScreenshotCmd(PowerBinderCommand):
 
         rbSizer = wx.BoxSizer(wx.HORIZONTAL)
         rbSizer.Add(wx.StaticText(dialog, -1, "Format:"), 0, flag = wx.ALIGN_CENTER_VERTICAL)
-        self.ScreenshotJPG = wx.RadioButton(dialog, -1, "JPG", style = wx.ALIGN_CENTER_VERTICAL)
+        self.ScreenshotJPG = wx.RadioButton(dialog, -1, "JPG", style = wx.ALIGN_CENTER_VERTICAL|wx.RB_GROUP)
         rbSizer.Add(self.ScreenshotJPG, 0, flag = wx.ALIGN_CENTER_VERTICAL)
         self.ScreenshotTGA = wx.RadioButton(dialog, -1, "TGA", style = wx.ALIGN_CENTER_VERTICAL)
         rbSizer.Add(self.ScreenshotTGA, 0, flag = wx.ALIGN_CENTER_VERTICAL)

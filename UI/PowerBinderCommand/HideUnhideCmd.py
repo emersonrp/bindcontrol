@@ -11,7 +11,7 @@ class HideUnhideCmd(PowerBinderCommand):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         hidePicker = wx.BoxSizer(wx.VERTICAL)
-        self.HideShowDialog = wx.RadioButton(dialog, wx.ID_ANY, "Show Hide Dialog")
+        self.HideShowDialog = wx.RadioButton(dialog, wx.ID_ANY, "Show Hide Dialog", style = wx.RB_GROUP)
         self.HideShowDialog.Bind(wx.EVT_RADIOBUTTON, self.SynchronizeUI)
         self.HideSet        = wx.RadioButton(dialog, wx.ID_ANY, "Hide from...")
         self.HideSet       .Bind(wx.EVT_RADIOBUTTON, self.SynchronizeUI)

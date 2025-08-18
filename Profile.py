@@ -60,7 +60,7 @@ def GetAllProfileBindsDirs():
 # class method to load a Profile from a file-open dialog
 def LoadFromFile(parent):
     with wx.FileDialog(parent, "Open Profile file",
-            wildcard   = "Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
+            wildcard   = "BindControl Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
             defaultDir = str(ProfilePath()),
             style      = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 

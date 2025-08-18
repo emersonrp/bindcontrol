@@ -1,8 +1,9 @@
 import wx
-import wx.html
+import re
 from pathlib import Path
-from Icon import GetIcon
+import json
 
+from Icon import GetIcon
 from Page import Page
 from Help import HelpButton
 from UI.BufferBindPane  import BufferBindPane
@@ -251,7 +252,28 @@ class CustomBinds(Page):
         newbindpane.ClearKeyBinds()
 
     def OnExportButton(self, evt):
-        ...
+
+        bindpane = evt.GetEventObject().BindPane
+
+        shorttitle = re.sub(r'\W+', '', bindpane.Title)
+
+        with wx.FileDialog(self, f'Export Complex Bind "{bindpane.Title}"',
+                           defaultFile = f"{shorttitle}.bcb",
+                           defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
+                           wildcard = "BindControl Custom Bind Files (*.bcb)|*.bcb|All Files (*.*)|*.*",
+                           style = wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return
+
+            pathname = fileDialog.GetPath()
+            try:
+                filepath = Path(pathname)
+                binddata = bindpane.Serialize()
+                filepath.write_text(json.dumps(binddata, indent=2))
+
+            except Exception as e:
+                wx.LogError(f"Error exporting Complex Bind: {e}")
 
     def PopulateBindFiles(self):
         for pane in self.Panes:

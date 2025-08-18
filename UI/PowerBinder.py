@@ -1,18 +1,18 @@
 import wx
 import os, sys, importlib
 from Help import HelpButton
-from Icon import GetIcon
 from pathlib import Path
 from UI.ControlGroup import cgTextCtrl
 from UI.ErrorControls import ErrorControlMixin
 
 class PowerBinder(ErrorControlMixin, wx.TextCtrl):
 
-    def __init__(self, parent, init = {}):
+    def __init__(self, parent, init = {}, extralength = 0):
         super().__init__(parent)
         self.Init = init
         self.Dialog = None
         self.DialogParent = parent
+        self.ExtraLength = extralength # for complex binds to add the footprint of each step's BLF()
 
         self.SetHint("Click to define bind contents")
 
@@ -26,15 +26,16 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
 
     def PowerBinderDialog(self):
         if not self.Dialog:
-            self.Dialog = PowerBinderDialog(self.DialogParent, self, self.Init)
+            self.Dialog = PowerBinderDialog(self.DialogParent, self, init = self.Init, extralength = self.ExtraLength)
         return self.Dialog
 
 class PowerBinderDialog(wx.Dialog):
-    def __init__(self, parent, powerbinder, init = {}):
+    def __init__(self, parent, powerbinder, init = {}, extralength = 0):
         super().__init__(parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
         self.Page = parent.Page
         self.CurrentState = init
+        self.ExtraLength = extralength
 
         self.LoadModules()
 
@@ -281,8 +282,8 @@ class PowerBinderDialog(wx.Dialog):
         # If they made any change, assume they're moving on with their lives and stop bugging about it not matching.
         self.BindStringDisplay.RemoveError('nomatch')
 
-        if len(bindstring) > 255:
-            self.BindStringDisplay.AddError('toolong', 'This bind string is longer than the maximum 255 characters and will likely not work as expected, if at all.')
+        if len(bindstring) + self.ExtraLength > 255:
+            self.BindStringDisplay.AddError('toolong', 'This bind string, when written to file, will be longer than the maximum 255 characters, and will likely not work as expected, if at all.')
         else:
             self.BindStringDisplay.RemoveError('toolong')
             self.BindStringDisplay.SetToolTip(bindstring)

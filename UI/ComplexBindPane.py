@@ -93,10 +93,10 @@ class ComplexBindPane(CustomBindPaneParent):
 
         stepsWellFormed = True
         for step in self.Steps:
-            if len(step.PowerBinder.GetValue()) <= 255:
+            if len(step.PowerBinder.GetValue()) + step.PowerBinder.ExtraLength <= 255:
                 step.PowerBinder.RemoveError('length')
             else:
-                step.PowerBinder.AddError('length', 'This step is longer than 255 characters, which will cause problems in-game.')
+                step.PowerBinder.AddError('length', 'This step, when written to file, will be longer than 255 characters, which will cause problems in-game.')
                 stepsWellFormed = False
 
         if (not stepsWellFormed): isWellFormed = False
@@ -201,7 +201,9 @@ class BindStep(wx.Panel):
         self.StepLabel = StepLabel
         sizer.Add(StepLabel, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        self.PowerBinder = PowerBinder(self, step.get('powerbinderdata', {}))
+        title = re.sub(r'\W+', '', parent.Title)
+        extralength = len(parent.Profile.BLF(f'cbinds\\{title}-X.txt'))
+        self.PowerBinder = PowerBinder(self, step.get('powerbinderdata', {}), extralength = extralength)
         self.PowerBinder.SetValue(step.get('contents', ''))
         self.PowerBinder.Bind(wx.EVT_TEXT, parent.onContentsChanged)
         sizer.Add(self.PowerBinder, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)

@@ -113,6 +113,7 @@ class CustomBinds(Page):
                 binddata = json.loads(bindjson)
                 bindpane = None
 
+                # Might DRY this up with the nearly-identical code in Profile
                 if binddata['Type'] == "SimpleBind":
                     bindpane = SimpleBindPane(self, init = binddata)
                 elif binddata['Type'] == "BufferBind":
@@ -125,7 +126,11 @@ class CustomBinds(Page):
                 else:
                     raise(Exception("No valid custom bind found."))
 
-                if bindpane: self.AddBindToPage(bindpane = bindpane)
+                if bindpane:
+                    self.AddBindToPage(bindpane = bindpane)
+                    existingBindsNames = [pane.Title for pane in self.Panes if pane != bindpane]
+                    if bindpane.Title in existingBindsNames:
+                        self.SetBindPaneLabel(None, bindpane, new = True)
 
             except Exception as e:
                 wx.LogError(f'Cannot import custom bind "{filepath.name}": {e}')
@@ -233,6 +238,7 @@ class CustomBinds(Page):
                 bindpane.DelButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
                 bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
                 bindpane.DupButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
+                bindpane.ExpButton.SetToolTip(f'Export bind "{bindpane.Title}"')
                 bindpane.RenameCtrlsFrom(oldtitle)
                 # if we have files to delete (we do, if not new) then delete them.
                 if deletefiles:
@@ -241,7 +247,7 @@ class CustomBinds(Page):
             self.Update()
         else:
             if new:
-                bindpane.Destroy()
+                self.doDeleteBindPane(bindpane)
 
         dlg.Destroy()
 
@@ -255,13 +261,18 @@ class CustomBinds(Page):
                 # do the delete of the files
                 files = bindpane.AllBindFiles()
                 self.Profile.doDeleteBindFiles(files)
+        self.doDeleteBindPane(bindpane)
+        evt.Skip()
+
+    def doDeleteBindPane(self, bindpane):
+        delButton = bindpane.DelButton
         sizer = delButton.BindSizer
-        for ctrlname in delButton.BindPane.Ctrls:
+        for ctrlname in bindpane.Ctrls:
             if self.Ctrls.get(ctrlname, None) : del self.Ctrls[ctrlname]
         self.PaneSizer.Hide(sizer)
         self.PaneSizer.Remove(sizer)
-        self.Panes.remove(delButton.BindPane)
-        delButton.BindPane.DestroyLater()
+        self.Panes.remove(bindpane)
+        bindpane.DestroyLater()
         wx.CallAfter(self.Profile.CheckAllConflicts)
         if len(self.Panes) == 0:
             # need to put back the blankpanel
@@ -269,7 +280,6 @@ class CustomBinds(Page):
             self.BlankPanel.Show()
             self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
         self.Layout()
-        evt.Skip()
 
     def OnDuplicateButton(self, evt):
         oldbindpane = evt.EventObject.BindPane

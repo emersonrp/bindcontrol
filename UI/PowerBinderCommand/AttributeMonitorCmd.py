@@ -98,7 +98,7 @@ class AttributeMonitorCmd(PowerBinderCommand):
                 'Level Shift'              : 'L S',
             },
         }
-        groupSizer = wx.BoxSizer(wx.HORIZONTAL)
+        groupSizer = wx.BoxSizer(wx.VERTICAL)
 
         self.AttributeMenu = wx.Menu()
         for group, controls in self.AttributeTable.items():
@@ -109,8 +109,9 @@ class AttributeMonitorCmd(PowerBinderCommand):
 
         self.AttributeMenu.Bind(wx.EVT_MENU, self.OnMenuItem)
 
-        self.editbox = EditableListBox(dialog, label = "Attributes", style = wx.adv.EL_ALLOW_NEW|wx.adv.EL_ALLOW_DELETE)
-        groupSizer.Add(self.editbox)
+        self.editbox = EditableListBox(dialog, label = "Attributes",
+                                       style = wx.adv.EL_ALLOW_NEW|wx.adv.EL_ALLOW_DELETE)
+        groupSizer.Add(self.editbox, 1, wx.ALIGN_CENTER_HORIZONTAL)
 
         newButton = self.editbox.GetNewButton()
         newButton.Bind(wx.EVT_BUTTON, self.OnNewButton)

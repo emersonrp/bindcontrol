@@ -40,7 +40,6 @@ class PowerBinderDialog(wx.Dialog):
 
         self.LoadModules()
 
-        self.EditDialog = None # make this at dialog-show time in LoadFromCurrentState
         self.PowerBinder = powerbinder
         self.AddCommandMenu = self.makeAddCommandMenu()
 
@@ -161,8 +160,6 @@ class PowerBinderDialog(wx.Dialog):
                 print(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
     def LoadFromCurrentState(self):
-        if self.EditDialog: self.EditDialog.Destroy()
-        self.EditDialog = PowerBinderEditDialog(self)
         self.RearrangeList.Clear()
 
         for item in self.CurrentState:
@@ -173,12 +170,9 @@ class PowerBinderDialog(wx.Dialog):
                     if not commandClass:
                         wx.LogError(f"Profile contained unknown custom bind command class {type}; ignoring it and continuing.")
                         continue
-                newCommand = commandClass(self.EditDialog, data)
+                newCommand = commandClass(self, data)
                 index = self.RearrangeList.Append(newCommand.MakeListEntryString())
                 self.RearrangeList.SetClientData(index, newCommand)
-                if newCommand.UI:
-                    self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10)
-                    self.EditDialog.mainSizer.Hide(newCommand.UI)
         self.UpdateBindStringDisplay()
 
     def SaveToData(self):
@@ -242,10 +236,11 @@ class PowerBinderDialog(wx.Dialog):
             pass
 
         if cmdObject:
-            self.ShowEditDialogFor(cmdObject)
+            cmdObject.ShowEditDialog()
             self.RearrangeList.SetString(index, cmdObject.MakeListEntryString())
         else:
             print("cmdObject was None")
+
         self.UpdateBindStringDisplay()
 
     # OnAddCommandMenu creates a new Command and adds it to the rearrangelist
@@ -255,13 +250,11 @@ class PowerBinderDialog(wx.Dialog):
 
         # make a new command object, attached to the parent dialog
         newCommandClass = commandClasses[chosenName]
-        newCommand = newCommandClass(self.EditDialog)
+        newCommand = newCommandClass(self)
 
         # show the edit dialog if this command needs it
-        if newCommand.UI and self.EditDialog:
-            self.EditDialog.mainSizer.Insert(0, newCommand.UI, 1, wx.ALL|wx.EXPAND, 10)
-            if (self.ShowEditDialogFor(newCommand) == wx.ID_CANCEL):
-                self.EditDialog.mainSizer.Remove(newCommand.UI)
+        if newCommand:
+            if newCommand.ShowEditDialog() == wx.ID_CANCEL:
                 return
 
         newBindIndex = self.RearrangeList.Append(newCommand.MakeListEntryString())
@@ -275,8 +268,7 @@ class PowerBinderDialog(wx.Dialog):
         selected = self.RearrangeList.GetSelection()
 
         if selected != wx.NOT_FOUND:
-            selCommand = self.RearrangeList.GetClientData(selected)
-            if selCommand.UI:
+            if bool(self.RearrangeList.GetClientData(selected)):
                 self.EditButton.Enable()
             else:
                 self.EditButton.Disable()
@@ -303,22 +295,6 @@ class PowerBinderDialog(wx.Dialog):
         bindstring = ('$$'.join(cmdBindStrings))
         return bindstring
 
-    # TODO - this is all reaching down into the innards of EditDialog and should probably
-    # instead be a method on that class.
-    def ShowEditDialogFor(self, command):
-        if not command.UI or not self.EditDialog: return
-
-        self.EditDialog.mainSizer.Show(command.UI)
-
-        self.EditDialog.mainSizer.Fit(self.EditDialog)
-
-        self.EditDialog.SetTitle(f'Editing Command "{commandRevClasses[type(command)]}"')
-        returnval = self.EditDialog.ShowModal()
-
-        self.EditDialog.mainSizer.Hide(command.UI)
-
-        return returnval
-
     def makeAddCommandMenu(self):
 
         CommandMenu = wx.Menu()
@@ -332,28 +308,6 @@ class PowerBinderDialog(wx.Dialog):
         CommandMenu.Append(wx.ID_ANY, 'Custom Command')
 
         return CommandMenu
-
-class PowerBinderEditDialog(wx.Dialog):
-    def __init__(self, parent):
-        super().__init__(parent, -1, "Edit Command",
-           style = wx.DEFAULT_DIALOG_STYLE)
-
-        outerSizer = wx.BoxSizer(wx.VERTICAL)
-
-        self.mainSizer = wx.BoxSizer(wx.VERTICAL)
-        self.mainSizer.SetMinSize(wx.Size(500, 150))
-
-        self.Page = parent.Page
-
-        self.mainSizer.Add(
-            self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL),
-            0, wx.EXPAND|wx.ALL, 10)
-
-        outerSizer.Add(self.mainSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 3)
-
-        self.SetSizerAndFit(outerSizer)
-        self.Layout()
-        self.Fit()
 
 menuStructure = {
         'Graphics / UI' : [ ],

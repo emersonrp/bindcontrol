@@ -100,6 +100,15 @@ class AttributeMonitorCmd(PowerBinderCommand):
         }
         groupSizer = wx.BoxSizer(wx.VERTICAL)
 
+        rbSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.MonitorOn = wx.RadioButton(dialog, -1, "Monitor", style = wx.ALIGN_CENTER_VERTICAL)
+        rbSizer.Add(self.MonitorOn, 1)
+        self.MonitorOff = wx.RadioButton(dialog, -1, "Unmonitor", style = wx.ALIGN_CENTER_VERTICAL)
+        rbSizer.Add(self.MonitorOff, 1)
+        self.MonitorOn.SetValue(True)
+
+        groupSizer.Add(rbSizer, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 6)
+
         self.AttributeMenu = wx.Menu()
         for group, controls in self.AttributeTable.items():
             submenu = wx.Menu()
@@ -125,19 +134,26 @@ class AttributeMonitorCmd(PowerBinderCommand):
             for cb, data in controls.items():
                 map[cb] = data
 
+        command = 'stopmonitorattribute' if self.MonitorOff.GetValue() else 'monitorattribute'
+
         for string in self.editbox.GetStrings():
             if string:
-                bindstrings.append(f'monitorattribute {map[string]}')
+                bindstrings.append(f'{command} {map[string]}')
 
         return '$$'.join(bindstrings)
 
     def Serialize(self):
         return {
+            'on_or_off'  : 'unmonitor' if self.MonitorOff.GetValue() else 'monitor',
             'attributes' : self.editbox.GetStrings()
         }
 
     def Deserialize(self, init):
         self.editbox.SetStrings(init.get('attributes', []))
+        if init.get('on_or_off', 'monitor') == 'monitor':
+            self.MonitorOn.SetValue(True)
+        else:
+            self.MonitorOff.SetValue(True)
 
     def OnNewButton(self, evt):
         evt.GetEventObject().PopupMenu(self.AttributeMenu)

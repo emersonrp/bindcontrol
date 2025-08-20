@@ -21,8 +21,7 @@ class KeyBind():
         # Therefore, we just make a new KeyBind object.  Maybe investigate someday.
         return KeyBind(self.Key, self.Name, self.Page, contents)
 
-    def GetKeyBindString(self):
-
+    def BindString(self):
         payload = '$$'.join([i for i in self.Contents if i])
 
         # remove any initial $$ if we snuck in here with it.
@@ -30,7 +29,10 @@ class KeyBind():
         # and any doubled up '$$'
         payload = re.sub(r'\$\$\$\$', '$$', payload)
 
-        return f'{self.Key} "{payload}"\n'
+        return payload
+
+    def BindFileString(self):
+        return f'{self.Key} "{self.BindString()}"\n'
 
 class BindFile():
 
@@ -102,10 +104,10 @@ class BindFile():
         output = ''
         for keybind in sortedKeyBinds:
             kb = self.KeyBinds[keybind]
-            payload = kb.GetKeyBindString()
-            if len(payload) > 255:
-                raise Exception(f"Bind '{kb.Key}' from page '{kb.Page}' is {len(payload)} characters long - this will cause badness in-game!")
-            output = output + payload
+            bindstring = kb.BindString()
+            if len(bindstring) > 255:
+                raise Exception(f"Bind '{kb.Key}' from page '{kb.Page}' is {len(bindstring)} characters long - this will cause badness in-game!")
+            output = output + kb.BindFileString()
 
         if output:
             try:

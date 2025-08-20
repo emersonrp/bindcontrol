@@ -89,8 +89,16 @@ class PowerBinderDialog(wx.Dialog):
 
         sizer.Add(bindStringPreviewSizer, 0, wx.EXPAND|wx.TOP, 16)
 
+        BSCountSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BindStringCount = wx.StaticText(self)
-        sizer.Add(self.BindStringCount, 0, wx.ALIGN_RIGHT|wx.BOTTOM, 16)
+        BSCountSizer.Add(self.BindStringCount, 0)
+
+        if self.ExtraLength:
+            BindStringCountHelp = wx.StaticText(self, label = '[?]')
+            BindStringCountHelp.SetToolTip('This count includes extra characters that will be added to your Complex Bind when the files are written, and so may be larger than expected.')
+            BSCountSizer.Add(BindStringCountHelp, 0, wx.LEFT, 3)
+
+        sizer.Add(BSCountSizer, 0, wx.ALIGN_RIGHT|wx.BOTTOM, 16)
 
         sizer.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND)
 

@@ -87,7 +87,10 @@ class PowerBinderDialog(wx.Dialog):
                         wx.ALIGN_CENTER_VERTICAL)
         bindStringPreviewSizer.Add(self.BindStringDisplay, 1, wx.LEFT, 10)
 
-        sizer.Add(bindStringPreviewSizer, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 16)
+        sizer.Add(bindStringPreviewSizer, 0, wx.EXPAND|wx.TOP, 16)
+
+        self.BindStringCount = wx.StaticText(self)
+        sizer.Add(self.BindStringCount, 0, wx.ALIGN_RIGHT|wx.BOTTOM, 16)
 
         sizer.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND)
 
@@ -279,6 +282,8 @@ class PowerBinderDialog(wx.Dialog):
 
         # If they made any change, assume they're moving on with their lives and stop bugging about it not matching.
         self.BindStringDisplay.RemoveError('nomatch')
+
+        self.BindStringCount.SetLabel(f'{len(bindstring) + self.ExtraLength}/255 characters')
 
         if len(bindstring) + self.ExtraLength > 255:
             self.BindStringDisplay.AddError('toolong', 'This bind string, when written to file, will be longer than the maximum 255 characters, and will likely not work as expected, if at all.')

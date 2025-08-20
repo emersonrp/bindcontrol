@@ -113,7 +113,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /info_self | Opens the info window for yourself |
 | /info_self_tab tab_number | Opens the specified tab of the info window for yourself |
 | /info_tab tab_number | Opens the specified tab of the info window for the current target (yourself if you have no target) |
-| /insp_combine inspName inspName | Combine 3 inspirations into one of a different type. Alias: /MergeInsp |
 | /insp_delete inspiration | Deletes an inspiration by name. |
 | /inspexec_pet_name insp_name petname | Gives an inspiration to the named pet |
 | /inspexec_pet_target insp_name | Gives an inspiration to the targeted pet |
@@ -149,7 +148,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /maxInactiveFps | Limits max frames per second while the game is not in the foreground. |
 | /maxrtframes number | How many frames ahead to allow buffering. |
 | /maxtexunits | Limits number of textures used, set to 4 to emulate GF 4/5 path |
-| /mergeInsp inspName inspName | Alias for /insp_combine. |
 | /ml character | Change the team leader to targeted character, must have character targeted if no name is provided.|
 | /mmentry | Opens the Mission Architect to the My Creations tab while inside Architect Entertainment.|
 | /mmscrollsettoggleregion [0-3] | Displays the specified editing screen while creating or editing a mission in the Mission Architect. Alias: /mmscrollsetviewlist |

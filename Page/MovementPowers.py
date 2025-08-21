@@ -803,7 +803,7 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
         self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
 
-        if ((flight == "Fly" or flight == "Mystic Flight") and pathbo):
+        if ((flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
             #  Base to set down
             if (modestr != "NonSoD") : self.makeNonSoDModeKey(profile,t,"r",curfile,[ mobile,stationary ],self.sodSetDownFix)
             if (modestr != "Sprint") : self.makeSprintModeKey(profile,t,"r",curfile,turnoff,self.sodSetDownFix)
@@ -837,7 +837,7 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
         self.sodRightKey  (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
 
-        if ((flight == "Fly" or flight == "Mystic Flight") and pathbo):
+        if ((flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
             if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"ar",curfile,[ mobile,stationary ],self.sodSetDownFix)
             if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,self.sodSetDownFix)
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,self.sodSetDownFix)
@@ -865,7 +865,7 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
         self.sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
 
-        if ((flight == "Fly" or flight == "Mystic Flight") and pathbo):
+        if ((flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
             if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ],self.sodSetDownFix)
             if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,self.sodSetDownFix)
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,self.sodSetDownFix)
@@ -1160,7 +1160,7 @@ class MovementPowers(Page):
             t.fly    = self.GetState('FlyPower')
             if (self.GetState('TPTPHover')): t.tphover = f'$${self.togon} {self.GetState("HoverPower")}'
 
-        if ((profile.Archetype() == "Peacebringer") and self.GetState('FlyQFly')):
+        if (profile.Archetype() == "Peacebringer"):
             t.canqfly = True
 
         if (self.GetState('HasGFly')):

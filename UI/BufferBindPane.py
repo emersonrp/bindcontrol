@@ -132,7 +132,8 @@ class BufferBindPane(CustomBindPaneParent):
         newBuff = Buff(self, buff)
         self.Buffs.append(newBuff)
         self.BuffSizer.Add(newBuff, flag=wx.EXPAND)
-        # don't SynchronizeUI in here, as we do this before the full page is built
+        # don't SynchronizeUI in here, because we call this before the full page is built
+        # TODO this is arguably a bad idea, overloading this as a general "add buff" scheme
         self.Page.Layout()
 
     def OnDelBuffButton(self, evt):
@@ -146,8 +147,20 @@ class BufferBindPane(CustomBindPaneParent):
         self.Parent.Layout()
         wx.CallAfter(self.Page.SynchronizeUI)
 
+    def GetVerbFor(self, ctl):
+        tgt = ctl.GetString(ctl.GetSelection())
+
+        if tgt == 'team':
+            verb = "g "
+        elif tgt == 'target':
+            verb = "tell $target, "
+        else:
+            verb = "local "
+
+        return verb
+
     def PopulateBindFiles(self):
-        if not self.checkIfWellFormed():
+        if not self.CheckIfWellFormed():
             wx.MessageBox(f'Buffer Bind "{self.Title}" is not complete or has errors.  Not written to bindfile.')
             return
 
@@ -158,29 +171,11 @@ class BufferBindPane(CustomBindPaneParent):
 
         BuffChats = {}
 
-        # TODO:  DRY up the next two bits eventually
-        ctl = self.SelChatTgt
-        tgt = ctl.GetString(ctl.GetSelection())
-
-        if tgt == 'team':
-            verb = "g "
-        elif tgt == 'target':
-            verb = "tell $target, "
-        else:
-            verb = "local "
-
-        BuffChats['SelChat'] = verb + self.SelChat.GetValue()
+        BuffChats['SelChat'] = self.GetVerbFor(self.SelChatTgt) + self.SelChat.GetValue()
 
         for i, b in enumerate(self.Buffs, start = 2): # select is step i, buffs 2..x
-            tgt = b.ChatTgt.GetString(b.ChatTgt.GetSelection())
-            if tgt == 'team':
-                verb = "g "
-            elif tgt == 'target':
-                verb = "tell $target, "
-            else:
-                verb = "local "
 
-            BuffChats[f'Buff{i}'] = verb + b.Chat.GetValue()
+            BuffChats[f'Buff{i}'] = self.GetVerbFor(b.ChatTgt) + b.Chat.GetValue()
 
         if self.Ctrls[self.MakeCtlName('BuffsAffectTeam')].GetValue():
             for j in [1,2,3,4,5,6,7,8]:
@@ -285,8 +280,8 @@ class BufferBindPane(CustomBindPaneParent):
             'dirs'  : [f"buff{title}"],
         }
 
-    def checkIfWellFormed(self):
-        return self.CheckAnyKeyPicked()
+    def CheckIfWellFormed(self):
+        return (self.CheckAnyKeyPicked() and self.CheckAllBuffsAreValid())
 
     def CheckAnyKeyPicked(self, _ = None):
         KeyIsPicked = False
@@ -304,6 +299,14 @@ class BufferBindPane(CustomBindPaneParent):
             Team1Button.AddError('undef', 'At least one Team or Pet key must be selected.')
 
         return KeyIsPicked
+
+    def CheckAllBuffsAreValid(self):
+        AllAreValid = True
+        for b in self.Buffs:
+            if not b.BuffPower.HasPowerPicked():
+                AllAreValid = False
+
+        return AllAreValid
 
 class Buff(wx.Panel):
     def __init__(self, parent, buff = {}):

@@ -10,6 +10,7 @@ class WizardBindPane(CustomBindPaneParent):
 
         self.WizClass    = wizClass
         self.Description = wizClass.WizardName
+        self.Type        = "WizardBind"
         self.Wizard      = wizClass(self, init)
 
         if init:
@@ -18,12 +19,10 @@ class WizardBindPane(CustomBindPaneParent):
         self.Init = init
 
     def Serialize(self):
-        data = {
-            'Type'     : 'WizardBind',
-            'Title'    : self.Title,
+        data = self.CreateSerialization({
             'WizClass' : rev_wiz[self.WizClass],
             'WizData'  : self.Wizard.Serialize(),
-        }
+        })
         return data
 
     def PopulateBindFiles(self):

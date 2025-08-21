@@ -4,7 +4,6 @@ import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinder import PowerBinder
-from UI.ControlGroup import cgTextCtrl
 from Icon import GetIcon
 
 class ComplexBindPane(CustomBindPaneParent):
@@ -12,16 +11,15 @@ class ComplexBindPane(CustomBindPaneParent):
         super().__init__(page, init)
 
         self.Description = "Complex Bind"
+        self.Type        = "ComplexBind"
 
         self.Steps = []
 
     def Serialize(self):
-        data = {
-            'Type' : 'ComplexBind',
-            'Title': self.Title,
+        data = self.CreateSerialization({
             'Key'  : self.Ctrls[self.MakeCtlName('BindKey')].Key,
             'Steps': [],
-        }
+        })
         for step in self.Steps:
             if step.PowerBinder.GetValue():
                 data['Steps'].append({
@@ -181,11 +179,12 @@ class ComplexBindPane(CustomBindPaneParent):
         # fish out only the steps that have contents
         fullsteps = list(filter(lambda x: x.PowerBinder.GetValue(), self.Steps))
         title = re.sub(r'\W+', '', self.Title)
+        cid = self.CustomID
         for i, step in enumerate(fullsteps, start = 1):
-            cbindfile = self.Profile.GetBindFile("cbinds", f"{title}-{i}.txt")
+            cbindfile = self.Profile.GetBindFile("cb", f"{cid}-{i}.txt")
             nextCycle = 1 if (i+1 > len(fullsteps)) else i+1
 
-            cmd = [step.PowerBinder.GetValue(), self.Profile.BLF(f'cbinds\\{title}-{nextCycle}.txt')]
+            cmd = [step.PowerBinder.GetValue(), self.Profile.BLF(f'cb\\{cid}-{nextCycle}.txt')]
             key = self.Ctrls[self.MakeCtlName('BindKey')].Key
 
             if i == 1: resetfile.SetBind(key, self, title, cmd)
@@ -193,13 +192,16 @@ class ComplexBindPane(CustomBindPaneParent):
 
     def AllBindFiles(self):
         files = []
+        # we do both of these for backwards compat but might eventually just do cid
         title = re.sub(r'\W+', '', self.Title)
+        cid = self.CustomID
         for i, _ in enumerate(self.Steps, start = 1):
             files.append(self.Profile.GetBindFile('cbinds', f'{title}-{i}.txt'))
+            files.append(self.Profile.GetBindFile('cb', f'{cid}-{i}.txt'))
 
         return {
             'files' : files,
-            'dirs'  : ['cbinds'],
+            'dirs'  : ['cbinds', 'cb'],
         }
 
 class BindStep(wx.Panel):
@@ -216,8 +218,7 @@ class BindStep(wx.Panel):
         self.StepLabel = StepLabel
         sizer.Add(StepLabel, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        title = re.sub(r'\W+', '', parent.Title)
-        extralength = len(parent.Profile.BLF(f'cbinds\\{title}-X.txt'))
+        extralength = len(parent.Profile.BLF(f'cb\\{parent.CustomID}-X.txt'))
         self.PowerBinder = PowerBinder(self, step.get('powerbinderdata', {}), extralength = extralength)
         self.PowerBinder.SetValue(step.get('contents', ''))
         self.PowerBinder.Bind(wx.EVT_TEXT, parent.onContentsChanged)
@@ -238,7 +239,7 @@ class BindStep(wx.Panel):
         self.dupeButton.SetToolTip('Duplicate step')
         sizer.Add(self.dupeButton, 0)
 
-        self.delButton = wx.Button(self, -1, "X", size = wx.Size(40,-1))
+        self.delButton = wx.BitmapButton(self, -1, bitmap = GetIcon('UI', 'delete'))
         self.delButton.SetForegroundColour(wx.RED)
         self.delButton.Bind(wx.EVT_BUTTON, parent.onDelButton)
         self.delButton.SetToolTip('Delete step')

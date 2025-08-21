@@ -13,6 +13,9 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         self.Init        = init
         self.Title       = init.get('Title', '')
         self.Description = ''
+        self.Type        = ''
+        # RP:  don't do this as .get('CustomID', GetCustomID()).  Love, RP
+        self.CustomID    = init.get('CustomID') or page.Profile.GetCustomID()
         self.DelButton   = None
         self.RenButton   = None
         self.DupButton   = None
@@ -38,6 +41,14 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         # for overriding on child classes this will be called in the course of
         # the Custom Binds page doing its own PopulateBindFiles, iteratively
         # over all of its kids
+
+    def CreateSerialization(self, data):
+        return {
+                'CustomID' : self.CustomID,
+                'Type'     : self.Type,
+                'Title'    : self.Title,
+                **data
+                }
 
     def Serialize(self):
         print(f"Inside {self.bindclass} Serialize, please override")

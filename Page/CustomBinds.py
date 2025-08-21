@@ -331,12 +331,12 @@ class CustomBinds(Page):
             pane.PopulateBindFiles()
         return True
 
-    # TODO - this only gets cbonds and wiz stuff if there is a cbind or wiz pane
-    # currently in the page.  This is not right.
+    # TODO:  this contains knowledge of the innards of ComplexBinds, BufferBinds, etc
+    # and probably should query each of those entities for which directories to check
     def AllBindFiles(self):
         files = []
         dirs  = []
-        for dir in ['cbinds', 'buff', 'wiz']:
+        for dir in ['cbinds', 'cb', 'buff', 'wiz']:
             fpbd = self.FullPaneBindsDir(dir)
             if fpbd:
                 files.extend(fpbd['files'])

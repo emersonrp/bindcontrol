@@ -117,6 +117,8 @@ BindControl is in many places a direct port of [CityBinder](http://sourceforge.n
 
 Various newer functionality was added to [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by Tailcoat, who kindly provided his source code and permission to adapt for use with BindControl, as well as offered suggestions and advice for improvements.
 
+The [CoH/CoV Technical Reference Guide](http://www.shenanigunner.com/COXTECHGUIDE) from [Heroica!](https://www.shenanigunner.com/) has been, and continues to be, a crucial resource and is highly recommended for those wishing to dig deeper into keybinds, popmenus, and macros.
+
 CityBinder's acknowledgements are reproduced below:
 ```
     Obviously, without Cryptic and NCSoft to have created/funded/published

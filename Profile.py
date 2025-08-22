@@ -101,7 +101,9 @@ class Profile(wx.Notebook):
         self.Data = {}
 
         # are we wanting to load this one from a file?
-        if self.Filename and self.Filename.exists():
+        if self.Filename:
+            if not self.Filename.exists():
+                raise Exception("Tried to load a Profile whose file is missing")
             if data := json.loads(Path(self.Filename).read_text()):
                 self.Data = data
                 self.LastModTime = self.Filename.stat().st_mtime_ns

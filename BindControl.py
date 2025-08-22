@@ -189,12 +189,13 @@ class Main(wx.Frame):
         # Load up the last profile if the pref says to and if it's there
         filename = config.Read('LastProfile')
         if (config.Read('StartWith') == 'Last Profile' or config.ReadBool('StartWithLastProfile')) and filename:
-            if profile := Profile.Profile(self, filename):
+            try:
+                profile = Profile.Profile(self, filename)
                 profile.buildFromData()
                 self.Profile = profile
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
                 self.CheckProfDirButtonErrors()
-            else:
+            except Exception as e:
                 self.Profile = None
                 self.StartupPanel = self.MakeStartupPanel()
                 self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)

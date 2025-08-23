@@ -2062,7 +2062,69 @@ IncarnatePowers2 = {
                 ],
             },
         },
-    }
+    },
+    'Hybrid' : {
+        'Levels' : ['Genome', 'Core Genome', 'Radial Genome', 'Total Core Graft', 'Partial Core Graft',
+                    'Partial Radial Graft', 'Total Radial Graft', 'Core Embodiment', 'Radial Embodiment'],
+        'Types' : {
+            'Assault' : {
+                'Effects' : ['Auto +DMG Buff', 'Chance of +DMG', 'Stacks of +DMG', 'Chance of Double Hit', 'Amount of Triggering Power\'s Damage', 'Damage Type'],
+                'Levels' : [
+                    ['2.5%', '20%', '3', 0         , 0         , 0]         ,
+                    ['5%'  , '35%', '3', 0         , 0         , 0]         ,
+                    ['5%'  , 0    , 0  , 'Moderate', 'Moderate', 'Smashing'],
+                    ['7.5%', '55%', '3', 0         , 0         , 0]         ,
+                    ['7.5%', '40%', '3', 'Moderate', 'Small'   , 'Smashing'],
+                    ['7.5%', '30%', '3', 'Moderate', 'Moderate', 'Smashing'],
+                    ['7.5%', 0    , 0  , 'High'    , 'Moderate', 'Energy']  ,
+                    ['10%' , '65%', '5', 0         , 0         , 0]         ,
+                    ['10%' , 0    , 0  , 'High'    , 'Large'   , 'Energy']  ,
+                ],
+            }      ,
+            'Control' : {
+                'Effects' : ['Auto Status Resistance', 'Chance of Damage to Controlled Enemies / Type', '+1 Magnitude to Controls', 'Chance to Mez / Type'],
+                'Levels' : [
+                    ['10%', '10% / Lethal' , 0    , 0]           ,
+                    ['20%', '20% / Lethal' , '20%', 0]           ,
+                    ['20%', 0              , 0    , '35% / Fear'],
+                    ['30%', '50% / Lethal' , '50%', 0]           ,
+                    ['30%', '35% / Psionic', '35%', 0]           ,
+                    ['30%', 0              , '45%', '45% / Fear'],
+                    ['30%', 0              , 0    , '45% / Fear, 45% / Immobilize'],
+                    ['40%', '75% / Psionic', '75%', 0]           ,
+                    ['40%', 0              , 0    , '70% / Fear, 70% / Immobilize, 100% / Stun (if feared and immobilized)'],
+                ],
+            },
+            'Melee' : {
+                'Effects' : ['Auto +Regeneration', 'Regeneration Buff', 'Front-Loaded Abilities', 'Resistance (all)', 'Defense (all)', 'Status Protection', 'Taunt Aura'],
+                'Levels' : [
+                    ['7.5%', 1, '5.85% Regeneration', 0, 0, 0, 0, '4', '8ft'],
+                    ['15%', 1, '30.6% Regeneration, 1.36% Resistance (all)', 1, 0, 0, 0, '4', '8ft'],
+                    ['15%', 1, 0, 0, 1, 0, 1, '4', '8ft'],
+                    ['22.5%', 1, '67.5% Regeneraion, 4% Resistance (all), 2.0 Status Protection', 1, 0, 1, 0, '4', '8ft'],
+                    ['22.5%', 1, '118.13% Regeneration, 7% Resistance (all)', 1, 0, 0, 0, '7', '8ft'],
+                    ['22.5%', 1, 0, 0, 1, 0, 1, '7', '8ft'],
+                    ['22.5%', 1, 0, 0, 1, 1, 1, '4', '8ft'],
+                    ['30%', 1, '241.2% Regeneraion, 16.08% Resistance (all), 10.72 Status Protection', 1, 0, 1, 0, '9', '8ft'],
+                    ['30%', 1, 0, 0, 1, 1, 1, '9', '8ft'],
+                ],
+            },
+            'Support' : {
+                'Effects' : ['Auto Endurance Discount', 'Damage Buff', 'Defense Buff', 'Accuracy Buff', 'Mez and Healing Buff', 'Doubled for Pets'],
+                'Levels' : [
+                    ['2.5%', 1, 'Melee S/L', 0, 0, 0, '2%', '50ft'],
+                    ['5%', 1, 'Melee, AoE S/L/E/NE', 0, 0, 1, '2%', '50ft'],
+                    ['5%', 1, 'Melee, AoE S/L/E/NE', 1, 0, 0, '2%', '50ft'],
+                    ['7.5%', 1, 'Melee, AoE S/L/F/C/E/N', 1, 0, 1, '4%', '50ft'],
+                    ['7.5%', 1, 'Melee, AoE S/L/F/C/E/N', 0, 1, 1, '3%', '50ft'],
+                    ['7.5%', 1, 'Melee, AoE S/L/F/C/E/N', 1, 0, 0, '8%', '50ft'],
+                    ['7.5%', 1, 'Melee, AoE S/L/F/C/E/N', 1, 1, 0, '6%', '50ft'],
+                    ['10%', 1, 'Defense (All)', 1, 1, 1, '6%', '50ft'],
+                    ['10%', 1, 'Defense (All)', 1, 1, 0, '8%', '80ft'],
+                ],
+            },
+        },
+    },
 },
 
 

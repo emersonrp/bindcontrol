@@ -5,6 +5,7 @@ from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinder import PowerBinder
 from UI.ControlGroup import cgTextCtrl
+from Icon import GetIcon
 
 class ComplexBindPane(CustomBindPaneParent):
     def __init__(self, page, init = {}):
@@ -141,6 +142,20 @@ class ComplexBindPane(CustomBindPaneParent):
         self.Profile.SetModified()
         self.RenumberSteps()
 
+    def onDupeButton(self, evt):
+        button = evt.GetEventObject()
+        step = button.GetParent()
+        stepidx = self.Steps.index(step)
+        data = {
+            'contents'        : step.PowerBinder.GetValue(),
+            'powerbinderdata' : step.PowerBinder.SaveToData()
+        }
+        newstep = BindStep(self, stepidx+1, data)
+        self.BindStepSizer.Insert(stepidx+1, newstep, 0, wx.EXPAND)
+        self.Steps.insert(stepidx+1, newstep)
+        self.Profile.SetModified()
+        self.RenumberSteps()
+
     def onDelButton(self, evt):
         button = evt.GetEventObject()
         step = button.GetParent()
@@ -210,15 +225,23 @@ class BindStep(wx.Panel):
 
         self.moveUpButton = wx.Button(self, -1, '\u25B2', size = wx.Size(40, -1))
         self.moveUpButton.Bind(wx.EVT_BUTTON, parent.onMoveUpButton)
+        self.moveUpButton.SetToolTip('Move step up')
         sizer.Add(self.moveUpButton, 0)
 
         self.moveDownButton = wx.Button(self, -1, '\u25BC', size = wx.Size(40, -1))
         self.moveDownButton.Bind(wx.EVT_BUTTON, parent.onMoveDownButton)
+        self.moveDownButton.SetToolTip('Move step down')
         sizer.Add(self.moveDownButton, 0)
+
+        self.dupeButton = wx.BitmapButton(self, -1, bitmap = GetIcon('UI', 'copy'))
+        self.dupeButton.Bind(wx.EVT_BUTTON, parent.onDupeButton)
+        self.dupeButton.SetToolTip('Duplicate step')
+        sizer.Add(self.dupeButton, 0)
 
         self.delButton = wx.Button(self, -1, "X", size = wx.Size(40,-1))
         self.delButton.SetForegroundColour(wx.RED)
         self.delButton.Bind(wx.EVT_BUTTON, parent.onDelButton)
+        self.delButton.SetToolTip('Delete step')
         sizer.Add(self.delButton, 0, flag = wx.RESERVE_SPACE_EVEN_IF_HIDDEN)
 
         self.SetSizer(sizer)

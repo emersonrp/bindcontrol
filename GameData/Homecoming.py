@@ -1986,6 +1986,83 @@ IncarnatePowers2 = {
             'Warworks'            : ['ACU', 'MK-VI "Victoria"', 'Battle Orb'],
         },
     },
+    'Destiny' : {
+        'Levels' : ['Invocation', 'Core Invocation', 'Radial Invocation', 'Total Core Invocation',
+                    'Partial Core Invocation', 'Partial Radial Invocation', 'Total Radial Invication',
+                    'Core Epiphany', 'Radial Epiphany'],
+        'Types' : {
+            'Ageless' : {
+                'Effects' : ['+Endurance', '+Recharge Rate', '+Recovery', '+Debuff Resistance'],
+                'Levels' : [
+                    [1, 1, 0, 0, '60s', '30\'', 0],
+                    [1, 1, 1, 0, '60s', '30\'', 0],
+                    [1, 1, 0, 1, '60s', '30\'', 0],
+                    [1, 1, 1, 0, '60s', '60\'', 1],
+                    [1, 1, 1, 0, '90s', '30\'', 1],
+                    [1, 1, 0, 1, '90s', '30\'', 1],
+                    [1, 1, 0, 1, '60s', '60\'', 1],
+                    [1, 1, 1, 0, '120s', '60\'', 1],
+                    [1, 1, 0, 1, '120s', '60\'', 1],
+                ],
+            },
+            'Barrier' : {
+                'Effects' : ['+Defense', '+Resistance', 'Revive 1 Ally', 'Revive 2 Allies'],
+                'Levels' : [
+                    [1, 1, 0, 0, '60s', '30\'', 0],
+                    [1, 1, 0, 0, '90s', '30\'', 0],
+                    [1, 1, 1, 0, '60s', '30\'', 0],
+                    [1, 1, 0, 0, '90s', '60\'', 1],
+                    [1, 1, 0, 0, '90s', '30\'', 1],
+                    [1, 1, 1, 0, '90s', '30\'', 1],
+                    [1, 1, 0, 1, '60s', '30\'', 1],
+                    [1, 1, 0, 0, '120s', '60\'', 1],
+                    [1, 1, 0, 1, '90s', '60\'', 1],
+                ],
+            },
+            'Clarion' : {
+                'Effects' : ['Status Effect Protection', '+Range and Secondary Effect'],
+                'Levels' : [
+                    [1, 0, '60s', '30\'', 0],
+                    [1, 0, '90s', '30\'', 0],
+                    [1, 1, '60s', '30\'', 0],
+                    [1, 0, '90s', '60\'', 1],
+                    [1, 0, '120s', '30\'', 1],
+                    [1, 1, '90s', '30\'', 1],
+                    [1, 1, '60s', '60\'', 1],
+                    [1, 0, '120s', '60\'', 1],
+                    [1, 1, '90s', '60\'', 1],
+                ],
+            },
+            'Incandescence' : {
+                'Effects' : ['League Teleport', '-Healing Resist', 'Foe Knockback', 'Foe Stun', 'Foe Intangible', '+Stealth', '+Movement Speed / +Perception' ],
+                'Levels' : [
+                    [1, '-30%', 1, 1, 0, 0, 0, '60s',  'League', 0],
+                    [1, '-50%', 1, 1, 0, 0, 0, '60s',  'League', 0],
+                    [1, '-40%', 1, 1, 0, 1, 0, '60s',  'League', 0],
+                    [1, '-70%', 1, 1, 0, 0, 0, '60s',  'League', 1],
+                    [1, '-50%', 1, 1, 0, 0, 0, '90s',  'League', 1],
+                    [1, '-50%', 1, 1, 0, 1, 0, '90s',  'League', 1],
+                    [1, '-50%', 1, 1, 0, 1, 0, '60s',  'League', 1],
+                    [1, '-80%', 1, 1, 0, 0, 0, '120s', 'League', 1],
+                    [1, '-60%', 1, 1, 1, 1, 1, '120s', 'League', 1],
+                ],
+            },
+            'Ageless' : {
+                'Effects' : ['Ally Heal', '+Regeneration', '+Max HP'],
+                'Levels' : [
+                    [1, 0, 0, '0s', '30\'', 0],
+                    [1, 0, 0, '0s', '60\'', 0],
+                    [1, 1, 0, '60s', '30\'', 0],
+                    [1, 0, 1, '60s', '60\'', 1],
+                    [1, 0, 1, '90s', '30\'', 1],
+                    [1, 1, 0, '90s', '30\'', 1],
+                    [1, 1, 0, '60s', '60\'', 1],
+                    [1, 0, 1, '120s', '60\'', 1],
+                    [1, 1, 0, '120s', '60\'', 1],
+                ],
+            },
+        },
+    }
 },
 
 

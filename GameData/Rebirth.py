@@ -616,6 +616,1518 @@ IncarnatePowers = {
     },
 }
 
+IncarnatePowers2 = {
+    'Alpha' : {
+        'Agility' : {
+            'Boost' : {
+                'EndMod' : '33',
+                'Bypass' : '1/6',
+                },
+            'Core Boost' : {
+                'EndMod'   : '33',
+                'Recharge' : '33',
+                'Bypass'   : '1/3',
+                },
+            'Radial Boost' : {
+                'EndMod'   : '33',
+                'Defense'  : '20',
+                'Bypass'   : '1/3',
+                },
+            'Total Core Revamp' : {
+                'EndMod'   : '45',
+                'Recharge' : '33',
+                'Bypass'   : '1/2',
+                'Level'    : '1',
+                },
+            'Partial Core Revamp' : {
+                'EndMod'   : '33',
+                'Recharge' : '33',
+                'Defense'  : '20',
+                'Bypass'   : '1/2',
+                'Level'    : '1',
+                },
+            'Total Radial Revamp' : {
+                'EndMod'   : '33',
+                'Recharge' : '16.5',
+                'Defense'  : '20',
+                'Jump'     : '33',
+                'Bypass'   : '1/2',
+                'Level'    : '1',
+                },
+            'Partial Radial Revamp' : {
+                'EndMod'   : '33',
+                'Recharge' : '16.5',
+                'Defense'  : '20',
+                'Run'      : '33',
+                'Bypass'   : '1/2',
+                'Level'    : '1',
+                },
+            'Core Paragon' : {
+                'EndMod'   : '45',
+                'Recharge' : '33',
+                'Defense'  : '20',
+                'Bypass'   : '2/3',
+                'Level'    : '1',
+                },
+            'Radial Paragon' : {
+                'EndMod'   : '33',
+                'Recharge' : '33',
+                'Defense'  : '20',
+                'Run'      : '33',
+                'Jump'     : '33',
+                'Fly'      : '33',
+                'Bypass'   : '2/3',
+                'Level'    : '1',
+                },
+        },
+        'Cardiac' : {
+            'Boost' : {
+                'EndCost' : '33',
+                'Bypass'  : '1/6',
+                },
+            'Core Boost' : {
+                'EndCost' : '33',
+                'Range'   : '20',
+                'Bypass'  : '1/3',
+                },
+            'Radial Boost' : {
+                'EndCost' : '33',
+                'Resist'  : '20',
+                'Bypass'  : '1/3',
+                },
+            'Total Core Revamp' : {
+                'EndCost' : '45',
+                'Range'   : '20',
+                'Bypass'  : '1/2',
+                'Level'   : '1',
+                },
+            'Partial Core Revamp' : {
+                'EndCost' : '33',
+                'Range'   : '20',
+                'Resist'  : '20',
+                'Bypass'  : '1/2',
+                'Level'   : '1',
+                },
+            'Total Radial Revamp' : {
+                'EndCost' : '33',
+                'Range'   : '10',
+                'Resist'  : '20',
+                'Sleep'   : '33',
+                'Bypass'  : '1/2',
+                'Level'   : '1',
+                },
+            'Partial Radial Revamp' : {
+                'EndCost' : '33',
+                'Range'   : '10',
+                'Resist'  : '20',
+                'Fear'    : '33',
+                'Bypass'  : '1/2',
+                'Level'   : '1',
+                },
+            'Core Paragon' : {
+                'EndCost' : '45',
+                'Range'   : '20',
+                'Resist'  : '20',
+                'Bypass'  : '2/3',
+                'Level'   : '1',
+                },
+            'Radial Paragon' : {
+                'EndCost' : '33',
+                'Range'   : '20',
+                'Resist'  : '20',
+                'Fear'    : '33',
+                'Sleep'   : '33',
+                'Absorb'  : '33',
+                'Bypass'  : '2/3',
+                'Level'   : '1',
+                },
+        },
+        'Intuition' : {
+            'Boost' : {
+                'Hold'   : '33',
+                'Bypass' : '1/6',
+                },
+            'Core Boost' : {
+                'Hold'      : '33',
+                'DefDebuff' : '33',
+                'Bypass'    : '1/3',
+                },
+            'Radial Boost' : {
+                'Hold'   : '33',
+                'Range'  : '20',
+                'Bypass' : '1/3',
+                },
+            'Total Core Revamp' : {
+                'Hold'      : '45',
+                'DefDebuff' : '33',
+                'Bypass'    : '1/2',
+                'Level'     : '1',
+                },
+            'Partial Core Revamp' : {
+                'Hold'      : '33',
+                'DefDebuff' : '33',
+                'Range'     : '20',
+                'Bypass'    : '1/2',
+                'Level'     : '1',
+                },
+            'Total Radial Revamp' : {
+                'Hold'      : '33',
+                'DefDebuff' : '16.5',
+                'Range'     : '20',
+                'ToHit'     : '20',
+                'Bypass'    : '1/2',
+                'Level'     : '1',
+                },
+            'Partial Radial Revamp' : {
+                'Hold'      : '33',
+                'DefDebuff' : '16.5',
+                'Range'     : '20',
+                'Damage'    : '33',
+                'Bypass'    : '1/2',
+                'Level'     : '1',
+                },
+            'Core Paragon' : {
+                'Hold'      : '45',
+                'DefDebuff' : '33',
+                'Range'     : '20',
+                'Bypass'    : '2/3',
+                'Level'     : '1',
+                },
+            'Radial Paragon' : {
+                'Hold'      : '33',
+                'DefDebuff' : '33',
+                'Range'     : '20',
+                'Damage'    : '33',
+                'ToHit'     : '20',
+                'Slow'      : '33',
+                'Bypass'    : '2/3',
+                'Level'     : '1',
+                },
+        },
+        'Musculature' : {
+            'Boost' : {
+                'Damage' : '33',
+                'Bypass' : '1/6',
+                },
+            'Core Boost' : {
+                'Damage' : '33',
+                'Immob'  : '33',
+                'Bypass' : '1/3',
+                },
+            'Radial Boost' : {
+                'Damage'    : '33',
+                'DefDebuff' : '33',
+                'Bypass'    : '1/3',
+                },
+            'Total Core Revamp' : {
+                'Damage' : '45',
+                'Immob'  : '33',
+                'Bypass' : '1/2',
+                'Level'  : '1',
+                },
+            'Partial Core Revamp' : {
+                'Damage'    : '33',
+                'Immob'     : '33',
+                'DefDebuff' : '33',
+                'Bypass'    : '1/2',
+                'Level'     : '1',
+                },
+            'Total Radial Revamp' : {
+                'Damage'    : '33',
+                'Immob'     : '16.5',
+                'DefDebuff' : '33',
+                'EndMod'    : '33',
+                'Bypass'    : '1/2',
+                'Level'     : '1',
+                },
+            'Partial Radial Revamp' : {
+                'Damage'    : '33',
+                'Immob'     : '16.5',
+                'DefDebuff' : '33',
+                'ToHit'     : '20',
+                'Bypass'    : '1/2',
+                'Level'     : '1',
+                },
+            'Core Paragon' : {
+                'Damage'    : '45',
+                'Immob'     : '33',
+                'DefDebuff' : '33',
+                'Bypass'    : '2/3',
+                'Level'     : '1',
+                },
+            'Radial Paragon' : {
+                'Damage'    : '33',
+                'Immob'     : '33',
+                'DefDebuff' : '33',
+                'ToHit'     : '20',
+                'EndMod'    : '33',
+                'Run'       : '33',
+                'Bypass'    : '2/3',
+                'Level'     : '1',
+                },
+        },
+        'Nerve' : {
+            'Boost' : {
+                'Accuracy' : '33',
+                'Bypass'   : '1/6',
+                },
+            'Core Boost' : {
+                'Accuracy' : '33',
+                'Hold'     : '33',
+                'Bypass'   : '1/3',
+                },
+            'Radial Boost' : {
+                'Accuracy' : '33',
+                'Defense'  : '20',
+                'Bypass'   : '1/3',
+                },
+            'Total Core Revamp' : {
+                'Accuracy' : '45',
+                'Hold'     : '33',
+                'Bypass'   : '1/2',
+                'Level'    : '1',
+                },
+            'Partial Core Revamp' : {
+                'Accuracy' : '33',
+                'Hold'     : '33',
+                'Defense'  : '20',
+                'Bypass'   : '1/2',
+                'Level'    : '1',
+                },
+            'Total Radial Revamp' : {
+                'Accuracy' : '33',
+                'Hold'     : '16.5',
+                'Defense'  : '20',
+                'Confuse'  : '33',
+                'Bypass'   : '1/2',
+                'Level'    : '1',
+                },
+            'Partial Radial Revamp' : {
+                'Accuracy' : '33',
+                'Hold'     : '16.5',
+                'Defense'  : '20',
+                'Threat'   : '33',
+                'Bypass'   : '1/2',
+                'Level'    : '1',
+                },
+            'Core Paragon' : {
+                'Accuracy' : '45',
+                'Hold'     : '33',
+                'Defense'  : '20',
+                'Bypass'   : '2/3',
+                'Level'    : '1',
+                },
+            'Radial Paragon' : {
+                'Accuracy' : '33',
+                'Hold'     : '33',
+                'Defense'  : '20',
+                'Threat'   : '33',
+                'Confuse'  : '33',
+                'Fly'      : '33',
+                'Bypass'   : '2/3',
+                'Level'    : '1',
+                },
+        },
+        'Resilient' : {
+            'Boost' : {
+                'Resist' : '20',
+                'Bypass' : '1/6',
+                },
+            'Core Boost' : {
+                'Resist' : '20',
+                'ToHit'  : '20',
+                'Bypass' : '1/3',
+                },
+            'Radial Boost' : {
+                'Resist' : '20',
+                'Immob'  : '33',
+                'Bypass' : '1/3',
+                },
+            'Total Core Revamp' : {
+                'Resist' : '33',
+                'ToHit'  : '20',
+                'Bypass' : '1/2',
+                'Level'  : '1',
+                },
+            'Partial Core Revamp' : {
+                'Resist' : '20',
+                'ToHit'  : '20',
+                'Immob'  : '33',
+                'Bypass' : '1/2',
+                'Level'  : '1',
+                },
+            'Partial Radial Revamp' : {
+                'Resist' : '20',
+                'ToHit'  : '10',
+                'Immob'  : '33',
+                'Stung'  : '33',
+                'Bypass' : '1/2',
+                'Level'  : '1',
+                },
+            'Total Radial Revamp' : {
+                'Resist' : '20',
+                'ToHit'  : '10',
+                'Immob'  : '33',
+                'Absorb' : '33',
+                'Bypass' : '1/2',
+                'Level'  : '1',
+                },
+            'Core Paragon' : {
+                'Resist' : '33',
+                'ToHit'  : '20',
+                'Immob'  : '33',
+                'Bypass' : '2/3',
+                'Level'  : '1',
+                },
+            'Radial Paragon' : {
+                'Resist' : '20',
+                'ToHit'  : '20',
+                'Immob'  : '33',
+                'Stun'   : '33',
+                'Absorb' : '33',
+                'Threat' : '33',
+                'Bypass' : '2/3',
+                'Level'  : '1',
+                },
+        },
+        'Spiritual' : {
+            'Boost' : {
+                'Recharge' : '33',
+                'Bypass'   : '1/6',
+                },
+            'Core Boost' : {
+                'Recharge' : '33',
+                'Stun'     : '33',
+                'Bypass'   : '1/3',
+                },
+            'Radial Boost' : {
+                'Recharge' : '33',
+                'Heal'     : '33',
+                'Bypass'   : '1/3',
+                },
+            'Total Core Revamp' : {
+                'Recharge' : '45',
+                'Stun'     : '33',
+                'Bypass'   : '1/2',
+                'Level'    : '1',
+                },
+            'Partial Core Revamp' : {
+                'Recharge' : '33',
+                'Stun'     : '33',
+                'Heal'     : '33',
+                'Bypass'   : '1/2',
+                'Level'    : '1',
+                },
+            'Partial Radial Revamp' : {
+                'Recharge' : '33',
+                'Stun'     : '16.5',
+                'Heal'     : '33',
+                'Slow'     : '33',
+                'Bypass'   : '1/2',
+                'Level'    : '1',
+                },
+            'Total Radial Revamp' : {
+                'Recharge' : '33',
+                'Stun'     : '16.5',
+                'Heal'     : '33',
+                'ToHit'    : '20',
+                'Bypass'   : '1/2',
+                'Level'    : '1',
+                },
+            'Core Paragon' : {
+                'Recharge' : '45',
+                'Stun'     : '33',
+                'Heal'     : '33',
+                'Bypass'   : '2/3',
+                'Level'    : '1',
+                },
+            'Radial Paragon' : {
+                'Recharge' : '33',
+                'Stun'     : '33',
+                'Heal'     : '33',
+                'Slow'     : '33',
+                'ToHit'    : '20',
+                'Jump'     : '33',
+                'Bypass'   : '2/3',
+                'Level'    : '1',
+                },
+        },
+        'Vigor' : {
+            'Boost' : {
+                'Heal'   : '33',
+                'Bypass' : '1/6',
+                },
+            'Core Boost' : {
+                'Heal'     : '33',
+                'Accuracy' : '33',
+                'Bypass'   : '1/3',
+                },
+            'Radial Boost' : {
+                'Heal'      : '33',
+                'Endurance' : '33',
+                'Bypass'    : '1/3',
+                },
+            'Total Core Revamp' : {
+                'Heal'     : '45',
+                'Accuracy' : '33',
+                'Bypass'   : '1/2',
+                'Level'    : '1',
+                },
+            'Partial Core Revamp' : {
+                'Heal'      : '33',
+                'Accuracy'  : '33',
+                'Endurance' : '33',
+                'Bypass'    : '1/2',
+                'Level'     : '1',
+                },
+            'Partial Radial Revamp' : {
+                'Heal'      : '33',
+                'Accuracy'  : '16.5',
+                'Endurance' : '33',
+                'Sleep'     : '33',
+                'Bypass'    : '1/2',
+                'Level'     : '1',
+                },
+            'Total Radial Revamp' : {
+                'Heal'      : '33',
+                'Accuracy'  : '16.5',
+                'Endurance' : '33',
+                'Confuse'   : '33',
+                'Bypass'    : '1/2',
+                'Level'     : '1',
+                },
+            'Core Paragon' : {
+                'Heal'      : '45',
+                'Accuracy'  : '33',
+                'Endurance' : '33',
+                'Bypass'    : '2/3',
+                'Level'     : '1',
+                },
+            'Radial Paragon' : {
+                'Heal'      : '33',
+                'Accuracy'  : '33',
+                'Endurance' : '33',
+                'Sleep'     : '33',
+                'Confuse'   : '33',
+                'Fear'      : '33',
+                'Bypass'    : '2/3',
+                'Level'     : '1',
+                },
+        },
+    },
+    'Judgement' : {
+        'Cryonic' : {
+            'Judgement' : {
+                'Damage' : '4 Cold',
+                'Targets' : '16',
+                'Range' : '80ft',
+                'Area of Effect' : '30° cone',
+                },
+            'Core Judgement' : {
+                'Damage' : '4 Cold',
+                'Extra' : [
+                    '20% chance of 1.5 Cold to LT Rank or lower',
+                    ],
+                'Targets' : '16',
+                'Range' : '80ft',
+                'Area of Effect' : '30° cone',
+                },
+            'Radial Judgement' : {
+                'Damage' : '4 Cold',
+                'Extra' : [
+                    '-50% recharge and movement speed for 30s',
+                    ],
+                'Targets' : '16',
+                'Range' : '80ft',
+                'Area of Effect' : '30° cone',
+                },
+            'Total Core Judgement' : {
+                'Damage' : '4 Cold',
+                'Extra' : [
+                    '20% chance of 1.5 Cold',
+                    ],
+                'Targets' : '24',
+                'Range' : '80ft',
+                'Area of Effect' : '30° cone',
+                },
+            'Partial Core Judgement' : {
+                'Damage' : '4 Cold',
+                'Extra' : [
+                    '20% chance of 1.5 Cold to LT Rank or lower',
+                    '-50% recharge and movement speed for 30s',
+                    ],
+                'Targets' : '24',
+                'Range' : '80ft',
+                'Area of Effect' : '30° cone',
+                },
+            'Partial Radial Judgement' : {
+                'Damage' : '4 Cold',
+                'Extra' : [
+                    '-50% recharge and movement speed for 30s',
+                    ],
+                'Targets' : '32',
+                'Range' : '120ft',
+                'Area of Effect' : '45° cone',
+                },
+            'Total Radial Judgement' : {
+                'Damage' : '4 Cold',
+                'Extra' : [
+                    '-50% recharge and movement speed for 30s',
+                    '25% chance of mag 4 Hold for 12s',
+                    ],
+                'Targets' : '24',
+                'Range' : '80ft',
+                'Area of Effect' : '30° cone',
+                },
+            'Core Final Judgement' : {
+                'Damage' : '4 Cold',
+                'Extra' : [
+                    '20% chance of 1.5 Cold',
+                    ],
+                'Targets' : '32',
+                'Range' : '120ft',
+                'Area of Effect' : '45° cone',
+                },
+            'Radial Final Judgement' : {
+                'Damage' : '4 Cold',
+                'Extra' : [
+                    '-50% recharge and movement speed for 30s',
+                    '25% chance of mag 4 Hold for 12s',
+                    ],
+                'Targets' : '32',
+                'Range' : '120ft',
+                'Area of Effect' : '45° cone',
+                },
+        },
+        'Ion' : {
+            'Judgement' : {
+                'Damage' : '4 Energy',
+                'Targets' : '16',
+                'Range' : '80ft',
+                'Area of Effect' : '40ft radius',
+                },
+            'Core Judgement' : {
+                'Damage' : '4 Energy',
+                'Extra' : [
+                    '20% chance of 1.5 Energy to LT Rank or lower',
+                    ],
+                'Targets' : '22',
+                'Range' : '80ft',
+                'Area of Effect' : '40ft radius',
+                },
+            'Radial Judgement' : {
+                'Damage' : '4 Energy',
+                'Extra' : [
+                    '-35 endurance',
+                    '-100% recovery for 10s',
+                    ],
+                'Targets' : '22',
+                'Range' : '80ft',
+                'Area of Effect' : '40ft radius',
+                },
+            'Total Core Judgement' : {
+                'Damage' : '4 Energy',
+                'Extra' : [
+                    '20% chance of 1.5 Energy',
+                    ],
+                'Targets' : '31',
+                'Range' : '80ft',
+                'Area of Effect' : '40ft radius',
+                },
+            'Partial Core Judgement' : {
+                'Damage' : '4 Energy',
+                'Extra' : [
+                    '20% chance of 1.5 Energy to LT Rank or lower',
+                    '-35 endurance',
+                    '-100% recovery for 10s',
+                    ],
+                'Targets' : '31',
+                'Range' : '80ft',
+                'Area of Effect' : '40ft radius',
+                },
+            'Partial Radial Judgement' : {
+                'Damage' : '4 Energy',
+                'Extra' : [
+                    '-35 endurance',
+                    '-100% recovery for 10s',
+                    ],
+                'Targets' : '40',
+                'Range' : '80ft',
+                'Area of Effect' : '45ft radius',
+                },
+            'Total Radial Judgement' : {
+                'Damage' : '4 Energy',
+                'Extra' : [
+                    '-35 endurance',
+                    '-100% recovery for 10s',
+                    '25% chance of mag 4 Hold for 12s',
+                    ],
+                'Targets' : '31',
+                'Range' : '80ft',
+                'Area of Effect' : '40ft radius',
+                },
+            'Core Final Judgement' : {
+                'Damage' : '4 Energy',
+                'Extra' : [
+                    '20% chance of 1.5 Energy',
+                    ],
+                'Targets' : '40',
+                'Range' : '80ft',
+                'Area of Effect' : '40ft radius',
+                },
+            'Radial Final Judgement' : {
+                'Damage' : '4 Energy',
+                'Extra' : [
+                    '-35 endurance',
+                    '-100% recovery for 10s',
+                    '25% chance of mag 4 Hold for 12s',
+                    ],
+                'Targets' : '40',
+                'Range' : '80ft',
+                'Area of Effect' : '40ft radius',
+                },
+        },
+        'Mighty' : {
+            'Judgement' : {
+                'Damage' : '4 Smashing',
+                'Targets' : '16',
+                'Range' : '30ft radius',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Core Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '20% chance of 1.5 Smashing to LT Rank or lower',
+                    ],
+                'Targets' : '16',
+                'Range' : '30ft radius',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Radial Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '50% chance for mag 10 knockup',
+                    ],
+                'Targets' : '16',
+                'Range' : '30ft radius',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Total Core Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '20% chance of 1.5 Smashing',
+                    ],
+                'Targets' : '16',
+                'Range' : '30ft radius',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Partial Core Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '20% chance of 1.5 Smashing to LT Rank or lower',
+                    '50% chance for mag 10 knockup',
+                    ],
+                'Targets' : '24',
+                'Range' : '50ft radius',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Partial Radial Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '50% chance for mag 10 knockup',
+                    ],
+                'Targets' : '32',
+                'Range' : '50ft radius',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Total Radial Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '50% chance for mag 10 knockup',
+                    ],
+                'Targets' : '16',
+                'Range' : '30ft radius',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Core Final Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '20% chance of 1.5 Smashing',
+                    ],
+                'Targets' : '24',
+                'Range' : '50ft radius',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Radial Final Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '50% chance for mag 10 knockup',
+                    ],
+                'Targets' : '32',
+                'Range' : '50ft radius',
+                'Area of Effect' : 'PBAoE',
+                },
+        },
+        'Pyronic' : {
+            'Judgement' : {
+                'Damage' : '4 Fire',
+                'Targets' : '16',
+                'Range' : '80ft',
+                'Area of Effect' : '25ft radius',
+                },
+            'Core Judgement' : {
+                'Damage' : '4 Fire',
+                'Extra' : [
+                    '80% chance of up to 0.3 Fire DoT',
+                    ],
+                'Targets' : '16',
+                'Range' : '80ft',
+                'Area of Effect' : '25ft radius',
+                },
+            'Radial Judgement' : {
+                'Damage' : '4 Fire',
+                'Extra' : [
+                    '-50% recharge and movement speed for 30s',
+                    ],
+                'Targets' : '16',
+                'Range' : '80ft',
+                'Area of Effect' : '40ft radius',
+                },
+            'Total Core Judgement' : {
+                'Damage' : '4 Fire',
+                'Extra' : [
+                    '80% chance of up to 1.5 Fire DoT',
+                    ],
+                'Targets' : '24',
+                'Range' : '80ft',
+                'Area of Effect' : '25ft radius',
+                },
+            'Partial Core Judgement' : {
+                'Damage' : '4 Fire',
+                'Extra' : [
+                    '80% chance of up to 0.45 Fire DoT',
+                    ],
+                'Targets' : '24',
+                'Range' : '80ft',
+                'Area of Effect' : '25ft radius',
+                },
+            'Partial Radial Judgement' : {
+                'Damage' : '4 Fire',
+                'Extra' : [
+                    '-50% recharge and movement speed for 30s',
+                    ],
+                'Targets' : '32',
+                'Range' : '80ft',
+                'Area of Effect' : '40ft radius',
+                },
+            'Total Radial Judgement' : {
+                'Damage' : '4 Fire',
+                'Extra' : [
+                    '-50% recharge and movement speed for 30s',
+                    '25% chance of mag 4 Stun for 12s',
+                    ],
+                'Targets' : '24',
+                'Range' : '80ft',
+                'Area of Effect' : '40ft radius',
+                },
+            'Core Final Judgement' : {
+                'Damage' : '4 Fire',
+                'Extra' : [
+                    '80% chance of up to 1.2 Fire DoT',
+                    ],
+                'Targets' : '32',
+                'Range' : '80ft',
+                'Area of Effect' : '40ft radius',
+                },
+            'Radial Final Judgement' : {
+                'Damage' : '4 Fire',
+                'Extra' : [
+                    '-50% recharge and movement speed for 30s',
+                    '25% chance of mag 4 Stun for 12s',
+                    ],
+                'Targets' : '32',
+                'Range' : '80ft',
+                'Area of Effect' : '40ft radius',
+                },
+        },
+        'Void' : {
+            'Judgement' : {
+                'Damage' : '4 Negative',
+                'Targets' : '16',
+                'Range' : '30ft',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Core Judgement' : {
+                'Damage' : '4 Negative',
+                'Extra' : [
+                    '20% chance of 1.5 Negative to LT Rank or lower',
+                    ],
+                'Targets' : '16',
+                'Range' : '30ft',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Radial Judgement' : {
+                'Damage' : '4 Negative',
+                'Extra' : [
+                    '-50% damage for 30s',
+                    ],
+                'Targets' : '16',
+                'Range' : '30ft',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Total Core Judgement' : {
+                'Damage' : '4 Negative',
+                'Extra' : [
+                    '20% chance of 1.5 Negative',
+                    ],
+                'Targets' : '16',
+                'Range' : '30ft',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Partial Core Judgement' : {
+                'Damage' : '4 Negative',
+                'Extra' : [
+                    '20% chance of 1.5 Negative to LT Rank or lower',
+                    '10 knockback',
+                    ],
+                'Targets' : '16',
+                'Range' : '30ft',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Partial Radial Judgement' : {
+                'Damage' : '4 Negative',
+                'Extra' : [
+                    '-50% damage for 30s',
+                    '10 knockback',
+                    ],
+                'Targets' : '16',
+                'Range' : '30ft',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Total Radial Judgement' : {
+                'Damage' : '4 Negative',
+                'Extra' : [
+                    '-50% damage for 30s',
+                    ],
+                'Targets' : '24',
+                'Range' : '50ft',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Core Final Judgement' : {
+                'Damage' : '4 Negative',
+                'Extra' : [
+                    '20% chance of 1.5 Negative',
+                    ],
+                'Targets' : '24',
+                'Range' : '50ft',
+                'Area of Effect' : 'PBAoE',
+                },
+            'Radial Final Judgement' : {
+                'Damage' : '4 Negative',
+                'Extra' : [
+                    '-50% damage for 30s',
+                    ],
+                'Targets' : '32',
+                'Range' : '50ft',
+                'Area of Effect' : 'PBAoE',
+                },
+        },
+        'Vorpal' : {
+            'Judgement' : {
+                'Damage' : '4 Smashing',
+                'Targets' : '20',
+                'Range' : '80ft',
+                'Area of Effect' : '80° cone',
+                },
+            'Core Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '80% chance of up to 0.3 Lethal DoT',
+                    ],
+                'Targets' : '20',
+                'Range' : '80ft',
+                'Area of Effect' : '80° cone',
+                },
+            'Radial Judgement' : {
+                'Damage' : '4 Smashing',
+                'Targets' : '30',
+                'Range' : '80ft',
+                'Area of Effect' : '120° cone',
+                },
+            'Total Core Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '80% chance of up to 1.5 Lethal DoT',
+                    ],
+                'Targets' : '20',
+                'Range' : '120ft',
+                'Area of Effect' : '80° cone',
+                },
+            'Partial Core Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '80% chance of up to 0.45 Lethal DoT',
+                    ],
+                'Targets' : '20',
+                'Range' : '120ft',
+                'Area of Effect' : '80° cone',
+                },
+            'Partial Radial Judgement' : {
+                'Damage' : '4 Smashing',
+                'Targets' : '40',
+                'Range' : '80ft',
+                'Area of Effect' : '120° cone',
+                },
+            'Total Radial Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '+15% defense for 10s',
+                    ],
+                'Targets' : '30',
+                'Range' : '80ft',
+                'Area of Effect' : '120° cone',
+                },
+            'Core Final Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '80% chance of up to 1.2 Lethal DoT',
+                    ],
+                'Targets' : '30',
+                'Range' : '120ft',
+                'Area of Effect' : '120° cone',
+                },
+            'Radial Final Judgement' : {
+                'Damage' : '4 Smashing',
+                'Extra' : [
+                    '+30% defense for 10s',
+                    ],
+                'Targets' : '40',
+                'Range' : '120ft',
+                'Area of Effect' : '120° cone',
+                },
+        },
+    },
+    'Interface' : {
+        'Cognitive' : {
+            'Interface' : {
+                'Chance for confuse 4s' : '8%',
+                },
+            'Core Interface' : {
+                'Chance for confuse 4s' : '12%',
+                },
+            'Radial Interface' : {
+                'Chance for confuse 4s' : '8%',
+                'Chance for minor psionic DoT' : '25%',
+                },
+            'Total Core Conversion' : {
+                'Chance for confuse 4s' : '16%',
+                },
+            'Partial Core Conversion' : {
+                'Chance for confuse 4s' : '12%',
+                'Chance for minor psionic DoT' : '25%',
+                },
+            'Partial Radial Conversion' : {
+                'Chance for confuse 4s' : '8%',
+                'Chance for minor psionic DoT' : '50%',
+                },
+            'Total Radial Conversion' : {
+                'Chance for confuse 4s' : '4%',
+                'Chance for minor psionic DoT' : '75%',
+                },
+            'Core Flawless Interface' : {
+                'Chance for confuse 4s' : '20%',
+                'Chance for minor psionic DoT' : '25%',
+                },
+            'Radial Flawless Interface' : {
+                'Chance for confuse 4s' : '12%',
+                'Chance for minor psionic DoT' : '75%',
+                },
+        },
+        'Degenerative' : {
+            'Interface' : {
+                'Chance for max HP debuff (10s)' : '25%',
+                },
+            'Core Interface' : {
+                'Chance for max HP debuff (10s)' : '50%',
+                },
+            'Radial Interface' : {
+                'Chance for max HP debuff (10s)' : '25%',
+                'Chance for minor toxic DoT' : '25%',
+                },
+            'Total Core Conversion' : {
+                'Chance for max HP debuff (10s)' : '75%',
+                },
+            'Partial Core Conversion' : {
+                'Chance for max HP debuff (10s)' : '50%',
+                'Chance for minor toxic DoT' : '25%',
+                },
+            'Partial Radial Conversion' : {
+                'Chance for max HP debuff (10s)' : '25%',
+                'Chance for minor toxic DoT' : '50%',
+                },
+            'Total Radial Conversion' : {
+                'Chance for minor toxic DoT' : '75%',
+                },
+            'Core Flawless Interface' : {
+                'Chance for max HP debuff (10s)' : '75%',
+                'Chance for minor toxic DoT' : '25%',
+                },
+            'Radial Flawless Interface' : {
+                'Chance for max HP debuff (10s)' : '25%',
+                'Chance for minor toxic DoT' : '75%',
+                },
+        },
+        'Diamagnetic' : {
+            'Interface' : {
+                'Chance for 5% ToHit debuff' : '50%',
+                },
+            'Core Interface' : {
+                'Chance for 5% ToHit debuff' : '75%',
+                },
+            'Radial Interface' : {
+                'Chance for 15% Regen debuff' : '50%',
+                },
+            'Total Core Conversion' : {
+                'Chance for 5% ToHit debuff' : '100%',
+                },
+            'Partial Core Conversion' : {
+                'Chance for 5% ToHit debuff' : '75%',
+                'Chance for 15% Regen debuff' : '25%',
+                },
+            'Partial Radial Conversion' : {
+                'Chance for 5% ToHit debuff' : '25%',
+                'Chance for 15% Regen debuff' : '75%',
+                },
+            'Total Radial Conversion' : {
+                'Chance for 15% Regen debuff' : '100%',
+                },
+            'Core Flawless Interface' : {
+                'Chance for 5% ToHit debuff' : '100%',
+                'Chance for 15% Regen debuff' : '50%',
+                },
+            'Radial Flawless Interface' : {
+                'Chance for 5% ToHit debuff' : '50%',
+                'Chance for 15% Regen debuff' : '100%',
+                },
+        },
+        'Gravitic' : {
+            'Interface' : {
+                'Chance for 10% recharge rate debuff 10s' : '25%',
+                },
+            'Core Interface' : {
+                'Chance for 10% recharge rate debuff 10s' : '25%',
+                'Chance for 10$ movement speed debuff 10s' : '25%',
+                },
+            'Radial Interface' : {
+                'Chance for 10% recharge rate debuff 10s' : '25%',
+                'Chance for 10% debuff on secondary effects from enemy attacks' : '25%',
+                },
+            'Total Core Conversion' : {
+                'Chance for 10% recharge rate debuff 10s' : '50%',
+                'Chance for 10$ movement speed debuff 10s' : '50%',
+                },
+            'Partial Core Conversion' : {
+                'Chance for 10% recharge rate debuff 10s' : '25%',
+                'Chance for 10% recovery debuff 10s' : '25%',
+                'Chance for 10$ movement speed debuff 10s' : '25%',
+                },
+            'Partial Radial Conversion' : {
+                'Chance for 10% recharge rate debuff 10s' : '25%',
+                'Chance for 10% recovery debuff 10s' : '25%',
+                'Chance for 10% debuff on secondary effects from enemy attacks' : '25%',
+                },
+            'Total Radial Conversion' : {
+                'Chance for 10% recharge rate debuff 10s' : '50%',
+                'Chance for 10% debuff on secondary effects from enemy attacks' : '50%',
+                },
+            'Core Flawless Interface' : {
+                'Chance for 10% recharge rate debuff 10s' : '75%',
+                'Chance for 10% recovery debuff 10s' : '50%',
+                'Chance for 10$ movement speed debuff 10s' : '75%',
+                },
+            'Radial Flawless Interface' : {
+                'Chance for 10% recharge rate debuff 10s' : '75%',
+                'Chance for 10% recovery debuff 10s' : '50%',
+                'Chance for 10% debuff on secondary effects from enemy attacks' : '75%',
+                },
+        },
+        'Paralytic' : {
+            'Interface' : {
+                'Chance for 2.5% defense debuff (10s)' : '25%',
+                },
+            'Core Interface' : {
+                'Chance for 2.5% defense debuff (10s)' : '50%',
+                },
+            'Radial Interface' : {
+                'Chance for 2.5% defense debuff (10s)' : '25%',
+                'Chance for 5% damage debuff (10s)' : '25%',
+                },
+            'Total Core Conversion' : {
+                'Chance for 2.5% defense debuff (10s)' : '75%',
+                },
+            'Partial Core Conversion' : {
+                'Chance for 2.5% defense debuff (10s)' : '50%',
+                'Chance for 5% damage debuff (10s)' : '25%',
+                },
+            'Partial Radial Conversion' : {
+                'Chance for 2.5% defense debuff (10s)' : '25%',
+                'Chance for 5% damage debuff (10s)' : '50%',
+                },
+            'Total Radial Conversion' : {
+                'Chance for 5% damage debuff (10s)' : '75%',
+                },
+            'Core Flawless Interface' : {
+                'Chance for 2.5% defense debuff (10s)' : '75%',
+                'Chance for 5% damage debuff (10s)' : '25%',
+                },
+            'Radial Flawless Interface' : {
+                'Chance for 2.5% defense debuff (10s)' : '25%',
+                'Chance for 5% damage debuff (10s)' : '75%',
+                },
+        },
+        'Preemptive' : {
+            'Interface' : {
+                'Chance for draining enemy endurance over time' : '25%',
+                },
+            'Core Interface' : {
+                'Chance for draining enemy endurance over time' : '50%',
+                },
+            'Radial Interface' : {
+                'Chance for draining enemy endurance over time' : '25%',
+                'Chance for minor energy DoT' : '25%',
+                },
+            'Total Core Conversion' : {
+                'Chance for draining enemy endurance over time' : '75%',
+                },
+            'Partial Core Conversion' : {
+                'Chance for draining enemy endurance over time' : '50%',
+                'Chance for minor energy DoT' : '25%',
+                },
+            'Partial Radial Conversion' : {
+                'Chance for draining enemy endurance over time' : '25%',
+                'Chance for minor energy DoT' : '50%',
+                },
+            'Total Radial Conversion' : {
+                'Chance for minor energy DoT' : '75%',
+                },
+            'Core Flawless Interface' : {
+                'Chance for draining enemy endurance over time' : '75%',
+                'Chance for minor energy DoT' : '25%',
+                },
+            'Radial Flawless Interface' : {
+                'Chance for draining enemy endurance over time' : '25%',
+                'Chance for minor energy DoT' : '75%',
+                },
+        },
+        'Reactive' : {
+            'Interface' : {
+                'Chance for 2.5% resistance debuff (10s)' : '25%',
+                },
+            'Core Interface' : {
+                'Chance for 2.5% resistance debuff (10s)' : '50%',
+                },
+            'Radial Interface' : {
+                'Chance for 2.5% resistance debuff (10s)' : '25%',
+                'Chance for moderate fire DoT' : '25%',
+                },
+            'Total Core Conversion' : {
+                'Chance for 2.5% resistance debuff (10s)' : '75%',
+                },
+            'Partial Core Conversion' : {
+                'Chance for 2.5% resistance debuff (10s)' : '50%',
+                'Chance for moderate fire DoT' : '25%',
+                },
+            'Partial Radial Conversion' : {
+                'Chance for 2.5% resistance debuff (10s)' : '25%',
+                'Chance for moderate fire DoT' : '50%',
+                },
+            'Total Radial Conversion' : {
+                'Chance for moderate fire DoT' : '75%',
+                },
+            'Core Flawless Interface' : {
+                'Chance for 2.5% resistance debuff (10s)' : '75%',
+                'Chance for moderate fire DoT' : '25%',
+                },
+            'Radial Flawless Interface' : {
+                'Chance for 2.5% resistance debuff (10s)' : '25%',
+                'Chance for moderate fire DoT' : '75%',
+                },
+        },
+        'Spectral' : {
+            'Interface' : {
+                'Chance for immobilize (4s)' : '10%',
+                },
+            'Core Interface' : {
+                'Chance for immobilize (4s)' : '15%',
+                },
+            'Radial Interface' : {
+                'Chance for immobilize (4s)' : '10%',
+                'Chance for minor negative DoT' : '25%',
+                },
+            'Total Core Conversion' : {
+                'Chance for immobilize (4s)' : '20%',
+                },
+            'Partial Core Conversion' : {
+                'Chance for immobilize (4s)' : '15%',
+                'Chance for minor negative DoT' : '25%',
+                },
+            'Partial Radial Conversion' : {
+                'Chance for immobilize (4s)' : '10%',
+                'Chance for minor negative DoT' : '50%',
+                },
+            'Total Radial Conversion' : {
+                'Chance for immobilize (4s)' : '5%',
+                'Chance for minor negative DoT' : '75%',
+                },
+            'Core Flawless Interface' : {
+                'Chance for immobilize (4s)' : '25%',
+                'Chance for minor negative DoT' : '25%',
+                },
+            'Radial Flawless Interface' : {
+                'Chance for immobilize (4s)' : '12.5%',
+                'Chance for minor negative DoT' : '75%',
+                },
+        },
+    },
+    'Lore' : {
+        'Levels' : [
+            ['Ally'                        , 1, 0, 0, None                                             , 0],
+            ['Core Ally'                   , 0, 1, 0, None                                             , 0],
+            ['Radial Ally'                 , 1, 0, 1, None                                             , 0],
+            ['Total Core Improved Ally'    , 1, 1, 0, None                                             , 1],
+            ['Partial Core Improved Ally'  , 0, 1, 1, None                                             , 1],
+            ['Partial Radial Improved Ally', 1, 0, 1, 'has attack powers'                              , 1],
+            ['Total Radial Improved Ally'  , 1, 0, 1, 'is untouchable with no/minimal offensive powers', 1],
+            ['Core Superior Ally'          , 1, 1, 0, '+DMG'                                           , 1],
+            ['Radial Superior Ally'        , 0, 1, 1, 'is untouchable with no/minimal offensive powers', 1],
+        ],
+        'Types' : {
+            'Arachnos'            : ['Bane Spider', 'Toxic Tarantula', 'Fortunata'],
+            'Banished Pantheon'   : ['Banespawn', 'Ravager', 'Defiler'],
+            'Carnival of Shadows' : ['Strongman', 'Dark Ring Mistress', 'Seneschal'],
+            'Cimerorans'          : ['Centurion', 'Praefectus Castorum', 'Immunes Surgeon'],
+            'Clockwork'           : ['Builder', 'Dismantler', 'Mender'],
+            'Demons'              : ['Behemoth', 'Succubus', 'Spectral Demon'],
+            'IDF'                 : ['Elite Ranger', 'Commander', 'Battle Orb'],
+            'Knives of Vengeance' : ['Tempest', 'Assassin', 'Guardian'],
+            'Longbow'             : ['Nullifier', 'Cataphract', 'Warden'],
+            'Nemesis'             : ['Colonel', 'War Hulk', 'Lancer Surgeon'],
+            'Phantom'             : ['Phantom', 'Spectre', 'Spirit'],
+            'Polar Lights'        : ['Australis', 'Polaris', 'Borealis'],
+            'Rikti'               : ['Headman', 'Chief Mentalist', 'Guardian'],
+            'Robotic Drones'      : ['Laser Drone', 'Assault Drone', 'Shield Drone'],
+            'Rularuu'             : ['Bull Natterling', 'Overseer', 'Noble Brute'],
+            'Seers'               : ['Seer Diviner', 'Seer Augur', 'Seer Seeker'],
+            'Storm Elementals'    : ['Storm Elemental', 'Tempest Elemental', 'Monsoon Elemental'],
+            'Talons of Vengeance' : ['Harpy', 'Diviner', 'Siren'],
+            'Tsoo'                : ['Ancestor Spirit', 'Ancestral Guardian', 'Sorcerer'],
+            'Vanguard'            : ['Sergeant', 'Sorcerer', 'Magician'],
+            'Warworks'            : ['ACU', 'MK-VI "Victoria"', 'Battle Orb'],
+        },
+    },
+    'Destiny' : {
+        'Levels' : ['Invocation', 'Core Invocation', 'Radial Invocation', 'Total Core Invocation',
+                    'Partial Core Invocation', 'Partial Radial Invocation', 'Total Radial Invication',
+                    'Core Epiphany', 'Radial Epiphany'],
+        'Types' : {
+            'Ageless' : {
+                'Effects' : ['+Endurance', '+Recharge Rate', '+Recovery', '+Debuff Resistance'],
+                'Levels' : [
+                    [1, 1, 0, 0, '60s', '30ft', 0],
+                    [1, 1, 1, 0, '60s', '30ft', 0],
+                    [1, 1, 0, 1, '60s', '30ft', 0],
+                    [1, 1, 1, 0, '60s', '60ft', 1],
+                    [1, 1, 1, 0, '90s', '30ft', 1],
+                    [1, 1, 0, 1, '90s', '30ft', 1],
+                    [1, 1, 0, 1, '60s', '60ft', 1],
+                    [1, 1, 1, 0, '120s', '60ft', 1],
+                    [1, 1, 0, 1, '120s', '60ft', 1],
+                ],
+            },
+            'Barrier' : {
+                'Effects' : ['+Defense', '+Resistance', 'Revive 1 Ally', 'Revive 2 Allies'],
+                'Levels' : [
+                    [1, 1, 0, 0, '60s', '30ft', 0],
+                    [1, 1, 0, 0, '90s', '30ft', 0],
+                    [1, 1, 1, 0, '60s', '30ft', 0],
+                    [1, 1, 0, 0, '90s', '60ft', 1],
+                    [1, 1, 0, 0, '90s', '30ft', 1],
+                    [1, 1, 1, 0, '90s', '30ft', 1],
+                    [1, 1, 0, 1, '60s', '30ft', 1],
+                    [1, 1, 0, 0, '120s', '60ft', 1],
+                    [1, 1, 0, 1, '90s', '60ft', 1],
+                ],
+            },
+            'Clarion' : {
+                'Effects' : ['Status Effect Protection', '+Range and Secondary Effect'],
+                'Levels' : [
+                    [1, 0, '60s', '30ft', 0],
+                    [1, 0, '90s', '30ft', 0],
+                    [1, 1, '60s', '30ft', 0],
+                    [1, 0, '90s', '60ft', 1],
+                    [1, 0, '120s', '30ft', 1],
+                    [1, 1, '90s', '30ft', 1],
+                    [1, 1, '60s', '60ft', 1],
+                    [1, 0, '120s', '60ft', 1],
+                    [1, 1, '90s', '60ft', 1],
+                ],
+            },
+            'Incandescence' : {
+                'Effects' : ['League Teleport', '-Healing Resist', 'Foe Knockback', 'Foe Stun', 'Foe Intangible', '+Stealth', '+Movement Speed / +Perception' ],
+                'Levels' : [
+                    [1, '-30%', 1, 1, 0, 0, 0, '60s',  'League', 0],
+                    [1, '-50%', 1, 1, 0, 0, 0, '60s',  'League', 0],
+                    [1, '-40%', 1, 1, 0, 1, 0, '60s',  'League', 0],
+                    [1, '-70%', 1, 1, 0, 0, 0, '60s',  'League', 1],
+                    [1, '-50%', 1, 1, 0, 0, 0, '90s',  'League', 1],
+                    [1, '-50%', 1, 1, 0, 1, 0, '90s',  'League', 1],
+                    [1, '-50%', 1, 1, 0, 1, 0, '60s',  'League', 1],
+                    [1, '-80%', 1, 1, 0, 0, 0, '120s', 'League', 1],
+                    [1, '-60%', 1, 1, 1, 1, 1, '120s', 'League', 1],
+                ],
+            },
+            'Ageless' : {
+                'Effects' : ['Ally Heal', '+Regeneration', '+Max HP'],
+                'Levels' : [
+                    [1, 0, 0, '0s', '30ft', 0],
+                    [1, 0, 0, '0s', '60ft', 0],
+                    [1, 1, 0, '60s', '30ft', 0],
+                    [1, 0, 1, '60s', '60ft', 1],
+                    [1, 0, 1, '90s', '30ft', 1],
+                    [1, 1, 0, '90s', '30ft', 1],
+                    [1, 1, 0, '60s', '60ft', 1],
+                    [1, 0, 1, '120s', '60ft', 1],
+                    [1, 1, 0, '120s', '60ft', 1],
+                ],
+            },
+        },
+    },
+    'Hybrid' : {
+        'Levels' : ['Genome', 'Core Genome', 'Radial Genome', 'Total Core Graft', 'Partial Core Graft',
+                    'Partial Radial Graft', 'Total Radial Graft', 'Core Embodiment', 'Radial Embodiment'],
+        'Types' : {
+            'Assault' : {
+                'Effects' : ['Auto +DMG Buff', 'Chance of +DMG', 'Stacks of +DMG', 'Chance of Double Hit', 'Amount of Triggering Power\'s Damage', 'Damage Type'],
+                'Levels' : [
+                    ['2.5%', '20%', '3', 0         , 0         , 0]         ,
+                    ['5%'  , '35%', '3', 0         , 0         , 0]         ,
+                    ['5%'  , 0    , 0  , 'Moderate', 'Moderate', 'Smashing'],
+                    ['7.5%', '55%', '3', 0         , 0         , 0]         ,
+                    ['7.5%', '40%', '3', 'Moderate', 'Small'   , 'Smashing'],
+                    ['7.5%', '30%', '3', 'Moderate', 'Moderate', 'Smashing'],
+                    ['7.5%', 0    , 0  , 'High'    , 'Moderate', 'Energy']  ,
+                    ['10%' , '65%', '5', 0         , 0         , 0]         ,
+                    ['10%' , 0    , 0  , 'High'    , 'Large'   , 'Energy']  ,
+                ],
+            }      ,
+            'Control' : {
+                'Effects' : ['Auto Status Resistance', 'Chance of Damage to Controlled Enemies / Type', '+1 Magnitude to Controls', 'Chance to Mez / Type'],
+                'Levels' : [
+                    ['10%', '10% / Lethal' , 0    , 0]           ,
+                    ['20%', '20% / Lethal' , '20%', 0]           ,
+                    ['20%', 0              , 0    , '35% / Fear'],
+                    ['30%', '50% / Lethal' , '50%', 0]           ,
+                    ['30%', '35% / Psionic', '35%', 0]           ,
+                    ['30%', 0              , '45%', '45% / Fear'],
+                    ['30%', 0              , 0    , '45% / Fear, 45% / Immobilize'],
+                    ['40%', '75% / Psionic', '75%', 0]           ,
+                    ['40%', 0              , 0    , '70% / Fear, 70% / Immobilize, 100% / Stun (if feared and immobilized)'],
+                ],
+            },
+            'Melee' : {
+                'Effects' : ['Auto +Regeneration', 'Regeneration Buff', 'Front-Loaded Abilities', 'Resistance (all)', 'Defense (all)', 'Status Protection', 'Taunt Aura'],
+                'Levels' : [
+                    ['7.5%', 1, '5.85% Regeneration', 0, 0, 0, 0, '4', '8ft'],
+                    ['15%', 1, '30.6% Regeneration, 1.36% Resistance (all)', 1, 0, 0, 0, '4', '8ft'],
+                    ['15%', 1, 0, 0, 1, 0, 1, '4', '8ft'],
+                    ['22.5%', 1, '67.5% Regeneraion, 4% Resistance (all), 2.0 Status Protection', 1, 0, 1, 0, '4', '8ft'],
+                    ['22.5%', 1, '118.13% Regeneration, 7% Resistance (all)', 1, 0, 0, 0, '7', '8ft'],
+                    ['22.5%', 1, 0, 0, 1, 0, 1, '7', '8ft'],
+                    ['22.5%', 1, 0, 0, 1, 1, 1, '4', '8ft'],
+                    ['30%', 1, '241.2% Regeneraion, 16.08% Resistance (all), 10.72 Status Protection', 1, 0, 1, 0, '9', '8ft'],
+                    ['30%', 1, 0, 0, 1, 1, 1, '9', '8ft'],
+                ],
+            },
+            'Support' : {
+                'Effects' : ['Auto Endurance Discount', 'Damage Buff', 'Defense Buff', 'Accuracy Buff', 'Mez and Healing Buff', 'Doubled for Pets'],
+                'Levels' : [
+                    ['2.5%', 1, 'Melee S/L', 0, 0, 0, '2%', '50ft'],
+                    ['5%', 1, 'Melee, AoE S/L/E/NE', 0, 0, 1, '2%', '50ft'],
+                    ['5%', 1, 'Melee, AoE S/L/E/NE', 1, 0, 0, '2%', '50ft'],
+                    ['7.5%', 1, 'Melee, AoE S/L/F/C/E/N', 1, 0, 1, '4%', '50ft'],
+                    ['7.5%', 1, 'Melee, AoE S/L/F/C/E/N', 0, 1, 1, '3%', '50ft'],
+                    ['7.5%', 1, 'Melee, AoE S/L/F/C/E/N', 1, 0, 0, '8%', '50ft'],
+                    ['7.5%', 1, 'Melee, AoE S/L/F/C/E/N', 1, 1, 0, '6%', '50ft'],
+                    ['10%', 1, 'Defense (All)', 1, 1, 1, '6%', '50ft'],
+                    ['10%', 1, 'Defense (All)', 1, 1, 0, '8%', '80ft'],
+                ],
+            },
+        },
+    },
+    'Genesis' : {
+        'Levels' : ['Genesis', 'Core Genesis', 'Radial Genesis', 'Total Core Genesis', 'Partial Core Genesis',
+                    'Partial Radial Genesis', 'Total Radial Genesis', 'Core Flawless Genesis', 'Radial Flawless Genesis'],
+        'Types' : {
+            'Data' : {
+                'Effects' : ['Lore Pet Damage Buff', 'Lore Pet Max HP Buff', 'Data Pet'],
+                'Levels' : [
+                    ['2.5%', '50', 'Rikti'],
+                    ['5%', '100', 'Robotic Drones'],
+                    ['5%', '100', 'Polar Lights'],
+                    ['7.5%', '150', 'Cimeroran'],
+                    ['7.5%', '150', 'IDF'],
+                    ['7.5%', '150', 'Clockwork'],
+                    ['7.5%', '150', 'Vanguard'],
+                    ['10%', '200', 'Longbow'],
+                    ['10%', '200', 'Arachnos'],
+                ],
+            },
+            'Fate' : {
+                'Effects' : ['Increase to Destiny Effects', 'Fate Power', 'Fate Buff', 'Radius', 'Duration'],
+                'Levels' : [
+                    ['2.5%', 'Ageless Fate', '+End, +Recharge', '30ft', '60s'],
+                    ['5%', 'Ageless Core Fate', '+End, +Recovery, +Recharge', '30ft', '60s'],
+                    ['5%', 'Ageless Radial Fate', '+End, +Recharge, +Debuff Resist', '30ft', '60s'],
+                    ['7.5%', 'Rebirth Total Core Fate', 'Ally Heal, +Max HP', '60ft', '60s'],
+                    ['7.5%', 'Rebirth Partial Core Fate', 'Ally Heal, +Max HP', '60ft', '90s'],
+                    ['7.5%', 'Barrier Partial Radial Fate', '+Def (all), +Res (all), Ally Rez (1)', '30ft', '90s'],
+                    ['7.5%', 'Barrier Total Radial Fate', '+Def (all), +Res (all), Ally Rez (2)', '30ft', '60s'],
+                    ['10%', 'Clarion Core Fortune', 'Status Effect Protection', '60ft', '120s'],
+                    ['10%', 'Clarion Radial Fortune', 'Status Effect Protection, +Range, +Secondary Effects', '60ft', '90s'],
+
+                ],
+            },
+            'Socket' : {
+                'Effects' : ['Interface Proc Buff', 'Max HP', 'Max Endurance', 'Socket Proc Type'],
+                'Levels' : [
+                    ['2.5%', '2.5%', '2%', 'Immobilize 10%'],
+                    ['5%', '5%', '5%', 'Confuse 12%'],
+                    ['5%', '5%', '5%', 'Psionic DoT 25%'],
+                    ['7.5%', '7.5%', '7%', 'End Drain, Recovery Debuff 75%'],
+                    ['7.5%', '7.5%', '7%', 'End Drain 50%, Recovery Debuff 50%, Energy DoT 25%'],
+                    ['7.5%', '7.5%', '7%', 'Max HP 25%, Toxic DoT 50%'],
+                    ['7.5%', '7.5%', '7%', 'Toxic DoT 75%'],
+                    ['10%', '10%', '10%', 'Res Debuff 75%, Fire DoT 25%'],
+                    ['10%', '10%', '10%', 'Res Debuff 25%, Fire DoT 75%'],
+            },
+            'Verdict' : {
+                'Effects' : ['Judgement Damage Buff', 'Verdict Damage Type', 'Special', 'Max Targets', 'Range / Radius'],
+                'Levels' : [
+                    ['2.5%', 'Negative Energy', 0, '16', 'PBAoE 30ft'],
+                    ['5%', 'Negative Energy', 'Additional damage to Pet / Minion / LT', '16', 'PBAoE 30ft'],
+                    ['5%', 'Negative Energy', '+Damage Debuff', '16', 'PBAoE 30ft'],
+                    ['7.5%', 'Energy', 'Chance for additional damage', '31', 'Chain Ranged AoE 40ft'],
+                    ['7.5%', 'Energy', 'Additional damage to Pet / Minion / LT, End Drain / Recovery Debuff', '31', 'Chain Ranged AoE 40ft'],
+                    ['7.5%', 'Cold', 'Movement Debuff, Recharge Debuff', '24', '80ft, 30° cone'],
+                    ['7.5%', 'Cold', 'Movement Debuff, Rechare Debuff, chance for hold', '24', '80ft, 30° cone'],
+                    ['10%', 'Fire', 'Fire DoT', '32', 'PBAoE 40ft'],
+                    ['10%', 'Fire', 'Chance to stuf', '40', '120ft, 120° cone'],
+                ],
+            },
+        },
+    },
+}
+
 PoolPowers = {
     'Concealment'     : [ 'Stealth', 'Grant Invisibility', 'Infiltration', 'Misdirection', 'Phase Shift', ],
     'Experimentation' : [ 'Experimental Injection', 'Toxic Dart', 'Speed of Sound', 'Corrosive Vial', 'Adrenal Booster', 'Jaunt', ],

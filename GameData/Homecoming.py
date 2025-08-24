@@ -797,495 +797,94 @@ IncarnatePowers2 = {
         },
     },
     'Judgement' : {
-        'Cryonic' : {
-            'Judgement' : {
-                'Damage' : '4 Cold',
-                'Targets' : '16',
-                'Range' : '80ft',
-                'Area of Effect' : '30° cone',
-                },
-            'Core Judgement' : {
-                'Damage' : '4 Cold',
-                'Extra' : [
-                    '20% chance of 1.5 Cold to LT Rank or lower',
-                    ],
-                'Targets' : '16',
-                'Range' : '80ft',
-                'Area of Effect' : '30° cone',
-                },
-            'Radial Judgement' : {
-                'Damage' : '4 Cold',
-                'Extra' : [
-                    '-50% recharge and movement speed for 30s',
-                    ],
-                'Targets' : '16',
-                'Range' : '80ft',
-                'Area of Effect' : '30° cone',
-                },
-            'Total Core Judgement' : {
-                'Damage' : '4 Cold',
-                'Extra' : [
-                    '20% chance of 1.5 Cold',
-                    ],
-                'Targets' : '24',
-                'Range' : '80ft',
-                'Area of Effect' : '30° cone',
-                },
-            'Partial Core Judgement' : {
-                'Damage' : '4 Cold',
-                'Extra' : [
-                    '20% chance of 1.5 Cold to LT Rank or lower',
-                    '-50% recharge and movement speed for 30s',
-                    ],
-                'Targets' : '24',
-                'Range' : '80ft',
-                'Area of Effect' : '30° cone',
-                },
-            'Partial Radial Judgement' : {
-                'Damage' : '4 Cold',
-                'Extra' : [
-                    '-50% recharge and movement speed for 30s',
-                    ],
-                'Targets' : '32',
-                'Range' : '120ft',
-                'Area of Effect' : '45° cone',
-                },
-            'Total Radial Judgement' : {
-                'Damage' : '4 Cold',
-                'Extra' : [
-                    '-50% recharge and movement speed for 30s',
-                    '25% chance of mag 4 Hold for 12s',
-                    ],
-                'Targets' : '24',
-                'Range' : '80ft',
-                'Area of Effect' : '30° cone',
-                },
-            'Core Final Judgement' : {
-                'Damage' : '4 Cold',
-                'Extra' : [
-                    '20% chance of 1.5 Cold',
-                    ],
-                'Targets' : '32',
-                'Range' : '120ft',
-                'Area of Effect' : '45° cone',
-                },
-            'Radial Final Judgement' : {
-                'Damage' : '4 Cold',
-                'Extra' : [
-                    '-50% recharge and movement speed for 30s',
-                    '25% chance of mag 4 Hold for 12s',
-                    ],
-                'Targets' : '32',
-                'Range' : '120ft',
-                'Area of Effect' : '45° cone',
-                },
-        },
-        'Ion' : {
-            'Judgement' : {
-                'Damage' : '4 Energy',
-                'Targets' : '16',
-                'Range' : '80ft',
-                'Area of Effect' : '40ft radius',
-                },
-            'Core Judgement' : {
-                'Damage' : '4 Energy',
-                'Extra' : [
-                    '20% chance of 1.5 Energy to LT Rank or lower',
-                    ],
-                'Targets' : '22',
-                'Range' : '80ft',
-                'Area of Effect' : '40ft radius',
-                },
-            'Radial Judgement' : {
-                'Damage' : '4 Energy',
-                'Extra' : [
-                    '-35 endurance',
-                    '-100% recovery for 10s',
-                    ],
-                'Targets' : '22',
-                'Range' : '80ft',
-                'Area of Effect' : '40ft radius',
-                },
-            'Total Core Judgement' : {
-                'Damage' : '4 Energy',
-                'Extra' : [
-                    '20% chance of 1.5 Energy',
-                    ],
-                'Targets' : '31',
-                'Range' : '80ft',
-                'Area of Effect' : '40ft radius',
-                },
-            'Partial Core Judgement' : {
-                'Damage' : '4 Energy',
-                'Extra' : [
-                    '20% chance of 1.5 Energy to LT Rank or lower',
-                    '-35 endurance',
-                    '-100% recovery for 10s',
-                    ],
-                'Targets' : '31',
-                'Range' : '80ft',
-                'Area of Effect' : '40ft radius',
-                },
-            'Partial Radial Judgement' : {
-                'Damage' : '4 Energy',
-                'Extra' : [
-                    '-35 endurance',
-                    '-100% recovery for 10s',
-                    ],
-                'Targets' : '40',
-                'Range' : '80ft',
-                'Area of Effect' : '45ft radius',
-                },
-            'Total Radial Judgement' : {
-                'Damage' : '4 Energy',
-                'Extra' : [
-                    '-35 endurance',
-                    '-100% recovery for 10s',
-                    '25% chance of mag 4 Hold for 12s',
-                    ],
-                'Targets' : '31',
-                'Range' : '80ft',
-                'Area of Effect' : '40ft radius',
-                },
-            'Core Final Judgement' : {
-                'Damage' : '4 Energy',
-                'Extra' : [
-                    '20% chance of 1.5 Energy',
-                    ],
-                'Targets' : '40',
-                'Range' : '80ft',
-                'Area of Effect' : '40ft radius',
-                },
-            'Radial Final Judgement' : {
-                'Damage' : '4 Energy',
-                'Extra' : [
-                    '-35 endurance',
-                    '-100% recovery for 10s',
-                    '25% chance of mag 4 Hold for 12s',
-                    ],
-                'Targets' : '40',
-                'Range' : '80ft',
-                'Area of Effect' : '40ft radius',
-                },
-        },
-        'Mighty' : {
-            'Judgement' : {
-                'Damage' : '4 Smashing',
-                'Targets' : '16',
-                'Range' : '30ft radius',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Core Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '20% chance of 1.5 Smashing to LT Rank or lower',
-                    ],
-                'Targets' : '16',
-                'Range' : '30ft radius',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Radial Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '50% chance for mag 10 knockup',
-                    ],
-                'Targets' : '16',
-                'Range' : '30ft radius',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Total Core Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '20% chance of 1.5 Smashing',
-                    ],
-                'Targets' : '16',
-                'Range' : '30ft radius',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Partial Core Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '20% chance of 1.5 Smashing to LT Rank or lower',
-                    '50% chance for mag 10 knockup',
-                    ],
-                'Targets' : '24',
-                'Range' : '50ft radius',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Partial Radial Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '50% chance for mag 10 knockup',
-                    ],
-                'Targets' : '32',
-                'Range' : '50ft radius',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Total Radial Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '50% chance for mag 10 knockup',
-                    ],
-                'Targets' : '16',
-                'Range' : '30ft radius',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Core Final Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '20% chance of 1.5 Smashing',
-                    ],
-                'Targets' : '24',
-                'Range' : '50ft radius',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Radial Final Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '50% chance for mag 10 knockup',
-                    ],
-                'Targets' : '32',
-                'Range' : '50ft radius',
-                'Area of Effect' : 'PBAoE',
-                },
-        },
-        'Pyronic' : {
-            'Judgement' : {
-                'Damage' : '4 Fire',
-                'Targets' : '16',
-                'Range' : '80ft',
-                'Area of Effect' : '25ft radius',
-                },
-            'Core Judgement' : {
-                'Damage' : '4 Fire',
-                'Extra' : [
-                    '80% chance of up to 0.3 Fire DoT',
-                    ],
-                'Targets' : '16',
-                'Range' : '80ft',
-                'Area of Effect' : '25ft radius',
-                },
-            'Radial Judgement' : {
-                'Damage' : '4 Fire',
-                'Extra' : [
-                    '-50% recharge and movement speed for 30s',
-                    ],
-                'Targets' : '16',
-                'Range' : '80ft',
-                'Area of Effect' : '40ft radius',
-                },
-            'Total Core Judgement' : {
-                'Damage' : '4 Fire',
-                'Extra' : [
-                    '80% chance of up to 1.5 Fire DoT',
-                    ],
-                'Targets' : '24',
-                'Range' : '80ft',
-                'Area of Effect' : '25ft radius',
-                },
-            'Partial Core Judgement' : {
-                'Damage' : '4 Fire',
-                'Extra' : [
-                    '80% chance of up to 0.45 Fire DoT',
-                    ],
-                'Targets' : '24',
-                'Range' : '80ft',
-                'Area of Effect' : '25ft radius',
-                },
-            'Partial Radial Judgement' : {
-                'Damage' : '4 Fire',
-                'Extra' : [
-                    '-50% recharge and movement speed for 30s',
-                    ],
-                'Targets' : '32',
-                'Range' : '80ft',
-                'Area of Effect' : '40ft radius',
-                },
-            'Total Radial Judgement' : {
-                'Damage' : '4 Fire',
-                'Extra' : [
-                    '-50% recharge and movement speed for 30s',
-                    '25% chance of mag 4 Stun for 12s',
-                    ],
-                'Targets' : '24',
-                'Range' : '80ft',
-                'Area of Effect' : '40ft radius',
-                },
-            'Core Final Judgement' : {
-                'Damage' : '4 Fire',
-                'Extra' : [
-                    '80% chance of up to 1.2 Fire DoT',
-                    ],
-                'Targets' : '32',
-                'Range' : '80ft',
-                'Area of Effect' : '40ft radius',
-                },
-            'Radial Final Judgement' : {
-                'Damage' : '4 Fire',
-                'Extra' : [
-                    '-50% recharge and movement speed for 30s',
-                    '25% chance of mag 4 Stun for 12s',
-                    ],
-                'Targets' : '32',
-                'Range' : '80ft',
-                'Area of Effect' : '40ft radius',
-                },
-        },
-        'Void' : {
-            'Judgement' : {
-                'Damage' : '4 Negative',
-                'Targets' : '16',
-                'Range' : '30ft',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Core Judgement' : {
-                'Damage' : '4 Negative',
-                'Extra' : [
-                    '20% chance of 1.5 Negative to LT Rank or lower',
-                    ],
-                'Targets' : '16',
-                'Range' : '30ft',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Radial Judgement' : {
-                'Damage' : '4 Negative',
-                'Extra' : [
-                    '-50% damage for 30s',
-                    ],
-                'Targets' : '16',
-                'Range' : '30ft',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Total Core Judgement' : {
-                'Damage' : '4 Negative',
-                'Extra' : [
-                    '20% chance of 1.5 Negative',
-                    ],
-                'Targets' : '16',
-                'Range' : '30ft',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Partial Core Judgement' : {
-                'Damage' : '4 Negative',
-                'Extra' : [
-                    '20% chance of 1.5 Negative to LT Rank or lower',
-                    '10 knockback',
-                    ],
-                'Targets' : '16',
-                'Range' : '30ft',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Partial Radial Judgement' : {
-                'Damage' : '4 Negative',
-                'Extra' : [
-                    '-50% damage for 30s',
-                    '10 knockback',
-                    ],
-                'Targets' : '16',
-                'Range' : '30ft',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Total Radial Judgement' : {
-                'Damage' : '4 Negative',
-                'Extra' : [
-                    '-50% damage for 30s',
-                    ],
-                'Targets' : '24',
-                'Range' : '50ft',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Core Final Judgement' : {
-                'Damage' : '4 Negative',
-                'Extra' : [
-                    '20% chance of 1.5 Negative',
-                    ],
-                'Targets' : '24',
-                'Range' : '50ft',
-                'Area of Effect' : 'PBAoE',
-                },
-            'Radial Final Judgement' : {
-                'Damage' : '4 Negative',
-                'Extra' : [
-                    '-50% damage for 30s',
-                    ],
-                'Targets' : '32',
-                'Range' : '50ft',
-                'Area of Effect' : 'PBAoE',
-                },
-        },
-        'Vorpal' : {
-            'Judgement' : {
-                'Damage' : '4 Smashing',
-                'Targets' : '20',
-                'Range' : '80ft',
-                'Area of Effect' : '80° cone',
-                },
-            'Core Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '80% chance of up to 0.3 Lethal DoT',
-                    ],
-                'Targets' : '20',
-                'Range' : '80ft',
-                'Area of Effect' : '80° cone',
-                },
-            'Radial Judgement' : {
-                'Damage' : '4 Smashing',
-                'Targets' : '30',
-                'Range' : '80ft',
-                'Area of Effect' : '120° cone',
-                },
-            'Total Core Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '80% chance of up to 1.5 Lethal DoT',
-                    ],
-                'Targets' : '20',
-                'Range' : '120ft',
-                'Area of Effect' : '80° cone',
-                },
-            'Partial Core Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '80% chance of up to 0.45 Lethal DoT',
-                    ],
-                'Targets' : '20',
-                'Range' : '120ft',
-                'Area of Effect' : '80° cone',
-                },
-            'Partial Radial Judgement' : {
-                'Damage' : '4 Smashing',
-                'Targets' : '40',
-                'Range' : '80ft',
-                'Area of Effect' : '120° cone',
-                },
-            'Total Radial Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '+15% defense for 10s',
-                    ],
-                'Targets' : '30',
-                'Range' : '80ft',
-                'Area of Effect' : '120° cone',
-                },
-            'Core Final Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '80% chance of up to 1.2 Lethal DoT',
-                    ],
-                'Targets' : '30',
-                'Range' : '120ft',
-                'Area of Effect' : '120° cone',
-                },
-            'Radial Final Judgement' : {
-                'Damage' : '4 Smashing',
-                'Extra' : [
-                    '+30% defense for 10s',
-                    ],
-                'Targets' : '40',
-                'Range' : '120ft',
-                'Area of Effect' : '120° cone',
-                },
+        'Levels' : ['Judgement', 'Core Judgement', 'Radial Judgement', 'Total Core Judgement',
+                    'Partial Core Judgement', 'Partial Radial Judgement', 'Total Radial Judgement',
+                    'Core Final Judgement', 'Radial Final Judgement'],
+        'Types' : {
+            'Cryonic' : {
+                'Effects' : ['Damage', 'Targets', 'Range', 'Area', 'Extra'],
+                'Levels' : [
+                    ['4 Cold', '16', '80ft', '30° cone', 0],
+                    ['4 Cold', '16', '80ft', '30° cone', ['20% chance of 1.5 Cold to LT Rank or lower']],
+                    ['4 Cold', '16', '80ft', '30° cone', ['-50% recharge and movement speed for 30s']],
+                    ['4 Cold', '24', '80ft', '30° cone', ['20% chance of 1.5 Cold']],
+                    ['4 Cold', '24', '80ft', '30° cone', ['20% chance of 1.5 Cold to LT Rank or lower', '-50% recharge and movement speed for 30s']],
+                    ['4 Cold', '32', '120ft', '45° cone', ['-50% recharge and movement speed for 30s' ]],
+                    ['4 Cold', '24', '80ft', '30° cone', ['-50% recharge and movement speed for 30s', '25% chance of mag 4 Hold for 12s']],
+                    ['4 Cold', '32', '120ft', '45° cone', ['20% chance of 1.5 Cold']],
+                    ['4 Cold', '32', '120ft', '45° cone', ['-50% recharge and movement speed for 30s', '25% chance of mag 4 Hold for 12s']],
+                ],
+            },
+            'Ion' : {
+                'Effects' : ['Damage', 'Targets', 'Range', 'Area', 'Extra'],
+                'Levels' : [
+                    ['4 Energy', '16', '80ft', '40ft radius', 0],
+                    ['4 Energy', '22', '80ft', '40ft radius', ['20% chance of 1.5 Energy to LT Rank or lower']],
+                    ['4 Energy', '22', '80ft', '40ft radius', ['-35 endurance', '-100% recovery for 10s']],
+                    ['4 Energy', '31', '80ft', '40ft radius', ['20% chance of 1.5 Energy']],
+                    ['4 Energy', '31', '80ft', '40ft radius', ['20% chance of 1.5 Energy to LT Rank or lower', '-35 endurance', '-100% recovery for 10s']],
+                    ['4 Energy', '40', '80ft', '40ft radius', ['-35 endurance', '-100% recovery for 10s']],
+                    ['4 Energy', '31', '80ft', '40ft radius', ['-35 endurance', '-100% recovery for 10s', '25% chance of mag 4 Hold for 12s']],
+                    ['4 Energy', '40', '80ft', '40ft radius', ['20% chance of 1.5 Energy']],
+                    ['4 Energy', '40', '80ft', '40ft radius', ['-35 endurance', '-100% recovery for 10s', '25% chance of mag 4 Hold for 12s']],
+                ],
+            },
+            'Mighty' : {
+                'Effects' : ['Damage', 'Targets', 'Range', 'Area', 'Extra'],
+                'Levels' : [
+                    ['4 Smashing', '16', '30ft radius', 'PBAoE', 0],
+                    ['4 Smashing', '16', '30ft radius', 'PBAoE', ['20% chance of 1.5 Smashing to LT Rank or lower']],
+                    ['4 Smashing', '16', '30ft radius', 'PBAoE', ['50% chance for mag 10 knockup']],
+                    ['4 Smashing', '16', '30ft radius', 'PBAoE', ['20% chance of 1.5 Smashing']],
+                    ['4 Smashing', '24', '30ft radius', 'PBAoE', ['20% chance of 1.5 Smashing to LT Rank or lower', '50% chance for mag 10 knockup']],
+                    ['4 Smashing', '32', '30ft radius', 'PBAoE', ['50% chance for mag 10 knockup']],
+                    ['4 Smashing', '16', '30ft radius', 'PBAoE', ['mag 20 knockup']],
+                    ['4 Smashing', '24', '30ft radius', 'PBAoE', ['20% chance of 1.5 Smashing']],
+                    ['4 Smashing', '32', '30ft radius', 'PBAoE', ['mag 20 knockup']],
+                ],
+            },
+            'Pyronic' : {
+                'Effects' : ['Damage', 'Targets', 'Range', 'Area', 'Extra'],
+                'Levels' : [
+                    ['4 Fire', '16', '80ft', '25ft radius', 0],
+                    ['4 Fire', '16', '80ft', '25ft radius', ['80% chance of up to 0.3 Fire DoT']],
+                    ['4 Fire', '24', '80ft', '40ft radius', 0],
+                    ['3.5 Fire', '16', '80ft', '25ft radius', ['80% chance of up to 1.5 Fire DoT']],
+                    ['4 Fire', '16', '80ft', '25ft radius', ['80% chance of up to 0.45 Fire DoT']],
+                    ['4 Fire', '32', '80ft', '40ft radius', 0],
+                    ['4 Fire', '24', '80ft', '40ft radius', ['25% chance of mag 4 Stun for 12s']],
+                    ['4 Fire', '24', '80ft', '40ft radius', ['80% chance of up to 1.2 Fire DoT']],
+                    ['4 Fire', '32', '80ft', '40ft radius', ['25% chance of mag 4 Stun for 12s']],
+                ],
+            },
+            'Void' : {
+                'Effects' : ['Damage', 'Targets', 'Range', 'Area', 'Extra'],
+                'Levels' : [
+                    ['4 Negative', '16', '30ft radius', 'PBAoE', 0],
+                    ['4 Negative', '16', '30ft radius', 'PBAoE', ['20% chance of 1.5 Negative to LT Rank or lower']],
+                    ['4 Negative', '16', '30ft radius', 'PBAoE', ['-50% damage for 30s']],
+                    ['4 Negative', '16', '30ft radius', 'PBAoE', ['20% chance of 1.5 Negative']],
+                    ['4 Negative', '16', '30ft radius', 'PBAoE', ['20% chance of 1.5 Negative to LT Rank or lower', '10 knockback']],
+                    ['4 Negative', '16', '30ft radius', 'PBAoE', ['-50% damage for 30s', '10 knockback']],
+                    ['4 Negative', '24', '50ft radius', 'PBAoE', ['-50% damage for 30s']],
+                    ['4 Negative', '24', '50ft radius', 'PBAoE', ['20% chance of 1.5 Negative']],
+                    ['4 Negative', '32', '50ft radius', 'PBAoE', ['-50% damage for 30s']],
+                ],
+            },
+            'Vorpal' : {
+                'Effects' : ['Damage', 'Targets', 'Range', 'Area', 'Extra'],
+                'Levels' : [
+                    ['4 Smashing', '20', '80ft radius', '80° cone', 0],
+                    ['4 Smashing', '20', '80ft radius', '80° cone', ['80% chance of up to 0.3 Lethal DoT']],
+                    ['4 Smashing', '30', '80ft radius', '120° cone', 0],
+                    ['3.5 Smashing', '20', '120ft radius', '80° cone', ['80% chance of up to 1.5 Lethal DoT']],
+                    ['4 Smashing', '20', '120ft radius', '80° cone', ['80% chance of up to 0.45 Lethal DoT']],
+                    ['4 Smashing', '40', '80ft radius', '120° cone', 0],
+                    ['4 Smashing', '30', '80ft radius', '120° cone', ['+15% defense for 10s']],
+                    ['4 Smashing', '30', '120ft radius', '120° cone', ['80% chance of up to 1.2 Lethal DoT']],
+                    ['4 Smashing', '40', '120ft radius', '120° cone', ['+30% defense for 10s']],
+                ],
+            },
         },
     },
     'Interface' : {

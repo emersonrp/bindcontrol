@@ -888,285 +888,122 @@ IncarnatePowers2 = {
         },
     },
     'Interface' : {
-        'Cognitive' : {
-            'Interface' : {
-                'Chance for confuse 4s' : '8%',
-                },
-            'Core Interface' : {
-                'Chance for confuse 4s' : '12%',
-                },
-            'Radial Interface' : {
-                'Chance for confuse 4s' : '8%',
-                'Chance for minor psionic DoT' : '25%',
-                },
-            'Total Core Conversion' : {
-                'Chance for confuse 4s' : '16%',
-                },
-            'Partial Core Conversion' : {
-                'Chance for confuse 4s' : '12%',
-                'Chance for minor psionic DoT' : '25%',
-                },
-            'Partial Radial Conversion' : {
-                'Chance for confuse 4s' : '8%',
-                'Chance for minor psionic DoT' : '50%',
-                },
-            'Total Radial Conversion' : {
-                'Chance for confuse 4s' : '4%',
-                'Chance for minor psionic DoT' : '75%',
-                },
-            'Core Flawless Interface' : {
-                'Chance for confuse 4s' : '20%',
-                'Chance for minor psionic DoT' : '25%',
-                },
-            'Radial Flawless Interface' : {
-                'Chance for confuse 4s' : '12%',
-                'Chance for minor psionic DoT' : '75%',
-                },
-        },
-        'Degenerative' : {
-            'Interface' : {
-                'Chance for max HP debuff (10s)' : '25%',
-                },
-            'Core Interface' : {
-                'Chance for max HP debuff (10s)' : '50%',
-                },
-            'Radial Interface' : {
-                'Chance for max HP debuff (10s)' : '25%',
-                'Chance for minor toxic DoT' : '25%',
-                },
-            'Total Core Conversion' : {
-                'Chance for max HP debuff (10s)' : '75%',
-                },
-            'Partial Core Conversion' : {
-                'Chance for max HP debuff (10s)' : '50%',
-                'Chance for minor toxic DoT' : '25%',
-                },
-            'Partial Radial Conversion' : {
-                'Chance for max HP debuff (10s)' : '25%',
-                'Chance for minor toxic DoT' : '50%',
-                },
-            'Total Radial Conversion' : {
-                'Chance for minor toxic DoT' : '75%',
-                },
-            'Core Flawless Interface' : {
-                'Chance for max HP debuff (10s)' : '75%',
-                'Chance for minor toxic DoT' : '25%',
-                },
-            'Radial Flawless Interface' : {
-                'Chance for max HP debuff (10s)' : '25%',
-                'Chance for minor toxic DoT' : '75%',
-                },
-        },
-        'Diamagnetic' : {
-            'Interface' : {
-                'Chance for 5% ToHit debuff' : '50%',
-                },
-            'Core Interface' : {
-                'Chance for 5% ToHit debuff' : '75%',
-                },
-            'Radial Interface' : {
-                'Chance for 15% Regen debuff' : '50%',
-                },
-            'Total Core Conversion' : {
-                'Chance for 5% ToHit debuff' : '100%',
-                },
-            'Partial Core Conversion' : {
-                'Chance for 5% ToHit debuff' : '75%',
-                'Chance for 15% Regen debuff' : '25%',
-                },
-            'Partial Radial Conversion' : {
-                'Chance for 5% ToHit debuff' : '25%',
-                'Chance for 15% Regen debuff' : '75%',
-                },
-            'Total Radial Conversion' : {
-                'Chance for 15% Regen debuff' : '100%',
-                },
-            'Core Flawless Interface' : {
-                'Chance for 5% ToHit debuff' : '100%',
-                'Chance for 15% Regen debuff' : '50%',
-                },
-            'Radial Flawless Interface' : {
-                'Chance for 5% ToHit debuff' : '50%',
-                'Chance for 15% Regen debuff' : '100%',
-                },
-        },
-        'Gravitic' : {
-            'Interface' : {
-                'Chance for 10% recharge rate debuff 10s' : '25%',
-                },
-            'Core Interface' : {
-                'Chance for 10% recharge rate debuff 10s' : '25%',
-                'Chance for 10$ movement speed debuff 10s' : '25%',
-                },
-            'Radial Interface' : {
-                'Chance for 10% recharge rate debuff 10s' : '25%',
-                'Chance for 10% debuff on secondary effects from enemy attacks' : '25%',
-                },
-            'Total Core Conversion' : {
-                'Chance for 10% recharge rate debuff 10s' : '50%',
-                'Chance for 10$ movement speed debuff 10s' : '50%',
-                },
-            'Partial Core Conversion' : {
-                'Chance for 10% recharge rate debuff 10s' : '25%',
-                'Chance for 10% recovery debuff 10s' : '25%',
-                'Chance for 10$ movement speed debuff 10s' : '25%',
-                },
-            'Partial Radial Conversion' : {
-                'Chance for 10% recharge rate debuff 10s' : '25%',
-                'Chance for 10% recovery debuff 10s' : '25%',
-                'Chance for 10% debuff on secondary effects from enemy attacks' : '25%',
-                },
-            'Total Radial Conversion' : {
-                'Chance for 10% recharge rate debuff 10s' : '50%',
-                'Chance for 10% debuff on secondary effects from enemy attacks' : '50%',
-                },
-            'Core Flawless Interface' : {
-                'Chance for 10% recharge rate debuff 10s' : '75%',
-                'Chance for 10% recovery debuff 10s' : '50%',
-                'Chance for 10$ movement speed debuff 10s' : '75%',
-                },
-            'Radial Flawless Interface' : {
-                'Chance for 10% recharge rate debuff 10s' : '75%',
-                'Chance for 10% recovery debuff 10s' : '50%',
-                'Chance for 10% debuff on secondary effects from enemy attacks' : '75%',
-                },
-        },
-        'Paralytic' : {
-            'Interface' : {
-                'Chance for 2.5% defense debuff (10s)' : '25%',
-                },
-            'Core Interface' : {
-                'Chance for 2.5% defense debuff (10s)' : '50%',
-                },
-            'Radial Interface' : {
-                'Chance for 2.5% defense debuff (10s)' : '25%',
-                'Chance for 5% damage debuff (10s)' : '25%',
-                },
-            'Total Core Conversion' : {
-                'Chance for 2.5% defense debuff (10s)' : '75%',
-                },
-            'Partial Core Conversion' : {
-                'Chance for 2.5% defense debuff (10s)' : '50%',
-                'Chance for 5% damage debuff (10s)' : '25%',
-                },
-            'Partial Radial Conversion' : {
-                'Chance for 2.5% defense debuff (10s)' : '25%',
-                'Chance for 5% damage debuff (10s)' : '50%',
-                },
-            'Total Radial Conversion' : {
-                'Chance for 5% damage debuff (10s)' : '75%',
-                },
-            'Core Flawless Interface' : {
-                'Chance for 2.5% defense debuff (10s)' : '75%',
-                'Chance for 5% damage debuff (10s)' : '25%',
-                },
-            'Radial Flawless Interface' : {
-                'Chance for 2.5% defense debuff (10s)' : '25%',
-                'Chance for 5% damage debuff (10s)' : '75%',
-                },
-        },
-        'Preemptive' : {
-            'Interface' : {
-                'Chance for draining enemy endurance over time' : '25%',
-                },
-            'Core Interface' : {
-                'Chance for draining enemy endurance over time' : '50%',
-                },
-            'Radial Interface' : {
-                'Chance for draining enemy endurance over time' : '25%',
-                'Chance for minor energy DoT' : '25%',
-                },
-            'Total Core Conversion' : {
-                'Chance for draining enemy endurance over time' : '75%',
-                },
-            'Partial Core Conversion' : {
-                'Chance for draining enemy endurance over time' : '50%',
-                'Chance for minor energy DoT' : '25%',
-                },
-            'Partial Radial Conversion' : {
-                'Chance for draining enemy endurance over time' : '25%',
-                'Chance for minor energy DoT' : '50%',
-                },
-            'Total Radial Conversion' : {
-                'Chance for minor energy DoT' : '75%',
-                },
-            'Core Flawless Interface' : {
-                'Chance for draining enemy endurance over time' : '75%',
-                'Chance for minor energy DoT' : '25%',
-                },
-            'Radial Flawless Interface' : {
-                'Chance for draining enemy endurance over time' : '25%',
-                'Chance for minor energy DoT' : '75%',
-                },
-        },
-        'Reactive' : {
-            'Interface' : {
-                'Chance for 2.5% resistance debuff (10s)' : '25%',
-                },
-            'Core Interface' : {
-                'Chance for 2.5% resistance debuff (10s)' : '50%',
-                },
-            'Radial Interface' : {
-                'Chance for 2.5% resistance debuff (10s)' : '25%',
-                'Chance for moderate fire DoT' : '25%',
-                },
-            'Total Core Conversion' : {
-                'Chance for 2.5% resistance debuff (10s)' : '75%',
-                },
-            'Partial Core Conversion' : {
-                'Chance for 2.5% resistance debuff (10s)' : '50%',
-                'Chance for moderate fire DoT' : '25%',
-                },
-            'Partial Radial Conversion' : {
-                'Chance for 2.5% resistance debuff (10s)' : '25%',
-                'Chance for moderate fire DoT' : '50%',
-                },
-            'Total Radial Conversion' : {
-                'Chance for moderate fire DoT' : '75%',
-                },
-            'Core Flawless Interface' : {
-                'Chance for 2.5% resistance debuff (10s)' : '75%',
-                'Chance for moderate fire DoT' : '25%',
-                },
-            'Radial Flawless Interface' : {
-                'Chance for 2.5% resistance debuff (10s)' : '25%',
-                'Chance for moderate fire DoT' : '75%',
-                },
-        },
-        'Spectral' : {
-            'Interface' : {
-                'Chance for immobilize (4s)' : '10%',
-                },
-            'Core Interface' : {
-                'Chance for immobilize (4s)' : '15%',
-                },
-            'Radial Interface' : {
-                'Chance for immobilize (4s)' : '10%',
-                'Chance for minor negative DoT' : '25%',
-                },
-            'Total Core Conversion' : {
-                'Chance for immobilize (4s)' : '20%',
-                },
-            'Partial Core Conversion' : {
-                'Chance for immobilize (4s)' : '15%',
-                'Chance for minor negative DoT' : '25%',
-                },
-            'Partial Radial Conversion' : {
-                'Chance for immobilize (4s)' : '10%',
-                'Chance for minor negative DoT' : '50%',
-                },
-            'Total Radial Conversion' : {
-                'Chance for immobilize (4s)' : '5%',
-                'Chance for minor negative DoT' : '75%',
-                },
-            'Core Flawless Interface' : {
-                'Chance for immobilize (4s)' : '25%',
-                'Chance for minor negative DoT' : '25%',
-                },
-            'Radial Flawless Interface' : {
-                'Chance for immobilize (4s)' : '12.5%',
-                'Chance for minor negative DoT' : '75%',
-                },
+        'Levels' : ['Interface', 'Core Interface', 'Radial Interface', 'Total Core Conversion',
+                    'Partial Core Conversion', 'Partial Radial Conversion', 'Total Radial Conversion',
+                    'Core Flawless Interface', 'Radial Flawless Interface'],
+        'Types' : {
+            'Cognitive' : {
+                'Effects' : ['Chance for confuse (4s)', 'Chance for minor psionic DoT'],
+                'Levels' : [
+                    ['8%', 0],
+                    ['12%', 0],
+                    ['8%', '25%'],
+                    ['16%', 0],
+                    ['12%', '25%'],
+                    ['8%', '50%'],
+                    ['4%', '75%'],
+                    ['20%', '25%'],
+                    ['12%', '75%'],
+                ],
+            },
+            'Degenerative' : {
+                'Effects' : ['Chance for max HP debuff (10s)', 'Chance for minor toxic DoT'],
+                'Levels' : [
+                    ['25%', 0],
+                    ['50%', 0],
+                    ['25%', '25%'],
+                    ['75%', 0],
+                    ['50%', '25%'],
+                    ['25%', '50%'],
+                    [0, '75%'],
+                    ['75%', '25%'],
+                    ['25%', '75%'],
+                ],
+            },
+            'Diamagnetic' : {
+                'Effects' : ['Chance for 5% ToHit debuff (10s)', 'Chance for 15% Regen debuff (10s)'],
+                'Levels' : [
+                    ['50%', 0],
+                    ['75%', 0],
+                    [0, '50%'],
+                    ['100%', 0],
+                    ['75%', '25%'],
+                    ['25%', '75%'],
+                    [0, '100%'],
+                    ['100%', '50%'],
+                    ['50%', '100%'],
+                ],
+            },
+            'Gravitic' : {
+                'Effects' : ['Chance for 10% recharge rate debuff (10s)', 'Chance for 10% recovery debuff (10s)', 'Chance for 10% movement speed debuff (10s)', 'Chance for 10% debuff on secondary effects from enemy attacks'],
+                'Levels' : [
+                    ['25%', 0, 0, 0],
+                    ['25%', 0, '25%', 0],
+                    ['25%', 0, 0, '25%'],
+                    ['50%', 0, '50%', 0],
+                    ['25%', '25%', '25%', 0],
+                    ['25%', '25%', 0, '25%'],
+                    ['50%', 0, 0, '50%'],
+                    ['75%', '50%', '75%', 0],
+                    ['75%', '50%', 0, '75%'],
+                ],
+            },
+            'Paralytic' : {
+                'Effects' : ['Chance for 2.5% defense debuff (10s)', 'Chance for 5% damage debuff (10s)'],
+                'Levels' : [
+                    ['25%', 0],
+                    ['50%', 0],
+                    ['25%', '25%'],
+                    ['75%', 0],
+                    ['50%', '25%'],
+                    ['25%', '50%'],
+                    [0, '75%',],
+                    ['75%', '25%'],
+                    ['25%', '75%'],
+                ],
+            },
+            'Preemptive' : {
+                'Effects' : ['Chance for draining enemy endurance over time', 'Chance for minor energy DoT'],
+                'Levels' : [
+                    ['25%', 0],
+                    ['50%', 0],
+                    ['25%', '25%'],
+                    ['75%', 0],
+                    ['50%', '25%'],
+                    ['25%', '50%'],
+                    [0, '75%'],
+                    ['75%', '25%'],
+                    ['25%', '75%'],
+                ],
+            },
+            'Reactive' : {
+                'Effects' : ['Chance for 2.5% resistance debuff (10s)', 'Chance for moderate fire DoT'],
+                'Levels' : [
+                    ['25%', 0],
+                    ['50%', 0],
+                    ['25%', '25%'],
+                    ['75%', 0],
+                    ['50%', '25%'],
+                    ['25%', '50%'],
+                    [0, '75%',],
+                    ['75%', '25%'],
+                    ['25%', '75%'],
+                ],
+            },
+            'Spectral' : {
+                'Effects' : ['Chance for immobilize (4s)', 'Chance for minor negative DoT'],
+                'Levels' : [
+                    ['10%', 0],
+                    ['15%', 0],
+                    ['10%', '25%'],
+                    ['20%', 0],
+                    ['15%', '25%'],
+                    ['10%', '50%'],
+                    ['5%', '75%'],
+                    ['25%', '25%'],
+                    ['12.5%', '75%'],
+                ],
+            },
         },
     },
     'Lore' : {

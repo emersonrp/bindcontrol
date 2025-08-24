@@ -75,7 +75,6 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
         self.Slot = slot
         self.IconFilename = ''
-        self.PopupMenu = None
         self.BuildSlotData()
 
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -92,13 +91,11 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
         self.Add(hsizer, 1, wx.EXPAND|wx.RIGHT|wx.BOTTOM, 12)
 
-    def OnButtonPress(self, evt):
-        button = evt.EventObject
-        if not self.PopupMenu:
-            self.PopupMenu = self.BuildMenu()
-            self.PopupMenu.Bind(wx.EVT_MENU, self.OnMenuSelection)
-
-        button.PopupMenu(self.PopupMenu)
+    def OnButtonPress(self, _):
+        # TODO "if showmodal == OK etc etc"
+        with IncarnateBrowser(self.Slot) as dlg:
+            if dlg.ShowModal() == wx.ID_OK:
+                print("Gonna Do The Thing")
 
     def OnMenuSelection(self, evt):
         menuitem = evt.EventObject.FindItemById(evt.GetId())
@@ -151,6 +148,14 @@ class IncarnatePicker(wx.StaticBoxSizer):
         menu.Append(menuitem)
 
         return menu
+
+    def BuildBrowser(self):
+        browserDialog = wx.Dialog(None, title = f"{self.Slot} slot")
+
+        browserDialog.SetSizerAndFit(browserSizer)
+
+        return browserDialog
+
 
     def BuildSlotData(self):
 
@@ -207,3 +212,27 @@ class IncarnatePicker(wx.StaticBoxSizer):
                 slotdata[typename][f'{typename} {levelname}'] = effecttext
 
         return slotdata
+
+class IncarnateBrowser(wx.Dialog):
+    def __init__(self, slot):
+        super().__init__(None, title = f"{slot} slot")
+
+        browserSizer = wx.BoxSizer(wx.VERTICAL)
+
+        listSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        typeList = wx.ListCtrl(self)
+        listSizer.Add(typeList, 1, wx.EXPAND)
+
+        levelList = wx.ListCtrl(self)
+        listSizer.Add(levelList, 1, wx.EXPAND)
+
+        inspList = wx.ListCtrl(self)
+        listSizer.Add(inspList, 1, wx.EXPAND)
+
+        browserSizer.Add(listSizer, 1, wx.EXPAND|wx.ALL, 10)
+
+        buttonSizer = self.CreateButtonSizer(wx.OK|wx.CANCEL)
+        browserSizer.Add(buttonSizer, 0, wx.EXPAND|wx.ALL, 10)
+
+        self.SetSizerAndFit(browserSizer)

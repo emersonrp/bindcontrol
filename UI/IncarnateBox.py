@@ -75,7 +75,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
         self.Slot = slot
         self.IconFilename = ''
-        self.BuildSlotData()
+        self.SlotData = self.BuildSlotData()
 
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -93,7 +93,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
     def OnButtonPress(self, _):
         # TODO "if showmodal == OK etc etc"
-        with IncarnateBrowser(self.Slot) as dlg:
+        with IncarnateBrowser(self) as dlg:
             if dlg.ShowModal() == wx.ID_OK:
                 print("Gonna Do The Thing")
 
@@ -148,14 +148,6 @@ class IncarnatePicker(wx.StaticBoxSizer):
         menu.Append(menuitem)
 
         return menu
-
-    def BuildBrowser(self):
-        browserDialog = wx.Dialog(None, title = f"{self.Slot} slot")
-
-        browserDialog.SetSizerAndFit(browserSizer)
-
-        return browserDialog
-
 
     def BuildSlotData(self):
 
@@ -214,21 +206,27 @@ class IncarnatePicker(wx.StaticBoxSizer):
         return slotdata
 
 class IncarnateBrowser(wx.Dialog):
-    def __init__(self, slot):
-        super().__init__(None, title = f"{slot} slot")
+    def __init__(self, picker):
+        super().__init__(None, title = f"{picker.Slot} slot")
+        self.Picker = picker
 
         browserSizer = wx.BoxSizer(wx.VERTICAL)
 
-        listSizer = wx.BoxSizer(wx.HORIZONTAL)
+        listSizer = wx.GridSizer(3)
 
-        typeList = wx.ListCtrl(self)
-        listSizer.Add(typeList, 1, wx.EXPAND)
+        self.TypeList = wx.ListCtrl(self, style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL)
+        self.TypeList.AppendColumn('')
+        self.TypeList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onPickType)
+        for type in list(picker.SlotData):
+            self.TypeList.Append([type])
+        listSizer.Add(self.TypeList, 1, wx.EXPAND)
 
-        levelList = wx.ListCtrl(self)
-        listSizer.Add(levelList, 1, wx.EXPAND)
+        self.LevelList = wx.ListCtrl(self, style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL)
+        self.LevelList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onPickLevel)
+        listSizer.Add(self.LevelList, 1, wx.EXPAND)
 
-        inspList = wx.ListCtrl(self)
-        listSizer.Add(inspList, 1, wx.EXPAND)
+        self.IncDetails = wx.StaticText(self, style = wx.ST_NO_AUTORESIZE)
+        listSizer.Add(self.IncDetails, 1, wx.EXPAND)
 
         browserSizer.Add(listSizer, 1, wx.EXPAND|wx.ALL, 10)
 
@@ -236,3 +234,22 @@ class IncarnateBrowser(wx.Dialog):
         browserSizer.Add(buttonSizer, 0, wx.EXPAND|wx.ALL, 10)
 
         self.SetSizerAndFit(browserSizer)
+        self.Layout()
+
+    def PickedPower(self):
+        ...
+
+    def onPickType(self, evt):
+        self.LevelList.ClearAll()
+        self.LevelList.AppendColumn('')
+        type = self.TypeList.GetItemText(evt.GetIndex())
+        for level in list(self.Picker.SlotData[type]):
+            self.LevelList.Append([level])
+
+    def onPickLevel(self, evt):
+        type = self.TypeList.GetItemText(self.TypeList.GetFirstSelected())
+        level = self.LevelList.GetItemText(evt.GetIndex())
+        info = self.Picker.SlotData[type][level]
+
+        self.IncDetails.SetLabel(info)
+

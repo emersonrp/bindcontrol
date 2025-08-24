@@ -17,14 +17,14 @@ class IncarnateBox(wx.StaticBoxSizer):
         self.Add(incarnateSizer, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
 
         if self.Server == "Rebirth":
-            self.genesisInc = IncarnatePicker(staticbox, label = "Genesis")
+            self.genesisInc = IncarnatePicker(staticbox, slot = "Genesis")
 
-        self.hybridInc    = IncarnatePicker(staticbox, label = "Hybrid")
-        self.loreInc      = IncarnatePicker(staticbox, label = "Lore")
-        self.destinyInc   = IncarnatePicker(staticbox, label = "Destiny")
-        self.judgementInc = IncarnatePicker(staticbox, label = "Judgement")
-        self.interfaceInc = IncarnatePicker(staticbox, label = "Interface")
-        self.alphaInc     = IncarnatePicker(staticbox, label = "Alpha")
+        self.hybridInc    = IncarnatePicker(staticbox, slot = "Hybrid")
+        self.loreInc      = IncarnatePicker(staticbox, slot = "Lore")
+        self.destinyInc   = IncarnatePicker(staticbox, slot = "Destiny")
+        self.judgementInc = IncarnatePicker(staticbox, slot = "Judgement")
+        self.interfaceInc = IncarnatePicker(staticbox, slot = "Interface")
+        self.alphaInc     = IncarnatePicker(staticbox, slot = "Alpha")
 
         if self.Server == "Rebirth":
             incarnateSizer.Add(self.hybridInc,    wx.GBPosition(0,0), wx.GBSpan(1,2), wx.EXPAND|wx.LEFT, 12)
@@ -52,7 +52,7 @@ class IncarnateBox(wx.StaticBoxSizer):
                     box.IncIcon.SetBitmapLabel(GetIconBitmap(contents['iconfile']))
                     box.IconFilename = contents['iconfile']
 
-    def GetData(self):
+    def Serialize(self):
         incarnatedata = {}
 
         boxes = [self.hybridInc, self.loreInc, self.destinyInc, self.judgementInc, self.interfaceInc, self.alphaInc]
@@ -61,7 +61,7 @@ class IncarnateBox(wx.StaticBoxSizer):
 
         for box in boxes:
             if box.IncName.GetLabel():
-                incarnatedata[box.Label] = {
+                incarnatedata[box.Slot] = {
                     'power'    : re.sub('\n', ' ', box.IncName.GetLabel()),
                     'iconfile' : box.IconFilename,
                 }
@@ -69,13 +69,14 @@ class IncarnateBox(wx.StaticBoxSizer):
 
 import wx.lib.buttons as buttons
 class IncarnatePicker(wx.StaticBoxSizer):
-    def __init__(self, parent, label = ""):
-        wx.StaticBoxSizer.__init__(self, wx.HORIZONTAL, parent, label = label)
+    def __init__(self, parent, slot = ""):
+        wx.StaticBoxSizer.__init__(self, wx.HORIZONTAL, parent, label = slot)
         staticbox = self.GetStaticBox()
 
-        self.Label = label
+        self.Slot = slot
         self.IconFilename = ''
         self.PopupMenu = None
+        self.BuildSlotData()
 
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -94,7 +95,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
     def OnButtonPress(self, evt):
         button = evt.EventObject
         if not self.PopupMenu:
-            self.PopupMenu = self.BuildMenu(self.Label)
+            self.PopupMenu = self.BuildMenu()
             self.PopupMenu.Bind(wx.EVT_MENU, self.OnMenuSelection)
 
         button.PopupMenu(self.PopupMenu)
@@ -120,10 +121,10 @@ class IncarnatePicker(wx.StaticBoxSizer):
         button.Layout()
         evt.Skip()
 
-    def BuildMenu(self, slot):
+    def BuildMenu(self):
         menu = wx.Menu()
 
-        incData = GameData.IncarnatePowers[slot]
+        incData = GameData.IncarnatePowers[self.Slot]
 
         for type in incData['Types']:
             submenu = wx.Menu()
@@ -136,7 +137,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
                 # aliases for the Lore types ie "Polar Lights" => "Lights" to match the icons
                 aliasedtype = Aliases.get(type, type)
 
-                icon = GetIcon('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}')
+                icon = GetIcon('Incarnate', f'Incarnate_{self.Slot}_{aliasedtype}_{rarity}')
                 if icon: menuitem.SetBitmap(icon)
                 setattr(menuitem, 'IconFilename', icon.Filename)
 
@@ -150,3 +151,59 @@ class IncarnatePicker(wx.StaticBoxSizer):
         menu.Append(menuitem)
 
         return menu
+
+    def BuildSlotData(self):
+
+        if self.Slot == 'Lore': return self.BuildLoreSlotData()
+
+        rawdata = GameData.IncarnatePowers[self.Slot]
+
+        slotdata = {}
+
+        for typename, typedata in rawdata['Types'].items():
+            slotdata[typename] = {}
+            effecttext = ''
+            for i, levelname in enumerate(rawdata['Levels']):
+                for j, effectname in enumerate(typedata['Effects']):
+                    effectdata = typedata['Levels'][i][j]
+                    if isinstance(effectdata, int) and effectdata == 0:
+                        continue
+                    if isinstance(effectdata, list):
+                        effectline = "\n".join(effectdata)
+                    elif isinstance(effectdata, str):
+                        effectline = effectdata
+                    elif isinstance(effectdata, int) and effectdata == 1:
+                        effectline = f"{effectname}\n"
+                    else:
+                        raise Exception(f'Something is terribly wrong with the incarnate data at {typename}, {i}, {j}: {effectdata}')
+                    effecttext = effecttext + f"{effectname}: {effectline}"
+
+                slotdata[typename][f'{typename} {levelname}'] = effecttext
+
+        return slotdata
+
+    def BuildLoreSlotData(self):
+
+        rawdata = GameData.IncarnatePowers['Lore']
+
+        slotdata = {}
+
+        for typename, typedata in rawdata['Types'].items():
+            slotdata[typename] = {}
+            effecttext = ''
+            for leveldata in rawdata['Levels']:
+                (levelname, min, lt, bos, special, lvlshift) = leveldata
+
+                if min: effecttext = effecttext + f"Summon {typedata[0]}\n"
+                if lt : effecttext = effecttext + f"Summon {typedata[1]}\n"
+                if bos: effecttext = effecttext + f"Summon {typedata[2]}\n"
+                if special:
+                    if special == "+DMG":
+                        effecttext = effecttext + f"{special}\n"
+                    else:
+                        effecttext = effecttext + f"{typedata[2]} {special}\n"
+                if lvlshift: effecttext = effecttext + "Incarnate Level Shift\n"
+
+                slotdata[typename][f'{typename} {levelname}'] = effecttext
+
+        return slotdata

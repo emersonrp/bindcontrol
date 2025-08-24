@@ -51,7 +51,7 @@ class IncarnateSet(WizardParent):
         if self.IncarnateBox:
             if not self.Init.get('WizData', None):
                 self.Init['WizData'] = {}
-            newdata = self.IncarnateBox.GetData()
+            newdata = self.IncarnateBox.Serialize()
             if self.Init['WizData'].get('IncData', {}) != newdata:
                 wx.App.Get().Main.Profile.SetModified()
                 self.Init['WizData']['IncData'] = newdata

@@ -1,4 +1,5 @@
 import wx
+import wx.html
 import re
 from Icon import GetIcon,GetIconBitmap
 from Util.Incarnate import Rarities, Aliases
@@ -92,7 +93,6 @@ class IncarnatePicker(wx.StaticBoxSizer):
         self.Add(hsizer, 1, wx.EXPAND|wx.RIGHT|wx.BOTTOM, 12)
 
     def OnButtonPress(self, _):
-        # TODO "if showmodal == OK etc etc"
         with IncarnateBrowser(self) as dlg:
             if dlg.ShowModal() == wx.ID_OK:
                 print("Gonna Do The Thing")
@@ -135,16 +135,16 @@ class IncarnatePicker(wx.StaticBoxSizer):
                     if isinstance(effectdata, int) and effectdata == 0:
                         continue
                     if isinstance(effectdata, list):
-                        effectline = "\n".join(effectdata)
+                        effectline = "<br>".join(effectdata)
                     elif isinstance(effectdata, str):
-                        effectline = f"{effectdata}\n"
+                        effectline = f"{effectdata}"
                     elif isinstance(effectdata, int) and effectdata == 1:
-                        effectline = f"{effectname}\n"
+                        continue # just show the name of the effect
                     else:
                         raise Exception(f'Something is terribly wrong with the incarnate data at {typename}, {i}, {j}: {effectdata}')
-                    effecttext = effecttext + f"{effectname}: {effectline}"
+                    effecttext = effecttext + f"<dt><b>{effectname}</b></dt><dd>{effectline}</dd>"
 
-                slotdata[typename][f'{typename} {levelname}'] = effecttext
+                slotdata[typename][f'{typename} {levelname}'] = f"<dl>{effecttext}</dl>"
 
         return slotdata
 
@@ -194,7 +194,7 @@ class IncarnateBrowser(wx.Dialog):
         self.LevelList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onPickLevel)
         listSizer.Add(self.LevelList, 1, wx.EXPAND)
 
-        self.IncDetails = wx.StaticText(self, style = wx.ST_NO_AUTORESIZE)
+        self.IncDetails = wx.html.HtmlWindow(self)
         listSizer.Add(self.IncDetails, 1, wx.EXPAND)
 
         browserSizer.Add(listSizer, 1, wx.EXPAND|wx.ALL, 10)
@@ -220,5 +220,5 @@ class IncarnateBrowser(wx.Dialog):
         level = self.LevelList.GetItemText(evt.GetIndex())
         info = self.Picker.SlotData[type][level]
 
-        self.IncDetails.SetLabel(info)
+        self.IncDetails.SetPage(info)
 

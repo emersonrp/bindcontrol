@@ -2109,6 +2109,7 @@ IncarnatePowers2 = {
                     ['7.5%', '7.5%', '7%', 'Toxic DoT 75%'],
                     ['10%', '10%', '10%', 'Res Debuff 75%, Fire DoT 25%'],
                     ['10%', '10%', '10%', 'Res Debuff 25%, Fire DoT 75%'],
+                ],
             },
             'Verdict' : {
                 'Effects' : ['Judgement Damage Buff', 'Verdict Damage Type', 'Special', 'Max Targets', 'Range / Radius'],

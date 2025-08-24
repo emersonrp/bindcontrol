@@ -118,37 +118,6 @@ class IncarnatePicker(wx.StaticBoxSizer):
         button.Layout()
         evt.Skip()
 
-    def BuildMenu(self):
-        menu = wx.Menu()
-
-        incData = GameData.IncarnatePowers[self.Slot]
-
-        for type in incData['Types']:
-            submenu = wx.Menu()
-            menu.AppendSubMenu(submenu, type)
-
-            for index, power in enumerate(incData['Powers']):
-                menuitem = wx.MenuItem(id = wx.ID_ANY, text = f"{type} {power}")
-                rarity = Rarities[ index ]
-
-                # aliases for the Lore types ie "Polar Lights" => "Lights" to match the icons
-                aliasedtype = Aliases.get(type, type)
-
-                icon = GetIcon('Incarnate', f'Incarnate_{self.Slot}_{aliasedtype}_{rarity}')
-                if icon: menuitem.SetBitmap(icon)
-                setattr(menuitem, 'IconFilename', icon.Filename)
-
-                submenu.Append(menuitem)
-
-        menuitem = wx.MenuItem(id = wx.ID_ANY, text = "Disable Slot")
-        icon = GetIcon('Incarnate', 'Disable')
-        if icon: menuitem.SetBitmap(icon)
-        setattr(menuitem, 'IconFilename', icon.Filename)
-
-        menu.Append(menuitem)
-
-        return menu
-
     def BuildSlotData(self):
 
         if self.Slot == 'Lore': return self.BuildLoreSlotData()
@@ -159,8 +128,8 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
         for typename, typedata in rawdata['Types'].items():
             slotdata[typename] = {}
-            effecttext = ''
             for i, levelname in enumerate(rawdata['Levels']):
+                effecttext = ''
                 for j, effectname in enumerate(typedata['Effects']):
                     effectdata = typedata['Levels'][i][j]
                     if isinstance(effectdata, int) and effectdata == 0:
@@ -168,7 +137,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
                     if isinstance(effectdata, list):
                         effectline = "\n".join(effectdata)
                     elif isinstance(effectdata, str):
-                        effectline = effectdata
+                        effectline = f"{effectdata}\n"
                     elif isinstance(effectdata, int) and effectdata == 1:
                         effectline = f"{effectname}\n"
                     else:
@@ -187,8 +156,8 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
         for typename, typedata in rawdata['Types'].items():
             slotdata[typename] = {}
-            effecttext = ''
             for leveldata in rawdata['Levels']:
+                effecttext = ''
                 (levelname, min, lt, bos, special, lvlshift) = leveldata
 
                 if min: effecttext = effecttext + f"Summon {typedata[0]}\n"

@@ -642,7 +642,7 @@ Archetypes: Dict[Any, Any] = {
     },
 };
 
-IncarnatePowers = {
+IncarnatePowers_old = {
     'Alpha': {
         'Types': [ 'Agility', 'Cardiac', 'Intuition', 'Musculature', 'Nerve' ,'Resilient', 'Spiritual', 'Vigor' ],
         'Powers': [ 'Boost', 'Core Boost', 'Radial Boost', 'Total Core Revamp', 'Partial Core Revamp',
@@ -677,7 +677,7 @@ IncarnatePowers = {
     },
 }
 
-IncarnatePowers2 = {
+IncarnatePowers = {
     'Alpha' : {
         'Levels' : ['Boost', 'Core Boost', 'Radial Boost', 'Total Core Revamp', 'Partial Core Revamp',
                     'Partial Radial Revamp', 'Total Radial Revamp', 'Core Paragon', 'Radial Paragon'],
@@ -691,7 +691,7 @@ IncarnatePowers2 = {
                     ['45', '33'  , 0   , 0   , 0   , 0   , '1/2', 1],
                     ['33', '33'  , '20', 0   , 0   , 0   , '1/2', 1],
                     ['33', '16.5', '20', '33', 0   , 0   , '1/2', 1],
-                    ['33', '16   , 5'  , '20', 0   , '33', '1/2', 1],
+                    ['33', '16.5', '20', 0   , '33', 0   , '1/2', 1],
                     ['45', '33'  , '20', 0   , 0   , 0   , '2/3', 1],
                     ['33', '33'  , '20', '33', '33', '33', '2/3', 1],
                 ],
@@ -1181,7 +1181,7 @@ IncarnatePowers2 = {
             },
         },
     },
-},
+}
 
 
 PoolPowers = {

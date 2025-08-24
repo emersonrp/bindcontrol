@@ -250,6 +250,7 @@ class General(Page):
         self.OnPickOrigin()
         self.OnPickArchetype()
         self.OnTypeEnable()
+        self.ValidateServerPicker()
 
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()
@@ -295,6 +296,11 @@ class General(Page):
 
     ### EVENT HANDLERS
     def OnPickAlignment(self, evt = None):
+        alignment = self.GetState('Alignment')
+        if not alignment:
+            alignment = 'Hero'
+            self.SetState('Alignment', 'Hero')
+
         # TODO put this in Gamedata?
         bgcolor = wx.Colour({
             'Hero'       : ( 35, 130, 212),
@@ -303,7 +309,7 @@ class General(Page):
             'Rogue'      : (180, 180, 180),
             'Resistance' : ( 30, 240, 255),
             'Loyalist'   : (255, 226,  56),
-        }[self.GetState('Alignment')])
+        }[alignment])
         self.bannerPanel.SetBackgroundColour(bgcolor)
         self.NameDisplay.SetBackgroundColour(bgcolor)
         # Have to do this dance to make the colors refresh on Windows.  Ugh.
@@ -318,8 +324,10 @@ class General(Page):
         arch = self.GetState('Archetype')
 
         if not arch:
-            wx.LogError("Got into OnPickArchetype with arch not set, bailing.  This is a bug.")
-            return
+            # We somehow have some code path that ends up here without arch set, so
+            # default to "Blaster" instead of throwing an error.
+            arch = 'Blaster'
+            self.SetState('Archetype', arch)
 
         self.Ctrls['Primary'].Clear()
         self.Ctrls['Secondary'].Clear()
@@ -359,6 +367,8 @@ class General(Page):
         if evt: evt.Skip()
 
     def OnPickOrigin(self, evt = None):
+        if not self.GetState('Origin'):
+            self.SetState('Origin', 'Magic')
         if evt: evt.Skip()
 
     def OnPickPoolPower(self, evt):
@@ -419,11 +429,14 @@ class General(Page):
         self.Layout()
         if evt: evt.Skip()
 
+    def ValidateServerPicker(self):
+        if not self.GetState('Server'): self.SetState('Server', 'Homecoming')
+
     def OnServerChange(self, evt):
         if evt: evt.Skip()
         server = self.Profile.Server
 
-        if self.ServerPicker.GetString(self.ServerPicker.GetSelection()) != server:
+        if self.GetState('Server') != server:
             if wx.MessageBox('Changing server requires saving and reloading the Profile.  Continue?', 'Changing Server', wx.YES_NO, self) == wx.YES:
                 mainwindow = wx.App.Get().Main
                 self.Profile.doSaveToFile()

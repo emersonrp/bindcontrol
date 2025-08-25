@@ -11,16 +11,15 @@ class SimpleBindPane(CustomBindPaneParent):
         super().__init__(page, init)
 
         self.Description = "Simple Bind"
+        self.Type        = "SimpleBind"
 
         self.PowerBinder = None
 
     def Serialize(self):
-        data = {
-            'Type'     : 'SimpleBind',
-            'Title'    : self.Title,
+        data = self.CreateSerialization({
             'Contents' : self.PowerBinder.GetValue() if self.PowerBinder else '',
             'Key'      : self.Ctrls[self.MakeCtlName('BindKey')].Key,
-        }
+        })
         if self.PowerBinder:
             if self.PowerBinder.PowerBinderDialog():
                 data['PowerBinderDlg'] = self.PowerBinder.PowerBinderDialog().SaveToData()

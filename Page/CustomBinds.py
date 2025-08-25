@@ -219,9 +219,11 @@ class CustomBinds(Page):
         if bindpane.Title:
             dlg.SetValue(bindpane.Title)
         if dlg.ShowModal() == wx.ID_OK:
-            # freeze and thaw to jump thru some hoops to make the title display update on Windows
             # check if we already have a bind named that.  Complex Binds use the name as
             # part of the bindfiles' filenames, so we can't have dupes
+            #
+            # TODO?  This is no longer the case, but do we want duplicate bind names allowed?
+            # That makes the "you have a conflict with custom bind 'Stan'" message ambiguous
             title = dlg.GetValue()
             for pane in self.Panes:
                 if title == pane.Title:
@@ -239,7 +241,6 @@ class CustomBinds(Page):
                 bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
                 bindpane.DupButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
                 bindpane.ExpButton.SetToolTip(f'Export bind "{bindpane.Title}"')
-                bindpane.RenameCtrlsFrom(oldtitle)
                 # if we have files to delete (we do, if not new) then delete them.
                 if deletefiles:
                     self.Profile.doDeleteBindFiles(deletefiles)
@@ -331,12 +332,12 @@ class CustomBinds(Page):
             pane.PopulateBindFiles()
         return True
 
-    # TODO - this only gets cbonds and wiz stuff if there is a cbind or wiz pane
-    # currently in the page.  This is not right.
+    # TODO:  this contains knowledge of the innards of ComplexBinds, BufferBinds, etc
+    # and probably should query each of those entities for which directories to check
     def AllBindFiles(self):
         files = []
         dirs  = []
-        for dir in ['cbinds', 'buff', 'wiz']:
+        for dir in ['cbinds', 'cb', 'buff', 'wiz']:
             fpbd = self.FullPaneBindsDir(dir)
             if fpbd:
                 files.extend(fpbd['files'])

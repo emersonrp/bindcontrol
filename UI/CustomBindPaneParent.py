@@ -13,6 +13,9 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         self.Init        = init
         self.Title       = init.get('Title', '')
         self.Description = ''
+        self.Type        = ''
+        # RP:  don't do this as .get('CustomID', GetCustomID()).  Love, RP
+        self.CustomID    = init.get('CustomID') or page.Profile.GetCustomID()
         self.DelButton   = None
         self.RenButton   = None
         self.DupButton   = None
@@ -39,6 +42,14 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         # the Custom Binds page doing its own PopulateBindFiles, iteratively
         # over all of its kids
 
+    def CreateSerialization(self, data):
+        return {
+                'CustomID' : self.CustomID,
+                'Type'     : self.Type,
+                'Title'    : self.Title,
+                **data
+                }
+
     def Serialize(self):
         print(f"Inside {self.bindclass} Serialize, please override")
         return {}
@@ -59,15 +70,4 @@ class CustomBindPaneParent(wx.CollapsiblePane):
                 ctrl.ClearButton(None)
 
     def MakeCtlName(self, name):
-        title = re.sub(r'\W+', '', self.Title)
-        return f"{self.bindclass}_{title}_{name}"
-
-    def RenameCtrlsFrom(self, oldtitle):
-        oldtitle = re.sub(r'\W+', '', oldtitle)
-        # don't iterate self.Ctrls directly since we're modifying it as we go
-        for ctrlname in list(self.Ctrls):
-            if re.search(oldtitle, ctrlname):
-                ctrl = self.Ctrls[ctrlname]
-                [_, _, name] = re.split(r'_', ctrlname)
-                self.Ctrls[self.MakeCtlName(name)] = ctrl
-                del(self.Ctrls[ctrlname])
+        return f"{self.bindclass}_{self.CustomID}_{name}"

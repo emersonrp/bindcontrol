@@ -95,6 +95,7 @@ class Profile(wx.Notebook):
         self.Modified        : bool      = False
         self.Filename        : Path|None = Path(filename) if filename else None
         self.ProfileBindsDir : str       = ''
+        self.MaxCustomID     : int       = 0
         self.LastModTime     : int       = 0
         self.Server          : str       = 'Homecoming'
 
@@ -214,6 +215,11 @@ class Profile(wx.Notebook):
     def ClearModified(self, _ = None):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore
         self.Modified = False
+
+    def GetCustomID(self):
+        self.MaxCustomID = self.MaxCustomID + 1
+        self.SetModified()
+        return self.MaxCustomID
 
     # come up with a sane default binds directory name for this profile
     def GenerateBindsDirectoryName(self):
@@ -368,6 +374,7 @@ class Profile(wx.Notebook):
     def AsJSON(self, small = False):
         savedata : Dict[str, Any] = {}
         savedata['ProfileBindsDir'] = self.ProfileBindsDir
+        savedata['MaxCustomID']     = self.MaxCustomID
         for pagename in self.Pages:
             savedata[pagename] = {}
             if pagename == "CustomBinds": continue
@@ -451,6 +458,10 @@ class Profile(wx.Notebook):
         # we store the ProfileBindsDir outside of the sections
         if data and data.get('ProfileBindsDir', None):
             self.ProfileBindsDir = data['ProfileBindsDir']
+
+        # Ditto the MaxCustomID
+        if data and data.get('MaxCustomID', None):
+            self.MaxCustomID = data['MaxCustomID']
 
         for pagename in ['General', 'Gameplay', 'MovementPowers', 'InspirationPopper', 'Mastermind', 'PopmenuEditor']:
             page = getattr(self, pagename)

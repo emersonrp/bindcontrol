@@ -14,8 +14,9 @@ class BufferBindPane(CustomBindPaneParent):
     def __init__(self, page, init = {}):
         CustomBindPaneParent.__init__(self, page, init)
 
-        self.PassedInit = init
+        self.PassedInit  = init
         self.Description = "Buffer Bind"
+        self.Type        = "BufferBind"
 
         self.Buffs = []
 
@@ -167,7 +168,7 @@ class BufferBindPane(CustomBindPaneParent):
         profile = self.Profile
         ResetFile = profile.ResetFile()
 
-        title = re.sub(r'\W+', '', self.Title)
+        cid = self.CustomID
 
         BuffChats = {}
 
@@ -181,8 +182,8 @@ class BufferBindPane(CustomBindPaneParent):
             for j in [1,2,3,4,5,6,7,8]:
                 teamkey = self.Ctrls[self.MakeCtlName(f"Team{j}BuffKey")].Key
                 if not teamkey: continue
-                filebase = profile.BindsDir()     / 'buff' / f"{title}_t{j}"
-                gamebase = profile.GameBindsDir() / 'buff' / f"{title}_t{j}"
+                filebase = profile.BindsDir()     / 'buff' / f"{cid}_t{j}"
+                gamebase = profile.GameBindsDir() / 'buff' / f"{cid}_t{j}"
 
                 outfiles = {}
                 outfiles[1] = profile.GetBindFile(f"{filebase}1.txt")
@@ -202,8 +203,8 @@ class BufferBindPane(CustomBindPaneParent):
             for j in [1,2,3,4,5,6]:
                 petkey = self.Ctrls[self.MakeCtlName(f"Pet{j}BuffKey")].Key
                 if not petkey: continue
-                filebase = profile.BindsDir()     / 'buff' / f"{title}_p{j}"
-                gamebase = profile.GameBindsDir() / 'buff' / f"{title}_p{j}"
+                filebase = profile.BindsDir()     / 'buff' / f"{cid}_p{j}"
+                gamebase = profile.GameBindsDir() / 'buff' / f"{cid}_p{j}"
 
                 outfiles = {}
                 outfiles[1] = profile.GetBindFile(f"{filebase}1.txt")
@@ -235,14 +236,12 @@ class BufferBindPane(CustomBindPaneParent):
         self.Page.Layout()
 
     def Serialize(self):
-        data = {
-            'Type'            : 'BufferBind',
-            'Title'           : self.Title,
+        data = self.CreateSerialization({
             "SelChatTgt"      : self.SelChatTgt.GetString(self.SelChatTgt.GetSelection()),
             "SelChat"         : self.SelChat.GetValue(),
             "BuffsAffectTeam" : self.Ctrls[self.MakeCtlName('BuffsAffectTeam')].GetValue(),
             "BuffsAffectPets" : self.Ctrls[self.MakeCtlName('BuffsAffectPets')].GetValue(),
-        }
+        })
         buffs = []
         for b in self.Buffs:
             buffs.append({
@@ -265,19 +264,24 @@ class BufferBindPane(CustomBindPaneParent):
     def AllBindFiles(self):
         files = []
         title = re.sub(r'\W+', '', self.Title)
+        cid = self.CustomID
         for j in [1,2,3,4,5,6,7,8]:
-            filebase = self.Profile.BindsDir() / f"buff{title}" / f"bufft{j}"
+            filebase  = self.Profile.BindsDir() / f"buff{cid}"   / f"bufft{j}"
+            filebase2 = self.Profile.BindsDir() / f"buff{title}" / f"bufft{j}"
             for k in ['a','b','c','d']:
                 files.append(self.Profile.GetBindFile(f"{filebase}{k}.txt"))
+                files.append(self.Profile.GetBindFile(f"{filebase2}{k}.txt"))
 
         for j in [1,2,3,4,5,6]:
-            filebase = self.Profile.BindsDir() / f"buff{title}" / f"buffp{j}"
+            filebase  = self.Profile.BindsDir() / f"buff{cid}"   / f"buffp{j}"
+            filebase2 = self.Profile.BindsDir() / f"buff{title}" / f"buffp{j}"
             for k in ['a','b','c','d']:
                 files.append(self.Profile.GetBindFile(f"{filebase}{k}.txt"))
+                files.append(self.Profile.GetBindFile(f"{filebase2}{k}.txt"))
 
         return {
             'files' : files,
-            'dirs'  : [f"buff{title}"],
+            'dirs'  : [f"buff{title}", f"buff{cid}"],
         }
 
     def CheckIfWellFormed(self):

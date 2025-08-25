@@ -1,5 +1,7 @@
 import wx
 import wx.html
+import wx.lib.mixins.listctrl as listmix
+
 import re
 from Icon import GetIcon,GetIconBitmap
 from Util.Incarnate import Rarities, Aliases
@@ -139,7 +141,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
                     elif isinstance(effectdata, str):
                         effectline = f"{effectdata}"
                     elif isinstance(effectdata, int) and effectdata == 1:
-                        continue # just show the name of the effect
+                        effectline = ''
                     else:
                         raise Exception(f'Something is terribly wrong with the incarnate data at {typename}, {i}, {j}: {effectdata}')
                     effecttext = effecttext + f"<dt><b>{effectname}</b></dt><dd>{effectline}</dd>"
@@ -174,27 +176,35 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
         return slotdata
 
+class IncarnateBrowserList(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
+    def __init__(self, parent, ID = -1, pos = wx.DefaultPosition,
+                 size = wx.Size(250, -1), style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL):
+        wx.ListCtrl.__init__(self, parent, ID, pos, size, style)
+        listmix.ListCtrlAutoWidthMixin.__init__(self)
+
 class IncarnateBrowser(wx.Dialog):
     def __init__(self, picker):
         super().__init__(None, title = f"{picker.Slot} slot")
         self.Picker = picker
 
+        boxsize = wx.Size(400, 300)
         browserSizer = wx.BoxSizer(wx.VERTICAL)
 
         listSizer = wx.GridSizer(3)
 
-        self.TypeList = wx.ListCtrl(self, style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL)
+        self.TypeList = IncarnateBrowserList(self, size = boxsize)
         self.TypeList.AppendColumn('')
         self.TypeList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onPickType)
         for type in list(picker.SlotData):
             self.TypeList.Append([type])
         listSizer.Add(self.TypeList, 1, wx.EXPAND)
 
-        self.LevelList = wx.ListCtrl(self, style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL)
+        self.LevelList = IncarnateBrowserList(self, size = boxsize)
+        self.LevelList.AppendColumn('')
         self.LevelList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onPickLevel)
         listSizer.Add(self.LevelList, 1, wx.EXPAND)
 
-        self.IncDetails = wx.html.HtmlWindow(self)
+        self.IncDetails = wx.html.HtmlWindow(self, size = boxsize)
         listSizer.Add(self.IncDetails, 1, wx.EXPAND)
 
         browserSizer.Add(listSizer, 1, wx.EXPAND|wx.ALL, 10)
@@ -209,11 +219,21 @@ class IncarnateBrowser(wx.Dialog):
         ...
 
     def onPickType(self, evt):
-        self.LevelList.ClearAll()
-        self.LevelList.AppendColumn('')
+        self.LevelList.DeleteAllItems()
         type = self.TypeList.GetItemText(evt.GetIndex())
-        for level in list(self.Picker.SlotData[type]):
-            self.LevelList.Append([level])
+
+        lvlImgList = wx.ImageList(32,32)
+        self.LevelList.AssignImageList(lvlImgList, wx.IMAGE_LIST_SMALL)
+
+        for i, level in enumerate(list(self.Picker.SlotData[type])):
+            rarity = Rarities[i]
+            slot = self.Picker.Slot
+            aliasedtype = Aliases.get(type, type)
+            lvlImgList.Add(GetIconBitmap('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}'))
+            self.LevelList.InsertItem(self.LevelList.GetItemCount(), level, i)
+
+        self.IncDetails.SetPage('')
+
 
     def onPickLevel(self, evt):
         type = self.TypeList.GetItemText(self.TypeList.GetFirstSelected())
@@ -221,4 +241,3 @@ class IncarnateBrowser(wx.Dialog):
         info = self.Picker.SlotData[type][level]
 
         self.IncDetails.SetPage(info)
-

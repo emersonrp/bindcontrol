@@ -195,8 +195,14 @@ class IncarnateBrowser(wx.Dialog):
         self.TypeList = IncarnateBrowserList(self, size = boxsize)
         self.TypeList.AppendColumn('')
         self.TypeList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onPickType)
-        for type in list(picker.SlotData):
-            self.TypeList.Append([type])
+        typeImgList = wx.ImageList(32,32)
+        self.TypeList.AssignImageList(typeImgList, wx.IMAGE_LIST_SMALL)
+
+        for i, type in enumerate(list(picker.SlotData)):
+            slot = self.Picker.Slot
+            aliasedtype = Aliases.get(type, type)
+            typeImgList.Add(GetIconBitmap('Incarnate', f'Incarnate_{slot}_{aliasedtype}_VeryRare'))
+            self.TypeList.InsertItem(self.TypeList.GetItemCount(), type, i)
         listSizer.Add(self.TypeList, 1, wx.EXPAND)
 
         self.LevelList = IncarnateBrowserList(self, size = boxsize)

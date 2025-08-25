@@ -121,6 +121,7 @@ class Profile(wx.Notebook):
                     raise Exception(f"Something broke while loading profile {self.Filename}.  This is a bug.")
 
             self.ProfileBindsDir = self.GenerateBindsDirectoryName()
+            self.Data['ProfileBindsDir'] = self.ProfileBindsDir
             if not self.ProfileBindsDir:
                 # This happens if GenerateBindsDirectoryName can't come up with something sane
                 parent.OnProfDirButton()

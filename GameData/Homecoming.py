@@ -642,41 +642,6 @@ Archetypes: Dict[Any, Any] = {
     },
 };
 
-IncarnatePowers_old = {
-    'Alpha': {
-        'Types': [ 'Agility', 'Cardiac', 'Intuition', 'Musculature', 'Nerve' ,'Resilient', 'Spiritual', 'Vigor' ],
-        'Powers': [ 'Boost', 'Core Boost', 'Radial Boost', 'Total Core Revamp', 'Partial Core Revamp',
-                   'Partial Radial Revamp', 'Total Radial Revamp', 'Core Paragon', 'Radial Paragon', ],
-    },
-    'Judgement': {
-        'Types': [ 'Cryonic', 'Ion', 'Mighty', 'Pyronic', 'Void', 'Vorpal', ],
-        'Powers': [ 'Judgement', 'Core Judgement', 'Radial Judgement', 'Total Core Judgement', 'Partial Core Judgement',
-                   'Partial Radial Judgement', 'Total Radial Judgement', 'Core Final Judgement', 'Radial Final Judgement' ],
-    },
-    'Interface': {
-        'Types': [ 'Cognitive', 'Degenerative', 'Diamagnetic', 'Gravitic', 'Paralytic', 'Preemptive', 'Reactive', 'Spectral', ],
-        'Powers': [ 'Interface', 'Core Interface', 'Radial Interface', 'Total Core Conversion', 'Partial Core Conversion',
-                   'Partial Radial Conversion', 'Total Radial Conversion', 'Core Flawless Interface', 'Radial Flawless Interface', ],
-    },
-    'Lore': {
-        'Types': [ 'Arachnos', 'Banished Pantheon', 'Carnival of Shadows', 'Cimerorans', 'Clockwork', 'Demons', 'IDF',
-                  'Knives of Vengeance', 'Longbow', 'Nemesis', 'Phantom', 'Polar Lights', 'Rikti', 'Robotic Drones',
-                  'Rularuu', 'Seers', 'Storm Elementals', 'Talons of Vengeance', 'Tsoo', 'Vanguard', 'Warworks', ],
-        'Powers': [ 'Ally', 'Core Ally', 'Radial Ally', 'Total Core Improved Ally', 'Partial Core Improved Ally',
-                   'Partial Radial Improved Ally', 'Total Radial Improved Ally', 'Core Superior Ally', 'Radial Superior Ally', ],
-    },
-    'Destiny': {
-        'Types': [ 'Ageless', 'Barrier', 'Clarion', 'Incandescence', 'Rebirth', ],
-        'Powers': [ 'Invocation', 'Core Invocation', 'Radial Invocation', 'Total Core Invocation', 'Partial Core Invocation',
-                   'Partial Radial Invocation', 'Total Radial Invocation', 'Core Epiphany', 'Radial Epiphany', ],
-    },
-    'Hybrid': {
-        'Types': [ 'Assault', 'Control', 'Melee', 'Support', ],
-        'Powers': [ 'Genome', 'Core Genome', 'Radial Genome', 'Total Core Graft', 'Partial Core Graft',
-                   'Partial Radial Graft', 'Total Radial Graft', 'Core Embodiment', 'Radial Embodiment', ],
-    },
-}
-
 IncarnatePowers = {
     'Alpha' : {
         'Levels' : ['Boost', 'Core Boost', 'Radial Boost', 'Total Core Revamp', 'Partial Core Revamp',

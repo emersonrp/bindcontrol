@@ -97,21 +97,18 @@ class IncarnatePicker(wx.StaticBoxSizer):
     def OnButtonPress(self, _):
         with IncarnateBrowser(self) as dlg:
             if dlg.ShowModal() == wx.ID_OK:
-                print("Gonna Do The Thing")
+                powerdata = dlg.GetPickedPower()
 
-    def OnMenuSelection(self, evt):
-        menuitem = evt.EventObject.FindItemById(evt.GetId())
+                self.IncName.SetLabel(powerdata['PowerName'])
+                self.IncIcon.SetBitmapLabel(powerdata['Icon'])
+                self.IconFilename = powerdata['IconFilename']
 
-        self.IncName.SetLabel(menuitem.GetItemLabel())
-        self.IncIcon.SetBitmapLabel(menuitem.GetBitmapBundle().GetBitmap(wx.Size(32,32)))
-        self.IconFilename = menuitem.IconFilename
-
-        # Yes both of the self.Layout() are necessary to do the sizing / wrap dance.
-        self.Layout()
-        w,_ = self.IncName.GetSize()
-        self.IncName.Wrap(w)
-        self.Layout()
-        evt.Skip()
+                # Yes both of the self.Layout() are necessary to do the sizing / wrap dance.
+                self.Layout()
+                w,_ = self.IncName.GetSize()
+                self.IncName.Wrap(w)
+                self.Layout()
+                evt.Skip()
 
     def OnRightClick(self, evt):
         button = evt.EventObject
@@ -182,6 +179,8 @@ class IncarnateBrowserList(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         wx.ListCtrl.__init__(self, parent, ID, pos, size, style)
         listmix.ListCtrlAutoWidthMixin.__init__(self)
 
+        self.IconFilenames = []
+
 class IncarnateBrowser(wx.Dialog):
     def __init__(self, picker):
         super().__init__(None, title = f"{picker.Slot} slot")
@@ -221,8 +220,17 @@ class IncarnateBrowser(wx.Dialog):
         self.SetSizerAndFit(browserSizer)
         self.Layout()
 
-    def PickedPower(self):
-        ...
+    def GetPickedPower(self):
+        pickedidx = self.LevelList.GetFirstSelected()
+        pickeditem = self.LevelList.GetItem(pickedidx)
+        iconlist = self.LevelList.GetImageList(wx.IMAGE_LIST_SMALL)
+        icon = iconlist.GetBitmap(pickeditem.GetImage())
+
+        return {
+            'PowerName'    : pickeditem.GetText(),
+            'Icon'         : icon,
+            'IconFilename' : self.LevelList.IconFilenames[pickedidx],
+        }
 
     def onPickType(self, evt):
         self.LevelList.DeleteAllItems()
@@ -235,7 +243,9 @@ class IncarnateBrowser(wx.Dialog):
             rarity = Rarities[i]
             slot = self.Picker.Slot
             aliasedtype = Aliases.get(type, type)
-            lvlImgList.Add(GetIconBitmap('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}'))
+            icon = GetIcon('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}')
+            lvlImgList.Add(icon.GetBitmap(wx.Size(32,32)))
+            self.LevelList.IconFilenames.append(icon.Filename)
             self.LevelList.InsertItem(self.LevelList.GetItemCount(), level, i)
 
         self.IncDetails.SetPage('')

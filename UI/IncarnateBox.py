@@ -94,21 +94,22 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
         self.Add(hsizer, 1, wx.EXPAND|wx.RIGHT|wx.BOTTOM, 12)
 
-    def OnButtonPress(self, _):
+    def OnButtonPress(self, evt):
         with IncarnateBrowser(self) as dlg:
             if dlg.ShowModal() == wx.ID_OK:
-                powerdata = dlg.GetPickedPower()
+                if powerdata := dlg.GetPickedPower():
 
-                self.IncName.SetLabel(powerdata['PowerName'])
-                self.IncIcon.SetBitmapLabel(powerdata['Icon'])
-                self.IconFilename = powerdata['IconFilename']
+                    self.IncName.SetLabel(powerdata['PowerName'])
+                    self.IncIcon.SetBitmapLabel(powerdata['Icon'])
+                    self.IconFilename = powerdata['IconFilename']
 
-                # Yes both of the self.Layout() are necessary to do the sizing / wrap dance.
-                self.Layout()
-                w,_ = self.IncName.GetSize()
-                self.IncName.Wrap(w)
-                self.Layout()
-                evt.Skip()
+                    # Yes both of the self.Layout() are necessary to do the sizing / wrap dance.
+                    self.Layout()
+                    w,_ = self.IncName.GetSize()
+                    self.IncName.Wrap(w)
+                    self.Layout()
+
+        evt.Skip()
 
     def OnRightClick(self, evt):
         button = evt.EventObject
@@ -222,6 +223,8 @@ class IncarnateBrowser(wx.Dialog):
 
     def GetPickedPower(self):
         pickedidx = self.LevelList.GetFirstSelected()
+        if pickedidx == -1:
+            return {}
         pickeditem = self.LevelList.GetItem(pickedidx)
         iconlist = self.LevelList.GetImageList(wx.IMAGE_LIST_SMALL)
         icon = iconlist.GetBitmap(pickeditem.GetImage())

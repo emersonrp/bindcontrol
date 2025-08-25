@@ -1,7 +1,10 @@
 import wx
+import wx.html
+import wx.lib.mixins.listctrl as listmix
+
 import re
 from Icon import GetIcon,GetIconBitmap
-from Util.Incarnate import Rarities, Aliases
+from Util.Incarnate import Rarities, Aliases, SlotData
 
 import GameData
 
@@ -17,14 +20,14 @@ class IncarnateBox(wx.StaticBoxSizer):
         self.Add(incarnateSizer, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
 
         if self.Server == "Rebirth":
-            self.genesisInc = IncarnatePicker(staticbox, label = "Genesis")
+            self.genesisInc = IncarnatePicker(staticbox, slot = "Genesis")
 
-        self.hybridInc    = IncarnatePicker(staticbox, label = "Hybrid")
-        self.loreInc      = IncarnatePicker(staticbox, label = "Lore")
-        self.destinyInc   = IncarnatePicker(staticbox, label = "Destiny")
-        self.judgementInc = IncarnatePicker(staticbox, label = "Judgement")
-        self.interfaceInc = IncarnatePicker(staticbox, label = "Interface")
-        self.alphaInc     = IncarnatePicker(staticbox, label = "Alpha")
+        self.hybridInc    = IncarnatePicker(staticbox, slot = "Hybrid")
+        self.loreInc      = IncarnatePicker(staticbox, slot = "Lore")
+        self.destinyInc   = IncarnatePicker(staticbox, slot = "Destiny")
+        self.judgementInc = IncarnatePicker(staticbox, slot = "Judgement")
+        self.interfaceInc = IncarnatePicker(staticbox, slot = "Interface")
+        self.alphaInc     = IncarnatePicker(staticbox, slot = "Alpha")
 
         if self.Server == "Rebirth":
             incarnateSizer.Add(self.hybridInc,    wx.GBPosition(0,0), wx.GBSpan(1,2), wx.EXPAND|wx.LEFT, 12)
@@ -52,7 +55,7 @@ class IncarnateBox(wx.StaticBoxSizer):
                     box.IncIcon.SetBitmapLabel(GetIconBitmap(contents['iconfile']))
                     box.IconFilename = contents['iconfile']
 
-    def GetData(self):
+    def Serialize(self):
         incarnatedata = {}
 
         boxes = [self.hybridInc, self.loreInc, self.destinyInc, self.judgementInc, self.interfaceInc, self.alphaInc]
@@ -61,7 +64,7 @@ class IncarnateBox(wx.StaticBoxSizer):
 
         for box in boxes:
             if box.IncName.GetLabel():
-                incarnatedata[box.Label] = {
+                incarnatedata[box.Slot] = {
                     'power'    : re.sub('\n', ' ', box.IncName.GetLabel()),
                     'iconfile' : box.IconFilename,
                 }
@@ -69,13 +72,13 @@ class IncarnateBox(wx.StaticBoxSizer):
 
 import wx.lib.buttons as buttons
 class IncarnatePicker(wx.StaticBoxSizer):
-    def __init__(self, parent, label = ""):
-        wx.StaticBoxSizer.__init__(self, wx.HORIZONTAL, parent, label = label)
+    def __init__(self, parent, slot = ""):
+        wx.StaticBoxSizer.__init__(self, wx.HORIZONTAL, parent, label = slot)
         staticbox = self.GetStaticBox()
 
-        self.Label = label
+        self.Slot = slot
         self.IconFilename = ''
-        self.PopupMenu = None
+        self.SlotData = SlotData[slot]
 
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -92,25 +95,20 @@ class IncarnatePicker(wx.StaticBoxSizer):
         self.Add(hsizer, 1, wx.EXPAND|wx.RIGHT|wx.BOTTOM, 12)
 
     def OnButtonPress(self, evt):
-        button = evt.EventObject
-        if not self.PopupMenu:
-            self.PopupMenu = self.BuildMenu(self.Label)
-            self.PopupMenu.Bind(wx.EVT_MENU, self.OnMenuSelection)
+        with IncarnateBrowser(self) as dlg:
+            if dlg.ShowModal() == wx.ID_OK:
+                if powerdata := dlg.GetPickedPower():
 
-        button.PopupMenu(self.PopupMenu)
+                    self.IncName.SetLabel(powerdata['PowerName'])
+                    self.IncIcon.SetBitmapLabel(powerdata['Icon'])
+                    self.IconFilename = powerdata['IconFilename']
 
-    def OnMenuSelection(self, evt):
-        menuitem = evt.EventObject.FindItemById(evt.GetId())
+                    # Yes both of the self.Layout() are necessary to do the sizing / wrap dance.
+                    self.Layout()
+                    w,_ = self.IncName.GetSize()
+                    self.IncName.Wrap(w)
+                    self.Layout()
 
-        self.IncName.SetLabel(menuitem.GetItemLabel())
-        self.IncIcon.SetBitmapLabel(menuitem.GetBitmapBundle().GetBitmap(wx.Size(32,32)))
-        self.IconFilename = menuitem.IconFilename
-
-        # Yes both of the self.Layout() are necessary to do the sizing / wrap dance.
-        self.Layout()
-        w,_ = self.IncName.GetSize()
-        self.IncName.Wrap(w)
-        self.Layout()
         evt.Skip()
 
     def OnRightClick(self, evt):
@@ -120,33 +118,89 @@ class IncarnatePicker(wx.StaticBoxSizer):
         button.Layout()
         evt.Skip()
 
-    def BuildMenu(self, slot):
-        menu = wx.Menu()
+class IncarnateBrowserList(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
+    def __init__(self, parent, ID = -1, pos = wx.DefaultPosition,
+                 size = wx.Size(250, -1), style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL):
+        wx.ListCtrl.__init__(self, parent, ID, pos, size, style)
+        listmix.ListCtrlAutoWidthMixin.__init__(self)
 
-        incData = GameData.IncarnatePowers[slot]
+        self.IconFilenames = []
 
-        for type in incData['Types']:
-            submenu = wx.Menu()
-            menu.AppendSubMenu(submenu, type)
+class IncarnateBrowser(wx.Dialog):
+    def __init__(self, picker):
+        super().__init__(None, title = f"{picker.Slot} slot")
+        self.Picker = picker
 
-            for index, power in enumerate(incData['Powers']):
-                menuitem = wx.MenuItem(id = wx.ID_ANY, text = f"{type} {power}")
-                rarity = Rarities[ index ]
+        boxsize = wx.Size(400, 300)
+        browserSizer = wx.BoxSizer(wx.VERTICAL)
 
-                # aliases for the Lore types ie "Polar Lights" => "Lights" to match the icons
-                aliasedtype = Aliases.get(type, type)
+        listSizer = wx.GridSizer(3)
 
-                icon = GetIcon('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}')
-                if icon: menuitem.SetBitmap(icon)
-                setattr(menuitem, 'IconFilename', icon.Filename)
+        self.TypeList = IncarnateBrowserList(self, size = boxsize)
+        self.TypeList.AppendColumn('')
+        self.TypeList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onPickType)
+        typeImgList = wx.ImageList(32,32)
+        self.TypeList.AssignImageList(typeImgList, wx.IMAGE_LIST_SMALL)
 
-                submenu.Append(menuitem)
+        for i, type in enumerate(list(picker.SlotData)):
+            slot = self.Picker.Slot
+            aliasedtype = Aliases.get(type, type)
+            typeImgList.Add(GetIconBitmap('Incarnate', f'Incarnate_{slot}_{aliasedtype}_VeryRare'))
+            self.TypeList.InsertItem(self.TypeList.GetItemCount(), type, i)
+        listSizer.Add(self.TypeList, 1, wx.EXPAND)
 
-        menuitem = wx.MenuItem(id = wx.ID_ANY, text = "Disable Slot")
-        icon = GetIcon('Incarnate', 'Disable')
-        if icon: menuitem.SetBitmap(icon)
-        setattr(menuitem, 'IconFilename', icon.Filename)
+        self.LevelList = IncarnateBrowserList(self, size = boxsize)
+        self.LevelList.AppendColumn('')
+        self.LevelList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onPickLevel)
+        listSizer.Add(self.LevelList, 1, wx.EXPAND)
 
-        menu.Append(menuitem)
+        self.IncDetails = wx.html.HtmlWindow(self, size = boxsize)
+        listSizer.Add(self.IncDetails, 1, wx.EXPAND)
 
-        return menu
+        browserSizer.Add(listSizer, 1, wx.EXPAND|wx.ALL, 10)
+
+        buttonSizer = self.CreateButtonSizer(wx.OK|wx.CANCEL)
+        browserSizer.Add(buttonSizer, 0, wx.EXPAND|wx.ALL, 10)
+
+        self.SetSizerAndFit(browserSizer)
+        self.Layout()
+
+    def GetPickedPower(self):
+        pickedidx = self.LevelList.GetFirstSelected()
+        if pickedidx == -1:
+            return {}
+        pickeditem = self.LevelList.GetItem(pickedidx)
+        iconlist = self.LevelList.GetImageList(wx.IMAGE_LIST_SMALL)
+        icon = iconlist.GetBitmap(pickeditem.GetImage())
+
+        return {
+            'PowerName'    : pickeditem.GetText(),
+            'Icon'         : icon,
+            'IconFilename' : self.LevelList.IconFilenames[pickedidx],
+        }
+
+    def onPickType(self, evt):
+        self.LevelList.DeleteAllItems()
+        type = self.TypeList.GetItemText(evt.GetIndex())
+
+        lvlImgList = wx.ImageList(32,32)
+        self.LevelList.AssignImageList(lvlImgList, wx.IMAGE_LIST_SMALL)
+
+        for i, level in enumerate(list(self.Picker.SlotData[type])):
+            rarity = Rarities[i]
+            slot = self.Picker.Slot
+            aliasedtype = Aliases.get(type, type)
+            icon = GetIcon('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}')
+            lvlImgList.Add(icon.GetBitmap(wx.Size(32,32)))
+            self.LevelList.IconFilenames.append(icon.Filename)
+            self.LevelList.InsertItem(self.LevelList.GetItemCount(), level, i)
+
+        self.IncDetails.SetPage('')
+
+
+    def onPickLevel(self, evt):
+        type = self.TypeList.GetItemText(self.TypeList.GetFirstSelected())
+        level = self.LevelList.GetItemText(evt.GetIndex())
+        info = self.Picker.SlotData[type][level]
+
+        self.IncDetails.SetPage(info)

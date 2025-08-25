@@ -1,5 +1,6 @@
 import GameData.Homecoming
 import GameData.Rebirth
+import Util.Incarnate
 
 Server = ''
 
@@ -49,3 +50,5 @@ def SetupGameData(server):
         GameData.TempTravelPowers = GameData.Homecoming.TempTravelPowers
     else:
         raise Exception(f'GameData.SetupGameData called with unknown server "{server}"')
+
+    Util.Incarnate.BuildSlotData()

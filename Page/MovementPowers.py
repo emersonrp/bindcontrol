@@ -99,6 +99,7 @@ class MovementPowers(Page):
 
             'FlyGFly'         : '',
 
+            'KhelFeedback'    : False,
             'HumanTray'       : "1",
 
             'UseNova'         : False,
@@ -298,6 +299,8 @@ class MovementPowers(Page):
         ##### KHELDIAN TRAVEL POWERS
         self.kheldianSizer = ControlGroup(self, self, 'Kheldian Forms / Powers')
 
+        self.kheldianSizer.AddControl( ctlName = 'KhelFeedback', ctlType = 'checkbox',
+            tooltip = "Perform a self-/tell when changing form indicating the new form",)
         self.kheldianSizer.AddControl( ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 8],
             tooltip = "Select the powers tray to change to when in human form")
         self.kheldianSizer.AddControl( ctlName = 'UseNova', ctlType = 'checkbox',
@@ -708,6 +711,7 @@ class MovementPowers(Page):
             raise e
 
         finally:
+            self.Fit()
             self.Layout()
             self.Thaw()
             if evt: evt.Skip()
@@ -1252,18 +1256,21 @@ class MovementPowers(Page):
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
         if (self.isKheldian() and self.GetState('UseNova')):
-            ResetFile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"t $name, Changing to {Nova} Form{fullstop}{t.on}{Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
+            khelfeedback = f"t $name, Changing to {Nova} Form" if self.GetState('KhelFeedback') else ""
+            ResetFile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"{khelfeedback}{fullstop}{t.on}{Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
             novafile = profile.GetBindFile("nova.txt")
 
             if (self.GetState('UseDwarf')):
-                novafile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"t $name, Changing to {Dwarf} Form{fullstop}{t.off}{Nova}{t.on}{Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
+                khelfeedback = f"t $name, Changing to {Dwarf} Form" if self.GetState('KhelFeedback') else ""
+                novafile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"{khelfeedback}{fullstop}{t.off}{Nova}{t.on}{Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
 
             humpower = ''
             # TODO this control went missing
             #if self.GetState('UseHumanFormPower'): humpower = f'$${self.togon} ' + HumanFormShield
             #else:                                  humpower = ''
-            novafile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"t $name, Changing to Human Form, SoD Mode{fullstop}$${self.togoff} {Nova}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
+            khelfeedback = f"t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ""
+            novafile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"{khelfeedback}{fullstop}$${self.togoff} {Nova}{humpower}$$gototray {self.GetState('HumanTray')}" + profile.BLF('reset.txt')))
 
             novafile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind("+forward"))
             novafile.SetBind(self.Ctrls['Left'].MakeFileKeyBind("+left"))
@@ -1287,16 +1294,19 @@ class MovementPowers(Page):
             novafile.SetBind(self.Ctrls['Follow'].MakeFileKeyBind("follow"))
 
         if (self.isKheldian() and self.GetState('UseDwarf')):
-            ResetFile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"t $name, Changing to {Dwarf} Form{fullstop}$${self.togon} {Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
+            khelfeedback = f"t $name, Changing to {Dwarf} Form" if self.GetState('KhelFeedback') else ""
+            ResetFile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"{khelfeedback}{fullstop}$${self.togon} {Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
             dwrffile = profile.GetBindFile("dwarf.txt")
             if (self.GetState('UseNova')):
-                dwrffile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"t $name, Changing to {Nova} Form{fullstop}$${self.togoff} {Dwarf}$${self.togon} {Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
+                khelfeedback = f"t $name, Changing to {Nova} Form" if self.GetState('KhelFeedback') else ""
+                dwrffile.SetBind(self.Ctrls['NovaMode'].MakeFileKeyBind(f"{khelfeedback}{fullstop}$${self.togoff} {Dwarf}$${self.togon} {Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
             humpower = ''
             # TODO this control went missing
             #if self.GetState('UseHumanFormPower'): humpower = f'$${self.togon} ' + HumanFormShield
             #else:                                  humpower = ''
-            dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"t $name, Changing to Human Form, SoD Mode{fullstop}$${self.togoff} {Dwarf}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
+            khelfeedback = f"t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ""
+            dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeFileKeyBind(f"{khelfeedback}{fullstop}$${self.togoff} {Dwarf}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
 
             dwrffile.SetBind(self.Ctrls['Forward'].MakeFileKeyBind("+forward"))
             dwrffile.SetBind(self.Ctrls['Left'].MakeFileKeyBind("+left"))
@@ -2389,6 +2399,7 @@ UI.Labels.update( {
     'TempEnable'     : 'Enable Temp Travel Power Bind',
     'TempToggle'     : 'Toggle Temp Travel Power',
 
+    'KhelFeedback'   : 'Give /tell Feedback When Changing Form',
     'HumanTray'      : 'Human Form Power Tray',
     'UseNova'        : 'Use Nova Form Toggle',
     'NovaMode'       : 'Toggle Nova Form',

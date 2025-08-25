@@ -219,9 +219,11 @@ class CustomBinds(Page):
         if bindpane.Title:
             dlg.SetValue(bindpane.Title)
         if dlg.ShowModal() == wx.ID_OK:
-            # freeze and thaw to jump thru some hoops to make the title display update on Windows
             # check if we already have a bind named that.  Complex Binds use the name as
             # part of the bindfiles' filenames, so we can't have dupes
+            #
+            # TODO?  This is no longer the case, but do we want duplicate bind names allowed?
+            # That makes the "you have a conflict with custom bind 'Stan'" message ambiguous
             title = dlg.GetValue()
             for pane in self.Panes:
                 if title == pane.Title:
@@ -239,7 +241,6 @@ class CustomBinds(Page):
                 bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
                 bindpane.DupButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
                 bindpane.ExpButton.SetToolTip(f'Export bind "{bindpane.Title}"')
-                bindpane.RenameCtrlsFrom(oldtitle)
                 # if we have files to delete (we do, if not new) then delete them.
                 if deletefiles:
                     self.Profile.doDeleteBindFiles(deletefiles)

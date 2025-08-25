@@ -70,15 +70,4 @@ class CustomBindPaneParent(wx.CollapsiblePane):
                 ctrl.ClearButton(None)
 
     def MakeCtlName(self, name):
-        title = re.sub(r'\W+', '', self.Title)
-        return f"{self.bindclass}_{title}_{name}"
-
-    def RenameCtrlsFrom(self, oldtitle):
-        oldtitle = re.sub(r'\W+', '', oldtitle)
-        # don't iterate self.Ctrls directly since we're modifying it as we go
-        for ctrlname in list(self.Ctrls):
-            if re.search(oldtitle, ctrlname):
-                ctrl = self.Ctrls[ctrlname]
-                [_, _, name] = re.split(r'_', ctrlname)
-                self.Ctrls[self.MakeCtlName(name)] = ctrl
-                del(self.Ctrls[ctrlname])
+        return f"{self.bindclass}_{self.CustomID}_{name}"

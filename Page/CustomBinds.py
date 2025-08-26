@@ -93,7 +93,8 @@ class CustomBinds(Page):
             if wizClass := bwd.WizClass:
                 newWizBindPane = WizardBindPane(self, wizClass)
                 self.AddBindToPage(bindpane = newWizBindPane)
-                newWizBindPane.Wizard.ShowWizard()
+                if newWizBindPane in self.Panes: # did we cancel the add?
+                    newWizBindPane.Wizard.ShowWizard()
         if evt: evt.Skip()
 
     def OnImportBindButton(self, evt):
@@ -144,8 +145,7 @@ class CustomBinds(Page):
             return
 
         if not bindpane.Title: # this is from a "New Bind" button
-            self.SetBindPaneLabel(None, bindpane, new = True)
-            if not bindpane: # clicked 'Cancel'
+            if not self.SetBindPaneLabel(None, bindpane, new = True):
                 return
 
         if len(self.Panes) == 0:
@@ -210,7 +210,6 @@ class CustomBinds(Page):
             wx.LogError("Tried to set a BindPane label without a bindpane.  This is a bug.")
             return
 
-        oldtitle = bindpane.Title
         # marshal up the files to delete, before we change the name
         deletefiles = None if new else bindpane.AllBindFiles()
         if bindDesc := bindpane.Description:
@@ -246,6 +245,7 @@ class CustomBinds(Page):
                     self.Profile.doDeleteBindFiles(deletefiles)
             self.Profile.SetModified()
             self.Update()
+            return True # successful name change
         else:
             if new:
                 self.doDeleteBindPane(bindpane)
@@ -266,13 +266,14 @@ class CustomBinds(Page):
         evt.Skip()
 
     def doDeleteBindPane(self, bindpane):
-        delButton = bindpane.DelButton
-        sizer = delButton.BindSizer
+        if delButton := bindpane.DelButton:
+            sizer = delButton.BindSizer
+            self.PaneSizer.Hide(sizer)
+            self.PaneSizer.Remove(sizer)
         for ctrlname in bindpane.Ctrls:
             if self.Ctrls.get(ctrlname, None) : del self.Ctrls[ctrlname]
-        self.PaneSizer.Hide(sizer)
-        self.PaneSizer.Remove(sizer)
-        self.Panes.remove(bindpane)
+        if bindpane in self.Panes:
+            self.Panes.remove(bindpane)
         bindpane.DestroyLater()
         wx.CallAfter(self.Profile.CheckAllConflicts)
         if len(self.Panes) == 0:

@@ -15,7 +15,7 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
         self.DialogParent = parent
         self.ExtraLength = extralength # for complex binds to add the footprint of each step's BLF()
 
-        self.SetHint("Click to define bind contents")
+        self.SetHint("Click to launch PowerBinder")
 
         self.Bind(wx.EVT_LEFT_DOWN, self.OnClickPB)
 

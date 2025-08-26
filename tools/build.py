@@ -20,8 +20,8 @@ params = [
     '--exclude-module=_decimal',
     '--exclude-module=_hashlib',
     '--exclude-module=_lzma',
-    '--exclude-module=_socket',
     '--exclude-module=_ssl',
+    '--hidden-import=UI.IncarnateBox',
 ]
 
 if platform.system() == "Darwin":

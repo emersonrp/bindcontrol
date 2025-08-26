@@ -75,13 +75,18 @@ class WizPickerDialog(wx.Dialog):
 
 # Load plugins / modules from UI/BindWizard directory
 def LoadModules():
-    path = Path(getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__))))
+    if path := getattr(sys, '_MEIPASS', None):
+        path = Path(path) / 'BindWizard'
+        modpath = "BindWizard."
+    else:
+        path = Path(os.path.dirname(os.path.abspath(__file__)))
+        modpath = "UI.BindWizard."
 
     for package_file in sorted(path.glob('*.py')):
         package = package_file.stem
         if package == '__init__': continue
 
-        modstr = "UI.BindWizard." + package
+        modstr = modpath + package
         # check if we've already loaded this one, if so, we've done this before, bail out
         if modstr in sys.modules: return
 

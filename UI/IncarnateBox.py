@@ -147,6 +147,9 @@ class IncarnateBrowser(wx.Dialog):
             aliasedtype = Aliases.get(type, type)
             typeImgList.Add(GetIconBitmap('Incarnate', f'Incarnate_{slot}_{aliasedtype}_VeryRare'))
             self.TypeList.InsertItem(self.TypeList.GetItemCount(), type, i)
+        nextentry = len(picker.SlotData)
+        typeImgList.Add(GetIconBitmap('Incarnate', 'Disable'))
+        self.TypeList.InsertItem(nextentry, "Disable Slot", nextentry)
         listSizer.Add(self.TypeList, 1, wx.EXPAND)
 
         self.LevelList = IncarnateBrowserList(self, size = boxsize)
@@ -166,6 +169,19 @@ class IncarnateBrowser(wx.Dialog):
         self.Layout()
 
     def GetPickedPower(self):
+        # First, check if we've decided on 'Disable'
+        typeidx = self.TypeList.GetFirstSelected()
+        typeitem = self.TypeList.GetItem(typeidx)
+        if typeitem.GetText() == "Disable Slot":
+            iconlist = self.TypeList.GetImageList(wx.IMAGE_LIST_SMALL)
+            icon = iconlist.GetBitmap(typeitem.GetImage())
+
+            return {
+                'PowerName'    : 'Disable Slot',
+                'Icon'         : icon,
+                'IconFilename' : GetIcon('Incarnate', 'Disable').Filename,
+            }
+
         pickedidx = self.LevelList.GetFirstSelected()
         if pickedidx == -1:
             return {}
@@ -181,7 +197,11 @@ class IncarnateBrowser(wx.Dialog):
 
     def onPickType(self, evt):
         self.LevelList.DeleteAllItems()
+        self.IncDetails.SetPage('')
+
         type = self.TypeList.GetItemText(evt.GetIndex())
+
+        if type == 'Disable Slot': return
 
         lvlImgList = wx.ImageList(32,32)
         self.LevelList.AssignImageList(lvlImgList, wx.IMAGE_LIST_SMALL)
@@ -194,9 +214,6 @@ class IncarnateBrowser(wx.Dialog):
             lvlImgList.Add(icon.GetBitmap(wx.Size(32,32)))
             self.LevelList.IconFilenames.append(icon.Filename)
             self.LevelList.InsertItem(self.LevelList.GetItemCount(), level, i)
-
-        self.IncDetails.SetPage('')
-
 
     def onPickLevel(self, evt):
         type = self.TypeList.GetItemText(self.TypeList.GetFirstSelected())

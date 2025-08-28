@@ -22,9 +22,9 @@ class MovementPowers(Page):
         # A few things that are server-specific.  If we change servers, we reload the profile
         # so this is safe to do in __init__
         server = self.Profile.Server
-        self.togon   = "powexectoggleon"  if server == "Homecoming" else "px_tgon"
-        self.togoff  = "powexectoggleoff" if server == "Homecoming" else "px_tgof"
-        self.unqueue = "powexecunqueue"   if server == "Homecoming" else "px_uq"
+        self.togon   = "px_tgon" if server == "Rebirth" else "powexectoggleon"
+        self.togoff  = "px_tgof" if server == "Rebirth" else "powexectoggleoff"
+        self.unqueue = "px_uq"   if server == "Rebirth" else "powexecunqueue"
 
         self.Init: Dict[str, Any] = {
             'EnableSoD'       : False,
@@ -2410,8 +2410,8 @@ UI.Labels.update( {
 class tObject(dict):
     def __init__(self, profile):
         from Profile import Profile
-        self.togon   = "powexectoggleon"  if profile.Server == "Homecoming" else "px_tgon"
-        self.togoff  = "powexectoggleoff" if profile.Server == "Homecoming" else "px_tgof"
+        self.togon   = "px_tgon" if profile.Server == "Rebirth" else "powexectoggleon"
+        self.togoff  = "px_tgof" if profile.Server == "Rebirth" else "powexectoggleoff"
 
         self.profile      :Profile = profile
         self.ini          :str = ''

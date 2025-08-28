@@ -319,33 +319,6 @@ class MovementPowers(Page):
             tooltip = "Select the powers tray to change to when in Dwarf form")
         self.leftColumn.Add(self.kheldianSizer, 0, wx.EXPAND)
 
-        ##### SPEED ON DEMAND SETTINGS
-        SoDSizer = ControlGroup(self, self, 'Speed on Demand Settings')
-
-        SoDSizer.AddControl( ctlName = 'EnableSoD', ctlType = 'checkbox',
-            tooltip = "Enable Speed on Demand behavior for the movement keys")
-        self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
-        SoDSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'choice',
-            contents = ('No SoD','Sprint','Speed','Jump','Fly'),
-            tooltip = "Select the Speed on Demand mode the movement keys will use by default")
-        self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.OnSpeedOnDemandChanged)
-        SoDSizer.AddControl( ctlName = 'SprintPower', ctlType = 'choice',
-            contents = GameData.SprintPowers,
-            tooltip = "Select the power to use for Sprint Speed on Demand")
-        SoDSizer.AddControl( ctlName = 'NonSoDEnable', ctlType = 'checkbox',
-            tooltip = "Use a key to toggle whether Speed on Demand is active")
-        self.Ctrls['NonSoDEnable'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
-        SoDSizer.AddControl( ctlName = 'NonSoDMode', ctlType = 'keybutton',
-            tooltip = "Select the key to toggle Speed on Demand")
-        SoDSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',)
-        self.Ctrls['SprintSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
-        SoDSizer.AddControl( ctlName = 'SprintMode', ctlType = 'keybutton',)
-        SoDSizer.AddControl( ctlName = 'MouseChord', ctlType = 'checkbox',)
-        SoDSizer.AddControl( ctlName = 'Feedback', ctlType = 'checkbox',
-            tooltip = "Announce changes in Speed on Demand modes via self-/tell")
-
-        self.rightColumn.Add(SoDSizer, 0, wx.EXPAND)
-
         ##### TEMP TRAVEL POWERS
         self.tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
         self.tempSizer.AddControl( ctlName = 'TempEnable', ctlType = 'checkbox',
@@ -370,8 +343,42 @@ class MovementPowers(Page):
         self.tempSizer.Layout()
         self.leftColumn.Add(self.tempSizer, 0, wx.EXPAND)
 
+        ##### SPEED ON DEMAND SETTINGS
+        SoDSizer = ControlGroup(self, self, 'Speed on Demand Settings')
+
+        SoDSizer.AddControl( ctlName = 'EnableSoD', ctlType = 'checkbox',
+            tooltip = "Enable Speed on Demand behavior for the movement keys")
+        self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
+        SoDSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'choice',
+            contents = ('No SoD','Sprint','Speed','Jump','Fly'),
+            tooltip = "Select the Speed on Demand mode the movement keys will use by default")
+        self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.OnSpeedOnDemandChanged)
+        SoDSizer.AddControl( ctlName = 'NonSoDEnable', ctlType = 'checkbox',
+            tooltip = "Use a key to toggle whether Speed on Demand is active")
+        self.Ctrls['NonSoDEnable'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
+        SoDSizer.AddControl( ctlName = 'NonSoDMode', ctlType = 'keybutton',
+            tooltip = "Select the key to toggle Speed on Demand")
+        SoDSizer.AddControl( ctlName = 'MouseChord', ctlType = 'checkbox',
+            tooltip = "Holding both mouse buttons will go forward using the current Speed on Demand mode")
+        SoDSizer.AddControl( ctlName = 'Feedback', ctlType = 'checkbox',
+            tooltip = "Announce changes in Speed on Demand modes via self-/tell")
+
+        self.rightColumn.Add(SoDSizer, 0, wx.EXPAND)
+
+        SprintSizer = ControlGroup(self, self, "Sprint Settings")
+        SprintSizer.AddControl( ctlName = 'SprintPower', ctlType = 'choice',
+            contents = GameData.SprintPowers,
+            tooltip = "Select the power to use for Sprint Speed on Demand")
+        SprintSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',
+            tooltip = "Use Sprint Speed on Demand, even when other speed powers are inactive")
+        self.Ctrls['SprintSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
+        SprintSizer.AddControl( ctlName = 'SprintMode', ctlType = 'keybutton',
+            tooltip = "Select the key to toggle Sprint Speed on Demand mode")
+
+        self.rightColumn.Add(SprintSizer, 0, wx.EXPAND)
+
         ##### SUPER SPEED
-        self.superSpeedSizer = ControlGroup(self, self, 'Speed')
+        self.superSpeedSizer = ControlGroup(self, self, 'Super Speed Settings')
         self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the super speed power to use with the keybinds in this section")
         self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
@@ -385,7 +392,7 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
-        self.superJumpSizer = ControlGroup(self, self, 'Jumping')
+        self.superJumpSizer = ControlGroup(self, self, 'Jumping Settings')
         self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the jump power to use with the keybinds in this section")
         self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
@@ -401,7 +408,7 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
         ##### FLY
-        self.flySizer = ControlGroup(self, self, 'Flight')
+        self.flySizer = ControlGroup(self, self, 'Flight Settings')
         self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the flight power to use with the keybinds in this section")
         self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
@@ -418,7 +425,7 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
-        self.teleportSizer = ControlGroup(self, self, 'Teleport')
+        self.teleportSizer = ControlGroup(self, self, 'Teleport Settings')
         self.teleportSizer.AddControl(ctlName = "TPPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the teleport power to use with the keybinds in this section")
         self.Ctrls['TPPower'].Bind(wx.EVT_CHOICE, self.OnTeleportChanged)
@@ -1114,8 +1121,8 @@ class MovementPowers(Page):
             t.flycamdist = f"$$camdist {self.GetState('CamdistMove')}"
 
         if (self.GetState('ChangeDetail')):
-            t.detailhi = f"$$visscale {self.GetState('DetailBase')}$$shadowvol 0$$ss 0"
-            t.detaillo = f"$$visscale {self.GetState('DetailMove')}$$shadowvol 0$$ss 0"
+            t.detailhi = f"$$visscale {self.GetState('DetailBase')}"
+            t.detaillo = f"$$visscale {self.GetState('DetailMove')}"
 
         ## Combat Jumping / Super Jump
         if (self.GetState('HasCJ') and not self.GetState('JumpPower')):
@@ -1595,6 +1602,7 @@ class MovementPowers(Page):
                                 t.horizkeys = W+S+A+D # total # of horizontal move keys. So Sprint isn't turned on when jumping
                                 t.vertkeys  = space+X
                                 t.jkeys     = t.horizkeys+t.space
+                                ### NonSoDMode
                                 if (self.GetState('NonSoDEnable') or t.canqfly or t.mouselookon):
                                     setattr(t, self.DefaultMode() + "Mode", t.NonSoDMode)
                                     self.makeSoDFile({
@@ -1614,6 +1622,7 @@ class MovementPowers(Page):
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
+                                ### Sprint Mode
                                 if (self.GetState('EnableSoD') and self.GetState('SprintSoD')):
                                     setattr(t, self.DefaultMode() + "Mode", t.SprintMode)
                                     self.makeSoDFile({
@@ -1633,11 +1642,11 @@ class MovementPowers(Page):
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
+                                ### Speed Mode
                                 if (self.GetState('EnableSoD') and self.GetState('SpeedPower')):
-                                    sssj = None
                                     setattr(t, self.DefaultMode() + "Mode", t.SpeedMode)
-                                    if (self.GetState('SSSJModeEnable')): sssj = t.jump
-                                    st = None if self.GetState('SSMobileOnly') else t.speed
+                                    sssj = t.jump if (self.GetState('SSSJModeEnable')) else None
+                                    st   = None   if  self.GetState('SSMobileOnly')    else t.speed
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : t.bls,
@@ -1656,10 +1665,10 @@ class MovementPowers(Page):
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
+                                ### Jump Mode
                                 if (self.GetState('EnableSoD') and t.canjmp and not (self.GetState('SimpleSJCJ'))):
                                     setattr(t, self.DefaultMode() + "Mode", t.JumpMode)
-                                    jturnoff = None
-                                    if (t.jump != t.cjmp): jturnoff = {t.jumpifnocj}
+                                    jturnoff = None if (t.jump == t.cjmp) else {t.jumpifnocj}
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : t.blj,
@@ -1680,6 +1689,7 @@ class MovementPowers(Page):
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
+                                ### Fly Mode
                                 if (self.GetState('EnableSoD') and t.canhov or t.canfly):
                                     setattr(t, self.DefaultMode() + "Mode", t.FlyMode)
                                     self.makeSoDFile({
@@ -1702,6 +1712,7 @@ class MovementPowers(Page):
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
+                                ### GFly Mode
                                 if (self.GetState('EnableSoD') and t.cangfly):
                                     setattr(t, self.DefaultMode() + "Mode", t.GFlyMode)
                                     self.makeSoDFile({
@@ -2347,10 +2358,10 @@ UI.Labels.update( {
 
     'EnableSoD'      : 'Enable Speed on Demand Binds',
     'DefaultMode'    : 'Default Speed on Demand Mode',
-    'SprintPower'    : 'Power to use for Sprint',
-    'NonSoDEnable'   : 'Enable Speed-on-Demand Toggle',
+    'SprintPower'    : 'Preferred Sprint power',
+    'NonSoDEnable'   : 'Enable Speed on Demand Toggle',
     'NonSoDMode'     : 'Speed on Demand Toggle',
-    'SprintSoD'      : 'Enable Sprint Speed on Demand',
+    'SprintSoD'      : 'Always use Sprint Speed on Demand',
     'SprintMode'     : "Sprint Mode",
     'MouseChord'     : 'Mousechord is SoD Forward',
     'Feedback'       : 'Self-/tell when changing SoD mode',

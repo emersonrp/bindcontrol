@@ -15,7 +15,7 @@ class ErrorControlMixin:
         self.Errors         : dict = {}
         self.Warnings       : dict = {}
         self.DefaultToolTip : str = ''
-        self.BGColour       : wx.Colour = self.GetBackgroundColour()
+        self.BGColour       : wx.Colour = self.GetBackgroundColour() if isinstance(self, wx.TextCtrl) else wx.NullColour
 
     def Enable(self, enable = True):
         if enable == False:

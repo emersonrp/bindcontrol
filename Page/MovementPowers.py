@@ -729,7 +729,7 @@ class MovementPowers(Page):
         bl   = p.get('bl'   , t.bl)
         bla  = p.get('bla'  , t.bla)
         blf  = p.get('blf'  , t.blf)
-        blbo = p.get('blbo' , t.blbo)
+        #blbo = p.get('blbo' , t.blbo)
 
         path      = p.get('path'      , t.path)
         gamepath  = p.get('gamepath'  , t.gamepath)
@@ -737,7 +737,7 @@ class MovementPowers(Page):
         gamepatha = p.get('gamepatha' , t.gamepatha)
         pathf     = p.get('pathf'     , t.pathf)
         gamepathf = p.get('gamepathf' , t.gamepathf)
-        pathbo    = p.get('pathbo'    , t.pathbo)
+        #pathbo    = p.get('pathbo'    , t.pathbo)
 
         mobile     = p.get('mobile'     , None)
         stationary = p.get('stationary' , None)
@@ -768,7 +768,7 @@ class MovementPowers(Page):
             if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path, gamepath)
 
 
-        if (flight and (flight == self.GetState('FlyPower')) and pathbo):
+        if (False and flight and (flight == self.GetState('FlyPower')) and pathbo):
             #  blast off
             curfile = profile.GetBindFile(f"{pathbo}{t.KeyState()}.txt")
             self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile,True))
@@ -809,7 +809,7 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
         self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
 
-        if ((flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
+        if (False and (flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
             #  Base to set down
             if (modestr != "NonSoD") : self.makeNonSoDModeKey(profile,t,"r",curfile,[ mobile,stationary ],self.sodSetDownFix)
             if (modestr != "Sprint") : self.makeSprintModeKey(profile,t,"r",curfile,turnoff,self.sodSetDownFix)
@@ -843,7 +843,7 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
         self.sodRightKey  (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
 
-        if ((flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
+        if (False and (flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
             if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"ar",curfile,[ mobile,stationary ],self.sodSetDownFix)
             if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,self.sodSetDownFix)
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,self.sodSetDownFix)
@@ -871,7 +871,7 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
         self.sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
 
-        if ((flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
+        if (False and (flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
             if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ],self.sodSetDownFix)
             if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,self.sodSetDownFix)
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,self.sodSetDownFix)
@@ -1031,7 +1031,7 @@ class MovementPowers(Page):
         else:                                      feedback = ''
 
         if (t.canhov or t.canfly):
-            if (bl == "bo"):
+            if False and (bl == "bo"):
                 bindload = t.blbo + t.KeyState() + ".txt"
                 if (fix):
                     fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
@@ -1543,14 +1543,6 @@ class MovementPowers(Page):
         t.gamepathfn = t.gamebasepath / 'FN' / 'FN'
         t.blfn       = f"$${BLF()} {t.gamepathfn}"
 
-        t.pathbo     = t.basepath     / 'BO' / 'BO'  # Blastoff Fly
-        t.gamepathbo = t.gamebasepath / 'BO' / 'BO'
-        t.blbo       = f"$${BLF()} {t.gamepathbo}"
-
-        t.pathgbo     = t.basepath     / 'GBO' / 'GBO'  # Blastoff Group Fly
-        t.gamepathgbo = t.gamebasepath / 'GBO' / 'GBO'
-        t.blgbo       = f"$${BLF()} {t.gamepathgbo}"
-
         #  if a given mode is not our default, get the key we use to enter that mode.
         #  this will (hopefully) only be used if/when we actually have that mode available.
         if (self.DefaultMode() != "NonSoD") : t.NonSoDMode = self.GetState('NonSoDMode')
@@ -1720,8 +1712,8 @@ class MovementPowers(Page):
                                         'stationary' : t.gfly,
                                         'modestr'    : "GFly",
                                         'flight'     : "GFly",
-                                        'pathbo'     : t.pathgbo,
-                                        'blbo'       : t.blgbo,
+                                        #'pathbo'     : t.pathgbo,
+                                        #'blbo'       : t.blgbo,
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
@@ -2476,7 +2468,7 @@ class tObject(dict):
         self.blan  :str = ''
         self.blas  :str = ''
         self.blat  :str = ''
-        self.blbo  :str = ''
+        #self.blbo  :str = ''
         self.blf   :str = ''
         self.blff  :str = ''
         self.blfn  :str = ''
@@ -2501,7 +2493,7 @@ class tObject(dict):
         self.pathan  :Path = Path()
         self.pathas  :Path = Path()
         self.pathat  :Path = Path()
-        self.pathbo  :Path = Path()
+        #self.pathbo  :Path = Path()
         self.pathf   :Path = Path()
         self.pathff  :Path = Path()
         self.pathfn  :Path = Path()
@@ -2526,7 +2518,7 @@ class tObject(dict):
         self.gamepathan :PureWindowsPath = PureWindowsPath()
         self.gamepathas :PureWindowsPath = PureWindowsPath()
         self.gamepathat :PureWindowsPath = PureWindowsPath()
-        self.gamepathbo :PureWindowsPath = PureWindowsPath()
+        #self.gamepathbo :PureWindowsPath = PureWindowsPath()
         self.gamepathf  :PureWindowsPath = PureWindowsPath()
         self.gamepathff :PureWindowsPath = PureWindowsPath()
         self.gamepathfn :PureWindowsPath = PureWindowsPath()

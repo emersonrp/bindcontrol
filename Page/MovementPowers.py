@@ -749,12 +749,12 @@ class MovementPowers(Page):
 
             curfile = profile.ResetFile()
 
-            self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-            self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','','')
-            self.sodForwardKey(t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-            self.sodBackKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-            self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-            self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
+            self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','',sssj)
+            self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','')
+            self.sodForwardKey(t,bl,curfile,mobile,stationary,flight,'','',sssj)
+            self.sodBackKey   (t,bl,curfile,mobile,stationary,flight,'','',sssj)
+            self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','',sssj)
+            self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','',sssj)
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
             self.sodFollowKey (t,blf,curfile,mobile,stationary)
 
@@ -769,12 +769,12 @@ class MovementPowers(Page):
 
         self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile,True))
 
-        self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-        self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','','')
-        self.sodForwardKey(t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-        self.sodBackKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-        self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-        self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
+        self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','',sssj)
+        self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','')
+        self.sodForwardKey(t,bl,curfile,mobile,stationary,flight,'','',sssj)
+        self.sodBackKey   (t,bl,curfile,mobile,stationary,flight,'','',sssj)
+        self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','',sssj)
+        self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','',sssj)
 
         if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ])
         if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
@@ -794,12 +794,12 @@ class MovementPowers(Page):
 
         self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile,True))
 
-        self.sodUpKey     (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
-        self.sodDownKey   (t,bla,curfile,mobile,stationary,flight,1, '','')
-        self.sodForwardKey(t,bla,curfile,mobile,stationary,flight,bl,'','',sssj)
-        self.sodBackKey   (t,bla,curfile,mobile,stationary,flight,bl,'','',sssj)
-        self.sodLeftKey   (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
-        self.sodRightKey  (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
+        self.sodUpKey     (t,bla,curfile,mobile,stationary,flight,1, '',sssj)
+        self.sodDownKey   (t,bla,curfile,mobile,stationary,flight,1, '')
+        self.sodForwardKey(t,bla,curfile,mobile,stationary,flight,bl,'',sssj)
+        self.sodBackKey   (t,bla,curfile,mobile,stationary,flight,bl,'',sssj)
+        self.sodLeftKey   (t,bla,curfile,mobile,stationary,flight,1, '',sssj)
+        self.sodRightKey  (t,bla,curfile,mobile,stationary,flight,1, '',sssj)
 
         if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"ar",curfile,[ mobile,stationary ])
         if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,fix)
@@ -816,12 +816,12 @@ class MovementPowers(Page):
 
         self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile,True))
 
-        self.sodUpKey     (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        self.sodDownKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'')
-        self.sodForwardKey(t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        self.sodBackKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        self.sodLeftKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        self.sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
+        self.sodUpKey     (t,blf,curfile,mobile,stationary,flight,'',bl,sssj)
+        self.sodDownKey   (t,blf,curfile,mobile,stationary,flight,'',bl)
+        self.sodForwardKey(t,blf,curfile,mobile,stationary,flight,'',bl,sssj)
+        self.sodBackKey   (t,blf,curfile,mobile,stationary,flight,'',bl,sssj)
+        self.sodLeftKey   (t,blf,curfile,mobile,stationary,flight,'',bl,sssj)
+        self.sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,sssj)
 
         if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ])
         if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,fix)
@@ -1631,6 +1631,7 @@ class MovementPowers(Page):
                                         'modestr'    : "Fly",
                                         # TODO: added "or t.flyx" here to fix BO/* not being written if hover
                                         # is not available.  This might not be the right solution
+                                        # TODO 2:  BO is not even a thing any more, so...?
                                         'flight'     : t.fly or t.flyx,
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
@@ -1685,7 +1686,7 @@ class MovementPowers(Page):
             ]
         )
 
-    def sodUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun, followbl, bo, sssj):
+    def sodUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun, followbl, sssj):
 
         (upx,dow,forw,bac,lef,rig) = (t.upx,t.dow,t.forw,t.bac,t.lef,t.rig)
 
@@ -1694,10 +1695,6 @@ class MovementPowers(Page):
 
         if (not flight) and (not sssj):
             mobile = stationary = None
-
-        if (bo == "bo") :
-            upx = '$$up 1'
-            dow = '$$down 0'
 
         if     mobile == "GroupFly": mobile     = None
         if stationary == "GroupFly": stationary = None
@@ -1760,7 +1757,7 @@ class MovementPowers(Page):
             if (not sssj) : toggle = ''  #  returns the following line to the way it was before sssj
             curfile.SetBind(self.Ctrls['Up'].MakeFileKeyBind(f"{ini}{upx}{dow}$$backward 0{lef}{rig}{toggle}{t.mouselookon}{bl}"))
 
-    def sodDownKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo):
+    def sodDownKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl):
         (up,dowx,forw,bac,lef,rig) = (t.up,t.dowx,t.forw,t.bac,t.lef,t.rig)
 
         actkeys = t.totalkeys
@@ -1768,9 +1765,6 @@ class MovementPowers(Page):
 
         if (not flight):
             mobile = stationary = None
-        if (bo == 'bo'):
-            up = '$$up 1'
-            dowx = '$$down 0'
 
         if (mobile     and mobile     == 'Group Fly'): mobile = None
         if (stationary and stationary == 'Group Fly'): stationary = None
@@ -1815,12 +1809,11 @@ class MovementPowers(Page):
         else:
             curfile.SetBind(self.Ctrls['Down'].MakeFileKeyBind(f"{ini}{up}{dowx}$$backward -1{lef}{rig}{t.mouselookon}{bl}"))
 
-    def sodForwardKey(self, t, bl, curfile,  mobile, stationary, flight, autorunbl, followbl, bo, sssj):
+    def sodForwardKey(self, t, bl, curfile,  mobile, stationary, flight, autorunbl, followbl, sssj):
         (up,dow,forx,bac,lef,rig) = (t.up,t.dow,t.forx,t.bac,t.lef,t.rig)
         name = UI.Labels['Forward']
 
         mouselook = ''
-        if (bo == "bo") : up = '$$up 1'; dow = '$$down 0'
 
         if (mobile     == 'Group Fly'): mobile = None
         if (stationary == 'Group Fly'): stationary = None
@@ -1890,12 +1883,10 @@ class MovementPowers(Page):
             if (self.GetState('MouseChord')) :
                 curfile.SetBind('mousechord', name, self, f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{rig}{lef}{t.mouselookon}{t.playerturn}{bl}")
 
-    def sodBackKey(self,t,bl,curfile,mobile,stationary,flight,autorunbl,followbl,bo,sssj):
+    def sodBackKey(self,t,bl,curfile,mobile,stationary,flight,autorunbl,followbl,sssj):
         (up,dow,forw,bacx,lef,rig) = (t.up,t.dow,t.forw, t.bacx,t.lef,t.rig)
 
         mouselook = ''
-        if (bo == "bo") : up = '$$up 1';dow = '$$down 0'
-
         if (mobile     == 'Group Fly'): mobile = None
         if (stationary == 'Group Fly'): stationary = None
 
@@ -1957,12 +1948,10 @@ class MovementPowers(Page):
 
             curfile.SetBind(self.Ctrls['Back'].MakeFileKeyBind(f"{ini}{up}{dow}{move}{lef}{rig}{t.mouselookon}{bl}"))
 
-    def sodLeftKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
+    def sodLeftKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,sssj):
         (up,dow,forw,bac,lefx,rig) = (t.up,t.dow,t.forw,t.bac, t.lefx,t.rig)
 
         mouselook = ''
-        if (bo == "bo") : up = '$$up 1';dow = '$$down 0'
-
         if (mobile     == 'Group Fly') : mobile = None
         if (stationary == 'Group Fly') : stationary = None
 
@@ -2018,12 +2007,10 @@ class MovementPowers(Page):
         else:
             curfile.SetBind(self.Ctrls['Left'].MakeFileKeyBind(f"{ini}{up}{dow}{'$$backward 0'}{lefx}{rig}{t.mouselookon}{bl}"))
 
-    def sodRightKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
+    def sodRightKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,sssj):
         (up,dow,forw,bac,lef,rigx) = (t.up,t.dow,t.forw,t.bac,t.lef, t.rigx)
 
         mouselook = ''
-        if (bo == "bo") :up = '$$up 1';dow = '$$down 0'
-
         if (mobile     == 'Group Fly') : mobile = None
         if (stationary == 'Group Fly') : stationary = None
 

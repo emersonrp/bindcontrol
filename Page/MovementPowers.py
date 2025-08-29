@@ -729,7 +729,6 @@ class MovementPowers(Page):
         bl   = p.get('bl'   , t.bl)
         bla  = p.get('bla'  , t.bla)
         blf  = p.get('blf'  , t.blf)
-        #blbo = p.get('blbo' , t.blbo)
 
         path      = p.get('path'      , t.path)
         gamepath  = p.get('gamepath'  , t.gamepath)
@@ -737,7 +736,6 @@ class MovementPowers(Page):
         gamepatha = p.get('gamepatha' , t.gamepatha)
         pathf     = p.get('pathf'     , t.pathf)
         gamepathf = p.get('gamepathf' , t.gamepathf)
-        #pathbo    = p.get('pathbo'    , t.pathbo)
 
         mobile     = p.get('mobile'     , None)
         stationary = p.get('stationary' , None)
@@ -767,37 +765,6 @@ class MovementPowers(Page):
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
             if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path, gamepath)
 
-
-        if (False and flight and (flight == self.GetState('FlyPower')) and pathbo):
-            #  blast off
-            curfile = profile.GetBindFile(f"{pathbo}{t.KeyState()}.txt")
-            self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile,True))
-            self.sodUpKey     (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
-            self.sodDownKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo")
-            self.sodForwardKey(t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
-            self.sodBackKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
-            self.sodLeftKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
-            self.sodRightKey  (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
-
-            if (modestr == "Sprint") : self.makeSprintModeKey(profile,t,"r",curfile,turnoff,fix)
-
-            t.ini = '-down$$'
-
-            if (self.DefaultMode() == "Fly") :
-                t.FlyMode = t.SprintMode
-                if (self.GetState('SpeedPower'))       : t.FlyMode = t.SpeedMode
-                if (t.canjmp)                          : t.FlyMode = t.JumpMode
-            self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-
-            t.ini = ''
-            if (modestr != "GFly")        : self.makeGFlyModeKey (profile,t,"gbo",curfile,turnoff,fix)
-            if (modestr != "Super Speed") : self.makeSpeedModeKey(profile,t,"s",  curfile,turnoff,fix)
-            if (modestr != "Jump")        : self.makeJumpModeKey (profile,t,"j",  curfile,turnoff,path,gamepath)
-
-            self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
-
-            self.sodFollowKey(t,blf,curfile,mobile,stationary)
-
         curfile = profile.GetBindFile(f"{path}{t.KeyState()}.txt")
 
         self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile,True))
@@ -809,24 +776,15 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
         self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
 
-        if (False and (flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
-            #  Base to set down
-            if (modestr != "NonSoD") : self.makeNonSoDModeKey(profile,t,"r",curfile,[ mobile,stationary ],self.sodSetDownFix)
-            if (modestr != "Sprint") : self.makeSprintModeKey(profile,t,"r",curfile,turnoff,self.sodSetDownFix)
-
-            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,self.sodSetDownFix)
-            if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
-            if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path,gamepath)
+        if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ])
+        if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
+        if (flight == "Jump"):
+            if (modestr != "Fly")     : self.makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,'',True)
         else:
-            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ])
-            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
-            if (flight == "Jump"):
-                if (modestr != "Fly")     : self.makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,'',True)
-            else:
-                if (modestr != "Fly")     : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
+            if (modestr != "Fly")     : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
 
-            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
-            if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path,gamepath)
+        if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
+        if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path,gamepath)
 
         self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
         self.sodFollowKey(t,blf,curfile,mobile,stationary)
@@ -843,17 +801,11 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
         self.sodRightKey  (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
 
-        if (False and (flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
-            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"ar",curfile,[ mobile,stationary ],self.sodSetDownFix)
-            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,self.sodSetDownFix)
-            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,self.sodSetDownFix)
-        else:
-            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"ar",curfile,[ mobile,stationary ])
-            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,fix)
-            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
-
-        if (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"af",curfile,turnoff,fix)
-        if (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"aj",curfile,turnoff,patha,gamepatha)
+        if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"ar",curfile,[ mobile,stationary ])
+        if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,fix)
+        if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
+        if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"af",curfile,turnoff,fix)
+        if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"aj",curfile,turnoff,patha,gamepatha)
 
         self.sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight)
 
@@ -871,17 +823,11 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
         self.sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
 
-        if (False and (flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
-            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ],self.sodSetDownFix)
-            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,self.sodSetDownFix)
-            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,self.sodSetDownFix)
-        else:
-            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ])
-            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,fix)
-            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
-
-        if (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"ff",curfile,turnoff,fix)
-        if (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"fj",curfile,turnoff, pathf, gamepathf)
+        if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ])
+        if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,fix)
+        if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
+        if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"ff",curfile,turnoff,fix)
+        if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"fj",curfile,turnoff, pathf, gamepathf)
 
         curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('nop'))
 
@@ -1031,14 +977,7 @@ class MovementPowers(Page):
         else:                                      feedback = ''
 
         if (t.canhov or t.canfly):
-            if False and (bl == "bo"):
-                bindload = t.blbo + t.KeyState() + ".txt"
-                if (fix):
-                    fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
-                else:
-                    cur.SetBind(key, name, self, '+down$$' + self.actPower_toggle(t.flyx,toff,start=True) + '$$up 1$$down 0' + t.dirs('FBLR') + t.detaillo + t.flycamdist + feedback + bindload)
-
-            elif (bl == "a"):
+            if (bl == "a"):
                 if (not fb_on_a): feedback = ''
                 bindload = t.bla + t.KeyState() + ".txt"
 
@@ -1712,8 +1651,6 @@ class MovementPowers(Page):
                                         'stationary' : t.gfly,
                                         'modestr'    : "GFly",
                                         'flight'     : "GFly",
-                                        #'pathbo'     : t.pathgbo,
-                                        #'blbo'       : t.blgbo,
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
@@ -2468,7 +2405,6 @@ class tObject(dict):
         self.blan  :str = ''
         self.blas  :str = ''
         self.blat  :str = ''
-        #self.blbo  :str = ''
         self.blf   :str = ''
         self.blff  :str = ''
         self.blfn  :str = ''
@@ -2479,7 +2415,6 @@ class tObject(dict):
         self.blgr  :str = ''
         self.blga  :str = ''
         self.blgaf :str = ''
-        self.blgbo :str = ''
         self.blgff :str = ''
         self.blj   :str = ''
         self.bln   :str = ''
@@ -2493,7 +2428,6 @@ class tObject(dict):
         self.pathan  :Path = Path()
         self.pathas  :Path = Path()
         self.pathat  :Path = Path()
-        #self.pathbo  :Path = Path()
         self.pathf   :Path = Path()
         self.pathff  :Path = Path()
         self.pathfn  :Path = Path()
@@ -2503,7 +2437,6 @@ class tObject(dict):
         self.pathfr  :Path = Path()
         self.pathga  :Path = Path()
         self.pathgaf :Path = Path()
-        self.pathgbo :Path = Path()
         self.pathgff :Path = Path()
         self.pathgr  :Path = Path()
         self.pathj   :Path = Path()
@@ -2518,7 +2451,6 @@ class tObject(dict):
         self.gamepathan :PureWindowsPath = PureWindowsPath()
         self.gamepathas :PureWindowsPath = PureWindowsPath()
         self.gamepathat :PureWindowsPath = PureWindowsPath()
-        #self.gamepathbo :PureWindowsPath = PureWindowsPath()
         self.gamepathf  :PureWindowsPath = PureWindowsPath()
         self.gamepathff :PureWindowsPath = PureWindowsPath()
         self.gamepathfn :PureWindowsPath = PureWindowsPath()
@@ -2527,7 +2459,6 @@ class tObject(dict):
         self.gamepathft :PureWindowsPath = PureWindowsPath()
         self.gamepathfr :PureWindowsPath = PureWindowsPath()
         self.gamepathga :PureWindowsPath = PureWindowsPath()
-        self.gamepathgbo:PureWindowsPath = PureWindowsPath()
         self.gamepathgr :PureWindowsPath = PureWindowsPath()
         self.gamepathj  :PureWindowsPath = PureWindowsPath()
         self.gamepathn  :PureWindowsPath = PureWindowsPath()

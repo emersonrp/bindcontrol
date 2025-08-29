@@ -286,20 +286,21 @@ class PopmenuEditor(Page):
 
         if menupath:
             self.MenuListCtrl.DeleteAllItems()
-            for menufile in sorted(menupath.glob('*.mnu', case_sensitive = False)):
-                with menufile.open() as f:
-                    menuname = ''
-                    while not menuname:
-                        line = f.readline().strip()
-                        if match := re.match(r'Menu\s+(.*)', line):
-                            menuname = match.group(1).strip('"')
+            if menupath := self.GetMenuPathForGamePath(menupath):
+                for menufile in sorted(menupath.glob('*.mnu', case_sensitive = False)):
+                    with menufile.open() as f:
+                        menuname = ''
+                        while not menuname:
+                            line = f.readline().strip()
+                            if match := re.match(r'Menu\s+(.*)', line):
+                                menuname = match.group(1).strip('"')
 
-                    item = self.MenuListCtrl.Append([menuname])
-                    self.MenuListCtrl.SetItemFont(item, self.UnloadedMenuFont)
-                    self.MenuListCtrl.SetItemData(item, menuID := wx.NewId())
-                    self.MenuIDList[menuID] = {'filename': str(menufile)}
+                        item = self.MenuListCtrl.Append([menuname])
+                        self.MenuListCtrl.SetItemFont(item, self.UnloadedMenuFont)
+                        self.MenuListCtrl.SetItemData(item, menuID := wx.NewId())
+                        self.MenuIDList[menuID] = {'filename': str(menufile)}
 
-                    f.close()
+                        f.close()
             self.MenuListCtrl.Refresh()
 
     def GetNewMenuName(self, dupe_menu_name = None):

@@ -7,6 +7,7 @@ if sys.version_info < MIN_PYTHON:
 
 import wx, re
 
+
 MIN_WX = (4, 2, 2)
 wxver = tuple(map(int, re.split(r'\.', wx.__version__))) # oogly
 if wxver < MIN_WX:
@@ -27,6 +28,7 @@ from UI.PrefsDialog import PrefsDialog
 from Help import ShowHelpWindow
 from UI.ControlGroup import cgTextCtrl, cgButton
 from Util.DefaultProfile import DefaultProfile
+from Util.BuildFiles import ParseBuildfile
 
 ###################
 # Main Window Class
@@ -365,12 +367,12 @@ class Main(wx.Frame):
         wx.ConfigBase.Get().Flush()
 
     def OnProfileImport(self, _):
-
         if wx.MessageBox("This will create a new profile based on the build file you select.  Continue?", "Import Build File", wx.YES_NO) == wx.NO:
             return
 
-        pathname = ''
+        if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
 
+        pathname = ''
         config = wx.FileConfig('bindcontrol')
         with wx.FileDialog(self, "Import build file",
                 wildcard   = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
@@ -383,7 +385,15 @@ class Main(wx.Frame):
 
             pathname = fileDialog.GetPath()
 
-        if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
+        if pathname:
+            buildfile = Path(pathname)
+
+            if profiledata := ParseBuildFile(buildfile):
+                if newprofile := Profile.Profile(self, profiledata = profiledata):
+                    self.InsertProfile(newprofile)
+            else:
+                wx.LogError('Build file was empty or contained errors')
+
 
     def OnProfileSave(self, _):
         if not self.Profile: return

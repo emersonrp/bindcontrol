@@ -370,7 +370,7 @@ class MovementPowers(Page):
             contents = GameData.SprintPowers,
             tooltip = "Select the power to use for Sprint Speed on Demand")
         SprintSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',
-            tooltip = "Use Sprint Speed on Demand, even when other speed powers are inactive")
+            tooltip = "Use Sprint Speed on Demand when other travel power modes are inactive")
         self.Ctrls['SprintSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
         SprintSizer.AddControl( ctlName = 'SprintMode', ctlType = 'keybutton',
             tooltip = "Select the key to toggle Sprint Speed on Demand mode")
@@ -500,7 +500,7 @@ class MovementPowers(Page):
 
     def OnSpeedOnDemandChanged(self, evt = None):
         c = self.Ctrls
-        for ctrl in ['DefaultMode', 'SprintPower', 'NonSoDEnable', 'SprintSoD', 'MouseChord', 'Feedback']:
+        for ctrl in ['DefaultMode', 'NonSoDEnable', 'SprintPower', 'SprintSoD', 'SprintMode', 'MouseChord', 'Feedback']:
             c[ctrl].Enable(self.GetState('EnableSoD'))
         c['NonSoDMode'].Enable(self.GetState('EnableSoD') and self.GetState('NonSoDEnable'))
         c['SprintMode'].Enable(self.GetState('EnableSoD') and self.GetState('SprintSoD') and self.DefaultMode() != "Sprint")
@@ -759,6 +759,12 @@ class MovementPowers(Page):
             self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
             self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
 
+            # TODO - this is the only place we make*ModeKey into reset.txt, and
+            # it requires (incorrectly) that DefaultMode() == modestr.  Trying
+            # to pull this out of that "if" statement, though, writes these
+            # repeatedly, once for each *000000.txt file, ending up with the
+            # wrong BLF() at the end.  This is the bug that requires
+            # "SprintSoD" to be turned on for SoD to work at all.
             if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ])
             if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
             if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
@@ -2356,16 +2362,6 @@ UI.Labels.update( {
     'AutoRun'        : 'Auto Run',
     'Follow'         : 'Follow Target',
 
-    'EnableSoD'      : 'Enable Speed on Demand Binds',
-    'DefaultMode'    : 'Default Speed on Demand Mode',
-    'SprintPower'    : 'Preferred Sprint power',
-    'NonSoDEnable'   : 'Enable Speed on Demand Toggle',
-    'NonSoDMode'     : 'Speed on Demand Toggle',
-    'SprintSoD'      : 'Always use Sprint Speed on Demand',
-    'SprintMode'     : "Sprint Mode",
-    'MouseChord'     : 'Mousechord is SoD Forward',
-    'Feedback'       : 'Self-/tell when changing SoD mode',
-
     'PlayerTurn'     : 'Turn to match camera',
     'AutoMouseLook'  : 'Mouselook when moving',
     'ChangeCamera'   : 'Change camera distance when moving',
@@ -2374,6 +2370,28 @@ UI.Labels.update( {
     'ChangeDetail'   : 'Change graphics detail level when moving',
     'DetailBase'     : 'Base Detail Level',
     'DetailMove'     : 'Travelling Detail Level',
+
+    'TempEnable'     : 'Enable Temp Travel Power Bind',
+    'TempToggle'     : 'Toggle Temp Travel Power',
+
+    'KhelFeedback'   : 'Give /tell Feedback When Changing Form',
+    'HumanTray'      : 'Human Form Power Tray',
+    'UseNova'        : 'Use Nova Form Toggle',
+    'NovaMode'       : 'Toggle Nova Form',
+    'NovaTray'       : 'Nova Form Power Tray',
+    'UseDwarf'       : 'Use Dwarf Form Toggle',
+    'DwarfMode'      : 'Toggle Dwarf Form',
+    'DwarfTray'      : 'Dwarf Form Power Tray',
+
+    'EnableSoD'      : 'Enable Speed on Demand Binds',
+    'DefaultMode'    : 'Default Speed on Demand Mode',
+    'NonSoDEnable'   : 'Use Speed on Demand Toggle Key',
+    'NonSoDMode'     : 'Speed on Demand Toggle Key',
+    'SprintSoD'      : 'Always use Sprint Speed on Demand',
+    'SprintPower'    : 'Preferred Sprint power',
+    'SprintMode'     : "Sprint Mode Toggle Key",
+    'MouseChord'     : 'Mousechord is SoD Forward',
+    'Feedback'       : 'Self-/tell when changing SoD mode',
 
     'JumpPower'        : "Primary Jump Power",
     'HasCJ'            : 'Has Combat Jumping',
@@ -2404,18 +2422,6 @@ UI.Labels.update( {
     'TTPComboKey'    : 'Hold to Show Team Teleport Target Marker',
     'TTPTPGFly'      : 'Group Fly when Team Teleporting',
     'TPHideWindows'  : 'Hide Windows when Holding Target Marker Key',
-
-    'TempEnable'     : 'Enable Temp Travel Power Bind',
-    'TempToggle'     : 'Toggle Temp Travel Power',
-
-    'KhelFeedback'   : 'Give /tell Feedback When Changing Form',
-    'HumanTray'      : 'Human Form Power Tray',
-    'UseNova'        : 'Use Nova Form Toggle',
-    'NovaMode'       : 'Toggle Nova Form',
-    'NovaTray'       : 'Nova Form Power Tray',
-    'UseDwarf'       : 'Use Dwarf Form Toggle',
-    'DwarfMode'      : 'Toggle Dwarf Form',
-    'DwarfTray'      : 'Dwarf Form Power Tray',
 })
 
 class tObject(dict):

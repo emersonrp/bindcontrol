@@ -45,7 +45,6 @@ class MovementPowers(Page):
             'AutoMouseLook'   : 0,
 
             'SprintPower'     : 'Sprint',
-            'SprintSoD'       : True,  # "Base" in citybinder
             'SprintMode'      : '',
 
             'ChangeCamera'    : False,
@@ -358,24 +357,17 @@ class MovementPowers(Page):
         self.Ctrls['NonSoDEnable'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl( ctlName = 'NonSoDMode', ctlType = 'keybutton',
             tooltip = "Select the key to toggle Speed on Demand")
+        SoDSizer.AddControl( ctlName = 'SprintPower', ctlType = 'choice',
+            contents = GameData.SprintPowers,
+            tooltip = "Select the power to use for Sprint Speed on Demand")
+        SoDSizer.AddControl( ctlName = 'SprintMode', ctlType = 'keybutton',
+            tooltip = "Select the key to toggle Sprint Speed on Demand mode")
         SoDSizer.AddControl( ctlName = 'MouseChord', ctlType = 'checkbox',
             tooltip = "Holding both mouse buttons will go forward using the current Speed on Demand mode")
         SoDSizer.AddControl( ctlName = 'Feedback', ctlType = 'checkbox',
             tooltip = "Announce changes in Speed on Demand modes via self-/tell")
 
         self.rightColumn.Add(SoDSizer, 0, wx.EXPAND)
-
-        SprintSizer = ControlGroup(self, self, "Sprint Settings")
-        SprintSizer.AddControl( ctlName = 'SprintPower', ctlType = 'choice',
-            contents = GameData.SprintPowers,
-            tooltip = "Select the power to use for Sprint Speed on Demand")
-        SprintSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',
-            tooltip = "Use Sprint Speed on Demand when other travel power modes are inactive")
-        self.Ctrls['SprintSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
-        SprintSizer.AddControl( ctlName = 'SprintMode', ctlType = 'keybutton',
-            tooltip = "Select the key to toggle Sprint Speed on Demand mode")
-
-        self.rightColumn.Add(SprintSizer, 0, wx.EXPAND)
 
         ##### SUPER SPEED
         self.superSpeedSizer = ControlGroup(self, self, 'Super Speed Settings')
@@ -500,10 +492,17 @@ class MovementPowers(Page):
 
     def OnSpeedOnDemandChanged(self, evt = None):
         c = self.Ctrls
-        for ctrl in ['DefaultMode', 'NonSoDEnable', 'SprintPower', 'SprintSoD', 'SprintMode', 'MouseChord', 'Feedback']:
+        for ctrl in ['DefaultMode', 'NonSoDEnable', 'SprintPower', 'SprintMode',
+                     'MouseChord', 'Feedback', 'FlyMode', 'JumpMode', 'SpeedMode',
+                     ]:
             c[ctrl].Enable(self.GetState('EnableSoD'))
         c['NonSoDMode'].Enable(self.GetState('EnableSoD') and self.GetState('NonSoDEnable'))
-        c['SprintMode'].Enable(self.GetState('EnableSoD') and self.GetState('SprintSoD') and self.DefaultMode() != "Sprint")
+        c['SprintMode'].Enable(self.GetState('EnableSoD') and self.DefaultMode() != "Sprint")
+        sodmode = self.GetState('DefaultMode')
+        c['FlyMode']    .Show(sodmode != 'Fly')
+        c['SprintMode'] .Show(sodmode != 'Sprint')
+        c['JumpMode']   .Show(sodmode != 'Jump')
+        c['SpeedMode']  .Show(sodmode != 'Speed')
         if evt: evt.Skip()
 
     def OnFlightChanged(self, evt = None):
@@ -758,13 +757,9 @@ class MovementPowers(Page):
             self.sodBackKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
             self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
             self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
+            self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
+            self.sodFollowKey (t,blf,curfile,mobile,stationary)
 
-            # TODO - this is the only place we make*ModeKey into reset.txt, and
-            # it requires (incorrectly) that DefaultMode() == modestr.  Trying
-            # to pull this out of that "if" statement, though, writes these
-            # repeatedly, once for each *000000.txt file, ending up with the
-            # wrong BLF() at the end.  This is the bug that requires
-            # "SprintSoD" to be turned on for SoD to work at all.
             if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ])
             if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
             if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
@@ -772,9 +767,6 @@ class MovementPowers(Page):
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
             if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path, gamepath)
 
-            self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
-
-            self.sodFollowKey(t,blf,curfile,mobile,stationary)
 
         if (flight and (flight == self.GetState('FlyPower')) and pathbo):
             #  blast off
@@ -792,8 +784,7 @@ class MovementPowers(Page):
             t.ini = '-down$$'
 
             if (self.DefaultMode() == "Fly") :
-                if (self.GetState('NonSoDEnable'))     : t.FlyMode = t.NonSoDMode
-                if (self.GetState('SprintSoD'))        : t.FlyMode = t.SprintMode
+                t.FlyMode = t.SprintMode
                 if (self.GetState('SpeedPower'))       : t.FlyMode = t.SpeedMode
                 if (t.canjmp)                          : t.FlyMode = t.JumpMode
             self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
@@ -1462,11 +1453,6 @@ class MovementPowers(Page):
         #        wx.MessageBox("Enabling NonSoD mode, since it is set as your default mode.", "Mode Changed", wx.OK|wx.ICON_WARNING)
         #    self.SetState('NonSoDEnable', 1)
 
-        #elif (self.DefaultMode() == "Sprint" and not self.GetState('SprintSoD')):
-        #    wx.MessageBox("Enabling NonSoD mode and making it the default, since Sprint SoD, your previous Default mode, is not enabled.", "Mode Changed", wx.OK|wx.ICON_WARNING)
-        #    self.SetState('NonSoDEnable', 1)
-        #    self.SetState('DefaultMode', "NonSoD")
-
         #elif (self.DefaultMode() == "Fly" and not (self.GetState('HasHover') or self.GetState('FlyPower'))):
         #    wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Fly mode but your character has neither Hover nor a Fly power.", "Mode Changed", wx.OK|wx.ICON_WARNING)
         #    self.SetState('NonSoDEnable', 1)
@@ -1628,8 +1614,8 @@ class MovementPowers(Page):
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
-                                ### Sprint Mode
-                                if (self.GetState('EnableSoD') and self.GetState('SprintSoD')):
+                                ### Default (Sprint) Mode
+                                if self.GetState('EnableSoD'):
                                     setattr(t, self.DefaultMode() + "Mode", t.SprintMode)
                                     self.makeSoDFile({
                                         't'          : t,
@@ -2387,7 +2373,6 @@ UI.Labels.update( {
     'DefaultMode'    : 'Default Speed on Demand Mode',
     'NonSoDEnable'   : 'Use Speed on Demand Toggle Key',
     'NonSoDMode'     : 'Speed on Demand Toggle Key',
-    'SprintSoD'      : 'Always use Sprint Speed on Demand',
     'SprintPower'    : 'Preferred Sprint power',
     'SprintMode'     : "Sprint Mode Toggle Key",
     'MouseChord'     : 'Mousechord is SoD Forward',

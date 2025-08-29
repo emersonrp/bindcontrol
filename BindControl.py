@@ -100,6 +100,7 @@ class Main(wx.Frame):
 
         Profile_new         = ProfMenu.Append(wx.ID_NEW, "&New Profile\tCTRL-N", "Create a new profile")
         Profile_load        = ProfMenu.Append(wx.ID_OPEN, "&Load Profile...\tCTRL-L", "Load an existing profile")
+        self.Profile_import = ProfMenu.Append(wx.ID_ANY,  "&Import Saved Build...\tCTRL-I", "Import a build file saved from Coty of Heroes")
         self.Profile_save   = ProfMenu.Append(wx.ID_SAVE, "&Save Profile\tCTRL-S", "Save the current profile")
         self.Profile_saveas = ProfMenu.Append(wx.ID_SAVEAS, "Save Profile As...", "Save the current profile under a new filename")
         ProfMenu.AppendSeparator()
@@ -134,6 +135,7 @@ class Main(wx.Frame):
         # MENUBAR EVENTS
         self.Bind(wx.EVT_MENU , self.OnProfileNew          , Profile_new)
         self.Bind(wx.EVT_MENU , self.OnProfileLoad         , Profile_load)
+        self.Bind(wx.EVT_MENU , self.OnProfileImport       , self.Profile_import)
         self.Bind(wx.EVT_MENU , self.OnProfileSave         , self.Profile_save)
         self.Bind(wx.EVT_MENU , self.OnProfileSaveAs       , self.Profile_saveas)
         self.Bind(wx.EVT_MENU , self.OnProfileSaveDefault  , self.Profile_savedefault)
@@ -361,6 +363,27 @@ class Main(wx.Frame):
         self.CheckProfDirButtonErrors()
         wx.ConfigBase.Get().Write('LastProfile', str(newProfile.Filename))
         wx.ConfigBase.Get().Flush()
+
+    def OnProfileImport(self, _):
+
+        if wx.MessageBox("This will create a new profile based on the build file you select.  Continue?", "Import Build File", wx.YES_NO) == wx.NO:
+            return
+
+        pathname = ''
+
+        config = wx.FileConfig('bindcontrol')
+        with wx.FileDialog(self, "Import build file",
+                wildcard   = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
+                defaultDir = config.Read('GamePath'),
+                style      = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                wx.LogMessage("User canceled importing build file")
+                return # the user changed their mind
+
+            pathname = fileDialog.GetPath()
+
+        if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
 
     def OnProfileSave(self, _):
         if not self.Profile: return

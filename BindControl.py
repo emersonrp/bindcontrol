@@ -389,9 +389,10 @@ class Main(wx.Frame):
             buildfile = Path(pathname)
 
             if profiledata := Util.BuildFiles.ParseBuildFile(buildfile):
-                return
-                if newprofile := Profile.Profile(self, profiledata = profiledata):
+                if newprofile := Profile.Profile(self, newname = profiledata['Name'], profiledata = profiledata):
+                    newprofile.buildFromData()
                     self.InsertProfile(newprofile)
+                    newprofile.SetModified()
             else:
                 wx.LogError('Build file was empty or contained errors')
 

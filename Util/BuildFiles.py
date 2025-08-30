@@ -22,7 +22,7 @@ def ParseBuildFile(file:Path):
             'Server' : 'Homecoming', # Rebirth doesn't have /build_save I think
         }
 
-        Pools = set()
+        Pools = []
         Archetypes = list(GameData.Archetypes)
 
         for line in lines:
@@ -34,7 +34,7 @@ def ParseBuildFile(file:Path):
                 if powersettype == 'Inherent': continue
                 if powersettype == 'Pool':
                     if not powerset in Pools:
-                        Pools.add(powerset)
+                        Pools.append(powerset)
                     continue
 
                 powerset = re.sub(r'_', ' ', powerset)
@@ -48,7 +48,9 @@ def ParseBuildFile(file:Path):
             else:
                 continue
 
-        print(data)
+        for i, pool in enumerate(Pools, start = 1):
+            data['Pool'+str(i)] = pool
+
         return data
 
 

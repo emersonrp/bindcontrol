@@ -343,7 +343,7 @@ class MovementPowers(Page):
         self.leftColumn.Add(self.tempSizer, 0, wx.EXPAND)
 
         ##### SPEED ON DEMAND SETTINGS
-        SoDSizer = ControlGroup(self, self, 'Speed on Demand Settings')
+        SoDSizer = ControlGroup(self, self, 'Speed on Demand (SoD) Settings')
 
         SoDSizer.AddControl( ctlName = 'EnableSoD', ctlType = 'checkbox',
             tooltip = "Enable Speed on Demand behavior for the movement keys")
@@ -353,7 +353,7 @@ class MovementPowers(Page):
             tooltip = "Select the Speed on Demand mode the movement keys will use by default")
         self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl( ctlName = 'NonSoDEnable', ctlType = 'checkbox',
-            tooltip = "Use a key to toggle whether Speed on Demand is active")
+            tooltip = "Use a key to toggle whether Speed on Demand is active at all")
         self.Ctrls['NonSoDEnable'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl( ctlName = 'NonSoDMode', ctlType = 'keybutton',
             tooltip = "Select the key to toggle Speed on Demand")
@@ -370,7 +370,7 @@ class MovementPowers(Page):
         self.rightColumn.Add(SoDSizer, 0, wx.EXPAND)
 
         ##### SUPER SPEED
-        self.superSpeedSizer = ControlGroup(self, self, 'Super Speed Settings')
+        self.superSpeedSizer = ControlGroup(self, self, 'Super Speed SoD Settings')
         self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the super speed power to use with the keybinds in this section")
         self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
@@ -384,7 +384,7 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
-        self.superJumpSizer = ControlGroup(self, self, 'Jumping Settings')
+        self.superJumpSizer = ControlGroup(self, self, 'Jumping SoD Settings')
         self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the jump power to use with the keybinds in this section")
         self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
@@ -400,7 +400,7 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
         ##### FLY
-        self.flySizer = ControlGroup(self, self, 'Flight Settings')
+        self.flySizer = ControlGroup(self, self, 'Flight SoD Settings')
         self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the flight power to use with the keybinds in this section")
         self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
@@ -524,11 +524,11 @@ class MovementPowers(Page):
             c['HasHover'].Show(self.Profile.HasPowerPool('Flight') or archetype == "Peacebringer")
             if archetype == 'Peacebringer':
                 c['HasHover'].CtlLabel.SetLabel('Has Combat Flight:')
-                c['HasHover'].SetToolTip('Use Combat Flight as a defense / stationary power -- if your Peacebringer is below level 10, leave this unchecked')
+                c['HasHover'].SetToolTip('Use Combat Flight as a defense power when not moving -- if your Peacebringer is below level 10, leave this unchecked')
                 c['HoverPower'].SetValue('Combat Flight')
             else:
                 c['HasHover'].CtlLabel.SetLabel('Has Hover:')
-                c['HasHover'].SetToolTip('Use Hover as a defense / stationary power')
+                c['HasHover'].SetToolTip('Use Hover as a defense power when not moving')
                 c['HoverPower'].SetValue('Hover')
             c['HasHover'].Enable(sodenabled)
 

@@ -13,6 +13,7 @@ def ParseBuildFile(file:Path):
             name      = parts.group(1)
             origin    = parts.group(2)
             archetype = parts.group(3)
+            archetype = re.sub(r'_', ' ', archetype)
         else:
             return None
 

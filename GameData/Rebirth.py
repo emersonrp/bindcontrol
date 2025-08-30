@@ -9,12 +9,15 @@ Archetypes: Dict[Any, Any] = {
             'Soul Mastery'      : [ 'Gloom', 'Soul Tentacles', 'Darkest Night', 'Dark Obliteration', 'Summon Widow', ],
         },
         'Primary': {
+            'Arachnos Soldier' : [ 'Single Shot', 'Pummel', 'Burst', 'Wide Area Web Grenade', 'Heavy Burst', 'Bayonet', 'Venom Grenade', 'Frag Grenade',],
             'Crab Spider Soldier' : [ 'Single Shot', 'Pummel', 'Burst', 'Wide Area Web Grenade', 'Heavy Burst', 'Bayonet', 'Venom Grenade', 'Frag Grenade',
                                       'Channelgun', 'Slice', 'Longfang', 'Aim', 'Suppression', 'Arm Lash', 'Venom Grenade', 'Frag Grenade', 'Frenzy', 'Omega Maneuver', ],
             'Bane Spider Soldier' : [ 'Single Shot', 'Pummel', 'Burst', 'Wide Area Web Grenade', 'Heavy Burst', 'Bayonet', 'Venom Grenade', 'Frag Grenade',
                                       'Bash', 'Mace Beam', 'Mace Beam Blast', 'Build Up', 'Mace Beam Volley', 'Poisonous Ray', 'Pulverize', 'Shatter', 'Placate', 'Crowd Control', ],
         },
         'Secondary': {
+            'Training and Gadgets' : [ 'Wolf Spider Armor', 'Combat Training: Defensive', 'Combat Training: Offensive', 'Tactical Training: Maneuvers',
+                                       'Tactical Training: Assault', 'Tactical Training: Leadership', 'Mental Training', 'Call Reinforcements',],
             'Crab Spider Training' : [ 'Wolf Spider Armor', 'Combat Training: Defensive', 'Combat Training: Offensive', 'Tactical Training: Maneuvers',
                                        'Tactical Training: Assault', 'Tactical Training: Leadership', 'Mental Training', 'Call Reinforcements',
                                        'Crab Spider Armor Upgrade', 'Fortification', 'Serum', 'Summon Spiderlings', ],
@@ -31,6 +34,7 @@ Archetypes: Dict[Any, Any] = {
             'Soul Mastery'      : [ 'Gloom', 'Soul Tentacles', 'Darkest Night', 'Dark Obliteration', 'Summon Widow', ],
         },
         'Primary': {
+            'Widow Training' : [ 'Poison Dart', 'Swipe', 'Strike', 'Dart Burst', 'Follow Up', 'Spin', 'Lunge', 'Confront',],
             'Night Widow Training' : [ 'Poison Dart', 'Swipe', 'Strike', 'Dart Burst', 'Follow Up', 'Spin', 'Lunge', 'Confront',
                                        'Mental Blast', 'Build Up', 'Smoke Grenade', 'Slash', 'Eviscerate', 'Psychic Scream', ],
             'Fortunata Training'   : [ 'Poison Dart', 'Swipe', 'Strike', 'Dart Burst', 'Follow Up', 'Spin', 'Lunge', 'Confront',
@@ -38,6 +42,8 @@ Archetypes: Dict[Any, Any] = {
                                        'Psionic Tornado', 'Scramble Thoughts', 'Total Domination', 'Psychic Wail', ],
         },
         'Secondary': {
+            'Teamwork'     : [ 'Combat Training: Defensive', 'Combat Training: Offensive', 'Tactical Training: Maneuvers', 'Indomitable Will',
+                                     'Tactical Training: Assault', 'Tactical Training: Leadership', 'Foresight',],
             'Widow Teamwork'     : [ 'Combat Training: Defensive', 'Combat Training: Offensive', 'Tactical Training: Maneuvers', 'Indomitable Will',
                                      'Tactical Training: Assault', 'Tactical Training: Leadership', 'Foresight',
                                      'Mask Presence', 'Mental Training', 'Mind Link', 'Placate', 'Tactical Training: Vengeance', 'Elude', ],

@@ -45,6 +45,11 @@ def ParseBuildFile(file:Path):
                 powerset = ' '.join(powersetwords)
                 data[powersettype] = powerset
 
+                # TODO TODO TODO - some Epic powersets, at least, have diffeent names
+                # than are in the picker.  Grarr, for instance, has Body_Mastery_Stalker
+                # but there is no "Body Mastery" in the Stalker Epic / Patron power pool.
+                # Ugh.
+
             else:
                 continue
 

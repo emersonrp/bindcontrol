@@ -122,7 +122,8 @@ class Profile(wx.Notebook):
                     raise Exception(f"Something broke while loading profile {self.Filename}.  This is a bug.")
 
             if profiledata:
-                self.Data.update(profiledata)
+                self.Data['General'].update(profiledata)
+                print(self.Data['General'])
 
             self.ProfileBindsDir = self.GenerateBindsDirectoryName()
             self.Data['ProfileBindsDir'] = self.ProfileBindsDir

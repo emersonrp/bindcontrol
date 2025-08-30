@@ -245,7 +245,7 @@ class Main(wx.Frame):
         loadButton.SetBitmapPosition(wx.TOP)
         loadButton.SetToolTip('Load an existing BindControl Profile file')
         importButton = wx.Button(StartupPanel, -1, "Import Build File")
-        importButton.SetBitmap(GetIcon('UI', 'load_profile')) # TODO!  New icon for this
+        importButton.SetBitmap(GetIcon('UI', 'import_build')) # TODO!  New icon for this
         importButton.SetBitmapPosition(wx.TOP)
         importButton.SetToolTip('Import a build file exported from City of Heroes')
         ButtonSizer.Add(newButton, 1, wx.EXPAND)

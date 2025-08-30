@@ -374,6 +374,7 @@ class General(Page):
     def OnPickPoolPower(self, evt):
         self.UpdatePoolPickers()
         self.Profile.MovementPowers.SynchronizeUI()
+        self.Profile.CheckAllConflicts()
         evt.Skip()
 
     def UpdatePoolPickers(self):
@@ -415,9 +416,11 @@ class General(Page):
 
     def OnPickPrimaryPowerSet(self, evt):
         self.Profile.Mastermind.SynchronizeUI()
+        self.Profile.CheckAllConflicts()
         evt.Skip()
 
     def OnPickSecondaryPowerSet(self, evt):
+        self.Profile.CheckAllConflicts()
         evt.Skip()
 
     def OnPickEpicPowerSet(self, evt):

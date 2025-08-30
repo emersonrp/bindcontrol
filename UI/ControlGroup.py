@@ -19,6 +19,7 @@ class ControlGroup(wx.StaticBoxSizer):
         self.vertCenteringSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.Page = page
+        self.Ctrls = []
 
         # usually for an "enable this stuff" checkbox in a wx.Panel
         if topcontent:
@@ -160,10 +161,15 @@ class ControlGroup(wx.StaticBoxSizer):
             control.CtlLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         self.InnerSizer.Add( control, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, padding)
+        self.Ctrls.append(control)
         self.Page.Ctrls[ctlName] = control
 
         self.Layout()
         return control
+
+    def EnableCtrls(self, show):
+        for c in self.Ctrls:
+            c.Enable(show)
 
     # check or uncheck checkboxes when clicking the associated label
     def OnCBLabelClick(self, evt):

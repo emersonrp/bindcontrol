@@ -470,9 +470,7 @@ class MovementPowers(Page):
             self.leftColumn.Show(group, show)
         else:
             wx.LogError(f"Tried to show/hide {group} which is in neither column.  This is a bug.")
-        for ctrl in group.GetChildren():
-            win = ctrl.GetWindow()
-            if win: win.Enable(show)
+        group.EnableCtrls(show)
 
     def OnTPComboKey(self, evt = None):
         ComboKey = self.GetState('TPComboKey')

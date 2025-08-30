@@ -1,15 +1,19 @@
 import re
 from pathlib import Path
+import GameData
+
 def ParseBuildFile(file:Path):
     if buildtext := file.read_text():
         lines = buildtext.splitlines()
 
         firstline = lines[0]
 
-        name, rest      = re.split(r':', firstline)
-        restwords       = re.split(r'\s', rest)
-        origin, rawarch = restwords[-2], restwords[-1]
-        _, archetype    = re.split(r'_', rawarch)
+        if parts := re.match(r'(.*?): Level \d+ (\w+) Class_(\w+)', firstline):
+            name      = parts.group(1)
+            origin    = parts.group(2)
+            archetype = parts.group(3)
+        else:
+            return None
 
         data = {
             'Name' : name,
@@ -18,10 +22,49 @@ def ParseBuildFile(file:Path):
             'Server' : 'Homecoming', # Rebirth doesn't have /build_save I think
         }
 
-        for line in lines:
-            if not re.match(r'Level', line): continue
+        Pools = set()
+        Archetypes = list(GameData.Archetypes)
 
-            print(line)
+        for line in lines:
+            if match := re.match(r'Level \d+: (\w+) (\w+)', line):
+                powersettype = PSMap[match.group(1)]
+                powerset     = match.group(2)
+
+                if not powersettype: continue
+                if powersettype == 'Inherent': continue
+                if powersettype == 'Pool':
+                    if not powerset in Pools:
+                        Pools.add(powerset)
+                    continue
+
+                powerset = re.sub(r'_', ' ', powerset)
+                powersetwords = re.split(r'\s+', powerset)
+                for word in list(powersetwords): # make a new list since we modify the existing one as we go
+                    if word in Archetypes:
+                        powersetwords.remove(word)
+                powerset = ' '.join(powersetwords)
+                data[powersettype] = powerset
+
+            else:
+                continue
 
         print(data)
         return data
+
+
+PSMap = {
+    'Epic'      : 'Epic',
+    'Inherent'  : 'Inherent',
+    'Pool'      : 'Pool',
+    'Redirects' : None,
+
+# TODO - get these for all archetypes
+    'Mastermind_Summon': 'Primary',
+    'Mastermind_Buff'  : 'Secondary',
+    'Peacebringer_Offensive' : 'Primary',
+    'Peacebringer_Defensive' : 'Secondary',
+    'Stalker_Melee' : 'Primary',
+    'Stalker_Defense' : 'Secondary',
+    'Tanker_Defense' : 'Primary',
+    'Tanker_Melee' : 'Secondary',
+}

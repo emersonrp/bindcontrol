@@ -28,7 +28,7 @@ from UI.PrefsDialog import PrefsDialog
 from Help import ShowHelpWindow
 from UI.ControlGroup import cgTextCtrl, cgButton
 from Util.DefaultProfile import DefaultProfile
-from Util.BuildFiles import ParseBuildfile
+import Util.BuildFiles
 
 ###################
 # Main Window Class
@@ -388,7 +388,8 @@ class Main(wx.Frame):
         if pathname:
             buildfile = Path(pathname)
 
-            if profiledata := ParseBuildFile(buildfile):
+            if profiledata := Util.BuildFiles.ParseBuildFile(buildfile):
+                return
                 if newprofile := Profile.Profile(self, profiledata = profiledata):
                     self.InsertProfile(newprofile)
             else:

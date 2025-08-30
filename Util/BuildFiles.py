@@ -3,6 +3,7 @@ from pathlib import Path
 import GameData
 
 def ParseBuildFile(file:Path):
+    GameData.SetupGameData('Homecoming') # TODO hmm but build files are only Homecoming?
     if buildtext := file.read_text():
         lines = buildtext.splitlines()
 
@@ -23,7 +24,6 @@ def ParseBuildFile(file:Path):
         }
 
         Pools = []
-        Archetypes = list(GameData.Archetypes)
 
         for line in lines:
             if match := re.match(r'Level \d+: (\w+) (\w+)', line):
@@ -40,9 +40,10 @@ def ParseBuildFile(file:Path):
                 powerset = re.sub(r'_', ' ', powerset)
                 powersetwords = re.split(r'\s+', powerset)
                 for word in list(powersetwords): # make a new list since we modify the existing one as we go
-                    if word in Archetypes:
+                    if word in GameData.Archetypes:
                         powersetwords.remove(word)
                 powerset = ' '.join(powersetwords)
+                powerset = PowerMap.get(powerset, powerset)
                 data[powersettype] = powerset
 
                 # TODO TODO TODO - some Epic powersets, at least, have diffeent names
@@ -74,4 +75,24 @@ PSMap = {
     'Stalker_Defense' : 'Secondary',
     'Tanker_Defense' : 'Primary',
     'Tanker_Melee' : 'Secondary',
+}
+
+PowerMap = {
+    "Flame Mastery"         : "Fire Mastery",
+    "Heat Mastery"          : "Fire Mastery",
+    "Pyre Mastery"          : "Fire Mastery",
+    "Blaze Mastery"         : "Fire Mastery",
+    "Darkness Mastery"      : "Dark Mastery",
+    "Stone Mastery"         : "Earth Mastery",
+    "Electrical Mastery"    : "Electricity Mastery",
+    "Charge Mastery"        : "Electricity Mastery",
+    "Primal Forces Mastery" : "Energy Mastery",
+    "Power Mastery"         : "Energy Mastery",
+    "Body Mastery"          : "Energy Mastery",
+    "Cold Mastery"          : "Ice Mastery",
+    "Chill Mastery"         : "Ice Mastery",
+    "Arctic Mastery"        : "Ice Mastery",
+    "Psychic Mastery"       : "Psionic Mastery",
+    "Ninja Tool Mastery"    : "Weapon Mastery",
+    "Munitions Mastery"     : "Arsenal Mastery",
 }

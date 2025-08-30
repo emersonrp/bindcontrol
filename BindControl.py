@@ -235,18 +235,26 @@ class Main(wx.Frame):
 
         StartupSizer = wx.BoxSizer(wx.VERTICAL)
 
-        ButtonSizer = wx.GridSizer(2, 10, 10)
+        ButtonSizer = wx.GridSizer(3, 10, 10)
         newButton  = wx.Button(StartupPanel, -1, "Start New Profile")
         newButton.SetBitmap(GetIcon('UI', 'new_profile'))
         newButton.SetBitmapPosition(wx.TOP)
+        newButton.SetToolTip('Start a brand new profile from scratch')
         loadButton = wx.Button(StartupPanel, -1, "Load Existing Profile")
         loadButton.SetBitmap(GetIcon('UI', 'load_profile'))
         loadButton.SetBitmapPosition(wx.TOP)
+        loadButton.SetToolTip('Load an existing BindControl Profile file')
+        importButton = wx.Button(StartupPanel, -1, "Import Build File")
+        importButton.SetBitmap(GetIcon('UI', 'load_profile')) # TODO!  New icon for this
+        importButton.SetBitmapPosition(wx.TOP)
+        importButton.SetToolTip('Import a build file exported from City of Heroes')
         ButtonSizer.Add(newButton, 1, wx.EXPAND)
         ButtonSizer.Add(loadButton, 1, wx.EXPAND)
+        ButtonSizer.Add(importButton, 1, wx.EXPAND)
 
         newButton.Bind(wx.EVT_BUTTON, self.OnProfileNew)
         loadButton.Bind(wx.EVT_BUTTON, self.OnProfileLoad)
+        importButton.Bind(wx.EVT_BUTTON, self.OnProfileImport)
 
         StartupSizer.AddStretchSpacer(1)
         StartupSizer.Add(ButtonSizer, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, 50)
@@ -367,8 +375,9 @@ class Main(wx.Frame):
         wx.ConfigBase.Get().Flush()
 
     def OnProfileImport(self, _):
-        if wx.MessageBox("This will create a new profile based on the build file you select.  Continue?", "Import Build File", wx.YES_NO) == wx.NO:
-            return
+        if self.Profile:
+            if wx.MessageBox("This will create a new profile based on the build file you select.  Continue?", "Import Build File", wx.YES_NO) == wx.NO:
+                return
 
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
 

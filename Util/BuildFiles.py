@@ -17,17 +17,17 @@ def ParseBuildFile(file:Path):
             return None
 
         data = {
-            'Name' : name,
-            'Origin' : origin,
+            'Name'      : name,
+            'Origin'    : origin,
             'Archetype' : archetype,
-            'Server' : 'Homecoming', # Rebirth doesn't have /build_save I think
+            'Server'    : 'Homecoming', # Rebirth doesn't have /build_save I think
         }
 
         Pools = []
 
         for line in lines:
             if match := re.match(r'Level \d+: (\w+) (\w+)', line):
-                powersettype = PSMap[match.group(1)]
+                powersettype = PSTypeMap[match.group(1)]
                 powerset     = match.group(2)
 
                 if not powersettype: continue
@@ -43,7 +43,7 @@ def ParseBuildFile(file:Path):
                     if word in GameData.Archetypes:
                         powersetwords.remove(word)
                 powerset = ' '.join(powersetwords)
-                powerset = PowerMap.get(powerset, powerset)
+                powerset = PowerSetMap.get(powerset, powerset)
                 data[powersettype] = powerset
 
                 # TODO TODO TODO - some Epic powersets, at least, have diffeent names
@@ -59,25 +59,48 @@ def ParseBuildFile(file:Path):
 
         return data
 
-
-PSMap = {
+PSTypeMap = {
     'Epic'      : 'Epic',
     'Inherent'  : 'Inherent',
     'Pool'      : 'Pool',
     'Redirects' : None,
 
 # TODO - get these for all archetypes
-    'Mastermind_Summon': 'Primary',
-    'Mastermind_Buff'  : 'Secondary',
+    'Arachnos_Soldiers'      : 'Primary',
+    'Training_Gadgets'       : 'Secondary',
+    'Widow_Training'         : 'Primary',
+    'Teamwork'               : 'Secondary',
+    'Blaster_Ranged'         : 'Primary',
+    'Blaster_Support'        : 'Secondary',
+    'Brute_Melee'            : 'Primary',
+    'Brute_Defense'          : 'Secondary',
+    'Controller_Control'     : 'Primary',
+    'Controller_Buff'        : 'Secondary',
+    'Corruptor_Ranged'       : 'Primary',
+    'Corruptor_Buff'         : 'Secondary',
+    'Defender_Buff'          : 'Primary',
+    'Defender_Ranged'        : 'Secondary',
+    'Dominator_Control'      : 'Primary',
+    'Dominator_Assault'      : 'Secondary',
+    'Mastermind_Summon'      : 'Primary',
+    'Mastermind_Buff'        : 'Secondary',
     'Peacebringer_Offensive' : 'Primary',
     'Peacebringer_Defensive' : 'Secondary',
-    'Stalker_Melee' : 'Primary',
-    'Stalker_Defense' : 'Secondary',
-    'Tanker_Defense' : 'Primary',
-    'Tanker_Melee' : 'Secondary',
+    'Scrapper_Melee'         : 'Primary',
+    'Scrapper_Defense'       : 'Secondary',
+    'Sentinel_Ranged'        : 'Primary',
+    'Sentinet_Defense'       : 'Secondary',
+    'Stalker_Melee'          : 'Primary',
+    'Stalker_Defense'        : 'Secondary',
+    'Tanker_Defense'         : 'Primary',
+    'Tanker_Melee'           : 'Secondary',
+    'Warshade_Offensive'     : 'Primary',
+    'Warshade_Defensive'     : 'Secondary',
 }
 
-PowerMap = {
+# Some powersets got renamed but the original "Body_Mastery_Stalker
+# etc names remain in the export and in Mids.
+PowerSetMap = {
     "Flame Mastery"         : "Fire Mastery",
     "Heat Mastery"          : "Fire Mastery",
     "Pyre Mastery"          : "Fire Mastery",

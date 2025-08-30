@@ -492,22 +492,21 @@ class MovementPowers(Page):
 
     def OnSpeedOnDemandChanged(self, evt = None):
         c = self.Ctrls
-        for ctrl in ['DefaultMode', 'NonSoDEnable', 'SprintPower', 'SprintMode',
-                     'MouseChord', 'Feedback', 'FlyMode', 'JumpMode', 'SpeedMode',
-                     ]:
+        for ctrl in ['DefaultMode', 'NonSoDEnable', 'SprintPower', 'SprintMode', 'MouseChord', 'Feedback', ]:
             c[ctrl].Enable(self.GetState('EnableSoD'))
         c['NonSoDMode'].Enable(self.GetState('EnableSoD') and self.GetState('NonSoDEnable'))
-        c['SprintMode'].Enable(self.GetState('EnableSoD') and self.DefaultMode() != "Sprint")
+        c['SprintMode'].Show(self.GetState('EnableSoD') and self.DefaultMode() != "Sprint")
         sodmode = self.GetState('DefaultMode')
-        c['FlyMode']    .Show(sodmode != 'Fly')
         c['SprintMode'] .Show(sodmode != 'Sprint')
-        c['JumpMode']   .Show(sodmode != 'Jump')
-        c['SpeedMode']  .Show(sodmode != 'Speed')
+        self.OnJumpChanged()
+        self.OnSpeedChanged()
+        self.OnFlightChanged()
         if evt: evt.Skip()
 
     def OnFlightChanged(self, evt = None):
         c = self.Ctrls
         archetype = self.Profile.Archetype()
+        sodenabled = self.GetState('EnableSoD')
 
         if (self.Profile.HasPowerPool('Flight')
                     or self.Profile.HasPowerPool('Sorcery')
@@ -517,9 +516,11 @@ class MovementPowers(Page):
             c['FlyPower'].ShowEntryIf("Mystic Flight", self.Profile.HasPowerPool("Sorcery"))
             c['FlyPower'].ShowEntryIf("Energy Flight", archetype == "Peacebringer")
             self.PrePickLonePower(c['FlyPower'])
+            c['FlyPower'].Enable(sodenabled)
 
-            c['FlyMode'].Enable(bool(self.GetState('FlyPower') or self.GetState('HoverPower'))
+            c['FlyMode'].Show(bool(self.GetState('FlyPower') or self.GetState('HoverPower'))
                                           and self.DefaultMode() != "Fly")
+            c['FlyMode'].Enable(sodenabled)
             c['HasHover'].Show(self.Profile.HasPowerPool('Flight') or archetype == "Peacebringer")
             if archetype == 'Peacebringer':
                 c['HasHover'].CtlLabel.SetLabel('Has Combat Flight:')
@@ -529,6 +530,7 @@ class MovementPowers(Page):
                 c['HasHover'].CtlLabel.SetLabel('Has Hover:')
                 c['HasHover'].SetToolTip('Use Hover as a defense / stationary power')
                 c['HoverPower'].SetValue('Hover')
+            c['HasHover'].Enable(sodenabled)
 
             try: # try/except here because we Freeze to prevent flicker and what if it breaks?
                 self.Freeze()
@@ -545,30 +547,36 @@ class MovementPowers(Page):
             except Exception:
                 pass
             finally:
+                c['FlySpecialKey'].Enable(sodenabled)
                 self.Thaw()
 
-            c['HasGFly'].Enable(self.Profile.HasPowerPool('Flight'))
-            c['GFlyMode'].Enable(self.hasGFly())
+            c['HasGFly'].Enable(sodenabled and self.Profile.HasPowerPool('Flight'))
+            c['GFlyMode'].Enable(sodenabled and self.hasGFly())
         else:
             self.ShowControlGroup(self.flySizer, False)
+
         if evt: evt.Skip()
 
     def OnJumpChanged(self, evt = None):
         c = self.Ctrls
+        sodenabled = self.GetState('EnableSoD')
         if (self.Profile.HasPowerPool('Leaping') or self.Profile.HasPowerPool('Force of Will')):
             self.ShowControlGroup(self.superJumpSizer)
             c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPowerPool('Force of Will'))
             c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPowerPool('Leaping'))
             self.PrePickLonePower(c['JumpPower'])
+            c['JumpPower'].Enable(sodenabled)
 
-            c['JumpMode']  .Enable(bool(
+            c['JumpMode'].Show(bool(
                     self.DefaultMode() != "Jump"
                         and
                     (self.GetState('JumpPower') or self.GetState('HasCJ') or self.GetState('SimpleSJCJ'))
                 ))
-            c['HasCJ'].Enable(self.Profile.HasPowerPool('Leaping'))
-            c['SimpleSJCJ'].Enable(bool(self.GetState('JumpPower') or self.GetState('HasCJ')))
+            c['JumpMode'].Enable(sodenabled)
+            c['HasCJ'].Enable(sodenabled and self.Profile.HasPowerPool('Leaping'))
+            c['SimpleSJCJ'].Enable(sodenabled and bool(self.GetState('JumpPower') or self.GetState('HasCJ')))
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
+            c['SSSJModeEnable'].Enable(sodenabled)
 
             if (self.GetState('JumpPower') == "Mighty Leap"):
                 c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
@@ -580,29 +588,38 @@ class MovementPowers(Page):
                 c['JumpSpecialKey'].Show()
             else:
                 c['JumpSpecialKey'].Show(False)
+            c['JumpSpecialKey'].Enable(sodenabled)
+
         else:
             self.ShowControlGroup(self.superJumpSizer, False)
+
         if evt: evt.Skip()
 
     def OnSpeedChanged(self, evt = None):
         c = self.Ctrls
+        sodenabled = self.GetState('EnableSoD')
         if (self.Profile.HasPowerPool('Speed') or self.Profile.HasPowerPool('Experimentation')):
             self.ShowControlGroup(self.superSpeedSizer)
             c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPowerPool('Experimentation'))
             c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPowerPool('Speed'))
             self.PrePickLonePower(c['SpeedPower'])
-            c['SpeedMode'].Enable(bool(self.GetState('SpeedPower')) and self.DefaultMode() != "Speed")
-            c['SSMobileOnly'].Enable(bool(self.GetState('SpeedPower')))
+            c['SpeedPower'].Enable(sodenabled)
+            c['SpeedMode'].Show(bool(self.GetState('SpeedPower')) and self.DefaultMode() != "Speed")
+            c['SpeedMode'].Enable(sodenabled)
+            c['SSMobileOnly'].Enable(sodenabled and bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
+            c['SSSJModeEnable'].Enable(sodenabled)
 
             if (self.GetState('SpeedPower') == "Super Speed"):
                 c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
                 c['SpeedSpecialPower'].SetValue('SpeedPhase')
                 c['SpeedSpecialKey'].Show()
+                c['SpeedSpecialKey'].Enable(sodenabled)
             else:
                 c['SpeedSpecialKey'].Show(False)
         else:
             self.ShowControlGroup(self.superSpeedSizer, False)
+
         if evt: evt.Skip()
 
     def OnTeleportChanged(self, evt = None):
@@ -702,9 +719,9 @@ class MovementPowers(Page):
 
             self.OnFlightChanged()
 
-            self.OnJumpChanged()
-
             self.OnSpeedChanged()
+
+            self.OnJumpChanged()
 
             self.OnTeleportChanged()
 

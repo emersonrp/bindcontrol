@@ -714,6 +714,8 @@ class MovementPowers(Page):
         try:
             self.OnDetailsCameraChanged()
 
+            self.OnTempChanged()
+
             self.OnKheldianChanged()
 
             self.OnSpeedOnDemandChanged()

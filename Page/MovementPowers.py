@@ -22,9 +22,9 @@ class MovementPowers(Page):
         # A few things that are server-specific.  If we change servers, we reload the profile
         # so this is safe to do in __init__
         server = self.Profile.Server
-        self.togon   = "powexectoggleon"  if server == "Homecoming" else "px_tgon"
-        self.togoff  = "powexectoggleoff" if server == "Homecoming" else "px_tgof"
-        self.unqueue = "powexecunqueue"   if server == "Homecoming" else "px_uq"
+        self.togon   = "px_tgon" if server == "Rebirth" else "powexectoggleon"
+        self.togoff  = "px_tgof" if server == "Rebirth" else "powexectoggleoff"
+        self.unqueue = "px_uq"   if server == "Rebirth" else "powexecunqueue"
 
         self.Init: Dict[str, Any] = {
             'EnableSoD'       : False,
@@ -44,9 +44,8 @@ class MovementPowers(Page):
             'PlayerTurn'      : 0, # TODO this should toggle with "Keybind Profile" somehow
             'AutoMouseLook'   : 0,
 
-            'SprintPower'     : 'Sprint',
-            'SprintSoD'       : True,  # "Base" in citybinder
             'SprintMode'      : '',
+            'SprintPower'     : 'Sprint',
 
             'ChangeCamera'    : False,
             'CamdistBase'     : 15,
@@ -56,7 +55,6 @@ class MovementPowers(Page):
             'DetailMove'      : 50,
             'Feedback'        : False,
 
-            'NonSoDEnable'    : False,
             'NonSoDMode'      : '',
 
             'SpeedPower'        : '',
@@ -64,14 +62,14 @@ class MovementPowers(Page):
             'SSMobileOnly'      : False,
             'SSSJModeEnable'    : False,
             'SpeedSpecialKey'   : "",
-            'SpeedSpecialPower' : "",
+            'SpeedSpecialPower' : "", # hidden
 
             'JumpPower'        : '',
             'HasCJ'            : False,
             'JumpMode'         : "T",
             'SimpleSJCJ'       : False,
             'JumpSpecialKey'   : "",
-            'JumpSpecialPower' : "",
+            'JumpSpecialPower' : "", # hidden
 
             'FlyPower'        : '',
             'HoverPower'      : '', # hidden
@@ -86,12 +84,12 @@ class MovementPowers(Page):
             'TPPower'         : '',
             'TPBindKey'       : '',
             'TPComboKey'      : 'LSHIFT',
-            'TPExecuteKey'    : 'LSHIFT+BUTTON1',
+            'TPExecuteKey'    : 'LSHIFT+BUTTON1', # hidden rebirth magic
 
             'HasTTP'          : False,
             'TTPBindKey'      : '',
             'TTPComboKey'     : 'LCTRL',
-            'TTPExecuteKey'   : 'LCTRL+BUTTON1',
+            'TTPExecuteKey'   : 'LCTRL+BUTTON1', # hidden rebirth magic
             'TTPTPGFly'       : False,
 
             'TPHideWindows'   : True,
@@ -137,11 +135,11 @@ class MovementPowers(Page):
 
         # hidden controls for keeping state
         self.hiddenSizer = ControlGroup(self, self, "Hidden Settings")
-        self.hiddenSizer.AddControl( ctlName = 'HoverPower', ctlType = 'text')
-        self.hiddenSizer.AddControl( ctlName = 'HasQF', ctlType = 'checkbox',)
-        self.hiddenSizer.AddControl( ctlName = 'FlySpecialPower', ctlType = 'text', )
-        self.hiddenSizer.AddControl( ctlName = 'JumpSpecialPower', ctlType = 'text', )
-        self.hiddenSizer.AddControl( ctlName = 'SpeedSpecialPower', ctlType = 'text', )
+        self.hiddenSizer.AddControl(ctlName = 'HoverPower', ctlType = 'text')
+        self.hiddenSizer.AddControl(ctlName = 'HasQF', ctlType = 'checkbox',)
+        self.hiddenSizer.AddControl(ctlName = 'FlySpecialPower', ctlType = 'text', )
+        self.hiddenSizer.AddControl(ctlName = 'JumpSpecialPower', ctlType = 'text', )
+        self.hiddenSizer.AddControl(ctlName = 'SpeedSpecialPower', ctlType = 'text', )
         self.leftColumn.Add(self.hiddenSizer)
         self.leftColumn.Hide(self.hiddenSizer)
 
@@ -276,82 +274,55 @@ class MovementPowers(Page):
 
         ### DETAIL SETTINGS
         detailSizer = ControlGroup(self, self, 'Detail and Camera Settings')
-        detailSizer.AddControl( ctlName = 'PlayerTurn', ctlType = 'checkbox',
+        detailSizer.AddControl(ctlName = 'PlayerTurn', ctlType = 'checkbox',
             tooltip = 'Turn player to match camera when moving forward',)
-        detailSizer.AddControl( ctlName = 'AutoMouseLook', ctlType = 'checkbox',
+        detailSizer.AddControl(ctlName = 'AutoMouseLook', ctlType = 'checkbox',
            tooltip = 'Automatically engage mouselook while movement keys are pressed',)
-        detailSizer.AddControl( ctlName = 'ChangeCamera', ctlType = 'checkbox',
+        detailSizer.AddControl(ctlName = 'ChangeCamera', ctlType = 'checkbox',
             tooltip = "Change the camera distance while moving")
         self.Ctrls['ChangeCamera'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
-        detailSizer.AddControl( ctlName = 'CamdistBase', ctlType = 'spinbox', contents = (1, 100),
+        detailSizer.AddControl(ctlName = 'CamdistBase', ctlType = 'spinbox', contents = (1, 100),
             tooltip = "Set the camera distance to use while stationary")
-        detailSizer.AddControl( ctlName = 'CamdistMove', ctlType = 'spinbox', contents = (1, 100),
+        detailSizer.AddControl(ctlName = 'CamdistMove', ctlType = 'spinbox', contents = (1, 100),
             tooltip = "Set the camera distance to use while moving")
-        detailSizer.AddControl( ctlName = 'ChangeDetail', ctlType = 'checkbox',
+        detailSizer.AddControl(ctlName = 'ChangeDetail', ctlType = 'checkbox',
             tooltip = "Change the game's detail level while moving")
         self.Ctrls['ChangeDetail'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
-        detailSizer.AddControl( ctlName = 'DetailBase', ctlType = 'spinboxfractional', contents = (0, 1),
+        detailSizer.AddControl(ctlName = 'DetailBase', ctlType = 'spinboxfractional', contents = (0, 1),
             tooltip = "Set the detail level to use while stationary")
-        detailSizer.AddControl( ctlName = 'DetailMove', ctlType = 'spinboxfractional', contents = (0, 1),
+        detailSizer.AddControl(ctlName = 'DetailMove', ctlType = 'spinboxfractional', contents = (0, 1),
             tooltip = "Set the detail level to use while moving")
         self.leftColumn.Add(detailSizer, 0, wx.EXPAND)
 
         ##### KHELDIAN TRAVEL POWERS
         self.kheldianSizer = ControlGroup(self, self, 'Kheldian Forms / Powers')
 
-        self.kheldianSizer.AddControl( ctlName = 'KhelFeedback', ctlType = 'checkbox',
+        self.kheldianSizer.AddControl(ctlName = 'KhelFeedback', ctlType = 'checkbox',
             tooltip = "Perform a self-/tell when changing form indicating the new form",)
-        self.kheldianSizer.AddControl( ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 8],
+        self.kheldianSizer.AddControl(ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 8],
             tooltip = "Select the powers tray to change to when in human form")
-        self.kheldianSizer.AddControl( ctlName = 'UseNova', ctlType = 'checkbox',
+        self.kheldianSizer.AddControl(ctlName = 'UseNova', ctlType = 'checkbox',
             tooltip = "Use a key to toggle between Nova and human form")
         self.Ctrls['UseNova'].Bind(wx.EVT_CHECKBOX, self.OnKheldianChanged)
-        self.kheldianSizer.AddControl( ctlName = 'NovaMode', ctlType = 'keybutton',
+        self.kheldianSizer.AddControl(ctlName = 'NovaMode', ctlType = 'keybutton',
             tooltip = "Select the key to toggle between Nova and human form")
-        self.kheldianSizer.AddControl( ctlName = 'NovaTray', ctlType = 'spinbox', contents = [1, 8],
+        self.kheldianSizer.AddControl(ctlName = 'NovaTray', ctlType = 'spinbox', contents = [1, 8],
             tooltip = "Select the powers tray to change to when in Nova form")
-        self.kheldianSizer.AddControl( ctlName = 'UseDwarf', ctlType = 'checkbox',
+        self.kheldianSizer.AddControl(ctlName = 'UseDwarf', ctlType = 'checkbox',
             tooltip = "Use a key to toggle between Dwarf and human form")
         self.Ctrls['UseDwarf'].Bind(wx.EVT_CHECKBOX, self.OnKheldianChanged)
-        self.kheldianSizer.AddControl( ctlName = 'DwarfMode', ctlType = 'keybutton',
+        self.kheldianSizer.AddControl(ctlName = 'DwarfMode', ctlType = 'keybutton',
             tooltip = "Select the key to toggle between Dwarf and human form")
-        self.kheldianSizer.AddControl( ctlName = 'DwarfTray', ctlType = 'spinbox', contents = [1, 8],
+        self.kheldianSizer.AddControl(ctlName = 'DwarfTray', ctlType = 'spinbox', contents = [1, 8],
             tooltip = "Select the powers tray to change to when in Dwarf form")
         self.leftColumn.Add(self.kheldianSizer, 0, wx.EXPAND)
 
-        ##### SPEED ON DEMAND SETTINGS
-        SoDSizer = ControlGroup(self, self, 'Speed on Demand Settings')
-
-        SoDSizer.AddControl( ctlName = 'EnableSoD', ctlType = 'checkbox',
-            tooltip = "Enable Speed on Demand behavior for the movement keys")
-        self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
-        SoDSizer.AddControl( ctlName = 'DefaultMode', ctlType = 'choice',
-            contents = ('No SoD','Sprint','Speed','Jump','Fly'),
-            tooltip = "Select the Speed on Demand mode the movement keys will use by default")
-        self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.OnSpeedOnDemandChanged)
-        SoDSizer.AddControl( ctlName = 'SprintPower', ctlType = 'choice',
-            contents = GameData.SprintPowers,
-            tooltip = "Select the power to use for Sprint Speed on Demand")
-        SoDSizer.AddControl( ctlName = 'NonSoDEnable', ctlType = 'checkbox',
-            tooltip = "Use a key to toggle whether Speed on Demand is active")
-        self.Ctrls['NonSoDEnable'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
-        SoDSizer.AddControl( ctlName = 'NonSoDMode', ctlType = 'keybutton',
-            tooltip = "Select the key to toggle Speed on Demand")
-        SoDSizer.AddControl( ctlName = 'SprintSoD', ctlType = 'checkbox',)
-        self.Ctrls['SprintSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
-        SoDSizer.AddControl( ctlName = 'SprintMode', ctlType = 'keybutton',)
-        SoDSizer.AddControl( ctlName = 'MouseChord', ctlType = 'checkbox',)
-        SoDSizer.AddControl( ctlName = 'Feedback', ctlType = 'checkbox',
-            tooltip = "Announce changes in Speed on Demand modes via self-/tell")
-
-        self.rightColumn.Add(SoDSizer, 0, wx.EXPAND)
-
         ##### TEMP TRAVEL POWERS
         self.tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
-        self.tempSizer.AddControl( ctlName = 'TempEnable', ctlType = 'checkbox',
+        self.tempSizer.AddControl(ctlName = 'TempEnable', ctlType = 'checkbox',
                                   tooltip = "Enable the Temp Travel Power toggle keybind")
-        self.Ctrls['TempEnable'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        self.tempSizer.AddControl( ctlName = 'TempToggle', ctlType = 'keybutton',
+        self.Ctrls['TempEnable'].Bind(wx.EVT_CHECKBOX, self.OnTempChanged)
+        self.tempSizer.AddControl(ctlName = 'TempToggle', ctlType = 'keybutton',
                                   tooltip = "Select the key to use to toggle the chosen temp travel power")
         self.Ctrls['TempToggle'].Bind(EVT_KEY_CHANGED, self.OnTempChanged)
         self.TempTravelPowerLabel = wx.StaticText(self.tempSizer.GetStaticBox(), wx.ID_ANY, "Temp Travel Power:", style = wx.ALIGN_RIGHT)
@@ -370,55 +341,79 @@ class MovementPowers(Page):
         self.tempSizer.Layout()
         self.leftColumn.Add(self.tempSizer, 0, wx.EXPAND)
 
+        ##### SPEED ON DEMAND SETTINGS
+        SoDSizer = ControlGroup(self, self, 'Speed on Demand (SoD) Settings')
+
+        SoDSizer.AddControl(ctlName = 'EnableSoD', ctlType = 'checkbox',
+            tooltip = "Enable Speed on Demand behavior for the movement keys")
+        self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
+        SoDSizer.AddControl(ctlName = 'DefaultMode', ctlType = 'choice',
+            contents = ('No Default SoD','Sprint','Speed','Jump','Fly'),
+            tooltip = "Select the Speed on Demand mode the movement keys will use by default")
+        self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.OnSpeedOnDemandChanged)
+        SoDSizer.AddControl(ctlName = 'NonSoDMode', ctlType = 'keybutton',
+            tooltip = "Select the key to toggle whether Speed on Demand is active")
+        SoDSizer.AddControl(ctlName = 'SprintMode', ctlType = 'keybutton',
+            tooltip = "Select the key to toggle Sprint Speed on Demand mode")
+        SoDSizer.AddControl(ctlName = 'SprintPower', ctlType = 'choice',
+            contents = GameData.SprintPowers,
+            tooltip = "Select the power to use for Sprint Speed on Demand")
+        SoDSizer.AddControl(ctlName = 'MouseChord', ctlType = 'checkbox',
+            tooltip = "Holding both mouse buttons will go forward using the current Speed on Demand mode")
+        SoDSizer.AddControl(ctlName = 'Feedback', ctlType = 'checkbox',
+            tooltip = "Announce changes in Speed on Demand modes via self-/tell")
+
+        self.rightColumn.Add(SoDSizer, 0, wx.EXPAND)
+
         ##### SUPER SPEED
-        self.superSpeedSizer = ControlGroup(self, self, 'Speed')
+        self.superSpeedSizer = ControlGroup(self, self, 'Super Speed SoD Settings')
         self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the super speed power to use with the keybinds in this section")
         self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
-        self.superSpeedSizer.AddControl( ctlName = 'SpeedMode', ctlType = 'keybutton',
+        self.superSpeedSizer.AddControl(ctlName = 'SpeedMode', ctlType = 'keybutton',
             tooltip = "Enter Speed on Demand Super Speed Mode")
-        self.superSpeedSizer.AddControl( ctlName = 'SpeedSpecialKey', ctlType = 'keybutton',)
-        self.superSpeedSizer.AddControl( ctlName = 'SSMobileOnly', ctlType = 'checkbox',
+        self.superSpeedSizer.AddControl(ctlName = 'SpeedSpecialKey', ctlType = 'keybutton',)
+        self.superSpeedSizer.AddControl(ctlName = 'SSMobileOnly', ctlType = 'checkbox',
             tooltip = "Activate speed power only when moving;  deactivate when stationary")
-        self.superSpeedSizer.AddControl( ctlName = 'SSSJModeEnable', ctlType = 'checkbox',
+        self.superSpeedSizer.AddControl(ctlName = 'SSSJModeEnable', ctlType = 'checkbox',
             tooltip = "Enable Super Speed + Super Jump mode.  Check the Manual for details")
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
-        self.superJumpSizer = ControlGroup(self, self, 'Jumping')
+        self.superJumpSizer = ControlGroup(self, self, 'Jumping SoD Settings')
         self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the jump power to use with the keybinds in this section")
         self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
-        self.superJumpSizer.AddControl( ctlName = 'HasCJ', ctlType = 'checkbox',
+        self.superJumpSizer.AddControl(ctlName = 'HasCJ', ctlType = 'checkbox',
             tooltip = "Should the binds use Combat Jumping as a defense / stationary power?")
         self.Ctrls['HasCJ'].Bind(wx.EVT_CHECKBOX, self.OnJumpChanged)
-        self.superJumpSizer.AddControl( ctlName = 'SimpleSJCJ', ctlType = 'checkbox',
+        self.superJumpSizer.AddControl(ctlName = 'SimpleSJCJ', ctlType = 'checkbox',
             tooltip = "Use the Jump Mode key as a simple Super Jump / Combat Jumping toggle.  This will toggle on and off either power if it is the only one available")
         self.Ctrls['SimpleSJCJ'].Bind(wx.EVT_CHECKBOX, self.OnJumpChanged)
-        self.superJumpSizer.AddControl( ctlName = 'JumpMode', ctlType = 'keybutton',
+        self.superJumpSizer.AddControl(ctlName = 'JumpMode', ctlType = 'keybutton',
             tooltip = "Enter Speed on Demand Jump Mode")
-        self.superJumpSizer.AddControl( ctlName = 'JumpSpecialKey', ctlType = 'keybutton',)
+        self.superJumpSizer.AddControl(ctlName = 'JumpSpecialKey', ctlType = 'keybutton',)
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
         ##### FLY
-        self.flySizer = ControlGroup(self, self, 'Flight')
+        self.flySizer = ControlGroup(self, self, 'Flight SoD Settings')
         self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the flight power to use with the keybinds in this section")
         self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
-        self.flySizer.AddControl( ctlName = 'HasHover', ctlType = 'checkbox',)
+        self.flySizer.AddControl(ctlName = 'HasHover', ctlType = 'checkbox',)
         self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.OnFlightChanged)
-        self.flySizer.AddControl( ctlName = 'FlyMode', ctlType = 'keybutton',
+        self.flySizer.AddControl(ctlName = 'FlyMode', ctlType = 'keybutton',
             tooltip = "Enter Speed on Demand Fly Mode")
-        self.flySizer.AddControl( ctlName = 'FlySpecialKey', ctlType = 'keybutton',)
-        self.flySizer.AddControl( ctlName = 'HasGFly', ctlType = 'checkbox',
+        self.flySizer.AddControl(ctlName = 'FlySpecialKey', ctlType = 'keybutton',)
+        self.flySizer.AddControl(ctlName = 'HasGFly', ctlType = 'checkbox',
             tooltip = "Enable Group Fly-related keybinds")
         self.Ctrls['HasGFly'].Bind(wx.EVT_CHECKBOX, self.OnFlightChanged)
-        self.flySizer.AddControl( ctlName = 'GFlyMode', ctlType = 'keybutton',
+        self.flySizer.AddControl(ctlName = 'GFlyMode', ctlType = 'keybutton',
             tooltip = "Enter Group Fly Speed on Demand Mode")
         self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
-        self.teleportSizer = ControlGroup(self, self, 'Teleport')
+        self.teleportSizer = ControlGroup(self, self, 'Teleport Settings')
         self.teleportSizer.AddControl(ctlName = "TPPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the teleport power to use with the keybinds in this section")
         self.Ctrls['TPPower'].Bind(wx.EVT_CHOICE, self.OnTeleportChanged)
@@ -428,13 +423,13 @@ class MovementPowers(Page):
         else:
             tpTooltip = 'Initiate teleport power, showing target marker.'
             tpcTooltip = 'Show target marker on keypress;  click to teleport.'
-        self.teleportSizer.AddControl( ctlName = "TPBindKey", ctlType = 'keybutton', tooltip = tpTooltip)
-        self.teleportSizer.AddControl( ctlName = "TPComboKey", ctlType = 'keybutton', tooltip = tpcTooltip)
+        self.teleportSizer.AddControl(ctlName = "TPBindKey", ctlType = 'keybutton', tooltip = tpTooltip)
+        self.teleportSizer.AddControl(ctlName = "TPComboKey", ctlType = 'keybutton', tooltip = tpcTooltip)
         self.Ctrls['TPComboKey'].Bind(EVT_KEY_CHANGED, self.OnTPComboKey)
-        self.teleportSizer.AddControl( ctlName = "TPExecuteKey", ctlType = 'keybutton')
-        self.teleportSizer.AddControl( ctlName = 'TPTPHover', ctlType = 'checkbox',
+        self.teleportSizer.AddControl(ctlName = "TPExecuteKey", ctlType = 'keybutton')
+        self.teleportSizer.AddControl(ctlName = 'TPTPHover', ctlType = 'checkbox',
             tooltip = "Activate the Hover power after teleporting")
-        self.teleportSizer.AddControl( ctlName = "HasTTP", ctlType = 'checkbox',
+        self.teleportSizer.AddControl(ctlName = "HasTTP", ctlType = 'checkbox',
             tooltip = "Enable Team Teleport-related keybinds")
         self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.OnTeleportChanged)
         if server == "Homecoming":
@@ -443,13 +438,13 @@ class MovementPowers(Page):
         else:
             ttpTooltip = "Initiate Team Teleport, showing target marker."
             ttpcTooltip = "Show target marker on keypress;  click to team teleport."
-        self.teleportSizer.AddControl( ctlName = "TTPBindKey", ctlType = 'keybutton', tooltip = ttpTooltip)
-        self.teleportSizer.AddControl( ctlName = "TTPComboKey", ctlType = 'keybutton', tooltip = ttpcTooltip)
+        self.teleportSizer.AddControl(ctlName = "TTPBindKey", ctlType = 'keybutton', tooltip = ttpTooltip)
+        self.teleportSizer.AddControl(ctlName = "TTPComboKey", ctlType = 'keybutton', tooltip = ttpcTooltip)
         self.Ctrls['TTPComboKey'].Bind(EVT_KEY_CHANGED, self.OnTTPComboKey)
-        self.teleportSizer.AddControl( ctlName = "TTPExecuteKey", ctlType = 'keybutton')
-        self.teleportSizer.AddControl( ctlName = 'TTPTPGFly', ctlType = 'checkbox',
+        self.teleportSizer.AddControl(ctlName = "TTPExecuteKey", ctlType = 'keybutton')
+        self.teleportSizer.AddControl(ctlName = 'TTPTPGFly', ctlType = 'checkbox',
             tooltip = "Activate the Group Fly power after Team Teleporting")
-        self.teleportSizer.AddControl( ctlName = 'TPHideWindows', ctlType = 'checkbox',
+        self.teleportSizer.AddControl(ctlName = 'TPHideWindows', ctlType = 'checkbox',
             tooltip = 'Hide most UI elements while holding target marker key.', )
         self.rightColumn.Add(self.teleportSizer, 0, wx.EXPAND)
 
@@ -493,15 +488,20 @@ class MovementPowers(Page):
 
     def OnSpeedOnDemandChanged(self, evt = None):
         c = self.Ctrls
-        for ctrl in ['DefaultMode', 'SprintPower', 'NonSoDEnable', 'SprintSoD', 'MouseChord', 'Feedback']:
+        sodmode = self.GetState('DefaultMode')
+        c['NonSoDMode'].Show(sodmode != 'No Default SoD')
+        c['SprintMode'].Show(sodmode != 'Sprint')
+        for ctrl in ['DefaultMode', 'NonSoDMode', 'SprintPower', 'SprintMode', 'MouseChord', 'Feedback', ]:
             c[ctrl].Enable(self.GetState('EnableSoD'))
-        c['NonSoDMode'].Enable(self.GetState('EnableSoD') and self.GetState('NonSoDEnable'))
-        c['SprintMode'].Enable(self.GetState('EnableSoD') and self.GetState('SprintSoD') and self.DefaultMode() != "Sprint")
+        self.OnJumpChanged()
+        self.OnSpeedChanged()
+        self.OnFlightChanged()
         if evt: evt.Skip()
 
     def OnFlightChanged(self, evt = None):
         c = self.Ctrls
         archetype = self.Profile.Archetype()
+        sodenabled = self.GetState('EnableSoD')
 
         if (self.Profile.HasPowerPool('Flight')
                     or self.Profile.HasPowerPool('Sorcery')
@@ -511,18 +511,21 @@ class MovementPowers(Page):
             c['FlyPower'].ShowEntryIf("Mystic Flight", self.Profile.HasPowerPool("Sorcery"))
             c['FlyPower'].ShowEntryIf("Energy Flight", archetype == "Peacebringer")
             self.PrePickLonePower(c['FlyPower'])
+            c['FlyPower'].Enable(sodenabled)
 
-            c['FlyMode'].Enable(bool(self.GetState('FlyPower') or self.GetState('HoverPower'))
+            c['FlyMode'].Show(bool(self.GetState('FlyPower') or self.GetState('HoverPower'))
                                           and self.DefaultMode() != "Fly")
+            c['FlyMode'].Enable(sodenabled)
             c['HasHover'].Show(self.Profile.HasPowerPool('Flight') or archetype == "Peacebringer")
             if archetype == 'Peacebringer':
                 c['HasHover'].CtlLabel.SetLabel('Has Combat Flight:')
-                c['HasHover'].SetToolTip('Use Combat Flight as a defense / stationary power -- if your Peacebringer is below level 10, leave this unchecked')
+                c['HasHover'].SetToolTip('Use Combat Flight as a defense power when not moving -- if your Peacebringer is below level 10, leave this unchecked')
                 c['HoverPower'].SetValue('Combat Flight')
             else:
                 c['HasHover'].CtlLabel.SetLabel('Has Hover:')
-                c['HasHover'].SetToolTip('Use Hover as a defense / stationary power')
+                c['HasHover'].SetToolTip('Use Hover as a defense power when not moving')
                 c['HoverPower'].SetValue('Hover')
+            c['HasHover'].Enable(sodenabled)
 
             try: # try/except here because we Freeze to prevent flicker and what if it breaks?
                 self.Freeze()
@@ -539,30 +542,36 @@ class MovementPowers(Page):
             except Exception:
                 pass
             finally:
+                c['FlySpecialKey'].Enable(sodenabled)
                 self.Thaw()
 
-            c['HasGFly'].Enable(self.Profile.HasPowerPool('Flight'))
-            c['GFlyMode'].Enable(self.hasGFly())
+            c['HasGFly'].Enable(sodenabled and self.Profile.HasPowerPool('Flight'))
+            c['GFlyMode'].Enable(sodenabled and self.hasGFly())
         else:
             self.ShowControlGroup(self.flySizer, False)
+
         if evt: evt.Skip()
 
     def OnJumpChanged(self, evt = None):
         c = self.Ctrls
+        sodenabled = self.GetState('EnableSoD')
         if (self.Profile.HasPowerPool('Leaping') or self.Profile.HasPowerPool('Force of Will')):
             self.ShowControlGroup(self.superJumpSizer)
             c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPowerPool('Force of Will'))
             c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPowerPool('Leaping'))
             self.PrePickLonePower(c['JumpPower'])
+            c['JumpPower'].Enable(sodenabled)
 
-            c['JumpMode']  .Enable(bool(
+            c['JumpMode'].Show(bool(
                     self.DefaultMode() != "Jump"
                         and
                     (self.GetState('JumpPower') or self.GetState('HasCJ') or self.GetState('SimpleSJCJ'))
                 ))
-            c['HasCJ'].Enable(self.Profile.HasPowerPool('Leaping'))
-            c['SimpleSJCJ'].Enable(bool(self.GetState('JumpPower') or self.GetState('HasCJ')))
+            c['JumpMode'].Enable(sodenabled)
+            c['HasCJ'].Enable(sodenabled and self.Profile.HasPowerPool('Leaping'))
+            c['SimpleSJCJ'].Enable(sodenabled and (bool(self.GetState('JumpPower') or self.GetState('HasCJ'))))
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
+            c['SSSJModeEnable'].Enable(sodenabled)
 
             if (self.GetState('JumpPower') == "Mighty Leap"):
                 c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
@@ -574,29 +583,38 @@ class MovementPowers(Page):
                 c['JumpSpecialKey'].Show()
             else:
                 c['JumpSpecialKey'].Show(False)
+            c['JumpSpecialKey'].Enable(sodenabled)
+
         else:
             self.ShowControlGroup(self.superJumpSizer, False)
+
         if evt: evt.Skip()
 
     def OnSpeedChanged(self, evt = None):
         c = self.Ctrls
+        sodenabled = self.GetState('EnableSoD')
         if (self.Profile.HasPowerPool('Speed') or self.Profile.HasPowerPool('Experimentation')):
             self.ShowControlGroup(self.superSpeedSizer)
             c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPowerPool('Experimentation'))
             c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPowerPool('Speed'))
             self.PrePickLonePower(c['SpeedPower'])
-            c['SpeedMode'].Enable(bool(self.GetState('SpeedPower')) and self.DefaultMode() != "Speed")
-            c['SSMobileOnly'].Enable(bool(self.GetState('SpeedPower')))
+            c['SpeedPower'].Enable(sodenabled)
+            c['SpeedMode'].Show(bool(self.GetState('SpeedPower')) and self.DefaultMode() != "Speed")
+            c['SpeedMode'].Enable(sodenabled)
+            c['SSMobileOnly'].Enable(sodenabled and bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
+            c['SSSJModeEnable'].Enable(sodenabled)
 
             if (self.GetState('SpeedPower') == "Super Speed"):
                 c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
                 c['SpeedSpecialPower'].SetValue('SpeedPhase')
                 c['SpeedSpecialKey'].Show()
+                c['SpeedSpecialKey'].Enable(sodenabled)
             else:
                 c['SpeedSpecialKey'].Show(False)
         else:
             self.ShowControlGroup(self.superSpeedSizer, False)
+
         if evt: evt.Skip()
 
     def OnTeleportChanged(self, evt = None):
@@ -668,6 +686,7 @@ class MovementPowers(Page):
         self.TempTravelPowerPicker.SetLabel(label)
         self.TempTravelPowerPicker.SetBitmap(bitmap)
         setattr(self.TempTravelPowerPicker, 'IconFilename', getattr(menuitem, 'IconFilename'))
+        evt.Skip()
 
     def BuildTempTravelPowerMenu(self):
         menu = wx.Menu()
@@ -690,19 +709,19 @@ class MovementPowers(Page):
         try:
             self.OnDetailsCameraChanged()
 
+            self.OnTempChanged()
+
             self.OnKheldianChanged()
 
             self.OnSpeedOnDemandChanged()
 
             self.OnFlightChanged()
 
-            self.OnJumpChanged()
-
             self.OnSpeedChanged()
 
-            self.OnTeleportChanged()
+            self.OnJumpChanged()
 
-            self.OnTempChanged()
+            self.OnTeleportChanged()
 
         except Exception as e:
             print(f"Something blowed up in SoD SynchronizeUI:  {e}")
@@ -723,7 +742,6 @@ class MovementPowers(Page):
         bl   = p.get('bl'   , t.bl)
         bla  = p.get('bla'  , t.bla)
         blf  = p.get('blf'  , t.blf)
-        blbo = p.get('blbo' , t.blbo)
 
         path      = p.get('path'      , t.path)
         gamepath  = p.get('gamepath'  , t.gamepath)
@@ -731,7 +749,6 @@ class MovementPowers(Page):
         gamepatha = p.get('gamepatha' , t.gamepatha)
         pathf     = p.get('pathf'     , t.pathf)
         gamepathf = p.get('gamepathf' , t.gamepathf)
-        pathbo    = p.get('pathbo'    , t.pathbo)
 
         mobile     = p.get('mobile'     , None)
         stationary = p.get('stationary' , None)
@@ -745,84 +762,42 @@ class MovementPowers(Page):
 
             curfile = profile.ResetFile()
 
-            self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-            self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','','')
-            self.sodForwardKey(t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-            self.sodBackKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-            self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-            self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
+            self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','',sssj)
+            self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','')
+            self.sodForwardKey(t,bl,curfile,mobile,stationary,flight,'','',sssj)
+            self.sodBackKey   (t,bl,curfile,mobile,stationary,flight,'','',sssj)
+            self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','',sssj)
+            self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','',sssj)
+            self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
+            self.sodFollowKey (t,blf,curfile,mobile,stationary)
 
             if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ])
             if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
-            if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
+            if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"ff",curfile,turnoff,fix)
             if (modestr != "GFly")        : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff,fix)
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
             if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path, gamepath)
-
-            self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
-
-            self.sodFollowKey(t,blf,curfile,mobile,stationary)
-
-        if (flight and (flight == self.GetState('FlyPower')) and pathbo):
-            #  blast off
-            curfile = profile.GetBindFile(f"{pathbo}{t.KeyState()}.txt")
-            self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile,True))
-            self.sodUpKey     (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
-            self.sodDownKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo")
-            self.sodForwardKey(t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
-            self.sodBackKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
-            self.sodLeftKey   (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
-            self.sodRightKey  (t,blbo,curfile,mobile,stationary,flight,'','',"bo",sssj)
-
-            if (modestr == "Sprint") : self.makeSprintModeKey(profile,t,"r",curfile,turnoff,fix)
-
-            t.ini = '-down$$'
-
-            if (self.DefaultMode() == "Fly") :
-                if (self.GetState('NonSoDEnable'))     : t.FlyMode = t.NonSoDMode
-                if (self.GetState('SprintSoD'))        : t.FlyMode = t.SprintMode
-                if (self.GetState('SpeedPower'))       : t.FlyMode = t.SpeedMode
-                if (t.canjmp)                          : t.FlyMode = t.JumpMode
-            self.makeFlyModeKey(profile,t,"a",curfile,turnoff,fix)
-
-            t.ini = ''
-            if (modestr != "GFly")        : self.makeGFlyModeKey (profile,t,"gbo",curfile,turnoff,fix)
-            if (modestr != "Super Speed") : self.makeSpeedModeKey(profile,t,"s",  curfile,turnoff,fix)
-            if (modestr != "Jump")        : self.makeJumpModeKey (profile,t,"j",  curfile,turnoff,path,gamepath)
-
-            self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
-
-            self.sodFollowKey(t,blf,curfile,mobile,stationary)
 
         curfile = profile.GetBindFile(f"{path}{t.KeyState()}.txt")
 
         self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile,True))
 
-        self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-        self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','','')
-        self.sodForwardKey(t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-        self.sodBackKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-        self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
-        self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','','',sssj)
+        self.sodUpKey     (t,bl,curfile,mobile,stationary,flight,'','',sssj)
+        self.sodDownKey   (t,bl,curfile,mobile,stationary,flight,'','')
+        self.sodForwardKey(t,bl,curfile,mobile,stationary,flight,'','',sssj)
+        self.sodBackKey   (t,bl,curfile,mobile,stationary,flight,'','',sssj)
+        self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','',sssj)
+        self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','',sssj)
 
-        if ((flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
-            #  Base to set down
-            if (modestr != "NonSoD") : self.makeNonSoDModeKey(profile,t,"r",curfile,[ mobile,stationary ],self.sodSetDownFix)
-            if (modestr != "Sprint") : self.makeSprintModeKey(profile,t,"r",curfile,turnoff,self.sodSetDownFix)
-
-            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,self.sodSetDownFix)
-            if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
-            if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path,gamepath)
+        if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ])
+        if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
+        if (flight == "Jump"):
+            if (modestr != "Fly")     : self.makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,'',True)
         else:
-            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ])
-            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff,fix)
-            if (flight == "Jump"):
-                if (modestr != "Fly")     : self.makeFlyModeKey   (profile,t,"a", curfile,turnoff,fix,'',True)
-            else:
-                if (modestr != "Fly")     : self.makeFlyModeKey   (profile,t,"bo",curfile,turnoff,fix)
+            if (modestr != "Fly")     : self.makeFlyModeKey   (profile,t,"ff",curfile,turnoff,fix)
 
-            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
-            if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path,gamepath)
+        if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff,fix)
+        if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path,gamepath)
 
         self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
         self.sodFollowKey(t,blf,curfile,mobile,stationary)
@@ -832,24 +807,18 @@ class MovementPowers(Page):
 
         self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile,True))
 
-        self.sodUpKey     (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
-        self.sodDownKey   (t,bla,curfile,mobile,stationary,flight,1, '','')
-        self.sodForwardKey(t,bla,curfile,mobile,stationary,flight,bl,'','',sssj)
-        self.sodBackKey   (t,bla,curfile,mobile,stationary,flight,bl,'','',sssj)
-        self.sodLeftKey   (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
-        self.sodRightKey  (t,bla,curfile,mobile,stationary,flight,1, '','',sssj)
+        self.sodUpKey     (t,bla,curfile,mobile,stationary,flight,1, '',sssj)
+        self.sodDownKey   (t,bla,curfile,mobile,stationary,flight,1, '')
+        self.sodForwardKey(t,bla,curfile,mobile,stationary,flight,bl,'',sssj)
+        self.sodBackKey   (t,bla,curfile,mobile,stationary,flight,bl,'',sssj)
+        self.sodLeftKey   (t,bla,curfile,mobile,stationary,flight,1, '',sssj)
+        self.sodRightKey  (t,bla,curfile,mobile,stationary,flight,1, '',sssj)
 
-        if ((flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
-            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"ar",curfile,[ mobile,stationary ],self.sodSetDownFix)
-            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,self.sodSetDownFix)
-            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,self.sodSetDownFix)
-        else:
-            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"ar",curfile,[ mobile,stationary ])
-            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,fix)
-            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
-
-        if (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"af",curfile,turnoff,fix)
-        if (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"aj",curfile,turnoff,patha,gamepatha)
+        if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"ar",curfile,[ mobile,stationary ])
+        if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"gr",curfile,turnoff,fix)
+        if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff,fix)
+        if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"af",curfile,turnoff,fix)
+        if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"aj",curfile,turnoff,patha,gamepatha)
 
         self.sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight)
 
@@ -860,24 +829,18 @@ class MovementPowers(Page):
 
         self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile,True))
 
-        self.sodUpKey     (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        self.sodDownKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'')
-        self.sodForwardKey(t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        self.sodBackKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        self.sodLeftKey   (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
-        self.sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,'',sssj)
+        self.sodUpKey     (t,blf,curfile,mobile,stationary,flight,'',bl,sssj)
+        self.sodDownKey   (t,blf,curfile,mobile,stationary,flight,'',bl)
+        self.sodForwardKey(t,blf,curfile,mobile,stationary,flight,'',bl,sssj)
+        self.sodBackKey   (t,blf,curfile,mobile,stationary,flight,'',bl,sssj)
+        self.sodLeftKey   (t,blf,curfile,mobile,stationary,flight,'',bl,sssj)
+        self.sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,sssj)
 
-        if ((flight == "Fly" or flight == "Mystic Flight" or flight == "Energy Flight") and pathbo):
-            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ],self.sodSetDownFix)
-            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,self.sodSetDownFix)
-            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,self.sodSetDownFix)
-        else:
-            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ])
-            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,fix)
-            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
-
-        if (modestr != "Fly")       : self.makeFlyModeKey (profile,t,"ff",curfile,turnoff,fix)
-        if (modestr != "Jump")      : self.makeJumpModeKey(profile,t,"fj",curfile,turnoff, pathf, gamepathf)
+        if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ])
+        if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"fr",curfile,turnoff,fix)
+        if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff,fix)
+        if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"ff",curfile,turnoff,fix)
+        if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"fj",curfile,turnoff, pathf, gamepathf)
 
         curfile.SetBind(self.Ctrls['AutoRun'].MakeFileKeyBind('nop'))
 
@@ -1027,14 +990,7 @@ class MovementPowers(Page):
         else:                                      feedback = ''
 
         if (t.canhov or t.canfly):
-            if (bl == "bo"):
-                bindload = t.blbo + t.KeyState() + ".txt"
-                if (fix):
-                    fix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
-                else:
-                    cur.SetBind(key, name, self, '+down$$' + self.actPower_toggle(t.flyx,toff,start=True) + '$$up 1$$down 0' + t.dirs('FBLR') + t.detaillo + t.flycamdist + feedback + bindload)
-
-            elif (bl == "a"):
+            if (bl == "a"):
                 if (not fb_on_a): feedback = ''
                 bindload = t.bla + t.KeyState() + ".txt"
 
@@ -1114,8 +1070,8 @@ class MovementPowers(Page):
             t.flycamdist = f"$$camdist {self.GetState('CamdistMove')}"
 
         if (self.GetState('ChangeDetail')):
-            t.detailhi = f"$$visscale {self.GetState('DetailBase')}$$shadowvol 0$$ss 0"
-            t.detaillo = f"$$visscale {self.GetState('DetailMove')}$$shadowvol 0$$ss 0"
+            t.detailhi = f"$$visscale {self.GetState('DetailBase')}"
+            t.detaillo = f"$$visscale {self.GetState('DetailMove')}"
 
         ## Combat Jumping / Super Jump
         if (self.GetState('HasCJ') and not self.GetState('JumpPower')):
@@ -1449,11 +1405,6 @@ class MovementPowers(Page):
         #        wx.MessageBox("Enabling NonSoD mode, since it is set as your default mode.", "Mode Changed", wx.OK|wx.ICON_WARNING)
         #    self.SetState('NonSoDEnable', 1)
 
-        #elif (self.DefaultMode() == "Sprint" and not self.GetState('SprintSoD')):
-        #    wx.MessageBox("Enabling NonSoD mode and making it the default, since Sprint SoD, your previous Default mode, is not enabled.", "Mode Changed", wx.OK|wx.ICON_WARNING)
-        #    self.SetState('NonSoDEnable', 1)
-        #    self.SetState('DefaultMode', "NonSoD")
-
         #elif (self.DefaultMode() == "Fly" and not (self.GetState('HasHover') or self.GetState('FlyPower'))):
         #    wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Fly mode but your character has neither Hover nor a Fly power.", "Mode Changed", wx.OK|wx.ICON_WARNING)
         #    self.SetState('NonSoDEnable', 1)
@@ -1544,14 +1495,6 @@ class MovementPowers(Page):
         t.gamepathfn = t.gamebasepath / 'FN' / 'FN'
         t.blfn       = f"$${BLF()} {t.gamepathfn}"
 
-        t.pathbo     = t.basepath     / 'BO' / 'BO'  # Blastoff Fly
-        t.gamepathbo = t.gamebasepath / 'BO' / 'BO'
-        t.blbo       = f"$${BLF()} {t.gamepathbo}"
-
-        t.pathgbo     = t.basepath     / 'GBO' / 'GBO'  # Blastoff Group Fly
-        t.gamepathgbo = t.gamebasepath / 'GBO' / 'GBO'
-        t.blgbo       = f"$${BLF()} {t.gamepathgbo}"
-
         #  if a given mode is not our default, get the key we use to enter that mode.
         #  this will (hopefully) only be used if/when we actually have that mode available.
         if (self.DefaultMode() != "NonSoD") : t.NonSoDMode = self.GetState('NonSoDMode')
@@ -1595,26 +1538,28 @@ class MovementPowers(Page):
                                 t.horizkeys = W+S+A+D # total # of horizontal move keys. So Sprint isn't turned on when jumping
                                 t.vertkeys  = space+X
                                 t.jkeys     = t.horizkeys+t.space
-                                if (self.GetState('NonSoDEnable') or t.canqfly or t.mouselookon):
-                                    setattr(t, self.DefaultMode() + "Mode", t.NonSoDMode)
-                                    self.makeSoDFile({
-                                        't'          : t,
-                                        'bl'         : t.bln,
-                                        'bla'        : t.blan,
-                                        'blf'        : t.blfn,
-                                        'path'       : t.pathn,
-                                        'gamepath'   : t.gamepathn,
-                                        'patha'      : t.pathan,
-                                        'gamepatha'  : t.gamepathan,
-                                        'pathf'      : t.pathfn,
-                                        'gamepathf'  : t.gamepathfn,
-                                        'mobile'     : None,
-                                        'stationary' : None,
-                                        'modestr'    : "NonSoD",
-                                    })
-                                    setattr(t, self.DefaultMode() + "Mode", None)
 
-                                if (self.GetState('EnableSoD') and self.GetState('SprintSoD')):
+                                ### NonSoDMode
+                                setattr(t, self.DefaultMode() + "Mode", t.NonSoDMode)
+                                self.makeSoDFile({
+                                    't'          : t,
+                                    'bl'         : t.bln,
+                                    'bla'        : t.blan,
+                                    'blf'        : t.blfn,
+                                    'path'       : t.pathn,
+                                    'gamepath'   : t.gamepathn,
+                                    'patha'      : t.pathan,
+                                    'gamepatha'  : t.gamepathan,
+                                    'pathf'      : t.pathfn,
+                                    'gamepathf'  : t.gamepathfn,
+                                    'mobile'     : None,
+                                    'stationary' : None,
+                                    'modestr'    : "NonSoD",
+                                })
+                                setattr(t, self.DefaultMode() + "Mode", None)
+
+                                ### Default (Sprint) Mode
+                                if self.GetState('EnableSoD'):
                                     setattr(t, self.DefaultMode() + "Mode", t.SprintMode)
                                     self.makeSoDFile({
                                         't'          : t,
@@ -1633,11 +1578,11 @@ class MovementPowers(Page):
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
+                                ### Speed Mode
                                 if (self.GetState('EnableSoD') and self.GetState('SpeedPower')):
-                                    sssj = None
                                     setattr(t, self.DefaultMode() + "Mode", t.SpeedMode)
-                                    if (self.GetState('SSSJModeEnable')): sssj = t.jump
-                                    st = None if self.GetState('SSMobileOnly') else t.speed
+                                    sssj = t.jump if (self.GetState('SSSJModeEnable')) else None
+                                    st   = None   if  self.GetState('SSMobileOnly')    else t.speed
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : t.bls,
@@ -1656,10 +1601,10 @@ class MovementPowers(Page):
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
+                                ### Jump Mode
                                 if (self.GetState('EnableSoD') and t.canjmp and not (self.GetState('SimpleSJCJ'))):
                                     setattr(t, self.DefaultMode() + "Mode", t.JumpMode)
-                                    jturnoff = None
-                                    if (t.jump != t.cjmp): jturnoff = {t.jumpifnocj}
+                                    jturnoff = None if (t.jump == t.cjmp) else {t.jumpifnocj}
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : t.blj,
@@ -1680,6 +1625,7 @@ class MovementPowers(Page):
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
+                                ### Fly Mode
                                 if (self.GetState('EnableSoD') and t.canhov or t.canfly):
                                     setattr(t, self.DefaultMode() + "Mode", t.FlyMode)
                                     self.makeSoDFile({
@@ -1698,10 +1644,12 @@ class MovementPowers(Page):
                                         'modestr'    : "Fly",
                                         # TODO: added "or t.flyx" here to fix BO/* not being written if hover
                                         # is not available.  This might not be the right solution
+                                        # TODO 2:  BO is not even a thing any more, so...?
                                         'flight'     : t.fly or t.flyx,
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
+                                ### GFly Mode
                                 if (self.GetState('EnableSoD') and t.cangfly):
                                     setattr(t, self.DefaultMode() + "Mode", t.GFlyMode)
                                     self.makeSoDFile({
@@ -1717,8 +1665,6 @@ class MovementPowers(Page):
                                         'stationary' : t.gfly,
                                         'modestr'    : "GFly",
                                         'flight'     : "GFly",
-                                        'pathbo'     : t.pathgbo,
-                                        'blbo'       : t.blgbo,
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
@@ -1753,7 +1699,7 @@ class MovementPowers(Page):
             ]
         )
 
-    def sodUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun, followbl, bo, sssj):
+    def sodUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun, followbl, sssj):
 
         (upx,dow,forw,bac,lef,rig) = (t.upx,t.dow,t.forw,t.bac,t.lef,t.rig)
 
@@ -1762,10 +1708,6 @@ class MovementPowers(Page):
 
         if (not flight) and (not sssj):
             mobile = stationary = None
-
-        if (bo == "bo") :
-            upx = '$$up 1'
-            dow = '$$down 0'
 
         if     mobile == "GroupFly": mobile     = None
         if stationary == "GroupFly": stationary = None
@@ -1828,7 +1770,7 @@ class MovementPowers(Page):
             if (not sssj) : toggle = ''  #  returns the following line to the way it was before sssj
             curfile.SetBind(self.Ctrls['Up'].MakeFileKeyBind(f"{ini}{upx}{dow}$$backward 0{lef}{rig}{toggle}{t.mouselookon}{bl}"))
 
-    def sodDownKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo):
+    def sodDownKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl):
         (up,dowx,forw,bac,lef,rig) = (t.up,t.dowx,t.forw,t.bac,t.lef,t.rig)
 
         actkeys = t.totalkeys
@@ -1836,9 +1778,6 @@ class MovementPowers(Page):
 
         if (not flight):
             mobile = stationary = None
-        if (bo == 'bo'):
-            up = '$$up 1'
-            dowx = '$$down 0'
 
         if (mobile     and mobile     == 'Group Fly'): mobile = None
         if (stationary and stationary == 'Group Fly'): stationary = None
@@ -1883,12 +1822,11 @@ class MovementPowers(Page):
         else:
             curfile.SetBind(self.Ctrls['Down'].MakeFileKeyBind(f"{ini}{up}{dowx}$$backward -1{lef}{rig}{t.mouselookon}{bl}"))
 
-    def sodForwardKey(self, t, bl, curfile,  mobile, stationary, flight, autorunbl, followbl, bo, sssj):
+    def sodForwardKey(self, t, bl, curfile,  mobile, stationary, flight, autorunbl, followbl, sssj):
         (up,dow,forx,bac,lef,rig) = (t.up,t.dow,t.forx,t.bac,t.lef,t.rig)
         name = UI.Labels['Forward']
 
         mouselook = ''
-        if (bo == "bo") : up = '$$up 1'; dow = '$$down 0'
 
         if (mobile     == 'Group Fly'): mobile = None
         if (stationary == 'Group Fly'): stationary = None
@@ -1958,12 +1896,10 @@ class MovementPowers(Page):
             if (self.GetState('MouseChord')) :
                 curfile.SetBind('mousechord', name, self, f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{rig}{lef}{t.mouselookon}{t.playerturn}{bl}")
 
-    def sodBackKey(self,t,bl,curfile,mobile,stationary,flight,autorunbl,followbl,bo,sssj):
+    def sodBackKey(self,t,bl,curfile,mobile,stationary,flight,autorunbl,followbl,sssj):
         (up,dow,forw,bacx,lef,rig) = (t.up,t.dow,t.forw, t.bacx,t.lef,t.rig)
 
         mouselook = ''
-        if (bo == "bo") : up = '$$up 1';dow = '$$down 0'
-
         if (mobile     == 'Group Fly'): mobile = None
         if (stationary == 'Group Fly'): stationary = None
 
@@ -2025,12 +1961,10 @@ class MovementPowers(Page):
 
             curfile.SetBind(self.Ctrls['Back'].MakeFileKeyBind(f"{ini}{up}{dow}{move}{lef}{rig}{t.mouselookon}{bl}"))
 
-    def sodLeftKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
+    def sodLeftKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,sssj):
         (up,dow,forw,bac,lefx,rig) = (t.up,t.dow,t.forw,t.bac, t.lefx,t.rig)
 
         mouselook = ''
-        if (bo == "bo") : up = '$$up 1';dow = '$$down 0'
-
         if (mobile     == 'Group Fly') : mobile = None
         if (stationary == 'Group Fly') : stationary = None
 
@@ -2086,12 +2020,10 @@ class MovementPowers(Page):
         else:
             curfile.SetBind(self.Ctrls['Left'].MakeFileKeyBind(f"{ini}{up}{dow}{'$$backward 0'}{lefx}{rig}{t.mouselookon}{bl}"))
 
-    def sodRightKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,bo,sssj):
+    def sodRightKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,sssj):
         (up,dow,forw,bac,lef,rigx) = (t.up,t.dow,t.forw,t.bac,t.lef, t.rigx)
 
         mouselook = ''
-        if (bo == "bo") :up = '$$up 1';dow = '$$down 0'
-
         if (mobile     == 'Group Fly') : mobile = None
         if (stationary == 'Group Fly') : stationary = None
 
@@ -2345,16 +2277,6 @@ UI.Labels.update( {
     'AutoRun'        : 'Auto Run',
     'Follow'         : 'Follow Target',
 
-    'EnableSoD'      : 'Enable Speed on Demand Binds',
-    'DefaultMode'    : 'Default Speed on Demand Mode',
-    'SprintPower'    : 'Power to use for Sprint',
-    'NonSoDEnable'   : 'Enable Speed-on-Demand Toggle',
-    'NonSoDMode'     : 'Speed on Demand Toggle',
-    'SprintSoD'      : 'Enable Sprint Speed on Demand',
-    'SprintMode'     : "Sprint Mode",
-    'MouseChord'     : 'Mousechord is SoD Forward',
-    'Feedback'       : 'Self-/tell when changing SoD mode',
-
     'PlayerTurn'     : 'Turn to match camera',
     'AutoMouseLook'  : 'Mouselook when moving',
     'ChangeCamera'   : 'Change camera distance when moving',
@@ -2363,6 +2285,26 @@ UI.Labels.update( {
     'ChangeDetail'   : 'Change graphics detail level when moving',
     'DetailBase'     : 'Base Detail Level',
     'DetailMove'     : 'Travelling Detail Level',
+
+    'TempEnable'     : 'Enable Temp Travel Power Bind',
+    'TempToggle'     : 'Toggle Temp Travel Power',
+
+    'KhelFeedback'   : 'Give /tell Feedback When Changing Form',
+    'HumanTray'      : 'Human Form Power Tray',
+    'UseNova'        : 'Use Nova Form Toggle',
+    'NovaMode'       : 'Toggle Nova Form',
+    'NovaTray'       : 'Nova Form Power Tray',
+    'UseDwarf'       : 'Use Dwarf Form Toggle',
+    'DwarfMode'      : 'Toggle Dwarf Form',
+    'DwarfTray'      : 'Dwarf Form Power Tray',
+
+    'EnableSoD'      : 'Enable Speed on Demand Binds',
+    'DefaultMode'    : 'Default Speed on Demand Mode',
+    'NonSoDMode'     : 'Speed on Demand Toggle Key',
+    'SprintPower'    : 'Preferred Sprint power',
+    'SprintMode'     : "Sprint Mode Toggle Key",
+    'MouseChord'     : 'Mousechord is SoD Forward',
+    'Feedback'       : 'Self-/tell when changing SoD mode',
 
     'JumpPower'        : "Primary Jump Power",
     'HasCJ'            : 'Has Combat Jumping',
@@ -2393,25 +2335,13 @@ UI.Labels.update( {
     'TTPComboKey'    : 'Hold to Show Team Teleport Target Marker',
     'TTPTPGFly'      : 'Group Fly when Team Teleporting',
     'TPHideWindows'  : 'Hide Windows when Holding Target Marker Key',
-
-    'TempEnable'     : 'Enable Temp Travel Power Bind',
-    'TempToggle'     : 'Toggle Temp Travel Power',
-
-    'KhelFeedback'   : 'Give /tell Feedback When Changing Form',
-    'HumanTray'      : 'Human Form Power Tray',
-    'UseNova'        : 'Use Nova Form Toggle',
-    'NovaMode'       : 'Toggle Nova Form',
-    'NovaTray'       : 'Nova Form Power Tray',
-    'UseDwarf'       : 'Use Dwarf Form Toggle',
-    'DwarfMode'      : 'Toggle Dwarf Form',
-    'DwarfTray'      : 'Dwarf Form Power Tray',
 })
 
 class tObject(dict):
     def __init__(self, profile):
         from Profile import Profile
-        self.togon   = "powexectoggleon"  if profile.Server == "Homecoming" else "px_tgon"
-        self.togoff  = "powexectoggleoff" if profile.Server == "Homecoming" else "px_tgof"
+        self.togon   = "px_tgon" if profile.Server == "Rebirth" else "powexectoggleon"
+        self.togoff  = "px_tgof" if profile.Server == "Rebirth" else "powexectoggleoff"
 
         self.profile      :Profile = profile
         self.ini          :str = ''
@@ -2474,7 +2404,6 @@ class tObject(dict):
         self.blan  :str = ''
         self.blas  :str = ''
         self.blat  :str = ''
-        self.blbo  :str = ''
         self.blf   :str = ''
         self.blff  :str = ''
         self.blfn  :str = ''
@@ -2485,7 +2414,6 @@ class tObject(dict):
         self.blgr  :str = ''
         self.blga  :str = ''
         self.blgaf :str = ''
-        self.blgbo :str = ''
         self.blgff :str = ''
         self.blj   :str = ''
         self.bln   :str = ''
@@ -2499,7 +2427,6 @@ class tObject(dict):
         self.pathan  :Path = Path()
         self.pathas  :Path = Path()
         self.pathat  :Path = Path()
-        self.pathbo  :Path = Path()
         self.pathf   :Path = Path()
         self.pathff  :Path = Path()
         self.pathfn  :Path = Path()
@@ -2509,7 +2436,6 @@ class tObject(dict):
         self.pathfr  :Path = Path()
         self.pathga  :Path = Path()
         self.pathgaf :Path = Path()
-        self.pathgbo :Path = Path()
         self.pathgff :Path = Path()
         self.pathgr  :Path = Path()
         self.pathj   :Path = Path()
@@ -2524,7 +2450,6 @@ class tObject(dict):
         self.gamepathan :PureWindowsPath = PureWindowsPath()
         self.gamepathas :PureWindowsPath = PureWindowsPath()
         self.gamepathat :PureWindowsPath = PureWindowsPath()
-        self.gamepathbo :PureWindowsPath = PureWindowsPath()
         self.gamepathf  :PureWindowsPath = PureWindowsPath()
         self.gamepathff :PureWindowsPath = PureWindowsPath()
         self.gamepathfn :PureWindowsPath = PureWindowsPath()
@@ -2533,7 +2458,6 @@ class tObject(dict):
         self.gamepathft :PureWindowsPath = PureWindowsPath()
         self.gamepathfr :PureWindowsPath = PureWindowsPath()
         self.gamepathga :PureWindowsPath = PureWindowsPath()
-        self.gamepathgbo:PureWindowsPath = PureWindowsPath()
         self.gamepathgr :PureWindowsPath = PureWindowsPath()
         self.gamepathj  :PureWindowsPath = PureWindowsPath()
         self.gamepathn  :PureWindowsPath = PureWindowsPath()

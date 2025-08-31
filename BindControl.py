@@ -102,9 +102,10 @@ class Main(wx.Frame):
 
         Profile_new         = ProfMenu.Append(wx.ID_NEW, "&New Profile\tCTRL-N", "Create a new profile")
         Profile_load        = ProfMenu.Append(wx.ID_OPEN, "&Load Profile...\tCTRL-L", "Load an existing profile")
-        self.Profile_import = ProfMenu.Append(wx.ID_ANY,  "&Import Saved Build...\tCTRL-I", "Import a build file saved from Coty of Heroes")
+        self.Profile_import = ProfMenu.Append(wx.ID_ADD,  "&Import Saved Build...\tCTRL-I", "Import a build file saved from City of Heroes")
         self.Profile_save   = ProfMenu.Append(wx.ID_SAVE, "&Save Profile\tCTRL-S", "Save the current profile")
         self.Profile_saveas = ProfMenu.Append(wx.ID_SAVEAS, "Save Profile As...", "Save the current profile under a new filename")
+        self.Profile_close  = ProfMenu.Append(wx.ID_CLOSE, "Close Profile", "Close the current profile")
         ProfMenu.AppendSeparator()
         self.Profile_savedefault = ProfMenu.Append(wx.ID_ANY, "Save Profile As Default", "Save the current profile as the default for new profiles")
         ProfMenu.AppendSeparator()
@@ -141,6 +142,7 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU , self.OnProfileSave         , self.Profile_save)
         self.Bind(wx.EVT_MENU , self.OnProfileSaveAs       , self.Profile_saveas)
         self.Bind(wx.EVT_MENU , self.OnProfileSaveDefault  , self.Profile_savedefault)
+        self.Bind(wx.EVT_MENU , self.OnProfileClose        , self.Profile_close)
         self.Bind(wx.EVT_MENU , self.OnMenuPrefsDialog     , Profile_preferences)
         self.Bind(wx.EVT_MENU , self.OnMenuExitApplication , Profile_exit)
 
@@ -417,6 +419,20 @@ class Main(wx.Frame):
     def OnProfileSaveDefault(self, _):
         if not self.Profile: return
         self.Profile.SaveAsDefault()
+
+    def OnProfileClose(self, _):
+        if not self.Profile: return
+        if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
+        self.Sizer.Remove(0)
+        if self.Profile:
+            self.Profile.DestroyLater()
+            self.Profile = None
+            wx.ConfigBase.Get().Write('LastProfile', '')
+            wx.ConfigBase.Get().Flush()
+        self.StartupPanel = self.MakeStartupPanel()
+        self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
+        self.SetupProfileUI()
+        self.Layout()
 
     def OnProfDirButton(self, _ = None):
         if not self.Profile: return # should try not to get here in the first place

@@ -63,14 +63,14 @@ class MovementPowers(Page):
             'SSMobileOnly'      : False,
             'SSSJModeEnable'    : False,
             'SpeedSpecialKey'   : "",
-            'SpeedSpecialPower' : "",
+            'SpeedSpecialPower' : "", # hidden
 
             'JumpPower'        : '',
             'HasCJ'            : False,
             'JumpMode'         : "T",
             'SimpleSJCJ'       : False,
             'JumpSpecialKey'   : "",
-            'JumpSpecialPower' : "",
+            'JumpSpecialPower' : "", # hidden
 
             'FlyPower'        : '',
             'HoverPower'      : '', # hidden
@@ -85,12 +85,12 @@ class MovementPowers(Page):
             'TPPower'         : '',
             'TPBindKey'       : '',
             'TPComboKey'      : 'LSHIFT',
-            'TPExecuteKey'    : 'LSHIFT+BUTTON1',
+            'TPExecuteKey'    : 'LSHIFT+BUTTON1', # hidden rebirth magic
 
             'HasTTP'          : False,
             'TTPBindKey'      : '',
             'TTPComboKey'     : 'LCTRL',
-            'TTPExecuteKey'   : 'LCTRL+BUTTON1',
+            'TTPExecuteKey'   : 'LCTRL+BUTTON1', # hidden rebirth magic
             'TTPTPGFly'       : False,
 
             'TPHideWindows'   : True,
@@ -574,7 +574,7 @@ class MovementPowers(Page):
                 ))
             c['JumpMode'].Enable(sodenabled)
             c['HasCJ'].Enable(sodenabled and self.Profile.HasPowerPool('Leaping'))
-            c['SimpleSJCJ'].Enable(sodenabled and bool(self.GetState('JumpPower') or self.GetState('HasCJ')))
+            c['SimpleSJCJ'].Enable(sodenabled and (bool(self.GetState('JumpPower') or self.GetState('HasCJ'))))
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
             c['SSSJModeEnable'].Enable(sodenabled)
 

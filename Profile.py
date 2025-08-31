@@ -87,7 +87,7 @@ def ProfilePath():
 
 class Profile(wx.Notebook):
 
-    def __init__(self, parent, filename = None, newname = None):
+    def __init__(self, parent, filename = None, newname = None, profiledata = None):
         wx.Notebook.__init__(self, parent, style = wx.NB_TOP, name = "Profile")
 
         self.BindFiles       : dict      = {}
@@ -120,6 +120,9 @@ class Profile(wx.Notebook):
                     self.Data = data
                 else:
                     raise Exception(f"Something broke while loading profile {self.Filename}.  This is a bug.")
+
+            if profiledata:
+                self.Data['General'].update(profiledata)
 
             self.ProfileBindsDir = self.GenerateBindsDirectoryName()
             self.Data['ProfileBindsDir'] = self.ProfileBindsDir

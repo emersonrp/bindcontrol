@@ -7,6 +7,7 @@ if sys.version_info < MIN_PYTHON:
 
 import wx, re
 
+
 MIN_WX = (4, 2, 2)
 wxver = tuple(map(int, re.split(r'\.', wx.__version__))) # oogly
 if wxver < MIN_WX:
@@ -27,6 +28,7 @@ from UI.PrefsDialog import PrefsDialog
 from Help import ShowHelpWindow
 from UI.ControlGroup import cgTextCtrl, cgButton
 from Util.DefaultProfile import DefaultProfile
+import Util.BuildFiles
 
 ###################
 # Main Window Class
@@ -100,8 +102,10 @@ class Main(wx.Frame):
 
         Profile_new         = ProfMenu.Append(wx.ID_NEW, "&New Profile\tCTRL-N", "Create a new profile")
         Profile_load        = ProfMenu.Append(wx.ID_OPEN, "&Load Profile...\tCTRL-L", "Load an existing profile")
+        self.Profile_import = ProfMenu.Append(wx.ID_ADD,  "&Import Saved Build...\tCTRL-I", "Import a build file saved from City of Heroes")
         self.Profile_save   = ProfMenu.Append(wx.ID_SAVE, "&Save Profile\tCTRL-S", "Save the current profile")
         self.Profile_saveas = ProfMenu.Append(wx.ID_SAVEAS, "Save Profile As...", "Save the current profile under a new filename")
+        self.Profile_close  = ProfMenu.Append(wx.ID_CLOSE, "Close Profile", "Close the current profile")
         ProfMenu.AppendSeparator()
         self.Profile_savedefault = ProfMenu.Append(wx.ID_ANY, "Save Profile As Default", "Save the current profile as the default for new profiles")
         ProfMenu.AppendSeparator()
@@ -134,9 +138,11 @@ class Main(wx.Frame):
         # MENUBAR EVENTS
         self.Bind(wx.EVT_MENU , self.OnProfileNew          , Profile_new)
         self.Bind(wx.EVT_MENU , self.OnProfileLoad         , Profile_load)
+        self.Bind(wx.EVT_MENU , self.OnProfileImport       , self.Profile_import)
         self.Bind(wx.EVT_MENU , self.OnProfileSave         , self.Profile_save)
         self.Bind(wx.EVT_MENU , self.OnProfileSaveAs       , self.Profile_saveas)
         self.Bind(wx.EVT_MENU , self.OnProfileSaveDefault  , self.Profile_savedefault)
+        self.Bind(wx.EVT_MENU , self.OnProfileClose        , self.Profile_close)
         self.Bind(wx.EVT_MENU , self.OnMenuPrefsDialog     , Profile_preferences)
         self.Bind(wx.EVT_MENU , self.OnMenuExitApplication , Profile_exit)
 
@@ -231,18 +237,26 @@ class Main(wx.Frame):
 
         StartupSizer = wx.BoxSizer(wx.VERTICAL)
 
-        ButtonSizer = wx.GridSizer(2, 10, 10)
+        ButtonSizer = wx.GridSizer(3, 10, 10)
         newButton  = wx.Button(StartupPanel, -1, "Start New Profile")
         newButton.SetBitmap(GetIcon('UI', 'new_profile'))
         newButton.SetBitmapPosition(wx.TOP)
+        newButton.SetToolTip('Start a brand new profile from scratch')
         loadButton = wx.Button(StartupPanel, -1, "Load Existing Profile")
         loadButton.SetBitmap(GetIcon('UI', 'load_profile'))
         loadButton.SetBitmapPosition(wx.TOP)
+        loadButton.SetToolTip('Load an existing BindControl Profile file')
+        importButton = wx.Button(StartupPanel, -1, "Import Build File")
+        importButton.SetBitmap(GetIcon('UI', 'import_build'))
+        importButton.SetBitmapPosition(wx.TOP)
+        importButton.SetToolTip('Import a build file exported from City of Heroes')
         ButtonSizer.Add(newButton, 1, wx.EXPAND)
         ButtonSizer.Add(loadButton, 1, wx.EXPAND)
+        ButtonSizer.Add(importButton, 1, wx.EXPAND)
 
         newButton.Bind(wx.EVT_BUTTON, self.OnProfileNew)
         loadButton.Bind(wx.EVT_BUTTON, self.OnProfileLoad)
+        importButton.Bind(wx.EVT_BUTTON, self.OnProfileImport)
 
         StartupSizer.AddStretchSpacer(1)
         StartupSizer.Add(ButtonSizer, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, 50)
@@ -362,6 +376,38 @@ class Main(wx.Frame):
         wx.ConfigBase.Get().Write('LastProfile', str(newProfile.Filename))
         wx.ConfigBase.Get().Flush()
 
+    def OnProfileImport(self, _):
+        if self.Profile:
+            if wx.MessageBox("This will create a new profile based on the build file you select.  Continue?", "Import Build File", wx.YES_NO) == wx.NO:
+                return
+
+        if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
+
+        pathname = ''
+        config = wx.FileConfig('bindcontrol')
+        with wx.FileDialog(self, "Import build file",
+                wildcard   = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
+                defaultDir = config.Read('GamePath'),
+                style      = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                wx.LogMessage("User canceled importing build file")
+                return # the user changed their mind
+
+            pathname = fileDialog.GetPath()
+
+        if pathname:
+            buildfile = Path(pathname)
+
+            if profiledata := Util.BuildFiles.ParseBuildFile(buildfile):
+                if newprofile := Profile.Profile(self, newname = profiledata['Name'], profiledata = profiledata):
+                    newprofile.buildFromData()
+                    self.InsertProfile(newprofile)
+                    newprofile.SetModified()
+            else:
+                wx.LogError('Build file was empty or contained errors')
+
+
     def OnProfileSave(self, _):
         if not self.Profile: return
         self.Profile.doSaveToFile()
@@ -373,6 +419,20 @@ class Main(wx.Frame):
     def OnProfileSaveDefault(self, _):
         if not self.Profile: return
         self.Profile.SaveAsDefault()
+
+    def OnProfileClose(self, _):
+        if not self.Profile: return
+        if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
+        self.Sizer.Remove(0)
+        if self.Profile:
+            self.Profile.DestroyLater()
+            self.Profile = None
+            wx.ConfigBase.Get().Write('LastProfile', '')
+            wx.ConfigBase.Get().Flush()
+        self.StartupPanel = self.MakeStartupPanel()
+        self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
+        self.SetupProfileUI()
+        self.Layout()
 
     def OnProfDirButton(self, _ = None):
         if not self.Profile: return # should try not to get here in the first place

@@ -322,7 +322,7 @@ class MovementPowers(Page):
         self.tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
         self.tempSizer.AddControl( ctlName = 'TempEnable', ctlType = 'checkbox',
                                   tooltip = "Enable the Temp Travel Power toggle keybind")
-        self.Ctrls['TempEnable'].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        self.Ctrls['TempEnable'].Bind(wx.EVT_CHECKBOX, self.OnTempChanged)
         self.tempSizer.AddControl( ctlName = 'TempToggle', ctlType = 'keybutton',
                                   tooltip = "Select the key to use to toggle the chosen temp travel power")
         self.Ctrls['TempToggle'].Bind(EVT_KEY_CHANGED, self.OnTempChanged)
@@ -691,6 +691,7 @@ class MovementPowers(Page):
         self.TempTravelPowerPicker.SetLabel(label)
         self.TempTravelPowerPicker.SetBitmap(bitmap)
         setattr(self.TempTravelPowerPicker, 'IconFilename', getattr(menuitem, 'IconFilename'))
+        evt.Skip()
 
     def BuildTempTravelPowerMenu(self):
         menu = wx.Menu()
@@ -724,8 +725,6 @@ class MovementPowers(Page):
             self.OnJumpChanged()
 
             self.OnTeleportChanged()
-
-            self.OnTempChanged()
 
         except Exception as e:
             print(f"Something blowed up in SoD SynchronizeUI:  {e}")

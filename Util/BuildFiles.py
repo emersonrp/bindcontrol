@@ -3,7 +3,7 @@ from pathlib import Path
 import GameData
 
 def ParseBuildFile(file:Path):
-    GameData.SetupGameData('Homecoming') # TODO hmm but build files are only Homecoming?
+    GameData.SetupGameData('Homecoming') # The whole notion of build_save is Homecoming-specific
     if buildtext := file.read_text():
         lines = buildtext.splitlines()
 
@@ -47,11 +47,6 @@ def ParseBuildFile(file:Path):
                 powerset = PowerSetMap.get(powerset, powerset)
                 data[powersettype] = powerset
 
-                # TODO TODO TODO - some Epic powersets, at least, have diffeent names
-                # than are in the picker.  Grarr, for instance, has Body_Mastery_Stalker
-                # but there is no "Body Mastery" in the Stalker Epic / Patron power pool.
-                # Ugh.
-
             else:
                 continue
 
@@ -66,7 +61,6 @@ PSTypeMap = {
     'Pool'      : 'Pool',
     'Redirects' : None,
 
-# TODO - get these for all archetypes
     'Arachnos_Soldiers'      : 'Primary',
     'Training_Gadgets'       : 'Secondary',
     'Widow_Training'         : 'Primary',

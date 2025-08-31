@@ -7,7 +7,7 @@ from typing import Dict, Any
 from BLF import BLF
 from Page import Page
 from Icon import GetIcon
-from UI.ControlGroup import ControlGroup, bcKeyButton, cgCheckBox, cgSpinCtrl, cgSpinCtrlDouble
+from UI.ControlGroup import ControlGroup, bcKeyButton
 from UI.KeySelectDialog import EVT_KEY_CHANGED
 from UI.PowerPicker import PowerPicker
 
@@ -274,75 +274,26 @@ class MovementPowers(Page):
         self.leftColumn.Add(movementSizer, 0, wx.EXPAND)
 
         ### DETAIL SETTINGS
-        detailBox = wx.StaticBoxSizer(wx.VERTICAL, self, label = 'Detail and Camera Settings')
-        dbox = detailBox.GetStaticBox()
-        c = self.Ctrls
-        detailSizer = wx.GridBagSizer(3,3)
-        c['PlayerTurn'] = cgCheckBox(dbox)
-        c['PlayerTurn'].SetValue(self.Init['PlayerTurn'])
-        c['PlayerTurn'].CtlLabel = wx.StaticText(dbox, label = UI.Labels['PlayerTurn'])
-        setattr(c['PlayerTurn'].CtlLabel, 'control', c['PlayerTurn'])
-        c['PlayerTurn'].SetToolTip('Turn player to match camera when moving forward')
-        detailSizer.Add(c['PlayerTurn'].CtlLabel, (0,0), (1,3), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
-        detailSizer.Add(c['PlayerTurn'],          (0,3), (1,1), wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 6)
-
-        c['AutoMouseLook'] = cgCheckBox(dbox)
-        c['AutoMouseLook'].SetValue(self.Init['AutoMouseLook'])
-        c['AutoMouseLook'].CtlLabel = wx.StaticText(dbox, label = UI.Labels['AutoMouseLook'])
-        setattr(c['AutoMouseLook'].CtlLabel, 'control', c['AutoMouseLook'])
-        c['AutoMouseLook'].SetToolTip('Automatically engage mouselook while movement keys are pressed')
-        detailSizer.Add(c['AutoMouseLook'].CtlLabel, (1,0), (1,3), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
-        detailSizer.Add(c['AutoMouseLook'],          (1,3), (1,1), wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 6)
-
-        c['ChangeCamera'] = cgCheckBox(dbox)
-        c['ChangeCamera'].SetValue(self.Init['ChangeCamera'])
-        c['ChangeCamera'].CtlLabel = wx.StaticText(dbox, label = UI.Labels['ChangeCamera'])
-        setattr(c['ChangeCamera'].CtlLabel, 'control', c['ChangeCamera'])
-        c['ChangeCamera'].SetToolTip('Change the camera distance while moving')
-        detailSizer.Add(c['ChangeCamera'].CtlLabel, (2,0), (1,3), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
-        detailSizer.Add(c['ChangeCamera'],          (2,3), (1,1), wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 6)
-        c['ChangeCamera'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
-
-        c['CamdistBase'] = cgSpinCtrl(dbox)
-        c['CamdistBase'].CtlLabel = wx.StaticText(dbox, label = UI.Labels['CamdistBase'])
-        setattr(c['CamdistBase'].CtlLabel, 'control', c['CamdistBase'])
-        c['CamdistBase'].SetToolTip('Set the camera distance to use while stationary')
-        detailSizer.Add(c['CamdistBase'].CtlLabel, (3,0), (1,1), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
-        detailSizer.Add(c['CamdistBase'],          (3,1), (1,1), wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 6)
-
-        c['CamdistMove'] = cgSpinCtrl(dbox)
-        c['CamdistMove'].CtlLabel = wx.StaticText(dbox, label = UI.Labels['CamdistMove'])
-        setattr(c['CamdistMove'].CtlLabel, 'control', c['CamdistMove'])
-        c['CamdistMove'].SetToolTip('Set the camera distance to use while moving')
-        detailSizer.Add(c['CamdistMove'].CtlLabel, (3,2), (1,1), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
-        detailSizer.Add(c['CamdistMove'],          (3,3), (1,1), wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 6)
-
-        c['ChangeDetail'] = cgCheckBox(dbox)
-        c['ChangeDetail'].SetValue(self.Init['ChangeDetail'])
-        c['ChangeDetail'].CtlLabel = wx.StaticText(dbox, label = UI.Labels['ChangeDetail'])
-        setattr(c['ChangeDetail'].CtlLabel, 'control', c['ChangeDetail'])
-        c['ChangeDetail'].SetToolTip('Change the game\'s detail level while moving')
-        detailSizer.Add(c['ChangeDetail'].CtlLabel, (4,0), (1,3), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
-        detailSizer.Add(c['ChangeDetail'],          (4,3), (1,1), wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 6)
-        c['ChangeDetail'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
-
-        c['DetailBase'] = cgSpinCtrlDouble(dbox, inc = 0.05)
-        c['DetailBase'].CtlLabel = wx.StaticText(dbox, label = UI.Labels['DetailBase'])
-        setattr(c['DetailBase'].CtlLabel, 'control', c['DetailBase'])
-        c['DetailBase'].SetToolTip('Set the detail level to use while stationary')
-        detailSizer.Add(c['DetailBase'].CtlLabel, (5,0), (1,1), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
-        detailSizer.Add(c['DetailBase'],          (5,1), (1,1), wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 6)
-
-        c['DetailMove'] = cgSpinCtrlDouble(dbox, inc = 0.05)
-        c['DetailMove'].CtlLabel = wx.StaticText(dbox, label = UI.Labels['DetailMove'])
-        setattr(c['DetailMove'].CtlLabel, 'control', c['DetailMove'])
-        c['DetailMove'].SetToolTip('Set the detail level to use while moving')
-        detailSizer.Add(c['DetailMove'].CtlLabel, (5,2), (1,1), wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
-        detailSizer.Add(c['DetailMove'],          (5,3), (1,1), wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 6)
-
-        detailBox.Add(detailSizer, 1, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 10)
-
-        self.leftColumn.Add(detailBox, 0, wx.EXPAND)
+        detailSizer = ControlGroup(self, self, 'Detail and Camera Settings')
+        detailSizer.AddControl( ctlName = 'PlayerTurn', ctlType = 'checkbox',
+            tooltip = 'Turn player to match camera when moving forward',)
+        detailSizer.AddControl( ctlName = 'AutoMouseLook', ctlType = 'checkbox',
+           tooltip = 'Automatically engage mouselook while movement keys are pressed',)
+        detailSizer.AddControl( ctlName = 'ChangeCamera', ctlType = 'checkbox',
+            tooltip = "Change the camera distance while moving")
+        self.Ctrls['ChangeCamera'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
+        detailSizer.AddControl( ctlName = 'CamdistBase', ctlType = 'spinbox', contents = (1, 100),
+            tooltip = "Set the camera distance to use while stationary")
+        detailSizer.AddControl( ctlName = 'CamdistMove', ctlType = 'spinbox', contents = (1, 100),
+            tooltip = "Set the camera distance to use while moving")
+        detailSizer.AddControl( ctlName = 'ChangeDetail', ctlType = 'checkbox',
+            tooltip = "Change the game's detail level while moving")
+        self.Ctrls['ChangeDetail'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
+        detailSizer.AddControl( ctlName = 'DetailBase', ctlType = 'spinboxfractional', contents = (0, 1),
+            tooltip = "Set the detail level to use while stationary")
+        detailSizer.AddControl( ctlName = 'DetailMove', ctlType = 'spinboxfractional', contents = (0, 1),
+            tooltip = "Set the detail level to use while moving")
+        self.leftColumn.Add(detailSizer, 0, wx.EXPAND)
 
         ##### KHELDIAN TRAVEL POWERS
         self.kheldianSizer = ControlGroup(self, self, 'Kheldian Forms / Powers')
@@ -2330,15 +2281,14 @@ UI.Labels.update( {
     'AutoRun'        : 'Auto Run',
     'Follow'         : 'Follow Target',
 
-    # These all want the terminal ":" because they're handled differently
-    'PlayerTurn'     : 'Turn to match camera:',
-    'AutoMouseLook'  : 'Mouselook when moving:',
-    'ChangeCamera'   : 'Change camera distance when moving:',
-    'CamdistBase'    : 'Stationary:',
-    'CamdistMove'    : 'Moving:',
-    'ChangeDetail'   : 'Change graphics detail level when moving:',
-    'DetailBase'     : 'Stationary:',
-    'DetailMove'     : 'Moving:',
+    'PlayerTurn'     : 'Turn to match camera',
+    'AutoMouseLook'  : 'Mouselook when moving',
+    'ChangeCamera'   : 'Change camera distance when moving',
+    'CamdistBase'    : 'Base Camera Distance',
+    'CamdistMove'    : 'Travelling Camera Distance',
+    'ChangeDetail'   : 'Change graphics detail level when moving',
+    'DetailBase'     : 'Base Detail Level',
+    'DetailMove'     : 'Travelling Detail Level',
 
     'TempEnable'     : 'Enable Temp Travel Power Bind',
     'TempToggle'     : 'Toggle Temp Travel Power',

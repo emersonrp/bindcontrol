@@ -36,6 +36,11 @@ class PowerPicker(ErrorControlMixin, wx.Button):
             self.Picker.Bind(wx.EVT_MENU, self.OnMenuSelection)
             self.Picker.BuildMenu()
         self.PopupMenu(self.Picker)
+        # TODO maybe it should update itself with the results from the menu
+        # instead of the menu reaching in and fiddling with it.  Maybe.
+        #
+        # TODO 2:  now that we possibly pass in our own menu, that's not
+        # quite as simple as all that.  Still, it seems more The Right Way.
 
     def OnRightClick(self, _):
         self.SetLabel('')
@@ -54,10 +59,10 @@ class PowerPicker(ErrorControlMixin, wx.Button):
             self.IconFilename = getattr(menuitem, 'IconFilename')
 
         # TODO we don't always want this and it's causing (me) confusion so I'm commenting it out for now
-        if self.IsEnabled() and not self.HasPowerPicked():
-            self.AddError('nopower', 'No power has been selected')
-        else:
-            self.RemoveError('nopower')
+        #if self.IsEnabled() and self.HasPowerPicked():
+        #    self.AddError('nopower', 'No power has been selected')
+        #else:
+        #    self.RemoveError('nopower')
 
         wx.PostEvent(self, PowerChanged())
 

@@ -44,8 +44,8 @@ class MovementPowers(Page):
             'PlayerTurn'      : 0, # TODO this should toggle with "Keybind Profile" somehow
             'AutoMouseLook'   : 0,
 
-            'SprintPower'     : 'Sprint',
             'SprintMode'      : '',
+            'SprintPower'     : 'Sprint',
 
             'ChangeCamera'    : False,
             'CamdistBase'     : 15,
@@ -55,7 +55,6 @@ class MovementPowers(Page):
             'DetailMove'      : 50,
             'Feedback'        : False,
 
-            'NonSoDEnable'    : False,
             'NonSoDMode'      : '',
 
             'SpeedPower'        : '',
@@ -349,19 +348,16 @@ class MovementPowers(Page):
             tooltip = "Enable Speed on Demand behavior for the movement keys")
         self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl(ctlName = 'DefaultMode', ctlType = 'choice',
-            contents = ('No SoD','Sprint','Speed','Jump','Fly'),
+            contents = ('No Default SoD','Sprint','Speed','Jump','Fly'),
             tooltip = "Select the Speed on Demand mode the movement keys will use by default")
         self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.OnSpeedOnDemandChanged)
-        SoDSizer.AddControl(ctlName = 'NonSoDEnable', ctlType = 'checkbox',
-            tooltip = "Use a key to toggle whether Speed on Demand is active at all")
-        self.Ctrls['NonSoDEnable'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl(ctlName = 'NonSoDMode', ctlType = 'keybutton',
-            tooltip = "Select the key to toggle Speed on Demand")
+            tooltip = "Select the key to toggle Speed on Demand entirely")
+        SoDSizer.AddControl(ctlName = 'SprintMode', ctlType = 'keybutton',
+            tooltip = "Select the key to toggle Sprint Speed on Demand mode")
         SoDSizer.AddControl(ctlName = 'SprintPower', ctlType = 'choice',
             contents = GameData.SprintPowers,
             tooltip = "Select the power to use for Sprint Speed on Demand")
-        SoDSizer.AddControl(ctlName = 'SprintMode', ctlType = 'keybutton',
-            tooltip = "Select the key to toggle Sprint Speed on Demand mode")
         SoDSizer.AddControl(ctlName = 'MouseChord', ctlType = 'checkbox',
             tooltip = "Holding both mouse buttons will go forward using the current Speed on Demand mode")
         SoDSizer.AddControl(ctlName = 'Feedback', ctlType = 'checkbox',
@@ -492,12 +488,11 @@ class MovementPowers(Page):
 
     def OnSpeedOnDemandChanged(self, evt = None):
         c = self.Ctrls
-        for ctrl in ['DefaultMode', 'NonSoDEnable', 'SprintPower', 'SprintMode', 'MouseChord', 'Feedback', ]:
-            c[ctrl].Enable(self.GetState('EnableSoD'))
-        c['NonSoDMode'].Enable(self.GetState('EnableSoD') and self.GetState('NonSoDEnable'))
-        c['SprintMode'].Show(self.GetState('EnableSoD') and self.DefaultMode() != "Sprint")
         sodmode = self.GetState('DefaultMode')
-        c['SprintMode'] .Show(sodmode != 'Sprint')
+        c['NonSoDMode'].Show(sodmode != 'No Default SoD')
+        c['SprintMode'].Show(sodmode != 'Sprint')
+        for ctrl in ['DefaultMode', 'NonSoDMode', 'SprintPower', 'SprintMode', 'MouseChord', 'Feedback', ]:
+            c[ctrl].Enable(self.GetState('EnableSoD'))
         self.OnJumpChanged()
         self.OnSpeedChanged()
         self.OnFlightChanged()
@@ -1543,25 +1538,25 @@ class MovementPowers(Page):
                                 t.horizkeys = W+S+A+D # total # of horizontal move keys. So Sprint isn't turned on when jumping
                                 t.vertkeys  = space+X
                                 t.jkeys     = t.horizkeys+t.space
+
                                 ### NonSoDMode
-                                if (self.GetState('NonSoDEnable') or t.canqfly or t.mouselookon):
-                                    setattr(t, self.DefaultMode() + "Mode", t.NonSoDMode)
-                                    self.makeSoDFile({
-                                        't'          : t,
-                                        'bl'         : t.bln,
-                                        'bla'        : t.blan,
-                                        'blf'        : t.blfn,
-                                        'path'       : t.pathn,
-                                        'gamepath'   : t.gamepathn,
-                                        'patha'      : t.pathan,
-                                        'gamepatha'  : t.gamepathan,
-                                        'pathf'      : t.pathfn,
-                                        'gamepathf'  : t.gamepathfn,
-                                        'mobile'     : None,
-                                        'stationary' : None,
-                                        'modestr'    : "NonSoD",
-                                    })
-                                    setattr(t, self.DefaultMode() + "Mode", None)
+                                setattr(t, self.DefaultMode() + "Mode", t.NonSoDMode)
+                                self.makeSoDFile({
+                                    't'          : t,
+                                    'bl'         : t.bln,
+                                    'bla'        : t.blan,
+                                    'blf'        : t.blfn,
+                                    'path'       : t.pathn,
+                                    'gamepath'   : t.gamepathn,
+                                    'patha'      : t.pathan,
+                                    'gamepatha'  : t.gamepathan,
+                                    'pathf'      : t.pathfn,
+                                    'gamepathf'  : t.gamepathfn,
+                                    'mobile'     : None,
+                                    'stationary' : None,
+                                    'modestr'    : "NonSoD",
+                                })
+                                setattr(t, self.DefaultMode() + "Mode", None)
 
                                 ### Default (Sprint) Mode
                                 if self.GetState('EnableSoD'):
@@ -2305,7 +2300,6 @@ UI.Labels.update( {
 
     'EnableSoD'      : 'Enable Speed on Demand Binds',
     'DefaultMode'    : 'Default Speed on Demand Mode',
-    'NonSoDEnable'   : 'Use Speed on Demand Toggle Key',
     'NonSoDMode'     : 'Speed on Demand Toggle Key',
     'SprintPower'    : 'Preferred Sprint power',
     'SprintMode'     : "Sprint Mode Toggle Key",

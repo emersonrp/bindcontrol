@@ -584,6 +584,10 @@ class Profile(wx.Notebook):
             self.Data['MovementPowers'] = self.Data['SoD']
             self.SetModified()
 
+        # This option got renamed for better clarity
+        if self.Data['MovementPowers']['DefaultMode'] == 'No SoD':
+            self.Data['MovementPowers']['DefaultMode'] = 'No Default SoD'
+
         # Massage old hardcoded-three-step BufferBinds into the new way
         if self.Data and 'CustomBinds' in self.Data:
             for i, custombind in enumerate(self.Data['CustomBinds']):

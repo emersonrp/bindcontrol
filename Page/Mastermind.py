@@ -250,37 +250,48 @@ class Mastermind(Page):
             self.Ctrls[f"Pet{i+1}Bodyguard"] = petcb
             petcb.SetToolTip(f"Select whether {petdesc} acts as Bodyguard when Bodyguard Mode is activated")
 
-            box.Add(name,   1, wx.EXPAND|wx.ALL, 3)
-            box.Add(button, 1, wx.EXPAND|wx.ALL, 3)
-            box.Add(petcb,  1, wx.ALIGN_CENTER|wx.ALL, 3)
+            box.Add(name,   0, wx.EXPAND|wx.ALL, 3)
+            box.Add(button, 0, wx.EXPAND|wx.ALL, 3)
+            box.Add(petcb,  0, wx.ALIGN_CENTER|wx.ALL, 3)
 
             PetInner.Add(box, 1, wx.EXPAND|wx.ALL, 3)
             self.PetBoxes.append(box)
 
-        PetExtraCtrls = wx.BoxSizer(wx.HORIZONTAL)
+        PetExtraCtrls = wx.BoxSizer(wx.VERTICAL)
+        PetExtraTop = wx.BoxSizer(wx.HORIZONTAL)
+        PetExtraBottom = wx.BoxSizer(wx.HORIZONTAL)
+
         maxValue = 24 if self.Profile.Server == 'Homecoming' else 26
+        LevelLabel = wx.StaticText(PetNameSB, -1, 'Mastermind Level:')
         self.LevelSlider = wx.Slider(PetNameSB, minValue = 1, maxValue = maxValue, value = maxValue,
                                      style = wx.SL_VALUE_LABEL|wx.SL_AUTOTICKS)
         self.LevelSlider.Bind(wx.EVT_SLIDER, self.OnLevelChanged)
+        LevelLabel      .SetToolTip('Select the level of your Mastermind - set to max for higher levels')
         self.LevelSlider.SetToolTip('Select the level of your Mastermind - set to max for higher levels')
         self.Ctrls['MMLevel'] = self.LevelSlider
 
         RenameLabel = wx.StaticText(PetNameSB, -1, 'Rename Pets:')
+        RenameLabel          .SetToolTip('Choose the key that will rename your pets, in-game, to match the names set in BindControl')
         self.RenamePetsButton = bcKeyButton(PetNameSB, -1, init = {
                 'CtlName'  : 'RenamePets',
                 'Key'      : self.Init['RenamePets'],
+                'ToolTip'  :'Choose the key that will rename your pets, in-game, to match the names set in BindControl',
             })
         self.RenamePetsButton.SetToolTip('Choose the key that will rename your pets, in-game, to match the names set in BindControl')
         self.Ctrls['RenamePets'] = self.RenamePetsButton
 
-        PetExtraCtrls.Add(wx.StaticText(PetNameSB, -1, 'Mastermind Level:'), 0, wx.ALIGN_CENTER_VERTICAL)
-        PetExtraCtrls.Add(self.LevelSlider, 1, wx.ALIGN_CENTER_VERTICAL)
-        PetExtraCtrls.Add(RenameLabel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 10)
-        PetExtraCtrls.Add(self.RenamePetsButton, 0, wx.ALIGN_CENTER_VERTICAL)
-        PetExtraCtrls.Add(HelpButton(PetNameSB, 'PetNames.html'), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 10)
+        PetExtraTop.Add(RenameLabel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
+        PetExtraTop.Add(self.RenamePetsButton, 1, wx.ALIGN_CENTER_VERTICAL)
+
+        PetExtraBottom.Add(LevelLabel      , 0, wx.ALIGN_CENTER_VERTICAL)
+        PetExtraBottom.Add(self.LevelSlider, 1, wx.ALIGN_CENTER_VERTICAL)
+        PetExtraBottom.Add(HelpButton(PetNameSB, 'PetNames.html'), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
+
+        PetExtraCtrls.Add(PetExtraTop,    0, wx.EXPAND)
+        PetExtraCtrls.Add(PetExtraBottom, 0, wx.EXPAND)
 
         PetNames.Add(PetInner,      1, wx.EXPAND|wx.ALL, 10)
-        PetNames.Add(PetExtraCtrls, 0, wx.EXPAND|wx.ALL, 15)
+        PetNames.Add(PetExtraCtrls, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 10)
 
         petcmdenable = wx.Panel(self)
         petcmdenablesizer = wx.BoxSizer(wx.HORIZONTAL)

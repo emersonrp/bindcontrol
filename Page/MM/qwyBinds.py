@@ -19,7 +19,7 @@ class qwyBinds(wx.Panel):
 
         for row in [
             ['NUMLOCK', '-', '-', '-', '-'],
-            ['DIVIDE', 'all pet say', 'all minions say', 'all Lieutenants say', 'boss says'],
+            ['DIVIDE', 'all pet say', 'all minions say', 'all lieutenants say', 'boss says'],
             ['MULTIPLY', 'open popmenu', 'toggle custom window', '', ''],
             ['SUBTRACT', 'all follow', 'all def follow', 'all agg follow', 'all pas follow'],
             ['NUMPAD9', 'all goto', 'all def goto', 'all agg goto', 'all pas goto'],
@@ -44,11 +44,10 @@ class qwyBinds(wx.Panel):
         rect = ButtonGrid.GetItemRect(0)
         height = rect.height * (ButtonGrid.GetItemCount()+2)
         width = rect.width
-        ButtonGrid.SetMinSize((width, height))
+        ButtonGrid.SetMinSize((wx.Size(width, height)))
         ButtonGrid.SetAutoLayout(True)
 
-        qwyNumpadSizer.AddStretchSpacer(1)
-        qwyNumpadSizer.Add(ButtonGrid, 0, wx.ALIGN_CENTER)
-        qwyNumpadSizer.AddStretchSpacer(1)
+        qwyNumpadSizer.Add(ButtonGrid, 0, wx.ALIGN_CENTER|wx.ALL, 25)
 
+        self.Fit()
         self.Layout()

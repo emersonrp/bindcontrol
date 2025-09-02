@@ -397,10 +397,13 @@ class Mastermind(Page):
                 for tsel in range(0,tsize+1):
                     files.append(self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt"))
 
+        for fn in ['pad', 'min1', 'min2', 'min3', 'lt1', 'lt2', 'bos', 'mins', 'lts', '1up', '2up']:
+            files.append(self.Profile.GetBindFile('mmq', f'{fn}.txt'))
+
         return {
             'files' : files,
             # putting the old "mmbinds" dir in here for now to clean up old bindsdirs
-            'dirs'  : ['mmbinds', 'mmb', 'petsel'],
+            'dirs'  : ['mmbinds', 'mmb', 'petsel', 'mmq'],
         }
 
 # https://stackoverflow.com/questions/11245481/find-the-smallest-unique-substring-for-each-string-in-an-array

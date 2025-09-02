@@ -11,7 +11,7 @@ from UI.KeySelectDialog import bcKeyButton
 
 from Page import Page
 from Page.MM.qwyBinds import qwyBinds
-from Page.MM.SandolphanBinds import SandolphanBinds
+from Page.MM.SandolphanBinds import SandolphanBinds, GetChatString
 from UI.ControlGroup import ControlGroup, cgTextCtrl
 
 class Mastermind(Page):
@@ -149,22 +149,22 @@ class Mastermind(Page):
 
 
         # Sub-tabs for selection of MM Bind style
-        BindStyleNotebook = wx.Notebook(self, wx.ID_ANY, style = wx.BORDER_NONE)
-        BindStyleNotebook.SetPadding(wx.Size(50,0))
+        self.BindStyleNotebook = wx.Notebook(self, wx.ID_ANY, style = wx.BORDER_NONE)
+        self.BindStyleNotebook.SetPadding(wx.Size(50,0))
 
-        BasicSelectPage = self.BasicSelectPage(BindStyleNotebook)
-        SandolphanPage  = SandolphanBinds(self, BindStyleNotebook)
-        qwyNumpadPage   = qwyBinds(BindStyleNotebook)
-        #qwyMousePage    = qwyMouseBinds(BindStyleNotebook) # TODO
+        BasicSelectPage = self.BasicSelectPage(self.BindStyleNotebook)
+        SandolphanPage  = SandolphanBinds(self, self.BindStyleNotebook)
+        qwyNumpadPage   = qwyBinds(self.BindStyleNotebook)
+        #qwyMousePage    = qwyMouseBinds(self.BindStyleNotebook) # TODO
 
-        BindStyleNotebook.AddPage(BasicSelectPage, "Use Simple Selection Binds")
-        BindStyleNotebook.AddPage(SandolphanPage, "Use Sandolphan Binds")
-        BindStyleNotebook.AddPage(qwyNumpadPage, "Use qwy Numpad Controls Binds")
-        #BindStyleNotebook.AddPage(qwyMousePage, "Use qwy Mouse Controls Binds")
+        self.BindStyleNotebook.AddPage(BasicSelectPage, "Use Simple Selection Binds")
+        self.BindStyleNotebook.AddPage(SandolphanPage, "Use Sandolphan Binds")
+        self.BindStyleNotebook.AddPage(qwyNumpadPage, "Use qwy Numpad Controls Binds")
+        #self.BindStyleNotebook.AddPage(qwyMousePage, "Use qwy Mouse Controls Binds")
 
         self.MainSizer.Add(PetNames,          0, wx.EXPAND|wx.BOTTOM, 16)
         self.MainSizer.Add(wx.StaticText(self, label = "Select Mastermind binds type:"), 0, wx.EXPAND|wx.ALL, 10)
-        self.MainSizer.Add(BindStyleNotebook, 1, wx.EXPAND)
+        self.MainSizer.Add(self.BindStyleNotebook, 1, wx.EXPAND)
 
         self.SynchronizeUI()
 
@@ -189,6 +189,9 @@ class Mastermind(Page):
         BasicSizer.Add(PetSelBox, 0, wx.EXPAND|wx.ALL, 0)
 
         return BasicPage
+
+    def BindsStyle(self):
+        return ['Basic', 'Sandolphan', 'qwy Numpad', 'qwy Mouse'][self.BindStyleNotebook.GetSelection()]
 
     def SynchronizeUI(self):
         ismm = self.Profile.Archetype() == "Mastermind"
@@ -306,10 +309,10 @@ class Mastermind(Page):
         for pet in range(6):
             feedback = ''
             selfile = ''
-            if False and self.IsUsingSandolphanSomehow(): # TODO TODO TODO
+            if self.BindsStyle() == 'Sandolphan':
                 selfile = 'sel.txt'
                 if self.GetState('PetChattyDefault'):
-                    feedback = self.GetChatString('SelectAll', pet+1)
+                    feedback = GetChatString('SelectAll', pet+1)
                     selfile = 'csel.txt'
                 selfile = profile.BLF('mmb', selfile)
             ResetFile.SetBind(

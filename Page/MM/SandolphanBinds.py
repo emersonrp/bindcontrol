@@ -216,7 +216,7 @@ class SandolphanBinds(wx.Panel):
             bgsay = [method + PetBodyguardResponse]
         else:
             if (tier1bg == 3):
-                if re.match('petsay', method): method = f"petsaypow {powers['min']} "
+                if re.match('petsay', method): method = f"petsaypow {powers[0]} "
                 bgsay.append(method + PetBodyguardResponse)
             else:
                 #  use petsayname commands for those tier1s that are bodyguards.
@@ -234,7 +234,7 @@ class SandolphanBinds(wx.Panel):
                     bgsay.append(method + PetBodyguardResponse)
 
             if (tier2bg == 2):
-                if re.match('petsay', method): method = f"petsaypow {powers['lts']} "
+                if re.match('petsay', method): method = f"petsaypow {powers[1]} "
                 bgsay.append(method + PetBodyguardResponse)
             else:
                 if (self.Page.GetState('Pet4Bodyguard')) :
@@ -247,14 +247,14 @@ class SandolphanBinds(wx.Panel):
                     bgsay.append(method + PetBodyguardResponse)
 
             if (tier3bg == 1):
-                if re.match('petsay', method): method = f"petsaypow {powers['bos']} "
+                if re.match('petsay', method): method = f"petsaypow {powers[2]} "
                 bgsay.append(method + PetBodyguardResponse)
 
         if ((tier1bg + tier2bg + tier3bg) == 6):
             bgset = ['petcomall def fol']
         else:
             if (tier1bg == 3):
-                bgset.append(f"petcompow {powers['min']} def fol")
+                bgset.append(f"petcompow {powers[0]} def fol")
             else:
                 #  use petsayname commands for those tier1s that are bodyguards.
                 if (self.Page.GetState('Pet1Bodyguard')):
@@ -265,7 +265,7 @@ class SandolphanBinds(wx.Panel):
                     bgset.append(f"petcomname {self.Page.uniqueNames[2]} def fol")
 
             if (tier2bg == 2):
-                bgset.append(f"petcompow {powers['lts']} def fol")
+                bgset.append(f"petcompow {powers[1]} def fol")
             else:
                 if (self.Page.GetState('Pet4Bodyguard')):
                     bgset.append(f"petcomname {self.Page.uniqueNames[3]} def fol")
@@ -273,7 +273,7 @@ class SandolphanBinds(wx.Panel):
                     bgset.append(f"petcomname {self.Page.uniqueNames[4]} def fol")
 
             if (tier3bg == 1):
-                bgset.append(f"petcompow {powers['bos']} def fol")
+                bgset.append(f"petcompow {powers[2]} def fol")
 
         file.SetBind(self.Page.Ctrls['PetBodyguard'].MakeFileKeyBind(bgsay + bgset))
 
@@ -286,7 +286,7 @@ class SandolphanBinds(wx.Panel):
             bgset = ["petcomall def fol"]
         else :
             if (tier1bg == 3):
-                bgset.append(f"petcompow {powers['min']} def fol")
+                bgset.append(f"petcompow {powers[0]} def fol")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
                 if (self.Page.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname {self.Page.uniqueNames[0]} def fol")
@@ -294,13 +294,13 @@ class SandolphanBinds(wx.Panel):
                 if (self.Page.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname {self.Page.uniqueNames[2]} def fol")
 
             if (tier2bg == 2):
-                bgset.append(f"petcompow {powers['lts']} def fol")
+                bgset.append(f"petcompow {powers[1]} def fol")
             else :
                 if (self.Page.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname {self.Page.uniqueNames[3]} def fol")
                 if (self.Page.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname {self.Page.uniqueNames[4]} def fol")
 
             if (tier3bg == 1):
-                bgset.append(f"petcompow {powers['bos']} def fol")
+                bgset.append(f"petcompow {powers[2]} def fol")
 
         file.SetBind(self.Page.Ctrls['PetBodyguard'].MakeFileKeyBind(bgset))
 
@@ -311,11 +311,11 @@ class SandolphanBinds(wx.Panel):
         file.SetBind(self.Page.Ctrls['PetSelectAll'].MakeFileKeyBind([
             self.GetChatString('SelectAll'), profile.BLF('mmb','call.txt')]))
         file.SetBind(self.Page.Ctrls['PetSelectMinions'].MakeFileKeyBind([
-            self.GetChatString('SelectMinions', powers['min']), profile.BLF('mmb','ctier1.txt')]))
+            self.GetChatString('SelectMinions', powers[0]), profile.BLF('mmb','ctier1.txt')]))
         file.SetBind(self.Page.Ctrls['PetSelectLieutenants'].MakeFileKeyBind([
-            self.GetChatString('SelectLieutenants', powers['lts']), profile.BLF('mmb','ctier2.txt')]))
+            self.GetChatString('SelectLieutenants', powers[1]), profile.BLF('mmb','ctier2.txt')]))
         file.SetBind(self.Page.Ctrls['PetSelectBoss'].MakeFileKeyBind([
-            self.GetChatString('SelectBoss', powers['bos']), profile.BLF('mmb','ctier3.txt')]))
+            self.GetChatString('SelectBoss', powers[2]), profile.BLF('mmb','ctier3.txt')]))
 
         bgfresponse = self.Page.GetState('PetBodyguardResponse') if self.GetChatString(f"Bodyguard") else ''
         self.mmBGSelBind(file,bgfresponse,powers)
@@ -350,7 +350,7 @@ class SandolphanBinds(wx.Panel):
         profile = self.Page.Profile
         ResetFile = profile.ResetFile()
 
-        powers = GameData.MMPowerSets[ profile.General.GetState('Primary') ]
+        powers = GameData.MMPowerSets[ profile.General.GetState('Primary') ]['abbrs']
 
         if self.Page.GetState('PetChattyDefault'):
             self.mmSubBind(ResetFile, "all", None, powers)
@@ -365,9 +365,9 @@ class SandolphanBinds(wx.Panel):
         selfile = profile.GetBindFile('mmb','sel.txt')
 
         self.mmQuietSubBind(allfile , "all"   , None          , powers)
-        self.mmQuietSubBind(minfile , "tier1" , powers['min'] , powers)
-        self.mmQuietSubBind(ltsfile , "tier2" , powers['lts'] , powers)
-        self.mmQuietSubBind(bosfile , "tier3" , powers['bos'] , powers)
+        self.mmQuietSubBind(minfile , "tier1" , powers[0] , powers)
+        self.mmQuietSubBind(ltsfile , "tier2" , powers[1] , powers)
+        self.mmQuietSubBind(bosfile , "tier3" , powers[2] , powers)
         self.mmQuietSubBind(selfile , "sel"   , 'sel'         , powers)
 
         #### "Chatty" versions
@@ -378,9 +378,9 @@ class SandolphanBinds(wx.Panel):
         cselfile = profile.GetBindFile('mmb','csel.txt')
 
         self.mmSubBind(callfile , "all"   , None          , powers)
-        self.mmSubBind(cminfile , "tier1" , powers['min'] , powers)
-        self.mmSubBind(cltsfile , "tier2" , powers['lts'] , powers)
-        self.mmSubBind(cbosfile , "tier3" , powers['bos'] , powers)
+        self.mmSubBind(cminfile , "tier1" , powers[0] , powers)
+        self.mmSubBind(cltsfile , "tier2" , powers[1] , powers)
+        self.mmSubBind(cbosfile , "tier3" , powers[2] , powers)
         self.mmSubBind(cselfile , "sel"   , 'sel'         , powers)
 
         return True

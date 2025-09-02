@@ -435,6 +435,13 @@ class Mastermind(Page):
             'dirs'  : ['mmbinds', 'mmb', 'petsel'],
         }
 
+    UI.Labels.update({
+        'SelNextPet'                         : "Select Next Pet",
+        'SelPrevPet'                         : "Select Previous Pet",
+        'IncPetSize'                         : "Increase Pet Group Size",
+        'DecPetSize'                         : "Decrease Pet Group Size",
+    })
+
 # https://stackoverflow.com/questions/11245481/find-the-smallest-unique-substring-for-each-string-in-an-array
 #
 # Oho I see that I used the "brute force" method from the above URL instead

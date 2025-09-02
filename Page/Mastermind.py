@@ -249,10 +249,9 @@ class Mastermind(Page):
 
         # First, deduce which "pet name boxes" need checking, and in what order.
         OrderedPetBoxes = []
-        petPowers = GameData.MMPowerSets[self.Profile.Primary()]
+        petPowers = GameData.MMPowerSets[profile.Primary()]['abbrs']
         # now order them by powername, alphabetically, to match the in-game pet list
-        revPowers = dict(sorted(petPowers.items()))
-        for grp in revPowers:
+        for grp in sorted(petPowers):
             if grp == "min":
                 if self.PetBoxes[0].GetStaticBox().IsEnabled():
                     OrderedPetBoxes.append([0, self.PetBoxes[0]])

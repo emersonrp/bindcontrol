@@ -1,6 +1,7 @@
 import wx
 import re
 import UI
+import GameData
 from Help import HelpButton
 
 # Sandolphan / Khaiba's guide to these controls found at:
@@ -76,7 +77,6 @@ class SandolphanBinds(wx.Panel):
     def __init__(self, page, bindsnotebook):
         super().__init__(bindsnotebook)
         self.Page = page
-        self.uniqueNames = []
 
         page.Init.update({
 
@@ -222,15 +222,15 @@ class SandolphanBinds(wx.Panel):
                 #  use petsayname commands for those tier1s that are bodyguards.
                 if (self.Page.GetState('Pet1Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.uniqueNames[0]} "
+                        method = f"petsayname {self.Page.uniqueNames[0]} "
                     bgsay.append(method + PetBodyguardResponse)
                 if (self.Page.GetState('Pet2Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.uniqueNames[1]} "
+                        method = f"petsayname {self.Page.uniqueNames[1]} "
                     bgsay.append(method + PetBodyguardResponse)
                 if (self.Page.GetState('Pet3Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.uniqueNames[2]} "
+                        method = f"petsayname {self.Page.uniqueNames[2]} "
                     bgsay.append(method + PetBodyguardResponse)
 
             if (tier2bg == 2):
@@ -239,11 +239,11 @@ class SandolphanBinds(wx.Panel):
             else:
                 if (self.Page.GetState('Pet4Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.uniqueNames[3]} "
+                        method = f"petsayname {self.Page.uniqueNames[3]} "
                     bgsay.append(method + PetBodyguardResponse)
                 if (self.Page.GetState('Pet5Bodyguard')) :
                     if re.match('petsay', method):
-                        method = f"petsayname {self.uniqueNames[4]} "
+                        method = f"petsayname {self.Page.uniqueNames[4]} "
                     bgsay.append(method + PetBodyguardResponse)
 
             if (tier3bg == 1):
@@ -258,19 +258,19 @@ class SandolphanBinds(wx.Panel):
             else:
                 #  use petsayname commands for those tier1s that are bodyguards.
                 if (self.Page.GetState('Pet1Bodyguard')):
-                    bgset.append(f"petcomname {self.uniqueNames[0]} def fol")
+                    bgset.append(f"petcomname {self.Page.uniqueNames[0]} def fol")
                 if (self.Page.GetState('Pet2Bodyguard')):
-                    bgset.append(f"petcomname {self.uniqueNames[1]} def fol")
+                    bgset.append(f"petcomname {self.Page.uniqueNames[1]} def fol")
                 if (self.Page.GetState('Pet3Bodyguard')):
-                    bgset.append(f"petcomname {self.uniqueNames[2]} def fol")
+                    bgset.append(f"petcomname {self.Page.uniqueNames[2]} def fol")
 
             if (tier2bg == 2):
                 bgset.append(f"petcompow {powers['lts']} def fol")
             else:
                 if (self.Page.GetState('Pet4Bodyguard')):
-                    bgset.append(f"petcomname {self.uniqueNames[3]} def fol")
+                    bgset.append(f"petcomname {self.Page.uniqueNames[3]} def fol")
                 if (self.Page.GetState('Pet5Bodyguard')):
-                    bgset.append(f"petcomname {self.uniqueNames[4]} def fol")
+                    bgset.append(f"petcomname {self.Page.uniqueNames[4]} def fol")
 
             if (tier3bg == 1):
                 bgset.append(f"petcompow {powers['bos']} def fol")
@@ -289,15 +289,15 @@ class SandolphanBinds(wx.Panel):
                 bgset.append(f"petcompow {powers['min']} def fol")
             else :
                 #  use petsayname commands for those tier1s that are bodyguards.
-                if (self.Page.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[0]} def fol")
-                if (self.Page.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[1]} def fol")
-                if (self.Page.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[2]} def fol")
+                if (self.Page.GetState('Pet1Bodyguard')) : bgset.append(f"petcomname {self.Page.uniqueNames[0]} def fol")
+                if (self.Page.GetState('Pet2Bodyguard')) : bgset.append(f"petcomname {self.Page.uniqueNames[1]} def fol")
+                if (self.Page.GetState('Pet3Bodyguard')) : bgset.append(f"petcomname {self.Page.uniqueNames[2]} def fol")
 
             if (tier2bg == 2):
                 bgset.append(f"petcompow {powers['lts']} def fol")
             else :
-                if (self.Page.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[3]} def fol")
-                if (self.Page.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname {self.uniqueNames[4]} def fol")
+                if (self.Page.GetState('Pet4Bodyguard')) : bgset.append(f"petcomname {self.Page.uniqueNames[3]} def fol")
+                if (self.Page.GetState('Pet5Bodyguard')) : bgset.append(f"petcomname {self.Page.uniqueNames[4]} def fol")
 
             if (tier3bg == 1):
                 bgset.append(f"petcompow {powers['bos']} def fol")
@@ -350,7 +350,7 @@ class SandolphanBinds(wx.Panel):
         profile = self.Page.Profile
         ResetFile = profile.ResetFile()
 
-        powers = self.Page.MMPowerSets[ profile.General.GetState('Primary') ]['powers']
+        powers = GameData.MMPowerSets[ profile.General.GetState('Primary') ]
 
         if self.Page.GetState('PetChattyDefault'):
             self.mmSubBind(ResetFile, "all", None, powers)
@@ -427,7 +427,7 @@ class SandolphanBinds(wx.Panel):
         chatdesc = self.Page.GetState(control)
         if   target == 'all'         : petsay = "petsayall "
         elif target == 'sel'         : petsay = "petsay "
-        elif isinstance(target, int) : petsay = f"petsayname {self.uniqueNames[target-1]} "
+        elif isinstance(target, int) : petsay = f"petsayname {self.Page.uniqueNames[target-1]} "
         else                         : petsay = f"petsaypow {target} "
 
         return {

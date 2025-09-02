@@ -1,6 +1,8 @@
 import wx
 import wx.lib.agw.ultimatelistctrl as ulc
 
+import GameData
+
 class qwyBinds(wx.Panel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -26,10 +28,9 @@ class qwyBinds(wx.Panel):
         for i, name in enumerate(['Key', 'No Chord', 'ALT+', 'SHIFT+', 'CTRL+']):
             self.ButtonGrid.InsertColumn(i, name)
 
-        # set it up with the longest strings before doing SetColumnWidth
+        # set it up with the longest possible strings before doing SetColumnWidth
         for row in GridContents[1]:
             self.ButtonGrid.Append(row)
-
 
         for i in (0,1,2,3,4):
             self.ButtonGrid.SetColumnWidth(i, wx.LIST_AUTOSIZE)
@@ -59,6 +60,9 @@ class qwyBinds(wx.Panel):
             self.ButtonGrid.Append(row)
 
         if evt: evt.Skip()
+
+    def PopulateBindFiles(self):
+        ...
 
 GridContents = [
     [
@@ -116,4 +120,3 @@ GridContents = [
         ['DECIMAL', 'target pet', 'target next minion',' target next lieutenant', 'target boss'],
     ],
 ]
-

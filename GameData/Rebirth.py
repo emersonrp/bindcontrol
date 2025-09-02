@@ -1166,6 +1166,16 @@ IncarnatePowers = {
     },
 }
 
+MMPowerSets = {
+    "Beast Mastery"   : { 'min' : 'wol',  'lts' : 'lio',  'bos' : 'dir',  },
+    "Demon Summoning" : { 'min' : 'lin',  'lts' : 'mons', 'bos' : 'pri',  },
+    "Mercenaries"     : { 'min' : "sol",  'lts' : "spec", 'bos' : "com",  },
+    "Necromancy"      : { 'min' : "zom",  'lts' : "grav", 'bos' : "lich", },
+    "Ninjas"          : { 'min' : "gen",  'lts' : "joun", 'bos' : "oni",  },
+    "Robotics"        : { 'min' : "dron", 'lts' : "prot", 'bos' : "ass",  },
+    "Thugs"           : { 'min' : "thu",  'lts' : "enf",  'bos' : "bru",  },
+}
+
 PoolPowers = {
     'Concealment'     : [ 'Stealth', 'Grant Invisibility', 'Infiltration', 'Misdirection', 'Phase Shift', ],
     'Experimentation' : [ 'Experimental Injection', 'Toxic Dart', 'Speed of Sound', 'Corrosive Vial', 'Adrenal Booster', 'Jaunt', ],

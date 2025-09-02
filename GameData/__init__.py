@@ -22,6 +22,7 @@ Inspirations = {}
 DefaultBinds = {}
 Emotes = {}
 IncarnatePowers = {}
+MMPowerSets = {}
 PoolPowers = {}
 TempTravelPowers = {}
 
@@ -36,6 +37,7 @@ def SetupGameData(server):
         GameData.DefaultBinds     = GameData.Rebirth.DefaultBinds
         GameData.Emotes           = GameData.Rebirth.Emotes
         GameData.IncarnatePowers  = GameData.Rebirth.IncarnatePowers
+        GameData.MMPowerSets      = GameData.Rebirth.MMPowerSets
         GameData.PoolPowers       = GameData.Rebirth.PoolPowers
         GameData.TempTravelPowers = GameData.Rebirth.TempTravelPowers
     elif server == 'Homecoming':
@@ -46,6 +48,7 @@ def SetupGameData(server):
         GameData.DefaultBinds     = GameData.Homecoming.DefaultBinds
         GameData.Emotes           = GameData.Homecoming.Emotes
         GameData.IncarnatePowers  = GameData.Homecoming.IncarnatePowers
+        GameData.MMPowerSets      = GameData.Homecoming.MMPowerSets
         GameData.PoolPowers       = GameData.Homecoming.PoolPowers
         GameData.TempTravelPowers = GameData.Homecoming.TempTravelPowers
     else:

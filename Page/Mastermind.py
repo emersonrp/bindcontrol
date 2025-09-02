@@ -1,17 +1,18 @@
 import wx
 import re
-from Help import HelpButton
-import UI
-from UI.KeySelectDialog import bcKeyButton
 
 # Sandolphan / Khaiba's guide to these controls found at:
 # https://guidescroll.com/2011/07/city-of-heroes-mastermind-numeric-keypad-pet-controls/
 #
 # Originally: https://web.archive.org/web/20120904222729/http://boards.cityofheroes.com/showthread.php?t=117256
 
+import GameData
 from Page import Page
 from Page.MM.qwyBinds import qwyBinds
 from Page.MM.SandolphanBinds import SandolphanBinds
+from Help import HelpButton
+import UI
+from UI.KeySelectDialog import bcKeyButton
 from UI.ControlGroup import ControlGroup, cgTextCtrl
 
 class Mastermind(Page):
@@ -66,15 +67,6 @@ class Mastermind(Page):
             'DecPetSize'  : '',
         }
         # TODO is this Gamedata?
-        self.MMPowerSets = {
-            "Beast Mastery"   : { 'min' : 'wol',  'lts' : 'lio',  'bos' : 'dir',  },
-            "Demon Summoning" : { 'min' : 'lin',  'lts' : 'mons', 'bos' : 'pri',  },
-            "Mercenaries"     : { 'min' : "sol",  'lts' : "spec", 'bos' : "com",  },
-            "Necromancy"      : { 'min' : "zom",  'lts' : "grav", 'bos' : "lich", },
-            "Ninjas"          : { 'min' : "gen",  'lts' : "joun", 'bos' : "oni",  },
-            "Robotics"        : { 'min' : "dron", 'lts' : "prot", 'bos' : "ass",  },
-            "Thugs"           : { 'min' : "thu",  'lts' : "enf",  'bos' : "bru",  },
-        }
         self.TabTitle = "Mastermind / Pet Binds"
 
     def BuildPage(self):
@@ -257,7 +249,7 @@ class Mastermind(Page):
 
         # First, deduce which "pet name boxes" need checking, and in what order.
         OrderedPetBoxes = []
-        petPowers = self.MMPowerSets[self.Profile.Primary()]
+        petPowers = GameData.MMPowerSets[self.Profile.Primary()]
         # now order them by powername, alphabetically, to match the in-game pet list
         revPowers = dict(sorted(petPowers.items()))
         for grp in revPowers:

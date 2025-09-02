@@ -1167,46 +1167,46 @@ IncarnatePowers = {
 }
 
 MMPowerSets = {
-    "Beast Mastery"   :{
+    "Beast Mastery" : {
         'abbrs' : [ 'wol', 'lio', 'dir' ],
         'names' : [ 'Summon Wolves', 'Summon Lions', 'Summon Dire Wolf' ],
-        'heal' : '',
+        'heal' : 'Fortify Pack',
         'upgrade' : 'Tame Beasts',
     },
-    "Demon Summoning" :{
+    "Demon Summoning" : {
         'abbrs' : [ 'lin', 'mons', 'pri' ],
         'names' : [ 'Summon Demonlings', 'Summon Demons', 'Summon Demon Prince' ],
-        'heal' : '',
+        'heal' : 'Hell On Earth',
         'upgrade' : 'Abyssal Empowerment',
     },
-    "Mercenaries"     :{
+    "Mercenaries" : {
         'abbrs' : [ 'sol', 'spec', 'com' ],
         'names' : [ 'Soldiers', 'Spec Ops', 'Commando'],
-        'heal' : '',
+        'heal' : 'Serum',
         'upgrade' : 'Tactical Upgrade',
     },
-    "Necromancy"      :{
+    "Necromancy" : {
         'abbrs' : [ 'zom', 'grav', 'lich' ],
         'names' : [ 'Zombie Horde', 'Grave Knight', 'Lich' ],
-        'heal' : '',
+        'heal' : 'Soul Extraction',
         'upgrade' : 'Dark Empowerment',
     },
-    "Ninjas"          :{
+    "Ninjas" : {
         'abbrs' : [ 'gen', 'joun', 'oni' ],
         'names' : [ 'Call Genin', 'Call Jounin', 'Oni' ],
-        'heal' : '',
+        'heal' : 'Smoke Flash',
         'upgrade' : 'Kuji In Zen',
     },
-    "Robotics"        :{
-        'abbrs' : [ 'dron', 'prot', 'ass' ],
-        'names' : [ 'Battle Drones', 'Protector Bots', 'Assault Bot' ],
-        'heal' : '',
+    "Robotics" : {
+        'abbrs'   : [ 'dron', 'prot', 'ass' ],
+        'names'   : [ 'Battle Drones', 'Protector Bots', 'Assault Bot' ],
+        'heal'    : 'Repair',
         'upgrade' : 'Upgrade Robots',
     },
-    "Thugs"           :{
+    "Thugs" : {
         'abbrs' : [ 'thu', 'enf', 'bru' ],
         'names' : [ 'Call Thugs', 'Call Enforcer', 'Call Bruiser' ],
-        'heal' : '',
+        'heal' : 'Gang War',
         'upgrade' : 'Upgrade Equipment',
     },
 }

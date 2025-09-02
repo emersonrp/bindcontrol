@@ -67,27 +67,13 @@ class Mastermind(Page):
         }
         # TODO is this Gamedata?
         self.MMPowerSets = {
-            "Beast Mastery"   :{
-                'powers': { 'min' : 'wol',  'lts' : 'lio',  'bos' : 'dir',  },
-            },
-            "Demon Summoning" :{
-                'powers': { 'min' : 'lin',  'lts' : 'mons', 'bos' : 'pri',  },
-            },
-            "Mercenaries"     :{
-                'powers': { 'min' : "sol",  'lts' : "spec", 'bos' : "com",  },
-            },
-            "Necromancy"      :{
-                'powers': { 'min' : "zom",  'lts' : "grav", 'bos' : "lich", },
-            },
-            "Ninjas"          :{
-                'powers': { 'min' : "gen",  'lts' : "joun", 'bos' : "oni",  },
-            },
-            "Robotics"        :{
-                'powers': { 'min' : "dron", 'lts' : "prot", 'bos' : "ass",  },
-            },
-            "Thugs"           :{
-                'powers': { 'min' : "thu",  'lts' : "enf",  'bos' : "bru",  },
-            },
+            "Beast Mastery"   : { 'min' : 'wol',  'lts' : 'lio',  'bos' : 'dir',  },
+            "Demon Summoning" : { 'min' : 'lin',  'lts' : 'mons', 'bos' : 'pri',  },
+            "Mercenaries"     : { 'min' : "sol",  'lts' : "spec", 'bos' : "com",  },
+            "Necromancy"      : { 'min' : "zom",  'lts' : "grav", 'bos' : "lich", },
+            "Ninjas"          : { 'min' : "gen",  'lts' : "joun", 'bos' : "oni",  },
+            "Robotics"        : { 'min' : "dron", 'lts' : "prot", 'bos' : "ass",  },
+            "Thugs"           : { 'min' : "thu",  'lts' : "enf",  'bos' : "bru",  },
         }
         self.TabTitle = "Mastermind / Pet Binds"
 
@@ -162,18 +148,22 @@ class Mastermind(Page):
         PetNames.Add(PetExtraCtrls, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15)
 
 
-        # Sub-tabs for Sandolphan vs qwy
-        BindStyleNotebook = wx.Notebook(self, wx.ID_ANY)
+        # Sub-tabs for selection of MM Bind style
+        BindStyleNotebook = wx.Notebook(self, wx.ID_ANY, style = wx.BORDER_NONE)
+        BindStyleNotebook.SetPadding(wx.Size(50,0))
 
         BasicSelectPage = self.BasicSelectPage(BindStyleNotebook)
         SandolphanPage  = SandolphanBinds(self, BindStyleNotebook)
         qwyNumpadPage   = qwyBinds(BindStyleNotebook)
+        #qwyMousePage    = qwyMouseBinds(BindStyleNotebook) # TODO
 
         BindStyleNotebook.AddPage(BasicSelectPage, "Use Simple Selection Binds")
         BindStyleNotebook.AddPage(SandolphanPage, "Use Sandolphan Binds")
         BindStyleNotebook.AddPage(qwyNumpadPage, "Use qwy Numpad Controls Binds")
+        #BindStyleNotebook.AddPage(qwyMousePage, "Use qwy Mouse Controls Binds")
 
         self.MainSizer.Add(PetNames,          0, wx.EXPAND|wx.BOTTOM, 16)
+        self.MainSizer.Add(wx.StaticText(self, label = "Select Mastermind binds type:"), 0, wx.EXPAND|wx.ALL, 10)
         self.MainSizer.Add(BindStyleNotebook, 1, wx.EXPAND)
 
         self.SynchronizeUI()
@@ -261,7 +251,7 @@ class Mastermind(Page):
         OrderedPetBoxes = []
         petPowers = self.MMPowerSets[self.Profile.Primary()]
         # now order them by powername, alphabetically, to match the in-game pet list
-        revPowers = dict(sorted(petPowers['powers'].items(), key = lambda item: item[1]))
+        revPowers = dict(sorted(petPowers.items()))
         for grp in revPowers:
             if grp == "min":
                 if self.PetBoxes[0].GetStaticBox().IsEnabled():
@@ -310,6 +300,23 @@ class Mastermind(Page):
                 rpCommands.append(f'petselect {i}')
                 rpCommands.append(f'petrename "{petnamebox.GetValue()}"')
                 ResetFile.SetBind(self.RenamePetsButton.MakeBind(rpCommands))
+
+        ### By-name select binds.
+        # TODO - would this make more sense fully integrated into mm(Quiet)SubBind?
+        for pet in range(6):
+            feedback = ''
+            selfile = ''
+            if False and self.IsUsingSandolphanSomehow(): # TODO TODO TODO
+                selfile = 'sel.txt'
+                if self.GetState('PetChattyDefault'):
+                    feedback = self.GetChatString('SelectAll', pet+1)
+                    selfile = 'csel.txt'
+                selfile = profile.BLF('mmb', selfile)
+            ResetFile.SetBind(
+                self.Ctrls[f"Pet{pet+1}Select"].MakeFileKeyBind(
+                    [feedback, f"petselectname {self.uniqueNames[pet]}", selfile]
+                )
+            )
 
         ### Prev / next pet binds
         if (

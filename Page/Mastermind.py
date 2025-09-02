@@ -14,6 +14,13 @@ from Page.MM.SandolphanBinds import SandolphanBinds
 from UI.ControlGroup import ControlGroup, cgTextCtrl
 
 class Mastermind(Page):
+    UI.Labels.update({
+        'SelNextPet'                         : "Select Next Pet",
+        'SelPrevPet'                         : "Select Previous Pet",
+        'IncPetSize'                         : "Increase Pet Group Size",
+        'DecPetSize'                         : "Decrease Pet Group Size",
+    })
+
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -24,64 +31,12 @@ class Mastermind(Page):
 
             'RenamePets' : '',
 
-            'PetSelectAll' : 'NUMPAD0',
-            'PetSelectAllResponse' : 'Orders?',
-            'PetSelectAllResponseMethod' : 'Petsay',
-
-            'PetSelectMinions' : 'NUMPAD1',
-            'PetSelectMinionsResponse' : 'Orders?',
-            'PetSelectMinionsResponseMethod' : 'Petsay',
-
-            'PetSelectLieutenants' : 'NUMPAD2',
-            'PetSelectLieutenantsResponse' : 'Orders?',
-            'PetSelectLieutenantsResponseMethod' : 'Petsay',
-
-            'PetSelectBoss' : 'NUMPAD3',
-            'PetSelectBossResponse' : 'Orders?',
-            'PetSelectBossResponseMethod' : 'Petsay',
-
-            'PetAggressive' : 'NUMPAD4',
-            'PetAggressiveResponse' : 'Kill on Sight.',
-            'PetAggressiveResponseMethod' : 'Petsay',
-
-            'PetDefensive' : 'NUMPAD5',
-            'PetDefensiveResponse' : 'Return Fire Only.',
-            'PetDefensiveResponseMethod' : 'Petsay',
-
-            'PetPassive' : 'NUMPAD6',
-            'PetPassiveResponse' : 'At Ease.',
-            'PetPassiveResponseMethod' : 'Petsay',
-
-            'PetAttack' : 'NUMPAD7',
-            'PetAttackResponse' : 'Open Fire!',
-            'PetAttackResponseMethod' : 'Petsay',
-
-            'PetFollow' : 'NUMPAD8',
-            'PetFollowResponse' : 'Falling In.',
-            'PetFollowResponseMethod' : 'Petsay',
-
-            'PetGoto' : 'NUMPAD9',
-            'PetGotoResponse' : 'Moving to Checkpoint.',
-            'PetGotoResponseMethod' : 'Petsay',
-
-            'PetStay' : 'DIVIDE',
-            'PetStayResponse' : 'Holding this Position.',
-            'PetStayResponseMethod' : 'Petsay',
-
-            'PetBodyguard' : 'MULTIPLY',
-            'PetBodyguardResponse' : 'Bodyguarding.',
-            'PetBodyguardResponseMethod' : 'Petsay',
-
-            'PetCmdEnable': False,
-
-            'PetChatToggle' : 'ALT+M',
-            'PetChattyDefault' : True,
-            'PetSelect1' : '',
-            'PetSelect2' : '',
-            'PetSelect3' : '',
-            'PetSelect4' : '',
-            'PetSelect5' : '',
-            'PetSelect6' : '',
+            'Pet1Select' : '',
+            'Pet2Select' : '',
+            'Pet3Select' : '',
+            'Pet4Select' : '',
+            'Pet5Select' : '',
+            'Pet6Select' : '',
 
             'Pet1Name' : '',
             'Pet2Name' : '',
@@ -137,20 +92,22 @@ class Mastermind(Page):
 
         for i in range(6):
             petdesc = ['Minion 1', 'Minion 2', 'Minion 3', 'Lieutenant 1', 'Lieutenant 2', 'Boss'][i]
+            petdescshort = ['Minion 1', 'Minion 2', 'Minion 3', 'Lt 1', 'Lt 2', 'Boss'][i]
             PBSB = wx.StaticBox(PetNameSB, style = wx.ALIGN_CENTER|wx.NO_BORDER, label = petdesc)
             box = wx.StaticBoxSizer(PBSB, wx.VERTICAL)
 
             name = cgTextCtrl(PBSB, style = wx.TE_CENTRE)
             setattr(name, "CtlLabel", None)
             self.Ctrls[f'Pet{i+1}Name'] = name
+            name.SetHint(f"{petdescshort} name")
             name.Bind(wx.EVT_TEXT, self.OnNameTextChange)
 
             button = bcKeyButton(PBSB, -1, init = {
-                'CtlName'  : f'PetSelect{i+1}',
+                'CtlName'  : f'Pet{i+1}Select',
                 'ToolTip'  : f'Choose the key that will select {petdesc}',
-                'Key'      : self.Init[f'PetSelect{i+1}'],
+                'Key'      : self.Init[f'Pet{i+1}Select'],
             })
-            self.Ctrls[f'PetSelect{i+1}'] = button
+            self.Ctrls[f'Pet{i+1}Select'] = button
 
             box.Add(name,   0, wx.EXPAND|wx.ALL, 3)
             box.Add(button, 0, wx.EXPAND|wx.ALL, 3)
@@ -330,7 +287,7 @@ class Mastermind(Page):
         for i in range(6):
             for [_, box] in OrderedPetBoxes:
                 if self.PetBoxes[i] == box:
-                    if self.Ctrls[f'PetSelect{i+1}'].GetLabel():
+                    if self.Ctrls[f'Pet{i+1}Select'].GetLabel():
                         needUniqueNames = True
                         break
         if self.Ctrls['PetBodyguard'].GetLabel():
@@ -434,13 +391,6 @@ class Mastermind(Page):
             # putting the old "mmbinds" dir in here for now to clean up old bindsdirs
             'dirs'  : ['mmbinds', 'mmb', 'petsel'],
         }
-
-    UI.Labels.update({
-        'SelNextPet'                         : "Select Next Pet",
-        'SelPrevPet'                         : "Select Previous Pet",
-        'IncPetSize'                         : "Increase Pet Group Size",
-        'DecPetSize'                         : "Decrease Pet Group Size",
-    })
 
 # https://stackoverflow.com/questions/11245481/find-the-smallest-unique-substring-for-each-string-in-an-array
 #

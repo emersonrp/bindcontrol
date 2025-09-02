@@ -49,16 +49,19 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
     * Optional /say feedback with per-inspiration-type custom colors
 
 * Mastermind / Pet Binds
-    * Support for classic "Sandolphan" Mastermind binds
-        + Select pets by power level: all, minions, lieutenants, and boss
-        + Orders for aggressive / defensive / passive stances; attack, follow, go to, and stay, for all or selected pets
-        + Pets can give feedback on each order;  chattiness can be toggled via keybind
     * Features to help name pets uniquely for by-name and bodyguard binds
         * BindControl will detect and warn if names are inadequately different / unique for by-name use
         * BindControl can create a keybind to rename your pets to match BindControl's config instead of doing it manually in-game
     * By-name pet selection - <i>requires uniquely-named pets</i>
-    * "Bodyguard mode" shortcut -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress[^1] - <i>requires uniquely-named pets</i>
-    * Next-pet / previous-pet binds for quick buffing etc
+    * Support for multiple alternate Mastermind binds styles:
+        + Simple next-pet / previous-pet binds for quick buffing etc
+        + [Classic "Sandolphan" binds](https://wiki.homecomingservers.com/wiki/Mastermind_Numpad_Pet_Controls):
+            + Select pets by power level: all, minions, lieutenants, and boss
+            + Orders for aggressive / defensive / passive stances; attack, follow, go to, and stay, for all or selected pets
+            + Pets can give feedback on each order;  chattiness can be toggled via keybind
+            + "Bodyguard mode" shortcut -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress[^1] - <i>requires uniquely-named pets</i>
+        + [qwy's Numpad Controls](https://forums.homecomingservers.com/topic/20650-i26-expanded-mastermind-numpad-controls/):
+            + Simple but comprehensive scheme for controlling pets using the number pad, modifier keys, and optional popmenu and custom window
 
 * Popmenu Editor (beta)
     * Install, edit, and delete popmenus in the correct game folder

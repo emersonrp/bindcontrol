@@ -11,7 +11,7 @@ from UI.KeySelectDialog import bcKeyButton
 
 from Page import Page
 from Page.MM.qwyBinds import qwyBinds
-from Page.MM.SandolphanBinds import SandolphanBinds, GetChatString
+from Page.MM.SandolphanBinds import SandolphanBinds
 from UI.ControlGroup import ControlGroup, cgTextCtrl
 
 class Mastermind(Page):
@@ -151,19 +151,24 @@ class Mastermind(Page):
         # Sub-tabs for selection of MM Bind style
         self.BindStyleNotebook = wx.Notebook(self, wx.ID_ANY, style = wx.BORDER_NONE)
         self.BindStyleNotebook.SetPadding(wx.Size(50,0))
+        self.Ctrls['BindStyle'] = self.BindStyleNotebook
 
         BasicSelectPage = self.BasicSelectPage(self.BindStyleNotebook)
-        SandolphanPage  = SandolphanBinds(self, self.BindStyleNotebook)
-        qwyNumpadPage   = qwyBinds(self.BindStyleNotebook)
+        self.SandolphanPage  = SandolphanBinds(self, self.BindStyleNotebook)
+        self.qwyNumpadPage   = qwyBinds(self.BindStyleNotebook)
         #qwyMousePage    = qwyMouseBinds(self.BindStyleNotebook) # TODO
 
-        self.BindStyleNotebook.AddPage(BasicSelectPage, "Use Simple Selection Binds")
-        self.BindStyleNotebook.AddPage(SandolphanPage, "Use Sandolphan Binds")
-        self.BindStyleNotebook.AddPage(qwyNumpadPage, "Use qwy Numpad Controls Binds")
-        #self.BindStyleNotebook.AddPage(qwyMousePage, "Use qwy Mouse Controls Binds")
+        self.BindStyleNotebook.AddPage(BasicSelectPage, "Simple Selection Binds")
+        self.BindStyleNotebook.AddPage(self.SandolphanPage, "Sandolphan Binds")
+        self.BindStyleNotebook.AddPage(self.qwyNumpadPage, "qwy Numpad Binds")
+        #self.BindStyleNotebook.AddPage(qwyMousePage, "qwy Mouse Controls Binds")
 
-        self.MainSizer.Add(PetNames,          0, wx.EXPAND|wx.BOTTOM, 16)
-        self.MainSizer.Add(wx.StaticText(self, label = "Select Mastermind binds type:"), 0, wx.EXPAND|wx.ALL, 10)
+        bindstyleLabel = wx.BoxSizer(wx.HORIZONTAL)
+        bindstyleLabel.Add(wx.StaticText(self, label = "Select Mastermind binds type:"), 0, wx.ALIGN_CENTER|wx.RIGHT, 10)
+        bindstyleLabel.Add(HelpButton(self, 'MMBindStyle.html'), 0, wx.ALIGN_CENTER)
+
+        self.MainSizer.Add(PetNames, 0, wx.EXPAND|wx.BOTTOM, 16)
+        self.MainSizer.Add(bindstyleLabel, 0, wx.EXPAND|wx.ALL, 10)
         self.MainSizer.Add(self.BindStyleNotebook, 1, wx.EXPAND)
 
         self.SynchronizeUI()
@@ -190,7 +195,7 @@ class Mastermind(Page):
 
         return BasicPage
 
-    def BindsStyle(self):
+    def BindStyle(self):
         return ['Basic', 'Sandolphan', 'qwy Numpad', 'qwy Mouse'][self.BindStyleNotebook.GetSelection()]
 
     def SynchronizeUI(self):
@@ -309,10 +314,10 @@ class Mastermind(Page):
         for pet in range(6):
             feedback = ''
             selfile = ''
-            if self.BindsStyle() == 'Sandolphan':
+            if self.BindStyle() == 'Sandolphan':
                 selfile = 'sel.txt'
                 if self.GetState('PetChattyDefault'):
-                    feedback = GetChatString('SelectAll', pet+1)
+                    feedback = self.SandolphanPage.GetChatString('SelectAll', pet+1)
                     selfile = 'csel.txt'
                 selfile = profile.BLF('mmb', selfile)
             ResetFile.SetBind(
@@ -321,16 +326,24 @@ class Mastermind(Page):
                 )
             )
 
-        ### Prev / next pet binds
-        if (
-            self.GetState('IncPetSize') and self.GetState('DecPetSize') and
-            self.GetState('SelNextPet') and self.GetState('SelPrevPet')
-        ):
-            self.psCreateSet(6,0,ResetFile)
-            for tsize in 1,2,3,4,5,6:
-                for tsel in range(0,tsize+1):
-                    file = self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt")
-                    self.psCreateSet(tsize,tsel,file)
+        bindstyle = self.BindStyle()
+        if bindstyle == 'Basic':
+            ### Prev / next pet binds
+            if (
+                self.GetState('IncPetSize') and self.GetState('DecPetSize') and
+                self.GetState('SelNextPet') and self.GetState('SelPrevPet')
+            ):
+                self.psCreateSet(6,0,ResetFile)
+                for tsize in 1,2,3,4,5,6:
+                    for tsel in range(0,tsize+1):
+                        file = self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt")
+                        self.psCreateSet(tsize,tsel,file)
+        elif bindstyle == 'Sandolphan':
+            self.SandolphanPage.PopulateBindFiles()
+        elif bindstyle == 'qwy Numpad':
+            self.qwyNumpadPage.PopulateBindFiles()
+        #elif bindstyle == 'qwy Mouse':
+        #    self.qwyMousePage.PopulateBindFiles()
 
         return True
 

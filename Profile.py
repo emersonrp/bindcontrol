@@ -411,6 +411,9 @@ class Profile(wx.Notebook):
                     if (sel != wx.NOT_FOUND): value = control.GetString(sel)
                 elif isinstance(control, wx.StaticText):
                     continue
+                elif isinstance(control, wx.BookCtrlBase):
+                    i = control.GetSelection()
+                    value = control.GetPageText(i)
                 else:
                     value = control.GetValue()
 
@@ -509,6 +512,10 @@ class Profile(wx.Notebook):
                         control.SetValue(value if value else page.Init.get(controlname, 0))
                     elif isinstance(control, wx.StaticText):
                         control.SetLabel(value if value else '')
+                    elif isinstance(control, wx.BookCtrlBase):
+                        for i in range(control.GetPageCount()):
+                            if control.GetPageText(i) == value:
+                                control.SetSelection(i)
                     else:
                         control.SetValue(value if value else '')
 

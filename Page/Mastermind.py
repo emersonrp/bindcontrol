@@ -16,6 +16,13 @@ from UI.ControlGroup import ControlGroup, cgTextCtrl
 
 class Mastermind(Page):
     UI.Labels.update({
+        'PetSelect1'                         : "Select First Pet",
+        'PetSelect2'                         : "Select Second Pet",
+        'PetSelect3'                         : "Select Third Pet",
+        'PetSelect4'                         : "Select Fourth Pet",
+        'PetSelect5'                         : "Select Fifth Pet",
+        'PetSelect6'                         : "Select Sixth Pet",
+
         'SelNextPet'                         : "Select Next Pet",
         'SelPrevPet'                         : "Select Previous Pet",
         'IncPetSize'                         : "Increase Pet Group Size",

@@ -189,11 +189,12 @@ class SandolphanBinds(wx.Panel):
 
         staticbox = petCommandsKeys.GetStaticBox()
         BGCBSizer = wx.BoxSizer(wx.HORIZONTAL)
-        cblabels = ['Minion 1 BG', 'Minion 2 BG', 'Minion 3 BG', 'Lt 1 BG', 'Lt 2 BG', 'Boss BG']
+        petlabels = ['Minion 1', 'Minion 2', 'Minion 3', 'lieutenant 1', 'lieutenant 2', 'Boss']
+        cblabels  = ['Minion 1 BG', 'Minion 2 BG', 'Minion 3 BG', 'Lt 1 BG', 'Lt 2 BG', 'Boss BG']
         for cb in range(6):
             checkbox = wx.CheckBox(staticbox, label = cblabels[cb])
             page.Ctrls[f"Pet{cb+1}Bodyguard"] = checkbox
-            checkbox.SetToolTip(f"Select whether {cblabels[cb]} acts as Bodyguard when Bodyguard Mode is activated")
+            checkbox.SetToolTip(f"Select whether {petlabels[cb]} acts as Bodyguard when Bodyguard Mode is activated")
 
             BGCBSizer.Add(checkbox, flag = wx.ALIGN_CENTER_VERTICAL)
 
@@ -351,7 +352,6 @@ class SandolphanBinds(wx.Panel):
 
         if not profile.Archetype() == 'Mastermind': return True
 
-        ### Sandolphan binds
         if self.Page.GetState('PetCmdEnable'):
             powers = self.Page.MMPowerSets[ profile.General.GetState('Primary') ]['powers']
 
@@ -385,31 +385,6 @@ class SandolphanBinds(wx.Panel):
             self.mmSubBind(cltsfile , "tier2" , powers['lts'] , powers)
             self.mmSubBind(cbosfile , "tier3" , powers['bos'] , powers)
             self.mmSubBind(cselfile , "sel"   , 'sel'         , powers)
-
-        ### By-name select binds.
-        # TODO - would this make more sense fully integrated into mm(Quiet)SubBind?
-        for pet in [1,2,3,4,5,6]:
-            feedback = ''
-            selfile = "sel.txt"
-            if self.Page.GetState('PetChattyDefault'):
-                feedback = self.GetChatString('SelectAll', pet)
-                selfile = "csel.txt"
-            ResetFile.SetBind(
-                self.Page.Ctrls[f"PetSelect{pet}"].MakeFileKeyBind(
-                    [feedback, f"petselectname {self.uniqueNames[pet-1]}", profile.BLF('mmb', selfile)]
-                )
-            )
-
-        ### Prev / next pet binds
-        if (
-            self.Page.GetState('IncPetSize') and self.Page.GetState('DecPetSize') and
-            self.Page.GetState('SelNextPet') and self.Page.GetState('SelPrevPet')
-        ):
-            self.psCreateSet(6,0,ResetFile)
-            for tsize in 1,2,3,4,5,6:
-                for tsel in range(0,tsize+1):
-                    file = self.Page.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt")
-                    self.psCreateSet(tsize,tsel,file)
 
         return True
 

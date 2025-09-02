@@ -76,7 +76,7 @@ class ControlGroup(wx.StaticBoxSizer):
                 CtlParent, -1, Init[ctlName], size = size,
                 choices = contents or (), style = wx.CB_READONLY)
             if callback:
-                control.Bind(wx.EVT_COMBOBOX, callback )
+                control.Bind(wx.EVT_COMBOBOX, callback)
 
         elif (ctlType == 'bmcombo') or (ctlType == "bmcombobox"):
             choices = []
@@ -90,7 +90,7 @@ class ControlGroup(wx.StaticBoxSizer):
                 choices = choices, size = size,
             )
             if callback:
-                control.Bind(wx.EVT_COMBOBOX, callback )
+                control.Bind(wx.EVT_COMBOBOX, callback)
             for i, entry in enumerate(bitmaps):
                 control.SetItemBitmap(i, entry)
             index = control.FindString(Init[ctlName])
@@ -107,7 +107,7 @@ class ControlGroup(wx.StaticBoxSizer):
             control = cgChoice(CtlParent, -1, choices = contents, size = size)
             control.SetSelection(control.FindString(Init[ctlName]))
             if callback:
-                control.Bind(wx.EVT_CHOICE, callback )
+                control.Bind(wx.EVT_CHOICE, callback)
 
         elif ctlType == ('statictext'):
             control = cgStaticText(CtlParent, -1, Init.get(ctlName, ''), size = size)
@@ -117,7 +117,7 @@ class ControlGroup(wx.StaticBoxSizer):
             control.SetValue(bool(Init.get(ctlName, False)))
             padding = 6
             if callback:
-                control.Bind(wx.EVT_CHECKBOX, callback )
+                control.Bind(wx.EVT_CHECKBOX, callback)
 
         elif ctlType == ('spinbox'):
             control = cgSpinCtrl(CtlParent, -1, size = size)
@@ -137,8 +137,7 @@ class ControlGroup(wx.StaticBoxSizer):
             control = cgColourPickerCtrl( CtlParent, -1, contents, size = (30,30))
 
         else:
-            wx.LogError(f"Got a ctlType in ControlGroup that I don't know: {ctlType}.  This is a bug.")
-            raise Exception
+            raise Exception(f"Got a ctlType in ControlGroup that I don't know: {ctlType}.  This is a bug.")
 
         # stash away the page that the control belongs to
         control.Page = self.Page
@@ -147,7 +146,7 @@ class ControlGroup(wx.StaticBoxSizer):
         control.Data = data
 
         if not noLabel and CtlLabel:
-            self.InnerSizer.Add( CtlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
+            self.InnerSizer.Add(CtlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
             control.CtlLabel = CtlLabel
             setattr(CtlLabel, "control", control)
 
@@ -160,7 +159,7 @@ class ControlGroup(wx.StaticBoxSizer):
         if ctlType == ('checkbox') and control.CtlLabel:
             control.CtlLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
-        self.InnerSizer.Add( control, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, padding)
+        self.InnerSizer.Add(control, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, padding)
         self.Ctrls.append(control)
         self.Page.Ctrls[ctlName] = control
 

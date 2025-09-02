@@ -71,7 +71,7 @@ class qwyBinds(wx.Panel):
         heal = GameData.MMPowerSets[primary]['heal']
         upgr = GameData.MMPowerSets[primary]['upgrade']
 
-        # Pad.txt - central file, overriden by other via BLF
+        # pad.txt - central file, overriden by other via BLF
         PadFile = profile.GetBindFile('mmq', 'pad.txt')
         PadFile.SetBind('NUMPAD0', '', page, profile.BLF('mmq', 'pad.txt'))
         PadFile.SetBind('NUMPAD1', '', page, profile.BLF('mmq', 'min.txt'))

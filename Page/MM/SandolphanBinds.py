@@ -350,41 +350,38 @@ class SandolphanBinds(wx.Panel):
         profile = self.Page.Profile
         ResetFile = profile.ResetFile()
 
-        if not profile.Archetype() == 'Mastermind': return True
+        powers = self.Page.MMPowerSets[ profile.General.GetState('Primary') ]['powers']
 
-        if self.Page.GetState('PetCmdEnable'):
-            powers = self.Page.MMPowerSets[ profile.General.GetState('Primary') ]['powers']
+        if self.Page.GetState('PetChattyDefault'):
+            self.mmSubBind(ResetFile, "all", None, powers)
+        else:
+            self.mmQuietSubBind(ResetFile, "all", None, powers)
 
-            if self.Page.GetState('PetChattyDefault'):
-                self.mmSubBind(ResetFile, "all", None, powers)
-            else:
-                self.mmQuietSubBind(ResetFile, "all", None, powers)
+        #### "Quiet" versions
+        allfile = profile.GetBindFile('mmb','all.txt')
+        minfile = profile.GetBindFile('mmb','tier1.txt')
+        ltsfile = profile.GetBindFile('mmb','tier2.txt')
+        bosfile = profile.GetBindFile('mmb','tier3.txt')
+        selfile = profile.GetBindFile('mmb','sel.txt')
 
-            #### "Quiet" versions
-            allfile = profile.GetBindFile('mmb','all.txt')
-            minfile = profile.GetBindFile('mmb','tier1.txt')
-            ltsfile = profile.GetBindFile('mmb','tier2.txt')
-            bosfile = profile.GetBindFile('mmb','tier3.txt')
-            selfile = profile.GetBindFile('mmb','sel.txt')
+        self.mmQuietSubBind(allfile , "all"   , None          , powers)
+        self.mmQuietSubBind(minfile , "tier1" , powers['min'] , powers)
+        self.mmQuietSubBind(ltsfile , "tier2" , powers['lts'] , powers)
+        self.mmQuietSubBind(bosfile , "tier3" , powers['bos'] , powers)
+        self.mmQuietSubBind(selfile , "sel"   , 'sel'         , powers)
 
-            self.mmQuietSubBind(allfile , "all"   , None          , powers)
-            self.mmQuietSubBind(minfile , "tier1" , powers['min'] , powers)
-            self.mmQuietSubBind(ltsfile , "tier2" , powers['lts'] , powers)
-            self.mmQuietSubBind(bosfile , "tier3" , powers['bos'] , powers)
-            self.mmQuietSubBind(selfile , "sel"   , 'sel'         , powers)
+        #### "Chatty" versions
+        callfile = profile.GetBindFile('mmb','call.txt')
+        cminfile = profile.GetBindFile('mmb','ctier1.txt')
+        cltsfile = profile.GetBindFile('mmb','ctier2.txt')
+        cbosfile = profile.GetBindFile('mmb','ctier3.txt')
+        cselfile = profile.GetBindFile('mmb','csel.txt')
 
-            #### "Chatty" versions
-            callfile = profile.GetBindFile('mmb','call.txt')
-            cminfile = profile.GetBindFile('mmb','ctier1.txt')
-            cltsfile = profile.GetBindFile('mmb','ctier2.txt')
-            cbosfile = profile.GetBindFile('mmb','ctier3.txt')
-            cselfile = profile.GetBindFile('mmb','csel.txt')
-
-            self.mmSubBind(callfile , "all"   , None          , powers)
-            self.mmSubBind(cminfile , "tier1" , powers['min'] , powers)
-            self.mmSubBind(cltsfile , "tier2" , powers['lts'] , powers)
-            self.mmSubBind(cbosfile , "tier3" , powers['bos'] , powers)
-            self.mmSubBind(cselfile , "sel"   , 'sel'         , powers)
+        self.mmSubBind(callfile , "all"   , None          , powers)
+        self.mmSubBind(cminfile , "tier1" , powers['min'] , powers)
+        self.mmSubBind(cltsfile , "tier2" , powers['lts'] , powers)
+        self.mmSubBind(cbosfile , "tier3" , powers['bos'] , powers)
+        self.mmSubBind(cselfile , "sel"   , 'sel'         , powers)
 
         return True
 

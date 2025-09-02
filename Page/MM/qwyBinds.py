@@ -1,10 +1,12 @@
 import wx
 import wx.lib.agw.ultimatelistctrl as ulc
+from Help import HelpButton
 
 import GameData
 
 class qwyBinds(wx.Panel):
     def __init__(self, *args, **kwargs):
+        page = kwargs.pop('page')
         super().__init__(*args, **kwargs)
 
         qwyNumpadSizer = wx.BoxSizer(wx.VERTICAL)
@@ -16,10 +18,22 @@ class qwyBinds(wx.Panel):
         PetPickedSizer.Add(wx.StaticText(self, label = 'Pet Selection:'), flag = wx.ALIGN_CENTER)
         self.PetPicker = wx.Choice(self, choices = ['All Pets', 'Pet Group', 'Individual Pet'])
         self.PetPicker.SetSelection(0)
-        PetPickedSizer.Add(self.PetPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 6)
+        PetPickedSizer.Add(self.PetPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 10)
         self.PetPicker.Bind(wx.EVT_CHOICE, self.OnPetPicked)
 
-        centeringSizer.Add(PetPickedSizer, 0, wx.TOP|wx.BOTTOM, 10)
+        self.InstallPopmenu = wx.CheckBox(self, label = 'Install Popmenu')
+        self.InstallPopmenu.SetValue(True)
+        PetPickedSizer.Add(self.InstallPopmenu, 0, wx.LEFT|wx.ALIGN_CENTER, 10)
+        page.Ctrls['InstallPopmenu'] = self.InstallPopmenu
+
+        self.InstallWindow = wx.CheckBox(self, label = 'Install Custom Window')
+        self.InstallWindow.SetValue(True)
+        PetPickedSizer.Add(self.InstallWindow, 0, wx.LEFT|wx.ALIGN_CENTER, 10)
+        page.Ctrls['InstallWindow'] = self.InstallWindow
+
+        PetPickedSizer.Add(HelpButton(self, 'qwyBinds.html'), 0, wx.ALIGN_CENTER|wx.LEFT, 10)
+
+        centeringSizer.Add(PetPickedSizer, 0, wx.TOP|wx.BOTTOM|wx.ALIGN_CENTER, 10)
 
         self.ButtonGrid = ulc.UltimateListCtrl(self,
                     agwStyle = ulc.ULC_VRULES|ulc.ULC_HRULES|ulc.ULC_NO_HIGHLIGHT|ulc.ULC_REPORT)
@@ -45,6 +59,7 @@ class qwyBinds(wx.Panel):
         self.ButtonGrid.SetAutoLayout(True)
 
         centeringSizer.Add(self.ButtonGrid, 1)
+
 
         qwyNumpadSizer.Add(centeringSizer, 0, wx.ALIGN_CENTER)
 
@@ -199,13 +214,13 @@ GridContents = [
         ['NUMPAD2', 'select lieutenants', 'select minion 2', 'summon lieutenants', 'dismiss lieutenants'],
         ['NUMPAD1', 'select minions', 'select minion 1', 'summon minions', 'dismiss minions'],
         ['NUMPAD0', 'select all', '', 'dismiss target', 'dismiss all'],
-        ['ADD', 'roll upgrades', '', '', ''],
+        ['ADD', 'perform upgrades', '', '', ''],
         ['NUMPADENTER', 'pet heal targeted', '', '', ''],
         ['DECIMAL', 'target next pet', 'target next minion',' target next lieutenant', 'target boss'],
     ],
     [
         ['DIVIDE', 'group pets say', 'minions say', 'lieutenants say', 'boss says'],
-        ['MULTIPLY', 'open MMPad + popmenu', 'toggle MMPad + custom window', '', ''],
+        ['MULTIPLY', 'open popmenu', 'toggle custom window', '', ''],
         ['SUBTRACT', 'group follow', 'group def follow', 'group agg follow', 'group pas follow'],
         ['NUMPAD9', 'group goto', 'group def goto', 'group agg goto', 'group pas goto'],
         ['NUMPAD8', 'group attack', 'group def attack', 'group agg attack', 'group pas attack'],
@@ -217,7 +232,7 @@ GridContents = [
         ['NUMPAD2', 'select lieutenants', 'select minion 2', 'summon lieutenants', 'dismiss lieutenants'],
         ['NUMPAD1', 'select minions', 'select minion 1', 'summon minions', 'dismiss minions'],
         ['NUMPAD0', 'select all', '', 'dismiss target', 'dismiss all'],
-        ['ADD', 'roll upgrades all', '', '', ''],
+        ['ADD', 'perform upgrades all', '', '', ''],
         ['NUMPADENTER', 'pet heal targeted', '', '', ''],
         ['DECIMAL', 'target next pet in group', 'target next minion',' target next lieutenant', 'target boss'],
     ],
@@ -235,7 +250,7 @@ GridContents = [
         ['NUMPAD2', 'select lieutenants', 'select minion 2', 'summon lieutenants', 'dismiss lieutenants'],
         ['NUMPAD1', 'select minions', 'select minion 1', 'summon minions', 'dismiss minions'],
         ['NUMPAD0', 'select all', 'dismiss selected', 'dismiss target', 'dismiss all'],
-        ['ADD', 'roll upgrades all', '', '', ''],
+        ['ADD', 'perform upgrades all', '', '', ''],
         ['NUMPADENTER', 'pet heal targeted', '', '', ''],
         ['DECIMAL', 'target pet', 'target next minion',' target next lieutenant', 'target boss'],
     ],

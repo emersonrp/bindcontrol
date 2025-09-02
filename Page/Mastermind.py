@@ -1,6 +1,7 @@
 import wx
 import re
 from Help import HelpButton
+import UI
 from UI.KeySelectDialog import bcKeyButton
 
 # Sandolphan / Khaiba's guide to these controls found at:
@@ -91,26 +92,28 @@ class Mastermind(Page):
         PetInner = wx.BoxSizer(wx.HORIZONTAL)
 
         for i in range(6):
-            petdesc = ['Minion 1', 'Minion 2', 'Minion 3', 'Lieutenant 1', 'Lieutenant 2', 'Boss'][i]
-            petdescshort = ['Minion 1', 'Minion 2', 'Minion 3', 'Lt 1', 'Lt 2', 'Boss'][i]
+            petdesc      = ['Minion 1', 'Minion 2', 'Minion 3', 'Lieutenant 1', 'Lieutenant 2', 'Boss'][i]
+            petdescshort = ['Minion 1', 'Minion 2', 'Minion 3', 'Lt 1'        , 'Lt 2'        , 'Boss'][i]
+
             PBSB = wx.StaticBox(PetNameSB, style = wx.ALIGN_CENTER|wx.NO_BORDER, label = petdesc)
             box = wx.StaticBoxSizer(PBSB, wx.VERTICAL)
 
-            name = cgTextCtrl(PBSB, style = wx.TE_CENTRE)
-            setattr(name, "CtlLabel", None)
-            self.Ctrls[f'Pet{i+1}Name'] = name
-            name.SetHint(f"{petdescshort} name")
-            name.Bind(wx.EVT_TEXT, self.OnNameTextChange)
+            petname = cgTextCtrl(PBSB, style = wx.TE_CENTRE)
+            setattr(petname, "CtlLabel", None)
+            self.Ctrls[f'Pet{i+1}Name'] = petname
+            petname.SetHint(f"{petdescshort} name")
+            petname.Bind(wx.EVT_TEXT, self.OnNameTextChange)
 
+            ctlname = f"Pet{i+1}Select"
             button = bcKeyButton(PBSB, -1, init = {
-                'CtlName'  : f'Pet{i+1}Select',
+                'CtlName'  : ctlname,
                 'ToolTip'  : f'Choose the key that will select {petdesc}',
-                'Key'      : self.Init[f'Pet{i+1}Select'],
+                'Key'      : self.Init[ctlname],
             })
-            self.Ctrls[f'Pet{i+1}Select'] = button
+            self.Ctrls[ctlname] = button
 
-            box.Add(name,   0, wx.EXPAND|wx.ALL, 3)
-            box.Add(button, 0, wx.EXPAND|wx.ALL, 3)
+            box.Add(petname, 0, wx.EXPAND|wx.ALL, 3)
+            box.Add(button,  0, wx.EXPAND|wx.ALL, 3)
 
             PetInner.Add(box, 1, wx.EXPAND|wx.ALL, 3)
             self.PetBoxes.append(box)
@@ -218,40 +221,27 @@ class Mastermind(Page):
     def CheckUndefNames(self):
         for i in (1,2,3,4,5,6):
             ctrl = self.Ctrls[f'Pet{i}Name']
-            if not ctrl.IsEnabled():
-                ctrl.RemoveError('undef')
-                continue
-
-            if ctrl.GetValue():
+            if not ctrl.IsEnabled() or ctrl.GetValue():
                 ctrl.RemoveError('undef')
             else:
                 ctrl.AddError('undef', 'By-Name selection and Bodyguard Mode require the pet name be filled in.')
 
     def CheckUniqueNames(self):
-        if (self.Profile.Archetype() == "Mastermind"):
-            names = []
-            for i in (1,2,3,4,5,6):
-                ctrl = self.Ctrls[f'Pet{i}Name']
-                value = ctrl.GetValue().strip() # don't allow whitespace at the ends
-                names.append(value)
+        names = []
+        for i in (1,2,3,4,5,6):
+            ctrl = self.Ctrls[f'Pet{i}Name']
+            value = ctrl.GetValue().strip() # don't allow whitespace at the ends
+            names.append(value)
 
-            # we stash this away every time we calculate it so we can
-            # extract it trivially when we write binds
-            self.uniqueNames = FindSmallestUniqueSubstring(names)
-            for i in (1,2,3,4,5,6):
-                ctrl = self.Ctrls[f'Pet{i}Name']
-                if not ctrl.IsEnabled():
-                    ctrl.RemoveError('unique')
-                    continue
-
-                if self.uniqueNames[i-1]:
-                    ctrl.RemoveError('unique')
-                else:
-                    ctrl.AddError('unique', f'This pet name is not different enough to identify it uniquely.  This is likely to cause issues with by-name and bodyguard binds.')
-        else:
-            for i in (1,2,3,4,5,6):
-                ctrl = self.Ctrls[f'Pet{i}Name']
+        # we stash this away every time we calculate it so we can
+        # extract it trivially when we write binds
+        self.uniqueNames = FindSmallestUniqueSubstring(names)
+        for i in (1,2,3,4,5,6):
+            ctrl = self.Ctrls[f'Pet{i}Name']
+            if not ctrl.IsEnabled() or not ctrl.GetValue() or self.uniqueNames[i-1]:
                 ctrl.RemoveError('unique')
+            else:
+                ctrl.AddError('unique', 'This pet name is not different enough to identify it uniquely.  This is likely to cause issues with by-name and bodyguard binds.')
 
     def PopulateBindFiles(self):
 

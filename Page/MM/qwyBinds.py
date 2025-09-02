@@ -62,7 +62,6 @@ class qwyBinds(wx.Panel):
 
 GridContents = [
     [
-        ['NUMLOCK', '-', '-', '-', '-'],
         ['DIVIDE', 'all pets say', 'minions say', 'lieutenants say', 'boss says'],
         ['MULTIPLY', 'open popmenu', 'toggle custom window', '', ''],
         ['SUBTRACT', 'all follow', 'all def follow', 'all agg follow', 'all pas follow'],
@@ -81,7 +80,6 @@ GridContents = [
         ['DECIMAL', 'target next pet', 'target next minion',' target next lieutenant', 'target boss'],
     ],
     [
-        ['NUMLOCK', '-', '-', '-', '-'],
         ['DIVIDE', 'group pets say', 'minions say', 'lieutenants say', 'boss says'],
         ['MULTIPLY', 'open MMPad + popmenu', 'toggle MMPad + custom window', '', ''],
         ['SUBTRACT', 'group follow', 'group def follow', 'group agg follow', 'group pas follow'],
@@ -100,7 +98,6 @@ GridContents = [
         ['DECIMAL', 'target next pet in group', 'target next minion',' target next lieutenant', 'target boss'],
     ],
     [
-        ['NUMLOCK', '-', '-', '-', '-'],
         ['DIVIDE', 'pet says', 'minions say', 'lieutenants say', 'boss says'],
         ['MULTIPLY', 'open popmenu', 'toggle custom window', '', ''],
         ['SUBTRACT', 'pet follow', 'pet def follow', 'pet agg follow', 'pet pas follow'],
@@ -114,7 +111,7 @@ GridContents = [
         ['NUMPAD2', 'select lieutenants', 'select minion 2', 'summon lieutenants', 'dismiss lieutenants'],
         ['NUMPAD1', 'select minions', 'select minion 1', 'summon minions', 'dismiss minions'],
         ['NUMPAD0', 'select all', 'dismiss selected', 'dismiss target', 'dismiss all'],
-        ['ADD', 'roll upgrades', '', '', ''],
+        ['ADD', 'roll upgrades all', '', '', ''],
         ['NUMPADENTER', 'pet heal targeted', '', '', ''],
         ['DECIMAL', 'target pet', 'target next minion',' target next lieutenant', 'target boss'],
     ],

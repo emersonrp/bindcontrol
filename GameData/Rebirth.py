@@ -1167,15 +1167,49 @@ IncarnatePowers = {
 }
 
 MMPowerSets = {
-    "Beast Mastery"   : { 'min' : 'wol',  'lts' : 'lio',  'bos' : 'dir',  },
-    "Demon Summoning" : { 'min' : 'lin',  'lts' : 'mons', 'bos' : 'pri',  },
-    "Mercenaries"     : { 'min' : "sol",  'lts' : "spec", 'bos' : "com",  },
-    "Necromancy"      : { 'min' : "zom",  'lts' : "grav", 'bos' : "lich", },
-    "Ninjas"          : { 'min' : "gen",  'lts' : "joun", 'bos' : "oni",  },
-    "Robotics"        : { 'min' : "dron", 'lts' : "prot", 'bos' : "ass",  },
-    "Thugs"           : { 'min' : "thu",  'lts' : "enf",  'bos' : "bru",  },
+    "Beast Mastery"   :{
+        'abbrs' : [ 'wol', 'lio', 'dir' ],
+        'powers' : [ 'Summon Wolves', 'Summon Lions', 'Summon Dire Wolf' ],
+        'heal' : '',
+        'upgrade' : 'Tame Beasts',
+    },
+    "Demon Summoning" :{
+        'abbrs' : [ 'lin', 'mons', 'pri' ],
+        'powers' : [ 'Summon Demonlings', 'Summon Demons', 'Summon Demon Prince' ],
+        'heal' : '',
+        'upgrade' : 'Abyssal Empowerment',
+    },
+    "Mercenaries"     :{
+        'abbrs' : [ 'sol', 'spec', 'com' ],
+        'powers' : [ 'Soldiers', 'Spec Ops', 'Commando'],
+        'heal' : '',
+        'upgrade' : 'Tactical Upgrade',
+    },
+    "Necromancy"      :{
+        'abbrs' : [ 'zom', 'grav', 'lich' ],
+        'powers' : [ 'Zombie Horde', 'Grave Knight', 'Lich' ],
+        'heal' : '',
+        'upgrade' : 'Dark Empowerment',
+    },
+    "Ninjas"          :{
+        'abbrs' : [ 'gen', 'joun', 'oni' ],
+        'powers' : [ 'Call Genin', 'Call Jounin', 'Oni' ],
+        'heal' : '',
+        'upgrade' : 'Kuji In Zen',
+    },
+    "Robotics"        :{
+        'abbrs' : [ 'dron', 'prot', 'ass' ],
+        'powers' : [ 'Battle Drones', 'Protector Bots', 'Assault Bot' ],
+        'heal' : '',
+        'upgrade' : 'Upgrade Robots',
+    },
+    "Thugs"           :{
+        'abbrs' : [ 'thu', 'enf', 'bru' ],
+        'powers' : [ 'Call Thugs', 'Call Enforcer', 'Call Bruiser' ],
+        'heal' : '',
+        'upgrade' : 'Upgrade Equipment',
+    },
 }
-
 PoolPowers = {
     'Concealment'     : [ 'Stealth', 'Grant Invisibility', 'Infiltration', 'Misdirection', 'Phase Shift', ],
     'Experimentation' : [ 'Experimental Injection', 'Toxic Dart', 'Speed of Sound', 'Corrosive Vial', 'Adrenal Booster', 'Jaunt', ],

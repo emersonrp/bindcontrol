@@ -66,7 +66,7 @@ class qwyBinds(wx.Panel):
         profile = wx.App.Get().Main.Profile
         page    = profile.Mastermind
         primary = profile.GetState('Primary')
-        pset = GameData.MMPowerSets[primary]
+        pset = GameData.MMPowerSets[primary]['abbrs']
 
         # Pad.txt - central file, overriden by other via BLF
         PadFile = profile.GetBindFile('mmq', 'pad.txt')
@@ -96,10 +96,10 @@ class qwyBinds(wx.Panel):
         PadFile.SetBind('ALT+NUMPAD7', '', page, 'petcomall def sta')
         PadFile.SetBind('ALT+NUMPAD8', '', page, 'petcomall def att')
         PadFile.SetBind('ALT+NUMPAD9', '', page, 'petcomall def got')
-        PadFile.SetBind('ALT+DIVIDE', '', page, ['show chat', f'beginchat /petsaypow {pset['min']} '])
+        PadFile.SetBind('ALT+DIVIDE', '', page, ['show chat', f'beginchat /petsaypow {pset[0]} '])
         PadFile.SetBind('ALT+SUBTRACT', '', page, 'petcomall def fol')
         PadFile.SetBind('ALT+MULTIPLY', '', page, 'customwindowtoggle MMPad+')
-        PadFile.SetBind('ALT+DECIMAL', '', page, f'targetcustomnext alive mypet {pset['min']}')
+        PadFile.SetBind('ALT+DECIMAL', '', page, f'targetcustomnext alive mypet {pset[0]}')
         PadFile.SetBind('SHIFT+NUMPAD0', '', page, 'petcom dis')
         # TODO TODO TODO get the full power names somehow
         PadFile.SetBind('SHIFT+NUMPAD1', '', page, 'powexeclocation back:2 Battle Drones')
@@ -108,19 +108,19 @@ class qwyBinds(wx.Panel):
         PadFile.SetBind('SHIFT+NUMPAD7', '', page, 'petcomall agg sta')
         PadFile.SetBind('SHIFT+NUMPAD8', '', page, 'petcomall agg att')
         PadFile.SetBind('SHIFT+NUMPAD9', '', page, 'petcomall agg got')
-        PadFile.SetBind('SHIFT+DIVIDE', '', page, ['show chat', f'beginchat /petsaypow {pset['min']} '])
+        PadFile.SetBind('SHIFT+DIVIDE', '', page, ['show chat', f'beginchat /petsaypow {pset[0]} '])
         PadFile.SetBind('SHIFT+SUBTRACT', '', page, 'petcomall agg fol')
-        PadFile.SetBind('SHIFT+DECIMAL', '', page, f'targetcustomnext alive mypet {pset['lts']}')
+        PadFile.SetBind('SHIFT+DECIMAL', '', page, f'targetcustomnext alive mypet {pset[1]}')
         PadFile.SetBind('CTRL+NUMPAD0', '', page, 'petcomall dis')
-        PadFile.SetBind('CTRL+NUMPAD1', '', page, f'petcompow {pset['min']} dis')
-        PadFile.SetBind('CTRL+NUMPAD2', '', page, f'petcompow {pset['lts']} dis')
-        PadFile.SetBind('CTRL+NUMPAD3', '', page, f'petcompow {pset['bos']} dis')
+        PadFile.SetBind('CTRL+NUMPAD1', '', page, f'petcompow {pset[0]} dis')
+        PadFile.SetBind('CTRL+NUMPAD2', '', page, f'petcompow {pset[1]} dis')
+        PadFile.SetBind('CTRL+NUMPAD3', '', page, f'petcompow {pset[2]} dis')
         PadFile.SetBind('CTRL+NUMPAD7', '', page, 'petcomall pas sta')
         PadFile.SetBind('CTRL+NUMPAD8', '', page, 'petcomall pas att')
         PadFile.SetBind('CTRL+NUMPAD9', '', page, 'petcomall pas got')
-        PadFile.SetBind('CTRL+DIVIDE', '', page, ['show chat', f'beginchat /petsaypow {pset['bos']} '])
+        PadFile.SetBind('CTRL+DIVIDE', '', page, ['show chat', f'beginchat /petsaypow {pset[2]} '])
         PadFile.SetBind('CTRL+SUBTRACT', '', page, 'petcomall pas fol')
-        PadFile.SetBind('CTRL+DECIMAL', '', page, f'petselectname {pset['bos']}')
+        PadFile.SetBind('CTRL+DECIMAL', '', page, f'petselectname {pset[2]}')
 
 
 GridContents = [

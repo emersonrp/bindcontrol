@@ -21,19 +21,9 @@ class qwyBinds(wx.Panel):
         PetPickedSizer.Add(self.PetPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 10)
         self.PetPicker.Bind(wx.EVT_CHOICE, self.OnPetPicked)
 
-        self.InstallPopmenu = wx.CheckBox(self, label = 'Install Popmenu')
-        self.InstallPopmenu.SetValue(True)
-        PetPickedSizer.Add(self.InstallPopmenu, 0, wx.LEFT|wx.ALIGN_CENTER, 10)
-        page.Ctrls['InstallPopmenu'] = self.InstallPopmenu
-
-        self.InstallWindow = wx.CheckBox(self, label = 'Install Custom Window')
-        self.InstallWindow.SetValue(True)
-        PetPickedSizer.Add(self.InstallWindow, 0, wx.LEFT|wx.ALIGN_CENTER, 10)
-        page.Ctrls['InstallWindow'] = self.InstallWindow
-
         PetPickedSizer.Add(HelpButton(self, 'qwyBinds.html'), 0, wx.ALIGN_CENTER|wx.LEFT, 10)
 
-        centeringSizer.Add(PetPickedSizer, 0, wx.TOP|wx.BOTTOM|wx.ALIGN_CENTER, 10)
+        centeringSizer.Add(PetPickedSizer, 0, wx.TOP|wx.BOTTOM, 10)
 
         self.ButtonGrid = ulc.UltimateListCtrl(self,
                     agwStyle = ulc.ULC_VRULES|ulc.ULC_HRULES|ulc.ULC_NO_HIGHLIGHT|ulc.ULC_REPORT)
@@ -100,7 +90,6 @@ class qwyBinds(wx.Panel):
         ResetFile.SetBind('NUMPAD8', '', page, 'petcomall att')
         ResetFile.SetBind('NUMPAD9', '', page, 'petcomall got')
         ResetFile.SetBind('DIVIDE', '', page, ['show chat', 'beginchat /petsayall '])
-        ResetFile.SetBind('MULTIPLY', '', page, 'popmenu MMPad+')
         ResetFile.SetBind('SUBTRACT', '', page, 'petcomall fol')
         ResetFile.SetBind('ADD', '', page, ['+', 'targetcustomnext alive mypet', f'powexecauto {upgr[0]}', profile.BLF('mmqn', '2up.txt')])
         ResetFile.SetBind('NUMPADENTER', '', page, f'powexecname {heal}')
@@ -117,7 +106,6 @@ class qwyBinds(wx.Panel):
         ResetFile.SetBind('ALT+NUMPAD9', '', page, 'petcomall def got')
         ResetFile.SetBind('ALT+DIVIDE', '', page, ['show chat', f'beginchat /petsaypow {pabb[0]} '])
         ResetFile.SetBind('ALT+SUBTRACT', '', page, 'petcomall def fol')
-        ResetFile.SetBind('ALT+MULTIPLY', '', page, 'customwindowtoggle MMPad+')
         ResetFile.SetBind('ALT+DECIMAL', '', page, f'targetcustomnext alive mypet {pabb[0]}')
         ResetFile.SetBind('SHIFT+NUMPAD0', '', page, 'petcom dis')
         # TODO:  "If Homecoming" else just powexecname?
@@ -202,7 +190,6 @@ class qwyBinds(wx.Panel):
 GridContents = [
     [
         ['DIVIDE', 'all pets say', 'minions say', 'lieutenants say', 'boss says'],
-        ['MULTIPLY', 'open popmenu', 'toggle custom window', '', ''],
         ['SUBTRACT', 'all follow', 'all def follow', 'all agg follow', 'all pas follow'],
         ['NUMPAD9', 'all goto', 'all def goto', 'all agg goto', 'all pas goto'],
         ['NUMPAD8', 'all attack', 'all def attack', 'all agg attack', 'all pas attack'],
@@ -220,7 +207,6 @@ GridContents = [
     ],
     [
         ['DIVIDE', 'group pets say', 'minions say', 'lieutenants say', 'boss says'],
-        ['MULTIPLY', 'open popmenu', 'toggle custom window', '', ''],
         ['SUBTRACT', 'group follow', 'group def follow', 'group agg follow', 'group pas follow'],
         ['NUMPAD9', 'group goto', 'group def goto', 'group agg goto', 'group pas goto'],
         ['NUMPAD8', 'group attack', 'group def attack', 'group agg attack', 'group pas attack'],
@@ -238,7 +224,6 @@ GridContents = [
     ],
     [
         ['DIVIDE', 'pet says', 'minions say', 'lieutenants say', 'boss says'],
-        ['MULTIPLY', 'open popmenu', 'toggle custom window', '', ''],
         ['SUBTRACT', 'pet follow', 'pet def follow', 'pet agg follow', 'pet pas follow'],
         ['NUMPAD9', 'pet goto', 'pet def goto', 'pet agg goto', 'pet pas goto'],
         ['NUMPAD8', 'pet attack', 'pet def attack', 'pet agg attack', 'pet pas attack'],

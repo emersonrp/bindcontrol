@@ -521,6 +521,7 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
 
     def onKeyChanged(self, _):
         wx.App.Get().Main.Profile.CheckAllConflicts()
+        self.CheckConflicts()
         # Let's try this out -- every time we pick a new key, update the trays'
         # default-keys display just in case we've mashed over one of them now.
         wx.App.Get().Main.Profile.Gameplay.OnKeybindProfilePicker()
@@ -570,20 +571,18 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
     def KeySelectEventHandler(self, evt):
         button = evt.EventObject
 
-        existingKey = button.Key
-
         with KeySelectDialog(button) as dlg:
-            newKey = ''
-            if(dlg.ShowModal() == wx.ID_OK):
-                newKey = dlg.Binding
+            profile = wx.App.Get().Main.Profile
 
-            # re-label the button / set its state
-            if newKey:
-                button.Key = newKey
-                button.SetLabel(newKey)
-                wx.PostEvent(button, KeyChanged())
+            if dlg.ShowModal() == wx.ID_OK:
+                # re-label the button / set its state
+                if newKey := dlg.Binding:
+                    button.Key = newKey
+                    button.SetLabel(newKey)
 
-                if existingKey != newKey:
-                    wx.App.Get().Main.Profile.SetModified()
+                    if button.Key != newKey:
+                        profile.SetModified()
 
-            wx.App.Get().Main.Profile.CheckAllConflicts()
+            # else we canceled, don't do any of that but still:
+            profile.CheckAllConflicts()
+            wx.PostEvent(button, KeyChanged())

@@ -150,17 +150,15 @@ class Profile(wx.Notebook):
 
         self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, parent.OnPageChanged)
 
-    def CreatePage(self, module):
-        module.BuildPage()
-        module.SetScrollRate(10,10)
-        self.AddPage(module, module.TabTitle)
+    def CreatePage(self, page):
+        page.BuildPage()
+        page.SetScrollRate(10,10)
+        self.AddPage(page, page.TabTitle)
 
-        modname = type(module).__name__
-
-        self.Pages.append(modname)
+        self.Pages.append(page)
 
         self.Layout()
-        return module
+        return page
 
     #####
     # Convenience / JIT accessors
@@ -193,19 +191,22 @@ class Profile(wx.Notebook):
     def CheckConflict(self, key, existingctrlname):
         conflicts = []
 
-        for pageName in self.Pages:
-            page = getattr(self, pageName)
+        for page in self.Pages:
             for ctrlname, ctrl in page.Ctrls.items():
                 if isinstance(ctrl, bcKeyButton):
                     if not ctrl.IsThisEnabled(): continue
                     if (key != '') and (key == ctrl.Key) and (not existingctrlname == ctrlname):
                         conflicts.append( {'page' : page.TabTitle, 'ctrl': UI.Labels[ctrlname]})
+
+        # Explicit check against Reset Kay from Prefs dialog
+        if (key != '') and (key == wx.ConfigBase.Get().Read('ResetKey') and existingctrlname != 'ResetKey'):
+            conflicts.append( { 'page' : 'Preferences Dialog', 'ctrl' : 'Reset Key' } )
+
         return conflicts
 
     # check all buttons for conflicts.
     def CheckAllConflicts(self):
-        for pageName in self.Pages:
-            page = getattr(self, pageName)
+        for page in self.Pages:
             for _, ctrl in page.Ctrls.items():
                 if isinstance(ctrl, bcKeyButton):
                     if not ctrl.IsThisEnabled(): continue
@@ -378,11 +379,10 @@ class Profile(wx.Notebook):
         savedata : Dict[str, Any] = {}
         savedata['ProfileBindsDir'] = self.ProfileBindsDir
         savedata['MaxCustomID']     = self.MaxCustomID
-        for pagename in self.Pages:
-            savedata[pagename] = {}
-            if pagename == "CustomBinds": continue
+        for page in self.Pages:
+            savedata[page.TabTitle] = {}
+            if page.TabTitle == "CustomBinds": continue
 
-            page = getattr(self, pagename)
             for controlname, control in page.Ctrls.items():
                 # Save disabled controls' states, too, so as not to lose config
                 # if someone, say, turns on "disable self tell" with a bunch of custom colors defined
@@ -413,9 +413,9 @@ class Profile(wx.Notebook):
                 else:
                     value = control.GetValue()
 
-                savedata[pagename][controlname] = value
+                savedata[page.TabTitle][controlname] = value
 
-            if pagename == "General":
+            if page.TabTitle == "General":
                 savedata['Server'] = page.ServerPicker.GetString(page.ServerPicker.GetSelection())
 
         savedata['CustomBinds'] = []
@@ -707,14 +707,13 @@ class Profile(wx.Notebook):
         donefiles = 0
 
         # Go to each page....
-        for pageName in self.Pages:
-            page = getattr(self, pageName)
+        for page in self.Pages:
 
             # ... and tell it to gather up binds and put them into bindfiles.
             try:
                 success = page.PopulateBindFiles()
                 if not success:
-                    wx.LogMessage(f'An error on the "{pageName}" tab caused WriteBinds to fail.')
+                    wx.LogMessage(f'An error on the "{page.TabTitle}" tab caused WriteBinds to fail.')
                     return
             except Exception as e:
                 if config.ReadBool('CrashOnBindError'):
@@ -761,8 +760,7 @@ class Profile(wx.Notebook):
     def AllBindFiles(self):
         files = [self.ResetFile()]
         dirs  = []
-        for pageName in self.Pages:
-            page = getattr(self, pageName)
+        for page in self.Pages:
             bf = page.AllBindFiles()
             for file in bf['files']:
                 files.append(file)

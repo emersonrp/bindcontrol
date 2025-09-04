@@ -84,12 +84,12 @@ class MovementPowers(Page):
             'TPPower'         : '',
             'TPBindKey'       : '',
             'TPComboKey'      : 'LSHIFT',
-            'TPExecuteKey'    : 'LSHIFT+BUTTON1', # hidden rebirth magic
+            'TPExecuteKey'    : 'SHIFT+BUTTON1', # hidden rebirth magic
 
             'HasTTP'          : False,
             'TTPBindKey'      : '',
             'TTPComboKey'     : 'LCTRL',
-            'TTPExecuteKey'   : 'LCTRL+BUTTON1', # hidden rebirth magic
+            'TTPExecuteKey'   : 'CTRL+BUTTON1', # hidden rebirth magic
             'TTPTPGFly'       : False,
 
             'TPHideWindows'   : True,

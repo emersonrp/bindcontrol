@@ -29,90 +29,90 @@ class PrefsDialog(wx.Dialog):
         generalPanel = wx.Panel(notebook)
         generalSizer = wx.FlexGridSizer(2,0,0)
 
-        generalSizer.Add( wx.StaticText(generalPanel, label = 'Homecoming Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        generalSizer.Add(wx.StaticText(generalPanel, label = 'Homecoming Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.gameDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('GamePath'), size = (300, -1))
         self.gameDirPicker.DefaultToolTip = 'This is where Homecoming is installed.  This will be used to install popmenus, and is optional.'
         self.gameDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
-        generalSizer.Add( self.gameDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        generalSizer.Add(self.gameDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
-        generalSizer.Add( wx.StaticText(generalPanel, label = 'Rebirth Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        generalSizer.Add(wx.StaticText(generalPanel, label = 'Rebirth Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.gameDirRebirthPicker = cgDirPickerCtrl(generalPanel, path = config.Read('GameRebirthPath'), size = (300, -1))
         self.gameDirRebirthPicker.DefaultToolTip = 'This is where Rebirth is installed.  This will be used to install popmenus, and is optional.'
         self.gameDirRebirthPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
-        generalSizer.Add( self.gameDirRebirthPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        generalSizer.Add(self.gameDirRebirthPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
-        generalSizer.Add( wx.StaticText(generalPanel, label = 'Game Language:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        generalSizer.Add(wx.StaticText(generalPanel, label = 'Game Language:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.gameLangPicker = wx.Choice(generalPanel, choices = ['ChineseTraditional','English','French','German','Japanese','Korean','uk'])
         self.gameLangPicker.SetSelection(self.gameLangPicker.FindString(config.Read('GameLang')))
         self.gameLangPicker.SetToolTip('The language of your installed game.  This is necessary to locate popmenus correctly.')
-        generalSizer.Add( self.gameLangPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        generalSizer.Add(self.gameLangPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
-        generalSizer.Add( wx.StaticText(generalPanel, label = 'Base Binds Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        generalSizer.Add(wx.StaticText(generalPanel, label = 'Base Binds Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.bindsDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('BindPath'), size = (300, -1))
         self.bindsDirPicker.SetToolTip('Bind files will be written to this folder, inside a profile-specific subfolder.  Keeping this path as short as possible is strongly recommended.')
         self.bindsDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
-        generalSizer.Add( self.bindsDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        generalSizer.Add(self.bindsDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         self.gameBindsDirPicker = None
         if (platform.system() != 'Windows'):
-            generalSizer.Add( wx.StaticText(generalPanel, label = "In-Game Binds Directory:") , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+            generalSizer.Add(wx.StaticText(generalPanel, label = "In-Game Binds Directory:") , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
             self.gameBindsDirPicker = cgTextCtrl(generalPanel, value = config.Read('GameBindPath'))
             self.gameBindsDirPicker.SetToolTip('When playing via Wine, the in-game file paths will be different than the native ones.  Put a Windows path into this box that describes where Wine will find the above directory.  Keeping this path as short as possible is strongly recommended.  Check the Manual for more information.')
             self.gameBindsDirPicker.Bind(wx.EVT_TEXT, self.OnGameBindsDirPickerChanged)
-            generalSizer.Add( self.gameBindsDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+            generalSizer.Add(self.gameBindsDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
-        generalSizer.Add( wx.StaticText(generalPanel, label = "Binds Reset Key:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        generalSizer.Add(wx.StaticText(generalPanel, label = "Binds Reset Key:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         resetKey = config.Read('ResetKey')
         self.ResetKey = bcKeyButton(generalPanel, -1, init ={ 'CtlName': 'ResetKey', 'Key' : resetKey })
-        self.ResetKey.SetLabel( resetKey )
-        generalSizer.Add( self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)
+        self.ResetKey.SetLabel( resetKey)
+        generalSizer.Add(self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)
 
         splitKeyLabel = statictextclass(generalPanel, label = "Bind L/R mod keys separately:")
-        generalSizer.Add( splitKeyLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        generalSizer.Add(splitKeyLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.UseSplitModKeys = wx.CheckBox(generalPanel)
         self.UseSplitModKeys.SetValue(config.ReadBool('UseSplitModKeys'))
         self.UseSplitModKeys.SetToolTip("This allows the left and right modifier keys to be bound separately if on the \"right-hand\" side of a bind.  Check the Manual for more information.")
-        generalSizer.Add( self.UseSplitModKeys, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+        generalSizer.Add(self.UseSplitModKeys, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         setattr(splitKeyLabel, 'CB', self.UseSplitModKeys)
-        splitKeyLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
+        splitKeyLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         flushBindsLabel = statictextclass(generalPanel, label = "Set binds to default on reset:")
-        generalSizer.Add( flushBindsLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        generalSizer.Add(flushBindsLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.FlushAllBinds = wx.CheckBox(generalPanel)
         self.FlushAllBinds.SetValue(config.ReadBool('FlushAllBinds'))
         self.FlushAllBinds.SetToolTip("Set all binds to City of Heroes' default before applying BindControl's binds.  Uncheck this if you have added any binds into the game that are not managed by BindControl.")
-        generalSizer.Add( self.FlushAllBinds, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+        generalSizer.Add(self.FlushAllBinds, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         setattr(flushBindsLabel, 'CB', self.FlushAllBinds)
-        flushBindsLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
+        flushBindsLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         StartWithLastProfileLabel = wx.StaticText(generalPanel, label = "On startup, load last used profile:")
-        generalSizer.Add( StartWithLastProfileLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        generalSizer.Add(StartWithLastProfileLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.StartWithLastProfile = wx.CheckBox(generalPanel)
         self.StartWithLastProfile.SetValue(config.ReadBool('StartWithLastProfile'))
         self.StartWithLastProfile.SetToolTip("Load the last profile you were working with when you start the program.")
         generalSizer.Add (self.StartWithLastProfile, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         setattr(StartWithLastProfileLabel, 'CB', self.StartWithLastProfile)
-        StartWithLastProfileLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
+        StartWithLastProfileLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         ProfilePathLabel = wx.StaticText(generalPanel, label = "Path for saved profiles:")
-        generalSizer.Add( ProfilePathLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        generalSizer.Add(ProfilePathLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ProfileDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('ProfilePath'), size = (300, -1))
         self.ProfileDirPicker.SetToolTip('Profiles will be saved to this location.')
         self.ProfileDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
-        generalSizer.Add( self.ProfileDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        generalSizer.Add(self.ProfileDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         SaveSizeLabel = statictextclass(generalPanel, label = "Save size / position of window:")
-        generalSizer.Add( SaveSizeLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        generalSizer.Add(SaveSizeLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.SaveSizeAndPosition = wx.CheckBox(generalPanel)
         self.SaveSizeAndPosition.SetValue(config.ReadBool('SaveSizeAndPosition'))
         self.SaveSizeAndPosition.SetToolTip("Save the size and position of the BindControl window between sessions.")
-        generalSizer.Add( self.SaveSizeAndPosition, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+        generalSizer.Add(self.SaveSizeAndPosition, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         setattr(SaveSizeLabel, 'CB', self.SaveSizeAndPosition)
-        SaveSizeLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
+        SaveSizeLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         generalPanel.SetSizerAndFit(generalSizer)
 
@@ -124,18 +124,18 @@ class PrefsDialog(wx.Dialog):
 
         # Controller name display
         controllerNameLabel = statictextclass(controllerPanel, label = 'Controller:')
-        controllerSizer.Add( controllerNameLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        controllerSizer.Add(controllerNameLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         controllerName = statictextclass(controllerPanel, label = 'No controller detected!')
         if controller.GetNumberJoysticks() > 0:
             controllerName.SetLabel(controller.GetProductName())
-        controllerSizer.Add( controllerName, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        controllerSizer.Add(controllerName, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
         controllerhelpbutton = HelpButton(controllerPanel, 'ControllerModifiers.html')
-        controllerSizer.Add( controllerhelpbutton)
+        controllerSizer.Add(controllerhelpbutton)
 
         # Pickers for controller_modifiers
         possible_mods = controller.ListOfPossibleMods()
         controllerModsLabel = statictextclass(controllerPanel, label = 'Controller Modifiers:')
-        controllerSizer.Add( controllerModsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        controllerSizer.Add(controllerModsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ControllerModPicker1 = wx.Choice(controllerPanel, choices = possible_mods)
         self.ControllerModPicker1.SetSelection(self.ControllerModPicker1.FindString(config.Read('ControllerMod1')))
         controllerSizer.Add(self.ControllerModPicker1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
@@ -145,7 +145,7 @@ class PrefsDialog(wx.Dialog):
 
         # Pickers for extra_modifiers
         extraModsLabel = statictextclass(controllerPanel, label = 'Extra Modifiers:')
-        controllerSizer.Add( extraModsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        controllerSizer.Add(extraModsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ExtraModPicker1 = wx.Choice(controllerPanel, choices = possible_mods)
         self.ExtraModPicker1.SetSelection(self.ExtraModPicker1.FindString(config.Read('ExtraMod1')))
         controllerSizer.Add(self.ExtraModPicker1, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
@@ -169,48 +169,48 @@ class PrefsDialog(wx.Dialog):
         debugSizer = wx.FlexGridSizer(2,0,0)
 
         verboseBLFLabel = statictextclass(debugPanel, label = "Verbose in-game feedback when loading bind file:")
-        debugSizer.Add( verboseBLFLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        debugSizer.Add(verboseBLFLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.VerboseBLF = wx.CheckBox(debugPanel)
         self.VerboseBLF.SetValue(config.ReadBool('VerboseBLF'))
         tooltip = "Enable output to the chat box whenever a bind file is loaded.  This could be rather spammy, most especially with Speed on Demand binds."
         verboseBLFLabel.SetToolTip(tooltip)
         self.VerboseBLF.SetToolTip(tooltip)
-        debugSizer.Add( self.VerboseBLF, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+        debugSizer.Add(self.VerboseBLF, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
         setattr(verboseBLFLabel, 'CB', self.VerboseBLF)
-        verboseBLFLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
+        verboseBLFLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         crashOnBindErrorLabel = statictextclass(debugPanel, label = "Crash on write-binds error:")
-        debugSizer.Add( crashOnBindErrorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        debugSizer.Add(crashOnBindErrorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.CrashOnBindError = wx.CheckBox(debugPanel)
         self.CrashOnBindError.SetValue(config.ReadBool('CrashOnBindError'))
         tooltip = "Crash and raise a stack trace if there is an error writing the bind files.  You want this turned off unless you are doing deep debugging."
         crashOnBindErrorLabel.SetToolTip(tooltip)
         self.CrashOnBindError.SetToolTip(tooltip)
-        debugSizer.Add( self.CrashOnBindError, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+        debugSizer.Add(self.CrashOnBindError, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
         setattr(crashOnBindErrorLabel, 'CB', self.CrashOnBindError)
-        crashOnBindErrorLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
+        crashOnBindErrorLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         showInspectorLabel = statictextclass(debugPanel, label = "Show Widget Inspector (requires restart):")
-        debugSizer.Add( showInspectorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        debugSizer.Add(showInspectorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ShowInspector = wx.CheckBox(debugPanel)
         self.ShowInspector.SetValue(config.ReadBool('ShowInspector'))
         tooltip = "Show the wxPython widget inspector while running.  While harmless, this will open an extra, cryptic window that you're probably not interested in unless debugging."
         showInspectorLabel.SetToolTip(tooltip)
         self.ShowInspector.SetToolTip(tooltip)
-        debugSizer.Add( self.ShowInspector, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+        debugSizer.Add(self.ShowInspector, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
         setattr(showInspectorLabel, 'CB', self.ShowInspector)
-        showInspectorLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
+        showInspectorLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         showDebugMessagesLabel = statictextclass(debugPanel, label = "Show debug messages in log window.")
-        debugSizer.Add( showDebugMessagesLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6 )
+        debugSizer.Add(showDebugMessagesLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ShowDebugMessages = wx.CheckBox(debugPanel)
         self.ShowDebugMessages.SetValue(config.ReadBool('ShowDebugMessages'))
         tooltip = "Show all debug messages in the Log Window.  This is harmless but might be spammy in some circumstances.  If you never look at the log window, you don't need to worry about this."
         showDebugMessagesLabel.SetToolTip(tooltip)
         self.ShowDebugMessages.SetToolTip(tooltip)
-        debugSizer.Add( self.ShowDebugMessages, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6 )
+        debugSizer.Add(self.ShowDebugMessages, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
         setattr(showDebugMessagesLabel, 'CB', self.ShowDebugMessages)
-        showDebugMessagesLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick )
+        showDebugMessagesLabel.Bind( wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         debugPanel.SetSizerAndFit(debugSizer)
 
@@ -331,8 +331,10 @@ class PrefsDialog(wx.Dialog):
 
             config.Flush()
 
-            # just in case we fiddled with the GameDir, repopulate the PopmenuEditor list
-            # This is way ugly
             if profile := wx.App.Get().Main.Profile:
+                # repopulate the Popmenu Editor, in case we fiddled with GameDir
                 profile.PopmenuEditor.SynchronizeUI()
+
+                # and highlight buttons as needed in case we fiddled with ReseyKey
+                profile.CheckAllConflicts()
 

@@ -1,4 +1,6 @@
+import webbrowser
 import wx
+import wx.html
 import wx.lib.agw.ultimatelistctrl as ulc
 from Help import HelpButton
 
@@ -6,7 +8,6 @@ import GameData
 
 class qwyBinds(wx.Panel):
     def __init__(self, *args, **kwargs):
-        page = kwargs.pop('page')
         super().__init__(*args, **kwargs)
 
         qwyNumpadSizer = wx.BoxSizer(wx.VERTICAL)
@@ -24,6 +25,11 @@ class qwyBinds(wx.Panel):
         PetPickedSizer.Add(HelpButton(self, 'qwyBinds.html'), 0, wx.ALIGN_CENTER|wx.LEFT, 10)
 
         centeringSizer.Add(PetPickedSizer, 0, wx.TOP|wx.BOTTOM, 10)
+
+        moredetailshtml = wx.html.HtmlWindow(self, style = wx.html.HW_SCROLLBAR_NEVER|wx.html.HW_NO_SELECTION)
+        moredetailshtml.SetPage('<html><body><p>More info: <a href="https://forums.homecomingservers.com/topic/20650-i26-expanded-mastermind-numpad-controls/">https://forums.homecomingservers.com/topic/20650-i26-expanded-mastermind-numpad-controls/</a></p></body></html>')
+        moredetailshtml.Bind(wx.html.EVT_HTML_LINK_CLICKED, self.HandleLinkClicked)
+        centeringSizer.Add(moredetailshtml, 0, wx.ALIGN_CENTER|wx.ALL, 10)
 
         self.ButtonGrid = ulc.UltimateListCtrl(self,
                     agwStyle = ulc.ULC_VRULES|ulc.ULC_HRULES|ulc.ULC_NO_HIGHLIGHT|ulc.ULC_REPORT)
@@ -47,6 +53,7 @@ class qwyBinds(wx.Panel):
         width = rect.width
         self.ButtonGrid.SetMinSize((wx.Size(width, height)))
         self.ButtonGrid.SetAutoLayout(True)
+        moredetailshtml.SetMinSize(wx.Size(width, 40))
 
         centeringSizer.Add(self.ButtonGrid, 1)
 
@@ -55,6 +62,13 @@ class qwyBinds(wx.Panel):
 
         self.Fit()
         self.Layout()
+
+    # TODO - maybe check if we have "http(s)" at the start, and if not,
+    # we're loading a local file and should use ourselves not the browser?
+    def HandleLinkClicked(self, evt):
+        linkinfo = evt.GetLinkInfo()
+        page = linkinfo.GetHref()
+        webbrowser.open(page)
 
     def OnPetPicked(self, evt = None):
         contents = GridContents[self.PetPicker.GetSelection()]

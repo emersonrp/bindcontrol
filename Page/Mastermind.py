@@ -8,8 +8,9 @@ import re
 
 import GameData
 from Page import Page
-from Page.MM.qwyBinds import qwyBinds
 from Page.MM.SandolphanBinds import SandolphanBinds
+from Page.MM.qwyBinds import qwyBinds
+from Page.MM.qwyPetMouse import qwyPetMouse
 from Help import HelpButton
 import UI
 from UI.KeySelectDialog import bcKeyButton
@@ -146,15 +147,15 @@ class Mastermind(Page):
         self.BindStyleNotebook.SetPadding(wx.Size(50,0))
         self.Ctrls['BindStyle'] = self.BindStyleNotebook
 
-        BasicSelectPage     = self.BasicSelectPage(self.BindStyleNotebook)
-        self.SandolphanPage = SandolphanBinds(self, self.BindStyleNotebook)
-        self.qwyNumpadPage  = qwyBinds(self.BindStyleNotebook)
-        #qwyMousePage        = qwyMouseBinds(self.BindStyleNotebook) # TODO
+        BasicSelectPage      = self.BasicSelectPage(self.BindStyleNotebook)
+        self.SandolphanPage  = SandolphanBinds(self, self.BindStyleNotebook)
+        self.qwyNumpadPage   = qwyBinds(self.BindStyleNotebook)
+        self.qwyPetMousePage = qwyPetMouse(self.BindStyleNotebook) # TODO
 
         self.BindStyleNotebook.AddPage(BasicSelectPage, "Simple Selection Binds")
         self.BindStyleNotebook.AddPage(self.SandolphanPage, "Sandolphan Binds")
         self.BindStyleNotebook.AddPage(self.qwyNumpadPage, "qwy Numpad Binds")
-        #self.BindStyleNotebook.AddPage(qwyMousePage, "qwy Mouse Controls Binds")
+        self.BindStyleNotebook.AddPage(self.qwyPetMousePage, "qwy PetMouse Binds")
 
         bindstyleLabel = wx.BoxSizer(wx.HORIZONTAL)
         bindstyleLabel.Add(wx.StaticText(self, label = "Select Mastermind binds type:"), 0, wx.ALIGN_CENTER|wx.RIGHT, 10)
@@ -189,7 +190,7 @@ class Mastermind(Page):
         return BasicPage
 
     def BindStyle(self):
-        return ['Basic', 'Sandolphan', 'qwy Numpad', 'qwy Mouse'][self.BindStyleNotebook.GetSelection()]
+        return ['Basic', 'Sandolphan', 'qwy Numpad', 'qwy PetMouse'][self.BindStyleNotebook.GetSelection()]
 
     def SynchronizeUI(self):
         ismm = self.Profile.Archetype() == "Mastermind"
@@ -334,8 +335,8 @@ class Mastermind(Page):
             self.SandolphanPage.PopulateBindFiles()
         elif bindstyle == 'qwy Numpad':
             self.qwyNumpadPage.PopulateBindFiles()
-        #elif bindstyle == 'qwy Mouse':
-        #    self.qwyMousePage.PopulateBindFiles()
+        elif bindstyle == 'qwy PetMouse':
+            self.qwyPetMouse.PopulateBindFiles()
 
         return True
 

@@ -128,10 +128,11 @@ class Mastermind(Page):
 
         PetExtraTop.Add(RenameLabel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
         PetExtraTop.Add(self.RenamePetsButton, 1, wx.ALIGN_CENTER_VERTICAL)
+        PetExtraTop.Add(HelpButton(PetNameSB, 'PetNames.html'), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
 
         PetExtraBottom.Add(LevelLabel      , 0, wx.ALIGN_CENTER_VERTICAL)
         PetExtraBottom.Add(self.LevelSlider, 1, wx.ALIGN_CENTER_VERTICAL)
-        PetExtraBottom.Add(HelpButton(PetNameSB, 'PetNames.html'), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
+        PetExtraBottom.Add(HelpButton(PetNameSB, 'MMLevelSlider.html'), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
 
         PetExtraCtrls.Add(PetExtraTop,    0, wx.EXPAND)
         PetExtraCtrls.Add(PetExtraBottom, 0, wx.EXPAND)
@@ -238,7 +239,7 @@ class Mastermind(Page):
             if not ctrl.IsEnabled() or not ctrl.GetValue() or self.uniqueNames[i-1]:
                 ctrl.RemoveError('unique')
             else:
-                ctrl.AddError('unique', 'This pet name is not different enough to identify it uniquely.  This is likely to cause issues with by-name and bodyguard binds.')
+                ctrl.AddError('unique', 'This pet name is not different enough to identify it uniquely.  This is likely to cause issues with many of BindControl\'s Mastermind binds.')
 
     def PopulateBindFiles(self):
 

@@ -147,7 +147,7 @@ class Mastermind(Page):
 
         BasicSelectPage     = self.BasicSelectPage(self.BindStyleNotebook)
         self.SandolphanPage = SandolphanBinds(self, self.BindStyleNotebook)
-        self.qwyNumpadPage  = qwyBinds(self.BindStyleNotebook, page = self)
+        self.qwyNumpadPage  = qwyBinds(self.BindStyleNotebook)
         #qwyMousePage        = qwyMouseBinds(self.BindStyleNotebook) # TODO
 
         self.BindStyleNotebook.AddPage(BasicSelectPage, "Simple Selection Binds")

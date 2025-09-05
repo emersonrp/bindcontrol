@@ -152,6 +152,8 @@ class SandolphanBinds(wx.Panel):
             'Pet6Bodyguard' : 0,
         })
 
+        self.SandolphanKeyButtons = {}
+
         SandolphanSizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(SandolphanSizer)
 
@@ -163,6 +165,7 @@ class SandolphanBinds(wx.Panel):
                 ctlType = 'keybutton',
                 tooltip = "Choose the key combo that will " + command['tooltipdetail'],
             )
+            self.SandolphanKeyButtons[command['ctrlName']] = self.Page.Ctrls[command['ctrlName']]
             petCommandsKeys.AddControl(
                 ctlName = command['ctrlName'] + 'ResponseMethod',
                 ctlType = 'combobox',
@@ -181,6 +184,7 @@ class SandolphanBinds(wx.Panel):
             ctlType = 'keybutton',
             tooltip = 'Choose the key combo that will toggle your pets\' chattiness level',
         )
+        self.SandolphanKeyButtons['PetChatToggle'] = self.Page.Ctrls['PetChatToggle']
         petCommandsKeys.AddControl(
             ctlName = 'PetChattyDefault',
             ctlType = "checkbox",

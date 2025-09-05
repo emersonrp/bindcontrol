@@ -4,7 +4,7 @@ from Help import HelpButton
 
 import GameData
 
-class qwyBinds(wx.Panel):
+class qwyNumpad(wx.Panel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -20,7 +20,7 @@ class qwyBinds(wx.Panel):
         PetPickedSizer.Add(self.PetPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 10)
         self.PetPicker.Bind(wx.EVT_CHOICE, self.OnPetPicked)
 
-        PetPickedSizer.Add(HelpButton(self, 'qwyBinds.html'), 0, wx.ALIGN_CENTER|wx.LEFT, 10)
+        PetPickedSizer.Add(HelpButton(self, 'qwyNumpad.html'), 0, wx.ALIGN_CENTER|wx.LEFT, 10)
 
         centeringSizer.Add(PetPickedSizer, 0, wx.TOP|wx.BOTTOM, 10)
 
@@ -54,6 +54,58 @@ class qwyBinds(wx.Panel):
 
         self.Fit()
         self.Layout()
+
+    def GetKeyBinds(self):
+        return [
+            [ 'Select All'                       ,'NUMPAD0'       ,],
+            [ 'Select Minions'                   ,'NUMPAD1'       ,],
+            [ 'Select Lieutenants'               ,'NUMPAD2'       ,],
+            [ 'Select Boss'                      ,'NUMPAD3'       ,],
+            [ 'Selected Pets Defense'            ,'NUMPAD4'       ,],
+            [ 'Selected Pets Aggressive'         ,'NUMPAD5'       ,],
+            [ 'Selected Pets Passive'            ,'NUMPAD6'       ,],
+            [ 'Selected Pets Stay'               ,'NUMPAD7'       ,],
+            [ 'Selected Pets Attack'             ,'NUMPAD8'       ,],
+            [ 'Selected Pets Go To'              ,'NUMPAD9'       ,],
+            [ 'Selected Pets Say'                ,'DIVIDE'        ,],
+            [ 'Selected Pets Follow'             ,'SUBTRACT'      ,],
+            [ 'Upgrade Pets'                     ,'ADD'           ,],
+            [ 'Heal Targeted Pet'                ,'NUMPADENTER'   ,],
+            [ 'Select Next Pet In Group'         ,'DECIMAL'       ,],
+            [ 'Dismiss Selected Pet'             ,'ALT+NUMPAD0'   ,],
+            [ 'Select Minion 1'                  ,'ALT+NUMPAD1'   ,],
+            [ 'Select Minion 2'                  ,'ALT+NUMPAD2'   ,],
+            [ 'Select Minion 3'                  ,'ALT+NUMPAD3'   ,],
+            [ 'Select Lieutenant 1'              ,'ALT+NUMPAD4'   ,],
+            [ 'Select Lieutenant 2'              ,'ALT+NUMPAD5'   ,],
+            [ 'Select Boss'                      ,'ALT+NUMPAD6'   ,],
+            [ 'Selected Pets Defensive / Stay'   ,'ALT+NUMPAD7'   ,],
+            [ 'Selected Pets Defensive / Attack' ,'ALT+NUMPAD8'   ,],
+            [ 'Selected Pets Defensive / Go To'  ,'ALT+NUMPAD9'   ,],
+            [ 'All Minions Say'                  ,'ALT+DIVIDE'    ,],
+            [ 'Selected Pets Defensive / Follow' ,'ALT+SUBTRACT'  ,],
+            [ 'Target Next Minion'               ,'ALT+DECIMAL'   ,],
+            [ 'Dismiss Targeted Pet'             ,'SHIFT+NUMPAD0' ,],
+            [ 'Summon Minions'                   ,'SHIFT+NUMPAD1' ,],
+            [ 'Summon Lieutenants'               ,'SHIFT+NUMPAD2' ,],
+            [ 'Summon Boss'                      ,'SHIFT+NUMPAD3' ,],
+            [ 'Selected Pets Aggressive / Stay'  ,'SHIFT+NUMPAD7' ,],
+            [ 'Selected Pets Aggressive / Attack','SHIFT+NUMPAD8' ,],
+            [ 'Selected Pets Aggressive / Go To' ,'SHIFT+NUMPAD9' ,],
+            [ 'All Lieutenants Say'              ,'SHIFT+DIVIDE'  ,],
+            [ 'Selected Pets Aggressive / Follow','SHIFT+SUBTRACT',],
+            [ 'Target Next Lieutenant'           ,'SHIFT+DECIMAL' ,],
+            [ 'Dismiss All Pets'                 ,'CTRL+NUMPAD0'  ,],
+            [ 'Dismiss Minions'                  ,'CTRL+NUMPAD1'  ,],
+            [ 'Dismiss Lieutenants'              ,'CTRL+NUMPAD2'  ,],
+            [ 'Dismiss Boss'                     ,'CTRL+NUMPAD3'  ,],
+            [ 'Selected Pets Passive / Stay'     ,'CTRL+NUMPAD7'  ,],
+            [ 'Selected Pets Passive / Attack'   ,'CTRL+NUMPAD8'  ,],
+            [ 'Selected Pets Passive / Go To'    ,'CTRL+NUMPAD9'  ,],
+            [ 'Boss Says'                        ,'CTRL+DIVIDE'   ,],
+            [ 'Selected Pets Passive / Follow'   ,'CTRL+SUBTRACT' ,],
+            [ 'Target Boss'                      ,'CTRL+DECIMAL'  ,],
+        ]
 
     def OnPetPicked(self, evt = None):
         contents = GridContents[self.PetPicker.GetSelection()]

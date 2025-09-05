@@ -9,7 +9,7 @@ import re
 import GameData
 from Page import Page
 from Page.MM.SandolphanBinds import SandolphanBinds
-from Page.MM.qwyBinds import qwyBinds
+from Page.MM.qwyNumpad import qwyNumpad
 from Page.MM.qwyPetMouse import qwyPetMouse
 from Help import HelpButton
 import UI
@@ -149,13 +149,14 @@ class Mastermind(Page):
 
         BasicSelectPage      = self.BasicSelectPage(self.BindStyleNotebook)
         self.SandolphanPage  = SandolphanBinds(self, self.BindStyleNotebook)
-        self.qwyNumpadPage   = qwyBinds(self.BindStyleNotebook)
+        self.qwyNumpadPage   = qwyNumpad(self.BindStyleNotebook)
         self.qwyPetMousePage = qwyPetMouse(self.BindStyleNotebook) # TODO
 
         self.BindStyleNotebook.AddPage(BasicSelectPage, "Simple Selection Binds")
         self.BindStyleNotebook.AddPage(self.SandolphanPage, "Sandolphan Binds")
         self.BindStyleNotebook.AddPage(self.qwyNumpadPage, "qwy Numpad Binds")
         self.BindStyleNotebook.AddPage(self.qwyPetMousePage, "qwy PetMouse Binds")
+        self.BindStyleNotebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnBindStyleChanged)
 
         bindstyleLabel = wx.BoxSizer(wx.HORIZONTAL)
         bindstyleLabel.Add(wx.StaticText(self, label = "Select Mastermind binds type:"), 0, wx.ALIGN_CENTER|wx.RIGHT, 10)
@@ -166,6 +167,18 @@ class Mastermind(Page):
         self.MainSizer.Add(self.BindStyleNotebook, 1, wx.EXPAND)
 
         self.SynchronizeUI()
+
+    def GetKeyBinds(self):
+        binds = super().GetKeyBinds()
+
+        bindstyle = self.BindStyle()
+
+        if bindstyle == 'qwy Numpad':
+            binds = binds + self.qwyNumpadPage.GetKeyBinds()
+        elif bindstyle == 'qwy PetMouse':
+            binds = binds + self.qwyPetMousePage.GetKeyBinds()
+
+        return binds
 
     def BasicSelectPage(self, parent):
         BasicPage = wx.ScrolledWindow(parent, wx.ID_ANY)
@@ -199,6 +212,18 @@ class Mastermind(Page):
         for control in self.Ctrls.values(): control.Enable(bool(ismm and pset))
         self.RenamePetsButton.Enable(bool(ismm and pset))
         self.OnLevelChanged()
+
+    def OnBindStyleChanged(self, evt):
+        bindstyle = self.BindStyle()
+        for ctrl in ['SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize']:
+            self.Ctrls[ctrl].Enable(bindstyle == 'Basic')
+
+        for _, ctrl in self.SandolphanPage.SandolphanKeyButtons.items():
+            ctrl.Enable(bindstyle == 'Sandolphan')
+
+        self.Profile.CheckAllConflicts()
+
+        evt.Skip()
 
     def OnLevelChanged(self, evt = None):
         if evt: evt.Skip()
@@ -336,7 +361,7 @@ class Mastermind(Page):
         elif bindstyle == 'qwy Numpad':
             self.qwyNumpadPage.PopulateBindFiles()
         elif bindstyle == 'qwy PetMouse':
-            self.qwyPetMouse.PopulateBindFiles()
+            self.qwyPetMousePage.PopulateBindFiles()
 
         return True
 

@@ -192,11 +192,9 @@ class Profile(wx.Notebook):
         conflicts = []
 
         for page in self.Pages:
-            for ctrlname, ctrl in page.Ctrls.items():
-                if isinstance(ctrl, bcKeyButton):
-                    if not ctrl.IsThisEnabled(): continue
-                    if (key != '') and (key == ctrl.Key) and (not existingctrlname == ctrlname):
-                        conflicts.append( {'page' : page.TabTitle, 'ctrl': UI.Labels[ctrlname]})
+            for ctrlname, bindkey in page.GetKeyBinds():
+                if (key != '') and (key == bindkey) and (not existingctrlname == ctrlname):
+                    conflicts.append({'page' : page.TabTitle, 'ctrl' : UI.Labels.get(ctrlname, ctrlname)})
 
         # Explicit check against Reset Kay from Prefs dialog
         if (key != '') and (key == wx.ConfigBase.Get().Read('ResetKey') and existingctrlname != 'ResetKey'):

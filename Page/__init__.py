@@ -84,6 +84,14 @@ class Page(wx.ScrolledWindow):
         # TODO:  "unless (some way to opt things out of this), then..."
         self.Profile.SetModified()
 
+    def GetKeyBinds(self):
+        binds = []
+        for ctrlname, ctrl in self.Ctrls.items():
+            if isinstance(ctrl, bcKeyButton):
+                if not ctrl.IsThisEnabled(): continue
+                binds.append( [ctrlname, ctrl.Key] )
+        return binds
+
     # disable controls by name
     def EnableControls(self, enabled, names):
         for name in names:

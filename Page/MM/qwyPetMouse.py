@@ -21,14 +21,14 @@ class qwyPetMouse(wx.Panel):
             self.ButtonGrid.InsertColumn(i, name)
 
         for row in [
-            ['2'               ,'PetCom attack'         ,'PetCom attack'         ,'PetComPow attack'    ,'PetComAll attack']    ,
-            ['ALT+LBUTTON'     ,'TargetCustomNext mypet','TargetCustomNext mypet','PetComPow go to'     ,'PetComAll go to']     ,
-            [''                ,'PetCom go to'          ,'PetCom go to'          ,''                    ,'']                    ,
-            ['ALT+RBUTTON'     ,'PetCom stay'           ,'PetCom stay'           ,'PetComPow stay'      ,'PetComAll stay']      ,
-            ['RightDoubleClick','PetCom follow'         ,'PetCom follow'         ,'PetComPow follow'    ,'PetComAll follow']    ,
-            ['ALT+RightDC'     ,'PetCom defensive'      ,'PetCom defensive'      ,'PetComPow defensive' ,'PetComAll defensive'] ,
-            ['SHIFT+RightDC'   ,'PetCom aggressive'     ,'PetCom aggressive'     ,'PetComPow aggressive','PetComAll aggressive'],
-            ['CTRL+RightDC'    ,'PetCom passive'        ,'PetCom passive'        ,'PetComPow passive'   ,'PetComAll passive ']  ,
+            ['2'               ,'Attack'         ,'Attack'         ,'Attack'    ,'Attack']    ,
+            ['ALT+LBUTTON'     ,'Target Next Pet','Target Next Pet','Go To'     ,'Go To']     ,
+            [''                ,'Go To'          ,'Go To'          ,''                    ,'']                    ,
+            ['ALT+RBUTTON'     ,'Stay'           ,'Stay'           ,'Stay'      ,'Stay']      ,
+            ['RightDoubleClick','Follow'         ,'Follow'         ,'Follow'    ,'Follow']    ,
+            ['ALT+RightDC'     ,'Defensive'      ,'Defensive'      ,'Defensive' ,'Defensive'] ,
+            ['SHIFT+RightDC'   ,'Aggressive'     ,'Aggressive'     ,'Aggressive','Aggressive'],
+            ['CTRL+RightDC'    ,'Passive'        ,'Passive'        ,'Passive'   ,'Passive ']  ,
         ]:
             self.ButtonGrid.Append(row)
 
@@ -42,12 +42,23 @@ class qwyPetMouse(wx.Panel):
         self.ButtonGrid.SetMinSize((wx.Size(width, height)))
         self.ButtonGrid.SetAutoLayout(True)
 
-        centeringSizer.Add(self.ButtonGrid, 1)
+        centeringSizer.Add(self.ButtonGrid, 1, wx.ALL, 15)
 
         qwyMouseSizer.Add(centeringSizer, 0, wx.ALIGN_CENTER)
 
         self.Fit()
         self.Layout()
+
+    def GetKeyBinds(self):
+        return [
+            ['Attack'         , '2'                     ],
+            ['Target Next Pet', 'ALT+LBUTTON'           ],
+            ['Stay'           , 'ALT+RBUTTON'           ],
+            ['Follow'         , 'RIGHTDOUBLECLICK'      ],
+            ['Defensive'      , 'ALT+RIGHTDOUBLECLICK'  ],
+            ['Aggressive'     , 'SHIFT+RIGHTDOUBLECLICK'],
+            ['Passive'        , 'CTRL+RIGHTDOUBLECLICK' ],
+        ]
 
     def PopulateBindFiles(self):
         # This is going to be complicated and tangly - there are like 14 files with many entries.

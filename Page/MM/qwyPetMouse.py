@@ -13,27 +13,41 @@ class qwyPetMouse(wx.Panel):
 
         centeringSizer = wx.BoxSizer(wx.VERTICAL)
 
+        popmenusizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.InstallPopmenuCB = wx.CheckBox(self, label = 'Install Popmenu (recommended)')
+        self.InstallPopmenuCB.SetValue(True)
+        self.Ctrls = {'InstallPopmenu' : self.InstallPopmenuCB }
+        popmenusizer.Add(self.InstallPopmenuCB, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        popmenusizer.Add(HelpButton(self, 'qwyPetMouse.html'), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+
+        centeringSizer.Add(popmenusizer, 0)
+
         self.ButtonGrid = ulc.UltimateListCtrl(self,
                     agwStyle = ulc.ULC_VRULES|ulc.ULC_HRULES|ulc.ULC_NO_HIGHLIGHT|ulc.ULC_REPORT)
 
         # column headers
-        for i, name in enumerate(['Key', 'Minions', 'Lieutenants', 'Boss', 'All']):
+        for i, name in enumerate(['Key', 'Function']):
             self.ButtonGrid.InsertColumn(i, name)
 
         for row in [
-            ['2'                     , 'Attack'         , 'Attack'         , 'Attack'    , 'Attack']    ,
-            ['ALT+LBUTTON'           , 'Target Next Pet', 'Target Next Pet', 'Go To'     , 'Go To']     ,
-            [''                      , 'Go To'          , 'Go To'          , ''          , '']          ,
-            ['ALT+RBUTTON'           , 'Stay'           , 'Stay'           , 'Stay'      , 'Stay']      ,
-            ['RIGHTDOUBLECLICK'      , 'Follow'         , 'Follow'         , 'Follow'    , 'Follow']    ,
-            ['ALT+RIGHTDOUBLECLICK'  , 'Defensive'      , 'Defensive'      , 'Defensive' , 'Defensive'] ,
-            ['SHIFT+RIGHTDOUBLECLICK', 'Aggressive'     , 'Aggressive'     , 'Aggressive', 'Aggressive'],
-            ['CTRL+RIGHTDOUBLECLICK' , 'Passive'        , 'Passive'        , 'Passive'   , 'Passive ']  ,
+            ['SHIFT+NUMPAD4'          , 'Select + Target Next Minion'     ],
+            ['SHIFT+NUMPAD5'          , 'Select + Target Next Lieutenant' ],
+            ['SHIFT+NUMPAD6'          , 'Select Boss'                     ],
+            ['SHIFT+ADD'              , 'Select All'                      ],
+            ['CTRL+ADD'               , 'Select None'                     ],
+            ['2'                      , 'Attack'                          ],
+            ['4'                      , 'Open Popmenu'                    ],
+            ['ALT+LBUTTON'            , 'Target Next Pet In Group + Go To'],
+            ['ALT+RBUTTON'            , 'Stay'                            ],
+            ['RIGHTDOUBLECLICK'       , 'Follow'                          ],
+            ['ALT+RIGHTDOUBLECLICK'   , 'Defensive'                       ],
+            ['SHIFT+RIGHTDOUBLECLICK' , 'Aggressive'                      ],
+            ['CTRL+RIGHTDOUBLECLICK'  , 'Passive'                         ],
         ]:
             self.ButtonGrid.Append(row)
 
-        for i in (0,1,2,3,4):
-            self.ButtonGrid.SetColumnWidth(i, wx.LIST_AUTOSIZE)
+        self.ButtonGrid.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+        self.ButtonGrid.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 
         # This is awful
         rect = self.ButtonGrid.GetItemRect(0)
@@ -42,9 +56,9 @@ class qwyPetMouse(wx.Panel):
         self.ButtonGrid.SetMinSize((wx.Size(width, height)))
         self.ButtonGrid.SetAutoLayout(True)
 
-        centeringSizer.Add(self.ButtonGrid, 1, wx.ALL, 15)
+        centeringSizer.Add(self.ButtonGrid, 1)
 
-        qwyMouseSizer.Add(centeringSizer, 0, wx.ALIGN_CENTER)
+        qwyMouseSizer.Add(centeringSizer, 0, wx.ALIGN_CENTER|wx.ALL, 15)
 
         self.Fit()
         self.Layout()

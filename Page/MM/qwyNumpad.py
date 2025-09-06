@@ -5,8 +5,8 @@ from Help import HelpButton
 import GameData
 
 class qwyNumpad(wx.Panel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, page, parent):
+        super().__init__(parent)
 
         qwyNumpadSizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(qwyNumpadSizer)

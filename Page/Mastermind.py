@@ -147,10 +147,10 @@ class Mastermind(Page):
         self.BindStyleNotebook.SetPadding(wx.Size(50,0))
         self.Ctrls['BindStyle'] = self.BindStyleNotebook
 
-        BasicSelectPage      = self.BasicSelectPage(self.BindStyleNotebook)
-        self.SandolphanPage  = SandolphanBinds(self, self.BindStyleNotebook)
-        self.qwyNumpadPage   = qwyNumpad(self, self.BindStyleNotebook)
-        self.qwyPetMousePage = qwyPetMouse(self, self.BindStyleNotebook) # TODO
+        BasicSelectPage      = self.BasicSelectPage(      self.BindStyleNotebook)
+        self.SandolphanPage  = SandolphanBinds     (self, self.BindStyleNotebook)
+        self.qwyNumpadPage   = qwyNumpad           (self, self.BindStyleNotebook)
+        self.qwyPetMousePage = qwyPetMouse         (self, self.BindStyleNotebook)
 
         self.BindStyleNotebook.AddPage(BasicSelectPage, "Simple Selection Binds")
         self.BindStyleNotebook.AddPage(self.SandolphanPage, "Sandolphan Binds")

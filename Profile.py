@@ -380,8 +380,9 @@ class Profile(wx.Notebook):
         savedata['ProfileBindsDir'] = self.ProfileBindsDir
         savedata['MaxCustomID']     = self.MaxCustomID
         for page in self.Pages:
-            savedata[page.TabTitle] = {}
-            if page.TabTitle == "CustomBinds": continue
+            pagename = type(page).__name__
+            savedata[pagename] = {}
+            if pagename == "CustomBinds": continue
 
             for controlname, control in page.Ctrls.items():
                 # Save disabled controls' states, too, so as not to lose config
@@ -413,9 +414,9 @@ class Profile(wx.Notebook):
                 else:
                     value = control.GetValue()
 
-                savedata[page.TabTitle][controlname] = value
+                savedata[pagename][controlname] = value
 
-            if page.TabTitle == "General":
+            if pagename == "General":
                 savedata['Server'] = page.ServerPicker.GetString(page.ServerPicker.GetSelection())
 
         savedata['CustomBinds'] = []

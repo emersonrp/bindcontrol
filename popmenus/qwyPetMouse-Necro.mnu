@@ -1,0 +1,993 @@
+///petMouse//////////////////////////////////////[mApps]~qwy////v1.0///20.07.15
+//-MACRO: /macroimage Inspiration_HPEnd_Lvl_2 PetMouse bind 4 popmenu pM-Necro
+//-install: c:/<RootInstall>/data/Texts/<Language>/Menus/MMPM-Necro.mnu
+//	- Including quotes, save as;  "<NameFile>.mnu"
+//	- Deviating from install path not supported.
+//	-/103 		- Cycles targeting of all T1
+//	-/203 		- Targets T3
+//	-/302 		- Cycles targeting of all T2
+//	-/321-410	- Control Section for First T2
+//	-/510-601	- Control Section for Second T2
+//	-/604-695	- Control Section for First T1
+//	-/697-786	- Control Section for Second T1
+//	-/788-878	- Control Section for Third T1
+//o\//////////////////////////////////////////////Necro
+Menu "pM-Necro" 
+{
+	Divider
+	Title "- petMouse  -"
+	Divider
+	Divider
+	Title "- Necro -"
+//\o/////////////////////////////////BEGIN/Zombie
+	Menu "&1 | Zombie"
+	{
+		Divider
+		Title "- bie -"
+		Title "[S+#Pad4]"
+		Divider
+		Divider
+		Menu "&1 | Stay"
+		{
+			Divider
+			Title "- bie -"
+			Title "stay"
+			Divider
+			Divider
+			Option "&1 pas" "petcompow bie pas sta"
+			Option "&2 agg" "petcompow bie agg sta"
+			Option "&3 def" "petcompow bie def sta"
+			Option "no&w!" "petcompow bie sta"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+RBTN]"
+				Badge "@."
+			}
+		}
+		Menu "&2 | Attack"
+		{
+			Divider
+			Title "- bie -"
+			Title "attack"
+			Divider
+			Divider
+			Option "&1 pas" "petcompow bie pas att"
+			Option "&2 agg" "petcompow bie agg att"
+			Option "&3 def" "petcompow bie def att"
+			Option "no&w!" "petcompow bie att"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  [2Key]"
+				Badge "@."
+			}
+		}
+		Menu "&3 | Go To"
+		{
+			Divider
+			Title "- bie -"
+			Title "go to"
+			Divider
+			Divider
+			Option "&1 pas" "petcompow bie pas got"
+			Option "&2 agg" "petcompow bie agg got"
+			Option "&3 def" "petcompow bie def got"
+			Option "no&w!" "petcompow bie got"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+LBTN]"
+				Badge "@."
+			}
+		}
+		Option "&4 | Summon" "powexeclocation forward:30 Zombie Horde"
+		Menu "Follo&w"
+		{
+			Divider
+			Title "- bie -"
+			Title "follow"
+			Divider
+			Divider
+			Option "&1 pas" "petcompow bie pas fol"
+			Option "&2 agg" "petcompow bie agg fol"
+			Option "&3 def" "petcompow bie def fol"
+			Option "no&w!" "petcompow bie fol"
+			Divider
+			LockedOption
+			{
+				DisplayName " ` [RDC]"
+				Badge "@."
+			}
+		}
+///This cycles the targeting on your T1 pets, It currently assumes, "bie" as in, "Zombie", is part of all three of their names. 
+		Option "Targ&et" "targetcustomnext alive mypet bie" 
+		Divider
+		Divider
+		Option "[C+RDC] |  p&as" "Petcompow bie pas"
+		Option "[&S+RDC] | agg" "Petcompow bie agg"
+		Option "[A+RDC] |  &def" "Petcompow bie def"
+		Divider
+		Divider
+		Option "Macr&o" <&macroimage "Necromancy_CallZombieHorde" "Zombie" "powexeclocation backward:20 Zombie Horde$$bindloadfilesilent @/!/MM/PetMouse/Necro/Off.txt"&>
+		Option "D&ismiss" "petcompow bie dis"
+		Divider
+		LockedOption
+		{
+			DisplayName " `  [S+#Pad4]"
+			Badge "@."
+		}
+	}
+
+//o\ \o//////////////////////////////BEGIN/Lich
+	Menu "&2 | Lich"
+	{
+		Divider
+		Title "- Lich-"
+		Title "[S+#Pad5]"
+		Divider
+		Divider
+		Menu "&1 | Stay"
+		{
+			Divider
+			Title "- Lich -"
+			Title "stay"
+			Divider
+			Divider
+			Option "&1 pas" "petcompow ich pas sta"
+			Option "&2 agg" "petcompow ich agg sta"
+			Option "&3 def" "petcompow ich def sta"
+			Option "no&w!" "petcompow ich sta"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+RBTN]"
+				Badge "@."
+			}
+		}
+		Menu "&2 | Attack"
+		{
+			Divider
+			Title "- Lich -"
+			Title "attack"
+			Divider
+			Divider
+			Option "&1 pas" "petcompow ich pas att"
+			Option "&2 agg" "petcompow ich agg att"
+			Option "&3 def" "petcompow ich def att"
+			Option "no&w!" "petcompow ich att"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  [2Key]"
+				Badge "@."
+			}
+		}
+		Menu "&3 | Go To"
+		{
+			Divider
+			Title "- Lich -"
+			Title "go to"
+			Divider
+			Divider
+			Option "&1 pas" "petcompow ich pas got"
+			Option "&2 agg" "petcompow ich agg got"
+			Option "&3 def" "petcompow ich def got"
+			Option "no&w!" "petcompow ich got"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+LBTN]"
+				Badge "@."
+			}
+		}
+		Option "&4 | Summon" "powexeclocation forward:20 Lich"
+		Menu "Follo&w"
+		{
+			Divider
+			Title "- Lich -"
+			Title "follow"
+			Divider
+			Divider
+			Option "&1 | pas" "petcompow ich pas fol"
+			Option "&2 | agg" "petcompow ich agg fol"
+			Option "&3 | def" "petcompow ich def fol"
+			Option "no&w!" "petcompow ich fol"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  [RDC]"
+				Badge "@."
+			}
+		}
+///This targets the T3 pet, It currently assumes, "ich" as in, "Lich", is part of it's name.
+		Option "Targ&et" "petselectname ich" 
+		Divider
+		Divider
+		Option "[C+RDC] |  p&as" "Petcompow ich pas"
+		Option "[&S+RDC] | agg" "Petcompow ich agg"
+		Option "[A+RDC] |  &def" "Petcompow ich def"
+		Divider
+		Divider
+		Option "Macr&o" <&macroimage "Necromancy_SummonLitch" "Lich" "powexeclocation backward:2 Lich$$bindloadfilesilent @/!/MM/PetMouse/Necro/Off.txt"&>
+		Option "D&ismiss" "petcompow ich dis"
+		Divider
+		LockedOption
+		{
+			DisplayName " [S+#PD5]"
+			Badge "@."
+		}
+	}
+//o\ \o//////////////////////////////Begin/Knights
+	Menu "&3 | Knights"
+	{
+		Divider
+		Title "Knights"
+		Title "[S+#Pad6]"
+		Divider
+		Divider
+		Menu "&1 | Stay"
+		{
+			Divider
+			Title "- Knights -"
+			Title "stay"
+			Divider
+			Divider
+			Option "&1 pas" "petcompow hts pas sta"
+			Option "&2 agg" "petcompow hts agg sta"
+			Option "&3 def" "petcompow hts def sta"
+			Option "no&w!" "petcompow hts sta"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+RBTN]"
+				Badge "@."
+			}
+		}
+		Menu "&2 | Attack"
+		{
+			Divider
+			Title "- Knights -"
+			Title "attack"
+			Divider
+			Divider
+			Option "&1 pas" "petcompow hts pas att"
+			Option "&2 agg" "petcompow hts agg att"
+			Option "&3 def" "petcompow hts def att"
+			Option "no&w!" "petcompow hts att"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  [2Key]"
+				Badge "@."
+			}
+		}
+		Menu "&3 | Go To"
+		{
+			Divider
+			Title "- Knights -"
+			Title "go to"
+			Divider
+			Divider
+			Option "&1 pas" "petcompow hts pas got"
+			Option "&2 agg" "petcompow hts agg got"
+			Option "&3 def" "petcompow hts def got"
+			Option "no&w!" "petcompow hts got"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+LBTN]"
+				Badge "@."
+			}
+		}
+		Option "&4 | Summon" "powexeclocation forward:20 Grave Knight"
+		Menu "Follo&w"
+		{
+			Divider
+			Title "- Knights -"
+			Title "follow"
+			Divider
+			Divider
+			Option "&1 pas" "petcompow hts pas fol"
+			Option "&2 agg" "petcompow hts agg fol"
+			Option "&3 def" "petcompow hts def fol"
+			Option "no&w!" "petcompow hts fol"
+			Divider
+			LockedOption
+			{
+				DisplayName " ` [RDC]"
+				Badge "@."
+			}
+		}
+///This cycles targeting of the T2 pets, It currently assumes, "hts" as in, "Knights", is part of both their names.
+		Option "Targ&et" "targetcustomnext alive mypet hts" 
+		Divider
+		Divider
+		Option "[C+RDC] |  p&as" "Petcompow hts pas"
+		Option "[&S+RDC] | agg" "Petcompow hts agg"
+		Option "[A+RDC] |  &def" "Petcompow hts def"
+		Divider
+		Divider
+		Option "Macr&o" <&macroimage "Necromancy_SummonSkeletonWarrior" "Necro" "powexeclocation backward:2 Grave Knight$$bindloadfilesilent @/!/MM/PetMouse/Necro/Off.txt"&>
+		Option "Term&iniate" "petcompow hts dis"
+		Divider
+			LockedOption
+			{
+				DisplayName "[S+#Pad6]"
+				Badge "@."
+			}
+	}
+//o\ \o//////////////////////////////BEGIN/KnightA
+///This section controls the first T2 pet, individually. It currently assumes, "hta" as in, "KnightA", is part of it's name.
+	Menu "&q | KnightA"
+	{
+		Divider
+		Title "- KnightA -"
+		Divider
+		Divider
+		Menu "&1 | Stay"
+		{
+			Divider
+			Title "- hta -"
+			Title "stay"
+			Divider
+			Divider
+			Option "&1 pas" "petcomname hta pas sta"
+			Option "&2 agg" "petcomname hta agg sta"
+			Option "&3 def" "petcomname hta def sta"
+			Option "no&w!" "petcomname hta sta"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+RBTN]"
+				Badge "@."
+			}
+		}
+		Menu "&2 | Attack"
+		{
+			Divider
+			Title "- hta -"
+			Title "attack"
+			Divider
+			Divider
+			Option "&1 pas" "petcomname hta pas att"
+			Option "&2 agg" "petcomname hta agg att"
+			Option "&3 def" "petcomname hta def att"
+			Option "no&w!" "petcomname hta att"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  [2Key]"
+				Badge "@."
+			}
+		}
+		Menu "&3 | Go To"
+		{
+			Divider
+			Title "- hta -"
+			Title "go to"
+			Divider
+			Divider
+			Option "&1 pas" "petcomname hta pas got"
+			Option "&2 agg" "petcomname hta agg got"
+			Option "&3 def" "petcomname hta def got"
+			Option "no&w!" "petcomname hta got"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+LBTN]"
+				Badge "@."
+			}
+		}
+		Menu " Follo&w"
+		{
+			Divider
+			Title "- hta -"
+			Title "follow"
+			Divider
+			Divider
+			Option "&1 pas" "petcomname hta pas fol"
+			Option "&2 agg" "petcomname hta agg fol"
+			Option "&3 def" "petcomname hta def fol"
+			Option "no&w!" "petcomname hta fol"
+			Divider
+			LockedOption
+			{
+				DisplayName "[RDC]"
+				Badge "@."
+			}
+		}
+		Option "Targ&et" "targetcustomnext alive mypet hta" 
+		Divider
+		Divider
+		Option "[C+RDC] |  p&as" "Petcomname hta pas"
+		Option "[&S+RDC] | agg" "Petcomname hta agg"
+		Option "[A+RDC] |  &def" "Petcomname hta  def"
+		Divider
+		Divider
+		Option "D&ismiss" "petcomname hta dis"
+		Divider
+	}
+//o\ \o//////////////////////////////BEGIN/All Pets 
+	Menu "&w | All Pets"
+	{
+		Divider
+		Title "- All Pets -"
+		Title "[S+#ADD]"
+		Divider
+		Divider
+		Menu "&1 | Stay"
+		{
+			Divider
+			Title "- all stay-"
+			Title "[A+RB]"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomall pas sta"
+			Option "&2 | agg" "petcomall agg sta"
+			Option "&3 | def" "petcomall def sta"
+			Option "no&w!" "petcomall sta"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+RBTN]"
+				Badge "@."
+			}
+		}
+		Menu "&2 | Attack"
+		{
+			Divider
+			Title "- all attack -"
+			Title "[2key]" ""
+			Divider
+			Divider
+			Option "&1 | pas" "petcomall pas att"
+			Option "&2 | agg" "petcomall agg att"
+			Option "&3 | def" "petcomall def att"
+			Option "no&w!" "petcomall att"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  [2Key]"
+				Badge "@."
+			}
+		}
+		Menu "&3 Go To"
+		{
+			Divider
+			Title "- all go to -"
+			Title "[A+LB]"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomall pas got"
+			Option "&2 | agg" "petcomall agg got"
+			Option "&3 | def" "petcomall def got"
+			Option "no&w!" "petcomall got"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+LBTN]"
+				Badge "@."
+			}
+		}
+		Menu "Follo&w"
+		{
+			Divider
+			Title "- all follow -"
+			Title "[RDC]"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomall pas fol"
+			Option "&2 | agg" "petcomall agg fol"
+			Option "&3 | def" "petcomall def fol"
+			Option "no&w!" "petcomall fol"
+			Divider
+			LockedOption
+			{
+				DisplayName "[RDC]"
+				Badge "@."
+			}
+		}
+		Option "Targ&et" "targetcustomnext alive mypet " 
+		Divider
+		Divider
+		Title "Staich Binds"
+		Option "[C+R&DC]: | pas" "petcomall pas" 
+		Option "[&S+RDC]: agg" "petcomall agg" 
+		Option "[&A+RDC]: def" "petcomall def" 
+		Divider
+		Divider
+		Option "D&ismiss" "petcomall dis"
+		Option "All fall d&own" "petcomall dis"
+		Divider
+		LockedOption
+		{
+			DisplayName "[S+#ADD]"
+			Badge "@."
+		}
+	}
+//o\ \o//////////////////////////////BEGIN/KnightB
+///This section controls the second T2 pet, individually. It currently assumes, "htb" as in, "KnightB", is part of it's name.
+	Menu "&e | KnightsB"
+	{
+		Divider
+		Title "- KnightsB -"
+		Divider
+		Divider
+		Menu "&1 | Stay"
+		{
+			Divider
+			Title "- htb -"
+			Title "stay"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname htb pas sta"
+			Option "&2 | agg" "petcomname htb agg sta"
+			Option "&3 | def" "petcomname htb def sta"
+			Option "no&w!" "petcomname htb sta"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+RBTN]"
+				Badge "@."
+			}
+
+		}
+		Menu "&2 | Attack"
+		{
+			Divider
+			Title "- htb -"
+			Title "attack"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname htb pas att"
+			Option "&2 | agg" "petcomname htb agg att"
+			Option "&3 | def" "petcomname htb def att"
+			Option "no&w!" "petcomname htb att"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  [2Key]"
+				Badge "@."
+			}
+		}
+		Menu "&3 | Go To"
+		{
+			Divider
+			Title "- htb -"
+			Title "go to"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname htb pas got"
+			Option "&2 | agg" "petcomname htb agg got"
+			Option "&3 | def" "petcomname htb def got"
+			Option "no&w!" "petcomname htb got"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+LBTN]"
+				Badge "@."
+			}
+		}
+		Menu "Follo&w"
+		{
+			Divider
+			Title "- htb -"
+			Title "follow"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname htb pas fol"
+			Option "&2 | agg" "petcomname htb agg fol"
+			Option "&3 | def" "petcomname htb def fol"
+			Option "no&w!" "petcomname htb fol"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  [RDC]"
+				Badge "@."
+			}
+		}
+		Option "Targ&et" "targetcustomnext alive mypet htb" 
+		Divider
+		Divider
+		Option "[C+RDC] |  p&as" "Petcomname htb pas"
+		Option "[&S+RDC] | agg" "Petcomname htb agg"
+		Option "[A+RDC] |  &def" "Petcomname htb def"
+		Divider
+		Divider
+		Option "D&ismiss" "petcomname htb dis"
+		Divider
+	}
+	Divider
+//o\//////////////////////////////////////////END/Knights
+//\o/////////////////////////////////BEGIN/Zombie1
+///This section controls the first T1 pet, individually. It currently assumes, "ie1" as in, "Zombie1", is part of it's name.
+	Divider
+	Title "Zombie"
+	Menu "&a | Zombie1"
+	{
+		Divider
+		Title "- Zombie1 -"
+		Divider
+		Divider
+		Menu "&1 | Stay"
+		{
+			Divider
+			Title "- ie1 -"
+			Title "stay"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname ie1 pas sta"
+			Option "&2 | agg" "petcomname ie1 agg sta"
+			Option "&3 | def" "petcomname ie1 def sta"
+			Option "no&w!" "petcomname ie1 sta"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+RBTN]"
+				Badge "@."
+			}
+		}
+		Menu "&2 | Attack"
+		{
+			Divider
+			Title "- ie1 -"
+			Title "attack"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname ie1 pas att"
+			Option "&2 | agg" "petcomname ie1 agg att"
+			Option "&3 | def" "petcomname ie1 def att"
+			Option "no&w!" "petcomname ie1 att"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  [2Key]"
+				Badge "@."
+			}
+		}
+		Menu "&3 | Go To"
+		{
+			Divider
+			Title "- ie1 -"
+			Title "go to"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname ie1 pas got"
+			Option "&2 | agg" "petcomname ie1 agg got"
+			Option "&3 | def" "petcomname ie1 def got"
+			Option "no&w!" "petcomname ie1 got"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+LBTN]"
+				Badge "@."
+			}
+		}
+		Menu "Follo&w"
+		{
+			Divider
+			Title "- ie1 -"
+			Title "follow"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname ie1 pas fol"
+			Option "&2 | agg" "petcomname ie1 agg fol"
+			Option "&3  | def" "petcomname ie1 def fol"
+			Option "no&w!" "petcomname ie1 fol"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  [RDC]"
+				Badge "@."
+			}
+		}
+		Option "Targ&et" "targetcustomnext alive mypet ie1"
+		Divider
+		Divider
+		Option "[C+RDC]|  p&as" "Petcomname ie1 pas"
+		Option "[&S+RDC] | agg" "Petcomname ie1 agg"
+		Option "[A+RDC] |  &def" "Petcomname ie1 def"
+		Divider
+		Divider
+		Option "D&ismiss" "petcomname ie1 dis"
+		Divider
+	}
+//o\ \o//////////////////////////////BEGIN/Zombie2
+///This section controls the second T1 pet, individually. It currently assumes, "ie2" as in, "Zombie2", is part of it's name.
+	Menu "&s | Zombie2"
+	{
+		Divider
+		Title "- Zombie2 -"
+		Divider
+		Divider
+		Menu "&1 | Stay"
+		{
+			Divider
+			Title "- ie2 -"
+			Title "stay"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname ie2 pas sta"
+			Option "&2 | agg" "petcomname ie2 agg sta"
+			Option "&3 | def" "petcomname ie2 def sta"
+			Option "no&w!" "petcomname ie2 sta"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+RBTN]"
+				Badge "@."
+			}
+		}
+		Menu "&2 | Attack"
+		{
+			Divider
+			Title "- ie2 -"
+			Title "attack"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname ie2 pas att"
+			Option "&2 | agg" "petcomname ie2 agg att"
+			Option "&3 | def" "petcomname ie2 def att"
+			Option "no&w!" "petcomname ie2 att"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  [2Key]"
+				Badge "@."
+			}
+		}
+		Menu "&3 | Go To"
+		{
+			Divider
+			Title "- ie2 -"
+			Title "go to"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname ie2 pas got"
+			Option "&2 | agg" "petcomname ie2 agg got"
+			Option "&3 | def" "petcomname ie2 def got"
+			Option "no&w!" "petcomname ie2 got"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+LBTN]"
+				Badge "@."
+			}
+		}
+		Menu "Follo&w"
+		{
+			Divider
+			Title "- ie2 -"
+			Title "follow"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname ie2 pas fol"
+			Option "&2 | agg" "petcomname ie2 agg fol"
+			Option "&3 | def" "petcomname ie2 def fol"
+			Option "no&w!" "petcomname ie2 fol"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  RDC"
+				Badge "@."
+			}
+		}
+		Option "Targ&et" "targetcustomnext alive mypet ie2"
+		Divider
+		Divider
+		Option "[C+RDC] |  p&as" "Petcomname ie2 pas"
+		Option "[&S+RDC] | agg" "Petcomname ie2 agg"
+		Option "[A+RDC] |  &def" "Petcomname ie2 def"
+		Divider
+		Divider
+		Option "D&ismiss" "petcomname ie2 dis"
+		Divider
+	}
+//o\ \o//////////////////////////////BEGIN/Zombie3
+///This section controls the third T1 pet, individually. It currently assumes, "ie3" as in, "Zombie3", is part of it's name.
+	Menu "&d | Zombie3"
+	{
+		Divider
+		Title "- Zombie3 -"
+		Divider
+		Divider
+		Menu "&1 | Stay"
+		{
+			Divider
+			Title "- ie3 -"
+			Title "stay"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname ie3 pas sta"
+			Option "&2 | agg" "petcomname ie3 agg sta"
+			Option "&3 | def" "petcomname ie3 def sta"
+			Option "no&w!" "petcomname ie3 sta"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+RBTN]"
+				Badge "@."
+			}
+		}
+		Menu "&2 | Attack"
+		{
+			Divider
+			Title "- ie3 -"
+			Title "attack"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname ie3 pas att"
+			Option "&2 | agg" "petcomname ie3 agg att"
+			Option "&3 | def" "petcomname ie3 def att"
+			Option "no&w!" "petcomname ie3 att"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  [2Key]"
+				Badge "@."
+			}
+		}
+		Menu "&3 | Go To"
+		{
+			Divider
+			Title "- ie3 -"
+			Title "go to"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname ie3 pas got"
+			Option "&2 | agg" "petcomname ie3 agg got"
+			Option "&3 | def" "petcomname ie3 def got"
+			Option "no&w!" "petcomname ie3 got"
+			Divider
+			LockedOption
+			{
+				DisplayName "[A+LBTN]"
+				Badge "@."
+			}
+		}
+		Menu "Follo&w"
+		{
+			Divider
+			Title "- ie3 -"
+			Title "follow"
+			Divider
+			Divider
+			Option "&1 | pas" "petcomname ie3 pas fol"
+			Option "&2 | agg" "petcomname ie3 agg fol"
+			Option "&3 | def" "petcomname ie3 def fol"
+			Option "no&w!" "petcomname ie3 fol"
+			Divider
+			LockedOption
+			{
+				DisplayName " `  RDC"
+				Badge "@."
+			}
+		}
+		Option "Targ&et" "targetcustomnext alive mypet ie3" 
+		Divider
+		Divider
+		Option "[C+RDC] |  p&as" "Petcomname ie3 pas"
+		Option "[&S+RDC] |  agg" "Petcomname ie3 agg"
+		Option "[A+RDC] |  &def" "Petcomname ie3 def"
+		Divider
+		Divider
+		Option "Dis&miss" "petcomname ie3 dis"
+		Divider
+	}
+	Divider
+//o\ o\///////////////////////////////////////END/Zombie
+//\o/////////////////////////////////BEGIN/PetMouse//v1.4
+	Divider
+	Title "Cont&rols"
+	Menu "&4 | Binds"
+	{
+	Divider
+	Divider
+	Title "Commands"
+	Option "&1 | [A+RB]: . sta" "petcomall sta"
+	Option "&2 | [2Key]: . att" "petcomall att"
+	Option "&3 | [A+LB]: . got" "petcomall got"
+	Option "&w |. [RDC]: . fol" "petcomall fol"
+	Divider
+	Divider
+	Title "Stance"
+	Option "[C+R&DC]: . pas" "petcomall pas" 
+	Option "[&S+RDC]: . agg" "petcomall agg" 
+	Option "[&A+RDC]: . def" "petcomall def" 
+	Divider
+	Divider
+	Title "SHIFT+"
+	Title "Select Group"
+	Option "[#Pad&4]: . T1" ""
+	Option "[#Pad&5]: . T2" ""
+	Option "[#Pad&6]: . T3" ""
+	Option ".[#A&DD]: . All" ""
+	Divider
+			LockedOption
+			{
+				DisplayName " `  Off | C+ADD"
+				Badge "@."
+			}
+	}
+//o\ \o//////////////////////////////BEGIN/Window Settings
+	Menu "Interfa&ce"
+	{
+		Divider
+		Title "- Interface -"
+		Title "Controls"
+		Divider
+		Divider
+		Title "Saved Options"
+		Option "Basi&cs" "windowshow pet$$windowscale pet 0.9$$optionset ShowPetControls 1$$optionset AdvancedPetControls 0$$optionset gShowPetBuffs 1"
+		Option "&Full On" "windowshow pet$$windowscale pet 1.2$$optionset ShowPetControls 1$$optionset AdvancedPetControls 1$$optionset gShowPetBuffs 1"
+		Option "&Tiny" "windowshow pet$$windowscale pet 0.75$$optionset ShowPetControls 0$$optionset AdvancedPetControls 1$$optionset gShowPetBuffs 0"
+		Divider
+		Divider
+		Title "Window settings"
+		Option "Show P&et Window" "windowshow pet"
+		Option "Toggle Cont&rol" "optiontoggle ShowPetControls"
+		Option "Toggle Ad&vanced" "optiontoggle AdvancedPetControls"
+		Option "To&gle Buffs" "optiontoggle gShowPetBuffs"
+		Menu "Win&dow Scale"
+		{
+			Divider
+			Title "- Window -"
+			Title "Scale"
+			Divider
+			Divider
+			Option "Hu&ge" "windowscale pet 1.5"
+			Option "La&rge" "windowscale pet 1.2"
+			Option "&Full" "windowscale pet 1.0"
+			Option "P&etite" "windowscale pet 0.80"
+			Option "&Dainty" "windowscale pet 0.65"
+			Divider
+			Option "0.65-&2.25" "show chat$$beginchat /windowscale pet "
+			Divider
+		}
+		Option "&Toggle Icon Lock" "optiontoggle PreventPetIconDrag"
+		Option "Toggle Team's Pet Link" "optiontoggle ShowPets"
+		Option "Hi&de Window" "windowhide pet"
+		Divider
+		Divider
+		Title "Voice and Data"
+		Menu "Chatter"
+		{
+			Divider
+			Title "- Show -"
+			Title "Chatter"
+			Divider
+			Divider
+			Option "&Disable" "optionset ChatDisablePetSay 1$$optionset ChatEnablePetTeamSay 0"
+			Option "My Pet&s" "optionset ChatDisablePetSay 0$$optionset ChatEnablePetTeamSay 0"
+			Option "Te&am Pets" "optionset ChatDisablePetSay 0$$optionset ChatEnablePetTeamSay 1"
+			Divider
+		}
+		Menu "Names"
+		{
+			Divider
+			Title "Options"
+			Divider
+			Divider
+			Option "User Pet Names" "optiontoggle hidepetnames"
+			Option "Rename &Focused Pet" "show chat$$beginchat /petrename "
+			Divider
+			Option "Reset All Pet Names" "clearpetnames"
+			Divider
+		}
+		Divider
+	}
+//o\ \o//////////////////////////////BEGIN/Footer
+	Option "Reco&very Macro" <&macroimage Inspiration_HPEnd_Lvl_2 PetMouse "bind 4 popmenu pM-Necro$$bindloadfilesilent @/!/MM/PetMouse/Necro/Off.txt"&>
+	Option "Load &Binds" "+$$t $name, Hit Enter.$$beginchat /bindloadfilesilent @/!/MM/PetMouse/Necro/Off.txt"
+	Divider
+	Option "Pla&y Dead!" "releasepets"
+	Divider
+	LockedOption
+	{
+		DisplayName " `          by qwy"
+		Badge "@."
+	}
+}
+//o\////////////////////////////////////END/petmouse
+

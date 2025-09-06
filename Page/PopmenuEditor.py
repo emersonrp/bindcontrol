@@ -190,13 +190,10 @@ class PopmenuEditor(Page):
 
     def SynchronizeUI(self, _ = None):
         NoErrors = True
-        server = self.Profile.Server
-        pathvar = 'GamePath' if server == 'Homecoming' else 'GameRebirthPath'
-        gamepath = Path(wx.ConfigBase.Get().Read(pathvar))
-        if gamepath.is_dir():
-            self.CheckGameDirBox.Hide()
+        if GetValidGamePath(self.Profile.Server):
+            self.CheckMenuDirBox.Hide()
         else:
-            self.CheckGameDirBox.Show()
+            self.CheckMenuDirBox.Show()
             NoErrors = False
 
         if NoErrors:

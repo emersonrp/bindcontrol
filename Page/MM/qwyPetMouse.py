@@ -5,8 +5,8 @@ from Help import HelpButton
 import GameData
 
 class qwyPetMouse(wx.Panel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, page, parent):
+        super().__init__(parent)
 
         qwyMouseSizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(qwyMouseSizer)
@@ -16,7 +16,7 @@ class qwyPetMouse(wx.Panel):
         popmenusizer = wx.BoxSizer(wx.HORIZONTAL)
         self.InstallPopmenuCB = wx.CheckBox(self, label = 'Install Popmenu (recommended)')
         self.InstallPopmenuCB.SetValue(True)
-        self.Ctrls = {'InstallPopmenu' : self.InstallPopmenuCB }
+        page.Ctrls['InstallPopmenu'] = self.InstallPopmenuCB
         popmenusizer.Add(self.InstallPopmenuCB, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
         popmenusizer.Add(HelpButton(self, 'qwyPetMouse.html'), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 

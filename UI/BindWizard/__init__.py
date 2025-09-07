@@ -2,6 +2,7 @@ import os, sys
 import importlib
 from pathlib import Path
 import wx
+from Util.Paths import GetRootDirPath
 
 class WizardParent(object):
     def __init__(self, parent, init):
@@ -75,18 +76,13 @@ class WizPickerDialog(wx.Dialog):
 
 # Load plugins / modules from UI/BindWizard directory
 def LoadModules():
-    if path := getattr(sys, '_MEIPASS', None):
-        path = Path(path) / 'BindWizard'
-        modpath = "BindWizard."
-    else:
-        path = Path(os.path.dirname(os.path.abspath(__file__)))
-        modpath = "UI.BindWizard."
+    path = GetRootDirPath() / 'UI' / 'BindWizard'
 
     for package_file in sorted(path.glob('*.py')):
         package = package_file.stem
         if package == '__init__': continue
 
-        modstr = modpath + package
+        modstr = f"UI.BindWizard.{package}"
         # check if we've already loaded this one, if so, we've done this before, bail out
         if modstr in sys.modules: return
 

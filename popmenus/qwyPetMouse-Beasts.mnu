@@ -1,5 +1,5 @@
 ///petMouse//////////////////////////////////////[mApps]~qwy////v1.0///20.07.15
-//-MACRO: /macroimage Inspiration_HPEnd_Lvl_2 PetMouse bind 4 popmenu pM-Beasts
+//-MACRO: /macroimage Inspiration_HPEnd_Lvl_2 PetMouse bind 4 popmenu qwyPetMouse-Beasts
 //-install: c:/<RootInstall>/data/Texts/<Language>/Menus/MMPM-Beasts.mnu
 //	- Including quotes, save as;  "<NameFile>.mnu"
 //	- Deviating from install path not supported.
@@ -12,7 +12,7 @@
 //	-/697-786	- Control Section for Second T1
 //	-/788-878	- Control Section for Third T1
 //o\//////////////////////////////////////////////Beasts
-Menu "pM-Beasts" 
+Menu "qwyPetMouse-Beasts"
 {
 	Divider
 	Title "- petMouse  -"
@@ -100,8 +100,8 @@ Menu "pM-Beasts"
 				Badge "@."
 			}
 		}
-///This cycles the targeting on your T1 pets, It currently assumes, "olf" as in, "Wolf", is part of all three of their names. 
-		Option "Targ&et" "targetcustomnext alive mypet olf" 
+///This cycles the targeting on your T1 pets, It currently assumes, "olf" as in, "Wolf", is part of all three of their names.
+		Option "Targ&et" "targetcustomnext alive mypet olf"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcompow ves pas"
@@ -119,7 +119,7 @@ Menu "pM-Beasts"
 		}
 	}
 
-//o\ \o//////////////////////////////BEGIN/Dire Wolf 
+//o\ \o//////////////////////////////BEGIN/Dire Wolf
 	Menu "&2 | Dire Wolf"
 	{
 		Divider
@@ -201,7 +201,7 @@ Menu "pM-Beasts"
 			}
 		}
 ///This targets the T3 pet, It currently assumes, "ire" as in, "Dire", is part of it's name.
-		Option "Targ&et" "petselectname ire" 
+		Option "Targ&et" "petselectname ire"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcompow ire pas"
@@ -300,7 +300,7 @@ Menu "pM-Beasts"
 			}
 		}
 ///This cycles targeting of the T2 pets, It currently assumes, "ons" as in, "Lions", is part of both their names.
-		Option "Targ&et" "targetcustomnext alive mypet ons" 
+		Option "Targ&et" "targetcustomnext alive mypet ons"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcompow ons pas"
@@ -397,7 +397,7 @@ Menu "pM-Beasts"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet ona" 
+		Option "Targ&et" "targetcustomnext alive mypet ona"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcomname ona pas"
@@ -408,7 +408,7 @@ Menu "pM-Beasts"
 		Option "D&ismiss" "petcomname ona dis"
 		Divider
 	}
-//o\ \o//////////////////////////////BEGIN/All Pets 
+//o\ \o//////////////////////////////BEGIN/All Pets
 	Menu "&w | All Pets"
 	{
 		Divider
@@ -488,13 +488,13 @@ Menu "pM-Beasts"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet " 
+		Option "Targ&et" "targetcustomnext alive mypet "
 		Divider
 		Divider
 		Title "Stance Binds"
-		Option "[C+R&DC]: | pas" "petcomall pas" 
-		Option "[&S+RDC]: agg" "petcomall agg" 
-		Option "[&A+RDC]: def" "petcomall def" 
+		Option "[C+R&DC]: | pas" "petcomall pas"
+		Option "[&S+RDC]: agg" "petcomall agg"
+		Option "[&A+RDC]: def" "petcomall def"
 		Divider
 		Divider
 		Option "D&ismiss" "petcomall dis"
@@ -587,7 +587,7 @@ Menu "pM-Beasts"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet onb" 
+		Option "Targ&et" "targetcustomnext alive mypet onb"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcomname onb pas"
@@ -785,7 +785,7 @@ Menu "pM-Beasts"
 		Divider
 	}
 //o\ \o//////////////////////////////BEGIN/Wolf3
-///This section controls the third T1 pet, individually. It currently assumes, "lf3" as in, "Wolf3", is part of it's name. 
+///This section controls the third T1 pet, individually. It currently assumes, "lf3" as in, "Wolf3", is part of it's name.
 	Menu "&d | Wolf3"
 	{
 		Divider
@@ -864,7 +864,7 @@ Menu "pM-Beasts"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet lf3" 
+		Option "Targ&et" "targetcustomnext alive mypet lf3"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcomname lf3 pas"
@@ -892,9 +892,9 @@ Menu "pM-Beasts"
 	Divider
 	Divider
 	Title "Stance"
-	Option "[C+R&DC]: . pas" "petcomall pas" 
-	Option "[&S+RDC]: . agg" "petcomall agg" 
-	Option "[&A+RDC]: . def" "petcomall def" 
+	Option "[C+R&DC]: . pas" "petcomall pas"
+	Option "[&S+RDC]: . agg" "petcomall agg"
+	Option "[&A+RDC]: . def" "petcomall def"
 	Divider
 	Divider
 	Title "SHIFT+"
@@ -978,7 +978,7 @@ Menu "pM-Beasts"
 		Divider
 	}
 //o\ \o//////////////////////////////BEGIN/Footer
-	Option "Reco&very Macro" <&macroimage Inspiration_HPEnd_Lvl_2 PetMouse "bind 4 popmenu pM-Beasts$$bindloadfilesilent @/!/MM/PetMouse/Beasts/Off.txt"&>
+	Option "Reco&very Macro" <&macroimage Inspiration_HPEnd_Lvl_2 PetMouse "bind 4 popmenu qwyPetMouse-Beasts$$bindloadfilesilent @/!/MM/PetMouse/Beasts/Off.txt"&>
 	Option "Load &Binds" "+$$t $name, Hit Enter.$$beginchat /bindloadfilesilent @/!/MM/PetMouse/Beasts/Off.txt"
 	Divider
 	Option "Pla&y Dead!" "releasepets"

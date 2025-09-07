@@ -1,5 +1,5 @@
 ///petMouse//////////////////////////////////////[mApps]~qwy////v1.0///20.07.15
-//-MACRO: /macroimage Inspiration_HPEnd_Lvl_2 PetMouse bind 4 popmenu pM-Demons
+//-MACRO: /macroimage Inspiration_HPEnd_Lvl_2 PetMouse bind 4 popmenu qwyPetMouse-Demons
 //-install: c:/<RootInstall>/data/Texts/<Language>/Menus/MMPM-Demons.mnu
 //	- Including quotes, save as;  "<NameFile>.mnu"
 //	- Deviating from install path not supported.
@@ -12,7 +12,7 @@
 //	-/697-786	- Control Section for Second T1
 //	-/788-878	- Control Section for Third T1
 //o\//////////////////////////////////////////////Demons
-Menu "pM-Demons" 
+Menu "qwyPetMouse-Demons"
 {
 	Divider
 	Title "- petMouse  -"
@@ -100,8 +100,8 @@ Menu "pM-Demons"
 				Badge "@."
 			}
 		}
-///This cycles the targeting on your T1 pets, It currently assumes, "ngs" as in, "Demonlings", is part of all three of their names. 
-		Option "Targ&et" "targetcustomnext alive mypet ngs" 
+///This cycles the targeting on your T1 pets, It currently assumes, "ngs" as in, "Demonlings", is part of all three of their names.
+		Option "Targ&et" "targetcustomnext alive mypet ngs"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcompow ngs pas"
@@ -201,7 +201,7 @@ Menu "pM-Demons"
 			}
 		}
 ///This targets the T3 pet, It currently assumes, "nce" as in, "Demon Prince", is part of it's name.
-		Option "Targ&et" "petselectname nce" 
+		Option "Targ&et" "petselectname nce"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcompow nce pas"
@@ -300,7 +300,7 @@ Menu "pM-Demons"
 			}
 		}
 ///This cycles targeting of the T2 pets, It currently assumes, "ons" as in, "Demons", is part of both their names.
-		Option "Targ&et" "targetcustomnext alive mypet ons" 
+		Option "Targ&et" "targetcustomnext alive mypet ons"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcompow ons pas"
@@ -397,7 +397,7 @@ Menu "pM-Demons"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet ona" 
+		Option "Targ&et" "targetcustomnext alive mypet ona"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcomname ona pas"
@@ -408,7 +408,7 @@ Menu "pM-Demons"
 		Option "D&ismiss" "petcomname ona dis"
 		Divider
 	}
-//o\ \o//////////////////////////////BEGIN/All Pets 
+//o\ \o//////////////////////////////BEGIN/All Pets
 	Menu "&w | All Pets"
 	{
 		Divider
@@ -488,13 +488,13 @@ Menu "pM-Demons"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet " 
+		Option "Targ&et" "targetcustomnext alive mypet "
 		Divider
 		Divider
 		Title "Stance Binds"
-		Option "[C+R&DC]: | pas" "petcomall pas" 
-		Option "[&S+RDC]: agg" "petcomall agg" 
-		Option "[&A+RDC]: def" "petcomall def" 
+		Option "[C+R&DC]: | pas" "petcomall pas"
+		Option "[&S+RDC]: agg" "petcomall agg"
+		Option "[&A+RDC]: def" "petcomall def"
 		Divider
 		Divider
 		Option "D&ismiss" "petcomall dis"
@@ -587,7 +587,7 @@ Menu "pM-Demons"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet onb" 
+		Option "Targ&et" "targetcustomnext alive mypet onb"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcomname onb pas"
@@ -864,7 +864,7 @@ Menu "pM-Demons"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet ng3" 
+		Option "Targ&et" "targetcustomnext alive mypet ng3"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcomname ng3 pas"
@@ -892,9 +892,9 @@ Menu "pM-Demons"
 	Divider
 	Divider
 	Title "Stance"
-	Option "[C+R&DC]: . pas" "petcomall pas" 
-	Option "[&S+RDC]: . agg" "petcomall agg" 
-	Option "[&A+RDC]: . def" "petcomall def" 
+	Option "[C+R&DC]: . pas" "petcomall pas"
+	Option "[&S+RDC]: . agg" "petcomall agg"
+	Option "[&A+RDC]: . def" "petcomall def"
 	Divider
 	Divider
 	Title "SHIFT+"
@@ -978,7 +978,7 @@ Menu "pM-Demons"
 		Divider
 	}
 //o\ \o//////////////////////////////BEGIN/Footer
-	Option "Reco&very Macro" <&macroimage Inspiration_HPEnd_Lvl_2 PetMouse "bind 4 popmenu pM-Demons$$bindloadfilesilent @/!/MM/PetMouse/Demons/Off.txt"&>
+	Option "Reco&very Macro" <&macroimage Inspiration_HPEnd_Lvl_2 PetMouse "bind 4 popmenu qwyPetMouse-Demons$$bindloadfilesilent @/!/MM/PetMouse/Demons/Off.txt"&>
 	Option "Load &Binds" "+$$t $name, Hit Enter.$$beginchat /bindloadfilesilent @/!/MM/PetMouse/Demons/Off.txt"
 	Divider
 	Option "Pla&y Dead!" "releasepets"

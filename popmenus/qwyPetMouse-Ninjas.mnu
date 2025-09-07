@@ -1,5 +1,5 @@
 ///petMouse//////////////////////////////////////[mApps]~qwy////v1.0///20.07.15
-//-MACRO: /macroimage Inspiration_HPEnd_Lvl_2 PetMouse bind 4 popmenu pM-Ninjas
+//-MACRO: /macroimage Inspiration_HPEnd_Lvl_2 PetMouse bind 4 popmenu qwyPetMouse-Ninjas
 //-install: c:/<RootInstall>/data/Texts/<Language>/Menus/MMPM-Ninjas.mnu
 //	- Including quotes, save as;  "<NameFile>.mnu"
 //	- Deviating from install path not supported.
@@ -12,7 +12,7 @@
 //	-/697-786	- Control Section for Second T1
 //	-/788-878	- Control Section for Third T1
 //o\//////////////////////////////////////////////Ninjas
-Menu "pM-Ninjas" 
+Menu "qwyPetMouse-Ninjas"
 {
 	Divider
 	Title "- petMouse  -"
@@ -100,8 +100,8 @@ Menu "pM-Ninjas"
 				Badge "@."
 			}
 		}
-///This cycles the targeting on your T1 pets, It currently assumes, "gen" as in, "Genin", is part of all three of their names. 
-		Option "Targ&et" "targetcustomnext alive mypet gen" 
+///This cycles the targeting on your T1 pets, It currently assumes, "gen" as in, "Genin", is part of all three of their names.
+		Option "Targ&et" "targetcustomnext alive mypet gen"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcompow gen pas"
@@ -201,7 +201,7 @@ Menu "pM-Ninjas"
 			}
 		}
 ///This targets the T3 pet, It currently assumes, "oni" as in, "Oni", is part of it's name.
-		Option "Targ&et" "petselectname oni" 
+		Option "Targ&et" "petselectname oni"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcompow oni pas"
@@ -300,7 +300,7 @@ Menu "pM-Ninjas"
 			}
 		}
 ///This cycles targeting of the T2 pets, It currently assumes, "jou" as in, "Jounin", is part of both their names.
-		Option "Targ&et" "targetcustomnext alive mypet jou" 
+		Option "Targ&et" "targetcustomnext alive mypet jou"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcompow jou pas"
@@ -397,7 +397,7 @@ Menu "pM-Ninjas"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet ina" 
+		Option "Targ&et" "targetcustomnext alive mypet ina"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcomname ina pas"
@@ -408,7 +408,7 @@ Menu "pM-Ninjas"
 		Option "D&ismiss" "petcomname ina dis"
 		Divider
 	}
-//o\ \o//////////////////////////////BEGIN/All Pets 
+//o\ \o//////////////////////////////BEGIN/All Pets
 	Menu "&w | All Pets"
 	{
 		Divider
@@ -488,13 +488,13 @@ Menu "pM-Ninjas"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet " 
+		Option "Targ&et" "targetcustomnext alive mypet "
 		Divider
 		Divider
 		Title "Staoni Binds"
-		Option "[C+R&DC]: | pas" "petcomall pas" 
-		Option "[&S+RDC]: agg" "petcomall agg" 
-		Option "[&A+RDC]: def" "petcomall def" 
+		Option "[C+R&DC]: | pas" "petcomall pas"
+		Option "[&S+RDC]: agg" "petcomall agg"
+		Option "[&A+RDC]: def" "petcomall def"
 		Divider
 		Divider
 		Option "D&ismiss" "petcomall dis"
@@ -587,7 +587,7 @@ Menu "pM-Ninjas"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet inb" 
+		Option "Targ&et" "targetcustomnext alive mypet inb"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcomname inb pas"
@@ -864,7 +864,7 @@ Menu "pM-Ninjas"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet in3" 
+		Option "Targ&et" "targetcustomnext alive mypet in3"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcomname in3 pas"
@@ -892,9 +892,9 @@ Menu "pM-Ninjas"
 	Divider
 	Divider
 	Title "Staoni"
-	Option "[C+R&DC]: . pas" "petcomall pas" 
-	Option "[&S+RDC]: . agg" "petcomall agg" 
-	Option "[&A+RDC]: . def" "petcomall def" 
+	Option "[C+R&DC]: . pas" "petcomall pas"
+	Option "[&S+RDC]: . agg" "petcomall agg"
+	Option "[&A+RDC]: . def" "petcomall def"
 	Divider
 	Divider
 	Title "SHIFT+"
@@ -925,9 +925,9 @@ Menu "pM-Ninjas"
 	Divider
 	Divider
 	Title "Stance"
-	Option "[C+R&DC]: . pas" "petcomall pas" 
-	Option "[&S+RDC]: . agg" "petcomall agg" 
-	Option "[&A+RDC]: . def" "petcomall def" 
+	Option "[C+R&DC]: . pas" "petcomall pas"
+	Option "[&S+RDC]: . agg" "petcomall agg"
+	Option "[&A+RDC]: . def" "petcomall def"
 	Divider
 	Divider
 	Title "SHIFT+"
@@ -1011,7 +1011,7 @@ Menu "pM-Ninjas"
 		Divider
 	}
 //o\ \o//////////////////////////////BEGIN/Footer
-	Option "Reco&very Macro" <&macroimage Inspiration_HPEnd_Lvl_2 PetMouse "bind 4 popmenu pM-Ninjas$$bindloadfilesilent @/!/MM/PetMouse/Ninjas/Off.txt"&>
+	Option "Reco&very Macro" <&macroimage Inspiration_HPEnd_Lvl_2 PetMouse "bind 4 popmenu qwyPetMouse-Ninjas$$bindloadfilesilent @/!/MM/PetMouse/Ninjas/Off.txt"&>
 	Option "Load &Binds" "+$$t $name, Hit Enter.$$beginchat /bindloadfilesilent @/!/MM/PetMouse/Ninjas/Off.txt"
 	Divider
 	Option "Pla&y Dead!" "releasepets"

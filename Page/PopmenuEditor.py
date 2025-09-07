@@ -342,35 +342,35 @@ class PopmenuEditor(Page):
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 return
 
-            origfilepath = fileDialog.GetPath()
+            filepath = fileDialog.GetPath()
 
-            self.doImportMenuFromFile(menupath, origfilepath)
+            self.doImportMenuFromFile(filepath, menupath)
 
-    def doImportMenuFromFile(self, menupath, filepath):
-            newmenu = Popmenu(self)
-            if newmenu.ReadFromFile(filepath):
-                filepath = menupath / Path(filepath).name
-                item = None
-                if self.MenuListCtrl.FindItem(-1, newmenu.Title) != wx.NOT_FOUND:
-                    newtitle = self.GetNewMenuName(dupe_menu_name = newmenu.Title)
-                    if newtitle == wx.ID_CANCEL:
-                        return
-                    else:
-                        newmenu.Title = newtitle
+    def doImportMenuFromFile(self, filepath, menupath):
+        newmenu = Popmenu(self)
+        if newmenu.ReadFromFile(filepath):
+            filepath = menupath / Path(filepath).name
+            item = None
+            if self.MenuListCtrl.FindItem(-1, newmenu.Title) != wx.NOT_FOUND:
+                newtitle = self.GetNewMenuName(dupe_menu_name = newmenu.Title)
+                if newtitle == wx.ID_CANCEL:
+                    return
+                else:
+                    newmenu.Title = newtitle
 
-                try:
-                    # TODO - walk the existing names and insert this into the right place instead of at the end
-                    item = self.MenuListCtrl.Append([newmenu.Title])
-                    self.MenuIDList[menuID := wx.NewId()] = {'menu': newmenu, 'filename': str(filepath)}
-                    self.MenuListCtrl.SetItemData(item, menuID)
-                    self.MenuListCtrl.Select(item)
-                    self.ToggleTopButtons(True)
-                    self.CurrentMenu = newmenu
-                    newmenu.WriteToFile(filepath)
-                except Exception as e:
-                    wx.LogError(f"Something went wrong importing menu file: {e}")
-                    if item:
-                        self.MenuListCtrl.DeleteItem(item)
+            try:
+                # TODO - walk the existing names and insert this into the right place instead of at the end
+                item = self.MenuListCtrl.Append([newmenu.Title])
+                self.MenuIDList[menuID := wx.NewId()] = {'menu': newmenu, 'filename': str(filepath)}
+                self.MenuListCtrl.SetItemData(item, menuID)
+                self.MenuListCtrl.Select(item)
+                self.ToggleTopButtons(True)
+                self.CurrentMenu = newmenu
+                newmenu.WriteToFile(filepath)
+            except Exception as e:
+                wx.LogError(f"Something went wrong importing menu file: {e}")
+                if item:
+                    self.MenuListCtrl.DeleteItem(item)
 
 
     def OnDeleteMenuButton(self, _):

@@ -978,9 +978,6 @@ Menu "qwyPetMouse-Necro"
 		Divider
 	}
 //o\ \o//////////////////////////////BEGIN/Footer
-	Option "Reco&very Macro" <&macroimage Inspiration_HPEnd_Lvl_2 PetMouse "bind 4 popmenu qwyPetMouse-Necro$$bindloadfilesilent @/!/MM/PetMouse/Necro/Off.txt"&>
-	Option "Load &Binds" "+$$t $name, Hit Enter.$$beginchat /bindloadfilesilent @/!/MM/PetMouse/Necro/Off.txt"
-	Divider
 	Option "Pla&y Dead!" "releasepets"
 	Divider
 	LockedOption

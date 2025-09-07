@@ -2,7 +2,7 @@ import wx
 import wx.lib.agw.ultimatelistctrl as ulc
 from Help import HelpButton
 from Page.PopmenuEditor import GetValidGamePath
-from UI.ControlGroup import cgCheckBox
+from UI.ControlGroup import cgButton
 
 import GameData
 
@@ -18,10 +18,9 @@ class qwyPetMouse(wx.Panel):
         centeringSizer = wx.BoxSizer(wx.VERTICAL)
 
         popmenusizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.InstallPopmenuCB = cgCheckBox(self, label = 'Install Popmenu (recommended)')
-        self.InstallPopmenuCB.SetValue(True)
-        page.Ctrls['InstallPopmenu'] = self.InstallPopmenuCB
-        popmenusizer.Add(self.InstallPopmenuCB, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        self.InstallPopmenu = cgButton(self, label = 'Install Popmenu (recommended)')
+        self.InstallPopmenu.Bind(wx.EVT_BUTTON, self.OnInstallPopmenu)
+        popmenusizer.Add(self.InstallPopmenu, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
         popmenusizer.Add(HelpButton(self, 'qwyPetMouse.html'), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         centeringSizer.Add(popmenusizer, 0)
@@ -70,9 +69,14 @@ class qwyPetMouse(wx.Panel):
 
     def CheckPopmenuPath(self):
         if GetValidGamePath(self.Profile.Server):
-            self.InstallPopmenuCB.RemoveError('gamepath')
+            self.InstallPopmenu.RemoveError('gamepath')
+            self.InstallPopmenu.Enable()
         else:
-            self.InstallPopmenuCB.AddError('gamepath', 'Your gamepath is not correctly set up for installing popmenus.  Please visit the Preferences dialog.')
+            self.InstallPopmenu.AddError('gamepath', 'Your gamepath is not correctly set up for installing popmenus.  Please visit the Preferences dialog.')
+            self.InstallPopmenu.Enable(False)
+
+    def OnInstallPopmenu(self, evt):
+        ...
 
     def GetKeyBinds(self):
         return [

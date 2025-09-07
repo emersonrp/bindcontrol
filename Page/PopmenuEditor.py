@@ -15,6 +15,45 @@ from functools import partial
 
 import wx.lib.agw.flatmenu as FM
 
+def GetValidGamePath(server):
+    pathvar = 'GamePath' if server == 'Homecoming' else 'GameRebirthPath'
+    gamepath = Path(wx.ConfigBase.Get().Read(pathvar))
+    if server == 'Homecoming':
+        binpath   = gamepath / 'bin'
+        assetpath = gamepath / 'assets'
+        if gamepath.is_dir() and gamepath.is_absolute() and binpath.is_dir() and assetpath.is_dir():
+            return gamepath
+    elif server == 'Rebirth':
+        exepath = gamepath / 'Rebirth.exe'
+        if gamepath.is_dir() and gamepath.is_absolute() and exepath.is_file():
+            return gamepath
+    else:
+        wx.LogError('GetValidGamePath got an unknown "server" passed in.  This is a bug')
+
+    return False
+
+def CheckAndCreateMenuPathForGamePath(gamepath):
+    gamelang = wx.ConfigBase.Get().Read('GameLang')
+    menupath = gamepath
+    pathparts = ['data', 'Texts', gamelang, 'Menus']
+    # Here's a wacky thing we do for Linux / Mac users:
+    while pathparts:
+        # walk through the parts and find them non-case-sensitively
+        pathpart = pathparts.pop(0)
+        pathglob = sorted(menupath.glob(pathpart, case_sensitive = False))
+        # if we have it, march on
+        if pathglob:
+            menupath = pathglob[0]
+        # Otherwise, glom the rest on there and offer to make the path.
+        else:
+            menupath = menupath.joinpath(pathpart, *pathparts)
+            if wx.MessageBox(f'Menu directory {menupath} does not exist.  Create?', 'No Menu Dir', wx.YES_NO) == wx.NO:
+                return
+            menupath.mkdir(parents = True)
+            break
+
+    return menupath
+
 class PopmenuEditor(Page):
     def __init__(self, parent):
         super().__init__(parent, bind_events = False)
@@ -112,7 +151,7 @@ class PopmenuEditor(Page):
         CheckMenuDirText = wx.StaticText(self.CheckMenuDirBox, label = "Your Popmenu directory does not exist.  BindControl can create it for you.")
         CheckMenuDirSizer.Add(CheckMenuDirText, 1, wx.ALIGN_CENTER|wx.ALL, 10)
         CreateDirButton = wx.Button(self.CheckMenuDirBox, label = "Create Directory")
-        CreateDirButton.Bind(wx.EVT_BUTTON, self.GetMenuPathForGamePath)
+        CreateDirButton.Bind(wx.EVT_BUTTON, self.GetMenuPath)
         CheckMenuDirSizer.Add(CreateDirButton,  0, wx.EXPAND|wx.ALL, 10)
         self.CheckMenuDirBox.Hide()
 
@@ -134,37 +173,12 @@ class PopmenuEditor(Page):
 
         self.Layout()
 
-    def GetValidGamePath(self):
-        server = self.Profile.Server
-        pathvar = 'GamePath' if server == 'Homecoming' else 'GameRebirthPath'
-        gamepath = Path(wx.ConfigBase.Get().Read(pathvar))
-        return gamepath if (gamepath.is_dir() and gamepath.is_absolute()) else False
-
-    def GetMenuPathForGamePath(self, _ = None):
-        if not (gamepath := self.GetValidGamePath()):
+    def GetMenuPath(self, _ = None):
+        if not (gamepath := GetValidGamePath(self.Profile.Server)):
             wx.MessageBox(f"Your {self.Profile.Server} Game Directory is not set up correctly.  Please visit the Preferences dialog.")
             return
 
-        gamelang = wx.ConfigBase.Get().Read('GameLang')
-        menupath = gamepath
-        pathparts = ['data', 'Texts', gamelang, 'Menus']
-        # Here's a wacky thing we do for Linux / Mac users:
-        while pathparts:
-            # walk through the parts and find them non-case-sensitively
-            pathpart = pathparts.pop(0)
-            pathglob = sorted(menupath.glob(pathpart, case_sensitive = False))
-            # if we have it, march on
-            if pathglob:
-                menupath = pathglob[0]
-            # Otherwise, glom the rest on there and offer to make the path.
-            else:
-                menupath = menupath.joinpath(pathpart, *pathparts)
-                if wx.MessageBox(f'Menu directory {menupath} does not exist.  Create?', 'No Menu Dir', wx.YES_NO) == wx.NO:
-                    return
-                menupath.mkdir(parents = True)
-                break
-
-        return menupath
+        return CheckAndCreateMenuPathForGamePath(gamepath)
 
     def OnOpenPrefsButton(self, _):
         with PrefsDialog(self) as dlg:
@@ -182,7 +196,7 @@ class PopmenuEditor(Page):
             NoErrors = False
 
         if NoErrors:
-            if self.GetValidGamePath():
+            if GetValidGamePath(self.Profile.Server):
                 self.CheckMenuDirBox.Hide()
             else:
                 self.CheckMenuDirBox.Show()
@@ -191,7 +205,7 @@ class PopmenuEditor(Page):
         self.NewMenuButton.Enable(NoErrors)
         self.ImportMenuButton.Enable(NoErrors)
 
-        self.ReloadMenusButton.Enable(bool(self.GetValidGamePath()))
+        self.ReloadMenusButton.Enable(bool(GetValidGamePath(self.Profile.Server)))
 
     def OnTestMenuButton(self, evt):
         if self.CurrentMenu:
@@ -199,8 +213,8 @@ class PopmenuEditor(Page):
         evt.Skip()
 
     def OnWriteMenuButton(self, _):
-        # self.GetMenuPathForGamePath shows its own errors
-        if not (menupath := self.GetMenuPathForGamePath()):
+        # self.GetMenuPath shows its own errors
+        if not (menupath := self.GetMenuPath()):
             return
 
         cm = self.CurrentMenu
@@ -282,11 +296,11 @@ class PopmenuEditor(Page):
         self.LoadMenusFromMenuDir()
 
     def LoadMenusFromMenuDir(self):
-        menupath = self.GetValidGamePath()
+        menupath = GetValidGamePath(self.Profile.Server)
 
         if menupath:
             self.MenuListCtrl.DeleteAllItems()
-            if menupath := self.GetMenuPathForGamePath(menupath):
+            if menupath := self.GetMenuPath(menupath):
                 for menufile in sorted(menupath.glob('*.mnu', case_sensitive = False)):
                     with menufile.open() as f:
                         menuname = ''
@@ -318,8 +332,8 @@ class PopmenuEditor(Page):
                 return wx.ID_CANCEL
 
     def OnImportMenuButton(self, _):
-        # self.GetMenuPathForGamePath shows its own errors
-        if not (menupath := self.GetMenuPathForGamePath()):
+        # self.GetMenuPath shows its own errors
+        if not (menupath := self.GetMenuPath()):
             return
 
         with wx.FileDialog(self, "Import Popmenu file", wildcard="MNU files (*.mnu)|*.mnu",

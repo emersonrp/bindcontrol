@@ -1,3 +1,4 @@
+import sys
 import wx
 import wx.lib.agw.ultimatelistctrl as ulc
 from Help import HelpButton
@@ -76,7 +77,18 @@ class qwyPetMouse(wx.Panel):
             self.InstallPopmenu.Enable(False)
 
     def OnInstallPopmenu(self, evt):
-        ...
+        profile = self.Profile
+        primary = profile.GetState('Primary')
+        menu = MenuNames[primary]
+
+        if wx.MessageBox(f'This will install the popmenu "qwyPM-{menu}.mnu" to your game directory.  Proceed?', 'Install Popmenu', wx.YES_NO) == wx.ID_NO:
+            return
+
+        base_path = getattr(sys, '_MEIPASS', '')
+        if base_path:
+            base_path = base_path + "/popmenus/"
+        else:
+            base_path = os.path.dirname(os.path.abspath(__file__))
 
     def GetKeyBinds(self):
         return [
@@ -96,7 +108,7 @@ class qwyPetMouse(wx.Panel):
         ]
 
     def PopulateBindFiles(self):
-        profile = wx.App.Get().Main.Profile
+        profile = self.Profile
         page    = profile.Mastermind
         primary = profile.GetState('Primary')
         pabb = GameData.MMPowerSets[primary]['abbrs']

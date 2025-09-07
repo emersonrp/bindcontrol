@@ -1,11 +1,12 @@
 import wx
 import re
 import os
-import sys
 import base64
 import zipfile
 from pathlib import Path
 from typing import Dict
+
+from Util.Paths import GetRootDirPath
 
 class Icon(wx.BitmapBundle):
     def __init__(self, img:wx.Image|wx.Bitmap):
@@ -28,11 +29,10 @@ def GetIcon(*args):
     iconpath    = Path(*pathbits).with_suffix('.png')
     iconpathstr = str(iconpath)
     if not iconpathstr in Icons:
-        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+        base_path = GetRootDirPath()
 
-        iconzippath = Path(base_path) / 'icons' / 'Icons.zip'
+        iconzippath = base_path / 'icons' / 'Icons.zip'
         if iconzippath.exists():
-            wx.LogMessage(f"Icon ZIP file {iconzippath} found -- using.")
             with zipfile.ZipFile(iconzippath) as iconzip:
                 try:
                     # as_posix is how we need this to index into the ZIPfile successfully on Windows

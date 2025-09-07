@@ -1,31 +1,26 @@
 import platform
 import os
-import sys
 import shutil
 import subprocess
-
+from Util.Paths import GetRootDirPath
 
 def current_version():
     # try to get the current tag from git...
     version = get_git_tag()
 
     # if not, try to find version.txt
-    # We do all this MEIPASS juggling for pyinstall madness
     #
     # version.txt gets written/bundled by tools/build_windows.bat
     if not version:
         try:
-            base_path = getattr(sys, '_MEIPASS', '')
-            if not base_path:
-                base_path = os.path.dirname(os.path.abspath(__file__))
-            filename = f"{base_path}/version.txt"
-            with open(filename, 'r') as file:
-                version = file.read().strip()
+            base_path = GetRootDirPath()
+            file_path = base_path / "version.txt"
+            version = file_path.read_text().strip()
         except:
             pass
 
     if not version:
-        version = "<No version found>"
+        version = "&lt; No version found &gt;"
 
     return version
 

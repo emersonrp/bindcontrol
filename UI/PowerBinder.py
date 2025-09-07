@@ -1,10 +1,10 @@
 import wx
-import os, sys, importlib
+import sys, importlib
 from Help import HelpButton
-from pathlib import Path
 from wx.lib.expando import EVT_ETC_LAYOUT_NEEDED
 from UI.ControlGroup import cgExpandoTextCtrl
 from UI.ErrorControls import ErrorControlMixin
+from Util.Paths import GetRootDirPath
 
 class PowerBinder(ErrorControlMixin, wx.TextCtrl):
 
@@ -132,8 +132,8 @@ class PowerBinderDialog(wx.Dialog):
 
     # Load plugins / modules from UI/PowerBinderCommand directory
     def LoadModules(self):
-        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-        path = Path(base_path) / 'PowerBinderCommand'
+        base_path = GetRootDirPath()
+        path = base_path / 'UI' / 'PowerBinderCommand'
 
         for package_file in sorted(path.glob('*.py')):
             package = package_file.stem

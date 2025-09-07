@@ -5,19 +5,17 @@ import webbrowser
 import wx
 import wx.html
 from Icon import GetIcon
+from Util.Paths import GetRootDirPath
 
 class HelpHTMLWindow(wx.html.HtmlWindow):
     def __init__(self, parent, filename, size = (800, 600)):
         super().__init__(parent, size = size)
 
-        base_path = getattr(sys, '_MEIPASS', '')
-        if base_path:
-            base_path = base_path + "/Help/"
-        else:
-            base_path = os.path.dirname(os.path.abspath(__file__))
-        self.LoadFile(f"{base_path}/{filename}")
+        base_path = GetRootDirPath()
+        help_path = base_path / 'Help' / filename
 
-        self.Bind(wx.html.EVT_HTML_LINK_CLICKED, self.HandleLinkClicked)
+        self.LoadFile(f"{help_path}")
+
 
     # TODO - maybe check if we have "http(s)" at the start, and if not,
     # we're loading a local file and should use ourselves not the browser?

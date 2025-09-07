@@ -28,6 +28,7 @@ from UI.PrefsDialog import PrefsDialog
 from Help import ShowHelpWindow
 from UI.ControlGroup import cgTextCtrl, cgButton
 from Util.DefaultProfile import DefaultProfile
+from Util.Paths import GetRootDirPath
 import Util.BuildFiles
 
 ###################
@@ -156,9 +157,9 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnMenuLogWindow, Log_window)
 
         AppIcon = wx.IconBundle()
-        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-        filename = f"{base_path}/icons/BindControl.ico"
-        AppIcon.AddIcon(filename, wx.BITMAP_TYPE_ANY)
+        base_path = GetRootDirPath()
+        filename = base_path / 'icons' / 'BindControl.ico'
+        AppIcon.AddIcon(f"{filename}", wx.BITMAP_TYPE_ANY)
         self.SetIcons(AppIcon)
 
         # Infobar for showing errors and other messages

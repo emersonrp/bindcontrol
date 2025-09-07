@@ -32,7 +32,11 @@ def GetValidGamePath(server):
 
     return False
 
+# NB This does not check that gamepath is sane.  This is probably a bug.
 def CheckAndCreateMenuPathForGamePath(gamepath):
+    if not gamepath.exists():
+        wx.LogError(f'Bad gamepath "{gamepath}" sent into CheckAndCreateMenuPathForGamePath.  This is a bug.')
+        return False
     gamelang = wx.ConfigBase.Get().Read('GameLang')
     menupath = gamepath
     pathparts = ['data', 'Texts', gamelang, 'Menus']
@@ -48,7 +52,7 @@ def CheckAndCreateMenuPathForGamePath(gamepath):
         else:
             menupath = menupath.joinpath(pathpart, *pathparts)
             if wx.MessageBox(f'Menu directory {menupath} does not exist.  Create?', 'No Menu Dir', wx.YES_NO) == wx.NO:
-                return
+                return False
             menupath.mkdir(parents = True)
             break
 
@@ -342,9 +346,13 @@ class PopmenuEditor(Page):
                 return
 
             origfilepath = fileDialog.GetPath()
+
+            self.doImportMenuFromFile(menupath, origfilepath)
+
+    def doImportMenuFromFile(self, menupath, filepath):
             newmenu = Popmenu(self)
-            if newmenu.ReadFromFile(origfilepath):
-                filepath = menupath / Path(origfilepath).name
+            if newmenu.ReadFromFile(filepath):
+                filepath = menupath / Path(filepath).name
                 item = None
                 if self.MenuListCtrl.FindItem(-1, newmenu.Title) != wx.NOT_FOUND:
                     newtitle = self.GetNewMenuName(dupe_menu_name = newmenu.Title)

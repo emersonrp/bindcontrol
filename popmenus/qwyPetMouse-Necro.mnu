@@ -1,5 +1,5 @@
 ///petMouse//////////////////////////////////////[mApps]~qwy////v1.0///20.07.15
-//-MACRO: /macroimage Inspiration_HPEnd_Lvl_2 PetMouse bind 4 popmenu pM-Necro
+//-MACRO: /macroimage Inspiration_HPEnd_Lvl_2 PetMouse bind 4 popmenu qwyPetMouse-Necro
 //-install: c:/<RootInstall>/data/Texts/<Language>/Menus/MMPM-Necro.mnu
 //	- Including quotes, save as;  "<NameFile>.mnu"
 //	- Deviating from install path not supported.
@@ -12,7 +12,7 @@
 //	-/697-786	- Control Section for Second T1
 //	-/788-878	- Control Section for Third T1
 //o\//////////////////////////////////////////////Necro
-Menu "pM-Necro" 
+Menu "qwyPetMouse-Necro"
 {
 	Divider
 	Title "- petMouse  -"
@@ -100,8 +100,8 @@ Menu "pM-Necro"
 				Badge "@."
 			}
 		}
-///This cycles the targeting on your T1 pets, It currently assumes, "bie" as in, "Zombie", is part of all three of their names. 
-		Option "Targ&et" "targetcustomnext alive mypet bie" 
+///This cycles the targeting on your T1 pets, It currently assumes, "bie" as in, "Zombie", is part of all three of their names.
+		Option "Targ&et" "targetcustomnext alive mypet bie"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcompow bie pas"
@@ -201,7 +201,7 @@ Menu "pM-Necro"
 			}
 		}
 ///This targets the T3 pet, It currently assumes, "ich" as in, "Lich", is part of it's name.
-		Option "Targ&et" "petselectname ich" 
+		Option "Targ&et" "petselectname ich"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcompow ich pas"
@@ -300,7 +300,7 @@ Menu "pM-Necro"
 			}
 		}
 ///This cycles targeting of the T2 pets, It currently assumes, "hts" as in, "Knights", is part of both their names.
-		Option "Targ&et" "targetcustomnext alive mypet hts" 
+		Option "Targ&et" "targetcustomnext alive mypet hts"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcompow hts pas"
@@ -397,7 +397,7 @@ Menu "pM-Necro"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet hta" 
+		Option "Targ&et" "targetcustomnext alive mypet hta"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcomname hta pas"
@@ -408,7 +408,7 @@ Menu "pM-Necro"
 		Option "D&ismiss" "petcomname hta dis"
 		Divider
 	}
-//o\ \o//////////////////////////////BEGIN/All Pets 
+//o\ \o//////////////////////////////BEGIN/All Pets
 	Menu "&w | All Pets"
 	{
 		Divider
@@ -488,13 +488,13 @@ Menu "pM-Necro"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet " 
+		Option "Targ&et" "targetcustomnext alive mypet "
 		Divider
 		Divider
 		Title "Staich Binds"
-		Option "[C+R&DC]: | pas" "petcomall pas" 
-		Option "[&S+RDC]: agg" "petcomall agg" 
-		Option "[&A+RDC]: def" "petcomall def" 
+		Option "[C+R&DC]: | pas" "petcomall pas"
+		Option "[&S+RDC]: agg" "petcomall agg"
+		Option "[&A+RDC]: def" "petcomall def"
 		Divider
 		Divider
 		Option "D&ismiss" "petcomall dis"
@@ -587,7 +587,7 @@ Menu "pM-Necro"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet htb" 
+		Option "Targ&et" "targetcustomnext alive mypet htb"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcomname htb pas"
@@ -864,7 +864,7 @@ Menu "pM-Necro"
 				Badge "@."
 			}
 		}
-		Option "Targ&et" "targetcustomnext alive mypet ie3" 
+		Option "Targ&et" "targetcustomnext alive mypet ie3"
 		Divider
 		Divider
 		Option "[C+RDC] |  p&as" "Petcomname ie3 pas"
@@ -892,9 +892,9 @@ Menu "pM-Necro"
 	Divider
 	Divider
 	Title "Stance"
-	Option "[C+R&DC]: . pas" "petcomall pas" 
-	Option "[&S+RDC]: . agg" "petcomall agg" 
-	Option "[&A+RDC]: . def" "petcomall def" 
+	Option "[C+R&DC]: . pas" "petcomall pas"
+	Option "[&S+RDC]: . agg" "petcomall agg"
+	Option "[&A+RDC]: . def" "petcomall def"
 	Divider
 	Divider
 	Title "SHIFT+"
@@ -978,7 +978,7 @@ Menu "pM-Necro"
 		Divider
 	}
 //o\ \o//////////////////////////////BEGIN/Footer
-	Option "Reco&very Macro" <&macroimage Inspiration_HPEnd_Lvl_2 PetMouse "bind 4 popmenu pM-Necro$$bindloadfilesilent @/!/MM/PetMouse/Necro/Off.txt"&>
+	Option "Reco&very Macro" <&macroimage Inspiration_HPEnd_Lvl_2 PetMouse "bind 4 popmenu qwyPetMouse-Necro$$bindloadfilesilent @/!/MM/PetMouse/Necro/Off.txt"&>
 	Option "Load &Binds" "+$$t $name, Hit Enter.$$beginchat /bindloadfilesilent @/!/MM/PetMouse/Necro/Off.txt"
 	Divider
 	Option "Pla&y Dead!" "releasepets"

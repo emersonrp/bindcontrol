@@ -4,6 +4,7 @@ import wx.lib.agw.ultimatelistctrl as ulc
 from Help import HelpButton
 from Page.PopmenuEditor import GetValidGamePath
 from UI.ControlGroup import cgButton
+from Util.Paths import GetRootDirPath
 
 import GameData
 
@@ -76,7 +77,7 @@ class qwyPetMouse(wx.Panel):
             self.InstallPopmenu.AddError('gamepath', 'Your gamepath is not correctly set up for installing popmenus.  Please visit the Preferences dialog.')
             self.InstallPopmenu.Enable(False)
 
-    def OnInstallPopmenu(self, evt):
+    def OnInstallPopmenu(self, _):
         profile = self.Profile
         primary = profile.GetState('Primary')
         menu = MenuNames[primary]
@@ -84,11 +85,19 @@ class qwyPetMouse(wx.Panel):
         if wx.MessageBox(f'This will install the popmenu "qwyPM-{menu}.mnu" to your game directory.  Proceed?', 'Install Popmenu', wx.YES_NO) == wx.ID_NO:
             return
 
-        base_path = getattr(sys, '_MEIPASS', '')
-        if base_path:
-            base_path = base_path + "/popmenus/"
-        else:
-            base_path = os.path.dirname(os.path.abspath(__file__))
+        file_path = GetRootDirPath() / 'popmenus' / f'qwyPM-{menu}.mnu'
+
+        # GET CORRECT DIRECTORY FROM POPMENU EDITOR
+
+        # if file exists, warn
+        if file_path.exists():
+            if wx.MessageBox(f'The popmenu "qwyPM-{menu}.mnu" already exists in the game directory.  Overwrite?', 'Popemnu Exists', wx.YES_NO) == wx.ID_NO:
+                return
+
+
+
+
+        # otherwise, copy it from /popmenus/ to GameDir/texts/etc/etc/etc/
 
     def GetKeyBinds(self):
         return [

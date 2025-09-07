@@ -332,11 +332,15 @@ class PrefsDialog(wx.Dialog):
 
             config.Flush()
 
+            # This AAAAALMOST has me ready to add pubsub as a dependence.  Almost.
             if profile := wx.App.Get().Main.Profile:
                 # repopulate the Popmenu Editor, in case we fiddled with GameDir
                 profile.PopmenuEditor.SynchronizeUI()
 
-                # and highlight buttons as needed in case we fiddled with ReseyKey
+                # Update PetMouse's display re: GameDir
+                profile.Mastermind.qwyPetMousePage.CheckPopmenuPath()
+
+                # highlight buttons as needed in case we fiddled with ReseyKey
                 profile.CheckAllConflicts()
 
 class controllerModPicker(wx.Choice):

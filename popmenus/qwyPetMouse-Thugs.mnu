@@ -978,9 +978,6 @@ Menu "qwyPetMouse-Thugs"
 		Divider
 	}
 //o\ \o//////////////////////////////BEGIN/Footer
-	Option "Reco&very Macro" <&macroimage Inspiration_HPEnd_Lvl_2 PetMouse "bind 4 popmenu qwyPetMouse-Thugs$$bindloadfilesilent @/!/MM/PetMouse/Thugs/Off.txt"&>
-	Option "Load &Binds" "+$$t $name, Hit Enter.$$beginchat /bindloadfilesilent @/!/MM/PetMouse/Thugs/Off.txt"
-	Divider
 	Option "Pla&y Dead!" "releasepets"
 	Divider
 	LockedOption

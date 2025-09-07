@@ -1011,9 +1011,6 @@ Menu "qwyPetMouse-Ninjas"
 		Divider
 	}
 //o\ \o//////////////////////////////BEGIN/Footer
-	Option "Reco&very Macro" <&macroimage Inspiration_HPEnd_Lvl_2 PetMouse "bind 4 popmenu qwyPetMouse-Ninjas$$bindloadfilesilent @/!/MM/PetMouse/Ninjas/Off.txt"&>
-	Option "Load &Binds" "+$$t $name, Hit Enter.$$beginchat /bindloadfilesilent @/!/MM/PetMouse/Ninjas/Off.txt"
-	Divider
 	Option "Pla&y Dead!" "releasepets"
 	Divider
 	LockedOption

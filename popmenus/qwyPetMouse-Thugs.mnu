@@ -20,7 +20,7 @@ Menu "qwyPetMouse-Thugs"
 	{
 		Divider
 		Title "- ugs -"
-		Title "[S+NUMPAD4]"
+		Title "[SHIFT+NUMPAD4]"
 		Divider
 		Divider"Thugs_HirePosse"
 		Menu "&1 | Stay"
@@ -37,7 +37,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -55,7 +55,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -73,7 +73,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -100,9 +100,9 @@ Menu "qwyPetMouse-Thugs"
 		Option "Targ&et" "targetcustomnext alive mypet ugs"
 		Divider
 		Divider
-		Option "[C+RDC] |  p&as" "Petcompow ugs pas"
-		Option "[&S+RDC] | agg" "Petcompow ugs agg"
-		Option "[A+RDC] |  &def" "Petcompow ugs def"
+		Option "[CTRL+RDC] |  p&as" "Petcompow ugs pas"
+		Option "[&SHIFT+RDC] | agg" "Petcompow ugs agg"
+		Option "[ALT+RDC] |  &def" "Petcompow ugs def"
 		Divider
 		Divider
 		Option "Macr&o" <&macroimage "Thugs_HirePosse" "Thugs" "powexeclocation backward:20 Call Thugs$$bindloadfilesilent @/!/MM/PetMouse/Thugs/Off.txt"&>
@@ -110,7 +110,7 @@ Menu "qwyPetMouse-Thugs"
 		Divider
 		LockedOption
 		{
-			DisplayName " `  [S+NUMPAD4]"
+			DisplayName " `  [SHIFT+NUMPAD4]"
 			Badge "@."
 		}
 	}
@@ -120,7 +120,7 @@ Menu "qwyPetMouse-Thugs"
 	{
 		Divider
 		Title "- Bruiser-"
-		Title "[S+NUMPAD5]"
+		Title "[SHIFT+NUMPAD5]"
 		Divider
 		Divider
 		Menu "&1 | Stay"
@@ -137,7 +137,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -155,7 +155,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -173,7 +173,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -200,9 +200,9 @@ Menu "qwyPetMouse-Thugs"
 		Option "Targ&et" "petselectname ser"
 		Divider
 		Divider
-		Option "[C+RDC] |  p&as" "Petcompow ser pas"
-		Option "[&S+RDC] | agg" "Petcompow ser agg"
-		Option "[A+RDC] |  &def" "Petcompow ser def"
+		Option "[CTRL+RDC] |  p&as" "Petcompow ser pas"
+		Option "[&SHIFT+RDC] | agg" "Petcompow ser agg"
+		Option "[ALT+RDC] |  &def" "Petcompow ser def"
 		Divider
 		Divider
 		Option "Macr&o" <&macroimage "Thugs_EnlistBoss" "Bruiser" "powexeclocation backward:2 Call Bruiser$$bindloadfilesilent @/!/MM/PetMouse/Thugs/Off.txt"&>
@@ -210,7 +210,7 @@ Menu "qwyPetMouse-Thugs"
 		Divider
 		LockedOption
 		{
-			DisplayName " [S+#PD5]"
+			DisplayName " [SHIFT+#PD5]"
 			Badge "@."
 		}
 	}
@@ -219,7 +219,7 @@ Menu "qwyPetMouse-Thugs"
 	{
 		Divider
 		Title "Enforcers"
-		Title "[S+NUMPAD6]"
+		Title "[SHIFT+NUMPAD6]"
 		Divider
 		Divider
 		Menu "&1 | Stay"
@@ -236,7 +236,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -254,7 +254,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -272,7 +272,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -299,9 +299,9 @@ Menu "qwyPetMouse-Thugs"
 		Option "Targ&et" "targetcustomnext alive mypet cer"
 		Divider
 		Divider
-		Option "[C+RDC] |  p&as" "Petcompow cer pas"
-		Option "[&S+RDC] | agg" "Petcompow cer agg"
-		Option "[A+RDC] |  &def" "Petcompow cer def"
+		Option "[CTRL+RDC] |  p&as" "Petcompow cer pas"
+		Option "[&SHIFT+RDC] | agg" "Petcompow cer agg"
+		Option "[ALT+RDC] |  &def" "Petcompow cer def"
 		Divider
 		Divider
 		Option "Macr&o" <&macroimage "Thugs_EnlistLieutenant" "Thugs" "powexeclocation backward:2 Call Enforcers$$bindloadfilesilent @/!/MM/PetMouse/Thugs/Off.txt"&>
@@ -309,7 +309,7 @@ Menu "qwyPetMouse-Thugs"
 		Divider
 			LockedOption
 			{
-				DisplayName "[S+NUMPAD6]"
+				DisplayName "[SHIFT+NUMPAD6]"
 				Badge "@."
 			}
 	}
@@ -335,7 +335,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -353,7 +353,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -371,7 +371,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -396,9 +396,9 @@ Menu "qwyPetMouse-Thugs"
 		Option "Targ&et" "targetcustomnext alive mypet era"
 		Divider
 		Divider
-		Option "[C+RDC] |  p&as" "Petcomname era pas"
-		Option "[&S+RDC] | agg" "Petcomname era agg"
-		Option "[A+RDC] |  &def" "Petcomname era  def"
+		Option "[CTRL+RDC] |  p&as" "Petcomname era pas"
+		Option "[&SHIFT+RDC] | agg" "Petcomname era agg"
+		Option "[ALT+RDC] |  &def" "Petcomname era  def"
 		Divider
 		Divider
 		Option "D&ismiss" "petcomname era dis"
@@ -409,14 +409,14 @@ Menu "qwyPetMouse-Thugs"
 	{
 		Divider
 		Title "- All Pets -"
-		Title "[S+#ADD]"
+		Title "[SHIFT+#ADD]"
 		Divider
 		Divider
 		Menu "&1 | Stay"
 		{
 			Divider
 			Title "- all stay-"
-			Title "[A+RB]"
+			Title "[ALT+RB]"
 			Divider
 			Divider
 			Option "&1 | pas" "petcomall pas sta"
@@ -426,7 +426,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -444,7 +444,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -452,7 +452,7 @@ Menu "qwyPetMouse-Thugs"
 		{
 			Divider
 			Title "- all go to -"
-			Title "[A+LB]"
+			Title "[ALT+LB]"
 			Divider
 			Divider
 			Option "&1 | pas" "petcomall pas got"
@@ -462,7 +462,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -488,9 +488,9 @@ Menu "qwyPetMouse-Thugs"
 		Divider
 		Divider
 		Title "Staser Binds"
-		Option "[C+R&DC]: | pas" "petcomall pas"
-		Option "[&S+RDC]: agg" "petcomall agg"
-		Option "[&A+RDC]: def" "petcomall def"
+		Option "[CTRL+R&DC]: | pas" "petcomall pas"
+		Option "[&SHIFT+RDC]: agg" "petcomall agg"
+		Option "[&ALT+RDC]: def" "petcomall def"
 		Divider
 		Divider
 		Option "D&ismiss" "petcomall dis"
@@ -498,7 +498,7 @@ Menu "qwyPetMouse-Thugs"
 		Divider
 		LockedOption
 		{
-			DisplayName "[S+#ADD]"
+			DisplayName "[SHIFT+#ADD]"
 			Badge "@."
 		}
 	}
@@ -524,7 +524,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 
@@ -543,7 +543,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -561,7 +561,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -586,15 +586,14 @@ Menu "qwyPetMouse-Thugs"
 		Option "Targ&et" "targetcustomnext alive mypet erb"
 		Divider
 		Divider
-		Option "[C+RDC] |  p&as" "Petcomname erb pas"
-		Option "[&S+RDC] | agg" "Petcomname erb agg"
-		Option "[A+RDC] |  &def" "Petcomname erb def"
+		Option "[CTRL+RDC] |  p&as" "Petcomname erb pas"
+		Option "[&SHIFT+RDC] | agg" "Petcomname erb agg"
+		Option "[ALT+RDC] |  &def" "Petcomname erb def"
 		Divider
 		Divider
 		Option "D&ismiss" "petcomname erb dis"
 		Divider
 	}
-	Divider
 //o\//////////////////////////////////////////END/Enforcers
 //\o/////////////////////////////////BEGIN/Thug1
 ///This section controls the first T1 pet, individually. It currently assumes, "ug1" as in, "Thug1", is part of it's name.
@@ -620,7 +619,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -638,7 +637,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -656,7 +655,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -681,9 +680,9 @@ Menu "qwyPetMouse-Thugs"
 		Option "Targ&et" "targetcustomnext alive mypet ug1"
 		Divider
 		Divider
-		Option "[C+RDC]|  p&as" "Petcomname ug1 pas"
-		Option "[&S+RDC] | agg" "Petcomname ug1 agg"
-		Option "[A+RDC] |  &def" "Petcomname ug1 def"
+		Option "[CTRL+RDC]|  p&as" "Petcomname ug1 pas"
+		Option "[&SHIFT+RDC] | agg" "Petcomname ug1 agg"
+		Option "[ALT+RDC] |  &def" "Petcomname ug1 def"
 		Divider
 		Divider
 		Option "D&ismiss" "petcomname ug1 dis"
@@ -711,7 +710,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -729,7 +728,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -747,7 +746,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -772,9 +771,9 @@ Menu "qwyPetMouse-Thugs"
 		Option "Targ&et" "targetcustomnext alive mypet ug2"
 		Divider
 		Divider
-		Option "[C+RDC] |  p&as" "Petcomname ug2 pas"
-		Option "[&S+RDC] | agg" "Petcomname ug2 agg"
-		Option "[A+RDC] |  &def" "Petcomname ug2 def"
+		Option "[CTRL+RDC] |  p&as" "Petcomname ug2 pas"
+		Option "[&SHIFT+RDC] | agg" "Petcomname ug2 agg"
+		Option "[ALT+RDC] |  &def" "Petcomname ug2 def"
 		Divider
 		Divider
 		Option "D&ismiss" "petcomname ug2 dis"
@@ -802,7 +801,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -820,7 +819,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -838,7 +837,7 @@ Menu "qwyPetMouse-Thugs"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -863,15 +862,14 @@ Menu "qwyPetMouse-Thugs"
 		Option "Targ&et" "targetcustomnext alive mypet ug3"
 		Divider
 		Divider
-		Option "[C+RDC] |  p&as" "Petcomname ug3 pas"
-		Option "[&S+RDC] |  agg" "Petcomname ug3 agg"
-		Option "[A+RDC] |  &def" "Petcomname ug3 def"
+		Option "[CTRL+RDC] |  p&as" "Petcomname ug3 pas"
+		Option "[&SHIFT+RDC] |  agg" "Petcomname ug3 agg"
+		Option "[ALT+RDC] |  &def" "Petcomname ug3 def"
 		Divider
 		Divider
 		Option "Dis&miss" "petcomname ug3 dis"
 		Divider
 	}
-	Divider
 //o\ o\///////////////////////////////////////END/Thugs
 //\o/////////////////////////////////BEGIN/PetMouse//v1.4
 	Divider
@@ -881,16 +879,16 @@ Menu "qwyPetMouse-Thugs"
 	Divider
 	Divider
 	Title "Commands"
-	Option "&1 | [A+RB]: . sta" "petcomall sta"
-	Option "&2 | [2Key]: . att" "petcomall att"
-	Option "&3 | [A+LB]: . got" "petcomall got"
+	Option "&1 | [ALT+RB]: . sta" "petcomall sta"
+	Option "&2 | [2 Key]: . att" "petcomall att"
+	Option "&3 | [ALT+LB]: . got" "petcomall got"
 	Option "&w |. [RDC]: . fol" "petcomall fol"
 	Divider
 	Divider
 	Title "Stance"
-	Option "[C+R&DC]: . pas" "petcomall pas"
-	Option "[&S+RDC]: . agg" "petcomall agg"
-	Option "[&A+RDC]: . def" "petcomall def"
+	Option "[CTRL+R&DC]: . pas" "petcomall pas"
+	Option "[&SHIFT+RDC]: . agg" "petcomall agg"
+	Option "[&ALT+RDC]: . def" "petcomall def"
 	Divider
 	Divider
 	Title "SHIFT+"
@@ -902,7 +900,7 @@ Menu "qwyPetMouse-Thugs"
 	Divider
 			LockedOption
 			{
-				DisplayName " `  Off | C+ADD"
+				DisplayName " `  Off | CTRL+ADD"
 				Badge "@."
 			}
 	}

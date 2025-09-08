@@ -346,6 +346,7 @@ class PopmenuEditor(Page):
 
             self.doImportMenuFromFile(filepath, menupath)
 
+    # returns boolean depending on success
     def doImportMenuFromFile(self, filepath, menupath):
         newmenu = Popmenu(self)
         if newmenu.ReadFromFile(filepath):
@@ -354,7 +355,7 @@ class PopmenuEditor(Page):
             if self.MenuListCtrl.FindItem(-1, newmenu.Title) != wx.NOT_FOUND:
                 newtitle = self.GetNewMenuName(dupe_menu_name = newmenu.Title)
                 if newtitle == wx.ID_CANCEL:
-                    return
+                    return False
                 else:
                     newmenu.Title = newtitle
 
@@ -367,10 +368,12 @@ class PopmenuEditor(Page):
                 self.ToggleTopButtons(True)
                 self.CurrentMenu = newmenu
                 newmenu.WriteToFile(filepath)
+                return True
             except Exception as e:
                 wx.LogError(f"Something went wrong importing menu file: {e}")
                 if item:
                     self.MenuListCtrl.DeleteItem(item)
+                return False
 
 
     def OnDeleteMenuButton(self, _):

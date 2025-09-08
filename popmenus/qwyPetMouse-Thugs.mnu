@@ -14,17 +14,13 @@
 //o\//////////////////////////////////////////////Thugs
 Menu "qwyPetMouse-Thugs"
 {
-	Divider
-	Title "- petMouse  -"
-	Divider
-	Divider
 	Title "- Thugs -"
 //\o/////////////////////////////////BEGIN/Thugs
 	Menu "&1 | Thugs"
 	{
 		Divider
 		Title "- ugs -"
-		Title "[S+#Pad4]"
+		Title "[S+NUMPAD4]"
 		Divider
 		Divider"Thugs_HirePosse"
 		Menu "&1 | Stay"
@@ -114,7 +110,7 @@ Menu "qwyPetMouse-Thugs"
 		Divider
 		LockedOption
 		{
-			DisplayName " `  [S+#Pad4]"
+			DisplayName " `  [S+NUMPAD4]"
 			Badge "@."
 		}
 	}
@@ -124,7 +120,7 @@ Menu "qwyPetMouse-Thugs"
 	{
 		Divider
 		Title "- Bruiser-"
-		Title "[S+#Pad5]"
+		Title "[S+NUMPAD5]"
 		Divider
 		Divider
 		Menu "&1 | Stay"
@@ -223,7 +219,7 @@ Menu "qwyPetMouse-Thugs"
 	{
 		Divider
 		Title "Enforcers"
-		Title "[S+#Pad6]"
+		Title "[S+NUMPAD6]"
 		Divider
 		Divider
 		Menu "&1 | Stay"
@@ -313,7 +309,7 @@ Menu "qwyPetMouse-Thugs"
 		Divider
 			LockedOption
 			{
-				DisplayName "[S+#Pad6]"
+				DisplayName "[S+NUMPAD6]"
 				Badge "@."
 			}
 	}
@@ -899,9 +895,9 @@ Menu "qwyPetMouse-Thugs"
 	Divider
 	Title "SHIFT+"
 	Title "Select Group"
-	Option "[#Pad&4]: . T1" ""
-	Option "[#Pad&5]: . T2" ""
-	Option "[#Pad&6]: . T3" ""
+	Option "[NUMPAD&4]: . T1" ""
+	Option "[NUMPAD&5]: . T2" ""
+	Option "[NUMPAD&6]: . T3" ""
 	Option ".[#A&DD]: . All" ""
 	Divider
 			LockedOption

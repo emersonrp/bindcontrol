@@ -14,25 +14,19 @@
 //o\//////////////////////////////////////////////Demons
 Menu "qwyPetMouse-Demons"
 {
-	Divider
-	Title "- petMouse  -"
-	Divider
-	Divider
 	Title "- Demons -"
 //\o/////////////////////////////////BEGIN/Demonlings
 	Menu "&1 | Demonlings"
 	{
 		Divider
 		Title "- ngs -"
-		Title "[S+#Pad4]"
-		Divider
+		Title "[S+NUMPAD4]"
 		Divider
 		Menu "&1 | Stay"
 		{
 			Divider
 			Title "- ngs -"
 			Title "stay"
-			Divider
 			Divider
 			Option "&1 pas" "petcompow ngs pas sta"
 			Option "&2 agg" "petcompow ngs agg sta"
@@ -51,7 +45,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- ngs -"
 			Title "attack"
 			Divider
-			Divider
 			Option "&1 pas" "petcompow ngs pas att"
 			Option "&2 agg" "petcompow ngs agg att"
 			Option "&3 def" "petcompow ngs def att"
@@ -68,7 +61,6 @@ Menu "qwyPetMouse-Demons"
 			Divider
 			Title "- ngs -"
 			Title "go to"
-			Divider
 			Divider
 			Option "&1 pas" "petcompow ngs pas got"
 			Option "&2 agg" "petcompow ngs agg got"
@@ -88,7 +80,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- ngs -"
 			Title "follow"
 			Divider
-			Divider
 			Option "&1 pas" "petcompow ngs pas fol"
 			Option "&2 agg" "petcompow ngs agg fol"
 			Option "&3 def" "petcompow ngs def fol"
@@ -103,18 +94,15 @@ Menu "qwyPetMouse-Demons"
 ///This cycles the targeting on your T1 pets, It currently assumes, "ngs" as in, "Demonlings", is part of all three of their names.
 		Option "Targ&et" "targetcustomnext alive mypet ngs"
 		Divider
-		Divider
 		Option "[C+RDC] |  p&as" "Petcompow ngs pas"
 		Option "[&S+RDC] | agg" "Petcompow ngs agg"
 		Option "[A+RDC] |  &def" "Petcompow ngs def"
 		Divider
-		Divider
-		Option "Macr&o" <&macroimage "DemonSummoning_SummonDemonlings" "Demonlings" "powexeclocation backward:20 Summon Demonlings$$bindloadfilesilent @/!/MM/PetMouse/Demons/Off.txt"&>
 		Option "D&ismiss" "petcompow ngs dis"
 		Divider
 		LockedOption
 		{
-			DisplayName " `  [S+#Pad4]"
+			DisplayName " `  [S+NUMPAD4]"
 			Badge "@."
 		}
 	}
@@ -124,15 +112,13 @@ Menu "qwyPetMouse-Demons"
 	{
 		Divider
 		Title "- Prince-"
-		Title "[S+#Pad5]"
-		Divider
+		Title "[S+NUMPAD5]"
 		Divider
 		Menu "&1 | Stay"
 		{
 			Divider
 			Title "- Prince -"
 			Title "stay"
-			Divider
 			Divider
 			Option "&1 pas" "petcompow nce pas sta"
 			Option "&2 agg" "petcompow nce agg sta"
@@ -151,7 +137,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- Prince -"
 			Title "attack"
 			Divider
-			Divider
 			Option "&1 pas" "petcompow nce pas att"
 			Option "&2 agg" "petcompow nce agg att"
 			Option "&3 def" "petcompow nce def att"
@@ -168,7 +153,6 @@ Menu "qwyPetMouse-Demons"
 			Divider
 			Title "- Prince -"
 			Title "go to"
-			Divider
 			Divider
 			Option "&1 pas" "petcompow nce pas got"
 			Option "&2 agg" "petcompow nce agg got"
@@ -188,7 +172,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- Prince -"
 			Title "follow"
 			Divider
-			Divider
 			Option "&1 | pas" "petcompow nce pas fol"
 			Option "&2 | agg" "petcompow nce agg fol"
 			Option "&3 | def" "petcompow nce def fol"
@@ -203,13 +186,10 @@ Menu "qwyPetMouse-Demons"
 ///This targets the T3 pet, It currently assumes, "nce" as in, "Demon Prince", is part of it's name.
 		Option "Targ&et" "petselectname nce"
 		Divider
-		Divider
 		Option "[C+RDC] |  p&as" "Petcompow nce pas"
 		Option "[&S+RDC] | agg" "Petcompow nce agg"
 		Option "[A+RDC] |  &def" "Petcompow nce def"
 		Divider
-		Divider
-		Option "Macr&o" <&macroimage "DemonSummoning_SummonDemonPrince" "Prince" "powexeclocation backward:2 Summon Demon Prince$$bindloadfilesilent @/!/MM/PetMouse/Demons/Off.txt"&>
 		Option "D&ismiss" "petcompow nce dis"
 		Divider
 		LockedOption
@@ -223,15 +203,13 @@ Menu "qwyPetMouse-Demons"
 	{
 		Divider
 		Title "Demons"
-		Title "[S+#Pad6]"
-		Divider
+		Title "[S+NUMPAD6]"
 		Divider
 		Menu "&1 | Stay"
 		{
 			Divider
 			Title "- Demons -"
 			Title "stay"
-			Divider
 			Divider
 			Option "&1 pas" "petcompow ons pas sta"
 			Option "&2 agg" "petcompow ons agg sta"
@@ -250,7 +228,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- Demons -"
 			Title "attack"
 			Divider
-			Divider
 			Option "&1 pas" "petcompow ons pas att"
 			Option "&2 agg" "petcompow ons agg att"
 			Option "&3 def" "petcompow ons def att"
@@ -267,7 +244,6 @@ Menu "qwyPetMouse-Demons"
 			Divider
 			Title "- Demons -"
 			Title "go to"
-			Divider
 			Divider
 			Option "&1 pas" "petcompow ons pas got"
 			Option "&2 agg" "petcompow ons agg got"
@@ -287,7 +263,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- Demons -"
 			Title "follow"
 			Divider
-			Divider
 			Option "&1 pas" "petcompow ons pas fol"
 			Option "&2 agg" "petcompow ons agg fol"
 			Option "&3 def" "petcompow ons def fol"
@@ -302,18 +277,15 @@ Menu "qwyPetMouse-Demons"
 ///This cycles targeting of the T2 pets, It currently assumes, "ons" as in, "Demons", is part of both their names.
 		Option "Targ&et" "targetcustomnext alive mypet ons"
 		Divider
-		Divider
 		Option "[C+RDC] |  p&as" "Petcompow ons pas"
 		Option "[&S+RDC] | agg" "Petcompow ons agg"
 		Option "[A+RDC] |  &def" "Petcompow ons def"
 		Divider
-		Divider
-		Option "Macr&o" <&macroimage "DemonSummoning_SummonDemons" "Demons" "powexeclocation backward:2 Summon Demons$$bindloadfilesilent @/!/MM/PetMouse/Demons/Off.txt"&>
 		Option "Term&iniate" "petcompow ons dis"
 		Divider
 			LockedOption
 			{
-				DisplayName "[S+#Pad6]"
+				DisplayName "[S+NUMPAD6]"
 				Badge "@."
 			}
 	}
@@ -324,13 +296,11 @@ Menu "qwyPetMouse-Demons"
 		Divider
 		Title "- DemonA -"
 		Divider
-		Divider
 		Menu "&1 | Stay"
 		{
 			Divider
 			Title "- ona -"
 			Title "stay"
-			Divider
 			Divider
 			Option "&1 pas" "petcomname ona pas sta"
 			Option "&2 agg" "petcomname ona agg sta"
@@ -349,7 +319,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- ona -"
 			Title "attack"
 			Divider
-			Divider
 			Option "&1 pas" "petcomname ona pas att"
 			Option "&2 agg" "petcomname ona agg att"
 			Option "&3 def" "petcomname ona def att"
@@ -366,7 +335,6 @@ Menu "qwyPetMouse-Demons"
 			Divider
 			Title "- ona -"
 			Title "go to"
-			Divider
 			Divider
 			Option "&1 pas" "petcomname ona pas got"
 			Option "&2 agg" "petcomname ona agg got"
@@ -385,7 +353,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- ona -"
 			Title "follow"
 			Divider
-			Divider
 			Option "&1 pas" "petcomname ona pas fol"
 			Option "&2 agg" "petcomname ona agg fol"
 			Option "&3 def" "petcomname ona def fol"
@@ -399,11 +366,9 @@ Menu "qwyPetMouse-Demons"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet ona"
 		Divider
-		Divider
 		Option "[C+RDC] |  p&as" "Petcomname ona pas"
 		Option "[&S+RDC] | agg" "Petcomname ona agg"
 		Option "[A+RDC] |  &def" "Petcomname ona  def"
-		Divider
 		Divider
 		Option "D&ismiss" "petcomname ona dis"
 		Divider
@@ -415,13 +380,11 @@ Menu "qwyPetMouse-Demons"
 		Title "- All Pets -"
 		Title "[S+#ADD]"
 		Divider
-		Divider
 		Menu "&1 | Stay"
 		{
 			Divider
 			Title "- all stay-"
 			Title "[A+RB]"
-			Divider
 			Divider
 			Option "&1 | pas" "petcomall pas sta"
 			Option "&2 | agg" "petcomall agg sta"
@@ -440,7 +403,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- all attack -"
 			Title "[2key]" ""
 			Divider
-			Divider
 			Option "&1 | pas" "petcomall pas att"
 			Option "&2 | agg" "petcomall agg att"
 			Option "&3 | def" "petcomall def att"
@@ -457,7 +419,6 @@ Menu "qwyPetMouse-Demons"
 			Divider
 			Title "- all go to -"
 			Title "[A+LB]"
-			Divider
 			Divider
 			Option "&1 | pas" "petcomall pas got"
 			Option "&2 | agg" "petcomall agg got"
@@ -476,7 +437,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- all follow -"
 			Title "[RDC]"
 			Divider
-			Divider
 			Option "&1 | pas" "petcomall pas fol"
 			Option "&2 | agg" "petcomall agg fol"
 			Option "&3 | def" "petcomall def fol"
@@ -490,12 +450,10 @@ Menu "qwyPetMouse-Demons"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet "
 		Divider
-		Divider
 		Title "Stance Binds"
 		Option "[C+R&DC]: | pas" "petcomall pas"
 		Option "[&S+RDC]: agg" "petcomall agg"
 		Option "[&A+RDC]: def" "petcomall def"
-		Divider
 		Divider
 		Option "D&ismiss" "petcomall dis"
 		Option "All fall d&own" "petcomall dis"
@@ -513,13 +471,11 @@ Menu "qwyPetMouse-Demons"
 		Divider
 		Title "- DemonB -"
 		Divider
-		Divider
 		Menu "&1 | Stay"
 		{
 			Divider
 			Title "- onb -"
 			Title "stay"
-			Divider
 			Divider
 			Option "&1 | pas" "petcomname onb pas sta"
 			Option "&2 | agg" "petcomname onb agg sta"
@@ -539,7 +495,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- onb -"
 			Title "attack"
 			Divider
-			Divider
 			Option "&1 | pas" "petcomname onb pas att"
 			Option "&2 | agg" "petcomname onb agg att"
 			Option "&3 | def" "petcomname onb def att"
@@ -556,7 +511,6 @@ Menu "qwyPetMouse-Demons"
 			Divider
 			Title "- onb -"
 			Title "go to"
-			Divider
 			Divider
 			Option "&1 | pas" "petcomname onb pas got"
 			Option "&2 | agg" "petcomname onb agg got"
@@ -575,7 +529,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- onb -"
 			Title "follow"
 			Divider
-			Divider
 			Option "&1 | pas" "petcomname onb pas fol"
 			Option "&2 | agg" "petcomname onb agg fol"
 			Option "&3 | def" "petcomname onb def fol"
@@ -589,11 +542,9 @@ Menu "qwyPetMouse-Demons"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet onb"
 		Divider
-		Divider
 		Option "[C+RDC] |  p&as" "Petcomname onb pas"
 		Option "[&S+RDC] | agg" "Petcomname onb agg"
 		Option "[A+RDC] |  &def" "Petcomname onb def"
-		Divider
 		Divider
 		Option "D&ismiss" "petcomname onb dis"
 		Divider
@@ -609,13 +560,11 @@ Menu "qwyPetMouse-Demons"
 		Divider
 		Title "- Wong1 -"
 		Divider
-		Divider
 		Menu "&1 | Stay"
 		{
 			Divider
 			Title "- ng1 -"
 			Title "stay"
-			Divider
 			Divider
 			Option "&1 | pas" "petcomname ng1 pas sta"
 			Option "&2 | agg" "petcomname ng1 agg sta"
@@ -634,7 +583,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- ng1 -"
 			Title "attack"
 			Divider
-			Divider
 			Option "&1 | pas" "petcomname ng1 pas att"
 			Option "&2 | agg" "petcomname ng1 agg att"
 			Option "&3 | def" "petcomname ng1 def att"
@@ -651,7 +599,6 @@ Menu "qwyPetMouse-Demons"
 			Divider
 			Title "- ng1 -"
 			Title "go to"
-			Divider
 			Divider
 			Option "&1 | pas" "petcomname ng1 pas got"
 			Option "&2 | agg" "petcomname ng1 agg got"
@@ -670,7 +617,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- ng1 -"
 			Title "follow"
 			Divider
-			Divider
 			Option "&1 | pas" "petcomname ng1 pas fol"
 			Option "&2 | agg" "petcomname ng1 agg fol"
 			Option "&3  | def" "petcomname ng1 def fol"
@@ -684,11 +630,9 @@ Menu "qwyPetMouse-Demons"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet ng1"
 		Divider
-		Divider
 		Option "[C+RDC]|  p&as" "Petcomname ng1 pas"
 		Option "[&S+RDC] | agg" "Petcomname ng1 agg"
 		Option "[A+RDC] |  &def" "Petcomname ng1 def"
-		Divider
 		Divider
 		Option "D&ismiss" "petcomname ng1 dis"
 		Divider
@@ -700,13 +644,11 @@ Menu "qwyPetMouse-Demons"
 		Divider
 		Title "- Ling2 -"
 		Divider
-		Divider
 		Menu "&1 | Stay"
 		{
 			Divider
 			Title "- ng2 -"
 			Title "stay"
-			Divider
 			Divider
 			Option "&1 | pas" "petcomname ng2 pas sta"
 			Option "&2 | agg" "petcomname ng2 agg sta"
@@ -725,7 +667,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- ng2 -"
 			Title "attack"
 			Divider
-			Divider
 			Option "&1 | pas" "petcomname ng2 pas att"
 			Option "&2 | agg" "petcomname ng2 agg att"
 			Option "&3 | def" "petcomname ng2 def att"
@@ -742,7 +683,6 @@ Menu "qwyPetMouse-Demons"
 			Divider
 			Title "- ng2 -"
 			Title "go to"
-			Divider
 			Divider
 			Option "&1 | pas" "petcomname ng2 pas got"
 			Option "&2 | agg" "petcomname ng2 agg got"
@@ -761,7 +701,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- ng2 -"
 			Title "follow"
 			Divider
-			Divider
 			Option "&1 | pas" "petcomname ng2 pas fol"
 			Option "&2 | agg" "petcomname ng2 agg fol"
 			Option "&3 | def" "petcomname ng2 def fol"
@@ -775,11 +714,9 @@ Menu "qwyPetMouse-Demons"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet ng2"
 		Divider
-		Divider
 		Option "[C+RDC] |  p&as" "Petcomname ng2 pas"
 		Option "[&S+RDC] | agg" "Petcomname ng2 agg"
 		Option "[A+RDC] |  &def" "Petcomname ng2 def"
-		Divider
 		Divider
 		Option "D&ismiss" "petcomname ng2 dis"
 		Divider
@@ -791,13 +728,11 @@ Menu "qwyPetMouse-Demons"
 		Divider
 		Title "- Ling3 -"
 		Divider
-		Divider
 		Menu "&1 | Stay"
 		{
 			Divider
 			Title "- ng3 -"
 			Title "stay"
-			Divider
 			Divider
 			Option "&1 | pas" "petcomname ng3 pas sta"
 			Option "&2 | agg" "petcomname ng3 agg sta"
@@ -816,7 +751,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- ng3 -"
 			Title "attack"
 			Divider
-			Divider
 			Option "&1 | pas" "petcomname ng3 pas att"
 			Option "&2 | agg" "petcomname ng3 agg att"
 			Option "&3 | def" "petcomname ng3 def att"
@@ -833,7 +767,6 @@ Menu "qwyPetMouse-Demons"
 			Divider
 			Title "- ng3 -"
 			Title "go to"
-			Divider
 			Divider
 			Option "&1 | pas" "petcomname ng3 pas got"
 			Option "&2 | agg" "petcomname ng3 agg got"
@@ -852,7 +785,6 @@ Menu "qwyPetMouse-Demons"
 			Title "- ng3 -"
 			Title "follow"
 			Divider
-			Divider
 			Option "&1 | pas" "petcomname ng3 pas fol"
 			Option "&2 | agg" "petcomname ng3 agg fol"
 			Option "&3 | def" "petcomname ng3 def fol"
@@ -866,11 +798,9 @@ Menu "qwyPetMouse-Demons"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet ng3"
 		Divider
-		Divider
 		Option "[C+RDC] |  p&as" "Petcomname ng3 pas"
 		Option "[&S+RDC] |  agg" "Petcomname ng3 agg"
 		Option "[A+RDC] |  &def" "Petcomname ng3 def"
-		Divider
 		Divider
 		Option "Dis&miss" "petcomname ng3 dis"
 		Divider
@@ -899,9 +829,9 @@ Menu "qwyPetMouse-Demons"
 	Divider
 	Title "SHIFT+"
 	Title "Select Group"
-	Option "[#Pad&4]: . T1" ""
-	Option "[#Pad&5]: . T2" ""
-	Option "[#Pad&6]: . T3" ""
+	Option "[NUMPAD&4]: . T1" ""
+	Option "[NUMPAD&5]: . T2" ""
+	Option "[NUMPAD&6]: . T3" ""
 	Option ".[#A&DD]: . All" ""
 	Divider
 			LockedOption
@@ -917,12 +847,10 @@ Menu "qwyPetMouse-Demons"
 		Title "- Interface -"
 		Title "Controls"
 		Divider
-		Divider
 		Title "Saved Options"
 		Option "Basi&cs" "windowshow pet$$windowscale pet 0.9$$optionset ShowPetControls 1$$optionset AdvancedPetControls 0$$optionset gShowPetBuffs 1"
 		Option "&Full On" "windowshow pet$$windowscale pet 1.2$$optionset ShowPetControls 1$$optionset AdvancedPetControls 1$$optionset gShowPetBuffs 1"
 		Option "&Tiny" "windowshow pet$$windowscale pet 0.75$$optionset ShowPetControls 0$$optionset AdvancedPetControls 1$$optionset gShowPetBuffs 0"
-		Divider
 		Divider
 		Title "Window settings"
 		Option "Show P&et Window" "windowshow pet"
@@ -934,7 +862,6 @@ Menu "qwyPetMouse-Demons"
 			Divider
 			Title "- Window -"
 			Title "Scale"
-			Divider
 			Divider
 			Option "Hu&ge" "windowscale pet 1.5"
 			Option "La&rge" "windowscale pet 1.2"
@@ -949,14 +876,12 @@ Menu "qwyPetMouse-Demons"
 		Option "Toggle Team's Pet Link" "optiontoggle ShowPets"
 		Option "Hi&de Window" "windowhide pet"
 		Divider
-		Divider
 		Title "Voice and Data"
 		Menu "Chatter"
 		{
 			Divider
 			Title "- Show -"
 			Title "Chatter"
-			Divider
 			Divider
 			Option "&Disable" "optionset ChatDisablePetSay 1$$optionset ChatEnablePetTeamSay 0"
 			Option "My Pet&s" "optionset ChatDisablePetSay 0$$optionset ChatEnablePetTeamSay 0"
@@ -967,7 +892,6 @@ Menu "qwyPetMouse-Demons"
 		{
 			Divider
 			Title "Options"
-			Divider
 			Divider
 			Option "User Pet Names" "optiontoggle hidepetnames"
 			Option "Rename &Focused Pet" "show chat$$beginchat /petrename "

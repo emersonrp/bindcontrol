@@ -184,10 +184,6 @@ class PopmenuEditor(Page):
 
         return CheckAndCreateMenuPathForGamePath(gamepath)
 
-    def OnOpenPrefsButton(self, _):
-        with PrefsDialog(self) as dlg:
-            dlg.ShowAndUpdatePrefs()
-
     def SynchronizeUI(self, _ = None):
         NoErrors = True
         if GetValidGamePath(self.Profile.Server):
@@ -207,6 +203,10 @@ class PopmenuEditor(Page):
         self.ImportMenuButton.Enable(NoErrors)
 
         self.ReloadMenusButton.Enable(bool(GetValidGamePath(self.Profile.Server)))
+
+    def OnOpenPrefsButton(self, _):
+        with PrefsDialog(self) as dlg:
+            dlg.ShowAndUpdatePrefs()
 
     def OnTestMenuButton(self, evt):
         if self.CurrentMenu:
@@ -300,6 +300,7 @@ class PopmenuEditor(Page):
         menupath = GetValidGamePath(self.Profile.Server)
 
         if menupath:
+            self.MenuIDList = {}
             self.MenuListCtrl.DeleteAllItems()
             if menupath := self.GetMenuPath(menupath):
                 for menufile in sorted(menupath.glob('*.mnu', case_sensitive = False)):
@@ -353,20 +354,20 @@ class PopmenuEditor(Page):
 
         if newmenu.ReadFromFile(filepath):
             filepath = menupath / Path(filepath).name
-            item = None
-            if existing_idx := mlc.FindItem(-1, newmenu.Title) != wx.NOT_FOUND:
-                if not allow_overwrite:
+            if item := mlc.FindItem(-1, newmenu.Title) != wx.NOT_FOUND:
+                if allow_overwrite:
+                    if itemdata := mlc.GetItemData(item):
+                        del self.MenuIDList[itemdata]
+                else:
                     newtitle = self.GetNewMenuName(dupe_menu_name = newmenu.Title)
                     if newtitle == wx.ID_CANCEL:
                         return False
                     else:
                         newmenu.Title = newtitle
-                else:
-                    mlc.DeleteItem(existing_idx)
 
             try:
                 # TODO - walk the existing names and insert this into the right place instead of at the end
-                item = mlc.Append([newmenu.Title])
+                item = item or mlc.Append([newmenu.Title])
                 self.MenuIDList[menuID := wx.NewId()] = {'menu': newmenu, 'filename': str(filepath)}
                 mlc.SetItemData(item, menuID)
                 mlc.Select(item)
@@ -377,7 +378,10 @@ class PopmenuEditor(Page):
             except Exception as e:
                 wx.LogError(f"Something went wrong importing menu file: {e}")
                 if item:
+                    if itemdata := mlc.GetItemData(item):
+                        del self.MenuIDList[itemdata]
                     mlc.DeleteItem(item)
+                    mlc.Refresh()
                 return False
 
 
@@ -385,7 +389,8 @@ class PopmenuEditor(Page):
         mlc = self.MenuListCtrl
         selection = mlc.GetFirstSelected()
         menuname = mlc.GetItemText(selection)
-        info = self.MenuIDList.get(mlc.GetItemData(selection), {})
+        itemdata = mlc.GetItemData(selection)
+        info = self.MenuIDList.get(itemdata, {})
 
         result = wx.MessageBox(f'This will delete "{menuname}" from this list, and from the menu directory.  This cannot be undone.  Continue?', "Delete Menu Item", wx.YES_NO)
         if result == wx.NO: return
@@ -394,7 +399,9 @@ class PopmenuEditor(Page):
             # TODO do we want any further sanity checking?
             Path(filename).unlink(missing_ok = True)
 
+        del self.MenuIDList[itemdata]
         mlc.DeleteItem(selection)
+        mlc.Refresh()
         self.ToggleTopButtons(False)
         self.TestMenuButton.SetLabel("Test Current Menu")
 
@@ -578,7 +585,7 @@ class Popmenu(FM.FlatMenu):
                 try:
                     contents = PopmenuFile.read_text(encoding = 'cp1252')
                 except Exception as e:
-                    wx.LogError(f'Invalid characters found in file {filename}: {e} - canceling')
+                    wx.LogError(f'Invalid characters found in file {filename}: {e} - aborting')
                     return False
 
         lines = contents.splitlines()

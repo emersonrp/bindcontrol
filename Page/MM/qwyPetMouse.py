@@ -96,8 +96,8 @@ class qwyPetMouse(wx.Panel):
         # import the menu file from popmenus/* using the PopmenuEditor
         # doImportMenuFromFile checks and existing file and warns,
         # as well as throws its own errors
-        if self.Profile.PopmenuEditor.doImportMenuFromFile(filepath, menupath):
-            wx.MessageBox("Popmenu installed!", "Popmenu Installed", wx.OK)
+        if self.Profile.PopmenuEditor.doImportMenuFromFile(filepath, menupath, allow_overwrite = True):
+            wx.MessageBox("Popmenu installed!", "", wx.OK)
 
     def GetKeyBinds(self):
         return [

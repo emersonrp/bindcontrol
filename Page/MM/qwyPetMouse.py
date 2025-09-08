@@ -93,18 +93,11 @@ class qwyPetMouse(wx.Panel):
         menupath = CheckAndCreateMenuPathForGamePath(GetValidGamePath(self.Profile.Server))
         if not menupath: return
 
-        # if file exists, warn and possibly bail out
-        newmenupath = menupath / menu
-        if newmenupath.exists():
-            if wx.MessageBox(f'The popmenu "{menu}" already exists in the game directory.  Overwrite?', 'Popmenu Exists', wx.YES_NO) == wx.ID_NO:
-                return
-
-        # otherwise, copy it from /popmenus/ to GameDir/texts/etc/etc/etc/
-        try:
-            self.Profile.PopmenuEditor.doImportMenuFromFile(filepath, menupath)
+        # import the menu file from popmenus/* using the PopmenuEditor
+        # doImportMenuFromFile checks and existing file and warns,
+        # as well as throws its own errors
+        if self.Profile.PopmenuEditor.doImportMenuFromFile(filepath, menupath):
             wx.MessageBox("Popmenu installed!", "Popmenu Installed", wx.OK)
-        except Exception as e:
-            wx.LogError(f'Couldn\'t write {newmenupath}: {e}')
 
     def GetKeyBinds(self):
         return [

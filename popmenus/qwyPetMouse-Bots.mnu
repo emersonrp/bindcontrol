@@ -20,7 +20,7 @@ Menu "qwyPetMouse-Bots"
 	{
 		Divider
 		Title "- Drones -"
-		Title "[S+NUMPAD4]"
+		Title "[SHIFT+NUMPAD4]"
 		Divider
 		Menu "&1 | Stay"
 		{
@@ -35,7 +35,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -52,7 +52,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -69,7 +69,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -94,15 +94,15 @@ Menu "qwyPetMouse-Bots"
 ///This cycles the targeting on your T1 pets, It currently assumes, "dro" as in, "drones", is part of all three of their names.
 		Option "Targ&et" "targetcustomnext alive mypet dro"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcompow dro pas"
-		Option "[&S+RDC] | agg" "Petcompow dro agg"
-		Option "[A+RDC] |  &def" "Petcompow dro def"
+		Option "[CTRL+RDC] |  p&as" "Petcompow dro pas"
+		Option "[&SHIFT+RDC] | agg" "Petcompow dro agg"
+		Option "[ALT+RDC] |  &def" "Petcompow dro def"
 		Divider
 		Option "D&ismiss" "petcompow dro dis"
 		Divider
 		LockedOption
 		{
-			DisplayName " `  [S+NUMPAD4]"
+			DisplayName " `  [SHIFT+NUMPAD4]"
 			Badge "@."
 		}
 	}
@@ -112,7 +112,7 @@ Menu "qwyPetMouse-Bots"
 	{
 		Divider
 		Title "- Assault -"
-		Title "[S+NUMPAD5]"
+		Title "[SHIFT+NUMPAD5]"
 		Divider
 		Menu "&1 | Stay"
 		{
@@ -127,7 +127,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -144,7 +144,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -161,7 +161,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -186,15 +186,15 @@ Menu "qwyPetMouse-Bots"
 ///This targets the T3 pet, It currently assumes, "ult" as in, "Assault", is part of it's name.
 		Option "Targ&et" "petselectname ult"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcompow ult pas"
-		Option "[&S+RDC] | agg" "Petcompow ult agg"
-		Option "[A+RDC] |  &def" "Petcompow ult def"
+		Option "[CTRL+RDC] |  p&as" "Petcompow ult pas"
+		Option "[&SHIFT+RDC] | agg" "Petcompow ult agg"
+		Option "[ALT+RDC] |  &def" "Petcompow ult def"
 		Divider
 		Option "D&ismiss" "petcompow ult dis"
 		Divider
 		LockedOption
 		{
-			DisplayName " [S+#PD5]"
+			DisplayName " [SHIFT+#PD5]"
 			Badge "@."
 		}
 	}
@@ -203,7 +203,7 @@ Menu "qwyPetMouse-Bots"
 	{
 		Divider
 		Title "- Protector -"
-		Title "[S+NUMPAD6]"
+		Title "[SHIFT+NUMPAD6]"
 		Divider
 		Menu "&1 | Stay"
 		{
@@ -218,7 +218,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -235,7 +235,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -252,7 +252,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -277,15 +277,15 @@ Menu "qwyPetMouse-Bots"
 ///This cycles targeting of the T2 pets, It currently assumes, "pro" as in, "protector", is part of both their names.
 		Option "Targ&et" "targetcustomnext alive mypet pro"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcompow pro pas"
-		Option "[&S+RDC] | agg" "Petcompow pro agg"
-		Option "[A+RDC] |  &def" "Petcompow pro def"
+		Option "[CTRL+RDC] |  p&as" "Petcompow pro pas"
+		Option "[&SHIFT+RDC] | agg" "Petcompow pro agg"
+		Option "[ALT+RDC] |  &def" "Petcompow pro def"
 		Divider
 		Option "Term&iniate" "petcompow Pro dis"
 		Divider
 			LockedOption
 			{
-				DisplayName "[S+NUMPAD6]"
+				DisplayName "[SHIFT+NUMPAD6]"
 				Badge "@."
 			}
 	}
@@ -309,7 +309,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -326,7 +326,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -343,7 +343,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -366,9 +366,9 @@ Menu "qwyPetMouse-Bots"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet ora"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcomname ora pas"
-		Option "[&S+RDC] | agg" "Petcomname ora agg"
-		Option "[A+RDC] |  &def" "Petcomname ora  def"
+		Option "[CTRL+RDC] |  p&as" "Petcomname ora pas"
+		Option "[&SHIFT+RDC] | agg" "Petcomname ora agg"
+		Option "[ALT+RDC] |  &def" "Petcomname ora  def"
 		Divider
 		Option "D&ismiss" "petcomname ora dis"
 		Divider
@@ -378,13 +378,13 @@ Menu "qwyPetMouse-Bots"
 	{
 		Divider
 		Title "- All Pets -"
-		Title "[S+#ADD]"
+		Title "[SHIFT+#ADD]"
 		Divider
 		Menu "&1 | Stay"
 		{
 			Divider
 			Title "- all stay-"
-			Title "[A+RB]"
+			Title "[ALT+RB]"
 			Divider
 			Option "&1 | pas" "petcomall pas sta"
 			Option "&2 | agg" "petcomall agg sta"
@@ -393,7 +393,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -410,7 +410,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -418,7 +418,7 @@ Menu "qwyPetMouse-Bots"
 		{
 			Divider
 			Title "- all go to -"
-			Title "[A+LB]"
+			Title "[ALT+LB]"
 			Divider
 			Option "&1 | pas" "petcomall pas got"
 			Option "&2 | agg" "petcomall agg got"
@@ -427,7 +427,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -451,16 +451,16 @@ Menu "qwyPetMouse-Bots"
 		Option "Targ&et" "targetcustomnext alive mypet "
 		Divider
 		Title "Stance Binds"
-		Option "[C+R&DC]: | pas" "petcomall pas"
-		Option "[&S+RDC]: agg" "petcomall agg"
-		Option "[&A+RDC]: def" "petcomall def"
+		Option "[CTRL+R&DC]: | pas" "petcomall pas"
+		Option "[&SHIFT+RDC]: agg" "petcomall agg"
+		Option "[&ALT+RDC]: def" "petcomall def"
 		Divider
 		Option "D&ismiss" "petcomall dis"
 		Option "All fall d&own" "petcomall dis"
 		Divider
 		LockedOption
 		{
-			DisplayName "[S+#ADD]"
+			DisplayName "[SHIFT+#ADD]"
 			Badge "@."
 		}
 	}
@@ -484,7 +484,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 
@@ -502,7 +502,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -519,7 +519,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -542,14 +542,13 @@ Menu "qwyPetMouse-Bots"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet orb"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcomname orb pas"
-		Option "[&S+RDC] | agg" "Petcomname orb agg"
-		Option "[A+RDC] |  &def" "Petcomname orb def"
+		Option "[CTRL+RDC] |  p&as" "Petcomname orb pas"
+		Option "[&SHIFT+RDC] | agg" "Petcomname orb agg"
+		Option "[ALT+RDC] |  &def" "Petcomname orb def"
 		Divider
 		Option "D&ismiss" "petcomname orb dis"
 		Divider
 	}
-	Divider
 //o\//////////////////////////////////////////END/Protectors
 //\o/////////////////////////////////BEGIN/Drone1
 ///This section controls the first T1 pet, individually. It currently assumes, "ne1" as in, "Drone1", is part of it's name.
@@ -573,7 +572,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -590,7 +589,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -607,7 +606,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -630,9 +629,9 @@ Menu "qwyPetMouse-Bots"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet ne1"
 		Divider
-		Option "[C+RDC]|  p&as" "Petcomname ne1 pas"
-		Option "[&S+RDC] | agg" "Petcomname ne1 agg"
-		Option "[A+RDC] |  &def" "Petcomname ne1 def"
+		Option "[CTRL+RDC]|  p&as" "Petcomname ne1 pas"
+		Option "[&SHIFT+RDC] | agg" "Petcomname ne1 agg"
+		Option "[ALT+RDC] |  &def" "Petcomname ne1 def"
 		Divider
 		Option "D&ismiss" "petcomname ne1 dis"
 		Divider
@@ -657,7 +656,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -674,7 +673,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -691,7 +690,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -714,9 +713,9 @@ Menu "qwyPetMouse-Bots"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet ne2"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcomname ne2 pas"
-		Option "[&S+RDC] | agg" "Petcomname ne2 agg"
-		Option "[A+RDC] |  &def" "Petcomname ne2 def"
+		Option "[CTRL+RDC] |  p&as" "Petcomname ne2 pas"
+		Option "[&SHIFT+RDC] | agg" "Petcomname ne2 agg"
+		Option "[ALT+RDC] |  &def" "Petcomname ne2 def"
 		Divider
 		Option "D&ismiss" "petcomname ne2 dis"
 		Divider
@@ -741,7 +740,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -758,7 +757,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -775,7 +774,7 @@ Menu "qwyPetMouse-Bots"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -798,14 +797,13 @@ Menu "qwyPetMouse-Bots"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet ne3"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcomname ne3 pas"
-		Option "[&S+RDC] |  agg" "Petcomname ne3 agg"
-		Option "[A+RDC] |  &def" "Petcomname ne3 def"
+		Option "[CTRL+RDC] |  p&as" "Petcomname ne3 pas"
+		Option "[&SHIFT+RDC] |  agg" "Petcomname ne3 agg"
+		Option "[ALT+RDC] |  &def" "Petcomname ne3 def"
 		Divider
 		Option "Dis&miss" "petcomname ne3 dis"
 		Divider
 	}
-	Divider
 //o\ o\///////////////////////////////////////END/Drones
 //\o/////////////////////////////////BEGIN/PetMouse//v1.4
 	Divider
@@ -815,16 +813,16 @@ Menu "qwyPetMouse-Bots"
 	Divider
 	Divider
 	Title "Commands"
-	Option "&1 | [A+RB]: . sta" "petcomall sta"
-	Option "&2 | [2Key]: . att" "petcomall att"
-	Option "&3 | [A+LB]: . got" "petcomall got"
+	Option "&1 | [ALT+RB]: . sta" "petcomall sta"
+	Option "&2 | [2 Key]: . att" "petcomall att"
+	Option "&3 | [ALT+LB]: . got" "petcomall got"
 	Option "&w |. [RDC]: . fol" "petcomall fol"
 	Divider
 	Divider
 	Title "Stance"
-	Option "[C+R&DC]: . pas" "petcomall pas"
-	Option "[&S+RDC]: . agg" "petcomall agg"
-	Option "[&A+RDC]: . def" "petcomall def"
+	Option "[CTRL+R&DC]: . pas" "petcomall pas"
+	Option "[&SHIFT+RDC]: . agg" "petcomall agg"
+	Option "[&ALT+RDC]: . def" "petcomall def"
 	Divider
 	Divider
 	Title "SHIFT+"
@@ -836,7 +834,7 @@ Menu "qwyPetMouse-Bots"
 	Divider
 			LockedOption
 			{
-				DisplayName " `  Off | C+ADD"
+				DisplayName " `  Off | CTRL+ADD"
 				Badge "@."
 			}
 	}

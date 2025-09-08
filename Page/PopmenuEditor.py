@@ -347,12 +347,12 @@ class PopmenuEditor(Page):
             self.doImportMenuFromFile(filepath, menupath)
 
     # returns boolean depending on success
-    def doImportMenuFromFile(self, filepath, menupath):
+    def doImportMenuFromFile(self, filepath, menupath, allow_overwrite = False):
         newmenu = Popmenu(self)
         if newmenu.ReadFromFile(filepath):
             filepath = menupath / Path(filepath).name
             item = None
-            if self.MenuListCtrl.FindItem(-1, newmenu.Title) != wx.NOT_FOUND:
+            if (not allow_overwrite) and (self.MenuListCtrl.FindItem(-1, newmenu.Title) != wx.NOT_FOUND):
                 newtitle = self.GetNewMenuName(dupe_menu_name = newmenu.Title)
                 if newtitle == wx.ID_CANCEL:
                     return False

@@ -349,22 +349,27 @@ class PopmenuEditor(Page):
     # returns boolean depending on success
     def doImportMenuFromFile(self, filepath, menupath, allow_overwrite = False):
         newmenu = Popmenu(self)
+        mlc = self.MenuListCtrl
+
         if newmenu.ReadFromFile(filepath):
             filepath = menupath / Path(filepath).name
             item = None
-            if (not allow_overwrite) and (self.MenuListCtrl.FindItem(-1, newmenu.Title) != wx.NOT_FOUND):
-                newtitle = self.GetNewMenuName(dupe_menu_name = newmenu.Title)
-                if newtitle == wx.ID_CANCEL:
-                    return False
+            if existing_idx := mlc.FindItem(-1, newmenu.Title) != wx.NOT_FOUND:
+                if not allow_overwrite:
+                    newtitle = self.GetNewMenuName(dupe_menu_name = newmenu.Title)
+                    if newtitle == wx.ID_CANCEL:
+                        return False
+                    else:
+                        newmenu.Title = newtitle
                 else:
-                    newmenu.Title = newtitle
+                    mlc.DeleteItem(existing_idx)
 
             try:
                 # TODO - walk the existing names and insert this into the right place instead of at the end
-                item = self.MenuListCtrl.Append([newmenu.Title])
+                item = mlc.Append([newmenu.Title])
                 self.MenuIDList[menuID := wx.NewId()] = {'menu': newmenu, 'filename': str(filepath)}
-                self.MenuListCtrl.SetItemData(item, menuID)
-                self.MenuListCtrl.Select(item)
+                mlc.SetItemData(item, menuID)
+                mlc.Select(item)
                 self.ToggleTopButtons(True)
                 self.CurrentMenu = newmenu
                 newmenu.WriteToFile(filepath)
@@ -372,7 +377,7 @@ class PopmenuEditor(Page):
             except Exception as e:
                 wx.LogError(f"Something went wrong importing menu file: {e}")
                 if item:
-                    self.MenuListCtrl.DeleteItem(item)
+                    mlc.DeleteItem(item)
                 return False
 
 

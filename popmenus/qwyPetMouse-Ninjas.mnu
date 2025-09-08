@@ -20,7 +20,7 @@ Menu "qwyPetMouse-Ninjas"
 	{
 		Divider
 		Title "- gen -"
-		Title "[S+NUMPAD4]"
+		Title "[SHIFT+NUMPAD4]"
 		Divider
 		Menu "&1 | Stay"
 		{
@@ -35,7 +35,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -52,7 +52,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -69,7 +69,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -94,15 +94,15 @@ Menu "qwyPetMouse-Ninjas"
 ///This cycles the targeting on your T1 pets, It currently assumes, "gen" as in, "Genin", is part of all three of their names.
 		Option "Targ&et" "targetcustomnext alive mypet gen"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcompow gen pas"
-		Option "[&S+RDC] | agg" "Petcompow gen agg"
-		Option "[A+RDC] |  &def" "Petcompow gen def"
+		Option "[CTRL+RDC] |  p&as" "Petcompow gen pas"
+		Option "[&SHIFT+RDC] | agg" "Petcompow gen agg"
+		Option "[ALT+RDC] |  &def" "Petcompow gen def"
 		Divider
 		Option "D&ismiss" "petcompow gen dis"
 		Divider
 		LockedOption
 		{
-			DisplayName " `  [S+NUMPAD4]"
+			DisplayName " `  [SHIFT+NUMPAD4]"
 			Badge "@."
 		}
 	}
@@ -112,7 +112,7 @@ Menu "qwyPetMouse-Ninjas"
 	{
 		Divider
 		Title "- Oni-"
-		Title "[S+NUMPAD5]"
+		Title "[SHIFT+NUMPAD5]"
 		Divider
 		Menu "&1 | Stay"
 		{
@@ -127,7 +127,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -144,7 +144,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -161,7 +161,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -186,15 +186,15 @@ Menu "qwyPetMouse-Ninjas"
 ///This targets the T3 pet, It currently assumes, "oni" as in, "Oni", is part of it's name.
 		Option "Targ&et" "petselectname oni"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcompow oni pas"
-		Option "[&S+RDC] | agg" "Petcompow oni agg"
-		Option "[A+RDC] |  &def" "Petcompow oni def"
+		Option "[CTRL+RDC] |  p&as" "Petcompow oni pas"
+		Option "[&SHIFT+RDC] | agg" "Petcompow oni agg"
+		Option "[ALT+RDC] |  &def" "Petcompow oni def"
 		Divider
 		Option "D&ismiss" "petcompow oni dis"
 		Divider
 		LockedOption
 		{
-			DisplayName " [S+#PD5]"
+			DisplayName " [SHIFT+#PD5]"
 			Badge "@."
 		}
 	}
@@ -203,7 +203,7 @@ Menu "qwyPetMouse-Ninjas"
 	{
 		Divider
 		Title "Jounin"
-		Title "[S+NUMPAD6]"
+		Title "[SHIFT+NUMPAD6]"
 		Divider
 		Menu "&1 | Stay"
 		{
@@ -218,7 +218,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -235,7 +235,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -252,7 +252,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -277,15 +277,15 @@ Menu "qwyPetMouse-Ninjas"
 ///This cycles targeting of the T2 pets, It currently assumes, "jou" as in, "Jounin", is part of both their names.
 		Option "Targ&et" "targetcustomnext alive mypet jou"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcompow jou pas"
-		Option "[&S+RDC] | agg" "Petcompow jou agg"
-		Option "[A+RDC] |  &def" "Petcompow jou def"
+		Option "[CTRL+RDC] |  p&as" "Petcompow jou pas"
+		Option "[&SHIFT+RDC] | agg" "Petcompow jou agg"
+		Option "[ALT+RDC] |  &def" "Petcompow jou def"
 		Divider
 		Option "Term&iniate" "petcompow jou dis"
 		Divider
 			LockedOption
 			{
-				DisplayName "[S+NUMPAD6]"
+				DisplayName "[SHIFT+NUMPAD6]"
 				Badge "@."
 			}
 	}
@@ -309,7 +309,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -326,7 +326,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -343,7 +343,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -366,9 +366,9 @@ Menu "qwyPetMouse-Ninjas"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet ina"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcomname ina pas"
-		Option "[&S+RDC] | agg" "Petcomname ina agg"
-		Option "[A+RDC] |  &def" "Petcomname ina  def"
+		Option "[CTRL+RDC] |  p&as" "Petcomname ina pas"
+		Option "[&SHIFT+RDC] | agg" "Petcomname ina agg"
+		Option "[ALT+RDC] |  &def" "Petcomname ina  def"
 		Divider
 		Option "D&ismiss" "petcomname ina dis"
 		Divider
@@ -378,13 +378,13 @@ Menu "qwyPetMouse-Ninjas"
 	{
 		Divider
 		Title "- All Pets -"
-		Title "[S+#ADD]"
+		Title "[SHIFT+#ADD]"
 		Divider
 		Menu "&1 | Stay"
 		{
 			Divider
 			Title "- all stay-"
-			Title "[A+RB]"
+			Title "[ALT+RB]"
 			Divider
 			Option "&1 | pas" "petcomall pas sta"
 			Option "&2 | agg" "petcomall agg sta"
@@ -393,7 +393,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -410,7 +410,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -418,7 +418,7 @@ Menu "qwyPetMouse-Ninjas"
 		{
 			Divider
 			Title "- all go to -"
-			Title "[A+LB]"
+			Title "[ALT+LB]"
 			Divider
 			Option "&1 | pas" "petcomall pas got"
 			Option "&2 | agg" "petcomall agg got"
@@ -427,7 +427,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -451,16 +451,16 @@ Menu "qwyPetMouse-Ninjas"
 		Option "Targ&et" "targetcustomnext alive mypet "
 		Divider
 		Title "Staoni Binds"
-		Option "[C+R&DC]: | pas" "petcomall pas"
-		Option "[&S+RDC]: agg" "petcomall agg"
-		Option "[&A+RDC]: def" "petcomall def"
+		Option "[CTRL+R&DC]: | pas" "petcomall pas"
+		Option "[&SHIFT+RDC]: agg" "petcomall agg"
+		Option "[&ALT+RDC]: def" "petcomall def"
 		Divider
 		Option "D&ismiss" "petcomall dis"
 		Option "All fall d&own" "petcomall dis"
 		Divider
 		LockedOption
 		{
-			DisplayName "[S+#ADD]"
+			DisplayName "[SHIFT+#ADD]"
 			Badge "@."
 		}
 	}
@@ -484,7 +484,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 
@@ -502,7 +502,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -519,7 +519,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -542,14 +542,13 @@ Menu "qwyPetMouse-Ninjas"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet inb"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcomname inb pas"
-		Option "[&S+RDC] | agg" "Petcomname inb agg"
-		Option "[A+RDC] |  &def" "Petcomname inb def"
+		Option "[CTRL+RDC] |  p&as" "Petcomname inb pas"
+		Option "[&SHIFT+RDC] | agg" "Petcomname inb agg"
+		Option "[ALT+RDC] |  &def" "Petcomname inb def"
 		Divider
 		Option "D&ismiss" "petcomname inb dis"
 		Divider
 	}
-	Divider
 //o\//////////////////////////////////////////END/Jounin
 //\o/////////////////////////////////BEGIN/Genin1
 ///This section controls the first T1 pet, individually. It currently assumes, "in1" as in, "Genin1", is part of it's name.
@@ -573,7 +572,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -590,7 +589,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -607,7 +606,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -630,9 +629,9 @@ Menu "qwyPetMouse-Ninjas"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet in1"
 		Divider
-		Option "[C+RDC]|  p&as" "Petcomname in1 pas"
-		Option "[&S+RDC] | agg" "Petcomname in1 agg"
-		Option "[A+RDC] |  &def" "Petcomname in1 def"
+		Option "[CTRL+RDC]|  p&as" "Petcomname in1 pas"
+		Option "[&SHIFT+RDC] | agg" "Petcomname in1 agg"
+		Option "[ALT+RDC] |  &def" "Petcomname in1 def"
 		Divider
 		Option "D&ismiss" "petcomname in1 dis"
 		Divider
@@ -657,7 +656,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -674,7 +673,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -691,7 +690,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -714,9 +713,9 @@ Menu "qwyPetMouse-Ninjas"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet in2"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcomname in2 pas"
-		Option "[&S+RDC] | agg" "Petcomname in2 agg"
-		Option "[A+RDC] |  &def" "Petcomname in2 def"
+		Option "[CTRL+RDC] |  p&as" "Petcomname in2 pas"
+		Option "[&SHIFT+RDC] | agg" "Petcomname in2 agg"
+		Option "[ALT+RDC] |  &def" "Petcomname in2 def"
 		Divider
 		Option "D&ismiss" "petcomname in2 dis"
 		Divider
@@ -741,7 +740,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+RBTN]"
+				DisplayName "[ALT+RBTN]"
 				Badge "@."
 			}
 		}
@@ -758,7 +757,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName " `  [2Key]"
+				DisplayName " `  [2 Key]"
 				Badge "@."
 			}
 		}
@@ -775,7 +774,7 @@ Menu "qwyPetMouse-Ninjas"
 			Divider
 			LockedOption
 			{
-				DisplayName "[A+LBTN]"
+				DisplayName "[ALT+LBTN]"
 				Badge "@."
 			}
 		}
@@ -798,14 +797,13 @@ Menu "qwyPetMouse-Ninjas"
 		}
 		Option "Targ&et" "targetcustomnext alive mypet in3"
 		Divider
-		Option "[C+RDC] |  p&as" "Petcomname in3 pas"
-		Option "[&S+RDC] |  agg" "Petcomname in3 agg"
-		Option "[A+RDC] |  &def" "Petcomname in3 def"
+		Option "[CTRL+RDC] |  p&as" "Petcomname in3 pas"
+		Option "[&SHIFT+RDC] |  agg" "Petcomname in3 agg"
+		Option "[ALT+RDC] |  &def" "Petcomname in3 def"
 		Divider
 		Option "Dis&miss" "petcomname in3 dis"
 		Divider
 	}
-	Divider
 //o\ o\///////////////////////////////////////END/Genin
 //\o/////////////////////////////////BEGIN/PetMouse//v1.4
 	Divider
@@ -815,16 +813,16 @@ Menu "qwyPetMouse-Ninjas"
 	Divider
 	Divider
 	Title "Commands"
-	Option "&1 | [A+RB]: . sta" "petcomall sta"
-	Option "&2 | [2Key]: . att" "petcomall att"
-	Option "&3 | [A+LB]: . got" "petcomall got"
+	Option "&1 | [ALT+RB]: . sta" "petcomall sta"
+	Option "&2 | [2 Key]: . att" "petcomall att"
+	Option "&3 | [ALT+LB]: . got" "petcomall got"
 	Option "&w |. [RDC]: . fol" "petcomall fol"
 	Divider
 	Divider
 	Title "Staoni"
-	Option "[C+R&DC]: . pas" "petcomall pas"
-	Option "[&S+RDC]: . agg" "petcomall agg"
-	Option "[&A+RDC]: . def" "petcomall def"
+	Option "[CTRL+R&DC]: . pas" "petcomall pas"
+	Option "[&SHIFT+RDC]: . agg" "petcomall agg"
+	Option "[&ALT+RDC]: . def" "petcomall def"
 	Divider
 	Divider
 	Title "SHIFT+"
@@ -836,7 +834,7 @@ Menu "qwyPetMouse-Ninjas"
 	Divider
 			LockedOption
 			{
-				DisplayName " `  Off | C+ADD"
+				DisplayName " `  Off | CTRL+ADD"
 				Badge "@."
 			}
 	}
@@ -848,16 +846,16 @@ Menu "qwyPetMouse-Ninjas"
 	Divider
 	Divider
 	Title "Commands"
-	Option "&1 | [A+RB]: . sta" "petcomall sta"
-	Option "&2 | [2Key]: . att" "petcomall att"
-	Option "&3 | [A+LB]: . got" "petcomall got"
+	Option "&1 | [ALT+RB]: . sta" "petcomall sta"
+	Option "&2 | [2 Key]: . att" "petcomall att"
+	Option "&3 | [ALT+LB]: . got" "petcomall got"
 	Option "&w |. [RDC]: . fol" "petcomall fol"
 	Divider
 	Divider
 	Title "Stance"
-	Option "[C+R&DC]: . pas" "petcomall pas"
-	Option "[&S+RDC]: . agg" "petcomall agg"
-	Option "[&A+RDC]: . def" "petcomall def"
+	Option "[CTRL+R&DC]: . pas" "petcomall pas"
+	Option "[&SHIFT+RDC]: . agg" "petcomall agg"
+	Option "[&ALT+RDC]: . def" "petcomall def"
 	Divider
 	Divider
 	Title "SHIFT+"
@@ -869,7 +867,7 @@ Menu "qwyPetMouse-Ninjas"
 	Divider
 			LockedOption
 			{
-				DisplayName " `  Off | C+ADD"
+				DisplayName " `  Off | CTRL+ADD"
 				Badge "@."
 			}
 	}

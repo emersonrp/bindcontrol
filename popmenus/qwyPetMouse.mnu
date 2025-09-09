@@ -16,10 +16,10 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			Title "- <<POWER0>> -"
 			Title "stay"
 			Divider
-			Option "&1 pas" "petcompow <<ABB1>> pas sta"
-			Option "&2 agg" "petcompow <<ABB1>> agg sta"
-			Option "&3 def" "petcompow <<ABB1>> def sta"
-			Option "no&w!" "petcompow <<ABB1>> sta"
+			Option "&1 pas" "petcompow <<ABB0>> pas sta"
+			Option "&2 agg" "petcompow <<ABB0>> agg sta"
+			Option "&3 def" "petcompow <<ABB0>> def sta"
+			Option "no&w!" "petcompow <<ABB0>> sta"
 			Divider
 			LockedOption
 			{
@@ -33,10 +33,10 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			Title "- <<POWER0>> -"
 			Title "attack"
 			Divider
-			Option "&1 pas" "petcompow <<ABB1>> pas att"
-			Option "&2 agg" "petcompow <<ABB1>> agg att"
-			Option "&3 def" "petcompow <<ABB1>> def att"
-			Option "no&w!" "petcompow <<ABB1>> att"
+			Option "&1 pas" "petcompow <<ABB0>> pas att"
+			Option "&2 agg" "petcompow <<ABB0>> agg att"
+			Option "&3 def" "petcompow <<ABB0>> def att"
+			Option "no&w!" "petcompow <<ABB0>> att"
 			Divider
 			LockedOption
 			{
@@ -50,10 +50,10 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			Title "- <<POWER0>> -"
 			Title "go to"
 			Divider
-			Option "&1 pas" "petcompow <<ABB1>> pas got"
-			Option "&2 agg" "petcompow <<ABB1>> agg got"
-			Option "&3 def" "petcompow <<ABB1>> def got"
-			Option "no&w!" "petcompow <<ABB1>> got"
+			Option "&1 pas" "petcompow <<ABB0>> pas got"
+			Option "&2 agg" "petcompow <<ABB0>> agg got"
+			Option "&3 def" "petcompow <<ABB0>> def got"
+			Option "no&w!" "petcompow <<ABB0>> got"
 			Divider
 			LockedOption
 			{
@@ -68,10 +68,10 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			Title "- <<POWER0>> -"
 			Title "follow"
 			Divider
-			Option "&1 pas" "petcompow <<ABB1>> pas fol"
-			Option "&2 agg" "petcompow <<ABB1>> agg fol"
-			Option "&3 def" "petcompow <<ABB1>> def fol"
-			Option "no&w!" "petcompow <<ABB1>> fol"
+			Option "&1 pas" "petcompow <<ABB0>> pas fol"
+			Option "&2 agg" "petcompow <<ABB0>> agg fol"
+			Option "&3 def" "petcompow <<ABB0>> def fol"
+			Option "no&w!" "petcompow <<ABB0>> fol"
 			Divider
 			LockedOption
 			{
@@ -80,12 +80,12 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			}
 		}
 ///This cycles the targeting on your T1 pets.
-		Option "[CTRL+RDC] |  p&as" "Petcompow <<ABBR0>> pas"
-		Option "[&SHIFT+RDC] | agg" "Petcompow <<ABBR0>> agg"
-		Option "[ALT+RDC] |  &def" "Petcompow <<ABBR0>> def"
+		Option "[CTRL+RDC] |  p&as" "Petcompow <<ABB0>> pas"
+		Option "[&SHIFT+RDC] | agg" "Petcompow <<ABB0>> agg"
+		Option "[ALT+RDC] |  &def" "Petcompow <<ABB0>> def"
 		Divider
 		Divider
-		Option "Macr&o" <&macroimage "<<ICON0>>" "<<POWER0>>" "powexeclocation backward:20 <<POWER0>>$$bindloadfilesilent <<RESETFILE>>"&>
+		Option "Macr&o" <&macroimage "<<ICON0>>" "<<POWER0>>" "powexeclocation backward:20 <<POWER0>>$$<<RESET_BLF>>"&>
 		Option "D&ismiss" "petcompow ves dis"
 		Divider
 		LockedOption
@@ -108,10 +108,10 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			Title "- Dire -"
 			Title "stay"
 			Divider
-			Option "&1 pas" "petcompow <<ABB3>> pas sta"
-			Option "&2 agg" "petcompow <<ABB3>> agg sta"
-			Option "&3 def" "petcompow <<ABB3>> def sta"
-			Option "no&w!" "petcompow <<ABB3>> sta"
+			Option "&1 pas" "petcompow <<ABB2>> pas sta"
+			Option "&2 agg" "petcompow <<ABB2>> agg sta"
+			Option "&3 def" "petcompow <<ABB2>> def sta"
+			Option "no&w!" "petcompow <<ABB2>> sta"
 			Divider
 			LockedOption
 			{
@@ -125,10 +125,10 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			Title "- Dire -"
 			Title "attack"
 			Divider
-			Option "&1 pas" "petcompow <<ABB3>> pas att"
-			Option "&2 agg" "petcompow <<ABB3>> agg att"
-			Option "&3 def" "petcompow <<ABB3>> def att"
-			Option "no&w!" "petcompow <<ABB3>> att"
+			Option "&1 pas" "petcompow <<ABB2>> pas att"
+			Option "&2 agg" "petcompow <<ABB2>> agg att"
+			Option "&3 def" "petcompow <<ABB2>> def att"
+			Option "no&w!" "petcompow <<ABB2>> att"
 			Divider
 			LockedOption
 			{
@@ -142,10 +142,10 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			Title "- Dire -"
 			Title "go to"
 			Divider
-			Option "&1 pas" "petcompow <<ABB3>> pas got"
-			Option "&2 agg" "petcompow <<ABB3>> agg got"
-			Option "&3 def" "petcompow <<ABB3>> def got"
-			Option "no&w!" "petcompow <<ABB3>> got"
+			Option "&1 pas" "petcompow <<ABB2>> pas got"
+			Option "&2 agg" "petcompow <<ABB2>> agg got"
+			Option "&3 def" "petcompow <<ABB2>> def got"
+			Option "no&w!" "petcompow <<ABB2>> got"
 			Divider
 			LockedOption
 			{
@@ -160,10 +160,10 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			Title "- Dire -"
 			Title "follow"
 			Divider
-			Option "&1 | pas" "petcompow <<ABB3>> pas fol"
-			Option "&2 | agg" "petcompow <<ABB3>> agg fol"
-			Option "&3 | def" "petcompow <<ABB3>> def fol"
-			Option "no&w!" "petcompow <<ABB3>> fol"
+			Option "&1 | pas" "petcompow <<ABB2>> pas fol"
+			Option "&2 | agg" "petcompow <<ABB2>> agg fol"
+			Option "&3 | def" "petcompow <<ABB2>> def fol"
+			Option "no&w!" "petcompow <<ABB2>> fol"
 			Divider
 			LockedOption
 			{
@@ -172,14 +172,14 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			}
 		}
 ///This targets the T3 pet.
-		Option "Targ&et" "petselectname <<ABB3>>"
+		Option "Targ&et" "petselectname <<ABB2>>"
 		Divider
-		Option "[CTRL+RDC] |  p&as" "Petcompow <<ABB3>> pas"
-		Option "[&SHIFT+RDC] | agg" "Petcompow <<ABB3>> agg"
-		Option "[ALT+RDC] |  &def" "Petcompow <<ABB3>> def"
+		Option "[CTRL+RDC] |  p&as" "Petcompow <<ABB2>> pas"
+		Option "[&SHIFT+RDC] | agg" "Petcompow <<ABB2>> agg"
+		Option "[ALT+RDC] |  &def" "Petcompow <<ABB2>> def"
 		Divider
-		Option "Macr&o" <&macroimage "<<ICON2>>" "<<POWER2>>" "powexeclocation backward:2 <<POWER2>>$$bindloadfilesilent <<RESETFILE>>"&>
-		Option "D&ismiss" "petcompow <<ABB3>> dis"
+		Option "Macr&o" <&macroimage "<<ICON2>>" "<<POWER2>>" "powexeclocation backward:2 <<POWER2>>$$<<RESET_BLF>>"&>
+		Option "D&ismiss" "petcompow <<ABB2>> dis"
 		Divider
 		LockedOption
 		{
@@ -200,10 +200,10 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			Title "- <<POWER1>> -"
 			Title "stay"
 			Divider
-			Option "&1 pas" "petcompow <<ABB2>> pas sta"
-			Option "&2 agg" "petcompow <<ABB2>> agg sta"
-			Option "&3 def" "petcompow <<ABB2>> def sta"
-			Option "no&w!" "petcompow <<ABB2>> sta"
+			Option "&1 pas" "petcompow <<ABB1>> pas sta"
+			Option "&2 agg" "petcompow <<ABB1>> agg sta"
+			Option "&3 def" "petcompow <<ABB1>> def sta"
+			Option "no&w!" "petcompow <<ABB1>> sta"
 			Divider
 			LockedOption
 			{
@@ -217,10 +217,10 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			Title "- <<POWER1>> -"
 			Title "attack"
 			Divider
-			Option "&1 pas" "petcompow <<ABB2>> pas att"
-			Option "&2 agg" "petcompow <<ABB2>> agg att"
-			Option "&3 def" "petcompow <<ABB2>> def att"
-			Option "no&w!" "petcompow <<ABB2>> att"
+			Option "&1 pas" "petcompow <<ABB1>> pas att"
+			Option "&2 agg" "petcompow <<ABB1>> agg att"
+			Option "&3 def" "petcompow <<ABB1>> def att"
+			Option "no&w!" "petcompow <<ABB1>> att"
 			Divider
 			LockedOption
 			{
@@ -234,10 +234,10 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			Title "- <<POWER1>> -"
 			Title "go to"
 			Divider
-			Option "&1 pas" "petcompow <<ABB2>> pas got"
-			Option "&2 agg" "petcompow <<ABB2>> agg got"
-			Option "&3 def" "petcompow <<ABB2>> def got"
-			Option "no&w!" "petcompow <<ABB2>> got"
+			Option "&1 pas" "petcompow <<ABB1>> pas got"
+			Option "&2 agg" "petcompow <<ABB1>> agg got"
+			Option "&3 def" "petcompow <<ABB1>> def got"
+			Option "no&w!" "petcompow <<ABB1>> got"
 			Divider
 			LockedOption
 			{
@@ -252,10 +252,10 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			Title "- <<POWER1>> -"
 			Title "follow"
 			Divider
-			Option "&1 pas" "petcompow <<ABB2>> pas fol"
-			Option "&2 agg" "petcompow <<ABB2>> agg fol"
-			Option "&3 def" "petcompow <<ABB2>> def fol"
-			Option "no&w!" "petcompow <<ABB2>> fol"
+			Option "&1 pas" "petcompow <<ABB1>> pas fol"
+			Option "&2 agg" "petcompow <<ABB1>> agg fol"
+			Option "&3 def" "petcompow <<ABB1>> def fol"
+			Option "no&w!" "petcompow <<ABB1>> fol"
 			Divider
 			LockedOption
 			{
@@ -264,14 +264,14 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 			}
 		}
 ///This cycles targeting of the T2 pets, It currently assumes, "ons" as in, "<<POWER1>>", is part of both their names.
-		Option "Targ&et" "targetcustomnext alive mypet <<ABB2>>"
+		Option "Targ&et" "targetcustomnext alive mypet <<ABB1>>"
 		Divider
-		Option "[CTRL+RDC] |  p&as" "Petcompow <<ABB2>> pas"
-		Option "[&SHIFT+RDC] | agg" "Petcompow <<ABB2>> agg"
-		Option "[ALT+RDC] |  &def" "Petcompow <<ABB2>> def"
+		Option "[CTRL+RDC] |  p&as" "Petcompow <<ABB1>> pas"
+		Option "[&SHIFT+RDC] | agg" "Petcompow <<ABB1>> agg"
+		Option "[ALT+RDC] |  &def" "Petcompow <<ABB1>> def"
 		Divider
-		Option "Macr&o" <&macroimage "<<ICON1>>" "<<POWER1>>" "powexeclocation backward:2 <<POWER1>>$$bindloadfilesilent <<RESETFILE>>"&>
-		Option "Term&iniate" "petcompow <<ABB2>> dis"
+		Option "Macr&o" <&macroimage "<<ICON1>>" "<<POWER1>>" "powexeclocation backward:2 <<POWER1>>$$<<RESET_BLF>>"&>
+		Option "Term&iniate" "petcompow <<ABB1>> dis"
 		Divider
 			LockedOption
 			{
@@ -289,7 +289,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&1 | Stay"
 		{
 			Divider
-			Title "- <<UNIQ3>> -"
+			Title "- <<NAME3>> -"
 			Title "stay"
 			Divider
 			Option "&1 pas" "petcomname <<UNIQ3>> pas sta"
@@ -306,7 +306,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&2 | Attack"
 		{
 			Divider
-			Title "- <<UNIQ3>> -"
+			Title "- <<NAME3>> -"
 			Title "attack"
 			Divider
 			Option "&1 pas" "petcomname <<UNIQ3>> pas att"
@@ -323,7 +323,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&3 | Go To"
 		{
 			Divider
-			Title "- <<UNIQ3>> -"
+			Title "- <<NAME3>> -"
 			Title "go to"
 			Divider
 			Option "&1 pas" "petcomname <<UNIQ3>> pas got"
@@ -340,7 +340,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu " Follo&w"
 		{
 			Divider
-			Title "- <<UNIQ3>> -"
+			Title "- <<NAME3>> -"
 			Title "follow"
 			Divider
 			Option "&1 pas" "petcomname <<UNIQ3>> pas fol"
@@ -464,7 +464,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&1 | Stay"
 		{
 			Divider
-			Title "- <<UNIQ4>> -"
+			Title "- <<NAME4>> -"
 			Title "stay"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ4>> pas sta"
@@ -482,7 +482,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&2 | Attack"
 		{
 			Divider
-			Title "- <<UNIQ4>> -"
+			Title "- <<NAME4>> -"
 			Title "attack"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ4>> pas att"
@@ -499,7 +499,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&3 | Go To"
 		{
 			Divider
-			Title "- <<UNIQ4>> -"
+			Title "- <<NAME4>> -"
 			Title "go to"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ4>> pas got"
@@ -516,7 +516,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "Follo&w"
 		{
 			Divider
-			Title "- <<UNIQ4>> -"
+			Title "- <<NAME4>> -"
 			Title "follow"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ4>> pas fol"
@@ -552,7 +552,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&1 | Stay"
 		{
 			Divider
-			Title "- <<UNIQ0>> -"
+			Title "- <<NAME0>> -"
 			Title "stay"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ0>> pas sta"
@@ -569,7 +569,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&2 | Attack"
 		{
 			Divider
-			Title "- <<UNIQ0>> -"
+			Title "- <<NAME0>> -"
 			Title "attack"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ0>> pas att"
@@ -586,7 +586,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&3 | Go To"
 		{
 			Divider
-			Title "- <<UNIQ0>> -"
+			Title "- <<NAME0>> -"
 			Title "go to"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ0>> pas got"
@@ -603,7 +603,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "Follo&w"
 		{
 			Divider
-			Title "- <<UNIQ0>> -"
+			Title "- <<NAME0>> -"
 			Title "follow"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ0>> pas fol"
@@ -636,7 +636,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&1 | Stay"
 		{
 			Divider
-			Title "- <<UNIQ1>> -"
+			Title "- <<NAME1>> -"
 			Title "stay"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ1>> pas sta"
@@ -653,7 +653,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&2 | Attack"
 		{
 			Divider
-			Title "- <<UNIQ1>> -"
+			Title "- <<NAME1>> -"
 			Title "attack"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ1>> pas att"
@@ -670,7 +670,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&3 | Go To"
 		{
 			Divider
-			Title "- <<UNIQ1>> -"
+			Title "- <<NAME1>> -"
 			Title "go to"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ1>> pas got"
@@ -687,7 +687,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "Follo&w"
 		{
 			Divider
-			Title "- <<UNIQ1>> -"
+			Title "- <<NAME1>> -"
 			Title "follow"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ1>> pas fol"
@@ -720,7 +720,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&1 | Stay"
 		{
 			Divider
-			Title "- <<UNIQ2>> -"
+			Title "- <<NAME2>> -"
 			Title "stay"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ2>> pas sta"
@@ -737,7 +737,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&2 | Attack"
 		{
 			Divider
-			Title "- <<UNIQ2>> -"
+			Title "- <<NAME2>> -"
 			Title "attack"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ2>> pas att"
@@ -754,7 +754,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "&3 | Go To"
 		{
 			Divider
-			Title "- <<UNIQ2>> -"
+			Title "- <<NAME2>> -"
 			Title "go to"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ2>> pas got"
@@ -771,7 +771,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Menu "Follo&w"
 		{
 			Divider
-			Title "- <<UNIQ2>> -"
+			Title "- <<NAME2>> -"
 			Title "follow"
 			Divider
 			Option "&1 | pas" "petcomname <<UNIQ2>> pas fol"

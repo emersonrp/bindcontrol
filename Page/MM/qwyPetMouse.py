@@ -79,24 +79,26 @@ class qwyPetMouse(wx.Panel):
 
     def OnInstallPopmenu(self, _):
         profile = self.Profile
-        menu = f'qwyPetMouse-{MenuNames[profile.Primary()]}.mnu'
+        menu = f'qwyPetMouse-{profile.ProfileBindsDir}.mnu'
 
-        if wx.MessageBox(f'This will install the popmenu "{menu}" to your game directory.  Proceed?', 'Install Popmenu', wx.YES_NO) == wx.ID_NO:
+        if wx.MessageBox(f'This will install the popmenu "{menu}" to your game directory.  Proceed?', 'Install Popmenu', wx.YES_NO) == wx.NO:
             return
 
-        filepath = GetRootDirPath() / 'popmenus' / menu
+        filepath = GetRootDirPath() / 'popmenus' / 'qwyPetMouse.mnu'
         if not filepath.exists():
-            wx.LogError(f'Cannot find popmenu "{menu}" in BindControl directory to install.  This is a bug.')
+            wx.LogError(f'Cannot find source popmenu in the BindControl install directory.  This is a bug.')
             return
 
         # This method side-effects checking, verifying, and creating the menupath
         menupath = CheckAndCreateMenuPathForGamePath(GetValidGamePath(self.Profile.Server))
         if not menupath: return
 
+        menutext = ''
+
         # import the menu file from popmenus/* using the PopmenuEditor
-        # doImportMenuFromFile checks and existing file and warns,
+        # doImportMenu checks and existing file and warns,
         # as well as throws its own errors
-        if self.Profile.PopmenuEditor.doImportMenuFromFile(filepath, menupath, allow_overwrite = True):
+        if False and self.Profile.PopmenuEditor.doImportMenu(menupath, text = menutext, allow_overwrite = True):
             wx.MessageBox("Popmenu installed!", "", wx.OK)
 
     def GetKeyBinds(self):

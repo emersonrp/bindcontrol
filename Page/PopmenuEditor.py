@@ -345,15 +345,28 @@ class PopmenuEditor(Page):
 
             filepath = fileDialog.GetPath()
 
-            self.doImportMenuFromFile(filepath, menupath)
+            self.doImportMenu(menupath, filepath = filepath)
 
     # returns boolean depending on success
-    def doImportMenuFromFile(self, filepath, menupath, allow_overwrite = False):
+    def doImportMenu(self, menupath, filepath = None, text = None, allow_overwrite = False):
         newmenu = Popmenu(self)
         mlc = self.MenuListCtrl
 
-        if newmenu.ReadFromFile(filepath):
-            filepath = menupath / Path(filepath).name
+        if filepath:
+            if newmenu.ReadFromFile(filepath):
+                filepath = menupath / Path(filepath).name
+            else:
+                newmenu = None
+        elif text:
+            if newmenu.BuildFromLines(text.splitlines()):
+                filepath = menupath / f'{newmenu.Title}.mnu'
+            else:
+                newmenu = None
+        else:
+            wx.LogError("doImportMenu got neither a filepath nor text.  This is a bug.")
+            return
+
+        if newmenu:
             if item := mlc.FindItem(-1, newmenu.Title) != wx.NOT_FOUND:
                 if allow_overwrite:
                     if itemdata := mlc.GetItemData(item):

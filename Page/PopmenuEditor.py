@@ -730,11 +730,9 @@ class Popmenu(FM.FlatMenu):
             finally:
                 # Just in case we didn't finish the dialog for some reason, finish it
                 if is_main_request and Popmenu.ProgressDialog:
-                    print("DESTROYING DIALOG")
                     Popmenu.ProgressDialog.Update(Popmenu.ProgressDialog.GetRange())
                     Popmenu.ProgressDialog.Destroy()
                     Popmenu.ProgressDialog = None
-                    print(Popmenu.ProgressDialog)
 
 
     def NormalizeOptName(self, optname):

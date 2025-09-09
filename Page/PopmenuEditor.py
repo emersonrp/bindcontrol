@@ -358,10 +358,8 @@ class PopmenuEditor(Page):
             else:
                 newmenu = None
         elif text:
-            if newmenu.BuildFromLines(text.splitlines()):
-                filepath = menupath / f'{newmenu.Title}.mnu'
-            else:
-                newmenu = None
+            newmenu.BuildFromLines(text.splitlines(), 'main')
+            filepath = menupath / f'{newmenu.Title}.mnu'
         else:
             wx.LogError("doImportMenu got neither a filepath nor text.  This is a bug.")
             return

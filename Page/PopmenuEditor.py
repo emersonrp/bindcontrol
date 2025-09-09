@@ -607,12 +607,6 @@ class Popmenu(FM.FlatMenu):
 
         self.BuildFromLines(lines, 'main')
 
-        # Just in case we didn't finish the dialog for some reason, finish it
-        if Popmenu.ProgressDialog:
-            Popmenu.ProgressDialog.Update(Popmenu.ProgressDialog.GetRange())
-            Popmenu.ProgressDialog.Destroy()
-            Popmenu.ProgressDialog = None
-
         return True
 
     def BuildFromLines(self, lines, request_type = ''):
@@ -663,75 +657,85 @@ class Popmenu(FM.FlatMenu):
 
         # OK, we should be into the juicy innards of the file.  Push the rest of "lines" through it
         while lines:
-            line = lines.pop(0)
-            if Popmenu.ProgressDialog:
-                Popmenu.ProgressDialog.Update(Popmenu.ProgressDialog.GetValue() + 1)
+            try:
+                line = lines.pop(0)
+                if Popmenu.ProgressDialog:
+                    Popmenu.ProgressDialog.Update(Popmenu.ProgressDialog.GetValue() + 1)
 
-            if is_lock_request:  # we're in a lockedoption subrequest, act differently
-                if   line == '{': continue
-                elif line == '}': # end of lock section, process accumulated stuff
-                    LockedOptions = {}
-                    for lockedline in self.LockedData:
-                        linematch = re.match(r'(\w+)(\s+(.*))?', lockedline)
-                        if not linematch:
-                            wx.LogWarning(f'Malformed line in LockedOption section: "{line}", skipping')
-                            continue
+                if is_lock_request:  # we're in a lockedoption subrequest, act differently
+                    if   line == '{': continue
+                    elif line == '}': # end of lock section, process accumulated stuff
+                        LockedOptions = {}
+                        for lockedline in self.LockedData:
+                            linematch = re.match(r'(\w+)(\s+(.*))?', lockedline)
+                            if not linematch:
+                                wx.LogWarning(f'Malformed line in LockedOption section: "{line}", skipping')
+                                continue
 
-                        OptName, OptPayload = linematch.group(1,3)
-                        OptName = OptName.strip('"')
-                        OptPayload = str(OptPayload).strip('"')
+                            OptName, OptPayload = linematch.group(1,3)
+                            OptName = OptName.strip('"')
+                            OptPayload = str(OptPayload).strip('"')
 
-                        OptName = self.NormalizeOptName(OptName)
+                            OptName = self.NormalizeOptName(OptName)
 
-                        if not OptName in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady', 'PowerOwned',):
-                            wx.LogWarning(f'Unknown keyword "{OptName}" with payload "{OptPayload}" in LockedOption section {LockedOptions["DisplayName"]}, skipping it')
-                            continue
+                            if not OptName in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady', 'PowerOwned',):
+                                wx.LogWarning(f'Unknown keyword "{OptName}" with payload "{OptPayload}" in LockedOption section {LockedOptions["DisplayName"]}, skipping it')
+                                continue
 
-                        LockedOptions[OptName] = OptPayload
+                            LockedOptions[OptName] = OptPayload
 
-                    optname = LockedOptions['DisplayName']
-                    if not optname:
-                        wx.LogWarning("There was a LockedOption with no DisplayName, skipping LockedOption section")
+                        optname = LockedOptions['DisplayName']
+                        if not optname:
+                            wx.LogWarning("There was a LockedOption with no DisplayName, skipping LockedOption section")
+                            return
+
+                        self.AppendItem(PELockedOption(self, LockedOptions))
+                        self.LockedData = []
                         return
+                    else: # normal line
+                        self.LockedData.append(line)
+                else:
+                    if   line == '{': continue
+                    elif line == "}": return     # was a recursive "menu" call
+                    elif line == "Divider":
+                        self.AppendItem(PEDivider(self, {}))
+                    elif line == "LockedOption":
+                        self.BuildFromLines(lines, 'lock')
+                    elif match := re.match(r'Title\s+(.*)', line):
+                        self.AppendItem(PETitle(self, match.group(1).strip('"')))
+                    elif match := re.match(r'Menu\s+(.*)', line):
+                        MenuName = match.group(1).strip('"')
+                        newMenu = Popmenu(self)
+                        newMenu.Title = MenuName
+                        newMenu.BuildFromLines(lines)
+                        self.AppendItem(PEMenu(self, {MenuName: newMenu}))
+                    elif match := re.match(r'Option\s+(.*)', line):
+                        OptionData = match.group(1)
+                        if re.match(r'"', OptionData):
+                            splitmatch = re.match(r'"([^"]+)"(\s+(.*))?', OptionData)
+                        else:
+                            splitmatch = re.match(r'([^\s]+)\(s+(.*))?', OptionData)
+                        if splitmatch:
+                            Optname, OptPayload = splitmatch.group(1,3)
+                        else:
+                            wx.LogError(f'Invalid "Option" clause in popmenu: "{OptionData}", canceling')
+                            return {}
+                        # "mission_helper.mnu" has Options with a name but no payload.  Ugly but we support now.
+                        OptPayload = OptPayload or 'nop'
+                        if re.match(r'"', OptPayload):
+                            OptPayload = OptPayload.strip('"')
+                        elif plmatch := re.match(r'<&(.*)&>', OptPayload):
+                            OptPayload = plmatch.group(1)
+                        self.AppendItem(PEOption(self, {Optname.strip('"') : OptPayload}))
+            finally:
+                # Just in case we didn't finish the dialog for some reason, finish it
+                if is_main_request and Popmenu.ProgressDialog:
+                    print("DESTROYING DIALOG")
+                    Popmenu.ProgressDialog.Update(Popmenu.ProgressDialog.GetRange())
+                    Popmenu.ProgressDialog.Destroy()
+                    Popmenu.ProgressDialog = None
+                    print(Popmenu.ProgressDialog)
 
-                    self.AppendItem(PELockedOption(self, LockedOptions))
-                    self.LockedData = []
-                    return
-                else: # normal line
-                    self.LockedData.append(line)
-            else:
-                if   line == '{': continue
-                elif line == "}": return     # was a recursive "menu" call
-                elif line == "Divider":
-                    self.AppendItem(PEDivider(self, {}))
-                elif line == "LockedOption":
-                    self.BuildFromLines(lines, 'lock')
-                elif match := re.match(r'Title\s+(.*)', line):
-                    self.AppendItem(PETitle(self, match.group(1).strip('"')))
-                elif match := re.match(r'Menu\s+(.*)', line):
-                    MenuName = match.group(1).strip('"')
-                    newMenu = Popmenu(self)
-                    newMenu.Title = MenuName
-                    newMenu.BuildFromLines(lines)
-                    self.AppendItem(PEMenu(self, {MenuName: newMenu}))
-                elif match := re.match(r'Option\s+(.*)', line):
-                    OptionData = match.group(1)
-                    if re.match(r'"', OptionData):
-                        splitmatch = re.match(r'"([^"]+)"(\s+(.*))?', OptionData)
-                    else:
-                        splitmatch = re.match(r'([^\s]+)\(s+(.*))?', OptionData)
-                    if splitmatch:
-                        Optname, OptPayload = splitmatch.group(1,3)
-                    else:
-                        wx.LogError(f'Invalid "Option" clause in popmenu: "{OptionData}", canceling')
-                        return {}
-                    # "mission_helper.mnu" has Options with a name but no payload.  Ugly but we support now.
-                    OptPayload = OptPayload or 'nop'
-                    if re.match(r'"', OptPayload):
-                        OptPayload = OptPayload.strip('"')
-                    elif plmatch := re.match(r'<&(.*)&>', OptPayload):
-                        OptPayload = plmatch.group(1)
-                    self.AppendItem(PEOption(self, {Optname.strip('"') : OptPayload}))
 
     def NormalizeOptName(self, optname):
         for opt in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady', 'PowerOwned',):

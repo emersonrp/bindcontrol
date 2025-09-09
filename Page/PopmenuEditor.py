@@ -278,16 +278,12 @@ class PopmenuEditor(Page):
             wx.MessageBox("Couldn't open the clipboard for copying")
 
     def OnNewMenuButton(self, _ = None):
-        mlc = self.MenuListCtrl
         newmenuname = self.GetNewMenuName()
         if newmenuname:
             newmenu = Popmenu(self)
             newmenu.Title = newmenuname
             newmenu.AppendItem(PETitle(newmenu, newmenuname))
-            # TODO - walk the existing names and insert this into the right place instead of at the end
-            listitem = mlc.Append([newmenuname])
-            mlc.SetItemData(listitem, menuID := wx.NewId())
-            self.MenuIDList[menuID] = {'menu' : newmenu}
+            self.doInsertMenuSorted(newmenuname, menu = newmenu)
             newmenu.SetModified()
 
     def OnReloadMenusButton(self, _ = None):
@@ -295,6 +291,28 @@ class PopmenuEditor(Page):
             if wx.MessageBox(f'One or more menus have unsaved changes.  Continuing will cause those changes to be lost.  Continue?', "Unsaved Changes", wx.YES_NO) == wx.NO:
                 return
         self.LoadMenusFromMenuDir()
+
+    def doInsertMenuSorted(self, name, file = None, menu = None):
+        mlc = self.MenuListCtrl
+        menuitem = None
+        # don't compare unless there's at least one to compare against
+        if count := mlc.GetItemCount():
+            for i in range(count):
+                check = mlc.GetItemText(i)
+                if name.upper() < check.upper():
+                    mlc.InsertItem(i, name)
+                    menuitem = i
+                    break
+
+        if menuitem is None:
+            menuitem = mlc.Append([name])
+        mlc.SetItemData(menuitem, menuId := wx.NewId())
+        menudata = {}
+        if menu: menudata['menu'] = menu
+        if file: menudata['filename'] = file
+        if menudata: self.MenuIDList[menuId] = menudata
+        return menuitem
+
 
     def LoadMenusFromMenuDir(self):
         menupath = GetValidGamePath(self.Profile.Server)
@@ -311,10 +329,8 @@ class PopmenuEditor(Page):
                             if match := re.match(r'Menu\s+(.*)', line):
                                 menuname = match.group(1).strip('"')
 
-                        item = self.MenuListCtrl.Append([menuname])
+                        item = self.doInsertMenuSorted(menuname, file = str(menufile))
                         self.MenuListCtrl.SetItemFont(item, self.UnloadedMenuFont)
-                        self.MenuListCtrl.SetItemData(item, menuID := wx.NewId())
-                        self.MenuIDList[menuID] = {'filename': str(menufile)}
 
                         f.close()
             self.MenuListCtrl.Refresh()
@@ -377,10 +393,7 @@ class PopmenuEditor(Page):
                         newmenu.Title = newtitle
 
             try:
-                # TODO - walk the existing names and insert this into the right place instead of at the end
-                item = item or mlc.Append([newmenu.Title])
-                self.MenuIDList[menuID := wx.NewId()] = {'menu': newmenu, 'filename': str(filepath)}
-                mlc.SetItemData(item, menuID)
+                item = self.doInsertMenuSorted(newmenu.Title, menu = newmenu, file = str(filepath))
                 mlc.Select(item)
                 self.ToggleTopButtons(True)
                 self.CurrentMenu = newmenu

@@ -124,7 +124,7 @@ class qwyPetMouse(wx.Panel):
         pabb = GameData.MMPowerSets[primary]['abbrs']
         uniq = page.uniqueNames
 
-        menu = MenuNames[primary]
+        menu = profile.ProfileBindsDir
 
         ResetFile = profile.ResetFile()
         ResetFile.SetBind('SHIFT+NUMPAD4', '', page, [f'petselectname {uniq[0]}', profile.BLF('mmqm', 't1-1.txt')])

@@ -1,4 +1,4 @@
-import sys
+import re
 import wx
 import wx.lib.agw.ultimatelistctrl as ulc
 from Help import HelpButton
@@ -93,13 +93,12 @@ class qwyPetMouse(wx.Panel):
         menupath = CheckAndCreateMenuPathForGamePath(GetValidGamePath(self.Profile.Server))
         if not menupath: return
 
-        menutext = filepath.read_text()
+        # read the text from the source file and make all necessary substitutions
+        menutext = self.MungeMenuText(filepath.read_text())
 
-        # import the menu file from popmenus/* using the PopmenuEditor
-        # doImportMenu checks and existing file and warns,
-        # as well as throws its own errors
-        if self.Profile.PopmenuEditor.doImportMenu(menupath, text = menutext, allow_overwrite = True):
-            wx.MessageBox("Popmenu installed!", "", wx.OK)
+        # import the menu file from popmenus/* using the PopmenuEditor.
+        # doImportMenu throws its own errors.
+        self.Profile.PopmenuEditor.doImportMenu(menupath, text = menutext, allow_overwrite = True)
 
     def GetKeyBinds(self):
         return [
@@ -219,12 +218,39 @@ class qwyPetMouse(wx.Panel):
         T3File.SetBind('SHIFT+RIGHTDOUBLECLICK', '', page, f'petcompow {pabb[2]} agg')
         T3File.SetBind('CTRL+RIGHTDOUBLECLICK', '', page, f'petcompow {pabb[2]} pas')
 
-MenuNames = {
-    "Beast Mastery"   : 'Beasts',
-    "Demon Summoning" : 'Demons',
-    "Mercenaries"     : 'Mercs',
-    "Necromancy"      : 'Necro',
-    "Ninjas"          : 'Ninjas',
-    "Robotics"        : 'Bots',
-    "Thugs"           : 'Thugs',
-}
+    def MungeMenuText(self, menutext):
+        primary = self.Profile.Primary()
+        pabb = GameData.MMPowerSets[primary]['abbrs']
+        pnam = GameData.MMPowerSets[primary]['names']
+        uniq = self.Profile.Mastermind.uniqueNames
+        shortprim = re.sub(r'\s+', '', primary)
+        shortpow0 = re.sub(r'\s+', '', pnam[0])
+        shortpow1 = re.sub(r'\s+', '', pnam[1])
+        shortpow2 = re.sub(r'\s+', '', pnam[2])
+        reset_blf = re.sub(r'\\', r'\\\\\\\\', self.Profile.ResetFile().BLF()) # yes we need eight slashes
+
+        menutext = re.sub(r'<<RESET_BLF>>', reset_blf, menutext)
+        menutext = re.sub(r'<<MENUNAME>>', self.Profile.ProfileBindsDir, menutext)
+        menutext = re.sub(r'<<ABB0>>', pabb[0], menutext)
+        menutext = re.sub(r'<<ABB1>>', pabb[1], menutext)
+        menutext = re.sub(r'<<ABB2>>', pabb[2], menutext)
+        menutext = re.sub(r'<<POWER0>>', pnam[0], menutext)
+        menutext = re.sub(r'<<POWER1>>', pnam[1], menutext)
+        menutext = re.sub(r'<<POWER2>>', pnam[2], menutext)
+        menutext = re.sub(r'<<ICON0>>', f'{shortprim}_{shortpow0}', menutext)
+        menutext = re.sub(r'<<ICON1>>', f'{shortprim}_{shortpow1}', menutext)
+        menutext = re.sub(r'<<ICON2>>', f'{shortprim}_{shortpow2}', menutext)
+        menutext = re.sub(r'<<UNIQ0>>', uniq[0], menutext)
+        menutext = re.sub(r'<<UNIQ1>>', uniq[1], menutext)
+        menutext = re.sub(r'<<UNIQ2>>', uniq[2], menutext)
+        menutext = re.sub(r'<<UNIQ3>>', uniq[3], menutext)
+        menutext = re.sub(r'<<UNIQ4>>', uniq[4], menutext)
+        menutext = re.sub(r'<<UNIQ5>>', uniq[5], menutext)
+        menutext = re.sub(r'<<NAME0>>', self.Profile.Mastermind.GetState('Pet1Name'), menutext)
+        menutext = re.sub(r'<<NAME1>>', self.Profile.Mastermind.GetState('Pet2Name'), menutext)
+        menutext = re.sub(r'<<NAME2>>', self.Profile.Mastermind.GetState('Pet3Name'), menutext)
+        menutext = re.sub(r'<<NAME3>>', self.Profile.Mastermind.GetState('Pet4Name'), menutext)
+        menutext = re.sub(r'<<NAME4>>', self.Profile.Mastermind.GetState('Pet5Name'), menutext)
+        menutext = re.sub(r'<<NAME5>>', self.Profile.Mastermind.GetState('Pet6Name'), menutext)
+
+        return menutext

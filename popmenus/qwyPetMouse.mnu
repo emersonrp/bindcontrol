@@ -61,7 +61,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 				Badge "@."
 			}
 		}
-		Option "&4 | Summon" "powexeclocation forward:30 Summon <<POWER0>>"
+		Option "&4 | Summon" "powexeclocation forward:30 <<POWER0>>"
 		Menu "Follo&w"
 		{
 			Divider
@@ -153,7 +153,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 				Badge "@."
 			}
 		}
-		Option "&4 | Summon" "powexeclocation forward:20 Summon <<POWER2>>"
+		Option "&4 | Summon" "powexeclocation forward:20 <<POWER2>>"
 		Menu "Follo&w"
 		{
 			Divider
@@ -245,7 +245,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 				Badge "@."
 			}
 		}
-		Option "&4 | Summon" "powexeclocation forward:20 Summon <<POWER1>>"
+		Option "&4 | Summon" "powexeclocation forward:20 <<POWER1>>"
 		Menu "Follo&w"
 		{
 			Divider

@@ -229,11 +229,9 @@ class qwyPetMouse(wx.Panel):
 
     def MungeMenuTextLookup(self, matchobj):
         primary = self.Profile.Primary()
-        pabb = GameData.MMPowerSets[primary]['abbrs']
         pnam = GameData.MMPowerSets[primary]['names']
-        uniq = self.Profile.Mastermind.uniqueNames
-        shortprim = re.sub(r'\s+', '', primary)
-        shortpow = [
+        shortprimary = re.sub(r'\s+', '', primary)
+        shortpowers = [
             re.sub(r'\s+', '', pnam[0]),
             re.sub(r'\s+', '', pnam[1]),
             re.sub(r'\s+', '', pnam[2]),
@@ -242,16 +240,17 @@ class qwyPetMouse(wx.Panel):
 
         match matchobj.group(1):
             case 'ABB':
-                return pabb[n]
+                return GameData.MMPowerSets[primary]['abbrs'][n]
             case 'POWER':
                 return pnam[n]
             case 'ICON':
-                return f'{shortprim}_{shortpow[n]}'
+                return f'{shortprimary}_{shortpowers[n]}'
             case 'UNIQ':
-                return uniq[n]
+                return self.Profile.Mastermind.uniqueNames[n]
             case 'NAME':
                 return self.Profile.Mastermind.GetState(f'Pet{n+1}Name')
 
+        wx.LogError(f'Encountered an unknown tag in source popmenu: <<{matchobj.group(0)}>>.  This is a bug in the source popmenu.')
         return matchobj.group(0)
 
 

@@ -205,6 +205,8 @@ class Mastermind(Page):
         for control in self.Ctrls.values(): control.Enable(bool(ismm and pset))
         self.RenamePetsButton.Enable(bool(ismm and pset))
         self.OnLevelChanged()
+        if self.BindStyle() == 'Sandolphan':
+            self.SandolphanPage.SynchronizeUI()
 
     def OnBindStyleChanged(self, evt):
         bindstyle = self.BindStyle()
@@ -215,6 +217,9 @@ class Mastermind(Page):
             ctrl.Enable(bindstyle == 'Sandolphan')
 
         self.Profile.CheckAllConflicts()
+
+        if self.BindStyle() == 'Sandolphan':
+            self.SandolphanPage.SynchronizeUI()
 
         evt.Skip()
 
@@ -233,6 +238,8 @@ class Mastermind(Page):
     def OnNameTextChange(self, evt = None):
         self.CheckUndefNames()
         self.CheckUniqueNames()
+        if self.BindStyle() == 'Sandolphan':
+            self.SandolphanPage.SynchronizeUI()
         if evt: evt.Skip()
 
     def CheckUndefNames(self):

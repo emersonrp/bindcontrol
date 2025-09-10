@@ -128,7 +128,18 @@ Various newer functionality was added to [CityBinder for Homecoming](https://sou
 
 The [CoH/CoV Technical Reference Guide](http://www.shenanigunner.com/COXTECHGUIDE) from [Heroica!](https://www.shenanigunner.com/) has been, and continues to be, a crucial resource and is highly recommended for those wishing to dig deeper into keybinds, popmenus, and macros.
 
-CityBinder's acknowledgements are reproduced below:
+The qwy bind schemes are adapted from user qwy's posts on the Homecoming forums, and are used with his gracious permission.
+
+The improved Inspiration Popper design was gratefully adapted from an unreleased version of [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by Tailcoat.
+
+Github Actions for automated building of binary releases provided by [JamzTheMan](https://github.com/JamzTheMan).
+
+Additional feedback and suggestions provided in the [Homecoming Forums thread](https://forums.homecomingservers.com/topic/38674-bindcontrol-alternative-to-citybinder) and in [Github issues](https://github.com/emersonrp/bindcontrol/issues) by:<br>
+DevoDog68, BlackSpectre, Premmy, kenlon, Lumenia, xizar, autobotpinto, jtoya85
+
+Icons / graphics are from Microsoft's Fluent icons collection, by way of [Colton Griffith's Fluent Icons viewer](https://fluenticons.co/outlined/).
+
+CityBinder's original acknowledgements are reproduced below:
 ```
     Obviously, without Cryptic and NCSoft to have created/funded/published
     City of Heroes and City of Villains, there would be no point to this
@@ -145,15 +156,6 @@ CityBinder's acknowledgements are reproduced below:
     DarknessEternal, reiella, Robotech_Master, Ground_Zeroo, Stylina, and
     ShieldBearer.
 ```
-
-The improved Inspiration Popper design was gratefully adapted from an unreleased version of [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by Tailcoat.
-
-Github Actions for automated building of binary releases provided by [JamzTheMan](https://github.com/JamzTheMan).
-
-Additional feedback and suggestions provided in the [Homecoming Forums thread](https://forums.homecomingservers.com/topic/38674-bindcontrol-alternative-to-citybinder) and in [Github issues](https://github.com/emersonrp/bindcontrol/issues) by:<br>
-DevoDog68, BlackSpectre, Premmy, kenlon, Lumenia, xizar, autobotpinto, jtoya85
-
-Icons / graphics are from Microsoft's Fluent icons collection, by way of [Colton Griffith's Fluent Icons viewer](https://fluenticons.co/outlined/).
 
 
 ## License

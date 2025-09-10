@@ -43,8 +43,8 @@ class Page(wx.ScrolledWindow):
             return control.GetLabel()
         elif isinstance(control, wx.Choice) or isinstance(control, wx.ComboBox):
             sel = control.GetSelection()
-            if sel != -1: return control.GetString(control.GetSelection())
-            else        : return ''
+            if sel != wx.NOT_FOUND: return control.GetString(sel)
+            else                  : return ''
         elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
             return control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
         elif isinstance(control, wx.StaticText):

@@ -155,11 +155,11 @@ class SandolphanBinds(wx.Panel):
             self.SandolphanKeyButtons[command['ctrlName']] = self.Page.Ctrls[command['ctrlName']]
             petCommandsKeys.AddControl(
                 ctlName = command['ctrlName'] + 'ResponseMethod',
-                ctlType = 'combobox',
+                ctlType = 'choice',
                 contents = [ "Local", "Self-tell", "Petsay", "---", ],
                 tooltip = "Choose how your pets will respond when they are in chatty mode and you " + command['tooltipdetail'],
             )
-            self.Page.Ctrls[command['ctrlName'] + 'ResponseMethod'].Bind(wx.EVT_COMBOBOX, self.SynchronizeUI)
+            self.Page.Ctrls[command['ctrlName'] + 'ResponseMethod'].Bind(wx.EVT_CHOICE, self.SynchronizeUI)
             petCommandsKeys.AddControl(
                 noLabel = True,
                 ctlName = command['ctrlName'] + "Response",
@@ -204,9 +204,8 @@ class SandolphanBinds(wx.Panel):
         self.BGCBSizer.Layout()
 
         for command in self.petCommandKeyDefinitions:
-            rmctrl = self.Page.Ctrls[command['ctrlName'] + 'ResponseMethod']
             rfield = self.Page.Ctrls[command['ctrlName'] + "Response"]
-            rfield.Enable(rmctrl.GetValue() != '---')
+            rfield.Enable(self.Page.GetState(command['ctrlName'] + 'ResponseMethod') != '---')
 
     ### BIND CREATION METHODS
 

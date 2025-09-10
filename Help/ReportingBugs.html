@@ -1,0 +1,33 @@
+<html>
+    <head><title>Reporting Bugs in BindControl</title></head>
+    <body>
+        <h1>Reporting Bugs in BindControl</h1>
+
+        <p>So you've found a bug!  First, thanks for using BindControl, and I'm sorry you've run into a problem with it.  I try to respond to bug reports quickly, so if you have it in you, it'd be great if you could open a Github issue describing your bug.</p>
+
+        <p>Unfortunately, this requires you to have a Github account.  Github accounts are free and don't come with any obligations or other baggage, but this step does add some friction to the process if you don't have one already.  You can open a github account at <a href="https://github.com/join">their signup / join page</a>.</p>
+
+        <p>Once you have an account, go to <a href="https://github.com/emersonrp/bindcontrol/issues">BindControl's issue page</a> and poke the "New Issue" button at the upper right.  You can then fill out a form describing what you've run into.  In a perfect world, you'd be able to reproduce the bug, and describe the steps that cause it.  If not, no worries, just describe what you've run into as best you can.</p>
+
+        <p>Some further thoughts on specific situations:</p>
+
+        <dl>
+            <dt>I got a note at the bottom of the screen that said "This is a bug."</dt>
+            <dd>That means you've tripped across a programming error.  This probably happened after a new release, where I broke something at a distance by working on something else.  If you open the Log Window, you should find the full message about the bug.  Please copy and paste this message into the Github issue.</dd>
+
+            <dt>When writing binds, the result dialog box said that there were errors.</dt>
+            <dd>Writing binds is the most complicated part of BindControl, and bugs creep into that process more often than I'd like to admit.  Again, the Log Window will probably have a message about what happened that you can copy and paste into a Github issue.</dd>
+
+            <dt>Something didn't act the way I'd expect.</dt>
+            <dd>This could be a bug, or could be that the normal process is poorly implemented and/or confusing.  In either case, this is a bug, so please open a Github issue and tell me what you were doing, and what you expected to have happen.</dd>
+
+            <dt>BindControl crashed, or froze, or otherwise stopped working</dt>
+            <dd>The first thing to check in the case of a program freeze is whether there's a BindControl dialog hidden behind another window.  Alt-tab through your open windows and see if you have a dialog box you need to close.  If that's what happened, or if BindControl crashed completely, I <b>really</b> want to hear about it.  Please open a Github issue, and in addition to describing what you were doing when the program crashed, please let me know your operating system and version.</dd>
+
+            <dt>I had a great idea for a new feature!</dt>
+            <dd>Excellent!  Please, as usual, open a Github issue.  The issues list is my "to-do" list, so new feature requests absolutely belong there.</dd>
+        </dl>
+
+        <p>That's about it for bug reporting.  Thanks again for using BindControl, and thanks in advance if you open any issues.</p>
+    </body>
+</html>

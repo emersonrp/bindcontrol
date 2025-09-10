@@ -16,6 +16,7 @@ class HelpHTMLWindow(wx.html.HtmlWindow):
 
         self.LoadFile(f"{help_path}")
 
+        self.Bind(wx.html.EVT_HTML_LINK_CLICKED, self.HandleLinkClicked)
 
     # TODO - maybe check if we have "http(s)" at the start, and if not,
     # we're loading a local file and should use ourselves not the browser?

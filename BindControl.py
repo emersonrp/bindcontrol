@@ -116,11 +116,12 @@ class Main(wx.Frame):
         # "Help" Menu
         HelpMenu = wx.Menu()
 
-        Help_manual   = HelpMenu.Append(wx.ID_ANY,"Manual","User's Manual")
-        Help_guide    = HelpMenu.Append(wx.ID_ANY,"Getting Started","Getting Started Guide on the BindControl wiki")
-        Help_files    = HelpMenu.Append(wx.ID_ANY,"Files","About BindControl's Output Files")
-        Help_bindDirs = HelpMenu.Append(wx.ID_ANY, "Bind Directories", "Location of each Profile's bind files")
-        Help_license  = HelpMenu.Append(wx.ID_ANY,"License Info","")
+        Help_manual   = HelpMenu.Append(wx.ID_ANY , "Manual"           , "User's Manual")
+        Help_guide    = HelpMenu.Append(wx.ID_ANY , "Getting Started"  , "Getting Started Guide on the BindControl wiki")
+        Help_files    = HelpMenu.Append(wx.ID_ANY , "Output Files"     , "About BindControl's Output Files")
+        Help_bindDirs = HelpMenu.Append(wx.ID_ANY , "Bind Directories" , "Location of each Profile's bind files")
+        Help_license  = HelpMenu.Append(wx.ID_ANY , "License Info"     , "")
+        Help_bugs     = HelpMenu.Append(wx.ID_ANY , "Reporting Bugs"   , "How To Report Bugs In BindControl")
         Help_about    = HelpMenu.Append(wx.ID_ABOUT)
 
         LogMenu = wx.Menu()
@@ -152,6 +153,7 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnHelpFiles, Help_files)
         self.Bind(wx.EVT_MENU, self.OnHelpBindDirs, Help_bindDirs)
         self.Bind(wx.EVT_MENU, self.OnHelpLicense, Help_license)
+        self.Bind(wx.EVT_MENU, self.OnHelpBugs, Help_bugs)
         self.Bind(wx.EVT_MENU, self.OnMenuAboutBox, Help_about)
 
         self.Bind(wx.EVT_MENU, self.OnMenuLogWindow, Log_window)
@@ -633,6 +635,9 @@ class Main(wx.Frame):
 
     def OnHelpLicense(self, _):
         ShowHelpWindow(self, 'LICENSE.html')
+
+    def OnHelpBugs(self, _):
+        ShowHelpWindow(self, 'ReportingBugs.html')
 
     def OnHelpFiles(self, _):
         ShowHelpWindow(self, 'OutputFiles.html')

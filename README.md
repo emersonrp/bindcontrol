@@ -61,7 +61,9 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
             + Pets can give feedback on each order;  chattiness can be toggled via keybind
             + "Bodyguard mode" shortcut -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress[^1] - <i>requires uniquely-named pets</i>
         + [qwy's Numpad Controls](https://forums.homecomingservers.com/topic/20650-i26-expanded-mastermind-numpad-controls/):
-            + Simple but comprehensive scheme for controlling pets using the number pad, modifier keys, and optional popmenu and custom window
+            + Simple but comprehensive scheme for controlling pets using the number pad and modifier keys to select, control, heal, and buff pets.
+        + [qwy's PetMouse Controls](https://forums.homecomingservers.com/topic/20788-i26-the-masterminds-petmouse-new-menu/):
+            + Mouse-centric keybind scheme that uses modifier keys with the mouse, as well as an optional popmenu, to give orders to pets individually or by power level.  This is a fairly simple control scheme, but can handle 90% of moment-to-moment pet commands from the mouse.
 
 * Popmenu Editor (beta)
     * Install, edit, and delete popmenus in the correct game folder

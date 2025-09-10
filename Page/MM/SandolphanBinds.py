@@ -159,6 +159,7 @@ class SandolphanBinds(wx.Panel):
                 contents = [ "Local", "Self-tell", "Petsay", "---", ],
                 tooltip = "Choose how your pets will respond when they are in chatty mode and you " + command['tooltipdetail'],
             )
+            self.Page.Ctrls[command['ctrlName'] + 'ResponseMethod'].Bind(wx.EVT_COMBOBOX, self.SynchronizeUI)
             petCommandsKeys.AddControl(
                 noLabel = True,
                 ctlName = command['ctrlName'] + "Response",
@@ -179,21 +180,33 @@ class SandolphanBinds(wx.Panel):
         )
 
         staticbox = petCommandsKeys.GetStaticBox()
-        BGCBSizer = wx.BoxSizer(wx.HORIZONTAL)
-        petlabels = ['Minion 1', 'Minion 2', 'Minion 3', 'lieutenant 1', 'lieutenant 2', 'Boss']
-        cblabels  = ['Minion 1 BG', 'Minion 2 BG', 'Minion 3 BG', 'Lt 1 BG', 'Lt 2 BG', 'Boss BG']
+        self.BGCBSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.BGCBSizer.Add(wx.StaticText(staticbox, label = "BG:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
         for cb in range(6):
-            checkbox = wx.CheckBox(staticbox, label = cblabels[cb])
+            checkbox = wx.CheckBox(staticbox)
             page.Ctrls[f"Pet{cb+1}Bodyguard"] = checkbox
-            checkbox.SetToolTip(f"Select whether {petlabels[cb]} acts as Bodyguard when Bodyguard Mode is activated")
 
-            BGCBSizer.Add(checkbox, 0, wx.ALIGN_CENTER_VERTICAL)
+            self.BGCBSizer.Add(checkbox, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        BGCBSizer.Add(HelpButton(staticbox, 'BodyguardBinds.html'), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5)
+        self.BGCBSizer.Add(HelpButton(staticbox, 'BodyguardBinds.html'), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5)
 
-        petCommandsKeys.InnerSizer.Add(BGCBSizer, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 10)
+        petCommandsKeys.InnerSizer.Add(self.BGCBSizer, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 10)
 
         SandolphanSizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.ALL, 0)
+
+    def SynchronizeUI(self, _ = None):
+        cblabels  = ['Minion 1', 'Minion 2', 'Minion 3', 'Lt 1', 'Lt 2', 'Boss']
+        for i in range(6):
+            cb   = self.Page.Ctrls[f'Pet{i+1}Bodyguard']
+            name = self.Page.Ctrls[f'Pet{i+1}Name'].GetValue() or cblabels[i]
+            cb.SetLabel(name)
+            cb.SetToolTip(f'Select whether {name} acts as Bodyguard when Bodyguard Mode is activated')
+        self.BGCBSizer.Layout()
+
+        for command in self.petCommandKeyDefinitions:
+            rmctrl = self.Page.Ctrls[command['ctrlName'] + 'ResponseMethod']
+            rfield = self.Page.Ctrls[command['ctrlName'] + "Response"]
+            rfield.Enable(rmctrl.GetValue() != '---')
 
     ### BIND CREATION METHODS
 

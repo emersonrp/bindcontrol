@@ -219,38 +219,39 @@ class qwyPetMouse(wx.Panel):
         T3File.SetBind('CTRL+RIGHTDOUBLECLICK', '', page, f'petcompow {pabb[2]} pas')
 
     def MungeMenuText(self, menutext):
+        reset_blf = re.sub(r'\\', r'\\\\\\\\', self.Profile.ResetFile().BLF()) # yes we need eight slashes
+
+        menutext = re.sub(r'<<RESET_BLF>>', reset_blf, menutext)
+        menutext = re.sub(r'<<MENUNAME>>', self.Profile.ProfileBindsDir, menutext)
+        menutext = re.sub(r'<<([A-Z]+)(\d)>>', self.MungeMenuTextLookup, menutext)
+
+        return menutext
+
+    def MungeMenuTextLookup(self, matchobj):
         primary = self.Profile.Primary()
         pabb = GameData.MMPowerSets[primary]['abbrs']
         pnam = GameData.MMPowerSets[primary]['names']
         uniq = self.Profile.Mastermind.uniqueNames
         shortprim = re.sub(r'\s+', '', primary)
-        shortpow0 = re.sub(r'\s+', '', pnam[0])
-        shortpow1 = re.sub(r'\s+', '', pnam[1])
-        shortpow2 = re.sub(r'\s+', '', pnam[2])
-        reset_blf = re.sub(r'\\', r'\\\\\\\\', self.Profile.ResetFile().BLF()) # yes we need eight slashes
+        shortpow = [
+            re.sub(r'\s+', '', pnam[0]),
+            re.sub(r'\s+', '', pnam[1]),
+            re.sub(r'\s+', '', pnam[2]),
+        ]
+        n = int(matchobj.group(2))
 
-        menutext = re.sub(r'<<RESET_BLF>>', reset_blf, menutext)
-        menutext = re.sub(r'<<MENUNAME>>', self.Profile.ProfileBindsDir, menutext)
-        menutext = re.sub(r'<<ABB0>>', pabb[0], menutext)
-        menutext = re.sub(r'<<ABB1>>', pabb[1], menutext)
-        menutext = re.sub(r'<<ABB2>>', pabb[2], menutext)
-        menutext = re.sub(r'<<POWER0>>', pnam[0], menutext)
-        menutext = re.sub(r'<<POWER1>>', pnam[1], menutext)
-        menutext = re.sub(r'<<POWER2>>', pnam[2], menutext)
-        menutext = re.sub(r'<<ICON0>>', f'{shortprim}_{shortpow0}', menutext)
-        menutext = re.sub(r'<<ICON1>>', f'{shortprim}_{shortpow1}', menutext)
-        menutext = re.sub(r'<<ICON2>>', f'{shortprim}_{shortpow2}', menutext)
-        menutext = re.sub(r'<<UNIQ0>>', uniq[0], menutext)
-        menutext = re.sub(r'<<UNIQ1>>', uniq[1], menutext)
-        menutext = re.sub(r'<<UNIQ2>>', uniq[2], menutext)
-        menutext = re.sub(r'<<UNIQ3>>', uniq[3], menutext)
-        menutext = re.sub(r'<<UNIQ4>>', uniq[4], menutext)
-        menutext = re.sub(r'<<UNIQ5>>', uniq[5], menutext)
-        menutext = re.sub(r'<<NAME0>>', self.Profile.Mastermind.GetState('Pet1Name'), menutext)
-        menutext = re.sub(r'<<NAME1>>', self.Profile.Mastermind.GetState('Pet2Name'), menutext)
-        menutext = re.sub(r'<<NAME2>>', self.Profile.Mastermind.GetState('Pet3Name'), menutext)
-        menutext = re.sub(r'<<NAME3>>', self.Profile.Mastermind.GetState('Pet4Name'), menutext)
-        menutext = re.sub(r'<<NAME4>>', self.Profile.Mastermind.GetState('Pet5Name'), menutext)
-        menutext = re.sub(r'<<NAME5>>', self.Profile.Mastermind.GetState('Pet6Name'), menutext)
+        match matchobj.group(1):
+            case 'ABB':
+                return pabb[n]
+            case 'POWER':
+                return pnam[n]
+            case 'ICON':
+                return f'{shortprim}_{shortpow[n]}'
+            case 'UNIQ':
+                return uniq[n]
+            case 'NAME':
+                return self.Profile.Mastermind.GetState(f'Pet{n+1}Name')
 
-        return menutext
+        return matchobj.group(0)
+
+

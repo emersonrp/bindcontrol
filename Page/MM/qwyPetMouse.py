@@ -35,19 +35,19 @@ class qwyPetMouse(wx.Panel):
             self.ButtonGrid.InsertColumn(i, name)
 
         for row in [
-            ['SHIFT+NUMPAD4'          , 'Select + Target Next Minion'     ],
-            ['SHIFT+NUMPAD5'          , 'Select + Target Next Lieutenant' ],
-            ['SHIFT+NUMPAD6'          , 'Select Boss'                     ],
-            ['SHIFT+ADD'              , 'Select All'                      ],
-            ['CTRL+ADD'               , 'Select None'                     ],
-            ['2'                      , 'Attack'                          ],
-            ['4'                      , 'Open Popmenu'                    ],
-            ['ALT+LBUTTON'            , 'Target Next Pet In Group + Go To'],
-            ['ALT+RBUTTON'            , 'Stay'                            ],
-            ['RIGHTDOUBLECLICK'       , 'Follow'                          ],
-            ['ALT+RIGHTDOUBLECLICK'   , 'Defensive'                       ],
-            ['SHIFT+RIGHTDOUBLECLICK' , 'Aggressive'                      ],
-            ['CTRL+RIGHTDOUBLECLICK'  , 'Passive'                         ],
+            ['SHIFT+NUMPAD4'          , 'Switch to Minions + Target Next'     ] ,
+            ['SHIFT+NUMPAD5'          , 'Switch to Lieutenants + Target Next' ] ,
+            ['SHIFT+NUMPAD6'          , 'Switch to Boss + Target'             ] ,
+            ['SHIFT+ADD'              , 'Select All'                          ] ,
+            ['CTRL+ADD'               , 'Select None'                         ] ,
+            ['2'                      , 'Attack'                              ] ,
+            ['4'                      , 'Open Popmenu'                        ] ,
+            ['ALT+LBUTTON'            , 'Target Next Pet In Group + Go To'    ] ,
+            ['ALT+RBUTTON'            , 'Stay'                                ] ,
+            ['RIGHTDOUBLECLICK'       , 'Follow'                              ] ,
+            ['ALT+RIGHTDOUBLECLICK'   , 'Defensive'                           ] ,
+            ['SHIFT+RIGHTDOUBLECLICK' , 'Aggressive'                          ] ,
+            ['CTRL+RIGHTDOUBLECLICK'  , 'Passive'                             ] ,
         ]:
             self.ButtonGrid.Append(row)
 
@@ -78,27 +78,30 @@ class qwyPetMouse(wx.Panel):
             self.InstallPopmenu.Enable(False)
 
     def OnInstallPopmenu(self, _):
-        profile = self.Profile
-        menu = f'qwyPetMouse-{profile.ProfileBindsDir}.mnu'
+        try:
+            profile = self.Profile
+            menu = f'qwyPetMouse-{profile.ProfileBindsDir}.mnu'
 
-        if wx.MessageBox(f'This will install the popmenu "{menu}" to your game directory.  Proceed?', 'Install Popmenu', wx.YES_NO) == wx.NO:
-            return
+            if wx.MessageBox(f'This will install the popmenu "{menu}" to your game directory.  Proceed?', 'Install Popmenu', wx.YES_NO) == wx.NO:
+                return
 
-        filepath = GetRootDirPath() / 'popmenus' / 'qwyPetMouse.mnu'
-        if not filepath.exists():
-            wx.LogError(f'Cannot find source popmenu in the BindControl install directory.  This is a bug.')
-            return
+            filepath = GetRootDirPath() / 'popmenus' / 'qwyPetMouse.mnu'
+            if not filepath.exists():
+                wx.LogError(f'Cannot find source popmenu in the BindControl install directory.  This is a bug.')
+                return
 
-        # This method side-effects checking, verifying, and creating the menupath
-        menupath = CheckAndCreateMenuPathForGamePath(GetValidGamePath(self.Profile.Server))
-        if not menupath: return
+            # This method side-effects checking, verifying, and creating the menupath
+            menupath = CheckAndCreateMenuPathForGamePath(GetValidGamePath(self.Profile.Server))
+            if not menupath: return
 
-        # read the text from the source file and make all necessary substitutions
-        menutext = self.MungeMenuText(filepath.read_text())
+            # read the text from the source file and make all necessary substitutions
+            menutext = self.MungeMenuText(filepath.read_text())
 
-        # import the menu file from popmenus/* using the PopmenuEditor.
-        # doImportMenu throws its own errors.
-        self.Profile.PopmenuEditor.doImportMenu(menupath, text = menutext, allow_overwrite = True)
+            # import the menu file from popmenus/* using the PopmenuEditor.
+            # doImportMenu throws its own errors.
+            self.Profile.PopmenuEditor.doImportMenu(menupath, text = menutext, allow_overwrite = True)
+        except Exception as e:
+            wx.LogError(f'Something broke while installing popmenu: {e}.  This is a bug.')
 
     def GetKeyBinds(self):
         return [

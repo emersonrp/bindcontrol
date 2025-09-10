@@ -130,19 +130,6 @@ class SandolphanBinds(wx.Panel):
 
             'PetChatToggle' : 'ALT+M',
             'PetChattyDefault' : True,
-            'PetSelect1' : '',
-            'PetSelect2' : '',
-            'PetSelect3' : '',
-            'PetSelect4' : '',
-            'PetSelect5' : '',
-            'PetSelect6' : '',
-
-            'Pet1Name' : '',
-            'Pet2Name' : '',
-            'Pet3Name' : '',
-            'Pet4Name' : '',
-            'Pet5Name' : '',
-            'Pet6Name' : '',
 
             'Pet1Bodyguard' : 0,
             'Pet2Bodyguard' : 0,
@@ -200,7 +187,9 @@ class SandolphanBinds(wx.Panel):
             page.Ctrls[f"Pet{cb+1}Bodyguard"] = checkbox
             checkbox.SetToolTip(f"Select whether {petlabels[cb]} acts as Bodyguard when Bodyguard Mode is activated")
 
-            BGCBSizer.Add(checkbox, flag = wx.ALIGN_CENTER_VERTICAL)
+            BGCBSizer.Add(checkbox, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        BGCBSizer.Add(HelpButton(staticbox, 'BodyguardBinds.html'), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5)
 
         petCommandsKeys.InnerSizer.Add(BGCBSizer, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 10)
 

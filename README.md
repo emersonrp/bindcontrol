@@ -1,6 +1,6 @@
 # BindControl
 
-###Find the latest release of BindControl on its [releases page](https://github.com/emersonrp/bindcontrol/releases).__
+### Find the latest release of BindControl on its [releases page](https://github.com/emersonrp/bindcontrol/releases).
 
 ## About BindControl
 

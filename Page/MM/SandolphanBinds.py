@@ -194,7 +194,7 @@ class SandolphanBinds(wx.Panel):
 
         SandolphanSizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.ALL, 0)
 
-    def SynchronizeUI(self, _ = None):
+    def SynchronizeUI(self, evt = None):
         cblabels  = ['Minion 1', 'Minion 2', 'Minion 3', 'Lt 1', 'Lt 2', 'Boss']
         for i in range(6):
             cb   = self.Page.Ctrls[f'Pet{i+1}Bodyguard']
@@ -206,6 +206,8 @@ class SandolphanBinds(wx.Panel):
         for command in self.petCommandKeyDefinitions:
             rfield = self.Page.Ctrls[command['ctrlName'] + "Response"]
             rfield.Enable(self.Page.GetState(command['ctrlName'] + 'ResponseMethod') != '---')
+
+        if evt: evt.Skip()
 
     ### BIND CREATION METHODS
 

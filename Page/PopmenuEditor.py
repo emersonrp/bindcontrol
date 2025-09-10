@@ -381,10 +381,12 @@ class PopmenuEditor(Page):
             return
 
         if newmenu:
-            if item := mlc.FindItem(-1, newmenu.Title) != wx.NOT_FOUND:
+            if (item := mlc.FindItem(-1, newmenu.Title)) != wx.NOT_FOUND:
                 if allow_overwrite:
                     if itemdata := mlc.GetItemData(item):
-                        del self.MenuIDList[itemdata]
+                        self.MenuIDList.pop(itemdata, None)
+                    mlc.DeleteItem(item)
+                    mlc.Refresh()
                 else:
                     newtitle = self.GetNewMenuName(dupe_menu_name = newmenu.Title)
                     if newtitle == wx.ID_CANCEL:
@@ -403,7 +405,7 @@ class PopmenuEditor(Page):
                 wx.LogError(f"Something went wrong importing menu file: {e}")
                 if item:
                     if itemdata := mlc.GetItemData(item):
-                        del self.MenuIDList[itemdata]
+                        self.MenuIDList.pop(itemdata, None)
                     mlc.DeleteItem(item)
                     mlc.Refresh()
                 return False

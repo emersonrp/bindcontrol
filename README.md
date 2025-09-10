@@ -1,8 +1,8 @@
 # BindControl
 
-### Find the latest release of BindControl on its [releases page](https://github.com/emersonrp/bindcontrol/releases).
+###Find the latest release of BindControl on its [releases page](https://github.com/emersonrp/bindcontrol/releases).__
 
-## About BindCntrol
+## About BindControl
 
 BindControl is a helper app for creating and maintaining keybinds and popmenus for City of Heroes.
 

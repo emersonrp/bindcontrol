@@ -211,10 +211,16 @@ class Mastermind(Page):
         for ctrl in ['SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize']:
             self.Ctrls[ctrl].Enable(bindstyle == 'Basic')
 
-        for _, ctrl in self.SandolphanPage.SandolphanKeyButtons.items():
+        for ctrl in self.SandolphanPage.SandolphanKeyButtons.values():
             ctrl.Enable(bindstyle == 'Sandolphan')
 
+        for ctrl in self.qwyPetMousePage.qwyPetMouseKeyButtons.values():
+            ctrl.Enable(bindstyle == 'qwy PetMouse')
+
         self.Profile.CheckAllConflicts()
+
+        # we want to re-fill the gameplay trays if we're no longer using '2' and '4' from PetMouse
+        self.Profile.Gameplay.OnKeybindProfilePicker()
 
         if self.BindStyle() == 'Sandolphan':
             self.SandolphanPage.SynchronizeUI()

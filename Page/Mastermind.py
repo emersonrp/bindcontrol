@@ -168,8 +168,6 @@ class Mastermind(Page):
 
         if bindstyle == 'qwy Numpad':
             binds = binds + self.qwyNumpadPage.GetKeyBinds()
-        elif bindstyle == 'qwy PetMouse':
-            binds = binds + self.qwyPetMousePage.GetKeyBinds()
 
         return binds
 
@@ -428,12 +426,12 @@ class Mastermind(Page):
             files.append(self.Profile.GetBindFile('mmqn', f'{fn}.txt'))
 
         for fn in ['off', 'all', 't1-1', 't1-2', 't1-3', 't2-1', 't2-2', 't3']:
-            files.append(self.Profile.GetBindFile('mmqm', f'{fn}.txt'))
+            files.append(self.Profile.GetBindFile('mmqpm', f'{fn}.txt'))
 
         return {
             'files' : files,
             # putting the old "mmbinds" dir in here for now to clean up old bindsdirs
-            'dirs'  : ['mmbinds', 'mmb', 'petsel', 'mmqn', 'mmqm'],
+            'dirs'  : ['mmbinds', 'mmb', 'petsel', 'mmqn', 'mmqpm'],
         }
 
 # https://stackoverflow.com/questions/11245481/find-the-smallest-unique-substring-for-each-string-in-an-array

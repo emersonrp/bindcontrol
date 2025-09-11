@@ -1074,7 +1074,7 @@ IncarnatePowers = {
                     [1, '-60%', 1, 1, 1, 1, 1, '120s', 'League', 1],
                 ],
             },
-            'Ageless' : {
+            'Rebirth' : {
                 'Effects' : ['Ally Heal', '+Regeneration', '+Max HP'],
                 'Levels' : [
                     [1, 0, 0, '0s', '30ft', 0],

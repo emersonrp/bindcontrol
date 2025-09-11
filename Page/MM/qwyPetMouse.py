@@ -29,6 +29,7 @@ class qwyPetMouse(wx.Panel):
         })
 
         self.Profile = page.Profile
+        self.qwyPetMouseKeyButtons = {}
 
         qwyMouseSizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(qwyMouseSizer)
@@ -61,6 +62,7 @@ class qwyPetMouse(wx.Panel):
             ['qpmPassive'    , 'Passive'                             ] ,
         ]:
             self.ButtonGrid.AddControl(ctlType = 'keybutton', ctlName = ctlname, label = ctllabel)
+            self.qwyPetMouseKeyButtons[ctlname] = page.Ctrls[ctlname]
 
         centeringSizer.Add(self.ButtonGrid, 1)
 

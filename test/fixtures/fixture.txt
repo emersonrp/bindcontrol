@@ -1,0 +1,138 @@
+Fixture: Level 50 Magic Class_Tanker
+
+Character Profile:
+------------------
+Level 1: Inherent Inherent Brawl
+	Crafted_Damage (50)
+Level 1: Inherent Inherent prestige_DVD_Glidep
+	EMPTY
+Level 1: Inherent Inherent Sprint
+	Crafted_Jump (50)
+Level 2: Inherent Inherent Rest
+	EMPTY
+Level 1: Inherent Fitness Swift
+	Crafted_Run (50)
+Level 1: Inherent Fitness Hurdle
+	Crafted_Jump (50)
+Level 1: Inherent Fitness Health
+	Attuned_Miracle_F (1)
+Level 1: Inherent Fitness Stamina
+	Crafted_Recovery (50)
+	Crafted_Recovery (50)
+Level 1: Tanker_Defense Fiery_Aura Fire_Shield
+	Attuned_Gladiators_Armor_A (1)
+	Attuned_Gladiators_Armor_B (1)
+	Attuned_Gladiators_Armor_C (1)
+	Attuned_Gladiators_Armor_D (1)
+	Attuned_Gladiators_Armor_F (1)
+Level 8: Tanker_Defense Fiery_Aura Healing_Flames
+	Attuned_Numinas_Convalesence_A (1)
+	Attuned_Numinas_Convalesence_B (1)
+	Attuned_Numinas_Convalesence_C (1)
+	Attuned_Numinas_Convalesence_D (1)
+	Attuned_Numinas_Convalesence_E (1)
+	Attuned_Numinas_Convalesence_F (1)
+Level 10: Tanker_Defense Fiery_Aura Blazing_Aura
+	Attuned_Obliteration_A (1)
+	Attuned_Obliteration_B (1)
+	Attuned_Obliteration_C (1)
+	Attuned_Obliteration_D (1)
+	Attuned_Obliteration_E (1)
+	Attuned_Obliteration_F (1)
+Level 12: Tanker_Defense Fiery_Aura Plasma_Sheild
+	Attuned_Unbreakable_Guard_B (1)
+	Attuned_Unbreakable_Guard_C (1)
+	Attuned_Unbreakable_Guard_D (1)
+	Attuned_Unbreakable_Guard_E (1)
+	Attuned_Unbreakable_Guard_F (1)
+Level 18: Tanker_Defense Fiery_Aura Burn
+	Superior_Attuned_Superior_Gauntleted_Fist_A (1)
+	Superior_Attuned_Superior_Gauntleted_Fist_B (1)
+	Superior_Attuned_Superior_Gauntleted_Fist_C (1)
+	Superior_Attuned_Superior_Gauntleted_Fist_D (1)
+	Superior_Attuned_Superior_Gauntleted_Fist_E (1)
+	Superior_Attuned_Superior_Gauntleted_Fist_F (1)
+Level 32: Tanker_Defense Fiery_Aura Temperature_Protection
+	Attuned_Steadfast_Protection_B (1)
+Level 1: Tanker_Melee War_Mace Bash
+	Superior_Attuned_Superior_Might_of_the_Tanker_A (1)
+	Superior_Attuned_Superior_Might_of_the_Tanker_B (1)
+	Superior_Attuned_Superior_Might_of_the_Tanker_C (1)
+	Superior_Attuned_Superior_Might_of_the_Tanker_D (1)
+	Superior_Attuned_Superior_Might_of_the_Tanker_E (1)
+	Superior_Attuned_Superior_Might_of_the_Tanker_F (1)
+Level 2: Tanker_Melee War_Mace Pulverize
+	Attuned_Makos_Bite_A (1)
+	Attuned_Makos_Bite_B (1)
+	Attuned_Makos_Bite_C (1)
+	Attuned_Makos_Bite_D (1)
+	Attuned_Makos_Bite_E (1)
+	Attuned_Makos_Bite_F (1)
+Level 14: Tanker_Melee War_Mace Taunt
+	Attuned_Perfect_Zinger_F (1)
+Level 20: Tanker_Melee War_Mace Whirling_Mace
+	Attuned_Fury_of_the_Gladiator_A (1)
+	Attuned_Fury_of_the_Gladiator_C (1)
+	Attuned_Fury_of_the_Gladiator_D (1)
+	Attuned_Fury_of_the_Gladiator_E (1)
+	Attuned_Fury_of_the_Gladiator_F (1)
+Level 28: Tanker_Melee War_Mace Clobber
+	Superior_Attuned_Hecatomb_A (1)
+	Superior_Attuned_Hecatomb_B (1)
+	Superior_Attuned_Hecatomb_C (1)
+	Superior_Attuned_Hecatomb_D (1)
+	Superior_Attuned_Hecatomb_E (1)
+	Superior_Attuned_Hecatomb_F (1)
+Level 38: Tanker_Melee War_Mace Crowd_Control
+	Superior_Attuned_Armageddon_A (1)
+	Superior_Attuned_Armageddon_B (1)
+	Superior_Attuned_Armageddon_C (1)
+	Superior_Attuned_Armageddon_D (1)
+	Superior_Attuned_Armageddon_E (1)
+	Superior_Attuned_Armageddon_F (1)
+Level 47: Tanker_Melee War_Mace Build_Up
+	Crafted_Recharge (50)
+Level 4: Pool Flight Combat_Flight
+	Attuned_Kismet_E (1)
+Level 6: Pool Flight Fly
+	Attuned_Blessing_of_the_Zephyr_C (1)
+Level 0: Pool Flight Fly_Boost
+Level 16: Pool Fighting Boxing
+	EMPTY
+Level 22: Pool Fighting Tough
+	Crafted_Endurance_Discount (50)
+Level 24: Pool Fighting Weave
+	Attuned_Shield_Wall_A (1)
+	Attuned_Shield_Wall_B (1)
+	Attuned_Shield_Wall_C (1)
+	Attuned_Shield_Wall_D (1)
+	Attuned_Shield_Wall_F (1)
+Level 26: Pool Leadership Defense
+	Attuned_Reactive_Defenses_A (1)
+	Attuned_Reactive_Defenses_B (1)
+	Attuned_Reactive_Defenses_C (1)
+	Attuned_Reactive_Defenses_D (1)
+	Attuned_Reactive_Defenses_E (1)
+	Attuned_Reactive_Defenses_F (1)
+Level 30: Pool Leadership Tactics
+	Attuned_Gaussians_Synchronized_FireControl_A (1)
+	Attuned_Gaussians_Synchronized_FireControl_B (1)
+	Attuned_Gaussians_Synchronized_FireControl_C (1)
+	Attuned_Gaussians_Synchronized_FireControl_D (1)
+	Attuned_Gaussians_Synchronized_FireControl_E (1)
+	Attuned_Gaussians_Synchronized_FireControl_F (1)
+Level 41: Pool Leadership Assault
+	Crafted_Endurance_Discount (50)
+Level 49: Pool Leadership Vengeance
+	Attuned_Karma_C (1)
+Level 35: Epic Brute_Soul_Mastery Gloom
+	Superior_Attuned_Apocalypse_A (1)
+	Superior_Attuned_Apocalypse_B (1)
+	Superior_Attuned_Apocalypse_C (1)
+	Superior_Attuned_Apocalypse_D (1)
+	Superior_Attuned_Apocalypse_E (1)
+	Crafted_Endurance_Discount (50)
+Level 44: Epic Brute_Soul_Mastery Darkest_Night
+	Crafted_Endurance_Discount (50)
+Level 50: Redirects Inherents Gauntlet_Proc
+------------------

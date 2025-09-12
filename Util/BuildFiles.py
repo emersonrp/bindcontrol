@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 import GameData
 
-def ParseBuildFile(file:Path):
+def ParseBuildFile(file:Path) -> dict:
     GameData.SetupGameData('Homecoming') # The whole notion of build_save is Homecoming-specific
     if buildtext := file.read_text():
         lines = buildtext.splitlines()
@@ -15,7 +15,7 @@ def ParseBuildFile(file:Path):
             archetype = parts.group(3)
             archetype = re.sub(r'_', ' ', archetype)
         else:
-            return None
+            return {}
 
         data = {
             'Name'      : name,
@@ -54,6 +54,8 @@ def ParseBuildFile(file:Path):
             data['Pool'+str(i)] = pool
 
         return data
+    else:
+        return {}
 
 PSTypeMap = {
     'Epic'      : 'Epic',

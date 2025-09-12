@@ -1,6 +1,6 @@
 import re, os, platform
 from pathlib import PurePath, Path, PureWindowsPath
-from typing import Dict, Any
+from typing import Dict, Any, List
 import json
 import codecs
 import base64
@@ -14,6 +14,7 @@ from BLF import BLF
 
 from Icon import GetIcon
 
+from Page import Page as bcPage
 from Page.General import General
 from Page.Gameplay import Gameplay
 from Page.MovementPowers import MovementPowers
@@ -90,16 +91,15 @@ class Profile(wx.Notebook):
     def __init__(self, parent, filename = None, newname = None, profiledata = None):
         super().__init__(parent, style = wx.NB_TOP, name = "Profile")
 
-        self.BindFiles       : dict      = {}
-        self.Pages           : list      = []
-        self.Modified        : bool      = False
-        self.Filename        : Path|None = Path(filename) if filename else None
-        self.ProfileBindsDir : str       = ''
-        self.MaxCustomID     : int       = 0
-        self.LastModTime     : int       = 0
-        self.Server          : str       = 'Homecoming'
-
-        self.Data = {}
+        self.BindFiles       : Dict[str, BindFile] = {}
+        self.Pages           : List[bcPage]        = []
+        self.Modified        : bool                = False
+        self.Filename        : Path|None           = Path(filename) if filename else None
+        self.ProfileBindsDir : str                 = ''
+        self.MaxCustomID     : int                 = 0
+        self.LastModTime     : int                 = 0
+        self.Server          : str                 = 'Homecoming'
+        self.Data            : Dict[str, Any]      = {}
 
         # are we wanting to load this one from a file?
         if self.Filename:
@@ -416,7 +416,7 @@ class Profile(wx.Notebook):
 
                 savedata[pagename][controlname] = value
 
-            if pagename == "General":
+            if isinstance(page, General):
                 savedata['Server'] = page.ServerPicker.GetString(page.ServerPicker.GetSelection())
 
         savedata['CustomBinds'] = []

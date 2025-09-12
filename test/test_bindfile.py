@@ -2,7 +2,7 @@ from BindFile import KeyBind, BindFile
 from pathlib import Path
 
 def test_keybind():
-    kb = KeyBind('A', 'Test A', object(), ['One', 'Two', 'Three'])
+    kb = KeyBind('A', 'Test A', '', ['One', 'Two', 'Three'])
     assert kb.BindFileString() == 'A "One$$Two$$Three"\n', "BindFileString output is well-formed"
 
     kb2 = kb.MakeFileKeyBind(["First", "$$Second", "Third"])
@@ -15,11 +15,11 @@ def test_keybind():
 def test_bindfile():
     bf = BindFile('/tmp', 'c:\\tmp', Path('test', 'test'))
 
-    kb = KeyBind('A', 'Test A', object(), ['One', 'Two', 'Three'])
+    kb = KeyBind('A', 'Test A', '', ['One', 'Two', 'Three'])
     bf.SetBind(kb)
     assert bf.KeyBinds['A'] == kb, "BindFile correctly sets KeyBinds from object"
 
-    bf.SetBind('B', 'Test B', object(), "This is a test")
+    bf.SetBind('B', 'Test B', '', "This is a test")
     assert isinstance(bf.KeyBinds['B'], KeyBind), "BindFile correctly creates KeyBind when SetBind called with strings"
 
     bf.Write()

@@ -1,17 +1,18 @@
 import re
 import inspect
+from typing import List, overload
 from pathlib import PurePath, Path, PureWindowsPath
 from BLF import BLF
 
 class KeyBind():
-    def __init__(self, key, name, page, contents = []):
+    def __init__(self, key, name : str, page, contents : str|List[str] = []):
 
-        if type(contents) == str: contents = [contents]
+        if type(contents) == str : contents = [contents]
 
-        self.Key      = key      # actual key combo
-        self.Name     = name     # friendly name, ie, "Select All Pets"
-        self.Page     = page     # which tab the bind originated on
-        self.Contents = contents # a list of strings to '$$'-join to create the actual payload
+        self.Key      : str       = key      # actual key combo
+        self.Name     : str       = name     # friendly name, ie, "Select All Pets"
+        self.Page     : str       = page     # which tab the bind originated on # pyright: ignore
+        self.Contents : List[str] = contents # a list of strings to '$$'-join to create the actual payload # pyright: ignore
 
     # factory for PopulateBindFiles to use
     def MakeFileKeyBind(self, contents):
@@ -38,13 +39,18 @@ class BindFile():
 
     def __init__(self, bindsdir, gamebindsdir, pathbits:PurePath):
 
-        self.Path         = Path           (bindsdir, pathbits)
+        self.Path         = Path(bindsdir, pathbits)
         self.GameBindsDir = gamebindsdir
         self.GamePath     = PureWindowsPath(self.GameBindsDir, pathbits)
 
         self.KeyBinds = {}
 
-    def SetBind(self, keybind:KeyBind|str, name:str = '', page = None, contents:str|list = ''):
+    @overload
+    def SetBind(self, keybind: KeyBind): ...
+    @overload
+    def SetBind(self, keybind: str, name: str, page: str, contents: str|List[str]): ...
+
+    def SetBind(self, keybind:KeyBind|str, name:str = '', page:str = '', contents:str|List[str] = ''):
 
         # we can either be called with a KeyBind, in which case we're golden, or with
         # four strings, in which case we need to roll a KeyBind.  Someday pick one scheme.

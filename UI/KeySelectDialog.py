@@ -511,7 +511,8 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
             thing = thing.GetParent()
             # we use these in the prefs dialog, so this happens there
             if not thing: break
-        self.Page = thing
+        if isinstance(thing, Page.Page):
+            self.Page = thing
 
         self.SetLabel(self.Key)
 
@@ -533,7 +534,8 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         wx.App.Get().Main.Profile.SetModified()
 
     def MakeFileKeyBind(self, contents):
-        return KeyBind(self.Key, self.CtlLabel, self.Page, contents)
+        label = self.CtlLabel.GetLabel() if self.CtlLabel else ''
+        return KeyBind(self.Key, label, self.Page, contents)
 
     def SetLabel(self, label):
         # if we have a long label or AlwaysShorten, smallify, and abbreviate if we have a mod key

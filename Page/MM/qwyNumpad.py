@@ -14,13 +14,14 @@ class qwyNumpad(wx.Panel):
         centeringSizer = wx.BoxSizer(wx.VERTICAL)
 
         PetPickedSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        PetPickedSizer.Add(HelpButton(self, 'qwyNumpad.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 10)
+
         PetPickedSizer.Add(wx.StaticText(self, label = 'Pet Selection:'), flag = wx.ALIGN_CENTER)
         self.PetPicker = wx.Choice(self, choices = ['All Pets', 'Pet Group', 'Individual Pet'])
         self.PetPicker.SetSelection(0)
         PetPickedSizer.Add(self.PetPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 10)
         self.PetPicker.Bind(wx.EVT_CHOICE, self.OnPetPicked)
-
-        PetPickedSizer.Add(HelpButton(self, 'qwyNumpad.html'), 0, wx.ALIGN_CENTER|wx.LEFT, 10)
 
         centeringSizer.Add(PetPickedSizer, 0, wx.TOP|wx.BOTTOM, 10)
 
@@ -253,7 +254,7 @@ GridContents = [
         ['NUMPAD1', 'Select Minions', 'Select Minion 1', 'Summon Minions', 'Dismiss Minions'],
         ['NUMPAD0', 'Select All', '', 'Dismiss Target', 'Dismiss All'],
         ['ADD', 'Perform Upgrades', '', '', ''],
-        ['NUMPADENTER', 'Pet Heal Targeted', '', '', ''],
+        ['NUMPADENTER', 'Heal Targeted Pet', '', '', ''],
         ['DECIMAL', 'Target Next Pet', 'Target Next Minion',' Target Next Lieutenant', 'Target Boss'],
     ],
     [
@@ -270,7 +271,7 @@ GridContents = [
         ['NUMPAD1', 'Select Minions', 'Select Minion 1', 'Summon Minions', 'Dismiss Minions'],
         ['NUMPAD0', 'Select All', '', 'Dismiss Target', 'Dismiss All'],
         ['ADD', 'Perform Upgrades All', '', '', ''],
-        ['NUMPADENTER', 'Pet Heal Targeted', '', '', ''],
+        ['NUMPADENTER', 'Heal Targeted Pet', '', '', ''],
         ['DECIMAL', 'Target Next Pet In Group', 'Target Next Minion',' Target Next Lieutenant', 'Target Boss'],
     ],
     [
@@ -287,7 +288,7 @@ GridContents = [
         ['NUMPAD1', 'Select Minions', 'Select Minion 1', 'Summon Minions', 'Dismiss Minions'],
         ['NUMPAD0', 'Select All', 'Dismiss Selected', 'Dismiss Target', 'Dismiss All'],
         ['ADD', 'Perform Upgrades All', '', '', ''],
-        ['NUMPADENTER', 'Pet Heal Targeted', '', '', ''],
+        ['NUMPADENTER', 'Heal Targeted Pet', '', '', ''],
         ['DECIMAL', 'Target Pet', 'Target Next Minion',' Target Next Lieutenant', 'Target Boss'],
     ],
 ]

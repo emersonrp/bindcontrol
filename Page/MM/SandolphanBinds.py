@@ -282,7 +282,7 @@ class SandolphanBinds(wx.Panel):
             if (tier3bg == 1):
                 bgset.append(f"petcompow {powers[2]} def fol")
 
-        file.SetBind(self.Page.Ctrls['PetBodyguard'].MakeFileKeyBind(bgsay + bgset))
+        file.SetBind(self.Page.Ctrls['PetBodyguard'].MakeBind(bgsay + bgset))
 
     # Set selected pets to BG Mode, quiet version
     def mmQuietBGSelBind(self, file, powers):
@@ -309,19 +309,19 @@ class SandolphanBinds(wx.Panel):
             if (tier3bg == 1):
                 bgset.append(f"petcompow {powers[2]} def fol")
 
-        file.SetBind(self.Page.Ctrls['PetBodyguard'].MakeFileKeyBind(bgset))
+        file.SetBind(self.Page.Ctrls['PetBodyguard'].MakeBind(bgset))
 
     # set up "all" and "tierx" files with command binds, chatty version
     def mmSubBind(self, file, fn, grp, powers):
         profile = self.Page.Profile
 
-        file.SetBind(self.Page.Ctrls['PetSelectAll'].MakeFileKeyBind([
+        file.SetBind(self.Page.Ctrls['PetSelectAll'].MakeBind([
             self.GetChatString('SelectAll'), profile.BLF('mmb','call.txt')]))
-        file.SetBind(self.Page.Ctrls['PetSelectMinions'].MakeFileKeyBind([
+        file.SetBind(self.Page.Ctrls['PetSelectMinions'].MakeBind([
             self.GetChatString('SelectMinions', powers[0]), profile.BLF('mmb','ctier1.txt')]))
-        file.SetBind(self.Page.Ctrls['PetSelectLieutenants'].MakeFileKeyBind([
+        file.SetBind(self.Page.Ctrls['PetSelectLieutenants'].MakeBind([
             self.GetChatString('SelectLieutenants', powers[1]), profile.BLF('mmb','ctier2.txt')]))
-        file.SetBind(self.Page.Ctrls['PetSelectBoss'].MakeFileKeyBind([
+        file.SetBind(self.Page.Ctrls['PetSelectBoss'].MakeBind([
             self.GetChatString('SelectBoss', powers[2]), profile.BLF('mmb','ctier3.txt')]))
 
         bgfresponse = self.Page.GetState('PetBodyguardResponse') if self.GetChatString(f"Bodyguard") else ''
@@ -331,26 +331,26 @@ class SandolphanBinds(wx.Panel):
         elif grp                : petcom = f'petcompow {grp}'
         else                    : petcom =  'petcomall'
         for cmd in ('Aggressive','Defensive','Passive', 'Attack','Follow','Goto', 'Stay'):
-            file.SetBind(self.Page.Ctrls[f"Pet{cmd}"].MakeFileKeyBind([self.GetChatString(cmd, grp or 'all'), f"{petcom} {cmd}"]))
+            file.SetBind(self.Page.Ctrls[f"Pet{cmd}"].MakeBind([self.GetChatString(cmd, grp or 'all'), f"{petcom} {cmd}"]))
 
-        file.SetBind(self.Page.Ctrls['PetChatToggle'].MakeFileKeyBind(['tell $name, Non-Chatty Mode', profile.BLF('mmb',f"{fn}.txt")]))
+        file.SetBind(self.Page.Ctrls['PetChatToggle'].MakeBind(['tell $name, Non-Chatty Mode', profile.BLF('mmb',f"{fn}.txt")]))
 
     # set up "all" and "tierx" files with command binds, quiet version
     def mmQuietSubBind(self, file, fn, grp, powers):
         profile = self.Page.Profile
-        file.SetBind(self.Page.Ctrls['PetSelectAll']        .MakeFileKeyBind(profile.BLF('mmb','all.txt')))
-        file.SetBind(self.Page.Ctrls['PetSelectMinions']    .MakeFileKeyBind(profile.BLF('mmb','tier1.txt')))
-        file.SetBind(self.Page.Ctrls['PetSelectLieutenants'].MakeFileKeyBind(profile.BLF('mmb','tier2.txt')))
-        file.SetBind(self.Page.Ctrls['PetSelectBoss']       .MakeFileKeyBind(profile.BLF('mmb','tier3.txt')))
+        file.SetBind(self.Page.Ctrls['PetSelectAll']        .MakeBind(profile.BLF('mmb','all.txt')))
+        file.SetBind(self.Page.Ctrls['PetSelectMinions']    .MakeBind(profile.BLF('mmb','tier1.txt')))
+        file.SetBind(self.Page.Ctrls['PetSelectLieutenants'].MakeBind(profile.BLF('mmb','tier2.txt')))
+        file.SetBind(self.Page.Ctrls['PetSelectBoss']       .MakeBind(profile.BLF('mmb','tier3.txt')))
         self.mmQuietBGSelBind(file, powers)
 
         if   grp == 'sel'       : petcom =  'petcom'
         elif grp                : petcom = f"petcompow {grp}"
         else                    : petcom =  'petcomall'
         for cmd in ('Aggressive','Defensive','Passive', 'Attack','Follow','Goto', 'Stay'):
-            file.SetBind(self.Page.Ctrls[f"Pet{cmd}"].MakeFileKeyBind(f"{petcom} {cmd}"))
+            file.SetBind(self.Page.Ctrls[f"Pet{cmd}"].MakeBind(f"{petcom} {cmd}"))
 
-        file.SetBind(self.Page.Ctrls['PetChatToggle'].MakeFileKeyBind(['tell $name, Chatty Mode', profile.BLF('mmb','c' + fn + '.txt')]))
+        file.SetBind(self.Page.Ctrls['PetChatToggle'].MakeBind(['tell $name, Chatty Mode', profile.BLF('mmb','c' + fn + '.txt')]))
 
     def PopulateBindFiles(self):
 
@@ -400,17 +400,17 @@ class SandolphanBinds(wx.Panel):
         p = self.Page.Profile
 
         if tsize < 6:
-            file.SetBind(c['IncPetSize'].MakeFileKeyBind([
+            file.SetBind(c['IncPetSize'].MakeBind([
                 f'tell $name, [{tsize+1} Pet]', p.BLF('petsel', f'{tsize+1}.txt')
             ]))
         else:
-            file.SetBind(c['IncPetSize'].MakeFileKeyBind('nop'))
+            file.SetBind(c['IncPetSize'].MakeBind('nop'))
         if tsize == 1:
-            file.SetBind(c['DecPetSize'].MakeFileKeyBind('nop'))
-            file.SetBind(c['SelNextPet'].MakeFileKeyBind([
+            file.SetBind(c['DecPetSize'].MakeBind('nop'))
+            file.SetBind(c['SelNextPet'].MakeBind([
                 f'petselect 0', p.BLF('petsel', f'{tsize}1.txt'), p.BLF('mmb', 'csel.txt'),
             ]))
-            file.SetBind(c['SelPrevPet'].MakeFileKeyBind([
+            file.SetBind(c['SelPrevPet'].MakeBind([
                 f'petselect 0', p.BLF('petsel', f'{tsize}1.txt'), p.BLF('mmb', 'csel.txt'),
             ]))
         else:
@@ -420,13 +420,13 @@ class SandolphanBinds(wx.Panel):
             newsel = tsel
             if tsize-1 < tsel : newsel = tsize-1
             if tsize == 2 : newsel = 0
-            file.SetBind(c['DecPetSize'].MakeFileKeyBind([
+            file.SetBind(c['DecPetSize'].MakeBind([
                 f'tell $name, [{tsize-1} Pet]', p.BLF('petsel', f'{tsize-1}{newsel}.txt')
             ]))
-            file.SetBind(c['SelNextPet'].MakeFileKeyBind([
+            file.SetBind(c['SelNextPet'].MakeBind([
                 f'petselect {selnext-1}', p.BLF('petsel', f'{tsize}{selnext}.txt'), p.BLF('mmb', 'csel.txt'),
             ]))
-            file.SetBind(c['SelPrevPet'].MakeFileKeyBind([
+            file.SetBind(c['SelPrevPet'].MakeBind([
                 f'petselect {selprev-1}', p.BLF('petsel', f'{tsize}{selprev}.txt'), p.BLF('mmb', 'csel.txt'),
             ]))
 

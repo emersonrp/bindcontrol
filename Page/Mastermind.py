@@ -343,7 +343,7 @@ class Mastermind(Page):
                     selfile = 'csel.txt'
                 selfile = profile.BLF('mmb', selfile)
             ResetFile.SetBind(
-                self.Ctrls[f"Pet{pet+1}Select"].MakeFileKeyBind(
+                self.Ctrls[f"Pet{pet+1}Select"].MakeBind(
                     [feedback, f"petselectname {self.uniqueNames[pet]}", selfile]
                 )
             )

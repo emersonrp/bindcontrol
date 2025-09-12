@@ -283,9 +283,9 @@ class InspirationPopper(Page):
                     reverseOrder.insert(0, f'tell $name, {ChatColors(fg, bg, bc)}{Insp}')
 
                 if self.GetState('EnableInspBinds'):
-                    ResetFile.SetBind(self.Ctrls[f"{tab}{Insp}Key"].MakeFileKeyBind(forwardOrder))
+                    ResetFile.SetBind(self.Ctrls[f"{tab}{Insp}Key"].MakeBind(forwardOrder))
                 if self.GetState('EnableRevInspBinds'):
-                    ResetFile.SetBind(self.Ctrls[f"{tab}Rev{Insp}Key"].MakeFileKeyBind(reverseOrder))
+                    ResetFile.SetBind(self.Ctrls[f"{tab}Rev{Insp}Key"].MakeBind(reverseOrder))
 
         return True
 

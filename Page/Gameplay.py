@@ -339,36 +339,36 @@ class Gameplay(Page):
         for button in (1,2,3,4,5,6,7,8,9,0):
             slotbutton = button if button != 0 else 10
             if self.GetState('Tray1Enabled'):
-                ResetFile.SetBind(self.Ctrls[f"Tray1Button{button}"].MakeFileKeyBind(f"powexec_slot {slotbutton}"))
+                ResetFile.SetBind(self.Ctrls[f"Tray1Button{button}"].MakeBind(f"powexec_slot {slotbutton}"))
             if self.GetState('Tray2Enabled'):
                 self.CheckForDefaultKeyToClear(2, button)
                 pe_as = "powexec_altslot" if server == "Homecoming" else "px_at1"
-                ResetFile.SetBind(self.Ctrls[f"Tray2Button{button}"].MakeFileKeyBind(f"{pe_as} {slotbutton}"))
+                ResetFile.SetBind(self.Ctrls[f"Tray2Button{button}"].MakeBind(f"{pe_as} {slotbutton}"))
             if self.GetState('Tray3Enabled'):
                 self.CheckForDefaultKeyToClear(3, button)
                 pe_a2 = "powexec_alt2slot" if server == "Homecoming" else "px_at2"
-                ResetFile.SetBind(self.Ctrls[f"Tray3Button{button}"].MakeFileKeyBind(f"{pe_a2} {slotbutton}"))
+                ResetFile.SetBind(self.Ctrls[f"Tray3Button{button}"].MakeBind(f"{pe_a2} {slotbutton}"))
             if self.GetState('Tray4Enabled'):
                 self.CheckForDefaultKeyToClear(4, button)
                 pe_ss = 'powexec_serverslot' if server == "Homecoming" else 'px_at3'
-                ResetFile.SetBind(self.Ctrls[f"Tray4Button{button}"].MakeFileKeyBind(f"{pe_ss} {slotbutton}"))
+                ResetFile.SetBind(self.Ctrls[f"Tray4Button{button}"].MakeBind(f"{pe_ss} {slotbutton}"))
             if self.Ctrls.get('Tray5Enabled', None) and self.GetState('Tray5Enabled'):
                 self.CheckForDefaultKeyToClear(5, button)
                 pe_ss = 'px_sv'  # Rebirth only
-                ResetFile.SetBind(self.Ctrls[f"Tray5Button{button}"].MakeFileKeyBind(f"{pe_ss} {slotbutton}"))
+                ResetFile.SetBind(self.Ctrls[f"Tray5Button{button}"].MakeBind(f"{pe_ss} {slotbutton}"))
 
         if self.GetState('Tray1Enabled'):
-            ResetFile.SetBind(self.Ctrls[f"Tray1Prev"].MakeFileKeyBind("prev_tray"))
-            ResetFile.SetBind(self.Ctrls[f"Tray1Next"].MakeFileKeyBind("next_tray"))
+            ResetFile.SetBind(self.Ctrls[f"Tray1Prev"].MakeBind("prev_tray"))
+            ResetFile.SetBind(self.Ctrls[f"Tray1Next"].MakeBind("next_tray"))
         if self.GetState('Tray2Enabled'):
-            ResetFile.SetBind(self.Ctrls[f"Tray2Prev"].MakeFileKeyBind("prev_tray_alt"))
-            ResetFile.SetBind(self.Ctrls[f"Tray2Next"].MakeFileKeyBind("next_tray_alt"))
+            ResetFile.SetBind(self.Ctrls[f"Tray2Prev"].MakeBind("prev_tray_alt"))
+            ResetFile.SetBind(self.Ctrls[f"Tray2Next"].MakeBind("next_tray_alt"))
         if self.GetState('Tray3Enabled'):
-            ResetFile.SetBind(self.Ctrls[f"Tray3Prev"].MakeFileKeyBind("prev_tray_alt2"))
-            ResetFile.SetBind(self.Ctrls[f"Tray3Next"].MakeFileKeyBind("next_tray_alt2"))
+            ResetFile.SetBind(self.Ctrls[f"Tray3Prev"].MakeBind("prev_tray_alt2"))
+            ResetFile.SetBind(self.Ctrls[f"Tray3Next"].MakeBind("next_tray_alt2"))
         if server == "Rebirth" and self.GetState('Tray4Enabled'):
-            ResetFile.SetBind(self.Ctrls[f"Tray4Prev"].MakeFileKeyBind("prev_tray_alt3"))
-            ResetFile.SetBind(self.Ctrls[f"Tray4Next"].MakeFileKeyBind("next_tray_alt3"))
+            ResetFile.SetBind(self.Ctrls[f"Tray4Prev"].MakeBind("prev_tray_alt3"))
+            ResetFile.SetBind(self.Ctrls[f"Tray4Next"].MakeBind("next_tray_alt3"))
 
 
         ### Team / Pet Select
@@ -389,13 +389,13 @@ class Gameplay(Page):
                 selresetfile = self.Profile.GetBindFile("teamsel","reset.txt")
                 for i in (1,2,3,4,5,6,7,8):
                     selfile = self.Profile.GetBindFile("teamsel",f"sel{i}.txt")
-                    ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {i - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
-                    selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].MakeFileKeyBind([f"{selmethod} {i - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
+                    ResetFile.   SetBind(self.Ctrls[f"TeamSelect{i}"].MakeBind([f"{selmethod} {i - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
+                    selresetfile.SetBind(self.Ctrls[f"TeamSelect{i}"].MakeBind([f"{selmethod} {i - selnummod}", self.Profile.BLF('teamsel',f"sel{i}.txt")]))
                     for j in (1,2,3,4,5,6,7,8):
                         if (i == j):
-                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod1} {j - selnummod1}", self.Profile.BLF('teamsel',"reset.txt")]))
+                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeBind([f"{selmethod1} {j - selnummod1}", self.Profile.BLF('teamsel',"reset.txt")]))
                         else:
-                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeFileKeyBind([f"{selmethod} {j - selnummod}"  , self.Profile.BLF('teamsel',f"sel{j}.txt")]))
+                            selfile.SetBind(self.Ctrls[f"TeamSelect{j}"].MakeBind([f"{selmethod} {j - selnummod}"  , self.Profile.BLF('teamsel',f"sel{j}.txt")]))
 
             else:
                 selmethod = "teamselect"
@@ -404,7 +404,7 @@ class Gameplay(Page):
                     selmethod = "petselect"
                     selnummod = 1
                 for i in (1,2,3,4,5,6,7,8):
-                    ResetFile.SetBind(self.Ctrls[f'TeamSelect{i}'].MakeFileKeyBind(f"{selmethod} {i - selnummod}"))
+                    ResetFile.SetBind(self.Ctrls[f'TeamSelect{i}'].MakeBind(f"{selmethod} {i - selnummod}"))
 
             ResetFile = self.Profile.ResetFile()
 

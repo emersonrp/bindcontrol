@@ -15,7 +15,7 @@ class KeyBind():
         self.Contents : List[str] = contents # a list of strings to '$$'-join to create the actual payload # pyright: ignore
 
     # factory for PopulateBindFiles to use
-    def MakeFileKeyBind(self, contents):
+    def MakeBind(self, contents):
         if type(contents) == str: contents = [contents]
 
         # changing self.Contents and reusing self over and over broke horribly in SoD.

@@ -259,31 +259,31 @@ class General(Page):
         if self.GetState('TypingNotifierEnable'):
             notifier = 'afk ' + self.GetState('TypingNotifier')
 
-        ResetFile.SetBind(self.Ctrls['StartChat'] .MakeFileKeyBind([notifier, 'show chat', 'startchat']))
-        ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeFileKeyBind([notifier, 'show chat', 'slashchat']))
-        ResetFile.SetBind(self.Ctrls['StartEmote'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /em ']))
-        ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeFileKeyBind([notifier, 'autoreply']))
-        ResetFile.SetBind(self.Ctrls['TellLast']  .MakeFileKeyBind([notifier, 'show chat', 'beginchat /tl ']))
-        ResetFile.SetBind(self.Ctrls['TellTarget'].MakeFileKeyBind([notifier, 'show chat', 'beginchat /tell $target, ']))
-        ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeFileKeyBind([notifier, 'quickchat']))
+        ResetFile.SetBind(self.Ctrls['StartChat'] .MakeBind([notifier, 'show chat', 'startchat']))
+        ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeBind([notifier, 'show chat', 'slashchat']))
+        ResetFile.SetBind(self.Ctrls['StartEmote'].MakeBind([notifier, 'show chat', 'beginchat /em ']))
+        ResetFile.SetBind(self.Ctrls['AutoReply'] .MakeBind([notifier, 'autoreply']))
+        ResetFile.SetBind(self.Ctrls['TellLast']  .MakeBind([notifier, 'show chat', 'beginchat /tl ']))
+        ResetFile.SetBind(self.Ctrls['TellTarget'].MakeBind([notifier, 'show chat', 'beginchat /tell $target, ']))
+        ResetFile.SetBind(self.Ctrls['QuickChat'] .MakeBind([notifier, 'quickchat']))
 
         ### Helpful Binds
-        ResetFile.SetBind(self.Ctrls['QuitToSelect'] .MakeFileKeyBind('quittocharacterselect'))
-        ResetFile.SetBind(self.Ctrls['QuitToLogin']  .MakeFileKeyBind('quittologin'))
-        ResetFile.SetBind(self.Ctrls['QuitToDesktop'].MakeFileKeyBind('quit'))
-        ResetFile.SetBind(self.Ctrls['Sync']         .MakeFileKeyBind('sync'))
+        ResetFile.SetBind(self.Ctrls['QuitToSelect'] .MakeBind('quittocharacterselect'))
+        ResetFile.SetBind(self.Ctrls['QuitToLogin']  .MakeBind('quittologin'))
+        ResetFile.SetBind(self.Ctrls['QuitToDesktop'].MakeBind('quit'))
+        ResetFile.SetBind(self.Ctrls['Sync']         .MakeBind('sync'))
 
-        ResetFile.SetBind(self.Ctrls['ToggleRP']  .MakeFileKeyBind('roleplaying'))
-        ResetFile.SetBind(self.Ctrls['HelpHelpMe'].MakeFileKeyBind('sethelperstatus 1'))
-        ResetFile.SetBind(self.Ctrls['HelpMentor'].MakeFileKeyBind('sethelperstatus 2'))
-        ResetFile.SetBind(self.Ctrls['HelpOff']   .MakeFileKeyBind('sethelperstatus 3'))
+        ResetFile.SetBind(self.Ctrls['ToggleRP']  .MakeBind('roleplaying'))
+        ResetFile.SetBind(self.Ctrls['HelpHelpMe'].MakeBind('sethelperstatus 1'))
+        ResetFile.SetBind(self.Ctrls['HelpMentor'].MakeBind('sethelperstatus 2'))
+        ResetFile.SetBind(self.Ctrls['HelpOff']   .MakeBind('sethelperstatus 3'))
 
-        ResetFile.SetBind(self.Ctrls['InviteTarget']  .MakeFileKeyBind('i $target'))
-        ResetFile.SetBind(self.Ctrls['SGInviteTarget'].MakeFileKeyBind('sgi $target'))
-        ResetFile.SetBind(self.Ctrls['FriendTarget']  .MakeFileKeyBind('friend $target'))
-        ResetFile.SetBind(self.Ctrls['GFriendTarget'] .MakeFileKeyBind('gfriend $target'))
-        ResetFile.SetBind(self.Ctrls['IgnoreTarget']  .MakeFileKeyBind('ignore $target'))
-        ResetFile.SetBind(self.Ctrls['UnignoreTarget'].MakeFileKeyBind('unignore $target'))
+        ResetFile.SetBind(self.Ctrls['InviteTarget']  .MakeBind('i $target'))
+        ResetFile.SetBind(self.Ctrls['SGInviteTarget'].MakeBind('sgi $target'))
+        ResetFile.SetBind(self.Ctrls['FriendTarget']  .MakeBind('friend $target'))
+        ResetFile.SetBind(self.Ctrls['GFriendTarget'] .MakeBind('gfriend $target'))
+        ResetFile.SetBind(self.Ctrls['IgnoreTarget']  .MakeBind('ignore $target'))
+        ResetFile.SetBind(self.Ctrls['UnignoreTarget'].MakeBind('unignore $target'))
 
         return True
 

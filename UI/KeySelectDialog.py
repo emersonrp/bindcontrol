@@ -533,7 +533,7 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         wx.PostEvent(self, KeyChanged())
         wx.App.Get().Main.Profile.SetModified()
 
-    def MakeFileKeyBind(self, contents):
+    def MakeBind(self, contents):
         label = self.CtlLabel.GetLabel() if self.CtlLabel else ''
         return KeyBind(self.Key, label, self.Page, contents)
 

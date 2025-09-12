@@ -5,11 +5,11 @@ def test_keybind():
     kb = KeyBind('A', 'Test A', '', ['One', 'Two', 'Three'])
     assert kb.BindFileString() == 'A "One$$Two$$Three"\n', "BindFileString output is well-formed"
 
-    kb2 = kb.MakeFileKeyBind(["First", "$$Second", "Third"])
-    assert kb != kb2, "MakeFileKeyBind returns a new object"
+    kb2 = kb.MakeBind(["First", "$$Second", "Third"])
+    assert kb != kb2, "MakeBind returns a new object"
     assert kb2.BindFileString() == 'A "First$$Second$$Third"\n', "BindFileString correctly strips extra $$"
 
-    kb3 = kb.MakeFileKeyBind("$$unbind_all$$up 1$$emote wave")
+    kb3 = kb.MakeBind("$$unbind_all$$up 1$$emote wave")
     assert kb3.BindFileString() == 'A "unbind_all$$up 1$$emote wave"\n', "BindFileString correctly strips leading $$"
 
 def test_bindfile():

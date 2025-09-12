@@ -160,8 +160,8 @@ class IncarnateSet(WizardParent):
 
             line = line + profile.BLF('wiz', f'{title}{nextfile}')
             if i == 0: # start with the reset file, too
-                profile.ResetFile().SetBind(self.BindKeyCtrl.MakeFileKeyBind(line))
-            bindfile.SetBind(self.BindKeyCtrl.MakeFileKeyBind(line))
+                profile.ResetFile().SetBind(self.BindKeyCtrl.MakeBind(line))
+            bindfile.SetBind(self.BindKeyCtrl.MakeBind(line))
 
     def AllBindFiles(self):
         profile = wx.App.Get().Main.Profile

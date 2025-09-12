@@ -15,6 +15,7 @@ params = [
     f'--add-data=version.txt{sep}.',
     f'--add-data=UI/PowerBinderCommand{sep}UI/PowerBinderCommand',
     f'--add-data=UI/BindWizard{sep}UI/BindWizard',
+    f'--add-data=popmenus/qwyPetMouse.mnu{sep}popmenus/',
     '--exclude-module=_bz2',
     '--exclude-module=_ctypes',
     '--exclude-module=_decimal',

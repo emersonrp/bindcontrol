@@ -121,7 +121,7 @@ class qwyNumpad(wx.Panel):
         # This is going to be complicated and tangly - there are like 14 files with many entries.
         profile = wx.App.Get().Main.Profile
         page    = profile.Mastermind
-        primary = profile.GetState('Primary')
+        primary = profile.General.GetState('Primary')
         pabb = GameData.MMPowerSets[primary]['abbrs']
         pnam = GameData.MMPowerSets[primary]['names']
         heal = GameData.MMPowerSets[primary]['heal']

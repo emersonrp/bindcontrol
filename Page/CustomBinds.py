@@ -14,7 +14,7 @@ from UI.BindWizard      import WizPickerDialog,wizards
 
 class CustomBinds(Page):
     def __init__(self, parent):
-        Page.__init__(self, parent)
+        super().__init__(parent)
 
         self.TabTitle = "Custom Binds"
         self.Panes    = []
@@ -367,7 +367,7 @@ class CustomBinds(Page):
 
 class BindDeletionDialog(wx.Dialog):
     def __init__(self, parent, bindpane):
-        wx.Dialog.__init__(self, parent, title = "Delete Bind")
+        super().__init__(parent, title = "Delete Bind")
 
         self.DeleteFilesCB = None
 

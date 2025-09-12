@@ -10,7 +10,7 @@ import GameData
 
 class IncarnateBox(wx.StaticBoxSizer):
     def __init__(self, parent, server):
-        wx.StaticBoxSizer.__init__(self, wx.HORIZONTAL, parent, 'Incarnate Powers')
+        super().__init__(wx.HORIZONTAL, parent, 'Incarnate Powers')
 
         staticbox = self.GetStaticBox()
         self.Server = server
@@ -73,7 +73,7 @@ class IncarnateBox(wx.StaticBoxSizer):
 import wx.lib.buttons as buttons
 class IncarnatePicker(wx.StaticBoxSizer):
     def __init__(self, parent, slot = ""):
-        wx.StaticBoxSizer.__init__(self, wx.HORIZONTAL, parent, label = slot)
+        super().__init__(wx.HORIZONTAL, parent, label = slot)
         staticbox = self.GetStaticBox()
 
         self.Slot = slot
@@ -121,7 +121,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
 class IncarnateBrowserList(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     def __init__(self, parent, ID = -1, pos = wx.DefaultPosition,
                  size = wx.Size(250, -1), style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL):
-        wx.ListCtrl.__init__(self, parent, ID, pos, size, style)
+        super().__init__(parent, ID, pos, size, style)
         listmix.ListCtrlAutoWidthMixin.__init__(self)
 
         self.IconFilenames = []

@@ -64,7 +64,7 @@ class KeySelectDialog(wx.Dialog):
         self.modKeys: List[str] = [] # gets set every ShowModal() call
         self.dualKeys = ['SHIFT','CTRL','ALT'] # keys which might be mod and might be trigger
 
-        wx.Dialog.__init__(self, button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
+        super().__init__(button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
 
         self.controller = bcController()
         self.controller.SetCapture(self)

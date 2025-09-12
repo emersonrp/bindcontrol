@@ -37,7 +37,7 @@ import Util.BuildFiles
 class Main(wx.Frame):
 
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, title = "BindControl")
+        super().__init__(parent, title = "BindControl")
 
         self.Profile = None
         self.StartupPanel = None

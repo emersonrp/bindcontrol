@@ -12,7 +12,7 @@ ChatTargets = ['team', 'target', 'local']
 
 class BufferBindPane(CustomBindPaneParent):
     def __init__(self, page, init = {}):
-        CustomBindPaneParent.__init__(self, page, init)
+        super().__init__(page, init)
 
         self.PassedInit  = init
         self.Description = "Buffer Bind"

@@ -4,7 +4,7 @@ import wx.lib.colourselect as csel
 class ChatColorPicker(wx.BoxSizer):
 
     def __init__(self, parent, page, prefix, cols):
-        wx.BoxSizer.__init__(self, wx.HORIZONTAL)
+        super().__init__(wx.HORIZONTAL)
 
         self.borderLabel = wx.StaticText(parent, label = "Border:")
         self.borderPicker = csel.ColourSelect(parent, colour = cols['border'], size = wx.Size(30,30))

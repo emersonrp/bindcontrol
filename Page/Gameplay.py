@@ -14,7 +14,7 @@ ordinals = ("First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "
 class Gameplay(Page):
 
     def __init__(self, parent):
-        Page.__init__(self, parent)
+        super().__init__(parent)
         self.TabTitle = "Gameplay"
 
         if self.Profile.Server == 'Homecoming':

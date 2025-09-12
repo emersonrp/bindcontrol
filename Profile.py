@@ -88,7 +88,7 @@ def ProfilePath():
 class Profile(wx.Notebook):
 
     def __init__(self, parent, filename = None, newname = None, profiledata = None):
-        wx.Notebook.__init__(self, parent, style = wx.NB_TOP, name = "Profile")
+        super().__init__(parent, style = wx.NB_TOP, name = "Profile")
 
         self.BindFiles       : dict      = {}
         self.Pages           : list      = []
@@ -861,7 +861,7 @@ class Profile(wx.Notebook):
 
 class WriteDoneDialog(wx.Dialog):
     def __init__(self, parent, msg = 'Bindfiles written.'):
-        wx.Dialog.__init__(self, parent, title = "Bindfiles Written")
+        super().__init__(parent, title = "Bindfiles Written")
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -930,7 +930,7 @@ class WriteDoneDialog(wx.Dialog):
 
 class DeleteDoneDialog(wx.Dialog):
     def __init__(self, parent, removed = 0):
-        wx.Dialog.__init__(self, parent, title = "Bindfiles Deleted")
+        super().__init__(parent, title = "Bindfiles Deleted")
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 

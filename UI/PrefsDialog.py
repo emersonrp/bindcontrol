@@ -11,7 +11,7 @@ from bcController import bcController
 
 class PrefsDialog(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, title = "Preferences")
+        super().__init__(parent, title = "Preferences")
 
         config = wx.ConfigBase.Get()
 

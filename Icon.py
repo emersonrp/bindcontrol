@@ -10,7 +10,7 @@ from Util.Paths import GetRootDirPath
 
 class Icon(wx.BitmapBundle):
     def __init__(self, img:wx.Image|wx.Bitmap):
-        wx.BitmapBundle.__init__(self, img)
+        super().__init__(img)
 
         self.Filename = ""
 

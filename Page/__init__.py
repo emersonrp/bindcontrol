@@ -16,7 +16,7 @@ from UI.KeySelectDialog import bcKeyButton
 class Page(wx.ScrolledWindow):
 
     def __init__(self, parent, bind_events = True):
-        wx.ScrolledWindow.__init__(self, parent)
+        super().__init__(parent)
 
         self.MainSizer = wx.BoxSizer(wx.VERTICAL)
         paddingSizer = wx.BoxSizer(wx.VERTICAL)

@@ -17,7 +17,7 @@ tabs = {
 
 class InspirationPopper(Page):
     def __init__(self, parent):
-        Page.__init__(self, parent)
+        super().__init__(parent)
 
         self.TabTitle = "Inspiration Popper"
         self.chatPickers = {}

@@ -6,7 +6,7 @@ from typing import List
 class bcController(wx.adv.Joystick):
 
     def __init__(self):
-        wx.adv.Joystick.__init__(self)
+        super().__init__()
         self.CodeTable = self.SetCodeTable()
 
         self.CurrentAxisPercents = []

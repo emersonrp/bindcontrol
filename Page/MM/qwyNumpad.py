@@ -15,13 +15,18 @@ class qwyNumpad(wx.Panel):
 
         PetPickedSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        PetPickedSizer.Add(HelpButton(self, 'qwyNumpad.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 10)
+        PetPickedSizer.Add(HelpButton(self, 'qwyNumpad.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 20)
 
         PetPickedSizer.Add(wx.StaticText(self, label = 'Pet Selection:'), flag = wx.ALIGN_CENTER)
-        self.PetPicker = wx.Choice(self, choices = ['All Pets', 'Pet Group', 'Individual Pet'])
-        self.PetPicker.SetSelection(0)
-        PetPickedSizer.Add(self.PetPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 10)
-        self.PetPicker.Bind(wx.EVT_CHOICE, self.OnPetPicked)
+        self.PetPickerAll   = wx.RadioButton(self, label = 'All Pets')
+        self.PetPickerGroup = wx.RadioButton(self, label = 'Pet Group')
+        self.PetPickerIndiv = wx.RadioButton(self, label = 'Individual Pet')
+        PetPickedSizer.Add(self.PetPickerAll  , 0, wx.LEFT|wx.ALIGN_CENTER, 10)
+        PetPickedSizer.Add(self.PetPickerGroup, 0, wx.LEFT|wx.ALIGN_CENTER, 10)
+        PetPickedSizer.Add(self.PetPickerIndiv, 0, wx.LEFT|wx.ALIGN_CENTER, 10)
+        self.PetPickerAll  .Bind(wx.EVT_RADIOBUTTON, self.OnPetPicked)
+        self.PetPickerGroup.Bind(wx.EVT_RADIOBUTTON, self.OnPetPicked)
+        self.PetPickerIndiv.Bind(wx.EVT_RADIOBUTTON, self.OnPetPicked)
 
         centeringSizer.Add(PetPickedSizer, 0, wx.TOP|wx.BOTTOM, 10)
 
@@ -109,7 +114,10 @@ class qwyNumpad(wx.Panel):
         ]
 
     def OnPetPicked(self, evt = None):
-        contents = GridContents[self.PetPicker.GetSelection()]
+        i = 0
+        if   self.PetPickerIndiv.GetValue(): i = 2
+        elif self.PetPickerGroup.GetValue(): i = 1
+        contents = GridContents[i]
 
         self.ButtonGrid.DeleteAllItems()
 

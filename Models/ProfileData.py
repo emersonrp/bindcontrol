@@ -107,6 +107,7 @@ class ProfileData(dict):
         self.clear()
         self.update(data)
         self.ProfileBindsDir = self['ProfileBindsDir']
+        self.Server          = self['General']['Server']
 
     def SetModified(self):
         self.Modified = True

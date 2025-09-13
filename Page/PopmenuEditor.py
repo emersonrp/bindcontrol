@@ -200,7 +200,7 @@ class PopmenuEditor(Page):
             NoErrors = False
 
         if NoErrors:
-            if GetValidGamePath(server)
+            if GetValidGamePath(server):
                 self.CheckMenuDirBox.Hide()
             else:
                 self.CheckMenuDirBox.Show()

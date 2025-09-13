@@ -2,8 +2,8 @@ from pathlib import Path, PureWindowsPath
 
 class tObject(dict):
     def __init__(self, profile):
-        self.togon   = "px_tgon" if profile.Server == "Rebirth" else "powexectoggleon"
-        self.togoff  = "px_tgof" if profile.Server == "Rebirth" else "powexectoggleoff"
+        self.togon   = "px_tgon" if profile.Server() == "Rebirth" else "powexectoggleon"
+        self.togoff  = "px_tgof" if profile.Server() == "Rebirth" else "powexectoggleoff"
 
         self.profile            = profile
         self.ini          :str  = ''

@@ -102,38 +102,8 @@ class Profile(wx.Notebook):
         self.ProfileBindsDir : str                 = ''
         self.MaxCustomID     : int                 = 0
         self.LastModTime     : int                 = 0
-        self.Server          : str                 = 'Homecoming'
 
-        # are we wanting to load this one from a file?
-        if self.Filename:
-            if not self.Filename.exists():
-                raise Exception("Tried to load a Profile whose file is missing")
-            if data := json.loads(Path(self.Filename).read_text()):
-                self.ProfileData.FillWith(data)
-                self.LastModTime = self.Filename.stat().st_mtime_ns
-            else:
-                raise Exception(f"Something broke while loading profile {self.Filename}.  This is a bug.")
-
-        # No?  Then it ought to be a new profile, and we ought to have passed in a name
-        elif newname:
-            self.Filename = ProfilePath() / f"{newname}.bcp"
-            jsonstring = self.GetDefaultProfileJSON()
-            if jsonstring:
-                if data := json.loads(jsonstring):
-                    self.ProfileData.FillWith(data)
-                else:
-                    raise Exception(f"Something broke while loading profile {self.Filename}.  This is a bug.")
-
-            self.ProfileBindsDir = self.GenerateBindsDirectoryName()
-            self.ProfileData['ProfileBindsDir'] = self.ProfileBindsDir
-            if not self.ProfileBindsDir:
-                # This happens if GenerateBindsDirectoryName can't come up with something sane
-                parent.OnProfDirButton()
-
-        else:
-            raise Exception("Error: Profile created with neither filename or newname.  This is a bug.")
-
-        GameData.SetupGameData(self.ProfileData['Server'])
+        GameData.SetupGameData(self.Server())
 
         # Add the individual tabs, in order.
         self.General           = self.CreatePage(General(self))
@@ -167,6 +137,7 @@ class Profile(wx.Notebook):
     def Secondary(self)     : return self.General.GetState('Secondary')
     def ResetFile(self)     : return self.GetBindFile("reset.txt")
     def ProfileIDFile(self) : return self.BindsDir() / 'bcprofileid.txt'
+    def Server(self)        : return self.ProfileData.Server
     def BindsDir(self)      : return Path(wx.ConfigBase.Get().Read('BindPath')) / self.ProfileBindsDir
     def GameBindsDir(self) :
         if gbp := wx.ConfigBase.Get().Read('GameBindPath'):
@@ -436,7 +407,7 @@ class Profile(wx.Notebook):
 
     def doLoadFromFile(self, pathname):
         try:
-            self.ProfileData.update(json.loads(Path(pathname).read_text()))
+            self.ProfileData.FillWith(json.loads(Path(pathname).read_text()))
             self.buildFromData()
         except Exception as e:
             wx.LogError(f"Profile {pathname} could not be loaded: {e}")
@@ -539,7 +510,7 @@ class Profile(wx.Notebook):
                 page.Ctrls['Epic'].SetSelection(epic)
 
                 # And while we're in "General" make sure the "Server" picker is set right
-                page.ServerPicker.SetSelection(page.ServerPicker.FindString(self.Server))
+                page.ServerPicker.SetSelection(page.ServerPicker.FindString(self.ProfileData.Server))
 
             page.Layout()
 

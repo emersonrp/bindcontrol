@@ -43,6 +43,7 @@ class Page(wx.ScrolledWindow):
         if isinstance(control, wx.DirPickerCtrl):
             return control.GetPath()
         elif isinstance(control, PowerPicker):
+            # we de-json this on the way out in ProfileData.AsJSON()
             return json.dumps({
                 'power'    : control.GetLabel(),
                 'iconfile' : control.IconFilename,

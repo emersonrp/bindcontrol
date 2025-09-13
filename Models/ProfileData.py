@@ -51,12 +51,11 @@ class ProfileData(dict):
         self.BindFiles       : Dict[str, BindFile] = {}
         self.Modified        : bool                = False
         self.Filepath        : Path|None           = Path(filename) if filename else None
-        self.MaxCustomID     : int                 = 0
         self.LastModTime     : int                 = 0
         self.Server          : str                 = "Homecoming"
 
         # TODO what is actually going to go here?
-        self.Pages : list = []
+        self.Pages : Dict[str, Any] = {}
 
         # are we wanting to load this one from a file?
         if self.Filepath:
@@ -104,6 +103,7 @@ class ProfileData(dict):
     def FillWith(self, data):
         self.clear()
         self.update(data)
+        self.ProfileBindsDir = self['ProfileBindsDir']
 
     def SetModified(self):
         self.Modified = True
@@ -112,9 +112,9 @@ class ProfileData(dict):
         self.Modified = False
 
     def GetCustomID(self):
-        self.MaxCustomID = self.MaxCustomID + 1
+        self['MaxCustomID'] = self['MaxCustomID'] + 1
         self.SetModified()
-        return self.MaxCustomID
+        return self['MaxCustomID']
 
     # come up with a sane default binds directory name for this profile
     def GenerateBindsDirectoryName(self):
@@ -214,9 +214,8 @@ class ProfileData(dict):
     def AsJSON(self, small = False):
         savedata : Dict[str, Any] = {}
         savedata['ProfileBindsDir'] = self['ProfileBindsDir']
-        savedata['MaxCustomID']     = self.MaxCustomID
-        for page in self.Pages:
-            pagename = type(page).__name__
+        savedata['MaxCustomID'] = self['MaxCustomID']
+        for pagename, page in self.Pages.items():
             savedata[pagename] = {}
             if pagename == "CustomBinds": continue
 
@@ -224,15 +223,21 @@ class ProfileData(dict):
                 # Save disabled controls' states, too, so as not to lose config
                 # if someone, say, turns on "disable self tell" with a bunch of custom colors defined
 
-                # Gonna try this -- we're serializing PowerPickers' states as JSON, and
-                # so let's just de-JSON everything -- strings should just turn into strings
-                savedata[pagename][controlname] = json.loads(page.GetState(controlname))
+                # Gonna try this -- we're serializing PowerPickers' states as JSON
+                info = page.GetState(controlname)
+                try:
+                    if info:
+                        newinfo = json.loads(info)
+                        if isinstance(newinfo, dict):
+                            info = newinfo
+                except Exception: ...
+                savedata[pagename][controlname] = info
 
             if pagename == 'General':
                 savedata['Server'] = page.ServerPicker.GetString(page.ServerPicker.GetSelection())
 
         savedata['CustomBinds'] = []
-        customPage = getattr(self, 'CustomBinds')
+        customPage = self.Pages['CustomBinds']
         # TODO - walking the sizer/widget tree like this is fragile.
         for pane in customPage.PaneSizer.GetChildren():
             bindui = pane.GetSizer().GetChildren()
@@ -319,7 +324,7 @@ class ProfileData(dict):
         donefiles = 0
 
         # Go to each page....
-        for page in self.Pages:
+        for page in self.Pages.values():
             # ... and tell it to gather up binds and put them into bindfiles.
             try:
                 success = page.PopulateBindFiles()
@@ -361,7 +366,7 @@ class ProfileData(dict):
     def AllBindFiles(self):
         files = [self.ResetFile()]
         dirs  = []
-        for page in self.Pages:
+        for page in self.Pages.values():
             bf = page.AllBindFiles()
             for file in bf['files']:
                 files.append(file)

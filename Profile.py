@@ -70,7 +70,6 @@ class Profile(wx.Notebook):
         self.Modified        : bool                = False
         self.Filename        : Path|None           = Path(filename) if filename else None
         self.ProfileBindsDir : str                 = ''
-        self.MaxCustomID     : int                 = 0
         self.LastModTime     : int                 = 0
 
         GameData.SetupGameData(self.Server())
@@ -96,7 +95,7 @@ class Profile(wx.Notebook):
 
         # for now, keep these both places.  Eventually, pages will have their own non-wx data structures
         self.Pages.append(page)
-        self.ProfileData.Pages.append(page)
+        self.ProfileData.Pages[type(page).__name__] = page
 
         self.Layout()
         return page
@@ -159,11 +158,6 @@ class Profile(wx.Notebook):
     def ClearModified(self, _ = None):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore
         self.Modified = False
-
-    def GetCustomID(self):
-        self.MaxCustomID = self.MaxCustomID + 1
-        self.SetModified()
-        return self.MaxCustomID
 
     ###################
     # Profile Save/Load
@@ -229,10 +223,6 @@ class Profile(wx.Notebook):
         # we store the ProfileBindsDir outside of the sections
         if data and data.get('ProfileBindsDir', None):
             self.ProfileBindsDir = data['ProfileBindsDir']
-
-        # Ditto the MaxCustomID
-        if data and data.get('MaxCustomID', None):
-            self.MaxCustomID = data['MaxCustomID']
 
         for pagename in ['General', 'Gameplay', 'MovementPowers', 'InspirationPopper', 'Mastermind', 'PopmenuEditor']:
             page = getattr(self, pagename)

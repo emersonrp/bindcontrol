@@ -60,8 +60,9 @@ class Page(wx.ScrolledWindow):
             else                  : return ''
         elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
             return control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
-        elif isinstance(control, wx.StaticText):
-            return control.GetLabel()
+        # TODO - I don't think we ever GetState on a StaticText, but maybe?
+        # elif isinstance(control, wx.StaticText):
+        #     return control.GetLabel()
         elif getattr(control, 'GetValue', None):
             return control.GetValue()
         elif getattr(control, 'GetPath', None):

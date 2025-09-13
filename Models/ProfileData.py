@@ -61,10 +61,13 @@ class ProfileData(dict):
         if self.Filepath:
             if not self.Filepath.exists():
                 raise Exception(f'Tried to load a Profile whose file "{self.Filepath}" is missing')
-            if data := json.loads(self.Filepath.read_text()):
-                self.FillWith(data)
-                self.LastModTime = self.Filepath.stat().st_mtime_ns
-            else:
+            try:
+                if data := json.loads(self.Filepath.read_text()):
+                    self.FillWith(data)
+                    self.LastModTime = self.Filepath.stat().st_mtime_ns
+                else:
+                    raise Exception(f'Something broke while loading profile "{self.Filepath}".  This is a bug.')
+            except Exception:
                 raise Exception(f'Something broke while loading profile "{self.Filepath}".  This is a bug.')
 
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
@@ -83,7 +86,7 @@ class ProfileData(dict):
                 raise Exception("Can't come up with a sane Binds Directory!")
 
         else:
-            raise Exception("Error: ProfileData requested with neither filename or newname.  This is a bug.")
+            raise Exception("Error: ProfileData requested with neither filename nor newname.  This is a bug.")
 
         GameData.SetupGameData(self.Server)
 

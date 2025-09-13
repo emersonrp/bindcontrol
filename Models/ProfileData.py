@@ -44,7 +44,7 @@ def ProfilePath(config): return Path(config.Read('ProfilePath'))
 class ProfileData(dict):
     def __init__(self, config, filename = None, newname = None, profiledata = {}):
 
-        self.FillWith(profiledata)
+        if profiledata: self.FillWith(profiledata)
 
         self.Config                                = config # wx.Config object
         self.BindFiles       : Dict[str, BindFile] = {}

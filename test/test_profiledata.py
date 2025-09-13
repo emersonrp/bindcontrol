@@ -1,6 +1,7 @@
 #!/usr/sbin/python
 import wx
 import Profile
+import Models.ProfileData as ProfileData
 from unittest.mock import MagicMock
 
 def test_CheckProfileForBindsDir(tmp_path):
@@ -15,7 +16,7 @@ def test_CheckProfileForBindsDir(tmp_path):
     pdir.mkdir(exist_ok = True)
     file = pdir / 'bcprofileid.txt'
     file.write_text('Mister Fubble')
-    assert Profile.CheckProfileForBindsDir('fubble') == 'Mister Fubble'
+    assert ProfileData.CheckProfileForBindsDir(config, 'fubble') == 'Mister Fubble'
     file.unlink()
     pdir.rmdir()
 
@@ -29,7 +30,7 @@ def test_GetProfileFileForName(tmp_path):
     # GetProfileFileForName
     file = tmp_path / 'fubble.bcp'
     file.write_text('freebird')
-    assert str(Profile.GetProfileFileForName('fubble')) == f'{tmp_path}/fubble.bcp'
+    assert str(ProfileData.GetProfileFileForName(config, 'fubble')) == f'{tmp_path}/fubble.bcp'
     file.unlink()
 
     config.DeleteAll()
@@ -44,7 +45,7 @@ def test_GetAllProfileBindsDirs(tmp_path):
         pdir = tmp_path / d
         pdir.mkdir(exist_ok = True)
 
-    assert sorted(Profile.GetAllProfileBindsDirs()) == sorted(['inky', 'pinky', 'blinky', 'clyde'])
+    assert sorted(ProfileData.GetAllProfileBindsDirs(config)) == sorted(['inky', 'pinky', 'blinky', 'clyde'])
 
     for d in ['inky', 'pinky', 'blinky', 'clyde']:
         pdir = tmp_path / d
@@ -58,6 +59,6 @@ def test_ProfilePath(tmp_path):
     wx.ConfigBase.Set(config)
     config.Read = MagicMock(return_value = str(tmp_path))
 
-    assert Profile.ProfilePath() == tmp_path
+    assert ProfileData.ProfilePath(config) == tmp_path
 
     config.DeleteAll()

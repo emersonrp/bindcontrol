@@ -31,4 +31,7 @@ def test_dirs():
 
 class FakeProfile(object):
     def __init__(self, server):
-        self.Server = server
+        self.ServerName = server
+
+    def Server(self):
+        return self.ServerName

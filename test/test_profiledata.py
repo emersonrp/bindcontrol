@@ -4,7 +4,8 @@ import os
 import pytest
 import Models.ProfileData as ProfileData
 from unittest.mock import MagicMock
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
+from BindFile import BindFile
 
 def test_CheckProfileForBindsDir(tmp_path):
     (_, config) = doSetup(tmp_path)
@@ -65,10 +66,10 @@ def test_ProfileData_init_newname(tmp_path):
     (_, config) = doSetup(tmp_path)
 
     pd = ProfileData.ProfileData(config, newname = 'test')
-    assert pd.Config   == config
-    assert pd.Filepath == ProfileData.ProfilePath(config) / 'test.bcp'
+    assert pd.Config             == config
+    assert pd.Filepath           == ProfileData.ProfilePath(config) / 'test.bcp'
     assert pd['ProfileBindsDir'] == 'test'
-    assert pd.Modified == True
+    assert pd.Modified           == True
 
     config.DeleteAll()
 
@@ -88,18 +89,46 @@ def test_ProfileData_init_filename(tmp_path):
         ProfileData.ProfileData(config, filename = str(profile_path))
     profile_path.unlink()
 
-    fixtureprofile = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'testprofile.bcp'
-    pd = ProfileData.ProfileData(config, filename = str(fixtureprofile))
+    config.DeleteAll()
 
-    assert pd.Filepath == fixtureprofile
-    assert pd.LastModTime == fixtureprofile.stat().st_mtime_ns
-    assert pd.Modified == False
+def test_ProfileData_accessors(tmp_path):
+    (_, config) = doSetup(tmp_path)
+    fixtureprofile, pd = GetFixtureProfile(config)
 
+    assert pd.Filepath        == fixtureprofile
+    assert pd.LastModTime     == fixtureprofile.stat().st_mtime_ns
+    assert pd.Modified        == False
+    assert pd.Server          == 'Rebirth'
+    assert pd.ProfileName()   == 'testprofile'
+    assert pd.ProfileIDFile() == pd.BindsDir() / 'bcprofileid.txt'
+    assert pd.BindsDir()      == tmp_path / pd['ProfileBindsDir']
+    assert pd.GameBindsDir()  == PureWindowsPath(tmp_path) / pd['ProfileBindsDir']
 
-
+    config.Read = MagicMock(return_value = '')
+    assert pd.GameBindsDir()  == pd.BindsDir()
 
     config.DeleteAll()
 
+def test_ProfileData_GetBindFile(tmp_path):
+    (_, config) = doSetup(tmp_path)
+    fixtureprofile, pd = GetFixtureProfile(config)
+
+    resetfile = pd.ResetFile()
+    assert resetfile == pd.GetBindFile('reset.txt')
+    assert isinstance(resetfile, BindFile)
+
+    otherbindfile = pd.GetBindFile('otherbindfile.txt')
+    assert isinstance(otherbindfile, BindFile)
+    assert otherbindfile              != resetfile
+    assert otherbindfile.Path         == Path(pd.BindsDir()) / 'otherbindfile.txt'
+    assert otherbindfile.GameBindsDir == PureWindowsPath(pd.BindsDir())
+    assert otherbindfile.GamePath     == PureWindowsPath(otherbindfile.Path)
+
+    pd.GameBindsDir = MagicMock(return_value = 'c:\\coh\\')
+    posixbindfile = pd.GetBindFile('dir', 'posixbindfile.txt')
+    assert posixbindfile.GamePath == PureWindowsPath('c:\\coh\\dir\\posixbindfile.txt')
+
+    config.DeleteAll()
 
 #########
 def doSetup(tmp_path):
@@ -109,3 +138,8 @@ def doSetup(tmp_path):
     config.Read = MagicMock(return_value = str(tmp_path))
 
     return (app, config)
+
+def GetFixtureProfile(config):
+    fixtureprofile = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'testprofile.bcp'
+    return fixtureprofile, ProfileData.ProfileData(config, filename = str(fixtureprofile))
+

@@ -1,8 +1,3 @@
-# TODO TODO TODO REMOVE THIS
-import wx
-
-
-
 import re, os, platform
 from pathlib import PurePath, Path, PureWindowsPath
 from typing import Dict, Any
@@ -191,7 +186,7 @@ class ProfileData(dict):
                 zipstring = base64.b64decode(b64string)
                 jsonstring = codecs.decode(zipstring, 'zlib')
             except Exception as e:
-                wx.LogError(f"Problem loading default profile: {e}")
+                raise Exception(f"Problem loading default profile: {e}")
 
         return jsonstring
 
@@ -210,10 +205,9 @@ class ProfileData(dict):
             savefile.touch() # make sure there's one there.
             savefile.write_text(dumpstring)
             self.LastModTime = savefile.stat().st_mtime_ns
-            wx.LogMessage(f"Wrote profile {savefile}")
             self.ClearModified()
         except Exception as e:
-            wx.LogError(f"Problem saving to profile {savefile}: {e}")
+            raise Exception(f"Problem saving to profile {savefile}: {e}")
 
     def AsJSON(self, small = False):
         savedata : Dict[str, Any] = {}
@@ -260,8 +254,7 @@ class ProfileData(dict):
             self.clear()
             self.update(json.loads(Path(pathname).read_text()))
         except Exception as e:
-            wx.LogError(f"Profile {pathname} could not be loaded: {e}")
-            return False
+            raise Exception(f"Profile {pathname} could not be loaded: {e}")
 
         self.Filepath = Path(pathname)
 
@@ -271,7 +264,7 @@ class ProfileData(dict):
             self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
             self.SetModified()
 
-        wx.LogMessage(f"Loaded profile {pathname}")
+        #wx.LogMessage(f"Loaded profile {pathname}")
         return True
 
     #####################
@@ -306,67 +299,6 @@ class ProfileData(dict):
         else:
             raise Exception("Profile.ProfileIDFile() returned nothing, not checking IDFile!")
 
-    def WriteBindFiles(self):
-
-        # write the ProfileID file that identifies this directory as "belonging to" this profile
-        try:
-            self.ProfileIDFile().write_text(self.ProfileName())
-        except Exception as e:
-            # TODO custom exception?
-            raise Exception("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
-
-        # Start by making the bind to make the reset load itself.  This might get overridden with
-        # more elaborate load strings in like MovementPowers, but this is the safety fallback
-
-        config = self.Config
-        resetfile = self.ResetFile()
-        keybindreset = 'keybind_reset' if config.ReadBool('FlushAllBinds') else ''
-        feedback = 't $name, Resetting keybinds.'
-        resetfile.SetBind(config.Read('ResetKey'), "Reset Key", "Preferences", [keybindreset , feedback, resetfile.BLF()])
-
-        errors = []
-        donefiles = 0
-
-        # Go to each page....
-        for page in self.Pages.values():
-            # ... and tell it to gather up binds and put them into bindfiles.
-            try:
-                success = page.PopulateBindFiles()
-                if not success:
-                    wx.LogMessage(f'An error on the "{page.TabTitle}" tab caused WriteBinds to fail.')
-                    return
-            except Exception as e:
-                if config.ReadBool('CrashOnBindError'):
-                    raise e
-                else:
-                    errors.append(f"Error populating bind file: {e}")
-
-        # Now we have them here and can iterate them
-        totalfiles = len(self.BindFiles)
-        dlg = wx.ProgressDialog('Writing Bind Files','',
-            maximum = totalfiles, style=wx.PD_APP_MODAL|wx.PD_AUTO_HIDE)
-
-        for bindfile in self.BindFiles.values():
-            try:
-                bindfile.Write()
-                donefiles += 1
-            except Exception as e:
-                if config.ReadBool('CrashOnBindError'):
-                    raise e
-                else:
-                    errors.append(f"Failed to write bindfile {bindfile.Path}: {e}")
-
-            dlg.Update(donefiles, str(bindfile.Path))
-
-        dlg.Destroy()
-
-        if errors:
-            msg = f"{donefiles} of {totalfiles} bind files written.\n\nThere were {len(errors)} errors!  Check the log."
-        else:
-            msg = f"{donefiles} of {totalfiles} bind files written successfully."
-
-        return (errors, msg)
-
     def AllBindFiles(self):
         files = [self.ResetFile()]
         dirs  = []
@@ -381,69 +313,3 @@ class ProfileData(dict):
             'files' : files,
             'dirs'  : dirs,
         }
-
-    def doDeleteBindFiles(self, bindfiles):
-
-        bindpath = self.Config.Read('BindPath')
-        if len(bindpath) < 6: # "C:\COH" being the classic
-            # TODO custom exception?
-            raise Exception(f"Your Binds Directory is set to '{bindpath}' which seems wrong.  Check the preferences dialog.", "Binds Directory Error", wx.OK)
-
-        if not bindfiles:
-            # TODO custom exception?
-            raise Exception("Tried to doDeleteBindFiles with no bindfiles.  Please report this as a bug.  Bailing.")
-
-        # bindfiles is generated using someone's AllBindFiles(), which uses
-        # Profile.GetBindFile(), so if BindsDir is sane, we're probably OK.
-
-        totalfiles = len(bindfiles['files']) + len(bindfiles['dirs'])
-        dlg = wx.ProgressDialog('Deleting Bind Files', '',
-            maximum = totalfiles, style=wx.PD_APP_MODAL|wx.PD_AUTO_HIDE)
-
-        # try all 15k+ of the files
-        progress = 0
-        removed = 0
-        for file in bindfiles['files']:
-            if not file.Path.is_relative_to(bindpath):
-                wx.LogWarning(f"Bindfile {file.Path} not in {bindpath}, skipping deletion!")
-            elif file.Path.is_file():
-                file.Path.unlink()
-                removed = removed + 1
-
-            dlg.Update(progress, str(file.Path))
-            progress = progress + 1
-
-
-        # remove the ProfileID file
-        try:
-            self.ProfileIDFile().unlink()
-        except Exception as e:
-            wx.LogMessage(f"Can't delete ProfileID file: {e}")
-
-        # try the directories
-        for bdir in bindfiles['dirs']:
-            dirpath = Path(self.BindsDir() / bdir)
-            if dirpath.is_dir():
-                # try / except because if it's not empty it'll barf.
-                try:
-                    dirpath.rmdir()
-                    # not incrementing "removed" here because we just want to count
-                    # files, so we can match "wrote X files" with "deleted X files"
-                    pass
-                except Exception:
-                    pass
-
-            dlg.Update(progress, bdir)
-            progress = progress + 1
-
-        # remove the bindsdir itself, if empty
-        bindsdir = Path(self.BindsDir())
-        try:
-            bindsdir.rmdir()
-        except Exception:
-            pass
-
-        # clear out our state
-        self.BindFiles = {}
-
-        return removed

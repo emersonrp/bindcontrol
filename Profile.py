@@ -52,7 +52,7 @@ def LoadFromFile(parent):
         wx.GetApp().Yield()
 
         if newProfile := Profile(parent, filename = pathname):
-            newProfile.buildFromData()
+            newProfile.buildUIFromData()
             newProfile.CheckAllConflicts()
             return newProfile
         else:
@@ -209,12 +209,17 @@ class Profile(wx.Notebook):
             self.doLoadFromFile(str(self.Filename))
 
     def doSaveToFile(self):
-        return self.ProfileData.doSaveToFile()
+        result = self.ProfileData.doSaveToFile()
+        self.SetTitle()
+        wx.LogMessage(f"Wrote profile {self.ProfileData.Filepath}")
+        return result
 
     def doLoadFromFile(self, filename):
-        return self.ProfileData.doLoadFromFile(filename)
+        result = self.ProfileData.doLoadFromFile(filename)
+        self.SetTitle()
+        return result
 
-    def buildFromData(self):
+    def buildUIFromData(self):
         self.SetTitle()
 
         self.MassageData()
@@ -447,13 +452,63 @@ class Profile(wx.Notebook):
             answer = wx.MessageBox(f"The binds directory {self.BindsDir()} contains binds from the profile \"{otherProfile}\" -- overwrite?", "Confirm", wx.YES_NO)
             if answer == wx.NO: return
 
-        errors = []
-        msg = ''
+        # write the ProfileID file that identifies this directory as "belonging to" this profile
         try:
-            if result := self.ProfileData.WriteBindFiles():
-                (errors, msg) = result
+            self.ProfileIDFile().write_text(self.ProfileName())
         except Exception as e:
-            raise Exception("WriteBindFiles failed in ProfileData: {e}")
+            wx.LogError("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
+            wx.MessageBox("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
+            return
+
+        # Start by making the bind to make the reset load itself.  This might get overridden with
+        # more elaborate load strings in like MovementPowers, but this is the safety fallback
+
+        config = wx.ConfigBase.Get()
+        resetfile = self.ResetFile()
+        keybindreset = 'keybind_reset' if config.ReadBool('FlushAllBinds') else ''
+        feedback = 't $name, Resetting keybinds.'
+        resetfile.SetBind(config.Read('ResetKey'), "Reset Key", "Preferences", [keybindreset , feedback, resetfile.BLF()])
+
+        errors = []
+        donefiles = 0
+
+        # Go to each page....
+        for page in self.Pages:
+            # ... and tell it to gather up binds and put them into bindfiles.
+            try:
+                success = page.PopulateBindFiles()
+                if not success:
+                    wx.LogMessage(f'An error on the "{page.TabTitle}" tab caused WriteBinds to fail.')
+                    return
+            except Exception as e:
+                if config.ReadBool('CrashOnBindError'):
+                    raise e
+                else:
+                    errors.append(f"Error populating bind file: {e}")
+
+        # Now we have them here and can iterate them
+        totalfiles = len(self.BindFiles)
+        dlg = wx.ProgressDialog('Writing Bind Files','',
+            maximum = totalfiles, style=wx.PD_APP_MODAL|wx.PD_AUTO_HIDE)
+
+        for bindfile in self.BindFiles.values():
+            try:
+                bindfile.Write()
+                donefiles += 1
+            except Exception as e:
+                if config.ReadBool('CrashOnBindError'):
+                    raise e
+                else:
+                    errors.append(f"Failed to write bindfile {bindfile.Path}: {e}")
+
+            dlg.Update(donefiles, str(bindfile.Path))
+
+        dlg.Destroy()
+
+        if errors:
+            msg = f"{donefiles} of {totalfiles} bind files written.\n\nThere were {len(errors)} errors!  Check the log."
+        else:
+            msg = f"{donefiles} of {totalfiles} bind files written successfully."
 
         with WriteDoneDialog(self, msg = msg) as dlg:
             dlg.Show()

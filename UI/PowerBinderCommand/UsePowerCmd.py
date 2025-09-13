@@ -31,7 +31,7 @@ class UsePowerCmd(PowerBinderCommand):
         return usePowerSizer
 
     def MakeBindString(self):
-        server = self.Profile.Server
+        server = self.Profile.Server()
         if self.usePowerRBToggle.GetValue():
             method = "powexecname"
         elif self.usePowerRBOn.GetValue():

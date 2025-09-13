@@ -48,7 +48,7 @@ class InspCombine(PowerBinderCommand):
         tchoice = self.inspCombineTarget
         tindex  = tchoice.GetSelection()
         target  = re.sub(' ', '_', tchoice.GetString(tindex))
-        cmd = "mergeinsp" if self.Profile.Server == "Homecoming" else "inspcombine"
+        cmd = "mergeinsp" if self.Profile.Server() == "Homecoming" else "inspcombine"
         return f'{cmd} {source.lower()} {target.lower()}'
 
     def GetAllInsps(self):

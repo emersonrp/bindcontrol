@@ -24,7 +24,7 @@ class TargetEnemyCmd(PowerBinderCommand):
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
 
-        if self.Profile.Server == "Homecoming":
+        if self.Profile.Server() == "Homecoming":
             return "targetenemy" + mode.lower()
         else: # Rebirth
             return {

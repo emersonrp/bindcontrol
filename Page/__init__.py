@@ -15,7 +15,7 @@ from UI.KeySelectDialog import bcKeyButton
 
 class Page(wx.ScrolledWindow):
 
-    def __init__(self, parent, bind_events = True):
+    def __init__(self, parent, bind_events : bool = True):
         super().__init__(parent)
 
         self.MainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -25,9 +25,9 @@ class Page(wx.ScrolledWindow):
         self.SetSizer(paddingSizer)
 
         self.Profile = parent
-        self.TabTitle = type(self).__name__
+        self.TabTitle : str = type(self).__name__
 
-        self.Ctrls = {}
+        self.Ctrls : dict = {}
 
     def GetState(self, key):
         control = self.Ctrls.get(key, None)
@@ -59,7 +59,6 @@ class Page(wx.ScrolledWindow):
 
     def SetState(self, key, value):
         control = self.Ctrls.get(key, None)
-
         if not control:
             wx.LogError(f"Got into SetState for key {key} with no control - this is a bug.")
             return

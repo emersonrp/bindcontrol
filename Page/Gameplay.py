@@ -1,5 +1,7 @@
 import wx
+from typing import List, Dict, Any
 import UI
+from Page import Page
 from BLF import BLF
 from Help import HelpButton
 
@@ -7,7 +9,6 @@ from BindFile import KeyBind
 
 from UI.ControlGroup import ControlGroup, cgChoice
 from UI.KeySelectDialog import bcKeyButton
-from Page import Page
 
 ordinals = ("First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth")
 
@@ -15,27 +16,27 @@ class Gameplay(Page):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self.TabTitle = "Gameplay"
+        self.TabTitle : str = "Gameplay"
 
         if self.Profile.Server == 'Homecoming':
-            self.NumTrays = 4
-            self.TrayLabels = ['', 'First', 'Second', 'Third', 'Server']
-            self.KeybindProfiles = {
+            self.NumTrays : int = 4
+            self.TrayLabels : List[str] = ['', 'First', 'Second', 'Third', 'Server']
+            self.KeybindProfiles : Dict[str, List[str]] = {
                 'Modern'           : ['','','ALT','SHIFT','CTRL'],
                 'Classic'          : ['','','ALT','CTRL',''],
                 'Joystick'         : ['','','ALT','',''],
                 'Launch (Issue 0)' : ['','','ALT','',''],
             }
         else: # Rebirth
-            self.NumTrays = 5
-            self.TrayLabels = ['', 'First', 'Second', 'Third', 'Fourth', 'Server']
-            self.KeybindProfiles = {
+            self.NumTrays : int = 5
+            self.TrayLabels : List[str] = ['', 'First', 'Second', 'Third', 'Fourth', 'Server']
+            self.KeybindProfiles : Dict[str, List[str]] = {
                 'Default'  : ['','','ALT','CTRL','',''],
                 'Joystick' : ['','','ALT','','',''],
                 'Original' : ['','','ALT','','',''],
             }
 
-        self.Init = {
+        self.Init : Dict[str, Any] = {
             'TPSEnable'   : False,
             'TPSSelMode'  : "Teammates, then pets",
             'TeamSelect1' : '',

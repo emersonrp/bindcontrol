@@ -4,7 +4,7 @@ from Help import HelpHTMLWindow
 from UI.ControlGroup import cgTextCtrl
 from UI.PrefsDialog import PrefsDialog
 from Icon import GetIcon
-from typing import Callable
+from typing import Callable, Dict
 
 from pathlib import Path
 from datetime import datetime
@@ -62,15 +62,15 @@ class PopmenuEditor(Page):
     def __init__(self, parent):
         super().__init__(parent, bind_events = False)
 
-        self.CurrentMenu = None
-        self.MenuIDList = {}  # dict for menu objects for left-side list
-        self.TabTitle = "Popmenu Editor"
+        self.CurrentMenu : Popmenu|None    = None
+        self.MenuIDList  : Dict[int, dict] = {}  # dict for menu objects for left-side list
+        self.TabTitle    : str             = "Popmenu Editor"
 
         Sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(Sizer)
 
 
-        self.LoadedMenuFont = wx.Font(wx.FontInfo().Italic(False).Bold(False))
+        self.LoadedMenuFont   = wx.Font(wx.FontInfo().Italic(False).Bold(False))
         self.UnloadedMenuFont = wx.Font(wx.FontInfo().Italic())
         self.ModifiedMenuFont = wx.Font(wx.FontInfo().Bold())
 

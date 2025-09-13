@@ -19,8 +19,8 @@ class InspirationPopper(Page):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.TabTitle = "Inspiration Popper"
-        self.chatPickers = {}
+        self.TabTitle : str = "Inspiration Popper"
+        self.chatPickers : Dict[str, ChatColorPicker] = {}
 
         self.Init : Dict[str, Any] = {}
 

@@ -2,6 +2,7 @@
 import wx
 import wx.adv
 import wx.lib.stattext as ST
+from typing import Dict, Any
 import UI
 import Profile
 from Icon import GetIconBitmap
@@ -15,7 +16,7 @@ class General(Page):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.Init = {
+        self.Init : Dict[str, Any] = {
             'Alignment' : 'Hero',
             'Origin'    : "Magic",
             'Archetype' : 'Mastermind',
@@ -148,7 +149,6 @@ class General(Page):
             contents = poolcontents,
             callback = self.OnPickPoolPower,
         )
-
 
         ## Typing Notifier
         TNPanel = wx.Panel(self)

@@ -2,7 +2,6 @@
 import wx
 import Profile
 from unittest.mock import MagicMock
-from pathlib import Path
 
 def test_CheckProfileForBindsDir(tmp_path):
     # setup

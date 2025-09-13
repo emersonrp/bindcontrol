@@ -15,16 +15,16 @@ class MovementPowers(Page):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.TabTitle = "Movement / Speed on Demand"
+        self.TabTitle : str = "Movement / Speed on Demand"
 
-        self.TempTravelPowerMenu = None
+        self.TempTravelPowerMenu : wx.Menu|None = None
 
         # A few things that are server-specific.  If we change servers, we reload the profile
         # so this is safe to do in __init__
         server = self.Profile.Server
-        self.togon   = "px_tgon" if server == "Rebirth" else "powexectoggleon"
-        self.togoff  = "px_tgof" if server == "Rebirth" else "powexectoggleoff"
-        self.unqueue = "px_uq"   if server == "Rebirth" else "powexecunqueue"
+        self.togon   : str = "px_tgon" if server == "Rebirth" else "powexectoggleon"
+        self.togoff  : str = "px_tgof" if server == "Rebirth" else "powexectoggleoff"
+        self.unqueue : str = "px_uq"   if server == "Rebirth" else "powexecunqueue"
 
         self.Init: Dict[str, Any] = {
             'EnableSoD'       : False,
@@ -1237,7 +1237,7 @@ class MovementPowers(Page):
             if (self.GetState('FlyMode') != self.GetState('SpeedMode')):
                 novafile.SetBind(self.Ctrls['SpeedMode'].MakeBind('nop'))
             if (self.GetState('MouseChord')):
-                novafile.SetBind('mousechord', 'Nova Form Mousechord', self, ['+down', '+forward', t.playerturn])
+                novafile.SetBind('mousechord', 'Nova Form Mousechord', self.TabTitle, ['+down', '+forward', t.playerturn])
 
             # no teleport while nova
             novafile.SetBind(self.Ctrls['TPComboKey'].MakeBind('nop'))
@@ -1274,7 +1274,7 @@ class MovementPowers(Page):
             if (self.GetState('FlyMode') != self.GetState('SpeedMode')):
                 dwrffile.SetBind(self.Ctrls['SpeedMode'].MakeBind('nop'))
             if (self.GetState('MouseChord')):
-                dwrffile.SetBind('mousechord', "Dwarf Mode Mousechord", self, ['+down', '+forward', t.playerturn])
+                dwrffile.SetBind('mousechord', "Dwarf Mode Mousechord", self.TabTitle, ['+down', '+forward', t.playerturn])
 
             # TODO:  this should get DRY'ed up with the normal teleport logic below
             if dwarfTPPower:
@@ -1387,7 +1387,7 @@ class MovementPowers(Page):
         config    = wx.ConfigBase.Get()
 
         keybindreset = 'keybind_reset' if config.ReadBool('FlushAllBinds') else ''
-        ResetFile.SetBind(config.Read('ResetKey'), "Reset Key", self,
+        ResetFile.SetBind(config.Read('ResetKey'), "Reset Key", self.TabTitle,
                     [
                         keybindreset,
                         ResetFile.BLF(),
@@ -2339,44 +2339,43 @@ UI.Labels.update( {
 
 class tObject(dict):
     def __init__(self, profile):
-        from Profile import Profile
         self.togon   = "px_tgon" if profile.Server == "Rebirth" else "powexectoggleon"
         self.togoff  = "px_tgof" if profile.Server == "Rebirth" else "powexectoggleoff"
 
-        self.profile      :Profile = profile
-        self.ini          :str = ''
-        self.sprint       :str = ''
-        self.speed        :str = ''
-        self.hover        :str = ''
-        self.fly          :str = ''
-        self.gfly         :str = ''
-        self.flyx         :str = ''
-        self.jump         :str = ''
-        self.cjmp         :str = ''
+        self.profile            = profile
+        self.ini          :str  = ''
+        self.sprint       :str  = ''
+        self.speed        :str  = ''
+        self.hover        :str  = ''
+        self.fly          :str  = ''
+        self.gfly         :str  = ''
+        self.flyx         :str  = ''
+        self.jump         :str  = ''
+        self.cjmp         :str  = ''
         self.canhov       :bool = False
         self.canfly       :bool = False
         self.canqfly      :bool = False
         self.cangfly      :bool = False
         self.cancj        :bool = False
         self.canjmp       :bool = False
-        self.tphover      :str = ''
-        self.ttpgfly      :str = ''
-        self.on           :str = f'$${self.togon} '
-        self.off          :str = f'$${self.togoff} '
-        self.playerturn   :str = ''
-        self.mouselookon  :str = ''
-        self.mouselookoff :str = ''
-        self.runcamdist   :str = ''
-        self.flycamdist   :str = ''
-        self.detailhi     :str = ''
-        self.detaillo     :str = ''
-        self.NonSoDMode   :str = ''
-        self.SprintMode   :str = ''
-        self.FlyMode      :str = ''
-        self.JumpMode     :str = ''
-        self.SpeedMode    :str = ''
-        self.GFlyMode     :str = ''
-        self.jumpifnocj   :str = ''
+        self.tphover      :str  = ''
+        self.ttpgfly      :str  = ''
+        self.on           :str  = f'$${self.togon} '
+        self.off          :str  = f'$${self.togoff} '
+        self.playerturn   :str  = ''
+        self.mouselookon  :str  = ''
+        self.mouselookoff :str  = ''
+        self.runcamdist   :str  = ''
+        self.flycamdist   :str  = ''
+        self.detailhi     :str  = ''
+        self.detaillo     :str  = ''
+        self.NonSoDMode   :str  = ''
+        self.SprintMode   :str  = ''
+        self.FlyMode      :str  = ''
+        self.JumpMode     :str  = ''
+        self.SpeedMode    :str  = ''
+        self.GFlyMode     :str  = ''
+        self.jumpifnocj   :str  = ''
 
         self.space:int = 0
         self.X    :int = 0

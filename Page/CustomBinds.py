@@ -1,11 +1,13 @@
 import wx
 import re
+from typing import Dict, List, Any
 from pathlib import Path
 import json
 
 from Icon import GetIcon
 from Page import Page
 from Help import HelpButton
+from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
@@ -16,9 +18,9 @@ class CustomBinds(Page):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.TabTitle = "Custom Binds"
-        self.Panes    = []
-        self.Init     = {}
+        self.TabTitle : str                        = "Custom Binds"
+        self.Panes    : List[CustomBindPaneParent] = []
+        self.Init     : Dict[str, Any]             = {}
 
     def BuildPage(self):
 

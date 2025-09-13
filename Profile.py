@@ -9,6 +9,8 @@ import wx.lib.colourselect as csel
 
 import GameData
 
+from Models.ProfileData import ProfileData
+
 from BindFile import BindFile
 from BLF import BLF
 
@@ -91,6 +93,8 @@ class Profile(wx.Notebook):
     def __init__(self, parent, filename = None, newname = None, profiledata = None):
         super().__init__(parent, style = wx.NB_TOP, name = "Profile")
 
+        self.ProfileData     : ProfileData         = ProfileData(wx.ConfigBase.Get(), filename, newname, profiledata)
+
         self.BindFiles       : Dict[str, BindFile] = {}
         self.Pages           : List[bcPage]        = []
         self.Modified        : bool                = False
@@ -99,14 +103,13 @@ class Profile(wx.Notebook):
         self.MaxCustomID     : int                 = 0
         self.LastModTime     : int                 = 0
         self.Server          : str                 = 'Homecoming'
-        self.Data            : Dict[str, Any]      = {}
 
         # are we wanting to load this one from a file?
         if self.Filename:
             if not self.Filename.exists():
                 raise Exception("Tried to load a Profile whose file is missing")
             if data := json.loads(Path(self.Filename).read_text()):
-                self.Data = data
+                self.ProfileData.FillWith(data)
                 self.LastModTime = self.Filename.stat().st_mtime_ns
             else:
                 raise Exception(f"Something broke while loading profile {self.Filename}.  This is a bug.")
@@ -117,15 +120,12 @@ class Profile(wx.Notebook):
             jsonstring = self.GetDefaultProfileJSON()
             if jsonstring:
                 if data := json.loads(jsonstring):
-                    self.Data = data
+                    self.ProfileData.FillWith(data)
                 else:
                     raise Exception(f"Something broke while loading profile {self.Filename}.  This is a bug.")
 
-            if profiledata:
-                self.Data['General'].update(profiledata)
-
             self.ProfileBindsDir = self.GenerateBindsDirectoryName()
-            self.Data['ProfileBindsDir'] = self.ProfileBindsDir
+            self.ProfileData['ProfileBindsDir'] = self.ProfileBindsDir
             if not self.ProfileBindsDir:
                 # This happens if GenerateBindsDirectoryName can't come up with something sane
                 parent.OnProfDirButton()
@@ -133,8 +133,7 @@ class Profile(wx.Notebook):
         else:
             raise Exception("Error: Profile created with neither filename or newname.  This is a bug.")
 
-        self.Server = self.Data.get('Server', 'Homecoming')
-        GameData.SetupGameData(self.Server)
+        GameData.SetupGameData(self.ProfileData['Server'])
 
         # Add the individual tabs, in order.
         self.General           = self.CreatePage(General(self))
@@ -437,7 +436,7 @@ class Profile(wx.Notebook):
 
     def doLoadFromFile(self, pathname):
         try:
-            self.Data = json.loads(Path(pathname).read_text())
+            self.ProfileData.update(json.loads(Path(pathname).read_text()))
             self.buildFromData()
         except Exception as e:
             wx.LogError(f"Profile {pathname} could not be loaded: {e}")
@@ -458,7 +457,7 @@ class Profile(wx.Notebook):
         self.SetTitle()
 
         self.MassageData()
-        data = self.Data
+        data = self.ProfileData
 
         # we store the ProfileBindsDir outside of the sections
         if data and data.get('ProfileBindsDir', None):
@@ -586,17 +585,17 @@ class Profile(wx.Notebook):
     def MassageData(self):
 
         # load old Profiles pre-rename of "Movement Powers" tab
-        if self.Data and 'SoD' in self.Data:
-            self.Data['MovementPowers'] = self.Data['SoD']
+        if self.ProfileData and 'SoD' in self.ProfileData:
+            self.ProfileData['MovementPowers'] = self.ProfileData['SoD']
             self.SetModified()
 
         # This option got renamed for better clarity
-        if self.Data['MovementPowers']['DefaultMode'] == 'No SoD':
-            self.Data['MovementPowers']['DefaultMode'] = 'No Default SoD'
+        if self.ProfileData['MovementPowers']['DefaultMode'] == 'No SoD':
+            self.ProfileData['MovementPowers']['DefaultMode'] = 'No Default SoD'
 
         # Massage old hardcoded-three-step BufferBinds into the new way
-        if self.Data and 'CustomBinds' in self.Data:
-            for i, custombind in enumerate(self.Data['CustomBinds']):
+        if self.ProfileData and 'CustomBinds' in self.ProfileData:
+            for i, custombind in enumerate(self.ProfileData['CustomBinds']):
                 if not custombind: continue
 
                 if custombind.get('Type', '') == "BufferBind":
@@ -633,7 +632,7 @@ class Profile(wx.Notebook):
                         del custombind['BuffChat3Tgt']
                         del custombind['BuffChat3']
 
-                    self.Data['CustomBinds'][i] = custombind
+                    self.ProfileData['CustomBinds'][i] = custombind
 
     def SetTitle(self):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore
@@ -707,7 +706,7 @@ class Profile(wx.Notebook):
         resetfile = self.ResetFile()
         keybindreset = 'keybind_reset' if config.ReadBool('FlushAllBinds') else ''
         feedback = 't $name, Resetting keybinds.'
-        resetfile.SetBind(config.Read('ResetKey'), "Reset Key", "Preferences", [keybindreset , feedback, resetfile.BLF()])
+        resetfile.SetBind(config.Read('ResetKey'), "Reset Key", "Preferences", [keybindreset, feedback, resetfile.BLF()])
 
         errors = 0
         donefiles = 0

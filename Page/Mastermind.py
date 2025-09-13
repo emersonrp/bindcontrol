@@ -73,7 +73,7 @@ class Mastermind(Page):
         PetExtraTop = wx.BoxSizer(wx.HORIZONTAL)
         PetExtraBottom = wx.BoxSizer(wx.HORIZONTAL)
 
-        maxValue = 24 if self.Profile.Server == 'Homecoming' else 26
+        maxValue = 24 if self.Profile.Server() == 'Homecoming' else 26
         LevelLabel = wx.StaticText(PetNameSB, -1, 'Mastermind Level:')
         self.LevelSlider = wx.Slider(PetNameSB, minValue = 1, maxValue = maxValue, value = maxValue,
                                      style = wx.SL_VALUE_LABEL|wx.SL_AUTOTICKS)
@@ -198,7 +198,7 @@ class Mastermind(Page):
 
     def OnLevelChanged(self, evt = None):
         if evt: evt.Skip()
-        bossLevel = 22 if self.Profile.Server == 'Homecoming' else 26
+        bossLevel = 22 if self.Profile.Server() == 'Homecoming' else 26
         lvl = self.LevelSlider.GetValue()
         self.PetBoxes[1].GetStaticBox().Enable(lvl >= 6)
         self.PetBoxes[2].GetStaticBox().Enable(lvl >= 18)

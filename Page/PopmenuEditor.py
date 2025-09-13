@@ -178,22 +178,22 @@ class PopmenuEditor(Page):
         self.Layout()
 
     def GetMenuPath(self, _ = None):
-        if not (gamepath := GetValidGamePath(self.Profile.Server)):
-            wx.MessageBox(f"Your {self.Profile.Server} Game Directory is not set up correctly.  Please visit the Preferences dialog.")
+        if not (gamepath := GetValidGamePath(self.Profile.Server())):
+            wx.MessageBox(f"Your {self.Profile.Server()} Game Directory is not set up correctly.  Please visit the Preferences dialog.")
             return
 
         return CheckAndCreateMenuPathForGamePath(gamepath)
 
     def SynchronizeUI(self, _ = None):
         NoErrors = True
-        if GetValidGamePath(self.Profile.Server):
+        if GetValidGamePath(self.Profile.Server()):
             self.CheckMenuDirBox.Hide()
         else:
             self.CheckMenuDirBox.Show()
             NoErrors = False
 
         if NoErrors:
-            if GetValidGamePath(self.Profile.Server):
+            if GetValidGamePath(server)
                 self.CheckMenuDirBox.Hide()
             else:
                 self.CheckMenuDirBox.Show()
@@ -202,7 +202,7 @@ class PopmenuEditor(Page):
         self.NewMenuButton.Enable(NoErrors)
         self.ImportMenuButton.Enable(NoErrors)
 
-        self.ReloadMenusButton.Enable(bool(GetValidGamePath(self.Profile.Server)))
+        self.ReloadMenusButton.Enable(bool(GetValidGamePath(server)))
 
     def OnOpenPrefsButton(self, _):
         with PrefsDialog(self) as dlg:
@@ -315,7 +315,7 @@ class PopmenuEditor(Page):
 
 
     def LoadMenusFromMenuDir(self):
-        menupath = GetValidGamePath(self.Profile.Server)
+        menupath = GetValidGamePath(self.Profile.Server())
 
         if menupath:
             self.MenuIDList = {}

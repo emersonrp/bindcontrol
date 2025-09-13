@@ -19,7 +19,7 @@ class AutoPowerCmd(PowerBinderCommand):
         return autoPowerSizer
 
     def MakeBindString(self):
-        cmd = "powexecauto" if self.Profile.Server == 'Homecoming' else 'px_at'
+        cmd = "powexecauto" if self.Profile.Server() == 'Homecoming' else 'px_at'
         return f"{cmd} {self.autoPowerName.GetLabel()}"
 
     def Serialize(self):

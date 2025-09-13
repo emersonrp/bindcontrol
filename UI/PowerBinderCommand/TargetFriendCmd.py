@@ -24,7 +24,7 @@ class TargetFriendCmd(PowerBinderCommand):
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
 
-        if self.Profile.Server == "Homecoming":
+        if self.Profile.Server() == "Homecoming":
             return "targetfriend" + mode.lower()
         else: # Rebirth
             return {

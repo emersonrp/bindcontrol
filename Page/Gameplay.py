@@ -18,7 +18,7 @@ class Gameplay(Page):
         super().__init__(parent)
         self.TabTitle : str = "Gameplay"
 
-        if self.Profile.Server == 'Homecoming':
+        if self.Profile.Server() == 'Homecoming':
             self.NumTrays : int = 4
             self.TrayLabels : List[str] = ['', 'First', 'Second', 'Third', 'Server']
             self.KeybindProfiles : Dict[str, List[str]] = {
@@ -136,7 +136,7 @@ class Gameplay(Page):
                 trayGridSizer.Add(nextbutton, 1, wx.ALIGN_CENTER)
 
         GridHelpSizer.Add(trayGridSizer, 0, wx.ALL, 10)
-        if self.Profile.Server == 'Rebirth':
+        if self.Profile.Server() == 'Rebirth':
             traygridbutton = HelpButton(staticbox, 'PowerTrayButtonsRebirth.html')
         else:
             traygridbutton = HelpButton(staticbox, 'PowerTrayButtons.html')
@@ -334,7 +334,7 @@ class Gameplay(Page):
 
     def PopulateBindFiles(self):
         ResetFile = self.Profile.ResetFile()
-        server = self.Profile.Server
+        server = self.Profile.Server()
 
         ### Tray buttons
         for button in (1,2,3,4,5,6,7,8,9,0):

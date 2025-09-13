@@ -22,7 +22,7 @@ class MovementPowers(Page):
 
         # A few things that are server-specific.  If we change servers, we reload the profile
         # so this is safe to do in __init__
-        server = self.Profile.Server
+        server = self.Profile.Server()
         self.togon   : str = "px_tgon" if server == "Rebirth" else "powexectoggleon"
         self.togoff  : str = "px_tgof" if server == "Rebirth" else "powexectoggleoff"
         self.unqueue : str = "px_uq"   if server == "Rebirth" else "powexecunqueue"
@@ -114,7 +114,7 @@ class MovementPowers(Page):
             'TempToggle'      : "",
         }
 
-        if self.Profile.Server == "Homecoming":
+        if self.Profile.Server() == "Homecoming":
             UI.Labels.update({
                 'TPBindKey'      : 'Teleport to Cursor Immediately',
                 'TTPBindKey'     : 'Team Teleport to Cursor Immediately',
@@ -127,7 +127,7 @@ class MovementPowers(Page):
 
     def BuildPage(self):
 
-        server = self.Profile.Server
+        server = self.Profile.Server()
 
         topSizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -1053,7 +1053,7 @@ class MovementPowers(Page):
     def PopulateBindFiles(self):
         profile   = self.Profile
         ResetFile = profile.ResetFile()
-        server = self.Profile.Server
+        server = self.Profile.Server()
         tpActivator = "powexeclocation cursor " if server == 'Homecoming' else "powexecname "
 
         # set up the "t" object that drives approximately everything

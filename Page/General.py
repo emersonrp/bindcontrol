@@ -405,7 +405,7 @@ class General(Page):
                         if sp != s:
                             if s in poolcontents: poolcontents.remove(s)
 
-            if self.Profile.Server == 'Rebirth':
+            if self.Profile.Server() == 'Rebirth':
                 arch = self.GetState('Archetype')
                 if arch == 'Peacebringer' or arch == 'Warshade':
                     if 'Flight' in poolcontents: poolcontents.remove('Flight')
@@ -437,7 +437,7 @@ class General(Page):
 
     def OnServerChange(self, evt):
         if evt: evt.Skip()
-        server = self.Profile.Server
+        server = self.Profile.Server()
 
         if self.GetState('Server') != server:
             if wx.MessageBox('Changing server requires saving and reloading the Profile.  Continue?', 'Changing Server', wx.YES_NO, self) == wx.YES:

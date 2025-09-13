@@ -207,7 +207,7 @@ class Main(wx.Frame):
         if filename:
             try:
                 profile = Profile.Profile(self, filename)
-                profile.buildFromData()
+                profile.buildUIFromData()
                 self.Profile = profile
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
                 self.CheckProfDirButtonErrors()
@@ -331,7 +331,7 @@ class Main(wx.Frame):
                 if self.StartupPanel: self.StartupPanel.Destroy()
 
                 self.Profile = Profile.Profile(self, newname = newname)
-                self.Profile.buildFromData()
+                self.Profile.buildUIFromData()
                 self.Profile.SetModified()
                 wx.LogMessage(f'Created New Profile "{newname}".')
 
@@ -412,7 +412,7 @@ class Main(wx.Frame):
             if profiledata := Util.BuildFiles.ParseBuildFile(buildfile):
                 generaldata = {'General' : profiledata}
                 if newprofile := Profile.Profile(self, newname = profiledata['Name'], profiledata = generaldata):
-                    newprofile.buildFromData()
+                    newprofile.buildUIFromData()
                     self.InsertProfile(newprofile)
                     newprofile.SetModified()
             else:

@@ -48,7 +48,7 @@ class TargetCustomCmd(PowerBinderCommand):
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
 
-        if self.Profile.Server == 'Homecoming':
+        if self.Profile.Server() == 'Homecoming':
             targetCommand = "targetcustom" + mode.lower()
         else: # Rebirth
             targetCommand = "tgt_" + {
@@ -104,7 +104,7 @@ class TargetCustomCmd(PowerBinderCommand):
         if init.get('name'        , ''): self.targetCustomOptionalName.SetValue(init['name'])
 
     def GetServerCommand(self, command):
-        server = self.Profile.Server
+        server = self.Profile.Server()
         if server == 'Homecoming': return f" {command}"
 
         # Rebirth abbreviations

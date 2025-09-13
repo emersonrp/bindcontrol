@@ -29,6 +29,6 @@ class PowerUnqueueCmd(PowerBinderCommand):
 
     def MakeBindString(self):
         if self.UnqueueOrAbort.GetString(self.UnqueueOrAbort.GetSelection()) == 'Unqueue':
-            return 'powexecunqueue' if self.Profile.Server == "Homecoming" else 'px_uq'
+            return 'powexecunqueue' if self.Profile.Server() == "Homecoming" else 'px_uq'
         else:
-            return 'powexecabort' if self.Profile.Server == "Homecoming" else 'px_ab'
+            return 'powexecabort' if self.Profile.Server() == "Homecoming" else 'px_ab'

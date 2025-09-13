@@ -52,6 +52,7 @@ class ProfileData(dict):
         self.Filepath        : Path|None           = Path(filename) if filename else None
         self.MaxCustomID     : int                 = 0
         self.LastModTime     : int                 = 0
+        self.Server          : str                 = "Homecoming"
 
         # TODO what is actually going to go here?
         self.Pages : list = []
@@ -84,8 +85,7 @@ class ProfileData(dict):
         else:
             raise Exception("Error: ProfileData requested with neither filename or newname.  This is a bug.")
 
-        self['Server'] = self['Server'] or 'Homecoming'
-        GameData.SetupGameData(self['Server'])
+        GameData.SetupGameData(self.Server)
 
         if newname:    self.SetModified()
         elif filename: self.ClearModified()

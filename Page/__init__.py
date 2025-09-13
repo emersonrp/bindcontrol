@@ -9,9 +9,12 @@
 #  page.GetState('FPSBindKey')
 #  page.SetState('Archetype', 'Blaster')
 
+import json
 import wx
 import wx.lib.colourselect as csel
 from UI.KeySelectDialog import bcKeyButton
+from UI.PowerPicker import PowerPicker
+
 
 class Page(wx.ScrolledWindow):
 
@@ -37,10 +40,19 @@ class Page(wx.ScrolledWindow):
         # We might be tempted to short-circuit out if the control is not enabled
         # but that breaks things terribly during window init.  Might be worth tracking
         # down and fixing but not today.
-        if isinstance(control, bcKeyButton):
+        if isinstance(control, wx.DirPickerCtrl):
+            return control.GetPath()
+        elif isinstance(control, PowerPicker):
+            return json.dumps({
+                'power'    : control.GetLabel(),
+                'iconfile' : control.IconFilename,
+            })
+        elif isinstance(control, bcKeyButton):
             return control.Key
         elif isinstance(control, wx.Button):
             return control.GetLabel()
+        elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
+            return control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
         elif isinstance(control, wx.Choice) or isinstance(control, wx.ComboBox):
             sel = control.GetSelection()
             if sel != wx.NOT_FOUND: return control.GetString(sel)

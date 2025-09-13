@@ -4,12 +4,15 @@ import platform
 from functools import partial
 
 import Profile
+import Models.ProfileData as ProfileData
 
 class BindDirsWindow(wx.MiniFrame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(mainSizer)
+
+        config = wx.ConfigBase.Get()
 
         statictextclass = wx.StaticText if platform.system() == "Windows" else ST.GenStaticText
 
@@ -37,9 +40,9 @@ class BindDirsWindow(wx.MiniFrame):
         proflabel.SetFont(headerFont)
         proflabel.SetLabelMarkup('Managing Profile')
 
-        for binddir in sorted(Profile.GetAllProfileBindsDirs(), key = str.casefold):
+        for binddir in sorted(ProfileData.GetAllProfileBindsDirs(config), key = str.casefold):
             listsizer.Add(statictextclass(panel, label = binddir), 0, wx.ALL, 3)
-            label = Profile.CheckProfileForBindsDir(binddir)
+            label = ProfileData.CheckProfileForBindsDir(config, binddir)
             dirname = statictextclass(panel, label = label or '')
             if not label:
                 dirname.SetForegroundColour(wx.Colour(128,128,128))
@@ -47,7 +50,7 @@ class BindDirsWindow(wx.MiniFrame):
                 dirname.SetLabelMarkup('-unmanaged-')
                 dirname.SetToolTip(f'No known profile is managing this directory.')
             else:
-                if file := Profile.GetProfileFileForName(label):
+                if file := ProfileData.GetProfileFileForName(config, label):
                     dirname.SetFont(linkFont)
                     dirname.SetForegroundColour(wx.Colour(0,0,255))
                     dirname.SetToolTip(f'Click to load profile "{label}"')

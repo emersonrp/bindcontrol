@@ -211,7 +211,9 @@ class Main(wx.Frame):
                 self.Profile = profile
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
                 self.CheckProfDirButtonErrors()
-            except Exception:
+            except Exception as e:
+                if self.Profile:
+                    self.Profile.DestroyLater()
                 self.Profile = None
                 self.StartupPanel = self.MakeStartupPanel()
                 self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
@@ -529,6 +531,7 @@ class Main(wx.Frame):
         return result
 
     def CheckProfDirButtonErrors(self):
+        config = wx.ConfigBase.Get()
         if not self.Profile: return
         if self.Profile.ProfileBindsDir:
             self.ProfDirButton.RemoveError('undef')

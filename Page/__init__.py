@@ -43,6 +43,7 @@ class Page(wx.ScrolledWindow):
         if isinstance(control, wx.DirPickerCtrl):
             return control.GetPath()
         elif isinstance(control, PowerPicker):
+            # we de-json this on the way out in ProfileData.AsJSON()
             return json.dumps({
                 'power'    : control.GetLabel(),
                 'iconfile' : control.IconFilename,
@@ -57,6 +58,7 @@ class Page(wx.ScrolledWindow):
             sel = control.GetSelection()
             if sel != -1: return control.GetString(control.GetSelection())
             else        : return ''
+        # TODO - I don't think we ever GetState on a StaticText, but maybe?
         # elif isinstance(control, wx.StaticText):
         #     return control.GetLabel()
         elif getattr(control, 'GetValue', None):

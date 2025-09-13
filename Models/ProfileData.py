@@ -1,4 +1,5 @@
-import wx # TODO TODO TODO REMOVE THIS WHEN POSSIBLE
+# TODO TODO TODO REMOVE THIS
+import wx
 
 
 
@@ -167,18 +168,14 @@ class ProfileData(dict):
     ###################
     # Profile Save/Load
     def doSaveAsDefault(self):
-        try:
-            # so much could go wrong.
-            self.Filepath = None
-            jsonstring = self.AsJSON(small = True)
-            zipstring = codecs.encode(jsonstring.encode('utf-8'), 'zlib')
-            b64string = base64.b64encode(zipstring).decode('ascii')
+        # if this blows up, calling code should try/except it
+        self.Filepath = None
+        jsonstring = self.AsJSON(small = True)
+        zipstring = codecs.encode(jsonstring.encode('utf-8'), 'zlib')
+        b64string = base64.b64encode(zipstring).decode('ascii')
 
-            self.Config.Write('DefaultProfile', b64string)
-            self.Config.Flush()
-        except Exception as e:
-            # Let us know if it did
-            wx.LogError(f"Failed to write default profile: {e}")
+        self.Config.Write('DefaultProfile', b64string)
+        self.Config.Flush()
 
     def GetDefaultProfileJSON(self):
         jsonstring = None
@@ -223,40 +220,16 @@ class ProfileData(dict):
             savedata[pagename] = {}
             if pagename == "CustomBinds": continue
 
-#            for controlname, control in page.Ctrls.items():
-#                # Save disabled controls' states, too, so as not to lose config
-#                # if someone, say, turns on "disable self tell" with a bunch of custom colors defined
-#
-#                # look up what type of control it is to know how to extract its value
-#                if isinstance(control, wx.DirPickerCtrl):
-#                    value = control.GetPath()
-#                elif isinstance(control, PowerPicker):
-#                    value = {
-#                        'power'    : control.GetLabel(),
-#                        'iconfile' : control.IconFilename,
-#                    }
-#                elif isinstance(control, bcKeyButton):
-#                    value = control.Key
-#                elif isinstance(control, wx.Button):
-#                    value = control.GetLabel()
-#                elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
-#                    value = control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
-#                elif isinstance(control, wx.Choice):
-#                    # we used to save the numerical selection which could break if the contents
-#                    # of a picker changed between runs, like, say, if new powersets appeared.
-#                    # Save the string value instead
-#                    value = ""
-#                    sel = control.GetSelection()
-#                    if (sel != wx.NOT_FOUND): value = control.GetString(sel)
-#                elif isinstance(control, wx.StaticText):
-#                    continue
-#                else:
-#                    value = control.GetValue()
-#
-#                savedata[pagename][controlname] = value
-#
-#            if isinstance(page, General):
-#                savedata['Server'] = page.ServerPicker.GetString(page.ServerPicker.GetSelection())
+            for controlname in page.Ctrls:
+                # Save disabled controls' states, too, so as not to lose config
+                # if someone, say, turns on "disable self tell" with a bunch of custom colors defined
+
+                # Gonna try this -- we're serializing PowerPickers' states as JSON, and
+                # so let's just de-JSON everything -- strings should just turn into strings
+                savedata[pagename][controlname] = json.loads(page.GetState(controlname))
+
+            if pagename == 'General':
+                savedata['Server'] = page.ServerPicker.GetString(page.ServerPicker.GetSelection())
 
         savedata['CustomBinds'] = []
         customPage = getattr(self, 'CustomBinds')

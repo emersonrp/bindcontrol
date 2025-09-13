@@ -23,6 +23,7 @@ from bcLogging import bcLogging
 from bcVersion import current_version
 from Icon import GetIcon
 import Profile
+import Models.ProfileData as ProfileData
 from UI.BindDirsWindow import BindDirsWindow
 from UI.PrefsDialog import PrefsDialog
 from Help import ShowHelpWindow
@@ -206,7 +207,7 @@ class Main(wx.Frame):
                 self.Profile = profile
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
                 self.CheckProfDirButtonErrors()
-            except Exception as e:
+            except Exception:
                 self.Profile = None
                 self.StartupPanel = self.MakeStartupPanel()
                 self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
@@ -480,7 +481,7 @@ class Main(wx.Frame):
                 if PathText.HasErrors(): return self.OnProfDirButton()
                 # if we changed the directory, offer to delete the old one.
 
-                otherprofile = Profile.CheckProfileForBindsDir(self.Profile.ProfileBindsDir)
+                otherprofile = ProfileData.CheckProfileForBindsDir(config, self.Profile.ProfileBindsDir)
                 if (
                     # we changed it to a new value:
                     self.Profile.ProfileBindsDir and (newvalue != self.Profile.ProfileBindsDir)
@@ -534,7 +535,7 @@ class Main(wx.Frame):
         else:
             self.ProfDirButton.AddWarning('toolong', 'Your binds directory name is rather long.  This is not an error but can lead to some binds being too long for the game to use.')
 
-        otherprofile = Profile.CheckProfileForBindsDir(self.Profile.ProfileBindsDir)
+        otherprofile = ProfileData.CheckProfileForBindsDir(config, self.Profile.ProfileBindsDir)
         if otherprofile and (otherprofile != self.Profile.ProfileName()):
             self.ProfDirButton.AddWarning('owned', f'The binds directory you have chosen is marked as owned by the profile "{otherprofile}."  This is not an error, but be sure this is what you want to do.')
         else:
@@ -571,14 +572,14 @@ class Main(wx.Frame):
         if value: # don't do this check if it's blank
             exists = None
             # look at the existing bindsdirs and see if we match
-            for bindsdir in Profile.GetAllProfileBindsDirs():
+            for bindsdir in ProfileData.GetAllProfileBindsDirs(config):
                 # check case-insensitive because Windows
                 if bindsdir.lower() == value.lower():
                     # but stash it away as the case-sensitive version because Linux
                     exists = bindsdir
                     break
             if exists and self.Profile:
-                existingProfile = Profile.CheckProfileForBindsDir(exists)
+                existingProfile = ProfileData.CheckProfileForBindsDir(config, exists)
                 if existingProfile != self.Profile.ProfileName():
                     existingProfileWarning = f', and is managed by the profile {existingProfile}' if existingProfile else ''
                     textctrl.AddWarning('exists', f'The directory you have selected already exists{existingProfileWarning}.  This is not an error, but be sure this is where you want to save your binds.')

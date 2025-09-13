@@ -1,6 +1,6 @@
 import wx
 from pathlib import PureWindowsPath
-import Profile
+import Models.ProfileData as ProfileData
 from UI.PowerBinderCommand import PowerBinderCommand
 
 ####### Load Binds Directory
@@ -16,7 +16,7 @@ class LoadBindsDir(PowerBinderCommand):
         lbText.SetToolTip('Select an existing profile directory from which to load a set of bind files')
         lbSizer.Add(lbText, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
 
-        profiles = Profile.GetAllProfileBindsDirs()
+        profiles = ProfileData.GetAllProfileBindsDirs(wx.ConfigBase.Get())
 
         self.lbPicker = wx.Choice(dialog, -1, choices = sorted(profiles))
         self.lbPicker.SetToolTip('Select an existing profile directory from which to load a set of bind files')

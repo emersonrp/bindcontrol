@@ -325,23 +325,6 @@ class ProfileData(dict):
             raise Exception("Profile.ProfileIDFile() returned nothing, not checking IDFile!")
 
     def WriteBindFiles(self):
-        if not self['ProfileBindsDir']:
-            # TODO - custom exception, catch in calling code
-            raise Exception("Profile Binds Directory is not valid, please correct this.")
-
-        # Create the BindsDir if it doesn't exist
-        try:
-            self.BindsDir().mkdir(parents = True, exist_ok = True)
-        except Exception as e:
-            # TODO custom exception?
-            raise Exception("Can't make binds directory {self.BindsDir()}: {e}")
-
-        # TODO - do this first, maybe, in Profile not ProfileData?
-        otherProfile = self.BindsDirNotMine()
-        if otherProfile:
-            # this directory belongs to someone else
-            answer = wx.MessageBox(f"The binds directory {self.BindsDir()} contains binds from the profile \"{otherProfile}\" -- overwrite?", "Confirm", wx.YES_NO)
-            if answer == wx.NO: return
 
         # write the ProfileID file that identifies this directory as "belonging to" this profile
         try:

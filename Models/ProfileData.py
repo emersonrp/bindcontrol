@@ -42,12 +42,14 @@ def GetAllProfileBindsDirs(config):
 def ProfilePath(config): return Path(config.Read('ProfilePath'))
 
 class ProfileData(dict):
-    def __init__(self, config, filename = None, newname = None):
+    def __init__(self, config, filename = None, newname = None, profiledata = {}):
+
+        self.FillWith(profiledata)
 
         self.Config                                = config # wx.Config object
         self.BindFiles       : Dict[str, BindFile] = {}
         self.Modified        : bool                = False
-        self.Filename        : Path|None           = Path(filename) if filename else None
+        self.Filepath        : Path|None           = Path(filename) if filename else None
         self.MaxCustomID     : int                 = 0
         self.LastModTime     : int                 = 0
 
@@ -55,33 +57,32 @@ class ProfileData(dict):
         self.Pages : list = []
 
         # are we wanting to load this one from a file?
-        if self.Filename:
-            if not self.Filename.exists():
-                raise Exception("Tried to load a Profile whose file is missing")
-            if data := json.loads(Path(self.Filename).read_text()):
-                self.update(data)
-                self.LastModTime = self.Filename.stat().st_mtime_ns
+        if self.Filepath:
+            if not self.Filepath.exists():
+                raise Exception(f'Tried to load a Profile whose file "{self.Filepath}" is missing')
+            if data := json.loads(self.Filepath.read_text()):
+                self.FillWith(data)
+                self.LastModTime = self.Filepath.stat().st_mtime_ns
             else:
-                raise Exception(f"Something broke while loading profile {self.Filename}.  This is a bug.")
+                raise Exception(f'Something broke while loading profile "{self.Filepath}".  This is a bug.')
 
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
         elif newname:
-            self.Filename = ProfilePath(self.Config) / f"{newname}.bcp"
-            jsonstring = self.GetDefaultProfileJSON()
-            if jsonstring:
+            self.Filepath = ProfilePath(self.Config) / f"{newname}.bcp"
+            if jsonstring := self.GetDefaultProfileJSON():
                 if data := json.loads(jsonstring):
-                    self.clear()
-                    self.update(data)
+                    self.FillWith(data)
                 else:
-                    raise Exception(f"Something broke while loading profile {self.Filename}.  This is a bug.")
+                    raise Exception(f"Something broke while loading profile {self.Filepath}.  This is a bug.")
 
             self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
             if not self['ProfileBindsDir']:
                 # This happens if GenerateBindsDirectoryName can't come up with something sane
+                # # TODO TODO Throw a custom exception here, and catch it in Profile
                 raise Exception("Can't come up with a sane Binds Directory!")
 
         else:
-            raise Exception("Error: Profile created with neither filename or newname.  This is a bug.")
+            raise Exception("Error: ProfileData requested with neither filename or newname.  This is a bug.")
 
         self['Server'] = self['Server'] or 'Homecoming'
         GameData.SetupGameData(self['Server'])
@@ -89,15 +90,19 @@ class ProfileData(dict):
         if newname:    self.SetModified()
         elif filename: self.ClearModified()
 
-    def ProfileName(self)   : return self.Filename.stem if self.Filename else ''
+    def ProfileName(self)   : return self.Filepath.stem if self.Filepath else ''
     def ResetFile(self)     : return self.GetBindFile("reset.txt")
     def ProfileIDFile(self) : return self.BindsDir() / 'bcprofileid.txt'
-    def BindsDir(self)      : return Path(self.Config.Read('BindPath')) / self.ProfileBindsDir
+    def BindsDir(self)      : return Path(self.Config.Read('BindPath')) / self['ProfileBindsDir']
     def GameBindsDir(self) :
         if gbp := self.Config.Read('GameBindPath'):
-            return PureWindowsPath(gbp) / self.ProfileBindsDir
+            return PureWindowsPath(gbp) / self['ProfileBindsDir']
         else:
             return self.BindsDir()
+
+    def FillWith(self, data):
+        self.clear()
+        self.update(data)
 
     def SetModified(self):
         self.Modified = True
@@ -159,13 +164,12 @@ class ProfileData(dict):
         # We're gonna lowercase this because Windows is case-insensitive
         return max(bindsdircandidates, key = len).lower() if bindsdircandidates else fallback
 
-
     ###################
     # Profile Save/Load
     def doSaveAsDefault(self):
         try:
             # so much could go wrong.
-            self.Filename = None
+            self.Filepath = None
             jsonstring = self.AsJSON(small = True)
             zipstring = codecs.encode(jsonstring.encode('utf-8'), 'zlib')
             b64string = base64.b64encode(zipstring).decode('ascii')
@@ -194,9 +198,9 @@ class ProfileData(dict):
 
         ProfilePath(self.Config).mkdir( parents = True, exist_ok = True )
 
-        if not self.Filename:
+        if not self.Filepath:
             raise Exception(f"No Filename set in Profile {self.ProfileName()}!  Aborting save.")
-        savefile = self.Filename
+        savefile = self.Filepath
 
         dumpstring = self.AsJSON()
 
@@ -212,7 +216,7 @@ class ProfileData(dict):
 
     def AsJSON(self, small = False):
         savedata : Dict[str, Any] = {}
-        savedata['ProfileBindsDir'] = self.ProfileBindsDir
+        savedata['ProfileBindsDir'] = self['ProfileBindsDir']
         savedata['MaxCustomID']     = self.MaxCustomID
         for page in self.Pages:
             pagename = type(page).__name__
@@ -277,12 +281,12 @@ class ProfileData(dict):
             wx.LogError(f"Profile {pathname} could not be loaded: {e}")
             return False
 
-        self.Filename = Path(pathname)
+        self.Filepath = Path(pathname)
 
         # if we're loading a profile from before when we stored the
         # ProfileBindsDir in it, generate one.
-        if not self.ProfileBindsDir:
-            self.ProfileBindsDir = self.GenerateBindsDirectoryName()
+        if not self['ProfileBindsDir']:
+            self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
             self.SetModified()
 
         wx.LogMessage(f"Loaded profile {pathname}")
@@ -321,18 +325,18 @@ class ProfileData(dict):
             raise Exception("Profile.ProfileIDFile() returned nothing, not checking IDFile!")
 
     def WriteBindFiles(self):
-        if not self.ProfileBindsDir:
-            wx.MessageBox("Profile Binds Directory is not valid, please correct this.")
-            return
+        if not self['ProfileBindsDir']:
+            # TODO - custom exception, catch in calling code
+            raise Exception("Profile Binds Directory is not valid, please correct this.")
 
         # Create the BindsDir if it doesn't exist
         try:
             self.BindsDir().mkdir(parents = True, exist_ok = True)
         except Exception as e:
-            wx.LogError("Can't make binds directory {self.BindsDir()}: {e}")
-            wx.MessageBox("Can't make binds directory {self.BindsDir()}: {e}")
-            return
+            # TODO custom exception?
+            raise Exception("Can't make binds directory {self.BindsDir()}: {e}")
 
+        # TODO - do this first, maybe, in Profile not ProfileData?
         otherProfile = self.BindsDirNotMine()
         if otherProfile:
             # this directory belongs to someone else
@@ -343,9 +347,8 @@ class ProfileData(dict):
         try:
             self.ProfileIDFile().write_text(self.ProfileName())
         except Exception as e:
-            wx.LogError("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
-            wx.MessageBox("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
-            return
+            # TODO custom exception?
+            raise Exception("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
 
         # Start by making the bind to make the reset load itself.  This might get overridden with
         # more elaborate load strings in like MovementPowers, but this is the safety fallback
@@ -356,12 +359,11 @@ class ProfileData(dict):
         feedback = 't $name, Resetting keybinds.'
         resetfile.SetBind(config.Read('ResetKey'), "Reset Key", "Preferences", [keybindreset , feedback, resetfile.BLF()])
 
-        errors = 0
+        errors = []
         donefiles = 0
 
         # Go to each page....
         for page in self.Pages:
-
             # ... and tell it to gather up binds and put them into bindfiles.
             try:
                 success = page.PopulateBindFiles()
@@ -372,8 +374,7 @@ class ProfileData(dict):
                 if config.ReadBool('CrashOnBindError'):
                     raise e
                 else:
-                    wx.LogMessage(f"Error populating bind file: {e}")
-                    errors += 1
+                    errors.append(f"Error populating bind file: {e}")
 
         # Now we have them here and can iterate them
         totalfiles = len(self.BindFiles)
@@ -388,15 +389,14 @@ class ProfileData(dict):
                 if config.ReadBool('CrashOnBindError'):
                     raise e
                 else:
-                    wx.LogMessage(f"Failed to write bindfile {bindfile.Path}: {e}")
-                    errors += 1
+                    errors.append(f"Failed to write bindfile {bindfile.Path}: {e}")
 
             dlg.Update(donefiles, str(bindfile.Path))
 
         dlg.Destroy()
 
         if errors:
-            msg = f"{donefiles} of {totalfiles} bind files written.\n\nThere were {errors} errors!  Check the log."
+            msg = f"{donefiles} of {totalfiles} bind files written.\n\nThere were {len(errors)} errors!  Check the log."
         else:
             msg = f"{donefiles} of {totalfiles} bind files written successfully."
 
@@ -421,12 +421,12 @@ class ProfileData(dict):
 
         bindpath = self.Config.Read('BindPath')
         if len(bindpath) < 6: # "C:\COH" being the classic
-            wx.MessageBox(f"Your Binds Directory is set to '{bindpath}' which seems wrong.  Check the preferences dialog.", "Binds Directory Error", wx.OK)
-            return
+            # TODO custom exception?
+            raise Exception(f"Your Binds Directory is set to '{bindpath}' which seems wrong.  Check the preferences dialog.", "Binds Directory Error", wx.OK)
 
         if not bindfiles:
-            wx.LogError("Tried to doDeleteBindFiles with no bindfiles.  Please report this as a bug.  Bailing.")
-            return
+            # TODO custom exception?
+            raise Exception("Tried to doDeleteBindFiles with no bindfiles.  Please report this as a bug.  Bailing.")
 
         # bindfiles is generated using someone's AllBindFiles(), which uses
         # Profile.GetBindFile(), so if BindsDir is sane, we're probably OK.

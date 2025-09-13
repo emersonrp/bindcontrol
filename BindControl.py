@@ -407,7 +407,8 @@ class Main(wx.Frame):
             buildfile = Path(pathname)
 
             if profiledata := Util.BuildFiles.ParseBuildFile(buildfile):
-                if newprofile := Profile.Profile(self, newname = profiledata['Name'], profiledata = profiledata):
+                generaldata = {'General' : profiledata}
+                if newprofile := Profile.Profile(self, newname = profiledata['Name'], profiledata = generaldata):
                     newprofile.buildFromData()
                     self.InsertProfile(newprofile)
                     newprofile.SetModified()

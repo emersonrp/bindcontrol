@@ -3,7 +3,7 @@ import Util.BuildFiles
 from pathlib import Path
 
 def test_BuildFiles():
-    fixture = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'fixture.txt'
+    fixture = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'buildfile.txt'
 
     data = Util.BuildFiles.ParseBuildFile(fixture)
 

@@ -444,7 +444,7 @@ class General(Page):
                 mainwindow = wx.App.Get().Main
                 self.Profile.doSaveToFile()
                 newProfile = Profile.Profile(mainwindow, filename = self.Profile.Filename)
-                newProfile.buildFromData()
+                newProfile.buildUIFromData()
                 mainwindow.InsertProfile(newProfile)
             else:
                 self.ServerPicker.SetSelection(self.ServerPicker.FindString(server))

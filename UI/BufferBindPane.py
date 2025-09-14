@@ -53,7 +53,7 @@ class BufferBindPane(CustomBindPaneParent):
         selChatTxt = wx.StaticText(pane, label = 'On select, tell:')
 
         self.SelChatTgt = wx.Choice(pane, choices = ChatTargets)
-        self.SelChatTgt.SetSelection(self.SelChatTgt.FindString(self.Init.get('SelChatTgt', '')))
+        self.SelChatTgt.SetStringSelection(self.Init.get('SelChatTgt', ''))
         self.Ctrls[self.MakeCtlName('SelChatTgt')] = self.SelChatTgt
 
         self.SelChat = wx.TextCtrl(pane, -1, self.Init.get('SelChat', ''))
@@ -323,7 +323,7 @@ class Buff(wx.Panel):
         buffChatTxt = wx.StaticText(self, label = 'On buff, tell:')
         buffSizer.Add(buffChatTxt, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
         self.ChatTgt = wx.Choice(self, choices = ChatTargets)
-        self.ChatTgt.SetSelection(self.ChatTgt.FindString(buff.get('ChatTgt', 'team')))
+        self.ChatTgt.SetStringSelection(buff.get('ChatTgt', 'team'))
         buffSizer.Add(self.ChatTgt, 0, wx.ALIGN_CENTER_VERTICAL)
         self.Chat = wx.TextCtrl(self, value = buff.get('Chat', ''))
         self.Chat.SetHint('/tell contents; leave blank to skip')

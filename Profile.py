@@ -154,11 +154,13 @@ class Profile(wx.Notebook):
 
     def SetModified(self, _ = None):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()} (*)") # pyright: ignore
-        self.Modified = True
+        self.ProfileData.SetModified()
 
     def ClearModified(self, _ = None):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore
-        self.Modified = False
+        self.ProfileData.ClearModified()
+
+    def IsModified(self): return self.ProfileData.Modified
 
     ###################
     # Profile Save/Load

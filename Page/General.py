@@ -322,6 +322,7 @@ class General(Page):
 
     def OnPickArchetype(self, evt = None):
         arch = self.GetState('Archetype')
+        c = self.Ctrls
 
         if not arch:
             # We somehow have some code path that ends up here without arch set, so
@@ -329,25 +330,28 @@ class General(Page):
             arch = 'Blaster'
             self.SetState('Archetype', arch)
 
-        self.Ctrls['Primary'].Clear()
-        self.Ctrls['Secondary'].Clear()
-        self.Ctrls['Epic'].Clear()
+        c['Primary'].Clear()
+        c['Secondary'].Clear()
+        c['Epic'].Clear()
 
         Primaries   = GameData.Archetypes[arch]['Primary']
         Secondaries = GameData.Archetypes[arch]['Secondary']
         Epix        = GameData.Archetypes[arch]['Epic']
 
-        self.Ctrls['Epic'].Append('') # allow us to deselect epic pool
+        c['Epic'].Append('') # allow us to deselect epic pool
 
-        for p in Primaries   : self.Ctrls['Primary'].Append(p)
-        for s in Secondaries : self.Ctrls['Secondary'].Append(s)
-        for e in Epix        : self.Ctrls['Epic'].Append(e)
+        for p in Primaries   : c['Primary'].Append(p)
+        for s in Secondaries : c['Secondary'].Append(s)
+        for e in Epix        : c['Epic'].Append(e)
 
-        self.Ctrls['Primary'].SetSelection(0)
-        self.Ctrls['Secondary'].SetSelection(0)
-        self.Ctrls['Epic'].SetSelection(0)
+        c['Primary'].SetSelection(0)
+        self.Profile.UpdateData('General', 'Primary', self.GetState('Primary'))
+        c['Secondary'].SetSelection(0)
+        self.Profile.UpdateData('General', 'Secondary', self.GetState('Secondary'))
+        c['Epic'].SetSelection(0)
+        self.Profile.UpdateData('General', 'Epic', self.GetState('Epic'))
 
-        self.Ctrls['Epic'].Enable(arch != "Peacebringer" and arch != "Warshade")
+        c['Epic'].Enable(arch != "Peacebringer" and arch != "Warshade")
 
         if arch == "Peacebringer" or arch == "Warshade":
             self.UpdatePoolPickers()
@@ -413,6 +417,7 @@ class General(Page):
 
             picker.SetItems(poolcontents)
             picker.SetSelection(picker.FindString(curval))
+            self.Profile.UpdateData('General', pickername, self.GetState(pickername))
 
     def OnPickPrimaryPowerSet(self, evt):
         self.Profile.Mastermind.SynchronizeUI()
@@ -448,6 +453,7 @@ class General(Page):
                 mainwindow.InsertProfile(newProfile)
             else:
                 self.ServerPicker.SetSelection(self.ServerPicker.FindString(server))
+                self.Profile.UpdateData('General', 'Server', server)
 
     UI.Labels.update({
         'Epic' : 'Epic / Patron',

@@ -55,5 +55,5 @@ class LoadBindsDir(PowerBinderCommand):
                 }
 
     def Deserialize(self, init):
-        if init.get('LoadBindProfile', ''): self.lbPicker.SetSelection(self.lbPicker.FindString(init['LoadBindProfile']))
+        if init.get('LoadBindProfile', ''): self.lbPicker.SetStringSelection(init['LoadBindProfile'])
         self.lbResetCB.SetValue(init.get('ResetKeybinds', False))

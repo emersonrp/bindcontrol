@@ -75,6 +75,6 @@ class InspCombine(PowerBinderCommand):
 
     def Deserialize(self, init):
         if source := init.get('source', ''):
-            self.inspCombineSource.SetSelection(self.inspCombineSource.FindString(source))
+            self.inspCombineSource.SetStringSelection(source)
         if target := init.get('target', ''):
-            self.inspCombineTarget.SetSelection(self.inspCombineTarget.FindString(target))
+            self.inspCombineTarget.SetStringSelection(target)

@@ -104,7 +104,7 @@ class ControlGroup(wx.StaticBoxSizer):
         elif ctlType == ('choice'):
             contents = contents if contents else []
             control = cgChoice(CtlParent, -1, choices = contents, size = size)
-            control.SetSelection(control.FindString(Init[ctlName]))
+            control.SetStringSelection(Init[ctlName])
             if callback:
                 control.Bind(wx.EVT_CHOICE, callback)
 

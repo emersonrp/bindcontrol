@@ -104,6 +104,12 @@ class ProfileData(dict):
         self.ProfileBindsDir = self['ProfileBindsDir']
         self.Server          = self['General']['Server']
 
+    def UpdateData(self, pagename, ctlname, value):
+        print(f"setting {pagename} {ctlname} to {value}")
+        self[pagename] = self[pagename] or {}
+        self[pagename][ctlname] = value
+        self.SetModified()
+
     def SetModified(self):
         self.Modified = True
 

@@ -75,4 +75,4 @@ class MovementCmd(PowerBinderCommand):
         elif mod == 'zero'     : self.zerobutton.SetValue(True)
         elif mod == 'one'      : self.onebutton.SetValue(True)
 
-        self.commandchoice.SetSelection(self.commandchoice.FindString(init.get('command', 'forward')))
+        self.commandchoice.SetStringSelection(init.get('command', 'forward'))

@@ -91,7 +91,7 @@ class LFGCmd(PowerBinderCommand):
         else:
             self.LFGRemoveRB.SetValue(True)
 
-        self.LFGSetChoice.SetSelection(self.LFGSetChoice.FindString(init.get('lfgvalue')))
+        self.LFGSetChoice.SetStringSelection(init.get('lfgvalue'))
         self.CommentCB.SetValue(init.get('usecomment', False))
         self.Comment.SetValue(init.get('comment', ''))
 

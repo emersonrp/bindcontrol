@@ -126,7 +126,7 @@ class WindowToggleCmd(PowerBinderCommand):
             if isinstance(window, int):
                 choice.SetSelection(window)
             else:
-                choice.SetSelection(choice.FindString(window))
+                choice.SetStringSelection(window)
 
         if choice.GetSelection() == wx.NOT_FOUND:
             choice.SetSelection(0)

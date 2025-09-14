@@ -24,7 +24,7 @@ class PowerUnqueueCmd(PowerBinderCommand):
         }
 
     def Deserialize(self, init):
-        self.UnqueueOrAbort.SetSelection(self.UnqueueOrAbort.FindString(init.get('unqueueorabort', 'Unqueue')))
+        self.UnqueueOrAbort.SetStringSelection(init.get('unqueueorabort', 'Unqueue'))
 
 
     def MakeBindString(self):

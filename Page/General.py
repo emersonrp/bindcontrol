@@ -69,7 +69,7 @@ class General(Page):
         for a in GameData.Alignments:
             alignPicker.Append(a, GetIconBitmap('Alignments', a))
         self.Ctrls['Alignment'] = alignPicker
-        alignPicker.SetSelection(alignPicker.FindString(self.Init['Alignment']))
+        alignPicker.SetStringSelection(self.Init['Alignment'])
         alignPicker.Bind(wx.EVT_COMBOBOX, self.OnPickAlignment)
         bannerSizer.Add(alignPicker, 1, wx.EXPAND|wx.ALL, 5)
 
@@ -416,7 +416,7 @@ class General(Page):
                     if 'Teleportation' in poolcontents: poolcontents.remove('Teleportation')
 
             picker.SetItems(poolcontents)
-            picker.SetSelection(picker.FindString(curval))
+            picker.SetStringSelection(curval)
             self.Profile.UpdateData('General', pickername, self.GetState(pickername))
 
     def OnPickPrimaryPowerSet(self, evt):
@@ -452,7 +452,7 @@ class General(Page):
                 newProfile.buildUIFromData()
                 mainwindow.InsertProfile(newProfile)
             else:
-                self.ServerPicker.SetSelection(self.ServerPicker.FindString(server))
+                self.ServerPicker.SetStringSelection(server)
                 self.Profile.UpdateData('General', 'Server', server)
 
     UI.Labels.update({

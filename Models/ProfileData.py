@@ -128,7 +128,6 @@ class ProfileData(dict):
                     if isinstance(newvalue, dict):
                         value = newvalue
             except Exception: pass
-            print(f"Updating {pagename} - {ctlname} - {value}")
             self[pagename][ctlname] = value
         self.SetModified()
 

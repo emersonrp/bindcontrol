@@ -348,8 +348,11 @@ class Profile(wx.Notebook):
         control = evt.GetEventObject()
         if ctlname := next((name for name,c in page.Ctrls.items() if control == c), None):
             # TODO:  "unless (some way to opt things out of this), then..."
-            self.ProfileData.UpdateData(pagename, ctlname, page.GetState(ctlname))
+            self.UpdateData(pagename, ctlname, page.GetState(ctlname))
             self.SetModified()
+
+    def UpdateData(self, *args):
+        self.ProfileData.UpdateData(*args)
 
     # This is for mashing old legacy profiles into the current state of affairs.
     # Each step in here might eventually get deprecated but maybe not, there's

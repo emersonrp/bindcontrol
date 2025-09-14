@@ -263,9 +263,9 @@ class Profile(wx.Notebook):
                         # of a picker changed between runs, like, say, if new powersets appeared.
                         # we still check whether we have a numerical value so we can load old profiles.
                         if isinstance(value, str):
-                            value = control.FindString(value)
-                            if value == wx.NOT_FOUND: value = 0
-                        control.SetSelection(value if value else 0)
+                            control.SetStringSelection(value)
+                        else:
+                            control.SetSelection(value if value else 0)
                     elif isinstance(control, wx.CheckBox):
                         control.SetValue(value if value else False)
                     elif isinstance(control, cgSpinCtrl) or isinstance(control, cgSpinCtrlDouble):
@@ -288,18 +288,21 @@ class Profile(wx.Notebook):
                 # Re-fill Primary and Secondary pickers, honoring old numeric indices if needed
                 prim = data['General'].get('Primary', None)
                 if isinstance(prim, str):
-                    prim = page.Ctrls['Primary'].FindString(prim)
-                page.Ctrls['Primary'].SetSelection(prim)
+                    page.Ctrls['Primary'].SetStringSelection(prim)
+                else:
+                    page.Ctrls['Primary'].SetSelection(prim)
 
                 seco = data['General'].get('Secondary', None)
                 if isinstance(seco, str):
-                    seco = page.Ctrls['Secondary'].FindString(seco)
-                page.Ctrls['Secondary'].SetSelection(seco)
+                    page.Ctrls['Secondary'].SetStringSelection(seco)
+                else:
+                    page.Ctrls['Secondary'].SetSelection(seco)
 
                 epic = data['General'].get('Epic', None)
                 if isinstance(epic, str):
-                    epic = page.Ctrls['Epic'].FindString(epic)
-                page.Ctrls['Epic'].SetSelection(epic)
+                    page.Ctrls['Epic'].SetStringSelection(epic)
+                else:
+                    page.Ctrls['Epic'].SetSelection(epic)
 
                 # And while we're in "General" make sure the "Server" picker is set right
                 page.ServerPicker.SetSelectionString(self.ProfileData.Server)

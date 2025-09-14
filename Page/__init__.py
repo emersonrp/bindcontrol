@@ -81,9 +81,9 @@ class Page(wx.ScrolledWindow):
             return control.SetLabel(value)
         elif isinstance(control, wx.Choice):
             if isinstance(value, str):
-                value = control.FindString(value)
-                if value == wx.NOT_FOUND: value = 0
-            return control.SetSelection(value)
+                return control.SetStringSelection(value)
+            else:
+                return control.SetSelection(value)
         elif isinstance(control, wx.StaticText):
             return control.SetLabel(value)
         elif getattr(control, 'SetValue', None):

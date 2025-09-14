@@ -305,7 +305,7 @@ class Profile(wx.Notebook):
                     page.Ctrls['Epic'].SetSelection(epic)
 
                 # And while we're in "General" make sure the "Server" picker is set right
-                page.ServerPicker.SetSelectionString(self.ProfileData.Server)
+                page.ServerPicker.SetStringSelection(self.ProfileData.Server)
 
             page.Layout()
 

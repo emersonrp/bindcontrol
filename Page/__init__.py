@@ -91,11 +91,6 @@ class Page(wx.ScrolledWindow):
         else:
             wx.LogError(f"{control} has no SetValue() - this is a bug.")
 
-    def OnCommandEvent(self, evt):
-        if evt: evt.Skip()
-        # TODO:  "unless (some way to opt things out of this), then..."
-        self.Profile.SetModified()
-
     # disable controls by name
     def EnableControls(self, enabled, names):
         for name in names:

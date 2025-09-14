@@ -8,7 +8,7 @@ from pathlib import Path, PureWindowsPath
 from BindFile import BindFile
 
 def test_CheckProfileForBindsDir(tmp_path):
-    (_, config) = doSetup(tmp_path)
+    _, config = doSetup(tmp_path)
 
     # CheckProfileForBindsDir
     pdir = tmp_path / 'fubble'
@@ -22,7 +22,7 @@ def test_CheckProfileForBindsDir(tmp_path):
     config.DeleteAll()
 
 def test_GetProfileFileForName(tmp_path):
-    (_, config) = doSetup(tmp_path)
+    _, config = doSetup(tmp_path)
 
     # GetProfileFileForName
     file = tmp_path / 'fubble.bcp'
@@ -33,7 +33,7 @@ def test_GetProfileFileForName(tmp_path):
     config.DeleteAll()
 
 def test_GetAllProfileBindsDirs(tmp_path):
-    (_, config) = doSetup(tmp_path)
+    _, config = doSetup(tmp_path)
 
     for d in ['inky', 'pinky', 'blinky', 'clyde']:
         pdir = tmp_path / d
@@ -48,14 +48,14 @@ def test_GetAllProfileBindsDirs(tmp_path):
     config.DeleteAll()
 
 def test_ProfilePath(tmp_path):
-    (_, config) = doSetup(tmp_path)
+    _, config = doSetup(tmp_path)
 
     assert ProfileData.ProfilePath(config) == tmp_path
 
     config.DeleteAll()
 
 def test_ProfileData_init_neither(tmp_path):
-    (_, config) = doSetup(tmp_path)
+    _, config = doSetup(tmp_path)
 
     with pytest.raises(Exception, match = 'neither filename nor newname'):
         ProfileData.ProfileData(config)
@@ -63,7 +63,7 @@ def test_ProfileData_init_neither(tmp_path):
     config.DeleteAll()
 
 def test_ProfileData_init_newname(tmp_path):
-    (_, config) = doSetup(tmp_path)
+    _, config = doSetup(tmp_path)
 
     pd = ProfileData.ProfileData(config, newname = 'test')
     assert pd.Config             == config
@@ -74,7 +74,7 @@ def test_ProfileData_init_newname(tmp_path):
     config.DeleteAll()
 
 def test_ProfileData_init_filename(tmp_path):
-    (_, config) = doSetup(tmp_path)
+    _, config = doSetup(tmp_path)
 
     profile_path = tmp_path / "testprofile.bcp"
     with pytest.raises(Exception, match = f'whose file "{profile_path}" is missing'):
@@ -92,7 +92,7 @@ def test_ProfileData_init_filename(tmp_path):
     config.DeleteAll()
 
 def test_ProfileData_accessors(tmp_path):
-    (_, config) = doSetup(tmp_path)
+    _, config = doSetup(tmp_path)
     fixtureprofile, pd = GetFixtureProfile(config)
 
     assert pd.Filepath        == fixtureprofile
@@ -110,8 +110,8 @@ def test_ProfileData_accessors(tmp_path):
     config.DeleteAll()
 
 def test_ProfileData_GetBindFile(tmp_path):
-    (_, config) = doSetup(tmp_path)
-    fixtureprofile, pd = GetFixtureProfile(config)
+    _, config = doSetup(tmp_path)
+    _, pd     = GetFixtureProfile(config)
 
     resetfile = pd.ResetFile()
     assert resetfile == pd.GetBindFile('reset.txt')
@@ -130,6 +130,54 @@ def test_ProfileData_GetBindFile(tmp_path):
 
     config.DeleteAll()
 
+def test_FillWith(tmp_path):
+    _, config = doSetup(tmp_path)
+    _, pd     = GetFixtureProfile(config)
+
+    pd.FillWith({
+        'ProfileBindsDir' : 'test_FillWith',
+        'General'         : { 'Server' : 'Homecoming' },
+    })
+
+    assert pd.Server == 'Homecoming'
+    assert pd.ProfileBindsDir == 'test_FillWith'
+    assert 'MovementPowers' not in pd
+    assert pd.Modified is True
+
+    config.DeleteAll()
+
+def test_UpdateData(tmp_path):
+    _, config = doSetup(tmp_path)
+    _, pd     = GetFixtureProfile(config)
+
+    # updates existing data
+    pd.UpdateData('General', 'Primary', 'Fubble')
+    assert pd['General']['Primary'] == 'Fubble'
+
+    # will create keys as needed
+    pd.UpdateData('NewThing', 'MakeIt', 'Work')
+    assert pd['NewThing']['MakeIt'] == 'Work'
+
+    # will append new custom bind when empty
+    pd.UpdateData('CustomBinds', { 'CustomID' : 1, 'Type' : 'SimpleBind' })
+    assert len(pd['CustomBinds']) == 1
+    assert pd['CustomBinds'][0]['CustomID'] == 1
+    assert pd['CustomBinds'][0]['Type']     == 'SimpleBind'
+
+    # will append new custom bind to existing
+    pd.UpdateData('CustomBinds', { 'CustomID' : 2, 'Type' : 'SecondBind' })
+    assert len(pd['CustomBinds']) == 2
+    assert pd['CustomBinds'][1]['CustomID'] == 2
+    assert pd['CustomBinds'][1]['Type']     == 'SecondBind'
+
+    # will replace existing custom bind
+    pd.UpdateData('CustomBinds', { 'CustomID' : 1, 'Type' : 'SomethingNew' })
+    assert len(pd['CustomBinds']) == 2
+    assert pd['CustomBinds'][0]['CustomID'] == 1
+    assert pd['CustomBinds'][0]['Type']     == 'SomethingNew'
+
+    config.DeleteAll()
+
 #########
 def doSetup(tmp_path):
     app = wx.App()
@@ -137,7 +185,7 @@ def doSetup(tmp_path):
     wx.ConfigBase.Set(config)
     config.Read = MagicMock(return_value = str(tmp_path))
 
-    return (app, config)
+    return app, config
 
 def GetFixtureProfile(config):
     fixtureprofile = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'testprofile.bcp'

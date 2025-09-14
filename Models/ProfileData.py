@@ -65,6 +65,7 @@ class ProfileData(dict):
             except Exception:
                 raise Exception(f'Something broke while loading profile "{self.Filepath}".  This is a bug.')
 
+            self.ClearModified()
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
         elif newname:
             self.Filepath = ProfilePath(self.Config) / f"{newname}.bcp"
@@ -80,13 +81,11 @@ class ProfileData(dict):
                 # # TODO TODO Throw a custom exception here, and catch it in Profile
                 raise Exception("Can't come up with a sane Binds Directory!")
 
+            self.SetModified()
         else:
             raise Exception("Error: ProfileData requested with neither filename nor newname.  This is a bug.")
 
         GameData.SetupGameData(self.Server)
-
-        if newname:    self.SetModified()
-        elif filename: self.ClearModified()
 
     def ProfileName(self)   : return self.Filepath.stem if self.Filepath else ''
     def ResetFile(self)     : return self.GetBindFile("reset.txt")
@@ -103,13 +102,13 @@ class ProfileData(dict):
         self.update(data)
         self.ProfileBindsDir = self['ProfileBindsDir']
         self.Server          = self['General']['Server']
+        self.SetModified()
 
     def UpdateData(self, pagename, *args):
         if pagename == 'CustomBinds':
-            self[pagename] = self[pagename] or []
+            self[pagename] = self.get(pagename) or []
             replaced = False
             bindcontents = args[0]
-            print(f"Updating Custom Bind: {bindcontents}")
             for i, testbind in enumerate(self[pagename]):
                 if testbind['CustomID'] == bindcontents['CustomID']:
                     self[pagename][i] = bindcontents
@@ -118,7 +117,7 @@ class ProfileData(dict):
             if not replaced:
                 self[pagename].append(bindcontents)
         else:
-            self[pagename] = self[pagename] or {}
+            self[pagename] = self.get(pagename) or {}
             # de-JSONize things if we got them from GetState().
             # This whole process wants revisiting.
             (ctlname, value) = args
@@ -127,7 +126,7 @@ class ProfileData(dict):
                     newvalue = json.loads(value)
                     if isinstance(newvalue, dict):
                         value = newvalue
-            except Exception: pass
+            except Exception: pass # if it didn't JSON, just use it
             self[pagename][ctlname] = value
         self.SetModified()
 

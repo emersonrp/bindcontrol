@@ -169,9 +169,6 @@ class CustomBinds(Page):
 
         bindpane.BuildBindUI(self)
 
-        for ctrlname, ctrl in bindpane.Ctrls.items():
-            self.Ctrls[ctrlname] = ctrl
-
         # put it in a box with control buttons
         bindSizer = wx.BoxSizer(wx.HORIZONTAL)
         bindSizer.Add(bindpane, 1, wx.EXPAND, 5)

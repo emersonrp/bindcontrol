@@ -104,10 +104,32 @@ class ProfileData(dict):
         self.ProfileBindsDir = self['ProfileBindsDir']
         self.Server          = self['General']['Server']
 
-    def UpdateData(self, pagename, ctlname, value):
-        print(f"setting {pagename} {ctlname} to {value}")
-        self[pagename] = self[pagename] or {}
-        self[pagename][ctlname] = value
+    def UpdateData(self, pagename, *args):
+        if pagename == 'CustomBinds':
+            self[pagename] = self[pagename] or []
+            replaced = False
+            bindcontents = args[0]
+            print(f"Updating Custom Bind: {bindcontents}")
+            for i, testbind in enumerate(self[pagename]):
+                if testbind['CustomID'] == bindcontents['CustomID']:
+                    self[pagename][i] = bindcontents
+                    replaced = True
+                    break
+            if not replaced:
+                self[pagename].append(bindcontents)
+        else:
+            self[pagename] = self[pagename] or {}
+            # de-JSONize things if we got them from GetState().
+            # This whole process wants revisiting.
+            (ctlname, value) = args
+            try:
+                if value:
+                    newvalue = json.loads(value)
+                    if isinstance(newvalue, dict):
+                        value = newvalue
+            except Exception: pass
+            print(f"Updating {pagename} - {ctlname} - {value}")
+            self[pagename][ctlname] = value
         self.SetModified()
 
     def SetModified(self):
@@ -234,7 +256,7 @@ class ProfileData(dict):
                         newinfo = json.loads(info)
                         if isinstance(newinfo, dict):
                             info = newinfo
-                except Exception: ...
+                except Exception: pass
                 savedata[pagename][controlname] = info
 
             if pagename == 'General':

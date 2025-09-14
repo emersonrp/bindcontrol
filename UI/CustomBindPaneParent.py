@@ -1,5 +1,4 @@
 # parent class for various custom bindpane types
-import re
 import wx
 from UI.KeySelectDialog import bcKeyButton
 
@@ -15,6 +14,8 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         self.Description = ''
         self.Type        = ''
         # RP:  don't do this as .get('CustomID', GetCustomID()).  Love, RP
+        # RP:  further expln:  .get(X, Y) runs both of X and Y before evaluating
+        # so we end up incrementing CustomID even if we don't use the new value
         self.CustomID    = init.get('CustomID') or page.Profile.GetCustomID()
         self.DelButton   = None
         self.RenButton   = None
@@ -30,6 +31,18 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         self.bindclass = type(self).__name__
 
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
+
+        for evt in [
+            wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
+            wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU, wx.EVT_RADIOBUTTON,
+            wx.EVT_SLIDER,
+        ]:
+
+            self.Bind(evt, self.OnCommandEvent)
+
+    def OnCommandEvent(self, evt):
+        evt.Skip()
+        self.Profile.UpdateData('CustomBinds', self.Serialize())
 
     def BuildBindUI(self, page):
         # build the UI needed to edit/create this bind, and shim

@@ -344,11 +344,12 @@ class General(Page):
         for s in Secondaries : c['Secondary'].Append(s)
         for e in Epix        : c['Epic'].Append(e)
 
-        c['Primary'].SetSelection(0)
+        gendata = self.Profile.ProfileData['General']
+        c['Primary'].SetStringSelection(gendata['Primary'])
         self.Profile.UpdateData('General', 'Primary', self.GetState('Primary'))
-        c['Secondary'].SetSelection(0)
+        c['Secondary'].SetStringSelection(gendata['Secondary'])
         self.Profile.UpdateData('General', 'Secondary', self.GetState('Secondary'))
-        c['Epic'].SetSelection(0)
+        c['Epic'].SetStringSelection(gendata['Epic'])
         self.Profile.UpdateData('General', 'Epic', self.GetState('Epic'))
 
         c['Epic'].Enable(arch != "Peacebringer" and arch != "Warshade")

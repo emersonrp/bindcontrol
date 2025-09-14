@@ -518,7 +518,7 @@ class Main(wx.Frame):
     def CheckIfProfileNeedsSaving(self):
         result = wx.OK
         if self.Profile:
-            if self.Profile.Modified:
+            if self.Profile.IsModified():
                 result = wx.MessageBox(f"Profile {self.Profile.ProfileName()} not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
                 if result == wx.YES:
                     self.Profile.doSaveToFile()

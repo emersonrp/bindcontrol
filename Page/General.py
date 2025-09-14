@@ -346,11 +346,8 @@ class General(Page):
 
         gendata = self.Profile.ProfileData['General']
         c['Primary'].SetStringSelection(gendata['Primary'])
-        self.Profile.UpdateData('General', 'Primary', self.GetState('Primary'))
         c['Secondary'].SetStringSelection(gendata['Secondary'])
-        self.Profile.UpdateData('General', 'Secondary', self.GetState('Secondary'))
         c['Epic'].SetStringSelection(gendata['Epic'])
-        self.Profile.UpdateData('General', 'Epic', self.GetState('Epic'))
 
         c['Epic'].Enable(arch != "Peacebringer" and arch != "Warshade")
 

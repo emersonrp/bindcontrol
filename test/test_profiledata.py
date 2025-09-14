@@ -1,11 +1,13 @@
 #!/usr/sbin/python
 import wx
-import os
+import os, platform
 import pytest
+import json
 import Models.ProfileData as ProfileData
-from unittest.mock import MagicMock
+from unittest.mock import Mock
 from pathlib import Path, PureWindowsPath
 from BindFile import BindFile
+from Util.DefaultProfile import DefaultProfile
 
 def test_CheckProfileForBindsDir(tmp_path):
     _, config = doSetup(tmp_path)
@@ -104,7 +106,7 @@ def test_ProfileData_accessors(tmp_path):
     assert pd.BindsDir()      == tmp_path / pd['ProfileBindsDir']
     assert pd.GameBindsDir()  == PureWindowsPath(tmp_path) / pd['ProfileBindsDir']
 
-    config.Read = MagicMock(return_value = '')
+    config.Read = Mock(return_value = '')
     assert pd.GameBindsDir()  == pd.BindsDir()
 
     config.DeleteAll()
@@ -124,7 +126,7 @@ def test_ProfileData_GetBindFile(tmp_path):
     assert otherbindfile.GameBindsDir == PureWindowsPath(pd.BindsDir())
     assert otherbindfile.GamePath     == PureWindowsPath(otherbindfile.Path)
 
-    pd.GameBindsDir = MagicMock(return_value = 'c:\\coh\\')
+    pd.GameBindsDir = Mock(return_value = 'c:\\coh\\')
     posixbindfile = pd.GetBindFile('dir', 'posixbindfile.txt')
     assert posixbindfile.GamePath == PureWindowsPath('c:\\coh\\dir\\posixbindfile.txt')
 
@@ -176,6 +178,66 @@ def test_UpdateData(tmp_path):
     assert pd['CustomBinds'][0]['CustomID'] == 1
     assert pd['CustomBinds'][0]['Type']     == 'SomethingNew'
 
+    # TODO - test sending JSON in as a value to make sure it gets de-JSON'd
+
+    config.DeleteAll()
+
+def test_GetCustomID(tmp_path):
+    _, config = doSetup(tmp_path)
+    _, pd     = GetFixtureProfile(config)
+
+    assert pd['MaxCustomID'] == 10
+    newid = pd.GetCustomID()
+    assert newid == 11
+    assert pd['MaxCustomID'] == 11
+
+    config.DeleteAll()
+
+def test_GenerateBindsDirectoryName(tmp_path):
+    _, config = doSetup(tmp_path)
+    _, pd     = GetFixtureProfile(config)
+
+    # Uses first letters of multiple words
+    pd.Filepath = Path('Multiple Words Testing.bcp')
+    assert pd.GenerateBindsDirectoryName() == 'mwt'
+
+    # Tries to use capital letters
+    pd.Filepath = Path('OneTestProfileName.bcp')
+    assert pd.GenerateBindsDirectoryName() == 'otpn'
+
+    # Trims to first five for longer names
+    pd.Filepath = Path('Firsttest.bcp')
+    assert pd.GenerateBindsDirectoryName() == 'first'
+
+    # Doesn't use Windows reserved words
+    if platform.system() == "Windows":
+        pd.Filepath = Path('Profile Really Neat.bcp') # 'prn' is reserved
+        assert pd.GenerateBindsDirectoryName() == 'profi'
+
+    config.DeleteAll()
+
+def test_GetDefaultProfileJSON(tmp_path):
+    # don't use doSetup() here as we don't want the Mock
+    _ = wx.App()
+    config = wx.FileConfig()
+    wx.ConfigBase.Set(config)
+    _, pd     = GetFixtureProfile(config)
+
+    jsonstring = pd.GetDefaultProfileJSON()
+    assert jsonstring is None
+
+    config.Write('DefaultProfile', "SOME GIBBERISH")
+    with pytest.raises(Exception):
+        jsonstring = pd.GetDefaultProfileJSON()
+
+    config.Write('DefaultProfile', DefaultProfile)
+    jsonstring = pd.GetDefaultProfileJSON()
+    assert jsonstring is not None
+
+    profiledata = json.loads(jsonstring)
+    assert 'General' in profiledata
+    assert profiledata['ProfileBindsDir'] == 'defau'
+
     config.DeleteAll()
 
 #########
@@ -183,11 +245,10 @@ def doSetup(tmp_path):
     app = wx.App()
     config = wx.FileConfig()
     wx.ConfigBase.Set(config)
-    config.Read = MagicMock(return_value = str(tmp_path))
+    config.Read = Mock(return_value = str(tmp_path))
 
     return app, config
 
 def GetFixtureProfile(config):
     fixtureprofile = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'testprofile.bcp'
     return fixtureprofile, ProfileData.ProfileData(config, filename = str(fixtureprofile))
-

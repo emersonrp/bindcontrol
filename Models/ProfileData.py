@@ -205,7 +205,6 @@ class ProfileData(dict):
     def GetDefaultProfileJSON(self):
         jsonstring = None
 
-        # If we have it already saved the new way
         if self.Config.HasEntry('DefaultProfile'):
             try:
                 b64string = self.Config.Read('DefaultProfile')
@@ -236,44 +235,10 @@ class ProfileData(dict):
             raise Exception(f"Problem saving to profile {savefile}: {e}")
 
     def AsJSON(self, small = False):
-        savedata : Dict[str, Any] = {}
-        savedata['ProfileBindsDir'] = self['ProfileBindsDir']
-        savedata['MaxCustomID'] = self['MaxCustomID']
-        for pagename, page in self.Pages.items():
-            savedata[pagename] = {}
-            if pagename == "CustomBinds": continue
-
-            for controlname in page.Ctrls:
-                # Save disabled controls' states, too, so as not to lose config
-                # if someone, say, turns on "disable self tell" with a bunch of custom colors defined
-
-                # Gonna try this -- we're serializing PowerPickers' states as JSON
-                info = page.GetState(controlname)
-                try:
-                    if info:
-                        newinfo = json.loads(info)
-                        if isinstance(newinfo, dict):
-                            info = newinfo
-                except Exception: pass
-                savedata[pagename][controlname] = info
-
-            if pagename == 'General':
-                savedata['Server'] = page.ServerPicker.GetString(page.ServerPicker.GetSelection())
-
-        savedata['CustomBinds'] = []
-        customPage = self.Pages['CustomBinds']
-        # TODO - walking the sizer/widget tree like this is fragile.
-        for pane in customPage.PaneSizer.GetChildren():
-            bindui = pane.GetSizer().GetChildren()
-            if bindui:
-                bindpane = bindui[0].GetWindow()
-                if bindpane:
-                    savedata['CustomBinds'].append(bindpane.Serialize())
-
         if small:
-            return json.dumps(savedata, separators = (',', ':'))
+            return json.dumps(self, separators = (',', ':'))
         else:
-            return json.dumps(savedata, indent=2)
+            return json.dumps(self, indent=2)
 
     def doLoadFromFile(self, pathname):
         try:

@@ -518,7 +518,8 @@ class Main(wx.Frame):
                 result = wx.MessageBox("Some popmenus contain unsaved changes, return to editor?", "Popmenus modified", wx.YES_NO)
                 if result == wx.YES:
                     result = wx.CANCEL
-                    self.Profile.SetSelection(6) # TODO - hardcoded "6" is ugly but meh
+                    peidx = self.Profile.FindPage(self.Profile.PopmenuEditor)
+                    self.Profile.SetSelection(peidx)
         return result
 
     def CheckProfDirButtonErrors(self):

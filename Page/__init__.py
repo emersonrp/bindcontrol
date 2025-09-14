@@ -93,11 +93,6 @@ class Page(wx.ScrolledWindow):
         else:
             wx.LogError(f"{control} has no SetValue() - this is a bug.")
 
-    def OnCommandEvent(self, evt):
-        if evt: evt.Skip()
-        # TODO:  "unless (some way to opt things out of this), then..."
-        self.Profile.SetModified()
-
     def GetKeyBinds(self):
         binds = []
         for ctrlname, ctrl in self.Ctrls.items():

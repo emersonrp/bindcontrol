@@ -14,7 +14,7 @@ import UI
 from UI.ErrorControls import ErrorControlMixin
 from bcController import bcController
 
-KeyChanged, EVT_KEY_CHANGED = wx.lib.newevent.NewEvent()
+KeyChanged, EVT_KEY_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 # Platform-specific keyevent flags for telling left from right
 modKeyFlags = {}
@@ -531,17 +531,20 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
         self.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
-    def onKeyChanged(self, _):
-        wx.App.Get().Main.Profile.CheckAllConflicts()
+    def onKeyChanged(self, evt):
+        evt.Skip()
+        profile = wx.App.Get().Main.Profile
+        profile.CheckAllConflicts()
         self.CheckConflicts()
         # Let's try this out -- every time we pick a new key, update the trays'
         # default-keys display just in case we've mashed over one of them now.
-        wx.App.Get().Main.Profile.Gameplay.OnKeybindProfilePicker()
+        profile.Gameplay.OnKeybindProfilePicker()
 
-    def ClearButton(self, _):
+
+    def ClearButton(self, evt):
         self.SetLabel("")
         self.Key = ""
-        wx.PostEvent(self, KeyChanged())
+        wx.PostEvent(self, KeyChanged(evt.GetId(), control = self))
         wx.App.Get().Main.Profile.SetModified()
 
     def MakeBind(self, contents):
@@ -598,4 +601,4 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
 
             # else we canceled, don't do any of that but still:
             profile.CheckAllConflicts()
-            wx.PostEvent(button, KeyChanged())
+            wx.PostEvent(button, KeyChanged(evt.GetId(), control = button))

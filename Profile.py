@@ -3,7 +3,6 @@ from functools import partial
 from pathlib import PurePath, Path, PureWindowsPath
 from typing import Dict, List
 import wx
-import wx.lib.colourselect as csel
 
 import GameData
 
@@ -25,14 +24,13 @@ from Page.CustomBinds import CustomBinds
 from Page.PopmenuEditor import PopmenuEditor
 
 import UI
-from UI.ControlGroup import cgSpinCtrl, cgSpinCtrlDouble
 from UI.SimpleBindPane import SimpleBindPane
 from UI.BufferBindPane import BufferBindPane
 from UI.ComplexBindPane import ComplexBindPane
 from UI.WizardBindPane import WizardBindPane
 from UI.BindWizard import wizards
-from UI.KeySelectDialog import bcKeyButton
-from UI.PowerPicker import PowerPicker
+from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
+from UI.PowerPicker import EVT_POWER_CHANGED
 
 # class method to load a Profile from a file-open dialog
 def LoadFromFile(parent):
@@ -229,7 +227,7 @@ class Profile(wx.Notebook):
         if data and data.get('ProfileBindsDir', None):
             self.ProfileBindsDir = data['ProfileBindsDir']
 
-        for pagename in ['General', 'Gameplay', 'MovementPowers', 'InspirationPopper', 'Mastermind', 'PopmenuEditor']:
+        for pagename in ['General', 'Gameplay', 'MovementPowers', 'InspirationPopper', 'Mastermind']:
             page = getattr(self, pagename)
             if data and pagename in data:
                 for controlname, control in page.Ctrls.items():
@@ -240,43 +238,7 @@ class Profile(wx.Notebook):
                     # it should already have the default value from Init
                     else: continue
 
-                    # look up what type of control it is to know how to update its value
-                    if isinstance(control, wx.DirPickerCtrl):
-                        control.SetPath(value if value else '')
-                    elif isinstance(control, PowerPicker):
-                        control.SetLabel(value['power'])
-                        if iconfile := value['iconfile']:
-                            control.SetBitmap(GetIcon(iconfile))
-                            control.IconFilename = iconfile
-                        control.OnMenuSelection()
-                    elif isinstance(control, wx.Button):
-                        control.SetLabel(value if value else '')
-                        if isinstance(control, bcKeyButton):
-                            control.Key = value if value else ''
-                    elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
-                        control.SetColour(value)
-                        if isinstance(control, csel.ColourSelect):
-                            wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
-                    elif isinstance(control, wx.Choice):
-                        # we used to save the numerical selection which could break if the contents
-                        # of a picker changed between runs, like, say, if new powersets appeared.
-                        # we still check whether we have a numerical value so we can load old profiles.
-                        if isinstance(value, str):
-                            control.SetStringSelection(value)
-                        else:
-                            control.SetSelection(value if value else 0)
-                    elif isinstance(control, wx.CheckBox):
-                        control.SetValue(value if value else False)
-                    elif isinstance(control, cgSpinCtrl) or isinstance(control, cgSpinCtrlDouble):
-                        control.SetValue(value if value else page.Init.get(controlname, 0))
-                    elif isinstance(control, wx.StaticText):
-                        control.SetLabel(value if value else '')
-                    elif isinstance(control, wx.BookCtrlBase):
-                        for i in range(control.GetPageCount()):
-                            if control.GetPageText(i) == value:
-                                control.SetSelection(i)
-                    else:
-                        control.SetValue(value if value else '')
+                    page.SetState(controlname, value)
 
             page.SynchronizeUI()
 
@@ -316,6 +278,7 @@ class Profile(wx.Notebook):
             for custombind in data['CustomBinds']:
                 if not custombind: continue
 
+                # TODO - move this logic into the CustomBBinds class
                 bindpane = None
                 if custombind['Type'] == "SimpleBind":
                     bindpane = SimpleBindPane(cbpage, init = custombind)
@@ -328,18 +291,20 @@ class Profile(wx.Notebook):
                         bindpane = WizardBindPane(cbpage, wizClass, init = custombind)
                     else:
                         wx.LogError(f"Tried to load WizardBind with unknown class {custombind['WizClass']} - probably a bug!")
+                else:
+                    wx.LogError(f'Tried to create a custom bind with unknown type "{custombind['Type']}" - probably a bug!')
 
                 if bindpane:
                     cbpage.AddBindToPage(bindpane = bindpane)
 
 
-        # Finally, after loading all this stuff, THEN add the binds that toggle SetModified
-        for pagename in ['General', 'Gameplay', 'MovementPowers', 'InspirationPopper', 'Mastermind', 'PopmenuEditor']:
+        # Finally, after loading all this stuff, THEN add the binds that update the ProfileData
+        for pagename in ['General', 'Gameplay', 'MovementPowers', 'InspirationPopper', 'Mastermind']:
             page = getattr(self, pagename)
             for evt in [
                 wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
                 wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU, wx.EVT_RADIOBUTTON,
-                wx.EVT_SLIDER,
+                wx.EVT_SLIDER, EVT_KEY_CHANGED, EVT_POWER_CHANGED
             ]:
 
                 page.Bind(evt, partial(self.OnCommandEvent, pagename = pagename))
@@ -347,7 +312,7 @@ class Profile(wx.Notebook):
     def OnCommandEvent(self, evt, pagename):
         evt.Skip()
         page = getattr(self, pagename)
-        control = evt.GetEventObject()
+        control = getattr(evt, 'control', evt.GetEventObject())
         if ctlname := next((name for name,c in page.Ctrls.items() if control == c), None):
             # TODO:  "unless (some way to opt things out of this), then..."
             self.UpdateData(pagename, ctlname, page.GetState(ctlname))

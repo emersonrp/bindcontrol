@@ -14,7 +14,7 @@ import wx
 import wx.lib.colourselect as csel
 from UI.KeySelectDialog import bcKeyButton
 from UI.PowerPicker import PowerPicker
-
+from Icon import GetIcon
 
 class Page(wx.ScrolledWindow):
 
@@ -77,7 +77,14 @@ class Page(wx.ScrolledWindow):
             wx.LogError(f"Got into SetState for key {key} with no control - this is a bug.")
             return
 
-        if isinstance(control, wx.Button):
+        if isinstance(control, PowerPicker):
+            print(value)
+            if power := value.get('power'):
+                control.SetLabel(power)
+            if iconfile := value.get('iconfile'):
+                control.IconFilename = iconfile
+                control.SetBitmap(GetIcon(control.IconFilename))
+        elif isinstance(control, wx.Button):
             return control.SetLabel(value)
         elif isinstance(control, wx.Choice):
             if isinstance(value, str):

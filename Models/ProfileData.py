@@ -117,7 +117,7 @@ class ProfileData(dict):
             if not replaced:
                 self[pagename].append(bindcontents)
         else:
-            self[pagename] = self.get(pagename) or {}
+            self[pagename] = self.get(pagename, {})
             # de-JSONize things if we got them from GetState().
             # This whole process wants revisiting.
             (ctlname, value) = args

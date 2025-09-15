@@ -461,7 +461,14 @@ class Profile(wx.Notebook):
             wx.MessageBox(f"Can't make binds directory {self.BindsDir()}: {e}")
             return
 
-        otherProfile = self.BindsDirNotMine()
+        otherProfile = None
+        try:
+            otherProfile = self.BindsDirNotMine()
+        except Exception:
+            wx.LogError("Something went wrong trying to check the ProfileIDFile: {e}")
+            wx.MessageBox("Something went wrong trying to check the ProfileIDFile: {e}")
+            return
+
         if otherProfile:
             # this directory belongs to someone else
             answer = wx.MessageBox(f"The binds directory {self.BindsDir()} contains binds from the profile \"{otherProfile}\" -- overwrite?", "Confirm", wx.YES_NO)

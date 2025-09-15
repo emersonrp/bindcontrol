@@ -272,8 +272,7 @@ class ProfileData(dict):
     # making this "not mine" so we can return False if everything's fine,
     # or the existing Profile name if something's wrong
     def BindsDirNotMine(self):
-        IDFile = self.ProfileIDFile()
-        if IDFile:
+        if IDFile := self.ProfileIDFile():
             # If the file is even there...
             if IDFile.exists():
                 profilename = IDFile.read_text().strip()

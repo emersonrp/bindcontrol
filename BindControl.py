@@ -241,6 +241,8 @@ class Main(wx.Frame):
 
         self.SetupProfileUI()
 
+        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
+
     # This is the two-button "start new profile" vs "load existing profile" panel
     def MakeStartupPanel(self):
         StartupPanel = wx.Panel(self)

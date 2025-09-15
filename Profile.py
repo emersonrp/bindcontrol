@@ -86,8 +86,6 @@ class Profile(wx.Notebook):
         if newname:    self.SetModified()
         elif filename: self.ClearModified()
 
-        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, parent.OnPageChanged)
-
     def CreatePage(self, page):
         page.BuildPage()
         page.SetScrollRate(10,10)

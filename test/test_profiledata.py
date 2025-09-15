@@ -255,6 +255,35 @@ def test_GetBindFile(tmp_path):
 
     config.DeleteAll()
 
+def test_BindsDirNotMine(tmp_path):
+    _, config = doSetup(tmp_path)
+    _, pd     = GetFixtureProfile(config)
+
+    # correctly returns False for unclaimed bindsdir
+    assert pd.BindsDirNotMine() is False
+
+    pd.BindsDir().mkdir(exist_ok = True)
+
+    # correctly returns truthy / profile name if claimed by someone else
+    idfile = pd.ProfileIDFile()
+    idfile.touch()
+    idfile.write_text('not my circus')
+    assert pd.BindsDirNotMine() == 'not my circus'
+
+    # correctly returns False for claimbed by me
+    idfile.write_text(pd.ProfileName())
+    assert pd.BindsDirNotMine() is False
+
+    # correctly blows up if the Profile doesn't know its id file
+    pd.ProfileIDFile = Mock(return_value = None)
+    with pytest.raises(Exception, match = 'not checking IDFile'):
+        _ = pd.BindsDirNotMine()
+
+    idfile.unlink()
+    pd.BindsDir().rmdir()
+
+    config.DeleteAll()
+
 #########
 def doSetup(tmp_path):
     app = wx.App()

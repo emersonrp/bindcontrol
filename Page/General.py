@@ -344,7 +344,7 @@ class General(Page):
         for s in Secondaries : c['Secondary'].Append(s)
         for e in Epix        : c['Epic'].Append(e)
 
-        gendata = self.Profile.ProfileData['General']
+        gendata = self.Profile.Data['General']
         c['Primary'].SetStringSelection(gendata['Primary'])
         c['Secondary'].SetStringSelection(gendata['Secondary'])
         c['Epic'].SetStringSelection(gendata['Epic'])

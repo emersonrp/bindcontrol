@@ -64,8 +64,7 @@ class Profile(wx.Notebook):
     def __init__(self, parent, filename = None, newname = None, profiledata = None):
         super().__init__(parent, style = wx.NB_TOP, name = "Profile")
 
-        self.ProfileData     : ProfileData         = ProfileData(wx.ConfigBase.Get(), filename, newname, profiledata)
-
+        self.Data            : ProfileData         = ProfileData(wx.ConfigBase.Get(), filename, newname, profiledata)
         self.BindFiles       : Dict[str, BindFile] = {}
         self.Pages           : List[bcPage]        = []
         self.Modified        : bool                = False
@@ -96,7 +95,7 @@ class Profile(wx.Notebook):
 
         # for now, keep these both places.  Eventually, pages will have their own non-wx data structures
         self.Pages.append(page)
-        self.ProfileData.Pages[type(page).__name__] = page
+        self.Data.Pages[type(page).__name__] = page
 
         self.Layout()
         return page
@@ -109,7 +108,7 @@ class Profile(wx.Notebook):
     def Secondary(self)     : return self.General.GetState('Secondary')
     def ResetFile(self)     : return self.GetBindFile("reset.txt")
     def ProfileIDFile(self) : return self.BindsDir() / 'bcprofileid.txt'
-    def Server(self)        : return self.ProfileData.Server
+    def Server(self)        : return self.Data.Server
     def BindsDir(self)      : return Path(wx.ConfigBase.Get().Read('BindPath')) / self.ProfileBindsDir
     def GameBindsDir(self) :
         if gbp := wx.ConfigBase.Get().Read('GameBindPath'):
@@ -154,13 +153,13 @@ class Profile(wx.Notebook):
 
     def SetModified(self, _ = None):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()} (*)") # pyright: ignore
-        self.ProfileData.SetModified()
+        self.Data.SetModified()
 
     def ClearModified(self, _ = None):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore
-        self.ProfileData.ClearModified()
+        self.Data.ClearModified()
 
-    def IsModified(self): return self.ProfileData.Modified
+    def IsModified(self): return self.Data.Modified
 
     ###################
     # Profile Save/Load
@@ -170,7 +169,7 @@ class Profile(wx.Notebook):
             if result == wx.NO: return
 
         try:
-            self.ProfileData.doSaveAsDefault()
+            self.Data.doSaveAsDefault()
         except Exception as e:
             # Let us know if it did
             wx.LogError(f"Failed to write default profile: {e}")
@@ -200,7 +199,7 @@ class Profile(wx.Notebook):
 
             # set up our innards to be the new file
             self.Filename = Path(pathname)
-            self.ProfileBindsDir = self.ProfileData.GenerateBindsDirectoryName()
+            self.ProfileBindsDir = self.Data.GenerateBindsDirectoryName()
             if not self.ProfileBindsDir:
                 # This happens if GenerateBindsDirectoryName can't come up with something sane
                 self.Parent.OnProfDirButton() # pyright: ignore
@@ -212,13 +211,13 @@ class Profile(wx.Notebook):
             self.doLoadFromFile(str(self.Filename))
 
     def doSaveToFile(self):
-        result = self.ProfileData.doSaveToFile()
+        result = self.Data.doSaveToFile()
         self.SetTitle()
-        wx.LogMessage(f"Wrote profile {self.ProfileData.Filepath}")
+        wx.LogMessage(f"Wrote profile {self.Data.Filepath}")
         return result
 
     def doLoadFromFile(self, filename):
-        result = self.ProfileData.doLoadFromFile(filename)
+        result = self.Data.doLoadFromFile(filename)
         self.SetTitle()
         return result
 
@@ -226,7 +225,7 @@ class Profile(wx.Notebook):
         self.SetTitle()
 
         self.MassageData()
-        data = self.ProfileData
+        data = self.Data
 
         # we store the ProfileBindsDir outside of the sections
         if data and data.get('ProfileBindsDir', None):
@@ -307,7 +306,7 @@ class Profile(wx.Notebook):
                     page.Ctrls['Epic'].SetSelection(epic)
 
                 # And while we're in "General" make sure the "Server" picker is set right
-                page.ServerPicker.SetStringSelection(self.ProfileData.Server)
+                page.ServerPicker.SetStringSelection(self.Data.Server)
 
             page.Layout()
 
@@ -357,7 +356,7 @@ class Profile(wx.Notebook):
             self.SetModified()
 
     def UpdateData(self, *args):
-        self.ProfileData.UpdateData(*args)
+        self.Data.UpdateData(*args)
 
     # This is for mashing old legacy profiles into the current state of affairs.
     # Each step in here might eventually get deprecated but maybe not, there's
@@ -365,17 +364,17 @@ class Profile(wx.Notebook):
     def MassageData(self):
 
         # load old Profiles pre-rename of "Movement Powers" tab
-        if self.ProfileData and 'SoD' in self.ProfileData:
-            self.ProfileData['MovementPowers'] = self.ProfileData['SoD']
+        if self.Data and 'SoD' in self.Data:
+            self.Data['MovementPowers'] = self.Data['SoD']
             self.SetModified()
 
         # This option got renamed for better clarity
-        if self.ProfileData['MovementPowers']['DefaultMode'] == 'No SoD':
-            self.ProfileData['MovementPowers']['DefaultMode'] = 'No Default SoD'
+        if self.Data['MovementPowers']['DefaultMode'] == 'No SoD':
+            self.Data['MovementPowers']['DefaultMode'] = 'No Default SoD'
 
         # Massage old hardcoded-three-step BufferBinds into the new way
-        if self.ProfileData and 'CustomBinds' in self.ProfileData:
-            for i, custombind in enumerate(self.ProfileData['CustomBinds']):
+        if self.Data and 'CustomBinds' in self.Data:
+            for i, custombind in enumerate(self.Data['CustomBinds']):
                 if not custombind: continue
 
                 if custombind.get('Type', '') == "BufferBind":
@@ -412,7 +411,7 @@ class Profile(wx.Notebook):
                         del custombind['BuffChat3Tgt']
                         del custombind['BuffChat3']
 
-                    self.ProfileData['CustomBinds'][i] = custombind
+                    self.Data['CustomBinds'][i] = custombind
 
     def SetTitle(self):
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore
@@ -538,7 +537,7 @@ class Profile(wx.Notebook):
                 wx.App.Get().Main.Logger.LogWindow.Show()
 
         # clear out our state
-        self.ProfileData.BindFiles = {}
+        self.Data.BindFiles = {}
         self.BindFiles = {}
 
     def AllBindFiles(self):

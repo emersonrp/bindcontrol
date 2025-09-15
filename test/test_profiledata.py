@@ -240,6 +240,21 @@ def test_GetDefaultProfileJSON(tmp_path):
 
     config.DeleteAll()
 
+def test_GetBindFile(tmp_path):
+    _, config = doSetup(tmp_path)
+    _, pd     = GetFixtureProfile(config)
+
+    assert f'{tmp_path}/fiddlefaddle.txt' not in pd.BindFiles
+
+    bindfile = pd.GetBindFile(tmp_path, 'fiddlefaddle.txt')
+    assert isinstance(bindfile, BindFile)
+    assert isinstance(bindfile.Path, Path)
+    assert bindfile.Path == Path(f'{tmp_path}/fiddlefaddle.txt')
+    assert f'{tmp_path}/fiddlefaddle.txt' in pd.BindFiles
+    assert pd.BindFiles[f'{tmp_path}/fiddlefaddle.txt'] == bindfile
+
+    config.DeleteAll()
+
 #########
 def doSetup(tmp_path):
     app = wx.App()

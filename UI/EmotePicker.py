@@ -19,7 +19,7 @@ class EmotePicker(wx.Menu):
         self.UpdateTarget = target
         self.BuildMenu(GameData.Emotes['emotes'])
 
-        self.Bind(wx.EVT_MENU, self.OnMenuSelection)
+        self.Bind(wx.EVT_MENU, self.OnMenuSelected)
 
     def BuildMenu(self, data):
         for category in data:
@@ -71,7 +71,7 @@ class EmotePicker(wx.Menu):
 
             menu.Append(-1, label)
 
-    def OnMenuSelection(self, evt):
+    def OnMenuSelected(self, evt):
         menuitem = self.FindItemById(evt.GetId())
         label = menuitem.GetItemLabel()
         self.UpdateTarget.SetLabel(label)

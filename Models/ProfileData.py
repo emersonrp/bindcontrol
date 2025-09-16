@@ -100,7 +100,6 @@ class ProfileData(dict):
     def FillWith(self, data):
         self.clear()
         self.update(data)
-        self.ProfileBindsDir = self['ProfileBindsDir']
         self.Server          = self['General']['Server']
         self.SetModified()
 
@@ -223,12 +222,10 @@ class ProfileData(dict):
             raise Exception(f"No Filename set in Profile {self.ProfileName()}!  Aborting save.")
         savefile = self.Filepath
 
-        dumpstring = self.AsJSON()
-
         try:
-            self.Config.Write('LastProfile', str(savefile))
             savefile.touch() # make sure there's one there.
-            savefile.write_text(dumpstring)
+            savefile.write_text(self.AsJSON())
+            self.Config.Write('LastProfile', str(savefile))
             self.LastModTime = savefile.stat().st_mtime_ns
             self.ClearModified()
         except Exception as e:
@@ -239,24 +236,6 @@ class ProfileData(dict):
             return json.dumps(self, separators = (',', ':'))
         else:
             return json.dumps(self, indent=2)
-
-    def doLoadFromFile(self, pathname):
-        try:
-            self.clear()
-            self.update(json.loads(Path(pathname).read_text()))
-        except Exception as e:
-            raise Exception(f"Profile {pathname} could not be loaded: {e}")
-
-        self.Filepath = Path(pathname)
-
-        # if we're loading a profile from before when we stored the
-        # ProfileBindsDir in it, generate one.
-        if not self['ProfileBindsDir']:
-            self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
-            self.SetModified()
-
-        #wx.LogMessage(f"Loaded profile {pathname}")
-        return True
 
     #####################
     # Bind file functions

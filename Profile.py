@@ -230,7 +230,7 @@ class Profile(wx.Notebook):
         for pagename in ['General', 'Gameplay', 'MovementPowers', 'InspirationPopper', 'Mastermind']:
             page = getattr(self, pagename)
             if data and pagename in data:
-                for controlname, control in page.Ctrls.items():
+                for controlname in page.Ctrls:
                     value = None
                     if controlname in data[pagename]:
                         value = data[pagename].get(controlname, None)
@@ -242,7 +242,7 @@ class Profile(wx.Notebook):
 
             page.SynchronizeUI()
 
-            # Do this after SynchronizeUI for General because SynchronizeUI will blow away our powerset
+            # Do this after SynchronizeUI for General because SynchronizeUI has blown away our powerset
             # picks when we re-fill those pickers from the archetype.
             if data and pagename == 'General':
 
@@ -278,7 +278,7 @@ class Profile(wx.Notebook):
             for custombind in data['CustomBinds']:
                 if not custombind: continue
 
-                # TODO - move this logic into the CustomBBinds class
+                # TODO - move this logic into the CustomBinds page class
                 bindpane = None
                 if custombind['Type'] == "SimpleBind":
                     bindpane = SimpleBindPane(cbpage, init = custombind)

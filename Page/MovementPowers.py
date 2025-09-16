@@ -665,12 +665,13 @@ class MovementPowers(Page):
         if evt: evt.Skip()
 
     def OnTempChanged(self, evt = None):
-        tt = self.Ctrls['TempToggle']
         enabled = bool(self.GetState('TempEnable'))
 
+        tt = self.Ctrls['TempToggle']
         tt.Enable(enabled)
         self.TempTravelPowerLabel.Enable(enabled)
         self.TempTravelPowerPicker.Enable(enabled)
+        # this reaches down and touches up Profile.Data
         self.TempTravelPowerPicker.doOnMenuSelected()
         if enabled and not tt.GetLabel():
             tt.AddError('unset', 'No Temp Travel Power BindKey has been set.')

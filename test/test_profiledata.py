@@ -142,7 +142,7 @@ def test_FillWith(tmp_path):
     })
 
     assert pd.Server == 'Homecoming'
-    assert pd.ProfileBindsDir == 'test_FillWith'
+    assert pd['ProfileBindsDir'] == 'test_FillWith'
     assert 'MovementPowers' not in pd
     assert pd.Modified is True
 

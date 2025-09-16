@@ -50,12 +50,15 @@ def LoadFromFile(parent):
         _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(parent).Text('Loading...'))
         wx.GetApp().Yield()
 
-        if newProfile := Profile(parent, filename = pathname):
-            newProfile.buildUIFromData()
-            newProfile.CheckAllConflicts()
-            return newProfile
-        else:
-            newProfile.Destroy()
+        return doLoadFromFile(parent, pathname)
+
+def doLoadFromFile(parent, pathname):
+    newProfile = None
+    if newProfile := Profile(parent, filename = pathname):
+        newProfile.buildUIFromData()
+        newProfile.CheckAllConflicts()
+
+    return newProfile
 
 class Profile(wx.Notebook):
 
@@ -66,7 +69,7 @@ class Profile(wx.Notebook):
         self.BindFiles       : Dict[str, BindFile] = {}
         self.Pages           : List[bcPage]        = []
         self.Modified        : bool                = False
-        self.Filename        : Path|None           = Path(filename) if filename else None
+        self.Filepath        : Path|None           = Path(filename) if filename else None
         self.ProfileBindsDir : str                 = ''
         self.LastModTime     : int                 = 0
 
@@ -98,7 +101,7 @@ class Profile(wx.Notebook):
 
     #####
     # Convenience / JIT accessors
-    def ProfileName(self)   : return self.Filename.stem if self.Filename else ''
+    def ProfileName(self)   : return self.Filepath.stem if self.Filepath else ''
     def Archetype(self)     : return self.General.GetState('Archetype')
     def Primary(self)       : return self.General.GetState('Primary')
     def Secondary(self)     : return self.General.GetState('Secondary')
@@ -194,9 +197,10 @@ class Profile(wx.Notebook):
                 pathname = pathname + '.bcp'
 
             # set up our innards to be the new file
-            self.Filename = Path(pathname)
-            self.ProfileBindsDir = self.Data.GenerateBindsDirectoryName()
-            if not self.ProfileBindsDir:
+            # TODO move this logic down into Models/ProfileData
+            self.Data.Filepath = Path(pathname)
+            self.Data['ProfileBindsDir'] = self.Data.GenerateBindsDirectoryName()
+            if not self.Data['ProfileBindsDir']:
                 # This happens if GenerateBindsDirectoryName can't come up with something sane
                 self.Parent.OnProfDirButton() # pyright: ignore
 
@@ -204,17 +208,14 @@ class Profile(wx.Notebook):
             self.doSaveToFile()
 
             # make sure we're all set up as whatever we just saved as
-            self.doLoadFromFile(str(self.Filename))
+            mainwindow = wx.App.Get().Main
+            newprofile = doLoadFromFile(mainwindow, self.Data.Filepath)
+            mainwindow.InsertProfile(newprofile)
 
     def doSaveToFile(self):
         result = self.Data.doSaveToFile()
         self.SetTitle()
         wx.LogMessage(f"Wrote profile {self.Data.Filepath}")
-        return result
-
-    def doLoadFromFile(self, filename):
-        result = self.Data.doLoadFromFile(filename)
-        self.SetTitle()
         return result
 
     def buildUIFromData(self):

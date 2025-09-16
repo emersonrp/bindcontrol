@@ -671,7 +671,7 @@ class MovementPowers(Page):
         tt.Enable(enabled)
         self.TempTravelPowerLabel.Enable(enabled)
         self.TempTravelPowerPicker.Enable(enabled)
-        self.TempTravelPowerPicker.OnMenuSelection()
+        self.TempTravelPowerPicker.doOnMenuSelected()
         if enabled and not tt.GetLabel():
             tt.AddError('unset', 'No Temp Travel Power BindKey has been set.')
         else:

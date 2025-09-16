@@ -76,7 +76,6 @@ class Page(wx.ScrolledWindow):
             return
 
         if isinstance(control, PowerPicker):
-            print(value)
             if power := value.get('power'):
                 control.SetLabel(power)
             if iconfile := value.get('iconfile'):

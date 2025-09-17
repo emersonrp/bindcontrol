@@ -299,7 +299,7 @@ class CustomBinds(Page):
 
         # clear the title so we get to name it.
         # also clear the keybind itself.
-        newbindpane.Title = None
+        newbindpane.Title = ''
         self.AddBindToPage(newbindpane)
         newbindpane.ClearKeyBinds()
 

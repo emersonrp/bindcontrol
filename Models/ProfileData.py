@@ -132,7 +132,7 @@ class ProfileData(dict):
     def ClearModified(self):
         self.Modified = False
 
-    def GetCustomID(self):
+    def GetCustomID(self) -> int:
         self['MaxCustomID'] = self['MaxCustomID'] + 1
         self.SetModified()
         return self['MaxCustomID']

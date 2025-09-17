@@ -3,7 +3,7 @@ import re
 import GameData
 from Icon import GetIcon
 from UI.ErrorControls import ErrorControlMixin
-from Util.Incarnate import Rarities, Aliases
+from Util.Incarnate import Rarities, Aliases, SlotData
 
 import wx.lib.newevent
 PowerChanged, EVT_POWER_CHANGED = wx.lib.newevent.NewEvent()
@@ -125,24 +125,25 @@ class PowerPickerMenu(wx.Menu):
         # Incarnate Powers
         menu = wx.Menu()
         for slot, slotdata in GameData.IncarnatePowers.items():
-            submenu = wx.Menu()
-            menu.AppendSubMenu(submenu, slot)
-            for type in slotdata['Types']:
-                subsubmenu = wx.Menu()
-                submenu.AppendSubMenu(subsubmenu, type)
+            if 'Powers' in slotdata:
+                submenu = wx.Menu()
+                menu.AppendSubMenu(submenu, slot)
+                for type in slotdata['Types']:
+                    subsubmenu = wx.Menu()
+                    submenu.AppendSubMenu(subsubmenu, type)
 
-                for index, power in enumerate(slotdata['Powers']):
-                    menuitem = wx.MenuItem(id = wx.ID_ANY, text = f"{type} {power}")
-                    rarity = Rarities[ index ]
+                    for index, power in enumerate(slotdata['Powers']):
+                        menuitem = wx.MenuItem(id = wx.ID_ANY, text = f"{type} {power}")
+                        rarity = Rarities[ index ]
 
-                    # aliases for the Lore types ie "Polar Lights" => "Lights" to match the icons
-                    aliasedtype = Aliases.get(type, type)
+                        # aliases for the Lore types ie "Polar Lights" => "Lights" to match the icons
+                        aliasedtype = Aliases.get(type, type)
 
-                    if icon := GetIcon('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}'):
-                        menuitem.SetBitmap(icon)
-                        setattr(menuitem, 'IconFilename', icon.Filename)
+                        if icon := GetIcon('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}'):
+                            menuitem.SetBitmap(icon)
+                            setattr(menuitem, 'IconFilename', icon.Filename)
 
-                    subsubmenu.Append(menuitem)
+                        subsubmenu.Append(menuitem)
         self.AppendSubMenu(menu, "Incarnate")
 
         # Misc Powers

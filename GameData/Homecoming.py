@@ -771,6 +771,9 @@ IncarnatePowers = {
         'Levels' : ['Judgement', 'Core Judgement', 'Radial Judgement', 'Total Core Judgement',
                     'Partial Core Judgement', 'Partial Radial Judgement', 'Total Radial Judgement',
                     'Core Final Judgement', 'Radial Final Judgement'],
+        'Powers' : ['Judgement', 'Core Judgement', 'Radial Judgement', 'Total Core Judgement',
+                    'Partial Core Judgement', 'Partial Radial Judgement', 'Total Radial Judgement',
+                    'Core Final Judgement', 'Radial Final Judgement'],
         'Types' : {
             'Cryonic' : {
                 'Effects' : ['Damage', 'Targets', 'Area of Effect', 'Radius', 'Extra'],
@@ -989,6 +992,11 @@ IncarnatePowers = {
             ['Core Superior Ally'          , 1, 1, 0, '+DMG'                                           , 1],
             ['Radial Superior Ally'        , 0, 1, 1, 'is untouchable with no/minimal offensive powers', 1],
         ],
+        'Powers' : [
+            'Ally', 'Core Ally', 'Radial Ally', 'Total Core Improved Ally', 'Partial Core Improved Ally',
+            'Partial Radial Improved Ally', 'Total Radial Improved Ally', 'Core Superior Ally',
+            'Radial Superior Ally',
+        ],
         'Types' : {
             'Arachnos'            : ['Bane Spider', 'Toxic Tarantula', 'Fortunata'],
             'Banished Pantheon'   : ['Banespawn', 'Ravager', 'Defiler'],
@@ -1015,6 +1023,9 @@ IncarnatePowers = {
     },
     'Destiny' : {
         'Levels' : ['Invocation', 'Core Invocation', 'Radial Invocation', 'Total Core Invocation',
+                    'Partial Core Invocation', 'Partial Radial Invocation', 'Total Radial Invication',
+                    'Core Epiphany', 'Radial Epiphany'],
+        'Powers' : ['Invocation', 'Core Invocation', 'Radial Invocation', 'Total Core Invocation',
                     'Partial Core Invocation', 'Partial Radial Invocation', 'Total Radial Invication',
                     'Core Epiphany', 'Radial Epiphany'],
         'Types' : {
@@ -1092,6 +1103,8 @@ IncarnatePowers = {
     },
     'Hybrid' : {
         'Levels' : ['Genome', 'Core Genome', 'Radial Genome', 'Total Core Graft', 'Partial Core Graft',
+                    'Partial Radial Graft', 'Total Radial Graft', 'Core Embodiment', 'Radial Embodiment'],
+        'Powers' : ['Genome', 'Core Genome', 'Radial Genome', 'Total Core Graft', 'Partial Core Graft',
                     'Partial Radial Graft', 'Total Radial Graft', 'Core Embodiment', 'Radial Embodiment'],
         'Types' : {
             'Assault' : {

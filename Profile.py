@@ -92,9 +92,7 @@ class Profile(wx.Notebook):
         page.SetScrollRate(10,10)
         self.AddPage(page, page.TabTitle)
 
-        # for now, keep these both places.  Eventually, pages will have their own non-wx data structures
         self.Pages.append(page)
-        self.Data.Pages[type(page).__name__] = page
 
         self.Layout()
         return page

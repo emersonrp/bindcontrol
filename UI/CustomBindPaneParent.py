@@ -6,21 +6,21 @@ class CustomBindPaneParent(wx.CollapsiblePane):
     def __init__(self, page, init = {}):
         super().__init__(page.scrolledPanel, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
-        self.Ctrls       = {}
-        self.Page        = page
-        self.Profile     = page.Profile
-        self.Init        = init
-        self.Title       = init.get('Title', '')
-        self.Description = ''
-        self.Type        = ''
+        self.Ctrls              = {}
+        self.Page               = page
+        self.Profile            = page.Profile
+        self.Init        : dict = init
+        self.Title       : str  = init.get('Title', '')
+        self.Description : str  = ''
+        self.Type        : str  = ''
         # RP:  don't do this as .get('CustomID', GetCustomID()).  Love, RP
         # RP:  further expln:  .get(X, Y) runs both of X and Y before evaluating
         # so we end up incrementing CustomID even if we don't use the new value
-        self.CustomID    = init.get('CustomID') or page.Profile.GetCustomID()
-        self.DelButton   = None
-        self.RenButton   = None
-        self.DupButton   = None
-        self.ExpButton   = None
+        self.CustomID    : int            = init.get('CustomID') or page.Profile.GetCustomID()
+        self.DelButton   : wx.Button|None = None
+        self.RenButton   : wx.Button|None = None
+        self.DupButton   : wx.Button|None = None
+        self.ExpButton   : wx.Button|None = None
         self.SetLabel(self.Title)
 
         self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT))

@@ -217,7 +217,6 @@ class PowerBinderDialog(wx.Dialog):
             self.BindStringDisplay.RemoveError('nomatch')
             if bindString != self.PowerBinder.GetValue():
                 self.PowerBinder.SetValue(bindString)
-                wx.App.Get().Main.Profile.SetModified()
         self.CurrentState = self.GetCurrentState()
         self.Close()
 

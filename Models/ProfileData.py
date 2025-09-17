@@ -49,9 +49,6 @@ class ProfileData(dict):
         self.LastModTime     : int                 = 0
         self.Server          : str                 = "Homecoming"
 
-        # TODO what is actually going to go here?
-        self.Pages : Dict[str, Any] = {}
-
         # are we wanting to load this one from a file?
         if self.Filepath:
             if not self.Filepath.exists():
@@ -267,18 +264,3 @@ class ProfileData(dict):
                 return False
         else:
             raise Exception("Profile.ProfileIDFile() returned nothing, not checking IDFile!")
-
-    def AllBindFiles(self):
-        files = [self.ResetFile()]
-        dirs  = []
-        for page in self.Pages.values():
-            bf = page.AllBindFiles()
-            for file in bf['files']:
-                files.append(file)
-            for bdir in bf['dirs']:
-                dirs.append(bdir)
-
-        return {
-            'files' : files,
-            'dirs'  : dirs,
-        }

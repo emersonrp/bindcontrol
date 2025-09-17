@@ -36,7 +36,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"), 0, wx.ALIGN_CENTER_VERTICAL)
         pb = PowerBinder(pane, powerbinderdata)
-        pb.SetValue(self.Init.get('Contents', ''))
+        pb.ChangeValue(self.Init.get('Contents', ''))
         pb.Bind(wx.EVT_TEXT, self.onContentsChanged)
         self.PowerBinder = pb
         self.Ctrls[self.MakeCtlName('PowerBinder')] = pb
@@ -61,7 +61,6 @@ class SimpleBindPane(CustomBindPaneParent):
         border.Add(BindSizer, 1, wx.EXPAND|wx.ALL, 10)
         pane.SetSizer(border)
         self.checkIfWellFormed()
-
 
     def onContentsChanged(self, _):
         self.Profile.SetModified()

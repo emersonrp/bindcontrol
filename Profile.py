@@ -121,6 +121,8 @@ class Profile(wx.Notebook):
                     return True
         return False
 
+    def GetCustomID(self) -> int: return self.Data.GetCustomID()
+
     def BLF(self, *args):
         filepath = self.GameBindsDir()
         for arg in args: filepath = filepath  /  arg

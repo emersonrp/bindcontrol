@@ -220,7 +220,7 @@ class BindStep(wx.Panel):
 
         extralength = len(parent.Profile.BLF(f'cb\\{parent.CustomID}-X.txt'))
         self.PowerBinder = PowerBinder(self, step.get('powerbinderdata', {}), extralength = extralength)
-        self.PowerBinder.SetValue(step.get('contents', ''))
+        self.PowerBinder.ChangeValue(step.get('contents', ''))
         self.PowerBinder.Bind(wx.EVT_TEXT, parent.onContentsChanged)
         sizer.Add(self.PowerBinder, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
 

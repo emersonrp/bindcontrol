@@ -23,7 +23,7 @@ class BufferBindPane(CustomBindPaneParent):
         self.Init = {
             'SelChatTgt'      : 'team',
             'SelChat'         : '',
-            'BuffsAffectTeam' : False,
+            'BuffsAffectTeam' : True,
             'BuffsAffectPets' : False,
         }
 

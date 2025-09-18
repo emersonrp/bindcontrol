@@ -92,6 +92,11 @@ class IncarnateSet(WizardParent):
 
         return panel
 
+    def UpdateAndRefresh(self, evt):
+        if self.IncarnateBox:
+            self.Init = { 'WizData' : { 'IncData' : self.IncarnateBox.Serialize() } }
+        super().UpdateAndRefresh(evt)
+
     def OnHoverIcon(self, markup, evt = None):
         if markup:
             self.HoverDisplay.SetForegroundColour(wx.BLACK)

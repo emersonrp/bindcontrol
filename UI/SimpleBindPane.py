@@ -70,10 +70,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
     def onKeyChanged(self, evt):
         evt.Skip()
-        self.Profile.SetModified()
         self.checkIfWellFormed()
-        if self.Profile:
-            self.Profile.CheckAllConflicts()
 
     def AllBindFiles(self): return {}
 

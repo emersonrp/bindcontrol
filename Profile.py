@@ -319,6 +319,7 @@ class Profile(wx.Notebook):
             # TODO:  "unless (some way to opt things out of this), then..."
             self.UpdateData(pagename, ctlname, page.GetState(ctlname))
             self.SetModified()
+            self.CheckAllConflicts()
 
     def UpdateData(self, *args):
         self.Data.UpdateData(*args)

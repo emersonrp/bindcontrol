@@ -283,6 +283,7 @@ class CustomBinds(Page):
             self.Panes.remove(bindpane)
         bindpane.DestroyLater()
         wx.CallAfter(self.Profile.CheckAllConflicts)
+        self.Profile.UpdateData('CustomBinds', { 'CustomID' : bindpane.CustomID, 'Action' : 'delete' })
         if len(self.Panes) == 0:
             # need to put back the blankpanel
             self.scrolledPanel.Hide()

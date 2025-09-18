@@ -178,6 +178,13 @@ def test_UpdateData(tmp_path):
     assert pd['CustomBinds'][0]['CustomID'] == 1
     assert pd['CustomBinds'][0]['Type']     == 'SomethingNew'
 
+    # will delete a custom bind when asked
+    pd.UpdateData('CustomBinds', { 'CustomID' : 1, 'Action' : 'delete' })
+    assert len(pd['CustomBinds']) == 1
+    assert pd['CustomBinds'][0]['CustomID'] == 2
+    assert pd['CustomBinds'][0]['Type']     == 'SecondBind'
+
+
     # TODO - test sending JSON in as a value to make sure it gets de-JSON'd
 
     config.DeleteAll()

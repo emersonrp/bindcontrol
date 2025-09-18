@@ -31,3 +31,10 @@ class AutoPowerCmd(PowerBinderCommand):
     def Deserialize(self, init):
         if init.get('pname', ''): self.autoPowerName.SetLabel(init['pname'])
         if init.get('picon', ''): self.autoPowerName.SetBitmap(GetIcon(init['picon']))
+
+    def OKToClose(self):
+        if self.autoPowerName.HasPowerPicked():
+            return True
+        else:
+            wx.MessageBox("You must choose a power.", "Power Not Picked")
+            return False

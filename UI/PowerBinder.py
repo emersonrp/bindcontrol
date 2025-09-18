@@ -247,8 +247,8 @@ class PowerBinderDialog(wx.Dialog):
             pass
 
         if cmdObject:
-            cmdObject.ShowEditDialog()
-            self.RearrangeList.SetString(index, cmdObject.MakeListEntryString())
+            if cmdObject.ShowEditDialog() == wx.ID_OK:
+                self.RearrangeList.SetString(index, cmdObject.MakeListEntryString())
         else:
             print("cmdObject was None")
 

@@ -70,3 +70,10 @@ class UsePowerCmd(PowerBinderCommand):
         if init.get('picon', ''):
             self.usePowerName.SetBitmap(GetIcon(init['picon']))
             self.usePowerName.IconFilename = init['picon']
+
+    def OKToClose(self):
+        if self.usePowerName.HasPowerPicked():
+            return True
+        else:
+            wx.MessageBox("You must choose a power.", "Power Not Picked")
+            return False

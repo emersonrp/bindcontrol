@@ -76,8 +76,6 @@ class ComplexBindPane(CustomBindPaneParent):
     def onKeyChanged(self, evt):
         evt.Skip()
         self.checkIfWellFormed()
-        if self.Profile:
-            self.Profile.CheckAllConflicts()
 
     def checkIfWellFormed(self):
         isWellFormed = True

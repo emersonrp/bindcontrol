@@ -220,7 +220,6 @@ class InspirationPopper(Page):
         self.EnableControls(self.useCB.IsChecked(), controls)
         if self.enableTellsCB.IsChecked():
             self.OnEnableTellCB()
-        self.Profile.CheckAllConflicts()
         self.Thaw()
         if evt: evt.Skip()
 
@@ -236,7 +235,6 @@ class InspirationPopper(Page):
         self.EnableControls(self.useRevCB.IsChecked(), controls)
         if self.enableTellsCB.IsChecked():
             self.OnEnableTellCB()
-        self.Profile.CheckAllConflicts()
         self.Thaw()
         if evt: evt.Skip()
 

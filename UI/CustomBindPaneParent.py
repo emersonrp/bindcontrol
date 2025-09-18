@@ -2,7 +2,7 @@
 import wx
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerPicker import EVT_POWER_CHANGED
-from UI.PowerBinder import EVT_POWERBINDER_CHANGED
+from UI.PowerBinder import PowerBinder, EVT_POWERBINDER_CHANGED
 
 class CustomBindPaneParent(wx.CollapsiblePane):
     def __init__(self, page, init = {}):
@@ -45,7 +45,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
     def OnCommandEvent(self, evt):
         evt.Skip()
         control = getattr(evt, 'control', evt.GetEventObject())
-        if control in self.Ctrls.values():
+        if isinstance(control, PowerBinder) or control in self.Ctrls.values():
             # TODO:  "unless (some way to opt things out of this), then..."
             self.Profile.UpdateData('CustomBinds', self.Serialize())
 

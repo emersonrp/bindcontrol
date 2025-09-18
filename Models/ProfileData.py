@@ -107,6 +107,10 @@ class ProfileData(dict):
             bindcontents = args[0]
             for i, testbind in enumerate(self[pagename]):
                 if testbind['CustomID'] == bindcontents['CustomID']:
+                    if bindcontents.get('Action', '') == 'delete':
+                        del self[pagename][i]
+                        replaced = True
+                        break
                     self[pagename][i] = bindcontents
                     replaced = True
                     break

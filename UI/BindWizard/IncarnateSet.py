@@ -78,10 +78,10 @@ class IncarnateSet(WizardParent):
             'Page'    : bindpane.Page,
             'Key'     : bindkey,
         })
-        self.BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.OnKeyChanged)
+        self.BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
         BindSizer.Add(wx.StaticText(panel, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(self.BindKeyCtrl,                      0, wx.ALIGN_CENTER_VERTICAL)
-        bindpane.Page.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
+        bindpane.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
         UI.Labels[self.BindKeyCtrl.CtlName] = f'Incarnate Set Bind "{bindpane.Title}"'
 
         panelSizer.Add(BindSizer, 0, wx.EXPAND|wx.ALL, 15)
@@ -101,16 +101,14 @@ class IncarnateSet(WizardParent):
             self.HoverDisplay.SetLabelMarkup("Incarnate Power Set - Hover any icon for details;  click anywhere to edit")
         if evt: evt.Skip()
 
-    def OnKeyChanged(self, _):
-        profile = wx.App.Get().Main.Profile
-        profile.SetModified()
-        profile.CheckAllConflicts()
+    def onKeyChanged(self, evt):
+        evt.Skip()
         self.CheckIfWellFormed()
 
     def CheckIfWellFormed(self):
         isWellFormed = True
 
-        bk = self.BindPane.Page.Ctrls.get(self.BindPane.MakeCtlName('BindKey'), None)
+        bk = self.BindPane.Ctrls.get(self.BindPane.MakeCtlName('BindKey'), None)
         if not bk:
             wx.LogError(f"BindKey missing from Ctrls in IncarnateSet.CheckIfWellFormed - this is a bug!")
             isWellFormed = False

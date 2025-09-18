@@ -1,6 +1,5 @@
-import os, sys
+import sys
 import importlib
-from pathlib import Path
 import wx
 from Util.Paths import GetRootDirPath
 
@@ -21,7 +20,7 @@ class WizardParent(object):
             helpbutton = wd.FindWindow(wx.ID_HELP)
             helpbutton.Bind(wx.EVT_BUTTON, self.ShowHelp)
             okbutton = wd.FindWindow(wx.ID_OK)
-            okbutton.Bind(wx.EVT_BUTTON, self.RefreshUI)
+            okbutton.Bind(wx.EVT_BUTTON, self.UpdateAndRefresh)
 
             mainSizer.Add(buttonsizer, 0, wx.EXPAND|wx.ALL, 10)
 
@@ -43,8 +42,9 @@ class WizardParent(object):
     def BuildUI(self, dialog, init) -> wx.Sizer:
         ...
 
-    def RefreshUI(self, evt):
+    def UpdateAndRefresh(self, evt):
         evt.Skip()
+        wx.App.Get().Main.Profile.UpdateData('CustomBinds', self.BindPane.Serialize())
         self.BindPane.BuildBindUI(None)
 
 class WizPickerDialog(wx.Dialog):

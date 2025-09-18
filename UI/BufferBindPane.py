@@ -287,7 +287,8 @@ class BufferBindPane(CustomBindPaneParent):
     def CheckIfWellFormed(self):
         return (self.CheckAnyKeyPicked() and self.CheckAllBuffsAreValid())
 
-    def CheckAnyKeyPicked(self, _ = None):
+    def CheckAnyKeyPicked(self, evt = None):
+        if evt: evt.Skip()
         KeyIsPicked = False
         for i in (1,2,3,4,5,6,7,8):
             if self.Ctrls[self.MakeCtlName(f'Team{i}BuffKey')].Key:

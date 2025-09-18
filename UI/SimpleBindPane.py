@@ -24,6 +24,7 @@ class SimpleBindPane(CustomBindPaneParent):
             data['PowerBinderDlg'] = self.PowerBinder.SaveToData()
         else:
             wx.LogWarning(f'Unable to save PowerBinder data for Simple Bind "{self.Title}"')
+
         return data
 
     def BuildBindUI(self, page):
@@ -62,11 +63,13 @@ class SimpleBindPane(CustomBindPaneParent):
         pane.SetSizer(border)
         self.checkIfWellFormed()
 
-    def onContentsChanged(self, _):
+    def onContentsChanged(self, evt):
+        evt.Skip()
         self.Profile.SetModified()
         self.checkIfWellFormed()
 
-    def onKeyChanged(self, _):
+    def onKeyChanged(self, evt):
+        evt.Skip()
         self.Profile.SetModified()
         self.checkIfWellFormed()
         if self.Profile:

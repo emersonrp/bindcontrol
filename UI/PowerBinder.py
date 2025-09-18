@@ -6,6 +6,9 @@ from UI.ControlGroup import cgExpandoTextCtrl
 from UI.ErrorControls import ErrorControlMixin
 from Util.Paths import GetRootDirPath
 
+import wx.lib.newevent
+PowerBinderChanged, EVT_POWERBINDER_CHANGED = wx.lib.newevent.NewCommandEvent()
+
 class PowerBinder(ErrorControlMixin, wx.TextCtrl):
 
     def __init__(self, parent, init = {}, extralength = 0):
@@ -24,8 +27,15 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
     def SaveToData(self):
         return self.CurrentState
 
+    # If we do this at __init__ time, the app doesn't launch.  Investigate why.
     def PowerBinderDialog(self):
         return PowerBinderDialog(self.DialogParent, self)
+
+    def UpdateState(self, bindString, state):
+        if bindString != self.GetValue():
+            self.CurrentState = state
+            self.SetValue(bindString)
+            wx.PostEvent(self, PowerBinderChanged(wx.NewId()))
 
 class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent, powerbinder):
@@ -34,6 +44,13 @@ class PowerBinderDialog(wx.Dialog):
         self.Page = parent.Page
         self.ExtraLength = powerbinder.ExtraLength
         self.PowerBinder = powerbinder
+
+class PowerBinderDialog(wx.Dialog):
+    def __init__(self, parent, powerbinder, extralength = 0):
+        super().__init__(parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
+
+        self.Page = parent.Page
+        self.ExtraLength = extralength
 
         self.LoadModules()
 
@@ -128,8 +145,7 @@ class PowerBinderDialog(wx.Dialog):
 
     # Load plugins / modules from UI/PowerBinderCommand directory
     def LoadModules(self):
-        base_path = GetRootDirPath()
-        path = base_path / 'UI' / 'PowerBinderCommand'
+        path = GetRootDirPath() / 'UI' / 'PowerBinderCommand'
 
         for package_file in sorted(path.glob('*.py')):
             package = package_file.stem
@@ -202,12 +218,9 @@ class PowerBinderDialog(wx.Dialog):
         button.PopupMenu(self.AddCommandMenu)
 
     def OnOKButton(self, _):
+        self.BindStringDisplay.RemoveError('nomatch')
         if self.PowerBinder:
-            bindString = self.MakeBindString()
-            self.BindStringDisplay.RemoveError('nomatch')
-            if bindString != self.PowerBinder.GetValue():
-                self.PowerBinder.SetValue(bindString)
-        self.PowerBinder.CurrentState = self.GetCurrentState()
+            self.PowerBinder.UpdateState(self.MakeBindString(), self.GetCurrentState())
         self.Close()
 
     def OnRearrangeDelete(self, _):

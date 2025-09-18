@@ -69,12 +69,12 @@ class ComplexBindPane(CustomBindPaneParent):
         self.RenumberSteps()
         self.checkIfWellFormed()
 
-    def onContentsChanged(self, _):
-        self.Profile.SetModified()
+    def onContentsChanged(self, evt):
+        evt.Skip()
         self.checkIfWellFormed()
 
-    def onKeyChanged(self, _):
-        self.Profile.SetModified()
+    def onKeyChanged(self, evt):
+        evt.Skip()
         self.checkIfWellFormed()
         if self.Profile:
             self.Profile.CheckAllConflicts()

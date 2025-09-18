@@ -6,12 +6,14 @@ from UI.ControlGroup import cgExpandoTextCtrl
 from UI.ErrorControls import ErrorControlMixin
 from Util.Paths import GetRootDirPath
 
+import wx.lib.newevent
+PowerBinderChanged, EVT_POWERBINDER_CHANGED = wx.lib.newevent.NewCommandEvent()
+
 class PowerBinder(ErrorControlMixin, wx.TextCtrl):
 
     def __init__(self, parent, init = {}, extralength = 0):
         super().__init__(parent)
-        self.Init = init
-        self.Dialog = None
+        self.CurrentState = init
         self.DialogParent = parent
         self.ExtraLength = extralength # for complex binds to add the footprint of each step's BLF()
 
@@ -25,17 +27,21 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
     def SaveToData(self):
         return self.PowerBinderDialog().SaveToData()
 
+    # If we do this at __init__ time, the app doesn't launch.  Investigate why.
     def PowerBinderDialog(self):
-        if not self.Dialog:
-            self.Dialog = PowerBinderDialog(self.DialogParent, self, init = self.Init, extralength = self.ExtraLength)
-        return self.Dialog
+        return PowerBinderDialog(self.DialogParent, self, extralength = self.ExtraLength)
+
+    def UpdateState(self, bindString, state):
+        if bindString != self.GetValue():
+            self.CurrentState = state
+            self.SetValue(bindString)
+            wx.PostEvent(self, PowerBinderChanged(wx.NewId()))
 
 class PowerBinderDialog(wx.Dialog):
-    def __init__(self, parent, powerbinder, init = {}, extralength = 0):
+    def __init__(self, parent, powerbinder, extralength = 0):
         super().__init__(parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
         self.Page = parent.Page
-        self.CurrentState = init
         self.ExtraLength = extralength
 
         self.LoadModules()
@@ -132,8 +138,7 @@ class PowerBinderDialog(wx.Dialog):
 
     # Load plugins / modules from UI/PowerBinderCommand directory
     def LoadModules(self):
-        base_path = GetRootDirPath()
-        path = base_path / 'UI' / 'PowerBinderCommand'
+        path = GetRootDirPath() / 'UI' / 'PowerBinderCommand'
 
         for package_file in sorted(path.glob('*.py')):
             package = package_file.stem
@@ -173,7 +178,7 @@ class PowerBinderDialog(wx.Dialog):
     def LoadFromCurrentState(self):
         self.RearrangeList.Clear()
 
-        for item in self.CurrentState:
+        for item in self.PowerBinder.CurrentState:
             for type, data in item.items():
                 commandClass = commandClasses.get(type, None)
                 if not commandClass:
@@ -212,12 +217,9 @@ class PowerBinderDialog(wx.Dialog):
         button.PopupMenu(self.AddCommandMenu)
 
     def OnOKButton(self, _):
+        self.BindStringDisplay.RemoveError('nomatch')
         if self.PowerBinder:
-            bindString = self.MakeBindString()
-            self.BindStringDisplay.RemoveError('nomatch')
-            if bindString != self.PowerBinder.GetValue():
-                self.PowerBinder.SetValue(bindString)
-        self.CurrentState = self.GetCurrentState()
+            self.PowerBinder.UpdateState(self.MakeBindString(), self.GetCurrentState())
         self.Close()
 
     def OnRearrangeDelete(self, _):

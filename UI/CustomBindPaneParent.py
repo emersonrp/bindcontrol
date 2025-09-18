@@ -1,6 +1,8 @@
 # parent class for various custom bindpane types
 import wx
-from UI.KeySelectDialog import bcKeyButton
+from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
+from UI.PowerPicker import EVT_POWER_CHANGED
+from UI.PowerBinder import EVT_POWERBINDER_CHANGED
 
 class CustomBindPaneParent(wx.CollapsiblePane):
     def __init__(self, page, init = {}):
@@ -35,14 +37,17 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         for evt in [
             wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
             wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU, wx.EVT_RADIOBUTTON,
-            wx.EVT_SLIDER,
+            wx.EVT_SLIDER, EVT_POWER_CHANGED, EVT_KEY_CHANGED, EVT_POWERBINDER_CHANGED,
         ]:
-
             self.Bind(evt, self.OnCommandEvent)
+
 
     def OnCommandEvent(self, evt):
         evt.Skip()
-        self.Profile.UpdateData('CustomBinds', self.Serialize())
+        control = getattr(evt, 'control', evt.GetEventObject())
+        if control in self.Ctrls.values():
+            # TODO:  "unless (some way to opt things out of this), then..."
+            self.Profile.UpdateData('CustomBinds', self.Serialize())
 
     def BuildBindUI(self, page):
         # build the UI needed to edit/create this bind, and shim

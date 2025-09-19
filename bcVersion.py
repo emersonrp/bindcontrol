@@ -5,19 +5,19 @@ import subprocess
 from Util.Paths import GetRootDirPath
 
 def current_version():
-    # try to get the current tag from git...
-    version = get_git_tag()
 
-    # if not, try to find version.txt
-    #
+    version = None
     # version.txt gets written/bundled by tools/build_windows.bat
+    try:
+        base_path = GetRootDirPath()
+        file_path = base_path / "version.txt"
+        version = file_path.read_text().strip()
+    except Exception:
+        pass
+
+    # try to get the current tag from git...
     if not version:
-        try:
-            base_path = GetRootDirPath()
-            file_path = base_path / "version.txt"
-            version = file_path.read_text().strip()
-        except:
-            pass
+        version = get_git_tag()
 
     if not version:
         version = "&lt; No version found &gt;"

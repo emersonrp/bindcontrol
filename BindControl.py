@@ -13,7 +13,7 @@ wxver = tuple(map(int, re.split(r'\.', wx.__version__))) # oogly
 if wxver < MIN_WX:
     sys.exit("wxPython %s.%s.%s or later is required.\n" % MIN_WX)
 
-import os, platform
+import os, platform, re
 from pathlib import Path
 import webbrowser
 
@@ -193,20 +193,24 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
 
-    def SetupProfile(self):
+    def SetupProfile(self, input_profile = None):
 
         config = wx.FileConfig('bindcontrol')
 
-        # Load up the last profile if the pref says to and if it's there
-        filename = config.Read('LastProfile')
-        if (config.Read('StartWith') == 'Last Profile' or config.ReadBool('StartWithLastProfile')) and filename:
+        filename = None
+        if input_profile:
+            filename = input_profile
+        elif (config.Read('StartWith') == 'Last Profile' or config.ReadBool('StartWithLastProfile')):
+            filename = config.Read('LastProfile')
+
+        if filename:
             try:
                 profile = Profile.Profile(self, filename)
                 profile.buildFromData()
                 self.Profile = profile
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
                 self.CheckProfDirButtonErrors()
-            except Exception as e:
+            except Exception:
                 self.Profile = None
                 self.StartupPanel = self.MakeStartupPanel()
                 self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
@@ -670,13 +674,20 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
 
         self.Profile = None  # needed inside Main()
 
+
+        input_profile = None
+        filename = sys.argv[1] if len(sys.argv) == 2 else None
+        if filename:
+            if re.search(r'\.bcp$', filename):
+                input_profile = filename
+
         self.Init()
         with wx.WindowDisabler():
             _ = wx.BusyInfo('Initializing BindControl...')
             wx.GetApp().Yield()
 
             self.Main = Main(None)
-            self.Main.SetupProfile()
+            self.Main.SetupProfile(input_profile = input_profile)
 
             # TODO bootstrapping problem, can't do this inside Profile's "__init__" because
             # Profile needs to be defined/initialized deep inside its innards.
@@ -688,10 +699,29 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         return True
 
 if __name__ == "__main__":
+
+    argv = sys.argv
+    if len(argv) > 2:
+        print("")
+        print("Usage:  BindControl.py [profile_file]")
+        print("")
+        print("profile_file is optional, and should be a *.bcp file")
+        print("")
+        exit()
+
+    filename = argv[1] if len(argv) == 2 else None
+    if filename:
+        if not re.search(r'\.bcp$', filename):
+            print("")
+            print("BindControl can only open *.bcp files")
+            print("")
+            exit()
+
     app = MyApp(redirect=False)
 
     config = wx.ConfigBase.Get()
     if config.ReadBool('ShowInspector'):
         import wx.lib.inspection
         wx.lib.inspection.InspectionTool().Show()
+
     app.MainLoop()

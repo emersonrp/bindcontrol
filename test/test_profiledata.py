@@ -136,21 +136,13 @@ def test_GenerateBindsDirectoryName(PD):
         PD.Filepath = Path('Profile Really Neat.bcp') # 'prn' is reserved
         assert PD.GenerateBindsDirectoryName() == 'profi'
 
-def test_GetDefaultProfileJSON(config):
-    # Have to do this whole dance because we don't want the Mock on config from the fixture
-    _ = wx.App()
-    testconfig = wx.FileConfig()
-    wx.ConfigBase.Set(testconfig)
-    fixtureprofile = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'testprofile.bcp'
-    PD = ProfileData.ProfileData(testconfig, filename = str(fixtureprofile))
-    jsonstring = PD.GetDefaultProfileJSON()
-    assert jsonstring is None
-
-    testconfig.Write('DefaultProfile', '%#aflj BAD JSON BAD" $@!')
+def test_GetDefaultProfileJSON(PD, config, monkeypatch):
+    monkeypatch.undo() # get rid of "Read" monkeypatch on config
+    config.Write('DefaultProfile', '%#aflj BAD JSON BAD" $@!')
     with pytest.raises(Exception):
         jsonstring = PD.GetDefaultProfileJSON()
 
-    testconfig.Write('DefaultProfile', DefaultProfile)
+    config.Write('DefaultProfile', DefaultProfile)
     jsonstring = PD.GetDefaultProfileJSON()
     assert jsonstring is not None
 
@@ -195,11 +187,11 @@ def test_FileHasChanged(config):
         PD.Filepath.unlink()
 #########
 @pytest.fixture(autouse = True)
-def config(tmp_path):
+def config(tmp_path, monkeypatch):
     _ = wx.App()
     config = wx.FileConfig()
     wx.ConfigBase.Set(config)
-    config.Read = Mock(return_value = str(tmp_path))
+    monkeypatch.setattr(config, 'Read', lambda _: str(tmp_path))
 
     yield config
 

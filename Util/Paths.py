@@ -3,6 +3,31 @@ from pathlib import Path
 
 # Things related to paths for the app
 #
+# examine an arbitrary profile binds dir for its associated profile name
+def CheckProfileForBindsDir(config, bindsdir):
+    IDFile = Path(config.Read('BindPath')) / bindsdir / 'bcprofileid.txt'
+    if IDFile:
+        # If the file is even there...
+        if IDFile.exists():
+            return IDFile.read_text().strip()
+
+# get a Path object given a profile name
+def GetProfileFileForName(config, name):
+    file = Path(config.Read('ProfilePath')) / f"{name}.bcp"
+    return file if file.is_file() else None
+
+# get all profile binds dirs as a list of strings.
+#
+# Might want to case-mangle these in calling code if checking against them, but
+# let's not do it inside here in case we want to touch them directly on Linux
+# etc where changing the case inside here would be bad.
+def GetAllProfileBindsDirs(config):
+    alldirs = []
+    for bindsdir in Path(config.Read('BindPath')).glob('*'):
+        if bindsdir.is_dir():
+            alldirs.append(bindsdir.name)
+    return alldirs
+
 # class method to return the current Profile Path
 def ProfilePath(config): return Path(config.Read('ProfilePath'))
 

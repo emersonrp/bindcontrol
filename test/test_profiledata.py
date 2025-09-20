@@ -10,27 +10,18 @@ from pathlib import Path, PureWindowsPath
 from BindFile import BindFile
 from Util.DefaultProfile import DefaultProfile
 
-def test_init_neither(tmp_path):
-    _, config = doSetup(tmp_path)
-
+def test_init_neither():
     with pytest.raises(Exception, match = 'neither filename nor newname'):
         ProfileData.ProfileData(config)
 
-    config.DeleteAll()
-
-def test_init_newname(tmp_path):
-    _, config = doSetup(tmp_path)
-
-    pd = ProfileData.ProfileData(config, newname = 'test')
-    assert pd.Config             == config
-    assert pd.Filepath           == ProfileData.ProfilePath(config) / 'test.bcp'
-    assert pd['ProfileBindsDir'] == 'test'
-    assert pd.Modified           == True
-
-    config.DeleteAll()
+def test_init_newname(config):
+    PD = ProfileData.ProfileData(config, newname = 'test')
+    assert PD.Config             == config
+    assert PD.Filepath           == ProfileData.ProfilePath(config) / 'test.bcp'
+    assert PD['ProfileBindsDir'] == 'test'
+    assert PD.Modified           == True
 
 def test_init_filename(tmp_path):
-    _, config = doSetup(tmp_path)
 
     profile_path = tmp_path / "testprofile.bcp"
     with pytest.raises(Exception, match = f'whose file "{profile_path}" is missing'):
@@ -45,214 +36,176 @@ def test_init_filename(tmp_path):
         ProfileData.ProfileData(config, filename = str(profile_path))
     profile_path.unlink()
 
-    config.DeleteAll()
+def test_accessors(config, tmp_path, PD):
 
-def test_accessors(tmp_path):
-    _, config = doSetup(tmp_path)
-    fixtureprofile, pd = GetFixtureProfile(config)
-
-    assert pd.Filepath        == fixtureprofile
-    assert pd.LastModTime     == fixtureprofile.stat().st_mtime_ns
-    assert pd.Modified        == False
-    assert pd.Server          == 'Rebirth'
-    assert pd.ProfileName()   == 'testprofile'
-    assert pd.ProfileIDFile() == pd.BindsDir() / 'bcprofileid.txt'
-    assert pd.BindsDir()      == tmp_path / pd['ProfileBindsDir']
-    assert pd.GameBindsDir()  == PureWindowsPath(tmp_path) / pd['ProfileBindsDir']
+    assert PD.LastModTime     == PD.Filepath.stat().st_mtime_ns
+    assert PD.Modified        == False
+    assert PD.Server          == 'Rebirth'
+    assert PD.ProfileName()   == 'testprofile'
+    assert PD.ProfileIDFile() == PD.BindsDir() / 'bcprofileid.txt'
+    assert PD.BindsDir()      == tmp_path / PD['ProfileBindsDir']
+    assert PD.GameBindsDir()  == PureWindowsPath(tmp_path) / PD['ProfileBindsDir']
 
     config.Read = Mock(return_value = '')
-    assert pd.GameBindsDir()  == pd.BindsDir()
+    assert PD.GameBindsDir()  == PD.BindsDir()
 
-    config.DeleteAll()
-
-def test_GetBindFile(tmp_path):
-    _, config = doSetup(tmp_path)
-    _, pd     = GetFixtureProfile(config)
-
-    resetfile = pd.ResetFile()
-    assert resetfile == pd.GetBindFile('reset.txt')
+def test_GetBindFile(PD):
+    resetfile = PD.ResetFile()
+    assert resetfile == PD.GetBindFile('reset.txt')
     assert isinstance(resetfile, BindFile)
 
-    otherbindfile = pd.GetBindFile('otherbindfile.txt')
+    otherbindfile = PD.GetBindFile('otherbindfile.txt')
     assert isinstance(otherbindfile, BindFile)
     assert otherbindfile              != resetfile
-    assert otherbindfile.Path         == Path(pd.BindsDir()) / 'otherbindfile.txt'
-    assert otherbindfile.GameBindsDir == PureWindowsPath(pd.BindsDir())
+    assert otherbindfile.Path         == Path(PD.BindsDir()) / 'otherbindfile.txt'
+    assert otherbindfile.GameBindsDir == PureWindowsPath(PD.BindsDir())
     assert otherbindfile.GamePath     == PureWindowsPath(otherbindfile.Path)
 
-    pd.GameBindsDir = Mock(return_value = 'c:\\coh\\')
-    posixbindfile = pd.GetBindFile('dir', 'posixbindfile.txt')
+    PD.GameBindsDir = Mock(return_value = 'c:\\coh\\')
+    posixbindfile = PD.GetBindFile('dir', 'posixbindfile.txt')
     assert posixbindfile.GamePath == PureWindowsPath('c:\\coh\\dir\\posixbindfile.txt')
 
-    config.DeleteAll()
-
-def test_FillWith(tmp_path):
-    _, config = doSetup(tmp_path)
-    _, pd     = GetFixtureProfile(config)
-
-    pd.FillWith({
+def test_FillWith(PD):
+    PD.FillWith({
         'ProfileBindsDir' : 'test_FillWith',
         'General'         : { 'Server' : 'Homecoming' },
     })
 
-    assert pd.Server == 'Homecoming'
-    assert pd['ProfileBindsDir'] == 'test_FillWith'
-    assert 'MovementPowers' not in pd
-    assert pd.Modified is True
+    assert PD.Server == 'Homecoming'
+    assert PD['ProfileBindsDir'] == 'test_FillWith'
+    assert 'MovementPowers' not in PD
+    assert PD.Modified is True
 
-    config.DeleteAll()
-
-def test_UpdateData(tmp_path):
-    _, config = doSetup(tmp_path)
-    _, pd     = GetFixtureProfile(config)
-
+def test_UpdateData(PD):
     # updates existing data
-    pd.UpdateData('General', 'Primary', 'Fubble')
-    assert pd['General']['Primary'] == 'Fubble'
+    PD.UpdateData('General', 'Primary', 'Fubble')
+    assert PD['General']['Primary'] == 'Fubble'
 
     # will create keys as needed
-    pd.UpdateData('NewThing', 'MakeIt', 'Work')
-    assert pd['NewThing']['MakeIt'] == 'Work'
+    PD.UpdateData('NewThing', 'MakeIt', 'Work')
+    assert PD['NewThing']['MakeIt'] == 'Work'
 
     # will append new custom bind when empty
-    pd.UpdateData('CustomBinds', { 'CustomID' : 1, 'Type' : 'SimpleBind' })
-    assert len(pd['CustomBinds']) == 1
-    assert pd['CustomBinds'][0]['CustomID'] == 1
-    assert pd['CustomBinds'][0]['Type']     == 'SimpleBind'
+    PD.UpdateData('CustomBinds', { 'CustomID' : 1, 'Type' : 'SimpleBind' })
+    assert len(PD['CustomBinds']) == 1
+    assert PD['CustomBinds'][0]['CustomID'] == 1
+    assert PD['CustomBinds'][0]['Type']     == 'SimpleBind'
 
     # will append new custom bind to existing
-    pd.UpdateData('CustomBinds', { 'CustomID' : 2, 'Type' : 'SecondBind' })
-    assert len(pd['CustomBinds']) == 2
-    assert pd['CustomBinds'][1]['CustomID'] == 2
-    assert pd['CustomBinds'][1]['Type']     == 'SecondBind'
+    PD.UpdateData('CustomBinds', { 'CustomID' : 2, 'Type' : 'SecondBind' })
+    assert len(PD['CustomBinds']) == 2
+    assert PD['CustomBinds'][1]['CustomID'] == 2
+    assert PD['CustomBinds'][1]['Type']     == 'SecondBind'
 
     # will replace existing custom bind
-    pd.UpdateData('CustomBinds', { 'CustomID' : 1, 'Type' : 'SomethingNew' })
-    assert len(pd['CustomBinds']) == 2
-    assert pd['CustomBinds'][0]['CustomID'] == 1
-    assert pd['CustomBinds'][0]['Type']     == 'SomethingNew'
+    PD.UpdateData('CustomBinds', { 'CustomID' : 1, 'Type' : 'SomethingNew' })
+    assert len(PD['CustomBinds']) == 2
+    assert PD['CustomBinds'][0]['CustomID'] == 1
+    assert PD['CustomBinds'][0]['Type']     == 'SomethingNew'
 
     # will delete a custom bind when asked
-    pd.UpdateData('CustomBinds', { 'CustomID' : 1, 'Action' : 'delete' })
-    assert len(pd['CustomBinds']) == 1
-    assert pd['CustomBinds'][0]['CustomID'] == 2
-    assert pd['CustomBinds'][0]['Type']     == 'SecondBind'
+    PD.UpdateData('CustomBinds', { 'CustomID' : 1, 'Action' : 'delete' })
+    assert len(PD['CustomBinds']) == 1
+    assert PD['CustomBinds'][0]['CustomID'] == 2
+    assert PD['CustomBinds'][0]['Type']     == 'SecondBind'
 
 
     # TODO - test sending JSON in as a value to make sure it gets de-JSON'd
 
-    config.DeleteAll()
-
-def test_GetCustomID(tmp_path):
-    _, config = doSetup(tmp_path)
-    _, pd     = GetFixtureProfile(config)
-
-    assert pd['MaxCustomID'] == 10
-    newid = pd.GetCustomID()
+def test_GetCustomID(PD):
+    assert PD['MaxCustomID'] == 10
+    newid = PD.GetCustomID()
     assert newid == 11
-    assert pd['MaxCustomID'] == 11
+    assert PD['MaxCustomID'] == 11
 
-    config.DeleteAll()
-
-def test_GenerateBindsDirectoryName(tmp_path):
-    _, config = doSetup(tmp_path)
-    _, pd     = GetFixtureProfile(config)
-
+def test_GenerateBindsDirectoryName(PD):
     # Uses first letters of multiple words
-    pd.Filepath = Path('Multiple Words Testing.bcp')
-    assert pd.GenerateBindsDirectoryName() == 'mwt'
+    PD.Filepath = Path('Multiple Words Testing.bcp')
+    assert PD.GenerateBindsDirectoryName() == 'mwt'
 
     # Tries to use capital letters
-    pd.Filepath = Path('OneTestProfileName.bcp')
-    assert pd.GenerateBindsDirectoryName() == 'otpn'
+    PD.Filepath = Path('OneTestProfileName.bcp')
+    assert PD.GenerateBindsDirectoryName() == 'otpn'
 
     # Trims to first five for longer names
-    pd.Filepath = Path('Firsttest.bcp')
-    assert pd.GenerateBindsDirectoryName() == 'first'
+    PD.Filepath = Path('Firsttest.bcp')
+    assert PD.GenerateBindsDirectoryName() == 'first'
 
     # Doesn't use Windows reserved words
     if platform.system() == "Windows":
-        pd.Filepath = Path('Profile Really Neat.bcp') # 'prn' is reserved
-        assert pd.GenerateBindsDirectoryName() == 'profi'
+        PD.Filepath = Path('Profile Really Neat.bcp') # 'prn' is reserved
+        assert PD.GenerateBindsDirectoryName() == 'profi'
 
-    config.DeleteAll()
-
-def test_GetDefaultProfileJSON():
-    # don't use doSetup() here as we don't want the Mock
+def test_GetDefaultProfileJSON(config):
+    # Have to do this whole dance because we don't want the Mock on config from the fixture
     _ = wx.App()
-    config = wx.FileConfig()
-    wx.ConfigBase.Set(config)
-    _, pd     = GetFixtureProfile(config)
-
-    jsonstring = pd.GetDefaultProfileJSON()
+    testconfig = wx.FileConfig()
+    wx.ConfigBase.Set(testconfig)
+    fixtureprofile = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'testprofile.bcp'
+    PD = ProfileData.ProfileData(testconfig, filename = str(fixtureprofile))
+    jsonstring = PD.GetDefaultProfileJSON()
     assert jsonstring is None
 
-    config.Write('DefaultProfile', "SOME GIBBERISH")
+    testconfig.Write('DefaultProfile', '%#aflj BAD JSON BAD" $@!')
     with pytest.raises(Exception):
-        jsonstring = pd.GetDefaultProfileJSON()
+        jsonstring = PD.GetDefaultProfileJSON()
 
-    config.Write('DefaultProfile', DefaultProfile)
-    jsonstring = pd.GetDefaultProfileJSON()
+    testconfig.Write('DefaultProfile', DefaultProfile)
+    jsonstring = PD.GetDefaultProfileJSON()
     assert jsonstring is not None
 
     profiledata = json.loads(jsonstring)
     assert 'General' in profiledata
     assert profiledata['ProfileBindsDir'] == 'defau'
 
-    config.DeleteAll()
-
-def test_BindsDirNotMine(tmp_path):
-    _, config = doSetup(tmp_path)
-    _, pd     = GetFixtureProfile(config)
-
+def test_BindsDirNotMine(PD):
     # correctly returns False for unclaimed bindsdir
-    assert pd.BindsDirNotMine() is False
+    assert PD.BindsDirNotMine() is False
 
-    pd.BindsDir().mkdir(exist_ok = True)
+    PD.BindsDir().mkdir(exist_ok = True)
 
     # correctly returns truthy / profile name if claimed by someone else
-    idfile = pd.ProfileIDFile()
+    idfile = PD.ProfileIDFile()
     idfile.touch()
     idfile.write_text('not my circus')
-    assert pd.BindsDirNotMine() == 'not my circus'
+    assert PD.BindsDirNotMine() == 'not my circus'
 
     # correctly returns False for claimbed by me
-    idfile.write_text(pd.ProfileName())
-    assert pd.BindsDirNotMine() is False
+    idfile.write_text(PD.ProfileName())
+    assert PD.BindsDirNotMine() is False
 
     # correctly blows up if the Profile doesn't know its id file
-    pd.ProfileIDFile = Mock(return_value = None)
+    PD.ProfileIDFile = Mock(return_value = None)
     with pytest.raises(Exception, match = 'not checking IDFile'):
-        _ = pd.BindsDirNotMine()
+        _ = PD.BindsDirNotMine()
 
     idfile.unlink()
-    pd.BindsDir().rmdir()
+    PD.BindsDir().rmdir()
 
-    config.DeleteAll()
+def test_FileHasChanged(config):
+    PD = ProfileData.ProfileData(config, newname = "test")
 
-def test_FileHasChanged(tmp_path):
-    _, config = doSetup(tmp_path)
-    pd = ProfileData.ProfileData(config, newname = "test")
-
-    pd.doSaveToFile()
-    if pd.Filepath: # thanks pyright
-        assert pd.FileHasChanged() is False
+    PD.doSaveToFile()
+    if PD.Filepath: # thanks pyright
+        assert PD.FileHasChanged() is False
         sleep(.01)
-        pd.Filepath.touch()
-        assert pd.FileHasChanged() is True
+        PD.Filepath.touch()
+        assert PD.FileHasChanged() is True
 
-        pd.Filepath.unlink()
-    config.DeleteAll()
-
+        PD.Filepath.unlink()
 #########
-def doSetup(tmp_path):
-    app = wx.App()
+@pytest.fixture(autouse = True)
+def config(tmp_path):
+    _ = wx.App()
     config = wx.FileConfig()
     wx.ConfigBase.Set(config)
     config.Read = Mock(return_value = str(tmp_path))
 
-    return app, config
+    yield config
 
-def GetFixtureProfile(config):
+    config.DeleteAll()
+
+@pytest.fixture
+def PD(config):
     fixtureprofile = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'testprofile.bcp'
-    return fixtureprofile, ProfileData.ProfileData(config, filename = str(fixtureprofile))
+    yield ProfileData.ProfileData(config, filename = str(fixtureprofile))

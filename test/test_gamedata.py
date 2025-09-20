@@ -1,4 +1,10 @@
 import GameData
+import pytest
+
+def text_GameData_BadServer():
+
+    with pytest.raises(Exception, match = 'unknown server'):
+        GameData.SetupGameData('No Such Server')
 
 def test_GameData_Homecoming():
     GameData.SetupGameData('Homecoming')

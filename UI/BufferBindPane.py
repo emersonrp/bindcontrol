@@ -3,7 +3,7 @@ import wx
 import UI
 from BLF import BLF
 from Icon import GetIcon
-from UI.PowerPicker import PowerPicker, EVT_POWER_CHANGED
+from UI.PowerPicker import PowerPicker, EVT_POWERPICKER_CHANGED
 
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
@@ -336,7 +336,7 @@ class Buff(wx.Panel):
         if icon := buff.get('Power', {}).get('picon', ''):
             self.BuffPower.SetBitmap(GetIcon(icon))
             self.BuffPower.IconFilename = icon
-        self.BuffPower.Bind(EVT_POWER_CHANGED, self.OnPowerPicked)
+        self.BuffPower.Bind(EVT_POWERPICKER_CHANGED, self.OnPowerPicked)
 
         self.delButton = wx.Button(self, -1, "X", size = wx.Size(40,-1))
         self.delButton.SetForegroundColour(wx.RED)

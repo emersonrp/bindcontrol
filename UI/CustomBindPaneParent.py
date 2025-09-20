@@ -1,7 +1,7 @@
 # parent class for various custom bindpane types
 import wx
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
-from UI.PowerPicker import EVT_POWER_CHANGED
+from UI.PowerPicker import EVT_POWERPICKER_CHANGED
 from UI.PowerBinder import PowerBinder, EVT_POWERBINDER_CHANGED
 
 class CustomBindPaneParent(wx.CollapsiblePane):
@@ -37,7 +37,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         for evt in [
             wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
             wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU, wx.EVT_RADIOBUTTON,
-            wx.EVT_SLIDER, EVT_POWER_CHANGED, EVT_KEY_CHANGED, EVT_POWERBINDER_CHANGED,
+            wx.EVT_SLIDER, EVT_POWERPICKER_CHANGED, EVT_KEY_CHANGED, EVT_POWERBINDER_CHANGED,
         ]:
             self.Bind(evt, self.OnCommandEvent)
 

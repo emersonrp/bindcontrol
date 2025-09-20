@@ -6,7 +6,7 @@ from UI.ErrorControls import ErrorControlMixin
 from Util.Incarnate import Rarities, Aliases, SlotData
 
 import wx.lib.newevent
-PowerChanged, EVT_POWER_CHANGED = wx.lib.newevent.NewCommandEvent()
+PowerChanged, EVT_POWERPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 class PowerPicker(ErrorControlMixin, wx.Button):
     def __init__(self, parent, menu = None, size = wx.DefaultSize):

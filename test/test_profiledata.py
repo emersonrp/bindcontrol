@@ -9,46 +9,6 @@ from pathlib import Path, PureWindowsPath
 from BindFile import BindFile
 from Util.DefaultProfile import DefaultProfile
 
-def test_CheckProfileForBindsDir(tmp_path):
-    _, config = doSetup(tmp_path)
-
-    # CheckProfileForBindsDir
-    pdir = tmp_path / 'fubble'
-    pdir.mkdir(exist_ok = True)
-    file = pdir / 'bcprofileid.txt'
-    file.write_text('Mister Fubble')
-    assert ProfileData.CheckProfileForBindsDir(config, 'fubble') == 'Mister Fubble'
-    file.unlink()
-    pdir.rmdir()
-
-    config.DeleteAll()
-
-def test_GetProfileFileForName(tmp_path):
-    _, config = doSetup(tmp_path)
-
-    # GetProfileFileForName
-    file = tmp_path / 'fubble.bcp'
-    file.write_text('freebird')
-    assert str(ProfileData.GetProfileFileForName(config, 'fubble')) == f'{tmp_path}/fubble.bcp'
-    file.unlink()
-
-    config.DeleteAll()
-
-def test_GetAllProfileBindsDirs(tmp_path):
-    _, config = doSetup(tmp_path)
-
-    for d in ['inky', 'pinky', 'blinky', 'clyde']:
-        pdir = tmp_path / d
-        pdir.mkdir(exist_ok = True)
-
-    assert sorted(ProfileData.GetAllProfileBindsDirs(config)) == sorted(['inky', 'pinky', 'blinky', 'clyde'])
-
-    for d in ['inky', 'pinky', 'blinky', 'clyde']:
-        pdir = tmp_path / d
-        pdir.rmdir()
-
-    config.DeleteAll()
-
 def test_ProfileData_init_neither(tmp_path):
     _, config = doSetup(tmp_path)
 

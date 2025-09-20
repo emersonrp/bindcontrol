@@ -4,7 +4,8 @@ import platform
 from functools import partial
 
 import Profile
-import Models.ProfileData as ProfileData
+from Util.Paths import GetAllProfileBindsDirs, CheckProfileForBindsDir, GetProfileFileForName
+
 
 class BindDirsWindow(wx.MiniFrame):
     def __init__(self, parent, **kwargs):
@@ -40,9 +41,9 @@ class BindDirsWindow(wx.MiniFrame):
         proflabel.SetFont(headerFont)
         proflabel.SetLabelMarkup('Managing Profile')
 
-        for binddir in sorted(ProfileData.GetAllProfileBindsDirs(config), key = str.casefold):
+        for binddir in sorted(GetAllProfileBindsDirs(config), key = str.casefold):
             listsizer.Add(statictextclass(panel, label = binddir), 0, wx.ALL, 3)
-            label = ProfileData.CheckProfileForBindsDir(config, binddir)
+            label = CheckProfileForBindsDir(config, binddir)
             dirname = statictextclass(panel, label = label or '')
             if not label:
                 dirname.SetForegroundColour(wx.Colour(128,128,128))
@@ -50,7 +51,7 @@ class BindDirsWindow(wx.MiniFrame):
                 dirname.SetLabelMarkup('-unmanaged-')
                 dirname.SetToolTip(f'No known profile is managing this directory.')
             else:
-                if file := ProfileData.GetProfileFileForName(config, label):
+                if file := GetProfileFileForName(config, label):
                     dirname.SetFont(linkFont)
                     dirname.SetForegroundColour(wx.Colour(0,0,255))
                     dirname.SetToolTip(f'Click to load profile "{label}"')

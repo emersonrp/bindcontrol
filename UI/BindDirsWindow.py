@@ -51,7 +51,8 @@ class BindDirsWindow(wx.MiniFrame):
                 dirname.SetLabelMarkup('-unmanaged-')
                 dirname.SetToolTip(f'No known profile is managing this directory.')
             else:
-                if file := GetProfileFileForName(config, label):
+                file = GetProfileFileForName(config, label)
+                if file.is_file():
                     dirname.SetFont(linkFont)
                     dirname.SetForegroundColour(wx.Colour(0,0,255))
                     dirname.SetToolTip(f'Click to load profile "{label}"')

@@ -171,9 +171,9 @@ class Main(wx.Frame):
         # Bottom Buttons
         # BUTTONS
         self.BottomButtonPanel = wx.Panel(self)
-        self.ProfDirButton = cgButton(self.BottomButtonPanel, -1, "Set Binds Location")
-        self.ProfDirButton.SetToolTip("Configure the location where this Profile will write bindfiles")
-        self.ProfDirButton.DefaultToolTip = "Configure the location where this Profile will write bindfiles"
+        self.ProfDirButton = cgButton(self.BottomButtonPanel, -1, "Set Binds Directory")
+        self.ProfDirButton.SetToolTip("Configure the directory where this Profile will write bindfiles")
+        self.ProfDirButton.DefaultToolTip = "Configure the directory where this Profile will write bindfiles"
         self.WriteButton = wx.Button(self.BottomButtonPanel, -1, "Write Binds")
         self.WriteButton.SetToolTip("Write out the bindfiles to the configured binds directory")
         self.DeleteButton = wx.Button(self.BottomButtonPanel, -1, "Delete All Binds")
@@ -447,12 +447,12 @@ class Main(wx.Frame):
 
     def OnProfDirButton(self, _ = None):
         if not self.Profile: return # should try not to get here in the first place
-        ProfDirDialog = wx.Dialog(self, -1, "Set Binds Location")
+        ProfDirDialog = wx.Dialog(self, -1, "Set Binds Directory")
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         ProfDirDialog.SetSizer(sizer)
 
-        sizer.Add(wx.StaticText(ProfDirDialog, -1, "Select the location where this profile will write its bindfiles:"), 1, wx.EXPAND|wx.ALL, 10)
+        sizer.Add(wx.StaticText(ProfDirDialog, -1, "Select the directory where this profile will write its bindfiles:"), 1, wx.EXPAND|wx.ALL, 10)
 
         config = wx.ConfigBase.Get()
         bindpath = config.Read('BindPath')
@@ -496,8 +496,8 @@ class Main(wx.Frame):
                     ((not otherprofile) or (otherprofile and (otherprofile == self.Profile.ProfileName())))
                 ):
                     answer = wx.MessageBox(
-                            f'Binds Location changed.  Delete all binds in old binds directory?\n{self.Profile.BindsDir()}',
-                            'Binds Location Changed',wx.YES_NO, self
+                            f'Binds directory changed.  Delete all binds in old binds directory?\n{self.Profile.BindsDir()}',
+                            'Binds directory Changed',wx.YES_NO, self
                     )
                     if answer == wx.YES:
                         self.Profile.DeleteBindFiles()

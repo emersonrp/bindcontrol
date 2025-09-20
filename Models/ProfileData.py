@@ -1,6 +1,6 @@
 import re, os, platform
 from pathlib import PurePath, Path, PureWindowsPath
-from typing import Dict, Any
+from typing import Dict
 import json
 import codecs
 import base64
@@ -8,6 +8,8 @@ import base64
 import GameData
 
 from BindFile import BindFile
+
+from Util.Paths import ProfilePath
 
 # class method to examine an arbitrary profile binds dir for its associated profile name
 def CheckProfileForBindsDir(config, bindsdir):
@@ -33,9 +35,6 @@ def GetAllProfileBindsDirs(config):
         if bindsdir.is_dir():
             alldirs.append(bindsdir.name)
     return alldirs
-
-# class method to return the current Profile Path
-def ProfilePath(config): return Path(config.Read('ProfilePath'))
 
 class ProfileData(dict):
     def __init__(self, config, filename = None, newname = None, profiledata = {}):

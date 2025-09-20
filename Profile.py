@@ -25,7 +25,7 @@ from Page.PopmenuEditor import PopmenuEditor
 import UI
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinder import EVT_POWERBINDER_CHANGED
-from UI.PowerPicker import EVT_POWER_CHANGED
+from UI.PowerPicker import EVT_POWERPICKER_CHANGED
 
 from Util.Paths import ProfilePath
 
@@ -247,7 +247,7 @@ class Profile(wx.Notebook):
             # picks when we re-fill those pickers from the archetype.
             if data and pagename == 'General':
 
-                # Re-fill Primary and Secondary pickers, honoring old numeric indices if needed
+                # Set Primary and Secondary pickers, honoring old numeric indices if needed
                 prim = data['General'].get('Primary', None)
                 if isinstance(prim, str):
                     page.Ctrls['Primary'].SetStringSelection(prim)
@@ -288,7 +288,7 @@ class Profile(wx.Notebook):
             for evt in [
                 wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
                 wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU, wx.EVT_RADIOBUTTON,
-                wx.EVT_SLIDER, EVT_KEY_CHANGED, EVT_POWER_CHANGED, EVT_POWERBINDER_CHANGED
+                wx.EVT_SLIDER, EVT_KEY_CHANGED, EVT_POWERPICKER_CHANGED, EVT_POWERBINDER_CHANGED
             ]:
 
                 page.Bind(evt, partial(self.OnCommandEvent, pagename = pagename))

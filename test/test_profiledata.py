@@ -49,13 +49,6 @@ def test_GetAllProfileBindsDirs(tmp_path):
 
     config.DeleteAll()
 
-def test_ProfilePath(tmp_path):
-    _, config = doSetup(tmp_path)
-
-    assert ProfileData.ProfilePath(config) == tmp_path
-
-    config.DeleteAll()
-
 def test_ProfileData_init_neither(tmp_path):
     _, config = doSetup(tmp_path)
 

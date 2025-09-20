@@ -6,7 +6,6 @@ import wx
 
 import GameData
 
-import Models.ProfileData as PD
 from Models.ProfileData import ProfileData
 
 from BindFile import BindFile
@@ -33,12 +32,14 @@ from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinder import EVT_POWERBINDER_CHANGED
 from UI.PowerPicker import EVT_POWER_CHANGED
 
+from Util.Paths import ProfilePath
+
 # class method to load a Profile from a file-open dialog
 def LoadFromFile(parent):
     config = wx.ConfigBase.Get()
     with wx.FileDialog(parent, "Open Profile file",
             wildcard   = "BindControl Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
-            defaultDir = str(PD.ProfilePath(config)),
+            defaultDir = str(ProfilePath(config)),
             style      = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 
         if fileDialog.ShowModal() == wx.ID_CANCEL:
@@ -177,14 +178,14 @@ class Profile(wx.Notebook):
     def SaveToFile(self):
         config = wx.ConfigBase.Get()
         try:
-            PD.ProfilePath(config).mkdir( parents = True, exist_ok = True )
+            ProfilePath(config).mkdir( parents = True, exist_ok = True )
         except Exception as e:
-            wx.LogError(f"Can't make Profile path {PD.ProfilePath(config)} - {e}.  Aborting Save.")
+            wx.LogError(f"Can't make Profile path {ProfilePath(config)} - {e}.  Aborting Save.")
             return
 
         with wx.FileDialog(self, "Save Profile file",
                 wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
-                defaultDir = str(PD.ProfilePath(config)),
+                defaultDir = str(ProfilePath(config)),
                 defaultFile = self.ProfileName(),
                 style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
 

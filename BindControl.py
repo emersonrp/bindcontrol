@@ -29,7 +29,7 @@ from UI.PrefsDialog import PrefsDialog
 from Help import ShowHelpWindow
 from UI.ControlGroup import cgTextCtrl, cgButton
 from Util.DefaultProfile import DefaultProfile
-from Util.Paths import GetRootDirPath
+from Util.Paths import GetRootDirPath, GetAllProfileBindsDirs
 import Util.BuildFiles
 
 ###################
@@ -211,7 +211,7 @@ class Main(wx.Frame):
                 self.Profile = profile
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
                 self.CheckProfDirButtonErrors()
-            except Exception as e:
+            except Exception:
                 if self.Profile:
                     self.Profile.DestroyLater()
                 self.Profile = None
@@ -582,7 +582,7 @@ class Main(wx.Frame):
         if value: # don't do this check if it's blank
             exists = None
             # look at the existing bindsdirs and see if we match
-            for bindsdir in ProfileData.GetAllProfileBindsDirs(config):
+            for bindsdir in GetAllProfileBindsDirs(config):
                 # check case-insensitive because Windows
                 if bindsdir.lower() == value.lower():
                     # but stash it away as the case-sensitive version because Linux

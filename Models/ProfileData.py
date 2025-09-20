@@ -9,32 +9,7 @@ import GameData
 
 from BindFile import BindFile
 
-from Util.Paths import ProfilePath
-
-# class method to examine an arbitrary profile binds dir for its associated profile name
-def CheckProfileForBindsDir(config, bindsdir):
-    IDFile = Path(config.Read('BindPath')) / bindsdir / 'bcprofileid.txt'
-    if IDFile:
-        # If the file is even there...
-        if IDFile.exists():
-            return IDFile.read_text().strip()
-
-# class method to get a Path object given a profile name
-def GetProfileFileForName(config, name):
-    file = Path(config.Read('ProfilePath')) / f"{name}.bcp"
-    return file if file.is_file() else None
-
-# class method to get all profile binds dirs as a list of strings.
-#
-# Might want to case-mangle these in calling code if checking against them, but
-# let's not do it inside here in case we want to touch them directly on Linux
-# etc where changing the case inside here would be bad.
-def GetAllProfileBindsDirs(config):
-    alldirs = []
-    for bindsdir in Path(config.Read('BindPath')).glob('*'):
-        if bindsdir.is_dir():
-            alldirs.append(bindsdir.name)
-    return alldirs
+from Util.Paths import ProfilePath, CheckProfileForBindsDir
 
 class ProfileData(dict):
     def __init__(self, config, filename = None, newname = None, profiledata = {}):

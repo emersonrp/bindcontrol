@@ -342,6 +342,10 @@ class CustomBinds(Page):
             except Exception as e:
                 wx.LogError(f"Error exporting Complex Bind: {e}")
 
+    def UpdateAllBinds(self):
+        for pane in self.Panes:
+            self.Profile.UpdateData('CustomBinds', pane.Serialize())
+
     def PopulateBindFiles(self):
         for pane in self.Panes:
             pane.PopulateBindFiles()

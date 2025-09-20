@@ -4,12 +4,13 @@ import os, platform
 import pytest
 import json
 import Models.ProfileData as ProfileData
+from time import sleep
 from unittest.mock import Mock
 from pathlib import Path, PureWindowsPath
 from BindFile import BindFile
 from Util.DefaultProfile import DefaultProfile
 
-def test_ProfileData_init_neither(tmp_path):
+def test_init_neither(tmp_path):
     _, config = doSetup(tmp_path)
 
     with pytest.raises(Exception, match = 'neither filename nor newname'):
@@ -17,7 +18,7 @@ def test_ProfileData_init_neither(tmp_path):
 
     config.DeleteAll()
 
-def test_ProfileData_init_newname(tmp_path):
+def test_init_newname(tmp_path):
     _, config = doSetup(tmp_path)
 
     pd = ProfileData.ProfileData(config, newname = 'test')
@@ -28,7 +29,7 @@ def test_ProfileData_init_newname(tmp_path):
 
     config.DeleteAll()
 
-def test_ProfileData_init_filename(tmp_path):
+def test_init_filename(tmp_path):
     _, config = doSetup(tmp_path)
 
     profile_path = tmp_path / "testprofile.bcp"
@@ -46,7 +47,7 @@ def test_ProfileData_init_filename(tmp_path):
 
     config.DeleteAll()
 
-def test_ProfileData_accessors(tmp_path):
+def test_accessors(tmp_path):
     _, config = doSetup(tmp_path)
     fixtureprofile, pd = GetFixtureProfile(config)
 
@@ -64,7 +65,7 @@ def test_ProfileData_accessors(tmp_path):
 
     config.DeleteAll()
 
-def test_ProfileData_GetBindFile(tmp_path):
+def test_GetBindFile(tmp_path):
     _, config = doSetup(tmp_path)
     _, pd     = GetFixtureProfile(config)
 
@@ -176,7 +177,7 @@ def test_GenerateBindsDirectoryName(tmp_path):
 
     config.DeleteAll()
 
-def test_GetDefaultProfileJSON(tmp_path):
+def test_GetDefaultProfileJSON():
     # don't use doSetup() here as we don't want the Mock
     _ = wx.App()
     config = wx.FileConfig()
@@ -197,21 +198,6 @@ def test_GetDefaultProfileJSON(tmp_path):
     profiledata = json.loads(jsonstring)
     assert 'General' in profiledata
     assert profiledata['ProfileBindsDir'] == 'defau'
-
-    config.DeleteAll()
-
-def test_GetBindFile(tmp_path):
-    _, config = doSetup(tmp_path)
-    _, pd     = GetFixtureProfile(config)
-
-    assert f'{tmp_path}/fiddlefaddle.txt' not in pd.BindFiles
-
-    bindfile = pd.GetBindFile(tmp_path, 'fiddlefaddle.txt')
-    assert isinstance(bindfile, BindFile)
-    assert isinstance(bindfile.Path, Path)
-    assert bindfile.Path == Path(f'{tmp_path}/fiddlefaddle.txt')
-    assert f'{tmp_path}/fiddlefaddle.txt' in pd.BindFiles
-    assert pd.BindFiles[f'{tmp_path}/fiddlefaddle.txt'] == bindfile
 
     config.DeleteAll()
 
@@ -242,6 +228,20 @@ def test_BindsDirNotMine(tmp_path):
     idfile.unlink()
     pd.BindsDir().rmdir()
 
+    config.DeleteAll()
+
+def test_FileHasChanged(tmp_path):
+    _, config = doSetup(tmp_path)
+    pd = ProfileData.ProfileData(config, newname = "test")
+
+    pd.doSaveToFile()
+    if pd.Filepath: # thanks pyright
+        assert pd.FileHasChanged() is False
+        sleep(.01)
+        pd.Filepath.touch()
+        assert pd.FileHasChanged() is True
+
+        pd.Filepath.unlink()
     config.DeleteAll()
 
 #########

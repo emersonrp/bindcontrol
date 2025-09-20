@@ -213,11 +213,9 @@ class Profile(wx.Notebook):
 
     def doSaveToFile(self):
         # check that we haven't updated the file from another copy of BindControl
-        if self.Data.Filepath:
-            if self.Data.Filepath.exists():
-                if self.Data.Filepath.stat().st_mtime_ns > self.Data.LastModTime:
-                    result = wx.MessageBox(f"Profile file {self.Data.Filepath} has changed since last save.  Continuing may overwrite changes.  Continue?", "File Modified", wx.YES_NO)
-                    if result == wx.NO: return
+        if self.Data.FileHasChanged():
+            result = wx.MessageBox(f"Profile file {self.Data.Filepath} has changed since last save.  Continuing may overwrite changes.  Continue?", "File Modified", wx.YES_NO)
+            if result == wx.NO: return
 
         result = self.Data.doSaveToFile()
         self.SetTitle()

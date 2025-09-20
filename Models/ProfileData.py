@@ -189,6 +189,12 @@ class ProfileData(dict):
 
         return jsonstring
 
+    def FileHasChanged(self):
+        if self.Filepath:
+            if self.Filepath.exists():
+                return self.Filepath.stat().st_mtime_ns > self.LastModTime
+        return False
+
     def doSaveToFile(self):
 
         ProfilePath(self.Config).mkdir( parents = True, exist_ok = True )

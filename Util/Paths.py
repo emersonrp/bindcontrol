@@ -27,7 +27,7 @@ def GetAllProfileBindsDirs(config):
             alldirs.append(bindsdir.name)
     return alldirs
 
-# class method to return the current Profile Path
+# return the current Profile Path
 def ProfilePath(config): return Path(config.Read('ProfilePath'))
 
 # This is for finding things like loadable modules for PowerBinder, icons, etc

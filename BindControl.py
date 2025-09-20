@@ -383,7 +383,7 @@ class Main(wx.Frame):
         # OK, we made it, set up the UI bits etc.
         self.SetupProfileUI()
         self.CheckProfDirButtonErrors()
-        wx.ConfigBase.Get().Write('LastProfile', str(newProfile.Filepath))
+        wx.ConfigBase.Get().Write('LastProfile', str(newProfile.Filepath()))
         wx.ConfigBase.Get().Flush()
 
     def OnProfileImport(self, _):

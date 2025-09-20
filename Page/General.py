@@ -447,7 +447,7 @@ class General(Page):
                 # TODO - push this logic down into Profile
                 mainwindow = wx.App.Get().Main
                 self.Profile.doSaveToFile()
-                newProfile = Profile.Profile(mainwindow, filename = self.Profile.Filepath)
+                newProfile = Profile.Profile(mainwindow, filename = self.Profile.Filepath())
                 newProfile.buildUIFromData()
                 mainwindow.InsertProfile(newProfile)
             else:

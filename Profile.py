@@ -76,9 +76,6 @@ class Profile(wx.Notebook):
         self.Modified        : bool                = False
         self.ProfileBindsDir : str                 = ''
         self.LastModTime     : int                 = 0
-        self.Filepath        : Path|None           = None
-        if filename:  self.Filepath = Path(filename)
-        elif newname: self.Filepath = GetProfileFileForName(wx.ConfigBase.Get(), newname)
 
         GameData.SetupGameData(self.Server())
 
@@ -106,13 +103,14 @@ class Profile(wx.Notebook):
 
     #####
     # Convenience / JIT accessors
-    def ProfileName(self)   : return self.Filepath.stem if self.Filepath else ''
+    def ProfileName(self)   : return self.Data.Filepath.stem if self.Data.Filepath else ''
     def Archetype(self)     : return self.General.GetState('Archetype')
     def Primary(self)       : return self.General.GetState('Primary')
     def Secondary(self)     : return self.General.GetState('Secondary')
     def ResetFile(self)     : return self.GetBindFile("reset.txt")
     def ProfileIDFile(self) : return self.BindsDir() / 'bcprofileid.txt'
     def Server(self)        : return self.Data.Server
+    def Filepath(self)      : return self.Data.Filepath
     def BindsDir(self)      : return Path(wx.ConfigBase.Get().Read('BindPath')) / self.ProfileBindsDir
     def GameBindsDir(self) :
         if gbp := wx.ConfigBase.Get().Read('GameBindPath'):
@@ -216,13 +214,13 @@ class Profile(wx.Notebook):
 
             # make sure we're all set up as whatever we just saved as
             mainwindow = wx.App.Get().Main
-            newprofile = Profile.doLoadFromFile(mainwindow, self.Data.Filepath)
+            newprofile = Profile.doLoadFromFile(mainwindow, self.Filepath())
             mainwindow.InsertProfile(newprofile)
 
     def doSaveToFile(self):
         result = self.Data.doSaveToFile()
         self.SetTitle()
-        wx.LogMessage(f"Wrote profile {self.Data.Filepath}")
+        wx.LogMessage(f"Wrote profile {self.Filepath()}")
         return result
 
     def buildUIFromData(self):

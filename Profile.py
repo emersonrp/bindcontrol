@@ -34,36 +34,39 @@ from UI.PowerPicker import EVT_POWER_CHANGED
 
 from Util.Paths import ProfilePath
 
-# class method to load a Profile from a file-open dialog
-def LoadFromFile(parent):
-    config = wx.ConfigBase.Get()
-    with wx.FileDialog(parent, "Open Profile file",
-            wildcard   = "BindControl Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
-            defaultDir = str(ProfilePath(config)),
-            style      = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
-
-        if fileDialog.ShowModal() == wx.ID_CANCEL:
-            wx.LogMessage("User canceled loading profile")
-            return False     # the user changed their mind
-
-        pathname = fileDialog.GetPath()
-
-    with wx.WindowDisabler():
-        _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(parent).Text('Loading...'))
-        wx.GetApp().Yield()
-
-        return doLoadFromFile(parent, pathname)
-
-def doLoadFromFile(parent, pathname):
-    newProfile = None
-    if newProfile := Profile(parent, filename = pathname):
-        newProfile.buildUIFromData()
-        newProfile.CheckAllConflicts()
-
-    return newProfile
-
 class Profile(wx.Notebook):
 
+    # class method to load a Profile from a file-open dialog
+    @classmethod
+    def LoadFromFile(cls, parent):
+        config = wx.ConfigBase.Get()
+        with wx.FileDialog(parent, "Open Profile file",
+                wildcard   = "BindControl Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
+                defaultDir = str(ProfilePath(config)),
+                style      = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                wx.LogMessage("User canceled loading profile")
+                return False     # the user changed their mind
+
+            pathname = fileDialog.GetPath()
+
+        with wx.WindowDisabler():
+            _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(parent).Text('Loading...'))
+            wx.GetApp().Yield()
+
+            return Profile.doLoadFromFile(parent, pathname)
+
+    @classmethod
+    def doLoadFromFile(cls, parent, pathname):
+        newProfile = None
+        if newProfile := Profile(parent, filename = pathname):
+            newProfile.buildUIFromData()
+            newProfile.CheckAllConflicts()
+
+        return newProfile
+
+    # Instance methods
     def __init__(self, parent, filename = None, newname = None, profiledata = None):
         super().__init__(parent, style = wx.NB_TOP, name = "Profile")
 
@@ -211,7 +214,7 @@ class Profile(wx.Notebook):
 
             # make sure we're all set up as whatever we just saved as
             mainwindow = wx.App.Get().Main
-            newprofile = doLoadFromFile(mainwindow, self.Data.Filepath)
+            newprofile = Profile.doLoadFromFile(mainwindow, self.Data.Filepath)
             mainwindow.InsertProfile(newprofile)
 
     def doSaveToFile(self):

@@ -1,5 +1,3 @@
-import sys
-import os
 from typing import Dict
 import webbrowser
 import wx

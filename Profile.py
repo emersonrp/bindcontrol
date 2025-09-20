@@ -23,11 +23,6 @@ from Page.CustomBinds import CustomBinds
 from Page.PopmenuEditor import PopmenuEditor
 
 import UI
-from UI.SimpleBindPane import SimpleBindPane
-from UI.BufferBindPane import BufferBindPane
-from UI.ComplexBindPane import ComplexBindPane
-from UI.WizardBindPane import WizardBindPane
-from UI.BindWizard import wizards
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinder import EVT_POWERBINDER_CHANGED
 from UI.PowerPicker import EVT_POWER_CHANGED

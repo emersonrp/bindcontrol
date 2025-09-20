@@ -287,7 +287,7 @@ class Profile(wx.Notebook):
                     cbpage.AddBindToPage(bindpane = bindpane)
 
         # Finally, after loading all this stuff, THEN add the binds that update the ProfileData
-        for pagename in ['General', 'Gameplay', 'MovementPowers', 'InspirationPopper', 'Mastermind']:
+        for pagename in ['General', 'Gameplay', 'CustomBinds', 'MovementPowers', 'InspirationPopper', 'Mastermind']:
             page = getattr(self, pagename)
             for evt in [
                 wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
@@ -301,11 +301,14 @@ class Profile(wx.Notebook):
         evt.Skip()
         page = getattr(self, pagename)
         control = getattr(evt, 'control', evt.GetEventObject())
-        if ctlname := next((name for name,c in page.Ctrls.items() if control == c), None):
-            # TODO:  "unless (some way to opt things out of this), then..."
-            self.UpdateData(pagename, ctlname, page.GetState(ctlname))
-            self.SetModified()
-            self.CheckAllConflicts()
+        if pagename == 'CustomBinds':
+            page.UpdateAllBinds() # no trivial or mess-free way to do just the one we need
+        else:
+            if ctlname := next((name for name,c in page.Ctrls.items() if control == c), None):
+                # TODO:  "unless (some way to opt things out of this), then..."
+                self.UpdateData(pagename, ctlname, page.GetState(ctlname))
+        self.SetModified()
+        self.CheckAllConflicts()
 
     def UpdateData(self, *args):
         self.Data.UpdateData(*args)

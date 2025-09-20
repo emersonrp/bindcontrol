@@ -70,7 +70,6 @@ class Profile(wx.Notebook):
         self.Pages           : List[bcPage]        = []
         self.Modified        : bool                = False
         self.ProfileBindsDir : str                 = ''
-        self.LastModTime     : int                 = 0
 
         GameData.SetupGameData(self.Server())
 
@@ -213,6 +212,13 @@ class Profile(wx.Notebook):
             mainwindow.InsertProfile(newprofile)
 
     def doSaveToFile(self):
+        # check that we haven't updated the file from another copy of BindControl
+        if self.Data.Filepath:
+            if self.Data.Filepath.exists():
+                if self.Data.Filepath.stat().st_mtime_ns > self.Data.LastModTime:
+                    result = wx.MessageBox(f"Profile file {self.Data.Filepath} has changed since last save.  Continuing may overwrite changes.  Continue?", "File Modified", wx.YES_NO)
+                    if result == wx.NO: return
+
         result = self.Data.doSaveToFile()
         self.SetTitle()
         wx.LogMessage(f"Wrote profile {self.Filepath()}")

@@ -22,7 +22,7 @@ import wx.adv
 from bcLogging import bcLogging
 from bcVersion import current_version
 from Icon import GetIcon
-import Profile
+from Profile import Profile
 import Models.ProfileData as ProfileData
 from UI.BindDirsWindow import BindDirsWindow
 from UI.PrefsDialog import PrefsDialog
@@ -206,7 +206,7 @@ class Main(wx.Frame):
 
         if filename:
             try:
-                profile = Profile.Profile(self, filename)
+                profile = Profile(self, filename)
                 profile.buildUIFromData()
                 self.Profile = profile
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
@@ -332,7 +332,7 @@ class Main(wx.Frame):
                 # destroy the Startup Panel if it's there.  This is only needed on Windows dunno why.
                 if self.StartupPanel: self.StartupPanel.Destroy()
 
-                self.Profile = Profile.Profile(self, newname = newname)
+                self.Profile = Profile(self, newname = newname)
                 self.Profile.buildUIFromData()
                 self.Profile.SetModified()
                 wx.LogMessage(f'Created New Profile "{newname}".')
@@ -350,10 +350,8 @@ class Main(wx.Frame):
     def OnProfileLoad(self, _):
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
 
-        newProfile = Profile.LoadFromFile(self)
-
         # Try to load;  if the user hits "cancel" or the load fails, go back to where we were
-        if newProfile:
+        if newProfile:= Profile.LoadFromFile(self):
             self.InsertProfile(newProfile)
 
     # we use this in the Binds Directory Window also
@@ -413,7 +411,7 @@ class Main(wx.Frame):
 
             if profiledata := Util.BuildFiles.ParseBuildFile(buildfile):
                 generaldata = {'General' : profiledata}
-                if newprofile := Profile.Profile(self, newname = profiledata['Name'], profiledata = generaldata):
+                if newprofile := Profile(self, newname = profiledata['Name'], profiledata = generaldata):
                     newprofile.buildUIFromData()
                     self.InsertProfile(newprofile)
                     newprofile.SetModified()

@@ -32,7 +32,7 @@ from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinder import EVT_POWERBINDER_CHANGED
 from UI.PowerPicker import EVT_POWER_CHANGED
 
-from Util.Paths import ProfilePath
+from Util.Paths import ProfilePath, GetProfileFileForName
 
 class Profile(wx.Notebook):
 
@@ -74,9 +74,11 @@ class Profile(wx.Notebook):
         self.BindFiles       : Dict[str, BindFile] = {}
         self.Pages           : List[bcPage]        = []
         self.Modified        : bool                = False
-        self.Filepath        : Path|None           = Path(filename) if filename else None
         self.ProfileBindsDir : str                 = ''
         self.LastModTime     : int                 = 0
+        self.Filepath        : Path|None           = None
+        if filename:  self.Filepath = Path(filename)
+        elif newname: self.Filepath = GetProfileFileForName(wx.ConfigBase.Get(), newname)
 
         GameData.SetupGameData(self.Server())
 

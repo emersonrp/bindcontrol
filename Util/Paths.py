@@ -13,8 +13,7 @@ def CheckProfileForBindsDir(config, bindsdir):
 
 # get a Path object given a profile name
 def GetProfileFileForName(config, name):
-    file = Path(config.Read('ProfilePath')) / f"{name}.bcp"
-    return file if file.is_file() else None
+    return Path(config.Read('ProfilePath')) / f"{name}.bcp"
 
 # get all profile binds dirs as a list of strings.
 #

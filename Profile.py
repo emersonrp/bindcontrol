@@ -32,7 +32,7 @@ from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinder import EVT_POWERBINDER_CHANGED
 from UI.PowerPicker import EVT_POWER_CHANGED
 
-from Util.Paths import ProfilePath, GetProfileFileForName
+from Util.Paths import ProfilePath
 
 class Profile(wx.Notebook):
 
@@ -284,25 +284,8 @@ class Profile(wx.Notebook):
             for custombind in data['CustomBinds']:
                 if not custombind: continue
 
-                # TODO - move this logic into the CustomBinds page class
-                bindpane = None
-                if custombind['Type'] == "SimpleBind":
-                    bindpane = SimpleBindPane(cbpage, init = custombind)
-                elif custombind['Type'] == "BufferBind":
-                    bindpane = BufferBindPane(cbpage, init = custombind)
-                elif custombind['Type'] == "ComplexBind":
-                    bindpane = ComplexBindPane(cbpage, init = custombind)
-                elif custombind['Type'] == "WizardBind":
-                    if wizClass := wizards.get(custombind['WizClass'], None):
-                        bindpane = WizardBindPane(cbpage, wizClass, init = custombind)
-                    else:
-                        wx.LogError(f"Tried to load WizardBind with unknown class {custombind['WizClass']} - probably a bug!")
-                else:
-                    wx.LogError(f'Tried to create a custom bind with unknown type "{custombind['Type']}" - probably a bug!')
-
-                if bindpane:
+                if bindpane := cbpage.BuildBindPaneFromData(custombind):
                     cbpage.AddBindToPage(bindpane = bindpane)
-
 
         # Finally, after loading all this stuff, THEN add the binds that update the ProfileData
         for pagename in ['General', 'Gameplay', 'MovementPowers', 'InspirationPopper', 'Mastermind']:

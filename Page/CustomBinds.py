@@ -12,7 +12,7 @@ from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
 from UI.WizardBindPane  import WizardBindPane
-from UI.BindWizard      import WizPickerDialog,wizards
+from UI.BindWizard      import WizPickerDialog, wizards
 
 class CustomBinds(Page):
     def __init__(self, parent):
@@ -114,22 +114,8 @@ class CustomBinds(Page):
             try:
                 bindjson = filepath.read_text()
                 binddata = json.loads(bindjson)
-                bindpane = None
 
-                # Might DRY this up with the nearly-identical code in Profile
-                if binddata['Type'] == "SimpleBind":
-                    bindpane = SimpleBindPane(self, init = binddata)
-                elif binddata['Type'] == "BufferBind":
-                    bindpane = BufferBindPane(self, init = binddata)
-                elif binddata['Type'] == "ComplexBind":
-                    bindpane = ComplexBindPane(self, init = binddata)
-                elif binddata['Type'] == "WizardBind":
-                    if wizClass := wizards.get(binddata['WizClass'], None):
-                        bindpane = WizardBindPane(self, wizClass, init = binddata)
-                else:
-                    raise(Exception("No valid custom bind found."))
-
-                if bindpane:
+                if bindpane := self.BuildBindPaneFromData(binddata):
                     self.AddBindToPage(bindpane = bindpane)
                     existingBindsNames = [pane.Title for pane in self.Panes if pane != bindpane]
                     if bindpane.Title in existingBindsNames:
@@ -139,6 +125,24 @@ class CustomBinds(Page):
                 wx.LogError(f'Cannot import custom bind "{filepath.name}": {e}')
 
         evt.Skip()
+
+    def BuildBindPaneFromData(self, binddata):
+        bindpane = None
+        if binddata['Type'] == "SimpleBind":
+            bindpane = SimpleBindPane(self, init = binddata)
+        elif binddata['Type'] == "BufferBind":
+            bindpane = BufferBindPane(self, init = binddata)
+        elif binddata['Type'] == "ComplexBind":
+            bindpane = ComplexBindPane(self, init = binddata)
+        elif binddata['Type'] == "WizardBind":
+            if wizClass := wizards.get(binddata['WizClass'], None):
+                bindpane = WizardBindPane(self, wizClass, init = binddata)
+            else:
+                wx.LogError(f"Tried to load WizardBind with unknown class {binddata['WizClass']}.  This is a bug.")
+        else:
+            wx.LogError("No valid custom bind found.")
+
+        return bindpane
 
     def AddBindToPage(self, bindpane = None):
 

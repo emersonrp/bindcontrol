@@ -303,6 +303,8 @@ class Gameplay(Page):
                 if self.Profile.CheckConflict(buttonval, ''): buttonval = ""
 
                 self.Ctrls[f"Tray{tray}Button{button}"].SetLabel(buttonval)
+                self.Ctrls[f"Tray{tray}Button{button}"].Key = buttonval
+                self.Profile.UpdateData("Gameplay", f"Tray{tray}Button{button}", buttonval)
 
         if evt: evt.Skip()
 

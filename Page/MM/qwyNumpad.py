@@ -140,9 +140,9 @@ class qwyNumpad(wx.Panel):
         # core binds, some get overridden via BLF.  Put them in the reset file
         ResetFile = profile.ResetFile()
         ResetFile.SetBind('NUMPAD0', '', page, profile.BLF('mmqn', 'pad.txt'))
-        ResetFile.SetBind('NUMPAD1', '', page, profile.BLF('mmqn', 'min.txt'))
-        ResetFile.SetBind('NUMPAD2', '', page, profile.BLF('mmqn', 'lt.txt'))
-        ResetFile.SetBind('NUMPAD3', '', page, profile.BLF('mmqn', 'bos.txt'))
+        ResetFile.SetBind('NUMPAD1', '', page, profile.BLF('mmqn', 'mins.txt'))
+        ResetFile.SetBind('NUMPAD2', '', page, profile.BLF('mmqn', 'lts.txt'))
+        ResetFile.SetBind('NUMPAD3', '', page, profile.BLF('mmqn', 'boss.txt'))
         ResetFile.SetBind('NUMPAD4', '', page, 'petcomall def')
         ResetFile.SetBind('NUMPAD5', '', page, 'petcomall agg')
         ResetFile.SetBind('NUMPAD6', '', page, 'petcomall pas')

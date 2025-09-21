@@ -1,6 +1,7 @@
 import re, os, platform
 from pathlib import PurePath, Path, PureWindowsPath
 from typing import Dict
+import copy
 import json
 import codecs
 import base64
@@ -22,6 +23,7 @@ class ProfileData(dict):
         self.Filepath        : Path|None           = Path(filename) if filename else None
         self.LastModTime     : int                 = 0
         self.Server          : str                 = "Homecoming"
+        self.SavedState      : dict                = profiledata
 
         # are we wanting to load this one from a file?
         if self.Filepath:
@@ -31,10 +33,12 @@ class ProfileData(dict):
                 if data := json.loads(self.Filepath.read_text()):
                     self.FillWith(data)
                     self.LastModTime = self.Filepath.stat().st_mtime_ns
+                    # TODO need a deep clone here instead
+                    self.SavedState = copy.deepcopy(data)
                 else:
                     raise Exception(f'Something broke while loading profile "{self.Filepath}".  This is a bug.')
-            except Exception:
-                raise Exception(f'Something broke while loading profile "{self.Filepath}".  This is a bug.')
+            except Exception as e:
+                raise Exception(f'Something broke while loading profile "{self.Filepath}: {e}".  This is a bug.')
 
             self.ClearModified()
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
@@ -103,7 +107,10 @@ class ProfileData(dict):
                         value = newvalue
             except Exception: pass # if it didn't JSON, just use it
             self[pagename][ctlname] = value
-        self.SetModified()
+        if dict(self) == self.SavedState:
+            self.ClearModified()
+        else:
+            self.SetModified()
 
     def SetModified(self) -> None:
         self.Modified = True
@@ -209,6 +216,7 @@ class ProfileData(dict):
             savefile.write_text(self.AsJSON())
             self.Config.Write('LastProfile', str(savefile))
             self.LastModTime = savefile.stat().st_mtime_ns
+            self.SavedState = copy.deepcopy(dict(self))
             self.ClearModified()
         except Exception as e:
             raise Exception(f"Problem saving to profile {savefile}: {e}")

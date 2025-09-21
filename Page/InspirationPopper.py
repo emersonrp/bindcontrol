@@ -16,7 +16,7 @@ tabs = {
 }
 
 class InspirationPopper(Page):
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         super().__init__(parent)
 
         self.TabTitle : str = "Inspiration Popper"
@@ -24,7 +24,7 @@ class InspirationPopper(Page):
 
         self.Init : Dict[str, Any] = {}
 
-    def BuildPage(self):
+    def BuildPage(self) -> None:
         for tab in tabs:
             for name, Insp in GameData.Inspirations[tab].items():
                 self.Init[f'{tab}{name}Key']        = ""
@@ -175,12 +175,12 @@ class InspirationPopper(Page):
 
         self.MainSizer.Add(centeringSizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
 
-    def SynchronizeUI(self):
+    def SynchronizeUI(self) -> None:
         self.OnEnableCB()
         self.OnEnableRevCB()
         self.OnEnableTellCB()
 
-    def OnProfileChatColorButton(self, _):
+    def OnProfileChatColorButton(self, _) -> None:
         dkcolor = self.Profile.General.GetState('ChatForeground')
         ltcolor = self.Profile.General.GetState('ChatBackground')
         for tab in tabs:
@@ -192,7 +192,7 @@ class InspirationPopper(Page):
                     control = self.Ctrls[f'{tab}{order}{Insp}Border']
                     wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
 
-    def OnByInspColorButton(self, _):
+    def OnByInspColorButton(self, _) -> None:
         for tab in tabs:
             for Insp, InspData in GameData.Inspirations[tab].items():
                 for order in ("", "Rev"):
@@ -207,8 +207,7 @@ class InspirationPopper(Page):
                     control = self.Ctrls[f'{tab}{order}{Insp}Border']
                     wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
 
-
-    def OnEnableCB(self, evt = None):
+    def OnEnableCB(self, evt = None) -> None:
         controls = []
         for tab in tabs:
             for Insp in GameData.Inspirations[tab]:
@@ -223,7 +222,7 @@ class InspirationPopper(Page):
         self.Thaw()
         if evt: evt.Skip()
 
-    def OnEnableRevCB(self, evt = None):
+    def OnEnableRevCB(self, evt = None) -> None:
         controls = []
         for tab in tabs:
             for Insp in GameData.Inspirations[tab]:
@@ -238,7 +237,7 @@ class InspirationPopper(Page):
         self.Thaw()
         if evt: evt.Skip()
 
-    def OnEnableTellCB(self, evt = None):
+    def OnEnableTellCB(self, evt = None) -> None:
         enabled = self.enableTellsCB.IsChecked()
         controls = []
         revcontrols = []
@@ -256,7 +255,7 @@ class InspirationPopper(Page):
             self.EnableControls(enabled, revcontrols)
         if evt: evt.Skip()
 
-    def PopulateBindFiles(self):
+    def PopulateBindFiles(self) -> bool:
         ResetFile = self.Profile.ResetFile()
 
         for tab in tabs:
@@ -288,7 +287,7 @@ class InspirationPopper(Page):
         return True
 
     # we only fiddle with ResetFile, which is already taken care of.
-    def AllBindFiles(self):
+    def AllBindFiles(self) -> Dict[str, list]:
         return {
             'files' : [],
             'dirs'  : [],

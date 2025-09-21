@@ -13,7 +13,7 @@ from UI.ControlGroup import ControlGroup
 from Page import Page
 
 class General(Page):
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         super().__init__(parent)
 
         self.Init : Dict[str, Any] = {
@@ -58,7 +58,7 @@ class General(Page):
             'UnignoreTarget'  : '',
         }
 
-    def BuildPage(self):
+    def BuildPage(self) -> None:
 
         self.bannerPanel = wx.Panel(self)
         bannerSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -245,14 +245,14 @@ class General(Page):
 
         self.MainSizer.Add(centeringSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 0)
 
-    def SynchronizeUI(self):
+    def SynchronizeUI(self) -> None:
         self.OnPickAlignment()
         self.OnPickOrigin()
         self.OnPickArchetype()
         self.OnTypeEnable()
         self.ValidateServerPicker()
 
-    def PopulateBindFiles(self):
+    def PopulateBindFiles(self) -> bool:
         ResetFile = self.Profile.ResetFile()
 
         notifier = ''
@@ -288,14 +288,14 @@ class General(Page):
         return True
 
     # we only fiddle with ResetFile, which is already taken care of.
-    def AllBindFiles(self):
+    def AllBindFiles(self) -> Dict[str, list]:
         return {
             'files' : [],
             'dirs'  : [],
         }
 
     ### EVENT HANDLERS
-    def OnPickAlignment(self, evt = None):
+    def OnPickAlignment(self, evt = None) -> None:
         alignment = self.GetState('Alignment')
         if not alignment:
             alignment = 'Hero'
@@ -320,7 +320,7 @@ class General(Page):
 
         if evt: evt.Skip()
 
-    def OnPickArchetype(self, evt = None):
+    def OnPickArchetype(self, evt = None) -> None:
         arch = self.GetState('Archetype')
         c = self.Ctrls
 
@@ -368,18 +368,18 @@ class General(Page):
 
         if evt: evt.Skip()
 
-    def OnPickOrigin(self, evt = None):
+    def OnPickOrigin(self, evt = None) -> None:
         if not self.GetState('Origin'):
             self.SetState('Origin', 'Magic')
         if evt: evt.Skip()
 
-    def OnPickPoolPower(self, evt):
+    def OnPickPoolPower(self, evt) -> None:
         self.UpdatePoolPickers()
         self.Profile.MovementPowers.SynchronizeUI()
         self.Profile.CheckAllConflicts()
         evt.Skip()
 
-    def UpdatePoolPickers(self):
+    def UpdatePoolPickers(self) -> None:
         c = self.Ctrls
         pickedPools = []
 
@@ -417,28 +417,28 @@ class General(Page):
             picker.SetStringSelection(curval)
             self.Profile.UpdateData('General', pickername, self.GetState(pickername))
 
-    def OnPickPrimaryPowerSet(self, evt):
+    def OnPickPrimaryPowerSet(self, evt) -> None:
         self.Profile.Mastermind.SynchronizeUI()
         self.Profile.CheckAllConflicts()
         evt.Skip()
 
-    def OnPickSecondaryPowerSet(self, evt):
+    def OnPickSecondaryPowerSet(self, evt) -> None:
         self.Profile.CheckAllConflicts()
         evt.Skip()
 
-    def OnPickEpicPowerSet(self, evt):
+    def OnPickEpicPowerSet(self, evt) -> None:
         evt.Skip()
 
-    def OnTypeEnable(self, evt = None):
+    def OnTypeEnable(self, evt = None) -> None:
         typeenabled = self.GetState('TypingNotifierEnable')
         self.EnableControls(typeenabled, ['TypingNotifier'])
         self.Layout()
         if evt: evt.Skip()
 
-    def ValidateServerPicker(self):
+    def ValidateServerPicker(self) -> None:
         if not self.GetState('Server'): self.SetState('Server', 'Homecoming')
 
-    def OnServerChange(self, evt):
+    def OnServerChange(self, evt) -> None:
         if evt: evt.Skip()
         server = self.Profile.Server()
 

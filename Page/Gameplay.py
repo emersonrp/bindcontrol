@@ -14,7 +14,7 @@ ordinals = ("First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "
 
 class Gameplay(Page):
 
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         super().__init__(parent)
         self.TabTitle : str = "Gameplay"
 
@@ -85,7 +85,7 @@ class Gameplay(Page):
                 self.Init[ctlname] = f"{mod}{button}"
                 UI.Labels[ctlname] = f"{name} Tray, Button {button}"
 
-    def BuildPage(self):
+    def BuildPage(self) -> None:
 
         ##### Power Tray Buttons
         traySizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = 'Power Tray Buttons')
@@ -262,7 +262,7 @@ class Gameplay(Page):
         self.MainSizer.Add(traySizer,   flag = wx.ALL|          wx.ALIGN_CENTER_HORIZONTAL, border = 16)
         self.MainSizer.Add(bottomSizer, flag = wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
 
-    def SynchronizeUI(self, evt = None):
+    def SynchronizeUI(self, evt = None) -> None:
         self.OnTPSEnable()
         self.OnTeamEnable()
 
@@ -282,7 +282,7 @@ class Gameplay(Page):
 
         if evt: evt.Skip()
 
-    def OnKeybindProfilePicker(self, evt = None):
+    def OnKeybindProfilePicker(self, evt = None) -> None:
         pickerval = self.GetState('KBProfile')
 
         # Fill in the disabled / default keys on the powertray slots with their
@@ -306,7 +306,7 @@ class Gameplay(Page):
 
         if evt: evt.Skip()
 
-    def OnFillTray(self, evt):
+    def OnFillTray(self, evt) -> None:
         evtbutton = evt.EventObject
         tray = evtbutton.Tray
         mod = ''
@@ -319,20 +319,20 @@ class Gameplay(Page):
         self.Profile.CheckAllConflicts()
         if evt: evt.Skip()
 
-    def OnTPSEnable(self, evt = None):
+    def OnTPSEnable(self, evt = None) -> None:
         self.EnableControls(self.GetState('TPSEnable'),
             ['TPSSelMode','TeamSelect1','TeamSelect2','TeamSelect3',
             'TeamSelect4', 'TeamSelect5','TeamSelect6','TeamSelect7',
             'TeamSelect8'])
         if evt: evt.Skip()
 
-    def OnTeamEnable(self, evt = None):
+    def OnTeamEnable(self, evt = None) -> None:
         self.EnableControls(self.GetState('TeamEnable'),
             ['SelNextTeam', 'SelPrevTeam','IncTeamSize', 'DecTeamSize',
             'IncTeamPos', 'DecTeamPos', 'TeamReset'])
         if evt: evt.Skip()
 
-    def PopulateBindFiles(self):
+    def PopulateBindFiles(self) -> bool:
         ResetFile = self.Profile.ResetFile()
         server = self.Profile.Server()
 
@@ -421,7 +421,7 @@ class Gameplay(Page):
 
         return True
 
-    def CheckForDefaultKeyToClear(self, traynum, button):
+    def CheckForDefaultKeyToClear(self, traynum, button) -> None:
         if self.GetState("KeepExisting") == False:
             if KBProfile := self.KeybindProfiles.get(self.GetState('KBProfile'), None):
                 if DefModKey := KBProfile[traynum]:
@@ -429,7 +429,7 @@ class Gameplay(Page):
                     if self.GetState(f"Tray{traynum}Button{button}") != DefKey and not self.Profile.CheckConflict(DefKey, ''):
                         self.Profile.ResetFile().SetBind(KeyBind(DefKey, "", self, "nop"))
 
-    def AllBindFiles(self):
+    def AllBindFiles(self) -> Dict[str, list]:
         files = [self.Profile.GetBindFile("teamsel", "reset.txt")]
         dirs  = ["teamsel", "teamsel2"]
 
@@ -447,7 +447,7 @@ class Gameplay(Page):
             'dirs'  : dirs,
         }
 
-    def formatTeamConfig(self, size, pos):
+    def formatTeamConfig(self, size, pos) -> str:
         sizetext = f"{size}-Man"
         postext = ", No Spot"
         if pos > 0   : postext = f", {ordinals[pos-1]} Spot"
@@ -456,7 +456,7 @@ class Gameplay(Page):
         if size == 3 : sizetext = "Trio"
         return f"[{sizetext}{postext}]"
 
-    def ts2CreateSet(self, tsize, tpos, tsel, file):
+    def ts2CreateSet(self, tsize, tpos, tsel, file) -> None:
         # tsize is the size of the team at the moment
         # tpos is the position of the player at the moment, or 0 if unknown
         # tsel is the currently selected team member as far as the bind knows, or 0 if unknown

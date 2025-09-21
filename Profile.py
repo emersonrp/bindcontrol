@@ -122,12 +122,12 @@ class Profile(wx.Notebook):
 
     def GetCustomID(self) -> int: return self.Data.GetCustomID()
 
-    def BLF(self, *args):
+    def BLF(self, *args) -> str:
         filepath = self.GameBindsDir()
         for arg in args: filepath = filepath  /  arg
         return f"$${BLF()} " + str(filepath)
 
-    def CheckConflict(self, key, existingctrlname):
+    def CheckConflict(self, key, existingctrlname) -> list:
         conflicts = []
 
         for page in self.Pages:
@@ -142,18 +142,18 @@ class Profile(wx.Notebook):
         return conflicts
 
     # check all buttons for conflicts.
-    def CheckAllConflicts(self):
+    def CheckAllConflicts(self) -> None:
         for page in self.Pages:
             for _, ctrl in page.Ctrls.items():
                 if isinstance(ctrl, bcKeyButton):
                     if not ctrl.IsThisEnabled(): continue
                     ctrl.CheckConflicts()
 
-    def SetModified(self, _ = None):
+    def SetModified(self, _ = None) -> None:
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()} (*)") # pyright: ignore
         self.Data.SetModified()
 
-    def ClearModified(self, _ = None):
+    def ClearModified(self, _ = None) -> None:
         self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore
         self.Data.ClearModified()
 
@@ -161,7 +161,7 @@ class Profile(wx.Notebook):
 
     ###################
     # Profile Save/Load
-    def SaveAsDefault(self, prompt = True):
+    def SaveAsDefault(self, prompt = True) -> None:
         if prompt:
             result = wx.MessageBox("This will set the current profile to be used as a template when making a new profile.  Continue?", "Save As Default", wx.YES_NO)
             if result == wx.NO: return
@@ -172,13 +172,13 @@ class Profile(wx.Notebook):
             # Let us know if it did
             wx.LogError(f"Failed to write default profile: {e}")
 
-    def SaveToFile(self):
+    def SaveToFile(self) -> bool:
         config = wx.ConfigBase.Get()
         try:
             ProfilePath(config).mkdir( parents = True, exist_ok = True )
         except Exception as e:
             wx.LogError(f"Can't make Profile path {ProfilePath(config)} - {e}.  Aborting Save.")
-            return
+            return False
 
         with wx.FileDialog(self, "Save Profile file",
                 wildcard="Bindcontrol Profiles (*.bcp)|*.bcp|All Files (*.*)|*.*",
@@ -211,16 +211,17 @@ class Profile(wx.Notebook):
             newprofile = Profile.doLoadFromFile(mainwindow, self.Filepath())
             mainwindow.InsertProfile(newprofile)
 
+            return True
+
     def doSaveToFile(self):
         # check that we haven't updated the file from another copy of BindControl
         if self.Data.FileHasChanged():
             result = wx.MessageBox(f"Profile file {self.Data.Filepath} has changed since last save.  Continuing may overwrite changes.  Continue?", "File Modified", wx.YES_NO)
-            if result == wx.NO: return
+            if result == wx.NO: return wx.NO
 
-        result = self.Data.doSaveToFile()
+        self.Data.doSaveToFile()
         self.SetTitle()
         wx.LogMessage(f"Wrote profile {self.Filepath()}")
-        return result
 
     def buildUIFromData(self):
         self.SetTitle()
@@ -375,7 +376,7 @@ class Profile(wx.Notebook):
 
     #####################
     # Bind file functions
-    def GetBindFile(self, *filebits):
+    def GetBindFile(self, *filebits) -> BindFile:
         filepath = PurePath(*filebits)
         key = str(filepath)
 
@@ -386,7 +387,7 @@ class Profile(wx.Notebook):
 
     # making this "not mine" so we can return False if everything's fine,
     # or the existing Profile name if something's wrong
-    def BindsDirNotMine(self):
+    def BindsDirNotMine(self) -> str|bool:
         IDFile = self.ProfileIDFile()
         if IDFile:
             # If the file is even there...
@@ -502,7 +503,7 @@ class Profile(wx.Notebook):
         self.Data.BindFiles = {}
         self.BindFiles = {}
 
-    def AllBindFiles(self):
+    def AllBindFiles(self) -> dict:
         files = [self.ResetFile()]
         dirs  = []
         for page in self.Pages:

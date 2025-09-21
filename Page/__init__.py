@@ -10,6 +10,7 @@
 #  page.SetState('Archetype', 'Blaster')
 
 import json
+from typing import Dict
 import wx
 import wx.lib.colourselect as csel
 from UI.KeySelectDialog import bcKeyButton
@@ -18,7 +19,7 @@ from Icon import GetIcon
 
 class Page(wx.ScrolledWindow):
 
-    def __init__(self, parent, bind_events : bool = True):
+    def __init__(self, parent, bind_events : bool = True) -> None:
         super().__init__(parent)
 
         self.MainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -32,7 +33,7 @@ class Page(wx.ScrolledWindow):
 
         self.Ctrls : dict = {}
 
-    def GetState(self, key):
+    def GetState(self, key) -> str:
         control = self.Ctrls.get(key, None)
         if not control:
             wx.LogWarning(f"Unknown control in GetState: {key} - this is a bug.")
@@ -71,11 +72,11 @@ class Page(wx.ScrolledWindow):
             wx.LogError(f"control '{key}' has no GetValue() - this is a bug")
             return ''
 
-    def SetState(self, key, value):
+    def SetState(self, key, value) -> str|int|None:
         control = self.Ctrls.get(key, None)
         if not control:
             wx.LogError(f"Got into SetState for key {key} with no control - this is a bug.")
-            return
+            return ''
 
         if isinstance(control, PowerPicker):
             if power := value.get('power'):
@@ -108,16 +109,16 @@ class Page(wx.ScrolledWindow):
         return binds
 
     # disable controls by name
-    def EnableControls(self, enabled, names):
+    def EnableControls(self, enabled, names) -> None:
         for name in names:
             self.Ctrls[name].Enable(enabled)
 
     ##### stubs for overriding (shoes for industry!)
-    def SynchronizeUI(self):
+    def SynchronizeUI(self) -> None:
         return
 
     # create and display the UI for this page
-    def BuildPage(self):
+    def BuildPage(self) -> None:
         return
 
     # create and fill the BindFile object with Bind objects
@@ -126,7 +127,7 @@ class Page(wx.ScrolledWindow):
         return True
 
     # return a list of all bindfiles
-    def AllBindFiles(self):
+    def AllBindFiles(self) -> Dict[str, list]:
         wx.LogWarning(f"AllBindFiles called on parent Page, needs implementing in {type(self).__name__}.")
         return {
             'files' : [],

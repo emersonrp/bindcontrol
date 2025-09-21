@@ -7,7 +7,7 @@ class SGModeCmd(PowerBinderCommand):
     Menu = "Social"
     DeprecatedName = "SG Mode Toggle"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
         sgmodeSizer = wx.BoxSizer(wx.HORIZONTAL)
         sgmodeSizer.Add(wx.StaticText(dialog, -1, "Supergroup Mode:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
@@ -23,7 +23,7 @@ class SGModeCmd(PowerBinderCommand):
         CenteringSizer.Add(sgmodeSizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
         return CenteringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         if self.sgmodeOnRB.GetValue():
             return 'sgmodeset 1'
         elif self.sgmodeOffRB.GetValue():
@@ -31,7 +31,7 @@ class SGModeCmd(PowerBinderCommand):
         else:
             return 'sgmode'
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         if self.sgmodeOnRB.GetValue():
             val = "On"
         elif self.sgmodeOffRB.GetValue():
@@ -41,7 +41,7 @@ class SGModeCmd(PowerBinderCommand):
 
         return {"value" : val}
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         val = init.get('value', '')
         if val == "On":
             self.sgmodeOnRB.SetValue(True)

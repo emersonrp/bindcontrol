@@ -9,7 +9,7 @@ class BuffDisplayCmd(PowerBinderCommand):
     Menu = "Graphics / UI"
     Groups = {}
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         self.Groups = {}
         self.Page = dialog.Page
         self.buffDisplayMap = {
@@ -58,7 +58,7 @@ class BuffDisplayCmd(PowerBinderCommand):
 
         return groupSizer
 
-    def CalculateValue(self):
+    def CalculateValue(self) -> int:
         page = wx.App.Get().Main.Profile.CustomBinds
 
         total = 0
@@ -71,13 +71,13 @@ class BuffDisplayCmd(PowerBinderCommand):
                     total = total + checkbox.Data
         return total
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         return f"optionset buffsettings {self.CalculateValue()}"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return { 'value' : self.CalculateValue() }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         value = init.get('value', 0)
 
         value = value or 0  # in case we had for some reason 'None' stashed in the init values

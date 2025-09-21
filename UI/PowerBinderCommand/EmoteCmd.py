@@ -7,7 +7,7 @@ class EmoteCmd(PowerBinderCommand):
     Name = "Emote"
     Menu = "Social"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         emoteSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.emoteText = wx.StaticText(dialog, -1, "Select Emote:")
         emoteSizer.Add(self.emoteText, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
@@ -18,14 +18,14 @@ class EmoteCmd(PowerBinderCommand):
 
         return emoteSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         displayedEmoteName = self.emoteName.GetLabel()
         actualEmotePayload = UI.EmotePicker.payloadMap[displayedEmoteName]
 
         return actualEmotePayload
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {'emoteName': self.emoteName.GetLabel()}
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if init.get('emoteName', ''): self.emoteName.SetLabel(init['emoteName'])

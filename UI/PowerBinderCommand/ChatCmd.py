@@ -24,7 +24,7 @@ class ChatCmd(PowerBinderCommand):
         'tell $name': 't $name',
     }
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.GridBagSizer:
         chatCommandSizer = wx.GridBagSizer(5, 5)
         self.chatCommandUseColorsCB = wx.CheckBox(dialog, -1, "Use Chat Bubble Colors")
         chatCommandSizer.Add(self.chatCommandUseColorsCB, (0,0), (1,6), flag=wx.ALIGN_CENTER_VERTICAL)
@@ -62,7 +62,7 @@ class ChatCmd(PowerBinderCommand):
 
         return chatCommandSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         duration = self.chatCommandDuration.GetValue()
 
         choice = self.chatCommandChatSize
@@ -91,7 +91,7 @@ class ChatCmd(PowerBinderCommand):
 
         return f"{beginchat}{channel} {size}{duration}{bdcolor}{fgcolor}{bgcolor}{text}"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {
             'usecolors' : self.chatCommandUseColorsCB.IsChecked(),
             'beginchat' : self.chatCommandUseBeginchatCB.IsChecked(),
@@ -104,7 +104,7 @@ class ChatCmd(PowerBinderCommand):
             'text'      : self.chatCommandMessage.GetValue(),
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if init.get('usecolors', '') : self.chatCommandUseColorsCB   .SetValue(init['usecolors'])
         if init.get('beginchat', '') : self.chatCommandUseBeginchatCB.SetValue(init['beginchat'])
         if init.get('channel'  , '') : self.chatCommandChannel .SetSelection(init['channel'])

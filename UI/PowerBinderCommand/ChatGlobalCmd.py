@@ -6,7 +6,7 @@ class ChatGlobalCmd(PowerBinderCommand):
     Name = "Chat Command (Global)"
     Menu = "Social"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.GridBagSizer:
         chatCommandGlobalSizer = wx.GridBagSizer(5,5)
 
         self.chatCommandGlobalUseBeginchatCB = wx.CheckBox(dialog, -1, "Use beginchat")
@@ -24,7 +24,7 @@ class ChatGlobalCmd(PowerBinderCommand):
 
         return chatCommandGlobalSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         useBeginchat = self.chatCommandGlobalUseBeginchatCB.IsChecked()
         channel      = self.chatCommandGlobalChannel.GetValue()
         message      = self.chatCommandGlobalMessage.GetValue()
@@ -33,14 +33,14 @@ class ChatGlobalCmd(PowerBinderCommand):
 
         return f'{preface}send "{channel}" {message}'
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {
             'usebeginchat': self.chatCommandGlobalUseBeginchatCB.GetValue(),
             'channel'     : self.chatCommandGlobalChannel.GetValue(),
             'message'     : self.chatCommandGlobalMessage.GetValue(),
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if init.get('usebeginchat', ''): self.chatCommandGlobalUseBeginchatCB.SetValue(init['usebeginchat'])
         if init.get('channel',      ''): self.chatCommandGlobalChannel.SetValue(init['channel'])
         if init.get('message',      ''): self.chatCommandGlobalMessage.SetValue(init['message'])

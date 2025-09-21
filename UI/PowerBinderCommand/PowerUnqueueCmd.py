@@ -6,7 +6,7 @@ class PowerUnqueueCmd(PowerBinderCommand):
     Name = "Power Unqueue / Abort"
     Menu = "Powers"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -18,17 +18,17 @@ class PowerUnqueueCmd(PowerBinderCommand):
         CenteringSizer.Add(sizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
         return CenteringSizer
 
-    def Serialize(self):
-        return {
-            'unqueueorabort' : self.UnqueueOrAbort.GetString(self.UnqueueOrAbort.GetSelection())
-        }
-
-    def Deserialize(self, init):
-        self.UnqueueOrAbort.SetStringSelection(init.get('unqueueorabort', 'Unqueue'))
-
-
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         if self.UnqueueOrAbort.GetString(self.UnqueueOrAbort.GetSelection()) == 'Unqueue':
             return 'powexecunqueue' if self.Profile.Server() == "Homecoming" else 'px_uq'
         else:
             return 'powexecabort' if self.Profile.Server() == "Homecoming" else 'px_ab'
+
+    def Serialize(self) -> dict:
+        return {
+            'unqueueorabort' : self.UnqueueOrAbort.GetString(self.UnqueueOrAbort.GetSelection())
+        }
+
+    def Deserialize(self, init) -> None:
+        self.UnqueueOrAbort.SetStringSelection(init.get('unqueueorabort', 'Unqueue'))
+

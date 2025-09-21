@@ -6,7 +6,7 @@ class HideUnhideCmd(PowerBinderCommand):
     Name = "Hide / Unhide"
     Menu = "Social"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -44,7 +44,7 @@ class HideUnhideCmd(PowerBinderCommand):
         CenteringSizer.Add(sizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
         return CenteringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         if self.HideShowDialog.GetValue() == True:
             return "hide"
         elif self.HideSet.GetValue() == True:
@@ -71,7 +71,7 @@ class HideUnhideCmd(PowerBinderCommand):
             else:
                 return '$$'.join(commands)
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         if self.HideShowDialog.GetValue() == True:
             hidepicker = 'dialog'
         elif self.HideSet.GetValue() == True:
@@ -90,7 +90,7 @@ class HideUnhideCmd(PowerBinderCommand):
             'invites'    : self.HInvites.IsChecked(),
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         hidepicker = init.get('hidepicker', 'dialog')
         if hidepicker == 'dialog':
             self.HideShowDialog.SetValue(True)
@@ -109,9 +109,9 @@ class HideUnhideCmd(PowerBinderCommand):
 
         self.SynchronizeUI()
 
-    def SynchronizeUI(self, evt = None):
+    def SynchronizeUI(self, evt = None) -> None:
         if evt: evt.Skip()
-        # if we have NOY chosen "Show Dialog" then enable the checkboxes
+        # if we have NOT chosen "Show Dialog" then enable the checkboxes
         self.HSearches  .Enable(self.HideShowDialog.GetValue() != True)
         self.HSupergroup.Enable(self.HideShowDialog.GetValue() != True)
         self.HFriends   .Enable(self.HideShowDialog.GetValue() != True)

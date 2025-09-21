@@ -6,7 +6,7 @@ class GraphicsCmd(PowerBinderCommand):
     Name = "Graphics Settings"
     Menu = "Graphics / UI"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         centeringSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = wx.FlexGridSizer(2)
 
@@ -80,7 +80,7 @@ class GraphicsCmd(PowerBinderCommand):
         centeringSizer.Add(sizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
         return centeringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         # choice 1, do this one at a time by hand;  choice 2, hack up some data-driven iterable.  I choose 1.
         bindstrings = []
         if self.visscalecb.IsChecked():
@@ -120,7 +120,7 @@ class GraphicsCmd(PowerBinderCommand):
 
         return '$$'.join(bindstrings)
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         fsaavalue = ""
         fsaaselection = self.fsaach.GetSelection()
         if fsaaselection != wx.NOT_FOUND:
@@ -158,7 +158,7 @@ class GraphicsCmd(PowerBinderCommand):
             'usehdrch'       : usehdrvalue,
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         self.visscalecb.SetValue(init.get('visscalecb', False))
         self.visscalesc.SetValue(init.get('visscalesc', 1.0))
         self.dofweightcb.SetValue(init.get('dofweightcb', False))

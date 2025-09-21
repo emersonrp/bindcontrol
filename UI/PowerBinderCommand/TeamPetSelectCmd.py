@@ -6,7 +6,7 @@ class TeamPetSelectCmd(PowerBinderCommand):
     Name = "Team/Pet Select"
     Menu = "Targeting"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
 
         teamPetSelectSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -25,19 +25,19 @@ class TeamPetSelectCmd(PowerBinderCommand):
         CenteringSizer.Add(teamPetSelectSizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
         return CenteringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         teamOrPet = 'team' if self.teamPetSelectTeamRB.GetValue() else 'pet'
         targetNumber = self.teamPetSelectNumber.GetSelection()+1
 
         return f"{teamOrPet}select {targetNumber}"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {
             'teamOrPet': 'team' if self.teamPetSelectTeamRB.GetValue() else 'pet',
             'targetNum': self.teamPetSelectNumber.GetSelection(),
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         ToP = init.get('teamOrPet', '')
         if ToP == 'pet':
             self.teamPetSelectPetRB.SetValue(True)

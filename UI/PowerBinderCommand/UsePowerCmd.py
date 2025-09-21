@@ -8,7 +8,7 @@ class UsePowerCmd(PowerBinderCommand):
     Name = "Use Power"
     Menu = "Powers"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.FlexGridSizer:
         usePowerSizer = wx.FlexGridSizer(2, 2, 5, 5)
         usePowerSizer.AddGrowableCol(1)
 
@@ -30,7 +30,7 @@ class UsePowerCmd(PowerBinderCommand):
 
         return usePowerSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         server = self.Profile.Server()
         if self.usePowerRBToggle.GetValue():
             method = "powexecname"
@@ -44,7 +44,7 @@ class UsePowerCmd(PowerBinderCommand):
 
         return f"{method} {self.usePowerName.GetLabel()}"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         if   self.usePowerRBOn.GetValue():
             method = "powexectoggleon"
         elif self.usePowerRBOff.GetValue():
@@ -58,7 +58,7 @@ class UsePowerCmd(PowerBinderCommand):
             'picon' : self.usePowerName.IconFilename
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         method = init.get('method', '')
         if method == 'powexectoggleon':
             self.usePowerRBOn.SetValue(True)
@@ -71,7 +71,7 @@ class UsePowerCmd(PowerBinderCommand):
             self.usePowerName.SetBitmap(GetIcon(init['picon']))
             self.usePowerName.IconFilename = init['picon']
 
-    def OKToClose(self):
+    def OKToClose(self) -> bool:
         if self.usePowerName.HasPowerPicked():
             return True
         else:

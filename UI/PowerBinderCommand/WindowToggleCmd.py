@@ -6,7 +6,7 @@ class WindowToggleCmd(PowerBinderCommand):
     Name = "Window Toggle"
     Menu = "Graphics / UI"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         # Having a window name of '' means you can't open/close/toggle because there's a special command
         self.WindowNames = {
                 'Actions'             : 'actions',
@@ -91,7 +91,7 @@ class WindowToggleCmd(PowerBinderCommand):
 
         return windowToggleSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         choice = self.windowToggleTray
         index  = choice.GetSelection()
         windowdesc = choice.GetString(index)
@@ -107,7 +107,7 @@ class WindowToggleCmd(PowerBinderCommand):
             else:
                 return 'toggle ' + windowname
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         choice = self.windowToggleTray
         if self.windowShowRB.GetValue():
             action = "Show"
@@ -120,7 +120,7 @@ class WindowToggleCmd(PowerBinderCommand):
                 'action': action,
                 }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         choice = self.windowToggleTray
         if window := init.get('window', ''):
             if isinstance(window, int):
@@ -139,7 +139,7 @@ class WindowToggleCmd(PowerBinderCommand):
         else:
             self.windowToggleRB.SetValue(True)
 
-    def OnWindowPicked(self, evt):
+    def OnWindowPicked(self, evt) -> None:
         if evt: evt.Skip()
         wtt = self.windowToggleTray
         enable = self.WindowNames[wtt.GetString(wtt.GetSelection())] != ''

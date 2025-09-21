@@ -6,7 +6,7 @@ class UsePowerFromTrayCmd(PowerBinderCommand):
     Name = "Use Power From Tray"
     Menu = "Powers"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         usePowerFromTraySizer = wx.BoxSizer(wx.HORIZONTAL)
         usePowerFromTraySizer.Add(wx.StaticText(dialog, -1, "Tray:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         self.usePowerFromTrayTray = wx.Choice(dialog, -1,
@@ -22,7 +22,7 @@ class UsePowerFromTrayCmd(PowerBinderCommand):
 
         return usePowerFromTraySizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         choice = self.usePowerFromTrayTray
         tray = choice.GetSelection()
 
@@ -41,12 +41,12 @@ class UsePowerFromTrayCmd(PowerBinderCommand):
 
         return f"powexec{mode} {slot}{mode2}"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {
             'tray' : self.usePowerFromTrayTray.GetSelection(),
             'slot' : self.usePowerFromTraySlot.GetSelection(),
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if init.get('tray', ''): self.usePowerFromTrayTray.SetSelection(init['tray'])
         if init.get('slot', ''): self.usePowerFromTraySlot.SetSelection(init['slot'])

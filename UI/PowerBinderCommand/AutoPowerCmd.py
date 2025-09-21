@@ -7,7 +7,7 @@ from UI.PowerBinderCommand import PowerBinderCommand
 class AutoPowerCmd(PowerBinderCommand):
     Name = "Auto Power"
     Menu = "Powers"
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         autoPowerSizer = wx.BoxSizer(wx.HORIZONTAL)
         label = wx.StaticText(dialog, -1, "Power:")
         label.SetToolTip("Turn on auto-attack for the specified power")
@@ -18,21 +18,21 @@ class AutoPowerCmd(PowerBinderCommand):
 
         return autoPowerSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         cmd = "powexecauto" if self.Profile.Server() == 'Homecoming' else 'px_at'
         return f"{cmd} {self.autoPowerName.GetLabel()}"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {
             'pname' : self.autoPowerName.GetLabel(),
             'picon' : self.autoPowerName.IconFilename
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if init.get('pname', ''): self.autoPowerName.SetLabel(init['pname'])
         if init.get('picon', ''): self.autoPowerName.SetBitmap(GetIcon(init['picon']))
 
-    def OKToClose(self):
+    def OKToClose(self) -> bool:
         if self.autoPowerName.HasPowerPicked():
             return True
         else:

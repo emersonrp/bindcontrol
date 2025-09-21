@@ -11,7 +11,7 @@ class UseInspByNameCmd(PowerBinderCommand):
     Menu = "Inspirations"
     DeprecatedName = "Use Insp By Name"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         useInspByNameSizer = wx.BoxSizer(wx.HORIZONTAL)
         useInspByNameSizer.Add(wx.StaticText(dialog, -1, "Inspiration:"), 0,
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
@@ -27,13 +27,13 @@ class UseInspByNameCmd(PowerBinderCommand):
 
         return useInspByNameSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         choice = self.useInspByNameModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
         return "inspexecname " + mode.lower()
 
-    def GetAllInsps(self):
+    def GetAllInsps(self) -> list:
         Insplist = []
         for _, info in GameData.Inspirations.items():
             for insp in info['tiers']:
@@ -47,8 +47,8 @@ class UseInspByNameCmd(PowerBinderCommand):
     # if the game changes up the inspirations.  We should dtrt with storing the
     # string instead, and still honoring isinstance(int) to support legacy profiles
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return { 'insp' : self.useInspByNameModeChoice.GetSelection() }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if init.get('insp', ''): self.useInspByNameModeChoice.SetSelection(init['insp'])

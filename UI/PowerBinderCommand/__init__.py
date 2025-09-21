@@ -5,7 +5,7 @@ from UI.PowerBinder import commandRevClasses
 class PowerBinderCommand():
     Menu = ''
     Name = ''
-    def __init__(self, dialog, init = {}):
+    def __init__(self, dialog, init = {}) -> None:
         self.Profile = wx.App.Get().Main.Profile
         self.EditDialog = PowerBinderEditDialog(self, dialog)
         self.EditDialog.AddContents(self.BuildUI(self.EditDialog))
@@ -15,18 +15,18 @@ class PowerBinderCommand():
             self.State = init
 
     # Methods to override
-    def BuildUI(self, dialog) -> wx.Sizer|None : return None
-    def MakeBindString(self) -> str            : return ''
-    def Serialize(self) -> dict                : return {}
-    def Deserialize(self, init)                : return
-    def OKToClose(self) -> bool                : return True
+    def BuildUI(self, dialog)   -> wx.Sizer|None : return None
+    def MakeBindString(self)    -> str           : return ''
+    def Serialize(self)         -> dict          : return {}
+    def Deserialize(self, init) -> None          : return
+    def OKToClose(self)         -> bool          : return True
 
-    def MakeListEntryString(self):
+    def MakeListEntryString(self) -> str:
         bindstr = self.MakeBindString()
         short_bindstr = "{:.40}{}".format(bindstr, "…" if len(bindstr) > 40 else "")
         return f"{self.Name} - {short_bindstr}"
 
-    def ShowEditDialog(self):
+    def ShowEditDialog(self) -> int:
         self.EditDialog.SetTitle(f'Editing Command "{commandRevClasses[type(self)]}"')
 
         result = self.EditDialog.ShowModal()
@@ -35,7 +35,7 @@ class PowerBinderCommand():
         return result
 
 class PowerBinderEditDialog(wx.Dialog):
-    def __init__(self, pbc, dialog):
+    def __init__(self, pbc, dialog) -> None:
         super().__init__(dialog, -1, "Edit Command", style = wx.DEFAULT_DIALOG_STYLE)
 
         outerSizer = wx.BoxSizer(wx.VERTICAL)
@@ -57,12 +57,12 @@ class PowerBinderEditDialog(wx.Dialog):
 
         self.SetSizerAndFit(outerSizer)
 
-    def onOKButton(self, evt):
+    def onOKButton(self, evt) -> None:
         if self.PowerBinderCommand.OKToClose():
             evt.Skip()
             self.PowerBinderCommand.State = self.PowerBinderCommand.Serialize()
 
-    def AddContents(self, contents):
+    def AddContents(self, contents) -> None:
         self.mainSizer.Insert(0, contents, 1, wx.EXPAND|wx.ALL, 10)
         self.Fit()
         self.Layout()

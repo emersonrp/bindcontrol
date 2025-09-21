@@ -6,7 +6,7 @@ class UIScaleCmd(PowerBinderCommand):
     Name = "UI Scale"
     Menu = "Graphics / UI"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -19,13 +19,13 @@ class UIScaleCmd(PowerBinderCommand):
         CenteringSizer.Add(sizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
         return CenteringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         return f'uiscale {self.ScaleSC.GetValue()}'
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {
             'scale' : self.ScaleSC.GetValue(),
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         self.ScaleSC.SetValue(init.get('scale', 1))

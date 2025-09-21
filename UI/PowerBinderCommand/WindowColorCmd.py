@@ -6,7 +6,7 @@ class WindowColorCmd(PowerBinderCommand):
     Name = "Window Color"
     Menu = "Graphics / UI"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         windowColorSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.ColorBorder  = wx.Panel(dialog, -1, size = wx.Size(150, 150))
@@ -57,14 +57,14 @@ class WindowColorCmd(PowerBinderCommand):
 
         return windowColorSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         Rval = self.RSlider.GetValue()
         Gval = self.GSlider.GetValue()
         Bval = self.BSlider.GetValue()
         Aval = self.ASlider.GetValue()
         return f"windowcolor {Rval} {Gval} {Bval} {Aval}"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {
             'Rval' : self.RSlider.GetValue(),
             'Gval' : self.GSlider.GetValue(),
@@ -72,14 +72,14 @@ class WindowColorCmd(PowerBinderCommand):
             'Aval' : self.ASlider.GetValue(),
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         self.RSlider.SetValue(init['Rval'])
         self.GSlider.SetValue(init['Gval'])
         self.BSlider.SetValue(init['Bval'])
         self.ASlider.SetValue(init['Aval'])
         self.UpdateFromSlider()
 
-    def UpdateFromSlider(self, _ = None):
+    def UpdateFromSlider(self, _ = None) -> None:
         Rval = self.RSlider.GetValue()
         Gval = self.GSlider.GetValue()
         Bval = self.BSlider.GetValue()
@@ -92,7 +92,7 @@ class WindowColorCmd(PowerBinderCommand):
         self.AReadout.SetValue(Aval)
         self.ColorBorder.Refresh()
 
-    def UpdateFromText(self, _ = None):
+    def UpdateFromText(self, _ = None) -> None:
         Rval = self.RReadout.GetValue()
         Gval = self.GReadout.GetValue()
         Bval = self.BReadout.GetValue()

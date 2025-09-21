@@ -6,7 +6,7 @@ class ShowPerformanceGraphsCmd(PowerBinderCommand):
     Name = "Performance Graphs"
     Menu = "Graphics / UI"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = wx.FlexGridSizer(2, 3, 3)
 
@@ -47,7 +47,7 @@ class ShowPerformanceGraphsCmd(PowerBinderCommand):
         self.SynchronizeUI()
         return CenteringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         commands = []
         if self.FPSEnable.IsChecked():
             sel = self.FPSChoice.GetSelection()
@@ -69,7 +69,7 @@ class ShowPerformanceGraphsCmd(PowerBinderCommand):
 
         return '$$'.join(commands)
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {
             'fpsenable'      : self.FPSEnable.IsChecked(),
             'fpschoice'      : self.FPSChoice.GetSelection(),
@@ -82,7 +82,7 @@ class ShowPerformanceGraphsCmd(PowerBinderCommand):
             'fpsgraphsli'    : self.FPSGraphSLI.IsChecked(),
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         self.FPSEnable.SetValue(init.get('fpsenable', False))
         self.FPSChoice.SetSelection(init.get('fpschoice', 0))
         self.NetgraphEnable.SetValue(init.get('netgraphenable', False))
@@ -95,7 +95,7 @@ class ShowPerformanceGraphsCmd(PowerBinderCommand):
 
         self.SynchronizeUI()
 
-    def SynchronizeUI(self, evt = None):
+    def SynchronizeUI(self, evt = None) -> None:
         if evt: evt.Skip()
         self.FPSChoice.Enable(self.FPSEnable.IsChecked())
         self.NetgraphChoice.Enable(self.NetgraphEnable.IsChecked())

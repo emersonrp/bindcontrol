@@ -6,10 +6,9 @@ class ScreenshotCmd(PowerBinderCommand):
     Name = "Screenshot"
     Menu = "Graphics / UI"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
         ScreenshotSizer = wx.BoxSizer(wx.VERTICAL)
-
 
         rbSizer = wx.BoxSizer(wx.HORIZONTAL)
         rbSizer.Add(wx.StaticText(dialog, -1, "Format:"), 0, flag = wx.ALIGN_CENTER_VERTICAL)
@@ -26,7 +25,7 @@ class ScreenshotCmd(PowerBinderCommand):
         CenteringSizer.Add(ScreenshotSizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
         return CenteringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         if self.ScreenshotTGA.GetValue():
             command = "screenshottga"
         else:
@@ -36,7 +35,7 @@ class ScreenshotCmd(PowerBinderCommand):
 
         return f"{hideUIText}{command}"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         if self.ScreenshotTGA.GetValue():
             command = "screenshottga"
         else:
@@ -47,7 +46,7 @@ class ScreenshotCmd(PowerBinderCommand):
             "hideui"  : self.ScreenshotHideUI.IsChecked(),
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         command = init.get('command', '')
         if command == 'screenshot':
             self.ScreenshotJPG.SetValue(True)

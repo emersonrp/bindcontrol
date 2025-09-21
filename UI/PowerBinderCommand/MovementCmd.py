@@ -6,7 +6,7 @@ class MovementCmd(PowerBinderCommand):
     Name = "Movement Commands"
     Menu = "Misc"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         centeringSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -41,7 +41,7 @@ class MovementCmd(PowerBinderCommand):
         centeringSizer.Add(sizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
         return centeringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         pre = post = ''
         if   self.plusbutton.GetValue()     : pre = "+"
         elif self.plusplusbutton.GetValue() : pre = "++"
@@ -53,7 +53,7 @@ class MovementCmd(PowerBinderCommand):
 
         return f"{pre}{command}{post}"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         mod = ''
         if   self.plusbutton.GetValue()     : mod = "plus"
         elif self.plusplusbutton.GetValue() : mod = "plusplus"
@@ -66,7 +66,7 @@ class MovementCmd(PowerBinderCommand):
             'command' : self.commandchoice.GetString(self.commandchoice.GetSelection()),
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         mod = init.get('mod', 'plus')
 
         if   mod == 'plus'     : self.plusbutton.SetValue(True)

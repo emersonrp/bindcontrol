@@ -30,6 +30,7 @@ class WindowToggleCmd(PowerBinderCommand):
                 'Group'               : 'group',
                 'Help'                : 'helpwindow',
                 'Incarnate'           : 'incarnate',
+                'Info'                : 'info',
                 'Inspirations'        : 'insp',
                 'League'              : 'league',
                 'LFG'                 : 'lfg',

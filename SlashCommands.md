@@ -104,10 +104,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /hardconsts | Use hard shader constants instead of Cg to setup shader params |
 | /ignore_spammer character | Ignore character and sends alert to customer service |
 | /imageServer | Sets game to Image Server mode. |
-| /info | Opens the info window for the current target (yourself if you have no target). |
-| /info_self | Opens the info window for yourself |
-| /info_self_tab tab_number | Opens the specified tab of the info window for yourself |
-| /info_tab tab_number | Opens the specified tab of the info window for the current target (yourself if you have no target) |
 | /insp_delete inspiration | Deletes an inspiration by name. |
 | /inspexec_pet_name insp_name petname | Gives an inspiration to the named pet |
 | /inspexec_pet_target insp_name | Gives an inspiration to the targeted pet |

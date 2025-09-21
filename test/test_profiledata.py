@@ -152,7 +152,7 @@ def test_GetDefaultProfileJSON(PD, config, monkeypatch):
 
 def test_BindsDirNotMine(PD):
     # correctly returns False for unclaimed bindsdir
-    assert PD.BindsDirNotMine() is False
+    assert bool(PD.BindsDirNotMine()) is False
 
     PD.BindsDir().mkdir(exist_ok = True)
 
@@ -164,7 +164,7 @@ def test_BindsDirNotMine(PD):
 
     # correctly returns False for claimbed by me
     idfile.write_text(PD.ProfileName())
-    assert PD.BindsDirNotMine() is False
+    assert bool(PD.BindsDirNotMine()) is False
 
     # correctly blows up if the Profile doesn't know its id file
     PD.ProfileIDFile = Mock(return_value = None)

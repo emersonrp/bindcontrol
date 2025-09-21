@@ -31,10 +31,9 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
         return PowerBinderDialog(self.DialogParent, self, extralength = self.ExtraLength)
 
     def UpdateState(self, bindString, state) -> None:
-        if bindString != self.GetValue():
-            self.CurrentState = state
-            self.SetValue(bindString)
-            wx.PostEvent(self, PowerBinderChanged(wx.NewId()))
+        self.CurrentState = state
+        self.SetValue(bindString)
+        wx.PostEvent(self, PowerBinderChanged(wx.NewId()))
 
 class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent, powerbinder, extralength = 0) -> None:

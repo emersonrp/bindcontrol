@@ -1,0 +1,43 @@
+import wx
+from UI.PowerBinderCommand import PowerBinderCommand
+
+####### Unselect
+class GotoTray(PowerBinderCommand):
+    Name = "Set Hotbar To Power Tray"
+    Menu = "Graphics / UI"
+
+    def BuildUI(self, dialog) -> wx.BoxSizer:
+        CenteringSizer = wx.BoxSizer(wx.VERTICAL)
+        MainSizer = wx.FlexGridSizer(2, 5, 5)
+
+        MainSizer.Add(wx.StaticText(dialog, label = "Set Hotbar:"), 0, wx.ALIGN_RIGHT)
+        server = wx.App.Get().Main.Profile.Server()
+        choices = ['1', '2', '3', '4'] if server == "Rebirth" else ['1', '2', '3']
+        self.HotbarPicker = wx.Choice(dialog, choices = choices)
+        self.HotbarPicker.SetSelection(0)
+        MainSizer.Add(self.HotbarPicker, 1)
+
+        MainSizer.Add(wx.StaticText(dialog, label = "To Power Tray:"), 0, wx.ALIGN_RIGHT)
+        server = wx.App.Get().Main.Profile.Server()
+        choices = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+        self.TrayPicker = wx.Choice(dialog, choices = choices)
+        self.TrayPicker.SetSelection(0)
+        MainSizer.Add(self.TrayPicker, 1)
+
+        CenteringSizer.Add(MainSizer, flag = wx.ALIGN_CENTER)
+        return CenteringSizer
+
+    def MakeBindString(self) -> str:
+        bar = self.HotbarPicker.GetStringSelection()
+        tray = self.TrayPicker.GetStringSelection()
+        return f"gototraystray {bar} {tray}"
+
+    def Serialize(self) -> dict:
+        return {
+            'bar' : self.HotbarPicker.GetStringSelection(),
+            'tray' : self.TrayPicker.GetStringSelection(),
+        }
+
+    def Deserialize(self, init) -> None:
+        self.HotbarPicker.SetStringSelection(init.get('bar', '1'))
+        self.TrayPicker.SetStringSelection(init.get('tray', '1'))

@@ -281,11 +281,12 @@ class Profile(wx.Notebook):
             cbpage.scrolledPanel.DestroyChildren()
             cbpage.Ctrls = {}
             cbpage.Panes = []
-            for custombind in data['CustomBinds']:
-                if not custombind: continue
+            if 'CustomBinds' in data:
+                for custombind in data['CustomBinds']:
+                    if not custombind: continue
 
-                if bindpane := cbpage.BuildBindPaneFromData(custombind):
-                    cbpage.AddBindToPage(bindpane = bindpane)
+                    if bindpane := cbpage.BuildBindPaneFromData(custombind):
+                        cbpage.AddBindToPage(bindpane = bindpane)
 
         # Finally, after loading all this stuff, THEN add the binds that update the ProfileData
         for pagename in ['General', 'Gameplay', 'CustomBinds', 'MovementPowers', 'InspirationPopper', 'Mastermind']:
@@ -328,11 +329,11 @@ class Profile(wx.Notebook):
             self.SetModified()
 
         # This option got renamed for better clarity
-        if self.Data['MovementPowers']['DefaultMode'] == 'No SoD':
+        if self.Data and ('MovementPowers' in self.Data) and (self.Data['MovementPowers'].get('DefaultMode') == 'No SoD'):
             self.Data['MovementPowers']['DefaultMode'] = 'No Default SoD'
 
         # Massage old hardcoded-three-step BufferBinds into the new way
-        if self.Data and 'CustomBinds' in self.Data:
+        if self.Data and ('CustomBinds' in self.Data):
             for i, custombind in enumerate(self.Data['CustomBinds']):
                 if not custombind: continue
 

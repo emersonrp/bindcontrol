@@ -59,7 +59,7 @@ def CheckAndCreateMenuPathForGamePath(gamepath):
     return menupath
 
 class PopmenuEditor(Page):
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         super().__init__(parent, bind_events = False)
 
         self.CurrentMenu : Popmenu|None    = None
@@ -180,11 +180,15 @@ class PopmenuEditor(Page):
     def GetMenuPath(self, _ = None):
         if not (gamepath := GetValidGamePath(self.Profile.Server())):
             wx.MessageBox(f"Your {self.Profile.Server()} Game Directory is not set up correctly.  Please visit the Preferences dialog.")
-            return
+            return False
 
         return CheckAndCreateMenuPathForGamePath(gamepath)
 
-    def SynchronizeUI(self, _ = None):
+    def OnOpenPrefsButton(self, _) -> None:
+        with PrefsDialog(self) as dlg:
+            dlg.ShowAndUpdatePrefs()
+
+    def SynchronizeUI(self, _ = None) -> None:
         NoErrors = True
         if GetValidGamePath(self.Profile.Server()):
             self.CheckMenuDirBox.Hide()
@@ -192,28 +196,17 @@ class PopmenuEditor(Page):
             self.CheckMenuDirBox.Show()
             NoErrors = False
 
-        if NoErrors:
-            if GetValidGamePath(server):
-                self.CheckMenuDirBox.Hide()
-            else:
-                self.CheckMenuDirBox.Show()
-                NoErrors = False
-
         self.NewMenuButton.Enable(NoErrors)
         self.ImportMenuButton.Enable(NoErrors)
 
-        self.ReloadMenusButton.Enable(bool(GetValidGamePath(server)))
+        self.ReloadMenusButton.Enable(bool(GetValidGamePath(self.Profile.Server())))
 
-    def OnOpenPrefsButton(self, _):
-        with PrefsDialog(self) as dlg:
-            dlg.ShowAndUpdatePrefs()
-
-    def OnTestMenuButton(self, evt):
+    def OnTestMenuButton(self, evt) -> None:
         if self.CurrentMenu:
             self.CurrentMenu.Popup(wx.GetMousePosition())
         evt.Skip()
 
-    def OnWriteMenuButton(self, _):
+    def OnWriteMenuButton(self, _) -> None:
         # self.GetMenuPath shows its own errors
         if not (menupath := self.GetMenuPath()):
             return
@@ -227,7 +220,7 @@ class PopmenuEditor(Page):
             if not info:
                 wx.LogError(f"Can't get info for current menu {cm.Title}")
                 return
-            filepath = info.get('filename', menupath / f"{cm.Title}.mnu")
+            filepath = info.get('filename', menupath / f"{cm.Title}.mnu") # pyright: ignore
 
             if info['filename'] != str(filepath):
                 if wx.MessageBox(f'The file "{filepath}" already exists and was not the source of this menu.  Overwrite?', 'Menu Exists', wx.YES_NO) == wx.NO:
@@ -242,7 +235,7 @@ class PopmenuEditor(Page):
         else: # cm is falsey
             wx.LogError("No current menu to save, canceling.  This is a bug.")
 
-    def OnMacroButton(self, _):
+    def OnMacroButton(self, _) -> None:
         cm = self.CurrentMenu
         if cm:
             with wx.Dialog(self, title = f"Macro for {cm.Title}",) as dlg:
@@ -268,7 +261,7 @@ class PopmenuEditor(Page):
 
                 dlg.ShowModal()
 
-    def doTextCopy(self, evt):
+    def doTextCopy(self, evt) -> None:
         dataObj = wx.TextDataObject(evt.EventObject.textctrl.GetValue())
         if wx.TheClipboard.Open():
             wx.TheClipboard.SetData(dataObj)
@@ -277,7 +270,8 @@ class PopmenuEditor(Page):
         else:
             wx.MessageBox("Couldn't open the clipboard for copying")
 
-    def OnNewMenuButton(self, _ = None):
+    def OnNewMenuButton(self, _ = None) -> None:
+        mlc = self.MenuListCtrl
         newmenuname = self.GetNewMenuName()
         if newmenuname:
             newmenu = Popmenu(self)
@@ -286,7 +280,7 @@ class PopmenuEditor(Page):
             self.doInsertMenuSorted(newmenuname, menu = newmenu)
             newmenu.SetModified()
 
-    def OnReloadMenusButton(self, _ = None):
+    def OnReloadMenusButton(self, _ = None) -> None:
         if self.CheckForModifiedMenus():
             if wx.MessageBox(f'One or more menus have unsaved changes.  Continuing will cause those changes to be lost.  Continue?', "Unsaved Changes", wx.YES_NO) == wx.NO:
                 return
@@ -314,7 +308,7 @@ class PopmenuEditor(Page):
         return menuitem
 
 
-    def LoadMenusFromMenuDir(self):
+    def LoadMenusFromMenuDir(self) -> None:
         menupath = GetValidGamePath(self.Profile.Server())
 
         if menupath:
@@ -335,7 +329,7 @@ class PopmenuEditor(Page):
                         f.close()
             self.MenuListCtrl.Refresh()
 
-    def GetNewMenuName(self, dupe_menu_name = None):
+    def GetNewMenuName(self, dupe_menu_name = None) -> int|str:
         if dupe_menu_name:
             wx.MessageBox(f'There already exists a menu called "{dupe_menu_name}" - please select a different name.', "Menu Already Exists", wx.OK)
 
@@ -349,7 +343,7 @@ class PopmenuEditor(Page):
             else:
                 return wx.ID_CANCEL
 
-    def OnImportMenuButton(self, _):
+    def OnImportMenuButton(self, _) -> None:
         # self.GetMenuPath shows its own errors
         if not (menupath := self.GetMenuPath()):
             return
@@ -411,7 +405,7 @@ class PopmenuEditor(Page):
                 return False
 
 
-    def OnDeleteMenuButton(self, _):
+    def OnDeleteMenuButton(self, _) -> None:
         mlc = self.MenuListCtrl
         selection = mlc.GetFirstSelected()
         menuname = mlc.GetItemText(selection)
@@ -431,12 +425,12 @@ class PopmenuEditor(Page):
         self.ToggleTopButtons(False)
         self.TestMenuButton.SetLabel("Test Current Menu")
 
-    def OnListDeselect(self, _):
+    def OnListDeselect(self, _) -> None:
         if self.MenuListCtrl.GetSelectedItemCount() == 0:
             self.TestMenuButton.SetLabel("Test Current Menu")
             self.ToggleTopButtons(False)
 
-    def OnListSelect(self, evt):
+    def OnListSelect(self, evt) -> None:
         item = evt.GetIndex()
         info = self.MenuIDList.get(self.MenuListCtrl.GetItemData(item), {})
         if menu := info.get('menu', None):
@@ -466,13 +460,13 @@ class PopmenuEditor(Page):
 
         if evt: evt.Skip()
 
-    def ToggleTopButtons(self, show):
+    def ToggleTopButtons(self, show) -> None:
         self.TestMenuButton.Enable(show)
         self.WriteMenuButton.Enable(show)
         self.MacroButton.Enable(show)
         self.DeleteMenuButton.Enable(show)
 
-    def CheckForModifiedMenus(self):
+    def CheckForModifiedMenus(self) -> bool:
         mlc = self.MenuListCtrl
         for item in range(0, mlc.GetItemCount()):
             info = self.MenuIDList.get(mlc.GetItemData(item), {})
@@ -481,7 +475,7 @@ class PopmenuEditor(Page):
                 return True
         return False
 
-    def AllBindFiles(self):
+    def AllBindFiles(self) -> dict[str, list]:
         return {
             'files' : [],
             'dirs'  : [],
@@ -491,7 +485,7 @@ class Popmenu(FM.FlatMenu):
     ContextMenu    = None
     SubContextMenu = None
     ProgressDialog = None
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         super().__init__(parent)
 
         # Let's make just one of each context menu for the whole class
@@ -502,7 +496,7 @@ class Popmenu(FM.FlatMenu):
         self.CreditComments    = []  # top-level popmenus we keep the opening comments for credit's sake
         self.Modified          = False
 
-    def SetModified(self, modified = True):
+    def SetModified(self, modified = True) -> None:
         # pass this up from submenus.  There's probably a more correct way to do this
         if isinstance(self.Parent, Popmenu):
             self.Parent.SetModified(modified)
@@ -513,7 +507,7 @@ class Popmenu(FM.FlatMenu):
             font = (self.Parent.ModifiedMenuFont if modified else self.Parent.LoadedMenuFont)
             mlc.SetItemFont(item, font)
 
-    def Dismiss(self, dismissParent = False, resetOwner = False, forceDismiss = False):
+    def Dismiss(self, dismissParent = False, resetOwner = False, forceDismiss = False) -> None:
         # TODO - here's where we need to come up with logic not to dismiss
         # just because a menu item got clicked.  But when -do- we dismiss?
         # This is going to be fiddly.
@@ -529,7 +523,7 @@ class Popmenu(FM.FlatMenu):
              super().Dismiss(dismissParent, resetOwner)
 
     # hook the right click behavior to tell ContextMenu who got right-clicked
-    def ProcessMouseRClick(self, pos):
+    def ProcessMouseRClick(self, pos) -> None:
         (result, menuid) = self.HitTest(pos)
         if result == FM.MENU_HT_ITEM:
             menuitem = self.GetMenuItems()[menuid]
@@ -537,7 +531,7 @@ class Popmenu(FM.FlatMenu):
         super().ProcessMouseRClick(pos)
 
     # recursive method to write the file to <filepath> -- no sanity-checking is done inside here.
-    def WriteToFile(self, filepath, outputlines = [], indentlevel = 0):
+    def WriteToFile(self, filepath, outputlines = [], indentlevel = 0) -> None:
         # If this is the outermost request (indent == 0), add the credits
         if indentlevel == 0:
             if outputlines:
@@ -596,11 +590,11 @@ class Popmenu(FM.FlatMenu):
         except Exception as e:
             wx.LogError(f"Something went wrong writing to {filepath}: {e}")
 
-    def ReadFromFile(self, filename:str|Path):
+    def ReadFromFile(self, filename:str|Path) -> bool:
         PopmenuFile = Path(filename)
         if not PopmenuFile.is_file():
             wx.LogError(f"Tried to edit a missing or non-file popmenu: {filename}")
-            return {}
+            return False
 
         try:
             contents = PopmenuFile.read_text()
@@ -624,7 +618,7 @@ class Popmenu(FM.FlatMenu):
 
         return True
 
-    def BuildFromLines(self, lines, request_type = ''):
+    def BuildFromLines(self, lines, request_type = '') -> dict|None:
         is_main_request = request_type == "main"
         is_lock_request = request_type == "lock"
 
@@ -750,13 +744,14 @@ class Popmenu(FM.FlatMenu):
                     Popmenu.ProgressDialog = None
 
 
-    def NormalizeOptName(self, optname):
+    def NormalizeOptName(self, optname) -> str|None:
         for opt in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady', 'PowerOwned',):
             if optname.lower() == opt.lower():
                 return opt
+            return optname
 
 class Popmenu_ContextMenu(FM.FlatMenu):
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         super().__init__(parent)
 
         self.EditMenuItem   = FM.FlatMenuItem(self, wx.ID_ANY, "Edit")
@@ -790,13 +785,13 @@ class Popmenu_ContextMenu(FM.FlatMenu):
         self.Bind(wx.EVT_MENU, self.OnContextMoveDown, self.MoveDnMenuItem)
         InsertMenu.Bind(wx.EVT_MENU, self.OnContextInsert)
 
-    def OnContextEdit(self, _):
+    def OnContextEdit(self, _) -> None:
         if cmi := self.CurrentMenuItem:
             cmi.Parent.Dismiss(forceDismiss = True)
             if cmi.ShowEditor():
                 cmi.Parent.SetModified()
 
-    def OnContextDelete(self, _):
+    def OnContextDelete(self, _) -> None:
         if cmi := self.CurrentMenuItem:
             cmi.Parent.Dismiss(forceDismiss = True)
             result = wx.MessageBox(f'About to delete menu item "{cmi.GetLabel()}" -- this cannot be undone.  Continue?', "Delete Menu Item", wx.YES_NO)
@@ -806,21 +801,21 @@ class Popmenu_ContextMenu(FM.FlatMenu):
             cmi.Parent.SetModified()
             self.CurrentMenuItem = None
 
-    def OnContextMoveUp(self, _):
+    def OnContextMoveUp(self, _) -> None:
         if cmi := self.CurrentMenuItem:
             currentPosition = cmi.Parent.FindMenuItemPosSimple(cmi)
             cmi.Parent.Remove(cmi)
             cmi.Parent.InsertItem(currentPosition - 1, cmi)
             cmi.Parent.SetModified()
 
-    def OnContextMoveDown(self, _):
+    def OnContextMoveDown(self, _) -> None:
         if cmi := self.CurrentMenuItem:
             currentPosition = cmi.Parent.FindMenuItemPosSimple(cmi)
             cmi.Parent.Remove(cmi)
             cmi.Parent.InsertItem(currentPosition + 1, cmi)
             cmi.Parent.SetModified()
 
-    def OnContextInsert(self, evt):
+    def OnContextInsert(self, evt) -> None:
         menuid = evt.GetId()
         if item := self.FindItem(menuid):
             if cmi := self.CurrentMenuItem:
@@ -830,7 +825,7 @@ class Popmenu_ContextMenu(FM.FlatMenu):
                     cmi.Parent.InsertItem(index + 1, newitem)
                     cmi.Parent.SetModified()
 
-    def MakeNewItemForInsert(self, item):
+    def MakeNewItemForInsert(self, item) -> int|bool:
         if cmi := self.CurrentMenuItem:
             if   item.GetLabel() == "Submenu": data = {'' : Popmenu(cmi.Parent)}
             elif item.GetLabel() == "Option":  data = {'': ''}
@@ -842,9 +837,10 @@ class Popmenu_ContextMenu(FM.FlatMenu):
             else:
                 wx.LogError(f"Unknown new menu item {item.GetLabel()}: this is a bug!")
                 return False
+        return False
 
 class Popmenu_SubContextMenu(Popmenu_ContextMenu):
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         super().__init__(parent)
 
         SubInsertMenu        = FM.FlatMenu(self)
@@ -865,18 +861,17 @@ class Popmenu_SubContextMenu(Popmenu_ContextMenu):
 
         SubInsertMenu.Bind(wx.EVT_MENU, self.OnContextSubInsert)
 
-    def OnContextSubInsert(self, evt):
+    def OnContextSubInsert(self, evt) -> None:
         menuid = evt.GetId()
         if item := self.FindItem(menuid):
             if newitem := self.MakeNewItemForInsert(item):
                 self.CurrentMenuItem.GetSubMenu().AppendItem(newitem) # pyright: ignore
 
-
 # Base Menu Item Class
 class PEMenuItem(FM.FlatMenuItem):
     EditorDialog: Callable
     TitleFont = None
-    def __init__(self, parent, data, label = ''):
+    def __init__(self, parent, data, label = '') -> None:
         super().__init__(parent, wx.ID_ANY, label = label)
 
         self.SetContextMenu(parent.ContextMenu)
@@ -885,7 +880,7 @@ class PEMenuItem(FM.FlatMenuItem):
         self.Editor = None
         PEMenuItem.TitleFont = PEMenuItem.TitleFont or wx.Font(wx.FontInfo().Bold())
 
-    def ConfigureContextMenu(self):
+    def ConfigureContextMenu(self) -> None:
         if cm := self.GetContextMenu():
             cm.CurrentMenuItem = self
             cm.EditMenuItem.Enable(self.HasEditor())
@@ -905,29 +900,29 @@ class PEMenuItem(FM.FlatMenuItem):
         else:
             wx.LogError(f"Tried to edit {type(self).__name__} which has no self.Editor - this is a bug")
 
-    def HasEditor(self):
+    def HasEditor(self) -> bool:
         return hasattr(self, 'EditorDialog') and callable(getattr(self, 'EditorDialog'))
 
-    def OnEditorUpdate(self):
+    def OnEditorUpdate(self) -> None:
         wx.LogError(f"Editor update not implemented for {type(self).__name__}")
 
-    def Serialize(self):
+    def Serialize(self) -> str:
         wx.LogError(f"Serialize not implemented yet for {type(self).__name__}")
         return ""
 
 # subclasses
 class PEMenu(PEMenuItem):
-    def __init__(self, parent, data):
+    def __init__(self, parent, data) -> None:
         [(menuname, submenu)] = data.items()
         super().__init__(parent, data, label = menuname)
         self.SetSubMenu(submenu)
         self.SetContextMenu(parent.SubContextMenu)
 
-    def EditorDialog(self):
+    def EditorDialog(self) -> wx.TextEntryDialog:
         return wx.TextEntryDialog(self.Parent, message = "Menu Name:",
                                   caption = "Editing Menu item", value = self.GetText())
 
-    def OnEditorUpdate(self):
+    def OnEditorUpdate(self) -> None:
         newlabel = self.Editor.GetValue() # pyright: ignore
         oldlabel = self.GetText()
         if oldlabel in self.Data:
@@ -939,31 +934,31 @@ class PEMenu(PEMenuItem):
         self.Parent.UpdateItem(self)
 
 class PETitle(PEMenuItem):
-    def __init__(self, parent, data):
+    def __init__(self, parent, data) -> None:
         super().__init__(parent, data, label = data)
         self.SetFont(PEMenuItem.TitleFont)
         self.SetTextColour((128,128,128))
 
-    def EditorDialog(self):
+    def EditorDialog(self) -> wx.TextEntryDialog:
         return wx.TextEntryDialog(self.Parent, message = "Title:",
                                   caption = "Editing Title item", value = self.GetLabel())
 
-    def OnEditorUpdate(self):
+    def OnEditorUpdate(self) -> None:
         newlabel = self.Editor.GetValue() # pyright: ignore
         self.Data = newlabel
         self.SetText(newlabel)
         self.Parent.UpdateItem(self)
 
 class PEDivider(PEMenuItem):
-    def __init__(self, parent, data):
+    def __init__(self, parent, data) -> None:
         super().__init__(parent, data, label = "--------------------")
 
 class PEOption(PEMenuItem):
-    def __init__(self, parent, data = {'': ''}):
+    def __init__(self, parent, data = {'': ''}) -> None:
         [(optname, _)] = data.items()
         super().__init__(parent, data, label = optname or '')
 
-    def EditorDialog(self):
+    def EditorDialog(self) -> wx.Dialog:
         dialog = wx.Dialog(self.Parent, title = "Editing Option item",)
         dlgSizer = wx.BoxSizer(wx.VERTICAL)
         dialog.SetSizer(dlgSizer)
@@ -985,7 +980,7 @@ class PEOption(PEMenuItem):
 
         return dialog
 
-    def OnEditorUpdate(self):
+    def OnEditorUpdate(self) -> None:
         newlabel = self.NameField.GetValue()
         newvalue = self.ValueField.GetValue()
 
@@ -993,13 +988,12 @@ class PEOption(PEMenuItem):
         self.SetText(newlabel)
         self.Parent.UpdateItem(self)
 
-
 class PELockedOption(PEMenuItem):
-    def __init__(self, parent, data):
+    def __init__(self, parent, data) -> None:
         name = data.get('DisplayName', '')
         super().__init__(parent, data, label = name)
 
-    def EditorDialog(self):
+    def EditorDialog(self) -> wx.Dialog:
         self.Ctrls = {}
         dialog = wx.Dialog(self.Parent, title = "Editing LockedOption item")
         paddingsizer = wx.BoxSizer(wx.VERTICAL)
@@ -1060,11 +1054,11 @@ class PELockedOption(PEMenuItem):
 
         return dialog
 
-    def OnOKButton(self, evt):
+    def OnOKButton(self, evt) -> None:
         if self.CheckEditorFieldsForError(): return
         evt.Skip()
 
-    def CheckEditorFieldsForError(self, _ = None):
+    def CheckEditorFieldsForError(self, _ = None) -> bool:
         hasError = False
         c = self.Ctrls
         if c['DisplayName'].GetValue() == '':
@@ -1089,7 +1083,7 @@ class PELockedOption(PEMenuItem):
 
         return hasError
 
-    def OnEditorUpdate(self):
+    def OnEditorUpdate(self) -> None:
         data = {}
         for ctrl in ['DisplayName', 'Command', 'Icon', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'PowerReady', 'PowerOwned']:
             data[ctrl] = self.Ctrls[ctrl].GetValue()

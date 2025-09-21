@@ -13,7 +13,7 @@ from UI.KeySelectDialog import EVT_KEY_CHANGED
 from UI.PowerPicker import PowerPicker
 
 class MovementPowers(Page):
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         super().__init__(parent)
 
         self.TabTitle : str = "Movement / Speed on Demand"
@@ -125,7 +125,7 @@ class MovementPowers(Page):
                 'TTPBindKey'     : 'Activate Team Teleport Power',
             })
 
-    def BuildPage(self):
+    def BuildPage(self) -> None:
 
         server = self.Profile.Server()
 
@@ -455,11 +455,11 @@ class MovementPowers(Page):
         self.MainSizer.Add(topSizer, flag = wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
 
     # If we have two items, blank plus one power, pre-set it to the one power
-    def PrePickLonePower(self, control):
+    def PrePickLonePower(self, control) -> None:
         if not isinstance(control, wx.Choice): return
         if control.GetCount() == 2: control.SetSelection(1)
 
-    def ShowControlGroup(self, group, show = True):
+    def ShowControlGroup(self, group, show = True) -> None:
         if self.rightColumn.GetItem(group):
             self.rightColumn.Show(group, show)
         elif self.leftColumn.GetItem(group):
@@ -468,17 +468,17 @@ class MovementPowers(Page):
             wx.LogError(f"Tried to show/hide {group} which is in neither column.  This is a bug.")
         group.EnableCtrls(show)
 
-    def OnTPComboKey(self, evt = None):
+    def OnTPComboKey(self, evt = None) -> None:
         ComboKey = self.GetState('TPComboKey')
         self.Ctrls['TPExecuteKey'].SetLabel(ComboKey + "+BUTTON1")
         if evt: evt.Skip()
 
-    def OnTTPComboKey(self, evt = None):
+    def OnTTPComboKey(self, evt = None) -> None:
         ComboKey = self.GetState('TTPComboKey')
         self.Ctrls['TTPExecuteKey'].SetLabel(ComboKey + "+BUTTON1")
         if evt: evt.Skip()
 
-    def OnDetailsCameraChanged(self, evt = None):
+    def OnDetailsCameraChanged(self, evt = None) -> None:
         c = self.Ctrls
         c['CamdistBase'].Enable(self.GetState('ChangeCamera'))
         c['CamdistMove'].Enable(self.GetState('ChangeCamera'))
@@ -487,7 +487,7 @@ class MovementPowers(Page):
         c['DetailMove'].Enable(self.GetState('ChangeDetail'))
         if evt: evt.Skip()
 
-    def OnSpeedOnDemandChanged(self, evt = None):
+    def OnSpeedOnDemandChanged(self, evt = None) -> None:
         c = self.Ctrls
         sodmode = self.GetState('DefaultMode')
         c['NonSoDMode'].Show(sodmode != 'No Default SoD')
@@ -499,7 +499,7 @@ class MovementPowers(Page):
         self.OnFlightChanged()
         if evt: evt.Skip()
 
-    def OnFlightChanged(self, evt = None):
+    def OnFlightChanged(self, evt = None) -> None:
         c = self.Ctrls
         archetype = self.Profile.Archetype()
         sodenabled = self.GetState('EnableSoD')
@@ -553,7 +553,7 @@ class MovementPowers(Page):
 
         if evt: evt.Skip()
 
-    def OnJumpChanged(self, evt = None):
+    def OnJumpChanged(self, evt = None) -> None:
         c = self.Ctrls
         sodenabled = self.GetState('EnableSoD')
         if (self.Profile.HasPowerPool('Leaping') or self.Profile.HasPowerPool('Force of Will')):
@@ -591,7 +591,7 @@ class MovementPowers(Page):
 
         if evt: evt.Skip()
 
-    def OnSpeedChanged(self, evt = None):
+    def OnSpeedChanged(self, evt = None) -> None:
         c = self.Ctrls
         sodenabled = self.GetState('EnableSoD')
         if (self.Profile.HasPowerPool('Speed') or self.Profile.HasPowerPool('Experimentation')):
@@ -618,7 +618,7 @@ class MovementPowers(Page):
 
         if evt: evt.Skip()
 
-    def OnTeleportChanged(self, evt = None):
+    def OnTeleportChanged(self, evt = None) -> None:
         c = self.Ctrls
         archetype = self.Profile.Archetype()
 
@@ -650,7 +650,7 @@ class MovementPowers(Page):
             self.ShowControlGroup(self.teleportSizer, False)
         if evt: evt.Skip()
 
-    def OnKheldianChanged(self, evt = None):
+    def OnKheldianChanged(self, evt = None) -> None:
         c = self.Ctrls
         if (self.isKheldian()):
             # show kheldian sizer, enable controls
@@ -664,7 +664,7 @@ class MovementPowers(Page):
             self.ShowControlGroup(self.kheldianSizer, False)
         if evt: evt.Skip()
 
-    def OnTempChanged(self, evt = None):
+    def OnTempChanged(self, evt = None) -> None:
         enabled = bool(self.GetState('TempEnable'))
 
         tt = self.Ctrls['TempToggle']
@@ -680,7 +680,7 @@ class MovementPowers(Page):
 
         if evt: evt.Skip()
 
-    def OnTempTravelPowerPicked(self, evt):
+    def OnTempTravelPowerPicked(self, evt) -> None:
         menu = evt.GetEventObject()
         menuitem = menu.FindItemById(evt.GetId())
         label = menuitem.GetItemLabel()
@@ -690,7 +690,7 @@ class MovementPowers(Page):
         setattr(self.TempTravelPowerPicker, 'IconFilename', getattr(menuitem, 'IconFilename'))
         evt.Skip()
 
-    def BuildTempTravelPowerMenu(self):
+    def BuildTempTravelPowerMenu(self) -> wx.Menu:
         menu = wx.Menu()
         for item in GameData.TempTravelPowers:
             if re.search(r'\|', item):
@@ -705,7 +705,7 @@ class MovementPowers(Page):
             menu.Append(menuitem)
         return menu
 
-    def SynchronizeUI(self, evt = None):
+    def SynchronizeUI(self, evt = None) -> None:
         self.Freeze()
 
         try:
@@ -735,7 +735,7 @@ class MovementPowers(Page):
             self.Thaw()
             if evt: evt.Skip()
 
-    def makeSoDFile(self, p):
+    def makeSoDFile(self, p) -> None:
 
         profile = self.Profile
 
@@ -848,7 +848,7 @@ class MovementPowers(Page):
 
         self.sodFollowOffKey(t,bl,curfile,mobile,stationary,flight)
 
-    def makeNonSoDModeKey(self, p, t, bl, cur, toff, fix = None, fb = ''):
+    def makeNonSoDModeKey(self, p, t, bl, cur, toff, fix = None, fb = '') -> None:
         key = t.NonSoDMode
         name = UI.Labels['NonSoDMode']
         if not self.Ctrls['NonSoDMode'].IsEnabled(): return
@@ -878,7 +878,7 @@ class MovementPowers(Page):
                 cur.SetBind(key, name, self, t.ini + self.actPower_toggle(None,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
         t.ini = ''
 
-    def makeSprintModeKey(self, p, t, bl, cur, toff, fix, fb = ''):
+    def makeSprintModeKey(self, p, t, bl, cur, toff, fix, fb = '') -> None:
         key = t.SprintMode
         name = UI.Labels['SprintMode']
         if not key: return
@@ -914,7 +914,7 @@ class MovementPowers(Page):
 
         t.ini = ''
 
-    def makeSpeedModeKey(self, p, t, bl, cur, toff, fix, fb = ''):
+    def makeSpeedModeKey(self, p, t, bl, cur, toff, fix, fb = '') -> None:
         key = t.SpeedMode
         name = UI.Labels['SpeedMode']
         if not self.Ctrls['SpeedMode'].IsEnabled(): return
@@ -952,7 +952,7 @@ class MovementPowers(Page):
 
         t.ini = ''
 
-    def makeJumpModeKey(self, p, t, bl, cur, toff, fpath, fbl):
+    def makeJumpModeKey(self, p, t, bl, cur, toff, fpath, fbl) -> None:
         key = t.JumpMode
         name = UI.Labels['JumpMode']
         if not self.Ctrls['JumpMode'].IsEnabled(): return
@@ -982,7 +982,7 @@ class MovementPowers(Page):
 
         t.ini = ''
 
-    def makeFlyModeKey(self, p, t, bl, cur, toff, fix, fb = '', fb_on_a = False):
+    def makeFlyModeKey(self, p, t, bl, cur, toff, fix, fb = '', fb_on_a = False) -> None:
         key = t.FlyMode
         name = UI.Labels['FlyMode']
         if not self.Ctrls['FlyMode'].IsEnabled(): return
@@ -1020,7 +1020,7 @@ class MovementPowers(Page):
 
         t.ini = ''
 
-    def makeGFlyModeKey(self, p, t, bl, cur, toff, fix):
+    def makeGFlyModeKey(self, p, t, bl, cur, toff, fix) -> None:
         key = t.GFlyMode
         name = UI.Labels['GFlyMode']
         if not self.Ctrls['GFlyMode'].IsEnabled(): return
@@ -1051,7 +1051,7 @@ class MovementPowers(Page):
 
         t.ini = ''
 
-    def PopulateBindFiles(self):
+    def PopulateBindFiles(self) -> bool:
         profile   = self.Profile
         ResetFile = profile.ResetFile()
         server = self.Profile.Server()
@@ -1383,7 +1383,7 @@ class MovementPowers(Page):
 
         return True
 
-    def doSpeedOnDemandBinds(self, t):
+    def doSpeedOnDemandBinds(self, t) -> None:
         profile   = self.Profile
         ResetFile = profile.ResetFile()
         config    = wx.ConfigBase.Get()
@@ -1685,7 +1685,7 @@ class MovementPowers(Page):
         t.rig  = '$$right 0'
         t.rigx = '$$right 1'
 
-    def sodResetKey(self, curfile, gamepath, turnoff):
+    def sodResetKey(self, curfile, gamepath, turnoff) -> None:
 
         config = wx.ConfigBase.Get()
 
@@ -1701,7 +1701,7 @@ class MovementPowers(Page):
             ]
         )
 
-    def sodUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun, followbl, sssj):
+    def sodUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun, followbl, sssj) -> None:
 
         (upx,dow,forw,bac,lef,rig) = (t.upx,t.dow,t.forw,t.bac,t.lef,t.rig)
 
@@ -1772,7 +1772,7 @@ class MovementPowers(Page):
             if (not sssj) : toggle = ''  #  returns the following line to the way it was before sssj
             curfile.SetBind(self.Ctrls['Up'].MakeBind(f"{ini}{upx}{dow}$$backward 0{lef}{rig}{toggle}{t.mouselookon}{bl}"))
 
-    def sodDownKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl):
+    def sodDownKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl) -> None:
         (up,dowx,forw,bac,lef,rig) = (t.up,t.dowx,t.forw,t.bac,t.lef,t.rig)
 
         actkeys = t.totalkeys
@@ -1824,7 +1824,7 @@ class MovementPowers(Page):
         else:
             curfile.SetBind(self.Ctrls['Down'].MakeBind(f"{ini}{up}{dowx}$$backward -1{lef}{rig}{t.mouselookon}{bl}"))
 
-    def sodForwardKey(self, t, bl, curfile,  mobile, stationary, flight, autorunbl, followbl, sssj):
+    def sodForwardKey(self, t, bl, curfile,  mobile, stationary, flight, autorunbl, followbl, sssj) -> None:
         (up,dow,forx,bac,lef,rig) = (t.up,t.dow,t.forx,t.bac,t.lef,t.rig)
         name = UI.Labels['Forward']
 
@@ -1898,7 +1898,7 @@ class MovementPowers(Page):
             if (self.GetState('MouseChord')) :
                 curfile.SetBind('mousechord', name, self, f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{rig}{lef}{t.mouselookon}{t.playerturn}{bl}")
 
-    def sodBackKey(self,t,bl,curfile,mobile,stationary,flight,autorunbl,followbl,sssj):
+    def sodBackKey(self,t,bl,curfile,mobile,stationary,flight,autorunbl,followbl,sssj) -> None:
         (up,dow,forw,bacx,lef,rig) = (t.up,t.dow,t.forw, t.bacx,t.lef,t.rig)
 
         mouselook = ''
@@ -1963,7 +1963,7 @@ class MovementPowers(Page):
 
             curfile.SetBind(self.Ctrls['Back'].MakeBind(f"{ini}{up}{dow}{move}{lef}{rig}{t.mouselookon}{bl}"))
 
-    def sodLeftKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,sssj):
+    def sodLeftKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,sssj) -> None:
         (up,dow,forw,bac,lefx,rig) = (t.up,t.dow,t.forw,t.bac, t.lefx,t.rig)
 
         mouselook = ''
@@ -2022,7 +2022,7 @@ class MovementPowers(Page):
         else:
             curfile.SetBind(self.Ctrls['Left'].MakeBind(f"{ini}{up}{dow}{'$$backward 0'}{lefx}{rig}{t.mouselookon}{bl}"))
 
-    def sodRightKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,sssj):
+    def sodRightKey(self,t,bl,curfile,mobile,stationary,flight,autorun,followbl,sssj) -> None:
         (up,dow,forw,bac,lef,rigx) = (t.up,t.dow,t.forw,t.bac,t.lef, t.rigx)
 
         mouselook = ''
@@ -2081,7 +2081,7 @@ class MovementPowers(Page):
         else:
             curfile.SetBind(self.Ctrls['Right'].MakeBind(f"{ini}{up}{dow}$$forward 1$$backward 0{lef}{rigx}{t.mouselookon}{bl}"))
 
-    def sodAutoRunKey(self,t,bl,curfile,mobile,sssj):
+    def sodAutoRunKey(self,t,bl,curfile,mobile,sssj) -> None:
         bindload = bl + t.KeyState() + ".txt"
         if (sssj and t.space == 1) :
             curfile.SetBind(self.Ctrls['AutoRun'].MakeBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mouselookon + self.actPower_name(sssj,mobile) + bindload))
@@ -2089,7 +2089,7 @@ class MovementPowers(Page):
             curfile.SetBind(self.Ctrls['AutoRun'].MakeBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mouselookon + self.actPower_name(mobile) + bindload))
 
     # TODO sssj never gets passed in, in citybinder.  Is this right?
-    def sodAutoRunOffKey(self, t,bl,curfile,mobile,stationary,flight,sssj = None):
+    def sodAutoRunOffKey(self, t,bl,curfile,mobile,stationary,flight,sssj = None) -> None:
         toggleon = toggleoff = None
         if sssj and t.space == 1:
             toggleoff = mobile
@@ -2116,10 +2116,10 @@ class MovementPowers(Page):
         # "[2:]" on next line is to trim off the initial "$$" that dirs() provides
         curfile.SetBind(self.Ctrls['AutoRun'].MakeBind(t.dirs('UDFBLR')[2:] + toggleon + bindload))
 
-    def sodFollowKey(self, t,bl,curfile,mobile,stationary):
+    def sodFollowKey(self, t,bl,curfile,mobile,stationary) -> None:
         curfile.SetBind(self.Ctrls['Follow'].MakeBind('follow' + self.actPower_toggle(mobile,stationary) + bl + t.KeyState() + '.txt'))
 
-    def sodFollowOffKey(self, t,bl,curfile,mobile,stationary,flight):
+    def sodFollowOffKey(self, t,bl,curfile,mobile,stationary,flight) -> None:
         toggle = ''
         if (not flight):
             if (t.horizkeys == 0) :
@@ -2138,7 +2138,7 @@ class MovementPowers(Page):
         curfile.SetBind(self.Ctrls['Follow'].MakeBind("follow" + toggle + t.up + t.dow + t.forw + t.bac + t.lef + t.rig + bl + t.KeyState() + '.txt'))
 
     #  toggleon variation
-    def actPower_toggle(self, on, off, start = False):
+    def actPower_toggle(self, on, off, start = False) -> str:
         s = ''
 
         offpower = set()
@@ -2160,7 +2160,7 @@ class MovementPowers(Page):
         if start: s = s[2:]
         return s
 
-    def actPower_name(self, on, *rest):
+    def actPower_name(self, on, *rest) -> str:
         s = ''
         for v in rest:
             if isinstance(v, str):
@@ -2180,7 +2180,7 @@ class MovementPowers(Page):
 
         return s
 
-    def sodJumpFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
+    def sodJumpFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback) -> None:
 
         filename     = str(getattr(t,"path"     + f"{autofollowmode}j")) + t.KeyState() + suffix + '.txt'
         gamefilename = str(getattr(t,"gamepath" + f"{autofollowmode}j")) + t.KeyState() + suffix + '.txt'
@@ -2189,7 +2189,7 @@ class MovementPowers(Page):
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
         curfile.SetBind(key, "Jump Fix", self, "+down" + feedback + self.actPower_name(t.cjmp) + profile.BLF(gamefilename))
 
-    def sodSetDownFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback):
+    def sodSetDownFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback) -> None:
         if autofollowmode:
             pathsuffix = "f"
         else:
@@ -2205,22 +2205,22 @@ class MovementPowers(Page):
 
 
     ### convenience methods
-    def DefaultMode(self):
+    def DefaultMode(self) -> str:
         return self.GetState('DefaultMode') if self.GetState('EnableSoD') else 'NonSoD'
 
-    def hasHover(self):
+    def hasHover(self) -> bool:
         return bool(
             (self.Profile.HasPowerPool('Flight') or self.Profile.Archetype() == "Peacebringer")
             and self.GetState('HasHover')
         )
 
-    def hasGFly(self):
+    def hasGFly(self) -> bool:
         return bool(self.Profile.HasPowerPool('Flight') and self.GetState('HasGFly'))
 
-    def isKheldian(self):
+    def isKheldian(self) -> bool:
         return bool(self.Profile.Archetype() == "Warshade" or self.Profile.Archetype() == "Peacebringer")
 
-    def AllBindFiles(self):
+    def AllBindFiles(self) -> Dict[str, list]:
         files = []
         dirs  = [
                 'R'  , 'F'   , 'J'  , 'S'  , 'N'  ,

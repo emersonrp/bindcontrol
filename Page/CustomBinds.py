@@ -15,14 +15,14 @@ from UI.WizardBindPane  import WizardBindPane
 from UI.BindWizard      import WizPickerDialog, wizards
 
 class CustomBinds(Page):
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         super().__init__(parent)
 
         self.TabTitle : str                        = "Custom Binds"
         self.Panes    : List[CustomBindPaneParent] = []
         self.Init     : Dict[str, Any]             = {}
 
-    def BuildPage(self):
+    def BuildPage(self) -> None:
 
         # sizer for the buttons
         buttonSizer         = wx.BoxSizer(wx.HORIZONTAL) # sizer for new-item buttons
@@ -77,19 +77,19 @@ class CustomBinds(Page):
 
         self.Layout()
 
-    def OnNewSimpleBindButton(self, evt):
+    def OnNewSimpleBindButton(self, evt) -> None:
         self.AddBindToPage(bindpane = SimpleBindPane(self))
         evt.Skip()
 
-    def OnNewComplexBindButton(self, evt):
+    def OnNewComplexBindButton(self, evt) -> None:
         self.AddBindToPage(bindpane = ComplexBindPane(self))
         evt.Skip()
 
-    def OnNewBufferBindButton(self, evt):
+    def OnNewBufferBindButton(self, evt) -> None:
         self.AddBindToPage(bindpane = BufferBindPane(self))
         evt.Skip()
 
-    def OnBindWizardButton(self, evt = None):
+    def OnBindWizardButton(self, evt = None) -> None:
         with WizPickerDialog(self) as bwd:
             bwd.ShowModal()
             if wizClass := bwd.WizClass:
@@ -99,7 +99,7 @@ class CustomBinds(Page):
                     newWizBindPane.Wizard.ShowWizard()
         if evt: evt.Skip()
 
-    def OnImportBindButton(self, evt):
+    def OnImportBindButton(self, evt) -> None:
             # otherwise ask the user what new file to open
         with wx.FileDialog(self, "Import Custom Bind",
                            defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
@@ -126,7 +126,7 @@ class CustomBinds(Page):
 
         evt.Skip()
 
-    def BuildBindPaneFromData(self, binddata):
+    def BuildBindPaneFromData(self, binddata) -> CustomBindPaneParent|None:
         bindpane = None
         if binddata['Type'] == "SimpleBind":
             bindpane = SimpleBindPane(self, init = binddata)
@@ -144,7 +144,7 @@ class CustomBinds(Page):
 
         return bindpane
 
-    def AddBindToPage(self, bindpane = None):
+    def AddBindToPage(self, bindpane = None) -> None:
 
         if not bindpane:
             wx.LogError("Something tried to add an empty bindpane to the page.  This is a bug.")
@@ -206,12 +206,12 @@ class CustomBinds(Page):
         bindpane.Expand()
         self.Layout()
 
-    def SetBindPaneLabel(self, evt, bindpane = None, new = False):
+    def SetBindPaneLabel(self, evt, bindpane = None, new = False) -> bool:
         if not bindpane:
             bindpane = evt.GetEventObject().BindPane
         if not bindpane:
             wx.LogError("Tried to set a BindPane label without a bindpane.  This is a bug.")
-            return
+            return False
 
         # marshal up the files to delete, before we change the name
         deletefiles = None if new else bindpane.AllBindFiles()
@@ -234,7 +234,7 @@ class CustomBinds(Page):
                         wx.MessageBox(f"A bind called {title} already exists!", "Error", wx.OK, self)
                         self.SetBindPaneLabel(evt, bindpane, new)
                     dlg.Destroy()
-                    return
+                    return False
 
             bindpane.Title = title
             bindpane.SetLabel(bindpane.Title)
@@ -254,8 +254,9 @@ class CustomBinds(Page):
                 self.doDeleteBindPane(bindpane)
 
         dlg.Destroy()
+        return True
 
-    def OnDeleteButton(self, evt):
+    def OnDeleteButton(self, evt) -> None:
         delButton = evt.EventObject
         bindpane = delButton.BindPane
         with BindDeletionDialog(self, bindpane) as dlg:
@@ -268,7 +269,7 @@ class CustomBinds(Page):
         self.doDeleteBindPane(bindpane)
         evt.Skip()
 
-    def doDeleteBindPane(self, bindpane):
+    def doDeleteBindPane(self, bindpane) -> None:
         if delButton := bindpane.DelButton:
             sizer = delButton.BindSizer
             self.PaneSizer.Hide(sizer)
@@ -287,7 +288,7 @@ class CustomBinds(Page):
             self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
         self.Layout()
 
-    def OnDuplicateButton(self, evt):
+    def OnDuplicateButton(self, evt) -> None:
         oldbindpane = evt.EventObject.BindPane
         init = oldbindpane.Serialize()
         newbindpane = None
@@ -308,7 +309,7 @@ class CustomBinds(Page):
         self.AddBindToPage(newbindpane)
         newbindpane.ClearKeyBinds()
 
-    def OnExportButton(self, evt):
+    def OnExportButton(self, evt) -> None:
 
         bindpane = evt.GetEventObject().BindPane
 
@@ -332,18 +333,18 @@ class CustomBinds(Page):
             except Exception as e:
                 wx.LogError(f"Error exporting Complex Bind: {e}")
 
-    def UpdateAllBinds(self):
+    def UpdateAllBinds(self) -> None:
         for pane in self.Panes:
             self.Profile.UpdateData('CustomBinds', pane.Serialize())
 
-    def PopulateBindFiles(self):
+    def PopulateBindFiles(self) -> bool:
         for pane in self.Panes:
             pane.PopulateBindFiles()
         return True
 
     # TODO:  this contains knowledge of the innards of ComplexBinds, BufferBinds, etc
     # and probably should query each of those entities for which directories to check
-    def AllBindFiles(self):
+    def AllBindFiles(self) -> dict:
         files = []
         dirs  = []
         for dir in ['cbinds', 'cb', 'buff', 'wiz']:
@@ -357,7 +358,7 @@ class CustomBinds(Page):
             'dirs'  : dirs,
         }
 
-    def FullPaneBindsDir(self, dir):
+    def FullPaneBindsDir(self, dir) -> Dict[str, list]:
         files = []
         dirs  = [dir]
         panebindsdir = Path(self.Profile.BindsDir(), dir)
@@ -370,7 +371,7 @@ class CustomBinds(Page):
 
         return {
             'files' : files,
-            'dirs'  : [dir],
+            'dirs'  : dirs,
         }
 
 class BindDeletionDialog(wx.Dialog):

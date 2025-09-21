@@ -22,7 +22,7 @@ class KeyBind():
         # Therefore, we just make a new KeyBind object.  Maybe investigate someday.
         return KeyBind(self.Key, self.Name, self.Page, contents)
 
-    def BindString(self):
+    def BindString(self) -> str:
         payload = '$$'.join([i for i in self.Contents if i])
 
         # remove any initial $$ if we snuck in here with it.
@@ -32,7 +32,7 @@ class KeyBind():
 
         return payload
 
-    def BindFileString(self):
+    def BindFileString(self) -> str:
         return f'{self.Key} "{self.BindString()}"\n'
 
 class BindFile():
@@ -50,7 +50,7 @@ class BindFile():
     @overload
     def SetBind(self, keybind: str, name: str, page: str, contents: str|List[str]): ...
 
-    def SetBind(self, keybind:KeyBind|str, name:str = '', page:str = '', contents:str|List[str] = ''):
+    def SetBind(self, keybind:KeyBind|str, name:str = '', page:str = '', contents:str|List[str] = '') -> None:
 
         # we can either be called with a KeyBind, in which case we're golden, or with
         # four strings, in which case we need to roll a KeyBind.  Someday pick one scheme.
@@ -68,13 +68,13 @@ class BindFile():
 
         self.KeyBinds[keybind.Key] = keybind
 
-    def BaseReset(self):
+    def BaseReset(self) -> str:
         return f'{BLF()} {PureWindowsPath(self.GameBindsDir) / "reset.txt"}'
 
-    def BLF(self):
+    def BLF(self) -> str:
         return f'{BLF()} {self.GamePath}'
 
-    def Write(self):
+    def Write(self) -> None:
         try:
             self.Path.parent.mkdir(parents = True, exist_ok = True)
         except Exception as e:

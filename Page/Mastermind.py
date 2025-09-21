@@ -1,5 +1,9 @@
 import wx
 import re
+from typing import Dict
+import UI
+from Help import HelpButton
+from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 
 import GameData
 from Page import Page
@@ -11,7 +15,7 @@ from UI.KeySelectDialog import bcKeyButton
 from UI.ControlGroup import cgTextCtrl
 
 class Mastermind(Page):
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         super().__init__(parent)
 
         self.PetBoxes = []
@@ -35,7 +39,7 @@ class Mastermind(Page):
         }
         self.TabTitle = "Mastermind / Pet Binds"
 
-    def BuildPage(self):
+    def BuildPage(self) -> None:
 
         # get the pet names and binds to select them directly
         PetNames  = wx.StaticBoxSizer(wx.HORIZONTAL, self, label = "Pet Names and By-Name Selection")
@@ -161,7 +165,7 @@ class Mastermind(Page):
         cblabels  = ['Minion 1', 'Minion 2', 'Minion 3', 'Lt 1', 'Lt 2', 'Boss']
         return self.Ctrls[f'Pet{idx+1}Name'].GetValue() or cblabels[idx]
 
-    def SynchronizeUI(self):
+    def SynchronizeUI(self) -> None:
         ismm = self.Profile.Archetype() == "Mastermind"
         pset = self.Profile.Primary()
 
@@ -196,7 +200,7 @@ class Mastermind(Page):
 
         if evt: evt.Skip()
 
-    def OnLevelChanged(self, evt = None):
+    def OnLevelChanged(self, evt = None) -> None:
         if evt: evt.Skip()
         bossLevel = 22 if self.Profile.Server() == 'Homecoming' else 26
         lvl = self.LevelSlider.GetValue()
@@ -217,7 +221,7 @@ class Mastermind(Page):
             self.qwyNumpadPage.SynchronizeUI()
         if evt: evt.Skip()
 
-    def CheckUndefNames(self):
+    def CheckUndefNames(self) -> None:
         for i in (1,2,3,4,5,6):
             ctrl = self.Ctrls[f'Pet{i}Name']
             # No errors if the control is disabled please
@@ -226,12 +230,13 @@ class Mastermind(Page):
             else:
                 ctrl.AddError('undef', 'Many BindControl Mastermind binds require the pet name be filled in.')
 
-    def CheckUniqueNames(self):
-        names = []
-        for i in (1,2,3,4,5,6):
-            ctrl = self.Ctrls[f'Pet{i}Name']
-            value = ctrl.GetValue().strip() # don't allow whitespace at the ends
-            names.append(value)
+    def CheckUniqueNames(self) -> None:
+        if (self.Profile.Archetype() == "Mastermind"):
+            names = []
+            for i in (1,2,3,4,5,6):
+                ctrl = self.Ctrls[f'Pet{i}Name']
+                value = ctrl.GetValue().strip() # don't allow whitespace at the ends
+                names.append(value)
 
         # we stash this away every time we calculate it so we can
         # extract it trivially when we write binds
@@ -244,7 +249,7 @@ class Mastermind(Page):
             else:
                 ctrl.AddError('unique', 'This pet name is not different enough to identify it uniquely.  This is likely to cause issues with many of BindControl\'s Mastermind binds.')
 
-    def PopulateBindFiles(self):
+    def PopulateBindFiles(self) -> bool:
 
         profile = self.Profile
         ResetFile = profile.ResetFile()
@@ -335,7 +340,7 @@ class Mastermind(Page):
 
         return True
 
-    def AllBindFiles(self):
+    def AllBindFiles(self) -> Dict[str, list]:
         files = []
         # not clear that all of these are used but let's be thorough
         for fn in [
@@ -369,13 +374,49 @@ class Mastermind(Page):
             'dirs'  : ['mmbinds', 'mmb', 'petsel', 'mmqn', 'mmqpm'],
         }
 
+    UI.Labels.update({
+        'Pet1Name'                           : "First Pet's Name",
+        'Pet2Name'                           : "Second Pet's Name",
+        'Pet3Name'                           : "Third Pet's Name",
+        'Pet4Name'                           : "Fourth Pet's Name",
+        'Pet5Name'                           : "Fifth Pet's Name",
+        'Pet6Name'                           : "Sixth Pet's Name",
+        'PetSelect1'                         : "Select First Pet",
+        'PetSelect2'                         : "Select Second Pet",
+        'PetSelect3'                         : "Select Third Pet",
+        'PetSelect4'                         : "Select Fourth Pet",
+        'PetSelect5'                         : "Select Fifth Pet",
+        'PetSelect6'                         : "Select Sixth Pet",
+        'RenamePets'                         : "Rename Pets",
+        'PetSelectAllResponseMethod'         : "Pet Response",
+        'PetSelectMinionsResponseMethod'     : "Pet Response",
+        'PetSelectLieutenantsResponseMethod' : "Pet Response",
+        'PetSelectBossResponseMethod'        : "Pet Response",
+        'PetAggressiveResponseMethod'        : "Pet Response",
+        'PetDefensiveResponseMethod'         : "Pet Response",
+        'PetPassiveResponseMethod'           : "Pet Response",
+        'PetAttackResponseMethod'            : "Pet Response",
+        'PetFollowResponseMethod'            : "Pet Response",
+        'PetGotoResponseMethod'              : "Pet Response",
+        'PetStayResponseMethod'              : "Pet Response",
+        'PetChatToggle'                      : "Pet Chatty Mode Toggle",
+        'PetChattyDefault'                   : "Chatty is Default",
+        'PetBodyguard'                       : "Bodyguard Mode",
+        'PetBodyguardResponseMethod'         : "Pet Response",
+        'PetNPEnable'                        : 'Enable Prev/Next Pet Binds',
+        'SelNextPet'                         : "Select Next Pet",
+        'SelPrevPet'                         : "Select Previous Pet",
+        'IncPetSize'                         : "Increase Pet Group Size",
+        'DecPetSize'                         : "Decrease Pet Group Size",
+    })
+
 # https://stackoverflow.com/questions/11245481/find-the-smallest-unique-substring-for-each-string-in-an-array
 #
 # Oho I see that I used the "brute force" method from the above URL instead
 # of the "elegant" one.  Still it's blazingly fast for these six short strings,
 # enough so that we can use it on every TextCtrl change.  If people start to
 # complain of lag, we can experiment with the elegant one.
-def FindSmallestUniqueSubstring(names):
+def FindSmallestUniqueSubstring(names) -> list:
     uniqueNames = [''] * len(names)
     ### For each name
     for nameInd, name in enumerate(names):

@@ -244,7 +244,7 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
 
     # This is the two-button "start new profile" vs "load existing profile" panel
-    def MakeStartupPanel(self):
+    def MakeStartupPanel(self) -> wx.Panel:
         StartupPanel = wx.Panel(self)
 
         StartupSizer = wx.BoxSizer(wx.VERTICAL)
@@ -279,7 +279,7 @@ class Main(wx.Frame):
 
         return StartupPanel
 
-    def SetupProfileUI(self):
+    def SetupProfileUI(self) -> None:
         enable = self.Profile != None
         self.Profile_save.Enable(enable)
         self.Profile_saveas.Enable(enable)
@@ -289,7 +289,7 @@ class Main(wx.Frame):
         self.WriteButton.Enable(enable)
         self.DeleteButton.Enable(enable)
 
-    def OnPageChanged(self, evt):
+    def OnPageChanged(self, evt) -> None:
         if self.Profile:
             tabnumber = evt.GetSelection()
             tabname = self.Profile.GetPageText(tabnumber)
@@ -301,7 +301,7 @@ class Main(wx.Frame):
                 self.BottomButtonPanel.Show(True)
             self.Layout()
 
-    def OnProfileNew(self, _ = None):
+    def OnProfileNew(self, _ = None) -> None:
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
         # loop eternally until we get a name we like
         while True:
@@ -347,7 +347,7 @@ class Main(wx.Frame):
             self.Layout()
             self.Thaw()
 
-    def OnProfileLoad(self, _):
+    def OnProfileLoad(self, _) -> None:
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
 
         # Try to load;  if the user hits "cancel" or the load fails, go back to where we were
@@ -355,7 +355,7 @@ class Main(wx.Frame):
             self.InsertProfile(newProfile)
 
     # we use this in the Binds Directory Window also
-    def InsertProfile(self, newProfile):
+    def InsertProfile(self, newProfile) -> bool:
         try:
             self.Freeze()
 
@@ -375,7 +375,7 @@ class Main(wx.Frame):
 
         except Exception as e:
             wx.LogError(f"Something broke while setting up profile load: {e}")
-            return
+            return False
 
         finally:
             if self.IsFrozen(): self.Thaw()
@@ -385,13 +385,14 @@ class Main(wx.Frame):
         self.CheckProfDirButtonErrors()
         wx.ConfigBase.Get().Write('LastProfile', str(newProfile.Filepath()))
         wx.ConfigBase.Get().Flush()
+        return True
 
-    def OnProfileImport(self, _):
+    def OnProfileImport(self, _) -> bool:
         if self.Profile:
             if wx.MessageBox("This will create a new profile based on the build file you select.  Continue?", "Import Build File", wx.YES_NO) == wx.NO:
-                return
+                return False
 
-        if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
+        if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return False
 
         pathname = ''
         config = wx.FileConfig('bindcontrol')
@@ -402,7 +403,7 @@ class Main(wx.Frame):
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 wx.LogMessage("User canceled importing build file")
-                return # the user changed their mind
+                return False # the user changed their mind
 
             pathname = fileDialog.GetPath()
 
@@ -417,21 +418,24 @@ class Main(wx.Frame):
                     newprofile.SetModified()
             else:
                 wx.LogError('Build file was empty or contained errors')
+                return False
+
+        return True
 
 
-    def OnProfileSave(self, _):
+    def OnProfileSave(self, _) -> None:
         if not self.Profile: return
         self.Profile.doSaveToFile()
 
-    def OnProfileSaveAs(self, _):
+    def OnProfileSaveAs(self, _) -> None:
         if not self.Profile: return
         self.Profile.SaveToFile()
 
-    def OnProfileSaveDefault(self, _):
+    def OnProfileSaveDefault(self, _) -> None:
         if not self.Profile: return
         self.Profile.SaveAsDefault()
 
-    def OnProfileClose(self, _):
+    def OnProfileClose(self, _) -> None:
         if not self.Profile: return
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
         self.Sizer.Remove(0)
@@ -445,7 +449,7 @@ class Main(wx.Frame):
         self.SetupProfileUI()
         self.Layout()
 
-    def OnProfDirButton(self, _ = None):
+    def OnProfDirButton(self, _ = None) -> None:
         if not self.Profile: return # should try not to get here in the first place
         ProfDirDialog = wx.Dialog(self, -1, "Set Binds Directory")
 
@@ -515,7 +519,7 @@ class Main(wx.Frame):
 
         self.CheckProfDirButtonErrors()
 
-    def CheckIfProfileNeedsSaving(self):
+    def CheckIfProfileNeedsSaving(self) -> int:
         result = wx.OK
         if self.Profile:
             if self.Profile.IsModified():
@@ -530,7 +534,7 @@ class Main(wx.Frame):
                     self.Profile.SetSelection(peidx)
         return result
 
-    def CheckProfDirButtonErrors(self):
+    def CheckProfDirButtonErrors(self) -> None:
         config = wx.ConfigBase.Get()
         if not self.Profile: return
         if self.Profile.ProfileBindsDir:
@@ -552,7 +556,7 @@ class Main(wx.Frame):
         self.DeleteButton.Enable(not self.ProfDirButton.HasErrors())
         self.WriteButton.Enable(not self.ProfDirButton.HasErrors())
 
-    def OnPathTextChanged(self, evt):
+    def OnPathTextChanged(self, evt) -> None:
         textctrl = evt.EventObject
         value = textctrl.GetValue()
 
@@ -594,19 +598,19 @@ class Main(wx.Frame):
             else:
                 textctrl.RemoveWarning('exists')
 
-    def OnWriteBindsButton(self, _):
+    def OnWriteBindsButton(self, _) -> None:
         if not self.Profile: return
         self.Profile.WriteBindFiles()
 
-    def OnDeleteBindsButton(self, _):
+    def OnDeleteBindsButton(self, _) -> None:
         if not self.Profile: return
         self.Profile.DeleteBindFiles()
 
-    def OnMenuPrefsDialog(self, _ = None):
+    def OnMenuPrefsDialog(self, _ = None) -> None:
         with PrefsDialog(self) as dlg:
             dlg.ShowAndUpdatePrefs()
 
-    def OnMenuAboutBox(self, _):
+    def OnMenuAboutBox(self, _) -> None:
         from datetime import datetime
         this_year = datetime.now().year
         if self.about_info is None:
@@ -631,33 +635,33 @@ class Main(wx.Frame):
 
         wx.adv.AboutBox(self.about_info)
 
-    def OnMenuLogWindow(self, _):
+    def OnMenuLogWindow(self, _) -> None:
         self.Logger.LogWindow.Show()
 
-    def OnMenuExitApplication(self, _):
+    def OnMenuExitApplication(self, _) -> None:
         self.Close()
 
-    def OnHelpManual(self, _):
+    def OnHelpManual(self, _) -> None:
         ShowHelpWindow(self, 'Manual.html')
 
-    def OnHelpGettingStarted(self, _):
+    def OnHelpGettingStarted(self, _) -> None:
         webbrowser.open('https://github.com/emersonrp/bindcontrol/wiki/Getting-Started-With-BindControl')
 
-    def OnHelpLicense(self, _):
+    def OnHelpLicense(self, _) -> None:
         ShowHelpWindow(self, 'LICENSE.html')
 
-    def OnHelpBugs(self, _):
+    def OnHelpBugs(self, _) -> None:
         ShowHelpWindow(self, 'ReportingBugs.html')
 
-    def OnHelpFiles(self, _):
+    def OnHelpFiles(self, _) -> None:
         ShowHelpWindow(self, 'OutputFiles.html')
 
     # TODO - make just one window instead of a new one every time the menu item is picked
-    def OnHelpBindDirs(self, _):
+    def OnHelpBindDirs(self, _) -> None:
         window = BindDirsWindow(self, title = "Bind Directories", style = wx.TINY_CAPTION|wx.CLOSE_BOX|wx.CAPTION)
         window.Show()
 
-    def OnWindowClosing(self, evt):
+    def OnWindowClosing(self, evt) -> None:
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
 
         config = wx.ConfigBase.Get()

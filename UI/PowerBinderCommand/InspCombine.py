@@ -10,7 +10,7 @@ class InspCombine(PowerBinderCommand):
     Name = "Combine Inspirations"
     Menu = "Inspirations"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.FlexGridSizer:
         inspCombineSizer = wx.FlexGridSizer(2, 2, 5)
 
         inspCombineSizer.Add(wx.StaticText(dialog, -1, "Combine 3:"), 0,
@@ -41,7 +41,7 @@ class InspCombine(PowerBinderCommand):
 
         return inspCombineSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         schoice = self.inspCombineSource
         sindex  = schoice.GetSelection()
         source  = re.sub(' ', '_', schoice.GetString(sindex))
@@ -51,7 +51,7 @@ class InspCombine(PowerBinderCommand):
         cmd = "mergeinsp" if self.Profile.Server() == "Homecoming" else "inspcombine"
         return f'{cmd} {source.lower()} {target.lower()}'
 
-    def GetAllInsps(self):
+    def GetAllInsps(self) -> list:
         Insplist = []
         for _, info in GameData.Inspirations.items():
             for insp in info['tiers']:
@@ -61,7 +61,7 @@ class InspCombine(PowerBinderCommand):
 
         return Insplist
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         schoice = self.inspCombineSource
         sindex  = schoice.GetSelection()
         source  = schoice.GetString(sindex)
@@ -73,7 +73,7 @@ class InspCombine(PowerBinderCommand):
                 'target' : target,
                 }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if source := init.get('source', ''):
             self.inspCombineSource.SetStringSelection(source)
         if target := init.get('target', ''):

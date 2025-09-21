@@ -6,7 +6,7 @@ class TargetFriendCmd(PowerBinderCommand):
     Name = "Target Friend"
     Menu = "Targeting"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
 
         targetFriendSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -19,7 +19,7 @@ class TargetFriendCmd(PowerBinderCommand):
         CenteringSizer.Add(targetFriendSizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
         return CenteringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         choice = self.targetFriendModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
@@ -34,8 +34,8 @@ class TargetFriendCmd(PowerBinderCommand):
                 'Prev' : 'tgf_p',
             }[mode]
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return { 'mode' : self.targetFriendModeChoice.GetSelection() }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if init.get('mode', ''): self.targetFriendModeChoice.SetSelection(init['mode'])

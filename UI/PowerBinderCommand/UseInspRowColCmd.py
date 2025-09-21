@@ -7,7 +7,7 @@ class UseInspRowColCmd(PowerBinderCommand):
     Menu = "Inspirations"
     DeprecatedName = "Use Insp From Row/Column"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
 
         useInspRowColumnSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -25,7 +25,7 @@ class UseInspRowColCmd(PowerBinderCommand):
         CenteringSizer.Add(useInspRowColumnSizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
         return CenteringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         row = self.useInspRowColumnRow.GetSelection()+1
         col = self.useInspRowColumnCol.GetSelection()+1
 
@@ -34,12 +34,12 @@ class UseInspRowColCmd(PowerBinderCommand):
         else:
             return f"inspexectray {col} {row}"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {
             'col' : self.useInspRowColumnCol.GetSelection(),
             'row' : self.useInspRowColumnRow.GetSelection(),
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if init.get('col', ''): self.useInspRowColumnCol.SetSelection(init['col'])
         if init.get('row', ''): self.useInspRowColumnRow.SetSelection(init['row'])

@@ -8,7 +8,7 @@ class LoadBindsDir(PowerBinderCommand):
     Name = "Load Binds Directory"
     Menu = "Misc"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
         lbSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -31,7 +31,7 @@ class LoadBindsDir(PowerBinderCommand):
 
         return mainSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
 
         # If the specified binds directory disappeared between runs, we'd crash, so handle that.
         if self.lbPicker.GetSelection() == wx.NOT_FOUND: return ''
@@ -49,11 +49,11 @@ class LoadBindsDir(PowerBinderCommand):
         resetfilepath = PureWindowsPath(bindpath) / self.lbPicker.GetString(self.lbPicker.GetSelection()) / 'reset.txt'
         return reset + 'bindloadfile ' + str(resetfilepath)
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {'LoadBindProfile' : self.lbPicker.GetString(self.lbPicker.GetSelection()),
                 'ResetKeybinds'   : self.lbResetCB.GetValue(),
                 }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if init.get('LoadBindProfile', ''): self.lbPicker.SetStringSelection(init['LoadBindProfile'])
         self.lbResetCB.SetValue(init.get('ResetKeybinds', False))

@@ -17,7 +17,7 @@ class LFGCmd(PowerBinderCommand):
     Name = "LFG Settings"
     Menu = "Social"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = wx.GridBagSizer(2, 4)
 
@@ -52,7 +52,7 @@ class LFGCmd(PowerBinderCommand):
         self.SynchronizeUI()
         return CenteringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         lfgselection = ''
         if self.LFGSetRB.GetValue() == True:
             command = "lfgset"
@@ -66,7 +66,7 @@ class LFGCmd(PowerBinderCommand):
 
         return f"{command}{lfgselection}{comment}"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         if self.LFGSetRB.GetValue() == True:
             lfgstate = 'lfgset'
         elif self.LFGToggleRB.GetValue() == True:
@@ -81,8 +81,7 @@ class LFGCmd(PowerBinderCommand):
                 'comment'    : self.Comment.GetValue(),
         }
 
-
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         lfgstate = init.get('lfgstate', 'lfgset')
         if lfgstate == 'lfgset':
             self.LFGSetRB.SetValue(True)
@@ -95,7 +94,7 @@ class LFGCmd(PowerBinderCommand):
         self.CommentCB.SetValue(init.get('usecomment', False))
         self.Comment.SetValue(init.get('comment', ''))
 
-    def SynchronizeUI(self, evt = None):
+    def SynchronizeUI(self, evt = None) -> None:
         if evt: evt.Skip()
 
         self.LFGSetChoice.Enable(self.LFGSetRB.GetValue())

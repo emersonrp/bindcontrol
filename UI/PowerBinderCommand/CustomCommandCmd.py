@@ -8,7 +8,7 @@ class CustomCommandCmd(PowerBinderCommand):
     Name = "Custom Command"
     # Menu = '' # This one gets treated specially, and should NOT define Menu
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.customBindName = wx.TextCtrl(dialog, -1)
         self.customBindName.SetHint('Custom Command Text')
@@ -16,7 +16,7 @@ class CustomCommandCmd(PowerBinderCommand):
 
         link = wx.html.HtmlWindow(dialog, size = wx.Size(200,40))
         dialog.SetBackgroundColour(link.GetHTMLBackgroundColour())
-        payload = 'https://wiki.cityofheroesrebirth.com/wiki/List_of_Slash_Commands' if self.Profile.Server == 'Rebirth' else 'https://homecoming.wiki/wiki/List_of_Slash_Commands'
+        payload = 'https://wiki.cityofheroesrebirth.com/wiki/List_of_Slash_Commands' if self.Profile.Server() == 'Rebirth' else 'https://homecoming.wiki/wiki/List_of_Slash_Commands'
         link.SetPage(f'<html><body><center><a href="{payload}">List of Slash Commands</a></body></center></html>')
         link.Bind(wx.html.EVT_HTML_LINK_CLICKED, self.HandleLinkClicked)
 
@@ -24,18 +24,18 @@ class CustomCommandCmd(PowerBinderCommand):
 
         return sizer
 
-    def HandleLinkClicked(self, evt):
+    def HandleLinkClicked(self, evt) -> None:
         linkinfo = evt.GetLinkInfo()
         page = linkinfo.GetHref()
         webbrowser.open(page)
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         return self.customBindName.GetValue()
 
     # We used to call these "Custom Binds" and we're gonna leave them called that
     # in the serialize / deserialize steps just so we don't have to legacy that name.
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return { 'customBindName': self.customBindName.GetValue() }
 
-    def Deserialize(self,init):
+    def Deserialize(self,init) -> None:
         if init.get('customBindName', ''): self.customBindName.SetValue(init['customBindName'])

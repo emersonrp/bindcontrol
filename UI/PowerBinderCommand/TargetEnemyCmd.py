@@ -6,7 +6,7 @@ class TargetEnemyCmd(PowerBinderCommand):
     Name = "Target Enemy"
     Menu = "Targeting"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
 
         targetEnemySizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -19,7 +19,7 @@ class TargetEnemyCmd(PowerBinderCommand):
         CenteringSizer.Add(targetEnemySizer, 1, wx.ALIGN_CENTER_HORIZONTAL)
         return CenteringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         choice = self.targetEnemyModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
@@ -34,8 +34,8 @@ class TargetEnemyCmd(PowerBinderCommand):
                 'Prev' : 'tge_p',
             }[mode]
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return { 'mode' : self.targetEnemyModeChoice.GetSelection() }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if init.get('mode', ''): self.targetEnemyModeChoice.SetSelection(init['mode'])

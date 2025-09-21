@@ -8,7 +8,7 @@ class AttributeMonitorCmd(PowerBinderCommand):
     Name = "Attribute Monitor"
     Menu = "Graphics / UI"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         self.Page = dialog.Page
         self.AttributeTable = {
             'Base' : {
@@ -127,7 +127,7 @@ class AttributeMonitorCmd(PowerBinderCommand):
 
         return groupSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         map = {}
         bindstrings = []
         for _, controls in self.AttributeTable.items():
@@ -142,23 +142,23 @@ class AttributeMonitorCmd(PowerBinderCommand):
 
         return '$$'.join(bindstrings)
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {
             'on_or_off'  : 'unmonitor' if self.MonitorOff.GetValue() else 'monitor',
             'attributes' : self.editbox.GetStrings()
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         self.editbox.SetStrings(init.get('attributes', []))
         if init.get('on_or_off', 'monitor') == 'monitor':
             self.MonitorOn.SetValue(True)
         else:
             self.MonitorOff.SetValue(True)
 
-    def OnNewButton(self, evt):
+    def OnNewButton(self, evt) -> None:
         evt.GetEventObject().PopupMenu(self.AttributeMenu)
 
-    def OnMenuItem(self, evt):
+    def OnMenuItem(self, evt) -> None:
         menuitem = evt.EventObject.FindItemById(evt.GetId())
         existingstrings = self.editbox.GetStrings()
         existingstrings.append(menuitem.GetItemLabel())

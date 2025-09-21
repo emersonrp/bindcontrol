@@ -7,7 +7,7 @@ class CostumeChangeCmd(PowerBinderCommand):
     Name = "Costume Change"
     Menu = "Social"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         costumeChangeSizer = wx.BoxSizer(wx.HORIZONTAL)
         costumeChangeSizer.Add(wx.StaticText(dialog, -1, "Costume:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         self.costumeChangeCostume = wx.Choice(dialog, -1,
@@ -24,7 +24,7 @@ class CostumeChangeCmd(PowerBinderCommand):
 
         return costumeChangeSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         costumeNumber = self.costumeChangeCostume.GetSelection()
         costumeEmote  = self.costumeChangeEmote.GetSelection()
 
@@ -38,12 +38,12 @@ class CostumeChangeCmd(PowerBinderCommand):
 
         return f"{ccCmd} {costumeNumber}{emoteName}"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return{
             'costumeNumber': self.costumeChangeCostume.GetSelection(),
             'costumeEmote' : self.costumeChangeEmote.GetSelection(),
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if init.get('costumeNumber', ''): self.costumeChangeCostume.SetSelection(init['costumeNumber'])
         if init.get('costumeEmote' , ''): self.costumeChangeEmote  .SetSelection(init['costumeEmote'])

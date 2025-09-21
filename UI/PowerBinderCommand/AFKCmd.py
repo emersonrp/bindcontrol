@@ -6,7 +6,7 @@ class AFKCmd(PowerBinderCommand):
     Name = "Away From Keyboard"
     Menu = "Social"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.AFKName = wx.TextCtrl(dialog, -1)
         self.AFKName.SetHint('Away From Keyboard Text ("AFK" is default)')
@@ -14,13 +14,13 @@ class AFKCmd(PowerBinderCommand):
 
         return sizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         message = self.AFKName.GetValue()
         return f"afk {message}" if message else "afk"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {'message': self.AFKName.GetValue()}
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if init['message']:
             self.AFKName.SetValue(init['message'])

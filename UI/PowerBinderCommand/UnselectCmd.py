@@ -5,5 +5,5 @@ class UnselectCmd(PowerBinderCommand):
     Name = "Unselect"
     Menu = "Targeting"
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         return 'unselect'

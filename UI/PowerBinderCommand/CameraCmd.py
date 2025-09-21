@@ -6,7 +6,7 @@ class CameraCmd(PowerBinderCommand):
     Name = "Camera Commands"
     Menu = "Misc"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         centeringSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = wx.GridSizer(2)
 
@@ -78,7 +78,7 @@ class CameraCmd(PowerBinderCommand):
         centeringSizer.Add(sizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
         return centeringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         # choice 1, do this one at a time by hand;  choice 2, hack up some data-driven iterable.  I choose 1.
         bindstrings = []
         if self.camdistcb.IsChecked():
@@ -149,7 +149,7 @@ class CameraCmd(PowerBinderCommand):
             bindstrings.append(thirdcmd)
         return '$$'.join(bindstrings)
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         camrotatevalue = ""
         camrotateselection = self.camrotatech.GetSelection()
         if camrotateselection != wx.NOT_FOUND:
@@ -193,7 +193,7 @@ class CameraCmd(PowerBinderCommand):
             'thirdch'     : thirdvalue,
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         self.camdistcb.SetValue(init.get('camdistcb', False))
         self.camdistsc.SetValue(init.get('camdistsc', 1.0))
         self.camresetcb.SetValue(init.get('camresetcb', False))

@@ -6,7 +6,7 @@ class TargetCustomCmd(PowerBinderCommand):
     Name = "Target Custom"
     Menu = "Targeting"
 
-    def BuildUI(self, dialog):
+    def BuildUI(self, dialog) -> wx.BoxSizer:
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
         targetCustomSizer = wx.GridBagSizer(5,5)
         targetCustomSizer.Add(wx.StaticText(dialog, -1, "Target Mode:"), (0,0),
@@ -43,7 +43,7 @@ class TargetCustomCmd(PowerBinderCommand):
         CenteringSizer.Add(targetCustomSizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
         return CenteringSizer
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         choice = self.targetCustomModeChoice
         index  = choice.GetSelection()
         mode   = choice.GetString(index)
@@ -73,7 +73,7 @@ class TargetCustomCmd(PowerBinderCommand):
 
         return f"{targetCommand}{enemy}{friend}{defeated}{alive}{mypet}{notmypet}{base}{notbase}{teammate}{notteammate} {name}"
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         return {
             'mode'        : self.targetCustomModeChoice.GetSelection(),
             'enemy'       : self.targetCustomCBEnemies.     IsChecked(),
@@ -89,7 +89,7 @@ class TargetCustomCmd(PowerBinderCommand):
             'name'        : self.targetCustomOptionalName.GetValue(),
         }
 
-    def Deserialize(self, init):
+    def Deserialize(self, init) -> None:
         if init.get('mode'        , ''): self.targetCustomModeChoice.SetSelection(init['mode'])
         if init.get('enemy'       , ''): self.targetCustomCBEnemies.     SetValue(init['enemy'])
         if init.get('friend'      , ''): self.targetCustomCBFriends.     SetValue(init['friend'])
@@ -103,7 +103,7 @@ class TargetCustomCmd(PowerBinderCommand):
         if init.get('notteammate' , ''): self.targetCustomCBNotTeammates.SetValue(init['notteammate'])
         if init.get('name'        , ''): self.targetCustomOptionalName.SetValue(init['name'])
 
-    def GetServerCommand(self, command):
+    def GetServerCommand(self, command) -> str:
         server = self.Profile.Server()
         if server == 'Homecoming': return f" {command}"
 

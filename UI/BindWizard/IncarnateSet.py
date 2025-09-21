@@ -59,9 +59,9 @@ class IncarnateSet(WizardParent):
         incarnateData = self.Init.get('WizData', {}).get('IncData', {})
         for slot in ['Alpha', 'Interface', 'Judgement', 'Destiny', 'Lore', 'Hybrid', 'Genesis',]:
             if slotData := incarnateData.get(slot, None):
-                icon = GetIcon(slotData['iconfile'])
+                icon = GetIcon(slotData['iconfile']) # pyright: ignore
                 bitmap = wx.GenericStaticBitmap(panel, wx.ID_ANY, icon)
-                bitmap.Bind(wx.EVT_ENTER_WINDOW, partial(self.OnHoverIcon, f"<b>{slot}</b>: {slotData['power']}"))
+                bitmap.Bind(wx.EVT_ENTER_WINDOW, partial(self.OnHoverIcon, f"<b>{slot}</b>: {slotData['power']}")) # pyright: ignore
                 bitmap.Bind(wx.EVT_LEAVE_WINDOW, partial(self.OnHoverIcon, None))
                 bitmap.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
                 listSizer.Add(bitmap, 0, wx.ALL, 5)
@@ -139,10 +139,10 @@ class IncarnateSet(WizardParent):
         fake_blf = profile.BLF('wiz', f'{title}X')
         extra_len = len(f"$$bindloadfilesilent {fake_blf}$$t $name, X of X, Press Again")
         for slot, data in incdata.items():
-            if data['power'] == "Disable Slot":
+            if data['power'] == "Disable Slot": # pyright: ignore
                 incarnate_command = f'incarnateunequipbyslot {slot}'
             else:
-                powername = re.sub(r' ', '_', data['power'])
+                powername = re.sub(r' ', '_', data['power']) # pyright: ignore
                 incarnate_command = f'incarnate_equip {slot} {powername}'
             if len(incarnate_lines[-1]) == 0:
                 incarnate_lines[-1] = incarnate_command

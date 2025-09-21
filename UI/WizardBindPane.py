@@ -1,10 +1,11 @@
+from typing import Dict, Any
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.BindWizard import rev_wiz
 
 import wx
 
 class WizardBindPane(CustomBindPaneParent):
-    def __init__(self, page, wizClass, init = {}):
+    def __init__(self, page, wizClass, init = {}) -> None:
 
         super().__init__(page, init)
 
@@ -18,22 +19,23 @@ class WizardBindPane(CustomBindPaneParent):
 
         self.Init = init
 
-    def Serialize(self):
+    def Serialize(self) -> Dict[str, Any]:
         data = self.CreateSerialization({
             'WizClass' : rev_wiz[self.WizClass],
             'WizData'  : self.Wizard.Serialize(),
         })
         return data
 
-    def PopulateBindFiles(self):
+    def PopulateBindFiles(self) -> None:
         self.Wizard.PopulateBindFiles()
 
     # implement in Wizard class if needed
-    def AllBindFiles(self):
+    def AllBindFiles(self) -> dict:
         if hasattr(self.Wizard, 'AllBindFiles'):
             return self.Wizard.AllBindFiles()
+        return {}
 
-    def BuildBindUI(self, page):
+    def BuildBindUI(self, page) -> None:
         # if the pane already has stuff, clear it out
         pane = self.GetPane()
         if mainSizer := pane.GetSizer():

@@ -1,7 +1,7 @@
 import wx
 import GameData
 
-def OnEmotePicker(evt):
+def OnEmotePicker(evt) -> None:
     button = evt.EventObject
 
     button.PopupMenu(EmotePicker(button))
@@ -13,7 +13,7 @@ class EmotePicker(wx.Menu):
 
     payloadMap = { '...': '' }
 
-    def __init__(self, target):
+    def __init__(self, target) -> None:
         super().__init__()
 
         self.UpdateTarget = target
@@ -21,7 +21,7 @@ class EmotePicker(wx.Menu):
 
         self.Bind(wx.EVT_MENU, self.OnMenuSelected)
 
-    def BuildMenu(self, data):
+    def BuildMenu(self, data) -> None:
         for category in data:
             # 'Converse' : []
             for catname, cat in category.items():
@@ -52,7 +52,7 @@ class EmotePicker(wx.Menu):
                                         for kneelitem in deeperdata:
                                             self.HandleEmoteString(kneelitem, subsubsubmenu)
 
-    def HandleEmoteString(self, item, menu):
+    def HandleEmoteString(self, item, menu) -> None:
         if item == "---":
             menu.AppendSeparator()
         else:
@@ -71,7 +71,7 @@ class EmotePicker(wx.Menu):
 
             menu.Append(-1, label)
 
-    def OnMenuSelected(self, evt):
+    def OnMenuSelected(self, evt) -> None:
         menuitem = self.FindItemById(evt.GetId())
         label = menuitem.GetItemLabel()
         self.UpdateTarget.SetLabel(label)

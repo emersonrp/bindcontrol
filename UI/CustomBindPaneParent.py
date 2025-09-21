@@ -1,9 +1,10 @@
 # parent class for various custom bindpane types
+from typing import Dict, Any
 import wx
 from UI.KeySelectDialog import bcKeyButton
 
 class CustomBindPaneParent(wx.CollapsiblePane):
-    def __init__(self, page, init = {}):
+    def __init__(self, page, init = {}) -> None:
         super().__init__(page.scrolledPanel, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
         self.Ctrls              = {}
@@ -32,18 +33,18 @@ class CustomBindPaneParent(wx.CollapsiblePane):
 
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
 
-    def BuildBindUI(self, page):
+    def BuildBindUI(self, page) -> None:
         # build the UI needed to edit/create this bind, and shim
         # it into 'page'
         ...
 
-    def PopulateBindFiles(self):
+    def PopulateBindFiles(self) -> None:
         print(f"Inside {self.bindclass} PopulateBindFiles")
         # for overriding on child classes this will be called in the course of
         # the Custom Binds page doing its own PopulateBindFiles, iteratively
         # over all of its kids
 
-    def CreateSerialization(self, data):
+    def CreateSerialization(self, data) -> Dict[str, Any]:
         return {
                 'CustomID' : self.CustomID,
                 'Type'     : self.Type,
@@ -51,11 +52,11 @@ class CustomBindPaneParent(wx.CollapsiblePane):
                 **data
                 }
 
-    def Serialize(self):
+    def Serialize(self) -> dict:
         print(f"Inside {self.bindclass} Serialize, please override")
         return {}
 
-    def OnPaneChanged(self, evt):
+    def OnPaneChanged(self, evt) -> None:
         IsCollapsed = evt.GetCollapsed()
         if self.DelButton: self.DelButton.Show(not IsCollapsed)
         if self.RenButton: self.RenButton.Show(not IsCollapsed)
@@ -65,10 +66,10 @@ class CustomBindPaneParent(wx.CollapsiblePane):
 
     # this is called when we duplicate a bind.  We'll want to clear any keybuttons
     # to keep the new duplicate bind from conflicting
-    def ClearKeyBinds(self):
+    def ClearKeyBinds(self) -> None:
         for _,ctrl in self.Ctrls.items():
             if isinstance(ctrl, bcKeyButton):
                 ctrl.ClearButton(None)
 
-    def MakeCtlName(self, name):
+    def MakeCtlName(self, name) -> str:
         return f"{self.bindclass}_{self.CustomID}_{name}"

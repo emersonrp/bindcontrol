@@ -1,4 +1,5 @@
 import re
+from typing import Dict
 import wx
 import UI
 from BLF import BLF
@@ -11,7 +12,7 @@ from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 ChatTargets = ['team', 'target', 'local']
 
 class BufferBindPane(CustomBindPaneParent):
-    def __init__(self, page, init = {}):
+    def __init__(self, page, init = {}) -> None:
         super().__init__(page, init)
 
         self.PassedInit  = init
@@ -32,7 +33,7 @@ class BufferBindPane(CustomBindPaneParent):
         for i in (1,2,3,4,5,6):
             self.Init[f'Pet{i}BuffKey'] = ''
 
-    def BuildBindUI(self, page):
+    def BuildBindUI(self, page) -> None:
         pane = self.GetPane()
         setattr(pane, 'Page', page)
 
@@ -128,7 +129,7 @@ class BufferBindPane(CustomBindPaneParent):
         pane.SetSizer(border)
         self.SynchronizeUI()
 
-    def OnAddBuffButton(self, evt = None, buff = {}):
+    def OnAddBuffButton(self, evt = None, buff = {}) -> None:
         if evt: evt.Skip()
         newBuff = Buff(self, buff)
         self.Buffs.append(newBuff)
@@ -137,7 +138,7 @@ class BufferBindPane(CustomBindPaneParent):
         # TODO this is arguably a bad idea, overloading this as a general "add buff" scheme
         self.Page.Layout()
 
-    def OnDelBuffButton(self, evt):
+    def OnDelBuffButton(self, evt) -> None:
         evt.Skip()
         button = evt.GetEventObject()
         buff = button.GetParent()
@@ -148,7 +149,7 @@ class BufferBindPane(CustomBindPaneParent):
         self.Parent.Layout()
         wx.CallAfter(self.Page.SynchronizeUI)
 
-    def GetVerbFor(self, ctl):
+    def GetVerbFor(self, ctl) -> str:
         tgt = ctl.GetString(ctl.GetSelection())
 
         if tgt == 'team':
@@ -160,7 +161,7 @@ class BufferBindPane(CustomBindPaneParent):
 
         return verb
 
-    def PopulateBindFiles(self):
+    def PopulateBindFiles(self) -> None:
         if not self.CheckIfWellFormed():
             wx.MessageBox(f'Buffer Bind "{self.Title}" is not complete or has errors.  Not written to bindfile.')
             return
@@ -219,7 +220,7 @@ class BufferBindPane(CustomBindPaneParent):
                     else:
                         outfiles[i].SetBind(petkey, self.Page, self.Title, [f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}{i+i}.txt'])
 
-    def SynchronizeUI(self, _ = None):
+    def SynchronizeUI(self, _ = None) -> None:
 
         for i, b in enumerate(self.Buffs):
             b.delButton.Show(i > 0)
@@ -235,7 +236,7 @@ class BufferBindPane(CustomBindPaneParent):
         self.CheckAnyKeyPicked()
         self.Page.Layout()
 
-    def Serialize(self):
+    def Serialize(self) -> Dict[str, str|list]:
         data = self.CreateSerialization({
             "SelChatTgt"      : self.SelChatTgt.GetString(self.SelChatTgt.GetSelection()),
             "SelChat"         : self.SelChat.GetValue(),
@@ -261,7 +262,7 @@ class BufferBindPane(CustomBindPaneParent):
 
         return data
 
-    def AllBindFiles(self):
+    def AllBindFiles(self) -> Dict[str, list]:
         files = []
         title = re.sub(r'\W+', '', self.Title)
         cid = self.CustomID
@@ -284,10 +285,10 @@ class BufferBindPane(CustomBindPaneParent):
             'dirs'  : [f"buff{title}", f"buff{cid}"],
         }
 
-    def CheckIfWellFormed(self):
+    def CheckIfWellFormed(self) -> bool:
         return (self.CheckAnyKeyPicked() and self.CheckAllBuffsAreValid())
 
-    def CheckAnyKeyPicked(self, evt = None):
+    def CheckAnyKeyPicked(self, evt = None) -> bool:
         if evt: evt.Skip()
         KeyIsPicked = False
         for i in (1,2,3,4,5,6,7,8):
@@ -305,7 +306,7 @@ class BufferBindPane(CustomBindPaneParent):
 
         return KeyIsPicked
 
-    def CheckAllBuffsAreValid(self):
+    def CheckAllBuffsAreValid(self) -> bool:
         AllAreValid = True
         for b in self.Buffs:
             if not b.BuffPower.HasPowerPicked():
@@ -314,7 +315,7 @@ class BufferBindPane(CustomBindPaneParent):
         return AllAreValid
 
 class Buff(wx.Panel):
-    def __init__(self, parent, buff = {}):
+    def __init__(self, parent, buff = {}) -> None:
         self.Page = parent.Page
         pane = parent.GetPane()
 
@@ -346,7 +347,7 @@ class Buff(wx.Panel):
         self.OnPowerPicked()
         self.SetSizerAndFit(buffSizer)
 
-    def OnPowerPicked(self, _ = None):
+    def OnPowerPicked(self, _ = None) -> None:
         if self.BuffPower.HasPowerPicked():
             self.BuffPower.RemoveError("nopick")
         else:

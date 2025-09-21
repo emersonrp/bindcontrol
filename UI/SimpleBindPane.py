@@ -1,3 +1,4 @@
+from typing import Dict, Any
 import wx
 import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
@@ -7,7 +8,7 @@ from UI.PowerBinder import PowerBinder
 ### CustomBind subclasses for the individual bind types
 
 class SimpleBindPane(CustomBindPaneParent):
-    def __init__(self, page, init = {}):
+    def __init__(self, page, init = {}) -> None:
         super().__init__(page, init)
 
         self.Description = "Simple Bind"
@@ -15,7 +16,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
         self.PowerBinder = None
 
-    def Serialize(self):
+    def Serialize(self) -> Dict[str, Any]:
         data = self.CreateSerialization({
             'Contents' : self.PowerBinder.GetValue() if self.PowerBinder else '',
             'Key'      : self.Ctrls[self.MakeCtlName('BindKey')].Key,
@@ -27,7 +28,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
         return data
 
-    def BuildBindUI(self, page):
+    def BuildBindUI(self, page) -> None:
         pane = self.GetPane()
         setattr(pane, 'Page', page)
 
@@ -63,18 +64,18 @@ class SimpleBindPane(CustomBindPaneParent):
         pane.SetSizer(border)
         self.checkIfWellFormed()
 
-    def onContentsChanged(self, evt):
+    def onContentsChanged(self, evt) -> None:
         evt.Skip()
         self.Profile.SetModified()
         self.checkIfWellFormed()
 
-    def onKeyChanged(self, evt):
+    def onKeyChanged(self, evt) -> None:
         evt.Skip()
         self.checkIfWellFormed()
 
-    def AllBindFiles(self): return {}
+    def AllBindFiles(self) -> dict: return {}
 
-    def checkIfWellFormed(self):
+    def checkIfWellFormed(self) -> bool:
         isWellFormed = True
 
         if self.PowerBinder:
@@ -100,7 +101,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
         return isWellFormed
 
-    def PopulateBindFiles(self):
+    def PopulateBindFiles(self) -> None:
         if not self.checkIfWellFormed():
             wx.MessageBox(f"Custom Bind \"{self.Title}\" is not complete or has errors.  Not written to bindfile.")
             return

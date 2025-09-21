@@ -8,7 +8,7 @@ from Util.Paths import GetAllProfileBindsDirs, CheckProfileForBindsDir, GetProfi
 
 
 class BindDirsWindow(wx.MiniFrame):
-    def __init__(self, parent, **kwargs):
+    def __init__(self, parent, **kwargs) -> None:
         super().__init__(parent, **kwargs)
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(mainSizer)
@@ -78,7 +78,7 @@ class BindDirsWindow(wx.MiniFrame):
 
         self.Bind(wx.EVT_SHOW, self.OnShow)
 
-    def OnProfileClick(self, _, file, label):
+    def OnProfileClick(self, _, file, label) -> None:
         if self.Parent.CheckIfProfileNeedsSaving() == wx.CANCEL: return # pyright: ignore
 
         # Offer some feedback that we did anything.
@@ -91,6 +91,6 @@ class BindDirsWindow(wx.MiniFrame):
             self.Parent.InsertProfile(newProfile) # pyright: ignore
 
     # blow up the window when we hide it since we make a new one each time to keep the info fresh
-    def OnShow(self, evt):
+    def OnShow(self, evt) -> None:
         if not evt.IsShown():
             self.Destroy()

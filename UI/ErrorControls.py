@@ -10,26 +10,26 @@ class ErrorControlMixin:
     HasTextCtrl            : Callable
     Refresh                : Callable
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.Errors         : dict = {}
         self.Warnings       : dict = {}
         self.DefaultToolTip : str = ''
         self.BGColour       : wx.Colour = self.GetBackgroundColour() if isinstance(self, wx.TextCtrl) else wx.NullColour
 
-    def Enable(self, enable = True):
+    def Enable(self, enable = True) -> bool:
         if enable == False:
             self.RemoveError('conflict')
         return super().Enable(enable) # pyright: ignore
 
-    def AddWarning(self, errname, tooltip = None):
+    def AddWarning(self, errname, tooltip = None) -> None:
         if not self.Errors:
             self.SetFullBackgroundColour((255,255,200))
         self.Warnings[errname] = tooltip
         self.SetErrorToolTip()
         self.Refresh()
 
-    def RemoveWarning(self, errname):
+    def RemoveWarning(self, errname) -> None:
         self.Warnings.pop(errname, None)
         if not self.Errors and not self.Warnings:
             self.SetFullBackgroundColour(self.BGColour)
@@ -38,13 +38,13 @@ class ErrorControlMixin:
         self.SetErrorToolTip()
         self.Refresh()
 
-    def AddError(self, errname, tooltip = None):
+    def AddError(self, errname, tooltip = None) -> None:
         self.SetFullBackgroundColour((255,200,200))
         self.Errors[errname] = tooltip
         self.SetErrorToolTip()
         self.Refresh()
 
-    def RemoveError(self, errname):
+    def RemoveError(self, errname) -> None:
         self.Errors.pop(errname, None)
         if not self.Errors and not self.Warnings:
             self.SetFullBackgroundColour(self.BGColour)
@@ -53,9 +53,9 @@ class ErrorControlMixin:
         self.SetErrorToolTip()
         self.Refresh()
 
-    def HasErrors(self): return bool(self.Errors)
+    def HasErrors(self) -> bool: return bool(self.Errors)
 
-    def ClearErrors(self):
+    def ClearErrors(self) -> None:
         # get a list first b/c we change it in the loop
         errors = list(self.Errors)
         for error in errors: self.RemoveError(error)
@@ -63,7 +63,7 @@ class ErrorControlMixin:
         self.Refresh()
 
     # Do some dancing in here to make sure multi-line text controls get their contents updated
-    def SetFullBackgroundColour(self, colour):
+    def SetFullBackgroundColour(self, colour) -> None:
         target = self.StylingTarget()
         target.SetBackgroundColour(colour)
         if isinstance(target, wx.TextCtrl) and target.IsMultiLine():
@@ -76,7 +76,7 @@ class ErrorControlMixin:
     def StylingTarget(self):
         return self.GetTextCtrl() if (isinstance(self, wx.PickerBase) and self.HasTextCtrl()) else self
 
-    def SetErrorToolTip(self):
+    def SetErrorToolTip(self) -> None:
         tipstrings = list(self.Errors.values()) + list(self.Warnings.values())
         # if we have any non-empty string, set the tooltip
         for tip in tipstrings:

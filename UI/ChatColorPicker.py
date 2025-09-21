@@ -2,8 +2,7 @@ import wx
 import wx.lib.colourselect as csel
 
 class ChatColorPicker(wx.BoxSizer):
-
-    def __init__(self, parent, page, prefix, cols):
+    def __init__(self, parent, page, prefix, cols) -> None:
         super().__init__(wx.HORIZONTAL)
 
         self.borderLabel = wx.StaticText(parent, label = "Border:")
@@ -44,10 +43,10 @@ class ChatColorPicker(wx.BoxSizer):
 
         self.Add(self.example, 0, wx.LEFT|wx.ALIGN_CENTER, 15)
 
-    def onColorChanged(self, _ = None):
+    def onColorChanged(self, _ = None) -> None:
         self.example.SetBackgroundColour(self.borderPicker.GetColour())
         self.exampleText.SetBackgroundColour(self.backgroundPicker.GetColour())
         self.exampleText.SetForegroundColour(self.textPicker.GetColour())
         self.exampleText.Refresh()
 
-def ChatColors(fg,bg,bd): return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'
+def ChatColors(fg,bg,bd) -> str: return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'

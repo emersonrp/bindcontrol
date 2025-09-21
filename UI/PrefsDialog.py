@@ -10,7 +10,7 @@ from UI.ControlGroup import cgDirPickerCtrl, cgTextCtrl
 from bcController import bcController
 
 class PrefsDialog(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         super().__init__(parent, title = "Preferences")
 
         config = wx.ConfigBase.Get()
@@ -235,7 +235,7 @@ class PrefsDialog(wx.Dialog):
         self.OnDirPickerChange()
         self.OnGameBindsDirPickerChanged()
 
-    def OnDirPickerChange(self, evt = None):
+    def OnDirPickerChange(self, evt = None) -> None:
         # Check the gamedir picker
         gamedir = Path(self.gameDirPicker.GetPath())
         if gamedir.is_absolute():
@@ -288,19 +288,19 @@ class PrefsDialog(wx.Dialog):
 
         if evt: evt.Skip()
 
-    def OnGameBindsDirPickerChanged(self, _ = None):
+    def OnGameBindsDirPickerChanged(self, _ = None) -> None:
         if gbdp := self.gameBindsDirPicker:
             if re.search(r'\s+', gbdp.GetValue()):
                 gbdp.AddError('spaces', 'The game binds directory cannot contain spaces.  Please check the manual for more information.')
             else:
                 gbdp.RemoveError('spaces')
 
-    def OnCBLabelClick(self, evt):
+    def OnCBLabelClick(self, evt) -> None:
         cblabel = evt.EventObject
         cblabel.CB.SetValue(not cblabel.CB.IsChecked())
         evt.Skip()
 
-    def ShowAndUpdatePrefs(self):
+    def ShowAndUpdatePrefs(self) -> None:
         if self.ShowModal() == wx.ID_OK:
             config = wx.ConfigBase.Get()
             config.Write('GamePath', self.gameDirPicker.GetPath())

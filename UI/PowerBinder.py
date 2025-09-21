@@ -10,7 +10,6 @@ import wx.lib.newevent
 PowerBinderChanged, EVT_POWERBINDER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 class PowerBinder(ErrorControlMixin, wx.TextCtrl):
-
     def __init__(self, parent, init = {}, extralength = 0):
         super().__init__(parent)
         self.CurrentState = init
@@ -21,24 +20,24 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
 
         self.Bind(wx.EVT_LEFT_DOWN, self.OnClickPB)
 
-    def OnClickPB(self, _):
+    def OnClickPB(self, _) -> None:
         self.PowerBinderDialog().Show()
 
-    def SaveToData(self):
+    def SaveToData(self) -> list:
         return self.PowerBinderDialog().SaveToData()
 
     # If we do this at __init__ time, the app doesn't launch.  Investigate why.
     def PowerBinderDialog(self):
         return PowerBinderDialog(self.DialogParent, self, extralength = self.ExtraLength)
 
-    def UpdateState(self, bindString, state):
+    def UpdateState(self, bindString, state) -> None:
         if bindString != self.GetValue():
             self.CurrentState = state
             self.SetValue(bindString)
             wx.PostEvent(self, PowerBinderChanged(wx.NewId()))
 
 class PowerBinderDialog(wx.Dialog):
-    def __init__(self, parent, powerbinder, extralength = 0):
+    def __init__(self, parent, powerbinder, extralength = 0) -> None:
         super().__init__(parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
         self.Page = parent.Page
@@ -121,12 +120,12 @@ class PowerBinderDialog(wx.Dialog):
         self.SetSizerAndFit(vbox);
         self.Layout()
 
-    def OnBindPreviewResize(self, evt):
+    def OnBindPreviewResize(self, evt) -> None:
         self.Fit()
         self.Layout()
         evt.Skip()
 
-    def Show(self, show = True):
+    def Show(self, show = True) -> bool:
         if show:
             self.LoadFromCurrentState()
             bindstring = self.MakeBindString()
@@ -137,7 +136,7 @@ class PowerBinderDialog(wx.Dialog):
         return retval
 
     # Load plugins / modules from UI/PowerBinderCommand directory
-    def LoadModules(self):
+    def LoadModules(self) -> None:
         path = GetRootDirPath() / 'UI' / 'PowerBinderCommand'
 
         for package_file in sorted(path.glob('*.py')):
@@ -175,7 +174,7 @@ class PowerBinderDialog(wx.Dialog):
             else:
                 print(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
-    def LoadFromCurrentState(self):
+    def LoadFromCurrentState(self) -> None:
         self.RearrangeList.Clear()
 
         for item in self.PowerBinder.CurrentState:
@@ -191,13 +190,13 @@ class PowerBinderDialog(wx.Dialog):
                 self.RearrangeList.SetClientData(index, newCommand)
         self.UpdateBindStringDisplay()
 
-    def SaveToData(self):
+    def SaveToData(self) -> list:
         # initialize this from CurrentState in case we just tried to save the profile
         # without ever having Show()ed the dialog and therefore haven't ever populated it.
         self.LoadFromCurrentState()
         return self.GetCurrentState()
 
-    def GetCurrentState(self):
+    def GetCurrentState(self) -> list:
         data = []
         for index in range(self.RearrangeList.GetCount()):
             # check whether we have an object already attached to this choice
@@ -210,34 +209,34 @@ class PowerBinderDialog(wx.Dialog):
                 wx.LogError(f"Item at index {index} in PowerBinder's RearrangeList didn't have Client Data.  This is a bug.")
         return data
 
-    def OnAddCommandButton(self, evt):
+    def OnAddCommandButton(self, evt) -> None:
         button = evt.EventObject
         if not self.AddCommandMenu:
             self.AddCommandMenu = self.makeAddCommandMenu()
         button.PopupMenu(self.AddCommandMenu)
 
-    def OnOKButton(self, _):
+    def OnOKButton(self, _) -> None:
         self.BindStringDisplay.RemoveError('nomatch')
         if self.PowerBinder:
             self.PowerBinder.UpdateState(self.MakeBindString(), self.GetCurrentState())
         self.Close()
 
-    def OnRearrangeDelete(self, _):
+    def OnRearrangeDelete(self, _) -> None:
         current = self.RearrangeList.GetSelection()
         if current == wx.NOT_FOUND: return
 
         self.RearrangeList.Delete(current)
         self.UpdateBindStringDisplay()
 
-    def OnRearrangeUp(self, _):
+    def OnRearrangeUp(self, _) -> None:
         self.RearrangeList.MoveCurrentUp()
         self.UpdateBindStringDisplay()
 
-    def OnRearrangeDown(self, _):
+    def OnRearrangeDown(self, _) -> None:
         self.RearrangeList.MoveCurrentDown()
         self.UpdateBindStringDisplay()
 
-    def OnRearrangeEdit(self, _):
+    def OnRearrangeEdit(self, _) -> None:
         index = self.RearrangeList.GetSelection()
 
         # check whether we have an object already attached to this choice
@@ -256,7 +255,7 @@ class PowerBinderDialog(wx.Dialog):
         self.UpdateBindStringDisplay()
 
     # OnAddCommandMenu creates a new Command and adds it to the rearrangelist
-    def OnAddCommandMenu(self, evt):
+    def OnAddCommandMenu(self, evt) -> None:
         menuitem = self.AddCommandMenu.FindItemById(evt.GetId())
         chosenName = menuitem.GetItemLabel()
 
@@ -276,7 +275,7 @@ class PowerBinderDialog(wx.Dialog):
         self.OnListSelect()
         self.UpdateBindStringDisplay()
 
-    def OnListSelect(self, _ = None):
+    def OnListSelect(self, _ = None) -> None:
         selected = self.RearrangeList.GetSelection()
 
         if selected != wx.NOT_FOUND:
@@ -285,7 +284,7 @@ class PowerBinderDialog(wx.Dialog):
             else:
                 self.EditButton.Disable()
 
-    def UpdateBindStringDisplay(self):
+    def UpdateBindStringDisplay(self) -> None:
         bindstring = self.MakeBindString()
         self.BindStringDisplay.SetValue(bindstring)
 
@@ -300,7 +299,7 @@ class PowerBinderDialog(wx.Dialog):
             self.BindStringDisplay.RemoveError('toolong')
             self.BindStringDisplay.SetToolTip(bindstring)
 
-    def MakeBindString(self):
+    def MakeBindString(self) -> str:
         cmdBindStrings = []
         for index in range(self.RearrangeList.GetCount()):
             c = self.RearrangeList.GetClientData(index)
@@ -309,7 +308,7 @@ class PowerBinderDialog(wx.Dialog):
         bindstring = ('$$'.join(cmdBindStrings))
         return bindstring
 
-    def makeAddCommandMenu(self):
+    def makeAddCommandMenu(self) -> wx.Menu:
 
         CommandMenu = wx.Menu()
 

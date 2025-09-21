@@ -1,3 +1,4 @@
+from typing import Dict, Any
 import wx
 import wx.html
 import wx.lib.mixins.listctrl as listmix
@@ -6,10 +7,8 @@ import re
 from Icon import GetIcon,GetIconBitmap
 from Util.Incarnate import Rarities, Aliases, SlotData
 
-import GameData
-
 class IncarnateBox(wx.StaticBoxSizer):
-    def __init__(self, parent, server):
+    def __init__(self, parent, server) -> None:
         super().__init__(wx.HORIZONTAL, parent, 'Incarnate Powers')
 
         staticbox = self.GetStaticBox()
@@ -46,7 +45,7 @@ class IncarnateBox(wx.StaticBoxSizer):
         incarnateSizer.AddGrowableCol(2)
         incarnateSizer.AddGrowableCol(3)
 
-    def FillWith(self, incarnate):
+    def FillWith(self, incarnate) -> None:
         if incarnate:
             for boxname, contents in incarnate.items():
                 box = getattr(self, boxname.lower() + "Inc", None)
@@ -55,7 +54,7 @@ class IncarnateBox(wx.StaticBoxSizer):
                     box.IncIcon.SetBitmapLabel(GetIconBitmap(contents['iconfile']))
                     box.IconFilename = contents['iconfile']
 
-    def Serialize(self):
+    def Serialize(self) -> Dict[str, str]:
         incarnatedata = {}
 
         boxes = [self.hybridInc, self.loreInc, self.destinyInc, self.judgementInc, self.interfaceInc, self.alphaInc]
@@ -72,7 +71,7 @@ class IncarnateBox(wx.StaticBoxSizer):
 
 import wx.lib.buttons as buttons
 class IncarnatePicker(wx.StaticBoxSizer):
-    def __init__(self, parent, slot = ""):
+    def __init__(self, parent, slot = "") -> None:
         super().__init__(wx.HORIZONTAL, parent, label = slot)
         staticbox = self.GetStaticBox()
 
@@ -94,7 +93,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
         self.Add(hsizer, 1, wx.EXPAND|wx.RIGHT|wx.BOTTOM, 12)
 
-    def OnButtonPress(self, evt):
+    def OnButtonPress(self, evt) -> None:
         with IncarnateBrowser(self) as dlg:
             if dlg.ShowModal() == wx.ID_OK:
                 if powerdata := dlg.GetPickedPower():
@@ -111,7 +110,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
         evt.Skip()
 
-    def OnRightClick(self, evt):
+    def OnRightClick(self, evt) -> None:
         button = evt.EventObject
         button.SetBitmapLabel(GetIconBitmap('Empty'))
         button.Picker.IncName.SetLabel('')
@@ -120,14 +119,14 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
 class IncarnateBrowserList(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     def __init__(self, parent, ID = -1, pos = wx.DefaultPosition,
-                 size = wx.Size(250, -1), style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL):
+                 size = wx.Size(250, -1), style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL) -> None:
         super().__init__(parent, ID, pos, size, style)
         listmix.ListCtrlAutoWidthMixin.__init__(self)
 
         self.IconFilenames = []
 
 class IncarnateBrowser(wx.Dialog):
-    def __init__(self, picker):
+    def __init__(self, picker) -> None:
         super().__init__(None, title = f"{picker.Slot} slot")
         self.Picker = picker
 
@@ -168,7 +167,7 @@ class IncarnateBrowser(wx.Dialog):
         self.SetSizerAndFit(browserSizer)
         self.Layout()
 
-    def GetPickedPower(self):
+    def GetPickedPower(self) -> Dict[str, Any]:
         # First, check if we've decided on 'Disable'
         typeidx = self.TypeList.GetFirstSelected()
         typeitem = self.TypeList.GetItem(typeidx)
@@ -195,7 +194,7 @@ class IncarnateBrowser(wx.Dialog):
             'IconFilename' : self.LevelList.IconFilenames[pickedidx],
         }
 
-    def onPickType(self, evt):
+    def onPickType(self, evt) -> None:
         self.LevelList.DeleteAllItems()
         self.IncDetails.SetPage('')
 

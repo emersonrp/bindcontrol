@@ -3,13 +3,13 @@ import re
 import GameData
 from Icon import GetIcon
 from UI.ErrorControls import ErrorControlMixin
-from Util.Incarnate import Rarities, Aliases, SlotData
+from Util.Incarnate import Rarities, Aliases
 
 import wx.lib.newevent
 PowerChanged, EVT_POWERPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 class PowerPicker(ErrorControlMixin, wx.Button):
-    def __init__(self, parent, menu = None, size = wx.DefaultSize):
+    def __init__(self, parent, menu = None, size = wx.DefaultSize) -> None:
         super().__init__(parent, size = size)
 
         if size == wx.DefaultSize:
@@ -21,13 +21,13 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         if self.Picker:  # we've passed in our own menu, bind its behavior
             self.Picker.Bind(wx.EVT_MENU, self.OnMenuSelected)
 
-    def HasPowerPicked(self):
+    def HasPowerPicked(self) -> str:
         if self.GetLabel():
             return self.GetLabel()
         else:
-            return False
+            return ''
 
-    def OnPowerPicker(self, _):
+    def OnPowerPicker(self, _) -> None:
         # if we didn't pass in a menu, make the normal full-on one
         if not self.Picker:
             self.Picker = PowerPickerMenu()
@@ -40,13 +40,13 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         # TODO 2:  now that we possibly pass in our own menu, that's not
         # quite as simple as all that.  Still, it seems more The Right Way.
 
-    def OnRightClick(self, _):
+    def OnRightClick(self, _) -> None:
         self.SetLabel('')
         self.IconFilename = ''
         self.SetBitmapLabel(GetIcon('Empty'))
         self.OnMenuSelected()
 
-    def doOnMenuSelected(self, evt = None):
+    def doOnMenuSelected(self, evt = None) -> None:
         if evt:
             menu = evt.GetEventObject()
             menuitem = menu.FindItemById(evt.GetId())
@@ -56,13 +56,12 @@ class PowerPicker(ErrorControlMixin, wx.Button):
             self.SetBitmap(bitmap)
             self.IconFilename = getattr(menuitem, 'IconFilename')
 
-    def OnMenuSelected(self, evt = None):
+    def OnMenuSelected(self, evt = None) -> None:
         self.doOnMenuSelected(evt)
         wx.PostEvent(self, PowerChanged(wx.NewId(), control = self))
 
 class PowerPickerMenu(wx.Menu):
-
-    def BuildMenu(self):
+    def BuildMenu(self) -> None:
 
         gen = wx.App.Get().Main.Profile.General
 
@@ -144,7 +143,7 @@ class PowerPickerMenu(wx.Menu):
         submenu = self.MakeRecursiveMenu(GameData.MiscPowers)
         self.AppendSubMenu(submenu, "Misc")
 
-    def MakeRecursiveMenu(self, menustruct):
+    def MakeRecursiveMenu(self, menustruct) -> wx.Menu:
         menu = wx.Menu()
 
         for name, data in menustruct.items():
@@ -165,7 +164,7 @@ class PowerPickerMenu(wx.Menu):
 
         return menu
 
-    def SplitNameAndIcon(self, namestr):
+    def SplitNameAndIcon(self, namestr) -> list:
         if re.search(r'\|', namestr):
             name, iconstr = re.split(r'\|', namestr)
             iconlist = re.split(r'_', iconstr)

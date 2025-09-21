@@ -38,7 +38,7 @@ elif platform.system() == 'Darwin':
     }
 
 class KeySelectDialog(wx.Dialog):
-    def __init__(self, button):
+    def __init__(self, button) -> None:
 
         if button.CtlLabel:
             self.Desc    = button.CtlLabel.GetLabel()
@@ -127,7 +127,7 @@ class KeySelectDialog(wx.Dialog):
         self.Layout()
         self.SetFocus()
 
-    def ShowModal(self):
+    def ShowModal(self) -> int:
         # re-set-up ModKeys every time we show the dialog in case prefs changed.
         config = wx.ConfigBase.Get()
         self.modKeys = ['SHIFT', 'LSHIFT', 'RSHIFT', 'ALT', 'RALT', 'LALT', 'CTRL', 'LCTRL', 'RCTRL', ]
@@ -138,10 +138,10 @@ class KeySelectDialog(wx.Dialog):
 
         return super().ShowModal()
 
-    def ShowBind(self):
+    def ShowBind(self) -> None:
         self.kbBind.SetPage('<center><b><font size=+4>' + self.Binding + '</font></b></center>')
 
-    def handleJS(self, event):
+    def handleJS(self, event) -> None:
         # we don't want to do this clearing logic with unknown events,
         # hence this tangly "if"
         if (
@@ -195,7 +195,7 @@ class KeySelectDialog(wx.Dialog):
 
         self.buildBind()
 
-    def handleCharHook(self, event):
+    def handleCharHook(self, event) -> None:
         # Key down
 
         # close the dialog on ESCAPE
@@ -259,7 +259,7 @@ class KeySelectDialog(wx.Dialog):
 
         self.buildBind()
 
-    def GetEventPayload(self, event):
+    def GetEventPayload(self, event) -> str:
         # fish out the payload name -- upgrade "SHIFT" to "LSHIFT" etc if appropriate
         SeparateLR = self.SeparateLRChooser.Value
         payload    = self.Keymap[event.GetKeyCode()]
@@ -289,17 +289,17 @@ class KeySelectDialog(wx.Dialog):
 
         return payload
 
-    def NormalizeDualKeyName(self, name):
+    def NormalizeDualKeyName(self, name) -> str:
         return { 'LSHIFT' : 'SHIFT' , 'RSHIFT' : 'SHIFT' , 'SHIFT' : 'SHIFT' ,
                  'LCTRL'  : 'CTRL'  , 'RCTRL'  : 'CTRL'  , 'CTRL'  : 'CTRL'  ,
                  'LALT'   : 'ALT'   , 'RALT'   : 'ALT'   , 'ALT'   : 'ALT'   ,
         }[name]
 
-    def handleKeyUp(self, event):
+    def handleKeyUp(self, event) -> None:
         self.PressedKeys.discard(self.GetEventPayload(event))
         self.buildBind()
 
-    def handleMouse(self, event):
+    def handleMouse(self, event) -> None:
         # if nothing's pressed, clear everything
         if not self.PressedKeys:
             self.ModSlot = ''
@@ -320,7 +320,7 @@ class KeySelectDialog(wx.Dialog):
 
         self.buildBind()
 
-    def buildBind(self):
+    def buildBind(self) -> None:
         # Finally, build the bind string from what we have left over
         self.Binding = "+".join([ key for key in [self.ModSlot, self.KeySlot] if key])
 
@@ -330,7 +330,7 @@ class KeySelectDialog(wx.Dialog):
 
         self.Layout()
 
-    def CheckConflicts(self):
+    def CheckConflicts(self) -> None:
         Profile = wx.App.Get().Main.Profile
         if Profile:
             conflicts = self.Button.CheckConflicts(self.Binding)
@@ -347,7 +347,7 @@ class KeySelectDialog(wx.Dialog):
                 self.kbBind.SetHTMLBackgroundColour( wx.WHITE )
 
     # This keymap code was initially adapted from PADRE < http://padre.perlide.org/ >.
-    def SetKeymap(self):
+    def SetKeymap(self) -> None:
         # key choice list
         self.Keymap: Dict[str|int, str] = {
                 wx.WXK_RETURN : 'ENTER',
@@ -502,7 +502,7 @@ class KeySelectDialog(wx.Dialog):
 from BindFile import KeyBind
 class bcKeyButton(ErrorControlMixin, wx.Button):
 
-    def __init__(self, parent, id, init = {}):
+    def __init__(self, parent, id, init = {}) -> None:
         self.CtlName  : str                                     = init.get('CtlName', None)
         self.CtlLabel : ST.GenStaticText | wx.StaticText | None = init.get('CtlLabel', None)
         self.Key      : str                                     = init.get('Key', '')
@@ -531,7 +531,7 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
         self.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
-    def onKeyChanged(self, evt):
+    def onKeyChanged(self, evt) -> None:
         evt.Skip()
         profile = wx.App.Get().Main.Profile
         profile.CheckAllConflicts()
@@ -540,18 +540,17 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         # default-keys display just in case we've mashed over one of them now.
         profile.Gameplay.OnKeybindProfilePicker()
 
-
-    def ClearButton(self, evt):
+    def ClearButton(self, evt) -> None:
         self.SetLabel("")
         self.Key = ""
         wx.PostEvent(self, KeyChanged(evt.GetId(), control = self))
         wx.App.Get().Main.Profile.SetModified()
 
-    def MakeBind(self, contents):
+    def MakeBind(self, contents) -> KeyBind:
         label = self.CtlLabel.GetLabel() if self.CtlLabel else ''
         return KeyBind(self.Key, label, self.Page, contents)
 
-    def SetLabel(self, label):
+    def SetLabel(self, label) -> None:
         # if we have a long label or AlwaysShorten, smallify, and abbreviate if we have a mod key
         if label: # don't do all this if we're clearing the label
             if re.search(r'\+\w\w\w\w\w', label) or len(label) > 12 or self.AlwaysShorten:
@@ -571,7 +570,7 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.SetLabelMarkup(label)
         self.Update()
 
-    def CheckConflicts(self, newbinding = None):
+    def CheckConflicts(self, newbinding = None) -> list:
         Profile = wx.App.Get().Main.Profile
         if Profile:
             conflicts = Profile.CheckConflict(newbinding or self.Key, self.CtlName)
@@ -583,8 +582,9 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
             else:
                 self.RemoveError('conflict')
             return conflicts
+        return []
 
-    def KeySelectEventHandler(self, evt):
+    def KeySelectEventHandler(self, evt) -> None:
         button = evt.EventObject
 
         with KeySelectDialog(button) as dlg:

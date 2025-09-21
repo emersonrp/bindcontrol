@@ -1,4 +1,5 @@
 import re
+from typing import Dict
 import wx
 import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
@@ -7,7 +8,7 @@ from UI.PowerBinder import PowerBinder
 from Icon import GetIcon
 
 class ComplexBindPane(CustomBindPaneParent):
-    def __init__(self, page, init = {}):
+    def __init__(self, page, init = {}) -> None:
         super().__init__(page, init)
 
         self.Description = "Complex Bind"
@@ -15,7 +16,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
         self.Steps = []
 
-    def Serialize(self):
+    def Serialize(self) -> Dict[str, str|list]:
         data = self.CreateSerialization({
             'Key'  : self.Ctrls[self.MakeCtlName('BindKey')].Key,
             'Steps': [],
@@ -28,7 +29,7 @@ class ComplexBindPane(CustomBindPaneParent):
                 })
         return data
 
-    def BuildBindUI(self, page):
+    def BuildBindUI(self, page) -> None:
         pane = self.GetPane()
         setattr(pane, 'Page', page)
 
@@ -69,15 +70,15 @@ class ComplexBindPane(CustomBindPaneParent):
         self.RenumberSteps()
         self.checkIfWellFormed()
 
-    def onContentsChanged(self, evt):
+    def onContentsChanged(self, evt) -> None:
         evt.Skip()
         self.checkIfWellFormed()
 
-    def onKeyChanged(self, evt):
+    def onKeyChanged(self, evt) -> None:
         evt.Skip()
         self.checkIfWellFormed()
 
-    def checkIfWellFormed(self):
+    def checkIfWellFormed(self) -> bool:
         isWellFormed = True
 
         firststep = self.Steps[0]
@@ -107,18 +108,18 @@ class ComplexBindPane(CustomBindPaneParent):
 
         return isWellFormed
 
-    def onAddStepButton(self, _ = None, stepdata = {}):
+    def onAddStepButton(self, _ = None, stepdata = {}) -> None:
         self.doAddStep(stepdata)
         self.Profile.SetModified()
 
-    def doAddStep(self, stepdata = {}):
+    def doAddStep(self, stepdata = {}) -> None:
         stepNumber = self.BindStepSizer.GetItemCount() # already the next step because of the add button
         step = BindStep(self, stepNumber, stepdata)
         self.BindStepSizer.Insert(self.BindStepSizer.GetItemCount()-1, step, 0, wx.EXPAND)
         self.Steps.append(step)
         self.RenumberSteps()
 
-    def onMoveUpButton(self, evt):
+    def onMoveUpButton(self, evt) -> None:
         button = evt.GetEventObject()
         step = button.GetParent()
         idx = self.Steps.index(step)
@@ -128,7 +129,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.Profile.SetModified()
         self.RenumberSteps()
 
-    def onMoveDownButton(self, evt):
+    def onMoveDownButton(self, evt) -> None:
         button = evt.GetEventObject()
         step = button.GetParent()
         idx = self.Steps.index(step)
@@ -138,7 +139,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.Profile.SetModified()
         self.RenumberSteps()
 
-    def onDupeButton(self, evt):
+    def onDupeButton(self, evt) -> None:
         button = evt.GetEventObject()
         step = button.GetParent()
         stepidx = self.Steps.index(step)
@@ -152,7 +153,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.Profile.SetModified()
         self.RenumberSteps()
 
-    def onDelButton(self, evt):
+    def onDelButton(self, evt) -> None:
         button = evt.GetEventObject()
         step = button.GetParent()
         self.Steps.remove(step)
@@ -160,7 +161,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.Profile.SetModified()
         self.RenumberSteps()
 
-    def RenumberSteps(self):
+    def RenumberSteps(self) -> None:
         for i, step in enumerate(self.Steps, start = 1):
             step.delButton.Show(i>1) # don't even show the del button on step 1
             step.moveUpButton.Enable(i > 1)
@@ -168,7 +169,7 @@ class ComplexBindPane(CustomBindPaneParent):
             step.StepLabel.SetLabel(f"Step {i}:")
         self.Page.Layout()
 
-    def PopulateBindFiles(self):
+    def PopulateBindFiles(self) -> None:
         if not self.checkIfWellFormed():
             wx.MessageBox(f"Custom Bind \"{self.Title}\" is not complete or has errors.  Not written to bindfile.")
             return
@@ -188,7 +189,7 @@ class ComplexBindPane(CustomBindPaneParent):
             if i == 1: resetfile.SetBind(key, self, title, cmd)
             cbindfile.SetBind(key, self, title, cmd)
 
-    def AllBindFiles(self):
+    def AllBindFiles(self) -> Dict[str, list]:
         files = []
         # we do both of these for backwards compat but might eventually just do cid
         title = re.sub(r'\W+', '', self.Title)
@@ -203,7 +204,7 @@ class ComplexBindPane(CustomBindPaneParent):
         }
 
 class BindStep(wx.Panel):
-    def __init__(self, parent, stepNumber, step):
+    def __init__(self, parent, stepNumber, step) -> None:
 
         self.Page = parent.Page
         pane = parent.GetPane()

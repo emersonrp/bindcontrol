@@ -9,8 +9,9 @@ from unittest.mock import Mock
 from pathlib import Path, PureWindowsPath
 from BindFile import BindFile
 from Util.DefaultProfile import DefaultProfile
+from Util.BuildFiles import ParseBuildFile
 
-def test_init_neither():
+def test_init_empty():
     with pytest.raises(Exception, match = 'neither filename nor newname'):
         ProfileData.ProfileData(config)
 
@@ -20,6 +21,21 @@ def test_init_newname(config):
     assert PD.Filepath           == ProfileData.ProfilePath(config) / 'test.bcp'
     assert PD['ProfileBindsDir'] == 'test'
     assert PD.Modified           == True
+
+def test_init_buildfile(config):
+    buildfile = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'buildfile.txt'
+    profiledata = { 'General' : ParseBuildFile(buildfile) }
+    PD = ProfileData.ProfileData(config, newname = 'fubble', profiledata = profiledata)
+    assert PD['General']['Name'] == 'Fixture'
+    assert PD['General']['Archetype'] == 'Tanker'
+    assert PD['General']['Origin'] == 'Magic'
+    assert PD['General']['Server'] == 'Homecoming'
+    assert PD['General']['Primary'] == 'Fiery Aura'
+    assert PD['General']['Secondary'] == 'War Mace'
+    assert PD['General']['Pool1'] == 'Flight'
+    assert PD['General']['Pool2'] == 'Fighting'
+    assert PD['General']['Pool3'] == 'Leadership'
+    assert PD['General']['Epic'] == 'Soul Mastery'
 
 def test_init_filename(tmp_path):
 

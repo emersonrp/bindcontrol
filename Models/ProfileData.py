@@ -40,11 +40,12 @@ class ProfileData(dict):
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
         elif newname:
             self.Filepath = ProfilePath(self.Config) / f"{newname}.bcp"
-            if jsonstring := self.GetDefaultProfileJSON():
-                if data := json.loads(jsonstring):
-                    self.FillWith(data)
-                else:
-                    raise Exception(f"Something broke while loading profile {self.Filepath}.  This is a bug.")
+            if not profiledata:
+                if jsonstring := self.GetDefaultProfileJSON():
+                    if data := json.loads(jsonstring):
+                        self.FillWith(data)
+                    else:
+                        raise Exception(f"Something broke while loading profile {self.Filepath}.  This is a bug.")
 
             self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
             if not self['ProfileBindsDir']:
@@ -71,7 +72,7 @@ class ProfileData(dict):
     def FillWith(self, data) -> None:
         self.clear()
         self.update(data)
-        self.Server          = self['General']['Server']
+        self.Server = self['General']['Server']
         self.SetModified()
 
     def UpdateData(self, pagename, *args) -> None:

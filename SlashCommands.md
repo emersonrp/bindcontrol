@@ -85,7 +85,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /enter_base_from_sgid SGID number | When the Base Entry Selection window is open, enters the Supergroup Base associated with the provided supergroup ID number. |
 | /enterdoor coordinates map_ID | Request a click on a door. |
 | /exitlaunch FilePath | Set program to run when game exits |
-| /face | Turn player to face target |
 | /fl | Display friend list. |
 | /follow | Toggle follow mode (/cmdlist says that follow takes an argument (0 or 1), it does not) |
 | /fullRelight | Do not cap number of world object vertices to relight per frame |
@@ -101,10 +100,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /ginvite channel_name username | Alias for /chan_invite |
 | /ginvite_sg channel_name rank | Alias for /chan_invite_sg |
 | /gmotd | View the game's global message again. |
-| /goto_tray number | Go to specified power tray number in the primary tray slot |
-| /goto_tray_alt number | Go to specified power tray number in the secondary (Alt) tray slot |
-| /goto_tray_alt2 number | Go to specified power tray number in the tertiary (Alt2) tray slot |
-| /goto_trays_tray row tray | Go to specified tray slot (1-3) and power tray (1 to 9). |
 | /gunfriend name | Remove player from global friends list. Alias: /gunfriend_player |
 | /hardconsts | Use hard shader constants instead of Cg to setup shader params |
 | /ignore_spammer character | Ignore character and sends alert to customer service |

@@ -22,7 +22,9 @@ def test_init_newname(config):
     assert PD['ProfileBindsDir'] == 'test'
     assert PD.Modified           == True
 
-def test_init_buildfile(config):
+def test_init_buildfile(config, monkeypatch):
+    monkeypatch.undo() # get rid of "Read" monkeypatch on config
+    config.Write('DefaultProfile', DefaultProfile)
     buildfile = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'buildfile.txt'
     profiledata = { 'General' : ParseBuildFile(buildfile) }
     PD = ProfileData.ProfileData(config, newname = 'fubble', profiledata = profiledata)

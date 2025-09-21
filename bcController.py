@@ -4,8 +4,7 @@ import wx.adv
 from typing import List
 
 class bcController(wx.adv.Joystick):
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.CodeTable = self.SetCodeTable()
 
@@ -15,7 +14,7 @@ class bcController(wx.adv.Joystick):
         if self.IsOk():
             self.CurrentAxisPercents = [0] * self.GetNumberAxes()
 
-    def GetAllAxisCodes(self):
+    def GetAllAxisCodes(self) -> list:
         all_axis_codes = []
 
         if self.IsOk():
@@ -26,7 +25,7 @@ class bcController(wx.adv.Joystick):
         return all_axis_codes
 
 
-    def SetCurrentAxisPercents(self):
+    def SetCurrentAxisPercents(self) -> None:
         for axis in range(len(self.CurrentAxisPercents)):
 
             # TODO - this code makes assumptions about the range/location of the dpad.
@@ -78,8 +77,9 @@ class bcController(wx.adv.Joystick):
                 self.CurrentAxisPercents[axis]= self.AxisPercent(amin, amax, apos)
                 # JOYPAD_*
 
-    def GetCurrentAxis(self):
-        povpos = code = None
+    def GetCurrentAxis(self) -> str:
+        povpos = None
+        code = ''
         if self.HasPOV4Dir():
             povpos = self.GetPOVPosition()
 
@@ -107,16 +107,16 @@ class bcController(wx.adv.Joystick):
 
         return code
 
-    def StickIsNearCenter(self):
+    def StickIsNearCenter(self) -> bool:
         return abs(max(self.CurrentAxisPercents, key=abs)) < 50
 
-    def AxisPercent(self, amin, amax, apos):
+    def AxisPercent(self, amin, amax, apos) -> int:
         center = amin + ((amax - amin) / 2)
         # (apos - center) is the distance, positive or negative, from the center
         # (amax - center) is the (positive) total throw on one side of center
         return int((apos - center) / (amax - center) * 100)
 
-    def ListOfPossibleMods(self):
+    def ListOfPossibleMods(self) -> list:
         # return a list of strings of controls that might be used as controller_modifiers
         # or extra_modifiers
         if not self.IsOk(): return []
@@ -136,8 +136,7 @@ class bcController(wx.adv.Joystick):
 
         return possible_mods
 
-
-    def SetCodeTable(self):
+    def SetCodeTable(self) -> List[list]:
         # sets the Code table, which is a list, indexed by axis number,
         # of lists of [negative direction, positive direction] codes
         CodeTable : List[List] = []

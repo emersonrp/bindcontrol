@@ -26,7 +26,7 @@ SlotData = {}
 # overengineered already.
 #
 # Call this from inside GameData.SetupGameData
-def BuildSlotData():
+def BuildSlotData() -> None:
 
     Util.Incarnate.SlotData.clear() # re-initialize this in case we change servers
 

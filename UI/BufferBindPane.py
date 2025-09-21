@@ -145,7 +145,7 @@ class BufferBindPane(CustomBindPaneParent):
         self.Buffs.remove(buff)
         buff.GetContainingSizer().Detach(buff)
         buff.DestroyLater()
-        self.Profile.SetModified()
+        self.Page.UpdateAllBinds()
         self.Parent.Layout()
         wx.CallAfter(self.Page.SynchronizeUI)
 

@@ -544,7 +544,6 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         self.SetLabel("")
         self.Key = ""
         wx.PostEvent(self, KeyChanged(evt.GetId(), control = self))
-        wx.App.Get().Main.Profile.SetModified()
 
     def MakeBind(self, contents) -> KeyBind:
         label = self.CtlLabel.GetLabel() if self.CtlLabel else ''
@@ -595,9 +594,6 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
                 if newKey := dlg.Binding:
                     button.Key = newKey
                     button.SetLabel(newKey)
-
-                    if button.Key != newKey:
-                        profile.SetModified()
 
             # else we canceled, don't do any of that but still:
             profile.CheckAllConflicts()

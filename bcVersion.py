@@ -4,7 +4,7 @@ import shutil
 import subprocess
 from Util.Paths import GetRootDirPath
 
-def current_version():
+def current_version() -> str:
 
     version = None
     # version.txt gets written/bundled by tools/build_windows.bat
@@ -24,10 +24,10 @@ def current_version():
 
     return version
 
-def get_git_tag(path=None):
+def get_git_tag(path=None) -> str:
     if not path: path = os.path.curdir
 
-    tag = None
+    tag = ''
 
     # we'll try asl git, mostly just for me.  If that breaks, try just plain git
     command = 'git describe --tags'
@@ -41,7 +41,7 @@ def get_git_tag(path=None):
 
     return tag
 
-def do_git(command, path):
+def do_git(command, path) -> str:
     tag = None
     proc = subprocess.Popen(command.split(), stdout=subprocess.PIPE, cwd=path)
     out  = proc.stdout
@@ -49,6 +49,7 @@ def do_git(command, path):
         tag = out.read().decode('utf-8')
     if tag:
         return tag.strip()
+    return ''
 
 ### two functions below from https://github.com/scivision/detect-windows-subsystem-for-linux
 #

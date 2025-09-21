@@ -4,15 +4,16 @@ from pathlib import Path
 # Things related to paths for the app
 #
 # examine an arbitrary profile binds dir for its associated profile name
-def CheckProfileForBindsDir(config, bindsdir):
+def CheckProfileForBindsDir(config, bindsdir) -> str:
     IDFile = Path(config.Read('BindPath')) / bindsdir / 'bcprofileid.txt'
     if IDFile:
         # If the file is even there...
         if IDFile.exists():
             return IDFile.read_text().strip()
+    return ''
 
 # get a Path object given a profile name
-def GetProfileFileForName(config, name):
+def GetProfileFileForName(config, name) -> Path:
     return Path(config.Read('ProfilePath')) / f"{name}.bcp"
 
 # get all profile binds dirs as a list of strings.
@@ -20,7 +21,7 @@ def GetProfileFileForName(config, name):
 # Might want to case-mangle these in calling code if checking against them, but
 # let's not do it inside here in case we want to touch them directly on Linux
 # etc where changing the case inside here would be bad.
-def GetAllProfileBindsDirs(config):
+def GetAllProfileBindsDirs(config) -> list:
     alldirs = []
     for bindsdir in Path(config.Read('BindPath')).glob('*'):
         if bindsdir.is_dir():
@@ -28,11 +29,11 @@ def GetAllProfileBindsDirs(config):
     return alldirs
 
 # return the current Profile Path
-def ProfilePath(config): return Path(config.Read('ProfilePath'))
+def ProfilePath(config) -> Path: return Path(config.Read('ProfilePath'))
 
 # This is for finding things like loadable modules for PowerBinder, icons, etc
 # This relies on this file, Paths.py, staying exactly one level down, in /Util
-def GetRootDirPath():
+def GetRootDirPath() -> Path:
     base_path = getattr(sys, '_MEIPASS', '')
     if base_path:
         base_path = Path(base_path)

@@ -12,7 +12,7 @@ from BindFile import BindFile
 from Util.Paths import ProfilePath, CheckProfileForBindsDir
 
 class ProfileData(dict):
-    def __init__(self, config, filename = None, newname = None, profiledata = {}):
+    def __init__(self, config, filename = None, newname = None, profiledata = {}) -> None:
 
         if profiledata: self.FillWith(profiledata)
 
@@ -58,23 +58,23 @@ class ProfileData(dict):
 
         GameData.SetupGameData(self.Server)
 
-    def ProfileName(self)   : return self.Filepath.stem if self.Filepath else ''
-    def ResetFile(self)     : return self.GetBindFile("reset.txt")
-    def ProfileIDFile(self) : return self.BindsDir() / 'bcprofileid.txt'
-    def BindsDir(self)      : return Path(self.Config.Read('BindPath')) / self['ProfileBindsDir']
-    def GameBindsDir(self) :
+    def ProfileName(self)   -> str      : return self.Filepath.stem if self.Filepath else ''
+    def ResetFile(self)     -> BindFile : return self.GetBindFile("reset.txt")
+    def ProfileIDFile(self) -> Path     : return self.BindsDir() / 'bcprofileid.txt'
+    def BindsDir(self)      -> Path     : return Path(self.Config.Read('BindPath')) / self['ProfileBindsDir']
+    def GameBindsDir(self)  -> Path     :
         if gbp := self.Config.Read('GameBindPath'):
             return PureWindowsPath(gbp) / self['ProfileBindsDir']
         else:
             return self.BindsDir()
 
-    def FillWith(self, data):
+    def FillWith(self, data) -> None:
         self.clear()
         self.update(data)
         self.Server          = self['General']['Server']
         self.SetModified()
 
-    def UpdateData(self, pagename, *args):
+    def UpdateData(self, pagename, *args) -> None:
         if pagename == 'CustomBinds':
             self[pagename] = self.get(pagename) or []
             replaced = False
@@ -104,10 +104,10 @@ class ProfileData(dict):
             self[pagename][ctlname] = value
         self.SetModified()
 
-    def SetModified(self):
+    def SetModified(self) -> None:
         self.Modified = True
 
-    def ClearModified(self):
+    def ClearModified(self) -> None:
         self.Modified = False
 
     def GetCustomID(self) -> int:
@@ -116,7 +116,7 @@ class ProfileData(dict):
         return self['MaxCustomID']
 
     # come up with a sane default binds directory name for this profile
-    def GenerateBindsDirectoryName(self):
+    def GenerateBindsDirectoryName(self) -> str:
         bindsdircandidates = set()
         # start with just the ASCII a-zA-Z0-9_ and space characters in the name
         # We keep the spaces initially so the multi-word thing works at all.
@@ -166,7 +166,7 @@ class ProfileData(dict):
 
     ###################
     # Profile Save/Load
-    def doSaveAsDefault(self):
+    def doSaveAsDefault(self) -> None:
         # if this blows up, calling code should try/except it
         self.Filepath = None
         jsonstring = self.AsJSON(small = True)
@@ -176,7 +176,7 @@ class ProfileData(dict):
         self.Config.Write('DefaultProfile', b64string)
         self.Config.Flush()
 
-    def GetDefaultProfileJSON(self):
+    def GetDefaultProfileJSON(self) -> bytes|None:
         jsonstring = None
 
         if self.Config.HasEntry('DefaultProfile'):
@@ -189,13 +189,13 @@ class ProfileData(dict):
 
         return jsonstring
 
-    def FileHasChanged(self):
+    def FileHasChanged(self) -> bool:
         if self.Filepath:
             if self.Filepath.exists():
                 return self.Filepath.stat().st_mtime_ns > self.LastModTime
         return False
 
-    def doSaveToFile(self):
+    def doSaveToFile(self) -> None:
 
         ProfilePath(self.Config).mkdir( parents = True, exist_ok = True )
 
@@ -212,7 +212,7 @@ class ProfileData(dict):
         except Exception as e:
             raise Exception(f"Problem saving to profile {savefile}: {e}")
 
-    def AsJSON(self, small = False):
+    def AsJSON(self, small = False) -> str:
         if small:
             return json.dumps(self, separators = (',', ':'))
         else:
@@ -220,7 +220,7 @@ class ProfileData(dict):
 
     #####################
     # Bind file functions
-    def GetBindFile(self, *filebits):
+    def GetBindFile(self, *filebits) -> BindFile:
         filepath = PurePath(*filebits)
         key = str(filepath)
 
@@ -231,7 +231,7 @@ class ProfileData(dict):
 
     # making this "not mine" so we can return False if everything's fine,
     # or the existing Profile name if something's wrong
-    def BindsDirNotMine(self):
+    def BindsDirNotMine(self) -> str:
         if IDFile := self.ProfileIDFile():
             # If the file is even there...
             if IDFile.exists():
@@ -239,12 +239,12 @@ class ProfileData(dict):
 
                 if profilename == self.ProfileName():
                     # OK, this is our bindsdir, great
-                    return False
+                    return ''
                 else:
                     # Oh noes someone else has written binds here, return the name
                     return profilename
             else:
                 # the file doesn't exist, so bindsdir has not been claimed by another profile
-                return False
+                return ''
         else:
             raise Exception("Profile.ProfileIDFile() returned nothing, not checking IDFile!")

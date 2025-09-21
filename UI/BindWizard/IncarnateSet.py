@@ -53,7 +53,7 @@ class IncarnateSet(WizardParent):
                 self.Init['WizData'] = {}
             newdata = self.IncarnateBox.Serialize()
             if self.Init['WizData'].get('IncData', {}) != newdata:
-                wx.App.Get().Main.Profile.SetModified()
+                self.BindPane.Page.UpdateAllBinds()
                 self.Init['WizData']['IncData'] = newdata
         # and then in either case, build the Pane from Init
         incarnateData = self.Init.get('WizData', {}).get('IncData', {})

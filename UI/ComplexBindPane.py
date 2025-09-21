@@ -110,7 +110,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
     def onAddStepButton(self, _ = None, stepdata = {}) -> None:
         self.doAddStep(stepdata)
-        self.Profile.SetModified()
+        self.Page.UpdateAllBinds()
 
     def doAddStep(self, stepdata = {}) -> None:
         stepNumber = self.BindStepSizer.GetItemCount() # already the next step because of the add button
@@ -126,7 +126,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.BindStepSizer.Detach(idx)
         self.BindStepSizer.Insert(idx-1, self.Steps[idx], 0, wx.EXPAND)
         self.Steps[idx], self.Steps[idx-1] = self.Steps[idx-1], self.Steps[idx]
-        self.Profile.SetModified()
+        self.Page.UpdateAllBinds()
         self.RenumberSteps()
 
     def onMoveDownButton(self, evt) -> None:
@@ -136,7 +136,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.BindStepSizer.Detach(idx)
         self.BindStepSizer.Insert(idx+1, self.Steps[idx], 0, wx.EXPAND)
         self.Steps[idx], self.Steps[idx+1] = self.Steps[idx+1], self.Steps[idx]
-        self.Profile.SetModified()
+        self.Page.UpdateAllBinds()
         self.RenumberSteps()
 
     def onDupeButton(self, evt) -> None:
@@ -150,7 +150,7 @@ class ComplexBindPane(CustomBindPaneParent):
         newstep = BindStep(self, stepidx+1, data)
         self.BindStepSizer.Insert(stepidx+1, newstep, 0, wx.EXPAND)
         self.Steps.insert(stepidx+1, newstep)
-        self.Profile.SetModified()
+        self.Page.UpdateAllBinds()
         self.RenumberSteps()
 
     def onDelButton(self, evt) -> None:
@@ -158,7 +158,7 @@ class ComplexBindPane(CustomBindPaneParent):
         step = button.GetParent()
         self.Steps.remove(step)
         step.DestroyLater()
-        self.Profile.SetModified()
+        self.Page.UpdateAllBinds()
         self.RenumberSteps()
 
     def RenumberSteps(self) -> None:

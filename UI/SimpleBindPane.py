@@ -66,7 +66,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
     def onContentsChanged(self, evt) -> None:
         evt.Skip()
-        self.Profile.SetModified()
+        self.Page.UpdateAllBinds()
         self.checkIfWellFormed()
 
     def onKeyChanged(self, evt) -> None:

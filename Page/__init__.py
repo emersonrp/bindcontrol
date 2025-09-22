@@ -34,7 +34,7 @@ class Page(wx.ScrolledWindow):
         self.Ctrls : dict = {}
 
     def GetState(self, key) -> str:
-        control = self.Ctrls.get(key, None)
+        control = self.Ctrls.get(key)
         if not control:
             wx.LogWarning(f"Unknown control in GetState: {key} - this is a bug.")
             return ''
@@ -73,7 +73,7 @@ class Page(wx.ScrolledWindow):
             return ''
 
     def SetState(self, key, value) -> str|int|None:
-        control = self.Ctrls.get(key, None)
+        control = self.Ctrls.get(key)
         if not control:
             wx.LogError(f"Got into SetState for key {key} with no control - this is a bug.")
             return ''

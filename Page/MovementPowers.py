@@ -752,8 +752,8 @@ class MovementPowers(Page):
         pathf     = p.get('pathf'     , t.pathf)
         gamepathf = p.get('gamepathf' , t.gamepathf)
 
-        mobile     = p.get('mobile'     , None)
-        stationary = p.get('stationary' , None)
+        mobile     = p.get('mobile')
+        stationary = p.get('stationary')
         modestr    = p.get('modestr'    , "")
         flight     = p.get('flight'     , "")
         fix        = p.get('fix'        , "")

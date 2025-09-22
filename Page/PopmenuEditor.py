@@ -415,7 +415,7 @@ class PopmenuEditor(Page):
         result = wx.MessageBox(f'This will delete "{menuname}" from this list, and from the menu directory.  This cannot be undone.  Continue?', "Delete Menu Item", wx.YES_NO)
         if result == wx.NO: return
 
-        if filename := info.get('filename', None):
+        if filename := info.get('filename'):
             # TODO do we want any further sanity checking?
             Path(filename).unlink(missing_ok = True)
 
@@ -433,9 +433,9 @@ class PopmenuEditor(Page):
     def OnListSelect(self, evt) -> None:
         item = evt.GetIndex()
         info = self.MenuIDList.get(self.MenuListCtrl.GetItemData(item), {})
-        if menu := info.get('menu', None):
+        if menu := info.get('menu'):
             self.CurrentMenu = menu
-        elif filename := info.get('filename', None):
+        elif filename := info.get('filename'):
             newmenu = Popmenu(self)
             if newmenu.ReadFromFile(filename):
                 self.MenuIDList[self.MenuListCtrl.GetItemData(item)] = {'filename': filename, 'menu': newmenu}
@@ -470,7 +470,7 @@ class PopmenuEditor(Page):
         mlc = self.MenuListCtrl
         for item in range(0, mlc.GetItemCount()):
             info = self.MenuIDList.get(mlc.GetItemData(item), {})
-            menu = info.get('menu', None)
+            menu = info.get('menu')
             if menu and menu.Modified:
                 return True
         return False
@@ -830,7 +830,7 @@ class Popmenu_ContextMenu(FM.FlatMenu):
             if   item.GetLabel() == "Submenu": data = {'' : Popmenu(cmi.Parent)}
             elif item.GetLabel() == "Option":  data = {'': ''}
             else: data = {}
-            menuitemclass = itemclasses.get(item.GetLabel(), None)
+            menuitemclass = itemclasses.get(item.GetLabel())
             if menuitemclass:
                 newitem = menuitemclass(cmi.Parent, data)
                 return newitem.ShowEditor()

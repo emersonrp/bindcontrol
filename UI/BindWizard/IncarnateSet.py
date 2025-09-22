@@ -27,8 +27,8 @@ class IncarnateSet(WizardParent):
         dialog.SetTitle(f"Incarnate Set{setName}")
 
         self.IncarnateBox = IncarnateBox(dialog, GameData.Server)
-        if wizdata := init.get('WizData', None):
-            if incdata := wizdata.get('IncData', None):
+        if wizdata := init.get('WizData'):
+            if incdata := wizdata.get('IncData'):
                 self.IncarnateBox.FillWith(incdata)
         mainSizer.Add(self.IncarnateBox, 1, wx.EXPAND|wx.ALL, 10)
 
@@ -49,7 +49,7 @@ class IncarnateSet(WizardParent):
         listSizer = wx.BoxSizer(wx.HORIZONTAL)
         # Fill Init from the dialog, if it exists
         if self.IncarnateBox:
-            if not self.Init.get('WizData', None):
+            if not self.Init.get('WizData'):
                 self.Init['WizData'] = {}
             newdata = self.IncarnateBox.Serialize()
             if self.Init['WizData'].get('IncData', {}) != newdata:
@@ -58,7 +58,7 @@ class IncarnateSet(WizardParent):
         # and then in either case, build the Pane from Init
         incarnateData = self.Init.get('WizData', {}).get('IncData', {})
         for slot in ['Alpha', 'Interface', 'Judgement', 'Destiny', 'Lore', 'Hybrid', 'Genesis',]:
-            if slotData := incarnateData.get(slot, None):
+            if slotData := incarnateData.get(slot):
                 icon = GetIcon(slotData['iconfile']) # pyright: ignore
                 bitmap = wx.GenericStaticBitmap(panel, wx.ID_ANY, icon)
                 bitmap.Bind(wx.EVT_ENTER_WINDOW, partial(self.OnHoverIcon, f"<b>{slot}</b>: {slotData['power']}")) # pyright: ignore
@@ -113,7 +113,7 @@ class IncarnateSet(WizardParent):
     def CheckIfWellFormed(self):
         isWellFormed = True
 
-        bk = self.BindPane.Ctrls.get(self.BindPane.MakeCtlName('BindKey'), None)
+        bk = self.BindPane.Ctrls.get(self.BindPane.MakeCtlName('BindKey'))
         if not bk:
             wx.LogError(f"BindKey missing from Ctrls in IncarnateSet.CheckIfWellFormed - this is a bug!")
             isWellFormed = False

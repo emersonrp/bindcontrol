@@ -82,13 +82,13 @@ class HelpButton(wx.BitmapButton):
 
 HelpWindows: Dict[str, HelpWindow] = {}
 def ShowHelpWindow(parent, filename, _ = None):
-    if not HelpWindows.get(filename, None):
+    if not HelpWindows.get(filename):
         HelpWindows[filename] = HelpWindow(parent, filename)
     HelpWindows[filename].Show()
 
 HelpPopups:  Dict[str, HelpPopup] = {}
 def ShowHelpPopup(self, filename, event):
-    if not HelpPopups.get(filename, None):
+    if not HelpPopups.get(filename):
         HelpPopups[filename] = HelpPopup(self, filename)
 
     popup = HelpPopups[filename]

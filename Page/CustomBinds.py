@@ -135,7 +135,7 @@ class CustomBinds(Page):
         elif binddata['Type'] == "ComplexBind":
             bindpane = ComplexBindPane(self, init = binddata)
         elif binddata['Type'] == "WizardBind":
-            if wizClass := wizards.get(binddata['WizClass'], None):
+            if wizClass := wizards.get(binddata['WizClass']):
                 bindpane = WizardBindPane(self, wizClass, init = binddata)
             else:
                 wx.LogError(f"Tried to load WizardBind with unknown class {binddata['WizClass']}.  This is a bug.")
@@ -284,7 +284,7 @@ class CustomBinds(Page):
             self.PaneSizer.Hide(sizer)
             self.PaneSizer.Remove(sizer)
         for ctrlname in bindpane.Ctrls:
-            if self.Ctrls.get(ctrlname, None) : del self.Ctrls[ctrlname]
+            if self.Ctrls.get(ctrlname) : del self.Ctrls[ctrlname]
         if bindpane in self.Panes:
             self.Panes.remove(bindpane)
         bindpane.DestroyLater()

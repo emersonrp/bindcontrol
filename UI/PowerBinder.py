@@ -183,9 +183,9 @@ class PowerBinderDialog(wx.Dialog):
 
         for item in self.PowerBinder.CurrentState:
             for type, data in item.items():
-                commandClass = commandClasses.get(type, None)
+                commandClass = commandClasses.get(type)
                 if not commandClass:
-                    commandClass = deprecatedCommandClasses.get(type, None)
+                    commandClass = deprecatedCommandClasses.get(type)
                     if not commandClass:
                         wx.LogError(f"Profile contained unknown custom bind command class {type}; ignoring it and continuing.")
                         continue

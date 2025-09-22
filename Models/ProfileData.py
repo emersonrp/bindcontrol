@@ -39,6 +39,7 @@ class ProfileData(dict):
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
         elif newname:
             self.Filepath = ProfilePath(self.Config) / f"{newname}.bcp"
+            # only load the default profile if we didn't pass in some data explicitly
             if not profiledata:
                 if jsonstring := self.GetDefaultProfileJSON():
                     if data := json.loads(jsonstring):
@@ -54,8 +55,9 @@ class ProfileData(dict):
 
             self.SetModified()
         else:
-            raise Exception("Error: ProfileData requested with neither filename nor newname.  This is a bug.")
+            raise Exception("Error: ProfileData created with neither filename nor newname.  This is a bug.")
 
+        self.MassageData()
         GameData.SetupGameData(self.Server)
 
     def ProfileName(self)   -> str      : return self.Filepath.stem if self.Filepath else ''
@@ -168,6 +170,63 @@ class ProfileData(dict):
 
     ###################
     # Profile Save/Load
+
+    # This is for mashing old legacy profiles into the current state of affairs.
+    # Each step in here might eventually get deprecated but maybe not, there's
+    # little downside to doing all of this forever.
+    def MassageData(self):
+
+        # load old Profiles pre-rename of "Movement Powers" tab
+        if 'SoD' in self:
+            self['MovementPowers'] = self['SoD']
+            self.SetModified()
+
+        # This option got renamed for better clarity
+        if ('MovementPowers' in self) and (self['MovementPowers'].get('DefaultMode') == 'No SoD'):
+            self['MovementPowers']['DefaultMode'] = 'No Default SoD'
+            self.SetModified()
+
+        # Massage old hardcoded-three-step BufferBinds into the new way
+        if 'CustomBinds' in self:
+            for i, custombind in enumerate(self['CustomBinds']):
+                if not custombind: continue
+
+                if custombind.get('Type') == "BufferBind":
+                    if power := custombind.get('BuffPower1'):
+                        self.SetModified()
+                        custombind['Buffs'] = [{
+                            'Power'   : power,
+                            'ChatTgt' : custombind.get('BuffChat1Tgt', ''),
+                            'Chat'    : custombind.get('BuffChat1', ''),
+                        }]
+                        del custombind['BuffPower1']
+                        del custombind['BuffChat1Tgt']
+                        del custombind['BuffChat1']
+
+                    if power := custombind.get('BuffPower2'):
+                        self.SetModified()
+                        custombind['Buffs'].append({
+                            'Power'   : power,
+                            'ChatTgt' : custombind.get('BuffChat2Tgt', ''),
+                            'Chat'    : custombind.get('BuffChat2', ''),
+                        })
+                        del custombind['BuffPower2']
+                        del custombind['BuffChat2Tgt']
+                        del custombind['BuffChat2']
+
+                    if power := custombind.get('BuffPower3'):
+                        self.SetModified()
+                        custombind['Buffs'].append({
+                            'Power'   : power,
+                            'ChatTgt' : custombind.get('BuffChat3Tgt', ''),
+                            'Chat'    : custombind.get('BuffChat3', ''),
+                        })
+                        del custombind['BuffPower3']
+                        del custombind['BuffChat3Tgt']
+                        del custombind['BuffChat3']
+
+                    self['CustomBinds'][i] = custombind
+
     def doSaveAsDefault(self) -> None:
         # if this blows up, calling code should try/except it
         self.Filepath = None

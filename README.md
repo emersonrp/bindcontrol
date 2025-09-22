@@ -49,7 +49,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
     * Optional /say feedback with per-inspiration-type custom colors
 
 * Mastermind / Pet Binds
-    * Features to help name pets uniquely for by-name and bodyguard binds
+    * Features to help name pets uniquely, required for most of BindControl's Mastermind bind styles.
         * BindControl will detect and warn if names are inadequately different / unique for by-name use
         * BindControl can create a keybind to rename your pets to match BindControl's config instead of doing it manually in-game
     * By-name pet selection - <i>requires uniquely-named pets</i>
@@ -59,7 +59,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
             + Select pets by power level: all, minions, lieutenants, and boss
             + Orders for aggressive / defensive / passive stances; attack, follow, go to, and stay, for all or selected pets
             + Pets can give feedback on each order;  chattiness can be toggled via keybind
-            + "Bodyguard mode" shortcut -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress[^1] - <i>requires uniquely-named pets</i>
+            + "Bodyguard mode" shortcut -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress - <i>requires uniquely-named pets</i>
         + [qwy's Numpad Controls](https://forums.homecomingservers.com/topic/20650-i26-expanded-mastermind-numpad-controls/):
             + Simple but comprehensive scheme for controlling pets using the number pad and modifier keys to select, control, heal, and buff pets.
         + [qwy's PetMouse Controls](https://forums.homecomingservers.com/topic/20788-i26-the-masterminds-petmouse-new-menu/):
@@ -76,8 +76,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
 * The hope is to make every reasonable slash command in the game available in some way, typically via PowerBinder.  What qualifies as a "reasonable slash command" is yet to be determined.  Check [the SlashCommands.md file](SlashCommands.md) for the current status
 * Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment.
 * The Movement Powers page is a confusing forest of checkboxes, dating from the original CityBinder layout and needs some layout and documentation work <i>(WIP)</i>.
-* "Bodyguard mode" as implemented in CityBinder doesn't work as intended, and might not be able to due to game restrictions.
-* Investigate improvements to Mastermind binds to clarify and expand the behavior.
+* Investigate improvements to Mastermind binds to clarify and expand the behavior <i>(WIP)</i>.
 * The popmenu editor, on Windows, simply can't load pathologically large popmenus (tens of thousands of entries).  This is a hard limit on the wx toolkit imposed by Windows itself, and can't be worked around in any way I can see.  As there exist at least two menus this large "in the wild," further investigation is merited.
 * More error detection and handling.
 * More and better help text and documentation.
@@ -92,7 +91,7 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 
 *MacOS users*:  An experimental binary release has been made available.  It is not signed and/or notarized, and might or might not work at all.
 
-*Linux users*:  An experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.  It's built using Github's "ubuntu-latest" environment, which may or may not be completely compatible with other distributions and versions.[^2]
+*Linux users*:  An experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.  It's built using Github's "ubuntu-latest" environment, which may or may not be completely compatible with other distributions and versions.[^1]
 
 ## Running From Source
 
@@ -111,7 +110,7 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 
 ### Step 2 - Getting and running the code
 
-* Clone this repo, or download the source as a ZIP file and unzip it somewhere[^3]
+* Clone this repo, or download the source as a ZIP file and unzip it somewhere[^2].
 
 * Double-click `BindControl.py` in the top-level folder in your explorer / file manager / Finder / etc.  This should work if you have Python correctly installed.
 
@@ -165,8 +164,6 @@ BindControl is licensed under the [GPL version 3](LICENSE) or later.
 
 emerson@hayseed.net
 
-[^1]: Bodyguard Mode is based on CityBinder's original implementation, which no longer works exactly as intended in all circumstances.  It's not clear whether it ever did completely work.  It will be modified in a future release, and possibly removed, depending on what workarounds can be found.
+[^1]: For instance, I run Manjaro, and have to install "libtiff5" from AUR to make the binary release work.
 
-[^2]: For instance, I run Manjaro, and have to install "libtiff5" from AUR to make the binary release work.
-
-[^3]: If you are familiar at all with git or github, cloning the repo is the recommended action here -- this makes it easier and quicker to get new changes when they arrive, as well as allows access to incremental between-release changes and experimental branches.
+[^2]: If you are familiar at all with git or github, cloning the repo is the recommended action here -- this makes it easier and quicker to get new changes when they arrive, as well as allows access to incremental between-release changes and experimental branches.

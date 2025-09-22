@@ -161,7 +161,7 @@ class PowerBinderDialog(wx.Dialog):
                     commandClasses[modName] = modclass
                     commandRevClasses[modclass] = modName
                 else:
-                    print(f"Class {modclass} didn't define 'Name' - this is a bug")
+                    wx.LogError(f"Class {modclass} didn't define 'Name' - this is a bug")
 
                 # TODO?  If we ever rename something more than once, we'll need this to be a list
                 if depName := getattr(modclass, 'DeprecatedName', ''):
@@ -173,10 +173,10 @@ class PowerBinderDialog(wx.Dialog):
                 if modMenu := getattr(modclass, 'Menu', ''):
                     menuStructure[modMenu].append(modName)
                 else:
-                    print(f"Module {modclass} didn't define 'Menu' - this is a bug")
+                    wx.LogError(f"Module {modclass} didn't define 'Menu' - this is a bug")
 
             else:
-                print(f"Module {mod} didn't define a class of the same name - this is a bug!")
+                wx.LogError(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
     def LoadFromCurrentState(self) -> None:
         self.RearrangeList.Clear()
@@ -248,7 +248,7 @@ class PowerBinderDialog(wx.Dialog):
             if cmdObject.ShowEditDialog() == wx.ID_OK:
                 self.RearrangeList.SetString(index, cmdObject.MakeListEntryString())
         else:
-            print("cmdObject was None")
+            wx.LogError("In OnRearrangeEdit, cmdObject was None.  This is a bug.")
 
         self.UpdateBindStringDisplay()
 

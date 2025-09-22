@@ -49,7 +49,7 @@ def GetIcon(*args) -> Icon:
                 Icons[iconpathstr].Filename = iconpathstr
             # TODO - maybe put this behind an "if debug" sort of thing
             else:
-                print(f"Missing icon: {iconpathstr}")
+                wx.LogWarning(f"Missing icon: {iconpathstr}")
 
     return Icons.get(iconpathstr, Icons['Empty.png'])
 

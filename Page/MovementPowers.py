@@ -726,8 +726,7 @@ class MovementPowers(Page):
             self.OnTeleportChanged()
 
         except Exception as e:
-            print(f"Something blowed up in SoD SynchronizeUI:  {e}")
-            raise e
+            raise Exception(f"Something blowed up in SoD SynchronizeUI:  {e}")
 
         finally:
             self.Fit()

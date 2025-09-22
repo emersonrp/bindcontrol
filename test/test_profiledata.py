@@ -43,19 +43,28 @@ def test_MassageData(config):
         'SoD' : {'DefaultMode' : 'No SoD'},
         'CustomBinds' : [
             {'Type' : 'BufferBind', 'BuffPower1' : 'Power1-1', 'BuffPower2' : 'Power1-2', 'BuffPower3' : 'Power1-3' },
+            {'Type' : 'BufferBind', 'BuffPower1' : 'Power2-1', 'BuffPower2' : 'Power2-2', 'BuffPower3' : 'Power2-3' },
         ],
     }
     PD = ProfileData.ProfileData(config, newname = 'buffer', profiledata = rawdata)
 
     assert 'MovementPowers' in PD
     assert 'SoD' not in PD
-    assert len(PD['CustomBinds']) == 1
+    assert len(PD['CustomBinds']) == 2
+
     assert 'Buffs' in PD['CustomBinds'][0]
     assert len(PD['CustomBinds'][0]['Buffs']) == 3
     b = PD['CustomBinds'][0]['Buffs']
     assert b[0]['Power'] == 'Power1-1'
     assert b[1]['Power'] == 'Power1-2'
     assert b[2]['Power'] == 'Power1-3'
+
+    assert 'Buffs' in PD['CustomBinds'][1]
+    assert len(PD['CustomBinds'][1]['Buffs']) == 3
+    b = PD['CustomBinds'][1]['Buffs']
+    assert b[0]['Power'] == 'Power2-1'
+    assert b[1]['Power'] == 'Power2-2'
+    assert b[2]['Power'] == 'Power2-3'
 
 def test_init_filename(tmp_path):
 

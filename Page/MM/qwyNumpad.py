@@ -139,7 +139,7 @@ class qwyNumpad(wx.Panel):
 
         # core binds, some get overridden via BLF.  Put them in the reset file
         ResetFile = profile.ResetFile()
-        ResetFile.SetBind('NUMPAD0', '', page, profile.BLF('mmqn', 'pad.txt'))
+        ResetFile.SetBind('NUMPAD0', '', page, profile.BLF('mmqn', 'all.txt'))
         ResetFile.SetBind('NUMPAD1', '', page, profile.BLF('mmqn', 'mins.txt'))
         ResetFile.SetBind('NUMPAD2', '', page, profile.BLF('mmqn', 'lts.txt'))
         ResetFile.SetBind('NUMPAD3', '', page, profile.BLF('mmqn', 'boss.txt'))
@@ -168,10 +168,10 @@ class qwyNumpad(wx.Panel):
         ResetFile.SetBind('ALT+SUBTRACT', '', page, 'petcomall def fol')
         ResetFile.SetBind('ALT+DECIMAL', '', page, f'targetcustomnext alive mypet {pabb[0]}')
         ResetFile.SetBind('SHIFT+NUMPAD0', '', page, 'petcom dis')
-        # TODO:  "If Homecoming" else just powexecname?
-        ResetFile.SetBind('SHIFT+NUMPAD1', '', page, f'powexeclocation back:2 {pnam[0]}')
-        ResetFile.SetBind('SHIFT+NUMPAD2', '', page, f'powexeclocation back:2 {pnam[1]}')
-        ResetFile.SetBind('SHIFT+NUMPAD3', '', page, f'powexeclocation back:2 {pnam[2]}')
+        command = 'powexeclocation back:2' if profile.Server == 'Homecoming' else 'powexecname'
+        ResetFile.SetBind('SHIFT+NUMPAD1', '', page, f'{command} {pnam[0]}')
+        ResetFile.SetBind('SHIFT+NUMPAD2', '', page, f'{command} {pnam[1]}')
+        ResetFile.SetBind('SHIFT+NUMPAD3', '', page, f'{command} {pnam[2]}')
         ResetFile.SetBind('SHIFT+NUMPAD7', '', page, 'petcomall agg sta')
         ResetFile.SetBind('SHIFT+NUMPAD8', '', page, 'petcomall agg att')
         ResetFile.SetBind('SHIFT+NUMPAD9', '', page, 'petcomall agg got')
@@ -188,6 +188,30 @@ class qwyNumpad(wx.Panel):
         ResetFile.SetBind('CTRL+DIVIDE', '', page, ['show chat', f'beginchat /petsaypow {pabb[2]} '])
         ResetFile.SetBind('CTRL+SUBTRACT', '', page, 'petcomall pas fol')
         ResetFile.SetBind('CTRL+DECIMAL', '', page, f'petselectname {pabb[2]}')
+
+        # All-pets file
+        AllFile = profile.GetBindFile('mmqn', f'all.txt')
+        AllFile.SetBind('NUMPAD4', '', page, f'petcomall def')
+        AllFile.SetBind('NUMPAD5', '', page, f'petcomall agg')
+        AllFile.SetBind('NUMPAD6', '', page, f'petcomall pas')
+        AllFile.SetBind('NUMPAD7', '', page, f'petcomall sta')
+        AllFile.SetBind('NUMPAD8', '', page, f'petcomall att')
+        AllFile.SetBind('NUMPAD9', '', page, f'petcomall got')
+        AllFile.SetBind('DIVIDE', '', page, ['show chat', f'beginchat /petsayall '])
+        AllFile.SetBind('SUBTRACT', '', page, f'petcomall fol')
+        AllFile.SetBind('ALT+NUMPAD0', '', page, f'petcomall dis')
+        AllFile.SetBind('ALT+NUMPAD7', '', page, f'petcomall def sta')
+        AllFile.SetBind('ALT+NUMPAD8', '', page, f'petcomall def att')
+        AllFile.SetBind('ALT+NUMPAD9', '', page, f'petcomall def got')
+        AllFile.SetBind('ALT+SUBTRACT', '', page, f'petcomall def fol')
+        AllFile.SetBind('SHIFT+NUMPAD7', '', page, f'petcomall agg sta')
+        AllFile.SetBind('SHIFT+NUMPAD8', '', page, f'petcomall agg att')
+        AllFile.SetBind('SHIFT+NUMPAD9', '', page, f'petcomall agg got')
+        AllFile.SetBind('SHIFT+SUBTRACT', '', page, f'petcomall agg fol')
+        AllFile.SetBind('CTRL+NUMPAD7', '', page, f'petcomall pas sta')
+        AllFile.SetBind('CTRL+NUMPAD8', '', page, f'petcomall pas att')
+        AllFile.SetBind('CTRL+NUMPAD9', '', page, f'petcomall pas got')
+        AllFile.SetBind('CTRL+SUBTRACT', '', page, f'petcomall pas fol')
 
         # Individual pet files:  min1, min2, min3, lt1, lt2, boss
         for i in range(6):
@@ -216,6 +240,7 @@ class qwyNumpad(wx.Panel):
             PetFile.SetBind('CTRL+NUMPAD9', '', page, f'petcomname {uniq[i]} pas got')
             PetFile.SetBind('CTRL+SUBTRACT', '', page, f'petcomname {uniq[i]} pas fol')
 
+        # group files
         for i, grp in enumerate(['mins', 'lts']):
             GrpFile = profile.GetBindFile('mmqn', f'{grp}.txt')
             GrpFile.SetBind('NUMPAD4', '', page, f'petcompow {pabb[i]} def')
@@ -226,7 +251,11 @@ class qwyNumpad(wx.Panel):
             GrpFile.SetBind('NUMPAD9', '', page, f'petcompow {pabb[i]} got')
             GrpFile.SetBind('DIVIDE', '', page, ['show chat', 'beginchat /petsaypow {pabb[i]} '])
             GrpFile.SetBind('SUBTRACT', '', page, f'petcompow {pabb[i]} fol')
-            GrpFile.SetBind('DECIMAL', '', page, f'targetcustomnext alive mypet {pabb[i]}')
+            if grp == 'mins':
+                payload = [f'petselectname {uniq[0]}', profile.BLF('mmqn', '2sel.txt')]
+            else:
+                payload = f'targetcustomnext alive mypet {pabb[i]}'
+            GrpFile.SetBind('DECIMAL', '', page, payload)
             GrpFile.SetBind('ALT+NUMPAD0', '', page, f'nop')
             GrpFile.SetBind('ALT+NUMPAD7', '', page, f'petcompow {pabb[i]} def sta')
             GrpFile.SetBind('ALT+NUMPAD8', '', page, f'petcompow {pabb[i]} def att')
@@ -246,6 +275,15 @@ class qwyNumpad(wx.Panel):
 
         Pet2UpFile = profile.GetBindFile('mmqn', '2up.txt')
         Pet2UpFile.SetBind('ADD', '', page, ['+', 'targetcustomnext alive mypet', f'powexecauto {upgr[1]}', profile.BLF('mmqn', '1up.txt')])
+
+        Min1SelectFile = profile.GetBindFile('mmqn', '1sel.txt')
+        Min1SelectFile.SetBind('DECIMAL', '', page, [f'petselectname {uniq[0]}', profile.BLF('mmqn', '2sel.txt')])
+
+        Min2SelectFile = profile.GetBindFile('mmqn', '2sel.txt')
+        Min2SelectFile.SetBind('DECIMAL', '', page, [f'petselectname {uniq[1]}', profile.BLF('mmqn', '3sel.txt')])
+
+        Min3SelectFile = profile.GetBindFile('mmqn', '3sel.txt')
+        Min3SelectFile.SetBind('DECIMAL', '', page, [f'petselectname {uniq[2]}', profile.BLF('mmqn', '1sel.txt')])
 
 GridContents = [
     [

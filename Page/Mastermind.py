@@ -428,7 +428,8 @@ class Mastermind(Page):
                 for tsel in range(0,tsize+1):
                     files.append(self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt"))
 
-        for fn in ['pad', 'min1', 'min2', 'min3', 'lt1', 'lt2', 'bos', 'mins', 'lts', '1up', '2up']:
+        # Might be nice to wedge AllBindFiles into each page so they control their own etc etc.
+        for fn in ['all', 'min1', 'min2', 'min3', 'lt1', 'lt2', 'bos', 'mins', 'lts', '1up', '2up', '1sel', '2sel', '3sel']:
             files.append(self.Profile.GetBindFile('mmqn', f'{fn}.txt'))
 
         for fn in ['off', 'all', 't1-1', 't1-2', 't1-3', 't2-1', 't2-2', 't3']:

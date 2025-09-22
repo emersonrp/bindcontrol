@@ -39,6 +39,7 @@ class qwyPetMouse(wx.Panel):
         popmenusizer = wx.BoxSizer(wx.HORIZONTAL)
         popmenusizer.Add(HelpButton(self, 'qwyPetMouse.html'), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
         self.InstallPopmenu = cgButton(self, label = 'Install Popmenu (recommended)')
+        self.InstallPopmenu.DefaultToolTip = 'This will install the optional popmenu to your Game Directory.  This is not required, but is highly recommended.'
         self.InstallPopmenu.Bind(wx.EVT_BUTTON, self.OnInstallPopmenu)
         popmenusizer.Add(self.InstallPopmenu, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
@@ -77,7 +78,7 @@ class qwyPetMouse(wx.Panel):
             self.InstallPopmenu.RemoveError('gamepath')
             self.InstallPopmenu.Enable()
         else:
-            self.InstallPopmenu.AddError('gamepath', 'Your gamepath is not correctly set up for installing popmenus.  Please visit the Preferences dialog.')
+            self.InstallPopmenu.AddError('gamepath', 'Your Game Directory is not correctly set up for installing popmenus.  Please visit the Preferences dialog.')
             self.InstallPopmenu.Enable(False)
 
     def OnInstallPopmenu(self, _):
@@ -85,7 +86,7 @@ class qwyPetMouse(wx.Panel):
             profile = self.Profile
             menu = f'qwyPetMouse-{profile.ProfileBindsDir}.mnu'
 
-            if wx.MessageBox(f'This will install the popmenu "{menu}" to your game directory.  Proceed?', 'Install Popmenu', wx.YES_NO) == wx.NO:
+            if wx.MessageBox(f'This will install the popmenu "{menu}" to your Game Directory.  Proceed?', 'Install Popmenu', wx.YES_NO) == wx.NO:
                 return
 
             filepath = GetRootDirPath() / 'popmenus' / 'qwyPetMouse.mnu'

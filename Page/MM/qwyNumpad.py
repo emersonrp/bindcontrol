@@ -34,7 +34,7 @@ class qwyNumpad(wx.Panel):
                     agwStyle = ulc.ULC_VRULES|ulc.ULC_HRULES|ulc.ULC_NO_HIGHLIGHT|ulc.ULC_REPORT)
 
         # column headers
-        for i, name in enumerate(['Key', 'No Chord', 'ALT+', 'SHIFT+', 'CTRL+']):
+        for i, name in enumerate(['Key', 'No Mod Key', 'ALT+', 'SHIFT+', 'CTRL+']):
             self.ButtonGrid.InsertColumn(i, name)
 
         # set it up with the longest possible strings before doing SetColumnWidth

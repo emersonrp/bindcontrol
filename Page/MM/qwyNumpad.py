@@ -151,7 +151,7 @@ class qwyNumpad(wx.Panel):
         ResetFile.SetBind('NUMPAD9', '', page, 'petcomall got')
         ResetFile.SetBind('DIVIDE', '', page, ['show chat', 'beginchat /petsayall '])
         ResetFile.SetBind('SUBTRACT', '', page, 'petcomall fol')
-        ResetFile.SetBind('ADD', '', page, ['+', 'targetcustomnext alive mypet', f'powexecauto {upgr[0]}', profile.BLF('mmqn', '2up.txt')])
+        ResetFile.SetBind('ADD', '', page, ['+', f'powexecauto {upgr[0]}', profile.BLF('mmqn', '2up.txt')])
         ResetFile.SetBind('NUMPADENTER', '', page, f'powexecname {heal}')
         ResetFile.SetBind('DECIMAL', '', page, 'targetcustomnext alive mypet')
         ResetFile.SetBind('ALT+NUMPAD0', '', page, 'nop')
@@ -271,7 +271,7 @@ class qwyNumpad(wx.Panel):
             GrpFile.SetBind('CTRL+SUBTRACT', '', page, f'petcompow {pabb[i]} pas fol')
 
         Pet1UpFile = profile.GetBindFile('mmqn', '1up.txt')
-        Pet1UpFile.SetBind('ADD', '', page, ['+', 'targetcustomnext alive mypet', f'powexecauto {upgr[0]}', profile.BLF('mmqn', '2up.txt')])
+        Pet1UpFile.SetBind('ADD', '', page, ['+', f'powexecauto {upgr[0]}', profile.BLF('mmqn', '2up.txt')])
 
         Pet2UpFile = profile.GetBindFile('mmqn', '2up.txt')
         Pet2UpFile.SetBind('ADD', '', page, ['-', 'powexecabort', f'powexecname {upgr[1]}', profile.BLF('mmqn', '1up.txt')])

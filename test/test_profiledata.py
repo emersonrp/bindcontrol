@@ -38,6 +38,25 @@ def test_init_buildfile(config, monkeypatch):
     assert PD['General']['Pool3'] == 'Leadership'
     assert PD['General']['Epic'] == 'Soul Mastery'
 
+def test_MassageData(config):
+    rawdata = {
+        'SoD' : {'DefaultMode' : 'No SoD'},
+        'CustomBinds' : [
+            {'Type' : 'BufferBind', 'BuffPower1' : 'Power1-1', 'BuffPower2' : 'Power1-2', 'BuffPower3' : 'Power1-3' },
+        ],
+    }
+    PD = ProfileData.ProfileData(config, newname = 'buffer', profiledata = rawdata)
+
+    assert 'MovementPowers' in PD
+    assert 'SoD' not in PD
+    assert len(PD['CustomBinds']) == 1
+    assert 'Buffs' in PD['CustomBinds'][0]
+    assert len(PD['CustomBinds'][0]['Buffs']) == 3
+    b = PD['CustomBinds'][0]['Buffs']
+    assert b[0]['Power'] == 'Power1-1'
+    assert b[1]['Power'] == 'Power1-2'
+    assert b[2]['Power'] == 'Power1-3'
+
 def test_init_filename(tmp_path):
 
     profile_path = tmp_path / "testprofile.bcp"

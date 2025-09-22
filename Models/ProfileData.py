@@ -179,6 +179,7 @@ class ProfileData(dict):
         # load old Profiles pre-rename of "Movement Powers" tab
         if 'SoD' in self:
             self['MovementPowers'] = self['SoD']
+            del self['SoD']
             self.SetModified()
 
         # This option got renamed for better clarity
@@ -199,9 +200,9 @@ class ProfileData(dict):
                             'ChatTgt' : custombind.get('BuffChat1Tgt', ''),
                             'Chat'    : custombind.get('BuffChat1', ''),
                         }]
-                        del custombind['BuffPower1']
-                        del custombind['BuffChat1Tgt']
-                        del custombind['BuffChat1']
+                        custombind.pop('BuffPower1', None)
+                        custombind.pop('BuffChat1Tgt', None)
+                        custombind.pop('BuffChat1', None)
 
                     if power := custombind.get('BuffPower2'):
                         self.SetModified()
@@ -210,9 +211,9 @@ class ProfileData(dict):
                             'ChatTgt' : custombind.get('BuffChat2Tgt', ''),
                             'Chat'    : custombind.get('BuffChat2', ''),
                         })
-                        del custombind['BuffPower2']
-                        del custombind['BuffChat2Tgt']
-                        del custombind['BuffChat2']
+                        custombind.pop('BuffPower2', None)
+                        custombind.pop('BuffChat2Tgt', None)
+                        custombind.pop('BuffChat2', None)
 
                     if power := custombind.get('BuffPower3'):
                         self.SetModified()
@@ -221,9 +222,9 @@ class ProfileData(dict):
                             'ChatTgt' : custombind.get('BuffChat3Tgt', ''),
                             'Chat'    : custombind.get('BuffChat3', ''),
                         })
-                        del custombind['BuffPower3']
-                        del custombind['BuffChat3Tgt']
-                        del custombind['BuffChat3']
+                        custombind.pop('BuffPower3', None)
+                        custombind.pop('BuffChat3Tgt', None)
+                        custombind.pop('BuffChat3', None)
 
                     self['CustomBinds'][i] = custombind
 

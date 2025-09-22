@@ -104,6 +104,6 @@ class SimpleBindPane(CustomBindPaneParent):
             return
 
         if pb := self.PowerBinder:
-            resetfile = wx.App.Get().Main.Profile.ResetFile()
+            resetfile = self.Profile.ResetFile()
             bk = self.Ctrls[self.MakeCtlName('BindKey')]
             resetfile.SetBind(bk.Key, self.Title, self.Page, pb.GetValue())

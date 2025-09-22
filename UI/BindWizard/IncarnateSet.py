@@ -131,7 +131,7 @@ class IncarnateSet(WizardParent):
             wx.MessageBox(f"Incarnate Set Bind \"{self.Dialog().Title}\" is not complete or has errors.  Not written to bindfile.")
             return
 
-        profile = wx.App.Get().Main.Profile
+        profile = self.Profile
 
         incdata = self.Init.get('WizData', {}).get('IncData', {})
         incarnate_lines = ['']
@@ -167,13 +167,12 @@ class IncarnateSet(WizardParent):
             bindfile.SetBind(self.BindKeyCtrl.MakeBind(line))
 
     def AllBindFiles(self):
-        profile = wx.App.Get().Main.Profile
         title = re.sub(r'\W+', '', self.BindPane.Title)
 
         files = []
 
         for i in range(6): # should not ever possibly be six steps, but....
-            files.append(profile.GetBindFile('wiz', f'{title}{i}.txt'))
+            files.append(self.Profile.GetBindFile('wiz', f'{title}{i}.txt'))
         return {
             'files' : files,
             'dirs'  : [],

@@ -6,6 +6,7 @@ from Util.Paths import GetRootDirPath
 class WizardParent(object):
     def __init__(self, parent, init):
         self.BindPane = parent
+        self.Profile = parent.Profile
         self.Init = init
         self.WizardDialog = None
 
@@ -44,7 +45,7 @@ class WizardParent(object):
 
     def UpdateAndRefresh(self, evt):
         evt.Skip()
-        wx.App.Get().Main.Profile.UpdateData('CustomBinds', self.BindPane.Serialize())
+        self.Profile.UpdateData('CustomBinds', self.BindPane.Serialize())
         self.BindPane.BuildBindUI(None)
 
 class WizPickerDialog(wx.Dialog):

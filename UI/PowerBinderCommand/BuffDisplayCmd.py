@@ -59,7 +59,7 @@ class BuffDisplayCmd(PowerBinderCommand):
         return groupSizer
 
     def CalculateValue(self) -> int:
-        page = wx.App.Get().Main.Profile.CustomBinds
+        page = self.Profile.CustomBinds
 
         total = 0
 

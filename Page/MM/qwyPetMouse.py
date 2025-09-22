@@ -117,8 +117,8 @@ class qwyPetMouse(wx.Panel):
         menu = profile.ProfileBindsDir
 
         ResetFile = profile.ResetFile()
-        ResetFile.SetBind(page.GetState('qpmMinions')    , '' , page , [f'petselectname {uniq[0]}'    , profile.BLF('mmqpm' , 't1-1.txt')])
-        ResetFile.SetBind(page.GetState('qpmLts')        , '' , page , [f'petselectname {uniq[3]}'    , profile.BLF('mmqpm' , 't2-1.txt')])
+        ResetFile.SetBind(page.GetState('qpmMinions')    , '' , page , [f'petselectname {uniq[0]}'    , profile.BLF('mmqpm' , 't1-2.txt')])
+        ResetFile.SetBind(page.GetState('qpmLts')        , '' , page , [f'petselectname {uniq[3]}'    , profile.BLF('mmqpm' , 't2-2.txt')])
         ResetFile.SetBind(page.GetState('qpmBoss')       , '' , page , [f'petselectname {uniq[5]}'    , profile.BLF('mmqpm' , 't3.txt')])
         ResetFile.SetBind(page.GetState('qpmAll')        , '' , page , profile.BLF('mmqpm'             , 'all.txt'))
         ResetFile.SetBind(page.GetState('qpmNone')       , '' , page , profile.BLF('mmqpm'             , 'off.txt'))
@@ -229,6 +229,8 @@ class qwyPetMouse(wx.Panel):
                 return re.sub(r'\\', r'\\\\\\\\', self.Profile.ResetFile().BLF()) # yes we need eight slashes
             case 'MENUNAME':
                 return self.Profile.ProfileBindsDir
+            case 'PLAYERNAME':
+                return self.Profile.ProfileName()
             case 'ABB':
                 return GameData.MMPowerSets[primary]['abbrs'][n]
             case 'POWER':

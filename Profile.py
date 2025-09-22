@@ -333,7 +333,7 @@ class Profile(wx.Notebook):
             for i, custombind in enumerate(self.Data['CustomBinds']):
                 if not custombind: continue
 
-                if custombind.get('Type', '') == "BufferBind":
+                if custombind.get('Type') == "BufferBind":
                     if power := custombind.get('BuffPower1'):
                         self.SetModified()
                         custombind['Buffs'] = [{
@@ -392,9 +392,7 @@ class Profile(wx.Notebook):
         if IDFile:
             # If the file is even there...
             if IDFile.exists():
-                profilename = IDFile.read_text().strip()
-
-                if profilename == self.ProfileName():
+                if profilename := IDFile.read_text().strip() == self.ProfileName():
                     # OK, this is our bindsdir, great
                     return False
                 else:
@@ -456,8 +454,7 @@ class Profile(wx.Notebook):
         for page in self.Pages:
             # ... and tell it to gather up binds and put them into bindfiles.
             try:
-                success = page.PopulateBindFiles()
-                if not success:
+                if not page.PopulateBindFiles():
                     wx.LogMessage(f'An error on the "{page.TabTitle}" tab caused WriteBinds to fail.')
                     return
             except Exception as e:
@@ -500,7 +497,6 @@ class Profile(wx.Notebook):
                 wx.App.Get().Main.Logger.LogWindow.Show()
 
         # clear out our state
-        self.Data.BindFiles = {}
         self.BindFiles = {}
 
     def AllBindFiles(self) -> dict:

@@ -5,7 +5,6 @@ import pytest
 import json
 import Models.ProfileData as ProfileData
 from time import sleep
-from unittest.mock import Mock
 from pathlib import Path, PureWindowsPath
 from BindFile import BindFile
 from Util.DefaultProfile import DefaultProfile
@@ -54,7 +53,7 @@ def test_init_filename(tmp_path):
         ProfileData.ProfileData(config, filename = str(profile_path))
     profile_path.unlink()
 
-def test_accessors(config, tmp_path, PD):
+def test_accessors(config, monkeypatch, tmp_path, PD):
 
     assert PD.LastModTime     == PD.Filepath.stat().st_mtime_ns
     assert PD.Modified        == False
@@ -64,7 +63,7 @@ def test_accessors(config, tmp_path, PD):
     assert PD.BindsDir()      == tmp_path / PD['ProfileBindsDir']
     assert PD.GameBindsDir()  == PureWindowsPath(tmp_path) / PD['ProfileBindsDir']
 
-    config.Read = Mock(return_value = '')
+    monkeypatch.setattr(config, 'Read', lambda _: '')
     assert PD.GameBindsDir()  == PD.BindsDir()
 
 # TODO TODO TODO - move this test somewhere else when we make a class for ProfileBindFiles or something
@@ -81,7 +80,7 @@ def test_GetBindFile(PD):
     assert otherbindfile.GameBindsDir == PureWindowsPath(PD.BindsDir())
     assert otherbindfile.GamePath     == PureWindowsPath(otherbindfile.Path)
 
-    PD.GameBindsDir = Mock(return_value = 'c:\\coh\\')
+    monkeypatch.setattr(PD, 'GameBindsDir', lambda _: 'c:\\coh\\')
     posixbindfile = PD.GetBindFile('dir', 'posixbindfile.txt')
     assert posixbindfile.GamePath == PureWindowsPath('c:\\coh\\dir\\posixbindfile.txt')
 
@@ -170,7 +169,7 @@ def test_GetDefaultProfileJSON(PD, config, monkeypatch):
     assert 'General' in profiledata
     assert profiledata['ProfileBindsDir'] == 'defau'
 
-def test_BindsDirNotMine(PD):
+def test_BindsDirNotMine(monkeypatch, PD):
     # correctly returns False for unclaimed bindsdir
     assert bool(PD.BindsDirNotMine()) is False
 
@@ -187,7 +186,7 @@ def test_BindsDirNotMine(PD):
     assert bool(PD.BindsDirNotMine()) is False
 
     # correctly blows up if the Profile doesn't know its id file
-    PD.ProfileIDFile = Mock(return_value = None)
+    monkeypatch.setattr(PD, 'ProfileIDFile', lambda: None)
     with pytest.raises(Exception, match = 'not checking IDFile'):
         _ = PD.BindsDirNotMine()
 

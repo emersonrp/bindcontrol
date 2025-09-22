@@ -302,6 +302,8 @@ class Gameplay(Page):
                 # don't fill in the default value if we're using it somewhere else.
                 if self.Profile.CheckConflict(buttonval, ''): buttonval = ""
 
+                # we could in principle call button.ClearButton() instead of these
+                # three lines, but that throws us in an infinite loop
                 self.Ctrls[f"Tray{tray}Button{button}"].SetLabel(buttonval)
                 self.Ctrls[f"Tray{tray}Button{button}"].Key = buttonval
                 self.Profile.UpdateData("Gameplay", f"Tray{tray}Button{button}", buttonval)

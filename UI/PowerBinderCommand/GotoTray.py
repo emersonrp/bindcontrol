@@ -11,14 +11,12 @@ class GotoTray(PowerBinderCommand):
         MainSizer = wx.FlexGridSizer(2, 5, 5)
 
         MainSizer.Add(wx.StaticText(dialog, label = "Set Hotbar:"), 0, wx.ALIGN_RIGHT)
-        server = wx.App.Get().Main.Profile.Server()
-        choices = ['1', '2', '3', '4'] if server == "Rebirth" else ['1', '2', '3']
+        choices = ['1', '2', '3', '4'] if self.Profile.Server() == "Rebirth" else ['1', '2', '3']
         self.HotbarPicker = wx.Choice(dialog, choices = choices)
         self.HotbarPicker.SetSelection(0)
         MainSizer.Add(self.HotbarPicker, 1)
 
         MainSizer.Add(wx.StaticText(dialog, label = "To Power Tray:"), 0, wx.ALIGN_RIGHT)
-        server = wx.App.Get().Main.Profile.Server()
         choices = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
         self.TrayPicker = wx.Choice(dialog, choices = choices)
         self.TrayPicker.SetSelection(0)

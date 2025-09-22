@@ -1,12 +1,10 @@
 import wx
 import os, sys
 from pathlib import Path
-from unittest.mock import Mock
+import pytest
 from Util.Paths import ProfilePath, GetRootDirPath, CheckProfileForBindsDir, GetProfileFileForName, GetAllProfileBindsDirs
 
-def test_CheckProfileForBindsDir(tmp_path):
-    _, config = doSetup(tmp_path)
-
+def test_CheckProfileForBindsDir(config, tmp_path):
     # CheckProfileForBindsDir
     pdir = tmp_path / 'fubble'
     pdir.mkdir(exist_ok = True)
@@ -16,22 +14,14 @@ def test_CheckProfileForBindsDir(tmp_path):
     file.unlink()
     pdir.rmdir()
 
-    config.DeleteAll()
-
-def test_GetProfileFileForName(tmp_path):
-    _, config = doSetup(tmp_path)
-
+def test_GetProfileFileForName(config, tmp_path):
     # GetProfileFileForName
     file = tmp_path / 'fubble.bcp'
     file.write_text('freebird')
     assert str(GetProfileFileForName(config, 'fubble')) == f'{tmp_path}/fubble.bcp'
     file.unlink()
 
-    config.DeleteAll()
-
-def test_GetAllProfileBindsDirs(tmp_path):
-    _, config = doSetup(tmp_path)
-
+def test_GetAllProfileBindsDirs(config, tmp_path):
     for d in ['inky', 'pinky', 'blinky', 'clyde']:
         pdir = tmp_path / d
         pdir.mkdir(exist_ok = True)
@@ -42,14 +32,8 @@ def test_GetAllProfileBindsDirs(tmp_path):
         pdir = tmp_path / d
         pdir.rmdir()
 
-    config.DeleteAll()
-
-def test_ProfilePath(tmp_path):
-    _, config = doSetup(tmp_path)
-
+def test_ProfilePath(config, tmp_path):
     assert ProfilePath(config) == tmp_path
-
-    config.DeleteAll()
 
 def test_GetRootDirPath(tmp_path):
     assert GetRootDirPath() == Path(os.path.abspath(__file__)).parent.parent
@@ -57,11 +41,13 @@ def test_GetRootDirPath(tmp_path):
     assert GetRootDirPath() == Path(tmp_path)
 
 #########
-def doSetup(tmp_path):
-    app = wx.App()
+@pytest.fixture(autouse = True)
+def config(tmp_path, monkeypatch):
+    _ = wx.App()
     config = wx.FileConfig()
     wx.ConfigBase.Set(config)
-    config.Read = Mock(return_value = str(tmp_path))
+    monkeypatch.setattr(config, 'Read', lambda _: str(tmp_path))
 
-    return app, config
+    yield config
 
+    config.DeleteAll()

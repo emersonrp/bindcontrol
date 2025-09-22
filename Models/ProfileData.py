@@ -14,12 +14,12 @@ class ProfileData(dict):
 
         if profiledata: self.FillWith(profiledata)
 
-        self.Config                                = config # wx.Config object
-        self.Modified        : bool                = False
-        self.Filepath        : Path|None           = Path(filename) if filename else None
-        self.LastModTime     : int                 = 0
-        self.Server          : str                 = "Homecoming"
-        self.SavedState      : dict                = profiledata
+        self.Config                      = config # wx.Config object
+        self.Modified        : bool      = False
+        self.Filepath        : Path|None = Path(filename) if filename else None
+        self.LastModTime     : int       = 0
+        self.Server          : str       = "Homecoming"
+        self.SavedState      : dict      = copy.deepcopy(profiledata)
 
         # are we wanting to load this one from a file?
         if self.Filepath:
@@ -29,12 +29,11 @@ class ProfileData(dict):
                 if data := json.loads(self.Filepath.read_text()):
                     self.FillWith(data)
                     self.LastModTime = self.Filepath.stat().st_mtime_ns
-                    # TODO need a deep clone here instead
                     self.SavedState = copy.deepcopy(data)
                 else:
-                    raise Exception(f'Something broke while loading profile "{self.Filepath}".  This is a bug.')
+                    raise Exception(f'Unable to parse JSON from "{self.Filepath}".')
             except Exception as e:
-                raise Exception(f'Something broke while loading profile "{self.Filepath}: {e}".  This is a bug.')
+                raise Exception(f'Something broke while loading profile "{self.Filepath}: {e}".')
 
             self.ClearModified()
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
@@ -45,7 +44,7 @@ class ProfileData(dict):
                     if data := json.loads(jsonstring):
                         self.FillWith(data)
                     else:
-                        raise Exception(f"Something broke while loading profile {self.Filepath}.  This is a bug.")
+                        raise Exception(f"Something broke while loading Default Profile.  This is a bug.")
 
             self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
             if not self['ProfileBindsDir']:

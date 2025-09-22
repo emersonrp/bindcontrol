@@ -69,8 +69,6 @@ class Profile(wx.Notebook):
         self.Pages           : List[bcPage]        = []
         self.ProfileBindsDir : str                 = ''
 
-        GameData.SetupGameData(self.Server())
-
         # Add the individual tabs, in order.
         self.General           = self.CreatePage(General          (self))
         self.CustomBinds       = self.CreatePage(CustomBinds      (self))

@@ -357,7 +357,7 @@ class Gameplay(Page):
                 self.CheckForDefaultKeyToClear(4, button)
                 pe_ss = 'powexec_serverslot' if server == "Homecoming" else 'px_at3'
                 ResetFile.SetBind(self.Ctrls[f"Tray4Button{button}"].MakeBind(f"{pe_ss} {slotbutton}"))
-            if self.Ctrls.get('Tray5Enabled', None) and self.GetState('Tray5Enabled'):
+            if self.Ctrls.get('Tray5Enabled') and self.GetState('Tray5Enabled'):
                 self.CheckForDefaultKeyToClear(5, button)
                 pe_ss = 'px_sv'  # Rebirth only
                 ResetFile.SetBind(self.Ctrls[f"Tray5Button{button}"].MakeBind(f"{pe_ss} {slotbutton}"))
@@ -427,7 +427,7 @@ class Gameplay(Page):
 
     def CheckForDefaultKeyToClear(self, traynum, button) -> None:
         if self.GetState("KeepExisting") == False:
-            if KBProfile := self.KeybindProfiles.get(self.GetState('KBProfile'), None):
+            if KBProfile := self.KeybindProfiles.get(self.GetState('KBProfile')):
                 if DefModKey := KBProfile[traynum]:
                     DefKey = f"{DefModKey}+{button}"
                     if self.GetState(f"Tray{traynum}Button{button}") != DefKey and not self.Profile.CheckConflict(DefKey, ''):

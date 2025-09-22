@@ -30,7 +30,6 @@ from UI.PowerPicker import EVT_POWERPICKER_CHANGED
 from Util.Paths import ProfilePath
 
 class Profile(wx.Notebook):
-
     # class method to load a Profile from a file-open dialog
     @classmethod
     def LoadFromFile(cls, parent):
@@ -48,7 +47,7 @@ class Profile(wx.Notebook):
 
         with wx.WindowDisabler():
             _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(parent).Text('Loading...'))
-            wx.GetApp().Yield()
+            wx.App.Get().Yield()
 
             return Profile.doLoadFromFile(parent, pathname)
 
@@ -68,19 +67,18 @@ class Profile(wx.Notebook):
         self.Data            : ProfileData         = ProfileData(wx.ConfigBase.Get(), filename, newname, profiledata)
         self.BindFiles       : Dict[str, BindFile] = {}
         self.Pages           : List[bcPage]        = []
-        self.Modified        : bool                = False
         self.ProfileBindsDir : str                 = ''
 
         GameData.SetupGameData(self.Server())
 
         # Add the individual tabs, in order.
-        self.General           = self.CreatePage(General(self))
-        self.CustomBinds       = self.CreatePage(CustomBinds(self))
-        self.Gameplay          = self.CreatePage(Gameplay(self))
-        self.MovementPowers    = self.CreatePage(MovementPowers(self))
+        self.General           = self.CreatePage(General          (self))
+        self.CustomBinds       = self.CreatePage(CustomBinds      (self))
+        self.Gameplay          = self.CreatePage(Gameplay         (self))
+        self.MovementPowers    = self.CreatePage(MovementPowers   (self))
         self.InspirationPopper = self.CreatePage(InspirationPopper(self))
-        self.Mastermind        = self.CreatePage(Mastermind(self))
-        self.PopmenuEditor     = self.CreatePage(PopmenuEditor(self))
+        self.Mastermind        = self.CreatePage(Mastermind       (self))
+        self.PopmenuEditor     = self.CreatePage(PopmenuEditor    (self))
 
         if newname:    self.SetModified()
         elif filename: self.ClearModified()
@@ -106,7 +104,7 @@ class Profile(wx.Notebook):
     def Server(self)        : return self.Data.Server
     def Filepath(self)      : return self.Data.Filepath
     def BindsDir(self)      : return Path(wx.ConfigBase.Get().Read('BindPath')) / self.ProfileBindsDir
-    def GameBindsDir(self) :
+    def GameBindsDir(self)  :
         if gbp := wx.ConfigBase.Get().Read('GameBindPath'):
             return PureWindowsPath(gbp) / self.ProfileBindsDir
         else:
@@ -114,10 +112,8 @@ class Profile(wx.Notebook):
 
     def HasPowerPool(self, poolname):
         for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
-            pctrl = self.General.Ctrls[picker]
-            if (sel := pctrl.GetSelection()) != wx.NOT_FOUND:
-                if pctrl.GetString(sel) == poolname:
-                    return True
+            if self.General.Ctrls[picker].GetStringSelection() == poolname:
+                return True
         return False
 
     def GetCustomID(self) -> int: return self.Data.GetCustomID()
@@ -145,8 +141,7 @@ class Profile(wx.Notebook):
     def CheckAllConflicts(self) -> None:
         for page in self.Pages:
             for _, ctrl in page.Ctrls.items():
-                if isinstance(ctrl, bcKeyButton):
-                    if not ctrl.IsThisEnabled(): continue
+                if isinstance(ctrl, bcKeyButton) and ctrl.IsThisEnabled():
                     ctrl.CheckConflicts()
 
     def SetModified(self, _ = None) -> None:
@@ -196,7 +191,7 @@ class Profile(wx.Notebook):
                 pathname = pathname + '.bcp'
 
             # set up our innards to be the new file
-            # TODO move this logic down into Models/ProfileData
+            # TODO this is sorta ugly tinkering in the innards of self.Data
             self.Data.Filepath = Path(pathname)
             self.Data['ProfileBindsDir'] = self.Data.GenerateBindsDirectoryName()
             if not self.Data['ProfileBindsDir']:
@@ -216,7 +211,7 @@ class Profile(wx.Notebook):
     def doSaveToFile(self):
         # check that we haven't updated the file from another copy of BindControl
         if self.Data.FileHasChanged():
-            result = wx.MessageBox(f"Profile file {self.Data.Filepath} has changed since last save.  Continuing may overwrite changes.  Continue?", "File Modified", wx.YES_NO)
+            result = wx.MessageBox(f"Profile file {self.Filepath()} has changed since last save.  Continuing may overwrite changes.  Continue?", "File Modified", wx.YES_NO)
             if result == wx.NO: return wx.NO
 
         self.Data.doSaveToFile()
@@ -230,7 +225,7 @@ class Profile(wx.Notebook):
         data = self.Data
 
         # we store the ProfileBindsDir outside of the sections
-        if data and data.get('ProfileBindsDir', None):
+        if data and data.get('ProfileBindsDir'):
             self.ProfileBindsDir = data['ProfileBindsDir']
 
         for pagename in ['General', 'Gameplay', 'MovementPowers', 'InspirationPopper', 'Mastermind']:
@@ -239,7 +234,7 @@ class Profile(wx.Notebook):
                 for controlname in page.Ctrls:
                     value = None
                     if controlname in data[pagename]:
-                        value = data[pagename].get(controlname, None)
+                        value = data[pagename].get(controlname)
                     # if we don't have a given control in the load data, skip it completely --
                     # it should already have the default value from Init
                     else: continue
@@ -253,19 +248,19 @@ class Profile(wx.Notebook):
             if data and pagename == 'General':
 
                 # Set Primary and Secondary pickers, honoring old numeric indices if needed
-                prim = data['General'].get('Primary', None)
+                prim = data['General'].get('Primary')
                 if isinstance(prim, str):
                     page.Ctrls['Primary'].SetStringSelection(prim)
                 else:
                     page.Ctrls['Primary'].SetSelection(prim)
 
-                seco = data['General'].get('Secondary', None)
+                seco = data['General'].get('Secondary')
                 if isinstance(seco, str):
                     page.Ctrls['Secondary'].SetStringSelection(seco)
                 else:
                     page.Ctrls['Secondary'].SetSelection(seco)
 
-                epic = data['General'].get('Epic', None)
+                epic = data['General'].get('Epic')
                 if isinstance(epic, str):
                     page.Ctrls['Epic'].SetStringSelection(epic)
                 else:
@@ -331,6 +326,7 @@ class Profile(wx.Notebook):
         # This option got renamed for better clarity
         if self.Data and ('MovementPowers' in self.Data) and (self.Data['MovementPowers'].get('DefaultMode') == 'No SoD'):
             self.Data['MovementPowers']['DefaultMode'] = 'No Default SoD'
+            self.SetModified()
 
         # Massage old hardcoded-three-step BufferBinds into the new way
         if self.Data and ('CustomBinds' in self.Data):
@@ -338,7 +334,7 @@ class Profile(wx.Notebook):
                 if not custombind: continue
 
                 if custombind.get('Type', '') == "BufferBind":
-                    if power := custombind.get('BuffPower1', None):
+                    if power := custombind.get('BuffPower1'):
                         self.SetModified()
                         custombind['Buffs'] = [{
                             'Power'   : power,
@@ -349,7 +345,7 @@ class Profile(wx.Notebook):
                         del custombind['BuffChat1Tgt']
                         del custombind['BuffChat1']
 
-                    if power := custombind.get('BuffPower2', None):
+                    if power := custombind.get('BuffPower2'):
                         self.SetModified()
                         custombind['Buffs'].append({
                             'Power'   : power,
@@ -360,7 +356,7 @@ class Profile(wx.Notebook):
                         del custombind['BuffChat2Tgt']
                         del custombind['BuffChat2']
 
-                    if power := custombind.get('BuffPower3', None):
+                    if power := custombind.get('BuffPower3'):
                         self.SetModified()
                         custombind['Buffs'].append({
                             'Power'   : power,
@@ -384,7 +380,7 @@ class Profile(wx.Notebook):
         filepath = PurePath(*filebits)
         key = str(filepath)
 
-        if not self.BindFiles.get(key, None):
+        if not self.BindFiles.get(key):
             self.BindFiles[key] = BindFile(self.BindsDir(), self.GameBindsDir(), filepath)
 
         return self.BindFiles[key]

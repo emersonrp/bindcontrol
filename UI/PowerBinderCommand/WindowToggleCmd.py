@@ -103,7 +103,7 @@ class WindowToggleCmd(PowerBinderCommand):
         elif self.windowHideRB.GetValue():
             return 'windowhide ' + windowname
         else:
-            if shortcmd := self.ShortToggleCommands.get(windowdesc, None):
+            if shortcmd := self.ShortToggleCommands.get(windowdesc):
                 return shortcmd
             else:
                 return 'toggle ' + windowname

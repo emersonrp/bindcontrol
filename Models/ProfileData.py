@@ -233,7 +233,7 @@ class ProfileData(dict):
         filepath = PurePath(*filebits)
         key = str(filepath)
 
-        if not self.BindFiles.get(key, None):
+        if not self.BindFiles.get(key):
             self.BindFiles[key] = BindFile(self.BindsDir(), self.GameBindsDir(), filepath)
 
         return self.BindFiles[key]

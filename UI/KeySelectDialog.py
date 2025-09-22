@@ -503,8 +503,8 @@ from BindFile import KeyBind
 class bcKeyButton(ErrorControlMixin, wx.Button):
 
     def __init__(self, parent, id, init = {}) -> None:
-        self.CtlName  : str                                     = init.get('CtlName', None)
-        self.CtlLabel : ST.GenStaticText | wx.StaticText | None = init.get('CtlLabel', None)
+        self.CtlName  : str                                     = init.get('CtlName')
+        self.CtlLabel : ST.GenStaticText | wx.StaticText | None = init.get('CtlLabel')
         self.Key      : str                                     = init.get('Key', '')
         self.AlwaysShorten : bool                               = init.get('AlwaysShorten', False)
         # This might be overloading "AlwaysShorten", but:

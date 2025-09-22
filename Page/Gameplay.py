@@ -306,7 +306,6 @@ class Gameplay(Page):
                 # three lines, but that throws us in an infinite loop
                 self.Ctrls[f"Tray{tray}Button{button}"].SetLabel(buttonval)
                 self.Ctrls[f"Tray{tray}Button{button}"].Key = buttonval
-                self.Profile.UpdateData("Gameplay", f"Tray{tray}Button{button}", buttonval)
 
         if evt: evt.Skip()
 

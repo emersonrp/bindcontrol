@@ -347,6 +347,7 @@ class CustomBinds(Page):
     def UpdateAllBinds(self) -> None:
         for pane in self.Panes:
             self.Profile.UpdateData('CustomBinds', pane.Serialize())
+            print(pane.Serialize())
 
     def PopulateBindFiles(self) -> bool:
         for pane in self.Panes:

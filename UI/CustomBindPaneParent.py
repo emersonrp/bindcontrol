@@ -31,6 +31,10 @@ class CustomBindPaneParent(wx.CollapsiblePane):
 
         self.bindclass = type(self).__name__
 
+        if not init.get('CustomID'):
+            self.Init['CustomID'] = self.CustomID
+            self.Page.UpdateAllBinds()
+
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
 
     def BuildBindUI(self, page) -> None:
@@ -46,11 +50,11 @@ class CustomBindPaneParent(wx.CollapsiblePane):
 
     def CreateSerialization(self, data) -> Dict[str, Any]:
         return {
-                'CustomID' : self.CustomID,
-                'Type'     : self.Type,
-                'Title'    : self.Title,
-                **data
-                }
+            'CustomID' : self.CustomID,
+            'Type'     : self.Type,
+            'Title'    : self.Title,
+            **data
+        }
 
     def Serialize(self) -> dict:
         print(f"Inside {self.bindclass} Serialize, please override")

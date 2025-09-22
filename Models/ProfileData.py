@@ -18,7 +18,6 @@ class ProfileData(dict):
         if profiledata: self.FillWith(profiledata)
 
         self.Config                                = config # wx.Config object
-        self.BindFiles       : Dict[str, BindFile] = {}
         self.Modified        : bool                = False
         self.Filepath        : Path|None           = Path(filename) if filename else None
         self.LastModTime     : int                 = 0
@@ -64,7 +63,6 @@ class ProfileData(dict):
         GameData.SetupGameData(self.Server)
 
     def ProfileName(self)   -> str      : return self.Filepath.stem if self.Filepath else ''
-    def ResetFile(self)     -> BindFile : return self.GetBindFile("reset.txt")
     def ProfileIDFile(self) -> Path     : return self.BindsDir() / 'bcprofileid.txt'
     def BindsDir(self)      -> Path     : return Path(self.Config.Read('BindPath')) / self['ProfileBindsDir']
     def GameBindsDir(self)  -> Path     :
@@ -226,17 +224,6 @@ class ProfileData(dict):
             return json.dumps(self, separators = (',', ':'))
         else:
             return json.dumps(self, indent=2)
-
-    #####################
-    # Bind file functions
-    def GetBindFile(self, *filebits) -> BindFile:
-        filepath = PurePath(*filebits)
-        key = str(filepath)
-
-        if not self.BindFiles.get(key):
-            self.BindFiles[key] = BindFile(self.BindsDir(), self.GameBindsDir(), filepath)
-
-        return self.BindFiles[key]
 
     # making this "not mine" so we can return False if everything's fine,
     # or the existing Profile name if something's wrong

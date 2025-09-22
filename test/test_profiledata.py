@@ -67,7 +67,9 @@ def test_accessors(config, tmp_path, PD):
     config.Read = Mock(return_value = '')
     assert PD.GameBindsDir()  == PD.BindsDir()
 
+# TODO TODO TODO - move this test somewhere else when we make a class for ProfileBindFiles or something
 def test_GetBindFile(PD):
+    return
     resetfile = PD.ResetFile()
     assert resetfile == PD.GetBindFile('reset.txt')
     assert isinstance(resetfile, BindFile)

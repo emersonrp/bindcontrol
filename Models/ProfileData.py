@@ -74,7 +74,7 @@ class ProfileData(dict):
     def FillWith(self, data) -> None:
         self.clear()
         self.update(data)
-        self.Server = self['General']['Server']
+        self.Server = self.get('General', {}).get('Server', 'Homecoming')
         self.SetModified()
 
     def UpdateData(self, pagename, *args) -> None:

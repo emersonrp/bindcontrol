@@ -1,14 +1,11 @@
 import re, os, platform
-from pathlib import PurePath, Path, PureWindowsPath
-from typing import Dict
+from pathlib import Path, PureWindowsPath
 import copy
 import json
 import codecs
 import base64
 
 import GameData
-
-from BindFile import BindFile
 
 from Util.Paths import ProfilePath, CheckProfileForBindsDir
 
@@ -117,7 +114,7 @@ class ProfileData(dict):
         self.Modified = False
 
     def GetCustomID(self) -> int:
-        self['MaxCustomID'] = self['MaxCustomID'] + 1
+        self['MaxCustomID'] = self.get('MaxCustomID', 0) + 1
         self.SetModified()
         return self['MaxCustomID']
 

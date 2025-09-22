@@ -96,9 +96,9 @@ def LoadModules():
                 wizards[modName] = modclass
                 rev_wiz[modclass] = modName
             else:
-                print(f"Class {modclass} didn't define 'Name' - this is a bug")
+                wx.LogError(f"Class {modclass} didn't define 'Name' - this is a bug")
         else:
-            print(f"Module {mod} didn't define a class of the same name - this is a bug!")
+            wx.LogError(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
 wizards = {}
 rev_wiz = {}

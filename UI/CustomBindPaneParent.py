@@ -43,7 +43,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         ...
 
     def PopulateBindFiles(self) -> None:
-        print(f"Inside {self.bindclass} PopulateBindFiles")
+        wx.LogError(f"{self.bindclass} did not override PopulateBindFiles.  This is a bug.")
         # for overriding on child classes this will be called in the course of
         # the Custom Binds page doing its own PopulateBindFiles, iteratively
         # over all of its kids
@@ -57,7 +57,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         }
 
     def Serialize(self) -> dict:
-        print(f"Inside {self.bindclass} Serialize, please override")
+        wx.LogError(f"{self.bindclass} did not override Serialize.  This is a bug.")
         return {}
 
     def OnPaneChanged(self, evt) -> None:

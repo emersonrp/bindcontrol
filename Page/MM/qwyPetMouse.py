@@ -142,9 +142,9 @@ class qwyPetMouse(wx.Panel):
 
         AllFile = profile.GetBindFile('mmqpm', 'all.txt')
         AllFile.SetBind(page.GetState('qpmAttack')     , ''         , page , 'petcomall att')
-        AllFile.SetBind(page.GetState('qpmTargetGoto') , ''         , page , 'petcomall fol')
-        AllFile.SetBind(page.GetState('qpmStay')       , ''         , page , 'petcomall got')
-        AllFile.SetBind(page.GetState('qpmFollow')     , ''         , page , 'petcomall sta')
+        AllFile.SetBind(page.GetState('qpmTargetGoto') , ''         , page , 'petcomall got')
+        AllFile.SetBind(page.GetState('qpmStay')       , ''         , page , 'petcomall sta')
+        AllFile.SetBind(page.GetState('qpmFollow')     , ''         , page , 'petcomall fol')
         AllFile.SetBind(page.GetState('qpmDefensive')  , ''         , page , 'petcomall def')
         AllFile.SetBind(page.GetState('qpmAggressive') , ''         , page , 'petcomall agg')
         AllFile.SetBind(page.GetState('qpmPassive')    , ''         , page , 'petcomall pas')

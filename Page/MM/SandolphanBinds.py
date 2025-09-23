@@ -212,10 +212,9 @@ class SandolphanBinds(wx.Panel):
         SandolphanSizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.ALL, 0)
 
     def SynchronizeUI(self, evt = None):
-        cblabels  = ['Minion 1', 'Minion 2', 'Minion 3', 'Lt 1', 'Lt 2', 'Boss']
         for i in range(6):
             cb   = self.Page.Ctrls[f'Pet{i+1}Bodyguard']
-            name = self.Page.Ctrls[f'Pet{i+1}Name'].GetValue() or cblabels[i]
+            name = self.Page.GetPetName(i)
             cb.SetLabel(name)
             cb.SetToolTip(f'Select whether {name} acts as Bodyguard when Bodyguard Mode is activated')
         self.BGCBSizer.Layout()

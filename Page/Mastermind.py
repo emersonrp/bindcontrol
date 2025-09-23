@@ -162,6 +162,10 @@ class Mastermind(Page):
     def BindStyle(self):
         return ['Sandolphan', 'qwy Numpad', 'qwy PetMouse'][self.BindStyleNotebook.GetSelection()]
 
+    def GetPetName(self, idx):
+        cblabels  = ['Minion 1', 'Minion 2', 'Minion 3', 'Lt 1', 'Lt 2', 'Boss']
+        return self.Ctrls[f'Pet{idx+1}Name'].GetValue() or cblabels[idx]
+
     def SynchronizeUI(self):
         ismm = self.Profile.Archetype() == "Mastermind"
         pset = self.Profile.Primary()
@@ -171,8 +175,12 @@ class Mastermind(Page):
         self.OnLevelChanged()
         if self.BindStyle() == 'Sandolphan':
             self.SandolphanPage.SynchronizeUI()
+        if self.BindStyle() == 'qwy Numpad':
+            self.qwyNumpadPage.SynchronizeUI()
 
-    def OnBindStyleChanged(self, evt):
+        self.OnBindStyleChanged()
+
+    def OnBindStyleChanged(self, evt = None):
         bindstyle = self.BindStyle()
         for ctrl in self.SandolphanPage.SandolphanKeyButtons.values():
             ctrl.Enable(bindstyle == 'Sandolphan')
@@ -188,7 +196,7 @@ class Mastermind(Page):
         if self.BindStyle() == 'Sandolphan':
             self.SandolphanPage.SynchronizeUI()
 
-        evt.Skip()
+        if evt: evt.Skip()
 
     def OnLevelChanged(self, evt = None):
         if evt: evt.Skip()
@@ -207,6 +215,8 @@ class Mastermind(Page):
         self.CheckUniqueNames()
         if self.BindStyle() == 'Sandolphan':
             self.SandolphanPage.SynchronizeUI()
+        elif self.BindStyle() == 'qwy Numpad':
+            self.qwyNumpadPage.SynchronizeUI()
         if evt: evt.Skip()
 
     def CheckUndefNames(self):

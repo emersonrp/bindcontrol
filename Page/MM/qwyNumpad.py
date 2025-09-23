@@ -8,6 +8,8 @@ class qwyNumpad(wx.Panel):
     def __init__(self, page, parent):
         super().__init__(parent)
 
+        self.Page = page
+
         qwyNumpadSizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(qwyNumpadSizer)
 
@@ -37,31 +39,23 @@ class qwyNumpad(wx.Panel):
         for i, name in enumerate(['Key', 'No Mod Key', 'ALT+', 'SHIFT+', 'CTRL+']):
             self.ButtonGrid.InsertColumn(i, name)
 
-        # set it up with the longest possible strings before doing SetColumnWidth
-        for row in GridContents[1]:
-            self.ButtonGrid.Append(row)
-
-        for i in (0,1,2,3,4):
-            self.ButtonGrid.SetColumnWidth(i, wx.LIST_AUTOSIZE)
-
-        self.OnPetPicked()
-
-        # This is awful
-        rect = self.ButtonGrid.GetItemRect(0)
-        height = rect.height * (self.ButtonGrid.GetItemCount()+2)
-        width = rect.width
-        self.ButtonGrid.SetMinSize((wx.Size(width, height)))
-        self.ButtonGrid.SetAutoLayout(True)
+        self.PopulateButtonGrid()
 
         centeringSizer.Add(self.ButtonGrid, 1)
-
 
         qwyNumpadSizer.Add(centeringSizer, 0, wx.ALIGN_CENTER)
 
         self.Fit()
         self.Layout()
 
+    def SynchronizeUI(self):
+        self.PopulateButtonGrid()
+
     def GetKeyBinds(self):
+        mmp = GameData.MMPowerSets[self.Page.Profile.Primary() or "Mercenaries"]
+        names = []
+        for i in range(6):
+            names.append(self.Page.GetPetName(i))
         return [
             [ 'Select All'                       ,'NUMPAD0'       ,],
             [ 'Select Minions'                   ,'NUMPAD1'       ,],
@@ -75,16 +69,16 @@ class qwyNumpad(wx.Panel):
             [ 'Selected Pets Go To'              ,'NUMPAD9'       ,],
             [ 'Selected Pets Say'                ,'DIVIDE'        ,],
             [ 'Selected Pets Follow'             ,'SUBTRACT'      ,],
-            [ 'Upgrade Pets'                     ,'ADD'           ,],
-            [ 'Heal Targeted Pet'                ,'NUMPADENTER'   ,],
+            [ 'Apply All Upgrades'               ,'ADD'           ,],
+            [ mmp['heal']                        ,'NUMPADENTER'   ,],
             [ 'Select Next Pet In Group'         ,'DECIMAL'       ,],
             [ 'Dismiss Selected Pet'             ,'ALT+NUMPAD0'   ,],
-            [ 'Select Minion 1'                  ,'ALT+NUMPAD1'   ,],
-            [ 'Select Minion 2'                  ,'ALT+NUMPAD2'   ,],
-            [ 'Select Minion 3'                  ,'ALT+NUMPAD3'   ,],
-            [ 'Select Lieutenant 1'              ,'ALT+NUMPAD4'   ,],
-            [ 'Select Lieutenant 2'              ,'ALT+NUMPAD5'   ,],
-            [ 'Select Boss'                      ,'ALT+NUMPAD6'   ,],
+            [ f'Select {names[0]}'               ,'ALT+NUMPAD1'   ,],
+            [ f'Select {names[1]}'               ,'ALT+NUMPAD2'   ,],
+            [ f'Select {names[2]}'               ,'ALT+NUMPAD3'   ,],
+            [ f'Select {names[3]}'               ,'ALT+NUMPAD4'   ,],
+            [ f'Select {names[4]}'               ,'ALT+NUMPAD5'   ,],
+            [ f'Select {names[5]}'               ,'ALT+NUMPAD6'   ,],
             [ 'Selected Pets Defensive / Stay'   ,'ALT+NUMPAD7'   ,],
             [ 'Selected Pets Defensive / Attack' ,'ALT+NUMPAD8'   ,],
             [ 'Selected Pets Defensive / Go To'  ,'ALT+NUMPAD9'   ,],
@@ -92,9 +86,9 @@ class qwyNumpad(wx.Panel):
             [ 'Selected Pets Defensive / Follow' ,'ALT+SUBTRACT'  ,],
             [ 'Target Next Minion'               ,'ALT+DECIMAL'   ,],
             [ 'Dismiss Targeted Pet'             ,'SHIFT+NUMPAD0' ,],
-            [ 'Summon Minions'                   ,'SHIFT+NUMPAD1' ,],
-            [ 'Summon Lieutenants'               ,'SHIFT+NUMPAD2' ,],
-            [ 'Summon Boss'                      ,'SHIFT+NUMPAD3' ,],
+            [ mmp['names'][0]                    ,'SHIFT+NUMPAD1' ,],
+            [ mmp['names'][1]                    ,'SHIFT+NUMPAD2' ,],
+            [ mmp['names'][2]                    ,'SHIFT+NUMPAD3' ,],
             [ 'Selected Pets Aggressive / Stay'  ,'SHIFT+NUMPAD7' ,],
             [ 'Selected Pets Aggressive / Attack','SHIFT+NUMPAD8' ,],
             [ 'Selected Pets Aggressive / Go To' ,'SHIFT+NUMPAD9' ,],
@@ -117,7 +111,7 @@ class qwyNumpad(wx.Panel):
         i = 0
         if   self.PetPickerIndiv.GetValue(): i = 2
         elif self.PetPickerGroup.GetValue(): i = 1
-        contents = GridContents[i]
+        contents = self.GridContents[i]
 
         self.ButtonGrid.DeleteAllItems()
 
@@ -128,9 +122,9 @@ class qwyNumpad(wx.Panel):
 
     def PopulateBindFiles(self):
         # This is going to be complicated and tangly - there are like 14 files with many entries.
-        profile = wx.App.Get().Main.Profile
+        profile = self.Page.Profile
         page    = profile.Mastermind
-        primary = profile.General.GetState('Primary')
+        primary = profile.Primary()
         pabb = GameData.MMPowerSets[primary]['abbrs']
         pnam = GameData.MMPowerSets[primary]['names']
         heal = GameData.MMPowerSets[primary]['heal']
@@ -300,56 +294,86 @@ class qwyNumpad(wx.Panel):
         Minsh2SelectFile = profile.GetBindFile('mmqn', '2selsh.txt')
         Minsh2SelectFile.SetBind('SHIFT+DECIMAL', '', page, [f'petselectname {uniq[4]}', profile.BLF('mmqn', '1selsh.txt')])
 
-GridContents = [
-    [
-        ['DIVIDE', 'All Pets Say', 'Minions Say', 'Lieutenants Say', 'Boss Says'],
-        ['SUBTRACT', 'All Follow', 'All Def Follow', 'All Agg Follow', 'All Pas Follow'],
-        ['NUMPAD9', 'All Goto', 'All Def Goto', 'All Agg Goto', 'All Pas Goto'],
-        ['NUMPAD8', 'All Attack', 'All Def Attack', 'All Agg Attack', 'All Pas Attack'],
-        ['NUMPAD7', 'All Stay', 'All Def Stay', 'All Agg Stay', 'All Pas Stay', ],
-        ['NUMPAD6', 'All Passive', 'Select Boss', '', ''],
-        ['NUMPAD5', 'All Aggressive', 'Select Lieutenant 2', '', ''],
-        ['NUMPAD4', 'All Defense', 'Select Lieutenant 1', '', '', ],
-        ['NUMPAD3', 'Select Boss', 'Select Minion 3', 'Summon Boss', 'Dismiss Boss'],
-        ['NUMPAD2', 'Select Lieutenants', 'Select Minion 2', 'Summon Lieutenants', 'Dismiss Lieutenants'],
-        ['NUMPAD1', 'Select Minions', 'Select Minion 1', 'Summon Minions', 'Dismiss Minions'],
-        ['NUMPAD0', 'Select All', '', 'Dismiss Target', 'Dismiss All'],
-        ['ADD', 'Apply All Upgrades', '', '', ''],
-        ['NUMPADENTER', 'Heal Targeted Pet', '', '', ''],
-        ['DECIMAL', 'Target Next Pet', 'Target Next Minion',' Target Next Lieutenant', 'Target Boss'],
-    ],
-    [
-        ['DIVIDE', 'Group Pets Say', 'Minions Say', 'Lieutenants Say', 'Boss Says'],
-        ['SUBTRACT', 'Group Follow', 'Group Def Follow', 'Group Agg Follow', 'Group Pas Follow'],
-        ['NUMPAD9', 'Group Goto', 'Group Def Goto', 'Group Agg Goto', 'Group Pas Goto'],
-        ['NUMPAD8', 'Group Attack', 'Group Def Attack', 'Group Agg Attack', 'Group Pas Attack'],
-        ['NUMPAD7', 'Group Stay', 'Group Def Stay', 'Group Agg Stay', 'Group Pas Stay', ],
-        ['NUMPAD6', 'Group Passive', 'Select Boss', '', ''],
-        ['NUMPAD5', 'Group Aggressive', 'Select Lieutenant 2', '', ''],
-        ['NUMPAD4', 'Group Defense', 'Select Lieutenant 1', '', '', ],
-        ['NUMPAD3', 'Select Boss', 'Select Minion 3', 'Summon Boss', 'Dismiss Boss'],
-        ['NUMPAD2', 'Select Lieutenants', 'Select Minion 2', 'Summon Lieutenants', 'Dismiss Lieutenants'],
-        ['NUMPAD1', 'Select Minions', 'Select Minion 1', 'Summon Minions', 'Dismiss Minions'],
-        ['NUMPAD0', 'Select All', '', 'Dismiss Target', 'Dismiss All'],
-        ['ADD', 'Apply All Upgrades', '', '', ''],
-        ['NUMPADENTER', 'Heal Targeted Pet', '', '', ''],
-        ['DECIMAL', 'Target Next Pet In Group', 'Target Next Minion',' Target Next Lieutenant', 'Target Boss'],
-    ],
-    [
-        ['DIVIDE', 'Pet Says', 'Minions Say', 'Lieutenants Say', 'Boss Says'],
-        ['SUBTRACT', 'Pet Follow', 'Pet Def Follow', 'Pet Agg Follow', 'Pet Pas Follow'],
-        ['NUMPAD9', 'Pet Goto', 'Pet Def Goto', 'Pet Agg Goto', 'Pet Pas Goto'],
-        ['NUMPAD8', 'Pet Attack', 'Pet Def Attack', 'Pet Agg Attack', 'Pet Pas Attack'],
-        ['NUMPAD7', 'Pet Stay', 'Pet Def Stay', 'Pet Agg Stay', 'Pet Pas Stay', ],
-        ['NUMPAD6', 'Pet Passive', 'Select Boss', '', ''],
-        ['NUMPAD5', 'Pet Aggressive', 'Select Lieutenant 2', '', ''],
-        ['NUMPAD4', 'Pet Defense', 'Select Lieutenant 1', '', '', ],
-        ['NUMPAD3', 'Select Boss', 'Select Minion 3', 'Summon Boss', 'Dismiss Boss'],
-        ['NUMPAD2', 'Select Lieutenants', 'Select Minion 2', 'Summon Lieutenants', 'Dismiss Lieutenants'],
-        ['NUMPAD1', 'Select Minions', 'Select Minion 1', 'Summon Minions', 'Dismiss Minions'],
-        ['NUMPAD0', 'Select All', 'Dismiss Selected', 'Dismiss Target', 'Dismiss All'],
-        ['ADD', 'Apply All Upgrades', '', '', ''],
-        ['NUMPADENTER', 'Heal Targeted Pet', '', '', ''],
-        ['DECIMAL', 'Target Pet', 'Target Next Minion',' Target Next Lieutenant', 'Target Boss'],
-    ],
-]
+    def PopulateButtonGrid(self):
+        self.GridContents = self.GetCurrentGrid()
+
+        self.Freeze()
+        try:
+            # set it up with the longest possible strings before doing SetColumnWidth
+            for row in self.GridContents[1]:
+                self.ButtonGrid.Append(row)
+
+            for i in (0,1,2,3,4):
+                self.ButtonGrid.SetColumnWidth(i, wx.LIST_AUTOSIZE)
+
+            self.OnPetPicked()
+
+            # This is awful
+            rect = self.ButtonGrid.GetItemRect(0)
+            height = rect.height * (self.ButtonGrid.GetItemCount()+2)
+            width = rect.width
+            self.ButtonGrid.SetMinSize((wx.Size(width, height)))
+            self.ButtonGrid.SetAutoLayout(True)
+        except Exception:
+            pass
+        finally:
+            if self.IsFrozen(): self.Thaw()
+
+    def GetCurrentGrid(self):
+        mmp = GameData.MMPowerSets[self.Page.Profile.Primary() or "Mercenaries"]
+        names = []
+        for i in range(6):
+            names.append(self.Page.GetPetName(i))
+        return [
+            [
+                ['DIVIDE', 'All Pets Say', 'Minions Say', 'Lieutenants Say', 'Boss Says'],
+                ['SUBTRACT', 'All Follow', 'All Def Follow', 'All Agg Follow', 'All Pas Follow'],
+                ['NUMPAD9', 'All Goto', 'All Def Goto', 'All Agg Goto', 'All Pas Goto'],
+                ['NUMPAD8', 'All Attack', 'All Def Attack', 'All Agg Attack', 'All Pas Attack'],
+                ['NUMPAD7', 'All Stay', 'All Def Stay', 'All Agg Stay', 'All Pas Stay', ],
+                ['NUMPAD6', 'All Passive', f'Select {names[5]}', '', ''],
+                ['NUMPAD5', 'All Aggressive', f'Select {names[4]}', '', ''],
+                ['NUMPAD4', 'All Defense', f'Select {names[3]}', '', '', ],
+                ['NUMPAD3', 'Select Boss', f'Select {names[2]}', mmp['names'][2], 'Dismiss Boss'],
+                ['NUMPAD2', 'Select Lieutenants', f'Select {names[1]}', mmp['names'][1], 'Dismiss Lieutenants'],
+                ['NUMPAD1', 'Select Minions', f'Select {names[0]}', mmp['names'][0], 'Dismiss Minions'],
+                ['NUMPAD0', 'Select All', '', 'Dismiss Target', 'Dismiss All'],
+                ['ADD', 'Apply All Upgrades', '', '', ''],
+                ['NUMPADENTER', mmp['heal'], '', '', ''],
+                ['DECIMAL', 'Target Next Pet', 'Target Next Minion',' Target Next Lieutenant', 'Target Boss'],
+            ],
+            [
+                ['DIVIDE', 'Group Pets Say', 'Minions Say', 'Lieutenants Say', 'Boss Says'],
+                ['SUBTRACT', 'Group Follow', 'Group Def Follow', 'Group Agg Follow', 'Group Pas Follow'],
+                ['NUMPAD9', 'Group Goto', 'Group Def Goto', 'Group Agg Goto', 'Group Pas Goto'],
+                ['NUMPAD8', 'Group Attack', 'Group Def Attack', 'Group Agg Attack', 'Group Pas Attack'],
+                ['NUMPAD7', 'Group Stay', 'Group Def Stay', 'Group Agg Stay', 'Group Pas Stay', ],
+                ['NUMPAD6', 'Group Passive', f'Select {names[5]}', '', ''],
+                ['NUMPAD5', 'Group Aggressive', f'Select {names[4]}', '', ''],
+                ['NUMPAD4', 'Group Defense', f'Select {names[3]}', '', '', ],
+                ['NUMPAD3', 'Select Boss', f'Select {names[2]}', mmp['names'][2], 'Dismiss Boss'],
+                ['NUMPAD2', 'Select Lieutenants', f'Select {names[1]}', mmp['names'][1], 'Dismiss Lieutenants'],
+                ['NUMPAD1', 'Select Minions', f'Select {names[0]}', mmp['names'][0], 'Dismiss Minions'],
+                ['NUMPAD0', 'Select All', '', 'Dismiss Target', 'Dismiss All'],
+                ['ADD', 'Apply All Upgrades', '', '', ''],
+                ['NUMPADENTER', mmp['heal'], '', '', ''],
+                ['DECIMAL', 'Target Next Pet In Group', 'Target Next Minion',' Target Next Lieutenant', 'Target Boss'],
+            ],
+            [
+                ['DIVIDE', 'Pet Says', 'Minions Say', 'Lieutenants Say', 'Boss Says'],
+                ['SUBTRACT', 'Pet Follow', 'Pet Def Follow', 'Pet Agg Follow', 'Pet Pas Follow'],
+                ['NUMPAD9', 'Pet Goto', 'Pet Def Goto', 'Pet Agg Goto', 'Pet Pas Goto'],
+                ['NUMPAD8', 'Pet Attack', 'Pet Def Attack', 'Pet Agg Attack', 'Pet Pas Attack'],
+                ['NUMPAD7', 'Pet Stay', 'Pet Def Stay', 'Pet Agg Stay', 'Pet Pas Stay', ],
+                ['NUMPAD6', 'Pet Passive', f'Select {names[5]}', '', ''],
+                ['NUMPAD5', 'Pet Aggressive', f'Select {names[4]}', '', ''],
+                ['NUMPAD4', 'Pet Defense', f'Select {names[3]}', '', '', ],
+                ['NUMPAD3', 'Select Boss', f'Select {names[2]}', mmp['names'][2], 'Dismiss Boss'],
+                ['NUMPAD2', 'Select Lieutenants', f'Select {names[1]}', mmp['names'][1], 'Dismiss Lieutenants'],
+                ['NUMPAD1', 'Select Minions', f'Select {names[0]}', mmp['names'][0], 'Dismiss Minions'],
+                ['NUMPAD0', 'Select All', 'Dismiss Selected', 'Dismiss Target', 'Dismiss All'],
+                ['ADD', 'Apply All Upgrades', '', '', ''],
+                ['NUMPADENTER', mmp['heal'], '', '', ''],
+                ['DECIMAL', 'Target Pet', 'Target Next Minion',' Target Next Lieutenant', 'Target Boss'],
+            ],
+        ]

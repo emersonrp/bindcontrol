@@ -35,8 +35,10 @@ def test_GetAllProfileBindsDirs(config, tmp_path):
 def test_ProfilePath(config, tmp_path):
     assert ProfilePath(config) == tmp_path
 
-def test_GetRootDirPath(tmp_path):
+def test_GetRootDirPath(monkeypatch, tmp_path):
     assert GetRootDirPath() == Path(os.path.abspath(__file__)).parent.parent
+    # TODO - if we use MEIPASS at any other point in the test suite
+    # we need to have undone this somehow.  monkeypatch doesn't work.
     setattr(sys, '_MEIPASS', tmp_path)
     assert GetRootDirPath() == Path(tmp_path)
 

@@ -91,6 +91,10 @@ class Page(wx.ScrolledWindow):
                 return control.SetStringSelection(value)
             else:
                 return control.SetSelection(value)
+        elif isinstance(control, wx.Notebook):
+            for i in range(control.GetPageCount()):
+                if control.GetPageText(i) == value:
+                    return control.SetSelection(i)
         elif isinstance(control, wx.StaticText):
             return control.SetLabel(value)
         elif getattr(control, 'SetValue', None):

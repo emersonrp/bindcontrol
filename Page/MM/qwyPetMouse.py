@@ -74,7 +74,7 @@ class qwyPetMouse(wx.Panel):
         self.Layout()
 
     def CheckPopmenuPath(self):
-        if GetValidGamePath(self.Profile.Server):
+        if GetValidGamePath(self.Profile.Server()):
             self.InstallPopmenu.RemoveError('gamepath')
             self.InstallPopmenu.Enable()
         else:
@@ -95,7 +95,7 @@ class qwyPetMouse(wx.Panel):
                 return
 
             # This method side-effects checking, verifying, and creating the menupath
-            menupath = CheckAndCreateMenuPathForGamePath(GetValidGamePath(self.Profile.Server))
+            menupath = CheckAndCreateMenuPathForGamePath(GetValidGamePath(self.Profile.Server()))
             if not menupath: return
 
             # read the text from the source file and make all necessary substitutions

@@ -1,11 +1,6 @@
 import wx
 import re
 
-# Sandolphan / Khaiba's guide to these controls found at:
-# https://guidescroll.com/2011/07/city-of-heroes-mastermind-numeric-keypad-pet-controls/
-#
-# Originally: https://web.archive.org/web/20120904222729/http://boards.cityofheroes.com/showthread.php?t=117256
-
 import GameData
 from Page import Page
 from Page.MM.SandolphanBinds import SandolphanBinds
@@ -14,7 +9,7 @@ from Page.MM.qwyPetMouse import qwyPetMouse
 from Help import HelpButton
 import UI
 from UI.KeySelectDialog import bcKeyButton
-from UI.ControlGroup import ControlGroup, cgTextCtrl
+from UI.ControlGroup import cgTextCtrl
 
 class Mastermind(Page):
     UI.Labels.update({
@@ -27,8 +22,6 @@ class Mastermind(Page):
 
         'SelNextPet'                         : "Select Next Pet",
         'SelPrevPet'                         : "Select Previous Pet",
-        'IncPetSize'                         : "Increase Pet Group Size",
-        'DecPetSize'                         : "Decrease Pet Group Size",
     })
 
     def __init__(self, parent):
@@ -57,8 +50,6 @@ class Mastermind(Page):
 
             'SelNextPet'  : '',
             'SelPrevPet'  : '',
-            'IncPetSize'  : '',
-            'DecPetSize'  : '',
         }
         # TODO is this Gamedata?
         self.TabTitle = "Mastermind / Pet Binds"
@@ -134,18 +125,15 @@ class Mastermind(Page):
         PetNames.Add(PetInner,      1, wx.EXPAND|wx.ALL, 10)
         PetNames.Add(PetExtraCtrls, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15)
 
-
         # Sub-tabs for selection of MM Bind style
         self.BindStyleNotebook = wx.Notebook(self, wx.ID_ANY, style = wx.BORDER_NONE)
         self.BindStyleNotebook.SetPadding(wx.Size(50,0))
         self.Ctrls['BindStyle'] = self.BindStyleNotebook
 
-        BasicSelectPage      = self.BasicSelectPage(      self.BindStyleNotebook)
-        self.SandolphanPage  = SandolphanBinds     (self, self.BindStyleNotebook)
-        self.qwyNumpadPage   = qwyNumpad           (self, self.BindStyleNotebook)
-        self.qwyPetMousePage = qwyPetMouse         (self, self.BindStyleNotebook)
+        self.SandolphanPage  = SandolphanBinds(self, self.BindStyleNotebook)
+        self.qwyNumpadPage   = qwyNumpad      (self, self.BindStyleNotebook)
+        self.qwyPetMousePage = qwyPetMouse    (self, self.BindStyleNotebook)
 
-        self.BindStyleNotebook.AddPage(BasicSelectPage, "Simple Selection Binds")
         self.BindStyleNotebook.AddPage(self.SandolphanPage, "Sandolphan Binds")
         self.BindStyleNotebook.AddPage(self.qwyNumpadPage, "qwy Numpad Binds")
         self.BindStyleNotebook.AddPage(self.qwyPetMousePage, "qwy PetMouse Binds")
@@ -171,30 +159,8 @@ class Mastermind(Page):
 
         return binds
 
-    def BasicSelectPage(self, parent):
-        BasicPage = wx.ScrolledWindow(parent, wx.ID_ANY)
-        BasicSizer = wx.BoxSizer(wx.VERTICAL)
-        BasicPage.SetSizer(BasicSizer)
-
-        PetSelBox = ControlGroup(BasicPage, self, label="", width=8, flexcols=[1,3,5,7])
-        for b in (
-            ['SelNextPet', 'Choose the key that will select the next pet from the currently selected one'],
-            ['SelPrevPet', 'Choose the key that will select the previous pet from the currently selected one'],
-            ['IncPetSize', 'Choose the key that will increase the size of your pet/henchman group rotation'],
-            ['DecPetSize', 'Choose the key that will decrease the size of your pet/henchman group rotation'],
-        ):
-            PetSelBox.AddControl(
-                ctlName = b[0],
-                ctlType = 'keybutton',
-                tooltip = b[1],
-            )
-
-        BasicSizer.Add(PetSelBox, 0, wx.EXPAND|wx.ALL, 0)
-
-        return BasicPage
-
     def BindStyle(self):
-        return ['Basic', 'Sandolphan', 'qwy Numpad', 'qwy PetMouse'][self.BindStyleNotebook.GetSelection()]
+        return ['Sandolphan', 'qwy Numpad', 'qwy PetMouse'][self.BindStyleNotebook.GetSelection()]
 
     def SynchronizeUI(self):
         ismm = self.Profile.Archetype() == "Mastermind"
@@ -208,9 +174,6 @@ class Mastermind(Page):
 
     def OnBindStyleChanged(self, evt):
         bindstyle = self.BindStyle()
-        for ctrl in ['SelNextPet', 'SelPrevPet', 'IncPetSize', 'DecPetSize']:
-            self.Ctrls[ctrl].Enable(bindstyle == 'Basic')
-
         for ctrl in self.SandolphanPage.SandolphanKeyButtons.values():
             ctrl.Enable(bindstyle == 'Sandolphan')
 
@@ -339,7 +302,7 @@ class Mastermind(Page):
             if self.BindStyle() == 'Sandolphan':
                 selfile = 'sel.txt'
                 if self.GetState('PetChattyDefault'):
-                    feedback = self.SandolphanPage.GetChatString('SelectAll', pet+1)
+                    feedback = self.SandolphanPage.GetChatString('PetSelectAll', pet+1)
                     selfile = 'csel.txt'
                 selfile = profile.BLF('mmb', selfile)
             ResetFile.SetBind(
@@ -348,19 +311,13 @@ class Mastermind(Page):
                 )
             )
 
+        ### Next / Prev binds
+        ResetFile.SetBind(self.Ctrls['SelNextPet'].MakeBind('targetcustomnext mypet alive'))
+        ResetFile.SetBind(self.Ctrls['SelPrevPet'].MakeBind('targetcustomprev mypet alive'))
+
+        ### Then, the bindstyles
         bindstyle = self.BindStyle()
-        if bindstyle == 'Basic':
-            ### Prev / next pet binds
-            if (
-                self.GetState('IncPetSize') and self.GetState('DecPetSize') and
-                self.GetState('SelNextPet') and self.GetState('SelPrevPet')
-            ):
-                self.psCreateSet(6,0,ResetFile)
-                for tsize in 1,2,3,4,5,6:
-                    for tsel in range(0,tsize+1):
-                        file = self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt")
-                        self.psCreateSet(tsize,tsel,file)
-        elif bindstyle == 'Sandolphan':
+        if bindstyle == 'Sandolphan':
             self.SandolphanPage.PopulateBindFiles()
         elif bindstyle == 'qwy Numpad':
             self.qwyNumpadPage.PopulateBindFiles()
@@ -368,44 +325,6 @@ class Mastermind(Page):
             self.qwyPetMousePage.PopulateBindFiles()
 
         return True
-
-    def psCreateSet(self, tsize, tsel, file):
-        # tsize is the size of the team at the moment
-        # tsel is the currently selected team member as far as the bind knows, or 0 if unknown
-
-        c = self.Ctrls
-        p = self.Profile
-
-        if tsize < 6:
-            file.SetBind(c['IncPetSize'].MakeBind([
-                f'tell $name, [{tsize+1} Pet]', p.BLF('petsel', f'{tsize+1}.txt')
-            ]))
-        else:
-            file.SetBind(c['IncPetSize'].MakeBind('nop'))
-        if tsize == 1:
-            file.SetBind(c['DecPetSize'].MakeBind('nop'))
-            file.SetBind(c['SelNextPet'].MakeBind([
-                f'petselect 0', p.BLF('petsel', f'{tsize}1.txt'), p.BLF('mmb', 'csel.txt'),
-            ]))
-            file.SetBind(c['SelPrevPet'].MakeBind([
-                f'petselect 0', p.BLF('petsel', f'{tsize}1.txt'), p.BLF('mmb', 'csel.txt'),
-            ]))
-        else:
-            selnext,selprev = tsel+1,tsel-1
-            if selnext > tsize : selnext = 1
-            if selprev < 1 : selprev = tsize
-            newsel = tsel
-            if tsize-1 < tsel : newsel = tsize-1
-            if tsize == 2 : newsel = 0
-            file.SetBind(c['DecPetSize'].MakeBind([
-                f'tell $name, [{tsize-1} Pet]', p.BLF('petsel', f'{tsize-1}{newsel}.txt')
-            ]))
-            file.SetBind(c['SelNextPet'].MakeBind([
-                f'petselect {selnext-1}', p.BLF('petsel', f'{tsize}{selnext}.txt'), p.BLF('mmb', 'csel.txt'),
-            ]))
-            file.SetBind(c['SelPrevPet'].MakeBind([
-                f'petselect {selprev-1}', p.BLF('petsel', f'{tsize}{selprev}.txt'), p.BLF('mmb', 'csel.txt'),
-            ]))
 
     def AllBindFiles(self):
         files = []

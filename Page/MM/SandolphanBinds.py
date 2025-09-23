@@ -14,6 +14,16 @@ from UI.ControlGroup import ControlGroup
 class SandolphanBinds(wx.Panel):
     petCommandKeyDefinitions = (
             {
+                'label'      : 'Select Previous Pet',
+                'ctrlName'      : 'SelPrevPet',
+                'tooltipdetail' : 'select the previous pet',
+            },
+            {
+                'label'      : 'Select Next Pet',
+                'ctrlName'      : 'SelNextPet',
+                'tooltipdetail' : 'select the next pet',
+            },
+            {
                 'label'      : 'Select All Pets',
                 'ctrlName'      : 'PetSelectAll',
                 'tooltipdetail' : 'select all of your pets',
@@ -79,6 +89,14 @@ class SandolphanBinds(wx.Panel):
         self.Page = page
 
         page.Init.update({
+
+            'SelPrevPet' : 'CTRL+COMMA',
+            'SelPrevPetResponse' : 'Orders?',
+            'SelPrevPetResponseMethod' : 'Petsay',
+
+            'SelNextPet' : 'CTRL+PERIOD',
+            'SelNextPetResponse' : 'Orders?',
+            'SelNextPetResponseMethod' : 'Petsay',
 
             'PetSelectAll' : 'NUMPAD0',
             'PetSelectAllResponse' : 'Orders?',
@@ -185,7 +203,6 @@ class SandolphanBinds(wx.Panel):
         for cb in range(6):
             checkbox = wx.CheckBox(staticbox)
             page.Ctrls[f"Pet{cb+1}Bodyguard"] = checkbox
-
             self.BGCBSizer.Add(checkbox, 0, wx.ALIGN_CENTER_VERTICAL)
 
         self.BGCBSizer.Add(HelpButton(staticbox, 'BodyguardBinds.html'), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 5)
@@ -315,29 +332,35 @@ class SandolphanBinds(wx.Panel):
     def mmSubBind(self, file, fn, grp, powers):
         profile = self.Page.Profile
 
+        file.SetBind(self.Page.Ctrls['SelNextPet'].MakeBind(['targetcustomnext alive mypet',
+            self.GetChatString('SelNextPet', 'sel'), profile.BLF('mmb', 'csel.txt')]))
+        file.SetBind(self.Page.Ctrls['SelPrevPet'].MakeBind(['targetcustomprev alive mypet',
+            self.GetChatString('SelPrevPet', 'sel'), profile.BLF('mmb', 'csel.txt')]))
         file.SetBind(self.Page.Ctrls['PetSelectAll'].MakeBind([
-            self.GetChatString('SelectAll'), profile.BLF('mmb','call.txt')]))
+            self.GetChatString('PetSelectAll'), profile.BLF('mmb','call.txt')]))
         file.SetBind(self.Page.Ctrls['PetSelectMinions'].MakeBind([
-            self.GetChatString('SelectMinions', powers[0]), profile.BLF('mmb','ctier1.txt')]))
+            self.GetChatString('PetSelectMinions', powers[0]), profile.BLF('mmb','ctier1.txt')]))
         file.SetBind(self.Page.Ctrls['PetSelectLieutenants'].MakeBind([
-            self.GetChatString('SelectLieutenants', powers[1]), profile.BLF('mmb','ctier2.txt')]))
+            self.GetChatString('PetSelectLieutenants', powers[1]), profile.BLF('mmb','ctier2.txt')]))
         file.SetBind(self.Page.Ctrls['PetSelectBoss'].MakeBind([
-            self.GetChatString('SelectBoss', powers[2]), profile.BLF('mmb','ctier3.txt')]))
+            self.GetChatString('PetSelectBoss', powers[2]), profile.BLF('mmb','ctier3.txt')]))
 
-        bgfresponse = self.Page.GetState('PetBodyguardResponse') if self.GetChatString(f"Bodyguard") else ''
+        bgfresponse = self.Page.GetState('PetBodyguardResponse') if self.GetChatString("PetBodyguard") else ''
         self.mmBGSelBind(file,bgfresponse,powers)
 
         if   grp == 'sel'       : petcom =  'petcom'
         elif grp                : petcom = f'petcompow {grp}'
         else                    : petcom =  'petcomall'
         for cmd in ('Aggressive','Defensive','Passive', 'Attack','Follow','Goto', 'Stay'):
-            file.SetBind(self.Page.Ctrls[f"Pet{cmd}"].MakeBind([self.GetChatString(cmd, grp or 'all'), f"{petcom} {cmd}"]))
+            file.SetBind(self.Page.Ctrls[f"Pet{cmd}"].MakeBind([self.GetChatString(f"Pet{cmd}", grp or 'all'), f"{petcom} {cmd}"]))
 
         file.SetBind(self.Page.Ctrls['PetChatToggle'].MakeBind(['tell $name, Non-Chatty Mode', profile.BLF('mmb',f"{fn}.txt")]))
 
     # set up "all" and "tierx" files with command binds, quiet version
     def mmQuietSubBind(self, file, fn, grp, powers):
         profile = self.Page.Profile
+        file.SetBind(self.Page.Ctrls['SelNextPet']          .MakeBind(['targetcustomnext alive mypet', profile.BLF('mmb', 'sel.txt')]))
+        file.SetBind(self.Page.Ctrls['SelPrevPet']          .MakeBind(['targetcustomprev alive mypet', profile.BLF('mmb', 'sel.txt')]))
         file.SetBind(self.Page.Ctrls['PetSelectAll']        .MakeBind(profile.BLF('mmb','all.txt')))
         file.SetBind(self.Page.Ctrls['PetSelectMinions']    .MakeBind(profile.BLF('mmb','tier1.txt')))
         file.SetBind(self.Page.Ctrls['PetSelectLieutenants'].MakeBind(profile.BLF('mmb','tier2.txt')))
@@ -371,11 +394,11 @@ class SandolphanBinds(wx.Panel):
         bosfile = profile.GetBindFile('mmb','tier3.txt')
         selfile = profile.GetBindFile('mmb','sel.txt')
 
-        self.mmQuietSubBind(allfile , "all"   , None          , powers)
+        self.mmQuietSubBind(allfile , "all"   , None      , powers)
         self.mmQuietSubBind(minfile , "tier1" , powers[0] , powers)
         self.mmQuietSubBind(ltsfile , "tier2" , powers[1] , powers)
         self.mmQuietSubBind(bosfile , "tier3" , powers[2] , powers)
-        self.mmQuietSubBind(selfile , "sel"   , 'sel'         , powers)
+        self.mmQuietSubBind(selfile , "sel"   , 'sel'     , powers)
 
         #### "Chatty" versions
         callfile = profile.GetBindFile('mmb','call.txt')
@@ -384,11 +407,11 @@ class SandolphanBinds(wx.Panel):
         cbosfile = profile.GetBindFile('mmb','ctier3.txt')
         cselfile = profile.GetBindFile('mmb','csel.txt')
 
-        self.mmSubBind(callfile , "all"   , None          , powers)
+        self.mmSubBind(callfile , "all"   , None      , powers)
         self.mmSubBind(cminfile , "tier1" , powers[0] , powers)
         self.mmSubBind(cltsfile , "tier2" , powers[1] , powers)
         self.mmSubBind(cbosfile , "tier3" , powers[2] , powers)
-        self.mmSubBind(cselfile , "sel"   , 'sel'         , powers)
+        self.mmSubBind(cselfile , "sel"   , 'sel'     , powers)
 
         return True
 
@@ -446,9 +469,9 @@ class SandolphanBinds(wx.Panel):
 
     def GetChatString(self, cmd, target:str|int = 'all'):
         response = ''
-        method = self.GetChatMethod(f'Pet{cmd}ResponseMethod', target)
+        method = self.GetChatMethod(f'{cmd}ResponseMethod', target)
         if method:
-            response = method + self.Page.GetState(f"Pet{cmd}Response")
+            response = method + self.Page.GetState(f"{cmd}Response")
         return response
 
     def CountBodyguards(self):
@@ -494,6 +517,8 @@ class SandolphanBinds(wx.Panel):
     for cmd in petCommandKeyDefinitions:
         UI.Labels[cmd['ctrlName']] = cmd['label']
     UI.Labels.update({
+        'SelPrevPetResponseMethod'           : "Pet Response",
+        'SelNextPetResponseMethod'           : "Pet Response",
         'PetSelectAllResponseMethod'         : "Pet Response",
         'PetSelectMinionsResponseMethod'     : "Pet Response",
         'PetSelectLieutenantsResponseMethod' : "Pet Response",

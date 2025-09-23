@@ -162,7 +162,7 @@ class qwyNumpad(wx.Panel):
         ResetFile.SetBind('ALT+SUBTRACT', '', page, 'petcomall def fol')
         ResetFile.SetBind('ALT+DECIMAL', '', page, [f'petselectname {uniq[0]}', profile.BLF('mmqn', '2selalt.txt')])
         ResetFile.SetBind('SHIFT+NUMPAD0', '', page, 'petcom dis')
-        command = 'powexeclocation back:2' if profile.Server == 'Homecoming' else 'powexecname'
+        command = 'powexeclocation back:2' if profile.Server() == 'Homecoming' else 'powexecname'
         ResetFile.SetBind('SHIFT+NUMPAD1', '', page, f'{command} {pnam[0]}')
         ResetFile.SetBind('SHIFT+NUMPAD2', '', page, f'{command} {pnam[1]}')
         ResetFile.SetBind('SHIFT+NUMPAD3', '', page, f'{command} {pnam[2]}')

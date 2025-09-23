@@ -238,16 +238,16 @@ class Mastermind(Page):
                 value = ctrl.GetValue().strip() # don't allow whitespace at the ends
                 names.append(value)
 
-        # we stash this away every time we calculate it so we can
-        # extract it trivially when we write binds
-        self.uniqueNames = FindSmallestUniqueSubstring(names)
-        for i in (1,2,3,4,5,6):
-            ctrl = self.Ctrls[f'Pet{i}Name']
-            # No errors if the control is disabled please
-            if not ctrl.IsEnabled() or not ctrl.GetValue() or self.uniqueNames[i-1]:
-                ctrl.RemoveError('unique')
-            else:
-                ctrl.AddError('unique', 'This pet name is not different enough to identify it uniquely.  This is likely to cause issues with many of BindControl\'s Mastermind binds.')
+            # we stash this away every time we calculate it so we can
+            # extract it trivially when we write binds
+            self.uniqueNames = FindSmallestUniqueSubstring(names)
+            for i in (1,2,3,4,5,6):
+                ctrl = self.Ctrls[f'Pet{i}Name']
+                # No errors if the control is disabled please
+                if not ctrl.IsEnabled() or not ctrl.GetValue() or self.uniqueNames[i-1]:
+                    ctrl.RemoveError('unique')
+                else:
+                    ctrl.AddError('unique', 'This pet name is not different enough to identify it uniquely.  This is likely to cause issues with many of BindControl\'s Mastermind binds.')
 
     def PopulateBindFiles(self) -> bool:
 

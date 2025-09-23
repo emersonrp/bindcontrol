@@ -347,7 +347,8 @@ class Buff(wx.Panel):
         self.OnPowerPicked()
         self.SetSizerAndFit(buffSizer)
 
-    def OnPowerPicked(self, _ = None) -> None:
+    def OnPowerPicked(self, evt = None) -> None:
+        if evt: evt.Skip()
         if self.BuffPower.HasPowerPicked():
             self.BuffPower.RemoveError("nopick")
         else:

@@ -215,6 +215,7 @@ class qwyPetMouse(wx.Panel):
     def MungeMenuTextLookup(self, matchobj):
         primary = self.Profile.Primary()
         pnam = GameData.MMPowerSets[primary]['names']
+        upgr = GameData.MMPowerSets[primary]['upgrade']
         shortprimary = re.sub(r'\s+', '', primary)
         shortpowers = [
             re.sub(r'\s+', '', pnam[0]),
@@ -233,6 +234,8 @@ class qwyPetMouse(wx.Panel):
                 return self.Profile.ProfileName()
             case 'ABB':
                 return GameData.MMPowerSets[primary]['abbrs'][n]
+            case 'UPGRADE':
+                return upgr[n]
             case 'POWER':
                 return pnam[n]
             case 'ICON':

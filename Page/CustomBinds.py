@@ -246,7 +246,7 @@ class CustomBinds(Page):
                 if deletefiles:
                     self.Profile.doDeleteBindFiles(deletefiles)
             self.Profile.SetModified()
-            self.Update()
+            self.Refresh()
             return True # successful name change
         else:
             if new:

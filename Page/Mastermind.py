@@ -170,8 +170,8 @@ class Mastermind(Page):
         ismm = self.Profile.Archetype() == "Mastermind"
         pset = self.Profile.Primary()
 
+        # disable these for non-mm even though the tab is missing so WriteBinds doesn't find them
         for control in self.Ctrls.values(): control.Enable(bool(ismm and pset))
-        self.RenamePetsButton.Enable(bool(ismm and pset))
         self.OnLevelChanged()
         if self.BindStyle() == 'Sandolphan':
             self.SandolphanPage.SynchronizeUI()
@@ -191,10 +191,13 @@ class Mastermind(Page):
         self.Profile.CheckAllConflicts()
 
         # we want to re-fill the gameplay trays if we're no longer using '2' and '4' from PetMouse
+        # TODO - should this just be part of CheckAllConflicts?
         self.Profile.Gameplay.OnKeybindProfilePicker()
 
-        if self.BindStyle() == 'Sandolphan':
+        if bindstyle == 'Sandolphan':
             self.SandolphanPage.SynchronizeUI()
+        elif bindstyle == 'qwy Numpad':
+            self.qwyNumpadPage.SynchronizeUI()
 
         if evt: evt.Skip()
 
@@ -255,6 +258,7 @@ class Mastermind(Page):
         OrderedPetBoxes = []
         petPowers = GameData.MMPowerSets[profile.Primary()]['abbrs']
         # now order them by powername, alphabetically, to match the in-game pet list
+        # We need this to get them in the right order for "petselect" in the rename bind
         for grp in sorted(petPowers):
             if grp == "min":
                 if self.PetBoxes[0].GetStaticBox().IsEnabled():
@@ -282,6 +286,8 @@ class Mastermind(Page):
                         break
         if self.Ctrls['PetBodyguard'].GetLabel():
             needUniqueNames = True
+        if self.BindStyle() in ['Sandolphan', 'qwy PetMouse']:
+            needUniqueNames = True
 
         if needUniqueNames:
             for i in range(6):
@@ -305,10 +311,10 @@ class Mastermind(Page):
                 ResetFile.SetBind(self.RenamePetsButton.MakeBind(rpCommands))
 
         ### By-name select binds.
-        # TODO - would this make more sense fully integrated into mm(Quiet)SubBind?
         for pet in range(6):
             feedback = ''
             selfile = ''
+            # TODO - would this make more sense fully integrated into mm(Quiet)SubBind?
             if self.BindStyle() == 'Sandolphan':
                 selfile = 'sel.txt'
                 if self.GetState('PetChattyDefault'):
@@ -320,10 +326,6 @@ class Mastermind(Page):
                     [feedback, f"petselectname {self.uniqueNames[pet]}", selfile]
                 )
             )
-
-        ### Next / Prev binds
-        ResetFile.SetBind(self.Ctrls['SelNextPet'].MakeBind('targetcustomnext mypet alive'))
-        ResetFile.SetBind(self.Ctrls['SelPrevPet'].MakeBind('targetcustomprev mypet alive'))
 
         ### Then, the bindstyles
         bindstyle = self.BindStyle()

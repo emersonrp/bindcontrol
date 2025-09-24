@@ -7,31 +7,16 @@ from Page.MM.SandolphanBinds import SandolphanBinds
 from Page.MM.qwyNumpad import qwyNumpad
 from Page.MM.qwyPetMouse import qwyPetMouse
 from Help import HelpButton
-import UI
 from UI.KeySelectDialog import bcKeyButton
 from UI.ControlGroup import cgTextCtrl
 
 class Mastermind(Page):
-    UI.Labels.update({
-        'Pet1Select'                         : "Select First Minion Pet",
-        'Pet2Select'                         : "Select Second Minion Pet",
-        'Pet3Select'                         : "Select Third Minion Pet",
-        'Pet4Select'                         : "Select First Lieutenant Pet",
-        'Pet5Select'                         : "Select Second Lieutenant Pet",
-        'Pet6Select'                         : "Select Boss Pet",
-
-        'SelNextPet'                         : "Select Next Pet",
-        'SelPrevPet'                         : "Select Previous Pet",
-    })
-
     def __init__(self, parent):
         super().__init__(parent)
 
         self.PetBoxes = []
 
         self.Init = {
-            'Enable' : False,
-
             'RenamePets' : '',
 
             'Pet1Select' : '',
@@ -47,23 +32,19 @@ class Mastermind(Page):
             'Pet4Name' : '',
             'Pet5Name' : '',
             'Pet6Name' : '',
-
-            'SelNextPet'  : '',
-            'SelPrevPet'  : '',
         }
-        # TODO is this Gamedata?
         self.TabTitle = "Mastermind / Pet Binds"
 
     def BuildPage(self):
 
         # get the pet names and binds to select them directly
-        PetNames  = wx.StaticBoxSizer(wx.HORIZONTAL, self, label = "Pet Names and By-Name Keybinds")
+        PetNames  = wx.StaticBoxSizer(wx.HORIZONTAL, self, label = "Pet Names and By-Name Selection")
         PetNameSB = PetNames.GetStaticBox()
         PetInner = wx.BoxSizer(wx.HORIZONTAL)
 
         for i in range(6):
             petdesc      = ['Minion 1', 'Minion 2', 'Minion 3', 'Lieutenant 1', 'Lieutenant 2', 'Boss'][i]
-            petdescshort = ['Minion 1', 'Minion 2', 'Minion 3', 'Lt 1'        , 'Lt 2'        , 'Boss'][i]
+            petdescshort = ['Min 1'   , 'Min 2'   , 'Min 3'   , 'Lt 1'        , 'Lt 2'        , 'Boss'][i]
 
             PBSB = wx.StaticBox(PetNameSB, style = wx.ALIGN_CENTER|wx.NO_BORDER, label = petdesc)
             box = wx.StaticBoxSizer(PBSB, wx.VERTICAL)
@@ -134,6 +115,7 @@ class Mastermind(Page):
         self.qwyNumpadPage   = qwyNumpad      (self, self.BindStyleNotebook)
         self.qwyPetMousePage = qwyPetMouse    (self, self.BindStyleNotebook)
 
+        self.BindStyleNotebook.AddPage(self.NoBindStylePage(), "No Binds")
         self.BindStyleNotebook.AddPage(self.SandolphanPage, "Sandolphan Binds")
         self.BindStyleNotebook.AddPage(self.qwyNumpadPage, "qwy Numpad Binds")
         self.BindStyleNotebook.AddPage(self.qwyPetMousePage, "qwy PetMouse Binds")
@@ -149,6 +131,19 @@ class Mastermind(Page):
 
         self.SynchronizeUI()
 
+    def NoBindStylePage(self):
+        page = wx.Panel(self.BindStyleNotebook)
+
+        BlankSizer = wx.BoxSizer(wx.HORIZONTAL)
+        helptext = wx.StaticText(page, wx.ID_ANY, style = wx.ALIGN_CENTER,
+                                 label = "No Mastermind bind style selected.\nBy-name selection binds will still work.")
+        helptext.SetFont(wx.Font(wx.FontInfo(16).Bold()))
+        BlankSizer.Add(helptext, 1, wx.ALIGN_CENTER_VERTICAL)
+        page.SetSizer(BlankSizer)
+        page.Layout()
+
+        return page
+
     def GetKeyBinds(self):
         binds = super().GetKeyBinds()
 
@@ -160,7 +155,7 @@ class Mastermind(Page):
         return binds
 
     def BindStyle(self):
-        return ['Sandolphan', 'qwy Numpad', 'qwy PetMouse'][self.BindStyleNotebook.GetSelection()]
+        return ['No Binds', 'Sandolphan', 'qwy Numpad', 'qwy PetMouse'][self.BindStyleNotebook.GetSelection()]
 
     def GetPetName(self, idx):
         cblabels  = ['Minion 1', 'Minion 2', 'Minion 3', 'Lt 1', 'Lt 2', 'Boss']
@@ -225,10 +220,11 @@ class Mastermind(Page):
     def CheckUndefNames(self):
         for i in (1,2,3,4,5,6):
             ctrl = self.Ctrls[f'Pet{i}Name']
+            # No errors if the control is disabled please
             if not ctrl.IsEnabled() or ctrl.GetValue():
                 ctrl.RemoveError('undef')
             else:
-                ctrl.AddError('undef', 'By-Name selection and Bodyguard Mode require the pet name be filled in.')
+                ctrl.AddError('undef', 'Many BindControl Mastermind binds require the pet name be filled in.')
 
     def CheckUniqueNames(self):
         names = []
@@ -242,6 +238,7 @@ class Mastermind(Page):
         self.uniqueNames = FindSmallestUniqueSubstring(names)
         for i in (1,2,3,4,5,6):
             ctrl = self.Ctrls[f'Pet{i}Name']
+            # No errors if the control is disabled please
             if not ctrl.IsEnabled() or not ctrl.GetValue() or self.uniqueNames[i-1]:
                 ctrl.RemoveError('unique')
             else:

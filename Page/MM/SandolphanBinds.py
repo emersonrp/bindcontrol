@@ -89,12 +89,11 @@ class SandolphanBinds(wx.Panel):
         self.Page = page
 
         page.Init.update({
-
-            'SelPrevPet' : 'CTRL+COMMA',
+            'SelPrevPet' : 'ALT+COMMA',
             'SelPrevPetResponse' : 'Orders?',
             'SelPrevPetResponseMethod' : 'Petsay',
 
-            'SelNextPet' : 'CTRL+PERIOD',
+            'SelNextPet' : 'ALT+PERIOD',
             'SelNextPetResponse' : 'Orders?',
             'SelNextPetResponseMethod' : 'Petsay',
 
@@ -516,6 +515,7 @@ class SandolphanBinds(wx.Panel):
     for cmd in petCommandKeyDefinitions:
         UI.Labels[cmd['ctrlName']] = cmd['label']
     UI.Labels.update({
+        'SelPrevPet'                         : "Select Previous Pet",
         'SelPrevPetResponseMethod'           : "Pet Response",
         'SelNextPetResponseMethod'           : "Pet Response",
         'PetSelectAllResponseMethod'         : "Pet Response",

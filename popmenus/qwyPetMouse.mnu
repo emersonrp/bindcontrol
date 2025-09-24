@@ -84,7 +84,6 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		Option "[&SHIFT+RDC] | agg" "Petcompow <<ABB0>> agg"
 		Option "[ALT+RDC] |  &def" "Petcompow <<ABB0>> def"
 		Divider
-		Divider
 		Option "Macr&o" <&macroimage "<<ICON0>>" "<<POWER0>>" "powexeclocation backward:20 <<POWER0>>$$<<RESET_BLF>>"&>
 		Option "D&ismiss" "petcompow ves dis"
 		Divider

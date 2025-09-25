@@ -6,20 +6,19 @@ import zipfile
 from pathlib import Path
 from typing import Dict
 
-from Util.Paths import GetRootDirPath
+import Util.Paths
 
 class Icon(wx.BitmapBundle):
-    def __init__(self, img:wx.Image|wx.Bitmap):
+    def __init__(self, img:wx.Image|wx.Bitmap, filename):
         super().__init__(img)
-
-        self.Filename = ""
+        self.Filename = filename
 
 Icons: Dict[str, Icon] = { }
 def GetIcon(*args) -> Icon:
 
     # If we haven't initialized the empty/fallback icon, do that now.
     if not 'Empty.png' in Icons:
-        Icons['Empty.png'] = Icon(wx.Bitmap.NewFromPNGData(transparentPNG, len(transparentPNG)))
+        Icons['Empty.png'] = Icon(wx.Bitmap.NewFromPNGData(transparentPNG, len(transparentPNG)), '')
 
     pathbits = []
     for arg in args:
@@ -29,7 +28,7 @@ def GetIcon(*args) -> Icon:
     iconpath    = Path(*pathbits).with_suffix('.png')
     iconpathstr = str(iconpath)
     if not iconpathstr in Icons:
-        base_path = GetRootDirPath()
+        base_path = Util.Paths.GetRootDirPath()
 
         iconzippath = base_path / 'icons' / 'Icons.zip'
         if iconzippath.exists():
@@ -37,16 +36,14 @@ def GetIcon(*args) -> Icon:
                 try:
                     # as_posix is how we need this to index into the ZIPfile successfully on Windows
                     icondata = iconzip.read(iconpath.as_posix())
-                    Icons[iconpathstr] = Icon(wx.Bitmap.NewFromPNGData(icondata, len(icondata)))
-                    Icons[iconpathstr].Filename = iconpathstr
+                    Icons[iconpathstr] = Icon(wx.Bitmap.NewFromPNGData(icondata, len(icondata)), iconpathstr)
                 except Exception as e:
                     wx.LogError(f"Loading icon {iconpathstr} from ZIP file failed: {e}.  This is a bug.")
 
         else:  # we don't have the ZIP file, so maybe we're running directly from source
             filepath = Path(base_path) / 'icons' / iconpath
             if os.path.exists(filepath):
-                Icons[iconpathstr] = Icon( wx.Image(str(filepath), wx.BITMAP_TYPE_ANY, -1,))
-                Icons[iconpathstr].Filename = iconpathstr
+                Icons[iconpathstr] = Icon( wx.Image(str(filepath), wx.BITMAP_TYPE_ANY, -1,), iconpathstr)
             # TODO - maybe put this behind an "if debug" sort of thing
             else:
                 wx.LogWarning(f"Missing icon: {iconpathstr}")

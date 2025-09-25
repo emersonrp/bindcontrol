@@ -179,6 +179,8 @@ def test_GenerateBindsDirectoryName(PD):
     assert PD.GenerateBindsDirectoryName() == 'first'
 
     # Doesn't use Windows reserved words
+    # TODO - this test doesn't run on non-Windows, but the code will crash
+    # on non-Windows anyway, and mocking it to pass doesn't test anything
     if platform.system() == "Windows":
         PD.Filepath = Path('Profile Really Neat.bcp') # 'prn' is reserved
         assert PD.GenerateBindsDirectoryName() == 'profi'

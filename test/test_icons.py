@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 import os
 import re
+import wx
+import pytest
 from pathlib import Path
 from Util.Incarnate import Aliases
 import GameData
-from Util.Paths import GetRootDirPath
+import Util.Paths
+import Icon
 
 def RecurseMiscPowers(menustruct):
     powerlist = []
@@ -27,7 +30,7 @@ def SplitNameAndIcon(namestr):
     else:
         return [namestr, [namestr]]
 
-icondir = GetRootDirPath() / 'icons'
+icondir = Util.Paths.GetRootDirPath() / 'icons'
 
 count = 0
 filecheck = set()
@@ -142,6 +145,68 @@ def test_inspiration_icons_exist():
                     if filename in filecheck: filecheck.remove(filename)
 
 def test_no_extra_icons():
-    for server in ['Homecoming', 'Rebirth']:
-        GameData.SetupGameData(server)
-        assert not filecheck, f"{len(filecheck)} extra icons exist: {filecheck}"
+    assert not filecheck, f"{len(filecheck)} extra icons exist: {filecheck}"
+
+def test_transparent_png():
+    _ = wx.App()
+    assert Icon.transparentPNG is not None
+
+def test_icon_class():
+    _ = wx.App()
+    empty = Icon.Icon(wx.Bitmap.NewFromPNGData(Icon.transparentPNG, len(Icon.transparentPNG)), 'Empty')
+    assert empty.Filename == 'Empty'
+    assert isinstance(empty, wx.BitmapBundle)
+
+def test_geticon():
+    _ = wx.App()
+    assert len(Icon.Icons) == 0
+    empty = Icon.GetIcon('Empty')
+    assert isinstance(empty, wx.BitmapBundle)
+    assert len(Icon.Icons) == 1
+
+def test_geticon_fromzip(monkeypatch):
+    _ = wx.App()
+    monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepath)
+    archicon = Icon.GetIcon('Archetypes', 'Tanker')
+    assert isinstance(archicon, Icon.Icon), 'Gets from ZIP file without extension'
+    assert len(Icon.Icons) == 2, 'Caches from ZIP file without extension'
+
+    alignicon = Icon.GetIcon('Alignments', 'Hero.png')
+    assert isinstance(alignicon, Icon.Icon), 'Gets from ZIP file with extension'
+    assert len(Icon.Icons) == 3, 'Caches from ZIP file with extension'
+
+    monkeypatch.setattr(wx, 'LogError', raises_exception)
+    with pytest.raises(Exception, match = 'RAISES: Loading icon'):
+        Icon.GetIcon('Gibberish', 'Not', 'Here')
+
+    monkeypatch.undo()
+
+def test_geticon_fromfile(monkeypatch):
+    _ = wx.App()
+    monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepath)
+
+    monkeypatch.setattr(Path, 'exists', lambda _: False)
+    flyicon = Icon.GetIcon('Powers', 'Flight', 'Fly')
+    assert isinstance(flyicon, Icon.Icon), 'Gets from filesystem'
+    assert len(Icon.Icons) == 4, 'Caches from filesystem'
+
+    frosticon = Icon.GetIcon('Powers', 'Icy Assault', 'Frost Breath')
+    assert isinstance(frosticon, Icon.Icon), 'Gets with spaces in name'
+    assert len(Icon.Icons) == 5, 'Caches with spaces'
+
+    monkeypatch.setattr(wx, 'LogWarning', raises_exception)
+    with pytest.raises(Exception, match = 'RAISES: Missing icon'):
+        Icon.GetIcon('Gibberish', 'Not', 'Here')
+
+    monkeypatch.undo()
+
+def test_geticonbitmap(monkeypatch):
+    monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepath)
+    archbmp = Icon.GetIconBitmap('Archetypes', 'Tanker')
+    assert isinstance(archbmp, wx.Bitmap)
+
+#####
+def fixturepath():
+    return Path(os.path.abspath(__file__)).parent / 'fixtures'
+
+def raises_exception(input): raise(Exception(f"RAISES: {input}"))

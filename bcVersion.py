@@ -2,14 +2,14 @@ import platform
 import os
 import shutil
 import subprocess
-from Util.Paths import GetRootDirPath
+import Util.Paths
 
 def current_version() -> str:
 
     version = None
     # version.txt gets written/bundled by tools/build_windows.bat
     try:
-        base_path = GetRootDirPath()
+        base_path = Util.Paths.GetRootDirPath()
         file_path = base_path / "version.txt"
         version = file_path.read_text().strip()
     except Exception:
@@ -42,14 +42,11 @@ def get_git_tag(path=None) -> str:
     return tag
 
 def do_git(command, path) -> str:
-    tag = None
+    tag = ''
     proc = subprocess.Popen(command.split(), stdout=subprocess.PIPE, cwd=path)
-    out  = proc.stdout
-    if out :
+    if out:= proc.stdout:
         tag = out.read().decode('utf-8')
-    if tag:
-        return tag.strip()
-    return ''
+    return tag.strip()
 
 ### two functions below from https://github.com/scivision/detect-windows-subsystem-for-linux
 #
@@ -81,7 +78,6 @@ def is_wsl(v: str = platform.uname().release) -> int:
         return 2
 
     return 0
-
 
 def wsl_available() -> int:
     ### detect if Windows Subsystem for Linux is available from Windows

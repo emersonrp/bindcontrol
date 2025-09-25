@@ -1695,7 +1695,7 @@ class MovementPowers(Page):
                 'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
                 str(turnoff),
                 't $name, Binds Reset',
-                curfile.BaseReset(),
+                self.Profile.ResetFile().BLF(),
                 f"{BLF()} {gamepath}000000.txt"
             ]
         )

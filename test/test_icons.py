@@ -1,22 +1,10 @@
 #!/usr/bin/env python3
 import os
 import re
-import sys
-import inspect
 from pathlib import Path
 from Util.Incarnate import Aliases
-
-
-currframe = inspect.currentframe()
-if currframe:
-    currentdir = os.path.dirname(os.path.abspath(inspect.getfile(currframe)))
-    parentdir = os.path.dirname(currentdir)
-    sys.path.insert(0, parentdir)
-else:
-    assert currframe != None
-    exit()
-
 import GameData
+from Util.Paths import GetRootDirPath
 
 def RecurseMiscPowers(menustruct):
     powerlist = []
@@ -27,11 +15,7 @@ def RecurseMiscPowers(menustruct):
             powerlist.extend(plist)
         elif isinstance(data, list):
             for item in data:
-                if isinstance(item, str):
-                    powerlist.append(item)
-                else:
-                    plist = RecurseMiscPowers(item)
-                    powerlist.extend(plist)
+                powerlist.append(item)
 
     return powerlist
 
@@ -43,18 +27,20 @@ def SplitNameAndIcon(namestr):
     else:
         return [namestr, [namestr]]
 
+icondir = GetRootDirPath() / 'icons'
+
 count = 0
 filecheck = set()
-for filename in Path(f"{parentdir}/icons/Archetypes/").glob('**/*.png'):
+for filename in Path(icondir / "Archetypes").glob('**/*.png'):
     filecheck.add(str(filename))
-for filename in Path(f"{parentdir}/icons/Origins/").glob('**/*.png'):
+for filename in Path(icondir / "Origins").glob('**/*.png'):
     filecheck.add(str(filename))
-for filename in Path(f"{parentdir}/icons/Powers/").glob('**/*.png'):
+for filename in Path(icondir / "Powers").glob('**/*.png'):
     filecheck.add(str(filename))
-for filename in Path(f"{parentdir}/icons/Incarnate/").glob('**/*.png'):
+for filename in Path(icondir / "Incarnate").glob('**/*.png'):
     if not re.search('Disable.png', str(filename)): # hmm
         filecheck.add(str(filename))
-for filename in Path(f"{parentdir}/icons/Inspirations/").glob('**/*.png'):
+for filename in Path(icondir / "Inspirations").glob('**/*.png'):
     filecheck.add(str(filename))
 
 def test_archetype_icons_exist():
@@ -63,7 +49,7 @@ def test_archetype_icons_exist():
         # Archetype, Primary, and Secondary
         for archname, archdata in GameData.Archetypes.items():
             archname = re.sub(r'\W+', '', archname)
-            filename = f"{parentdir}/icons/Archetypes/{archname}.png"
+            filename = str(icondir / "Archetypes" / f"{archname}.png")
             assert os.path.exists(filename), f"Archetype icon missing: {filename}"
             if filename in filecheck: filecheck.remove(filename)
 
@@ -75,11 +61,11 @@ def test_archetype_icons_exist():
                             [(power, items)] = power.items()
                             for p in items:
                                 p = re.sub(r'\W+', '', p)
-                                filename = f"{parentdir}/icons/Powers/{powerset}/{p}.png"
+                                filename = str(icondir / "Powers" / powerset / f"{p}.png")
                                 assert os.path.exists(filename), f"Powers icon missing: {filename}"
                                 if filename in filecheck: filecheck.remove(filename)
                         power = re.sub(r'\W+', '', power)
-                        filename = f"{parentdir}/icons/Powers/{powerset}/{power}.png"
+                        filename = str(icondir / "Powers" / powerset / f"{power}.png")
                         assert os.path.exists(filename), f"Powers icon missing: {filename}"
                         if filename in filecheck: filecheck.remove(filename)
 
@@ -88,7 +74,7 @@ def test_origin_icons_exist():
         GameData.SetupGameData(server)
         # Origins
         for origin in GameData.Origins:
-            filename = f"{parentdir}/icons/Origins/{origin}.png"
+            filename = str(icondir / "Origins" / f"{origin}.png")
             assert os.path.exists(filename), f"Origins icon missing: {filename}"
             if filename in filecheck: filecheck.remove(filename)
 
@@ -100,7 +86,7 @@ def test_pool_power_icons_exist():
             for power in pool:
                 power = re.sub(r'\W+', '', power)
                 poolname = re.sub(r'\W+', '', poolname)
-                filename = f"{parentdir}/icons/Powers/{poolname}/{power}.png"
+                filename = str(icondir / "Powers" / poolname / f"{power}.png")
                 assert os.path.exists(filename), f"Pool power icond missing: {filename}"
                 if filename in filecheck: filecheck.remove(filename)
 
@@ -112,7 +98,7 @@ def test_incarnate_icons_exist():
             for type in slotdata['Types']:
                 aliasedtype = Aliases.get(type, type)
                 for rarity in ['Common', 'Uncommon', 'Rare', 'VeryRare']:
-                    filename = f"{parentdir}/icons/Incarnate/Incarnate_{slot}_{aliasedtype}_{rarity}.png"
+                    filename = str(icondir / "Incarnate" / f"Incarnate_{slot}_{aliasedtype}_{rarity}.png")
                     assert os.path.exists(filename), f"Incarnate icon missing: {filename}"
                     if filename in filecheck: filecheck.remove(filename)
 
@@ -128,7 +114,7 @@ def test_miscpowers_icons_exist():
             power = re.sub(r'[^\w|]+', '', power)
             _, icon = SplitNameAndIcon(power)
             icon = '_'.join(icon)
-            filename = f'{parentdir}/icons/Powers/Misc/{icon}.png'
+            filename = str(icondir / "Powers" / "Misc" / f"{icon}.png")
             assert os.path.exists(filename), f"Misc Powers icon missing: {filename}"
             if filename in filecheck: filecheck.remove(filename)
 
@@ -139,7 +125,7 @@ def test_temppowers_icons_exist():
             power = re.sub(r'[^\w|]+', '', power)
             _, icon = SplitNameAndIcon(power)
             icon = '_'.join(icon)
-            filename = f'{parentdir}/icons/Powers/Temp/{icon}.png'
+            filename = str(icondir / "Powers" / "Temp" / f"{icon}.png")
             assert os.path.exists(filename), f"Temp Powers icon missing: {filename}"
             if filename in filecheck: filecheck.remove(filename)
 
@@ -151,7 +137,7 @@ def test_inspiration_icons_exist():
             for _, data in type.items():
                 for insp in data['tiers']:
                     insp = re.sub(r'\W+', '',  insp)
-                    filename = f"{parentdir}/icons/Inspirations/{insp}.png"
+                    filename = str(icondir / "Inspirations" / f"{insp}.png")
                     assert os.path.exists(filename), f"Inspiration icon missing: {filename}"
                     if filename in filecheck: filecheck.remove(filename)
 

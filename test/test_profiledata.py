@@ -212,8 +212,7 @@ def test_GenerateBindsDirectoryName(monkeypatch, PD):
     # TODO - as mocked, this test doesn't actually test anything
     # but I've gone ahead and done it just for the sake of coverage
     monkeypatch.setattr(platform, 'system', lambda: 'Windows')
-    setattr(os.path, 'isreserved', None) # ugh
-    monkeypatch.setattr(os.path, 'isreserved', lambda _: True)
+    monkeypatch.setattr(os.path, 'isreserved', lambda _: True, raising = False)
     PD.Filepath = Path('Profile Really Neat.bcp') # 'prn' is reserved
     assert PD.GenerateBindsDirectoryName() == 'profi'
 

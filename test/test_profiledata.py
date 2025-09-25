@@ -209,12 +209,13 @@ def test_GenerateBindsDirectoryName(monkeypatch, PD):
     assert PD.GenerateBindsDirectoryName() == ''
     monkeypatch.undo()
 
-    # Doesn't use Windows reserved words
-    # TODO - this test doesn't run on non-Windows, but the code will crash
-    # on non-Windows anyway, and mocking it to pass doesn't test anything
-    if platform.system() == "Windows":
-        PD.Filepath = Path('Profile Really Neat.bcp') # 'prn' is reserved
-        assert PD.GenerateBindsDirectoryName() == 'profi'
+    # TODO - as mocked, this test doesn't actually test anything
+    # but I've gone ahead and done it just for the sake of coverage
+    monkeypatch.setattr(platform, 'system', lambda: 'Windows')
+    setattr(os.path, 'isreserved', None) # ugh
+    monkeypatch.setattr(os.path, 'isreserved', lambda _: True)
+    PD.Filepath = Path('Profile Really Neat.bcp') # 'prn' is reserved
+    assert PD.GenerateBindsDirectoryName() == 'profi'
 
 def test_doSaveAsDefault(PD, config):
     config.Write('DefaultProfile', DefaultProfile)

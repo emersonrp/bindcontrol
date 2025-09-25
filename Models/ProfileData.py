@@ -7,7 +7,7 @@ import base64
 
 import GameData
 
-from Util.Paths import ProfilePath, CheckProfileForBindsDir
+import Util.Paths
 
 class ProfileData(dict):
     def __init__(self, config, filename = None, newname = None, profiledata = {}) -> None:
@@ -38,7 +38,7 @@ class ProfileData(dict):
             self.ClearModified()
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
         elif newname:
-            self.Filepath = ProfilePath(self.Config) / f"{newname}.bcp"
+            self.Filepath = Util.Paths.ProfilePath(self.Config) / f"{newname}.bcp"
             # only load the default profile if we didn't pass in some data explicitly
             if not profiledata:
                 if jsonstring := self.GetDefaultProfileJSON():
@@ -142,7 +142,7 @@ class ProfileData(dict):
         # Let's also fall back on the first (non-space) five of the profileName as an option
         fallback = re.sub(r'\s+', '', profileName)[:5].lower()
         # ...if it's not already someone else's
-        existingProfile = CheckProfileForBindsDir(self.Config, fallback)
+        existingProfile = Util.Paths.CheckProfileForBindsDir(self.Config, fallback)
         if existingProfile and (existingProfile != self.ProfileName()):
             fallback = ''
 
@@ -157,7 +157,7 @@ class ProfileData(dict):
             if len(bdc) < 2: bindsdircandidates.remove(bdc)
 
             # check if it already exists and belongs to someone else
-            existingProfile = CheckProfileForBindsDir(self.Config, bdc)
+            existingProfile = Util.Paths.CheckProfileForBindsDir(self.Config, bdc)
             if existingProfile and (existingProfile != self.ProfileName()):
                 bindsdircandidates.remove(bdc)
 
@@ -259,11 +259,10 @@ class ProfileData(dict):
         return False
 
     def doSaveToFile(self) -> None:
-
-        ProfilePath(self.Config).mkdir( parents = True, exist_ok = True )
+        Util.Paths.ProfilePath(self.Config).mkdir( parents = True, exist_ok = True )
 
         if not self.Filepath:
-            raise Exception(f"No Filename set in Profile {self.ProfileName()}!  Aborting save.")
+            raise Exception(f"No Filepath set in Profile {self.ProfileName()}!  Aborting save.")
         savefile = self.Filepath
 
         try:

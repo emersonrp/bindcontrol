@@ -9,6 +9,7 @@ from pathlib import Path, PureWindowsPath
 from BindFile import BindFile
 from Util.DefaultProfile import DefaultProfile
 from Util.BuildFiles import ParseBuildFile
+import Util.Paths
 
 def test_init_empty():
     with pytest.raises(Exception, match = 'neither filename nor newname'):
@@ -17,7 +18,7 @@ def test_init_empty():
 def test_init_newname(config, monkeypatch):
     PD = ProfileData.ProfileData(config, newname = 'test')
     assert PD.Config             == config
-    assert PD.Filepath           == ProfileData.ProfilePath(config) / 'test.bcp'
+    assert PD.Filepath           == Util.Paths.ProfilePath(config) / 'test.bcp'
     assert PD['ProfileBindsDir'] == 'test'
     assert PD.Modified           == True
 
@@ -143,8 +144,14 @@ def test_FillWith(PD):
 
 def test_UpdateData(PD):
     # updates existing data
+    assert PD.Modified == False
+
     PD.UpdateData('General', 'Primary', 'Fubble')
     assert PD['General']['Primary'] == 'Fubble'
+    assert PD.Modified == True
+
+    PD.UpdateData('General', 'Primary', 'Crab Spider Soldier')
+    assert PD.Modified == False
 
     # will create keys as needed
     PD.UpdateData('NewThing', 'MakeIt', 'Work')
@@ -184,7 +191,7 @@ def test_GetCustomID(PD):
     assert newid == 11
     assert PD['MaxCustomID'] == 11
 
-def test_GenerateBindsDirectoryName(PD):
+def test_GenerateBindsDirectoryName(monkeypatch, PD):
     # Uses first letters of multiple words
     PD.Filepath = Path('Multiple Words Testing.bcp')
     assert PD.GenerateBindsDirectoryName() == 'mwt'
@@ -197,12 +204,22 @@ def test_GenerateBindsDirectoryName(PD):
     PD.Filepath = Path('Firsttest.bcp')
     assert PD.GenerateBindsDirectoryName() == 'first'
 
+    PD.Filepath = Path('Check Again Multi Word.bcp')
+    monkeypatch.setattr(Util.Paths, 'CheckProfileForBindsDir', lambda _,__: 'glamrock')
+    assert PD.GenerateBindsDirectoryName() == ''
+    monkeypatch.undo()
+
     # Doesn't use Windows reserved words
     # TODO - this test doesn't run on non-Windows, but the code will crash
     # on non-Windows anyway, and mocking it to pass doesn't test anything
     if platform.system() == "Windows":
         PD.Filepath = Path('Profile Really Neat.bcp') # 'prn' is reserved
         assert PD.GenerateBindsDirectoryName() == 'profi'
+
+def test_doSaveAsDefault(PD, config):
+    config.Write('DefaultProfile', DefaultProfile)
+    PD.doSaveAsDefault()
+    assert config.Read('DefaultProfile') != DefaultProfile, "Saves a new Default Profile"
 
 def test_GetDefaultProfileJSON(PD, config, monkeypatch):
     monkeypatch.undo() # get rid of "Read" monkeypatch on config
@@ -242,7 +259,7 @@ def test_BindsDirNotMine(monkeypatch, PD):
     idfile.unlink()
     PD.BindsDir().rmdir()
 
-def test_FileHasChanged(config):
+def test_doSaveToFile(config, monkeypatch):
     PD = ProfileData.ProfileData(config, newname = "test")
 
     PD.doSaveToFile()
@@ -253,6 +270,18 @@ def test_FileHasChanged(config):
         assert PD.FileHasChanged() is True
 
         PD.Filepath.unlink()
+        assert PD.FileHasChanged() is False
+
+        monkeypatch.setattr(PD, 'ClearModified', raises_exception)
+        with pytest.raises(Exception, match = 'Problem saving to profile'):
+            PD.doSaveToFile()
+        monkeypatch.undo()
+
+        PD.Filepath = None
+        with pytest.raises(Exception, match = 'No Filepath set'):
+            PD.doSaveToFile()
+
+
 #########
 def raises_exception(*args): raise(Exception)
 

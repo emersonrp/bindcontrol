@@ -68,9 +68,6 @@ class BindFile():
 
         self.KeyBinds[keybind.Key] = keybind
 
-    def BaseReset(self) -> str:
-        return f'{BLF()} {PureWindowsPath(self.GameBindsDir) / "reset.txt"}'
-
     def BLF(self) -> str:
         return f'{BLF()} {self.GamePath}'
 

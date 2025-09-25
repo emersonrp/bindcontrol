@@ -42,9 +42,10 @@ class ProfileData(dict):
             # only load the default profile if we didn't pass in some data explicitly
             if not profiledata:
                 if jsonstring := self.GetDefaultProfileJSON():
-                    if data := json.loads(jsonstring):
+                    try:
+                        data = json.loads(jsonstring)
                         self.FillWith(data)
-                    else:
+                    except Exception:
                         raise Exception(f"Something broke while loading Default Profile.  This is a bug.")
 
             self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()

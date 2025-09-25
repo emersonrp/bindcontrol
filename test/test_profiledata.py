@@ -14,16 +14,34 @@ def test_init_empty():
     with pytest.raises(Exception, match = 'neither filename nor newname'):
         ProfileData.ProfileData(config)
 
-def test_init_newname(config):
+def test_init_newname(config, monkeypatch):
     PD = ProfileData.ProfileData(config, newname = 'test')
     assert PD.Config             == config
     assert PD.Filepath           == ProfileData.ProfilePath(config) / 'test.bcp'
     assert PD['ProfileBindsDir'] == 'test'
     assert PD.Modified           == True
 
-def test_init_buildfile(config, monkeypatch):
+    monkeypatch.setattr(ProfileData.ProfileData, 'GenerateBindsDirectoryName', lambda _: '')
+    with pytest.raises(Exception, match = f'sane Binds Directory'):
+        ProfileData.ProfileData(config, newname = 'nobindsdir')
+    monkeypatch.undo()
+
+def test_defaultprofile(config, monkeypatch):
     monkeypatch.undo() # get rid of "Read" monkeypatch on config
     config.Write('DefaultProfile', DefaultProfile)
+    # newname + no profiledata == use Default Profile
+    PD = ProfileData.ProfileData(config, newname = 'test')
+    assert PD['General']['Archetype'] == 'Blaster'
+    assert PD['General']['Origin'] == 'Magic'
+    assert PD['General']['Server'] == 'Homecoming'
+    assert PD['General']['Primary'] == 'Archery'
+    assert PD['General']['Secondary'] == 'Atomic Manipulation'
+
+    monkeypatch.setattr(json, 'loads', raises_exception)
+    with pytest.raises(Exception, match = f'while loading Default Profile'):
+        ProfileData.ProfileData(config, newname = 'explode')
+
+def test_init_buildfile(config):
     buildfile = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'buildfile.txt'
     profiledata = { 'General' : ParseBuildFile(buildfile) }
     PD = ProfileData.ProfileData(config, newname = 'fubble', profiledata = profiledata)
@@ -156,8 +174,9 @@ def test_UpdateData(PD):
     assert PD['CustomBinds'][0]['CustomID'] == 2
     assert PD['CustomBinds'][0]['Type']     == 'SecondBind'
 
-
-    # TODO - test sending JSON in as a value to make sure it gets de-JSON'd
+    PD.UpdateData('General', 'Stuff', '{"Primary" : "Ice Capades", "Secondary" : "Freestyle"}')
+    assert PD['General']['Stuff']['Primary'] == 'Ice Capades'
+    assert PD['General']['Stuff']['Secondary'] == 'Freestyle'
 
 def test_GetCustomID(PD):
     assert PD['MaxCustomID'] == 10
@@ -235,6 +254,8 @@ def test_FileHasChanged(config):
 
         PD.Filepath.unlink()
 #########
+def raises_exception(*args): raise(Exception)
+
 @pytest.fixture(autouse = True)
 def config(tmp_path, monkeypatch):
     _ = wx.App()

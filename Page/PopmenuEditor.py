@@ -171,11 +171,17 @@ class PopmenuEditor(Page):
 
         Sizer.Add(splitter, 1, wx.EXPAND)
 
-        # Do this once, at startup.  DO NOT PUT THIS IN SynchronizeUI;  it can
-        # blow away unsaved changes with no recourse.
-        self.LoadMenusFromMenuDir()
+        self.InitialLoadComplete = False
 
         self.Layout()
+
+    def LoadMenusIfNeeded(self):
+        if not self.InitialLoadComplete:
+            # Do this once, the first time we focus the page.
+            # DO NOT PUT THIS IN SynchronizeUI;  it will blow away
+            # unsaved changes with no recourse.
+            self.LoadMenusFromMenuDir()
+            self.InitialLoadComplete = True
 
     def GetMenuPath(self, _ = None):
         if not (gamepath := GetValidGamePath(self.Profile.Server())):
@@ -307,14 +313,14 @@ class PopmenuEditor(Page):
         if menudata: self.MenuIDList[menuId] = menudata
         return menuitem
 
-
     def LoadMenusFromMenuDir(self) -> None:
-        menupath = GetValidGamePath(self.Profile.Server())
-
-        if menupath:
+        # Do this once, the first time we focus the page.
+        # DO NOT PUT THIS IN SynchronizeUI;  it will blow away
+        # unsaved changes with no recourse.
+        if gamepath := GetValidGamePath(self.Profile.Server()):
             self.MenuIDList = {}
             self.MenuListCtrl.DeleteAllItems()
-            if menupath := self.GetMenuPath(menupath):
+            if menupath := self.GetMenuPath(gamepath):
                 for menufile in sorted(menupath.glob('*.mnu', case_sensitive = False)):
                     with menufile.open() as f:
                         menuname = ''

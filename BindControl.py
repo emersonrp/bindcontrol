@@ -45,12 +45,7 @@ class Main(wx.Frame):
         self.about_info = None
 
         stdpaths = wx.StandardPaths.Get()
-
-        if platform.system() == "Linux":
-            stdpaths.SetFileLayout(stdpaths.FileLayout_XDG)
-
-        config = wx.FileConfig('bindcontrol')
-        wx.ConfigBase.Set(config)
+        config = wx.ConfigBase.Get()
         # Check each config bit for existence and set to default if no
         if not config.Exists('GamePath'):
             if platform.system() == 'Windows':
@@ -681,16 +676,11 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         import functools
         builtins.print = functools.partial(print, flush=True)
 
-        self.Profile = None  # needed inside Main()
-
-
-        input_profile = None
-        filename = sys.argv[1] if len(sys.argv) == 2 else None
-        if filename:
-            if re.search(r'\.bcp$', filename):
-                input_profile = filename
-
         self.Init()
+
+        return True
+
+    def Populate(self, input_profile):
         with wx.WindowDisabler():
             _ = wx.BusyInfo('Initializing BindControl...')
             wx.GetApp().Yield()
@@ -705,8 +695,6 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
 
         self.Main.Show()
 
-        return True
-
 if __name__ == "__main__":
 
     argv = sys.argv
@@ -718,17 +706,23 @@ if __name__ == "__main__":
         print("")
         exit()
 
+    input_profile = ''
     filename = argv[1] if len(argv) == 2 else None
     if filename:
-        if not re.search(r'\.bcp$', filename):
-            print("")
-            print("BindControl can only open *.bcp files")
-            print("")
-            exit()
+        if re.search(r'\.bcp$', filename):
+            input_profile = filename
 
     app = MyApp(redirect=False)
 
-    config = wx.ConfigBase.Get()
+    stdpaths = wx.StandardPaths.Get()
+    if platform.system() == "Linux":
+        stdpaths.SetFileLayout(stdpaths.FileLayout_XDG)
+
+    config = wx.FileConfig('bindcontrol')
+    wx.ConfigBase.Set(config)
+
+    app.Populate(input_profile)
+
     if config.ReadBool('ShowInspector'):
         import wx.lib.inspection
         wx.lib.inspection.InspectionTool().Show()

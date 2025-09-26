@@ -295,6 +295,7 @@ class Main(wx.Frame):
             if tabname == "Popmenu Editor":
                 self.BottomButtonPanel.Hide()
                 if self.Profile:
+                    self.Profile.PopmenuEditor.LoadMenusIfNeeded()
                     self.Profile.PopmenuEditor.SynchronizeUI()
             else:
                 self.BottomButtonPanel.Show(True)

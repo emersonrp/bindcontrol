@@ -175,8 +175,8 @@ class PopmenuEditor(Page):
 
         self.Layout()
 
-    def LoadMenusIfNeeded(self):
-        if not self.InitialLoadComplete:
+    def LoadMenusIfNeeded(self, force = False):
+        if not self.InitialLoadComplete or force:
             # Do this once, the first time we focus the page.
             # DO NOT PUT THIS IN SynchronizeUI;  it will blow away
             # unsaved changes with no recourse.
@@ -409,7 +409,6 @@ class PopmenuEditor(Page):
                     mlc.DeleteItem(item)
                     mlc.Refresh()
                 return False
-
 
     def OnDeleteMenuButton(self, _) -> None:
         mlc = self.MenuListCtrl

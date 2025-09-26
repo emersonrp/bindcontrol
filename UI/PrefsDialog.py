@@ -303,14 +303,26 @@ class PrefsDialog(wx.Dialog):
     def ShowAndUpdatePrefs(self) -> None:
         if self.ShowModal() == wx.ID_OK:
             config = wx.ConfigBase.Get()
+
+            # check if we changed either GameDir so we know whether to force PopmenuEditor to reload itself
+            changedGameDir = False
+            if self.gameDirPicker.GetPath() != config.Read('GamePath'): changedGameDir = True
+            if self.gameDirRebirthPicker.GetPath() != config.Read('GameRebirthPath'): changedGameDir = True
+
+            # Ditto check if reset key changed
+            changedResetKey = self.ResetKey.GetLabel() == config.Read('ResetKey')
+
+            ###
             config.Write('GamePath', self.gameDirPicker.GetPath())
             config.Write('GameRebirthPath', self.gameDirRebirthPicker.GetPath())
+
             config.Write('GameLang', self.gameLangPicker.GetStringSelection())
             config.Write('BindPath', self.bindsDirPicker.GetPath())
             if self.gameBindsDirPicker:
                 config.Write('GameBindPath', self.gameBindsDirPicker.GetValue())
             config.WriteBool('UseSplitModKeys', self.UseSplitModKeys.GetValue())
             config.WriteBool('FlushAllBinds', self.FlushAllBinds.GetValue())
+
             config.Write('ResetKey', self.ResetKey.GetLabel())
 
             config.WriteBool('StartWithLastProfile', self.StartWithLastProfile.GetValue())
@@ -334,14 +346,17 @@ class PrefsDialog(wx.Dialog):
 
             # This AAAAALMOST has me ready to add pubsub as a dependence.  Almost.
             if profile := wx.App.Get().Main.Profile:
-                # repopulate the Popmenu Editor, in case we fiddled with GameDir
-                profile.PopmenuEditor.SynchronizeUI()
+                if changedGameDir:
+                    # repopulate the Popmenu Editor, if we fiddled with GameDir
+                    profile.PopmenuEditor.LoadMenusIfNeeded(force = True)
+                    profile.PopmenuEditor.SynchronizeUI()
 
-                # Update PetMouse's display re: GameDir
-                profile.Mastermind.qwyPetMousePage.CheckPopmenuPath()
+                    # Update PetMouse's display re: GameDir
+                    profile.Mastermind.qwyPetMousePage.CheckPopmenuPath()
 
-                # highlight buttons as needed in case we fiddled with ReseyKey
-                profile.CheckAllConflicts()
+                if changedResetKey:
+                    # highlight buttons as needed if we fiddled with ResetKey
+                    profile.CheckAllConflicts()
 
 class controllerModPicker(wx.Choice):
     def __init__(self, *args, **kwargs):

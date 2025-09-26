@@ -30,7 +30,7 @@ def test_dirs():
 
     assert t.dirs('UDFBLR') == "$$down 1$$forw 1$$right 1"
 
-def test_blf(config):
+def test_blf():
     t = tObject(FakeProfile('Homecoming'))
     assert t.BLF('AJ') == "bindloadfilesilent c:\\TestPath\\AJ\\AJ000000.txt"
 
@@ -45,15 +45,6 @@ def test_blf(config):
     assert t.BLF('sf', 's') == "bindloadfilesilent c:\\TestPath\\SF\\SF111111s.txt"
 
 #####
-@pytest.fixture
-def config():
-    _ = wx.App()
-    config = wx.FileConfig()
-
-    yield config
-
-    config.DeleteAll()
-
 class FakeProfile(object):
     def __init__(self, server):
         self.ServerName = server

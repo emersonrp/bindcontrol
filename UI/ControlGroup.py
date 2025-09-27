@@ -44,7 +44,7 @@ class ControlGroup(wx.StaticBoxSizer):
        ):
 
         if not ctlName:
-            wx.LogError(f"Tried to make a labeled control without a CtlName.  This is a bug.")
+            wx.LogError("Tried to make a labeled control without a CtlName.  This is a bug.")
             raise(Exception)
 
         Init      = self.Page.Init

@@ -1,6 +1,7 @@
 #!/usr/sbin/python
 import wx
-import os, platform
+import os
+import platform
 import pytest
 import json
 import Models.ProfileData as ProfileData
@@ -20,10 +21,10 @@ def test_init_newname(config, monkeypatch):
     assert PD.Config             == config
     assert PD.Filepath           == Util.Paths.ProfilePath(config) / 'test.bcp'
     assert PD['ProfileBindsDir'] == 'test'
-    assert PD.Modified           == True
+    assert PD.Modified
 
     monkeypatch.setattr(ProfileData.ProfileData, 'GenerateBindsDirectoryName', lambda _: '')
-    with pytest.raises(Exception, match = f'sane Binds Directory'):
+    with pytest.raises(Exception, match = 'sane Binds Directory'):
         ProfileData.ProfileData(config, newname = 'nobindsdir')
     monkeypatch.undo()
 
@@ -39,7 +40,7 @@ def test_defaultprofile(config, monkeypatch):
     assert PD['General']['Secondary'] == 'Atomic Manipulation'
 
     monkeypatch.setattr(json, 'loads', raises_exception)
-    with pytest.raises(Exception, match = f'while loading Default Profile'):
+    with pytest.raises(Exception, match = 'while loading Default Profile'):
         ProfileData.ProfileData(config, newname = 'explode')
 
 def test_init_buildfile(config):
@@ -92,18 +93,18 @@ def test_init_filename(tmp_path):
         ProfileData.ProfileData(config, filename = str(profile_path))
 
     profile_path.write_text('{}')
-    with pytest.raises(Exception, match = f'Something broke while loading'):
+    with pytest.raises(Exception, match = 'Something broke while loading'):
         ProfileData.ProfileData(config, filename = str(profile_path))
 
     profile_path.write_text('%#aflj BAD JSON BAD" $@!')
-    with pytest.raises(Exception, match = f'Something broke while loading'):
+    with pytest.raises(Exception, match = 'Something broke while loading'):
         ProfileData.ProfileData(config, filename = str(profile_path))
     profile_path.unlink()
 
 def test_accessors(config, monkeypatch, tmp_path, PD):
 
     assert PD.LastModTime     == PD.Filepath.stat().st_mtime_ns
-    assert PD.Modified        == False
+    assert not PD.Modified
     assert PD.Server          == 'Rebirth'
     assert PD.ProfileName()   == 'testprofile'
     assert PD.ProfileIDFile() == PD.BindsDir() / 'bcprofileid.txt'
@@ -114,7 +115,7 @@ def test_accessors(config, monkeypatch, tmp_path, PD):
     assert PD.GameBindsDir()  == PD.BindsDir()
 
 # TODO TODO TODO - move this test somewhere else when we make a class for ProfileBindFiles or something
-def test_GetBindFile(PD):
+def test_GetBindFile(monkeypatch, PD):
     return
     resetfile = PD.ResetFile()
     assert resetfile == PD.GetBindFile('reset.txt')
@@ -144,14 +145,14 @@ def test_FillWith(PD):
 
 def test_UpdateData(PD):
     # updates existing data
-    assert PD.Modified == False
+    assert not PD.Modified
 
     PD.UpdateData('General', 'Primary', 'Fubble')
     assert PD['General']['Primary'] == 'Fubble'
-    assert PD.Modified == True
+    assert PD.Modified
 
     PD.UpdateData('General', 'Primary', 'Crab Spider Soldier')
-    assert PD.Modified == False
+    assert not PD.Modified
 
     # will create keys as needed
     PD.UpdateData('NewThing', 'MakeIt', 'Work')

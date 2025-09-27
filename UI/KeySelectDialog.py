@@ -10,6 +10,7 @@ import wx.lib.newevent
 
 import Page
 
+from BindFile import KeyBind
 import UI
 from UI.ErrorControls import ErrorControlMixin
 from bcController import bcController
@@ -59,7 +60,7 @@ class KeySelectDialog(wx.Dialog):
 
         self.PressedKeys = set()
 
-        self.SetKeymap();
+        self.SetKeymap()
 
         self.modKeys: List[str] = [] # gets set every ShowModal() call
         self.dualKeys = ['SHIFT','CTRL','ALT'] # keys which might be mod and might be trigger
@@ -78,7 +79,7 @@ class KeySelectDialog(wx.Dialog):
         desc = f"Press the key you want bound to {self.Desc}\n(Right-click a key button to clear it.)"
 
         # is this ugly?
-        sizer = wx.BoxSizer(wx.VERTICAL);
+        sizer = wx.BoxSizer(wx.VERTICAL)
 
         self.kbDesc = wx.StaticText     ( self, -1, desc,                 style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
         self.kbBind = wx.html.HtmlWindow( self, -1, size=wx.Size(450,60), style=wx.html.HW_SCROLLBAR_NEVER)
@@ -87,9 +88,9 @@ class KeySelectDialog(wx.Dialog):
 
         self.ShowBind()
 
-        sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5);
-        sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL);
-        sizer.Add( self.kbErr , 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5);
+        sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
+        sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL)
+        sizer.Add( self.kbErr , 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
         sizer.AddSpacer(15)
 
         if(modKeyFlags):
@@ -99,8 +100,8 @@ class KeySelectDialog(wx.Dialog):
             self.SeparateLRChooser.SetValue( wx.ConfigBase.Get().ReadBool('UseSplitModKeys') )
 
         # Wrap everything in a vbox to add some padding
-        vbox = wx.BoxSizer(wx.VERTICAL);
-        vbox.Add(sizer, 0, wx.EXPAND|wx.ALL, 10);
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        vbox.Add(sizer, 0, wx.EXPAND|wx.ALL, 10)
 
         # clearly I'm thinking of this the wrong way.
         self.SeparateLRChooser.Bind(wx.EVT_KEY_UP    , self.handleKeyUp )
@@ -123,7 +124,7 @@ class KeySelectDialog(wx.Dialog):
         buttonSizer = self.CreateButtonSizer(wx.OK|wx.CANCEL|wx.NO_DEFAULT)
         vbox.Add(buttonSizer, 0, wx.ALIGN_CENTER|wx.ALL, 16)
 
-        self.SetSizerAndFit(vbox);
+        self.SetSizerAndFit(vbox)
         self.Layout()
         self.SetFocus()
 
@@ -499,7 +500,6 @@ class KeySelectDialog(wx.Dialog):
         for alphanum in (list(string.ascii_uppercase) + list(range(10))):
             self.Keymap[ord(str(alphanum))] = str(alphanum)
 
-from BindFile import KeyBind
 class bcKeyButton(ErrorControlMixin, wx.Button):
 
     def __init__(self, parent, id, init = {}) -> None:

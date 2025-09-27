@@ -1,5 +1,6 @@
 import wx
-import sys, importlib
+import sys
+import importlib
 from Help import HelpButton
 from wx.lib.expando import EVT_ETC_LAYOUT_NEEDED
 from UI.ControlGroup import cgExpandoTextCtrl
@@ -47,7 +48,7 @@ class PowerBinderDialog(wx.Dialog):
         self.PowerBinder = powerbinder
         self.AddCommandMenu = self.makeAddCommandMenu()
 
-        sizer = wx.BoxSizer(wx.VERTICAL);
+        sizer = wx.BoxSizer(wx.VERTICAL)
         self.mainSizer = sizer
 
         choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -111,12 +112,12 @@ class PowerBinderDialog(wx.Dialog):
         okButton.Bind(wx.EVT_BUTTON, self.OnOKButton)
 
         # Wrap everything in a vbox to add some padding
-        vbox = wx.BoxSizer(wx.VERTICAL);
-        vbox.Add(sizer, 0, wx.EXPAND|wx.ALL, 10);
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        vbox.Add(sizer, 0, wx.EXPAND|wx.ALL, 10)
 
         self.Bind(EVT_ETC_LAYOUT_NEEDED, self.OnBindPreviewResize)
 
-        self.SetSizerAndFit(vbox);
+        self.SetSizerAndFit(vbox)
         self.Layout()
 
     def OnBindPreviewResize(self, evt) -> None:

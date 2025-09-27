@@ -34,7 +34,7 @@ def ParseBuildFile(file:Path) -> dict:
                 if not powersettype: continue
                 if powersettype == 'Inherent': continue
                 if powersettype == 'Pool':
-                    if not powerset in Pools:
+                    if powerset not in Pools:
                         Pools.append(powerset)
                     continue
 

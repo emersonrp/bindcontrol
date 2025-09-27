@@ -1,18 +1,16 @@
 import wx
 import re
 from typing import Dict
-import UI
-from Help import HelpButton
-from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 
 import GameData
+from Help import HelpButton
 from Page import Page
 from Page.MM.SandolphanBinds import SandolphanBinds
 from Page.MM.qwyNumpad import qwyNumpad
 from Page.MM.qwyPetMouse import qwyPetMouse
-from Help import HelpButton
-from UI.KeySelectDialog import bcKeyButton
+import UI
 from UI.ControlGroup import cgTextCtrl
+from UI.KeySelectDialog import bcKeyButton
 
 class Mastermind(Page):
     def __init__(self, parent) -> None:

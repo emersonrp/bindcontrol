@@ -20,7 +20,7 @@ class UseInspByNameCmd(PowerBinderCommand):
             for _, info in types.items():
                 for insp in info['tiers']:
                     name = re.sub(' ', '', str(insp))
-                    icon = GetIconBitmap(f'Inspirations', name)
+                    icon = GetIconBitmap('Inspirations', name)
                     self.useInspByNameModeChoice.Append(insp, icon)
         self.useInspByNameModeChoice.SetSelection(0)
         useInspByNameSizer.Add(self.useInspByNameModeChoice, 1, wx.ALIGN_CENTER_VERTICAL)

@@ -4,6 +4,7 @@ build
 .coverage
 .DS_Store
 *.spec
+ruff.toml
 version.txt
 icons/Icons.zip
 BindControl.bat

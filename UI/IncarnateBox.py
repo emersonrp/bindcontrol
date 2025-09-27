@@ -2,6 +2,7 @@ from typing import Dict, Any
 import wx
 import wx.html
 import wx.lib.mixins.listctrl as listmix
+import wx.lib.buttons as buttons
 
 import re
 from Icon import GetIcon,GetIconBitmap
@@ -69,7 +70,6 @@ class IncarnateBox(wx.StaticBoxSizer):
                 }
         return incarnatedata
 
-import wx.lib.buttons as buttons
 class IncarnatePicker(wx.StaticBoxSizer):
     def __init__(self, parent, slot = "") -> None:
         super().__init__(wx.HORIZONTAL, parent, label = slot)

@@ -54,10 +54,10 @@ class LFGCmd(PowerBinderCommand):
 
     def MakeBindString(self) -> str:
         lfgselection = ''
-        if self.LFGSetRB.GetValue() == True:
+        if self.LFGSetRB.GetValue():
             command = "lfgset"
             lfgselection = f" {LFGSet_Numbers[self.LFGSetChoice.GetString(self.LFGSetChoice.GetSelection())]}"
-        elif self.LFGToggleRB.GetValue() == True:
+        elif self.LFGToggleRB.GetValue():
             command = "lfgtoggle"
         else:
             command = "lfgremovefromqueue"
@@ -67,9 +67,9 @@ class LFGCmd(PowerBinderCommand):
         return f"{command}{lfgselection}{comment}"
 
     def Serialize(self) -> dict:
-        if self.LFGSetRB.GetValue() == True:
+        if self.LFGSetRB.GetValue():
             lfgstate = 'lfgset'
-        elif self.LFGToggleRB.GetValue() == True:
+        elif self.LFGToggleRB.GetValue():
             lfgstate = 'lfgtoggle'
         else:
             lfgstate = 'lfgremove'

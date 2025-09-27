@@ -580,7 +580,7 @@ Archetypes: Dict[Any, Any] = {
                             'Black Dwarf Mire', 'Black Dwarf Drain', 'Black Dwarf Step', 'Black Dwarf Antagonize', ],
         },
     },
-};
+}
 
 IncarnatePowers = {
     'Alpha' : {

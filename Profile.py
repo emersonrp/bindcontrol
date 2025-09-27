@@ -4,8 +4,6 @@ from pathlib import PurePath, Path, PureWindowsPath
 from typing import Dict, List
 import wx
 
-import GameData
-
 from Models.ProfileData import ProfileData
 
 from BindFile import BindFile
@@ -382,8 +380,8 @@ class Profile(wx.Notebook):
         try:
             self.ProfileIDFile().write_text(self.ProfileName())
         except Exception as e:
-            wx.LogError("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
-            wx.MessageBox("Can't write Profile ID file {self.ProfileIDFile()}: {e}")
+            wx.LogError(f"Can't write Profile ID file {self.ProfileIDFile()}: {e}")
+            wx.MessageBox(f"Can't write Profile ID file {self.ProfileIDFile()}: {e}")
             return
 
         # Start by making the bind to make the reset load itself.  This might get overridden with
@@ -643,7 +641,7 @@ class DeleteDoneDialog(wx.Dialog):
         sizer.Add(textCtrl, 0, wx.EXPAND|wx.ALL, 10)
 
         sizer.Add(
-            wx.StaticText(self, label = f"Alternatively, you can Write Binds again at this point for a fresh set of bindfiles.", style = wx.ALIGN_CENTER),
+            wx.StaticText(self, label = "Alternatively, you can Write Binds again at this point for a fresh set of bindfiles.", style = wx.ALIGN_CENTER),
             0, wx.EXPAND|wx.ALL, 10
         )
         sizer.Add(self.CreateButtonSizer(wx.OK), 0, wx.ALL|wx.ALIGN_RIGHT, 10)

@@ -1,4 +1,5 @@
-import sys, os
+import sys
+import os
 from pathlib import Path
 
 # Things related to paths for the app

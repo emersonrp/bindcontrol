@@ -83,7 +83,7 @@ class bcController(wx.adv.Joystick):
         if self.HasPOV4Dir():
             povpos = self.GetPOVPosition()
 
-            if povpos != None and povpos < 60000: # 65535 seems to mean "at center"
+            if povpos is not None and povpos < 60000: # 65535 seems to mean "at center"
                 if   povpos == 0     : code = "JP_U"
                 elif povpos == 9000  : code = "JP_R"
                 elif povpos == 18000 : code = "JP_D"
@@ -102,7 +102,7 @@ class bcController(wx.adv.Joystick):
                 elif self.CurrentAxisPercents[current_axis] > 50:
                     current_dir = 1
 
-                if current_dir != None:
+                if current_dir is not None:
                     code = self.CodeTable[current_axis][current_dir]
 
         return code

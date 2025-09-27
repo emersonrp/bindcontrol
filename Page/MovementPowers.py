@@ -1186,16 +1186,18 @@ class MovementPowers(Page):
         #  create the Nova and Dwarf form support files if enabled.
         archetype = profile.Archetype()
 
-        Nova = Dwarf = HumanFormShield = ''
+        Nova = ''
+        Dwarf =''
+        #HumanFormShield = ''
         if (archetype == "Peacebringer"):
             Nova = "Bright Nova"
             Dwarf = "White Dwarf"
-            HumanFormShield = "Shining Shield"
+            #HumanFormShield = "Shining Shield"
 
         elif (archetype == "Warshade"):
             Nova = "Dark Nova"
             Dwarf = "Black Dwarf"
-            HumanFormShield = "Gravity Shield"
+            #HumanFormShield = "Gravity Shield"
 
         dwarfTPPower = normalTPPower = teamTPPower = ''
 
@@ -1224,7 +1226,7 @@ class MovementPowers(Page):
             # TODO this control went missing
             #if self.GetState('UseHumanFormPower'): humpower = f'$${self.togon} ' + HumanFormShield
             #else:                                  humpower = ''
-            khelfeedback = f"t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ""
+            khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ""
             novafile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {Nova}{humpower}$$gototray {self.GetState('HumanTray')}" + profile.BLF('reset.txt')))
 
             novafile.SetBind(self.Ctrls['Forward'].MakeBind("+forward"))
@@ -1260,7 +1262,7 @@ class MovementPowers(Page):
             # TODO this control went missing
             #if self.GetState('UseHumanFormPower'): humpower = f'$${self.togon} ' + HumanFormShield
             #else:                                  humpower = ''
-            khelfeedback = f"t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ""
+            khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ""
             dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {Dwarf}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
 
             dwrffile.SetBind(self.Ctrls['Forward'].MakeBind("+forward"))
@@ -1314,7 +1316,7 @@ class MovementPowers(Page):
             elif (self.GetState('JumpPower')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname {jpower}'))
             elif (self.GetState('HasCJ')):
-                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname Combat Jumping'))
+                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind('powexecname Combat Jumping'))
 
         # TODO - this is making 'nop' binds even when teleport is completely disabled.
         # That's not right but I'm not in a space to track it down and fix it yet.
@@ -2144,12 +2146,12 @@ class MovementPowers(Page):
 
         if off and not isinstance(off, str):
             for w in off:
-                if (w and w != on and not (w in offpower)):
+                if (w and w != on and (w not in offpower)):
                     offpower.add(w)
                     s = s + f'$${self.togoff} {w}'
 
         else:
-            if (off and off != '' and (off != on) and not (off in offpower)):
+            if (off and off != '' and (off != on) and (off not in offpower)):
                 offpower.add(off)
                 s = s + f'$${self.togoff} {off}'
 

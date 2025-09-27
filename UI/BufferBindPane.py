@@ -211,8 +211,8 @@ class BufferBindPane(CustomBindPaneParent):
                 outfiles = {}
                 outfiles[1] = profile.GetBindFile(f"{filebase}1.txt")
 
-                outfiles[1].SetBind(petkey, self.Page, self.Title, [f'petselect 1', f'{BLF()} {gamebase}2.txt'])
-                ResetFile  .SetBind(petkey, self.Page, self.Title, [f'petselect 1', f'{BLF()} {gamebase}2.txt'])
+                outfiles[1].SetBind(petkey, self.Page, self.Title, ['petselect 1', f'{BLF()} {gamebase}2.txt'])
+                ResetFile  .SetBind(petkey, self.Page, self.Title, ['petselect 1', f'{BLF()} {gamebase}2.txt'])
 
                 for i, b in enumerate(self.Buffs, start = 2): # number the binds as steps 2..x
                     outfiles[i] = profile.GetBindFile(f"{filebase}{i}.txt")
@@ -299,7 +299,7 @@ class BufferBindPane(CustomBindPaneParent):
             if self.GetCtrl(f'Pet{i}BuffKey').Key:
                 KeyIsPicked = True
 
-        Team1Button = self.GetCtrl(f'Team1BuffKey')
+        Team1Button = self.GetCtrl('Team1BuffKey')
         if KeyIsPicked:
             Team1Button.RemoveError('undef')
         else:

@@ -277,7 +277,6 @@ class PopmenuEditor(Page):
             wx.MessageBox("Couldn't open the clipboard for copying")
 
     def OnNewMenuButton(self, _ = None) -> None:
-        mlc = self.MenuListCtrl
         newmenuname = self.GetNewMenuName()
         if newmenuname:
             newmenu = Popmenu(self)
@@ -288,7 +287,7 @@ class PopmenuEditor(Page):
 
     def OnReloadMenusButton(self, _ = None) -> None:
         if self.CheckForModifiedMenus():
-            if wx.MessageBox(f'One or more menus have unsaved changes.  Continuing will cause those changes to be lost.  Continue?', "Unsaved Changes", wx.YES_NO) == wx.NO:
+            if wx.MessageBox('One or more menus have unsaved changes.  Continuing will cause those changes to be lost.  Continue?', "Unsaved Changes", wx.YES_NO) == wx.NO:
                 return
         self.LoadMenusFromMenuDir()
 
@@ -692,7 +691,7 @@ class Popmenu(FM.FlatMenu):
 
                             OptName = self.NormalizeOptName(OptName)
 
-                            if not OptName in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady', 'PowerOwned',):
+                            if OptName not in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady', 'PowerOwned',):
                                 wx.LogWarning(f'Unknown keyword "{OptName}" with payload "{OptPayload}" in LockedOption section {LockedOptions["DisplayName"]}, skipping it')
                                 continue
 

@@ -1,5 +1,4 @@
 import re
-import inspect
 from typing import List, overload
 from pathlib import PurePath, Path, PureWindowsPath
 from BLF import BLF
@@ -7,7 +6,7 @@ from BLF import BLF
 class KeyBind():
     def __init__(self, key, name : str, page, contents : str|List[str] = []):
 
-        if type(contents) == str : contents = [contents]
+        if type(contents) is str : contents = [contents]
 
         self.Key      : str       = key      # actual key combo
         self.Name     : str       = name     # friendly name, ie, "Select All Pets"
@@ -16,7 +15,7 @@ class KeyBind():
 
     # factory for PopulateBindFiles to use
     def MakeBind(self, contents):
-        if type(contents) == str: contents = [contents]
+        if type(contents) is str: contents = [contents]
 
         # changing self.Contents and reusing self over and over broke horribly in SoD.
         # Therefore, we just make a new KeyBind object.  Maybe investigate someday.
@@ -109,7 +108,7 @@ class BindFile():
             try:
                 self.Path.write_text(output, newline = '\r\n')
             except Exception as e:
-                raise Exception("Can't write to bindfile {self.Path}: {e}")
+                raise Exception(f"Can't write to bindfile {self.Path}: {e}")
 
     # delete the bindfile.  THIS DOES NOT ASK FOR CONFIRMATION
 #    def Delete(self):

@@ -1,4 +1,6 @@
-import re, os, platform
+import re
+import os
+import platform
 from pathlib import Path, PureWindowsPath
 import copy
 import json
@@ -46,7 +48,7 @@ class ProfileData(dict):
                         data = json.loads(jsonstring)
                         self.FillWith(data)
                     except Exception:
-                        raise Exception(f"Something broke while loading Default Profile.  This is a bug.")
+                        raise Exception("Something broke while loading Default Profile.  This is a bug.")
 
             self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
             if not self['ProfileBindsDir']:

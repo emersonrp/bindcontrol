@@ -115,7 +115,7 @@ class IncarnateSet(WizardParent):
 
         bk = self.BindPane.GetCtrl('BindKey')
         if not bk:
-            wx.LogError(f"BindKey missing from Ctrls in IncarnateSet.CheckIfWellFormed - this is a bug!")
+            wx.LogError("BindKey missing from Ctrls in IncarnateSet.CheckIfWellFormed - this is a bug!")
             isWellFormed = False
 
         if bk.Key:

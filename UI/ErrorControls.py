@@ -18,7 +18,7 @@ class ErrorControlMixin:
         self.BGColour       : wx.Colour = self.GetBackgroundColour() if isinstance(self, wx.TextCtrl) else wx.NullColour
 
     def Enable(self, enable = True) -> bool:
-        if enable == False:
+        if not enable:
             self.RemoveError('conflict')
         return super().Enable(enable) # pyright: ignore
 

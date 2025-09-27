@@ -16,6 +16,6 @@ def test_baddata(monkeypatch):
         }
     })
 
-    with pytest.raises(Exception, match = f'Something is terribly wrong'):
+    with pytest.raises(Exception, match = 'Something is terribly wrong'):
         Util.Incarnate.BuildSlotData()
 

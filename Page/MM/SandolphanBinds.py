@@ -230,7 +230,7 @@ class SandolphanBinds(wx.Panel):
     def mmBGSelBind(self, file, PetBodyguardResponse, powers):
         bgset = []
         bgsay = []
-        method = self.GetChatMethod(f"PetBodyguardResponseMethod")
+        method = self.GetChatMethod("PetBodyguardResponseMethod")
         (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
 
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
@@ -429,10 +429,10 @@ class SandolphanBinds(wx.Panel):
         if tsize == 1:
             file.SetBind(c['DecPetSize'].MakeBind('nop'))
             file.SetBind(c['SelNextPet'].MakeBind([
-                f'petselect 0', p.BLF('petsel', f'{tsize}1.txt'), p.BLF('mmb', 'csel.txt'),
+                'petselect 0', p.BLF('petsel', f'{tsize}1.txt'), p.BLF('mmb', 'csel.txt'),
             ]))
             file.SetBind(c['SelPrevPet'].MakeBind([
-                f'petselect 0', p.BLF('petsel', f'{tsize}1.txt'), p.BLF('mmb', 'csel.txt'),
+                'petselect 0', p.BLF('petsel', f'{tsize}1.txt'), p.BLF('mmb', 'csel.txt'),
             ]))
         else:
             selnext,selprev = tsel+1,tsel-1

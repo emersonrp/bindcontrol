@@ -91,7 +91,7 @@ class qwyPetMouse(wx.Panel):
 
             filepath = GetRootDirPath() / 'popmenus' / 'qwyPetMouse.mnu'
             if not filepath.exists():
-                wx.LogError(f'Cannot find source popmenu in the BindControl install directory.  This is a bug.')
+                wx.LogError('Cannot find source popmenu in the BindControl install directory.  This is a bug.')
                 return
 
             # This method side-effects checking, verifying, and creating the menupath

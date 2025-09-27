@@ -1,5 +1,6 @@
 import wx
-import os, sys
+import os
+import sys
 from pathlib import Path
 import pytest
 from Util.Paths import ProfilePath, GetRootDirPath, CheckProfileForBindsDir, GetProfileFileForName, GetAllProfileBindsDirs

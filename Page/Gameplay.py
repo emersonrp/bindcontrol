@@ -362,17 +362,17 @@ class Gameplay(Page):
                 ResetFile.SetBind(self.Ctrls[f"Tray5Button{button}"].MakeBind(f"{pe_ss} {slotbutton}"))
 
         if self.GetState('Tray1Enabled'):
-            ResetFile.SetBind(self.Ctrls[f"Tray1Prev"].MakeBind("prev_tray"))
-            ResetFile.SetBind(self.Ctrls[f"Tray1Next"].MakeBind("next_tray"))
+            ResetFile.SetBind(self.Ctrls["Tray1Prev"].MakeBind("prev_tray"))
+            ResetFile.SetBind(self.Ctrls["Tray1Next"].MakeBind("next_tray"))
         if self.GetState('Tray2Enabled'):
-            ResetFile.SetBind(self.Ctrls[f"Tray2Prev"].MakeBind("prev_tray_alt"))
-            ResetFile.SetBind(self.Ctrls[f"Tray2Next"].MakeBind("next_tray_alt"))
+            ResetFile.SetBind(self.Ctrls["Tray2Prev"].MakeBind("prev_tray_alt"))
+            ResetFile.SetBind(self.Ctrls["Tray2Next"].MakeBind("next_tray_alt"))
         if self.GetState('Tray3Enabled'):
-            ResetFile.SetBind(self.Ctrls[f"Tray3Prev"].MakeBind("prev_tray_alt2"))
-            ResetFile.SetBind(self.Ctrls[f"Tray3Next"].MakeBind("next_tray_alt2"))
+            ResetFile.SetBind(self.Ctrls["Tray3Prev"].MakeBind("prev_tray_alt2"))
+            ResetFile.SetBind(self.Ctrls["Tray3Next"].MakeBind("next_tray_alt2"))
         if server == "Rebirth" and self.GetState('Tray4Enabled'):
-            ResetFile.SetBind(self.Ctrls[f"Tray4Prev"].MakeBind("prev_tray_alt3"))
-            ResetFile.SetBind(self.Ctrls[f"Tray4Next"].MakeBind("next_tray_alt3"))
+            ResetFile.SetBind(self.Ctrls["Tray4Prev"].MakeBind("prev_tray_alt3"))
+            ResetFile.SetBind(self.Ctrls["Tray4Next"].MakeBind("next_tray_alt3"))
 
 
         ### Team / Pet Select
@@ -425,7 +425,7 @@ class Gameplay(Page):
         return True
 
     def CheckForDefaultKeyToClear(self, traynum, button) -> None:
-        if self.GetState("KeepExisting") == False:
+        if not self.GetState("KeepExisting"):
             if KBProfile := self.KeybindProfiles.get(self.GetState('KBProfile')):
                 if DefModKey := KBProfile[traynum]:
                     DefKey = f"{DefModKey}+{button}"
@@ -454,7 +454,9 @@ class Gameplay(Page):
         sizetext = f"{size}-Man"
         postext = ", No Spot"
         if pos > 0   : postext = f", {ordinals[pos-1]} Spot"
-        if size == 1 : sizetext = "Solo"; postext = ""
+        if size == 1 :
+            sizetext = "Solo"
+            postext = ""
         if size == 2 : sizetext = "Duo"
         if size == 3 : sizetext = "Trio"
         return f"[{sizetext}{postext}]"
@@ -496,7 +498,9 @@ class Gameplay(Page):
             newpos,newsel = tpos,tsel
             if tsize-1 < tpos  : newpos = tsize-1
             if tsize-1 < tsel  : newsel = tsize-1
-            if tsize == 2      : newpos = 0; newsel = 0
+            if tsize == 2:
+                newpos = 0
+                newsel = 0
             file.SetBind(self.GetState('DecTeamSize'), self, UI.Labels['DecTeamSize'], f'tell $name, {self.formatTeamConfig(tsize-1,newpos)}$${BLF()} {self.Profile.GameBindsDir()}\\teamsel2\\{tsize-1}{newpos}{newsel}.txt')
             file.SetBind(self.GetState('IncTeamPos'),  self, UI.Labels['IncTeamPos'],  f'tell $name, {self.formatTeamConfig(tsize,  tposup)}$${BLF()} {self.Profile.GameBindsDir()}\\teamsel2\\{tsize  }{tposup}{tsel  }.txt')
             file.SetBind(self.GetState('DecTeamPos'),  self, UI.Labels['DecTeamPos'],  f'tell $name, {self.formatTeamConfig(tsize,  tposdn)}$${BLF()} {self.Profile.GameBindsDir()}\\teamsel2\\{tsize  }{tposdn}{tsel  }.txt')

@@ -32,12 +32,12 @@ def get_git_tag(path=None) -> str:
     # we'll try asl git, mostly just for me.  If that breaks, try just plain git
     command = 'git describe --tags'
     if wsl_available():
-        try:    tag = do_git("wsl " + command, path)
-        except: pass
+        try              : tag = do_git("wsl " + command, path)
+        except Exception : pass
 
     if not tag:
-        try:    tag = do_git(command, path)
-        except: pass
+        try              : tag = do_git(command, path)
+        except Exception : pass
 
     return tag
 

@@ -49,7 +49,7 @@ class BindDirsWindow(wx.MiniFrame):
                 dirname.SetForegroundColour(wx.Colour(128,128,128))
                 dirname.SetFont(unmgdFont)
                 dirname.SetLabelMarkup('-unmanaged-')
-                dirname.SetToolTip(f'No known profile is managing this directory.')
+                dirname.SetToolTip('No known profile is managing this directory.')
             else:
                 file = GetProfileFileForName(config, label)
                 if file.is_file():

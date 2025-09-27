@@ -21,7 +21,7 @@ class InspCombine(PowerBinderCommand):
             for _, info in types.items():
                 for insp in info['tiers']:
                     name = re.sub(' ', '', str(insp))
-                    icon = GetIconBitmap(f'Inspirations', name)
+                    icon = GetIconBitmap('Inspirations', name)
                     self.inspCombineSource.Append(insp, icon)
         self.inspCombineSource.SetSelection(0)
         inspCombineSizer.Add(self.inspCombineSource, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
@@ -34,7 +34,7 @@ class InspCombine(PowerBinderCommand):
             for _, info in types.items():
                 for insp in info['tiers']:
                     name = re.sub(' ', '', str(insp))
-                    icon = GetIconBitmap(f'Inspirations', name)
+                    icon = GetIconBitmap('Inspirations', name)
                     self.inspCombineTarget.Append(insp, icon)
         self.inspCombineTarget.SetSelection(0)
         inspCombineSizer.Add(self.inspCombineTarget, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)

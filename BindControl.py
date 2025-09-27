@@ -1,19 +1,9 @@
 #!/usr/bin/env python3
 import sys
-
-MIN_PYTHON = (3, 13)
-if sys.version_info < MIN_PYTHON:
-    sys.exit("Python %s.%s or later is required.\n" % MIN_PYTHON)
-
-import wx, re
-
-
-MIN_WX = (4, 2, 2)
-wxver = tuple(map(int, re.split(r'\.', wx.__version__))) # oogly
-if wxver < MIN_WX:
-    sys.exit("wxPython %s.%s.%s or later is required.\n" % MIN_WX)
-
-import os, platform, re
+import wx
+import re
+import os
+import platform
 from pathlib import Path
 import webbrowser
 
@@ -30,6 +20,16 @@ from UI.ControlGroup import cgTextCtrl, cgButton
 from Util.DefaultProfile import DefaultProfile
 import Util.Paths
 import Util.BuildFiles
+
+MIN_PYTHON = (3, 13)
+if sys.version_info < MIN_PYTHON:
+    sys.exit("Python %s.%s or later is required.\n" % MIN_PYTHON)
+
+MIN_WX = (4, 2, 2)
+wxver = tuple(map(int, re.split(r'\.', wx.__version__))) # oogly
+if wxver < MIN_WX:
+    sys.exit("wxPython %s.%s.%s or later is required.\n" % MIN_WX)
+
 
 ###################
 # Main Window Class
@@ -279,7 +279,7 @@ class Main(wx.Frame):
         return StartupPanel
 
     def SetupProfileUI(self) -> None:
-        enable = self.Profile != None
+        enable = self.Profile is None
         self.Profile_save.Enable(enable)
         self.Profile_saveas.Enable(enable)
         self.Profile_savedefault.Enable(enable)

@@ -45,9 +45,9 @@ class HideUnhideCmd(PowerBinderCommand):
         return CenteringSizer
 
     def MakeBindString(self) -> str:
-        if self.HideShowDialog.GetValue() == True:
+        if self.HideShowDialog.GetValue():
             return "hide"
-        elif self.HideSet.GetValue() == True:
+        elif self.HideSet.GetValue():
             hidevalue = 0
             if self.HSearches  .IsChecked(): hidevalue += 1
             if self.HSupergroup.IsChecked(): hidevalue += 2
@@ -72,9 +72,9 @@ class HideUnhideCmd(PowerBinderCommand):
                 return '$$'.join(commands)
 
     def Serialize(self) -> dict:
-        if self.HideShowDialog.GetValue() == True:
+        if self.HideShowDialog.GetValue():
             hidepicker = 'dialog'
-        elif self.HideSet.GetValue() == True:
+        elif self.HideSet.GetValue():
             hidepicker = 'hide'
         else:
             hidepicker = 'unhide'
@@ -112,11 +112,11 @@ class HideUnhideCmd(PowerBinderCommand):
     def SynchronizeUI(self, evt = None) -> None:
         if evt: evt.Skip()
         # if we have NOT chosen "Show Dialog" then enable the checkboxes
-        self.HSearches  .Enable(self.HideShowDialog.GetValue() != True)
-        self.HSupergroup.Enable(self.HideShowDialog.GetValue() != True)
-        self.HFriends   .Enable(self.HideShowDialog.GetValue() != True)
-        self.HGFriends  .Enable(self.HideShowDialog.GetValue() != True)
-        self.HGChannels .Enable(self.HideShowDialog.GetValue() != True)
-        self.HTells     .Enable(self.HideShowDialog.GetValue() != True)
-        self.HInvites   .Enable(self.HideShowDialog.GetValue() != True)
+        self.HSearches  .Enable(not self.HideShowDialog.GetValue())
+        self.HSupergroup.Enable(not self.HideShowDialog.GetValue())
+        self.HFriends   .Enable(not self.HideShowDialog.GetValue())
+        self.HGFriends  .Enable(not self.HideShowDialog.GetValue())
+        self.HGChannels .Enable(not self.HideShowDialog.GetValue())
+        self.HTells     .Enable(not self.HideShowDialog.GetValue())
+        self.HInvites   .Enable(not self.HideShowDialog.GetValue())
 

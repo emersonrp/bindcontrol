@@ -17,7 +17,7 @@ Icons: Dict[str, Icon] = { }
 def GetIcon(*args) -> Icon:
 
     # If we haven't initialized the empty/fallback icon, do that now.
-    if not 'Empty.png' in Icons:
+    if 'Empty.png' not in Icons:
         Icons['Empty.png'] = Icon(wx.Bitmap.NewFromPNGData(transparentPNG, len(transparentPNG)), '')
 
     pathbits = []
@@ -27,7 +27,7 @@ def GetIcon(*args) -> Icon:
 
     iconpath    = Path(*pathbits).with_suffix('.png')
     iconpathstr = str(iconpath)
-    if not iconpathstr in Icons:
+    if iconpathstr not in Icons:
         base_path = Util.Paths.GetRootDirPath()
 
         iconzippath = base_path / 'icons' / 'Icons.zip'

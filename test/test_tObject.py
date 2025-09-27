@@ -1,5 +1,4 @@
 from Models.tObject import tObject
-import wx, pytest
 
 def test_togon():
     t = tObject(FakeProfile('Homecoming'))
@@ -24,9 +23,9 @@ def test_KeyState():
 
 def test_dirs():
     t = tObject(FakeProfile('Homecoming'))
-    t.dow  = f'$$down 1'
-    t.forw = f'$$forw 1'
-    t.rig  = f'$$right 1'
+    t.dow  = '$$down 1'
+    t.forw = '$$forw 1'
+    t.rig  = '$$right 1'
 
     assert t.dirs('UDFBLR') == "$$down 1$$forw 1$$right 1"
 

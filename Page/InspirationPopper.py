@@ -150,9 +150,11 @@ class InspirationPopper(Page):
                     keybutton.Key = self.Init[keybutton.CtlName]
 
                     # reverse the colors if we're doing team inspirations
-                    ltcolor = 'ltcolor'; dkcolor = 'dkcolor'
+                    ltcolor = 'ltcolor'
+                    dkcolor = 'dkcolor'
                     if tab == "Team" or tab == "DualTeam":
-                        ltcolor = 'dkcolor'; dkcolor = 'ltcolor'
+                        ltcolor = 'dkcolor'
+                        dkcolor = 'ltcolor'
 
                     chatcolorpicker = ChatColorPicker(box.GetStaticBox(), self, f"{tab}{order}{Insp}",
                         {
@@ -197,9 +199,11 @@ class InspirationPopper(Page):
             for Insp, InspData in GameData.Inspirations[tab].items():
                 for order in ("", "Rev"):
                     # reverse the colors if we're doing team inspirations
-                    ltcolor = 'ltcolor'; dkcolor = 'dkcolor'
+                    ltcolor = 'ltcolor'
+                    dkcolor = 'dkcolor'
                     if tab == "Team" or tab == "DualTeam":
-                        ltcolor = 'dkcolor'; dkcolor = 'ltcolor'
+                        ltcolor = 'dkcolor'
+                        dkcolor = 'ltcolor'
 
                     self.Ctrls[f'{tab}{order}{Insp}Border']    .SetColour(InspData[dkcolor])
                     self.Ctrls[f'{tab}{order}{Insp}Background'].SetColour(InspData[ltcolor])

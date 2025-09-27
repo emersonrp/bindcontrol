@@ -60,7 +60,7 @@ def CheckAndCreateMenuPathForGamePath(gamepath):
 
 class PopmenuEditor(Page):
     def __init__(self, parent) -> None:
-        super().__init__(parent, bind_events = False)
+        super().__init__(parent)
 
         self.CurrentMenu : Popmenu|None    = None
         self.MenuIDList  : Dict[int, dict] = {}  # dict for menu objects for left-side list

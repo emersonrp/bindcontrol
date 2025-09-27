@@ -38,9 +38,9 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
 
     def BuildBindUI(self, page) -> None:
+        wx.LogError(f"{self.bindclass} did not override BuildBindUI.  This is a bug.")
         # build the UI needed to edit/create this bind, and shim
         # it into 'page'
-        ...
 
     def PopulateBindFiles(self) -> None:
         wx.LogError(f"{self.bindclass} did not override PopulateBindFiles.  This is a bug.")
@@ -75,5 +75,12 @@ class CustomBindPaneParent(wx.CollapsiblePane):
             if isinstance(ctrl, bcKeyButton):
                 ctrl.ClearButton(None)
 
-    def MakeCtlName(self, name) -> str:
+    def MakeCtrlName(self, name) -> str:
         return f"{self.bindclass}_{self.CustomID}_{name}"
+
+    def GetCtrl(self, name):
+        return self.Ctrls[self.MakeCtrlName(name)]
+
+    def SetCtrl(self, name, ctl):
+        self.Ctrls[self.MakeCtrlName(name)] = ctl
+        return ctl

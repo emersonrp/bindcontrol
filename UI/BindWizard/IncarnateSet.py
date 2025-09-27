@@ -74,7 +74,7 @@ class IncarnateSet(WizardParent):
         bindkey = bindpane.Init.get('BindKey', '')
         BindSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BindKeyCtrl = bcKeyButton(panel, -1, {
-            'CtlName' : bindpane.MakeCtlName("BindKey"),
+            'CtlName' : bindpane.MakeCtrlName("BindKey"),
             'Page'    : bindpane.Page,
             'Key'     : bindkey,
         })
@@ -113,7 +113,7 @@ class IncarnateSet(WizardParent):
     def CheckIfWellFormed(self):
         isWellFormed = True
 
-        bk = self.BindPane.Ctrls.get(self.BindPane.MakeCtlName('BindKey'))
+        bk = self.BindPane.GetCtrl('BindKey')
         if not bk:
             wx.LogError(f"BindKey missing from Ctrls in IncarnateSet.CheckIfWellFormed - this is a bug!")
             isWellFormed = False

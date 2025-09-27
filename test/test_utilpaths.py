@@ -3,7 +3,7 @@ import os
 import sys
 from pathlib import Path
 import pytest
-from Util.Paths import ProfilePath, GetRootDirPath, CheckProfileForBindsDir, GetProfileFileForName, GetAllProfileBindsDirs
+from Util.Paths import ProfilePath, GetRootDirPath, CheckProfileForBindsDir, GetProfileFileForName, GetAllProfileBindsDirs, GetValidGamePath
 
 def test_CheckProfileForBindsDir(config, tmp_path):
     # CheckProfileForBindsDir
@@ -38,10 +38,28 @@ def test_ProfilePath(config, tmp_path):
 
 def test_GetRootDirPath(monkeypatch, tmp_path):
     assert GetRootDirPath() == Path(os.path.abspath(__file__)).parent.parent
-    # TODO - if we use MEIPASS at any other point in the test suite
-    # we need to have undone this somehow.  monkeypatch doesn't work.
-    setattr(sys, '_MEIPASS', tmp_path)
+    monkeypatch.setattr(sys, '_MEIPASS', tmp_path, raising = False)
     assert GetRootDirPath() == Path(tmp_path)
+    monkeypatch.undo()
+
+def test_GetValidGamePath(config, monkeypatch, tmp_path):
+    config.Write('GamePath', str(tmp_path))
+    assert not GetValidGamePath('Homecoming')
+    assert not GetValidGamePath('Rebirth')
+
+    Path(tmp_path / 'bin').mkdir()
+    Path(tmp_path / 'assets').mkdir()
+    assert GetValidGamePath('Homecoming') == tmp_path
+    Path(tmp_path / 'bin').rmdir()
+    Path(tmp_path / 'assets').rmdir()
+
+    config.Write('GameRebirthPath', str(tmp_path))
+    Path(tmp_path / 'Rebirth.exe').touch()
+    assert GetValidGamePath('Rebirth') == tmp_path
+    Path(tmp_path / 'Rebirth.exe').unlink()
+
+    with pytest.raises(Exception, match = 'GetValidGamePath got an unknown'):
+        GetValidGamePath('No Such Server')
 
 #########
 @pytest.fixture(autouse = True)

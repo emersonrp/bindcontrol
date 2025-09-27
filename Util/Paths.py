@@ -1,3 +1,4 @@
+import wx
 import sys
 import os
 from pathlib import Path
@@ -43,3 +44,18 @@ def GetRootDirPath() -> Path:
 
     return base_path
 
+# returns the gamepath if it's valid, False otherwise
+def GetValidGamePath(server:str) -> Path|None:
+    pathvar = 'GamePath' if server == 'Homecoming' else 'GameRebirthPath'
+    gamepath = Path(wx.ConfigBase.Get().Read(pathvar))
+    if server == 'Homecoming':
+        binpath   = gamepath / 'bin'
+        assetpath = gamepath / 'assets'
+        if gamepath.is_dir() and gamepath.is_absolute() and binpath.is_dir() and assetpath.is_dir():
+            return gamepath
+    elif server == 'Rebirth':
+        exepath = gamepath / 'Rebirth.exe'
+        if gamepath.is_dir() and gamepath.is_absolute() and exepath.is_file():
+            return gamepath
+    else:
+        raise Exception('GetValidGamePath got an unknown "server" passed in.  This is a bug')

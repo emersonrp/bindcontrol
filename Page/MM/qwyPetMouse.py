@@ -95,15 +95,16 @@ class qwyPetMouse(wx.Panel):
                 return
 
             # This method side-effects checking, verifying, and creating the menupath
-            menupath = CheckAndCreateMenuPathForGamePath(GetValidGamePath(self.Profile.Server()))
-            if not menupath: return
+            if (gamepath := GetValidGamePath(self.Profile.Server())):
+                menupath = CheckAndCreateMenuPathForGamePath(gamepath)
+                if not menupath: return
 
-            # read the text from the source file and make all necessary substitutions
-            menutext = self.MungeMenuText(filepath.read_text())
+                # read the text from the source file and make all necessary substitutions
+                menutext = self.MungeMenuText(filepath.read_text())
 
-            # import the menu file from popmenus/* using the PopmenuEditor.
-            # doImportMenu throws its own errors.
-            self.Profile.PopmenuEditor.doImportMenu(menupath, text = menutext, allow_overwrite = True)
+                # import the menu file from popmenus/* using the PopmenuEditor.
+                # doImportMenu throws its own errors.
+                self.Profile.PopmenuEditor.doImportMenu(menupath, text = menutext, allow_overwrite = True)
         except Exception as e:
             wx.LogError(f'Something broke while installing popmenu: {e}.  This is a bug.')
 

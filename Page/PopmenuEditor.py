@@ -4,7 +4,7 @@ from Help import HelpHTMLWindow
 from UI.ControlGroup import cgTextCtrl
 from UI.PrefsDialog import PrefsDialog
 from Icon import GetIcon
-from typing import Callable, Dict
+from typing import Callable, Dict, Literal
 
 from pathlib import Path
 from datetime import datetime
@@ -12,28 +12,12 @@ import re
 import platform
 import webbrowser
 from functools import partial
+from Util.Paths import GetValidGamePath
 
 import wx.lib.agw.flatmenu as FM
 
-def GetValidGamePath(server):
-    pathvar = 'GamePath' if server == 'Homecoming' else 'GameRebirthPath'
-    gamepath = Path(wx.ConfigBase.Get().Read(pathvar))
-    if server == 'Homecoming':
-        binpath   = gamepath / 'bin'
-        assetpath = gamepath / 'assets'
-        if gamepath.is_dir() and gamepath.is_absolute() and binpath.is_dir() and assetpath.is_dir():
-            return gamepath
-    elif server == 'Rebirth':
-        exepath = gamepath / 'Rebirth.exe'
-        if gamepath.is_dir() and gamepath.is_absolute() and exepath.is_file():
-            return gamepath
-    else:
-        wx.LogError('GetValidGamePath got an unknown "server" passed in.  This is a bug')
-
-    return False
-
 # NB This does not check that gamepath is sane.  This is probably a bug.
-def CheckAndCreateMenuPathForGamePath(gamepath):
+def CheckAndCreateMenuPathForGamePath(gamepath:Path) -> Path|Literal[False]:
     if not gamepath.exists():
         wx.LogError(f'Bad gamepath "{gamepath}" sent into CheckAndCreateMenuPathForGamePath.  This is a bug.')
         return False
@@ -183,7 +167,7 @@ class PopmenuEditor(Page):
             self.LoadMenusFromMenuDir()
             self.InitialLoadComplete = True
 
-    def GetMenuPath(self, _ = None):
+    def GetMenuPath(self, _ = None) -> Path|Literal[False]:
         if not (gamepath := GetValidGamePath(self.Profile.Server())):
             wx.MessageBox(f"Your {self.Profile.Server()} Game Directory is not set up correctly.  Please visit the Preferences dialog.")
             return False

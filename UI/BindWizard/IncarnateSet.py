@@ -36,7 +36,7 @@ class IncarnateSet(WizardParent):
 
     def Serialize(self):
         return {
-            'IncData' : self.Init.get('WizData', {}).get('IncData', {}),
+            'IncData' : self.State.get('WizData', {}).get('IncData', {}),
             'BindKey' : self.BindKeyCtrl.Key,
         }
 
@@ -47,16 +47,16 @@ class IncarnateSet(WizardParent):
         panelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         listSizer = wx.BoxSizer(wx.HORIZONTAL)
-        # Fill Init from the dialog, if it exists
+        # Fill State from the dialog, if it exists
         if self.IncarnateBox:
-            if not self.Init.get('WizData'):
-                self.Init['WizData'] = {}
+            if not self.State.get('WizData'):
+                self.State['WizData'] = {}
             newdata = self.IncarnateBox.Serialize()
-            if self.Init['WizData'].get('IncData', {}) != newdata:
+            if self.State['WizData'].get('IncData', {}) != newdata:
                 self.BindPane.Page.UpdateAllBinds()
-                self.Init['WizData']['IncData'] = newdata
-        # and then in either case, build the Pane from Init
-        incarnateData = self.Init.get('WizData', {}).get('IncData', {})
+                self.State['WizData']['IncData'] = newdata
+        # and then in either case, build the Pane from State
+        incarnateData = self.State.get('WizData', {}).get('IncData', {})
         for slot in ['Alpha', 'Interface', 'Judgement', 'Destiny', 'Lore', 'Hybrid', 'Genesis',]:
             if slotData := incarnateData.get(slot):
                 icon = GetIcon(slotData['iconfile']) # pyright: ignore
@@ -94,7 +94,7 @@ class IncarnateSet(WizardParent):
 
     def UpdateAndRefresh(self, evt):
         if self.IncarnateBox:
-            self.Init = { 'WizData' : { 'IncData' : self.IncarnateBox.Serialize() } }
+            self.State = { 'WizData' : { 'IncData' : self.IncarnateBox.Serialize() } }
         super().UpdateAndRefresh(evt)
 
     def OnHoverIcon(self, markup, evt = None):
@@ -133,7 +133,7 @@ class IncarnateSet(WizardParent):
 
         profile = self.Profile
 
-        incdata = self.Init.get('WizData', {}).get('IncData', {})
+        incdata = self.State.get('WizData', {}).get('IncData', {})
         incarnate_lines = ['']
         title = re.sub(r'\W+', '', self.BindPane.Title)
         fake_blf = profile.BLF('wiz', f'{title}X')

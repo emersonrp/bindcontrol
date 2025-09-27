@@ -3,7 +3,7 @@ import re
 
 import wx
 import wx.lib.stattext as ST
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from Help import HelpButton
 from UI.KeySelectDialog import bcKeyButton
 from UI.ControlGroup import cgDirPickerCtrl, cgTextCtrl
@@ -32,12 +32,14 @@ class PrefsDialog(wx.Dialog):
         generalSizer.Add(wx.StaticText(generalPanel, label = 'Homecoming Game Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.gameDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('GamePath'), size = (300, -1))
         self.gameDirPicker.DefaultToolTip = 'This is where Homecoming is installed.  This will be used to install popmenus, and is optional.'
+        self.gameDirPicker.UpdateTextCtrlFromPicker()
         self.gameDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
         generalSizer.Add(self.gameDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         generalSizer.Add(wx.StaticText(generalPanel, label = 'Rebirth Game Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.gameDirRebirthPicker = cgDirPickerCtrl(generalPanel, path = config.Read('GameRebirthPath'), size = (300, -1))
         self.gameDirRebirthPicker.DefaultToolTip = 'This is where Rebirth is installed.  This will be used to install popmenus, and is optional.'
+        self.gameDirRebirthPicker.UpdateTextCtrlFromPicker()
         self.gameDirRebirthPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
         generalSizer.Add(self.gameDirRebirthPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
@@ -49,7 +51,11 @@ class PrefsDialog(wx.Dialog):
 
         generalSizer.Add(wx.StaticText(generalPanel, label = 'Base Binds Directory:') , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.bindsDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('BindPath'), size = (300, -1))
-        self.bindsDirPicker.DefaultToolTip = 'Bind files will be written to this folder, inside a profile-specific subfolder.  Keeping this path as short as possible is strongly recommended.'
+        deftt = 'Bind files will be written to this folder, inside a profile-specific subfolder.'
+        if platform.system() == 'Windows':
+            deftt = deftt + '  Keeping this path as short as possible is strongly recommended.'
+        self.bindsDirPicker.DefaultToolTip = deftt
+        self.bindsDirPicker.UpdateTextCtrlFromPicker()
         self.bindsDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
         generalSizer.Add(self.bindsDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
@@ -102,6 +108,7 @@ class PrefsDialog(wx.Dialog):
         generalSizer.Add(ProfilePathLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ProfileDirPicker = cgDirPickerCtrl(generalPanel, path = config.Read('ProfilePath'), size = (300, -1))
         self.ProfileDirPicker.SetToolTip('Profiles will be saved to this location.')
+        self.ProfileDirPicker.UpdateTextCtrlFromPicker()
         self.ProfileDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
         generalSizer.Add(self.ProfileDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
@@ -220,8 +227,10 @@ class PrefsDialog(wx.Dialog):
         notebook.AddPage(debugPanel, "Debug")
 
         buttonSizer = wx.StdDialogButtonSizer()
-        buttonSizer.AddButton(wx.Button(self, wx.ID_OK))
+        okbutton = wx.Button(self, wx.ID_OK)
+        buttonSizer.AddButton(okbutton)
         buttonSizer.AddButton(wx.Button(self, wx.ID_CANCEL))
+        okbutton.SetFocus()
         buttonSizer.Realize()
 
         paddingSizer = wx.BoxSizer(wx.VERTICAL)
@@ -290,10 +299,22 @@ class PrefsDialog(wx.Dialog):
 
     def OnGameBindsDirPickerChanged(self, _ = None) -> None:
         if gbdp := self.gameBindsDirPicker:
-            if re.search(r'\s+', gbdp.GetValue()):
+            path = gbdp.GetValue()
+            if re.search(r'\s+', path):
                 gbdp.AddError('spaces', 'The game binds directory cannot contain spaces.  Please check the manual for more information.')
             else:
                 gbdp.RemoveError('spaces')
+
+            if len(path) > 12:
+                gbdp.AddWarning('length', 'This game binds directory is pretty long.  You should try to keep it as short as possible for best results.')
+            else:
+                gbdp.RemoveWarning('length')
+
+            winpath = PureWindowsPath(path)
+            if not winpath.is_absolute():
+                gbdp.AddError('absolute', 'The game binds directory must be a valid Windows path, including the drive letter.')
+            else:
+                gbdp.RemoveError('absolute')
 
     def OnCBLabelClick(self, evt) -> None:
         cblabel = evt.EventObject

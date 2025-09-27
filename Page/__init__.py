@@ -19,7 +19,7 @@ from Icon import GetIcon
 
 class Page(wx.ScrolledWindow):
 
-    def __init__(self, parent, bind_events : bool = True) -> None:
+    def __init__(self, parent):
         super().__init__(parent)
 
         self.MainSizer = wx.BoxSizer(wx.VERTICAL)

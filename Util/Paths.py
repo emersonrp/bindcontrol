@@ -59,3 +59,20 @@ def GetValidGamePath(server:str) -> Path|None:
             return gamepath
     else:
         raise Exception('GetValidGamePath got an unknown "server" passed in.  This is a bug')
+
+# returns the popmenu path for the server, regardless of whether it's there
+def GetPopmenuPath(server) -> Path|None:
+    menupath = GetValidGamePath(server)
+    if not menupath: return
+
+    gamelang = wx.ConfigBase.Get().Read('GameLang')
+    pathparts = ['data', 'Texts', gamelang, 'Menus']
+    # Here's a wacky thing we do for Linux / Mac users:
+    while pathparts:
+        # walk through the parts and find them non-case-sensitively
+        pathpart = pathparts.pop(0)
+        pathglob = sorted(menupath.glob(pathpart, case_sensitive = False))
+        # if we found it, add it in as found, otherwise as written
+        menupath = pathglob[0] if pathglob else (menupath / pathpart)
+
+    return menupath

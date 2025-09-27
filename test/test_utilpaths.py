@@ -3,7 +3,7 @@ import os
 import sys
 from pathlib import Path
 import pytest
-from Util.Paths import ProfilePath, GetRootDirPath, CheckProfileForBindsDir, GetProfileFileForName, GetAllProfileBindsDirs, GetValidGamePath
+from Util.Paths import ProfilePath, GetRootDirPath, CheckProfileForBindsDir, GetProfileFileForName, GetAllProfileBindsDirs, GetValidGamePath, GetPopmenuPath
 
 def test_CheckProfileForBindsDir(config, tmp_path):
     # CheckProfileForBindsDir
@@ -42,7 +42,7 @@ def test_GetRootDirPath(monkeypatch, tmp_path):
     assert GetRootDirPath() == Path(tmp_path)
     monkeypatch.undo()
 
-def test_GetValidGamePath(config, monkeypatch, tmp_path):
+def test_GetValidGamePath(config, tmp_path):
     config.Write('GamePath', str(tmp_path))
     assert not GetValidGamePath('Homecoming')
     assert not GetValidGamePath('Rebirth')
@@ -60,6 +60,21 @@ def test_GetValidGamePath(config, monkeypatch, tmp_path):
 
     with pytest.raises(Exception, match = 'GetValidGamePath got an unknown'):
         GetValidGamePath('No Such Server')
+
+def test_GetPopmenuPath(config, monkeypatch, tmp_path):
+    monkeypatch.undo() # get rid of config.Read patch
+    config.Write('GamePath', str(tmp_path))
+    config.Write('GameLang', 'en')
+    Path(tmp_path / 'bin').mkdir()
+    Path(tmp_path / 'assets').mkdir()
+    assert GetPopmenuPath('Homecoming') == tmp_path / 'data' / 'Texts' / 'en' / 'Menus'
+
+    Path(tmp_path / 'DAtA').mkdir()
+    assert GetPopmenuPath('Homecoming') == tmp_path / 'DAtA' / 'Texts' / 'en' / 'Menus'
+
+    Path(tmp_path / 'bin').rmdir()
+    Path(tmp_path / 'assets').rmdir()
+    Path(tmp_path / 'DAtA').rmdir()
 
 #########
 @pytest.fixture(autouse = True)

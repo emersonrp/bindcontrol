@@ -7,7 +7,7 @@ class WizardParent(object):
     def __init__(self, parent, init):
         self.BindPane = parent
         self.Profile = parent.Profile
-        self.Init = init
+        self.State = init
         self.WizardDialog = None
 
     def Dialog(self):
@@ -15,7 +15,7 @@ class WizardParent(object):
             wd = wx.Dialog(self.BindPane)
             mainSizer = wx.BoxSizer(wx.VERTICAL)
 
-            mainSizer.Add(self.BuildUI(wd, self.Init), 1, wx.EXPAND)
+            mainSizer.Add(self.BuildUI(wd, self.State), 1, wx.EXPAND)
 
             buttonsizer = wd.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL|wx.HELP)
             helpbutton = wd.FindWindow(wx.ID_HELP)

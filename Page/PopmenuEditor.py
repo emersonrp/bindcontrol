@@ -197,9 +197,9 @@ class PopmenuEditor(Page):
     def SynchronizeUI(self, _ = None) -> None:
         NoErrors = True
         if GetValidGamePath(self.Profile.Server()):
-            self.CheckMenuDirBox.Hide()
+            self.CheckGameDirBox.Hide()
         else:
-            self.CheckMenuDirBox.Show()
+            self.CheckGameDirBox.Show()
             NoErrors = False
 
         self.NewMenuButton.Enable(NoErrors)

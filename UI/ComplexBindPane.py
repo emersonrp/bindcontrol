@@ -18,7 +18,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
     def Serialize(self) -> Dict[str, str|list]:
         data = self.CreateSerialization({
-            'Key'  : self.Ctrls[self.MakeCtlName('BindKey')].Key,
+            'Key'  : self.GetCtrl('BindKey').Key,
             'Steps': [],
         })
         for step in self.Steps:
@@ -47,7 +47,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.BindSizer.Add (self.BindStepSizer, 1, wx.EXPAND)
 
         BindKeyCtrl = bcKeyButton(pane, -1, {
-            'CtlName' : self.MakeCtlName('BindKey'),
+            'CtlName' : self.MakeCtrlName('BindKey'),
             'Page'    : page,
             'Key'     : self.Init.get('Key', ''),
         })
@@ -57,7 +57,7 @@ class ComplexBindPane(CustomBindPaneParent):
         BindKeySizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindKeySizer.Add(BindKeyCtrl,                          0)
         self.BindSizer.Add(BindKeySizer, 0, wx.LEFT|wx.RIGHT, 10)
-        self.Ctrls[BindKeyCtrl.CtlName] = BindKeyCtrl
+        self.SetCtrl('BindKey', BindKeyCtrl)
         UI.Labels[BindKeyCtrl.CtlName] = f'Complex Bind "{self.Title}"'
 
         self.BindSizer.Layout()
@@ -99,7 +99,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
         if (not stepsWellFormed): isWellFormed = False
 
-        bk = self.Ctrls[self.MakeCtlName('BindKey')]
+        bk = self.GetCtrl('BindKey')
         if not bk.Key:
             bk.AddError('undef', 'The keybind has not been selected')
             isWellFormed = False
@@ -184,7 +184,7 @@ class ComplexBindPane(CustomBindPaneParent):
             nextCycle = 1 if (i+1 > len(fullsteps)) else i+1
 
             cmd = [step.PowerBinder.GetValue(), self.Profile.BLF(f'cb\\{cid}-{nextCycle}.txt')]
-            key = self.Ctrls[self.MakeCtlName('BindKey')].Key
+            key = self.GetCtrl('BindKey').Key
 
             if i == 1: resetfile.SetBind(key, self, title, cmd)
             cbindfile.SetBind(key, self, title, cmd)

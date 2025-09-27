@@ -19,7 +19,7 @@ class SimpleBindPane(CustomBindPaneParent):
     def Serialize(self) -> Dict[str, Any]:
         data = self.CreateSerialization({
             'Contents' : self.PowerBinder.GetValue() if self.PowerBinder else '',
-            'Key'      : self.Ctrls[self.MakeCtlName('BindKey')].Key,
+            'Key'      : self.GetCtrl('BindKey').Key,
         })
         if self.PowerBinder:
             data['PowerBinderDlg'] = self.PowerBinder.SaveToData()
@@ -41,11 +41,11 @@ class SimpleBindPane(CustomBindPaneParent):
         pb.ChangeValue(self.Init.get('Contents', ''))
         pb.Bind(wx.EVT_TEXT, self.onContentsChanged)
         self.PowerBinder = pb
-        self.Ctrls[self.MakeCtlName('PowerBinder')] = pb
+        self.SetCtrl('PowerBinder', pb)
         BindSizer.Add(pb, 1, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
 
         BindKeyCtrl = bcKeyButton(pane, -1, {
-            'CtlName' : self.MakeCtlName("BindKey"),
+            'CtlName' : self.MakeCtrlName("BindKey"),
             'Page'    : page,
             'Key'     : self.Init.get('Key', ''),
         })
@@ -53,7 +53,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
         BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(BindKeyCtrl,                          0, wx.ALIGN_CENTER_VERTICAL)
-        self.Ctrls[BindKeyCtrl.CtlName] = BindKeyCtrl
+        self.SetCtrl('BindKey', BindKeyCtrl)
         UI.Labels[BindKeyCtrl.CtlName] = f'Simple Bind "{self.Title}"'
 
         BindSizer.Layout()
@@ -92,7 +92,7 @@ class SimpleBindPane(CustomBindPaneParent):
                 self.PowerBinder.AddError('length', 'This bind is longer than 255 characters, which will cause problems in-game.')
                 isWellFormed = False
 
-        bk = self.Ctrls[self.MakeCtlName('BindKey')]
+        bk = self.GetCtrl('BindKey')
         if bk.Key:
             bk.RemoveError('undef')
         else:
@@ -108,5 +108,4 @@ class SimpleBindPane(CustomBindPaneParent):
 
         if pb := self.PowerBinder:
             resetfile = self.Profile.ResetFile()
-            bk = self.Ctrls[self.MakeCtlName('BindKey')]
-            resetfile.SetBind(bk.Key, self.Title, self.Page, pb.GetValue())
+            resetfile.SetBind(self.GetCtrl('BindKey').Key, self.Title, self.Page, pb.GetValue())

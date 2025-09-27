@@ -37,11 +37,12 @@ class BufferBindPane(CustomBindPaneParent):
         pane = self.GetPane()
         setattr(pane, 'Page', page)
 
-        # Doing this UI here since we need Title to be set to get MakeCtlName right
+        # Doing this UI here since we need CustomID to be set to get MakeCtrlName right
+        # TODO: is this still true?  Can we do this in init now that we use CustomID?
         for i in (1,2,3,4,5,6,7,8):
-            UI.Labels[self.MakeCtlName(f'Team{i}BuffKey')] = f'Team {i} Key'
+            UI.Labels[self.MakeCtrlName(f'Team{i}BuffKey')] = f'Team {i} Key'
         for i in (1,2,3,4,5,6):
-            UI.Labels[self.MakeCtlName(f'Pet{i}BuffKey')] = f'Pet {i} Key'
+            UI.Labels[self.MakeCtrlName(f'Pet{i}BuffKey')] = f'Pet {i} Key'
 
         # TODO:  why do I do this here instead of in __init__?  Must have been a reason.
         self.Init.update(self.PassedInit)
@@ -55,11 +56,11 @@ class BufferBindPane(CustomBindPaneParent):
 
         self.SelChatTgt = wx.Choice(pane, choices = ChatTargets)
         self.SelChatTgt.SetStringSelection(self.Init.get('SelChatTgt', ''))
-        self.Ctrls[self.MakeCtlName('SelChatTgt')] = self.SelChatTgt
+        self.SetCtrl('SelChatTgt', self.SelChatTgt)
 
         self.SelChat = wx.TextCtrl(pane, -1, self.Init.get('SelChat', ''))
         self.SelChat.SetHint('/tell contents; leave blank to skip')
-        self.Ctrls[self.MakeCtlName('SelChat')] = self.SelChat
+        self.SetCtrl('SelChat', self.SelChat)
 
         BindSizer.Add(selChatTxt,      (0, 0), flag = wx.ALIGN_CENTER_VERTICAL)
         BindSizer.Add(self.SelChatTgt, (0, 1))
@@ -85,12 +86,12 @@ class BufferBindPane(CustomBindPaneParent):
         PetInner = wx.GridBagSizer(hgap = 5, vgap = 5)
         PetCtrls.Add(PetInner, 1, wx.ALL|wx.EXPAND, 10)
 
-        self.Ctrls[self.MakeCtlName('BuffsAffectTeam')] = wx.CheckBox(TeamSB, -1, label = 'Enable')
-        self.Ctrls[self.MakeCtlName('BuffsAffectTeam')].SetValue(self.Init['BuffsAffectTeam'])
-        self.Ctrls[self.MakeCtlName('BuffsAffectTeam')].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        TeamInner.Add(self.Ctrls[self.MakeCtlName('BuffsAffectTeam')], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
+        bat = self.SetCtrl('BuffsAffectTeam', wx.CheckBox(TeamSB, -1, label = 'Enable'))
+        bat.SetValue(self.Init['BuffsAffectTeam'])
+        bat.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        TeamInner.Add(bat, (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6,7,8):
-            button = bcKeyButton(TeamSB, -1, init = { 'CtlName' : self.MakeCtlName(f'Team{i}BuffKey'), })
+            button = bcKeyButton(TeamSB, -1, init = { 'CtlName' : self.MakeCtrlName(f'Team{i}BuffKey'), })
             button.Key = self.Init[f'Team{i}BuffKey']
             button.SetLabel(button.Key)
             button.Bind(EVT_KEY_CHANGED, self.CheckAnyKeyPicked)
@@ -98,14 +99,14 @@ class BufferBindPane(CustomBindPaneParent):
             button.CtlLabel = label
             TeamInner.Add(label, (0,i), flag = wx.EXPAND|wx.ALIGN_CENTER)
             TeamInner.Add(button, (1,i))
-            self.Ctrls[self.MakeCtlName(f'Team{i}BuffKey')] = button
+            self.SetCtrl(f'Team{i}BuffKey', button)
 
-        self.Ctrls[self.MakeCtlName('BuffsAffectPets')] = wx.CheckBox(PetSB, -1, label = 'Enable')
-        self.Ctrls[self.MakeCtlName('BuffsAffectPets')].SetValue(self.Init['BuffsAffectPets'])
-        self.Ctrls[self.MakeCtlName('BuffsAffectPets')].Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
-        PetInner.Add(self.Ctrls[self.MakeCtlName('BuffsAffectPets')], (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
+        bap = self.SetCtrl('BuffsAffectPets', wx.CheckBox(PetSB, -1, label = 'Enable'))
+        bap.SetValue(self.Init['BuffsAffectPets'])
+        bap.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
+        PetInner.Add(bap, (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6):
-            button = bcKeyButton(PetSB, -1, init = { 'CtlName' : self.MakeCtlName(f'Pet{i}BuffKey'), })
+            button = bcKeyButton(PetSB, -1, init = { 'CtlName' : self.MakeCtrlName(f'Pet{i}BuffKey'), })
             button.Key = self.Init[f'Pet{i}BuffKey']
             button.SetLabel(button.Key)
             button.Bind(EVT_KEY_CHANGED, self.CheckAnyKeyPicked)
@@ -113,7 +114,7 @@ class BufferBindPane(CustomBindPaneParent):
             button.CtlLabel = label
             PetInner.Add(label , (0,i), flag = wx.EXPAND|wx.ALIGN_CENTER)
             PetInner.Add(button, (1,i))
-            self.Ctrls[self.MakeCtlName(f'Pet{i}BuffKey')] = button
+            self.SetCtrl(f'Pet{i}BuffKey', button)
 
         BindSizer.AddGrowableCol(2)
         BindSizer.AddGrowableCol(4)
@@ -179,9 +180,9 @@ class BufferBindPane(CustomBindPaneParent):
 
             BuffChats[f'Buff{i}'] = self.GetVerbFor(b.ChatTgt) + b.Chat.GetValue()
 
-        if self.Ctrls[self.MakeCtlName('BuffsAffectTeam')].GetValue():
+        if self.GetCtrl('BuffsAffectTeam').GetValue():
             for j in [1,2,3,4,5,6,7,8]:
-                teamkey = self.Ctrls[self.MakeCtlName(f"Team{j}BuffKey")].Key
+                teamkey = self.GetCtrl(f"Team{j}BuffKey").Key
                 if not teamkey: continue
                 filebase = profile.BindsDir()     / 'buff' / f"{cid}_t{j}"
                 gamebase = profile.GameBindsDir() / 'buff' / f"{cid}_t{j}"
@@ -200,9 +201,9 @@ class BufferBindPane(CustomBindPaneParent):
                         outfiles[i].SetBind(teamkey, self.Page, self.Title, [BuffChats[f'Buff{i}'], f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}{i+1}.txt'])
 
         # NB:  Don't use the BuffChats for the pet ones.  They're spammy, nobody cares, and /tell $target breaks.
-        if self.Ctrls[self.MakeCtlName("BuffsAffectPets")].GetValue():
+        if self.GetCtrl("BuffsAffectPets").GetValue():
             for j in [1,2,3,4,5,6]:
-                petkey = self.Ctrls[self.MakeCtlName(f"Pet{j}BuffKey")].Key
+                petkey = self.GetCtrl(f"Pet{j}BuffKey").Key
                 if not petkey: continue
                 filebase = profile.BindsDir()     / 'buff' / f"{cid}_p{j}"
                 gamebase = profile.GameBindsDir() / 'buff' / f"{cid}_p{j}"
@@ -225,13 +226,13 @@ class BufferBindPane(CustomBindPaneParent):
         for i, b in enumerate(self.Buffs):
             b.delButton.Show(i > 0)
 
-        useteam = self.Ctrls[self.MakeCtlName("BuffsAffectTeam")].GetValue()
+        useteam = self.GetCtrl("BuffsAffectTeam").GetValue()
         for i in [1,2,3,4,5,6,7,8]:
-            self.Ctrls[self.MakeCtlName(f'Team{i}BuffKey')].Enable(useteam)
+            self.GetCtrl(f'Team{i}BuffKey').Enable(useteam)
 
-        usepet = self.Ctrls[self.MakeCtlName("BuffsAffectPets")].GetValue()
+        usepet = self.GetCtrl("BuffsAffectPets").GetValue()
         for i in [1,2,3,4,5,6]:
-            self.Ctrls[self.MakeCtlName(f'Pet{i}BuffKey')].Enable(usepet)
+            self.GetCtrl(f'Pet{i}BuffKey').Enable(usepet)
 
         self.CheckAnyKeyPicked()
         self.Page.Layout()
@@ -240,8 +241,8 @@ class BufferBindPane(CustomBindPaneParent):
         data = self.CreateSerialization({
             "SelChatTgt"      : self.SelChatTgt.GetString(self.SelChatTgt.GetSelection()),
             "SelChat"         : self.SelChat.GetValue(),
-            "BuffsAffectTeam" : self.Ctrls[self.MakeCtlName('BuffsAffectTeam')].GetValue(),
-            "BuffsAffectPets" : self.Ctrls[self.MakeCtlName('BuffsAffectPets')].GetValue(),
+            "BuffsAffectTeam" : self.GetCtrl('BuffsAffectTeam').GetValue(),
+            "BuffsAffectPets" : self.GetCtrl('BuffsAffectPets').GetValue(),
         })
         buffs = []
         for b in self.Buffs:
@@ -256,9 +257,9 @@ class BufferBindPane(CustomBindPaneParent):
         data['Buffs'] = buffs
 
         for i in (1,2,3,4,5,6,7,8):
-            data[f'Team{i}BuffKey'] = self.Ctrls[self.MakeCtlName(f'Team{i}BuffKey')].Key
+            data[f'Team{i}BuffKey'] = self.GetCtrl(f'Team{i}BuffKey').Key
         for i in (1,2,3,4,5,6):
-            data[f'Pet{i}BuffKey']  = self.Ctrls[self.MakeCtlName(f'Pet{i}BuffKey')].Key
+            data[f'Pet{i}BuffKey']  = self.GetCtrl(f'Pet{i}BuffKey').Key
 
         return data
 
@@ -292,13 +293,13 @@ class BufferBindPane(CustomBindPaneParent):
         if evt: evt.Skip()
         KeyIsPicked = False
         for i in (1,2,3,4,5,6,7,8):
-            if self.Ctrls[self.MakeCtlName(f'Team{i}BuffKey')].Key:
+            if self.GetCtrl(f'Team{i}BuffKey').Key:
                 KeyIsPicked = True
         for i in (1,2,3,4,5,6):
-            if self.Ctrls[self.MakeCtlName(f'Pet{i}BuffKey')].Key:
+            if self.GetCtrl(f'Pet{i}BuffKey').Key:
                 KeyIsPicked = True
 
-        Team1Button = self.Ctrls[self.MakeCtlName(f'Team1BuffKey')]
+        Team1Button = self.GetCtrl(f'Team1BuffKey')
         if KeyIsPicked:
             Team1Button.RemoveError('undef')
         else:

@@ -300,4 +300,4 @@ def config(tmp_path, monkeypatch):
 @pytest.fixture
 def PD(config):
     fixtureprofile = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'testprofile.bcp'
-    yield ProfileData.ProfileData(config, filename = str(fixtureprofile))
+    return ProfileData.ProfileData(config, filename = str(fixtureprofile))

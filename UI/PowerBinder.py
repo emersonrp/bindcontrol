@@ -10,10 +10,9 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
 
     def __init__(self, parent, init = {}, extralength = 0):
         super().__init__(parent)
-        self.Init = init
-        self.Dialog = None
+        self.CurrentState = init
         self.DialogParent = parent
-        self.ExtraLength = extralength # for complex binds to add the footprint of each step's BLF()
+        self.ExtraLength  = extralength # for complex binds to add the footprint of each step's BLF()
 
         self.SetHint("Click to launch PowerBinder")
 
@@ -23,24 +22,21 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
         self.PowerBinderDialog().Show()
 
     def SaveToData(self):
-        return self.PowerBinderDialog().SaveToData()
+        return self.CurrentState
 
     def PowerBinderDialog(self):
-        if not self.Dialog:
-            self.Dialog = PowerBinderDialog(self.DialogParent, self, init = self.Init, extralength = self.ExtraLength)
-        return self.Dialog
+        return PowerBinderDialog(self.DialogParent, self)
 
 class PowerBinderDialog(wx.Dialog):
-    def __init__(self, parent, powerbinder, init = {}, extralength = 0):
+    def __init__(self, parent, powerbinder):
         super().__init__(parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
         self.Page = parent.Page
-        self.CurrentState = init
-        self.ExtraLength = extralength
+        self.ExtraLength = powerbinder.ExtraLength
+        self.PowerBinder = powerbinder
 
         self.LoadModules()
 
-        self.PowerBinder = powerbinder
         self.AddCommandMenu = self.makeAddCommandMenu()
 
         sizer = wx.BoxSizer(wx.VERTICAL);
@@ -170,12 +166,10 @@ class PowerBinderDialog(wx.Dialog):
             else:
                 print(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
-    def SaveToData(self): return self.CurrentState
-
     def LoadFromCurrentState(self):
         self.RearrangeList.Clear()
 
-        for item in self.CurrentState:
+        for item in self.PowerBinder.CurrentState:
             for type, data in item.items():
                 commandClass = commandClasses.get(type, None)
                 if not commandClass:
@@ -214,7 +208,7 @@ class PowerBinderDialog(wx.Dialog):
             if bindString != self.PowerBinder.GetValue():
                 self.PowerBinder.SetValue(bindString)
                 wx.App.Get().Main.Profile.SetModified()
-        self.CurrentState = self.GetCurrentState()
+        self.PowerBinder.CurrentState = self.GetCurrentState()
         self.Close()
 
     def OnRearrangeDelete(self, _):

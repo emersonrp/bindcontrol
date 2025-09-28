@@ -21,10 +21,9 @@ class SimpleBindPane(CustomBindPaneParent):
             'Key'      : self.Ctrls[self.MakeCtlName('BindKey')].Key,
         })
         if self.PowerBinder:
-            if self.PowerBinder.PowerBinderDialog():
-                data['PowerBinderDlg'] = self.PowerBinder.PowerBinderDialog().SaveToData()
-            else:
-                wx.LogWarning(f'Unable to save PowerBinder data for Simple Bind "{self.Title}"')
+            data['PowerBinderDlg'] = self.PowerBinder.SaveToData()
+        else:
+            wx.LogWarning(f'Unable to save PowerBinder data for Simple Bind "{self.Title}"')
         return data
 
     def BuildBindUI(self, page):

@@ -358,8 +358,8 @@ class CustomBinds(Page):
     def AllBindFiles(self) -> dict:
         files = []
         dirs  = []
-        for dir in ['cbinds', 'cb', 'buff', 'wiz']:
-            fpbd = self.FullPaneBindsDir(dir)
+        for d in ['cbinds', 'cb', 'buff', 'wiz']:
+            fpbd = self.FullPaneBindsDir(d)
             if fpbd:
                 files.extend(fpbd['files'])
                 dirs .extend(fpbd['dirs'])
@@ -369,14 +369,14 @@ class CustomBinds(Page):
             'dirs'  : dirs,
         }
 
-    def FullPaneBindsDir(self, dir) -> Dict[str, list]:
+    def FullPaneBindsDir(self, bdir) -> Dict[str, list]:
         files = []
-        dirs  = [dir]
-        panebindsdir = Path(self.Profile.BindsDir(), dir)
+        dirs  = [bdir]
+        panebindsdir = Path(self.Profile.BindsDir(), bdir)
         if panebindsdir.is_dir():
             for item in panebindsdir.glob('**/*'):
                 if item.is_file():
-                    files.append(self.Profile.GetBindFile(dir, item.name))
+                    files.append(self.Profile.GetBindFile(bdir, item.name))
                 elif item.is_dir():
                     dirs.append(item)
 

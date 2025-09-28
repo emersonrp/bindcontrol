@@ -128,17 +128,17 @@ class AttributeMonitorCmd(PowerBinderCommand):
         return groupSizer
 
     def MakeBindString(self) -> str:
-        map = {}
+        ctrl_map = {}
         bindstrings = []
         for _, controls in self.AttributeTable.items():
             for cb, data in controls.items():
-                map[cb] = data
+                ctrl_map[cb] = data
 
         command = 'stopmonitorattribute' if self.MonitorOff.GetValue() else 'monitorattribute'
 
         for string in self.editbox.GetStrings():
             if string:
-                bindstrings.append(f'{command} {map[string]}')
+                bindstrings.append(f'{command} {ctrl_map[string]}')
 
         return '$$'.join(bindstrings)
 

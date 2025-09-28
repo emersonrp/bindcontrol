@@ -62,7 +62,7 @@ class PowerBinderDialog(wx.Dialog):
         AddCommandButton.Bind(wx.EVT_BUTTON, self.OnAddCommandButton)
         AddCommandButton.Bind(wx.EVT_MENU,   self.OnAddCommandMenu)
         choiceSizer.Add(AddCommandButton, 1, wx.LEFT, 10)
-        choiceSizer.Add(HelpButton(self, "PowerBinder.html", type="window"), 0, wx.LEFT, 10)
+        choiceSizer.Add(HelpButton(self, "PowerBinder.html", wintype="window"), 0, wx.LEFT, 10)
         sizer.Add(choiceSizer, 1, wx.EXPAND|wx.BOTTOM, 10)
 
         rearrangeCtrl = wx.BoxSizer(wx.HORIZONTAL)
@@ -184,12 +184,12 @@ class PowerBinderDialog(wx.Dialog):
         self.RearrangeList.Clear()
 
         for item in self.PowerBinder.CurrentState:
-            for type, data in item.items():
-                commandClass = commandClasses.get(type)
+            for cmd_type, data in item.items():
+                commandClass = commandClasses.get(cmd_type)
                 if not commandClass:
-                    commandClass = deprecatedCommandClasses.get(type)
+                    commandClass = deprecatedCommandClasses.get(cmd_type)
                     if not commandClass:
-                        wx.LogError(f"Profile contained unknown custom bind command class {type}; ignoring it and continuing.")
+                        wx.LogError(f"Profile contained unknown custom bind command class {cmd_type}; ignoring it and continuing.")
                         continue
                 newCommand = commandClass(self, data)
                 index = self.RearrangeList.Append(newCommand.MakeListEntryString())

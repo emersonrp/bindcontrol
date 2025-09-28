@@ -98,8 +98,8 @@ def test_incarnate_icons_exist():
         GameData.SetupGameData(server)
         # Incarnate Powers
         for slot, slotdata in GameData.IncarnatePowers.items():
-            for type in slotdata['Types']:
-                aliasedtype = Aliases.get(type, type)
+            for inc_type in slotdata['Types']:
+                aliasedtype = Aliases.get(inc_type, inc_type)
                 for rarity in ['Common', 'Uncommon', 'Rare', 'VeryRare']:
                     filename = str(icondir / "Incarnate" / f"Incarnate_{slot}_{aliasedtype}_{rarity}.png")
                     assert os.path.exists(filename), f"Incarnate icon missing: {filename}"
@@ -136,8 +136,8 @@ def test_inspiration_icons_exist():
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
         # Inspirations
-        for _, type in GameData.Inspirations.items():
-            for _, data in type.items():
+        for _, insp_type in GameData.Inspirations.items():
+            for _, data in insp_type.items():
                 for insp in data['tiers']:
                     insp = re.sub(r'\W+', '',  insp)
                     filename = str(icondir / "Inspirations" / f"{insp}.png")
@@ -209,4 +209,4 @@ def test_geticonbitmap(monkeypatch):
 def fixturepath():
     return Path(os.path.abspath(__file__)).parent / 'fixtures'
 
-def raises_exception(input): raise(Exception(f"RAISES: {input}"))
+def raises_exception(ex_input): raise(Exception(f"RAISES: {ex_input}"))

@@ -110,9 +110,9 @@ class Profile(wx.Notebook):
         return False
 
     def GetCustomID(self) -> int:
-        id = self.Data.GetCustomID()
+        cust_id = self.Data.GetCustomID()
         self.CheckModified()
-        return id
+        return cust_id
 
     def BLF(self, *args) -> str:
         filepath = self.GameBindsDir()

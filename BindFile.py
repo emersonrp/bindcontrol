@@ -77,24 +77,25 @@ class BindFile():
 
         # duplicate citybinder's (modified) logic exactly
         def getMainKey(testkey):
-            str = testkey or "UNBOUND"
-            str = str.upper()
-            str = re.sub(r'LSHIFT', '', str)
-            str = re.sub(r'RSHIFT', '', str)
-            str = re.sub(r'SHIFT', '', str)
-            str = re.sub(r'LCTRL', '', str)
-            str = re.sub(r'RCTRL', '', str)
-            str = re.sub(r'CTRL', '', str)
-            str = re.sub(r'LALT', '', str)
-            str = re.sub(r'RALT', '', str)
-            str = re.sub(r'ALT', '', str)
-            str = re.sub(r'\+', "", str)
-            if str == '':
+            mainkey = testkey or "UNBOUND"
+            mainkey = mainkey.upper()
+            mainkey = re.sub(r'LSHIFT', '', mainkey)
+            mainkey = re.sub(r'RSHIFT', '', mainkey)
+            mainkey = re.sub(r'SHIFT', '', mainkey)
+            mainkey = re.sub(r'LCTRL', '', mainkey)
+            mainkey = re.sub(r'RCTRL', '', mainkey)
+            mainkey = re.sub(r'CTRL', '', mainkey)
+            mainkey = re.sub(r'LALT', '', mainkey)
+            mainkey = re.sub(r'RALT', '', mainkey)
+            mainkey = re.sub(r'ALT', '', mainkey)
+            mainkey = re.sub(r'\+', "", mainkey)
+            if mainkey == '':
                 rval = testkey
             else:
-                rval = str
-            if testkey != str: rval = rval + "        " + testkey
+                rval = mainkey
+            if testkey != mainkey: rval = rval + "        " + testkey
             return rval
+
         sortedKeyBinds = sorted(self.KeyBinds, key = getMainKey)
 
         output = ''

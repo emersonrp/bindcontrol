@@ -70,9 +70,9 @@ def BuildLoreSlotData():
         slotdata[typename] = {}
         for leveldata in rawdata['Levels']:
             effecttext = ''
-            (levelname, min, lt, bos, special, lvlshift) = leveldata
+            (levelname, mn, lt, bos, special, lvlshift) = leveldata
 
-            if min: effecttext = effecttext + f"Summon {typedata[0]}\n"
+            if mn : effecttext = effecttext + f"Summon {typedata[0]}\n"
             if lt : effecttext = effecttext + f"Summon {typedata[1]}\n"
             if bos: effecttext = effecttext + f"Summon {typedata[2]}\n"
             if special:

@@ -142,11 +142,11 @@ class IncarnateBrowser(wx.Dialog):
         typeImgList = wx.ImageList(32,32)
         self.TypeList.AssignImageList(typeImgList, wx.IMAGE_LIST_SMALL)
 
-        for i, type in enumerate(list(picker.SlotData)):
+        for i, inc_type in enumerate(list(picker.SlotData)):
             slot = self.Picker.Slot
-            aliasedtype = Aliases.get(type, type)
+            aliasedtype = Aliases.get(inc_type, inc_type)
             typeImgList.Add(GetIconBitmap('Incarnate', f'Incarnate_{slot}_{aliasedtype}_VeryRare'))
-            self.TypeList.InsertItem(self.TypeList.GetItemCount(), type, i)
+            self.TypeList.InsertItem(self.TypeList.GetItemCount(), inc_type, i)
         nextentry = len(picker.SlotData)
         typeImgList.Add(GetIconBitmap('Incarnate', 'Disable'))
         self.TypeList.InsertItem(nextentry, "Disable Slot", nextentry)
@@ -199,25 +199,25 @@ class IncarnateBrowser(wx.Dialog):
         self.LevelList.DeleteAllItems()
         self.IncDetails.SetPage('')
 
-        type = self.TypeList.GetItemText(evt.GetIndex())
+        inc_type = self.TypeList.GetItemText(evt.GetIndex())
 
-        if type == 'Disable Slot': return
+        if inc_type == 'Disable Slot': return
 
         lvlImgList = wx.ImageList(32,32)
         self.LevelList.AssignImageList(lvlImgList, wx.IMAGE_LIST_SMALL)
 
-        for i, level in enumerate(list(self.Picker.SlotData[type])):
+        for i, level in enumerate(list(self.Picker.SlotData[inc_type])):
             rarity = Rarities[i]
             slot = self.Picker.Slot
-            aliasedtype = Aliases.get(type, type)
+            aliasedtype = Aliases.get(inc_type, inc_type)
             icon = GetIcon('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}')
             lvlImgList.Add(icon.GetBitmap(wx.Size(32,32)))
             self.LevelList.IconFilenames.append(icon.Filename)
             self.LevelList.InsertItem(self.LevelList.GetItemCount(), level, i)
 
     def onPickLevel(self, evt):
-        type = self.TypeList.GetItemText(self.TypeList.GetFirstSelected())
+        inc_type = self.TypeList.GetItemText(self.TypeList.GetFirstSelected())
         level = self.LevelList.GetItemText(evt.GetIndex())
-        info = self.Picker.SlotData[type][level]
+        info = self.Picker.SlotData[inc_type][level]
 
         self.IncDetails.SetPage(info)

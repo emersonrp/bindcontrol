@@ -2229,7 +2229,7 @@ class MovementPowers(Page):
                 'FR' , 'FF'  , 'FJ' , 'FS' , 'FN' ,
                 'BO' , 'GBO' ,
         ]
-        for dir in dirs:
+        for d in dirs:
             for sp in (0,1):
                 for X in (0,1):
                     for W in (0,1):
@@ -2238,8 +2238,8 @@ class MovementPowers(Page):
                                 for D in (0,1):
                                     for suffix in ['', 'f', 'j', 'a', 'n', 'r', 's', 'gf', '_t', '_s',]:
                                         files.append(
-                                            self.Profile.GetBindFile(dir,
-                                                f'{dir}{sp}{X}{W}{S}{A}{D}{suffix}.txt')
+                                            self.Profile.GetBindFile(d,
+                                                f'{d}{sp}{X}{W}{S}{A}{D}{suffix}.txt')
                                             )
 
         files.append(self.Profile.GetBindFile('nova.txt'))

@@ -65,10 +65,10 @@ class HelpPopup(wx.PopupTransientWindow):
         HelpPopups[filename] = self
 
 class HelpButton(wx.BitmapButton):
-    def __init__(self, parent, filename, type = "popup"):
+    def __init__(self, parent, filename, wintype = "popup"):
         super().__init__(parent, -1, GetIcon('Help'))
         self.Filename = filename
-        self.WinType = type
+        self.WinType = wintype
 
         self.Bind(wx.EVT_BUTTON, self.GetHelpHandler())
 

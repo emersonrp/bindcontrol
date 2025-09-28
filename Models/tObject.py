@@ -152,8 +152,8 @@ class tObject(dict):
     def dirs(self, dirs):
         dirdict = { 'U': 'up', "D": 'dow', "F": 'forw', "B": 'bac', "L": 'lef', "R": 'rig' }
         ret = ''
-        for dir in list(dirs):
-           ret += getattr(self, dirdict[dir])
+        for d in list(dirs):
+           ret += getattr(self, dirdict[d])
 
         return ret
 

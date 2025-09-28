@@ -502,7 +502,7 @@ class KeySelectDialog(wx.Dialog):
 
 class bcKeyButton(ErrorControlMixin, wx.Button):
 
-    def __init__(self, parent, id, init : dict|None = None) -> None:
+    def __init__(self, parent, wx_id, init : dict|None = None) -> None:
         init = init or {}
         self.CtlName  : str                                     = init.get('CtlName', '')
         self.CtlLabel : ST.GenStaticText | wx.StaticText | None = init.get('CtlLabel')
@@ -511,7 +511,7 @@ class bcKeyButton(ErrorControlMixin, wx.Button):
         # This might be overloading "AlwaysShorten", but:
         style = wx.BU_EXACTFIT if self.AlwaysShorten else 0
 
-        super().__init__(parent, id, style = style)
+        super().__init__(parent, wx_id, style = style)
 
         if tt := init.get('ToolTip', ''):
             self.DefaultToolTip = tt

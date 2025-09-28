@@ -80,3 +80,5 @@ jobs:
           overwrite: true
           release_name: "BindControl ${{ github.ref_name }}"
           body: "${{ github.event.head_commit.message }}"
+          prerelease:  ${{  contains(github.ref, "test") ||  contains(github.ref, "prerelease") }}
+          make_latest: ${{ !contains(github.ref, "test") && !contains(github.ref, "prerelease") }}

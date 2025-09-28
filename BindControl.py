@@ -26,8 +26,7 @@ if sys.version_info < MIN_PYTHON:
     sys.exit("Python %s.%s or later is required.\n" % MIN_PYTHON)
 
 MIN_WX = (4, 2, 2)
-wxver = tuple(map(int, re.split(r'\.', wx.__version__))) # oogly
-if wxver < MIN_WX:
+if wx.VERSION < MIN_WX:
     sys.exit("wxPython %s.%s.%s or later is required.\n" % MIN_WX)
 
 

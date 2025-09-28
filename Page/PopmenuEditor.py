@@ -458,7 +458,7 @@ class PopmenuEditor(Page):
 
     def CheckForModifiedMenus(self) -> bool:
         mlc = self.MenuListCtrl
-        for item in range(0, mlc.GetItemCount()):
+        for item in range(mlc.GetItemCount()):
             info = self.MenuIDList.get(mlc.GetItemData(item), {})
             menu = info.get('menu')
             if menu and menu.Modified:

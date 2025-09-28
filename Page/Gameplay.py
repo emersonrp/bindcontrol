@@ -416,8 +416,8 @@ class Gameplay(Page):
         if self.GetState('TeamEnable'):
             self.ts2CreateSet(1,0,0,self.Profile.ResetFile())
             for tsize in 1,2,3,4,5,6,7,8:
-                for tpos in range(0,tsize+1):
-                    for tsel in range(0,tsize+1):
+                for tpos in range(tsize+1):
+                    for tsel in range(tsize+1):
                         if (tsel != tpos) or (tsel == 0):
                             file = self.Profile.GetBindFile('teamsel2', f'{tsize}{tpos}{tsel}.txt')
                             self.ts2CreateSet(tsize, tpos, tsel, file)
@@ -440,8 +440,8 @@ class Gameplay(Page):
             files.append(self.Profile.GetBindFile("teamsel", f"sel{i}.txt"))
 
         for tsize in 1,2,3,4,5,6,7,8:
-            for tpos in range(0,tsize+1):
-                for tsel in range(0,tsize+1):
+            for tpos in range(tsize+1):
+                for tsel in range(tsize+1):
                     if (tsel != tpos) or (tsel == 0):
                         files.append(self.Profile.GetBindFile('teamsel2', f'{tsize}{tpos}{tsel}.txt'))
 

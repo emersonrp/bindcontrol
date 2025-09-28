@@ -524,7 +524,6 @@ class Profile(wx.Notebook):
                     dirpath.rmdir()
                     # not incrementing "removed" here because we just want to count
                     # files, so we can match "wrote X files" with "deleted X files"
-                    pass
                 except Exception:
                     pass
 

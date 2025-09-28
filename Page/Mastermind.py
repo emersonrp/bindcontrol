@@ -356,7 +356,7 @@ class Mastermind(Page):
             files.append(self.Profile.GetBindFile('mmb',     f'{fn}.txt'))
 
             for tsize in 1,2,3,4,5,6:
-                for tsel in range(0,tsize+1):
+                for tsel in range(tsize+1):
                     files.append(self.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt"))
 
         # Might be nice to wedge AllBindFiles into each page so they control their own etc etc.
@@ -421,11 +421,11 @@ def FindSmallestUniqueSubstring(names) -> list:
         ### For each possible substring length
         for windowSize in range(1,len(name)+1):
             ### For each starting index of a substring
-            for substrInd in range(0, len(name)-windowSize+1):
+            for substrInd in range(len(name)-windowSize+1):
                 substr = name[substrInd:substrInd+windowSize].lower()
                 foundMatch = False
                 ### For each other name
-                for otherNameInd in range(0, len(names)):
+                for otherNameInd in range(len(names)):
                     if (nameInd != otherNameInd) and (names[otherNameInd].lower().find(substr) >= 0):
                         foundMatch = True
                         break

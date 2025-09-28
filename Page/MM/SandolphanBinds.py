@@ -502,7 +502,7 @@ class SandolphanBinds(wx.Panel):
             files.append(self.Page.Profile.GetBindFile('mmb',     f'{fn}.txt'))
 
             for tsize in 1,2,3,4,5,6:
-                for tsel in range(0,tsize+1):
+                for tsel in range(tsize+1):
                     files.append(self.Page.Profile.GetBindFile('petsel', f"{tsize}{tsel}.txt"))
 
         return {

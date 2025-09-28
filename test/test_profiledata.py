@@ -225,7 +225,7 @@ def test_doSaveAsDefault(PD, config):
 def test_GetDefaultProfileJSON(PD, config, monkeypatch):
     monkeypatch.undo() # get rid of "Read" monkeypatch on config
     config.Write('DefaultProfile', '%#aflj BAD JSON BAD" $@!')
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match = 'Problem loading default profile'):
         jsonstring = PD.GetDefaultProfileJSON()
 
     config.Write('DefaultProfile', DefaultProfile)

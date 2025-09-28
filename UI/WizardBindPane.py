@@ -5,8 +5,8 @@ from UI.BindWizard import rev_wiz
 import wx
 
 class WizardBindPane(CustomBindPaneParent):
-    def __init__(self, page, wizClass, init = {}) -> None:
-
+    def __init__(self, page, wizClass, init : Dict|None = None) -> None:
+        init = init or {}
         super().__init__(page, init)
 
         self.WizClass    = wizClass
@@ -17,7 +17,7 @@ class WizardBindPane(CustomBindPaneParent):
         if init:
             init = init.get('WizData', {})
 
-        self.Init = init
+        self.Init = init or {}
 
     def Serialize(self) -> Dict[str, Any]:
         data = self.CreateSerialization({

@@ -12,7 +12,8 @@ import GameData
 import Util.Paths
 
 class ProfileData(dict):
-    def __init__(self, config, filename = None, newname = None, profiledata = {}) -> None:
+    def __init__(self, config, filename = None, newname = None, profiledata : dict|None = None) -> None:
+        profiledata = profiledata or {}
 
         if profiledata: self.FillWith(profiledata)
 
@@ -35,7 +36,7 @@ class ProfileData(dict):
                 else:
                     raise Exception(f'Unable to parse JSON from "{self.Filepath}".')
             except Exception as e:
-                raise Exception(f'Something broke while loading profile "{self.Filepath}: {e}".')
+                raise Exception(f'Something broke while loading profile "{self.Filepath}: {e}".') from e
 
             self.ClearModified()
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
@@ -47,8 +48,8 @@ class ProfileData(dict):
                     try:
                         data = json.loads(jsonstring)
                         self.FillWith(data)
-                    except Exception:
-                        raise Exception("Something broke while loading Default Profile.  This is a bug.")
+                    except Exception as e:
+                        raise Exception("Something broke while loading Default Profile.  This is a bug.") from e
 
             self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
             if not self['ProfileBindsDir']:
@@ -250,7 +251,7 @@ class ProfileData(dict):
                 zipstring = base64.b64decode(b64string)
                 jsonstring = codecs.decode(zipstring, 'zlib')
             except Exception as e:
-                raise Exception(f"Problem loading default profile: {e}")
+                raise Exception(f"Problem loading default profile: {e}") from e
 
         return jsonstring
 
@@ -275,7 +276,7 @@ class ProfileData(dict):
             self.SavedState = copy.deepcopy(dict(self))
             self.ClearModified()
         except Exception as e:
-            raise Exception(f"Problem saving to profile {savefile}: {e}")
+            raise Exception(f"Problem saving to profile {savefile}: {e}") from e
 
     def AsJSON(self, small = False) -> str:
         if small:
@@ -283,7 +284,7 @@ class ProfileData(dict):
         else:
             return json.dumps(self, indent=2)
 
-    # making this "not mine" so we can return False if everything's fine,
+    # making this "not mine" so we can return falsie if everything's fine,
     # or the existing Profile name if something's wrong
     def BindsDirNotMine(self) -> str:
         if IDFile := self.ProfileIDFile():

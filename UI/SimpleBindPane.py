@@ -8,7 +8,8 @@ from UI.PowerBinder import PowerBinder
 ### CustomBind subclasses for the individual bind types
 
 class SimpleBindPane(CustomBindPaneParent):
-    def __init__(self, page, init = {}) -> None:
+    def __init__(self, page, init : dict|None = None) -> None:
+        init = init or {}
         super().__init__(page, init)
 
         self.Description = "Simple Bind"

@@ -12,7 +12,8 @@ from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 ChatTargets = ['team', 'target', 'local']
 
 class BufferBindPane(CustomBindPaneParent):
-    def __init__(self, page, init = {}) -> None:
+    def __init__(self, page, init : dict|None = None) -> None:
+        init = init or {}
         super().__init__(page, init)
 
         self.PassedInit  = init
@@ -130,7 +131,8 @@ class BufferBindPane(CustomBindPaneParent):
         pane.SetSizer(border)
         self.SynchronizeUI()
 
-    def OnAddBuffButton(self, evt = None, buff = {}) -> None:
+    def OnAddBuffButton(self, evt = None, buff : dict|None = None) -> None:
+        buff = buff or {}
         if evt: evt.Skip()
         newBuff = Buff(self, buff)
         self.Buffs.append(newBuff)
@@ -316,7 +318,8 @@ class BufferBindPane(CustomBindPaneParent):
         return AllAreValid
 
 class Buff(wx.Panel):
-    def __init__(self, parent, buff = {}) -> None:
+    def __init__(self, parent, buff : dict|None = None) -> None:
+        buff = buff or {}
         self.Page = parent.Page
         pane = parent.GetPane()
 

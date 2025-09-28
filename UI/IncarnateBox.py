@@ -118,8 +118,9 @@ class IncarnatePicker(wx.StaticBoxSizer):
         evt.Skip()
 
 class IncarnateBrowserList(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
+    defaultSize = wx.Size(250, -1)
     def __init__(self, parent, ID = -1, pos = wx.DefaultPosition,
-                 size = wx.Size(250, -1), style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL) -> None:
+                 size = defaultSize, style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL) -> None:
         super().__init__(parent, ID, pos, size, style)
         listmix.ListCtrlAutoWidthMixin.__init__(self)
 

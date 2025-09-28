@@ -97,17 +97,17 @@ def parseEmoteString(item):
 
         payloadMap[label] = payload
 for category in data:
-    for catname, cat in category.items():
+    for _, cat in category.items():
         for subcat in cat:
             if isinstance(subcat, str):
                 parseEmoteString(subcat)
             elif isinstance(subcat, dict):
-                for subitem, deepdata in subcat.items():
+                for _, deepdata in subcat.items():
                     for leafitem in deepdata:
                         if isinstance(leafitem, str):
                             parseEmoteString(leafitem)
                         elif isinstance(leafitem, dict):
-                            for subsubitem, deeperdata in leafitem.items():
+                            for _, deeperdata in leafitem.items():
                                 for kneelitem in deeperdata:
                                     parseEmoteString(kneelitem)
 

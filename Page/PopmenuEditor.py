@@ -521,7 +521,8 @@ class Popmenu(FM.FlatMenu):
         super().ProcessMouseRClick(pos)
 
     # recursive method to write the file to <filepath> -- no sanity-checking is done inside here.
-    def WriteToFile(self, filepath, outputlines = [], indentlevel = 0) -> None:
+    def WriteToFile(self, filepath, outputlines : list|None = None, indentlevel : int = 0) -> None:
+        outputlines = outputlines or []
         # If this is the outermost request (indent == 0), add the credits
         if indentlevel == 0:
             if outputlines:
@@ -943,7 +944,8 @@ class PEDivider(PEMenuItem):
         super().__init__(parent, data, label = "--------------------")
 
 class PEOption(PEMenuItem):
-    def __init__(self, parent, data = {'': ''}) -> None:
+    def __init__(self, parent, data : Dict[str, str]|None = None) -> None:
+        data = data or {'' : ''}
         [(optname, _)] = data.items()
         super().__init__(parent, data, label = optname or '')
 

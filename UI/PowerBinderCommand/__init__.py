@@ -5,7 +5,7 @@ from UI.PowerBinder import commandRevClasses
 class PowerBinderCommand():
     Menu = ''
     Name = ''
-    def __init__(self, dialog, init = {}) -> None:
+    def __init__(self, dialog, init : dict|None = None) -> None:
         self.Profile = wx.App.Get().Main.Profile
         self.EditDialog = PowerBinderEditDialog(self, dialog)
         self.EditDialog.AddContents(self.BuildUI(self.EditDialog))

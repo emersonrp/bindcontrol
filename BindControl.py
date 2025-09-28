@@ -29,7 +29,6 @@ MIN_WX = (4, 2, 2)
 if wx.VERSION < MIN_WX:
     sys.exit("wxPython %s.%s.%s or later is required.\n" % MIN_WX)
 
-
 ###################
 # Main Window Class
 ###################
@@ -387,10 +386,6 @@ class Main(wx.Frame):
         return True
 
     def OnProfileImport(self, _) -> bool:
-        if self.Profile:
-            if wx.MessageBox("This will create a new profile based on the build file you select.  Continue?", "Import Build File", wx.YES_NO) == wx.NO:
-                return False
-
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return False
 
         pathname = ''
@@ -420,7 +415,6 @@ class Main(wx.Frame):
                 return False
 
         return True
-
 
     def OnProfileSave(self, _) -> None:
         if not self.Profile: return
@@ -681,7 +675,6 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         builtins.print = functools.partial(print, flush=True)
 
         self.Profile = None  # needed inside Main()
-
 
         input_profile = None
         filename = sys.argv[1] if len(sys.argv) == 2 else None

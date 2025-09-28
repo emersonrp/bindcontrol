@@ -11,7 +11,8 @@ import wx.lib.newevent
 PowerBinderChanged, EVT_POWERBINDER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 class PowerBinder(ErrorControlMixin, wx.TextCtrl):
-    def __init__(self, parent, init = {}, extralength = 0):
+    def __init__(self, parent, init : dict|None = None, extralength = 0):
+        init = init or {}
         super().__init__(parent)
         self.CurrentState = init
         self.DialogParent = parent

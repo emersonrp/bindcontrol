@@ -17,7 +17,8 @@ class IncarnateSet(WizardParent):
         super().__init__(parent, init)
         self.IncarnateBox = None
 
-    def BuildUI(self, dialog, init = {}):
+    def BuildUI(self, dialog, init : dict|None = None):
+        init = init or {}
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.SetMinSize(wx.Size(700,-1))
 

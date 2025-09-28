@@ -136,7 +136,8 @@ class tObject(dict):
 
     # return binary "011010" string of which keys are "on";
     # optionally flipping one of them first.
-    def KeyState(self, p = {}):
+    def KeyState(self, p : dict|None = None):
+        p = p or {}
         togglebit = p.get('toggle', '')
 
         ret = ''

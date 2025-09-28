@@ -59,7 +59,8 @@ class Profile(wx.Notebook):
         return newProfile
 
     # Instance methods
-    def __init__(self, parent, filename = None, newname = None, profiledata = {}):
+    def __init__(self, parent, filename : str|None = None, newname : str|None = None, profiledata : dict|None = None):
+        profiledata = profiledata or {}
         super().__init__(parent, style = wx.NB_TOP, name = "Profile")
 
         self.Data            : ProfileData         = ProfileData(wx.ConfigBase.Get(), filename, newname, profiledata)

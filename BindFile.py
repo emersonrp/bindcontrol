@@ -4,7 +4,8 @@ from pathlib import PurePath, Path, PureWindowsPath
 from BLF import BLF
 
 class KeyBind():
-    def __init__(self, key, name : str, page, contents : str|List[str] = []):
+    def __init__(self, key, name : str, page, contents : str|List[str]|None = None):
+        contents = contents or []
 
         if type(contents) is str : contents = [contents]
 
@@ -67,12 +68,12 @@ class BindFile():
         try:
             self.Path.parent.mkdir(parents = True, exist_ok = True)
         except Exception as e:
-            raise Exception(f"Can't make bindfile parent dirs {self.Path.parent} : {e}")
+            raise Exception(f"Can't make bindfile parent dirs {self.Path.parent} : {e}") from e
 
         try:
             self.Path.touch(exist_ok = True)
         except Exception as e:
-            raise Exception(f"Can't instantiate bindfile {self}: {e}")
+            raise Exception(f"Can't instantiate bindfile {self}: {e}") from e
 
         # duplicate citybinder's (modified) logic exactly
         def getMainKey(testkey):
@@ -108,7 +109,7 @@ class BindFile():
             try:
                 self.Path.write_text(output, newline = '\r\n')
             except Exception as e:
-                raise Exception(f"Can't write to bindfile {self.Path}: {e}")
+                raise Exception(f"Can't write to bindfile {self.Path}: {e}") from e
 
     # delete the bindfile.  THIS DOES NOT ASK FOR CONFIRMATION
 #    def Delete(self):

@@ -13,7 +13,9 @@ import UI
 from UI.KeySelectDialog import bcKeyButton
 
 class ControlGroup(wx.StaticBoxSizer):
-    def __init__(self, parent, page, label = '', width = 2, flexcols = [0], topcontent = None) -> None:
+    def __init__(self, parent, page, label = '', width = 2, flexcols : list|None = None, topcontent = None) -> None:
+        flexcols = flexcols or [0]
+
         super().__init__(wx.VERTICAL, parent, label = label)
         self.vertCenteringSizer = wx.BoxSizer(wx.HORIZONTAL)
 

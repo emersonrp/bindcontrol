@@ -8,7 +8,8 @@ from UI.PowerBinder import PowerBinder
 from Icon import GetIcon
 
 class ComplexBindPane(CustomBindPaneParent):
-    def __init__(self, page, init = {}) -> None:
+    def __init__(self, page, init : dict|None = None) -> None:
+        init = init or {}
         super().__init__(page, init)
 
         self.Description = "Complex Bind"
@@ -108,11 +109,12 @@ class ComplexBindPane(CustomBindPaneParent):
 
         return isWellFormed
 
-    def onAddStepButton(self, _ = None, stepdata = {}) -> None:
-        self.doAddStep(stepdata)
+    def onAddStepButton(self, _ = None, stepdata : dict|None = None) -> None:
+        self.doAddStep(stepdata or {})
         self.Page.UpdateAllBinds()
 
-    def doAddStep(self, stepdata = {}) -> None:
+    def doAddStep(self, stepdata : dict|None = None) -> None:
+        stepdata = stepdata or {}
         stepNumber = self.BindStepSizer.GetItemCount() # already the next step because of the add button
         step = BindStep(self, stepNumber, stepdata)
         self.BindStepSizer.Insert(self.BindStepSizer.GetItemCount()-1, step, 0, wx.EXPAND)

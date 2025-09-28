@@ -502,8 +502,9 @@ class KeySelectDialog(wx.Dialog):
 
 class bcKeyButton(ErrorControlMixin, wx.Button):
 
-    def __init__(self, parent, id, init = {}) -> None:
-        self.CtlName  : str                                     = init.get('CtlName')
+    def __init__(self, parent, id, init : dict|None = None) -> None:
+        init = init or {}
+        self.CtlName  : str                                     = init.get('CtlName', '')
         self.CtlLabel : ST.GenStaticText | wx.StaticText | None = init.get('CtlLabel')
         self.Key      : str                                     = init.get('Key', '')
         self.AlwaysShorten : bool                               = init.get('AlwaysShorten', False)

@@ -277,7 +277,7 @@ class Main(wx.Frame):
         return StartupPanel
 
     def SetupProfileUI(self) -> None:
-        enable = self.Profile is None
+        enable = self.Profile is not None
         self.Profile_save.Enable(enable)
         self.Profile_saveas.Enable(enable)
         self.Profile_savedefault.Enable(enable)

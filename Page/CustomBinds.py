@@ -157,6 +157,14 @@ class CustomBinds(Page):
             self.MainSizer.Replace(self.BlankPanel, self.scrolledPanel)
             self.MainSizer.Layout()
 
+        # Re-ID the bindpane if the ID is a dupe.  This should never
+        # have happened but it did and we need to fix it in existing
+        # profiles that have this situation
+        for p in self.Panes:
+            if p.CustomID == bindpane.CustomID:
+                bindpane.CustomID = self.Profile.GetCustomID()
+                break
+
         self.Panes.append(bindpane)
 
         bindpane.BuildBindUI(self)
@@ -288,6 +296,12 @@ class CustomBinds(Page):
     def OnDuplicateButton(self, evt):
         oldbindpane = evt.EventObject.BindPane
         init = oldbindpane.Serialize()
+
+        # clear out a few things that we don't want in the new bind
+        init.pop('CustomID')
+        init.pop('Title')
+        init.pop('Key')
+
         newbindpane = None
         if   isinstance(oldbindpane, SimpleBindPane):
             newbindpane = SimpleBindPane(self, init)
@@ -300,11 +314,7 @@ class CustomBinds(Page):
             wx.LogError(f"Error duplicating bind {oldbindpane.Title}!")
             return
 
-        # clear the title so we get to name it.
-        # also clear the keybind itself.
-        newbindpane.Title = None
         self.AddBindToPage(newbindpane)
-        newbindpane.ClearKeyBinds()
 
     def OnExportButton(self, evt):
 

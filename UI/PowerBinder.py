@@ -170,6 +170,8 @@ class PowerBinderDialog(wx.Dialog):
             else:
                 print(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
+    def SaveToData(self): return self.CurrentState
+
     def LoadFromCurrentState(self):
         self.RearrangeList.Clear()
 
@@ -185,12 +187,6 @@ class PowerBinderDialog(wx.Dialog):
                 index = self.RearrangeList.Append(newCommand.MakeListEntryString())
                 self.RearrangeList.SetClientData(index, newCommand)
         self.UpdateBindStringDisplay()
-
-    def SaveToData(self):
-        # initialize this from CurrentState in case we just tried to save the profile
-        # without ever having Show()ed the dialog and therefore haven't ever populated it.
-        self.LoadFromCurrentState()
-        return self.GetCurrentState()
 
     def GetCurrentState(self):
         data = []

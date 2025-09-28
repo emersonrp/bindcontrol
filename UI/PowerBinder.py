@@ -25,7 +25,7 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
     def OnClickPB(self, _) -> None:
         self.PowerBinderDialog().Show()
 
-    def SaveToData(self) -> list:
+    def SaveToData(self) -> dict:
         return self.CurrentState
 
     # If we do this at __init__ time, the app doesn't launch.  Investigate why.
@@ -44,11 +44,6 @@ class PowerBinderDialog(wx.Dialog):
         self.Page = parent.Page
         self.ExtraLength = powerbinder.ExtraLength
         self.PowerBinder = powerbinder
-
-        super().__init__(parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
-
-        self.Page = parent.Page
-        self.ExtraLength = extralength
 
         self.LoadModules()
 

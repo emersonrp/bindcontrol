@@ -1,17 +1,15 @@
 import re
 from functools import partial
 from pathlib import PurePath, Path, PureWindowsPath
-from typing import Dict, List
+from typing import Dict, List, TYPE_CHECKING
 import wx
-
-from Models.ProfileData import ProfileData
 
 from BindFile import BindFile
 from BLF import BLF
-
 from Icon import GetIcon
-
-from Page import Page as bcPage
+from Models.ProfileData import ProfileData
+if TYPE_CHECKING:
+    from Page import Page as bcPage
 from Page.General import General
 from Page.Gameplay import Gameplay
 from Page.MovementPowers import MovementPowers
@@ -19,12 +17,10 @@ from Page.InspirationPopper import InspirationPopper
 from Page.Mastermind import Mastermind
 from Page.CustomBinds import CustomBinds
 from Page.PopmenuEditor import PopmenuEditor
-
 import UI
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinder import EVT_POWERBINDER_CHANGED
 from UI.PowerPicker import EVT_POWERPICKER_CHANGED
-
 from Util.Paths import ProfilePath
 
 class Profile(wx.Notebook):

@@ -7,13 +7,14 @@ from wx.adv import BitmapComboBox
 import wx.lib.stattext as ST
 from wx.lib.expando import ExpandoTextCtrl
 
-from UI.ErrorControls import ErrorControlMixin
 from Page import Page as bcPage
+
 import UI
+from UI.ErrorControls import ErrorControlMixin
 from UI.KeySelectDialog import bcKeyButton
 
 class ControlGroup(wx.StaticBoxSizer):
-    def __init__(self, parent, page, label = '', width = 2, flexcols : list|None = None, topcontent = None) -> None:
+    def __init__(self, parent, page : bcPage, label = '', width = 2, flexcols : list|None = None, topcontent = None) -> None:
         flexcols = flexcols or [0]
 
         super().__init__(wx.VERTICAL, parent, label = label)

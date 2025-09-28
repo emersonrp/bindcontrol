@@ -10,9 +10,11 @@
 #  page.SetState('Archetype', 'Blaster')
 
 import json
-from typing import Dict
+from typing import Dict, TYPE_CHECKING
 import wx
 import wx.lib.colourselect as csel
+if TYPE_CHECKING:
+    from Profile import Profile as bcProfile
 from UI.KeySelectDialog import bcKeyButton
 from UI.PowerPicker import PowerPicker
 from Icon import GetIcon
@@ -28,10 +30,11 @@ class Page(wx.ScrolledWindow):
 
         self.SetSizer(paddingSizer)
 
-        self.Profile = parent
+        self.Profile  : bcProfile = parent
         self.TabTitle : str = type(self).__name__
 
         self.Ctrls : dict = {}
+        self.Init  : dict = {}
 
     def GetState(self, key) -> str:
         control = self.Ctrls.get(key)

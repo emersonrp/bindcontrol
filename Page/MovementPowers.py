@@ -59,28 +59,28 @@ class MovementPowers(Page):
             'NonSoDMode'      : '',
 
             'SpeedPower'        : '',
-            'SpeedMode'         : "C",
+            'SpeedMode'         : '',
             'SSMobileOnly'      : False,
             'SSSJModeEnable'    : False,
-            'SpeedSpecialKey'   : "",
-            'SpeedSpecialPower' : "", # hidden
+            'SpeedSpecialKey'   : '',
+            'SpeedSpecialPower' : '', # hidden
 
             'JumpPower'        : '',
             'HasCJ'            : False,
-            'JumpMode'         : "T",
+            'JumpMode'         : '',
             'SimpleSJCJ'       : False,
-            'JumpSpecialKey'   : "",
-            'JumpSpecialPower' : "", # hidden
+            'JumpSpecialKey'   : '',
+            'JumpSpecialPower' : '', # hidden
 
             'FlyPower'        : '',
             'HoverPower'      : '', # hidden
             'HasHover'        : False,
             'HasGFly'         : False,
             'HasQF'           : False, # hidden
-            'FlyMode'         : "F",
-            'GFlyMode'        : "",
-            'FlySpecialKey'   : "",
-            'FlySpecialPower' : "", # hidden
+            'FlyMode'         : '',
+            'GFlyMode'        : '',
+            'FlySpecialKey'   : '',
+            'FlySpecialPower' : '', # hidden
 
             'TPPower'         : '',
             'TPBindKey'       : '',
@@ -111,7 +111,7 @@ class MovementPowers(Page):
 
 
             'TempEnable'      : False,
-            'TempToggle'      : "",
+            'TempToggle'      : '',
         }
 
         if self.Profile.Server() == "Homecoming":
@@ -753,11 +753,11 @@ class MovementPowers(Page):
 
         mobile     = p.get('mobile')
         stationary = p.get('stationary')
-        modestr    = p.get('modestr'    , "")
-        flight     = p.get('flight'     , "")
-        fix        = p.get('fix'        , "")
+        modestr    = p.get('modestr'    , '')
+        flight     = p.get('flight'     , '')
+        fix        = p.get('fix'        , '')
         turnoff    = p.get('turnoff'    , [ mobile, stationary ])
-        sssj       = p.get('sssj'       , "")
+        sssj       = p.get('sssj'       , '')
 
         if ((self.DefaultMode() == modestr) and (t.totalkeys == 0)):
 
@@ -1213,20 +1213,20 @@ class MovementPowers(Page):
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
         if (self.isKheldian() and self.GetState('UseNova')):
-            khelfeedback = f"t $name, Changing to {Nova} Form" if self.GetState('KhelFeedback') else ""
+            khelfeedback = f"t $name, Changing to {Nova} Form" if self.GetState('KhelFeedback') else ''
             ResetFile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}{t.on}{Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
             novafile = profile.GetBindFile("nova.txt")
 
             if (self.GetState('UseDwarf')):
-                khelfeedback = f"t $name, Changing to {Dwarf} Form" if self.GetState('KhelFeedback') else ""
+                khelfeedback = f"t $name, Changing to {Dwarf} Form" if self.GetState('KhelFeedback') else ''
                 novafile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}{t.off}{Nova}{t.on}{Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
 
             humpower = ''
             # TODO this control went missing
             #if self.GetState('UseHumanFormPower'): humpower = f'$${self.togon} ' + HumanFormShield
             #else:                                  humpower = ''
-            khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ""
+            khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ''
             novafile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {Nova}{humpower}$$gototray {self.GetState('HumanTray')}" + profile.BLF('reset.txt')))
 
             novafile.SetBind(self.Ctrls['Forward'].MakeBind("+forward"))
@@ -1251,18 +1251,18 @@ class MovementPowers(Page):
             novafile.SetBind(self.Ctrls['Follow'].MakeBind("follow"))
 
         if (self.isKheldian() and self.GetState('UseDwarf')):
-            khelfeedback = f"t $name, Changing to {Dwarf} Form" if self.GetState('KhelFeedback') else ""
+            khelfeedback = f"t $name, Changing to {Dwarf} Form" if self.GetState('KhelFeedback') else ''
             ResetFile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togon} {Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
             dwrffile = profile.GetBindFile("dwarf.txt")
             if (self.GetState('UseNova')):
-                khelfeedback = f"t $name, Changing to {Nova} Form" if self.GetState('KhelFeedback') else ""
+                khelfeedback = f"t $name, Changing to {Nova} Form" if self.GetState('KhelFeedback') else ''
                 dwrffile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {Dwarf}$${self.togon} {Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
             humpower = ''
             # TODO this control went missing
             #if self.GetState('UseHumanFormPower'): humpower = f'$${self.togon} ' + HumanFormShield
             #else:                                  humpower = ''
-            khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ""
+            khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ''
             dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {Dwarf}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
 
             dwrffile.SetBind(self.Ctrls['Forward'].MakeBind("+forward"))
@@ -1629,7 +1629,7 @@ class MovementPowers(Page):
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
                                 ### Fly Mode
-                                if (self.GetState('EnableSoD') and t.canhov or t.canfly):
+                                if (self.GetState('EnableSoD') and (t.canhov or t.canfly)):
                                     setattr(t, self.DefaultMode() + "Mode", t.FlyMode)
                                     self.makeSoDFile({
                                         't'          : t,

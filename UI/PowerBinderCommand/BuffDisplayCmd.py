@@ -7,7 +7,6 @@ from UI.PowerBinderCommand import PowerBinderCommand
 class BuffDisplayCmd(PowerBinderCommand):
     Name = "Buff Display Settings"
     Menu = "Graphics / UI"
-    Groups = {}
 
     def BuildUI(self, dialog) -> wx.BoxSizer:
         self.Groups = {}

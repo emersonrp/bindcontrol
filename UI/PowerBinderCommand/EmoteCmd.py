@@ -1,4 +1,5 @@
 import wx
+import GameData
 import UI.EmotePicker
 from UI.PowerBinderCommand import PowerBinderCommand
 
@@ -20,7 +21,7 @@ class EmoteCmd(PowerBinderCommand):
 
     def MakeBindString(self) -> str:
         displayedEmoteName = self.emoteName.GetLabel()
-        actualEmotePayload = UI.EmotePicker.payloadMap[displayedEmoteName]
+        actualEmotePayload = payloadMap[displayedEmoteName]
 
         return actualEmotePayload
 
@@ -29,3 +30,38 @@ class EmoteCmd(PowerBinderCommand):
 
     def Deserialize(self, init) -> None:
         if init.get('emoteName', ''): self.emoteName.SetLabel(init['emoteName'])
+
+# generate the payloadMap at init time instead of lazy-building it.
+# This is ugly and fragile.
+def AddEmotesString(item):
+    if item != "---":
+        label, *payload = item.split('%')
+        if payload and payload[0]:
+            # contains the entire necessary bindstring
+            payload = payload[0]
+        else:
+            label, *payload = item.split('|')
+            if payload and payload[0]:
+                # contains different string for emote name
+                payload = f"em {payload[0]}"
+            else:
+                # no extra info needed, just lower and de-space the name
+                payload = "em " + label.lower().replace(" ","")
+
+        payloadMap[label] = payload
+
+payloadMap = {}
+for category in GameData.Emotes['emotes']:
+    for _, cat in category.items():
+        for subcat in cat:
+            if isinstance(subcat, str):
+                AddEmotesString(subcat)
+            elif isinstance(subcat, dict):
+                for _, deepdata in subcat.items():
+                    for leafitem in deepdata:
+                        if isinstance(leafitem, str):
+                            AddEmotesString(leafitem)
+                        elif isinstance(leafitem, dict):
+                            for _, deeperdata in leafitem.items():
+                                for kneelitem in deeperdata:
+                                    AddEmotesString(kneelitem)

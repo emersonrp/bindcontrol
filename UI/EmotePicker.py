@@ -6,13 +6,7 @@ def OnEmotePicker(evt) -> None:
 
     button.PopupMenu(EmotePicker(button))
 
-# TODO -- self.payloadMap is only generated once we first make the menu, but it
-# might be accessed after loading a profile and trying to edit an emote step.
-# We need to go through the exercise of building it proactively at init time.
 class EmotePicker(wx.Menu):
-
-    payloadMap = { '...': '' }
-
     def __init__(self, target) -> None:
         super().__init__()
 
@@ -76,38 +70,4 @@ class EmotePicker(wx.Menu):
         label = menuitem.GetItemLabel()
         self.UpdateTarget.SetLabel(label)
 
-# generate the payloadMap at init time instead of lazy-building it.
-# This is ugly and fragile.  TODO -- DRY this up some with HandleEmoteString()
-payloadMap = {}
-data = GameData.Emotes['emotes']
-def parseEmoteString(item):
-    if item != "---":
-        label, *payload = item.split('%')
-        if payload and payload[0]:
-            # contains the entire necessary bindstring
-            payload = payload[0]
-        else:
-            label, *payload = item.split('|')
-            if payload and payload[0]:
-                # contains different string for emote name
-                payload = f"em {payload[0]}"
-            else:
-                # no extra info needed, just lower and de-space the name
-                payload = "em " + label.lower().replace(" ","")
-
-        payloadMap[label] = payload
-for category in data:
-    for _, cat in category.items():
-        for subcat in cat:
-            if isinstance(subcat, str):
-                parseEmoteString(subcat)
-            elif isinstance(subcat, dict):
-                for _, deepdata in subcat.items():
-                    for leafitem in deepdata:
-                        if isinstance(leafitem, str):
-                            parseEmoteString(leafitem)
-                        elif isinstance(leafitem, dict):
-                            for _, deeperdata in leafitem.items():
-                                for kneelitem in deeperdata:
-                                    parseEmoteString(kneelitem)
 

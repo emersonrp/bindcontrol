@@ -131,7 +131,7 @@ class bcController(wx.adv.Joystick):
 
         # windows vs linux treatment of dpad
         if self.HasPOV4Dir() or self.GetMaxAxes() > 6:
-            possible_mods = possible_mods + ["Joypad_Up", "Joypad_Down", "Joypad_Left", "Joypad_Right"]
+            possible_mods = [*possible_mods, "Joypad_Up", "Joypad_Down", "Joypad_Left", "Joypad_Right"]
 
         return possible_mods
 

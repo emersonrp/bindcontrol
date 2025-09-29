@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any
 import wx
 import wx.html
 import wx.lib.mixins.listctrl as listmix
@@ -55,7 +55,7 @@ class IncarnateBox(wx.StaticBoxSizer):
                     box.IncIcon.SetBitmapLabel(GetIconBitmap(contents['iconfile']))
                     box.IconFilename = contents['iconfile']
 
-    def Serialize(self) -> Dict[str, str]:
+    def Serialize(self) -> dict[str, str]:
         incarnatedata = {}
 
         boxes = [self.hybridInc, self.loreInc, self.destinyInc, self.judgementInc, self.interfaceInc, self.alphaInc]
@@ -168,7 +168,7 @@ class IncarnateBrowser(wx.Dialog):
         self.SetSizerAndFit(browserSizer)
         self.Layout()
 
-    def GetPickedPower(self) -> Dict[str, Any]:
+    def GetPickedPower(self) -> dict[str, Any]:
         # First, check if we've decided on 'Disable'
         typeidx = self.TypeList.GetFirstSelected()
         typeitem = self.TypeList.GetItem(typeidx)

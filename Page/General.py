@@ -2,7 +2,7 @@
 import wx
 import wx.adv
 import wx.lib.stattext as ST
-from typing import Dict, Any
+from typing import Any
 import UI
 import Profile
 from Icon import GetIconBitmap
@@ -16,7 +16,7 @@ class General(Page):
     def __init__(self, parent) -> None:
         super().__init__(parent)
 
-        self.Init : Dict[str, Any] = {
+        self.Init : dict[str, Any] = {
             'Alignment' : 'Hero',
             'Origin'    : "Magic",
             'Archetype' : 'Mastermind',
@@ -288,7 +288,7 @@ class General(Page):
         return True
 
     # we only fiddle with ResetFile, which is already taken care of.
-    def AllBindFiles(self) -> Dict[str, list]:
+    def AllBindFiles(self) -> dict[str, list]:
         return {
             'files' : [],
             'dirs'  : [],

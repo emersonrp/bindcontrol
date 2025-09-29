@@ -1,4 +1,4 @@
-from typing import Callable
+from collections.abc import Callable
 import wx
 # Mixin to handle setting/showing errors and tooltips
 class ErrorControlMixin:

@@ -1,5 +1,3 @@
-from typing import Dict
-
-Labels: Dict[str, str] = {
+Labels: dict[str, str] = {
     'ResetKey': 'Binds Reset Key',
 }

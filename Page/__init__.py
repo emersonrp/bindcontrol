@@ -10,7 +10,7 @@
 #  page.SetState('Archetype', 'Blaster')
 
 import json
-from typing import Dict, TYPE_CHECKING
+from typing import TYPE_CHECKING
 import wx
 import wx.lib.colourselect as csel
 if TYPE_CHECKING:
@@ -136,7 +136,7 @@ class Page(wx.ScrolledWindow):
         return True
 
     # return a list of all bindfiles
-    def AllBindFiles(self) -> Dict[str, list]:
+    def AllBindFiles(self) -> dict[str, list]:
         wx.LogWarning(f"AllBindFiles called on parent Page, needs implementing in {type(self).__name__}.")
         return {
             'files' : [],

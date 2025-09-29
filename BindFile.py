@@ -1,10 +1,10 @@
 import re
-from typing import List, overload
+from typing import overload
 from pathlib import PurePath, Path, PureWindowsPath
 from BLF import BLF
 
-class KeyBind():
-    def __init__(self, key, name : str, page, contents : str|List[str]|None = None):
+class KeyBind:
+    def __init__(self, key, name : str, page, contents : str|list[str]|None = None):
         contents = contents or []
 
         if type(contents) is str : contents = [contents]
@@ -12,7 +12,7 @@ class KeyBind():
         self.Key      : str       = key      # actual key combo
         self.Name     : str       = name     # friendly name, ie, "Select All Pets"
         self.Page     : str       = page     # which tab the bind originated on # pyright: ignore
-        self.Contents : List[str] = contents # a list of strings to '$$'-join to create the actual payload # pyright: ignore
+        self.Contents : list[str] = contents # a list of strings to '$$'-join to create the actual payload # pyright: ignore
 
     # factory for PopulateBindFiles to use
     def MakeBind(self, contents):
@@ -35,7 +35,7 @@ class KeyBind():
     def BindFileString(self) -> str:
         return f'{self.Key} "{self.BindString()}"\n'
 
-class BindFile():
+class BindFile:
 
     def __init__(self, bindsdir, gamebindsdir, pathbits:PurePath):
 
@@ -48,9 +48,9 @@ class BindFile():
     @overload
     def SetBind(self, keybind: KeyBind): ...
     @overload
-    def SetBind(self, keybind: str, name: str, page: str, contents: str|List[str]): ...
+    def SetBind(self, keybind: str, name: str, page: str, contents: str|list[str]): ...
 
-    def SetBind(self, keybind:KeyBind|str, name:str = '', page:str = '', contents:str|List[str] = '') -> None:
+    def SetBind(self, keybind:KeyBind|str, name:str = '', page:str = '', contents:str|list[str] = '') -> None:
 
         # we can either be called with a KeyBind, in which case we're golden, or with
         # four strings, in which case we need to roll a KeyBind.  Someday pick one scheme.

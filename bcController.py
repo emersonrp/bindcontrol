@@ -1,7 +1,6 @@
 # Utility class for querying joystick/controller
 import platform
 import wx.adv
-from typing import List
 
 class bcController(wx.adv.Joystick):
     def __init__(self) -> None:
@@ -136,10 +135,10 @@ class bcController(wx.adv.Joystick):
 
         return possible_mods
 
-    def SetCodeTable(self) -> List[list]:
+    def SetCodeTable(self) -> list[list]:
         # sets the Code table, which is a list, indexed by axis number,
         # of lists of [negative direction, positive direction] codes
-        CodeTable : List[List] = []
+        CodeTable : list[list] = []
         if platform.system() == 'Windows':
             CodeTable =  [
                     ['J1_L', 'J1_R'],

@@ -1,6 +1,5 @@
 import wx
 import re
-from typing import Dict
 
 import GameData
 from Help import HelpButton
@@ -338,7 +337,7 @@ class Mastermind(Page):
 
         return True
 
-    def AllBindFiles(self) -> Dict[str, list]:
+    def AllBindFiles(self) -> dict[str, list]:
         files = []
         # not clear that all of these are used but let's be thorough
         for fn in [

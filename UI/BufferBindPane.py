@@ -1,5 +1,4 @@
 import re
-from typing import Dict
 import wx
 import UI
 from BLF import BLF
@@ -239,7 +238,7 @@ class BufferBindPane(CustomBindPaneParent):
         self.CheckAnyKeyPicked()
         self.Page.Layout()
 
-    def Serialize(self) -> Dict[str, str|list]:
+    def Serialize(self) -> dict[str, str|list]:
         data = self.CreateSerialization({
             "SelChatTgt"      : self.SelChatTgt.GetString(self.SelChatTgt.GetSelection()),
             "SelChat"         : self.SelChat.GetValue(),
@@ -265,7 +264,7 @@ class BufferBindPane(CustomBindPaneParent):
 
         return data
 
-    def AllBindFiles(self) -> Dict[str, list]:
+    def AllBindFiles(self) -> dict[str, list]:
         files = []
         title = re.sub(r'\W+', '', self.Title)
         cid = self.CustomID

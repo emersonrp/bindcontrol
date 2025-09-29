@@ -1,4 +1,3 @@
-from typing import Dict
 import webbrowser
 import wx
 import wx.html
@@ -80,13 +79,13 @@ class HelpButton(wx.BitmapButton):
         return OnClick
 
 
-HelpWindows: Dict[str, HelpWindow] = {}
+HelpWindows: dict[str, HelpWindow] = {}
 def ShowHelpWindow(parent, filename, _ = None):
     if not HelpWindows.get(filename):
         HelpWindows[filename] = HelpWindow(parent, filename)
     HelpWindows[filename].Show()
 
-HelpPopups:  Dict[str, HelpPopup] = {}
+HelpPopups:  dict[str, HelpPopup] = {}
 def ShowHelpPopup(self, filename, event):
     if not HelpPopups.get(filename):
         HelpPopups[filename] = HelpPopup(self, filename)

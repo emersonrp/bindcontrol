@@ -1,6 +1,6 @@
 import wx
 import wx.lib.colourselect as csel
-from typing import Dict, Any
+from typing import Any
 import UI
 import Icon
 from Page import Page
@@ -20,9 +20,9 @@ class InspirationPopper(Page):
         super().__init__(parent)
 
         self.TabTitle : str = "Inspiration Popper"
-        self.chatPickers : Dict[str, ChatColorPicker] = {}
+        self.chatPickers : dict[str, ChatColorPicker] = {}
 
-        self.Init : Dict[str, Any] = {}
+        self.Init : dict[str, Any] = {}
 
     def BuildPage(self) -> None:
         for tab in tabs:
@@ -291,7 +291,7 @@ class InspirationPopper(Page):
         return True
 
     # we only fiddle with ResetFile, which is already taken care of.
-    def AllBindFiles(self) -> Dict[str, list]:
+    def AllBindFiles(self) -> dict[str, list]:
         return {
             'files' : [],
             'dirs'  : [],

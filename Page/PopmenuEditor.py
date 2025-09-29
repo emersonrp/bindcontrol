@@ -4,7 +4,8 @@ from Help import HelpHTMLWindow
 from UI.ControlGroup import cgTextCtrl
 from UI.PrefsDialog import PrefsDialog
 from Icon import GetIcon
-from typing import Callable, Dict, Literal
+from typing import Literal
+from collections.abc import Callable
 
 from pathlib import Path
 from datetime import datetime
@@ -38,7 +39,7 @@ class PopmenuEditor(Page):
         super().__init__(parent)
 
         self.CurrentMenu : Popmenu|None    = None
-        self.MenuIDList  : Dict[int, dict] = {}  # dict for menu objects for left-side list
+        self.MenuIDList  : dict[int, dict] = {}  # dict for menu objects for left-side list
         self.TabTitle    : str             = "Popmenu Editor"
 
         Sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -944,7 +945,7 @@ class PEDivider(PEMenuItem):
         super().__init__(parent, data, label = "--------------------")
 
 class PEOption(PEMenuItem):
-    def __init__(self, parent, data : Dict[str, str]|None = None) -> None:
+    def __init__(self, parent, data : dict[str, str]|None = None) -> None:
         data = data or {'' : ''}
         [(optname, _)] = data.items()
         super().__init__(parent, data, label = optname or '')

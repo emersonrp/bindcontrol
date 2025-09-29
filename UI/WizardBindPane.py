@@ -1,11 +1,11 @@
-from typing import Dict, Any
+from typing import Any
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.BindWizard import rev_wiz
 
 import wx
 
 class WizardBindPane(CustomBindPaneParent):
-    def __init__(self, page, wizClass, init : Dict|None = None) -> None:
+    def __init__(self, page, wizClass, init : dict|None = None) -> None:
         init = init or {}
         super().__init__(page, init)
 
@@ -19,7 +19,7 @@ class WizardBindPane(CustomBindPaneParent):
 
         self.Init = init or {}
 
-    def Serialize(self) -> Dict[str, Any]:
+    def Serialize(self) -> dict[str, Any]:
         data = self.CreateSerialization({
             'WizClass' : rev_wiz[self.WizClass],
             'WizData'  : self.Wizard.Serialize(),

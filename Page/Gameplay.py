@@ -1,5 +1,5 @@
 import wx
-from typing import List, Dict, Any
+from typing import Any
 import UI
 from Page import Page
 from BLF import BLF
@@ -20,8 +20,8 @@ class Gameplay(Page):
 
         if self.Profile.Server() == 'Homecoming':
             self.NumTrays : int = 4
-            self.TrayLabels : List[str] = ['', 'First', 'Second', 'Third', 'Server']
-            self.KeybindProfiles : Dict[str, List[str]] = {
+            self.TrayLabels : list[str] = ['', 'First', 'Second', 'Third', 'Server']
+            self.KeybindProfiles : dict[str, list[str]] = {
                 'Modern'           : ['','','ALT','SHIFT','CTRL'],
                 'Classic'          : ['','','ALT','CTRL',''],
                 'Joystick'         : ['','','ALT','',''],
@@ -29,14 +29,14 @@ class Gameplay(Page):
             }
         else: # Rebirth
             self.NumTrays : int = 5
-            self.TrayLabels : List[str] = ['', 'First', 'Second', 'Third', 'Fourth', 'Server']
-            self.KeybindProfiles : Dict[str, List[str]] = {
+            self.TrayLabels : list[str] = ['', 'First', 'Second', 'Third', 'Fourth', 'Server']
+            self.KeybindProfiles : dict[str, list[str]] = {
                 'Default'  : ['','','ALT','CTRL','',''],
                 'Joystick' : ['','','ALT','','',''],
                 'Original' : ['','','ALT','','',''],
             }
 
-        self.Init : Dict[str, Any] = {
+        self.Init : dict[str, Any] = {
             'TPSEnable'   : False,
             'TPSSelMode'  : "Teammates, then pets",
             'TeamSelect1' : '',
@@ -432,7 +432,7 @@ class Gameplay(Page):
                     if self.GetState(f"Tray{traynum}Button{button}") != DefKey and not self.Profile.CheckConflict(DefKey, ''):
                         self.Profile.ResetFile().SetBind(KeyBind(DefKey, "", self, "nop"))
 
-    def AllBindFiles(self) -> Dict[str, list]:
+    def AllBindFiles(self) -> dict[str, list]:
         files = [self.Profile.GetBindFile("teamsel", "reset.txt")]
         dirs  = ["teamsel", "teamsel2"]
 

@@ -1,7 +1,7 @@
 import re
 from functools import partial
 from pathlib import PurePath, Path, PureWindowsPath
-from typing import Dict, List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 import wx
 
 from BindFile import BindFile
@@ -60,8 +60,8 @@ class Profile(wx.Notebook):
         super().__init__(parent, style = wx.NB_TOP, name = "Profile")
 
         self.Data            : ProfileData         = ProfileData(wx.ConfigBase.Get(), filename, newname, profiledata)
-        self.BindFiles       : Dict[str, BindFile] = {}
-        self.Pages           : List[bcPage]        = []
+        self.BindFiles       : dict[str, BindFile] = {}
+        self.Pages           : list[bcPage]        = []
         self.ProfileBindsDir : str                 = ''
 
         # Add the individual tabs, in order.
@@ -189,7 +189,7 @@ class Profile(wx.Notebook):
 
             # Proceed with the file chosen by the user
             pathname = fileDialog.GetPath()
-            if not re.search(r'\.bcp$', pathname, flags = re.I):
+            if not re.search(r'\.bcp$', pathname, flags = re.IGNORECASE):
                 pathname = pathname + '.bcp'
 
             # set up our innards to be the new file

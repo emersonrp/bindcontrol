@@ -3,7 +3,6 @@ import re
 import base64
 import zipfile
 from pathlib import Path
-from typing import Dict
 
 import Util.Paths
 
@@ -12,7 +11,7 @@ class Icon(wx.BitmapBundle):
         super().__init__(img)
         self.Filename = filename
 
-Icons: Dict[str, Icon] = { }
+Icons: dict[str, Icon] = { }
 def GetIcon(*args) -> Icon:
 
     # If we haven't initialized the empty/fallback icon, do that now.

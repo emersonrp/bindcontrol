@@ -312,7 +312,7 @@ class qwyNumpad(wx.Panel):
             rect = self.ButtonGrid.GetItemRect(0)
             height = rect.height * (self.ButtonGrid.GetItemCount()+2)
             width = rect.width
-            self.ButtonGrid.SetMinSize((wx.Size(width, height)))
+            self.ButtonGrid.SetMinSize(wx.Size(width, height))
             self.ButtonGrid.SetAutoLayout(True)
         except Exception:
             pass

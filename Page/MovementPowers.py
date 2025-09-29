@@ -1,6 +1,6 @@
 import re
 import wx
-from typing import Dict, Any
+from typing import Any
 
 from BLF import BLF
 import GameData
@@ -27,7 +27,7 @@ class MovementPowers(Page):
         self.togoff  : str = "px_tgof" if server == "Rebirth" else "powexectoggleoff"
         self.unqueue : str = "px_uq"   if server == "Rebirth" else "powexecunqueue"
 
-        self.Init: Dict[str, Any] = {
+        self.Init: dict[str, Any] = {
             'EnableSoD'       : False,
 
             'Up'              : "SPACE",
@@ -2221,7 +2221,7 @@ class MovementPowers(Page):
     def isKheldian(self) -> bool:
         return bool(self.Profile.Archetype() == "Warshade" or self.Profile.Archetype() == "Peacebringer")
 
-    def AllBindFiles(self) -> Dict[str, list]:
+    def AllBindFiles(self) -> dict[str, list]:
         files = []
         dirs  = [
                 'R'  , 'F'   , 'J'  , 'S'  , 'N'  ,

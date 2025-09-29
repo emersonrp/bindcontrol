@@ -3,7 +3,7 @@ import importlib
 import wx
 from Util.Paths import GetRootDirPath
 
-class WizardParent(object):
+class WizardParent:
     def __init__(self, parent, init):
         self.BindPane = parent
         self.Profile = parent.Profile

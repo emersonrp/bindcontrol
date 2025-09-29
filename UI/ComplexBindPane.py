@@ -1,5 +1,4 @@
 import re
-from typing import Dict
 import wx
 import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
@@ -17,7 +16,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
         self.Steps = []
 
-    def Serialize(self) -> Dict[str, str|list]:
+    def Serialize(self) -> dict[str, str|list]:
         data = self.CreateSerialization({
             'Key'  : self.GetCtrl('BindKey').Key,
             'Steps': [],
@@ -191,7 +190,7 @@ class ComplexBindPane(CustomBindPaneParent):
             if i == 1: resetfile.SetBind(key, self, title, cmd)
             cbindfile.SetBind(key, self, title, cmd)
 
-    def AllBindFiles(self) -> Dict[str, list]:
+    def AllBindFiles(self) -> dict[str, list]:
         files = []
         # we do both of these for backwards compat but might eventually just do cid
         title = re.sub(r'\W+', '', self.Title)

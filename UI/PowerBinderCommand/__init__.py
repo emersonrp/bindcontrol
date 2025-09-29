@@ -2,7 +2,7 @@ import wx
 from UI.PowerBinder import commandRevClasses
 
 ########### Power Binder Command Objects
-class PowerBinderCommand():
+class PowerBinderCommand:
     Menu = ''
     Name = ''
     def __init__(self, dialog, init : dict|None = None) -> None:

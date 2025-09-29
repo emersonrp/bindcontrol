@@ -1,7 +1,6 @@
 import platform
 import re
 import string
-from typing import Dict, List
 
 import wx
 import wx.html
@@ -62,7 +61,7 @@ class KeySelectDialog(wx.Dialog):
 
         self.SetKeymap()
 
-        self.modKeys: List[str] = [] # gets set every ShowModal() call
+        self.modKeys: list[str] = [] # gets set every ShowModal() call
         self.dualKeys = ['SHIFT','CTRL','ALT'] # keys which might be mod and might be trigger
 
         super().__init__(button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
@@ -350,7 +349,7 @@ class KeySelectDialog(wx.Dialog):
     # This keymap code was initially adapted from PADRE < http://padre.perlide.org/ >.
     def SetKeymap(self) -> None:
         # key choice list
-        self.Keymap: Dict[str|int, str] = {
+        self.Keymap: dict[str|int, str] = {
                 wx.WXK_RETURN : 'ENTER',
                 wx.WXK_BACK : 'BACKSPACE',
                 wx.WXK_TAB : 'TAB',

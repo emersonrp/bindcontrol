@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any
 import wx
 import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
@@ -17,7 +17,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
         self.PowerBinder = None
 
-    def Serialize(self) -> Dict[str, Any]:
+    def Serialize(self) -> dict[str, Any]:
         data = self.CreateSerialization({
             'Contents' : self.PowerBinder.GetValue() if self.PowerBinder else '',
             'Key'      : self.GetCtrl('BindKey').Key,

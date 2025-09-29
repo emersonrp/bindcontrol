@@ -44,7 +44,7 @@ def test_blf():
     assert t.BLF('sf', 's') == "bindloadfilesilent c:\\TestPath\\SF\\SF111111s.txt"
 
 #####
-class FakeProfile(object):
+class FakeProfile:
     def __init__(self, server):
         self.ServerName = server
 

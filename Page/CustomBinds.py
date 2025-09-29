@@ -1,6 +1,6 @@
 import wx
 import re
-from typing import Dict, List, Any
+from typing import Any
 from pathlib import Path
 import json
 
@@ -19,8 +19,8 @@ class CustomBinds(Page):
         super().__init__(parent)
 
         self.TabTitle : str                        = "Custom Binds"
-        self.Panes    : List[CustomBindPaneParent] = []
-        self.Init     : Dict[str, Any]             = {}
+        self.Panes    : list[CustomBindPaneParent] = []
+        self.Init     : dict[str, Any]             = {}
 
     def BuildPage(self) -> None:
 
@@ -369,7 +369,7 @@ class CustomBinds(Page):
             'dirs'  : dirs,
         }
 
-    def FullPaneBindsDir(self, bdir) -> Dict[str, list]:
+    def FullPaneBindsDir(self, bdir) -> dict[str, list]:
         files = []
         dirs  = [bdir]
         panebindsdir = Path(self.Profile.BindsDir(), bdir)

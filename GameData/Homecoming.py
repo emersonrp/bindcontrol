@@ -1,6 +1,6 @@
-from typing import Dict, Any
+from typing import Any
 
-Archetypes: Dict[Any, Any] = {
+Archetypes: dict[Any, Any] = {
     'Arachnos Soldier': {
         'Epic': {
             'Leviathan Mastery' : [ 'Spirit Shark', 'School of Sharks', 'Arctic Breath', 'Bile Spray', 'Summon Guardian', ],

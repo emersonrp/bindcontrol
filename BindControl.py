@@ -23,11 +23,11 @@ import Util.BuildFiles
 
 MIN_PYTHON = (3, 13)
 if sys.version_info < MIN_PYTHON:
-    sys.exit("Python %s.%s or later is required.\n" % MIN_PYTHON)
+    sys.exit("Python {}.{} or later is required.\n".format(*MIN_PYTHON))
 
 MIN_WX = (4, 2, 2)
 if wx.VERSION < MIN_WX:
-    sys.exit("wxPython %s.%s.%s or later is required.\n" % MIN_WX)
+    sys.exit("wxPython {}.{}.{} or later is required.\n".format(*MIN_WX))
 
 ###################
 # Main Window Class
@@ -229,7 +229,7 @@ class Main(wx.Frame):
             width  = self.Profile.GetBestSize().width + 24 # account for Profile's padding
 
         if width and height:
-            self.SetSize((wx.Size(width, height)))
+            self.SetSize(wx.Size(width, height))
 
         if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinX') and config.HasEntry('WinY'):
             self.SetPosition(wx.Point((config.ReadInt('WinX'), config.ReadInt('WinY'))))
@@ -611,7 +611,7 @@ class Main(wx.Frame):
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')
             info.SetName('BindControl')
             info.SetVersion(current_version())
-            info.SetDescription((
+            info.SetDescription(
                 "BindControl can help you set up custom keybinds and popmenus in City of Heroes.\n\n"
 
                 "Based on CityBinder 0.76, Copyright \u00A9 2005-2006 Jeff Sheets,\nand CityBinder for Homecoming 0.2, Copyright \u00A9 2021-2023 tailcoat\n\n"
@@ -621,7 +621,7 @@ class Main(wx.Frame):
                 "Mastermind binds by Sandolphan in CoV beta, updated by Konoko and emerson.\n\n"
 
                 "Inspiration Popper design adapted from CityBinder for Homecoming by Tailcoat."
-            ))
+            )
             info.SetCopyright(f'\u00A9 2010-{this_year} R Pickett <emerson@hayseed.net>')
             info.SetWebSite('https://github.com/emersonrp/bindcontrol')
             self.about_info = info
@@ -703,19 +703,19 @@ if __name__ == "__main__":
 
     argv = sys.argv
     if len(argv) > 2:
-        print("")
+        print()
         print("Usage:  BindControl.py [profile_file]")
-        print("")
+        print()
         print("profile_file is optional, and should be a *.bcp file")
-        print("")
+        print()
         exit()
 
     filename = argv[1] if len(argv) == 2 else None
     if filename:
         if not re.search(r'\.bcp$', filename):
-            print("")
+            print()
             print("BindControl can only open *.bcp files")
-            print("")
+            print()
             exit()
 
     app = MyApp(redirect=False)

@@ -1,5 +1,5 @@
 # parent class for various custom bindpane types
-from typing import Dict, Any
+from typing import Any
 import wx
 from UI.KeySelectDialog import bcKeyButton
 
@@ -49,7 +49,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         # the Custom Binds page doing its own PopulateBindFiles, iteratively
         # over all of its kids
 
-    def CreateSerialization(self, data) -> Dict[str, Any]:
+    def CreateSerialization(self, data) -> dict[str, Any]:
         return {
             'CustomID' : self.CustomID,
             'Type'     : self.Type,

@@ -234,7 +234,7 @@ class SandolphanBinds(wx.Panel):
         (tier1bg, tier2bg, tier3bg) = self.CountBodyguards()
 
         #  first check if tier1bg + tier2bg + tier3bg == 6, if so, we can get away with petsayall.
-        if (((tier1bg + tier2bg + tier3bg) == 6)):
+        if ((tier1bg + tier2bg + tier3bg) == 6):
             bgsay = [method + PetBodyguardResponse]
         else:
             if (tier1bg == 3):

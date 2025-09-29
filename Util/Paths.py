@@ -1,6 +1,5 @@
 import wx
 import sys
-import os
 from pathlib import Path
 
 # Things related to paths for the app
@@ -40,7 +39,7 @@ def GetRootDirPath() -> Path:
     if base_path:
         base_path = Path(base_path)
     else:
-        base_path = Path(os.path.abspath(__file__)).parent.parent
+        base_path = Path(__file__).resolve().parent.parent
 
     return base_path
 

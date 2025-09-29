@@ -1,5 +1,4 @@
 import wx
-import os
 import sys
 from pathlib import Path
 import pytest
@@ -37,7 +36,7 @@ def test_ProfilePath(config, tmp_path):
     assert ProfilePath(config) == tmp_path
 
 def test_GetRootDirPath(monkeypatch, tmp_path):
-    assert GetRootDirPath() == Path(os.path.abspath(__file__)).parent.parent
+    assert GetRootDirPath() == Path(__file__).resolve().parent.parent
     monkeypatch.setattr(sys, '_MEIPASS', tmp_path, raising = False)
     assert GetRootDirPath() == Path(tmp_path)
     monkeypatch.undo()

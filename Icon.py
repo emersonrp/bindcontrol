@@ -1,6 +1,5 @@
 import wx
 import re
-import os
 import base64
 import zipfile
 from pathlib import Path
@@ -42,7 +41,7 @@ def GetIcon(*args) -> Icon:
 
         else:  # we don't have the ZIP file, so maybe we're running directly from source
             filepath = Path(base_path) / 'icons' / iconpath
-            if os.path.exists(filepath):
+            if filepath.exists():
                 Icons[iconpathstr] = Icon( wx.Image(str(filepath), wx.BITMAP_TYPE_ANY, -1,), iconpathstr)
             # TODO - maybe put this behind an "if debug" sort of thing
             else:

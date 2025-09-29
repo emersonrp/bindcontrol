@@ -44,7 +44,7 @@ def test_defaultprofile(config, monkeypatch):
         ProfileData.ProfileData(config, newname = 'explode')
 
 def test_init_buildfile(config):
-    buildfile = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'buildfile.txt'
+    buildfile = Path(__file__).resolve().parent / 'fixtures' / 'buildfile.txt'
     profiledata = { 'General' : ParseBuildFile(buildfile) }
     PD = ProfileData.ProfileData(config, newname = 'fubble', profiledata = profiledata)
     assert PD['General']['Name'] == 'Fixture'
@@ -299,5 +299,5 @@ def config(tmp_path, monkeypatch):
 
 @pytest.fixture
 def PD(config):
-    fixtureprofile = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'testprofile.bcp'
+    fixtureprofile = Path(__file__).resolve().parent / 'fixtures' / 'testprofile.bcp'
     return ProfileData.ProfileData(config, filename = str(fixtureprofile))

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import os
 import re
 import wx
 import pytest
@@ -52,9 +51,9 @@ def test_archetype_icons_exist():
         # Archetype, Primary, and Secondary
         for archname, archdata in GameData.Archetypes.items():
             archname = re.sub(r'\W+', '', archname)
-            filename = str(icondir / "Archetypes" / f"{archname}.png")
-            assert os.path.exists(filename), f"Archetype icon missing: {filename}"
-            if filename in filecheck: filecheck.remove(filename)
+            filename = icondir / "Archetypes" / f"{archname}.png"
+            assert filename.exists(), f"Archetype icon missing: {filename}"
+            if str(filename) in filecheck: filecheck.remove(str(filename))
 
             for category in ['Primary', 'Secondary', 'Epic']:
                 for powerset, powers in archdata[category].items():
@@ -64,22 +63,22 @@ def test_archetype_icons_exist():
                             [(power, items)] = power.items()
                             for p in items:
                                 p = re.sub(r'\W+', '', p)
-                                filename = str(icondir / "Powers" / powerset / f"{p}.png")
-                                assert os.path.exists(filename), f"Powers icon missing: {filename}"
-                                if filename in filecheck: filecheck.remove(filename)
+                                filename = icondir / "Powers" / powerset / f"{p}.png"
+                                assert filename.exists(), f"Powers icon missing: {filename}"
+                                if str(filename) in filecheck: filecheck.remove(str(filename))
                         power = re.sub(r'\W+', '', power)
-                        filename = str(icondir / "Powers" / powerset / f"{power}.png")
-                        assert os.path.exists(filename), f"Powers icon missing: {filename}"
-                        if filename in filecheck: filecheck.remove(filename)
+                        filename = icondir / "Powers" / powerset / f"{power}.png"
+                        assert filename.exists(), f"Powers icon missing: {filename}"
+                        if str(filename) in filecheck: filecheck.remove(str(filename))
 
 def test_origin_icons_exist():
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
         # Origins
         for origin in GameData.Origins:
-            filename = str(icondir / "Origins" / f"{origin}.png")
-            assert os.path.exists(filename), f"Origins icon missing: {filename}"
-            if filename in filecheck: filecheck.remove(filename)
+            filename = icondir / "Origins" / f"{origin}.png"
+            assert filename.exists(), f"Origins icon missing: {filename}"
+            if str(filename) in filecheck: filecheck.remove(str(filename))
 
 def test_pool_power_icons_exist():
     for server in ['Homecoming', 'Rebirth']:
@@ -89,9 +88,9 @@ def test_pool_power_icons_exist():
             for power in pool:
                 power = re.sub(r'\W+', '', power)
                 poolname = re.sub(r'\W+', '', poolname)
-                filename = str(icondir / "Powers" / poolname / f"{power}.png")
-                assert os.path.exists(filename), f"Pool power icond missing: {filename}"
-                if filename in filecheck: filecheck.remove(filename)
+                filename = icondir / "Powers" / poolname / f"{power}.png"
+                assert filename.exists(), f"Pool power icon missing: {filename}"
+                if str(filename) in filecheck: filecheck.remove(str(filename))
 
 def test_incarnate_icons_exist():
     for server in ['Homecoming', 'Rebirth']:
@@ -101,9 +100,9 @@ def test_incarnate_icons_exist():
             for inc_type in slotdata['Types']:
                 aliasedtype = Aliases.get(inc_type, inc_type)
                 for rarity in ['Common', 'Uncommon', 'Rare', 'VeryRare']:
-                    filename = str(icondir / "Incarnate" / f"Incarnate_{slot}_{aliasedtype}_{rarity}.png")
-                    assert os.path.exists(filename), f"Incarnate icon missing: {filename}"
-                    if filename in filecheck: filecheck.remove(filename)
+                    filename = icondir / "Incarnate" / f"Incarnate_{slot}_{aliasedtype}_{rarity}.png"
+                    assert filename.exists(), f"Incarnate icon missing: {filename}"
+                    if str(filename) in filecheck: filecheck.remove(str(filename))
 
 def test_miscpowers_icons_exist():
     for server in ['Homecoming', 'Rebirth']:
@@ -117,9 +116,9 @@ def test_miscpowers_icons_exist():
             power = re.sub(r'[^\w|]+', '', power)
             _, icon = SplitNameAndIcon(power)
             icon = '_'.join(icon)
-            filename = str(icondir / "Powers" / "Misc" / f"{icon}.png")
-            assert os.path.exists(filename), f"Misc Powers icon missing: {filename}"
-            if filename in filecheck: filecheck.remove(filename)
+            filename = icondir / "Powers" / "Misc" / f"{icon}.png"
+            assert filename.exists(), f"Misc Powers icon missing: {filename}"
+            if str(filename) in filecheck: filecheck.remove(str(filename))
 
 def test_temppowers_icons_exist():
     for server in ['Homecoming', 'Rebirth']:
@@ -128,9 +127,9 @@ def test_temppowers_icons_exist():
             power = re.sub(r'[^\w|]+', '', power)
             _, icon = SplitNameAndIcon(power)
             icon = '_'.join(icon)
-            filename = str(icondir / "Powers" / "Temp" / f"{icon}.png")
-            assert os.path.exists(filename), f"Temp Powers icon missing: {filename}"
-            if filename in filecheck: filecheck.remove(filename)
+            filename = icondir / "Powers" / "Temp" / f"{icon}.png"
+            assert filename.exists(), f"Temp Powers icon missing: {filename}"
+            if str(filename) in filecheck: filecheck.remove(str(filename))
 
 def test_inspiration_icons_exist():
     for server in ['Homecoming', 'Rebirth']:
@@ -140,9 +139,9 @@ def test_inspiration_icons_exist():
             for _, data in insp_type.items():
                 for insp in data['tiers']:
                     insp = re.sub(r'\W+', '',  insp)
-                    filename = str(icondir / "Inspirations" / f"{insp}.png")
-                    assert os.path.exists(filename), f"Inspiration icon missing: {filename}"
-                    if filename in filecheck: filecheck.remove(filename)
+                    filename = icondir / "Inspirations" / f"{insp}.png"
+                    assert filename.exists(), f"Inspiration icon missing: {filename}"
+                    if str(filename) in filecheck: filecheck.remove(str(filename))
 
 def test_no_extra_icons():
     assert not filecheck, f"{len(filecheck)} extra icons exist: {filecheck}"
@@ -166,7 +165,7 @@ def test_geticon():
 
 def test_geticon_fromzip(monkeypatch):
     _ = wx.App()
-    monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepath)
+    monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepathzip)
     archicon = Icon.GetIcon('Archetypes', 'Tanker')
     assert isinstance(archicon, Icon.Icon), 'Gets from ZIP file without extension'
     assert len(Icon.Icons) == 2, 'Caches from ZIP file without extension'
@@ -183,9 +182,8 @@ def test_geticon_fromzip(monkeypatch):
 
 def test_geticon_fromfile(monkeypatch):
     _ = wx.App()
-    monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepath)
+    monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepathfs)
 
-    monkeypatch.setattr(Path, 'exists', lambda _: False)
     flyicon = Icon.GetIcon('Powers', 'Flight', 'Fly')
     assert isinstance(flyicon, Icon.Icon), 'Gets from filesystem'
     assert len(Icon.Icons) == 4, 'Caches from filesystem'
@@ -201,12 +199,15 @@ def test_geticon_fromfile(monkeypatch):
     monkeypatch.undo()
 
 def test_geticonbitmap(monkeypatch):
-    monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepath)
+    monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepathfs)
     archbmp = Icon.GetIconBitmap('Archetypes', 'Tanker')
     assert isinstance(archbmp, wx.Bitmap)
 
 #####
-def fixturepath():
-    return Path(os.path.abspath(__file__)).parent / 'fixtures'
+def fixturepathzip():
+    return Path(__file__).resolve().parent / 'fixtures' / 'iconszip'
+
+def fixturepathfs():
+    return Path(__file__).resolve().parent / 'fixtures' / 'iconsfs'
 
 def raises_exception(ex_input): raise(Exception(f"RAISES: {ex_input}"))

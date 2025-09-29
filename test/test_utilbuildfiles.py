@@ -1,4 +1,3 @@
-import os
 import Util.BuildFiles
 from pathlib import Path
 
@@ -11,7 +10,7 @@ def test_ParseBuildFiles(tmp_path):
     assert Util.BuildFiles.ParseBuildFile(badfile) == {}
     badfile.unlink()
 
-    fixture = Path(os.path.abspath(__file__)).parent / 'fixtures' / 'buildfile.txt'
+    fixture = Path(__file__).resolve().parent / 'fixtures' / 'buildfile.txt'
 
     data = Util.BuildFiles.ParseBuildFile(fixture)
 

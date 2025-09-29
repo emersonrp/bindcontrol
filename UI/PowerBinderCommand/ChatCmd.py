@@ -1,28 +1,28 @@
 import wx
 from UI.PowerBinderCommand import PowerBinderCommand
 
+chatChannelMap = {
+    'say' : 's',
+    'group' : 'g',
+    'broadcast': 'b',
+    'local': 'l',
+    'yell': 'y',
+    'friends': 'f',
+    'general': 'gen',
+    'help': 'h',
+    'looking for group': 'lfg',
+    'request': 'req',
+    'arena': 'ac',
+    'supergroup': 'sg',
+    'coalition': 'c',
+    'tell $target,': 't $target,',
+    'tell $name': 't $name',
+}
+
 ####### Chat Command
 class ChatCmd(PowerBinderCommand):
     Name = "Chat Command"
     Menu = "Social"
-
-    chatChannelMap = {
-        'say' : 's',
-        'group' : 'g',
-        'broadcast': 'b',
-        'local': 'l',
-        'yell': 'y',
-        'friends': 'f',
-        'general': 'gen',
-        'help': 'h',
-        'looking for group': 'lfg',
-        'request': 'req',
-        'arena': 'ac',
-        'supergroup': 'sg',
-        'coalition': 'c',
-        'tell $target,': 't $target,',
-        'tell $name': 't $name',
-    }
 
     def BuildUI(self, dialog) -> wx.GridBagSizer:
         chatCommandSizer = wx.GridBagSizer(5, 5)
@@ -49,7 +49,7 @@ class ChatCmd(PowerBinderCommand):
         self.chatCommandChatSize.SetSelection(5)
         chatCommandSizer.Add(wx.StaticText(dialog, -1, "Size:"), (2,2), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
         chatCommandSizer.Add(self.chatCommandChatSize, (2,3))
-        self.chatCommandChannel = wx.Choice(dialog, -1, choices = [chan for chan in self.chatChannelMap])
+        self.chatCommandChannel = wx.Choice(dialog, -1, choices = [chan for chan in chatChannelMap])
         self.chatCommandChannel.SetSelection(0)
         chatCommandSizer.Add(wx.StaticText(dialog, -1, "Channel:"), (2,4), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
         chatCommandSizer.Add(self.chatCommandChannel, (2,5))

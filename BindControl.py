@@ -193,7 +193,7 @@ class Main(wx.Frame):
 
     def SetupProfile(self, input_profile = None):
 
-        config = wx.FileConfig('bindcontrol')
+        config = wx.ConfigBase.Get()
 
         filename = None
         if input_profile:
@@ -393,7 +393,7 @@ class Main(wx.Frame):
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return False
 
         pathname = ''
-        config = wx.FileConfig('bindcontrol')
+        config = wx.ConfigBase.Get()
         with wx.FileDialog(self, "Import build file",
                 wildcard   = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
                 defaultDir = config.Read('GamePath'),

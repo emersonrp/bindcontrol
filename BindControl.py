@@ -267,8 +267,12 @@ class Main(wx.Frame):
         loadButton.Bind(wx.EVT_BUTTON, self.OnProfileLoad)
         importButton.Bind(wx.EVT_BUTTON, self.OnProfileImport)
 
+        GettingStartedButton = wx.Button(StartupPanel, label = "Getting Started With BindControl")
+        GettingStartedButton.Bind(wx.EVT_BUTTON, self.OnHelpGettingStarted)
+
         StartupSizer.AddStretchSpacer(1)
         StartupSizer.Add(ButtonSizer, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, 50)
+        StartupSizer.Add(GettingStartedButton, 0, wx.ALIGN_CENTER|wx.TOP, 40)
         StartupSizer.AddStretchSpacer(1)
 
         StartupPanel.SetSizer(StartupSizer)

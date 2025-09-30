@@ -193,7 +193,7 @@ class Gameplay(Page):
         self.Ctrls['TPSEnable'] = tpsenable
         tpsenable.SetValue(self.Init['TPSEnable'])
 
-        tpsenablesizer.Add(tpsenable, 1, wx.ALIGN_CENTER_VERTICAL)
+        tpsenablesizer.Add(tpsenable, 1, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 10)
         tpsenablesizer.Add(HelpButton(tpsenablepanel, 'TPSBinds.html'), 0)
 
         removedefaultbinds = wx.CheckBox(tpsenablepanel, label = 'Remove Default Team Select Binds')
@@ -201,7 +201,7 @@ class Gameplay(Page):
         self.Ctrls['RemoveDefaultTeamBinds'] = removedefaultbinds
         removedefaultbinds.SetValue(self.Init['RemoveDefaultTeamBinds'])
 
-        tpsenablesizer.Add(removedefaultbinds, 1, wx.ALIGN_CENTER_VERTICAL)
+        tpsenablesizer.Add(removedefaultbinds, 1, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 10)
         tpsenablesizer.Add(HelpButton(tpsenablepanel, 'RemoveDefaultTeamBinds.html'), 0)
 
         tpsenablepanel.SetSizer(tpsenablesizer)
@@ -231,7 +231,7 @@ class Gameplay(Page):
         self.Ctrls['TeamEnable'] = teamenable
         teamenable.SetValue(self.Init['TeamEnable'])
 
-        teamenablesizer.Add(teamenable, 1, wx.ALIGN_CENTER_VERTICAL)
+        teamenablesizer.Add(teamenable, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 10)
         teamenablesizer.Add(HelpButton(teamenablepanel, 'TeamSelectBinds.html'), 0)
         teamenablepanel.SetSizer(teamenablesizer)
 

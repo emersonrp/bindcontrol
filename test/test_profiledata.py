@@ -46,6 +46,7 @@ def test_defaultprofile(config, monkeypatch):
 def test_init_buildfile(config):
     buildfile = Path(__file__).resolve().parent / 'fixtures' / 'buildfile.txt'
     profiledata = { 'General' : ParseBuildFile(buildfile) }
+    config.Write('DefaultProfile', DefaultProfile)
     PD = ProfileData.ProfileData(config, newname = 'fubble', profiledata = profiledata)
     assert PD['General']['Name'] == 'Fixture'
     assert PD['General']['Archetype'] == 'Tanker'

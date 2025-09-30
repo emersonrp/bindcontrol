@@ -443,6 +443,7 @@ class Main(wx.Frame):
             wx.ConfigBase.Get().Flush()
         self.StartupPanel = self.MakeStartupPanel()
         self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
+        self.SetTitle('BindControl')
         self.SetupProfileUI()
         self.Layout()
 

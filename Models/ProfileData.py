@@ -48,6 +48,7 @@ class ProfileData(dict):
                     try:
                         data = json.loads(jsonstring)
                         self.FillWith(data)
+                        self.update(profiledata)
                     except Exception as e:
                         raise Exception("Something broke while loading Default Profile.  This is a bug.") from e
 

@@ -288,8 +288,7 @@ class Gameplay(Page):
         # default values, basically informationally.
         for tray in (range(1,self.NumTrays+1)):
             # skip trays we have activated and therefore might have changed values for
-            # We use Init here because we might not have filled out the UI completely yet
-            if self.Init.get(f"Tray{tray}Enabled"): continue
+            if self.GetState(f"Tray{tray}Enabled"): continue
             modkey = self.KeybindProfiles[pickerval][tray]
             for button in (1,2,3,4,5,6,7,8,9,0):
                 if modkey:

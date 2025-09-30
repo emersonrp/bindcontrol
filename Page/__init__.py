@@ -20,7 +20,6 @@ from UI.PowerPicker import PowerPicker
 from Icon import GetIcon
 
 class Page(wx.ScrolledWindow):
-
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -90,6 +89,8 @@ class Page(wx.ScrolledWindow):
                 control.IconFilename = iconfile
                 control.SetBitmap(GetIcon(control.IconFilename))
         elif isinstance(control, wx.Button):
+            if isinstance(control, bcKeyButton):
+                control.Key = value
             return control.SetLabel(value)
         elif isinstance(control, wx.Choice):
             if isinstance(value, str):

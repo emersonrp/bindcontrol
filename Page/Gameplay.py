@@ -13,7 +13,6 @@ from UI.KeySelectDialog import bcKeyButton
 ordinals = ("First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth")
 
 class Gameplay(Page):
-
     def __init__(self, parent) -> None:
         super().__init__(parent)
         self.TabTitle : str = "Gameplay"

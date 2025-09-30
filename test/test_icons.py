@@ -31,21 +31,22 @@ def SplitNameAndIcon(namestr):
 
 icondir = Util.Paths.GetRootDirPath() / 'icons'
 
-count = 0
-filecheck = set()
-for filename in Path(icondir / "Archetypes").glob('**/*.png'):
-    filecheck.add(str(filename))
-for filename in Path(icondir / "Origins").glob('**/*.png'):
-    filecheck.add(str(filename))
-for filename in Path(icondir / "Powers").glob('**/*.png'):
-    filecheck.add(str(filename))
-for filename in Path(icondir / "Incarnate").glob('**/*.png'):
-    if not re.search('Disable.png', str(filename)): # hmm
-        filecheck.add(str(filename))
-for filename in Path(icondir / "Inspirations").glob('**/*.png'):
-    filecheck.add(str(filename))
+def test_archetype_icons():
+    archcheck = set()
+    powcheck = set()
 
-def test_archetype_icons_exist():
+    for filename in Path(icondir / "Archetypes").glob('**/*.png'):
+        archcheck.add(str(filename))
+
+    for server in ['Homecoming', 'Rebirth']:
+        GameData.SetupGameData(server)
+        # Archetype, Primary, and Secondary
+        for _, archdata in GameData.Archetypes.items():
+            for category in ['Primary', 'Secondary', 'Epic']:
+                for powerset, _ in archdata[category].items():
+                    for filename in Path(icondir / "Powers" / powerset).glob('**/*.png'):
+                        powcheck.add(str(filename))
+
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
         # Archetype, Primary, and Secondary
@@ -53,7 +54,7 @@ def test_archetype_icons_exist():
             archname = re.sub(r'\W+', '', archname)
             filename = icondir / "Archetypes" / f"{archname}.png"
             assert filename.exists(), f"Archetype icon missing: {filename}"
-            if str(filename) in filecheck: filecheck.remove(str(filename))
+            if str(filename) in archcheck: archcheck.remove(str(filename))
 
             for category in ['Primary', 'Secondary', 'Epic']:
                 for powerset, powers in archdata[category].items():
@@ -65,13 +66,18 @@ def test_archetype_icons_exist():
                                 p = re.sub(r'\W+', '', p)
                                 filename = icondir / "Powers" / powerset / f"{p}.png"
                                 assert filename.exists(), f"Powers icon missing: {filename}"
-                                if str(filename) in filecheck: filecheck.remove(str(filename))
+                                if str(filename) in powcheck: powcheck.remove(str(filename))
                         power = re.sub(r'\W+', '', power)
                         filename = icondir / "Powers" / powerset / f"{power}.png"
                         assert filename.exists(), f"Powers icon missing: {filename}"
-                        if str(filename) in filecheck: filecheck.remove(str(filename))
+                        if str(filename) in powcheck: powcheck.remove(str(filename))
+    assert not powcheck, f"{len(powcheck)} extra Powerset icons exist: {powcheck}"
+    assert not archcheck, f"{len(archcheck)} extra Archetype icons exist: {archcheck}"
 
-def test_origin_icons_exist():
+def test_origin_icons():
+    filecheck = set()
+    for filename in Path(icondir / "Origins").glob('**/*.png'):
+        filecheck.add(str(filename))
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
         # Origins
@@ -79,8 +85,17 @@ def test_origin_icons_exist():
             filename = icondir / "Origins" / f"{origin}.png"
             assert filename.exists(), f"Origins icon missing: {filename}"
             if str(filename) in filecheck: filecheck.remove(str(filename))
+    assert not filecheck, f"{len(filecheck)} extra Origins icons exist: {filecheck}"
 
-def test_pool_power_icons_exist():
+def test_pool_power_icons():
+    filecheck = set()
+    for server in ['Homecoming', 'Rebirth']:
+        GameData.SetupGameData(server)
+        # Pool Powers
+        for poolname, _ in GameData.PoolPowers.items():
+            for filename in Path(icondir / "Powers" / poolname).glob('**/*.png'):
+                filecheck.add(str(filename))
+
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
         # Pool Powers
@@ -91,8 +106,13 @@ def test_pool_power_icons_exist():
                 filename = icondir / "Powers" / poolname / f"{power}.png"
                 assert filename.exists(), f"Pool power icon missing: {filename}"
                 if str(filename) in filecheck: filecheck.remove(str(filename))
+    assert not filecheck, f"{len(filecheck)} extra Powers icons exist: {filecheck}"
 
-def test_incarnate_icons_exist():
+def test_incarnate_icons():
+    filecheck = set()
+    for filename in Path(icondir / "Incarnate").glob('**/*.png'):
+        if not re.search('Disable.png', str(filename)): # hmm
+            filecheck.add(str(filename))
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
         # Incarnate Powers
@@ -103,13 +123,16 @@ def test_incarnate_icons_exist():
                     filename = icondir / "Incarnate" / f"Incarnate_{slot}_{aliasedtype}_{rarity}.png"
                     assert filename.exists(), f"Incarnate icon missing: {filename}"
                     if str(filename) in filecheck: filecheck.remove(str(filename))
+    assert not filecheck, f"{len(filecheck)} extra Incarnate icons exist: {filecheck}"
 
-def test_miscpowers_icons_exist():
+def test_miscpowers_icons():
+    filecheck = set()
+    for filename in Path(icondir / "Powers" / "Misc").glob('**/*.png'):
+        filecheck.add(str(filename))
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
         # Misc Powers
         # TODO generalize this more?
-
 
         miscpowerlist = RecurseMiscPowers(GameData.MiscPowers)
         for power in miscpowerlist:
@@ -119,10 +142,14 @@ def test_miscpowers_icons_exist():
             filename = icondir / "Powers" / "Misc" / f"{icon}.png"
             assert filename.exists(), f"Misc Powers icon missing: {filename}"
             if str(filename) in filecheck: filecheck.remove(str(filename))
+    assert not filecheck, f"{len(filecheck)} extra Misc Power icons exist: {filecheck}"
 
-def test_temppowers_icons_exist():
+def test_temppowers_icons():
+    filecheck = set()
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
+        for filename in Path(icondir / "Powers" / "Temp").glob('**/*.png'):
+            filecheck.add(str(filename))
         for power in GameData.TempTravelPowers:
             power = re.sub(r'[^\w|]+', '', power)
             _, icon = SplitNameAndIcon(power)
@@ -130,8 +157,12 @@ def test_temppowers_icons_exist():
             filename = icondir / "Powers" / "Temp" / f"{icon}.png"
             assert filename.exists(), f"Temp Powers icon missing: {filename}"
             if str(filename) in filecheck: filecheck.remove(str(filename))
+    assert not filecheck, f"{len(filecheck)} extra Temp Power icons exist: {filecheck}"
 
-def test_inspiration_icons_exist():
+def test_inspiration_icons():
+    filecheck = set()
+    for filename in Path(icondir / "Inspirations").glob('**/*.png'):
+        filecheck.add(str(filename))
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
         # Inspirations
@@ -142,9 +173,7 @@ def test_inspiration_icons_exist():
                     filename = icondir / "Inspirations" / f"{insp}.png"
                     assert filename.exists(), f"Inspiration icon missing: {filename}"
                     if str(filename) in filecheck: filecheck.remove(str(filename))
-
-def test_no_extra_icons():
-    assert not filecheck, f"{len(filecheck)} extra icons exist: {filecheck}"
+    assert not filecheck, f"{len(filecheck)} extra Inspiration icons exist: {filecheck}"
 
 def test_transparent_png():
     _ = wx.App()
@@ -186,11 +215,11 @@ def test_geticon_fromfile(monkeypatch):
 
     flyicon = Icon.GetIcon('Powers', 'Flight', 'Fly')
     assert isinstance(flyicon, Icon.Icon), 'Gets from filesystem'
-    assert len(Icon.Icons) == 4, 'Caches from filesystem'
+    assert len(Icon.Icons) == 2, 'Caches from filesystem'
 
     frosticon = Icon.GetIcon('Powers', 'Icy Assault', 'Frost Breath')
     assert isinstance(frosticon, Icon.Icon), 'Gets with spaces in name'
-    assert len(Icon.Icons) == 5, 'Caches with spaces'
+    assert len(Icon.Icons) == 3, 'Caches with spaces'
 
     monkeypatch.setattr(wx, 'LogWarning', raises_exception)
     with pytest.raises(Exception, match = 'RAISES: Missing icon'):

@@ -315,13 +315,14 @@ class Gameplay(Page):
                     buttonval = ""
 
                 # don't fill in the default value if we're using it somewhere else.
-                if self.Profile.CheckConflict(buttonval, ''): buttonval = ""
+                if self.Profile.CheckConflict(buttonval, ''): continue
 
                 # we could in principle call button.ClearButton() instead of these
                 # three lines, but that throws us in an infinite loop
                 self.Ctrls[f"Tray{tray}Button{button}"].SetLabel(buttonval)
                 self.Ctrls[f"Tray{tray}Button{button}"].Key = buttonval
 
+        self.Profile.CheckAllConflicts()
         if evt: evt.Skip()
 
     def OnFillTray(self, evt) -> None:

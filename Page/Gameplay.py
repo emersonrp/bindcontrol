@@ -10,7 +10,18 @@ from BindFile import KeyBind
 from UI.ControlGroup import ControlGroup, cgChoice
 from UI.KeySelectDialog import bcKeyButton
 
-ordinals = ("First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth")
+ordinals : tuple = ("First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth")
+DefaultTeamBinds : dict[str, tuple] = {
+    'Modern'           : (
+        'SHIFT+F1', 'SHIFT+F2', 'SHIFT+F3', 'SHIFT+F4', 'SHIFT+F5', 'SHIFT+F6', 'SHIFT+F7', 'SHIFT+F8',
+    ),
+    'Classic'          : (
+        'SHIFT+1', 'SHIFT+2', 'SHIFT+3', 'SHIFT+4', 'SHIFT+5', 'SHIFT+6', 'SHIFT+7', 'SHIFT+8',
+    ),
+}
+DefaultTeamBinds['Joystick'] = DefaultTeamBinds['Classic']
+DefaultTeamBinds['Launch (Issue 0)'] = DefaultTeamBinds['Classic']
+
 
 class Gameplay(Page):
     def __init__(self, parent) -> None:
@@ -19,33 +30,34 @@ class Gameplay(Page):
 
         if self.Profile.Server() == 'Homecoming':
             self.NumTrays : int = 4
-            self.TrayLabels : list[str] = ['', 'First', 'Second', 'Third', 'Server']
-            self.KeybindProfiles : dict[str, list[str]] = {
-                'Modern'           : ['','','ALT','SHIFT','CTRL'],
-                'Classic'          : ['','','ALT','CTRL',''],
-                'Joystick'         : ['','','ALT','',''],
-                'Launch (Issue 0)' : ['','','ALT','',''],
+            self.TrayLabels : tuple = ('', 'First', 'Second', 'Third', 'Server')
+            self.KeybindProfiles : dict[str, tuple] = {
+                'Modern'           : ('','','ALT','SHIFT','CTRL'),
+                'Classic'          : ('','','ALT','CTRL',''),
+                'Joystick'         : ('','','ALT','',''),
+                'Launch (Issue 0)' : ('','','ALT','',''),
             }
         else: # Rebirth
             self.NumTrays : int = 5
-            self.TrayLabels : list[str] = ['', 'First', 'Second', 'Third', 'Fourth', 'Server']
-            self.KeybindProfiles : dict[str, list[str]] = {
-                'Default'  : ['','','ALT','CTRL','',''],
-                'Joystick' : ['','','ALT','','',''],
-                'Original' : ['','','ALT','','',''],
+            self.TrayLabels : tuple = ('', 'First', 'Second', 'Third', 'Fourth', 'Server')
+            self.KeybindProfiles : dict[str, tuple] = {
+                'Default'  : ('','','ALT','CTRL','',''),
+                'Joystick' : ('','','ALT','','',''),
+                'Original' : ('','','ALT','','',''),
             }
 
         self.Init : dict[str, Any] = {
-            'TPSEnable'   : False,
-            'TPSSelMode'  : "Teammates, then pets",
-            'TeamSelect1' : '',
-            'TeamSelect2' : '',
-            'TeamSelect3' : '',
-            'TeamSelect4' : '',
-            'TeamSelect5' : '',
-            'TeamSelect6' : '',
-            'TeamSelect7' : '',
-            'TeamSelect8' : '',
+            'TPSEnable'              : False,
+            'RemoveDefaultTeamBinds' : False,
+            'TPSSelMode'             : "Teammates, then pets",
+            'TeamSelect1'            : '',
+            'TeamSelect2'            : '',
+            'TeamSelect3'            : '',
+            'TeamSelect4'            : '',
+            'TeamSelect5'            : '',
+            'TeamSelect6'            : '',
+            'TeamSelect7'            : '',
+            'TeamSelect8'            : '',
 
             'TeamEnable'  : False,
             'SelNextTeam' : '',
@@ -73,7 +85,7 @@ class Gameplay(Page):
             'Tray4Enabled' : False,
         }
         for tray in (range(self.NumTrays, 0, -1)):
-            mod = ['', '', 'ALT+', 'SHIFT+', 'CTRL+', ''][tray]
+            mod = ('', '', 'ALT+', 'SHIFT+', 'CTRL+', '')[tray]
             name = self.TrayLabels[tray]
             self.Init[f"Tray{tray}Next"] = ''
             self.Init[f"Tray{tray}Prev"] = ''
@@ -173,7 +185,7 @@ class Gameplay(Page):
 
         ##### Enable TPS Direct Select
         tpsenablepanel = wx.Panel(self)
-        tpsenablesizer = wx.BoxSizer(wx.HORIZONTAL)
+        tpsenablesizer = wx.FlexGridSizer(2)
 
         tpsenable = wx.CheckBox(tpsenablepanel, -1, 'Enable Team/Pet Select')
         tpsenable.SetToolTip('Check this to enable the Combined Team/Pet Select Binds')
@@ -181,12 +193,18 @@ class Gameplay(Page):
         self.Ctrls['TPSEnable'] = tpsenable
         tpsenable.SetValue(self.Init['TPSEnable'])
 
-        tpshelpbutton = HelpButton(tpsenablepanel, 'TPSBinds.html')
-
         tpsenablesizer.Add(tpsenable, 1, wx.ALIGN_CENTER_VERTICAL)
-        tpsenablesizer.Add(tpshelpbutton, 0)
-        tpsenablepanel.SetSizer(tpsenablesizer)
+        tpsenablesizer.Add(HelpButton(tpsenablepanel, 'TPSBinds.html'), 0)
 
+        removedefaultbinds = wx.CheckBox(tpsenablepanel, label = 'Remove Default Team Select Binds')
+        removedefaultbinds.SetToolTip('Check this to disable the default team-selection binds that the game provides.')
+        self.Ctrls['RemoveDefaultTeamBinds'] = removedefaultbinds
+        removedefaultbinds.SetValue(self.Init['RemoveDefaultTeamBinds'])
+
+        tpsenablesizer.Add(removedefaultbinds, 1, wx.ALIGN_CENTER_VERTICAL)
+        tpsenablesizer.Add(HelpButton(tpsenablepanel, 'RemoveDefaultTeamBinds.html'), 0)
+
+        tpsenablepanel.SetSizer(tpsenablesizer)
 
         ##### direct-select keys
         TPSDirectBox = ControlGroup(self, self, 'Combined Team/Pet Select', topcontent = tpsenablepanel)
@@ -213,10 +231,8 @@ class Gameplay(Page):
         self.Ctrls['TeamEnable'] = teamenable
         teamenable.SetValue(self.Init['TeamEnable'])
 
-        teamhelpbutton = HelpButton(teamenablepanel, 'TeamSelectBinds.html')
-
         teamenablesizer.Add(teamenable, 1, wx.ALIGN_CENTER_VERTICAL)
-        teamenablesizer.Add(teamhelpbutton, 0)
+        teamenablesizer.Add(HelpButton(teamenablepanel, 'TeamSelectBinds.html'), 0)
         teamenablepanel.SetSizer(teamenablesizer)
 
         TeamSelBox = ControlGroup(self, self, 'Team Select', topcontent = teamenablepanel)
@@ -316,8 +332,8 @@ class Gameplay(Page):
         elif wx.GetKeyState(wx.WXK_CONTROL) : mod = "CTRL+"
         elif wx.GetKeyState(wx.WXK_ALT)     : mod = "ALT+"
         for button in (1,2,3,4,5,6,7,8,9,0):
-            self.Ctrls[f"Tray{tray}Button{button}"].Key = f"{mod}{button}"
             self.Ctrls[f"Tray{tray}Button{button}"].SetLabel(f"{mod}{button}")
+            self.Ctrls[f"Tray{tray}Button{button}"].Key = f"{mod}{button}"
         self.Profile.CheckAllConflicts()
         if evt: evt.Skip()
 
@@ -325,7 +341,7 @@ class Gameplay(Page):
         self.EnableControls(self.GetState('TPSEnable'),
             ['TPSSelMode','TeamSelect1','TeamSelect2','TeamSelect3',
             'TeamSelect4', 'TeamSelect5','TeamSelect6','TeamSelect7',
-            'TeamSelect8'])
+            'TeamSelect8', 'RemoveDefaultTeamBinds'])
         if evt: evt.Skip()
 
     def OnTeamEnable(self, evt = None) -> None:
@@ -373,7 +389,6 @@ class Gameplay(Page):
             ResetFile.SetBind(self.Ctrls["Tray4Prev"].MakeBind("prev_tray_alt3"))
             ResetFile.SetBind(self.Ctrls["Tray4Next"].MakeBind("next_tray_alt3"))
 
-
         ### Team / Pet Select
         if self.GetState('TPSEnable'):
             if (self.GetState('TPSSelMode') != "Pets Only"
@@ -409,7 +424,10 @@ class Gameplay(Page):
                 for i in (1,2,3,4,5,6,7,8):
                     ResetFile.SetBind(self.Ctrls[f'TeamSelect{i}'].MakeBind(f"{selmethod} {i - selnummod}"))
 
-            ResetFile = self.Profile.ResetFile()
+            if self.GetState('RemoveDefaultTeamBinds'):
+                for i, key in enumerate(DefaultTeamBinds[self.GetState('KBProfile')]):
+                    if not self.Profile.CheckConflict(f"TeamSelect{i}", ''):
+                        ResetFile.SetBind(KeyBind(key, '', self, 'nop'))
 
         # Prev / Next team binds
         if self.GetState('TeamEnable'):

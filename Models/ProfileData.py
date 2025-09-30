@@ -15,14 +15,12 @@ class ProfileData(dict):
     def __init__(self, config, filename = None, newname = None, profiledata : dict|None = None) -> None:
         profiledata = profiledata or {}
 
-        if profiledata: self.FillWith(profiledata)
-
         self.Config                      = config # wx.Config object
         self.Modified        : bool      = False
         self.Filepath        : Path|None = Path(filename) if filename else None
         self.LastModTime     : int       = 0
         self.Server          : str       = "Homecoming"
-        self.SavedState      : dict      = copy.deepcopy(profiledata)
+        self.SavedState      : dict|None = None
 
         # are we wanting to load this one from a file?
         if self.Filepath:
@@ -32,7 +30,6 @@ class ProfileData(dict):
                 if data := json.loads(self.Filepath.read_text()):
                     self.FillWith(data)
                     self.LastModTime = self.Filepath.stat().st_mtime_ns
-                    self.SavedState = copy.deepcopy(data)
                 else:
                     raise Exception(f'Unable to parse JSON from "{self.Filepath}".')
             except Exception as e:
@@ -42,16 +39,31 @@ class ProfileData(dict):
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
         elif newname:
             self.Filepath = Util.Paths.ProfilePath(self.Config) / f"{newname}.bcp"
-            # only load the default profile if we didn't pass in some data explicitly
-            if not profiledata:
-                if jsonstring := self.GetDefaultProfileJSON():
-                    try:
-                        data = json.loads(jsonstring)
-                        self.FillWith(data)
-                        self.update(profiledata)
-                    except Exception as e:
-                        raise Exception("Something broke while loading Default Profile.  This is a bug.") from e
 
+            # First, mash the Default Profile in there, if it exists
+            if jsonstring := self.GetDefaultProfileJSON():
+                try:
+                    data = json.loads(jsonstring)
+                    self.FillWith(data)
+                except Exception as e:
+                    raise Exception("Something broke while loading Default Profile.  This is a bug.") from e
+
+            # then, if we had profiledata from a buildfile, mash that on top
+            # This feels uglier and uglier, and probably wants to be DRYed up somehow
+            # TODO - a real buildfile will only have General, but we need everything to make
+            # the tests run.  This is not great.
+            if profiledata:
+                for tab in profiledata:
+                    if tab == 'CustomBinds':
+                        self[tab] = self.get(tab, [])
+                        for bind in profiledata[tab]:
+                            self[tab].append(bind)
+                    else:
+                        self[tab] = self.get(tab, {})
+                        for k,v in profiledata[tab].items():
+                            self[tab][k] = v
+
+            # set up the ProfileBindsDir
             self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
             if not self['ProfileBindsDir']:
                 # This happens if GenerateBindsDirectoryName can't come up with something sane
@@ -62,7 +74,11 @@ class ProfileData(dict):
         else:
             raise Exception("Error: ProfileData created with neither filename nor newname.  This is a bug.")
 
-        self.MassageData()
+        self.MassageData() # will SetModified as needed
+
+        # set up our SavedState finally
+        self.SavedState = copy.deepcopy(dict(self))
+
         GameData.SetupGameData(self.Server)
 
     def ProfileName(self)   -> str      : return self.Filepath.stem if self.Filepath else ''

@@ -8,7 +8,7 @@ PowerSelectorChanged, EVT_POWERSELECTOR_CHANGED = wx.lib.newevent.NewCommandEven
 
 class PowerSelector(wx.BitmapButton):
     def __init__(self, parent, page, pickername):
-        super().__init__(parent, bitmap = GetIcon('UI', 'copy'))
+        super().__init__(parent, bitmap = GetIcon('UI', 'gear'))
 
         self.CtlName        = None
         self.CtlLabel       = None

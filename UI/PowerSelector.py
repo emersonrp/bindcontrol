@@ -1,4 +1,8 @@
 import wx
+import wx.lib.stattext as ST
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING: from Page import Page as bcPage
 
 import GameData
 from Icon import GetIcon
@@ -10,13 +14,13 @@ class PowerSelector(wx.BitmapButton):
     def __init__(self, parent, page, pickername):
         super().__init__(parent, bitmap = GetIcon('UI', 'gear'))
 
-        self.CtlName        = None
-        self.CtlLabel       = None
-        self.Page           = page
-        self.Data           = None
-        self.PickerName     = pickername
-        self.DefaultToolTip = None
-        self.Powers         = []
+        self.CtlLabel : ST.GenStaticText | wx.StaticText | None = None
+        self.Page     : bcPage|None                             = page
+        self.Data     : Any                                     = None
+        self.CtlName                                            = ''
+        self.PickerName                                         = pickername
+        self.DefaultToolTip                                     = ''
+        self.Powers                                             = []
 
         self.Bind(wx.EVT_BUTTON, self.OnButtonClicked)
         page.Ctrls[pickername].Bind(wx.EVT_CHOICE, self.ClearPowers)

@@ -80,7 +80,7 @@ class ControlGroup(wx.StaticBoxSizer):
             control.Key     = Init[ctlName]
 
         elif (ctlType == 'powerselector'):
-            control = PowerSelector(CtlParent, context)
+            control = PowerSelector(CtlParent, self.Page, context)
             control.CtlName = ctlName
             noLabel = True
 

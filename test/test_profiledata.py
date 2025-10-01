@@ -71,7 +71,8 @@ def test_init_buildfile(config, DefaultProfile, monkeypatch):
 
     assert PD.SavedState == dict(PD)
 
-def test_MassageData(config):
+def test_MassageData(config, monkeypatch):
+    monkeypatch.undo()
     rawdata = {
         'SoD' : {'DefaultMode' : 'No SoD'},
         'CustomBinds' : [

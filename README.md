@@ -123,11 +123,12 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 
 BindControl is being developed on Manjaro Linux.  It gets feature-tested on a Windows 10 VM.
 
+While developing, I make sure the code passes both `pyright` and `ruff` with a large subset of existing rules.
+
 There is a small but growing `pytest` test suite.  It only runs on Linux (and possibly MacOS) because it uses `pytest-forked` which is not supported on Windows.  To run the test suite, you'll need to install:
 * `pytest-forked`
 * `pytest-xdist`
-
-While developing, I make sure the code passes both `pyright` and `ruff` with a large subset of existing rules.  The intent is to add in `pytest-pyright` and `pytest-ruff` at some point to make those a core part of running the test suite.
+* `pytest-ruff`
 
 I make liberal use of `typing` in parameters, attributes, and return values, and continue to add this into new and existing code as I go.  This has proven to be a bit of a hassle since BindControl was originally a direct port of CityBinder, and inherited many of its original questionable design decisions, as well as having introduced any number of my own over the years.  It's getting gradually better.
 

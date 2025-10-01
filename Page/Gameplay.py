@@ -440,6 +440,17 @@ class Gameplay(Page):
                             file = self.Profile.GetBindFile('teamsel2', f'{tsize}{tpos}{tsel}.txt')
                             self.ts2CreateSet(tsize, tpos, tsel, file)
 
+        ResetFile.SetBind(self.Ctrls['Assist']    .MakeBind('assist'))
+        ResetFile.SetBind(self.Ctrls['Location']  .MakeBind('loc'))
+        ResetFile.SetBind(self.Ctrls['Interact']  .MakeBind('interact'))
+        ResetFile.SetBind(self.Ctrls['Menu']      .MakeBind('menu'))
+        ResetFile.SetBind(self.Ctrls['Release']   .MakeBind('release'))
+        ResetFile.SetBind(self.Ctrls['GameReturn'].MakeBind('gamereturn'))
+        ResetFile.SetBind(self.Ctrls['Sheathe']   .MakeBind('sheathe'))
+        ResetFile.SetBind(self.Ctrls['Stuck']     .MakeBind('stuck'))
+        ResetFile.SetBind(self.Ctrls['DialogYes'] .MakeBind('dialog_yes'))
+        ResetFile.SetBind(self.Ctrls['DialogNo']  .MakeBind('dialog_no'))
+
         return True
 
     def CheckForDefaultKeyToClear(self, traynum, button) -> None:

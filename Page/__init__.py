@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from Profile import Profile as bcProfile
 from UI.KeySelectDialog import bcKeyButton
 from UI.PowerPicker import PowerPicker
+from UI.PowerSelector import PowerSelector
 from Icon import GetIcon
 
 class Page(wx.ScrolledWindow):
@@ -88,6 +89,8 @@ class Page(wx.ScrolledWindow):
             if iconfile := value.get('iconfile'):
                 control.IconFilename = iconfile
                 control.SetBitmap(GetIcon(control.IconFilename))
+        elif isinstance(control, PowerSelector):
+            control.SetValue(value)
         elif isinstance(control, wx.Button):
             if isinstance(control, bcKeyButton):
                 control.Key = value

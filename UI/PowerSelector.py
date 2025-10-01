@@ -1,31 +1,42 @@
 import wx
-import wx.lib.stattext as ST
-from typing import TYPE_CHECKING, Any
 
 import GameData
 from Icon import GetIcon
-if TYPE_CHECKING: from Page import Page as bcPage
 
 class PowerSelector(wx.BitmapButton):
-    def __init__(self, parent, pickername):
+    def __init__(self, parent, page, pickername):
         super().__init__(parent, bitmap = GetIcon('UI', 'copy'))
 
         self.CtlName        = None
         self.CtlLabel       = None
-        self.Page           = None
+        self.Page           = page
         self.Data           = None
         self.PickerName     = pickername
         self.DefaultToolTip = None
         self.Powers         = []
 
         self.Bind(wx.EVT_BUTTON, self.OnButtonClicked)
+        page.Ctrls[pickername].Bind(wx.EVT_CHOICE, self.ClearPowers)
 
     def OnButtonClicked(self, _):
-        # do not skip event here, we're going to throw a custom one instead
+        # do not evt.Skip() here, we're going to throw a custom one instead
         menu = self.MakeMenu()
         self.PopupMenu(menu)
+        profile = wx.App.Get().Main.Profile
+        profile.UpdateData(type(self.Page).__name__, self.CtlName, self.Powers)
 
-    ### TODO TODO TODO need to clean out self.Powers if the picker changes.
+    def ClearPowers(self, evt = None):
+        self.Powers = []
+        if evt: evt.Skip()
+
+    def AddPower(self, power: str):
+        self.Powers.append(power)
+
+    def GetValue(self):
+        return self.Powers
+
+    def SetValue(self, value):
+        self.Powers = value
 
     def MakeMenu(self):
         profile = wx.App.Get().Main.Profile

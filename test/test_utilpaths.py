@@ -82,7 +82,4 @@ def config(tmp_path, monkeypatch):
     config = wx.FileConfig()
     wx.ConfigBase.Set(config)
     monkeypatch.setattr(config, 'Read', lambda _: str(tmp_path))
-
     yield config
-
-    config.DeleteAll()

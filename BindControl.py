@@ -34,21 +34,17 @@ if wx.VERSION < MIN_WX:
 ###################
 class Main(wx.Frame):
 
-    def __init__(self, parent):
-        super().__init__(parent, title = "BindControl")
+    def __init__(self, guiLogging = True):
+        super().__init__(None, title = "BindControl")
 
         self.Profile = None
         self.StartupPanel = None
+        self.Logger : bcLogging|None = None
 
         self.about_info = None
 
         stdpaths = wx.StandardPaths.Get()
-
-        if platform.system() == "Linux":
-            stdpaths.SetFileLayout(stdpaths.FileLayout_XDG)
-
-        config = wx.FileConfig('bindcontrol')
-        wx.ConfigBase.Set(config)
+        config = wx.ConfigBase.Get()
         # Check each config bit for existence and set to default if no
         if not config.Exists('GamePath'):
             if platform.system() == 'Windows':
@@ -88,7 +84,9 @@ class Main(wx.Frame):
         config.Flush()
 
         # set up the custom logger with the infobar
-        self.Logger = bcLogging(self)
+        if guiLogging:
+            self.Logger = bcLogging(self)
+
         if config.ReadBool('ShowDebugMessage'):
             wx.Log.SetLogLevel(wx.LOG_Debug)
         else:
@@ -163,7 +161,8 @@ class Main(wx.Frame):
         self.SetIcons(AppIcon)
 
         # Infobar for showing errors and other messages
-        self.Sizer.Add(self.Logger.InfoBar, 0, wx.EXPAND)
+        if guiLogging and self.Logger:
+            self.Sizer.Add(self.Logger.InfoBar, 0, wx.EXPAND)
 
         # Bottom Buttons
         # BUTTONS
@@ -634,7 +633,8 @@ class Main(wx.Frame):
         wx.adv.AboutBox(self.about_info)
 
     def OnMenuLogWindow(self, _) -> None:
-        self.Logger.LogWindow.Show()
+        if self.Logger:
+            self.Logger.LogWindow.Show()
 
     def OnMenuExitApplication(self, _) -> None:
         self.Close()
@@ -679,20 +679,16 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         import functools
         builtins.print = functools.partial(print, flush=True)
 
-        self.Profile = None  # needed inside Main()
-
-        input_profile = None
-        filename = sys.argv[1] if len(sys.argv) == 2 else None
-        if filename:
-            if re.search(r'\.bcp$', filename):
-                input_profile = filename
-
         self.Init()
+
+        return True
+
+    def Populate(self, input_profile):
         with wx.WindowDisabler():
             _ = wx.BusyInfo('Initializing BindControl...')
             wx.GetApp().Yield()
 
-            self.Main = Main(None)
+            self.Main = Main()
             self.Main.SetupProfile(input_profile = input_profile)
 
             # TODO bootstrapping problem, can't do this inside Profile's "__init__" because
@@ -701,8 +697,6 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
                 self.Main.Profile.CheckAllConflicts()
 
         self.Main.Show()
-
-        return True
 
 if __name__ == "__main__":
 
@@ -715,17 +709,23 @@ if __name__ == "__main__":
         print()
         exit()
 
+    input_profile = ''
     filename = argv[1] if len(argv) == 2 else None
     if filename:
-        if not re.search(r'\.bcp$', filename):
-            print()
-            print("BindControl can only open *.bcp files")
-            print()
-            exit()
+        if re.search(r'\.bcp$', filename):
+            input_profile = filename
 
     app = MyApp(redirect=False)
 
-    config = wx.ConfigBase.Get()
+    stdpaths = wx.StandardPaths.Get()
+    if platform.system() == "Linux":
+        stdpaths.SetFileLayout(stdpaths.FileLayout_XDG)
+
+    config = wx.FileConfig('bindcontrol')
+    wx.ConfigBase.Set(config)
+
+    app.Populate(input_profile)
+
     if config.ReadBool('ShowInspector'):
         import wx.lib.inspection
         wx.lib.inspection.InspectionTool().Show()

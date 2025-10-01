@@ -68,10 +68,7 @@ def config():
     _ = wx.App()
     config = wx.FileConfig()
     wx.ConfigBase.Set(config)
-
     yield config
-
-    config.DeleteAll()
 
 @pytest.fixture
 def bindfile(tmp_path):

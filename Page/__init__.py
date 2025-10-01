@@ -52,6 +52,8 @@ class Page(wx.ScrolledWindow):
                 'power'    : control.GetLabel(),
                 'iconfile' : control.IconFilename,
             })
+        elif isinstance(control, PowerSelector):
+            return json.dumps(control.GetValue())
         elif isinstance(control, bcKeyButton):
             return control.Key
         elif isinstance(control, wx.Button):

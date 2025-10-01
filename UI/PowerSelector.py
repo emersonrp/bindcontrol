@@ -3,6 +3,9 @@ import wx
 import GameData
 from Icon import GetIcon
 
+import wx.lib.newevent
+PowerSelectorChanged, EVT_POWERSELECTOR_CHANGED = wx.lib.newevent.NewCommandEvent()
+
 class PowerSelector(wx.BitmapButton):
     def __init__(self, parent, page, pickername):
         super().__init__(parent, bitmap = GetIcon('UI', 'copy'))
@@ -22,8 +25,6 @@ class PowerSelector(wx.BitmapButton):
         # do not evt.Skip() here, we're going to throw a custom one instead
         menu = self.MakeMenu()
         self.PopupMenu(menu)
-        profile = wx.App.Get().Main.Profile
-        profile.UpdateData(type(self.Page).__name__, self.CtlName, self.Powers)
 
     def ClearPowers(self, evt = None):
         self.Powers = []
@@ -68,3 +69,4 @@ class PowerSelector(wx.BitmapButton):
 
         powers = [item.GetItemLabel() for item in items if item.IsChecked()]
         self.Powers = powers
+        wx.PostEvent(self, PowerSelectorChanged(wx.NewId(), control = self))

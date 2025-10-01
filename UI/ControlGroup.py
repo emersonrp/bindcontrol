@@ -13,6 +13,7 @@ from Page import Page as bcPage
 import UI
 from UI.ErrorControls import ErrorControlMixin
 from UI.KeySelectDialog import bcKeyButton
+from UI.PowerSelector import PowerSelector
 
 class ControlGroup(wx.StaticBoxSizer):
     def __init__(self, parent, page : bcPage, label = '', width = 2, flexcols : list|None = None, topcontent = None) -> None:
@@ -36,15 +37,16 @@ class ControlGroup(wx.StaticBoxSizer):
         self.Add(self.vertCenteringSizer, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10)
 
     def AddControl(self,
-                   ctlType  : str           = '',
-                   ctlName  : str           = '',
-                   noLabel  : bool          = False,
-                   contents : Any           = '',
-                   tooltip  : str           = '',
-                   callback : Callable|None = None,
-                   label    : str           = '',
-                   data     : Any           = None,
-                   size     : wx.Size       = wx.DefaultSize,
+                   ctlType  : str            = '',
+                   ctlName  : str            = '',
+                   noLabel  : bool           = False,
+                   contents : Any            = '',
+                   tooltip  : str            = '',
+                   callback : Callable|None  = None,
+                   label    : str            = '',
+                   data     : Any            = None,
+                   size     : wx.Size        = wx.DefaultSize,
+                   context  : str            = '',
        ):
 
         if not ctlName:
@@ -58,14 +60,6 @@ class ControlGroup(wx.StaticBoxSizer):
         padding = 0
 
         label = label or UI.Labels.get(ctlName, ctlName)
-        if not noLabel:
-            # This ST.GenStaticText is so we can intercept clicks on it, but
-            # the background color is wrong on Windows in a way I can't work out,
-            # and clicks work with wx.StaticText on Windows anyway, so...
-            if platform.system() != 'Windows':
-                CtlLabel = ST.GenStaticText(CtlParent, -1, label + ':')
-            else:
-                CtlLabel = wx.StaticText(CtlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
             control = cgbcKeyButton( CtlParent, -1,)
@@ -73,6 +67,11 @@ class ControlGroup(wx.StaticBoxSizer):
             # push context onto the button, we'll thank me later
             control.CtlName = ctlName
             control.Key     = Init[ctlName]
+
+        elif (ctlType == 'powerselector'):
+            control = PowerSelector(CtlParent, context)
+            control.CtlName = ctlName
+            noLabel = True
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
             control = cgComboBox(
@@ -141,6 +140,15 @@ class ControlGroup(wx.StaticBoxSizer):
 
         else:
             raise Exception(f"Got a ctlType in ControlGroup that I don't know: {ctlType}.  This is a bug.")
+
+        if not noLabel:
+            # This ST.GenStaticText is so we can intercept clicks on it, but
+            # the background color is wrong on Windows in a way I can't work out,
+            # and clicks work with wx.StaticText on Windows anyway, so...
+            if platform.system() != 'Windows':
+                CtlLabel = ST.GenStaticText(CtlParent, -1, label + ':')
+            else:
+                CtlLabel = wx.StaticText(CtlParent, -1, label + ':')
 
         # stash away the page that the control belongs to
         control.Page = self.Page

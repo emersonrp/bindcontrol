@@ -106,7 +106,7 @@ class General(Page):
         bannerSizer.Add(self.ServerPicker, 1, wx.EXPAND|wx.ALL, 5)
 
         topSizer = wx.BoxSizer(wx.HORIZONTAL)
-        powersBox = ControlGroup(self, self, 'Powers')
+        powersBox = ControlGroup(self, self, 'Powers', width = 3)
 
         powersBox.AddControl(
             ctlName = 'Primary',
@@ -114,14 +114,32 @@ class General(Page):
             callback = self.OnPickPrimaryPowerSet,
         )
         powersBox.AddControl(
+            ctlName = 'PrimaryPowers',
+            ctlType = 'powerselector',
+            tooltip = 'Select Powers from Primary powerset.  This is optional.',
+            context = 'Primary',
+        )
+        powersBox.AddControl(
             ctlName = 'Secondary',
             ctlType = 'choice',
             callback = self.OnPickSecondaryPowerSet,
         )
         powersBox.AddControl(
+            ctlName = 'SecondaryPowers',
+            ctlType = 'powerselector',
+            tooltip = 'Select Powers from Secondary powerset.  This is optional.',
+            context = 'Secondary',
+        )
+        powersBox.AddControl(
             ctlName = 'Epic',
             ctlType = 'choice',
             callback = self.OnPickEpicPowerSet,
+        )
+        powersBox.AddControl(
+            ctlName = 'EpicPowers',
+            ctlType = 'powerselector',
+            tooltip = 'Select Powers from Epic powerset.  This is optional.',
+            context = 'Epic',
         )
         poolcontents = sorted(GameData.PoolPowers)
         poolcontents.insert(0, '')
@@ -132,10 +150,22 @@ class General(Page):
             callback = self.OnPickPoolPower,
         )
         powersBox.AddControl(
+            ctlName = 'Pool1Powers',
+            ctlType = 'powerselector',
+            tooltip = 'Select Powers from first Pool powerset.  This is optional.',
+            context = 'Pool1',
+        )
+        powersBox.AddControl(
             ctlName = 'Pool2',
             ctlType = 'choice',
             contents = poolcontents,
             callback = self.OnPickPoolPower,
+        )
+        powersBox.AddControl(
+            ctlName = 'Pool2Powers',
+            ctlType = 'powerselector',
+            tooltip = 'Select Powers from second Pool powerset.  This is optional.',
+            context = 'Pool2',
         )
         powersBox.AddControl(
             ctlName = 'Pool3',
@@ -144,10 +174,22 @@ class General(Page):
             callback = self.OnPickPoolPower,
         )
         powersBox.AddControl(
+            ctlName = 'Pool3Powers',
+            ctlType = 'powerselector',
+            tooltip = 'Select Powers from third Pool powerset.  This is optional.',
+            context = 'Pool3',
+        )
+        powersBox.AddControl(
             ctlName = 'Pool4',
             ctlType = 'choice',
             contents = poolcontents,
             callback = self.OnPickPoolPower,
+        )
+        powersBox.AddControl(
+            ctlName = 'Pool4Powers',
+            ctlType = 'powerselector',
+            tooltip = 'Select Powers from fourth Pool powerset.  This is optional.',
+            context = 'Pool4',
         )
 
         ## Typing Notifier

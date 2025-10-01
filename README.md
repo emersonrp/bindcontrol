@@ -121,11 +121,11 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 
 ## Developing BindControl
 
-BindControl is being developed on Manjaro Linux.  It gets feature-tested on a Windows 10 VM.
+BindControl is being developed on Manjaro Linux.  It gets feature-tested on a Windows 10 VM.  When Windows 10 goes EOL, I'll probably update to a Windows 11 VM, but that's its own headache.
 
 While developing, I make sure the code passes both `pyright` and `ruff` with a large subset of existing rules.
 
-There is a small but growing `pytest` test suite.  It only runs on Linux (and possibly MacOS) because it uses `pytest-forked` which is not supported on Windows.  To run the test suite, you'll need to install:
+There is a small but growing `pytest` test suite.  It only runs on Linux (and possibly MacOS) because it uses `pytest-forked` which is not supported on Windows.  To run the test suite, you'll need to install the following plugins and their dependencies:
 * `pytest-forked`
 * `pytest-xdist`
 * `pytest-ruff`

@@ -15,7 +15,8 @@ def test_init_empty():
     with pytest.raises(Exception, match = 'neither filename nor newname'):
         ProfileData.ProfileData(config)
 
-def test_init_newname(config, monkeypatch):
+def test_init_newname(config, DefaultProfile, monkeypatch):
+    monkeypatch.undo()
     PD = ProfileData.ProfileData(config, newname = 'test')
     assert PD.Config             == config
     assert PD.Filepath           == Util.Paths.ProfilePath(config) / 'test.bcp'

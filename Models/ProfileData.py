@@ -125,7 +125,6 @@ class ProfileData(dict):
             # de-JSONize things if we got them from GetState().
             # This whole process wants revisiting.
             (ctlname, value) = args
-            print(f"{pagename} {ctlname} {value}")
             try:
                 if value:
                     newvalue = json.loads(value)

@@ -29,11 +29,13 @@ class PowerPicker(ErrorControlMixin, wx.Button):
 
     def OnPowerPicker(self, _) -> None:
         # if we didn't pass in a menu, make the normal full-on one
-        if not self.Picker:
-            self.Picker = PowerPickerMenu()
-            self.Picker.Bind(wx.EVT_MENU, self.OnMenuSelected)
-            self.Picker.BuildMenu()
-        self.PopupMenu(self.Picker)
+        if self.Picker:
+            picker = self.Picker
+        else:
+            picker = PowerPickerMenu()
+            picker.Bind(wx.EVT_MENU, self.OnMenuSelected)
+            picker.BuildMenu()
+        self.PopupMenu(picker)
         # TODO maybe it should update itself with the results from the menu
         # instead of the menu reaching in and fiddling with it.  Maybe.
         #
@@ -79,6 +81,7 @@ class PowerPickerMenu(wx.Menu):
                     [(subsubname, items)] = power.items()
                     subsubmenu = wx.Menu()
                     for power in items:
+                        if not self.ShowPower(category, power): continue
                         menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
                         icon = GetIcon('Powers', powerset, power)
                         if icon:
@@ -92,6 +95,7 @@ class PowerPickerMenu(wx.Menu):
                         setattr(subitem, 'IconFilename', icon.Filename)
 
                 else:
+                    if not self.ShowPower(category, power): continue
                     menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
                     icon = GetIcon('Powers', powerset, power)
                     if icon:
@@ -108,6 +112,7 @@ class PowerPickerMenu(wx.Menu):
 
                 powers = GameData.PoolPowers[poolname]
                 for power in powers:
+                    if not self.ShowPower(poolpicker, power): continue
                     menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
                     icon = GetIcon('Powers', poolname,  power)
                     if icon:
@@ -142,6 +147,12 @@ class PowerPickerMenu(wx.Menu):
         # Misc Powers
         submenu = self.MakeRecursiveMenu(GameData.MiscPowers)
         self.AppendSubMenu(submenu, "Misc")
+
+    def ShowPower(self, category:str, power:str) -> bool:
+        powerlist = wx.App.Get().Main.Profile.General.GetState(f'{category}Powers')
+        if not powerlist      : return True # we haven't picked powers, show them all
+        if power in powerlist : return True # we have picked this one, show it
+        return False
 
     def MakeRecursiveMenu(self, menustruct) -> wx.Menu:
         menu = wx.Menu()

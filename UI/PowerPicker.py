@@ -149,10 +149,11 @@ class PowerPickerMenu(wx.Menu):
         self.AppendSubMenu(submenu, "Misc")
 
     def ShowPower(self, category:str, power:str) -> bool:
-        powerlist = wx.App.Get().Main.Profile.General.GetState(f'{category}Powers')
-        if not powerlist      : return True # we haven't picked powers, show them all
-        if power in powerlist : return True # we have picked this one, show it
-        return False
+        # This next line is uuuuugly.  What is the right way to do this?
+        powerlist = wx.App.Get().Main.Profile.General.Ctrls[f'{category}Powers'].GetValue()
+        if   powerlist == []    : return True # we haven't picked powers, show them all
+        elif power in powerlist : return True # we have picked this one, show it
+        else                    : return False
 
     def MakeRecursiveMenu(self, menustruct) -> wx.Menu:
         menu = wx.Menu()

@@ -126,7 +126,7 @@ class PowerPickerMenu(wx.Menu):
                     submenu.AppendSubMenu(subsubmenu, inc_type)
 
                     for index, power in enumerate(slotdata['Powers']):
-                        menuitem = wx.MenuItem(id = wx.ID_ANY, text = f"{type} {power}")
+                        menuitem = wx.MenuItem(id = wx.ID_ANY, text = f"{inc_type} {power}")
                         rarity = Rarities[ index ]
 
                         # aliases for the Lore types ie "Polar Lights" => "Lights" to match the icons

@@ -74,16 +74,22 @@ class Popup(wx.PopupTransientWindow):
                 popup.Check(i)
 
         popup.Bind(wx.EVT_LISTBOX, self.OnPopupClicked)
+        popup.Bind(wx.EVT_CHECKLISTBOX, self.OnPopupClicked)
 
         panel.Fit()
         panel.Layout()
 
     def OnPopupClicked(self, evt):
         popup = evt.GetEventObject()
-
-        sel = popup.GetSelection()
-        popup.Check(sel, not popup.IsChecked(sel))
         popup.SetSelection(wx.NOT_FOUND)
+
+        # If we are first popping up the menu, don't toggle the first element.
+        # This is ugly and annoying.
+        clpoint = popup.ScreenToClient(wx.GetMousePosition())
+        if (sel := popup.HitTest(clpoint)) == wx.NOT_FOUND:
+            return
+
+        popup.Check(sel, not popup.IsChecked(sel))
 
         powers = [popup.GetString(i) for i in popup.GetCheckedItems()]
         self.PowerSelector.Powers = powers

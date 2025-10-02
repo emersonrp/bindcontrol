@@ -293,6 +293,12 @@ class General(Page):
         self.OnPickArchetype()
         self.OnTypeEnable()
         self.ValidateServerPicker()
+        self.UpdatePoolPickers()
+        self.EnablePowerSelectors()
+
+    def EnablePowerSelectors(self):
+        for picker in ('Primary', 'Secondary', 'Epic', 'Pool1', 'Pool2', 'Pool3', 'Pool4'):
+            self.Ctrls[f'{picker}Powers'].Enable(bool(self.GetState(picker)))
 
     def PopulateBindFiles(self) -> bool:
         ResetFile = self.Profile.ResetFile()
@@ -419,6 +425,7 @@ class General(Page):
         self.UpdatePoolPickers()
         self.Profile.MovementPowers.SynchronizeUI()
         self.Profile.CheckAllConflicts()
+        self.EnablePowerSelectors()
         evt.Skip()
 
     def UpdatePoolPickers(self) -> None:

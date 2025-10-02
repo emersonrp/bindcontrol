@@ -121,5 +121,6 @@ PowerSetMap = {
 }
 PowerMap = {
     "Combat Flight" : "Hover",
+    "Fly Boost"     : "Afterburner",
     "Plasma Sheild" : "Plasma Shield",
 }

@@ -26,7 +26,7 @@ def test_ParseBuildFiles(tmp_path):
     assert data['Epic'] == 'Soul Mastery'
     assert data['PrimaryPowers'] == ['Fire Shield', 'Healing Flames', 'Blazing Aura', 'Plasma Shield', 'Burn', 'Temperature Protection']
     assert data['SecondaryPowers'] == ['Bash', 'Pulverize', 'Taunt', 'Whirling Mace', 'Clobber', 'Crowd Control', 'Build Up']
-    assert data['Pool1Powers'] == ['Combat Flight', 'Fly', 'Fly Boost']
+    assert data['Pool1Powers'] == ['Hover', 'Fly', 'Afterburner']
     assert data['Pool2Powers'] == ['Boxing', 'Tough', 'Weave']
     assert data['Pool3Powers'] == ['Defense', 'Tactics', 'Assault', 'Vengeance']
     assert data['EpicPowers'] == ['Gloom', 'Darkest Night']

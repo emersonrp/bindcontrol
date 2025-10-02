@@ -37,6 +37,8 @@ def ParseBuildFile(file:Path) -> dict:
                 if powersettype == 'Pool':
                     if powerset not in Pools:
                         Pools.append(powerset)
+                    powersettype = 'Pool' + str(Pools.index(powerset)+1)
+                    data[powersettype] = powerset
 
                 power = re.sub(r'_', ' ', power)
                 power = re.sub('Sheild', 'Shield', power) # SRSLY?!
@@ -49,14 +51,12 @@ def ParseBuildFile(file:Path) -> dict:
                 powerset = ' '.join(powersetwords)
                 powerset = PowerSetMap.get(powerset, powerset)
                 data[powersettype] = powerset
-                data[powerset] = data.get(powerset, [])
-                data[powerset].append(power)
+                data[f'{powersettype}Powers'] = data.get(f'{powersettype}Powers', [])
+                data[f'{powersettype}Powers'].append(power)
+                print(data)
 
             else:
                 continue
-
-        for i, pool in enumerate(Pools, start = 1):
-            data['Pool'+str(i)] = pool
 
         return data
     else:

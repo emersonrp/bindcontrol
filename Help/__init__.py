@@ -83,9 +83,9 @@ def ShowHelpWindow(parent, filename, _ = None):
     HelpWindows[filename].Show()
 
 HelpPopups:  dict[str, HelpPopup] = {}
-def ShowHelpPopup(self, filename, event):
+def ShowHelpPopup(parent, filename, event):
     if not HelpPopups.get(filename):
-        HelpPopups[filename] = HelpPopup(self, filename)
+        HelpPopups[filename] = HelpPopup(parent, filename)
 
     popup = HelpPopups[filename]
 

@@ -128,7 +128,7 @@ class ProfileData(dict):
             try:
                 if value:
                     newvalue = json.loads(value)
-                    if isinstance(newvalue, dict):
+                    if not isinstance(newvalue, str): # we transformed it somehow
                         value = newvalue
             except Exception: pass # if it didn't JSON, just use it
             self[pagename][ctlname] = value

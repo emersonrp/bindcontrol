@@ -79,6 +79,8 @@ class Popup(wx.PopupTransientWindow):
 
         panel.Fit()
         panel.Layout()
+        self.Fit()
+        self.Layout()
 
     def OnPopupClicked(self, evt):
         popup = evt.GetEventObject()

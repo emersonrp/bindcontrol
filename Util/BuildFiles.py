@@ -41,7 +41,6 @@ def ParseBuildFile(file:Path) -> dict:
                     data[powersettype] = powerset
 
                 power = re.sub(r'_', ' ', power)
-                power = re.sub('Sheild', 'Shield', power) # SRSLY?!
 
                 powerset = re.sub(r'_', ' ', powerset)
                 powersetwords = re.split(r'\s+', powerset)
@@ -52,8 +51,7 @@ def ParseBuildFile(file:Path) -> dict:
                 powerset = PowerSetMap.get(powerset, powerset)
                 data[powersettype] = powerset
                 data[f'{powersettype}Powers'] = data.get(f'{powersettype}Powers', [])
-                data[f'{powersettype}Powers'].append(power)
-                print(data)
+                data[f'{powersettype}Powers'].append(PowerMap.get(power, power))
 
             else:
                 continue
@@ -120,4 +118,8 @@ PowerSetMap = {
     "Psychic Mastery"       : "Psionic Mastery",
     "Ninja Tool Mastery"    : "Weapon Mastery",
     "Munitions Mastery"     : "Arsenal Mastery",
+}
+PowerMap = {
+    "Combat Flight" : "Hover",
+    "Plasma Sheild" : "Plasma Shield",
 }

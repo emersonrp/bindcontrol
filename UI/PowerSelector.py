@@ -84,4 +84,3 @@ class Popup(wx.PopupTransientWindow):
         powers = [popup.GetString(i) for i in range(popup.GetCount()) if popup.IsChecked(i)]
         self.PowerSelector.Powers = powers
         wx.PostEvent(self, PowerSelectorChanged(wx.NewId(), control = self))
-

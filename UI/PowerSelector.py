@@ -1,8 +1,6 @@
 import wx
 import wx.lib.stattext as ST
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING: from Page import Page as bcPage
+from typing import Any
 
 import GameData
 from Icon import GetIcon
@@ -15,7 +13,7 @@ class PowerSelector(wx.BitmapButton):
         super().__init__(parent, bitmap = GetIcon('UI', 'gear'))
 
         self.CtlLabel : ST.GenStaticText | wx.StaticText | None = None
-        self.Page     : bcPage|None                             = page
+        self.Page                                               = page
         self.Data     : Any                                     = None
         self.CtlName                                            = ''
         self.PickerName                                         = pickername
@@ -27,8 +25,10 @@ class PowerSelector(wx.BitmapButton):
 
     def OnButtonClicked(self, _):
         # do not evt.Skip() here, we're going to throw a custom one instead
-        menu = self.MakeMenu()
-        self.PopupMenu(menu)
+        powerlist = Popup(self.Page, self)
+        evtpos = wx.GetMousePosition()
+        powerlist.Position(evtpos, wx.DefaultSize)
+        powerlist.Popup()
 
     def ClearPowers(self, evt = None):
         self.Powers = []
@@ -43,34 +43,45 @@ class PowerSelector(wx.BitmapButton):
     def SetValue(self, value):
         self.Powers = value
 
-    def MakeMenu(self):
-        profile = wx.App.Get().Main.Profile
-        popupMenu = wx.Menu()
-        pickername = self.PickerName
-        picker = None
+class Popup(wx.PopupTransientWindow):
+    def __init__(self, parent, powerselector: PowerSelector):
+        super().__init__(parent)
+
+        self.PowerSelector = powerselector
+
+        panel = wx.Panel(self)
+        popup = wx.CheckListBox(panel, style = wx.LB_MULTIPLE)
+
+        manualsizer = wx.BoxSizer(wx.VERTICAL)
+        manualsizer.Add(popup, 1, wx.EXPAND|wx.ALL, 3)
+
+        panel.SetSizer(manualsizer)
+
+        pickername = self.PowerSelector.PickerName
+
         powerset = ''
-        if self.Page:
-            picker = self.Page.Ctrls[pickername]
-            powerset = picker.GetStringSelection()
+        picker = parent.Ctrls[pickername]
+        powerset = picker.GetStringSelection()
 
         if pickername in ('Primary', 'Secondary', 'Epic'):
-            powers = GameData.Archetypes[profile.Archetype()][pickername][powerset]
+            powers = GameData.Archetypes[parent.Profile.Archetype()][pickername][powerset]
         else:
             powers = GameData.PoolPowers[powerset]
 
-        for power in powers:
-            item = popupMenu.AppendCheckItem(wx.ID_ANY, power)
-            if power in self.Powers:
-                item.Check(True)
+        popup.InsertItems(powers,0)
+        for i,power in enumerate(powers):
+            if power in self.PowerSelector.Powers:
+                popup.Check(i)
 
-        popupMenu.Bind(wx.EVT_MENU, self.OnMenuClicked)
+        popup.Bind(wx.EVT_LISTBOX, self.OnPopupClicked)
 
-        return popupMenu
+        panel.Fit()
+        panel.Layout()
 
-    def OnMenuClicked(self, evt):
-        popupmenu = evt.GetEventObject()
-        items = popupmenu.GetMenuItems()
+    def OnPopupClicked(self, evt):
+        popup = evt.GetEventObject()
 
-        powers = [item.GetItemLabel() for item in items if item.IsChecked()]
-        self.Powers = powers
+        powers = [popup.GetString(i) for i in range(popup.GetCount()) if popup.IsChecked(i)]
+        self.PowerSelector.Powers = powers
         wx.PostEvent(self, PowerSelectorChanged(wx.NewId(), control = self))
+

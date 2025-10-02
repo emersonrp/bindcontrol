@@ -24,10 +24,10 @@ class PowerSelector(wx.BitmapButton):
         page.Ctrls[pickername].Bind(wx.EVT_CHOICE, self.ClearPowers)
 
     def OnButtonClicked(self, _):
-        # do not evt.Skip() here, we're going to throw a custom one instead
+        # do not evt.Skip() here, we're going to throw a custom one instead when the popup closes
         powerlist = Popup(self.Page, self)
         evtpos = wx.GetMousePosition()
-        powerlist.Position(evtpos, wx.DefaultSize)
+        powerlist.Position(wx.Point(evtpos.x + 5, evtpos.y + 5), wx.DefaultSize)
         powerlist.Popup()
 
     def ClearPowers(self, evt = None):
@@ -50,7 +50,7 @@ class Popup(wx.PopupTransientWindow):
         self.PowerSelector = powerselector
 
         panel = wx.Panel(self)
-        popup = wx.CheckListBox(panel, style = wx.LB_MULTIPLE)
+        popup = wx.CheckListBox(panel, style = wx.LB_SINGLE)
 
         manualsizer = wx.BoxSizer(wx.VERTICAL)
         manualsizer.Add(popup, 1, wx.EXPAND|wx.ALL, 3)
@@ -81,6 +81,13 @@ class Popup(wx.PopupTransientWindow):
     def OnPopupClicked(self, evt):
         popup = evt.GetEventObject()
 
-        powers = [popup.GetString(i) for i in range(popup.GetCount()) if popup.IsChecked(i)]
+        sel = popup.GetSelection()
+        popup.Check(sel, not popup.IsChecked(sel))
+        popup.SetSelection(wx.NOT_FOUND)
+
+        powers = [popup.GetString(i) for i in popup.GetCheckedItems()]
         self.PowerSelector.Powers = powers
-        wx.PostEvent(self, PowerSelectorChanged(wx.NewId(), control = self))
+
+    def OnDismiss(self):
+        wx.PostEvent(self, PowerSelectorChanged(wx.NewId(), control = self.PowerSelector))
+        self.DestroyLater()

@@ -32,6 +32,7 @@ class PowerSelector(wx.BitmapButton):
 
     def ClearPowers(self, evt = None):
         self.Powers = []
+        wx.PostEvent(self, PowerSelectorChanged(wx.NewId(), control = self))
         if evt: evt.Skip()
 
     def AddPower(self, power: str):

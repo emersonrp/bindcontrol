@@ -27,16 +27,19 @@ def ParseBuildFile(file:Path) -> dict:
         Pools = []
 
         for line in lines:
-            if match := re.match(r'Level \d+: (\w+) (\w+)', line):
+            if match := re.match(r'Level \d+: (\w+) (\w+) (\w+)', line):
                 powersettype = PSTypeMap[match.group(1)]
                 powerset     = match.group(2)
+                power        = match.group(3)
 
                 if not powersettype: continue
                 if powersettype == 'Inherent': continue
                 if powersettype == 'Pool':
                     if powerset not in Pools:
                         Pools.append(powerset)
-                    continue
+
+                power = re.sub(r'_', ' ', power)
+                power = re.sub('Sheild', 'Shield', power) # SRSLY?!
 
                 powerset = re.sub(r'_', ' ', powerset)
                 powersetwords = re.split(r'\s+', powerset)
@@ -46,6 +49,8 @@ def ParseBuildFile(file:Path) -> dict:
                 powerset = ' '.join(powersetwords)
                 powerset = PowerSetMap.get(powerset, powerset)
                 data[powersettype] = powerset
+                data[powerset] = data.get(powerset, [])
+                data[powerset].append(power)
 
             else:
                 continue

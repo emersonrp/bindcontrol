@@ -87,9 +87,9 @@ class Profile(wx.Notebook):
     #####
     # Convenience / JIT accessors
     def ProfileName(self)   : return self.Data.Filepath.stem if self.Data.Filepath else ''
-    def Archetype(self)     : return self.General.GetState('Archetype')
-    def Primary(self)       : return self.General.GetState('Primary')
-    def Secondary(self)     : return self.General.GetState('Secondary')
+    def Archetype(self)     : return self.InspectData('General', 'Archetype')
+    def Primary(self)       : return self.InspectData('General', 'Primary')
+    def Secondary(self)     : return self.InspectData('General', 'Secondary')
     def ResetFile(self)     : return self.GetBindFile("reset.txt")
     def ProfileIDFile(self) : return self.BindsDir() / 'bcprofileid.txt'
     def Server(self)        : return self.Data.Server
@@ -103,7 +103,7 @@ class Profile(wx.Notebook):
 
     def HasPowerPool(self, poolname):
         for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
-            if self.General.Ctrls[picker].GetStringSelection() == poolname:
+            if self.InspectData('General', picker) == poolname:
                 return True
         return False
 
@@ -303,6 +303,9 @@ class Profile(wx.Notebook):
                 # TODO:  "unless (some way to opt things out of this), then..."
                 self.UpdateData(pagename, ctlname, page.GetState(ctlname))
         self.CheckAllConflicts()
+
+    def InspectData(self, *args):
+        return self.Data.InspectData(*args)
 
     def UpdateData(self, *args):
         self.Data.UpdateData(*args)

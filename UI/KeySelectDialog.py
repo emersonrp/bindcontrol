@@ -198,12 +198,6 @@ class KeySelectDialog(wx.Dialog):
     def handleCharHook(self, event) -> None:
         # Key down
 
-        # close the dialog on ESCAPE
-        if (isinstance(event, wx.KeyEvent)):
-            if event.GetKeyCode() == wx.WXK_ESCAPE:
-                self.EndModal(wx.CANCEL)
-                return
-
         payload = self.GetEventPayload(event)
 
         if not self.PressedKeys:
@@ -350,6 +344,7 @@ class KeySelectDialog(wx.Dialog):
     def SetKeymap(self) -> None:
         # key choice list
         self.Keymap: dict[str|int, str] = {
+                wx.WXK_ESCAPE : 'ESC',
                 wx.WXK_RETURN : 'ENTER',
                 wx.WXK_BACK : 'BACKSPACE',
                 wx.WXK_TAB : 'TAB',

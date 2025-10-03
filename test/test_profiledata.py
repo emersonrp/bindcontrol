@@ -215,6 +215,21 @@ def test_UpdateData(PD):
     assert PD['General']['Stuff']['Primary'] == 'Ice Capades'
     assert PD['General']['Stuff']['Secondary'] == 'Freestyle'
 
+def test_HasPowerPool(PD):
+    PD.UpdateData('General', 'Pool1', 'Flight')
+
+    assert PD.HasPowerPool('Flight')
+    assert not PD.HasPowerPool('Leprosy')
+
+def test_HasPower(PD):
+    PD.UpdateData('General', 'Pool1Powers', ['Fly', 'Hover'])
+    PD.UpdateData('General', 'PrimaryPowers', ['Test1', 'Test2'])
+
+    assert PD.HasPower('Pool', 'Hover')
+    assert not PD.HasPower('Pool', 'Boeing')
+    assert PD.HasPower('Primary', 'Test1')
+    assert not PD.HasPower('Primary', 'Testosterone')
+
 def test_GetCustomID(PD):
     assert PD['MaxCustomID'] == 10
     newid = PD.GetCustomID()

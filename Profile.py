@@ -114,10 +114,10 @@ class Profile(wx.Notebook):
     def GameBindsDir(self)    : return self.Data.GameBindsDir()
 
     def HasPowerPool(self, poolname):
-        for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
-            if self.InspectData('General', picker) == poolname:
-                return True
-        return False
+        return self.Data.HasPowerPool(poolname)
+
+    def HasPower(self, psettype, powername):
+        return self.Data.HasPower(psettype, powername)
 
     def GetCustomID(self) -> int:
         cust_id = self.Data.GetCustomID()

@@ -112,6 +112,22 @@ class ProfileData(dict):
             data = data[bit]
         return data
 
+    def HasPowerPool(self, poolname):
+        for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
+            if self.InspectData('General', picker) == poolname:
+                return True
+        return False
+
+    def HasPower(self, psettype, powername):
+        if psettype == 'Pool':
+            for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
+                if powers := self.InspectData('General', f'{picker}Powers'):
+                    if powername in powers: return True
+        else:
+            if powers := self.InspectData('General', f'{psettype}Powers'):
+                if powername in powers: return True
+        return False
+
     def UpdateData(self, pagename, *args) -> None:
         if pagename == 'CustomBinds':
             self[pagename] = self.get(pagename, [])

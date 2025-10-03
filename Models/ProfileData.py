@@ -96,6 +96,14 @@ class ProfileData(dict):
         self.Server = self.get('General', {}).get('Server', 'Homecoming')
         self.SetModified()
 
+    def InspectData(self, *args):
+        data = self
+        for bit in args:
+            if bit not in data:
+                return None
+            data = data[bit]
+        return data
+
     def UpdateData(self, pagename, *args) -> None:
         if pagename == 'CustomBinds':
             self[pagename] = self.get(pagename) or []

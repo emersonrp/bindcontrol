@@ -159,6 +159,17 @@ def test_FillWith(PD):
     assert 'MovementPowers' not in PD
     assert PD.IsModified()
 
+def test_InspectData(PD):
+    assert PD.InspectData('General', 'Origin') == 'Magic'
+
+    PD.UpdateData('Testing', 'Updated', 'Thing')
+    assert PD.InspectData('Testing', 'Updated') == 'Thing'
+
+    PD.UpdateData('CustomBinds', { 'CustomID' : 1, 'Type' : 'SimpleBind' })
+    bindlist = PD.InspectData('CustomBinds')
+    assert isinstance(bindlist, list)
+    assert len(bindlist) == 1
+
 def test_UpdateData(PD):
     # updates existing data
     assert not PD.IsModified()

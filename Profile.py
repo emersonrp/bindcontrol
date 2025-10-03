@@ -115,7 +115,7 @@ class Profile(wx.Notebook):
 
     def HasPowerPool(self, poolname):
         for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
-            if self.General.Ctrls[picker].GetStringSelection() == poolname:
+            if self.InspectData('General', picker) == poolname:
                 return True
         return False
 
@@ -312,6 +312,9 @@ class Profile(wx.Notebook):
                 # TODO:  "unless (some way to opt things out of this), then..."
                 self.UpdateData(pagename, ctlname, page.GetState(ctlname))
         self.CheckAllConflicts()
+
+    def InspectData(self, *args):
+        return self.Data.InspectData(*args)
 
     def UpdateData(self, *args):
         self.Data.UpdateData(*args)

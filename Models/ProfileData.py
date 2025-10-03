@@ -101,6 +101,14 @@ class ProfileData(dict):
         self.Server = server if server else self['Server']
         self.Server = self.Server or 'Homecoming'
 
+    def InspectData(self, *args):
+        data = self
+        for bit in args:
+            if bit not in data:
+                return None
+            data = data[bit]
+        return data
+
     def UpdateData(self, pagename, *args) -> None:
         if pagename == 'CustomBinds':
             self[pagename] = self.get(pagename, [])

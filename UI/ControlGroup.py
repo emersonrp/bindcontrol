@@ -48,16 +48,16 @@ class ControlGroup(wx.StaticBoxSizer):
         self.Add(self.vertCenteringSizer, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10)
 
     def AddControl(self,
-                   ctlType  : str            = '',
-                   ctlName  : str            = '',
-                   noLabel  : bool           = False,
-                   contents : Any            = '',
-                   tooltip  : str            = '',
-                   callback : Callable|None  = None,
-                   label    : str            = '',
-                   data     : Any            = None,
-                   size     : wx.Size        = wx.DefaultSize,
-                   context  : str            = '',
+                   ctlType  : str           = '',
+                   ctlName  : str           = '',
+                   noLabel  : bool          = False,
+                   contents : Any           = '',
+                   tooltip  : str           = '',
+                   callback : Callable|None = None,
+                   label    : str           = '',
+                   data     : Any           = None,
+                   size     : wx.Size       = wx.DefaultSize,
+                   context  : str           = '',
        ):
 
         if not ctlName:

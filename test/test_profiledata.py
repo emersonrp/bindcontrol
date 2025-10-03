@@ -15,7 +15,7 @@ def test_init_empty():
     with pytest.raises(Exception, match = 'neither filename nor newname'):
         ProfileData.ProfileData(config)
 
-def test_init_newname(config, DefaultProfile, monkeypatch):
+def test_init_newname(config, monkeypatch):
     monkeypatch.undo()
     PD = ProfileData.ProfileData(config, newname = 'test')
     assert PD.Config             == config
@@ -210,6 +210,21 @@ def test_UpdateData(PD):
     PD.UpdateData('General', 'Stuff', '{"Primary" : "Ice Capades", "Secondary" : "Freestyle"}')
     assert PD['General']['Stuff']['Primary'] == 'Ice Capades'
     assert PD['General']['Stuff']['Secondary'] == 'Freestyle'
+
+def test_HasPowerPool(PD):
+    PD.UpdateData('General', 'Pool1', 'Flight')
+
+    assert PD.HasPowerPool('Flight')
+    assert not PD.HasPowerPool('Leprosy')
+
+def test_HasPower(PD):
+    PD.UpdateData('General', 'Pool1Powers', ['Fly', 'Hover'])
+    PD.UpdateData('General', 'PrimaryPowers', ['Test1', 'Test2'])
+
+    assert PD.HasPower('Pool', 'Hover')
+    assert not PD.HasPower('Pool', 'Boeing')
+    assert PD.HasPower('Primary', 'Test1')
+    assert not PD.HasPower('Primary', 'Testosterone')
 
 def test_GetCustomID(PD):
     assert PD['MaxCustomID'] == 10

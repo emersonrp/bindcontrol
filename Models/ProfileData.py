@@ -93,7 +93,13 @@ class ProfileData(dict):
     def FillWith(self, data) -> None:
         self.clear()
         self.update(data)
-        self.Server = self.get('General', {}).get('Server', 'Homecoming')
+        # These next three lines are wacky and unclear.  We want:
+        # 1) Get Server from General if it's there
+        # 2) otherwise get it from top-level
+        # 3) otherwise make it 'Homecoming'
+        server = self.get('General', {}).get('Server', '')
+        self.Server = server if server else self['Server']
+        self.Server = self.Server or 'Homecoming'
         self.SetModified()
 
     def UpdateData(self, pagename, *args) -> None:

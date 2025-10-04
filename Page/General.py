@@ -444,6 +444,7 @@ class General(Page):
 
         if self.GetState('Server') != server:
             if wx.MessageBox('Changing server requires saving and reloading the Profile.  Continue?', 'Changing Server', wx.YES_NO, self) == wx.YES:
+                self.Profile.SetServer(self.GetState('Server'))
                 # TODO - push this logic down into Profile
                 mainwindow = wx.App.Get().Main
                 self.Profile.doSaveToFile()

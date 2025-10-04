@@ -220,6 +220,10 @@ class Profile(wx.Notebook):
         self.SetTitle()
         wx.LogMessage(f"Wrote profile {self.Filepath()}")
 
+    def SetServer(self, server):
+        # this is ugly.  Maybe keeping 'Server' up top like we do is not The Way.
+        self.Data['Server'] = server
+
     def buildUIFromData(self):
         self.SetTitle()
 

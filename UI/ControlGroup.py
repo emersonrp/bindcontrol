@@ -1,5 +1,5 @@
 # pyright: reportIncompatibleMethodOverride=false
-from typing import Any
+from typing import Any, TYPE_CHECKING
 from collections.abc import Callable
 import platform
 
@@ -13,6 +13,14 @@ from Page import Page as bcPage
 import UI
 from UI.ErrorControls import ErrorControlMixin
 from UI.KeySelectDialog import bcKeyButton
+
+# This ST.GenStaticText is so we can intercept clicks on it, but
+# the background color is wrong on Windows in a way I can't work out,
+# and clicks work with wx.StaticText on Windows anyway, so...
+if TYPE_CHECKING or platform.system() != 'Windows':
+    STClass = ST.GenStaticText
+else:
+    STClass = wx.StaticText
 
 class ControlGroup(wx.StaticBoxSizer):
     def __init__(self, parent, page : bcPage, label = '', width = 2, flexcols : list|None = None, topcontent = None) -> None:
@@ -59,13 +67,7 @@ class ControlGroup(wx.StaticBoxSizer):
 
         label = label or UI.Labels.get(ctlName, ctlName)
         if not noLabel:
-            # This ST.GenStaticText is so we can intercept clicks on it, but
-            # the background color is wrong on Windows in a way I can't work out,
-            # and clicks work with wx.StaticText on Windows anyway, so...
-            if platform.system() != 'Windows':
-                CtlLabel = ST.GenStaticText(CtlParent, -1, label + ':')
-            else:
-                CtlLabel = wx.StaticText(CtlParent, -1, label + ':')
+            CtlLabel = STClass(CtlParent, -1, label + ':')
 
         if ctlType == ('keybutton'):
             control = cgbcKeyButton( CtlParent, -1,)
@@ -223,9 +225,9 @@ class cgBMComboBox      (CGControlMixin, ErrorControlMixin, BitmapComboBox)     
     def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
 class cgTextCtrl        (CGControlMixin, ErrorControlMixin, wx.TextCtrl)         :
     def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-class cgExpandoTextCtrl (CGControlMixin, ErrorControlMixin, ExpandoTextCtrl)         :
+class cgExpandoTextCtrl (CGControlMixin, ErrorControlMixin, ExpandoTextCtrl)     :
     def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-class cgStaticText      (CGControlMixin, ErrorControlMixin, wx.StaticText)       :
+class cgStaticText      (CGControlMixin, ErrorControlMixin, STClass)             :
     def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
 class cgCheckBox        (CGControlMixin, ErrorControlMixin, wx.CheckBox)         :
     def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)

@@ -261,6 +261,7 @@ class CustomBinds(Page):
         else:
             if new:
                 self.doDeleteBindPane(bindpane)
+                return False
 
         dlg.Destroy()
         return True

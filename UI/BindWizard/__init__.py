@@ -8,6 +8,7 @@ class WizardParent:
     WizardName  = ''
     WizToolTip  = ''
     WizHelpFile = ''
+    IsUnique    = False
 
     def __init__(self, parent, init):
         self.BindPane = parent
@@ -75,6 +76,14 @@ class WizPickerDialog(wx.Dialog):
             setattr(wizbutton, 'WizClass', wizClass)
             wizbutton.Bind(wx.EVT_BUTTON, self.OnWizPicked)
 
+            # Turn off the button if we just can have one, like "Escape Configurator"
+            # This is a little hacky, innit?
+            if wizClass.IsUnique:
+                for pane in parent.Panes:
+                    if hasattr(pane, 'WizClass') and (pane.WizClass == wizClass):
+                        wizbutton.Enable(False)
+                        wizbutton.SetToolTip(f'You can only have one instance of "{classname}" per-Profile')
+
         mainSizer.Add(wcSizer, 1, wx.EXPAND|wx.ALL, 20)
 
         self.SetSizer(mainSizer)
@@ -112,4 +121,3 @@ def LoadModules():
 wizards = {}
 rev_wiz = {}
 LoadModules()
-

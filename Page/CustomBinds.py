@@ -138,7 +138,7 @@ class CustomBinds(Page):
             if wizClass := wizards.get(binddata['WizClass']):
                 bindpane = WizardBindPane(self, wizClass, init = binddata)
             else:
-                wx.LogError(f"Tried to load WizardBind with unknown class {binddata['WizClass']}.  This is a bug.")
+                wx.LogWarning(f"Tried to load WizardBind with unknown class {binddata['WizClass']}.  Did you start using an older version of BindControl?")
         else:
             wx.LogError("No valid custom bind found.")
 

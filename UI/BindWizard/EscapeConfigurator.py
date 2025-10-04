@@ -83,16 +83,6 @@ class EscapeConfigurator(WizardParent):
 
     def Serialize(self):
         return self.State.get('WizData', {})
-        return {
-            'EscUnselect'    : self.EscUnselect   .GetValue(), # pyright: ignore
-            'EscUnqueue'     : self.EscUnqueue    .GetValue(), # pyright: ignore
-            'EscWindows'     : self.EscWindows    .GetValue(), # pyright: ignore
-            'EscExitMission' : self.EscExitMission.GetValue(), # pyright: ignore
-            'EscResetCam'    : self.EscResetCam   .GetValue(), # pyright: ignore
-            'EscNoReward'    : self.EscNoReward   .GetValue(), # pyright: ignore
-            'EscDialogNo'    : self.EscDialogNo   .GetValue(), # pyright: ignore
-            'EscMenu'        : self.EscMenu       .GetValue(), # pyright: ignore
-        }
 
     def PaneContents(self):
         bindpane = self.BindPane
@@ -100,9 +90,33 @@ class EscapeConfigurator(WizardParent):
         panel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         panelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        BindStringDisplay = cgStaticText(panel, label = self.BindString())
-        panelSizer.Add(BindStringDisplay, 1, wx.ALIGN_CENTER|wx.ALL, 10)
-        BindStringDisplay.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+        cmdSizer = wx.GridSizer(2, 4, 5, 5)
+        cmdPanel = wx.Panel(panel)
+        cmdPanel.SetSizer(cmdSizer)
+        cmdPanel.SetToolTip(self.BindString())
+        for cmd in ('EscUnselect', 'EscUnqueue', 'EscWindows', 'EscExitMission',
+                    'EscResetCam', 'EscNoReward', 'EscDialogNo', 'EscMenu',):
+            ctpanel = wx.Panel(cmdPanel)
+            ctpanel.SetBackgroundColour(wx.Colour(220, 220, 220))
+            ctsizer = wx.BoxSizer(wx.HORIZONTAL)
+            ctpanel.SetSizer(ctsizer)
+            cmdtext = cgStaticText(ctpanel, label = UI.Labels[cmd], style = wx.ALIGN_CENTER)
+            if self.State.get('WizData', {}).get(cmd):
+                cmdtext.SetLabel("✓ " + UI.Labels[cmd])
+            else:
+                cmdtext.SetForegroundColour(wx.Colour(160, 160, 160))
+            ctsizer.Add(cmdtext, 1, wx.EXPAND|wx.ALL, 5)
+            cmdSizer.Add(ctpanel, 1, wx.EXPAND)
+
+            ctpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+            cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+
+        panelSizer.Add(cmdPanel, 1, wx.ALIGN_CENTER|wx.ALL, 15)
+        cmdPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+
+        # BindStringDisplay = cgStaticText(panel, label = self.BindString())
+        # panelSizer.Add(BindStringDisplay, 1, wx.ALIGN_CENTER|wx.ALL, 10)
+        # BindStringDisplay.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
         bkText = cgStaticText(panel, label = 'Bind Key:')
         panelSizer.Add(bkText, 0, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 5)

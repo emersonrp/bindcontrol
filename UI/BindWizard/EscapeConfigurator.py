@@ -20,7 +20,8 @@ class EscapeConfigurator(WizardParent):
     WizToolTip  = 'Bind various interesting functions to your Escape key'
 
     def BuildUI(self, dialog, init : dict|None = None):
-        init = init or {}
+        wizdata = {}
+        if init: wizdata = init.get('WizData', {})
 
         Expln = wx.Panel(dialog)
         ESizr = wx.BoxSizer(wx.HORIZONTAL)
@@ -34,41 +35,49 @@ class EscapeConfigurator(WizardParent):
             ctlName = 'EscUnselect',
             tooltip = 'Unselect any selected units or items',
         )
+        self.EscUnselect.SetValue(bool(wizdata.get('EscUnselect'))) # pyright: ignore
         self.EscUnqueue = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscUnqueue',
             tooltip = 'Unqueue any power that is about to fire',
         )
+        self.EscUnqueue.SetValue(bool(wizdata.get('EscUnqueue'))) # pyright: ignore
         self.EscWindows = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscWindows',
             tooltip = 'Close all non-essential windows, clearing the screen',
         )
+        self.EscWindows.SetValue(bool(wizdata.get('EscWindows'))) # pyright: ignore
         self.EscExitMission = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscExitMission',
             tooltip = 'Exit a completed mission',
         )
+        self.EscExitMission.SetValue(bool(wizdata.get('EscExitMission'))) # pyright: ignore
         self.EscResetCam = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscResetCam',
             tooltip = 'Reset the camera to behind the player',
         )
+        self.EscResetCam.SetValue(bool(wizdata.get('EscResetCam'))) # pyright: ignore
         self.EscNoReward = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscNoReward',
             tooltip = 'Select "No Reward" from a reward choice list',
         )
+        self.EscNoReward.SetValue(bool(wizdata.get('EscNoReward'))) # pyright: ignore
         self.EscDialogNo = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscDialogNo',
             tooltip = 'Answer "OK" or "No" or "Cancel" to a dialog',
         )
+        self.EscDialogNo.SetValue(bool(wizdata.get('EscDialogNo'))) # pyright: ignore
         self.EscMenu = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscMenu',
             tooltip = 'Open the Main Menu',
         )
+        self.EscMenu.SetValue(bool(wizdata.get('EscMenu'))) # pyright: ignore
         return mainSizer
 
     def Serialize(self):

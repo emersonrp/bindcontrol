@@ -1,8 +1,7 @@
 import wx
 import UI
-from Help import ShowHelpWindow
 from UI.BindWizard import WizardParent
-from UI.ControlGroup import ControlGroup
+from UI.ControlGroup import ControlGroup, bcKeyButton
 
 UI.Labels.update({
     'EscUnselect'    : 'Unselect',
@@ -18,8 +17,9 @@ UI.Labels.update({
 class EscapeConfigurator(WizardParent):
     WizardName  = 'Escape Configurator'
     WizToolTip  = 'Bind various interesting functions to your Escape key'
+    WizHelpFile = 'EscapeConfigurator.html'
 
-    def BuildUI(self, dialog, init : dict|None = None):
+    def BuildUI(self, dialog, init : dict|None = None) -> wx.Sizer:
         wizdata = {}
         if init: wizdata = init.get('WizData', {})
 
@@ -81,6 +81,7 @@ class EscapeConfigurator(WizardParent):
         return mainSizer
 
     def Serialize(self):
+        return self.State
         return {
             'EscUnselect'    : self.EscUnselect   .GetValue(), # pyright: ignore
             'EscUnqueue'     : self.EscUnqueue    .GetValue(), # pyright: ignore
@@ -98,31 +99,56 @@ class EscapeConfigurator(WizardParent):
         panel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         panelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
+        BindStringDisplay = wx.StaticText(panel, label = self.BindString())
+        panelSizer.Add(BindStringDisplay, 1, wx.ALIGN_CENTER|wx.ALL, 10)
+        BindStringDisplay.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+
+        panelSizer.Add(wx.StaticText(panel, label = 'Bind Key:'), 0, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 5)
+
+        escButton = bcKeyButton(panel, wx.ID_ANY, {
+            'CtlName' : bindpane.MakeCtrlName("EscapeConfigurator"),
+            'Page'    : bindpane.Page,
+            'Key'     : 'ESC',
+        })
+        escButton.Bind(wx.EVT_BUTTON, self.DeHandleButton) # Is this enough?
+        panelSizer.Add(escButton, 0, wx.ALIGN_CENTER|wx.ALL, 5)
+        self.Profile.CustomBinds.Ctrls['Escape'] = escButton
+
         panel.SetSizer(panelSizer)
+        panel.Layout()
 
         return panel
+
+    def UpdateAndRefresh(self, evt):
+        self.State = { 'WizData' : self.Serialize() }
+        super().UpdateAndRefresh(evt)
+
+    def DeHandleButton(self, _):
+        # do not evt.Skip
+        wx.MessageBox('The Escape Configurator can only be bound to the "ESC" Key.')
 
     def CheckIfWellFormed(self):
         return True
 
     def PopulateBindFiles(self):
-        commands = []
-        if self.EscUnselect.GetValue(): commands.append('unselect') # pyright: ignore
-        if self.EscUnqueue.GetValue(): commands.append('unqueue') # pyright: ignore
-        if self.EscWindows.GetValue(): commands.append('gamereturn') # pyright: ignore
-        if self.EscExitMission.GetValue(): commands.append('requestexitmission 1') # pyright: ignore
-        if self.EscResetCam.GetValue(): commands.append('camreset') # pyright: ignore
-        if self.EscNoReward.GetValue(): commands.append('clearRewardChoice') # pyright: ignore
-        if self.EscDialogNo.GetValue(): commands.append('dialogno') # pyright: ignore
-        if self.EscMenu.GetValue(): commands.append('menu') # pyright: ignore
+        self.Profile.ResetFile().SetBind('ESC', 'Escape Configurator', self.Profile.CustomBinds, self.BindString())
 
+    def BindString(self) -> str:
+        commands = []
+        wizdata = self.State.get('WizData', {})
+        if wizdata.get('EscUnselect')   : commands.append('unselect')             # pyright: ignore
+        if wizdata.get('EscUnqueue')    : commands.append('unqueue')              # pyright: ignore
+        if wizdata.get('EscWindows')    : commands.append('gamereturn')           # pyright: ignore
+        if wizdata.get('EscExitMission'): commands.append('requestexitmission 1') # pyright: ignore
+        if wizdata.get('EscResetCam')   : commands.append('camreset')             # pyright: ignore
+        if wizdata.get('EscNoReward')   : commands.append('clearRewardChoice')    # pyright: ignore
+        if wizdata.get('EscDialogNo')   : commands.append('dialogno')             # pyright: ignore
+        if wizdata.get('EscMenu')       : commands.append('menu')                 # pyright: ignore
+
+        return '$$'.join(commands)
 
     def AllBindFiles(self):
         return {
             'files' : [],
             'dirs'  : [],
         }
-
-    def ShowHelp(self, evt = None):
-        if evt: evt.Skip()
-        ShowHelpWindow(self.BindPane, 'EscapeConfigurator.html')

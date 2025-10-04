@@ -4,7 +4,6 @@ import wx
 import UI
 import GameData
 from Icon import GetIcon
-from Help import ShowHelpWindow
 from UI.BindWizard import WizardParent
 from UI.IncarnateBox import IncarnateBox
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
@@ -12,12 +11,13 @@ from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 class IncarnateSet(WizardParent):
     WizardName  = 'Incarnate Powers Set'
     WizToolTip  = 'Create a keybind that, with multiple presses, will load a particular set of Incarnate Powers'
+    WizHelpFile = 'IncarnateWizard.html'
 
-    def __init__(self, parent, init):
+    def __init__(self, parent, init) -> None:
         super().__init__(parent, init)
-        self.IncarnateBox = None
+        self.IncarnateBox : IncarnateBox|None = None
 
-    def BuildUI(self, dialog, init : dict|None = None):
+    def BuildUI(self, dialog, init : dict|None = None) -> wx.Sizer:
         init = init or {}
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.SetMinSize(wx.Size(700,-1))
@@ -79,7 +79,7 @@ class IncarnateSet(WizardParent):
             'Page'    : bindpane.Page,
             'Key'     : bindkey,
         })
-        self.BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
+        self.BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.OnKeyChanged)
         BindSizer.Add(wx.StaticText(panel, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(self.BindKeyCtrl,                      0, wx.ALIGN_CENTER_VERTICAL)
         bindpane.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
@@ -107,7 +107,7 @@ class IncarnateSet(WizardParent):
             self.HoverDisplay.SetLabelMarkup("Incarnate Power Set - Hover any icon for details;  click anywhere to edit")
         if evt: evt.Skip()
 
-    def onKeyChanged(self, evt):
+    def OnKeyChanged(self, evt):
         evt.Skip()
         self.CheckIfWellFormed()
 
@@ -174,7 +174,3 @@ class IncarnateSet(WizardParent):
             'files' : files,
             'dirs'  : [],
         }
-
-    def ShowHelp(self, evt = None):
-        if evt: evt.Skip()
-        ShowHelpWindow(self.BindPane, 'IncarnateWizard.html')

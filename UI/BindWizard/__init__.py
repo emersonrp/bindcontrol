@@ -1,14 +1,20 @@
 import sys
 import importlib
 import wx
+from Help import ShowHelpWindow
 from Util.Paths import GetRootDirPath
 
 class WizardParent:
+    WizardName  = ''
+    WizToolTip  = ''
+    WizHelpFile = ''
+
     def __init__(self, parent, init):
         self.BindPane = parent
         self.Profile = parent.Profile
         self.State = init
         self.WizardDialog = None
+        self.BindPane.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
     def Dialog(self):
         if not self.WizardDialog:
@@ -17,9 +23,11 @@ class WizardParent:
 
             mainSizer.Add(self.BuildUI(wd, self.State), 1, wx.EXPAND)
 
-            buttonsizer = wd.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL|wx.HELP)
-            helpbutton = wd.FindWindow(wx.ID_HELP)
-            helpbutton.Bind(wx.EVT_BUTTON, self.ShowHelp)
+            buttonflags = wx.OK|wx.CANCEL|wx.HELP if self.WizHelpFile else wx.OK|wx.CANCEL
+            buttonsizer = wd.CreateStdDialogButtonSizer(buttonflags)
+            if self.WizHelpFile:
+                helpbutton = wd.FindWindow(wx.ID_HELP)
+                helpbutton.Bind(wx.EVT_BUTTON, self.ShowHelp)
             okbutton = wd.FindWindow(wx.ID_OK)
             okbutton.Bind(wx.EVT_BUTTON, self.UpdateAndRefresh)
 
@@ -38,13 +46,14 @@ class WizardParent:
         ...
 
     def ShowHelp(self, evt = None):
-        ...
+        if evt: evt.Skip()
+        ShowHelpWindow(self.BindPane, self.WizHelpFile)
 
     def BuildUI(self, dialog, init) -> wx.Sizer:
         ...
 
     def UpdateAndRefresh(self, evt):
-        evt.Skip()
+        if evt: evt.Skip()
         self.Profile.UpdateData('CustomBinds', self.BindPane.Serialize())
         self.BindPane.BuildBindUI(None)
 

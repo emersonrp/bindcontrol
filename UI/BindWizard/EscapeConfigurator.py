@@ -13,7 +13,6 @@ UI.Labels.update({
     'EscNoReward'    : 'Choose No Reward',
     'EscDialogNo'    : 'Answer No to Dialog',
     'EscMenu'        : 'Show Main Menu',
-    'EscSheathe'     : 'Sheathe Weapons',
 })
 
 class EscapeConfigurator(WizardParent):
@@ -23,58 +22,65 @@ class EscapeConfigurator(WizardParent):
     def BuildUI(self, dialog, init : dict|None = None):
         init = init or {}
 
-        mainSizer = ControlGroup(dialog, self.Profile.CustomBinds)
+        Expln = wx.Panel(dialog)
+        ESizr = wx.BoxSizer(wx.HORIZONTAL)
+        Expln.SetSizer(ESizr)
+        ESizr.Add(wx.StaticText(Expln, label = 'Select the functions that will be bound to the Escape key.\nClick the "Help" button for more information.'), 1, wx.ALL, 6)
 
-        mainSizer.AddControl(
+        mainSizer = ControlGroup(dialog, self.Profile.CustomBinds, topcontent = Expln)
+
+        self.EscUnselect = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscUnselect',
             tooltip = 'Unselect any selected units or items',
         )
-        mainSizer.AddControl(
+        self.EscUnqueue = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscUnqueue',
             tooltip = 'Unqueue any power that is about to fire',
         )
-        mainSizer.AddControl(
+        self.EscWindows = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscWindows',
             tooltip = 'Close all non-essential windows, clearing the screen',
         )
-        mainSizer.AddControl(
+        self.EscExitMission = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscExitMission',
             tooltip = 'Exit a completed mission',
         )
-        mainSizer.AddControl(
+        self.EscResetCam = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscResetCam',
             tooltip = 'Reset the camera to behind the player',
         )
-        mainSizer.AddControl(
+        self.EscNoReward = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscNoReward',
             tooltip = 'Select "No Reward" from a reward choice list',
         )
-        mainSizer.AddControl(
+        self.EscDialogNo = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscDialogNo',
             tooltip = 'Answer "OK" or "No" or "Cancel" to a dialog',
         )
-        mainSizer.AddControl(
+        self.EscMenu = mainSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = 'EscMenu',
             tooltip = 'Open the Main Menu',
         )
-        mainSizer.AddControl(
-            ctlType = 'checkbox',
-            ctlName = 'EscSheathe',
-            tooltip = 'Sheathe any drawn weapons',
-        )
-
         return mainSizer
 
     def Serialize(self):
         return {
+            'EscUnselect'    : self.EscUnselect   .GetValue(), # pyright: ignore
+            'EscUnqueue'     : self.EscUnqueue    .GetValue(), # pyright: ignore
+            'EscWindows'     : self.EscWindows    .GetValue(), # pyright: ignore
+            'EscExitMission' : self.EscExitMission.GetValue(), # pyright: ignore
+            'EscResetCam'    : self.EscResetCam   .GetValue(), # pyright: ignore
+            'EscNoReward'    : self.EscNoReward   .GetValue(), # pyright: ignore
+            'EscDialogNo'    : self.EscDialogNo   .GetValue(), # pyright: ignore
+            'EscMenu'        : self.EscMenu       .GetValue(), # pyright: ignore
         }
 
     def PaneContents(self):
@@ -91,7 +97,16 @@ class EscapeConfigurator(WizardParent):
         return True
 
     def PopulateBindFiles(self):
-        ...
+        commands = []
+        if self.EscUnselect.GetValue(): commands.append('unselect') # pyright: ignore
+        if self.EscUnqueue.GetValue(): commands.append('unqueue') # pyright: ignore
+        if self.EscWindows.GetValue(): commands.append('gamereturn') # pyright: ignore
+        if self.EscExitMission.GetValue(): commands.append('requestexitmission 1') # pyright: ignore
+        if self.EscResetCam.GetValue(): commands.append('camreset') # pyright: ignore
+        if self.EscNoReward.GetValue(): commands.append('clearRewardChoice') # pyright: ignore
+        if self.EscDialogNo.GetValue(): commands.append('dialogno') # pyright: ignore
+        if self.EscMenu.GetValue(): commands.append('menu') # pyright: ignore
+
 
     def AllBindFiles(self):
         return {

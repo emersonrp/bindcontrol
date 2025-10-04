@@ -8,17 +8,14 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         init = init or {}
         super().__init__(page.scrolledPanel, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
-        self.Ctrls              = {}
-        self.Page               = page
-        self.Profile            = page.Profile
-        self.Init        : dict = init
-        self.Title       : str  = init.get('Title', '')
-        self.Description : str  = ''
-        self.Type        : str  = ''
-        # RP:  don't do this as .get('CustomID', GetCustomID()).  Love, RP
-        # RP:  further expln:  .get(X, Y) runs both of X and Y before evaluating
-        # so we end up incrementing CustomID even if we don't use the new value
-        self.CustomID    : int            = init.get('CustomID') or page.Profile.GetCustomID()
+        self.Ctrls                        = {}
+        self.Page                         = page
+        self.Profile                      = page.Profile
+        self.Init        : dict           = init
+        self.Title       : str            = init.get('Title', '')
+        self.Description : str            = ''
+        self.Type        : str            = ''
+        self.CustomID    : int|None       = init.get('CustomID')
         self.DelButton   : wx.Button|None = None
         self.RenButton   : wx.Button|None = None
         self.DupButton   : wx.Button|None = None
@@ -31,10 +28,6 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         setattr(self.GetPane(), 'Title', self.Title)
 
         self.bindclass = type(self).__name__
-
-        if not init.get('CustomID'):
-            self.Init['CustomID'] = self.CustomID
-            self.Page.UpdateAllBinds()
 
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
 

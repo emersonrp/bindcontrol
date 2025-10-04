@@ -104,12 +104,12 @@ class ProfileData(dict):
 
     def UpdateData(self, pagename, *args) -> None:
         if pagename == 'CustomBinds':
-            self[pagename] = self.get(pagename) or []
+            self[pagename] = self.get(pagename, [])
             replaced = False
             bindcontents = args[0]
             for i, testbind in enumerate(self[pagename]):
                 if testbind['CustomID'] == bindcontents['CustomID']:
-                    if bindcontents.get('Action', '') == 'delete':
+                    if bindcontents.get('Action') == 'delete':
                         del self[pagename][i]
                         replaced = True
                         break

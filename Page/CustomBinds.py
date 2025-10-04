@@ -145,7 +145,6 @@ class CustomBinds(Page):
         return bindpane
 
     def AddBindToPage(self, bindpane = None) -> None:
-
         if not bindpane:
             wx.LogError("Something tried to add an empty bindpane to the page.  This is a bug.")
             return
@@ -161,13 +160,18 @@ class CustomBinds(Page):
             self.MainSizer.Replace(self.BlankPanel, self.scrolledPanel)
             self.MainSizer.Layout()
 
-        # Re-ID the bindpane if the ID is a dupe.  This should never
-        # have happened but it did and we need to fix it in existing
-        # profiles that have this situation
-        for p in self.Panes:
-            if p.CustomID == bindpane.CustomID:
-                bindpane.CustomID = self.Profile.GetCustomID()
-                break
+        if not bindpane.CustomID:
+            # probably need to re-examine why we need this in two places in the bindpane
+            bindpane.CustomID = self.Profile.GetCustomID()
+            bindpane.Init['CustomID'] = bindpane.CustomID
+        else:
+            # Re-ID the bindpane if the ID is a dupe.  This should never
+            # have happened but it did and we need to fix it in existing
+            # profiles that have this situation
+            for p in self.Panes:
+                if p.CustomID == bindpane.CustomID:
+                    bindpane.CustomID = self.Profile.GetCustomID()
+                    break
 
         self.Panes.append(bindpane)
 
@@ -287,9 +291,11 @@ class CustomBinds(Page):
             if self.Ctrls.get(ctrlname) : del self.Ctrls[ctrlname]
         if bindpane in self.Panes:
             self.Panes.remove(bindpane)
+        # won't have an ID if it was a cancelled new bind
+        if bindpane.CustomID:
+            self.Profile.UpdateData('CustomBinds', { 'CustomID' : bindpane.CustomID, 'Action' : 'delete' })
         bindpane.DestroyLater()
         wx.CallAfter(self.Profile.CheckAllConflicts)
-        self.Profile.UpdateData('CustomBinds', { 'CustomID' : bindpane.CustomID, 'Action' : 'delete' })
         if len(self.Panes) == 0:
             # need to put back the blankpanel
             self.scrolledPanel.Hide()

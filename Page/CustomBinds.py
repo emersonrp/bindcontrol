@@ -257,14 +257,13 @@ class CustomBinds(Page):
             self.Profile.SetModified()
             self.UpdateAllBinds()
             self.Refresh()
+            dlg.Destroy()
             return True # successful name change
         else:
             if new:
                 self.doDeleteBindPane(bindpane)
-                return False
-
-        dlg.Destroy()
-        return True
+            dlg.Destroy()
+            return False
 
     def OnDeleteButton(self, evt) -> None:
         delButton = evt.EventObject

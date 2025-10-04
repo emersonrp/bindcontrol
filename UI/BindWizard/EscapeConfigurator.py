@@ -18,6 +18,7 @@ class EscapeConfigurator(WizardParent):
     WizardName  = 'Escape Configurator'
     WizToolTip  = 'Bind various interesting functions to your Escape key'
     WizHelpFile = 'EscapeConfigurator.html'
+    IsUnique    = True
 
     def BuildUI(self, dialog, init : dict|None = None) -> wx.Sizer:
         wizdata = {}
@@ -81,6 +82,7 @@ class EscapeConfigurator(WizardParent):
         return mainSizer
 
     def Serialize(self):
+        return self.State.get('WizData', {})
         return {
             'EscUnselect'    : self.EscUnselect   .GetValue(), # pyright: ignore
             'EscUnqueue'     : self.EscUnqueue    .GetValue(), # pyright: ignore
@@ -106,21 +108,32 @@ class EscapeConfigurator(WizardParent):
         panelSizer.Add(bkText, 0, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 5)
         bkText.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
+        EscapeControlName = bindpane.MakeCtrlName('Escape')
         escButton = bcKeyButton(panel, wx.ID_ANY, {
-            'CtlName' : "Escape",
+            'CtlName' : EscapeControlName,
             'Page'    : bindpane.Page,
             'Key'     : 'ESC',
         })
         escButton.Bind(wx.EVT_BUTTON, self.DeHandleButton) # Is this enough?
         panelSizer.Add(escButton, 0, wx.ALIGN_CENTER|wx.ALL, 5)
-        self.Profile.CustomBinds.Ctrls['Escape'] = escButton
+        bindpane.SetCtrl('Escape', escButton)
+        UI.Labels[EscapeControlName] = 'Escape'
 
         panel.SetSizer(panelSizer)
 
         return panel
 
     def UpdateAndRefresh(self, evt):
-        self.State = { 'WizData' : self.Serialize() }
+        self.State = { 'WizData' : {
+            'EscUnselect'    : self.EscUnselect   .GetValue(), # pyright: ignore
+            'EscUnqueue'     : self.EscUnqueue    .GetValue(), # pyright: ignore
+            'EscWindows'     : self.EscWindows    .GetValue(), # pyright: ignore
+            'EscExitMission' : self.EscExitMission.GetValue(), # pyright: ignore
+            'EscResetCam'    : self.EscResetCam   .GetValue(), # pyright: ignore
+            'EscNoReward'    : self.EscNoReward   .GetValue(), # pyright: ignore
+            'EscDialogNo'    : self.EscDialogNo   .GetValue(), # pyright: ignore
+            'EscMenu'        : self.EscMenu       .GetValue(), # pyright: ignore
+        } }
         super().UpdateAndRefresh(evt)
 
     def DeHandleButton(self, _):

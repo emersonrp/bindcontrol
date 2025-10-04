@@ -149,10 +149,10 @@ def test_GetBindFile(monkeypatch, PD):
 def test_FillWith(PD):
     PD.FillWith({
         'ProfileBindsDir' : 'test_FillWith',
-        'General'         : { 'Server' : 'Homecoming' },
+        'General'         : { 'Server' : 'Rebirth' },
     })
 
-    assert PD.Server == 'Homecoming'
+    assert PD.Server == 'Rebirth'
     assert PD['ProfileBindsDir'] == 'test_FillWith'
     assert 'MovementPowers' not in PD
     assert PD.Modified is True

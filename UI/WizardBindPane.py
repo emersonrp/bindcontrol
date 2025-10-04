@@ -26,6 +26,9 @@ class WizardBindPane(CustomBindPaneParent):
         })
         return data
 
+    def CheckIfWellFormed(self) -> bool:
+        return self.Wizard.CheckIfWellFormed()
+
     def PopulateBindFiles(self) -> None:
         self.Wizard.PopulateBindFiles()
 

@@ -349,8 +349,15 @@ class CustomBinds(Page):
             self.Profile.UpdateData('CustomBinds', pane.Serialize())
 
     def PopulateBindFiles(self) -> bool:
+        errors = []
         for pane in self.Panes:
-            pane.PopulateBindFiles()
+            if pane.CheckIfWellFormed():
+                pane.PopulateBindFiles()
+            else:
+                errors.append(pane.Title)
+
+        if errors:
+            wx.MessageBox(f"The following custom binds contain errors, and will not be written to the bindfiles: {', '.join(errors)}", "Errors Found")
         return True
 
     # TODO:  this contains knowledge of the innards of ComplexBinds, BufferBinds, etc

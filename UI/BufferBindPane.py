@@ -164,10 +164,6 @@ class BufferBindPane(CustomBindPaneParent):
         return verb
 
     def PopulateBindFiles(self) -> None:
-        if not self.CheckIfWellFormed():
-            wx.MessageBox(f'Buffer Bind "{self.Title}" is not complete or has errors.  Not written to bindfile.')
-            return
-
         profile = self.Profile
         ResetFile = profile.ResetFile()
 

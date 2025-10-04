@@ -43,6 +43,10 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         # build the UI needed to edit/create this bind, and shim
         # it into 'page'
 
+    def CheckIfWellFormed(self) -> bool:
+        wx.LogWarning(f"{self.bindclass} did not override CheckIfWellFormed.  This is a bug.")
+        return False
+
     def PopulateBindFiles(self) -> None:
         wx.LogError(f"{self.bindclass} did not override PopulateBindFiles.  This is a bug.")
         # for overriding on child classes this will be called in the course of

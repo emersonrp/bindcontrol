@@ -128,10 +128,6 @@ class IncarnateSet(WizardParent):
         return isWellFormed
 
     def PopulateBindFiles(self):
-        if not self.CheckIfWellFormed():
-            wx.MessageBox(f"Incarnate Set Bind \"{self.Dialog().Title}\" is not complete or has errors.  Not written to bindfile.")
-            return
-
         profile = self.Profile
 
         incdata = self.State.get('WizData', {}).get('IncData', {})

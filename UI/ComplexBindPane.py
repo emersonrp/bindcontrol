@@ -68,17 +68,17 @@ class ComplexBindPane(CustomBindPaneParent):
         pane.SetSizer(border)
 
         self.RenumberSteps()
-        self.checkIfWellFormed()
+        self.CheckIfWellFormed()
 
     def onContentsChanged(self, evt) -> None:
         evt.Skip()
-        self.checkIfWellFormed()
+        self.CheckIfWellFormed()
 
     def onKeyChanged(self, evt) -> None:
         evt.Skip()
-        self.checkIfWellFormed()
+        self.CheckIfWellFormed()
 
-    def checkIfWellFormed(self) -> bool:
+    def CheckIfWellFormed(self) -> bool:
         isWellFormed = True
 
         firststep = self.Steps[0]
@@ -171,10 +171,6 @@ class ComplexBindPane(CustomBindPaneParent):
         self.Page.Layout()
 
     def PopulateBindFiles(self) -> None:
-        if not self.checkIfWellFormed():
-            wx.MessageBox(f"Custom Bind \"{self.Title}\" is not complete or has errors.  Not written to bindfile.")
-            return
-
         resetfile = self.Profile.ResetFile()
         # fish out only the steps that have contents
         fullsteps = list(filter(lambda x: x.PowerBinder.GetValue(), self.Steps))

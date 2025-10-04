@@ -63,20 +63,20 @@ class SimpleBindPane(CustomBindPaneParent):
         border = wx.BoxSizer(wx.VERTICAL)
         border.Add(BindSizer, 1, wx.EXPAND|wx.ALL, 10)
         pane.SetSizer(border)
-        self.checkIfWellFormed()
+        self.CheckIfWellFormed()
 
     def onContentsChanged(self, evt) -> None:
         evt.Skip()
         self.Page.UpdateAllBinds()
-        self.checkIfWellFormed()
+        self.CheckIfWellFormed()
 
     def onKeyChanged(self, evt) -> None:
         evt.Skip()
-        self.checkIfWellFormed()
+        self.CheckIfWellFormed()
 
     def AllBindFiles(self) -> dict: return {}
 
-    def checkIfWellFormed(self) -> bool:
+    def CheckIfWellFormed(self) -> bool:
         isWellFormed = True
 
         if self.PowerBinder:
@@ -103,10 +103,6 @@ class SimpleBindPane(CustomBindPaneParent):
         return isWellFormed
 
     def PopulateBindFiles(self) -> None:
-        if not self.checkIfWellFormed():
-            wx.MessageBox(f"Custom Bind \"{self.Title}\" is not complete or has errors.  Not written to bindfile.")
-            return
-
         if pb := self.PowerBinder:
             resetfile = self.Profile.ResetFile()
             resetfile.SetBind(self.GetCtrl('BindKey').Key, self.Title, self.Page, pb.GetValue())

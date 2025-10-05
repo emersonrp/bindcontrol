@@ -229,7 +229,7 @@ class Profile(wx.Notebook):
             self.Data['General']['Server'] = server
         self.Data['Server'] = server
 
-    def buildUIFromData(self):
+    def buildUIFromData(self, set_power_picks = False):
         self.SetTitle()
 
         data = self.Data
@@ -288,6 +288,25 @@ class Profile(wx.Notebook):
 
                     if bindpane := cbpage.BuildBindPaneFromData(custombind):
                         cbpage.AddBindToPage(bindpane = bindpane)
+
+        # if we want to set things based on power picks, let's do that.  This might
+        # want to be its own logic / method instead.
+        if set_power_picks:
+            if self.HasPower('Pool', 'Hover') or self.Archetype() == 'Peacebringer':
+                self.MovementPowers.SetState('HasHover', True)
+                self.UpdateData('MovementPowers', 'HasHover', True)
+
+            if self.HasPower('Pool', 'Group Fly') or self.Archetype() == 'Peacebringer':
+                self.MovementPowers.SetState('HasGFly', True)
+                self.UpdateData('MovementPowers', 'HasGFly', True)
+
+            if self.HasPower('Pool', 'Combat Jumping'):
+                self.MovementPowers.SetState('HasCJ', True)
+                self.UpdateData('MovementPowers', 'HasCJ', True)
+
+            if self.HasPower('Pool', 'Team Teleport'):
+                self.MovementPowers.SetState('HasTTP', True)
+                self.UpdateData('MovementPowers', 'HasTTP', True)
 
         # Finally, after loading all this stuff, THEN add the binds that update the ProfileData
         for pagename in ['General', 'Gameplay', 'CustomBinds', 'MovementPowers', 'InspirationPopper', 'Mastermind']:

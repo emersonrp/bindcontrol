@@ -409,7 +409,7 @@ class Main(wx.Frame):
             if profiledata := Util.BuildFiles.ParseBuildFile(buildfile):
                 generaldata = {'General' : profiledata}
                 if newprofile := Profile(self, newname = profiledata['Name'], profiledata = generaldata):
-                    newprofile.buildUIFromData()
+                    newprofile.buildUIFromData(set_power_picks = True)
                     self.InsertProfile(newprofile)
             else:
                 wx.LogError('Build file was empty or contained errors')

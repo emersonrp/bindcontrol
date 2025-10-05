@@ -332,6 +332,9 @@ class Profile(wx.Notebook):
             if ctlname := next((name for name,c in page.Ctrls.items() if control == c), None):
                 # TODO:  "unless (some way to opt things out of this), then..."
                 self.UpdateData(pagename, ctlname, page.GetState(ctlname))
+        # This is ugly.  pubsub sigh.
+        if evt.GetEventType() == EVT_POWERSELECTOR_CHANGED._getEvtType():
+            self.MovementPowers.SynchronizeUI()
         self.CheckAllConflicts()
 
     def InspectData(self, *args):

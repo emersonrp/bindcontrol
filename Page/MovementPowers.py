@@ -525,8 +525,8 @@ class MovementPowers(Page):
                 c['UseHover'].CtlLabel.SetLabel('Use Hover for Defense:')
                 c['UseHover'].SetToolTip('When in SoD Fly mode, use Hover as a defense power when not moving')
                 c['HoverPower'].SetValue('Hover')
+            c['UseHover'].Show  (self.Profile.HasPower('Flight', 'Hover') or archetype == "Peacebringer")
             c['UseHover'].Enable(sodenabled and (self.Profile.HasPower('Flight', 'Hover') or archetype == "Peacebringer"))
-            c['UseHover'].Show  (sodenabled and (self.Profile.HasPower('Flight', 'Hover') or archetype == "Peacebringer"))
 
             try: # try/except here because we Freeze to prevent flicker and what if it breaks?
                 self.Freeze()
@@ -569,8 +569,8 @@ class MovementPowers(Page):
                     (self.GetState('JumpPower') or self.Profile.HasPower('Leaping', 'Combat Jumping') or self.GetState('SimpleSJCJ'))
                 ))
             c['JumpMode'].Enable(sodenabled)
+            c['UseCJ'].Show  (self.Profile.HasPower('Leaping', 'Combat Jumping'))
             c['UseCJ'].Enable(sodenabled and self.Profile.HasPower('Leaping', 'Combat Jumping'))
-            c['UseCJ'].Show  (sodenabled and self.Profile.HasPower('Leaping', 'Combat Jumping'))
             c['SimpleSJCJ'].Enable(sodenabled and (bool(self.GetState('JumpPower') or self.Profile.HasPower('Leaping', 'Combat Jumping'))))
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
             c['SSSJModeEnable'].Enable(sodenabled)

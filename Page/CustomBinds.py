@@ -246,7 +246,7 @@ class CustomBinds(Page):
                     if pane != bindpane:
                         # show an "oops" dialog and try again, this might not be perfect
                         wx.MessageBox(f"A bind called {title} already exists!", "Error", wx.OK, self)
-                        self.SetBindPaneLabel(evt, bindpane, new)
+                        return self.SetBindPaneLabel(evt, bindpane, new)
                     dlg.Destroy()
                     return False
 

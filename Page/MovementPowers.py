@@ -517,7 +517,6 @@ class MovementPowers(Page):
             c['FlyMode'].Show(bool(self.GetState('FlyPower') or self.GetState('HoverPower'))
                                           and self.DefaultMode() != "Fly")
             c['FlyMode'].Enable(sodenabled)
-            c['UseHover'].Show(self.Profile.HasPower('Flight', 'Hover') or archetype == "Peacebringer")
             if archetype == 'Peacebringer':
                 c['UseHover'].CtlLabel.SetLabel('Use Combat Flight for Defense:')
                 c['UseHover'].SetToolTip('When in SoD Fly mode, use Combat Flight as a defense power when not moving -- if your Peacebringer is below level 10, leave this unchecked')
@@ -526,7 +525,8 @@ class MovementPowers(Page):
                 c['UseHover'].CtlLabel.SetLabel('Use Hover for Defense:')
                 c['UseHover'].SetToolTip('When in SoD Fly mode, use Hover as a defense power when not moving')
                 c['HoverPower'].SetValue('Hover')
-            c['UseHover'].Enable(sodenabled)
+            c['UseHover'].Enable(sodenabled and (self.Profile.HasPower('Flight', 'Hover') or archetype == "Peacebringer"))
+            c['UseHover'].Show  (sodenabled and (self.Profile.HasPower('Flight', 'Hover') or archetype == "Peacebringer"))
 
             try: # try/except here because we Freeze to prevent flicker and what if it breaks?
                 self.Freeze()
@@ -536,7 +536,7 @@ class MovementPowers(Page):
                     c['FlySpecialPower'].SetValue('fly_boost') # "afterburner" has overloaded meaning.
                     c['FlySpecialKey'].Show()
 
-                if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.GetState('UseHover'))):
+                if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.useHover())):
                     c['FlySpecialKey'].CtlLabel.SetLabel('Quantum Maneuvers:')
                     c['FlySpecialPower'].SetValue('Quantum Maneuvers')
                     c['FlySpecialKey'].Show()
@@ -566,11 +566,12 @@ class MovementPowers(Page):
             c['JumpMode'].Show(bool(
                     self.DefaultMode() != "Jump"
                         and
-                    (self.GetState('JumpPower') or self.GetState('UseCJ') or self.GetState('SimpleSJCJ'))
+                    (self.GetState('JumpPower') or self.Profile.HasPower('Leaping', 'Combat Jumping') or self.GetState('SimpleSJCJ'))
                 ))
             c['JumpMode'].Enable(sodenabled)
-            c['UseCJ'].Enable(sodenabled and self.Profile.HasPowerPool('Leaping'))
-            c['SimpleSJCJ'].Enable(sodenabled and (bool(self.GetState('JumpPower') or self.GetState('UseCJ'))))
+            c['UseCJ'].Enable(sodenabled and self.Profile.HasPower('Leaping', 'Combat Jumping'))
+            c['UseCJ'].Show  (sodenabled and self.Profile.HasPower('Leaping', 'Combat Jumping'))
+            c['SimpleSJCJ'].Enable(sodenabled and (bool(self.GetState('JumpPower') or self.Profile.HasPower('Leaping', 'Combat Jumping'))))
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
             c['SSSJModeEnable'].Enable(sodenabled)
 
@@ -635,7 +636,7 @@ class MovementPowers(Page):
             self.PrePickLonePower(c['TPPower'])
             c['TPBindKey'].Enable(self.GetState('TPPower') != '')
             c['TPComboKey'].Enable(self.GetState('TPPower') != '')
-            c['TPTPHover'].Show((self.GetState('TPPower') != '') and self.hasHover())
+            c['TPTPHover'].Show((self.GetState('TPPower') != '') and self.useHover())
             c['HasTTP']     .Show(self.Profile.HasPowerPool('Teleportation'))
             c['TTPBindKey'] .Show(c['HasTTP'].IsShown() and self.GetState('HasTTP'))
             c['TTPComboKey'].Show(c['HasTTP'].IsShown() and self.GetState('HasTTP'))
@@ -1104,16 +1105,16 @@ class MovementPowers(Page):
             t.canfly = True
 
         # hover, no fly
-        if (self.hasHover() and not self.GetState('FlyPower')):
+        if (self.useHover() and not self.GetState('FlyPower')):
             t.canhov = True
             t.flyx   = self.GetState('HoverPower')
             if (self.GetState('TPTPHover')): t.tphover = f'$${self.togon} {self.GetState("HoverPower")}'
         # fly, no hover
-        elif (not self.hasHover() and bool(self.GetState('FlyPower'))):
+        elif (not self.useHover() and bool(self.GetState('FlyPower'))):
             t.canfly = True
             t.hover  = self.GetState('FlyPower')
         # hover and fly
-        elif (self.hasHover() and self.GetState('FlyPower')):
+        elif (self.useHover() and self.GetState('FlyPower')):
             t.canhov = True
             t.canfly = True
             t.fly    = self.GetState('FlyPower')
@@ -2209,9 +2210,9 @@ class MovementPowers(Page):
     def DefaultMode(self) -> str:
         return self.GetState('DefaultMode') if self.GetState('EnableSoD') else 'NonSoD'
 
-    def hasHover(self) -> bool:
+    def useHover(self) -> bool:
         return bool(
-            (self.Profile.HasPowerPool('Flight') or self.Profile.Archetype() == "Peacebringer")
+            (self.Profile.HasPower('Flight', 'Hover') or self.Profile.Archetype() == "Peacebringer")
             and self.GetState('UseHover')
         )
 

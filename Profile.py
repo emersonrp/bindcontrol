@@ -74,6 +74,8 @@ class Profile(wx.Notebook):
         self.Mastermind        = self.CreatePage(Mastermind       (self))
         self.PopmenuEditor     = self.CreatePage(PopmenuEditor    (self))
 
+        self.CheckModified()
+
     def CreatePage(self, page):
         page.BuildPage()
         page.SetScrollRate(10,10)

@@ -66,7 +66,7 @@ class MovementPowers(Page):
             'SpeedSpecialPower' : '', # hidden
 
             'JumpPower'        : '',
-            'HasCJ'            : False,
+            'UseCJ'            : False,
             'JumpMode'         : '',
             'SimpleSJCJ'       : False,
             'JumpSpecialKey'   : '',
@@ -74,7 +74,7 @@ class MovementPowers(Page):
 
             'FlyPower'        : '',
             'HoverPower'      : '', # hidden
-            'HasHover'        : False,
+            'UseHover'        : False,
             'HasGFly'         : False,
             'HasQF'           : False, # hidden
             'FlyMode'         : '',
@@ -385,9 +385,9 @@ class MovementPowers(Page):
         self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the jump power to use with the keybinds in this section")
         self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
-        self.superJumpSizer.AddControl(ctlName = 'HasCJ', ctlType = 'checkbox',
+        self.superJumpSizer.AddControl(ctlName = 'UseCJ', ctlType = 'checkbox',
             tooltip = "Should the binds use Combat Jumping as a defense / stationary power?")
-        self.Ctrls['HasCJ'].Bind(wx.EVT_CHECKBOX, self.OnJumpChanged)
+        self.Ctrls['UseCJ'].Bind(wx.EVT_CHECKBOX, self.OnJumpChanged)
         self.superJumpSizer.AddControl(ctlName = 'SimpleSJCJ', ctlType = 'checkbox',
             tooltip = "Use the Jump Mode key as a simple Super Jump / Combat Jumping toggle.  This will toggle on and off either power if it is the only one available")
         self.Ctrls['SimpleSJCJ'].Bind(wx.EVT_CHECKBOX, self.OnJumpChanged)
@@ -401,8 +401,8 @@ class MovementPowers(Page):
         self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the flight power to use with the keybinds in this section")
         self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
-        self.flySizer.AddControl(ctlName = 'HasHover', ctlType = 'checkbox',)
-        self.Ctrls['HasHover'].Bind(wx.EVT_CHECKBOX, self.OnFlightChanged)
+        self.flySizer.AddControl(ctlName = 'UseHover', ctlType = 'checkbox',)
+        self.Ctrls['UseHover'].Bind(wx.EVT_CHECKBOX, self.OnFlightChanged)
         self.flySizer.AddControl(ctlName = 'FlyMode', ctlType = 'keybutton',
             tooltip = "Enter Speed on Demand Fly Mode")
         self.flySizer.AddControl(ctlName = 'FlySpecialKey', ctlType = 'keybutton',)
@@ -517,16 +517,16 @@ class MovementPowers(Page):
             c['FlyMode'].Show(bool(self.GetState('FlyPower') or self.GetState('HoverPower'))
                                           and self.DefaultMode() != "Fly")
             c['FlyMode'].Enable(sodenabled)
-            c['HasHover'].Show(self.Profile.HasPowerPool('Flight') or archetype == "Peacebringer")
+            c['UseHover'].Show(self.Profile.HasPower('Flight', 'Hover') or archetype == "Peacebringer")
             if archetype == 'Peacebringer':
-                c['HasHover'].CtlLabel.SetLabel('Has Combat Flight:')
-                c['HasHover'].SetToolTip('Use Combat Flight as a defense power when not moving -- if your Peacebringer is below level 10, leave this unchecked')
+                c['UseHover'].CtlLabel.SetLabel('Use Combat Flight for Defense:')
+                c['UseHover'].SetToolTip('When in SoD Fly mode, use Combat Flight as a defense power when not moving -- if your Peacebringer is below level 10, leave this unchecked')
                 c['HoverPower'].SetValue('Combat Flight')
             else:
-                c['HasHover'].CtlLabel.SetLabel('Has Hover:')
-                c['HasHover'].SetToolTip('Use Hover as a defense power when not moving')
+                c['UseHover'].CtlLabel.SetLabel('Use Hover for Defense:')
+                c['UseHover'].SetToolTip('When in SoD Fly mode, use Hover as a defense power when not moving')
                 c['HoverPower'].SetValue('Hover')
-            c['HasHover'].Enable(sodenabled)
+            c['UseHover'].Enable(sodenabled)
 
             try: # try/except here because we Freeze to prevent flicker and what if it breaks?
                 self.Freeze()
@@ -536,7 +536,7 @@ class MovementPowers(Page):
                     c['FlySpecialPower'].SetValue('fly_boost') # "afterburner" has overloaded meaning.
                     c['FlySpecialKey'].Show()
 
-                if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.GetState('HasHover'))):
+                if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.GetState('UseHover'))):
                     c['FlySpecialKey'].CtlLabel.SetLabel('Quantum Maneuvers:')
                     c['FlySpecialPower'].SetValue('Quantum Maneuvers')
                     c['FlySpecialKey'].Show()
@@ -566,11 +566,11 @@ class MovementPowers(Page):
             c['JumpMode'].Show(bool(
                     self.DefaultMode() != "Jump"
                         and
-                    (self.GetState('JumpPower') or self.GetState('HasCJ') or self.GetState('SimpleSJCJ'))
+                    (self.GetState('JumpPower') or self.GetState('UseCJ') or self.GetState('SimpleSJCJ'))
                 ))
             c['JumpMode'].Enable(sodenabled)
-            c['HasCJ'].Enable(sodenabled and self.Profile.HasPowerPool('Leaping'))
-            c['SimpleSJCJ'].Enable(sodenabled and (bool(self.GetState('JumpPower') or self.GetState('HasCJ'))))
+            c['UseCJ'].Enable(sodenabled and self.Profile.HasPowerPool('Leaping'))
+            c['SimpleSJCJ'].Enable(sodenabled and (bool(self.GetState('JumpPower') or self.GetState('UseCJ'))))
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
             c['SSSJModeEnable'].Enable(sodenabled)
 
@@ -1075,17 +1075,17 @@ class MovementPowers(Page):
             t.detaillo = f"$$visscale {self.GetState('DetailMove')}"
 
         ## Combat Jumping / Super Jump
-        if (self.GetState('HasCJ') and not self.GetState('JumpPower')):
+        if (self.GetState('UseCJ') and not self.GetState('JumpPower')):
             t.cancj = True
             t.cjmp  = "Combat Jumping"
             t.jump  = "Combat Jumping"
 
-        elif (not self.GetState('HasCJ') and self.GetState('JumpPower')):
+        elif (not self.GetState('UseCJ') and self.GetState('JumpPower')):
             t.canjmp     = True
             t.jump       = self.GetState('JumpPower')
             t.jumpifnocj = self.GetState('JumpPower')
 
-        elif self.GetState('HasCJ') and self.GetState('JumpPower'):
+        elif self.GetState('UseCJ') and self.GetState('JumpPower'):
             t.cancj  = True
             t.canjmp = True
             t.cjmp   = "Combat Jumping"
@@ -1311,11 +1311,11 @@ class MovementPowers(Page):
 
         if (self.GetState('SimpleSJCJ')):
             jpower = self.GetState('JumpPower')
-            if (self.GetState('HasCJ') and jpower):
+            if (self.GetState('UseCJ') and jpower):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname {jpower}$$powexecname Combat Jumping'))
             elif (self.GetState('JumpPower')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname {jpower}'))
-            elif (self.GetState('HasCJ')):
+            elif (self.GetState('UseCJ')):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind('powexecname Combat Jumping'))
 
         # TODO - this is making 'nop' binds even when teleport is completely disabled.
@@ -1408,12 +1408,12 @@ class MovementPowers(Page):
         #        wx.MessageBox("Enabling NonSoD mode, since it is set as your default mode.", "Mode Changed", wx.OK|wx.ICON_WARNING)
         #    self.SetState('NonSoDEnable', 1)
 
-        #elif (self.DefaultMode() == "Fly" and not (self.GetState('HasHover') or self.GetState('FlyPower'))):
+        #elif (self.DefaultMode() == "Fly" and not (self.GetState('UseHover') or self.GetState('FlyPower'))):
         #    wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Fly mode but your character has neither Hover nor a Fly power.", "Mode Changed", wx.OK|wx.ICON_WARNING)
         #    self.SetState('NonSoDEnable', 1)
         #    self.SetState('DefaultMode', "NonSoD")
 
-        #elif (self.DefaultMode() == "Jump" and not (self.GetState('HasCJ') or self.GetState('JumpPower'))):
+        #elif (self.DefaultMode() == "Jump" and not (self.GetState('UseCJ') or self.GetState('JumpPower'))):
         #    wx.MessageBox("Enabling NonSoD mode and making it the default, since you had selected Jump mode but your character has neither Combat Jumping nor a Super Jump power.", "Mode Changed", wx.OK|wx.ICON_WARNING)
         #    self.SetState('NonSoDEnable', 1)
         #    self.SetState('DefaultMode', "NonSoD")
@@ -2212,7 +2212,7 @@ class MovementPowers(Page):
     def hasHover(self) -> bool:
         return bool(
             (self.Profile.HasPowerPool('Flight') or self.Profile.Archetype() == "Peacebringer")
-            and self.GetState('HasHover')
+            and self.GetState('UseHover')
         )
 
     def hasGFly(self) -> bool:
@@ -2310,7 +2310,7 @@ UI.Labels.update( {
     'Feedback'       : 'Self-/tell when changing SoD mode',
 
     'JumpPower'        : "Primary Jump Power",
-    'HasCJ'            : 'Has Combat Jumping',
+    'UseCJ'            : 'Use Combat Jumping for Defense',
     'JumpMode'         : 'Toggle Jump Mode',
     'SimpleSJCJ'       : 'Simple Combat Jumping / Super Jump Toggle',
     'JumpSpecialKey'   : '',
@@ -2318,13 +2318,13 @@ UI.Labels.update( {
 
     'SpeedPower'        : "Primary Speed Power",
     'SpeedMode'         : 'Toggle Super Speed Mode',
-    'SSMobileOnly'      : 'SuperSpeed only when moving',
+    'SSMobileOnly'      : 'Super Speed only when moving',
     'SSSJModeEnable'    : 'Enable Super Speed / Super Jump Mode',
     'SpeedSpecialKey'   : '',
     'SpeedSpecialPower' : '', # Hidden
 
     'FlyPower'        : "Primary Flight Power",
-    'HasHover'        : "Has Hover",
+    'UseHover'        : "Use Hover for Defense",
     'HasGFly'         : 'Has Group Fly',
     'FlyMode'         : 'Toggle Fly Mode',
     'FlySpecialKey'   : 'Afterburner',

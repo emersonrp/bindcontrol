@@ -86,6 +86,7 @@ class Profile(wx.Notebook):
         self.PopmenuEditor     = self.CreatePage(PopmenuEditor    (self))
 
         if self.EditingDefault: self.ColorThingsForEditingDefault()
+        self.CheckModified()
 
         PrecacheIcons(self)
 

@@ -85,6 +85,7 @@ class Profile(wx.Notebook):
         self.PopmenuEditor     = self.CreatePage(PopmenuEditor    (self))
 
         if self.EditingDefault: self.ColorThingsForEditingDefault()
+        self.CheckModified()
 
     def CreatePage(self, page):
         page.BuildPage()

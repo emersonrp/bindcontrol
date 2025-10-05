@@ -282,7 +282,7 @@ def test_GetDefaultProfileJSON(PD, config, DefaultProfile, monkeypatch):
 
     profiledata = json.loads(jsonstring)
     assert 'General' in profiledata
-    assert profiledata['ProfileBindsDir'] == 'nd'
+    assert profiledata['ProfileBindsDir'] == 't2'
 
 def test_BindsDirNotMine(monkeypatch, PD):
     # correctly returns False for unclaimed bindsdir

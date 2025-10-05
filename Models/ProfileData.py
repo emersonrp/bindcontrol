@@ -230,12 +230,19 @@ class ProfileData(dict):
 
         # load old Profiles pre-rename of "Movement Powers" tab
         if 'SoD' in self:
-            self['MovementPowers'] = self['SoD']
-            del self['SoD']
+            self['MovementPowers'] = self.pop('SoD')
 
-        # This option got renamed for better clarity
+        # One value of this option got renamed for better clarity
         if ('MovementPowers' in self) and (self['MovementPowers'].get('DefaultMode') == 'No SoD'):
             self['MovementPowers']['DefaultMode'] = 'No Default SoD'
+
+        # These two got actually renamed fully.
+        if ('MovementPowers' in self) and ('HasHover' in self['MovementPowers']):
+            self['MovementPowers']['UseHover'] = self['MovementPowers'].pop('HasHover')
+            self.SetModified()
+        if ('MovementPowers' in self) and ('HasCJ' in self['MovementPowers']):
+            self['MovementPowers']['UseCJ'] = self['MovementPowers'].pop('HasCJ')
+            self.SetModified()
 
         # Massage old hardcoded-three-step BufferBinds into the new way
         if 'CustomBinds' in self:

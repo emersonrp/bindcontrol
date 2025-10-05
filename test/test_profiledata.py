@@ -220,13 +220,17 @@ def test_HasPowerPool(PD):
     assert not PD.HasPowerPool('Leprosy')
 
 def test_HasPower(PD):
+    PD.UpdateData('General', 'Pool1', 'Flight')
     PD.UpdateData('General', 'Pool1Powers', ['Fly', 'Hover'])
+    PD.UpdateData('General', 'Primary', 'Test Powers')
     PD.UpdateData('General', 'PrimaryPowers', ['Test1', 'Test2'])
+    PD.UpdateData('General', 'Secondary', 'No Powers Here')
 
-    assert PD.HasPower('Pool', 'Hover')
-    assert not PD.HasPower('Pool', 'Boeing')
-    assert PD.HasPower('Primary', 'Test1')
-    assert not PD.HasPower('Primary', 'Testosterone')
+    assert PD.HasPower('Flight', 'Hover')
+    assert not PD.HasPower('Flight', 'Boeing')
+    assert PD.HasPower('Test Powers', 'Test1')
+    assert not PD.HasPower('Test Powers', 'Testosterone')
+    assert PD.HasPower('No Powers Here', 'Picked No Powers')
 
 def test_GetCustomID(PD):
     assert PD['MaxCustomID'] == 10

@@ -5,7 +5,6 @@ import re
 import os
 import platform
 from pathlib import Path
-import webbrowser
 
 import wx.lib.mixins.inspection
 import wx.adv
@@ -266,12 +265,14 @@ class Main(wx.Frame):
         loadButton.Bind(wx.EVT_BUTTON, self.OnProfileLoad)
         importButton.Bind(wx.EVT_BUTTON, self.OnProfileImport)
 
-        GettingStartedButton = wx.Button(StartupPanel, label = "Getting Started With BindControl")
-        GettingStartedButton.Bind(wx.EVT_BUTTON, self.OnHelpGettingStarted)
+        GettingStartedLink = wx.adv.HyperlinkCtrl(StartupPanel,
+            label = 'Getting Started with BindControl',
+            url = 'https://github.com/emersonrp/bindcontrol/wiki/Getting-Started-With-BindControl'
+        )
 
         StartupSizer.AddStretchSpacer(1)
         StartupSizer.Add(ButtonSizer, 0, wx.ALIGN_CENTER)
-        StartupSizer.Add(GettingStartedButton, 0, wx.ALIGN_CENTER|wx.TOP, 40)
+        StartupSizer.Add(GettingStartedLink, 0, wx.ALIGN_CENTER|wx.TOP, 60)
         StartupSizer.AddStretchSpacer(1)
 
         StartupPanel.SetSizer(StartupSizer)
@@ -643,7 +644,7 @@ class Main(wx.Frame):
         ShowHelpWindow(self, 'Manual.html')
 
     def OnHelpGettingStarted(self, _) -> None:
-        webbrowser.open('https://github.com/emersonrp/bindcontrol/wiki/Getting-Started-With-BindControl')
+        wx.LaunchDefaultBrowser('https://github.com/emersonrp/bindcontrol/wiki/Getting-Started-With-BindControl')
 
     def OnHelpLicense(self, _) -> None:
         ShowHelpWindow(self, 'LICENSE.html')

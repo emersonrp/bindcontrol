@@ -11,7 +11,6 @@ from pathlib import Path
 from datetime import datetime
 import re
 import platform
-import webbrowser
 from functools import partial
 from Util.Paths import GetValidGamePath, GetPopmenuPath
 
@@ -1007,7 +1006,7 @@ class PELockedOption(PEMenuItem):
 
         IconButton = wx.BitmapButton(staticbox, -1, bitmap = GetIcon('UI', 'search'))
         gridsizer.Add(IconButton, pos = (2,2))
-        IconButton.Bind(wx.EVT_BUTTON, partial(webbrowser.open, 'https://homecoming.wiki/wiki/Macro_image_(Slash_Command)'))
+        IconButton.Bind(wx.EVT_BUTTON, partial(self.LaunchBrowser, 'https://homecoming.wiki/wiki/Macro_image_(Slash_Command)'))
 
         gridsizer.Add(wx.StaticLine(staticbox, wx.ID_ANY, style = wx.LI_HORIZONTAL), pos = (row, 1), flag = wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, border = 10)
         row = row + 1
@@ -1028,7 +1027,7 @@ class PELockedOption(PEMenuItem):
             gridsizer.Add(self.Ctrls[ctrl], pos = (row, 1), flag = wx.EXPAND)
             srchbutton = wx.BitmapButton(staticbox, -1, bitmap = GetIcon('UI', 'search'))
             gridsizer.Add(srchbutton, pos = (row,2))
-            srchbutton.Bind(wx.EVT_BUTTON, partial(webbrowser.open, URLs[ctrl]))
+            srchbutton.Bind(wx.EVT_BUTTON, partial(self.LaunchBrowser, URLs[ctrl]))
             row = row + 1
 
 
@@ -1045,6 +1044,8 @@ class PELockedOption(PEMenuItem):
         dialog.Fit()
 
         return dialog
+
+    def LaunchBrowser(self, url, _): wx.LaunchDefaultBrowser(url)
 
     def OnOKButton(self, evt) -> None:
         if self.CheckEditorFieldsForError(): return

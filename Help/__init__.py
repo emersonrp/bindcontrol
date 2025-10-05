@@ -1,4 +1,3 @@
-import webbrowser
 import wx
 import wx.html
 from Icon import GetIcon
@@ -20,8 +19,7 @@ class HelpHTMLWindow(wx.html.HtmlWindow):
     def HandleLinkClicked(self, evt):
         linkinfo = evt.GetLinkInfo()
         page = linkinfo.GetHref()
-        webbrowser.open(page)
-
+        wx.LaunchDefaultBrowser(page)
 
 class HelpWindow(wx.MiniFrame):
     def __init__(self, parent, filename):
@@ -78,7 +76,6 @@ class HelpButton(wx.BitmapButton):
             def OnClick(event): ShowHelpWindow(self, self.Filename, event)
         return OnClick
 
-
 HelpWindows: dict[str, HelpWindow] = {}
 def ShowHelpWindow(parent, filename, _ = None):
     if not HelpWindows.get(filename):
@@ -105,4 +102,3 @@ def ShowHelpPopup(self, filename, event):
 
     popup.Position(btnpos, wx.Size(xcoord, btnsiz.GetHeight() + 5)) # 5 padding below button
     popup.Popup()
-

@@ -124,14 +124,16 @@ class ProfileData(dict):
                 return True
         return False
 
-    def HasPower(self, psettype, powername):
-        if psettype == 'Pool':
-            for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
+    # "Have picked the power, or have the power pool but have picked no powers"
+    # This might not be the most intuitive read of this but works for our purposes
+    def HasPower(self, powerset:str, powername:str) -> bool:
+        for picker in ['Primary', 'Secondary', 'Epic', 'Pool1', 'Pool2', 'Pool3', 'Pool4']:
+            if powerset == self.InspectData('General', picker):
                 if powers := self.InspectData('General', f'{picker}Powers'):
                     if powername in powers: return True
-        else:
-            if powers := self.InspectData('General', f'{psettype}Powers'):
-                if powername in powers: return True
+                else:
+                    # powerset matches but no powers picked
+                    return True
         return False
 
     def UpdateData(self, pagename, *args) -> None:

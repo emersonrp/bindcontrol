@@ -293,19 +293,19 @@ class Profile(wx.Notebook):
         # if we want to set things based on power picks, let's do that.  This might
         # want to be its own logic / method instead.
         if set_power_picks:
-            if self.HasPower('Pool', 'Hover') or self.Archetype() == 'Peacebringer':
+            if self.HasPower('Flight', 'Hover') or self.Archetype() == 'Peacebringer':
                 self.MovementPowers.SetState('HasHover', True)
                 self.UpdateData('MovementPowers', 'HasHover', True)
 
-            if self.HasPower('Pool', 'Group Fly') or self.Archetype() == 'Peacebringer':
+            if self.HasPower('Flight', 'Group Fly'):
                 self.MovementPowers.SetState('HasGFly', True)
                 self.UpdateData('MovementPowers', 'HasGFly', True)
 
-            if self.HasPower('Pool', 'Combat Jumping'):
+            if self.HasPower('Leaping', 'Combat Jumping'):
                 self.MovementPowers.SetState('HasCJ', True)
                 self.UpdateData('MovementPowers', 'HasCJ', True)
 
-            if self.HasPower('Pool', 'Team Teleport'):
+            if self.HasPower('Teleportation', 'Team Teleport'):
                 self.MovementPowers.SetState('HasTTP', True)
                 self.UpdateData('MovementPowers', 'HasTTP', True)
 

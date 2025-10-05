@@ -198,6 +198,17 @@ class PrefsDialog(wx.Dialog):
         setattr(crashOnBindErrorLabel, 'CB', self.CrashOnBindError)
         crashOnBindErrorLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
+        VerboseCustomBindTitlesLabel = statictextclass(debugPanel, label = "Verbose Titles for Custom Binds:")
+        debugSizer.Add(VerboseCustomBindTitlesLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        self.VerboseCustomBinds = wx.CheckBox(debugPanel)
+        self.VerboseCustomBinds.SetValue(config.ReadBool('VerboseCustomBinds'))
+        tooltip = "Show more information in the title of custom binds, including the bind type and bind ID."
+        VerboseCustomBindTitlesLabel.SetToolTip(tooltip)
+        self.VerboseCustomBinds.SetToolTip(tooltip)
+        debugSizer.Add(self.VerboseCustomBinds, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        setattr(VerboseCustomBindTitlesLabel, 'CB', self.VerboseCustomBinds)
+        VerboseCustomBindTitlesLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
+
         showInspectorLabel = statictextclass(debugPanel, label = "Show Widget Inspector (requires restart):")
         debugSizer.Add(showInspectorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ShowInspector = wx.CheckBox(debugPanel)
@@ -327,11 +338,13 @@ class PrefsDialog(wx.Dialog):
 
             # check if we changed either GameDir so we know whether to force PopmenuEditor to reload itself
             changedGameDir = False
-            if self.gameDirPicker.GetPath() != config.Read('GamePath'): changedGameDir = True
+            if self.gameDirPicker.GetPath()        != config.Read('GamePath')       : changedGameDir = True
             if self.gameDirRebirthPicker.GetPath() != config.Read('GameRebirthPath'): changedGameDir = True
 
             # Ditto check if reset key changed
-            changedResetKey = self.ResetKey.GetLabel() == config.Read('ResetKey')
+            changedResetKey = (self.ResetKey.GetLabel() != config.Read('ResetKey'))
+
+            changedVerboseCustomBinds = (self.VerboseCustomBinds.GetValue() != config.ReadBool('VerboseCustomBinds'))
 
             ###
             config.Write('GamePath', self.gameDirPicker.GetPath())
@@ -360,6 +373,7 @@ class PrefsDialog(wx.Dialog):
 
             config.WriteBool('VerboseBLF', self.VerboseBLF.GetValue())
             config.WriteBool('CrashOnBindError', self.CrashOnBindError.GetValue())
+            config.WriteBool('VerboseCustomBinds', self.VerboseCustomBinds.GetValue())
             config.WriteBool('ShowInspector', self.ShowInspector.GetValue())
             config.WriteBool('ShowDebugMessages', self.ShowDebugMessages.GetValue())
 
@@ -378,6 +392,10 @@ class PrefsDialog(wx.Dialog):
                 if changedResetKey:
                     # highlight buttons as needed if we fiddled with ResetKey
                     profile.CheckAllConflicts()
+
+                if changedVerboseCustomBinds:
+                    for pane in profile.CustomBinds.Panes:
+                        pane.UpdateLabel()
 
 class controllerModPicker(wx.Choice):
     def __init__(self, *args, **kwargs):

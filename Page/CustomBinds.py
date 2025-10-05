@@ -173,6 +173,8 @@ class CustomBinds(Page):
                     bindpane.CustomID = self.Profile.GetCustomID()
                     break
 
+        bindpane.UpdateLabel()
+
         self.Panes.append(bindpane)
 
         bindpane.BuildBindUI(self)

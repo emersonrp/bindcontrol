@@ -29,6 +29,8 @@ class CustomBindPaneParent(wx.CollapsiblePane):
 
         self.bindclass = type(self).__name__
 
+        self.UpdateLabel()
+
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
 
     def BuildBindUI(self, page) -> None:
@@ -45,6 +47,13 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         # for overriding on child classes this will be called in the course of
         # the Custom Binds page doing its own PopulateBindFiles, iteratively
         # over all of its kids
+
+    def UpdateLabel(self):
+        if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
+            self.SetLabel(f"{self.Title} ({self.Description} ID:{self.CustomID})")
+        else:
+            self.SetLabel(f"{self.Title}")
+
 
     def CreateSerialization(self, data) -> dict[str, Any]:
         return {

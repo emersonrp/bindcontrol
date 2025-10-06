@@ -10,7 +10,7 @@ PowerSelectorChanged, EVT_POWERSELECTOR_CHANGED = wx.lib.newevent.NewCommandEven
 
 class PowerSelector(wx.BitmapButton):
     def __init__(self, parent, page, pickername):
-        super().__init__(parent, bitmap = GetIcon('UI', 'gear'))
+        super().__init__(parent, bitmap = GetIcon('UI', 'select'))
 
         self.CtlLabel : ST.GenStaticText | wx.StaticText | None = None
         self.Page                                               = page
@@ -74,8 +74,7 @@ class Popup(wx.PopupTransientWindow):
             if power in self.PowerSelector.Powers:
                 popup.Check(i)
 
-        popup.Bind(wx.EVT_LISTBOX, self.OnPopupClicked)
-        popup.Bind(wx.EVT_CHECKLISTBOX, self.OnPopupClicked)
+        popup.Bind(wx.EVT_LEFT_DOWN, self.OnPopupClicked)
 
         panel.Fit()
         panel.Layout()
@@ -98,5 +97,5 @@ class Popup(wx.PopupTransientWindow):
         self.PowerSelector.Powers = powers
 
     def OnDismiss(self):
-        wx.PostEvent(self, PowerSelectorChanged(wx.NewId(), control = self.PowerSelector))
+        wx.PostEvent(self.PowerSelector.Page, PowerSelectorChanged(wx.NewId(), control = self.PowerSelector))
         self.DestroyLater()

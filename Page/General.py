@@ -117,7 +117,7 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'PrimaryPowers',
             ctlType = 'powerselector',
-            tooltip = 'Select Powers from Primary powerset.  This is optional.',
+            tooltip = 'Select Powers from Primary powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Primary',
         )
         powersBox.AddControl(
@@ -129,7 +129,7 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'SecondaryPowers',
             ctlType = 'powerselector',
-            tooltip = 'Select Powers from Secondary powerset.  This is optional.',
+            tooltip = 'Select Powers from Secondary powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Secondary',
         )
         powersBox.AddControl(
@@ -141,7 +141,7 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'EpicPowers',
             ctlType = 'powerselector',
-            tooltip = 'Select Powers from Epic powerset.  This is optional.',
+            tooltip = 'Select Powers from Epic powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Epic',
         )
         poolcontents = sorted(GameData.PoolPowers)
@@ -156,7 +156,7 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'Pool1Powers',
             ctlType = 'powerselector',
-            tooltip = 'Select Powers from first Pool powerset.  This is optional.',
+            tooltip = 'Select Powers from first Pool powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Pool1',
         )
         powersBox.AddControl(
@@ -169,7 +169,7 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'Pool2Powers',
             ctlType = 'powerselector',
-            tooltip = 'Select Powers from second Pool powerset.  This is optional.',
+            tooltip = 'Select Powers from second Pool powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Pool2',
         )
         powersBox.AddControl(
@@ -182,7 +182,7 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'Pool3Powers',
             ctlType = 'powerselector',
-            tooltip = 'Select Powers from third Pool powerset.  This is optional.',
+            tooltip = 'Select Powers from third Pool powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Pool3',
         )
         powersBox.AddControl(
@@ -195,7 +195,7 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'Pool4Powers',
             ctlType = 'powerselector',
-            tooltip = 'Select Powers from fourth Pool powerset.  This is optional.',
+            tooltip = 'Select Powers from fourth Pool powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Pool4',
         )
 

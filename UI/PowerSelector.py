@@ -32,7 +32,7 @@ class PowerSelector(wx.BitmapButton):
 
     def ClearPowers(self, evt = None):
         self.Powers = []
-        wx.PostEvent(self, PowerSelectorChanged(wx.NewId(), control = self))
+        wx.PostEvent(self.Page, PowerSelectorChanged(wx.NewId(), control = self))
         if evt: evt.Skip()
 
     def AddPower(self, power: str):
@@ -76,6 +76,7 @@ class Popup(wx.PopupTransientWindow):
 
         popup.Bind(wx.EVT_LEFT_DOWN, self.OnPopupClicked)
 
+        # Yes we need all of these
         panel.Fit()
         panel.Layout()
         self.Fit()

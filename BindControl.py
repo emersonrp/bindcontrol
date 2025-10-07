@@ -104,6 +104,7 @@ class Main(wx.Frame):
         self.Profile_close  = ProfMenu.Append(wx.ID_CLOSE, "Close Profile", "Close the current profile")
         ProfMenu.AppendSeparator()
         self.Profile_savedefault = ProfMenu.Append(wx.ID_ANY, "Save Profile As Default", "Save the current profile as the default for new profiles")
+        self.Profile_editdefault = ProfMenu.Append(wx.ID_ANY, "Edit Default Profile", "Edit the default profile that gets applied to new profiles")
         ProfMenu.AppendSeparator()
         Profile_preferences = ProfMenu.Append(wx.ID_PREFERENCES, "&Preferences", "Configure BindControl")
         Profile_exit  = ProfMenu.Append(wx.ID_EXIT)
@@ -138,6 +139,7 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU , self.OnProfileSave         , self.Profile_save)
         self.Bind(wx.EVT_MENU , self.OnProfileSaveAs       , self.Profile_saveas)
         self.Bind(wx.EVT_MENU , self.OnProfileSaveDefault  , self.Profile_savedefault)
+        self.Bind(wx.EVT_MENU , self.OnProfileEditDefault  , self.Profile_editdefault)
         self.Bind(wx.EVT_MENU , self.OnProfileClose        , self.Profile_close)
         self.Bind(wx.EVT_MENU , self.OnMenuPrefsDialog     , Profile_preferences)
         self.Bind(wx.EVT_MENU , self.OnMenuExitApplication , Profile_exit)
@@ -279,14 +281,13 @@ class Main(wx.Frame):
         return StartupPanel
 
     def SetupProfileUI(self) -> None:
-        enable = self.Profile is not None
-        self.Profile_save.Enable(enable)
-        self.Profile_saveas.Enable(enable)
-        self.Profile_savedefault.Enable(enable)
-        self.ProfDirButton.Enable(enable)
+        self.Profile_save.Enable(self.EnableProfCtrls())
+        self.Profile_saveas.Enable(self.EnableProfCtrls())
+        self.Profile_savedefault.Enable(self.EnableProfCtrls() or bool(self.Profile and self.Profile.EditingDefault))
+        self.ProfDirButton.Enable(self.EnableProfCtrls())
         # TODO - do smarter things with enabling the write and delete buttons
-        self.WriteButton.Enable(enable)
-        self.DeleteButton.Enable(enable)
+        self.WriteButton.Enable(self.EnableProfCtrls())
+        self.DeleteButton.Enable(self.EnableProfCtrls())
 
     def OnPageChanged(self, evt) -> None:
         if self.Profile:
@@ -428,6 +429,16 @@ class Main(wx.Frame):
         if not self.Profile: return
         self.Profile.SaveAsDefault()
 
+    def OnProfileEditDefault(self, _) -> None:
+        if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
+        self.Sizer.Remove(0)
+        if self.Profile:
+            self.Profile.DestroyLater()
+            self.Profile = None
+        if defaultProfile := Profile(self, editdefault = True):
+            defaultProfile.buildUIFromData()
+            self.InsertProfile(defaultProfile)
+
     def OnProfileClose(self, _) -> None:
         if not self.Profile: return
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
@@ -548,8 +559,11 @@ class Main(wx.Frame):
         else:
             self.ProfDirButton.RemoveWarning('owned')
 
-        self.DeleteButton.Enable(not self.ProfDirButton.HasErrors())
-        self.WriteButton.Enable(not self.ProfDirButton.HasErrors())
+        self.DeleteButton.Enable(self.EnableProfCtrls() and not self.ProfDirButton.HasErrors())
+        self.WriteButton .Enable(self.EnableProfCtrls() and not self.ProfDirButton.HasErrors())
+
+    def EnableProfCtrls(self):
+        return bool(self.Profile and not self.Profile.EditingDefault)
 
     def OnPathTextChanged(self, evt) -> None:
         textctrl = evt.EventObject

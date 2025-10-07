@@ -101,6 +101,8 @@ class Gameplay(Page):
         ##### Power Tray Buttons
         traySizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = 'Power Tray Buttons')
         staticbox = traySizer.GetStaticBox()
+        if self.Profile.EditingDefault:
+            staticbox.SetBackgroundColour(wx.WHITE)
 
         # Horizontal sizer for "help" button
         GridHelpSizer = wx.BoxSizer(wx.HORIZONTAL)

@@ -35,6 +35,10 @@ class Page(wx.ScrolledWindow):
         self.Ctrls : dict = {}
         self.Init  : dict = {}
 
+        if self.Profile.EditingDefault:
+            self.SetToolTip("You are editing the default profile, which will apply to all new and imported profiles.")
+            self.SetBackgroundColour(wx.Colour(255,200,200))
+
     def GetState(self, key) -> str:
         control = self.Ctrls.get(key)
         if not control:

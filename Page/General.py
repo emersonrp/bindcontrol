@@ -112,16 +112,19 @@ class General(Page):
             ctlName = 'Primary',
             ctlType = 'choice',
             callback = self.OnPickPrimaryPowerSet,
+            tooltip = "Select your character's Primary powerset",
         )
         powersBox.AddControl(
             ctlName = 'Secondary',
             ctlType = 'choice',
             callback = self.OnPickSecondaryPowerSet,
+            tooltip = "Select your character's Secondary powerset",
         )
         powersBox.AddControl(
             ctlName = 'Epic',
             ctlType = 'choice',
             callback = self.OnPickEpicPowerSet,
+            tooltip = "Select your character's Epic / Ancillary / Patron powerset",
         )
         poolcontents = sorted(GameData.PoolPowers)
         poolcontents.insert(0, '')
@@ -130,24 +133,28 @@ class General(Page):
             ctlType = 'choice',
             contents = poolcontents,
             callback = self.OnPickPoolPower,
+            tooltip = "Select any Power Pool powerset your character has",
         )
         powersBox.AddControl(
             ctlName = 'Pool2',
             ctlType = 'choice',
             contents = poolcontents,
             callback = self.OnPickPoolPower,
+            tooltip = "Select any Power Pool powerset your character has",
         )
         powersBox.AddControl(
             ctlName = 'Pool3',
             ctlType = 'choice',
             contents = poolcontents,
             callback = self.OnPickPoolPower,
+            tooltip = "Select any Power Pool powerset your character has",
         )
         powersBox.AddControl(
             ctlName = 'Pool4',
             ctlType = 'choice',
             contents = poolcontents,
             callback = self.OnPickPoolPower,
+            tooltip = "Select any Power Pool powerset your character has",
         )
 
         ## Typing Notifier
@@ -360,11 +367,13 @@ class General(Page):
             self.Profile.MovementPowers.SynchronizeUI()
 
         if arch == "Mastermind":
-            if self.Profile.GetPageText(5) != self.Profile.Mastermind.TabTitle:
+            if self.Profile.FindPage(self.Profile.Mastermind) == wx.NOT_FOUND:
+                # hard-coded "5" here is ugly
                 self.Profile.InsertPage(5, self.Profile.Mastermind, self.Profile.Mastermind.TabTitle)
         else:
-            if self.Profile.GetPageText(5) == self.Profile.Mastermind.TabTitle:
-                self.Profile.RemovePage(5)
+            mmidx = self.Profile.FindPage(self.Profile.Mastermind)
+            if mmidx != wx.NOT_FOUND:
+                self.Profile.RemovePage(mmidx)
 
         if evt: evt.Skip()
 

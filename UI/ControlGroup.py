@@ -40,6 +40,9 @@ class ControlGroup(wx.StaticBoxSizer):
         self.InnerSizer = wx.FlexGridSizer(width,3,3)
         for col in flexcols: self.InnerSizer.AddGrowableCol(col)
 
+        if self.Page.Profile.EditingDefault:
+            self.GetStaticBox().SetBackgroundColour(wx.WHITE)
+
         self.vertCenteringSizer.Add(self.InnerSizer, 1, wx.ALIGN_CENTER_VERTICAL)
         self.Add(self.vertCenteringSizer, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10)
 

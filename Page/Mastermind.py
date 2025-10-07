@@ -43,6 +43,9 @@ class Mastermind(Page):
         PetNameSB = PetNames.GetStaticBox()
         PetInner = wx.BoxSizer(wx.HORIZONTAL)
 
+        if self.Profile.EditingDefault:
+            PetNameSB.SetBackgroundColour(wx.WHITE)
+
         for i in range(6):
             petdesc      = ['Minion 1', 'Minion 2', 'Minion 3', 'Lieutenant 1', 'Lieutenant 2', 'Boss'][i]
             petdescshort = ['Min 1'   , 'Min 2'   , 'Min 3'   , 'Lt 1'        , 'Lt 2'        , 'Boss'][i]
@@ -122,12 +125,18 @@ class Mastermind(Page):
         self.BindStyleNotebook.AddPage(self.qwyPetMousePage, "qwy PetMouse Binds")
         self.BindStyleNotebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnBindStyleChanged)
 
-        bindstyleLabel = wx.BoxSizer(wx.HORIZONTAL)
-        bindstyleLabel.Add(wx.StaticText(self, label = "Select Mastermind binds type:"), 0, wx.ALIGN_CENTER|wx.RIGHT, 10)
-        bindstyleLabel.Add(HelpButton(self, 'MMBindStyle.html'), 0, wx.ALIGN_CENTER)
+        bindstyleLabel = wx.Panel(self)
+        bindstyleSizer = wx.BoxSizer(wx.HORIZONTAL)
+        bindstyleLabel.SetSizer(bindstyleSizer)
+        bindstyleSizer.Add(wx.StaticText(bindstyleLabel, label = "Select Mastermind binds type:"), 0, wx.ALIGN_CENTER|wx.ALL, 10)
+        bindstyleSizer.Add(HelpButton(bindstyleLabel, 'MMBindStyle.html'), 0, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 10)
+
+        if self.Profile.EditingDefault:
+            bindstyleLabel.SetBackgroundColour(wx.WHITE)
+            self.BindStyleNotebook.SetBackgroundColour(wx.WHITE)
 
         self.MainSizer.Add(PetNames, 0, wx.EXPAND|wx.BOTTOM, 16)
-        self.MainSizer.Add(bindstyleLabel, 0, wx.EXPAND|wx.ALL, 10)
+        self.MainSizer.Add(bindstyleLabel, 0, wx.EXPAND)
         self.MainSizer.Add(self.BindStyleNotebook, 1, wx.EXPAND)
 
         self.SynchronizeUI()
@@ -167,6 +176,8 @@ class Mastermind(Page):
         pset = self.Profile.Primary()
 
         # disable these for non-mm even though the tab is missing so WriteBinds doesn't find them
+        # TODO - it's weird-feeling to have the whole page turned off when you haven't picked
+        # a primary powerset yet.  We probably need some sort of warning somewhere somehow.
         for control in self.Ctrls.values(): control.Enable(bool(ismm and pset))
         self.OnLevelChanged()
         if self.BindStyle() == 'Sandolphan':

@@ -150,6 +150,9 @@ class MovementPowers(Page):
         innerSizer = wx.BoxSizer(wx.VERTICAL)
         movementSizer.Add(innerSizer, 1, wx.ALL|wx.ALIGN_CENTER, 10)
 
+        if self.Profile.EditingDefault:
+            staticbox.SetBackgroundColour(wx.WHITE)
+
         keySizer = wx.GridBagSizer(6, 3)
         tlLabel = wx.StaticText(staticbox, label = 'Turn Left')
         fwLabel = wx.StaticText(staticbox, label = 'Forward')

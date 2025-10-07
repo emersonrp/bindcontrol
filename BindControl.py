@@ -440,7 +440,7 @@ class Main(wx.Frame):
         if defaultProfile := Profile(self, editdefault = True):
             defaultProfile.buildUIFromData()
             self.InsertProfile(defaultProfile)
-            defaultProfile.RemovePage(5) # hide the Popmenu Editor
+            defaultProfile.RemovePage(defaultProfile.FindPage(defaultProfile.PopmenuEditor)) # hide the Popmenu Editor
 
     def OnProfileClose(self, _) -> None:
         if not self.Profile: return

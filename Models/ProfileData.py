@@ -41,7 +41,7 @@ class ProfileData(dict):
             if newname:
                 self.Filepath = Util.Paths.ProfilePath(self.Config) / f"{newname}.bcp"
             else: # editing default
-                self.Filepath = Path('DEFAULT PROFILE.bcp')
+                self.Filepath = Path('DEFAULT PROFILE.bcp') # we use this just to set Profile.ProfileName()
 
             # First, mash the Default Profile in there, if it exists
             if jsonstring := self.GetDefaultProfileJSON():
@@ -82,9 +82,10 @@ class ProfileData(dict):
             self.MassageData()
 
             if editdefault:
-                self.SavedData = copy.deepcopy(dict(self))
+                self.SavedState = copy.deepcopy(dict(self))
         else:
             raise Exception("Error: ProfileData created with neither filename nor newname.  This is a bug.")
+
 
         GameData.SetupGameData(self.Server)
 

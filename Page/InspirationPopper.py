@@ -64,6 +64,9 @@ class InspirationPopper(Page):
         # "Use Order" options
         useOrderBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Use Order")
 
+        if self.Profile.EditingDefault:
+            useOrderBox.GetStaticBox().SetBackgroundColour(wx.WHITE)
+
         self.useCB = wx.CheckBox( useOrderBox.GetStaticBox(), -1, 'Enable Largest-First Binds')
         self.useCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Inspiration Popper Binds, (largest inspirations used first)'))
@@ -84,6 +87,10 @@ class InspirationPopper(Page):
 
         # General Options
         optionsBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Options")
+
+        if self.Profile.EditingDefault:
+            optionsBox.GetStaticBox().SetBackgroundColour(wx.WHITE)
+
         self.useSuperInspCB = wx.CheckBox( optionsBox.GetStaticBox(), -1, 'Use Super Inspirations')
         self.useSuperInspCB.SetToolTip(wx.ToolTip(
             'Check this to include Super Inspirations in the Inspiration Popper binds.  If you\'re concerned about accidental activation and would prefer to use Super Inspirations manually, leave this unchecked.'))
@@ -124,6 +131,9 @@ class InspirationPopper(Page):
             idx1 = il.Add(Icon.GetIcon("UI", f"Insp{tab}").GetBitmap(wx.Size(32,32)))
             InspTabs.AddPage(tabpanel, tabname, imageId = idx1)
             tabsizer = wx.BoxSizer(wx.VERTICAL)
+
+            if self.Profile.EditingDefault:
+                tabpanel.SetBackgroundColour(wx.WHITE)
 
             InspBox  = wx.StaticBoxSizer(wx.VERTICAL, tabpanel, "Large Inspirations First")
             InspRows = wx.FlexGridSizer(3,0,3)

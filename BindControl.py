@@ -438,6 +438,7 @@ class Main(wx.Frame):
         if defaultProfile := Profile(self, editdefault = True):
             defaultProfile.buildUIFromData()
             self.InsertProfile(defaultProfile)
+            defaultProfile.RemovePage(5) # hide the Popmenu Editor
 
     def OnProfileClose(self, _) -> None:
         if not self.Profile: return
@@ -531,7 +532,10 @@ class Main(wx.Frame):
             if self.Profile.IsModified():
                 result = wx.MessageBox(f"Profile {self.Profile.ProfileName()} not saved, save now?", "Profile modified", wx.YES_NO|wx.CANCEL)
                 if result == wx.YES:
-                    self.Profile.doSaveToFile()
+                    if self.Profile.EditingDefault:
+                        self.Profile.Data.doSaveAsDefault()
+                    else:
+                        self.Profile.doSaveToFile()
             if self.Profile.PopmenuEditor.CheckForModifiedMenus():
                 result = wx.MessageBox("Some popmenus contain unsaved changes, return to editor?", "Popmenus modified", wx.YES_NO)
                 if result == wx.YES:

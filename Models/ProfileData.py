@@ -80,6 +80,9 @@ class ProfileData(dict):
             # TODO maybe we want to detect that and re-save the Default Profile?
             # Maybe not.
             self.MassageData()
+
+            if editdefault:
+                self.SavedData = copy.deepcopy(dict(self))
         else:
             raise Exception("Error: ProfileData created with neither filename nor newname.  This is a bug.")
 

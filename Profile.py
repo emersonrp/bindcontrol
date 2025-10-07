@@ -57,7 +57,7 @@ class Profile(wx.Notebook):
         return newProfile
 
     # Instance methods
-    def __init__(self, parent, filename : str|None = None, newname : str|None = None, profiledata : dict|None = None):
+    def __init__(self, parent, filename : str|None = None, newname : str|None = None, profiledata : dict|None = None, editdefault : bool = False):
         profiledata = profiledata or {}
         super().__init__(parent, style = wx.NB_TOP, name = "Profile")
 
@@ -67,8 +67,9 @@ class Profile(wx.Notebook):
         except BindsDirectoryException:
             self.Parent.OnProfDirButton() # pyright: ignore
 
-        self.BindFiles : dict[str, BindFile] = {}
-        self.Pages     : list[bcPage]        = []
+        self.BindFiles      : dict[str, BindFile] = {}
+        self.Pages          : list[bcPage]        = []
+        self.EditingDefault : bool                = editdefault
 
         # Add the individual tabs, in order.
         self.General           = self.CreatePage(General          (self))
@@ -144,7 +145,7 @@ class Profile(wx.Notebook):
                 if isinstance(ctrl, bcKeyButton) and ctrl.IsThisEnabled():
                     ctrl.CheckConflicts()
 
-    def IsModified(self): return self.Data.IsModified()
+    def IsModified(self): return (not self.EditingDefault) and self.Data.IsModified()
 
     def CheckModified(self):
         if self.IsModified():

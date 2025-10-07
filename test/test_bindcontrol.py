@@ -30,7 +30,7 @@ def test_main_menubar(app):
     profmenu = menubar.GetMenu(0)
     assert isinstance(profmenu, wx.Menu)
     assert profmenu.GetTitle() == 'Profile'
-    assert profmenu.GetMenuItemCount() == 11
+    assert profmenu.GetMenuItemCount() == 12
     assert profmenu.FindItemByPosition(0).GetItemLabel() == "&New Profile\tCTRL-N"
     assert profmenu.FindItemByPosition(1).GetItemLabel() == "&Load Profile...\tCTRL-L"
     assert profmenu.FindItemByPosition(2).GetItemLabel() == "&Import Saved Build...\tCTRL-I"
@@ -39,9 +39,10 @@ def test_main_menubar(app):
     assert profmenu.FindItemByPosition(5).GetItemLabel() == "Close Profile"
     assert profmenu.FindItemByPosition(6).GetKind() == wx.ITEM_SEPARATOR
     assert profmenu.FindItemByPosition(7).GetItemLabel() == "Save Profile As Default"
-    assert profmenu.FindItemByPosition(8).GetKind() == wx.ITEM_SEPARATOR
-    assert profmenu.FindItemByPosition(9).GetItemLabel() == "&Preferences"
-    assert profmenu.FindItemByPosition(10).GetItemLabel() == "&Quit"
+    assert profmenu.FindItemByPosition(8).GetItemLabel() == "Edit Default Profile"
+    assert profmenu.FindItemByPosition(9).GetKind() == wx.ITEM_SEPARATOR
+    assert profmenu.FindItemByPosition(10).GetItemLabel() == "&Preferences"
+    assert profmenu.FindItemByPosition(11).GetItemLabel() == "&Quit"
 
     helpmenu = menubar.GetMenu(1)
     assert isinstance(helpmenu, wx.Menu)

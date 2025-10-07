@@ -145,7 +145,7 @@ class Profile(wx.Notebook):
                 if isinstance(ctrl, bcKeyButton) and ctrl.IsThisEnabled():
                     ctrl.CheckConflicts()
 
-    def IsModified(self): return (not self.EditingDefault) and self.Data.IsModified()
+    def IsModified(self): return self.Data.IsModified()
 
     def CheckModified(self):
         if self.IsModified():
@@ -155,9 +155,9 @@ class Profile(wx.Notebook):
 
     ###################
     # Profile Save/Load
-    def SaveAsDefault(self, prompt = True) -> None:
-        if prompt:
-            result = wx.MessageBox("This will set the current profile to be used as a template when making a new profile.  Continue?", "Save As Default", wx.YES_NO)
+    def SaveAsDefault(self):
+        if not self.EditingDefault:
+            result = wx.MessageBox("This will set the current profile to be used as the template when making a new profile.  Continue?", "Save As Default", wx.YES_NO)
             if result == wx.NO: return
 
         try:

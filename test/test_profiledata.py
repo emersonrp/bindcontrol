@@ -15,25 +15,25 @@ def test_init_empty():
     with pytest.raises(Exception, match = 'neither filename nor newname'):
         ProfileData.ProfileData(config)
 
-def test_init_newname(config, DefaultProfile, monkeypatch):
+def test_init_newname(config, monkeypatch):
     monkeypatch.undo()
     PD = ProfileData.ProfileData(config, newname = 'test')
     assert PD.Config             == config
     assert PD.Filepath           == Util.Paths.ProfilePath(config) / 'test.bcp'
     assert PD['ProfileBindsDir'] == 'test'
-    assert PD.Modified
+    assert PD.IsModified()
 
     monkeypatch.setattr(ProfileData.ProfileData, 'GenerateBindsDirectoryName', lambda _: '')
     with pytest.raises(Exception, match = 'sane Binds Directory'):
         ProfileData.ProfileData(config, newname = 'nobindsdir')
     monkeypatch.undo()
 
-    assert PD.SavedState == dict(PD)
+    assert PD.IsModified()
 
 def test_defaultprofile(config, DefaultProfile, monkeypatch):
     monkeypatch.undo() # get rid of "Read" monkeypatch on config
     config.Write('DefaultProfile', DefaultProfile)
-    # newname + no profiledata == use Default Profile
+    # newname == use Default Profile
     PD = ProfileData.ProfileData(config, newname = 'test')
     assert PD['General']['Archetype'] == 'Blaster'
     assert PD['General']['Origin'] == 'Magic'
@@ -41,11 +41,11 @@ def test_defaultprofile(config, DefaultProfile, monkeypatch):
     assert PD['General']['Primary'] == 'Archery'
     assert PD['General']['Secondary'] == 'Atomic Manipulation'
 
+    assert PD.IsModified()
+
     monkeypatch.setattr(json, 'loads', raises_exception)
     with pytest.raises(Exception, match = 'while loading Default Profile'):
         ProfileData.ProfileData(config, newname = 'explode')
-
-    assert PD.SavedState == dict(PD)
 
 def test_init_buildfile(config, DefaultProfile, monkeypatch):
     monkeypatch.undo()
@@ -69,7 +69,7 @@ def test_init_buildfile(config, DefaultProfile, monkeypatch):
     assert 'QuitToSelect' in PD['General']
     assert PD['General']['QuitToSelect'] == 'CTRL+Q'
 
-    assert PD.SavedState == dict(PD)
+    assert PD.IsModified()
 
 def test_MassageData(config, monkeypatch):
     monkeypatch.undo()
@@ -118,7 +118,7 @@ def test_init_filename(tmp_path):
 def test_accessors(config, monkeypatch, tmp_path, PD):
 
     assert PD.LastModTime     == PD.Filepath.stat().st_mtime_ns
-    assert not PD.Modified
+    assert not PD.IsModified()
     assert PD.Server          == 'Rebirth'
     assert PD.ProfileName()   == 'testprofile'
     assert PD.ProfileIDFile() == PD.BindsDir() / 'bcprofileid.txt'
@@ -127,6 +127,11 @@ def test_accessors(config, monkeypatch, tmp_path, PD):
 
     monkeypatch.setattr(config, 'Read', lambda _: '')
     assert PD.GameBindsDir()  == PD.BindsDir()
+
+def test_IsModified(PD):
+    assert not PD.IsModified()
+    PD['General']['Fubble'] = 'asdf'
+    assert PD.IsModified()
 
 # TODO TODO TODO - move this test somewhere else when we make a class for ProfileBindFiles or something
 def test_GetBindFile(monkeypatch, PD):
@@ -155,18 +160,18 @@ def test_FillWith(PD):
     assert PD.Server == 'Rebirth'
     assert PD['ProfileBindsDir'] == 'test_FillWith'
     assert 'MovementPowers' not in PD
-    assert PD.Modified is True
+    assert PD.IsModified()
 
 def test_UpdateData(PD):
     # updates existing data
-    assert not PD.Modified
+    assert not PD.IsModified()
 
     PD.UpdateData('General', 'Primary', 'Fubble')
     assert PD['General']['Primary'] == 'Fubble'
-    assert PD.Modified
+    assert PD.IsModified()
 
     PD.UpdateData('General', 'Primary', 'Crab Spider Soldier')
-    assert not PD.Modified
+    assert not PD.IsModified()
 
     # will create keys as needed
     PD.UpdateData('NewThing', 'MakeIt', 'Work')
@@ -287,7 +292,7 @@ def test_doSaveToFile(config, monkeypatch):
         PD.Filepath.unlink()
         assert PD.FileHasChanged() is False
 
-        monkeypatch.setattr(PD, 'ClearModified', raises_exception)
+        monkeypatch.setattr(PD, 'AsJSON', raises_exception)
         with pytest.raises(Exception, match = 'Problem saving to profile'):
             PD.doSaveToFile()
         monkeypatch.undo()

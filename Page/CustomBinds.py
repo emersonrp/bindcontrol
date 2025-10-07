@@ -260,7 +260,6 @@ class CustomBinds(Page):
                 # if we have files to delete (we do, if not new) then delete them.
                 if deletefiles:
                     self.Profile.doDeleteBindFiles(deletefiles)
-            self.Profile.SetModified()
             self.UpdateAllBinds()
             self.Refresh()
             dlg.Destroy()

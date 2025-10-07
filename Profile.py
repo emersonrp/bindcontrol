@@ -73,9 +73,6 @@ class Profile(wx.Notebook):
         self.Mastermind        = self.CreatePage(Mastermind       (self))
         self.PopmenuEditor     = self.CreatePage(PopmenuEditor    (self))
 
-        if newname:    self.SetModified()
-        elif filename: self.ClearModified()
-
     def CreatePage(self, page):
         page.BuildPage()
         page.SetScrollRate(10,10)
@@ -140,15 +137,7 @@ class Profile(wx.Notebook):
                 if isinstance(ctrl, bcKeyButton) and ctrl.IsThisEnabled():
                     ctrl.CheckConflicts()
 
-    def SetModified(self, _ = None) -> None:
-        self.Data.SetModified()
-        self.CheckModified()
-
-    def ClearModified(self, _ = None) -> None:
-        self.Data.ClearModified()
-        self.CheckModified()
-
-    def IsModified(self): return self.Data.Modified
+    def IsModified(self): return self.Data.IsModified()
 
     def CheckModified(self):
         if self.IsModified():

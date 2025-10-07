@@ -16,7 +16,6 @@ class ProfileData(dict):
         profiledata = profiledata or {}
 
         self.Config                      = config # wx.Config object
-        self.Modified        : bool      = False
         self.Filepath        : Path|None = Path(filename) if filename else None
         self.LastModTime     : int       = 0
         self.Server          : str       = "Homecoming"
@@ -30,12 +29,13 @@ class ProfileData(dict):
                 if data := json.loads(self.Filepath.read_text()):
                     self.FillWith(data)
                     self.LastModTime = self.Filepath.stat().st_mtime_ns
+                    self.MassageData()
+                    self.SavedState = copy.deepcopy(dict(self))
                 else:
                     raise Exception(f'Unable to parse JSON from "{self.Filepath}".')
             except Exception as e:
                 raise Exception(f'Something broke while loading profile "{self.Filepath}: {e}".') from e
 
-            self.ClearModified()
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
         elif newname:
             self.Filepath = Util.Paths.ProfilePath(self.Config) / f"{newname}.bcp"
@@ -45,6 +45,7 @@ class ProfileData(dict):
                 try:
                     data = json.loads(jsonstring)
                     self.FillWith(data)
+
                 except Exception as e:
                     raise Exception("Something broke while loading Default Profile.  This is a bug.") from e
 
@@ -65,19 +66,18 @@ class ProfileData(dict):
 
             # set up the ProfileBindsDir
             self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
+
             if not self['ProfileBindsDir']:
                 # This happens if GenerateBindsDirectoryName can't come up with something sane
                 # # TODO TODO Throw a custom exception here, and catch it in Profile
                 raise Exception("Can't come up with a sane Binds Directory!")
 
-            self.SetModified()
+            # We do this in case the Default Profile they have saved needs massaging.
+            # TODO maybe we want to detect that and re-save the Default Profile?
+            # Maybe not.
+            self.MassageData()
         else:
             raise Exception("Error: ProfileData created with neither filename nor newname.  This is a bug.")
-
-        self.MassageData() # will SetModified as needed
-
-        # set up our SavedState finally
-        self.SavedState = copy.deepcopy(dict(self))
 
         GameData.SetupGameData(self.Server)
 
@@ -100,7 +100,6 @@ class ProfileData(dict):
         server = self.get('General', {}).get('Server', '')
         self.Server = server if server else self['Server']
         self.Server = self.Server or 'Homecoming'
-        self.SetModified()
 
     def UpdateData(self, pagename, *args) -> None:
         if pagename == 'CustomBinds':
@@ -130,20 +129,11 @@ class ProfileData(dict):
                         value = newvalue
             except Exception: pass # if it didn't JSON, just use it
             self[pagename][ctlname] = value
-        if dict(self) == self.SavedState:
-            self.ClearModified()
-        else:
-            self.SetModified()
 
-    def SetModified(self) -> None:
-        self.Modified = True
-
-    def ClearModified(self) -> None:
-        self.Modified = False
+    def IsModified(self): return (dict(self) != self.SavedState)
 
     def GetCustomID(self) -> int:
         self['MaxCustomID'] = self.get('MaxCustomID', 0) + 1
-        self.SetModified()
         return self['MaxCustomID']
 
     # come up with a sane default binds directory name for this profile
@@ -207,12 +197,10 @@ class ProfileData(dict):
         if 'SoD' in self:
             self['MovementPowers'] = self['SoD']
             del self['SoD']
-            self.SetModified()
 
         # This option got renamed for better clarity
         if ('MovementPowers' in self) and (self['MovementPowers'].get('DefaultMode') == 'No SoD'):
             self['MovementPowers']['DefaultMode'] = 'No Default SoD'
-            self.SetModified()
 
         # Massage old hardcoded-three-step BufferBinds into the new way
         if 'CustomBinds' in self:
@@ -220,38 +208,24 @@ class ProfileData(dict):
                 if not custombind: continue
 
                 if custombind.get('Type') == "BufferBind":
-                    if power := custombind.get('BuffPower1'):
-                        self.SetModified()
+                    if power := custombind.pop('BuffPower1'):
                         custombind['Buffs'] = [{
                             'Power'   : power,
-                            'ChatTgt' : custombind.get('BuffChat1Tgt', ''),
-                            'Chat'    : custombind.get('BuffChat1', ''),
+                            'ChatTgt' : custombind.pop('BuffChat1Tgt', ''),
+                            'Chat'    : custombind.pop('BuffChat1', ''),
                         }]
-                        custombind.pop('BuffPower1', None)
-                        custombind.pop('BuffChat1Tgt', None)
-                        custombind.pop('BuffChat1', None)
-
-                    if power := custombind.get('BuffPower2'):
-                        self.SetModified()
+                    if power := custombind.pop('BuffPower2'):
                         custombind['Buffs'].append({
                             'Power'   : power,
-                            'ChatTgt' : custombind.get('BuffChat2Tgt', ''),
-                            'Chat'    : custombind.get('BuffChat2', ''),
+                            'ChatTgt' : custombind.pop('BuffChat2Tgt', ''),
+                            'Chat'    : custombind.pop('BuffChat2', ''),
                         })
-                        custombind.pop('BuffPower2', None)
-                        custombind.pop('BuffChat2Tgt', None)
-                        custombind.pop('BuffChat2', None)
-
-                    if power := custombind.get('BuffPower3'):
-                        self.SetModified()
+                    if power := custombind.pop('BuffPower3'):
                         custombind['Buffs'].append({
                             'Power'   : power,
-                            'ChatTgt' : custombind.get('BuffChat3Tgt', ''),
-                            'Chat'    : custombind.get('BuffChat3', ''),
+                            'ChatTgt' : custombind.pop('BuffChat3Tgt', ''),
+                            'Chat'    : custombind.pop('BuffChat3', ''),
                         })
-                        custombind.pop('BuffPower3', None)
-                        custombind.pop('BuffChat3Tgt', None)
-                        custombind.pop('BuffChat3', None)
 
                     self['CustomBinds'][i] = custombind
 
@@ -297,7 +271,6 @@ class ProfileData(dict):
             self.Config.Write('LastProfile', str(savefile))
             self.LastModTime = savefile.stat().st_mtime_ns
             self.SavedState = copy.deepcopy(dict(self))
-            self.ClearModified()
         except Exception as e:
             raise Exception(f"Problem saving to profile {savefile}: {e}") from e
 

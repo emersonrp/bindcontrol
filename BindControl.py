@@ -336,7 +336,6 @@ class Main(wx.Frame):
 
                 self.Profile = Profile(self, newname = newname)
                 self.Profile.buildUIFromData()
-                self.Profile.SetModified()
                 wx.LogMessage(f'Created New Profile "{newname}".')
 
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
@@ -413,7 +412,6 @@ class Main(wx.Frame):
                 if newprofile := Profile(self, newname = profiledata['Name'], profiledata = generaldata):
                     newprofile.buildUIFromData()
                     self.InsertProfile(newprofile)
-                    newprofile.SetModified()
             else:
                 wx.LogError('Build file was empty or contained errors')
                 return False

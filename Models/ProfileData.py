@@ -12,7 +12,7 @@ import GameData
 import Util.Paths
 
 class ProfileData(dict):
-    def __init__(self, config, filename = None, newname = None, profiledata : dict|None = None) -> None:
+    def __init__(self, config, filename = None, newname = None, profiledata : dict|None = None, editdefault : bool = False) -> None:
         profiledata = profiledata or {}
 
         self.Config                      = config # wx.Config object
@@ -37,8 +37,11 @@ class ProfileData(dict):
                 raise Exception(f'Something broke while loading profile "{self.Filepath}: {e}".') from e
 
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
-        elif newname:
-            self.Filepath = Util.Paths.ProfilePath(self.Config) / f"{newname}.bcp"
+        elif newname or editdefault:
+            if newname:
+                self.Filepath = Util.Paths.ProfilePath(self.Config) / f"{newname}.bcp"
+            else: # editing default
+                self.Filepath = Path('DEFAULT PROFILE.bcp')
 
             # First, mash the Default Profile in there, if it exists
             if jsonstring := self.GetDefaultProfileJSON():
@@ -65,12 +68,13 @@ class ProfileData(dict):
                             self[tab][k] = v
 
             # set up the ProfileBindsDir
-            self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
+            if newname:
+                self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
 
-            if not self['ProfileBindsDir']:
-                # This happens if GenerateBindsDirectoryName can't come up with something sane
-                # # TODO TODO Throw a custom exception here, and catch it in Profile
-                raise Exception("Can't come up with a sane Binds Directory!")
+                if not self['ProfileBindsDir']:
+                    # This happens if GenerateBindsDirectoryName can't come up with something sane
+                    # # TODO TODO Throw a custom exception here, and catch it in Profile
+                    raise Exception("Can't come up with a sane Binds Directory!")
 
             # We do this in case the Default Profile they have saved needs massaging.
             # TODO maybe we want to detect that and re-save the Default Profile?

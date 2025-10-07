@@ -55,14 +55,15 @@ class Profile(wx.Notebook):
         return newProfile
 
     # Instance methods
-    def __init__(self, parent, filename : str|None = None, newname : str|None = None, profiledata : dict|None = None):
+    def __init__(self, parent, filename : str|None = None, newname : str|None = None, profiledata : dict|None = None, editdefault : bool = False):
         profiledata = profiledata or {}
         super().__init__(parent, style = wx.NB_TOP, name = "Profile")
 
-        self.Data            : ProfileData         = ProfileData(wx.ConfigBase.Get(), filename, newname, profiledata)
+        self.Data            : ProfileData         = ProfileData(wx.ConfigBase.Get(), filename, newname, profiledata, editdefault)
         self.BindFiles       : dict[str, BindFile] = {}
         self.Pages           : list[bcPage]        = []
         self.ProfileBindsDir : str                 = ''
+        self.EditingDefault  : bool                = editdefault
 
         # Add the individual tabs, in order.
         self.General           = self.CreatePage(General          (self))
@@ -137,7 +138,7 @@ class Profile(wx.Notebook):
                 if isinstance(ctrl, bcKeyButton) and ctrl.IsThisEnabled():
                     ctrl.CheckConflicts()
 
-    def IsModified(self): return self.Data.IsModified()
+    def IsModified(self): return (not self.EditingDefault) and self.Data.IsModified()
 
     def CheckModified(self):
         if self.IsModified():

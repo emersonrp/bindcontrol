@@ -233,10 +233,8 @@ class ProfileData(dict):
         # These two got actually renamed fully.
         if ('MovementPowers' in self) and ('HasHover' in self['MovementPowers']):
             self['MovementPowers']['UseHover'] = self['MovementPowers'].pop('HasHover')
-            self.SetModified()
         if ('MovementPowers' in self) and ('HasCJ' in self['MovementPowers']):
             self['MovementPowers']['UseCJ'] = self['MovementPowers'].pop('HasCJ')
-            self.SetModified()
 
         # Massage old hardcoded-three-step BufferBinds into the new way
         if 'CustomBinds' in self:

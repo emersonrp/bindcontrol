@@ -9,8 +9,14 @@ class WindowSaveLoadCmd(PowerBinderCommand):
     def BuildUI(self, dialog) -> wx.BoxSizer:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.CommandChoice = wx.Choice(dialog, -1, choices = ["Save Window Settings", "Load Window Settings"])
+        self.CommandChoice = wx.Choice(dialog, -1, choices = [
+            "Save Window Settings to Specified File",
+            "Load Window Settings from Specified File",
+            "Save Window Settings to wdw.txt",
+            "Load Window Settings from wdw.txt",
+        ])
         self.CommandChoice.SetSelection(0)
+        self.CommandChoice.Bind(wx.EVT_CHOICE, self.OnCommandChoice)
         sizer.Add(self.CommandChoice, 0, wx.ALL, 5)
 
         self.FilePath = wx.TextCtrl(dialog, -1, size = wx.Size(400, -1),
@@ -20,8 +26,10 @@ class WindowSaveLoadCmd(PowerBinderCommand):
         return sizer
 
     def MakeBindString(self) -> str:
-        command = ['wdwsavefile', 'wdwloadfile'][self.CommandChoice.GetSelection()]
-        return f'{command} "{self.FilePath.GetValue()}"'
+        sel = self.CommandChoice.GetSelection()
+        command = ['wdwsavefile', 'wdwloadfile', 'wdwsave', 'wdwload'][sel]
+        filename = f' "{self.FilePath.GetValue()}"' if (sel in (0, 1)) else ''
+        return f'{command}{filename}'
 
     def Serialize(self) -> dict:
         return {
@@ -32,3 +40,8 @@ class WindowSaveLoadCmd(PowerBinderCommand):
     def Deserialize(self, init) -> None:
         self.CommandChoice.SetSelection(init.get('command', 0))
         self.FilePath.SetValue(init.get('filename', ''))
+        self.OnCommandChoice()
+
+    def OnCommandChoice(self, _ = None):
+        self.FilePath.Enable(self.CommandChoice.GetSelection() in (0,1))
+

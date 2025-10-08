@@ -433,6 +433,8 @@ class General(Page):
         if evt: evt.Skip()
 
     def OnPickPoolPower(self, evt) -> None:
+        pickername = evt.GetEventObject().CtlName
+        self.Ctrls[f'{pickername}Powers'].ClearPowers()
         self.UpdatePoolPickers()
         self.Profile.MovementPowers.SynchronizeUI()
         self.Profile.CheckAllConflicts()
@@ -480,13 +482,16 @@ class General(Page):
     def OnPickPrimaryPowerSet(self, evt) -> None:
         self.Profile.Mastermind.SynchronizeUI()
         self.Profile.CheckAllConflicts()
+        self.Ctrls['PrimaryPowers'].ClearPowers()
         evt.Skip()
 
     def OnPickSecondaryPowerSet(self, evt) -> None:
         self.Profile.CheckAllConflicts()
+        self.Ctrls['SecondaryPowers'].ClearPowers()
         evt.Skip()
 
     def OnPickEpicPowerSet(self, evt) -> None:
+        self.Ctrls['EpicPowers'].ClearPowers()
         evt.Skip()
 
     def OnTypeEnable(self, evt = None) -> None:

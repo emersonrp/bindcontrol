@@ -39,12 +39,9 @@ class Mastermind(Page):
     def BuildPage(self) -> None:
 
         # get the pet names and binds to select them directly
-        PetNames  = wx.StaticBoxSizer(wx.HORIZONTAL, self, label = "Pet Names and By-Name Selection")
-        PetNameSB = PetNames.GetStaticBox()
+        self.PetNames  = wx.StaticBoxSizer(wx.HORIZONTAL, self, label = "Pet Names and By-Name Selection")
+        PetNameSB = self.PetNames.GetStaticBox()
         PetInner = wx.BoxSizer(wx.HORIZONTAL)
-
-        if self.Profile.EditingDefault:
-            PetNameSB.SetBackgroundColour(wx.WHITE)
 
         for i in range(6):
             petdesc      = ['Minion 1', 'Minion 2', 'Minion 3', 'Lieutenant 1', 'Lieutenant 2', 'Boss'][i]
@@ -107,8 +104,8 @@ class Mastermind(Page):
         PetExtraCtrls.Add(PetExtraTop,    0, wx.EXPAND)
         PetExtraCtrls.Add(PetExtraBottom, 0, wx.EXPAND)
 
-        PetNames.Add(PetInner,      1, wx.EXPAND|wx.ALL, 10)
-        PetNames.Add(PetExtraCtrls, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15)
+        self.PetNames.Add(PetInner,      1, wx.EXPAND|wx.ALL, 10)
+        self.PetNames.Add(PetExtraCtrls, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15)
 
         # Sub-tabs for selection of MM Bind style
         self.BindStyleNotebook = wx.Notebook(self, wx.ID_ANY, style = wx.BORDER_NONE)
@@ -125,18 +122,14 @@ class Mastermind(Page):
         self.BindStyleNotebook.AddPage(self.qwyPetMousePage, "qwy PetMouse Binds")
         self.BindStyleNotebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnBindStyleChanged)
 
-        bindstyleLabel = wx.Panel(self)
+        self.BindstyleLabel = wx.Panel(self)
         bindstyleSizer = wx.BoxSizer(wx.HORIZONTAL)
-        bindstyleLabel.SetSizer(bindstyleSizer)
-        bindstyleSizer.Add(wx.StaticText(bindstyleLabel, label = "Select Mastermind binds type:"), 0, wx.ALIGN_CENTER|wx.ALL, 10)
-        bindstyleSizer.Add(HelpButton(bindstyleLabel, 'MMBindStyle.html'), 0, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 10)
+        self.BindstyleLabel.SetSizer(bindstyleSizer)
+        bindstyleSizer.Add(wx.StaticText(self.BindstyleLabel, label = "Select Mastermind binds type:"), 0, wx.ALIGN_CENTER|wx.ALL, 10)
+        bindstyleSizer.Add(HelpButton(self.BindstyleLabel, 'MMBindStyle.html'), 0, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 10)
 
-        if self.Profile.EditingDefault:
-            bindstyleLabel.SetBackgroundColour(wx.WHITE)
-            self.BindStyleNotebook.SetBackgroundColour(wx.WHITE)
-
-        self.MainSizer.Add(PetNames, 0, wx.EXPAND|wx.BOTTOM, 16)
-        self.MainSizer.Add(bindstyleLabel, 0, wx.EXPAND)
+        self.MainSizer.Add(self.PetNames, 0, wx.EXPAND|wx.BOTTOM, 16)
+        self.MainSizer.Add(self.BindstyleLabel, 0, wx.EXPAND)
         self.MainSizer.Add(self.BindStyleNotebook, 1, wx.EXPAND)
 
         self.SynchronizeUI()

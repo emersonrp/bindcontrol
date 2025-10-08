@@ -145,13 +145,10 @@ class MovementPowers(Page):
         self.leftColumn.Hide(self.hiddenSizer)
 
         ##### MOVEMENT KEYS
-        movementSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = "Movement Keys")
-        staticbox = movementSizer.GetStaticBox()
+        self.MovementSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = "Movement Keys")
+        staticbox = self.MovementSizer.GetStaticBox()
         innerSizer = wx.BoxSizer(wx.VERTICAL)
-        movementSizer.Add(innerSizer, 1, wx.ALL|wx.ALIGN_CENTER, 10)
-
-        if self.Profile.EditingDefault:
-            staticbox.SetBackgroundColour(wx.WHITE)
+        self.MovementSizer.Add(innerSizer, 1, wx.ALL|wx.ALIGN_CENTER, 10)
 
         keySizer = wx.GridBagSizer(6, 3)
         tlLabel = wx.StaticText(staticbox, label = 'Turn Left')
@@ -274,7 +271,7 @@ class MovementPowers(Page):
 
         innerSizer.Add(keySizer, 0)
 
-        self.leftColumn.Add(movementSizer, 0, wx.EXPAND)
+        self.leftColumn.Add(self.MovementSizer, 0, wx.EXPAND)
 
         ### DETAIL SETTINGS
         detailSizer = ControlGroup(self, self, 'Detail and Camera Settings')

@@ -99,10 +99,8 @@ class Gameplay(Page):
     def BuildPage(self) -> None:
 
         ##### Power Tray Buttons
-        traySizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = 'Power Tray Buttons')
-        staticbox = traySizer.GetStaticBox()
-        if self.Profile.EditingDefault:
-            staticbox.SetBackgroundColour(wx.WHITE)
+        self.TraySizer = wx.StaticBoxSizer(wx.VERTICAL, self, label = 'Power Tray Buttons')
+        staticbox = self.TraySizer.GetStaticBox()
 
         # Horizontal sizer for "help" button
         GridHelpSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -155,7 +153,7 @@ class Gameplay(Page):
             traygridbutton = HelpButton(staticbox, 'PowerTrayButtons.html')
         GridHelpSizer.Add(traygridbutton, 0, wx.ALL, 10)
 
-        traySizer.Add(GridHelpSizer, 0, wx.ALL, 10)
+        self.TraySizer.Add(GridHelpSizer, 0, wx.ALL, 10)
 
         # Keybind Profile picker
         KBProfileSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -181,7 +179,7 @@ class Gameplay(Page):
         KBProfileSizer.Add(HelpButton(staticbox, 'KeepExistingTrayBinds.html'), 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 5)
 
 
-        traySizer.Add(KBProfileSizer, 0, wx.ALL, 10)
+        self.TraySizer.Add(KBProfileSizer, 0, wx.ALL, 10)
         # Bottom Sizer for narrower boxes
         bottomSizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -276,7 +274,7 @@ class Gameplay(Page):
         bottomSizer.Add(TPSDirectBox,  0, wx.ALL|wx.EXPAND, 10)
         bottomSizer.Add(TeamSelBox,    0, wx.ALL|wx.EXPAND, 10)
         bottomSizer.Add(HelpfulBox,    0, wx.ALL|wx.EXPAND, 10)
-        self.MainSizer.Add(traySizer,   flag = wx.ALL|          wx.ALIGN_CENTER_HORIZONTAL, border = 16)
+        self.MainSizer.Add(self.TraySizer,   flag = wx.ALL|          wx.ALIGN_CENTER_HORIZONTAL, border = 16)
         self.MainSizer.Add(bottomSizer, flag = wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
 
     def SynchronizeUI(self, evt = None) -> None:

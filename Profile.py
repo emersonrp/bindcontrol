@@ -80,6 +80,8 @@ class Profile(wx.Notebook):
         self.Mastermind        = self.CreatePage(Mastermind       (self))
         self.PopmenuEditor     = self.CreatePage(PopmenuEditor    (self))
 
+        if self.EditingDefault: self.ColorThingsForEditingDefault()
+
     def CreatePage(self, page):
         page.BuildPage()
         page.SetScrollRate(10,10)
@@ -540,6 +542,30 @@ class Profile(wx.Notebook):
         self.BindFiles = {}
 
         return removed
+
+    # set the background of various UI bits because of the colored background
+    # when we're in edit-default-profile mode.  This is ugly but it's in one place.
+    def ColorThingsForEditingDefault(self):
+        bgcolor = wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW)
+
+        # Gameplay Page
+        self.Gameplay.TraySizer.GetStaticBox().SetBackgroundColour(bgcolor)
+
+        # Movement Powers page
+        self.MovementPowers.MovementSizer.GetStaticBox().SetBackgroundColour(bgcolor)
+
+        # Inspiration Popper Page
+        self.InspirationPopper.UseOrderBox.GetStaticBox().SetBackgroundColour(bgcolor)
+        self.InspirationPopper.OptionsBox.GetStaticBox().SetBackgroundColour(bgcolor)
+        for pageidx in range(self.InspirationPopper.InspTabs.GetPageCount()):
+            self.InspirationPopper.InspTabs.GetPage(pageidx).SetBackgroundColour(bgcolor)
+
+        # Mastermind Page
+        self.Mastermind.PetNames.GetStaticBox().SetBackgroundColour(bgcolor)
+        self.Mastermind.BindstyleLabel.SetBackgroundColour(bgcolor)
+        for pageidx in range(self.Mastermind.BindStyleNotebook.GetPageCount()):
+            self.Mastermind.BindStyleNotebook.GetPage(pageidx).SetBackgroundColour(bgcolor)
+
 
 class WriteDoneDialog(wx.Dialog):
     def __init__(self, parent, msg = 'Bindfiles written.'):

@@ -29,6 +29,7 @@ class PowerSelector(wx.BitmapButton):
         evtpos = wx.GetMousePosition()
         powerlist.Position(wx.Point(evtpos.x + 5, evtpos.y + 5), wx.DefaultSize)
         powerlist.Popup()
+        powerlist.CheckList.SetSelection(wx.NOT_FOUND)
 
     def ClearPowers(self, evt = None):
         self.Powers = []
@@ -51,10 +52,10 @@ class Popup(wx.PopupTransientWindow):
         self.PowerSelector = powerselector
 
         panel = wx.Panel(self)
-        popup = wx.CheckListBox(panel, style = wx.LB_SINGLE)
+        self.CheckList = wx.CheckListBox(panel, style = wx.LB_SINGLE)
 
         manualsizer = wx.BoxSizer(wx.VERTICAL)
-        manualsizer.Add(popup, 1, wx.EXPAND|wx.ALL, 3)
+        manualsizer.Add(self.CheckList, 1, wx.EXPAND|wx.ALL, 3)
 
         panel.SetSizer(manualsizer)
 
@@ -69,34 +70,30 @@ class Popup(wx.PopupTransientWindow):
         else:
             powers = GameData.PoolPowers[powerset]
 
-        popup.InsertItems(powers,0)
+        self.CheckList.InsertItems(powers,0)
         for i,power in enumerate(powers):
             if power in self.PowerSelector.Powers:
-                popup.Check(i)
+                self.CheckList.Check(i)
 
-        popup.Bind(wx.EVT_LEFT_DOWN, self.OnPopupClicked)
+        self.CheckList.Bind(wx.EVT_LEFT_DOWN, self.OnCheckListClicked)
 
         # Yes we need all of these
         panel.Fit()
-        panel.Layout()
         self.Fit()
         self.Layout()
 
-    def OnPopupClicked(self, evt):
-        popup = evt.GetEventObject()
-        popup.SetSelection(wx.NOT_FOUND)
+    def OnCheckListClicked(self, _):
+        self.CheckList.SetSelection(wx.NOT_FOUND)
 
-        # If we are first popping up the menu, don't toggle the first element.
-        # This is ugly and annoying.
-        sel = popup.HitTest(popup.ScreenToClient(wx.GetMousePosition()))
-        if sel == wx.NOT_FOUND:
-            return
+        sel = self.CheckList.HitTest(self.CheckList.ScreenToClient(wx.GetMousePosition()))
 
-        popup.Check(sel, not popup.IsChecked(sel))
+        if sel == wx.NOT_FOUND: return
 
-        powers = [popup.GetString(i) for i in popup.GetCheckedItems()]
-        self.PowerSelector.Powers = powers
+        self.CheckList.Check(sel, not self.CheckList.IsChecked(sel))
+
 
     def OnDismiss(self):
+        self.PowerSelector.Powers = [self.CheckList.GetString(i) for i in self.CheckList.GetCheckedItems()]
+
         wx.PostEvent(self.PowerSelector.Page, PowerSelectorChanged(wx.NewId(), control = self.PowerSelector))
         self.DestroyLater()

@@ -76,12 +76,10 @@ class ControlGroup(wx.StaticBoxSizer):
             control = cgbcKeyButton(CtlParent)
             control.SetLabel(Init[ctlName])
             # push context onto the button, we'll thank me later
-            control.CtlName = ctlName
             control.Key     = Init[ctlName]
 
         elif (ctlType == 'powerselector'):
             control = PowerSelector(CtlParent, self.Page, context)
-            control.CtlName = ctlName
             noLabel = True
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
@@ -172,6 +170,9 @@ class ControlGroup(wx.StaticBoxSizer):
 
         if not noLabel:
             CtlLabel = STClass(CtlParent, -1, label + ':')
+
+        # Let them all know their own name
+        control.CtlName = ctlName # pyright: ignore
 
         # stash away the page that the control belongs to
         control.Page = self.Page

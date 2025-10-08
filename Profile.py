@@ -546,25 +546,40 @@ class Profile(wx.Notebook):
     # set the background of various UI bits because of the colored background
     # when we're in edit-default-profile mode.  This is ugly but it's in one place.
     def ColorThingsForEditingDefault(self):
-        bgcolor = wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW)
+
+        boxbgcolor = wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW)
+        pagebgcolor = wx.ColourDatabase().FindColour('LIGHT BLUE')
+
+        # All Page backgrounds
+        for page in self.Pages:
+            page.SetToolTip("You are editing the default profile, which will apply to all new and imported profiles.")
+            page.SetBackgroundColour(pagebgcolor)
+
+        # General Page
+        self.General.nameBox.SetBackgroundColour(pagebgcolor)
+        self.General.nameBox.Show(False)
+        self.General.nameBox.Show(True)
+        self.General.NameDisplay.SetBackgroundColour(pagebgcolor)
+        self.General.NameDisplay.Show(False)
+        self.General.NameDisplay.Show(True)
 
         # Gameplay Page
-        self.Gameplay.TraySizer.GetStaticBox().SetBackgroundColour(bgcolor)
+        self.Gameplay.TraySizer.GetStaticBox().SetBackgroundColour(boxbgcolor)
 
         # Movement Powers page
-        self.MovementPowers.MovementSizer.GetStaticBox().SetBackgroundColour(bgcolor)
+        self.MovementPowers.MovementSizer.GetStaticBox().SetBackgroundColour(boxbgcolor)
 
         # Inspiration Popper Page
-        self.InspirationPopper.UseOrderBox.GetStaticBox().SetBackgroundColour(bgcolor)
-        self.InspirationPopper.OptionsBox.GetStaticBox().SetBackgroundColour(bgcolor)
+        self.InspirationPopper.UseOrderBox.GetStaticBox().SetBackgroundColour(boxbgcolor)
+        self.InspirationPopper.OptionsBox.GetStaticBox().SetBackgroundColour(boxbgcolor)
         for pageidx in range(self.InspirationPopper.InspTabs.GetPageCount()):
-            self.InspirationPopper.InspTabs.GetPage(pageidx).SetBackgroundColour(bgcolor)
+            self.InspirationPopper.InspTabs.GetPage(pageidx).SetBackgroundColour(boxbgcolor)
 
         # Mastermind Page
-        self.Mastermind.PetNames.GetStaticBox().SetBackgroundColour(bgcolor)
-        self.Mastermind.BindstyleLabel.SetBackgroundColour(bgcolor)
+        self.Mastermind.PetNames.GetStaticBox().SetBackgroundColour(boxbgcolor)
+        self.Mastermind.BindstyleLabel.SetBackgroundColour(boxbgcolor)
         for pageidx in range(self.Mastermind.BindStyleNotebook.GetPageCount()):
-            self.Mastermind.BindStyleNotebook.GetPage(pageidx).SetBackgroundColour(bgcolor)
+            self.Mastermind.BindStyleNotebook.GetPage(pageidx).SetBackgroundColour(boxbgcolor)
 
 
 class WriteDoneDialog(wx.Dialog):

@@ -324,6 +324,8 @@ class General(Page):
         self.nameBox.Show(True)
         self.bannerPanel.Show(False)
         self.bannerPanel.Show(True)
+        if self.Profile.EditingDefault:
+            self.Profile.ColorThingsForEditingDefault()
 
         if evt: evt.Skip()
 

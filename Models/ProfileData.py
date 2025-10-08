@@ -29,8 +29,8 @@ class ProfileData(dict):
                 if data := json.loads(self.Filepath.read_text()):
                     self.FillWith(data)
                     self.LastModTime = self.Filepath.stat().st_mtime_ns
-                    self.MassageData()
                     self.SavedState = copy.deepcopy(dict(self))
+                    self.MassageData()
                 else:
                     raise Exception(f'Unable to parse JSON from "{self.Filepath}".')
             except Exception as e:

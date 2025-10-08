@@ -171,6 +171,7 @@ class CustomBinds(Page):
             for p in self.Panes:
                 if p.CustomID == bindpane.CustomID:
                     bindpane.CustomID = self.Profile.GetCustomID()
+                    bindpane.Init['CustomID'] = bindpane.CustomID
                     break
 
         bindpane.UpdateLabel()

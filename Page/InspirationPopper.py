@@ -62,78 +62,69 @@ class InspirationPopper(Page):
         optionsSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # "Use Order" options
-        useOrderBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Use Order")
+        self.UseOrderBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Use Order")
 
-        if self.Profile.EditingDefault:
-            useOrderBox.GetStaticBox().SetBackgroundColour(wx.WHITE)
-
-        self.useCB = wx.CheckBox( useOrderBox.GetStaticBox(), -1, 'Enable Largest-First Binds')
+        self.useCB = wx.CheckBox( self.UseOrderBox.GetStaticBox(), -1, 'Enable Largest-First Binds')
         self.useCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Inspiration Popper Binds, (largest inspirations used first)'))
         self.useCB.SetValue(self.Init['EnableInspBinds'])
         self.Ctrls['EnableInspBinds'] = self.useCB
-        useOrderBox.Add(self.useCB, 1, wx.ALL, 6)
+        self.UseOrderBox.Add(self.useCB, 1, wx.ALL, 6)
         self.useCB.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
 
-        self.useRevCB = wx.CheckBox( useOrderBox.GetStaticBox(), -1, 'Enable Smallest-First Binds')
+        self.useRevCB = wx.CheckBox( self.UseOrderBox.GetStaticBox(), -1, 'Enable Smallest-First Binds')
         self.useRevCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Reverse Inspiration Popper Binds, (smallest inspirations used first)'))
         self.useRevCB.SetValue(self.Init['EnableRevInspBinds'])
         self.Ctrls['EnableRevInspBinds'] = self.useRevCB
-        useOrderBox.Add(self.useRevCB, 1, wx.ALL, 6)
+        self.UseOrderBox.Add(self.useRevCB, 1, wx.ALL, 6)
         self.useRevCB.Bind(wx.EVT_CHECKBOX, self.OnEnableRevCB)
 
-        optionsSizer.Add(useOrderBox, 1, wx.EXPAND, 0)
+        optionsSizer.Add(self.UseOrderBox, 1, wx.EXPAND, 0)
 
         # General Options
-        optionsBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Options")
+        self.OptionsBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Options")
 
-        if self.Profile.EditingDefault:
-            optionsBox.GetStaticBox().SetBackgroundColour(wx.WHITE)
-
-        self.useSuperInspCB = wx.CheckBox( optionsBox.GetStaticBox(), -1, 'Use Super Inspirations')
+        self.useSuperInspCB = wx.CheckBox( self.OptionsBox.GetStaticBox(), -1, 'Use Super Inspirations')
         self.useSuperInspCB.SetToolTip(wx.ToolTip(
             'Check this to include Super Inspirations in the Inspiration Popper binds.  If you\'re concerned about accidental activation and would prefer to use Super Inspirations manually, leave this unchecked.'))
         self.useSuperInspCB.SetValue(self.Init['UseSuperInsp'])
         self.Ctrls['UseSuperInsp'] = self.useSuperInspCB
-        optionsBox.Add(self.useSuperInspCB, 0, wx.ALL, 6)
+        self.OptionsBox.Add(self.useSuperInspCB, 0, wx.ALL, 6)
 
-        self.enableTellsCB = wx.CheckBox( optionsBox.GetStaticBox(), -1, 'Enable self-/tell feedback')
+        self.enableTellsCB = wx.CheckBox( self.OptionsBox.GetStaticBox(), -1, 'Enable self-/tell feedback')
         self.enableTellsCB.SetToolTip(wx.ToolTip(
             'Check this box to avoid having your toon tell you whenever you pop an inspiration.'))
         self.enableTellsCB.SetValue(self.Init['EnableTells'])
         self.Ctrls['EnableTells'] = self.enableTellsCB
-        optionsBox.Add(self.enableTellsCB, 0, wx.ALL, 6)
+        self.OptionsBox.Add(self.enableTellsCB, 0, wx.ALL, 6)
         self.enableTellsCB.Bind(wx.EVT_CHECKBOX, self.OnEnableTellCB)
 
         optionButtonBox = wx.BoxSizer(wx.HORIZONTAL)
-        # profileChatColorButton = wx.Button(optionsBox.GetStaticBox(), label = "Profile's Chat Colors")
+        # profileChatColorButton = wx.Button(self.OptionsBox.GetStaticBox(), label = "Profile's Chat Colors")
         # profileChatColorButton.SetToolTip("Set self-/tell colors to the default profile chat colors")
-        byInspColorButton      = wx.Button(optionsBox.GetStaticBox(), label = "Color-coded")
+        byInspColorButton      = wx.Button(self.OptionsBox.GetStaticBox(), label = "Color-coded")
         byInspColorButton     .SetToolTip("Reset self-/tell colors according to inspiration type")
         # optionButtonBox.Add(profileChatColorButton, 1, wx.ALL, 10)
         optionButtonBox.Add(byInspColorButton,      1, wx.ALL, 10)
         # profileChatColorButton.Bind(wx.EVT_BUTTON, self.OnProfileChatColorButton)
         byInspColorButton     .Bind(wx.EVT_BUTTON, self.OnByInspColorButton)
 
-        optionsBox.Add(optionButtonBox)
+        self.OptionsBox.Add(optionButtonBox)
 
-        optionsSizer.Add(optionsBox, 1, wx.EXPAND|wx.LEFT, 10)
+        optionsSizer.Add(self.OptionsBox, 1, wx.EXPAND|wx.LEFT, 10)
 
         centeringSizer.Add(optionsSizer, 1, wx.BOTTOM|wx.EXPAND, 10)
 
-        InspTabs = wx.Notebook(self, style = wx.NB_TOP, name = 'InspTabs')
-        InspTabs.SetPadding(wx.Size(2,0))
+        self.InspTabs = wx.Notebook(self, style = wx.NB_TOP|wx.NB_FIXEDWIDTH, name = 'InspTabs')
+        self.InspTabs.SetPadding(wx.Size(2,0))
         il = wx.ImageList(18,18)
-        InspTabs.AssignImageList(il)
+        self.InspTabs.AssignImageList(il)
         for tab, tabname in tabs.items():
-            tabpanel = wx.Panel(InspTabs)
+            tabpanel = wx.Panel(self.InspTabs)
             idx1 = il.Add(Icon.GetIcon("UI", f"Insp{tab}").GetBitmap(wx.Size(32,32)))
-            InspTabs.AddPage(tabpanel, tabname, imageId = idx1)
+            self.InspTabs.AddPage(tabpanel, tabname, imageId = idx1)
             tabsizer = wx.BoxSizer(wx.VERTICAL)
-
-            if self.Profile.EditingDefault:
-                tabpanel.SetBackgroundColour(wx.WHITE)
 
             InspBox  = wx.StaticBoxSizer(wx.VERTICAL, tabpanel, "Large Inspirations First")
             InspRows = wx.FlexGridSizer(3,0,3)
@@ -183,7 +174,7 @@ class InspirationPopper(Page):
 
             tabpanel.SetSizerAndFit(tabsizer)
 
-        centeringSizer.Add(InspTabs, 0, wx.EXPAND)
+        centeringSizer.Add(self.InspTabs, 0, wx.EXPAND)
 
         self.MainSizer.Add(centeringSizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
 

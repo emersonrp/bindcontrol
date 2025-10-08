@@ -88,8 +88,8 @@ class Popup(wx.PopupTransientWindow):
 
         # If we are first popping up the menu, don't toggle the first element.
         # This is ugly and annoying.
-        clpoint = popup.ScreenToClient(wx.GetMousePosition())
-        if (sel := popup.HitTest(clpoint)) == wx.NOT_FOUND:
+        sel = popup.HitTest(popup.ScreenToClient(wx.GetMousePosition()))
+        if sel == wx.NOT_FOUND:
             return
 
         popup.Check(sel, not popup.IsChecked(sel))

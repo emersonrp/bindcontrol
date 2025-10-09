@@ -191,7 +191,7 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
 
-    def SetupProfile(self, input_profile = None):
+    def SetupInitialProfile(self, input_profile = None):
 
         config = wx.ConfigBase.Get()
 
@@ -203,9 +203,8 @@ class Main(wx.Frame):
 
         if filename:
             try:
-                profile = Profile(self, filename)
-                profile.buildUIFromData()
-                self.Profile = profile
+                self.Profile = Profile(self, filename)
+                self.Profile.buildUIFromData()
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
                 self.CheckProfDirButtonErrors()
             except Exception:
@@ -215,7 +214,7 @@ class Main(wx.Frame):
                 self.StartupPanel = self.MakeStartupPanel()
                 self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
 
-        # otherwise show the two big buttons
+        # otherwise show the big buttons
         else:
             self.StartupPanel = self.MakeStartupPanel()
             self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
@@ -437,10 +436,15 @@ class Main(wx.Frame):
         if self.Profile:
             self.Profile.DestroyLater()
             self.Profile = None
-        if defaultProfile := Profile(self, editdefault = True):
-            defaultProfile.buildUIFromData()
-            self.InsertProfile(defaultProfile)
-            defaultProfile.RemovePage(defaultProfile.FindPage(defaultProfile.PopmenuEditor)) # hide the Popmenu Editor
+
+        with wx.WindowDisabler():
+            _ = wx.BusyInfo('Loading...')
+            wx.GetApp().Yield()
+
+            if defaultProfile := Profile(self, editdefault = True):
+                defaultProfile.buildUIFromData()
+                self.InsertProfile(defaultProfile)
+                defaultProfile.RemovePage(defaultProfile.FindPage(defaultProfile.PopmenuEditor)) # hide the Popmenu Editor
 
     def OnProfileClose(self, _) -> None:
         if not self.Profile: return
@@ -706,10 +710,10 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
             wx.GetApp().Yield()
 
             self.Main = Main()
-            self.Main.SetupProfile(input_profile = input_profile)
+            self.Main.SetupInitialProfile(input_profile = input_profile)
 
             # TODO bootstrapping problem, can't do this inside Profile's "__init__" because
-            # Profile needs to be defined/initialized deep inside its innards.
+            # Profile needs to be defined/initialized deep inside its innards to succeed at this.
             if self.Main.Profile:
                 self.Main.Profile.CheckAllConflicts()
 

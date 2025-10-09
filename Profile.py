@@ -48,9 +48,12 @@ class Profile(wx.Notebook):
     @classmethod
     def doLoadFromFile(cls, parent, pathname):
         newProfile = None
-        if newProfile := Profile(parent, filename = pathname):
-            newProfile.buildUIFromData()
-            newProfile.CheckAllConflicts()
+        try:
+            if newProfile := Profile(parent, filename = pathname):
+                newProfile.buildUIFromData()
+                newProfile.CheckAllConflicts()
+        except Exception as e:
+            wx.LogError(f"Problem loading profile: {e} - this is a bug.")
 
         return newProfile
 
@@ -196,6 +199,7 @@ class Profile(wx.Notebook):
             self.doSaveToFile()
 
             # make sure we're all set up as whatever we just saved as
+            # TODO - do we really need to do this?
             mainwindow = wx.App.Get().Main
             newprofile = Profile.doLoadFromFile(mainwindow, self.Filepath())
             mainwindow.InsertProfile(newprofile)

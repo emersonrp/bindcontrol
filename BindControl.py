@@ -384,8 +384,9 @@ class Main(wx.Frame):
         # OK, we made it, set up the UI bits etc.
         self.SetupProfileUI()
         self.CheckProfDirButtonErrors()
-        wx.ConfigBase.Get().Write('LastProfile', str(newProfile.Filepath()))
-        wx.ConfigBase.Get().Flush()
+        if not newProfile.EditingDefault:
+            wx.ConfigBase.Get().Write('LastProfile', str(newProfile.Filepath()))
+            wx.ConfigBase.Get().Flush()
         return True
 
     def OnProfileImport(self, _) -> bool:
@@ -432,10 +433,6 @@ class Main(wx.Frame):
 
     def OnProfileEditDefault(self, _) -> None:
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
-        self.Sizer.Remove(0)
-        if self.Profile:
-            self.Profile.DestroyLater()
-            self.Profile = None
 
         with wx.WindowDisabler():
             _ = wx.BusyInfo('Loading...')
@@ -445,6 +442,7 @@ class Main(wx.Frame):
                 defaultProfile.buildUIFromData()
                 self.InsertProfile(defaultProfile)
                 defaultProfile.RemovePage(defaultProfile.FindPage(defaultProfile.PopmenuEditor)) # hide the Popmenu Editor
+                wx.LogWarning("You are editing the default profile, which will be the basis for all new and imported profiles.")
 
     def OnProfileClose(self, _) -> None:
         if not self.Profile: return

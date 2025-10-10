@@ -241,6 +241,7 @@ class ProfileData(dict):
         # if this blows up, calling code should try/except it
         self.Filepath = None
         jsonstring = self.AsJSON(small = True)
+        print(jsonstring)
         zipstring = codecs.encode(jsonstring.encode('utf-8'), 'zlib')
         b64string = base64.b64encode(zipstring).decode('ascii')
 

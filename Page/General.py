@@ -456,10 +456,14 @@ class General(Page):
         if self.GetState('Server') != server:
             if wx.MessageBox('Changing server requires saving and reloading the Profile.  Continue?', 'Changing Server', wx.YES_NO, self) == wx.YES:
                 self.Profile.SetServer(self.GetState('Server'))
-                # TODO - push this logic down into Profile
+                # TODO - push this logic down into Profile or even Main
                 mainwindow = wx.App.Get().Main
-                self.Profile.doSaveToFile()
-                newProfile = Profile.Profile(mainwindow, filename = str(self.Profile.Filepath()))
+                if self.Profile.EditingDefault:
+                    self.Profile.Data.doSaveAsDefault()
+                    newProfile = Profile.Profile(mainwindow, editdefault = True)
+                else:
+                    self.Profile.doSaveToFile()
+                    newProfile = Profile.Profile(mainwindow, filename = str(self.Profile.Filepath()))
                 newProfile.buildUIFromData()
                 mainwindow.InsertProfile(newProfile)
             else:

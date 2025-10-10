@@ -552,11 +552,10 @@ class Profile(wx.Notebook):
     def ColorThingsForEditingDefault(self):
 
         boxbgcolor = wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW)
-        pagebgcolor = wx.ColourDatabase().FindColour('LIGHT BLUE')
+        pagebgcolor = wx.ColourDatabase().FindColour('LIGHT BLUE') # this is horrid but the best I've found so far
 
         # All Page backgrounds
         for page in self.Pages:
-            page.SetToolTip("You are editing the default profile, which will apply to all new and imported profiles.")
             page.SetBackgroundColour(pagebgcolor)
 
         # General Page

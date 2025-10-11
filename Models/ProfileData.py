@@ -98,8 +98,7 @@ class ProfileData(dict):
         # 2) otherwise get it from top-level
         # 3) otherwise make it 'Homecoming'
         server = self.get('General', {}).get('Server', '')
-        self.Server = server if server else self['Server']
-        self.Server = self.Server or 'Homecoming'
+        self.Server = server if server else self.get('Server', 'Homecoming')
 
     def UpdateData(self, pagename, *args) -> None:
         if pagename == 'CustomBinds':

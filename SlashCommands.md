@@ -30,11 +30,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /chan_timeout <channel name> <days> | Sets the number of days a member of a global channel must go without logging in before being automatically kicked from the channel. |
 | /chan_user_mode channel global options | Sets user permissions for the user with the handle global (without the @) on channel. You must have operator status to set permissions. |
 | /chat_cycle | Cycles through the default chat channels |
-| /chat_load | Reads a list of chat settings from chat.txt |
-| /chat_load_file filename | Reads a list of chat settings from a file |
 | /chatoptions [0-4] | Activates context menu for the chat windows. |
-| /chat_save | Saves a list of chat settings to chat.txt |
-| /chat_save_file filename | Saves a list of current chat settings to a file |
 | /chat_set channel_name | Changes the default channel in the chat window. |
 | /ci player | Invite player's supergroup to join coalition. |
 | /citytime | Displays the current in-game time in the System chat channel. |

@@ -210,7 +210,9 @@ class Profile(wx.Notebook):
         wx.LogMessage(f"Wrote profile {self.Filepath()}")
 
     def SetServer(self, server):
-        # this is ugly.  Maybe keeping 'Server' up top like we do is not The Way.
+        # Keeping this in two different places is Not The Way.
+        if 'General' in self.Data:
+            self.Data['General']['Server'] = server
         self.Data['Server'] = server
 
     def buildUIFromData(self):

@@ -1597,7 +1597,10 @@ MiscPowers = {
             'Recovery Serum',
             'Resuscitator',
             'Backup Radio',
-            'Signature Summon',
+            'Signature Summon (Tank)',
+            'Signature Summon (Melee Damage)',
+            'Signature Summon (Ranged Damage)',
+            'Signature Summon (Support)',
             ],
         'Miscellaneous' : [
             'Experienced',

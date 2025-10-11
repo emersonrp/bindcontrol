@@ -41,9 +41,9 @@ class MovementPowers(Page):
             'AutoRun'         : "R",
             'Follow'          : "TILDE",
             'DefaultMode'     : "Sprint",
-            'MouseChord'      : 0,
-            'PlayerTurn'      : 0, # TODO this should toggle with "Keybind Profile" somehow
-            'AutoMouseLook'   : 0,
+            'MouseChord'      : False,
+            'PlayerTurn'      : False, # TODO this should toggle with "Keybind Profile" somehow
+            'AutoMouseLook'   : False,
 
             'SprintMode'      : '',
             'SprintPower'     : 'Sprint',
@@ -58,6 +58,7 @@ class MovementPowers(Page):
 
             'NonSoDMode'      : '',
 
+            'SpeedUsesSoD'      : False,
             'SpeedPower'        : '',
             'SpeedMode'         : '',
             'SSMobileOnly'      : False,
@@ -65,6 +66,7 @@ class MovementPowers(Page):
             'SpeedSpecialKey'   : '',
             'SpeedSpecialPower' : '', # hidden
 
+            'JumpUsesSoD'      : False,
             'JumpPower'        : '',
             'UseCJ'            : False,
             'JumpMode'         : '',
@@ -72,6 +74,7 @@ class MovementPowers(Page):
             'JumpSpecialKey'   : '',
             'JumpSpecialPower' : '', # hidden
 
+            'FlyUsesSoD'      : False,
             'FlyPower'        : '',
             'HoverPower'      : '', # hidden
             'UseHover'        : False,
@@ -363,7 +366,9 @@ class MovementPowers(Page):
         self.rightColumn.Add(SoDSizer, 0, wx.EXPAND)
 
         ##### SUPER SPEED
-        self.superSpeedSizer = ControlGroup(self, self, 'Super Speed SoD Settings')
+        self.superSpeedSizer = ControlGroup(self, self, 'Super Speed Powers Settings')
+        self.superSpeedSizer.AddControl(ctlName = 'SpeedUsesSoD', ctlType = 'checkbox',
+            tooltip = "Select whether to use Speed on Demand for Super Speed powers")
         self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the super speed power to use with the keybinds in this section")
         self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
@@ -377,7 +382,9 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
-        self.superJumpSizer = ControlGroup(self, self, 'Jumping SoD Settings')
+        self.superJumpSizer = ControlGroup(self, self, 'Jumping Powers Settings')
+        self.superJumpSizer.AddControl(ctlName = 'JumpUsesSoD', ctlType = 'checkbox',
+            tooltip = "Select whether to use Speed on Demand for Super Jump powers")
         self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the jump power to use with the keybinds in this section")
         self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
@@ -393,7 +400,9 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
         ##### FLY
-        self.flySizer = ControlGroup(self, self, 'Flight SoD Settings')
+        self.flySizer = ControlGroup(self, self, 'Flight Powers Settings')
+        self.flySizer.AddControl(ctlName = 'FlyUsesSoD', ctlType = 'checkbox',
+            tooltip = "Select whether to use Speed on Demand for Flight powers")
         self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the flight power to use with the keybinds in this section")
         self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
@@ -407,7 +416,7 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
-        self.teleportSizer = ControlGroup(self, self, 'Teleport Settings')
+        self.teleportSizer = ControlGroup(self, self, 'Teleport Powers Settings')
         self.teleportSizer.AddControl(ctlName = "TPPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the teleport power to use with the keybinds in this section")
         self.Ctrls['TPPower'].Bind(wx.EVT_CHOICE, self.OnTeleportChanged)
@@ -493,30 +502,42 @@ class MovementPowers(Page):
         c = self.Ctrls
         archetype = self.Profile.Archetype()
         sodenabled = self.GetState('EnableSoD')
+        flyusessod = self.GetState('FlyUsesSoD')
 
         if (self.Profile.HasPower('Flight', 'Fly')
                     or self.Profile.HasPower('Sorcery', 'Mystic Flight')
                     or archetype == "Peacebringer"):
             self.ShowControlGroup(self.flySizer)
+
+            c['DefaultMode'].ShowEntryIf('Fly', flyusessod)
+
             c['FlyPower'].ShowEntryIf("Fly",           self.Profile.HasPower("Flight", 'Fly'))
             c['FlyPower'].ShowEntryIf("Mystic Flight", self.Profile.HasPower("Sorcery", 'Mystic Flight'))
+
             c['FlyPower'].ShowEntryIf("Energy Flight", archetype == "Peacebringer")
             self.PrePickLonePower(c['FlyPower'])
-            c['FlyPower'].Enable(sodenabled)
+            c['FlyPower'].Enable()
 
             c['FlyMode'].Show(bool(self.GetState('FlyPower') or self.GetState('HoverPower'))
                                           and self.DefaultMode() != "Fly")
-            c['FlyMode'].Enable(sodenabled)
+            c['FlyMode'].Enable()
+
             if archetype == 'Peacebringer':
                 c['UseHover'].CtlLabel.SetLabel('Use Combat Flight for Defense:')
-                c['UseHover'].SetToolTip('When in SoD Fly mode, use Combat Flight as a defense power when not moving -- if your Peacebringer is below level 10, leave this unchecked')
+                if flyusessod:
+                    c['UseHover'].SetToolTip('When in SoD Fly mode, use Combat Flight as a defense power when not moving -- if your Peacebringer is below level 10, leave this unchecked')
+                else:
+                    c['UseHover'].SetToolTip('Use the Fly Mode key to toggle between Energy Flight and Combat Flight -- if your Peacebringer is below level 10, leave this unchecked')
                 c['HoverPower'].SetValue('Combat Flight')
             else:
                 c['UseHover'].CtlLabel.SetLabel('Use Hover for Defense:')
-                c['UseHover'].SetToolTip('When in SoD Fly mode, use Hover as a defense power when not moving')
+                if flyusessod:
+                    c['UseHover'].SetToolTip('When in SoD Fly mode, use Hover as a defense power when not moving')
+                else:
+                    c['UseHover'].SetToolTip('Use the Fly Mode key to toggle between your main flight power and Hover')
                 c['HoverPower'].SetValue('Hover')
             c['UseHover'].Show  (self.Profile.HasPower('Flight', 'Hover') or archetype == "Peacebringer")
-            c['UseHover'].Enable(sodenabled and (self.Profile.HasPower('Flight', 'Hover') or archetype == "Peacebringer"))
+            c['UseHover'].Enable(self.Profile.HasPower('Flight', 'Hover') or archetype == "Peacebringer")
 
             try: # try/except here because we Freeze to prevent flicker and what if it breaks?
                 self.Freeze()
@@ -534,9 +555,9 @@ class MovementPowers(Page):
                 pass
             finally:
                 c['FlySpecialKey'].Enable(sodenabled)
-                self.Thaw()
+                if self.IsFrozen(): self.Thaw()
 
-            c['GFlyMode'].Enable(sodenabled and self.hasGFly())
+            c['GFlyMode'].Show(self.hasGFly())
         else:
             self.ShowControlGroup(self.flySizer, False)
 
@@ -2296,29 +2317,32 @@ UI.Labels.update( {
     'EnableSoD'      : 'Enable Speed on Demand Binds',
     'DefaultMode'    : 'Default Speed on Demand Mode',
     'NonSoDMode'     : 'Speed on Demand Toggle Key',
-    'SprintPower'    : 'Preferred Sprint power',
-    'SprintMode'     : "Sprint Mode Toggle Key",
+    'SprintPower'    : 'Preferred Sprint Power',
+    'SprintMode'     : "Switch to Sprint SoD Mode",
     'MouseChord'     : 'Mousechord is SoD Forward',
     'Feedback'       : 'Self-/tell when changing SoD mode',
 
-    'JumpPower'        : 'Primary Jump Power',
+    'JumpUsesSoD'      : "Jump Powers Use Speed on Demand",
+    'JumpPower'        : "Primary Jump Power",
     'UseCJ'            : 'Use Combat Jumping for Defense',
     'JumpMode'         : 'Switch to Jump SoD Mode',
     'SimpleSJCJ'       : 'Simple Combat Jumping / Super Jump Toggle',
     'JumpSpecialKey'   : '',
     'JumpSpecialPower' : '', # hidden
 
-    'SpeedPower'        : 'Primary Speed Power',
+    'SpeedUsesSoD'      : "Speed Powers Use Speed on Demand",
+    'SpeedPower'        : "Primary Speed Power",
     'SpeedMode'         : 'Switch to Super Speed SoD Mode',
     'SSMobileOnly'      : 'Super Speed only when moving',
     'SSSJModeEnable'    : 'Enable Super Speed / Super Jump Mode',
     'SpeedSpecialKey'   : '',
     'SpeedSpecialPower' : '', # Hidden
 
+    'FlyUsesSoD'      : "Flight Powers Use Speed on Demand",
     'FlyPower'        : "Primary Flight Power",
     'UseHover'        : "Use Hover for Defense",
-    'FlyMode'         : 'Switch to Fly SoD Mode',
-    'FlySpecialKey'   : 'Afterburner',
+    'FlyMode'         : 'Toggle Fly Mode',
+    'FlySpecialKey'   : '',
     'FlySpecialPower' : '', # hidden
     'GFlyMode'        : 'Toggle Group Fly Mode',
 

@@ -75,7 +75,6 @@ class MovementPowers(Page):
             'FlyPower'        : '',
             'HoverPower'      : '', # hidden
             'UseHover'        : False,
-            'HasGFly'         : False,
             'HasQF'           : False, # hidden
             'FlyMode'         : '',
             'GFlyMode'        : '',
@@ -87,7 +86,6 @@ class MovementPowers(Page):
             'TPComboKey'      : 'LSHIFT',
             'TPExecuteKey'    : 'SHIFT+BUTTON1', # hidden rebirth magic
 
-            'HasTTP'          : False,
             'TTPBindKey'      : '',
             'TTPComboKey'     : 'LCTRL',
             'TTPExecuteKey'   : 'CTRL+BUTTON1', # hidden rebirth magic
@@ -406,9 +404,6 @@ class MovementPowers(Page):
         self.flySizer.AddControl(ctlName = 'FlyMode', ctlType = 'keybutton',
             tooltip = "Enter Speed on Demand Fly Mode")
         self.flySizer.AddControl(ctlName = 'FlySpecialKey', ctlType = 'keybutton',)
-        self.flySizer.AddControl(ctlName = 'HasGFly', ctlType = 'checkbox',
-            tooltip = "Enable Group Fly-related keybinds")
-        self.Ctrls['HasGFly'].Bind(wx.EVT_CHECKBOX, self.OnFlightChanged)
         self.flySizer.AddControl(ctlName = 'GFlyMode', ctlType = 'keybutton',
             tooltip = "Enter Group Fly Speed on Demand Mode")
         self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
@@ -430,9 +425,6 @@ class MovementPowers(Page):
         self.teleportSizer.AddControl(ctlName = "TPExecuteKey", ctlType = 'keybutton')
         self.teleportSizer.AddControl(ctlName = 'TPTPHover', ctlType = 'checkbox',
             tooltip = "Activate the Hover power after teleporting")
-        self.teleportSizer.AddControl(ctlName = "HasTTP", ctlType = 'checkbox',
-            tooltip = "Enable Team Teleport-related keybinds")
-        self.Ctrls['HasTTP'].Bind(wx.EVT_CHECKBOX, self.OnTeleportChanged)
         if server == "Homecoming":
             ttpTooltip = "Immediately Team Teleport to the cursor position without showing a target marker."
             ttpcTooltip = "Show target marker on keypress;  Team Teleport to marker on key release."
@@ -504,12 +496,12 @@ class MovementPowers(Page):
         archetype = self.Profile.Archetype()
         sodenabled = self.GetState('EnableSoD')
 
-        if (self.Profile.HasPowerPool('Flight')
-                    or self.Profile.HasPowerPool('Sorcery')
+        if (self.Profile.HasPower('Flight', 'Fly')
+                    or self.Profile.HasPower('Sorcery', 'Mystic Flight')
                     or archetype == "Peacebringer"):
             self.ShowControlGroup(self.flySizer)
-            c['FlyPower'].ShowEntryIf("Fly",           self.Profile.HasPowerPool("Flight"))
-            c['FlyPower'].ShowEntryIf("Mystic Flight", self.Profile.HasPowerPool("Sorcery"))
+            c['FlyPower'].ShowEntryIf("Fly",           self.Profile.HasPower("Flight", 'Fly'))
+            c['FlyPower'].ShowEntryIf("Mystic Flight", self.Profile.HasPower("Sorcery", 'Mystic Flight'))
             c['FlyPower'].ShowEntryIf("Energy Flight", archetype == "Peacebringer")
             self.PrePickLonePower(c['FlyPower'])
             c['FlyPower'].Enable(sodenabled)
@@ -546,7 +538,6 @@ class MovementPowers(Page):
                 c['FlySpecialKey'].Enable(sodenabled)
                 self.Thaw()
 
-            c['HasGFly'].Enable(sodenabled and self.Profile.HasPowerPool('Flight'))
             c['GFlyMode'].Enable(sodenabled and self.hasGFly())
         else:
             self.ShowControlGroup(self.flySizer, False)
@@ -556,10 +547,10 @@ class MovementPowers(Page):
     def OnJumpChanged(self, evt = None) -> None:
         c = self.Ctrls
         sodenabled = self.GetState('EnableSoD')
-        if (self.Profile.HasPowerPool('Leaping') or self.Profile.HasPowerPool('Force of Will')):
+        if (self.Profile.HasPower('Leaping', 'Super Jump') or self.Profile.HasPower('Force of Will', 'Mighty Leap')):
             self.ShowControlGroup(self.superJumpSizer)
-            c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPowerPool('Force of Will'))
-            c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPowerPool('Leaping'))
+            c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPower('Force of Will', 'Mighty Leap'))
+            c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPower('Leaping', 'Super Jump'))
             self.PrePickLonePower(c['JumpPower'])
             c['JumpPower'].Enable(sodenabled)
 
@@ -595,10 +586,10 @@ class MovementPowers(Page):
     def OnSpeedChanged(self, evt = None) -> None:
         c = self.Ctrls
         sodenabled = self.GetState('EnableSoD')
-        if (self.Profile.HasPowerPool('Speed') or self.Profile.HasPowerPool('Experimentation')):
+        if (self.Profile.HasPower('Speed', 'Super Speed') or self.Profile.HasPower('Experimentation', 'Speed of Sound')):
             self.ShowControlGroup(self.superSpeedSizer)
-            c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPowerPool('Experimentation'))
-            c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPowerPool('Speed'))
+            c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPower('Experimentation', 'Speed of Sound'))
+            c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPower('Speed', 'Super Speed'))
             self.PrePickLonePower(c['SpeedPower'])
             c['SpeedPower'].Enable(sodenabled)
             c['SpeedMode'].Show(bool(self.GetState('SpeedPower')) and self.DefaultMode() != "Speed")
@@ -623,24 +614,23 @@ class MovementPowers(Page):
         c = self.Ctrls
         archetype = self.Profile.Archetype()
 
-        if (self.Profile.HasPowerPool('Teleportation')
-                    or self.Profile.HasPowerPool('Sorcery')
-                    or self.Profile.HasPowerPool('Experimentation')
+        if (self.Profile.HasPower('Teleportation', 'Teleport')
+                    or self.Profile.HasPower('Sorcery', 'Translocation')
+                    or self.Profile.HasPower('Experimentation', 'Jaunt')
                     or archetype == "Warshade"):
             self.ShowControlGroup(self.teleportSizer)
-            c['TPPower'].ShowEntryIf('Teleport',      self.Profile.HasPowerPool('Teleportation'))
-            c['TPPower'].ShowEntryIf('Translocation', self.Profile.HasPowerPool('Sorcery'))
-            c['TPPower'].ShowEntryIf('Jaunt',         self.Profile.HasPowerPool('Experimentation')
+            c['TPPower'].ShowEntryIf('Teleport',      self.Profile.HasPower('Teleportation', 'Teleport'))
+            c['TPPower'].ShowEntryIf('Translocation', self.Profile.HasPower('Sorcery', 'Translocation'))
+            c['TPPower'].ShowEntryIf('Jaunt',         self.Profile.HasPower('Experimentation', 'Jaunt')
                                                         and self.GetState('SpeedPower') == "Speed of Sound")
             c['TPPower'].ShowEntryIf('Shadow Step',   archetype == "Warshade")
             self.PrePickLonePower(c['TPPower'])
             c['TPBindKey'].Enable(self.GetState('TPPower') != '')
             c['TPComboKey'].Enable(self.GetState('TPPower') != '')
             c['TPTPHover'].Show((self.GetState('TPPower') != '') and self.useHover())
-            c['HasTTP']     .Show(self.Profile.HasPowerPool('Teleportation'))
-            c['TTPBindKey'] .Show(c['HasTTP'].IsShown() and self.GetState('HasTTP'))
-            c['TTPComboKey'].Show(c['HasTTP'].IsShown() and self.GetState('HasTTP'))
-            c['TTPTPGFly']  .Show(c['HasTTP'].IsShown() and self.GetState('HasTTP') and self.hasGFly())
+            c['TTPBindKey'] .Show(self.hasTTP())
+            c['TTPComboKey'].Show(self.hasTTP())
+            c['TTPTPGFly']  .Show(self.hasTTP() and self.hasGFly())
 
             # The two 'execute' keys are always hidden as they are magical.
             # They are only for the complicated Rebirth Combo Teleport scheme and might
@@ -1123,7 +1113,7 @@ class MovementPowers(Page):
         if (profile.Archetype() == "Peacebringer"):
             t.canqfly = True
 
-        if (self.GetState('HasGFly')):
+        if (self.hasGFly()):
             t.cangfly = True
             t.gfly    = "Group Fly"
             if (self.GetState('TTPTPGFly')): t.ttpgfly = f'$${self.togon} Group Fly'
@@ -2217,7 +2207,10 @@ class MovementPowers(Page):
         )
 
     def hasGFly(self) -> bool:
-        return bool(self.Profile.HasPowerPool('Flight') and self.GetState('HasGFly'))
+        return self.Profile.HasPower('Flight', 'Group Fly')
+
+    def hasTTP(self) -> bool:
+        return self.Profile.HasPower('Teleportation', 'Team Teleport')
 
     def isKheldian(self) -> bool:
         return bool(self.Profile.Archetype() == "Warshade" or self.Profile.Archetype() == "Peacebringer")
@@ -2310,15 +2303,15 @@ UI.Labels.update( {
     'MouseChord'     : 'Mousechord is SoD Forward',
     'Feedback'       : 'Self-/tell when changing SoD mode',
 
-    'JumpPower'        : "Primary Jump Power",
+    'JumpPower'        : 'Primary Jump Power',
     'UseCJ'            : 'Use Combat Jumping for Defense',
-    'JumpMode'         : 'Toggle Jump Mode',
+    'JumpMode'         : 'Switch to Jump SoD Mode',
     'SimpleSJCJ'       : 'Simple Combat Jumping / Super Jump Toggle',
     'JumpSpecialKey'   : '',
     'JumpSpecialPower' : '', # hidden
 
-    'SpeedPower'        : "Primary Speed Power",
-    'SpeedMode'         : 'Toggle Super Speed Mode',
+    'SpeedPower'        : 'Primary Speed Power',
+    'SpeedMode'         : 'Switch to Super Speed SoD Mode',
     'SSMobileOnly'      : 'Super Speed only when moving',
     'SSSJModeEnable'    : 'Enable Super Speed / Super Jump Mode',
     'SpeedSpecialKey'   : '',
@@ -2326,8 +2319,7 @@ UI.Labels.update( {
 
     'FlyPower'        : "Primary Flight Power",
     'UseHover'        : "Use Hover for Defense",
-    'HasGFly'         : 'Has Group Fly',
-    'FlyMode'         : 'Toggle Fly Mode',
+    'FlyMode'         : 'Switch to Fly SoD Mode',
     'FlySpecialKey'   : 'Afterburner',
     'FlySpecialPower' : '', # hidden
     'GFlyMode'        : 'Toggle Group Fly Mode',
@@ -2335,7 +2327,6 @@ UI.Labels.update( {
     'TPPower'        : 'Teleport Power',
     'TPComboKey'     : 'Hold to Show Teleport Target Marker',
     'TPTPHover'      : 'Hover when Teleporting',
-    'HasTTP'         : 'Has Team Teleport',
     'TTPComboKey'    : 'Hold to Show Team Teleport Target Marker',
     'TTPTPGFly'      : 'Group Fly when Team Teleporting',
     'TPHideWindows'  : 'Hide Windows when Holding Target Marker Key',

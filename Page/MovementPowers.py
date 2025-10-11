@@ -75,7 +75,6 @@ class MovementPowers(Page):
             'FlyPower'        : '',
             'HoverPower'      : '', # hidden
             'UseHover'        : False,
-            'HasQF'           : False, # hidden
             'FlyMode'         : '',
             'GFlyMode'        : '',
             'FlySpecialKey'   : '',
@@ -135,7 +134,6 @@ class MovementPowers(Page):
         # hidden controls for keeping state
         self.hiddenSizer = ControlGroup(self, self, "Hidden Settings")
         self.hiddenSizer.AddControl(ctlName = 'HoverPower', ctlType = 'text')
-        self.hiddenSizer.AddControl(ctlName = 'HasQF', ctlType = 'checkbox',)
         self.hiddenSizer.AddControl(ctlName = 'FlySpecialPower', ctlType = 'text', )
         self.hiddenSizer.AddControl(ctlName = 'JumpSpecialPower', ctlType = 'text', )
         self.hiddenSizer.AddControl(ctlName = 'SpeedSpecialPower', ctlType = 'text', )
@@ -405,7 +403,7 @@ class MovementPowers(Page):
             tooltip = "Enter Speed on Demand Fly Mode")
         self.flySizer.AddControl(ctlName = 'FlySpecialKey', ctlType = 'keybutton',)
         self.flySizer.AddControl(ctlName = 'GFlyMode', ctlType = 'keybutton',
-            tooltip = "Enter Group Fly Speed on Demand Mode")
+            tooltip = "Enter Speed on Demand Group Fly Mode")
         self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
@@ -625,9 +623,9 @@ class MovementPowers(Page):
                                                         and self.GetState('SpeedPower') == "Speed of Sound")
             c['TPPower'].ShowEntryIf('Shadow Step',   archetype == "Warshade")
             self.PrePickLonePower(c['TPPower'])
-            c['TPBindKey'].Enable(self.GetState('TPPower') != '')
-            c['TPComboKey'].Enable(self.GetState('TPPower') != '')
-            c['TPTPHover'].Show((self.GetState('TPPower') != '') and self.useHover())
+            c['TPBindKey']  .Enable(self.GetState('TPPower') != '')
+            c['TPComboKey'] .Enable(self.GetState('TPPower') != '')
+            c['TPTPHover']  .Show( (self.GetState('TPPower') != '') and self.Profile.HasPower('Flight', 'Hover'))
             c['TTPBindKey'] .Show(self.hasTTP())
             c['TTPComboKey'].Show(self.hasTTP())
             c['TTPTPGFly']  .Show(self.hasTTP() and self.hasGFly())

@@ -123,7 +123,6 @@
   },
   "MovementPowers": {
     "HoverPower": "",
-    "HasQF": false,
     "FlySpecialPower": "",
     "JumpSpecialPower": "",
     "SpeedSpecialPower": "",

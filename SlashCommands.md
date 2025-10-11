@@ -61,20 +61,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /custom_window name | Creates a custom window |
 | /custom_window_toggle name | Opens or closes a custom window |
 | /debug_disableautodismiss [0-1] | Enables you to turn on and off auto-dismissal of contacts. |
-| /demodump | Alias for /demostop |
-| /demodumptga [0-1] | dump frames to tga files |
-| /demofps number | set demo playback frames per second |
-| /demoframestats [0-1] | whether or not to log performance info for every frame of the demo |
-| /demohideallentityui [0-1] | hides all ui in demo playback. |
-| /demohidechat [0-1] | hides chat in demo playback. |
-| /demohidedamage [0-1] | hides damage in demo playback. |
-| /demohidenames [0-1] | hides names in demo playback. |
-| /demoloop number | Number of times to loop demo before exiting |
-| /demopause number | point to stop and loop same frame (in msec) |
-| /demorecord filename | Record a demo to the given name |
-| /demorecord_auto | Begin recording a demo with a game-generated filename |
-| /demospeedscale number | speed multiple to play back demo at |
-| /demostop | Stop demo record/play. Alias: /demodump |
 | /demote character | Demote supergroup member one rank |
 | /dialog_answer choice | Answer dialog with button matching the provided text choice (ok, yes, no, cancel, accept, decline, join, etc.) |
 | /disable2d | Disables 2D sprite drawing |
@@ -264,7 +250,10 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /zoomout +, ++, or [0-1] | Zoom camera out and lock. |
 
 
-## Not Likely to Implement
+# Not Likely to Implement
+
+These are commands that seem either too fiddly or too situational to want to bind to keystrokes.  If you see something in there that you'd like BindControl to support, please open an issue and I can make it happen.
+
 
 | Bind | Description |
 |------|-------------|
@@ -308,6 +297,20 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /controller_modifiers <first> <second> | Allows setting two controller buttons as modifiers on a gamepad |
 | /controller_vmouse <LMB> <RMB> [MMB] [Snap] | Configures virtual mouse mode buttons on a gamepad |
 | /cursorcache | Enable cursor cache for smoother cursor changes |
+| /demodump | Alias for /demostop |
+| /demodumptga [0-1] | dump frames to tga files |
+| /demofps number | set demo playback frames per second |
+| /demoframestats [0-1] | whether or not to log performance info for every frame of the demo |
+| /demohideallentityui [0-1] | hides all ui in demo playback. |
+| /demohidechat [0-1] | hides chat in demo playback. |
+| /demohidedamage [0-1] | hides damage in demo playback. |
+| /demohidenames [0-1] | hides names in demo playback. |
+| /demoloop number | Number of times to loop demo before exiting |
+| /demopause number | point to stop and loop same frame (in msec) |
+| /demorecord filename | Record a demo to the given name |
+| /demorecord_auto | Begin recording a demo with a game-generated filename |
+| /demospeedscale number | speed multiple to play back demo at |
+| /demostop | Stop demo record/play. Alias: /demodump |
 | /editbase [1/0] | Turns supergroup base editor on or off. |
 | /extra_modifiers [mod1] [mod2] [mod3] [mod4] | Allows setting up to four extra modifiers on a controller/gamepad. |
 | /grid_snap number | Sets item placement grid size while in the SG base editor. |

@@ -482,15 +482,18 @@ class General(Page):
     def OnPickPrimaryPowerSet(self, evt) -> None:
         self.Profile.Mastermind.SynchronizeUI()
         self.Profile.CheckAllConflicts()
+        self.EnablePowerSelectors()
         self.Ctrls['PrimaryPowers'].ClearPowers()
         evt.Skip()
 
     def OnPickSecondaryPowerSet(self, evt) -> None:
         self.Profile.CheckAllConflicts()
+        self.EnablePowerSelectors()
         self.Ctrls['SecondaryPowers'].ClearPowers()
         evt.Skip()
 
     def OnPickEpicPowerSet(self, evt) -> None:
+        self.EnablePowerSelectors()
         self.Ctrls['EpicPowers'].ClearPowers()
         evt.Skip()
 

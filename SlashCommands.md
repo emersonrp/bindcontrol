@@ -254,8 +254,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /usefp | Use a floating point render target for HDR lighting effects if available |
 | /usewater | Use fancy water effects if available |
 | /watching | List all members of all chat channels that you belong to |
-| /wdw_load | Loads the default windows settings file wdw.txt onto your character. |
-| /wdw_save | Saves a list of current window settings to wdw.txt |
 | /whereami | Tells the names of your current Server, Zone, and map coordinates. |
 | /who name | Searches for character name. |
 | /whoall | List who's on the current map, in the System chat channel. |

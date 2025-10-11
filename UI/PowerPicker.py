@@ -167,7 +167,9 @@ class PowerPickerMenu(wx.Menu):
     def SplitNameAndIcon(self, namestr) -> list:
         if re.search(r'\|', namestr):
             name, iconstr = re.split(r'\|', namestr)
+            iconstr = re.sub(r'[^\w|]+', '', iconstr)
             iconlist = re.split(r'_', iconstr)
             return [name, iconlist]
         else:
-            return [namestr, [namestr]]
+            iconstr = re.sub(r'[^\w|]+', '', namestr)
+            return [namestr, [iconstr]]

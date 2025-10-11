@@ -485,17 +485,20 @@ class General(Page):
         self.Profile.Mastermind.SynchronizeUI()
         self.Profile.CheckAllConflicts()
         PrecacheIcons(self.Profile)
+        self.EnablePowerSelectors()
         self.Ctrls['PrimaryPowers'].ClearPowers()
         evt.Skip()
 
     def OnPickSecondaryPowerSet(self, evt) -> None:
         self.Profile.CheckAllConflicts()
         PrecacheIcons(self.Profile)
+        self.EnablePowerSelectors()
         self.Ctrls['SecondaryPowers'].ClearPowers()
         evt.Skip()
 
     def OnPickEpicPowerSet(self, evt) -> None:
         PrecacheIcons(self.Profile)
+        self.EnablePowerSelectors()
         self.Ctrls['EpicPowers'].ClearPowers()
         evt.Skip()
 

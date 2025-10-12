@@ -62,7 +62,6 @@ class Profile(wx.Notebook):
         self.Data            : ProfileData         = ProfileData(wx.ConfigBase.Get(), filename, newname, profiledata)
         self.BindFiles       : dict[str, BindFile] = {}
         self.Pages           : list[bcPage]        = []
-        self.ProfileBindsDir : str                 = ''
 
         # Add the individual tabs, in order.
         self.General           = self.CreatePage(General          (self))
@@ -85,18 +84,19 @@ class Profile(wx.Notebook):
 
     #####
     # Convenience / JIT accessors
-    def ProfileName(self)   : return self.Data.Filepath.stem if self.Data.Filepath else ''
-    def Archetype(self)     : return self.General.GetState('Archetype')
-    def Primary(self)       : return self.General.GetState('Primary')
-    def Secondary(self)     : return self.General.GetState('Secondary')
-    def ResetFile(self)     : return self.GetBindFile("reset.txt")
-    def ProfileIDFile(self) : return self.BindsDir() / 'bcprofileid.txt'
-    def Server(self)        : return self.Data.Server
-    def Filepath(self)      : return self.Data.Filepath
-    def BindsDir(self)      : return Path(wx.ConfigBase.Get().Read('BindPath')) / self.ProfileBindsDir
-    def GameBindsDir(self)  :
+    def ProfileName(self)     : return self.Data.Filepath.stem if self.Data.Filepath else ''
+    def Archetype(self)       : return self.General.GetState('Archetype')
+    def Primary(self)         : return self.General.GetState('Primary')
+    def Secondary(self)       : return self.General.GetState('Secondary')
+    def ResetFile(self)       : return self.GetBindFile("reset.txt")
+    def ProfileIDFile(self)   : return self.BindsDir() / 'bcprofileid.txt'
+    def Server(self)          : return self.Data.Server
+    def Filepath(self)        : return self.Data.Filepath
+    def ProfileBindsDir(self) : return self.Data['ProfileBindsDir']
+    def BindsDir(self)        : return Path(wx.ConfigBase.Get().Read('BindPath')) / self.Data['ProfileBindsDir']
+    def GameBindsDir(self)    :
         if gbp := wx.ConfigBase.Get().Read('GameBindPath'):
-            return PureWindowsPath(gbp) / self.ProfileBindsDir
+            return PureWindowsPath(gbp) / self.Data['ProfileBindsDir']
         else:
             return self.BindsDir()
 
@@ -220,10 +220,6 @@ class Profile(wx.Notebook):
 
         data = self.Data
 
-        # we store the ProfileBindsDir outside of the sections
-        if data and data.get('ProfileBindsDir'):
-            self.ProfileBindsDir = data['ProfileBindsDir']
-
         for pagename in ['General', 'Gameplay', 'MovementPowers', 'InspirationPopper', 'Mastermind']:
             page = getattr(self, pagename)
             if data and pagename in data:
@@ -343,7 +339,7 @@ class Profile(wx.Notebook):
             raise Exception("Profile.ProfileIDFile() returned nothing, not checking IDFile!")
 
     def WriteBindFiles(self):
-        if not self.ProfileBindsDir:
+        if not self.ProfileBindsDir():
             wx.MessageBox("Profile Binds Directory is not valid, please correct this.")
             return
 

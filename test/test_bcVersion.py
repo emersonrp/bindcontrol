@@ -16,7 +16,7 @@ def test_get_git_tag(monkeypatch):
     assert bcVersion.get_git_tag() != ''
     assert bcVersion.current_version() is not None
     monkeypatch.setattr(bcVersion, 'get_git_tag', lambda: None)
-    assert bcVersion.current_version() == "&lt; No version found &gt;"
+    assert bcVersion.current_version() == "(No version found)"
     monkeypatch.undo()
 
 def test_is_wsl():

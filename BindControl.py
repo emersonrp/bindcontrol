@@ -111,7 +111,6 @@ class Main(wx.Frame):
         # "Help" Menu
         HelpMenu = wx.Menu()
 
-        Help_manual   = HelpMenu.Append(wx.ID_ANY , "Manual"           , "User's Manual")
         Help_guide    = HelpMenu.Append(wx.ID_ANY , "Getting Started"  , "Getting Started Guide on the BindControl wiki")
         Help_files    = HelpMenu.Append(wx.ID_ANY , "Output Files"     , "About BindControl's Output Files")
         Help_bindDirs = HelpMenu.Append(wx.ID_ANY , "Bind Directories" , "Location of each Profile's bind files")
@@ -143,7 +142,6 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU , self.OnMenuPrefsDialog     , Profile_preferences)
         self.Bind(wx.EVT_MENU , self.OnMenuExitApplication , Profile_exit)
 
-        self.Bind(wx.EVT_MENU, self.OnHelpManual, Help_manual)
         self.Bind(wx.EVT_MENU, self.OnHelpGettingStarted, Help_guide)
         self.Bind(wx.EVT_MENU, self.OnHelpFiles, Help_files)
         self.Bind(wx.EVT_MENU, self.OnHelpBindDirs, Help_bindDirs)
@@ -617,11 +615,11 @@ class Main(wx.Frame):
             info.SetDescription(
                 "BindControl can help you set up custom keybinds and popmenus in City of Heroes.\n\n"
 
-                "Based on CityBinder 0.76, Copyright \u00A9 2005-2006 Jeff Sheets,\nand CityBinder for Homecoming 0.2, Copyright \u00A9 2021-2023 tailcoat\n\n"
+                "Based on:\n\tCityBinder 0.76, Copyright \u00A9 2005-2006 Jeff Sheets\n\tCityBinder for Homecoming 0.2, Copyright \u00A9 2021-2023 tailcoat\n\n"
 
-                "Speed-On-Demand binds originally created by Gnarley's Speed On Demand Binds,\nupdated for Homecoming by emerson.  Advanced Teleport Binds originally by\nDrLetharga, updated for Homecoming by emerson.\n\n"
+                "Speed-On-Demand binds originally created by Gnarley's Speed On Demand Binds.\nAdvanced Teleport Binds originally by DrLetharga.\n\n"
 
-                "Mastermind binds by Sandolphan in CoV beta, updated by Konoko and emerson.\n\n"
+                "Sandolphan Mastermind binds by Sandolphan in CoV beta.\nqwy Mastermind binds by qwy in the Homecoming Forums 2020.\n\n"
 
                 "Inspiration Popper design adapted from CityBinder for Homecoming by Tailcoat."
             )
@@ -629,7 +627,7 @@ class Main(wx.Frame):
             info.SetWebSite('https://github.com/emersonrp/bindcontrol')
             self.about_info = info
 
-        wx.adv.AboutBox(self.about_info)
+        wx.adv.GenericAboutBox(self.about_info, self)
 
     def OnMenuLogWindow(self, _) -> None:
         if self.Logger:
@@ -637,9 +635,6 @@ class Main(wx.Frame):
 
     def OnMenuExitApplication(self, _) -> None:
         self.Close()
-
-    def OnHelpManual(self, _) -> None:
-        ShowHelpWindow(self, 'Manual.html')
 
     def OnHelpGettingStarted(self, _) -> None:
         wx.LaunchDefaultBrowser('https://github.com/emersonrp/bindcontrol/wiki/Getting-Started-With-BindControl')
@@ -653,7 +648,6 @@ class Main(wx.Frame):
     def OnHelpFiles(self, _) -> None:
         ShowHelpWindow(self, 'OutputFiles.html')
 
-    # TODO - make just one window instead of a new one every time the menu item is picked
     def OnHelpBindDirs(self, _) -> None:
         window = BindDirsWindow(self, title = "Bind Directories", style = wx.TINY_CAPTION|wx.CLOSE_BOX|wx.CAPTION)
         window.Show()

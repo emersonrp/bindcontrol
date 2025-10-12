@@ -7,7 +7,7 @@ import Util.Paths
 def current_version() -> str:
 
     version = None
-    # version.txt gets written/bundled by tools/build_windows.bat
+    # version.txt gets written/bundled by tools/build.py
     try:
         base_path = Util.Paths.GetRootDirPath()
         file_path = base_path / "version.txt"
@@ -20,7 +20,7 @@ def current_version() -> str:
         version = get_git_tag()
 
     if not version:
-        version = "&lt; No version found &gt;"
+        version = "(No version found)"
 
     return version
 

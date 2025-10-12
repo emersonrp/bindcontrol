@@ -48,14 +48,13 @@ def test_main_menubar(app):
     helpmenu = menubar.GetMenu(1)
     assert isinstance(helpmenu, wx.Menu)
     assert helpmenu.GetTitle() == 'Help'
-    assert helpmenu.GetMenuItemCount() == 7
-    assert helpmenu.FindItemByPosition(0).GetItemLabel() == "Manual"
-    assert helpmenu.FindItemByPosition(1).GetItemLabel() == "Getting Started"
-    assert helpmenu.FindItemByPosition(2).GetItemLabel() == "Output Files"
-    assert helpmenu.FindItemByPosition(3).GetItemLabel() == "Bind Directories"
-    assert helpmenu.FindItemByPosition(4).GetItemLabel() == "License Info"
-    assert helpmenu.FindItemByPosition(5).GetItemLabel() == "Reporting Bugs"
-    assert helpmenu.FindItemByPosition(6).GetItemLabel() == "&About"
+    assert helpmenu.GetMenuItemCount() == 6
+    assert helpmenu.FindItemByPosition(0).GetItemLabel() == "Getting Started"
+    assert helpmenu.FindItemByPosition(1).GetItemLabel() == "Output Files"
+    assert helpmenu.FindItemByPosition(2).GetItemLabel() == "Bind Directories"
+    assert helpmenu.FindItemByPosition(3).GetItemLabel() == "License Info"
+    assert helpmenu.FindItemByPosition(4).GetItemLabel() == "Reporting Bugs"
+    assert helpmenu.FindItemByPosition(5).GetItemLabel() == "&About"
 
     logmenu = menubar.GetMenu(2)
     assert isinstance(logmenu, wx.Menu)

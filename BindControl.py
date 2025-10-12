@@ -477,7 +477,7 @@ class Main(wx.Frame):
         PathText.ClearErrors() # whyyyy?
 
         with ProfDirDialog as dlg:
-            PathText.SetValue(self.Profile.ProfileBindsDir) # do this here to trigger wx.EVT_TEXT
+            PathText.SetValue(self.Profile.ProfileBindsDir()) # do this here to trigger wx.EVT_TEXT
             result = dlg.ShowModal()
             if result == wx.ID_OK:
                 newvalue = PathText.GetValue()
@@ -485,10 +485,10 @@ class Main(wx.Frame):
                 if PathText.HasErrors(): return self.OnProfDirButton()
                 # if we changed the directory, offer to delete the old one.
 
-                otherprofile = Util.Paths.CheckProfileForBindsDir(config, self.Profile.ProfileBindsDir)
+                otherprofile = Util.Paths.CheckProfileForBindsDir(config, self.Profile.ProfileBindsDir())
                 if (
                     # we changed it to a new value:
-                    self.Profile.ProfileBindsDir and (newvalue != self.Profile.ProfileBindsDir)
+                    self.Profile.ProfileBindsDir() and (newvalue != self.Profile.ProfileBindsDir())
                         and
                     # the old one isn't owned by another profile:
                     ((not otherprofile) or (otherprofile and (otherprofile == self.Profile.ProfileName())))
@@ -499,7 +499,8 @@ class Main(wx.Frame):
                     )
                     if answer == wx.YES:
                         self.Profile.DeleteBindFiles()
-                self.Profile.ProfileBindsDir = newvalue
+
+                self.Profile.Data['ProfileBindsDir'] = newvalue
                 self.Profile.doSaveToFile()
 
         # need this out here in case we cancelled on a previously-blank one.
@@ -531,17 +532,17 @@ class Main(wx.Frame):
     def CheckProfDirButtonErrors(self) -> None:
         config = wx.ConfigBase.Get()
         if not self.Profile: return
-        if self.Profile.ProfileBindsDir:
+        if self.Profile.ProfileBindsDir():
             self.ProfDirButton.RemoveError('undef')
         else:
             self.ProfDirButton.AddError('undef', 'Your binds directory is unset.  Binds cannot be written.')
 
-        if len(self.Profile.ProfileBindsDir) <= 8:
+        if len(self.Profile.ProfileBindsDir()) <= 8:
             self.ProfDirButton.RemoveWarning('toolong')
         else:
             self.ProfDirButton.AddWarning('toolong', 'Your binds directory name is rather long.  This is not an error but can lead to some binds being too long for the game to use.')
 
-        otherprofile = Util.Paths.CheckProfileForBindsDir(config, self.Profile.ProfileBindsDir)
+        otherprofile = Util.Paths.CheckProfileForBindsDir(config, self.Profile.ProfileBindsDir())
         if otherprofile and (otherprofile != self.Profile.ProfileName()):
             self.ProfDirButton.AddWarning('owned', f'The binds directory you have chosen is marked as owned by the profile "{otherprofile}."  This is not an error, but be sure this is what you want to do.')
         else:

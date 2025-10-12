@@ -11,6 +11,9 @@ import GameData
 
 import Util.Paths
 
+# Custom exception for Profile to catch
+class BindsDirectoryException(Exception): pass
+
 class ProfileData(dict):
     def __init__(self, config, filename = None, newname = None, profiledata : dict|None = None) -> None:
         profiledata = profiledata or {}
@@ -31,6 +34,8 @@ class ProfileData(dict):
                     self.LastModTime = self.Filepath.stat().st_mtime_ns
                     self.SavedState = copy.deepcopy(dict(self))
                     self.MassageData()
+                    if 'ProfileBindsDir' not in self:
+                        self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
                 else:
                     raise Exception(f'Unable to parse JSON from "{self.Filepath}".')
             except Exception as e:
@@ -67,17 +72,15 @@ class ProfileData(dict):
             # set up the ProfileBindsDir
             self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
 
-            if not self['ProfileBindsDir']:
-                # This happens if GenerateBindsDirectoryName can't come up with something sane
-                # # TODO TODO Throw a custom exception here, and catch it in Profile
-                raise Exception("Can't come up with a sane Binds Directory!")
-
             # We do this in case the Default Profile they have saved needs massaging.
             # TODO maybe we want to detect that and re-save the Default Profile?
             # Maybe not.
             self.MassageData()
         else:
             raise Exception("Error: ProfileData created with neither filename nor newname.  This is a bug.")
+
+        if not self['ProfileBindsDir']:
+            raise BindsDirectoryException("Can't come up with a sane Binds Directory!")
 
         GameData.SetupGameData(self.Server)
 

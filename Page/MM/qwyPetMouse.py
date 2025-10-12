@@ -84,7 +84,7 @@ class qwyPetMouse(wx.Panel):
     def OnInstallPopmenu(self, _):
         try:
             profile = self.Profile
-            menu = f'qwyPetMouse-{profile.ProfileBindsDir}.mnu'
+            menu = f'qwyPetMouse-{profile.ProfileBindsDir()}.mnu'
 
             if wx.MessageBox(f'This will install the popmenu "{menu}" to your Game Directory.  Proceed?', 'Install Popmenu', wx.YES_NO) == wx.NO:
                 return
@@ -114,7 +114,7 @@ class qwyPetMouse(wx.Panel):
         pabb = GameData.MMPowerSets[primary]['abbrs']
         uniq = page.uniqueNames
 
-        menu = profile.ProfileBindsDir
+        menu = profile.ProfileBindsDir()
 
         ResetFile = profile.ResetFile()
         ResetFile.SetBind(page.GetState('qpmMinions')    , '' , page , [f'petselectname {uniq[0]}'    , profile.BLF('mmqpm' , 't1-2.txt')])
@@ -229,7 +229,7 @@ class qwyPetMouse(wx.Panel):
             case 'RESET_BLF':
                 return re.sub(r'\\', r'\\\\\\\\', self.Profile.ResetFile().BLF()) # yes we need eight slashes
             case 'MENUNAME':
-                return self.Profile.ProfileBindsDir
+                return self.Profile.ProfileBindsDir()
             case 'PLAYERNAME':
                 return self.Profile.ProfileName()
             case 'ABB':

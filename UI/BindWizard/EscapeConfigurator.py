@@ -128,7 +128,9 @@ class EscapeConfigurator(WizardParent):
             'Page'    : bindpane.Page,
             'Key'     : 'ESC',
         })
-        escButton.Bind(wx.EVT_BUTTON, self.DeHandleButton) # Is this enough?
+        # Disallow changing the KeyButton
+        escButton.Bind(wx.EVT_BUTTON,     self.DeHandleButton)
+        escButton.Bind(wx.EVT_RIGHT_DOWN, self.DeHandleButton)
         panelSizer.Add(escButton, 0, wx.ALIGN_CENTER|wx.ALL, 5)
         bindpane.SetCtrl('Escape', escButton)
         UI.Labels[EscapeControlName] = 'Escape'

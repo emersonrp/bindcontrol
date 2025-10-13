@@ -1,5 +1,8 @@
 import wx
 import wx.lib.colourselect as csel
+import wx.lib.newevent
+
+ChatColorPickerChanged, EVT_CHATCOLORPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 class ChatColorPicker(wx.BoxSizer):
     def __init__(self, parent, page, prefix, cols) -> None:
@@ -41,6 +44,10 @@ class ChatColorPicker(wx.BoxSizer):
         self.backgroundPicker.Bind(csel.EVT_COLOURSELECT, self.onColorChanged)
         self.textPicker.Bind(csel.EVT_COLOURSELECT, self.onColorChanged)
 
+        self.borderPicker.Bind(EVT_CHATCOLORPICKER_CHANGED, self.onColorChanged)
+        self.backgroundPicker.Bind(EVT_CHATCOLORPICKER_CHANGED, self.onColorChanged)
+        self.textPicker.Bind(EVT_CHATCOLORPICKER_CHANGED, self.onColorChanged)
+
         self.Add(self.example, 0, wx.LEFT|wx.ALIGN_CENTER, 15)
 
     def onColorChanged(self, evt = None) -> None:
@@ -59,4 +66,4 @@ class bcColourSelect(csel.ColourSelect):
     # Post an event so the Example Text updates if we set this programmatically
     def SetColour(self, colour):
         super().SetColour(colour)
-        wx.PostEvent(self, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, self.GetId()))
+        wx.PostEvent(self, ChatColorPickerChanged(id = wx.NewIdRef(), control = self))

@@ -1,5 +1,4 @@
 import wx
-import wx.lib.colourselect as csel
 from typing import Any
 import UI
 import Icon
@@ -191,8 +190,6 @@ class InspirationPopper(Page):
                     self.Ctrls[f'{tab}{order}{Insp}Border']    .SetColour(dkcolor)
                     self.Ctrls[f'{tab}{order}{Insp}Background'].SetColour(ltcolor)
                     self.Ctrls[f'{tab}{order}{Insp}Foreground'].SetColour(dkcolor)
-                    control = self.Ctrls[f'{tab}{order}{Insp}Border']
-                    wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
 
     def OnByInspColorButton(self, _) -> None:
         for tab in tabs:
@@ -208,8 +205,6 @@ class InspirationPopper(Page):
                     self.Ctrls[f'{tab}{order}{Insp}Border']    .SetColour(InspData[dkcolor])
                     self.Ctrls[f'{tab}{order}{Insp}Background'].SetColour(InspData[ltcolor])
                     self.Ctrls[f'{tab}{order}{Insp}Foreground'].SetColour(InspData[dkcolor])
-                    control = self.Ctrls[f'{tab}{order}{Insp}Border']
-                    wx.PostEvent(control, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, control.GetId()))
 
     def OnEnableCB(self, evt = None) -> None:
         controls = []

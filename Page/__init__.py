@@ -96,8 +96,11 @@ class Page(wx.ScrolledWindow):
             else:
                 return control.SetSelection(value)
         elif isinstance(control, (wx.ColourPickerCtrl, csel.ColourSelect)):
-            colour = wx.Colour()
-            colour.Set(value)
+            if isinstance(value, tuple):
+                colour = wx.Colour(*value)
+            else:
+                colour = wx.Colour()
+                colour.Set(value)
             return control.SetColour(colour)
         elif isinstance(control, wx.Notebook):
             for i in range(control.GetPageCount()):

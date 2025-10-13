@@ -22,11 +22,6 @@ class IncarnateSet(WizardParent):
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.SetMinSize(wx.Size(700,-1))
 
-        if setName := init.get('Title', ''):
-            setName = f' "{setName}"'
-
-        dialog.SetTitle(f"Incarnate Set{setName}")
-
         self.IncarnateBox = IncarnateBox(dialog, GameData.Server)
         if wizdata := init.get('WizData'):
             if incdata := wizdata.get('IncData'):

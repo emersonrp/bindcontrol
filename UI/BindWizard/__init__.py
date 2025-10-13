@@ -22,6 +22,11 @@ class WizardParent:
             wd = wx.Dialog(self.BindPane)
             mainSizer = wx.BoxSizer(wx.VERTICAL)
 
+            if bindName := self.BindPane.Title:
+                bindName = f' "{bindName}"'
+
+            wd.SetTitle(f"{self.WizardName}{bindName}")
+
             mainSizer.Add(self.BuildUI(wd, self.State), 1, wx.EXPAND)
 
             buttonflags = wx.OK|wx.CANCEL|wx.HELP if self.WizHelpFile else wx.OK|wx.CANCEL

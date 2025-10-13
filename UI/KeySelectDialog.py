@@ -291,7 +291,6 @@ class KeySelectDialog(wx.Dialog):
 
     def handleKeyUp(self, event) -> None:
         payload = self.GetEventPayload(event)
-        print(payload)
         if payload == 'SYSRQ':
             self.handleCharHook(event)
         self.PressedKeys.discard(payload)

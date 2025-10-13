@@ -37,7 +37,7 @@ class Page(wx.ScrolledWindow):
         self.Ctrls : dict[str, bcControl] = {}
         self.Init  : dict[str, Any]       = {}
 
-    def GetState(self, key) -> str:
+    def GetState(self, key) -> str|bool:
         control = self.Ctrls.get(key)
         if not control:
             wx.LogWarning(f"Unknown control in GetState: {key} - this is a bug.")
@@ -69,7 +69,7 @@ class Page(wx.ScrolledWindow):
         # elif isinstance(control, wx.StaticText):
         #     return control.GetLabel()
         elif isinstance(control, (wx.ComboBox, wx.TextCtrl, wx.CheckBox, wx.adv.BitmapComboBox, wx.Slider, wx.SpinCtrl, wx.SpinCtrlDouble)):
-            return str(control.GetValue())
+            return control.GetValue()
         else:
             wx.LogError(f"control '{key}' type is unknown in GetState() - this is a bug")
             return ''

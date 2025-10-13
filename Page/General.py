@@ -342,18 +342,18 @@ class General(Page):
         if isinstance(ppick, wx.Choice):
             ppick.Clear()
             for p in Primaries: ppick.Append(p)
-            ppick.SetStringSelection(gendata['Primary'])
+            self.SetState('Primary', gendata['Primary'])
 
         if isinstance(spick, wx.Choice):
             spick.Clear()
             for p in Secondaries: spick.Append(p)
-            spick.SetStringSelection(gendata['Secondary'])
+            self.SetState('Secondary', gendata['Secondary'])
 
         if isinstance(epick, wx.Choice):
             epick.Clear()
             epick.Append('') # allow us to deselect epic pool
             for e in Epix: epick.Append(e)
-            epick.SetStringSelection(gendata['Epic'])
+            self.SetState('Epic', gendata['Epic'])
 
         epick.Enable(arch != "Peacebringer" and arch != "Warshade")
 

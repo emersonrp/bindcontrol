@@ -52,7 +52,7 @@ class ChatColorPicker(wx.BoxSizer):
 
     def onColorChanged(self, evt = None) -> None:
         if evt: evt.Skip()
-        self.example    .SetBackgroundColour(self.borderPicker.GetColour())
+        self.example.SetBackgroundColour(self.borderPicker.GetColour())
         self.exampleText.SetBackgroundColour(self.backgroundPicker.GetColour())
         self.exampleText.SetForegroundColour(self.textPicker.GetColour())
         self.exampleText.Refresh()

@@ -282,7 +282,7 @@ class Gameplay(Page):
 
         AnyTray = False
         for tray in (range(1,self.NumTrays+1)):
-            self.FillTrayButtons[tray].Enable(self.GetState(f"Tray{tray}Enabled"))
+            self.FillTrayButtons[tray].Enable(bool(self.GetState(f"Tray{tray}Enabled")))
             for button in (1,2,3,4,5,6,7,8,9,0):
                 self.Ctrls[f"Tray{tray}Button{button}"].Enable(bool(self.GetState(f'Tray{tray}Enabled')))
             if tray != self.NumTrays:  # not the server tray

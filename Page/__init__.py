@@ -12,6 +12,7 @@
 import json
 from typing import Any, TYPE_CHECKING
 import wx
+import wx.adv
 import wx.lib.colourselect as csel
 if TYPE_CHECKING:
     from Profile import Profile as bcProfile
@@ -56,21 +57,19 @@ class Page(wx.ScrolledWindow):
             return control.Key
         elif isinstance(control, wx.Button):
             return control.GetLabel()
-        elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
-            return control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
-        elif isinstance(control, wx.Choice) or isinstance(control, wx.ComboBox):
+        elif isinstance(control, (wx.Choice, wx.ComboBox)):
             sel = control.GetSelection()
             if sel != wx.NOT_FOUND: return control.GetString(sel)
             else                  : return ''
-        elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
+        elif isinstance(control, (wx.ColourPickerCtrl, csel.ColourSelect)):
             return control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
         elif isinstance(control, wx.Notebook):
             return control.GetPageText(control.GetSelection())
         # TODO - I don't think we ever GetState on a StaticText, but maybe?
         # elif isinstance(control, wx.StaticText):
         #     return control.GetLabel()
-        elif isinstance(control, (wx.ComboBox, wx.TextCtrl)):
-            return control.GetValue()
+        elif isinstance(control, (wx.ComboBox, wx.TextCtrl, wx.CheckBox, wx.adv.BitmapComboBox, wx.Slider, wx.SpinCtrl, wx.SpinCtrlDouble)):
+            return str(control.GetValue())
         else:
             wx.LogError(f"control '{key}' type is unknown in GetState() - this is a bug")
             return ''
@@ -96,14 +95,24 @@ class Page(wx.ScrolledWindow):
                 return control.SetStringSelection(value)
             else:
                 return control.SetSelection(value)
+        elif isinstance(control, (wx.ColourPickerCtrl, csel.ColourSelect)):
+            colour = wx.Colour()
+            colour.Set(value)
+            return control.SetColour(colour)
         elif isinstance(control, wx.Notebook):
             for i in range(control.GetPageCount()):
                 if control.GetPageText(i) == value:
                     return control.SetSelection(i) # pyright: ignore  # for some reason type narrowing isn't working right
         elif isinstance(control, wx.StaticText):
             return control.SetLabel(value)
-        elif isinstance(control, (wx.ComboBox, wx.TextCtrl)):
+        elif isinstance(control, (wx.ComboBox, wx.TextCtrl, wx.adv.BitmapComboBox)):
             return control.SetValue(value)
+        elif isinstance(control, (wx.CheckBox)):
+            return control.SetValue(bool(value))
+        elif isinstance(control, (wx.Slider, wx.SpinCtrl)):
+            return control.SetValue(int(value))
+        elif isinstance(control, (wx.SpinCtrlDouble)):
+            return control.SetValue(float(value))
         elif isinstance(control, wx.DirPickerCtrl):
             return control.SetPath(value)
         else:
@@ -120,7 +129,7 @@ class Page(wx.ScrolledWindow):
     # disable controls by name
     def EnableControls(self, enabled, names) -> None:
         for name in names:
-            self.Ctrls[name].Enable(enabled)
+            self.Ctrls[name].Enable(bool(enabled))
 
     ##### stubs for overriding (shoes for industry!)
     def SynchronizeUI(self) -> None:

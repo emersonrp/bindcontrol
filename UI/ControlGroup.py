@@ -22,6 +22,9 @@ if TYPE_CHECKING or platform.system() != 'Windows':
 else:
     STClass = wx.StaticText
 
+# For future use with better type checking, but so far this is a giant headache
+type bcControl = cgbcKeyButton|cgButton|cgComboBox|cgBMComboBox|cgTextCtrl|cgExpandoTextCtrl|cgStaticText|cgCheckBox|cgSpinCtrl|cgSpinCtrlDouble|cgDirPickerCtrl|cgColourPickerCtrl|cgChoice
+
 class ControlGroup(wx.StaticBoxSizer):
     def __init__(self, parent, page : bcPage, label = '', width = 2, flexcols : list|None = None, topcontent = None) -> None:
         flexcols = flexcols or [0]
@@ -53,7 +56,7 @@ class ControlGroup(wx.StaticBoxSizer):
                    label    : str           = '',
                    data     : Any           = None,
                    size     : wx.Size       = wx.DefaultSize,
-       ):
+       ) -> bcControl:
 
         if not ctlName:
             wx.LogError("Tried to make a labeled control without a CtlName.  This is a bug.")

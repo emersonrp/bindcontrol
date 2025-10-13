@@ -377,7 +377,7 @@ class MovementPowers(Page):
         self.superSpeedSizer.AddControl(ctlName = 'SSMobileOnly', ctlType = 'checkbox',
             tooltip = "Activate speed power only when moving;  deactivate when stationary")
         self.superSpeedSizer.AddControl(ctlName = 'SSSJModeEnable', ctlType = 'checkbox',
-            tooltip = "Enable Super Speed + Super Jump mode.  Check the Manual for details")
+            tooltip = "Enable Super Speed + Super Jump mode.")
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP

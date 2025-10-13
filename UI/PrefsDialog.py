@@ -63,7 +63,7 @@ class PrefsDialog(wx.Dialog):
         if (platform.system() != 'Windows'):
             generalSizer.Add(wx.StaticText(generalPanel, label = "In-Game Binds Directory:") , 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
             self.gameBindsDirPicker = cgTextCtrl(generalPanel, value = config.Read('GameBindPath'))
-            self.gameBindsDirPicker.DefaultToolTip = 'When playing via Wine, the in-game file paths will be different than the native ones.  Put a Windows path into this box that describes where Wine will find the above directory.  Keeping this path as short as possible is strongly recommended.  Check the Manual for more information.'
+            self.gameBindsDirPicker.DefaultToolTip = 'When playing via Wine, the in-game file paths will be different than the native ones.  Put a Windows path into this box that describes where Wine will find the above directory.  Keeping this path as short as possible is strongly recommended.  Check "Help > Getting Started with BindControl" for more information.'
             self.gameBindsDirPicker.Bind(wx.EVT_TEXT, self.OnGameBindsDirPickerChanged)
             generalSizer.Add(self.gameBindsDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
@@ -78,7 +78,7 @@ class PrefsDialog(wx.Dialog):
         generalSizer.Add(splitKeyLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.UseSplitModKeys = wx.CheckBox(generalPanel)
         self.UseSplitModKeys.SetValue(config.ReadBool('UseSplitModKeys'))
-        self.UseSplitModKeys.SetToolTip("This allows the left and right modifier keys to be bound separately if on the \"right-hand\" side of a bind.  Check the Manual for more information.")
+        self.UseSplitModKeys.SetToolTip("This allows the left and right modifier keys to be bound separately on the \"right-hand\" side of a bind.  Check \"Help > Getting Started with BindControl\" for more information.")
         generalSizer.Add(self.UseSplitModKeys, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         setattr(splitKeyLabel, 'CB', self.UseSplitModKeys)
@@ -312,7 +312,7 @@ class PrefsDialog(wx.Dialog):
         if gbdp := self.gameBindsDirPicker:
             path = gbdp.GetValue()
             if re.search(r'\s+', path):
-                gbdp.AddError('spaces', 'The game binds directory cannot contain spaces.  Please check the manual for more information.')
+                gbdp.AddError('spaces', 'The game binds directory cannot contain spaces.  Please check "Help > Getting Started with BindControl" for more information.')
             else:
                 gbdp.RemoveError('spaces')
 

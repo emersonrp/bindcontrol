@@ -3,7 +3,7 @@ import wx
 import re
 import GameData
 from Icon import GetIcon
-from UI.ControlGroup import CGControlMixin
+from UI.CGControlMixin import CGControlMixin
 from UI.ErrorControls import ErrorControlMixin
 from Util.Incarnate import Rarities, Aliases
 

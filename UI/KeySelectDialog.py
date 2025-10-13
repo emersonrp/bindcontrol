@@ -256,7 +256,7 @@ class KeySelectDialog(wx.Dialog):
     def GetEventPayload(self, event) -> str:
         # fish out the payload name -- upgrade "SHIFT" to "LSHIFT" etc if appropriate
         SeparateLR = self.SeparateLRChooser.Value
-        payload    = self.Keymap[event.GetKeyCode()]
+        payload    = self.Keymap.get(event.GetKeyCode(), '')
 
         if SeparateLR and modKeyFlags:
             rawFlags = event.GetRawKeyFlags()
@@ -290,7 +290,11 @@ class KeySelectDialog(wx.Dialog):
         }[name]
 
     def handleKeyUp(self, event) -> None:
-        self.PressedKeys.discard(self.GetEventPayload(event))
+        payload = self.GetEventPayload(event)
+        print(payload)
+        if payload == 'SYSRQ':
+            self.handleCharHook(event)
+        self.PressedKeys.discard(payload)
         self.buildBind()
 
     def handleMouse(self, event) -> None:

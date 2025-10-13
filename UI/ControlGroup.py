@@ -13,6 +13,7 @@ from Page import Page as bcPage
 import UI
 from UI.ErrorControls import ErrorControlMixin
 from UI.KeySelectDialog import bcKeyButton
+from UI.PowerPicker import PowerPicker
 
 # This ST.GenStaticText is so we can intercept clicks on it, but
 # the background color is wrong on Windows in a way I can't work out,
@@ -23,7 +24,7 @@ else:
     STClass = wx.StaticText
 
 # For future use with better type checking, but so far this is a giant headache
-type bcControl = cgbcKeyButton|cgButton|cgComboBox|cgBMComboBox|cgTextCtrl|cgExpandoTextCtrl|cgStaticText|cgCheckBox|cgSpinCtrl|cgSpinCtrlDouble|cgDirPickerCtrl|cgColourPickerCtrl|cgChoice
+type bcControl = PowerPicker|cgbcKeyButton|cgButton|cgComboBox|cgBMComboBox|cgTextCtrl|cgExpandoTextCtrl|cgStaticText|cgCheckBox|cgSpinCtrl|cgSpinCtrlDouble|cgDirPickerCtrl|cgColourPickerCtrl|cgSlider|cgNotebook|cgChoice
 
 class ControlGroup(wx.StaticBoxSizer):
     def __init__(self, parent, page : bcPage, label = '', width = 2, flexcols : list|None = None, topcontent = None) -> None:
@@ -217,6 +218,12 @@ class CGControlMixin:
             self.CtlLabel.SetToolTip(tooltip)
         return super().SetToolTip(tooltip) # pyright: ignore
 
+    def MakeBind(self, *args):
+        raise(Exception('"MakeBind" called on something that isn\'t a KeyButton!  This is a bug.'))
+
+    def ShowEntryIf(self, *args):
+        raise(Exception('"MakeBind" called on something that isn\'t a cgChoice!  This is a bug.'))
+
 # Miniclasses to use mixins
 class cgbcKeyButton     (CGControlMixin,                    bcKeyButton)         :
     def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
@@ -244,6 +251,10 @@ class cgDirPickerCtrl   (CGControlMixin, ErrorControlMixin, wx.DirPickerCtrl)   
         self.SetTextCtrlProportion(1)
         self.GetTextCtrl().SetEditable(False)
 class cgColourPickerCtrl(CGControlMixin, ErrorControlMixin, wx.ColourPickerCtrl) :
+    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
+class cgSlider(CGControlMixin, ErrorControlMixin, wx.Slider) :
+    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
+class cgNotebook(CGControlMixin, ErrorControlMixin, wx.Notebook) :
     def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
 class cgChoice          (CGControlMixin, ErrorControlMixin, wx.Choice)           :
     def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)

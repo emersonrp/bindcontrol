@@ -10,11 +10,12 @@
 #  page.SetState('Archetype', 'Blaster')
 
 import json
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 import wx
 import wx.lib.colourselect as csel
 if TYPE_CHECKING:
     from Profile import Profile as bcProfile
+    from UI.ControlGroup import bcControl
 from UI.KeySelectDialog import bcKeyButton
 from UI.PowerPicker import PowerPicker
 from Icon import GetIcon
@@ -32,8 +33,8 @@ class Page(wx.ScrolledWindow):
         self.Profile  : bcProfile = parent
         self.TabTitle : str = type(self).__name__
 
-        self.Ctrls : dict = {}
-        self.Init  : dict = {}
+        self.Ctrls : dict[str, bcControl] = {}
+        self.Init  : dict[str, Any]       = {}
 
     def GetState(self, key) -> str:
         control = self.Ctrls.get(key)
@@ -68,12 +69,10 @@ class Page(wx.ScrolledWindow):
         # TODO - I don't think we ever GetState on a StaticText, but maybe?
         # elif isinstance(control, wx.StaticText):
         #     return control.GetLabel()
-        elif getattr(control, 'GetValue', None):
+        elif isinstance(control, (wx.ComboBox, wx.TextCtrl)):
             return control.GetValue()
-        elif getattr(control, 'GetPath', None):
-            return control.GetPath()
         else:
-            wx.LogError(f"control '{key}' has no GetValue() - this is a bug")
+            wx.LogError(f"control '{key}' type is unknown in GetState() - this is a bug")
             return ''
 
     def SetState(self, key, value) -> str|int|None:
@@ -100,15 +99,15 @@ class Page(wx.ScrolledWindow):
         elif isinstance(control, wx.Notebook):
             for i in range(control.GetPageCount()):
                 if control.GetPageText(i) == value:
-                    return control.SetSelection(i)
+                    return control.SetSelection(i) # pyright: ignore  # for some reason type narrowing isn't working right
         elif isinstance(control, wx.StaticText):
             return control.SetLabel(value)
-        elif getattr(control, 'SetValue', None):
+        elif isinstance(control, (wx.ComboBox, wx.TextCtrl)):
             return control.SetValue(value)
-        elif getattr(control, 'SetPath', None):
+        elif isinstance(control, wx.DirPickerCtrl):
             return control.SetPath(value)
         else:
-            wx.LogError(f"{control} has no SetValue() - this is a bug.")
+            wx.LogError(f"control '{key}' type is unknown in SetState() - this is a bug.")
 
     def GetKeyBinds(self):
         binds = []

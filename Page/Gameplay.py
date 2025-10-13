@@ -7,8 +7,7 @@ from Help import HelpButton
 
 from BindFile import KeyBind
 
-from UI.ControlGroup import ControlGroup, cgChoice
-from UI.KeySelectDialog import bcKeyButton
+from UI.ControlGroup import ControlGroup, cgChoice, cgbcKeyButton, cgCheckBox
 
 ordinals : tuple = ("First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth")
 DefaultTeamBinds : dict[str, tuple] = {
@@ -117,7 +116,7 @@ class Gameplay(Page):
 
         for tray in (range(self.NumTrays, 0, -1)):
             label = self.TrayLabels[tray]
-            checkbox = wx.CheckBox(staticbox, wx.ID_ANY, label = f"{label} Tray")
+            checkbox = cgCheckBox(staticbox, wx.ID_ANY, label = f"{label} Tray")
             checkbox.SetValue(self.Init.get(f'Tray{tray}Enabled', False))
             checkbox.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
             self.Ctrls[f'Tray{tray}Enabled'] = checkbox
@@ -125,7 +124,7 @@ class Gameplay(Page):
 
             for button in (1,2,3,4,5,6,7,8,9,0):
                 ctlname = f'Tray{tray}Button{button}'
-                traybutton = bcKeyButton(staticbox, wx.ID_ANY, init = {
+                traybutton = cgbcKeyButton(staticbox, wx.ID_ANY, init = {
                     'CtlName'       : ctlname,
                     'Key'           : self.Init[ctlname],
                     'AlwaysShorten' : True,
@@ -139,9 +138,9 @@ class Gameplay(Page):
                 trayGridSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Prev Tray"), 1, wx.ALIGN_CENTER)
                 trayGridSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Next Tray"), 1, wx.ALIGN_CENTER)
             else:
-                prevbutton = bcKeyButton(staticbox, wx.ID_ANY, init = { 'CtlName' : f"Tray{tray}Prev",})
+                prevbutton = cgbcKeyButton(staticbox, wx.ID_ANY, init = { 'CtlName' : f"Tray{tray}Prev",})
                 self.Ctrls[f"Tray{tray}Prev"] = prevbutton
-                nextbutton = bcKeyButton(staticbox, wx.ID_ANY, init = { 'CtlName' : f"Tray{tray}Next",})
+                nextbutton = cgbcKeyButton(staticbox, wx.ID_ANY, init = { 'CtlName' : f"Tray{tray}Next",})
                 self.Ctrls[f"Tray{tray}Next"] = nextbutton
                 trayGridSizer.Add(prevbutton, 1, wx.ALIGN_CENTER)
                 trayGridSizer.Add(nextbutton, 1, wx.ALIGN_CENTER)
@@ -169,7 +168,7 @@ class Gameplay(Page):
         KBProfilePicker.Bind( wx.EVT_CHOICE, self.OnKeybindProfilePicker )
         KBProfileSizer.Add(KBProfilePicker, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
 
-        KeepExistingCB = wx.CheckBox(staticbox, wx.ID_ANY, "Keep Existing / Default Tray Binds")
+        KeepExistingCB = cgCheckBox(staticbox, wx.ID_ANY, "Keep Existing / Default Tray Binds")
         KeepExistingCB.SetValue(False)
         UI.Labels['KeepExisting'] = "Keep Existing / Default Tray Binds"
         self.Ctrls['KeepExisting'] = KeepExistingCB
@@ -187,7 +186,7 @@ class Gameplay(Page):
         tpsenablepanel = wx.Panel(self)
         tpsenablesizer = wx.FlexGridSizer(2)
 
-        tpsenable = wx.CheckBox(tpsenablepanel, -1, 'Enable Team/Pet Select')
+        tpsenable = cgCheckBox(tpsenablepanel, -1, 'Enable Team/Pet Select')
         tpsenable.SetToolTip('Check this to enable the Combined Team/Pet Select Binds')
         tpsenable.Bind(wx.EVT_CHECKBOX, self.OnTPSEnable)
         self.Ctrls['TPSEnable'] = tpsenable
@@ -196,7 +195,7 @@ class Gameplay(Page):
         tpsenablesizer.Add(tpsenable, 1, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 10)
         tpsenablesizer.Add(HelpButton(tpsenablepanel, 'TPSBinds.html'), 0)
 
-        removedefaultbinds = wx.CheckBox(tpsenablepanel, label = 'Remove Default Team Select Binds')
+        removedefaultbinds = cgCheckBox(tpsenablepanel, label = 'Remove Default Team Select Binds')
         removedefaultbinds.SetToolTip('Check this to disable the default team-selection binds that the game provides.')
         self.Ctrls['RemoveDefaultTeamBinds'] = removedefaultbinds
         removedefaultbinds.SetValue(self.Init['RemoveDefaultTeamBinds'])
@@ -225,7 +224,7 @@ class Gameplay(Page):
         ##### Next/Prev Team Select Binds
         teamenablepanel = wx.Panel(self)
         teamenablesizer = wx.BoxSizer(wx.HORIZONTAL)
-        teamenable = wx.CheckBox(teamenablepanel, -1, 'Enable Team Select')
+        teamenable = cgCheckBox(teamenablepanel, -1, 'Enable Team Select')
         teamenable.SetToolTip('Check this to enable the Next/Prev Team Select Binds')
         teamenable.Bind(wx.EVT_CHECKBOX, self.OnTeamEnable)
         self.Ctrls['TeamEnable'] = teamenable
@@ -285,10 +284,10 @@ class Gameplay(Page):
         for tray in (range(1,self.NumTrays+1)):
             self.FillTrayButtons[tray].Enable(self.GetState(f"Tray{tray}Enabled"))
             for button in (1,2,3,4,5,6,7,8,9,0):
-                self.Ctrls[f"Tray{tray}Button{button}"].Enable(self.GetState(f'Tray{tray}Enabled'))
+                self.Ctrls[f"Tray{tray}Button{button}"].Enable(bool(self.GetState(f'Tray{tray}Enabled')))
             if tray != self.NumTrays:  # not the server tray
-                self.Ctrls[f"Tray{tray}Prev"].Enable(self.GetState(f"Tray{tray}Enabled"))
-                self.Ctrls[f"Tray{tray}Next"].Enable(self.GetState(f"Tray{tray}Enabled"))
+                self.Ctrls[f"Tray{tray}Prev"].Enable(bool(self.GetState(f"Tray{tray}Enabled")))
+                self.Ctrls[f"Tray{tray}Next"].Enable(bool(self.GetState(f"Tray{tray}Enabled")))
             if self.GetState(f'Tray{tray}Enabled'):
                 AnyTray = True
         self.Ctrls['KeepExisting'].Enable(AnyTray)
@@ -317,10 +316,7 @@ class Gameplay(Page):
                 # don't fill in the default value if we're using it somewhere else.
                 if self.Profile.CheckConflict(buttonval, ''): continue
 
-                # we could in principle call button.ClearButton() instead of these
-                # three lines, but that throws us in an infinite loop
-                self.Ctrls[f"Tray{tray}Button{button}"].SetLabel(buttonval)
-                self.Ctrls[f"Tray{tray}Button{button}"].Key = buttonval
+                self.SetState(f"Tray{tray}Button{button}", buttonval)
 
         self.Profile.CheckAllConflicts()
         if evt: evt.Skip()
@@ -333,8 +329,7 @@ class Gameplay(Page):
         elif wx.GetKeyState(wx.WXK_CONTROL) : mod = "CTRL+"
         elif wx.GetKeyState(wx.WXK_ALT)     : mod = "ALT+"
         for button in (1,2,3,4,5,6,7,8,9,0):
-            self.Ctrls[f"Tray{tray}Button{button}"].SetLabel(f"{mod}{button}")
-            self.Ctrls[f"Tray{tray}Button{button}"].Key = f"{mod}{button}"
+            self.SetState(f"Tray{tray}Button{button}", f"{mod}{button}")
         self.Profile.CheckAllConflicts()
         if evt: evt.Skip()
 
@@ -440,16 +435,12 @@ class Gameplay(Page):
                             file = self.Profile.GetBindFile('teamsel2', f'{tsize}{tpos}{tsel}.txt')
                             self.ts2CreateSet(tsize, tpos, tsel, file)
 
-        ResetFile.SetBind(self.Ctrls['Assist']    .MakeBind('assist'))
-        ResetFile.SetBind(self.Ctrls['Location']  .MakeBind('loc'))
-        ResetFile.SetBind(self.Ctrls['Interact']  .MakeBind('interact'))
-        ResetFile.SetBind(self.Ctrls['Menu']      .MakeBind('menu'))
-        ResetFile.SetBind(self.Ctrls['Release']   .MakeBind('release'))
-        ResetFile.SetBind(self.Ctrls['GameReturn'].MakeBind('gamereturn'))
-        ResetFile.SetBind(self.Ctrls['Sheathe']   .MakeBind('sheathe'))
-        ResetFile.SetBind(self.Ctrls['Stuck']     .MakeBind('stuck'))
-        ResetFile.SetBind(self.Ctrls['DialogYes'] .MakeBind('dialog_yes'))
-        ResetFile.SetBind(self.Ctrls['DialogNo']  .MakeBind('dialog_no'))
+        for cname in ('Assist', 'Location', 'Interact', 'Menu', 'Release', 'GameReturn',
+                      'Sheathe', 'Stuck', 'DialogYes', 'DialogNo'):
+            c = self.Ctrls[cname]
+            if isinstance(c, cgbcKeyButton):
+                payload = 'loc' if cname == 'Location' else cname.lower()
+                ResetFile.SetBind(c.MakeBind(payload))
 
         return True
 

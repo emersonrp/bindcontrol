@@ -1,6 +1,5 @@
 # UI / logic for the 'general' panel
 import wx
-import wx.adv
 import wx.lib.stattext as ST
 from typing import Any
 import UI
@@ -8,7 +7,7 @@ import Profile
 from Icon import GetIconBitmap
 import GameData
 
-from UI.ControlGroup import ControlGroup
+from UI.ControlGroup import ControlGroup, cgCheckBox, cgTextCtrl, cgBMComboBox
 
 from Page import Page
 
@@ -64,7 +63,7 @@ class General(Page):
         bannerSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.bannerPanel.SetSizer(bannerSizer)
 
-        alignPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
+        alignPicker = cgBMComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
         alignPicker.Clear()
         for a in GameData.Alignments:
             alignPicker.Append(a, GetIconBitmap('Alignments', a))
@@ -73,7 +72,7 @@ class General(Page):
         alignPicker.Bind(wx.EVT_COMBOBOX, self.OnPickAlignment)
         bannerSizer.Add(alignPicker, 1, wx.EXPAND|wx.ALL, 5)
 
-        originPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
+        originPicker = cgBMComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
         originPicker.Clear()
         for o in GameData.Origins:
             originPicker.Append(o, GetIconBitmap('Origins', o))
@@ -89,7 +88,7 @@ class General(Page):
         nameSizer.Add(self.NameDisplay, 1, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 6)
         bannerSizer.Add(self.nameBox, 1, wx.EXPAND|wx.ALL, 5)
 
-        archetypePicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
+        archetypePicker = cgBMComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
         archetypePicker.Clear()
         for a in GameData.Archetypes:
             archetypePicker.Append(a, GetIconBitmap('Archetypes', a))
@@ -97,7 +96,7 @@ class General(Page):
         archetypePicker.Bind(wx.EVT_COMBOBOX, self.OnPickArchetype)
         bannerSizer.Add(archetypePicker, 1, wx.EXPAND|wx.ALL, 5)
 
-        self.ServerPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
+        self.ServerPicker = cgBMComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
         self.ServerPicker.Clear()
         for s in ['Homecoming', 'Rebirth']:
             self.ServerPicker.Append(s, GetIconBitmap('Servers', s))
@@ -154,13 +153,13 @@ class General(Page):
         TNPanel = wx.Panel(self)
         TNSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        TNEnable = wx.CheckBox(TNPanel, -1, 'Use Typing Notifier')
+        TNEnable = cgCheckBox(TNPanel, -1, 'Use Typing Notifier')
         TNEnable.SetToolTip('Check this to enable a floating notifier when you are typing into the chat box')
         setattr(TNEnable, 'CtlName', 'TypingNotifierEnable')
         TNEnable.Bind(wx.EVT_CHECKBOX, self.OnTypeEnable)
         self.Ctrls['TypingNotifierEnable'] = TNEnable
 
-        TN = wx.TextCtrl(TNPanel, value = self.Init['TypingNotifier'], style = wx.TE_CENTER)
+        TN = cgTextCtrl(TNPanel, value = self.Init['TypingNotifier'], style = wx.TE_CENTER)
         TN.SetToolTip('The contents of the notifier that will float over your head as you type')
         TN.SetHint('typing notifier contents')
         setattr(TN, 'CtlName', 'TypingNotifier')
@@ -330,26 +329,33 @@ class General(Page):
             arch = 'Blaster'
             self.SetState('Archetype', arch)
 
-        c['Primary'].Clear()
-        c['Secondary'].Clear()
-        c['Epic'].Clear()
-
         Primaries   = GameData.Archetypes[arch]['Primary']
         Secondaries = GameData.Archetypes[arch]['Secondary']
         Epix        = GameData.Archetypes[arch]['Epic']
 
-        c['Epic'].Append('') # allow us to deselect epic pool
-
-        for p in Primaries   : c['Primary'].Append(p)
-        for s in Secondaries : c['Secondary'].Append(s)
-        for e in Epix        : c['Epic'].Append(e)
+        ppick = c['Primary']
+        spick = c['Secondary']
+        epick = c['Epic']
 
         gendata = self.Profile.Data['General']
-        c['Primary'].SetStringSelection(gendata['Primary'])
-        c['Secondary'].SetStringSelection(gendata['Secondary'])
-        c['Epic'].SetStringSelection(gendata['Epic'])
 
-        c['Epic'].Enable(arch != "Peacebringer" and arch != "Warshade")
+        if isinstance(ppick, wx.Choice):
+            ppick.Clear()
+            for p in Primaries: ppick.Append(p)
+            ppick.SetStringSelection(gendata['Primary'])
+
+        if isinstance(spick, wx.Choice):
+            spick.Clear()
+            for p in Secondaries: spick.Append(p)
+            spick.SetStringSelection(gendata['Secondary'])
+
+        if isinstance(epick, wx.Choice):
+            epick.Clear()
+            epick.Append('') # allow us to deselect epic pool
+            for e in Epix: epick.Append(e)
+            epick.SetStringSelection(gendata['Epic'])
+
+        epick.Enable(arch != "Peacebringer" and arch != "Warshade")
 
         if arch == "Peacebringer" or arch == "Warshade":
             self.UpdatePoolPickers()
@@ -413,8 +419,9 @@ class General(Page):
                     if 'Flight' in poolcontents: poolcontents.remove('Flight')
                     if 'Teleportation' in poolcontents: poolcontents.remove('Teleportation')
 
-            picker.SetItems(poolcontents)
-            picker.SetStringSelection(curval)
+            if isinstance(picker, wx.Choice):
+                picker.SetItems(poolcontents)
+                picker.SetStringSelection(curval)
             self.Profile.UpdateData('General', pickername, self.GetState(pickername))
 
     def OnPickPrimaryPowerSet(self, evt) -> None:

@@ -5,7 +5,7 @@ import Icon
 from Page import Page
 import GameData
 from UI.ChatColorPicker import ChatColorPicker, ChatColors
-from UI.KeySelectDialog import bcKeyButton
+from UI.ControlGroup import cgbcKeyButton, cgCheckBox
 
 tabs = {
     'Single'   : 'Single',
@@ -63,7 +63,7 @@ class InspirationPopper(Page):
         # "Use Order" options
         useOrderBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Use Order")
 
-        self.useCB = wx.CheckBox( useOrderBox.GetStaticBox(), -1, 'Enable Largest-First Binds')
+        self.useCB = cgCheckBox( useOrderBox.GetStaticBox(), -1, 'Enable Largest-First Binds')
         self.useCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Inspiration Popper Binds, (largest inspirations used first)'))
         self.useCB.SetValue(self.Init['EnableInspBinds'])
@@ -71,7 +71,7 @@ class InspirationPopper(Page):
         useOrderBox.Add(self.useCB, 1, wx.ALL, 6)
         self.useCB.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
 
-        self.useRevCB = wx.CheckBox( useOrderBox.GetStaticBox(), -1, 'Enable Smallest-First Binds')
+        self.useRevCB = cgCheckBox( useOrderBox.GetStaticBox(), -1, 'Enable Smallest-First Binds')
         self.useRevCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Reverse Inspiration Popper Binds, (smallest inspirations used first)'))
         self.useRevCB.SetValue(self.Init['EnableRevInspBinds'])
@@ -83,14 +83,14 @@ class InspirationPopper(Page):
 
         # General Options
         optionsBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Options")
-        self.useSuperInspCB = wx.CheckBox( optionsBox.GetStaticBox(), -1, 'Use Super Inspirations')
+        self.useSuperInspCB = cgCheckBox( optionsBox.GetStaticBox(), -1, 'Use Super Inspirations')
         self.useSuperInspCB.SetToolTip(wx.ToolTip(
             'Check this to include Super Inspirations in the Inspiration Popper binds.  If you\'re concerned about accidental activation and would prefer to use Super Inspirations manually, leave this unchecked.'))
         self.useSuperInspCB.SetValue(self.Init['UseSuperInsp'])
         self.Ctrls['UseSuperInsp'] = self.useSuperInspCB
         optionsBox.Add(self.useSuperInspCB, 0, wx.ALL, 6)
 
-        self.enableTellsCB = wx.CheckBox( optionsBox.GetStaticBox(), -1, 'Enable self-/tell feedback')
+        self.enableTellsCB = cgCheckBox( optionsBox.GetStaticBox(), -1, 'Enable self-/tell feedback')
         self.enableTellsCB.SetToolTip(wx.ToolTip(
             'Check this box to avoid having your toon tell you whenever you pop an inspiration.'))
         self.enableTellsCB.SetValue(self.Init['EnableTells'])
@@ -139,7 +139,7 @@ class InspirationPopper(Page):
                     rowSet = RevInspRows if order else InspRows
                     box    = RevInspBox  if order else InspBox
 
-                    keybutton = bcKeyButton(box.GetStaticBox(), wx.ID_ANY)
+                    keybutton = cgbcKeyButton(box.GetStaticBox(), wx.ID_ANY)
                     keybutton.CtlName = f"{tab}{order}{Insp}Key"
                     kblabel = wx.StaticText(box.GetStaticBox(), wx.ID_ANY, label = UI.Labels[keybutton.CtlName] + ":")
                     keybutton.CtlLabel = kblabel
@@ -187,9 +187,9 @@ class InspirationPopper(Page):
         for tab in tabs:
             for Insp in GameData.Inspirations[tab]:
                 for order in ("", "Rev"):
-                    self.Ctrls[f'{tab}{order}{Insp}Border']    .SetColour(dkcolor)
-                    self.Ctrls[f'{tab}{order}{Insp}Background'].SetColour(ltcolor)
-                    self.Ctrls[f'{tab}{order}{Insp}Foreground'].SetColour(dkcolor)
+                    self.SetState(f'{tab}{order}{Insp}Border'    , dkcolor)
+                    self.SetState(f'{tab}{order}{Insp}Background', ltcolor)
+                    self.SetState(f'{tab}{order}{Insp}Foreground', dkcolor)
 
     def OnByInspColorButton(self, _) -> None:
         for tab in tabs:
@@ -202,9 +202,9 @@ class InspirationPopper(Page):
                         ltcolor = 'dkcolor'
                         dkcolor = 'ltcolor'
 
-                    self.Ctrls[f'{tab}{order}{Insp}Border']    .SetColour(InspData[dkcolor])
-                    self.Ctrls[f'{tab}{order}{Insp}Background'].SetColour(InspData[ltcolor])
-                    self.Ctrls[f'{tab}{order}{Insp}Foreground'].SetColour(InspData[dkcolor])
+                    self.SetState(f'{tab}{order}{Insp}Border'    , InspData[dkcolor])
+                    self.SetState(f'{tab}{order}{Insp}Background', InspData[ltcolor])
+                    self.SetState(f'{tab}{order}{Insp}Foreground', InspData[dkcolor])
 
     def OnEnableCB(self, evt = None) -> None:
         controls = []

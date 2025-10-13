@@ -8,8 +8,7 @@ from Page.MM.SandolphanBinds import SandolphanBinds
 from Page.MM.qwyNumpad import qwyNumpad
 from Page.MM.qwyPetMouse import qwyPetMouse
 import UI
-from UI.ControlGroup import cgTextCtrl
-from UI.KeySelectDialog import bcKeyButton
+from UI.ControlGroup import cgTextCtrl, cgbcKeyButton, cgSlider, cgNotebook
 
 class Mastermind(Page):
     def __init__(self, parent) -> None:
@@ -57,7 +56,7 @@ class Mastermind(Page):
             petname.Bind(wx.EVT_TEXT, self.OnNameTextChange)
 
             ctlname = f"Pet{i+1}Select"
-            button = bcKeyButton(PBSB, -1, init = {
+            button = cgbcKeyButton(PBSB, -1, init = {
                 'CtlName'  : ctlname,
                 'ToolTip'  : f'Choose the key that will select {petdesc}',
                 'Key'      : self.Init[ctlname],
@@ -76,7 +75,7 @@ class Mastermind(Page):
 
         maxValue = 24 if self.Profile.Server() == 'Homecoming' else 26
         LevelLabel = wx.StaticText(PetNameSB, -1, 'Mastermind Level:')
-        self.LevelSlider = wx.Slider(PetNameSB, minValue = 1, maxValue = maxValue, value = maxValue,
+        self.LevelSlider = cgSlider(PetNameSB, minValue = 1, maxValue = maxValue, value = maxValue,
                                      style = wx.SL_VALUE_LABEL|wx.SL_AUTOTICKS)
         self.LevelSlider.Bind(wx.EVT_SLIDER, self.OnLevelChanged)
         LevelLabel      .SetToolTip('Select the level of your Mastermind - set to max for higher levels')
@@ -85,7 +84,7 @@ class Mastermind(Page):
 
         RenameLabel = wx.StaticText(PetNameSB, -1, 'Rename Pets:')
         RenameLabel          .SetToolTip('Choose the key that will rename your pets, in-game, to match the names set in BindControl')
-        self.RenamePetsButton = bcKeyButton(PetNameSB, -1, init = {
+        self.RenamePetsButton = cgbcKeyButton(PetNameSB, -1, init = {
                 'CtlName'  : 'RenamePets',
                 'Key'      : self.Init['RenamePets'],
                 'ToolTip'  :'Choose the key that will rename your pets, in-game, to match the names set in BindControl',
@@ -108,7 +107,7 @@ class Mastermind(Page):
         PetNames.Add(PetExtraCtrls, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15)
 
         # Sub-tabs for selection of MM Bind style
-        self.BindStyleNotebook = wx.Notebook(self, wx.ID_ANY, style = wx.BORDER_NONE)
+        self.BindStyleNotebook = cgNotebook(self, wx.ID_ANY, style = wx.BORDER_NONE)
         self.BindStyleNotebook.SetPadding(wx.Size(50,0))
         self.Ctrls['BindStyle'] = self.BindStyleNotebook
 
@@ -160,7 +159,7 @@ class Mastermind(Page):
 
     def GetPetName(self, idx):
         cblabels  = ['Minion 1', 'Minion 2', 'Minion 3', 'Lt 1', 'Lt 2', 'Boss']
-        return self.Ctrls[f'Pet{idx+1}Name'].GetValue() or cblabels[idx]
+        return self.GetState(f'Pet{idx+1}Name') or cblabels[idx]
 
     def SynchronizeUI(self) -> None:
         ismm = self.Profile.Archetype() == "Mastermind"
@@ -222,7 +221,7 @@ class Mastermind(Page):
         for i in (1,2,3,4,5,6):
             ctrl = self.Ctrls[f'Pet{i}Name']
             # No errors if the control is disabled please
-            if not ctrl.IsEnabled() or ctrl.GetValue():
+            if not ctrl.IsEnabled() or bool(self.GetState(f'Pet{i}Name')):
                 ctrl.RemoveError('undef')
             else:
                 ctrl.AddError('undef', 'Many BindControl Mastermind binds require the pet name be filled in.')
@@ -231,8 +230,7 @@ class Mastermind(Page):
         if (self.Profile.Archetype() == "Mastermind"):
             names = []
             for i in (1,2,3,4,5,6):
-                ctrl = self.Ctrls[f'Pet{i}Name']
-                value = ctrl.GetValue().strip() # don't allow whitespace at the ends
+                value = str(self.GetState(f'Pet{i}Name')).strip()
                 names.append(value)
 
             # we stash this away every time we calculate it so we can
@@ -241,7 +239,7 @@ class Mastermind(Page):
             for i in (1,2,3,4,5,6):
                 ctrl = self.Ctrls[f'Pet{i}Name']
                 # No errors if the control is disabled please
-                if not ctrl.IsEnabled() or not ctrl.GetValue() or self.uniqueNames[i-1]:
+                if not ctrl.IsEnabled() or not self.GetState(f'Pet{i}Name') or self.uniqueNames[i-1]:
                     ctrl.RemoveError('unique')
                 else:
                     ctrl.AddError('unique', 'This pet name is not different enough to identify it uniquely.  This is likely to cause issues with many of BindControl\'s Mastermind binds.')
@@ -304,9 +302,8 @@ class Mastermind(Page):
             for i, pair in enumerate(OrderedPetBoxes):
                 if not pair: continue
                 (j, box) = pair
-                petnamebox = self.Ctrls[f'Pet{j+1}Name']
                 rpCommands.append(f'petselect {i}')
-                rpCommands.append(f'petrename "{petnamebox.GetValue()}"')
+                rpCommands.append('petrename "' + self.GetState(f'Pet{j+1}Name') + '"')
                 ResetFile.SetBind(self.RenamePetsButton.MakeBind(rpCommands))
 
         ### By-name select binds.

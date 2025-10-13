@@ -1,14 +1,16 @@
+# pyright: reportIncompatibleMethodOverride=false
 import wx
 import re
 import GameData
 from Icon import GetIcon
+from UI.ControlGroup import CGControlMixin
 from UI.ErrorControls import ErrorControlMixin
 from Util.Incarnate import Rarities, Aliases
 
 import wx.lib.newevent
 PowerChanged, EVT_POWERPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
-class PowerPicker(ErrorControlMixin, wx.Button):
+class PowerPicker(CGControlMixin, ErrorControlMixin, wx.Button):
     def __init__(self, parent, menu = None, size = wx.DefaultSize) -> None:
         super().__init__(parent, size = size)
 

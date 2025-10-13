@@ -8,7 +8,7 @@ from Icon import GetIcon
 from Models.tObject import tObject
 from Page import Page
 import UI
-from UI.ControlGroup import ControlGroup, bcKeyButton
+from UI.ControlGroup import ControlGroup, cgbcKeyButton
 from UI.KeySelectDialog import EVT_KEY_CHANGED
 from UI.PowerPicker import PowerPicker
 
@@ -159,7 +159,7 @@ class MovementPowers(Page):
         keySizer.Add(fwLabel, wx.GBPosition(0,2), wx.GBSpan(1,2), wx.ALIGN_CENTER)
         keySizer.Add(trLabel, wx.GBPosition(0,4), wx.GBSpan(1,2), wx.ALIGN_CENTER)
 
-        tleftButton = bcKeyButton(staticbox, -1, )
+        tleftButton = cgbcKeyButton(staticbox, -1, )
         tleftButton.SetLabel(self.Init['TurnLeft'])
         self.Ctrls['TurnLeft'] = tleftButton
         tleftButton.CtlName = 'TurnLeft'
@@ -168,7 +168,7 @@ class MovementPowers(Page):
         tleftButton.Key = self.Init['TurnLeft']
         keySizer.Add(tleftButton, wx.GBPosition(1,0), wx.GBSpan(1,2))
 
-        forwardButton = bcKeyButton(staticbox, -1, )
+        forwardButton = cgbcKeyButton(staticbox, -1, )
         self.Ctrls['Forward'] = forwardButton
         forwardButton.SetLabel(self.Init['Forward'])
         forwardButton.CtlName = 'Forward'
@@ -177,7 +177,7 @@ class MovementPowers(Page):
         forwardButton.Key = self.Init['Forward']
         keySizer.Add(forwardButton, wx.GBPosition(1,2), wx.GBSpan(1,2))
 
-        trightButton = bcKeyButton(staticbox, -1, )
+        trightButton = cgbcKeyButton(staticbox, -1, )
         self.Ctrls['TurnRight'] = trightButton
         trightButton.SetLabel(self.Init['TurnRight'])
         trightButton.CtlName = 'TurnRight'
@@ -190,7 +190,7 @@ class MovementPowers(Page):
         backLabel = wx.StaticText(staticbox, label = 'Back')
         rightLabel = wx.StaticText(staticbox, label = 'Right')
 
-        leftButton = bcKeyButton(staticbox, -1, )
+        leftButton = cgbcKeyButton(staticbox, -1, )
         self.Ctrls['Left'] = leftButton
         leftButton.SetLabel(self.Init['Left'])
         leftButton.CtlName = 'Left'
@@ -199,7 +199,7 @@ class MovementPowers(Page):
         leftButton.Key = self.Init['Left']
         keySizer.Add(leftButton, wx.GBPosition(2,0), wx.GBSpan(1,2))
 
-        backButton = bcKeyButton(staticbox, -1, )
+        backButton = cgbcKeyButton(staticbox, -1, )
         backButton.SetLabel(self.Init['Back'])
         self.Ctrls['Back'] = backButton
         backButton.CtlName = 'Back'
@@ -208,7 +208,7 @@ class MovementPowers(Page):
         backButton.Key = self.Init['Back']
         keySizer.Add(backButton, wx.GBPosition(2,2), wx.GBSpan(1,2))
 
-        rightButton = bcKeyButton(staticbox, -1, )
+        rightButton = cgbcKeyButton(staticbox, -1, )
         self.Ctrls['Right'] = rightButton
         rightButton.SetLabel(self.Init['Right'])
         rightButton.CtlName = 'Right'
@@ -227,7 +227,7 @@ class MovementPowers(Page):
         keySizer.Add(downLabel, wx.GBPosition(4,0), wx.GBSpan(1,2), wx.ALIGN_CENTER|wx.TOP, 16)
         keySizer.Add(upLabel,   wx.GBPosition(4,2), wx.GBSpan(1,4), wx.ALIGN_CENTER|wx.TOP, 16)
 
-        downButton = bcKeyButton(staticbox, -1, )
+        downButton = cgbcKeyButton(staticbox, -1, )
         self.Ctrls['Down'] = downButton
         downButton.SetLabel(self.Init['Down'])
         downButton.CtlName = 'Down'
@@ -236,7 +236,7 @@ class MovementPowers(Page):
         downButton.Key = self.Init['Down']
         keySizer.Add(downButton, wx.GBPosition(5,0), wx.GBSpan(1,2), wx.EXPAND)
 
-        upButton = bcKeyButton(staticbox, -1, )
+        upButton = cgbcKeyButton(staticbox, -1, )
         self.Ctrls['Up'] = upButton
         upButton.SetLabel(self.Init['Up'])
         upButton.CtlName = 'Up'
@@ -251,7 +251,7 @@ class MovementPowers(Page):
         keySizer.Add(autoRunLabel, wx.GBPosition(6,1), wx.GBSpan(1,2), wx.ALIGN_CENTER)
         keySizer.Add(followLabel,  wx.GBPosition(6,3), wx.GBSpan(1,2), wx.ALIGN_CENTER)
 
-        autoRunButton = bcKeyButton(staticbox, -1, )
+        autoRunButton = cgbcKeyButton(staticbox, -1, )
         self.Ctrls['AutoRun'] = autoRunButton
         autoRunButton.SetLabel(self.Init['AutoRun'])
         autoRunButton.CtlName = 'AutoRun'
@@ -260,7 +260,7 @@ class MovementPowers(Page):
         autoRunButton.Key = self.Init['AutoRun']
         keySizer.Add(autoRunButton, wx.GBPosition(7,1), wx.GBSpan(1,2), wx.EXPAND)
 
-        followButton = bcKeyButton(staticbox, -1, )
+        followButton = cgbcKeyButton(staticbox, -1, )
         self.Ctrls['Follow'] = followButton
         followButton.SetLabel(self.Init['Follow'])
         followButton.CtlName = 'Follow'
@@ -480,11 +480,11 @@ class MovementPowers(Page):
 
     def OnDetailsCameraChanged(self, evt = None) -> None:
         c = self.Ctrls
-        c['CamdistBase'].Enable(self.GetState('ChangeCamera'))
-        c['CamdistMove'].Enable(self.GetState('ChangeCamera'))
+        c['CamdistBase'].Enable(bool(self.GetState('ChangeCamera')))
+        c['CamdistMove'].Enable(bool(self.GetState('ChangeCamera')))
 
-        c['DetailBase'].Enable(self.GetState('ChangeDetail'))
-        c['DetailMove'].Enable(self.GetState('ChangeDetail'))
+        c['DetailBase'].Enable(bool(self.GetState('ChangeDetail')))
+        c['DetailMove'].Enable(bool(self.GetState('ChangeDetail')))
         if evt: evt.Skip()
 
     def OnSpeedOnDemandChanged(self, evt = None) -> None:
@@ -493,7 +493,7 @@ class MovementPowers(Page):
         c['NonSoDMode'].Show(sodmode != 'No Default SoD')
         c['SprintMode'].Show(sodmode != 'Sprint')
         for ctrl in ['DefaultMode', 'NonSoDMode', 'SprintPower', 'SprintMode', 'MouseChord', 'Feedback', ]:
-            c[ctrl].Enable(self.GetState('EnableSoD'))
+            c[ctrl].Enable(bool(self.GetState('EnableSoD')))
         self.OnJumpChanged()
         self.OnSpeedChanged()
         self.OnFlightChanged()
@@ -502,7 +502,7 @@ class MovementPowers(Page):
     def OnFlightChanged(self, evt = None) -> None:
         c = self.Ctrls
         archetype = self.Profile.Archetype()
-        sodenabled = self.GetState('EnableSoD')
+        sodenabled = bool(self.GetState('EnableSoD'))
 
         if (self.Profile.HasPowerPool('Flight')
                     or self.Profile.HasPowerPool('Sorcery')
@@ -519,26 +519,30 @@ class MovementPowers(Page):
             c['FlyMode'].Enable(sodenabled)
             c['HasHover'].Show(self.Profile.HasPowerPool('Flight') or archetype == "Peacebringer")
             if archetype == 'Peacebringer':
-                c['HasHover'].CtlLabel.SetLabel('Has Combat Flight:')
+                if c['HasHover'].CtlLabel:
+                    c['HasHover'].CtlLabel.SetLabel('Has Combat Flight:')
                 c['HasHover'].SetToolTip('Use Combat Flight as a defense power when not moving -- if your Peacebringer is below level 10, leave this unchecked')
-                c['HoverPower'].SetValue('Combat Flight')
+                self.SetState('HoverPower', 'Combat Flight')
             else:
-                c['HasHover'].CtlLabel.SetLabel('Has Hover:')
+                if c['HasHover'].CtlLabel:
+                    c['HasHover'].CtlLabel.SetLabel('Has Hover:')
                 c['HasHover'].SetToolTip('Use Hover as a defense power when not moving')
-                c['HoverPower'].SetValue('Hover')
+                self.SetState('HoverPower', 'Hover')
             c['HasHover'].Enable(sodenabled)
 
             try: # try/except here because we Freeze to prevent flicker and what if it breaks?
                 self.Freeze()
                 c['FlySpecialKey'].Show(False)
                 if (self.GetState('FlyPower') == "Fly"):
-                    c['FlySpecialKey'].CtlLabel.SetLabel('Afterburner:')
-                    c['FlySpecialPower'].SetValue('fly_boost') # "afterburner" has overloaded meaning.
+                    if c['FlySpecialKey'].CtlLabel:
+                        c['FlySpecialKey'].CtlLabel.SetLabel('Afterburner:')
+                    self.SetState('FlySpecialPower', 'fly_boost') # "afterburner" has overloaded meaning.
                     c['FlySpecialKey'].Show()
 
                 if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.GetState('HasHover'))):
-                    c['FlySpecialKey'].CtlLabel.SetLabel('Quantum Maneuvers:')
-                    c['FlySpecialPower'].SetValue('Quantum Maneuvers')
+                    if c['FlySpecialKey'].CtlLabel:
+                        c['FlySpecialKey'].CtlLabel.SetLabel('Quantum Maneuvers:')
+                    self.SetState('FlySpecialPower', 'Quantum Maneuvers')
                     c['FlySpecialKey'].Show()
             except Exception:
                 pass
@@ -555,7 +559,7 @@ class MovementPowers(Page):
 
     def OnJumpChanged(self, evt = None) -> None:
         c = self.Ctrls
-        sodenabled = self.GetState('EnableSoD')
+        sodenabled = bool(self.GetState('EnableSoD'))
         if (self.Profile.HasPowerPool('Leaping') or self.Profile.HasPowerPool('Force of Will')):
             self.ShowControlGroup(self.superJumpSizer)
             c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPowerPool('Force of Will'))
@@ -575,12 +579,14 @@ class MovementPowers(Page):
             c['SSSJModeEnable'].Enable(sodenabled)
 
             if (self.GetState('JumpPower') == "Mighty Leap"):
-                c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
-                c['JumpSpecialPower'].SetValue('Takeoff')
+                if c['JumpSpecialKey'].CtlLabel:
+                    c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
+                self.SetState('JumpSpecialPower', 'Takeoff')
                 c['JumpSpecialKey'].Show()
             elif (self.GetState('JumpPower') == "Super Jump"):
-                c['JumpSpecialKey'].CtlLabel.SetLabel('Double Jump:')
-                c['JumpSpecialPower'].SetValue('Double_Jump')
+                if c['JumpSpecialKey'].CtlLabel:
+                    c['JumpSpecialKey'].CtlLabel.SetLabel('Double Jump:')
+                self.SetState('JumpSpecialPower', 'Double_Jump')
                 c['JumpSpecialKey'].Show()
             else:
                 c['JumpSpecialKey'].Show(False)
@@ -593,7 +599,7 @@ class MovementPowers(Page):
 
     def OnSpeedChanged(self, evt = None) -> None:
         c = self.Ctrls
-        sodenabled = self.GetState('EnableSoD')
+        sodenabled = bool(self.GetState('EnableSoD'))
         if (self.Profile.HasPowerPool('Speed') or self.Profile.HasPowerPool('Experimentation')):
             self.ShowControlGroup(self.superSpeedSizer)
             c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPowerPool('Experimentation'))
@@ -607,8 +613,9 @@ class MovementPowers(Page):
             c['SSSJModeEnable'].Enable(sodenabled)
 
             if (self.GetState('SpeedPower') == "Super Speed"):
-                c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
-                c['SpeedSpecialPower'].SetValue('SpeedPhase')
+                if c['SpeedSpecialKey'].CtlLabel:
+                    c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
+                self.SetState('SpeedSpecialPower', 'SpeedPhase')
                 c['SpeedSpecialKey'].Show()
                 c['SpeedSpecialKey'].Enable(sodenabled)
             else:
@@ -637,9 +644,9 @@ class MovementPowers(Page):
             c['TPComboKey'].Enable(self.GetState('TPPower') != '')
             c['TPTPHover'].Show((self.GetState('TPPower') != '') and self.hasHover())
             c['HasTTP']     .Show(self.Profile.HasPowerPool('Teleportation'))
-            c['TTPBindKey'] .Show(c['HasTTP'].IsShown() and self.GetState('HasTTP'))
-            c['TTPComboKey'].Show(c['HasTTP'].IsShown() and self.GetState('HasTTP'))
-            c['TTPTPGFly']  .Show(c['HasTTP'].IsShown() and self.GetState('HasTTP') and self.hasGFly())
+            c['TTPBindKey'] .Show(bool(c['HasTTP'].IsShown() and self.GetState('HasTTP')))
+            c['TTPComboKey'].Show(bool(c['HasTTP'].IsShown() and self.GetState('HasTTP')))
+            c['TTPTPGFly']  .Show(bool(c['HasTTP'].IsShown() and self.GetState('HasTTP') and self.hasGFly()))
 
             # The two 'execute' keys are always hidden as they are magical.
             # They are only for the complicated Rebirth Combo Teleport scheme and might
@@ -656,10 +663,10 @@ class MovementPowers(Page):
             # show kheldian sizer, enable controls
             self.ShowControlGroup(self.kheldianSizer)
 
-            c['NovaMode'].Enable(self.GetState('UseNova'))
-            c['NovaTray'].Enable(self.GetState('UseNova'))
-            c['DwarfMode'].Enable(self.GetState('UseDwarf'))
-            c['DwarfTray'].Enable(self.GetState('UseDwarf'))
+            c['NovaMode'].Enable(bool(self.GetState('UseNova')))
+            c['NovaTray'].Enable(bool(self.GetState('UseNova')))
+            c['DwarfMode'].Enable(bool(self.GetState('UseDwarf')))
+            c['DwarfTray'].Enable(bool(self.GetState('UseDwarf')))
         else:
             self.ShowControlGroup(self.kheldianSizer, False)
         if evt: evt.Skip()

@@ -6,7 +6,7 @@ class ChatColorPicker(wx.BoxSizer):
         super().__init__(wx.HORIZONTAL)
 
         self.borderLabel = wx.StaticText(parent, label = "Border:")
-        self.borderPicker = csel.ColourSelect(parent, colour = cols['border'], size = wx.Size(30,30))
+        self.borderPicker = bcColourSelect(parent, colour = cols['border'], size = wx.Size(30,30))
         setattr(self.borderPicker, "CtlName", f"{prefix}Border")
         setattr(self.borderPicker, "CtlLabel", self.borderLabel)
         page.Ctrls[f"{prefix}Border"] = self.borderPicker
@@ -14,7 +14,7 @@ class ChatColorPicker(wx.BoxSizer):
         self.Add(self.borderPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 5)
 
         self.backgroundLabel = wx.StaticText(parent, label = "Bkgnd:")
-        self.backgroundPicker = csel.ColourSelect(parent, colour = cols['background'], size = wx.Size(30,30))
+        self.backgroundPicker = bcColourSelect(parent, colour = cols['background'], size = wx.Size(30,30))
         setattr(self.backgroundPicker, "CtlName", f"{prefix}Background")
         setattr(self.backgroundPicker, "CtlLabel", self.backgroundLabel)
         page.Ctrls[f"{prefix}Background"] = self.backgroundPicker
@@ -22,7 +22,7 @@ class ChatColorPicker(wx.BoxSizer):
         self.Add(self.backgroundPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 5)
 
         self.textLabel = wx.StaticText(parent, label = "Text:")
-        self.textPicker = csel.ColourSelect(parent, colour = cols['text'], size = wx.Size(30,30))
+        self.textPicker = bcColourSelect(parent, colour = cols['text'], size = wx.Size(30,30))
         setattr(self.textPicker, "CtlName", f"{prefix}Foreground")
         setattr(self.textPicker, "CtlLabel", self.textLabel)
         page.Ctrls[f"{prefix}Foreground"] = self.textPicker
@@ -43,10 +43,20 @@ class ChatColorPicker(wx.BoxSizer):
 
         self.Add(self.example, 0, wx.LEFT|wx.ALIGN_CENTER, 15)
 
-    def onColorChanged(self, _ = None) -> None:
-        self.example.SetBackgroundColour(self.borderPicker.GetColour())
+    def onColorChanged(self, evt = None) -> None:
+        if evt: evt.Skip()
+        self.example    .SetBackgroundColour(self.borderPicker.GetColour())
         self.exampleText.SetBackgroundColour(self.backgroundPicker.GetColour())
         self.exampleText.SetForegroundColour(self.textPicker.GetColour())
         self.exampleText.Refresh()
 
 def ChatColors(fg,bg,bd) -> str: return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'
+
+class bcColourSelect(csel.ColourSelect):
+    def __init__(self, parent, **kwargs):
+        super().__init__(parent, **kwargs)
+
+    # Post an event so the Example Text updates if we set this programmatically
+    def SetColour(self, colour):
+        super().SetColour(colour)
+        wx.PostEvent(self, wx.CommandEvent(csel.EVT_COLOURSELECT.typeId, self.GetId()))

@@ -3,6 +3,7 @@ from functools import partial
 from pathlib import PurePath, Path, PureWindowsPath
 from typing import TYPE_CHECKING
 import wx
+import wx.lib.colourselect as csel
 
 from BindFile import BindFile
 from BLF import BLF
@@ -287,7 +288,7 @@ class Profile(wx.Notebook):
                 wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
                 wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU, wx.EVT_RADIOBUTTON,
                 wx.EVT_SLIDER, EVT_KEY_CHANGED, EVT_POWERPICKER_CHANGED, EVT_POWERBINDER_CHANGED,
-                wx.EVT_NOTEBOOK_PAGE_CHANGED
+                wx.EVT_NOTEBOOK_PAGE_CHANGED, csel.EVT_COLOURSELECT
             ]:
 
                 page.Bind(evt, partial(self.OnCommandEvent, pagename = pagename))

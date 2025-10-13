@@ -469,12 +469,12 @@ class MovementPowers(Page):
         group.EnableCtrls(show)
 
     def OnTPComboKey(self, evt = None) -> None:
-        ComboKey = self.GetState('TPComboKey')
+        ComboKey = str(self.GetState('TPComboKey'))
         self.Ctrls['TPExecuteKey'].SetLabel(ComboKey + "+BUTTON1")
         if evt: evt.Skip()
 
     def OnTTPComboKey(self, evt = None) -> None:
-        ComboKey = self.GetState('TTPComboKey')
+        ComboKey = str(self.GetState('TTPComboKey'))
         self.Ctrls['TTPExecuteKey'].SetLabel(ComboKey + "+BUTTON1")
         if evt: evt.Skip()
 
@@ -1089,14 +1089,14 @@ class MovementPowers(Page):
 
         elif (not self.GetState('HasCJ') and self.GetState('JumpPower')):
             t.canjmp     = True
-            t.jump       = self.GetState('JumpPower')
-            t.jumpifnocj = self.GetState('JumpPower')
+            t.jump       = str(self.GetState('JumpPower'))
+            t.jumpifnocj = str(self.GetState('JumpPower'))
 
         elif self.GetState('HasCJ') and self.GetState('JumpPower'):
             t.cancj  = True
             t.canjmp = True
             t.cjmp   = "Combat Jumping"
-            t.jump   = self.GetState('JumpPower')
+            t.jump   = str(self.GetState('JumpPower'))
 
         # Temp Travel Power Toggle
         if (self.GetState('TempEnable')):
@@ -1104,8 +1104,8 @@ class MovementPowers(Page):
                 ResetFile.SetBind(self.Ctrls['TempToggle'].MakeBind(f'powexecname {temppower}'))
 
         ## Flying / hover
-        t.hover  = self.GetState('HoverPower')
-        t.flyx   = self.GetState('FlyPower')
+        t.hover  = str(self.GetState('HoverPower'))
+        t.flyx   = str(self.GetState('FlyPower'))
 
         if (profile.Archetype() == "Peacebringer"):
             t.canfly = True
@@ -1113,17 +1113,17 @@ class MovementPowers(Page):
         # hover, no fly
         if (self.hasHover() and not self.GetState('FlyPower')):
             t.canhov = True
-            t.flyx   = self.GetState('HoverPower')
+            t.flyx   = str(self.GetState('HoverPower'))
             if (self.GetState('TPTPHover')): t.tphover = f'$${self.togon} {self.GetState("HoverPower")}'
         # fly, no hover
         elif (not self.hasHover() and bool(self.GetState('FlyPower'))):
             t.canfly = True
-            t.hover  = self.GetState('FlyPower')
+            t.hover  = str(self.GetState('FlyPower'))
         # hover and fly
         elif (self.hasHover() and self.GetState('FlyPower')):
             t.canhov = True
             t.canfly = True
-            t.fly    = self.GetState('FlyPower')
+            t.fly    = str(self.GetState('FlyPower'))
             if (self.GetState('TPTPHover')): t.tphover = f'$${self.togon} {self.GetState("HoverPower")}'
 
         if (profile.Archetype() == "Peacebringer"):
@@ -1135,11 +1135,11 @@ class MovementPowers(Page):
             if (self.GetState('TTPTPGFly')): t.ttpgfly = f'$${self.togon} Group Fly'
 
         if (self.GetState('SpeedPower')):
-            t.sprint = self.GetState('SprintPower')
-            t.speed  = self.GetState('SpeedPower')
+            t.sprint = str(self.GetState('SprintPower'))
+            t.speed  = str(self.GetState('SpeedPower'))
         else:
-            t.sprint = self.GetState('SprintPower')
-            t.speed  = self.GetState('SprintPower')
+            t.sprint = str(self.GetState('SprintPower'))
+            t.speed  = str(self.GetState('SprintPower'))
 
         if self.GetState('TPHideWindows'):
             windowhide = '$$windowhide health$$windowhide chat$$windowhide target$$windowhide tray$$windowhide nav'
@@ -1214,7 +1214,7 @@ class MovementPowers(Page):
         elif (archetype == "Peacebringer"):
             dwarfTPPower = "White Dwarf Step"
         else:
-            normalTPPower = self.GetState('TPPower')
+            normalTPPower = str(self.GetState('TPPower'))
             teamTPPower   = "Team Teleport"
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
@@ -2214,7 +2214,7 @@ class MovementPowers(Page):
 
     ### convenience methods
     def DefaultMode(self) -> str:
-        return self.GetState('DefaultMode') if self.GetState('EnableSoD') else 'NonSoD'
+        return str(self.GetState('DefaultMode')) if self.GetState('EnableSoD') else 'NonSoD'
 
     def hasHover(self) -> bool:
         return bool(

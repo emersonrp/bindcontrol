@@ -303,7 +303,7 @@ class Mastermind(Page):
                 if not pair: continue
                 (j, box) = pair
                 rpCommands.append(f'petselect {i}')
-                rpCommands.append('petrename "' + self.GetState(f'Pet{j+1}Name') + '"')
+                rpCommands.append('petrename "' + str(self.GetState(f'Pet{j+1}Name')) + '"')
                 ResetFile.SetBind(self.RenamePetsButton.MakeBind(rpCommands))
 
         ### By-name select binds.

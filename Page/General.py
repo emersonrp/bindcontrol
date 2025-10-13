@@ -256,7 +256,7 @@ class General(Page):
 
         notifier = ''
         if self.GetState('TypingNotifierEnable'):
-            notifier = 'afk ' + self.GetState('TypingNotifier')
+            notifier = 'afk ' + str(self.GetState('TypingNotifier'))
 
         ResetFile.SetBind(self.Ctrls['StartChat'] .MakeBind([notifier, 'show chat', 'startchat']))
         ResetFile.SetBind(self.Ctrls['SlashChat'] .MakeBind([notifier, 'show chat', 'slashchat']))
@@ -295,7 +295,7 @@ class General(Page):
 
     ### EVENT HANDLERS
     def OnPickAlignment(self, evt = None) -> None:
-        alignment = self.GetState('Alignment')
+        alignment = str(self.GetState('Alignment'))
         if not alignment:
             alignment = 'Hero'
             self.SetState('Alignment', 'Hero')
@@ -394,7 +394,7 @@ class General(Page):
                 pickedPools.append(val)
 
         for pickername in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
-            curval = self.GetState(pickername)
+            curval = str(self.GetState(pickername))
             picker = c[pickername]
             # rebuild the base list
             poolcontents = sorted(GameData.PoolPowers)

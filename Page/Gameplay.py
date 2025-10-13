@@ -297,7 +297,7 @@ class Gameplay(Page):
         if evt: evt.Skip()
 
     def OnKeybindProfilePicker(self, evt = None) -> None:
-        pickerval = self.GetState('KBProfile')
+        pickerval = str(self.GetState('KBProfile'))
 
         # Fill in the disabled / default keys on the powertray slots with their
         # default values, basically informationally.
@@ -421,7 +421,7 @@ class Gameplay(Page):
                     ResetFile.SetBind(self.Ctrls[f'TeamSelect{i}'].MakeBind(f"{selmethod} {i - selnummod}"))
 
             if self.GetState('RemoveDefaultTeamBinds'):
-                for i, key in enumerate(DefaultTeamBinds[self.GetState('KBProfile')]):
+                for i, key in enumerate(DefaultTeamBinds[str(self.GetState('KBProfile'))]):
                     if not self.Profile.CheckConflict(f"TeamSelect{i}", ''):
                         ResetFile.SetBind(KeyBind(key, '', self, 'nop'))
 
@@ -446,7 +446,7 @@ class Gameplay(Page):
 
     def CheckForDefaultKeyToClear(self, traynum, button) -> None:
         if not self.GetState("KeepExisting"):
-            if KBProfile := self.KeybindProfiles.get(self.GetState('KBProfile')):
+            if KBProfile := self.KeybindProfiles.get(str(self.GetState('KBProfile'))):
                 if DefModKey := KBProfile[traynum]:
                     DefKey = f"{DefModKey}+{button}"
                     if self.GetState(f"Tray{traynum}Button{button}") != DefKey and not self.Profile.CheckConflict(DefKey, ''):

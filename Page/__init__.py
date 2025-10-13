@@ -37,7 +37,7 @@ class Page(wx.ScrolledWindow):
         self.Ctrls : dict[str, bcControl] = {}
         self.Init  : dict[str, Any]       = {}
 
-    def GetState(self, key) -> str|bool:
+    def GetState(self, key):
         control = self.Ctrls.get(key)
         if not control:
             wx.LogWarning(f"Unknown control in GetState: {key} - this is a bug.")

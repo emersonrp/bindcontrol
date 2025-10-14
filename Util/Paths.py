@@ -17,7 +17,7 @@ def CheckProfileForBindsDir(config, bindsdir) -> str:
 def GetProfileFileForName(config, name) -> Path:
     return Path(config.Read('ProfilePath')) / f"{name}.bcp"
 
-# get all profile binds dirs as a list of strings.
+# get all profile binds dirs as a list of directory names (not full paths)
 #
 # Might want to case-mangle these in calling code if checking against them, but
 # let's not do it inside here in case we want to touch them directly on Linux

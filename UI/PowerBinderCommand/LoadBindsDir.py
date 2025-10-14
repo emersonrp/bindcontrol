@@ -1,24 +1,31 @@
 import wx
 from pathlib import PureWindowsPath
 from UI.PowerBinderCommand import PowerBinderCommand
-from Util.Paths import GetAllProfileBindsDirs
+from Util.Paths import GetAllProfileBindsDirs, CheckProfileForBindsDir
 
 ####### Load Binds Directory
 class LoadBindsDir(PowerBinderCommand):
-    Name = "Load Binds Directory"
+    Name = "Load Different Profile's Binds"
     Menu = "Misc"
+    DeprecatedName = "Load Binds Directory"
 
     def BuildUI(self, dialog) -> wx.BoxSizer:
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
         lbSizer = wx.BoxSizer(wx.HORIZONTAL)
-        lbText = wx.StaticText(dialog, label = "Load Binds Directory:")
-        lbText.SetToolTip('Select an existing profile directory from which to load a set of bind files')
+        lbText = wx.StaticText(dialog, label = "Load Different Profile's Binds:")
+        lbText.SetToolTip('Select an existing profile from which to load a set of bind files')
         lbSizer.Add(lbText, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
 
+        self.NameToDir = {}
+        self.DirToName = {}
         profiles = GetAllProfileBindsDirs(wx.ConfigBase.Get())
+        for p in profiles:
+            if bd := CheckProfileForBindsDir(wx.ConfigBase.Get(), p):
+                self.NameToDir[bd] = p
+                self.DirToName[p] = bd
 
-        self.lbPicker = wx.Choice(dialog, choices = sorted(profiles))
+        self.lbPicker = wx.Choice(dialog, choices = sorted(self.NameToDir.keys(), key = str.casefold))
         self.lbPicker.SetToolTip('Select an existing profile directory from which to load a set of bind files')
         lbSizer.Add(self.lbPicker, 1, wx.ALIGN_CENTER_VERTICAL)
 
@@ -46,14 +53,18 @@ class LoadBindsDir(PowerBinderCommand):
         if self.lbResetCB.GetValue():
             reset = "keybind_reset$$"
 
-        resetfilepath = PureWindowsPath(bindpath) / self.lbPicker.GetString(self.lbPicker.GetSelection()) / 'reset.txt'
+        pname = self.lbPicker.GetStringSelection()
+        resetfilepath = PureWindowsPath(bindpath) / self.NameToDir[pname] / 'reset.txt'
         return reset + 'bindloadfile ' + str(resetfilepath)
 
+    # for backwards compatibility, we store the dir, not the name
     def Serialize(self) -> dict:
-        return {'LoadBindProfile' : self.lbPicker.GetString(self.lbPicker.GetSelection()),
-                'ResetKeybinds'   : self.lbResetCB.GetValue(),
-                }
+        return {
+            'LoadBindProfile' : self.NameToDir[self.lbPicker.GetStringSelection()],
+            'ResetKeybinds'   : self.lbResetCB.GetValue(),
+        }
 
     def Deserialize(self, init) -> None:
-        if init.get('LoadBindProfile', ''): self.lbPicker.SetStringSelection(init['LoadBindProfile'])
+        if init.get('LoadBindProfile', ''):
+            self.lbPicker.SetStringSelection(self.DirToName.get(init['LoadBindProfile'], ''))
         self.lbResetCB.SetValue(init.get('ResetKeybinds', False))

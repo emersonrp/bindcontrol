@@ -28,6 +28,7 @@ class ChatCmd(PowerBinderCommand):
         chatCommandSizer = wx.GridBagSizer(5, 5)
         self.chatCommandUseColorsCB = wx.CheckBox(dialog, label = "Use Chat Bubble Colors")
         chatCommandSizer.Add(self.chatCommandUseColorsCB, (0,0), (1,6), flag=wx.ALIGN_CENTER_VERTICAL)
+        self.chatCommandUseColorsCB.Bind(wx.EVT_CHECKBOX, self.OnChatEnableCB)
         # row 1
         self.chatCommandBorderColor = wx.ColourPickerCtrl(dialog, -1)
         chatCommandSizer.Add(wx.StaticText(dialog, label = "Border:"), (1,0), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
@@ -60,7 +61,15 @@ class ChatCmd(PowerBinderCommand):
         self.chatCommandMessage.SetHint('Chat Command Text')
         chatCommandSizer.Add(self.chatCommandMessage, (3,2), (1,4), flag=wx.EXPAND)
 
+        self.OnChatEnableCB()
+
         return chatCommandSizer
+
+    def OnChatEnableCB(self, evt = None):
+        if evt: evt.Skip()
+        self.chatCommandBorderColor.Enable(self.chatCommandUseColorsCB.IsChecked())
+        self.chatCommandBGColor.Enable(self.chatCommandUseColorsCB.IsChecked())
+        self.chatCommandFGColor.Enable(self.chatCommandUseColorsCB.IsChecked())
 
     def MakeBindString(self) -> str:
         duration = self.chatCommandDuration.GetValue()
@@ -114,4 +123,4 @@ class ChatCmd(PowerBinderCommand):
         if init.get('fgcolor'  , '') : self.chatCommandFGColor    .SetColour(init['fgcolor'])
         if init.get('bgcolor'  , '') : self.chatCommandBGColor    .SetColour(init['bgcolor'])
         if init.get('text'     , '') : self.chatCommandMessage.SetValue(init['text'])
-
+        self.OnChatEnableCB()

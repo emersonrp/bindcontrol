@@ -22,5 +22,5 @@ class AFKCmd(PowerBinderCommand):
         return {'message': self.AFKName.GetValue()}
 
     def Deserialize(self, init) -> None:
-        if init['message']:
+        if 'message' in init:
             self.AFKName.SetValue(init['message'])

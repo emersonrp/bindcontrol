@@ -36,6 +36,7 @@ class ChatColorPicker(wx.BoxSizer):
         self.exampleSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.exampleText = wx.StaticText(self.example, style = wx.ALIGN_CENTER_HORIZONTAL,)
         self.exampleText.SetLabelMarkup("<big>  Example Text  </big>")
+        page.Ctrls[f"{prefix}Example"] = self.example
         self.exampleSizer.Add(self.exampleText, 0, wx.ALL, 3)
         self.example.SetSizerAndFit(self.exampleSizer)
         self.onColorChanged()

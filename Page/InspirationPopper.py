@@ -1,4 +1,5 @@
 import wx
+import re
 from typing import Any
 import UI
 import Icon
@@ -24,7 +25,6 @@ class InspirationPopper(Page):
         super().__init__(parent)
 
         self.TabTitle : str = "Inspiration Popper"
-        self.chatPickers : dict[str, ChatColorPicker] = {}
 
         self.Init : dict[str, Any] = {}
 
@@ -68,6 +68,7 @@ class InspirationPopper(Page):
                     chatgroup.append(f"{tab}{order}{Insp}Border")
                     chatgroup.append(f"{tab}{order}{Insp}Background")
                     chatgroup.append(f"{tab}{order}{Insp}Foreground")
+                    chatgroup.append(f"{tab}{order}{Insp}Example")
 
         centeringSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -78,7 +79,7 @@ class InspirationPopper(Page):
 
         self.useCB = wx.CheckBox( useOrderBox.GetStaticBox(), -1, 'Enable Largest-First Binds')
         self.useCB.SetToolTip(wx.ToolTip(
-            'Check this to enable the Inspiration Popper Binds, (largest inspirations used first)'))
+            'Check this to enable the Inspiration Popper Binds (largest inspirations used first)'))
         self.useCB.SetValue(self.Init['EnableInspBinds'])
         self.Ctrls['EnableInspBinds'] = self.useCB
         useOrderBox.Add(self.useCB, 1, wx.ALL, 6)
@@ -86,7 +87,7 @@ class InspirationPopper(Page):
 
         self.useRevCB = wx.CheckBox( useOrderBox.GetStaticBox(), -1, 'Enable Smallest-First Binds')
         self.useRevCB.SetToolTip(wx.ToolTip(
-            'Check this to enable the Reverse Inspiration Popper Binds, (smallest inspirations used first)'))
+            'Check this to enable the Reverse Inspiration Popper Binds (smallest inspirations used first)'))
         self.useRevCB.SetValue(self.Init['EnableRevInspBinds'])
         self.Ctrls['EnableRevInspBinds'] = self.useRevCB
         useOrderBox.Add(self.useRevCB, 1, wx.ALL, 6)
@@ -105,17 +106,17 @@ class InspirationPopper(Page):
 
         self.enableTellsCB = wx.CheckBox( optionsBox.GetStaticBox(), -1, 'Enable self-/tell feedback')
         self.enableTellsCB.SetToolTip(wx.ToolTip(
-            'Check this box to avoid having your toon tell you whenever you pop an inspiration.'))
+            'Check this box to have your toon /tell you whenever you pop an inspiration.'))
         self.enableTellsCB.SetValue(self.Init['EnableTells'])
         self.Ctrls['EnableTells'] = self.enableTellsCB
         optionsBox.Add(self.enableTellsCB, 0, wx.ALL, 6)
         self.enableTellsCB.Bind(wx.EVT_CHECKBOX, self.OnEnableTellCB)
 
         optionButtonBox = wx.BoxSizer(wx.HORIZONTAL)
-        byInspColorButton      = wx.Button(optionsBox.GetStaticBox(), label = "Color-coded")
-        byInspColorButton     .SetToolTip("Reset self-/tell colors according to inspiration type")
+        byInspColorButton = wx.Button(optionsBox.GetStaticBox(), label = "Color-coded")
+        byInspColorButton.SetToolTip("Reset self-/tell colors according to inspiration type")
         optionButtonBox.Add(byInspColorButton,      1, wx.ALL, 10)
-        byInspColorButton     .Bind(wx.EVT_BUTTON, self.OnByInspColorButton)
+        byInspColorButton.Bind(wx.EVT_BUTTON, self.OnByInspColorButton)
 
         optionsBox.Add(optionButtonBox)
 
@@ -170,7 +171,6 @@ class InspirationPopper(Page):
                           'background' : InspData[ltcolor],
                           'text'       : InspData[dkcolor],
                         })
-                    self.chatPickers[f"{tab}{order}{Insp}"] = chatcolorpicker
 
                     rowSet.Add(kblabel,         0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 3)
                     rowSet.Add(keybutton,       0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 3)
@@ -189,16 +189,6 @@ class InspirationPopper(Page):
         self.OnEnableCB()
         self.OnEnableRevCB()
         self.OnEnableTellCB()
-
-    def OnProfileChatColorButton(self, _) -> None:
-        dkcolor = self.Profile.General.GetState('ChatForeground')
-        ltcolor = self.Profile.General.GetState('ChatBackground')
-        for tab in tabs:
-            for Insp in GameData.Inspirations[tab]:
-                for order in ("", "Rev"):
-                    self.Ctrls[f'{tab}{order}{Insp}Border']    .SetColour(dkcolor)
-                    self.Ctrls[f'{tab}{order}{Insp}Background'].SetColour(ltcolor)
-                    self.Ctrls[f'{tab}{order}{Insp}Foreground'].SetColour(dkcolor)
 
     def OnByInspColorButton(self, _) -> None:
         for tab in tabs:
@@ -230,6 +220,13 @@ class InspirationPopper(Page):
         enabled = self.enableTellsCB.IsChecked()
         self.EnableControls(enabled and self.useCB   .IsChecked(), chatcontrols)
         self.EnableControls(enabled and self.useRevCB.IsChecked(), revchatcontrols)
+        # Hide the Example Text boxes if they're not needed
+        for c in chatcontrols:
+            if re.search('Example', c):
+                self.Ctrls[c].Show(enabled and self.useCB.IsChecked())
+        for c in revchatcontrols:
+            if re.search('Example', c):
+                self.Ctrls[c].Show(enabled and self.useRevCB.IsChecked())
 
     def PopulateBindFiles(self) -> bool:
         ResetFile = self.Profile.ResetFile()

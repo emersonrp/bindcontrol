@@ -4,6 +4,7 @@ from UI.PowerBinderCommand import PowerBinderCommand
 class FaceTarget(PowerBinderCommand):
     Name = "Turn to Face Target"
     Menu = "Targeting"
+    UseEditDialog = False
 
     def MakeBindString(self) -> str:
         return 'face'

@@ -55,9 +55,9 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
         * BindControl can create a keybind to rename your pets to match BindControl's config instead of doing it manually in-game
     * By-name pet selection - <i>requires uniquely-named pets</i>
     * Support for multiple alternate Mastermind binds styles:
-        + Simple next-pet / previous-pet binds for quick buffing etc
         + [Classic "Sandolphan" binds](https://wiki.homecomingservers.com/wiki/Mastermind_Numpad_Pet_Controls):
             + Select pets by power level: all, minions, lieutenants, and boss
+            + Select next-pet / previous-pet binds for quick buffing etc
             + Orders for aggressive / defensive / passive stances; attack, follow, go to, and stay, for all or selected pets
             + Pets can give feedback on each order;  chattiness can be toggled via keybind
             + "Bodyguard mode" shortcut -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress - <i>requires uniquely-named pets</i>

@@ -96,32 +96,32 @@ class Main(wx.Frame):
         # "Profile" Menu
         ProfMenu = wx.Menu()
 
-        Profile_new         = ProfMenu.Append(wx.ID_NEW, "&New Profile\tCTRL-N", "Create a new profile")
-        Profile_load        = ProfMenu.Append(wx.ID_OPEN, "&Load Profile...\tCTRL-L", "Load an existing profile")
-        self.Profile_import = ProfMenu.Append(wx.ID_ADD,  "&Import Saved Build...\tCTRL-I", "Import a build file saved from City of Heroes")
-        self.Profile_save   = ProfMenu.Append(wx.ID_SAVE, "&Save Profile\tCTRL-S", "Save the current profile")
-        self.Profile_saveas = ProfMenu.Append(wx.ID_SAVEAS, "Save Profile As...", "Save the current profile under a new filename")
-        self.Profile_close  = ProfMenu.Append(wx.ID_CLOSE, "Close Profile", "Close the current profile")
+        Profile_new                = ProfMenu.Append(wx.ID_NEW        , "&New Profile\tCTRL-N")
+        Profile_load               = ProfMenu.Append(wx.ID_OPEN       , "&Load Profile...\tCTRL-L")
+        self.Profile_import        = ProfMenu.Append(wx.ID_ADD        , "&Import Saved Build...\tCTRL-I")
+        self.Profile_save          = ProfMenu.Append(wx.ID_SAVE       , "&Save Profile\tCTRL-S")
+        self.Profile_saveas        = ProfMenu.Append(wx.ID_SAVEAS     , "Save Profile As...")
+        self.Profile_close         = ProfMenu.Append(wx.ID_CLOSE      , "Close Profile")
         ProfMenu.AppendSeparator()
-        self.Profile_savedefault = ProfMenu.Append(wx.ID_ANY, "Save Profile As Default", "Save the current profile as the default for new profiles")
-        self.Profile_editdefault = ProfMenu.Append(wx.ID_ANY, "Edit Default Profile", "Edit the default profile that gets applied to new profiles")
+        self.Profile_savedefault   = ProfMenu.Append(wx.ID_ANY        , "Save Profile As Default")
+        self.Profile_editdefault   = ProfMenu.Append(wx.ID_ANY        , "Edit Default Profile")
         ProfMenu.AppendSeparator()
-        Profile_preferences = ProfMenu.Append(wx.ID_PREFERENCES, "&Preferences", "Configure BindControl")
-        Profile_exit  = ProfMenu.Append(wx.ID_EXIT)
+        Profile_preferences        = ProfMenu.Append(wx.ID_PREFERENCES, "&Preferences")
+        Profile_exit               = ProfMenu.Append(wx.ID_EXIT)
 
         # "Help" Menu
         HelpMenu = wx.Menu()
 
-        Help_guide    = HelpMenu.Append(wx.ID_ANY , "Getting Started"  , "Getting Started Guide on the BindControl wiki")
-        Help_files    = HelpMenu.Append(wx.ID_ANY , "Output Files"     , "About BindControl's Output Files")
-        Help_bindDirs = HelpMenu.Append(wx.ID_ANY , "Bind Directories" , "Location of each Profile's bind files")
-        Help_license  = HelpMenu.Append(wx.ID_ANY , "License Info"     , "")
-        Help_bugs     = HelpMenu.Append(wx.ID_ANY , "Reporting Bugs"   , "How To Report Bugs In BindControl")
+        Help_guide    = HelpMenu.Append(wx.ID_ANY, "Getting Started")
+        Help_files    = HelpMenu.Append(wx.ID_ANY, "Output Files")
+        Help_bindDirs = HelpMenu.Append(wx.ID_ANY, "Bind Directories")
+        Help_license  = HelpMenu.Append(wx.ID_ANY, "License Info")
+        Help_bugs     = HelpMenu.Append(wx.ID_ANY, "Reporting Bugs")
         Help_about    = HelpMenu.Append(wx.ID_ABOUT)
 
         LogMenu = wx.Menu()
 
-        Log_window = LogMenu.Append(wx.ID_ANY, "Log Window", "Show the log window")
+        Log_window = LogMenu.Append(wx.ID_ANY, "Log Window")
 
         # cram the separate menus into a menubar
         MenuBar = wx.MenuBar()
@@ -133,26 +133,27 @@ class Main(wx.Frame):
         self.SetMenuBar(MenuBar)
 
         # MENUBAR EVENTS
-        self.Bind(wx.EVT_MENU , self.OnProfileNew          , Profile_new)
-        self.Bind(wx.EVT_MENU , self.OnProfileLoad         , Profile_load)
-        self.Bind(wx.EVT_MENU , self.OnProfileImport       , self.Profile_import)
-        self.Bind(wx.EVT_MENU , self.OnProfileSave         , self.Profile_save)
-        self.Bind(wx.EVT_MENU , self.OnProfileSaveAs       , self.Profile_saveas)
-        self.Bind(wx.EVT_MENU , self.OnProfileSaveDefault  , self.Profile_savedefault)
-        self.Bind(wx.EVT_MENU , self.OnProfileEditDefault  , self.Profile_editdefault)
-        self.Bind(wx.EVT_MENU , self.OnProfileClose        , self.Profile_close)
-        self.Bind(wx.EVT_MENU , self.OnMenuPrefsDialog     , Profile_preferences)
-        self.Bind(wx.EVT_MENU , self.OnMenuExitApplication , Profile_exit)
+        self.Bind(wx.EVT_MENU, self.OnProfileNew         , Profile_new)
+        self.Bind(wx.EVT_MENU, self.OnProfileLoad        , Profile_load)
+        self.Bind(wx.EVT_MENU, self.OnProfileImport      , self.Profile_import)
+        self.Bind(wx.EVT_MENU, self.OnProfileSave        , self.Profile_save)
+        self.Bind(wx.EVT_MENU, self.OnProfileSaveAs      , self.Profile_saveas)
+        self.Bind(wx.EVT_MENU, self.OnProfileSaveDefault , self.Profile_savedefault)
+        self.Bind(wx.EVT_MENU, self.OnProfileEditDefault , self.Profile_editdefault)
+        self.Bind(wx.EVT_MENU, self.OnProfileClose       , self.Profile_close)
+        self.Bind(wx.EVT_MENU, self.OnMenuPrefsDialog    , Profile_preferences)
+        self.Bind(wx.EVT_MENU, self.OnMenuExitApplication, Profile_exit)
 
         self.Bind(wx.EVT_MENU, self.OnHelpGettingStarted, Help_guide)
-        self.Bind(wx.EVT_MENU, self.OnHelpFiles, Help_files)
-        self.Bind(wx.EVT_MENU, self.OnHelpBindDirs, Help_bindDirs)
-        self.Bind(wx.EVT_MENU, self.OnHelpLicense, Help_license)
-        self.Bind(wx.EVT_MENU, self.OnHelpBugs, Help_bugs)
-        self.Bind(wx.EVT_MENU, self.OnMenuAboutBox, Help_about)
+        self.Bind(wx.EVT_MENU, self.OnHelpFiles         , Help_files)
+        self.Bind(wx.EVT_MENU, self.OnHelpBindDirs      , Help_bindDirs)
+        self.Bind(wx.EVT_MENU, self.OnHelpLicense       , Help_license)
+        self.Bind(wx.EVT_MENU, self.OnHelpBugs          , Help_bugs)
+        self.Bind(wx.EVT_MENU, self.OnMenuAboutBox      , Help_about)
 
         self.Bind(wx.EVT_MENU, self.OnMenuLogWindow, Log_window)
 
+        # APPLICATION ICON
         AppIcon = wx.IconBundle()
         base_path = Util.Paths.GetRootDirPath()
         filename = base_path / 'icons' / 'BindControl.ico'
@@ -164,20 +165,19 @@ class Main(wx.Frame):
             self.Sizer.Add(self.Logger.InfoBar, 0, wx.EXPAND)
 
         # Bottom Buttons
-        # BUTTONS
         self.BottomButtonPanel = wx.Panel(self)
-        self.ProfDirButton = cgButton(self.BottomButtonPanel, -1, "Set Binds Directory")
+        self.ProfDirButton = cgButton(self.BottomButtonPanel, wx.ID_ANY, "Set Binds Directory")
         self.ProfDirButton.SetToolTip("Configure the directory where this Profile will write bindfiles")
         self.ProfDirButton.DefaultToolTip = "Configure the directory where this Profile will write bindfiles"
-        self.WriteButton = wx.Button(self.BottomButtonPanel, -1, "Write Binds")
+        self.WriteButton = wx.Button(self.BottomButtonPanel, wx.ID_ANY, "Write Binds")
         self.WriteButton.SetToolTip("Write out the bindfiles to the configured binds directory")
-        self.DeleteButton = wx.Button(self.BottomButtonPanel, -1, "Delete All Binds")
+        self.DeleteButton = wx.Button(self.BottomButtonPanel, wx.ID_ANY, "Delete All Binds")
         self.DeleteButton.SetToolTip("Delete all BindControl-managed files in the configured binds directory")
         BottomButtonSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BottomButtonPanel.SetSizer(BottomButtonSizer)
         BottomButtonSizer.Add(self.ProfDirButton, 0, wx.EXPAND)
-        BottomButtonSizer.Add(self.WriteButton, 1, wx.EXPAND)
-        BottomButtonSizer.Add(self.DeleteButton, 0, wx.EXPAND)
+        BottomButtonSizer.Add(self.WriteButton  , 1, wx.EXPAND)
+        BottomButtonSizer.Add(self.DeleteButton , 0, wx.EXPAND)
         self.ProfDirButton.Bind(wx.EVT_BUTTON, self.OnProfDirButton)
         self.WriteButton  .Bind(wx.EVT_BUTTON, self.OnWriteBindsButton)
         self.DeleteButton .Bind(wx.EVT_BUTTON, self.OnDeleteBindsButton)
@@ -244,15 +244,15 @@ class Main(wx.Frame):
         StartupSizer = wx.BoxSizer(wx.VERTICAL)
 
         ButtonSizer = wx.GridSizer(3, 10, 10)
-        newButton  = wx.Button(StartupPanel, -1, "Start New Profile")
+        newButton  = wx.Button(StartupPanel, wx.ID_ANY, "Start New Profile")
         newButton.SetBitmap(GetIcon('UI', 'new_profile'))
         newButton.SetBitmapPosition(wx.TOP)
         newButton.SetToolTip('Start a brand new profile from scratch')
-        loadButton = wx.Button(StartupPanel, -1, "Load Existing Profile")
+        loadButton = wx.Button(StartupPanel, wx.ID_ANY, "Load Existing Profile")
         loadButton.SetBitmap(GetIcon('UI', 'load_profile'))
         loadButton.SetBitmapPosition(wx.TOP)
         loadButton.SetToolTip('Load an existing BindControl Profile file')
-        importButton = wx.Button(StartupPanel, -1, "Import Build File")
+        importButton = wx.Button(StartupPanel, wx.ID_ANY, "Import Build File")
         importButton.SetBitmap(GetIcon('UI', 'import_build'))
         importButton.SetBitmapPosition(wx.TOP)
         importButton.SetToolTip('Import a build file exported from City of Heroes')
@@ -459,12 +459,12 @@ class Main(wx.Frame):
 
     def OnProfDirButton(self, _ = None) -> None:
         if not self.Profile: return # should try not to get here in the first place
-        ProfDirDialog = wx.Dialog(self, -1, "Set Binds Directory")
+        ProfDirDialog = wx.Dialog(self, wx.ID_ANY, "Set Binds Directory")
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         ProfDirDialog.SetSizer(sizer)
 
-        sizer.Add(wx.StaticText(ProfDirDialog, -1, "Select the directory where this profile will write its bindfiles:"), 1, wx.EXPAND|wx.ALL, 10)
+        sizer.Add(wx.StaticText(ProfDirDialog, wx.ID_ANY, "Select the directory where this profile will write its bindfiles:"), 1, wx.EXPAND|wx.ALL, 10)
 
         config = wx.ConfigBase.Get()
         bindpath = config.Read('BindPath')
@@ -472,15 +472,15 @@ class Main(wx.Frame):
         if bindpath[-1:] == separator: separator = ''
 
         dirSizer = wx.BoxSizer(wx.HORIZONTAL)
-        dirSizer.Add(wx.StaticText(ProfDirDialog, -1,
+        dirSizer.Add(wx.StaticText(ProfDirDialog, wx.ID_ANY,
                     f"{bindpath}{separator}"), 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
-        PathText = cgTextCtrl(ProfDirDialog, -1)
+        PathText = cgTextCtrl(ProfDirDialog)
         dirSizer.Add(PathText, 1, wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 10)
         PathText.Bind(wx.EVT_TEXT, self.OnPathTextChanged)
 
         sizer.Add(dirSizer, 1, wx.EXPAND)
 
-        sizer.Add(wx.StaticText(ProfDirDialog, -1, "Changing this value will automatically save the Profile,\nincluding any other changes you have made."), 1, wx.EXPAND|wx.ALL, 10)
+        sizer.Add(wx.StaticText(ProfDirDialog, wx.ID_ANY, "Changing this value will automatically save the Profile,\nincluding any other changes you have made."), 1, wx.EXPAND|wx.ALL, 10)
 
         buttonsizer = ProfDirDialog.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL)
 

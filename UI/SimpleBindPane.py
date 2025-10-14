@@ -37,7 +37,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
         powerbinderdata = self.Init.get('PowerBinderDlg', {})
 
-        BindSizer.Add(wx.StaticText(pane, -1, "Bind Contents:"), 0, wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(wx.StaticText(pane, label = "Bind Contents:"), 0, wx.ALIGN_CENTER_VERTICAL)
         pb = PowerBinder(pane, powerbinderdata)
         pb.ChangeValue(self.Init.get('Contents', ''))
         pb.Bind(wx.EVT_TEXT, self.onContentsChanged)
@@ -45,14 +45,14 @@ class SimpleBindPane(CustomBindPaneParent):
         self.SetCtrl('PowerBinder', pb)
         BindSizer.Add(pb, 1, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
 
-        BindKeyCtrl = bcKeyButton(pane, -1, {
+        BindKeyCtrl = bcKeyButton(pane, init = {
             'CtlName' : self.MakeCtrlName("BindKey"),
             'Page'    : page,
             'Key'     : self.Init.get('Key', ''),
         })
         BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
-        BindSizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
+        BindSizer.Add(wx.StaticText(pane, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(BindKeyCtrl,                          0, wx.ALIGN_CENTER_VERTICAL)
         self.SetCtrl('BindKey', BindKeyCtrl)
         UI.Labels[BindKeyCtrl.CtlName] = f'Simple Bind "{self.Title}"'

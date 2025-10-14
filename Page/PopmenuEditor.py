@@ -1004,7 +1004,7 @@ class PELockedOption(PEMenuItem):
             gridsizer.Add(self.Ctrls[ctrl], pos = (row, 1), span = span, flag = wx.EXPAND)
             row = row + 1
 
-        IconButton = wx.BitmapButton(staticbox, -1, bitmap = GetIcon('UI', 'search'))
+        IconButton = wx.BitmapButton(staticbox, bitmap = GetIcon('UI', 'search'))
         gridsizer.Add(IconButton, pos = (2,2))
         IconButton.Bind(wx.EVT_BUTTON, partial(self.LaunchBrowser, 'https://homecoming.wiki/wiki/Macro_image_(Slash_Command)'))
 
@@ -1025,7 +1025,7 @@ class PELockedOption(PEMenuItem):
             self.Ctrls[ctrl] = cgTextCtrl(staticbox, size = (400, -1), value = self.Data.get(ctrl, ''))
             self.Ctrls[ctrl].Bind(wx.EVT_TEXT, self.CheckEditorFieldsForError)
             gridsizer.Add(self.Ctrls[ctrl], pos = (row, 1), flag = wx.EXPAND)
-            srchbutton = wx.BitmapButton(staticbox, -1, bitmap = GetIcon('UI', 'search'))
+            srchbutton = wx.BitmapButton(staticbox, bitmap = GetIcon('UI', 'search'))
             gridsizer.Add(srchbutton, pos = (row,2))
             srchbutton.Bind(wx.EVT_BUTTON, partial(self.LaunchBrowser, URLs[ctrl]))
             row = row + 1

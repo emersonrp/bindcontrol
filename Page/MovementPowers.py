@@ -159,7 +159,7 @@ class MovementPowers(Page):
         keySizer.Add(fwLabel, wx.GBPosition(0,2), wx.GBSpan(1,2), wx.ALIGN_CENTER)
         keySizer.Add(trLabel, wx.GBPosition(0,4), wx.GBSpan(1,2), wx.ALIGN_CENTER)
 
-        tleftButton = bcKeyButton(staticbox, -1, )
+        tleftButton = bcKeyButton(staticbox)
         tleftButton.SetLabel(self.Init['TurnLeft'])
         self.Ctrls['TurnLeft'] = tleftButton
         tleftButton.CtlName = 'TurnLeft'
@@ -168,7 +168,7 @@ class MovementPowers(Page):
         tleftButton.Key = self.Init['TurnLeft']
         keySizer.Add(tleftButton, wx.GBPosition(1,0), wx.GBSpan(1,2))
 
-        forwardButton = bcKeyButton(staticbox, -1, )
+        forwardButton = bcKeyButton(staticbox)
         self.Ctrls['Forward'] = forwardButton
         forwardButton.SetLabel(self.Init['Forward'])
         forwardButton.CtlName = 'Forward'
@@ -177,7 +177,7 @@ class MovementPowers(Page):
         forwardButton.Key = self.Init['Forward']
         keySizer.Add(forwardButton, wx.GBPosition(1,2), wx.GBSpan(1,2))
 
-        trightButton = bcKeyButton(staticbox, -1, )
+        trightButton = bcKeyButton(staticbox)
         self.Ctrls['TurnRight'] = trightButton
         trightButton.SetLabel(self.Init['TurnRight'])
         trightButton.CtlName = 'TurnRight'
@@ -190,7 +190,7 @@ class MovementPowers(Page):
         backLabel = wx.StaticText(staticbox, label = 'Back')
         rightLabel = wx.StaticText(staticbox, label = 'Right')
 
-        leftButton = bcKeyButton(staticbox, -1, )
+        leftButton = bcKeyButton(staticbox)
         self.Ctrls['Left'] = leftButton
         leftButton.SetLabel(self.Init['Left'])
         leftButton.CtlName = 'Left'
@@ -199,7 +199,7 @@ class MovementPowers(Page):
         leftButton.Key = self.Init['Left']
         keySizer.Add(leftButton, wx.GBPosition(2,0), wx.GBSpan(1,2))
 
-        backButton = bcKeyButton(staticbox, -1, )
+        backButton = bcKeyButton(staticbox)
         backButton.SetLabel(self.Init['Back'])
         self.Ctrls['Back'] = backButton
         backButton.CtlName = 'Back'
@@ -208,7 +208,7 @@ class MovementPowers(Page):
         backButton.Key = self.Init['Back']
         keySizer.Add(backButton, wx.GBPosition(2,2), wx.GBSpan(1,2))
 
-        rightButton = bcKeyButton(staticbox, -1, )
+        rightButton = bcKeyButton(staticbox)
         self.Ctrls['Right'] = rightButton
         rightButton.SetLabel(self.Init['Right'])
         rightButton.CtlName = 'Right'
@@ -227,7 +227,7 @@ class MovementPowers(Page):
         keySizer.Add(downLabel, wx.GBPosition(4,0), wx.GBSpan(1,2), wx.ALIGN_CENTER|wx.TOP, 16)
         keySizer.Add(upLabel,   wx.GBPosition(4,2), wx.GBSpan(1,4), wx.ALIGN_CENTER|wx.TOP, 16)
 
-        downButton = bcKeyButton(staticbox, -1, )
+        downButton = bcKeyButton(staticbox)
         self.Ctrls['Down'] = downButton
         downButton.SetLabel(self.Init['Down'])
         downButton.CtlName = 'Down'
@@ -236,7 +236,7 @@ class MovementPowers(Page):
         downButton.Key = self.Init['Down']
         keySizer.Add(downButton, wx.GBPosition(5,0), wx.GBSpan(1,2), wx.EXPAND)
 
-        upButton = bcKeyButton(staticbox, -1, )
+        upButton = bcKeyButton(staticbox)
         self.Ctrls['Up'] = upButton
         upButton.SetLabel(self.Init['Up'])
         upButton.CtlName = 'Up'
@@ -251,7 +251,7 @@ class MovementPowers(Page):
         keySizer.Add(autoRunLabel, wx.GBPosition(6,1), wx.GBSpan(1,2), wx.ALIGN_CENTER)
         keySizer.Add(followLabel,  wx.GBPosition(6,3), wx.GBSpan(1,2), wx.ALIGN_CENTER)
 
-        autoRunButton = bcKeyButton(staticbox, -1, )
+        autoRunButton = bcKeyButton(staticbox)
         self.Ctrls['AutoRun'] = autoRunButton
         autoRunButton.SetLabel(self.Init['AutoRun'])
         autoRunButton.CtlName = 'AutoRun'
@@ -260,7 +260,7 @@ class MovementPowers(Page):
         autoRunButton.Key = self.Init['AutoRun']
         keySizer.Add(autoRunButton, wx.GBPosition(7,1), wx.GBSpan(1,2), wx.EXPAND)
 
-        followButton = bcKeyButton(staticbox, -1, )
+        followButton = bcKeyButton(staticbox)
         self.Ctrls['Follow'] = followButton
         followButton.SetLabel(self.Init['Follow'])
         followButton.CtlName = 'Follow'
@@ -326,7 +326,7 @@ class MovementPowers(Page):
         self.tempSizer.AddControl(ctlName = 'TempToggle', ctlType = 'keybutton',
                                   tooltip = "Select the key to use to toggle the chosen temp travel power")
         self.Ctrls['TempToggle'].Bind(EVT_KEY_CHANGED, self.OnTempChanged)
-        self.TempTravelPowerLabel = wx.StaticText(self.tempSizer.GetStaticBox(), wx.ID_ANY, "Temp Travel Power:", style = wx.ALIGN_RIGHT)
+        self.TempTravelPowerLabel = wx.StaticText(self.tempSizer.GetStaticBox(), label = "Temp Travel Power:", style = wx.ALIGN_RIGHT)
         self.TempTravelPowerLabel.SetToolTip('Select the temporary travel power to toggle using the keybind')
         self.tempSizer.InnerSizer.Add(self.TempTravelPowerLabel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
 

@@ -36,7 +36,7 @@ class PowerBinderCommand:
 
 class PowerBinderEditDialog(wx.Dialog):
     def __init__(self, pbc, dialog) -> None:
-        super().__init__(dialog, -1, "Edit Command", style = wx.DEFAULT_DIALOG_STYLE)
+        super().__init__(dialog, title = "Edit Command", style = wx.DEFAULT_DIALOG_STYLE)
 
         outerSizer = wx.BoxSizer(wx.VERTICAL)
 

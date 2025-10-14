@@ -9,7 +9,7 @@ class WindowSaveLoadCmd(PowerBinderCommand):
     def BuildUI(self, dialog) -> wx.BoxSizer:
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.CommandChoice = wx.Choice(dialog, -1, choices = [
+        self.CommandChoice = wx.Choice(dialog, choices = [
             "Save Window Settings to Specified File",
             "Load Window Settings from Specified File",
             "Save Window Settings to wdw.txt",
@@ -19,7 +19,7 @@ class WindowSaveLoadCmd(PowerBinderCommand):
         self.CommandChoice.Bind(wx.EVT_CHOICE, self.OnCommandChoice)
         sizer.Add(self.CommandChoice, 0, wx.ALL, 5)
 
-        self.FilePath = wx.TextCtrl(dialog, -1, size = wx.Size(400, -1),
+        self.FilePath = wx.TextCtrl(dialog, size = wx.Size(400, -1),
             value = str(self.Profile.GameBindsDir() / 'windows.txt'))
         sizer.Add(self.FilePath, 0, wx.ALL, 5)
 

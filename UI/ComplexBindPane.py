@@ -35,7 +35,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
         self.BindSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BindStepSizer = wx.BoxSizer(wx.VERTICAL)
-        AddBindStepButton = wx.Button(pane, -1, "Add Step")
+        AddBindStepButton = wx.Button(pane, label = "Add Step")
         AddBindStepButton.Bind(wx.EVT_BUTTON, self.onAddStepButton)
         self.BindStepSizer.Add(AddBindStepButton, 0, wx.TOP, 10)
         if self.Init.get('Steps', ''):
@@ -46,7 +46,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
         self.BindSizer.Add (self.BindStepSizer, 1, wx.EXPAND)
 
-        BindKeyCtrl = bcKeyButton(pane, -1, {
+        BindKeyCtrl = bcKeyButton(pane, init = {
             'CtlName' : self.MakeCtrlName('BindKey'),
             'Page'    : page,
             'Key'     : self.Init.get('Key', ''),
@@ -54,7 +54,7 @@ class ComplexBindPane(CustomBindPaneParent):
         BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
         BindKeySizer = wx.BoxSizer(wx.HORIZONTAL)
-        BindKeySizer.Add(wx.StaticText(pane, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
+        BindKeySizer.Add(wx.StaticText(pane, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindKeySizer.Add(BindKeyCtrl,                          0)
         self.BindSizer.Add(BindKeySizer, 0, wx.LEFT|wx.RIGHT, 10)
         self.SetCtrl('BindKey', BindKeyCtrl)
@@ -210,7 +210,7 @@ class BindStep(wx.Panel):
 
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        StepLabel = wx.StaticText(self, -1, f"Step {stepNumber}:")
+        StepLabel = wx.StaticText(self, label = f"Step {stepNumber}:")
         self.StepLabel = StepLabel
         sizer.Add(StepLabel, 0, wx.ALIGN_CENTER_VERTICAL)
 
@@ -220,22 +220,22 @@ class BindStep(wx.Panel):
         self.PowerBinder.Bind(wx.EVT_TEXT, parent.onContentsChanged)
         sizer.Add(self.PowerBinder, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
 
-        self.moveUpButton = wx.Button(self, -1, '\u25B2', size = wx.Size(40, -1))
+        self.moveUpButton = wx.Button(self, label = '\u25B2', size = wx.Size(40, -1))
         self.moveUpButton.Bind(wx.EVT_BUTTON, parent.onMoveUpButton)
         self.moveUpButton.SetToolTip('Move step up')
         sizer.Add(self.moveUpButton, 0)
 
-        self.moveDownButton = wx.Button(self, -1, '\u25BC', size = wx.Size(40, -1))
+        self.moveDownButton = wx.Button(self, label = '\u25BC', size = wx.Size(40, -1))
         self.moveDownButton.Bind(wx.EVT_BUTTON, parent.onMoveDownButton)
         self.moveDownButton.SetToolTip('Move step down')
         sizer.Add(self.moveDownButton, 0)
 
-        self.dupeButton = wx.BitmapButton(self, -1, bitmap = GetIcon('UI', 'copy'))
+        self.dupeButton = wx.BitmapButton(self, bitmap = GetIcon('UI', 'copy'))
         self.dupeButton.Bind(wx.EVT_BUTTON, parent.onDupeButton)
         self.dupeButton.SetToolTip('Duplicate step')
         sizer.Add(self.dupeButton, 0)
 
-        self.delButton = wx.BitmapButton(self, -1, bitmap = GetIcon('UI', 'delete'))
+        self.delButton = wx.BitmapButton(self, bitmap = GetIcon('UI', 'delete'))
         self.delButton.SetForegroundColour(wx.RED)
         self.delButton.Bind(wx.EVT_BUTTON, parent.onDelButton)
         self.delButton.SetToolTip('Delete step')

@@ -13,7 +13,7 @@ class UseInspByNameCmd(PowerBinderCommand):
 
     def BuildUI(self, dialog) -> wx.BoxSizer:
         useInspByNameSizer = wx.BoxSizer(wx.HORIZONTAL)
-        useInspByNameSizer.Add(wx.StaticText(dialog, -1, "Inspiration:"), 0,
+        useInspByNameSizer.Add(wx.StaticText(dialog, label = "Inspiration:"), 0,
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         self.useInspByNameModeChoice = BitmapComboBox(dialog, style = wx.CB_READONLY)
         for _, types in GameData.Inspirations.items():

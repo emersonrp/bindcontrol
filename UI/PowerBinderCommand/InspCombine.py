@@ -13,7 +13,7 @@ class InspCombine(PowerBinderCommand):
     def BuildUI(self, dialog) -> wx.FlexGridSizer:
         inspCombineSizer = wx.FlexGridSizer(2, 2, 5)
 
-        inspCombineSizer.Add(wx.StaticText(dialog, -1, "Combine 3:"), 0,
+        inspCombineSizer.Add(wx.StaticText(dialog, label = "Combine 3:"), 0,
                 wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT|wx.RIGHT, 4)
         self.inspCombineSource = BitmapComboBox(dialog, style = wx.CB_READONLY)
         self.inspCombineSource.SetMinSize(wx.Size(350,-1))
@@ -26,7 +26,7 @@ class InspCombine(PowerBinderCommand):
         self.inspCombineSource.SetSelection(0)
         inspCombineSizer.Add(self.inspCombineSource, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL)
 
-        inspCombineSizer.Add(wx.StaticText(dialog, -1, "Into 1:"), 0,
+        inspCombineSizer.Add(wx.StaticText(dialog, label = "Into 1:"), 0,
                 wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT|wx.RIGHT, 4)
         self.inspCombineTarget = BitmapComboBox(dialog, style = wx.CB_READONLY)
         self.inspCombineTarget.SetMinSize(wx.Size(350,-1))

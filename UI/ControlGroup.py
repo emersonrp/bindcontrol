@@ -70,10 +70,10 @@ class ControlGroup(wx.StaticBoxSizer):
 
         label = label or UI.Labels.get(ctlName, ctlName)
         if not noLabel:
-            CtlLabel = STClass(CtlParent, -1, label + ':')
+            CtlLabel = STClass(CtlParent, label = label + ':')
 
         if ctlType == ('keybutton'):
-            control = cgbcKeyButton( CtlParent, -1,)
+            control = cgbcKeyButton(CtlParent)
             control.SetLabel(Init[ctlName])
             # push context onto the button, we'll thank me later
             control.CtlName = ctlName
@@ -81,8 +81,11 @@ class ControlGroup(wx.StaticBoxSizer):
 
         elif (ctlType == 'combo') or (ctlType == "combobox"):
             control = cgComboBox(
-                CtlParent, -1, Init[ctlName], size = size,
-                choices = contents or (), style = wx.CB_READONLY)
+                CtlParent,
+                value = Init[ctlName],
+                size = size,
+                choices = contents or (),
+                style = wx.CB_READONLY)
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback)
 
@@ -93,9 +96,11 @@ class ControlGroup(wx.StaticBoxSizer):
                 choices.append(c[0])
                 bitmaps.append(c[1])
             control = cgBMComboBox(
-                CtlParent, -1, '',
+                CtlParent,
+                value = '',
                 style = wx.CB_READONLY,
-                choices = choices, size = size,
+                choices = choices,
+                size = size,
             )
             if callback:
                 control.Bind(wx.EVT_COMBOBOX, callback)
@@ -108,27 +113,33 @@ class ControlGroup(wx.StaticBoxSizer):
                 control.SetSelection(index)
 
         elif ctlType == ('text'):
-            control = cgTextCtrl(CtlParent, -1, Init[ctlName], size = size)
+            control = cgTextCtrl(CtlParent,
+                                 value = Init[ctlName],
+                                 size = size)
 
         elif ctlType == ('choice'):
             contents = contents if contents else []
-            control = cgChoice(CtlParent, -1, choices = contents, size = size)
+            control = cgChoice(CtlParent, choices = contents, size = size)
             control.SetStringSelection(Init[ctlName])
             if callback:
                 control.Bind(wx.EVT_CHOICE, callback)
 
         elif ctlType == ('statictext'):
-            control = cgStaticText(CtlParent, -1, Init.get(ctlName, ''), size = size)
+            control = cgStaticText(CtlParent,
+                                   value = Init.get(ctlName, ''),
+                                   size = size)
 
         elif ctlType == ('checkbox'):
-            control = cgCheckBox(CtlParent, -1, contents, size = size)
+            control = cgCheckBox(CtlParent,
+                                 label = contents,
+                                 size = size)
             control.SetValue(bool(Init.get(ctlName, False)))
             padding = 6
             if callback:
                 control.Bind(wx.EVT_CHECKBOX, callback)
 
         elif ctlType == ('spinbox'):
-            control = cgSpinCtrl(CtlParent, -1, size = size)
+            control = cgSpinCtrl(CtlParent, size = size)
             control.SetValue(Init[ctlName])
             control.SetRange(*contents)
 
@@ -139,10 +150,17 @@ class ControlGroup(wx.StaticBoxSizer):
 
         elif ctlType == ('dirpicker'):
             control = cgDirPickerCtrl(
-                CtlParent, -1, Init[ctlName], Init[ctlName], size = size,
+                CtlParent,
+                message = Init[ctlName],
+                size = size,
             )
+
         elif ctlType == ('colorpicker'):
-            control = cgColourPickerCtrl( CtlParent, -1, contents, size = (30,30))
+            control = cgColourPickerCtrl(
+                CtlParent,
+                colour = contents,
+                size = (30,30),
+            )
 
         else:
             raise Exception(f"Got a ctlType in ControlGroup that I don't know: {ctlType}.  This is a bug.")

@@ -10,11 +10,11 @@ class SGModeCmd(PowerBinderCommand):
     def BuildUI(self, dialog) -> wx.BoxSizer:
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
         sgmodeSizer = wx.BoxSizer(wx.HORIZONTAL)
-        sgmodeSizer.Add(wx.StaticText(dialog, -1, "Supergroup Mode:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
+        sgmodeSizer.Add(wx.StaticText(dialog, label = "Supergroup Mode:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
 
-        self.sgmodeToggleRB = wx.RadioButton(dialog, -1, "Toggle", style = wx.RB_GROUP)
-        self.sgmodeOnRB     = wx.RadioButton(dialog, -1, "On")
-        self.sgmodeOffRB    = wx.RadioButton(dialog, -1, "Off")
+        self.sgmodeToggleRB = wx.RadioButton(dialog, label =  "Toggle", style = wx.RB_GROUP)
+        self.sgmodeOnRB     = wx.RadioButton(dialog, label =  "On")
+        self.sgmodeOffRB    = wx.RadioButton(dialog, label =  "Off")
 
         sgmodeSizer.Add(self.sgmodeToggleRB, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
         sgmodeSizer.Add(self.sgmodeOnRB, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)

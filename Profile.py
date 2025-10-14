@@ -603,7 +603,7 @@ class WriteDoneDialog(wx.Dialog):
 
         ### helpful copyable /blf text
         blfSizer = wx.BoxSizer(wx.HORIZONTAL)
-        textCtrl = wx.TextCtrl(self, id = wx.ID_ANY,
+        textCtrl = wx.TextCtrl(self,
                        style = wx.TE_READONLY|wx.TE_CENTER,
                        value = "/bindloadfile " + str(parent.GameBindsDir() / "reset.txt")
         )
@@ -627,7 +627,7 @@ class WriteDoneDialog(wx.Dialog):
         sizer.Add(blfSizer, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
         ### "Files Written" list
-        fileslist = wx.TextCtrl(self, id = wx.ID_ANY, size = wx.Size(-1, 150),
+        fileslist = wx.TextCtrl(self, size = wx.Size(-1, 150),
                                 value = "reset.txt\n", style = wx.TE_READONLY|wx.TE_MULTILINE)
         for filename in sorted(parent.BindFiles.keys()):
             if filename == "reset.txt": continue
@@ -639,7 +639,7 @@ class WriteDoneDialog(wx.Dialog):
 
         fileslist.SetInsertionPoint(0)
 
-        sizer.Add(wx.StaticText(self, -1, label = "Files written:"), 0, wx.TOP|wx.RIGHT|wx.LEFT, 10)
+        sizer.Add(wx.StaticText(self, label = "Files written:"), 0, wx.TOP|wx.RIGHT|wx.LEFT, 10)
         sizer.Add(fileslist, 0, wx.ALL|wx.EXPAND, 10)
 
         sizer.Add(self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10)
@@ -670,10 +670,7 @@ class DeleteDoneDialog(wx.Dialog):
                 ), style = wx.ALIGN_CENTER),
             1, wx.EXPAND|wx.ALL, 10
         )
-        textCtrl = wx.TextCtrl(self, id = wx.ID_ANY,
-                       style = wx.TE_READONLY|wx.TE_CENTER,
-                       value = "/keybind_reset",
-        )
+        textCtrl = wx.TextCtrl(self, style = wx.TE_READONLY|wx.TE_CENTER, value = "/keybind_reset",)
         textCtrl.SetFont(
             wx.Font(10, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = 'Courier')
         )

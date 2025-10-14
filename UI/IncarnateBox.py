@@ -8,6 +8,7 @@ import re
 from Icon import GetIcon,GetIconBitmap
 from Util.Incarnate import Rarities, Aliases, SlotData
 
+browserBoxSize = wx.Size(400, 300)
 class IncarnateBox(wx.StaticBoxSizer):
     def __init__(self, parent, server) -> None:
         super().__init__(wx.HORIZONTAL, parent, 'Incarnate Powers')
@@ -86,7 +87,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
         setattr(self.IncIcon, 'Picker', self)
         self.IncIcon.Bind(wx.EVT_BUTTON, self.OnButtonPress)
         self.IncIcon.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
-        self.IncName = wx.StaticText(staticbox, wx.ID_ANY, style=wx.ALIGN_RIGHT, size=wx.Size(310, -1))
+        self.IncName = wx.StaticText(staticbox, style=wx.ALIGN_RIGHT, size=wx.Size(310, -1))
 
         hsizer.Add(self.IncName, 1, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 6)
         hsizer.Add(self.IncIcon, 0, wx.ALIGN_CENTER_VERTICAL)
@@ -118,10 +119,9 @@ class IncarnatePicker(wx.StaticBoxSizer):
         evt.Skip()
 
 class IncarnateBrowserList(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
-    defaultSize = wx.Size(250, -1)
-    def __init__(self, parent, ID = -1, pos = wx.DefaultPosition,
-                 size = defaultSize, style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL) -> None:
-        super().__init__(parent, ID, pos, size, style)
+    def __init__(self, parent, pos = wx.DefaultPosition, size = browserBoxSize,
+                 style = wx.LC_REPORT|wx.LC_NO_HEADER|wx.LC_SINGLE_SEL) -> None:
+        super().__init__(parent, pos = pos, size = size, style = style)
         listmix.ListCtrlAutoWidthMixin.__init__(self)
 
         self.IconFilenames = []
@@ -131,12 +131,11 @@ class IncarnateBrowser(wx.Dialog):
         super().__init__(None, title = f"{picker.Slot} slot")
         self.Picker = picker
 
-        boxsize = wx.Size(400, 300)
         browserSizer = wx.BoxSizer(wx.VERTICAL)
 
         listSizer = wx.GridSizer(3)
 
-        self.TypeList = IncarnateBrowserList(self, size = boxsize)
+        self.TypeList = IncarnateBrowserList(self)
         self.TypeList.AppendColumn('')
         self.TypeList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onPickType)
         typeImgList = wx.ImageList(32,32)
@@ -152,12 +151,12 @@ class IncarnateBrowser(wx.Dialog):
         self.TypeList.InsertItem(nextentry, "Disable Slot", nextentry)
         listSizer.Add(self.TypeList, 1, wx.EXPAND)
 
-        self.LevelList = IncarnateBrowserList(self, size = boxsize)
+        self.LevelList = IncarnateBrowserList(self)
         self.LevelList.AppendColumn('')
         self.LevelList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onPickLevel)
         listSizer.Add(self.LevelList, 1, wx.EXPAND)
 
-        self.IncDetails = wx.html.HtmlWindow(self, size = boxsize)
+        self.IncDetails = wx.html.HtmlWindow(self, size = browserBoxSize)
         listSizer.Add(self.IncDetails, 1, wx.EXPAND)
 
         browserSizer.Add(listSizer, 1, wx.EXPAND|wx.ALL, 10)

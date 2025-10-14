@@ -17,46 +17,46 @@ class UsePowerCmd(PowerBinderCommand):
 
         server = self.Profile.Server()
 
-        self.UsePowerSizer.Add(wx.StaticText(dialog, -1, "Method:"), flag = wx.ALIGN_CENTER_VERTICAL)
+        self.UsePowerSizer.Add(wx.StaticText(dialog, label = "Method:"), flag = wx.ALIGN_CENTER_VERTICAL)
 
         rbSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.usePowerRBToggle = wx.RadioButton(dialog, -1, "Toggle", style = wx.ALIGN_CENTER_VERTICAL|wx.RB_GROUP)
+        self.usePowerRBToggle = wx.RadioButton(dialog, label = "Toggle", style = wx.ALIGN_CENTER_VERTICAL|wx.RB_GROUP)
         rbSizer.Add(self.usePowerRBToggle, 1)
-        self.usePowerRBOn = wx.RadioButton(dialog, -1, "On", style = wx.ALIGN_CENTER_VERTICAL)
+        self.usePowerRBOn = wx.RadioButton(dialog, label = "On", style = wx.ALIGN_CENTER_VERTICAL)
         rbSizer.Add(self.usePowerRBOn, 1)
-        self.usePowerRBOff = wx.RadioButton(dialog, -1, "Off", style = wx.ALIGN_CENTER_VERTICAL)
+        self.usePowerRBOff = wx.RadioButton(dialog, label = "Off", style = wx.ALIGN_CENTER_VERTICAL)
         rbSizer.Add(self.usePowerRBOff, 1)
         if server == 'Homecoming':
-            self.usePowerRBLocation = wx.RadioButton(dialog, -1, 'Location', style = wx.ALIGN_CENTER_VERTICAL)
+            self.usePowerRBLocation = wx.RadioButton(dialog, label = 'Location', style = wx.ALIGN_CENTER_VERTICAL)
             rbSizer.Add(self.usePowerRBLocation, 1)
 
         self.UsePowerSizer.Add(rbSizer, 1, flag = wx.EXPAND)
 
         if server == 'Homecoming':
-            self.LocText = wx.StaticText(dialog, -1, "Location:")
+            self.LocText = wx.StaticText(dialog, label = "Location:")
             self.UsePowerSizer.Add(self.LocText, flag = wx.ALIGN_CENTER_VERTICAL)
 
             self.LocSizer = wx.BoxSizer(wx.HORIZONTAL)
-            self.LocMe = wx.RadioButton(dialog, -1, 'Me', style = wx.ALIGN_CENTER_VERTICAL|wx.RB_GROUP)
+            self.LocMe = wx.RadioButton(dialog, label = 'Me', style = wx.ALIGN_CENTER_VERTICAL|wx.RB_GROUP)
             self.LocSizer.Add(self.LocMe, flag = wx.ALIGN_CENTER_VERTICAL)
-            self.LocTarget = wx.RadioButton(dialog, -1, 'Target', style = wx.ALIGN_CENTER_VERTICAL)
+            self.LocTarget = wx.RadioButton(dialog, label = 'Target', style = wx.ALIGN_CENTER_VERTICAL)
             self.LocSizer.Add(self.LocTarget, flag = wx.ALIGN_CENTER_VERTICAL)
-            self.LocDD = wx.RadioButton(dialog, -1, 'Dir/Dist', style = wx.ALIGN_CENTER_VERTICAL)
+            self.LocDD = wx.RadioButton(dialog, label = 'Dir/Dist', style = wx.ALIGN_CENTER_VERTICAL)
             self.LocSizer.Add(self.LocDD, flag = wx.ALIGN_CENTER_VERTICAL)
-            self.Pdir = wx.Choice(dialog, -1, style = wx.ALIGN_CENTER_VERTICAL,
+            self.Pdir = wx.Choice(dialog, style = wx.ALIGN_CENTER_VERTICAL,
                                  choices = ['0°', '30°', '60°', '90°', '120°', '150°',
                                             '180°', '210°', '240°', '270°', '300°', '330°'])
             self.LocSizer.Add(self.Pdir, flag = wx.ALIGN_CENTER_VERTICAL)
-            self.Dist = wx.Choice(dialog, -1, style = wx.ALIGN_CENTER_VERTICAL,
+            self.Dist = wx.Choice(dialog, style = wx.ALIGN_CENTER_VERTICAL,
                                   choices = ["10'", "20'", "30'", "40'", "50'", "60'",
                                              "70'", "80'", "90'", "100'", "110'", "120'", 'max'])
             self.LocSizer.Add(self.Dist, flag = wx.ALIGN_CENTER_VERTICAL)
-            self.LocCurs = wx.RadioButton(dialog, -1, 'Cursor', style = wx.ALIGN_CENTER_VERTICAL)
+            self.LocCurs = wx.RadioButton(dialog, label = 'Cursor', style = wx.ALIGN_CENTER_VERTICAL)
             self.LocSizer.Add(self.LocCurs, flag = wx.ALIGN_CENTER_VERTICAL)
 
             self.UsePowerSizer.Add(self.LocSizer, 1, wx.EXPAND|wx.TOP|wx.BOTTOM, 10)
 
-        self.UsePowerSizer.Add(wx.StaticText(dialog, -1, "Power:"), flag = wx.ALIGN_CENTER_VERTICAL)
+        self.UsePowerSizer.Add(wx.StaticText(dialog, label = "Power:"), flag = wx.ALIGN_CENTER_VERTICAL)
         self.usePowerName = PowerPicker(dialog)
         self.UsePowerSizer.Add(self.usePowerName, 1, flag = wx.EXPAND)
 

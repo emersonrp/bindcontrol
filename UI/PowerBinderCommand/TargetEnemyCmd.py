@@ -10,9 +10,9 @@ class TargetEnemyCmd(PowerBinderCommand):
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
 
         targetEnemySizer = wx.BoxSizer(wx.HORIZONTAL)
-        targetEnemySizer.Add(wx.StaticText(dialog, -1, "Target Enemy:"), 0,
+        targetEnemySizer.Add(wx.StaticText(dialog, label = "Target Enemy:"), 0,
                 wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
-        self.targetEnemyModeChoice = wx.Choice(dialog, -1, choices = ['Near','Far','Next','Prev'])
+        self.targetEnemyModeChoice = wx.Choice(dialog, choices = ['Near','Far','Next','Prev'])
         self.targetEnemyModeChoice.SetSelection(0)
         targetEnemySizer.Add(self.targetEnemyModeChoice, 0, wx.ALIGN_CENTER_VERTICAL)
 

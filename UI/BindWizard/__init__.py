@@ -66,16 +66,16 @@ class WizardParent:
 class WizPickerDialog(wx.Dialog):
     def __init__(self, parent):
 
-        super().__init__(parent, -1, 'Bind Wizard')
+        super().__init__(parent, title = 'Bind Wizard')
 
         self.WizClass = None
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
         wcSizer = wx.BoxSizer(wx.VERTICAL)
-        wcSizer.Add(wx.StaticText(self, wx.ID_ANY, 'Select a Bind Wizard to run:'), 0, wx.EXPAND|wx.BOTTOM, 20)
+        wcSizer.Add(wx.StaticText(self, label = 'Select a Bind Wizard to run:'), 0, wx.EXPAND|wx.BOTTOM, 20)
         for classname, wizClass in wizards.items():
-            wizbutton = wx.Button(self, wx.ID_ANY, label = classname)
+            wizbutton = wx.Button(self, label = classname)
             wizbutton.SetToolTip(wizClass.WizToolTip)
             wcSizer.Add(wizbutton, 1, wx.EXPAND)
             setattr(wizbutton, 'WizClass', wizClass)

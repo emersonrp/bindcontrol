@@ -10,10 +10,10 @@ class EmoteCmd(PowerBinderCommand):
 
     def BuildUI(self, dialog) -> wx.BoxSizer:
         emoteSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.emoteText = wx.StaticText(dialog, -1, "Select Emote:")
+        self.emoteText = wx.StaticText(dialog, label = "Select Emote:")
         emoteSizer.Add(self.emoteText, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
 
-        self.emoteName = wx.Button(dialog, -1, "...")
+        self.emoteName = wx.Button(dialog, label = "...")
         self.emoteName.Bind(wx.EVT_BUTTON, UI.EmotePicker.OnEmotePicker)
         emoteSizer.Add(self.emoteName, 1, wx.ALIGN_CENTER_VERTICAL)
 

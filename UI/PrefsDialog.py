@@ -69,7 +69,7 @@ class PrefsDialog(wx.Dialog):
 
         generalSizer.Add(wx.StaticText(generalPanel, label = "Binds Reset Key:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         resetKey = config.Read('ResetKey')
-        self.ResetKey = bcKeyButton(generalPanel, -1, init ={ 'CtlName': 'ResetKey', 'Key' : resetKey })
+        self.ResetKey = bcKeyButton(generalPanel, init ={ 'CtlName': 'ResetKey', 'Key' : resetKey })
         self.ResetKey.SetLabel(resetKey)
         self.ResetKey.DefaultToolTip = 'This is the key that will reset your binds to their default state, and stop all movement, if movement binds are installed.'
         generalSizer.Add(self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)

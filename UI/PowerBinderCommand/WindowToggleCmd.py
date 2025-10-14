@@ -76,15 +76,15 @@ class WindowToggleCmd(PowerBinderCommand):
             }
 
         windowToggleSizer = wx.BoxSizer(wx.HORIZONTAL)
-        windowToggleSizer.Add(wx.StaticText(dialog, -1, "Window:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
-        self.windowToggleTray = wx.Choice(dialog, -1, choices = list(self.WindowNames.keys()))
+        windowToggleSizer.Add(wx.StaticText(dialog, label = "Window:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
+        self.windowToggleTray = wx.Choice(dialog, choices = list(self.WindowNames.keys()))
         self.windowToggleTray.SetSelection(0)
         self.windowToggleTray.Bind(wx.EVT_CHOICE, self.OnWindowPicked)
         windowToggleSizer.Add(self.windowToggleTray, 1, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
 
-        self.windowToggleRB = wx.RadioButton(dialog, -1, "Toggle", style = wx.RB_GROUP)
-        self.windowShowRB   = wx.RadioButton(dialog, -1, "Show")
-        self.windowHideRB   = wx.RadioButton(dialog, -1, "Hide")
+        self.windowToggleRB = wx.RadioButton(dialog, label = "Toggle", style = wx.RB_GROUP)
+        self.windowShowRB   = wx.RadioButton(dialog, label = "Show")
+        self.windowHideRB   = wx.RadioButton(dialog, label = "Hide")
 
         windowToggleSizer.Add(self.windowToggleRB, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
         windowToggleSizer.Add(self.windowShowRB,   0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)

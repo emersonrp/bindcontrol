@@ -77,7 +77,7 @@ class InspirationPopper(Page):
         # "Use Order" options
         self.UseOrderBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Use Order")
 
-        self.useCB = wx.CheckBox( self.UseOrderBox.GetStaticBox(), -1, 'Enable Largest-First Binds')
+        self.useCB = wx.CheckBox(self.UseOrderBox.GetStaticBox(), label = 'Enable Largest-First Binds')
         self.useCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Inspiration Popper Binds (largest inspirations used first)'))
         self.useCB.SetValue(self.Init['EnableInspBinds'])
@@ -85,7 +85,7 @@ class InspirationPopper(Page):
         self.UseOrderBox.Add(self.useCB, 1, wx.ALL, 6)
         self.useCB.Bind(wx.EVT_CHECKBOX, self.OnEnableCB)
 
-        self.useRevCB = wx.CheckBox( self.UseOrderBox.GetStaticBox(), -1, 'Enable Smallest-First Binds')
+        self.useRevCB = wx.CheckBox(self.UseOrderBox.GetStaticBox(), label = 'Enable Smallest-First Binds')
         self.useRevCB.SetToolTip(wx.ToolTip(
             'Check this to enable the Reverse Inspiration Popper Binds (smallest inspirations used first)'))
         self.useRevCB.SetValue(self.Init['EnableRevInspBinds'])
@@ -98,14 +98,14 @@ class InspirationPopper(Page):
         # General Options
         self.OptionsBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Options")
 
-        self.useSuperInspCB = wx.CheckBox( self.OptionsBox.GetStaticBox(), -1, 'Use Super Inspirations')
+        self.useSuperInspCB = wx.CheckBox(self.OptionsBox.GetStaticBox(), label = 'Use Super Inspirations')
         self.useSuperInspCB.SetToolTip(wx.ToolTip(
             'Check this to include Super Inspirations in the Inspiration Popper binds.  If you\'re concerned about accidental activation and would prefer to use Super Inspirations manually, leave this unchecked.'))
         self.useSuperInspCB.SetValue(self.Init['UseSuperInsp'])
         self.Ctrls['UseSuperInsp'] = self.useSuperInspCB
         self.OptionsBox.Add(self.useSuperInspCB, 0, wx.ALL, 6)
 
-        self.enableTellsCB = wx.CheckBox( self.OptionsBox.GetStaticBox(), -1, 'Enable self-/tell feedback')
+        self.enableTellsCB = wx.CheckBox(self.OptionsBox.GetStaticBox(), label = 'Enable self-/tell feedback')
         self.enableTellsCB.SetToolTip(wx.ToolTip(
             'Check this box to have your toon /tell you whenever you pop an inspiration.'))
         self.enableTellsCB.SetValue(self.Init['EnableTells'])
@@ -150,9 +150,9 @@ class InspirationPopper(Page):
                     rowSet = RevInspRows if order else InspRows
                     box    = RevInspBox  if order else InspBox
 
-                    keybutton = bcKeyButton(box.GetStaticBox(), wx.ID_ANY)
+                    keybutton = bcKeyButton(box.GetStaticBox())
                     keybutton.CtlName = f"{tab}{order}{Insp}Key"
-                    kblabel = wx.StaticText(box.GetStaticBox(), wx.ID_ANY, label = UI.Labels[keybutton.CtlName] + ":")
+                    kblabel = wx.StaticText(box.GetStaticBox(), label = UI.Labels[keybutton.CtlName] + ":")
                     keybutton.CtlLabel = kblabel
                     self.Ctrls[keybutton.CtlName] = keybutton
                     keybutton.Page = self

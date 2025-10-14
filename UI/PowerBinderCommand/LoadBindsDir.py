@@ -12,19 +12,19 @@ class LoadBindsDir(PowerBinderCommand):
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
         lbSizer = wx.BoxSizer(wx.HORIZONTAL)
-        lbText = wx.StaticText(dialog, -1, "Load Binds Directory:")
+        lbText = wx.StaticText(dialog, label = "Load Binds Directory:")
         lbText.SetToolTip('Select an existing profile directory from which to load a set of bind files')
         lbSizer.Add(lbText, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
 
         profiles = GetAllProfileBindsDirs(wx.ConfigBase.Get())
 
-        self.lbPicker = wx.Choice(dialog, -1, choices = sorted(profiles))
+        self.lbPicker = wx.Choice(dialog, choices = sorted(profiles))
         self.lbPicker.SetToolTip('Select an existing profile directory from which to load a set of bind files')
         lbSizer.Add(self.lbPicker, 1, wx.ALIGN_CENTER_VERTICAL)
 
         mainSizer.Add(lbSizer, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5)
 
-        self.lbResetCB = wx.CheckBox(dialog, -1, "Reset All Keybinds Before Loading")
+        self.lbResetCB = wx.CheckBox(dialog, label = "Reset All Keybinds Before Loading")
         self.lbResetCB.SetValue(True)
 
         mainSizer.Add(self.lbResetCB, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5)

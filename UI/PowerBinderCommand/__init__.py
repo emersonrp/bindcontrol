@@ -5,10 +5,15 @@ from UI.PowerBinder import commandRevClasses
 class PowerBinderCommand:
     Menu = ''
     Name = ''
+    UseEditDialog = True
+
     def __init__(self, dialog, init : dict|None = None) -> None:
         self.Profile = wx.App.Get().Main.Profile
-        self.EditDialog = PowerBinderEditDialog(self, dialog)
-        self.EditDialog.AddContents(self.BuildUI(self.EditDialog))
+
+        if self.UseEditDialog:
+            self.EditDialog = PowerBinderEditDialog(self, dialog)
+            self.EditDialog.AddContents(self.BuildUI(self.EditDialog))
+
         self.State = {}
         if init:
             self.Deserialize(init)

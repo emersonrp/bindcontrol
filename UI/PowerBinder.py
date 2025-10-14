@@ -242,7 +242,7 @@ class PowerBinderDialog(wx.Dialog):
             pass
 
         if cmdObject:
-            if cmdObject.ShowEditDialog() == wx.ID_OK:
+            if cmdObject.UseEditDialog and cmdObject.ShowEditDialog() == wx.ID_OK:
                 self.RearrangeList.SetString(index, cmdObject.MakeListEntryString())
         else:
             wx.LogError("In OnRearrangeEdit, cmdObject was None.  This is a bug.")
@@ -260,7 +260,7 @@ class PowerBinderDialog(wx.Dialog):
 
         # show the edit dialog if this command needs it
         if newCommand:
-            if newCommand.ShowEditDialog() == wx.ID_CANCEL:
+            if newCommand.UseEditDialog and newCommand.ShowEditDialog() == wx.ID_CANCEL:
                 return
 
         newBindIndex = self.RearrangeList.Append(newCommand.MakeListEntryString())
@@ -274,7 +274,8 @@ class PowerBinderDialog(wx.Dialog):
         selected = self.RearrangeList.GetSelection()
 
         if selected != wx.NOT_FOUND:
-            if bool(self.RearrangeList.GetClientData(selected)):
+            cmdObject = self.RearrangeList.GetClientData(selected)
+            if cmdObject and cmdObject.UseEditDialog:
                 self.EditButton.Enable()
             else:
                 self.EditButton.Disable()

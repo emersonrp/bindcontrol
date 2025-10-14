@@ -65,7 +65,7 @@ class Profile(wx.Notebook):
         super().__init__(parent, style = wx.NB_TOP, name = "Profile")
 
         try:
-            self.Data : ProfileData = ProfileData(wx.ConfigBase.Get(), filename, newname, profiledata)
+            self.Data : ProfileData = ProfileData(wx.ConfigBase.Get(), filename, newname, profiledata, editdefault)
         # This is uuugly but getting less so
         except BindsDirectoryException:
             self.Parent.OnProfDirButton() # pyright: ignore

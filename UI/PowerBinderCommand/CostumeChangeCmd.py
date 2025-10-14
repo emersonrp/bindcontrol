@@ -9,14 +9,14 @@ class CostumeChangeCmd(PowerBinderCommand):
 
     def BuildUI(self, dialog) -> wx.BoxSizer:
         costumeChangeSizer = wx.BoxSizer(wx.HORIZONTAL)
-        costumeChangeSizer.Add(wx.StaticText(dialog, -1, "Costume:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
-        self.costumeChangeCostume = wx.Choice(dialog, -1,
+        costumeChangeSizer.Add(wx.StaticText(dialog, label = "Costume:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        self.costumeChangeCostume = wx.Choice(dialog,
                choices = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth"])
         self.costumeChangeCostume.SetSelection(0)
         costumeChangeSizer.Add(self.costumeChangeCostume, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
-        costumeChangeSizer.Add(wx.StaticText(dialog, -1, "CC Emote:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
-        self.costumeChangeEmote = wx.Choice(dialog, -1,
+        costumeChangeSizer.Add(wx.StaticText(dialog, label = "CC Emote:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
+        self.costumeChangeEmote = wx.Choice(dialog,
                 choices = GameData.Emotes['costumechange'])
         self.costumeChangeEmote.Insert("- None -", 0)
         self.costumeChangeEmote.SetSelection(0)

@@ -64,13 +64,13 @@ class KeySelectDialog(wx.Dialog):
         self.modKeys: list[str] = [] # gets set every ShowModal() call
         self.dualKeys = ['SHIFT','CTRL','ALT'] # keys which might be mod and might be trigger
 
-        super().__init__(button.Parent, -1, self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
+        super().__init__(button.Parent, title = self.Desc, style = wx.WANTS_CHARS|wx.DEFAULT_DIALOG_STYLE)
 
         self.controller = bcController()
         self.controller.SetCapture(self)
 
         # Mystery panel must be in here in order to get key events
-        self.mysteryPanel = wx.Panel(self, -1)
+        self.mysteryPanel = wx.Panel(self)
 
         if not self.Desc:
             raise Exception("Tried to make a KeySelectDialog for something with no desc")
@@ -80,22 +80,22 @@ class KeySelectDialog(wx.Dialog):
         # is this ugly?
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.kbDesc = wx.StaticText     ( self, -1, desc,                 style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
-        self.kbBind = wx.html.HtmlWindow( self, -1, size=wx.Size(450,60), style=wx.html.HW_SCROLLBAR_NEVER)
+        self.kbDesc = wx.StaticText     (self, label = desc,           style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
+        self.kbBind = wx.html.HtmlWindow(self, size = wx.Size(450,60), style = wx.html.HW_SCROLLBAR_NEVER)
         self.kbBind.SetHTMLBackgroundColour( wx.WHITE )
-        self.kbErr  = wx.StaticText     ( self, -1, " ",                  style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
+        self.kbErr  = wx.StaticText     (self, label = " ",            style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
 
         self.ShowBind()
 
-        sizer.Add( self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
-        sizer.Add( self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL)
-        sizer.Add( self.kbErr , 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+        sizer.Add(self.kbDesc, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
+        sizer.Add(self.kbBind, 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL)
+        sizer.Add(self.kbErr , 1, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
         sizer.AddSpacer(15)
 
         if(modKeyFlags):
-            self.SeparateLRChooser = wx.CheckBox( self, -1, "Bind left/right mod keys separately")
+            self.SeparateLRChooser = wx.CheckBox(self, label = "Bind left/right mod keys separately")
             self.SeparateLRChooser.SetToolTip("This allows you to bind specifically left or right side mod keys for this bind.  This will not change the global preference.")
-            sizer.Add( self.SeparateLRChooser, 0, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
+            sizer.Add(self.SeparateLRChooser, 0, wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
             self.SeparateLRChooser.SetValue( wx.ConfigBase.Get().ReadBool('UseSplitModKeys') )
 
         # Wrap everything in a vbox to add some padding
@@ -499,7 +499,7 @@ class KeySelectDialog(wx.Dialog):
 
 class bcKeyButton(ErrorControlMixin, wx.Button):
 
-    def __init__(self, parent, wx_id, init : dict|None = None) -> None:
+    def __init__(self, parent, wx_id : int = wx.ID_ANY, init : dict|None = None) -> None:
         init = init or {}
         self.CtlName  : str                                     = init.get('CtlName', '')
         self.CtlLabel : ST.GenStaticText | wx.StaticText | None = init.get('CtlLabel')

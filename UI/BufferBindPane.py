@@ -58,7 +58,7 @@ class BufferBindPane(CustomBindPaneParent):
         self.SelChatTgt.SetStringSelection(self.Init.get('SelChatTgt', ''))
         self.SetCtrl('SelChatTgt', self.SelChatTgt)
 
-        self.SelChat = wx.TextCtrl(pane, -1, self.Init.get('SelChat', ''))
+        self.SelChat = wx.TextCtrl(pane, value = self.Init.get('SelChat', ''))
         self.SelChat.SetHint('/tell contents; leave blank to skip')
         self.SetCtrl('SelChat', self.SelChat)
 
@@ -86,12 +86,12 @@ class BufferBindPane(CustomBindPaneParent):
         PetInner = wx.GridBagSizer(hgap = 5, vgap = 5)
         PetCtrls.Add(PetInner, 1, wx.ALL|wx.EXPAND, 10)
 
-        bat = self.SetCtrl('BuffsAffectTeam', wx.CheckBox(TeamSB, -1, label = 'Enable'))
+        bat = self.SetCtrl('BuffsAffectTeam', wx.CheckBox(TeamSB, label = 'Enable'))
         bat.SetValue(self.Init['BuffsAffectTeam'])
         bat.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         TeamInner.Add(bat, (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6,7,8):
-            button = bcKeyButton(TeamSB, -1, init = { 'CtlName' : self.MakeCtrlName(f'Team{i}BuffKey'), })
+            button = bcKeyButton(TeamSB, init = { 'CtlName' : self.MakeCtrlName(f'Team{i}BuffKey'), })
             button.Key = self.Init[f'Team{i}BuffKey']
             button.SetLabel(button.Key)
             button.Bind(EVT_KEY_CHANGED, self.CheckAnyKeyPicked)
@@ -101,12 +101,12 @@ class BufferBindPane(CustomBindPaneParent):
             TeamInner.Add(button, (1,i))
             self.SetCtrl(f'Team{i}BuffKey', button)
 
-        bap = self.SetCtrl('BuffsAffectPets', wx.CheckBox(PetSB, -1, label = 'Enable'))
+        bap = self.SetCtrl('BuffsAffectPets', wx.CheckBox(PetSB, label = 'Enable'))
         bap.SetValue(self.Init['BuffsAffectPets'])
         bap.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         PetInner.Add(bap, (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6):
-            button = bcKeyButton(PetSB, -1, init = { 'CtlName' : self.MakeCtrlName(f'Pet{i}BuffKey'), })
+            button = bcKeyButton(PetSB, init = { 'CtlName' : self.MakeCtrlName(f'Pet{i}BuffKey'), })
             button.Key = self.Init[f'Pet{i}BuffKey']
             button.SetLabel(button.Key)
             button.Bind(EVT_KEY_CHANGED, self.CheckAnyKeyPicked)
@@ -338,7 +338,7 @@ class Buff(wx.Panel):
             self.BuffPower.IconFilename = icon
         self.BuffPower.Bind(EVT_POWERPICKER_CHANGED, self.OnPowerPicked)
 
-        self.delButton = wx.Button(self, -1, "X", size = wx.Size(40,-1))
+        self.delButton = wx.Button(self, label = "X", size = wx.Size(40,-1))
         self.delButton.SetForegroundColour(wx.RED)
         self.delButton.Bind(wx.EVT_BUTTON, parent.OnDelBuffButton)
         buffSizer.Add(self.delButton, 0, flag = wx.RESERVE_SPACE_EVEN_IF_HIDDEN|wx.ALIGN_CENTER_VERTICAL)

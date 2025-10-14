@@ -20,12 +20,12 @@ class CameraCmd(PowerBinderCommand):
         self.camresetcb = wx.CheckBox(dialog, label = "camreset")
         self.camresetcb.SetToolTip('Resets the camera to behind the player; resets camera distance')
         sizer.Add(self.camresetcb, 0, wx.ALIGN_CENTER_VERTICAL)
-        sizer.Add(wx.StaticText(dialog, wx.ID_ANY, ''))
+        sizer.Add(wx.StaticText(dialog, label = ''))
 
         self.camturncb = wx.CheckBox(dialog, label = "camturn")
         self.camturncb.SetToolTip('Resets the camera to behind the player without changing camera distance')
         sizer.Add(self.camturncb, 0, wx.ALIGN_CENTER_VERTICAL)
-        sizer.Add(wx.StaticText(dialog, wx.ID_ANY, ''))
+        sizer.Add(wx.StaticText(dialog, label = ''))
 
         self.camrotatecb = wx.CheckBox(dialog, label = "camrotate")
         self.camrotatecb.SetToolTip('Enable or toggle camera rotation using the mouse;  does not affect player facing')

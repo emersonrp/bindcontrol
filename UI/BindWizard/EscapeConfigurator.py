@@ -127,7 +127,7 @@ class EscapeConfigurator(WizardParent):
         bkText.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
         EscapeControlName = bindpane.MakeCtrlName('Escape')
-        escButton = bcKeyButton(panel, wx.ID_ANY, {
+        escButton = bcKeyButton(panel, init = {
             'CtlName' : EscapeControlName,
             'Page'    : bindpane.Page,
             'Key'     : 'ESC',

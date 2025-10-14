@@ -57,7 +57,7 @@ class Mastermind(Page):
             petname.Bind(wx.EVT_TEXT, self.OnNameTextChange)
 
             ctlname = f"Pet{i+1}Select"
-            button = bcKeyButton(PBSB, -1, init = {
+            button = bcKeyButton(PBSB, init = {
                 'CtlName'  : ctlname,
                 'ToolTip'  : f'Choose the key that will select {petdesc}',
                 'Key'      : self.Init[ctlname],
@@ -75,7 +75,7 @@ class Mastermind(Page):
         PetExtraBottom = wx.BoxSizer(wx.HORIZONTAL)
 
         maxValue = 24 if self.Profile.Server() == 'Homecoming' else 26
-        LevelLabel = wx.StaticText(PetNameSB, -1, 'Mastermind Level:')
+        LevelLabel = wx.StaticText(PetNameSB, label = 'Mastermind Level:')
         self.LevelSlider = wx.Slider(PetNameSB, minValue = 1, maxValue = maxValue, value = maxValue,
                                      style = wx.SL_VALUE_LABEL|wx.SL_AUTOTICKS)
         self.LevelSlider.Bind(wx.EVT_SLIDER, self.OnLevelChanged)
@@ -83,9 +83,9 @@ class Mastermind(Page):
         self.LevelSlider.SetToolTip('Select the level of your Mastermind - set to max for higher levels')
         self.Ctrls['MMLevel'] = self.LevelSlider
 
-        RenameLabel = wx.StaticText(PetNameSB, -1, 'Rename Pets:')
+        RenameLabel = wx.StaticText(PetNameSB, label = 'Rename Pets:')
         RenameLabel          .SetToolTip('Choose the key that will rename your pets, in-game, to match the names set in BindControl')
-        self.RenamePetsButton = bcKeyButton(PetNameSB, -1, init = {
+        self.RenamePetsButton = bcKeyButton(PetNameSB, init = {
                 'CtlName'  : 'RenamePets',
                 'Key'      : self.Init['RenamePets'],
                 'ToolTip'  :'Choose the key that will rename your pets, in-game, to match the names set in BindControl',
@@ -108,7 +108,7 @@ class Mastermind(Page):
         self.PetNames.Add(PetExtraCtrls, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 15)
 
         # Sub-tabs for selection of MM Bind style
-        self.BindStyleNotebook = wx.Notebook(self, wx.ID_ANY, style = wx.BORDER_NONE)
+        self.BindStyleNotebook = wx.Notebook(self, style = wx.BORDER_NONE)
         self.BindStyleNotebook.SetPadding(wx.Size(50,0))
         self.Ctrls['BindStyle'] = self.BindStyleNotebook
 
@@ -138,7 +138,7 @@ class Mastermind(Page):
         page = wx.Panel(self.BindStyleNotebook)
 
         BlankSizer = wx.BoxSizer(wx.HORIZONTAL)
-        helptext = wx.StaticText(page, wx.ID_ANY, style = wx.ALIGN_CENTER,
+        helptext = wx.StaticText(page, style = wx.ALIGN_CENTER,
                                  label = "No Mastermind bind style selected.\nBy-name selection binds will still work.")
         helptext.SetFont(wx.Font(wx.FontInfo(16).Bold()))
         BlankSizer.Add(helptext, 1, wx.ALIGN_CENTER_VERTICAL)

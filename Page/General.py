@@ -84,7 +84,7 @@ class General(Page):
         self.nameBox = wx.Panel(self.bannerPanel)
         nameSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.nameBox.SetSizer(nameSizer)
-        self.NameDisplay = ST.GenStaticText(self.nameBox, -1, "", style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.NameDisplay = ST.GenStaticText(self.nameBox, style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.NameDisplay.SetFont(wx.Font(wx.FontInfo().Bold()))
         nameSizer.Add(self.NameDisplay, 1, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 6)
         bannerSizer.Add(self.nameBox, 1, wx.EXPAND|wx.ALL, 5)
@@ -161,7 +161,7 @@ class General(Page):
         TNPanel = wx.Panel(self)
         TNSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        TNEnable = wx.CheckBox(TNPanel, -1, 'Use Typing Notifier')
+        TNEnable = wx.CheckBox(TNPanel, label = 'Use Typing Notifier')
         TNEnable.SetToolTip('Check this to enable a floating notifier when you are typing into the chat box')
         setattr(TNEnable, 'CtlName', 'TypingNotifierEnable')
         TNEnable.Bind(wx.EVT_CHECKBOX, self.OnTypeEnable)

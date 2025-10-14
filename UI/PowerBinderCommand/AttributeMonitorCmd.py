@@ -101,9 +101,9 @@ class AttributeMonitorCmd(PowerBinderCommand):
         groupSizer = wx.BoxSizer(wx.VERTICAL)
 
         rbSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.MonitorOn = wx.RadioButton(dialog, -1, "Monitor", style = wx.ALIGN_CENTER_VERTICAL)
+        self.MonitorOn = wx.RadioButton(dialog, label = "Monitor", style = wx.ALIGN_CENTER_VERTICAL)
         rbSizer.Add(self.MonitorOn, 1)
-        self.MonitorOff = wx.RadioButton(dialog, -1, "Unmonitor", style = wx.ALIGN_CENTER_VERTICAL)
+        self.MonitorOff = wx.RadioButton(dialog, label = "Unmonitor", style = wx.ALIGN_CENTER_VERTICAL)
         rbSizer.Add(self.MonitorOff, 1)
         self.MonitorOn.SetValue(True)
 

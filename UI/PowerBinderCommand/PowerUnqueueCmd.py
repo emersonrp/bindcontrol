@@ -10,7 +10,7 @@ class PowerUnqueueCmd(PowerBinderCommand):
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.UnqueueOrAbort = wx.Choice(dialog, wx.ID_ANY, choices = ['Unqueue', 'Abort'])
+        self.UnqueueOrAbort = wx.Choice(dialog, choices = ['Unqueue', 'Abort'])
         self.UnqueueOrAbort.SetToolTip('"Unqueue" cancels any queued power, "Abort" also cancels any autopower')
         self.UnqueueOrAbort.SetSelection(0)
         sizer.Add(self.UnqueueOrAbort, 1, wx.ALIGN_CENTER_VERTICAL)

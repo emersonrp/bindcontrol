@@ -9,14 +9,14 @@ class ChatGlobalCmd(PowerBinderCommand):
     def BuildUI(self, dialog) -> wx.GridBagSizer:
         chatCommandGlobalSizer = wx.GridBagSizer(5,5)
 
-        self.chatCommandGlobalUseBeginchatCB = wx.CheckBox(dialog, -1, "Use beginchat")
+        self.chatCommandGlobalUseBeginchatCB = wx.CheckBox(dialog, label = "Use beginchat")
         chatCommandGlobalSizer.Add(self.chatCommandGlobalUseBeginchatCB, (0,0), (1,2))
 
-        self.chatCommandGlobalChannel = wx.TextCtrl(dialog, -1)
+        self.chatCommandGlobalChannel = wx.TextCtrl(dialog)
         self.chatCommandGlobalChannel.SetHint("Channel")
         chatCommandGlobalSizer.Add(self.chatCommandGlobalChannel, (1,0))
 
-        self.chatCommandGlobalMessage = wx.TextCtrl(dialog, -1)
+        self.chatCommandGlobalMessage = wx.TextCtrl(dialog)
         self.chatCommandGlobalMessage.SetHint('Chat Command (Global) Message')
         chatCommandGlobalSizer.Add(self.chatCommandGlobalMessage, (1,1), flag=wx.EXPAND)
 

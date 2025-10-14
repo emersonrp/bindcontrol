@@ -110,14 +110,14 @@ class Gameplay(Page):
 
         self.FillTrayButtons = {}
         for b in (range(1,self.NumTrays+1)):
-            self.FillTrayButtons[b] = wx.Button(staticbox, wx.ID_ANY, "Fill")
+            self.FillTrayButtons[b] = wx.Button(staticbox, label = "Fill")
             setattr(self.FillTrayButtons[b], 'Tray', b)
             self.FillTrayButtons[b].Bind(wx.EVT_BUTTON, self.OnFillTray)
             self.FillTrayButtons[b].SetToolTip("Fill the buttons with the numbers 1 - 0.  Hold a modifier key while clicking to use that modifier key in the binds.")
 
         for tray in (range(self.NumTrays, 0, -1)):
             label = self.TrayLabels[tray]
-            checkbox = wx.CheckBox(staticbox, wx.ID_ANY, label = f"{label} Tray")
+            checkbox = wx.CheckBox(staticbox, label = f"{label} Tray")
             checkbox.SetValue(self.Init.get(f'Tray{tray}Enabled', False))
             checkbox.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
             self.Ctrls[f'Tray{tray}Enabled'] = checkbox
@@ -125,7 +125,7 @@ class Gameplay(Page):
 
             for button in (1,2,3,4,5,6,7,8,9,0):
                 ctlname = f'Tray{tray}Button{button}'
-                traybutton = bcKeyButton(staticbox, wx.ID_ANY, init = {
+                traybutton = bcKeyButton(staticbox, init = {
                     'CtlName'       : ctlname,
                     'Key'           : self.Init[ctlname],
                     'AlwaysShorten' : True,
@@ -136,12 +136,12 @@ class Gameplay(Page):
             trayGridSizer.Add(self.FillTrayButtons[tray], 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
             if tray == self.NumTrays:  # is the server tray
-                trayGridSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Prev Tray"), 1, wx.ALIGN_CENTER)
-                trayGridSizer.Add(wx.StaticText(staticbox, wx.ID_ANY, "Next Tray"), 1, wx.ALIGN_CENTER)
+                trayGridSizer.Add(wx.StaticText(staticbox, label = "Prev Tray"), 1, wx.ALIGN_CENTER)
+                trayGridSizer.Add(wx.StaticText(staticbox, label = "Next Tray"), 1, wx.ALIGN_CENTER)
             else:
-                prevbutton = bcKeyButton(staticbox, wx.ID_ANY, init = { 'CtlName' : f"Tray{tray}Prev",})
+                prevbutton = bcKeyButton(staticbox, init = { 'CtlName' : f"Tray{tray}Prev",})
                 self.Ctrls[f"Tray{tray}Prev"] = prevbutton
-                nextbutton = bcKeyButton(staticbox, wx.ID_ANY, init = { 'CtlName' : f"Tray{tray}Next",})
+                nextbutton = bcKeyButton(staticbox, init = { 'CtlName' : f"Tray{tray}Next",})
                 self.Ctrls[f"Tray{tray}Next"] = nextbutton
                 trayGridSizer.Add(prevbutton, 1, wx.ALIGN_CENTER)
                 trayGridSizer.Add(nextbutton, 1, wx.ALIGN_CENTER)
@@ -158,9 +158,9 @@ class Gameplay(Page):
         # Keybind Profile picker
         KBProfileSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        KBProfileText = wx.StaticText(staticbox, wx.ID_ANY, "Keybind Profile:")
+        KBProfileText = wx.StaticText(staticbox, label = "Keybind Profile:")
         KBProfileSizer.Add(KBProfileText, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
-        KBProfilePicker = cgChoice(staticbox, wx.ID_ANY, choices = list(self.KeybindProfiles.keys()))
+        KBProfilePicker = cgChoice(staticbox, choices = list(self.KeybindProfiles.keys()))
         KBProfilePicker.SetSelection(0)
         KBProfilePicker.CtlLabel = KBProfileText
         UI.Labels['KBProfile'] = "Keybind Profile"
@@ -169,7 +169,7 @@ class Gameplay(Page):
         KBProfilePicker.Bind( wx.EVT_CHOICE, self.OnKeybindProfilePicker )
         KBProfileSizer.Add(KBProfilePicker, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
 
-        KeepExistingCB = wx.CheckBox(staticbox, wx.ID_ANY, "Keep Existing / Default Tray Binds")
+        KeepExistingCB = wx.CheckBox(staticbox, label = "Keep Existing / Default Tray Binds")
         KeepExistingCB.SetValue(False)
         UI.Labels['KeepExisting'] = "Keep Existing / Default Tray Binds"
         self.Ctrls['KeepExisting'] = KeepExistingCB
@@ -187,7 +187,7 @@ class Gameplay(Page):
         tpsenablepanel = wx.Panel(self)
         tpsenablesizer = wx.FlexGridSizer(2)
 
-        tpsenable = wx.CheckBox(tpsenablepanel, -1, 'Enable Team/Pet Select')
+        tpsenable = wx.CheckBox(tpsenablepanel, label = 'Enable Team/Pet Select')
         tpsenable.SetToolTip('Check this to enable the Combined Team/Pet Select Binds')
         tpsenable.Bind(wx.EVT_CHECKBOX, self.OnTPSEnable)
         self.Ctrls['TPSEnable'] = tpsenable
@@ -225,7 +225,7 @@ class Gameplay(Page):
         ##### Next/Prev Team Select Binds
         teamenablepanel = wx.Panel(self)
         teamenablesizer = wx.BoxSizer(wx.HORIZONTAL)
-        teamenable = wx.CheckBox(teamenablepanel, -1, 'Enable Team Select')
+        teamenable = wx.CheckBox(teamenablepanel, label = 'Enable Team Select')
         teamenable.SetToolTip('Check this to enable the Next/Prev Team Select Binds')
         teamenable.Bind(wx.EVT_CHECKBOX, self.OnTeamEnable)
         self.Ctrls['TeamEnable'] = teamenable

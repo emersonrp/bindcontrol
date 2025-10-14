@@ -39,7 +39,7 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
 
 class PowerBinderDialog(wx.Dialog):
     def __init__(self, parent, powerbinder) -> None:
-        super().__init__(parent, -1, "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
+        super().__init__(parent, title = "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
         self.Page = parent.Page
         self.ExtraLength = powerbinder.ExtraLength
@@ -53,7 +53,7 @@ class PowerBinderDialog(wx.Dialog):
         self.mainSizer = sizer
 
         choiceSizer = wx.BoxSizer(wx.HORIZONTAL)
-        AddCommandButton = wx.Button(self, -1, 'Add Command')
+        AddCommandButton = wx.Button(self, label = 'Add Command')
         AddCommandButton.Bind(wx.EVT_BUTTON, self.OnAddCommandButton)
         AddCommandButton.Bind(wx.EVT_MENU,   self.OnAddCommandMenu)
         choiceSizer.Add(AddCommandButton, 1, wx.LEFT, 10)
@@ -62,20 +62,20 @@ class PowerBinderDialog(wx.Dialog):
 
         rearrangeCtrl = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.RearrangeList = wx.RearrangeList(self, -1, size = wx.Size(550,400))
+        self.RearrangeList = wx.RearrangeList(self, size = wx.Size(550,400))
         self.RearrangeList.Bind(wx.EVT_LISTBOX, self.OnListSelect)
         self.RearrangeList.Bind(wx.EVT_LISTBOX_DCLICK, self.OnRearrangeEdit)
         rearrangeCtrl.Add(self.RearrangeList, 1)
 
         rearrangeButtons = wx.BoxSizer(wx.VERTICAL)
-        self.DelButton = wx.Button(self, -1, "Delete")
+        self.DelButton = wx.Button(self, label = "Delete")
         self.DelButton.Bind(wx.EVT_BUTTON, self.OnRearrangeDelete)
-        self.EditButton = wx.Button(self, -1, "Edit")
+        self.EditButton = wx.Button(self, label = "Edit")
         self.EditButton.Bind(wx.EVT_BUTTON, self.OnRearrangeEdit)
         self.EditButton.Disable()
-        upButton = wx.Button(self, -1, "\u25B2")
+        upButton = wx.Button(self, label = "\u25B2")
         upButton.Bind(wx.EVT_BUTTON, self.OnRearrangeUp)
-        downButton = wx.Button(self, -1, "\u25BC")
+        downButton = wx.Button(self, label = "\u25BC")
         downButton.Bind(wx.EVT_BUTTON, self.OnRearrangeDown)
         rearrangeButtons.Add(upButton, 1, wx.BOTTOM, 10)
         rearrangeButtons.Add(downButton, 1, wx.BOTTOM, 10)
@@ -87,9 +87,9 @@ class PowerBinderDialog(wx.Dialog):
 
         bindStringPreviewSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.BindStringDisplay = cgExpandoTextCtrl(self, -1, style = wx.TE_READONLY)
+        self.BindStringDisplay = cgExpandoTextCtrl(self, style = wx.TE_READONLY)
         self.BindStringDisplay.SetHint("Add Commands to create a bind string")
-        bindStringPreviewSizer.Add(wx.StaticText(self, -1, "Bind String:"), 0,
+        bindStringPreviewSizer.Add(wx.StaticText(self, label = "Bind String:"), 0,
                         wx.ALIGN_CENTER_VERTICAL)
         bindStringPreviewSizer.Add(self.BindStringDisplay, 1, wx.LEFT, 10)
 

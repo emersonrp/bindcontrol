@@ -10,35 +10,35 @@ class ShowPerformanceGraphsCmd(PowerBinderCommand):
         CenteringSizer = wx.BoxSizer(wx.VERTICAL)
         sizer = wx.FlexGridSizer(2, 3, 3)
 
-        self.FPSEnable = wx.CheckBox(dialog, wx.ID_ANY, 'Show FPS')
+        self.FPSEnable = wx.CheckBox(dialog, label = 'Show FPS')
         self.FPSEnable.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         sizer.Add(self.FPSEnable, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
-        self.FPSChoice = wx.Choice(dialog, wx.ID_ANY,
+        self.FPSChoice = wx.Choice(dialog,
                                    choices = ['Camera POS/PYR', 'FPS Only', 'FPS + POS/PYR', 'FPS + large POS/PYR', 'Off'])
         self.FPSChoice.SetSelection(4)
         sizer.Add(self.FPSChoice, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
-        self.NetgraphEnable = wx.CheckBox(dialog, wx.ID_ANY, 'Show Netgraph')
+        self.NetgraphEnable = wx.CheckBox(dialog, label = 'Show Netgraph')
         self.NetgraphEnable.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         sizer.Add(self.NetgraphEnable, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
-        self.NetgraphChoice = wx.Choice(dialog, wx.ID_ANY, choices = ['Off', 'Small', 'Large'])
+        self.NetgraphChoice = wx.Choice(dialog, choices = ['Off', 'Small', 'Large'])
         self.NetgraphChoice.SetSelection(0)
         sizer.Add(self.NetgraphChoice, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
-        self.FPSGraphEnable = wx.CheckBox(dialog, wx.ID_ANY, 'Show FPS Graph')
+        self.FPSGraphEnable = wx.CheckBox(dialog, label = 'Show FPS Graph')
         self.FPSGraphEnable.Bind(wx.EVT_CHECKBOX, self.SynchronizeUI)
         sizer.Add(self.FPSGraphEnable, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
         fpsgraphboxes = wx.BoxSizer(wx.HORIZONTAL)
-        self.FPSGraphSwap = wx.CheckBox(dialog, wx.ID_ANY, 'Swap')
+        self.FPSGraphSwap = wx.CheckBox(dialog, label = 'Swap')
         fpsgraphboxes.Add(self.FPSGraphSwap, 0, wx.ALL, 3)
-        self.FPSGraphGPU = wx.CheckBox(dialog, wx.ID_ANY, 'GPU')
+        self.FPSGraphGPU = wx.CheckBox(dialog, label = 'GPU')
         fpsgraphboxes.Add(self.FPSGraphGPU, 0, wx.ALL, 3)
-        self.FPSGraphCPU = wx.CheckBox(dialog, wx.ID_ANY, 'CPU')
+        self.FPSGraphCPU = wx.CheckBox(dialog, label = 'CPU')
         fpsgraphboxes.Add(self.FPSGraphCPU, 0, wx.ALL, 3)
-        self.FPSGraphSLI = wx.CheckBox(dialog, wx.ID_ANY, 'SLI')
+        self.FPSGraphSLI = wx.CheckBox(dialog, label = 'SLI')
         fpsgraphboxes.Add(self.FPSGraphSLI, 0, wx.ALL, 3)
         sizer.Add(fpsgraphboxes, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 

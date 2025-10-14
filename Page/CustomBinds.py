@@ -25,41 +25,41 @@ class CustomBinds(Page):
 
         # sizer for the buttons
         buttonSizer         = wx.BoxSizer(wx.HORIZONTAL) # sizer for new-item buttons
-        newSimpleBindButton = wx.Button(self, -1, "New Simple Bind")
+        newSimpleBindButton = wx.Button(self, label = "New Simple Bind")
         newSimpleBindButton.Bind(wx.EVT_BUTTON, self.OnNewSimpleBindButton)
         buttonSizer.Add(newSimpleBindButton, wx.ALIGN_CENTER)
         buttonSizer.Add(HelpButton(self, 'SimpleBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
 
-        newComplexBindButton = wx.Button(self, -1, "New Complex Bind")
+        newComplexBindButton = wx.Button(self, label = "New Complex Bind")
         newComplexBindButton.Bind(wx.EVT_BUTTON, self.OnNewComplexBindButton)
         buttonSizer.Add(newComplexBindButton, wx.ALIGN_CENTER)
         buttonSizer.Add(HelpButton(self, 'ComplexBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
 
-        newBufferBindButton = wx.Button(self, -1, "New Buffer Bind")
+        newBufferBindButton = wx.Button(self, label = "New Buffer Bind")
         newBufferBindButton.Bind(wx.EVT_BUTTON, self.OnNewBufferBindButton)
         buttonSizer.Add(newBufferBindButton, wx.ALIGN_CENTER)
         buttonSizer.Add(HelpButton(self, 'BufferBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
 
-        launchBindWizardButton = wx.Button(self, -1, "Launch Custom Bind Wizard")
+        launchBindWizardButton = wx.Button(self, label = "Launch Custom Bind Wizard")
         launchBindWizardButton.Bind(wx.EVT_BUTTON, self.OnBindWizardButton)
         buttonSizer.Add(launchBindWizardButton, wx.ALIGN_CENTER)
         buttonSizer.Add(HelpButton(self, 'WizardBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
 
-        importBindButton = wx.Button(self, -1, "Import Custom Bind")
+        importBindButton = wx.Button(self, label = "Import Custom Bind")
         importBindButton.Bind(wx.EVT_BUTTON, self.OnImportBindButton)
         buttonSizer.Add(importBindButton, wx.ALIGN_CENTER)
         buttonSizer.Add(HelpButton(self, 'ImportBind.html'), 0, wx.ALIGN_CENTER, 5)
 
         # a scrollable window and sizer for the collection of collapsible panes
         self.PaneSizer     = wx.BoxSizer(wx.VERTICAL)
-        self.scrolledPanel = wx.ScrolledWindow(self, -1, style = wx.VSCROLL)
+        self.scrolledPanel = wx.ScrolledWindow(self, style = wx.VSCROLL)
         self.scrolledPanel.SetScrollRate(10,10) # necessary to enable scrolling at all.
         self.scrolledPanel.SetSizer(self.PaneSizer)
 
         # Panel to show if we have no bindpanes, describing what's going on here
         BlankSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.BlankPanel = wx.Panel(self, wx.ID_ANY)
-        helptext = wx.StaticText(self.BlankPanel, wx.ID_ANY, style = wx.ALIGN_CENTER,
+        self.BlankPanel = wx.Panel(self)
+        helptext = wx.StaticText(self.BlankPanel, style = wx.ALIGN_CENTER,
                                  label = "Create a Custom Bind using the buttons above")
         helptext.SetFont(wx.Font(wx.FontInfo(16).Bold()))
         BlankSizer.Add(helptext, 1, wx.ALIGN_CENTER_VERTICAL)
@@ -181,7 +181,7 @@ class CustomBinds(Page):
         bindSizer.Add(bindpane, 1, wx.EXPAND, 5)
 
         buttonSizer = wx.BoxSizer(wx.VERTICAL)
-        deleteButton = wx.BitmapButton(self.scrolledPanel, -1, bitmap = GetIcon('UI', 'delete'))
+        deleteButton = wx.BitmapButton(self.scrolledPanel, bitmap = GetIcon('UI', 'delete'))
         deleteButton.SetForegroundColour(wx.RED)
         setattr(deleteButton, "BindPane", bindpane)
         setattr(deleteButton, "BindSizer", bindSizer)
@@ -190,21 +190,21 @@ class CustomBinds(Page):
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
         buttonSizer.Add(deleteButton)
 
-        renameButton = wx.BitmapButton(self.scrolledPanel, -1, bitmap = GetIcon('UI', 'rename'))
+        renameButton = wx.BitmapButton(self.scrolledPanel, bitmap = GetIcon('UI', 'rename'))
         setattr(renameButton, "BindPane", bindpane)
         bindpane.RenButton = renameButton
         renameButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
         renameButton.Bind(wx.EVT_BUTTON, self.SetBindPaneLabel)
         buttonSizer.Add(renameButton)
 
-        duplicateButton = wx.BitmapButton(self.scrolledPanel, -1, bitmap = GetIcon('UI', 'copy'))
+        duplicateButton = wx.BitmapButton(self.scrolledPanel, bitmap = GetIcon('UI', 'copy'))
         setattr(duplicateButton, "BindPane", bindpane)
         bindpane.DupButton = duplicateButton
         duplicateButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
         duplicateButton.Bind(wx.EVT_BUTTON, self.OnDuplicateButton)
         buttonSizer.Add(duplicateButton)
 
-        exportButton = wx.BitmapButton(self.scrolledPanel, -1, bitmap = GetIcon('UI', 'export'))
+        exportButton = wx.BitmapButton(self.scrolledPanel, bitmap = GetIcon('UI', 'export'))
         setattr(exportButton, "BindPane", bindpane)
         bindpane.ExpButton = exportButton
         exportButton.SetToolTip(f'Export bind "{bindpane.Title}"')

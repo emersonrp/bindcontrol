@@ -166,12 +166,12 @@ class Main(wx.Frame):
 
         # Bottom Buttons
         self.BottomButtonPanel = wx.Panel(self)
-        self.ProfDirButton = cgButton(self.BottomButtonPanel, wx.ID_ANY, "Set Binds Directory")
+        self.ProfDirButton = cgButton(self.BottomButtonPanel, label = "Set Binds Directory")
         self.ProfDirButton.SetToolTip("Configure the directory where this Profile will write bindfiles")
         self.ProfDirButton.DefaultToolTip = "Configure the directory where this Profile will write bindfiles"
-        self.WriteButton = wx.Button(self.BottomButtonPanel, wx.ID_ANY, "Write Binds")
+        self.WriteButton = wx.Button(self.BottomButtonPanel, label = "Write Binds")
         self.WriteButton.SetToolTip("Write out the bindfiles to the configured binds directory")
-        self.DeleteButton = wx.Button(self.BottomButtonPanel, wx.ID_ANY, "Delete All Binds")
+        self.DeleteButton = wx.Button(self.BottomButtonPanel, label = "Delete All Binds")
         self.DeleteButton.SetToolTip("Delete all BindControl-managed files in the configured binds directory")
         BottomButtonSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BottomButtonPanel.SetSizer(BottomButtonSizer)
@@ -244,15 +244,15 @@ class Main(wx.Frame):
         StartupSizer = wx.BoxSizer(wx.VERTICAL)
 
         ButtonSizer = wx.GridSizer(3, 10, 10)
-        newButton  = wx.Button(StartupPanel, wx.ID_ANY, "Start New Profile")
+        newButton  = wx.Button(StartupPanel, label = "Start New Profile")
         newButton.SetBitmap(GetIcon('UI', 'new_profile'))
         newButton.SetBitmapPosition(wx.TOP)
         newButton.SetToolTip('Start a brand new profile from scratch')
-        loadButton = wx.Button(StartupPanel, wx.ID_ANY, "Load Existing Profile")
+        loadButton = wx.Button(StartupPanel, label = "Load Existing Profile")
         loadButton.SetBitmap(GetIcon('UI', 'load_profile'))
         loadButton.SetBitmapPosition(wx.TOP)
         loadButton.SetToolTip('Load an existing BindControl Profile file')
-        importButton = wx.Button(StartupPanel, wx.ID_ANY, "Import Build File")
+        importButton = wx.Button(StartupPanel, label = "Import Build File")
         importButton.SetBitmap(GetIcon('UI', 'import_build'))
         importButton.SetBitmapPosition(wx.TOP)
         importButton.SetToolTip('Import a build file exported from City of Heroes')
@@ -459,12 +459,12 @@ class Main(wx.Frame):
 
     def OnProfDirButton(self, _ = None) -> None:
         if not self.Profile: return # should try not to get here in the first place
-        ProfDirDialog = wx.Dialog(self, wx.ID_ANY, "Set Binds Directory")
+        ProfDirDialog = wx.Dialog(self, title = "Set Binds Directory")
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         ProfDirDialog.SetSizer(sizer)
 
-        sizer.Add(wx.StaticText(ProfDirDialog, wx.ID_ANY, "Select the directory where this profile will write its bindfiles:"), 1, wx.EXPAND|wx.ALL, 10)
+        sizer.Add(wx.StaticText(ProfDirDialog, label = "Select the directory where this profile will write its bindfiles:"), 1, wx.EXPAND|wx.ALL, 10)
 
         config = wx.ConfigBase.Get()
         bindpath = config.Read('BindPath')
@@ -472,15 +472,14 @@ class Main(wx.Frame):
         if bindpath[-1:] == separator: separator = ''
 
         dirSizer = wx.BoxSizer(wx.HORIZONTAL)
-        dirSizer.Add(wx.StaticText(ProfDirDialog, wx.ID_ANY,
-                    f"{bindpath}{separator}"), 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
+        dirSizer.Add(wx.StaticText(ProfDirDialog, label = f"{bindpath}{separator}"), 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
         PathText = cgTextCtrl(ProfDirDialog)
         dirSizer.Add(PathText, 1, wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 10)
         PathText.Bind(wx.EVT_TEXT, self.OnPathTextChanged)
 
         sizer.Add(dirSizer, 1, wx.EXPAND)
 
-        sizer.Add(wx.StaticText(ProfDirDialog, wx.ID_ANY, "Changing this value will automatically save the Profile,\nincluding any other changes you have made."), 1, wx.EXPAND|wx.ALL, 10)
+        sizer.Add(wx.StaticText(ProfDirDialog, label = "Changing this value will automatically save the Profile,\nincluding any other changes you have made."), 1, wx.EXPAND|wx.ALL, 10)
 
         buttonsizer = ProfDirDialog.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL)
 

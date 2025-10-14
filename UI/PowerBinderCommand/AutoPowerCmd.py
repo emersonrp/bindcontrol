@@ -9,7 +9,7 @@ class AutoPowerCmd(PowerBinderCommand):
     Menu = "Powers"
     def BuildUI(self, dialog) -> wx.BoxSizer:
         autoPowerSizer = wx.BoxSizer(wx.HORIZONTAL)
-        label = wx.StaticText(dialog, -1, "Power:")
+        label = wx.StaticText(dialog, label = "Power:")
         label.SetToolTip("Turn on auto-attack for the specified power")
         autoPowerSizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
         self.autoPowerName = PowerPicker(dialog)

@@ -11,15 +11,15 @@ class ScreenshotCmd(PowerBinderCommand):
         ScreenshotSizer = wx.BoxSizer(wx.VERTICAL)
 
         rbSizer = wx.BoxSizer(wx.HORIZONTAL)
-        rbSizer.Add(wx.StaticText(dialog, -1, "Format:"), 0, flag = wx.ALIGN_CENTER_VERTICAL)
-        self.ScreenshotJPG = wx.RadioButton(dialog, -1, "JPG", style = wx.ALIGN_CENTER_VERTICAL|wx.RB_GROUP)
+        rbSizer.Add(wx.StaticText(dialog, label = "Format:"), 0, flag = wx.ALIGN_CENTER_VERTICAL)
+        self.ScreenshotJPG = wx.RadioButton(dialog, label = "JPG", style = wx.ALIGN_CENTER_VERTICAL|wx.RB_GROUP)
         rbSizer.Add(self.ScreenshotJPG, 0, flag = wx.ALIGN_CENTER_VERTICAL)
-        self.ScreenshotTGA = wx.RadioButton(dialog, -1, "TGA", style = wx.ALIGN_CENTER_VERTICAL)
+        self.ScreenshotTGA = wx.RadioButton(dialog, label = "TGA", style = wx.ALIGN_CENTER_VERTICAL)
         rbSizer.Add(self.ScreenshotTGA, 0, flag = wx.ALIGN_CENTER_VERTICAL)
 
         ScreenshotSizer.Add(rbSizer, 1, flag = wx.ALIGN_CENTER_HORIZONTAL)
 
-        self.ScreenshotHideUI = wx.CheckBox(dialog, -1, "Hide UI during screenshot")
+        self.ScreenshotHideUI = wx.CheckBox(dialog, label = "Hide UI during screenshot")
         ScreenshotSizer.Add(self.ScreenshotHideUI, 1, flag = wx.EXPAND)
 
         CenteringSizer.Add(ScreenshotSizer, 1, wx.ALIGN_CENTER_HORIZONTAL)

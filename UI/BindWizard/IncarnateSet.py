@@ -57,12 +57,12 @@ class IncarnateSet(WizardParent):
         for slot in ['Alpha', 'Interface', 'Judgement', 'Destiny', 'Lore', 'Hybrid', 'Genesis',]:
             if slotData := incarnateData.get(slot):
                 icon = GetIcon(slotData['iconfile']) # pyright: ignore
-                bitmap = wx.GenericStaticBitmap(panel, wx.ID_ANY, icon)
+                bitmap = wx.GenericStaticBitmap(panel, bitmap = icon)
                 bitmap.Bind(wx.EVT_ENTER_WINDOW, partial(self.OnHoverIcon, f"<b>{slot}</b>: {slotData['power']}")) # pyright: ignore
                 bitmap.Bind(wx.EVT_LEAVE_WINDOW, partial(self.OnHoverIcon, None))
                 bitmap.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
                 listSizer.Add(bitmap, 0, wx.ALL, 5)
-        self.HoverDisplay = wx.StaticText(panel, wx.ID_ANY)
+        self.HoverDisplay = wx.StaticText(panel)
         self.HoverDisplay.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         listSizer.Add(self.HoverDisplay, 1, wx.ALL, 10)
 
@@ -70,13 +70,13 @@ class IncarnateSet(WizardParent):
 
         bindkey = bindpane.Init.get('BindKey', '')
         BindSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.BindKeyCtrl = bcKeyButton(panel, -1, {
+        self.BindKeyCtrl = bcKeyButton(panel, init = {
             'CtlName' : bindpane.MakeCtrlName("BindKey"),
             'Page'    : bindpane.Page,
             'Key'     : bindkey,
         })
         self.BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.OnKeyChanged)
-        BindSizer.Add(wx.StaticText(panel, -1, "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
+        BindSizer.Add(wx.StaticText(panel, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(self.BindKeyCtrl,                      0, wx.ALIGN_CENTER_VERTICAL)
         bindpane.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
         UI.Labels[self.BindKeyCtrl.CtlName] = f'Incarnate Set Bind "{bindpane.Title}"'

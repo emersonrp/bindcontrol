@@ -14,6 +14,11 @@ tabs = {
     'DualTeam' : 'Dual Team',
 }
 
+keycontrols = []
+revkeycontrols = []
+chatcontrols = []
+revchatcontrols = []
+
 class InspirationPopper(Page):
     def __init__(self, parent) -> None:
         super().__init__(parent)
@@ -54,7 +59,15 @@ class InspirationPopper(Page):
                     InspDesc = Insp
                     if InspDesc == "ResistDamage": InspDesc = "Resist Damage"
                     if InspDesc == "BreakFree"   : InspDesc = "Break Free"
-                    UI.Labels[f"{tab}{order}{Insp}Key"]        = f"{InspDesc} Key"
+                    UI.Labels[f"{tab}{order}{Insp}Key"]     = f"{InspDesc} Key"
+
+                    keygroup = keycontrols if not order else revkeycontrols
+                    keygroup.append(f"{tab}{order}{Insp}Key")
+
+                    chatgroup = chatcontrols if not order else revchatcontrols
+                    chatgroup.append(f"{tab}{order}{Insp}Border")
+                    chatgroup.append(f"{tab}{order}{Insp}Background")
+                    chatgroup.append(f"{tab}{order}{Insp}Foreground")
 
         centeringSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -99,13 +112,9 @@ class InspirationPopper(Page):
         self.enableTellsCB.Bind(wx.EVT_CHECKBOX, self.OnEnableTellCB)
 
         optionButtonBox = wx.BoxSizer(wx.HORIZONTAL)
-        # profileChatColorButton = wx.Button(optionsBox.GetStaticBox(), label = "Profile's Chat Colors")
-        # profileChatColorButton.SetToolTip("Set self-/tell colors to the default profile chat colors")
         byInspColorButton      = wx.Button(optionsBox.GetStaticBox(), label = "Color-coded")
         byInspColorButton     .SetToolTip("Reset self-/tell colors according to inspiration type")
-        # optionButtonBox.Add(profileChatColorButton, 1, wx.ALL, 10)
         optionButtonBox.Add(byInspColorButton,      1, wx.ALL, 10)
-        # profileChatColorButton.Bind(wx.EVT_BUTTON, self.OnProfileChatColorButton)
         byInspColorButton     .Bind(wx.EVT_BUTTON, self.OnByInspColorButton)
 
         optionsBox.Add(optionButtonBox)
@@ -207,52 +216,20 @@ class InspirationPopper(Page):
                     self.Ctrls[f'{tab}{order}{Insp}Foreground'].SetColour(InspData[dkcolor])
 
     def OnEnableCB(self, evt = None) -> None:
-        controls = []
-        for tab in tabs:
-            for Insp in GameData.Inspirations[tab]:
-                controls.append(f"{tab}{Insp}Key")
-                controls.append(f"{tab}{Insp}Border")
-                controls.append(f"{tab}{Insp}Background")
-                controls.append(f"{tab}{Insp}Foreground")
-        self.Freeze()
-        self.EnableControls(self.useCB.IsChecked(), controls)
-        if self.enableTellsCB.IsChecked():
-            self.OnEnableTellCB()
-        self.Thaw()
         if evt: evt.Skip()
+        self.EnableControls(self.useCB.IsChecked(), keycontrols)
+        if self.enableTellsCB.IsChecked(): self.OnEnableTellCB()
 
     def OnEnableRevCB(self, evt = None) -> None:
-        controls = []
-        for tab in tabs:
-            for Insp in GameData.Inspirations[tab]:
-                controls.append(f"{tab}Rev{Insp}Key")
-                controls.append(f"{tab}Rev{Insp}Border")
-                controls.append(f"{tab}Rev{Insp}Background")
-                controls.append(f"{tab}Rev{Insp}Foreground")
-        self.Freeze()
-        self.EnableControls(self.useRevCB.IsChecked(), controls)
-        if self.enableTellsCB.IsChecked():
-            self.OnEnableTellCB()
-        self.Thaw()
         if evt: evt.Skip()
+        self.EnableControls(self.useRevCB.IsChecked(), revkeycontrols)
+        if self.enableTellsCB.IsChecked(): self.OnEnableTellCB()
 
     def OnEnableTellCB(self, evt = None) -> None:
-        enabled = self.enableTellsCB.IsChecked()
-        controls = []
-        revcontrols = []
-        for tab in tabs:
-            for Insp in GameData.Inspirations[tab]:
-                controls.append(f"{tab}{Insp}Border")
-                controls.append(f"{tab}{Insp}Background")
-                controls.append(f"{tab}{Insp}Foreground")
-                revcontrols.append(f"{tab}Rev{Insp}Border")
-                revcontrols.append(f"{tab}Rev{Insp}Background")
-                revcontrols.append(f"{tab}Rev{Insp}Foreground")
-        if self.useCB.IsChecked():
-            self.EnableControls(enabled, controls)
-        if self.useRevCB.IsChecked():
-            self.EnableControls(enabled, revcontrols)
         if evt: evt.Skip()
+        enabled = self.enableTellsCB.IsChecked()
+        self.EnableControls(enabled and self.useCB   .IsChecked(), chatcontrols)
+        self.EnableControls(enabled and self.useRevCB.IsChecked(), revchatcontrols)
 
     def PopulateBindFiles(self) -> bool:
         ResetFile = self.Profile.ResetFile()

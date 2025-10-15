@@ -1,7 +1,6 @@
 from BindFile import KeyBind, BindFile
 from pathlib import Path
 import pytest
-import wx
 
 def test_keybind():
     kb = KeyBind('A', 'Test A', '', ['One', 'Two', 'Three'])
@@ -62,13 +61,6 @@ def test_blf(config, bindfile, monkeypatch):
 
 #########
 def raise_exception(): raise(Exception)
-
-@pytest.fixture
-def config():
-    _ = wx.App()
-    config = wx.FileConfig()
-    wx.ConfigBase.Set(config)
-    yield config
 
 @pytest.fixture
 def bindfile(tmp_path):

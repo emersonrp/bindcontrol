@@ -1,4 +1,3 @@
-import wx
 import sys
 from pathlib import Path
 import pytest
@@ -74,12 +73,3 @@ def test_GetPopmenuPath(config, monkeypatch, tmp_path):
     Path(tmp_path / 'bin').rmdir()
     Path(tmp_path / 'assets').rmdir()
     Path(tmp_path / 'DAtA').rmdir()
-
-#########
-@pytest.fixture(autouse = True)
-def config(tmp_path, monkeypatch):
-    _ = wx.App()
-    config = wx.FileConfig()
-    wx.ConfigBase.Set(config)
-    monkeypatch.setattr(config, 'Read', lambda _: str(tmp_path))
-    yield config

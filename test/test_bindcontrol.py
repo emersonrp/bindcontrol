@@ -1,13 +1,14 @@
-import BindControl
+import wx
+from pathlib import Path
 import pytest
 import threading
-import wx
 
-from pathlib import Path
+import BindControl
 from Util.DefaultProfile import DefaultProfile
 
-def test_create_main_no_config(config):
+def test_create_main_no_config(config, monkeypatch):
     stdpaths = wx.StandardPaths.Get()
+    monkeypatch.undo() # get rid of config.Read patch
 
     assert config.Read('GameLang') == 'English'
     assert config.Read('ResetKey') == 'CTRL+R'
@@ -81,33 +82,16 @@ def test_main_bottombuttonpanel(app):
     assert main.DeleteButton in buttons
     assert main.DeleteButton.GetToolTipText() != ''
 
-# This is not working yet -- I believe the mock is grabbing OnProfileImport
-# after the Bind() in there already has a pointer to it.  This involves examining
-# how Bind() works and seeing if this is at all even possible
-@pytest.mark.skip
-def test_main_menuevents(app, mocker):
-    main = app.Main
-    mocked_import = mocker.patch('BindControl.Main.OnProfileImport')
-    menuevt = wx.CommandEvent(wx.wxEVT_MENU, main.Profile_import.GetId())
-    wx.PostEvent(main, menuevt)
-    mocked_import.assert_called()
-
-#####
-@pytest.fixture(autouse = True)
-def config(app):
-    config = wx.ConfigBase.Get()
-    yield config
 
 @pytest.fixture(autouse = True)
-def app():
+def app(config):
+    class MyApp(wx.App):
+        def OnInit(self):
+            self.Main = BindControl.Main(guiLogging = False)
+            self.SetTopWindow(self.Main)
+            return True
     app = MyApp()
     thread = threading.Thread(target = app.MainLoop)
     thread.start()
     return app
 
-class MyApp(wx.App):
-    def OnInit(self):
-        wx.ConfigBase.Set(wx.FileConfig())
-        self.Main = BindControl.Main(guiLogging = False)
-        self.SetTopWindow(self.Main)
-        return True

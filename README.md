@@ -129,6 +129,7 @@ There is a small but growing `pytest` test suite.  It only runs on Linux (and po
 * `pytest-forked`
 * `pytest-xdist`
 * `pytest-ruff`
+* `pytest-cov`
 
 I make liberal use of `typing` in parameters, attributes, and return values, and continue to add this into new and existing code as I go.  This has proven to be a bit of a hassle since BindControl was originally a direct port of CityBinder, and inherited many of its original questionable design decisions, as well as having introduced any number of my own over the years.  It's getting gradually better, and has proven to be very helpful in finding and avoiding bugs.
 

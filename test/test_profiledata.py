@@ -1,5 +1,4 @@
 #!/usr/sbin/python
-import wx
 import os
 import platform
 import pytest
@@ -11,7 +10,7 @@ from BindFile import BindFile
 from Util.BuildFiles import ParseBuildFile
 import Util.Paths
 
-def test_init_empty():
+def test_init_empty(config):
     with pytest.raises(Exception, match = 'neither filename nor newname'):
         ProfileData.ProfileData(config)
 
@@ -100,7 +99,7 @@ def test_MassageData(config, monkeypatch):
     assert b[1]['Power'] == 'Power2-2'
     assert b[2]['Power'] == 'Power2-3'
 
-def test_init_filename(tmp_path):
+def test_init_filename(config, tmp_path):
 
     profile_path = tmp_path / "testprofile.bcp"
     with pytest.raises(Exception, match = f'whose file "{profile_path}" is missing'):
@@ -304,22 +303,3 @@ def test_doSaveToFile(config, monkeypatch):
 
 #########
 def raises_exception(*args): raise(Exception)
-
-@pytest.fixture(autouse = True)
-def config(tmp_path, monkeypatch):
-    _ = wx.App()
-    config = wx.FileConfig()
-    wx.ConfigBase.Set(config)
-    monkeypatch.setattr(config, 'Read', lambda _: str(tmp_path))
-    yield config
-    config.DeleteAll()
-
-@pytest.fixture
-def PD(config):
-    fixtureprofile = Path(__file__).resolve().parent / 'fixtures' / 'testprofile.bcp'
-    return ProfileData.ProfileData(config, filename = str(fixtureprofile))
-
-# This is sorta ugly innit
-@pytest.fixture
-def DefaultProfile():
-    return "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"

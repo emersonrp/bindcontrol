@@ -552,7 +552,7 @@ class Profile(wx.Notebook):
     def ColorThingsForEditingDefault(self):
 
         boxbgcolor = wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW)
-        pagebgcolor = wx.ColourDatabase().FindColour('LIGHT BLUE') # this is horrid but the best I've found so far
+        pagebgcolor = wx.ColourDatabase().FindColour('WHEAT')
 
         # All Page backgrounds
         for page in self.Pages:
@@ -605,7 +605,7 @@ class WriteDoneDialog(wx.Dialog):
         blfSizer = wx.BoxSizer(wx.HORIZONTAL)
         textCtrl = wx.TextCtrl(self,
                        style = wx.TE_READONLY|wx.TE_CENTER,
-                       value = "/bindloadfile " + str(parent.GameBindsDir() / "reset.txt")
+                       value = f"/bindloadfile {parent.GameBindsDir() / 'reset.txt'}"
         )
         textCtrl.SetFont(
             wx.Font(9, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = 'Courier')
@@ -619,9 +619,9 @@ class WriteDoneDialog(wx.Dialog):
             )
         )
         blfSizer.Add(textCtrl, 1, wx.EXPAND)
+
         copyButton = wx.BitmapButton(self, bitmap = GetIcon('UI', 'copy'))
         copyButton.SetToolTip('Copy text')
-        setattr(copyButton, 'textctrl', textCtrl)
         blfSizer.Add(copyButton, 0)
         copyButton.Bind(wx.EVT_BUTTON, self.doTextCopy)
         sizer.Add(blfSizer, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
@@ -642,11 +642,13 @@ class WriteDoneDialog(wx.Dialog):
         sizer.Add(wx.StaticText(self, label = "Files written:"), 0, wx.TOP|wx.RIGHT|wx.LEFT, 10)
         sizer.Add(fileslist, 0, wx.ALL|wx.EXPAND, 10)
 
+        self.textctrl = textCtrl
+
         sizer.Add(self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10)
         self.SetSizerAndFit(sizer)
 
-    def doTextCopy(self, evt):
-        dataObj = wx.TextDataObject(evt.EventObject.textctrl.GetValue())
+    def doTextCopy(self, _):
+        dataObj = wx.TextDataObject(self.textctrl.GetValue())
         if wx.TheClipboard.Open():
             wx.TheClipboard.SetData(dataObj)
             wx.TheClipboard.Flush()

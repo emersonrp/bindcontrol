@@ -23,7 +23,6 @@ class bcController(wx.adv.Joystick):
 
         return all_axis_codes
 
-
     def SetCurrentAxisPercents(self) -> None:
         for axis in range(len(self.CurrentAxisPercents)):
 
@@ -83,26 +82,25 @@ class bcController(wx.adv.Joystick):
             povpos = self.GetPOVPosition()
 
             if povpos is not None and povpos < 60000: # 65535 seems to mean "at center"
-                if   povpos == 0     : code = "JP_U"
-                elif povpos == 9000  : code = "JP_R"
-                elif povpos == 18000 : code = "JP_D"
-                elif povpos == 27000 : code = "JP_L"
+                if   povpos == 0     : return "JP_U"
+                elif povpos == 9000  : return "JP_R"
+                elif povpos == 18000 : return "JP_D"
+                elif povpos == 27000 : return "JP_L"
 
-        else:
-            self.SetCurrentAxisPercents()
+        self.SetCurrentAxisPercents()
 
-            if self.CurrentAxisPercents: # might be empty list if we have no controller.
-                current_axis = self.CurrentAxisPercents.index(max(self.CurrentAxisPercents, key=abs))
+        if self.CurrentAxisPercents: # might be empty list if we have no controller.
+            current_axis = self.CurrentAxisPercents.index(max(self.CurrentAxisPercents, key=abs))
 
-                current_dir = None
+            current_dir = None
 
-                if self.CurrentAxisPercents[current_axis] < -50:
-                    current_dir = 0
-                elif self.CurrentAxisPercents[current_axis] > 50:
-                    current_dir = 1
+            if self.CurrentAxisPercents[current_axis] < -50:
+                current_dir = 0
+            elif self.CurrentAxisPercents[current_axis] > 50:
+                current_dir = 1
 
-                if current_dir is not None:
-                    code = self.CodeTable[current_axis][current_dir]
+            if current_dir is not None:
+                code = self.CodeTable[current_axis][current_dir]
 
         return code
 
@@ -122,7 +120,7 @@ class bcController(wx.adv.Joystick):
 
         possible_mods = ["", "LTrigger", "RTrigger"] # assume everybody has triggers
 
-        for bnum in range(1, self.GetNumberButtons()):
+        for bnum in range(1, self.GetNumberButtons()+1):
             bname = "JOY" + str(bnum)
             # TODO - should keep these mappings in this class somewhere
             if bnum == 5: bname = "LeftBumper"
@@ -130,7 +128,7 @@ class bcController(wx.adv.Joystick):
             possible_mods.append(bname)
 
         # windows vs linux treatment of dpad
-        if self.HasPOV4Dir() or self.GetMaxAxes() > 6:
+        if self.HasPOV4Dir() or (self.GetMaxAxes() > 6):
             possible_mods = [*possible_mods, "Joypad_Up", "Joypad_Down", "Joypad_Left", "Joypad_Right"]
 
         return possible_mods

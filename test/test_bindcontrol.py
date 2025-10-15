@@ -1,12 +1,9 @@
 import wx
 from pathlib import Path
-import pytest
-import threading
 
-import BindControl
 from Util.DefaultProfile import DefaultProfile
 
-def test_create_main_no_config(config, monkeypatch):
+def test_create_main_no_config(app, config, monkeypatch): # 'app' to init wx.App()
     stdpaths = wx.StandardPaths.Get()
     monkeypatch.undo() # get rid of config.Read patch
 
@@ -81,17 +78,3 @@ def test_main_bottombuttonpanel(app):
     assert main.WriteButton.GetToolTipText() != ''
     assert main.DeleteButton in buttons
     assert main.DeleteButton.GetToolTipText() != ''
-
-
-@pytest.fixture(autouse = True)
-def app(config):
-    class MyApp(wx.App):
-        def OnInit(self):
-            self.Main = BindControl.Main(guiLogging = False)
-            self.SetTopWindow(self.Main)
-            return True
-    app = MyApp()
-    thread = threading.Thread(target = app.MainLoop)
-    thread.start()
-    return app
-

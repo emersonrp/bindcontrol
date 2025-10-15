@@ -1,7 +1,9 @@
 import wx
 import pytest
 from pathlib import Path
+import threading
 
+import BindControl
 import Models.ProfileData as ProfileData
 
 
@@ -18,6 +20,18 @@ def config(tmp_path, monkeypatch):
 def PD(config):
     fixtureprofile = Path(__file__).resolve().parent / 'fixtures' / 'testprofile.bcp'
     return ProfileData.ProfileData(config, filename = str(fixtureprofile))
+
+@pytest.fixture
+def app(config):
+    class MyApp(wx.App):
+        def OnInit(self):
+            self.Main = BindControl.Main(guiLogging = False)
+            self.SetTopWindow(self.Main)
+            return True
+    app = MyApp()
+    thread = threading.Thread(target = app.MainLoop)
+    thread.start()
+    return app
 
 # This is sorta ugly innit
 @pytest.fixture

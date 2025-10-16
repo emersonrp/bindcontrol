@@ -194,6 +194,8 @@ class Mastermind(Page):
             self.SandolphanPage.SynchronizeUI()
         elif bindstyle == 'qwy Numpad':
             self.qwyNumpadPage.SynchronizeUI()
+        elif bindstyle == 'No Binds':
+            self.BindStyleNotebook.GetPage(0).Refresh()
 
         if evt: evt.Skip()
 

@@ -165,14 +165,14 @@ class EscapeConfigurator(WizardParent):
     def BindString(self) -> str:
         commands = []
         wizdata = self.State.get('WizData', {})
-        if wizdata.get('EscUnselect')   : commands.append('unselect')             # pyright: ignore
-        if wizdata.get('EscUnqueue')    : commands.append('unqueue')              # pyright: ignore
-        if wizdata.get('EscWindows')    : commands.append('gamereturn')           # pyright: ignore
-        if wizdata.get('EscExitMission'): commands.append('requestexitmission 1') # pyright: ignore
-        if wizdata.get('EscResetCam')   : commands.append('camreset')             # pyright: ignore
-        if wizdata.get('EscNoReward')   : commands.append('clearRewardChoice')    # pyright: ignore
-        if wizdata.get('EscDialogNo')   : commands.append('dialogno')             # pyright: ignore
-        if wizdata.get('EscMenu')       : commands.append('menu')                 # pyright: ignore
+        if wizdata.get('EscUnselect')   : commands.append('unselect')
+        if wizdata.get('EscUnqueue')    : commands.append('unqueue')
+        if wizdata.get('EscWindows')    : commands.append('gamereturn')
+        if wizdata.get('EscExitMission'): commands.append('requestexitmission 1')
+        if wizdata.get('EscResetCam')   : commands.append('camreset')
+        if wizdata.get('EscNoReward')   : commands.append('clearRewardChoice')
+        if wizdata.get('EscDialogNo')   : commands.append('dialogno')
+        if wizdata.get('EscMenu')       : commands.append('menu')
 
         return '$$'.join(commands)
 

@@ -51,6 +51,7 @@ class IncarnateSet(WizardParent):
             if self.State['WizData'].get('IncData', {}) != newdata:
                 self.BindPane.Page.UpdateAllBinds()
                 self.State['WizData']['IncData'] = newdata
+
         # and then in either case, build the Pane from State
         incarnateData = self.State.get('WizData', {}).get('IncData', {})
         for slot in ['Alpha', 'Interface', 'Judgement', 'Destiny', 'Lore', 'Hybrid', 'Genesis',]:
@@ -106,7 +107,7 @@ class IncarnateSet(WizardParent):
         evt.Skip()
         self.CheckIfWellFormed()
 
-    def CheckIfWellFormed(self):
+    def CheckIfWellFormed(self) -> bool:
         isWellFormed = True
 
         bk = self.BindPane.GetCtrl('BindKey')
@@ -114,11 +115,12 @@ class IncarnateSet(WizardParent):
             wx.LogError("BindKey missing from Ctrls in IncarnateSet.CheckIfWellFormed - this is a bug!")
             isWellFormed = False
 
-        if bk.Key:
-            bk.RemoveError('undef')
         else:
-            bk.AddError('undef', 'The keybind has not been selected')
-            isWellFormed = False
+            if bk.Key:
+                bk.RemoveError('undef')
+            else:
+                bk.AddError('undef', 'The keybind has not been selected')
+                isWellFormed = False
 
         return isWellFormed
 

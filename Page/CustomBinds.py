@@ -11,8 +11,7 @@ from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
-from UI.WizardBindPane  import WizardBindPane
-from UI.BindWizard      import WizPickerDialog, wizards
+from UI.WizardBindPane  import WizardBindPane, WizPickerDialog, wizards
 
 class CustomBinds(Page):
     def __init__(self, parent) -> None:

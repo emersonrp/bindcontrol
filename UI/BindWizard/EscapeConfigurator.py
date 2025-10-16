@@ -143,7 +143,7 @@ class EscapeConfigurator(WizardParent):
 
         return panel
 
-    def UpdateAndRefresh(self, evt):
+    def UpdateState(self):
         self.State = { 'WizData' : {
             'EscUnselect'    : self.EscUnselect   .GetValue(), # pyright: ignore
             'EscUnqueue'     : self.EscUnqueue    .GetValue(), # pyright: ignore
@@ -154,7 +154,6 @@ class EscapeConfigurator(WizardParent):
             'EscDialogNo'    : self.EscDialogNo   .GetValue(), # pyright: ignore
             'EscMenu'        : self.EscMenu       .GetValue(), # pyright: ignore
         } }
-        super().UpdateAndRefresh(evt)
 
     def DeHandleButton(self, _):
         # do not evt.Skip

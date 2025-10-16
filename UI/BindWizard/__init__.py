@@ -31,7 +31,7 @@ class WizardParent:
                 helpbutton = wd.FindWindow(wx.ID_HELP)
                 helpbutton.Bind(wx.EVT_BUTTON, self.ShowHelp)
             okbutton = wd.FindWindow(wx.ID_OK)
-            okbutton.Bind(wx.EVT_BUTTON, self.UpdateAndRefresh)
+            okbutton.Bind(wx.EVT_BUTTON, self.BindPane.UpdateAndRefresh)
 
             mainSizer.Add(buttonsizer, 0, wx.EXPAND|wx.ALL, 10)
 
@@ -54,9 +54,5 @@ class WizardParent:
     def BuildUI(self, dialog, init) -> wx.Sizer:
         ...
 
-    # TODO this really sorta belongs upstairs in WizardBindPane but needs refactoring
-    # maybe into "Wizard.SetState" and "BindPane.Update" or something
-    def UpdateAndRefresh(self, evt):
-        if evt: evt.Skip()
-        self.Profile.UpdateData('CustomBinds', self.BindPane.Serialize())
-        self.BindPane.BuildBindUI(None)
+    def UpdateState(self):
+        ...

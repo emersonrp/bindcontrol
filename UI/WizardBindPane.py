@@ -71,6 +71,12 @@ class WizardBindPane(CustomBindPaneParent):
 
         pane.Layout()
 
+    def UpdateAndRefresh(self, evt):
+        if evt: evt.Skip()
+        self.Wizard.UpdateState()
+        self.Profile.UpdateData('CustomBinds', self.Serialize())
+        self.BuildBindUI(None)
+
 class WizPickerDialog(wx.Dialog):
     def __init__(self, parent):
 

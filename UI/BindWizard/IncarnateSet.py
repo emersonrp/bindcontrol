@@ -89,10 +89,9 @@ class IncarnateSet(WizardParent):
 
         return panel
 
-    def UpdateAndRefresh(self, evt):
+    def UpdateState(self):
         if self.IncarnateBox:
             self.State = { 'WizData' : { 'IncData' : self.IncarnateBox.Serialize() } }
-        super().UpdateAndRefresh(evt)
 
     def OnHoverIcon(self, markup, evt = None):
         if markup:

@@ -97,7 +97,11 @@ class EscapeConfigurator(WizardParent):
         for cmd in ('EscUnselect', 'EscUnqueue', 'EscWindows', 'EscExitMission',
                     'EscResetCam', 'EscNoReward', 'EscDialogNo', 'EscMenu',):
             ctpanel = wx.Panel(cmdPanel)
-            ctpanel.SetBackgroundColour(wx.Colour(220, 220, 220))
+            if self.CheckIfWellFormed():
+                ctpanel.SetBackgroundColour(wx.Colour(220, 220, 220))
+            else:
+                ctpanel.SetBackgroundColour(wx.Colour(255, 220, 220))
+                ctpanel.SetToolTip("No commands are selected;  bind will not be written.")
             ctsizer = wx.BoxSizer(wx.HORIZONTAL)
             ctpanel.SetSizer(ctsizer)
             cmdtext = cgStaticText(ctpanel, label = UI.Labels[cmd], style = wx.ALIGN_CENTER)

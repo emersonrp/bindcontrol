@@ -11,7 +11,7 @@ from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
-from UI.WizardBindPane  import WizardBindPane, WizPickerDialog, wizards
+from UI.WizardBindPane  import WizardBindPane, WizPickerDialog
 
 class CustomBinds(Page):
     def __init__(self, parent) -> None:
@@ -134,10 +134,7 @@ class CustomBinds(Page):
         elif binddata['Type'] == "ComplexBind":
             bindpane = ComplexBindPane(self, init = binddata)
         elif binddata['Type'] == "WizardBind":
-            if wizClass := wizards.get(binddata['WizClass']):
-                bindpane = WizardBindPane(self, wizClass, init = binddata)
-            else:
-                wx.LogWarning(f"Tried to load WizardBind with unknown class {binddata['WizClass']}.  Did you start using an older version of BindControl?")
+            bindpane = WizardBindPane(self, binddata['WizClass'], init = binddata)
         else:
             wx.LogError("No valid custom bind found.")
 
@@ -356,15 +353,15 @@ class CustomBinds(Page):
             self.Profile.UpdateData('CustomBinds', pane.Serialize())
 
     def PopulateBindFiles(self) -> bool:
-        errors = []
+        errors = ''
         for pane in self.Panes:
             if pane.CheckIfWellFormed():
                 pane.PopulateBindFiles()
             else:
-                errors.append(pane.Title)
+                errors = errors + f"\n - {pane.Title}"
 
         if errors:
-            wx.MessageBox(f"The following custom binds contain errors, and will not be written to the bindfiles: {', '.join(errors)}", "Errors Found")
+            wx.MessageBox(f"The following custom binds contain errors, and will not be written to the bindfiles: {errors}", "Errors Found")
         return True
 
     # TODO:  this contains knowledge of the innards of ComplexBinds, BufferBinds, etc

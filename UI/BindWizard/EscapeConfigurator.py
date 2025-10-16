@@ -157,7 +157,7 @@ class EscapeConfigurator(WizardParent):
         wx.MessageBox('The Escape Configurator can only be bound to the "ESC" Key.')
 
     def CheckIfWellFormed(self):
-        return True
+        return bool(self.BindString()) # let's not write an empty bind
 
     def PopulateBindFiles(self):
         self.Profile.ResetFile().SetBind('ESC', 'Escape Configurator', self.Profile.CustomBinds, self.BindString())

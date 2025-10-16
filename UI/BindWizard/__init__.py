@@ -12,7 +12,6 @@ class WizardParent:
         self.Profile = parent.Profile
         self.State = init
         self.WizardDialog = None
-        self.BindPane.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
     def Dialog(self):
         if not self.WizardDialog:
@@ -55,6 +54,8 @@ class WizardParent:
     def BuildUI(self, dialog, init) -> wx.Sizer:
         ...
 
+    # TODO this really sorta belongs upstairs in WizardBindPane but needs refactoring
+    # maybe into "Wizard.SetState" and "BindPane.Update" or something
     def UpdateAndRefresh(self, evt):
         if evt: evt.Skip()
         self.Profile.UpdateData('CustomBinds', self.BindPane.Serialize())

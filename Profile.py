@@ -295,16 +295,16 @@ class Profile(wx.Notebook):
         # want to be its own logic / method instead.
         if set_power_picks:
             if self.HasPower('Flight', 'Hover') or self.Archetype() == 'Peacebringer':
-                self.MovementPowers.SetState('HasHover', True)
-                self.UpdateData('MovementPowers', 'HasHover', True)
+                self.MovementPowers.SetState('UseHover', True)
+                self.UpdateData('MovementPowers', 'UseHover', True)
 
             if self.HasPower('Flight', 'Group Fly'):
                 self.MovementPowers.SetState('HasGFly', True)
                 self.UpdateData('MovementPowers', 'HasGFly', True)
 
             if self.HasPower('Leaping', 'Combat Jumping'):
-                self.MovementPowers.SetState('HasCJ', True)
-                self.UpdateData('MovementPowers', 'HasCJ', True)
+                self.MovementPowers.SetState('UseCJ', True)
+                self.UpdateData('MovementPowers', 'UseCJ', True)
 
             if self.HasPower('Teleportation', 'Team Teleport'):
                 self.MovementPowers.SetState('HasTTP', True)

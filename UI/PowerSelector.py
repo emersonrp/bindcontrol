@@ -32,12 +32,9 @@ class PowerSelector(wx.BitmapButton):
         powerlist.CheckList.SetSelection(wx.NOT_FOUND)
 
     def ClearPowers(self, evt = None):
+        if evt: evt.Skip()
         self.Powers = []
         wx.PostEvent(self.Page, PowerSelectorChanged(wx.NewId(), control = self))
-        if evt: evt.Skip()
-
-    def AddPower(self, power: str):
-        self.Powers.append(power)
 
     def GetValue(self):
         return self.Powers
@@ -51,35 +48,24 @@ class Popup(wx.PopupTransientWindow):
 
         self.PowerSelector = powerselector
 
-        panel = wx.Panel(self)
-        self.CheckList = wx.CheckListBox(panel, style = wx.LB_SINGLE)
-
-        manualsizer = wx.BoxSizer(wx.VERTICAL)
-        manualsizer.Add(self.CheckList, 1, wx.EXPAND|wx.ALL, 3)
-
-        panel.SetSizer(manualsizer)
-
         pickername = self.PowerSelector.PickerName
-
-        powerset = ''
-        picker = parent.Ctrls[pickername]
-        powerset = picker.GetStringSelection()
+        powerset = parent.Ctrls[pickername].GetStringSelection()
 
         if pickername in ('Primary', 'Secondary', 'Epic'):
             powers = GameData.Archetypes[parent.Profile.Archetype()][pickername][powerset]
         else:
             powers = GameData.PoolPowers[powerset]
 
-        self.CheckList.InsertItems(powers,0)
+        self.CheckList = wx.CheckListBox(self, choices = powers, style = wx.LB_SINGLE)
         for i,power in enumerate(powers):
             if power in self.PowerSelector.Powers:
                 self.CheckList.Check(i)
-
         self.CheckList.Bind(wx.EVT_LEFT_DOWN, self.OnCheckListClicked)
 
-        # Yes we need all of these
-        panel.Fit()
-        self.Fit()
+        manualsizer = wx.BoxSizer(wx.VERTICAL)
+        manualsizer.Add(self.CheckList, 0, wx.ALL, 3)
+
+        self.SetSizerAndFit(manualsizer)
         self.Layout()
 
     def OnCheckListClicked(self, _):
@@ -90,7 +76,6 @@ class Popup(wx.PopupTransientWindow):
         if sel == wx.NOT_FOUND: return
 
         self.CheckList.Check(sel, not self.CheckList.IsChecked(sel))
-
 
     def OnDismiss(self):
         self.PowerSelector.Powers = [self.CheckList.GetString(i) for i in self.CheckList.GetCheckedItems()]

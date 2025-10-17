@@ -29,7 +29,7 @@ class PowerSelector(wx.BitmapButton):
         evtpos = wx.GetMousePosition()
         powerlist.Position(wx.Point(evtpos.x + 5, evtpos.y + 5), wx.DefaultSize)
         powerlist.Popup()
-        powerlist.CheckList.SetSelection(wx.NOT_FOUND)
+        #powerlist.CheckList.SetSelection(wx.NOT_FOUND)
 
     def ClearPowers(self, evt = None):
         if evt: evt.Skip()
@@ -56,29 +56,46 @@ class Popup(wx.PopupTransientWindow):
         else:
             powers = GameData.PoolPowers[powerset]
 
-        self.CheckList = wx.CheckListBox(self, choices = powers, style = wx.LB_SINGLE)
-        for i,power in enumerate(powers):
-            if power in self.PowerSelector.Powers:
-                self.CheckList.Check(i)
-        self.CheckList.Bind(wx.EVT_LEFT_DOWN, self.OnCheckListClicked)
-
         manualsizer = wx.BoxSizer(wx.VERTICAL)
-        manualsizer.Add(self.CheckList, 0, wx.ALL, 3)
+
+        self.Popups = []
+        for power in powers:
+            popuppower = PopupPower(self, powerset, power)
+            popuppower.CB.SetValue(power in self.PowerSelector.Powers)
+            manualsizer.Add(popuppower, 0, wx.ALL, 3)
+            self.Popups.append(popuppower)
 
         self.SetSizerAndFit(manualsizer)
         self.Layout()
 
-    def OnCheckListClicked(self, _):
-        self.CheckList.SetSelection(wx.NOT_FOUND)
-
-        sel = self.CheckList.HitTest(self.CheckList.ScreenToClient(wx.GetMousePosition()))
-
-        if sel == wx.NOT_FOUND: return
-
-        self.CheckList.Check(sel, not self.CheckList.IsChecked(sel))
-
     def OnDismiss(self):
-        self.PowerSelector.Powers = [self.CheckList.GetString(i) for i in self.CheckList.GetCheckedItems()]
+        self.PowerSelector.Powers = [p.Power for p in self.Popups if p.CB.IsChecked()]
 
         wx.PostEvent(self.PowerSelector.Page, PowerSelectorChanged(wx.NewId(), control = self.PowerSelector))
         self.DestroyLater()
+
+class PopupPower(wx.Panel):
+    def __init__(self, parent, powerset, power):
+        super().__init__(parent)
+        self.Power = power
+
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.CB = wx.CheckBox(self)
+        sizer.Add(self.CB, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 3)
+
+        icon = wx.GenericStaticBitmap(self, bitmap = GetIcon('Powers', powerset, power))
+        sizer.Add(icon, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 3)
+
+        text = wx.StaticText(self, label = power)
+        sizer.Add(text, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 3)
+
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
+        icon.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
+        text.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
+
+        self.SetSizerAndFit(sizer)
+
+    def OnClick(self, evt = None):
+        if evt: evt.Skip()
+        self.CB.SetValue(not self.CB.IsChecked())

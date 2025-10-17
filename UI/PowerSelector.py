@@ -62,7 +62,7 @@ class Popup(wx.PopupTransientWindow):
         for power in powers:
             popuppower = PopupPower(self, powerset, power)
             popuppower.CB.SetValue(power in self.PowerSelector.Powers)
-            manualsizer.Add(popuppower, 0, wx.ALL, 3)
+            manualsizer.Add(popuppower, 0)
             self.Popups.append(popuppower)
 
         self.SetSizerAndFit(manualsizer)
@@ -84,7 +84,8 @@ class PopupPower(wx.Panel):
         self.CB = wx.CheckBox(self)
         sizer.Add(self.CB, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 3)
 
-        icon = wx.GenericStaticBitmap(self, bitmap = GetIcon('Powers', powerset, power))
+        icon = wx.GenericStaticBitmap(self, bitmap = GetIcon('Powers', powerset, power), size = wx.Size(16,16))
+        icon.SetScaleMode(wx.GenericStaticBitmap.Scale_AspectFill)
         sizer.Add(icon, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 3)
 
         text = wx.StaticText(self, label = power)

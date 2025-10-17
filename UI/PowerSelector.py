@@ -72,12 +72,12 @@ class Popup(wx.PopupTransientWindow):
         for power in powers:
             popuppower = PopupPower(powerpanel, powerset, power)
             popuppower.CB.SetValue(power in self.PowerSelector.Powers)
-            powersizer.Add(popuppower, 0)
+            powersizer.Add(popuppower, 0, wx.EXPAND)
             self.Popups.append(popuppower)
 
         powerpanel.SetSizerAndFit(powersizer)
 
-        # shim the power panel into the main sizer with a 2x border
+        # shim the power panel into the main sizer with a 2px border
         bordersizer.Add(borderpanel, 1, wx.EXPAND|wx.ALL, 2)
 
         self.SetSizerAndFit(bordersizer)
@@ -103,15 +103,31 @@ class PopupPower(wx.Panel):
         icon.SetScaleMode(wx.GenericStaticBitmap.Scale_AspectFill)
         sizer.Add(icon, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 3)
 
-        text = wx.StaticText(self, label = power)
-        sizer.Add(text, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 3)
+        self.PowerText = wx.StaticText(self, label = power)
+        sizer.Add(self.PowerText, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 3)
 
         self.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
         icon.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
-        text.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
+        self.PowerText.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
+
+        self.Bind(wx.EVT_ENTER_WINDOW, self.OnEnterWindow)
+        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
+
+        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
+        self.PowerText.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENUTEXT))
 
         self.SetSizerAndFit(sizer)
 
-    def OnClick(self, evt = None):
-        if evt: evt.Skip()
+    def OnClick(self, evt):
+        evt.Skip()
         self.CB.SetValue(not self.CB.IsChecked())
+
+    def OnEnterWindow(self, evt):
+        evt.Skip()
+        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENUHILIGHT))
+        self.PowerText.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT))
+
+    def OnLeaveWindow(self, evt):
+        evt.Skip()
+        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
+        self.PowerText.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENUTEXT))

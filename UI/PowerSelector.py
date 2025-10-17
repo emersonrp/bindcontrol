@@ -56,18 +56,31 @@ class Popup(wx.PopupTransientWindow):
         else:
             powers = GameData.PoolPowers[powerset]
 
-        manualsizer = wx.BoxSizer(wx.VERTICAL)
-        manualsizer.Add(wx.StaticText(self, label = powerset), 0, wx.ALL|wx.ALIGN_CENTER, 5)
-        manualsizer.Add(wx.StaticLine(self, style = wx.HORIZONTAL), 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)
+        # a whole wx.Panel just to give us a two-pixel "3D Shadow" border to make it look like a menu
+        borderpanel = wx.Panel(self)
+        borderpanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DDKSHADOW))
+        bordersizer = wx.BoxSizer(wx.VERTICAL)
+
+        # And another wx.Panel to put all the "menu items" on that's menu-colored
+        powerpanel = wx.Panel(borderpanel)
+        powerpanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
+        powersizer = wx.BoxSizer(wx.VERTICAL)
+        powersizer.Add(wx.StaticText(powerpanel, label = powerset), 0, wx.ALL|wx.ALIGN_CENTER, 5)
+        powersizer.Add(wx.StaticLine(powerpanel, style = wx.HORIZONTAL), 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)
 
         self.Popups = []
         for power in powers:
-            popuppower = PopupPower(self, powerset, power)
+            popuppower = PopupPower(powerpanel, powerset, power)
             popuppower.CB.SetValue(power in self.PowerSelector.Powers)
-            manualsizer.Add(popuppower, 0)
+            powersizer.Add(popuppower, 0)
             self.Popups.append(popuppower)
 
-        self.SetSizerAndFit(manualsizer)
+        powerpanel.SetSizerAndFit(powersizer)
+
+        # shim the power panel into the main sizer with a 2x border
+        bordersizer.Add(borderpanel, 1, wx.EXPAND|wx.ALL, 2)
+
+        self.SetSizerAndFit(bordersizer)
         self.Layout()
 
     def OnDismiss(self):

@@ -57,6 +57,8 @@ class Popup(wx.PopupTransientWindow):
             powers = GameData.PoolPowers[powerset]
 
         manualsizer = wx.BoxSizer(wx.VERTICAL)
+        manualsizer.Add(wx.StaticText(self, label = powerset), 0, wx.ALL|wx.ALIGN_CENTER, 5)
+        manualsizer.Add(wx.StaticLine(self, style = wx.HORIZONTAL), 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)
 
         self.Popups = []
         for power in powers:

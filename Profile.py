@@ -1,13 +1,14 @@
 import re
 from functools import partial
-from pathlib import PurePath, Path, PureWindowsPath
+from pathlib import PurePath, Path
 from typing import TYPE_CHECKING
 import wx
 import wx.lib.colourselect as csel
 
 from BindFile import BindFile
 from BLF import BLF
-from Icon import GetIcon
+from Icon import GetIcon, PrecacheIcons
+
 from Models.ProfileData import ProfileData, BindsDirectoryException
 if TYPE_CHECKING:
     from Page import Page as bcPage
@@ -85,6 +86,8 @@ class Profile(wx.Notebook):
 
         if self.EditingDefault: self.ColorThingsForEditingDefault()
 
+        PrecacheIcons(self)
+
     def CreatePage(self, page):
         page.BuildPage()
         page.SetScrollRate(10,10)
@@ -97,21 +100,17 @@ class Profile(wx.Notebook):
 
     #####
     # Convenience / JIT accessors
-    def ProfileName(self)     : return self.Data.Filepath.stem if self.Data.Filepath else ''
-    def Archetype(self)       : return self.General.GetState('Archetype')
-    def Primary(self)         : return self.General.GetState('Primary')
-    def Secondary(self)       : return self.General.GetState('Secondary')
+    def ProfileName(self)     : return self.Data.ProfileName()
+    def Archetype(self)       : return self.Data['General']['Archetype']
+    def Primary(self)         : return self.Data['General']['Primary']
+    def Secondary(self)       : return self.Data['General']['Secondary']
     def ResetFile(self)       : return self.GetBindFile("reset.txt")
-    def ProfileIDFile(self)   : return self.BindsDir() / 'bcprofileid.txt'
-    def Server(self)          : return self.Data.Server
+    def ProfileIDFile(self)   : return self.Data.ProfileIDFile()
+    def Server(self)          : return self.Data['General']['Server']
     def Filepath(self)        : return self.Data.Filepath
     def ProfileBindsDir(self) : return self.Data['ProfileBindsDir']
-    def BindsDir(self)        : return Path(wx.ConfigBase.Get().Read('BindPath')) / self.Data['ProfileBindsDir']
-    def GameBindsDir(self)    :
-        if gbp := wx.ConfigBase.Get().Read('GameBindPath'):
-            return PureWindowsPath(gbp) / self.Data['ProfileBindsDir']
-        else:
-            return self.BindsDir()
+    def BindsDir(self)        : return self.Data.BindsDir()
+    def GameBindsDir(self)    : return self.Data.GameBindsDir()
 
     def HasPowerPool(self, poolname):
         for picker in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
@@ -583,7 +582,6 @@ class Profile(wx.Notebook):
         self.Mastermind.BindstyleLabel.SetBackgroundColour(boxbgcolor)
         for pageidx in range(self.Mastermind.BindStyleNotebook.GetPageCount()):
             self.Mastermind.BindStyleNotebook.GetPage(pageidx).SetBackgroundColour(boxbgcolor)
-
 
 class WriteDoneDialog(wx.Dialog):
     def __init__(self, parent, msg = 'Bindfiles written.'):

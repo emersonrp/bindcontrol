@@ -1,7 +1,6 @@
 import wx
-import re
 import GameData
-from Icon import GetIcon
+from Icon import GetIcon, SplitNameAndIcon
 from UI.ErrorControls import ErrorControlMixin
 from Util.Incarnate import Rarities, Aliases
 
@@ -153,9 +152,9 @@ class PowerPickerMenu(wx.Menu):
             elif isinstance(data, list):
                 submenu = wx.Menu()
                 for item in data:
-                    item, iconlist = self.SplitNameAndIcon(item)
+                    item, iconpathparts = SplitNameAndIcon(item)
                     menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
-                    icon = GetIcon('Powers', 'Misc', *iconlist)
+                    icon = GetIcon('Powers', 'Misc', *iconpathparts)
                     if icon:
                         menuitem.SetBitmap(icon)
                         setattr(menuitem, 'IconFilename', icon.Filename)
@@ -163,13 +162,3 @@ class PowerPickerMenu(wx.Menu):
                 menu.AppendSubMenu(submenu, name)
 
         return menu
-
-    def SplitNameAndIcon(self, namestr) -> list:
-        if re.search(r'\|', namestr):
-            name, iconstr = re.split(r'\|', namestr)
-            iconstr = re.sub(r'[^\w|]+', '', iconstr)
-            iconlist = re.split(r'_', iconstr)
-            return [name, iconlist]
-        else:
-            iconstr = re.sub(r'[^\w|]+', '', namestr)
-            return [namestr, [iconstr]]

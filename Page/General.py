@@ -5,7 +5,7 @@ import wx.lib.stattext as ST
 from typing import Any
 import UI
 import Profile
-from Icon import GetIconBitmap
+from Icon import GetIconBitmap, PrecacheIcons
 import GameData
 
 from UI.ControlGroup import ControlGroup
@@ -428,16 +428,21 @@ class General(Page):
             picker.SetStringSelection(curval)
             self.Profile.UpdateData('General', pickername, self.GetState(pickername))
 
+        PrecacheIcons(self.Profile)
+
     def OnPickPrimaryPowerSet(self, evt) -> None:
         self.Profile.Mastermind.SynchronizeUI()
         self.Profile.CheckAllConflicts()
+        PrecacheIcons(self.Profile)
         evt.Skip()
 
     def OnPickSecondaryPowerSet(self, evt) -> None:
         self.Profile.CheckAllConflicts()
+        PrecacheIcons(self.Profile)
         evt.Skip()
 
     def OnPickEpicPowerSet(self, evt) -> None:
+        PrecacheIcons(self.Profile)
         evt.Skip()
 
     def OnTypeEnable(self, evt = None) -> None:

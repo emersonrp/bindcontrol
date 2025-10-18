@@ -118,7 +118,6 @@ def test_accessors(config, monkeypatch, tmp_path, PD):
 
     assert PD.LastModTime     == PD.Filepath.stat().st_mtime_ns
     assert not PD.IsModified()
-    assert PD.Server          == 'Rebirth'
     assert PD.ProfileName()   == 'testprofile'
     assert PD.ProfileIDFile() == PD.BindsDir() / 'bcprofileid.txt'
     assert PD.BindsDir()      == tmp_path / PD['ProfileBindsDir']
@@ -156,7 +155,6 @@ def test_FillWith(PD):
         'General'         : { 'Server' : 'Rebirth' },
     })
 
-    assert PD.Server == 'Rebirth'
     assert PD['ProfileBindsDir'] == 'test_FillWith'
     assert 'MovementPowers' not in PD
     assert PD.IsModified()

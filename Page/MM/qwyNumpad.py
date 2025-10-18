@@ -52,7 +52,10 @@ class qwyNumpad(wx.Panel):
         self.PopulateButtonGrid()
 
     def GetKeyBinds(self):
-        mmp = GameData.MMPowerSets[self.Page.Profile.Primary() or "Mercenaries"]
+        if self.Page.Profile.Archetype() == 'Mastermind':
+            mmp = GameData.MMPowerSets[self.Page.Profile.Primary() or "Mercenaries"]
+        else:
+            mmp = GameData.MMPowerSets["Mercenaries"]
         names = []
         for i in range(6):
             names.append(self.Page.GetPetName(i))
@@ -320,7 +323,10 @@ class qwyNumpad(wx.Panel):
             if self.IsFrozen(): self.Thaw()
 
     def GetCurrentGrid(self):
-        mmp = GameData.MMPowerSets[self.Page.Profile.Primary() or "Mercenaries"]
+        if self.Page.Profile.Archetype() == 'Mastermind':
+            mmp = GameData.MMPowerSets[self.Page.Profile.Primary() or "Mercenaries"]
+        else:
+            mmp = GameData.MMPowerSets["Mercenaries"]
         names = []
         for i in range(6):
             names.append(self.Page.GetPetName(i))

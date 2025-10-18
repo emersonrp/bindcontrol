@@ -18,10 +18,10 @@ class ProfileData(dict):
     def __init__(self, config, filename = None, newname = None, profiledata : dict|None = None, editdefault : bool = False) -> None:
         profiledata = profiledata or {}
 
+        # things as attributes are things we don't save into the JSON / save file.
         self.Config                      = config # wx.Config object
         self.Filepath        : Path|None = Path(filename) if filename else None
         self.LastModTime     : int       = 0
-        self.Server          : str       = "Homecoming"
         self.SavedState      : dict|None = None
 
         # are we wanting to load this one from a file?
@@ -89,7 +89,7 @@ class ProfileData(dict):
         if not self['ProfileBindsDir']:
             raise BindsDirectoryException("Can't come up with a sane Binds Directory!")
 
-        GameData.SetupGameData(self.Server)
+        GameData.SetupGameData(self.get('General', {}).get('Server', 'Homecoming'))
 
     def ProfileName(self)   -> str      : return self.Filepath.stem if self.Filepath else ''
     def ProfileIDFile(self) -> Path     : return self.BindsDir() / 'bcprofileid.txt'
@@ -103,12 +103,6 @@ class ProfileData(dict):
     def FillWith(self, data) -> None:
         self.clear()
         self.update(data)
-        # These next three lines are wacky and unclear.  We want:
-        # 1) Get Server from General if it's there
-        # 2) otherwise get it from top-level
-        # 3) otherwise make it 'Homecoming'
-        server = self.get('General', {}).get('Server', '')
-        self.Server = server if server else self.get('Server', 'Homecoming')
 
     def UpdateData(self, pagename, *args) -> None:
         if pagename == 'CustomBinds':

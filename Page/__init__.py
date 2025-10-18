@@ -6,6 +6,11 @@
 #  to change a wx.Choice's list, for example.  Then we just trawl
 #  through page.Ctrls directly.  This could be improved.
 
+# Much later observation:  gating behind GetState and SetState wreaks
+# havoc on the entire notion of type checking, since GetState can in
+# principle return str|bool|list|etc.  Undoing this would be tangly
+# but might be The Right Thing.
+
 #  page.GetState('FPSBindKey')
 #  page.SetState('Archetype', 'Blaster')
 

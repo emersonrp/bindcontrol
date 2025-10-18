@@ -433,12 +433,12 @@ class General(Page):
         if evt: evt.Skip()
 
     def OnPickPoolPower(self, evt) -> None:
-        pickername = evt.GetEventObject().CtlName
-        self.Ctrls[f'{pickername}Powers'].ClearPowers()
         self.UpdatePoolPickers()
         self.Profile.MovementPowers.SynchronizeUI()
         self.Profile.CheckAllConflicts()
         self.EnablePowerSelectors()
+        pickername = evt.GetEventObject().CtlName
+        self.Ctrls[f'{pickername}Powers'].ClearPowers()
         evt.Skip()
 
     def UpdatePoolPickers(self) -> None:

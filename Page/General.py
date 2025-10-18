@@ -117,7 +117,6 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'PrimaryPowers',
             ctlType = 'powerselector',
-            tooltip = 'Select this Profile\'s powers from the Primary powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Primary',
         )
         powersBox.AddControl(
@@ -129,7 +128,6 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'SecondaryPowers',
             ctlType = 'powerselector',
-            tooltip = 'Select this Profile\'s powers from the Secondary powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Secondary',
         )
         powersBox.AddControl(
@@ -141,7 +139,6 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'EpicPowers',
             ctlType = 'powerselector',
-            tooltip = 'Select this Profile\'s powers from the Epic powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Epic',
         )
         poolcontents = sorted(GameData.PoolPowers)
@@ -156,7 +153,6 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'Pool1Powers',
             ctlType = 'powerselector',
-            tooltip = 'Select this Profile\'s powers from the first Pool powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Pool1',
         )
         powersBox.AddControl(
@@ -169,7 +165,6 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'Pool2Powers',
             ctlType = 'powerselector',
-            tooltip = 'Select this Profile\'s powers from the second Pool powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Pool2',
         )
         powersBox.AddControl(
@@ -182,7 +177,6 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'Pool3Powers',
             ctlType = 'powerselector',
-            tooltip = 'Select this Profile\'s powers from the third Pool powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Pool3',
         )
         powersBox.AddControl(
@@ -195,7 +189,6 @@ class General(Page):
         powersBox.AddControl(
             ctlName = 'Pool4Powers',
             ctlType = 'powerselector',
-            tooltip = 'Select this Profile\'s powers from the fourth Pool powerset.\nThis is used in several places in BindControl, and is optional.',
             context = 'Pool4',
         )
 
@@ -301,11 +294,19 @@ class General(Page):
         self.OnTypeEnable()
         self.ValidateServerPicker()
         self.UpdatePoolPickers()
-        self.EnablePowerSelectors()
+        self.SetupPowerSelectors()
 
-    def EnablePowerSelectors(self):
-        for picker in ('Primary', 'Secondary', 'Epic', 'Pool1', 'Pool2', 'Pool3', 'Pool4'):
-            self.Ctrls[f'{picker}Powers'].Enable(bool(self.GetState(picker)))
+    def SetupPowerSelectors(self):
+        for name in ('Primary', 'Secondary', 'Epic', 'Pool1', 'Pool2', 'Pool3', 'Pool4'):
+            psel = self.Ctrls[f'{name}Powers']
+            pname = self.Ctrls[name].GetStringSelection() or {
+                'Pool1' : 'first Pool',
+                'Pool2' : 'second Pool',
+                'Pool3' : 'third Pool',
+                'Pool4' : 'fourth Pool',
+            }.get(name, name)
+            psel.SetToolTip(f"Select this Profile's powers from the {pname} powerset.\nThis is used in several places in BindControl, and is optional.")
+            psel.Enable(bool(self.GetState(name)))
 
     def PopulateBindFiles(self) -> bool:
         ResetFile = self.Profile.ResetFile()
@@ -432,15 +433,6 @@ class General(Page):
             self.SetState('Origin', 'Magic')
         if evt: evt.Skip()
 
-    def OnPickPoolPower(self, evt) -> None:
-        self.UpdatePoolPickers()
-        self.Profile.MovementPowers.SynchronizeUI()
-        self.Profile.CheckAllConflicts()
-        self.EnablePowerSelectors()
-        pickername = evt.GetEventObject().CtlName
-        self.Ctrls[f'{pickername}Powers'].ClearPowers()
-        evt.Skip()
-
     def UpdatePoolPickers(self) -> None:
         c = self.Ctrls
         pickedPools = []
@@ -485,21 +477,30 @@ class General(Page):
         self.Profile.Mastermind.SynchronizeUI()
         self.Profile.CheckAllConflicts()
         PrecacheIcons(self.Profile)
-        self.EnablePowerSelectors()
+        self.SetupPowerSelectors()
         self.Ctrls['PrimaryPowers'].ClearPowers()
         evt.Skip()
 
     def OnPickSecondaryPowerSet(self, evt) -> None:
         self.Profile.CheckAllConflicts()
         PrecacheIcons(self.Profile)
-        self.EnablePowerSelectors()
+        self.SetupPowerSelectors()
         self.Ctrls['SecondaryPowers'].ClearPowers()
         evt.Skip()
 
     def OnPickEpicPowerSet(self, evt) -> None:
         PrecacheIcons(self.Profile)
-        self.EnablePowerSelectors()
+        self.SetupPowerSelectors()
         self.Ctrls['EpicPowers'].ClearPowers()
+        evt.Skip()
+
+    def OnPickPoolPower(self, evt) -> None:
+        self.UpdatePoolPickers()
+        self.Profile.MovementPowers.SynchronizeUI()
+        self.Profile.CheckAllConflicts()
+        self.SetupPowerSelectors()
+        pname = evt.GetEventObject().CtlName
+        self.Ctrls[f'{pname}Powers'].ClearPowers()
         evt.Skip()
 
     def OnTypeEnable(self, evt = None) -> None:

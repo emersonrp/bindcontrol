@@ -8,7 +8,9 @@ from wx.adv import BitmapComboBox
 from wx.lib.expando import ExpandoTextCtrl
 from wx.lib.stattext import GenStaticText
 
-if TYPE_CHECKING: from Page import Page as bcPage
+if TYPE_CHECKING:
+    from Help import HelpButton
+    from Page import Page as bcPage
 
 from UI.ErrorControls import ErrorControlMixin
 from UI.KeySelectDialog import bcKeyButton
@@ -20,9 +22,11 @@ class CGControlMixin:
     SetOwnBackgroundColour : Callable
 
     def __init__(self, *args, **kwargs) -> None:
-        self.CtlLabel : cgStaticText | None = None
-        self.Page     : bcPage|None         = None
-        self.Data     : Any                 = None
+        self.CtlLabel   : cgStaticText | None = None
+        self.CtlName    : str                 = ''
+        self.HelpButton : HelpButton|None     = None
+        self.Page       : bcPage|None         = None
+        self.Data       : Any                 = None
         super().__init__(*args, **kwargs)
 
     def Enable(self, enable = True) -> bool:
@@ -30,8 +34,16 @@ class CGControlMixin:
         return super().Enable(enable) # pyright: ignore
 
     def Show(self, show = True) -> bool:
-        self.GetContainingSizer().Show(self, show = show)
-        self.Enable(show)
+        # This is terrible
+        if self.HelpButton:
+            minisizer = self.GetContainingSizer()
+            minisizer.ShowItems(show)
+            self.Enable(show)
+        else:
+            # RP: stop trying to optimize this next line, it's fine.  Love, RP
+            self.GetContainingSizer().Show(self, show)
+            self.Enable(show)
+
         if self.CtlLabel:
             self.GetContainingSizer().Show(self.CtlLabel, show = show)
             self.CtlLabel.Enable(show)
@@ -77,6 +89,10 @@ class cgChoice          (CGControlMixin, ErrorControlMixin, wx.Choice)          
         idx    = self.FindString(entry)
         exists = idx != wx.NOT_FOUND
         if condition:
-            if not exists: self.Append(entry)
+            if not exists:
+                if self.GetString(0) == '':
+                    self.Insert(entry, 1)
+                else:
+                    self.Insert(entry, 0)
         else:
             if exists: self.Delete(idx)

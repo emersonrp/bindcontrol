@@ -579,8 +579,8 @@ class MovementPowers(Page):
 
             c['JumpKeyAction'].ShowEntryIf('Speed / Defense Toggle', self.Profile.HasPower('Leaping', 'Combat Jumping'))
             c['JumpMode'].Show(self.DefaultMode() != "Jump")
-            c['JumpMode'].Enable(self.GetState('JumpKeyAction') not in ('', 'None'))
-            c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
+            c['JumpMode'].Enable(bool(self.JumpKeyAction()))
+            c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower')))
 
             if (self.GetState('JumpPower') == "Mighty Leap"):
                 c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
@@ -961,7 +961,7 @@ class MovementPowers(Page):
         key = t.JumpMode
         name = UI.Labels['JumpMode']
         if not self.Ctrls['JumpMode'].IsEnabled(): return
-        if (t.canjmp and (self.GetState('JumpKeyAction') != 'Speed / Defense Toggle')):
+        if (t.canjmp and (self.JumpKeyAction() != 'SDT')):
 
             if self.GetState('Feedback'): feedback = '$$t $name, Superjump Mode'
             else:                         feedback = ''
@@ -1313,10 +1313,10 @@ class MovementPowers(Page):
         ###
         ###### End Kheldian power setup
 
-        if jbt := (self.GetState('JumpKeyAction') in ('Speed / Defense Toggle', 'Main Power Toggle')):
+        if (jbt := self.JumpKeyAction()) in ('SDT', 'MPT'):
             jpower = self.GetState('JumpPower')
             hascj  = self.Profile.HasPower('Leaping', 'Combat Jumping')
-            if ((jbt == 'Speed / Defense Toggle') and jpower and hascj):
+            if ((jbt == 'SDT') and jpower and hascj):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname {jpower}$$powexecname Combat Jumping'))
             else:  # s/d toggle but not both powers, or main toggle, so do them onesies
                 if jpower:
@@ -1611,7 +1611,7 @@ class MovementPowers(Page):
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
                                 ### Jump Mode
-                                if (self.GetState('EnableSoD') and t.canjmp and (self.GetState('JumpKeyAction') != "Speed / Defense Toggle")):
+                                if (self.GetState('EnableSoD') and t.canjmp and (self.JumpKeyAction() != "SDT")):
                                     setattr(t, self.DefaultMode() + "Mode", t.JumpMode)
                                     jturnoff = None if (t.jump == t.cjmp) else {t.jumpifnocj}
                                     self.makeSoDFile({
@@ -2229,6 +2229,26 @@ class MovementPowers(Page):
 
     def isKheldian(self) -> bool:
         return bool(self.Profile.Archetype() == "Warshade" or self.Profile.Archetype() == "Peacebringer")
+
+    def JumpKeyAction(self):
+        return {
+            'Speed on Demand'        : 'SoD',
+            'Speed / Defense Toggle' : 'SDT',
+            'Main Power Toggle'      : 'MPT',
+        }.get(self.Ctrls['JumpKeyAction'].GetStringSelection(), '')
+
+    def FlyKeyAction(self):
+        return {
+            'Speed on Demand'        : 'SoD',
+            'Speed / Defense Toggle' : 'SDT',
+            'Main Power Toggle'      : 'MPT',
+        }.get(self.Ctrls['FlyKeyAction'].GetStringSelection(), '')
+
+    def SpeedKeyAction(self):
+        return {
+            'Speed on Demand'        : 'SoD',
+            'Main Power Toggle'      : 'MPT',
+        }.get(self.Ctrls['SpeedKeyAction'].GetStringSelection(), '')
 
     def AllBindFiles(self) -> dict[str, list]:
         files = []

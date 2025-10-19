@@ -1,10 +1,12 @@
 import platform
 import wx
 import wx.lib.newevent
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 import GameData
 from Icon import GetIcon
+if TYPE_CHECKING:
+    from Help import HelpButton
 from UI.CGControls import cgStaticText
 
 PowerSelectorChanged, EVT_POWERSELECTOR_CHANGED = wx.lib.newevent.NewCommandEvent()
@@ -15,13 +17,14 @@ class PowerSelector(wx.BitmapButton):
     def __init__(self, parent, page, pickername):
         super().__init__(parent, bitmap = GetIcon('UI', 'select'))
 
-        self.CtlLabel : cgStaticText | None = None
-        self.Page                      = page
-        self.Data     : Any            = None
-        self.CtlName                   = ''
-        self.PickerName                = pickername
-        self.DefaultToolTip            = ''
-        self.Powers                    = []
+        self.CtlLabel   : cgStaticText|None = None
+        self.Page                           = page
+        self.Data       : Any               = None
+        self.CtlName                        = ''
+        self.HelpButton : HelpButton|None   = None
+        self.PickerName                     = pickername
+        self.DefaultToolTip                 = ''
+        self.Powers                         = []
 
         self.Bind(wx.EVT_BUTTON, self.OnButtonClicked)
         page.Ctrls[pickername].Bind(wx.EVT_CHOICE, self.ClearPowers)

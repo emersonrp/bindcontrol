@@ -196,8 +196,10 @@ class ControlGroup(wx.StaticBoxSizer):
 
         # if we specified a helpfile, wrap it up with a helpbutton to the right
         if helpfile:
+            control.HelpButton = HelpButton(CtlParent, helpfile)
+
             weeSizer = wx.BoxSizer(wx.HORIZONTAL)
-            weeSizer.Add(HelpButton(CtlParent, helpfile), 0)
+            weeSizer.Add(control.HelpButton, 0)
             weeSizer.Add(control, 1, wx.EXPAND|wx.LEFT, 3)
             payload = weeSizer
         else:

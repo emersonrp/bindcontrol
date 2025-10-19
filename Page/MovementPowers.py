@@ -59,7 +59,7 @@ class MovementPowers(Page):
 
             'NonSoDMode'      : '',
 
-            'SpeedKeyAction'     : 'Speed on Demand',
+            'SpeedKeyAction'    : 'Speed on Demand',
             'SpeedPower'        : '',
             'SpeedMode'         : '',
             'SSMobileOnly'      : False,
@@ -67,13 +67,13 @@ class MovementPowers(Page):
             'SpeedSpecialKey'   : '',
             'SpeedSpecialPower' : '', # hidden
 
-            'JumpKeyAction'     : 'Speed on Demand',
+            'JumpKeyAction'    : 'Speed on Demand',
             'JumpPower'        : '',
             'JumpMode'         : '',
             'JumpSpecialKey'   : '',
             'JumpSpecialPower' : '', # hidden
 
-            'FlyKeyAction'     : 'Speed on Demand',
+            'FlyKeyAction'    : 'Speed on Demand',
             'FlyPower'        : '',
             'HoverPower'      : '', # hidden
             'UseHover'        : False,
@@ -348,14 +348,18 @@ class MovementPowers(Page):
         self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl(ctlName = 'DefaultMode', ctlType = 'choice',
             contents = ('No Default SoD','Sprint','Speed','Jump','Fly'),
+            helpfile = 'DefaultSoDMode.html',
             tooltip = "Select the Speed on Demand mode the movement keys will use by default")
         self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl(ctlName = 'NonSoDMode', ctlType = 'keybutton',
+            helpfile = 'SoDToggle.html',
             tooltip = "Select the key to toggle whether Speed on Demand is active")
         SoDSizer.AddControl(ctlName = 'SprintMode', ctlType = 'keybutton',
+            helpfile = 'SprintSoDToggle.html',
             tooltip = "Select the key to toggle Sprint Speed on Demand mode")
         SoDSizer.AddControl(ctlName = 'SprintPower', ctlType = 'choice',
             contents = GameData.SprintPowers,
+            helpfile = 'PreferredSprintPower.html',
             tooltip = "Select the power to use for Sprint Speed on Demand")
         SoDSizer.AddControl(ctlName = 'MouseChord', ctlType = 'checkbox',
             tooltip = "Holding both mouse buttons will go forward using the current Speed on Demand mode")
@@ -369,7 +373,7 @@ class MovementPowers(Page):
         self.superSpeedSizer.AddControl(ctlName = 'SpeedKeyAction', ctlType = 'choice',
             contents = ('Speed on Demand', 'Main Power Toggle', 'None'),
             helpfile = 'SpeedKeyAction.html',
-        )
+            tooltip = 'Select what the Speed Power Key will do')
         self.Ctrls['SpeedKeyAction'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
         self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the super speed power to use with the keybinds in this section")
@@ -388,7 +392,7 @@ class MovementPowers(Page):
         self.superJumpSizer.AddControl(ctlName = 'JumpKeyAction', ctlType = 'choice',
             contents = ('Speed on Demand', 'Speed / Defense Toggle', 'Main Power Toggle', 'None'),
             helpfile = 'JumpKeyAction.html',
-        )
+            tooltip = 'Select what the Jump Power Key will do')
         self.Ctrls['JumpKeyAction'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
         self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the jump power to use with the keybinds in this section")
@@ -403,7 +407,7 @@ class MovementPowers(Page):
         self.flySizer.AddControl(ctlName = 'FlyKeyAction', ctlType = 'choice',
             contents = ('Speed on Demand', 'Speed / Defense Toggle', 'Main Power Toggle', 'None'),
             helpfile = 'FlyKeyAction.html',
-        )
+            tooltip = 'Select what the Fly Power Key will do')
         self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the flight power to use with the keybinds in this section")
         self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)

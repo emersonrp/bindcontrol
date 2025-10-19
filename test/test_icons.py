@@ -232,9 +232,19 @@ def test_geticonbitmap(monkeypatch):
     archbmp = Icon.GetIconBitmap('Archetypes', 'Tanker')
     assert isinstance(archbmp, wx.Bitmap)
 
+def test_splitnameandicon():
+    assert Icon.SplitNameAndIcon('testone') == ['testone', ['testone']]
+    assert Icon.SplitNameAndIcon('testtwo|moretest') == ['testtwo', ['moretest']]
+    assert Icon.SplitNameAndIcon('testthree|longer_test_string') == ['testthree', ['longer', 'test', 'string']]
+
 def test_precache(profile):
     assert 'Powers/CrabSpiderSoldier/HeavyBurst.png'         not in Icon.Icons
     assert 'Powers/CrabSpiderTraining/SummonSpiderlings.png' not in Icon.Icons
+    assert 'Powers/LeviathanMastery/SchoolofSharks.png'      not in Icon.Icons
+    assert 'Powers/Flight/Hover.png'                         not in Icon.Icons
+    assert 'Powers/Gadgetry/NanoNet.png'                     not in Icon.Icons
+    assert 'Powers/Presence/Provoke.png'                     not in Icon.Icons
+    assert 'Powers/Leadership/Maneuvers.png'                 not in Icon.Icons
     assert 'Incarnate/Incarnate_Alpha_Agility_Common.png'    not in Icon.Icons
     assert 'Powers/Misc/StolenImmobilizerRay.png'            not in Icon.Icons
 
@@ -243,6 +253,11 @@ def test_precache(profile):
 
     assert 'Powers/CrabSpiderSoldier/HeavyBurst.png'         in Icon.Icons
     assert 'Powers/CrabSpiderTraining/SummonSpiderlings.png' in Icon.Icons
+    assert 'Powers/LeviathanMastery/SchoolofSharks.png'      in Icon.Icons
+    assert 'Powers/Flight/Hover.png'                         in Icon.Icons
+    assert 'Powers/Gadgetry/NanoNet.png'                     in Icon.Icons
+    assert 'Powers/Presence/Provoke.png'                     in Icon.Icons
+    assert 'Powers/Leadership/Maneuvers.png'                 in Icon.Icons
     assert 'Incarnate/Incarnate_Alpha_Agility_Common.png'    in Icon.Icons
     assert 'Powers/Misc/StolenImmobilizerRay.png'            in Icon.Icons
 

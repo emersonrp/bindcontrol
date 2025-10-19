@@ -301,6 +301,10 @@ class cgChoice          (CGControlMixin, ErrorControlMixin, wx.Choice)          
         idx    = self.FindString(entry)
         exists = idx != wx.NOT_FOUND
         if condition:
-            if not exists: self.Insert(entry, 0)
+            if not exists:
+                if self.GetString(0) == '':
+                    self.Insert(entry, 1)
+                else:
+                    self.Insert(entry, 0)
         else:
             if exists: self.Delete(idx)

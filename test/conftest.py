@@ -1,7 +1,7 @@
 import wx
 import pytest
 from pathlib import Path
-import threading
+#import threading
 
 import BindControl
 import Models.ProfileData as ProfileData
@@ -29,8 +29,8 @@ def app(config):
             self.SetTopWindow(self.Main)
             return True
     app = MyApp()
-    thread = threading.Thread(target = app.MainLoop)
-    thread.start()
+    #thread = threading.Thread(target = app.MainLoop)
+    #thread.start()
     return app
 
 # This is sorta ugly innit

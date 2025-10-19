@@ -59,7 +59,7 @@ class MovementPowers(Page):
 
             'NonSoDMode'      : '',
 
-            'SpeedBindType'     : 'Speed on Demand',
+            'SpeedKeyAction'     : 'Speed on Demand',
             'SpeedPower'        : '',
             'SpeedMode'         : '',
             'SSMobileOnly'      : False,
@@ -67,13 +67,13 @@ class MovementPowers(Page):
             'SpeedSpecialKey'   : '',
             'SpeedSpecialPower' : '', # hidden
 
-            'JumpBindType'     : 'Speed on Demand',
+            'JumpKeyAction'     : 'Speed on Demand',
             'JumpPower'        : '',
             'JumpMode'         : '',
             'JumpSpecialKey'   : '',
             'JumpSpecialPower' : '', # hidden
 
-            'FlyBindType'     : 'Speed on Demand',
+            'FlyKeyAction'     : 'Speed on Demand',
             'FlyPower'        : '',
             'HoverPower'      : '', # hidden
             'UseHover'        : False,
@@ -366,10 +366,11 @@ class MovementPowers(Page):
 
         ##### SUPER SPEED
         self.superSpeedSizer = ControlGroup(self, self, 'Super Speed Powers Settings')
-        self.superSpeedSizer.AddControl(ctlName = 'SpeedBindType', ctlType = 'choice',
-            contents = ['Speed on Demand', 'Speed / Defense Toggle', 'Main Power Toggle', 'None'],
-            tooltip = "Select what the Speed Mode Key will do")
-        self.Ctrls['SpeedBindType'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
+        self.superSpeedSizer.AddControl(ctlName = 'SpeedKeyAction', ctlType = 'choice',
+            contents = ('Speed on Demand', 'Main Power Toggle', 'None'),
+            helpfile = 'SpeedKeyAction.html',
+        )
+        self.Ctrls['SpeedKeyAction'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
         self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the super speed power to use with the keybinds in this section")
         self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
@@ -384,10 +385,11 @@ class MovementPowers(Page):
 
         ##### SUPER JUMP
         self.superJumpSizer = ControlGroup(self, self, 'Jumping Powers Settings')
-        self.superJumpSizer.AddControl(ctlName = 'JumpBindType', ctlType = 'choice',
-            contents = ['Speed on Demand', 'Speed / Defense Toggle', 'Main Power Toggle', 'None'],
-            tooltip = "Select what the Jump Mode key will do")
-        self.Ctrls['JumpBindType'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
+        self.superJumpSizer.AddControl(ctlName = 'JumpKeyAction', ctlType = 'choice',
+            contents = ('Speed on Demand', 'Speed / Defense Toggle', 'Main Power Toggle', 'None'),
+            helpfile = 'JumpKeyAction.html',
+        )
+        self.Ctrls['JumpKeyAction'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
         self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the jump power to use with the keybinds in this section")
         self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
@@ -398,10 +400,10 @@ class MovementPowers(Page):
 
         ##### FLY
         self.flySizer = ControlGroup(self, self, 'Flight Powers Settings')
-        self.flySizer.AddControl(ctlName = 'FlyBindType', ctlType = 'choice',
-            contents = ['Speed on Demand', 'Main Power Toggle', 'None'],
-            tooltip = "Select what the Fly Mode key will do")
-        self.Ctrls['FlyBindType'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
+        self.flySizer.AddControl(ctlName = 'FlyKeyAction', ctlType = 'choice',
+            contents = ('Speed on Demand', 'Speed / Defense Toggle', 'Main Power Toggle', 'None'),
+            helpfile = 'FlyKeyAction.html',
+        )
         self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the flight power to use with the keybinds in this section")
         self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
@@ -492,7 +494,7 @@ class MovementPowers(Page):
         c['SprintMode'].Show(sodmode != 'Sprint')
         for ctrl in ['DefaultMode', 'NonSoDMode', 'SprintPower', 'SprintMode', 'MouseChord', 'Feedback', ]:
             c[ctrl].Enable(self.GetState('EnableSoD'))
-        for ctrl in ['JumpBindType', 'FlyBindType', 'SpeedBindType', ]:
+        for ctrl in ['JumpKeyAction', 'FlyKeyAction', 'SpeedKeyAction', ]:
             c[ctrl].ShowEntryIf('Speed on Demand', self.GetState('EnableSoD'))
         self.OnSpeedChanged()
         self.OnFlightChanged()
@@ -502,7 +504,7 @@ class MovementPowers(Page):
         c = self.Ctrls
         archetype = self.Profile.Archetype()
         sodenabled = self.GetState('EnableSoD')
-        flyusessod = self.GetState('FlyBindType') == 'Speed on Demand'
+        flyusessod = self.GetState('FlyKeyAction') == 'Speed on Demand'
 
         if (self.Profile.HasPower('Flight', 'Fly')
                     or self.Profile.HasPower('Sorcery', 'Mystic Flight')
@@ -571,9 +573,9 @@ class MovementPowers(Page):
             c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPower('Leaping', 'Super Jump'))
             self.PrePickLonePower(c['JumpPower'])
 
-            c['JumpBindType'].ShowEntryIf('Speed / Defense Toggle', self.Profile.HasPower('Leaping', 'Combat Jumping'))
+            c['JumpKeyAction'].ShowEntryIf('Speed / Defense Toggle', self.Profile.HasPower('Leaping', 'Combat Jumping'))
             c['JumpMode'].Show(self.DefaultMode() != "Jump")
-            c['JumpMode'].Enable(self.GetState('JumpBindType') not in ('', 'None'))
+            c['JumpMode'].Enable(self.GetState('JumpKeyAction') not in ('', 'None'))
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower') and self.rightColumn.IsShown(self.superJumpSizer)))
 
             if (self.GetState('JumpPower') == "Mighty Leap"):
@@ -955,7 +957,7 @@ class MovementPowers(Page):
         key = t.JumpMode
         name = UI.Labels['JumpMode']
         if not self.Ctrls['JumpMode'].IsEnabled(): return
-        if (t.canjmp and (self.GetState('JumpBindType') != 'Speed / Defense Toggle')):
+        if (t.canjmp and (self.GetState('JumpKeyAction') != 'Speed / Defense Toggle')):
 
             if self.GetState('Feedback'): feedback = '$$t $name, Superjump Mode'
             else:                         feedback = ''
@@ -1307,7 +1309,7 @@ class MovementPowers(Page):
         ###
         ###### End Kheldian power setup
 
-        if jbt := (self.GetState('JumpBindType') in ('Speed / Defense Toggle', 'Main Power Toggle')):
+        if jbt := (self.GetState('JumpKeyAction') in ('Speed / Defense Toggle', 'Main Power Toggle')):
             jpower = self.GetState('JumpPower')
             hascj  = self.Profile.HasPower('Leaping', 'Combat Jumping')
             if ((jbt == 'Speed / Defense Toggle') and jpower and hascj):
@@ -1605,7 +1607,7 @@ class MovementPowers(Page):
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
                                 ### Jump Mode
-                                if (self.GetState('EnableSoD') and t.canjmp and (self.GetState('JumpBindType') != "Speed / Defense Toggle")):
+                                if (self.GetState('EnableSoD') and t.canjmp and (self.GetState('JumpKeyAction') != "Speed / Defense Toggle")):
                                     setattr(t, self.DefaultMode() + "Mode", t.JumpMode)
                                     jturnoff = None if (t.jump == t.cjmp) else {t.jumpifnocj}
                                     self.makeSoDFile({
@@ -2312,24 +2314,24 @@ UI.Labels.update( {
     'MouseChord'     : 'Mousechord is SoD Forward',
     'Feedback'       : 'Self-/tell when changing SoD mode',
 
-    'JumpBindType'     : "Jump Powers Toggle Type",
+    'JumpKeyAction'    : "Jump Power Key Action",
     'JumpPower'        : "Primary Jump Power",
-    'JumpMode'         : 'Jump Powers Key',
+    'JumpMode'         : 'Jump Power Key',
     'JumpSpecialKey'   : '',
     'JumpSpecialPower' : '', # hidden
 
-    'SpeedBindType'     : "Speed Powers Toggle Type",
+    'SpeedKeyAction'    : "Speed Power Key Action",
     'SpeedPower'        : "Primary Speed Power",
-    'SpeedMode'         : 'Speed Powers Key',
+    'SpeedMode'         : 'Speed Power Key',
     'SSMobileOnly'      : 'Super Speed only when moving',
     'SSSJModeEnable'    : 'Enable Super Speed / Super Jump Mode',
     'SpeedSpecialKey'   : '',
     'SpeedSpecialPower' : '', # Hidden
 
-    'FlyBindType'     : "Flight Powers Toggle Type",
-    'FlyPower'        : "Primary Flight Power",
+    'FlyKeyAction'    : "Fly Power Key Action",
+    'FlyPower'        : "Primary Fly Power",
     'UseHover'        : "Use Hover for Defense",
-    'FlyMode'         : 'Fly Powers Key',
+    'FlyMode'         : 'Fly Power Key',
     'FlySpecialKey'   : '',
     'FlySpecialPower' : '', # hidden
     'GFlyMode'        : 'Toggle Group Fly Mode',

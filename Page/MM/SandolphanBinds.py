@@ -167,7 +167,7 @@ class SandolphanBinds(wx.Panel):
             petCommandsKeys.AddControl(
                 ctlName = command['ctrlName'],
                 ctlType = 'keybutton',
-                tooltip = "Choose the key combo that will " + command['tooltipdetail'],
+                tooltip = "Choose the key that will " + command['tooltipdetail'],
             )
             self.SandolphanKeyButtons[command['ctrlName']] = self.Page.Ctrls[command['ctrlName']]
             petCommandsKeys.AddControl(
@@ -187,7 +187,7 @@ class SandolphanBinds(wx.Panel):
         petCommandsKeys.AddControl(
             ctlName = 'PetChatToggle',
             ctlType = 'keybutton',
-            tooltip = 'Choose the key combo that will toggle your pets\' chattiness level',
+            tooltip = 'Choose the key that will toggle your pets\' chattiness level',
         )
         self.SandolphanKeyButtons['PetChatToggle'] = self.Page.Ctrls['PetChatToggle']
         petCommandsKeys.AddControl(

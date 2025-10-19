@@ -198,8 +198,10 @@ class ControlGroup(wx.StaticBoxSizer):
 
         # if we specified a helpfile, wrap it up with a helpbutton to the right
         if helpfile:
+            control.HelpButton = HelpButton(CtlParent, helpfile)
+
             weeSizer = wx.BoxSizer(wx.HORIZONTAL)
-            weeSizer.Add(HelpButton(CtlParent, helpfile), 0)
+            weeSizer.Add(control.HelpButton, 0)
             weeSizer.Add(control, 1, wx.EXPAND|wx.LEFT, 3)
             payload = weeSizer
         else:
@@ -233,9 +235,10 @@ class CGControlMixin:
     SetOwnBackgroundColour : Callable
 
     def __init__(self, *args, **kwargs) -> None:
-        self.CtlLabel : ST.GenStaticText | wx.StaticText | None = None
-        self.Page     : bcPage|None                             = None
-        self.Data     : Any                                     = None
+        self.CtlLabel   : ST.GenStaticText | wx.StaticText | None = None
+        self.HelpButton : HelpButton|None                         = None
+        self.Page       : bcPage|None                             = None
+        self.Data       : Any                                     = None
         super().__init__(*args, **kwargs)
 
     def Enable(self, enable = True) -> bool:
@@ -243,11 +246,19 @@ class CGControlMixin:
         return super().Enable(enable) # pyright: ignore
 
     def Show(self, show = True) -> bool:
-        self.GetContainingSizer().Show(self, show = show)
-        self.Enable(show)
+        # This is terrible
+        if self.HelpButton:
+            minisizer = self.GetContainingSizer()
+            minisizer.ShowItems(show)
+            self.Enable(show)
+        else:
+            self.GetContainingSizer().Show(self, show = show)
+            self.Enable(show)
+
         if self.CtlLabel:
-            self.GetContainingSizer().Show(self.CtlLabel, show = show)
+            self.CtlLabel.Show(show)
             self.CtlLabel.Enable(show)
+
         if self.Page: self.Page.Layout()
         return True
 

@@ -1,9 +1,11 @@
 import wx
 import wx.lib.stattext as ST
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 import GameData
 from Icon import GetIcon
+if TYPE_CHECKING:
+    from Help import HelpButton
 
 import wx.lib.newevent
 PowerSelectorChanged, EVT_POWERSELECTOR_CHANGED = wx.lib.newevent.NewCommandEvent()
@@ -16,6 +18,7 @@ class PowerSelector(wx.BitmapButton):
         self.Page                                               = page
         self.Data     : Any                                     = None
         self.CtlName                                            = ''
+        self.HelpButton : HelpButton|None                       = None
         self.PickerName                                         = pickername
         self.DefaultToolTip                                     = ''
         self.Powers                                             = []

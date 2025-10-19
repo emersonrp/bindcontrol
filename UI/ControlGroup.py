@@ -3,6 +3,7 @@ from collections.abc import Callable
 
 import wx
 
+from Help import HelpButton
 from Page import Page as bcPage
 
 import UI
@@ -56,6 +57,7 @@ class ControlGroup(wx.StaticBoxSizer):
                    data     : Any           = None,
                    size     : wx.Size       = wx.DefaultSize,
                    context  : str           = '',
+                   helpfile : str           = '',
        ):
 
         if not ctlName:
@@ -70,13 +72,13 @@ class ControlGroup(wx.StaticBoxSizer):
 
         label = label or UI.Labels.get(ctlName, ctlName)
 
-        if ctlType == ('keybutton'):
+        if ctlType == 'keybutton':
             control = cgbcKeyButton(CtlParent)
             control.SetLabel(Init[ctlName])
             # push context onto the button, we'll thank me later
             control.Key     = Init[ctlName]
 
-        elif (ctlType == 'powerselector'):
+        elif ctlType == 'powerselector':
             control = PowerSelector(CtlParent, self.Page, context)
             noLabel = True
 
@@ -113,24 +115,24 @@ class ControlGroup(wx.StaticBoxSizer):
             else:
                 control.SetSelection(index)
 
-        elif ctlType == ('text'):
+        elif ctlType == 'text':
             control = cgTextCtrl(CtlParent,
                                  value = Init[ctlName],
                                  size = size)
 
-        elif ctlType == ('choice'):
+        elif ctlType == 'choice':
             contents = contents if contents else []
             control = cgChoice(CtlParent, choices = contents, size = size)
             control.SetStringSelection(Init[ctlName])
             if callback:
                 control.Bind(wx.EVT_CHOICE, callback)
 
-        elif ctlType == ('statictext'):
+        elif ctlType == 'statictext':
             control = cgStaticText(CtlParent,
                                    value = Init.get(ctlName, ''),
                                    size = size)
 
-        elif ctlType == ('checkbox'):
+        elif ctlType == 'checkbox':
             control = cgCheckBox(CtlParent,
                                  label = contents,
                                  size = size)
@@ -139,24 +141,24 @@ class ControlGroup(wx.StaticBoxSizer):
             if callback:
                 control.Bind(wx.EVT_CHECKBOX, callback)
 
-        elif ctlType == ('spinbox'):
+        elif ctlType == 'spinbox':
             control = cgSpinCtrl(CtlParent, size = size)
             control.SetValue(Init[ctlName])
             control.SetRange(*contents)
 
-        elif ctlType == ('spinboxfractional'):
+        elif ctlType == 'spinboxfractional':
             control = cgSpinCtrlDouble(CtlParent, inc = 0.05, size = size)
             control.SetValue(Init[ctlName])
             control.SetRange(*contents)
 
-        elif ctlType == ('dirpicker'):
+        elif ctlType == 'dirpicker':
             control = cgDirPickerCtrl(
                 CtlParent,
                 message = Init[ctlName],
                 size = size,
             )
 
-        elif ctlType == ('colorpicker'):
+        elif ctlType == 'colorpicker':
             control = cgColourPickerCtrl(
                 CtlParent,
                 colour = contents,
@@ -192,7 +194,17 @@ class ControlGroup(wx.StaticBoxSizer):
         if ctlType == ('checkbox') and control.CtlLabel:
             control.CtlLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
-        self.InnerSizer.Add(control, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, padding)
+        # if we specified a helpfile, wrap it up with a helpbutton to the right
+        if helpfile:
+            weeSizer = wx.BoxSizer(wx.HORIZONTAL)
+            weeSizer.Add(HelpButton(CtlParent, helpfile), 0)
+            weeSizer.Add(control, 1, wx.EXPAND|wx.LEFT, 3)
+            payload = weeSizer
+        else:
+            payload = control
+
+        self.InnerSizer.Add(payload, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, padding)
+
         self.Ctrls.append(control)
         self.Page.Ctrls[ctlName] = control
 

@@ -2314,13 +2314,13 @@ UI.Labels.update( {
 
     'JumpBindType'     : "Jump Powers Toggle Type",
     'JumpPower'        : "Primary Jump Power",
-    'JumpMode'         : 'Jump Toggle Key',
+    'JumpMode'         : 'Jump Powers Key',
     'JumpSpecialKey'   : '',
     'JumpSpecialPower' : '', # hidden
 
     'SpeedBindType'     : "Speed Powers Toggle Type",
     'SpeedPower'        : "Primary Speed Power",
-    'SpeedMode'         : 'Speed Toggle Key',
+    'SpeedMode'         : 'Speed Powers Key',
     'SSMobileOnly'      : 'Super Speed only when moving',
     'SSSJModeEnable'    : 'Enable Super Speed / Super Jump Mode',
     'SpeedSpecialKey'   : '',
@@ -2329,7 +2329,7 @@ UI.Labels.update( {
     'FlyBindType'     : "Flight Powers Toggle Type",
     'FlyPower'        : "Primary Flight Power",
     'UseHover'        : "Use Hover for Defense",
-    'FlyMode'         : 'Toggle Fly Mode',
+    'FlyMode'         : 'Fly Powers Key',
     'FlySpecialKey'   : '',
     'FlySpecialPower' : '', # hidden
     'GFlyMode'        : 'Toggle Group Fly Mode',

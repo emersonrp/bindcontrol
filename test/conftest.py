@@ -1,11 +1,10 @@
 import wx
 import pytest
 from pathlib import Path
-#import threading
 
 import BindControl
+from Profile import Profile
 import Models.ProfileData as ProfileData
-
 
 @pytest.fixture(autouse = True)
 def config(tmp_path, monkeypatch):
@@ -22,6 +21,16 @@ def PD(config):
     return ProfileData.ProfileData(config, filename = str(fixtureprofile))
 
 @pytest.fixture
+def profile(app, config, DefaultProfile, monkeypatch):
+    monkeypatch.undo()
+    config.Write('DefaultProfile', DefaultProfile)
+    monkeypatch.setattr(Profile, 'CreatePage', lambda _,__: {})
+
+    fixtureprofile = Path(__file__).resolve().parent / 'fixtures' / 'testprofile.bcp'
+    prof = Profile(app.Main, filename = str(fixtureprofile), skip_precache = True)
+    return prof
+
+@pytest.fixture
 def app(config):
     class MyApp(wx.App):
         def OnInit(self):
@@ -29,8 +38,6 @@ def app(config):
             self.SetTopWindow(self.Main)
             return True
     app = MyApp()
-    #thread = threading.Thread(target = app.MainLoop)
-    #thread.start()
     return app
 
 # This is sorta ugly innit

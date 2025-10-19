@@ -62,7 +62,13 @@ class Profile(wx.Notebook):
         return newProfile
 
     # Instance methods
-    def __init__(self, parent, filename : str|None = None, newname : str|None = None, profiledata : dict|None = None, editdefault : bool = False):
+    def __init__(self, parent,
+            filename      : str|None  = None,
+            newname       : str|None  = None,
+            profiledata   : dict|None = None,
+            skip_precache : bool      = False,    # mostly for the test suite
+            editdefault   : bool      = False
+        ):
         profiledata = profiledata or {}
         super().__init__(parent, style = wx.NB_TOP, name = "Profile")
 
@@ -88,7 +94,7 @@ class Profile(wx.Notebook):
         if self.EditingDefault: self.ColorThingsForEditingDefault()
         self.CheckModified()
 
-        PrecacheIcons(self)
+        if not skip_precache: PrecacheIcons(self)
 
     def CreatePage(self, page):
         page.BuildPage()

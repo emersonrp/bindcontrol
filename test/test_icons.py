@@ -232,6 +232,20 @@ def test_geticonbitmap(monkeypatch):
     archbmp = Icon.GetIconBitmap('Archetypes', 'Tanker')
     assert isinstance(archbmp, wx.Bitmap)
 
+def test_precache(profile):
+    assert 'Powers/CrabSpiderSoldier/HeavyBurst.png'         not in Icon.Icons
+    assert 'Powers/CrabSpiderTraining/SummonSpiderlings.png' not in Icon.Icons
+    assert 'Incarnate/Incarnate_Alpha_Agility_Common.png'    not in Icon.Icons
+    assert 'Powers/Misc/StolenImmobilizerRay.png'            not in Icon.Icons
+
+    thread = Icon.PrecacheIcons(profile)
+    thread.join()
+
+    assert 'Powers/CrabSpiderSoldier/HeavyBurst.png'         in Icon.Icons
+    assert 'Powers/CrabSpiderTraining/SummonSpiderlings.png' in Icon.Icons
+    assert 'Incarnate/Incarnate_Alpha_Agility_Common.png'    in Icon.Icons
+    assert 'Powers/Misc/StolenImmobilizerRay.png'            in Icon.Icons
+
 #####
 def fixturepathzip():
     return Path(__file__).resolve().parent / 'fixtures' / 'iconszip'

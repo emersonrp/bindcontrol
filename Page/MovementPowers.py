@@ -626,18 +626,13 @@ class MovementPowers(Page):
 
     def OnTeleportChanged(self, evt = None) -> None:
         c = self.Ctrls
-        archetype = self.Profile.Archetype()
-
-        if (self.Profile.HasPower('Teleportation', 'Teleport')
-                    or self.Profile.HasPower('Sorcery', 'Translocation')
-                    or self.Profile.HasPower('Experimentation', 'Jaunt')
-                    or archetype == "Warshade"):
+        if (self.HasTPPowers()):
             self.ShowControlGroup(self.teleportSizer)
             c['TPPower'].ShowEntryIf('Teleport',      self.Profile.HasPower('Teleportation', 'Teleport'))
             c['TPPower'].ShowEntryIf('Translocation', self.Profile.HasPower('Sorcery', 'Translocation'))
             c['TPPower'].ShowEntryIf('Jaunt',         self.Profile.HasPower('Experimentation', 'Jaunt')
                                                         and self.GetState('SpeedPower') == "Speed of Sound")
-            c['TPPower'].ShowEntryIf('Shadow Step',   archetype == "Warshade")
+            c['TPPower'].ShowEntryIf('Shadow Step',   self.Profile.Archetype() == "Warshade")
             self.PrePickLonePower(c['TPPower'])
             c['TPBindKey']  .Enable(bool(self.GetState('TPPower')))
             c['TPComboKey'] .Enable(bool(self.GetState('TPPower')))
@@ -688,10 +683,8 @@ class MovementPowers(Page):
     def OnTempTravelPowerPicked(self, evt) -> None:
         menu = evt.GetEventObject()
         menuitem = menu.FindItemById(evt.GetId())
-        label = menuitem.GetItemLabel()
-        bitmap = menuitem.GetBitmapBundle()
-        self.TempTravelPowerPicker.SetLabel(label)
-        self.TempTravelPowerPicker.SetBitmap(bitmap)
+        self.TempTravelPowerPicker.SetLabel (menuitem.GetItemLabel())
+        self.TempTravelPowerPicker.SetBitmap(menuitem.GetBitmapBundle())
         setattr(self.TempTravelPowerPicker, 'IconFilename', getattr(menuitem, 'IconFilename'))
         evt.Skip()
 
@@ -703,10 +696,11 @@ class MovementPowers(Page):
             else:
                 iconname = item
             menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
-            icon = GetIcon('Powers', 'Temp', iconname)
-            if icon:
+
+            if icon := GetIcon('Powers', 'Temp', iconname):
                 menuitem.SetBitmap(icon)
                 setattr(menuitem, 'IconFilename', icon.Filename)
+
             menu.Append(menuitem)
         return menu
 
@@ -2189,7 +2183,11 @@ class MovementPowers(Page):
         return self.Profile.HasPower('Flight', 'Group Fly')
 
     def HasTPPowers(self):
-        return self.rightColumn.IsShown(self.teleportSizer)
+        return (self.Profile.HasPower('Teleportation', 'Teleport')
+                    or self.Profile.HasPower('Sorcery', 'Translocation')
+                    or self.Profile.HasPower('Experimentation', 'Jaunt')
+                    or self.Profile.Archetype() == "Warshade"
+                )
 
     def HasTTP(self) -> bool:
         return self.Profile.HasPower('Teleportation', 'Team Teleport')

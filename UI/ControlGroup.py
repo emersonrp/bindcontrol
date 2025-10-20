@@ -139,7 +139,8 @@ class ControlGroup(wx.StaticBoxSizer):
                                  label = contents,
                                  size = size)
             control.SetValue(bool(Init.get(ctlName, False)))
-            padding = 6
+            if not helpfile:
+                padding = 6
             if callback:
                 control.Bind(wx.EVT_CHECKBOX, callback)
 

@@ -770,9 +770,10 @@ class MovementPowers(Page):
             if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ], False)
             if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff              ,jumpfix)
             if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"ff",curfile,turnoff              ,jumpfix)
-            if (modestr != "GFly")        : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff              ,jumpfix)
             if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff              ,jumpfix)
             if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path, gamepath)
+
+            if (modestr != "GFly")        : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff              ,jumpfix)
 
         ### write the binds to the "current key state" file
         curfile = profile.GetBindFile(f"{path}{t.KeyState()}.txt")
@@ -1043,7 +1044,7 @@ class MovementPowers(Page):
 
     def PopulateBindFiles(self) -> bool:
         profile     = self.Profile
-        ResetFile   = profile.ResetFile()
+        resetfile   = profile.ResetFile()
         server      = profile.Server()
         archetype   = profile.Archetype()
         tpActivator = "powexeclocation cursor " if server == 'Homecoming' else "powexecname "
@@ -1084,7 +1085,7 @@ class MovementPowers(Page):
         # Temp Travel Power Toggle
         if (self.GetState('TempEnable')):
             if temppower := self.TempTravelPowerPicker.HasPowerPicked():
-                ResetFile.SetBind(self.Ctrls['TempToggle'].MakeBind(f'powexecname {temppower}'))
+                resetfile.SetBind(self.Ctrls['TempToggle'].MakeBind(f'powexecname {temppower}'))
 
         ## Flying / hover
         t.hover  = self.GetState('HoverPower')
@@ -1138,45 +1139,150 @@ class MovementPowers(Page):
         ###
         ### Here's where we go into the giant SoD tangle, conditionally
         ###
-        if self.SoDEnabled() or self.GetState('AutoMouseLook'):
-            self.doSpeedOnDemandBinds(t)
+        if self.HasAnySoD() or self.GetState('AutoMouseLook'):
+            self.DoSpeedOnDemandBinds(t)
         else:
             # bind normal movement keys if SoD not enabled or no mouselook
-
             if (self.GetState('Left')):
-                ResetFile.SetBind(self.Ctrls['Left'].MakeBind(["+left"]))
+                resetfile.SetBind(self.Ctrls['Left'].MakeBind(["+left"]))
             if (self.GetState('Right')):
-                ResetFile.SetBind(self.Ctrls['Right'].MakeBind(["+right"]))
+                resetfile.SetBind(self.Ctrls['Right'].MakeBind(["+right"]))
             if (self.GetState('Up')):
-                ResetFile.SetBind(self.Ctrls['Up'].MakeBind(["+up"]))
+                resetfile.SetBind(self.Ctrls['Up'].MakeBind(["+up"]))
             if (self.GetState('Down')):
-                ResetFile.SetBind(self.Ctrls['Down'].MakeBind(["+down"]))
+                resetfile.SetBind(self.Ctrls['Down'].MakeBind(["+down"]))
             if (self.GetState('Forward')):
                 turn = 'playerturn' if self.GetState('PlayerTurn') else ''
-                ResetFile.SetBind(self.Ctrls['Forward'].MakeBind(["+forward", turn]))
+                resetfile.SetBind(self.Ctrls['Forward'].MakeBind(["+forward", turn]))
             if (self.GetState('Back')):
-                ResetFile.SetBind(self.Ctrls['Back'].MakeBind(["+backward"]))
+                resetfile.SetBind(self.Ctrls['Back'].MakeBind(["+backward"]))
             if (self.GetState('Follow')):
-                ResetFile.SetBind(self.Ctrls['Follow'].MakeBind(["+follow"]))
+                resetfile.SetBind(self.Ctrls['Follow'].MakeBind(["+follow"]))
             if (self.GetState('AutoRun')):
-                ResetFile.SetBind(self.Ctrls['AutoRun'].MakeBind(["++autorun"]))
+                resetfile.SetBind(self.Ctrls['AutoRun'].MakeBind(["++autorun"]))
 
         # Bind the turn keys in either case
         if (self.GetState('TurnLeft')):
-            ResetFile.SetBind(self.Ctrls['TurnLeft'].MakeBind("+turnleft"))
+            resetfile.SetBind(self.Ctrls['TurnLeft'].MakeBind("+turnleft"))
         if (self.GetState('TurnRight')):
-            ResetFile.SetBind(self.Ctrls['TurnRight'].MakeBind("+turnright"))
-
+            resetfile.SetBind(self.Ctrls['TurnRight'].MakeBind("+turnright"))
 
         # Make binds for the "stage 2" travel powers like Afterburner, if appropriate
         if self.Ctrls['FlySpecialKey'].IsEnabled():
-            ResetFile.SetBind(self.Ctrls['FlySpecialKey']  .MakeBind(f'powexecname {self.GetState("FlySpecialPower")}'))
+            resetfile.SetBind(self.Ctrls['FlySpecialKey']  .MakeBind(f'powexecname {self.GetState("FlySpecialPower")}'))
         if self.Ctrls['SpeedSpecialKey'].IsEnabled():
-            ResetFile.SetBind(self.Ctrls['SpeedSpecialKey'].MakeBind(f'powexecname {self.GetState("SpeedSpecialPower")}'))
+            resetfile.SetBind(self.Ctrls['SpeedSpecialKey'].MakeBind(f'powexecname {self.GetState("SpeedSpecialPower")}'))
         if self.Ctrls['JumpSpecialKey'].IsEnabled():
-            ResetFile.SetBind(self.Ctrls['JumpSpecialKey'] .MakeBind(f'powexecname {self.GetState("JumpSpecialPower")}'))
+            resetfile.SetBind(self.Ctrls['JumpSpecialKey'] .MakeBind(f'powexecname {self.GetState("JumpSpecialPower")}'))
 
-        ###### Kheldian power setup
+
+        if self.IsKheldian():
+            self.DoKheldianBinds(t, tpActivator, windowhide, windowshow)
+
+        ###### Basic travel power binds, not SoD
+        # OK, first, let's do these trivial toggle binds if and only if we aren't doing SoD at all
+        # The SoD case is handled inside make*ModeKey()
+        if not self.HasAnySoD():
+            if self.SpeedKeyAction() == "PT":
+                spower = self.GetState("SpeedPower")
+                resetfile.SetBind(self.Ctrls["FlyMode"].MakeBind(f'powexecname "{spower}"'))
+
+            if self.JumpKeyAction() == 'PT':
+                jpower = self.GetState('JumpPower')
+                cpower = self.GetState('CJPower')
+                if jpower and cpower:
+                    resetfile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{jpower}"$$powexecname "{cpower}"'))
+                elif jpower:
+                    resetfile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{jpower}"'))
+                elif cpower:
+                    resetfile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{cpower}"'))
+
+            if self.FlyKeyAction() == 'PT':
+                fpower = self.GetState('FlyPower')
+                hpower = self.GetState('HoverPower')
+                if fpower and hpower:
+                    resetfile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{fpower}"$$powexecname "{hpower}"'))
+                elif fpower:
+                    resetfile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{fpower}"'))
+                elif hpower:
+                    resetfile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{hpower}"'))
+
+        ###### Teleport Binds
+        teamTPPower = 'Team Teleport' if self.HasTTP() else ''
+        normalTPPower = 'Shadow Step' if archetype == 'Warshade' else self.GetState('TPPower')
+
+        # I'm not sure why we create these nop binds.  Are they necessary?
+        if (self.HasTPPowers() and not normalTPPower):
+            resetfile.SetBind(self.Ctrls['TPBindKey'].MakeBind('nop'))
+            resetfile.SetBind(self.Ctrls['TPComboKey'].MakeBind('nop'))
+            if server == "Rebirth":
+                resetfile.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('nop'))
+
+        # We did kheldian tp binds inside DoKheldianBinds()
+        if (self.HasTPPowers() and normalTPPower and (archetype != "Peacebringer")):
+            tphovermodeswitch = ''
+            if (t.tphover != ''):
+                tphovermodeswitch = t.bla + "000000.txt"
+
+            resetfile.SetBind(self.Ctrls['TPBindKey'].MakeBind(tpActivator + normalTPPower))
+            tp_off = profile.GetBindFile("tp","tp_off.txt")
+            tp_on1 = profile.GetBindFile("tp","tp_on1.txt")
+            zoomin = '' if t.tphover else t.detailhi + t.runcamdist
+
+            if server == 'Homecoming':
+                resetfile.SetBind(self.Ctrls['TPComboKey'].MakeBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
+
+                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
+
+                tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeBind(f'+first$$-first$${self.unqueue}$$' + tpActivator + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
+
+            else: # server == Rebirth
+                resetfile.SetBind(self.Ctrls['TPComboKey'].MakeBind('+ $$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
+                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeBind('+ $$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
+                tp_off.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('nop'))
+
+                tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeBind(f'- $${self.unqueue}' + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
+                tp_on1.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('+' + profile.BLF('tp','tp_on2.txt')))
+
+                tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
+                tp_on2.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('-$$powexecname ' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
+
+        # normal non-peacebringer team teleport binds
+        if (self.HasTPPowers() and self.HasTTP() and (archetype != "Peacebringer") and teamTPPower) :
+
+            resetfile.SetBind(self.Ctrls['TTPBindKey'].MakeBind(tpActivator + teamTPPower))
+
+            ttp_off = profile.GetBindFile("ttp","ttp_off.txt")
+            ttp_on1 = profile.GetBindFile("ttp","ttp_on1.txt")
+
+            if server == 'Homecoming':
+                resetfile.SetBind(self.Ctrls['TTPComboKey'].MakeBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
+
+                ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
+
+                ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeBind(f'+first$$-first$${self.unqueue}$$' + tpActivator + teamTPPower + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
+
+            else:
+                resetfile.SetBind(self.Ctrls['TTPComboKey'].MakeBind('+ $$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
+
+                ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeBind('+ $$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
+                ttp_off.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('nop'))
+
+                ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeBind(f'- $${self.unqueue}' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
+                ttp_on1.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('+' + profile.BLF('ttp','ttp_on2.txt')))
+
+                ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
+                ttp_on2.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('-$$powexecname ' + normalTPPower + profile.BLF('ttp','ttp_on1.txt')))
+
+        return True
+
+    ###### Kheldian power setup
+    def DoKheldianBinds(self, t, tpActivator, windowhide, windowshow):
+        profile   = self.Profile
+        archetype = profile.Archetype()
+        resetfile = profile.ResetFile()
+        server    = profile.Server()
+
         #  create the Nova and Dwarf form support files if enabled.
         Nova = ''
         Dwarf =''
@@ -1191,22 +1297,17 @@ class MovementPowers(Page):
             Dwarf = "Black Dwarf"
             HumanFormShield = "Gravity Shield"
 
-        dwarfTPPower = normalTPPower = teamTPPower = ''
-
+        dwarfTPPower = ''
         if (archetype == "Warshade"):
             dwarfTPPower  = "Black Dwarf Step"
-            normalTPPower = "Shadow Step"
         elif (archetype == "Peacebringer"):
             dwarfTPPower = "White Dwarf Step"
-        else:
-            normalTPPower = self.GetState('TPPower')
-            teamTPPower   = "Team Teleport"
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
         if (self.IsKheldian() and self.GetState('NovaMode')):
             khelfeedback = f"t $name, Changing to {Nova} Form" if self.GetState('KhelFeedback') else ''
-            ResetFile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}{t.on}{Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
+            resetfile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}{t.on}{Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
             novafile = profile.GetBindFile("nova.txt")
 
@@ -1242,7 +1343,7 @@ class MovementPowers(Page):
 
         if (self.IsKheldian() and self.GetState('UseDwarf')):
             khelfeedback = f"t $name, Changing to {Dwarf} Form" if self.GetState('KhelFeedback') else ''
-            ResetFile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togon} {Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
+            resetfile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togon} {Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
             dwrffile = profile.GetBindFile("dwarf.txt")
             if (bool(self.GetState('NovaMode'))):
                 khelfeedback = f"t $name, Changing to {Nova} Form" if self.GetState('KhelFeedback') else ''
@@ -1298,121 +1399,16 @@ class MovementPowers(Page):
         ###### End Kheldian power setup
 
 
-        ######
-        ### Non-SoD / basic toggle binds
-        ###
-        ### We're going to blf() SoD's "Non-SoD" mode every single time.  This is suboptimal
-        ### but likely fairly harmless since in SoD mode we blf() every keypress.
-
-        # TODO:  ferret out what the "reset" file is for Non-SoD mode
-        # TODO:  if self.HasAnySoD():  set up a string var with that BLF()
-        # TODO:  add that string var to each of these SetBinds
-        #
-        # TODO:  OH MAN or maybe we need to shim this into the entire deep loop since we might
-        # press the *Mode key at any point, with any number of movement keys pressed.  Like, we
-        # need to make the *Mode keys be a subset or addition to what goes into makeNonSoDModeKey
-        #
-        # TODO: OH MAN II:  The OH MAN-ening:  Or we might even need a whole makeToggle*Key sub
-        # for each of the three of these that gets called in addition to the existing make*Key
-        # stuff
-        if self.SpeedKeyAction() == "PT":
-            spower = self.GetState("SpeedPower")
-            ResetFile.SetBind(self.Ctrls["FlyMode"].MakeBind(f'powexecname "{spower}"'))
-
-        if self.JumpKeyAction() == 'PT':
-            jpower = self.GetState('JumpPower')
-            cpower = self.GetState('CJPower')
-            if jpower and cpower:
-                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{jpower}"$$powexecname "{cpower}"'))
-            elif jpower:
-                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{jpower}"'))
-            elif cpower:
-                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{cpower}"'))
-
-        if self.FlyKeyAction() == 'PT':
-            fpower = self.GetState('FlyPower')
-            hpower = self.GetState('HoverPower')
-            if fpower and hpower:
-                ResetFile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{fpower}"$$powexecname "{hpower}"'))
-            elif fpower:
-                ResetFile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{fpower}"'))
-            elif hpower:
-                ResetFile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{hpower}"'))
-
-        if (self.HasTPPowers() and not normalTPPower):
-            ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeBind('nop'))
-            ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeBind('nop'))
-            if server == "Rebirth":
-                ResetFile.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('nop'))
-
-        # Normal non-peacebringer teleport binds
-        if (self.HasTPPowers() and normalTPPower and not (archetype == "Peacebringer")):
-            tphovermodeswitch = ''
-            if (t.tphover != ''):
-                tphovermodeswitch = t.bla + "000000.txt"
-
-            ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeBind(tpActivator + normalTPPower))
-            tp_off = profile.GetBindFile("tp","tp_off.txt")
-            tp_on1 = profile.GetBindFile("tp","tp_on1.txt")
-            zoomin = '' if t.tphover else t.detailhi + t.runcamdist
-
-            if server == 'Homecoming':
-                ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
-
-                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
-
-                tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeBind(f'+first$$-first$${self.unqueue}$$' + tpActivator + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
-
-            else: # server == Rebirth
-                ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeBind('+ $$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
-                tp_off.SetBind(self.Ctrls['TPComboKey'].MakeBind('+ $$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
-                tp_off.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('nop'))
-
-                tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeBind(f'- $${self.unqueue}' + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
-                tp_on1.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('+' + profile.BLF('tp','tp_on2.txt')))
-
-                tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
-                tp_on2.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('-$$powexecname ' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
-
-        # normal non-peacebringer team teleport binds
-        if (self.HasTPPowers() and self.HasTTP() and not (archetype == "Peacebringer") and teamTPPower) :
-
-            ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeBind(tpActivator + teamTPPower))
-
-            ttp_off = profile.GetBindFile("ttp","ttp_off.txt")
-            ttp_on1 = profile.GetBindFile("ttp","ttp_on1.txt")
-
-            if server == 'Homecoming':
-                ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
-
-                ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
-
-                ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeBind(f'+first$$-first$${self.unqueue}$$' + tpActivator + teamTPPower + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
-
-            else:
-                ResetFile.SetBind(self.Ctrls['TTPComboKey'].MakeBind('+ $$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
-
-                ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeBind('+ $$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
-                ttp_off.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('nop'))
-
-                ttp_on1.SetBind(self.Ctrls['TTPComboKey'].MakeBind(f'- $${self.unqueue}' + t.detailhi + t.runcamdist + windowshow + profile.BLF('ttp','ttp_off.txt')))
-                ttp_on1.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('+' + profile.BLF('ttp','ttp_on2.txt')))
-
-                ttp_on2 = profile.GetBindFile("ttp","ttp_on2.txt")
-                ttp_on2.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('-$$powexecname ' + normalTPPower + profile.BLF('ttp','ttp_on1.txt')))
-
-        return True
-
-    def doSpeedOnDemandBinds(self, t) -> None:
+    def DoSpeedOnDemandBinds(self, t) -> None:
         profile   = self.Profile
-        ResetFile = profile.ResetFile()
+        resetfile = profile.ResetFile()
         config    = wx.ConfigBase.Get()
 
         keybindreset = 'keybind_reset' if config.ReadBool('FlushAllBinds') else ''
-        ResetFile.SetBind(config.Read('ResetKey'), "Reset Key", self.TabTitle,
+        resetfile.SetBind(config.Read('ResetKey'), "Reset Key", self.TabTitle,
                     [
                         keybindreset,
-                        ResetFile.BLF(),
+                        resetfile.BLF(),
                         'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
                         'powexecname Sprint',
                         self.unqueue,
@@ -1438,9 +1434,9 @@ class MovementPowers(Page):
         t.gamepaths = t.gamebasepath / 'S' / 'S'
         t.bls       = f"$${BLF()} {t.gamepaths}"
 
-        #t.pathga     = t.basepath     / 'GF' / 'GF' # group fly
-        #t.gamepathga = t.gamebasepath / 'GF' / 'GF'
-        #t.blga       = f"$${BLF()} {t.gamepathga}"
+        t.pathga     = t.basepath     / 'GF' / 'GF' # group fly
+        t.gamepathga = t.gamebasepath / 'GF' / 'GF'
+        t.blga       = f"$${BLF()} {t.gamepathga}"
 
         t.pathn     = t.basepath     / 'N' / 'N' # normal / non-sod
         t.gamepathn = t.gamebasepath / 'N' / 'N'
@@ -1462,9 +1458,9 @@ class MovementPowers(Page):
         t.gamepathas = t.gamebasepath / 'AS' / 'AS'
         t.blas       = f"$${BLF()} {t.gamepathas}"
 
-        #t.pathgaf     = t.basepath     / 'GAF' / 'GAF'  # autorun group fly
-        #t.gamepathgaf = t.gamebasepath / 'GAF' / 'GAF'
-        #t.blgaf       = f"$${BLF()} {t.gamepathgaf}"
+        t.pathgaf     = t.basepath     / 'GAF' / 'GAF'  # autorun group fly
+        t.gamepathgaf = t.gamebasepath / 'GAF' / 'GAF'
+        t.blgaf       = f"$${BLF()} {t.gamepathgaf}"
 
         t.pathan     = t.basepath     / 'AN' / 'AN' # autorun normal / non-sod
         t.gamepathan = t.gamebasepath / 'AN' / 'AN'
@@ -1486,9 +1482,9 @@ class MovementPowers(Page):
         t.gamepathfs = t.gamebasepath / 'FS' / 'FS'
         t.blfs       = f"$${BLF()} {t.gamepathfs}"
 
-        #t.pathgff     = t.basepath     / 'GFF' / 'GFF'  # Follow Group Fly
-        #t.gamepathgff = t.gamebasepath / 'GFF' / 'GFF'
-        #t.blgff       = f"$${BLF()} {t.gamepathgff}"
+        t.pathgff     = t.basepath     / 'GFF' / 'GFF'  # Follow Group Fly
+        t.gamepathgff = t.gamebasepath / 'GFF' / 'GFF'
+        t.blgff       = f"$${BLF()} {t.gamepathgff}"
 
         t.pathfn     = t.basepath     / 'FN' / 'FN' # Follow normal / non-sod
         t.gamepathfn = t.gamebasepath / 'FN' / 'FN'
@@ -1668,7 +1664,13 @@ class MovementPowers(Page):
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
-        t.space = t.X = t.W = t.S = t.A = t.D = 0
+        # clear the state of the tObject for further use
+        t.space = 0
+        t.X = 0
+        t.W = 0
+        t.S = 0
+        t.A = 0
+        t.D = 0
 
         t.up   = '$$up 0'
         t.upx  = '$$up 1'

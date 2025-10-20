@@ -592,13 +592,10 @@ class MovementPowers(Page):
             self.PrePickLonePower(c['FlyPower'])
             c['FlyPower'].Enable(bool(self.FlyKeyAction()))
 
-            c['FlyMode'].Show(bool(self.GetState('FlyPower') or self.GetState('HoverPower'))
-                                          and self.DefaultMode() != "Fly")
+            c['FlyMode'].Show((self.GetState('FlyPower') or self.GetState('HoverPower')) and self.DefaultMode() != "Fly")
             c['FlyMode'].Enable(bool(self.FlyKeyAction()))
-            if archetype == 'Peacebringer':
-                c['HoverPower'].SetValue('Combat Flight')
-            else:
-                c['HoverPower'].SetValue('Hover')
+
+            c['HoverPower'].SetValue('Combat Flight' if archetype == 'Peacebringer' else 'Hover')
 
             c['FlyMode'].SetToolTip({
                 'SoD' : 'Toggle Fly Speed on Demand Mode',
@@ -607,15 +604,17 @@ class MovementPowers(Page):
             }.get(self.FlyKeyAction(), ''))
 
             if (self.GetState('FlyPower') == "Fly"):
-                c['FlySpecialKey'].CtlLabel.SetLabel('Afterburner:')
-                # "fly_boost" below because "afterburner" has overloaded meaning in-game
+                # "fly_boost" below because "afterburner" has overloaded meaning in-game and reacts
+                # weirdly (ie, fires the wrong power) if Afterburner isn't on a visible button
+                # https://github.com/emersonrp/bindcontrol/issues/80#issuecomment-2585719489
                 c['FlySpecialPower'].SetValue('fly_boost')
+                c['FlySpecialKey'].CtlLabel.SetLabel('Afterburner:')
                 c['FlySpecialKey'].SetToolTip('Activate Afterburner')
 
             if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.UseHover())):
-                c['FlySpecialKey'].CtlLabel.SetLabel('Quantum Maneuvers:')
                 c['FlySpecialPower'].SetValue('Quantum Maneuvers')
-                c['FlySpecialKey'].SetToolTip('Quantum Maneuvers')
+                c['FlySpecialKey'].CtlLabel.SetLabel('Quantum Maneuvers:')
+                c['FlySpecialKey'].SetToolTip('Activate Quantum Maneuvers')
 
             c['GFlyMode'].Show(self.HasGFly())
         else:

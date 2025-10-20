@@ -2192,6 +2192,17 @@ class MovementPowers(Page):
     def HasTTP(self) -> bool:
         return self.Profile.HasPower('Teleportation', 'Team Teleport')
 
+    def HasAnySoD(self) -> bool:
+        return (
+            self.SoDEnabled() and (
+                (self.Ctrls['JumpKeyAction'] .IsShown() and self.JumpKeyAction()  == 'SoD')
+                    or
+                (self.Ctrls['FlyKeyAction']  .IsShown() and self.FlyKeyAction()   == 'SoD')
+                    or
+                (self.Ctrls['SpeedKeyAction'].IsShown() and self.SpeedKeyAction() == 'SoD')
+            )
+        )
+
     def IsKheldian(self) -> bool:
         return bool(self.Profile.Archetype() in ("Warshade", "Peacebringer"))
 

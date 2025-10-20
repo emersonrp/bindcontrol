@@ -511,6 +511,7 @@ class MovementPowers(Page):
             c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPower('Speed', 'Super Speed'))
             c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPower('Experimentation', 'Speed of Sound'))
             self.PrePickLonePower(c['SpeedPower'])
+            c['SpeedPower'].Enable(bool(self.SpeedKeyAction()))
             c['SpeedMode'].Show(self.DefaultMode() != "Speed")
             c['SpeedMode'].Enable(bool(self.SpeedKeyAction()))
             c['SSMobileOnly'].Enable(sodenabled)
@@ -542,6 +543,7 @@ class MovementPowers(Page):
             self.ShowControlGroup(self.superJumpSizer)
             c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPower('Leaping', 'Super Jump'))
             c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPower('Force of Will', 'Mighty Leap'))
+            c['JumpPower'].Enable(bool(self.JumpKeyAction()))
             self.PrePickLonePower(c['JumpPower'])
 
             c['JumpKeyAction'].ShowEntryIf('Speed / Defense Toggle', self.Profile.HasPower('Leaping', 'Combat Jumping'))
@@ -589,9 +591,11 @@ class MovementPowers(Page):
             c['FlyPower'].ShowEntryIf("Mystic Flight", self.Profile.HasPower("Sorcery", 'Mystic Flight'))
             c['FlyPower'].ShowEntryIf("Energy Flight", archetype == "Peacebringer")
             self.PrePickLonePower(c['FlyPower'])
+            c['FlyPower'].Enable(bool(self.FlyKeyAction()))
 
             c['FlyMode'].Show(bool(self.GetState('FlyPower') or self.GetState('HoverPower'))
                                           and self.DefaultMode() != "Fly")
+            c['FlyMode'].Enable(bool(self.FlyKeyAction()))
             if archetype == 'Peacebringer':
                 c['HoverPower'].SetValue('Combat Flight')
             else:
@@ -708,33 +712,28 @@ class MovementPowers(Page):
         return menu
 
     def SynchronizeUI(self, evt = None) -> None:
-        self.Freeze()
 
-        try:
-            self.OnDetailsCameraChanged()
+        self.OnDetailsCameraChanged()
 
-            self.OnTempChanged()
+        self.OnTempChanged()
 
-            self.OnKheldianChanged()
+        self.OnKheldianChanged()
 
-            self.OnSpeedOnDemandChanged()
+        self.OnSpeedOnDemandChanged()
 
-            self.OnSpeedChanged()
+        self.OnSpeedChanged()
 
-            self.OnJumpChanged()
+        self.OnJumpChanged()
 
-            self.OnFlightChanged()
+        self.OnFlightChanged()
 
-            self.OnTeleportChanged()
+        self.OnTeleportChanged()
 
-        except Exception as e:
-            raise Exception(f"Something blowed up in SoD SynchronizeUI:  {e}") from e
+        self.Fit()
 
-        finally:
-            self.Fit()
-            self.Layout()
-            self.Thaw()
-            if evt: evt.Skip()
+        self.Layout()
+
+        if evt: evt.Skip()
 
     def makeSoDFile(self, p) -> None:
 

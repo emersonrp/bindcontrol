@@ -290,27 +290,6 @@ class MovementPowers(Page):
             tooltip = "Set the detail level to use while moving")
         self.leftColumn.Add(detailSizer, 0, wx.EXPAND)
 
-        ##### KHELDIAN TRAVEL POWERS
-        self.kheldianSizer = ControlGroup(self, self, 'Kheldian Forms / Powers')
-
-        self.kheldianSizer.AddControl(ctlName = 'KhelFeedback', ctlType = 'checkbox',
-            tooltip = "Perform a self-/tell when changing form indicating the new form",)
-        self.kheldianSizer.AddControl(ctlName = 'UseHumanFormPower', ctlType = 'checkbox',
-            tooltip = "Activate shield power when switching to human form",)
-        self.kheldianSizer.AddControl(ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 8],
-            tooltip = "Select the powers tray to change to when in human form")
-        self.kheldianSizer.AddControl(ctlName = 'NovaMode', ctlType = 'keybutton',
-            tooltip = "Select the key to toggle between Nova and human form")
-        self.Ctrls['NovaMode'].Bind(EVT_KEY_CHANGED, self.OnKheldianChanged)
-        self.kheldianSizer.AddControl(ctlName = 'NovaTray', ctlType = 'spinbox', contents = [1, 8],
-            tooltip = "Select the powers tray to change to when in Nova form")
-        self.kheldianSizer.AddControl(ctlName = 'DwarfMode', ctlType = 'keybutton',
-            tooltip = "Select the key to toggle between Dwarf and human form")
-        self.Ctrls['DwarfMode'].Bind(EVT_KEY_CHANGED, self.OnKheldianChanged)
-        self.kheldianSizer.AddControl(ctlName = 'DwarfTray', ctlType = 'spinbox', contents = [1, 8],
-            tooltip = "Select the powers tray to change to when in Dwarf form")
-        self.leftColumn.Add(self.kheldianSizer, 0, wx.EXPAND)
-
         ##### TEMP TRAVEL POWERS
         self.tempSizer = ControlGroup(self, self, 'Temp Travel Powers')
         self.tempSizer.AddControl(ctlName = 'TempEnable', ctlType = 'checkbox',
@@ -322,23 +301,41 @@ class MovementPowers(Page):
         self.TempTravelPowerLabel = wx.StaticText(self.tempSizer.GetStaticBox(), label = "Temp Travel Power:", style = wx.ALIGN_RIGHT)
         self.TempTravelPowerLabel.SetToolTip('Select the temporary travel power to toggle using the keybind')
         self.tempSizer.InnerSizer.Add(self.TempTravelPowerLabel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
-
         temptravelPowerMenu = self.BuildTempTravelPowerMenu()
         temptravelPowerMenu.Bind(wx.EVT_MENU, self.OnTempTravelPowerPicked)
-
         self.TempTravelPowerPicker = PowerPicker(self.tempSizer.GetStaticBox(), menu = temptravelPowerMenu, size = wx.Size(230, 40))
         self.TempTravelPowerPicker.SetToolTip('Select the temporary travel power to toggle using the keybind')
         self.TempTravelPowerPicker.DefaultToolTip = 'Select the temporary travel power to toggle using the keybind'
         self.Ctrls['TempTravelPowerPicker'] = self.TempTravelPowerPicker
         self.tempSizer.InnerSizer.Add(self.TempTravelPowerPicker, 1, wx.EXPAND)
-
-        self.tempSizer.Layout()
         self.leftColumn.Add(self.tempSizer, 0, wx.EXPAND)
+
+        ##### KHELDIAN TRAVEL POWERS
+        self.kheldianSizer = ControlGroup(self, self, 'Kheldian Forms / Powers')
+
+        self.kheldianSizer.AddControl(ctlName = 'KhelFeedback', ctlType = 'checkbox',
+            tooltip = "Perform a self-/tell when changing form indicating the new form",)
+        self.kheldianSizer.AddControl(ctlName = 'UseHumanFormPower', ctlType = 'checkbox',
+            tooltip = "Activate shield power when switching to human form",)
+        self.kheldianSizer.AddControl(ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 9],
+            tooltip = "Select the powers tray to change to when in human form")
+        self.kheldianSizer.AddControl(ctlName = 'NovaMode', ctlType = 'keybutton',
+            tooltip = "Select the key to toggle between Nova and human form")
+        self.Ctrls['NovaMode'].Bind(EVT_KEY_CHANGED, self.OnKheldianChanged)
+        self.kheldianSizer.AddControl(ctlName = 'NovaTray', ctlType = 'spinbox', contents = [1, 9],
+            tooltip = "Select the powers tray to change to when in Nova form")
+        self.kheldianSizer.AddControl(ctlName = 'DwarfMode', ctlType = 'keybutton',
+            tooltip = "Select the key to toggle between Dwarf and human form")
+        self.Ctrls['DwarfMode'].Bind(EVT_KEY_CHANGED, self.OnKheldianChanged)
+        self.kheldianSizer.AddControl(ctlName = 'DwarfTray', ctlType = 'spinbox', contents = [1, 9],
+            tooltip = "Select the powers tray to change to when in Dwarf form")
+        self.rightColumn.Add(self.kheldianSizer, 0, wx.EXPAND)
 
         ##### SPEED ON DEMAND SETTINGS
         SoDSizer = ControlGroup(self, self, 'Speed on Demand (SoD) Settings')
 
         SoDSizer.AddControl(ctlName = 'EnableSoD', ctlType = 'checkbox',
+            helpfile = 'SpeedonDemand.html',
             tooltip = "Enable Speed on Demand behavior for the movement keys")
         self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl(ctlName = 'DefaultMode', ctlType = 'choice',

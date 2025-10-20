@@ -340,7 +340,7 @@ class MovementPowers(Page):
         self.Ctrls['EnableSoD'].Bind(wx.EVT_CHECKBOX, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl(ctlName = 'DefaultMode', ctlType = 'choice',
             contents = ('','Sprint','Speed','Jump','Fly'),
-            helpfile = 'DefaultSoDMode.html',
+            helpfile = 'SpeedOnDemandModes.html',
             tooltip = "Select the Speed on Demand mode the movement keys will use by default")
         self.Ctrls['DefaultMode'].Bind(wx.EVT_CHOICE, self.OnSpeedOnDemandChanged)
         SoDSizer.AddControl(ctlName = 'NonSoDMode', ctlType = 'keybutton',
@@ -421,7 +421,9 @@ class MovementPowers(Page):
             tpTooltip = 'Immediately teleport to the cursor position without showing a target marker.'
             tpcTooltip = 'Show target marker on keypress;  teleport to marker on key release.'
         else:
+            # TODO - is this "show marker on press, teleport on release?"  Clarify if so.
             tpTooltip = 'Initiate teleport power, showing target marker.'
+            # ...because otherwise this one is the same thing.
             tpcTooltip = 'Show target marker on keypress;  click to teleport.'
         self.teleportSizer.AddControl(ctlName = "TPBindKey", ctlType = 'keybutton', tooltip = tpTooltip)
         self.teleportSizer.AddControl(ctlName = "TPComboKey", ctlType = 'keybutton', tooltip = tpcTooltip)
@@ -614,7 +616,7 @@ class MovementPowers(Page):
                 c['FlySpecialKey'].CtlLabel.SetLabel('Afterburner:')
                 c['FlySpecialKey'].SetToolTip('Activate Afterburner')
 
-            if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.UseHover())):
+            if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or bool(self.GetState('HoverPower')))):
                 c['FlySpecialPower'].SetValue('Quantum Maneuvers')
                 c['FlySpecialKey'].CtlLabel.SetLabel('Quantum Maneuvers:')
                 c['FlySpecialKey'].SetToolTip('Activate Quantum Maneuvers')
@@ -641,9 +643,9 @@ class MovementPowers(Page):
                                                         and self.GetState('SpeedPower') == "Speed of Sound")
             c['TPPower'].ShowEntryIf('Shadow Step',   archetype == "Warshade")
             self.PrePickLonePower(c['TPPower'])
-            c['TPBindKey']  .Enable(self.GetState('TPPower') != '')
-            c['TPComboKey'] .Enable(self.GetState('TPPower') != '')
-            c['TPTPHover']  .Show( (self.GetState('TPPower') != '') and self.Profile.HasPower('Flight', 'Hover'))
+            c['TPBindKey']  .Enable(bool(self.GetState('TPPower')))
+            c['TPComboKey'] .Enable(bool(self.GetState('TPPower')))
+            c['TPTPHover']  .Show(  bool(self.GetState('TPPower')) and bool(self.GetState('HoverPower')))
             c['TTPBindKey'] .Show(self.HasTTP())
             c['TTPComboKey'].Show(self.HasTTP())
             c['TTPTPGFly']  .Show(self.HasTTP() and self.HasGFly())
@@ -1103,21 +1105,25 @@ class MovementPowers(Page):
         if (profile.Archetype() == "Peacebringer"):
             t.canfly = True
 
+        has_h = bool(self.GetState('HoverPower'))
+        has_f = bool(self.GetState('FlyPower'))
         # hover, no fly
-        if (self.UseHover() and not self.GetState('FlyPower')):
+        if (has_h and not has_f):
             t.canhov = True
             t.flyx   = self.GetState('HoverPower')
-            if (self.GetState('TPTPHover')): t.tphover = f'$${self.togon} {self.GetState("HoverPower")}'
+            if (self.GetState('TPTPHover')):
+                t.tphover = f'$${self.togon} {self.GetState("HoverPower")}'
         # fly, no hover
-        elif (not self.UseHover() and bool(self.GetState('FlyPower'))):
+        elif (not has_h and has_f):
             t.canfly = True
             t.hover  = self.GetState('FlyPower')
         # hover and fly
-        elif (self.UseHover() and self.GetState('FlyPower')):
+        elif (has_h and has_f):
             t.canhov = True
             t.canfly = True
             t.fly    = self.GetState('FlyPower')
-            if (self.GetState('TPTPHover')): t.tphover = f'$${self.togon} {self.GetState("HoverPower")}'
+            if (self.GetState('TPTPHover')):
+                t.tphover = f'$${self.togon} {self.GetState("HoverPower")}'
 
         if (profile.Archetype() == "Peacebringer"):
             t.canqfly = True
@@ -2174,9 +2180,6 @@ class MovementPowers(Page):
 
     def DefaultMode(self) -> str:
         return self.Ctrls['DefaultMode'].GetStringSelection()
-
-    def UseHover(self) -> bool:
-        return self.Profile.HasPower('Flight', 'Hover') or self.Profile.Archetype() == "Peacebringer"
 
     def HasGFly(self) -> bool:
         return self.Profile.HasPower('Flight', 'Group Fly')

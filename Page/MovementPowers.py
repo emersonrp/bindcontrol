@@ -377,8 +377,7 @@ class MovementPowers(Page):
         self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the super speed power to use with the keybinds in this section")
         self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
-        self.superSpeedSizer.AddControl(ctlName = 'SpeedMode', ctlType = 'keybutton',
-            tooltip = "Enter Speed on Demand Super Speed Mode")
+        self.superSpeedSizer.AddControl(ctlName = 'SpeedMode', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl(ctlName = 'SpeedSpecialKey', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl(ctlName = 'SSMobileOnly', ctlType = 'checkbox',
             tooltip = "Activate speed power only when moving;  deactivate when stationary")
@@ -396,8 +395,7 @@ class MovementPowers(Page):
         self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the jump power to use with the keybinds in this section")
         self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
-        self.superJumpSizer.AddControl(ctlName = 'JumpMode', ctlType = 'keybutton',
-            tooltip = "Enter Speed on Demand Jump Mode")
+        self.superJumpSizer.AddControl(ctlName = 'JumpMode', ctlType = 'keybutton',)
         self.superJumpSizer.AddControl(ctlName = 'JumpSpecialKey', ctlType = 'keybutton',)
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
@@ -407,14 +405,14 @@ class MovementPowers(Page):
             contents = ('Speed on Demand', 'Speed / Defense Toggle', 'Main Power Toggle', 'None'),
             helpfile = 'FlyKeyAction.html',
             tooltip = 'Select what the Fly Power Key will do')
+        self.Ctrls['FlyKeyAction'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
         self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the flight power to use with the keybinds in this section")
         self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
-        self.flySizer.AddControl(ctlName = 'FlyMode', ctlType = 'keybutton',
-            tooltip = "Enter Speed on Demand Fly Mode")
+        self.flySizer.AddControl(ctlName = 'FlyMode', ctlType = 'keybutton',)
         self.flySizer.AddControl(ctlName = 'FlySpecialKey', ctlType = 'keybutton',)
         self.flySizer.AddControl(ctlName = 'GFlyMode', ctlType = 'keybutton',
-            tooltip = "Enter Speed on Demand Group Fly Mode")
+            tooltip = "Toggle Group Fly Speed on Demand Mode")
         self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
@@ -497,6 +495,7 @@ class MovementPowers(Page):
             c[ctrl].Enable(self.SoDEnabled())
         for ctrl in ['JumpKeyAction', 'FlyKeyAction', 'SpeedKeyAction', ]:
             c[ctrl].ShowEntryIf('Speed on Demand', self.SoDEnabled())
+            c[ctrl].SetStringSelection(self.Profile.Data.get('MovementPowers', {}).get(ctrl, ''))
         self.OnJumpChanged()
         self.OnSpeedChanged()
         self.OnFlightChanged()
@@ -520,22 +519,29 @@ class MovementPowers(Page):
 
             c['FlyMode'].Show(bool(self.GetState('FlyPower') or self.GetState('HoverPower'))
                                           and self.DefaultMode() != "Fly")
-
             if archetype == 'Peacebringer':
                 c['HoverPower'].SetValue('Combat Flight')
             else:
                 c['HoverPower'].SetValue('Hover')
 
+            c['FlyMode'].SetToolTip({
+                'SoD' : 'Toggle Fly Speed on Demand Mode',
+                'SDT' : f'Toggle between {c['FlyPower'].GetStringSelection()} and {c['HoverPower'].GetStringSelection()}',
+                'MPT' : f'Toggle {c['FlyPower'].GetStringSelection()} on and off',
+            }.get(self.FlyKeyAction(), ''))
+
             if (self.GetState('FlyPower') == "Fly"):
                 c['FlySpecialKey'].CtlLabel.SetLabel('Afterburner:')
                 # "fly_boost" below because "afterburner" has overloaded meaning in-game
                 c['FlySpecialPower'].SetValue('fly_boost')
+                c['FlySpecialKey'].SetToolTip('Activate Afterburner')
 
-            if (archetype == "Peacebringer" and (self.GetState('FlyPower') == 'Energy Flight') or self.useHover()):
+            if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.UseHover())):
                 c['FlySpecialKey'].CtlLabel.SetLabel('Quantum Maneuvers:')
                 c['FlySpecialPower'].SetValue('Quantum Maneuvers')
+                c['FlySpecialKey'].SetToolTip('Quantum Maneuvers')
 
-            c['GFlyMode'].Show(self.hasGFly())
+            c['GFlyMode'].Show(self.HasGFly())
         else:
             self.ShowControlGroup(self.flySizer, False)
             c['DefaultMode'].ShowEntryIf('Fly', False)
@@ -557,14 +563,22 @@ class MovementPowers(Page):
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable'].Enable(self.SoDEnabled())
 
+            c['JumpMode'].SetToolTip({
+                'SoD' : 'Toggle Jump Speed on Demand Mode',
+                'SDT' : f'Toggle between {c['JumpPower'].GetStringSelection()} and Combat Jumping',
+                'MPT' : f'Toggle {c['JumpPower'].GetStringSelection()} on and off',
+            }.get(self.JumpKeyAction(), ''))
+
             if (self.GetState('JumpPower') == "Mighty Leap"):
                 c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
                 c['JumpSpecialPower'].SetValue('Takeoff')
                 c['JumpSpecialKey'].Show()
+                c['JumpSpecialKey'].SetToolTip('Activate Takeoff')
             elif (self.GetState('JumpPower') == "Super Jump"):
                 c['JumpSpecialKey'].CtlLabel.SetLabel('Double Jump:')
                 c['JumpSpecialPower'].SetValue('Double_Jump')
                 c['JumpSpecialKey'].Show()
+                c['JumpSpecialKey'].SetToolTip('Activate Double Jump')
             else:
                 c['JumpSpecialKey'].Show(False)
         else:
@@ -576,24 +590,28 @@ class MovementPowers(Page):
     def OnSpeedChanged(self, evt = None) -> None:
         c = self.Ctrls
         sodenabled = self.SoDEnabled()
-        has_spower = bool(self.GetState('SpeedPower'))
         if (self.Profile.HasPower('Speed', 'Super Speed') or self.Profile.HasPower('Experimentation', 'Speed of Sound')):
             c['DefaultMode'].ShowEntryIf('Speed', self.SpeedKeyAction() == 'SoD')
             self.ShowControlGroup(self.superSpeedSizer)
             c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPower('Speed', 'Super Speed'))
             c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPower('Experimentation', 'Speed of Sound'))
             self.PrePickLonePower(c['SpeedPower'])
-            c['SpeedMode'].Show(has_spower and self.DefaultMode() != "Speed")
+            c['SpeedMode'].Show(self.DefaultMode() != "Speed")
             c['SpeedMode'].Enable(bool(self.SpeedKeyAction()))
-            c['SSMobileOnly'].Enable(sodenabled and has_spower)
-            c['SSSJModeEnable'].Show(has_spower and self.rightColumn.IsShown(self.superJumpSizer))
+            c['SSMobileOnly'].Enable(sodenabled)
+            c['SSSJModeEnable'].Show(self.rightColumn.IsShown(self.superJumpSizer))
             c['SSSJModeEnable'].Enable(sodenabled)
+
+            c['SpeedMode'].SetToolTip({
+                'SoD' : 'Toggle Super Speed Speed on Demand Mode',
+                'MPT' : f'Toggle {c['SpeedPower'].GetStringSelection()} on and off',
+            }.get(self.SpeedKeyAction(), ''))
 
             if (self.GetState('SpeedPower') == "Super Speed"):
                 c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
                 c['SpeedSpecialPower'].SetValue('SpeedPhase')
                 c['SpeedSpecialKey'].Show()
-                c['SpeedSpecialKey'].Enable(sodenabled)
+                c['SpeedSpecialKey'].SetToolTip('Activate Speed Phase')
             else:
                 c['SpeedSpecialKey'].Show(False)
         else:
@@ -620,9 +638,9 @@ class MovementPowers(Page):
             c['TPBindKey']  .Enable(self.GetState('TPPower') != '')
             c['TPComboKey'] .Enable(self.GetState('TPPower') != '')
             c['TPTPHover']  .Show( (self.GetState('TPPower') != '') and self.Profile.HasPower('Flight', 'Hover'))
-            c['TTPBindKey'] .Show(self.hasTTP())
-            c['TTPComboKey'].Show(self.hasTTP())
-            c['TTPTPGFly']  .Show(self.hasTTP() and self.hasGFly())
+            c['TTPBindKey'] .Show(self.HasTTP())
+            c['TTPComboKey'].Show(self.HasTTP())
+            c['TTPTPGFly']  .Show(self.HasTTP() and self.HasGFly())
 
             # The two 'execute' keys are always hidden as they are magical.
             # They are only for the complicated Rebirth Combo Teleport scheme and might
@@ -635,7 +653,7 @@ class MovementPowers(Page):
 
     def OnKheldianChanged(self, evt = None) -> None:
         c = self.Ctrls
-        if (self.isKheldian()):
+        if (self.IsKheldian()):
             # show kheldian sizer, enable controls
             self.ShowControlGroup(self.kheldianSizer)
 
@@ -1085,16 +1103,16 @@ class MovementPowers(Page):
             t.canfly = True
 
         # hover, no fly
-        if (self.useHover() and not self.GetState('FlyPower')):
+        if (self.UseHover() and not self.GetState('FlyPower')):
             t.canhov = True
             t.flyx   = self.GetState('HoverPower')
             if (self.GetState('TPTPHover')): t.tphover = f'$${self.togon} {self.GetState("HoverPower")}'
         # fly, no hover
-        elif (not self.useHover() and bool(self.GetState('FlyPower'))):
+        elif (not self.UseHover() and bool(self.GetState('FlyPower'))):
             t.canfly = True
             t.hover  = self.GetState('FlyPower')
         # hover and fly
-        elif (self.useHover() and self.GetState('FlyPower')):
+        elif (self.UseHover() and self.GetState('FlyPower')):
             t.canhov = True
             t.canfly = True
             t.fly    = self.GetState('FlyPower')
@@ -1103,7 +1121,7 @@ class MovementPowers(Page):
         if (profile.Archetype() == "Peacebringer"):
             t.canqfly = True
 
-        if (self.hasGFly()):
+        if (self.HasGFly()):
             t.cangfly = True
             t.gfly    = "Group Fly"
             if (self.GetState('TTPTPGFly')): t.ttpgfly = f'$${self.togon} Group Fly'
@@ -1193,7 +1211,7 @@ class MovementPowers(Page):
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
-        if (self.isKheldian() and self.GetState('UseNova')):
+        if (self.IsKheldian() and self.GetState('UseNova')):
             khelfeedback = f"t $name, Changing to {Nova} Form" if self.GetState('KhelFeedback') else ''
             ResetFile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}{t.on}{Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
@@ -1231,7 +1249,7 @@ class MovementPowers(Page):
 
             novafile.SetBind(self.Ctrls['Follow'].MakeBind("follow"))
 
-        if (self.isKheldian() and self.GetState('UseDwarf')):
+        if (self.IsKheldian() and self.GetState('UseDwarf')):
             khelfeedback = f"t $name, Changing to {Dwarf} Form" if self.GetState('KhelFeedback') else ''
             ResetFile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togon} {Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
             dwrffile = profile.GetBindFile("dwarf.txt")
@@ -2165,22 +2183,22 @@ class MovementPowers(Page):
         curfile.SetBind(key, "SetDown Fix", self, '+down' + feedback + profile.BLF(gamefilename))
 
     ### convenience methods
-    def SoDEnabled(self):
-        return self.Profile.Data.get('MovementPowers', {}).get('EnableSoD', False)
+    def SoDEnabled(self) -> bool:
+        return self.Ctrls['EnableSoD'].IsChecked()
 
     def DefaultMode(self) -> str:
-        return self.Profile.Data.get('MovementPowers', {}).get('DefaultState') if self.SoDEnabled() else 'NonSoD'
+        return self.Ctrls['DefaultMode'].GetStringSelection()
 
-    def useHover(self) -> bool:
+    def UseHover(self) -> bool:
         return self.Profile.HasPower('Flight', 'Hover') or self.Profile.Archetype() == "Peacebringer"
 
-    def hasGFly(self) -> bool:
+    def HasGFly(self) -> bool:
         return self.Profile.HasPower('Flight', 'Group Fly')
 
-    def hasTTP(self) -> bool:
+    def HasTTP(self) -> bool:
         return self.Profile.HasPower('Teleportation', 'Team Teleport')
 
-    def isKheldian(self) -> bool:
+    def IsKheldian(self) -> bool:
         return bool(self.Profile.Archetype() in ("Warshade", "Peacebringer"))
 
     def JumpKeyAction(self):

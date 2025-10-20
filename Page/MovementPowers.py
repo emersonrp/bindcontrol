@@ -69,13 +69,14 @@ class MovementPowers(Page):
 
             'JumpKeyAction'    : 'Speed on Demand',
             'JumpPower'        : '',
+            'CJPower'          : 'Combat Jumping',
             'JumpMode'         : '',
             'JumpSpecialKey'   : '',
             'JumpSpecialPower' : '', # hidden
 
             'FlyKeyAction'    : 'Speed on Demand',
             'FlyPower'        : '',
-            'HoverPower'      : '', # hidden
+            'HoverPower'      : 'Hover',
             'FlyMode'         : '',
             'GFlyMode'        : '',
             'FlySpecialKey'   : '',
@@ -133,7 +134,6 @@ class MovementPowers(Page):
 
         # hidden controls for keeping state
         self.hiddenSizer = ControlGroup(self, self, "Hidden Settings")
-        self.hiddenSizer.AddControl(ctlName = 'HoverPower', ctlType = 'text')
         self.hiddenSizer.AddControl(ctlName = 'FlySpecialPower', ctlType = 'text', )
         self.hiddenSizer.AddControl(ctlName = 'JumpSpecialPower', ctlType = 'text', )
         self.hiddenSizer.AddControl(ctlName = 'SpeedSpecialPower', ctlType = 'text', )
@@ -389,6 +389,8 @@ class MovementPowers(Page):
         self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the jump power to use with the keybinds in this section")
         self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
+        self.superJumpSizer.AddControl(ctlName = 'CJPower', ctlType = 'choice', contents = ['', 'Combat Jumping'],
+            tooltip = "Select the jump power that will be activated by Speed on Demand when you are not moving")
         self.superJumpSizer.AddControl(ctlName = 'JumpMode', ctlType = 'keybutton',)
         self.superJumpSizer.AddControl(ctlName = 'JumpSpecialKey', ctlType = 'keybutton',)
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
@@ -402,6 +404,8 @@ class MovementPowers(Page):
         self.Ctrls['FlyKeyAction'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
         self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the flight power to use with the keybinds in this section")
+        self.flySizer.AddControl(ctlName = 'HoverPower', ctlType = 'choice', contents = ['', 'Hover', 'Combat Flight'],
+            tooltip = "Select the flight power that will be activated by Speed on Demand when you are not moving")
         self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
         self.flySizer.AddControl(ctlName = 'FlyMode', ctlType = 'keybutton',)
         self.flySizer.AddControl(ctlName = 'FlySpecialKey', ctlType = 'keybutton',)
@@ -540,6 +544,10 @@ class MovementPowers(Page):
             c['JumpPower'].Enable(bool(self.JumpKeyAction()))
             self.PrePickLonePower(c['JumpPower'])
 
+            c['CJPower'].ShowEntryIf('Combat Jumping', self.Profile.HasPower('Leaping', 'Combat Jumping'))
+            c['CJPower'].Show  (bool(self.JumpKeyAction()) and c['CJPower'].GetCount() > 1)
+            c['CJPower'].Enable(bool(self.JumpKeyAction()) and c['CJPower'].GetCount() > 1)
+
             c['JumpKeyAction'].ShowEntryIf('Speed / Defense Toggle', self.Profile.HasPower('Leaping', 'Combat Jumping'))
             c['JumpMode'].Show(self.DefaultMode() != "Jump")
             c['JumpMode'].Enable(bool(self.JumpKeyAction()))
@@ -587,10 +595,13 @@ class MovementPowers(Page):
             self.PrePickLonePower(c['FlyPower'])
             c['FlyPower'].Enable(bool(self.FlyKeyAction()))
 
+            c['HoverPower'].ShowEntryIf('Hover',         self.Profile.HasPower('Flight', 'Hover'))
+            c['HoverPower'].ShowEntryIf('Combat Flight', archetype == "Peacebringer")
+            c['HoverPower'].Show  (bool(self.FlyKeyAction()) and c['HoverPower'].GetCount() > 1)
+            c['HoverPower'].Enable(bool(self.FlyKeyAction()) and c['HoverPower'].GetCount() > 1)
+
             c['FlyMode'].Show((self.GetState('FlyPower') or self.GetState('HoverPower')) and self.DefaultMode() != "Fly")
             c['FlyMode'].Enable(bool(self.FlyKeyAction()))
-
-            c['HoverPower'].SetValue('Combat Flight' if archetype == 'Peacebringer' else 'Hover')
 
             c['FlyMode'].SetToolTip({
                 'SoD' : 'Toggle Fly Speed on Demand Mode',
@@ -2286,12 +2297,6 @@ UI.Labels.update( {
     'MouseChord'     : 'Mousechord is SoD Forward',
     'Feedback'       : 'Self-/tell when changing SoD mode',
 
-    'JumpKeyAction'    : "Jump Power Key Action",
-    'JumpPower'        : "Primary Jump Power",
-    'JumpMode'         : 'Jump Power Key',
-    'JumpSpecialKey'   : '',
-    'JumpSpecialPower' : '', # hidden
-
     'SpeedKeyAction'    : "Speed Power Key Action",
     'SpeedPower'        : "Primary Speed Power",
     'SpeedMode'         : 'Speed Power Key',
@@ -2300,8 +2305,16 @@ UI.Labels.update( {
     'SpeedSpecialKey'   : '',
     'SpeedSpecialPower' : '', # Hidden
 
+    'JumpKeyAction'    : "Jump Power Key Action",
+    'JumpPower'        : "Primary Jump Power",
+    'CJPower'          : "Defensive Jump Power",
+    'JumpMode'         : 'Jump Power Key',
+    'JumpSpecialKey'   : '',
+    'JumpSpecialPower' : '', # hidden
+
     'FlyKeyAction'    : "Fly Power Key Action",
     'FlyPower'        : "Primary Fly Power",
+    'HoverPower'      : "Defensive Fly Power",
     'FlyMode'         : 'Fly Power Key',
     'FlySpecialKey'   : '',
     'FlySpecialPower' : '', # hidden

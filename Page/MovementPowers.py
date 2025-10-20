@@ -363,7 +363,7 @@ class MovementPowers(Page):
         ##### SUPER SPEED
         self.superSpeedSizer = ControlGroup(self, self, 'Super Speed Powers Settings')
         self.superSpeedSizer.AddControl(ctlName = 'SpeedKeyAction', ctlType = 'choice',
-            contents = ('Speed on Demand', 'Main Power Toggle', 'None'),
+            contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'SpeedKeyAction.html',
             tooltip = 'Select what the Speed Power Key will do')
         self.Ctrls['SpeedKeyAction'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
@@ -381,7 +381,7 @@ class MovementPowers(Page):
         ##### SUPER JUMP
         self.superJumpSizer = ControlGroup(self, self, 'Jumping Powers Settings')
         self.superJumpSizer.AddControl(ctlName = 'JumpKeyAction', ctlType = 'choice',
-            contents = ('Speed on Demand', 'Speed / Defense Toggle', 'Main Power Toggle', 'None'),
+            contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'JumpKeyAction.html',
             tooltip = 'Select what the Jump Power Key will do')
         self.Ctrls['JumpKeyAction'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
@@ -397,7 +397,7 @@ class MovementPowers(Page):
         ##### FLY
         self.flySizer = ControlGroup(self, self, 'Flight Powers Settings')
         self.flySizer.AddControl(ctlName = 'FlyKeyAction', ctlType = 'choice',
-            contents = ('Speed on Demand', 'Speed / Defense Toggle', 'Main Power Toggle', 'None'),
+            contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'FlyKeyAction.html',
             tooltip = 'Select what the Fly Power Key will do')
         self.Ctrls['FlyKeyAction'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
@@ -517,7 +517,7 @@ class MovementPowers(Page):
 
             c['SpeedMode'].SetToolTip({
                 'SoD' : 'Toggle Super Speed Speed on Demand Mode',
-                'MPT' : f'Toggle {c['SpeedPower'].GetStringSelection()} on and off',
+                'PT' : f'Toggle {c['SpeedPower'].GetStringSelection()} on and off',
             }.get(self.SpeedKeyAction(), ''))
 
             if (self.GetState('SpeedPower') == "Super Speed"):
@@ -555,8 +555,7 @@ class MovementPowers(Page):
 
             c['JumpMode'].SetToolTip({
                 'SoD' : 'Toggle Jump Speed on Demand Mode',
-                'SDT' : f'Toggle between {c['JumpPower'].GetStringSelection()} and Combat Jumping',
-                'MPT' : f'Toggle {c['JumpPower'].GetStringSelection()} on and off',
+                'PT' : f'Toggle {c['JumpPower'].GetStringSelection()} on and off',
             }.get(self.JumpKeyAction(), ''))
 
             if (self.GetState('JumpPower') == "Mighty Leap"):
@@ -604,8 +603,7 @@ class MovementPowers(Page):
 
             c['FlyMode'].SetToolTip({
                 'SoD' : 'Toggle Fly Speed on Demand Mode',
-                'SDT' : f'Toggle between {c['FlyPower'].GetStringSelection()} and {c['HoverPower'].GetStringSelection()}',
-                'MPT' : f'Toggle {c['FlyPower'].GetStringSelection()} on and off',
+                'PT' : f'Toggle {c['FlyPower'].GetStringSelection()} on and off',
             }.get(self.FlyKeyAction(), ''))
 
             if (self.GetState('FlyPower') == "Fly"):
@@ -959,7 +957,7 @@ class MovementPowers(Page):
         key = t.JumpMode
         name = UI.Labels['JumpMode']
         if not self.Ctrls['JumpMode'].IsEnabled(): return
-        if (t.canjmp and (self.JumpKeyAction() != 'SDT')):
+        if (t.canjmp and bool(self.JumpKeyAction())):
 
             if self.GetState('Feedback'): feedback = '$$t $name, Superjump Mode'
             else:                         feedback = ''
@@ -1307,10 +1305,10 @@ class MovementPowers(Page):
         ###
         ###### End Kheldian power setup
 
-        if (jbt := self.JumpKeyAction()) in ('SDT', 'MPT'):
+        if (jbt := self.JumpKeyAction()) == 'PT':
             jpower = self.GetState('JumpPower')
             hascj  = self.Profile.HasPower('Leaping', 'Combat Jumping')
-            if ((jbt == 'SDT') and jpower and hascj):
+            if ((jbt == 'PT') and jpower and hascj):
                 ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname {jpower}$$powexecname Combat Jumping'))
             else:  # s/d toggle but not both powers, or main toggle, so do them onesies
                 if jpower:
@@ -1582,7 +1580,7 @@ class MovementPowers(Page):
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
                                 ### Jump Mode
-                                if (self.SoDEnabled() and t.canjmp and (self.JumpKeyAction() != "SDT")):
+                                if (self.SoDEnabled() and t.canjmp and bool(self.JumpKeyAction())):
                                     setattr(t, self.DefaultMode() + "Mode", t.JumpMode)
                                     jturnoff = None if (t.jump == t.cjmp) else {t.jumpifnocj}
                                     self.makeSoDFile({
@@ -2189,24 +2187,23 @@ class MovementPowers(Page):
     def IsKheldian(self) -> bool:
         return bool(self.Profile.Archetype() in ("Warshade", "Peacebringer"))
 
+    # Let's DRY these next three up somehow
     def JumpKeyAction(self):
         return {
-            'Speed on Demand'        : 'SoD',
-            'Speed / Defense Toggle' : 'SDT',
-            'Main Power Toggle'      : 'MPT',
+            'Speed on Demand' : 'SoD',
+            'Power Toggle'    : 'PT',
         }.get(self.Ctrls['JumpKeyAction'].GetStringSelection(), '')
 
     def FlyKeyAction(self):
         return {
-            'Speed on Demand'        : 'SoD',
-            'Speed / Defense Toggle' : 'SDT',
-            'Main Power Toggle'      : 'MPT',
+            'Speed on Demand' : 'SoD',
+            'Power Toggle'    : 'PT',
         }.get(self.Ctrls['FlyKeyAction'].GetStringSelection(), '')
 
     def SpeedKeyAction(self):
         return {
-            'Speed on Demand'        : 'SoD',
-            'Main Power Toggle'      : 'MPT',
+            'Speed on Demand' : 'SoD',
+            'Power Toggle'    : 'PT',
         }.get(self.Ctrls['SpeedKeyAction'].GetStringSelection(), '')
 
     def AllBindFiles(self) -> dict[str, list]:

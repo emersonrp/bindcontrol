@@ -495,10 +495,83 @@ class MovementPowers(Page):
             c[ctrl].Enable(self.SoDEnabled())
         for ctrl in ['JumpKeyAction', 'FlyKeyAction', 'SpeedKeyAction', ]:
             c[ctrl].ShowEntryIf('Speed on Demand', self.SoDEnabled())
+            # Reset these pickers to saved state in case we just reappeared their desired value.  Might be bad.
             c[ctrl].SetStringSelection(self.Profile.Data.get('MovementPowers', {}).get(ctrl, ''))
         self.OnJumpChanged()
         self.OnSpeedChanged()
         self.OnFlightChanged()
+        if evt: evt.Skip()
+
+    def OnSpeedChanged(self, evt = None) -> None:
+        c = self.Ctrls
+        sodenabled = self.SoDEnabled()
+        if (self.Profile.HasPower('Speed', 'Super Speed') or self.Profile.HasPower('Experimentation', 'Speed of Sound')):
+            c['DefaultMode'].ShowEntryIf('Speed', self.SpeedKeyAction() == 'SoD')
+            self.ShowControlGroup(self.superSpeedSizer)
+            c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPower('Speed', 'Super Speed'))
+            c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPower('Experimentation', 'Speed of Sound'))
+            self.PrePickLonePower(c['SpeedPower'])
+            c['SpeedMode'].Show(self.DefaultMode() != "Speed")
+            c['SpeedMode'].Enable(bool(self.SpeedKeyAction()))
+            c['SSMobileOnly'].Enable(sodenabled)
+            c['SSSJModeEnable'].Show(self.rightColumn.IsShown(self.superJumpSizer))
+            c['SSSJModeEnable'].Enable(sodenabled)
+
+            c['SpeedMode'].SetToolTip({
+                'SoD' : 'Toggle Super Speed Speed on Demand Mode',
+                'MPT' : f'Toggle {c['SpeedPower'].GetStringSelection()} on and off',
+            }.get(self.SpeedKeyAction(), ''))
+
+            if (self.GetState('SpeedPower') == "Super Speed"):
+                c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
+                c['SpeedSpecialPower'].SetValue('SpeedPhase')
+                c['SpeedSpecialKey'].Show()
+                c['SpeedSpecialKey'].SetToolTip('Activate Speed Phase')
+            else:
+                c['SpeedSpecialKey'].Show(False)
+        else:
+            self.ShowControlGroup(self.superSpeedSizer, False)
+            c['DefaultMode'].ShowEntryIf('Speed', False)
+
+        if evt: evt.Skip()
+
+    def OnJumpChanged(self, evt = None) -> None:
+        c = self.Ctrls
+        if (self.Profile.HasPower('Leaping', 'Super Jump') or self.Profile.HasPower('Force of Will', 'Mighty Leap')):
+            c['DefaultMode'].ShowEntryIf('Jump', self.JumpKeyAction() == 'SoD')
+            self.ShowControlGroup(self.superJumpSizer)
+            c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPower('Leaping', 'Super Jump'))
+            c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPower('Force of Will', 'Mighty Leap'))
+            self.PrePickLonePower(c['JumpPower'])
+
+            c['JumpKeyAction'].ShowEntryIf('Speed / Defense Toggle', self.Profile.HasPower('Leaping', 'Combat Jumping'))
+            c['JumpMode'].Show(self.DefaultMode() != "Jump")
+            c['JumpMode'].Enable(bool(self.JumpKeyAction()))
+            c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower')))
+            c['SSSJModeEnable'].Enable(self.SoDEnabled())
+
+            c['JumpMode'].SetToolTip({
+                'SoD' : 'Toggle Jump Speed on Demand Mode',
+                'SDT' : f'Toggle between {c['JumpPower'].GetStringSelection()} and Combat Jumping',
+                'MPT' : f'Toggle {c['JumpPower'].GetStringSelection()} on and off',
+            }.get(self.JumpKeyAction(), ''))
+
+            if (self.GetState('JumpPower') == "Mighty Leap"):
+                c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
+                c['JumpSpecialPower'].SetValue('Takeoff')
+                c['JumpSpecialKey'].Show()
+                c['JumpSpecialKey'].SetToolTip('Activate Takeoff')
+            elif (self.GetState('JumpPower') == "Super Jump"):
+                c['JumpSpecialKey'].CtlLabel.SetLabel('Double Jump:')
+                c['JumpSpecialPower'].SetValue('Double_Jump')
+                c['JumpSpecialKey'].Show()
+                c['JumpSpecialKey'].SetToolTip('Activate Double Jump')
+            else:
+                c['JumpSpecialKey'].Show(False)
+        else:
+            self.ShowControlGroup(self.superJumpSizer, False)
+            c['DefaultMode'].ShowEntryIf('Fly', False)
+
         if evt: evt.Skip()
 
     def OnFlightChanged(self, evt = None) -> None:
@@ -545,78 +618,6 @@ class MovementPowers(Page):
         else:
             self.ShowControlGroup(self.flySizer, False)
             c['DefaultMode'].ShowEntryIf('Fly', False)
-
-        if evt: evt.Skip()
-
-    def OnJumpChanged(self, evt = None) -> None:
-        c = self.Ctrls
-        if (self.Profile.HasPower('Leaping', 'Super Jump') or self.Profile.HasPower('Force of Will', 'Mighty Leap')):
-            c['DefaultMode'].ShowEntryIf('Jump', self.JumpKeyAction() == 'SoD')
-            self.ShowControlGroup(self.superJumpSizer)
-            c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPower('Leaping', 'Super Jump'))
-            c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPower('Force of Will', 'Mighty Leap'))
-            self.PrePickLonePower(c['JumpPower'])
-
-            c['JumpKeyAction'].ShowEntryIf('Speed / Defense Toggle', self.Profile.HasPower('Leaping', 'Combat Jumping'))
-            c['JumpMode'].Show(self.DefaultMode() != "Jump")
-            c['JumpMode'].Enable(bool(self.JumpKeyAction()))
-            c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower')))
-            c['SSSJModeEnable'].Enable(self.SoDEnabled())
-
-            c['JumpMode'].SetToolTip({
-                'SoD' : 'Toggle Jump Speed on Demand Mode',
-                'SDT' : f'Toggle between {c['JumpPower'].GetStringSelection()} and Combat Jumping',
-                'MPT' : f'Toggle {c['JumpPower'].GetStringSelection()} on and off',
-            }.get(self.JumpKeyAction(), ''))
-
-            if (self.GetState('JumpPower') == "Mighty Leap"):
-                c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
-                c['JumpSpecialPower'].SetValue('Takeoff')
-                c['JumpSpecialKey'].Show()
-                c['JumpSpecialKey'].SetToolTip('Activate Takeoff')
-            elif (self.GetState('JumpPower') == "Super Jump"):
-                c['JumpSpecialKey'].CtlLabel.SetLabel('Double Jump:')
-                c['JumpSpecialPower'].SetValue('Double_Jump')
-                c['JumpSpecialKey'].Show()
-                c['JumpSpecialKey'].SetToolTip('Activate Double Jump')
-            else:
-                c['JumpSpecialKey'].Show(False)
-        else:
-            self.ShowControlGroup(self.superJumpSizer, False)
-            c['DefaultMode'].ShowEntryIf('Fly', False)
-
-        if evt: evt.Skip()
-
-    def OnSpeedChanged(self, evt = None) -> None:
-        c = self.Ctrls
-        sodenabled = self.SoDEnabled()
-        if (self.Profile.HasPower('Speed', 'Super Speed') or self.Profile.HasPower('Experimentation', 'Speed of Sound')):
-            c['DefaultMode'].ShowEntryIf('Speed', self.SpeedKeyAction() == 'SoD')
-            self.ShowControlGroup(self.superSpeedSizer)
-            c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPower('Speed', 'Super Speed'))
-            c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPower('Experimentation', 'Speed of Sound'))
-            self.PrePickLonePower(c['SpeedPower'])
-            c['SpeedMode'].Show(self.DefaultMode() != "Speed")
-            c['SpeedMode'].Enable(bool(self.SpeedKeyAction()))
-            c['SSMobileOnly'].Enable(sodenabled)
-            c['SSSJModeEnable'].Show(self.rightColumn.IsShown(self.superJumpSizer))
-            c['SSSJModeEnable'].Enable(sodenabled)
-
-            c['SpeedMode'].SetToolTip({
-                'SoD' : 'Toggle Super Speed Speed on Demand Mode',
-                'MPT' : f'Toggle {c['SpeedPower'].GetStringSelection()} on and off',
-            }.get(self.SpeedKeyAction(), ''))
-
-            if (self.GetState('SpeedPower') == "Super Speed"):
-                c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
-                c['SpeedSpecialPower'].SetValue('SpeedPhase')
-                c['SpeedSpecialKey'].Show()
-                c['SpeedSpecialKey'].SetToolTip('Activate Speed Phase')
-            else:
-                c['SpeedSpecialKey'].Show(False)
-        else:
-            self.ShowControlGroup(self.superSpeedSizer, False)
-            c['DefaultMode'].ShowEntryIf('Speed', False)
 
         if evt: evt.Skip()
 
@@ -718,11 +719,11 @@ class MovementPowers(Page):
 
             self.OnSpeedOnDemandChanged()
 
-            self.OnFlightChanged()
-
             self.OnSpeedChanged()
 
             self.OnJumpChanged()
+
+            self.OnFlightChanged()
 
             self.OnTeleportChanged()
 

@@ -252,7 +252,8 @@ class CGControlMixin:
             minisizer.ShowItems(show)
             self.Enable(show)
         else:
-            self.GetContainingSizer().Show(self, show = show)
+            # RP: stop trying to optimize this next line, it's fine.  Love, RP
+            self.GetContainingSizer().Show(self, show)
             self.Enable(show)
 
         if self.CtlLabel:

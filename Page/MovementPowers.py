@@ -1328,16 +1328,14 @@ class MovementPowers(Page):
             elif hpower:
                 ResetFile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{hpower}"'))
 
-        # TODO - this is making 'nop' binds even when teleport is completely disabled.
-        # That's not right but I'm not in a space to track it down and fix it yet.
-        if (not normalTPPower):
+        if (self.HasTPPowers() and not normalTPPower):
             ResetFile.SetBind(self.Ctrls['TPBindKey'].MakeBind('nop'))
             ResetFile.SetBind(self.Ctrls['TPComboKey'].MakeBind('nop'))
             if server == "Rebirth":
                 ResetFile.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('nop'))
 
         # Normal non-peacebringer teleport binds
-        if (normalTPPower and not (archetype == "Peacebringer")):
+        if (self.HasTPPowers() and normalTPPower and not (archetype == "Peacebringer")):
             tphovermodeswitch = ''
             if (t.tphover != ''):
                 tphovermodeswitch = t.bla + "000000.txt"
@@ -1366,7 +1364,7 @@ class MovementPowers(Page):
                 tp_on2.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('-$$powexecname ' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
 
         # normal non-peacebringer team teleport binds
-        if (self.GetState('HasTTP') and not (archetype == "Peacebringer") and teamTPPower) :
+        if (self.HasTPPowers() and self.HasTTP() and not (archetype == "Peacebringer") and teamTPPower) :
 
             ResetFile.SetBind(self.Ctrls['TTPBindKey'].MakeBind(tpActivator + teamTPPower))
 
@@ -2190,6 +2188,9 @@ class MovementPowers(Page):
 
     def HasGFly(self) -> bool:
         return self.Profile.HasPower('Flight', 'Group Fly')
+
+    def HasTPPowers(self):
+        return self.rightColumn.IsShown(self.teleportSizer)
 
     def HasTTP(self) -> bool:
         return self.Profile.HasPower('Teleportation', 'Team Teleport')

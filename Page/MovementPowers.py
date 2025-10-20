@@ -62,7 +62,6 @@ class MovementPowers(Page):
             'SpeedKeyAction'    : 'Speed on Demand',
             'SpeedPower'        : '',
             'SpeedMode'         : '',
-            'SSMobileOnly'      : False,
             'SSSJModeEnable'    : False,
             'SpeedSpecialKey'   : '',
             'SpeedSpecialPower' : '', # hidden
@@ -349,13 +348,13 @@ class MovementPowers(Page):
             tooltip = "Select the key to toggle whether Speed on Demand is active")
         SoDSizer.AddControl(ctlName = 'SprintMode', ctlType = 'keybutton',
             helpfile = 'SprintSoDToggle.html',
-            tooltip = "Select the key to toggle Sprint Speed on Demand mode")
+            tooltip = "Select the key to toggle Sprint Speed on Demand Mode")
         SoDSizer.AddControl(ctlName = 'SprintPower', ctlType = 'choice',
             contents = GameData.SprintPowers,
             helpfile = 'PreferredSprintPower.html',
             tooltip = "Select the power to use for Sprint Speed on Demand")
         SoDSizer.AddControl(ctlName = 'MouseChord', ctlType = 'checkbox',
-            tooltip = "Holding both mouse buttons will go forward using the current Speed on Demand mode")
+            tooltip = "Holding both mouse buttons will go forward using the current Speed on Demand Mode")
         SoDSizer.AddControl(ctlName = 'Feedback', ctlType = 'checkbox',
             tooltip = "Announce changes in Speed on Demand modes via self-/tell")
 
@@ -373,10 +372,8 @@ class MovementPowers(Page):
         self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
         self.superSpeedSizer.AddControl(ctlName = 'SpeedMode', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl(ctlName = 'SpeedSpecialKey', ctlType = 'keybutton',)
-        self.superSpeedSizer.AddControl(ctlName = 'SSMobileOnly', ctlType = 'checkbox',
-            tooltip = "Activate speed power only when moving;  deactivate when stationary")
         self.superSpeedSizer.AddControl(ctlName = 'SSSJModeEnable', ctlType = 'checkbox',
-            tooltip = "Enable Super Speed + Super Jump mode.")
+            tooltip = "Enable Super Speed + Super Jump Mode.")
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
@@ -514,7 +511,6 @@ class MovementPowers(Page):
             c['SpeedPower'].Enable(bool(self.SpeedKeyAction()))
             c['SpeedMode'].Show(self.DefaultMode() != "Speed")
             c['SpeedMode'].Enable(bool(self.SpeedKeyAction()))
-            c['SSMobileOnly'].Enable(sodenabled)
             c['SSSJModeEnable'].Show(self.rightColumn.IsShown(self.superJumpSizer))
             c['SSSJModeEnable'].Enable(sodenabled)
 
@@ -1312,16 +1308,25 @@ class MovementPowers(Page):
         ###
         ###### End Kheldian power setup
 
-        if (jbt := self.JumpKeyAction()) == 'PT':
+        if self.JumpKeyAction() == 'PT':
             jpower = self.GetState('JumpPower')
-            hascj  = self.Profile.HasPower('Leaping', 'Combat Jumping')
-            if ((jbt == 'PT') and jpower and hascj):
-                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname {jpower}$$powexecname Combat Jumping'))
-            else:  # s/d toggle but not both powers, or main toggle, so do them onesies
-                if jpower:
-                    ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname {jpower}'))
-                elif hascj:
-                    ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind('powexecname Combat Jumping'))
+            cpower = self.GetState('CJPower')
+            if jpower and cpower:
+                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{jpower}"$$powexecname "{cpower}"'))
+            elif jpower:
+                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{jpower}"'))
+            elif cpower:
+                ResetFile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{cpower}"'))
+
+        if self.FlyKeyAction() == 'PT':
+            fpower = self.GetState('FlyPower')
+            hpower = self.GetState('HoverPower')
+            if fpower and hpower:
+                ResetFile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{fpower}"$$powexecname "{hpower}"'))
+            elif fpower:
+                ResetFile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{fpower}"'))
+            elif hpower:
+                ResetFile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{hpower}"'))
 
         # TODO - this is making 'nop' binds even when teleport is completely disabled.
         # That's not right but I'm not in a space to track it down and fix it yet.
@@ -1567,7 +1572,8 @@ class MovementPowers(Page):
                                 if (self.SoDEnabled() and self.GetState('SpeedPower')):
                                     setattr(t, self.DefaultMode() + "Mode", t.SpeedMode)
                                     sssj = t.jump if (self.GetState('SSSJModeEnable')) else None
-                                    st   = None   if  self.GetState('SSMobileOnly')    else t.speed
+                                    st   = None  # I think we want never to have a "stationary" power with SS anymore
+                                    #st   = None   if  self.GetState('SSMobileOnly')    else t.speed
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : t.bls,
@@ -2300,7 +2306,6 @@ UI.Labels.update( {
     'SpeedKeyAction'    : "Speed Power Key Action",
     'SpeedPower'        : "Primary Speed Power",
     'SpeedMode'         : 'Speed Power Key',
-    'SSMobileOnly'      : 'Super Speed only when moving',
     'SSSJModeEnable'    : 'Enable Super Speed / Super Jump Mode',
     'SpeedSpecialKey'   : '',
     'SpeedSpecialPower' : '', # Hidden

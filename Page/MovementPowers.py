@@ -99,11 +99,9 @@ class MovementPowers(Page):
             'UseHumanFormPower' : False,
             'HumanTray'         : "1",
 
-            'UseNova'         : False,
             'NovaMode'        : "[",
             'NovaTray'        : "4",
 
-            'UseDwarf'        : False,
             'DwarfMode'       : "]",
             'DwarfTray'       : "5",
 
@@ -301,18 +299,14 @@ class MovementPowers(Page):
             tooltip = "Activate shield power when switching to human form",)
         self.kheldianSizer.AddControl(ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 8],
             tooltip = "Select the powers tray to change to when in human form")
-        self.kheldianSizer.AddControl(ctlName = 'UseNova', ctlType = 'checkbox',
-            tooltip = "Use a key to toggle between Nova and human form")
-        self.Ctrls['UseNova'].Bind(wx.EVT_CHECKBOX, self.OnKheldianChanged)
         self.kheldianSizer.AddControl(ctlName = 'NovaMode', ctlType = 'keybutton',
             tooltip = "Select the key to toggle between Nova and human form")
+        self.Ctrls['NovaMode'].Bind(EVT_KEY_CHANGED, self.OnKheldianChanged)
         self.kheldianSizer.AddControl(ctlName = 'NovaTray', ctlType = 'spinbox', contents = [1, 8],
             tooltip = "Select the powers tray to change to when in Nova form")
-        self.kheldianSizer.AddControl(ctlName = 'UseDwarf', ctlType = 'checkbox',
-            tooltip = "Use a key to toggle between Dwarf and human form")
-        self.Ctrls['UseDwarf'].Bind(wx.EVT_CHECKBOX, self.OnKheldianChanged)
         self.kheldianSizer.AddControl(ctlName = 'DwarfMode', ctlType = 'keybutton',
             tooltip = "Select the key to toggle between Dwarf and human form")
+        self.Ctrls['DwarfMode'].Bind(EVT_KEY_CHANGED, self.OnKheldianChanged)
         self.kheldianSizer.AddControl(ctlName = 'DwarfTray', ctlType = 'spinbox', contents = [1, 8],
             tooltip = "Select the powers tray to change to when in Dwarf form")
         self.leftColumn.Add(self.kheldianSizer, 0, wx.EXPAND)
@@ -663,10 +657,10 @@ class MovementPowers(Page):
             # show kheldian sizer, enable controls
             self.ShowControlGroup(self.kheldianSizer)
 
-            c['NovaMode'].Enable(self.GetState('UseNova'))
-            c['NovaTray'].Enable(self.GetState('UseNova'))
-            c['DwarfMode'].Enable(self.GetState('UseDwarf'))
-            c['DwarfTray'].Enable(self.GetState('UseDwarf'))
+            c['NovaMode'].Enable()
+            c['NovaTray'].Enable(bool(self.GetState('NovaMode')))
+            c['DwarfMode'].Enable()
+            c['DwarfTray'].Enable(bool(self.GetState('DwarfMode')))
         else:
             self.ShowControlGroup(self.kheldianSizer, False)
         if evt: evt.Skip()
@@ -1212,13 +1206,13 @@ class MovementPowers(Page):
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
-        if (self.IsKheldian() and self.GetState('UseNova')):
+        if (self.IsKheldian() and self.GetState('NovaMode')):
             khelfeedback = f"t $name, Changing to {Nova} Form" if self.GetState('KhelFeedback') else ''
             ResetFile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}{t.on}{Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
             novafile = profile.GetBindFile("nova.txt")
 
-            if (self.GetState('UseDwarf')):
+            if (bool(self.GetState('DwarfMode'))):
                 khelfeedback = f"t $name, Changing to {Dwarf} Form" if self.GetState('KhelFeedback') else ''
                 novafile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}{t.off}{Nova}{t.on}{Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
 
@@ -1252,7 +1246,7 @@ class MovementPowers(Page):
             khelfeedback = f"t $name, Changing to {Dwarf} Form" if self.GetState('KhelFeedback') else ''
             ResetFile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togon} {Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
             dwrffile = profile.GetBindFile("dwarf.txt")
-            if (self.GetState('UseNova')):
+            if (bool(self.GetState('NovaMode'))):
                 khelfeedback = f"t $name, Changing to {Nova} Form" if self.GetState('KhelFeedback') else ''
                 dwrffile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {Dwarf}$${self.togon} {Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
@@ -2279,12 +2273,10 @@ UI.Labels.update( {
     'TempToggle'     : 'Toggle Temp Travel Power',
 
     'KhelFeedback'      : 'Give /tell Feedback When Changing Form',
-    'UseHumanFormPower' : 'Activate Shield Power When Switching to Human Form',
+    'UseHumanFormPower' : 'Activate Shield With Human Form',
     'HumanTray'         : 'Human Form Power Tray',
-    'UseNova'           : 'Use Nova Form Toggle',
     'NovaMode'          : 'Toggle Nova Form',
     'NovaTray'          : 'Nova Form Power Tray',
-    'UseDwarf'          : 'Use Dwarf Form Toggle',
     'DwarfMode'         : 'Toggle Dwarf Form',
     'DwarfTray'         : 'Dwarf Form Power Tray',
 

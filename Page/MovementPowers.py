@@ -1006,7 +1006,6 @@ class MovementPowers(Page):
                 if (not fb_on_a): feedback = ''
                 bindload = t.BLF('n') if istoggle else t.bl('f') + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
 
-                # if we're already moving, turn on fly, otherwise hover.  TODO this isn't working, it's always "Fly"
                 if t.totalkeys: ton = t.flyx
                 else:           ton = t.hover
 

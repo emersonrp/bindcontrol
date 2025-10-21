@@ -15,6 +15,7 @@ class KeyBind:
         self.Contents : list[str] = contents # a list of strings to '$$'-join to create the actual payload # pyright: ignore
 
     # factory for PopulateBindFiles to use
+    # TODO this should be a class method
     def MakeBind(self, contents):
         if type(contents) is str: contents = [contents]
 
@@ -48,14 +49,17 @@ class BindFile:
     @overload
     def SetBind(self, keybind: KeyBind): ...
     @overload
-    def SetBind(self, keybind: str, name: str, page: str, contents: str|list[str]): ...
+    def SetBind(self, keybind: str, name: str, page, contents: str|list[str]): ...
 
-    def SetBind(self, keybind:KeyBind|str, name:str = '', page:str = '', contents:str|list[str] = '') -> None:
+    def SetBind(self, keybind:KeyBind|str, name:str = '', page = '', contents:str|list[str] = '') -> None:
 
         # we can either be called with a KeyBind, in which case we're golden, or with
         # four strings, in which case we need to roll a KeyBind.  Someday pick one scheme.
         if isinstance(keybind, str):
             keybind = KeyBind(keybind, name, page, contents)
+
+        if not isinstance(page, str):
+            page = page.TabTitle
 
         if not keybind.Key: return
 

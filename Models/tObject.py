@@ -65,15 +65,19 @@ class tObject(dict):
         self.basepath     : Path            = profile.BindsDir()
         self.gamebasepath : PureWindowsPath = profile.GameBindsDir()
 
-        for suffix in ('r', 'f', 'j', 's', 'gf', 'n', 'ar', 'aj', 'as', 'agf', 'an', 'fr', 'ff', 'fj', 'fs', 'fgf', 'fn'):
-            setattr(self, 'path'     + suffix, self.basepath     / suffix.upper() / suffix.upper())
-            setattr(self, 'gamepath' + suffix, self.gamebasepath / suffix.upper() / suffix.upper())
-            setattr(self, 'bl'       + suffix, f"$${BLF()} {getattr(self, 'gamepath' + suffix)}")
-
         self.vertkeys  :int = 0
         self.horizkeys :int = 0
         self.jkeys     :int = 0
         self.totalkeys :int = 0
+
+    def path(self, suffix):
+        return self.basepath / suffix.upper() / suffix.upper()
+
+    def gamepath(self, suffix):
+        return self.gamebasepath / suffix.upper() / suffix.upper()
+
+    def bl(self, suffix):
+        return f"$${BLF()} {self.gamepath(suffix)}"
 
     # return binary "011010" string of which keys are "on";
     # optionally flipping one of them firsself.

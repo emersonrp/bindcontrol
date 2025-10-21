@@ -44,6 +44,18 @@ def test_blf():
     t.A = 1
     assert t.BLF('sf', 's') == "bindloadfilesilent c:\\TestPath\\SF\\SF111111s.txt"
 
+def test_bl():
+    t = tObject(FakeProfile('Homecoming'))
+    assert t.bl('af') == '$$bindloadfilesilent c:\\coh\\AF\\AF'
+
+def test_path():
+    t = tObject(FakeProfile('Homecoming'))
+    assert t.path('af') == Path('/tmp/AF/AF')
+
+def test_gamepath():
+    t = tObject(FakeProfile('Homecoming'))
+    assert t.gamepath('af') == PureWindowsPath('c:\\coh\\AF\\AF')
+
 #####
 class FakeProfile:
     def __init__(self, server):

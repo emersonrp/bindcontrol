@@ -1,6 +1,7 @@
 from Models.tObject import tObject
+from pathlib import Path, PureWindowsPath
 
-def test_togon():
+def test_togon(profile):
     t = tObject(FakeProfile('Homecoming'))
     assert t.togon == 'powexectoggleon'
     t = tObject(FakeProfile('Rebirth'))
@@ -53,3 +54,9 @@ class FakeProfile:
 
     def BLF(self, *bits):
         return "bindloadfilesilent c:\\TestPath\\" + "\\".join(bits)
+
+    def BindsDir(self):
+        return Path('/tmp')
+
+    def GameBindsDir(self):
+        return PureWindowsPath("c:\\coh\\")

@@ -773,11 +773,11 @@ class MovementPowers(Page):
 
             if (modestr != "NonSoD")      : self.MakeNonSoDModeKey(t,"r", resetfile,[ mobile,stationary ])
             if (modestr != "Sprint")      : self.MakeSprintModeKey(t,"r", resetfile,turnoff,jumpfix)
-            if (modestr != "Fly")         : self.MakeFlyModeKey   (t,"ff",resetfile,turnoff,jumpfix)
+            if (modestr != "Fly")         : self.MakeFlyModeKey   (t,"ff",resetfile,turnoff,jumpfix) # TODO why is this 'ff' not 'f'?
             if (modestr != "Super Speed") : self.MakeSpeedModeKey (t,"s", resetfile,turnoff,jumpfix)
-            if (modestr != "Jump")        : self.MakeJumpModeKey  (t,"j", resetfile,turnoff,path, gamepath)
+            if (modestr != "Jump")        : self.MakeJumpModeKey  (t,"j", resetfile,turnoff,path,gamepath)
 
-            if (modestr != "GFly")        : self.MakeGFlyModeKey  (t,"gf",resetfile,turnoff              ,jumpfix)
+            if (modestr != "GFly")        : self.MakeGFlyModeKey  (t,"gf",resetfile,turnoff,jumpfix)
 
         ### write the binds to the "current path/context + current key state" file
         curfile = profile.GetBindFile(f"{path}{t.KeyState()}.txt")
@@ -796,7 +796,7 @@ class MovementPowers(Page):
         if (flight == "Jump"):
             if (modestr != "Fly")     : self.MakeFlyModeKey   (t,"a", curfile,turnoff,jumpfix,True)
         else:
-            if (modestr != "Fly")     : self.MakeFlyModeKey   (t,"ff",curfile,turnoff,jumpfix)
+            if (modestr != "Fly")     : self.MakeFlyModeKey   (t,"ff",curfile,turnoff,jumpfix) # TODO why is this 'ff' not 'f'?
         if (modestr != "Super Speed") : self.MakeSpeedModeKey (t,"s", curfile,turnoff,jumpfix)
         if (modestr != "Jump")        : self.MakeJumpModeKey  (t,"j", curfile,turnoff,path,gamepath)
 
@@ -840,7 +840,7 @@ class MovementPowers(Page):
         if (modestr != "Sprint")      : self.MakeSprintModeKey(t,"fr",followfile,turnoff,jumpfix)
         if (modestr != "Super Speed") : self.MakeSpeedModeKey (t,"fs",followfile,turnoff,jumpfix)
         if (modestr != "Fly")         : self.MakeFlyModeKey   (t,"ff",followfile,turnoff,jumpfix)
-        if (modestr != "Jump")        : self.MakeJumpModeKey  (t,"fj",followfile,turnoff, pathf, gamepathf)
+        if (modestr != "Jump")        : self.MakeJumpModeKey  (t,"fj",followfile,turnoff,pathf,gamepathf)
 
         self.SoDFollowOffKey(t,bl,followfile,mobile,stationary,flight)
         followfile.SetBind(self.Ctrls['AutoRun'].MakeBind('nop'))
@@ -1088,15 +1088,16 @@ class MovementPowers(Page):
             t.canjmp = True
         if cpower := str(self.GetState('CJPower')):
             t.cancj = True
-        if (cpower and not jpower):
-            t.cjmp  = cpower
-            t.jump  = cpower
+
+        if cpower and not jpower:
+            t.cjmp = cpower
+            t.jump = cpower
         elif jpower and not cpower:
             t.jump       = jpower
             t.jumpifnocj = jpower
         elif cpower and jpower:
-            t.cjmp   = cpower
-            t.jump   = jpower
+            t.cjmp = cpower
+            t.jump = jpower
 
         # Temp Travel Power Toggle
         if (self.GetState('TempEnable')):
@@ -1473,7 +1474,7 @@ class MovementPowers(Page):
 
                                 ### Speed Mode
                                 if self.SpeedKeyAction():
-                                    sssj = t.jump if self.GetState('SSSJModeEnable') else None
+                                    sssj = t.jump if self.GetState('SSSJModeEnable') else ''
                                     self.MakeSoDFile({
                                         't'          : t,
                                         'key'        : t.SpeedModeKey,
@@ -1486,7 +1487,7 @@ class MovementPowers(Page):
 
                                 ### Jump Mode
                                 if self.JumpKeyAction():
-                                    jturnoff = None if (t.jump == t.cjmp) else {t.jumpifnocj}
+                                    jturnoff = None if (t.jump == t.cjmp) else {t.jumpifnocj} # TODO why is this {}?
                                     self.MakeSoDFile({
                                         't'          : t,
                                         'key'        : t.JumpModeKey,

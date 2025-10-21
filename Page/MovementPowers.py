@@ -727,7 +727,7 @@ class MovementPowers(Page):
 
         if evt: evt.Skip()
 
-    def makeSoDFile(self, params: dict) -> None:
+    def MakeSoDFile(self, params: dict) -> None:
 
         profile = self.Profile
 
@@ -737,12 +737,12 @@ class MovementPowers(Page):
         bla  = params.get('bla'  , t.bla)
         blf  = params.get('blf'  , t.blf)
 
-        path      = params.get('path'      , t.path)
-        gamepath  = params.get('gamepath'  , t.gamepath)
-        patha     = params.get('patha'     , t.patha)
-        gamepatha = params.get('gamepatha' , t.gamepatha)
-        pathf     = params.get('pathf'     , t.pathf)
-        gamepathf = params.get('gamepathf' , t.gamepathf)
+        path      = params.get('path')
+        gamepath  = params.get('gamepath')
+        patha     = params.get('patha')
+        gamepatha = params.get('gamepatha')
+        pathf     = params.get('pathf')
+        gamepathf = params.get('gamepathf')
 
         mobile     = params.get('mobile')
         stationary = params.get('stationary')
@@ -774,7 +774,7 @@ class MovementPowers(Page):
 
             if (modestr != "GFly")        : self.makeGFlyModeKey  (t,"gf",curfile,turnoff              ,jumpfix)
 
-        ### write the binds to the "current key state" file
+        ### write the binds to the "current path/context + current key state" file
         curfile = profile.GetBindFile(f"{path}{t.KeyState()}.txt")
 
         self.sodResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile,True))
@@ -1220,7 +1220,7 @@ class MovementPowers(Page):
         if (self.HasTPPowers() and normalTPPower and (archetype != "Peacebringer")):
             tphovermodeswitch = ''
             if t.tphover:
-                tphovermodeswitch = t.bla + "000000.txt"
+                tphovermodeswitch = t.blf + "000000.txt"
 
             resetfile.SetBind(self.Ctrls['TPBindKey'].MakeBind(tpActivator + normalTPPower))
             tp_off = profile.GetBindFile("tp","tp_off.txt")
@@ -1449,7 +1449,7 @@ class MovementPowers(Page):
                                 ### NonSoD Mode
                                 if self.HasAnySoD():
                                     setattr(t, self.DefaultMode() + "Mode", t.NonSoDMode) # why do we need this?
-                                    self.makeSoDFile({
+                                    self.MakeSoDFile({
                                         't'          : t,
                                         'bl'         : t.bln,
                                         'bla'        : t.blan,
@@ -1469,15 +1469,15 @@ class MovementPowers(Page):
                                 ### Sprint Mode
                                 if self.SoDEnabled() and self.GetState('SprintPower'):
                                     setattr(t, self.DefaultMode() + "Mode", t.SprintMode) # why do we need this?
-                                    self.makeSoDFile({
+                                    self.MakeSoDFile({
                                         't'          : t,
-                                        'bl'         : t.bl,
-                                        'bla'        : t.blgr,
+                                        'bl'         : t.blr,
+                                        'bla'        : t.blar,
                                         'blf'        : t.blfr,
-                                        'path'       : t.path,
-                                        'gamepath'   : t.gamepath,
-                                        'patha'      : t.pathgr,
-                                        'gamepatha'  : t.gamepathgr,
+                                        'path'       : t.pathr,
+                                        'gamepath'   : t.gamepathr,
+                                        'patha'      : t.pathar,
+                                        'gamepatha'  : t.gamepathar,
                                         'pathf'      : t.pathfr,
                                         'gamepathf'  : t.gamepathfr,
                                         'mobile'     : t.sprint,
@@ -1490,7 +1490,7 @@ class MovementPowers(Page):
                                 if self.SpeedKeyAction():
                                     setattr(t, self.DefaultMode() + "Mode", t.SpeedMode) # why do we need this?
                                     sssj = t.jump if self.GetState('SSSJModeEnable') else None
-                                    self.makeSoDFile({
+                                    self.MakeSoDFile({
                                         't'          : t,
                                         'bl'         : t.bls,
                                         'bla'        : t.blas,
@@ -1512,7 +1512,7 @@ class MovementPowers(Page):
                                 if self.JumpKeyAction():
                                     setattr(t, self.DefaultMode() + "Mode", t.JumpMode) # why do we need this?
                                     jturnoff = None if (t.jump == t.cjmp) else {t.jumpifnocj}
-                                    self.makeSoDFile({
+                                    self.MakeSoDFile({
                                         't'          : t,
                                         'bl'         : t.blj,
                                         'bla'        : t.blaj,
@@ -1535,13 +1535,13 @@ class MovementPowers(Page):
                                 ### Fly Mode
                                 if self.FlyKeyAction() and (t.canhov or t.canfly):
                                     setattr(t, self.DefaultMode() + "Mode", t.FlyMode) # why do we need this?
-                                    self.makeSoDFile({
+                                    self.MakeSoDFile({
                                         't'          : t,
-                                        'bl'         : t.bla,
+                                        'bl'         : t.blf,
                                         'bla'        : t.blaf,
                                         'blf'        : t.blff,
-                                        'path'       : t.patha,
-                                        'gamepath'   : t.gamepatha,
+                                        'path'       : t.pathf,
+                                        'gamepath'   : t.gamepathf,
                                         'patha'      : t.pathaf,
                                         'gamepatha'  : t.gamepathaf,
                                         'pathf'      : t.pathff,
@@ -1556,15 +1556,15 @@ class MovementPowers(Page):
                                 ### GFly Mode
                                 if t.cangfly:
                                     setattr(t, self.DefaultMode() + "Mode", t.GFlyMode) # why do we need this?
-                                    self.makeSoDFile({
+                                    self.MakeSoDFile({
                                         't'          : t,
-                                        'bl'         : t.blga,
-                                        'bla'        : t.blgaf,
-                                        'blf'        : t.blgff,
-                                        'path'       : t.pathga,
-                                        'gamepath'   : t.gamepathga,
-                                        'patha'      : t.pathgaf,
-                                        'pathf'      : t.pathgff,
+                                        'bl'         : t.blgf,
+                                        'bla'        : t.blagf,
+                                        'blf'        : t.blfgf,
+                                        'path'       : t.pathgf,
+                                        'gamepath'   : t.gamepathgf,
+                                        'patha'      : t.pathagf,
+                                        'pathf'      : t.pathfgf,
                                         'mobile'     : t.gfly,
                                         'stationary' : t.gfly,
                                         'modestr'    : "GFly",
@@ -2162,9 +2162,9 @@ class MovementPowers(Page):
     def AllBindFiles(self) -> dict[str, list]:
         files = []
         dirs  = [
-                'R'  , 'F'   , 'J'  , 'S'  , 'N'  ,
-                'AR' , 'AF'  , 'AJ' , 'AS' , 'AN' ,
-                'FR' , 'FF'  , 'FJ' , 'FS' , 'FN' ,
+                'R'  , 'F'   , 'J'  , 'S'  , 'N'  , 'GF',
+                'AR' , 'AF'  , 'AJ' , 'AS' , 'AN' , 'AGF',
+                'FR' , 'FF'  , 'FJ' , 'FS' , 'FN' , 'FGF',
                 'BO' , 'GBO' ,
         ]
         for d in dirs:

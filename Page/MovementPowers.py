@@ -774,7 +774,7 @@ class MovementPowers(Page):
 
             if (modestr != "NonSoD")      : self.MakeNonSoDModeKey(t,"r", resetfile,[ mobile,stationary ])
             if (modestr != "Sprint")      : self.MakeSprintModeKey(t,"r", resetfile,turnoff,jumpfix)
-            if (modestr != "Fly")         : self.MakeFlyModeKey   (t,"ff",resetfile,turnoff,jumpfix) # TODO why is this 'ff' not 'f'?
+            if (modestr != "Fly")         : self.MakeFlyModeKey   (t,"f", resetfile,turnoff,jumpfix)
             if (modestr != "Super Speed") : self.MakeSpeedModeKey (t,"s", resetfile,turnoff,jumpfix)
             if (modestr != "Jump")        : self.MakeJumpModeKey  (t,"j", resetfile,turnoff,path,gamepath)
 
@@ -794,10 +794,12 @@ class MovementPowers(Page):
 
         if (modestr != "NonSoD")      : self.MakeNonSoDModeKey(t,"r", curfile,[ mobile,stationary ])
         if (modestr != "Sprint")      : self.MakeSprintModeKey(t,"r", curfile,turnoff,jumpfix)
+        # Not clear what's going on here;  maybe I messed it up.  Anyway, these two are
+        # exactly the same except for feedback == True
         if (flight == "Jump"):
-            if (modestr != "Fly")     : self.MakeFlyModeKey   (t,"a", curfile,turnoff,jumpfix,True)
+            if (modestr != "Fly")     : self.MakeFlyModeKey   (t,"f", curfile,turnoff,jumpfix,True)
         else:
-            if (modestr != "Fly")     : self.MakeFlyModeKey   (t,"ff",curfile,turnoff,jumpfix) # TODO why is this 'ff' not 'f'?
+            if (modestr != "Fly")     : self.MakeFlyModeKey   (t,"f", curfile,turnoff,jumpfix)
         if (modestr != "Super Speed") : self.MakeSpeedModeKey (t,"s", curfile,turnoff,jumpfix)
         if (modestr != "Jump")        : self.MakeJumpModeKey  (t,"j", curfile,turnoff,path,gamepath)
 
@@ -1000,10 +1002,11 @@ class MovementPowers(Page):
         istoggle = self.FlyKeyAction() == 'PT'
 
         if (t.canhov or t.canfly):
-            if (bl == "a"):
+            if (bl == "f"):
                 if (not fb_on_a): feedback = ''
-                bindload = t.BLF('n') if istoggle else t.bl('a') + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
+                bindload = t.BLF('n') if istoggle else t.bl('f') + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
 
+                # if we're already moving, turn on fly, otherwise hover.  TODO this isn't working, it's always "Fly"
                 if t.totalkeys: ton = t.flyx
                 else:           ton = t.hover
 
@@ -1368,7 +1371,7 @@ class MovementPowers(Page):
             if dwarfTPPower:
                 tphovermodeswitch = ''
                 if t.tphover:
-                    tphovermodeswitch = t.bl('a') + "000000.txt"
+                    tphovermodeswitch = t.bl('f') + "000000.txt"
 
                 dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeBind(tpActivator + dwarfTPPower))
 

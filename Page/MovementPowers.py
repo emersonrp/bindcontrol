@@ -732,7 +732,7 @@ class MovementPowers(Page):
 
         profile = self.Profile
 
-        t = params['t']
+        t      = params['t']
         suffix = params.get('suffix', '')
 
         bl        = getattr(t, 'bl'        + suffix)
@@ -1221,7 +1221,7 @@ class MovementPowers(Page):
         if (self.HasTPPowers() and normalTPPower and (archetype != "Peacebringer")):
             tphovermodeswitch = ''
             if t.tphover:
-                tphovermodeswitch = t.blf + "000000.txt"
+                tphovermodeswitch = getattr(t, 'blf') + "000000.txt"
 
             resetfile.SetBind(self.Ctrls['TPBindKey'].MakeBind(tpActivator + normalTPPower))
             tp_off = profile.GetBindFile("tp","tp_off.txt")

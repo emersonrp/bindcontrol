@@ -922,21 +922,21 @@ class MovementPowers(Page):
 
         if (self.GetState('SpeedPower')):
             if (bl == 's'):
-                bindload = t.BLF('n') if istoggle else f"{t.bls}{t.KeyState()}.txt" # use non-sod if we're doing a simple toggle
+                bindload = t.BLF('n') if istoggle else f"{t.bl('s')}{t.KeyState()}.txt" # use non-sod if we're doing a simple toggle
                 if jumpfix:
                     self.sodJumpFix(t,key,self.makeSpeedModeKey,"s",bl,file,toff,'',feedback)
                 else:
                     file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "as"):
-                bindload = t.BLF('an') if istoggle else f"{t.blas}{t.KeyState()}.txt" # use non-sod if we're doing a simple toggle
+                bindload = t.BLF('an') if istoggle else f"{t.bl('as')}{t.KeyState()}.txt" # use non-sod if we're doing a simple toggle
                 if jumpfix:
                     self.sodJumpFix(t,key,self.makeSpeedModeKey,"s",bl,file,toff,"a",feedback)
                 elif (not feedback):
                     file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
                 else:
-                    bindload  = f"{t.blas}{t.KeyState()}.txt"
-                    bindload2 = f"{t.blas}{t.KeyState()}_s.txt"
+                    bindload  = f"{t.bl('as')}{t.KeyState()}.txt"
+                    bindload2 = f"{t.bl('as')}{t.KeyState()}_s.txt"
                     tgl = p.GetBindFile(f"{t.pathas}{t.KeyState()}_s.txt")
                     file.SetBind(key, name, self, "+ $$" + t.ini + self.actPower_toggle(t.speed,toff,start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + bindload2)
                     tgl.SetBind(key, name, self, "- $$" + feedback + bindload)
@@ -945,7 +945,7 @@ class MovementPowers(Page):
                 if jumpfix:
                     self.sodJumpFix(t,key,self.makeSpeedModeKey,"s",bl,file,toff,"f",feedback)
                 else:
-                    bindload = t.BLF('fn') if istoggle else f"{t.blfs}{t.KeyState()}.txt" # use non-sod if we're doing a simple toggle
+                    bindload = t.BLF('fn') if istoggle else f"{t.bl('fs')}{t.KeyState()}.txt" # use non-sod if we're doing a simple toggle
                     file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
@@ -969,14 +969,14 @@ class MovementPowers(Page):
                 else:
                     a = self.actPower_name(t.cjmp,toff)
 
-                tgl.SetBind(key, name, self, '-down' + a + t.detaillo + t.flycamdist + t.blj + t.KeyState() + ".txt")
+                tgl.SetBind(key, name, self, '-down' + a + t.detaillo + t.flycamdist + t.bl('j') + t.KeyState() + ".txt")
                 file.SetBind(key, name, self, '+down' + feedback + tglbl)
             elif (bl == "aj"):
-                ajbl = t.blan if istoggle else t.blaj # use non-sod if we're doing a simple toggle
+                ajbl = t.bl('an') if istoggle else t.bl('aj') # use non-sod if we're doing a simple toggle
                 tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + t.dirs('DLR') + ajbl + t.KeyState() + ".txt")
                 file.SetBind(key, name, self, '+down' + feedback + tglbl)
             else:
-                fjbl = t.blfn if istoggle else t.blfj # use non-sod if we're doing a simple toggle
+                fjbl = t.bl('fn') if istoggle else t.bl('fj') # use non-sod if we're doing a simple toggle
                 tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + fjbl + t.KeyState() + ".txt")
                 file.SetBind(key, name, self, '+down' + feedback + tglbl)
 
@@ -996,7 +996,7 @@ class MovementPowers(Page):
         if (t.canhov or t.canfly):
             if (bl == "a"):
                 if (not fb_on_a): feedback = ''
-                bindload = t.BLF('n') if istoggle else t.bla + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
+                bindload = t.BLF('n') if istoggle else t.bl('a') + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
 
                 if t.totalkeys: ton = t.flyx
                 else:           ton = t.hover
@@ -1007,14 +1007,14 @@ class MovementPowers(Page):
                     file.SetBind(key, name, self, t.ini + self.actPower_toggle(ton,toff,start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "af"):
-                bindload = t.BLF('an') if istoggle else t.blaf + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
+                bindload = t.BLF('an') if istoggle else t.bl('af') + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
                 if jumpfix:
                     self.sodJumpFix(t,key,self.makeFlyModeKey,"f",bl,file,toff,"a",feedback)
                 else:
                     file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx,toff,start=True) + t.detaillo + t.flycamdist + t.dirs('DLR') + feedback + bindload)
 
             else: # bl == "ff"
-                bindload = t.BLF('fn') if istoggle else t.blff + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
+                bindload = t.BLF('fn') if istoggle else t.bl('ff') + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
                 if jumpfix:
                     self.sodJumpFix(t,key,self.makeFlyModeKey,"f",bl,file,toff,"f",feedback)
                 else:
@@ -1363,7 +1363,7 @@ class MovementPowers(Page):
             if dwarfTPPower:
                 tphovermodeswitch = ''
                 if t.tphover:
-                    tphovermodeswitch = t.bla + "000000.txt"
+                    tphovermodeswitch = t.bl('a') + "000000.txt"
 
                 dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeBind(tpActivator + dwarfTPPower))
 

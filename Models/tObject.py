@@ -21,7 +21,6 @@ class tObject(dict):
         self.canhov        :bool = False
         self.canfly        :bool = False
         self.canqfly       :bool = False
-        self.cangfly       :bool = False
         self.cancj         :bool = False
         self.canjmp        :bool = False
         self.tphover       :str  = ''
@@ -65,7 +64,6 @@ class tObject(dict):
         self.basepath     : Path            = profile.BindsDir()
         self.gamebasepath : PureWindowsPath = profile.GameBindsDir()
 
-        self.vertkeys  :int = 0
         self.horizkeys :int = 0
         self.jkeys     :int = 0
         self.totalkeys :int = 0
@@ -88,10 +86,8 @@ class tObject(dict):
         ret = ''
         for key in ('space','X','W','S','A','D'):
             retthing = int(getattr(self, key))
-            if key == togglebit:
-                ret = ret + str(1 - retthing)
-            else:
-                ret = ret + str(retthing)
+            ret = ret + (str(1 - retthing) if key == togglebit else str(retthing))
+
         return ret
 
     def dirs(self, dirs):

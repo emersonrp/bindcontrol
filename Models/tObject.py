@@ -65,78 +65,10 @@ class tObject(dict):
         self.basepath     : Path            = profile.BindsDir()
         self.gamebasepath : PureWindowsPath = profile.GameBindsDir()
 
-        # I am very close to making these into methods instead of static definitions
-        self.pathr       : Path            = self.basepath     / 'R' / 'R' # run
-        self.gamepathr   : PureWindowsPath = self.gamebasepath / 'R' / 'R'
-        self.blr         : str             = f"$${BLF()} {self.gamepathr}"
-
-        self.pathf       : Path            = self.basepath     / 'F' / 'F' # fly
-        self.gamepathf   : PureWindowsPath = self.gamebasepath / 'F' / 'F'
-        self.blf         : str             = f"$${BLF()} {self.gamepathf}"
-
-        self.pathj       : Path            = self.basepath     / 'J' / 'J' # jump
-        self.gamepathj   : PureWindowsPath = self.gamebasepath / 'J' / 'J'
-        self.blj         : str             = f"$${BLF()} {self.gamepathj}"
-
-        self.paths       : Path            = self.basepath     / 'S' / 'S' # speed
-        self.gamepaths   : PureWindowsPath = self.gamebasepath / 'S' / 'S'
-        self.bls         : str             = f"$${BLF()} {self.gamepaths}"
-
-        self.pathgf      : Path            = self.basepath     / 'GF' / 'GF' # group fly
-        self.gamepathgf  : PureWindowsPath = self.gamebasepath / 'GF' / 'GF'
-        self.blgf        : str             = f"$${BLF()} {self.gamepathgf}"
-
-        self.pathn       : Path            = self.basepath     / 'N' / 'N' # normal / non-sod
-        self.gamepathn   : PureWindowsPath = self.gamebasepath / 'N' / 'N'
-        self.bln         : str             = f"$${BLF()} {self.gamepathn}"
-
-        self.pathar      : Path            = self.basepath     / 'AR' / 'AR'  # autorun ground
-        self.gamepathar  : PureWindowsPath = self.gamebasepath / 'AR' / 'AR'
-        self.blar        : str             = f"$${BLF()} {self.gamepathar}"
-
-        self.pathaf      : Path            = self.basepath     / 'AF' / 'AF'  # autorun flight
-        self.gamepathaf  : PureWindowsPath = self.gamebasepath / 'AF' / 'AF'
-        self.blaf        : str             = f"$${BLF()} {self.gamepathaf}"
-
-        self.pathaj      : Path            = self.basepath     / 'AJ' / 'AJ'  # autorun jump
-        self.gamepathaj  : PureWindowsPath = self.gamebasepath / 'AJ' / 'AJ'
-        self.blaj        : str             = f"$${BLF()} {self.gamepathaj}"
-
-        self.pathas      : Path            = self.basepath     / 'AS' / 'AS'  # autorun speed
-        self.gamepathas  : PureWindowsPath = self.gamebasepath / 'AS' / 'AS'
-        self.blas        : str             = f"$${BLF()} {self.gamepathas}"
-
-        self.pathagf     : Path            = self.basepath     / 'AGF' / 'AGF'  # autorun group fly
-        self.gamepathagf : PureWindowsPath = self.gamebasepath / 'AGF' / 'AGF'
-        self.blagf       : str             = f"$${BLF()} {self.gamepathagf}"
-
-        self.pathan      : Path            = self.basepath     / 'AN' / 'AN' # autorun normal / non-sod
-        self.gamepathan  : PureWindowsPath = self.gamebasepath / 'AN' / 'AN'
-        self.blan        : str             = f"$${BLF()} {self.gamepathan}"
-
-        self.pathfr      : Path            = self.basepath     / 'FR' / 'FR'  # Follow Run
-        self.gamepathfr  : PureWindowsPath = self.gamebasepath / 'FR' / 'FR'
-        self.blfr        : str             = f"$${BLF()} {self.gamepathfr}"
-
-        self.pathff      : Path            = self.basepath     / 'FF' / 'FF'  # Follow Fly
-        self.gamepathff  : PureWindowsPath = self.gamebasepath / 'FF' / 'FF'
-        self.blff        : str             = f"$${BLF()} {self.gamepathff}"
-
-        self.pathfj      : Path            = self.basepath     / 'FJ' / 'FJ'  # Follow Jump
-        self.gamepathfj  : PureWindowsPath = self.gamebasepath / 'FJ' / 'FJ'
-        self.blfj        : str             = f"$${BLF()} {self.gamepathfj}"
-
-        self.pathfs      : Path            = self.basepath     / 'FS' / 'FS'  # Follow Speed
-        self.gamepathfs  : PureWindowsPath = self.gamebasepath / 'FS' / 'FS'
-        self.blfs        : str             = f"$${BLF()} {self.gamepathfs}"
-
-        self.pathfgf     : Path            = self.basepath     / 'FGF' / 'FGF'  # Follow Group Fly
-        self.gamepathfgf : PureWindowsPath = self.gamebasepath / 'FGF' / 'FGF'
-        self.blfgf       : str             = f"$${BLF()} {self.gamepathfgf}"
-
-        self.pathfn      : Path            = self.basepath     / 'FN' / 'FN' # Follow normal / non-sod
-        self.gamepathfn  : PureWindowsPath = self.gamebasepath / 'FN' / 'FN'
-        self.blfn        : str             = f"$${BLF()} {self.gamepathfn}"
+        for suffix in ('r', 'f', 'j', 's', 'gf', 'n', 'ar', 'aj', 'as', 'agf', 'an', 'fr', 'ff', 'fj', 'fs', 'fgf', 'fn'):
+            setattr(self, 'path'     + suffix, self.basepath     / suffix.upper() / suffix.upper())
+            setattr(self, 'gamepath' + suffix, self.gamebasepath / suffix.upper() / suffix.upper())
+            setattr(self, 'bl'       + suffix, f"$${BLF()} {getattr(self, 'gamepath' + suffix)}")
 
         self.vertkeys  :int = 0
         self.horizkeys :int = 0

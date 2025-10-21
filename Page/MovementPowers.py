@@ -1101,32 +1101,22 @@ class MovementPowers(Page):
         ## Flying / hover
         t.hover  = self.GetState('HoverPower')
         t.flyx   = self.GetState('FlyPower')
+        t.canhov = bool(t.hover)
+        t.canfly = bool(t.flyx)
 
-        if (archetype == "Peacebringer"):
-            t.canfly = True
-
-        has_h = bool(t.hover)
-        has_f = bool(t.flyx)
-        # hover, no fly
-        if (has_h and not has_f):
-            t.canhov = True
-            t.flyx   = self.GetState('HoverPower')
-            if (self.GetState('TPTPHover')):
-                t.tphover = f'$${self.togon} {self.GetState("HoverPower")}'
-        # fly, no hover
-        elif (not has_h and has_f):
-            t.canfly = True
-            t.hover  = self.GetState('FlyPower')
-        # hover and fly
-        elif (has_h and has_f):
-            t.canhov = True
-            t.canfly = True
-            t.fly    = self.GetState('FlyPower')
-            if (self.GetState('TPTPHover')):
-                t.tphover = f'$${self.togon} {self.GetState("HoverPower")}'
-
-        if (archetype == "Peacebringer"):
+        if archetype == "Peacebringer":
+            t.canfly  = True
             t.canqfly = True
+
+        if t.canhov and not t.canfly:   # hover, no fly
+            t.flyx = t.hover
+        elif not t.canhov and t.canfly: # fly, no hover
+            t.hover = t.flyx
+        elif t.canhov and t.canfly:     # hover and fly
+            t.fly = t.flyx
+
+        if t.canhov and self.GetState('TPTPHover'):
+            t.tphover = f'$${self.togon} {t.hover}'
 
         if (self.HasGFly()):
             t.cangfly = True
@@ -1155,22 +1145,22 @@ class MovementPowers(Page):
         else:
             # bind normal movement keys if SoD not enabled or no mouselook
             if (self.GetState('Left')):
-                resetfile.SetBind(self.Ctrls['Left'].MakeBind(["+left"]))
+                resetfile.SetBind(self.Ctrls['Left'].MakeBind("+left"))
             if (self.GetState('Right')):
-                resetfile.SetBind(self.Ctrls['Right'].MakeBind(["+right"]))
+                resetfile.SetBind(self.Ctrls['Right'].MakeBind("+right"))
             if (self.GetState('Up')):
-                resetfile.SetBind(self.Ctrls['Up'].MakeBind(["+up"]))
+                resetfile.SetBind(self.Ctrls['Up'].MakeBind("+up"))
             if (self.GetState('Down')):
-                resetfile.SetBind(self.Ctrls['Down'].MakeBind(["+down"]))
+                resetfile.SetBind(self.Ctrls['Down'].MakeBind("+down"))
             if (self.GetState('Forward')):
                 turn = 'playerturn' if self.GetState('PlayerTurn') else ''
                 resetfile.SetBind(self.Ctrls['Forward'].MakeBind(["+forward", turn]))
             if (self.GetState('Back')):
-                resetfile.SetBind(self.Ctrls['Back'].MakeBind(["+backward"]))
+                resetfile.SetBind(self.Ctrls['Back'].MakeBind("+backward"))
             if (self.GetState('Follow')):
-                resetfile.SetBind(self.Ctrls['Follow'].MakeBind(["+follow"]))
+                resetfile.SetBind(self.Ctrls['Follow'].MakeBind("+follow"))
             if (self.GetState('AutoRun')):
-                resetfile.SetBind(self.Ctrls['AutoRun'].MakeBind(["++autorun"]))
+                resetfile.SetBind(self.Ctrls['AutoRun'].MakeBind("++autorun"))
 
         # Bind the turn keys in either case
         if (self.GetState('TurnLeft')):
@@ -1230,7 +1220,7 @@ class MovementPowers(Page):
         # We did kheldian tp binds inside DoKheldianBinds()
         if (self.HasTPPowers() and normalTPPower and (archetype != "Peacebringer")):
             tphovermodeswitch = ''
-            if (t.tphover != ''):
+            if t.tphover:
                 tphovermodeswitch = t.bla + "000000.txt"
 
             resetfile.SetBind(self.Ctrls['TPBindKey'].MakeBind(tpActivator + normalTPPower))
@@ -1369,10 +1359,10 @@ class MovementPowers(Page):
             if (self.GetState('MouseChord')):
                 dwrffile.SetBind('mousechord', "Dwarf Mode Mousechord", self.TabTitle, ['+down', '+forward', t.playerturn])
 
-            # TODO:  this should get DRY'ed up with the normal teleport logic below
+            # TODO:  this should get DRY'ed up with the normal teleport logic
             if dwarfTPPower:
                 tphovermodeswitch = ''
-                if (t.tphover != ''):
+                if t.tphover:
                     tphovermodeswitch = t.bla + "000000.txt"
 
                 dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeBind(tpActivator + dwarfTPPower))
@@ -1458,27 +1448,28 @@ class MovementPowers(Page):
                                 t.jkeys     = t.horizkeys+t.space
 
                                 ### NonSoD Mode
-                                setattr(t, self.DefaultMode() + "Mode", t.NonSoDMode)
-                                self.makeSoDFile({
-                                    't'          : t,
-                                    'bl'         : t.bln,
-                                    'bla'        : t.blan,
-                                    'blf'        : t.blfn,
-                                    'path'       : t.pathn,
-                                    'gamepath'   : t.gamepathn,
-                                    'patha'      : t.pathan,
-                                    'gamepatha'  : t.gamepathan,
-                                    'pathf'      : t.pathfn,
-                                    'gamepathf'  : t.gamepathfn,
-                                    'mobile'     : None,
-                                    'stationary' : None,
-                                    'modestr'    : "NonSoD",
-                                })
-                                setattr(t, self.DefaultMode() + "Mode", None)
+                                if self.HasAnySoD():
+                                    setattr(t, self.DefaultMode() + "Mode", t.NonSoDMode) # why do we need this?
+                                    self.makeSoDFile({
+                                        't'          : t,
+                                        'bl'         : t.bln,
+                                        'bla'        : t.blan,
+                                        'blf'        : t.blfn,
+                                        'path'       : t.pathn,
+                                        'gamepath'   : t.gamepathn,
+                                        'patha'      : t.pathan,
+                                        'gamepatha'  : t.gamepathan,
+                                        'pathf'      : t.pathfn,
+                                        'gamepathf'  : t.gamepathfn,
+                                        'mobile'     : None,
+                                        'stationary' : None,
+                                        'modestr'    : "NonSoD",
+                                    })
+                                    setattr(t, self.DefaultMode() + "Mode", None)
 
                                 ### Sprint Mode
-                                if self.GetState('SprintPower'):
-                                    setattr(t, self.DefaultMode() + "Mode", t.SprintMode)
+                                if self.SoDEnabled() and self.GetState('SprintPower'):
+                                    setattr(t, self.DefaultMode() + "Mode", t.SprintMode) # why do we need this?
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : t.bl,
@@ -1498,7 +1489,7 @@ class MovementPowers(Page):
 
                                 ### Speed Mode
                                 if self.SpeedKeyAction():
-                                    setattr(t, self.DefaultMode() + "Mode", t.SpeedMode)
+                                    setattr(t, self.DefaultMode() + "Mode", t.SpeedMode) # why do we need this?
                                     sssj = t.jump if self.GetState('SSSJModeEnable') else None
                                     self.makeSoDFile({
                                         't'          : t,
@@ -1520,7 +1511,7 @@ class MovementPowers(Page):
 
                                 ### Jump Mode
                                 if self.JumpKeyAction():
-                                    setattr(t, self.DefaultMode() + "Mode", t.JumpMode)
+                                    setattr(t, self.DefaultMode() + "Mode", t.JumpMode) # why do we need this?
                                     jturnoff = None if (t.jump == t.cjmp) else {t.jumpifnocj}
                                     self.makeSoDFile({
                                         't'          : t,
@@ -1544,7 +1535,7 @@ class MovementPowers(Page):
 
                                 ### Fly Mode
                                 if self.FlyKeyAction() and (t.canhov or t.canfly):
-                                    setattr(t, self.DefaultMode() + "Mode", t.FlyMode)
+                                    setattr(t, self.DefaultMode() + "Mode", t.FlyMode) # why do we need this?
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : t.bla,
@@ -1565,7 +1556,7 @@ class MovementPowers(Page):
 
                                 ### GFly Mode
                                 if t.cangfly:
-                                    setattr(t, self.DefaultMode() + "Mode", t.GFlyMode)
+                                    setattr(t, self.DefaultMode() + "Mode", t.GFlyMode) # why do we need this?
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : t.blga,

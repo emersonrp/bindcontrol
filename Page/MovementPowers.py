@@ -919,14 +919,14 @@ class MovementPowers(Page):
 
         if (self.GetState('SpeedPower')):
             if (bl == 's'):
-                bindload = t.BLF('n') if istoggle else f"{t.bls}{t.KeyState()}.txt"
+                bindload = t.BLF('n') if istoggle else f"{t.bls}{t.KeyState()}.txt" # use non-sod if we're doing a simple toggle
                 if jumpfix:
                     self.sodJumpFix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,'',feedback)
                 else:
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "as"):
-                bindload = t.BLF('an') if istoggle else f"{t.blas}{t.KeyState()}.txt"
+                bindload = t.BLF('an') if istoggle else f"{t.blas}{t.KeyState()}.txt" # use non-sod if we're doing a simple toggle
                 if jumpfix:
                     self.sodJumpFix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"a",feedback)
                 elif (not feedback):
@@ -942,7 +942,7 @@ class MovementPowers(Page):
                 if jumpfix:
                     self.sodJumpFix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"f",feedback)
                 else:
-                    bindload = t.BLF('fn') if istoggle else f"{t.blfs}{t.KeyState()}.txt"
+                    bindload = t.BLF('fn') if istoggle else f"{t.blfs}{t.KeyState()}.txt" # use non-sod if we're doing a simple toggle
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
@@ -956,7 +956,7 @@ class MovementPowers(Page):
 
             feedback = '$$t $name, Super Jump Mode' if self.GetState('Feedback') else ''
 
-            tglbl = t.BLF('n') if istoggle else f"$${BLF()} {fbl}{t.KeyState()}j.txt"
+            tglbl = t.BLF('n') if istoggle else f"$${BLF()} {fbl}{t.KeyState()}j.txt" # use non-sod if we're doing a simple toggle
             tgl   = p.GetBindFile(f"{fpath}{t.KeyState()}j.txt")
 
             if (bl == "j"):
@@ -968,11 +968,11 @@ class MovementPowers(Page):
                 tgl.SetBind(key, name, self, '-down' + a + t.detaillo + t.flycamdist + t.blj + t.KeyState() + ".txt")
                 cur.SetBind(key, name, self, '+down' + feedback + tglbl)
             elif (bl == "aj"):
-                ajbl = t.blan if istoggle else t.blaj
+                ajbl = t.blan if istoggle else t.blaj # use non-sod if we're doing a simple toggle
                 tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + t.dirs('DLR') + ajbl + t.KeyState() + ".txt")
                 cur.SetBind(key, name, self, '+down' + feedback + tglbl)
             else:
-                fjbl = t.blfn if istoggle else t.blfj
+                fjbl = t.blfn if istoggle else t.blfj # use non-sod if we're doing a simple toggle
                 tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + fjbl + t.KeyState() + ".txt")
                 cur.SetBind(key, name, self, '+down' + feedback + tglbl)
 
@@ -990,7 +990,7 @@ class MovementPowers(Page):
         if (t.canhov or t.canfly):
             if (bl == "a"):
                 if (not fb_on_a): feedback = ''
-                bindload = t.BLF('n') if istoggle else t.bla + t.KeyState() + ".txt"
+                bindload = t.BLF('n') if istoggle else t.bla + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
 
                 if t.totalkeys: ton = t.flyx
                 else:           ton = t.hover
@@ -1001,14 +1001,14 @@ class MovementPowers(Page):
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(ton,toff,start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "af"):
-                bindload = t.BLF('an') if istoggle else t.blaf + t.KeyState() + ".txt"
+                bindload = t.BLF('an') if istoggle else t.blaf + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
                 if jumpfix:
                     self.sodJumpFix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"a",feedback)
                 else:
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx,toff,start=True) + t.detaillo + t.flycamdist + t.dirs('DLR') + feedback + bindload)
 
             else: # bl == "ff"
-                bindload = t.BLF('fn') if istoggle else t.blff + t.KeyState() + ".txt"
+                bindload = t.BLF('fn') if istoggle else t.blff + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
                 if jumpfix:
                     self.sodJumpFix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"f",feedback)
                 else:
@@ -2137,11 +2137,11 @@ class MovementPowers(Page):
                     s = s + f'$${self.togoff} {w}'
 
         else:
-            if (off and off != '' and (off != on) and (off not in offpower)):
+            if (off and (off != on) and (off not in offpower)):
                 offpower.add(off)
                 s = s + f'$${self.togoff} {off}'
 
-        if (on and on != ''):
+        if on:
             s = s + f'$${self.togon} {on}'
 
         if start: s = s[2:]
@@ -2151,7 +2151,7 @@ class MovementPowers(Page):
         s = ''
         for v in rest:
             if isinstance(v, str):
-                if (v != '' and v != on):
+                if (v and v != on):
                     s = s + '$$powexecname ' + v
 
             elif isinstance(v, set):
@@ -2159,17 +2159,21 @@ class MovementPowers(Page):
                     if (w and w != on):
                         s = s + '$$powexecname ' + w
 
-        if (s != ''):
+        if s:
             s = s + f'$${self.unqueue}'
 
-        if (on and on != ''):
+        if on:
             s = s + '$$powexecname ' + on + '$$powexecname ' + on
 
         return s
 
     # This seems to be used when making keys for jump mode, triggered inside various make*ModeKey subs to do its
-    # thing instead of the normal SetBind() in there.  It seems to make a toggle bind.  This is still not
-    # clear to me after fifteen years.  RP 2025
+    # thing instead of the normal SetBind() in there.  It also takes in 'makeModeKey' which is always a reference
+    # back to the calling method, and it calls that with different parameters, so it seems to make two binds, one
+    # here and one inside the "callback" which isn't really one.  This -seems- to be in order to convert what
+    # might otherwise be a simple powexec bind into a two-file toggle one, but why?
+    #
+    # The reason and thinking for all of this is still not clear to me after fifteen years.  RP 2025
     def sodJumpFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback = '') -> None:
 
         filename     = str(getattr(t,"path"     + f"{autofollowmode}j")) + t.KeyState() + suffix + '.txt'
@@ -2177,6 +2181,7 @@ class MovementPowers(Page):
         tglfile      = profile.GetBindFile(filename)
         t.ini        = '-down$$'
         makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
+        # TODO TODO TODO do we need to do anything in here for when we're making simple toggle binds?  Probably.
         curfile.SetBind(key, "Jump Fix", self, "+down" + feedback + self.actPower_name(t.cjmp) + profile.BLF(gamefilename))
 
     ### convenience methods

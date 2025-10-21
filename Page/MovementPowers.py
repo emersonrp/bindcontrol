@@ -2105,6 +2105,19 @@ class MovementPowers(Page):
             'Power Toggle'    : 'PT',
         }.get(self.Ctrls['SpeedKeyAction'].GetStringSelection(), '')
 
+    # used to do a "turn off all SoD" when toggling on a non-SoD power
+    def AllSoDPowers(self) -> set:
+        powers = set()
+        if self.JumpKeyAction() == 'SoD':
+            if jp := self.GetState('JumpPower'):  powers.add(jp)
+            if cp := self.GetState('CJPower'):    powers.add(cp)
+        if self.FlyKeyAction() == 'SoD':
+            if fp := self.GetState('FlyPower'):   powers.add(fp)
+            if hp := self.GetState('HoverPower'): powers.add(hp)
+        if self.SpeedKeyAction() == 'SoD':
+            if sp := self.GetState('SpeedPower'): powers.add(sp)
+        return powers
+
     def AllBindFiles(self) -> dict[str, list]:
         files = []
         dirs  = [

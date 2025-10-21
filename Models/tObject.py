@@ -1,4 +1,7 @@
-from pathlib import Path, PureWindowsPath
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from pathlib import Path, PureWindowsPath
+from BLF import BLF
 
 class tObject(dict):
     def __init__(self, profile):
@@ -59,75 +62,80 @@ class tObject(dict):
         self.lefx :str = ''
         self.rigx :str = ''
 
-        self.bl    :str = ''
-        self.bla   :str = ''
-        self.blaf  :str = ''
-        self.blaj  :str = ''
-        self.blan  :str = ''
-        self.blas  :str = ''
-        self.blat  :str = ''
-        self.blf   :str = ''
-        self.blff  :str = ''
-        self.blfn  :str = ''
-        self.blfj  :str = ''
-        self.blfs  :str = ''
-        self.blft  :str = ''
-        self.blfr  :str = ''
-        self.blgr  :str = ''
-        self.blga  :str = ''
-        self.blgaf :str = ''
-        self.blgff :str = ''
-        self.blj   :str = ''
-        self.bln   :str = ''
-        self.bls   :str = ''
-        self.blt   :str = ''
+        self.basepath     : Path            = profile.BindsDir()
+        self.gamebasepath : PureWindowsPath = profile.GameBindsDir()
 
-        self.path    :Path = Path()
-        self.patha   :Path = Path()
-        self.pathaf  :Path = Path()
-        self.pathaj  :Path = Path()
-        self.pathan  :Path = Path()
-        self.pathas  :Path = Path()
-        self.pathat  :Path = Path()
-        self.pathf   :Path = Path()
-        self.pathff  :Path = Path()
-        self.pathfn  :Path = Path()
-        self.pathfj  :Path = Path()
-        self.pathfs  :Path = Path()
-        self.pathft  :Path = Path()
-        self.pathfr  :Path = Path()
-        self.pathga  :Path = Path()
-        self.pathgaf :Path = Path()
-        self.pathgff :Path = Path()
-        self.pathgr  :Path = Path()
-        self.pathj   :Path = Path()
-        self.pathn   :Path = Path()
-        self.paths   :Path = Path()
-        self.patht   :Path = Path()
+        self.path         = self.basepath     / 'R' / 'R' # run
+        self.gamepath     = self.gamebasepath / 'R' / 'R'
+        self.bl           = f"$${BLF()} {self.gamepath}"
 
-        self.gamepath   :PureWindowsPath = PureWindowsPath()
-        self.gamepatha  :PureWindowsPath = PureWindowsPath()
-        self.gamepathaf :PureWindowsPath = PureWindowsPath()
-        self.gamepathaj :PureWindowsPath = PureWindowsPath()
-        self.gamepathan :PureWindowsPath = PureWindowsPath()
-        self.gamepathas :PureWindowsPath = PureWindowsPath()
-        self.gamepathat :PureWindowsPath = PureWindowsPath()
-        self.gamepathf  :PureWindowsPath = PureWindowsPath()
-        self.gamepathff :PureWindowsPath = PureWindowsPath()
-        self.gamepathfn :PureWindowsPath = PureWindowsPath()
-        self.gamepathfj :PureWindowsPath = PureWindowsPath()
-        self.gamepathfs :PureWindowsPath = PureWindowsPath()
-        self.gamepathft :PureWindowsPath = PureWindowsPath()
-        self.gamepathfr :PureWindowsPath = PureWindowsPath()
-        self.gamepathga :PureWindowsPath = PureWindowsPath()
-        self.gamepathgr :PureWindowsPath = PureWindowsPath()
-        self.gamepathj  :PureWindowsPath = PureWindowsPath()
-        self.gamepathn  :PureWindowsPath = PureWindowsPath()
-        self.gamepaths  :PureWindowsPath = PureWindowsPath()
-        self.gamepatht  :PureWindowsPath = PureWindowsPath()
+        self.patha       : Path            = self.basepath     / 'F' / 'F' # fly
+        self.gamepatha   : PureWindowsPath = self.gamebasepath / 'F' / 'F'
+        self.bla         : str             = f"$${BLF()} {self.gamepatha}"
 
-        self.basepath     :Path = Path()
-        self.gamebasepath :PureWindowsPath = PureWindowsPath()
+        self.pathj       : Path            = self.basepath     / 'J' / 'J' # jump
+        self.gamepathj   : PureWindowsPath = self.gamebasepath / 'J' / 'J'
+        self.blj         : str             = f"$${BLF()} {self.gamepathj}"
+
+        self.paths       : Path            = self.basepath     / 'S' / 'S' # speed
+        self.gamepaths   : PureWindowsPath = self.gamebasepath / 'S' / 'S'
+        self.bls         : str             = f"$${BLF()} {self.gamepaths}"
+
+        self.pathga      : Path            = self.basepath     / 'GF' / 'GF' # group fly
+        self.gamepathga  : PureWindowsPath = self.gamebasepath / 'GF' / 'GF'
+        self.blga        : str             = f"$${BLF()} {self.gamepathga}"
+
+        self.pathn       : Path            = self.basepath     / 'N' / 'N' # normal / non-sod
+        self.gamepathn   : PureWindowsPath = self.gamebasepath / 'N' / 'N'
+        self.bln         : str             = f"$${BLF()} {self.gamepathn}"
+
+        self.pathgr      : Path            = self.basepath     / 'AR' / 'AR'  # autorun ground
+        self.gamepathgr  : PureWindowsPath = self.gamebasepath / 'AR' / 'AR'
+        self.blgr        : str             = f"$${BLF()} {self.gamepathgr}"
+
+        self.pathaf      : Path            = self.basepath     / 'AF' / 'AF'  # autorun flight
+        self.gamepathaf  : PureWindowsPath = self.gamebasepath / 'AF' / 'AF'
+        self.blaf        : str             = f"$${BLF()} {self.gamepathaf}"
+
+        self.pathaj      : Path            = self.basepath     / 'AJ' / 'AJ'  # autorun jump
+        self.gamepathaj  : PureWindowsPath = self.gamebasepath / 'AJ' / 'AJ'
+        self.blaj        : str             = f"$${BLF()} {self.gamepathaj}"
+
+        self.pathas      : Path            = self.basepath     / 'AS' / 'AS'  # autorun speed
+        self.gamepathas  : PureWindowsPath = self.gamebasepath / 'AS' / 'AS'
+        self.blas        : str             = f"$${BLF()} {self.gamepathas}"
+
+        self.pathgaf     : Path            = self.basepath     / 'GAF' / 'GAF'  # autorun group fly
+        self.gamepathgaf : PureWindowsPath = self.gamebasepath / 'GAF' / 'GAF'
+        self.blgaf       : str             = f"$${BLF()} {self.gamepathgaf}"
+
+        self.pathan      : Path            = self.basepath     / 'AN' / 'AN' # autorun normal / non-sod
+        self.gamepathan  : PureWindowsPath = self.gamebasepath / 'AN' / 'AN'
+        self.blan        : str             = f"$${BLF()} {self.gamepathan}"
+
+        self.pathfr      : Path            = self.basepath     / 'FR' / 'FR'  # Follow Run
+        self.gamepathfr  : PureWindowsPath = self.gamebasepath / 'FR' / 'FR'
+        self.blfr        : str             = f"$${BLF()} {self.gamepathfr}"
+
+        self.pathff      : Path            = self.basepath     / 'FF' / 'FF'  # Follow Fly
+        self.gamepathff  : PureWindowsPath = self.gamebasepath / 'FF' / 'FF'
+        self.blff        : str             = f"$${BLF()} {self.gamepathff}"
+
+        self.pathfj      : Path            = self.basepath     / 'FJ' / 'FJ'  # Follow Jump
+        self.gamepathfj  : PureWindowsPath = self.gamebasepath / 'FJ' / 'FJ'
+        self.blfj        : str             = f"$${BLF()} {self.gamepathfj}"
+
+        self.pathfs      : Path            = self.basepath     / 'FS' / 'FS'  # Follow Speed
+        self.gamepathfs  : PureWindowsPath = self.gamebasepath / 'FS' / 'FS'
+        self.blfs        : str             = f"$${BLF()} {self.gamepathfs}"
+
+        self.pathgff     : Path            = self.basepath     / 'GFF' / 'GFF'  # Follow Group Fly
+        self.gamepathgff : PureWindowsPath = self.gamebasepath / 'GFF' / 'GFF'
+        self.blgff       : str             = f"$${BLF()} {self.gamepathgff}"
+
+        self.pathfn      : Path            = self.basepath     / 'FN' / 'FN' # Follow normal / non-sod
+        self.gamepathfn  : PureWindowsPath = self.gamebasepath / 'FN' / 'FN'
+        self.blfn        : str             = f"$${BLF()} {self.gamepathfn}"
 
         self.vertkeys  :int = 0
         self.horizkeys :int = 0
@@ -135,7 +143,7 @@ class tObject(dict):
         self.totalkeys :int = 0
 
     # return binary "011010" string of which keys are "on";
-    # optionally flipping one of them first.
+    # optionally flipping one of them firsself.
     def KeyState(self, p : dict|None = None):
         p = p or {}
         togglebit = p.get('toggle', '')

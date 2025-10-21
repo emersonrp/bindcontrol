@@ -2052,8 +2052,8 @@ class MovementPowers(Page):
     def sodJumpFix(self, t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback = '') -> None:
         profile = self.Profile
 
-        filename     = t.path    (f"{autofollowmode}j") + t.KeyState() + suffix + '.txt'
-        gamefilename = t.gamepath(f"{autofollowmode}j") + t.KeyState() + suffix + '.txt'
+        filename     = str(t.path    (f"{autofollowmode}j")) + t.KeyState() + suffix + '.txt'
+        gamefilename = str(t.gamepath(f"{autofollowmode}j")) + t.KeyState() + suffix + '.txt'
         tglfile      = profile.GetBindFile(filename)
         t.ini        = '-down$$'
         makeModeKey(t,bl,tglfile,turnoff,None,1)

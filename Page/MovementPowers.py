@@ -732,17 +732,17 @@ class MovementPowers(Page):
         profile = self.Profile
 
         t = params['t']
+        suffix = params.get('suffix', '')
 
-        bl   = params.get('bl'   , t.bl)
-        bla  = params.get('bla'  , t.bla)
-        blf  = params.get('blf'  , t.blf)
-
-        path      = params.get('path')
-        gamepath  = params.get('gamepath')
-        patha     = params.get('patha')
-        gamepatha = params.get('gamepatha')
-        pathf     = params.get('pathf')
-        gamepathf = params.get('gamepathf')
+        bl        = getattr(t, 'bl'        + suffix)
+        bla       = getattr(t, 'bla'       + suffix)
+        blf       = getattr(t, 'blf'       + suffix)
+        path      = getattr(t, 'path'      + suffix)
+        gamepath  = getattr(t, 'gamepath'  + suffix)
+        patha     = getattr(t, 'patha'     + suffix)
+        gamepatha = getattr(t, 'gamepatha' + suffix)
+        pathf     = getattr(t, 'pathf'     + suffix)
+        gamepathf = getattr(t, 'gamepathf' + suffix)
 
         mobile     = params.get('mobile')
         stationary = params.get('stationary')
@@ -1451,15 +1451,7 @@ class MovementPowers(Page):
                                     setattr(t, self.DefaultMode() + "Mode", t.NonSoDMode) # why do we need this?
                                     self.MakeSoDFile({
                                         't'          : t,
-                                        'bl'         : t.bln,
-                                        'bla'        : t.blan,
-                                        'blf'        : t.blfn,
-                                        'path'       : t.pathn,
-                                        'gamepath'   : t.gamepathn,
-                                        'patha'      : t.pathan,
-                                        'gamepatha'  : t.gamepathan,
-                                        'pathf'      : t.pathfn,
-                                        'gamepathf'  : t.gamepathfn,
+                                        'suffix'     : 'n',
                                         'mobile'     : None,
                                         'stationary' : None,
                                         'modestr'    : "NonSoD",
@@ -1471,15 +1463,7 @@ class MovementPowers(Page):
                                     setattr(t, self.DefaultMode() + "Mode", t.SprintMode) # why do we need this?
                                     self.MakeSoDFile({
                                         't'          : t,
-                                        'bl'         : t.blr,
-                                        'bla'        : t.blar,
-                                        'blf'        : t.blfr,
-                                        'path'       : t.pathr,
-                                        'gamepath'   : t.gamepathr,
-                                        'patha'      : t.pathar,
-                                        'gamepatha'  : t.gamepathar,
-                                        'pathf'      : t.pathfr,
-                                        'gamepathf'  : t.gamepathfr,
+                                        'suffix'     : 'r',
                                         'mobile'     : t.sprint,
                                         'stationary' : None,
                                         'modestr'    : "Sprint",
@@ -1492,15 +1476,7 @@ class MovementPowers(Page):
                                     sssj = t.jump if self.GetState('SSSJModeEnable') else None
                                     self.MakeSoDFile({
                                         't'          : t,
-                                        'bl'         : t.bls,
-                                        'bla'        : t.blas,
-                                        'blf'        : t.blfs,
-                                        'path'       : t.paths,
-                                        'gamepath'   : t.gamepaths,
-                                        'patha'      : t.pathas,
-                                        'gamepatha'  : t.gamepathas,
-                                        'pathf'      : t.pathfs,
-                                        'gamepathf'  : t.gamepathfs,
+                                        'suffix'     : 's',
                                         'mobile'     : t.speed,
                                         'stationary' : None, # I think we want no stationary power with SS anymore
                                         'modestr'    : "Super Speed",
@@ -1514,15 +1490,7 @@ class MovementPowers(Page):
                                     jturnoff = None if (t.jump == t.cjmp) else {t.jumpifnocj}
                                     self.MakeSoDFile({
                                         't'          : t,
-                                        'bl'         : t.blj,
-                                        'bla'        : t.blaj,
-                                        'blf'        : t.blfj,
-                                        'path'       : t.pathj,
-                                        'gamepath'   : t.gamepathj,
-                                        'patha'      : t.pathaj,
-                                        'gamepatha'  : t.gamepathaj,
-                                        'pathf'      : t.pathfj,
-                                        'gamepathf'  : t.gamepathfj,
+                                        'suffix'     : 'j',
                                         'mobile'     : t.jump,
                                         'stationary' : t.cjmp,
                                         'modestr'    : "Jump",
@@ -1537,15 +1505,7 @@ class MovementPowers(Page):
                                     setattr(t, self.DefaultMode() + "Mode", t.FlyMode) # why do we need this?
                                     self.MakeSoDFile({
                                         't'          : t,
-                                        'bl'         : t.blf,
-                                        'bla'        : t.blaf,
-                                        'blf'        : t.blff,
-                                        'path'       : t.pathf,
-                                        'gamepath'   : t.gamepathf,
-                                        'patha'      : t.pathaf,
-                                        'gamepatha'  : t.gamepathaf,
-                                        'pathf'      : t.pathff,
-                                        'gamepathf'  : t.gamepathff,
+                                        'suffix'     : 'f',
                                         'mobile'     : t.flyx,
                                         'stationary' : t.hover,
                                         'modestr'    : "Fly",
@@ -1558,13 +1518,7 @@ class MovementPowers(Page):
                                     setattr(t, self.DefaultMode() + "Mode", t.GFlyMode) # why do we need this?
                                     self.MakeSoDFile({
                                         't'          : t,
-                                        'bl'         : t.blgf,
-                                        'bla'        : t.blagf,
-                                        'blf'        : t.blfgf,
-                                        'path'       : t.pathgf,
-                                        'gamepath'   : t.gamepathgf,
-                                        'patha'      : t.pathagf,
-                                        'pathf'      : t.pathfgf,
+                                        'suffix'     : 'gf',
                                         'mobile'     : t.gfly,
                                         'stationary' : t.gfly,
                                         'modestr'    : "GFly",

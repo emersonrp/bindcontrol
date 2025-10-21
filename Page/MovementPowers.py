@@ -728,30 +728,30 @@ class MovementPowers(Page):
 
         if evt: evt.Skip()
 
-    def makeSoDFile(self, p) -> None:
+    def makeSoDFile(self, params: dict) -> None:
 
         profile = self.Profile
 
-        t = p['t']
+        t = params['t']
 
-        bl   = p.get('bl'   , t.bl)
-        bla  = p.get('bla'  , t.bla)
-        blf  = p.get('blf'  , t.blf)
+        bl   = params.get('bl'   , t.bl)
+        bla  = params.get('bla'  , t.bla)
+        blf  = params.get('blf'  , t.blf)
 
-        path      = p.get('path'      , t.path)
-        gamepath  = p.get('gamepath'  , t.gamepath)
-        patha     = p.get('patha'     , t.patha)
-        gamepatha = p.get('gamepatha' , t.gamepatha)
-        pathf     = p.get('pathf'     , t.pathf)
-        gamepathf = p.get('gamepathf' , t.gamepathf)
+        path      = params.get('path'      , t.path)
+        gamepath  = params.get('gamepath'  , t.gamepath)
+        patha     = params.get('patha'     , t.patha)
+        gamepatha = params.get('gamepatha' , t.gamepatha)
+        pathf     = params.get('pathf'     , t.pathf)
+        gamepathf = params.get('gamepathf' , t.gamepathf)
 
-        mobile     = p.get('mobile')
-        stationary = p.get('stationary')
-        modestr    = p.get('modestr'    , '')
-        flight     = p.get('flight'     , '')
-        jumpfix    = p.get('jumpfix'    , False)
-        turnoff    = p.get('turnoff'    , [ mobile, stationary ])
-        sssj       = p.get('sssj'       , '')
+        mobile     = params.get('mobile')
+        stationary = params.get('stationary')
+        modestr    = params.get('modestr'    , '')
+        flight     = params.get('flight'     , '')
+        jumpfix    = params.get('jumpfix'    , False)
+        turnoff    = params.get('turnoff'    , [ mobile, stationary ])
+        sssj       = params.get('sssj'       , '')
 
         # if our current context is the Default Mode, and we're 000000,
         # write the keybinds to the reset file.
@@ -914,17 +914,18 @@ class MovementPowers(Page):
         bindload = ''
 
         feedback = '$$t $name, Speed Mode' if self.GetState('Feedback') else ''
+        istoggle = self.SpeedKeyAction() == 'PT'
 
         if (self.GetState('SpeedPower')):
             if (bl == 's'):
-                bindload = f"{t.bls}{t.KeyState()}.txt"
+                bindload = t.BLF('n') if istoggle else f"{t.bls}{t.KeyState()}.txt"
                 if jumpfix:
                     self.sodJumpFix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,'',feedback)
                 else:
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "as"):
-                bindload = f"{t.blas}{t.KeyState()}.txt"
+                bindload = t.BLF('an') if istoggle else f"{t.blas}{t.KeyState()}.txt"
                 if jumpfix:
                     self.sodJumpFix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"a",feedback)
                 elif (not feedback):
@@ -936,11 +937,11 @@ class MovementPowers(Page):
                     cur.SetBind(key, name, self, "+ $$" + t.ini + self.actPower_toggle(t.speed,toff,start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + bindload2)
                     tgl.SetBind(key, name, self, "- $$" + feedback + bindload)
 
-            else:
+            else:  # bl == "fs"
                 if jumpfix:
                     self.sodJumpFix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"f",feedback)
                 else:
-                    bindload = f"{t.blfs}{t.KeyState()}.txt"
+                    bindload = t.BLF('fn') if istoggle else f"{t.blfs}{t.KeyState()}.txt"
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
@@ -950,12 +951,12 @@ class MovementPowers(Page):
         name = UI.Labels['JumpMode']
         if not self.Ctrls['JumpMode'].IsEnabled(): return
         if (t.canjmp and bool(self.JumpKeyAction())):
+            istoggle = self.JumpKeyAction() == 'PT'
 
             feedback = '$$t $name, Super Jump Mode' if self.GetState('Feedback') else ''
 
-            tglbl =   f"{fbl}{t.KeyState()}j.txt"
-            tglfn = f"{fpath}{t.KeyState()}j.txt"
-            tgl = p.GetBindFile(tglfn)
+            tglbl = t.BLF('n') if istoggle else f"$${BLF()} {fbl}{t.KeyState()}j.txt"
+            tgl   = p.GetBindFile(f"{fpath}{t.KeyState()}j.txt")
 
             if (bl == "j"):
                 if (t.horizkeys + t.space > 0):
@@ -964,13 +965,15 @@ class MovementPowers(Page):
                     a = self.actPower_name(t.cjmp,toff)
 
                 tgl.SetBind(key, name, self, '-down' + a + t.detaillo + t.flycamdist + t.blj + t.KeyState() + ".txt")
-                cur.SetBind(key, name, self, '+down' + feedback + f'$${BLF()} ' + tglbl)
+                cur.SetBind(key, name, self, '+down' + feedback + tglbl)
             elif (bl == "aj"):
-                tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + t.dirs('DLR') + t.blaj + t.KeyState() + ".txt")
-                cur.SetBind(key, name, self, '+down' + feedback + f'$${BLF()} ' + tglbl)
+                ajbl = t.blan if istoggle else t.blaj
+                tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + t.dirs('DLR') + ajbl + t.KeyState() + ".txt")
+                cur.SetBind(key, name, self, '+down' + feedback + tglbl)
             else:
-                tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + t.blfj + t.KeyState() + ".txt")
-                cur.SetBind(key, name, self, '+down' + feedback + f'$${BLF()} ' + tglbl)
+                fjbl = t.blfn if istoggle else t.blfj
+                tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + '$$up 1' + t.detaillo + t.flycamdist + fjbl + t.KeyState() + ".txt")
+                cur.SetBind(key, name, self, '+down' + feedback + tglbl)
 
         t.ini = ''
 
@@ -981,11 +984,12 @@ class MovementPowers(Page):
         if not key: return
 
         feedback = '$$t $name, Fly Mode' if self.GetState('Feedback') else ''
+        istoggle = self.FlyKeyAction() == 'PT'
 
         if (t.canhov or t.canfly):
             if (bl == "a"):
                 if (not fb_on_a): feedback = ''
-                bindload = t.bla + t.KeyState() + ".txt"
+                bindload = t.BLF('n') if istoggle else t.bla + t.KeyState() + ".txt"
 
                 if t.totalkeys: ton = t.flyx
                 else:           ton = t.hover
@@ -996,18 +1000,18 @@ class MovementPowers(Page):
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(ton,toff,start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "af"):
-                bindload = t.blaf + t.KeyState() + ".txt"
+                bindload = t.BLF('an') if istoggle else t.blaf + t.KeyState() + ".txt"
                 if jumpfix:
                     self.sodJumpFix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"a",feedback)
                 else:
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx,toff,start=True) + t.detaillo + t.flycamdist + t.dirs('DLR') + feedback + bindload)
 
-            else:
-                bindload = t.blff + t.KeyState() + ".txt"
+            else: # bl == "ff"
+                bindload = t.BLF('fn') if istoggle else t.blff + t.KeyState() + ".txt"
                 if jumpfix:
                     self.sodJumpFix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"f",feedback)
                 else:
-                    cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx,toff,start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + t.blff + t.KeyState() + ".txt")
+                    cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx,toff,start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
 
@@ -1175,9 +1179,7 @@ class MovementPowers(Page):
         if self.Ctrls['JumpSpecialKey'].IsEnabled():
             resetfile.SetBind(self.Ctrls['JumpSpecialKey'] .MakeBind(f'powexecname {self.GetState("JumpSpecialPower")}'))
 
-
-        if self.IsKheldian():
-            self.DoKheldianBinds(t, tpActivator, windowhide, windowshow)
+        if self.IsKheldian(): self.DoKheldianBinds(t, tpActivator, windowhide, windowshow)
 
         ###### Basic travel power binds, not SoD
         # OK, first, let's do these trivial toggle binds if and only if we aren't doing SoD at all
@@ -1284,41 +1286,33 @@ class MovementPowers(Page):
         server    = profile.Server()
 
         #  create the Nova and Dwarf form support files if enabled.
-        Nova = ''
-        Dwarf =''
-        HumanFormShield = ''
-        if (archetype == "Peacebringer"):
-            Nova = "Bright Nova"
-            Dwarf = "White Dwarf"
-            HumanFormShield = "Shining Shield"
-
-        elif (archetype == "Warshade"):
-            Nova = "Dark Nova"
-            Dwarf = "Black Dwarf"
-            HumanFormShield = "Gravity Shield"
-
-        dwarfTPPower = ''
-        if (archetype == "Warshade"):
-            dwarfTPPower  = "Black Dwarf Step"
-        elif (archetype == "Peacebringer"):
+        if archetype == "Peacebringer":
+            novaPower = "Bright Nova"
+            dwarfPower = "White Dwarf"
+            humanFormShield = "Shining Shield"
             dwarfTPPower = "White Dwarf Step"
+        else: # Warshade
+            novaPower = "Dark Nova"
+            dwarfPower = "Black Dwarf"
+            humanFormShield = "Gravity Shield"
+            dwarfTPPower = "Black Dwarf Step"
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
-        if (self.IsKheldian() and self.GetState('NovaMode')):
-            khelfeedback = f"t $name, Changing to {Nova} Form" if self.GetState('KhelFeedback') else ''
-            resetfile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}{t.on}{Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
+        if self.GetState('NovaMode'):
+            khelfeedback = f"t $name, Changing to {novaPower} Form" if self.GetState('KhelFeedback') else ''
+            resetfile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}{t.on}{novaPower}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
             novafile = profile.GetBindFile("nova.txt")
 
             if (bool(self.GetState('DwarfMode'))):
-                khelfeedback = f"t $name, Changing to {Dwarf} Form" if self.GetState('KhelFeedback') else ''
-                novafile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}{t.off}{Nova}{t.on}{Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
+                khelfeedback = f"t $name, Changing to {dwarfPower} Form" if self.GetState('KhelFeedback') else ''
+                novafile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}{t.off}{novaPower}{t.on}{dwarfPower}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
 
-            humpower = f'$${self.togon} {HumanFormShield}' if self.GetState('UseHumanFormPower') else ''
+            humpower = f'$${self.togon} {humanFormShield}' if self.GetState('UseHumanFormPower') else ''
 
             khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ''
-            novafile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {Nova}{humpower}$$gototray {self.GetState('HumanTray')}" + profile.BLF('reset.txt')))
+            novafile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {novaPower}{humpower}$$gototray {self.GetState('HumanTray')}" + profile.BLF('reset.txt')))
 
             novafile.SetBind(self.Ctrls['Forward'].MakeBind("+forward"))
             novafile.SetBind(self.Ctrls['Left'].MakeBind("+left"))
@@ -1341,18 +1335,18 @@ class MovementPowers(Page):
 
             novafile.SetBind(self.Ctrls['Follow'].MakeBind("follow"))
 
-        if (self.IsKheldian() and self.GetState('UseDwarf')):
-            khelfeedback = f"t $name, Changing to {Dwarf} Form" if self.GetState('KhelFeedback') else ''
-            resetfile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togon} {Dwarf}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
+        if self.GetState('UseDwarf'):
+            khelfeedback = f"t $name, Changing to {dwarfPower} Form" if self.GetState('KhelFeedback') else ''
+            resetfile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togon} {dwarfPower}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
             dwrffile = profile.GetBindFile("dwarf.txt")
             if (bool(self.GetState('NovaMode'))):
-                khelfeedback = f"t $name, Changing to {Nova} Form" if self.GetState('KhelFeedback') else ''
-                dwrffile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {Dwarf}$${self.togon} {Nova}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
+                khelfeedback = f"t $name, Changing to {novaPower} Form" if self.GetState('KhelFeedback') else ''
+                dwrffile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {dwarfPower}$${self.togon} {novaPower}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
-            humpower = f'$${self.togon} {HumanFormShield}' if self.GetState('UseHumanFormPower') else ''
+            humpower = f'$${self.togon} {humanFormShield}' if self.GetState('UseHumanFormPower') else ''
 
             khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ''
-            dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {Dwarf}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
+            dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {dwarfPower}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
 
             dwrffile.SetBind(self.Ctrls['Forward'].MakeBind("+forward"))
             dwrffile.SetBind(self.Ctrls['Left'].MakeBind("+left"))
@@ -1395,9 +1389,6 @@ class MovementPowers(Page):
 
                     tp_on2 = profile.GetBindFile("dtp","tp_on2.txt")
                     tp_on2.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('- $$powexecname ' + dwarfTPPower + profile.BLF('dtp','tp_on1.txt')))
-        ###
-        ###### End Kheldian power setup
-
 
     def DoSpeedOnDemandBinds(self, t) -> None:
         profile   = self.Profile
@@ -1534,7 +1525,7 @@ class MovementPowers(Page):
                                 t.vertkeys  = space+X
                                 t.jkeys     = t.horizkeys+t.space
 
-                                ### NonSoDMode
+                                ### NonSoD Mode
                                 setattr(t, self.DefaultMode() + "Mode", t.NonSoDMode)
                                 self.makeSoDFile({
                                     't'          : t,
@@ -1553,8 +1544,8 @@ class MovementPowers(Page):
                                 })
                                 setattr(t, self.DefaultMode() + "Mode", None)
 
-                                ### Default (Sprint) Mode
-                                if self.SoDEnabled():
+                                ### Sprint Mode
+                                if self.GetState('SprintPower'):
                                     setattr(t, self.DefaultMode() + "Mode", t.SprintMode)
                                     self.makeSoDFile({
                                         't'          : t,
@@ -1574,11 +1565,9 @@ class MovementPowers(Page):
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
                                 ### Speed Mode
-                                if (self.SoDEnabled() and self.GetState('SpeedPower')):
+                                if self.SpeedKeyAction():
                                     setattr(t, self.DefaultMode() + "Mode", t.SpeedMode)
-                                    sssj = t.jump if (self.GetState('SSSJModeEnable')) else None
-                                    st   = None  # I think we want never to have a "stationary" power with SS anymore
-                                    #st   = None   if  self.GetState('SSMobileOnly')    else t.speed
+                                    sssj = t.jump if self.GetState('SSSJModeEnable') else None
                                     self.makeSoDFile({
                                         't'          : t,
                                         'bl'         : t.bls,
@@ -1591,14 +1580,14 @@ class MovementPowers(Page):
                                         'pathf'      : t.pathfs,
                                         'gamepathf'  : t.gamepathfs,
                                         'mobile'     : t.speed,
-                                        'stationary' : st,
+                                        'stationary' : None, # I think we want no stationary power with SS anymore
                                         'modestr'    : "Super Speed",
                                         'sssj'       : sssj,
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
                                 ### Jump Mode
-                                if (self.SoDEnabled() and t.canjmp and bool(self.JumpKeyAction())):
+                                if self.JumpKeyAction():
                                     setattr(t, self.DefaultMode() + "Mode", t.JumpMode)
                                     jturnoff = None if (t.jump == t.cjmp) else {t.jumpifnocj}
                                     self.makeSoDFile({
@@ -1622,7 +1611,7 @@ class MovementPowers(Page):
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
                                 ### Fly Mode
-                                if (self.SoDEnabled() and (t.canhov or t.canfly)):
+                                if self.FlyKeyAction() and (t.canhov or t.canfly):
                                     setattr(t, self.DefaultMode() + "Mode", t.FlyMode)
                                     self.makeSoDFile({
                                         't'          : t,
@@ -1638,15 +1627,12 @@ class MovementPowers(Page):
                                         'mobile'     : t.flyx,
                                         'stationary' : t.hover,
                                         'modestr'    : "Fly",
-                                        # TODO: added "or t.flyx" here to fix BO/* not being written if hover
-                                        # is not available.  This might not be the right solution
-                                        # TODO 2:  BO is not even a thing any more, so...?
-                                        'flight'     : t.fly or t.flyx,
+                                        'flight'     : t.fly,
                                     })
                                     setattr(t, self.DefaultMode() + "Mode", None)
 
                                 ### GFly Mode
-                                if (self.SoDEnabled() and t.cangfly):
+                                if t.cangfly:
                                     setattr(t, self.DefaultMode() + "Mode", t.GFlyMode)
                                     self.makeSoDFile({
                                         't'          : t,

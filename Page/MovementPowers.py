@@ -734,15 +734,15 @@ class MovementPowers(Page):
         t      = params['t']
         suffix = params.get('suffix', '')
 
-        bl        = getattr(t, 'bl'        + suffix)
-        bla       = getattr(t, 'bla'       + suffix)
-        blf       = getattr(t, 'blf'       + suffix)
-        path      = getattr(t, 'path'      + suffix)
-        gamepath  = getattr(t, 'gamepath'  + suffix)
-        patha     = getattr(t, 'patha'     + suffix)
-        gamepatha = getattr(t, 'gamepatha' + suffix)
-        pathf     = getattr(t, 'pathf'     + suffix)
-        gamepathf = getattr(t, 'gamepathf' + suffix)
+        bl        = t.bl(suffix)
+        bla       = t.bl('a' + suffix)
+        blf       = t.bl('f' + suffix)
+        path      = t.path(suffix)
+        gamepath  = t.gamepath(suffix)
+        patha     = t.path('a' + suffix)
+        gamepatha = t.gamepath('a'+ suffix)
+        pathf     = t.path('f' + suffix)
+        gamepathf = t.gamepath('f'+ suffix)
 
         mobile     = params.get('mobile')
         stationary = params.get('stationary')
@@ -1220,7 +1220,7 @@ class MovementPowers(Page):
         if (self.HasTPPowers() and normalTPPower and (archetype != "Peacebringer")):
             tphovermodeswitch = ''
             if t.tphover:
-                tphovermodeswitch = getattr(t, 'blf') + "000000.txt"
+                tphovermodeswitch = t.bl('f') + "000000.txt"
 
             resetfile.SetBind(self.Ctrls['TPBindKey'].MakeBind(tpActivator + normalTPPower))
             tp_off = profile.GetBindFile("tp","tp_off.txt")
@@ -2052,8 +2052,8 @@ class MovementPowers(Page):
     def sodJumpFix(self, t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback = '') -> None:
         profile = self.Profile
 
-        filename     = str(getattr(t,"path"     + f"{autofollowmode}j")) + t.KeyState() + suffix + '.txt'
-        gamefilename = str(getattr(t,"gamepath" + f"{autofollowmode}j")) + t.KeyState() + suffix + '.txt'
+        filename     = t.path    (f"{autofollowmode}j") + t.KeyState() + suffix + '.txt'
+        gamefilename = t.gamepath(f"{autofollowmode}j") + t.KeyState() + suffix + '.txt'
         tglfile      = profile.GetBindFile(filename)
         t.ini        = '-down$$'
         makeModeKey(t,bl,tglfile,turnoff,None,1)

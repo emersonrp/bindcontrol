@@ -735,6 +735,10 @@ class MovementPowers(Page):
         t      = params['t']
         suffix = params.get('suffix', '')
 
+        # it's still not clear to me why this is needed but it is
+        # we undo it at the bottom of the method
+        setattr(t, self.DefaultMode() + 'ModeKey', params['key'])
+
         bl        = t.bl(suffix)
         bla       = t.bl('a' + suffix)
         blf       = t.bl('f' + suffix)
@@ -842,6 +846,9 @@ class MovementPowers(Page):
         curfile.SetBind(self.Ctrls['AutoRun'].MakeBind('nop'))
 
         self.sodFollowOffKey(t,bl,curfile,mobile,stationary,flight)
+
+        # Undo the mystery mashing from the top of the method
+        setattr(t, self.DefaultMode() + 'ModeKey', None)
 
     def makeNonSoDModeKey(self, t, bl, file, toff, jumpfix, fb = '') -> None:
         key = t.NonSoDModeKey
@@ -1119,8 +1126,7 @@ class MovementPowers(Page):
             t.tphover = f'$${self.togon} {t.hover}'
 
         if (self.HasGFly()):
-            t.cangfly = True
-            t.gfly    = "Group Fly"
+            t.gfly = "Group Fly"
             if (self.GetState('TTPTPGFly')): t.ttpgfly = f'$${self.togon} Group Fly'
 
         if (self.GetState('SpeedPower')):
@@ -1153,8 +1159,7 @@ class MovementPowers(Page):
             if (self.GetState('Down')):
                 resetfile.SetBind(self.Ctrls['Down'].MakeBind("+down"))
             if (self.GetState('Forward')):
-                turn = 'playerturn' if self.GetState('PlayerTurn') else ''
-                resetfile.SetBind(self.Ctrls['Forward'].MakeBind(["+forward", turn]))
+                resetfile.SetBind(self.Ctrls['Forward'].MakeBind(["+forward", t.playerturn]))
             if (self.GetState('Back')):
                 resetfile.SetBind(self.Ctrls['Back'].MakeBind("+backward"))
             if (self.GetState('Follow')):
@@ -1311,7 +1316,7 @@ class MovementPowers(Page):
             khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ''
             novafile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {novaPower}{humpower}$$gototray {self.GetState('HumanTray')}" + profile.BLF('reset.txt')))
 
-            novafile.SetBind(self.Ctrls['Forward'].MakeBind("+forward"))
+            novafile.SetBind(self.Ctrls['Forward'].MakeBind(["+forward", t.playerturn]))
             novafile.SetBind(self.Ctrls['Left'].MakeBind("+left"))
             novafile.SetBind(self.Ctrls['Right'].MakeBind("+right"))
             novafile.SetBind(self.Ctrls['Back'].MakeBind("+backward"))
@@ -1345,7 +1350,7 @@ class MovementPowers(Page):
             khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ''
             dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {dwarfPower}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
 
-            dwrffile.SetBind(self.Ctrls['Forward'].MakeBind("+forward"))
+            dwrffile.SetBind(self.Ctrls['Forward'].MakeBind(["+forward", t.playerturn]))
             dwrffile.SetBind(self.Ctrls['Left'].MakeBind("+left"))
             dwrffile.SetBind(self.Ctrls['Right'].MakeBind("+right"))
             dwrffile.SetBind(self.Ctrls['Back'].MakeBind("+backward"))
@@ -1412,8 +1417,6 @@ class MovementPowers(Page):
         if (self.DefaultMode() != "Speed")  : t.SpeedModeKey  = self.GetState('SpeedMode')
         if (self.DefaultMode() != "GFly")   : t.GFlyModeKey   = self.GetState('GFlyMode')
 
-        defaultModeKeyAttrName = self.DefaultMode() + "ModeKey"
-
         for space in (0,1):
             t.space = space
             t.up  = f'$$up {space}'
@@ -1446,53 +1449,49 @@ class MovementPowers(Page):
 
                                 t.totalkeys = space+X+W+S+A+D # total number of keys down
                                 t.horizkeys = W+S+A+D # total # of horizontal move keys. So Sprint isn't turned on when jumping
-                                t.vertkeys  = space+X
                                 t.jkeys     = t.horizkeys+t.space
 
                                 ### NonSoD Mode
                                 if self.HasAnySoD():
-                                    setattr(t, defaultModeKeyAttrName, t.NonSoDModeKey) # why do we need this?
                                     self.MakeSoDFile({
                                         't'          : t,
+                                        'key'        : t.NonSoDModeKey,
                                         'suffix'     : 'n',
                                         'mobile'     : None,
                                         'stationary' : None,
                                         'modestr'    : "NonSoD",
                                     })
-                                    setattr(t, defaultModeKeyAttrName, None)
 
                                 ### Sprint Mode
                                 if self.SoDEnabled() and self.GetState('SprintPower'):
-                                    setattr(t, defaultModeKeyAttrName, t.SprintModeKey) # why do we need this?
                                     self.MakeSoDFile({
                                         't'          : t,
+                                        'key'        : t.SprintModeKey,
                                         'suffix'     : 'r',
                                         'mobile'     : t.sprint,
                                         'stationary' : None,
                                         'modestr'    : "Sprint",
                                     })
-                                    setattr(t, defaultModeKeyAttrName, None)
 
                                 ### Speed Mode
                                 if self.SpeedKeyAction():
-                                    setattr(t, defaultModeKeyAttrName, t.SpeedModeKey) # why do we need this?
                                     sssj = t.jump if self.GetState('SSSJModeEnable') else None
                                     self.MakeSoDFile({
                                         't'          : t,
+                                        'key'        : t.SpeedModeKey,
                                         'suffix'     : 's',
                                         'mobile'     : t.speed,
                                         'stationary' : None, # I think we want no stationary power with SS anymore
                                         'modestr'    : "Super Speed",
                                         'sssj'       : sssj,
                                     })
-                                    setattr(t, defaultModeKeyAttrName, None)
 
                                 ### Jump Mode
                                 if self.JumpKeyAction():
-                                    setattr(t, defaultModeKeyAttrName, t.JumpModeKey) # why do we need this?
                                     jturnoff = None if (t.jump == t.cjmp) else {t.jumpifnocj}
                                     self.MakeSoDFile({
                                         't'          : t,
+                                        'key'        : t.JumpModeKey,
                                         'suffix'     : 'j',
                                         'mobile'     : t.jump,
                                         'stationary' : t.cjmp,
@@ -1501,33 +1500,30 @@ class MovementPowers(Page):
                                         'jumpfix'    : True,
                                         'turnoff'    : jturnoff,
                                     })
-                                    setattr(t, defaultModeKeyAttrName, None)
 
                                 ### Fly Mode
                                 if self.FlyKeyAction() and (t.canhov or t.canfly):
-                                    setattr(t, defaultModeKeyAttrName, t.FlyModeKey) # why do we need this?
                                     self.MakeSoDFile({
                                         't'          : t,
+                                        'key'        : t.FlyModeKey,
                                         'suffix'     : 'f',
                                         'mobile'     : t.flyx,
                                         'stationary' : t.hover,
                                         'modestr'    : "Fly",
                                         'flight'     : t.fly,
                                     })
-                                    setattr(t, defaultModeKeyAttrName, None)
 
                                 ### GFly Mode
                                 if t.GFlyModeKey:
-                                    setattr(t, defaultModeKeyAttrName, t.GFlyModeKey) # why do we need this?
                                     self.MakeSoDFile({
                                         't'          : t,
+                                        'key'        : t.GFlyModeKey,
                                         'suffix'     : 'gf',
                                         'mobile'     : t.gfly,
                                         'stationary' : t.gfly,
                                         'modestr'    : "GFly",
                                         'flight'     : "GFly",
                                     })
-                                    setattr(t, defaultModeKeyAttrName, None)
 
         # clear the state of the tObject for further use
         t.space = 0

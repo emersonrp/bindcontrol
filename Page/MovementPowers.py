@@ -843,13 +843,14 @@ class MovementPowers(Page):
 
         self.sodFollowOffKey(t,bl,curfile,mobile,stationary,flight)
 
-    def makeNonSoDModeKey(self, p, t, bl, cur, toff, jumpfix) -> None:
+    def makeNonSoDModeKey(self, p, t, bl, cur, toff, jumpfix, fb = '') -> None:
         key = t.NonSoDMode
         name = UI.Labels['NonSoDMode']
         if not self.Ctrls['NonSoDMode'].IsEnabled(): return
         if not key: return
 
-        feedback = '$$t $name, Non-SoD Mode' if self.GetState('Feedback') else ''
+        if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Non-SoD Mode'
+        else:                                      feedback = ''
 
         if (bl == "r"):
             bindload = t.BLF('n')
@@ -872,12 +873,13 @@ class MovementPowers(Page):
                 cur.SetBind(key, name, self, t.ini + self.actPower_toggle(None,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
         t.ini = ''
 
-    def makeSprintModeKey(self, p, t, bl, cur, toff, jumpfix):
+    def makeSprintModeKey(self, p, t, bl, cur, toff, jumpfix, fb = '') -> None:
         key = t.SprintMode
         name = UI.Labels['SprintMode']
         if not key: return
 
-        feedback = '$$t $name, Sprint Mode' if self.GetState('Feedback') else ''
+        if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Sprint-SoD Mode'
+        else:                                      feedback = ''
 
         if (bl == "r"):
             bindload  = t.BLF('R')
@@ -907,14 +909,15 @@ class MovementPowers(Page):
 
         t.ini = ''
 
-    def makeSpeedModeKey(self, p, t, bl, cur, toff, jumpfix) -> None:
+    def makeSpeedModeKey(self, p, t, bl, cur, toff, jumpfix, fb = '') -> None:
         key = t.SpeedMode
         name = UI.Labels['SpeedMode']
         if not self.Ctrls['SpeedMode'].IsEnabled(): return
         bindload = ''
-
-        feedback = '$$t $name, Speed Mode' if self.GetState('Feedback') else ''
         istoggle = self.SpeedKeyAction() == 'PT'
+
+        feedback = ''
+        if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Superspeed Mode'
 
         if (self.GetState('SpeedPower')):
             if (bl == 's'):
@@ -977,13 +980,15 @@ class MovementPowers(Page):
 
         t.ini = ''
 
-    def makeFlyModeKey(self, p, t, bl, cur, toff, jumpfix, fb_on_a = False) -> None:
+    def makeFlyModeKey(self, p, t, bl, cur, toff, jumpfix, fb = False, fb_on_a = False) -> None:
         key = t.FlyMode
         name = UI.Labels['FlyMode']
         if not self.Ctrls['FlyMode'].IsEnabled(): return
         if not key: return
 
-        feedback = '$$t $name, Fly Mode' if self.GetState('Feedback') else ''
+        if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Flight Mode'
+        else:                                      feedback = ''
+
         istoggle = self.FlyKeyAction() == 'PT'
 
         if (t.canhov or t.canfly):

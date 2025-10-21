@@ -546,7 +546,6 @@ class MovementPowers(Page):
             c['CJPower'].Show  (bool(self.JumpKeyAction()) and c['CJPower'].GetCount() > 1)
             c['CJPower'].Enable(bool(self.JumpKeyAction()) and c['CJPower'].GetCount() > 1)
 
-            c['JumpKeyAction'].ShowEntryIf('Speed / Defense Toggle', self.Profile.HasPower('Leaping', 'Combat Jumping'))
             c['JumpMode'].Show(self.DefaultMode() != "Jump")
             c['JumpMode'].Enable(bool(self.JumpKeyAction()))
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower')))
@@ -768,13 +767,13 @@ class MovementPowers(Page):
             self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
             self.sodFollowKey (t,blf,curfile,mobile,stationary)
 
-            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ], False)
-            if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff              ,jumpfix)
-            if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"ff",curfile,turnoff              ,jumpfix)
-            if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff              ,jumpfix)
-            if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path, gamepath)
+            if (modestr != "NonSoD")      : self.makeNonSoDModeKey(t,"r", curfile,[ mobile,stationary ], False)
+            if (modestr != "Sprint")      : self.makeSprintModeKey(t,"r", curfile,turnoff              ,jumpfix)
+            if (modestr != "Fly")         : self.makeFlyModeKey   (t,"ff",curfile,turnoff              ,jumpfix)
+            if (modestr != "Super Speed") : self.makeSpeedModeKey (t,"s", curfile,turnoff              ,jumpfix)
+            if (modestr != "Jump")        : self.makeJumpModeKey  (t,"j", curfile,turnoff,path, gamepath)
 
-            if (modestr != "GFly")        : self.makeGFlyModeKey  (profile,t,"gf",curfile,turnoff              ,jumpfix)
+            if (modestr != "GFly")        : self.makeGFlyModeKey  (t,"gf",curfile,turnoff              ,jumpfix)
 
         ### write the binds to the "current key state" file
         curfile = profile.GetBindFile(f"{path}{t.KeyState()}.txt")
@@ -788,14 +787,14 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,bl,curfile,mobile,stationary,flight,'','',sssj)
         self.sodRightKey  (t,bl,curfile,mobile,stationary,flight,'','',sssj)
 
-        if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"r", curfile,[ mobile,stationary ], False)
-        if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"r", curfile,turnoff              ,jumpfix)
+        if (modestr != "NonSoD")      : self.makeNonSoDModeKey(t,"r", curfile,[ mobile,stationary ], False)
+        if (modestr != "Sprint")      : self.makeSprintModeKey(t,"r", curfile,turnoff              ,jumpfix)
         if (flight == "Jump"):
-            if (modestr != "Fly")     : self.makeFlyModeKey   (profile,t,"a", curfile,turnoff              ,jumpfix,True)
+            if (modestr != "Fly")     : self.makeFlyModeKey   (t,"a", curfile,turnoff              ,jumpfix,True)
         else:
-            if (modestr != "Fly")     : self.makeFlyModeKey   (profile,t,"ff",curfile,turnoff              ,jumpfix)
-        if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"s", curfile,turnoff              ,jumpfix)
-        if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"j", curfile,turnoff,path,gamepath)
+            if (modestr != "Fly")     : self.makeFlyModeKey   (t,"ff",curfile,turnoff              ,jumpfix)
+        if (modestr != "Super Speed") : self.makeSpeedModeKey (t,"s", curfile,turnoff              ,jumpfix)
+        if (modestr != "Jump")        : self.makeJumpModeKey  (t,"j", curfile,turnoff,path,gamepath)
 
         self.sodAutoRunKey(t,bla,curfile,mobile,sssj)
         self.sodFollowKey(t,blf,curfile,mobile,stationary)
@@ -812,11 +811,11 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,bla,curfile,mobile,stationary,flight,1, '',sssj)
         self.sodRightKey  (t,bla,curfile,mobile,stationary,flight,1, '',sssj)
 
-        if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"ar",curfile,[ mobile,stationary ], False)
-        if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"gr",curfile,turnoff              ,jumpfix)
-        if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"as",curfile,turnoff              ,jumpfix)
-        if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"af",curfile,turnoff              ,jumpfix)
-        if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"aj",curfile,turnoff,patha,gamepatha)
+        if (modestr != "NonSoD")      : self.makeNonSoDModeKey(t,"ar",curfile,[ mobile,stationary ], False)
+        if (modestr != "Sprint")      : self.makeSprintModeKey(t,"gr",curfile,turnoff              ,jumpfix)
+        if (modestr != "Super Speed") : self.makeSpeedModeKey (t,"as",curfile,turnoff              ,jumpfix)
+        if (modestr != "Fly")         : self.makeFlyModeKey   (t,"af",curfile,turnoff              ,jumpfix)
+        if (modestr != "Jump")        : self.makeJumpModeKey  (t,"aj",curfile,turnoff,patha,gamepatha)
 
         self.sodAutoRunOffKey(t,bl,curfile,mobile,stationary,flight)
 
@@ -834,17 +833,17 @@ class MovementPowers(Page):
         self.sodLeftKey   (t,blf,curfile,mobile,stationary,flight,'',bl,sssj)
         self.sodRightKey  (t,blf,curfile,mobile,stationary,flight,'',bl,sssj)
 
-        if (modestr != "NonSoD")      : self.makeNonSoDModeKey(profile,t,"fr",curfile,[ mobile,stationary ], False)
-        if (modestr != "Sprint")      : self.makeSprintModeKey(profile,t,"fr",curfile,turnoff              ,jumpfix)
-        if (modestr != "Super Speed") : self.makeSpeedModeKey (profile,t,"fs",curfile,turnoff              ,jumpfix)
-        if (modestr != "Fly")         : self.makeFlyModeKey   (profile,t,"ff",curfile,turnoff              ,jumpfix)
-        if (modestr != "Jump")        : self.makeJumpModeKey  (profile,t,"fj",curfile,turnoff, pathf, gamepathf)
+        if (modestr != "NonSoD")      : self.makeNonSoDModeKey(t,"fr",curfile,[ mobile,stationary ], False)
+        if (modestr != "Sprint")      : self.makeSprintModeKey(t,"fr",curfile,turnoff              ,jumpfix)
+        if (modestr != "Super Speed") : self.makeSpeedModeKey (t,"fs",curfile,turnoff              ,jumpfix)
+        if (modestr != "Fly")         : self.makeFlyModeKey   (t,"ff",curfile,turnoff              ,jumpfix)
+        if (modestr != "Jump")        : self.makeJumpModeKey  (t,"fj",curfile,turnoff, pathf, gamepathf)
 
         curfile.SetBind(self.Ctrls['AutoRun'].MakeBind('nop'))
 
         self.sodFollowOffKey(t,bl,curfile,mobile,stationary,flight)
 
-    def makeNonSoDModeKey(self, p, t, bl, cur, toff, jumpfix, fb = '') -> None:
+    def makeNonSoDModeKey(self, t, bl, cur, toff, jumpfix, fb = '') -> None:
         key = t.NonSoDMode
         name = UI.Labels['NonSoDMode']
         if not self.Ctrls['NonSoDMode'].IsEnabled(): return
@@ -856,25 +855,25 @@ class MovementPowers(Page):
         if (bl == "r"):
             bindload = t.BLF('n')
             if jumpfix:
-                self.sodJumpFix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,'',feedback)
+                self.sodJumpFix(t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,'',feedback)
             else:
                 cur.SetBind(key, name, self, t.ini + self.actPower_toggle(None,toff) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
 
         elif (bl == "ar"):
             bindload = t.BLF('an')
             if jumpfix:
-                self.sodJumpFix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"a",feedback)
+                self.sodJumpFix(t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"a",feedback)
             else:
                 cur.SetBind(key, name, self, t.ini + self.actPower_toggle(None,toff) + t.detailhi + t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
 
         else:
             if jumpfix:
-                self.sodJumpFix(p,t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"f",feedback)
+                self.sodJumpFix(t,key, self.makeNonSoDModeKey,"n",bl,cur,toff,"f",feedback)
             else:
                 cur.SetBind(key, name, self, t.ini + self.actPower_toggle(None,toff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
         t.ini = ''
 
-    def makeSprintModeKey(self, p, t, bl, cur, toff, jumpfix, fb = '') -> None:
+    def makeSprintModeKey(self, t, bl, cur, toff, jumpfix, fb = '') -> None:
         key = t.SprintMode
         name = UI.Labels['SprintMode']
         if not key: return
@@ -890,7 +889,7 @@ class MovementPowers(Page):
             ton = self.actPower_toggle(sprint, toff, start = True)
 
             if jumpfix:
-                self.sodJumpFix(p,t,key, self.makeSprintModeKey,"r",bl,cur,toff,'',feedback)
+                self.sodJumpFix(t,key, self.makeSprintModeKey,"r",bl,cur,toff,'',feedback)
             else:
                 cur.SetBind(key, name, self, t.ini + ton + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
 
@@ -898,19 +897,20 @@ class MovementPowers(Page):
             bindload  = t.BLF('gr')
 
             if jumpfix:
-                self.sodJumpFix(p,t,key, self.makeSprintModeKey,"r",bl,cur,toff,"a",feedback)
+                self.sodJumpFix(t,key, self.makeSprintModeKey,"r",bl,cur,toff,"a",feedback)
             else:
                 cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint,toff,start=True) + t.detailhi +  t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
 
         else:
             if jumpfix:
-                self.sodJumpFix(p,t,key, self.makeSprintModeKey,"r",bl,cur,toff,"f",feedback)
+                self.sodJumpFix(t,key, self.makeSprintModeKey,"r",bl,cur,toff,"f",feedback)
             else:
                 cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint,toff,start=True) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fr'))
 
         t.ini = ''
 
-    def makeSpeedModeKey(self, p, t, bl, cur, toff, jumpfix, fb = '') -> None:
+    def makeSpeedModeKey(self, t, bl, cur, toff, jumpfix, fb = '') -> None:
+        p = self.Profile
         key = t.SpeedMode
         name = UI.Labels['SpeedMode']
         if not self.Ctrls['SpeedMode'].IsEnabled(): return
@@ -924,14 +924,14 @@ class MovementPowers(Page):
             if (bl == 's'):
                 bindload = t.BLF('n') if istoggle else f"{t.bls}{t.KeyState()}.txt" # use non-sod if we're doing a simple toggle
                 if jumpfix:
-                    self.sodJumpFix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,'',feedback)
+                    self.sodJumpFix(t,key,self.makeSpeedModeKey,"s",bl,cur,toff,'',feedback)
                 else:
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "as"):
                 bindload = t.BLF('an') if istoggle else f"{t.blas}{t.KeyState()}.txt" # use non-sod if we're doing a simple toggle
                 if jumpfix:
-                    self.sodJumpFix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"a",feedback)
+                    self.sodJumpFix(t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"a",feedback)
                 elif (not feedback):
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
                 else:
@@ -943,14 +943,15 @@ class MovementPowers(Page):
 
             else:  # bl == "fs"
                 if jumpfix:
-                    self.sodJumpFix(p,t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"f",feedback)
+                    self.sodJumpFix(t,key,self.makeSpeedModeKey,"s",bl,cur,toff,"f",feedback)
                 else:
                     bindload = t.BLF('fn') if istoggle else f"{t.blfs}{t.KeyState()}.txt" # use non-sod if we're doing a simple toggle
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
 
-    def makeJumpModeKey(self, p, t, bl, cur, toff, fpath, fbl) -> None:
+    def makeJumpModeKey(self, t, bl, cur, toff, fpath, fbl) -> None:
+        p = self.Profile
         key = t.JumpMode
         name = UI.Labels['JumpMode']
         if not self.Ctrls['JumpMode'].IsEnabled(): return
@@ -981,7 +982,7 @@ class MovementPowers(Page):
 
         t.ini = ''
 
-    def makeFlyModeKey(self, p, t, bl, cur, toff, jumpfix, fb = False, fb_on_a = False) -> None:
+    def makeFlyModeKey(self, t, bl, cur, toff, jumpfix, fb = False, fb_on_a = False) -> None:
         key = t.FlyMode
         name = UI.Labels['FlyMode']
         if not self.Ctrls['FlyMode'].IsEnabled(): return
@@ -1001,27 +1002,27 @@ class MovementPowers(Page):
                 else:           ton = t.hover
 
                 if jumpfix:
-                    self.sodJumpFix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
+                    self.sodJumpFix(t,key,self.makeFlyModeKey,"f",bl,cur,toff,'',feedback)
                 else:
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(ton,toff,start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "af"):
                 bindload = t.BLF('an') if istoggle else t.blaf + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
                 if jumpfix:
-                    self.sodJumpFix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"a",feedback)
+                    self.sodJumpFix(t,key,self.makeFlyModeKey,"f",bl,cur,toff,"a",feedback)
                 else:
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx,toff,start=True) + t.detaillo + t.flycamdist + t.dirs('DLR') + feedback + bindload)
 
             else: # bl == "ff"
                 bindload = t.BLF('fn') if istoggle else t.blff + t.KeyState() + ".txt" # use non-sod if we're doing a simple toggle
                 if jumpfix:
-                    self.sodJumpFix(p,t,key,self.makeFlyModeKey,"f",bl,cur,toff,"f",feedback)
+                    self.sodJumpFix(t,key,self.makeFlyModeKey,"f",bl,cur,toff,"f",feedback)
                 else:
                     cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx,toff,start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
 
-    def makeGFlyModeKey(self, p, t, bl, cur, toff, jumpfix) -> None:
+    def makeGFlyModeKey(self, t, bl, cur, toff, jumpfix) -> None:
         key = t.GFlyMode
         name = UI.Labels['GFlyMode']
         if not self.Ctrls['GFlyMode'].IsEnabled(): return
@@ -1030,20 +1031,20 @@ class MovementPowers(Page):
             if (bl == "gbo"):
                 bindload = t.BLF('gbo')
                 if jumpfix:
-                    self.sodJumpFix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,'','')
+                    self.sodJumpFix(t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,'','')
                 else:
                     cur.SetBind(key, name, self, t.ini + '$$up 1$$down 0' + self.actPower_toggle(t.gfly,toff) + t.dirs('FBLR') + t.detaillo + t.flycamdist + bindload)
 
             elif (bl == "gaf"):
                 bindload = t.BLF('gaf')
                 if jumpfix:
-                    self.sodJumpFix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,"a")
+                    self.sodJumpFix(t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,"a")
                 else:
                     cur.SetBind(key, name, self, t.ini + t.detaillo + t.flycamdist + t.dirs('UDLR') + bindload)
 
             else:
                 if jumpfix:
-                    self.sodJumpFix(p,t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,"f")
+                    self.sodJumpFix(t,key,self.makeGFlyModeKey,"gf",bl,cur,toff,"f")
                 else:
                     if (bl == "gf"):
                         cur.SetBind(key, name, self, t.ini + self.actPower_toggle(t.gfly,toff,start=True) + t.detaillo + t.flycamdist + t.BLF('gff'))
@@ -2179,13 +2180,14 @@ class MovementPowers(Page):
     # might otherwise be a simple powexec bind into a two-file toggle one, but why?
     #
     # The reason and thinking for all of this is still not clear to me after fifteen years.  RP 2025
-    def sodJumpFix(self, profile,t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback = '') -> None:
+    def sodJumpFix(self, t,key,makeModeKey,suffix,bl,curfile,turnoff,autofollowmode,feedback = '') -> None:
+        profile = self.Profile
 
         filename     = str(getattr(t,"path"     + f"{autofollowmode}j")) + t.KeyState() + suffix + '.txt'
         gamefilename = str(getattr(t,"gamepath" + f"{autofollowmode}j")) + t.KeyState() + suffix + '.txt'
         tglfile      = profile.GetBindFile(filename)
         t.ini        = '-down$$'
-        makeModeKey(profile,t,bl,tglfile,turnoff,None,1)
+        makeModeKey(t,bl,tglfile,turnoff,None,1)
         # TODO TODO TODO do we need to do anything in here for when we're making simple toggle binds?  Probably.
         curfile.SetBind(key, "Jump Fix", self, "+down" + feedback + self.actPower_name(t.cjmp) + profile.BLF(gamefilename))
 

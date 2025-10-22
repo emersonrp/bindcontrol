@@ -24,7 +24,7 @@ class KeyBind:
         return KeyBind(self.Key, self.Name, self.Page, contents)
 
     def BindString(self) -> str:
-        payload = '$$'.join([i for i in self.Contents if i])
+        payload = '$$'.join(i for i in self.Contents if i)
 
         # remove any initial $$ if we snuck in here with it.
         payload = re.sub(r'^\$\$', '', payload)
@@ -97,6 +97,8 @@ class BindFile:
                 rval = testkey
             else:
                 rval = mainkey
+            # this next line is so we sort by, say, "S" <-> "S        CTRL+S" <-> "S        ALT+S"
+            # it's weird but that's how CityBinder did it and it seems to work.
             if testkey != mainkey: rval = rval + "        " + testkey
             return rval
 
@@ -107,7 +109,8 @@ class BindFile:
             kb = self.KeyBinds[keybind]
             bindstring = kb.BindString()
             if len(bindstring) > 255:
-                raise Exception(f"Bind '{kb.Key}' from page '{kb.Page}' is {len(bindstring)} characters long - this will cause badness in-game!")
+                # TODO - make this a custom exception so we can handle it specially
+                raise Exception(f"Bind '{kb.Key}' from page '{kb.Page.TabTitle}' is {len(bindstring)} characters long - this will cause badness in-game!")
             output = output + kb.BindFileString()
 
         if output:

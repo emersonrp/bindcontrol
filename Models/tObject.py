@@ -68,14 +68,17 @@ class tObject(dict):
         self.jkeys     :int = 0
         self.totalkeys :int = 0
 
-    def path(self, suffix):
-        return self.basepath / suffix.upper() / suffix.upper()
+    def path(self, code):
+        return self.basepath / code.upper() / code.upper()
 
-    def gamepath(self, suffix):
-        return self.gamebasepath / suffix.upper() / suffix.upper()
+    def gamepath(self, code):
+        return self.gamebasepath / code.upper() / code.upper()
 
-    def bl(self, suffix):
-        return f"$${BLF()} {self.gamepath(suffix)}"
+    def bl(self, code):
+        return f"$${BLF()} {self.gamepath(code)}"
+
+    def bfpath(self, code, suffix):
+        return str(self.path(code)) + self.KeyState() + suffix + '.txt'
 
     # return binary "011010" string of which keys are "on";
     # optionally flipping one of them firsself.

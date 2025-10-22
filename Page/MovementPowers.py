@@ -754,8 +754,9 @@ class MovementPowers(Page):
         turnoff    = params.get('turnoff', [ mobile, stationary ])
         sssj       = params.get('sssj'   , '')
 
-        # it's still not clear to me why this is needed but it is.
-        # we undo it at the bottom of the method
+        # I believe we're setting the default mode's key to the current
+        # mode's key so that pressing the current mode's key while it's
+        # already active will toggle us back to default mode
         setattr(t, self.DefaultMode() + 'ModeKey', params['key'])
 
         # if our current context is the Default Mode, and we're 000000,
@@ -889,6 +890,12 @@ class MovementPowers(Page):
         if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Sprint-SoD Mode'
         else:                                      feedback = ''
 
+        # TODO we have no notion of turning Sprint into a toggle yet, in the UI.
+        # We might not do that if it's fiddly, or it might actually normalize all
+        # of this a little bit.  Anyway, for now we assume SoD if we're in Sprint
+        # Mode at all.
+        deactivate = self.DeactivatePowers(self.OtherMovementPowers('n'))
+
         if (bl == "r"):
             bindload  = t.BLF('R')
 
@@ -899,7 +906,7 @@ class MovementPowers(Page):
             if jumpfix:
                 self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,toff,feedback = feedback)
             else:
-                file.SetBind(key, name, self, t.ini + ton + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + ton + deactivate + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
 
         elif (bl == "ar"):
             bindload  = t.BLF('gr')
@@ -907,29 +914,29 @@ class MovementPowers(Page):
             if jumpfix:
                 self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,toff,"a",feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint,toff,start=True) + t.detailhi +  t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint,toff,start=True) + '$$up 0' + t.detailhi +  t.runcamdist + deactivate + t.dirs('DLR') + feedback + bindload)
 
         else:
             if jumpfix:
                 self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,toff,"f",feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint,toff,start=True) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fr'))
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint,toff,start=True) + deactivate + '$$up 0' + t.detailhi + t.runcamdist + feedback + t.BLF('fr'))
 
         t.ini = ''
 
     def MakeSpeedModeKey(self, t, bl, file, toff, jumpfix = False, fb = False, doingtoggle = False) -> None:
-        p = self.Profile
+        if not self.Ctrls['SpeedMode'].IsEnabled(): return
+
         key = t.SpeedModeKey
         name = UI.Labels['SpeedMode']
-        if not self.Ctrls['SpeedMode'].IsEnabled(): return
         bindload = ''
 
         if istoggle := self.SpeedKeyAction() == 'PT':
             code   = 'n'
-            sodoff = self.DeactivatePowers(self.AllSoDPowers()) if doingtoggle else ''
-        else:
+            deactivate = self.DeactivatePowers(self.AllSoDPowers()) if doingtoggle else ''
+        else: # is SoD
             code   = 's'
-            sodoff = ''
+            deactivate = self.DeactivatePowers(self.OtherMovementPowers('s'))
         dotogglefix = istoggle and not doingtoggle
 
         feedback = ''
@@ -944,7 +951,7 @@ class MovementPowers(Page):
                     if jumpfix:
                         self.SoDJumpFix(t,key,self.MakeSpeedModeKey,code,bl,file,toff,feedback = feedback)
                     else:
-                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + sodoff + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + deactivate + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "as"):
                 bindload  = t.BLF('a' + code)
@@ -954,7 +961,7 @@ class MovementPowers(Page):
                     if jumpfix:
                         self.SoDJumpFix(t,key,self.MakeSpeedModeKey,code,bl,file,toff,"a",feedback)
                     else:
-                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + sodoff + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + deactivate + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             else:  # bl == "fs"
                 if dotogglefix:
@@ -964,21 +971,22 @@ class MovementPowers(Page):
                         self.SoDJumpFix(t,key,self.MakeSpeedModeKey,code,bl,file,toff,"f",feedback)
                     else:
                         bindload  = t.BLF('f' + code)
-                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + sodoff + '$$up 0' +  t.detaillo + t.flycamdist + feedback + bindload)
+                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.speed,toff,start=True) + deactivate + '$$up 0' +  t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
 
     def MakeJumpModeKey(self, t, bl, file, toff, fpath, fbl, doingtoggle = False) -> None:
+        if not self.Ctrls['JumpMode'].IsEnabled(): return
         p = self.Profile
         key = t.JumpModeKey
         name = UI.Labels['JumpMode']
-        if not self.Ctrls['JumpMode'].IsEnabled(): return
+
         if (t.canjmp and bool(self.JumpKeyAction())):
 
             if istoggle := (self.JumpKeyAction() == 'PT'):
-                sodoff = self.DeactivatePowers(self.AllSoDPowers()) if doingtoggle else ''
+                deactivate = self.DeactivatePowers(self.AllSoDPowers()) if doingtoggle else ''
             else:
-                sodoff = ''
+                deactivate = self.DeactivatePowers(self.OtherMovementPowers('j'))
 
             feedback = '$$t $name, Super Jump Mode' if self.GetState('Feedback') else ''
 
@@ -992,36 +1000,35 @@ class MovementPowers(Page):
                 else:
                     a = self.actPower_name(t.cjmp,toff)
 
-                tgl.SetBind(key, name, self, '-down' + a + sodoff + t.detaillo + t.flycamdist + t.bl('j') + t.KeyState() + ".txt")
+                tgl.SetBind(key, name, self, '-down' + a + deactivate + t.detaillo + t.flycamdist + t.bl('j') + t.KeyState() + ".txt")
                 file.SetBind(key, name, self, '+down' + feedback + tglbl)
 
             elif (bl == "aj"):
                 ajbl = t.BLF('an' if istoggle else 'aj')
-                tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + sodoff + '$$up 1' + t.detaillo + t.flycamdist + t.dirs('DLR') + ajbl)
+                tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + deactivate + '$$up 1' + t.detaillo + t.flycamdist + t.dirs('DLR') + ajbl)
                 file.SetBind(key, name, self, '+down' + feedback + tglbl)
 
             else: # bl == fj
                 fjbl = t.BLF('fn' if istoggle else 'fj')
-                tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + sodoff + '$$up 1' + t.detaillo + t.flycamdist + fjbl)
+                tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump,toff) + deactivate + '$$up 1' + t.detaillo + t.flycamdist + fjbl)
                 file.SetBind(key, name, self, '+down' + feedback + tglbl)
 
         t.ini = ''
 
     def MakeFlyModeKey(self, t, bl, file, toff, jumpfix, fb = False, fb_on_a = False, doingtoggle = False) -> None:
+        if not self.Ctrls['FlyMode'].IsEnabled(): return
         key = t.FlyModeKey
         name = UI.Labels['FlyMode']
-        if not self.Ctrls['FlyMode'].IsEnabled(): return
-        if not key: return
 
         if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Flight Mode'
         else:                                      feedback = ''
 
         if istoggle := (self.FlyKeyAction() == 'PT'):
             code   = 'n'
-            sodoff = self.DeactivatePowers(self.AllSoDPowers()) if doingtoggle else ''
+            deactivate = self.DeactivatePowers(self.AllSoDPowers()) if doingtoggle else ''
         else:
             code   = 'f'
-            sodoff = ''
+            deactivate = self.DeactivatePowers(self.OtherMovementPowers('f'))
         dotogglefix = istoggle and not doingtoggle
 
         if (t.canhov or t.canfly):
@@ -1038,7 +1045,7 @@ class MovementPowers(Page):
                     if jumpfix:
                         self.SoDJumpFix(t,key,self.MakeFlyModeKey,code,bl,file,toff,feedback = feedback)
                     else:
-                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(ton,toff,start=True) + sodoff + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(ton,toff,start=True) + deactivate + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "af"):
                 bindload = t.BLF(f'a{code}')
@@ -1048,7 +1055,7 @@ class MovementPowers(Page):
                     if jumpfix:
                         self.SoDJumpFix(t,key,self.MakeFlyModeKey,code,bl,file,toff,"a",feedback)
                     else:
-                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx,toff,start=True) + sodoff + t.dirs('DLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx,toff,start=True) + deactivate + t.dirs('DLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             else: # bl == "ff"
                 bindload = t.BLF(f'f{code}')
@@ -1058,7 +1065,7 @@ class MovementPowers(Page):
                     if jumpfix:
                         self.SoDJumpFix(t,key,self.MakeFlyModeKey,code,bl,file,toff,"f",feedback)
                     else:
-                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx,toff,start=True) + sodoff + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx,toff,start=True) + deactivate + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
 
@@ -2203,6 +2210,11 @@ class MovementPowers(Page):
         }.get(self.Ctrls['SpeedKeyAction'].GetStringSelection(), '')
 
     # used to do a "turn off all SoD" when toggling on a non-SoD power
+    #
+    # TODO: I note we could use DeactivatePowers, below, or
+    # self.actPower_* also can take sets as parameters
+    #
+    # TODO:  does this want the Sprint Power added?  Maybe.
     def AllSoDPowers(self) -> set:
         powers = set()
         if self.JumpKeyAction() == 'SoD':
@@ -2217,21 +2229,30 @@ class MovementPowers(Page):
 
     # powers that I own that are not in the current context.
     # For turning everyone else off when we turn something on
-    def OtherMovementPowers(self, context: Literal['J']|Literal['F']|Literal['S']):
+    #
+    # TODO: I note we could use DeactivatePowers, below, or
+    # self.actPower_* also can take sets as parameters
+    #
+    # TODO:  does this want the Sprint Power added?  Maybe.
+    def OtherMovementPowers(self, context: Literal['j']|Literal['f']|Literal['s']|Literal['n']) -> set:
         powers = set()
-        if context != 'J':
+        # the "and self.*KeyAction" in this case means "and BC is managing this
+        # movement power" but this means it won't shut off movement powers activated
+        # manually via power trays or Simple Binds or something.  I think we're just
+        # going to have to live with that.
+        if context != 'J' and self.JumpKeyAction():
             if jp := self.GetState('JumpPower'):  powers.add(jp)
             if cp := self.GetState('CJPower'):    powers.add(cp)
-        if context != 'F':
+        if context != 'F' and self.FlyKeyAction():
             if fp := self.GetState('FlyPower'):   powers.add(fp)
             if hp := self.GetState('HoverPower'): powers.add(hp)
-        if context != 'S':
+        if context != 'S' and self.SpeedKeyAction():
             if sp := self.GetState('SpeedPower'): powers.add(sp)
         return powers
 
     # make a 'turn us all off' string, used with the above two methods
-    def DeactivatePowers(self, powers):
-        return ''.join(f'$${self.togoff} "{p}"' for p in powers)
+    def DeactivatePowers(self, powers: set) -> str:
+        return ''.join(f'$${self.togoff} {p}' for p in powers)
 
     def AllBindFiles(self) -> dict[str, list]:
         files = []

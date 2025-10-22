@@ -110,7 +110,8 @@ class BindFile:
             bindstring = kb.BindString()
             if len(bindstring) > 255:
                 # TODO - make this a custom exception so we can handle it specially
-                raise Exception(f"Bind '{kb.Key}' from page '{kb.Page.TabTitle}' is {len(bindstring)} characters long - this will cause badness in-game!")
+                title = kb.Page if isinstance(kb.Page, str) else kb.Page.TabTitle
+                raise Exception(f"Bind '{kb.Key}' from page '{title}' is {len(bindstring)} characters long - this will cause badness in-game!")
             output = output + kb.BindFileString()
 
         if output:

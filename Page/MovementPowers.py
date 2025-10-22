@@ -1553,6 +1553,26 @@ class MovementPowers(Page):
         t.rig  = '$$right 0'
         t.rigx = '$$right 1'
 
+    # clear the movement keys to basid defs;  for non-SoD use cases
+    def ClearMovementKeys(self, file):
+        playerturn = 'playerturn' if (self.GetState('PlayerTurn')) else ''
+        if (self.GetState('Left')):
+            file.SetBind(self.Ctrls['Left'].MakeBind("+left"))
+        if (self.GetState('Right')):
+            file.SetBind(self.Ctrls['Right'].MakeBind("+right"))
+        if (self.GetState('Up')):
+            file.SetBind(self.Ctrls['Up'].MakeBind("+up"))
+        if (self.GetState('Down')):
+            file.SetBind(self.Ctrls['Down'].MakeBind("+down"))
+        if (self.GetState('Forward')):
+            file.SetBind(self.Ctrls['Forward'].MakeBind(["+forward", playerturn]))
+        if (self.GetState('Back')):
+            file.SetBind(self.Ctrls['Back'].MakeBind("+backward"))
+        if (self.GetState('Follow')):
+            file.SetBind(self.Ctrls['Follow'].MakeBind("+follow"))
+        if (self.GetState('AutoRun')):
+            file.SetBind(self.Ctrls['AutoRun'].MakeBind("++autorun"))
+
     def SoDResetKey(self, curfile, gamepath, turnoff) -> None:
 
         config = wx.ConfigBase.Get()
@@ -2113,6 +2133,19 @@ class MovementPowers(Page):
             'Speed on Demand' : 'SoD',
             'Power Toggle'    : 'PT',
         }.get(self.Ctrls['SpeedKeyAction'].GetStringSelection(), '')
+
+    # used to do a "turn off all SoD" when toggling on a non-SoD power
+    def AllSoDPowers(self) -> set:
+        powers = set()
+        if self.JumpKeyAction() == 'SoD':
+            if jp := self.GetState('JumpPower'):  powers.add(jp)
+            if cp := self.GetState('CJPower'):    powers.add(cp)
+        if self.FlyKeyAction() == 'SoD':
+            if fp := self.GetState('FlyPower'):   powers.add(fp)
+            if hp := self.GetState('HoverPower'): powers.add(hp)
+        if self.SpeedKeyAction() == 'SoD':
+            if sp := self.GetState('SpeedPower'): powers.add(sp)
+        return powers
 
     def AllBindFiles(self) -> dict[str, list]:
         files = []

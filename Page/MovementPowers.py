@@ -1236,8 +1236,7 @@ class MovementPowers(Page):
         # The SoD case is handled inside make*ModeKey()
         if not self.HasAnySoD():
             if self.SpeedKeyAction() == "PT":
-                spower = self.GetState("SpeedPower")
-                resetfile.SetBind(self.Ctrls["FlyMode"].MakeBind(f'powexecname "{spower}"'))
+                resetfile.SetBind(self.Ctrls["SpeedMode"].MakeBind(f'powexecname "{self.GetState("SpeedPower")}"'))
 
             if self.JumpKeyAction() == 'PT':
                 jpower = self.GetState('JumpPower')
@@ -1444,16 +1443,16 @@ class MovementPowers(Page):
         profile   = self.Profile
         resetfile = profile.ResetFile()
         config    = wx.ConfigBase.Get()
+        default   = self.SoDModeInfo(self.DefaultMode())
 
-        keybindreset = 'keybind_reset' if config.ReadBool('FlushAllBinds') else ''
         resetfile.SetBind(config.Read('ResetKey'), "Reset Key", self.TabTitle,
                     [
-                        keybindreset,
-                        resetfile.BLF(),
+                        'unbindall' if config.ReadBool('FlushAllBinds') else '',
                         'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
-                        'powexecname Sprint',
+                        f'powexecname {default["sta"]}',
                         self.unqueue,
                         't $name, Binds Reset',
+                        resetfile.BLF(),
                     ])
 
         #  if a given mode is not our default, get the key we use to enter that mode.
@@ -1616,12 +1615,7 @@ class MovementPowers(Page):
         if (self.GetState('AutoRun')):
             file.SetBind(self.Ctrls['AutoRun'].MakeBind("++autorun"))
 
-    # OK, currently this resets movement to the CURRENT SoD Mode.  Do we want
-    # instead to go back to the DEFAULT mode?  I feel like that's principle of
-    # least surprise.  Doing that is going to take some plumbing, though,
-    # to get the notion of what the default mode is down in here, and get its
-    # "turnoff" correct, activating its 'stationary' power, and BLFing the correct
-    # bindfile to set it up.
+    # Reset now goes back to the Default Mode from wherever you are.
     def SoDResetKey(self, t, curfile, modestr):
 
         default = self.SoDModeInfo(self.DefaultMode())
@@ -1635,7 +1629,7 @@ class MovementPowers(Page):
 
         curfile.SetBind(config.Read('ResetKey'), UI.Labels['ResetKey'], self,
             [
-                'keybind_reset' if config.ReadBool('FlushAllBinds') else '',
+                'unbindall' if config.ReadBool('FlushAllBinds') else '',
                 'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
                 on_off,
                 't $name, Binds Reset',

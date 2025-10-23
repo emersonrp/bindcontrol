@@ -372,7 +372,7 @@ class MovementPowers(Page):
         self.rightColumn.Add(SprintSizer, 0, wx.EXPAND)
 
         ##### SUPER SPEED
-        self.superSpeedSizer = ControlGroup(self, self, 'Super Speed Powers Settings')
+        self.superSpeedSizer = ControlGroup(self, self, 'Super Speed Settings')
         self.superSpeedSizer.AddControl(ctlName = 'SpeedKeyAction', ctlType = 'choice',
             contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'SpeedKeyAction.html',
@@ -389,7 +389,7 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
-        self.superJumpSizer = ControlGroup(self, self, 'Jumping Powers Settings')
+        self.superJumpSizer = ControlGroup(self, self, 'Jumping Settings')
         self.superJumpSizer.AddControl(ctlName = 'JumpKeyAction', ctlType = 'choice',
             contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'JumpKeyAction.html',
@@ -405,7 +405,7 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
         ##### FLY
-        self.flySizer = ControlGroup(self, self, 'Flight Powers Settings')
+        self.flySizer = ControlGroup(self, self, 'Flight Settings')
         self.flySizer.AddControl(ctlName = 'FlyKeyAction', ctlType = 'choice',
             contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'FlyKeyAction.html',
@@ -423,7 +423,7 @@ class MovementPowers(Page):
         self.rightColumn.Add(self.flySizer, 0, wx.EXPAND)
 
         ##### TELEPORT
-        self.teleportSizer = ControlGroup(self, self, 'Teleport Powers Settings')
+        self.teleportSizer = ControlGroup(self, self, 'Teleport Settings')
         self.teleportSizer.AddControl(ctlName = "TPPower", ctlType = 'choice', contents = [''],
             tooltip = "Select the teleport power to use with the keybinds in this section")
         self.Ctrls['TPPower'].Bind(wx.EVT_CHOICE, self.OnTeleportChanged)
@@ -431,9 +431,7 @@ class MovementPowers(Page):
             tpTooltip = 'Immediately teleport to the cursor position without showing a target marker.'
             tpcTooltip = 'Show target marker on keypress;  teleport to marker on key release.'
         else:
-            # TODO - is this "show marker on press, teleport on release?"  Clarify if so.
-            tpTooltip = 'Initiate teleport power, showing target marker.'
-            # ...because otherwise this one is the same thing.
+            tpTooltip = 'Show target marker on keypress;  teleport to marker on key release.'
             tpcTooltip = 'Show target marker on keypress;  click to teleport.'
         self.teleportSizer.AddControl(ctlName = "TPBindKey", ctlType = 'keybutton', tooltip = tpTooltip)
         self.teleportSizer.AddControl(ctlName = "TPComboKey", ctlType = 'keybutton', tooltip = tpcTooltip)
@@ -445,7 +443,7 @@ class MovementPowers(Page):
             ttpTooltip = "Immediately Team Teleport to the cursor position without showing a target marker."
             ttpcTooltip = "Show target marker on keypress;  Team Teleport to marker on key release."
         else:
-            ttpTooltip = "Initiate Team Teleport, showing target marker."
+            ttpTooltip = "Show target marker on keypress;  Team Teleport to marker on key release."
             ttpcTooltip = "Show target marker on keypress;  click to team teleport."
         self.teleportSizer.AddControl(ctlName = "TTPBindKey", ctlType = 'keybutton', tooltip = ttpTooltip)
         self.teleportSizer.AddControl(ctlName = "TTPComboKey", ctlType = 'keybutton', tooltip = ttpcTooltip)
@@ -457,7 +455,7 @@ class MovementPowers(Page):
             tooltip = 'Hide most UI elements while holding target marker key.', )
         self.rightColumn.Add(self.teleportSizer, 0, wx.EXPAND)
 
-        topSizer.Add(self.leftColumn, 0, wx.ALL, 3)
+        topSizer.Add(self.leftColumn , 0, wx.ALL, 3)
         topSizer.Add(self.rightColumn, 0, wx.ALL, 3)
 
         self.MainSizer.Add(topSizer, flag = wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
@@ -660,10 +658,13 @@ class MovementPowers(Page):
             c['TPPower'].ShowEntryIf('Jaunt',         self.Profile.HasPower('Experimentation', 'Jaunt')
                                                         and self.GetState('SpeedPower') == "Speed of Sound")
             c['TPPower'].ShowEntryIf('Shadow Step',   self.Profile.Archetype() == "Warshade")
-            c['TPBindKey']  .Enable(bool(self.GetState('TPPower')))
-            c['TPComboKey'] .Enable(bool(self.GetState('TPPower')))
-            c['TPTPHover']  .Enable(bool(self.GetState('TPPower')))
             c['TPTPHover']  .Show(  bool(self.GetState('HoverPower')))
+
+            c['TPBindKey']    .Enable(bool(self.GetState('TPPower')))
+            c['TPComboKey']   .Enable(bool(self.GetState('TPPower')))
+            c['TPTPHover']    .Enable(bool(self.GetState('TPPower')))
+            c['TPHideWindows'].Enable(bool(self.GetState('TPPower')))
+
             c['TTPBindKey'] .Show(self.HasTTP())
             c['TTPComboKey'].Show(self.HasTTP())
             c['TTPTPGFly']  .Show(self.HasTTP() and self.HasGFly())
@@ -1116,7 +1117,8 @@ class MovementPowers(Page):
         t.ini = ''
 
     # ###
-    # TODO this is still completely broken, 'gbo' and 'gaf' are not actual things etc.
+    # TODO - need to test if this even works.  'mobile' and 'stationary' are both
+    #        GFly, so it doesn't switch off when not moving, but... what's the point?
     # ###
     def MakeGFlyModeKey(self, t, bl, file, usejumpfix = False) -> None:
         key = t.GFlyModeKey
@@ -1124,28 +1126,28 @@ class MovementPowers(Page):
         if not self.Ctrls['GFlyMode'].IsEnabled(): return
 
         if self.GetState('GFlyMode'):
-            if (bl == "gbo"):
-                bindload = t.BLF('gbo')
+            if (bl == "gf"):
+                bindload = t.BLF('gf')
                 if usejumpfix:
                     self.SoDJumpFix(t,key,self.MakeGFlyModeKey,"gf",bl,file)
                 else:
                     file.SetBind(key, name, self, t.ini + '$$up 1$$down 0' + self.actPower_toggle(t.gfly) + t.dirs('FBLR') + t.detaillo + t.flycamdist + bindload)
 
-            elif (bl == "gaf"):
-                bindload = t.BLF('gaf')
+            elif (bl == "agf"):
+                bindload = t.BLF('agf')
                 if usejumpfix:
-                    self.SoDJumpFix(t,key,self.MakeGFlyModeKey,"gf",bl,file,"a")
+                    self.SoDJumpFix(t,key,self.MakeGFlyModeKey,"agf",bl,file,"a")
                 else:
                     file.SetBind(key, name, self, t.ini + t.detaillo + t.flycamdist + t.dirs('UDLR') + bindload)
 
             else:
                 if usejumpfix:
-                    self.SoDJumpFix(t,key,self.MakeGFlyModeKey,"gf",bl,file,"f")
+                    self.SoDJumpFix(t,key,self.MakeGFlyModeKey,"fgf",bl,file,"f")
                 else:
-                    if (bl == "gf"):
-                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.gfly,start=True) + t.detaillo + t.flycamdist + t.BLF('gff'))
+                    if (bl == "fgf"):
+                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.gfly,start=True) + t.detaillo + t.flycamdist + t.BLF('fgf'))
                     else:
-                        file.SetBind(key, name, self, t.ini + t.detaillo + t.flycamdist + t.BLF('gff'))
+                        file.SetBind(key, name, self, t.ini + t.detaillo + t.flycamdist + t.BLF('fgf'))
 
         t.ini = ''
 
@@ -1301,8 +1303,8 @@ class MovementPowers(Page):
                     resetfile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{hpower}"'))
 
         ###### Teleport Binds
-        teamTPPower = 'Team Teleport' if self.HasTTP() else ''
-        normalTPPower = 'Shadow Step' if archetype == 'Warshade' else self.GetState('TPPower')
+        teamTPPower   = 'Team Teleport' if self.HasTTP() else ''
+        normalTPPower = self.GetState('TPPower')
 
         # I'm not sure why we create these nop binds.  Are they necessary?
         if (self.HasTPPowers() and not normalTPPower):

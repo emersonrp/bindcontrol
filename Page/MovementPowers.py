@@ -906,7 +906,7 @@ class MovementPowers(Page):
                 file.SetBind(key, name, self, t.ini + self.actPower_toggle(None,turnoff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
         t.ini = ''
 
-    def MakeSprintModeKey(self, t, bl, file, usejumpfix = False, fb = False) -> None:
+    def MakeSprintModeKey(self, t, bl, file, usejumpfix = False, fb = False, doingtoggle = False) -> None:
         key = t.SprintModeKey
         name = UI.Labels['SprintMode']
         if not key: return
@@ -914,36 +914,47 @@ class MovementPowers(Page):
         if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Sprint-SoD Mode'
         else:                                      feedback = ''
 
-        # TODO we have no notion of turning Sprint into a toggle yet, in the UI.
-        # We might not do that if it's fiddly, or it might actually normalize all
-        # of this a little bit.  Anyway, for now we assume SoD if we're in Sprint
-        # Mode at all.
-        turnoff = self.OtherMovementPowers('n')
+        if istoggle := self.GetKeyAction('Speed') == 'PT':
+            code   = 'n'
+            togoff = self.AllSoDPowers() if doingtoggle else ''
+        else: # is SoD
+            code   = 'r'
+            togoff = self.OtherMovementPowers('s')
+        dotogglefix = istoggle and not doingtoggle
 
         if (bl == "r"):
-            bindload  = t.BLF('R')
+            bindload  = t.BLF(code)
 
-            if t.horizkeys: sprint = t.sprint
-            else:           sprint = ''
-
-            if usejumpfix:
-                self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,feedback = feedback)
+            if dotogglefix:
+                self.ToggleFix(t, key, self.MakeSprintModeKey, code, bl, file, feedback = feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(sprint, turnoff, start = True) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
+                if t.horizkeys: sprint = t.sprint
+                else:           sprint = ''
+
+                if usejumpfix:
+                    self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,feedback = feedback)
+                else:
+                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(sprint, togoff, start = True) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
 
         elif (bl == "ar"):
-            bindload  = t.BLF('gr')
-
-            if usejumpfix:
-                self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,"a",feedback)
+            bindload  = t.BLF('a' + code)
+            if dotogglefix:
+                self.ToggleFix(t, key, self.MakeSprintModeKey, code, bl, file, "a", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, turnoff, start=True) + '$$up 0' + t.detailhi +  t.runcamdist + t.dirs('DLR') + feedback + bindload)
+                if usejumpfix:
+                    self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,"a",feedback)
+                else:
+                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, togoff, start=True) + '$$up 0' + t.detailhi +  t.runcamdist + t.dirs('DLR') + feedback + bindload)
 
-        else:
-            if usejumpfix:
-                self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,"f",feedback)
+        else: # bl = 'fr'
+            bindload = t.BLF('f' + code)
+            if dotogglefix:
+                self.ToggleFix(t, key, self.MakeSprintModeKey, code, bl, file, "f", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, turnoff, start=True) + '$$up 0' + t.detailhi + t.runcamdist + feedback + t.BLF('fr'))
+                if usejumpfix:
+                    self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,"f",feedback)
+                else:
+                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, togoff, start=True) + '$$up 0' + t.detailhi + t.runcamdist + feedback + bindload)
 
         t.ini = ''
 
@@ -952,7 +963,6 @@ class MovementPowers(Page):
 
         key = t.SpeedModeKey
         name = UI.Labels['SpeedMode']
-        bindload = ''
 
         if istoggle := self.GetKeyAction('Speed') == 'PT':
             code   = 'n'
@@ -987,6 +997,7 @@ class MovementPowers(Page):
                         file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff, start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             else:  # bl == "fs"
+                bindload  = t.BLF('f' + code)
                 if dotogglefix:
                     self.ToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
                 else:

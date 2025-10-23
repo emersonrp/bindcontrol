@@ -787,7 +787,7 @@ class MovementPowers(Page):
         ### write the binds to the "current path/context + current key state" file
         curfile = profile.GetBindFile(f"{path}{t.KeyState()}.txt")
 
-        self.SoDResetKey(curfile,gamepath,self.actPower_toggle(stationary,mobile,start = True))
+        self.SoDResetKey(t, curfile, modestr)
 
         self.SoDUpKey     (t,bl,curfile,mobile,stationary,flight,sssj = sssj)
         self.SoDDownKey   (t,bl,curfile,mobile,stationary,flight)
@@ -813,7 +813,7 @@ class MovementPowers(Page):
         # Autorun Binds
         autorunfile = profile.GetBindFile(f"{patha}{t.KeyState()}.txt")
 
-        self.SoDResetKey(autorunfile,gamepath,self.actPower_toggle(stationary,mobile,True))
+        self.SoDResetKey(t, autorunfile, modestr)
 
         self.SoDUpKey     (t,bla,autorunfile,mobile,stationary,flight,autorun=True, sssj = sssj)
         self.SoDDownKey   (t,bla,autorunfile,mobile,stationary,flight,autorun=True)
@@ -834,7 +834,7 @@ class MovementPowers(Page):
         # Follow Binds
         followfile = profile.GetBindFile(f"{pathf}{t.KeyState()}.txt")
 
-        self.SoDResetKey(followfile,gamepath,self.actPower_toggle(stationary,mobile,True))
+        self.SoDResetKey(t, followfile, modestr)
 
         self.SoDUpKey     (t,blf,followfile,mobile,stationary,flight,followbl = bl,sssj = sssj)
         self.SoDDownKey   (t,blf,followfile,mobile,stationary,flight,followbl = bl)
@@ -1623,7 +1623,14 @@ class MovementPowers(Page):
     # to get the notion of what the default mode is down in here, and get its
     # "turnoff" correct, activating its 'stationary' power, and BLFing the correct
     # bindfile to set it up.
-    def SoDResetKey(self, curfile, gamepath, turnoff) -> None:
+    def SoDResetKey(self, t, curfile, modestr):
+
+        default = self.SoDModeInfo(self.DefaultMode())
+        gamepath = t.gamepath(default['code'])
+
+        thismode = self.SoDModeInfo(modestr)
+        turnoff  = {thismode['sta'], thismode['mob'], default['mob']}
+        on_off = self.actPower_toggle(default['sta'], turnoff)
 
         config = wx.ConfigBase.Get()
 
@@ -1631,7 +1638,7 @@ class MovementPowers(Page):
             [
                 'keybind_reset' if config.ReadBool('FlushAllBinds') else '',
                 'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
-                turnoff,
+                on_off,
                 't $name, Binds Reset',
                 self.Profile.ResetFile().BLF(),
                 f"{BLF()} {gamepath}000000.txt"
@@ -2264,6 +2271,37 @@ class MovementPowers(Page):
     # make a 'turn us all off' string, used with the above two methods
     def DeactivatePowers(self, powers: set) -> str:
         return ''.join(f'$${self.togoff} {p}' for p in powers)
+
+    # get blf etc info for current Default SoD Mode
+    def SoDModeInfo(self, Mode):
+        c = self.Ctrls
+        return {
+            'Jump'        : {
+                'code' : 'j',
+                'sta'  : c['CJPower'].GetStringSelection(),
+                'mob'  : c['JumpPower'].GetStringSelection(),
+            },
+            'Fly'         : {
+                'code' : 'f',
+                'sta'  : c['HoverPower'].GetStringSelection(),
+                'mob'  : c['FlyPower'].GetStringSelection(),
+            },
+            'Sprint'      : {
+                'code' : 'r',
+                'sta'  : '',
+                'mob'  : c['SprintPower'].GetStringSelection(),
+            },
+            'NonSoD'      : {
+                'code' : 'n',
+                'sta'  : '',
+                'mob'  : '',
+            },
+            'Super Speed' : {
+                'code' : 's',
+                'sta'  : '',
+                'mob'  : c['SpeedPower'].GetStringSelection(),
+            },
+        }[Mode]
 
     def AllBindFiles(self) -> dict[str, list]:
         files = []

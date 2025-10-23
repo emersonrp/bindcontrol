@@ -516,6 +516,8 @@ class MovementPowers(Page):
             'PT' : f'Toggle {c['SprintPower'].GetStringSelection()} on and off',
         }.get(self.GetKeyAction('Sprint'), ''))
 
+        self.Fit()
+        self.Layout()
         if evt: evt.Skip()
 
     def OnSpeedChanged(self, evt = None) -> None:
@@ -550,6 +552,8 @@ class MovementPowers(Page):
             self.ShowControlGroup(self.superSpeedSizer, False)
             c['DefaultMode'].ShowEntryIf('Speed', False)
 
+        self.Fit()
+        self.Layout()
         if evt: evt.Skip()
 
     def OnJumpChanged(self, evt = None) -> None:
@@ -591,6 +595,8 @@ class MovementPowers(Page):
             self.ShowControlGroup(self.superJumpSizer, False)
             c['DefaultMode'].ShowEntryIf('Fly', False)
 
+        self.Fit()
+        self.Layout()
         if evt: evt.Skip()
 
     def OnFlightChanged(self, evt = None) -> None:
@@ -640,6 +646,8 @@ class MovementPowers(Page):
             self.ShowControlGroup(self.flySizer, False)
             c['DefaultMode'].ShowEntryIf('Fly', False)
 
+        self.Fit()
+        self.Layout()
         if evt: evt.Skip()
 
     def OnTeleportChanged(self, evt = None) -> None:
@@ -653,7 +661,8 @@ class MovementPowers(Page):
             c['TPPower'].ShowEntryIf('Shadow Step',   self.Profile.Archetype() == "Warshade")
             c['TPBindKey']  .Enable(bool(self.GetState('TPPower')))
             c['TPComboKey'] .Enable(bool(self.GetState('TPPower')))
-            c['TPTPHover']  .Show(  bool(self.GetState('TPPower')) and bool(self.GetState('HoverPower')))
+            c['TPTPHover']  .Enable(bool(self.GetState('TPPower')))
+            c['TPTPHover']  .Show(  bool(self.GetState('HoverPower')))
             c['TTPBindKey'] .Show(self.HasTTP())
             c['TTPComboKey'].Show(self.HasTTP())
             c['TTPTPGFly']  .Show(self.HasTTP() and self.HasGFly())
@@ -665,6 +674,9 @@ class MovementPowers(Page):
             c['TTPExecuteKey'].Show(False)
         else:
             self.ShowControlGroup(self.teleportSizer, False)
+
+        self.Fit()
+        self.Layout()
         if evt: evt.Skip()
 
     def OnKheldianChanged(self, evt = None) -> None:

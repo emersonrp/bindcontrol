@@ -515,30 +515,30 @@ class MovementPowers(Page):
 
     def OnSprintChanged(self, evt = None):
         c = self.Ctrls
-        c['DefaultMode'].ShowEntryIf('Sprint', self.SprintKeyAction() == 'SoD')
+        c['DefaultMode'].ShowEntryIf('Sprint', self.GetKeyAction('Sprint') == 'SoD')
         c['SprintMode'].Show(self.DefaultMode() != "Sprint")
-        c['SprintMode'].Enable(bool(self.SprintKeyAction()))
+        c['SprintMode'].Enable(bool(self.GetKeyAction('Sprint')))
 
         if evt: evt.Skip()
 
     def OnSpeedChanged(self, evt = None) -> None:
         c = self.Ctrls
         if (self.Profile.HasPower('Speed', 'Super Speed') or self.Profile.HasPower('Experimentation', 'Speed of Sound')):
-            c['DefaultMode'].ShowEntryIf('Speed', self.SpeedKeyAction() == 'SoD')
+            c['DefaultMode'].ShowEntryIf('Speed', self.GetKeyAction('Speed') == 'SoD')
             self.ShowControlGroup(self.superSpeedSizer)
             c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPower('Speed', 'Super Speed'))
             c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPower('Experimentation', 'Speed of Sound'))
             self.PrePickLonePower(c['SpeedPower'])
-            c['SpeedPower'].Enable(bool(self.SpeedKeyAction()))
+            c['SpeedPower'].Enable(bool(self.GetKeyAction('Speed')))
             c['SpeedMode'].Show(self.DefaultMode() != "Speed")
-            c['SpeedMode'].Enable(bool(self.SpeedKeyAction()))
+            c['SpeedMode'].Enable(bool(self.GetKeyAction('Speed')))
             c['SSSJModeEnable'].Show(self.rightColumn.IsShown(self.superJumpSizer))
             c['SSSJModeEnable'].Enable(self.SoDEnabled())
 
             c['SpeedMode'].SetToolTip({
                 'SoD' : 'Toggle Super Speed Speed on Demand Mode',
                 'PT' : f'Toggle {c['SpeedPower'].GetStringSelection()} on and off',
-            }.get(self.SpeedKeyAction(), ''))
+            }.get(self.GetKeyAction('Speed'), ''))
 
             if (self.GetState('SpeedPower') == "Super Speed"):
                 c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
@@ -556,26 +556,26 @@ class MovementPowers(Page):
     def OnJumpChanged(self, evt = None) -> None:
         c = self.Ctrls
         if (self.Profile.HasPower('Leaping', 'Super Jump') or self.Profile.HasPower('Force of Will', 'Mighty Leap')):
-            c['DefaultMode'].ShowEntryIf('Jump', self.JumpKeyAction() == 'SoD')
+            c['DefaultMode'].ShowEntryIf('Jump', self.GetKeyAction('Jump') == 'SoD')
             self.ShowControlGroup(self.superJumpSizer)
             c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPower('Leaping', 'Super Jump'))
             c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPower('Force of Will', 'Mighty Leap'))
-            c['JumpPower'].Enable(bool(self.JumpKeyAction()))
+            c['JumpPower'].Enable(bool(self.GetKeyAction('Jump')))
             self.PrePickLonePower(c['JumpPower'])
 
             c['CJPower'].ShowEntryIf('Combat Jumping', self.Profile.HasPower('Leaping', 'Combat Jumping'))
-            c['CJPower'].Show  (bool(self.JumpKeyAction()) and c['CJPower'].GetCount() > 1)
-            c['CJPower'].Enable(bool(self.JumpKeyAction()) and c['CJPower'].GetCount() > 1)
+            c['CJPower'].Show  (bool(self.GetKeyAction('Jump')) and c['CJPower'].GetCount() > 1)
+            c['CJPower'].Enable(bool(self.GetKeyAction('Jump')) and c['CJPower'].GetCount() > 1)
 
             c['JumpMode'].Show(self.DefaultMode() != "Jump")
-            c['JumpMode'].Enable(bool(self.JumpKeyAction()))
+            c['JumpMode'].Enable(bool(self.GetKeyAction('Jump')))
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable'].Enable(self.SoDEnabled())
 
             c['JumpMode'].SetToolTip({
                 'SoD' : 'Toggle Jump Speed on Demand Mode',
                 'PT' : f'Toggle {c['JumpPower'].GetStringSelection()} on and off',
-            }.get(self.JumpKeyAction(), ''))
+            }.get(self.GetKeyAction('Jump'), ''))
 
             if (self.GetState('JumpPower') == "Mighty Leap"):
                 c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
@@ -598,7 +598,7 @@ class MovementPowers(Page):
     def OnFlightChanged(self, evt = None) -> None:
         c = self.Ctrls
         archetype = self.Profile.Archetype()
-        flyusessod = self.FlyKeyAction() == 'SoD'
+        flyusessod = self.GetKeyAction('Fly') == 'SoD'
 
         if (self.Profile.HasPower('Flight', 'Fly')
                     or self.Profile.HasPower('Sorcery', 'Mystic Flight')
@@ -610,20 +610,20 @@ class MovementPowers(Page):
             c['FlyPower'].ShowEntryIf("Mystic Flight", self.Profile.HasPower("Sorcery", 'Mystic Flight'))
             c['FlyPower'].ShowEntryIf("Energy Flight", archetype == "Peacebringer")
             self.PrePickLonePower(c['FlyPower'])
-            c['FlyPower'].Enable(bool(self.FlyKeyAction()))
+            c['FlyPower'].Enable(bool(self.GetKeyAction('Fly')))
 
             c['HoverPower'].ShowEntryIf('Hover',         self.Profile.HasPower('Flight', 'Hover'))
             c['HoverPower'].ShowEntryIf('Combat Flight', archetype == "Peacebringer")
-            c['HoverPower'].Show  (bool(self.FlyKeyAction()) and c['HoverPower'].GetCount() > 1)
-            c['HoverPower'].Enable(bool(self.FlyKeyAction()) and c['HoverPower'].GetCount() > 1)
+            c['HoverPower'].Show  (bool(self.GetKeyAction('Fly')) and c['HoverPower'].GetCount() > 1)
+            c['HoverPower'].Enable(bool(self.GetKeyAction('Fly')) and c['HoverPower'].GetCount() > 1)
 
             c['FlyMode'].Show((self.GetState('FlyPower') or self.GetState('HoverPower')) and self.DefaultMode() != "Fly")
-            c['FlyMode'].Enable(bool(self.FlyKeyAction()))
+            c['FlyMode'].Enable(bool(self.GetKeyAction('Fly')))
 
             c['FlyMode'].SetToolTip({
                 'SoD' : 'Toggle Fly Speed on Demand Mode',
                 'PT' : f'Toggle {c['FlyPower'].GetStringSelection()} on and off',
-            }.get(self.FlyKeyAction(), ''))
+            }.get(self.GetKeyAction('Fly'), ''))
 
             if (self.GetState('FlyPower') == "Fly"):
                 # "fly_boost" below because "afterburner" has overloaded meaning in-game and reacts
@@ -808,7 +808,7 @@ class MovementPowers(Page):
         ### write the binds to the "current path/context + current key state" file
         curfile = profile.GetBindFile(f"{path}{t.KeyState()}.txt")
 
-        self.SoDResetKey(t, curfile, modestr)
+        self.SoDResetKey(curfile)
 
         self.SoDUpKey     (t,bl,curfile,mobile,stationary,flight,sssj = sssj)
         self.SoDDownKey   (t,bl,curfile,mobile,stationary,flight)
@@ -834,7 +834,7 @@ class MovementPowers(Page):
         # Autorun Binds
         autorunfile = profile.GetBindFile(f"{patha}{t.KeyState()}.txt")
 
-        self.SoDResetKey(t, autorunfile, modestr)
+        self.SoDResetKey(autorunfile)
 
         self.SoDUpKey     (t,bla,autorunfile,mobile,stationary,flight,autorun=True, sssj = sssj)
         self.SoDDownKey   (t,bla,autorunfile,mobile,stationary,flight,autorun=True)
@@ -855,7 +855,7 @@ class MovementPowers(Page):
         # Follow Binds
         followfile = profile.GetBindFile(f"{pathf}{t.KeyState()}.txt")
 
-        self.SoDResetKey(t, followfile, modestr)
+        self.SoDResetKey(followfile)
 
         self.SoDUpKey     (t,blf,followfile,mobile,stationary,flight,followbl = bl,sssj = sssj)
         self.SoDDownKey   (t,blf,followfile,mobile,stationary,flight,followbl = bl)
@@ -955,7 +955,7 @@ class MovementPowers(Page):
         name = UI.Labels['SpeedMode']
         bindload = ''
 
-        if istoggle := self.SpeedKeyAction() == 'PT':
+        if istoggle := self.GetKeyAction('Speed') == 'PT':
             code   = 'n'
             togoff = self.AllSoDPowers() if doingtoggle else ''
         else: # is SoD
@@ -1005,9 +1005,9 @@ class MovementPowers(Page):
         key = t.JumpModeKey
         name = UI.Labels['JumpMode']
 
-        if (t.canjmp and bool(self.JumpKeyAction())):
+        if (t.canjmp and bool(self.GetKeyAction('Jump'))):
 
-            if istoggle := (self.JumpKeyAction() == 'PT'):
+            if istoggle := (self.GetKeyAction('Jump') == 'PT'):
                 togoff = self.DeactivatePowers(self.AllSoDPowers()) if doingtoggle else ''
             else:
                 togoff = self.DeactivatePowers(self.OtherMovementPowers('j'))
@@ -1049,7 +1049,7 @@ class MovementPowers(Page):
         if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Flight Mode'
         else:                                      feedback = ''
 
-        if istoggle := (self.FlyKeyAction() == 'PT'):
+        if istoggle := (self.GetKeyAction('Fly') == 'PT'):
             code   = 'n'
             togoff = self.AllSoDPowers() if doingtoggle else ''
         else:
@@ -1257,10 +1257,10 @@ class MovementPowers(Page):
         # OK, first, let's do these trivial toggle binds if and only if we aren't doing SoD at all
         # The SoD case is handled inside make*ModeKey()
         if not self.HasAnySoD():
-            if self.SpeedKeyAction() == "PT":
+            if self.GetKeyAction('Speed') == "PT":
                 resetfile.SetBind(self.Ctrls["SpeedMode"].MakeBind(f'powexecname "{self.GetState("SpeedPower")}"'))
 
-            if self.JumpKeyAction() == 'PT':
+            if self.GetKeyAction('Jump') == 'PT':
                 jpower = self.GetState('JumpPower')
                 cpower = self.GetState('CJPower')
                 if jpower and cpower:
@@ -1270,7 +1270,7 @@ class MovementPowers(Page):
                 elif cpower:
                     resetfile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{cpower}"'))
 
-            if self.FlyKeyAction() == 'PT':
+            if self.GetKeyAction('Fly') == 'PT':
                 fpower = self.GetState('FlyPower')
                 hpower = self.GetState('HoverPower')
                 if fpower and hpower:
@@ -1556,7 +1556,7 @@ class MovementPowers(Page):
                                     })
 
                                 ### Speed Mode
-                                if self.SpeedKeyAction():
+                                if self.GetKeyAction('Speed'):
                                     sssj = t.jump if self.GetState('SSSJModeEnable') else ''
                                     self.MakeSoDFile({
                                         't'          : t,
@@ -1569,7 +1569,7 @@ class MovementPowers(Page):
                                     })
 
                                 ### Jump Mode
-                                if self.JumpKeyAction():
+                                if self.GetKeyAction('Jump'):
                                     # TODO - I think this is because we used to have the notion of
                                     # "Simple CS/SJ Toggle" but now that's supposed to be integrated
                                     # so this might be The Wrong Way.
@@ -1586,7 +1586,7 @@ class MovementPowers(Page):
                                     })
 
                                 ### Fly Mode
-                                if self.FlyKeyAction() and (t.canhov or t.canfly):
+                                if self.GetKeyAction('Fly') and (t.canhov or t.canfly):
                                     self.MakeSoDFile({
                                         't'          : t,
                                         'key'        : t.FlyModeKey,
@@ -1651,7 +1651,7 @@ class MovementPowers(Page):
             file.SetBind(self.Ctrls['AutoRun'].MakeBind("++autorun"))
 
     # Reset now goes back to the Default Mode from wherever you are.
-    def SoDResetKey(self, t, curfile, modestr):
+    def SoDResetKey(self, curfile):
         # extra.txt was set up back at the head of DoSpeedOnDemandBinds, and we rely on the
         # existing contents there to: turn off movement; feedback; reset.txt; default SoD
         extrafile = self.Profile.GetBindFile('extra.txt')
@@ -2222,41 +2222,24 @@ class MovementPowers(Page):
     def HasAnySoD(self) -> bool:
         return (
             self.SoDEnabled() and (
-                (self.Ctrls['JumpKeyAction'] .IsShown() and self.JumpKeyAction()  == 'SoD')
+                (self.Ctrls['JumpKeyAction'] .IsShown() and self.GetKeyAction('Jump')  == 'SoD')
                     or
-                (self.Ctrls['FlyKeyAction']  .IsShown() and self.FlyKeyAction()   == 'SoD')
+                (self.Ctrls['FlyKeyAction']  .IsShown() and self.GetKeyAction('Fly')   == 'SoD')
                     or
-                (self.Ctrls['SpeedKeyAction'].IsShown() and self.SpeedKeyAction() == 'SoD')
+                (self.Ctrls['SpeedKeyAction'].IsShown() and self.GetKeyAction('Speed') == 'SoD')
             )
         )
 
     def IsKheldian(self) -> bool:
         return bool(self.Profile.Archetype() in ("Warshade", "Peacebringer"))
 
-    # Let's DRY these next four up somehow
-    def JumpKeyAction(self):
+    # Get what state the KeyAction picker is in for a given *Mode key.
+    # TODO - maybe make 'SoD' and 'PT' into some sort of bc.SoD enum or something.
+    def GetKeyAction(self, powertype: Literal['Jump', 'Fly', 'Speed', 'Sprint']):
         return {
             'Speed on Demand' : 'SoD',
             'Power Toggle'    : 'PT',
-        }.get(self.Ctrls['JumpKeyAction'].GetStringSelection(), '')
-
-    def FlyKeyAction(self):
-        return {
-            'Speed on Demand' : 'SoD',
-            'Power Toggle'    : 'PT',
-        }.get(self.Ctrls['FlyKeyAction'].GetStringSelection(), '')
-
-    def SpeedKeyAction(self):
-        return {
-            'Speed on Demand' : 'SoD',
-            'Power Toggle'    : 'PT',
-        }.get(self.Ctrls['SpeedKeyAction'].GetStringSelection(), '')
-
-    def SprintKeyAction(self):
-        return {
-            'Speed on Demand' : 'SoD',
-            'Power Toggle'    : 'PT',
-        }.get(self.Ctrls['SprintKeyAction'].GetStringSelection(), '')
+        }.get(self.Ctrls[powertype + 'KeyAction'].GetStringSelection(), '')
 
     # used to do a "turn off all SoD" when toggling on a non-SoD power
     #
@@ -2266,13 +2249,13 @@ class MovementPowers(Page):
     # TODO:  does this want the Sprint Power added?  Maybe.
     def AllSoDPowers(self) -> set:
         powers = set()
-        if self.JumpKeyAction() == 'SoD':
+        if self.GetKeyAction('Jump') == 'SoD':
             if jp := self.GetState('JumpPower'):  powers.add(jp)
             if cp := self.GetState('CJPower'):    powers.add(cp)
-        if self.FlyKeyAction() == 'SoD':
+        if self.GetKeyAction('Fly') == 'SoD':
             if fp := self.GetState('FlyPower'):   powers.add(fp)
             if hp := self.GetState('HoverPower'): powers.add(hp)
-        if self.SpeedKeyAction() == 'SoD':
+        if self.GetKeyAction('Speed') == 'SoD':
             if sp := self.GetState('SpeedPower'): powers.add(sp)
         return powers
 
@@ -2289,13 +2272,13 @@ class MovementPowers(Page):
         # movement power" but this means it won't shut off movement powers activated
         # manually via power trays or Simple Binds or something.  I think we're just
         # going to have to live with that.
-        if context != 'j' and self.JumpKeyAction():
+        if context != 'j' and self.GetKeyAction('Jump'):
             if jp := self.GetState('JumpPower'):  powers.add(jp)
             if cp := self.GetState('CJPower'):    powers.add(cp)
-        if context != 'f' and self.FlyKeyAction():
+        if context != 'f' and self.GetKeyAction('Fly'):
             if fp := self.GetState('FlyPower'):   powers.add(fp)
             if hp := self.GetState('HoverPower'): powers.add(hp)
-        if context != 's' and self.SpeedKeyAction():
+        if context != 's' and self.GetKeyAction('Speed'):
             if sp := self.GetState('SpeedPower'): powers.add(sp)
         if context != 'r':
             if rp := self.GetState('SprintPower') : powers.add(rp)
@@ -2305,7 +2288,7 @@ class MovementPowers(Page):
     def DeactivatePowers(self, powers: set) -> str:
         return ''.join(f'$${self.togoff} {p}' for p in powers)
 
-    # get blf etc info for current Default SoD Mode
+    # get blf etc info for given SoD Mode, typically Default but w/e
     def SoDModeInfo(self, Mode):
         c = self.Ctrls
         return {
@@ -2334,7 +2317,7 @@ class MovementPowers(Page):
                 'sta'  : '',
                 'mob'  : c['SpeedPower'].GetStringSelection(),
             },
-        }[Mode]
+        }[Mode or 'NonSoD']
 
     def AllBindFiles(self) -> dict[str, list]:
         files = [self.Profile.GetBindFile('extra.txt')]

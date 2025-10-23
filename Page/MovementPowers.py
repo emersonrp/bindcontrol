@@ -45,6 +45,7 @@ class MovementPowers(Page):
             'PlayerTurn'      : False, # TODO this should toggle with "Keybind Profile" somehow
             'AutoMouseLook'   : False,
 
+            'SprintKeyAction' : 'Speed On Demand',
             'SprintMode'      : '',
             'SprintPower'     : 'Sprint',
 
@@ -345,19 +346,31 @@ class MovementPowers(Page):
         SoDSizer.AddControl(ctlName = 'NonSoDMode', ctlType = 'keybutton',
             helpfile = 'SoDToggle.html',
             tooltip = "Select the key to toggle whether Speed on Demand is active")
-        SoDSizer.AddControl(ctlName = 'SprintMode', ctlType = 'keybutton',
-            helpfile = 'SprintSoDToggle.html',
-            tooltip = "Select the key to toggle Sprint Speed on Demand Mode")
-        SoDSizer.AddControl(ctlName = 'SprintPower', ctlType = 'choice',
-            contents = GameData.SprintPowers,
-            helpfile = 'PreferredSprintPower.html',
-            tooltip = "Select the power to use for Sprint Speed on Demand")
         SoDSizer.AddControl(ctlName = 'MouseChord', ctlType = 'checkbox',
             tooltip = "Holding both mouse buttons will go forward using the current Speed on Demand Mode")
         SoDSizer.AddControl(ctlName = 'Feedback', ctlType = 'checkbox',
             tooltip = "Announce changes in Speed on Demand modes via self-/tell")
 
         self.rightColumn.Add(SoDSizer, 0, wx.EXPAND)
+
+        ##### SPRINT SETTINGS
+        SprintSizer = ControlGroup(self, self, 'Sprint Settings')
+
+        SprintSizer.AddControl(ctlName = 'SprintKeyAction', ctlType = 'choice',
+            contents = ('Speed on Demand', 'Power Toggle', 'None'),
+            helpfile = 'SprintKeyAction.html',
+            tooltip = 'Select what the Sprint Power Key will do')
+        self.Ctrls['SprintKeyAction'].Bind(wx.EVT_CHOICE, self.OnSprintChanged)
+        SprintSizer.AddControl(ctlName = 'SprintPower', ctlType = 'choice',
+            contents = GameData.SprintPowers,
+            helpfile = 'PreferredSprintPower.html',
+            tooltip = "Select the power to use for Sprint Speed on Demand")
+        self.Ctrls['SprintPower'].Bind(wx.EVT_CHOICE, self.OnSprintChanged)
+        SprintSizer.AddControl(ctlName = 'SprintMode', ctlType = 'keybutton',
+            helpfile = 'SprintSoDToggle.html',
+            tooltip = "Select the key to toggle Sprint Speed on Demand Mode")
+
+        self.rightColumn.Add(SprintSizer, 0, wx.EXPAND)
 
         ##### SUPER SPEED
         self.superSpeedSizer = ControlGroup(self, self, 'Super Speed Powers Settings')
@@ -487,21 +500,28 @@ class MovementPowers(Page):
         c = self.Ctrls
         sodmode = self.DefaultMode()
         c['NonSoDMode'].Show(bool(sodmode))
-        c['SprintMode'].Show(sodmode != 'Sprint')
-        for ctrl in ['DefaultMode', 'NonSoDMode', 'SprintPower', 'SprintMode', 'MouseChord', 'Feedback', ]:
+        for ctrl in ['DefaultMode', 'NonSoDMode', 'MouseChord', 'Feedback', ]:
             c[ctrl].Enable(self.SoDEnabled())
-        for ctrl in ['JumpKeyAction', 'FlyKeyAction', 'SpeedKeyAction', ]:
+        for ctrl in ['SprintKeyAction', 'JumpKeyAction', 'FlyKeyAction', 'SpeedKeyAction', ]:
             c[ctrl].ShowEntryIf('Speed on Demand', self.SoDEnabled())
             # Reset these pickers to saved state in case we just reappeared their desired value.  Might be bad.
             c[ctrl].SetStringSelection(self.Profile.Data.get('MovementPowers', {}).get(ctrl, ''))
+        self.OnSprintChanged()
         self.OnJumpChanged()
         self.OnSpeedChanged()
         self.OnFlightChanged()
         if evt: evt.Skip()
 
+    def OnSprintChanged(self, evt = None):
+        c = self.Ctrls
+        c['DefaultMode'].ShowEntryIf('Sprint', self.SprintKeyAction() == 'SoD')
+        c['SprintMode'].Show(self.DefaultMode() != "Sprint")
+        c['SprintMode'].Enable(bool(self.SprintKeyAction()))
+
+        if evt: evt.Skip()
+
     def OnSpeedChanged(self, evt = None) -> None:
         c = self.Ctrls
-        sodenabled = self.SoDEnabled()
         if (self.Profile.HasPower('Speed', 'Super Speed') or self.Profile.HasPower('Experimentation', 'Speed of Sound')):
             c['DefaultMode'].ShowEntryIf('Speed', self.SpeedKeyAction() == 'SoD')
             self.ShowControlGroup(self.superSpeedSizer)
@@ -512,7 +532,7 @@ class MovementPowers(Page):
             c['SpeedMode'].Show(self.DefaultMode() != "Speed")
             c['SpeedMode'].Enable(bool(self.SpeedKeyAction()))
             c['SSSJModeEnable'].Show(self.rightColumn.IsShown(self.superJumpSizer))
-            c['SSSJModeEnable'].Enable(sodenabled)
+            c['SSSJModeEnable'].Enable(self.SoDEnabled())
 
             c['SpeedMode'].SetToolTip({
                 'SoD' : 'Toggle Super Speed Speed on Demand Mode',
@@ -2212,7 +2232,7 @@ class MovementPowers(Page):
     def IsKheldian(self) -> bool:
         return bool(self.Profile.Archetype() in ("Warshade", "Peacebringer"))
 
-    # Let's DRY these next three up somehow
+    # Let's DRY these next four up somehow
     def JumpKeyAction(self):
         return {
             'Speed on Demand' : 'SoD',
@@ -2230,6 +2250,12 @@ class MovementPowers(Page):
             'Speed on Demand' : 'SoD',
             'Power Toggle'    : 'PT',
         }.get(self.Ctrls['SpeedKeyAction'].GetStringSelection(), '')
+
+    def SprintKeyAction(self):
+        return {
+            'Speed on Demand' : 'SoD',
+            'Power Toggle'    : 'PT',
+        }.get(self.Ctrls['SprintKeyAction'].GetStringSelection(), '')
 
     # used to do a "turn off all SoD" when toggling on a non-SoD power
     #
@@ -2391,10 +2417,12 @@ UI.Labels.update( {
     'EnableSoD'      : 'Enable Speed on Demand Binds',
     'DefaultMode'    : 'Default Speed on Demand Mode',
     'NonSoDMode'     : 'Speed on Demand Toggle Key',
-    'SprintPower'    : 'Preferred Sprint Power',
-    'SprintMode'     : "Switch to Sprint SoD Mode",
     'MouseChord'     : 'Mousechord is SoD Forward',
     'Feedback'       : 'Self-/tell when changing SoD mode',
+
+    'SprintKeyAction' : "Sprint Power Key Action",
+    'SprintPower'     : 'Preferred Sprint Power',
+    'SprintMode'      : 'Sprint Power Key',
 
     'SpeedKeyAction'    : "Speed Power Key Action",
     'SpeedPower'        : "Primary Speed Power",

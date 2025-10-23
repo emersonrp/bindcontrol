@@ -423,7 +423,7 @@ class Profile(wx.Notebook):
 
         config = wx.ConfigBase.Get()
         resetfile = self.ResetFile()
-        keybindreset = 'keybind_reset' if config.ReadBool('FlushAllBinds') else ''
+        keybindreset = 'unbindall' if config.ReadBool('FlushAllBinds') else ''
         feedback = 't $name, Resetting keybinds.'
         resetfile.SetBind(config.Read('ResetKey'), "Reset Key", "Preferences", [keybindreset , feedback, resetfile.BLF()])
 

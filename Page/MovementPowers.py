@@ -1440,22 +1440,33 @@ class MovementPowers(Page):
                     tp_on2.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('- $$powexecname ' + dwarfTPPower + profile.BLF('dtp','tp_on1.txt')))
 
     def DoSpeedOnDemandBinds(self, t) -> None:
+        # most of this is so that we return to Default SoD mode when we reset.
         profile   = self.Profile
         resetfile = profile.ResetFile()
+        extrafile = profile.GetBindFile('extra.txt')
         config    = wx.ConfigBase.Get()
         default   = self.SoDModeInfo(self.DefaultMode())
         turnoff   = self.AllSoDPowers()
         on_off    = self.actPower_toggle(default['sta'], turnoff)
 
+        # We do this over two files so it doesn't get too long if there are
+        # multiple SoD pools and on_off has like five powers in it.
         resetfile.SetBind(config.Read('ResetKey'), "Reset Key", self.TabTitle,
                     [
+                        '+',
                         'unbindall' if config.ReadBool('FlushAllBinds') else '',
-                        'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
                         on_off,
+                        extrafile.BLF(),
+                    ])
+        extrafile.SetBind(config.Read('ResetKey'), "Reset Key", self.TabTitle,
+                    [
+                        '+',
+                        'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
                         't $name, Binds Reset',
                         resetfile.BLF(),
                         t.BLF(default['code']),
                     ])
+
 
         #  if a given mode is not our default, get the key we use to enter that mode.
         #  this will (hopefully) only be used if/when we actually have that mode available.
@@ -1619,24 +1630,21 @@ class MovementPowers(Page):
 
     # Reset now goes back to the Default Mode from wherever you are.
     def SoDResetKey(self, t, curfile, modestr):
-
-        default = self.SoDModeInfo(self.DefaultMode())
-        gamepath = t.gamepath(default['code'])
-
-        thismode = self.SoDModeInfo(modestr)
-        turnoff  = {thismode['sta'], thismode['mob'], default['mob']}
-        on_off = self.actPower_toggle(default['sta'], turnoff)
+        # extra.txt was set up back at the head of DoSpeedOnDemandBinds, and we rely on the
+        # existing contents there to: turn off movement; feedback; reset.txt; default SoD
+        extrafile = self.Profile.GetBindFile('extra.txt')
+        default   = self.SoDModeInfo(self.DefaultMode())
+        turnoff   = self.AllSoDPowers()
+        on_off    = self.actPower_toggle(default['sta'], turnoff)
 
         config = wx.ConfigBase.Get()
 
         curfile.SetBind(config.Read('ResetKey'), UI.Labels['ResetKey'], self,
             [
+                '+',
                 'unbindall' if config.ReadBool('FlushAllBinds') else '',
-                'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
                 on_off,
-                't $name, Binds Reset',
-                self.Profile.ResetFile().BLF(),
-                f"{BLF()} {gamepath}000000.txt"
+                extrafile.BLF(),
             ]
         )
 
@@ -2299,7 +2307,7 @@ class MovementPowers(Page):
         }[Mode]
 
     def AllBindFiles(self) -> dict[str, list]:
-        files = []
+        files = [self.Profile.GetBindFile('extra.txt')]
         dirs  = [
                 'R'  , 'F'   , 'J'  , 'S'  , 'N'  , 'GF',
                 'AR' , 'AF'  , 'AJ' , 'AS' , 'AN' , 'AGF',

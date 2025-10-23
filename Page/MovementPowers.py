@@ -40,14 +40,8 @@ class MovementPowers(Page):
             'TurnRight'       : "E",
             'AutoRun'         : "R",
             'Follow'          : "TILDE",
-            'DefaultMode'     : "Sprint",
-            'MouseChord'      : False,
             'PlayerTurn'      : False, # TODO this should toggle with "Keybind Profile" somehow
             'AutoMouseLook'   : False,
-
-            'SprintKeyAction' : 'Speed On Demand',
-            'SprintMode'      : '',
-            'SprintPower'     : 'Sprint',
 
             'ChangeCamera'    : False,
             'CamdistBase'     : 15,
@@ -57,7 +51,13 @@ class MovementPowers(Page):
             'DetailMove'      : 50,
             'Feedback'        : False,
 
+            'DefaultMode'     : "Sprint",
             'NonSoDMode'      : '',
+            'MouseChord'      : True,
+
+            'SprintKeyAction' : 'Speed on Demand',
+            'SprintMode'      : '',
+            'SprintPower'     : 'Sprint',
 
             'SpeedKeyAction'    : 'Speed on Demand',
             'SpeedPower'        : '',
@@ -505,7 +505,7 @@ class MovementPowers(Page):
         for ctrl in ['SprintKeyAction', 'JumpKeyAction', 'FlyKeyAction', 'SpeedKeyAction', ]:
             c[ctrl].ShowEntryIf('Speed on Demand', self.SoDEnabled())
             # Reset these pickers to saved state in case we just reappeared their desired value.  Might be bad.
-            c[ctrl].SetStringSelection(self.Profile.Data.get('MovementPowers', {}).get(ctrl, ''))
+            c[ctrl].SetStringSelection(self.Profile.Data.get('MovementPowers', {}).get(ctrl, self.Init[ctrl] or ''))
         self.OnSprintChanged()
         self.OnJumpChanged()
         self.OnSpeedChanged()

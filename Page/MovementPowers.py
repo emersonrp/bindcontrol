@@ -373,7 +373,8 @@ class MovementPowers(Page):
         self.superSpeedSizer.AddControl(ctlName = 'SpeedMode', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl(ctlName = 'SpeedSpecialKey', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl(ctlName = 'SSSJModeEnable', ctlType = 'checkbox',
-            tooltip = "Enable Super Speed + Super Jump Mode.")
+            helpfile = 'SuperSpeedSuperJumpMode.html',
+            tooltip = 'Enable Super Speed + Super Jump Mode.')
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
@@ -2256,20 +2257,22 @@ class MovementPowers(Page):
     # self.actPower_* also can take sets as parameters
     #
     # TODO:  does this want the Sprint Power added?  Maybe.
-    def OtherMovementPowers(self, context: Literal['j']|Literal['f']|Literal['s']|Literal['n']) -> set:
+    def OtherMovementPowers(self, context: Literal['j', 'f', 's', 'n', 'r']) -> set:
         powers = set()
         # the "and self.*KeyAction" in this case means "and BC is managing this
         # movement power" but this means it won't shut off movement powers activated
         # manually via power trays or Simple Binds or something.  I think we're just
         # going to have to live with that.
-        if context != 'J' and self.JumpKeyAction():
+        if context != 'j' and self.JumpKeyAction():
             if jp := self.GetState('JumpPower'):  powers.add(jp)
             if cp := self.GetState('CJPower'):    powers.add(cp)
-        if context != 'F' and self.FlyKeyAction():
+        if context != 'f' and self.FlyKeyAction():
             if fp := self.GetState('FlyPower'):   powers.add(fp)
             if hp := self.GetState('HoverPower'): powers.add(hp)
-        if context != 'S' and self.SpeedKeyAction():
+        if context != 's' and self.SpeedKeyAction():
             if sp := self.GetState('SpeedPower'): powers.add(sp)
+        if context != 'r':
+            if rp := self.GetState('SprintPower') : powers.add(rp)
         return powers
 
     # make a 'turn us all off' string, used with the above two methods

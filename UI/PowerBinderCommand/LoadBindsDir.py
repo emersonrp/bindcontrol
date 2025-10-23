@@ -51,7 +51,7 @@ class LoadBindsDir(PowerBinderCommand):
 
         reset = ""
         if self.lbResetCB.GetValue():
-            reset = "keybind_reset$$"
+            reset = "unbindall$$"
 
         pname = self.lbPicker.GetStringSelection()
         resetfilepath = PureWindowsPath(bindpath) / self.NameToDir[pname] / 'reset.txt'

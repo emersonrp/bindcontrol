@@ -1445,15 +1445,17 @@ class MovementPowers(Page):
         resetfile = profile.ResetFile()
         config    = wx.ConfigBase.Get()
         default   = self.SoDModeInfo(self.DefaultMode())
+        turnoff   = self.AllSoDPowers()
+        on_off    = self.actPower_toggle(default['sta'], turnoff)
 
         resetfile.SetBind(config.Read('ResetKey'), "Reset Key", self.TabTitle,
                     [
                         'unbindall' if config.ReadBool('FlushAllBinds') else '',
                         'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',
-                        f'powexecname {default["sta"]}',
-                        self.unqueue,
+                        on_off,
                         't $name, Binds Reset',
                         resetfile.BLF(),
+                        t.BLF(default['code']),
                     ])
 
         #  if a given mode is not our default, get the key we use to enter that mode.

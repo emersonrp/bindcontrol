@@ -885,7 +885,7 @@ class MovementPowers(Page):
 
         setattr(t, self.DefaultMode() + 'ModeKey', None)
 
-    def MakeNonSoDModeKey(self, t, bl, file, usejumpfix = False, fb = False) -> None:
+    def MakeNonSoDModeKey(self, t, bl, file, usejumpfix = False, skipfeedback = False) -> None:
         key = t.NonSoDModeKey
         name = UI.Labels['NonSoDMode']
         if not self.Ctrls['NonSoDMode'].IsEnabled(): return
@@ -893,7 +893,7 @@ class MovementPowers(Page):
 
         togoff = self.OtherMovementPowers('n')
 
-        if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Non-SoD Mode'
+        if (not skipfeedback) and self.GetState('Feedback'): feedback = '$$t $name, Non-SoD Mode'
         else:                                      feedback = ''
 
         if (bl == "r"):
@@ -917,12 +917,12 @@ class MovementPowers(Page):
                 file.SetBind(key, name, self, t.ini + self.actPower_toggle(None,togoff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
         t.ini = ''
 
-    def MakeSprintModeKey(self, t, bl, file, usejumpfix = False, fb = False, doingtoggle = False) -> None:
+    def MakeSprintModeKey(self, t, bl, file, usejumpfix = False, skipfeedback = False, doingtoggle = False) -> None:
         key = t.SprintModeKey
         name = UI.Labels['SprintMode']
         if not key: return
 
-        if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Sprint-SoD Mode'
+        if (not skipfeedback) and self.GetState('Feedback'): feedback = '$$t $name, Sprint-SoD Mode'
         else:                                      feedback = ''
 
         if istoggle := self.GetKeyAction('Speed') == 'PT':
@@ -969,7 +969,7 @@ class MovementPowers(Page):
 
         t.ini = ''
 
-    def MakeSpeedModeKey(self, t, bl, file, usejumpfix = False, fb = False, doingtoggle = False) -> None:
+    def MakeSpeedModeKey(self, t, bl, file, usejumpfix = False, skipfeedback = False, doingtoggle = False) -> None:
         if not self.Ctrls['SpeedMode'].IsEnabled(): return
 
         key = t.SpeedModeKey
@@ -984,7 +984,7 @@ class MovementPowers(Page):
         dotogglefix = istoggle and not doingtoggle
 
         feedback = ''
-        if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Superspeed Mode'
+        if (not skipfeedback) and self.GetState('Feedback'): feedback = '$$t $name, Superspeed Mode'
 
         if (self.GetState('SpeedPower')):
             if (bl == 's'):
@@ -1062,12 +1062,12 @@ class MovementPowers(Page):
 
         t.ini = ''
 
-    def MakeFlyModeKey(self, t, bl, file, usejumpfix, fb = False, fb_on_a = False, doingtoggle = False) -> None:
+    def MakeFlyModeKey(self, t, bl, file, usejumpfix, skipfeedback = False, fb_on_a = False, doingtoggle = False) -> None:
         if not self.Ctrls['FlyMode'].IsEnabled(): return
         key = t.FlyModeKey
         name = UI.Labels['FlyMode']
 
-        if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Flight Mode'
+        if (not skipfeedback) and self.GetState('Feedback'): feedback = '$$t $name, Flight Mode'
         else:                                      feedback = ''
 
         if istoggle := (self.GetKeyAction('Fly') == 'PT'):
@@ -2151,6 +2151,9 @@ class MovementPowers(Page):
         # TODO - why twice?  Does this guarantee that it gets activated, somehow?
         # Like, if it's already on, this turns it off, then turns it on?
         # And if it's off, it turns it on, and since that's activating one power, it stops?
+        #
+        # Yes, yes I think that's exactly why.  Why do we not just... powexectoggle_on here
+        # instead?  Not sure if there's a reason one way or the other, leaving it for now.
         if on:
             s = s + '$$powexecname ' + on + '$$powexecname ' + on
 
@@ -2173,9 +2176,9 @@ class MovementPowers(Page):
         # need this press/release thing specifically here?  Bind length, with the feedback
         # tacked on the end?  Maybe?
 
-        # make the "key up" bind back in the calling method.  We set fb = True because
-        # oddly that -skips- the feedback, which we will be giving in the "key down" bind.
-        makeModeKey(t, bl, tglfile, fb = True)
+        # make the "key up" bind back in the calling method.  We set skipfeedback = True
+        # because we will be giving the feedback in the "key down" bind.
+        makeModeKey(t, bl, tglfile, skipfeedback = True)
         # make the "key down" bind
         curfile.SetBind(key, "Jump Fix", self, "+down" + feedback + self.actPower_name(t.cjmp) + t.BLF(f'{afmode}j', suffix))
 
@@ -2198,7 +2201,7 @@ class MovementPowers(Page):
             powercode = 's'
             power = t.speed
             tglfile  = self.Profile.GetBindFile( t.bfpath(afmode + powercode, suffix) )
-            makeModeKey(t, bl, tglfile, fb = True, doingtoggle = True)
+            makeModeKey(t, bl, tglfile, skipfeedback = True, doingtoggle = True)
         elif makeModeKey == self.MakeJumpModeKey:
             powercode = 'j'
             power = {t.jump, t.cjmp}
@@ -2208,7 +2211,7 @@ class MovementPowers(Page):
             powercode = 'f'
             power = {t.fly, t.hover}
             tglfile  = self.Profile.GetBindFile( t.bfpath(afmode + powercode, suffix) )
-            makeModeKey(t, bl, tglfile, fb = True, doingtoggle = True)
+            makeModeKey(t, bl, tglfile, skipfeedback = True, doingtoggle = True)
         else:
             raise Exception("Unknown callback in ToggleFix.  This is a bug.")
 

@@ -413,9 +413,11 @@ class General(Page):
             self.UpdatePoolPickers()
 
         if getattr(self.Profile, 'Mastermind', None):
-            self.Profile.Mastermind.SynchronizeUI()
+            wx.CallAfter(self.Profile.Mastermind.SynchronizeUI)
         if getattr(self.Profile, 'MovementPowers', None):
-            self.Profile.MovementPowers.SynchronizeUI()
+            # touch up the UI in MovementPowers in case we changed to a Kheldian arch
+            wx.CallAfter(self.Profile.MovementPowers.OnFlightChanged)
+            wx.CallAfter(self.Profile.MovementPowers.OnTeleportChanged)
 
         if arch == "Mastermind":
             if self.Profile.FindPage(self.Profile.Mastermind) == wx.NOT_FOUND:

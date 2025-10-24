@@ -651,6 +651,9 @@ class MovementPowers(Page):
                 c['FlySpecialKey'].SetToolTip('Activate Afterburner')
                 c['FlySpecialKey'].Show()
 
+            # This next condition forces this to be Quantum Maneuvers for Peacebringers who
+            # for some reason take Flight and want "Fly" as Primary but "Combat Flight" as
+            # Defensive.  Almost certainly nobody does this.  Almost.
             if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.GetState('HoverPower') == 'Combat Flight')):
                 c['FlySpecialPower'].SetValue('Quantum Maneuvers')
                 c['FlySpecialKey'].CtlLabel.SetLabel('Quantum Maneuvers:')
@@ -672,11 +675,12 @@ class MovementPowers(Page):
         c = self.Ctrls
         if (self.HasTPPowers()):
             self.ShowControlGroup(self.teleportSizer)
-            c['TPPower'].ShowEntryIf('Teleport',      self.Profile.HasPower('Teleportation', 'Teleport'))
-            c['TPPower'].ShowEntryIf('Translocation', self.Profile.HasPower('Sorcery', 'Translocation'))
-            c['TPPower'].ShowEntryIf('Jaunt',         self.Profile.HasPower('Experimentation', 'Speed of Sound')
-                                                        and self.GetState('SpeedPower') == "Speed of Sound")
-            c['TPPower'].ShowEntryIf('Shadow Step',   self.Profile.Archetype() == "Warshade")
+            c['TPPower'].ShowEntryIf('Teleport',         self.Profile.HasPower('Teleportation', 'Teleport'))
+            c['TPPower'].ShowEntryIf('Translocation',    self.Profile.HasPower('Sorcery', 'Translocation'))
+            c['TPPower'].ShowEntryIf('Jaunt',            self.GetState('SpeedPower') == "Speed of Sound")
+            c['TPPower'].ShowEntryIf('Shadow Step',      self.Profile.Archetype() == "Warshade")
+            c['TPPower'].ShowEntryIf('Black Dwarf Step', self.Profile.Archetype() == "Warshade")
+            c['TPPower'].ShowEntryIf('White Dwarf Step', self.Profile.Archetype() == "Peacebringer")
 
             c['TPBindKey']    .Enable(bool(self.GetState('TPPower')))
             c['TPComboKey']   .Enable(bool(self.GetState('TPPower')))
@@ -1323,8 +1327,8 @@ class MovementPowers(Page):
             if server == "Rebirth":
                 resetfile.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('nop'))
 
-        # We did kheldian tp binds inside DoKheldianBinds()
-        if (self.HasTPPowers() and normalTPPower and (archetype != "Peacebringer")):
+        # personal tp binds
+        if self.HasTPPowers() and bool(normalTPPower):
             tphovermodeswitch = ''
             if t.tphover:
                 tphovermodeswitch = t.bl('f') + "000000.txt"
@@ -1352,8 +1356,8 @@ class MovementPowers(Page):
                 tp_on2 = profile.GetBindFile("tp","tp_on2.txt")
                 tp_on2.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('-$$powexecname ' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
 
-        # normal non-peacebringer team teleport binds
-        if (self.HasTPPowers() and self.HasTTP() and (archetype != "Peacebringer") and teamTPPower) :
+        # team teleport binds
+        if (self.HasTPPowers() and self.HasTTP() and teamTPPower) :
 
             resetfile.SetBind(self.Ctrls['TTPBindKey'].MakeBind(tpActivator + teamTPPower))
 
@@ -1393,12 +1397,10 @@ class MovementPowers(Page):
             novaPower = "Bright Nova"
             dwarfPower = "White Dwarf"
             humanFormShield = "Shining Shield"
-            dwarfTPPower = "White Dwarf Step"
         else: # Warshade
             novaPower = "Dark Nova"
             dwarfPower = "Black Dwarf"
             humanFormShield = "Gravity Shield"
-            dwarfTPPower = "Black Dwarf Step"
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
@@ -1464,34 +1466,6 @@ class MovementPowers(Page):
                 dwrffile.SetBind(self.Ctrls['SpeedMode'].MakeBind('nop'))
             if (self.GetState('MouseChord')):
                 dwrffile.SetBind('mousechord', "Dwarf Mode Mousechord", self.TabTitle, ['+down', '+forward', t.playerturn])
-
-            # TODO:  this should get DRY'ed up with the normal teleport logic
-            if dwarfTPPower:
-                tphovermodeswitch = ''
-                if t.tphover:
-                    tphovermodeswitch = t.bl('f') + "000000.txt"
-
-                dwrffile.SetBind(self.Ctrls['TPBindKey'].MakeBind(tpActivator + dwarfTPPower))
-
-                tp_off = profile.GetBindFile("dtp","tp_off.txt")
-                tp_on1 = profile.GetBindFile("dtp","tp_on1.txt")
-                zoomin = '' if t.tphover else t.detailhi + t.runcamdist
-
-                dwrffile.SetBind(self.Ctrls['TPComboKey'].MakeBind('+first$$-first$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
-                if server == 'Homecoming':
-                    tp_off.SetBind(self.Ctrls['TPComboKey'].MakeBind('+first$$-first$$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
-
-                    tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeBind(f'+first$$-first$${self.unqueue}$$powexeclocation cursor' + dwarfTPPower + zoomin + windowshow + profile.BLF('dtp','tp_off.txt') + tphovermodeswitch))
-
-                else:  # server == Rebirth
-                    tp_off.SetBind(self.Ctrls['TPComboKey'].MakeBind('+ $$powexecname ' + dwarfTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('dtp','tp_on1.txt')))
-                    tp_off.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('nop'))
-
-                    tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeBind(f'- {self.unqueue}' + zoomin + windowshow + profile.BLF('dtp','tp_off.txt') + tphovermodeswitch))
-                    tp_on1.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('+ ' + profile.BLF('dtp','tp_on2.txt')))
-
-                    tp_on2 = profile.GetBindFile("dtp","tp_on2.txt")
-                    tp_on2.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('- $$powexecname ' + dwarfTPPower + profile.BLF('dtp','tp_on1.txt')))
 
     def DoSpeedOnDemandBinds(self, t) -> None:
         # most of this is so that we return to Default SoD mode when we reset.
@@ -2241,7 +2215,7 @@ class MovementPowers(Page):
         return (self.Profile.HasPower('Teleportation', 'Teleport')
                     or self.Profile.HasPower('Sorcery', 'Translocation')
                     or self.GetState('SpeedPower') == 'Speed of Sound'
-                    or self.Profile.Archetype() == "Warshade"
+                    or self.IsKheldian()
                 )
 
     def HasTTP(self) -> bool:

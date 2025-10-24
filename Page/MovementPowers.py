@@ -1077,7 +1077,7 @@ class MovementPowers(Page):
 
         t.ini = ''
 
-    def MakeFlyModeKey(self, t, bl, file, usejumpfix, skipfeedback = False, fb_on_a = False, doingtoggle = False) -> None:
+    def MakeFlyModeKey(self, t, bl, file, usejumpfix = False, skipfeedback = False, fb_on_a = False, doingtoggle = False) -> None:
         if not self.Ctrls['FlyMode'].IsEnabled(): return
         key = t.FlyModeKey
         name = UI.Labels['FlyMode']
@@ -1441,7 +1441,7 @@ class MovementPowers(Page):
 
             novafile.SetBind(self.Ctrls['Follow'].MakeBind("follow"))
 
-        if self.GetState('UseDwarf'):
+        if self.GetState('DwarfMode'):
             khelfeedback = f"t $name, Changing to {dwarfPower} Form" if self.GetState('KhelFeedback') else ''
             resetfile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togon} {dwarfPower}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
             dwrffile = profile.GetBindFile("dwarf.txt")

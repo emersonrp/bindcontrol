@@ -101,6 +101,7 @@ class MovementPowers(Page):
             'FlyGFly'         : '',
 
             'KhelFeedback'      : False,
+            'UseHumanFormPower' : False,
             'HumanTray'         : "1",
 
             'NovaMode'        : "[",
@@ -318,6 +319,8 @@ class MovementPowers(Page):
 
         self.kheldianSizer.AddControl(ctlName = 'KhelFeedback', ctlType = 'checkbox',
             tooltip = "Perform a self-/tell when changing form indicating the new form",)
+        self.kheldianSizer.AddControl(ctlName = 'UseHumanFormPower', ctlType = 'checkbox',
+            tooltip = "Activate shield power when switching to human form",)
         self.kheldianSizer.AddControl(ctlName = 'HumanTray', ctlType = 'spinbox', contents = [1, 9],
             tooltip = "Select the powers tray to change to when in human form")
         self.kheldianSizer.AddControl(ctlName = 'NovaMode', ctlType = 'keybutton',
@@ -1396,9 +1399,11 @@ class MovementPowers(Page):
         if archetype == "Peacebringer":
             novaPower = "Bright Nova"
             dwarfPower = "White Dwarf"
+            humanFormShield = "Shining Shield"
         else: # Warshade
             novaPower = "Dark Nova"
             dwarfPower = "Black Dwarf"
+            humanFormShield = "Gravity Shield"
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
@@ -1412,8 +1417,10 @@ class MovementPowers(Page):
                 khelfeedback = f"t $name, Changing to {dwarfPower} Form" if self.GetState('KhelFeedback') else ''
                 novafile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}{t.off}{novaPower}{t.on}{dwarfPower}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
 
+            humpower = f'$${self.togon} {humanFormShield}' if self.GetState('UseHumanFormPower') else ''
+
             khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ''
-            novafile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {novaPower}$$gototray {self.GetState('HumanTray')}" + profile.BLF('reset.txt')))
+            novafile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {novaPower}{humpower}$$gototray {self.GetState('HumanTray')}" + profile.BLF('reset.txt')))
 
             novafile.SetBind(self.Ctrls['Forward'].MakeBind(["+forward", t.playerturn]))
             novafile.SetBind(self.Ctrls['Left'].MakeBind("+left"))
@@ -1444,8 +1451,10 @@ class MovementPowers(Page):
                 khelfeedback = f"t $name, Changing to {novaPower} Form" if self.GetState('KhelFeedback') else ''
                 dwrffile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {dwarfPower}$${self.togon} {novaPower}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
 
+            humpower = f'$${self.togon} {humanFormShield}' if self.GetState('UseHumanFormPower') else ''
+
             khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ''
-            dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {dwarfPower}$$gototray 1" + profile.BLF('reset.txt')))
+            dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {dwarfPower}{humpower}$$gototray 1" + profile.BLF('reset.txt')))
 
             dwrffile.SetBind(self.Ctrls['Forward'].MakeBind(["+forward", t.playerturn]))
             dwrffile.SetBind(self.Ctrls['Left'].MakeBind("+left"))
@@ -2373,12 +2382,13 @@ UI.Labels.update( {
     'TempEnable'     : 'Enable Temp Travel Power Bind',
     'TempToggle'     : 'Toggle Temp Travel Power',
 
-    'KhelFeedback' : 'Give /tell Feedback When Changing Form',
-    'HumanTray'    : 'Human Form Power Tray',
-    'NovaMode'     : 'Toggle Nova Form',
-    'NovaTray'     : 'Nova Form Power Tray',
-    'DwarfMode'    : 'Toggle Dwarf Form',
-    'DwarfTray'    : 'Dwarf Form Power Tray',
+    'KhelFeedback'      : 'Give /tell Feedback When Changing Form',
+    'UseHumanFormPower' : 'Activate Shield With Human Form',
+    'HumanTray'         : 'Human Form Power Tray',
+    'NovaMode'          : 'Toggle Nova Form',
+    'NovaTray'          : 'Nova Form Power Tray',
+    'DwarfMode'         : 'Toggle Dwarf Form',
+    'DwarfTray'         : 'Dwarf Form Power Tray',
 
     'EnableSoD'      : 'Enable Speed on Demand Binds',
     'DefaultMode'    : 'Default Speed on Demand Mode',

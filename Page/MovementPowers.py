@@ -378,7 +378,8 @@ class MovementPowers(Page):
             helpfile = 'SpeedKeyAction.html',
             tooltip = 'Select what the Speed Power Key will do')
         self.Ctrls['SpeedKeyAction'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
-        self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice', contents = [''],
+        self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice',
+            contents = ['', 'Speed of Sound', 'Super Speed'],
             tooltip = "Select the super speed power to use with the keybinds in this section")
         self.Ctrls['SpeedPower'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
         self.superSpeedSizer.AddControl(ctlName = 'SpeedMode', ctlType = 'keybutton',)
@@ -395,7 +396,8 @@ class MovementPowers(Page):
             helpfile = 'JumpKeyAction.html',
             tooltip = 'Select what the Jump Power Key will do')
         self.Ctrls['JumpKeyAction'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
-        self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice', contents = [''],
+        self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice',
+            contents = ['', 'Mighty Leap', 'Super Jump',],
             tooltip = "Select the primary jump power to use with the keybinds in this section")
         self.Ctrls['JumpPower'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
         self.superJumpSizer.AddControl(ctlName = 'CJPower', ctlType = 'choice', contents = ['', 'Combat Jumping'],
@@ -411,7 +413,8 @@ class MovementPowers(Page):
             helpfile = 'FlyKeyAction.html',
             tooltip = 'Select what the Fly Power Key will do')
         self.Ctrls['FlyKeyAction'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
-        self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice', contents = [''],
+        self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice',
+            contents = ['', 'Fly', 'Mystic Flight',],
             tooltip = "Select the primary flight power to use with the keybinds in this section")
         self.Ctrls['FlyPower'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
         self.flySizer.AddControl(ctlName = 'HoverPower', ctlType = 'choice', contents = ['', 'Hover', 'Combat Flight'],
@@ -500,11 +503,11 @@ class MovementPowers(Page):
             c[ctrl].ShowEntryIf('Speed on Demand', self.SoDEnabled())
             # Reset these pickers to saved state in case we just reappeared their desired value.  Might be bad.
             c[ctrl].SetStringSelection(self.Profile.Data.get('MovementPowers', {}).get(ctrl, self.Init[ctrl] or ''))
-        self.OnSprintChanged()
-        self.OnJumpChanged()
-        self.OnSpeedChanged()
-        self.OnFlightChanged()
-        self.OnTeleportChanged()
+        wx.CallAfter(self.OnSprintChanged)
+        wx.CallAfter(self.OnJumpChanged)
+        wx.CallAfter(self.OnSpeedChanged)
+        wx.CallAfter(self.OnFlightChanged)
+        wx.CallAfter(self.OnTeleportChanged)
         if evt: evt.Skip()
 
     def OnSprintChanged(self, evt = None):
@@ -530,6 +533,7 @@ class MovementPowers(Page):
             c['DefaultMode'].ShowEntryIf('Speed', self.GetKeyAction('Speed') == ACTION_SOD)
             self.ShowControlGroup(self.superSpeedSizer)
             c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPower('Speed', 'Super Speed'))
+            print(f"In here, with {self.Profile.HasPower('Experimentation', 'Speed of Sound')}")
             c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPower('Experimentation', 'Speed of Sound'))
             c['SpeedPower'].Enable(bool(self.GetKeyAction('Speed')))
             c['SpeedMode'].Show(self.DefaultMode() != "Speed")
@@ -553,7 +557,7 @@ class MovementPowers(Page):
             else:
                 c['SpeedSpecialKey'].Show(False)
 
-            self.OnTeleportChanged() # set up "Jaunt" as TP power if 'Speed of Sound'
+            wx.CallAfter(self.OnTeleportChanged) # set up "Jaunt" as TP power if 'Speed of Sound'
         else:
             self.ShowControlGroup(self.superSpeedSizer, False)
             c['DefaultMode'].ShowEntryIf('Speed', False)
@@ -659,7 +663,7 @@ class MovementPowers(Page):
 
             c['GFlyMode'].Show(self.HasGFly())
 
-            self.OnTeleportChanged() # in case we did something with 'Hover' and need to update TPHover
+            wx.CallAfter(self.OnTeleportChanged) # in case we did something with 'Hover' and need to update TPHover
         else:
             self.ShowControlGroup(self.flySizer, False)
             c['DefaultMode'].ShowEntryIf('Fly', False)

@@ -713,6 +713,9 @@ class MovementPowers(Page):
             # show kheldian sizer, enable controls
             self.ShowControlGroup(self.kheldianSizer)
 
+            c['UseHumanFormPower'].Show(  self.Profile.Server() != 'Homecoming')
+            c['UseHumanFormPower'].Enable(self.Profile.Server() != 'Homecoming')
+
             c['NovaMode'].Enable()
             c['NovaTray'].Enable(bool(self.GetState('NovaMode')))
             c['DwarfMode'].Enable()
@@ -1394,16 +1397,19 @@ class MovementPowers(Page):
         archetype = profile.Archetype()
         resetfile = profile.ResetFile()
         server    = profile.Server()
+        humpower  = ''
 
         #  create the Nova and Dwarf form support files if enabled.
         if archetype == "Peacebringer":
             novaPower = "Bright Nova"
             dwarfPower = "White Dwarf"
-            humanFormShield = "Shining Shield"
+            if server != 'Homecoming' and self.GetState('UseHumanFormPower'):
+                humpower = f"$${self.togon} Shining Shield"
         else: # Warshade
             novaPower = "Dark Nova"
             dwarfPower = "Black Dwarf"
-            humanFormShield = "Gravity Shield"
+            if server != 'Homecoming' and self.GetState('UseHumanFormPower'):
+                humpower = f"$${self.togon} Gravity Shield"
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
 
@@ -1416,8 +1422,6 @@ class MovementPowers(Page):
             if (bool(self.GetState('DwarfMode'))):
                 khelfeedback = f"t $name, Changing to {dwarfPower} Form" if self.GetState('KhelFeedback') else ''
                 novafile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}{t.off}{novaPower}{t.on}{dwarfPower}$$gototray {self.GetState('DwarfTray')}" + profile.BLF('dwarf.txt')))
-
-            humpower = f'$${self.togon} {humanFormShield}' if self.GetState('UseHumanFormPower') else ''
 
             khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ''
             novafile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {novaPower}{humpower}$$gototray {self.GetState('HumanTray')}" + profile.BLF('reset.txt')))
@@ -1450,8 +1454,6 @@ class MovementPowers(Page):
             if (bool(self.GetState('NovaMode'))):
                 khelfeedback = f"t $name, Changing to {novaPower} Form" if self.GetState('KhelFeedback') else ''
                 dwrffile.SetBind(self.Ctrls['NovaMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {dwarfPower}$${self.togon} {novaPower}$$gototray {self.GetState('NovaTray')}" + profile.BLF('nova.txt')))
-
-            humpower = f'$${self.togon} {humanFormShield}' if self.GetState('UseHumanFormPower') else ''
 
             khelfeedback = "t $name, Changing to Human Form, SoD Mode" if self.GetState('KhelFeedback') else ''
             dwrffile.SetBind(self.Ctrls['DwarfMode'].MakeBind(f"{khelfeedback}{fullstop}$${self.togoff} {dwarfPower}{humpower}$$gototray 1" + profile.BLF('reset.txt')))

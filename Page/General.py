@@ -483,11 +483,11 @@ class General(Page):
         PrecacheIcons(self.Profile)
 
     def OnPickPrimaryPowerSet(self, evt) -> None:
-        self.Profile.Mastermind.SynchronizeUI()
         self.Profile.CheckAllConflicts()
         PrecacheIcons(self.Profile)
         self.SetupPowerSelectors()
         self.Ctrls['PrimaryPowers'].ClearPowers()
+        wx.CallAfter(self.Profile.Mastermind.SynchronizeUI)
         evt.Skip()
 
     def OnPickSecondaryPowerSet(self, evt) -> None:
@@ -505,11 +505,11 @@ class General(Page):
 
     def OnPickPoolPower(self, evt) -> None:
         self.UpdatePoolPickers()
-        self.Profile.MovementPowers.SynchronizeUI()
         self.Profile.CheckAllConflicts()
         self.SetupPowerSelectors()
         pname = evt.GetEventObject().CtlName
         self.Ctrls[f'{pname}Powers'].ClearPowers()
+        wx.CallAfter(self.Profile.MovementPowers.SynchronizeUI)
         evt.Skip()
 
     def OnTypeEnable(self, evt = None) -> None:

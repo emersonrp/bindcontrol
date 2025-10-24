@@ -342,7 +342,7 @@ class Profile(wx.Notebook):
                 self.UpdateData(pagename, ctlname, page.GetState(ctlname))
         # This is ugly.  pubsub sigh.
         if evt.GetEventType() == EVT_POWERSELECTOR_CHANGED._getEvtType():
-            self.MovementPowers.SynchronizeUI()
+            wx.CallAfter(self.MovementPowers.SynchronizeUI)
         self.CheckAllConflicts()
 
     def InspectData(self, *args):

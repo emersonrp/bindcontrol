@@ -534,7 +534,6 @@ class MovementPowers(Page):
             c['DefaultMode'].ShowEntryIf('Speed', self.GetKeyAction('Speed') == ACTION_SOD)
             self.ShowControlGroup(self.superSpeedSizer)
             c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPower('Speed', 'Super Speed'))
-            print(f"In here, with {self.Profile.HasPower('Experimentation', 'Speed of Sound')}")
             c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPower('Experimentation', 'Speed of Sound'))
             c['SpeedPower'].Enable(bool(self.GetKeyAction('Speed')))
             c['SpeedMode'].Show(self.DefaultMode() != "Speed")

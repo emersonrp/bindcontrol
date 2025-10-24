@@ -891,7 +891,7 @@ class MovementPowers(Page):
         if not self.Ctrls['NonSoDMode'].IsEnabled(): return
         if not key: return
 
-        turnoff = self.OtherMovementPowers('n')
+        togoff = self.OtherMovementPowers('n')
 
         if (not fb) and self.GetState('Feedback'): feedback = '$$t $name, Non-SoD Mode'
         else:                                      feedback = ''
@@ -901,20 +901,20 @@ class MovementPowers(Page):
             if usejumpfix:
                 self.SoDJumpFix(t,key, self.MakeNonSoDModeKey,"n",bl,file,feedback = feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None,turnoff) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None,togoff) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
 
         elif (bl == "ar"):
             bindload = t.BLF('an')
             if usejumpfix:
                 self.SoDJumpFix(t,key, self.MakeNonSoDModeKey,"n",bl,file,"a",feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None,turnoff) + t.detailhi + t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None,togoff) + t.detailhi + t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
 
         else:
             if usejumpfix:
                 self.SoDJumpFix(t,key, self.MakeNonSoDModeKey,"n",bl,file,"f",feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None,turnoff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None,togoff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
         t.ini = ''
 
     def MakeSprintModeKey(self, t, bl, file, usejumpfix = False, fb = False, doingtoggle = False) -> None:
@@ -1029,9 +1029,9 @@ class MovementPowers(Page):
         if (t.canjmp and bool(self.GetKeyAction('Jump'))):
 
             if istoggle := (self.GetKeyAction('Jump') == 'PT'):
-                togoff = self.DeactivatePowers(self.AllSoDPowers()) if doingtoggle else ''
+                togoff = self.actPower_toggle(None, self.AllSoDPowers()) if doingtoggle else ''
             else:
-                togoff = self.DeactivatePowers(self.OtherMovementPowers('j'))
+                togoff = self.actPower_toggle(None, self.OtherMovementPowers('j'))
 
             feedback = '$$t $name, Super Jump Mode' if self.GetState('Feedback') else ''
 
@@ -1490,8 +1490,7 @@ class MovementPowers(Page):
         extrafile = profile.GetBindFile('extra.txt')
         config    = wx.ConfigBase.Get()
         default   = self.SoDModeInfo(self.DefaultMode())
-        turnoff   = self.AllSoDPowers()
-        on_off    = self.actPower_toggle(default['sta'], turnoff)
+        on_off    = self.actPower_toggle(default['sta'], self.AllSoDPowers())
 
         # We do this over two files so it doesn't get too long if there are
         # multiple SoD pools and on_off has like five powers in it.
@@ -1592,10 +1591,6 @@ class MovementPowers(Page):
 
                                 ### Jump Mode
                                 if self.GetKeyAction('Jump'):
-                                    # TODO - I think this is because we used to have the notion of
-                                    # "Simple CS/SJ Toggle" but now that's supposed to be integrated
-                                    # so this might be The Wrong Way.
-                                    jturnoff = None if (t.jump == t.cjmp) else {t.jumpifnocj}
                                     self.MakeSoDFile({
                                         't'          : t,
                                         'key'        : t.JumpModeKey,
@@ -1604,7 +1599,6 @@ class MovementPowers(Page):
                                         'stationary' : t.cjmp,
                                         'modestr'    : "Jump",
                                         'flight'     : "Jump",
-                                        'turnoff'    : jturnoff,
                                     })
 
                                 ### Fly Mode
@@ -1678,8 +1672,7 @@ class MovementPowers(Page):
         # existing contents there to: turn off movement; feedback; reset.txt; default SoD
         extrafile = self.Profile.GetBindFile('extra.txt')
         default   = self.SoDModeInfo(self.DefaultMode())
-        turnoff   = self.AllSoDPowers()
-        on_off    = self.actPower_toggle(default['sta'], turnoff)
+        on_off    = self.actPower_toggle(default['sta'], self.AllSoDPowers())
 
         config = wx.ConfigBase.Get()
 
@@ -2264,30 +2257,22 @@ class MovementPowers(Page):
         }.get(self.Ctrls[powertype + 'KeyAction'].GetStringSelection(), '')
 
     # used to do a "turn off all SoD" when toggling on a non-SoD power
-    #
-    # TODO: I note we could use DeactivatePowers, below, or
-    # self.actPower_* also can take sets as parameters
-    #
-    # TODO:  does this want the Sprint Power added?  Maybe.
     def AllSoDPowers(self) -> set:
         powers = set()
         if self.GetKeyAction('Jump') == 'SoD':
-            if jp := self.GetState('JumpPower'):  powers.add(jp)
-            if cp := self.GetState('CJPower'):    powers.add(cp)
+            if jp := self.GetState('JumpPower'):   powers.add(jp)
+            if cp := self.GetState('CJPower'):     powers.add(cp)
         if self.GetKeyAction('Fly') == 'SoD':
-            if fp := self.GetState('FlyPower'):   powers.add(fp)
-            if hp := self.GetState('HoverPower'): powers.add(hp)
+            if fp := self.GetState('FlyPower'):    powers.add(fp)
+            if hp := self.GetState('HoverPower'):  powers.add(hp)
         if self.GetKeyAction('Speed') == 'SoD':
-            if sp := self.GetState('SpeedPower'): powers.add(sp)
+            if sp := self.GetState('SpeedPower'):  powers.add(sp)
+        if self.GetKeyAction('Sprint') == 'SoD':
+            if rp := self.GetState('SprintPower'): powers.add(rp)
         return powers
 
     # powers that I own that are not in the current context.
     # For turning everyone else off when we turn something on
-    #
-    # TODO: I note we could use DeactivatePowers, below, or
-    # self.actPower_* also can take sets as parameters
-    #
-    # TODO:  does this want the Sprint Power added?  Maybe.
     def OtherMovementPowers(self, context: Literal['j', 'f', 's', 'n', 'r']) -> set:
         powers = set()
         # the "and self.*KeyAction" in this case means "and BC is managing this
@@ -2295,20 +2280,16 @@ class MovementPowers(Page):
         # manually via power trays or Simple Binds or something.  I think we're just
         # going to have to live with that.
         if context != 'j' and self.GetKeyAction('Jump'):
-            if jp := self.GetState('JumpPower'):  powers.add(jp)
-            if cp := self.GetState('CJPower'):    powers.add(cp)
+            if jp := self.GetState('JumpPower'):    powers.add(jp)
+            if cp := self.GetState('CJPower'):      powers.add(cp)
         if context != 'f' and self.GetKeyAction('Fly'):
-            if fp := self.GetState('FlyPower'):   powers.add(fp)
-            if hp := self.GetState('HoverPower'): powers.add(hp)
+            if fp := self.GetState('FlyPower'):     powers.add(fp)
+            if hp := self.GetState('HoverPower'):   powers.add(hp)
         if context != 's' and self.GetKeyAction('Speed'):
-            if sp := self.GetState('SpeedPower'): powers.add(sp)
+            if sp := self.GetState('SpeedPower'):   powers.add(sp)
         if context != 'r':
             if rp := self.GetState('SprintPower') : powers.add(rp)
         return powers
-
-    # make a 'turn us all off' string, used with the above two methods
-    def DeactivatePowers(self, powers: set) -> str:
-        return ''.join(f'$${self.togoff} {p}' for p in powers)
 
     # get blf etc info for given SoD Mode, typically Default but w/e
     def SoDModeInfo(self, Mode):

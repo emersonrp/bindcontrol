@@ -497,7 +497,7 @@ class MovementPowers(Page):
     def OnSpeedOnDemandChanged(self, evt = None) -> None:
         c = self.Ctrls
         sodmode = self.DefaultMode()
-        c['NonSoDMode'].Show(bool(sodmode))
+        c['NonSoDMode'].Show(bool(sodmode)) # Hide the "turn off SoD" key if "No SoD" is the default.
         for ctrl in ['DefaultMode', 'NonSoDMode', 'MouseChord', 'Feedback', ]:
             c[ctrl].Enable(self.SoDEnabled())
         for ctrl in ['SprintKeyAction', 'JumpKeyAction', 'FlyKeyAction', 'SpeedKeyAction', ]:
@@ -634,7 +634,7 @@ class MovementPowers(Page):
             c['HoverPower'].Show  (bool(self.GetKeyAction('Fly')) and c['HoverPower'].GetCount() > 1)
             c['HoverPower'].Enable(bool(self.GetKeyAction('Fly')) and c['HoverPower'].GetCount() > 1)
 
-            c['FlyMode'].Show((self.GetState('FlyPower') or self.GetState('HoverPower')) and self.DefaultMode() != "Fly")
+            c['FlyMode'].Show(bool(self.GetState('FlyPower') or self.GetState('HoverPower')) and self.DefaultMode() != "Fly")
             c['FlyMode'].Enable(bool(self.GetKeyAction('Fly')))
 
             c['FlyMode'].SetToolTip({
@@ -652,7 +652,7 @@ class MovementPowers(Page):
                 c['FlySpecialKey'].SetToolTip('Activate Afterburner')
                 c['FlySpecialKey'].Show()
 
-            if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or bool(self.GetState('HoverPower')))):
+            if (archetype == "Peacebringer" and ((self.GetState('FlyPower') == 'Energy Flight') or self.GetState('HoverPower') == 'Combat Flight')):
                 c['FlySpecialPower'].SetValue('Quantum Maneuvers')
                 c['FlySpecialKey'].CtlLabel.SetLabel('Quantum Maneuvers:')
                 c['FlySpecialKey'].SetToolTip('Activate Quantum Maneuvers')
@@ -756,22 +756,13 @@ class MovementPowers(Page):
         return menu
 
     def SynchronizeUI(self, evt = None) -> None:
-
         self.OnDetailsCameraChanged()
 
         self.OnTempChanged()
 
         self.OnKheldianChanged()
 
-        self.OnSpeedOnDemandChanged()
-
-        self.OnSpeedChanged()
-
-        self.OnJumpChanged()
-
-        self.OnFlightChanged()
-
-        self.OnTeleportChanged()
+        self.OnSpeedOnDemandChanged() # does all of the others
 
         self.Fit()
 

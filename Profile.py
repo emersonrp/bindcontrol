@@ -57,7 +57,10 @@ class Profile(wx.Notebook):
                 newProfile.buildUIFromData()
                 newProfile.CheckAllConflicts()
         except Exception as e:
-            wx.LogError(f"Problem loading profile: {e} - this is a bug.")
+            if wx.ConfigBase.Get().ReadBool('CrashOnProfileError'):
+                raise e
+            else:
+                wx.LogError(f"Problem loading profile: {e} - this is a bug.")
 
         return newProfile
 

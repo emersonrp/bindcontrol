@@ -68,6 +68,7 @@ class Main(wx.Frame):
         if not config.Exists('StartWithLastProfile'): config.WriteBool('StartWithLastProfile', True)
         if not config.Exists('SaveSizeAndPosition') : config.WriteBool('SaveSizeAndPosition', True)
         if not config.Exists('VerboseBLF')          : config.WriteBool('VerboseBLF', False)
+        if not config.Exists('CrashOnProfileError') : config.WriteBool('CrashOnProfileError', False)
         if not config.Exists('CrashOnBindError')    : config.WriteBool('CrashOnBindError', False)
         if not config.Exists('ShowInspector')       : config.WriteBool('ShowInspector', False)
         if not config.Exists('ShowDebugMessages')   : config.WriteBool('ShowDebugMessages', False)

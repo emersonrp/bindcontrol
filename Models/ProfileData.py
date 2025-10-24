@@ -263,6 +263,12 @@ class ProfileData(dict):
 
                     self['CustomBinds'][i] = custombind
 
+        # if we're loading a pre-cretaceous profile, it won't have Server which will crash things
+        if not self.get('General', {}).get('Server'):
+            if 'General' not in self:
+                self['General'] = {}
+            self['General']['Server'] = 'Homecoming'
+
     def doSaveAsDefault(self) -> None:
         # if this blows up, calling code should try/except it
         self.Filepath = None

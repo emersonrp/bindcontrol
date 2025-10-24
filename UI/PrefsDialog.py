@@ -187,6 +187,17 @@ class PrefsDialog(wx.Dialog):
         setattr(verboseBLFLabel, 'CB', self.VerboseBLF)
         verboseBLFLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
+        crashOnProfileErrorLabel = statictextclass(debugPanel, label = "Crash on loading profile error:")
+        debugSizer.Add(crashOnProfileErrorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        self.CrashOnProfileError = wx.CheckBox(debugPanel)
+        self.CrashOnProfileError.SetValue(config.ReadBool('CrashOnProfileError'))
+        tooltip = "Crash and raise a stack trace if there is an error loading a Profile.  You want this turned off unless you are doing deep debugging."
+        crashOnProfileErrorLabel.SetToolTip(tooltip)
+        self.CrashOnProfileError.SetToolTip(tooltip)
+        debugSizer.Add(self.CrashOnProfileError, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+        setattr(crashOnProfileErrorLabel, 'CB', self.CrashOnProfileError)
+        crashOnProfileErrorLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
+
         crashOnBindErrorLabel = statictextclass(debugPanel, label = "Crash on write-binds error:")
         debugSizer.Add(crashOnBindErrorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.CrashOnBindError = wx.CheckBox(debugPanel)
@@ -372,6 +383,7 @@ class PrefsDialog(wx.Dialog):
             config.Write('ExtraMod4', self.ExtraModPicker4.GetStringSelection())
 
             config.WriteBool('VerboseBLF', self.VerboseBLF.GetValue())
+            config.WriteBool('CrashOnProfileError', self.CrashOnProfileError.GetValue())
             config.WriteBool('CrashOnBindError', self.CrashOnBindError.GetValue())
             config.WriteBool('VerboseCustomBinds', self.VerboseCustomBinds.GetValue())
             config.WriteBool('ShowInspector', self.ShowInspector.GetValue())

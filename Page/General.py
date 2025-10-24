@@ -412,7 +412,12 @@ class General(Page):
         c['Epic'].Enable(arch != "Peacebringer" and arch != "Warshade")
 
         if arch == "Peacebringer" or arch == "Warshade":
-            self.UpdatePoolPickers()
+            # Kheldians have just one pick for Pri / Sec, so go ahead and pick those
+            c['Primary'].SetSelection(0)
+            c['Secondary'].SetSelection(0)
+            # also they have access to fewer pool picks on Rebirth
+            if self.Profile.Server() == 'Rebirth':
+                wx.CallAfter(self.UpdatePoolPickers)
 
         if getattr(self.Profile, 'Mastermind', None):
             wx.CallAfter(self.Profile.Mastermind.SynchronizeUI)

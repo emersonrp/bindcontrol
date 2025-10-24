@@ -1287,7 +1287,7 @@ class MovementPowers(Page):
         if self.Ctrls['JumpSpecialKey'].IsEnabled():
             resetfile.SetBind(self.Ctrls['JumpSpecialKey'] .MakeBind(f'powexecname {self.GetState("JumpSpecialPower")}'))
 
-        if self.IsKheldian(): self.DoKheldianBinds(t, tpActivator, windowhide, windowshow)
+        if self.IsKheldian(): self.DoKheldianBinds(t)
 
         ###### Basic travel power binds, not SoD
         # OK, first, let's do these trivial toggle binds if and only if we aren't doing SoD at all
@@ -1386,7 +1386,7 @@ class MovementPowers(Page):
         return True
 
     ###### Kheldian power setup
-    def DoKheldianBinds(self, t, tpActivator, windowhide, windowshow):
+    def DoKheldianBinds(self, t):
         profile   = self.Profile
         archetype = profile.Archetype()
         resetfile = profile.ResetFile()

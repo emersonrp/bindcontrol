@@ -4,14 +4,15 @@ import Util.Incarnate
 
 Server = ''
 
-Alignments = [
-    'Hero',
-    'Villain',
-    'Vigilante',
-    'Rogue',
-    'Resistance',
-    'Loyalist',
-]
+# Alignment -> color tuple
+Alignments = {
+    'Hero'       : ( 35, 130, 212),
+    'Villain'    : (225,  65,  65),
+    'Vigilante'  : (241, 213, 114),
+    'Rogue'      : (180, 180, 180),
+    'Resistance' : ( 30, 240, 255),
+    'Loyalist'   : (255, 226,  56),
+}
 
 Origins = ['Magic','Mutation','Natural','Science','Technology']
 

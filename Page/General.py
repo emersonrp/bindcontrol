@@ -357,15 +357,7 @@ class General(Page):
             alignment = 'Hero'
             self.SetState('Alignment', 'Hero')
 
-        # TODO put this in Gamedata?
-        bgcolor = wx.Colour({
-            'Hero'       : ( 35, 130, 212),
-            'Villain'    : (225,  65,  65),
-            'Vigilante'  : (241, 213, 114),
-            'Rogue'      : (180, 180, 180),
-            'Resistance' : ( 30, 240, 255),
-            'Loyalist'   : (255, 226,  56),
-        }[alignment])
+        bgcolor = wx.Colour(GameData.Alignments[alignment])
         self.bannerPanel.SetBackgroundColour(bgcolor)
         self.NameDisplay.SetBackgroundColour(bgcolor)
         # Have to do this dance to make the colors refresh on Windows.  Ugh.

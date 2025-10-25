@@ -1709,7 +1709,7 @@ class MovementPowers(Page):
         if (toggleon or toggleoff):
             toggle = self.actPower_toggle(toggleon,[toggleoff,toggleoff2])
 
-        newbits = t.KeyState({'toggle' : 'space'})
+        newbits = t.KeyState(toggle = 'space')
         bl = f"{bl}{newbits}.txt"
 
         if t.space == 1: ini = '-down'
@@ -1762,7 +1762,7 @@ class MovementPowers(Page):
         if (toggleon or toggleoff):
             toggle = self.actPower_toggle(toggleon,toggleoff)
 
-        newbits = t.KeyState({'toggle' : 'X'})
+        newbits = t.KeyState(toggle = 'X')
         bl = f"{bl}{newbits}.txt"
 
         if t.X == 1: ini = "-down"
@@ -1823,7 +1823,7 @@ class MovementPowers(Page):
         if (toggleon or toggleoff):
             toggle = self.actPower_toggle(toggleon,toggleoff)
 
-        newbits = t.KeyState({'toggle' : 'W'})
+        newbits = t.KeyState(toggle = 'W')
         bl = f"{bl}{newbits}.txt"
 
         if t.W == 1: ini = "-down"
@@ -1894,7 +1894,7 @@ class MovementPowers(Page):
         if (toggleon or toggleoff) :
             toggle = self.actPower_toggle(toggleon,toggleoff)
 
-        newbits = t.KeyState({'toggle' : 'S'})
+        newbits = t.KeyState(toggle = 'S')
         bl = f"{bl}{newbits}.txt"
 
         if (t.S == 1) : ini = "-down"
@@ -1959,7 +1959,7 @@ class MovementPowers(Page):
         if (toggleon or toggleoff) :
             toggle = self.actPower_toggle(toggleon,toggleoff)
 
-        newbits = t.KeyState({'toggle' : 'A'})
+        newbits = t.KeyState(toggle = 'A')
         bl = f"{bl}{newbits}.txt"
 
         if (t.A == 1): ini = '-down'

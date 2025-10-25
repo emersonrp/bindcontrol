@@ -82,14 +82,12 @@ class tObject(dict):
 
     # return binary "011010" string of which keys are "on";
     # optionally flipping one of them firsself.
-    def KeyState(self, p : dict|None = None):
-        p = p or {}
-        togglebit = p.get('toggle', '')
+    def KeyState(self, toggle: str = ''):
 
         ret = ''
         for key in ('space','X','W','S','A','D'):
             retthing = int(getattr(self, key))
-            ret = ret + (str(1 - retthing) if key == togglebit else str(retthing))
+            ret = ret + (str(1 - retthing) if key == toggle else str(retthing))
 
         return ret
 

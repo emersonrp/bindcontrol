@@ -2018,7 +2018,7 @@ class MovementPowers(Page):
         if (toggleon or toggleoff) :
             toggle = self.actPower_toggle(toggleon,toggleoff)
 
-        newbits = t.KeyState({'toggle' : 'D'})
+        newbits = t.KeyState(toggle = 'D')
         bl = f"{bl}{newbits}.txt"
 
         if (t.D == 1): ini = '-down'

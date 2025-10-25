@@ -960,34 +960,31 @@ class MovementPowers(Page):
 
             if dotogglefix:
                 self.SoDToggleFix(t, key, self.MakeSprintModeKey, code, bl, file, feedback = feedback)
+            elif usejumpfix:
+                self.SoDJumpFix  (t, key, self.MakeSprintModeKey, "r",  bl, file, feedback = feedback)
             else:
                 if t.horizkeys: sprint = t.sprint
                 else:           sprint = ''
 
-                if usejumpfix:
-                    self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,feedback = feedback)
-                else:
-                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(sprint, togoff, start = True) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(sprint, togoff, start = True) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
 
         elif (bl == "ar"):
             bindload  = t.BLF('a' + code)
             if dotogglefix:
                 self.SoDToggleFix(t, key, self.MakeSprintModeKey, code, bl, file, "a", feedback)
+            elif usejumpfix:
+                self.SoDJumpFix(  t, key, self.MakeSprintModeKey, "r",  bl, file, "a", feedback)
             else:
-                if usejumpfix:
-                    self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,"a",feedback)
-                else:
-                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, togoff, start=True) + '$$up 0' + t.detailhi +  t.runcamdist + t.dirs('DLR') + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, togoff, start=True) + '$$up 0' + t.detailhi +  t.runcamdist + t.dirs('DLR') + feedback + bindload)
 
         else: # bl = 'fr'
             bindload = t.BLF('f' + code)
             if dotogglefix:
                 self.SoDToggleFix(t, key, self.MakeSprintModeKey, code, bl, file, "f", feedback)
+            elif usejumpfix:
+                self.SoDJumpFix(  t, key, self.MakeSprintModeKey, "r",  bl, file, "f", feedback)
             else:
-                if usejumpfix:
-                    self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,"f",feedback)
-                else:
-                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, togoff, start=True) + '$$up 0' + t.detailhi + t.runcamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, togoff, start=True) + '$$up 0' + t.detailhi + t.runcamdist + feedback + bindload)
 
         t.ini = ''
 
@@ -1109,32 +1106,29 @@ class MovementPowers(Page):
                 else:           ton = t.hover
 
                 if dotogglefix:
-                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
+                    self.SoDToggleFix(t, key, self.MakeFlyModeKey, code, bl, file, feedback = feedback)
+                elif usejumpfix:
+                    self.SoDJumpFix(  t, key, self.MakeFlyModeKey, code, bl, file, feedback = feedback)
                 else:
-                    if usejumpfix:
-                        self.SoDJumpFix(t,key,self.MakeFlyModeKey,code,bl,file,feedback = feedback)
-                    else:
-                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(ton, togoff, start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(ton, togoff, start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "af"):
                 bindload = t.BLF(f'a{code}')
                 if dotogglefix:
-                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
+                    self.SoDToggleFix(t, key, self.MakeFlyModeKey, code, bl, file, "a", feedback)
+                elif usejumpfix:
+                    self.SoDJumpFix(  t, key, self.MakeFlyModeKey, code, bl, file, "a", feedback)
                 else:
-                    if usejumpfix:
-                        self.SoDJumpFix(t,key,self.MakeFlyModeKey,code,bl,file,"a",feedback)
-                    else:
-                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx, togoff, start=True) + t.dirs('DLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx, togoff, start=True) + t.dirs('DLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             else: # bl == "ff"
                 bindload = t.BLF(f'f{code}')
                 if dotogglefix:
-                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
+                    self.SoDToggleFix(t, key, self.MakeFlyModeKey, code, bl, file, "f", feedback)
+                elif usejumpfix:
+                    self.SoDJumpFix(  t, key, self.MakeFlyModeKey, code, bl, file, "f", feedback)
                 else:
-                    if usejumpfix:
-                        self.SoDJumpFix(t,key,self.MakeFlyModeKey,code,bl,file,"f",feedback)
-                    else:
-                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx, togoff, start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx, togoff, start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
 

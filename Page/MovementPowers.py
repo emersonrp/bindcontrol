@@ -946,7 +946,7 @@ class MovementPowers(Page):
         if (not skipfeedback) and self.GetState('Feedback'): feedback = '$$t $name, Sprint-SoD Mode'
         else:                                      feedback = ''
 
-        if istoggle := self.GetKeyAction('Speed') == ACTION_PT:
+        if istoggle := self.GetKeyAction('Sprint') == ACTION_PT:
             code   = 'n'
             togoff = self.AllSoDPowers() if doingtoggle else ''
         else: # is SoD

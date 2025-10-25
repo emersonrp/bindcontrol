@@ -19,8 +19,7 @@ def test_KeyState():
     t.S = 1
     t.A = 1
     assert t.KeyState() == '010110'
-    p = {'toggle' : 'S'}
-    assert t.KeyState(p) == '010010'
+    assert t.KeyState(toggle = 'S') == '010010'
 
 def test_dirs():
     t = tObject(FakeProfile('Homecoming'))

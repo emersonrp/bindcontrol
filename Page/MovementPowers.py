@@ -431,7 +431,8 @@ class MovementPowers(Page):
 
         ##### TELEPORT
         self.teleportSizer = ControlGroup(self, self, 'Teleport Settings')
-        self.teleportSizer.AddControl(ctlName = "TPPower", ctlType = 'choice', contents = [''],
+        self.teleportSizer.AddControl(ctlName = "TPPower", ctlType = 'choice',
+            contents = ['', 'Teleport', 'Jaunt', 'Shadow Step', 'White Dwarf Step', 'Black Dwarf Step'],
             tooltip = "Select the teleport power to use with the keybinds in this section")
         self.Ctrls['TPPower'].Bind(wx.EVT_CHOICE, self.OnTeleportChanged)
         if server == "Homecoming":
@@ -957,7 +958,7 @@ class MovementPowers(Page):
             bindload  = t.BLF(code)
 
             if dotogglefix:
-                self.ToggleFix(t, key, self.MakeSprintModeKey, code, bl, file, feedback = feedback)
+                self.SoDToggleFix(t, key, self.MakeSprintModeKey, code, bl, file, feedback = feedback)
             else:
                 if t.horizkeys: sprint = t.sprint
                 else:           sprint = ''
@@ -970,7 +971,7 @@ class MovementPowers(Page):
         elif (bl == "ar"):
             bindload  = t.BLF('a' + code)
             if dotogglefix:
-                self.ToggleFix(t, key, self.MakeSprintModeKey, code, bl, file, "a", feedback)
+                self.SoDToggleFix(t, key, self.MakeSprintModeKey, code, bl, file, "a", feedback)
             else:
                 if usejumpfix:
                     self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,"a",feedback)
@@ -980,7 +981,7 @@ class MovementPowers(Page):
         else: # bl = 'fr'
             bindload = t.BLF('f' + code)
             if dotogglefix:
-                self.ToggleFix(t, key, self.MakeSprintModeKey, code, bl, file, "f", feedback)
+                self.SoDToggleFix(t, key, self.MakeSprintModeKey, code, bl, file, "f", feedback)
             else:
                 if usejumpfix:
                     self.SoDJumpFix(t,key, self.MakeSprintModeKey,"r",bl,file,"f",feedback)
@@ -1010,7 +1011,7 @@ class MovementPowers(Page):
             if (bl == 's'):
                 bindload  = t.BLF(code)
                 if dotogglefix:
-                    self.ToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, feedback = feedback)
+                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, feedback = feedback)
                 else:
                     if usejumpfix:
                         self.SoDJumpFix(t,key,self.MakeSpeedModeKey,code,bl,file,feedback = feedback)
@@ -1020,7 +1021,7 @@ class MovementPowers(Page):
             elif (bl == "as"):
                 bindload  = t.BLF('a' + code)
                 if dotogglefix:
-                    self.ToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "a", feedback)
+                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "a", feedback)
                 else:
                     if usejumpfix:
                         self.SoDJumpFix(t,key,self.MakeSpeedModeKey,code,bl,file,"a",feedback)
@@ -1030,7 +1031,7 @@ class MovementPowers(Page):
             else:  # bl == "fs"
                 bindload  = t.BLF('f' + code)
                 if dotogglefix:
-                    self.ToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
+                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
                 else:
                     if usejumpfix:
                         self.SoDJumpFix(t,key,self.MakeSpeedModeKey,code,bl,file,"f",feedback)
@@ -1107,7 +1108,7 @@ class MovementPowers(Page):
                 else:           ton = t.hover
 
                 if dotogglefix:
-                    self.ToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
+                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
                 else:
                     if usejumpfix:
                         self.SoDJumpFix(t,key,self.MakeFlyModeKey,code,bl,file,feedback = feedback)
@@ -1117,7 +1118,7 @@ class MovementPowers(Page):
             elif (bl == "af"):
                 bindload = t.BLF(f'a{code}')
                 if dotogglefix:
-                    self.ToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
+                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
                 else:
                     if usejumpfix:
                         self.SoDJumpFix(t,key,self.MakeFlyModeKey,code,bl,file,"a",feedback)
@@ -1127,7 +1128,7 @@ class MovementPowers(Page):
             else: # bl == "ff"
                 bindload = t.BLF(f'f{code}')
                 if dotogglefix:
-                    self.ToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
+                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
                 else:
                     if usejumpfix:
                         self.SoDJumpFix(t,key,self.MakeFlyModeKey,code,bl,file,"f",feedback)
@@ -1298,6 +1299,8 @@ class MovementPowers(Page):
         ###### Basic travel power binds, not SoD
         # OK, first, let's do these trivial toggle binds if and only if we aren't doing SoD at all
         # The SoD case is handled inside make*ModeKey()
+        #
+        # TODO:  do we want "turn off other powers" added here?
         if not self.HasAnySoD():
             if self.GetKeyAction('Speed') == ACTION_PT:
                 resetfile.SetBind(self.Ctrls["SpeedMode"].MakeBind(f'powexecname "{self.GetState("SpeedPower")}"'))
@@ -1634,26 +1637,6 @@ class MovementPowers(Page):
         t.lefx = '$$left 1'
         t.rig  = '$$right 0'
         t.rigx = '$$right 1'
-
-    # clear the movement keys to basid defs;  for non-SoD use cases
-    def ClearMovementKeys(self, file):
-        playerturn = 'playerturn' if (self.GetState('PlayerTurn')) else ''
-        if (self.GetState('Left')):
-            file.SetBind(self.Ctrls['Left'].MakeBind("+left"))
-        if (self.GetState('Right')):
-            file.SetBind(self.Ctrls['Right'].MakeBind("+right"))
-        if (self.GetState('Up')):
-            file.SetBind(self.Ctrls['Up'].MakeBind("+up"))
-        if (self.GetState('Down')):
-            file.SetBind(self.Ctrls['Down'].MakeBind("+down"))
-        if (self.GetState('Forward')):
-            file.SetBind(self.Ctrls['Forward'].MakeBind(["+forward", playerturn]))
-        if (self.GetState('Back')):
-            file.SetBind(self.Ctrls['Back'].MakeBind("+backward"))
-        if (self.GetState('Follow')):
-            file.SetBind(self.Ctrls['Follow'].MakeBind("+follow"))
-        if (self.GetState('AutoRun')):
-            file.SetBind(self.Ctrls['AutoRun'].MakeBind("++autorun"))
 
     # Reset now goes back to the Default Mode from wherever you are.
     def SoDResetKey(self, curfile):
@@ -2171,7 +2154,7 @@ class MovementPowers(Page):
         # make the "key down" bind
         curfile.SetBind(key, "Jump Fix", self, "+" + feedback + self.actPower_name(t.cjmp) + t.BLF(f'{afmode}j', suffix))
 
-    def ToggleFix(self, t, key, makeModeKey, suffix, bl, curfile, afmode = '', feedback = '') -> None:
+    def SoDToggleFix(self, t, key, makeModeKey, suffix, bl, curfile, afmode = '', feedback = '') -> None:
         # if we are a toggle bind, *KeyAction == ACTION_PT, then
         # we want to make a press / release keybind pair.  On press:
         #   "+$$"
@@ -2207,7 +2190,7 @@ class MovementPowers(Page):
             tglfile  = self.Profile.GetBindFile( t.bfpath(afmode + powercode, suffix) )
             makeModeKey(t, bl, tglfile, skipfeedback = True, doingtoggle = True)
         else:
-            raise Exception("Unknown callback in ToggleFix.  This is a bug.")
+            raise Exception("Unknown callback in SoDToggleFix.  This is a bug.")
 
         curfile.SetBind(key, "Toggle Fix", self, "+" + feedback + self.actPower_name('', power) + t.BLF(f'{afmode}{powercode}', suffix))
 

@@ -2199,7 +2199,7 @@ class MovementPowers(Page):
         return self.Ctrls['EnableSoD'].IsChecked()
 
     def DefaultMode(self) -> str:
-        return self.Ctrls['DefaultMode'].GetStringSelection()
+        return self.Ctrls['DefaultMode'].GetStringSelection() or 'NonSoD'
 
     def HasGFly(self) -> bool:
         return self.Profile.HasPower('Flight', 'Group Fly')
@@ -2230,10 +2230,12 @@ class MovementPowers(Page):
 
     # Get what state the KeyAction picker is in for a given *Mode key.
     def GetKeyAction(self, powertype: Literal['Jump', 'Fly', 'Speed', 'Sprint']) -> int:
+        actionctrl = self.Ctrls[powertype + 'KeyAction']
+        if not actionctrl.IsEnabled(): return 0
         return {
             'Speed on Demand' : ACTION_SOD,
             'Power Toggle'    : ACTION_PT,
-        }.get(self.Ctrls[powertype + 'KeyAction'].GetStringSelection(), 0)
+        }.get(actionctrl.GetStringSelection(), 0)
 
     # used to do a "turn off all SoD" when toggling on a non-SoD power
     def AllSoDPowers(self) -> set:

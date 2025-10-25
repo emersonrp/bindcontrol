@@ -677,7 +677,7 @@ class MovementPowers(Page):
 
     def OnTeleportChanged(self, evt = None) -> None:
         c = self.Ctrls
-        if (self.HasTPPowers()):
+        if (self.HasTP()):
             self.ShowControlGroup(self.teleportSizer)
             c['TPPower'].ShowEntryIf('Teleport',         self.Profile.HasPower('Teleportation', 'Teleport'))
             c['TPPower'].ShowEntryIf('Translocation',    self.Profile.HasPower('Sorcery', 'Translocation'))
@@ -1328,14 +1328,14 @@ class MovementPowers(Page):
         normalTPPower = self.GetState('TPPower')
 
         # I'm not sure why we create these nop binds.  Are they necessary?
-        if (self.HasTPPowers() and not normalTPPower):
+        if (self.HasTP() and not normalTPPower):
             resetfile.SetBind(self.Ctrls['TPBindKey'].MakeBind('nop'))
             resetfile.SetBind(self.Ctrls['TPComboKey'].MakeBind('nop'))
             if server == "Rebirth":
                 resetfile.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('nop'))
 
         # personal tp binds
-        if self.HasTPPowers() and bool(normalTPPower):
+        if self.HasTP() and bool(normalTPPower):
             tphovermodeswitch = ''
             if t.tphover:
                 tphovermodeswitch = t.bl('f') + "000000.txt"
@@ -1364,7 +1364,7 @@ class MovementPowers(Page):
                 tp_on2.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('-$$powexecname ' + normalTPPower + profile.BLF('tp','tp_on1.txt')))
 
         # team teleport binds
-        if (self.HasTPPowers() and self.HasTTP() and teamTPPower) :
+        if (self.HasTP() and self.HasTTP() and teamTPPower) :
 
             resetfile.SetBind(self.Ctrls['TTPBindKey'].MakeBind(tpActivator + teamTPPower))
 
@@ -2160,7 +2160,7 @@ class MovementPowers(Page):
         # It's going to be in the new file, which is loaded by the "key down" bind below,
         # and it, itself, when "key up," will load the intended BLF().  We've shimmed a
         # two-part press/release combo into the place of just a simple keypress bind.
-        t.ini    = '-down$$'
+        t.ini    = '+$$'
 
         # Also, I'm not 100% clear why we do this specifically with Jump Mode.  Why do we
         # need this press/release thing specifically here?  Bind length, with the feedback
@@ -2170,24 +2170,29 @@ class MovementPowers(Page):
         # because we will be giving the feedback in the "key down" bind.
         makeModeKey(t, bl, tglfile, skipfeedback = True)
         # make the "key down" bind
-        curfile.SetBind(key, "Jump Fix", self, "+down" + feedback + self.actPower_name(t.cjmp) + t.BLF(f'{afmode}j', suffix))
+        curfile.SetBind(key, "Jump Fix", self, "+" + feedback + self.actPower_name(t.cjmp) + t.BLF(f'{afmode}j', suffix))
 
     def ToggleFix(self, t, key, makeModeKey, suffix, bl, curfile, afmode = '', feedback = '') -> None:
-        # What we want to do:  if we are a toggle bind, *KeyAction == ACTION_PT, then
+        # if we are a toggle bind, *KeyAction == ACTION_PT, then
         # we want to make a press / release keybind pair.  On press:
-        #   "+down$$"
+        #   "+$$"
         #   * give feedback
         #   * toggle the toggle power
         #   * blf a second file
         # in the second file:
-        #   * "-down$$"
+        #   * "+$$"
         #   * turn off SoD powers
         #   * BLF the N/N(keystate) file to turn off the movement keys' SoD stuff
-        # OK, now on press we toggle the indicated power, and on release, we turn
+        # So, now, on press we toggle the indicated power, and on release, we turn
         # off SoD (every time, whatever)
-        t.ini = '-down$$'
+        t.ini = '+$$'
 
-        if makeModeKey == self.MakeSpeedModeKey:
+        if makeModeKey == self.MakeSprintModeKey:
+            powercode = 'r'
+            power = t.sprint
+            tglfile  = self.Profile.GetBindFile( t.bfpath(afmode + powercode, suffix) )
+            makeModeKey(t, bl, tglfile, skipfeedback = True, doingtoggle = True)
+        elif makeModeKey == self.MakeSpeedModeKey:
             powercode = 's'
             power = t.speed
             tglfile  = self.Profile.GetBindFile( t.bfpath(afmode + powercode, suffix) )
@@ -2205,7 +2210,7 @@ class MovementPowers(Page):
         else:
             raise Exception("Unknown callback in ToggleFix.  This is a bug.")
 
-        curfile.SetBind(key, "Toggle Fix", self, "+down" + feedback + self.actPower_name('', power) + t.BLF(f'{afmode}{powercode}', suffix))
+        curfile.SetBind(key, "Toggle Fix", self, "+" + feedback + self.actPower_name('', power) + t.BLF(f'{afmode}{powercode}', suffix))
 
     ### convenience methods
     def SoDEnabled(self) -> bool:
@@ -2217,9 +2222,9 @@ class MovementPowers(Page):
     def HasGFly(self) -> bool:
         return self.Profile.HasPower('Flight', 'Group Fly')
 
-    def HasTPPowers(self):
+    def HasTP(self):
         return (self.Profile.HasPower('Teleportation', 'Teleport')
-                    or self.Profile.HasPower('Sorcery', 'Translocation')
+                    or self.Profile.HasPower('Sorcery', 'Mystic Flight')
                     or self.GetState('SpeedPower') == 'Speed of Sound'
                     or self.IsKheldian()
                 )

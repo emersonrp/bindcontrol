@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 if TYPE_CHECKING:
     from pathlib import Path, PureWindowsPath
 from BLF import BLF
@@ -82,7 +82,7 @@ class tObject(dict):
 
     # return binary "011010" string of which keys are "on";
     # optionally flipping one of them firsself.
-    def KeyState(self, toggle: str = ''):
+    def KeyState(self, toggle: Literal['space', 'X', 'W', 'S', 'A', 'D', ''] = ''):
 
         ret = ''
         for key in ('space','X','W','S','A','D'):

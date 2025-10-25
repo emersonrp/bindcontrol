@@ -952,7 +952,7 @@ class MovementPowers(Page):
             togoff = self.AllSoDPowers() if doingtoggle else ''
         else: # is SoD
             code   = 'r'
-            togoff = self.OtherMovementPowers('s')
+            togoff = self.OtherMovementPowers('r')
         dotogglefix = istoggle and not doingtoggle
 
         if (bl == "r"):

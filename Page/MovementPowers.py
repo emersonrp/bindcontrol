@@ -1171,7 +1171,6 @@ class MovementPowers(Page):
         profile     = self.Profile
         resetfile   = profile.ResetFile()
         server      = profile.Server()
-        archetype   = profile.Archetype()
         tpActivator = "powexeclocation cursor " if server == 'Homecoming' else "powexecname "
 
         # set up the "t" object that drives approximately everything
@@ -1218,10 +1217,6 @@ class MovementPowers(Page):
         t.flyx   = self.GetState('FlyPower')
         t.canhov = bool(t.hover)
         t.canfly = bool(t.flyx)
-
-        if archetype == "Peacebringer":
-            t.canfly  = True
-            t.canqfly = True
 
         if t.canhov and not t.canfly:   # hover, no fly
             t.flyx = t.hover
@@ -2309,7 +2304,7 @@ class MovementPowers(Page):
                 'R'  , 'F'   , 'J'  , 'S'  , 'N'  , 'GF',
                 'AR' , 'AF'  , 'AJ' , 'AS' , 'AN' , 'AGF',
                 'FR' , 'FF'  , 'FJ' , 'FS' , 'FN' , 'FGF',
-                'BO' , 'GBO' ,
+                'BO' , 'GBO' , # both historical
         ]
         for d in dirs:
             for sp in (0,1):
@@ -2327,11 +2322,11 @@ class MovementPowers(Page):
         files.append(self.Profile.GetBindFile('nova.txt'))
         files.append(self.Profile.GetBindFile('dwarf.txt'))
 
-        dirs.append('dtp')
-        files.append(self.Profile.GetBindFile('dtp', 'tp_on.txt')) # historical
-        files.append(self.Profile.GetBindFile('dtp', 'tp_on1.txt'))
-        files.append(self.Profile.GetBindFile('dtp', 'tp_on2.txt'))
-        files.append(self.Profile.GetBindFile('dtp', 'tp_off.txt'))
+        dirs.append('dtp') # historical - dwarf powers now in main tp files
+        files.append(self.Profile.GetBindFile('dtp', 'tp_on.txt'))  # historical
+        files.append(self.Profile.GetBindFile('dtp', 'tp_on1.txt')) # historical
+        files.append(self.Profile.GetBindFile('dtp', 'tp_on2.txt')) # historical
+        files.append(self.Profile.GetBindFile('dtp', 'tp_off.txt')) # historical
 
         dirs.append('tp')
         files.append(self.Profile.GetBindFile('tp', 'tp_on.txt')) # historical

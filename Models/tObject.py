@@ -20,7 +20,6 @@ class tObject(dict):
         self.cjmp          :str  = ''
         self.canhov        :bool = False
         self.canfly        :bool = False
-        self.canqfly       :bool = False
         self.cancj         :bool = False
         self.canjmp        :bool = False
         self.tphover       :str  = ''

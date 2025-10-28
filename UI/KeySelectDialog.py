@@ -569,6 +569,7 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
                 label = re.sub(r'RightBumper', 'RBump', label)
                 label = f"<small>{label}</small>"
         self.SetLabelMarkup(label)
+        # Dear emerson:  no, we don't want to save time by setting self.Key here.
         self.Update()
 
     def CheckConflicts(self, newbinding = None) -> list:

@@ -2268,7 +2268,7 @@ class MovementPowers(Page):
             if hp := self.GetState('HoverPower'):   powers.add(hp)
         if context != 's' and self.GetKeyAction('Speed'):
             if sp := self.GetState('SpeedPower'):   powers.add(sp)
-        if context != 'r':
+        if context != 'r' and self.GetKeyAction('Sprint'):
             if rp := self.GetState('SprintPower') : powers.add(rp)
         return powers
 

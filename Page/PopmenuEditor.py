@@ -243,9 +243,8 @@ class PopmenuEditor(Page):
                 )
                 textBoxSizer.Add(textCtrl, 1, wx.EXPAND)
                 copyButton = wx.BitmapButton(dlg, bitmap = GetIcon('UI', 'copy'))
-                copyButton.textctrl = textCtrl
                 textBoxSizer.Add(copyButton, 0)
-                copyButton.Bind(wx.EVT_BUTTON, self.doTextCopy)
+                copyButton.Bind(wx.EVT_BUTTON, partial(self.doTextCopy, textctrl = textCtrl))
 
                 sizer.Add(textBoxSizer, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
                 sizer.Add(dlg.CreateButtonSizer(wx.OK), 1, wx.EXPAND|wx.ALL, 10)
@@ -254,8 +253,8 @@ class PopmenuEditor(Page):
 
                 dlg.ShowModal()
 
-    def doTextCopy(self, evt) -> None:
-        dataObj = wx.TextDataObject(evt.EventObject.textctrl.GetValue())
+    def doTextCopy(self, _, textctrl) -> None:
+        dataObj = wx.TextDataObject(textctrl.GetValue())
         if wx.TheClipboard.Open():
             wx.TheClipboard.SetData(dataObj)
             wx.TheClipboard.Flush()

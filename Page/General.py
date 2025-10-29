@@ -8,7 +8,7 @@ import Profile
 from Icon import GetIconBitmap, PrecacheIcons
 import GameData
 
-from UI.ControlGroup import ControlGroup
+from UI.ControlGroup import ControlGroup, cgCheckBox, cgTextCtrl
 
 from Page import Page
 
@@ -198,13 +198,13 @@ class General(Page):
         TNPanel = wx.Panel(self)
         TNSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        TNEnable = wx.CheckBox(TNPanel, label = 'Use Typing Notifier')
+        TNEnable = cgCheckBox(TNPanel, label = 'Use Typing Notifier')
         TNEnable.SetToolTip('Check this to enable a floating notifier when you are typing into the chat box')
         TNEnable.CtlName = 'TypingNotifierEnable'
         TNEnable.Bind(wx.EVT_CHECKBOX, self.OnTypeEnable)
         self.Ctrls['TypingNotifierEnable'] = TNEnable
 
-        TN = wx.TextCtrl(TNPanel, value = self.Init['TypingNotifier'], style = wx.TE_CENTER)
+        TN = cgTextCtrl(TNPanel, value = self.Init['TypingNotifier'], style = wx.TE_CENTER)
         TN.SetToolTip('The contents of the notifier that will float over your head as you type')
         TN.SetHint('typing notifier contents')
         TN.CtlName = 'TypingNotifier'

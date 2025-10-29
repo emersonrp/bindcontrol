@@ -237,7 +237,7 @@ class InspirationPopper(Page):
 
                 tiers = GameData.Inspirations[tab][Insp]['tiers']
                 # "reverse" order is as it is in gamebinds, smallest first
-                reverseOrder = list(map(lambda s: f"inspexecname {s}", tiers))
+                reverseOrder = [f"inspexecname {s}" for s in tiers]
                 # If we don't want to use Super Insps, trim them from the end of the reverse list
                 if not self.GetState('UseSuperInsp'): del reverseOrder[-1:]
                 # Then flip it around for "forward" largest-first order

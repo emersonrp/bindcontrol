@@ -27,9 +27,10 @@ def CheckAndCreateMenuPath(server:str) -> Path|Literal[False]:
         wx.LogError('GetPopmenuPath failed in CheckAndCreateMenuPath.  This is a bug.')
         return False
 
-    if wx.MessageBox(f'Menu directory {menupath} does not exist.  Create?', 'No Menu Dir', wx.YES_NO) == wx.NO:
-        return False
-    menupath.mkdir(parents = True)
+    if not menupath.exists():
+        if wx.MessageBox(f'Menu directory {menupath} does not exist.  Create?', 'No Menu Dir', wx.YES_NO) == wx.NO:
+            return False
+        menupath.mkdir(parents = True)
 
     return menupath
 
@@ -563,7 +564,7 @@ class Popmenu(FM.FlatMenu):
                 outputlines.append(f"{indent}LockedOption")
                 outputlines.append(f"{indent}{{")
                 for (LOName, LOStuff) in menuitem.Data.items():
-                    outputlines.append(f"{indent}    {LOName} {LOStuff}")
+                    outputlines.append(f'{indent}    {LOName} "{LOStuff}"')
                 outputlines.append(f"{indent}}}")
             else:
                 raise Exception(f"There was a mystery item inside menu {self.Title}, canceling write.  This is a bug.")

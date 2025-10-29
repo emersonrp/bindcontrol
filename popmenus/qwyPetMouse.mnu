@@ -390,7 +390,7 @@ Menu "qwyPetMouse-<<MENUNAME>>"
 		{
 			Divider
 			Title "- all attack -"
-			Title "[2key]" ""
+			Title "[2key]"
 			Divider
 			Option "&1 | pas" "petcomall pas att"
 			Option "&2 | agg" "petcomall agg att"

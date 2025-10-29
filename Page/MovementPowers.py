@@ -746,21 +746,27 @@ class MovementPowers(Page):
         menuitem = menu.FindItemById(evt.GetId())
         self.TempTravelPowerPicker.SetLabel (menuitem.GetItemLabel())
         self.TempTravelPowerPicker.SetBitmap(menuitem.GetBitmapBundle())
-        setattr(self.TempTravelPowerPicker, 'IconFilename', getattr(menuitem, 'IconFilename'))
+        self.TempTravelPowerPicker.IconFilename = menuitem.IconFilename
         evt.Skip()
 
     def BuildTempTravelPowerMenu(self) -> wx.Menu:
+
+        class TempMenuItem(wx.MenuItem):
+            def __init__(self, wxid, text):
+                super().__init__(id = wxid, text = text)
+                self.IconFilename: str = ''
+
         menu = wx.Menu()
         for item in GameData.TempTravelPowers:
             if re.search(r'\|', item):
                 item, iconname = re.split(r'\|', item)
             else:
                 iconname = item
-            menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
+            menuitem = TempMenuItem(wx.ID_ANY, item)
 
             if icon := GetIcon('Powers', 'Temp', iconname):
                 menuitem.SetBitmap(icon)
-                setattr(menuitem, 'IconFilename', icon.Filename)
+                menuitem.IconFilename = icon.Filename
 
             menu.Append(menuitem)
         return menu

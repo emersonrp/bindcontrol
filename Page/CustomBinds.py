@@ -310,13 +310,7 @@ class CustomBinds(Page):
         init.pop('Title')
         init.pop('Key')
 
-        newbindpane = None
-        if   isinstance(oldbindpane, SimpleBindPane):
-            newbindpane = SimpleBindPane(self, init)
-        elif isinstance(oldbindpane, ComplexBindPane):
-            newbindpane = ComplexBindPane(self, init)
-        elif isinstance(oldbindpane, BufferBindPane):
-            newbindpane = BufferBindPane(self, init)
+        newbindpane = self.BuildBindPaneFromData(init)
 
         if not newbindpane:
             wx.LogError(f"Error duplicating bind {oldbindpane.Title}!")

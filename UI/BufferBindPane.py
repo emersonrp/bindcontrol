@@ -36,7 +36,7 @@ class BufferBindPane(CustomBindPaneParent):
 
     def BuildBindUI(self, page) -> None:
         pane = self.GetPane()
-        setattr(pane, 'Page', page)
+        self.Page = page
 
         # Doing this UI here since we need CustomID to be set to get MakeCtrlName right
         # TODO: is this still true?  Can we do this in init now that we use CustomID?

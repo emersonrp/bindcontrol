@@ -31,7 +31,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
     def BuildBindUI(self, page) -> None:
         pane = self.GetPane()
-        setattr(pane, 'Page', page)
+        self.Page = page
 
         BindSizer = wx.BoxSizer(wx.HORIZONTAL)
 

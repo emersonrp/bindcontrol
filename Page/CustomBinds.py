@@ -213,6 +213,13 @@ class CustomBinds(Page):
 
         bindSizer.Add(buttonSizer, 0, wx.LEFT, 10)
 
+        # more hackery -- if we have a unique wizbind (currently just esc config), turn off the
+        # duplicate button
+        if isinstance(bindpane, WizardBindPane):
+            if bindpane.WizClass.IsUnique:
+                duplicateButton.Enable(False)
+                duplicateButton.SetToolTip(f"You can only have one instance of {bindpane.WizClass.WizardName} per profile.")
+
         self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), bindSizer, 0, wx.ALL|wx.EXPAND, 10)
         bindpane.Expand()
         self.Layout()

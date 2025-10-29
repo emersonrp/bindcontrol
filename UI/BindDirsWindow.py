@@ -23,8 +23,8 @@ class BindDirsWindow(wx.MiniFrame):
 
         bindpath = wx.ConfigBase.Get().Read('BindPath')
         sizer.Add(mainlabel := statictextclass(panel), 0, wx.TOP|wx.ALIGN_CENTER, 16)
-        mainlabel.SetLabelMarkup(f"In your bind path: <b>{bindpath}</b>\n"+
-                                 "the following binds directories were found,\n" +
+        mainlabel.SetLabelMarkup(f"In your bind path: <b>{bindpath}</b>\n"
+                                 "the following binds directories were found,\n"
                                  "and are managed by the following profiles:")
 
         listspacer = wx.BoxSizer(wx.HORIZONTAL)

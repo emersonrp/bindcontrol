@@ -75,7 +75,6 @@ class PowerPickerMenu(wx.Menu):
 
             powers = archdata[category][powerset]
             for power in powers:
-                print(power)
                 if isinstance(power, dict):  # for sub sub menus like Corruptor -> Dual Pistols -> Swap Ammo
                     [(subsubname, items)] = power.items()
                     subsubmenu = wx.Menu()

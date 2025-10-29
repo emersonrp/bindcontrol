@@ -70,10 +70,18 @@ class Popup(wx.PopupTransientWindow):
 
         self.Popups = []
         for power in powers:
-            popuppower = PopupPower(powerpanel, powerset, power)
-            popuppower.CB.SetValue(power in self.PowerSelector.Powers)
-            powersizer.Add(popuppower, 0, wx.EXPAND)
-            self.Popups.append(popuppower)
+            if isinstance(power, dict):
+                for plist in power.values():
+                    for p in plist:
+                        popuppower = PopupPower(powerpanel, powerset, p)
+                        popuppower.CB.SetValue(p in self.PowerSelector.Powers)
+                        powersizer.Add(popuppower, 0, wx.EXPAND)
+                        self.Popups.append(popuppower)
+            else:
+                popuppower = PopupPower(powerpanel, powerset, power)
+                popuppower.CB.SetValue(power in self.PowerSelector.Powers)
+                powersizer.Add(popuppower, 0, wx.EXPAND)
+                self.Popups.append(popuppower)
 
         powerpanel.SetSizerAndFit(powersizer)
 

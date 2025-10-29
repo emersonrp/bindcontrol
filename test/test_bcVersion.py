@@ -1,4 +1,3 @@
-#!/usr/sbin/python
 import os
 import shutil
 import subprocess

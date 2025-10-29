@@ -1,4 +1,3 @@
-#!/usr/sbin/python
 import wx
 from BLF import BLF
 

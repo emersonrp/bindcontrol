@@ -716,11 +716,11 @@ if __name__ == "__main__":
 
     argv = sys.argv
     if len(argv) > 2:
-        print()
-        print("Usage:  BindControl.py [profile_file]")
-        print()
-        print("profile_file is optional, and should be a *.bcp file")
-        print()
+        sys.stderr.write('\n')
+        sys.stderr.write('Usage:  BindControl.py [profile_file]\n')
+        sys.stderr.write('\n')
+        sys.stderr.write('profile_file is optional, and should be a *.bcp file\n')
+        sys.stderr.write('\n')
         exit()
 
     input_profile = ''

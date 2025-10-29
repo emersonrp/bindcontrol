@@ -50,7 +50,7 @@ class ChatCmd(PowerBinderCommand):
         self.chatCommandChatSize.SetSelection(5)
         chatCommandSizer.Add(wx.StaticText(dialog, label = "Size:"), (2,2), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
         chatCommandSizer.Add(self.chatCommandChatSize, (2,3))
-        self.chatCommandChannel = wx.Choice(dialog, choices = [chan for chan in chatChannelMap])
+        self.chatCommandChannel = wx.Choice(dialog, choices = list(chatChannelMap))
         self.chatCommandChannel.SetSelection(0)
         chatCommandSizer.Add(wx.StaticText(dialog, label = "Channel:"), (2,4), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
         chatCommandSizer.Add(self.chatCommandChannel, (2,5))

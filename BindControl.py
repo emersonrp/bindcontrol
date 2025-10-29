@@ -626,8 +626,8 @@ class Main(wx.Frame):
             dlg.ShowAndUpdatePrefs()
 
     def OnMenuAboutBox(self, _) -> None:
-        from datetime import datetime
-        this_year = datetime.now().year
+        from datetime import datetime, UTC
+        this_year = datetime.now(tz = UTC).year
         if self.about_info is None:
             info = wx.adv.AboutDialogInfo()
             info.AddDeveloper('R Pickett (emerson@hayseed.net)')

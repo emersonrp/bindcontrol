@@ -8,7 +8,7 @@ from typing import Literal
 from collections.abc import Callable
 
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, UTC
 import re
 import platform
 from functools import partial
@@ -531,7 +531,7 @@ class Popmenu(FM.FlatMenu):
 
             outputlines = self.CreditComments
             outputlines.append('')
-            outputlines.append(f'// Saved from BindControl {datetime.now()}')
+            outputlines.append(f'// Saved from BindControl {datetime.now(tz = UTC)}')
 
         # top of each "menu" clause, insert the initial two lines
         indent = "    " * indentlevel

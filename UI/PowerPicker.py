@@ -55,7 +55,7 @@ class PowerPicker(ErrorControlMixin, wx.Button):
             bitmap = menuitem.GetBitmapBundle()
             self.SetLabel(label)
             self.SetBitmap(bitmap)
-            self.IconFilename = getattr(menuitem, 'IconFilename')
+            self.IconFilename = menuitem.IconFilename
 
     def OnMenuSelected(self, evt = None) -> None:
         self.doOnMenuSelected(evt)
@@ -63,7 +63,6 @@ class PowerPicker(ErrorControlMixin, wx.Button):
 
 class PowerPickerMenu(wx.Menu):
     def BuildMenu(self) -> None:
-
         gen = wx.App.Get().Main.Profile.General
 
         # primary / secondary / epic powers
@@ -76,30 +75,31 @@ class PowerPickerMenu(wx.Menu):
 
             powers = archdata[category][powerset]
             for power in powers:
-                if isinstance(power, dict):
+                print(power)
+                if isinstance(power, dict):  # for sub sub menus like Corruptor -> Dual Pistols -> Swap Ammo
                     [(subsubname, items)] = power.items()
                     subsubmenu = wx.Menu()
                     for power in items:
                         if not self.ShowPower(category, power): continue
-                        menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
+                        menuitem = PowerMenuItem(wx.ID_ANY, power)
                         icon = GetIcon('Powers', powerset, power)
                         if icon:
                             menuitem.SetBitmap(icon)
-                            setattr(menuitem, 'IconFilename', icon.Filename)
+                            menuitem.IconFilename = icon.Filename
                         subsubmenu.Append(menuitem)
                     subitem = submenu.AppendSubMenu(subsubmenu, subsubname)
                     icon = GetIcon('Powers', powerset, subsubname)
                     if icon:
-                        subitem.SetBitmap(icon)
-                        setattr(subitem, 'IconFilename', icon.Filename)
+                        subitem.SetBitmap(icon) # this works on Windows but not GTK.  Maybe investigate, maybe not.
+                        # don't need to set .IconFilename here because we're never going to store the submenu
 
                 else:
                     if not self.ShowPower(category, power): continue
-                    menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
+                    menuitem = PowerMenuItem(wx.ID_ANY, power)
                     icon = GetIcon('Powers', powerset, power)
                     if icon:
                         menuitem.SetBitmap(icon)
-                        setattr(menuitem, 'IconFilename', icon.Filename)
+                        menuitem.IconFilename = icon.Filename
                     submenu.Append(menuitem)
 
         # Pool powers
@@ -112,11 +112,11 @@ class PowerPickerMenu(wx.Menu):
                 powers = GameData.PoolPowers[poolname]
                 for power in powers:
                     if not self.ShowPower(poolpicker, power): continue
-                    menuitem = wx.MenuItem(id = wx.ID_ANY, text = power)
+                    menuitem = PowerMenuItem(wx.ID_ANY, power)
                     icon = GetIcon('Powers', poolname,  power)
                     if icon:
                         menuitem.SetBitmap(icon)
-                        setattr(menuitem, 'IconFilename', icon.Filename)
+                        menuitem.IconFilename = icon.Filename
                     submenu.Append(menuitem)
 
         # Incarnate Powers
@@ -130,7 +130,7 @@ class PowerPickerMenu(wx.Menu):
                     submenu.AppendSubMenu(subsubmenu, inc_type)
 
                     for index, power in enumerate(slotdata['Powers']):
-                        menuitem = wx.MenuItem(id = wx.ID_ANY, text = f"{inc_type} {power}")
+                        menuitem = PowerMenuItem(wx.ID_ANY, f"{inc_type} {power}")
                         rarity = Rarities[ index ]
 
                         # aliases for the Lore types ie "Polar Lights" => "Lights" to match the icons
@@ -138,7 +138,7 @@ class PowerPickerMenu(wx.Menu):
 
                         if icon := GetIcon('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}'):
                             menuitem.SetBitmap(icon)
-                            setattr(menuitem, 'IconFilename', icon.Filename)
+                            menuitem.IconFilename = icon.Filename
 
                         subsubmenu.Append(menuitem)
         self.AppendSubMenu(menu, "Incarnate")
@@ -155,6 +155,7 @@ class PowerPickerMenu(wx.Menu):
         else                    : return False
 
     def MakeRecursiveMenu(self, menustruct) -> wx.Menu:
+
         menu = wx.Menu()
 
         for name, data in menustruct.items():
@@ -165,12 +166,17 @@ class PowerPickerMenu(wx.Menu):
                 submenu = wx.Menu()
                 for item in data:
                     item, iconpathparts = SplitNameAndIcon(item)
-                    menuitem = wx.MenuItem(id = wx.ID_ANY, text = item)
+                    menuitem = PowerMenuItem(wx.ID_ANY, item)
                     icon = GetIcon('Powers', 'Misc', *iconpathparts)
                     if icon:
                         menuitem.SetBitmap(icon)
-                        setattr(menuitem, 'IconFilename', icon.Filename)
+                        menuitem.IconFilename = icon.Filename
                     submenu.Append(menuitem)
                 menu.AppendSubMenu(submenu, name)
 
         return menu
+
+class PowerMenuItem(wx.MenuItem):
+    def __init__(self, wxid, text):
+        super().__init__(id = wxid, text = text)
+        self.IconFilename: str = ''

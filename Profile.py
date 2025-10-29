@@ -287,7 +287,7 @@ class Profile(wx.Notebook):
 
             page.Layout()
 
-        cbpage = getattr(self, "CustomBinds")
+        cbpage = self.CustomBinds
         if data and cbpage:
             cbpage.scrolledPanel.DestroyChildren()
             cbpage.Ctrls = {}

@@ -92,7 +92,7 @@ class WizPickerDialog(wx.Dialog):
             wizbutton = wx.Button(self, wx.ID_ANY, label = classname)
             wizbutton.SetToolTip(wizClass.WizToolTip)
             wcSizer.Add(wizbutton, 1, wx.EXPAND)
-            setattr(wizbutton, 'WizClass', wizClass)
+            wizbutton.WizClass = wizClass
             wizbutton.Bind(wx.EVT_BUTTON, self.OnWizPicked)
 
             # Turn off the button if we just can have one, like "Escape Configurator"

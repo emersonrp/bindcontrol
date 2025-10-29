@@ -111,7 +111,7 @@ class Gameplay(Page):
         self.FillTrayButtons = {}
         for b in (range(1,self.NumTrays+1)):
             self.FillTrayButtons[b] = wx.Button(staticbox, label = "Fill")
-            setattr(self.FillTrayButtons[b], 'Tray', b)
+            self.FillTrayButtons[b].Tray = b
             self.FillTrayButtons[b].Bind(wx.EVT_BUTTON, self.OnFillTray)
             self.FillTrayButtons[b].SetToolTip("Fill the buttons with the numbers 1 - 0.  Hold a modifier key while clicking to use that modifier key in the binds.")
 

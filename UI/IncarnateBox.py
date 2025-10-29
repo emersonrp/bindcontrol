@@ -84,7 +84,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
 
         # "Themed" GenBitmapButton looks flat etc the way we want it to.
         self.IncIcon = buttons.ThemedGenBitmapButton(staticbox, bitmap = GetIconBitmap('Empty'), size=wx.Size(39,40))
-        setattr(self.IncIcon, 'Picker', self)
+        self.IncIcon.Picker = self
         self.IncIcon.Bind(wx.EVT_BUTTON, self.OnButtonPress)
         self.IncIcon.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
         self.IncName = wx.StaticText(staticbox, style=wx.ALIGN_RIGHT, size=wx.Size(310, -1))

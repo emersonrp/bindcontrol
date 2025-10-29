@@ -200,14 +200,14 @@ class General(Page):
 
         TNEnable = wx.CheckBox(TNPanel, label = 'Use Typing Notifier')
         TNEnable.SetToolTip('Check this to enable a floating notifier when you are typing into the chat box')
-        setattr(TNEnable, 'CtlName', 'TypingNotifierEnable')
+        TNEnable.CtlName = 'TypingNotifierEnable'
         TNEnable.Bind(wx.EVT_CHECKBOX, self.OnTypeEnable)
         self.Ctrls['TypingNotifierEnable'] = TNEnable
 
         TN = wx.TextCtrl(TNPanel, value = self.Init['TypingNotifier'], style = wx.TE_CENTER)
         TN.SetToolTip('The contents of the notifier that will float over your head as you type')
         TN.SetHint('typing notifier contents')
-        setattr(TN, 'CtlName', 'TypingNotifier')
+        TN.CtlName = 'TypingNotifier'
         self.Ctrls['TypingNotifier'] = TN
 
         TNSizer.Add(TNEnable, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)

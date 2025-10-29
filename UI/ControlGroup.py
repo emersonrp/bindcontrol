@@ -184,7 +184,7 @@ class ControlGroup(wx.StaticBoxSizer):
         if not noLabel and CtlLabel:
             self.InnerSizer.Add(CtlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
             control.CtlLabel = CtlLabel
-            setattr(CtlLabel, "control", control)
+            CtlLabel.control = control
 
         # Pack'em in there
         if tooltip and tooltip != '':

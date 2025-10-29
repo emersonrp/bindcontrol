@@ -1,5 +1,6 @@
 import platform
 import re
+from typing import Any, TYPE_CHECKING
 
 import wx
 import wx.lib.stattext as ST
@@ -8,6 +9,16 @@ from Help import HelpButton
 from UI.KeySelectDialog import bcKeyButton
 from UI.ControlGroup import cgDirPickerCtrl, cgTextCtrl
 from bcController import bcController
+
+# This ST.GenStaticText is so we can intercept clicks on it, but
+# the background color is wrong on Windows in a way I can't work out,
+# and clicks work with wx.StaticText on Windows anyway, so...
+if TYPE_CHECKING or platform.system() != 'Windows':
+    class CBLabel(ST.GenStaticText):
+        CB : Any = None
+else:
+    class CBLabel(wx.StaticText):
+        CB : Any = None
 
 class PrefsDialog(wx.Dialog):
     def __init__(self, parent) -> None:
@@ -20,8 +31,6 @@ class PrefsDialog(wx.Dialog):
         controller = bcController()
 
         notebook = wx.Notebook(self)
-
-        statictextclass = wx.StaticText if platform.system() == "Windows" else ST.GenStaticText
 
         ###
         # GENERAL PANEL
@@ -74,34 +83,34 @@ class PrefsDialog(wx.Dialog):
         self.ResetKey.DefaultToolTip = 'This is the key that will reset your binds to their default state, and stop all movement, if movement binds are installed.'
         generalSizer.Add(self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)
 
-        splitKeyLabel = statictextclass(generalPanel, label = "Bind L/R mod keys separately:")
+        splitKeyLabel = CBLabel(generalPanel, label = "Bind L/R mod keys separately:")
         generalSizer.Add(splitKeyLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.UseSplitModKeys = wx.CheckBox(generalPanel)
         self.UseSplitModKeys.SetValue(config.ReadBool('UseSplitModKeys'))
         self.UseSplitModKeys.SetToolTip("This allows the left and right modifier keys to be bound separately on the \"right-hand\" side of a bind.  Check \"Help > Getting Started with BindControl\" for more information.")
         generalSizer.Add(self.UseSplitModKeys, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
-        setattr(splitKeyLabel, 'CB', self.UseSplitModKeys)
+        splitKeyLabel.CB = self.UseSplitModKeys
         splitKeyLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
-        flushBindsLabel = statictextclass(generalPanel, label = "Set binds to default on reset:")
+        flushBindsLabel = CBLabel(generalPanel, label = "Set binds to default on reset:")
         generalSizer.Add(flushBindsLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.FlushAllBinds = wx.CheckBox(generalPanel)
         self.FlushAllBinds.SetValue(config.ReadBool('FlushAllBinds'))
         self.FlushAllBinds.SetToolTip("Set all binds to City of Heroes' default before applying / resetting BindControl's binds.  Uncheck this if you have added any binds into the game that are not managed by BindControl.")
         generalSizer.Add(self.FlushAllBinds, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
-        setattr(flushBindsLabel, 'CB', self.FlushAllBinds)
+        flushBindsLabel.CB = self.FlushAllBinds
         flushBindsLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
-        StartWithLastProfileLabel = wx.StaticText(generalPanel, label = "On startup, load last used profile:")
+        StartWithLastProfileLabel = CBLabel(generalPanel, label = "On startup, load last used profile:")
         generalSizer.Add(StartWithLastProfileLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.StartWithLastProfile = wx.CheckBox(generalPanel)
         self.StartWithLastProfile.SetValue(config.ReadBool('StartWithLastProfile'))
         self.StartWithLastProfile.SetToolTip("Load the last profile you were working with when you start the program.")
         generalSizer.Add (self.StartWithLastProfile, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
-        setattr(StartWithLastProfileLabel, 'CB', self.StartWithLastProfile)
+        StartWithLastProfileLabel.CB = self.StartWithLastProfile
         StartWithLastProfileLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         ProfilePathLabel = wx.StaticText(generalPanel, label = "Path for saved profiles:")
@@ -112,14 +121,14 @@ class PrefsDialog(wx.Dialog):
         self.ProfileDirPicker.Bind(wx.EVT_DIRPICKER_CHANGED, self.OnDirPickerChange)
         generalSizer.Add(self.ProfileDirPicker, 1, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
-        SaveSizeLabel = statictextclass(generalPanel, label = "Save size / position of window:")
+        SaveSizeLabel = CBLabel(generalPanel, label = "Save size / position of window:")
         generalSizer.Add(SaveSizeLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.SaveSizeAndPosition = wx.CheckBox(generalPanel)
         self.SaveSizeAndPosition.SetValue(config.ReadBool('SaveSizeAndPosition'))
         self.SaveSizeAndPosition.SetToolTip("Save the size and position of the BindControl window between sessions.")
         generalSizer.Add(self.SaveSizeAndPosition, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
-        setattr(SaveSizeLabel, 'CB', self.SaveSizeAndPosition)
+        SaveSizeLabel.CB = self.SaveSizeAndPosition
         SaveSizeLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         generalPanel.SetSizerAndFit(generalSizer)
@@ -131,9 +140,9 @@ class PrefsDialog(wx.Dialog):
         controllerSizer = wx.FlexGridSizer(3,0,0)
 
         # Controller name display
-        controllerNameLabel = statictextclass(controllerPanel, label = 'Controller:')
+        controllerNameLabel = CBLabel(controllerPanel, label = 'Controller:')
         controllerSizer.Add(controllerNameLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
-        controllerName = statictextclass(controllerPanel, label = 'No controller detected!')
+        controllerName = CBLabel(controllerPanel, label = 'No controller detected!')
         if controller.GetNumberJoysticks() > 0:
             controllerName.SetLabel(controller.GetProductName())
         controllerSizer.Add(controllerName, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
@@ -142,7 +151,7 @@ class PrefsDialog(wx.Dialog):
 
         # Pickers for controller_modifiers
         possible_mods = controller.ListOfPossibleMods()
-        controllerModsLabel = statictextclass(controllerPanel, label = 'Controller Modifiers:')
+        controllerModsLabel = CBLabel(controllerPanel, label = 'Controller Modifiers:')
         controllerSizer.Add(controllerModsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ControllerModPicker1 = wx.Choice(controllerPanel, choices = possible_mods)
         self.ControllerModPicker1.SetStringSelection(config.Read('ControllerMod1'))
@@ -152,7 +161,7 @@ class PrefsDialog(wx.Dialog):
         controllerSizer.Add(self.ControllerModPicker2, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
 
         # Pickers for extra_modifiers
-        extraModsLabel = statictextclass(controllerPanel, label = 'Extra Modifiers:')
+        extraModsLabel = CBLabel(controllerPanel, label = 'Extra Modifiers:')
         controllerSizer.Add(extraModsLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ExtraModPicker1 = wx.Choice(controllerPanel, choices = possible_mods)
         self.ExtraModPicker1.SetStringSelection(config.Read('ExtraMod1'))
@@ -176,7 +185,7 @@ class PrefsDialog(wx.Dialog):
         debugPanel = wx.Panel(notebook)
         debugSizer = wx.FlexGridSizer(2,0,0)
 
-        verboseBLFLabel = statictextclass(debugPanel, label = "Verbose in-game feedback when loading bind file:")
+        verboseBLFLabel = CBLabel(debugPanel, label = "Verbose in-game feedback when loading bind file:")
         debugSizer.Add(verboseBLFLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.VerboseBLF = wx.CheckBox(debugPanel)
         self.VerboseBLF.SetValue(config.ReadBool('VerboseBLF'))
@@ -184,10 +193,10 @@ class PrefsDialog(wx.Dialog):
         verboseBLFLabel.SetToolTip(tooltip)
         self.VerboseBLF.SetToolTip(tooltip)
         debugSizer.Add(self.VerboseBLF, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
-        setattr(verboseBLFLabel, 'CB', self.VerboseBLF)
+        verboseBLFLabel.CB = self.VerboseBLF
         verboseBLFLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
-        crashOnProfileErrorLabel = statictextclass(debugPanel, label = "Crash on loading profile error:")
+        crashOnProfileErrorLabel = CBLabel(debugPanel, label = "Crash on loading profile error:")
         debugSizer.Add(crashOnProfileErrorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.CrashOnProfileError = wx.CheckBox(debugPanel)
         self.CrashOnProfileError.SetValue(config.ReadBool('CrashOnProfileError'))
@@ -195,10 +204,10 @@ class PrefsDialog(wx.Dialog):
         crashOnProfileErrorLabel.SetToolTip(tooltip)
         self.CrashOnProfileError.SetToolTip(tooltip)
         debugSizer.Add(self.CrashOnProfileError, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
-        setattr(crashOnProfileErrorLabel, 'CB', self.CrashOnProfileError)
+        crashOnProfileErrorLabel.CB = self.CrashOnProfileError
         crashOnProfileErrorLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
-        crashOnBindErrorLabel = statictextclass(debugPanel, label = "Crash on write-binds error:")
+        crashOnBindErrorLabel = CBLabel(debugPanel, label = "Crash on write-binds error:")
         debugSizer.Add(crashOnBindErrorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.CrashOnBindError = wx.CheckBox(debugPanel)
         self.CrashOnBindError.SetValue(config.ReadBool('CrashOnBindError'))
@@ -206,10 +215,10 @@ class PrefsDialog(wx.Dialog):
         crashOnBindErrorLabel.SetToolTip(tooltip)
         self.CrashOnBindError.SetToolTip(tooltip)
         debugSizer.Add(self.CrashOnBindError, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
-        setattr(crashOnBindErrorLabel, 'CB', self.CrashOnBindError)
+        crashOnBindErrorLabel.CB = self.CrashOnBindError
         crashOnBindErrorLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
-        VerboseCustomBindTitlesLabel = statictextclass(debugPanel, label = "Verbose Titles for Custom Binds:")
+        VerboseCustomBindTitlesLabel = CBLabel(debugPanel, label = "Verbose Titles for Custom Binds:")
         debugSizer.Add(VerboseCustomBindTitlesLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.VerboseCustomBinds = wx.CheckBox(debugPanel)
         self.VerboseCustomBinds.SetValue(config.ReadBool('VerboseCustomBinds'))
@@ -217,10 +226,10 @@ class PrefsDialog(wx.Dialog):
         VerboseCustomBindTitlesLabel.SetToolTip(tooltip)
         self.VerboseCustomBinds.SetToolTip(tooltip)
         debugSizer.Add(self.VerboseCustomBinds, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
-        setattr(VerboseCustomBindTitlesLabel, 'CB', self.VerboseCustomBinds)
+        VerboseCustomBindTitlesLabel.CB = self.VerboseCustomBinds
         VerboseCustomBindTitlesLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
-        showInspectorLabel = statictextclass(debugPanel, label = "Show Widget Inspector (requires restart):")
+        showInspectorLabel = CBLabel(debugPanel, label = "Show Widget Inspector (requires restart):")
         debugSizer.Add(showInspectorLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ShowInspector = wx.CheckBox(debugPanel)
         self.ShowInspector.SetValue(config.ReadBool('ShowInspector'))
@@ -228,10 +237,10 @@ class PrefsDialog(wx.Dialog):
         showInspectorLabel.SetToolTip(tooltip)
         self.ShowInspector.SetToolTip(tooltip)
         debugSizer.Add(self.ShowInspector, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
-        setattr(showInspectorLabel, 'CB', self.ShowInspector)
+        showInspectorLabel.CB = self.ShowInspector
         showInspectorLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
-        showDebugMessagesLabel = statictextclass(debugPanel, label = "Show debug messages in log window.")
+        showDebugMessagesLabel = CBLabel(debugPanel, label = "Show debug messages in log window.")
         debugSizer.Add(showDebugMessagesLabel, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         self.ShowDebugMessages = wx.CheckBox(debugPanel)
         self.ShowDebugMessages.SetValue(config.ReadBool('ShowDebugMessages'))
@@ -239,7 +248,7 @@ class PrefsDialog(wx.Dialog):
         showDebugMessagesLabel.SetToolTip(tooltip)
         self.ShowDebugMessages.SetToolTip(tooltip)
         debugSizer.Add(self.ShowDebugMessages, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
-        setattr(showDebugMessagesLabel, 'CB', self.ShowDebugMessages)
+        showDebugMessagesLabel.CB = self.ShowDebugMessages
         showDebugMessagesLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         debugPanel.SetSizerAndFit(debugSizer)

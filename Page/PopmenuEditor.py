@@ -243,7 +243,7 @@ class PopmenuEditor(Page):
                 )
                 textBoxSizer.Add(textCtrl, 1, wx.EXPAND)
                 copyButton = wx.BitmapButton(dlg, bitmap = GetIcon('UI', 'copy'))
-                setattr(copyButton, 'textctrl', textCtrl)
+                copyButton.textctrl = textCtrl
                 textBoxSizer.Add(copyButton, 0)
                 copyButton.Bind(wx.EVT_BUTTON, self.doTextCopy)
 

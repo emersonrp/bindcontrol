@@ -20,9 +20,11 @@ from UI.PowerSelector import PowerSelector
 # the background color is wrong on Windows in a way I can't work out,
 # and clicks work with wx.StaticText on Windows anyway, so...
 if TYPE_CHECKING or platform.system() != 'Windows':
-    STClass = ST.GenStaticText
+    class STClass(ST.GenStaticText):
+        control : Any = None
 else:
-    STClass = wx.StaticText
+    class STClass(wx.StaticText):
+        control : Any = None
 
 class ControlGroup(wx.StaticBoxSizer):
     def __init__(self, parent, page : bcPage, label = '', width = 2, flexcols : list|None = None, topcontent = None) -> None:
@@ -186,7 +188,7 @@ class ControlGroup(wx.StaticBoxSizer):
         if not noLabel and CtlLabel:
             self.InnerSizer.Add(CtlLabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL|wx.LEFT, 6)
             control.CtlLabel = CtlLabel
-            setattr(CtlLabel, "control", control)
+            CtlLabel.control = control
 
         # Pack'em in there
         if tooltip and tooltip != '':

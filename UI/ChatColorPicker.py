@@ -10,24 +10,24 @@ class ChatColorPicker(wx.BoxSizer):
 
         self.borderLabel = wx.StaticText(parent, label = "Border:")
         self.borderPicker = bcColourSelect(parent, colour = cols['border'], size = wx.Size(30,30))
-        setattr(self.borderPicker, "CtlName", f"{prefix}Border")
-        setattr(self.borderPicker, "CtlLabel", self.borderLabel)
+        self.borderPicker.CtlName = f"{prefix}Border"
+        self.borderPicker.CtlLabel = self.borderLabel
         page.Ctrls[f"{prefix}Border"] = self.borderPicker
         self.Add(self.borderLabel,  0, wx.LEFT|wx.ALIGN_CENTER, 5)
         self.Add(self.borderPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 5)
 
         self.backgroundLabel = wx.StaticText(parent, label = "Bkgnd:")
         self.backgroundPicker = bcColourSelect(parent, colour = cols['background'], size = wx.Size(30,30))
-        setattr(self.backgroundPicker, "CtlName", f"{prefix}Background")
-        setattr(self.backgroundPicker, "CtlLabel", self.backgroundLabel)
+        self.backgroundPicker.CtlName = f"{prefix}Background"
+        self.backgroundPicker.CtlLabel = self.backgroundLabel
         page.Ctrls[f"{prefix}Background"] = self.backgroundPicker
         self.Add(self.backgroundLabel,  0, wx.LEFT|wx.ALIGN_CENTER, 5)
         self.Add(self.backgroundPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 5)
 
         self.textLabel = wx.StaticText(parent, label = "Text:")
         self.textPicker = bcColourSelect(parent, colour = cols['text'], size = wx.Size(30,30))
-        setattr(self.textPicker, "CtlName", f"{prefix}Foreground")
-        setattr(self.textPicker, "CtlLabel", self.textLabel)
+        self.textPicker.CtlName = f"{prefix}Foreground"
+        self.textPicker.CtlLabel = self.textLabel
         page.Ctrls[f"{prefix}Foreground"] = self.textPicker
         self.Add(self.textLabel,  0, wx.LEFT|wx.ALIGN_CENTER, 5)
         self.Add(self.textPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 5)

@@ -51,7 +51,7 @@ class Mastermind(Page):
             box = wx.StaticBoxSizer(PBSB, wx.VERTICAL)
 
             petname = cgTextCtrl(PBSB, style = wx.TE_CENTRE)
-            setattr(petname, "CtlLabel", None)
+            petname.CtlLabel = None
             self.Ctrls[f'Pet{i+1}Name'] = petname
             petname.SetHint(f"{petdescshort} name")
             petname.Bind(wx.EVT_TEXT, self.OnNameTextChange)

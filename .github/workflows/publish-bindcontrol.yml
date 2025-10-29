@@ -24,10 +24,10 @@ jobs:
             CMD_VERIFY: ls -la dist/BindControl.app
             CMD_PREZIP: rm -rf dist/BindControl
             FILE_NAME: BindControl-${{ github.ref_name }}_macos.zip
-          - os: ubuntu-latest
-            CMD_BUILD: python tools/build.py
-            CMD_VERIFY: ls -la dist/BindControl
-            FILE_NAME: BindControl-${{ github.ref_name }}_linux.zip
+#          - os: ubuntu-latest
+#            CMD_BUILD: python tools/build.py
+#            CMD_VERIFY: ls -la dist/BindControl
+#            FILE_NAME: BindControl-${{ github.ref_name }}_linux.zip
 
     runs-on: ${{ matrix.os }}
 

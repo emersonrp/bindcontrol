@@ -13,6 +13,12 @@ from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
 from UI.WizardBindPane  import WizardBindPane, WizPickerDialog
 
+class CustomBindControlButton(wx.BitmapButton):
+    def __init__(self, parent, bitmap):
+        super().__init__(parent, bitmap = bitmap)
+        self.BindPane: wx.Window|None = None
+        self.BindSizer: wx.Sizer|None = None
+
 class CustomBinds(Page):
     def __init__(self, parent) -> None:
         super().__init__(parent)
@@ -181,31 +187,30 @@ class CustomBinds(Page):
         bindSizer.Add(bindpane, 1, wx.EXPAND, 5)
 
         buttonSizer = wx.BoxSizer(wx.VERTICAL)
-        deleteButton = wx.BitmapButton(self.scrolledPanel, bitmap = GetIcon('UI', 'delete'))
-        deleteButton.SetForegroundColour(wx.RED)
-        setattr(deleteButton, "BindPane", bindpane)
-        setattr(deleteButton, "BindSizer", bindSizer)
+        deleteButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'delete'))
+        deleteButton.BindPane  = bindpane
+        deleteButton.BindSizer = bindSizer
         bindpane.DelButton = deleteButton
         deleteButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
         buttonSizer.Add(deleteButton)
 
-        renameButton = wx.BitmapButton(self.scrolledPanel, bitmap = GetIcon('UI', 'rename'))
-        setattr(renameButton, "BindPane", bindpane)
+        renameButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'rename'))
+        renameButton.BindPane = bindpane
         bindpane.RenButton = renameButton
         renameButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
         renameButton.Bind(wx.EVT_BUTTON, self.SetBindPaneLabel)
         buttonSizer.Add(renameButton)
 
-        duplicateButton = wx.BitmapButton(self.scrolledPanel, bitmap = GetIcon('UI', 'copy'))
-        setattr(duplicateButton, "BindPane", bindpane)
+        duplicateButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'copy'))
+        duplicateButton.BindPane = bindpane
         bindpane.DupButton = duplicateButton
         duplicateButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
         duplicateButton.Bind(wx.EVT_BUTTON, self.OnDuplicateButton)
         buttonSizer.Add(duplicateButton)
 
-        exportButton = wx.BitmapButton(self.scrolledPanel, bitmap = GetIcon('UI', 'export'))
-        setattr(exportButton, "BindPane", bindpane)
+        exportButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'export'))
+        exportButton.BindPane = bindpane
         bindpane.ExpButton = exportButton
         exportButton.SetToolTip(f'Export bind "{bindpane.Title}"')
         exportButton.Bind(wx.EVT_BUTTON, self.OnExportButton)
@@ -313,9 +318,9 @@ class CustomBinds(Page):
         init = oldbindpane.Serialize()
 
         # clear out a few things that we don't want in the new bind
-        init.pop('CustomID')
-        init.pop('Title')
-        init.pop('Key')
+        init.pop('CustomID', None)
+        init.pop('Title', None)
+        init.pop('Key', None)
 
         newbindpane = self.BuildBindPaneFromData(init)
 

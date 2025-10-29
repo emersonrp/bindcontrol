@@ -239,6 +239,7 @@ class CGControlMixin:
 
     def __init__(self, *args, **kwargs) -> None:
         self.CtlLabel   : ST.GenStaticText | wx.StaticText | None = None
+        self.CtlName    : str                                     = ''
         self.HelpButton : HelpButton|None                         = None
         self.Page       : bcPage|None                             = None
         self.Data       : Any                                     = None

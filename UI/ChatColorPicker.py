@@ -2,6 +2,8 @@ import wx
 import wx.lib.colourselect as csel
 import wx.lib.newevent
 
+from UI.ControlGroup import CGControlMixin
+
 ChatColorPickerChanged, EVT_CHATCOLORPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 class ChatColorPicker(wx.BoxSizer):
@@ -60,7 +62,7 @@ class ChatColorPicker(wx.BoxSizer):
 
 def ChatColors(fg,bg,bd) -> str: return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'
 
-class bcColourSelect(csel.ColourSelect):
+class bcColourSelect(CGControlMixin, csel.ColourSelect): # pyright: ignore
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)
 

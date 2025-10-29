@@ -77,6 +77,12 @@ class WizardBindPane(CustomBindPaneParent):
         self.Profile.UpdateData('CustomBinds', self.Serialize())
         self.BuildBindUI(None)
 
+class WizButton(wx.Button):
+    def __init__(self, parent, label, wizclass):
+        super().__init__(parent, wx.ID_ANY, label = label)
+        self.WizClass : Any = wizclass
+        self.SetToolTip(self.WizClass.WizToolTip)
+
 class WizPickerDialog(wx.Dialog):
     def __init__(self, parent):
 
@@ -89,10 +95,8 @@ class WizPickerDialog(wx.Dialog):
         wcSizer = wx.BoxSizer(wx.VERTICAL)
         wcSizer.Add(wx.StaticText(self, wx.ID_ANY, 'Select a Bind Wizard:'), 0, wx.EXPAND|wx.BOTTOM, 20)
         for classname, wizClass in wizards.items():
-            wizbutton = wx.Button(self, wx.ID_ANY, label = classname)
-            wizbutton.SetToolTip(wizClass.WizToolTip)
+            wizbutton = WizButton(self, label = classname, wizclass = wizClass)
             wcSizer.Add(wizbutton, 1, wx.EXPAND)
-            wizbutton.WizClass = wizClass
             wizbutton.Bind(wx.EVT_BUTTON, self.OnWizPicked)
 
             # Turn off the button if we just can have one, like "Escape Configurator"

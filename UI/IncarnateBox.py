@@ -71,6 +71,11 @@ class IncarnateBox(wx.StaticBoxSizer):
                 }
         return incarnatedata
 
+class IncarnateIcon(buttons.ThemedGenBitmapButton):
+    def __init__(self, parent, bitmap, size):
+        super().__init__(parent, bitmap = bitmap, size = size)
+        self.Picker : IncarnatePicker|None = None
+
 class IncarnatePicker(wx.StaticBoxSizer):
     def __init__(self, parent, slot = "") -> None:
         super().__init__(wx.HORIZONTAL, parent, label = slot)
@@ -83,7 +88,7 @@ class IncarnatePicker(wx.StaticBoxSizer):
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # "Themed" GenBitmapButton looks flat etc the way we want it to.
-        self.IncIcon = buttons.ThemedGenBitmapButton(staticbox, bitmap = GetIconBitmap('Empty'), size=wx.Size(39,40))
+        self.IncIcon = IncarnateIcon(staticbox, GetIconBitmap('Empty'), wx.Size(39,40))
         self.IncIcon.Picker = self
         self.IncIcon.Bind(wx.EVT_BUTTON, self.OnButtonPress)
         self.IncIcon.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)

@@ -892,7 +892,7 @@ class PEMenuItem(FM.FlatMenuItem):
             wx.LogError(f"Tried to edit {type(self).__name__} which has no self.Editor - this is a bug")
 
     def HasEditor(self) -> bool:
-        return hasattr(self, 'EditorDialog') and callable(getattr(self, 'EditorDialog'))
+        return hasattr(self, 'EditorDialog') and callable(self.EditorDialog)
 
     def OnEditorUpdate(self) -> None:
         wx.LogError(f"Editor update not implemented for {type(self).__name__}")

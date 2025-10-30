@@ -522,12 +522,13 @@ class MovementPowers(Page):
         c['SprintMode'].Enable(bool(sprintkeyaction) and self.DefaultMode() != 'Sprint')
 
         if self.DefaultMode() == 'Sprint':
-            c['SprintMode'].SetToolTip('The Sprint Mode Key is disabled since Sprint is your default Speed on Demand Mode')
+            modekeytooltip = 'The Sprint Key is disabled because Sprint is your default Speed on Demand Mode'
         else:
-            c['SprintMode'].SetToolTip({
+            modekeytooltip = {
                 ACTION_SOD :  'Toggle Sprint Speed on Demand Mode',
                 ACTION_PT  : f'Toggle {c['SprintPower'].GetStringSelection()} on and off',
-            }.get(sprintkeyaction, ''))
+            }.get(sprintkeyaction, 'The Sprint Key is disabled because your Sprint Key Action is set to None')
+        c['SprintMode'].SetToolTip(modekeytooltip)
 
         self.Fit()
         self.Layout()
@@ -542,17 +543,20 @@ class MovementPowers(Page):
             c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPower('Speed', 'Super Speed'))
             c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPower('Experimentation', 'Speed of Sound'))
             c['SpeedPower'].Enable(bool(speedkeyaction))
-            c['SpeedMode'].Enable(bool(speedkeyaction) and self.DefaultMode() != 'Speed')
+            c['SpeedMode'].Enable(bool(speedkeyaction) and bool(c['SpeedPower'].GetStringSelection()) and self.DefaultMode() != 'Speed')
             c['SSSJModeEnable'].Show(self.rightColumn.IsShown(self.superJumpSizer))
             c['SSSJModeEnable'].Enable(speedkeyaction == ACTION_SOD)
 
             if self.DefaultMode() == 'Speed':
-                c['SpeedMode'].SetToolTip('The Speed Mode Key is disabled since Speed is your default Speed on Demand Mode')
+                modekeytooltip = 'The Speed Key is disabled because Speed is your default Speed on Demand Mode'
+            elif not c['SpeedPower'].GetStringSelection():
+                modekeytooltip = 'The Speed Key is disabled because you have not selected a Speed Power'
             else:
-                c['SpeedMode'].SetToolTip({
+                modekeytooltip = {
                     ACTION_SOD :  'Toggle Super Speed Speed on Demand Mode',
                     ACTION_PT  : f'Toggle {c['SpeedPower'].GetStringSelection()} on and off',
-                }.get(speedkeyaction, ''))
+                }.get(speedkeyaction, 'The Speed Key is disabled because your Speed Key Action is set to None')
+            c['SpeedMode'].SetToolTip(modekeytooltip)
 
             if (self.GetState('SpeedPower') == "Super Speed"):
                 c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
@@ -585,17 +589,22 @@ class MovementPowers(Page):
             c['CJPower'].Show  (bool(jumpkeyaction) and c['CJPower'].GetCount() > 1)
             c['CJPower'].Enable(bool(jumpkeyaction) and c['CJPower'].GetCount() > 1)
 
-            c['JumpMode'].Enable(bool(jumpkeyaction) and self.DefaultMode() != 'Jump')
+            c['JumpMode'].Enable(bool(jumpkeyaction) and (
+                c['JumpPower'].GetStringSelection() or c['CJPower'].GetStringSelection()
+                ) and self.DefaultMode() != 'Jump')
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable'].Enable(self.SoDEnabled())
 
             if self.DefaultMode() == 'Jump':
-                c['JumpMode'].SetToolTip('The Jump Mode Key is disabled since Jump is your default Speed on Demand Mode')
+                modekeytooltip = 'The Jump Key is disabled because Jump is your default Speed on Demand Mode'
+            elif not (c['JumpPower'].GetStringSelection() or c['CJPower'].GetStringSelection()):
+                modekeytooltip = 'The Jump Key is disabled because you have not selected any Jump powers'
             else:
-                c['JumpMode'].SetToolTip({
+                modekeytooltip = {
                     ACTION_SOD : 'Toggle Jump Speed on Demand Mode',
                     ACTION_PT : f'Toggle {c['JumpPower'].GetStringSelection()} on and off',
-                }.get(jumpkeyaction, ''))
+                }.get(jumpkeyaction, 'The Jump Key is disabled because your Jump Key Action is set to None')
+            c['JumpMode'].SetToolTip(modekeytooltip)
 
             if (self.GetState('JumpPower') == "Mighty Leap"):
                 c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
@@ -640,15 +649,20 @@ class MovementPowers(Page):
             c['HoverPower'].Enable(bool(flykeyaction) and c['HoverPower'].GetCount() > 1)
 
             c['FlyMode'].Show(bool(self.GetState('FlyPower') or self.GetState('HoverPower')))
-            c['FlyMode'].Enable(bool(flykeyaction) and self.DefaultMode() != "Fly")
+            c['FlyMode'].Enable(bool(flykeyaction) and (
+                c['FlyPower'].GetStringSelection() or c['HoverPower'].GetStringSelection()
+                ) and self.DefaultMode() != "Fly")
 
             if self.DefaultMode() == 'Fly':
-                c['FlyMode'].SetToolTip('The Fly Mode Key is disabled since Fly is your default Speed on Demand Mode')
+                modekeytooltip = 'The Fly Key is disabled because Fly is your default Speed on Demand Mode'
+            elif not (c['FlyPower'].GetStringSelection() or c['HoverPower'].GetStringSelection()):
+                modekeytooltip = 'The Fly Key is disabled because you have not selected any Fly powers'
             else:
-                c['FlyMode'].SetToolTip({
+                modekeytooltip = {
                     ACTION_SOD : 'Toggle Fly Speed on Demand Mode',
                     ACTION_PT : f'Toggle {c['FlyPower'].GetStringSelection()} on and off',
-                }.get(flykeyaction, ''))
+                }.get(flykeyaction, 'The Fly Key is disabled because your Fly Key Action is set to None')
+            c['FlyMode'].SetToolTip(modekeytooltip)
 
             c['FlySpecialKey'].Show(False) # turn it off and then check to see if we want it
             if (self.GetState('FlyPower') == "Fly"):

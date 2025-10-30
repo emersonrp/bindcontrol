@@ -544,7 +544,7 @@ class MovementPowers(Page):
             c['SpeedPower'].Enable(bool(speedkeyaction))
             c['SpeedMode'].Enable(bool(speedkeyaction) and self.DefaultMode() != 'Speed')
             c['SSSJModeEnable'].Show(self.rightColumn.IsShown(self.superJumpSizer))
-            c['SSSJModeEnable'].Enable(self.SoDEnabled() and bool(speedkeyaction))
+            c['SSSJModeEnable'].Enable(speedkeyaction == ACTION_SOD)
 
             if self.DefaultMode() == 'Speed':
                 c['SpeedMode'].SetToolTip('The Speed Mode Key is disabled since Speed is your default Speed on Demand Mode')
@@ -1546,7 +1546,7 @@ class MovementPowers(Page):
                                 t.horizkeys = W+S+A+D # total # of horizontal move keys. So Sprint isn't turned on when jumping
                                 t.jkeys     = t.horizkeys+t.space
 
-                                sssj = t.jump if self.GetState('SSSJModeEnable') else ''
+                                sssj = t.jump if self.SSSJEnabled() else ''
                                 ### NonSoD Mode
                                 if self.HasAnySoD():
                                     self.MakeSoDFile({
@@ -2202,6 +2202,9 @@ class MovementPowers(Page):
     ### convenience methods
     def SoDEnabled(self) -> bool:
         return self.Ctrls['EnableSoD'].IsChecked()
+
+    def SSSJEnabled(self) -> bool:
+        return self.Ctrls['SSSJModeEnable'].IsEnabled() and self.Ctrls['SSSJModeEnable'].IsChecked()
 
     def DefaultMode(self) -> str:
         return self.Ctrls['DefaultMode'].GetStringSelection() or 'NonSoD'

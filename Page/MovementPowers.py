@@ -390,7 +390,7 @@ class MovementPowers(Page):
         self.superSpeedSizer.AddControl(ctlName = 'SpeedSpecialKey', ctlType = 'keybutton',)
         self.superSpeedSizer.AddControl(ctlName = 'SSSJModeEnable', ctlType = 'checkbox',
             helpfile = 'SuperSpeedSuperJumpMode.html',
-            tooltip = 'Enable Super Speed / Super Jump Mode.')
+            tooltip = 'Enable Super Speed / Super Jump Mode')
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
@@ -437,11 +437,11 @@ class MovementPowers(Page):
             tooltip = "Select the teleport power to use with the keybinds in this section")
         self.Ctrls['TPPower'].Bind(wx.EVT_CHOICE, self.OnTeleportChanged)
         if server == "Homecoming":
-            tpTooltip = 'Immediately teleport to the cursor position without showing a target marker.'
-            tpcTooltip = 'Show target marker on keypress;  teleport to marker on key release.'
+            tpTooltip = 'Immediately teleport to the cursor position without showing a target marker'
+            tpcTooltip = 'Show target marker on keypress;  teleport to marker on key release'
         else:
-            tpTooltip = 'Show target marker on keypress;  teleport to marker on key release.'
-            tpcTooltip = 'Show target marker on keypress;  click to teleport.'
+            tpTooltip = 'Show target marker on keypress;  teleport to marker on key release'
+            tpcTooltip = 'Show target marker on keypress;  click to teleport'
         self.teleportSizer.AddControl(ctlName = "TPBindKey", ctlType = 'keybutton', tooltip = tpTooltip)
         self.teleportSizer.AddControl(ctlName = "TPComboKey", ctlType = 'keybutton', tooltip = tpcTooltip)
         self.Ctrls['TPComboKey'].Bind(EVT_KEY_CHANGED, self.OnTPComboKey)
@@ -449,11 +449,11 @@ class MovementPowers(Page):
         self.teleportSizer.AddControl(ctlName = 'TPTPHover', ctlType = 'checkbox',
             tooltip = "Activate the Hover power after teleporting")
         if server == "Homecoming":
-            ttpTooltip = "Immediately Team Teleport to the cursor position without showing a target marker."
-            ttpcTooltip = "Show target marker on keypress;  Team Teleport to marker on key release."
+            ttpTooltip = 'Immediately Team Teleport to the cursor position without showing a target marker'
+            ttpcTooltip = 'Show target marker on keypress;  Team Teleport to marker on key release'
         else:
-            ttpTooltip = "Show target marker on keypress;  Team Teleport to marker on key release."
-            ttpcTooltip = "Show target marker on keypress;  click to team teleport."
+            ttpTooltip = 'Show target marker on keypress;  Team Teleport to marker on key release'
+            ttpcTooltip = 'Show target marker on keypress;  click to team teleport'
         self.teleportSizer.AddControl(ctlName = "TTPBindKey", ctlType = 'keybutton', tooltip = ttpTooltip)
         self.teleportSizer.AddControl(ctlName = "TTPComboKey", ctlType = 'keybutton', tooltip = ttpcTooltip)
         self.Ctrls['TTPComboKey'].Bind(EVT_KEY_CHANGED, self.OnTTPComboKey)
@@ -461,7 +461,7 @@ class MovementPowers(Page):
         self.teleportSizer.AddControl(ctlName = 'TTPTPGFly', ctlType = 'checkbox',
             tooltip = "Activate the Group Fly power after Team Teleporting")
         self.teleportSizer.AddControl(ctlName = 'TPHideWindows', ctlType = 'checkbox',
-            tooltip = 'Hide most UI elements while holding target marker key.', )
+            tooltip = 'Hide most UI elements while holding target marker key', )
         self.rightColumn.Add(self.teleportSizer, 0, wx.EXPAND)
 
         topSizer.Add(self.leftColumn , 0, wx.ALL, 3)
@@ -518,15 +518,17 @@ class MovementPowers(Page):
     def OnSprintChanged(self, evt = None):
         c = self.Ctrls
         c['DefaultMode'].ShowEntryIf('Sprint', self.GetKeyAction('Sprint') == ACTION_SOD)
-        c['SprintMode'].Show(self.DefaultMode() != "Sprint")
-        c['SprintMode'].Enable(bool(self.GetKeyAction('Sprint')))
+        c['SprintMode'].Enable(bool(self.GetKeyAction('Sprint')) and self.DefaultMode() != 'Sprint')
 
         c['SprintKeyAction'].CtlLabel.SetLabel('Sprint Powers Mode:' if self.DefaultMode() == 'Sprint' else 'Sprint Key Action:')
 
-        c['SprintMode'].SetToolTip({
-            ACTION_SOD :  'Toggle Sprint Speed on Demand Mode',
-            ACTION_PT  : f'Toggle {c['SprintPower'].GetStringSelection()} on and off',
-        }.get(self.GetKeyAction('Sprint'), ''))
+        if self.DefaultMode() == 'Sprint':
+            c['SprintMode'].SetToolTip('The Sprint Mode Key is disabled since Sprint is your default Speed on Demand Mode')
+        else:
+            c['SprintMode'].SetToolTip({
+                ACTION_SOD :  'Toggle Sprint Speed on Demand Mode',
+                ACTION_PT  : f'Toggle {c['SprintPower'].GetStringSelection()} on and off',
+            }.get(self.GetKeyAction('Sprint'), ''))
 
         self.Fit()
         self.Layout()
@@ -540,18 +542,19 @@ class MovementPowers(Page):
             c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPower('Speed', 'Super Speed'))
             c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPower('Experimentation', 'Speed of Sound'))
             c['SpeedPower'].Enable(bool(self.GetKeyAction('Speed')))
-            c['SpeedMode'].Show(self.DefaultMode() != "Speed")
-            c['SpeedMode'].Enable(bool(self.GetKeyAction('Speed')))
+            c['SpeedMode'].Enable(bool(self.GetKeyAction('Speed')) and self.DefaultMode() != 'Speed')
             c['SSSJModeEnable'].Show(self.rightColumn.IsShown(self.superJumpSizer))
             c['SSSJModeEnable'].Enable(self.SoDEnabled())
 
-
             c['SpeedKeyAction'].CtlLabel.SetLabel('Speed Powers Mode:' if self.DefaultMode() == 'Speed' else 'Speed Key Action:')
 
-            c['SpeedMode'].SetToolTip({
-                ACTION_SOD :  'Toggle Super Speed Speed on Demand Mode',
-                ACTION_PT  : f'Toggle {c['SpeedPower'].GetStringSelection()} on and off',
-            }.get(self.GetKeyAction('Speed'), ''))
+            if self.DefaultMode() == 'Speed':
+                c['SpeedMode'].SetToolTip('The Speed Mode Key is disabled since Speed is your default Speed on Demand Mode')
+            else:
+                c['SpeedMode'].SetToolTip({
+                    ACTION_SOD :  'Toggle Super Speed Speed on Demand Mode',
+                    ACTION_PT  : f'Toggle {c['SpeedPower'].GetStringSelection()} on and off',
+                }.get(self.GetKeyAction('Speed'), ''))
 
             if (self.GetState('SpeedPower') == "Super Speed"):
                 c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
@@ -585,15 +588,17 @@ class MovementPowers(Page):
 
             c['JumpKeyAction'].CtlLabel.SetLabel('Jump Powers Mode:' if self.DefaultMode() == 'Jump' else 'Jump Key Action:')
 
-            c['JumpMode'].Show(self.DefaultMode() != "Jump")
-            c['JumpMode'].Enable(bool(self.GetKeyAction('Jump')))
+            c['JumpMode'].Enable(bool(self.GetKeyAction('Jump')) and self.DefaultMode() != 'Jump')
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable'].Enable(self.SoDEnabled())
 
-            c['JumpMode'].SetToolTip({
-                ACTION_SOD : 'Toggle Jump Speed on Demand Mode',
-                ACTION_PT : f'Toggle {c['JumpPower'].GetStringSelection()} on and off',
-            }.get(self.GetKeyAction('Jump'), ''))
+            if self.DefaultMode() == 'Jump':
+                c['JumpMode'].SetToolTip('The Jump Mode Key is disabled since Jump is your default Speed on Demand Mode')
+            else:
+                c['JumpMode'].SetToolTip({
+                    ACTION_SOD : 'Toggle Jump Speed on Demand Mode',
+                    ACTION_PT : f'Toggle {c['JumpPower'].GetStringSelection()} on and off',
+                }.get(self.GetKeyAction('Jump'), ''))
 
             if (self.GetState('JumpPower') == "Mighty Leap"):
                 c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
@@ -638,13 +643,16 @@ class MovementPowers(Page):
             c['HoverPower'].Show  (bool(self.GetKeyAction('Fly')) and c['HoverPower'].GetCount() > 1)
             c['HoverPower'].Enable(bool(self.GetKeyAction('Fly')) and c['HoverPower'].GetCount() > 1)
 
-            c['FlyMode'].Show(bool(self.GetState('FlyPower') or self.GetState('HoverPower')) and self.DefaultMode() != "Fly")
-            c['FlyMode'].Enable(bool(self.GetKeyAction('Fly')))
+            c['FlyMode'].Show(bool(self.GetState('FlyPower') or self.GetState('HoverPower')))
+            c['FlyMode'].Enable(bool(self.GetKeyAction('Fly')) and self.DefaultMode() != "Fly")
 
-            c['FlyMode'].SetToolTip({
-                ACTION_SOD : 'Toggle Fly Speed on Demand Mode',
-                ACTION_PT : f'Toggle {c['FlyPower'].GetStringSelection()} on and off',
-            }.get(self.GetKeyAction('Fly'), ''))
+            if self.DefaultMode() == 'Fly':
+                c['FlyMode'].SetToolTip('The Fly Mode Key is disabled since Fly is your default Speed on Demand Mode')
+            else:
+                c['FlyMode'].SetToolTip({
+                    ACTION_SOD : 'Toggle Fly Speed on Demand Mode',
+                    ACTION_PT : f'Toggle {c['FlyPower'].GetStringSelection()} on and off',
+                }.get(self.GetKeyAction('Fly'), ''))
 
             c['FlySpecialKey'].Show(False) # turn it off and then check to see if we want it
             if (self.GetState('FlyPower') == "Fly"):
@@ -736,7 +744,7 @@ class MovementPowers(Page):
         # this reaches down and touches up Profile.Data
         self.TempTravelPowerPicker.doOnMenuSelected()
         if enabled and not tt.GetLabel():
-            tt.AddError('unset', 'No Temp Travel Power BindKey has been set.')
+            tt.AddError('unset', 'No Temp Travel Power BindKey has been set')
         else:
             tt.RemoveError('unset')
 

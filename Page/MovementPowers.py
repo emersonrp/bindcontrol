@@ -1004,14 +1004,11 @@ class MovementPowers(Page):
         key = t.SpeedModeKey
         name = UI.Labels['SpeedMode']
 
-        # sssj mode forces us to differentiate between 'code' for X/X00000 and 'suffix' for 000000x.txt'
         if istoggle := self.GetKeyAction('Speed') == ACTION_PT:
-            code   = 's' if sssj else 'n' # use sod-style movement keybinds if sssj to turn jumping on/off
-            suffix = ''  if sssj else 'n'
+            code   = 'n'
             togoff = self.AllSoDPowers() if doingtoggle else ''
         else: # is SoD
             code   = 's'
-            suffix = 's'
             togoff = self.OtherMovementPowers('s')
         dotogglefix = istoggle and not doingtoggle
 
@@ -1022,27 +1019,27 @@ class MovementPowers(Page):
             if (bl == 's'):
                 bindload  = t.BLF(code)
                 if dotogglefix:
-                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, suffix, bl, file, feedback, sssj = sssj)
+                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, feedback, sssj = sssj)
                 elif usejumpfix:
-                    self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, suffix, bl, file, feedback)
+                    self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, code, bl, file, feedback)
                 else:
                     file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff, start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "as"):
                 bindload  = t.BLF('a' + code)
                 if dotogglefix:
-                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, suffix, bl, file, "a", feedback, sssj = sssj)
+                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "a", feedback, sssj = sssj)
                 elif usejumpfix:
-                    self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, suffix, bl, file, "a", feedback)
+                    self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, code, bl, file, "a", feedback)
                 else:
                     file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff, start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             else:  # bl == "fs"
                 bindload  = t.BLF('f' + code)
                 if dotogglefix:
-                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, suffix, bl, file, "f", feedback, sssj = sssj)
+                    self.SoDToggleFix(t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback, sssj = sssj)
                 elif usejumpfix:
-                    self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, suffix, bl, file, "f", feedback)
+                    self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
                 else:
                     bindload  = t.BLF('f' + code)
                     file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff, start=True) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + bindload)
@@ -1065,7 +1062,7 @@ class MovementPowers(Page):
             feedback = '$$t $name, Super Jump Mode' if self.GetState('Feedback') else ''
 
             # tglbl is the BLF() for the toggle file
-            # tgl is the bindfile itself
+            # tgl is the toggle bindfile itself
             tglbl =       f"$${BLF()} {fbl}{t.KeyState()}j.txt"
             tgl   = p.GetBindFile(f"{fpath}{t.KeyState()}j.txt")
 

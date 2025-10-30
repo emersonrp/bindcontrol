@@ -70,7 +70,7 @@ class ErrorControlMixin:
     def HasErrors(self) -> bool: return bool(self.Errors)
 
     def ClearErrors(self) -> None:
-        # get a list first b/c we change it in the loop
+        # make a list copy of self.Errors first b/c we change self.Errors in the loop
         errors = list(self.Errors)
         for error in errors: self.RemoveError(error)
         self.SetErrorToolTip()

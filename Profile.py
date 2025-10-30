@@ -257,7 +257,7 @@ class Profile(wx.Notebook):
 
                     page.SetState(controlname, value)
 
-            page.SynchronizeUI()
+            page.SynchronizeUI() # don't CallAfter() this one
 
             # Do this after SynchronizeUI for General because SynchronizeUI has blown away our powerset
             # picks when we re-fill those pickers from the archetype.

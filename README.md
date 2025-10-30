@@ -89,7 +89,7 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 
 *Windows users*:  Try the ZIP file.  If that works for you, it's the quickest path to victory.  ***If you receive malware warnings when downloading***, please read [my comments on that issue](Help/MalwareWarnings.md).
 
-*MacOS users*:  An experimental binary release has been made available.  It is not signed and/or notarized, and might or might not work at all.
+*MacOS users*:  Experimental binary releases for Intel and Arm64 have been made available.  They are not signed and/or notarized, and might or might not work at all.
 
 <strike>*Linux users*:  An experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.  It's built using Github's "ubuntu-latest" environment, which may or may not be completely compatible with other distributions and versions.[^1]</strike>
 

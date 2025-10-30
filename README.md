@@ -37,13 +37,13 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
     + PowerBinder is a flexible tool offering an easy way to assemble and maintain possibly-complicated configurations of slash commands, and is used in Simple, Complex, and Buffer Binds
 
 * Movement / Speed-on-Demand
-    * Speed-on-Demand keybinds based on [CityBinder](http://sourceforge.net/projects/citybinder/) and the original Gnarly's SoD keybinds, with many clarifications and improvements
+    * Speed-on-Demand keybinds based on CityBinder and the original Gnarly's SoD keybinds, with many clarifications and improvements
     * Updates to Speed-on-Demand to accommodate the various [travel power changes introduced by Homecoming](https://homecoming.wiki/wiki/Issue_27_Page_2#Travel_Power_Updates)
     * Simple Power Toggle keybinds that can activate individual travel powers or toggle between related powers like Fly and Hover
     * Support for all formal travel powers:  Fly, Mystic Flight, Group Fly, Super Jump, Mighty Leap, Super Speed, Speed of Sound, Teleport, and Team Teleport
     * Secondary / server tray travel powers like Super Jump's "Double Jump" and Mystic Flight's "Translocation" integrated
-    * Homecoming's <code>powexec_location cursor</code> used for Teleport binds, with "teleport immediately" and "teleport on key release" options available
-    * Kheldian form toggles;  Kheldian movement powers incorporated into Speed-on-Demand and Power Toggle
+    * With Homecoming profiles, <code>powexec_location cursor</code> used for Teleport binds, with "teleport immediately" and "teleport on key release" options available
+    * Kheldian form toggles with power tray changing;  Kheldian movement powers incorporated into Speed-on-Demand and Power Toggle
     * Simple Temporary Travel Power toggle keybind
     * One-key reset in case SoD binds get tangled up
 
@@ -67,8 +67,19 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
             + "Bodyguard mode" shortcut -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress - <i>requires uniquely-named pets</i>
         + [qwy's Numpad Controls](https://forums.homecomingservers.com/topic/20650-i26-expanded-mastermind-numpad-controls/):
             + Simple but comprehensive scheme using the number pad and modifier keys to select, control, heal, and buff pets.
+            + Mod keys select Defensive, Aggressive, Passive versions of the same commands
+            + Select individual pets or by power level
+            + Follow, Go To, Attack, Stay commands
+            + One-key upgrade bind, applying both possible upgrades on key press and release
+            + Heal targeted pet
+            + Cycle target through all pets or per power level
         + [qwy's PetMouse Controls](https://forums.homecomingservers.com/topic/20788-i26-the-masterminds-petmouse-new-menu/):
-            + Mouse-centric keybind scheme that uses modifier keys with the mouse, as well as an optional popmenu, to give orders to pets individually or by power level.  This is a fairly simple control scheme, but can handle 90% of moment-to-moment pet commands from the mouse.
+            + Mouse-centric keybind scheme that uses mod keys with the mouse to give orders to pets individually or by power level.
+            + Alt+Click (by default) will command current pet to "go to" the click location and will target the next pet for orders, making it trivial to send each of your pets to a precise location with a minimum of interaction
+            + Most key commands available from the WASD "home" position by default
+            + Optional popmenu allowing more detailed commands using just a few home position keystrokes
+            + Numpad commands to select all pets or by-power
+            + Mouse controls can cover 90% of moment-to-moment interactions with henchmen, while the popmenu covers all other needed functionality
 
 * Popmenu Editor (beta)
     * Install, edit, and delete popmenus in the correct game folder

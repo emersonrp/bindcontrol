@@ -1069,9 +1069,9 @@ class MovementPowers(Page):
             if (bl == "j"):
                 # if we're moving, turn on jump;  if stationary, turn on combat jumping
                 if (t.horizkeys + t.space > 0):
-                    a = self.actPower_name(None, {t.cjmp, t.jump}) + '$$up 1'
+                    a = self.actPower_toggle(t.jump, t.cjmp) + '$$up 1'
                 else:
-                    a = self.actPower_name(None, {t.jump, t.cjmp})
+                    a = self.actPower_toggle(t.cjmp, t.jump)
 
                 tgl.SetBind(key, name, self, '-down' + a + togoff + t.detaillo + t.flycamdist + t.BLF('n' if istoggle else 'j'))
                 file.SetBind(key, name, self, '+down' + feedback + tglbl)

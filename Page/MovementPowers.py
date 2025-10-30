@@ -364,7 +364,7 @@ class MovementPowers(Page):
         SprintSizer.AddControl(ctlName = 'SprintKeyAction', ctlType = 'choice',
             contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'SprintKeyAction.html',
-            tooltip = 'Select what the Sprint Power Key will do')
+            tooltip = 'Select what the Sprint Key will do')
         self.Ctrls['SprintKeyAction'].Bind(wx.EVT_CHOICE, self.OnSprintChanged)
         SprintSizer.AddControl(ctlName = 'SprintPower', ctlType = 'choice',
             contents = GameData.SprintPowers,
@@ -380,7 +380,7 @@ class MovementPowers(Page):
         self.superSpeedSizer.AddControl(ctlName = 'SpeedKeyAction', ctlType = 'choice',
             contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'SpeedKeyAction.html',
-            tooltip = 'Select what the Speed Power Key will do')
+            tooltip = 'Select what the Speed Key will do')
         self.Ctrls['SpeedKeyAction'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
         self.superSpeedSizer.AddControl(ctlName = "SpeedPower", ctlType = 'choice',
             contents = ['', 'Speed of Sound', 'Super Speed'],
@@ -398,7 +398,7 @@ class MovementPowers(Page):
         self.superJumpSizer.AddControl(ctlName = 'JumpKeyAction', ctlType = 'choice',
             contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'JumpKeyAction.html',
-            tooltip = 'Select what the Jump Power Key will do')
+            tooltip = 'Select what the Jump Key will do')
         self.Ctrls['JumpKeyAction'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
         self.superJumpSizer.AddControl(ctlName = "JumpPower", ctlType = 'choice',
             contents = ['', 'Mighty Leap', 'Super Jump',],
@@ -415,7 +415,7 @@ class MovementPowers(Page):
         self.flySizer.AddControl(ctlName = 'FlyKeyAction', ctlType = 'choice',
             contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'FlyKeyAction.html',
-            tooltip = 'Select what the Fly Power Key will do')
+            tooltip = 'Select what the Fly Key will do')
         self.Ctrls['FlyKeyAction'].Bind(wx.EVT_CHOICE, self.OnFlightChanged)
         self.flySizer.AddControl(ctlName = "FlyPower", ctlType = 'choice',
             contents = ['', 'Fly', 'Mystic Flight',],
@@ -517,10 +517,9 @@ class MovementPowers(Page):
 
     def OnSprintChanged(self, evt = None):
         c = self.Ctrls
-        c['DefaultMode'].ShowEntryIf('Sprint', self.GetKeyAction('Sprint') == ACTION_SOD)
-        c['SprintMode'].Enable(bool(self.GetKeyAction('Sprint')) and self.DefaultMode() != 'Sprint')
-
-        c['SprintKeyAction'].CtlLabel.SetLabel('Sprint Powers Mode:' if self.DefaultMode() == 'Sprint' else 'Sprint Key Action:')
+        sprintkeyaction = self.GetKeyAction('Sprint')
+        c['DefaultMode'].ShowEntryIf('Sprint', sprintkeyaction == ACTION_SOD)
+        c['SprintMode'].Enable(bool(sprintkeyaction) and self.DefaultMode() != 'Sprint')
 
         if self.DefaultMode() == 'Sprint':
             c['SprintMode'].SetToolTip('The Sprint Mode Key is disabled since Sprint is your default Speed on Demand Mode')
@@ -528,7 +527,7 @@ class MovementPowers(Page):
             c['SprintMode'].SetToolTip({
                 ACTION_SOD :  'Toggle Sprint Speed on Demand Mode',
                 ACTION_PT  : f'Toggle {c['SprintPower'].GetStringSelection()} on and off',
-            }.get(self.GetKeyAction('Sprint'), ''))
+            }.get(sprintkeyaction, ''))
 
         self.Fit()
         self.Layout()
@@ -536,17 +535,16 @@ class MovementPowers(Page):
 
     def OnSpeedChanged(self, evt = None) -> None:
         c = self.Ctrls
+        speedkeyaction = self.GetKeyAction('Speed')
         if (self.Profile.HasPower('Speed', 'Super Speed') or self.Profile.HasPower('Experimentation', 'Speed of Sound')):
-            c['DefaultMode'].ShowEntryIf('Speed', self.GetKeyAction('Speed') == ACTION_SOD)
+            c['DefaultMode'].ShowEntryIf('Speed', speedkeyaction == ACTION_SOD)
             self.ShowControlGroup(self.superSpeedSizer)
             c['SpeedPower'].ShowEntryIf('Super Speed',    self.Profile.HasPower('Speed', 'Super Speed'))
             c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPower('Experimentation', 'Speed of Sound'))
-            c['SpeedPower'].Enable(bool(self.GetKeyAction('Speed')))
-            c['SpeedMode'].Enable(bool(self.GetKeyAction('Speed')) and self.DefaultMode() != 'Speed')
+            c['SpeedPower'].Enable(bool(speedkeyaction))
+            c['SpeedMode'].Enable(bool(speedkeyaction) and self.DefaultMode() != 'Speed')
             c['SSSJModeEnable'].Show(self.rightColumn.IsShown(self.superJumpSizer))
-            c['SSSJModeEnable'].Enable(self.SoDEnabled())
-
-            c['SpeedKeyAction'].CtlLabel.SetLabel('Speed Powers Mode:' if self.DefaultMode() == 'Speed' else 'Speed Key Action:')
+            c['SSSJModeEnable'].Enable(self.SoDEnabled() and bool(speedkeyaction))
 
             if self.DefaultMode() == 'Speed':
                 c['SpeedMode'].SetToolTip('The Speed Mode Key is disabled since Speed is your default Speed on Demand Mode')
@@ -554,7 +552,7 @@ class MovementPowers(Page):
                 c['SpeedMode'].SetToolTip({
                     ACTION_SOD :  'Toggle Super Speed Speed on Demand Mode',
                     ACTION_PT  : f'Toggle {c['SpeedPower'].GetStringSelection()} on and off',
-                }.get(self.GetKeyAction('Speed'), ''))
+                }.get(speedkeyaction, ''))
 
             if (self.GetState('SpeedPower') == "Super Speed"):
                 c['SpeedSpecialKey'].CtlLabel.SetLabel('Speed Phase:')
@@ -575,20 +573,19 @@ class MovementPowers(Page):
 
     def OnJumpChanged(self, evt = None) -> None:
         c = self.Ctrls
+        jumpkeyaction = self.GetKeyAction('Jump')
         if (self.Profile.HasPower('Leaping', 'Super Jump') or self.Profile.HasPower('Force of Will', 'Mighty Leap')):
-            c['DefaultMode'].ShowEntryIf('Jump', self.GetKeyAction('Jump') == ACTION_SOD)
+            c['DefaultMode'].ShowEntryIf('Jump', jumpkeyaction == ACTION_SOD)
             self.ShowControlGroup(self.superJumpSizer)
             c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPower('Leaping', 'Super Jump'))
             c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPower('Force of Will', 'Mighty Leap'))
-            c['JumpPower'].Enable(bool(self.GetKeyAction('Jump')))
+            c['JumpPower'].Enable(bool(jumpkeyaction))
 
             c['CJPower'].ShowEntryIf('Combat Jumping', self.Profile.HasPower('Leaping', 'Combat Jumping'))
-            c['CJPower'].Show  (bool(self.GetKeyAction('Jump')) and c['CJPower'].GetCount() > 1)
-            c['CJPower'].Enable(bool(self.GetKeyAction('Jump')) and c['CJPower'].GetCount() > 1)
+            c['CJPower'].Show  (bool(jumpkeyaction) and c['CJPower'].GetCount() > 1)
+            c['CJPower'].Enable(bool(jumpkeyaction) and c['CJPower'].GetCount() > 1)
 
-            c['JumpKeyAction'].CtlLabel.SetLabel('Jump Powers Mode:' if self.DefaultMode() == 'Jump' else 'Jump Key Action:')
-
-            c['JumpMode'].Enable(bool(self.GetKeyAction('Jump')) and self.DefaultMode() != 'Jump')
+            c['JumpMode'].Enable(bool(jumpkeyaction) and self.DefaultMode() != 'Jump')
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable'].Enable(self.SoDEnabled())
 
@@ -598,7 +595,7 @@ class MovementPowers(Page):
                 c['JumpMode'].SetToolTip({
                     ACTION_SOD : 'Toggle Jump Speed on Demand Mode',
                     ACTION_PT : f'Toggle {c['JumpPower'].GetStringSelection()} on and off',
-                }.get(self.GetKeyAction('Jump'), ''))
+                }.get(jumpkeyaction, ''))
 
             if (self.GetState('JumpPower') == "Mighty Leap"):
                 c['JumpSpecialKey'].CtlLabel.SetLabel('Takeoff:')
@@ -623,7 +620,8 @@ class MovementPowers(Page):
     def OnFlightChanged(self, evt = None) -> None:
         c = self.Ctrls
         archetype = self.Profile.Archetype()
-        flyusessod = self.GetKeyAction('Fly') == ACTION_SOD
+        flykeyaction = self.GetKeyAction('Fly')
+        flyusessod = flykeyaction == ACTION_SOD
 
         if (self.Profile.HasPower('Flight', 'Fly')
                     or self.Profile.HasPower('Sorcery', 'Mystic Flight')
@@ -634,17 +632,15 @@ class MovementPowers(Page):
             c['FlyPower'].ShowEntryIf("Fly",           self.Profile.HasPower("Flight", 'Fly'))
             c['FlyPower'].ShowEntryIf("Mystic Flight", self.Profile.HasPower("Sorcery", 'Mystic Flight'))
             c['FlyPower'].ShowEntryIf("Energy Flight", archetype == "Peacebringer")
-            c['FlyPower'].Enable(bool(self.GetKeyAction('Fly')))
-
-            c['FlyKeyAction'].CtlLabel.SetLabel('Fly Powers Mode:' if self.DefaultMode() == 'Fly' else 'Fly Key Action:')
+            c['FlyPower'].Enable(bool(flykeyaction))
 
             c['HoverPower'].ShowEntryIf('Hover',         self.Profile.HasPower('Flight', 'Hover'))
             c['HoverPower'].ShowEntryIf('Combat Flight', archetype == "Peacebringer")
-            c['HoverPower'].Show  (bool(self.GetKeyAction('Fly')) and c['HoverPower'].GetCount() > 1)
-            c['HoverPower'].Enable(bool(self.GetKeyAction('Fly')) and c['HoverPower'].GetCount() > 1)
+            c['HoverPower'].Show  (bool(flykeyaction) and c['HoverPower'].GetCount() > 1)
+            c['HoverPower'].Enable(bool(flykeyaction) and c['HoverPower'].GetCount() > 1)
 
             c['FlyMode'].Show(bool(self.GetState('FlyPower') or self.GetState('HoverPower')))
-            c['FlyMode'].Enable(bool(self.GetKeyAction('Fly')) and self.DefaultMode() != "Fly")
+            c['FlyMode'].Enable(bool(flykeyaction) and self.DefaultMode() != "Fly")
 
             if self.DefaultMode() == 'Fly':
                 c['FlyMode'].SetToolTip('The Fly Mode Key is disabled since Fly is your default Speed on Demand Mode')
@@ -652,7 +648,7 @@ class MovementPowers(Page):
                 c['FlyMode'].SetToolTip({
                     ACTION_SOD : 'Toggle Fly Speed on Demand Mode',
                     ACTION_PT : f'Toggle {c['FlyPower'].GetStringSelection()} on and off',
-                }.get(self.GetKeyAction('Fly'), ''))
+                }.get(flykeyaction, ''))
 
             c['FlySpecialKey'].Show(False) # turn it off and then check to see if we want it
             if (self.GetState('FlyPower') == "Fly"):

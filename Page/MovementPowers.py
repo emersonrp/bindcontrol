@@ -534,7 +534,6 @@ class MovementPowers(Page):
             }.get(sprintkeyaction, 'The Sprint Key is disabled because your Sprint Key Action is set to None')
         c['SprintMode'].SetToolTip(modekeytooltip)
 
-        self.Fit()
         self.Layout()
         if evt: evt.Skip()
 
@@ -575,7 +574,6 @@ class MovementPowers(Page):
             self.ShowControlGroup(self.superSpeedSizer, False)
             c['DefaultMode'].ShowEntryIf('Speed', False)
 
-        self.Fit()
         self.Layout()
         if evt: evt.Skip()
 
@@ -627,7 +625,6 @@ class MovementPowers(Page):
             self.ShowControlGroup(self.superJumpSizer, False)
             c['DefaultMode'].ShowEntryIf('Jump', False)
 
-        self.Fit()
         self.Layout()
         if evt: evt.Skip()
 
@@ -694,7 +691,6 @@ class MovementPowers(Page):
             self.ShowControlGroup(self.flySizer, False)
             c['DefaultMode'].ShowEntryIf('Fly', False)
 
-        self.Fit()
         self.Layout()
         if evt: evt.Skip()
 
@@ -727,7 +723,6 @@ class MovementPowers(Page):
         else:
             self.ShowControlGroup(self.teleportSizer, False)
 
-        self.Fit()
         self.Layout()
         if evt: evt.Skip()
 

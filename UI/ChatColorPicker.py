@@ -2,7 +2,7 @@ import wx
 import wx.lib.colourselect as csel
 import wx.lib.newevent
 
-from UI.ControlGroup import CGControlMixin
+from UI.CGControls import CGControlMixin, cgStaticText
 
 ChatColorPickerChanged, EVT_CHATCOLORPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
@@ -10,7 +10,7 @@ class ChatColorPicker(wx.BoxSizer):
     def __init__(self, parent, page, prefix, cols) -> None:
         super().__init__(wx.HORIZONTAL)
 
-        self.borderLabel = wx.StaticText(parent, label = "Border:")
+        self.borderLabel = cgStaticText(parent, label = "Border:")
         self.borderPicker = bcColourSelect(parent, colour = cols['border'], size = wx.Size(30,30))
         self.borderPicker.CtlName = f"{prefix}Border"
         self.borderPicker.CtlLabel = self.borderLabel
@@ -18,7 +18,7 @@ class ChatColorPicker(wx.BoxSizer):
         self.Add(self.borderLabel,  0, wx.LEFT|wx.ALIGN_CENTER, 5)
         self.Add(self.borderPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 5)
 
-        self.backgroundLabel = wx.StaticText(parent, label = "Bkgnd:")
+        self.backgroundLabel = cgStaticText(parent, label = "Bkgnd:")
         self.backgroundPicker = bcColourSelect(parent, colour = cols['background'], size = wx.Size(30,30))
         self.backgroundPicker.CtlName = f"{prefix}Background"
         self.backgroundPicker.CtlLabel = self.backgroundLabel
@@ -26,7 +26,7 @@ class ChatColorPicker(wx.BoxSizer):
         self.Add(self.backgroundLabel,  0, wx.LEFT|wx.ALIGN_CENTER, 5)
         self.Add(self.backgroundPicker, 0, wx.LEFT|wx.ALIGN_CENTER, 5)
 
-        self.textLabel = wx.StaticText(parent, label = "Text:")
+        self.textLabel = cgStaticText(parent, label = "Text:")
         self.textPicker = bcColourSelect(parent, colour = cols['text'], size = wx.Size(30,30))
         self.textPicker.CtlName = f"{prefix}Foreground"
         self.textPicker.CtlLabel = self.textLabel
@@ -36,7 +36,7 @@ class ChatColorPicker(wx.BoxSizer):
 
         self.example = wx.Panel(parent)
         self.exampleSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.exampleText = wx.StaticText(self.example, style = wx.ALIGN_CENTER_HORIZONTAL,)
+        self.exampleText = cgStaticText(self.example, style = wx.ALIGN_CENTER_HORIZONTAL,)
         self.exampleText.SetLabelMarkup("<big>  Example Text  </big>")
         page.Ctrls[f"{prefix}Example"] = self.example
         self.exampleSizer.Add(self.exampleText, 0, wx.ALL, 3)

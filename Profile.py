@@ -154,7 +154,7 @@ class Profile(wx.Notebook):
     def CheckAllConflicts(self) -> None:
         for page in self.Pages:
             for _, ctrl in page.Ctrls.items():
-                if isinstance(ctrl, bcKeyButton) and ctrl.IsThisEnabled():
+                if isinstance(ctrl, bcKeyButton) and ctrl.IsEnabled():
                     ctrl.CheckConflicts()
 
     def IsModified(self): return self.Data.IsModified()

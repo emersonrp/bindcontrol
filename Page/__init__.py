@@ -124,7 +124,7 @@ class Page(wx.ScrolledWindow):
         binds = []
         for ctrlname, ctrl in self.Ctrls.items():
             if isinstance(ctrl, bcKeyButton):
-                if not ctrl.IsThisEnabled(): continue
+                if not ctrl.IsEnabled(): continue
                 binds.append( [ctrlname, ctrl.Key] )
         return binds
 

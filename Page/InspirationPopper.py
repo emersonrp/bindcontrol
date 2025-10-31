@@ -6,6 +6,7 @@ import Icon
 from Page import Page
 import GameData
 from UI.ChatColorPicker import ChatColorPicker, ChatColors
+from UI.CGControls import cgStaticText
 from UI.KeySelectDialog import bcKeyButton
 
 tabs = {
@@ -152,7 +153,7 @@ class InspirationPopper(Page):
 
                     keybutton = bcKeyButton(box.GetStaticBox())
                     keybutton.CtlName = f"{tab}{order}{Insp}Key"
-                    kblabel = wx.StaticText(box.GetStaticBox(), label = UI.Labels[keybutton.CtlName] + ":")
+                    kblabel = cgStaticText(box.GetStaticBox(), label = UI.Labels[keybutton.CtlName] + ":")
                     keybutton.CtlLabel = kblabel
                     self.Ctrls[keybutton.CtlName] = keybutton
                     keybutton.Page = self

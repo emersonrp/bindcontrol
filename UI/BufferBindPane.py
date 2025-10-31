@@ -5,6 +5,7 @@ from BLF import BLF
 from Icon import GetIcon
 from UI.PowerPicker import PowerPicker, EVT_POWERPICKER_CHANGED
 
+from UI.CGControls import cgStaticText
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 
@@ -95,7 +96,7 @@ class BufferBindPane(CustomBindPaneParent):
             button.Key = self.Init[f'Team{i}BuffKey']
             button.SetLabel(button.Key)
             button.Bind(EVT_KEY_CHANGED, self.CheckAnyKeyPicked)
-            label = wx.StaticText(TeamSB, label = f'Teammate {i}')
+            label = cgStaticText(TeamSB, label = f'Teammate {i}')
             button.CtlLabel = label
             TeamInner.Add(label, (0,i), flag = wx.EXPAND|wx.ALIGN_CENTER)
             TeamInner.Add(button, (1,i))
@@ -110,7 +111,7 @@ class BufferBindPane(CustomBindPaneParent):
             button.Key = self.Init[f'Pet{i}BuffKey']
             button.SetLabel(button.Key)
             button.Bind(EVT_KEY_CHANGED, self.CheckAnyKeyPicked)
-            label = wx.StaticText(PetSB, label = f'Pet {i}')
+            label = cgStaticText(PetSB, label = f'Pet {i}')
             button.CtlLabel = label
             PetInner.Add(label , (0,i), flag = wx.EXPAND|wx.ALIGN_CENTER)
             PetInner.Add(button, (1,i))

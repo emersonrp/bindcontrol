@@ -1,5 +1,6 @@
 from collections.abc import Callable
 import wx
+from wx.lib.buttons import GenButton
 # Mixin to handle setting/showing errors and tooltips
 class ErrorControlMixin:
     GetBackgroundColour    : Callable
@@ -9,17 +10,30 @@ class ErrorControlMixin:
     GetTextCtrl            : Callable
     HasTextCtrl            : Callable
     Refresh                : Callable
+    IsEnabled              : Callable
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.Errors         : dict = {}
-        self.Warnings       : dict = {}
-        self.DefaultToolTip : str = ''
-        self.BGColour       : wx.Colour = self.GetBackgroundColour() if isinstance(self, wx.TextCtrl) else wx.NullColour
+        self.Errors         : dict           = {}
+        self.Warnings       : dict           = {}
+        self.DefaultToolTip : str            = ''
+        self.DisabledColor  : wx.Colour|None = None
+
+        if isinstance(self, wx.TextCtrl):
+            self.BGColour = self.GetBackgroundColour()
+        else:
+            if isinstance(self, GenButton):
+                self.BGColour      = wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNHIGHLIGHT)
+                self.DisabledColor = wx.NullColour
+            else:
+                self.BGColour = wx.NullColour
 
     def Enable(self, enable = True) -> bool:
         if not enable:
             self.RemoveError('conflict')
+            self.SetBackgroundColour(self.DisabledColor)
+        else:
+            self.SetBackgroundColour(self.BGColour)
         return super().Enable(enable) # pyright: ignore
 
     def AddWarning(self, errname, tooltip = None) -> None:
@@ -32,7 +46,7 @@ class ErrorControlMixin:
     def RemoveWarning(self, errname) -> None:
         self.Warnings.pop(errname, None)
         if not self.Errors and not self.Warnings:
-            self.SetFullBackgroundColour(self.BGColour)
+            self.SetFullBackgroundColour(self.BGColour if self.IsEnabled() else self.DisabledColor)
         elif not self.Errors:
             self.SetFullBackgroundColour((255,255,200))
         self.SetErrorToolTip()
@@ -47,7 +61,7 @@ class ErrorControlMixin:
     def RemoveError(self, errname) -> None:
         self.Errors.pop(errname, None)
         if not self.Errors and not self.Warnings:
-            self.SetFullBackgroundColour(self.BGColour)
+            self.SetFullBackgroundColour(self.BGColour if self.IsEnabled() else self.DisabledColor)
         elif not self.Errors:
             self.SetFullBackgroundColour((255,255,200))
         self.SetErrorToolTip()

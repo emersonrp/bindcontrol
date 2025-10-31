@@ -78,6 +78,7 @@ class General(Page):
         for o in GameData.Origins:
             originPicker.Append(o, GetIconBitmap('Origins', o))
         self.Ctrls['Origin'] = originPicker
+        originPicker.SetStringSelection(self.Init['Origin'])
         originPicker.Bind(wx.EVT_COMBOBOX, self.OnPickOrigin)
         bannerSizer.Add(originPicker, 1, wx.EXPAND|wx.ALL, 5)
 
@@ -94,6 +95,7 @@ class General(Page):
         for a in GameData.Archetypes:
             archetypePicker.Append(a, GetIconBitmap('Archetypes', a))
         self.Ctrls['Archetype'] = archetypePicker
+        archetypePicker.SetStringSelection(self.Init['Archetype'])
         archetypePicker.Bind(wx.EVT_COMBOBOX, self.OnPickArchetype)
         bannerSizer.Add(archetypePicker, 1, wx.EXPAND|wx.ALL, 5)
 

@@ -81,7 +81,7 @@ class Page(wx.ScrolledWindow):
         elif getattr(control, 'GetPath', None):
             return control.GetPath()
         else:
-            wx.LogError(f"control '{key}' has no GetValue() - this is a bug")
+            wx.LogError(f"control '{control.CtlName}' has no GetValue() - this is a bug")
             return ''
 
     def SetState(self, key, value) -> str|int|None:
@@ -98,9 +98,8 @@ class Page(wx.ScrolledWindow):
                 control.SetBitmap(GetIcon(control.IconFilename))
         elif isinstance(control, PowerSelector):
             control.SetValue(value)
-        elif isinstance(control, wx.Button):
-            if isinstance(control, bcKeyButton):
-                control.Key = value
+        elif isinstance(control, bcKeyButton):
+            control.Key = value
             return control.SetLabel(value)
         elif isinstance(control, wx.Choice):
             if isinstance(value, str):
@@ -118,7 +117,7 @@ class Page(wx.ScrolledWindow):
         elif getattr(control, 'SetPath', None):
             return control.SetPath(value)
         else:
-            wx.LogError(f"{control} has no SetValue() - this is a bug.")
+            wx.LogError(f"Control '{control.CtlName}' has no SetValue() - this is a bug.")
 
     def GetKeyBinds(self):
         binds = []

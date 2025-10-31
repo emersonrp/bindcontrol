@@ -8,7 +8,8 @@ from Icon import GetIcon
 from Models.tObject import tObject
 from Page import Page
 import UI
-from UI.ControlGroup import ControlGroup, bcKeyButton
+from UI.ControlGroup import ControlGroup
+from UI.CGControls import bcKeyButton, cgStaticText
 from UI.KeySelectDialog import EVT_KEY_CHANGED
 from UI.PowerPicker import PowerPicker
 
@@ -147,9 +148,9 @@ class MovementPowers(Page):
         self.MovementSizer.Add(innerSizer, 1, wx.ALL|wx.ALIGN_CENTER, 10)
 
         keySizer = wx.GridBagSizer(6, 3)
-        tlLabel = wx.StaticText(staticbox, label = 'Turn Left')
-        fwLabel = wx.StaticText(staticbox, label = 'Forward')
-        trLabel = wx.StaticText(staticbox, label = 'Turn Right')
+        tlLabel = cgStaticText(staticbox, label = 'Turn Left')
+        fwLabel = cgStaticText(staticbox, label = 'Forward')
+        trLabel = cgStaticText(staticbox, label = 'Turn Right')
 
         keySizer.Add(tlLabel, wx.GBPosition(0,0), wx.GBSpan(1,2), wx.ALIGN_CENTER)
         keySizer.Add(fwLabel, wx.GBPosition(0,2), wx.GBSpan(1,2), wx.ALIGN_CENTER)
@@ -182,9 +183,9 @@ class MovementPowers(Page):
         trightButton.Key = self.Init['TurnRight']
         keySizer.Add(trightButton, wx.GBPosition(1,4), wx.GBSpan(1,2))
 
-        leftLabel = wx.StaticText(staticbox, label = 'Left')
-        backLabel = wx.StaticText(staticbox, label = 'Back')
-        rightLabel = wx.StaticText(staticbox, label = 'Right')
+        leftLabel  = cgStaticText(staticbox, label = 'Left')
+        backLabel  = cgStaticText(staticbox, label = 'Back')
+        rightLabel = cgStaticText(staticbox, label = 'Right')
 
         leftButton = bcKeyButton(staticbox)
         self.Ctrls['Left'] = leftButton
@@ -217,8 +218,8 @@ class MovementPowers(Page):
         keySizer.Add(backLabel,  wx.GBPosition(3,2), wx.GBSpan(1,2), wx.ALIGN_CENTER)
         keySizer.Add(rightLabel, wx.GBPosition(3,4), wx.GBSpan(1,2), wx.ALIGN_CENTER)
 
-        downLabel = wx.StaticText(staticbox, label = 'Down')
-        upLabel   = wx.StaticText(staticbox, label = 'Up')
+        downLabel = cgStaticText(staticbox, label = 'Down')
+        upLabel   = cgStaticText(staticbox, label = 'Up')
 
         keySizer.Add(downLabel, wx.GBPosition(4,0), wx.GBSpan(1,2), wx.ALIGN_CENTER|wx.TOP, 16)
         keySizer.Add(upLabel,   wx.GBPosition(4,2), wx.GBSpan(1,4), wx.ALIGN_CENTER|wx.TOP, 16)
@@ -241,8 +242,8 @@ class MovementPowers(Page):
         upButton.Key = self.Init['Up']
         keySizer.Add(upButton, wx.GBPosition(5,2), wx.GBSpan(1,4), wx.EXPAND)
 
-        autoRunLabel = wx.StaticText(staticbox, label = 'Autorun')
-        followLabel  = wx.StaticText(staticbox, label = 'Follow')
+        autoRunLabel = cgStaticText(staticbox, label = 'Autorun')
+        followLabel  = cgStaticText(staticbox, label = 'Follow')
 
         keySizer.Add(autoRunLabel, wx.GBPosition(6,1), wx.GBSpan(1,2), wx.ALIGN_CENTER)
         keySizer.Add(followLabel,  wx.GBPosition(6,3), wx.GBSpan(1,2), wx.ALIGN_CENTER)

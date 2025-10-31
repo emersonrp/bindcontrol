@@ -1,27 +1,25 @@
-# pyright: reportIncompatibleMethodOverride=false
-from typing import Any, TYPE_CHECKING
+from typing import Any
 from collections.abc import Callable
-import platform
 
 import wx
-from wx.adv import BitmapComboBox
-import wx.lib.stattext as ST
-from wx.lib.expando import ExpandoTextCtrl
 
 from Page import Page as bcPage
 
 import UI
-from UI.ErrorControls import ErrorControlMixin
-from UI.KeySelectDialog import bcKeyButton
+from UI.CGControls import (
+    cgbcKeyButton,
+    cgComboBox,
+    cgBMComboBox,
+    cgTextCtrl,
+    cgStaticText,
+    cgCheckBox,
+    cgSpinCtrl,
+    cgSpinCtrlDouble,
+    cgDirPickerCtrl,
+    cgColourPickerCtrl,
+    cgChoice,
+)
 from UI.PowerSelector import PowerSelector
-
-# This ST.GenStaticText is so we can intercept clicks on it, but
-# the background color is wrong on Windows in a way I can't work out,
-# and clicks work with wx.StaticText on Windows anyway, so...
-if TYPE_CHECKING or platform.system() != 'Windows':
-    STClass = ST.GenStaticText
-else:
-    STClass = wx.StaticText
 
 class ControlGroup(wx.StaticBoxSizer):
     def __init__(self, parent, page : bcPage, label = '', width = 2, flexcols : list|None = None, topcontent = None) -> None:
@@ -169,7 +167,7 @@ class ControlGroup(wx.StaticBoxSizer):
             raise Exception(f"Got a ctlType in ControlGroup that I don't know: {ctlType}.  This is a bug.")
 
         if not noLabel:
-            CtlLabel = STClass(CtlParent, -1, label + ':')
+            CtlLabel = cgStaticText(CtlParent, -1, label + ':')
 
         # Let them all know their own name
         control.CtlName = ctlName # pyright: ignore
@@ -213,71 +211,3 @@ class ControlGroup(wx.StaticBoxSizer):
         fakeevt.SetEventObject(cblabel.control)
         wx.PostEvent(cblabel.control, fakeevt)
         evt.Skip()
-
-# Mixin to enable/show controls' labels when they are enabled/shown
-class CGControlMixin:
-    GetContainingSizer     : Callable
-    SetBackgroundColour    : Callable
-    SetOwnBackgroundColour : Callable
-
-    def __init__(self, *args, **kwargs) -> None:
-        self.CtlLabel : ST.GenStaticText | wx.StaticText | None = None
-        self.Page     : bcPage|None                             = None
-        self.Data     : Any                                     = None
-        super().__init__(*args, **kwargs)
-
-    def Enable(self, enable = True) -> bool:
-        if self.CtlLabel: self.CtlLabel.Enable(enable)
-        return super().Enable(enable) # pyright: ignore
-
-    def Show(self, show = True) -> bool:
-        self.GetContainingSizer().Show(self, show = show)
-        self.Enable(show)
-        if self.CtlLabel:
-            self.GetContainingSizer().Show(self.CtlLabel, show = show)
-            self.CtlLabel.Enable(show)
-        if self.Page: self.Page.Layout()
-        return True
-
-    def SetToolTip(self, tooltip) -> bool:
-        if self.CtlLabel:
-            self.CtlLabel.SetToolTip(tooltip)
-        return super().SetToolTip(tooltip) # pyright: ignore
-
-# Miniclasses to use mixins
-class cgbcKeyButton     (CGControlMixin,                    bcKeyButton)         :
-    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-class cgButton          (CGControlMixin, ErrorControlMixin, wx.Button)           :
-    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-class cgComboBox        (CGControlMixin, ErrorControlMixin, wx.ComboBox)         :
-    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-class cgBMComboBox      (CGControlMixin, ErrorControlMixin, BitmapComboBox)      :
-    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-class cgTextCtrl        (CGControlMixin, ErrorControlMixin, wx.TextCtrl)         :
-    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-class cgExpandoTextCtrl (CGControlMixin, ErrorControlMixin, ExpandoTextCtrl)     :
-    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-class cgStaticText      (CGControlMixin, ErrorControlMixin, STClass)             :
-    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-class cgCheckBox        (CGControlMixin, ErrorControlMixin, wx.CheckBox)         :
-    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-class cgSpinCtrl        (CGControlMixin, ErrorControlMixin, wx.SpinCtrl)         :
-    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-class cgSpinCtrlDouble  (CGControlMixin, ErrorControlMixin, wx.SpinCtrlDouble)   :
-    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-class cgDirPickerCtrl   (CGControlMixin, ErrorControlMixin, wx.DirPickerCtrl)    :
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, style = wx.DIRP_USE_TEXTCTRL|wx.DIRP_SMALL, **kwargs)
-        self.SetTextCtrlProportion(1)
-        self.GetTextCtrl().SetEditable(False)
-class cgColourPickerCtrl(CGControlMixin, ErrorControlMixin, wx.ColourPickerCtrl) :
-    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-class cgChoice          (CGControlMixin, ErrorControlMixin, wx.Choice)           :
-    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-    def ShowEntryIf(self, entry: str, condition: bool):
-        idx    = self.FindString(entry)
-        exists = idx != wx.NOT_FOUND
-        if condition:
-            if not exists: self.Append(entry)
-        else:
-            if exists: self.Delete(idx)

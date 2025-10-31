@@ -7,7 +7,7 @@ from Help import HelpButton
 
 from BindFile import KeyBind
 
-from UI.ControlGroup import ControlGroup, cgChoice
+from UI.ControlGroup import ControlGroup, cgChoice, cgStaticText
 from UI.KeySelectDialog import bcKeyButton
 
 ordinals : tuple = ("First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth")
@@ -158,7 +158,7 @@ class Gameplay(Page):
         # Keybind Profile picker
         KBProfileSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        KBProfileText = wx.StaticText(staticbox, label = "Keybind Profile:")
+        KBProfileText = cgStaticText(staticbox, label = "Keybind Profile:")
         KBProfileSizer.Add(KBProfileText, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 10)
         KBProfilePicker = cgChoice(staticbox, choices = list(self.KeybindProfiles.keys()))
         KBProfilePicker.SetSelection(0)

@@ -3,7 +3,8 @@ import wx
 from Help import HelpButton
 import Page.PopmenuEditor
 import UI
-from UI.ControlGroup import ControlGroup, cgButton
+from UI.ControlGroup import ControlGroup
+from UI.CGControls import cgButton
 from Util.Paths import GetRootDirPath, GetValidGamePath
 
 import GameData

@@ -10,12 +10,12 @@ import wx.lib.mixins.inspection
 import wx.adv
 from bcLogging import bcLogging
 from bcVersion import current_version
+from Help import ShowHelpWindow
 from Icon import GetIcon
 from Profile import Profile
 from UI.BindDirsWindow import BindDirsWindow
+from UI.CGControls import cgTextCtrl, cgButton
 from UI.PrefsDialog import PrefsDialog
-from Help import ShowHelpWindow
-from UI.ControlGroup import cgTextCtrl, cgButton
 from Util.DefaultProfile import DefaultProfile
 import Util.Paths
 import Util.BuildFiles

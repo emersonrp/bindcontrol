@@ -1,24 +1,27 @@
+import platform
 import wx
-import wx.lib.stattext as ST
+import wx.lib.newevent
 from typing import Any
 
 import GameData
 from Icon import GetIcon
+from UI.CGControls import cgStaticText
 
-import wx.lib.newevent
 PowerSelectorChanged, EVT_POWERSELECTOR_CHANGED = wx.lib.newevent.NewCommandEvent()
+
+MenuBGColor = wx.SYS_COLOUR_WINDOW if platform.system() == 'Darwin' else wx.SYS_COLOUR_MENU
 
 class PowerSelector(wx.BitmapButton):
     def __init__(self, parent, page, pickername):
         super().__init__(parent, bitmap = GetIcon('UI', 'select'))
 
-        self.CtlLabel : ST.GenStaticText | wx.StaticText | None = None
-        self.Page                                               = page
-        self.Data     : Any                                     = None
-        self.CtlName                                            = ''
-        self.PickerName                                         = pickername
-        self.DefaultToolTip                                     = ''
-        self.Powers                                             = []
+        self.CtlLabel : cgStaticText | None = None
+        self.Page                      = page
+        self.Data     : Any            = None
+        self.CtlName                   = ''
+        self.PickerName                = pickername
+        self.DefaultToolTip            = ''
+        self.Powers                    = []
 
         self.Bind(wx.EVT_BUTTON, self.OnButtonClicked)
         page.Ctrls[pickername].Bind(wx.EVT_CHOICE, self.ClearPowers)
@@ -63,7 +66,7 @@ class Popup(wx.PopupTransientWindow):
 
         # And another wx.Panel to put all the "menu items" on that's menu-colored
         powerpanel = wx.Panel(borderpanel)
-        powerpanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
+        powerpanel.SetBackgroundColour(wx.SystemSettings.GetColour(MenuBGColor))
         powersizer = wx.BoxSizer(wx.VERTICAL)
         powersizer.Add(wx.StaticText(powerpanel, label = powerset), 0, wx.ALL|wx.ALIGN_CENTER, 5)
         powersizer.Add(wx.StaticLine(powerpanel, style = wx.HORIZONTAL), 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 10)
@@ -111,17 +114,20 @@ class PopupPower(wx.Panel):
         icon.SetScaleMode(wx.GenericStaticBitmap.Scale_AspectFill)
         sizer.Add(icon, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 3)
 
-        self.PowerText = wx.StaticText(self, label = power)
+        self.PowerText = cgStaticText(self, label = power)
         sizer.Add(self.PowerText, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 3)
 
         self.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
         icon.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
         self.PowerText.Bind(wx.EVT_LEFT_DOWN, self.OnClick)
 
-        self.Bind(wx.EVT_ENTER_WINDOW, self.OnEnterWindow)
-        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
+        if platform.system() != 'Darwin':
+            self.Bind(wx.EVT_ENTER_WINDOW, self.OnEnterWindow)
+            self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
+            self.PowerText.Bind(wx.EVT_ENTER_WINDOW, self.OnEnterWindow)
+            self.PowerText.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
 
-        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
+        self.SetBackgroundColour(wx.SystemSettings.GetColour(MenuBGColor))
         self.PowerText.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENUTEXT))
 
         self.SetSizerAndFit(sizer)

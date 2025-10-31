@@ -3,7 +3,7 @@ import sys
 import importlib
 from Help import HelpButton
 from wx.lib.expando import EVT_ETC_LAYOUT_NEEDED
-from UI.ControlGroup import cgExpandoTextCtrl
+from UI.CGControls import cgExpandoTextCtrl
 from UI.ErrorControls import ErrorControlMixin
 from Util.Paths import GetRootDirPath
 

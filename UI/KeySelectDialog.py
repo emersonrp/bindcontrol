@@ -1,11 +1,12 @@
 import platform
 import re
 import string
+from typing import TYPE_CHECKING
 
 import wx
 import wx.html
-import wx.lib.stattext as ST
 import wx.lib.newevent
+from wx.lib.buttons import GenButton
 
 import Page
 
@@ -15,6 +16,9 @@ from UI.ErrorControls import ErrorControlMixin
 from bcController import bcController
 
 KeyChanged, EVT_KEY_CHANGED = wx.lib.newevent.NewCommandEvent()
+
+if TYPE_CHECKING:
+    from UI.CGControls import cgStaticText
 
 # Platform-specific keyevent flags for telling left from right
 modKeyFlags = {}
@@ -497,14 +501,14 @@ class KeySelectDialog(wx.Dialog):
         for alphanum in (list(string.ascii_uppercase) + list(range(10))):
             self.Keymap[ord(str(alphanum))] = str(alphanum)
 
-class bcKeyButton(ErrorControlMixin, wx.Button):
-
+# I *can* *not* *believe* this if.. else.. hackery works:
+class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' else wx.Button): # pyright: ignore
     def __init__(self, parent, wx_id : int = wx.ID_ANY, init : dict|None = None) -> None:
         init = init or {}
-        self.CtlName  : str                                     = init.get('CtlName', '')
-        self.CtlLabel : ST.GenStaticText | wx.StaticText | None = init.get('CtlLabel')
-        self.Key      : str                                     = init.get('Key', '')
-        self.AlwaysShorten : bool                               = init.get('AlwaysShorten', False)
+        self.CtlName       : str                 = init.get('CtlName', '')
+        self.CtlLabel      : cgStaticText | None = init.get('CtlLabel')
+        self.Key           : str                 = init.get('Key', '')
+        self.AlwaysShorten : bool                = init.get('AlwaysShorten', False)
         # This might be overloading "AlwaysShorten", but:
         style = wx.BU_EXACTFIT if self.AlwaysShorten else 0
 

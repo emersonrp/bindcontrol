@@ -1,7 +1,8 @@
 import wx
 import UI
 from UI.BindWizard import WizardParent
-from UI.ControlGroup import ControlGroup, bcKeyButton, cgStaticText
+from UI.ControlGroup import ControlGroup
+from UI.CGControls import bcKeyButton, cgStaticText
 
 UI.Labels.update({
     'EscUnselect'    : 'Unselect',

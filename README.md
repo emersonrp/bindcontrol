@@ -54,7 +54,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
     * Optional /say feedback with per-inspiration-type custom colors
 
 * Mastermind / Pet Binds
-    * Features to help name pets uniquely, required for most of BindControl's Mastermind bind styles.
+    * Features to help name pets uniquely, required for most of BindControl's Mastermind bind styles
         * BindControl will detect and warn if names are inadequately different / unique for by-name use
         * BindControl can create a keybind to rename your pets to match BindControl's config instead of doing it manually in-game
     * By-name pet selection - <i>requires uniquely-named pets</i>
@@ -66,7 +66,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
             + Pets can give feedback on each order;  chattiness can be toggled via keybind
             + "Bodyguard mode" shortcut -- you can define which pets should be treated as bodyguards, and turn Bodyguard Mode on for them with a single keypress - <i>requires uniquely-named pets</i>
         + [qwy's Numpad Controls](https://forums.homecomingservers.com/topic/20650-i26-expanded-mastermind-numpad-controls/):
-            + Simple but comprehensive scheme using the number pad and modifier keys to select, control, heal, and buff pets.
+            + Simple but comprehensive scheme using the number pad and modifier keys to select, control, heal, and buff pets
             + Mod keys select Defensive, Aggressive, Passive versions of the same commands
             + Select individual pets or by power level
             + Follow, Go To, Attack, Stay commands
@@ -74,7 +74,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
             + Heal targeted pet
             + Cycle target through all pets or per power level
         + [qwy's PetMouse Controls](https://forums.homecomingservers.com/topic/20788-i26-the-masterminds-petmouse-new-menu/):
-            + Mouse-centric keybind scheme that uses mod keys with the mouse to give orders to pets individually or by power level.
+            + Mouse-centric keybind scheme that uses mod keys with the mouse to give orders to pets individually or by power level
             + Alt+Click (by default) will command current pet to "go to" the click location and will target the next pet for orders, making it trivial to send each of your pets to a precise location with a minimum of interaction
             + Most key commands available from the WASD "home" position by default
             + Optional popmenu allowing more detailed commands using just a few home position keystrokes
@@ -82,7 +82,9 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
             + Mouse controls can cover 90% of moment-to-moment interactions with henchmen, while the popmenu covers all other needed functionality
 
 * Popmenu Editor (beta)
-    * Install, edit, and delete popmenus in the correct game folder
+    * Create, install, edit, and delete popmenus in the game folder
+        + Requires telling BindControl where the game is installed
+        + BindControl can create the necessary folders in the game install folder for popmenus
     * Easy GUI editing and testing of popmenus
     * Generate macros to make popmenu buttons in-game
 
@@ -92,6 +94,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
 * The hope is to make every reasonable slash command in the game available in some way, typically via PowerBinder.  What qualifies as a "reasonable slash command" is yet to be determined.  Check [the SlashCommands.md file](SlashCommands.md) for the current status.
 * Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment.
 * The popmenu editor, on Windows, simply can't load pathologically large popmenus (tens of thousands of entries).  This is a hard limit on the wx toolkit imposed by Windows itself, and can't be worked around in any way I can see.  As there exist at least two menus this large "in the wild," further investigation is merited.
+* It might be nice to find a way to add icons to the popmenu editor macro creator, but it would involve either shipping every icon in the game with BindControl or creating a browsable view of some external site like City of Data to pick from the icons.
 * More error detection and handling.
 * More and better help text and documentation.  <i>(WIP - check [the wiki](https://github.com/emersonrp/bindcontrol/wiki/Getting-Started-With-BindControl))</i>
 * More internal work on initialization order of objects to speed up start time and avoid bootstrapping problems.  <i>(WIP)</i>
@@ -105,7 +108,7 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 
 *MacOS users*:  Experimental binary releases for Intel and Arm64 have been made available.  They are not signed and/or notarized, and might or might not work at all.  Any feedback from MacOS users is welcome and appreciated.
 
-*Linux users*:  An experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.  It's built using Github's "ubuntu-latest" environment, which may or may not be completely compatible with other distributions and versions.[^1]
+*Linux users*:  An experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.  It's built using Github's "ubuntu-22.04" environment, which may or may not be completely compatible with other distributions and versions.[^1]
 
 ## Running From Source
 

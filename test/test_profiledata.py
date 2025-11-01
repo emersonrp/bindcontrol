@@ -6,6 +6,7 @@ import Models.ProfileData as ProfileData
 from time import sleep
 from pathlib import Path, PureWindowsPath
 from BindFile import BindFile
+import Exceptions
 from Util.BuildFiles import ParseBuildFile
 import Util.Paths
 
@@ -22,7 +23,7 @@ def test_init_newname(config, monkeypatch):
     assert PD.IsModified()
 
     monkeypatch.setattr(ProfileData.ProfileData, 'GenerateBindsDirectoryName', lambda _: '')
-    with pytest.raises(Exception, match = 'sane Binds Directory'):
+    with pytest.raises(Exceptions.ProfileBindsDirectoryException, match = 'sane Binds Directory'):
         ProfileData.ProfileData(config, newname = 'nobindsdir')
     monkeypatch.undo()
 
@@ -41,9 +42,10 @@ def test_defaultprofile(config, DefaultProfile, monkeypatch):
 
     assert PD.IsModified()
 
-    monkeypatch.setattr(json, 'loads', raises_exception)
-    with pytest.raises(Exception, match = 'while loading Default Profile'):
+    config.Write('DefaultProfile', '@#$% BAD JSON CRASH CRASH')
+    with pytest.raises(Exceptions.BCModelsException, match = 'while loading Default Profile'):
         ProfileData.ProfileData(config, newname = 'explode')
+    config.Write('DefaultProfile', DefaultProfile)
 
 def test_init_buildfile(config, DefaultProfile, monkeypatch):
     monkeypatch.undo()
@@ -101,15 +103,15 @@ def test_MassageData(config, monkeypatch):
 def test_init_filename(config, tmp_path):
 
     profile_path = tmp_path / "testprofile.bcp"
-    with pytest.raises(Exception, match = f'whose file "{profile_path}" is missing'):
+    with pytest.raises(Exceptions.ProfileFileMissingException, match = f'whose file "{profile_path}" is missing'):
         ProfileData.ProfileData(config, filename = str(profile_path))
 
     profile_path.write_text('{}')
-    with pytest.raises(Exception, match = 'Something broke while loading'):
+    with pytest.raises(Exceptions.ProfileLoadJSONException, match = 'Something broke while loading'):
         ProfileData.ProfileData(config, filename = str(profile_path))
 
     profile_path.write_text('%#aflj BAD JSON BAD" $@!')
-    with pytest.raises(Exception, match = 'Something broke while loading'):
+    with pytest.raises(Exceptions.ProfileLoadJSONException, match = 'Something broke while loading'):
         ProfileData.ProfileData(config, filename = str(profile_path))
     profile_path.unlink()
 

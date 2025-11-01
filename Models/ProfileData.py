@@ -27,18 +27,21 @@ class ProfileData(dict):
         if self.Filepath:
             if not self.Filepath.exists():
                 raise Exceptions.ProfileFileMissingException(f'Tried to load a Profile whose file "{self.Filepath}" is missing')
+
             try:
-                if data := json.loads(self.Filepath.read_text()):
-                    self.FillWith(data)
-                    self.LastModTime = self.Filepath.stat().st_mtime_ns
-                    self.SavedState = copy.deepcopy(dict(self))
-                    self.MassageData()
-                    if 'ProfileBindsDir' not in self:
-                        self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
-                else:
-                    raise Exceptions.ProfileDefaultProfileJSONException(f'Unable to parse JSON from "{self.Filepath}".')
-            except Exceptions.ProfileDefaultProfileJSONException as e:
-                raise Exceptions.BCModelsException(f'Something broke while loading profile "{self.Filepath}: {e}".') from e
+                data = json.loads(self.Filepath.read_text())
+            except json.JSONDecodeError as e:
+                raise Exceptions.ProfileLoadJSONException(f'Something broke while loading profile "{self.Filepath}": {e}.') from e
+
+            if not data: # empty hash somehow?
+                raise Exceptions.ProfileLoadJSONException(f'Something broke while loading profile "{self.Filepath}": No Data!.')
+
+            self.FillWith(data)
+            self.LastModTime = self.Filepath.stat().st_mtime_ns
+            self.SavedState = copy.deepcopy(dict(self))
+            self.MassageData()
+            if 'ProfileBindsDir' not in self:
+                self['ProfileBindsDir'] = self.GenerateBindsDirectoryName()
 
         # No?  Then it ought to be a new profile, and we ought to have passed in a name
         elif newname or editdefault:
@@ -48,13 +51,13 @@ class ProfileData(dict):
                 self.Filepath = Path('DEFAULT PROFILE.bcp') # we use this just to set Profile.ProfileName()
 
             # First, mash the Default Profile in there, if it exists
-            if jsonstring := self.GetDefaultProfileJSON():
-                try:
+            try:
+                if jsonstring := self.GetDefaultProfileJSON():
                     data = json.loads(jsonstring)
                     self.FillWith(data)
 
-                except Exceptions.ProfileDefaultProfileJSONException as e:
-                    raise Exceptions.BCModelsException("Something broke while loading Default Profile.  This is a bug.") from e
+            except Exception as e:
+                raise Exceptions.ProfileDefaultProfileJSONException("Something broke while loading Default Profile.  This is a bug.") from e
 
             # then, if we had profiledata from a buildfile, mash that on top
             # This feels uglier and uglier, and probably wants to be DRYed up somehow

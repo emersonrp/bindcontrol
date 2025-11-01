@@ -5,7 +5,18 @@ script:
   # Make usr and icons dirs
   - mkdir -p $TARGET_APPDIR/usr/src
   # Copy the python application code into the AppDir
-  - rsync -av . $TARGET_APPDIR/usr/src --exclude=$TARGET_APPDIR
+  - cp -rv *.py  $TARGET_APPDIR/usr/src
+  - cp -rv GameData  $TARGET_APPDIR/usr/src
+  - cp -rv Help  $TARGET_APPDIR/usr/src
+  - cp -rv Models  $TARGET_APPDIR/usr/src
+  - cp -rv Page  $TARGET_APPDIR/usr/src
+  - cp -rv UI  $TARGET_APPDIR/usr/src
+  - cp -rv Util  $TARGET_APPDIR/usr/src
+  - cp -rv icons  $TARGET_APPDIR/usr/src
+  - cp -rv popmenus  $TARGET_APPDIR/usr/src
+  # Put an icon in the right place
+  - mkdir -p $TARGET_APPDIR/usr/share/icons/hicolor/256x256
+  - cp tools/bcicon/BindControl.iconset/icon_256x256.png $TARGET_APPDIR/usr/share/icons/hicolor/256x256/BindControl.png
   # Install application dependencies
   - python3 -m pip install --ignore-installed --prefix=/usr --root=$TARGET_APPDIR "wxPython==4.2.2"
 
@@ -14,7 +25,7 @@ AppDir:
   app_info:
     id: net.hayseed.bindcontrol
     name: BindControl
-    icon: usr/src/tools/bcicon/BindControl.iconset/icon_256x256.png
+    icon: BindControl
     version: latest
     # Set the python executable as entry point
     exec: usr/bin/python3
@@ -26,9 +37,12 @@ AppDir:
     sources:
       - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse'
         key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3b4fe6acc0b21f32'
+      - sourceline: 'deb [arch=amd64] https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu/ noble main'
+        key_url: 'https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu/dists/noble/Release.gpg'
 
     include:
-      - python3
+      - python3.13
+      - python3-wxgtk4.0
     exclude: []
 
   files:

@@ -14,7 +14,7 @@ I worked on it on-and-off for the remainder of the original run of City of Heroe
 
 BindControl is and has been developed on Homecoming, and best supports that.  Recently, beta support for Rebirth has been added, supporting the Guardian archetype, new powersets, the Genesis Incarnate slot, and more.  This support is solid but is a work in progress -- Rebirth players, check it out and file issues as you find bugs!
 
-![BindControl](https://github.com/user-attachments/assets/8610d453-d6bc-490a-9894-d91494aa2da7)
+![BindControl](https://github.com/user-attachments/assets/43f94b17-1706-400b-b98e-2fec1db562a4)
 
 ## Features
 

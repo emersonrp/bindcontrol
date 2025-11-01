@@ -108,7 +108,7 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 
 *MacOS users*:  Experimental binary releases for Intel and Arm64 have been made available.  They are not signed and/or notarized, and might or might not work at all.  Any feedback from MacOS users is welcome and appreciated.
 
-*Linux users*:  An experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.  It's built using Github's "ubuntu-22.04" environment, which may or may not be completely compatible with other distributions and versions.[^1]
+*Linux users*:  An experimental binary release is now available.  You should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.  It's built using Github's "ubuntu-24.04" environment, which may or may not be completely compatible with other distributions and versions.[^1]
 
 ## Running From Source
 

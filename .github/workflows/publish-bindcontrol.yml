@@ -29,7 +29,7 @@ jobs:
             CMD_VERIFY: ls -la dist/BindControl.app
             CMD_PREZIP: rm -rf dist/BindControl
             FILE_NAME: BindControl-${{ github.ref_name }}_macos_arm64.zip
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             CMD_BUILD: python tools/build.py
             CMD_VERIFY: ls -la dist/BindControl
             FILE_NAME: BindControl-${{ github.ref_name }}_linux.zip
@@ -57,7 +57,7 @@ jobs:
         # The -f URL below should have its ubuntu-xxx version synced with the os: ubuntu-xxx version in the matrix above
         run: |
           python -m pip install --upgrade pip
-          pip install -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-22.04 wxPython --user
+          pip install -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04 wxPython --user
           pip install pyinstaller==6.10.0 -r requirements.txt
 
       - name: Create Executable

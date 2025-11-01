@@ -9,7 +9,8 @@ from BindFile import BindFile
 from BLF import BLF
 from Icon import GetIcon, PrecacheIcons
 
-from Models.ProfileData import ProfileData, BindsDirectoryException
+from Models.ProfileData import ProfileData
+import Exceptions
 if TYPE_CHECKING:
     from Page import Page as bcPage
 from Page.General import General
@@ -78,7 +79,7 @@ class Profile(wx.Notebook):
         try:
             self.Data : ProfileData = ProfileData(wx.ConfigBase.Get(), filename, newname, profiledata, editdefault)
         # This is uuugly but getting less so
-        except BindsDirectoryException:
+        except Exceptions.ProfileBindsDirectoryException:
             self.Parent.OnProfDirButton() # pyright: ignore
 
         self.BindFiles      : dict[str, BindFile] = {}

@@ -8,6 +8,8 @@ import wx.html
 import wx.lib.newevent
 from wx.lib.buttons import GenButton
 
+import Exceptions
+
 import Page
 
 from BindFile import KeyBind
@@ -77,7 +79,8 @@ class KeySelectDialog(wx.Dialog):
         self.mysteryPanel = wx.Panel(self)
 
         if not self.Desc:
-            raise Exception("Tried to make a KeySelectDialog for something with no desc")
+            msg = "Tried to make a KeySelectDialog for something with no desc"
+            raise Exceptions.UIKeySelectNoDescException(msg)
 
         desc = f"Press the key you want bound to {self.Desc}\n(Right-click a key button to clear it.)"
 

@@ -1,7 +1,9 @@
 import re
 from typing import overload
 from pathlib import PurePath, Path, PureWindowsPath
+
 from BLF import BLF
+import Exceptions
 
 class KeyBind:
     def __init__(self, key, name : str, page, contents : str|list[str]|None = None):
@@ -72,12 +74,14 @@ class BindFile:
         try:
             self.Path.parent.mkdir(parents = True, exist_ok = True)
         except Exception as e:
-            raise Exception(f"Can't make bindfile parent dirs {self.Path.parent} : {e}") from e
+            msg = f"Can't make bindfile parent dirs {self.Path.parent} : {e}"
+            raise Exceptions.BindFileParentDirsException(msg) from None
 
         try:
             self.Path.touch(exist_ok = True)
         except Exception as e:
-            raise Exception(f"Can't instantiate bindfile {self}: {e}") from e
+            msg = f"Can't instantiate bindfile {self}: {e}"
+            raise Exceptions.BindFileCreateBindFileException(msg) from None
 
         # duplicate citybinder's (modified) logic exactly
         def getMainKey(testkey):
@@ -111,14 +115,16 @@ class BindFile:
             if len(bindstring) > 255:
                 # TODO - make this a custom exception so we can handle it specially
                 title = kb.Page if isinstance(kb.Page, str) else kb.Page.TabTitle
-                raise Exception(f"Bind '{kb.Key}' from page '{title}' is {len(bindstring)} characters long - this will cause badness in-game!")
+                msg = f"Bind '{kb.Key}' from page '{title}' is {len(bindstring)} characters long - this will cause badness in-game!"
+                raise Exceptions.BindFileBindTooLongException(msg)
             output = output + kb.BindFileString()
 
         if output:
             try:
                 self.Path.write_text(output, newline = '\r\n')
             except Exception as e:
-                raise Exception(f"Can't write to bindfile {self.Path}: {e}") from e
+                msg = f"Can't write to bindfile {self.Path}: {e}"
+                raise Exceptions.BindFileWriteToBindFileException(msg) from None
 
     # delete the bindfile.  THIS DOES NOT ASK FOR CONFIRMATION
 #    def Delete(self):

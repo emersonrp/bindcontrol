@@ -26,15 +26,18 @@ class ProfileData(dict):
         # are we wanting to load this one from a file?
         if self.Filepath:
             if not self.Filepath.exists():
-                raise Exceptions.ProfileFileMissingException(f'Tried to load a Profile whose file "{self.Filepath}" is missing')
+                msg = f'Tried to load a Profile whose file "{self.Filepath}" is missing'
+                raise Exceptions.ProfileFileMissingException(msg)
 
             try:
                 data = json.loads(self.Filepath.read_text())
             except json.JSONDecodeError as e:
-                raise Exceptions.ProfileLoadJSONException(f'Something broke while loading profile "{self.Filepath}": {e}.') from e
+                msg = f'Something broke while loading profile "{self.Filepath}": {e}.'
+                raise Exceptions.ProfileLoadJSONException(msg) from None
 
             if not data: # empty hash somehow?
-                raise Exceptions.ProfileLoadJSONException(f'Something broke while loading profile "{self.Filepath}": No Data!.')
+                msg = f'Something broke while loading profile "{self.Filepath}": No Data!.'
+                raise Exceptions.ProfileLoadJSONException(msg)
 
             self.FillWith(data)
             self.LastModTime = self.Filepath.stat().st_mtime_ns
@@ -57,7 +60,8 @@ class ProfileData(dict):
                     self.FillWith(data)
 
             except Exception as e:
-                raise Exceptions.ProfileDefaultProfileJSONException("Something broke while loading Default Profile.  This is a bug.") from e
+                msg = f"Something broke while loading Default Profile: {e}.  This is a bug."
+                raise Exceptions.ProfileDefaultProfileJSONException(msg) from None
 
             # then, if we had profiledata from a buildfile, mash that on top
             # This feels uglier and uglier, and probably wants to be DRYed up somehow
@@ -86,10 +90,12 @@ class ProfileData(dict):
             if editdefault:
                 self.SavedState = copy.deepcopy(dict(self))
         else:
-            raise Exceptions.ProfileParamsException("Error: ProfileData created with neither filename nor newname.  This is a bug.")
+            msg = "Error: ProfileData created with neither filename nor newname.  This is a bug."
+            raise Exceptions.ProfileParamsException(msg)
 
         if not self['ProfileBindsDir']:
-            raise Exceptions.ProfileBindsDirectoryException("Can't come up with a sane Binds Directory!")
+            msg = "Can't come up with a sane Binds Directory!"
+            raise Exceptions.ProfileBindsDirectoryException(msg)
 
         GameData.SetupGameData(self.get('General', {}).get('Server', 'Homecoming'))
 
@@ -290,7 +296,8 @@ class ProfileData(dict):
                 zipstring = base64.b64decode(b64string)
                 jsonstring = codecs.decode(zipstring, 'zlib')
             except Exception as e:
-                raise Exceptions.ProfileDefaultProfileJSONException(f"Problem loading default profile: {e}") from e
+                msg = f"Problem loading default profile: {e}"
+                raise Exceptions.ProfileDefaultProfileJSONException(msg) from None
 
         return jsonstring
 
@@ -304,7 +311,8 @@ class ProfileData(dict):
         Util.Paths.ProfilePath(self.Config).mkdir( parents = True, exist_ok = True )
 
         if not self.Filepath:
-            raise Exceptions.ProfileParamsException(f"No Filepath set in Profile {self.ProfileName()}!  Aborting save.")
+            msg = f"No Filepath set in Profile {self.ProfileName()}!  Aborting save."
+            raise Exceptions.ProfileParamsException(msg)
         savefile = self.Filepath
 
         try:
@@ -314,7 +322,8 @@ class ProfileData(dict):
             self.LastModTime = savefile.stat().st_mtime_ns
             self.SavedState = copy.deepcopy(dict(self))
         except Exception as e:
-            raise Exceptions.ProfileSaveException(f"Problem saving to profile {savefile}: {e}") from e
+            msg = f"Problem saving to profile {savefile}: {e}"
+            raise Exceptions.ProfileSaveException(msg) from None
 
     def AsJSON(self, small = False) -> str:
         if small:
@@ -336,4 +345,5 @@ class ProfileData(dict):
                 # the file doesn't exist, so bindsdir has not been claimed by another profile
                 return ''
         else:
-            raise Exception("In BindsDirNotMine, ProfileIDFile() returned nothing, not checking IDFile!")
+            msg = "In BindsDirNotMine, ProfileIDFile() returned nothing, not checking IDFile!"
+            raise Exceptions.ProfileNoProfileIDFileException(msg)

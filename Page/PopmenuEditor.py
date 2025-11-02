@@ -1,5 +1,6 @@
 import wx
 from Page import Page
+import Exceptions
 from Help import HelpHTMLWindow
 from UI.ControlGroup import cgTextCtrl
 from UI.PrefsDialog import PrefsDialog
@@ -385,7 +386,6 @@ class PopmenuEditor(Page):
                 self.ToggleTopButtons(True)
                 self.CurrentMenu = newmenu
                 newmenu.WriteToFile(filepath)
-                return True
             except Exception as e:
                 wx.LogError(f"Something went wrong importing menu file: {e}")
                 if item:
@@ -394,6 +394,8 @@ class PopmenuEditor(Page):
                     mlc.DeleteItem(item)
                     mlc.Refresh()
                 return False
+            else:
+                return True
 
     def OnDeleteMenuButton(self, _) -> None:
         mlc = self.MenuListCtrl
@@ -558,7 +560,8 @@ class Popmenu(FM.FlatMenu):
                 if submenu:
                     submenu.WriteToFile(filepath, outputlines, indentlevel)
                 else:
-                    raise Exception(f"Submenu entry {subname} had no menu attached.  This is a bug.")
+                    msg = f"Submenu entry {subname} had no menu attached.  This is a bug."
+                    raise Exceptions.PopmenuBadSubmenuException(msg)
             elif isinstance(menuitem, PELockedOption):
                 outputlines.append(f"{indent}LockedOption")
                 outputlines.append(f"{indent}{{")
@@ -566,7 +569,8 @@ class Popmenu(FM.FlatMenu):
                     outputlines.append(f'{indent}    {LOName} "{LOStuff}"')
                 outputlines.append(f"{indent}}}")
             else:
-                raise Exception(f"There was a mystery item inside menu {self.Title}, canceling write.  This is a bug.")
+                msg = f"There was a mystery item inside menu {self.Title}, canceling write.  This is a bug."
+                raise Exceptions.PopmenuUnknownMenuItemException(msg)
         indentlevel -= 1
         indent = "    " * indentlevel
         outputlines.append(f"{indent}}}")

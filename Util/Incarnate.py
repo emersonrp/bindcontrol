@@ -1,7 +1,8 @@
 # Constants and so forth for dealing with Incarnate stuff
-
 import GameData
 import Util.Incarnate
+
+import Exceptions
 
 Rarities = ['Common', 'Uncommon', 'Uncommon', 'Rare', 'Rare', 'Rare', 'Rare', 'VeryRare', 'VeryRare']
 Aliases = {
@@ -53,7 +54,8 @@ def BuildSlotData() -> None:
                     elif isinstance(effectdata, int) and effectdata == 1:
                         effectline = ''
                     else:
-                        raise Exception(f'Something is terribly wrong with the incarnate data at {typename}, {i}, {j}: {effectdata}')
+                        msg = f'Something is terribly wrong with the incarnate data at {typename}, {i}, {j}: {effectdata}'
+                        raise Exceptions.UtilIncarnateDataException(msg)
                     effecttext = effecttext + f"<dt><b>{effectname}</b></dt><dd>{effectline}</dd>"
 
                 slotdata[typename][f'{typename} {levelname}'] = f"<dl>{effecttext}</dl>"

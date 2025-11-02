@@ -6,6 +6,13 @@ import BindControl
 from Profile import Profile
 import Models.ProfileData as ProfileData
 
+def raises_exception(ex_input):
+    msg = f"RAISES: {ex_input}"
+    raise(BCTestException(msg))
+
+class BCTestException(Exception): pass
+
+##### Fixures
 @pytest.fixture(autouse = True)
 def config(tmp_path, monkeypatch):
     _ = wx.App()

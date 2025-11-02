@@ -3,6 +3,7 @@ import wx
 from typing import Any, Literal, Final
 
 from BLF import BLF
+import Exceptions
 import GameData
 from Icon import GetIcon
 from Models.tObject import tObject
@@ -2205,7 +2206,8 @@ class MovementPowers(Page):
             tglfile = self.Profile.GetBindFile( t.bfpath(afmode + powercode, suffix) )
             makeModeKey(t, bl, tglfile, skipfeedback = True, doingtoggle = True)
         else:
-            raise Exception("Unknown callback in SoDToggleFix.  This is a bug.")
+            msg = "Unknown callback in SoDToggleFix.  This is a bug."
+            raise Exceptions.PageMovementBadCallbackException(msg)
 
         curfile.SetBind(key, "Toggle Fix", self, "+" + feedback + self.actPower_name('', power) + t.BLF(f'{afmode}{powercode}', suffix))
 

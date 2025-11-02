@@ -1,3 +1,4 @@
+import Exceptions
 import GameData.Homecoming
 import GameData.Rebirth
 import Util.Incarnate
@@ -53,6 +54,7 @@ def SetupGameData(server):
         GameData.PoolPowers       = GameData.Homecoming.PoolPowers
         GameData.TempTravelPowers = GameData.Homecoming.TempTravelPowers
     else:
-        raise Exception(f'GameData.SetupGameData called with unknown server "{server}"')
+        msg = f'GameData.SetupGameData called with unknown server "{server}"'
+        raise Exceptions.GameDataBadServerException(msg)
 
     Util.Incarnate.BuildSlotData()

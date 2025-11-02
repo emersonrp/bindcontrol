@@ -3,6 +3,7 @@ import importlib
 import sys
 from typing import Any
 
+import Exceptions
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from Util.Paths import GetRootDirPath
 
@@ -21,7 +22,8 @@ class WizardBindPane(CustomBindPaneParent):
                 wizClass = wizards.get(wizStr)
 
                 if not wizClass:
-                    raise Exception(f'Unknown BindWizard class "{wizStr}" requested when building BindWizard.  This is a bug')
+                    msg = f'Unknown BindWizard class "{wizStr}" requested when building BindWizard.  This is a bug'
+                    raise Exceptions.UIUnknownWizClass(msg)
 
         self.WizClass    = wizClass
         self.Description = wizClass.WizardName

@@ -58,10 +58,11 @@ class Profile(wx.Notebook):
                 newProfile.buildUIFromData()
                 newProfile.CheckAllConflicts()
         except Exception as e:
+            msg = f"Problem loading profile: {e} - this is a bug."
             if wx.ConfigBase.Get().ReadBool('CrashOnProfileError'):
-                raise e
+                raise Exceptions.ProfileLoadFromFileException(msg) from None
             else:
-                wx.LogError(f"Problem loading profile: {e} - this is a bug.")
+                wx.LogError(msg)
 
         return newProfile
 
@@ -369,25 +370,6 @@ class Profile(wx.Notebook):
 
         return self.BindFiles[key]
 
-    # making this "not mine" so we can return False if everything's fine,
-    # or the existing Profile name if something's wrong
-    def BindsDirNotMine(self) -> str|bool:
-        IDFile = self.ProfileIDFile()
-        if IDFile:
-            # If the file is even there...
-            if IDFile.exists():
-                if profilename := IDFile.read_text().strip() == self.ProfileName():
-                    # OK, this is our bindsdir, great
-                    return False
-                else:
-                    # Oh noes someone else has written binds here, return the name
-                    return profilename
-            else:
-                # the file doesn't exist, so bindsdir has not been claimed by another profile
-                return False
-        else:
-            raise Exception("Profile.ProfileIDFile() returned nothing, not checking IDFile!")
-
     def WriteBindFiles(self):
         if not self.ProfileBindsDir():
             wx.MessageBox("Profile Binds Directory is not valid, please correct this.")
@@ -397,17 +379,15 @@ class Profile(wx.Notebook):
         try:
             self.BindsDir().mkdir(parents = True, exist_ok = True)
         except Exception as e:
-            wx.LogError(f"Can't make binds directory {self.BindsDir()}: {e}")
-            wx.MessageBox(f"Can't make binds directory {self.BindsDir()}: {e}")
-            return
+            msg = f"Can't make binds directory {self.BindsDir()}: {e}"
+            raise Exceptions.ProfileCreateBindsDirException(msg) from None
 
         otherProfile = None
         try:
-            otherProfile = self.BindsDirNotMine()
-        except Exception:
-            wx.LogError("Something went wrong trying to check the ProfileIDFile: {e}")
-            wx.MessageBox("Something went wrong trying to check the ProfileIDFile: {e}")
-            return
+            otherProfile = self.Data.BindsDirNotMine()
+        except Exception as e:
+            msg = f"Something went wrong trying to check the ProfileIDFile: {e}"
+            raise Exceptions.ProfileProfileIDFileException(msg) from None
 
         if otherProfile:
             # this directory belongs to someone else
@@ -418,9 +398,8 @@ class Profile(wx.Notebook):
         try:
             self.ProfileIDFile().write_text(self.ProfileName())
         except Exception as e:
-            wx.LogError(f"Can't write Profile ID file {self.ProfileIDFile()}: {e}")
-            wx.MessageBox(f"Can't write Profile ID file {self.ProfileIDFile()}: {e}")
-            return
+            msg = f"Can't write Profile ID file {self.ProfileIDFile()}: {e}"
+            raise Exceptions.ProfileProfileIDFileException(msg) from None
 
         # Start by making the bind to make the reset load itself.  This might get overridden with
         # more elaborate load strings in like MovementPowers, but this is the safety fallback
@@ -442,10 +421,11 @@ class Profile(wx.Notebook):
                     wx.LogMessage(f'An error on the "{page.TabTitle}" tab caused WriteBinds to fail.')
                     return
             except Exception as e:
+                msg = f"Error occurred in PopulateBindFiles for {page.TabTitle}: {e}"
                 if config.ReadBool('CrashOnBindError'):
-                    raise e
+                    raise Exceptions.ProfilePopulateBindFileException(msg) from None
                 else:
-                    errors.append(f"Error populating bind file: {e}")
+                    errors.append(msg)
 
         # Now we have them here and can iterate them
         totalfiles = len(self.BindFiles)
@@ -457,10 +437,11 @@ class Profile(wx.Notebook):
                 bindfile.Write()
                 donefiles += 1
             except Exception as e:
+                msg = f"Failed to write bindfile {bindfile.Path}: {e}"
                 if config.ReadBool('CrashOnBindError'):
-                    raise e
+                    raise Exceptions.ProfileWriteBindFileException(msg) from None
                 else:
-                    errors.append(f"Failed to write bindfile {bindfile.Path}: {e}")
+                    errors.append(msg)
 
             dlg.Update(donefiles, str(bindfile.Path))
 

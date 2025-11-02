@@ -2,6 +2,8 @@ from BindFile import KeyBind, BindFile
 from pathlib import Path
 import pytest
 
+from test.conftest import BCTestException
+
 def test_keybind():
     kb = KeyBind('A', 'Test A', '', ['One', 'Two', 'Three'])
     assert kb.BindFileString() == 'A "One$$Two$$Three"\n', "BindFileString output is well-formed"
@@ -60,7 +62,7 @@ def test_blf(config, bindfile, monkeypatch):
     monkeypatch.undo()
 
 #########
-def raise_exception(): raise(Exception)
+def raise_exception(): raise(BCTestException)
 
 @pytest.fixture
 def bindfile(tmp_path):

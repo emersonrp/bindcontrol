@@ -2,6 +2,8 @@ import wx
 import sys
 from pathlib import Path
 
+import Exceptions
+
 # Things related to paths for the app
 #
 # examine an arbitrary profile binds dir for its associated profile name
@@ -57,7 +59,8 @@ def GetValidGamePath(server:str) -> Path|None:
         if gamepath.is_dir() and gamepath.is_absolute() and exepath.is_file():
             return gamepath
     else:
-        raise Exception('GetValidGamePath got an unknown "server" passed in.  This is a bug')
+        msg = 'GetValidGamePath got an unknown "server" passed in.  This is a bug'
+        raise Exceptions.UtilServerException(msg)
 
 # returns the popmenu path for the server, regardless of whether it's there
 def GetPopmenuPath(server) -> Path|None:

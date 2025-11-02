@@ -10,6 +10,8 @@ import Exceptions
 from Util.BuildFiles import ParseBuildFile
 import Util.Paths
 
+from test.conftest import BCTestException
+
 def test_init_empty(config):
     with pytest.raises(Exception, match = 'neither filename nor newname'):
         ProfileData.ProfileData(config)
@@ -331,4 +333,4 @@ def test_doSaveToFile(config, monkeypatch):
 
 
 #########
-def raises_exception(*args): raise(Exception)
+def raises_exception(*args): raise(BCTestException)

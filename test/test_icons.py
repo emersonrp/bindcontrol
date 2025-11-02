@@ -7,6 +7,8 @@ import GameData
 import Util.Paths
 import Icon
 
+from test.conftest import raises_exception, BCTestException
+
 def RecurseMiscPowers(menustruct):
     powerlist = []
 
@@ -221,7 +223,7 @@ def test_geticon_fromfile(monkeypatch):
     assert len(Icon.Icons) == 3, 'Caches with spaces'
 
     monkeypatch.setattr(wx, 'LogWarning', raises_exception)
-    with pytest.raises(Exception, match = 'RAISES: Missing icon'):
+    with pytest.raises(BCTestException, match = 'RAISES: Missing icon'):
         Icon.GetIcon('Gibberish', 'Not', 'Here')
 
     monkeypatch.undo()
@@ -266,5 +268,3 @@ def fixturepathzip():
 
 def fixturepathfs():
     return Path(__file__).resolve().parent / 'fixtures' / 'iconsfs'
-
-def raises_exception(ex_input): raise(Exception(f"RAISES: {ex_input}"))

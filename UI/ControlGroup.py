@@ -3,6 +3,7 @@ from collections.abc import Callable
 
 import wx
 
+import Exceptions
 from Help import HelpButton
 from Page import Page as bcPage
 
@@ -61,8 +62,8 @@ class ControlGroup(wx.StaticBoxSizer):
        ):
 
         if not ctlName:
-            wx.LogError("Tried to make a labeled control without a CtlName.  This is a bug.")
-            raise(Exception)
+            msg = "Tried to make a labeled control without a CtlName.  This is a bug."
+            raise Exceptions.UIControlGroupNoCttNameException(msg)
 
         Init      = self.Page.Init
         CtlParent = self.GetStaticBox()
@@ -167,7 +168,8 @@ class ControlGroup(wx.StaticBoxSizer):
             )
 
         else:
-            raise Exception(f"Got a ctlType in ControlGroup that I don't know: {ctlType}.  This is a bug.")
+            msg = f"Got a ctlType in ControlGroup that I don't know: {ctlType}.  This is a bug."
+            raise Exceptions.UIControlGroupUnknownCtlTypeException(msg)
 
         if not noLabel:
             CtlLabel = cgStaticText(CtlParent, -1, label + ':')

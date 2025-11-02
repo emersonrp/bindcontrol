@@ -1,7 +1,7 @@
 version: 1
 script:
   # Remove any previous build
-  - rm -rf $TARGET_APPDIR/usr/src | true
+  - rm -rf $TARGET_APPDIR | true
   # Make usr and icons dirs
   - mkdir -p $TARGET_APPDIR/usr/src
   # Copy the python application code into the AppDir
@@ -28,21 +28,20 @@ AppDir:
     icon: BindControl
     version: latest
     # Set the python executable as entry point
-    exec: usr/bin/python3
+    exec: usr/bin/python3.13
     # Set the application main script path as argument. Use '$@' to forward CLI parameters
     exec_args: "$APPDIR/usr/src/BindControl.py $@"
 
   apt:
     arch: amd64
     sources:
-      - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse'
-        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3b4fe6acc0b21f32'
+      - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble main restricted universe multiverse'
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920D1991BC93C'
       - sourceline: 'deb [arch=amd64] https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu/ noble main'
-        key_url: 'https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu/dists/noble/Release.gpg'
+        key_url: 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xf23c5a6cf475977595c89f51ba6932366a755776'
 
     include:
       - python3.13
-      - python3-wxgtk4.0
     exclude: []
 
   files:

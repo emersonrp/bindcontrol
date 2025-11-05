@@ -533,6 +533,16 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
         self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
         self.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
+    # This is an override for GenButton, which is only on MacOS
+    # On other platforms, we have wx.Button and this is never called.
+    # This makes the buttons look aaaalmost like the native ones,
+    # at least on my Catalina VM.
+    def DrawBezel(self, dc, width, height, dx=0, dy=0):
+        pen = wx.Pen(dc.GetPen())
+        pen.SetColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNSHADOW))
+        dc.SetPen(pen)
+        dc.DrawRoundedRectangle(width-1, height-1, dx+2, dy+2, 3)
+
     def onKeyChanged(self, evt) -> None:
         evt.Skip()
         profile = wx.App.Get().Main.Profile

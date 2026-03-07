@@ -1,4 +1,4 @@
-import PyInstaller.__main__
+import PyInstaller.__main__ # pyright: ignore
 import platform
 from pathlib import Path
 

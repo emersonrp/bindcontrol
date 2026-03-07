@@ -2235,11 +2235,13 @@ class MovementPowers(Page):
     def HasAnySoD(self) -> bool:
         return (
             self.SoDEnabled() and (
-                (self.Ctrls['JumpKeyAction'] .IsShown() and self.GetKeyAction('Jump')  == ACTION_SOD)
+                (self.Ctrls['SprintKeyAction'].IsShown() and self.GetKeyAction('Sprint')  == ACTION_SOD)
                     or
-                (self.Ctrls['FlyKeyAction']  .IsShown() and self.GetKeyAction('Fly')   == ACTION_SOD)
+                (self.Ctrls['JumpKeyAction']  .IsShown() and self.GetKeyAction('Jump')    == ACTION_SOD)
                     or
-                (self.Ctrls['SpeedKeyAction'].IsShown() and self.GetKeyAction('Speed') == ACTION_SOD)
+                (self.Ctrls['FlyKeyAction']   .IsShown() and self.GetKeyAction('Fly')     == ACTION_SOD)
+                    or
+                (self.Ctrls['SpeedKeyAction'] .IsShown() and self.GetKeyAction('Speed')   == ACTION_SOD)
             )
         )
 

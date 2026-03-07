@@ -1075,30 +1075,46 @@ class MovementPowers(Page):
         else:
             togoff = self.actPower_toggle(None, self.OtherMovementPowers('j'))
 
-        # tglbl is the BLF() for the toggle file
-        # tgl is the toggle bindfile itself
-        tglbl =       f"$${BLF()} {fbl}{t.KeyState()}j.txt"
-        tgl   = p.GetBindFile(f"{fpath}{t.KeyState()}j.txt")
+        # ( 'file' is the main file we're working with;  the subsequent three are
+        # the additional files we need for toggle and press/release stuff.  Ugh.)
+
+        # keyupbl is the BLF() for the keyup part of the press/release bind
+        # keyup is the keyup BindFile itself
+        keyupbl =       f"$${BLF()} {fbl}{t.KeyState()}jp.txt"
+        keyup   = p.GetBindFile(f"{fpath}{t.KeyState()}jp.txt")
+
+        # tgl is the toggle BindFile itself
+        tgl   = p.GetBindFile(f"{fpath}{t.KeyState()}jt.txt")
+
+        # tkubl is the BLF() for the keyup + toggle-mode press/release bind
+        # tku is the keyup+toggle BindFile itself
+        tkubl =       f"$${BLF()} {fbl}{t.KeyState()}jtp.txt"
+        tku   = p.GetBindFile(f"{fpath}{t.KeyState()}jtp.txt")
 
         if (bl == "j"):
             # if we're moving, turn on jump;  if stationary, turn on combat jumping
             if (t.horizkeys + t.space > 0):
-                a = self.actPower_toggle(t.jump, t.cjmp) + '$$up 1'
+                turnon = self.actPower_toggle(t.jump, t.cjmp) + '$$up 1'
+                turnoff = self.actPower_toggle(t.cjmp, t.jump)
             else:
-                a = self.actPower_toggle(t.cjmp, t.jump)
+                turnon = self.actPower_toggle(t.cjmp, t.jump)
+                turnoff = self.actPower_toggle(t.jump, t.cjmp)
 
-            tgl.SetBind(key, name, self, '-down' + a + togoff + t.detaillo + t.flycamdist + t.BLF('n' if istoggle else 'j'))
-            file.SetBind(key, name, self, '+down' + feedback + tglbl)
+            file.SetBind(key, name, self, '+down' + feedback + keyupbl)
+            keyup.SetBind(key, name, self, '-down' + turnon + togoff + t.detaillo + t.flycamdist + t.BLF('n' if istoggle else 'j', suffix = 'jt'))
+
+            tgl.SetBind(key, name, self, '+down' + feedback + tkubl)
+            tku.SetBind(key, name, self, '-down' + turnoff + t.detaillo + t.flycamdist + t.BLF('n' if istoggle else 'j'))
 
         elif (bl == "aj"):
             ajbl = t.BLF('an' if istoggle else 'aj')
-            tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump) + togoff + '$$up 1' + t.detaillo + t.flycamdist + t.dirs('DLR') + ajbl)
-            file.SetBind(key, name, self, '+down' + feedback + tglbl)
+            file.SetBind(key, name, self, '+down' + feedback + keyupbl)
+            keyup.SetBind(key, name, self, '-down' + self.actPower_name(t.jump) + togoff + '$$up 1' + t.detaillo + t.flycamdist + t.dirs('DLR') + ajbl)
 
         else: # bl == fj
             fjbl = t.BLF('fn' if istoggle else 'fj')
-            tgl.SetBind(key, name, self, '-down' + self.actPower_name(t.jump) + togoff + '$$up 1' + t.detaillo + t.flycamdist + fjbl)
-            file.SetBind(key, name, self, '+down' + feedback + tglbl)
+            file.SetBind(key, name, self, '+down' + feedback + keyupbl)
+            keyup.SetBind(key, name, self, '-down' + self.actPower_name(t.jump) + togoff + '$$up 1' + t.detaillo + t.flycamdist + fjbl)
 
         t.ini = ''
 
@@ -2158,7 +2174,7 @@ class MovementPowers(Page):
         # It's going to be in the new file, which is loaded by the "key down" bind below,
         # and it, itself, when "key up," will load the intended BLF().  We've shimmed a
         # two-part press/release combo into the place of just a simple keypress bind.
-        t.ini    = '+$$'
+        t.ini = '+$$'
 
         # Also, I'm not 100% clear why we do this specifically with Jump Mode.  Why do we
         # need this press/release thing specifically here?  Bind length, with the feedback

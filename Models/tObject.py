@@ -98,6 +98,6 @@ class tObject(dict):
 
         return ret
 
-    # This will return "${BLF()} C:\path\CODE\CODE101010<suffix>.txt"
+    # This will return "$${BLF()} C:\path\<CODE>\<CODE>101010<suffix>.txt"
     def BLF(self, code, suffix = ''):
         return self.profile.BLF(code.upper(), code.upper() + self.KeyState() + suffix + '.txt')

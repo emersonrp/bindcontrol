@@ -2369,7 +2369,8 @@ class MovementPowers(Page):
                         for S in (0,1):
                             for A in (0,1):
                                 for D in (0,1):
-                                    for suffix in ['', 'f', 'j', 'a', 'n', 'r', 's', 'gf', '_t', '_s',]:
+                                    for suffix in ['', 'f', 'j', 'jp', 'jt', 'jtp',
+                                                   'a', 'n', 'r', 's', 'gf', '_t', '_s',]:
                                         files.append(
                                             self.Profile.GetBindFile(d,
                                                 f'{d}{sp}{X}{W}{S}{A}{D}{suffix}.txt')

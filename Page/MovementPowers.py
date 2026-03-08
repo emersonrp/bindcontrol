@@ -1,6 +1,7 @@
 import re
 import wx
 from typing import Any, Literal, Final
+from collections.abc import Iterable
 
 from BLF import BLF
 import GameData
@@ -511,8 +512,7 @@ class MovementPowers(Page):
 
     def OnSpeedOnDemandChanged(self, evt = None) -> None:
         c = self.Ctrls
-        sodmode = self.DefaultMode()
-        c['NonSoDMode'].Show(bool(sodmode)) # Hide the "turn off SoD" key if "No SoD" is the default.
+        c['NonSoDMode'].Show(self.DefaultMode() != MODE_NON)
         for ctrl in ['DefaultMode', 'NonSoDMode', 'MouseChord', 'Feedback', ]:
             c[ctrl].Enable(self.SoDEnabled())
         for ctrl in ['SprintKeyAction', 'JumpKeyAction', 'FlyKeyAction', 'SpeedKeyAction', ]:
@@ -834,7 +834,7 @@ class MovementPowers(Page):
 
         mobile     = params.get('mobile')
         stationary = params.get('stationary')
-        mode       = self.GetMode(params.get('modestr') or 'NonSoD')
+        mode       = params.get('mode')
 
         flight     = params.get('flight' , '')
         sssj       = params.get('sssj'   , '')
@@ -999,7 +999,7 @@ class MovementPowers(Page):
             elif usejumpfix:
                 self.SoDJumpFix(  t, key, self.MakeSprintModeKey, "r",  bl, file, "a", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, togoff, start=True) + '$$up 0' + t.detailhi +  t.runcamdist + t.dirs('DLR') + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, togoff, start = True) + '$$up 0' + t.detailhi +  t.runcamdist + t.dirs('DLR') + feedback + bindload)
 
         else: # bl = 'fr'
             bindload = t.BLF('f' + code)
@@ -1008,7 +1008,7 @@ class MovementPowers(Page):
             elif usejumpfix:
                 self.SoDJumpFix(  t, key, self.MakeSprintModeKey, "r",  bl, file, "f", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, togoff, start=True) + '$$up 0' + t.detailhi + t.runcamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, togoff, start = True) + '$$up 0' + t.detailhi + t.runcamdist + feedback + bindload)
 
         t.ini = ''
 
@@ -1026,8 +1026,7 @@ class MovementPowers(Page):
             togoff = self.OtherMovementPowers('s')
         dotogglefix = istoggle and not doingtoggle
 
-        feedback = ''
-        if (not skipfeedback) and self.GetState('Feedback'): feedback = '$$t $name, Superspeed Mode'
+        feedback = '$$t $name, Super Speed Mode' if ((not skipfeedback) and self.GetState('Feedback')) else ''
 
         if (self.GetState('SpeedPower')):
             if (bl == 's'):
@@ -1037,7 +1036,7 @@ class MovementPowers(Page):
                 elif usejumpfix:
                     self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, code, bl, file, feedback)
                 else:
-                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff, start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff, start = True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "as"):
                 bindload  = t.BLF('a' + code)
@@ -1046,7 +1045,7 @@ class MovementPowers(Page):
                 elif usejumpfix:
                     self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, code, bl, file, "a", feedback)
                 else:
-                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff, start=True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff, start = True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
             else:  # bl == "fs"
                 bindload  = t.BLF('f' + code)
@@ -1056,7 +1055,7 @@ class MovementPowers(Page):
                     self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
                 else:
                     bindload  = t.BLF('f' + code)
-                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff, start=True) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + bindload)
+                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff, start = True) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
 
@@ -1169,14 +1168,14 @@ class MovementPowers(Page):
             if usejumpfix:
                 self.SoDJumpFix(  t, key, self.MakeFlyModeKey, code, bl, file, "a", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx, togoff, start=True) + t.dirs('DLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx, togoff, start = True) + t.dirs('DLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
         else: # bl == "ff"
             bindload = t.BLF(f'f{code}')
             if usejumpfix:
                 self.SoDJumpFix(t, key, self.MakeFlyModeKey, code, bl, file, "f", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx, togoff, start=True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx, togoff, start = True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
 
@@ -1209,7 +1208,7 @@ class MovementPowers(Page):
                     self.SoDJumpFix(t,key,self.MakeGFlyModeKey,"fgf",bl,file,"f")
                 else:
                     if (bl == "fgf"):
-                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.gfly,start=True) + t.detaillo + t.flycamdist + t.BLF('fgf'))
+                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.gfly,start = True) + t.detaillo + t.flycamdist + t.BLF('fgf'))
                     else:
                         file.SetBind(key, name, self, t.ini + t.detaillo + t.flycamdist + t.BLF('fgf'))
 
@@ -1593,7 +1592,7 @@ class MovementPowers(Page):
                                         'suffix'     : 'n',
                                         'mobile'     : None,
                                         'stationary' : None,
-                                        'modestr'    : "NonSoD",
+                                        'mode'       : MODE_NON,
                                         'sssj'       : sssj,
                                     })
 
@@ -1605,7 +1604,7 @@ class MovementPowers(Page):
                                         'suffix'     : 'r',
                                         'mobile'     : t.sprint,
                                         'stationary' : None,
-                                        'modestr'    : "Sprint",
+                                        'mode'       : MODE_SPR,
                                         'sssj'       : sssj,
                                     })
 
@@ -1617,7 +1616,7 @@ class MovementPowers(Page):
                                         'suffix'     : 's',
                                         'mobile'     : t.speed,
                                         'stationary' : None, # I think we want no stationary power with SS anymore
-                                        'modestr'    : "Super Speed",
+                                        'mode'       : MODE_SS,
                                         'sssj'       : sssj,
                                     })
 
@@ -1629,7 +1628,7 @@ class MovementPowers(Page):
                                         'suffix'     : 'j',
                                         'mobile'     : t.jump,
                                         'stationary' : t.cjmp,
-                                        'modestr'    : "Jump",
+                                        'mode'       : MODE_JMP,
                                         'flight'     : "Jump",
                                         'sssj'       : sssj,
                                     })
@@ -1642,7 +1641,7 @@ class MovementPowers(Page):
                                         'suffix'     : 'f',
                                         'mobile'     : t.flyx,
                                         'stationary' : t.hover,
-                                        'modestr'    : "Fly",
+                                        'mode'       : MODE_FLY,
                                         'flight'     : t.fly,
                                         'sssj'       : sssj,
                                     })
@@ -1655,7 +1654,7 @@ class MovementPowers(Page):
                                         'suffix'     : 'gf',
                                         'mobile'     : t.gfly,
                                         'stationary' : t.gfly,
-                                        'modestr'    : "GFly",
+                                        'mode'       : MODE_GFL,
                                         'flight'     : "GFly",
                                         'sssj'       : sssj,
                                     })
@@ -2132,7 +2131,7 @@ class MovementPowers(Page):
 
         offpower = set()
 
-        if off and isinstance(off, (set,list)):
+        if off and isinstance(off, Iterable):
             for w in off:
                 if (w and w != on and (w not in offpower)):
                     offpower.add(w)
@@ -2247,7 +2246,13 @@ class MovementPowers(Page):
         return self.Ctrls['DefaultMode'].GetStringSelection() or 'NonSoD'
 
     def DefaultMode(self) -> int:
-        return self.GetMode(self.DefaultModeStr() or 'NonSoD')
+        return {
+                "NonSoD" : MODE_NON,
+                "Sprint" : MODE_SPR,
+                "Speed"  : MODE_SS,
+                "Jump"   : MODE_JMP,
+                "Fly"    : MODE_FLY,
+        }[self.DefaultModeStr()]
 
     def HasGFly(self) -> bool:
         return self.Profile.HasPower('Flight', 'Group Fly')
@@ -2286,17 +2291,6 @@ class MovementPowers(Page):
             'Speed on Demand' : ACTION_SOD,
             'Power Toggle'    : ACTION_PT,
         }.get(actionctrl.GetStringSelection(), 0)
-
-    def GetMode(self, mode: Literal['NonSoD', 'Sprint', 'Jump', 'Fly', 'GFly', 'Super Speed', 'Speed']) -> int:
-        return {
-                "NonSoD"      : MODE_NON,
-                "Sprint"      : MODE_SPR,
-                "Jump"        : MODE_JMP,
-                "Fly"         : MODE_FLY,
-                "GFly"        : MODE_GFL,
-                "Super Speed" : MODE_SS,
-                "Speed"       : MODE_SS,
-        }[mode]
 
     # used to do a "turn off all SoD" when toggling on a non-SoD power
     def AllSoDPowers(self) -> set:

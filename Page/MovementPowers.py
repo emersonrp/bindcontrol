@@ -82,6 +82,7 @@ class MovementPowers(Page):
             'JumpPower'        : '',
             'CJPower'          : 'Combat Jumping',
             'JumpMode'         : '',
+            'JumpOff'          : '',
             'JumpSpecialKey'   : '',
             'JumpSpecialPower' : '', # hidden
 
@@ -89,6 +90,7 @@ class MovementPowers(Page):
             'FlyPower'        : '',
             'HoverPower'      : 'Hover',
             'FlyMode'         : '',
+            'FlyOff'          : '',
             'GFlyMode'        : '',
             'FlySpecialKey'   : '',
             'FlySpecialPower' : '', # hidden
@@ -417,6 +419,10 @@ class MovementPowers(Page):
             tooltip = "Select the defensive jump power to use with the keybinds in this section")
         self.superJumpSizer.AddControl(ctlName = 'JumpMode', ctlType = 'keybutton',)
         self.Ctrls['JumpMode'].Bind(EVT_KEY_CHANGED, self.OnJumpChanged)
+        self.superJumpSizer.AddControl(ctlName = 'JumpOff', ctlType = 'keybutton',
+            helpfile = 'JumpOffKey.html',
+            tooltip = 'Turn off Jumping powers completely')
+        self.Ctrls['JumpOff'].Bind(EVT_KEY_CHANGED, self.OnJumpChanged)
         self.superJumpSizer.AddControl(ctlName = 'JumpSpecialKey', ctlType = 'keybutton',)
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
@@ -436,6 +442,10 @@ class MovementPowers(Page):
         self.Ctrls['HoverPower'].Bind(wx.EVT_CHOICE, self.OnFlyChanged)
         self.flySizer.AddControl(ctlName = 'FlyMode', ctlType = 'keybutton',)
         self.Ctrls['FlyMode'].Bind(EVT_KEY_CHANGED, self.OnFlyChanged)
+        self.flySizer.AddControl(ctlName = 'FlyOff', ctlType = 'keybutton',
+            helpfile = 'FlyOffKey.html',
+            tooltip = 'Turn off Flying powers completely')
+        self.Ctrls['FlyOff'].Bind(EVT_KEY_CHANGED, self.OnFlyChanged)
         self.flySizer.AddControl(ctlName = 'FlySpecialKey', ctlType = 'keybutton',)
         self.flySizer.AddControl(ctlName = 'GFlyMode', ctlType = 'keybutton',
             tooltip = "Toggle Group Fly Speed on Demand Mode")
@@ -601,6 +611,12 @@ class MovementPowers(Page):
                 c['JumpPower'].GetStringSelection() or c['CJPower'].GetStringSelection()
                 ) and self.DefaultMode() != MODE_JMP))
 
+            c['JumpOff'].Show(
+                jumpkeyaction == ACTION_PT and
+                bool(self.GetState('JumpPower')) and
+                bool(self.GetState('CJPower'))
+            )
+
             c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable'].Enable(self.SoDEnabled())
 
@@ -659,6 +675,12 @@ class MovementPowers(Page):
             c['FlyMode'].Enable(bool(flykeyaction and (
                 c['FlyPower'].GetStringSelection() or c['HoverPower'].GetStringSelection()
                 ) and self.DefaultMode() != MODE_FLY))
+
+            c['FlyOff'].Show(
+                flykeyaction == ACTION_PT and
+                bool(self.GetState('FlyPower')) and
+                bool(self.GetState('HoverPower'))
+            )
 
             if self.DefaultMode() == MODE_FLY:
                 modekeytooltip = 'The Fly Key is disabled because Fly is your default Speed on Demand Mode'
@@ -2365,6 +2387,7 @@ UI.Labels.update( {
     'JumpPower'        : "Primary Jump Power",
     'CJPower'          : "Defensive Jump Power",
     'JumpMode'         : 'Jump Key',
+    'JumpOff'          : 'Toggle Jump Off',
     'JumpSpecialKey'   : '',
     'JumpSpecialPower' : '', # hidden
 
@@ -2372,6 +2395,7 @@ UI.Labels.update( {
     'FlyPower'        : "Primary Fly Power",
     'HoverPower'      : "Defensive Fly Power",
     'FlyMode'         : 'Fly Key',
+    'FlyOff'          : 'Toggle Fly Off',
     'FlySpecialKey'   : '',
     'FlySpecialPower' : '', # hidden
     'GFlyMode'        : 'Toggle Group Fly Mode',

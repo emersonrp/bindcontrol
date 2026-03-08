@@ -45,7 +45,7 @@ class CGControlMixin:
             self.Enable(show)
 
         if self.CtlLabel:
-            self.GetContainingSizer().Show(self.CtlLabel, show = show)
+            self.CtlLabel.GetContainingSizer().Show(self.CtlLabel, show = show)
             self.CtlLabel.Enable(show)
         if self.Page: self.Page.Layout()
         return True

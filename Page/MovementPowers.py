@@ -1314,6 +1314,9 @@ class MovementPowers(Page):
             elif cpower:
                 resetfile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{cpower}"'))
 
+            if self.GetState('JumpOff'):
+                resetfile.SetBind(self.Ctrls['JumpOff'].MakeBind(f'{self.togoff} "{cpower}"$${self.togoff} "{jpower}"'))
+
         if self.GetKeyAction('Fly') == ACTION_PT:
             fpower = self.GetState('FlyPower')
             hpower = self.GetState('HoverPower')
@@ -1323,6 +1326,9 @@ class MovementPowers(Page):
                 resetfile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{fpower}"'))
             elif hpower:
                 resetfile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{hpower}"'))
+
+            if self.GetState('FlyOff'):
+                resetfile.SetBind(self.Ctrls['FlyOff'].MakeBind(f'{self.togoff} "{fpower}"$${self.togoff} "{hpower}"'))
 
         ###### Teleport Binds
         teamTPPower   = 'Team Teleport' if self.HasTTP() else ''

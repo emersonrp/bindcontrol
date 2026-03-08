@@ -14,8 +14,9 @@ from UI.KeySelectDialog import EVT_KEY_CHANGED
 from UI.PowerPicker import PowerPicker
 
 # "Constants"
-ACTION_SOD : Final = 1
-ACTION_PT  : Final = 2
+ACTION_NONE : Final = 0
+ACTION_SOD  : Final = 1
+ACTION_PT   : Final = 2
 
 MODE_NON : Final = 0
 MODE_SPR : Final = 1
@@ -1487,7 +1488,7 @@ class MovementPowers(Page):
         extrafile = profile.GetBindFile('extra.txt')
         config    = wx.ConfigBase.Get()
         default   = self.SoDModeInfo(self.DefaultMode())
-        on_off    = self.actPower_toggle(default['sta'], self.AllSoDPowers())
+        on_off    = self.actPower_toggle(default['sta'], self.AllMovementPowers())
 
         # We do this over two files so it doesn't get too long if there are
         # multiple SoD pools and on_off has like five powers in it.
@@ -1654,7 +1655,7 @@ class MovementPowers(Page):
         # existing contents there to: turn off movement; feedback; reset.txt; default SoD
         extrafile = self.Profile.GetBindFile('extra.txt')
         default   = self.SoDModeInfo(self.DefaultMode())
-        on_off    = self.actPower_toggle(default['sta'], self.AllSoDPowers())
+        on_off    = self.actPower_toggle(default['sta'], self.AllMovementPowers())
 
         config = wx.ConfigBase.Get()
 
@@ -2224,20 +2225,20 @@ class MovementPowers(Page):
         return {
             'Speed on Demand' : ACTION_SOD,
             'Power Toggle'   : ACTION_PT,
-        }.get(actionctrl.GetStringSelection(), 0)
+        }.get(actionctrl.GetStringSelection(), ACTION_NONE)
 
     # used to do a "turn off all SoD" when toggling on a non-SoD power
-    def AllSoDPowers(self) -> set:
+    def AllMovementPowers(self) -> set:
         powers = set()
-        if self.GetKeyAction('Jump') == ACTION_SOD:
+        if self.GetKeyAction('Jump') != ACTION_NONE:
             if jp := self.GetState('JumpPower'):   powers.add(jp)
             if cp := self.GetState('CJPower'):     powers.add(cp)
-        if self.GetKeyAction('Fly') == ACTION_SOD:
+        if self.GetKeyAction('Fly') != ACTION_NONE:
             if fp := self.GetState('FlyPower'):    powers.add(fp)
             if hp := self.GetState('HoverPower'):  powers.add(hp)
-        if self.GetKeyAction('Speed') == ACTION_SOD:
+        if self.GetKeyAction('Speed') != ACTION_NONE:
             if sp := self.GetState('SpeedPower'):  powers.add(sp)
-        if self.GetKeyAction('Sprint') == ACTION_SOD:
+        if self.GetKeyAction('Sprint') != ACTION_NONE:
             if rp := self.GetState('SprintPower'): powers.add(rp)
         return powers
 

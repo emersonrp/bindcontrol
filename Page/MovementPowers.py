@@ -369,7 +369,7 @@ class MovementPowers(Page):
         SprintSizer = ControlGroup(self, self, 'Sprint Settings')
 
         SprintSizer.AddControl(ctlName = 'SprintKeyAction', ctlType = 'choice',
-            contents = ('Speed on Demand', 'Power Toggle', 'Power Toggle', 'None'),
+            contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'SprintKeyAction.html',
             tooltip = 'Select what the Sprint Key will do')
         self.Ctrls['SprintKeyAction'].Bind(wx.EVT_CHOICE, self.OnSprintChanged)
@@ -386,7 +386,7 @@ class MovementPowers(Page):
         ##### SUPER SPEED
         self.superSpeedSizer = ControlGroup(self, self, 'Super Speed Settings')
         self.superSpeedSizer.AddControl(ctlName = 'SpeedKeyAction', ctlType = 'choice',
-            contents = ('Speed on Demand', 'Power Toggle', 'Power Toggle', 'None'),
+            contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'SpeedKeyAction.html',
             tooltip = 'Select what the Speed Key will do')
         self.Ctrls['SpeedKeyAction'].Bind(wx.EVT_CHOICE, self.OnSpeedChanged)
@@ -405,7 +405,7 @@ class MovementPowers(Page):
         ##### SUPER JUMP
         self.superJumpSizer = ControlGroup(self, self, 'Jumping Settings')
         self.superJumpSizer.AddControl(ctlName = 'JumpKeyAction', ctlType = 'choice',
-            contents = ('Speed on Demand', 'Power Toggle', 'Power Toggle', 'None'),
+            contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'JumpKeyAction.html',
             tooltip = 'Select what the Jump Key will do')
         self.Ctrls['JumpKeyAction'].Bind(wx.EVT_CHOICE, self.OnJumpChanged)
@@ -423,7 +423,7 @@ class MovementPowers(Page):
         ##### FLY
         self.flySizer = ControlGroup(self, self, 'Flight Settings')
         self.flySizer.AddControl(ctlName = 'FlyKeyAction', ctlType = 'choice',
-            contents = ('Speed on Demand', 'Power Toggle', 'Power Toggle', 'None'),
+            contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'FlyKeyAction.html',
             tooltip = 'Select what the Fly Key will do')
         self.Ctrls['FlyKeyAction'].Bind(wx.EVT_CHOICE, self.OnFlyChanged)
@@ -1276,32 +1276,31 @@ class MovementPowers(Page):
         if self.IsKheldian(): self.DoKheldianBinds(t)
 
         ###### Power Toggle binds.
-        sod_off = self.actPower_toggle(None, self.AllSoDPowers())
         if self.GetKeyAction('Sprint') == ACTION_PT:
-            resetfile.SetBind(self.Ctrls["SprintMode"].MakeBind(sod_off, f'powexecname "{self.GetState("SprintPower")}"'))
+            resetfile.SetBind(self.Ctrls["SprintMode"].MakeBind(f'powexecname "{self.GetState("SprintPower")}"'))
 
         if self.GetKeyAction('Speed') == ACTION_PT:
-            resetfile.SetBind(self.Ctrls["SpeedMode"].MakeBind(sod_off, f'powexecname "{self.GetState("SpeedPower")}"'))
+            resetfile.SetBind(self.Ctrls["SpeedMode"].MakeBind(f'powexecname "{self.GetState("SpeedPower")}"'))
 
         if self.GetKeyAction('Jump') == ACTION_PT:
             jpower = self.GetState('JumpPower')
             cpower = self.GetState('CJPower')
             if jpower and cpower:
-                resetfile.SetBind(self.Ctrls['JumpMode'].MakeBind(sod_off, f'powexecname "{jpower}"$$powexecname "{cpower}"'))
+                resetfile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{jpower}"$$powexecname "{cpower}"'))
             elif jpower:
-                resetfile.SetBind(self.Ctrls['JumpMode'].MakeBind(sod_off, f'powexecname "{jpower}"'))
+                resetfile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{jpower}"'))
             elif cpower:
-                resetfile.SetBind(self.Ctrls['JumpMode'].MakeBind(sod_off, f'powexecname "{cpower}"'))
+                resetfile.SetBind(self.Ctrls['JumpMode'].MakeBind(f'powexecname "{cpower}"'))
 
         if self.GetKeyAction('Fly') == ACTION_PT:
             fpower = self.GetState('FlyPower')
             hpower = self.GetState('HoverPower')
             if fpower and hpower:
-                resetfile.SetBind(self.Ctrls['FlyMode'].MakeBind(sod_off, f'powexecname "{fpower}"$$powexecname "{hpower}"'))
+                resetfile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{fpower}"$$powexecname "{hpower}"'))
             elif fpower:
-                resetfile.SetBind(self.Ctrls['FlyMode'].MakeBind(sod_off, f'powexecname "{fpower}"'))
+                resetfile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{fpower}"'))
             elif hpower:
-                resetfile.SetBind(self.Ctrls['FlyMode'].MakeBind(sod_off, f'powexecname "{hpower}"'))
+                resetfile.SetBind(self.Ctrls['FlyMode'].MakeBind(f'powexecname "{hpower}"'))
 
         ###### Teleport Binds
         teamTPPower   = 'Team Teleport' if self.HasTTP() else ''
@@ -2356,7 +2355,7 @@ UI.Labels.update( {
     'SprintMode'      : 'Sprint Key',
 
     'SpeedKeyAction'    : "Speed Key Action",
-    'SpeedPower'        : "Primary Speed Power",
+    'SpeedPower'        : "Speed Power",
     'SpeedMode'         : 'Speed Key',
     'SSSJModeEnable'    : 'Enable Super Speed / Super Jump Mode',
     'SpeedSpecialKey'   : '',

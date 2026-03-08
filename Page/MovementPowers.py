@@ -884,8 +884,8 @@ class MovementPowers(Page):
         if mode != MODE_FLY : self.MakeFlyModeKey   (t, "f", curfile, path, gamepath, usejumpfix)
         if mode != MODE_JMP : self.MakeJumpModeKey  (t, "j", curfile, path, gamepath)
 
-        self.SoDAutoRunKey(t,bla,curfile,mobile,sssj)
-        self.SoDFollowKey (t,blf,curfile,mobile,stationary)
+        self.SoDAutoRunKey(t, bla, curfile, mobile, sssj)
+        self.SoDFollowKey (t, blf, curfile, mobile, stationary)
 
         # Autorun Binds
         autorunfile = profile.GetBindFile(f"{patha}{t.KeyState()}.txt")
@@ -905,7 +905,7 @@ class MovementPowers(Page):
         if mode != MODE_FLY : self.MakeFlyModeKey   (t, "af", autorunfile, patha, gamepatha, usejumpfix)
         if mode != MODE_JMP : self.MakeJumpModeKey  (t, "aj", autorunfile, patha, gamepatha)
 
-        self.SoDAutoRunOffKey(t,bl,autorunfile,mobile,stationary,flight)
+        self.SoDAutoRunOffKey(t, bl, autorunfile, mobile, stationary, flight)
         autorunfile.SetBind(self.Ctrls['Follow'].MakeBind('nop'))
 
         # Follow Binds
@@ -926,7 +926,7 @@ class MovementPowers(Page):
         if mode != MODE_FLY : self.MakeFlyModeKey   (t, "ff", followfile, pathf, gamepathf, usejumpfix)
         if mode != MODE_JMP : self.MakeJumpModeKey  (t, "fj", followfile, pathf, gamepathf)
 
-        self.SoDFollowOffKey(t,bl,followfile,mobile,stationary,flight)
+        self.SoDFollowOffKey(t, bl, followfile, mobile, stationary, flight)
         followfile.SetBind(self.Ctrls['AutoRun'].MakeBind('nop'))
 
         setattr(t, self.DefaultModeStr() + 'ModeKey', None)
@@ -945,22 +945,22 @@ class MovementPowers(Page):
         if (bl == "r"):
             bindload = t.BLF('n')
             if usejumpfix:
-                self.SoDJumpFix(t,key, self.MakeNonSoDModeKey,"n",bl,file,feedback = feedback)
+                self.SoDJumpFix(t, key, self.MakeNonSoDModeKey,"n", bl, file, feedback = feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None,togoff) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
 
         elif (bl == "ar"):
             bindload = t.BLF('an')
             if usejumpfix:
-                self.SoDJumpFix(t,key, self.MakeNonSoDModeKey,"n",bl,file,"a",feedback)
+                self.SoDJumpFix(t, key, self.MakeNonSoDModeKey,"n", bl, file,"a", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None,togoff) + t.detailhi + t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff) + t.detailhi + t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
 
         else:
             if usejumpfix:
-                self.SoDJumpFix(t,key, self.MakeNonSoDModeKey,"n",bl,file,"f",feedback)
+                self.SoDJumpFix(t, key, self.MakeNonSoDModeKey,"n", bl, file,"f", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None,togoff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
         t.ini = ''
 
     def MakeSprintModeKey(self, t, bl, file, usejumpfix = False, skipfeedback = False, doingtoggle = False) -> None:
@@ -1192,23 +1192,23 @@ class MovementPowers(Page):
             if (bl == "gf"):
                 bindload = t.BLF('gf')
                 if usejumpfix:
-                    self.SoDJumpFix(t,key,self.MakeGFlyModeKey,"gf",bl,file)
+                    self.SoDJumpFix(t, key, self.MakeGFlyModeKey,"gf", bl, file)
                 else:
                     file.SetBind(key, name, self, t.ini + '$$up 1$$down 0' + self.actPower_toggle(t.gfly) + t.dirs('FBLR') + t.detaillo + t.flycamdist + bindload)
 
             elif (bl == "agf"):
                 bindload = t.BLF('agf')
                 if usejumpfix:
-                    self.SoDJumpFix(t,key,self.MakeGFlyModeKey,"agf",bl,file,"a")
+                    self.SoDJumpFix(t, key, self.MakeGFlyModeKey,"agf", bl, file,"a")
                 else:
                     file.SetBind(key, name, self, t.ini + t.detaillo + t.flycamdist + t.dirs('UDLR') + bindload)
 
             else:
                 if usejumpfix:
-                    self.SoDJumpFix(t,key,self.MakeGFlyModeKey,"fgf",bl,file,"f")
+                    self.SoDJumpFix(t, key, self.MakeGFlyModeKey,"fgf", bl, file,"f")
                 else:
                     if (bl == "fgf"):
-                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.gfly,start = True) + t.detaillo + t.flycamdist + t.BLF('fgf'))
+                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.gfly, start = True) + t.detaillo + t.flycamdist + t.BLF('fgf'))
                     else:
                         file.SetBind(key, name, self, t.ini + t.detaillo + t.flycamdist + t.BLF('fgf'))
 
@@ -1701,7 +1701,7 @@ class MovementPowers(Page):
 
     def SoDUpKey(self, t, bl, curfile, mobile, stationary, flight, autorun = False, followbl = '', sssj = None) -> None:
 
-        (upx,dow,forw,bac,lef,rig) = (t.upx,t.dow,t.forw,t.bac,t.lef,t.rig)
+        (upx, dow, forw, bac, lef, rig) = (t.upx, t.dow, t.forw, t.bac, t.lef, t.rig)
 
         actkeys = t.totalkeys
         mouselook = ''
@@ -1749,7 +1749,7 @@ class MovementPowers(Page):
 
         toggle = ''
         if (toggleon or toggleoff):
-            toggle = self.actPower_toggle(toggleon,[toggleoff,toggleoff2])
+            toggle = self.actPower_toggle(toggleon,[toggleoff, toggleoff2])
 
         newbits = t.KeyState(toggle = 'space')
         bl = f"{bl}{newbits}.txt"
@@ -1771,7 +1771,7 @@ class MovementPowers(Page):
             curfile.SetBind(self.Ctrls['Up'].MakeBind(f"{ini}{upx}{dow}$$backward 0{lef}{rig}{toggle}{t.mouselookon}{bl}"))
 
     def SoDDownKey(self, t, bl, curfile, mobile, stationary, flight, autorun = False, followbl = '') -> None:
-        (up,dowx,forw,bac,lef,rig) = (t.up,t.dowx,t.forw,t.bac,t.lef,t.rig)
+        (up, dowx, forw, bac, lef, rig) = (t.up, t.dowx, t.forw, t.bac, t.lef, t.rig)
 
         actkeys = t.totalkeys
         mouselook      = ''
@@ -1802,7 +1802,7 @@ class MovementPowers(Page):
 
         toggle = ''
         if (toggleon or toggleoff):
-            toggle = self.actPower_toggle(toggleon,toggleoff)
+            toggle = self.actPower_toggle(toggleon, toggleoff)
 
         newbits = t.KeyState(toggle = 'X')
         bl = f"{bl}{newbits}.txt"
@@ -1823,7 +1823,7 @@ class MovementPowers(Page):
             curfile.SetBind(self.Ctrls['Down'].MakeBind(f"{ini}{up}{dowx}$$backward -1{lef}{rig}{t.mouselookon}{bl}"))
 
     def SoDForwardKey(self, t, bl, curfile,  mobile, stationary, flight, autorunbl = '', followbl = '', sssj = None) -> None:
-        (up,dow,forx,bac,lef,rig) = (t.up,t.dow,t.forx,t.bac,t.lef,t.rig)
+        (up, dow, forx, bac, lef, rig) = (t.up, t.dow, t.forx, t.bac, t.lef, t.rig)
         name = UI.Labels['Forward']
 
         mouselook = ''
@@ -1863,7 +1863,7 @@ class MovementPowers(Page):
 
         toggle = ''
         if (toggleon or toggleoff):
-            toggle = self.actPower_toggle(toggleon,toggleoff)
+            toggle = self.actPower_toggle(toggleon, toggleoff)
 
         newbits = t.KeyState(toggle = 'W')
         bl = f"{bl}{newbits}.txt"
@@ -1897,7 +1897,7 @@ class MovementPowers(Page):
                 curfile.SetBind('mousechord', name, self, f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{rig}{lef}{t.mouselookon}{t.playerturn}{bl}")
 
     def SoDBackKey(self, t, bl, curfile, mobile, stationary, flight, autorunbl = '', followbl = '', sssj = None) -> None:
-        (up,dow,forw,bacx,lef,rig) = (t.up,t.dow,t.forw, t.bacx,t.lef,t.rig)
+        (up, dow, forw, bacx, lef, rig) = (t.up, t.dow, t.forw, t.bacx, t.lef, t.rig)
 
         mouselook = ''
         if (mobile     == 'Group Fly'): mobile = None
@@ -1934,7 +1934,7 @@ class MovementPowers(Page):
 
         toggle = ''
         if (toggleon or toggleoff) :
-            toggle = self.actPower_toggle(toggleon,toggleoff)
+            toggle = self.actPower_toggle(toggleon, toggleoff)
 
         newbits = t.KeyState(toggle = 'S')
         bl = f"{bl}{newbits}.txt"
@@ -1962,7 +1962,7 @@ class MovementPowers(Page):
             curfile.SetBind(self.Ctrls['Back'].MakeBind(f"{ini}{up}{dow}{move}{lef}{rig}{t.mouselookon}{bl}"))
 
     def SoDLeftKey(self, t, bl, curfile, mobile, stationary, flight, autorun = False, followbl = '', sssj = None) -> None:
-        (up,dow,forw,bac,lefx,rig) = (t.up,t.dow,t.forw,t.bac, t.lefx,t.rig)
+        (up, dow, forw, bac, lefx, rig) = (t.up, t.dow, t.forw, t.bac, t.lefx, t.rig)
 
         mouselook = ''
         if (mobile     == 'Group Fly') : mobile = None
@@ -1999,7 +1999,7 @@ class MovementPowers(Page):
 
         toggle = ''
         if (toggleon or toggleoff) :
-            toggle = self.actPower_toggle(toggleon,toggleoff)
+            toggle = self.actPower_toggle(toggleon, toggleoff)
 
         newbits = t.KeyState(toggle = 'A')
         bl = f"{bl}{newbits}.txt"
@@ -2021,7 +2021,7 @@ class MovementPowers(Page):
             curfile.SetBind(self.Ctrls['Left'].MakeBind(f"{ini}{up}{dow}{'$$backward 0'}{lefx}{rig}{t.mouselookon}{bl}"))
 
     def SoDRightKey(self, t, bl, curfile, mobile, stationary, flight, autorun = False, followbl = '', sssj = None) -> None:
-        (up,dow,forw,bac,lef,rigx) = (t.up,t.dow,t.forw,t.bac,t.lef, t.rigx)
+        (up, dow, forw, bac, lef, rigx) = (t.up, t.dow, t.forw, t.bac, t.lef, t.rigx)
 
         mouselook = ''
         if (mobile     == 'Group Fly') : mobile = None
@@ -2058,7 +2058,7 @@ class MovementPowers(Page):
 
         toggle = ''
         if (toggleon or toggleoff) :
-            toggle = self.actPower_toggle(toggleon,toggleoff)
+            toggle = self.actPower_toggle(toggleon, toggleoff)
 
         newbits = t.KeyState(toggle = 'D')
         bl = f"{bl}{newbits}.txt"
@@ -2082,7 +2082,7 @@ class MovementPowers(Page):
     def SoDAutoRunKey(self, t, bl, curfile, mobile, sssj) -> None:
         bindload = bl + t.KeyState() + ".txt"
         if (sssj and t.space == 1) :
-            curfile.SetBind(self.Ctrls['AutoRun'].MakeBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mouselookon + self.actPower_name(sssj,mobile) + bindload))
+            curfile.SetBind(self.Ctrls['AutoRun'].MakeBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mouselookon + self.actPower_name(sssj, mobile) + bindload))
         else:
             curfile.SetBind(self.Ctrls['AutoRun'].MakeBind('forward 1$$backward 0' + t.dirs('UDLR') + t.mouselookon + self.actPower_name(mobile) + bindload))
 
@@ -2092,34 +2092,34 @@ class MovementPowers(Page):
             if (t.horizkeys > 0) : # if flying, check only horizontal keys
                 toggleon = t.mouselookon + self.actPower_name(mobile)
             else:
-                toggleon = t.mouselookoff + self.actPower_name(stationary,mobile)
+                toggleon = t.mouselookoff + self.actPower_name(stationary, mobile)
 
         else:
             if (t.totalkeys > 0) : # otherwise check all keys
                 toggleon = t.mouselookon + self.actPower_name(mobile)
             else:
-                toggleon = t.mouselookoff + self.actPower_name(stationary,mobile)
+                toggleon = t.mouselookoff + self.actPower_name(stationary, mobile)
 
         bindload = bl + t.KeyState() + '.txt'
         # "[2:]" on next line is to trim off the initial "$$" that dirs() provides
         curfile.SetBind(self.Ctrls['AutoRun'].MakeBind(t.dirs('UDFBLR')[2:] + toggleon + bindload))
 
     def SoDFollowKey(self, t, bl, curfile, mobile, stationary) -> None:
-        curfile.SetBind(self.Ctrls['Follow'].MakeBind('follow' + self.actPower_toggle(mobile,stationary) + bl + t.KeyState() + '.txt'))
+        curfile.SetBind(self.Ctrls['Follow'].MakeBind('follow' + self.actPower_toggle(mobile, stationary) + bl + t.KeyState() + '.txt'))
 
     def SoDFollowOffKey(self, t, bl, curfile, mobile, stationary, flight) -> None:
         toggle = ''
         if (not flight):
             if (t.horizkeys == 0) :
                 if (stationary != mobile) :
-                   toggle = self.actPower_toggle(stationary,mobile)
+                   toggle = self.actPower_toggle(stationary, mobile)
                 else:
                    toggle = self.actPower_name(stationary)
 
         else:
             if (t.totalkeys == 0) :
                 if (stationary != mobile) :
-                   toggle = self.actPower_toggle(stationary,mobile)
+                   toggle = self.actPower_toggle(stationary, mobile)
                 else:
                    toggle = self.actPower_name(stationary)
 
@@ -2153,7 +2153,7 @@ class MovementPowers(Page):
                 if (v and v != on):
                     s = s + '$$powexecname ' + v
 
-            elif isinstance(v, set):
+            elif isinstance(v, Iterable):
                 for w in v:
                     if (w and w != on):
                         s = s + '$$powexecname ' + w
@@ -2311,7 +2311,7 @@ class MovementPowers(Page):
     # For turning everyone else off when we turn something on
     def OtherMovementPowers(self, context: Literal['j', 'f', 's', 'n', 'r']) -> set:
         powers = set()
-        # the "and self.*KeyAction" in this case means "and BC is managing this
+        # the "and self.GetKeyAction(*)" in this case means "and BC is managing this
         # movement power" but this means it won't shut off movement powers activated
         # manually via power trays or Simple Binds or something.  I think we're just
         # going to have to live with that.

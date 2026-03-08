@@ -280,8 +280,10 @@ class MovementPowers(Page):
         ### DETAIL SETTINGS
         detailSizer = ControlGroup(self, self, 'Detail and Camera Settings')
         detailSizer.AddControl(ctlName = 'PlayerTurn', ctlType = 'checkbox',
+            helpfile = 'PlayerTurn.html',
             tooltip = 'Turn player to match camera when moving forward',)
         detailSizer.AddControl(ctlName = 'AutoMouseLook', ctlType = 'checkbox',
+           helpfile = 'MouselookWhenMoving.html',
            tooltip = 'Automatically engage mouselook while movement keys are pressed',)
         detailSizer.AddControl(ctlName = 'ChangeCamera', ctlType = 'checkbox',
             tooltip = "Change the camera distance while moving")
@@ -2345,8 +2347,8 @@ UI.Labels.update( {
     'AutoRun'        : 'Auto Run',
     'Follow'         : 'Follow Target',
 
-    'PlayerTurn'     : 'Turn to match camera',
-    'AutoMouseLook'  : 'Mouselook when moving',
+    'PlayerTurn'     : 'Turn to Match Camera',
+    'AutoMouseLook'  : 'Mouselook When Moving',
     'ChangeCamera'   : 'Change camera distance when moving',
     'CamdistBase'    : 'Base Camera Distance',
     'CamdistMove'    : 'Travelling Camera Distance',

@@ -1002,6 +1002,7 @@ class MovementPowers(Page):
 
     def MakeSpeedModeKey(self, t, bl, file, usejumpfix = False, skipfeedback = False, sssj = '') -> None:
         if not self.Ctrls['SpeedMode'].IsEnabled(): return
+        if self.GetKeyAction('Speed') == ACTION_PT: return
 
         key = t.SpeedModeKey
         name = UI.Labels['SpeedMode']
@@ -1039,6 +1040,7 @@ class MovementPowers(Page):
     def MakeJumpModeKey(self, t, bl, file, fpath, fbl, doingtoggle = False) -> None:
         if not self.Ctrls['JumpMode'].IsEnabled(): return
         if not (t.canjmp and bool(self.GetKeyAction('Jump'))): return
+        if self.GetKeyAction('Jump') == ACTION_PT: return
 
         p        = self.Profile
         key      = t.JumpModeKey
@@ -1078,6 +1080,7 @@ class MovementPowers(Page):
     def MakeFlyModeKey(self, t, bl, file, fpath, fbl, usejumpfix = False, skipfeedback = False, fb_on_a = False) -> None:
         if not self.Ctrls['FlyMode'].IsEnabled(): return
         if not (t.canhov or t.canfly): return
+        if self.GetKeyAction('Fly') == ACTION_PT: return
 
         p        = self.Profile
         key      = t.FlyModeKey

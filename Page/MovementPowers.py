@@ -14,16 +14,16 @@ from UI.KeySelectDialog import EVT_KEY_CHANGED
 from UI.PowerPicker import PowerPicker
 
 # "Constants"
-ACTION_NONE : Final = 0
-ACTION_SOD  : Final = 1
-ACTION_PT   : Final = 2
+ACTION_NONE : Final[int] = 0
+ACTION_SOD  : Final[int] = 1
+ACTION_PT   : Final[int] = 2
 
-MODE_NON : Final = 0
-MODE_SPR : Final = 1
-MODE_JMP : Final = 2
-MODE_FLY : Final = 3
-MODE_GFL : Final = 4
-MODE_SS  : Final = 5
+MODE_NON : Final[int] = 0
+MODE_SPR : Final[int] = 1
+MODE_JMP : Final[int] = 2
+MODE_FLY : Final[int] = 3
+MODE_GFL : Final[int] = 4
+MODE_SS  : Final[int] = 5
 
 class MovementPowers(Page):
     def __init__(self, parent) -> None:
@@ -35,10 +35,9 @@ class MovementPowers(Page):
 
         # A few things that are server-specific.  If we change servers, we reload the profile
         # so this is safe to do in __init__
-        server : str = self.Profile.Server()
-        self.togon   : str = "px_tgon" if server == "Rebirth" else "powexectoggleon"
-        self.togoff  : str = "px_tgof" if server == "Rebirth" else "powexectoggleoff"
-        self.unqueue : str = "px_uq"   if server == "Rebirth" else "powexecunqueue"
+        self.togon   : Final[str] = "px_tgon" if self.Server == "Rebirth" else "powexectoggleon"
+        self.togoff  : Final[str] = "px_tgof" if self.Server == "Rebirth" else "powexectoggleoff"
+        self.unqueue : Final[str] = "px_uq"   if self.Server == "Rebirth" else "powexecunqueue"
 
         self.Init: dict[str, Any] = {
             'EnableSoD'       : False,
@@ -109,8 +108,6 @@ class MovementPowers(Page):
             'TPHideWindows'   : True,
             'TPTPHover'       : False,
 
-            'FlyGFly'         : '',
-
             'KhelFeedback'      : False,
             'UseHumanFormPower' : False,
             'HumanTray'         : "1",
@@ -121,12 +118,11 @@ class MovementPowers(Page):
             'DwarfMode'       : "]",
             'DwarfTray'       : "5",
 
-
             'TempEnable'      : False,
             'TempToggle'      : '',
         }
 
-        if server == "Homecoming":
+        if self.Server == "Homecoming":
             UI.Labels.update({
                 'TPBindKey'      : 'Teleport to Cursor Immediately',
                 'TTPBindKey'     : 'Team Teleport to Cursor Immediately',
@@ -138,8 +134,6 @@ class MovementPowers(Page):
             })
 
     def BuildPage(self) -> None:
-
-        server = self.Profile.Server()
 
         topSizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -458,7 +452,7 @@ class MovementPowers(Page):
             contents = ['', 'Teleport', 'Jaunt', 'Shadow Step', 'White Dwarf Step', 'Black Dwarf Step'],
             tooltip = "Select the teleport power to use with the keybinds in this section")
         self.Ctrls['TPPower'].Bind(wx.EVT_CHOICE, self.OnTeleportChanged)
-        if server == "Homecoming":
+        if self.Server == "Homecoming":
             tpTooltip = 'Immediately teleport to the cursor position without showing a target marker'
             tpcTooltip = 'Show target marker on keypress;  teleport to marker on key release'
         else:
@@ -470,7 +464,7 @@ class MovementPowers(Page):
         self.teleportSizer.AddControl(ctlName = "TPExecuteKey", ctlType = 'keybutton')
         self.teleportSizer.AddControl(ctlName = 'TPTPHover', ctlType = 'checkbox',
             tooltip = "Activate the Hover power after teleporting")
-        if server == "Homecoming":
+        if self.Server == "Homecoming":
             ttpTooltip = 'Immediately Team Teleport to the cursor position without showing a target marker'
             ttpcTooltip = 'Show target marker on keypress;  Team Teleport to marker on key release'
         else:
@@ -761,8 +755,8 @@ class MovementPowers(Page):
             # show kheldian sizer, enable controls
             self.ShowControlGroup(self.kheldianSizer)
 
-            c['UseHumanFormPower'].Show(  self.Profile.Server() != 'Homecoming')
-            c['UseHumanFormPower'].Enable(self.Profile.Server() != 'Homecoming')
+            c['UseHumanFormPower'].Show(  self.Server != 'Homecoming')
+            c['UseHumanFormPower'].Enable(self.Server != 'Homecoming')
 
             c['NovaMode'].Enable()
             c['NovaTray'].Enable(bool(self.GetState('NovaMode')))
@@ -1182,8 +1176,7 @@ class MovementPowers(Page):
     def PopulateBindFiles(self) -> bool:
         profile     = self.Profile
         resetfile   = profile.ResetFile()
-        server      = profile.Server()
-        tpActivator = "powexeclocation cursor " if server == 'Homecoming' else "powexecname "
+        tpActivator = "powexeclocation cursor " if self.Server == 'Homecoming' else "powexecname "
 
         # set up the "t" object that drives approximately everything
         t = tObject(profile)
@@ -1339,7 +1332,7 @@ class MovementPowers(Page):
         if (self.HasTP() and not normalTPPower):
             resetfile.SetBind(self.Ctrls['TPBindKey'].MakeBind('nop'))
             resetfile.SetBind(self.Ctrls['TPComboKey'].MakeBind('nop'))
-            if server == "Rebirth":
+            if self.Server == "Rebirth":
                 resetfile.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('nop'))
 
         # personal tp binds
@@ -1353,14 +1346,14 @@ class MovementPowers(Page):
             tp_on1 = profile.GetBindFile("tp","tp_on1.txt")
             zoomin = '' if t.tphover else t.detailhi + t.runcamdist
 
-            if server == 'Homecoming':
+            if self.Server == 'Homecoming':
                 resetfile.SetBind(self.Ctrls['TPComboKey'].MakeBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
 
                 tp_off.SetBind(self.Ctrls['TPComboKey'].MakeBind('+first$$-first$$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
 
                 tp_on1.SetBind(self.Ctrls['TPComboKey'].MakeBind(f'+first$$-first$${self.unqueue}$$' + tpActivator + normalTPPower + zoomin + windowshow + profile.BLF('tp','tp_off.txt') + tphovermodeswitch))
 
-            else: # server == Rebirth
+            else: # self.Server == Rebirth
                 resetfile.SetBind(self.Ctrls['TPComboKey'].MakeBind('+ $$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
                 tp_off.SetBind(self.Ctrls['TPComboKey'].MakeBind('+ $$powexecname ' + normalTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('tp','tp_on1.txt')))
                 tp_off.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('nop'))
@@ -1379,7 +1372,7 @@ class MovementPowers(Page):
             ttp_off = profile.GetBindFile("ttp","ttp_off.txt")
             ttp_on1 = profile.GetBindFile("ttp","ttp_on1.txt")
 
-            if server == 'Homecoming':
+            if self.Server == 'Homecoming':
                 resetfile.SetBind(self.Ctrls['TTPComboKey'].MakeBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
 
                 ttp_off.SetBind(self.Ctrls['TTPComboKey'].MakeBind('+first$$-first$$powexecname ' + teamTPPower + t.detaillo + t.flycamdist + windowhide + profile.BLF('ttp','ttp_on1.txt')))
@@ -1405,19 +1398,18 @@ class MovementPowers(Page):
         profile   = self.Profile
         archetype = profile.Archetype()
         resetfile = profile.ResetFile()
-        server    = profile.Server()
         humpower  = ''
 
         #  create the Nova and Dwarf form support files if enabled.
         if archetype == "Peacebringer":
             novaPower = "Bright Nova"
             dwarfPower = "White Dwarf"
-            if server != 'Homecoming' and self.GetState('UseHumanFormPower'):
+            if self.Server != 'Homecoming' and self.GetState('UseHumanFormPower'):
                 humpower = f"$${self.togon} Shining Shield"
         else: # Warshade
             novaPower = "Dark Nova"
             dwarfPower = "Black Dwarf"
-            if server != 'Homecoming' and self.GetState('UseHumanFormPower'):
+            if self.Server != 'Homecoming' and self.GetState('UseHumanFormPower'):
                 humpower = f"$${self.togon} Gravity Shield"
 
         fullstop = '$$up 0$$down 0$$forward 0$$backward 0$$left 0$$right 0'
@@ -1451,7 +1443,7 @@ class MovementPowers(Page):
             # no teleport while nova
             novafile.SetBind(self.Ctrls['TPComboKey'].MakeBind('nop'))
             novafile.SetBind(self.Ctrls['TPBindKey'].MakeBind('nop'))
-            if server == 'Rebirth':
+            if self.Server == 'Rebirth':
                 novafile.SetBind(self.Ctrls['TPExecuteKey'].MakeBind('nop'))
 
             novafile.SetBind(self.Ctrls['Follow'].MakeBind("follow"))

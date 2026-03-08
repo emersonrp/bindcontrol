@@ -160,11 +160,11 @@ class PopmenuEditor(Page):
             self.InitialLoadComplete = True
 
     def GetOrCreateMenuPath(self, _ = None) -> Path|Literal[False]:
-        if not GetValidGamePath(self.Profile.Server()):
-            wx.MessageBox(f"Your {self.Profile.Server()} Game Directory is not set up correctly.  Please visit the Preferences dialog.")
+        if not GetValidGamePath(self.Server):
+            wx.MessageBox(f"Your {self.Server} Game Directory is not set up correctly.  Please visit the Preferences dialog.")
             return False
 
-        retval = CheckAndCreateMenuPath(self.Profile.Server())
+        retval = CheckAndCreateMenuPath(self.Server)
         self.SynchronizeUI() # in case we created and need to hide the "no directory" warning
         return retval
 
@@ -174,11 +174,11 @@ class PopmenuEditor(Page):
 
     def SynchronizeUI(self, _ = None) -> None:
         NoErrors = True
-        if GetValidGamePath(self.Profile.Server()):
+        if GetValidGamePath(self.Server):
             self.CheckGameDirBox.Hide()
 
             # game dir is OK, check popmenu dir
-            menupath = GetPopmenuPath(self.Profile.Server())
+            menupath = GetPopmenuPath(self.Server)
             if menupath and menupath.is_dir():
                 self.CheckMenuDirBox.Hide()
             else:
@@ -191,7 +191,7 @@ class PopmenuEditor(Page):
         self.NewMenuButton.Enable(NoErrors)
         self.ImportMenuButton.Enable(NoErrors)
 
-        self.ReloadMenusButton.Enable(bool(GetValidGamePath(self.Profile.Server())))
+        self.ReloadMenusButton.Enable(bool(GetValidGamePath(self.Server)))
         self.Fit()
         self.Layout()
         self.Refresh()
@@ -302,7 +302,7 @@ class PopmenuEditor(Page):
         # Do this once, the first time we focus the page.
         # DO NOT PUT THIS IN SynchronizeUI;  it will blow away
         # unsaved changes with no recourse.
-        menupath = GetPopmenuPath(self.Profile.Server())
+        menupath = GetPopmenuPath(self.Server)
         if menupath and menupath.is_dir():
             self.MenuIDList = {}
             self.MenuListCtrl.DeleteAllItems()

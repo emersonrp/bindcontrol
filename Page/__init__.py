@@ -15,7 +15,7 @@
 #  page.SetState('Archetype', 'Blaster')
 
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 import wx
 import wx.lib.colourselect as csel
 if TYPE_CHECKING:
@@ -37,6 +37,7 @@ class Page(wx.ScrolledWindow):
 
         self.Profile  : bcProfile = parent
         self.TabTitle : str = type(self).__name__
+        self.Server   : Final[str] = self.Profile.Server()
 
         self.Ctrls : dict = {}
         self.Init  : dict = {}

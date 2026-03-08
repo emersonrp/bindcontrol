@@ -408,7 +408,7 @@ class General(Page):
             c['Primary'].SetSelection(0)
             c['Secondary'].SetSelection(0)
             # also they have access to fewer pool picks on Rebirth
-            if self.Profile.Server() == 'Rebirth':
+            if self.Server == 'Rebirth':
                 wx.CallAfter(self.UpdatePoolPickers)
 
         if getattr(self.Profile, 'Mastermind', None):
@@ -462,7 +462,7 @@ class General(Page):
                         if sp != s:
                             if s in poolcontents: poolcontents.remove(s)
 
-            if self.Profile.Server() == 'Rebirth':
+            if self.Server == 'Rebirth':
                 arch = self.GetState('Archetype')
                 if arch == 'Peacebringer' or arch == 'Warshade':
                     if 'Flight' in poolcontents: poolcontents.remove('Flight')
@@ -515,9 +515,8 @@ class General(Page):
 
     def OnServerChange(self, evt) -> None:
         if evt: evt.Skip()
-        server = self.Profile.Server()
 
-        if self.GetState('Server') != server:
+        if self.GetState('Server') != self.Server:
             if wx.MessageBox('Changing server requires saving and reloading the Profile.  Continue?', 'Changing Server', wx.YES_NO, self) == wx.YES:
                 self.Profile.SetServer(self.GetState('Server'))
                 # TODO - push this logic down into Profile or even Main
@@ -531,8 +530,8 @@ class General(Page):
                 newProfile.buildUIFromData()
                 mainwindow.InsertProfile(newProfile)
             else:
-                self.ServerPicker.SetStringSelection(server)
-                self.Profile.UpdateData('General', 'Server', server)
+                self.ServerPicker.SetStringSelection(self.Server)
+                self.Profile.UpdateData('General', 'Server', self.Server)
 
     UI.Labels.update({
         'Epic' : 'Epic / Patron',

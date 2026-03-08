@@ -28,7 +28,7 @@ class Gameplay(Page):
         super().__init__(parent)
         self.TabTitle : str = "Gameplay"
 
-        if self.Profile.Server() == 'Homecoming':
+        if self.Server == 'Homecoming':
             self.NumTrays : int = 4
             self.TrayLabels : tuple = ('', 'First', 'Second', 'Third', 'Server')
             self.KeybindProfiles : dict[str, tuple] = {
@@ -147,7 +147,7 @@ class Gameplay(Page):
                 trayGridSizer.Add(nextbutton, 1, wx.ALIGN_CENTER)
 
         GridHelpSizer.Add(trayGridSizer, 0, wx.ALL, 10)
-        if self.Profile.Server() == 'Rebirth':
+        if self.Server == 'Rebirth':
             traygridbutton = HelpButton(staticbox, 'PowerTrayButtonsRebirth.html')
         else:
             traygridbutton = HelpButton(staticbox, 'PowerTrayButtons.html')
@@ -353,7 +353,6 @@ class Gameplay(Page):
 
     def PopulateBindFiles(self) -> bool:
         ResetFile = self.Profile.ResetFile()
-        server = self.Profile.Server()
 
         ### Tray buttons
         for button in (1,2,3,4,5,6,7,8,9,0):
@@ -362,15 +361,15 @@ class Gameplay(Page):
                 ResetFile.SetBind(self.Ctrls[f"Tray1Button{button}"].MakeBind(f"powexec_slot {slotbutton}"))
             if self.GetState('Tray2Enabled'):
                 self.CheckForDefaultKeyToClear(2, button)
-                pe_as = "powexec_altslot" if server == "Homecoming" else "px_at1"
+                pe_as = "powexec_altslot" if self.Server == "Homecoming" else "px_at1"
                 ResetFile.SetBind(self.Ctrls[f"Tray2Button{button}"].MakeBind(f"{pe_as} {slotbutton}"))
             if self.GetState('Tray3Enabled'):
                 self.CheckForDefaultKeyToClear(3, button)
-                pe_a2 = "powexec_alt2slot" if server == "Homecoming" else "px_at2"
+                pe_a2 = "powexec_alt2slot" if self.Server == "Homecoming" else "px_at2"
                 ResetFile.SetBind(self.Ctrls[f"Tray3Button{button}"].MakeBind(f"{pe_a2} {slotbutton}"))
             if self.GetState('Tray4Enabled'):
                 self.CheckForDefaultKeyToClear(4, button)
-                pe_ss = 'powexec_serverslot' if server == "Homecoming" else 'px_at3'
+                pe_ss = 'powexec_serverslot' if self.Server == "Homecoming" else 'px_at3'
                 ResetFile.SetBind(self.Ctrls[f"Tray4Button{button}"].MakeBind(f"{pe_ss} {slotbutton}"))
             if self.Ctrls.get('Tray5Enabled') and self.GetState('Tray5Enabled'):
                 self.CheckForDefaultKeyToClear(5, button)
@@ -386,7 +385,7 @@ class Gameplay(Page):
         if self.GetState('Tray3Enabled'):
             ResetFile.SetBind(self.Ctrls["Tray3Prev"].MakeBind("prev_tray_alt2"))
             ResetFile.SetBind(self.Ctrls["Tray3Next"].MakeBind("next_tray_alt2"))
-        if server == "Rebirth" and self.GetState('Tray4Enabled'):
+        if self.Server == "Rebirth" and self.GetState('Tray4Enabled'):
             ResetFile.SetBind(self.Ctrls["Tray4Prev"].MakeBind("prev_tray_alt3"))
             ResetFile.SetBind(self.Ctrls["Tray4Next"].MakeBind("next_tray_alt3"))
 

@@ -1,7 +1,6 @@
 import re
 import wx
 from typing import Any, Literal, Final
-from collections.abc import Iterable
 
 from BLF import BLF
 import GameData
@@ -990,7 +989,7 @@ class MovementPowers(Page):
                 if t.horizkeys: sprint = t.sprint
                 else:           sprint = ''
 
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(sprint, togoff, start = True) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + t.dirs('UDFBLR') + self.actPower_toggle(sprint, togoff) + t.detailhi + t.runcamdist + feedback + bindload)
 
         elif (bl == "ar"):
             bindload  = t.BLF('a' + code)
@@ -999,7 +998,7 @@ class MovementPowers(Page):
             elif usejumpfix:
                 self.SoDJumpFix(  t, key, self.MakeSprintModeKey, "r",  bl, file, "a", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, togoff, start = True) + '$$up 0' + t.detailhi +  t.runcamdist + t.dirs('DLR') + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + '$$up 0' + self.actPower_toggle(t.sprint, togoff) + t.detailhi +  t.runcamdist + t.dirs('DLR') + feedback + bindload)
 
         else: # bl = 'fr'
             bindload = t.BLF('f' + code)
@@ -1008,7 +1007,7 @@ class MovementPowers(Page):
             elif usejumpfix:
                 self.SoDJumpFix(  t, key, self.MakeSprintModeKey, "r",  bl, file, "f", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.sprint, togoff, start = True) + '$$up 0' + t.detailhi + t.runcamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + '$$up 0' + self.actPower_toggle(t.sprint, togoff) + t.detailhi + t.runcamdist + feedback + bindload)
 
         t.ini = ''
 
@@ -1036,7 +1035,7 @@ class MovementPowers(Page):
                 elif usejumpfix:
                     self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, code, bl, file, feedback)
                 else:
-                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff, start = True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    file.SetBind(key, name, self, t.ini + t.dirs('UDFBLR') + self.actPower_toggle(None, togoff) + t.detaillo + t.flycamdist + feedback + bindload)
 
             elif (bl == "as"):
                 bindload  = t.BLF('a' + code)
@@ -1045,7 +1044,7 @@ class MovementPowers(Page):
                 elif usejumpfix:
                     self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, code, bl, file, "a", feedback)
                 else:
-                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff, start = True) + t.dirs('UDLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                    file.SetBind(key, name, self, t.ini + t.dirs('UDLR') + self.actPower_toggle(None, togoff) + t.detaillo + t.flycamdist + feedback + bindload)
 
             else:  # bl == "fs"
                 bindload  = t.BLF('f' + code)
@@ -1055,7 +1054,7 @@ class MovementPowers(Page):
                     self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, code, bl, file, "f", feedback)
                 else:
                     bindload  = t.BLF('f' + code)
-                    file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff, start = True) + '$$up 0' +  t.detaillo + t.flycamdist + feedback + bindload)
+                    file.SetBind(key, name, self, t.ini + '$$up 0' + self.actPower_toggle(None, togoff) +  t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
 
@@ -1168,14 +1167,14 @@ class MovementPowers(Page):
             if usejumpfix:
                 self.SoDJumpFix(  t, key, self.MakeFlyModeKey, code, bl, file, "a", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx, togoff, start = True) + t.dirs('DLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + t.dirs('DLR') + self.actPower_toggle(t.flyx, togoff) + t.detaillo + t.flycamdist + feedback + bindload)
 
         else: # bl == "ff"
             bindload = t.BLF(f'f{code}')
             if usejumpfix:
                 self.SoDJumpFix(t, key, self.MakeFlyModeKey, code, bl, file, "f", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.flyx, togoff, start = True) + t.dirs('UDFBLR') + t.detaillo + t.flycamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + t.dirs('UDFBLR') + self.actPower_toggle(t.flyx, togoff) + t.detaillo + t.flycamdist + feedback + bindload)
 
         t.ini = ''
 
@@ -1208,7 +1207,7 @@ class MovementPowers(Page):
                     self.SoDJumpFix(t, key, self.MakeGFlyModeKey,"fgf", bl, file,"f")
                 else:
                     if (bl == "fgf"):
-                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.gfly, start = True) + t.detaillo + t.flycamdist + t.BLF('fgf'))
+                        file.SetBind(key, name, self, t.ini + t.detaillo + t.flycamdist + self.actPower_toggle(t.gfly) + t.BLF('fgf'))
                     else:
                         file.SetBind(key, name, self, t.ini + t.detaillo + t.flycamdist + t.BLF('fgf'))
 
@@ -1749,7 +1748,7 @@ class MovementPowers(Page):
 
         toggle = ''
         if (toggleon or toggleoff):
-            toggle = self.actPower_toggle(toggleon,[toggleoff, toggleoff2])
+            toggle = self.actPower_toggle(toggleon, [toggleoff, toggleoff2])
 
         newbits = t.KeyState(toggle = 'space')
         bl = f"{bl}{newbits}.txt"
@@ -2125,13 +2124,13 @@ class MovementPowers(Page):
 
         curfile.SetBind(self.Ctrls['Follow'].MakeBind("follow" + toggle + t.up + t.dow + t.forw + t.bac + t.lef + t.rig + bl + t.KeyState() + '.txt'))
 
-    #  toggleon variation
-    def actPower_toggle(self, on, off:Any = '', start = False) -> str:
+    #  "On and off" version wrapping those two notions
+    def actPower_toggle(self, on, off:Any = '') -> str:
         s = ''
 
         offpower = set()
 
-        if off and isinstance(off, Iterable):
+        if off and isinstance(off, (set, list, tuple)):
             for w in off:
                 if (w and w != on and (w not in offpower)):
                     offpower.add(w)
@@ -2143,9 +2142,10 @@ class MovementPowers(Page):
         if on:
             s = s + f'$${self.togon} {on}'
 
-        if start: s = s[2:]
         return s
 
+    # This seems to try to turn on "on" and to exec (and therefore possibly toggle)
+    # anything in "rest".  This seems fiddly and wants to get cleaned up.
     def actPower_name(self, on, *rest) -> str:
         s = ''
         for v in rest:
@@ -2153,7 +2153,7 @@ class MovementPowers(Page):
                 if (v and v != on):
                     s = s + '$$powexecname ' + v
 
-            elif isinstance(v, Iterable):
+            elif isinstance(v, (set, list, tuple)):
                 for w in v:
                     if (w and w != on):
                         s = s + '$$powexecname ' + w
@@ -2174,6 +2174,12 @@ class MovementPowers(Page):
         return s
 
     def SoDJumpFix(self, t, key, makeModeKey, suffix, bl, curfile, afmode = '', feedback = '') -> None:
+        # We do this when we're making various keys that are NOT Jump, when our
+        # current mode IS Jump.  That is, we're in Jump Mode, and we pressed the
+        # Fly Mode key, for instance.  What does this do and why?  Still figuring
+        # this out from CityBinder.
+        #
+        # TODO: Can this be integrated / DRYed up with SoDToggleFix below?
 
         # This is the same file we were in with originally, in the calling sub,
         # except with 'j' tacked on the end.
@@ -2216,13 +2222,13 @@ class MovementPowers(Page):
             power = t.sprint
             tglfile = self.Profile.GetBindFile( t.bfpath(afmode + powercode, suffix) )
             makeModeKey(t, bl, tglfile, skipfeedback = True, doingtoggle = True)
-            curfile.SetBind(key, "Toggle Fix", self, "+" + feedback + self.actPower_name('', power) + t.BLF(f'{afmode}{powercode}', suffix))
+            curfile.SetBind(key, "Toggle Fix", self, "+" + feedback + self.actPower_name(None, power) + t.BLF(f'{afmode}{powercode}', suffix))
         elif makeModeKey == self.MakeSpeedModeKey:
             powercode = 's'
             power = t.speed
             tglfile = self.Profile.GetBindFile( t.bfpath(afmode + powercode, suffix) )
             makeModeKey(t, bl, tglfile, skipfeedback = True, doingtoggle = True, sssj = sssj)
-            curfile.SetBind(key, "Toggle Fix", self, "+" + feedback + self.actPower_name('', power) + t.BLF(f'{afmode}{powercode}', suffix))
+            curfile.SetBind(key, "Toggle Fix", self, "+" + feedback + self.actPower_name(None, power) + t.BLF(f'{afmode}{powercode}', suffix))
         elif makeModeKey == self.MakeFlyModeKey:
             powercode = 'f'
             # TODO - "if suffix means we're alreadty toggled, flip these

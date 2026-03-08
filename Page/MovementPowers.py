@@ -59,8 +59,8 @@ class MovementPowers(Page):
             'CamdistBase'     : 15,
             'CamdistMove'     : 60,
             'ChangeDetail'    : False,
-            'DetailBase'      : 100,
-            'DetailMove'      : 50,
+            'DetailBase'      : 1.0,
+            'DetailMove'      : 0.5,
             'Feedback'        : False,
 
             'DefaultMode'     : "Sprint",
@@ -286,19 +286,21 @@ class MovementPowers(Page):
            helpfile = 'MouselookWhenMoving.html',
            tooltip = 'Automatically engage mouselook while movement keys are pressed',)
         detailSizer.AddControl(ctlName = 'ChangeCamera', ctlType = 'checkbox',
-            tooltip = "Change the camera distance while moving")
+            helpfile = 'ChangeCamera.html',
+            tooltip = 'Change the camera distance while moving')
         self.Ctrls['ChangeCamera'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
-        detailSizer.AddControl(ctlName = 'CamdistBase', ctlType = 'spinbox', contents = (1, 100),
-            tooltip = "Set the camera distance to use while stationary")
-        detailSizer.AddControl(ctlName = 'CamdistMove', ctlType = 'spinbox', contents = (1, 100),
-            tooltip = "Set the camera distance to use while moving")
+        detailSizer.AddControl(ctlName = 'CamdistBase', ctlType = 'spinbox', contents = (1, 120),
+            tooltip = 'Set the camera distance to use while stationary')
+        detailSizer.AddControl(ctlName = 'CamdistMove', ctlType = 'spinbox', contents = (1, 120),
+            tooltip = 'Set the camera distance to use while moving')
         detailSizer.AddControl(ctlName = 'ChangeDetail', ctlType = 'checkbox',
-            tooltip = "Change the game's detail level while moving")
+            helpfile = 'ChangeDetail.html',
+            tooltip = 'Change the game\'s detail level while moving')
         self.Ctrls['ChangeDetail'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
-        detailSizer.AddControl(ctlName = 'DetailBase', ctlType = 'spinboxfractional', contents = (0, 1),
-            tooltip = "Set the detail level to use while stationary")
-        detailSizer.AddControl(ctlName = 'DetailMove', ctlType = 'spinboxfractional', contents = (0, 1),
-            tooltip = "Set the detail level to use while moving")
+        detailSizer.AddControl(ctlName = 'DetailBase', ctlType = 'spinboxfractional', contents = (0, 2),
+            tooltip = 'Set the detail level to use while stationary')
+        detailSizer.AddControl(ctlName = 'DetailMove', ctlType = 'spinboxfractional', contents = (0, 2),
+            tooltip = 'Set the detail level to use while moving')
         self.leftColumn.Add(detailSizer, 0, wx.EXPAND)
 
         ##### TEMP TRAVEL POWERS
@@ -965,20 +967,20 @@ class MovementPowers(Page):
             if usejumpfix:
                 self.SoDJumpFix(t, key, self.MakeNonSoDModeKey,"n", bl, file, feedback = feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff) + t.dirs('UDFBLR') + t.detailhi + t.runcamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff) + t.dirs('UDFBLR') + feedback + bindload)
 
         elif (bl == "ar"):
             bindload = t.BLF('an')
             if usejumpfix:
                 self.SoDJumpFix(t, key, self.MakeNonSoDModeKey,"n", bl, file,"a", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff) + t.detailhi + t.runcamdist + '$$up 0' + t.dirs('DLR') + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff) + '$$up 0' + t.dirs('DLR') + feedback + bindload)
 
         else:
             if usejumpfix:
                 self.SoDJumpFix(t, key, self.MakeNonSoDModeKey,"n", bl, file,"f", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff) + t.detailhi + t.runcamdist + '$$up 0' + feedback + t.BLF('fn'))
+                file.SetBind(key, name, self, t.ini + self.actPower_toggle(None, togoff) + '$$up 0' + feedback + t.BLF('fn'))
         t.ini = ''
 
     def MakeSprintModeKey(self, t, bl, file, usejumpfix = False, skipfeedback = False) -> None:
@@ -1001,21 +1003,21 @@ class MovementPowers(Page):
                 if t.horizkeys: sprint = t.sprint
                 else:           sprint = ''
 
-                file.SetBind(key, name, self, t.ini + t.dirs('UDFBLR') + self.actPower_toggle(sprint, togoff) + t.detailhi + t.runcamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + t.dirs('UDFBLR') + self.actPower_toggle(sprint, togoff) + feedback + bindload)
 
         elif (bl == "ar"):
             bindload  = t.BLF('a' + code)
             if usejumpfix:
                 self.SoDJumpFix(  t, key, self.MakeSprintModeKey, "r", bl, file, "a", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + '$$up 0' + self.actPower_toggle(t.sprint, togoff) + t.detailhi +  t.runcamdist + t.dirs('DLR') + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + '$$up 0' + self.actPower_toggle(t.sprint, togoff) + t.dirs('DLR') + feedback + bindload)
 
         else: # bl = 'fr'
             bindload = t.BLF('f' + code)
             if usejumpfix:
                 self.SoDJumpFix(  t, key, self.MakeSprintModeKey, "r", bl, file, "f", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + '$$up 0' + self.actPower_toggle(t.sprint, togoff) + t.detailhi + t.runcamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + '$$up 0' + self.actPower_toggle(t.sprint, togoff) + feedback + bindload)
 
         t.ini = ''
 
@@ -1037,14 +1039,14 @@ class MovementPowers(Page):
                 if usejumpfix:
                     self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, code, bl, file, feedback)
                 else:
-                    file.SetBind(key, name, self, t.ini + t.dirs('UDFBLR') + self.actPower_toggle(None, togoff) + t.detaillo + t.flycamdist + feedback + bindload)
+                    file.SetBind(key, name, self, t.ini + t.dirs('UDFBLR') + self.actPower_toggle(None, togoff) + feedback + bindload)
 
             elif (bl == "as"):
                 bindload  = t.BLF('a' + code)
                 if usejumpfix:
                     self.SoDJumpFix  (t, key, self.MakeSpeedModeKey, code, bl, file, "a", feedback)
                 else:
-                    file.SetBind(key, name, self, t.ini + t.dirs('UDLR') + self.actPower_toggle(None, togoff) + t.detaillo + t.flycamdist + feedback + bindload)
+                    file.SetBind(key, name, self, t.ini + t.dirs('UDLR') + self.actPower_toggle(None, togoff) + feedback + bindload)
 
             else:  # bl == "fs"
                 bindload  = t.BLF('f' + code)
@@ -1082,17 +1084,17 @@ class MovementPowers(Page):
                 turnon = self.actPower_toggle(t.cjmp, t.jump)
 
             file.SetBind(key, name, self, '+down' + feedback + keyupbl)
-            keyup.SetBind(key, name, self, '-down' + turnon + togoff + t.detaillo + t.flycamdist + t.BLF('j'))
+            keyup.SetBind(key, name, self, '-down' + turnon + togoff + t.BLF('j'))
 
         elif (bl == "aj"):
             ajbl = t.BLF('aj')
             file.SetBind(key, name, self, '+down' + feedback + keyupbl)
-            keyup.SetBind(key, name, self, '-down' + self.actPower_name(t.jump) + togoff + '$$up 1' + t.detaillo + t.flycamdist + t.dirs('DLR') + ajbl)
+            keyup.SetBind(key, name, self, '-down' + self.actPower_name(t.jump) + togoff + '$$up 1' + t.dirs('DLR') + ajbl)
 
         else: # bl == fj
             fjbl = t.BLF('fj')
             file.SetBind(key, name, self, '+down' + feedback + keyupbl)
-            keyup.SetBind(key, name, self, '-down' + self.actPower_name(t.jump) + togoff + '$$up 1' + t.detaillo + t.flycamdist + fjbl)
+            keyup.SetBind(key, name, self, '-down' + self.actPower_name(t.jump) + togoff + '$$up 1' + fjbl)
 
         t.ini = ''
 
@@ -1122,21 +1124,21 @@ class MovementPowers(Page):
                 self.SoDJumpFix(t, key, self.MakeFlyModeKey, code, bl, file, feedback = feedback)
             else:
                 file.SetBind(key, name, self, '+down' + feedback + keyupbl)
-                keyup.SetBind(key, name, self, '-down' + self.actPower_toggle(t.hover, [t.flyx, *togoff]) + t.detaillo + t.flycamdist + t.BLF('f'))
+                keyup.SetBind(key, name, self, '-down' + self.actPower_toggle(t.hover, [t.flyx, *togoff]) + t.BLF('f'))
 
         elif (bl == "af"):
             bindload = t.BLF(f'a{code}')
             if usejumpfix:
                 self.SoDJumpFix(  t, key, self.MakeFlyModeKey, code, bl, file, "a", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + t.dirs('DLR') + self.actPower_toggle(t.flyx, togoff) + t.detaillo + t.flycamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + t.dirs('DLR') + self.actPower_toggle(t.flyx, togoff) + feedback + bindload)
 
         else: # bl == "ff"
             bindload = t.BLF(f'f{code}')
             if usejumpfix:
                 self.SoDJumpFix(t, key, self.MakeFlyModeKey, code, bl, file, "f", feedback)
             else:
-                file.SetBind(key, name, self, t.ini + t.dirs('UDFBLR') + self.actPower_toggle(t.flyx, togoff) + t.detaillo + t.flycamdist + feedback + bindload)
+                file.SetBind(key, name, self, t.ini + t.dirs('UDFBLR') + self.actPower_toggle(t.flyx, togoff) + feedback + bindload)
 
         t.ini = ''
 
@@ -1155,23 +1157,23 @@ class MovementPowers(Page):
                 if usejumpfix:
                     self.SoDJumpFix(t, key, self.MakeGFlyModeKey,"gf", bl, file)
                 else:
-                    file.SetBind(key, name, self, t.ini + '$$up 1$$down 0' + self.actPower_toggle(t.gfly) + t.dirs('FBLR') + t.detaillo + t.flycamdist + bindload)
+                    file.SetBind(key, name, self, t.ini + '$$up 1$$down 0' + self.actPower_toggle(t.gfly) + t.dirs('FBLR') + bindload)
 
             elif (bl == "agf"):
                 bindload = t.BLF('agf')
                 if usejumpfix:
                     self.SoDJumpFix(t, key, self.MakeGFlyModeKey,"agf", bl, file,"a")
                 else:
-                    file.SetBind(key, name, self, t.ini + t.detaillo + t.flycamdist + t.dirs('UDLR') + bindload)
+                    file.SetBind(key, name, self, t.ini + t.dirs('UDLR') + bindload)
 
             else:
                 if usejumpfix:
                     self.SoDJumpFix(t, key, self.MakeGFlyModeKey,"fgf", bl, file,"f")
                 else:
                     if (bl == "fgf"):
-                        file.SetBind(key, name, self, t.ini + t.detaillo + t.flycamdist + self.actPower_toggle(t.gfly) + t.BLF('fgf'))
+                        file.SetBind(key, name, self, t.ini + self.actPower_toggle(t.gfly) + t.BLF('fgf'))
                     else:
-                        file.SetBind(key, name, self, t.ini + t.detaillo + t.flycamdist + t.BLF('fgf'))
+                        file.SetBind(key, name, self, t.ini + t.BLF('fgf'))
 
         t.ini = ''
 
@@ -1666,8 +1668,10 @@ class MovementPowers(Page):
 
         (upx, dow, forw, bac, lef, rig) = (t.upx, t.dow, t.forw, t.bac, t.lef, t.rig)
 
-        actkeys = t.totalkeys
+        actkeys   = t.totalkeys
         mouselook = ''
+        camdist   = ''
+        detail    = ''
 
         if (not flight) and (not sssj):
             mobile = stationary = None
@@ -1689,12 +1693,16 @@ class MovementPowers(Page):
         if (actkeys == 0):
             # pressing just the up key
             mouselook = t.mouselookon
+            camdist = t.flycamdist
+            detail  = t.detaillo
             toggleon = mobile
             if (mobile != stationary): toggleoff = stationary
 
         if (actkeys == 1 and t.space == 1):
             # releasing the up key, which was the only one held down
             mouselook = t.mouselookoff
+            camdist = t.runcamdist
+            detail  = t.detailhi
             toggleon = stationary
             if (mobile != stationary) : toggleoff = mobile
 
@@ -1728,16 +1736,18 @@ class MovementPowers(Page):
 
             curfile.SetBind(self.Ctrls['Up'].MakeBind(f"{ini}{move}{bl}"))
         elif (not autorun):
-            curfile.SetBind(self.Ctrls['Up'].MakeBind(f"{ini}{upx}{dow}{forw}{bac}{lef}{rig}{mouselook}{toggle}{bl}"))
+            curfile.SetBind(self.Ctrls['Up'].MakeBind(f"{ini}{upx}{dow}{forw}{bac}{lef}{rig}{mouselook}{camdist}{detail}{toggle}{bl}"))
         else:
             if (not sssj) : toggle = ''  #  returns the following line to the way it was before sssj
-            curfile.SetBind(self.Ctrls['Up'].MakeBind(f"{ini}{upx}{dow}$$backward 0{lef}{rig}{toggle}{t.mouselookon}{bl}"))
+            curfile.SetBind(self.Ctrls['Up'].MakeBind(f"{ini}{upx}{dow}$$backward 0{lef}{rig}{toggle}{camdist}{detail}{t.mouselookon}{bl}"))
 
     def SoDDownKey(self, t, bl, curfile, mobile, stationary, flight, autorun = False, followbl = '') -> None:
         (up, dowx, forw, bac, lef, rig) = (t.up, t.dowx, t.forw, t.bac, t.lef, t.rig)
 
         actkeys = t.totalkeys
         mouselook      = ''
+        camdist = ''
+        detail = ''
 
         if (not flight):
             mobile = stationary = None
@@ -1756,10 +1766,14 @@ class MovementPowers(Page):
         if (actkeys == 0):
             mouselook = t.mouselookon
             toggleon = mobile
+            camdist = t.flycamdist
+            detail = t.detaillo
             if (mobile != stationary): toggleoff = stationary
 
         if (t.totalkeys == 1 and t.X == 1):
             mouselook = t.mouselookoff
+            camdist = t.runcamdist
+            detail = t.detailhi
             if (mobile != stationary): toggleoff = mobile
             toggleon = stationary
 
@@ -1781,15 +1795,17 @@ class MovementPowers(Page):
 
             curfile.SetBind(self.Ctrls['Down'].MakeBind(f"{ini}{move}{bl}"))
         elif (not autorun):
-            curfile.SetBind(self.Ctrls['Down'].MakeBind(f"{ini}{up}{dowx}{forw}{bac}{lef}{rig}{mouselook}{toggle}{bl}"))
+            curfile.SetBind(self.Ctrls['Down'].MakeBind(f"{ini}{up}{dowx}{forw}{bac}{lef}{rig}{mouselook}{camdist}{detail}{toggle}{bl}"))
         else:
-            curfile.SetBind(self.Ctrls['Down'].MakeBind(f"{ini}{up}{dowx}$$backward -1{lef}{rig}{t.mouselookon}{bl}"))
+            curfile.SetBind(self.Ctrls['Down'].MakeBind(f"{ini}{up}{dowx}$$backward -1{lef}{rig}{t.mouselookon}{camdist}{detail}{bl}"))
 
     def SoDForwardKey(self, t, bl, curfile, mobile, stationary, flight, autorunbl = '', followbl = '', sssj = None) -> None:
         (up, dow, forx, bac, lef, rig) = (t.up, t.dow, t.forx, t.bac, t.lef, t.rig)
         name = UI.Labels['Forward']
 
         mouselook = ''
+        camdist = ''
+        detail = ''
 
         if (mobile     == 'Group Fly'): mobile = None
         if (stationary == 'Group Fly'): stationary = None
@@ -1807,11 +1823,16 @@ class MovementPowers(Page):
         toggleoff = stationary
         if (t.totalkeys == 0) :
             mouselook = t.mouselookon
+            camdist = t.flycamdist
+            detail = t.detaillo
             if (not mobile) and (mobile != '') and (mobile != stationary):
                 toggleoff = stationary
 
         if (t.totalkeys == 1 and t.W == 1):
+
             mouselook = t.mouselookoff
+            camdist = t.runcamdist
+            detail = t.detailhi
 
         if flight: testKeys = t.totalkeys
         else:      testKeys = t.horizkeys
@@ -1847,22 +1868,25 @@ class MovementPowers(Page):
                 curfile.SetBind('mousechord', name, self, move + bl)
 
         elif (not autorunbl):
-            curfile.SetBind(self.Ctrls['Forward'].MakeBind(f"{ini}{up}{dow}{forx}{bac}{lef}{rig}{mouselook}{toggle}{bl}"))
+            curfile.SetBind(self.Ctrls['Forward'].MakeBind(f"{ini}{up}{dow}{forx}{bac}{lef}{rig}{mouselook}{camdist}{detail}{toggle}{bl}"))
             if (self.GetState('MouseChord')):
-                curfile.SetBind('mousechord', name, self, f"{ini}{up}{dow}{forx}{bac}{rig}{lef}{mouselook}{toggle}{t.playerturn}{bl}")
+                curfile.SetBind('mousechord', name, self, f"{ini}{up}{dow}{forx}{bac}{rig}{lef}{mouselook}{camdist}{detail}{toggle}{t.playerturn}{bl}")
 
         else:
             if (t.W != 1):
                 bl = f"{autorunbl}{newbits}.txt"
 
-            curfile.SetBind(self.Ctrls['Forward'].MakeBind(f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{lef}{rig}{t.mouselookon}{bl}"))
+            curfile.SetBind(self.Ctrls['Forward'].MakeBind(f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{lef}{rig}{t.mouselookon}{camdist}{detail}{bl}"))
             if (self.GetState('MouseChord')) :
-                curfile.SetBind('mousechord', name, self, f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{rig}{lef}{t.mouselookon}{t.playerturn}{bl}")
+                curfile.SetBind('mousechord', name, self, f"{ini}{up}{dow}{'$$forward 1$$backward 0'}{rig}{lef}{t.mouselookon}{t.playerturn}{camdist}{detail}{bl}")
 
     def SoDBackKey(self, t, bl, curfile, mobile, stationary, flight, autorunbl = '', followbl = '', sssj = None) -> None:
         (up, dow, forw, bacx, lef, rig) = (t.up, t.dow, t.forw, t.bacx, t.lef, t.rig)
 
         mouselook = ''
+        camdist = ''
+        detail = ''
+
         if (mobile     == 'Group Fly'): mobile = None
         if (stationary == 'Group Fly'): stationary = None
 
@@ -1877,12 +1901,17 @@ class MovementPowers(Page):
         toggleoff = stationary
         if (t.totalkeys == 0):
             mouselook = t.mouselookon
+            camdist = t.flycamdist
+            detail = t.detaillo
+
             toggleon = mobile
             if (not mobile) and (mobile != '') and (mobile != stationary):
                 toggleoff = stationary
 
         if (t.totalkeys == 1 and t.S == 1):
             mouselook = t.mouselookoff
+            camdist = t.runcamdist
+            detail = t.detailhi
 
         if flight: testKeys = t.totalkeys
         else:      testKeys = t.horizkeys
@@ -1914,7 +1943,7 @@ class MovementPowers(Page):
 
             curfile.SetBind(self.Ctrls['Back'].MakeBind(move + bl))
         elif (not autorunbl) :
-            curfile.SetBind(self.Ctrls['Back'].MakeBind(f"{ini}{up}{dow}{forw}{bacx}{lef}{rig}{mouselook}{toggle}{bl}"))
+            curfile.SetBind(self.Ctrls['Back'].MakeBind(f"{ini}{up}{dow}{forw}{bacx}{lef}{rig}{mouselook}{camdist}{detail}{toggle}{bl}"))
         else:
             if (t.S == 1):
                 move = '$$forward 1$$backward 0'
@@ -1922,12 +1951,15 @@ class MovementPowers(Page):
                 move = '$$forward 0$$backward 1'
                 bl = f"{autorunbl}{newbits}.txt"
 
-            curfile.SetBind(self.Ctrls['Back'].MakeBind(f"{ini}{up}{dow}{move}{lef}{rig}{t.mouselookon}{bl}"))
+            curfile.SetBind(self.Ctrls['Back'].MakeBind(f"{ini}{up}{dow}{move}{lef}{rig}{t.mouselookon}{camdist}{detail}{bl}"))
 
     def SoDLeftKey(self, t, bl, curfile, mobile, stationary, flight, autorun = False, followbl = '', sssj = None) -> None:
         (up, dow, forw, bac, lefx, rig) = (t.up, t.dow, t.forw, t.bac, t.lefx, t.rig)
 
         mouselook = ''
+        camdist = ''
+        detail = ''
+
         if (mobile     == 'Group Fly') : mobile = None
         if (stationary == 'Group Fly') : stationary = None
 
@@ -1942,12 +1974,17 @@ class MovementPowers(Page):
         toggleoff = stationary
         if (t.totalkeys == 0):
             mouselook = t.mouselookon
+            camdist = t.flycamdist
+            detail = t.detaillo
+
             toggleon = mobile
             if (not mobile) and (mobile != '') and (mobile != stationary) :
                 toggleoff = stationary
 
         if (t.totalkeys == 1 and t.A == 1) :
             mouselook = t.mouselookoff
+            camdist = t.runcamdist
+            detail = t.detailhi
 
         if flight: testKeys = t.totalkeys
         else:      testKeys = t.horizkeys
@@ -1979,14 +2016,17 @@ class MovementPowers(Page):
 
             curfile.SetBind(self.Ctrls['Left'].MakeBind(move + bl))
         elif (not autorun) :
-            curfile.SetBind(self.Ctrls['Left'].MakeBind(f"{ini}{up}{dow}{forw}{bac}{lefx}{rig}{mouselook}{toggle}{bl}"))
+            curfile.SetBind(self.Ctrls['Left'].MakeBind(f"{ini}{up}{dow}{forw}{bac}{lefx}{rig}{mouselook}{toggle}{camdist}{detail}{bl}"))
         else:
-            curfile.SetBind(self.Ctrls['Left'].MakeBind(f"{ini}{up}{dow}{'$$backward 0'}{lefx}{rig}{t.mouselookon}{bl}"))
+            curfile.SetBind(self.Ctrls['Left'].MakeBind(f"{ini}{up}{dow}{'$$backward 0'}{lefx}{rig}{t.mouselookon}{camdist}{detail}{bl}"))
 
     def SoDRightKey(self, t, bl, curfile, mobile, stationary, flight, autorun = False, followbl = '', sssj = None) -> None:
         (up, dow, forw, bac, lef, rigx) = (t.up, t.dow, t.forw, t.bac, t.lef, t.rigx)
 
         mouselook = ''
+        camdist = ''
+        detail = ''
+
         if (mobile     == 'Group Fly') : mobile = None
         if (stationary == 'Group Fly') : stationary = None
 
@@ -2001,12 +2041,17 @@ class MovementPowers(Page):
         toggleoff = stationary
         if (t.totalkeys == 0):
             mouselook = t.mouselookon
+            camdist = t.flycamdist
+            detail = t.detaillo
+
             toggleon = mobile
             if (not mobile) and (mobile != '') and (mobile != stationary) :
                 toggleoff = stationary
 
         if (t.totalkeys == 1 and t.D == 1) :
             mouselook = t.mouselookoff
+            camdist = t.runcamdist
+            detail = t.detailhi
 
         if flight: testKeys = t.totalkeys
         else :     testKeys = t.horizkeys
@@ -2038,9 +2083,9 @@ class MovementPowers(Page):
 
             curfile.SetBind(self.Ctrls['Right'].MakeBind(move + bl))
         elif (not autorun) :
-            curfile.SetBind(self.Ctrls['Right'].MakeBind(f"{ini}{up}{dow}{forw}{bac}{lef}{rigx}{mouselook}{toggle}{bl}"))
+            curfile.SetBind(self.Ctrls['Right'].MakeBind(f"{ini}{up}{dow}{forw}{bac}{lef}{rigx}{mouselook}{toggle}{camdist}{detail}{bl}"))
         else:
-            curfile.SetBind(self.Ctrls['Right'].MakeBind(f"{ini}{up}{dow}$$forward 1$$backward 0{lef}{rigx}{t.mouselookon}{bl}"))
+            curfile.SetBind(self.Ctrls['Right'].MakeBind(f"{ini}{up}{dow}$$forward 1$$backward 0{lef}{rigx}{t.mouselookon}{camdist}{detail}{bl}"))
 
     def SoDAutoRunKey(self, t, bl, curfile, mobile, sssj) -> None:
         bindload = bl + t.KeyState() + ".txt"

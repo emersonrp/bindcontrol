@@ -504,12 +504,7 @@ class MovementPowers(Page):
     def OnDetailsCameraChanged(self, evt = None) -> None:
         c = self.Ctrls
         c['CameraRange'].Enable(self.GetState('ChangeCamera'))
-        #c['CamdistBase'].Enable(self.GetState('ChangeCamera'))
-        #c['CamdistMove'].Enable(self.GetState('ChangeCamera'))
-
         c['DetailRange'].Enable(self.GetState('ChangeDetail'))
-        #c['DetailBase'].Enable(self.GetState('ChangeDetail'))
-        #c['DetailMove'].Enable(self.GetState('ChangeDetail'))
         if evt: evt.Skip()
 
     def OnSpeedOnDemandChanged(self, evt = None) -> None:

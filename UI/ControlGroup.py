@@ -19,6 +19,7 @@ from UI.CGControls import (
     cgDirPickerCtrl,
     cgColourPickerCtrl,
     cgChoice,
+    cgRangeSlider
 )
 from UI.PowerSelector import PowerSelector
 
@@ -47,17 +48,20 @@ class ControlGroup(wx.StaticBoxSizer):
         self.Add(self.vertCenteringSizer, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10)
 
     def AddControl(self,
-                   ctlType  : str           = '',
-                   ctlName  : str           = '',
-                   noLabel  : bool          = False,
-                   contents : Any           = '',
-                   tooltip  : str           = '',
-                   callback : Callable|None = None,
-                   label    : str           = '',
-                   data     : Any           = None,
-                   size     : wx.Size       = wx.DefaultSize,
-                   context  : str           = '',
-                   helpfile : str           = '',
+                   ctlType   : str           = '',
+                   ctlName   : str           = '',
+                   noLabel   : bool          = False,
+                   contents  : Any           = '',
+                   tooltip   : str           = '',
+                   callback  : Callable|None = None,
+                   label     : str           = '',
+                   data      : Any           = None,
+                   size      : wx.Size       = wx.DefaultSize,
+                   context   : str           = '',
+                   helpfile  : str           = '',
+                   # these two just for RangeSlider sigh
+                   lowValue  : int|float     = 0,
+                   highValue : int|float     = 0,
        ):
 
         if not ctlName:
@@ -166,6 +170,15 @@ class ControlGroup(wx.StaticBoxSizer):
                 size = (30,30),
             )
 
+        elif ctlType == 'rangeslider':
+            control = cgRangeSlider(
+                CtlParent,
+                minValue  = contents[0],
+                maxValue  = contents[1],
+                lowValue  = lowValue,
+                highValue = highValue,
+            )
+
         else:
             raise Exception(f"Got a ctlType in ControlGroup that I don't know: {ctlType}.  This is a bug.")
 
@@ -192,7 +205,7 @@ class ControlGroup(wx.StaticBoxSizer):
             control.SetToolTip(tooltip)
 
         # make checkboxes' labels click to check them
-        if ctlType == ('checkbox') and control.CtlLabel:
+        if ctlType == 'checkbox' and control.CtlLabel:
             control.CtlLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         # if we specified a helpfile, wrap it up with a helpbutton to the right

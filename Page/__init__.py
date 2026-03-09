@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 from UI.KeySelectDialog import bcKeyButton
 from UI.PowerPicker import PowerPicker
 from UI.PowerSelector import PowerSelector
+from UI.RangeSlider import RangeSlider
 from Icon import GetIcon
 
 class Page(wx.ScrolledWindow):
@@ -74,6 +75,8 @@ class Page(wx.ScrolledWindow):
             return control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
         elif isinstance(control, wx.Notebook):
             return control.GetPageText(control.GetSelection())
+        elif isinstance(control, RangeSlider):
+            return json.dumps(control.GetValues())
         # TODO - I don't think we ever GetState on a StaticText, but maybe?
         # elif isinstance(control, wx.StaticText):
         #     return control.GetLabel()
@@ -113,6 +116,8 @@ class Page(wx.ScrolledWindow):
                     return control.SetSelection(i)
         elif isinstance(control, wx.StaticText):
             return control.SetLabel(value)
+        elif isinstance(control, RangeSlider):
+            return control.SetValues(*value)
         elif getattr(control, 'SetValue', None):
             return control.SetValue(value)
         elif getattr(control, 'SetPath', None):

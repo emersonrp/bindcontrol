@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 from UI.ErrorControls import ErrorControlMixin
 from UI.KeySelectDialog import bcKeyButton
+from UI.RangeSlider import RangeSlider
 
 # Mixin to enable/show controls' labels when they are enabled/shown
 class CGControlMixin:
@@ -96,3 +97,6 @@ class cgChoice          (CGControlMixin, ErrorControlMixin, wx.Choice)          
                     self.Insert(entry, 0)
         else:
             if exists: self.Delete(idx)
+class cgRangeSlider     (CGControlMixin, ErrorControlMixin, RangeSlider)         :
+    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
+

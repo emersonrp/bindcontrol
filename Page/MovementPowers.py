@@ -289,6 +289,8 @@ class MovementPowers(Page):
             helpfile = 'ChangeCamera.html',
             tooltip = 'Change the camera distance while moving')
         self.Ctrls['ChangeCamera'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
+        detailSizer.AddControl(ctlName = 'CameraRange', ctlType = 'rangeslider', contents = (1, 120),
+            lowValue = self.Init['CamdistBase'], highValue = self.Init['CamdistMove'],)
         detailSizer.AddControl(ctlName = 'CamdistBase', ctlType = 'spinbox', contents = (1, 120),
             tooltip = 'Set the camera distance to use while stationary')
         detailSizer.AddControl(ctlName = 'CamdistMove', ctlType = 'spinbox', contents = (1, 120),

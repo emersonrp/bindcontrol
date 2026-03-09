@@ -42,7 +42,7 @@ class SliderThumb:
         min_value = self.parent.GetMin()
         max_value = self.parent.GetMax()
         fraction = value_to_fraction(self.value, min_value, max_value)
-        pos = (fraction_to_value(fraction, min_x, max_x), parent_size[1] / 2 + 1)
+        pos = (fraction_to_value(fraction, min_x, max_x), parent_size[1] * .667 + 1)
         return pos
 
     def SetPosition(self, pos):
@@ -117,14 +117,19 @@ class SliderThumb:
         dc.SetBrush(wx.Brush(thumb_shadow_color, style=wx.BRUSHSTYLE_SOLID))
         dc.SetPen(wx.Pen(thumb_shadow_color, width=1, style=wx.PENSTYLE_SOLID))
         dc.DrawPolygon(points=self.thumb_shadow_poly,
-                       xoffset=my_pos[0] - self.size[0]/2,
-                       yoffset=my_pos[1] - self.size[1]/2)
+                       xoffset=round(my_pos[0] - self.size[0]/2),
+                       yoffset=round(my_pos[1] - self.size[1]/2))
         # Draw thumb itself
         dc.SetBrush(wx.Brush(thumb_color, style=wx.BRUSHSTYLE_SOLID))
         dc.SetPen(wx.Pen(thumb_color, width=1, style=wx.PENSTYLE_SOLID))
         dc.DrawPolygon(points=self.thumb_poly,
-                       xoffset=my_pos[0] - self.size[0] / 2,
-                       yoffset=my_pos[1] - self.size[1] / 2)
+                       xoffset=round(my_pos[0] - self.size[0] / 2),
+                       yoffset=round(my_pos[1] - self.size[1] / 2))
+        # Draw the value text
+        text = str(int(self.value))
+        textsize = dc.GetTextExtent(text)
+
+        dc.DrawText(text, round(my_pos[0] - (textsize[0] / 2)), 3)
 
 
 class RangeSlider(wx.Panel):
@@ -136,7 +141,7 @@ class RangeSlider(wx.Panel):
         if validator != wx.DefaultValidator:
             raise NotImplementedError('Validator not implemented')
         super().__init__(parent=parent, pos=pos, size=size, name=name)
-        self.SetMinSize(size=wx.Size(max(50, size[0]), max(26, size[1])))
+        self.SetMinSize(size=wx.Size(max(50, size[0]), max(50, size[1])))
         if minValue > maxValue:
             minValue, maxValue = maxValue, minValue
         self.min_value = minValue
@@ -147,33 +152,33 @@ class RangeSlider(wx.Panel):
             highValue = self.max_value
         if lowValue > highValue:
             lowValue, highValue = highValue, lowValue
-        lowValue = max(lowValue, self.min_value)
+        lowValue  = max(lowValue,  self.min_value)
         highValue = min(highValue, self.max_value)
 
         self.border_width = 8
 
         self.thumbs = {
-            'low': SliderThumb(parent=self, value=lowValue),
+            'low':  SliderThumb(parent=self, value=lowValue),
             'high': SliderThumb(parent=self, value=highValue)
         }
         self.thumb_width = self.thumbs['low'].size[0]
 
         # Aesthetic definitions
-        self.slider_background_color = wx.Colour((231, 234, 234))
-        self.slider_outline_color = wx.Colour((214, 214, 214))
-        self.selected_range_color = wx.Colour((0, 120, 215))
+        self.slider_background_color      = wx.Colour((231, 234, 234))
+        self.slider_outline_color         = wx.Colour((214, 214, 214))
+        self.selected_range_color         = wx.Colour((0, 120, 215))
         self.selected_range_outline_color = wx.Colour((0, 120, 215))
 
         # Bind events
-        self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseDown)
-        self.Bind(wx.EVT_LEFT_UP, self.OnMouseUp)
-        self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
+        self.Bind(wx.EVT_LEFT_DOWN         , self.OnMouseDown)
+        self.Bind(wx.EVT_LEFT_UP           , self.OnMouseUp)
+        self.Bind(wx.EVT_MOTION            , self.OnMouseMotion)
         self.Bind(wx.EVT_MOUSE_CAPTURE_LOST, self.OnMouseLost)
-        self.Bind(wx.EVT_ENTER_WINDOW, self.OnMouseEnter)
-        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnMouseLeave)
-        self.Bind(wx.EVT_PAINT, self.OnPaint)
-        self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
-        self.Bind(wx.EVT_SIZE, self.OnResize)
+        self.Bind(wx.EVT_ENTER_WINDOW      , self.OnMouseEnter)
+        self.Bind(wx.EVT_LEAVE_WINDOW      , self.OnMouseLeave)
+        self.Bind(wx.EVT_PAINT             , self.OnPaint)
+        self.Bind(wx.EVT_ERASE_BACKGROUND  , self.OnEraseBackground)
+        self.Bind(wx.EVT_SIZE              , self.OnResize)
 
     def Enable(self, enable=True):
         val = super().Enable(enable)
@@ -267,7 +272,7 @@ class RangeSlider(wx.Panel):
         track_height = 12
         dc.SetPen(wx.Pen(self.slider_outline_color, width=1, style=wx.PENSTYLE_SOLID))
         dc.SetBrush(wx.Brush(self.slider_background_color, style=wx.BRUSHSTYLE_SOLID))
-        dc.DrawRectangle(self.border_width, h/2 - track_height/2, w - 2 * self.border_width, track_height)
+        dc.DrawRectangle(self.border_width, round(h*.667 - track_height/2), w - 2 * self.border_width, track_height)
         # Draw selected range
         if self.IsEnabled():
             dc.SetPen(wx.Pen(self.selected_range_outline_color, width=1, style=wx.PENSTYLE_SOLID))
@@ -275,9 +280,9 @@ class RangeSlider(wx.Panel):
         else:
             dc.SetPen(wx.Pen(self.slider_outline_color, width=1, style=wx.PENSTYLE_SOLID))
             dc.SetBrush(wx.Brush(self.slider_outline_color, style=wx.BRUSHSTYLE_SOLID))
-        low_pos = self.thumbs['low'].GetPosition()[0]
-        high_pos = self.thumbs['high'].GetPosition()[0]
-        dc.DrawRectangle(low_pos, h / 2 - track_height / 4, high_pos - low_pos, track_height / 2) # pyright: ignore
+        low_pos  = round(self.thumbs['low'].GetPosition()[0])
+        high_pos = round(self.thumbs['high'].GetPosition()[0])
+        dc.DrawRectangle(low_pos, round(h * .667 - track_height / 4), high_pos - low_pos, round(track_height / 2)) # pyright: ignore
         # Draw thumbs
         for thumb in self.thumbs.values():
             thumb.OnPaint(dc)

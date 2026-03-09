@@ -56,9 +56,11 @@ class MovementPowers(Page):
             'AutoMouseLook'   : False,
 
             'ChangeCamera'    : False,
+            'CameraRange'     : [15, 60],
             'CamdistBase'     : 15,
             'CamdistMove'     : 60,
             'ChangeDetail'    : False,
+            'DetailRange'     : [1.0, 2.0],
             'DetailBase'      : 1.0,
             'DetailMove'      : 0.5,
             'Feedback'        : False,
@@ -289,20 +291,12 @@ class MovementPowers(Page):
             helpfile = 'ChangeCamera.html',
             tooltip = 'Change the camera distance while moving')
         self.Ctrls['ChangeCamera'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
-        detailSizer.AddControl(ctlName = 'CameraRange', ctlType = 'rangeslider', contents = (1, 120),
-            lowValue = self.Init['CamdistBase'], highValue = self.Init['CamdistMove'],)
-        detailSizer.AddControl(ctlName = 'CamdistBase', ctlType = 'spinbox', contents = (1, 120),
-            tooltip = 'Set the camera distance to use while stationary')
-        detailSizer.AddControl(ctlName = 'CamdistMove', ctlType = 'spinbox', contents = (1, 120),
-            tooltip = 'Set the camera distance to use while moving')
+        detailSizer.AddControl(ctlName = 'CameraRange', ctlType = 'rangeslider', contents = (1, 120))
         detailSizer.AddControl(ctlName = 'ChangeDetail', ctlType = 'checkbox',
             helpfile = 'ChangeDetail.html',
             tooltip = 'Change the game\'s detail level while moving')
+        detailSizer.AddControl(ctlName = 'DetailRange', ctlType = 'rangeslider', contents = (0.1, 2.0))
         self.Ctrls['ChangeDetail'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
-        detailSizer.AddControl(ctlName = 'DetailBase', ctlType = 'spinboxfractional', contents = (0, 2),
-            tooltip = 'Set the detail level to use while stationary')
-        detailSizer.AddControl(ctlName = 'DetailMove', ctlType = 'spinboxfractional', contents = (0, 2),
-            tooltip = 'Set the detail level to use while moving')
         self.leftColumn.Add(detailSizer, 0, wx.EXPAND)
 
         ##### TEMP TRAVEL POWERS
@@ -513,11 +507,13 @@ class MovementPowers(Page):
 
     def OnDetailsCameraChanged(self, evt = None) -> None:
         c = self.Ctrls
-        c['CamdistBase'].Enable(self.GetState('ChangeCamera'))
-        c['CamdistMove'].Enable(self.GetState('ChangeCamera'))
+        c['CameraRange'].Enable(self.GetState('ChangeCamera'))
+        #c['CamdistBase'].Enable(self.GetState('ChangeCamera'))
+        #c['CamdistMove'].Enable(self.GetState('ChangeCamera'))
 
-        c['DetailBase'].Enable(self.GetState('ChangeDetail'))
-        c['DetailMove'].Enable(self.GetState('ChangeDetail'))
+        c['DetailRange'].Enable(self.GetState('ChangeDetail'))
+        #c['DetailBase'].Enable(self.GetState('ChangeDetail'))
+        #c['DetailMove'].Enable(self.GetState('ChangeDetail'))
         if evt: evt.Skip()
 
     def OnSpeedOnDemandChanged(self, evt = None) -> None:

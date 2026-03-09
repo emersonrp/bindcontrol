@@ -175,8 +175,8 @@ class ControlGroup(wx.StaticBoxSizer):
                 CtlParent,
                 minValue  = contents[0],
                 maxValue  = contents[1],
-                lowValue  = lowValue,
-                highValue = highValue,
+                lowValue  = Init[ctlName][0],
+                highValue = Init[ctlName][1],
             )
 
         else:

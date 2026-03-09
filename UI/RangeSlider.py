@@ -141,7 +141,7 @@ class RangeSlider(wx.Panel):
         if validator != wx.DefaultValidator:
             raise NotImplementedError('Validator not implemented')
         super().__init__(parent=parent, pos=pos, size=size, name=name)
-        self.SetMinSize(size=wx.Size(max(50, size[0]), max(50, size[1])))
+        self.SetMinSize(size=wx.Size(max(120, size[0]), max(50, size[1])))
         if minValue > maxValue:
             minValue, maxValue = maxValue, minValue
         self.min_value = minValue

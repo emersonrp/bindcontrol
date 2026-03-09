@@ -226,15 +226,30 @@ class ProfileData(dict):
         if 'SoD' in self:
             self['MovementPowers'] = self.pop('SoD')
 
-        # One value of this option got renamed for better clarity
-        if ('MovementPowers' in self) and (self['MovementPowers'].get('DefaultMode') == 'No SoD'):
-            self['MovementPowers']['DefaultMode'] = 'No Default SoD'
+        # MovementPowers reworks
+        if 'MovementPowers' in self:
+            # One value of this option got renamed for better clarity
+            if self['MovementPowers'].get('DefaultMode') == 'No SoD':
+                self['MovementPowers']['DefaultMode'] = 'No Default SoD'
 
-        # These two got actually renamed fully.
-        if ('MovementPowers' in self) and ('HasHover' in self['MovementPowers']):
-            self['MovementPowers']['UseHover'] = self['MovementPowers'].pop('HasHover')
-        if ('MovementPowers' in self) and ('HasCJ' in self['MovementPowers']):
-            self['MovementPowers']['UseCJ'] = self['MovementPowers'].pop('HasCJ')
+            # These two got actually renamed fully.
+            if 'HasHover' in self['MovementPowers']:
+                self['MovementPowers']['UseHover'] = self['MovementPowers'].pop('HasHover')
+            if 'HasCJ' in self['MovementPowers']:
+                self['MovementPowers']['UseCJ'] = self['MovementPowers'].pop('HasCJ')
+
+            # push separate camera-distance and detail-level settings into the
+            # new CameraRange and DetailRange slider controls
+            if 'CamdistBase' in self['MovementPowers'] or 'CamdistMove' in self['MovementPowers']:
+                self['MovementPowers']['CameraRange'] = [
+                    self['MovementPowers'].pop('CamdistBase', None),
+                    self['MovementPowers'].pop('CamdistMove', None)
+                ]
+            if 'DetailBase' in self['MovementPowers'] or 'DetailMove' in self['MovementPowers']:
+                self['MovementPowers']['DetailRange'] = [
+                    self['MovementPowers'].pop('DetailBase', None),
+                    self['MovementPowers'].pop('DetailMove', None)
+                ]
 
         # Massage old hardcoded-three-step BufferBinds into the new way
         if 'CustomBinds' in self:

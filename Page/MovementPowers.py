@@ -287,11 +287,13 @@ class MovementPowers(Page):
             helpfile = 'ChangeCamera.html',
             tooltip = 'Change the camera distance while moving')
         self.Ctrls['ChangeCamera'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
-        detailSizer.AddControl(ctlName = 'CameraRange', ctlType = 'rangeslider', contents = (1, 120))
+        detailSizer.AddControl(ctlName = 'CameraRange', ctlType = 'rangeslider', contents = (1, 120),
+            tooltip = 'Set the stationary camera distance with the left slider, and the moving camera distance with the right slider')
         detailSizer.AddControl(ctlName = 'ChangeDetail', ctlType = 'checkbox',
             helpfile = 'ChangeDetail.html',
             tooltip = 'Change the game\'s detail level while moving')
-        detailSizer.AddControl(ctlName = 'DetailRange', ctlType = 'rangeslider', contents = (0.1, 2.0), roundDigits = 1)
+        detailSizer.AddControl(ctlName = 'DetailRange', ctlType = 'rangeslider', contents = (0.1, 2.0), roundDigits = 1,
+            tooltip = 'Set the moving detail level with the left slider, and the stationary detail level with the right slider')
         self.Ctrls['ChangeDetail'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
         self.leftColumn.Add(detailSizer, 0, wx.EXPAND)
 

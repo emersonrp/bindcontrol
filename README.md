@@ -171,6 +171,8 @@ DevoDog68, BlackSpectre, Premmy, kenlon, Lumenia, xizar, autobotpinto, jtoya85
 
 Icons / graphics are from Microsoft's Fluent icons collection, by way of [Colton Griffith's Fluent Icons viewer](https://fluenticons.co/outlined/).
 
+BindControl contains a modified version of [Range Slider](https://gist.github.com/gabrieldp/e19611abead7f6617872d33866c568a3) by [Gabriel Pasa](https://gist.github.com/gabrieldp).
+
 CityBinder's original acknowledgements are reproduced below:
 ```
     Obviously, without Cryptic and NCSoft to have created/funded/published

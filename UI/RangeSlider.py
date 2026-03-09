@@ -42,7 +42,7 @@ class SliderThumb:
         min_value = self.parent.GetMin()
         max_value = self.parent.GetMax()
         fraction = value_to_fraction(self.value, min_value, max_value)
-        pos = (fraction_to_value(fraction, min_x, max_x), parent_size[1] * .667 + 1)
+        pos = (fraction_to_value(fraction, min_x, max_x), parent_size[1] * self.parent.midpoint + 1)
         return pos
 
     def SetPosition(self, pos):
@@ -125,15 +125,17 @@ class SliderThumb:
         dc.DrawPolygon(points=self.thumb_poly,
                        xoffset=round(my_pos[0] - self.size[0] / 2),
                        yoffset=round(my_pos[1] - self.size[1] / 2))
-        # Draw the value text
-        text = str(int(self.value))
-        textsize = dc.GetTextExtent(text)
+        # Draw the value text if requested
+        if self.parent.showValues:
+            text = str(round(self.value, self.parent.roundDigits))
+            textsize = dc.GetTextExtent(text)
 
-        dc.DrawText(text, round(my_pos[0] - (textsize[0] / 2)), 3)
+            dc.DrawText(text, round(my_pos[0] - (textsize[0] / 2)), 3)
 
 
 class RangeSlider(wx.Panel):
     def __init__(self, parent, lowValue=None, highValue=None, minValue=0, maxValue=100,
+                 roundDigits = None, showValues = False,
                  pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.SL_HORIZONTAL, validator=wx.DefaultValidator,
                  name='rangeSlider'):
         if style != wx.SL_HORIZONTAL:
@@ -141,7 +143,18 @@ class RangeSlider(wx.Panel):
         if validator != wx.DefaultValidator:
             raise NotImplementedError('Validator not implemented')
         super().__init__(parent=parent, pos=pos, size=size, name=name)
-        self.SetMinSize(size=wx.Size(max(120, size[0]), max(50, size[1])))
+
+        # make space for the values to show if requested
+        self.showValues = showValues
+        vertMin = 26
+        self.midpoint = 0.5
+        if showValues:
+            vertMin = 50
+            self.midpoint = 0.667
+
+        self.roundDigits = roundDigits
+
+        self.SetMinSize(size=wx.Size(max(50, size[0]), max(vertMin, size[1])))
         if minValue > maxValue:
             minValue, maxValue = maxValue, minValue
         self.min_value = minValue
@@ -272,7 +285,7 @@ class RangeSlider(wx.Panel):
         track_height = 12
         dc.SetPen(wx.Pen(self.slider_outline_color, width=1, style=wx.PENSTYLE_SOLID))
         dc.SetBrush(wx.Brush(self.slider_background_color, style=wx.BRUSHSTYLE_SOLID))
-        dc.DrawRectangle(self.border_width, round(h*.667 - track_height/2), w - 2 * self.border_width, track_height)
+        dc.DrawRectangle(self.border_width, round(h * self.midpoint - track_height / 2), w - 2 * self.border_width, track_height)
         # Draw selected range
         if self.IsEnabled():
             dc.SetPen(wx.Pen(self.selected_range_outline_color, width=1, style=wx.PENSTYLE_SOLID))
@@ -282,7 +295,7 @@ class RangeSlider(wx.Panel):
             dc.SetBrush(wx.Brush(self.slider_outline_color, style=wx.BRUSHSTYLE_SOLID))
         low_pos  = round(self.thumbs['low'].GetPosition()[0])
         high_pos = round(self.thumbs['high'].GetPosition()[0])
-        dc.DrawRectangle(low_pos, round(h * .667 - track_height / 4), high_pos - low_pos, round(track_height / 2)) # pyright: ignore
+        dc.DrawRectangle(low_pos, round(h * self.midpoint - track_height / 4), high_pos - low_pos, round(track_height / 2)) # pyright: ignore
         # Draw thumbs
         for thumb in self.thumbs.values():
             thumb.OnPaint(dc)
@@ -293,7 +306,13 @@ class RangeSlider(wx.Panel):
         pass
 
     def GetValues(self):
-        return self.thumbs['low'].value, self.thumbs['high'].value
+        return self.GetLow(), self.GetHigh()
+
+    def GetLow(self):
+        return round(self.thumbs['low'].value, self.roundDigits)
+
+    def GetHigh(self):
+        return round(self.thumbs['high'].value, self.roundDigits)
 
     def SetValues(self, lowValue, highValue):
         if lowValue > highValue:
@@ -313,7 +332,7 @@ class RangeSlider(wx.Panel):
     def SetMax(self, maxValue):
         if maxValue < self.min_value:
             maxValue = self.min_value
-        _, old_high = self.GetValues()
+        old_high = self.GetHigh()
         if old_high > maxValue:
             self.thumbs['high'].SetValue(maxValue)
         self.max_value = maxValue
@@ -322,7 +341,7 @@ class RangeSlider(wx.Panel):
     def SetMin(self, minValue):
         if minValue > self.max_value:
             minValue = self.max_value
-        old_low, _ = self.GetValues()
+        old_low = self.GetLow()
         if old_low < minValue:
             self.thumbs['low'].SetValue(minValue)
         self.min_value = minValue

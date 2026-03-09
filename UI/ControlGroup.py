@@ -48,20 +48,22 @@ class ControlGroup(wx.StaticBoxSizer):
         self.Add(self.vertCenteringSizer, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10)
 
     def AddControl(self,
-                   ctlType   : str           = '',
-                   ctlName   : str           = '',
-                   noLabel   : bool          = False,
-                   contents  : Any           = '',
-                   tooltip   : str           = '',
-                   callback  : Callable|None = None,
-                   label     : str           = '',
-                   data      : Any           = None,
-                   size      : wx.Size       = wx.DefaultSize,
-                   context   : str           = '',
-                   helpfile  : str           = '',
-                   # these two just for RangeSlider sigh
-                   lowValue  : int|float     = 0,
-                   highValue : int|float     = 0,
+                   ctlType     : str           = '',
+                   ctlName     : str           = '',
+                   noLabel     : bool          = False,
+                   contents    : Any           = '',
+                   tooltip     : str           = '',
+                   callback    : Callable|None = None,
+                   label       : str           = '',
+                   data        : Any           = None,
+                   size        : wx.Size       = wx.DefaultSize,
+                   context     : str           = '',
+                   helpfile    : str           = '',
+                   # these are just for RangeSlider sigh
+                   lowValue    : int|float     = 0,
+                   highValue   : int|float     = 100,
+                   roundDigits : int|None      = None,
+                   showValues  : bool          = True,
        ):
 
         if not ctlName:
@@ -173,10 +175,12 @@ class ControlGroup(wx.StaticBoxSizer):
         elif ctlType == 'rangeslider':
             control = cgRangeSlider(
                 CtlParent,
-                minValue  = contents[0],
-                maxValue  = contents[1],
-                lowValue  = Init[ctlName][0],
-                highValue = Init[ctlName][1],
+                minValue    = contents[0],
+                maxValue    = contents[1],
+                lowValue    = Init[ctlName][0],
+                highValue   = Init[ctlName][1],
+                roundDigits = roundDigits,
+                showValues  = showValues,
             )
 
         else:

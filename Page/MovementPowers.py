@@ -57,12 +57,8 @@ class MovementPowers(Page):
 
             'ChangeCamera'    : False,
             'CameraRange'     : [15, 60],
-            'CamdistBase'     : 15,
-            'CamdistMove'     : 60,
             'ChangeDetail'    : False,
             'DetailRange'     : [1.0, 2.0],
-            'DetailBase'      : 1.0,
-            'DetailMove'      : 0.5,
             'Feedback'        : False,
 
             'DefaultMode'     : "Sprint",
@@ -295,7 +291,7 @@ class MovementPowers(Page):
         detailSizer.AddControl(ctlName = 'ChangeDetail', ctlType = 'checkbox',
             helpfile = 'ChangeDetail.html',
             tooltip = 'Change the game\'s detail level while moving')
-        detailSizer.AddControl(ctlName = 'DetailRange', ctlType = 'rangeslider', contents = (0.1, 2.0))
+        detailSizer.AddControl(ctlName = 'DetailRange', ctlType = 'rangeslider', contents = (0.1, 2.0), roundDigits = 1)
         self.Ctrls['ChangeDetail'].Bind(wx.EVT_CHECKBOX, self.OnDetailsCameraChanged)
         self.leftColumn.Add(detailSizer, 0, wx.EXPAND)
 
@@ -1191,12 +1187,12 @@ class MovementPowers(Page):
             t.mouselookoff = '$$mouselook 0'
 
         if (self.GetState('ChangeCamera')):
-            t.runcamdist = f"$$camdist {self.GetState('CamdistBase')}"
-            t.flycamdist = f"$$camdist {self.GetState('CamdistMove')}"
+            t.runcamdist = f"$$camdist {self.GetState('CameraRange')[0]}"
+            t.flycamdist = f"$$camdist {self.GetState('CameraRange')[1]}"
 
         if (self.GetState('ChangeDetail')):
-            t.detailhi = f"$$visscale {self.GetState('DetailBase')}"
-            t.detaillo = f"$$visscale {self.GetState('DetailMove')}"
+            t.detailhi = f"$$visscale {self.GetState('DetailRange')[0]}"
+            t.detaillo = f"$$visscale {self.GetState('DetailRange')[1]}"
 
         ## Combat Jumping / Super Jump
         if jpower := str(self.GetState('JumpPower')):
@@ -2392,12 +2388,10 @@ UI.Labels.update( {
 
     'PlayerTurn'     : 'Turn to Match Camera',
     'AutoMouseLook'  : 'Mouselook When Moving',
-    'ChangeCamera'   : 'Change camera distance when moving',
-    'CamdistBase'    : 'Base Camera Distance',
-    'CamdistMove'    : 'Travelling Camera Distance',
-    'ChangeDetail'   : 'Change graphics detail level when moving',
-    'DetailBase'     : 'Base Detail Level',
-    'DetailMove'     : 'Travelling Detail Level',
+    'ChangeCamera'   : 'Change Camera Distance When Moving',
+    'CameraRange'    : 'Camera Distance Range (in feet)',
+    'ChangeDetail'   : 'Change Graphics Detail Level When Moving',
+    'DetailRange'    : 'Detail Level Range (1.0 = 100%)',
 
     'TempEnable'     : 'Enable Temp Travel Power Bind',
     'TempToggle'     : 'Toggle Temp Travel Power',

@@ -98,5 +98,5 @@ class cgChoice          (CGControlMixin, ErrorControlMixin, wx.Choice)          
         else:
             if exists: self.Delete(idx)
 class cgRangeSlider     (CGControlMixin, ErrorControlMixin, RangeSlider)         :
-    def __init__(self, *args, **kwargs) -> None: super().__init__(*args, **kwargs)
-
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, size = wx.Size(150,-1), **kwargs)

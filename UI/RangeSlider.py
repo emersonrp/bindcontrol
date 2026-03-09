@@ -129,6 +129,8 @@ class SliderThumb:
         if self.parent.showValues:
             text = str(round(self.value, self.parent.roundDigits))
             textsize = dc.GetTextExtent(text)
+            textcolour = wx.SYS_COLOUR_WINDOWTEXT if self.parent.IsEnabled() else wx.SYS_COLOUR_GRAYTEXT
+            dc.SetTextForeground(wx.SystemSettings.GetColour(textcolour))
 
             dc.DrawText(text, round(my_pos[0] - (textsize[0] / 2)), 3)
 

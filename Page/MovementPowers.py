@@ -1184,12 +1184,12 @@ class MovementPowers(Page):
             t.mouselookoff = '$$mouselook 0'
 
         if (self.GetState('ChangeCamera')):
-            t.runcamdist = f"$$camdist {self.GetState('CameraRange')[0]}"
-            t.flycamdist = f"$$camdist {self.GetState('CameraRange')[1]}"
+            t.runcamdist = f"$$camdist {self.Ctrls['CameraRange'].GetLow()}"
+            t.flycamdist = f"$$camdist {self.Ctrls['CameraRange'].GetHigh()}"
 
         if (self.GetState('ChangeDetail')):
-            t.detailhi = f"$$visscale {self.GetState('DetailRange')[0]}"
-            t.detaillo = f"$$visscale {self.GetState('DetailRange')[1]}"
+            t.detailhi = f"$$visscale {self.Ctrls['DetailRange'].GetHigh()}"
+            t.detaillo = f"$$visscale {self.Ctrls['DetailRange'].GetLow()}"
 
         ## Combat Jumping / Super Jump
         if jpower := str(self.GetState('JumpPower')):

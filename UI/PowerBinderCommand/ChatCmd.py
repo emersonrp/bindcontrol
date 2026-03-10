@@ -16,7 +16,7 @@ chatChannelMap = {
     'supergroup': 'sg',
     'coalition': 'c',
     'tell $target,': 't $target,',
-    'tell $name': 't $name',
+    'tell $name,': 't $name,',
 }
 
 ####### Chat Command

@@ -22,11 +22,18 @@ class ComplexBindPane(CustomBindPaneParent):
             'Steps': [],
         })
         for step in self.Steps:
-            if step.PowerBinder.GetValue():
-                data['Steps'].append({
-                    'contents'        : step.PowerBinder.GetValue(),
-                    'powerbinderdata' : step.PowerBinder.SaveToData()
-                })
+            newstepdata = {}
+            if step.PowerBinder:
+                newstepdata['contents']        = step.PowerBinder.GetValue()
+                newstepdata['powerbinderdata'] = step.PowerBinder.SaveToData()
+            if step.ReleaseBinder:
+                newstepdata['rcontents']         = step.ReleaseBinder.GetValue()
+                newstepdata['releasebinderdata'] = step.ReleaseBinder.SaveToData()
+
+            if newstepdata:
+                newstepdata['isPRBind'] = step.IsPR()
+                data['Steps'].append(newstepdata)
+
         return data
 
     def BuildBindUI(self, page) -> None:
@@ -38,8 +45,8 @@ class ComplexBindPane(CustomBindPaneParent):
         AddBindStepButton = wx.Button(pane, label = "Add Step")
         AddBindStepButton.Bind(wx.EVT_BUTTON, self.onAddStepButton)
         self.BindStepSizer.Add(AddBindStepButton, 0, wx.TOP, 10)
-        if self.Init.get('Steps', ''):
-            for step in self.Init['Steps']:
+        if steps := self.Init.get('Steps', []):
+            for step in steps:
                 self.doAddStep(step)
         else:
             self.doAddStep()
@@ -81,23 +88,15 @@ class ComplexBindPane(CustomBindPaneParent):
     def CheckIfWellFormed(self) -> bool:
         isWellFormed = True
 
+        if not self.Steps: return True
+
         firststep = self.Steps[0]
-        fullsteps = list(filter(lambda x: x.PowerBinder.GetValue(), self.Steps))
+        fullsteps = list(filter(lambda x: x.CheckIfWellFormed(), self.Steps))
         if fullsteps:
             firststep.PowerBinder.RemoveError('undef')
         else:
-            firststep.PowerBinder.AddError('undef', 'At least one step must be defined')
+            firststep.PowerBinder.AddError('undef', 'At least one valid step must be defined.')
             isWellFormed = False
-
-        stepsWellFormed = True
-        for step in self.Steps:
-            if len(step.PowerBinder.GetValue()) + step.PowerBinder.ExtraLength <= 255:
-                step.PowerBinder.RemoveError('length')
-            else:
-                step.PowerBinder.AddError('length', 'This step, when written to file, will be longer than 255 characters, which will cause problems in-game.')
-                stepsWellFormed = False
-
-        if (not stepsWellFormed): isWellFormed = False
 
         bk = self.GetCtrl('BindKey')
         if not bk.Key:
@@ -108,13 +107,14 @@ class ComplexBindPane(CustomBindPaneParent):
 
         return isWellFormed
 
-    def onAddStepButton(self, _ = None, stepdata : dict|None = None) -> None:
+    def onAddStepButton(self, evt = None, stepdata : dict|None = None) -> None:
         self.doAddStep(stepdata or {})
         self.Page.UpdateAllBinds()
+        if evt: evt.Skip()
 
     def doAddStep(self, stepdata : dict|None = None) -> None:
         stepdata = stepdata or {}
-        stepNumber = self.BindStepSizer.GetItemCount() # already the next step because of the add button
+        stepNumber = self.BindStepSizer.GetItemCount() # This is the correct (next) number because the Add button adds one to the count
         step = BindStep(self, stepNumber, stepdata)
         self.BindStepSizer.Insert(self.BindStepSizer.GetItemCount()-1, step, 0, wx.EXPAND)
         self.Steps.append(step)
@@ -129,6 +129,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.Steps[idx], self.Steps[idx-1] = self.Steps[idx-1], self.Steps[idx]
         self.Page.UpdateAllBinds()
         self.RenumberSteps()
+        evt.Skip()
 
     def onMoveDownButton(self, evt) -> None:
         button = evt.GetEventObject()
@@ -139,6 +140,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.Steps[idx], self.Steps[idx+1] = self.Steps[idx+1], self.Steps[idx]
         self.Page.UpdateAllBinds()
         self.RenumberSteps()
+        evt.Skip()
 
     def onDupeButton(self, evt) -> None:
         button = evt.GetEventObject()
@@ -153,6 +155,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.Steps.insert(stepidx+1, newstep)
         self.Page.UpdateAllBinds()
         self.RenumberSteps()
+        evt.Skip()
 
     def onDelButton(self, evt) -> None:
         button = evt.GetEventObject()
@@ -161,30 +164,42 @@ class ComplexBindPane(CustomBindPaneParent):
         step.DestroyLater()
         self.Page.UpdateAllBinds()
         self.RenumberSteps()
+        evt.Skip()
 
     def RenumberSteps(self) -> None:
         for i, step in enumerate(self.Steps, start = 1):
             step.delButton.Show(i>1) # don't even show the del button on step 1
             step.moveUpButton.Enable(i > 1)
             step.moveDownButton.Enable(i < len(self.Steps))
-            step.StepLabel.SetLabel(f"Step {i}:")
+            step.StepNumber = i
+            step.StepLabel  .SetLabel(f"Step {i} Press Action:" if step.IsPR() else f"Step {i}:")
+            step.ReleaseText.SetLabel(f"Step {i} Release Action:")
         self.Page.Layout()
 
     def PopulateBindFiles(self) -> None:
         resetfile = self.Profile.ResetFile()
-        # fish out only the steps that have contents
-        fullsteps = list(filter(lambda x: x.PowerBinder.GetValue(), self.Steps))
+        # fish out only the steps that are valid
+        fullsteps = list(filter(lambda x: x.CheckIfWellFormed(), self.Steps))
         title = re.sub(r'\W+', '', self.Title)
         cid = self.CustomID
         for i, step in enumerate(fullsteps, start = 1):
-            cbindfile = self.Profile.GetBindFile("cb", f"{cid}-{i}.txt")
             nextCycle = 1 if (i+1 > len(fullsteps)) else i+1
 
-            cmd = [step.PowerBinder.GetValue(), self.Profile.BLF(f'cb\\{cid}-{nextCycle}.txt')]
+            cbindfile = self.Profile.GetBindFile('cb', f'{cid}-{i}.txt')
+            rbindfile = self.Profile.GetBindFile('cb', f'{cid}-{i}-r.txt') if step.IsPR() else None
+
             key = self.GetCtrl('BindKey').Key
+
+            if step.IsPR():
+                cmd = ['+$$' + step.PowerBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{i}-r.txt')]
+            else:
+                cmd = [        step.PowerBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{nextCycle}.txt')]
 
             if i == 1: resetfile.SetBind(key, self, title, cmd)
             cbindfile.SetBind(key, self, title, cmd)
+            if rbindfile:
+                rcmd = ['+$$' + step.ReleaseBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{nextCycle}.txt')]
+                rbindfile.SetBind(key, self, title, rcmd)
 
     def AllBindFiles(self) -> dict[str, list]:
         files = []
@@ -194,6 +209,7 @@ class ComplexBindPane(CustomBindPaneParent):
         for i, _ in enumerate(self.Steps, start = 1):
             files.append(self.Profile.GetBindFile('cbinds', f'{title}-{i}.txt'))
             files.append(self.Profile.GetBindFile('cb', f'{cid}-{i}.txt'))
+            files.append(self.Profile.GetBindFile('cb', f'{cid}-{i}-r.txt')) # 'release'
 
         return {
             'files' : files,
@@ -204,41 +220,112 @@ class BindStep(wx.Panel):
     def __init__(self, parent, stepNumber, step) -> None:
 
         self.Page = parent.Page
+        self.Pane : ComplexBindPane = parent
+        self.StepNumber = stepNumber
         pane = parent.GetPane()
 
         super().__init__(pane)
 
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.BindSizer = wx.FlexGridSizer(7, 0, 0)
+        self.BindSizer.AddGrowableCol(1)
 
-        StepLabel = wx.StaticText(self, label = f"Step {stepNumber}:")
-        self.StepLabel = StepLabel
-        sizer.Add(StepLabel, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.StepLabel = wx.StaticText(self, label = f"Step {stepNumber}:")
+        self.BindSizer.Add(self.StepLabel, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        extralength = len(parent.Profile.BLF(f'cb\\{parent.CustomID}-X.txt'))
+        # get the length of a hypothetical BLF string (don't need pathlib etc)
+        extralength = len(parent.Profile.BLF(f'cb\\{parent.CustomID}-XX.txt'))
         self.PowerBinder = PowerBinder(self, step.get('powerbinderdata', {}), extralength = extralength)
         self.PowerBinder.ChangeValue(step.get('contents', ''))
         self.PowerBinder.Bind(wx.EVT_TEXT, parent.onContentsChanged)
-        sizer.Add(self.PowerBinder, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
+        self.BindSizer.Add(self.PowerBinder, 1, wx.EXPAND|wx.LEFT, 5)
+
+        self.PRButton = wx.BitmapToggleButton(self, label = GetIcon('UI', 'add_circle'))
+        self.BindSizer.Add(self.PRButton, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
+        self.PRButton.SetValue(step.get('isPRBind', False))
+        self.PRButton.SetToolTip("Separate Press / Release Actions for this step")
+        self.PRButton.Bind(wx.EVT_TOGGLEBUTTON, self.onPRButtonClicked)
 
         self.moveUpButton = wx.Button(self, label = '\u25B2', size = wx.Size(40, -1))
         self.moveUpButton.Bind(wx.EVT_BUTTON, parent.onMoveUpButton)
         self.moveUpButton.SetToolTip('Move step up')
-        sizer.Add(self.moveUpButton, 0)
+        self.BindSizer.Add(self.moveUpButton, 0)
 
         self.moveDownButton = wx.Button(self, label = '\u25BC', size = wx.Size(40, -1))
         self.moveDownButton.Bind(wx.EVT_BUTTON, parent.onMoveDownButton)
         self.moveDownButton.SetToolTip('Move step down')
-        sizer.Add(self.moveDownButton, 0)
+        self.BindSizer.Add(self.moveDownButton, 0)
 
         self.dupeButton = wx.BitmapButton(self, bitmap = GetIcon('UI', 'copy'))
         self.dupeButton.Bind(wx.EVT_BUTTON, parent.onDupeButton)
         self.dupeButton.SetToolTip('Duplicate step')
-        sizer.Add(self.dupeButton, 0)
+        self.BindSizer.Add(self.dupeButton, 0)
 
         self.delButton = wx.BitmapButton(self, bitmap = GetIcon('UI', 'delete'))
         self.delButton.SetForegroundColour(wx.RED)
         self.delButton.Bind(wx.EVT_BUTTON, parent.onDelButton)
         self.delButton.SetToolTip('Delete step')
-        sizer.Add(self.delButton, 0, flag = wx.RESERVE_SPACE_EVEN_IF_HIDDEN)
+        self.BindSizer.Add(self.delButton, 0, flag = wx.RESERVE_SPACE_EVEN_IF_HIDDEN)
 
-        self.SetSizer(sizer)
+        self.ReleaseText = wx.StaticText(self, label = f"Step {self.StepNumber} Release Action:")
+        self.BindSizer.Add(self.ReleaseText, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        rb = PowerBinder(self, step.get('releasebinderdata', {}))
+        rb.ChangeValue(step.get('rcontents', ''))
+        rb.Bind(wx.EVT_TEXT, parent.onContentsChanged)
+        self.ReleaseBinder = rb
+        self.BindSizer.Add(rb, 1, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.EXPAND, 5)
+
+        self.SetSizer(self.BindSizer)
+
+        self.onPRButtonClicked()
+
+    def IsPR(self):
+        return self.PRButton.GetValue()
+
+    def onPRButtonClicked(self, evt = None) -> None:
+        if evt: evt.Skip()
+        checked = self.IsPR()
+        if self.ReleaseText:
+            self.BindSizer.Show(self.ReleaseText, checked)
+        if self.ReleaseBinder:
+            self.BindSizer.Show(self.ReleaseBinder, checked)
+        self.StepLabel.SetLabel(f'Step {self.StepNumber} Press Action:' if checked else f'Step {self.StepNumber}:')
+        self.BindSizer.Layout()
+        self.Page.Layout()
+
+    def CheckIfWellFormed(self) -> bool:
+        isWellFormed = True
+        if self.PowerBinder.GetValue() or self.ReleaseBinder.GetValue():
+            self.PowerBinder.RemoveError('noaction')
+        else:
+            self.PowerBinder.AddError('noaction', 'This step has no action defined.')
+            isWellFormed = False
+
+        if len(self.PowerBinder.GetValue()) + self.PowerBinder.ExtraLength <= 255:
+            self.PowerBinder.RemoveError('length')
+        else:
+            self.PowerBinder.AddError('length', 'This step, when written to file, will be longer than 255 characters, which will cause problems in-game.')
+            isWellFormed = False
+
+        # extra checks for Press/Release binds:
+        if self.IsPR():
+            if len(self.ReleaseBinder.GetValue()) + self.ReleaseBinder.ExtraLength <= 255:
+                self.ReleaseBinder.RemoveError('length')
+            else:
+                self.ReleaseBinder.AddError('length', 'This step, when written to file, will be longer than 255 characters, which will cause problems in-game.')
+                isWellFormed = False
+
+            if self.PowerBinder.GetValue():
+                if self.ReleaseBinder.GetValue():
+                    self.ReleaseBinder.RemoveError('pressrelease')
+                else:
+                    self.ReleaseBinder.AddError('pressrelease', 'This step has a "Press" action but no "Release" action.  This is probably not what you want.')
+                    isWellFormed = False
+            else:
+                if self.ReleaseBinder.GetValue():
+                    self.PowerBinder.AddError('pressrelease', 'This step has a "Release" action but no "Press" action.  This is probably not what you want.')
+                    isWellFormed = False
+                else:
+                    self.PowerBinder.RemoveError('pressrelease')
+
+        return isWellFormed

@@ -4,6 +4,7 @@ import UI
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinder import PowerBinder
+from Icon import GetIcon
 
 ### CustomBind subclasses for the individual bind types
 
@@ -15,15 +16,20 @@ class SimpleBindPane(CustomBindPaneParent):
         self.Description = "Simple Bind"
         self.Type        = "SimpleBind"
 
-        self.PowerBinder = None
+        self.PressBinder   = None
+        self.ReleaseBinder = None
 
     def Serialize(self) -> dict[str, Any]:
         data = self.CreateSerialization({
-            'Contents' : self.PowerBinder.GetValue() if self.PowerBinder else '',
+            'Contents' : self.PressBinder.GetValue() if self.PressBinder else '',
             'Key'      : self.GetCtrl('BindKey').Key,
+            'isPRBind' : self.IsPR(),
+            'RContents': self.ReleaseBinder.GetValue() if self.ReleaseBinder else '',
         })
-        if self.PowerBinder:
-            data['PowerBinderDlg'] = self.PowerBinder.SaveToData()
+        if self.PressBinder:
+            data['PowerBinderDlg'] = self.PressBinder.SaveToData()
+        if self.ReleaseBinder:
+            data['ReleaseBinderDlg'] = self.ReleaseBinder.SaveToData()
         else:
             wx.LogWarning(f'Unable to save PowerBinder data for Simple Bind "{self.Title}"')
 
@@ -33,17 +39,27 @@ class SimpleBindPane(CustomBindPaneParent):
         pane = self.GetPane()
         self.Page = page
 
-        BindSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.BindSizer = wx.FlexGridSizer(5, 5, 0)
+        self.BindSizer.AddGrowableCol(1)
 
-        powerbinderdata = self.Init.get('PowerBinderDlg', {})
+        powerbinderdata   = self.Init.get('PowerBinderDlg', {})
+        releasebinderdata = self.Init.get('ReleaseBinderDlg', {})
 
-        BindSizer.Add(wx.StaticText(pane, label = "Bind Contents:"), 0, wx.ALIGN_CENTER_VERTICAL)
+        self.PressText = wx.StaticText(pane, label = "Bind Contents:")
+        self.BindSizer.Add(self.PressText, 0, wx.ALIGN_CENTER_VERTICAL)
+
         pb = PowerBinder(pane, powerbinderdata)
         pb.ChangeValue(self.Init.get('Contents', ''))
         pb.Bind(wx.EVT_TEXT, self.onContentsChanged)
-        self.PowerBinder = pb
+        self.PressBinder = pb
         self.SetCtrl('PowerBinder', pb)
-        BindSizer.Add(pb, 1, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
+        self.BindSizer.Add(pb, 1, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.EXPAND, 5)
+
+        self.PRButton = wx.BitmapToggleButton(pane, label = GetIcon('UI', 'add_circle'))
+        self.BindSizer.Add(self.PRButton, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5)
+        self.PRButton.SetToolTip("Separate Press/Release Actions for This Bind")
+        self.PRButton.SetValue(self.Init.get('isPRBind', False))
+        self.PRButton.Bind(wx.EVT_TOGGLEBUTTON, self.onPRButtonClicked)
 
         BindKeyCtrl = bcKeyButton(pane, init = {
             'CtlName' : self.MakeCtrlName("BindKey"),
@@ -52,18 +68,41 @@ class SimpleBindPane(CustomBindPaneParent):
         })
         BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
-        BindSizer.Add(wx.StaticText(pane, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
-        BindSizer.Add(BindKeyCtrl,                          0, wx.ALIGN_CENTER_VERTICAL)
+        self.BindSizer.Add(wx.StaticText(pane, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
+        self.BindSizer.Add(BindKeyCtrl,                          0, wx.ALIGN_CENTER_VERTICAL)
         self.SetCtrl('BindKey', BindKeyCtrl)
         UI.Labels[BindKeyCtrl.CtlName] = f'Simple Bind "{self.Title}"'
 
-        BindSizer.Layout()
+        self.ReleaseText = wx.StaticText(pane, label = "Release Action:")
+        self.BindSizer.Add(self.ReleaseText, 0, wx.ALIGN_CENTER_VERTICAL)
+
+        rb = PowerBinder(pane, releasebinderdata)
+        rb.ChangeValue(self.Init.get('RContents', ''))
+        rb.Bind(wx.EVT_TEXT, self.onContentsChanged)
+        self.ReleaseBinder = rb
+        self.SetCtrl('ReleaseBinder', rb)
+        self.BindSizer.Add(rb, 1, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.EXPAND, 5)
+
+        self.BindSizer.Layout()
 
         # border around the addr box
-        border = wx.BoxSizer(wx.VERTICAL)
-        border.Add(BindSizer, 1, wx.EXPAND|wx.ALL, 10)
+        border = wx.BoxSizer(wx.HORIZONTAL)
+        border.Add(self.BindSizer, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 10)
         pane.SetSizer(border)
+        self.onPRButtonClicked()
         self.CheckIfWellFormed()
+
+    def onPRButtonClicked(self, evt = None) -> None:
+        if evt: evt.Skip()
+        checked = self.IsPR()
+        if self.ReleaseText:
+            self.BindSizer.Show(self.ReleaseText, checked)
+        if self.ReleaseBinder:
+            self.BindSizer.Show(self.ReleaseBinder, checked)
+        self.PressText.SetLabel('Press Action:' if checked else 'Bind Contents:')
+        self.CheckIfWellFormed()
+        self.BindSizer.Layout()
+        self.Page.Layout()
 
     def onContentsChanged(self, evt) -> None:
         evt.Skip()
@@ -74,24 +113,35 @@ class SimpleBindPane(CustomBindPaneParent):
         evt.Skip()
         self.CheckIfWellFormed()
 
-    def AllBindFiles(self) -> dict: return {}
+    def IsPR(self):
+        return self.PRButton.GetValue()
+
+    def AllBindFiles(self) -> dict:
+        cid = self.CustomID
+        p   = self.Profile
+        files = [p.GetBindFile('sb', f'{cid}-p.txt'), p.GetBindFile('sb', f'{cid}-r.txt')] if self.IsPR() else []
+        return {
+            'files' : files,
+            'dirs'  : ['sb'],
+        }
 
     def CheckIfWellFormed(self) -> bool:
         isWellFormed = True
 
-        if self.PowerBinder:
-            self.PowerBinder.SetToolTip('')
-            if self.PowerBinder.GetValue():
-                self.PowerBinder.RemoveError('undef')
-            else:
-                self.PowerBinder.AddError('undef', 'The bind contents have not been defined.')
-                isWellFormed = False
+        for binder in (self.PressBinder, self.ReleaseBinder):
+            if binder and binder.IsShown():
+                binder.SetToolTip('')
+                if binder.GetValue():
+                    binder.RemoveError('undef')
+                else:
+                    binder.AddError('undef', 'The bind contents have not been defined.')
+                    isWellFormed = False
 
-            if len(self.PowerBinder.GetValue()) <= 255:
-                self.PowerBinder.RemoveError('length')
-            else:
-                self.PowerBinder.AddError('length', 'This bind is longer than 255 characters, which will cause problems in-game.')
-                isWellFormed = False
+                if len(binder.GetValue()) <= 255:
+                    binder.RemoveError('length')
+                else:
+                    binder.AddError('length', 'This bind is longer than 255 characters, which will cause problems in-game.')
+                    isWellFormed = False
 
         bk = self.GetCtrl('BindKey')
         if bk.Key:
@@ -103,6 +153,18 @@ class SimpleBindPane(CustomBindPaneParent):
         return isWellFormed
 
     def PopulateBindFiles(self) -> None:
-        if pb := self.PowerBinder:
-            resetfile = self.Profile.ResetFile()
-            resetfile.SetBind(self.GetCtrl('BindKey').Key, self.Title, self.Page, pb.GetValue())
+        cid = self.CustomID
+        key = self.GetCtrl('BindKey').Key
+        resetfile = self.Profile.ResetFile()
+        if self.IsPR():
+            # press/release bind, do it in resetfile plus two more, sigh.
+            pfile = self.Profile.GetBindFile('sb', f"{cid}-p.txt")
+            rfile = self.Profile.GetBindFile('sb', f"{cid}-r.txt")
+            if pb := self.PressBinder:
+                if rb := self.ReleaseBinder:
+                    resetfile.SetBind(key, self.Title, self.Page, "+$$" + pb.GetValue() + '$$' + rfile.BLF())
+                    pfile    .SetBind(key, self.Title, self.Page, "+$$" + pb.GetValue() + '$$' + rfile.BLF())
+                    rfile    .SetBind(key, self.Title, self.Page, "+$$" + rb.GetValue() + '$$' + pfile.BLF())
+        else:
+            if pb := self.PressBinder:
+                resetfile.SetBind(key, self.Title, self.Page, pb.GetValue())

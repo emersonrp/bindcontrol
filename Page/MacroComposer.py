@@ -7,6 +7,7 @@ from Page import Page
 from Help import HelpButton
 from Icon import GetIcon, GetIconBitmap, MACRO_ICON_NAMES
 from UI.PowerBinder import PowerBinder
+import wx.lib.agw.ultimatelistctrl as ULC
 
 class MacroComposer(Page):
     def __init__(self, parent) -> None:
@@ -217,7 +218,7 @@ class CustomBindControlButton(wx.BitmapButton):
 
 class MacroIconPicker(wx.Dialog):
     def __init__(self, parent):
-        super().__init__(parent, title = "Macro Icon", size = wx.Size(600,800))
+        super().__init__(parent, title = "Macro Icon", size = wx.Size(800,800))
 
         IconSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -230,14 +231,18 @@ class MacroIconPicker(wx.Dialog):
 
         IconSizer.Add(searchSizer, 0, wx.EXPAND|wx.ALL, 10)
 
-        self.IconList = wx.ListCtrl(self, style = wx.LC_LIST)
-        IconSizer.Add(self.IconList, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+        self.ScrolledWindow = wx.ScrolledWindow(self, style = wx.VSCROLL)
+        self.IconGrid = wx.GridSizer(3, 5, 5)
+        self.ScrolledWindow.SetSizer(self.IconGrid)
+        IconSizer.Add(self.ScrolledWindow, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
         IconSizer.Add(self.CreateButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 10)
 
         self.SetSizer(IconSizer)
 
+    def Show(self, show = True):
         self.FillList()
+        return super().Show(show)
 
     def OnSearchBox(self, evt):
         self.FillList()
@@ -245,10 +250,12 @@ class MacroIconPicker(wx.Dialog):
     def FillList(self):
         searchString = self.SearchBox.GetValue()
 
-        self.IconList.ClearAll()
-        index = 0
+        self.IconGrid.Clear(True)
 
         for micon in MACRO_ICON_NAMES:
             if not searchString or re.search(searchString, micon, re.IGNORECASE):
-                self.IconList.InsertItem(index, micon)
-                index = index + 1
+                IconTile = wx.ToggleButton(self.ScrolledWindow, label = micon, size = wx.Size(100, 50), style = wx.BU_LEFT)
+                IconTile.SetBitmap(GetIconBitmap('macros', micon))
+                self.IconGrid.Add(IconTile, 1, wx.EXPAND)
+
+        self.IconGrid.Layout()

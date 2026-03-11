@@ -23,7 +23,7 @@ def GetIcon(*args) -> Icon:
 
     pathbits = []
     for arg in args:
-        arg = re.sub(r'[^\w\\/.]+', '', arg)
+        arg = re.sub(r'[^\w\-\\/.]+', '', arg)
         pathbits.append(arg)
 
     iconpath    = Path(*pathbits).with_suffix('.png')

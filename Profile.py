@@ -18,6 +18,7 @@ from Page.MovementPowers import MovementPowers
 from Page.InspirationPopper import InspirationPopper
 from Page.Mastermind import Mastermind
 from Page.CustomBinds import CustomBinds
+from Page.MacroComposer import MacroComposer
 from Page.PopmenuEditor import PopmenuEditor
 import UI
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
@@ -92,6 +93,7 @@ class Profile(wx.Notebook):
         self.MovementPowers    = self.CreatePage(MovementPowers   (self))
         self.InspirationPopper = self.CreatePage(InspirationPopper(self))
         self.Mastermind        = self.CreatePage(Mastermind       (self))
+        self.MacroComposer     = self.CreatePage(MacroComposer    (self))
         self.PopmenuEditor     = self.CreatePage(PopmenuEditor    (self))
 
         if self.EditingDefault: self.ColorThingsForEditingDefault()

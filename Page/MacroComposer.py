@@ -1,4 +1,5 @@
 import wx
+import re
 
 from typing import Any
 
@@ -14,6 +15,8 @@ class MacroComposer(Page):
         self.TabTitle : str             = "Macro Composer"
         self.Panes    : list[MacroPane] = []
         self.Init     : dict[str, Any]  = {}
+
+        self.IconPicker = MacroIconPicker(self)
 
     def BuildPage(self) -> None:
         # sizer for the buttons
@@ -204,7 +207,7 @@ class MacroPane(wx.CollapsiblePane):
         self.SetLabel(f"{self.Title}")
 
     def OnIconButton(self, evt):
-        ...
+        self.Page.IconPicker.Show()
 
 class CustomBindControlButton(wx.BitmapButton):
     def __init__(self, parent, bitmap):
@@ -212,7 +215,40 @@ class CustomBindControlButton(wx.BitmapButton):
         self.MacroPane: wx.Window|None = None
         self.CtrlSizer: wx.Sizer |None = None
 
-class MacroIconMenu(wx.Menu):
-    def __init__(self):
-        super().__init__()
+class MacroIconPicker(wx.Dialog):
+    def __init__(self, parent):
+        super().__init__(parent, title = "Macro Icon", size = wx.Size(600,800))
 
+        IconSizer = wx.BoxSizer(wx.VERTICAL)
+
+        searchSizer = wx.BoxSizer(wx.HORIZONTAL)
+        searchSizer.Add(wx.StaticText(self, label = 'Search:'), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+
+        self.SearchBox = wx.TextCtrl(self)
+        self.SearchBox.Bind(wx.EVT_TEXT, self.OnSearchBox)
+        searchSizer.Add(self.SearchBox, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+
+        IconSizer.Add(searchSizer, 0, wx.EXPAND|wx.ALL, 10)
+
+        self.IconList = wx.ListCtrl(self, style = wx.LC_LIST)
+        IconSizer.Add(self.IconList, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+
+        IconSizer.Add(self.CreateButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 10)
+
+        self.SetSizer(IconSizer)
+
+        self.FillList()
+
+    def OnSearchBox(self, evt):
+        self.FillList()
+
+    def FillList(self):
+        searchString = self.SearchBox.GetValue()
+
+        self.IconList.ClearAll()
+        index = 0
+
+        for micon in MACRO_ICON_NAMES:
+            if not searchString or re.search(searchString, micon, re.IGNORECASE):
+                self.IconList.InsertItem(index, micon)
+                index = index + 1

@@ -4,7 +4,8 @@ from typing import Any
 
 from Page import Page
 from Help import HelpButton
-from Icon import GetIcon
+from Icon import GetIcon, GetIconBitmap, MACRO_ICON_NAMES
+from UI.PowerBinder import PowerBinder
 
 class MacroComposer(Page):
     def __init__(self, parent) -> None:
@@ -171,27 +172,39 @@ class MacroPane(wx.CollapsiblePane):
         self.Description : str = ''
 
     def BuildMacroUI(self, page):
+        self.Page = page
+
         pane = self.GetPane()
         macroSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        macroSizer.Add(wx.StaticText(pane, label = "Icon:"), 0, flag = wx.ALIGN_CENTER_VERTICAL)
-        self.IconButton = wx.Button(pane)
-        macroSizer.Add(self.IconButton, 0, flag = wx.ALIGN_CENTER_VERTICAL)
+        macroSizer.Add(wx.StaticText(pane, label = "Icon:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+        self.IconButton = wx.BitmapButton(pane, size = wx.Size(40,40))
+        self.IconButton.Bind(wx.EVT_BUTTON, self.OnIconButton)
+        macroSizer.Add(self.IconButton, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
         fieldSizer = wx.FlexGridSizer(2, 5, 5)
         fieldSizer.AddGrowableCol(1)
-        fieldSizer.Add(wx.StaticText(pane, label = "Contents:"), 0, flag = wx.ALIGN_CENTER_VERTICAL)
-        fieldSizer.Add(wx.TextCtrl(pane, value = "Test Contents"), 1, flag = wx.ALIGN_CENTER_VERTICAL)
+        fieldSizer.Add(wx.StaticText(pane, label = "Contents:"), 0, wx.ALIGN_CENTER_VERTICAL)
+        self.MacroContents = PowerBinder(pane)
+        fieldSizer.Add(self.MacroContents, 1, wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
 
-        fieldSizer.Add(wx.StaticText(pane, label = "Tooltip:"), 0, flag = wx.ALIGN_CENTER_VERTICAL)
-        fieldSizer.Add(wx.TextCtrl(pane, value = "Test Tooltip"), 1, flag = wx.ALIGN_CENTER_VERTICAL)
+        fieldSizer.Add(wx.StaticText(pane, label = "Tooltip:"), 0, wx.ALIGN_CENTER_VERTICAL)
+        self.ToolTipText = wx.TextCtrl(pane)
+        self.ToolTipText.SetHint('Optional in-game tooltip for the macro button')
+        fieldSizer.Add(self.ToolTipText, 1, wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
 
-        macroSizer.Add(fieldSizer, 0, flag = wx.ALIGN_CENTER_VERTICAL)
+        macroSizer.Add(fieldSizer, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
-        pane.SetSizer(macroSizer)
+        borderSizer = wx.BoxSizer(wx.VERTICAL)
+        borderSizer.Add(macroSizer, 1, wx.ALL|wx.EXPAND, 15)
+
+        pane.SetSizer(borderSizer)
 
     def UpdateLabel(self):
         self.SetLabel(f"{self.Title}")
+
+    def OnIconButton(self, evt):
+        ...
 
 class CustomBindControlButton(wx.BitmapButton):
     def __init__(self, parent, bitmap):

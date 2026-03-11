@@ -17,10 +17,10 @@ class MacroComposer(Page):
     def BuildPage(self) -> None:
         # sizer for the buttons
         buttonSizer         = wx.BoxSizer(wx.HORIZONTAL) # sizer for new-item buttons
-        newSimpleBindButton = wx.Button(self, label = "Create New Macro")
-        newSimpleBindButton.Bind(wx.EVT_BUTTON, self.OnNewMacroButton)
-        buttonSizer.Add(newSimpleBindButton, wx.ALIGN_CENTER)
-        buttonSizer.Add(HelpButton(self, 'SimpleBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
+        newMacroButton = wx.Button(self, label = "Create New Macro")
+        newMacroButton.Bind(wx.EVT_BUTTON, self.OnNewMacroButton)
+        buttonSizer.Add(newMacroButton, wx.ALIGN_CENTER)
+        buttonSizer.Add(HelpButton(self, 'MacroComposer.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
 
         # a scrollable window and sizer for the collection of collapsible panes
         self.PaneSizer     = wx.BoxSizer(wx.VERTICAL)
@@ -51,11 +51,9 @@ class MacroComposer(Page):
     def SynchronizeUI(self) -> None:
         ...
 
-    def PopulateBindFiles(self) -> bool:
-        return True
+    def PopulateBindFiles(self) -> bool: return True
 
-    def AllBindFiles(self) -> dict[str, list]:
-        return {}
+    def AllBindFiles(self) -> dict[str, list]: return {}
 
     def OnNewMacroButton(self, evt):
         self.AddMacroToPage(macropane = MacroPane(self))
@@ -143,38 +141,24 @@ class MacroComposer(Page):
             return False
 
         # marshal up the files to delete, before we change the name
-        if bindDesc := macropane.Description:
-            bindDesc = f' "{bindDesc}"'
-        dlg = wx.TextEntryDialog(self, f'Enter name for{bindDesc} bind:')
+        if macroDesc := macropane.Description:
+            macroDesc = f' "{macroDesc}"'
+        dlg = wx.TextEntryDialog(self, f'Enter name for{macroDesc} macro:')
         if macropane.Title:
             dlg.SetValue(macropane.Title)
-        if dlg.ShowModal() == wx.ID_OK:
-            # check if we already have a bind named that.  Complex Binds use the name as
-            # part of the bindfiles' filenames, so we can't have dupes
-            #
-            # TODO?  This is no longer the case, but do we want duplicate bind names allowed?
-            # That makes the "you have a conflict with custom bind 'Stan'" message ambiguous
-            title = dlg.GetValue()
-            for pane in self.Panes:
-                if title == pane.Title:
-                    if pane != macropane:
-                        # show an "oops" dialog and try again, this might not be perfect
-                        wx.MessageBox(f"A bind called {title} already exists!", "Error", wx.OK, self)
-                        return self.SetMacroPaneLabel(evt, macropane, new)
-                    dlg.Destroy()
-                    return False
 
-            macropane.Title = title
+        if dlg.ShowModal() == wx.ID_OK:
+            macropane.Title = dlg.GetValue()
             macropane.SetLabel(macropane.Title)
             if not new:
-                macropane.DelButton.SetToolTip(f'Delete bind "{macropane.Title}"')
-                macropane.RenButton.SetToolTip(f'Rename bind "{macropane.Title}"')
-                macropane.DupButton.SetToolTip(f'Duplicate bind "{macropane.Title}"')
-                macropane.ExpButton.SetToolTip(f'Export bind "{macropane.Title}"')
+                macropane.DelButton.SetToolTip(f'Delete macro "{macropane.Title}"')
+                macropane.RenButton.SetToolTip(f'Rename macro "{macropane.Title}"')
+                macropane.DupButton.SetToolTip(f'Duplicate macro "{macropane.Title}"')
+                macropane.ExpButton.SetToolTip(f'Export macro "{macropane.Title}"')
             self.Refresh()
             dlg.Destroy()
             return True # successful name change
-        else:
+        else: # they hit 'cancel'
             if new:
                 self.doDeleteMacroPane(macropane)
             dlg.Destroy()
@@ -187,14 +171,24 @@ class MacroPane(wx.CollapsiblePane):
         self.Description : str = ''
 
     def BuildMacroUI(self, page):
-        macroSizer = wx.FlexGridSizer(2, 5, 5)
-        macroSizer.AddGrowableCol(1)
+        pane = self.GetPane()
+        macroSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        macroSizer.Add(wx.StaticText(self, label = "Icon:"), 0, flag = wx.ALIGN_RIGHT)
-        self.IconButton = wx.Button(self)
-        macroSizer.Add(self.IconButton, 0, flag = wx.EXPAND)
+        macroSizer.Add(wx.StaticText(pane, label = "Icon:"), 0, flag = wx.ALIGN_CENTER_VERTICAL)
+        self.IconButton = wx.Button(pane)
+        macroSizer.Add(self.IconButton, 0, flag = wx.ALIGN_CENTER_VERTICAL)
 
-        self.SetSizer(macroSizer)
+        fieldSizer = wx.FlexGridSizer(2, 5, 5)
+        fieldSizer.AddGrowableCol(1)
+        fieldSizer.Add(wx.StaticText(pane, label = "Contents:"), 0, flag = wx.ALIGN_CENTER_VERTICAL)
+        fieldSizer.Add(wx.TextCtrl(pane, value = "Test Contents"), 1, flag = wx.ALIGN_CENTER_VERTICAL)
+
+        fieldSizer.Add(wx.StaticText(pane, label = "Tooltip:"), 0, flag = wx.ALIGN_CENTER_VERTICAL)
+        fieldSizer.Add(wx.TextCtrl(pane, value = "Test Tooltip"), 1, flag = wx.ALIGN_CENTER_VERTICAL)
+
+        macroSizer.Add(fieldSizer, 0, flag = wx.ALIGN_CENTER_VERTICAL)
+
+        pane.SetSizer(macroSizer)
 
     def UpdateLabel(self):
         self.SetLabel(f"{self.Title}")
@@ -202,5 +196,10 @@ class MacroPane(wx.CollapsiblePane):
 class CustomBindControlButton(wx.BitmapButton):
     def __init__(self, parent, bitmap):
         super().__init__(parent, bitmap = bitmap)
-        self.MacroPane:  wx.Window|None = None
-        self.CtrlSizer: wx.Sizer|None = None
+        self.MacroPane: wx.Window|None = None
+        self.CtrlSizer: wx.Sizer |None = None
+
+class MacroIconMenu(wx.Menu):
+    def __init__(self):
+        super().__init__()
+

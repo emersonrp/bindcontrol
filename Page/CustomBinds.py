@@ -162,8 +162,7 @@ class CustomBinds(Page):
             self.MainSizer.Replace(self.BlankPanel, self.scrolledPanel)
             self.MainSizer.Layout()
 
-        if not bindpane.CustomID:
-            # probably need to re-examine why we need this in two places in the bindpane
+        if not bindpane.CustomID: # probably need to re-examine why we need this in two places in the bindpane
             bindpane.CustomID = self.Profile.GetCustomID()
             bindpane.Init['CustomID'] = bindpane.CustomID
         else:

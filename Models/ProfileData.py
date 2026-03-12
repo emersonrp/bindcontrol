@@ -165,6 +165,10 @@ class ProfileData(dict):
         self['MaxCustomID'] = self.get('MaxCustomID', 0) + 1
         return self['MaxCustomID']
 
+    def GetMacroID(self) -> int:
+        self['MaxMacroID'] = self.get('MaxMacroID', 0) + 1
+        return self['MaxMacroID']
+
     # come up with a sane default binds directory name for this profile
     def GenerateBindsDirectoryName(self) -> str:
         bindsdircandidates = set()

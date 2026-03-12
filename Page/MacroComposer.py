@@ -79,6 +79,10 @@ class MacroComposer(Page):
             self.MainSizer.Replace(self.BlankPanel, self.scrolledPanel)
             self.MainSizer.Layout()
 
+        if not macropane.MacroID:
+            macropane.MacroID = self.Profile.GetMacroID()
+            macropane.Init['MacroID'] = macropane.MacroID
+
         macropane.UpdateLabel()
 
         self.Panes.append(macropane)
@@ -170,9 +174,15 @@ class MacroComposer(Page):
 
 class MacroPane(wx.CollapsiblePane):
     def __init__(self, page, init : dict|None = None) -> None:
+        init = init or {}
         super().__init__(page.scrolledPanel, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
-        self.Title       : str = ''
-        self.Description : str = ''
+
+        self.Title       : str      = init.get('Title', '')
+        self.Description : str      = ''
+        self.MacroID     : int|None = init.get('MacroID')
+        self.Init        : dict     = init
+
+        self.UpdateLabel()
 
     def BuildMacroUI(self, page):
         self.Page = page
@@ -205,7 +215,10 @@ class MacroPane(wx.CollapsiblePane):
         pane.SetSizer(borderSizer)
 
     def UpdateLabel(self):
-        self.SetLabel(f"{self.Title}")
+        if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
+            self.SetLabel(f"{self.Title} ({self.Description} ID:{self.MacroID})")
+        else:
+            self.SetLabel(f"{self.Title}")
 
     def OnIconButton(self, evt):
         iconpicker = self.Page.IconPicker
@@ -270,14 +283,18 @@ class MacroIconPicker(wx.Dialog):
         self.SetSizer(IconSizer)
 
     def ShowModal(self):
+        self.SearchBox.SetValue('')
+        self.ColorChoice.SetSelection(0)
         self.FillList()
         return super().ShowModal()
 
     def OnColorChoice(self, evt):
         self.FillList()
+        evt.Skip()
 
     def OnSearchBox(self, evt):
         self.FillList()
+        evt.Skip()
 
     def FillList(self):
         searchString = self.SearchBox.GetValue()
@@ -308,4 +325,3 @@ class MacroIconPicker(wx.Dialog):
     def color_dist(self, c1, c2):
         """ returns the squared euklidian distance between two color vectors in yuv space """
         return sum( (a-b)**2 for a,b in zip(c1, c2, strict = True) )
-

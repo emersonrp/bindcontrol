@@ -181,7 +181,7 @@ class MacroComposer(Page):
 
         shorttitle = re.sub(r'\W+', '', macropane.Title)
 
-        with wx.FileDialog(self, f'Export Complex Bind "{macropane.Title}"',
+        with wx.FileDialog(self, f'Export Macro "{macropane.Title}"',
                            defaultFile = f"{shorttitle}.bcm",
                            defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
                            wildcard = "BindControl Macro Files (*.bcm)|*.bcm|All Files (*.*)|*.*",

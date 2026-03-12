@@ -119,6 +119,7 @@ class CustomBinds(Page):
             try:
                 bindjson = filepath.read_text()
                 binddata = json.loads(bindjson)
+                binddata.pop('CustomID', None)
 
                 if bindpane := self.BuildBindPaneFromData(binddata):
                     self.AddBindToPage(bindpane = bindpane)

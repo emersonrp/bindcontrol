@@ -7,7 +7,6 @@ from Page import Page
 from Help import HelpButton
 from Icon import GetIcon, GetIconBitmap, MACRO_ICON_NAMES
 from UI.PowerBinder import PowerBinder
-import wx.lib.agw.ultimatelistctrl as ULC
 
 class MacroComposer(Page):
     def __init__(self, parent) -> None:

@@ -1,6 +1,8 @@
 import wx
 import re
+import json
 
+from pathlib import Path
 from typing import Any
 
 from Page import Page
@@ -57,8 +59,8 @@ class MacroComposer(Page):
         self.UpdateAllMacros()
         evt.Skip()
 
-    def BuildMacroPaneFromData(self, binddata):
-        return MacroPane(self, init = binddata)
+    def BuildMacroPaneFromData(self, macrodata):
+        return MacroPane(self, init = macrodata)
 
     def AddMacroToPage(self, macropane = None) -> None:
         if not macropane:
@@ -124,6 +126,7 @@ class MacroComposer(Page):
 
         self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), macroSizer, 0, wx.ALL|wx.EXPAND, 10)
         macropane.Expand()
+        self.UpdateAllMacros()
         self.Layout()
 
     def OnDeleteButton(self, evt):
@@ -174,7 +177,28 @@ class MacroComposer(Page):
         self.AddMacroToPage(newmacropane)
 
     def OnExportButton(self, evt):
-        ...
+        macropane = evt.GetEventObject().MacroPane
+
+        shorttitle = re.sub(r'\W+', '', macropane.Title)
+
+        with wx.FileDialog(self, f'Export Complex Bind "{macropane.Title}"',
+                           defaultFile = f"{shorttitle}.bcm",
+                           defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
+                           wildcard = "BindControl Macro Files (*.bcm)|*.bcm|All Files (*.*)|*.*",
+                           style = wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return
+
+            pathname = fileDialog.GetPath()
+            try:
+                filepath = Path(pathname)
+                macrodata = macropane.Serialize()
+                macrodata.pop('CustomID', None)
+                filepath.write_text(json.dumps(macrodata, indent=2))
+
+            except Exception as e:
+                wx.LogError(f"Error exporting Macro: {e}")
 
     def OnContentsChanged(self, evt = None) -> None:
         if evt: evt.Skip()
@@ -220,6 +244,10 @@ class MacroPane(wx.CollapsiblePane):
         self.Title       : str      = init.get('Title', '')
         self.CustomID    : int|None = init.get('CustomID')
         self.Init        : dict     = init
+        self.DelButton   : wx.Button|None = None
+        self.RenButton   : wx.Button|None = None
+        self.DupButton   : wx.Button|None = None
+        self.ExpButton   : wx.Button|None = None
 
         self.UpdateLabel()
 

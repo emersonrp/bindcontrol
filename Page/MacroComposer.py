@@ -168,7 +168,7 @@ class MacroComposer(Page):
         newmacropane = self.BuildMacroPaneFromData(init)
 
         if not newmacropane:
-            wx.LogError(f"Error duplicating bind {oldmacropane.Title}!")
+            wx.LogError(f'Error duplicating macro "{oldmacropane.Title}"!')
             return
 
         self.AddMacroToPage(newmacropane)

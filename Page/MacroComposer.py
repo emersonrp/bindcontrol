@@ -52,16 +52,13 @@ class MacroComposer(Page):
 
         self.Layout()
 
-    def SynchronizeUI(self) -> None:
-        ...
-
-    def PopulateBindFiles(self) -> bool: return True
-
-    def AllBindFiles(self) -> dict[str, list]: return {}
-
     def OnNewMacroButton(self, evt):
         self.AddMacroToPage(macropane = MacroPane(self))
+        self.UpdateAllMacros()
         evt.Skip()
+
+    def BuildMacroPaneFromData(self, binddata):
+        return MacroPane(self, init = binddata)
 
     def AddMacroToPage(self, macropane = None) -> None:
         if not macropane:
@@ -138,6 +135,14 @@ class MacroComposer(Page):
     def OnExportButton(self, evt):
         ...
 
+    def OnContentsChanged(self, evt = None) -> None:
+        if evt: evt.Skip()
+        self.UpdateAllMacros()
+
+    def UpdateAllMacros(self) -> None:
+        for pane in self.Panes:
+            self.Profile.UpdateData('MacroComposer', pane.Serialize())
+
     def doDeleteMacroPane(self, macropane):
         ...
 
@@ -148,10 +153,7 @@ class MacroComposer(Page):
             wx.LogError("Tried to set a MacroPane label without a macropane.  This is a bug.")
             return False
 
-        # marshal up the files to delete, before we change the name
-        if macroDesc := macropane.Description:
-            macroDesc = f' "{macroDesc}"'
-        dlg = wx.TextEntryDialog(self, f'Enter name for{macroDesc} macro:')
+        dlg = wx.TextEntryDialog(self, 'Enter name for macro:')
         if macropane.Title:
             dlg.SetValue(macropane.Title)
 
@@ -178,11 +180,20 @@ class MacroPane(wx.CollapsiblePane):
         super().__init__(page.scrolledPanel, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
         self.Title       : str      = init.get('Title', '')
-        self.Description : str      = ''
-        self.CustomID     : int|None = init.get('CustomID')
+        self.CustomID    : int|None = init.get('CustomID')
         self.Init        : dict     = init
 
         self.UpdateLabel()
+
+    def Serialize(self) -> dict:
+        return {
+            'CustomID'        : self.CustomID,
+            'Title'           : self.Title,
+            'Icon'            : self.IconButton.GetLabel(),
+            'Contents'        : self.MacroContents.GetValue(),
+            'powerbinderdata' : self.MacroContents.SaveToData(),
+            'ToolTip'         : self.ToolTipText.GetValue(),
+        }
 
     def BuildMacroUI(self, page):
         self.Page = page
@@ -191,7 +202,10 @@ class MacroPane(wx.CollapsiblePane):
         macroSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         macroSizer.Add(wx.StaticText(pane, label = "Icon:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
-        self.IconButton = wx.BitmapButton(pane, size = wx.Size(60,60))
+        self.IconButton = wx.Button(pane, size = wx.Size(60,60), style = wx.BU_NOTEXT)
+        if iconname := self.Init.get('Icon'):
+            self.IconButton.SetLabel(iconname)
+            self.IconButton.SetBitmap(GetIcon('macros', iconname))
         self.IconButton.Bind(wx.EVT_BUTTON, self.OnIconButton)
         self.IconButton.Bind(wx.EVT_RIGHT_DOWN, self.OnIconButtonRClick)
         macroSizer.Add(self.IconButton, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
@@ -199,12 +213,15 @@ class MacroPane(wx.CollapsiblePane):
         fieldSizer = wx.FlexGridSizer(2, 5, 5)
         fieldSizer.AddGrowableCol(1)
         fieldSizer.Add(wx.StaticText(pane, label = "Contents:"), 0, wx.ALIGN_CENTER_VERTICAL)
-        self.MacroContents = PowerBinder(pane)
+        self.MacroContents = PowerBinder(pane, self.Init.get('powerbinderdata'), contents = self.Init.get('Contents', ''))
+        self.MacroContents.Bind(wx.EVT_TEXT, self.Page.OnContentsChanged)
         fieldSizer.Add(self.MacroContents, 1, wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
 
         fieldSizer.Add(wx.StaticText(pane, label = "Tooltip:"), 0, wx.ALIGN_CENTER_VERTICAL)
         self.ToolTipText = wx.TextCtrl(pane)
+        self.ToolTipText.SetValue(self.Init.get('ToolTip', ''))
         self.ToolTipText.SetHint('Optional in-game tooltip for the macro button')
+        self.ToolTipText.Bind(wx.EVT_TEXT, self.Page.OnContentsChanged)
         fieldSizer.Add(self.ToolTipText, 1, wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
 
         macroSizer.Add(fieldSizer, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
@@ -216,7 +233,7 @@ class MacroPane(wx.CollapsiblePane):
 
     def UpdateLabel(self):
         if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
-            self.SetLabel(f"{self.Title} ({self.Description} ID:{self.CustomID})")
+            self.SetLabel(f"{self.Title} ID:{self.CustomID})")
         else:
             self.SetLabel(f"{self.Title}")
 
@@ -228,6 +245,7 @@ class MacroPane(wx.CollapsiblePane):
             self.IconButton.SetToolTip(iconname)
             self.IconButton.SetLabel(iconname)
             self.IconButton.SetBitmap(wx.BitmapBundle(GetIconBitmap('macros', iconname)))
+            self.Page.OnContentsChanged()
 
     def OnIconButtonRClick(self, evt):
         self.IconButton.SetToolTip('')

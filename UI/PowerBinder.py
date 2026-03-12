@@ -11,12 +11,14 @@ import wx.lib.newevent
 PowerBinderChanged, EVT_POWERBINDER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 class PowerBinder(ErrorControlMixin, wx.TextCtrl):
-    def __init__(self, parent, init : dict|None = None, extralength = 0):
+    def __init__(self, parent, init : dict|None = None, extralength = 0, contents = ''):
         init = init or {}
         super().__init__(parent)
         self.CurrentState = init
         self.DialogParent = parent
         self.ExtraLength  = extralength # for complex binds to add the footprint of each step's BLF()
+        if contents:
+            self.ChangeValue(contents)
 
         self.SetHint("Click to launch PowerBinder")
 
@@ -29,6 +31,9 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
         return self.CurrentState
 
     # If we do this at __init__ time, the app doesn't launch.  Investigate why.
+    # TODO - a little experimenting makes me think this isn't the case any more
+    # but I'm not confident enough to change it yet.  Likely it's OK to do
+    # this in __init__ now.
     def PowerBinderDialog(self):
         return PowerBinderDialog(self.DialogParent, self)
 

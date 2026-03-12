@@ -262,12 +262,9 @@ class MacroPane(wx.CollapsiblePane):
         enable = self.IconButton.GetLabel() != ''
         self.ToolTipText.Enable(enable)
         self.ToolTipLabel.Enable(enable)
-        if enable:
-            self.ToolTipText.SetToolTip('')
-            self.ToolTipLabel.SetToolTip('')
-        else:
-            self.ToolTipText.SetToolTip('Tooltip is only supported if an icon is chosen.')
-            self.ToolTipLabel.SetToolTip('Tooltip is only supported if an icon is chosen.')
+        tooltiptext = '' if enable else 'Tooltip is only supported if an icon is chosen.'
+        self.ToolTipText.SetToolTip(tooltiptext)
+        self.ToolTipLabel.SetToolTip(tooltiptext)
 
 class CustomBindControlButton(wx.BitmapButton):
     def __init__(self, parent, bitmap):

@@ -479,17 +479,14 @@ class MacroTextDialog(wx.Dialog):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        msg = ("\n"
+        msg = (
                f'To install "{macropane.Title}" into the game, copy and paste\n'
                "the following text into the chat window in-game:"
               )
-        sizer.Add(
-            wx.StaticText(self, label = msg, style = wx.ALIGN_CENTER),
-            0, wx.EXPAND|wx.ALL, 10
-        )
+        sizer.Add( wx.StaticText(self, label = msg, style = wx.ALIGN_CENTER), 0, wx.EXPAND|wx.ALL, 10)
 
-        ### helpful copyable /blf text
-        blfSizer = wx.BoxSizer(wx.HORIZONTAL)
+        ### helpful copyable /macro text
+        macroSizer = wx.BoxSizer(wx.HORIZONTAL)
         textCtrl = wx.TextCtrl(self,
                        style = wx.TE_READONLY|wx.TE_CENTER,
                        value = macropane.GetMacroString(),
@@ -505,15 +502,19 @@ class MacroTextDialog(wx.Dialog):
                 )
             )
         )
-        blfSizer.Add(textCtrl, 1, wx.EXPAND)
+        macroSizer.Add(textCtrl, 1, wx.EXPAND)
 
         copyButton = wx.BitmapButton(self, bitmap = GetIcon('UI', 'copy'))
         copyButton.SetToolTip('Copy text')
-        blfSizer.Add(copyButton, 0)
+        macroSizer.Add(copyButton, 0)
         copyButton.Bind(wx.EVT_BUTTON, self.doTextCopy)
-        sizer.Add(blfSizer, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+        sizer.Add(macroSizer, 0, wx.EXPAND|wx.TOP|wx.LEFT|wx.RIGHT, 10)
 
         self.textctrl = textCtrl
+
+        extraText = '\nThe macro will be placed in the first available power tray slot.'
+
+        sizer.Add(wx.StaticText(self, label = extraText, style = wx.ALIGN_CENTER), 0, wx.EXPAND|wx.ALL, 10)
 
         sizer.Add(self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10)
         self.SetSizerAndFit(sizer)

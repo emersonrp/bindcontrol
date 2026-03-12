@@ -217,7 +217,8 @@ class MacroPane(wx.CollapsiblePane):
         self.MacroContents.Bind(wx.EVT_TEXT, self.Page.OnContentsChanged)
         fieldSizer.Add(self.MacroContents, 1, wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
 
-        fieldSizer.Add(wx.StaticText(pane, label = "Tooltip:"), 0, wx.ALIGN_CENTER_VERTICAL)
+        self.ToolTipLabel = wx.StaticText(pane, label = "Tooltip:")
+        fieldSizer.Add(self.ToolTipLabel, 0, wx.ALIGN_CENTER_VERTICAL)
         self.ToolTipText = wx.TextCtrl(pane)
         self.ToolTipText.SetValue(self.Init.get('ToolTip', ''))
         self.ToolTipText.SetHint('Optional in-game tooltip for the macro button')
@@ -230,6 +231,8 @@ class MacroPane(wx.CollapsiblePane):
         borderSizer.Add(macroSizer, 1, wx.ALL|wx.EXPAND, 15)
 
         pane.SetSizer(borderSizer)
+
+        self.CheckToolTipSlot()
 
     def UpdateLabel(self):
         if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
@@ -246,11 +249,25 @@ class MacroPane(wx.CollapsiblePane):
             self.IconButton.SetLabel(iconname)
             self.IconButton.SetBitmap(wx.BitmapBundle(GetIconBitmap('macros', iconname)))
             self.Page.OnContentsChanged()
+            self.CheckToolTipSlot()
 
     def OnIconButtonRClick(self, evt):
         self.IconButton.SetToolTip('')
         self.IconButton.SetLabel('')
         self.IconButton.SetBitmap(wx.BitmapBundle(GetIconBitmap('Empty')))
+        self.Page.OnContentsChanged()
+        self.CheckToolTipSlot()
+
+    def CheckToolTipSlot(self):
+        enable = self.IconButton.GetLabel() != ''
+        self.ToolTipText.Enable(enable)
+        self.ToolTipLabel.Enable(enable)
+        if enable:
+            self.ToolTipText.SetToolTip('')
+            self.ToolTipLabel.SetToolTip('')
+        else:
+            self.ToolTipText.SetToolTip('Tooltip is only supported if an icon is chosen.')
+            self.ToolTipLabel.SetToolTip('Tooltip is only supported if an icon is chosen.')
 
 class CustomBindControlButton(wx.BitmapButton):
     def __init__(self, parent, bitmap):

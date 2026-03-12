@@ -131,21 +131,21 @@ class ProfileData(dict):
         return False
 
     def UpdateData(self, pagename, *args) -> None:
-        if pagename == 'CustomBinds':
+        if pagename == 'CustomBinds' or pagename == 'MacroComposer':
             self[pagename] = self.get(pagename, [])
             replaced = False
-            bindcontents = args[0]
-            for i, testbind in enumerate(self[pagename]):
-                if testbind['CustomID'] == bindcontents['CustomID']:
-                    if bindcontents.get('Action') == 'delete':
+            contents = args[0]
+            for i, test in enumerate(self[pagename]):
+                if test['CustomID'] == contents['CustomID']:
+                    if contents.get('Action') == 'delete':
                         del self[pagename][i]
                         replaced = True
                         break
-                    self[pagename][i] = bindcontents
+                    self[pagename][i] = contents
                     replaced = True
                     break
             if not replaced:
-                self[pagename].append(bindcontents)
+                self[pagename].append(contents)
         else:
             self[pagename] = self.get(pagename, {})
             # de-JSONize things if we got them from GetState().
@@ -164,10 +164,6 @@ class ProfileData(dict):
     def GetCustomID(self) -> int:
         self['MaxCustomID'] = self.get('MaxCustomID', 0) + 1
         return self['MaxCustomID']
-
-    def GetMacroID(self) -> int:
-        self['MaxMacroID'] = self.get('MaxMacroID', 0) + 1
-        return self['MaxMacroID']
 
     # come up with a sane default binds directory name for this profile
     def GenerateBindsDirectoryName(self) -> str:

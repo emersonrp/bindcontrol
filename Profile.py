@@ -136,11 +136,6 @@ class Profile(wx.Notebook):
         self.CheckModified()
         return cust_id
 
-    def GetMacroID(self) -> int:
-        macro_id = self.Data.GetMacroID()
-        self.CheckModified()
-        return macro_id
-
     def BLF(self, *args) -> str:
         filepath = self.GameBindsDir()
         for arg in args: filepath = filepath  /  arg

@@ -79,9 +79,9 @@ class MacroComposer(Page):
             self.MainSizer.Replace(self.BlankPanel, self.scrolledPanel)
             self.MainSizer.Layout()
 
-        if not macropane.MacroID:
-            macropane.MacroID = self.Profile.GetMacroID()
-            macropane.Init['MacroID'] = macropane.MacroID
+        if not macropane.CustomID:
+            macropane.CustomID = self.Profile.GetCustomID()
+            macropane.Init['CustomID'] = macropane.CustomID
 
         macropane.UpdateLabel()
 
@@ -179,7 +179,7 @@ class MacroPane(wx.CollapsiblePane):
 
         self.Title       : str      = init.get('Title', '')
         self.Description : str      = ''
-        self.MacroID     : int|None = init.get('MacroID')
+        self.CustomID     : int|None = init.get('CustomID')
         self.Init        : dict     = init
 
         self.UpdateLabel()
@@ -216,7 +216,7 @@ class MacroPane(wx.CollapsiblePane):
 
     def UpdateLabel(self):
         if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
-            self.SetLabel(f"{self.Title} ({self.Description} ID:{self.MacroID})")
+            self.SetLabel(f"{self.Title} ({self.Description} ID:{self.CustomID})")
         else:
             self.SetLabel(f"{self.Title}")
 

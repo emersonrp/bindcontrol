@@ -26,7 +26,11 @@ class MacroComposer(Page):
         newMacroButton = wx.Button(self, label = "Create New Macro")
         newMacroButton.Bind(wx.EVT_BUTTON, self.OnNewMacroButton)
         buttonSizer.Add(newMacroButton, wx.ALIGN_CENTER)
-        buttonSizer.Add(HelpButton(self, 'MacroComposer.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
+        buttonSizer.Add(HelpButton(self, 'MacroComposer.html'), 0, wx.ALIGN_CENTER, 5)
+        importMacroButton = wx.Button(self, label = "Import Macro")
+        importMacroButton.Bind(wx.EVT_BUTTON, self.OnImportMacroButton)
+        buttonSizer.Add(importMacroButton, wx.ALIGN_CENTER)
+        buttonSizer.Add(HelpButton(self, 'ImportMacro.html'), 0, wx.ALIGN_CENTER, 5)
 
         # a scrollable window and sizer for the collection of collapsible panes
         self.PaneSizer     = wx.BoxSizer(wx.VERTICAL)
@@ -57,6 +61,34 @@ class MacroComposer(Page):
     def OnNewMacroButton(self, evt):
         self.AddMacroToPage(macropane = MacroPane(self))
         self.UpdateAllMacros()
+        evt.Skip()
+
+    def OnImportMacroButton(self, evt):
+        # otherwise ask the user what new file to open
+        with wx.FileDialog(self, "Import Macro",
+                           defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
+                           wildcard="BindControl Custom Bind files (*.bcm)|*.bcm|All files (*.*)|*.*",
+                           style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return     # the user changed their mind
+
+            # Proceed loading the file chosen by the user
+            filepath = Path(fileDialog.GetPath())
+            try:
+                bindjson = filepath.read_text()
+                macrodata = json.loads(bindjson)
+                macrodata.pop('CustomID', None)
+
+                if macropane := self.BuildMacroPaneFromData(macrodata):
+                    self.AddMacroToPage(macropane = macropane)
+                    existingMacroNames = [pane.Title for pane in self.Panes if pane != macropane]
+                    if macropane.Title in existingMacroNames:
+                        self.SetMacroPaneLabel(None, macropane, new = True)
+
+            except Exception as e:
+                wx.LogError(f'Cannot import macro "{filepath.name}": {e}')
+
         evt.Skip()
 
     def BuildMacroPaneFromData(self, macrodata):
@@ -221,7 +253,7 @@ class MacroComposer(Page):
 
         if dlg.ShowModal() == wx.ID_OK:
             macropane.Title = dlg.GetValue()
-            macropane.SetLabel(macropane.Title)
+            macropane.UpdateLabel()
             if not new:
                 macropane.DelButton.SetToolTip(f'Delete macro "{macropane.Title}"')
                 macropane.RenButton.SetToolTip(f'Rename macro "{macropane.Title}"')
@@ -302,7 +334,7 @@ class MacroPane(wx.CollapsiblePane):
 
     def UpdateLabel(self):
         if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
-            self.SetLabel(f"{self.Title} ID:{self.CustomID})")
+            self.SetLabel(f"{self.Title} (ID:{self.CustomID})")
         else:
             self.SetLabel(f"{self.Title}")
 

@@ -117,8 +117,8 @@ class CustomBinds(Page):
             # Proceed loading the file chosen by the user
             filepath = Path(fileDialog.GetPath())
             try:
-                bindjson = filepath.read_text()
-                binddata = json.loads(bindjson)
+                macrojson = filepath.read_text()
+                binddata = json.loads(macrojson)
                 binddata.pop('CustomID', None)
 
                 if bindpane := self.BuildBindPaneFromData(binddata):

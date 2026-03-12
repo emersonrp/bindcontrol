@@ -4,7 +4,7 @@
 
 ## About BindControl
 
-BindControl is a helper app for creating and maintaining keybinds and popmenus for City of Heroes.
+BindControl is a helper app for creating and maintaining keybinds, macros, and popmenus for City of Heroes.
 
 It began as a direct port of Konoko and Monorail's [CityBinder 0.76](http://sourceforge.net/projects/citybinder/), using Python and the WxWidgets UI toolkit.  It has since come into its own, adding many original features, UI improvements, and quality-of-life upgrades.
 
@@ -80,6 +80,11 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
             + Optional popmenu allowing more detailed commands using just a few home position keystrokes
             + Numpad commands to select all pets or by-power
             + Mouse controls can cover 90% of moment-to-moment interactions with henchmen, while the popmenu covers all other needed functionality
+
+* Macro Composer (beta)
+    * Create complex macros using PowerBinder
+    * Icon picker containing (basically) all available in-game icons
+    * Import and export macros for ease of moving from one Profile to another or sharing with other BindControl users
 
 * Popmenu Editor (beta)
     * Create, install, edit, and delete popmenus in the game folder

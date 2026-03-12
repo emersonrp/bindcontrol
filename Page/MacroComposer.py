@@ -87,13 +87,13 @@ class MacroComposer(Page):
         macropane.BuildMacroUI(self)
 
         # put it in a box with control buttons
-        ctrlSizer = wx.BoxSizer(wx.HORIZONTAL)
-        ctrlSizer.Add(macropane, 1, wx.EXPAND, 5)
+        macroSizer = wx.BoxSizer(wx.HORIZONTAL)
+        macroSizer.Add(macropane, 1, wx.EXPAND, 5)
 
         buttonSizer = wx.BoxSizer(wx.VERTICAL)
         deleteButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'delete'))
         deleteButton.MacroPane  = macropane
-        deleteButton.CtrlSizer = ctrlSizer
+        deleteButton.MacroSizer = macroSizer
         macropane.DelButton = deleteButton
         deleteButton.SetToolTip(f'Delete macro "{macropane.Title}"')
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
@@ -120,14 +120,43 @@ class MacroComposer(Page):
         exportButton.Bind(wx.EVT_BUTTON, self.OnExportButton)
         buttonSizer.Add(exportButton)
 
-        ctrlSizer.Add(buttonSizer, 0, wx.LEFT, 10)
+        macroSizer.Add(buttonSizer, 0, wx.LEFT, 10)
 
-        self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), ctrlSizer, 0, wx.ALL|wx.EXPAND, 10)
+        self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), macroSizer, 0, wx.ALL|wx.EXPAND, 10)
         macropane.Expand()
         self.Layout()
 
     def OnDeleteButton(self, evt):
-        ...
+        delButton = evt.EventObject
+        macropane = delButton.MacroPane
+        with wx.MessageDialog(self,
+                              message = f'Delete macro "{macropane.Title}"?  This cannot be undone.',
+                              caption = f'Delete macro "{macropane.Title}"?',
+                              style   = wx.OK|wx.CANCEL,
+                              ) as dlg:
+            if dlg.ShowModal() == wx.ID_OK:
+                self.doDeleteMacroPane(macropane)
+            else:
+                return
+
+    def doDeleteMacroPane(self, macropane) -> None:
+        if delButton := macropane.DelButton:
+            sizer = delButton.MacroSizer
+            self.PaneSizer.Hide(sizer)
+            self.PaneSizer.Remove(sizer)
+        if macropane in self.Panes:
+            self.Panes.remove(macropane)
+        # won't have an ID if it was a cancelled new bind
+        if macropane.CustomID:
+            self.Profile.UpdateData('MacroComposer', { 'CustomID' : macropane.CustomID, 'Action' : 'delete' })
+        macropane.DestroyLater()
+        if len(self.Panes) == 0:
+            # need to put back the blankpanel
+            self.scrolledPanel.Hide()
+            self.BlankPanel.Show()
+            self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
+        self.Layout()
+
 
     def OnDuplicateButton(self, evt):
         ...
@@ -142,9 +171,6 @@ class MacroComposer(Page):
     def UpdateAllMacros(self) -> None:
         for pane in self.Panes:
             self.Profile.UpdateData('MacroComposer', pane.Serialize())
-
-    def doDeleteMacroPane(self, macropane):
-        ...
 
     def SetMacroPaneLabel(self, evt, macropane = None, new = False) -> bool:
         if not macropane:
@@ -269,8 +295,8 @@ class MacroPane(wx.CollapsiblePane):
 class CustomBindControlButton(wx.BitmapButton):
     def __init__(self, parent, bitmap):
         super().__init__(parent, bitmap = bitmap)
-        self.MacroPane: wx.Window|None = None
-        self.CtrlSizer: wx.Sizer |None = None
+        self.MacroPane:  wx.Window|None = None
+        self.MacroSizer: wx.Sizer |None = None
 
 class MacroIconPicker(wx.Dialog):
     def __init__(self, parent):

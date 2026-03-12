@@ -225,11 +225,18 @@ class MacroIconPicker(wx.Dialog):
         IconSizer = wx.BoxSizer(wx.VERTICAL)
 
         searchSizer = wx.BoxSizer(wx.HORIZONTAL)
-        searchSizer.Add(wx.StaticText(self, label = 'Search:'), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
         self.SearchBox = wx.TextCtrl(self)
+        self.SearchBox.SetHint('Search')
         self.SearchBox.Bind(wx.EVT_TEXT, self.OnSearchBox)
         searchSizer.Add(self.SearchBox, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+
+        colorHelp = HelpButton(self, 'ColorFilter.html')
+        searchSizer.Add(colorHelp, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+
+        self.ColorChoice = wx.Choice(self, choices = ['', 'Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Violet'])
+        self.ColorChoice.Bind(wx.EVT_CHOICE, self.OnColorChoice)
+        searchSizer.Add(self.ColorChoice, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
         IconSizer.Add(searchSizer, 0, wx.EXPAND|wx.ALL, 10)
 
@@ -244,11 +251,15 @@ class MacroIconPicker(wx.Dialog):
         self.FillList()
         return super().Show(show)
 
+    def OnColorChoice(self, evt):
+        self.FillList()
+
     def OnSearchBox(self, evt):
         self.FillList()
 
     def FillList(self):
         searchString = self.SearchBox.GetValue()
+        searchColor  = self.ColorChoice.GetStringSelection()
 
         self.IconList.ClearAll()
 
@@ -263,6 +274,24 @@ class MacroIconPicker(wx.Dialog):
 
         index = 0
         for iconidx, micon in enumerate(MACRO_ICON_NAMES):
-            if not searchString or re.search(searchString, micon, re.IGNORECASE):
-                self.IconList.InsertItem(index, micon, iconidx)
-                index = index + 1
+            if searchString and not re.search(searchString, micon, re.IGNORECASE): continue
+
+            if searchColor and not color_dist(YCC_COLORS[searchColor], MACRO_ICON_NAMES[micon]) < 0.12: continue
+
+            self.IconList.InsertItem(index, micon, iconidx)
+            index = index + 1
+
+
+# color functions / etc for icon color filter
+def color_dist(c1, c2):
+    """ returns the squared euklidian distance between two color vectors in yuv space """
+    return sum( (a-b)**2 for a,b in zip(c1, c2, strict = True) )
+
+YCC_COLORS = {
+    'Red' : (0.299, 127.831264, 128.5),
+    'Orange' : (0.6212745098039216, 127.64933866666667, 128.27013207843137),
+    'Yellow' : (0.8859999999999999, 127.49990000000001, 128.081312),
+    'Green' : (0.44197647058823525, 127.7505024, 127.68475256470589),
+    'Blue' : (0.114, 128.5, 127.918688),
+    'Violet' : (0.2629137254901961, 128.41596285490198, 128.16770760784314),
+}

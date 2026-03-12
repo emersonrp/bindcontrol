@@ -157,9 +157,21 @@ class MacroComposer(Page):
             self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
         self.Layout()
 
-
     def OnDuplicateButton(self, evt):
-        ...
+        oldmacropane = evt.EventObject.MacroPane
+        init = oldmacropane.Serialize()
+
+        # clear out a few things that we don't want in the new bind
+        init.pop('CustomID', None)
+        init.pop('Title', None)
+
+        newmacropane = self.BuildMacroPaneFromData(init)
+
+        if not newmacropane:
+            wx.LogError(f"Error duplicating bind {oldmacropane.Title}!")
+            return
+
+        self.AddMacroToPage(newmacropane)
 
     def OnExportButton(self, evt):
         ...

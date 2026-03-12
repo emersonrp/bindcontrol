@@ -308,20 +308,25 @@ class MacroPane(wx.CollapsiblePane):
         self.IconButton.Bind(wx.EVT_RIGHT_DOWN, self.OnIconButtonRClick)
         macroSizer.Add(self.IconButton, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
-        fieldSizer = wx.FlexGridSizer(2, 5, 5)
-        fieldSizer.AddGrowableCol(1)
-        fieldSizer.Add(wx.StaticText(pane, label = "Contents:"), 0, wx.ALIGN_CENTER_VERTICAL)
+        fieldSizer = wx.GridBagSizer(5, 5)
+        fieldSizer.Add(wx.StaticText(pane, label = "Contents:"), (0, 0), flag = wx.ALIGN_CENTER_VERTICAL)
         self.MacroContents = PowerBinder(pane, self.Init.get('powerbinderdata'), contents = self.Init.get('Contents', ''))
         self.MacroContents.Bind(wx.EVT_TEXT, self.Page.OnContentsChanged)
-        fieldSizer.Add(self.MacroContents, 1, wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
+        fieldSizer.Add(self.MacroContents, (0, 1), (1, 2), flag = wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
 
         self.ToolTipLabel = wx.StaticText(pane, label = "Tooltip:")
-        fieldSizer.Add(self.ToolTipLabel, 0, wx.ALIGN_CENTER_VERTICAL)
+        fieldSizer.Add(self.ToolTipLabel, (1, 0), flag = wx.ALIGN_CENTER_VERTICAL)
         self.ToolTipText = wx.TextCtrl(pane)
         self.ToolTipText.SetValue(self.Init.get('ToolTip', ''))
         self.ToolTipText.SetHint('Optional in-game tooltip for the macro button')
         self.ToolTipText.Bind(wx.EVT_TEXT, self.Page.OnContentsChanged)
-        fieldSizer.Add(self.ToolTipText, 1, wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
+        fieldSizer.Add(self.ToolTipText, (1, 1), flag = wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
+
+        stringButton = wx.Button(pane, label = 'Get Macro String')
+        stringButton.Bind(wx.EVT_BUTTON, self.OnStringButton)
+        fieldSizer.Add(stringButton, (1, 2), flag = wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
+
+        fieldSizer.AddGrowableCol(1)
 
         macroSizer.Add(fieldSizer, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
@@ -363,6 +368,18 @@ class MacroPane(wx.CollapsiblePane):
         tooltiptext = '' if enable else 'Tooltip is only supported if an icon is chosen.'
         self.ToolTipText.SetToolTip(tooltiptext)
         self.ToolTipLabel.SetToolTip(tooltiptext)
+
+    def OnStringButton(self, evt):
+        with MacroTextDialog(self.Page, self) as dlg:
+            dlg.ShowModal()
+
+    def GetMacroString(self) -> str:
+        if iconname := self.IconButton.GetLabel():
+            macrostring = f'/macro_image "{iconname}" "{self.ToolTipText.GetValue()}" "{self.MacroContents.GetValue()}"'
+        else:
+            macrostring = f'/macro "{self.Title}" "{self.MacroContents.GetValue()}"'
+
+        return macrostring
 
 class CustomBindControlButton(wx.BitmapButton):
     def __init__(self, parent, bitmap):
@@ -455,3 +472,57 @@ class MacroIconPicker(wx.Dialog):
     def color_dist(self, c1, c2):
         """ returns the squared euklidian distance between two color vectors in yuv space """
         return sum( (a-b)**2 for a,b in zip(c1, c2, strict = True) )
+
+class MacroTextDialog(wx.Dialog):
+    def __init__(self, parent, macropane):
+        super().__init__(parent, title = f'Macro Text for macro "{macropane.Title}"')
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        msg = ("\n"
+               f'To install "{macropane.Title}" into the game, copy and paste\n'
+               "the following text into the chat window in-game:"
+              )
+        sizer.Add(
+            wx.StaticText(self, label = msg, style = wx.ALIGN_CENTER),
+            0, wx.EXPAND|wx.ALL, 10
+        )
+
+        ### helpful copyable /blf text
+        blfSizer = wx.BoxSizer(wx.HORIZONTAL)
+        textCtrl = wx.TextCtrl(self,
+                       style = wx.TE_READONLY|wx.TE_CENTER,
+                       value = macropane.GetMacroString(),
+        )
+        textCtrl.SetFont(
+            wx.Font(9, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = 'Courier')
+        )
+        # https://wxpython.org/Phoenix/docs/html/wx.Control.html#wx.Control.GetSizeFromTextSize
+        textCtrl.SetInitialSize(
+            textCtrl.GetSizeFromTextSize(
+                textCtrl.GetTextExtent(
+                    textCtrl.GetValue()
+                )
+            )
+        )
+        blfSizer.Add(textCtrl, 1, wx.EXPAND)
+
+        copyButton = wx.BitmapButton(self, bitmap = GetIcon('UI', 'copy'))
+        copyButton.SetToolTip('Copy text')
+        blfSizer.Add(copyButton, 0)
+        copyButton.Bind(wx.EVT_BUTTON, self.doTextCopy)
+        sizer.Add(blfSizer, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+
+        self.textctrl = textCtrl
+
+        sizer.Add(self.CreateButtonSizer(wx.OK), 0, wx.EXPAND|wx.ALL, 10)
+        self.SetSizerAndFit(sizer)
+
+    def doTextCopy(self, _):
+        dataObj = wx.TextDataObject(self.textctrl.GetValue())
+        if wx.TheClipboard.Open():
+            wx.TheClipboard.SetData(dataObj)
+            wx.TheClipboard.Flush()
+            wx.TheClipboard.Close()
+        else:
+            wx.MessageBox("Couldn't open the clipboard for copying")

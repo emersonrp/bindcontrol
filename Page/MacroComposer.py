@@ -181,8 +181,9 @@ class MacroPane(wx.CollapsiblePane):
         macroSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         macroSizer.Add(wx.StaticText(pane, label = "Icon:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
-        self.IconButton = wx.BitmapButton(pane, size = wx.Size(40,40))
+        self.IconButton = wx.BitmapButton(pane, size = wx.Size(60,60))
         self.IconButton.Bind(wx.EVT_BUTTON, self.OnIconButton)
+        self.IconButton.Bind(wx.EVT_RIGHT_DOWN, self.OnIconButtonRClick)
         macroSizer.Add(self.IconButton, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
         fieldSizer = wx.FlexGridSizer(2, 5, 5)
@@ -207,7 +208,18 @@ class MacroPane(wx.CollapsiblePane):
         self.SetLabel(f"{self.Title}")
 
     def OnIconButton(self, evt):
-        self.Page.IconPicker.Show()
+        iconpicker = self.Page.IconPicker
+        if iconpicker.ShowModal() == wx.ID_OK:
+            item = iconpicker.IconList.GetFirstSelected()
+            iconname = iconpicker.IconList.GetItemText(item)
+            self.IconButton.SetToolTip(iconname)
+            self.IconButton.SetLabel(iconname)
+            self.IconButton.SetBitmap(GetIconBitmap('macros', iconname))
+
+    def OnIconButtonRClick(self, evt):
+        self.IconButton.SetToolTip('')
+        self.IconButton.SetLabel('')
+        self.IconButton.SetBitmap(GetIconBitmap('Empty'))
 
 class CustomBindControlButton(wx.BitmapButton):
     def __init__(self, parent, bitmap):
@@ -218,6 +230,16 @@ class CustomBindControlButton(wx.BitmapButton):
 class MacroIconPicker(wx.Dialog):
     def __init__(self, parent):
         super().__init__(parent, title = "Macro Icon", size = wx.Size(500,600))
+
+        # TODO do we want to move all the color stuff away into Util somewhere?
+        self.YCC_COLORS = {
+            'Red' : (0.299, 127.831264, 128.5),
+            'Orange' : (0.6212745098039216, 127.64933866666667, 128.27013207843137),
+            'Yellow' : (0.8859999999999999, 127.49990000000001, 128.081312),
+            'Green' : (0.44197647058823525, 127.7505024, 127.68475256470589),
+            'Blue' : (0.114, 128.5, 127.918688),
+            'Violet' : (0.2629137254901961, 128.41596285490198, 128.16770760784314),
+        }
 
         # where we squirrel away the actual Icon objects, indexed the same as MACRO_ICON_NAMES
         self.Icons = wx.ImageList(32, 32, True)
@@ -247,9 +269,9 @@ class MacroIconPicker(wx.Dialog):
 
         self.SetSizer(IconSizer)
 
-    def Show(self, show = True):
+    def ShowModal(self):
         self.FillList()
-        return super().Show(show)
+        return super().ShowModal()
 
     def OnColorChoice(self, evt):
         self.FillList()
@@ -276,22 +298,13 @@ class MacroIconPicker(wx.Dialog):
         for iconidx, micon in enumerate(MACRO_ICON_NAMES):
             if searchString and not re.search(searchString, micon, re.IGNORECASE): continue
 
-            if searchColor and not color_dist(YCC_COLORS[searchColor], MACRO_ICON_NAMES[micon]) < 0.12: continue
+            if searchColor and not self.color_dist(self.YCC_COLORS[searchColor], MACRO_ICON_NAMES[micon]) < 0.12: continue
 
             self.IconList.InsertItem(index, micon, iconidx)
             index = index + 1
 
+    # color functions / etc for icon color filter
+    def color_dist(self, c1, c2):
+        """ returns the squared euklidian distance between two color vectors in yuv space """
+        return sum( (a-b)**2 for a,b in zip(c1, c2, strict = True) )
 
-# color functions / etc for icon color filter
-def color_dist(c1, c2):
-    """ returns the squared euklidian distance between two color vectors in yuv space """
-    return sum( (a-b)**2 for a,b in zip(c1, c2, strict = True) )
-
-YCC_COLORS = {
-    'Red' : (0.299, 127.831264, 128.5),
-    'Orange' : (0.6212745098039216, 127.64933866666667, 128.27013207843137),
-    'Yellow' : (0.8859999999999999, 127.49990000000001, 128.081312),
-    'Green' : (0.44197647058823525, 127.7505024, 127.68475256470589),
-    'Blue' : (0.114, 128.5, 127.918688),
-    'Violet' : (0.2629137254901961, 128.41596285490198, 128.16770760784314),
-}

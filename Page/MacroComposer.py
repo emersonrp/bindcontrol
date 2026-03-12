@@ -214,12 +214,12 @@ class MacroPane(wx.CollapsiblePane):
             iconname = iconpicker.IconList.GetItemText(item)
             self.IconButton.SetToolTip(iconname)
             self.IconButton.SetLabel(iconname)
-            self.IconButton.SetBitmap(GetIconBitmap('macros', iconname))
+            self.IconButton.SetBitmap(wx.BitmapBundle(GetIconBitmap('macros', iconname)))
 
     def OnIconButtonRClick(self, evt):
         self.IconButton.SetToolTip('')
         self.IconButton.SetLabel('')
-        self.IconButton.SetBitmap(GetIconBitmap('Empty'))
+        self.IconButton.SetBitmap(wx.BitmapBundle(GetIconBitmap('Empty')))
 
 class CustomBindControlButton(wx.BitmapButton):
     def __init__(self, parent, bitmap):
@@ -290,6 +290,7 @@ class MacroIconPicker(wx.Dialog):
         if not self.Icons.GetImageCount() > 0:
             for m in MACRO_ICON_NAMES:
                 self.Icons.Add(GetIconBitmap('macros', m))
+
             self.IconList.SetImageList(self.Icons, wx.IMAGE_LIST_SMALL)
 
         self.IconList.InsertColumn(0, '', width = 450)

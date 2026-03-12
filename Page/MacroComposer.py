@@ -218,10 +218,10 @@ class CustomBindControlButton(wx.BitmapButton):
 
 class MacroIconPicker(wx.Dialog):
     def __init__(self, parent):
-        super().__init__(parent, title = "Macro Icon", size = wx.Size(800,800))
+        super().__init__(parent, title = "Macro Icon", size = wx.Size(500,600))
 
         # where we squirrel away the actual Icon objects, indexed the same as MACRO_ICON_NAMES
-        self.Icons = ULC.PyImageList(32, 32, style = ULC.IL_FIXED_SIZE)
+        self.Icons = wx.ImageList(32, 32, True)
 
         IconSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -234,8 +234,7 @@ class MacroIconPicker(wx.Dialog):
 
         IconSizer.Add(searchSizer, 0, wx.EXPAND|wx.ALL, 10)
 
-        self.IconList = ULC.UltimateListCtrl(self,
-            agwStyle = ULC.ULC_REPORT|ULC.ULC_NO_HEADER|ULC.ULC_SINGLE_SEL)
+        self.IconList = wx.ListCtrl(self, style = wx.LC_REPORT|wx.LC_SINGLE_SEL|wx.LC_NO_HEADER)
         IconSizer.Add(self.IconList, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
         IconSizer.Add(self.CreateButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 10)
@@ -252,19 +251,19 @@ class MacroIconPicker(wx.Dialog):
     def FillList(self):
         searchString = self.SearchBox.GetValue()
 
+        self.IconList.ClearAll()
+
         # Build the Icons cache list once.  Do it here later on because
         # Icon.py has been caching these in a background thread.
         if not self.Icons.GetImageCount() > 0:
             for m in MACRO_ICON_NAMES:
                 self.Icons.Add(GetIconBitmap('macros', m))
-            self.IconList.SetImageList(self.Icons, wx.IMAGE_LIST_NORMAL)
+            self.IconList.SetImageList(self.Icons, wx.IMAGE_LIST_SMALL)
 
-        self.IconList.ClearAll()
+        self.IconList.InsertColumn(0, '', width = 450)
 
-        self.IconList.InsertColumn(0, '', width = 260)
-        self.IconList.InsertColumn(1, '', width = 260)
-        self.IconList.InsertColumn(2, '', width = 260)
-
-        for micon in MACRO_ICON_NAMES:
+        index = 0
+        for iconidx, micon in enumerate(MACRO_ICON_NAMES):
             if not searchString or re.search(searchString, micon, re.IGNORECASE):
-                self.IconList.InsertImageStringItem(self.IconList.GetItemCount(), micon, micon in MACRO_ICON_NAMES)
+                self.IconList.InsertItem(index, micon, iconidx)
+                index = index + 1

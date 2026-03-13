@@ -1,4 +1,5 @@
 import wx
+import wx.lib.agw.ultimatelistctrl as ULC
 import re
 import json
 
@@ -387,9 +388,17 @@ class CustomBindControlButton(wx.BitmapButton):
         self.MacroPane:  wx.Window|None = None
         self.MacroSizer: wx.Sizer |None = None
 
-class MacroIconPicker(wx.Dialog):
+class IconVirtualList(ULC.UltimateListCtrl):
     def __init__(self, parent):
-        super().__init__(parent, title = "Macro Icon", size = wx.Size(500,600))
+        super().__init__(parent, agwStyle = ULC.ULC_REPORT|ULC.ULC_VIRTUAL|ULC.ULC_SINGLE_SEL|ULC.ULC_NO_HEADER|ULC.ULC_USER_ROW_HEIGHT)
+        self.InsertColumn(0, '', width = 450)
+
+        self.SetItemCount(len(MACRO_ICON_NAMES))
+        self.SetUserLineHeight(40)
+
+        self.Icons = wx.ImageList(32, 32, True)
+        self.CurrentList = [] # the current list of names after filters have been applied
+        self.NameToIconIdx = {}
 
         # TODO do we want to move all the color stuff away into Util somewhere?
         self.YCC_COLORS = {
@@ -401,8 +410,44 @@ class MacroIconPicker(wx.Dialog):
             'Violet' : (0.2629137254901961, 128.41596285490198, 128.16770760784314),
         }
 
-        # where we squirrel away the actual Icon objects, indexed the same as MACRO_ICON_NAMES
-        self.Icons = wx.ImageList(32, 32, True)
+        self.SetImageList(self.Icons, wx.IMAGE_LIST_SMALL)
+
+    def OnGetItemText(self, item, col):
+        return self.CurrentList[item]
+
+    def OnGetItemImage(self, item):
+        name = self.CurrentList[item]
+        idx = self.NameToIconIdx.get(name, None) or self.Icons.Add(GetIconBitmap('macros', name))
+        self.NameToIconIdx[name] = idx
+        return [idx]
+
+    def OnGetItemToolTip   (self, item, col): return '' # pyright: ignore
+    def OnGetItemTextColour(self, item, col): return None # pyright: ignore
+
+    def FillList(self):
+        searchString = self.Parent.SearchBox.GetValue() # pyright: ignore
+        searchColor  = self.Parent.ColorChoice.GetStringSelection() # pyright: ignore
+
+        self.DeleteAllItems()
+        self.CurrentList = []
+
+        for micon in MACRO_ICON_NAMES:
+            if searchString and not re.search(searchString, micon, re.IGNORECASE): continue
+
+            if searchColor and not self.color_dist(self.YCC_COLORS[searchColor], MACRO_ICON_NAMES[micon]) < 0.12: continue
+
+            self.CurrentList.append(micon)
+
+        self.SetItemCount(len(self.CurrentList))
+
+    # color functions / etc for icon color filter
+    def color_dist(self, c1, c2):
+        """ returns the squared euklidian distance between two color vectors in yuv space """
+        return sum( (a-b)**2 for a,b in zip(c1, c2, strict = True) )
+
+class MacroIconPicker(wx.Dialog):
+    def __init__(self, parent):
+        super().__init__(parent, title = "Macro Icon", size = wx.Size(500,600))
 
         IconSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -422,7 +467,7 @@ class MacroIconPicker(wx.Dialog):
 
         IconSizer.Add(searchSizer, 0, wx.EXPAND|wx.ALL, 10)
 
-        self.IconList = wx.ListCtrl(self, style = wx.LC_REPORT|wx.LC_SINGLE_SEL|wx.LC_NO_HEADER)
+        self.IconList = IconVirtualList(self)
         IconSizer.Add(self.IconList, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
         IconSizer.Add(self.CreateButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 10)
@@ -432,46 +477,16 @@ class MacroIconPicker(wx.Dialog):
     def ShowModal(self):
         self.SearchBox.SetValue('')
         self.ColorChoice.SetSelection(0)
-        self.FillList()
+        self.IconList.FillList()
         return super().ShowModal()
 
     def OnColorChoice(self, evt):
-        self.FillList()
+        self.IconList.FillList()
         evt.Skip()
 
     def OnSearchBox(self, evt):
-        self.FillList()
+        self.IconList.FillList()
         evt.Skip()
-
-    def FillList(self):
-        searchString = self.SearchBox.GetValue()
-        searchColor  = self.ColorChoice.GetStringSelection()
-
-        self.IconList.ClearAll()
-
-        # Build the Icons cache list once.  Do it here later on because
-        # Icon.py has been caching these in a background thread.
-        if not self.Icons.GetImageCount() > 0:
-            for m in MACRO_ICON_NAMES:
-                self.Icons.Add(GetIconBitmap('macros', m))
-
-            self.IconList.SetImageList(self.Icons, wx.IMAGE_LIST_SMALL)
-
-        self.IconList.InsertColumn(0, '', width = 450)
-
-        index = 0
-        for iconidx, micon in enumerate(MACRO_ICON_NAMES):
-            if searchString and not re.search(searchString, micon, re.IGNORECASE): continue
-
-            if searchColor and not self.color_dist(self.YCC_COLORS[searchColor], MACRO_ICON_NAMES[micon]) < 0.12: continue
-
-            self.IconList.InsertItem(index, micon, iconidx)
-            index = index + 1
-
-    # color functions / etc for icon color filter
-    def color_dist(self, c1, c2):
-        """ returns the squared euklidian distance between two color vectors in yuv space """
-        return sum( (a-b)**2 for a,b in zip(c1, c2, strict = True) )
 
 class MacroTextDialog(wx.Dialog):
     def __init__(self, parent, macropane):

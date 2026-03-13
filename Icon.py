@@ -88,10 +88,6 @@ def PrecacheIcons(profile):
 
         RecurseMiscPowers(GameData.MiscPowers)
 
-        # Precache the Macro Icons.  This is probably spendy but hey, threading
-        for micon in MACRO_ICON_NAMES:
-            GetIcon('macros', micon)
-
     def RecurseMiscPowers(menustruct):
         for data in menustruct.values():
             if isinstance(data, dict):

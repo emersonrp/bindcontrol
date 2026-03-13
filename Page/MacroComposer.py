@@ -432,7 +432,7 @@ class IconVirtualList(ULC.UltimateListCtrl):
         self.CurrentList = []
 
         for micon in MACRO_ICON_NAMES:
-            if searchString and not re.search(searchString, micon, re.IGNORECASE): continue
+            if searchString and not re.search(re.escape(searchString), micon, re.IGNORECASE): continue
 
             if searchColor and not self.color_dist(self.YCC_COLORS[searchColor], MACRO_ICON_NAMES[micon]) < 0.12: continue
 

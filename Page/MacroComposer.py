@@ -8,8 +8,9 @@ from typing import Any
 
 from Page import Page
 from Help import HelpButton
-from Icon import GetIcon, GetIconBitmap, MACRO_ICON_NAMES
+from Icon import GetIcon, GetIconBitmap
 from UI.PowerBinder import PowerBinder
+from Util.MacroIcons import MacroIconBitmap, MACRO_ICON_NAMES, YCC_COLORS
 
 class MacroComposer(Page):
     def __init__(self, parent) -> None:
@@ -350,7 +351,7 @@ class MacroPane(wx.CollapsiblePane):
                 iconname = iconpicker.IconList.GetItemText(item)
                 self.IconButton.SetToolTip(iconname)
                 self.IconButton.SetLabel(iconname)
-                self.IconButton.SetBitmap(wx.BitmapBundle(GetIconBitmap('macros', iconname)))
+                self.IconButton.SetBitmap(wx.BitmapBundle(MacroIconBitmap(iconname)))
                 self.Page.OnContentsChanged()
                 self.CheckToolTipSlot()
 
@@ -358,7 +359,7 @@ class MacroPane(wx.CollapsiblePane):
         if evt: evt.Skip()
         self.IconButton.SetToolTip('')
         self.IconButton.SetLabel('')
-        self.IconButton.SetBitmap(wx.BitmapBundle(GetIconBitmap('Empty')))
+        self.IconButton.SetBitmap(wx.BitmapBundle(GetIconBitmap('Empty'))) # GetIconBitmap just for 'Empty'
         self.Page.OnContentsChanged()
         self.CheckToolTipSlot()
 
@@ -400,16 +401,6 @@ class IconVirtualList(ULC.UltimateListCtrl):
         self.CurrentList = [] # the current list of names after filters have been applied
         self.NameToIconIdx = {}
 
-        # TODO do we want to move all the color stuff away into Util somewhere?
-        self.YCC_COLORS = {
-            'Red' : (0.299, 127.831264, 128.5),
-            'Orange' : (0.6212745098039216, 127.64933866666667, 128.27013207843137),
-            'Yellow' : (0.8859999999999999, 127.49990000000001, 128.081312),
-            'Green' : (0.44197647058823525, 127.7505024, 127.68475256470589),
-            'Blue' : (0.114, 128.5, 127.918688),
-            'Violet' : (0.2629137254901961, 128.41596285490198, 128.16770760784314),
-        }
-
         self.SetImageList(self.Icons, wx.IMAGE_LIST_SMALL)
 
     def OnGetItemText(self, item, col):
@@ -417,7 +408,7 @@ class IconVirtualList(ULC.UltimateListCtrl):
 
     def OnGetItemImage(self, item):
         name = self.CurrentList[item]
-        idx = self.NameToIconIdx.get(name, None) or self.Icons.Add(GetIconBitmap('macros', name))
+        idx = self.NameToIconIdx.get(name, None) or self.Icons.Add(MacroIconBitmap(name))
         self.NameToIconIdx[name] = idx
         return [idx]
 
@@ -434,7 +425,7 @@ class IconVirtualList(ULC.UltimateListCtrl):
         for micon in MACRO_ICON_NAMES:
             if searchString and not re.search(re.escape(searchString), micon, re.IGNORECASE): continue
 
-            if searchColor and not self.color_dist(self.YCC_COLORS[searchColor], MACRO_ICON_NAMES[micon]) < 0.12: continue
+            if searchColor and not self.color_dist(YCC_COLORS[searchColor], MACRO_ICON_NAMES[micon]) < 0.12: continue
 
             self.CurrentList.append(micon)
 

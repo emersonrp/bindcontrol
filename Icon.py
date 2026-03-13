@@ -97,7 +97,7 @@ def PrecacheIcons(profile):
                     item, iconlist = SplitNameAndIcon(item)
                     GetIcon('Powers', 'Misc', *iconlist)
 
-    thread = threading.Thread(target = doPrecacheIcons, args = (profile,))
+    thread = threading.Thread(target = doPrecacheIcons, args = (profile,)) # RP:  trailing comma necessary
     thread.start()
     return thread
 

@@ -19,11 +19,9 @@ class MacroComposer(Page):
         self.Panes    : list[MacroPane] = []
         self.Init     : dict[str, Any]  = {}
 
-        self.IconPicker = MacroIconPicker(self)
-
     def BuildPage(self) -> None:
         # sizer for the buttons
-        buttonSizer         = wx.BoxSizer(wx.HORIZONTAL) # sizer for new-item buttons
+        buttonSizer = wx.BoxSizer(wx.HORIZONTAL) # sizer for new-item buttons
         newMacroButton = wx.Button(self, label = "Create New Macro")
         newMacroButton.Bind(wx.EVT_BUTTON, self.OnNewMacroButton)
         buttonSizer.Add(newMacroButton, wx.ALIGN_CENTER)
@@ -274,13 +272,13 @@ class MacroPane(wx.CollapsiblePane):
         init = init or {}
         super().__init__(page.scrolledPanel, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
 
-        self.Title       : str      = init.get('Title', '')
-        self.CustomID    : int|None = init.get('CustomID')
-        self.Init        : dict     = init
-        self.DelButton   : wx.Button|None = None
-        self.RenButton   : wx.Button|None = None
-        self.DupButton   : wx.Button|None = None
-        self.ExpButton   : wx.Button|None = None
+        self.Title       : str             = init.get('Title', '')
+        self.CustomID    : int|None        = init.get('CustomID')
+        self.Init        : dict            = init
+        self.DelButton   : wx.Button|None  = None
+        self.RenButton   : wx.Button|None  = None
+        self.DupButton   : wx.Button|None  = None
+        self.ExpButton   : wx.Button|None  = None
 
         self.UpdateLabel()
 
@@ -345,17 +343,19 @@ class MacroPane(wx.CollapsiblePane):
             self.SetLabel(f"{self.Title}")
 
     def OnIconButton(self, evt):
-        iconpicker = self.Page.IconPicker
-        if iconpicker.ShowModal() == wx.ID_OK:
-            item = iconpicker.IconList.GetFirstSelected()
-            iconname = iconpicker.IconList.GetItemText(item)
-            self.IconButton.SetToolTip(iconname)
-            self.IconButton.SetLabel(iconname)
-            self.IconButton.SetBitmap(wx.BitmapBundle(GetIconBitmap('macros', iconname)))
-            self.Page.OnContentsChanged()
-            self.CheckToolTipSlot()
+        if evt: evt.Skip()
+        with MacroIconPicker(self) as iconpicker: # RP: don't try to cache this, make a new one every time ugh
+            if iconpicker.ShowModal() == wx.ID_OK:
+                item = iconpicker.IconList.GetFirstSelected()
+                iconname = iconpicker.IconList.GetItemText(item)
+                self.IconButton.SetToolTip(iconname)
+                self.IconButton.SetLabel(iconname)
+                self.IconButton.SetBitmap(wx.BitmapBundle(GetIconBitmap('macros', iconname)))
+                self.Page.OnContentsChanged()
+                self.CheckToolTipSlot()
 
     def OnIconButtonRClick(self, evt):
+        if evt: evt.Skip()
         self.IconButton.SetToolTip('')
         self.IconButton.SetLabel('')
         self.IconButton.SetBitmap(wx.BitmapBundle(GetIconBitmap('Empty')))

@@ -117,8 +117,8 @@ class CustomBinds(Page):
             # Proceed loading the file chosen by the user
             filepath = Path(fileDialog.GetPath())
             try:
-                macrojson = filepath.read_text()
-                binddata = json.loads(macrojson)
+                bindjson = filepath.read_text()
+                binddata = json.loads(bindjson)
                 binddata.pop('CustomID', None)
 
                 if bindpane := self.BuildBindPaneFromData(binddata):
@@ -163,7 +163,8 @@ class CustomBinds(Page):
             self.MainSizer.Replace(self.BlankPanel, self.scrolledPanel)
             self.MainSizer.Layout()
 
-        if not bindpane.CustomID: # probably need to re-examine why we need this in two places in the bindpane
+        if not bindpane.CustomID:
+            # probably need to re-examine why we need this in two places in the bindpane
             bindpane.CustomID = self.Profile.GetCustomID()
             bindpane.Init['CustomID'] = bindpane.CustomID
         else:

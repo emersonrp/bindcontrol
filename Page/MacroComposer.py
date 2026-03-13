@@ -303,7 +303,7 @@ class MacroPane(wx.CollapsiblePane):
         self.IconButton = wx.Button(pane, size = wx.Size(60,60), style = wx.BU_NOTEXT)
         if iconname := self.Init.get('Icon'):
             self.IconButton.SetLabel(iconname)
-            self.IconButton.SetBitmap(GetIcon('macros', iconname))
+            self.IconButton.SetBitmap(wx.BitmapBundle(MacroIconBitmap(iconname)))
         self.IconButton.Bind(wx.EVT_BUTTON, self.OnIconButton)
         self.IconButton.Bind(wx.EVT_RIGHT_DOWN, self.OnIconButtonRClick)
         macroSizer.Add(self.IconButton, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)

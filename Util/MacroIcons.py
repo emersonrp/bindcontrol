@@ -8,10 +8,10 @@ def MacroIconBitmap(name):
     iconloc = list(MACRO_ICON_NAMES).index(name) * 32
     pil_image = MacroIconsImage.crop(box = (iconloc, 0, iconloc + 32, 32))
 
-    wx_image = wx.EmptyImage(pil_image.size[0], pil_image.size[1])
+    wx_image = wx.Image(pil_image.size[0], pil_image.size[1])
     wx_image.SetData(pil_image.convert("RGB").tobytes())
     wx_image.SetAlpha(pil_image.convert("RGBA").tobytes()[3::4])
-    return wx.BitmapFromImage(wx_image)
+    return wx.Bitmap(wx_image)
 
 YCC_COLORS = {
     'Red' : (0.299, 127.831264, 128.5),

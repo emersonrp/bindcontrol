@@ -23,6 +23,7 @@ params = [
     '--exclude-module=_lzma',
     '--exclude-module=_ssl',
     '--hidden-import=UI.IncarnateBox',
+    '--hidden-import=PIL',
 ]
 
 if platform.system() == "Darwin":

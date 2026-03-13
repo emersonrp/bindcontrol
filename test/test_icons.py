@@ -6,6 +6,7 @@ from Util.Incarnate import Aliases
 import GameData
 import Util.Paths
 import Icon
+import asyncio
 
 def RecurseMiscPowers(menustruct):
     powerlist = []
@@ -248,7 +249,7 @@ def test_precache(profile):
     assert 'Powers/Misc/StolenImmobilizerRay.png'            not in Icon.Icons
 
     thread = Icon.PrecacheIcons(profile)
-    thread.join()
+    asyncio.wait(thread)
 
     assert 'Powers/CrabSpiderSoldier/HeavyBurst.png'         in Icon.Icons
     assert 'Powers/CrabSpiderTraining/SummonSpiderlings.png' in Icon.Icons

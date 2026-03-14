@@ -23,7 +23,6 @@ if TYPE_CHECKING:
 from UI.KeySelectDialog import bcKeyButton
 from UI.PowerPicker import PowerPicker
 from UI.PowerSelector import PowerSelector
-from Icon import GetIcon
 
 class Page(wx.ScrolledWindow):
     def __init__(self, parent):

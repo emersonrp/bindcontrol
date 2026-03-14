@@ -1,6 +1,8 @@
 import wx
+import re
 import GameData
 from Icon import GetIcon, SplitNameAndIcon
+from Util.SourceFileIcons import GetIconFromSourceFile
 from UI.ErrorControls import ErrorControlMixin
 from Util.Incarnate import Rarities, Aliases
 
@@ -13,7 +15,7 @@ class PowerPicker(ErrorControlMixin, wx.Button):
 
         if size == wx.DefaultSize:
             self.SetMinSize(wx.Size(-1, 40))
-        self.Bind(wx.EVT_BUTTON, self.OnPowerPicker)
+        self.Bind(wx.EVT_BUTTON,     self.OnPowerPicker)
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
         self.IconFilename = ''
         self.Picker = menu
@@ -61,6 +63,23 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         self.doOnMenuSelected(evt)
         wx.PostEvent(self, PowerChanged(wx.NewId(), control = self))
 
+    # DRYed this up from a few places.  Probably belongs here but not 100% sure.
+    def SetIconFromFilename(self, filename):
+        # this dance is to support Profiles saved pre-PIL icons
+        if re.match('Powers_', filename):
+            filename = re.sub('^Powers_', '', filename)
+            icon = GetIconFromSourceFile('Powers', filename)
+        else:
+            start, *bits = re.split('/', filename)
+            if start != 'Powers':
+                wx.LogError(f'Got a very strange picon value: "{filename}" - this is a bug!')
+                icon = GetIcon('Empty')
+            else:
+                filename = f'Powers_{"_".join(bits)}'
+                icon = GetIconFromSourceFile('Powers', '_'.join(bits))
+        self.IconFilename = filename
+        self.SetBitmap(icon)
+
 class PowerPickerMenu(wx.Menu):
     def BuildMenu(self) -> None:
         gen = wx.App.Get().Main.Profile.General
@@ -81,13 +100,13 @@ class PowerPickerMenu(wx.Menu):
                     for power in items:
                         if not self.ShowPower(category, power): continue
                         menuitem = PowerMenuItem(wx.ID_ANY, power)
-                        icon = GetIcon('Powers', powerset, power)
+                        icon = GetIconFromSourceFile('Powers', f'{powerset}_{power}')
                         if icon:
                             menuitem.SetBitmap(icon)
                             menuitem.IconFilename = icon.Filename
                         subsubmenu.Append(menuitem)
                     subitem = submenu.AppendSubMenu(subsubmenu, subsubname)
-                    icon = GetIcon('Powers', powerset, subsubname)
+                    icon = GetIconFromSourceFile('Powers', f'{powerset}_{subsubname}')
                     if icon:
                         subitem.SetBitmap(icon) # this works on Windows but not GTK.  Maybe investigate, maybe not.
                         # don't need to set .IconFilename here because we're never going to store the submenu
@@ -95,7 +114,7 @@ class PowerPickerMenu(wx.Menu):
                 else:
                     if not self.ShowPower(category, power): continue
                     menuitem = PowerMenuItem(wx.ID_ANY, power)
-                    icon = GetIcon('Powers', powerset, power)
+                    icon = GetIconFromSourceFile('Powers', f'{powerset}_{power}')
                     if icon:
                         menuitem.SetBitmap(icon)
                         menuitem.IconFilename = icon.Filename
@@ -112,7 +131,7 @@ class PowerPickerMenu(wx.Menu):
                 for power in powers:
                     if not self.ShowPower(poolpicker, power): continue
                     menuitem = PowerMenuItem(wx.ID_ANY, power)
-                    icon = GetIcon('Powers', poolname,  power)
+                    icon = GetIconFromSourceFile('Powers', f'{poolname}_{power}')
                     if icon:
                         menuitem.SetBitmap(icon)
                         menuitem.IconFilename = icon.Filename
@@ -166,7 +185,8 @@ class PowerPickerMenu(wx.Menu):
                 for item in data:
                     item, iconpathparts = SplitNameAndIcon(item)
                     menuitem = PowerMenuItem(wx.ID_ANY, item)
-                    icon = GetIcon('Powers', 'Misc', *iconpathparts)
+                    # TODO - why, again, were we retuning iconpathparts as a list?
+                    icon = GetIconFromSourceFile('Powers', f'Misc_{iconpathparts[0]}')
                     if icon:
                         menuitem.SetBitmap(icon)
                         menuitem.IconFilename = icon.Filename

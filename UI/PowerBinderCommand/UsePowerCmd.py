@@ -1,7 +1,6 @@
 import wx
 import re
 from UI.PowerPicker import PowerPicker
-from Icon import GetIcon
 from UI.PowerBinderCommand import PowerBinderCommand
 
 ####### Use Power
@@ -143,10 +142,10 @@ class UsePowerCmd(PowerBinderCommand):
                 self.Dist.SetStringSelection(f"{dist}'")
         else:
             self.usePowerRBToggle.SetValue(True)
+
         if init.get('pname', ''): self.usePowerName.SetLabel(init['pname'])
-        if init.get('picon', ''):
-            self.usePowerName.SetBitmap(GetIcon(init['picon']))
-            self.usePowerName.IconFilename = init['picon']
+        if iconname := init.get('picon', ''):
+            self.usePowerName.SetIconFromFilename(iconname)
 
         self.OnRadioButton()
 

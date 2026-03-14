@@ -5,8 +5,8 @@ import wx.lib.stattext as ST
 from typing import Any
 import UI
 import Profile
-from Icon import GetIconBitmap, PrecacheIcons
-from Util.MacroIcons import MacroIconBitmap
+from Icon import GetIconBitmap
+from Util.SourceFileIcons import GetIconBitmapFromSourceFile
 import GameData
 
 from UI.ControlGroup import ControlGroup, cgCheckBox, cgTextCtrl
@@ -68,7 +68,7 @@ class General(Page):
         alignPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
         alignPicker.Clear()
         for a in GameData.Alignments:
-            alignPicker.Append(a, MacroIconBitmap(f'Align_Status_{a}'))
+            alignPicker.Append(a, GetIconBitmapFromSourceFile('Macros', f'Align_Status_{a}'))
         self.Ctrls['Alignment'] = alignPicker
         alignPicker.SetStringSelection(self.Init['Alignment'])
         alignPicker.Bind(wx.EVT_COMBOBOX, self.OnPickAlignment)
@@ -77,7 +77,7 @@ class General(Page):
         originPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
         originPicker.Clear()
         for o in GameData.Origins:
-            originPicker.Append(o, MacroIconBitmap(f'Originicon_{o.lower()}'))
+            originPicker.Append(o, GetIconBitmapFromSourceFile('Macros', f'Originicon_{o.lower()}'))
         self.Ctrls['Origin'] = originPicker
         originPicker.SetStringSelection(self.Init['Origin'])
         originPicker.Bind(wx.EVT_COMBOBOX, self.OnPickOrigin)
@@ -437,11 +437,15 @@ class General(Page):
 
     def UpdatePoolPickers(self) -> None:
         c = self.Ctrls
-        pickedPools = []
+        pickedPools = set()
 
         for pickername in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
             if val := self.GetState(pickername):
-                pickedPools.append(val)
+                # somehow some Profiles had the same pool in them twice.
+                if val in pickedPools:
+                    self.SetState(pickername, '')
+                pickedPools.add(val)
+
 
         for pickername in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
             curval = self.GetState(pickername)
@@ -473,11 +477,8 @@ class General(Page):
             picker.SetStringSelection(curval)
             self.Profile.UpdateData('General', pickername, self.GetState(pickername))
 
-        PrecacheIcons(self.Profile)
-
     def OnPickPrimaryPowerSet(self, evt) -> None:
         self.Profile.CheckAllConflicts()
-        PrecacheIcons(self.Profile)
         self.SetupPowerSelectors()
         self.Ctrls['PrimaryPowers'].ClearPowers()
         wx.CallAfter(self.Profile.Mastermind.SynchronizeUI)
@@ -485,13 +486,11 @@ class General(Page):
 
     def OnPickSecondaryPowerSet(self, evt) -> None:
         self.Profile.CheckAllConflicts()
-        PrecacheIcons(self.Profile)
         self.SetupPowerSelectors()
         self.Ctrls['SecondaryPowers'].ClearPowers()
         evt.Skip()
 
     def OnPickEpicPowerSet(self, evt) -> None:
-        PrecacheIcons(self.Profile)
         self.SetupPowerSelectors()
         self.Ctrls['EpicPowers'].ClearPowers()
         evt.Skip()

@@ -7,7 +7,7 @@ import wx.lib.colourselect as csel
 
 from BindFile import BindFile
 from BLF import BLF
-from Icon import GetIcon, PrecacheIcons
+from Icon import GetIcon
 
 from Models.ProfileData import ProfileData, BindsDirectoryException
 if TYPE_CHECKING:
@@ -70,7 +70,6 @@ class Profile(wx.Notebook):
             filename      : str|None  = None,
             newname       : str|None  = None,
             profiledata   : dict|None = None,
-            skip_precache : bool      = False,    # mostly for the test suite
             editdefault   : bool      = False
         ):
         profiledata = profiledata or {}
@@ -98,8 +97,6 @@ class Profile(wx.Notebook):
 
         if self.EditingDefault: self.ColorThingsForEditingDefault()
         self.CheckModified()
-
-        if not skip_precache: PrecacheIcons(self)
 
     def CreatePage(self, page):
         page.BuildPage()

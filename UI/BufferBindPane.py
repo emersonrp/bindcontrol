@@ -2,7 +2,7 @@ import re
 import wx
 import UI
 from BLF import BLF
-from Icon import GetIcon
+
 from UI.PowerPicker import PowerPicker, EVT_POWERPICKER_CHANGED
 
 from UI.CGControls import cgStaticText
@@ -334,9 +334,8 @@ class Buff(wx.Panel):
         self.BuffPower = PowerPicker(self)
         buffSizer.Add(self.BuffPower, 1, wx.ALIGN_CENTER_VERTICAL)
         self.BuffPower.SetLabel(buff.get('Power', {}).get('pname', ''))
-        if icon := buff.get('Power', {}).get('picon', ''):
-            self.BuffPower.SetBitmap(GetIcon(icon))
-            self.BuffPower.IconFilename = icon
+        if iconname := buff.get('Power', {}).get('picon', ''):
+            self.BuffPower.SetIconFromFilename(iconname)
         self.BuffPower.Bind(EVT_POWERPICKER_CHANGED, self.OnPowerPicked)
 
         self.delButton = wx.Button(self, label = "X", size = wx.Size(40,-1))

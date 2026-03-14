@@ -8,6 +8,7 @@ from Icon import GetIcon
 if TYPE_CHECKING:
     from Help import HelpButton
 from UI.CGControls import cgStaticText
+from Util.SourceFileIcons import GetIconFromSourceFile
 
 PowerSelectorChanged, EVT_POWERSELECTOR_CHANGED = wx.lib.newevent.NewCommandEvent()
 
@@ -113,7 +114,7 @@ class PopupPower(wx.Panel):
         self.CB = wx.CheckBox(self)
         sizer.Add(self.CB, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 3)
 
-        icon = wx.GenericStaticBitmap(self, bitmap = GetIcon('Powers', powerset, power), size = wx.Size(16,16))
+        icon = wx.GenericStaticBitmap(self, bitmap = GetIconFromSourceFile('Powers', f'{powerset}_{power}'), size = wx.Size(16,16))
         icon.SetScaleMode(wx.GenericStaticBitmap.Scale_AspectFill)
         sizer.Add(icon, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 3)
 

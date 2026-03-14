@@ -27,7 +27,7 @@ def profile(app, config, DefaultProfile, monkeypatch):
     monkeypatch.setattr(Profile, 'CreatePage', lambda _,__: {})
 
     fixtureprofile = Path(__file__).resolve().parent / 'fixtures' / 'testprofile.bcp'
-    prof = Profile(app.Main, filename = str(fixtureprofile), skip_precache = True)
+    prof = Profile(app.Main, filename = str(fixtureprofile))
     return prof
 
 @pytest.fixture

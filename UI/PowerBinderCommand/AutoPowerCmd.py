@@ -1,6 +1,5 @@
 import wx
 from UI.PowerPicker import PowerPicker
-from Icon import GetIcon
 from UI.PowerBinderCommand import PowerBinderCommand
 
 ####### Auto Power
@@ -30,7 +29,8 @@ class AutoPowerCmd(PowerBinderCommand):
 
     def Deserialize(self, init) -> None:
         if init.get('pname', ''): self.autoPowerName.SetLabel(init['pname'])
-        if init.get('picon', ''): self.autoPowerName.SetBitmap(GetIcon(init['picon']))
+        if iconname := init.get('picon', ''):
+            self.autoPowerName.SetIconFromFilename(iconname)
 
     def OKToClose(self) -> bool:
         if self.autoPowerName.HasPowerPicked():

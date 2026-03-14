@@ -6,12 +6,21 @@ from pathlib import Path
 
 import Util.Paths
 
+# just a Bitmap with a filename attached.
 class Icon(wx.BitmapBundle):
     def __init__(self, img:wx.Image|wx.Bitmap, filename):
         super().__init__(img)
         self.Filename = filename
 
+# set up the ZIPfile once up front, if it exists
+base_path = Util.Paths.GetRootDirPath()
+iconzippath = base_path / 'icons' / 'Icons.zip'
+iconzip = zipfile.ZipFile(iconzippath) if iconzippath.exists() else None
+
+# The global Icon cache
 Icons: dict[str, Icon] = { }
+
+# This is the one way in.
 def GetIcon(*args) -> Icon:
 
     # If we haven't initialized the empty/fallback icon, do that now.
@@ -26,17 +35,13 @@ def GetIcon(*args) -> Icon:
     iconpath    = Path(*pathbits).with_suffix('.png')
     iconpathstr = str(iconpath)
     if iconpathstr not in Icons:
-        base_path = Util.Paths.GetRootDirPath()
-
-        iconzippath = base_path / 'icons' / 'Icons.zip'
-        if iconzippath.exists():
-            with zipfile.ZipFile(iconzippath) as iconzip:
-                try:
-                    # as_posix is how we need this to index into the ZIPfile successfully on Windows
-                    icondata = iconzip.read(iconpath.as_posix())
-                    Icons[iconpathstr] = Icon(wx.Bitmap.NewFromPNGData(icondata, len(icondata)), iconpathstr)
-                except Exception as e:
-                    wx.LogError(f"Loading icon {iconpathstr} from ZIP file failed: {e}.  This is a bug.")
+        if iconzip:
+            try:
+                # as_posix is how we need this to index into the ZIPfile successfully on Windows
+                icondata = iconzip.read(iconpath.as_posix())
+                Icons[iconpathstr] = Icon(wx.Bitmap.NewFromPNGData(icondata, len(icondata)), iconpathstr)
+            except Exception as e:
+                wx.LogError(f"Loading icon {iconpathstr} from ZIP file failed: {e}.  This is a bug.")
 
         else:  # we don't have the ZIP file, so maybe we're running directly from source
             filepath = Path(base_path) / 'icons' / iconpath

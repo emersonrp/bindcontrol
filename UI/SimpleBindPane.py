@@ -48,8 +48,7 @@ class SimpleBindPane(CustomBindPaneParent):
         self.PressText = wx.StaticText(pane, label = "Bind Contents:")
         self.BindSizer.Add(self.PressText, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        pb = PowerBinder(pane, powerbinderdata)
-        pb.ChangeValue(self.Init.get('Contents', ''))
+        pb = PowerBinder(pane, powerbinderdata, contents = self.Init.get('Contents', ''))
         pb.Bind(wx.EVT_TEXT, self.onContentsChanged)
         self.PressBinder = pb
         self.SetCtrl('PowerBinder', pb)
@@ -76,8 +75,7 @@ class SimpleBindPane(CustomBindPaneParent):
         self.ReleaseText = wx.StaticText(pane, label = "Release Action:")
         self.BindSizer.Add(self.ReleaseText, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        rb = PowerBinder(pane, releasebinderdata)
-        rb.ChangeValue(self.Init.get('RContents', ''))
+        rb = PowerBinder(pane, releasebinderdata, contents = self.Init.get('RContents', ''))
         rb.Bind(wx.EVT_TEXT, self.onContentsChanged)
         self.ReleaseBinder = rb
         self.SetCtrl('ReleaseBinder', rb)

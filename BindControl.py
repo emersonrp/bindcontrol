@@ -293,7 +293,7 @@ class Main(wx.Frame):
         if self.Profile:
             tabnumber = evt.GetSelection()
             tabname = self.Profile.GetPageText(tabnumber)
-            if tabname == "Popmenu Editor":
+            if tabname == "Macro Composer" or tabname == "Popmenu Editor":
                 self.BottomButtonPanel.Hide()
                 if self.Profile:
                     self.Profile.PopmenuEditor.LoadMenusIfNeeded()
@@ -634,7 +634,7 @@ class Main(wx.Frame):
             info.SetName('BindControl')
             info.SetVersion(current_version())
             info.SetDescription(
-                "BindControl can help you set up custom keybinds and popmenus in City of Heroes.\n\n"
+                "BindControl can help you set up custom keybinds, macros, and popmenus in City of Heroes.\n\n"
 
                 "Based on:\n\tCityBinder 0.76, Copyright \u00A9 2005-2006 Jeff Sheets\n\tCityBinder for Homecoming 0.2, Copyright \u00A9 2021-2023 tailcoat\n\n"
 

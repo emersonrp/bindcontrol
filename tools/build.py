@@ -10,6 +10,7 @@ params = [
     '--noconfirm',
     '--clean',
     f'--add-data=icons/Icons.zip{sep}icons/',
+    f'--add-data=icons/Macros.png{sep}icons/',
     f'--add-data=icons/BindControl.ico{sep}icons/',
     f'--add-data=Help{sep}Help',
     f'--add-data=version.txt{sep}.',
@@ -23,6 +24,7 @@ params = [
     '--exclude-module=_lzma',
     '--exclude-module=_ssl',
     '--hidden-import=UI.IncarnateBox',
+    '--hidden-import=PIL',
 ]
 
 if platform.system() == "Darwin":

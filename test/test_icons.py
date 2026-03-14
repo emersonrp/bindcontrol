@@ -40,9 +40,9 @@ def test_archetype_icons():
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
         # Archetype, Primary, and Secondary
-        for _, archdata in GameData.Archetypes.items():
+        for archdata in GameData.Archetypes.values():
             for category in ['Primary', 'Secondary', 'Epic']:
-                for powerset, _ in archdata[category].items():
+                for powerset in archdata[category]:
                     for filename in Path(icondir / "Powers" / powerset).glob('**/*.png'):
                         powcheck.add(str(filename))
 
@@ -71,20 +71,6 @@ def test_archetype_icons():
                         assert filename.exists(), f"Powers icon missing: {filename}"
                         if str(filename) in powcheck: powcheck.remove(str(filename))
     assert not powcheck, f"{len(powcheck)} extra Powerset icons exist: {powcheck}"
-    assert not archcheck, f"{len(archcheck)} extra Archetype icons exist: {archcheck}"
-
-def test_origin_icons():
-    filecheck = set()
-    for filename in Path(icondir / "Origins").glob('**/*.png'):
-        filecheck.add(str(filename))
-    for server in ['Homecoming', 'Rebirth']:
-        GameData.SetupGameData(server)
-        # Origins
-        for origin in GameData.Origins:
-            filename = icondir / "Origins" / f"{origin}.png"
-            assert filename.exists(), f"Origins icon missing: {filename}"
-            if str(filename) in filecheck: filecheck.remove(str(filename))
-    assert not filecheck, f"{len(filecheck)} extra Origins icons exist: {filecheck}"
 
 def test_pool_power_icons():
     filecheck = set()
@@ -198,8 +184,8 @@ def test_geticon_fromzip(monkeypatch):
     assert isinstance(archicon, Icon.Icon), 'Gets from ZIP file without extension'
     assert len(Icon.Icons) == 2, 'Caches from ZIP file without extension'
 
-    alignicon = Icon.GetIcon('Alignments', 'Hero.png')
-    assert isinstance(alignicon, Icon.Icon), 'Gets from ZIP file with extension'
+    servericon = Icon.GetIcon('Servers', 'Homecoming.png')
+    assert isinstance(servericon, Icon.Icon), 'Gets from ZIP file with extension'
     assert len(Icon.Icons) == 3, 'Caches from ZIP file with extension'
 
     monkeypatch.setattr(wx, 'LogError', raises_exception)

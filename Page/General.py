@@ -6,6 +6,7 @@ from typing import Any
 import UI
 import Profile
 from Icon import GetIconBitmap, PrecacheIcons
+from Util.MacroIcons import MacroIconBitmap
 import GameData
 
 from UI.ControlGroup import ControlGroup, cgCheckBox, cgTextCtrl
@@ -67,7 +68,7 @@ class General(Page):
         alignPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
         alignPicker.Clear()
         for a in GameData.Alignments:
-            alignPicker.Append(a, GetIconBitmap('Alignments', a))
+            alignPicker.Append(a, MacroIconBitmap(f'Align_Status_{a}'))
         self.Ctrls['Alignment'] = alignPicker
         alignPicker.SetStringSelection(self.Init['Alignment'])
         alignPicker.Bind(wx.EVT_COMBOBOX, self.OnPickAlignment)
@@ -76,7 +77,7 @@ class General(Page):
         originPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
         originPicker.Clear()
         for o in GameData.Origins:
-            originPicker.Append(o, GetIconBitmap('Origins', o))
+            originPicker.Append(o, MacroIconBitmap(f'Originicon_{o.lower()}'))
         self.Ctrls['Origin'] = originPicker
         originPicker.SetStringSelection(self.Init['Origin'])
         originPicker.Bind(wx.EVT_COMBOBOX, self.OnPickOrigin)

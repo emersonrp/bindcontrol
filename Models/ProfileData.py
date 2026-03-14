@@ -131,21 +131,21 @@ class ProfileData(dict):
         return False
 
     def UpdateData(self, pagename, *args) -> None:
-        if pagename == 'CustomBinds':
+        if pagename == 'CustomBinds' or pagename == 'MacroComposer':
             self[pagename] = self.get(pagename, [])
             replaced = False
-            bindcontents = args[0]
-            for i, testbind in enumerate(self[pagename]):
-                if testbind['CustomID'] == bindcontents['CustomID']:
-                    if bindcontents.get('Action') == 'delete':
+            contents = args[0]
+            for i, test in enumerate(self[pagename]):
+                if test['CustomID'] == contents['CustomID']:
+                    if contents.get('Action') == 'delete':
                         del self[pagename][i]
                         replaced = True
                         break
-                    self[pagename][i] = bindcontents
+                    self[pagename][i] = contents
                     replaced = True
                     break
             if not replaced:
-                self[pagename].append(bindcontents)
+                self[pagename].append(contents)
         else:
             self[pagename] = self.get(pagename, {})
             # de-JSONize things if we got them from GetState().

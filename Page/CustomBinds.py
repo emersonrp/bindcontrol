@@ -119,6 +119,7 @@ class CustomBinds(Page):
             try:
                 bindjson = filepath.read_text()
                 binddata = json.loads(bindjson)
+                binddata.pop('CustomID', None)
 
                 if bindpane := self.BuildBindPaneFromData(binddata):
                     self.AddBindToPage(bindpane = bindpane)
@@ -349,6 +350,7 @@ class CustomBinds(Page):
             try:
                 filepath = Path(pathname)
                 binddata = bindpane.Serialize()
+                binddata.pop('CustomID', None)
                 filepath.write_text(json.dumps(binddata, indent=2))
 
             except Exception as e:

@@ -234,8 +234,7 @@ class BindStep(wx.Panel):
 
         # get the length of a hypothetical BLF string (don't need pathlib etc)
         extralength = len(parent.Profile.BLF(f'cb\\{parent.CustomID}-XX.txt'))
-        self.PowerBinder = PowerBinder(self, step.get('powerbinderdata', {}), extralength = extralength)
-        self.PowerBinder.ChangeValue(step.get('contents', ''))
+        self.PowerBinder = PowerBinder(self, step.get('powerbinderdata', {}), extralength = extralength, contents = step.get('contents', ''))
         self.PowerBinder.Bind(wx.EVT_TEXT, parent.onContentsChanged)
         self.BindSizer.Add(self.PowerBinder, 1, wx.EXPAND|wx.LEFT, 5)
 
@@ -269,8 +268,7 @@ class BindStep(wx.Panel):
         self.ReleaseText = wx.StaticText(self, label = f"Step {self.StepNumber} Release Action:")
         self.BindSizer.Add(self.ReleaseText, 0, wx.ALIGN_CENTER_VERTICAL)
 
-        rb = PowerBinder(self, step.get('releasebinderdata', {}))
-        rb.ChangeValue(step.get('rcontents', ''))
+        rb = PowerBinder(self, step.get('releasebinderdata', {}), contents = step.get('rcontents', ''))
         rb.Bind(wx.EVT_TEXT, parent.onContentsChanged)
         self.ReleaseBinder = rb
         self.BindSizer.Add(rb, 1, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.EXPAND, 5)

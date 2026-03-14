@@ -18,6 +18,7 @@ from Page.MovementPowers import MovementPowers
 from Page.InspirationPopper import InspirationPopper
 from Page.Mastermind import Mastermind
 from Page.CustomBinds import CustomBinds
+from Page.MacroComposer import MacroComposer
 from Page.PopmenuEditor import PopmenuEditor
 import UI
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
@@ -92,6 +93,7 @@ class Profile(wx.Notebook):
         self.MovementPowers    = self.CreatePage(MovementPowers   (self))
         self.InspirationPopper = self.CreatePage(InspirationPopper(self))
         self.Mastermind        = self.CreatePage(Mastermind       (self))
+        self.MacroComposer     = self.CreatePage(MacroComposer    (self))
         self.PopmenuEditor     = self.CreatePage(PopmenuEditor    (self))
 
         if self.EditingDefault: self.ColorThingsForEditingDefault()
@@ -299,6 +301,18 @@ class Profile(wx.Notebook):
                     if bindpane := cbpage.BuildBindPaneFromData(custombind):
                         cbpage.AddBindToPage(bindpane = bindpane)
 
+        mpage = self.MacroComposer
+        if data and mpage:
+            mpage.scrolledPanel.DestroyChildren()
+            mpage.Ctrls = {}
+            mpage.Panes = []
+            if 'MacroComposer' in data:
+                for macro in data['MacroComposer']:
+                    if not macro: continue
+
+                    if macropane := mpage.BuildMacroPaneFromData(macro):
+                        mpage.AddMacroToPage(macropane = macropane)
+
         # if we want to set things based on power picks, let's do that.  This might
         # want to be its own logic / method instead.
         if set_power_picks:
@@ -337,6 +351,8 @@ class Profile(wx.Notebook):
         control = getattr(evt, 'control', evt.GetEventObject())
         if pagename == 'CustomBinds':
             page.UpdateAllBinds() # no trivial or mess-free way to do just the one we need
+        elif pagename == 'MacroComposer':
+            page.UpdateAllMacros()
         else:
             if ctlname := next((name for name,c in page.Ctrls.items() if control == c), None):
                 # TODO:  "unless (some way to opt things out of this), then..."

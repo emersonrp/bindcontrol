@@ -11,6 +11,7 @@ params = [
     '--clean',
     f'--add-data=icons/Icons.zip{sep}icons/',
     f'--add-data=icons/Macros.png{sep}icons/',
+    f'--add-data=icons/Powers.png{sep}icons/',
     f'--add-data=icons/BindControl.ico{sep}icons/',
     f'--add-data=Help{sep}Help',
     f'--add-data=version.txt{sep}.',

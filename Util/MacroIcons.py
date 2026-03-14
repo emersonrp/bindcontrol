@@ -1,8 +1,8 @@
 import wx
 from PIL import Image
-from pathlib import Path
+import Util.Paths
 
-MacroIconsImage = Image.open(Path('icons') / 'Macros.png')
+MacroIconsImage = Image.open(Util.Paths.GetRootDirPath() / 'icons' / 'Macros.png')
 
 def MacroIconBitmap(name):
     iconloc = list(MACRO_ICON_NAMES).index(name) * 32

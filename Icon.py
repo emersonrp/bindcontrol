@@ -3,10 +3,11 @@ import re
 import base64
 import zipfile
 from pathlib import Path
+from Util.SourceFileIcons import GetBitmapFromSourceFile, sourcemaps
 
 import Util.Paths
 
-# just a Bitmap with a filename attached.
+# just a BitmapBundle with a filename attached.
 class Icon(wx.BitmapBundle):
     def __init__(self, img:wx.Image|wx.Bitmap, filename):
         super().__init__(img)
@@ -24,6 +25,7 @@ Icons: dict[str, Icon] = { }
 def GetIcon(*args) -> Icon:
 
     # If we haven't initialized the empty/fallback icon, do that now.
+    # We don't do this at start-time b/c wx is not initialized.
     if 'Empty.png' not in Icons:
         Icons['Empty.png'] = Icon(wx.Bitmap.NewFromPNGData(transparentPNG, len(transparentPNG)), '')
 
@@ -35,7 +37,17 @@ def GetIcon(*args) -> Icon:
     iconpath    = Path(*pathbits).with_suffix('.png')
     iconpathstr = str(iconpath)
     if iconpathstr not in Icons:
-        if iconzip:
+        source = pathbits[0]
+        if source in sourcemaps:
+            sourcename = '_'.join(pathbits[1:]) # probably not needed on this code path, but just in case
+            if sourcename in sourcemaps[source]:
+                if bitmap := GetBitmapFromSourceFile(source, sourcename):
+                    Icons[iconpathstr] = Icon(bitmap, filename = f"{source}_{sourcename}")
+                else:
+                    wx.LogWarning(f"Missing Icon: SourceFile {source} returned None for {sourcename} - check logs!")
+            else:
+                wx.LogWarning(f"Missing icon: {source} icon not in sourcemap: {sourcename}")
+        elif iconzip:
             try:
                 # as_posix is how we need this to index into the ZIPfile successfully on Windows
                 icondata = iconzip.read(iconpath.as_posix())
@@ -49,12 +61,13 @@ def GetIcon(*args) -> Icon:
                 Icons[iconpathstr] = Icon( wx.Image(str(filepath), wx.BITMAP_TYPE_ANY, -1,), iconpathstr)
             # TODO - maybe put this behind an "if debug" sort of thing
             else:
-                wx.LogWarning(f"Missing icon: {iconpathstr}")
+                wx.LogWarning(f"Missing icon: Not found in filesystem: {iconpathstr}")
 
     return Icons.get(iconpathstr, Icons['Empty.png'])
 
-def GetIconBitmap(*args) -> wx.Bitmap:
-    return GetIcon(*args).GetBitmap(wx.Size(32,32))
+def GetIconBitmap(*args, **kwargs):
+    size : tuple = kwargs.get('size', (32,32))
+    return GetIcon(*args).GetBitmap(wx.Size(*size))
 
 # get the correct icon path bits for GetIcon based on how we
 # store Misc power names in GameData.  Used here and in PowerPicker

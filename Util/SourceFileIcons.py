@@ -1,17 +1,13 @@
 import wx
 import re
 from PIL import Image, ImageFile
-from Icon import Icon, GetIcon
 import Util.Paths
 
 IconCache = {}
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-def GetIconBitmapFromSourceFile(source, name):
-    return GetIconFromSourceFile(source, name).GetBitmap(wx.Size(32, 32))
-
-def GetIconFromSourceFile(source, name):
+def GetBitmapFromSourceFile(source, name) -> wx.Bitmap|None:
 
     name = re.sub(r'[^\w\-\\/\'.]+', '', name)
 
@@ -24,12 +20,12 @@ def GetIconFromSourceFile(source, name):
 
     if name not in sourcelist:
         wx.LogError(f"source file {source} doesn't have {name} in it - this is a bug!")
-        return GetIcon('Empty')
+        return None
 
     iconloc = sourcelist.index(name) * 32
     if (iconloc + 32) > sourcefile.width:
         wx.LogError(f"icon out of bounds in source file:  {source} - {name}")
-        return GetIcon('Empty')
+        return None
     pil_image = sourcefile.crop(box = (iconloc, 0, iconloc + 32, 32))
 
     wx_image = wx.Image(pil_image.size[0], pil_image.size[1])
@@ -37,7 +33,7 @@ def GetIconFromSourceFile(source, name):
     wx_image.SetAlpha(pil_image.convert("RGBA").tobytes()[3::4])
     if source not in IconCache:
         IconCache[source] = {}
-    IconCache[source][name] = Icon(wx.Bitmap(wx_image), f"{source}_{name}")
+    IconCache[source][name] = wx.Bitmap(wx_image)
     return IconCache[source][name]
 
 YCC_COLORS = {

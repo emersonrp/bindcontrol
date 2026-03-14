@@ -12,7 +12,7 @@ from UI.CGControls import bcKeyButton, cgStaticText
 from UI.KeySelectDialog import EVT_KEY_CHANGED
 from UI.PowerPicker import PowerPicker
 
-from Util.SourceFileIcons import GetIconFromSourceFile
+from Icon import GetIcon
 
 # "Constants"
 ACTION_NONE : Final[int] = 0
@@ -810,7 +810,7 @@ class MovementPowers(Page):
                 iconname = item
             menuitem = TempMenuItem(wx.ID_ANY, item)
 
-            if icon := GetIconFromSourceFile('Powers', f'Temp_{iconname}'):
+            if icon := GetIcon('Powers', f'Temp_{iconname}'):
                 menuitem.SetBitmap(icon)
                 menuitem.IconFilename = icon.Filename
 

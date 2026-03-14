@@ -303,6 +303,7 @@ class MacroPane(wx.CollapsiblePane):
         self.IconButton = wx.Button(pane, size = wx.Size(60,60), style = wx.BU_NOTEXT)
         if iconname := self.Init.get('Icon'):
             self.IconButton.SetLabel(iconname)
+            self.IconButton.SetToolTip(iconname)
             self.IconButton.SetBitmap(wx.BitmapBundle(GetIconFromSourceFile('Macros', iconname)))
         self.IconButton.Bind(wx.EVT_BUTTON, self.OnIconButton)
         self.IconButton.Bind(wx.EVT_RIGHT_DOWN, self.OnIconButtonRClick)

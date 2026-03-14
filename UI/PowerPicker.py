@@ -70,7 +70,8 @@ class PowerPicker(ErrorControlMixin, wx.Button):
             filename = re.sub('^Powers_', '', filename)
             icon = GetIconFromSourceFile('Powers', filename)
         else:
-            start, *bits = re.split('/', filename)
+            filename = re.sub(r'\.png$', '', filename, flags = re.IGNORECASE)
+            start, *bits = re.split(r'[\\/]', filename)
             if start != 'Powers':
                 wx.LogError(f'Got a very strange picon value: "{filename}" - this is a bug!')
                 icon = GetIcon('Empty')

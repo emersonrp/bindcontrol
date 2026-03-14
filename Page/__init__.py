@@ -96,7 +96,7 @@ class Page(wx.ScrolledWindow):
                 control.SetLabel(power)
             if iconfile := value.get('iconfile'):
                 control.IconFilename = iconfile
-                control.SetBitmap(GetIcon(control.IconFilename))
+                control.SetIconFromFilename(control.IconFilename)
         elif isinstance(control, PowerSelector):
             control.SetValue(value)
         elif isinstance(control, bcKeyButton):

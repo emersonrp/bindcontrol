@@ -67,14 +67,13 @@ jobs:
       - name: Create Executable
         run: |
           echo "${{ github.ref_name }}" > version.txt
-          python tools/zip_icons.py
           ${{ matrix.CMD_BUILD }}
 
       - name: Create Zip Archive
         uses: thedoctor0/zip-release@0.7.6
         with:
           type: 'zip'
-          # symlinks needed for MacOS and Linux builds
+          # "--symlinks" needed for MacOS and Linux builds
           custom: '${{ matrix.ZIP_CUSTOM }}'
           directory: './dist'
           command: '${{ matrix.CMD_PREZIP }}'

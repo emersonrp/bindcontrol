@@ -108,7 +108,7 @@ class Main(wx.Frame):
         self.Profile_editdefault   = ProfMenu.Append(wx.ID_ANY        , "Edit Default Profile")
         ProfMenu.AppendSeparator()
         Profile_preferences        = ProfMenu.Append(wx.ID_PREFERENCES, "&Preferences")
-        Profile_exit               = ProfMenu.Append(wx.ID_EXIT)
+        Profile_exit               = ProfMenu.Append(wx.ID_EXIT       , "&Quit BindControl\tCTRL-Q")
 
         # "Help" Menu
         HelpMenu = wx.Menu()

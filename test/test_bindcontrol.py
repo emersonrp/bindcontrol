@@ -42,7 +42,7 @@ def test_main_menubar(app):
     assert profmenu.FindItemByPosition(8).GetItemLabel() == "Edit Default Profile"
     assert profmenu.FindItemByPosition(9).GetKind() == wx.ITEM_SEPARATOR
     assert profmenu.FindItemByPosition(10).GetItemLabel() == "&Preferences"
-    assert profmenu.FindItemByPosition(11).GetItemLabel() == "&Quit"
+    assert profmenu.FindItemByPosition(11).GetItemLabel() == "&Quit BindControl\tCTRL-Q"
 
     helpmenu = menubar.GetMenu(1)
     assert isinstance(helpmenu, wx.Menu)

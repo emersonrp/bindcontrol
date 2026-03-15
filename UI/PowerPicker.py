@@ -153,7 +153,7 @@ class PowerPickerMenu(wx.Menu):
                         # aliases for the Lore types ie "Polar Lights" => "Lights" to match the icons
                         aliasedtype = Aliases.get(inc_type, inc_type)
 
-                        if icon := GetIcon('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}'):
+                        if icon := GetIcon('Incarnate', f'{slot}_{aliasedtype}_{rarity}'):
                             menuitem.SetBitmap(icon)
                             menuitem.IconFilename = icon.Filename
 

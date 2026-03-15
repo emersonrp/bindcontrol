@@ -5,7 +5,7 @@ from pathlib import Path
 from Util.Incarnate import Aliases
 import GameData
 import Util.Paths
-from Util.SourceFileIcons import GetBitmapFromSourceFile, sourcemaps
+from Util.SourceFileIcons import GetBitmapFromSourceFile, sourcemaps, SourceCache
 import Icon
 
 def RecurseMiscPowers(menustruct):
@@ -37,19 +37,17 @@ def test_geticon(empty):
     assert len(Icon.Icons) == 1
 
 def test_source_files():
-    assert sourcemaps['Powers']['file'] is not None
-    assert sourcemaps['Powers']['file'].height == 32
 
-    assert isinstance( sourcemaps['Powers']['list'], list)
-    powercount = len(sourcemaps['Powers']['list'])
-    assert sourcemaps['Powers']['file'].width == (32 * powercount)
+    for source in sourcemaps:
 
-    assert sourcemaps['Macros']['file'] is not None
-    assert sourcemaps['Macros']['file'].height == 32
+        powerlist  = list(sourcemaps[source]['list'])
+        powercount = len(powerlist)
+        GetBitmapFromSourceFile(source, powerlist[0]) # to cache the source file
 
-    assert isinstance(sourcemaps['Macros']['list'], dict)
-    powercount = len(sourcemaps['Macros']['list'].keys())
-    assert sourcemaps['Macros']['file'].width == (32 * powercount)
+        sourcefile = SourceCache[source]
+        assert sourcefile is not None
+        assert sourcefile.height == 32
+        assert sourcefile.width  == (32 * powercount)
 
 def test_archetype_icons(empty):
     archcheck = set()
@@ -142,7 +140,7 @@ def test_incarnate_icons():
             for inc_type in slotdata['Types']:
                 aliasedtype = Aliases.get(inc_type, inc_type)
                 for rarity in ['Common', 'Uncommon', 'Rare', 'VeryRare']:
-                    filename = icondir / "Incarnate" / f"Incarnate_{slot}_{aliasedtype}_{rarity}.png"
+                    filename = icondir / "Incarnate" / f"{slot}_{aliasedtype}_{rarity}.png"
                     assert filename.exists(), f"Incarnate icon missing: {filename}"
                     if str(filename) in filecheck: filecheck.remove(str(filename))
     assert not filecheck, f"{len(filecheck)} extra Incarnate icons exist: {filecheck}"
@@ -212,23 +210,6 @@ def test_icon_class():
     assert empty.Filename == 'Empty'
     assert isinstance(empty, wx.BitmapBundle)
 
-def test_geticon_fromzip(monkeypatch):
-    _ = wx.App()
-    monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepathzip)
-    archicon = Icon.GetIcon('Archetypes', 'Tanker')
-    assert isinstance(archicon, Icon.Icon), 'Gets from ZIP file without extension'
-    assert len(Icon.Icons) == 2, 'Caches from ZIP file without extension'
-
-    servericon = Icon.GetIcon('Servers', 'Homecoming.png')
-    assert isinstance(servericon, Icon.Icon), 'Gets from ZIP file with extension'
-    assert len(Icon.Icons) == 3, 'Caches from ZIP file with extension'
-
-    monkeypatch.setattr(wx, 'LogError', raises_exception)
-    with pytest.raises(Exception, match = 'RAISES: Loading icon'):
-        Icon.GetIcon('Gibberish', 'Not', 'Here')
-
-    monkeypatch.undo()
-
 @pytest.mark.skip(reason = "Need to use non-powers icons for filesystem test")
 def test_geticon_fromfile(monkeypatch, empty):
     _ = wx.App()
@@ -261,9 +242,6 @@ def test_splitnameandicon():
     assert Icon.SplitNameAndIcon('testthree|longer_test_string') == ['testthree', ['longer', 'test', 'string']]
 
 #####
-def fixturepathzip():
-    return Path(__file__).resolve().parent / 'fixtures' / 'iconszip'
-
 def fixturepathfs():
     return Path(__file__).resolve().parent / 'fixtures' / 'iconsfs'
 

@@ -1,7 +1,6 @@
 import wx
 import re
 import base64
-import zipfile
 from pathlib import Path
 from Util.SourceFileIcons import GetBitmapFromSourceFile, sourcemaps
 
@@ -12,11 +11,6 @@ class Icon(wx.BitmapBundle):
     def __init__(self, img:wx.Image|wx.Bitmap, filename):
         super().__init__(img)
         self.Filename = filename
-
-# set up the ZIPfile once up front, if it exists
-base_path = Util.Paths.GetRootDirPath()
-iconzippath = base_path / 'icons' / 'Icons.zip'
-iconzip = zipfile.ZipFile(iconzippath) if iconzippath.exists() else None
 
 # The global Icon cache
 Icons: dict[str, Icon] = { }
@@ -30,6 +24,14 @@ def GetIcon(*args) -> Icon:
         Icons['Empty.png'] = Icon(wx.Bitmap.NewFromPNGData(transparentPNG, len(transparentPNG)), '')
 
     pathbits = []
+
+    # this next bit is because we're still using "filename" in Icon even though we're cropping
+    # from the sourcefile, so we're saving the filename in Icon as <sourcefile>/<iconname>.
+    # I think this is only a deal in the Incarnate Box, so there might want to be some cleanup of
+    # this whole scheme.
+    if len(args) == 1:
+        args = re.split('/', args[0])
+
     for arg in args:
 
         # UGH
@@ -50,21 +52,13 @@ def GetIcon(*args) -> Icon:
             sourcename = '_'.join(pathbits[1:]) # probably not needed on this code path, but just in case
             if sourcename in sourcemaps[source]['list']:
                 if bitmap := GetBitmapFromSourceFile(source, sourcename):
-                    Icons[iconpathstr] = Icon(bitmap, filename = f"{source}_{sourcename}")
+                    Icons[iconpathstr] = Icon(bitmap, filename = f"{source}/{sourcename}")
                 else:
                     wx.LogWarning(f"Missing Icon: SourceFile {source} returned None for {sourcename} - check logs!")
             else:
                 wx.LogWarning(f"Missing icon: {source} icon not in sourcemap: {sourcename}")
-        elif iconzip:
-            try:
-                # as_posix is how we need this to index into the ZIPfile successfully on Windows
-                icondata = iconzip.read(iconpath.as_posix())
-                Icons[iconpathstr] = Icon(wx.Bitmap.NewFromPNGData(icondata, len(icondata)), iconpathstr)
-            except Exception as e:
-                wx.LogError(f"Loading icon {iconpathstr} from ZIP file failed: {e}.  This is a bug.")
-
-        else:  # we don't have the ZIP file, so maybe we're running directly from source
-            filepath = Path(base_path) / 'icons' / iconpath
+        else:  # we don't have any such source file, so check the filesystem for the leftover UI icons etc
+            filepath = Util.Paths.GetRootDirPath() / 'icons' / iconpath
             if filepath.exists():
                 Icons[iconpathstr] = Icon( wx.Image(str(filepath), wx.BITMAP_TYPE_ANY, -1,), iconpathstr)
             # TODO - maybe put this behind an "if debug" sort of thing

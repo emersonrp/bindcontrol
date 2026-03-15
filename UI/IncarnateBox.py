@@ -149,7 +149,7 @@ class IncarnateBrowser(wx.Dialog):
         for i, inc_type in enumerate(list(picker.SlotData)):
             slot = self.Picker.Slot
             aliasedtype = Aliases.get(inc_type, inc_type)
-            typeImgList.Add(GetIconBitmap('Incarnate', f'Incarnate_{slot}_{aliasedtype}_VeryRare'))
+            typeImgList.Add(GetIconBitmap('Incarnate', f'{slot}_{aliasedtype}_VeryRare'))
             self.TypeList.InsertItem(self.TypeList.GetItemCount(), inc_type, i)
         nextentry = len(picker.SlotData)
         typeImgList.Add(GetIconBitmap('Incarnate', 'Disable'))
@@ -214,7 +214,7 @@ class IncarnateBrowser(wx.Dialog):
             rarity = Rarities[i]
             slot = self.Picker.Slot
             aliasedtype = Aliases.get(inc_type, inc_type)
-            icon = GetIcon('Incarnate', f'Incarnate_{slot}_{aliasedtype}_{rarity}')
+            icon = GetIcon('Incarnate', f'{slot}_{aliasedtype}_{rarity}')
             lvlImgList.Add(icon.GetBitmap(wx.Size(32,32)))
             self.LevelList.IconFilenames.append(icon.Filename)
             self.LevelList.InsertItem(self.LevelList.GetItemCount(), level, i)

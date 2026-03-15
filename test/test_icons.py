@@ -5,7 +5,7 @@ from pathlib import Path
 from Util.Incarnate import Aliases
 import GameData
 import Util.Paths
-from Util.SourceFileIcons import GetIconFromSourceFile, sourcemaps
+from Util.SourceFileIcons import GetBitmapFromSourceFile, sourcemaps, SourceCache
 import Icon
 
 def RecurseMiscPowers(menustruct):
@@ -37,19 +37,17 @@ def test_geticon(empty):
     assert len(Icon.Icons) == 1
 
 def test_source_files():
-    assert sourcemaps['Powers']['file'] is not None
-    assert sourcemaps['Powers']['file'].height == 32
 
-    assert isinstance( sourcemaps['Powers']['list'], list)
-    powercount = len(sourcemaps['Powers']['list'])
-    assert sourcemaps['Powers']['file'].width == (32 * powercount)
+    for source in sourcemaps:
 
-    assert sourcemaps['Macros']['file'] is not None
-    assert sourcemaps['Macros']['file'].height == 32
+        powerlist  = list(sourcemaps[source]['list'])
+        powercount = len(powerlist)
+        GetBitmapFromSourceFile(source, powerlist[0]) # to cache the source file
 
-    assert isinstance(sourcemaps['Macros']['list'], dict)
-    powercount = len(sourcemaps['Macros']['list'].keys())
-    assert sourcemaps['Macros']['file'].width == (32 * powercount)
+        sourcefile = SourceCache[source]
+        assert sourcefile is not None
+        assert sourcefile.height == 32
+        assert sourcefile.width  == (32 * powercount)
 
 def test_archetype_icons(empty):
     archcheck = set()
@@ -87,15 +85,15 @@ def test_archetype_icons(empty):
                             [(power, items)] = power.items()
                             for p in items:
                                 p = re.sub(r'\W+', '', p)
-                                filename = icondir / "Powers" / powerset / f"{p}.png"
+                                filename = icondir / "Powers" / f"{powerset}_{p}.png"
                                 assert filename.exists(), f"Powers icon missing: {filename}"
                                 if str(filename) in powcheck: powcheck.remove(str(filename))
 
-                                sourceicon = GetIconFromSourceFile('Powers', f'{powerset}_{p}')
-                                assert isinstance(sourceicon, Icon.Icon)
+                                sourceicon = GetBitmapFromSourceFile('Powers', f'{powerset}_{p}')
+                                assert isinstance(sourceicon, wx.Bitmap)
                                 assert sourceicon != empty, f'{powerset}_{p}" in source file'
                         power = re.sub(r'\W+', '', power)
-                        filename = icondir / "Powers" / powerset / f"{power}.png"
+                        filename = icondir / "Powers" / f"{powerset}_{power}.png"
                         assert filename.exists(), f"Powers icon missing: {filename}"
                         if str(filename) in powcheck: powcheck.remove(str(filename))
     assert not archcheck, f"{len(archcheck)} extra Archetype icons exist: {archcheck}"
@@ -120,12 +118,12 @@ def test_pool_power_icons():
             for power in pool:
                 power = re.sub(r'\W+', '', power)
                 poolname = re.sub(r'\W+', '', poolname)
-                filename = icondir / "Powers" / poolname / f"{power}.png"
+                filename = icondir / "Powers" / f"{poolname}_{power}.png"
                 assert filename.exists(), f"Pool power icon missing: {filename}"
                 if str(filename) in filecheck: filecheck.remove(str(filename))
 
-                sourceicon = GetIconFromSourceFile('Powers', f'{poolname}_{power}')
-                assert isinstance(sourceicon, Icon.Icon)
+                sourceicon = GetBitmapFromSourceFile('Powers', f'{poolname}_{power}')
+                assert isinstance(sourceicon, wx.Bitmap)
                 assert sourceicon != empty, f'{poolname}_{power} in source file'
 
     assert not filecheck, f"{len(filecheck)} extra Powers icons exist: {filecheck}"
@@ -142,14 +140,14 @@ def test_incarnate_icons():
             for inc_type in slotdata['Types']:
                 aliasedtype = Aliases.get(inc_type, inc_type)
                 for rarity in ['Common', 'Uncommon', 'Rare', 'VeryRare']:
-                    filename = icondir / "Incarnate" / f"Incarnate_{slot}_{aliasedtype}_{rarity}.png"
+                    filename = icondir / "Incarnate" / f"{slot}_{aliasedtype}_{rarity}.png"
                     assert filename.exists(), f"Incarnate icon missing: {filename}"
                     if str(filename) in filecheck: filecheck.remove(str(filename))
     assert not filecheck, f"{len(filecheck)} extra Incarnate icons exist: {filecheck}"
 
 def test_miscpowers_icons(empty):
     filecheck = set()
-    for filename in Path(icondir / "Powers" / "Misc").glob('**/*.png'):
+    for filename in Path(icondir / "Powers").glob('Misc_*.png'):
         filecheck.add(str(filename))
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
@@ -161,12 +159,12 @@ def test_miscpowers_icons(empty):
             power = re.sub(r'[^\w|]+', '', power)
             _, icon = SplitNameAndIcon(power)
             icon = '_'.join(icon)
-            filename = icondir / "Powers" / "Misc" / f"{icon}.png"
+            filename = icondir / "Powers" / f"Misc_{icon}.png"
             assert filename.exists(), f"Misc Powers icon missing: {filename}"
             if str(filename) in filecheck: filecheck.remove(str(filename))
 
-            sourceicon = GetIconFromSourceFile('Powers', f'Misc_{icon}')
-            assert isinstance(sourceicon, Icon.Icon)
+            sourceicon = GetBitmapFromSourceFile('Powers', f'Misc_{icon}')
+            assert isinstance(sourceicon, wx.Bitmap)
             assert sourceicon != empty, f'Misc_{icon} in source file'
 
     assert not filecheck, f"{len(filecheck)} extra Misc Power icons exist: {filecheck}"
@@ -175,13 +173,13 @@ def test_temppowers_icons():
     filecheck = set()
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
-        for filename in Path(icondir / "Powers" / "Temp").glob('**/*.png'):
+        for filename in Path(icondir / "Powers").glob('Temp_*.png'):
             filecheck.add(str(filename))
         for power in GameData.TempTravelPowers:
             power = re.sub(r'[^\w|]+', '', power)
             _, icon = SplitNameAndIcon(power)
             icon = '_'.join(icon)
-            filename = icondir / "Powers" / "Temp" / f"{icon}.png"
+            filename = icondir / "Powers" / f"Temp_{icon}.png"
             assert filename.exists(), f"Temp Powers icon missing: {filename}"
             if str(filename) in filecheck: filecheck.remove(str(filename))
     assert not filecheck, f"{len(filecheck)} extra Temp Power icons exist: {filecheck}"
@@ -212,34 +210,14 @@ def test_icon_class():
     assert empty.Filename == 'Empty'
     assert isinstance(empty, wx.BitmapBundle)
 
-def test_geticon_fromzip(monkeypatch):
-    _ = wx.App()
-    monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepathzip)
-    archicon = Icon.GetIcon('Archetypes', 'Tanker')
-    assert isinstance(archicon, Icon.Icon), 'Gets from ZIP file without extension'
-    assert len(Icon.Icons) == 2, 'Caches from ZIP file without extension'
-
-    servericon = Icon.GetIcon('Servers', 'Homecoming.png')
-    assert isinstance(servericon, Icon.Icon), 'Gets from ZIP file with extension'
-    assert len(Icon.Icons) == 3, 'Caches from ZIP file with extension'
-
-    monkeypatch.setattr(wx, 'LogError', raises_exception)
-    with pytest.raises(Exception, match = 'RAISES: Loading icon'):
-        Icon.GetIcon('Gibberish', 'Not', 'Here')
-
-    monkeypatch.undo()
-
-def test_geticon_fromfile(monkeypatch):
+def test_geticon_fromfile(monkeypatch, empty):
     _ = wx.App()
     monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepathfs)
 
-    flyicon = Icon.GetIcon('Powers', 'Flight', 'Fly')
-    assert isinstance(flyicon, Icon.Icon), 'Gets from filesystem'
+    copyicon = Icon.GetIcon('UI', 'copy')
+    assert isinstance(copyicon, Icon.Icon), 'Gets from filesystem'
+    assert copyicon != empty, 'Gets the actual icon not the empty one'
     assert len(Icon.Icons) == 2, 'Caches from filesystem'
-
-    frosticon = Icon.GetIcon('Powers', 'Icy Assault', 'Frost Breath')
-    assert isinstance(frosticon, Icon.Icon), 'Gets with spaces in name'
-    assert len(Icon.Icons) == 3, 'Caches with spaces'
 
     monkeypatch.setattr(wx, 'LogWarning', raises_exception)
     with pytest.raises(Exception, match = 'RAISES: Missing icon'):
@@ -258,9 +236,6 @@ def test_splitnameandicon():
     assert Icon.SplitNameAndIcon('testthree|longer_test_string') == ['testthree', ['longer', 'test', 'string']]
 
 #####
-def fixturepathzip():
-    return Path(__file__).resolve().parent / 'fixtures' / 'iconszip'
-
 def fixturepathfs():
     return Path(__file__).resolve().parent / 'fixtures' / 'iconsfs'
 

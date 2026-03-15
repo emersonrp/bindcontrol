@@ -4,7 +4,7 @@ import Util.Paths
 
 IconCache = {}
 
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+ImageFile.LOAD_TRUNCATED_IMAGES = True # this became necessary to make pytest dtrt.  /side-eye
 
 # We assume 'name' has been properly s/// already.  We want NOT
 # to do it in here because of "Warrior'sChallenge" sigh

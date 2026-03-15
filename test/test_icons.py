@@ -87,7 +87,7 @@ def test_archetype_icons(empty):
                             [(power, items)] = power.items()
                             for p in items:
                                 p = re.sub(r'\W+', '', p)
-                                filename = icondir / "Powers" / powerset / f"{p}.png"
+                                filename = icondir / "Powers" / f"{powerset}_{p}.png"
                                 assert filename.exists(), f"Powers icon missing: {filename}"
                                 if str(filename) in powcheck: powcheck.remove(str(filename))
 
@@ -95,7 +95,7 @@ def test_archetype_icons(empty):
                                 assert isinstance(sourceicon, wx.Bitmap)
                                 assert sourceicon != empty, f'{powerset}_{p}" in source file'
                         power = re.sub(r'\W+', '', power)
-                        filename = icondir / "Powers" / powerset / f"{power}.png"
+                        filename = icondir / "Powers" / f"{powerset}_{power}.png"
                         assert filename.exists(), f"Powers icon missing: {filename}"
                         if str(filename) in powcheck: powcheck.remove(str(filename))
     assert not archcheck, f"{len(archcheck)} extra Archetype icons exist: {archcheck}"
@@ -120,7 +120,7 @@ def test_pool_power_icons():
             for power in pool:
                 power = re.sub(r'\W+', '', power)
                 poolname = re.sub(r'\W+', '', poolname)
-                filename = icondir / "Powers" / poolname / f"{power}.png"
+                filename = icondir / "Powers" / f"{poolname}_{power}.png"
                 assert filename.exists(), f"Pool power icon missing: {filename}"
                 if str(filename) in filecheck: filecheck.remove(str(filename))
 
@@ -149,7 +149,7 @@ def test_incarnate_icons():
 
 def test_miscpowers_icons(empty):
     filecheck = set()
-    for filename in Path(icondir / "Powers" / "Misc").glob('**/*.png'):
+    for filename in Path(icondir / "Powers").glob('Misc_*.png'):
         filecheck.add(str(filename))
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
@@ -161,7 +161,7 @@ def test_miscpowers_icons(empty):
             power = re.sub(r'[^\w|]+', '', power)
             _, icon = SplitNameAndIcon(power)
             icon = '_'.join(icon)
-            filename = icondir / "Powers" / "Misc" / f"{icon}.png"
+            filename = icondir / "Powers" / f"Misc_{icon}.png"
             assert filename.exists(), f"Misc Powers icon missing: {filename}"
             if str(filename) in filecheck: filecheck.remove(str(filename))
 
@@ -175,13 +175,13 @@ def test_temppowers_icons():
     filecheck = set()
     for server in ['Homecoming', 'Rebirth']:
         GameData.SetupGameData(server)
-        for filename in Path(icondir / "Powers" / "Temp").glob('**/*.png'):
+        for filename in Path(icondir / "Powers").glob('Temp_*.png'):
             filecheck.add(str(filename))
         for power in GameData.TempTravelPowers:
             power = re.sub(r'[^\w|]+', '', power)
             _, icon = SplitNameAndIcon(power)
             icon = '_'.join(icon)
-            filename = icondir / "Powers" / "Temp" / f"{icon}.png"
+            filename = icondir / "Powers" / f"Temp_{icon}.png"
             assert filename.exists(), f"Temp Powers icon missing: {filename}"
             if str(filename) in filecheck: filecheck.remove(str(filename))
     assert not filecheck, f"{len(filecheck)} extra Temp Power icons exist: {filecheck}"

@@ -398,9 +398,8 @@ class General(Page):
         for e in Epix        : c['Epic'].Append(e)
 
         gendata = self.Profile.Data['General']
-        c['Primary'].SetStringSelection(gendata['Primary'])
-        c['Secondary'].SetStringSelection(gendata['Secondary'])
-        c['Epic'].SetStringSelection(gendata['Epic'])
+        for x in ['Primary', 'Secondary', 'Epic']:
+            self.SetState(x, gendata[x])
 
         c['Epic'].Enable(arch != "Peacebringer" and arch != "Warshade")
 
@@ -446,7 +445,6 @@ class General(Page):
                     self.SetState(pickername, '')
                 pickedPools.add(val)
 
-
         for pickername in ['Pool1', 'Pool2', 'Pool3', 'Pool4']:
             curval = self.GetState(pickername)
             picker = c[pickername]
@@ -462,10 +460,10 @@ class General(Page):
             for sp in specializedPools:
                 # if we've selected one of these...
                 if sp in pickedPools:
-                    #...remove each of the other ones from poolcontents
+                    #...remove each of the other ones from poolcontents if appropriate
                     for s in specializedPools:
-                        if sp != s:
-                            if s in poolcontents: poolcontents.remove(s)
+                        if (s != sp) and (s != curval) and (s in poolcontents):
+                            poolcontents.remove(s)
 
             if self.Server == 'Rebirth':
                 arch = self.GetState('Archetype')

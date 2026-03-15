@@ -130,7 +130,7 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 *MacOS users*:
 * *Pre-Catalina*:  I recommend following the instructions in [this article at opensource.com](https://www.opensource.com/article/19/5/python-3-default-mac) to get Python 3 installed and working as the default Python.  Once Python 3 is working, you will want to run `pip3 install wxPython`.
 * *Catalina and later*: follow the instructions on the above sites' download pages to install Python and wxPython.
-* *All versions*: from a command line, 'pip3 install pillow'
+* *All versions*: from a command line, `pip3 install pillow`
 
 *Linux users*:  install your distribution's packages for Python 3 and wxPython, and "python-pillow" or whatever your distribution calls it.
 

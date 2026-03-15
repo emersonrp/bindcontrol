@@ -75,7 +75,7 @@ class PowerPicker(ErrorControlMixin, wx.Button):
                 wx.LogError(f'Got a very strange picon value: "{filename}" - this is a bug!')
                 icon = GetIcon('Empty')
             else:
-                icon = GetIcon('Powers', bits)
+                icon = GetIcon('Powers', *bits)
         self.IconFilename = filename
         self.SetBitmap(icon)
 

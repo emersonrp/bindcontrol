@@ -23,15 +23,18 @@ jobs:
             CMD_BUILD:  python tools/build.py
             CMD_VERIFY: ls -la dist/BindControl.app
             CMD_PREZIP: rm -rf dist/BindControl
+            ZIP_CUSTOM: --symlinks
             FILE_NAME: BindControl-${{ github.ref_name }}_macos_intel.zip
           - os: macos-15
             CMD_BUILD:  python tools/build.py
             CMD_VERIFY: ls -la dist/BindControl.app
             CMD_PREZIP: rm -rf dist/BindControl
+            ZIP_CUSTOM: --symlinks
             FILE_NAME: BindControl-${{ github.ref_name }}_macos_arm64.zip
           - os: ubuntu-22.04
             CMD_BUILD: python tools/build.py
             CMD_VERIFY: ls -la dist/BindControl
+            ZIP_CUSTOM: --symlinks
             FILE_NAME: BindControl-${{ github.ref_name }}_linux.zip
 
     runs-on: ${{ matrix.os }}
@@ -72,7 +75,7 @@ jobs:
         with:
           type: 'zip'
           # symlinks needed for MacOS and Linux builds
-          custom: '--symlinks'
+          custom: '${{ matrix.ZIP_CUSTOM }}'
           directory: './dist'
           command: '${{ matrix.CMD_PREZIP }}'
           filename: '${{ matrix.FILE_NAME }}'

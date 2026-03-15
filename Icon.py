@@ -31,7 +31,15 @@ def GetIcon(*args) -> Icon:
 
     pathbits = []
     for arg in args:
-        arg = re.sub(r'[^\w\-\\/.]+', '', arg)
+
+        # UGH
+        # The devs left ONE icon in there with a ' in it and scraped out the rest.
+        # Just in the Macro set;  we have control of the names in the Powers set.
+        if pathbits and pathbits[0] == 'Macros' and arg == "MartialArts_Warrior'sChallenge":
+            arg = re.sub(r'[^\w\-\\/\'.]+', '', arg)
+        else:
+            arg = re.sub(r'[^\w\-\\/.]+', '', arg)
+
         pathbits.append(arg)
 
     iconpath    = Path(*pathbits).with_suffix('.png')
@@ -40,7 +48,7 @@ def GetIcon(*args) -> Icon:
         source = pathbits[0]
         if source in sourcemaps:
             sourcename = '_'.join(pathbits[1:]) # probably not needed on this code path, but just in case
-            if sourcename in sourcemaps[source]:
+            if sourcename in sourcemaps[source]['list']:
                 if bitmap := GetBitmapFromSourceFile(source, sourcename):
                     Icons[iconpathstr] = Icon(bitmap, filename = f"{source}_{sourcename}")
                 else:

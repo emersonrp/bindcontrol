@@ -1,5 +1,4 @@
 import wx
-import re
 from PIL import Image, ImageFile
 import Util.Paths
 
@@ -7,9 +6,9 @@ IconCache = {}
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
+# We assume 'name' has been properly s/// already.  We want NOT
+# to do it in here because of "Warrior'sChallenge" sigh
 def GetBitmapFromSourceFile(source, name) -> wx.Bitmap|None:
-
-    name = re.sub(r'[^\w\-\\/\'.]+', '', name)
 
     if source in IconCache:
         if name in IconCache[source]:

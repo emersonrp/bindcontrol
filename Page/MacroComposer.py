@@ -10,7 +10,7 @@ from Page import Page
 from Help import HelpButton
 from Icon import GetIcon, GetIconBitmap
 from UI.PowerBinder import PowerBinder
-from Util.SourceFileIcons import GetBitmapFromSourceFile, MACRO_ICON_NAMES, YCC_COLORS
+from Util.SourceFileIcons import MACRO_ICON_NAMES, YCC_COLORS
 
 class MacroComposer(Page):
     def __init__(self, parent) -> None:
@@ -304,7 +304,7 @@ class MacroPane(wx.CollapsiblePane):
         if iconname := self.Init.get('Icon'):
             self.IconButton.SetLabel(iconname)
             self.IconButton.SetToolTip(iconname)
-            self.IconButton.SetBitmap(wx.BitmapBundle(GetBitmapFromSourceFile('Macros', iconname)))
+            self.IconButton.SetBitmap(GetIcon('Macros', iconname))
         self.IconButton.Bind(wx.EVT_BUTTON, self.OnIconButton)
         self.IconButton.Bind(wx.EVT_RIGHT_DOWN, self.OnIconButtonRClick)
         macroSizer.Add(self.IconButton, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
@@ -352,7 +352,7 @@ class MacroPane(wx.CollapsiblePane):
                 iconname = iconpicker.IconList.GetItemText(item)
                 self.IconButton.SetToolTip(iconname)
                 self.IconButton.SetLabel(iconname)
-                self.IconButton.SetBitmap(wx.BitmapBundle(GetBitmapFromSourceFile('Macros', iconname)))
+                self.IconButton.SetBitmap(GetIcon('Macros', iconname))
                 self.Page.OnContentsChanged()
                 self.CheckToolTipSlot()
 
@@ -360,7 +360,7 @@ class MacroPane(wx.CollapsiblePane):
         if evt: evt.Skip()
         self.IconButton.SetToolTip('')
         self.IconButton.SetLabel('')
-        self.IconButton.SetBitmap(wx.BitmapBundle(GetIconBitmap('Empty'))) # GetIconBitmap just for 'Empty'
+        self.IconButton.SetBitmap(GetIcon('Empty'))
         self.Page.OnContentsChanged()
         self.CheckToolTipSlot()
 

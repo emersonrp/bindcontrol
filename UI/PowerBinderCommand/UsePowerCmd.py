@@ -20,6 +20,7 @@ class UsePowerCmd(PowerBinderCommand):
 
         rbSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.usePowerRBToggle = wx.RadioButton(dialog, label = "Toggle", style = wx.ALIGN_CENTER_VERTICAL|wx.RB_GROUP)
+        self.usePowerRBToggle.SetValue(True) # check something going in just to be sure
         rbSizer.Add(self.usePowerRBToggle, 1)
         self.usePowerRBOn = wx.RadioButton(dialog, label = "On", style = wx.ALIGN_CENTER_VERTICAL)
         rbSizer.Add(self.usePowerRBOn, 1)
@@ -158,7 +159,7 @@ class UsePowerCmd(PowerBinderCommand):
 
     def OnRadioButton(self, evt = None):
         if self.Profile.Server() == 'Homecoming':
-            self.UsePowerSizer.Show(self.LocText, show = self.usePowerRBLocation.GetValue())
+            self.UsePowerSizer.Show(self.LocText,  show = self.usePowerRBLocation.GetValue())
             self.UsePowerSizer.Show(self.LocSizer, show = self.usePowerRBLocation.GetValue())
             self.Pdir.Enable(self.LocDD.GetValue())
             self.Dist.Enable(self.LocDD.GetValue())

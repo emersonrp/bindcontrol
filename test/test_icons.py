@@ -210,20 +210,14 @@ def test_icon_class():
     assert empty.Filename == 'Empty'
     assert isinstance(empty, wx.BitmapBundle)
 
-@pytest.mark.skip(reason = "Need to use non-powers icons for filesystem test")
 def test_geticon_fromfile(monkeypatch, empty):
     _ = wx.App()
     monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepathfs)
 
-    flyicon = Icon.GetIcon('Powers', 'Flight', 'Fly')
-    assert isinstance(flyicon, Icon.Icon), 'Gets from filesystem'
-    assert flyicon != empty, 'Gets the actual icon not the empty one'
+    copyicon = Icon.GetIcon('UI', 'copy')
+    assert isinstance(copyicon, Icon.Icon), 'Gets from filesystem'
+    assert copyicon != empty, 'Gets the actual icon not the empty one'
     assert len(Icon.Icons) == 2, 'Caches from filesystem'
-
-    frosticon = Icon.GetIcon('Powers', 'Icy Assault', 'Frost Breath')
-    assert isinstance(frosticon, Icon.Icon), 'Gets with spaces in name'
-    assert frosticon != empty, 'Gets the actual icon not the empty one'
-    assert len(Icon.Icons) == 3, 'Caches with spaces'
 
     monkeypatch.setattr(wx, 'LogWarning', raises_exception)
     with pytest.raises(Exception, match = 'RAISES: Missing icon'):

@@ -30,9 +30,15 @@ def GetIcon(*args) -> Icon:
     # I think this is only a deal in the Incarnate Box, so there might want to be some cleanup of
     # this whole scheme.
     if len(args) == 1:
-        args = re.split('/', args[0])
+        args = (re.sub(r'\.png$', '', args[0], flags = re.IGNORECASE),) # trailing comma important
+        args = re.split(r'[/\\]', args[0])
 
     for arg in args:
+
+        # we renamed icons because we like simplicity and parallelism.  But we need to munch Incarnate
+        # icons' filenames now, forever and ever amen.  Ah well.
+        if re.match('Incarnate_', arg):
+            arg = re.sub('^Incarnate_', '', arg)
 
         # UGH
         # The devs left ONE icon in there with a ' in it and scraped out the rest.

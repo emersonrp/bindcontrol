@@ -13,7 +13,7 @@ PowerBinderChanged, EVT_POWERBINDER_CHANGED = wx.lib.newevent.NewCommandEvent()
 class PowerBinder(ErrorControlMixin, wx.TextCtrl):
     def __init__(self, parent, init : dict|None = None, extralength = 0, contents = ''):
         init = init or {}
-        super().__init__(parent)
+        super().__init__(parent, style = wx.TE_READONLY)
         self.CurrentState = init
         self.DialogParent = parent
         self.ExtraLength  = extralength # for complex binds to add the footprint of each step's BLF()

@@ -121,14 +121,19 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 
 1. [Python](https://www.python.org) version 3.13 or later
 2. [wxPython](https://www.wxpython.org) version 4.2.2 or later
+3. [Pillow](https://pypi.org/project/pillow/)
 
-*Windows users*:  follow the instructions on the above sites' download pages to install Python and wxPython.
+*Windows users*:
+* follow the instructions on the above sites' download pages to install Python and wxPython.
+* From a command line, `pip3 install pillow`
 
 *MacOS users*:
-* Pre-Catalina:  I recommend following the instructions in [this article at opensource.com](https://www.opensource.com/article/19/5/python-3-default-mac) to get Python 3 installed and working as the default Python.  Once Python 3 is working, you will want to run `pip3 install wxPython`.
-* Catalina and later: follow the instructions on the above sites' download pages to install Python and wxPython.
+* *Pre-Catalina*:  I recommend following the instructions in [this article at opensource.com](https://www.opensource.com/article/19/5/python-3-default-mac) to get Python 3 installed and working as the default Python.  Once Python 3 is working, you will want to run `pip3 install wxPython`.
+* *Catalina and later*: follow the instructions on the above sites' download pages to install Python and wxPython.
+* *All versions*: from a command line, 'pip3 install pillow'
 
-*Linux users*:  install your distribution's packages for Python 3 and wxPython.
+*Linux users*:  install your distribution's packages for Python 3 and wxPython, and "python-pillow" or whatever your distribution calls it.
+
 
 ### Step 2 - Getting and running the code
 

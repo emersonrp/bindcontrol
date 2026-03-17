@@ -1,0 +1,173 @@
+version: 1
+script:
+  # Remove any previous build
+  - rm -rf $TARGET_APPDIR | true
+  # Make usr and icons dirs
+  - mkdir -p $TARGET_APPDIR/usr/src/icons
+  # Copy the python application code into the AppDir
+  - cp -rv *.py  $TARGET_APPDIR/usr/src
+  - cp -rv GameData  $TARGET_APPDIR/usr/src
+  - cp -rv Help  $TARGET_APPDIR/usr/src
+  - cp -rv Models  $TARGET_APPDIR/usr/src
+  - cp -rv Page  $TARGET_APPDIR/usr/src
+  - cp -rv popmenus  $TARGET_APPDIR/usr/src
+  - cp -rv UI  $TARGET_APPDIR/usr/src
+  - cp -rv Util  $TARGET_APPDIR/usr/src
+  # ...and the icons
+  - cp -rv icons/*.png  $TARGET_APPDIR/usr/src/icons
+  - cp -rv icons/*.ico  $TARGET_APPDIR/usr/src/icons
+  - cp -rv icons/UI  $TARGET_APPDIR/usr/src/icons
+  - cp -rv icons/Servers  $TARGET_APPDIR/usr/src/icons
+  # Put an application icon in the right place
+  - mkdir -p $TARGET_APPDIR/usr/share/icons/hicolor/256x256/apps
+  - cp tools/bcicon/BindControl.iconset/icon_256x256.png $TARGET_APPDIR/usr/share/icons/hicolor/256x256/apps/BindControl.png
+
+AppDir:
+  app_info:
+    id: net.hayseed.bindcontrol
+    name: BindControl
+    icon: BindControl
+    version: latest
+    # Set the python executable as entry point
+    exec: usr/bin/python3
+    # Set the application main script path as argument. Use '$@' to forward CLI parameters
+    exec_args: "$APPDIR/usr/src/BindControl.py $@"
+
+  after_bundle: |
+    # Set python 3.13 env
+    export PYTHONHOME=${TARGET_APPDIR}/usr
+    export PYTHONPATH=${TARGET_APPDIR}/usr/lib/python3.13/site-packages:$TARGET_APPDIR/usr/lib/python3.13
+    export PATH=${TARGET_APPDIR}/usr/bin:$PATH
+    # Set python 3.13 as default
+    ln -fs python3.13 $TARGET_APPDIR/usr/bin/python3
+    # Install pip
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    python3.13 get-pip.py
+    # Install application dependencies in AppDir
+    python3.13 -m pip install --upgrade --isolated --no-input --ignore-installed --prefix=$TARGET_APPDIR/usr pillow
+    # get wxPython wheel from wxpython.org directly
+    # try for a local copy first, though
+    if ! [ -f wxpython-4.2.4-cp313-cp313-linux_x86_64.whl ]; then
+      curl https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04/wxpython-4.2.4-cp313-cp313-linux_x86_64.whl -o wxpython-4.2.4-cp313-cp313-linux_x86_64.whl
+    fi
+    python3.13 -m pip install wxpython-4.2.4-cp313-cp313-linux_x86_64.whl
+
+  apt:
+    arch: amd64
+    sources:
+      - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble main restricted universe multiverse'
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920D1991BC93C'
+      - sourceline: 'deb [arch=amd64] https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu/ noble main'
+        key_url: 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xf23c5a6cf475977595c89f51ba6932366a755776'
+
+    include:
+      - python3.13
+      - curl
+      - libsdl2-2.0-0
+    exclude:
+      - dbus-bin
+      - libacl1
+      - libapparmor1
+      - libargon2
+      - libargon2-1
+      - libasound2-data
+      - libasound2t64
+      - libaudit1
+      - libaudit
+      - libaudit-common
+      - libbz2-1.0
+      - libfdisk1
+      - libffi8:amd64=3.4.6-1build1
+      - libblkid1
+      - libbrotli1
+      - libcap2
+      - libcap2-bin
+      - libcap-ng0
+      - libcom-err2
+      - libcrypt1
+      - libcryptsetup12
+      - libdb5.3t64
+      - libdecor-0-0
+      - libdevmapper1.02.1
+      - libexpat1
+      - libgcrypt20
+      - libgmp10
+      - libgpg-error0
+      - libgssapi-krb5-2
+      - libidn2-0
+      - libkmod2
+      - libkrb5support0
+      - libldap2
+      - liblz4-1
+      - liblzma5
+      - libmount1
+      - libnghttp2-14
+      - libp11-kit0
+      - libpam0g
+      - libpam-modules
+      - libpam-runtime
+      - libpcre2-8-0
+      - libpsl5t64
+      - libpulse0
+      - libreadline8t64
+      - librtmp1
+      - libsamplerate0
+      - libseccomp2
+      - libselinux1
+      - libsndfile1
+      - libsqlite3-0
+      - libssh-4
+      - libssl3t64
+      - libudev1
+      - libuuid1
+      - libxcursor1
+      - libxext6
+      - libxfixes3
+      - libxkbcommon0
+      - libxrandr2
+      - libxrender1
+      - libxss1
+      - libzstd1
+      - media-types
+      - mount
+      - systemd-sysv
+      - tzdata
+      - zlib1g
+
+  files:
+    exclude:
+      - usr/src/*/__pycache__
+      - usr/src/AppImageBuilder.yml
+      - usr/src/BindControl.bat
+      - usr/src/BindControl.spec
+      - usr/src/build
+      - usr/src/LICENSE
+      - usr/src/pytest.ini
+      - usr/src/README.md
+      - usr/src/requirements.txt
+      - usr/src/ruff.toml
+      - usr/src/SlashCommands.md
+      - usr/src/test
+      - usr/src/tools
+      - usr/share/man
+      - usr/share/doc/*/README.*
+      - usr/share/doc/*/changelog.*
+      - usr/share/doc/*/NEWS.*
+      - usr/share/doc/*/TODO.*
+
+  runtime:
+    version: "continuous"
+    env:
+      PATH: '${APPDIR}/usr/bin:${PATH}'
+      # Set python home
+      # See https://docs.python.org/3/using/cmdline.html#envvar-PYTHONHOME
+      PYTHONHOME: '${APPDIR}/usr'
+      # Path to the site-packages dir or other modules dirs
+      # See https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH
+      PYTHONPATH: '${APPDIR}/usr/lib/python3.13/site-packages'
+
+AppImage:
+  comp: xz
+  update-information: 'gh-releases-zsync|emersonrp|bindcontrol|latest|BindControl-*x86_64.AppImage.zsync'
+  sign-key: None
+  arch: x86_64

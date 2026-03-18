@@ -6,6 +6,7 @@ script:
   - mkdir -p $TARGET_APPDIR/usr/src/icons
   # Copy the python application code into the AppDir
   - cp -rv *.py  $TARGET_APPDIR/usr/src
+  - if [ -e version.txt ]; then cp -rv version.txt $TARGET_APPDIR/usr/src; fi
   - cp -rv GameData  $TARGET_APPDIR/usr/src
   - cp -rv Help  $TARGET_APPDIR/usr/src
   - cp -rv Models  $TARGET_APPDIR/usr/src
@@ -167,7 +168,8 @@ AppDir:
       PYTHONPATH: '${APPDIR}/usr/lib/python3.13/site-packages'
 
 AppImage:
-  comp: xz
+  comp: gzip
   update-information: 'gh-releases-zsync|emersonrp|bindcontrol|latest|BindControl-*x86_64.AppImage.zsync'
   sign-key: None
   arch: x86_64
+  file_name: 'BindControl-{{VERSION}}_linux.AppImage'

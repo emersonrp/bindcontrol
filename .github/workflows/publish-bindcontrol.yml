@@ -108,13 +108,13 @@ jobs:
           sudo mv appimage-builder-x86_64.AppImage /usr/local/bin/appimage-builder
           VERSION=${{ github.ref_name }} appimage-builder --recipe AppImageBuilder.yml --skip-test
 
-      - name: Upload AppImage File
+      - name: Upload AppImage Files (AppImage and zsync)
         if: ${{ runner.os == 'Linux' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: BindControl-${{ github.ref_name }}_linux.AppImage
-          asset_name: BindControl-${{ github.ref_name }}_linux.AppImage
+          file: BindControl-${{ github.ref_name }}_linux.AppImage*
+          file_glob: true
           tag: ${{ github.ref }}
           overwrite: true
           release_name: "BindControl ${{ github.ref_name }}"

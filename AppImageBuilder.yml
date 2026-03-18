@@ -169,7 +169,7 @@ AppDir:
 
 AppImage:
   comp: gzip
-  update-information: 'gh-releases-zsync|emersonrp|bindcontrol|latest|BindControl-*x86_64.AppImage.zsync'
+  update-information: 'gh-releases-zsync|emersonrp|bindcontrol|latest|*.AppImage.zsync'
   sign-key: None
   arch: x86_64
   file_name: 'BindControl-{{VERSION}}_linux.AppImage'

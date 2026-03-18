@@ -276,6 +276,7 @@ class MacroPane(wx.CollapsiblePane):
         self.Title       : str             = init.get('Title', '')
         self.CustomID    : int|None        = init.get('CustomID')
         self.Init        : dict            = init
+        self.IconButton  : wx.Button|None  = None
         self.DelButton   : wx.Button|None  = None
         self.RenButton   : wx.Button|None  = None
         self.DupButton   : wx.Button|None  = None
@@ -346,6 +347,9 @@ class MacroPane(wx.CollapsiblePane):
         else:
             self.SetLabel(f"{self.Title}")
 
+        if self.IconButton and not self.IconButton.GetLabel():
+            self.SetFakeIcon()
+
     def OnIconButton(self, evt):
         if evt: evt.Skip()
         with MacroIconPicker(self) as iconpicker: # RP: don't try to cache this, make a new one every time ugh
@@ -360,7 +364,6 @@ class MacroPane(wx.CollapsiblePane):
 
     def OnIconButtonRClick(self, evt):
         if evt: evt.Skip()
-        self.IconButton.SetLabel('')
         self.SetFakeIcon()
         self.Page.OnContentsChanged()
         self.CheckToolTipSlot()
@@ -386,7 +389,7 @@ class MacroPane(wx.CollapsiblePane):
         return macrostring
 
     def SetFakeIcon(self):
-        # don't SetLabel() here, or it'll get serialized as the actual icon name which no.
+        self.IconButton.SetLabel('')
         self.IconButton.SetToolTip(self.Title)
         self.IconButton.SetBitmap(self.FakeMacroIcon(self.Title))
 
@@ -396,7 +399,12 @@ class MacroPane(wx.CollapsiblePane):
         bitmapdc.SetTextForeground(wx.WHITE)
         bitmapdc.SetFont(wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT))
         extent = bitmapdc.GetTextExtent(text)
-        bitmapdc.DrawText(text, 0, int(16 - (extent.y / 2)))
+        # center it horizintally if v v short
+        if extent.x >= 32:
+            xloc = 0
+        else:
+            xloc = int(16 - (extent.x / 2))
+        bitmapdc.DrawText(text, xloc, int(16 - (extent.y / 2)))
         return wx.BitmapBundle(bitmap = bitmapdc.GetAsBitmap())
 
 class CustomBindControlButton(wx.BitmapButton):

@@ -1,5 +1,6 @@
 import wx
 from Page import Page
+from Page.MacroComposer import MacroPane
 from Help import HelpHTMLWindow
 from UI.ControlGroup import cgTextCtrl
 from UI.PrefsDialog import PrefsDialog
@@ -229,38 +230,26 @@ class PopmenuEditor(Page):
             wx.LogError("No current menu to save, canceling.  This is a bug.")
 
     def OnMacroButton(self, _) -> None:
+
+        mc = self.Profile.MacroComposer
         cm = self.CurrentMenu
-        if cm:
-            with wx.Dialog(self, title = f"Macro for {cm.Title}",) as dlg:
-                sizer = wx.BoxSizer(wx.VERTICAL)
-                sizer.Add(wx.StaticText(dlg, label = "Paste the following into the game to create your macro button:"), 1, wx.EXPAND|wx.ALL, 10)
 
-                textBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
-                textCtrl = wx.TextCtrl(dlg, value = f"/macro {cm.Title} popmenu {cm.Title}",
-                                       style = wx.TE_READONLY|wx.TE_CENTER)
-                textCtrl.SetFont(
-                    wx.Font(9, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, faceName = 'Courier')
-                )
-                textBoxSizer.Add(textCtrl, 1, wx.EXPAND)
-                copyButton = wx.BitmapButton(dlg, bitmap = GetIcon('UI', 'copy'))
-                textBoxSizer.Add(copyButton, 0)
-                copyButton.Bind(wx.EVT_BUTTON, partial(self.doTextCopy, textctrl = textCtrl))
+        if mc and cm:
+            with wx.TextEntryDialog(self, "Enter new macro name", "New Macro", f"Pop up {cm.Title}") as dlg:
+                if dlg.ShowModal() == wx.ID_CANCEL:
+                    return
 
-                sizer.Add(textBoxSizer, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
-                sizer.Add(dlg.CreateButtonSizer(wx.OK), 1, wx.EXPAND|wx.ALL, 10)
-                dlg.SetSizerAndFit(sizer)
-                dlg.Layout()
-
-                dlg.ShowModal()
-
-    def doTextCopy(self, _, textctrl) -> None:
-        dataObj = wx.TextDataObject(textctrl.GetValue())
-        if wx.TheClipboard.Open():
-            wx.TheClipboard.SetData(dataObj)
-            wx.TheClipboard.Flush()
-            wx.TheClipboard.Close()
-        else:
-            wx.MessageBox("Couldn't open the clipboard for copying")
+                mc.AddMacroToPage(MacroPane(mc, {
+                    'Title'           : dlg.GetValue(),
+                    'Contents'        : f"popmenu {cm.Title}",
+                    'powerbinderdata' : [{
+                        "Custom Command": {
+                            "customBindName": f"popmenu {cm.Title}"
+                        }
+                    }],
+                }))
+                mcidx = self.Profile.FindPage(mc)
+                self.Profile.SetSelection(mcidx)
 
     def OnNewMenuButton(self, _ = None) -> None:
         newmenuname = self.GetNewMenuName()
@@ -453,7 +442,7 @@ class PopmenuEditor(Page):
     def ToggleTopButtons(self, show) -> None:
         self.TestMenuButton.Enable(show)
         self.WriteMenuButton.Enable(show)
-        self.MacroButton.Enable(show)
+        self.MacroButton.Enable(self.Profile.MacroComposer and show)
         self.DeleteMenuButton.Enable(show)
 
     def CheckForModifiedMenus(self) -> bool:

@@ -71,6 +71,10 @@ jobs:
           echo "${{ github.ref_name }}" > version.txt
           ${{ matrix.CMD_BUILD }}
 
+      - name: Verify Files
+        run: |
+          ${{ matrix.CMD_VERIFY }}
+
       - name: Create Zip Archive
         uses: thedoctor0/zip-release@0.7.6
         with:
@@ -81,16 +85,36 @@ jobs:
           command: '${{ matrix.CMD_PREZIP }}'
           filename: '${{ matrix.FILE_NAME }}'
 
-      - name: Verify Files
-        run: |
-          ${{ matrix.CMD_VERIFY }}
-
-      - name: Upload Release Asset
+      - name: Upload ZIP Archive
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/${{ matrix.FILE_NAME }}
           asset_name: ${{ matrix.FILE_NAME }}
+          tag: ${{ github.ref }}
+          overwrite: true
+          release_name: "BindControl ${{ github.ref_name }}"
+          body: "${{ github.event.head_commit.message }}"
+          prerelease:  ${{  contains(github.ref, 'test') ||  contains(github.ref, 'prerelease') }}
+          make_latest: ${{ !contains(github.ref, 'test') && !contains(github.ref, 'prerelease') }}
+
+      - name: Create AppImage File
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          wget -O appimage-builder-x86_64.AppImage.tar https://github.com/Lord-Kamina/appimage-builder/releases/download/continuous/appimage-builder_x86_64-AppImage.tar
+          tar xvf appimage-builder-x86_64.AppImage.tar --transform='s/.*\///'
+          mv appimage-builder-*-x86_64.AppImage appimage-builder-x86_64.AppImage
+          chmod +x appimage-builder-x86_64.AppImage
+          sudo mv appimage-builder-x86_64.AppImage /usr/local/bin/appimage-builder
+          VERSION=${{ github.ref_name }} appimage-builder --recipe AppImageBuilder.yml --skip-test
+
+      - name: Upload AppImage File
+        if: ${{ runner.os == 'Linux' }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: BindControl-${{ github.ref_name }}_linux.AppImage
+          asset_name: BindControl-${{ github.ref_name }}_linux.AppImage
           tag: ${{ github.ref }}
           overwrite: true
           release_name: "BindControl ${{ github.ref_name }}"

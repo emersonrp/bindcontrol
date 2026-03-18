@@ -442,7 +442,7 @@ class PopmenuEditor(Page):
     def ToggleTopButtons(self, show) -> None:
         self.TestMenuButton.Enable(show)
         self.WriteMenuButton.Enable(show)
-        self.MacroButton.Enable(self.Profile.MacroComposer and show)
+        self.MacroButton.Enable(bool(self.Profile.MacroComposer) and show)
         self.DeleteMenuButton.Enable(show)
 
     def CheckForModifiedMenus(self) -> bool:

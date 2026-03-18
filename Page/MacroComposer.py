@@ -288,7 +288,7 @@ class MacroPane(wx.CollapsiblePane):
         return {
             'CustomID'        : self.CustomID,
             'Title'           : self.Title,
-            'Icon'            : self.IconButton.GetLabel(),
+            'Icon'            : self.IconButton.GetLabel() if self.IconButton else '',
             'Contents'        : self.MacroContents.GetValue(),
             'powerbinderdata' : self.MacroContents.SaveToData(),
             'ToolTip'         : self.ToolTipText.GetValue(),
@@ -351,14 +351,14 @@ class MacroPane(wx.CollapsiblePane):
             self.SetFakeIcon()
 
     def OnIconButton(self, evt):
-        if evt: evt.Skip()
+        button = evt.GetEventObject()
         with MacroIconPicker(self) as iconpicker: # RP: don't try to cache this, make a new one every time ugh
             if iconpicker.ShowModal() == wx.ID_OK:
                 item = iconpicker.IconList.GetFirstSelected()
                 iconname = iconpicker.IconList.GetItemText(item)
-                self.IconButton.SetToolTip(iconname)
-                self.IconButton.SetLabel(iconname)
-                self.IconButton.SetBitmap(GetIcon('Macros', iconname))
+                button.SetToolTip(iconname)
+                button.SetLabel(iconname)
+                button.SetBitmap(GetIcon('Macros', iconname))
                 self.Page.OnContentsChanged()
                 self.CheckToolTipSlot()
 
@@ -369,7 +369,7 @@ class MacroPane(wx.CollapsiblePane):
         self.CheckToolTipSlot()
 
     def CheckToolTipSlot(self):
-        enable = self.IconButton.GetLabel() != ''
+        enable = bool(self.IconButton) and (self.IconButton.GetLabel() != '')
         self.ToolTipText.Enable(enable)
         self.ToolTipLabel.Enable(enable)
         tooltiptext = '' if enable else 'Tooltip is only supported if an icon is chosen.'
@@ -381,7 +381,7 @@ class MacroPane(wx.CollapsiblePane):
             dlg.ShowModal()
 
     def GetMacroString(self) -> str:
-        if iconname := self.IconButton.GetLabel():
+        if iconname := (self.IconButton.GetLabel() if self.IconButton else ''):
             macrostring = f'/macro_image "{iconname}" "{self.ToolTipText.GetValue()}" "{self.MacroContents.GetValue()}"'
         else:
             macrostring = f'/macro "{self.Title}" "{self.MacroContents.GetValue()}"'
@@ -389,9 +389,10 @@ class MacroPane(wx.CollapsiblePane):
         return macrostring
 
     def SetFakeIcon(self):
-        self.IconButton.SetLabel('')
-        self.IconButton.SetToolTip(self.Title)
-        self.IconButton.SetBitmap(self.FakeMacroIcon(self.Title))
+        if self.IconButton:
+            self.IconButton.SetLabel('')
+            self.IconButton.SetToolTip(self.Title)
+            self.IconButton.SetBitmap(self.FakeMacroIcon(self.Title))
 
     def FakeMacroIcon(self, text) -> wx.BitmapBundle:
         bitmapdc = wx.MemoryDC()

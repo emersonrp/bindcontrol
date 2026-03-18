@@ -305,6 +305,8 @@ class MacroPane(wx.CollapsiblePane):
             self.IconButton.SetLabel(iconname)
             self.IconButton.SetToolTip(iconname)
             self.IconButton.SetBitmap(GetIcon('Macros', iconname))
+        else:
+            self.SetFakeIcon()
         self.IconButton.Bind(wx.EVT_BUTTON, self.OnIconButton)
         self.IconButton.Bind(wx.EVT_RIGHT_DOWN, self.OnIconButtonRClick)
         macroSizer.Add(self.IconButton, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
@@ -358,9 +360,8 @@ class MacroPane(wx.CollapsiblePane):
 
     def OnIconButtonRClick(self, evt):
         if evt: evt.Skip()
-        self.IconButton.SetToolTip('')
         self.IconButton.SetLabel('')
-        self.IconButton.SetBitmap(GetIcon('Empty'))
+        self.SetFakeIcon()
         self.Page.OnContentsChanged()
         self.CheckToolTipSlot()
 
@@ -383,6 +384,20 @@ class MacroPane(wx.CollapsiblePane):
             macrostring = f'/macro "{self.Title}" "{self.MacroContents.GetValue()}"'
 
         return macrostring
+
+    def SetFakeIcon(self):
+        # don't SetLabel() here, or it'll get serialized as the actual icon name which no.
+        self.IconButton.SetToolTip(self.Title)
+        self.IconButton.SetBitmap(self.FakeMacroIcon(self.Title))
+
+    def FakeMacroIcon(self, text) -> wx.BitmapBundle:
+        bitmapdc = wx.MemoryDC()
+        bitmapdc.SelectObject(GetIconBitmap('UI', 'MacroButton'))
+        bitmapdc.SetTextForeground(wx.WHITE)
+        bitmapdc.SetFont(wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT))
+        extent = bitmapdc.GetTextExtent(text)
+        bitmapdc.DrawText(text, 0, int(16 - (extent.y / 2)))
+        return wx.BitmapBundle(bitmap = bitmapdc.GetAsBitmap())
 
 class CustomBindControlButton(wx.BitmapButton):
     def __init__(self, parent, bitmap):

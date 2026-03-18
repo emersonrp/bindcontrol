@@ -399,12 +399,7 @@ class MacroPane(wx.CollapsiblePane):
         bitmapdc.SetTextForeground(wx.WHITE)
         bitmapdc.SetFont(wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT))
         extent = bitmapdc.GetTextExtent(text)
-        # center it horizintally if v v short
-        if extent.x >= 32:
-            xloc = 0
-        else:
-            xloc = int(16 - (extent.x / 2))
-        bitmapdc.DrawText(text, xloc, int(16 - (extent.y / 2)))
+        bitmapdc.DrawText(text, max(0, int(16 - (extent.x / 2))), int(16 - (extent.y / 2)))
         return wx.BitmapBundle(bitmap = bitmapdc.GetAsBitmap())
 
 class CustomBindControlButton(wx.BitmapButton):

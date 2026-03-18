@@ -99,7 +99,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
 * The hope is to make every reasonable slash command in the game available in some way, typically via PowerBinder.  What qualifies as a "reasonable slash command" is yet to be determined.  Check [the SlashCommands.md file](SlashCommands.md) for the current status.
 * Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment.
 * The popmenu editor, on Windows, simply can't load pathologically large popmenus (tens of thousands of entries).  This is a hard limit on the wx toolkit imposed by Windows itself, and can't be worked around in any way I can see.  As there exist at least two menus this large "in the wild," further investigation is merited.
-* It might be nice to find a way to add icons to the popmenu editor macro creator, but it would involve either shipping every icon in the game with BindControl or creating a browsable view of some external site like City of Data to pick from the icons.
+* Integrate macro icons with Popmenu Macro Creator, now that we have them on-board for the Macro Composer.  Really, integrating the two somehow would be best.
 * More error detection and handling.
 * More and better help text and documentation.  <i>(WIP - check [the wiki](https://github.com/emersonrp/bindcontrol/wiki/Getting-Started-With-BindControl))</i>
 * More internal work on initialization order of objects to speed up start time and avoid bootstrapping problems.  <i>(WIP)</i>

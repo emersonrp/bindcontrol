@@ -5,6 +5,7 @@ class WizardParent:
     WizardName  = ''
     WizToolTip  = ''
     WizHelpFile = ''
+    IconPath    = ('Empty',) # trailing , is important
     IsUnique    = False
 
     def __init__(self, parent, init):

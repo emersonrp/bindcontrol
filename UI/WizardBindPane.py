@@ -2,10 +2,10 @@ import wx
 import importlib
 import sys
 from typing import Any
+from functools import partial
 
 from UI.CustomBindPaneParent import CustomBindPaneParent
 from Util.Paths import GetRootDirPath
-
 
 class WizardBindPane(CustomBindPaneParent):
     def __init__(self, page, wizClass, init : dict|None = None) -> None:
@@ -83,38 +83,25 @@ class WizButton(wx.Button):
         self.WizClass : Any = wizclass
         self.SetToolTip(self.WizClass.WizToolTip)
 
-class WizPickerDialog(wx.Dialog):
-    def __init__(self, parent):
+class WizPickerMenu(wx.Menu):
+    def __init__(self, page):
 
-        super().__init__(parent, -1, 'Bind Wizard')
+        from Icon import GetIcon
+        super().__init__()
 
-        self.WizClass = None
-
-        mainSizer = wx.BoxSizer(wx.VERTICAL)
-
-        wcSizer = wx.BoxSizer(wx.VERTICAL)
-        wcSizer.Add(wx.StaticText(self, wx.ID_ANY, 'Select a Bind Wizard:'), 0, wx.EXPAND|wx.BOTTOM, 20)
-        for classname, wizClass in wizards.items():
-            wizbutton = WizButton(self, label = classname, wizclass = wizClass)
-            wcSizer.Add(wizbutton, 1, wx.EXPAND)
-            wizbutton.Bind(wx.EVT_BUTTON, self.OnWizPicked)
-
-            # Turn off the button if we just can have one, like "Escape Configurator"
+        for wizClass in wizards.values():
+            menuitem = wx.MenuItem(self, wx.ID_ANY, wizClass.WizardName)
+            menuitem.SetBitmap(GetIcon(*wizClass.IconPath))
+            self.Append(menuitem)
+            self.Bind(wx.EVT_MENU, partial(page.OnBindWizardPicked, wizClass), menuitem)
+            # Delete the menuitem if it's a unique item ("Escape Configurator" so far)
+            # and we already have one in there.
             # This is a little hacky, innit?
             if wizClass.IsUnique:
-                for pane in parent.Panes:
+                for pane in page.Panes:
                     if hasattr(pane, 'WizClass') and (pane.WizClass == wizClass):
-                        wizbutton.Enable(False)
-                        wizbutton.SetToolTip(f'You can only have one instance of "{classname}" per-Profile')
+                        self.Delete(menuitem)
 
-        mainSizer.Add(wcSizer, 1, wx.EXPAND|wx.ALL, 20)
-
-        self.SetSizer(mainSizer)
-
-    def OnWizPicked(self, evt):
-        if evt: evt.Skip()
-        self.WizClass = evt.GetEventObject().WizClass
-        self.Hide()
 
 # Load plugins / modules from UI/BindWizard directory
 def LoadModules():

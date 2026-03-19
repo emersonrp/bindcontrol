@@ -20,6 +20,7 @@ class EscapeConfigurator(WizardParent):
     WizToolTip  = 'Bind various interesting functions to your Escape key'
     WizHelpFile = 'EscapeConfigurator.html'
     IsUnique    = True
+    IconPath    = ('UI', 'EscKey')
 
     def BuildUI(self, dialog, init : dict|None = None) -> wx.Sizer:
         wizdata = {}

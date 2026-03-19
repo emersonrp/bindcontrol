@@ -11,6 +11,7 @@ class InspCombiner(WizardParent):
     WizardName  = 'Inspiration Combiner'
     WizToolTip  = 'Create a keybind that, with multiple presses, will combine inspirations and optionally consume them'
     WizHelpFile = 'InspCombiner.html'
+    IconPath    = ('Inspirations', 'FuriousRage')
 
     def __init__(self, parent, init) -> None:
         super().__init__(parent, init)

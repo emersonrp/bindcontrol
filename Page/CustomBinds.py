@@ -12,7 +12,7 @@ from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
-from UI.WizardBindPane  import WizardBindPane, WizPickerDialog
+from UI.WizardBindPane  import WizardBindPane, WizPickerMenu
 
 class CustomBindControlButton(wx.BitmapButton):
     def __init__(self, parent, bitmap):
@@ -91,13 +91,18 @@ class CustomBinds(Page):
         evt.Skip()
 
     def OnBindWizardButton(self, evt = None) -> None:
-        with WizPickerDialog(self) as bwd:
-            bwd.ShowModal()
-            if wizClass := bwd.WizClass:
-                newWizBindPane = WizardBindPane(self, wizClass)
-                self.AddBindToPage(bindpane = newWizBindPane)
-                if newWizBindPane in self.Panes: # did we cancel the add?
-                    newWizBindPane.Wizard.ShowWizard()
+        if evt:
+            evt.GetEventObject().PopupMenu(WizPickerMenu(self))
+            evt.Skip()
+
+    # I don't totally like binding the menu back upstream to this,
+    # but the other way seems just as weirdly intrusive.
+    def OnBindWizardPicked(self, wizClass = None, evt = None):
+        if wizClass:
+            newWizBindPane = WizardBindPane(self, wizClass)
+            self.AddBindToPage(bindpane = newWizBindPane)
+            if newWizBindPane in self.Panes: # did we cancel the add?
+                newWizBindPane.Wizard.ShowWizard()
         if evt: evt.Skip()
 
     def OnImportBindButton(self, evt) -> None:

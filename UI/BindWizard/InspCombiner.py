@@ -2,7 +2,7 @@ import re
 import wx
 from wx.adv import BitmapComboBox
 import GameData
-from Icon import GetIconBitmap
+from Icon import GetIcon, GetIconBitmap
 import UI
 from UI.BindWizard import WizardParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
@@ -17,6 +17,9 @@ class InspCombiner(WizardParent):
         super().__init__(parent, init)
 
     def BuildUI(self, dialog, init : dict|None = None) -> wx.Sizer:
+
+        self.Dialog = dialog
+
         init = init or {}
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.SetMinSize(wx.Size(700,-1))
@@ -32,6 +35,11 @@ class InspCombiner(WizardParent):
         typePickerSizer.Add(self.TypePicker, 1, wx.ALL, 5)
 
         mainSizer.Add(typePickerSizer, 0, wx.EXPAND|wx.ALL, 10)
+
+        self.CBSizer = wx.BoxSizer(wx.VERTICAL)
+        mainSizer.Add(self.CBSizer, 0, wx.EXPAND|wx.ALL, 10)
+
+        self.GetCorrectInspCheckboxes()
 
         return mainSizer
 
@@ -76,6 +84,15 @@ class InspCombiner(WizardParent):
 
     def UpdateState(self):
         self.State = { 'WizData' : { } }
+
+    def GetCorrectInspCheckboxes(self, evt = None):
+        if evt: evt.Skip()
+
+        currtype = self.TypePicker.GetStringSelection()
+        self.CBSizer.Clear(delete_windows = True)
+        for insptype in GameData.Inspirations['Single']:
+            if insptype == currtype: continue
+            self.CBSizer.Add(InspirationTypeCheckBox(self.Dialog, insptype), 0, wx.ALIGN_LEFT|wx.ALL, 5)
 
     def CheckIfWellFormed(self) -> bool:
         isWellFormed = True
@@ -141,3 +158,29 @@ class InspCombiner(WizardParent):
             'files' : files,
             'dirs'  : [],
         }
+
+# call with parent, insp name
+class InspirationTypeCheckBox(wx.Panel):
+    def __init__(self, parent, insptype):
+        super().__init__(parent)
+
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.CheckBox = wx.CheckBox(self)
+        sizer.Add(self.CheckBox, 0, wx.ALIGN_CENTER|wx.ALL, 5)
+
+        insp = GameData.Inspirations['Single'][insptype]['tiers'][3] # get max tier icon just because
+        insp = re.sub(' ', '', insp)
+
+        bitmap = wx.StaticBitmap(self, bitmap = GetIcon('Inspirations', insp))
+        sizer.Add(bitmap, 0, wx.ALIGN_CENTER|wx.ALL, 5)
+        bitmap.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
+
+        label = wx.StaticText(self, label = insptype)
+        sizer.Add(label, 0, wx.ALIGN_CENTER|wx.ALL, 5)
+        label.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
+
+        self.SetSizer(sizer)
+
+    def OnSomethingClicked(self, evt):
+        evt.Skip()
+        self.CheckBox.SetValue(not self.CheckBox.GetValue())

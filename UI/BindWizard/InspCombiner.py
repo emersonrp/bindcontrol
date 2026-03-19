@@ -24,19 +24,22 @@ class InspCombiner(WizardParent):
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.SetMinSize(wx.Size(700,-1))
 
+        # picker for which type we're working with
         typePickerSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.TypePicker = BitmapComboBox(dialog, style = wx.CB_READONLY)
         for insptype, info in GameData.Inspirations['Single'].items():
             baseicon = GetIconBitmap('Inspirations', info['tiers'][0])
             self.TypePicker.Append(insptype, baseicon)
         self.TypePicker.SetSelection(0)
+        self.TypePicker.Bind(wx.EVT_COMBOBOX, self.GetCorrectInspCheckboxes)
 
         typePickerSizer.Add(wx.StaticText(dialog, label = 'Inspiration Type:', style=wx.ALIGN_RIGHT), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
         typePickerSizer.Add(self.TypePicker, 1, wx.ALL, 5)
 
         mainSizer.Add(typePickerSizer, 0, wx.EXPAND|wx.ALL, 10)
 
-        self.CBSizer = wx.BoxSizer(wx.VERTICAL)
+        # sizer for the checkboxes for the other types.
+        self.CBSizer = wx.StaticBoxSizer(wx.VERTICAL, dialog, 'Combine Inspiration Types')
         mainSizer.Add(self.CBSizer, 0, wx.EXPAND|wx.ALL, 10)
 
         self.GetCorrectInspCheckboxes()
@@ -92,7 +95,9 @@ class InspCombiner(WizardParent):
         self.CBSizer.Clear(delete_windows = True)
         for insptype in GameData.Inspirations['Single']:
             if insptype == currtype: continue
-            self.CBSizer.Add(InspirationTypeCheckBox(self.Dialog, insptype), 0, wx.ALIGN_LEFT|wx.ALL, 5)
+            self.CBSizer.Add(InspirationTypeCheckBox(self.CBSizer.GetStaticBox(), insptype), 0, wx.ALIGN_LEFT|wx.ALL, 5)
+
+        self.Dialog.Layout()
 
     def CheckIfWellFormed(self) -> bool:
         isWellFormed = True
@@ -164,11 +169,13 @@ class InspirationTypeCheckBox(wx.Panel):
     def __init__(self, parent, insptype):
         super().__init__(parent)
 
+        self.InspType = insptype
+
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.CheckBox = wx.CheckBox(self)
         sizer.Add(self.CheckBox, 0, wx.ALIGN_CENTER|wx.ALL, 5)
 
-        insp = GameData.Inspirations['Single'][insptype]['tiers'][3] # get max tier icon just because
+        insp = GameData.Inspirations['Single'][insptype]['tiers'][0] # get min tier icon just because
         insp = re.sub(' ', '', insp)
 
         bitmap = wx.StaticBitmap(self, bitmap = GetIcon('Inspirations', insp))

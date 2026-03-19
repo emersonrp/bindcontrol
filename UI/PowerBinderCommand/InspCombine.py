@@ -42,12 +42,8 @@ class InspCombine(PowerBinderCommand):
         return inspCombineSizer
 
     def MakeBindString(self) -> str:
-        schoice = self.inspCombineSource
-        sindex  = schoice.GetSelection()
-        source  = re.sub(' ', '_', schoice.GetString(sindex))
-        tchoice = self.inspCombineTarget
-        tindex  = tchoice.GetSelection()
-        target  = re.sub(' ', '_', tchoice.GetString(tindex))
+        source  = re.sub(' ', '_', self.inspCombineSource.GetStringSelection())
+        target  = re.sub(' ', '_', self.inspCombineTarget.GetStringSelection())
         cmd = "mergeinsp" if self.Profile.Server() == "Homecoming" else "inspcombine"
         return f'{cmd} {source.lower()} {target.lower()}'
 
@@ -62,15 +58,9 @@ class InspCombine(PowerBinderCommand):
         return Insplist
 
     def Serialize(self) -> dict:
-        schoice = self.inspCombineSource
-        sindex  = schoice.GetSelection()
-        source  = schoice.GetString(sindex)
-        tchoice = self.inspCombineTarget
-        tindex  = tchoice.GetSelection()
-        target  = tchoice.GetString(tindex)
         return {
-                'source' : source,
-                'target' : target,
+                'source' : self.inspCombineSource.GetStringSelection(),
+                'target' : self.inspCombineTarget.GetStringSelection(),
                 }
 
     def Deserialize(self, init) -> None:

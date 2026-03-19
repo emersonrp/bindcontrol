@@ -18,8 +18,6 @@ class InspCombiner(WizardParent):
 
     def BuildUI(self, dialog, init : dict|None = None) -> wx.Sizer:
 
-        self.Dialog = dialog
-
         init = init or {}
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.SetMinSize(wx.Size(700,-1))
@@ -27,9 +25,9 @@ class InspCombiner(WizardParent):
         # picker for which type we're working with
         typePickerSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.TypePicker = BitmapComboBox(dialog, style = wx.CB_READONLY)
-        for insptype, info in GameData.Inspirations['Single'].items():
+        for info in GameData.Inspirations['Single'].values():
             baseicon = GetIconBitmap('Inspirations', info['tiers'][0])
-            self.TypePicker.Append(insptype, baseicon)
+            self.TypePicker.Append(info['displayname'], baseicon)
         self.TypePicker.SetSelection(0)
         self.TypePicker.Bind(wx.EVT_COMBOBOX, self.GetCorrectInspCheckboxes)
 
@@ -38,9 +36,17 @@ class InspCombiner(WizardParent):
 
         mainSizer.Add(typePickerSizer, 0, wx.EXPAND|wx.ALL, 10)
 
-        # sizer for the checkboxes for the other types.
+        bottomSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # sizer for the various option-style toggles
+        optsSizer = wx.StaticBoxSizer(wx.VERTICAL, dialog, 'Options')
+        bottomSizer.Add(optsSizer, 1, wx.EXPAND|wx.ALL, 10)
+
+        # sizer for the checkboxes for the other types to combine
         self.CBSizer = wx.StaticBoxSizer(wx.VERTICAL, dialog, 'Combine Inspiration Types')
-        mainSizer.Add(self.CBSizer, 0, wx.EXPAND|wx.ALL, 10)
+        bottomSizer.Add(self.CBSizer, 1, wx.EXPAND|wx.ALL, 10)
+
+        mainSizer.Add(bottomSizer, 0, wx.EXPAND|wx.ALL, 10)
 
         self.GetCorrectInspCheckboxes()
 
@@ -97,7 +103,7 @@ class InspCombiner(WizardParent):
             if insptype == currtype: continue
             self.CBSizer.Add(InspirationTypeCheckBox(self.CBSizer.GetStaticBox(), insptype), 0, wx.ALIGN_LEFT|wx.ALL, 5)
 
-        self.Dialog.Layout()
+        self.Dialog().Layout()
 
     def CheckIfWellFormed(self) -> bool:
         isWellFormed = True
@@ -171,18 +177,21 @@ class InspirationTypeCheckBox(wx.Panel):
 
         self.InspType = insptype
 
+        inspdata = GameData.Inspirations['Single'][insptype]
+
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.CheckBox = wx.CheckBox(self)
         sizer.Add(self.CheckBox, 0, wx.ALIGN_CENTER|wx.ALL, 5)
 
-        insp = GameData.Inspirations['Single'][insptype]['tiers'][0] # get min tier icon just because
+        insp = inspdata['tiers'][0] # get min tier icon just because
         insp = re.sub(' ', '', insp)
 
         bitmap = wx.StaticBitmap(self, bitmap = GetIcon('Inspirations', insp))
         sizer.Add(bitmap, 0, wx.ALIGN_CENTER|wx.ALL, 5)
         bitmap.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
 
-        label = wx.StaticText(self, label = insptype)
+        # this speaks to some sort of lack of vision on my part in GameData
+        label = wx.StaticText(self, label = inspdata['displayname'])
         sizer.Add(label, 0, wx.ALIGN_CENTER|wx.ALL, 5)
         label.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
 

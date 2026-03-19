@@ -51,7 +51,7 @@ class ChatColorPicker(wx.BoxSizer):
         self.backgroundPicker.Bind(EVT_CHATCOLORPICKER_CHANGED, self.onColorChanged)
         self.textPicker.Bind(EVT_CHATCOLORPICKER_CHANGED, self.onColorChanged)
 
-        self.Add(self.example, 0, wx.LEFT|wx.ALIGN_CENTER, 15)
+        self.Add(self.example, 0, wx.LEFT|wx.ALIGN_CENTER|wx.RESERVE_SPACE_EVEN_IF_HIDDEN, 15)
 
     def onColorChanged(self, evt = None) -> None:
         if evt: evt.Skip()

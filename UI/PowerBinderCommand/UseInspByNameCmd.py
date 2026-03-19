@@ -28,10 +28,7 @@ class UseInspByNameCmd(PowerBinderCommand):
         return useInspByNameSizer
 
     def MakeBindString(self) -> str:
-        choice = self.useInspByNameModeChoice
-        index  = choice.GetSelection()
-        mode   = choice.GetString(index)
-        return "inspexecname " + mode.lower()
+        return "inspexecname " + self.useInspByNameModeChoice.GetStringSelection().lower()
 
     def GetAllInsps(self) -> list:
         Insplist = []
@@ -43,12 +40,16 @@ class UseInspByNameCmd(PowerBinderCommand):
 
         return Insplist
 
-    # TODO - we're serializing GetSelection() which could, in principle, change
-    # if the game changes up the inspirations.  We should dtrt with storing the
-    # string instead, and still honoring isinstance(int) to support legacy profiles
-
     def Serialize(self) -> dict:
-        return { 'insp' : self.useInspByNameModeChoice.GetSelection() }
+        return { 'insp' : self.useInspByNameModeChoice.GetStringSelection() }
 
     def Deserialize(self, init) -> None:
-        if init.get('insp', ''): self.useInspByNameModeChoice.SetSelection(init['insp'])
+        insp = init.get('insp', 0)
+        if isinstance(insp, int):
+            self.useInspByNameModeChoice.SetSelection(insp)
+            # If we touch one that is int-based, mark it as needing re-saving.
+            # TODO:  is there a trivial way to tell it "resave the whole thing,
+            # examining and updating all steps?"  Probably not.
+            self.Profile.CustomBinds.UpdateAllBinds()
+        elif isinstance(insp, str):
+            self.useInspByNameModeChoice.SetStringSelection(insp)

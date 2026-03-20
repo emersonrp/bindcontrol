@@ -92,12 +92,11 @@ class InspCombiner(WizardParent):
             panelSizer.Add(combinesizer, 1, wx.ALIGN_BOTTOM|wx.ALL, 15)
 
             # And the bind key
-            bindkey = bindpane.Init.get('BindKey', '')
             BindSizer = wx.BoxSizer(wx.HORIZONTAL)
             self.BindKeyCtrl = bcKeyButton(panel, init = {
                 'CtlName' : bindpane.MakeCtrlName("BindKey"),
                 'Page'    : bindpane.Page,
-                'Key'     : bindkey,
+                'Key'     : bindpane.Init.get('BindKey', ''),
             })
             self.BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.OnKeyChanged)
             BindSizer.Add(wx.StaticText(panel, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
@@ -105,9 +104,11 @@ class InspCombiner(WizardParent):
             bindpane.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
             UI.Labels[self.BindKeyCtrl.CtlName] = f'Inspiration Combiner Bind "{bindpane.Title}"'
 
-            panelSizer.Add(BindSizer, wx.ALIGN_CENTER|wx.ALL, 10)
+            panelSizer.Add(BindSizer, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 10)
 
         panel.SetSizer(panelSizer)
+
+        panel.Layout()
 
         return panel
 

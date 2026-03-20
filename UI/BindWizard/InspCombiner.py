@@ -65,24 +65,31 @@ class InspCombiner(WizardParent):
 
         if self.WizardDialog:
 
-            combineGrid = wx.GridSizer(2, 4, 5, 5)
+            combinesizer = wx.StaticBoxSizer(wx.HORIZONTAL, panel, 'Combine')
+            combinebox   = combinesizer.GetStaticBox()
+
+            combineGrid = wx.GridSizer(1, 7, 5, 5)
             for combineInfo in self.GetOtherInspTypes(self.TypePicker.GetStringSelection()).values():
-                cbpanel = wx.Panel(panel)
-                cbpanel.SetBackgroundColour(combineInfo['ltcolor'])
+                cbpanel = wx.Panel(combinebox)
 
                 ctsizer = wx.BoxSizer(wx.HORIZONTAL)
                 cbpanel.SetSizer(ctsizer)
                 cmdtext = wx.StaticText(cbpanel, label = combineInfo['displayname'], style = wx.ALIGN_CENTER)
                 if self.CombineCBs[combineInfo['displayname']].IsChecked():
                     cmdtext.SetLabel(f"✓ {combineInfo['displayname']}")
+                    cbpanel.SetBackgroundColour(combineInfo['ltcolor'])
+                    cmdtext.SetForegroundColour(combineInfo['dkcolor'])
                 else:
+                    cbpanel.SetBackgroundColour(wx.Colour(160, 160, 160))
                     cmdtext.SetForegroundColour(wx.Colour(128, 128, 128))
                 ctsizer.Add(cmdtext, 1, wx.ALIGN_CENTER|wx.ALL, 5)
                 combineGrid.Add(cbpanel, 1, wx.EXPAND)
 
                 cbpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
                 cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-            panelSizer.Add(combineGrid, 1, wx.ALIGN_CENTER|wx.ALL, 15)
+
+            combinesizer.Add(combineGrid, 1, wx.ALL, 5)
+            panelSizer.Add(combinesizer, 1, wx.ALIGN_BOTTOM|wx.ALL, 15)
 
             # And the bind key
             bindkey = bindpane.Init.get('BindKey', '')
@@ -96,9 +103,9 @@ class InspCombiner(WizardParent):
             BindSizer.Add(wx.StaticText(panel, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
             BindSizer.Add(self.BindKeyCtrl, 0, wx.ALIGN_CENTER_VERTICAL)
             bindpane.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
-            UI.Labels[self.BindKeyCtrl.CtlName] = f'Incarnate Set Bind "{bindpane.Title}"'
+            UI.Labels[self.BindKeyCtrl.CtlName] = f'Inspiration Combiner Bind "{bindpane.Title}"'
 
-            panelSizer.Add(BindSizer, wx.ALL, 10)
+            panelSizer.Add(BindSizer, wx.ALIGN_CENTER|wx.ALL, 10)
 
         panel.SetSizer(panelSizer)
 
@@ -133,72 +140,35 @@ class InspCombiner(WizardParent):
             self.WizardDialog.Layout()
 
     def CheckIfWellFormed(self) -> bool:
-        return True
         isWellFormed = True
+        if self.WizardDialog: # we somehow get into here before fully-formed - TODO this needs some love
 
-        bk = self.BindPane.GetCtrl('BindKey')
-        if not bk:
-            wx.LogError("BindKey missing from Ctrls in IncarnateSet.CheckIfWellFormed - this is a bug!")
-            isWellFormed = False
-
-        else:
-            if bk.Key:
-                bk.RemoveError('undef')
-            else:
-                bk.AddError('undef', 'The keybind has not been selected')
+            bk = self.BindPane.GetCtrl('BindKey')
+            if not bk:
+                wx.LogError("BindKey missing from Ctrls in IncarnateSet.CheckIfWellFormed - this is a bug!")
                 isWellFormed = False
+
+            else:
+                if bk.Key:
+                    bk.RemoveError('undef')
+                else:
+                    bk.AddError('undef', 'The keybind has not been selected')
+                    isWellFormed = False
 
         return isWellFormed
 
     def PopulateBindFiles(self):
-        profile = self.Profile
-
-        incdata = self.State.get('WizData', {}).get('IncData', {})
-        incarnate_lines = ['']
-        title = re.sub(r'\W+', '', self.BindPane.Title)
-        fake_blf = profile.BLF('wiz', f'{title}X')
-        extra_len = len(f"$$bindloadfilesilent {fake_blf}$$t $name, X of X, Press Again")
-        for slot, data in incdata.items():
-            if data['power'] == "Disable Slot": # pyright: ignore
-                incarnate_command = f'incarnateunequipbyslot {slot}'
-            else:
-                powername = re.sub(r' ', '_', data['power']) # pyright: ignore
-                incarnate_command = f'incarnate_equip {slot} {powername}'
-            if len(incarnate_lines[-1]) == 0:
-                incarnate_lines[-1] = incarnate_command
-            elif (len(incarnate_lines[-1]) + len(incarnate_command)) > (255 - extra_len):
-                incarnate_lines.append(incarnate_command)
-            else:
-                incarnate_lines[-1] = f'{incarnate_lines[-1]}$${incarnate_command}'
-
-        for i, line in enumerate(incarnate_lines):
-            bindfile = profile.GetBindFile('wiz', f'{title}{i}.txt')
-
-            if (i+1 < len(incarnate_lines)):
-                nextfile = i+1
-                line = line + f'$$t $name, {i+1} of {len(incarnate_lines)}, Press Again'
-            else:
-                nextfile = 0
-                line = line + '$$t $name, Set Loaded'
-
-            line = line + profile.BLF('wiz', f'{title}{nextfile}')
-            if i == 0: # start with the reset file, too
-                profile.ResetFile().SetBind(self.BindKeyCtrl.MakeBind(line))
-            bindfile.SetBind(self.BindKeyCtrl.MakeBind(line))
+        ...
 
     def AllBindFiles(self):
-        title = re.sub(r'\W+', '', self.BindPane.Title)
-
         files = []
 
-        for i in range(6): # should not ever possibly be six steps, but....
-            files.append(self.Profile.GetBindFile('wiz', f'{title}{i}.txt'))
         return {
             'files' : files,
             'dirs'  : [],
         }
 
-# call with parent, insp name
+# call with parent, insp type keyname ("Accuracy" "BreakFree" etc)
 class InspirationTypeCheckBox(wx.Panel):
     def __init__(self, parent, insptype):
         super().__init__(parent)
@@ -211,19 +181,23 @@ class InspirationTypeCheckBox(wx.Panel):
         self.CheckBox = wx.CheckBox(self)
         sizer.Add(self.CheckBox, 0, wx.ALIGN_CENTER|wx.ALL, 5)
 
-        insp = inspdata['tiers'][0] # get min tier icon just because
-        insp = re.sub(' ', '', insp)
+        mininsp = inspdata['tiers'][0] # get min tier icon just because
+        mininsp = re.sub(' ', '', mininsp)
 
-        bitmap = wx.StaticBitmap(self, bitmap = GetIcon('Inspirations', insp))
+        bitmap = wx.StaticBitmap(self, bitmap = GetIcon('Inspirations', mininsp))
         sizer.Add(bitmap, 0, wx.ALIGN_CENTER|wx.ALL, 5)
         bitmap.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
 
-        # this speaks to some sort of lack of vision on my part in GameData
-        label = wx.StaticText(self, label = inspdata['displayname'])
-        sizer.Add(label, 0, wx.ALIGN_CENTER|wx.ALL, 5)
-        label.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
+        self.TypeLabel = wx.StaticText(self, label = inspdata['displayname'])
+        sizer.Add(self.TypeLabel, 0, wx.ALIGN_CENTER|wx.ALL, 5)
+        self.TypeLabel.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
 
         self.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
+
+        self.Bind(wx.EVT_ENTER_WINDOW, self.OnEnterWindow)
+        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
+        self.TypeLabel.Bind(wx.EVT_ENTER_WINDOW, self.OnEnterWindow)
+        self.TypeLabel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
 
         self.SetSizer(sizer)
 
@@ -239,3 +213,13 @@ class InspirationTypeCheckBox(wx.Panel):
     def OnSomethingClicked(self, evt):
         evt.Skip()
         self.CheckBox.SetValue(not self.CheckBox.GetValue())
+
+    def OnEnterWindow(self, evt):
+        evt.Skip()
+        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENUHILIGHT))
+        self.TypeLabel.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT))
+
+    def OnLeaveWindow(self, evt):
+        evt.Skip()
+        self.SetBackgroundColour(wx.NullColour)
+        self.TypeLabel.SetForegroundColour(wx.NullColour)

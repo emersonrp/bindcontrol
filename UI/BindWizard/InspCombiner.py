@@ -76,7 +76,7 @@ class InspCombiner(WizardParent):
                 if self.CombineCBs[combineInfo['displayname']].IsChecked():
                     cmdtext.SetLabel(f"✓ {combineInfo['displayname']}")
                 else:
-                    cmdtext.SetForegroundColour(wx.Colour(160, 160, 160))
+                    cmdtext.SetForegroundColour(wx.Colour(128, 128, 128))
                 ctsizer.Add(cmdtext, 1, wx.ALIGN_CENTER|wx.ALL, 5)
                 combineGrid.Add(cbpanel, 1, wx.EXPAND)
 
@@ -125,7 +125,7 @@ class InspCombiner(WizardParent):
         othertypes = self.GetOtherInspTypes(currtype)
         for insptype, info in othertypes.items():
             typecb = InspirationTypeCheckBox(self.CBSizer.GetStaticBox(), insptype)
-            self.CBSizer.Add(typecb, 0, wx.ALIGN_LEFT|wx.ALL, 5)
+            self.CBSizer.Add(typecb, 0, wx.ALIGN_LEFT|wx.EXPAND|wx.ALL, 5)
             typecb.SetValue(info['displayname'] in self.State.get('CombineCBs', []))
             self.CombineCBs[info['displayname']] = typecb
 
@@ -222,6 +222,8 @@ class InspirationTypeCheckBox(wx.Panel):
         label = wx.StaticText(self, label = inspdata['displayname'])
         sizer.Add(label, 0, wx.ALIGN_CENTER|wx.ALL, 5)
         label.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
+
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
 
         self.SetSizer(sizer)
 

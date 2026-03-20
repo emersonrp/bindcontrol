@@ -11,10 +11,11 @@ class InspCombiner(WizardParent):
     WizardName  = 'Inspiration Combiner'
     WizToolTip  = 'Create a keybind that, with multiple presses, will combine inspirations and optionally consume them'
     WizHelpFile = 'InspCombiner.html'
-    IconPath    = ('Inspirations', 'FuriousRage')
+    IconPath    = ('Inspirations', 'Enrage')
 
     def __init__(self, parent, init) -> None:
         super().__init__(parent, init)
+        self.CombineCBs = {}
 
     def BuildUI(self, dialog, init : dict|None = None) -> wx.Sizer:
 
@@ -49,14 +50,12 @@ class InspCombiner(WizardParent):
         mainSizer.Add(bottomSizer, 0, wx.EXPAND|wx.ALL, 10)
 
         self.GetCorrectInspCheckboxes()
+        self.CheckIfWellFormed()
 
         return mainSizer
 
     def Serialize(self):
-        return {
-            'IncData' : self.State.get('WizData', {}).get('IncData', {}),
-            'BindKey' : self.BindKeyCtrl.Key,
-        }
+        return {}
 
     def PaneContents(self):
         bindpane = self.BindPane
@@ -64,25 +63,42 @@ class InspCombiner(WizardParent):
         panel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         panelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        listSizer = wx.BoxSizer(wx.HORIZONTAL)
-        # TODO actual pane contents go here once we figure them out
-        panelSizer.Add(listSizer, 1, wx.ALIGN_CENTER|wx.ALL, 15)
+        if self.WizardDialog:
 
-        # And the bind key
-        bindkey = bindpane.Init.get('BindKey', '')
-        BindSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.BindKeyCtrl = bcKeyButton(panel, init = {
-            'CtlName' : bindpane.MakeCtrlName("BindKey"),
-            'Page'    : bindpane.Page,
-            'Key'     : bindkey,
-        })
-        self.BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.OnKeyChanged)
-        BindSizer.Add(wx.StaticText(panel, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
-        BindSizer.Add(self.BindKeyCtrl, 0, wx.ALIGN_CENTER_VERTICAL)
-        bindpane.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
-        UI.Labels[self.BindKeyCtrl.CtlName] = f'Incarnate Set Bind "{bindpane.Title}"'
+            combineGrid = wx.GridSizer(2, 4, 5, 5)
+            for combineInfo in self.GetOtherInspTypes(self.TypePicker.GetStringSelection()).values():
+                cbpanel = wx.Panel(panel)
+                cbpanel.SetBackgroundColour(combineInfo['ltcolor'])
 
-        panelSizer.Add(BindSizer, wx.ALL, 10)
+                ctsizer = wx.BoxSizer(wx.HORIZONTAL)
+                cbpanel.SetSizer(ctsizer)
+                cmdtext = wx.StaticText(cbpanel, label = combineInfo['displayname'], style = wx.ALIGN_CENTER)
+                if self.CombineCBs[combineInfo['displayname']].IsChecked():
+                    cmdtext.SetLabel(f"✓ {combineInfo['displayname']}")
+                else:
+                    cmdtext.SetForegroundColour(wx.Colour(160, 160, 160))
+                ctsizer.Add(cmdtext, 1, wx.ALIGN_CENTER|wx.ALL, 5)
+                combineGrid.Add(cbpanel, 1, wx.EXPAND)
+
+                cbpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+                cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+            panelSizer.Add(combineGrid, 1, wx.ALIGN_CENTER|wx.ALL, 15)
+
+            # And the bind key
+            bindkey = bindpane.Init.get('BindKey', '')
+            BindSizer = wx.BoxSizer(wx.HORIZONTAL)
+            self.BindKeyCtrl = bcKeyButton(panel, init = {
+                'CtlName' : bindpane.MakeCtrlName("BindKey"),
+                'Page'    : bindpane.Page,
+                'Key'     : bindkey,
+            })
+            self.BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.OnKeyChanged)
+            BindSizer.Add(wx.StaticText(panel, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
+            BindSizer.Add(self.BindKeyCtrl, 0, wx.ALIGN_CENTER_VERTICAL)
+            bindpane.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
+            UI.Labels[self.BindKeyCtrl.CtlName] = f'Incarnate Set Bind "{bindpane.Title}"'
+
+            panelSizer.Add(BindSizer, wx.ALL, 10)
 
         panel.SetSizer(panelSizer)
 
@@ -94,18 +110,30 @@ class InspCombiner(WizardParent):
     def UpdateState(self):
         self.State = { 'WizData' : { } }
 
+    def GetOtherInspTypes(self, currtype):
+        returntypes = dict(GameData.Inspirations['Single'].items())
+        returntypes.pop(currtype)
+        return returntypes
+
     def GetCorrectInspCheckboxes(self, evt = None):
         if evt: evt.Skip()
 
         currtype = self.TypePicker.GetStringSelection()
         self.CBSizer.Clear(delete_windows = True)
-        for insptype in GameData.Inspirations['Single']:
-            if insptype == currtype: continue
-            self.CBSizer.Add(InspirationTypeCheckBox(self.CBSizer.GetStaticBox(), insptype), 0, wx.ALIGN_LEFT|wx.ALL, 5)
+        self.CombineCBs.clear()
 
-        self.Dialog().Layout()
+        othertypes = self.GetOtherInspTypes(currtype)
+        for insptype, info in othertypes.items():
+            typecb = InspirationTypeCheckBox(self.CBSizer.GetStaticBox(), insptype)
+            self.CBSizer.Add(typecb, 0, wx.ALIGN_LEFT|wx.ALL, 5)
+            typecb.SetValue(info['displayname'] in self.State.get('CombineCBs', []))
+            self.CombineCBs[info['displayname']] = typecb
+
+        if self.WizardDialog: # we do this once during init time before the WizardDialog is fully-formed
+            self.WizardDialog.Layout()
 
     def CheckIfWellFormed(self) -> bool:
+        return True
         isWellFormed = True
 
         bk = self.BindPane.GetCtrl('BindKey')
@@ -196,6 +224,15 @@ class InspirationTypeCheckBox(wx.Panel):
         label.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
 
         self.SetSizer(sizer)
+
+    def SetValue(self, value:bool):
+        self.CheckBox.SetValue(value)
+
+    def GetValue(self):
+        return self.CheckBox.GetValue()
+
+    def IsChecked(self):
+        return self.CheckBox.IsChecked()
 
     def OnSomethingClicked(self, evt):
         evt.Skip()

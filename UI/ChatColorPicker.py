@@ -243,3 +243,7 @@ def ChatBubbleBitmap(text = '', textsize = 14, zigzag = False, cols = None):
                          ])
 
     return bubbleBitmap
+
+class ColorPickerPopup(wx.PopupTransientWindow):
+    def __init__(self, parent):
+        super().__init__(parent, flags = wx.PU_CONTAINS_CONTROLS)

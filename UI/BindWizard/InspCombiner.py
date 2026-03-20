@@ -41,6 +41,13 @@ class InspCombiner(WizardParent):
 
         # sizer for the various option-style toggles
         optsSizer = wx.StaticBoxSizer(wx.VERTICAL, dialog, 'Options')
+
+        self.SmallLarge = wx.RadioBox(dialog, label = "When using inspirations",
+            choices = [ 'Use Largest Available First', 'Use Smallest Available First' ],
+            style = wx.RA_SPECIFY_COLS, majorDimension = 2)
+
+        optsSizer.Add(self.SmallLarge, 0, wx.EXPAND|wx.ALL, 10)
+
         bottomSizer.Add(optsSizer, 1, wx.EXPAND|wx.ALL, 10)
 
         # sizer for the checkboxes for the other types to combine

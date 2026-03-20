@@ -1,5 +1,6 @@
 import wx
 import re
+from functools import partial
 from typing import Any
 from pathlib import Path
 import json
@@ -31,20 +32,10 @@ class CustomBinds(Page):
 
         # sizer for the buttons
         buttonSizer         = wx.BoxSizer(wx.HORIZONTAL) # sizer for new-item buttons
-        newSimpleBindButton = wx.Button(self, label = "New Simple Bind")
-        newSimpleBindButton.Bind(wx.EVT_BUTTON, self.OnNewSimpleBindButton)
-        buttonSizer.Add(newSimpleBindButton, wx.ALIGN_CENTER)
-        buttonSizer.Add(HelpButton(self, 'SimpleBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
-
-        newComplexBindButton = wx.Button(self, label = "New Complex Bind")
-        newComplexBindButton.Bind(wx.EVT_BUTTON, self.OnNewComplexBindButton)
-        buttonSizer.Add(newComplexBindButton, wx.ALIGN_CENTER)
-        buttonSizer.Add(HelpButton(self, 'ComplexBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
-
-        newBufferBindButton = wx.Button(self, label = "New Buffer Bind")
-        newBufferBindButton.Bind(wx.EVT_BUTTON, self.OnNewBufferBindButton)
-        buttonSizer.Add(newBufferBindButton, wx.ALIGN_CENTER)
-        buttonSizer.Add(HelpButton(self, 'BufferBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
+        newCustomBindButton = wx.Button(self, label = "New Custom Bind")
+        newCustomBindButton.Bind(wx.EVT_BUTTON, self.OnNewCustomBindButton)
+        buttonSizer.Add(newCustomBindButton, wx.ALIGN_CENTER)
+        buttonSizer.Add(HelpButton(self, 'CustomBinds.html'), 0, wx.ALIGN_CENTER|wx.RIGHT, 5)
 
         launchBindWizardButton = wx.Button(self, label = "Launch Custom Bind Wizard")
         launchBindWizardButton.Bind(wx.EVT_BUTTON, self.OnBindWizardButton)
@@ -82,16 +73,21 @@ class CustomBinds(Page):
 
         self.Layout()
 
-    def OnNewSimpleBindButton(self, evt) -> None:
-        self.AddBindToPage(bindpane = SimpleBindPane(self))
+    def OnNewCustomBindButton(self, evt) -> None:
+        popupmenu = wx.Menu()
+        for bindtype in ['Simple', 'Complex', 'Buffer']:
+            item = popupmenu.Append(wx.ID_ANY, f"New {bindtype} Bind")
+            popupmenu.Bind(wx.EVT_MENU, partial(self.OnCustomBindMenu, bindtype), item)
+        evt.GetEventObject().PopupMenu(popupmenu)
         evt.Skip()
 
-    def OnNewComplexBindButton(self, evt) -> None:
-        self.AddBindToPage(bindpane = ComplexBindPane(self))
-        evt.Skip()
-
-    def OnNewBufferBindButton(self, evt) -> None:
-        self.AddBindToPage(bindpane = BufferBindPane(self))
+    def OnCustomBindMenu(self, bindtype, evt) -> None:
+        bindclass = {
+            'Simple' : SimpleBindPane,
+            'Complex' : ComplexBindPane,
+            'Buffer' : BufferBindPane,
+        }[bindtype]
+        self.AddBindToPage(bindpane = bindclass(self))
         evt.Skip()
 
     def OnBindWizardButton(self, evt = None) -> None:
@@ -239,9 +235,7 @@ class CustomBinds(Page):
 
         # marshal up the files to delete, before we change the name
         deletefiles = None if new else bindpane.AllBindFiles()
-        if bindDesc := bindpane.Description:
-            bindDesc = f' "{bindDesc}"'
-        dlg = wx.TextEntryDialog(self, f'Enter name for{bindDesc} bind:')
+        dlg = wx.TextEntryDialog(self, f'Enter name for {bindpane.Description or "bind"}:')
         if bindpane.Title:
             dlg.SetValue(bindpane.Title)
         if dlg.ShowModal() == wx.ID_OK:

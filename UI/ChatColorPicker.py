@@ -90,8 +90,9 @@ class ExampleText(wx.GenericStaticBitmap):
         self.SetMaxSize(newChatBubble.GetSize())
 
 class bcColourSelect(CGControlMixin, csel.ColourSelect): # pyright: ignore
-    def __init__(self, parent, colour = wx.NullColour):
+    def __init__(self, parent, popup = None, colour = wx.NullColour):
         super().__init__(parent, colour = colour, size = wx.Size(30,30))
+        self.Popup = popup
 
 class ChatColorPickerWindow(wx.Dialog):
     def __init__(self, parent):

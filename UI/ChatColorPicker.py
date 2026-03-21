@@ -9,6 +9,8 @@ import UI
 from UI.CGControls import CGControlMixin, cgStaticText
 from UI.ProfileAwareControl import ProfileAwareControlMixin
 
+ChatColorPickerChanged, EVT_CHATCOLORPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
+
 def ChatColors(fg,bg,bd) -> str: return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'
 
 # the calling convention to create one of this is WAY too complicated.
@@ -90,9 +92,8 @@ class ExampleText(wx.GenericStaticBitmap):
         self.SetMaxSize(newChatBubble.GetSize())
 
 class bcColourSelect(CGControlMixin, csel.ColourSelect): # pyright: ignore
-    def __init__(self, parent, popup = None, colour = wx.NullColour):
+    def __init__(self, parent, colour = wx.NullColour):
         super().__init__(parent, colour = colour, size = wx.Size(30,30))
-        self.Popup = popup
 
 class ChatColorPickerWindow(wx.Dialog):
     def __init__(self, parent):
@@ -248,3 +249,11 @@ def ChatBubbleBitmap(text = '', textsize = 14, zigzag = False, cols = None):
 class ColorPickerPopup(wx.PopupTransientWindow):
     def __init__(self, parent):
         super().__init__(parent, flags = wx.PU_CONTAINS_CONTROLS)
+    # Post an event so the Example Text updates even if we set this programmatically
+    def SetColour(self, colour):
+        super().SetColour(colour)
+        wx.PostEvent(self, ChatColorPickerChanged(id = wx.NewIdRef(), control = self))
+
+    def OnClick(self, event):
+        event.Skip()
+        super().OnClick(event)

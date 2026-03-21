@@ -58,6 +58,12 @@ class MacroComposer(Page):
 
         self.Layout()
 
+    def AllBindFiles(self) -> dict[str, list]:
+        return {
+            'files' : [],
+            'dirs'  : [],
+        }
+
     def OnNewMacroButton(self, evt):
         self.AddMacroToPage(macropane = MacroPane(self))
         self.UpdateAllMacros()

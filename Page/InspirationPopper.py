@@ -1,6 +1,7 @@
 import wx
 import re
 from typing import Any
+
 import UI
 import Icon
 from Page import Page
@@ -143,8 +144,7 @@ class InspirationPopper(Page):
                     keybutton.CtlLabel = kblabel
                     self.Ctrls[keybutton.CtlName] = keybutton
                     keybutton.Page = self
-                    keybutton.SetLabel(self.Init[keybutton.CtlName])
-                    keybutton.Key = self.Init[keybutton.CtlName]
+                    keybutton.SetValue(self.Init[keybutton.CtlName])
 
                     # reverse the colors if we're doing team inspirations
                     ltcolor = 'ltcolor'
@@ -209,7 +209,7 @@ class InspirationPopper(Page):
             for Insp in sorted(GameData.Inspirations[tab]):
 
                 tiers = GameData.Inspirations[tab][Insp]['tiers']
-                # "reverse" order is as it is in gamebinds, smallest first
+                # "reverse" order is as it is in GameData, smallest first
                 reverseOrder = [f"inspexecname {s}" for s in tiers]
                 # If we don't want to use Super Insps, trim them from the end of the reverse list
                 if not self.GetState('UseSuperInsp'): del reverseOrder[-1:]

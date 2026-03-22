@@ -165,30 +165,27 @@ class MovementPowers(Page):
         keySizer.Add(trLabel, wx.GBPosition(0,4), wx.GBSpan(1,2), wx.ALIGN_CENTER)
 
         tleftButton = bcKeyButton(staticbox)
-        tleftButton.SetLabel(self.Init['TurnLeft'])
+        tleftButton.SetValue(self.Init['TurnLeft'])
         self.Ctrls['TurnLeft'] = tleftButton
         tleftButton.CtlName = 'TurnLeft'
         tleftButton.CtlLabel = tlLabel
         tleftButton.Page = self
-        tleftButton.Key = self.Init['TurnLeft']
         keySizer.Add(tleftButton, wx.GBPosition(1,0), wx.GBSpan(1,2))
 
         forwardButton = bcKeyButton(staticbox)
         self.Ctrls['Forward'] = forwardButton
-        forwardButton.SetLabel(self.Init['Forward'])
+        forwardButton.SetValue(self.Init['Forward'])
         forwardButton.CtlName = 'Forward'
         forwardButton.CtlLabel = fwLabel
         forwardButton.Page = self
-        forwardButton.Key = self.Init['Forward']
         keySizer.Add(forwardButton, wx.GBPosition(1,2), wx.GBSpan(1,2))
 
         trightButton = bcKeyButton(staticbox)
         self.Ctrls['TurnRight'] = trightButton
-        trightButton.SetLabel(self.Init['TurnRight'])
+        trightButton.SetValue(self.Init['TurnRight'])
         trightButton.CtlName = 'TurnRight'
         trightButton.CtlLabel = trLabel
         trightButton.Page = self
-        trightButton.Key = self.Init['TurnRight']
         keySizer.Add(trightButton, wx.GBPosition(1,4), wx.GBSpan(1,2))
 
         leftLabel  = cgStaticText(staticbox, label = 'Left')
@@ -197,29 +194,26 @@ class MovementPowers(Page):
 
         leftButton = bcKeyButton(staticbox)
         self.Ctrls['Left'] = leftButton
-        leftButton.SetLabel(self.Init['Left'])
+        leftButton.SetValue(self.Init['Left'])
         leftButton.CtlName = 'Left'
         leftButton.CtlLabel = leftLabel
         leftButton.Page = self
-        leftButton.Key = self.Init['Left']
         keySizer.Add(leftButton, wx.GBPosition(2,0), wx.GBSpan(1,2))
 
         backButton = bcKeyButton(staticbox)
-        backButton.SetLabel(self.Init['Back'])
+        backButton.SetValue(self.Init['Back'])
         self.Ctrls['Back'] = backButton
         backButton.CtlName = 'Back'
         backButton.CtlLabel = backLabel
         backButton.Page = self
-        backButton.Key = self.Init['Back']
         keySizer.Add(backButton, wx.GBPosition(2,2), wx.GBSpan(1,2))
 
         rightButton = bcKeyButton(staticbox)
         self.Ctrls['Right'] = rightButton
-        rightButton.SetLabel(self.Init['Right'])
+        rightButton.SetValue(self.Init['Right'])
         rightButton.CtlName = 'Right'
         rightButton.CtlLabel = rightLabel
         rightButton.Page = self
-        rightButton.Key = self.Init['Right']
         keySizer.Add(rightButton, wx.GBPosition(2,4), wx.GBSpan(1,2))
 
         keySizer.Add(leftLabel,  wx.GBPosition(3,0), wx.GBSpan(1,2), wx.ALIGN_CENTER)
@@ -234,20 +228,18 @@ class MovementPowers(Page):
 
         downButton = bcKeyButton(staticbox)
         self.Ctrls['Down'] = downButton
-        downButton.SetLabel(self.Init['Down'])
+        downButton.SetValue(self.Init['Down'])
         downButton.CtlName = 'Down'
         downButton.CtlLabel = downLabel
         downButton.Page = self
-        downButton.Key = self.Init['Down']
         keySizer.Add(downButton, wx.GBPosition(5,0), wx.GBSpan(1,2), wx.EXPAND)
 
         upButton = bcKeyButton(staticbox)
         self.Ctrls['Up'] = upButton
-        upButton.SetLabel(self.Init['Up'])
+        upButton.SetValue(self.Init['Up'])
         upButton.CtlName = 'Up'
         upButton.CtlLabel = upLabel
         upButton.Page = self
-        upButton.Key = self.Init['Up']
         keySizer.Add(upButton, wx.GBPosition(5,2), wx.GBSpan(1,4), wx.EXPAND)
 
         autoRunLabel = cgStaticText(staticbox, label = 'Autorun')
@@ -258,20 +250,18 @@ class MovementPowers(Page):
 
         autoRunButton = bcKeyButton(staticbox)
         self.Ctrls['AutoRun'] = autoRunButton
-        autoRunButton.SetLabel(self.Init['AutoRun'])
+        autoRunButton.SetValue(self.Init['AutoRun'])
         autoRunButton.CtlName = 'AutoRun'
         autoRunButton.CtlLabel = autoRunLabel
         autoRunButton.Page = self
-        autoRunButton.Key = self.Init['AutoRun']
         keySizer.Add(autoRunButton, wx.GBPosition(7,1), wx.GBSpan(1,2), wx.EXPAND)
 
         followButton = bcKeyButton(staticbox)
         self.Ctrls['Follow'] = followButton
-        followButton.SetLabel(self.Init['Follow'])
+        followButton.SetValue(self.Init['Follow'])
         followButton.CtlName = 'Follow'
         followButton.CtlLabel = followLabel
         followButton.Page = self
-        followButton.Key = self.Init['Follow']
         keySizer.Add(followButton, wx.GBPosition(7,3), wx.GBSpan(1,2), wx.EXPAND)
 
         innerSizer.Add(keySizer, 0)

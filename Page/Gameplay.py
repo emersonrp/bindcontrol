@@ -317,10 +317,7 @@ class Gameplay(Page):
                 # don't fill in the default value if we're using it somewhere else.
                 if self.Profile.CheckConflict(buttonval, ''): continue
 
-                # we could in principle call button.ClearButton() instead of these
-                # three lines, but that throws us in an infinite loop
-                self.Ctrls[f"Tray{tray}Button{button}"].SetLabel(buttonval)
-                self.Ctrls[f"Tray{tray}Button{button}"].Key = buttonval
+                self.Ctrls[f"Tray{tray}Button{button}"].SetValue(buttonval)
 
         self.Profile.CheckAllConflicts()
         if evt: evt.Skip()
@@ -333,8 +330,7 @@ class Gameplay(Page):
         elif wx.GetKeyState(wx.WXK_CONTROL) : mod = "CTRL+"
         elif wx.GetKeyState(wx.WXK_ALT)     : mod = "ALT+"
         for button in (1,2,3,4,5,6,7,8,9,0):
-            self.Ctrls[f"Tray{tray}Button{button}"].SetLabel(f"{mod}{button}")
-            self.Ctrls[f"Tray{tray}Button{button}"].Key = f"{mod}{button}"
+            self.Ctrls[f"Tray{tray}Button{button}"].SetValue(f"{mod}{button}")
         self.Profile.CheckAllConflicts()
         if evt: evt.Skip()
 

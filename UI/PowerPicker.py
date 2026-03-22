@@ -1,5 +1,6 @@
 import wx
 import re
+
 import GameData
 from Icon import GetIcon, SplitNameAndIcon
 from UI.ErrorControls import ErrorControlMixin
@@ -79,6 +80,18 @@ class PowerPicker(ErrorControlMixin, wx.Button):
                 icon = GetIcon('Powers', *bits)
         self.IconFilename = filename
         self.SetBitmap(icon)
+
+    def GetValue(self):
+        return {
+            'power'    : self.GetLabel(),
+            'iconfile' : self.IconFilename,
+        }
+
+    def SetValue(self, value):
+        self.SetLabel(value.get('power', ''))
+        if iconfile := value.get('iconfile'):
+            self.IconFilename = iconfile
+            self.SetIconFromFilename(iconfile)
 
 class PowerPickerMenu(wx.Menu):
     def BuildMenu(self) -> None:

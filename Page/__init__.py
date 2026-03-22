@@ -21,8 +21,6 @@ import wx.lib.colourselect as csel
 if TYPE_CHECKING:
     from Profile import Profile as bcProfile
 from UI.KeySelectDialog import bcKeyButton
-from UI.PowerPicker import PowerPicker
-from UI.PowerSelector import PowerSelector
 
 class Page(wx.ScrolledWindow):
     def __init__(self, parent):
@@ -46,43 +44,28 @@ class Page(wx.ScrolledWindow):
         if not control:
             wx.LogWarning(f"Unknown control in GetState: {key} - this is a bug.")
             return ''
-        # We might be tempted to short-circuit out if the control is not enabled
-        # but that breaks things terribly during window init.  Might be worth tracking
-        # down and fixing but not today.
+
+        retval = None
         if isinstance(control, wx.DirPickerCtrl):
-            return control.GetPath()
-        elif isinstance(control, PowerPicker):
-            # we de-json this on the way out in ProfileData.AsJSON()
-            return json.dumps({
-                'power'    : control.GetLabel(),
-                'iconfile' : control.IconFilename,
-            })
-        elif isinstance(control, PowerSelector):
-            return json.dumps(control.GetValue())
-        elif isinstance(control, bcKeyButton):
-            return control.Key
-        elif isinstance(control, wx.Button):
-            return control.GetLabel()
-        elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
-            return control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
-        elif isinstance(control, wx.Choice) or isinstance(control, wx.ComboBox):
-            sel = control.GetSelection()
-            if sel != wx.NOT_FOUND: return control.GetString(sel)
-            else                  : return ''
-        elif isinstance(control, wx.ColourPickerCtrl) or isinstance(control, csel.ColourSelect):
-            return control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
+            retval = control.GetPath()
+        elif isinstance(control, (wx.ColourPickerCtrl, csel.ColourSelect)):
+            retval = control.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
+        elif isinstance(control, (wx.Choice, wx.ComboBox)):
+            retval = control.GetStringSelection()
         elif isinstance(control, wx.Notebook):
-            return control.GetPageText(control.GetSelection())
-        # TODO - I don't think we ever GetState on a StaticText, but maybe?
-        # elif isinstance(control, wx.StaticText):
-        #     return control.GetLabel()
+            retval = control.GetPageText(control.GetSelection())
         elif getattr(control, 'GetValue', None):
-            return control.GetValue()
+            retval = control.GetValue()
         elif getattr(control, 'GetPath', None):
-            return control.GetPath()
+            retval = control.GetPath()
         else:
             wx.LogError(f"control '{control.CtlName}' has no GetValue() - this is a bug")
-            return ''
+            retval = ''
+
+        if isinstance(retval, (dict, list)):
+            retval = json.dumps(retval)
+
+        return retval
 
     def SetState(self, key, value) -> str|int|None:
         control = self.Ctrls.get(key)
@@ -90,18 +73,7 @@ class Page(wx.ScrolledWindow):
             wx.LogError(f"Got into SetState for key {key} with no control - this is a bug.")
             return ''
 
-        if isinstance(control, PowerPicker):
-            if power := value.get('power'):
-                control.SetLabel(power)
-            if iconfile := value.get('iconfile'):
-                control.IconFilename = iconfile
-                control.SetIconFromFilename(control.IconFilename)
-        elif isinstance(control, PowerSelector):
-            control.SetValue(value)
-        elif isinstance(control, bcKeyButton):
-            control.Key = value
-            return control.SetLabel(value)
-        elif isinstance(control, wx.Choice):
+        if isinstance(control, wx.Choice):
             if isinstance(value, str):
                 return control.SetStringSelection(value)
             else:
@@ -110,8 +82,6 @@ class Page(wx.ScrolledWindow):
             for i in range(control.GetPageCount()):
                 if control.GetPageText(i) == value:
                     return control.SetSelection(i)
-        elif isinstance(control, wx.StaticText):
-            return control.SetLabel(value)
         elif getattr(control, 'SetValue', None):
             return control.SetValue(value)
         elif getattr(control, 'SetPath', None):
@@ -130,7 +100,8 @@ class Page(wx.ScrolledWindow):
     # disable controls by name
     def EnableControls(self, enabled, names) -> None:
         for name in names:
-            self.Ctrls[name].Enable(enabled)
+            if name in self.Ctrls:
+                self.Ctrls[name].Enable(enabled)
 
     ##### stubs for overriding (shoes for industry!)
     def SynchronizeUI(self) -> None:

@@ -93,8 +93,7 @@ class BufferBindPane(CustomBindPaneParent):
         TeamInner.Add(bat, (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6,7,8):
             button = bcKeyButton(TeamSB, init = { 'CtlName' : self.MakeCtrlName(f'Team{i}BuffKey'), })
-            button.Key = self.Init[f'Team{i}BuffKey']
-            button.SetLabel(button.Key)
+            button.SetValue(self.Init[f'Team{i}BuffKey'])
             button.Bind(EVT_KEY_CHANGED, self.CheckAnyKeyPicked)
             label = cgStaticText(TeamSB, label = f'Teammate {i}')
             button.CtlLabel = label
@@ -108,8 +107,7 @@ class BufferBindPane(CustomBindPaneParent):
         PetInner.Add(bap, (1,0), flag=wx.ALIGN_CENTER_VERTICAL)
         for i in (1,2,3,4,5,6):
             button = bcKeyButton(PetSB, init = { 'CtlName' : self.MakeCtrlName(f'Pet{i}BuffKey'), })
-            button.Key = self.Init[f'Pet{i}BuffKey']
-            button.SetLabel(button.Key)
+            button.SetValue(self.Init[f'Pet{i}BuffKey'])
             button.Bind(EVT_KEY_CHANGED, self.CheckAnyKeyPicked)
             label = cgStaticText(PetSB, label = f'Pet {i}')
             button.CtlLabel = label

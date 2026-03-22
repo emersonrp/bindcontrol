@@ -561,6 +561,13 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
         label = self.CtlLabel.GetLabel() if self.CtlLabel else ''
         return KeyBind(self.Key, label, self.Page, contents)
 
+    def GetValue(self):
+        return self.Key
+
+    def SetValue(self, value):
+        self.Key = value
+        return self.SetLabel(value)
+
     def SetLabel(self, label) -> None:
         # if we have a long label or AlwaysShorten, smallify, and abbreviate if we have a mod key
         if label: # don't do all this if we're clearing the label

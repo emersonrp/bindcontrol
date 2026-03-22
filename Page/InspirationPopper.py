@@ -147,7 +147,7 @@ class InspirationPopper(Page):
 
                     optsbutton = None
                     if tab == 'Single':
-                        optsbutton = InspOptsButton(box.GetStaticBox(), Insp)
+                        optsbutton = InspOptsButton(box.GetStaticBox(), Insp, self.Init)
                         self.Ctrls[f"{tab}{order}{Insp}Opts"] = optsbutton
 
                     # reverse the colors if we're doing team inspirations
@@ -250,24 +250,34 @@ class InspirationPopper(Page):
             'dirs'  : [],
         }
 
-class InspOptsButton(wx.BitmapButton):
-    def __init__(self, parent, insptype):
-        super().__init__(parent, bitmap = Icon.GetIcon('UI', 'gear'))
-        self.SetToolTip(f"Combine-inspirations options for {insptype}")
+class InspOptsButton(wx.Panel):
+    def __init__(self, parent, insptype, init):
+        super().__init__(parent)
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.SetSizer(sizer)
 
-        self.Dialog = None
+        self.OptsButton = wx.BitmapToggleButton(self, label = Icon.GetIcon('UI', 'gear'))
+        self.OptsButton.SetToolTip(f"Combine-inspirations options for {insptype}")
+        self.OptsButton.Bind(wx.EVT_TOGGLEBUTTON, self.OnOptsButton)
+
+        sizer.Add(self.OptsButton)
+
         self.InspType = insptype
         self.State = {}
         self.CtlName = ''
         self.CtlLabel = None
 
+        self.Dialog = None
         self.EnableCombine = None
         self.CombineCBs = {}
 
-        self.Bind(wx.EVT_BUTTON, self.OnOptsButton)
-
     def OnOptsButton(self, evt):
-        if evt: evt.Skip()
+        # This is not perfect, as it fires AFTER we have toggled the button.
+
+        # Therefore, this is the toggle value AFTER clicking, so on wx.ID_CANCEL below
+        # we want to set it to the opposite of this, ie, back to its original state
+        # This feels a little hackish.
+        initToggleVal = self.OptsButton.GetValue()
 
         if not self.Dialog:
             self.Dialog = wx.Dialog(self.Parent, title = "Inspiration Combine Options")
@@ -300,9 +310,15 @@ class InspOptsButton(wx.BitmapButton):
             self.GetCorrectInspCheckboxes()
             mainSizer.Add(self.CBSizer, 0, wx.EXPAND|wx.ALL, 10)
 
+            mainSizer.Add(self.Dialog.CreateButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 10)
+
         self.Dialog.Fit()
         self.Dialog.Layout()
-        self.Dialog.Show()
+        if self.Dialog.ShowModal() == wx.ID_OK:
+            if self.EnableCombine:
+                self.OptsButton.SetValue(self.EnableCombine.GetValue())
+        else: # wx.ID_CANCEL or closed via close box or something
+            self.OptsButton.SetValue(not initToggleVal) # un-have-toggled it.
 
     def GetCorrectInspCheckboxes(self, evt = None):
         if evt: evt.Skip()
@@ -321,13 +337,16 @@ class InspOptsButton(wx.BitmapButton):
         self.Layout()
 
     def GetValue(self):
-        if not self.EnableCombine: return ''
-        return {
-            'EnableCombine' : self.EnableCombine.GetValue(),
-            'CombineInsps'  : [insp for insp in self.CombineCBs if self.CombineCBs[insp].IsChecked()],
-        }
+        if self.EnableCombine:
+            return {
+                'EnableCombine' : self.EnableCombine.GetValue(),
+                'CombineInsps'  : [insp for insp in self.CombineCBs if self.CombineCBs[insp].IsChecked()],
+            }
+        else:
+            return {'EnableCombine' : False}
 
     def SetValue(self, value):
+        self.OptsButton.SetValue(value.get('EnableCombine', False))
         if self.EnableCombine:
             self.EnableCombine.SetValue(value.get('EnableCombine', False))
             for insp in self.CombineCBs:

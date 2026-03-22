@@ -54,14 +54,13 @@ class InspirationPopper(Page):
 
         for tab in tabs:
             for order in ("", "Rev"):
-                for Insp in GameData.Inspirations[tab]:
-                    InspDesc = Insp
-                    if InspDesc == "ResistDamage": InspDesc = "Resist Damage"
-                    if InspDesc == "BreakFree"   : InspDesc = "Break Free"
+                for Insp, InspInfo in GameData.Inspirations[tab].items():
+                    InspDesc = InspInfo['displayname']
                     UI.Labels[f"{tab}{order}{Insp}Key"]     = f"{InspDesc} Key"
 
                     keygroup = keycontrols if not order else revkeycontrols
                     keygroup.append(f"{tab}{order}{Insp}Key")
+                    keygroup.append(f"{tab}{order}{Insp}Opts")
 
                     chatgroup = chatcontrols if not order else revchatcontrols
                     chatgroup.append(f"{tab}{order}{Insp}Example")
@@ -147,6 +146,7 @@ class InspirationPopper(Page):
                     keybutton.SetValue(self.Init[keybutton.CtlName])
 
                     optsbutton = InspOptsButton(box.GetStaticBox(), Insp)
+                    self.Ctrls[f"{tab}{order}{Insp}Opts"] = optsbutton
 
                     # reverse the colors if we're doing team inspirations
                     ltcolor = 'ltcolor'
@@ -257,6 +257,8 @@ class InspOptsButton(wx.BitmapButton):
         self.InspType = insptype
         self.CombineCBs = {}
         self.State = {}
+        self.CtlName = ''
+        self.CtlLabel = None
 
         self.Bind(wx.EVT_BUTTON, self.OnOptsButton)
 
@@ -313,6 +315,9 @@ class InspOptsButton(wx.BitmapButton):
             self.CombineCBs[info['displayname']] = typecb
 
         self.Layout()
+
+    def SetValue(self, value):
+        ...
 
 # call with parent, insp type keyname ("Accuracy" "BreakFree" etc)
 class InspirationTypeCheckBox(wx.Panel):

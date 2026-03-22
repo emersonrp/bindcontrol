@@ -152,7 +152,7 @@ class InspirationPopper(Page):
                     optsbutton = None
                     if tab == 'Single':
                         optsname = f"{tab}{order}{Insp}Opts"
-                        optsbutton = InspOptsButton(box.GetStaticBox(), self, Insp, self.Init.get(optsname, {}))
+                        optsbutton = InspOptsButton(box.GetStaticBox(), self, Insp)
                         optsbutton.CtlName = optsname
                         self.Ctrls[optsname] = optsbutton
 
@@ -257,35 +257,33 @@ class InspirationPopper(Page):
         }
 
 class InspOptsButton(wx.Panel):
-    def __init__(self, parent, page, insptype, init):
+    def __init__(self, parent, page, insptype):
         super().__init__(parent)
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(sizer)
 
         self.OptsButton = wx.BitmapToggleButton(self, label = Icon.GetIcon('UI', 'gear'))
         self.OptsButton.SetToolTip(f"Combine-inspirations options for {insptype}")
-        self.OptsButton.SetValue(init.get('EnableCombine', False))
         self.OptsButton.Bind(wx.EVT_TOGGLEBUTTON, self.OnOptsButton)
 
         sizer.Add(self.OptsButton)
 
         self.Page = page
         self.InspType = insptype
-        self.Init = (init or {})
         self.CtlName = ''
         self.CtlLabel = None
 
+        # Where we keep state
+        self.EnableCombine = False
+        self.CombineInsps = []
+
+        # the UI elements
         self.Dialog = None
-        self.EnableCombine = None
+        self.EnableCombineCB = None
         self.CombineCBs = {}
 
     def OnOptsButton(self, evt):
-        # This is not perfect, as it fires AFTER we have toggled the button.
-
-        # Therefore, this is the toggle value AFTER clicking, so on wx.ID_CANCEL below
-        # we want to set it to the opposite of this, ie, back to its original state
-        # This feels a little hackish.
-        initToggleVal = self.OptsButton.GetValue()
+        if evt:  evt.Skip(False) # don't do the normal toggling thing
 
         if not self.Dialog:
             self.Dialog = wx.Dialog(self.Parent, title = "Inspiration Combine Options")
@@ -299,7 +297,7 @@ class InspOptsButton(wx.Panel):
             info = GameData.Inspirations['Single'][self.InspType]
             baseicon = Icon.GetIcon('Inspirations', info['tiers'][0])
 
-            infoSizer.Add(wx.StaticText(self.Dialog, label = 'Inspiration Type:'), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+            infoSizer.Add(wx.StaticText(self.Dialog, label = 'Inspiration Type:', style=wx.ALIGN_RIGHT), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
             infoSizer.Add(wx.StaticBitmap(self.Dialog, bitmap = baseicon), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
             infoSizer.Add(wx.StaticText(self.Dialog, label = self.InspType), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
@@ -308,60 +306,69 @@ class InspOptsButton(wx.Panel):
             # sizer for the various option-style toggles
             optsSizer = wx.StaticBoxSizer(wx.VERTICAL, self.Dialog, 'Options')
 
-            self.EnableCombine = wx.CheckBox(self.Dialog, label = "Enable on-release inspiration combining")
-            self.EnableCombine.SetToolTip("If checked, the keybind will attempt to combine other flavor inspirations into this flavor on key release.")
-            self.EnableCombine.SetValue(self.Init.get('EnableCombine', False))
-            optsSizer.Add(self.EnableCombine, 0, wx.EXPAND|wx.ALL, 10)
+            self.EnableCombineCB = wx.CheckBox(self.Dialog, label = "Enable on-release inspiration combining")
+            self.EnableCombineCB.SetToolTip("If checked, the keybind will attempt to combine other flavor inspirations into this flavor on key release.")
+            optsSizer.Add(self.EnableCombineCB, 0, wx.EXPAND|wx.ALL, 10)
+            self.EnableCombineCB.Bind(wx.EVT_CHECKBOX, self.OnEnableCombineCB)
+
             mainSizer.Add(optsSizer, 0, wx.EXPAND|wx.ALL, 10)
 
             # sizer for the checkboxes for the other types to combine
             self.CBSizer = wx.StaticBoxSizer(wx.VERTICAL, self.Dialog, 'Combine Inspiration Types')
-            self.GetCorrectInspCheckboxes()
             mainSizer.Add(self.CBSizer, 0, wx.EXPAND|wx.ALL, 10)
 
             mainSizer.Add(self.Dialog.CreateButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 10)
 
+        self.PopulateDialog()
+        self.OnEnableCombineCB()
         self.Dialog.Fit()
         self.Dialog.Layout()
 
         if self.Dialog.ShowModal() == wx.ID_OK:
-            if self.EnableCombine:
-                self.OptsButton.SetValue(self.EnableCombine.GetValue())
+            # set the actual state vars.
+            if self.EnableCombineCB: # thx pyright
+                self.EnableCombine = self.EnableCombineCB.GetValue()
+                self.CombineInsps = [i for i,cb in self.CombineCBs.items() if cb.IsChecked()]
                 wx.PostEvent(self.Page, InspOptsChanged(wx.NewId(), control = self))
-        else: # wx.ID_CANCEL or closed via close box or something
-            self.OptsButton.SetValue(not initToggleVal) # un-have-toggled it.
 
-    def GetCorrectInspCheckboxes(self, evt = None):
-        if evt: evt.Skip()
+        self.OptsButton.SetValue(self.EnableCombine) # un-have-toggled it.
 
+    def PopulateDialog(self):
         self.CBSizer.Clear(delete_windows = True)
         self.CombineCBs.clear()
+
+        if self.EnableCombineCB:
+            self.EnableCombineCB.SetValue(self.EnableCombine)
 
         othertypes = dict(GameData.Inspirations['Single'].items())
         othertypes.pop(self.InspType)
         for insptype, info in othertypes.items():
             typecb = InspirationTypeCheckBox(self.CBSizer.GetStaticBox(), insptype)
             self.CBSizer.Add(typecb, 0, wx.ALIGN_LEFT|wx.EXPAND|wx.ALL, 5)
-            typecb.SetValue(info['displayname'] in self.Init.get('CombineInsps', []))
+            typecb.SetValue(info['displayname'] in self.CombineInsps)
             self.CombineCBs[info['displayname']] = typecb
 
         self.Layout()
 
+    def OnEnableCombineCB(self, evt = None):
+        if evt: evt.Skip()
+        if self.EnableCombineCB:
+            for cb in self.CombineCBs.values():
+                cb.Enable(self.EnableCombineCB.IsChecked())
+
     def GetValue(self):
-        if self.EnableCombine:
+        if self.EnableCombineCB:
             return {
-                'EnableCombine' : self.EnableCombine.GetValue(),
-                'CombineInsps'  : [insp for insp in self.CombineCBs if self.CombineCBs[insp].IsChecked()],
+                'EnableCombine' : self.EnableCombineCB.GetValue(),
+                'CombineInsps'  : self.CombineInsps,
             }
         else:
             return {'EnableCombine' : False}
 
     def SetValue(self, value):
-        self.OptsButton.SetValue(value.get('EnableCombine', False))
-        if self.EnableCombine:
-            self.EnableCombine.SetValue(value.get('EnableCombine', False))
-            for insp in self.CombineCBs:
-                self.CombineCBs[insp].SetValue(insp in value.get('CombineInsps', []))
+        self.EnableCombine = value.get('EnableCombine', False)
+        self.OptsButton.SetValue(self.EnableCombine)
+        self.CombineInsps = value.get('CombineInsps', [])
 
 # call with parent, insp type keyname ("Accuracy" "BreakFree" etc)
 class InspirationTypeCheckBox(wx.Panel):

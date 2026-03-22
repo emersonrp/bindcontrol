@@ -1,3 +1,5 @@
+import re
+
 import GameData.Homecoming
 import GameData.Rebirth
 import Util.Incarnate
@@ -57,5 +59,10 @@ def SetupGameData(server):
         GameData.Badges           = GameData.Homecoming.Badges
     else:
         raise Exception(f'GameData.SetupGameData called with unknown server "{server}"')
+
+    # Is this the right place for this - am I just being too lazy to put it into the raw data?
+    for inspclass in GameData.Inspirations.values():
+        for name, data in inspclass.items():
+            data['displayname'] = re.sub(r'([a-z])([A-Z])', r'\1 \2', name)
 
     Util.Incarnate.BuildSlotData()

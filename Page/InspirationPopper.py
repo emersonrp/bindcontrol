@@ -124,12 +124,12 @@ class InspirationPopper(Page):
             tabsizer = wx.BoxSizer(wx.HORIZONTAL)
 
             InspBox  = wx.StaticBoxSizer(wx.VERTICAL, tabpanel, "Large Inspirations First")
-            InspRows = wx.FlexGridSizer(3,0,3)
+            InspRows = wx.FlexGridSizer(4,0,3)
             InspRows.AddGrowableCol(1)
             InspBox.Add(InspRows, 1, wx.ALL|wx.EXPAND, 10)
 
             RevInspBox  = wx.StaticBoxSizer(wx.VERTICAL, tabpanel, "Small Inspirations First")
-            RevInspRows = wx.FlexGridSizer(3,0,3)
+            RevInspRows = wx.FlexGridSizer(4,0,3)
             RevInspRows.AddGrowableCol(1)
             RevInspBox.Add(RevInspRows, 1, wx.ALL|wx.EXPAND, 10)
 
@@ -145,6 +145,8 @@ class InspirationPopper(Page):
                     self.Ctrls[keybutton.CtlName] = keybutton
                     keybutton.Page = self
                     keybutton.SetValue(self.Init[keybutton.CtlName])
+
+                    optsbutton = InspOptsButton(box.GetStaticBox(), Insp)
 
                     # reverse the colors if we're doing team inspirations
                     ltcolor = 'ltcolor'
@@ -163,6 +165,10 @@ class InspirationPopper(Page):
 
                     rowSet.Add(kblabel,         0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 3)
                     rowSet.Add(keybutton,       0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 3)
+                    if tab == 'Single':
+                        rowSet.Add(optsbutton,      0, wx.RIGHT|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 3)
+                    else:
+                        rowSet.AddSpacer(1)
                     rowSet.Add(chatcolorpicker, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
 
             tabsizer.Add(InspBox, 0, wx.EXPAND|wx.ALL, 10)
@@ -241,3 +247,125 @@ class InspirationPopper(Page):
             'files' : [],
             'dirs'  : [],
         }
+
+class InspOptsButton(wx.BitmapButton):
+    def __init__(self, parent, insptype):
+        super().__init__(parent, bitmap = Icon.GetIcon('UI', 'gear'))
+        self.SetToolTip(f"Combine-inspirations options for {insptype}")
+
+        self.Dialog = None
+        self.InspType = insptype
+        self.CombineCBs = {}
+        self.State = {}
+
+        self.Bind(wx.EVT_BUTTON, self.OnOptsButton)
+
+    def OnOptsButton(self, evt):
+        if evt: evt.Skip()
+
+        if not self.Dialog:
+            self.Dialog = wx.Dialog(self.Parent, title = "Inspiration Combine Options")
+
+            mainSizer = wx.BoxSizer(wx.VERTICAL)
+
+            self.Dialog.SetSizer(mainSizer)
+
+            # picker for which type we're working with
+            typePickerSizer = wx.BoxSizer(wx.HORIZONTAL)
+            info = GameData.Inspirations['Single'][self.InspType]
+            baseicon = Icon.GetIcon('Inspirations', info['tiers'][0])
+
+            typePickerSizer.Add(wx.StaticText(self.Dialog, label = 'Inspiration Type:', style=wx.ALIGN_RIGHT), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+            typePickerSizer.Add(wx.StaticBitmap(self.Dialog, bitmap = baseicon), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+            typePickerSizer.Add(wx.StaticText(self.Dialog, label = self.InspType), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+
+            mainSizer.Add(typePickerSizer, 0, wx.EXPAND|wx.ALL, 10)
+
+            # sizer for the various option-style toggles
+            optsSizer = wx.StaticBoxSizer(wx.VERTICAL, self.Dialog, 'Options')
+
+            self.EnableCombine = wx.CheckBox(self.Dialog, label = "Enable on-release inspiration combining")
+            self.EnableCombine.SetToolTip("If checked, the keybind will attempt to combine other flavor inspirations into this flavor on key release.")
+            optsSizer.Add(self.EnableCombine, 0, wx.EXPAND|wx.ALL, 10)
+            mainSizer.Add(optsSizer, 0, wx.EXPAND|wx.ALL, 10)
+
+            # sizer for the checkboxes for the other types to combine
+            self.CBSizer = wx.StaticBoxSizer(wx.VERTICAL, self.Dialog, 'Combine Inspiration Types')
+            self.GetCorrectInspCheckboxes()
+            mainSizer.Add(self.CBSizer, 0, wx.EXPAND|wx.ALL, 10)
+
+        self.Dialog.Fit()
+        self.Dialog.Layout()
+        self.Dialog.Show()
+
+    def GetCorrectInspCheckboxes(self, evt = None):
+        if evt: evt.Skip()
+
+        self.CBSizer.Clear(delete_windows = True)
+        self.CombineCBs.clear()
+
+        othertypes = dict(GameData.Inspirations['Single'].items())
+        othertypes.pop(self.InspType)
+        for insptype, info in othertypes.items():
+            typecb = InspirationTypeCheckBox(self.CBSizer.GetStaticBox(), insptype)
+            self.CBSizer.Add(typecb, 0, wx.ALIGN_LEFT|wx.EXPAND|wx.ALL, 5)
+            typecb.SetValue(info['displayname'] in self.State.get('CombineCBs', []))
+            self.CombineCBs[info['displayname']] = typecb
+
+        self.Layout()
+
+# call with parent, insp type keyname ("Accuracy" "BreakFree" etc)
+class InspirationTypeCheckBox(wx.Panel):
+    def __init__(self, parent, insptype):
+        super().__init__(parent)
+
+        self.InspType = insptype
+
+        inspdata = GameData.Inspirations['Single'][insptype]
+
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.CheckBox = wx.CheckBox(self)
+        sizer.Add(self.CheckBox, 0, wx.ALIGN_CENTER|wx.ALL, 5)
+
+        mininsp = inspdata['tiers'][0] # get min tier icon just because
+        mininsp = re.sub(' ', '', mininsp)
+
+        bitmap = wx.StaticBitmap(self, bitmap = Icon.GetIcon('Inspirations', mininsp))
+        sizer.Add(bitmap, 0, wx.ALIGN_CENTER|wx.ALL, 5)
+        bitmap.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
+
+        self.TypeLabel = wx.StaticText(self, label = inspdata['displayname'])
+        sizer.Add(self.TypeLabel, 0, wx.ALIGN_CENTER|wx.ALL, 5)
+        self.TypeLabel.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
+
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnSomethingClicked)
+
+        self.Bind(wx.EVT_ENTER_WINDOW, self.OnEnterWindow)
+        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
+        self.TypeLabel.Bind(wx.EVT_ENTER_WINDOW, self.OnEnterWindow)
+        self.TypeLabel.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
+
+        self.SetSizer(sizer)
+
+    def SetValue(self, value:bool):
+        self.CheckBox.SetValue(value)
+
+    def GetValue(self):
+        return self.CheckBox.GetValue()
+
+    def IsChecked(self):
+        return self.CheckBox.IsChecked()
+
+    def OnSomethingClicked(self, evt):
+        evt.Skip()
+        self.CheckBox.SetValue(not self.CheckBox.GetValue())
+
+    def OnEnterWindow(self, evt):
+        evt.Skip()
+        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENUHILIGHT))
+        self.TypeLabel.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT))
+
+    def OnLeaveWindow(self, evt):
+        evt.Skip()
+        self.SetBackgroundColour(wx.NullColour)
+        self.TypeLabel.SetForegroundColour(wx.NullColour)

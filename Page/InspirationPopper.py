@@ -145,8 +145,10 @@ class InspirationPopper(Page):
                     keybutton.Page = self
                     keybutton.SetValue(self.Init[keybutton.CtlName])
 
-                    optsbutton = InspOptsButton(box.GetStaticBox(), Insp)
-                    self.Ctrls[f"{tab}{order}{Insp}Opts"] = optsbutton
+                    optsbutton = None
+                    if tab == 'Single':
+                        optsbutton = InspOptsButton(box.GetStaticBox(), Insp)
+                        self.Ctrls[f"{tab}{order}{Insp}Opts"] = optsbutton
 
                     # reverse the colors if we're doing team inspirations
                     ltcolor = 'ltcolor'
@@ -165,7 +167,7 @@ class InspirationPopper(Page):
 
                     rowSet.Add(kblabel,         0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 3)
                     rowSet.Add(keybutton,       0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 3)
-                    if tab == 'Single':
+                    if optsbutton:
                         rowSet.Add(optsbutton,      0, wx.RIGHT|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 3)
                     else:
                         rowSet.AddSpacer(1)
@@ -255,10 +257,12 @@ class InspOptsButton(wx.BitmapButton):
 
         self.Dialog = None
         self.InspType = insptype
-        self.CombineCBs = {}
         self.State = {}
         self.CtlName = ''
         self.CtlLabel = None
+
+        self.EnableCombine = None
+        self.CombineCBs = {}
 
         self.Bind(wx.EVT_BUTTON, self.OnOptsButton)
 
@@ -316,8 +320,18 @@ class InspOptsButton(wx.BitmapButton):
 
         self.Layout()
 
+    def GetValue(self):
+        if not self.EnableCombine: return ''
+        return {
+            'EnableCombine' : self.EnableCombine.GetValue(),
+            'CombineInsps'  : [insp for insp in self.CombineCBs if self.CombineCBs[insp].IsChecked()],
+        }
+
     def SetValue(self, value):
-        ...
+        if self.EnableCombine:
+            self.EnableCombine.SetValue(value.get('EnableCombine', False))
+            for insp in self.CombineCBs:
+                self.CombineCBs[insp].SetValue(insp in value.get('CombineInsps', []))
 
 # call with parent, insp type keyname ("Accuracy" "BreakFree" etc)
 class InspirationTypeCheckBox(wx.Panel):

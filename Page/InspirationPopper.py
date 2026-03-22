@@ -1,4 +1,5 @@
 import wx
+import wx.lib.newevent
 import re
 from typing import Any
 
@@ -9,6 +10,8 @@ import GameData
 from UI.ChatColorPicker import ChatColorPicker, ChatColors
 from UI.CGControls import cgStaticText
 from UI.KeySelectDialog import bcKeyButton
+
+InspOptsChanged, EVT_INSPOPTS_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 tabs = {
     'Single'   : 'Single',
@@ -21,6 +24,7 @@ keycontrols = []
 revkeycontrols = []
 chatcontrols = []
 revchatcontrols = []
+
 
 class InspirationPopper(Page):
     def __init__(self, parent) -> None:
@@ -147,8 +151,10 @@ class InspirationPopper(Page):
 
                     optsbutton = None
                     if tab == 'Single':
-                        optsbutton = InspOptsButton(box.GetStaticBox(), Insp, self.Init)
-                        self.Ctrls[f"{tab}{order}{Insp}Opts"] = optsbutton
+                        optsname = f"{tab}{order}{Insp}Opts"
+                        optsbutton = InspOptsButton(box.GetStaticBox(), self, Insp, self.Init.get(optsname, {}))
+                        optsbutton.CtlName = optsname
+                        self.Ctrls[optsname] = optsbutton
 
                     # reverse the colors if we're doing team inspirations
                     ltcolor = 'ltcolor'
@@ -251,19 +257,21 @@ class InspirationPopper(Page):
         }
 
 class InspOptsButton(wx.Panel):
-    def __init__(self, parent, insptype, init):
+    def __init__(self, parent, page, insptype, init):
         super().__init__(parent)
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(sizer)
 
         self.OptsButton = wx.BitmapToggleButton(self, label = Icon.GetIcon('UI', 'gear'))
         self.OptsButton.SetToolTip(f"Combine-inspirations options for {insptype}")
+        self.OptsButton.SetValue(init.get('EnableCombine', False))
         self.OptsButton.Bind(wx.EVT_TOGGLEBUTTON, self.OnOptsButton)
 
         sizer.Add(self.OptsButton)
 
+        self.Page = page
         self.InspType = insptype
-        self.State = {}
+        self.Init = (init or {})
         self.CtlName = ''
         self.CtlLabel = None
 
@@ -287,21 +295,22 @@ class InspOptsButton(wx.Panel):
             self.Dialog.SetSizer(mainSizer)
 
             # picker for which type we're working with
-            typePickerSizer = wx.BoxSizer(wx.HORIZONTAL)
+            infoSizer = wx.BoxSizer(wx.HORIZONTAL)
             info = GameData.Inspirations['Single'][self.InspType]
             baseicon = Icon.GetIcon('Inspirations', info['tiers'][0])
 
-            typePickerSizer.Add(wx.StaticText(self.Dialog, label = 'Inspiration Type:', style=wx.ALIGN_RIGHT), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
-            typePickerSizer.Add(wx.StaticBitmap(self.Dialog, bitmap = baseicon), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
-            typePickerSizer.Add(wx.StaticText(self.Dialog, label = self.InspType), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+            infoSizer.Add(wx.StaticText(self.Dialog, label = 'Inspiration Type:'), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+            infoSizer.Add(wx.StaticBitmap(self.Dialog, bitmap = baseicon), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+            infoSizer.Add(wx.StaticText(self.Dialog, label = self.InspType), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
-            mainSizer.Add(typePickerSizer, 0, wx.EXPAND|wx.ALL, 10)
+            mainSizer.Add(infoSizer, 0, wx.EXPAND|wx.ALL, 10)
 
             # sizer for the various option-style toggles
             optsSizer = wx.StaticBoxSizer(wx.VERTICAL, self.Dialog, 'Options')
 
             self.EnableCombine = wx.CheckBox(self.Dialog, label = "Enable on-release inspiration combining")
             self.EnableCombine.SetToolTip("If checked, the keybind will attempt to combine other flavor inspirations into this flavor on key release.")
+            self.EnableCombine.SetValue(self.Init.get('EnableCombine', False))
             optsSizer.Add(self.EnableCombine, 0, wx.EXPAND|wx.ALL, 10)
             mainSizer.Add(optsSizer, 0, wx.EXPAND|wx.ALL, 10)
 
@@ -314,9 +323,11 @@ class InspOptsButton(wx.Panel):
 
         self.Dialog.Fit()
         self.Dialog.Layout()
+
         if self.Dialog.ShowModal() == wx.ID_OK:
             if self.EnableCombine:
                 self.OptsButton.SetValue(self.EnableCombine.GetValue())
+                wx.PostEvent(self.Page, InspOptsChanged(wx.NewId(), control = self))
         else: # wx.ID_CANCEL or closed via close box or something
             self.OptsButton.SetValue(not initToggleVal) # un-have-toggled it.
 
@@ -331,7 +342,7 @@ class InspOptsButton(wx.Panel):
         for insptype, info in othertypes.items():
             typecb = InspirationTypeCheckBox(self.CBSizer.GetStaticBox(), insptype)
             self.CBSizer.Add(typecb, 0, wx.ALIGN_LEFT|wx.EXPAND|wx.ALL, 5)
-            typecb.SetValue(info['displayname'] in self.State.get('CombineCBs', []))
+            typecb.SetValue(info['displayname'] in self.Init.get('CombineInsps', []))
             self.CombineCBs[info['displayname']] = typecb
 
         self.Layout()

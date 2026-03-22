@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 from Page.General import General
 from Page.Gameplay import Gameplay
 from Page.MovementPowers import MovementPowers
-from Page.InspirationPopper import InspirationPopper
+from Page.InspirationPopper import InspirationPopper, EVT_INSPOPTS_CHANGED
 from Page.Mastermind import Mastermind
 from Page.CustomBinds import CustomBinds
 from Page.MacroComposer import MacroComposer, MacroPane
@@ -342,7 +342,8 @@ class Profile(wx.Notebook):
             for evt in [
                 wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
                 wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU, wx.EVT_RADIOBUTTON,
-                wx.EVT_SLIDER, wx.EVT_NOTEBOOK_PAGE_CHANGED, csel.EVT_COLOURSELECT, wx.EVT_TOGGLEBUTTON,
+                wx.EVT_SLIDER, wx.EVT_NOTEBOOK_PAGE_CHANGED, csel.EVT_COLOURSELECT,
+                wx.EVT_TOGGLEBUTTON, EVT_INSPOPTS_CHANGED,
             ]:
                 page.Bind(evt, partial(self.OnCommandEvent, page = page))
 

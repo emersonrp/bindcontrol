@@ -360,13 +360,14 @@ class InspOptsButton(wx.Panel):
         self.Layout()
 
     def GetCombineKeybinds(self):
+        # TODO - check server, somehow, to decide on 'mergeinsp' vs 'inspcombine'
         combineitems = []
         for insptype in self.CombineInsps:
             insptype = re.sub(' ', '', insptype) # ugh this gets old
             for idx in range(3):
-                srcinsp = GameData.Inspirations['Single'][insptype]['tiers'][idx]
-                dstinsp = GameData.Inspirations['Single'][self.InspType]['tiers'][idx]
-                combineitems.append(f'inspcombine "{srcinsp}" "{dstinsp}"')
+                srcinsp = re.sub(' ', '_', GameData.Inspirations['Single'][insptype]['tiers'][idx])
+                dstinsp = re.sub(' ', '_', GameData.Inspirations['Single'][self.InspType]['tiers'][idx])
+                combineitems.append(f'inspcombine {srcinsp} {dstinsp}')
         return combineitems
 
     def GetValue(self):

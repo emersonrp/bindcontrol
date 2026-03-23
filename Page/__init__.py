@@ -118,6 +118,12 @@ class Page(wx.ScrolledWindow):
             if name in self.Ctrls:
                 self.Ctrls[name].Enable(enabled)
 
+    # show/hide controls by name
+    def ShowControls(self, show, names) -> None:
+        for name in names:
+            if name in self.Ctrls:
+                self.Ctrls[name].Show(show)
+
     ##### stubs for overriding (shoes for industry!)
     def SynchronizeUI(self) -> None:
         return

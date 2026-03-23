@@ -25,7 +25,6 @@ revkeycontrols = []
 chatcontrols = []
 revchatcontrols = []
 
-
 class InspirationPopper(Page):
     def __init__(self, parent) -> None:
         super().__init__(parent)
@@ -242,9 +241,12 @@ class InspirationPopper(Page):
                     bc = rcols['border']
                     reverseOrder.insert(0, f'tell $name, {ChatColors(fg, bg, bc)}{Insp}')
 
+
                 if self.GetState('EnableInspBinds'):
+                    #combinelines = self.Ctrls[f"{tab}{Insp}Opts"].GetCombineKeybinds() if tab == 'Single' else []
                     ResetFile.SetBind(self.Ctrls[f"{tab}{Insp}Key"].MakeBind(forwardOrder))
                 if self.GetState('EnableRevInspBinds'):
+                    #combinelines = self.Ctrls[f"{tab}Rev{Insp}Opts"].GetCombineKeybinds() if tab == 'Single' else []
                     ResetFile.SetBind(self.Ctrls[f"{tab}Rev{Insp}Key"].MakeBind(reverseOrder))
 
         return True
@@ -355,6 +357,17 @@ class InspOptsButton(wx.Panel):
         if self.EnableCombineCB:
             for cb in self.CombineCBs.values():
                 cb.Enable(self.EnableCombineCB.IsChecked())
+
+    def GetCombineKeybinds(self):
+        combineitems = []
+        if self.EnableCombine:
+            for insptype in self.CombineInsps:
+                insptype = re.sub(' ', '', insptype) # ugh this gets old
+                for idx in range(3):
+                    srcinsp = GameData.Inspirations['Single'][insptype]['tiers'][idx]
+                    dstinsp = GameData.Inspirations['Single'][self.InspType]['tiers'][idx]
+                    combineitems.append(f'inspcombine "{srcinsp}" "{dstinsp}"')
+        return combineitems
 
     def GetValue(self):
         if self.EnableCombineCB:

@@ -79,7 +79,7 @@ class InspirationPopper(Page):
         optionsSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # "Use Order" options
-        self.UseOrderBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Use Order")
+        self.UseOrderBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Setup Options")
 
         self.useCB = wx.CheckBox(self.UseOrderBox.GetStaticBox(), label = 'Enable Largest-First Binds')
         self.useCB.SetToolTip(wx.ToolTip(
@@ -114,16 +114,16 @@ class InspirationPopper(Page):
         optionsSizer.Add(self.UseOrderBox, 1, wx.EXPAND, 0)
 
         # General Options
-        self.OptionsBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Options")
+        self.OptionsBox = wx.StaticBoxSizer(wx.VERTICAL, self, "Bind Options")
 
         self.useSuperInspCB = wx.CheckBox(self.OptionsBox.GetStaticBox(), label = 'Use Super Inspirations')
         self.useSuperInspCB.SetToolTip(wx.ToolTip(
-            'Check this to include Super Inspirations in the Inspiration Popper binds.  If you\'re concerned about accidental activation and would prefer to use Super Inspirations manually, leave this unchecked.'))
+            'Check this to include Super Inspirations in the Inspiration Popper binds.  If you\'re concerned about accidental activation and would prefer to use Super Inspirations manually, leave this unchecked.  Super Inspirations cannot be combined.'))
         self.useSuperInspCB.SetValue(self.Init['UseSuperInsp'])
         self.Ctrls['UseSuperInsp'] = self.useSuperInspCB
         self.OptionsBox.Add(self.useSuperInspCB, 0, wx.ALL, 6)
 
-        self.enableTellsCB = wx.CheckBox(self.OptionsBox.GetStaticBox(), label = 'Enable self-/tell feedback')
+        self.enableTellsCB = wx.CheckBox(self.OptionsBox.GetStaticBox(), label = 'Enable inspiration-colored self-/tell feedback')
         self.enableTellsCB.SetToolTip(wx.ToolTip(
             'Check this box to have your toon /tell you whenever you pop an inspiration.'))
         self.enableTellsCB.SetValue(self.Init['EnableTells'])
@@ -288,7 +288,7 @@ class InspOptsButton(wx.Panel):
         self.SetSizer(sizer)
 
         self.OptsButton = wx.BitmapToggleButton(self, label = Icon.GetIcon('UI', 'combine'))
-        self.OptsButton.SetToolTip(f"Combine-inspirations options for {insptype}")
+        self.OptsButton.SetToolTip(f"Inspiration Combine Options for {insptype}")
         self.OptsButton.Bind(wx.EVT_TOGGLEBUTTON, self.OnOptsButton)
 
         sizer.Add(self.OptsButton)
@@ -315,22 +315,25 @@ class InspOptsButton(wx.Panel):
 
             self.Dialog.SetSizer(mainSizer)
 
-            # picker for which type we're working with
+            # Just a line at the top indicating this dialog's context:
             infoSizer = wx.BoxSizer(wx.HORIZONTAL)
-            info = GameData.Inspirations['Single'][self.InspType]
-            baseicon = Icon.GetIcon('Inspirations', info['tiers'][0])
+            inspinfo = GameData.Inspirations['Single'][self.InspType]
+            baseicon = Icon.GetIcon('Inspirations', inspinfo['tiers'][0])
 
-            infoSizer.Add(wx.StaticText(self.Dialog, label = 'Inspiration Type:', style=wx.ALIGN_RIGHT), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
-            infoSizer.Add(wx.StaticBitmap(self.Dialog, bitmap = baseicon), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
-            infoSizer.Add(wx.StaticText(self.Dialog, label = self.InspType), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+            infoSizer.Add(wx.StaticText  (self.Dialog, label = 'Target Type:'), 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+            infoSizer.Add(wx.StaticBitmap(self.Dialog, bitmap = baseicon),      0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+            infoSizer.Add(wx.StaticText  (self.Dialog, label = self.InspType),  0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
             mainSizer.Add(infoSizer, 0, wx.EXPAND|wx.ALL, 10)
 
             # sizer for the checkboxes for the other types to combine
-            self.CBSizer = wx.StaticBoxSizer(wx.VERTICAL, self.Dialog, 'Combine Inspiration Types')
+            self.CBSizer = wx.StaticBoxSizer(wx.VERTICAL, self.Dialog, 'Combine Types')
             mainSizer.Add(self.CBSizer, 0, wx.EXPAND|wx.ALL, 10)
 
-            mainSizer.Add(self.Dialog.CreateButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 10)
+            buttonSizer = self.Dialog.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL)
+            optsHelpButton = HelpButton(self.Dialog, 'InspCombineOpts.html')
+            buttonSizer.Prepend(optsHelpButton)
+            mainSizer.Add(buttonSizer, 0, wx.EXPAND|wx.ALL, 10)
 
         self.PopulateDialog()
         self.Dialog.Fit()
@@ -367,13 +370,11 @@ class InspOptsButton(wx.Panel):
         return combineitems
 
     def GetValue(self):
-        return {
-            'CombineInsps'  : self.CombineInsps,
-        }
+        return { 'CombineInsps'  : self.CombineInsps, }
 
     def SetValue(self, value):
         self.CombineInsps = value.get('CombineInsps', [])
-        self.OptsButton.SetValue(bool(self.CombineInsps))
+        self.OptsButton.SetValue( bool(self.CombineInsps) ) # toggle "on" if there are any CombineInsps
 
 # call with parent, insp type keyname ("Accuracy" "BreakFree" etc)
 class InspirationTypeCheckBox(wx.Panel):

@@ -15,13 +15,18 @@ def ChatColors(fg,bg,bd) -> str: return f'<color {fg}><bgcolor {bg}><bordercolor
 
 # the calling convention to create one of this is WAY too complicated.
 class ChatColorPicker(ProfileAwareControlMixin, wx.Panel):
-    def __init__(self, parent, prefix:tuple, initcols:dict):
+    def __init__(self, parent, page, prefix:tuple, InspData:dict):
         super().__init__(parent)
 
+        self.Page = page
         self.PrefixBits = prefix
-        self.Prefix     = ''.join(prefix)
-        self.Colors     = initcols
-
+        self.Prefix = ''.join(prefix)
+        self.InspData = InspData
+        self.Colors = {
+            'border'     : InspData['dkcolor'],
+            'background' : InspData['ltcolor'],
+            'foreground' : InspData['dkcolor'],
+        }
         self.Dialog = None
 
         sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -245,15 +250,3 @@ def ChatBubbleBitmap(text = '', textsize = 14, zigzag = False, cols = None):
                          ])
 
     return bubbleBitmap
-
-class ColorPickerPopup(wx.PopupTransientWindow):
-    def __init__(self, parent):
-        super().__init__(parent, flags = wx.PU_CONTAINS_CONTROLS)
-    # Post an event so the Example Text updates even if we set this programmatically
-    def SetColour(self, colour):
-        super().SetColour(colour)
-        wx.PostEvent(self, ChatColorPickerChanged(id = wx.NewIdRef(), control = self))
-
-    def OnClick(self, event):
-        event.Skip()
-        super().OnClick(event)

@@ -182,20 +182,7 @@ class InspirationPopper(Page):
                         optsbutton.CtlName = optsname
                         self.Ctrls[optsname] = optsbutton
 
-                    # reverse the colors if we're doing team inspirations
-                    ltcolor = 'ltcolor'
-                    dkcolor = 'dkcolor'
-                    if tab == "Team" or tab == "DualTeam":
-                        ltcolor = 'dkcolor'
-                        dkcolor = 'ltcolor'
-
-                    chatcolorpicker = ChatColorPicker(box.GetStaticBox(), (tab, order, Insp),
-                        {
-                          'border'     : InspData[dkcolor],
-                          'background' : InspData[ltcolor],
-                          'foreground' : InspData[dkcolor],
-                        })
-                    self.Ctrls[f"{tab}{order}{Insp}Colors"] = chatcolorpicker
+                    chatcolorpicker = ChatColorPicker(box.GetStaticBox(), self, (tab, order, Insp), InspData)
 
                     rowSet.Add(kblabel,         0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 3)
                     rowSet.Add(keybutton,       0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 3)
@@ -203,7 +190,7 @@ class InspirationPopper(Page):
                         rowSet.Add(optsbutton,      0, wx.RIGHT|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 3)
                     else:
                         rowSet.AddSpacer(1)
-                    rowSet.Add(chatcolorpicker, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+                    rowSet.Add(chatcolorpicker, 0, wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 3)
 
             tabsizer.Add(InspBox, 0, wx.EXPAND|wx.ALL, 10)
             tabsizer.Add(RevInspBox, 0, wx.EXPAND|wx.ALL, 10)
@@ -300,9 +287,9 @@ class InspOptsButton(wx.Panel):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(sizer)
 
-        self.OptsButton = wx.BitmapButton(self, bitmap = Icon.GetIcon('UI', 'gear'))
+        self.OptsButton = wx.BitmapToggleButton(self, label = Icon.GetIcon('UI', 'combine'))
         self.OptsButton.SetToolTip(f"Combine-inspirations options for {insptype}")
-        self.OptsButton.Bind(wx.EVT_BUTTON, self.OnOptsButton)
+        self.OptsButton.Bind(wx.EVT_TOGGLEBUTTON, self.OnOptsButton)
 
         sizer.Add(self.OptsButton)
 
@@ -319,7 +306,7 @@ class InspOptsButton(wx.Panel):
         self.CombineCBs = {}
 
     def OnOptsButton(self, evt):
-        if evt: evt.Skip()
+        if evt: evt.Skip(False) # don't do normal toggle behavior
 
         if not self.Dialog:
             self.Dialog = wx.Dialog(self.Parent, title = "Inspiration Combine Options")
@@ -353,6 +340,7 @@ class InspOptsButton(wx.Panel):
             # set the actual state vars.
             self.CombineInsps = [i for i,cb in self.CombineCBs.items() if cb.IsChecked()]
             wx.PostEvent(self.Page, InspOptsChanged(wx.NewId(), control = self))
+        self.OptsButton.SetValue(bool(self.CombineInsps))
 
     def PopulateDialog(self):
         self.CBSizer.Clear(delete_windows = True)
@@ -385,6 +373,7 @@ class InspOptsButton(wx.Panel):
 
     def SetValue(self, value):
         self.CombineInsps = value.get('CombineInsps', [])
+        self.OptsButton.SetValue(bool(self.CombineInsps))
 
 # call with parent, insp type keyname ("Accuracy" "BreakFree" etc)
 class InspirationTypeCheckBox(wx.Panel):

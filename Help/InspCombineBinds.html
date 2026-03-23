@@ -1,0 +1,15 @@
+<html>
+    <head><title>Inspiration Combine Binds</title></head>
+    <body>
+        <h2>Inspiration Combine Binds</h2>
+        <p>Checking this box enables buttons below to specify other types of inspirations you'd like to combine into the target inspiration type on key press, followed by consuming an inspiration on key release.  For example, if you were to enable this function, and then on your "Accuracy Key" bind, specify "Health" and "Break Free" inspiration types then:</p>
+        <ul>
+            <li>On pressing the key, the bind would attempt to combine any available three Health or Break Free inspirations into a same-level Accuracy inspiration.</li>
+            <li>On <b>releasing</b> the key, you would consume an Accuracy inspiration, if available, either largest-first or smallest-first as directed.</li>
+        </ul>
+        <p>It's not possible to fit all inspiration-combine commands into a single keybind, so the keybind will rotate among the indicated combining targets with subsequent keypresses.  That is, on the first keypress, you might end up combining Health inspirations.  On the second keypress, the bind would then try to combine Break Free inspirations.  After the keypresses have gone through all configured types, they'll start the rotation over.</p>
+        <p>This can be helpful but also a bit fiddly.  It's possible that you have no Accuracy inspirations, for instance, and not enough Health inspirations to combine.  If that's the case, and the keybinds are in that phase of the rotation, no inspiration will be generated, and therefore there will be none to be consumed.  It might require a number of key presses and releases before an inspiration is created and activated, if that's even possible given your inventory of inspirations.</p>
+        <p>This can be more convenient than simply having use-inspiration keybinds that don't work at all if you have no inspirations, but it requires a bit of attention and sometimes multiple keypresses.</p>
+        <p><i>This is an experimental feature and feedback is encouraged.</i></p>
+    </body>
+</html>

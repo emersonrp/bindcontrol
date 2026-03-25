@@ -76,7 +76,9 @@ class CustomBinds(Page):
     def OnNewCustomBindButton(self, evt) -> None:
         popupmenu = wx.Menu()
         for bindtype in ['Simple', 'Complex', 'Buffer']:
-            item = popupmenu.Append(wx.ID_ANY, f"New {bindtype} Bind")
+            item = wx.MenuItem(popupmenu, wx.ID_ANY, f"New {bindtype} Bind")
+            item.SetBitmap(GetIcon('UI', f"{bindtype}Bind"))
+            popupmenu.Append(item)
             popupmenu.Bind(wx.EVT_MENU, partial(self.OnCustomBindMenu, bindtype), item)
         evt.GetEventObject().PopupMenu(popupmenu)
         evt.Skip()

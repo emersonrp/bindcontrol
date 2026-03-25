@@ -120,6 +120,7 @@ class Profile(wx.Notebook):
     def Filepath(self)        : return self.Data.Filepath
     def ProfileBindsDir(self) : return self.Data['ProfileBindsDir']
     def BindsDir(self)        : return self.Data.BindsDir()
+    def BindsPath(self)       : return self.Data.BindsPath()
     def GameBindsDir(self)    : return self.Data.GameBindsDir()
 
     def HasPowerPool(self, poolname):
@@ -378,7 +379,7 @@ class Profile(wx.Notebook):
         key = str(filepath)
 
         if not self.BindFiles.get(key):
-            self.BindFiles[key] = BindFile(self.BindsDir(), self.GameBindsDir(), filepath)
+            self.BindFiles[key] = BindFile(self.BindsPath(), self.GameBindsDir(), filepath)
 
         return self.BindFiles[key]
 
@@ -408,10 +409,10 @@ class Profile(wx.Notebook):
 
         # Create the BindsDir if it doesn't exist
         try:
-            self.BindsDir().mkdir(parents = True, exist_ok = True)
+            self.BindsPath().mkdir(parents = True, exist_ok = True)
         except Exception as e:
-            wx.LogError(f"Can't make binds directory {self.BindsDir()}: {e}")
-            wx.MessageBox(f"Can't make binds directory {self.BindsDir()}: {e}")
+            wx.LogError(f"Can't make binds directory {self.BindsPath()}: {e}")
+            wx.MessageBox(f"Can't make binds directory {self.BindsPath()}: {e}")
             return
 
         otherProfile = None
@@ -681,7 +682,7 @@ class WriteDoneDialog(wx.Dialog):
             if filename == "reset.txt": continue
             bindfile = parent.BindFiles[filename]
 
-            displaypath = bindfile.Path.relative_to(parent.BindsDir())
+            displaypath = bindfile.Path.relative_to(parent.BindsPath())
 
             fileslist.AppendText(f"{displaypath}\n")
 

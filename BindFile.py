@@ -37,7 +37,6 @@ class KeyBind:
         return f'{self.Key} "{self.BindString()}"\n'
 
 class BindFile:
-
     def __init__(self, bindsdir, gamebindsdir, pathbits:PurePath):
 
         self.Path         = Path(bindsdir, pathbits)
@@ -128,8 +127,8 @@ class BindFile:
 #        # files through here but they might not all be there, almost certainly some won't
 #        if not self.Path.exists():
 #            raise Exception(f"Trying to delete nonexistant bindfile {self}")
-#        if not re.match(self.Profile.BindsDir(), str(self.Path)):
-#            raise Exception(f"Trying to delete a bindfile {self} not in {self.Profile.BindsDir()}!")
+#        if not re.match(self.Profile.BindsPath(), str(self.Path)):
+#            raise Exception(f"Trying to delete a bindfile {self} not in {self.Profile.BindsPath()}!")
 #
 #        # TODO do we need more sanity checking?  Probably
 #        #self.Path.unlink()

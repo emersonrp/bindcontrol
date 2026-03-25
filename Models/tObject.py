@@ -1,6 +1,4 @@
-from typing import TYPE_CHECKING, Literal
-if TYPE_CHECKING:
-    from pathlib import Path, PureWindowsPath
+from typing import Literal
 from BLF import BLF
 
 class tObject(dict):
@@ -60,18 +58,15 @@ class tObject(dict):
         self.lefx :str = ''
         self.rigx :str = ''
 
-        self.basepath     : Path            = profile.BindsDir()
-        self.gamebasepath : PureWindowsPath = profile.GameBindsDir()
-
         self.horizkeys :int = 0
         self.jkeys     :int = 0
         self.totalkeys :int = 0
 
     def path(self, code):
-        return self.basepath / code.upper() / code.upper()
+        return self.profile.BindsPath() / code.upper() / code.upper()
 
     def gamepath(self, code):
-        return self.gamebasepath / code.upper() / code.upper()
+        return self.profile.GameBindsDir() / code.upper() / code.upper()
 
     def bl(self, code):
         return f"$${BLF()} {self.gamepath(code)}"
@@ -80,7 +75,7 @@ class tObject(dict):
         return str(self.path(code)) + self.KeyState() + suffix + '.txt'
 
     # return binary "011010" string of which keys are "on";
-    # optionally flipping one of them firsself.
+    # optionally flipping one of them first.
     def KeyState(self, toggle: Literal['space', 'X', 'W', 'S', 'A', 'D', ''] = ''):
 
         ret = ''

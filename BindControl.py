@@ -44,6 +44,7 @@ class Main(wx.Frame):
 
         stdpaths = wx.StandardPaths.Get()
         config = wx.ConfigBase.Get()
+
         # Check each config bit for existence and set to default if no
         if not config.Exists('GamePath'):
             if platform.system() == 'Windows':
@@ -52,12 +53,17 @@ class Main(wx.Frame):
                 gamepath = str(Path.home() / '.wine' / 'drive_c' / 'Games' / 'Homecoming')
             config.Write('GamePath', gamepath)
         if not config.Exists('GameLang'): config.Write('GameLang', 'English')
+        # if we're first starting up without the "RelativeBindsDir", set it to True, *IF*
+        # and *ONLY IF* we don't already have a BindPath set up.  This means new installs
+        # will get RelativeBindsDir True;  existing ones will default to False
+        if not config.Exists('RelativeBindsDir')    : config.WriteBool('RelativeBindsDir', not config.Exists('BindPath'))
         if not config.Exists('BindPath'):
             if platform.system() == 'Windows':
                 bindpath = "C:\\coh\\"
             else:
                 bindpath = str(Path.home() / '.wine' / 'drive_c' / 'coh')
             config.Write('BindPath', bindpath)
+        if not config.Exists('BindTextPath')        : config.Write('BindTextPath', 'kb')
         if not config.Exists('GameBindPath'):
             if platform.system() != 'Windows':
                 config.Write('GameBindPath', "c:\\coh\\")
@@ -237,6 +243,15 @@ class Main(wx.Frame):
         self.SetupProfileUI()
 
         self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
+
+    def CheckIfGameDirNeeded(self):
+        if not Util.Paths.GetValidGamePath('Homecoming') and not Util.Paths.GetValidGamePath('Rebirth'):
+            with wx.MessageDialog(self,
+                    ("You don't have a valid game path set up for either Homecoming or Rebirth.\n"
+                     "Please fix this in Preferences.  Go to the Preferences Dialog now?"),
+                    "Game Directory Not Set", style=wx.YES_NO|wx.ICON_WARNING|wx.CENTER) as dlg:
+                if dlg.ShowModal() == wx.ID_YES:
+                    self.OnMenuPrefsDialog()
 
     # This is the two-button "start new profile" vs "load existing profile" panel
     def MakeStartupPanel(self) -> wx.Panel:
@@ -711,6 +726,7 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
                 self.Main.Profile.CheckAllConflicts()
 
         self.Main.Show()
+        wx.CallAfter(self.Main.CheckIfGameDirNeeded)
 
 if __name__ == "__main__":
 

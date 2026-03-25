@@ -59,6 +59,13 @@ def GetValidGamePath(server:str) -> Path|None:
     else:
         raise Exception('GetValidGamePath got an unknown "server" passed in.  This is a bug')
 
+def GetServerBindsPath(server: str) -> Path|None:
+    if not GetValidGamePath(server): return None
+    if server == 'Rebirth':
+        return Path(wx.ConfigBase.Get().Read('GameRebirthPath')) / 'piggs'
+    else:
+        return Path(wx.ConfigBase.Get().Read('GamePath')) / 'settings' / 'live'
+
 # returns the popmenu path for the server, regardless of whether it's there
 def GetPopmenuPath(server) -> Path|None:
     menupath = GetValidGamePath(server)

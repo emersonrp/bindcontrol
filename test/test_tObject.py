@@ -69,5 +69,8 @@ class FakeProfile:
     def BindsDir(self):
         return Path('/tmp')
 
+    def BindsPath(self):
+        return Path('/tmp')
+
     def GameBindsDir(self):
         return PureWindowsPath("c:\\coh\\")

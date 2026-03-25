@@ -89,13 +89,32 @@ class ProfileData(dict):
         if not self['ProfileBindsDir']:
             raise BindsDirectoryException("Can't come up with a sane Binds Directory!")
 
-        GameData.SetupGameData(self.get('General', {}).get('Server', 'Homecoming'))
+        GameData.SetupGameData(self.Server())
 
     def ProfileName(self)   -> str      : return self.Filepath.stem if self.Filepath else ''
-    def ProfileIDFile(self) -> Path     : return self.BindsDir() / 'bcprofileid.txt'
-    def BindsDir(self)      -> Path     : return Path(self.Config.Read('BindPath')) / self['ProfileBindsDir']
+    def ProfileIDFile(self) -> Path     : return self.BindsPath() / 'bcprofileid.txt'
+    def Server(self)        -> str      : return self.get('General', {}).get('Server', 'Homecoming')
+
+    # The in-BLF() path, ie, "kb/grarr" if RelativeBindsDir
+    def BindsDir(self)      -> Path     :
+        c = self.Config
+        initpath = c.Read('BindTextPath') if c.ReadBool('RelativeBindsDir') else c.Read('BindPath')
+        return Path(initpath) / self['ProfileBindsDir']
+
+    # The filesystem path, ie, ~/Games/Homecoming/drive_c/etcetcetc for actually writing it
+    def BindsPath(self)     -> Path     :
+        bindspath = self.BindsDir()
+        if self.Config.ReadBool('RelativeBindsDir'):
+            gamepath = Util.Paths.GetServerBindsPath(self.Server())
+            if not gamepath:
+                raise(Exception(f'Server is {self.Server()} but Game(Rebirth?)Path is invalid!  Cannot write BindFiles.'))
+            bindspath = gamepath / bindspath
+        return bindspath
+
+    # BLF path - filesystem path not needed here (I hope)
     def GameBindsDir(self)  -> Path     :
-        if gbp := self.Config.Read('GameBindPath'):
+        gbp = self.Config.Read('GameBindPath')
+        if gbp and not self.Config.ReadBool('RelativeBindsDir'):
             return PureWindowsPath(gbp) / self['ProfileBindsDir']
         else:
             return self.BindsDir()

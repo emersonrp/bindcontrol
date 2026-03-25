@@ -115,15 +115,23 @@ def test_init_filename(config, tmp_path):
 
 def test_accessors(config, monkeypatch, tmp_path, PD):
 
+    config.WriteBool('RelativeBindsDir', False)
+
     assert PD.LastModTime     == PD.Filepath.stat().st_mtime_ns
     assert not PD.IsModified()
     assert PD.ProfileName()   == 'testprofile'
-    assert PD.ProfileIDFile() == PD.BindsDir() / 'bcprofileid.txt'
     assert PD.BindsDir()      == tmp_path / PD['ProfileBindsDir']
+    assert PD.ProfileIDFile() == PD.BindsDir() / 'bcprofileid.txt'
     assert PD.GameBindsDir()  == PureWindowsPath(tmp_path) / PD['ProfileBindsDir']
 
     monkeypatch.setattr(config, 'Read', lambda _: '')
     assert PD.GameBindsDir()  == PD.BindsDir()
+
+    monkeypatch.undo()
+    config.WriteBool('RelativeBindsDir', True)
+    config.Write('BindTextPath', 'kb')
+    assert PD.BindsDir()      == Path('kb') / PD['ProfileBindsDir']
+
 
 def test_IsModified(PD):
     assert not PD.IsModified()
@@ -293,7 +301,7 @@ def test_BindsDirNotMine(monkeypatch, PD):
     idfile.write_text('not my circus')
     assert PD.BindsDirNotMine() == 'not my circus'
 
-    # correctly returns False for claimbed by me
+    # correctly returns False for claimed by me
     idfile.write_text(PD.ProfileName())
     assert bool(PD.BindsDirNotMine()) is False
 

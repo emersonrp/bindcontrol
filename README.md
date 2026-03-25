@@ -95,12 +95,14 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
 
 ## TODO
 
-* It's gotten a lot better, but there are still some Homecoming-specific notions hard-coded into BindControl.  I'm working on finding and fixing these, but any bug reports and other feedback from Rebirth players would be very welcomed.
-* The hope is to make every reasonable slash command in the game available in some way, typically via PowerBinder.  What qualifies as a "reasonable slash command" is yet to be determined.  Check [the SlashCommands.md file](SlashCommands.md) for the current status.
-* Access to MacOS for testing is via a MacOS VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment.
-* The popmenu editor, on Windows, simply can't load pathologically large popmenus (tens of thousands of entries).  This is a hard limit on the wx toolkit imposed by Windows itself, and can't be worked around in any way I can see.  As there exist at least two menus this large "in the wild," further investigation is merited.
-* Integrate macro icons with Popmenu Macro Creator, now that we have them on-board for the Macro Composer.  Really, integrating the two somehow would be best.
-* More error detection and handling.
+* There are still some Homecoming-specific notions hard-coded into BindControl.  I'm working on finding and fixing these, but any bug reports and other feedback from Rebirth players would be very welcomed.
+* There are a growing number of places where bits of BindControl want to trigger changes in other far-flung bits, for instance, reworking some of the UI in response to changes in the Preferences Dialog.  This is currently done haphazardly and in an ugly tightly-coupled fashion.  The time will come when I buckle down and rewrite most of these cases using [pubsub](https://pypi.org/project/Pypubsub/) which I've mostly been avoiding just to keep from adding extra dependencies.
+* I hope to make every reasonable slash command available, typically via PowerBinder.  What counts as a "reasonable slash command" is yet to be determined.  Check [the SlashCommands.md file](SlashCommands.md) for the current status.
+* I have ideas for a few more BindWizards.  Rolling those up from scratch is always a process, so they'll arrive whenever they do.
+* Access to MacOS for testing is via a VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment.
+* Similarly, notarizing MacOS software involves having a $99/year Apple Developer Account, which is not something I find remotely interesting just for making life a few clicks easier for BindControl's MacOS users, of which I suspect there are approximately zero....
+* The popmenu editor, on Windows, can't load pathologically large popmenus (tens of thousands of entries).  This is a hard limit on the wx toolkit imposed by Windows itself, and can't be worked around in any way I can see.  As there exist at least two menus this large "in the wild," further investigation is merited.
+* More error detection and better / cleaner error handling.
 * More and better help text and documentation.  <i>(WIP - check [the wiki](https://github.com/emersonrp/bindcontrol/wiki/Getting-Started-With-BindControl))</i>
 * More internal work on initialization order of objects to speed up start time and avoid bootstrapping problems.  <i>(WIP)</i>
 * Fix bugs as found.
@@ -114,8 +116,8 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 *MacOS users*:  Experimental binary releases for Intel and Arm64 have been made available.  They are not signed and/or notarized, and might or might not work at all.  Any feedback from MacOS users is welcome and appreciated.
 
 *Linux users*:  Two experimental binary releases are now available:
-* ZIPfile:  you should be able to unzip the zipfile anywhere, and run the "BindControl" binary from within it.  It's built using Github's "ubuntu-latest" environment, which may or may not be completely compatible with other distributions and versions.[^1]  If this works for you, it's probably the simplest solution
-* AppImage:  a full-on AppImage is also available.  You should be able to download it, `chmod +x` the downloaded file, and run it directly.  This is a work in progress, and may go through a few iterations before it's completely solid.  Check it out!
+* ZIP file:  you should be able to unzip the ZIP file anywhere, and run the "BindControl" binary from within it.  It's built using Github's "ubuntu-24.04" environment, which may or may not be completely compatible with other distributions and versions.[^1]  If this works for you, it's probably the simplest solution
+* AppImage:  a full-on AppImage is also available.  You should be able to download it, `chmod +x` the downloaded file, and run it directly.  It's a big download, as AppImages tend to be, but github supports using tools like [AppImageUpdate](https://github.com/AppImageCommunity/AppImageUpdate) and [appimage-updater](https://royw.github.io/appimage-updater/), so it's possible to update BindControl incrementally instead of downloading nearly 200MB of AppImage over and over.  Check the various tools' sites for more information.
 
 ## Running From Source
 

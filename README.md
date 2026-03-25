@@ -152,9 +152,9 @@ Binary releases of Python applications are a bit finicky and fragile, but are pr
 
 ## Developing BindControl
 
-BindControl is being developed on Manjaro Linux.  It gets feature-tested on a Windows 10 VM.  When Windows 10 goes EOL, I'll probably update to a Windows 11 VM, but that's its own headache.
+BindControl is being developed on Manjaro Linux.  It gets feature-tested on Windows 10 and 11 VMs, and occasionally on a MacOS Catalina VM.
 
-While developing, I make sure the code passes both `pyright` and `ruff` with a large subset of the possible rules included.
+While developing, I make sure the code passes both `pyright` and `ruff` with a large subset of the possible ruff rules included.
 
 There is a small but growing `pytest` test suite.  It only runs on Linux (and possibly MacOS) because it uses `pytest-forked` which is not supported on Windows.  To run the test suite, you'll need to install the following plugins and their dependencies:
 * `pytest-forked`
@@ -170,9 +170,9 @@ Any submitted patches or pull requests should pass the test suite and `pyright` 
 
 BindControl was originally a direct port of [CityBinder](http://sourceforge.net/projects/citybinder/) code, and in many places is still extremely influenced by it.  Keybinding code drew from similar code in [PADRE](https://padre.perlide.org/).
 
-Various newer functionality was initially added to [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by Tailcoat, who kindly provided his source code and permission to adapt for use with BindControl, as well as offered suggestions and advice for improvements.  The Inspiration Popper in particular was incorporated wholesale from a design of Tailcoat's in an unreleased version of CityBinder for Homecoming.
+Various newer functionality was added to [CityBinder for Homecoming](https://sourceforge.net/projects/citybinder-for-homecoming/) by Tailcoat, who kindly provided his source code and permission to adapt for use with BindControl, as well as offered suggestions and advice for improvements.  The Inspiration Popper in particular was incorporated wholesale from a design of Tailcoat's in an unreleased version of CityBinder for Homecoming.
 
-The [CoH/CoV Technical Reference Guide](http://www.shenanigunner.com/COXTECHGUIDE) from [Shenanigunner](https://www.shenanigunner.com/) has been, and continues to be, a crucial resource and is highly recommended for those wishing to dig deeper into keybinds, popmenus, and macros.
+The [CoH/CoV Technical Reference Guide](https://web.archive.org/web/20251212024327/http://shenanigunner.com/CoX-Technical-Guide-v4-16.pdf) from [Shenanigunner](https://web.archive.org/web/20250318031408/http://shenanigunner.com/)[^5] has been, and continues to be, a crucial resource and is highly recommended for those wishing to dig deeper into keybinds, popmenus, and macros.
 
 The Sandolphan Mastermind bind schemes were originally developed by Sandolphan during the City of Villains beta in 2006 and [posted to the official forums](http://web.archive.org/web/20120904222729/http://boards.cityofheroes.com/showthread.php?t=117256) at that time.  The version in BindControl is an adaptation and expansion of the original binds.
 
@@ -183,7 +183,7 @@ The Github Actions for automated building of binary releases were provided by [J
 Additional feedback and suggestions have been provided in the [Homecoming Forums thread](https://forums.homecomingservers.com/topic/38674-bindcontrol-alternative-to-citybinder) and in [Github issues](https://github.com/emersonrp/bindcontrol/issues) by:<br>
 DevoDog68, BlackSpectre, Premmy, kenlon, Lumenia, xizar, autobotpinto, jtoya85
 
-Icons / graphics are from Microsoft's Fluent icons collection, by way of [Colton Griffith's Fluent Icons viewer](https://fluenticons.co/outlined/).
+Most of the UI Icons / graphics are from Microsoft's [Fluent icons](https://github.com/microsoft/fluentui-system-icons) collection, by way of [Colton Griffith's Fluent Icons viewer](https://fluenticons.co/outlined/).
 
 CityBinder's original acknowledgements are reproduced below:
 ```
@@ -218,3 +218,5 @@ emerson@hayseed.net
 [^3]: [i26 Expanded Mastermind NumPad Controls+](https://forums.homecomingservers.com/topic/20650-i26-expanded-mastermind-numpad-controls/)
 
 [^4]: [i26 The Mastermind's PetMouse](https://forums.homecomingservers.com/topic/20788-i26-the-masterminds-petmouse-new-menu/)
+
+[^5]: [Shenanigunner passed away in April 2025](https://forums.homecomingservers.com/topic/59721-shenanigunner-ave-atque-vale/) and his site has gone dark since then.  The links in the Credits section point to the latest available captures of his site at the Internet Archive.  Shenanigunner was an iconic and tireless member of the City of Heroes community, and his presence is deeply missed.

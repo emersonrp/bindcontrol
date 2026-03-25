@@ -534,8 +534,11 @@ class Profile(wx.Notebook):
 
     def doDeleteBindFiles(self, bindfiles):
 
-        bindpath = wx.ConfigBase.Get().Read('BindPath')
-        if len(bindpath) < 6: # "C:\COH" being the classic
+        bindpath = self.BindsPath()
+        # TODO - should rethink if this step is right or even necessary after the new
+        # RelativeBindsDir notion.  I suppose "kb/bj" is possible so maybe 5?  Maybe this
+        # is too fiddly or corner-case-y in the first place?
+        if len(str(bindpath)) < 6: # "C:\COH" being the classic
             wx.MessageBox(f"Your Binds Directory is set to '{bindpath}' which seems wrong.  Check the preferences dialog.", "Binds Directory Error", wx.OK)
             return
 

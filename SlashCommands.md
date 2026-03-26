@@ -110,8 +110,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /loudstacking [0-1] | Enable old eardrum-busting sound stacking. |
 | /ma message | Send message to the Architect Chat channel.|
 | /ma message | Send message to the Architect Chat channel. |
-| /macro name command | Add a macro to first empty slot |
-| /macro_image icon tooltip command | Add a macro with an existing icon to the first empty slot |
 | /macroslot macro-slot# name command | Add a macro to specified power tray slot |
 | /mailview string | Sets which view to use (Inbox or Character Items) when on the Email window |
 | /maxAniso | Shows the maximum anisotropic your card allows |
@@ -142,9 +140,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /option_save_file filename | Saves a list of current option settings to a file |
 | /option_toggle optionname | Toggles an option setting on or off. |
 | /petoptions | Displays pet option context menu |
-| /petrename name | Rename your current pet |
-| /petrename_name name | Rename the named pet |
-| /pet_select_name pet_name | Selects the named pet |
 | /playernote globalname | Opens note window for a specified global name |
 | /playernotelocal name | Opens note window for both character names and global names |
 | /playerturn | Turn player to match camera |

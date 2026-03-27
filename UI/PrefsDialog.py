@@ -9,6 +9,7 @@ from Help import HelpButton
 from UI.KeySelectDialog import bcKeyButton
 from UI.ControlGroup import cgDirPickerCtrl, cgTextCtrl
 from bcController import bcController
+from Util.Profile import GetCurrentProfile
 
 # This ST.GenStaticText is so we can intercept clicks on it, but
 # the background color is wrong on Windows in a way I can't work out,
@@ -470,7 +471,7 @@ class PrefsDialog(wx.Dialog):
             config.Flush()
 
             # This AAAAALMOST has me ready to add pubsub as a dependence.  Almost.
-            if profile := wx.App.Get().Main.Profile:
+            if profile := GetCurrentProfile():
                 if changedGameDir:
                     # repopulate the Popmenu Editor, if we fiddled with GameDir
                     profile.PopmenuEditor.LoadMenusIfNeeded(force = True)

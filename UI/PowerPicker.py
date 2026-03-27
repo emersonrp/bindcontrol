@@ -4,6 +4,7 @@ import GameData
 from Icon import GetIcon, SplitNameAndIcon
 from UI.ErrorControls import ErrorControlMixin
 from Util.Incarnate import Rarities, Aliases
+from Util.Profile import GetCurrentProfile
 
 import wx.lib.newevent
 PowerChanged, EVT_POWERPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
@@ -81,7 +82,7 @@ class PowerPicker(ErrorControlMixin, wx.Button):
 
 class PowerPickerMenu(wx.Menu):
     def BuildMenu(self) -> None:
-        gen = wx.App.Get().Main.Profile.General
+        gen = GetCurrentProfile().General
 
         # primary / secondary / epic powers
         archdata = GameData.Archetypes[gen.GetState('Archetype')]
@@ -166,7 +167,7 @@ class PowerPickerMenu(wx.Menu):
 
     def ShowPower(self, category:str, power:str) -> bool:
         # This next line is uuuuugly.  What is the right way to do this?
-        powerlist = wx.App.Get().Main.Profile.General.Ctrls[f'{category}Powers'].GetValue()
+        powerlist = GetCurrentProfile().General.Ctrls[f'{category}Powers'].GetValue()
         if   powerlist == []    : return True # we haven't picked powers, show them all
         elif power in powerlist : return True # we have picked this one, show it
         else                    : return False

@@ -14,6 +14,7 @@ from BindFile import KeyBind
 import UI
 from UI.ErrorControls import ErrorControlMixin
 from bcController import bcController
+from Util.Profile import GetCurrentProfile
 
 KeyChanged, EVT_KEY_CHANGED = wx.lib.newevent.NewCommandEvent()
 
@@ -332,8 +333,7 @@ class KeySelectDialog(wx.Dialog):
         self.Layout()
 
     def CheckConflicts(self) -> None:
-        Profile = wx.App.Get().Main.Profile
-        if Profile:
+        if bool(GetCurrentProfile()):
             conflicts = self.Button.CheckConflicts(self.Binding)
             if conflicts:
                 conflictStrings = []
@@ -545,7 +545,7 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
 
     def onKeyChanged(self, evt) -> None:
         evt.Skip()
-        profile = wx.App.Get().Main.Profile
+        profile = GetCurrentProfile()
         profile.CheckAllConflicts()
         self.CheckConflicts()
         # Let's try this out -- every time we pick a new key, update the trays'
@@ -583,8 +583,7 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
         self.Update()
 
     def CheckConflicts(self, newbinding = None) -> list:
-        Profile = wx.App.Get().Main.Profile
-        if Profile:
+        if Profile := GetCurrentProfile():
             conflicts = Profile.CheckConflict(newbinding or self.Key, self.CtlName)
             if conflicts:
                 conflictStrings = []
@@ -600,7 +599,7 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
         button = evt.EventObject
 
         with KeySelectDialog(button) as dlg:
-            profile = wx.App.Get().Main.Profile
+            profile = GetCurrentProfile()
 
             if dlg.ShowModal() == wx.ID_OK:
                 # re-label the button / set its state

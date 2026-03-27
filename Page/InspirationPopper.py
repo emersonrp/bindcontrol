@@ -31,12 +31,9 @@ class InspirationPopper(Page):
 
     def BuildPage(self) -> None:
         for tab in tabs:
-            for name, Insp in GameData.Inspirations[tab].items():
+            for name in GameData.Inspirations[tab]:
                 self.Init[f'{tab}{name}Key']        = ""
                 self.Init[f'{tab}Rev{name}Key']     = ""
-                self.Init[f"{tab}{name}Border"]     = Insp['dkcolor']
-                self.Init[f"{tab}{name}Foreground"] = Insp['dkcolor']
-                self.Init[f"{tab}{name}Background"] = Insp['ltcolor']
         self.Init.update({
             'EnableInspBinds'          : False,
             'EnableRevInspBinds'       : False,
@@ -220,13 +217,15 @@ class InspirationPopper(Page):
                 forwardOrder = reverseOrder[::-1]
 
                 if self.GetState("EnableTells"):
-                    bc = self.GetState(f'{tab}{Insp}Border')
-                    bg = self.GetState(f'{tab}{Insp}Background')
-                    fg = self.GetState(f'{tab}{Insp}Foreground')
+                    cols = self.Ctrls[f'{tab}{Insp}Colors'].GetValue()
+                    fg = cols['foreground']
+                    bg = cols['background']
+                    bc = cols['border']
                     forwardOrder.insert(0, f'tell $name, {ChatColors(fg, bg, bc)}{Insp}')
-                    bc = self.GetState(f'{tab}Rev{Insp}Border')
-                    bg = self.GetState(f'{tab}Rev{Insp}Background')
-                    fg = self.GetState(f'{tab}Rev{Insp}Foreground')
+                    rcols = self.Ctrls[f'{tab}Rev{Insp}Colors'].GetValue()
+                    fg = rcols['foreground']
+                    bg = rcols['background']
+                    bc = rcols['border']
                     reverseOrder.insert(0, f'tell $name, {ChatColors(fg, bg, bc)}{Insp}')
 
                 if self.GetState('EnableInspBinds'):

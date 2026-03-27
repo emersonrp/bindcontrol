@@ -66,9 +66,6 @@ class InspirationPopper(Page):
                     keygroup.append(f"{tab}{order}{Insp}Key")
 
                     chatgroup = chatcontrols if not order else revchatcontrols
-                    chatgroup.append(f"{tab}{order}{Insp}Border")
-                    chatgroup.append(f"{tab}{order}{Insp}Background")
-                    chatgroup.append(f"{tab}{order}{Insp}Foreground")
                     chatgroup.append(f"{tab}{order}{Insp}Example")
 
         centeringSizer = wx.BoxSizer(wx.VERTICAL)
@@ -114,14 +111,6 @@ class InspirationPopper(Page):
         self.OptionsBox.Add(self.enableTellsCB, 0, wx.ALL, 6)
         self.enableTellsCB.Bind(wx.EVT_CHECKBOX, self.OnEnableTellCB)
 
-        optionButtonBox = wx.BoxSizer(wx.HORIZONTAL)
-        byInspColorButton      = wx.Button(self.OptionsBox.GetStaticBox(), label = "Color-coded")
-        byInspColorButton     .SetToolTip("Reset self-/tell colors according to inspiration type")
-        optionButtonBox.Add(byInspColorButton,      1, wx.ALL, 10)
-        byInspColorButton.Bind(wx.EVT_BUTTON, self.OnByInspColorButton)
-
-        self.OptionsBox.Add(optionButtonBox)
-
         optionsSizer.Add(self.OptionsBox, 1, wx.EXPAND|wx.LEFT, 10)
 
         centeringSizer.Add(optionsSizer, 1, wx.BOTTOM|wx.EXPAND, 10)
@@ -132,9 +121,9 @@ class InspirationPopper(Page):
         self.InspTabs.AssignImageList(il)
         for tab, tabname in tabs.items():
             tabpanel = wx.Panel(self.InspTabs)
-            idx1 = il.Add(Icon.GetIcon("UI", f"Insp{tab}").GetBitmap(wx.Size(32,32)))
+            idx1 = il.Add(Icon.GetIcon("UI", f"Insp{tab}").GetBitmap(wx.Size(18,18)))
             self.InspTabs.AddPage(tabpanel, tabname, imageId = idx1)
-            tabsizer = wx.BoxSizer(wx.VERTICAL)
+            tabsizer = wx.BoxSizer(wx.HORIZONTAL)
 
             InspBox  = wx.StaticBoxSizer(wx.VERTICAL, tabpanel, "Large Inspirations First")
             InspRows = wx.FlexGridSizer(3,0,3)
@@ -167,12 +156,13 @@ class InspirationPopper(Page):
                         ltcolor = 'dkcolor'
                         dkcolor = 'ltcolor'
 
-                    chatcolorpicker = ChatColorPicker(box.GetStaticBox(), self, f"{tab}{order}{Insp}",
+                    chatcolorpicker = ChatColorPicker(box.GetStaticBox(), self, (tab, order, Insp),
                         {
                           'border'     : InspData[dkcolor],
                           'background' : InspData[ltcolor],
-                          'text'       : InspData[dkcolor],
+                          'foreground' : InspData[dkcolor],
                         })
+                    self.Ctrls[f"{tab}{order}{Insp}Colors"] = chatcolorpicker
 
                     rowSet.Add(kblabel,         0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 3)
                     rowSet.Add(keybutton,       0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 3)
@@ -191,21 +181,6 @@ class InspirationPopper(Page):
         self.OnEnableCB()
         self.OnEnableRevCB()
         self.OnEnableTellCB()
-
-    def OnByInspColorButton(self, _) -> None:
-        for tab in tabs:
-            for Insp, InspData in GameData.Inspirations[tab].items():
-                for order in ("", "Rev"):
-                    # reverse the colors if we're doing team inspirations
-                    ltcolor = 'ltcolor'
-                    dkcolor = 'dkcolor'
-                    if tab == "Team" or tab == "DualTeam":
-                        ltcolor = 'dkcolor'
-                        dkcolor = 'ltcolor'
-
-                    self.Ctrls[f'{tab}{order}{Insp}Border']    .SetColour(InspData[dkcolor])
-                    self.Ctrls[f'{tab}{order}{Insp}Background'].SetColour(InspData[ltcolor])
-                    self.Ctrls[f'{tab}{order}{Insp}Foreground'].SetColour(InspData[dkcolor])
 
     def OnEnableCB(self, evt = None) -> None:
         if evt: evt.Skip()

@@ -282,6 +282,15 @@ class ProfileData(dict):
 
                     self['CustomBinds'][i] = custombind
 
+        # Migrate old per-picker InspirationPopper config into new per-triplet one
+        if 'InspirationPopper' in self:
+            ip = self['InspirationPopper']
+            for key in list(ip.keys()):
+                if matches := re.match(r'(.+)(Border|Background|Foreground)', key):
+                    newkey = f"{matches[1]}Colors"
+                    ip[newkey] = ip.get(newkey, {})
+                    ip[newkey][matches[2].lower()] = ip.pop(key)
+
         # if we're loading a pre-cretaceous profile, it won't have Server which will crash things
         if not self.get('General', {}).get('Server'):
             if 'General' not in self:

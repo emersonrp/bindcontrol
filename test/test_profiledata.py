@@ -98,6 +98,35 @@ def test_MassageData(config, monkeypatch):
     assert b[1]['Power'] == 'Power2-2'
     assert b[2]['Power'] == 'Power2-3'
 
+    rawdata = {
+        'InspirationPopper' : {
+            'SingleAccuracyKey': 'SHIFT+A',
+            'SingleAccuracyBorder': '#765000',
+            'SingleAccuracyBackground': '#FFEE00',
+            'SingleAccuracyForeground': '#00CC00',
+        },
+    }
+    PD = ProfileData.ProfileData(config, newname = 'insppopper', profiledata = rawdata)
+
+    assert 'InspirationPopper' in PD
+
+    assert 'SingleAccuracyKey' in PD['InspirationPopper']
+    assert PD['InspirationPopper']['SingleAccuracyKey'] == 'SHIFT+A'
+
+    assert 'SingleAccuracyBorder'     not in PD['InspirationPopper']
+    assert 'SingleAccuracyBackground' not in PD['InspirationPopper']
+    assert 'SingleAccuracyForeground' not in PD['InspirationPopper']
+    assert 'SingleAccuracyColors'         in PD['InspirationPopper']
+    cols = PD['InspirationPopper']['SingleAccuracyColors']
+    assert isinstance(cols, dict)
+    assert 'border'     in cols
+    assert 'background' in cols
+    assert 'foreground' in cols
+    assert cols['border']     == '#765000'
+    assert cols['background'] == '#FFEE00'
+    assert cols['foreground'] == '#00CC00'
+
+
 def test_init_filename(config, tmp_path):
 
     profile_path = tmp_path / "testprofile.bcp"

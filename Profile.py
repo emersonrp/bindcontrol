@@ -338,7 +338,6 @@ class Profile(wx.Notebook):
                 wx.EVT_NOTEBOOK_PAGE_CHANGED, EVT_POWERSELECTOR_CHANGED, csel.EVT_COLOURSELECT, EVT_CHATCOLORPICKER_CHANGED,
                 wx.EVT_TOGGLEBUTTON,
             ]:
-
                 page.Bind(evt, partial(self.OnCommandEvent, pagename = pagename))
 
     def OnCommandEvent(self, evt, pagename):

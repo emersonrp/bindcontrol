@@ -1,5 +1,6 @@
 import wx
 from UI.PowerBinderCommand import PowerBinderCommand
+from UI.ChatColorPicker import ChatColorPicker
 
 chatChannelMap = {
     'say' : 's',
@@ -25,41 +26,37 @@ class ChatCmd(PowerBinderCommand):
     Menu = "Social"
 
     def BuildUI(self, dialog) -> wx.GridBagSizer:
+        self.Dialog = dialog
         chatCommandSizer = wx.GridBagSizer(5, 5)
         self.chatCommandUseColorsCB = wx.CheckBox(dialog, label = "Use Chat Bubble Colors")
-        chatCommandSizer.Add(self.chatCommandUseColorsCB, (0,0), (1,6), flag=wx.ALIGN_CENTER_VERTICAL)
+        chatCommandSizer.Add(self.chatCommandUseColorsCB, (0,0), (1,3), flag=wx.ALIGN_CENTER_VERTICAL)
         self.chatCommandUseColorsCB.Bind(wx.EVT_CHECKBOX, self.OnChatEnableCB)
+
+        self.chatColorPicker = ChatColorPicker(dialog, None, ('','','Attack!!!'),
+                       {'border': '#000000', 'background': '#FFFFFF', 'foreground' : '#000000'})
+        chatCommandSizer.Add(self.chatColorPicker, (0,3), (1,3), flag = wx.ALIGN_CENTER_VERTICAL)
+
         # row 1
-        self.chatCommandBorderColor = wx.ColourPickerCtrl(dialog, -1)
-        chatCommandSizer.Add(wx.StaticText(dialog, label = "Border:"), (1,0), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
-        chatCommandSizer.Add(self.chatCommandBorderColor, (1,1))
-        self.chatCommandBGColor = wx.ColourPickerCtrl(dialog, -1)
-        chatCommandSizer.Add(wx.StaticText(dialog, label = "Background:"), (1,2), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
-        chatCommandSizer.Add(self.chatCommandBGColor, (1,3))
-        self.chatCommandFGColor = wx.ColourPickerCtrl(dialog, -1)
-        chatCommandSizer.Add(wx.StaticText(dialog, label = "Text:"), (1,4), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
-        chatCommandSizer.Add(self.chatCommandFGColor, (1,5))
-        # row 2
         self.chatCommandDuration = wx.SpinCtrl(dialog, style=wx.SP_ARROW_KEYS)
         self.chatCommandDuration.SetRange(1, 20)
         self.chatCommandDuration.SetValue(7)
-        chatCommandSizer.Add(wx.StaticText(dialog, label = "Duration:"), (2,0), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
-        chatCommandSizer.Add(self.chatCommandDuration, (2,1))
+        chatCommandSizer.Add(wx.StaticText(dialog, label = "Duration:"), (1,0), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        chatCommandSizer.Add(self.chatCommandDuration, (1,1))
         self.chatCommandChatSize = wx.Choice(dialog,
                choices = ['0.5', '0.6', '0.7', '0.8', '0.9', '1', '1.1', '1.2', '1.3', '1.4', '1.5'])
         self.chatCommandChatSize.SetSelection(5)
-        chatCommandSizer.Add(wx.StaticText(dialog, label = "Size:"), (2,2), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
-        chatCommandSizer.Add(self.chatCommandChatSize, (2,3))
+        chatCommandSizer.Add(wx.StaticText(dialog, label = "Size:"), (1,2), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        chatCommandSizer.Add(self.chatCommandChatSize, (1,3))
         self.chatCommandChannel = wx.Choice(dialog, choices = list(chatChannelMap))
         self.chatCommandChannel.SetSelection(0)
-        chatCommandSizer.Add(wx.StaticText(dialog, label = "Channel:"), (2,4), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
-        chatCommandSizer.Add(self.chatCommandChannel, (2,5))
+        chatCommandSizer.Add(wx.StaticText(dialog, label = "Channel:"), (1,4), flag=wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
+        chatCommandSizer.Add(self.chatCommandChannel, (1,5))
         # row 3
         self.chatCommandUseBeginchatCB = wx.CheckBox(dialog, label = "Use Beginchat")
-        chatCommandSizer.Add(self.chatCommandUseBeginchatCB, (3,0), (1,2), flag=wx.ALIGN_CENTER_VERTICAL)
+        chatCommandSizer.Add(self.chatCommandUseBeginchatCB, (2,0), (1,2), flag=wx.ALIGN_CENTER_VERTICAL)
         self.chatCommandMessage = wx.TextCtrl(dialog, -1)
         self.chatCommandMessage.SetHint('Chat Command Text')
-        chatCommandSizer.Add(self.chatCommandMessage, (3,2), (1,4), flag=wx.EXPAND)
+        chatCommandSizer.Add(self.chatCommandMessage, (2,2), (1,4), flag=wx.EXPAND)
 
         self.OnChatEnableCB()
 
@@ -67,9 +64,8 @@ class ChatCmd(PowerBinderCommand):
 
     def OnChatEnableCB(self, evt = None):
         if evt: evt.Skip()
-        self.chatCommandBorderColor.Enable(self.chatCommandUseColorsCB.IsChecked())
-        self.chatCommandBGColor.Enable(self.chatCommandUseColorsCB.IsChecked())
-        self.chatCommandFGColor.Enable(self.chatCommandUseColorsCB.IsChecked())
+        self.chatColorPicker.Show(self.chatCommandUseColorsCB.IsChecked())
+        self.Dialog.Layout()
 
     def MakeBindString(self) -> str:
         duration = self.chatCommandDuration.GetValue()
@@ -83,13 +79,13 @@ class ChatCmd(PowerBinderCommand):
 
         bdcolor = fgcolor = bgcolor = ''
         if self.chatCommandUseColorsCB.IsChecked():
-            bdcolor = self.chatCommandBorderColor.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
-            fgcolor = self.chatCommandFGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
-            bgcolor = self.chatCommandBGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
+            bdcolor = self.chatColorPicker.GetValue()['border']
+            bgcolor = self.chatColorPicker.GetValue()['background']
+            fgcolor = self.chatColorPicker.GetValue()['foreground']
 
             bdcolor = f"<bordercolor {bdcolor}>"
-            fgcolor = f"<color {fgcolor}>"
             bgcolor = f"<bgcolor {bgcolor}>"
+            fgcolor = f"<color {fgcolor}>"
 
         beginchat = "beginchat /" if self.chatCommandUseBeginchatCB.IsChecked() else ''
         text      = self.chatCommandMessage.GetValue()
@@ -107,9 +103,9 @@ class ChatCmd(PowerBinderCommand):
             'channel'   : self.chatCommandChannel .GetSelection(),
             'size'      : self.chatCommandChatSize.GetSelection(),
             'duration'  : self.chatCommandDuration.GetValue(),
-            'bdcolor'   : self.chatCommandBorderColor.GetColour().GetAsString(wx.C2S_HTML_SYNTAX),
-            'fgcolor'   : self.chatCommandFGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX),
-            'bgcolor'   : self.chatCommandBGColor    .GetColour().GetAsString(wx.C2S_HTML_SYNTAX),
+            'bdcolor'   : self.chatColorPicker.GetValue()['border'],
+            'bgcolor'   : self.chatColorPicker.GetValue()['background'],
+            'fgcolor'   : self.chatColorPicker.GetValue()['foreground'],
             'text'      : self.chatCommandMessage.GetValue(),
         }
 
@@ -119,8 +115,10 @@ class ChatCmd(PowerBinderCommand):
         if init.get('channel'  , '') : self.chatCommandChannel .SetSelection(init['channel'])
         if init.get('size'     , '') : self.chatCommandChatSize.SetSelection(init['size'])
         if init.get('duration' , '') : self.chatCommandDuration.SetValue(init['duration'])
-        if init.get('bdcolor'  , '') : self.chatCommandBorderColor.SetColour(init['bdcolor'])
-        if init.get('fgcolor'  , '') : self.chatCommandFGColor    .SetColour(init['fgcolor'])
-        if init.get('bgcolor'  , '') : self.chatCommandBGColor    .SetColour(init['bgcolor'])
+        cols = {}
+        cols['border']     = init.get('bdcolor'  , '#000000')
+        cols['background'] = init.get('bgcolor'  , '#FFFFFF')
+        cols['foreground'] = init.get('fgcolor'  , '#000000')
+        self.chatColorPicker.SetValue(cols)
         if init.get('text'     , '') : self.chatCommandMessage.SetValue(init['text'])
         self.OnChatEnableCB()

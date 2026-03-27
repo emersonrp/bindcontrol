@@ -9,6 +9,7 @@ params = [
     '--noconsole',
     '--noconfirm',
     '--clean',
+    f'--add-data=Fonts{sep}Fonts',
     f'--add-data=icons/*.png{sep}icons/',
     f'--add-data=icons/UI{sep}icons/UI/',
     f'--add-data=icons/Servers{sep}icons/Servers/',

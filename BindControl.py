@@ -756,6 +756,10 @@ if __name__ == "__main__":
     config = wx.FileConfig('bindcontrol')
     wx.ConfigBase.Set(config)
 
+    # Set up custom font waaaaay back here
+    if platform.system() != 'Darwin':
+        wx.Font.AddPrivateFont('Fonts/mont_demibold.ttf')
+
     app.Populate(input_profile)
 
     if config.ReadBool('ShowInspector'):

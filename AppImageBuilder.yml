@@ -7,6 +7,7 @@ script:
   # Copy the python application code into the AppDir
   - cp -rv *.py  $TARGET_APPDIR/usr/src
   - if [ -e version.txt ]; then cp -rv version.txt $TARGET_APPDIR/usr/src; fi
+  - cp -rv Fonts  $TARGET_APPDIR/usr/src
   - cp -rv GameData  $TARGET_APPDIR/usr/src
   - cp -rv Help  $TARGET_APPDIR/usr/src
   - cp -rv Models  $TARGET_APPDIR/usr/src

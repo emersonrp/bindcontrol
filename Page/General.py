@@ -526,6 +526,7 @@ class General(Page):
                     newProfile = Profile.Profile(mainwindow, filename = str(self.Profile.Filepath()))
                 newProfile.buildUIFromData()
                 mainwindow.InsertProfile(newProfile)
+                wx.CallAfter(mainwindow.CheckIfGameDirNeeded, newProfile.Server())
             else:
                 self.ServerPicker.SetStringSelection(self.Server)
                 self.Profile.UpdateData('General', 'Server', self.Server)

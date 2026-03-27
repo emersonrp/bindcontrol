@@ -6,7 +6,7 @@ import Util.Paths
 def test_accessors(config, monkeypatch, profile, tmp_path):
     config.Write('BindPath', str(tmp_path))
     config.Write('GameRebirthPath', str(tmp_path))
-    monkeypatch.setattr(Util.Paths, 'GetValidGamePath', lambda _: tmp_path)
+    monkeypatch.setattr(Util.Paths, 'GetValidGamePath', lambda _,__: tmp_path)
     assert profile.ProfileName()     == 'testprofile'
     assert profile.Archetype()       == 'Arachnos Soldier'
     assert profile.Primary()         == 'Crab Spider Soldier'

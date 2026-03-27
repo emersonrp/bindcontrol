@@ -44,6 +44,7 @@ class Main(wx.Frame):
 
         stdpaths = wx.StandardPaths.Get()
         config = wx.ConfigBase.Get()
+        self.Config = config
 
         # Check each config bit for existence and set to default if no
         if not config.Exists('GamePath'):
@@ -121,7 +122,7 @@ class Main(wx.Frame):
 
         Help_guide    = HelpMenu.Append(wx.ID_ANY, "Getting Started")
         Help_files    = HelpMenu.Append(wx.ID_ANY, "Output Files")
-        Help_bindDirs = HelpMenu.Append(wx.ID_ANY, "Bind Directories")
+        #Help_bindDirs = HelpMenu.Append(wx.ID_ANY, "Bind Directories")
         Help_license  = HelpMenu.Append(wx.ID_ANY, "License Info")
         Help_bugs     = HelpMenu.Append(wx.ID_ANY, "Reporting Bugs")
         Help_about    = HelpMenu.Append(wx.ID_ABOUT)
@@ -153,7 +154,7 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.OnHelpGettingStarted, Help_guide)
         self.Bind(wx.EVT_MENU, self.OnHelpFiles         , Help_files)
-        self.Bind(wx.EVT_MENU, self.OnHelpBindDirs      , Help_bindDirs)
+        #self.Bind(wx.EVT_MENU, self.OnHelpBindDirs      , Help_bindDirs)
         self.Bind(wx.EVT_MENU, self.OnHelpLicense       , Help_license)
         self.Bind(wx.EVT_MENU, self.OnHelpBugs          , Help_bugs)
         self.Bind(wx.EVT_MENU, self.OnMenuAboutBox      , Help_about)
@@ -244,12 +245,12 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
 
-    def CheckIfGameDirNeeded(self):
-        if not Util.Paths.GetValidGamePath('Homecoming') and not Util.Paths.GetValidGamePath('Rebirth'):
+    def CheckIfGameDirNeeded(self, server):
+        if not Util.Paths.GetValidGamePath(self.Config, server):
             with wx.MessageDialog(self,
-                    ("You don't have a valid game path set up for either Homecoming or Rebirth.\n"
+                    (f"You don't have a valid game path set up for the {server} server.\n"
                      "Please fix this in Preferences.  Go to the Preferences Dialog now?"),
-                    "Game Directory Not Set", style=wx.YES_NO|wx.ICON_WARNING|wx.CENTER) as dlg:
+                    f"{server} Game Directory Not Set", style=wx.YES_NO|wx.ICON_WARNING|wx.CENTER) as dlg:
                 if dlg.ShowModal() == wx.ID_YES:
                     self.OnMenuPrefsDialog()
 
@@ -483,7 +484,7 @@ class Main(wx.Frame):
         sizer.Add(wx.StaticText(ProfDirDialog, label = "Select the directory where this profile will write its bindfiles:"), 1, wx.EXPAND|wx.ALL, 10)
 
         config = wx.ConfigBase.Get()
-        bindpath = config.Read('BindPath')
+        bindpath = config.Read('BindTextPath' if config.ReadBool('RelativeBindsDir') else 'BindPath')
         separator = "\\" if platform.system() == "Windows" else "/"
         if bindpath[-1:] == separator: separator = ''
 
@@ -726,7 +727,8 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
                 self.Main.Profile.CheckAllConflicts()
 
         self.Main.Show()
-        wx.CallAfter(self.Main.CheckIfGameDirNeeded)
+        if self.Main.Profile:
+            wx.CallAfter(self.Main.CheckIfGameDirNeeded, self.Main.Profile.Server())
 
 if __name__ == "__main__":
 

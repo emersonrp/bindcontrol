@@ -105,7 +105,7 @@ class ProfileData(dict):
     def BindsPath(self)     -> Path     :
         bindspath = self.BindsDir()
         if self.Config.ReadBool('RelativeBindsDir'):
-            gamepath = Util.Paths.GetServerBindsPath(self.Server())
+            gamepath = Util.Paths.GetServerBindsPath(self.Config, self.Server())
             if not gamepath:
                 raise(Exception(f'Server is {self.Server()} but Game(Rebirth?)Path is invalid!  Cannot write BindFiles.'))
             bindspath = gamepath / bindspath

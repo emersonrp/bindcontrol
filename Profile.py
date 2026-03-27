@@ -44,11 +44,7 @@ class Profile(wx.Notebook):
 
             pathname = fileDialog.GetPath()
 
-        with wx.WindowDisabler():
-            _ = wx.BusyInfo(wx.BusyInfoFlags().Parent(parent).Text('Loading...'))
-            wx.App.Get().Yield()
-
-            return Profile.doLoadFromFile(parent, pathname)
+        return Profile.doLoadFromFile(parent, pathname)
 
     @classmethod
     def doLoadFromFile(cls, parent, pathname):
@@ -63,6 +59,8 @@ class Profile(wx.Notebook):
             else:
                 wx.LogError(f"Problem loading profile: {e} - this is a bug.")
 
+        if newProfile:
+            wx.CallAfter(wx.App.Get().Main.CheckIfGameDirNeeded, newProfile.Server())
         return newProfile
 
     # Instance methods

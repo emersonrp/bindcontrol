@@ -17,13 +17,13 @@ from Util.Paths import GetValidGamePath, GetPopmenuPath
 
 import wx.lib.agw.flatmenu as FM
 
-def CheckAndCreateMenuPath(server:str) -> Path|Literal[False]:
-    gamepath = GetValidGamePath(server)
+def CheckAndCreateMenuPath(config, server:str) -> Path|Literal[False]:
+    gamepath = GetValidGamePath(config, server)
     if not gamepath:
         wx.LogError('GetValidGamePath failed in CheckAndCreateMenuPath.  This is a bug.')
         return False
 
-    menupath = GetPopmenuPath(server)
+    menupath = GetPopmenuPath(config, server)
     if not menupath:
         wx.LogError('GetPopmenuPath failed in CheckAndCreateMenuPath.  This is a bug.')
         return False
@@ -38,6 +38,8 @@ def CheckAndCreateMenuPath(server:str) -> Path|Literal[False]:
 class PopmenuEditor(Page):
     def __init__(self, parent) -> None:
         super().__init__(parent)
+
+        self.Config = wx.ConfigBase.Get()
 
         self.CurrentMenu : Popmenu|None    = None
         self.MenuIDList  : dict[int, dict] = {}  # dict for menu objects for left-side list
@@ -161,11 +163,11 @@ class PopmenuEditor(Page):
             self.InitialLoadComplete = True
 
     def GetOrCreateMenuPath(self, _ = None) -> Path|Literal[False]:
-        if not GetValidGamePath(self.Server):
+        if not GetValidGamePath(self.Config, self.Server):
             wx.MessageBox(f"Your {self.Server} Game Directory is not set up correctly.  Please visit the Preferences dialog.")
             return False
 
-        retval = CheckAndCreateMenuPath(self.Server)
+        retval = CheckAndCreateMenuPath(self.Config, self.Server)
         self.SynchronizeUI() # in case we created and need to hide the "no directory" warning
         return retval
 
@@ -175,11 +177,11 @@ class PopmenuEditor(Page):
 
     def SynchronizeUI(self, _ = None) -> None:
         NoErrors = True
-        if GetValidGamePath(self.Server):
+        if GetValidGamePath(self.Config, self.Server):
             self.CheckGameDirBox.Hide()
 
             # game dir is OK, check popmenu dir
-            menupath = GetPopmenuPath(self.Server)
+            menupath = GetPopmenuPath(self.Config, self.Server)
             if menupath and menupath.is_dir():
                 self.CheckMenuDirBox.Hide()
             else:
@@ -192,7 +194,7 @@ class PopmenuEditor(Page):
         self.NewMenuButton.Enable(NoErrors)
         self.ImportMenuButton.Enable(NoErrors)
 
-        self.ReloadMenusButton.Enable(bool(GetValidGamePath(self.Server)))
+        self.ReloadMenusButton.Enable(bool(GetValidGamePath(self.Config, self.Server)))
         self.Fit()
         self.Layout()
         self.Refresh()
@@ -205,8 +207,7 @@ class PopmenuEditor(Page):
     def OnWriteMenuButton(self, _) -> None:
         if not (menupath := self.GetOrCreateMenuPath()): return
 
-        cm = self.CurrentMenu
-        if cm:
+        if cm := self.CurrentMenu:
             # TODO - this is not right!  We need to get the filepath from the menulist, and
             # use THAT.  Only generate this from first principles if it's a new menu
             mlc = self.MenuListCtrl
@@ -216,7 +217,7 @@ class PopmenuEditor(Page):
                 return
             filepath = info.get('filename', menupath / f"{cm.Title}.mnu") # pyright: ignore
 
-            if info['filename'] != str(filepath):
+            if info.get('filename') and (info.get('filename') != str(filepath)):
                 if wx.MessageBox(f'The file "{filepath}" already exists and was not the source of this menu.  Overwrite?', 'Menu Exists', wx.YES_NO) == wx.NO:
                     return
 
@@ -291,7 +292,7 @@ class PopmenuEditor(Page):
         # Do this once, the first time we focus the page.
         # DO NOT PUT THIS IN SynchronizeUI;  it will blow away
         # unsaved changes with no recourse.
-        menupath = GetPopmenuPath(self.Server)
+        menupath = GetPopmenuPath(self.Config, self.Server)
         if menupath and menupath.is_dir():
             self.MenuIDList = {}
             self.MenuListCtrl.DeleteAllItems()

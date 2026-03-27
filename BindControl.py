@@ -758,7 +758,8 @@ if __name__ == "__main__":
 
     # Set up custom font waaaaay back here
     if platform.system() != 'Darwin':
-        wx.Font.AddPrivateFont('Fonts/mont_demibold.ttf')
+        rootdir = Util.Paths.GetRootDirPath()
+        wx.Font.AddPrivateFont(str(rootdir / 'Fonts' / 'mont_demibold.ttf'))
 
     app.Populate(input_profile)
 

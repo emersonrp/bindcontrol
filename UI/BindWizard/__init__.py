@@ -64,13 +64,13 @@ class WizardDialog(wx.Dialog):
 
         self.SetTitle(f"{wizard.WizardName}{bindName}")
 
-        mainSizer.Add(wizard.BuildUI(self, self.State), 1, wx.EXPAND)
+        mainSizer.Add(wizard.BuildUI(self, wizard.State), 1, wx.EXPAND)
 
         buttonflags = wx.OK|wx.CANCEL|wx.HELP if wizard.WizHelpFile else wx.OK|wx.CANCEL
         buttonsizer = self.CreateStdDialogButtonSizer(buttonflags)
         if wizard.WizHelpFile:
             helpbutton = self.FindWindow(wx.ID_HELP)
-            helpbutton.Bind(wx.EVT_BUTTON, self.ShowHelp)
+            helpbutton.Bind(wx.EVT_BUTTON, wizard.ShowHelp)
         okbutton = self.FindWindow(wx.ID_OK)
         okbutton.Bind(wx.EVT_BUTTON, self.Wizard.onOKClicked)
 
@@ -79,11 +79,5 @@ class WizardDialog(wx.Dialog):
 
         mainSizer.Add(buttonsizer, 0, wx.EXPAND|wx.ALL, 10)
 
-        self.Bind(wx.EVT_SIZE, self.OnSizeDebug)
-
         self.SetSizerAndFit(mainSizer)
         self.Layout()
-
-    def OnSizeDebug(self, evt):
-        print("GOT A SIZE")
-        print(evt.GetSize())

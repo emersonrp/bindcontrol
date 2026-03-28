@@ -69,14 +69,12 @@ class BaseEditMode(WizardParent):
             ctlName = self.BindPane.MakeCtrlName('BEDisableMovement'),
             tooltip = 'Disable SoD etc and set movement keys to their default behavior',
         )
-        self.BEDisableMovement.SetValue(bool(wizdata.get('BEDisableMovement'))) # pyright: ignore
 
         self.BEDisableChat = optsSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = self.BindPane.MakeCtrlName('BEDisableChat'),
             tooltip = 'Disable keys that will pop up the chat window',
         )
-        self.BEDisableChat.SetValue(bool(wizdata.get('BEDisableChat'))) # pyright: ignore
 
         ### KEY SIZER
         keysSizer = ControlGroup(dialog, self.Profile.CustomBinds, label = 'Keybinds', width = 4)
@@ -177,6 +175,8 @@ class BaseEditMode(WizardParent):
             tooltip = 'Rotate through base lighting options',
         )
 
+        for ctrlname in wizdata:
+            getattr(self, ctrlname).SetValue(wizdata[ctrlname])
 
         mainSizer.Add(optsSizer, 0, wx.EXPAND|wx.ALL, 5)
         mainSizer.Add(keysSizer, 0, wx.EXPAND|wx.ALL, 5)
@@ -236,9 +236,29 @@ class BaseEditMode(WizardParent):
         return panel
 
     def UpdateState(self):
-        self.State = { 'WizData' : {
-            'BEDisableMovement'    : self.BEDisableMovement   .GetValue(), # pyright: ignore
-        } }
+        newstate = {}
+        for ctrlname in [
+            'BEDisableMovement',
+            'BEDisableChat'    ,
+            'BEGridCycle'      ,
+            'BEAngleCycle'     ,
+            'BEClipCycle'      ,
+            'BEAttachCycle'    ,
+            'BEUndo'           ,
+            'BERedo'           ,
+            'BESelect'         ,
+            'BESelectNext'     ,
+            'BESelectLast'     ,
+            'BESell'           ,
+            'BECenterCur'      ,
+            'BECenterSel'      ,
+            'BERotateCCW'      ,
+            'BERotateCW'       ,
+            'BESeeEverything'  ,
+            'BESetBaseLighting',
+        ]:
+            newstate[ctrlname] = getattr(self, ctrlname).GetValue()
+        self.State = { 'WizData' : newstate }
 
     def PopulateBindFiles(self):
         self.Profile.ResetFile().SetBind(self.EnterEditModeKey.Key, 'Escape Configurator', self.Profile.CustomBinds, self.BindString())

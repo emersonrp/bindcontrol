@@ -92,7 +92,7 @@ class BaseEditMode(WizardParent):
                 'CtlName'  : self.BindPane.MakeCtrlName(key),
                 'CtlLabel' : kblabel,
                 'ToolTip'  : UI.Labels[self.BindPane.MakeCtrlName(key)],
-                'Key'      : wizdata.get(key, ''),
+                'Key'      : wizdata.get(key) if key in wizdata else self.KeyInit.get(key, ''),
             })
             self.BindPane.SetCtrl(key, keybutton)
             keybutton.Bind(EVT_KEY_CHANGED, self.CheckForConflicts)

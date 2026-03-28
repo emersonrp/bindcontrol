@@ -22,7 +22,7 @@ class WizardBindPane(CustomBindPaneParent):
 
                 if not wizClass:
                     raise Exception(f'Unknown BindWizard class "{wizStr}" requested when building BindWizard.  This is a bug')
-
+        print(wizClass)
         self.WizClass    = wizClass
         self.Description = wizClass.WizardName
         self.Type        = "WizardBind"
@@ -33,7 +33,7 @@ class WizardBindPane(CustomBindPaneParent):
 
         self.Init = init or {}
 
-        self.Bind(wx.EVT_LEFT_DOWN, self.Wizard.ShowWizard)
+        #self.Bind(wx.EVT_LEFT_DOWN, self.Wizard.ShowWizard)
 
     def Serialize(self) -> dict[str, Any]:
         data = self.CreateSerialization({

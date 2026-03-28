@@ -1,9 +1,9 @@
 import wx
 import UI
 from UI.BindWizard import WizardParent
-from UI.ControlGroup import ControlGroup
 from UI.CGControls import bcKeyButton, cgStaticText
 from UI.KeySelectDialog import EVT_KEY_CHANGED
+from UI.CGControls import cgCheckBox, cgbcKeyButton
 
 class BaseEditMode(WizardParent):
     WizardName  = 'Base Edit Mode'
@@ -70,38 +70,39 @@ class BaseEditMode(WizardParent):
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
-        optsSizer = ControlGroup(dialog, self.Profile.CustomBinds, label = 'Options')
+        optsSizer = wx.StaticBoxSizer(wx.VERTICAL, dialog, label = 'Options')
 
-        self.BEDisableMovement = optsSizer.AddControl(
-            ctlType = 'checkbox',
-            ctlName = self.BindPane.MakeCtrlName('BEDisableMovement'),
-            tooltip = 'Disable SoD etc and set movement keys to their default behavior',
-        )
+        self.BEDisableMovement = cgCheckBox(optsSizer.GetStaticBox(), label = 'Default Movement Keys')
+        self.BEDisableMovement.SetToolTip('Disable SoD etc and set movement keys to their default behavior')
+        self.BEDisableMovement.CtlName = self.BindPane.MakeCtrlName('BEDisableMovement')
+        optsSizer.Add(self.BEDisableMovement, 0, wx.EXPAND|wx.ALL, 5)
 
-        self.BEDisableChat = optsSizer.AddControl(
-            ctlType = 'checkbox',
-            ctlName = self.BindPane.MakeCtrlName('BEDisableChat'),
-            tooltip = 'Disable keys that will pop up the chat window',
-        )
+        self.BEDisableChat = cgCheckBox(optsSizer.GetStaticBox(), label = 'Disable Chat Keys')
+        self.BEDisableChat .SetToolTip('Disable keys that will pop up the chat window')
+        self.BEDisableChat .CtlName = self.BindPane.MakeCtrlName('BEDisableChat')
+        optsSizer.Add(self.BEDisableChat, 0, wx.EXPAND|wx.ALL, 5)
 
         ### KEY SIZER
-        keysSizer = ControlGroup(dialog, self.Profile.CustomBinds, label = 'Keybinds', width = 4)
+        keysSizer = wx.StaticBoxSizer(wx.VERTICAL, dialog, label = 'Options')
 
+        keysGrid = wx.FlexGridSizer(4, 5, 5)
         for key in self.KeyInit:
-            keybutton = keysSizer.AddControl(
-                ctlType = 'keybutton',
-                ctlName = self.BindPane.MakeCtrlName(key),
-                tooltip = UI.Labels[self.BindPane.MakeCtrlName(key)],
-            )
+            kblabel = wx.StaticText(keysSizer.GetStaticBox(), label = f"{self.AllCtrls[key]}:")
+            keybutton = cgbcKeyButton(keysSizer.GetStaticBox(), init = {
+                'CtlName'  : self.BindPane.MakeCtrlName(key),
+                'CtlLabel' : kblabel,
+                'ToolTip'  : UI.Labels[self.BindPane.MakeCtrlName(key)],
+                'Key'      : wizdata.get(key, ''),
+            })
+            self.BindPane.SetCtrl(key, keybutton)
             keybutton.Bind(EVT_KEY_CHANGED, self.CheckForConflicts)
             setattr(self, key, keybutton)
+            keysGrid.Add(kblabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+            keysGrid.Add(keybutton, 0, wx.EXPAND)
+        keysSizer.Add(keysGrid, 0, wx.ALL, 10)
 
-        for ctrlname in wizdata:
-            if hasattr(self, ctrlname): # just in case, 'cause kaboom
-                getattr(self, ctrlname).SetValue(wizdata[ctrlname])
-
-        mainSizer.Add(optsSizer, 0, wx.EXPAND|wx.ALL, 5)
-        mainSizer.Add(keysSizer, 0, wx.EXPAND|wx.ALL, 5)
+        mainSizer.Add(optsSizer, 0, wx.EXPAND|wx.ALL, 10)
+        mainSizer.Add(keysSizer, 0, wx.EXPAND|wx.ALL, 10)
 
         self.Profile.CheckAllConflicts()
 
@@ -136,7 +137,8 @@ class BaseEditMode(WizardParent):
             cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
         if conflicts := self.CheckForConflicts():
-            conflicts.remove('EnterEditMode')
+            if 'EnterEditMode' in conflicts:
+                conflicts.remove('EnterEditMode')
             conflicts = [f"\n\t\u2022 {UI.Labels[self.BindPane.MakeCtrlName(c)]}" for c in conflicts]
             ctpanel = wx.Panel(cmdPanel)
             ctsizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -178,8 +180,9 @@ class BaseEditMode(WizardParent):
         if evt: evt.Skip()
         conflicts = []
         for key in self.KeyInit:
-            if getattr(self, key).CheckConflicts():
-                conflicts.append(key)
+            if hasattr(self, key):
+                if conflicts := getattr(self, key).CheckConflicts():
+                    conflicts.append(key)
         if hasattr(self, 'EnterEditMode'):
             if self.EnterEditMode.CheckConflicts():  conflicts.append('EnterEditMode')
         return conflicts

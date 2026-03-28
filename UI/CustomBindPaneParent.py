@@ -15,7 +15,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         self.Title       : str            = init.get('Title', '')
         self.Description : str            = ''
         self.Type        : str            = ''
-        self.CustomID    : int|None       = init.get('CustomID')
+        self.CustomID    : int|None       = init.get('CustomID') or self.Profile.GetCustomID()
         self.DelButton   : wx.Button|None = None
         self.RenButton   : wx.Button|None = None
         self.DupButton   : wx.Button|None = None

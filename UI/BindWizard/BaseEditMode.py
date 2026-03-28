@@ -14,9 +14,6 @@ class BaseEditMode(WizardParent):
         super().__init__(parent, init)
 
         # All of this is so we can use ControlGroup.  Maybe that's a false economy.
-        #
-        # TODO -- could do /baselightingtype [012] with a rotating file.  We'd want
-        # to find one more thing so we still had an even number of keybuttons.
         for k,v in {
             'BEDisableMovement' : 'Default Movement Keys',
             'BEDisableChat'     : 'Disable Chat Keys',
@@ -72,7 +69,6 @@ class BaseEditMode(WizardParent):
             ctlName = self.BindPane.MakeCtrlName('BEDisableMovement'),
             tooltip = 'Disable SoD etc and set movement keys to their default behavior',
         )
-        self.BindPane.SetCtrl('BEDisableMovement', self.BEDisableMovement)
         self.BEDisableMovement.SetValue(bool(wizdata.get('BEDisableMovement'))) # pyright: ignore
 
         self.BEDisableChat = optsSizer.AddControl(
@@ -80,7 +76,6 @@ class BaseEditMode(WizardParent):
             ctlName = self.BindPane.MakeCtrlName('BEDisableChat'),
             tooltip = 'Disable keys that will pop up the chat window',
         )
-        self.BindPane.SetCtrl('BEDisableChat', self.BEDisableChat)
         self.BEDisableChat.SetValue(bool(wizdata.get('BEDisableChat'))) # pyright: ignore
 
         ### KEY SIZER
@@ -91,112 +86,96 @@ class BaseEditMode(WizardParent):
             ctlName = self.BindPane.MakeCtrlName('BEGridCycle'),
             tooltip = 'Cycle through object placement grid sizes',
         )
-        self.BindPane.SetCtrl('BEGridCycle', self.BEGridCycle)
 
         self.BEUndo = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BEUndo'),
             tooltip = 'Undo last action',
         )
-        self.BindPane.SetCtrl('BEUndo', self.BEUndo)
 
         self.BEAngleCycle = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BEAngleCycle'),
             tooltip = 'Cycle through snap-drag rotation angle settings',
         )
-        self.BindPane.SetCtrl('BEAngleCycle', self.BEAngleCycle)
 
         self.BERedo = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BERedo'),
             tooltip = 'Redo last undo / repeat action',
         )
-        self.BindPane.SetCtrl('BERedo', self.BERedo)
 
         self.BEClipCycle = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BEClipCycle'),
             tooltip = 'Toggle wall clipping',
         )
-        self.BindPane.SetCtrl('BEClipCycle', self.BEClipCycle)
 
         self.BESelect = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BESelect'),
             tooltip = 'Select base item under cursor',
         )
-        self.BindPane.SetCtrl('BESelect', self.BESelect)
 
         self.BEAttachCycle = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BEAttachCycle'),
             tooltip = 'Cycle through object placement attachment (floor, wall, ceiling, surface)',
         )
-        self.BindPane.SetCtrl('BEAttachCycle', self.BEAttachCycle)
 
         self.BESelectNext = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BESelectNext'),
             tooltip = 'Select next base item',
         )
-        self.BindPane.SetCtrl('BESelectNext', self.BESelectNext)
 
         self.BERotateCCW = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BERotateCCW'),
             tooltip = 'Rotate selected item 90° CCW',
         )
-        self.BindPane.SetCtrl('BERotateCCW', self.BERotateCCW)
 
         self.BESelectLast = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BESelectLast'),
             tooltip = 'Select previous base item',
         )
-        self.BindPane.SetCtrl('BESelectLast', self.BESelectLast)
 
         self.BERotateCW = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BERotateCW'),
             tooltip = 'Rotate selected item 90° CW',
         )
-        self.BindPane.SetCtrl('BERotateCW', self.BERotateCW)
 
         self.BECenterCur = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BECenterCur'),
             tooltip = 'Center view on cursor',
         )
-        self.BindPane.SetCtrl('BECenterCur', self.BECenterCur)
 
         self.BESell = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BESell'),
             tooltip = 'Delete currently selected / targeted item',
         )
-        self.BindPane.SetCtrl('BESell', self.BESell)
 
         self.BECenterSel = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BECenterSel'),
             tooltip = 'Center view on selected base item',
         )
-        self.BindPane.SetCtrl('BECenterSel', self.BECenterSel)
 
         self.BESeeEverything = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BESeeEverything'),
             tooltip = 'Toggle seeing hidden items',
         )
-        self.BindPane.SetCtrl('BESeeEverything', self.BESeeEverything)
 
         self.BESetBaseLighting = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BESetBaseLighting'),
             tooltip = 'Rotate through base lighting options',
         )
-        self.BindPane.SetCtrl('BESetBaseLighting', self.BESetBaseLighting)
 
 
         mainSizer.Add(optsSizer, 0, wx.EXPAND|wx.ALL, 5)

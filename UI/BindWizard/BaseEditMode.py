@@ -70,7 +70,7 @@ class BaseEditMode(WizardParent):
         self.BEDisableMovement = optsSizer.AddControl(
             ctlType = 'checkbox',
             ctlName = self.BindPane.MakeCtrlName('BEDisableMovement'),
-            tooltip = 'Disable SoD etc, returning movement keys to their defaults',
+            tooltip = 'Disable SoD etc and set movement keys to their default behavior',
         )
         self.BindPane.SetCtrl('BEDisableMovement', self.BEDisableMovement)
         self.BEDisableMovement.SetValue(bool(wizdata.get('BEDisableMovement'))) # pyright: ignore

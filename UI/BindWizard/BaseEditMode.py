@@ -76,12 +76,14 @@ class BaseEditMode(WizardParent):
         self.BEDisableMovement.SetToolTip('Disable SoD etc and set movement keys to their default behavior')
         self.BEDisableMovement.CtlName = self.BindPane.MakeCtrlName('BEDisableMovement')
         self.BEDisableMovement.SetValue(wizdata.get('BEDisableMovement', False))
+        self.BindPane.SetCtrl('BEDisableMovement', self.BEDisableMovement)
         optsSizer.Add(self.BEDisableMovement, 0, wx.EXPAND|wx.ALL, 5)
 
         self.BEDisableChat = cgCheckBox(optsSizer.GetStaticBox(), label = 'Disable Chat Keys')
         self.BEDisableChat.SetToolTip('Disable keys that will pop up the chat window')
         self.BEDisableChat.CtlName = self.BindPane.MakeCtrlName('BEDisableChat')
         self.BEDisableChat.SetValue(wizdata.get('BEDisableChat', False))
+        self.BindPane.SetCtrl('BEDisableChat', self.BEDisableChat)
         optsSizer.Add(self.BEDisableChat, 0, wx.EXPAND|wx.ALL, 5)
 
         ### KEY SIZER
@@ -213,8 +215,8 @@ class BaseEditMode(WizardParent):
         resetfile = self.Profile.ResetFile()
         modefile  = self.Profile.GetBindFile('wiz', f"{self.BindPane.CustomID}-md.txt")
 
-        resetfile.SetBind(self.BindPane.GetCtrl('EnterEditMode').MakeBind('editbase 1', modefile .BLF()))
-        modefile .SetBind(self.BindPane.GetCtrl('EnterEditMode').MakeBind('keybindreset', 'editbase 0', resetfile.BLF()))
+        resetfile.SetBind(self.BindPane.GetCtrl('EnterEditMode').MakeBind(['editbase 1', modefile .BLF()]))
+        modefile .SetBind(self.BindPane.GetCtrl('EnterEditMode').MakeBind(['keybindreset', 'editbase 0', resetfile.BLF()]))
 
         if self.BindPane.GetCtrl('BEDisableMovement').GetValue():
             # go through movement keys, add their default values to modefile
@@ -275,10 +277,10 @@ class BaseEditMode(WizardParent):
             lighting1 = self.Profile.GetBindFile('wiz', f"{self.BindPane.CustomID}-l1.txt")
             lighting2 = self.Profile.GetBindFile('wiz', f"{self.BindPane.CustomID}-l2.txt")
 
-            modefile .SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind('baselightingtype 1', lighting1.BLF()))
-            lighting0.SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind('baselightingtype 1', lighting1.BLF()))
-            lighting1.SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind('baselightingtype 2', lighting2.BLF()))
-            lighting2.SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind('baselightingtype 0', lighting0.BLF()))
+            modefile .SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind(['baselightingtype 1', lighting1.BLF()]))
+            lighting0.SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind(['baselightingtype 1', lighting1.BLF()]))
+            lighting1.SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind(['baselightingtype 2', lighting2.BLF()]))
+            lighting2.SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind(['baselightingtype 0', lighting0.BLF()]))
 
 
     def AllBindFiles(self):

@@ -19,6 +19,7 @@ class BaseEditMode(WizardParent):
             'BEDisableChat'     : 'Disable Chat Keys',
             'BEExitEditMode'    : 'Exit Edit Mode',
             'BEGridCycle'       : 'Cycle Placement Grid Sizes',
+            'BEAngleCycle'      : 'Cycle Rotation Snap Angle',
             'BEClipCycle'       : 'Toggle Wall Clipping',
             'BEAttachCycle'     : 'Cycle Object Attachment',
             'BEUndo'            : 'Undo last Action',
@@ -26,27 +27,32 @@ class BaseEditMode(WizardParent):
             'BESelect'          : 'Select Base Item Under Cursor',
             'BESelectNext'      : 'Select Next Base Item',
             'BESelectLast'      : 'Select Previous Base Item',
+            'BESell'            : 'Delete Selected / Targeted Item',
             'BECenterCur'       : 'Center View At Cursor Location',
             'BECenterSel'       : 'Center View On Selected Base Item',
-            'BERotateCCW'       : 'Rotate Selected Object 90° Counterclockwise',
-            'BERotateCW'        : 'Rotate Selected Object 90° Clockwise',
+            'BERotateCCW'       : 'Rotate Selected Object 90° CCW',
+            'BERotateCW'        : 'Rotate Selected Object 90° CW',
+            'BESeeEverything'   : 'Toggle seeing hidden markers',
         }.items():
             UI.Labels[self.BindPane.MakeCtrlName(k)] = v
 
         for k,v in {
-            'BEExitEditMode' : '',
-            'BEGridCycle'    : 'F1',
-            'BEClipCycle'    : 'F3',
-            'BEAttachCycle'  : 'F5',
-            'BEUndo'         : 'CTRL+Z',
-            'BERedo'         : 'CTRL+Y',
-            'BESelect'       : '',
-            'BESelectNext'   : 'TAB',
-            'BESelectLast'   : 'SHIFT+TAB',
-            'BECenterCur'    : '',
-            'BECenterSel'    : '',
-            'BERotateCCW'    : '',
-            'BERotateCW'     : '',
+            'BEExitEditMode'  : '',
+            'BEGridCycle'     : 'F1',
+            'BEAngleCycle'    : 'F2',
+            'BEClipCycle'     : 'F3',
+            'BEAttachCycle'   : 'F5',
+            'BEUndo'          : 'CTRL+Z',
+            'BERedo'          : 'CTRL+Y',
+            'BESelect'        : '',
+            'BESelectNext'    : 'TAB',
+            'BESelectLast'    : 'SHIFT+TAB',
+            'BESell'          : '',
+            'BECenterCur'     : '',
+            'BECenterSel'     : '',
+            'BERotateCCW'     : '',
+            'BERotateCW'      : '',
+            'BESeeEverything' : '',
         }.items():
             self.Profile.CustomBinds.Init[self.BindPane.MakeCtrlName(k)] = v
 
@@ -74,7 +80,8 @@ class BaseEditMode(WizardParent):
         self.BindPane.SetCtrl('BEDisableChat', self.BEDisableChat)
         self.BEDisableChat.SetValue(bool(wizdata.get('BEDisableChat'))) # pyright: ignore
 
-        keysSizer = ControlGroup(dialog, self.Profile.CustomBinds, label = 'Keybinds')
+        ### KEY SIZER
+        keysSizer = ControlGroup(dialog, self.Profile.CustomBinds, label = 'Keybinds', width = 4)
 
         self.BEExitEditMode = keysSizer.AddControl(
             ctlType = 'keybutton',
@@ -90,26 +97,19 @@ class BaseEditMode(WizardParent):
         )
         self.BindPane.SetCtrl('BEGridCycle', self.BEGridCycle)
 
-        self.BEClipCycle = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BEClipCycle'),
-            tooltip = 'Toggle wall clipping',
-        )
-        self.BindPane.SetCtrl('BEClipCycle', self.BEClipCycle)
-
-        self.BEAttachCycle = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BEAttachCycle'),
-            tooltip = 'Cycle through object placement attachment (floor, wall, ceiling, surface)',
-        )
-        self.BindPane.SetCtrl('BEAttachCycle', self.BEAttachCycle)
-
         self.BEUndo = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BEUndo'),
             tooltip = 'Undo last action',
         )
         self.BindPane.SetCtrl('BEUndo', self.BEUndo)
+
+        self.BEAngleCycle = keysSizer.AddControl(
+            ctlType = 'keybutton',
+            ctlName = self.BindPane.MakeCtrlName('BEAngleCycle'),
+            tooltip = 'Cycle through snap-drag rotation angle settings',
+        )
+        self.BindPane.SetCtrl('BEAngleCycle', self.BEAngleCycle)
 
         self.BERedo = keysSizer.AddControl(
             ctlType = 'keybutton',
@@ -118,12 +118,26 @@ class BaseEditMode(WizardParent):
         )
         self.BindPane.SetCtrl('BERedo', self.BERedo)
 
+        self.BEClipCycle = keysSizer.AddControl(
+            ctlType = 'keybutton',
+            ctlName = self.BindPane.MakeCtrlName('BEClipCycle'),
+            tooltip = 'Toggle wall clipping',
+        )
+        self.BindPane.SetCtrl('BEClipCycle', self.BEClipCycle)
+
         self.BESelect = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BESelect'),
             tooltip = 'Select base item under cursor',
         )
         self.BindPane.SetCtrl('BESelect', self.BESelect)
+
+        self.BEAttachCycle = keysSizer.AddControl(
+            ctlType = 'keybutton',
+            ctlName = self.BindPane.MakeCtrlName('BEAttachCycle'),
+            tooltip = 'Cycle through object placement attachment (floor, wall, ceiling, surface)',
+        )
+        self.BindPane.SetCtrl('BEAttachCycle', self.BEAttachCycle)
 
         self.BESelectNext = keysSizer.AddControl(
             ctlType = 'keybutton',
@@ -132,12 +146,26 @@ class BaseEditMode(WizardParent):
         )
         self.BindPane.SetCtrl('BESelectNext', self.BESelectNext)
 
+        self.BERotateCCW = keysSizer.AddControl(
+            ctlType = 'keybutton',
+            ctlName = self.BindPane.MakeCtrlName('BERotateCCW'),
+            tooltip = 'Rotate selected item 90° CCW',
+        )
+        self.BindPane.SetCtrl('BERotateCCW', self.BERotateCCW)
+
         self.BESelectLast = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BESelectLast'),
             tooltip = 'Select previous base item',
         )
         self.BindPane.SetCtrl('BESelectLast', self.BESelectLast)
+
+        self.BERotateCW = keysSizer.AddControl(
+            ctlType = 'keybutton',
+            ctlName = self.BindPane.MakeCtrlName('BERotateCW'),
+            tooltip = 'Rotate selected item 90° CW',
+        )
+        self.BindPane.SetCtrl('BERotateCW', self.BERotateCW)
 
         self.BECenterCur = keysSizer.AddControl(
             ctlType = 'keybutton',
@@ -146,6 +174,13 @@ class BaseEditMode(WizardParent):
         )
         self.BindPane.SetCtrl('BECenterCur', self.BECenterCur)
 
+        self.BESell = keysSizer.AddControl(
+            ctlType = 'keybutton',
+            ctlName = self.BindPane.MakeCtrlName('BESell'),
+            tooltip = 'Delete currently selected / targeted item',
+        )
+        self.BindPane.SetCtrl('BESell', self.BESell)
+
         self.BECenterSel = keysSizer.AddControl(
             ctlType = 'keybutton',
             ctlName = self.BindPane.MakeCtrlName('BECenterSel'),
@@ -153,19 +188,12 @@ class BaseEditMode(WizardParent):
         )
         self.BindPane.SetCtrl('BECenterSel', self.BECenterSel)
 
-        self.BERotateCCW = keysSizer.AddControl(
+        self.BESeeEverything = keysSizer.AddControl(
             ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BERotateCCW'),
-            tooltip = 'Rotate selected item 90° Counterclockwise',
+            ctlName = self.BindPane.MakeCtrlName('BESeeEverything'),
+            tooltip = 'Toggle seeing hidden items',
         )
-        self.BindPane.SetCtrl('BERotateCCW', self.BERotateCCW)
-
-        self.BERotateCW = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BERotateCW'),
-            tooltip = 'Rotate selected item 90° Clockwise',
-        )
-        self.BindPane.SetCtrl('BERotateCW', self.BERotateCW)
+        self.BindPane.SetCtrl('BESeeEverything', self.BESeeEverything)
 
 
         mainSizer.Add(optsSizer, 0, wx.EXPAND|wx.ALL, 5)

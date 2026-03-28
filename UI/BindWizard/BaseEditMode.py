@@ -98,7 +98,6 @@ class BaseEditMode(WizardParent):
             })
             self.BindPane.SetCtrl(key, keybutton)
             keybutton.Bind(EVT_KEY_CHANGED, self.CheckForConflicts)
-            setattr(self, key, keybutton)
             keysGrid.Add(kblabel, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
             keysGrid.Add(keybutton, 0, wx.EXPAND)
         keysSizer.Add(keysGrid, 0, wx.ALL, 10)
@@ -182,11 +181,11 @@ class BaseEditMode(WizardParent):
         if evt: evt.Skip()
         conflicts = []
         for key in self.KeyInit:
-            if hasattr(self, key):
-                if conflicts := getattr(self, key).CheckConflicts():
+            if ctrl := self.BindPane.GetCtrl(key):
+                if conflicts := ctrl.CheckConflicts():
                     conflicts.append(key)
-        if hasattr(self, 'EnterEditMode'):
-            if self.EnterEditMode.CheckConflicts():  conflicts.append('EnterEditMode')
+        if eem := self.BindPane.GetCtrl('EnterEditMode'):
+            if eem.CheckConflicts():  conflicts.append('EnterEditMode')
         return conflicts
 
     def OnBindKeyChanged(self, evt = None):
@@ -196,7 +195,7 @@ class BaseEditMode(WizardParent):
 
     def CheckIfWellFormed(self, evt = None):
         if evt: evt.Skip()
-        if self.EnterEditMode.GetValue():
+        if self.BindPane.GetCtrl('EnterEditMode').GetValue():
             self.EnterEditMode.RemoveError('undef')
             return True
         else:
@@ -204,9 +203,9 @@ class BaseEditMode(WizardParent):
             return False
 
     def UpdateState(self):
-        newstate = { 'EnterEditMode' : self.EnterEditMode.GetValue() }
+        newstate = { 'EnterEditMode' : self.BindPane.GetCtrl('EnterEditMode').GetValue() }
         for ctrlname in self.AllCtrls:
-            newstate[ctrlname] = getattr(self, ctrlname).GetValue()
+            newstate[ctrlname] = self.BindPane.GetCtrl(ctrlname).GetValue()
         self.State = { 'WizData' : newstate }
 
     def PopulateBindFiles(self):
@@ -214,11 +213,83 @@ class BaseEditMode(WizardParent):
         resetfile = self.Profile.ResetFile()
         modefile  = self.Profile.GetBindFile('wiz', f"{self.BindPane.CustomID}-md.txt")
 
-        resetfile.SetBind(self.EnterEditMode.MakeBind(modefile.BLF()))
-        modefile .SetBind(self.EnterEditMode.MakeBind(resetfile.BLF()))
+        resetfile.SetBind(self.BindPane.GetCtrl('EnterEditMode').MakeBind('editbase 1', modefile .BLF()))
+        modefile .SetBind(self.BindPane.GetCtrl('EnterEditMode').MakeBind('keybindreset', 'editbase 0', resetfile.BLF()))
+
+        if self.BindPane.GetCtrl('BEDisableMovement').GetValue():
+            # go through movement keys, add their default values to modefile
+            ...
+
+        if self.BindPane.GetCtrl('BEDisableChat').GetValue():
+            # go through chat keys, add them as 'nop' to modefile
+            ...
+
+        ### turn each keybutton into a bind in modefile
+        if self.BindPane.GetCtrl('BEGridCycle').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BEGridCycle').MakeBind('gridsnapcycle'))
+
+        if self.BindPane.GetCtrl('BEUndo').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BEUndo').MakeBind('baseundo'))
+
+        if self.BindPane.GetCtrl('BEAngleCycle').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BEAngleCycle').MakeBind('anglesnapcycle'))
+
+        if self.BindPane.GetCtrl('BERedo').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BERedo').MakeBind('baseredo'))
+
+        if self.BindPane.GetCtrl('BEClipCycle').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BEClipCycle').MakeBind('roomclipcycle'))
+
+        if self.BindPane.GetCtrl('BESelect').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BESelect').MakeBind('baseselect'))
+
+        if self.BindPane.GetCtrl('BEAttachCycle').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BEAttachCycle').MakeBind('attach_cycle'))
+
+        if self.BindPane.GetCtrl('BESelectNext').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BESelectNext').MakeBind('selectnext'))
+
+        if self.BindPane.GetCtrl('BERotateCCW').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BERotateCCW').MakeBind('rotate 0'))
+
+        if self.BindPane.GetCtrl('BESelectLast').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BESelectLast').MakeBind('selectlast'))
+
+        if self.BindPane.GetCtrl('BERotateCW').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BERotateCW').MakeBind('rotate 1'))
+
+        if self.BindPane.GetCtrl('BECenterCur').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BECenterCur').MakeBind('center'))
+
+        if self.BindPane.GetCtrl('BESell').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BESell').MakeBind('sell'))
+
+        if self.BindPane.GetCtrl('BECenterSel').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BECenterSel').MakeBind('centersel'))
+
+        if self.BindPane.GetCtrl('BESeeEverything').GetValue():
+            modefile.SetBind(self.BindPane.GetCtrl('BESeeEverything').MakeBind('seeeverything'))
+
+        if self.BindPane.GetCtrl('BESetBaseLighting').GetValue():
+            lighting0 = self.Profile.GetBindFile('wiz', f"{self.BindPane.CustomID}-l0.txt")
+            lighting1 = self.Profile.GetBindFile('wiz', f"{self.BindPane.CustomID}-l1.txt")
+            lighting2 = self.Profile.GetBindFile('wiz', f"{self.BindPane.CustomID}-l2.txt")
+
+            modefile .SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind('baselightingtype 1', lighting1.BLF()))
+            lighting0.SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind('baselightingtype 1', lighting1.BLF()))
+            lighting1.SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind('baselightingtype 2', lighting2.BLF()))
+            lighting2.SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind('baselightingtype 0', lighting0.BLF()))
+
 
     def AllBindFiles(self):
+        cid = self.BindPane.CustomID
+        files = [
+            self.Profile.GetBindFile('wiz', f"{cid}-md.txt"),
+            self.Profile.GetBindFile('wiz', f"{cid}-l0.txt"),
+            self.Profile.GetBindFile('wiz', f"{cid}-l1.txt"),
+            self.Profile.GetBindFile('wiz', f"{cid}-l2.txt"),
+        ]
         return {
-            'files' : [],
+            'files' : files,
             'dirs'  : [],
         }

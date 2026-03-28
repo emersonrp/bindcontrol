@@ -154,9 +154,15 @@ class Profile(wx.Notebook):
     # check all buttons for conflicts.
     def CheckAllConflicts(self) -> None:
         for page in self.Pages:
-            for _, ctrl in page.Ctrls.items():
+            for ctrl in page.Ctrls.values():
                 if isinstance(ctrl, bcKeyButton) and ctrl.IsEnabled():
                     ctrl.CheckConflicts()
+
+            if page == self.CustomBinds:
+                for pane in page.Panes:
+                    for ctrl in pane.Ctrls.values():
+                        if isinstance(ctrl, bcKeyButton) and ctrl.IsEnabled():
+                            ctrl.CheckConflicts()
 
     def IsModified(self): return self.Data.IsModified()
 

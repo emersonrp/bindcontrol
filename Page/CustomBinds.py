@@ -13,6 +13,7 @@ from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
 from UI.WizardBindPane  import WizardBindPane, WizPickerMenu
+from UI.KeySelectDialog import bcKeyButton
 
 class CustomBindControlButton(wx.BitmapButton):
     def __init__(self, parent, bitmap):
@@ -356,6 +357,15 @@ class CustomBinds(Page):
 
             except Exception as e:
                 wx.LogError(f"Error exporting Complex Bind: {e}")
+
+    def GetKeyBinds(self):
+        binds = super().GetKeyBinds()
+        for pane in self.Panes:
+            for ctrlname, ctrl in pane.Ctrls.items():
+                if isinstance(ctrl, bcKeyButton):
+                    if not ctrl.IsEnabled(): continue
+                    binds.append( [ctrlname, ctrl.Key] )
+        return binds
 
     def UpdateAllBinds(self) -> None:
         for pane in self.Panes:

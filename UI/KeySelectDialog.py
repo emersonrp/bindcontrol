@@ -141,6 +141,8 @@ class KeySelectDialog(wx.Dialog):
             if modkey:
                 self.modKeys.append(modkey)
 
+        self.CheckConflicts()
+
         return super().ShowModal()
 
     def ShowBind(self) -> None:
@@ -338,7 +340,7 @@ class KeySelectDialog(wx.Dialog):
             if conflicts:
                 conflictStrings = []
                 for conflict in conflicts:
-                    conflictStrings.append(f'Conflict with "{conflict["ctrl"]}" on {conflict["page"]} page.')
+                    conflictStrings.append(f'Conflict with {conflict["ctrl"]} on {conflict["page"]} tab.')
                 self.kbErr.SetForegroundColour(wx.RED)
                 self.kbErr.SetLabel("\n".join(conflictStrings))
                 self.kbBind.SetHTMLBackgroundColour(wx.Colour(255,200,200))
@@ -595,7 +597,7 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
             if conflicts:
                 conflictStrings = []
                 for conflict in conflicts:
-                    conflictStrings.append(f'This key conflicts with \"{conflict["ctrl"]}\" on the \"{conflict["page"]}\" tab.')
+                    conflictStrings.append(f'This key conflicts with {conflict["ctrl"]} on the {conflict["page"]} tab.')
                 self.AddError('conflict', '\n'.join(conflictStrings))
             else:
                 self.RemoveError('conflict')

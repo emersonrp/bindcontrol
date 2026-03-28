@@ -33,7 +33,7 @@ class BaseEditMode(WizardParent):
             'BECenterSel'       : 'Center View On Selected Base Item',
             'BERotateCCW'       : 'Rotate Selected Object 90° CCW',
             'BERotateCW'        : 'Rotate Selected Object 90° CW',
-            'BESeeEverything'   : 'Toggle seeing hidden markers',
+            'BESeeEverything'   : 'Toggle Seeing Hidden Markers',
             'BESetBaseLighting' : 'Rotate Through Base Lighting Options',
         }
         for k,v in self.AllCtrls.items():
@@ -156,7 +156,7 @@ class BaseEditMode(WizardParent):
         panelSizer.Add(cmdPanel, 1, wx.ALIGN_CENTER|wx.ALL, 15)
         cmdPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
-        bkText = cgStaticText(panel, label = 'Bind Key:')
+        bkText = cgStaticText(panel, label = 'Toggle Base Edit Mode:')
         panelSizer.Add(bkText, 0, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 5)
         bkText.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 

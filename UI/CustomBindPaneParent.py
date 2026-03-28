@@ -83,7 +83,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
         return f"{self.bindclass}_{self.CustomID}_{name}"
 
     def GetCtrl(self, name):
-        return self.Ctrls[self.MakeCtrlName(name)]
+        return self.Ctrls.get(self.MakeCtrlName(name))
 
     def SetCtrl(self, name, ctl):
         self.Ctrls[self.MakeCtrlName(name)] = ctl

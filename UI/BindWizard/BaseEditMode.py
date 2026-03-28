@@ -75,11 +75,13 @@ class BaseEditMode(WizardParent):
         self.BEDisableMovement = cgCheckBox(optsSizer.GetStaticBox(), label = 'Default Movement Keys')
         self.BEDisableMovement.SetToolTip('Disable SoD etc and set movement keys to their default behavior')
         self.BEDisableMovement.CtlName = self.BindPane.MakeCtrlName('BEDisableMovement')
+        self.BEDisableMovement.SetValue(wizdata.get('BEDisableMovement', False))
         optsSizer.Add(self.BEDisableMovement, 0, wx.EXPAND|wx.ALL, 5)
 
         self.BEDisableChat = cgCheckBox(optsSizer.GetStaticBox(), label = 'Disable Chat Keys')
-        self.BEDisableChat .SetToolTip('Disable keys that will pop up the chat window')
-        self.BEDisableChat .CtlName = self.BindPane.MakeCtrlName('BEDisableChat')
+        self.BEDisableChat.SetToolTip('Disable keys that will pop up the chat window')
+        self.BEDisableChat.CtlName = self.BindPane.MakeCtrlName('BEDisableChat')
+        self.BEDisableChat.SetValue(wizdata.get('BEDisableChat', False))
         optsSizer.Add(self.BEDisableChat, 0, wx.EXPAND|wx.ALL, 5)
 
         ### KEY SIZER

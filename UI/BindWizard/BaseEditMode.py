@@ -16,6 +16,7 @@ class BaseEditMode(WizardParent):
 
         # we use this also to serialize, below
         self.AllCtrls = {
+            'EnterEditMode'     : 'Toggle Base Edit Mode',
             'BEDisableMovement' : 'Default Movement Keys',
             'BEDisableChat'     : 'Disable Chat Keys',
             'BEGridCycle'       : 'Cycle Placement Grid Sizes',
@@ -96,7 +97,8 @@ class BaseEditMode(WizardParent):
             setattr(self, key, keybutton)
 
         for ctrlname in wizdata:
-            getattr(self, ctrlname).SetValue(wizdata[ctrlname])
+            if hasattr(self, ctrlname): # just in case, 'cause kaboom
+                getattr(self, ctrlname).SetValue(wizdata[ctrlname])
 
         mainSizer.Add(optsSizer, 0, wx.EXPAND|wx.ALL, 5)
         mainSizer.Add(keysSizer, 0, wx.EXPAND|wx.ALL, 5)
@@ -134,6 +136,7 @@ class BaseEditMode(WizardParent):
             cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
         if conflicts := self.CheckForConflicts():
+            conflicts.remove('EnterEditMode')
             conflicts = [f"\n\t\u2022 {UI.Labels[self.BindPane.MakeCtrlName(c)]}" for c in conflicts]
             ctpanel = wx.Panel(cmdPanel)
             ctsizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -154,18 +157,19 @@ class BaseEditMode(WizardParent):
         panelSizer.Add(bkText, 0, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 5)
         bkText.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
-        EnterEditModeKeyName = bindpane.MakeCtrlName('EnterEditMode')
-        self.EnterEditModeKey = bcKeyButton(panel, init = {
-            'CtlName' : EnterEditModeKeyName,
+        self.EnterEditMode = bcKeyButton(panel, init = {
+            'CtlName' : bindpane.MakeCtrlName('EnterEditMode'),
             'Page'    : bindpane.Page,
+            'Key'     : self.State.get('WizData', {}).get('EnterEditMode', ''),
         })
-        panelSizer.Add(self.EnterEditModeKey, 0, wx.ALIGN_CENTER|wx.ALL, 5)
-        bindpane.SetCtrl('EnterEditMode', self.EnterEditModeKey)
-        self.EnterEditModeKey.Bind(EVT_KEY_CHANGED, self.CheckIfWellFormed)
-        UI.Labels[self.EnterEditModeKey] = 'Enter Edit Mode'
+        panelSizer.Add(self.EnterEditMode, 0, wx.ALIGN_CENTER|wx.ALL, 5)
+        bindpane.SetCtrl('EnterEditMode', self.EnterEditMode)
+        self.EnterEditMode.Bind(EVT_KEY_CHANGED, self.OnBindKeyChanged)
+        UI.Labels[self.EnterEditMode] = 'Enter Edit Mode'
 
         panel.SetSizer(panelSizer)
 
+        self.CheckForConflicts()
         self.CheckIfWellFormed()
 
         return panel
@@ -174,21 +178,28 @@ class BaseEditMode(WizardParent):
         if evt: evt.Skip()
         conflicts = []
         for key in self.KeyInit:
-            if getattr(self, key).CheckConflicts():  conflicts.append(key)
-
+            if getattr(self, key).CheckConflicts():
+                conflicts.append(key)
+        if hasattr(self, 'EnterEditMode'):
+            if self.EnterEditMode.CheckConflicts():  conflicts.append('EnterEditMode')
         return conflicts
+
+    def OnBindKeyChanged(self, evt = None):
+        if evt: evt.Skip()
+        self.CheckIfWellFormed()
+        self.UpdateState()
 
     def CheckIfWellFormed(self, evt = None):
         if evt: evt.Skip()
-        if self.EnterEditModeKey.GetValue():
-            self.EnterEditModeKey.RemoveError('undef')
+        if self.EnterEditMode.GetValue():
+            self.EnterEditMode.RemoveError('undef')
             return True
         else:
-            self.EnterEditModeKey.AddError('undef', 'The keybind has not been selected')
+            self.EnterEditMode.AddError('undef', 'The keybind has not been selected')
             return False
 
     def UpdateState(self):
-        newstate = {}
+        newstate = { 'EnterEditMode' : self.EnterEditMode.GetValue() }
         for ctrlname in self.AllCtrls:
             newstate[ctrlname] = getattr(self, ctrlname).GetValue()
         self.State = { 'WizData' : newstate }
@@ -198,8 +209,8 @@ class BaseEditMode(WizardParent):
         resetfile = self.Profile.ResetFile()
         modefile  = self.Profile.GetBindFile('wiz', f"{self.BindPane.CustomID}-md.txt")
 
-        resetfile.SetBind(self.EnterEditModeKey.MakeBind(modefile.BLF()))
-        modefile .SetBind(self.EnterEditModeKey.MakeBind(resetfile.BLF()))
+        resetfile.SetBind(self.EnterEditMode.MakeBind(modefile.BLF()))
+        modefile .SetBind(self.EnterEditMode.MakeBind(resetfile.BLF()))
 
     def AllBindFiles(self):
         return {

@@ -602,6 +602,7 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
         self.Update()
 
     def CheckConflicts(self, newbinding = None) -> list:
+        conflicts = []
         if Profile := GetCurrentProfile():
             conflicts = Profile.CheckConflict(newbinding or self.Key, self.CtlName)
             if conflicts:
@@ -611,8 +612,7 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
                 self.AddError('conflict', '\n'.join(conflictStrings))
             else:
                 self.RemoveError('conflict')
-            return conflicts
-        return []
+        return conflicts
 
     def KeySelectEventHandler(self, evt) -> None:
         button = evt.EventObject

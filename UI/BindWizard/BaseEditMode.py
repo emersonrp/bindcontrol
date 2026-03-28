@@ -14,10 +14,12 @@ class BaseEditMode(WizardParent):
         super().__init__(parent, init)
 
         # All of this is so we can use ControlGroup.  Maybe that's a false economy.
+        #
+        # TODO -- could do /baselightingtype [012] with a rotating file.  We'd want
+        # to find one more thing so we still had an even number of keybuttons.
         for k,v in {
             'BEDisableMovement' : 'Default Movement Keys',
             'BEDisableChat'     : 'Disable Chat Keys',
-            'BEExitEditMode'    : 'Exit Edit Mode',
             'BEGridCycle'       : 'Cycle Placement Grid Sizes',
             'BEAngleCycle'      : 'Cycle Rotation Snap Angle',
             'BEClipCycle'       : 'Toggle Wall Clipping',
@@ -33,26 +35,27 @@ class BaseEditMode(WizardParent):
             'BERotateCCW'       : 'Rotate Selected Object 90° CCW',
             'BERotateCW'        : 'Rotate Selected Object 90° CW',
             'BESeeEverything'   : 'Toggle seeing hidden markers',
+            'BESetBaseLighting' : 'Rotate Through Base Lighting Options',
         }.items():
             UI.Labels[self.BindPane.MakeCtrlName(k)] = v
 
         for k,v in {
-            'BEExitEditMode'  : '',
-            'BEGridCycle'     : 'F1',
-            'BEAngleCycle'    : 'F2',
-            'BEClipCycle'     : 'F3',
-            'BEAttachCycle'   : 'F5',
-            'BEUndo'          : 'CTRL+Z',
-            'BERedo'          : 'CTRL+Y',
-            'BESelect'        : '',
-            'BESelectNext'    : 'TAB',
-            'BESelectLast'    : 'SHIFT+TAB',
-            'BESell'          : '',
-            'BECenterCur'     : '',
-            'BECenterSel'     : '',
-            'BERotateCCW'     : '',
-            'BERotateCW'      : '',
-            'BESeeEverything' : '',
+            'BEGridCycle'       : 'F1',
+            'BEAngleCycle'      : 'F2',
+            'BEClipCycle'       : 'F3',
+            'BEAttachCycle'     : 'F5',
+            'BEUndo'            : 'CTRL+Z',
+            'BERedo'            : 'CTRL+Y',
+            'BESelect'          : '',
+            'BESelectNext'      : 'TAB',
+            'BESelectLast'      : 'SHIFT+TAB',
+            'BESell'            : '',
+            'BECenterCur'       : '',
+            'BECenterSel'       : '',
+            'BERotateCCW'       : '',
+            'BERotateCW'        : '',
+            'BESeeEverything'   : '',
+            'BESetBaseLighting' : ''
         }.items():
             self.Profile.CustomBinds.Init[self.BindPane.MakeCtrlName(k)] = v
 
@@ -82,13 +85,6 @@ class BaseEditMode(WizardParent):
 
         ### KEY SIZER
         keysSizer = ControlGroup(dialog, self.Profile.CustomBinds, label = 'Keybinds', width = 4)
-
-        self.BEExitEditMode = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BEExitEditMode'),
-            tooltip = 'Exit Base Edit mode and return to normal keybinds',
-        )
-        self.BindPane.SetCtrl('BEExitEditMode', self.BEExitEditMode)
 
         self.BEGridCycle = keysSizer.AddControl(
             ctlType = 'keybutton',
@@ -194,6 +190,13 @@ class BaseEditMode(WizardParent):
             tooltip = 'Toggle seeing hidden items',
         )
         self.BindPane.SetCtrl('BESeeEverything', self.BESeeEverything)
+
+        self.BESetBaseLighting = keysSizer.AddControl(
+            ctlType = 'keybutton',
+            ctlName = self.BindPane.MakeCtrlName('BESetBaseLighting'),
+            tooltip = 'Rotate through base lighting options',
+        )
+        self.BindPane.SetCtrl('BESetBaseLighting', self.BESetBaseLighting)
 
 
         mainSizer.Add(optsSizer, 0, wx.EXPAND|wx.ALL, 5)

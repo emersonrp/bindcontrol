@@ -20,9 +20,10 @@ class SimpleBindPane(CustomBindPaneParent):
         self.ReleaseBinder = None
 
     def Serialize(self) -> dict[str, Any]:
+        bindkey = self.GetCtrl('BindKey')
         data = self.CreateSerialization({
             'Contents' : self.PressBinder.GetValue() if self.PressBinder else '',
-            'Key'      : self.GetCtrl('BindKey').Key,
+            'Key'      : bindkey.Key if bindkey else '',
             'isPRBind' : self.IsPR(),
             'RContents': self.ReleaseBinder.GetValue() if self.ReleaseBinder else '',
         })
@@ -141,28 +142,29 @@ class SimpleBindPane(CustomBindPaneParent):
                     binder.AddError('length', 'This bind is longer than 255 characters, which will cause problems in-game.')
                     isWellFormed = False
 
-        bk = self.GetCtrl('BindKey')
-        if bk.Key:
-            bk.RemoveError('undef')
-        else:
-            bk.AddError('undef', 'The keybind has not been selected')
-            isWellFormed = False
+        if bk := self.GetCtrl('BindKey'):
+            if bk.Key:
+                bk.RemoveError('undef')
+            else:
+                bk.AddError('undef', 'The keybind has not been selected')
+                isWellFormed = False
 
         return isWellFormed
 
     def PopulateBindFiles(self) -> None:
         cid = self.CustomID
-        key = self.GetCtrl('BindKey').Key
-        resetfile = self.Profile.ResetFile()
-        if self.IsPR():
-            # press/release bind, do it in resetfile plus two more, sigh.
-            pfile = self.Profile.GetBindFile('sb', f"{cid}-p.txt")
-            rfile = self.Profile.GetBindFile('sb', f"{cid}-r.txt")
-            if pb := self.PressBinder:
-                if rb := self.ReleaseBinder:
-                    resetfile.SetBind(key, self.Title, self.Page, "+$$" + pb.GetValue() + '$$' + rfile.BLF())
-                    pfile    .SetBind(key, self.Title, self.Page, "+$$" + pb.GetValue() + '$$' + rfile.BLF())
-                    rfile    .SetBind(key, self.Title, self.Page, "+$$" + rb.GetValue() + '$$' + pfile.BLF())
-        else:
-            if pb := self.PressBinder:
-                resetfile.SetBind(key, self.Title, self.Page, pb.GetValue())
+        if ctrl := self.GetCtrl('BindKey'):
+            key = ctrl.Key
+            resetfile = self.Profile.ResetFile()
+            if self.IsPR():
+                # press/release bind, do it in resetfile plus two more, sigh.
+                pfile = self.Profile.GetBindFile('sb', f"{cid}-p.txt")
+                rfile = self.Profile.GetBindFile('sb', f"{cid}-r.txt")
+                if pb := self.PressBinder:
+                    if rb := self.ReleaseBinder:
+                        resetfile.SetBind(key, self.Title, self.Page, "+$$" + pb.GetValue() + '$$' + rfile.BLF())
+                        pfile    .SetBind(key, self.Title, self.Page, "+$$" + pb.GetValue() + '$$' + rfile.BLF())
+                        rfile    .SetBind(key, self.Title, self.Page, "+$$" + rb.GetValue() + '$$' + pfile.BLF())
+            else:
+                if pb := self.PressBinder:
+                    resetfile.SetBind(key, self.Title, self.Page, pb.GetValue())

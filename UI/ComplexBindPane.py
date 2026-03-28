@@ -17,8 +17,9 @@ class ComplexBindPane(CustomBindPaneParent):
         self.Steps = []
 
     def Serialize(self) -> dict[str, str|list]:
+        bindkey = self.GetCtrl('BindKey')
         data = self.CreateSerialization({
-            'Key'  : self.GetCtrl('BindKey').Key,
+            'Key'  : bindkey.Key if bindkey else '',
             'Steps': [],
         })
         for step in self.Steps:
@@ -98,12 +99,12 @@ class ComplexBindPane(CustomBindPaneParent):
             firststep.PowerBinder.AddError('undef', 'At least one valid step must be defined.')
             isWellFormed = False
 
-        bk = self.GetCtrl('BindKey')
-        if not bk.Key:
-            bk.AddError('undef', 'The keybind has not been selected')
-            isWellFormed = False
-        else:
-            bk.RemoveError('undef')
+        if bk := self.GetCtrl('BindKey'):
+            if not bk.Key:
+                bk.AddError('undef', 'The keybind has not been selected')
+                isWellFormed = False
+            else:
+                bk.RemoveError('undef')
 
         return isWellFormed
 
@@ -188,18 +189,19 @@ class ComplexBindPane(CustomBindPaneParent):
             cbindfile = self.Profile.GetBindFile('cb', f'{cid}-{i}.txt')
             rbindfile = self.Profile.GetBindFile('cb', f'{cid}-{i}-r.txt') if step.IsPR() else None
 
-            key = self.GetCtrl('BindKey').Key
+            if key := self.GetCtrl('BindKey'):
+                key = key.Key
 
-            if step.IsPR():
-                cmd = ['+$$' + step.PowerBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{i}-r.txt')]
-            else:
-                cmd = [        step.PowerBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{nextCycle}.txt')]
+                if step.IsPR():
+                    cmd = ['+$$' + step.PowerBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{i}-r.txt')]
+                else:
+                    cmd = [        step.PowerBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{nextCycle}.txt')]
 
-            if i == 1: resetfile.SetBind(key, self, title, cmd)
-            cbindfile.SetBind(key, self, title, cmd)
-            if rbindfile:
-                rcmd = ['+$$' + step.ReleaseBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{nextCycle}.txt')]
-                rbindfile.SetBind(key, self, title, rcmd)
+                if i == 1: resetfile.SetBind(key, self, title, cmd)
+                cbindfile.SetBind(key, self, title, cmd)
+                if rbindfile:
+                    rcmd = ['+$$' + step.ReleaseBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{nextCycle}.txt')]
+                    rbindfile.SetBind(key, self, title, rcmd)
 
     def AllBindFiles(self) -> dict[str, list]:
         files = []

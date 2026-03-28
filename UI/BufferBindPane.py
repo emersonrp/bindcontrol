@@ -176,69 +176,79 @@ class BufferBindPane(CustomBindPaneParent):
 
             BuffChats[f'Buff{i}'] = self.GetVerbFor(b.ChatTgt) + b.Chat.GetValue()
 
-        if self.GetCtrl('BuffsAffectTeam').GetValue():
-            for j in [1,2,3,4,5,6,7,8]:
-                teamkey = self.GetCtrl(f"Team{j}BuffKey").Key
-                if not teamkey: continue
-                filebase = profile.BindsDir()     / 'buff' / f"{cid}_t{j}"
-                gamebase = profile.GameBindsDir() / 'buff' / f"{cid}_t{j}"
+        if ctrl := self.GetCtrl('BuffsAffectTeam'):
+            if ctrl.GetValue():
+                for j in [1,2,3,4,5,6,7,8]:
+                    teamkey = self.GetCtrl(f"Team{j}BuffKey")
+                    if not teamkey: continue
+                    teamkey = teamkey.Key
+                    filebase = profile.BindsDir()     / 'buff' / f"{cid}_t{j}"
+                    gamebase = profile.GameBindsDir() / 'buff' / f"{cid}_t{j}"
 
-                outfiles = {}
-                outfiles[1] = profile.GetBindFile(f"{filebase}1.txt")
+                    outfiles = {}
+                    outfiles[1] = profile.GetBindFile(f"{filebase}1.txt")
 
-                outfiles[1].SetBind(teamkey, self.Page, self.Title, [f'teamselect {j}', BuffChats['SelChat'], f'{BLF()} {gamebase}2.txt'])
-                ResetFile  .SetBind(teamkey, self.Page, self.Title, [f'teamselect {j}', BuffChats['SelChat'], f'{BLF()} {gamebase}2.txt'])
+                    outfiles[1].SetBind(teamkey, self.Page, self.Title, [f'teamselect {j}', BuffChats['SelChat'], f'{BLF()} {gamebase}2.txt'])
+                    ResetFile  .SetBind(teamkey, self.Page, self.Title, [f'teamselect {j}', BuffChats['SelChat'], f'{BLF()} {gamebase}2.txt'])
 
-                for i, b in enumerate(self.Buffs, start = 2): # number the binds as steps 2..x
-                    outfiles[i] = profile.GetBindFile(f"{filebase}{i}.txt")
-                    if i == len(self.Buffs)+1:  # on the last one, back to step 1
-                        outfiles[i].SetBind(teamkey, self.Page, self.Title, [BuffChats[f'Buff{i}'], f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}1.txt'])
-                    else:
-                        outfiles[i].SetBind(teamkey, self.Page, self.Title, [BuffChats[f'Buff{i}'], f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}{i+1}.txt'])
+                    for i, b in enumerate(self.Buffs, start = 2): # number the binds as steps 2..x
+                        outfiles[i] = profile.GetBindFile(f"{filebase}{i}.txt")
+                        if i == len(self.Buffs)+1:  # on the last one, back to step 1
+                            outfiles[i].SetBind(teamkey, self.Page, self.Title, [BuffChats[f'Buff{i}'], f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}1.txt'])
+                        else:
+                            outfiles[i].SetBind(teamkey, self.Page, self.Title, [BuffChats[f'Buff{i}'], f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}{i+1}.txt'])
 
         # NB:  Don't use the BuffChats for the pet ones.  They're spammy, nobody cares, and /tell $target breaks.
-        if self.GetCtrl("BuffsAffectPets").GetValue():
-            for j in [1,2,3,4,5,6]:
-                petkey = self.GetCtrl(f"Pet{j}BuffKey").Key
-                if not petkey: continue
-                filebase = profile.BindsDir()     / 'buff' / f"{cid}_p{j}"
-                gamebase = profile.GameBindsDir() / 'buff' / f"{cid}_p{j}"
+        if ctrl := self.GetCtrl("BuffsAffectPets"):
+            if ctrl.GetValue():
+                for j in [1,2,3,4,5,6]:
+                    petkey = self.GetCtrl(f"Pet{j}BuffKey")
+                    if not petkey: continue
+                    petkey = petkey.Key
+                    filebase = profile.BindsDir()     / 'buff' / f"{cid}_p{j}"
+                    gamebase = profile.GameBindsDir() / 'buff' / f"{cid}_p{j}"
 
-                outfiles = {}
-                outfiles[1] = profile.GetBindFile(f"{filebase}1.txt")
+                    outfiles = {}
+                    outfiles[1] = profile.GetBindFile(f"{filebase}1.txt")
 
-                outfiles[1].SetBind(petkey, self.Page, self.Title, ['petselect 1', f'{BLF()} {gamebase}2.txt'])
-                ResetFile  .SetBind(petkey, self.Page, self.Title, ['petselect 1', f'{BLF()} {gamebase}2.txt'])
+                    outfiles[1].SetBind(petkey, self.Page, self.Title, ['petselect 1', f'{BLF()} {gamebase}2.txt'])
+                    ResetFile  .SetBind(petkey, self.Page, self.Title, ['petselect 1', f'{BLF()} {gamebase}2.txt'])
 
-                for i, b in enumerate(self.Buffs, start = 2): # number the binds as steps 2..x
-                    outfiles[i] = profile.GetBindFile(f"{filebase}{i}.txt")
-                    if i == len(self.Buffs)+1:  # on the last one, back to step 1
-                        outfiles[i].SetBind(petkey, self.Page, self.Title, [f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}1.txt'])
-                    else:
-                        outfiles[i].SetBind(petkey, self.Page, self.Title, [f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}{i+i}.txt'])
+                    for i, b in enumerate(self.Buffs, start = 2): # number the binds as steps 2..x
+                        outfiles[i] = profile.GetBindFile(f"{filebase}{i}.txt")
+                        if i == len(self.Buffs)+1:  # on the last one, back to step 1
+                            outfiles[i].SetBind(petkey, self.Page, self.Title, [f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}1.txt'])
+                        else:
+                            outfiles[i].SetBind(petkey, self.Page, self.Title, [f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}{i+i}.txt'])
 
     def SynchronizeUI(self, _ = None) -> None:
 
         for i, b in enumerate(self.Buffs):
             b.delButton.Show(i > 0)
 
-        useteam = self.GetCtrl("BuffsAffectTeam").GetValue()
-        for i in [1,2,3,4,5,6,7,8]:
-            self.GetCtrl(f'Team{i}BuffKey').Enable(useteam)
+        if ctrl := self.GetCtrl("BuffsAffectTeam"):
+            useteam = ctrl.GetValue()
+            for i in [1,2,3,4,5,6,7,8]:
+                if buffkey := self.GetCtrl(f'Team{i}BuffKey'):
+                    buffkey.Enable(useteam)
 
-        usepet = self.GetCtrl("BuffsAffectPets").GetValue()
-        for i in [1,2,3,4,5,6]:
-            self.GetCtrl(f'Pet{i}BuffKey').Enable(usepet)
+        if ctrl := self.GetCtrl("BuffsAffectPets"):
+            usepet = ctrl.GetValue()
+            for i in [1,2,3,4,5,6]:
+                if buffkey := self.GetCtrl(f'Pet{i}BuffKey'):
+                    buffkey.Enable(usepet)
 
         self.CheckAnyKeyPicked()
         self.Page.Layout()
 
     def Serialize(self) -> dict[str, str|list]:
+        bat = self.GetCtrl('BuffsAffectTeam')
+        bap = self.GetCtrl('BuffsAffectPets')
         data = self.CreateSerialization({
             "SelChatTgt"      : self.SelChatTgt.GetString(self.SelChatTgt.GetSelection()),
             "SelChat"         : self.SelChat.GetValue(),
-            "BuffsAffectTeam" : self.GetCtrl('BuffsAffectTeam').GetValue(),
-            "BuffsAffectPets" : self.GetCtrl('BuffsAffectPets').GetValue(),
+            "BuffsAffectTeam" : bat.GetValue() if bat else False,
+            "BuffsAffectPets" : bap.GetValue() if bap else False,
         })
         buffs = []
         for b in self.Buffs:
@@ -253,9 +263,11 @@ class BufferBindPane(CustomBindPaneParent):
         data['Buffs'] = buffs
 
         for i in (1,2,3,4,5,6,7,8):
-            data[f'Team{i}BuffKey'] = self.GetCtrl(f'Team{i}BuffKey').Key
+            if buffkey := self.GetCtrl(f'Team{i}BuffKey'):
+                data[f'Team{i}BuffKey'] = buffkey.Key
         for i in (1,2,3,4,5,6):
-            data[f'Pet{i}BuffKey']  = self.GetCtrl(f'Pet{i}BuffKey').Key
+            if buffkey := self.GetCtrl(f'Pet{i}BuffKey'):
+                data[f'Pet{i}BuffKey']  = buffkey.Key
 
         return data
 
@@ -289,17 +301,19 @@ class BufferBindPane(CustomBindPaneParent):
         if evt: evt.Skip()
         KeyIsPicked = False
         for i in (1,2,3,4,5,6,7,8):
-            if self.GetCtrl(f'Team{i}BuffKey').Key:
-                KeyIsPicked = True
+            if buffkey := self.GetCtrl(f'Team{i}BuffKey'):
+                if buffkey.Key:
+                    KeyIsPicked = True
         for i in (1,2,3,4,5,6):
-            if self.GetCtrl(f'Pet{i}BuffKey').Key:
-                KeyIsPicked = True
+            if buffkey := self.GetCtrl(f'Pet{i}BuffKey'):
+                if buffkey.Key:
+                    KeyIsPicked = True
 
-        Team1Button = self.GetCtrl('Team1BuffKey')
-        if KeyIsPicked:
-            Team1Button.RemoveError('undef')
-        else:
-            Team1Button.AddError('undef', 'At least one Team or Pet key must be selected.')
+        if Team1Button := self.GetCtrl('Team1BuffKey'):
+            if KeyIsPicked:
+                Team1Button.RemoveError('undef')
+            else:
+                Team1Button.AddError('undef', 'At least one Team or Pet key must be selected.')
 
         return KeyIsPicked
 

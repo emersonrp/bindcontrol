@@ -75,7 +75,7 @@ class BaseEditMode(WizardParent):
         self.BEDisableMovement = cgCheckBox(optsSizer.GetStaticBox(), label = 'Default Movement Keys')
         self.BEDisableMovement.SetToolTip('Disable SoD etc and set movement keys to their default behavior')
         self.BEDisableMovement.CtlName = self.BindPane.MakeCtrlName('BEDisableMovement')
-        self.BEDisableMovement.SetValue(wizdata.get('BEDisableMovement', False))
+        self.BEDisableMovement.SetValue(wizdata.get('BEDisableMovement', True))
         self.BindPane.SetCtrl('BEDisableMovement', self.BEDisableMovement)
         optsSizer.Add(self.BEDisableMovement, 0, wx.EXPAND|wx.ALL, 5)
 

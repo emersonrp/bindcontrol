@@ -225,20 +225,6 @@ class Main(wx.Frame):
             self.StartupPanel = self.MakeStartupPanel()
             self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
 
-        (width, height) = (1100, 800)
-        if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinH') and config.HasEntry('WinW'):
-            height = config.ReadInt('WinH')
-            width  = config.ReadInt('WinW')
-        elif self.Profile:
-            height = self.Profile.GetBestSize().height
-            width  = self.Profile.GetBestSize().width + 24 # account for Profile's padding
-
-        if width and height:
-            self.SetSize(wx.Size(width, height))
-
-        if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinX') and config.HasEntry('WinY'):
-            self.SetPosition(wx.Point((config.ReadInt('WinX'), config.ReadInt('WinY'))))
-
         self.BindDirsWindow = None
 
         self.SetupProfileUI()
@@ -719,14 +705,33 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
             wx.GetApp().Yield()
 
             self.Main = Main()
+
+            # get the height, width, and position all set up before Show()
+            (width, height) = (1100, 800)
+            if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinH') and config.HasEntry('WinW'):
+                height = config.ReadInt('WinH')
+                width  = config.ReadInt('WinW')
+
+            if width and height:
+                self.Main.SetSize(wx.Size(width, height))
+
+            if config.ReadBool('SaveSizeAndPosition') and config.HasEntry('WinX') and config.HasEntry('WinY'):
+                self.Main.SetPosition(wx.Point((config.ReadInt('WinX'), config.ReadInt('WinY'))))
+
+            # we MUST Show() the window before setting up the intial profile, or various widgets
+            # and dialogs and so forth will get pathological ideas about their sizes and/or
+            # positions, on Windows.  Show(), then load.
+            self.Main.Show()
             self.Main.SetupInitialProfile(input_profile = input_profile)
+
+            # lay out the screen now that we have a profile or startup panel
+            self.Main.Layout()
 
             # TODO bootstrapping problem, can't do this inside Profile's "__init__" because
             # Profile needs to be defined/initialized deep inside its innards to succeed at this.
             if self.Main.Profile:
                 self.Main.Profile.CheckAllConflicts()
 
-        self.Main.Show()
         if self.Main.Profile:
             wx.CallAfter(self.Main.CheckIfGameDirNeeded, self.Main.Profile.Server())
 

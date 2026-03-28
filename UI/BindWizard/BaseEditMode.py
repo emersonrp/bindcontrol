@@ -3,6 +3,7 @@ import UI
 from UI.BindWizard import WizardParent
 from UI.ControlGroup import ControlGroup
 from UI.CGControls import bcKeyButton, cgStaticText
+from UI.KeySelectDialog import EVT_KEY_CHANGED
 
 class BaseEditMode(WizardParent):
     WizardName  = 'Base Edit Mode'
@@ -13,8 +14,8 @@ class BaseEditMode(WizardParent):
     def __init__(self, parent, init):
         super().__init__(parent, init)
 
-        # All of this is so we can use ControlGroup.  Maybe that's a false economy.
-        for k,v in {
+        # we use this also to serialize, below
+        self.AllCtrls = {
             'BEDisableMovement' : 'Default Movement Keys',
             'BEDisableChat'     : 'Disable Chat Keys',
             'BEGridCycle'       : 'Cycle Placement Grid Sizes',
@@ -33,28 +34,34 @@ class BaseEditMode(WizardParent):
             'BERotateCW'        : 'Rotate Selected Object 90° CW',
             'BESeeEverything'   : 'Toggle seeing hidden markers',
             'BESetBaseLighting' : 'Rotate Through Base Lighting Options',
-        }.items():
+        }
+        for k,v in self.AllCtrls.items():
             UI.Labels[self.BindPane.MakeCtrlName(k)] = v
 
-        for k,v in {
+        # we use this as a list, below, to initialize and later to conflict-check these.
+        # Order matters here for layout.
+        self.KeyInit = {
             'BEGridCycle'       : 'F1',
-            'BEAngleCycle'      : 'F2',
-            'BEClipCycle'       : 'F3',
-            'BEAttachCycle'     : 'F5',
             'BEUndo'            : 'CTRL+Z',
+            'BEAngleCycle'      : 'F2',
             'BERedo'            : 'CTRL+Y',
+            'BEClipCycle'       : 'F3',
             'BESelect'          : '',
+            'BEAttachCycle'     : 'F5',
             'BESelectNext'      : 'TAB',
-            'BESelectLast'      : 'SHIFT+TAB',
-            'BESell'            : '',
-            'BECenterCur'       : '',
-            'BECenterSel'       : '',
             'BERotateCCW'       : '',
+            'BESelectLast'      : 'SHIFT+TAB',
             'BERotateCW'        : '',
+            'BECenterCur'       : '',
+            'BESell'            : '',
+            'BECenterSel'       : '',
             'BESeeEverything'   : '',
             'BESetBaseLighting' : ''
-        }.items():
+        }
+        for k,v in self.KeyInit.items():
             self.Profile.CustomBinds.Init[self.BindPane.MakeCtrlName(k)] = v
+
+        self.Dialog() # do this early to run Profile.CheckAllConflicts
 
     def BuildUI(self, dialog, init : dict|None = None) -> wx.Sizer:
         wizdata = {}
@@ -79,107 +86,22 @@ class BaseEditMode(WizardParent):
         ### KEY SIZER
         keysSizer = ControlGroup(dialog, self.Profile.CustomBinds, label = 'Keybinds', width = 4)
 
-        self.BEGridCycle = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BEGridCycle'),
-            tooltip = 'Cycle through object placement grid sizes',
-        )
-
-        self.BEUndo = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BEUndo'),
-            tooltip = 'Undo last action',
-        )
-
-        self.BEAngleCycle = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BEAngleCycle'),
-            tooltip = 'Cycle through snap-drag rotation angle settings',
-        )
-
-        self.BERedo = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BERedo'),
-            tooltip = 'Redo last undo / repeat action',
-        )
-
-        self.BEClipCycle = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BEClipCycle'),
-            tooltip = 'Toggle wall clipping',
-        )
-
-        self.BESelect = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BESelect'),
-            tooltip = 'Select base item under cursor',
-        )
-
-        self.BEAttachCycle = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BEAttachCycle'),
-            tooltip = 'Cycle through object placement attachment (floor, wall, ceiling, surface)',
-        )
-
-        self.BESelectNext = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BESelectNext'),
-            tooltip = 'Select next base item',
-        )
-
-        self.BERotateCCW = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BERotateCCW'),
-            tooltip = 'Rotate selected item 90° CCW',
-        )
-
-        self.BESelectLast = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BESelectLast'),
-            tooltip = 'Select previous base item',
-        )
-
-        self.BERotateCW = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BERotateCW'),
-            tooltip = 'Rotate selected item 90° CW',
-        )
-
-        self.BECenterCur = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BECenterCur'),
-            tooltip = 'Center view on cursor',
-        )
-
-        self.BESell = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BESell'),
-            tooltip = 'Delete currently selected / targeted item',
-        )
-
-        self.BECenterSel = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BECenterSel'),
-            tooltip = 'Center view on selected base item',
-        )
-
-        self.BESeeEverything = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BESeeEverything'),
-            tooltip = 'Toggle seeing hidden items',
-        )
-
-        self.BESetBaseLighting = keysSizer.AddControl(
-            ctlType = 'keybutton',
-            ctlName = self.BindPane.MakeCtrlName('BESetBaseLighting'),
-            tooltip = 'Rotate through base lighting options',
-        )
+        for key in self.KeyInit:
+            keybutton = keysSizer.AddControl(
+                ctlType = 'keybutton',
+                ctlName = self.BindPane.MakeCtrlName(key),
+                tooltip = UI.Labels[self.BindPane.MakeCtrlName(key)],
+            )
+            keybutton.Bind(EVT_KEY_CHANGED, self.CheckForConflicts)
+            setattr(self, key, keybutton)
 
         for ctrlname in wizdata:
             getattr(self, ctrlname).SetValue(wizdata[ctrlname])
 
         mainSizer.Add(optsSizer, 0, wx.EXPAND|wx.ALL, 5)
         mainSizer.Add(keysSizer, 0, wx.EXPAND|wx.ALL, 5)
+
+        self.Profile.CheckAllConflicts()
 
         return mainSizer
 
@@ -195,14 +117,14 @@ class BaseEditMode(WizardParent):
         cmdSizer = wx.GridSizer(2, 4, 5, 5)
         cmdPanel = wx.Panel(panel)
         cmdPanel.SetSizer(cmdSizer)
-        cmdPanel.SetToolTip(self.BindString())
-        for cmd in ('BEDisableMovement', ):
+        for cmd in ('BEDisableMovement', 'BEDisableChat', ):
             ctpanel = wx.Panel(cmdPanel)
             ctsizer = wx.BoxSizer(wx.HORIZONTAL)
             ctpanel.SetSizer(ctsizer)
             cmdtext = cgStaticText(ctpanel, label = UI.Labels[self.BindPane.MakeCtrlName(cmd)], style = wx.ALIGN_CENTER)
-            if self.State.get('WizData', {}).get(cmd):
-                cmdtext.SetLabel("✓ " + UI.Labels[cmd])
+            cmdtext.SetBackgroundColour(wx.Colour(220, 220, 220))
+            if self.State.get('WizData', {}).get(cmd, False):
+                cmdtext.SetLabel("✓ " + UI.Labels[self.BindPane.MakeCtrlName(cmd)])
             else:
                 cmdtext.SetForegroundColour(wx.Colour(160, 160, 160))
             ctsizer.Add(cmdtext, 1, wx.EXPAND|wx.ALL, 5)
@@ -211,12 +133,22 @@ class BaseEditMode(WizardParent):
             ctpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
             cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
+        if conflicts := self.CheckForConflicts():
+            conflicts = [f"\n\t\u2022 {UI.Labels[self.BindPane.MakeCtrlName(c)]}" for c in conflicts]
+            ctpanel = wx.Panel(cmdPanel)
+            ctsizer = wx.BoxSizer(wx.HORIZONTAL)
+            ctpanel.SetSizer(ctsizer)
+            cmdtext = cgStaticText(ctpanel, label = f"Error: {len(conflicts)} key conflicts", style = wx.ALIGN_CENTER)
+            cmdtext.SetBackgroundColour(wx.Colour(255, 200, 200))
+            cmdtext.SetToolTip("The following keys have conflicts:" + "".join(conflicts))
+            ctsizer.Add(cmdtext, 1, wx.EXPAND|wx.ALL, 5)
+            cmdSizer.Add(ctpanel, 1, wx.EXPAND)
+
+            ctpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+            cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+
         panelSizer.Add(cmdPanel, 1, wx.ALIGN_CENTER|wx.ALL, 15)
         cmdPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-
-        # BindStringDisplay = cgStaticText(panel, label = self.BindString())
-        # panelSizer.Add(BindStringDisplay, 1, wx.ALIGN_CENTER|wx.ALL, 10)
-        # BindStringDisplay.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
         bkText = cgStaticText(panel, label = 'Bind Key:')
         panelSizer.Add(bkText, 0, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 5)
@@ -228,46 +160,46 @@ class BaseEditMode(WizardParent):
             'Page'    : bindpane.Page,
         })
         panelSizer.Add(self.EnterEditModeKey, 0, wx.ALIGN_CENTER|wx.ALL, 5)
-        bindpane.SetCtrl('EditMode', self.EnterEditModeKey)
+        bindpane.SetCtrl('EnterEditMode', self.EnterEditModeKey)
+        self.EnterEditModeKey.Bind(EVT_KEY_CHANGED, self.CheckIfWellFormed)
         UI.Labels[self.EnterEditModeKey] = 'Enter Edit Mode'
 
         panel.SetSizer(panelSizer)
 
+        self.CheckIfWellFormed()
+
         return panel
+
+    def CheckForConflicts(self, evt = None):
+        if evt: evt.Skip()
+        conflicts = []
+        for key in self.KeyInit:
+            if getattr(self, key).CheckConflicts():  conflicts.append(key)
+
+        return conflicts
+
+    def CheckIfWellFormed(self, evt = None):
+        if evt: evt.Skip()
+        if self.EnterEditModeKey.GetValue():
+            self.EnterEditModeKey.RemoveError('undef')
+            return True
+        else:
+            self.EnterEditModeKey.AddError('undef', 'The keybind has not been selected')
+            return False
 
     def UpdateState(self):
         newstate = {}
-        for ctrlname in [
-            'BEDisableMovement',
-            'BEDisableChat'    ,
-            'BEGridCycle'      ,
-            'BEAngleCycle'     ,
-            'BEClipCycle'      ,
-            'BEAttachCycle'    ,
-            'BEUndo'           ,
-            'BERedo'           ,
-            'BESelect'         ,
-            'BESelectNext'     ,
-            'BESelectLast'     ,
-            'BESell'           ,
-            'BECenterCur'      ,
-            'BECenterSel'      ,
-            'BERotateCCW'      ,
-            'BERotateCW'       ,
-            'BESeeEverything'  ,
-            'BESetBaseLighting',
-        ]:
+        for ctrlname in self.AllCtrls:
             newstate[ctrlname] = getattr(self, ctrlname).GetValue()
         self.State = { 'WizData' : newstate }
 
     def PopulateBindFiles(self):
-        self.Profile.ResetFile().SetBind(self.EnterEditModeKey.Key, 'Escape Configurator', self.Profile.CustomBinds, self.BindString())
+        if not self.CheckIfWellFormed():  return
+        resetfile = self.Profile.ResetFile()
+        modefile  = self.Profile.GetBindFile('wiz', f"{self.BindPane.CustomID}-md.txt")
 
-    def BindString(self) -> str:
-        commands = []
-        #wizdata = self.State.get('WizData', {})
-
-        return '$$'.join(commands)
+        resetfile.SetBind(self.EnterEditModeKey.MakeBind(modefile.BLF()))
+        modefile .SetBind(self.EnterEditModeKey.MakeBind(resetfile.BLF()))
 
     def AllBindFiles(self):
         return {

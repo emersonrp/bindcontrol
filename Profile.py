@@ -161,11 +161,10 @@ class Profile(wx.Notebook):
                 if isinstance(ctrl, bcKeyButton) and ctrl.IsEnabled():
                     ctrl.CheckConflicts()
 
-            if page == self.CustomBinds:
-                for pane in page.Panes: # pyright: ignore
-                    for ctrl in pane.Ctrls.values():
-                        if isinstance(ctrl, bcKeyButton) and ctrl.IsEnabled():
-                            ctrl.CheckConflicts()
+        for pane in self.CustomBinds.Panes:
+            for ctrl in pane.Ctrls.values():
+                if isinstance(ctrl, bcKeyButton) and ctrl.IsEnabled():
+                    ctrl.CheckConflicts()
 
     def IsModified(self): return self.Data.IsModified()
 

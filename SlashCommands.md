@@ -250,7 +250,6 @@ These are commands that seem either too fiddly or too situational to want to bin
 |------|-------------|
 | /ai player | Invite player to join your arena event.|
 | /angle_snap [0-359] | Sets the angle for snap drag rotation in degrees while editing a supergroup base. Default snap = 5, disable snap = 0 |
-| /angle_snap_cycle | Cycles through 8 standard angles for snap drag rotation (Off - 45 degrees). (F2) |
 | /architect | Activate the Mission Architect while inside Architect Entertainment.|
 | /architect_claim_tickets # | Claims # Architect tickets |
 | /architect_completemission | Complete the current mission while in Architect Test Mode |
@@ -269,17 +268,10 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /arena_local message | The Arena event window chat. |
 | /arena_score | Open the arena score window if you are in an Arena match. |
 | /assist_name player | Change your current target to specified ally's target |
-| /attach_cycle | Toggle object placement attachment (Floor, Wall, Ceiling, Surface) while in the SG base editor. (F5) |
 | /badgegrant BadgeGrantTag | Grants a character the specified badge (only works on Beta server) |
 | /base_default_sky number | Sets SG base editing default sky setting to one of 16 preset values |
-| /base_lighting_type number | Sets lighting type while in the supergroup base editor. 0 = Indoor, 1 = Outdoor sky lighting, 2 = Outdoor with shadows |
-| /base_redo | Reverse your last Undo and/or repeat action while in the SG base editor. (Ctrl-Y) |
-| /base_select | Select base object. |
-| /base_undo | Reverse your last action while in the SG base editor. (Ctrl-Z) |
 | /boost_convert | Converts the specified enhancement into a different enhancement. |
 | /camdistadjust | Adjusts the camera distance relative to the current camera distance. |
-| /center | While supergroup base editing, center alt on spot indicated. (Left-Doubleclick). |
-| /centersel | Center on current selection (base editor). |
 | /chan_invitedeny channel name_string | Chat channel invite denied message. Appears to be an internal command. |
 | /change_handle new_global | Change your global user name, if allowed. |
 | /clear_tray | Removes all power icons from all power trays; preserves macros |
@@ -302,10 +294,8 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /demorecord_auto | Begin recording a demo with a game-generated filename |
 | /demospeedscale number | speed multiple to play back demo at |
 | /demostop | Stop demo record/play. Alias: /demodump |
-| /editbase [1/0] | Turns supergroup base editor on or off. |
 | /extra_modifiers [mod1] [mod2] [mod3] [mod4] | Allows setting up to four extra modifiers on a controller/gamepad. |
 | /grid_snap number | Sets item placement grid size while in the SG base editor. |
-| /grid_snap_cycle | Cycles through object placement grid sizes while in the SG base editor. (F1) |
 | /incarnate_unequip slotName powername | Unequips the specified Incarnate Ability. |
 | /incarnate_unequip_all | Unequips all equipped Incarnate Abilities. |
 | /hardconsts | Use hard shader constants instead of Cg to setup shader params |
@@ -331,12 +321,6 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /prev_trays_tray 1-3 | Go to previous power tray in the specified tray slot. |
 | /reduce_mip | Reduces the resolution of textures to only use the reduced (mip-map) textures. Must pass as command line arg -reduce_mip or you need to subsequently run unloadgfx |
 | /room_clip [0-1] | Enables or disables the room clipping option while in the SG base editor. Alias: /room_clip_cycle. (F3) |
-| /room_clip_cycle | Toggle wall clipping on and off while in the SG base editor. Alias: /room_clip. (F3) |
-| /rotate [0,1] | Rotate object 90 degrees while in the SG base editor. (R) or (Right-Click). |
-| /see_everything [1/0] | See the boundary boxes and hidden markers for everything while in the SG base editor. |
-| /select_last | Select previous object in series while in the SG base editor. (Shift+Tab) |
-| /select_next | Select next present object in series while in the SG base editor. (Tab) |
-| /sell (base editor) | Sells (deletes) a base item while editing a supergroup base. |
 | /sg_music filename | Sets a sound file to play over the music channel in a supergroup base. |
 | /sgpasscode text | Creates a Base Access Passcode, used to enter a supergroup's base |
 | /sgsetdemotetimeout seconds | Sets the number of days a leader in your supergroup has to go without logging in before the leader is demoted. |

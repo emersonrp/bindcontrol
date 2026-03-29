@@ -215,16 +215,35 @@ class BaseEditMode(WizardParent):
         resetfile = self.Profile.ResetFile()
         modefile  = self.Profile.GetBindFile('wiz', f"{self.BindPane.CustomID}-md.txt")
 
-        resetfile.SetBind(self.BindPane.GetCtrl('EnterEditMode').MakeBind(['editbase 1', modefile .BLF()]))
+        resetfile.SetBind(self.BindPane.GetCtrl('EnterEditMode').MakeBind([                'editbase 1', modefile .BLF()]))
         modefile .SetBind(self.BindPane.GetCtrl('EnterEditMode').MakeBind(['keybindreset', 'editbase 0', resetfile.BLF()]))
 
         if self.BindPane.GetCtrl('BEDisableMovement').GetValue():
-            # go through movement keys, add their default values to modefile
-            ...
+            # reset movement keys if so
+            # TODO - this in lieu of "keybindreset" which might crush other things we want?
+            # Or am I overthinking this?
+            forward = ['+forward']
+            if self.Profile.Gameplay.GetState('KBProfile') == 'Modern':
+                forward.append('playerturn')
+            modefile.SetBind('W'    , 'Forward' , self.Profile.CustomBinds, forward)
+            modefile.SetBind('A'    , 'Left'    , self.Profile.CustomBinds, '+left')
+            modefile.SetBind('S'    , 'Backward', self.Profile.CustomBinds, '+backward')
+            modefile.SetBind('D'    , 'Right'   , self.Profile.CustomBinds, '+right')
+            modefile.SetBind('X'    , 'Down'    , self.Profile.CustomBinds, '+down')
+            modefile.SetBind('SPACE', 'Up'      , self.Profile.CustomBinds, '+up')
 
         if self.BindPane.GetCtrl('BEDisableChat').GetValue():
             # go through chat keys, add them as 'nop' to modefile
-            ...
+            #
+            # TODO - ponder whether they might still have some default ones also set up?
+            # There's no way to test for that in-game, but we could maybe... examine all
+            # the default ones and see if there's a bind set?  Do we have a mechanism for that?
+            # Hmm we probably don't since we're in the middle of populating the list when
+            # we're in here.  Hmm.
+            gen = self.Profile.General
+            for chatkey in ['StartChat', 'SlashChat', 'StartEmote', 'AutoReply', 'TellLast', 'TellTarget', 'QuickChat',]:
+                if key := gen.GetState(chatkey):
+                    modefile.SetBind(key, '', self.Profile.CustomBinds, 'nop')
 
         ### turn each keybutton into a bind in modefile
         if self.BindPane.GetCtrl('BEGridCycle').GetValue():
@@ -281,7 +300,6 @@ class BaseEditMode(WizardParent):
             lighting0.SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind(['baselightingtype 1', lighting1.BLF()]))
             lighting1.SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind(['baselightingtype 2', lighting2.BLF()]))
             lighting2.SetBind(self.BindPane.GetCtrl('BESetBaseLighting').MakeBind(['baselightingtype 0', lighting0.BLF()]))
-
 
     def AllBindFiles(self):
         cid = self.BindPane.CustomID

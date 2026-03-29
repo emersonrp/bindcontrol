@@ -28,7 +28,6 @@ class General(Page):
             'Pool3'     : '',
             'Pool4'     : '',
 
-            'ChatEnable' : False,
             'StartChat'  : 'ENTER',
             'SlashChat'  : '/',
             'StartEmote' : ';',

@@ -1622,8 +1622,7 @@ Emotes = {
             'You bow down!|bowdown', 'Surrender', 'Get Some', 'Go Away', 'Taunt 1', 'Taunt 2',
             'Chicken', 'Slash Throat', 'Bring it!', 'Threaten|threathand', 'Hands Up', 'Smack',
             'Slap', 'Slap React', 'Alakazam!', 'Alakazam! React', 'Bat Smash',
-            'Bat Smash React', 'Ultimate Power', 'Facepalm', 'Double Facepalm',
-            'Casting', 'Channel',
+            'Bat Smash React', 'Ultimate Power', 'Facepalm',
             '---',
             { 'Judge' : [
                 'Score 1', 'Score 2', 'Score 3', 'Score 4', 'Score 5',
@@ -1655,7 +1654,7 @@ Emotes = {
             'Dust Off', 'Read Book', 'Burp',
             '---',
             'Laughs|laugh', 'Giggle|laugh2', 'Drat', 'Shucks', 'Grief', 'Flipping Coin',
-            'Open Gift', 'Ghoul Flex', 'Tantrum', 'Collapse', 'Swoon', 'Defeated',
+            'Dirnk Enriche', 'Open Gift', 'Ghoul Flex', 'Tantrum', 'Collapse', 'Swoon',
             '---',
             { 'Athletics' : [
                 'Backflip', 'Flex 1', 'Flex 2', 'Flex 3', 'Jumping Jacks', 'Kata', 'Pushups|Pushup',
@@ -1685,25 +1684,12 @@ Emotes = {
             'Calculate Theories|calculate', 'Mix Formula', 'Talk Pool|pool', 'Soccer Kick|soccer',
             'Basketball Dribble|basketball', 'Catch Breath',
             '---',
-            { 'Food and Drink' : [
-                'Eat Food', 'Eat Donut', 'Eat Hotdog|hotdog', 'Eat Hamburger|hamburger', 'Eat Jumbo Hotdog|jumbohotdog',
-                'Eat Pocket Dog|pocketdog', 'Eat Watermelon|watermelon', 'Eat Onigiri|onigiri', 'Drink',  'Drink Tea|teabag', 'Drink Enriche',
-                { 'Drenched Donuts' :
-                    [ 'Eat Strawberry Donut|Donut1', 'Eat Chocolate Donut|Donut2', 'Eat Sprinkled Donut|Donut3',
-                     'Eat Plain Donut|Donut4', 'Eat Blue Sky Donut|Donut5', 'Eat Winter Donut|WinterDonut',
-                     'Eat Spooky Donut|SpookyDonut', 'Eat Jelly Donut|jellydonut', 'Eat Lemon Donut|lemondonut',
-                     'Drink DD Coffee|DDCoffee', 'Drink DD Coffee 2|DDCoffee2' ],
-                 },
-                { 'Collectible Mugs' :
-                    [ 'Arachnos Mug', 'Paragon Mug', 'Winter Mug', 'Pumpkin Mug', ],
-                 },
-            ]},
+            'Drink', 'Eat Food', 'Eat Donut', 'Drink Tea|teabag',
+            '---',
             { 'Away' : [
-                { 'Phone' :
-                    [ 'Smartphone 1', 'Smartphone 2', 'Cellphone', 'Text 1', 'Text 2', 'Camera Phone 1', 'Camera Phone 2', ],
-                 },
+                'Cellphone' ,
                 'Crouch',
-                { 'Kneel' : [ 'kneel', 'kneel2', 'kneel3', 'kneel4', 'kneel5'] },
+                'Kneel',
                 'Use Laptop|laptop', 'Lotus', 'Read Newspaper|newspaper',
                 'AFK Sleep|sleep', 'Sit on Ground|sit', 'Wait|waiting',
             ]},
@@ -1717,12 +1703,6 @@ Emotes = {
                 'Center Stance|idle2', 'Cross Arms', 'Hands on Hips|akimbo', 'Neutral Stance|idle1',
                 'Hero Stance 1|stancehero1', 'Hero Stance 2|stancehero2',
                 'Villain Stance 1|stancevillain1', 'Villain Stance 2|stancevillain2',
-            ]},
-            { 'Swimming' : [
-                { 'Innertube' : [
-                    'Random|Innertube', 'Strawberry Donut|Innertube1', 'Chocolate Donut|Innertube2',
-                    'Neon Sport|Innertube3', 'Moo!|Innertube4', 'Naval Academy|Innertube5', 'Lifeguard|Innertube6',
-                ]}
             ]},
             { 'Loyalty': [
                 'Hero Loyal', 'Vigilante Loyal', 'Villain Loyal', 'Rogue Loyal',
@@ -1759,9 +1739,10 @@ Emotes = {
             ] },
             '---',
             'Dance', 'Shuffle|dance1', 'Rock It|dance2', 'The Washer|dance3', 'Raise the Roof|dance4',
-            'Bounce|dance5', 'The Monkey|dance6', 'Drum Dance|drum', 'Robot Dance', 'Karate Dance',
-            'Pop Dance', 'Air Guitar', 'Disco Dance', 'Groove|dance12', 'Shuffle Back|dance13', 'Mystic|dance14',
-            'Wednesday|dance15', 'Twist|dance16',
+            'Bounce|dance5', 'The Monkey|dance6', 'The Twist|twistdance', 'Groove|dance12',
+            'Shuffle Back|dance13', 'Wednesday|dance15',
+            'Drum Dance|drum', 'Mystic|dance14', 'Dab', 'Robot Dance', 'Karate Dance',
+            'Pop Dance', 'Air Guitar', 'Disco Dance',
             '---',
             'Big Drum|drum', 'Small Drum|drumlow',
         ] },

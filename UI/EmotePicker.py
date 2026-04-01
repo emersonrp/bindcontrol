@@ -1,25 +1,45 @@
 import wx
 import GameData
+import COHMenu as FM
+from Icon import GetIcon
+import UI
 
-def OnEmotePicker(evt) -> None:
-    button = evt.EventObject
+class EmotePicker(wx.Button):
+    def __init__(self, parent) -> None:
+        super().__init__(parent)
 
-    button.PopupMenu(EmotePicker(button))
+        self.EmotePickerMenu = None
+        self.SetBitmap(GetIcon('UI', 'QuickChat'))
+        self.SetFont(UI.COHFont(13))
 
-class EmotePicker(wx.Menu):
+        self.Bind(wx.EVT_BUTTON, self.OnEmotePicker)
+
+    def OnEmotePicker(self, evt) -> None:
+        if not self.EmotePickerMenu:
+            self.EmotePickerMenu = EmotePickerMenu(self)
+
+        self.EmotePickerMenu.Popup(wx.GetMousePosition())
+
+    def SetLabel(self, label):
+        super().SetLabel(label)
+        self.SetBitmap(GetIcon('UI', 'QuickChat'))
+
+class EmotePickerMenu(FM.FlatMenu):
     def __init__(self, target) -> None:
-        super().__init__()
+        super().__init__(target)
 
         self.UpdateTarget = target
         self.BuildMenu(GameData.Emotes['emotes'])
 
-        self.Bind(wx.EVT_MENU, self.OnMenuSelected)
+        self.Bind(FM.EVT_FLAT_MENU_SELECTED, self.OnMenuSelected)
 
+    # this is AWFUL
     def BuildMenu(self, data) -> None:
         for category in data:
             # 'Converse' : []
             for catname, cat in category.items():
-                submenu = wx.Menu()
+                submenu = FM.FlatMenu()
+                submenu.Bind(FM.EVT_FLAT_MENU_SELECTED, self.OnMenuSelected)
                 self.AppendSubMenu(submenu, catname)
 
                 # [ {submenu: [ list, of, emotes ]},  "or just strings" ]
@@ -30,7 +50,8 @@ class EmotePicker(wx.Menu):
                     elif isinstance(subcat, dict):
                         # { submenu : [ list, of, emotes ]}
                         for subitem, deepdata in subcat.items():
-                            subsubmenu = wx.Menu()
+                            subsubmenu = FM.FlatMenu()
+                            subsubmenu.Bind(FM.EVT_FLAT_MENU_SELECTED, self.OnMenuSelected)
                             submenu.AppendSubMenu(subsubmenu, subitem)
 
                             for leafitem in deepdata:
@@ -40,7 +61,8 @@ class EmotePicker(wx.Menu):
                                 elif isinstance(leafitem, dict):
                                     # Thanks, "kneel" subsubsubsubmenu
                                     for subsubitem, deeperdata in leafitem.items():
-                                        subsubsubmenu = wx.Menu()
+                                        subsubsubmenu = FM.FlatMenu()
+                                        subsubsubmenu.Bind(FM.EVT_FLAT_MENU_SELECTED, self.OnMenuSelected)
                                         subsubmenu.AppendSubMenu(subsubsubmenu, subsubitem)
 
                                         for kneelitem in deeperdata:
@@ -66,8 +88,7 @@ class EmotePicker(wx.Menu):
             menu.Append(-1, label)
 
     def OnMenuSelected(self, evt) -> None:
-        menuitem = self.FindItemById(evt.GetId())
-        label = menuitem.GetItemLabel()
-        self.UpdateTarget.SetLabel(label)
-
-
+        if menuitem := self.FindItem(evt.GetId()):
+            label = menuitem.GetLabel()
+            self.UpdateTarget.SetLabel(label)
+            self.UpdateTarget.SetBitmap(GetIcon('UI', 'QuickChat'))

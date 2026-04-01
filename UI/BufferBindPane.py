@@ -1,7 +1,7 @@
 import re
 import wx
 import UI
-from BLF import BLF
+from Util.BLF import BLF
 
 from UI.PowerPicker import PowerPicker, EVT_POWERPICKER_CHANGED
 

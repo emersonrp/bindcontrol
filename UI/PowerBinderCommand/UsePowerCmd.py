@@ -9,7 +9,6 @@ class UsePowerCmd(PowerBinderCommand):
     Menu = "Powers"
 
     def BuildUI(self, dialog) -> wx.FlexGridSizer:
-        self.Dialog = dialog
 
         self.UsePowerSizer = wx.FlexGridSizer(3, 2, 5, 5)
         self.UsePowerSizer.AddGrowableCol(1)
@@ -163,6 +162,7 @@ class UsePowerCmd(PowerBinderCommand):
             self.UsePowerSizer.Show(self.LocSizer, show = self.usePowerRBLocation.GetValue())
             self.Pdir.Enable(self.LocDD.GetValue())
             self.Dist.Enable(self.LocDD.GetValue())
-            self.Dialog.Fit()
-            self.Dialog.Layout()
+            if self.EditDialog:
+                self.EditDialog.Fit()
+                self.EditDialog.Layout()
         if evt: evt.Skip()

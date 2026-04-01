@@ -180,10 +180,14 @@ The qwy Mastermind bind schemes are adapted from qwy's posts on the Homecoming f
 
 The Github Actions for automated building of binary releases were provided by [JamzTheMan](https://github.com/JamzTheMan).
 
+BindControl contains a local modified copy of the wx.lib.agw.flatmenu package from wxPython.  The file [COHMenu.py](COHMenu.py) is separately licensed under the wxWindows Library License, which is reproduced inside that file, and references the LGPL version 2.0, which is included as a [separate file](LICENSE-LGPL).  Flatmenu was originally written by [Andrea Gavana](https://github.com/infinity77).
+
+Most of the UI Icons / graphics are from Microsoft's [Fluent icons](https://github.com/microsoft/fluentui-system-icons) collection, by way of [Colton Griffith's Fluent Icons viewer](https://fluenticons.co/outlined/).
+
+
 Additional feedback and suggestions have been provided in the [Homecoming Forums thread](https://forums.homecomingservers.com/topic/38674-bindcontrol-alternative-to-citybinder) and in [Github issues](https://github.com/emersonrp/bindcontrol/issues) by:<br>
 DevoDog68, BlackSpectre, Premmy, kenlon, Lumenia, xizar, autobotpinto, jtoya85
 
-Most of the UI Icons / graphics are from Microsoft's [Fluent icons](https://github.com/microsoft/fluentui-system-icons) collection, by way of [Colton Griffith's Fluent Icons viewer](https://fluenticons.co/outlined/).
 
 CityBinder's original acknowledgements are reproduced below:
 ```
@@ -206,7 +210,7 @@ CityBinder's original acknowledgements are reproduced below:
 
 ## License
 
-BindControl is licensed under the [GPL version 3](LICENSE) or later.
+BindControl is licensed under the [GPL version 3](LICENSE) or later, except for the file [COHMenu.py](COHMenu.py), which is licensed as indicated inside that file.
 
 
 emerson@hayseed.net

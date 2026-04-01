@@ -757,9 +757,18 @@ if __name__ == "__main__":
     wx.ConfigBase.Set(config)
 
     # Set up custom font waaaaay back here
-    if platform.system() != 'Darwin':
-        rootdir = Util.Paths.GetRootDirPath()
+    rootdir = Util.Paths.GetRootDirPath()
+    if (platform.system() == 'Darwin') and (rootdir.parts[-1] == 'Frameworks'):
+        rootdir = rootdir.parent / 'Resources'
         wx.Font.AddPrivateFont(str(rootdir / 'Fonts' / 'mont_demibold.ttf'))
+        wx.Font.AddPrivateFont(str(rootdir / 'Fonts' / 'paragon city italic.ttf'))
+    elif platform.system() != 'Darwin':
+        # don't do this AT ALL on MacOS if we're running from source.
+        # There seems to be no way to do this in that case, so if we didn't
+        # get into the "Frameworks" case above (and therefore are running from
+        # a pyinstaller-bundled .app dir), just don't try the fonts.
+        wx.Font.AddPrivateFont(str(rootdir / 'Fonts' / 'mont_demibold.ttf'))
+        wx.Font.AddPrivateFont(str(rootdir / 'Fonts' / 'paragon city italic.ttf'))
 
     app.Populate(input_profile)
 

@@ -14,9 +14,12 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
     def __init__(self, parent, init : dict|None = None, extralength = 0, contents = ''):
         init = init or {}
         super().__init__(parent, style = wx.TE_READONLY)
+
         self.CurrentState = init
+        self.PBDialog     = None
         self.DialogParent = parent
         self.ExtraLength  = extralength # for complex binds to add the footprint of each step's BLF()
+
         if contents:
             self.ChangeValue(contents)
 
@@ -26,16 +29,16 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
 
     def OnClickPB(self, _) -> None:
         self.PowerBinderDialog().Show()
+        self.PowerBinderDialog().Raise()
 
     def SaveToData(self) -> dict:
         return self.CurrentState
 
-    # If we do this at __init__ time, the app doesn't launch.  Investigate why.
-    # TODO - a little experimenting makes me think this isn't the case any more
-    # but I'm not confident enough to change it yet.  Likely it's OK to do
-    # this in __init__ now.
+    # lazy-create these, to speed up startup time
     def PowerBinderDialog(self):
-        return PowerBinderDialog(self.DialogParent, self)
+        if not self.PBDialog:
+            self.PBDialog = PowerBinderDialog(self.DialogParent, self)
+        return self.PBDialog
 
     def UpdateState(self, bindString, state) -> None:
         self.CurrentState = state
@@ -114,14 +117,18 @@ class PowerBinderDialog(wx.Dialog):
         sizer.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND)
 
         # need to dig around and get the OK button since we show this dialog modelessly now.
-        okButton = self.FindWindow(self.GetAffirmativeId())
+        okButton = self.FindWindow(wx.ID_OK)
         okButton.Bind(wx.EVT_BUTTON, self.OnOKButton)
+
+        cancelButton = self.FindWindow(wx.ID_CANCEL)
+        cancelButton.Bind(wx.EVT_BUTTON, self.OnCancelButton)
 
         # Wrap everything in a vbox to add some padding
         vbox = wx.BoxSizer(wx.VERTICAL)
         vbox.Add(sizer, 0, wx.EXPAND|wx.ALL, 10)
 
         self.Bind(EVT_ETC_LAYOUT_NEEDED, self.OnBindPreviewResize)
+        self.Bind(wx.EVT_CLOSE, self.OnDialogClose)
 
         self.SetSizerAndFit(vbox)
         self.Layout()
@@ -209,17 +216,33 @@ class PowerBinderDialog(wx.Dialog):
                 wx.LogError(f"Item at index {index} in PowerBinder's RearrangeList didn't have Client Data.  This is a bug.")
         return data
 
+    def OnDialogClose(self, evt):
+        self.CloseAllEditDialogs()
+        evt.Skip()
+
+    def OnOKButton(self, evt) -> None:
+        self.BindStringDisplay.RemoveError('nomatch')
+        if self.PowerBinder:
+            self.PowerBinder.UpdateState(self.MakeBindString(), self.GetCurrentState())
+        self.CloseAllEditDialogs()
+        evt.Skip()
+
+    def OnCancelButton(self, evt) -> None:
+        self.CloseAllEditDialogs()
+        evt.Skip()
+
+    def CloseAllEditDialogs(self):
+        for index in range(self.RearrangeList.GetCount()):
+            # check whether we have an object already attached to this choice
+            if cmdObject := self.RearrangeList.GetClientData(index):
+                if cmdObject.EditDialog and cmdObject.EditDialog.IsShown():
+                    cmdObject.EditDialog.Close()
+
     def OnAddCommandButton(self, evt) -> None:
         button = evt.EventObject
         if not self.AddCommandMenu:
             self.AddCommandMenu = self.makeAddCommandMenu()
         button.PopupMenu(self.AddCommandMenu)
-
-    def OnOKButton(self, _) -> None:
-        self.BindStringDisplay.RemoveError('nomatch')
-        if self.PowerBinder:
-            self.PowerBinder.UpdateState(self.MakeBindString(), self.GetCurrentState())
-        self.Close()
 
     def OnRearrangeDelete(self, _) -> None:
         current = self.RearrangeList.GetSelection()
@@ -246,12 +269,13 @@ class PowerBinderDialog(wx.Dialog):
         except Exception:
             pass
 
-        if cmdObject:
-            if cmdObject.UseEditDialog and cmdObject.ShowEditDialog() == wx.ID_OK:
-                self.RearrangeList.SetString(index, cmdObject.MakeListEntryString())
+        if cmdObject and cmdObject.UseEditDialog:
+            cmdObject.ShowEditDialog(callback = self.OnEditDialogOK, data = index)
         else:
             wx.LogError("In OnRearrangeEdit, cmdObject was None.  This is a bug.")
 
+    def OnEditDialogOK(self, cmdObject, index):
+        self.RearrangeList.SetString(index, cmdObject.MakeListEntryString())
         self.UpdateBindStringDisplay()
 
     # OnAddCommandMenu creates a new Command and adds it to the rearrangelist
@@ -265,9 +289,9 @@ class PowerBinderDialog(wx.Dialog):
 
         # show the edit dialog if this command needs it
         if newCommand:
-            if newCommand.UseEditDialog and newCommand.ShowEditDialog() == wx.ID_CANCEL:
-                return
+            newCommand.ShowEditDialog(callback = self.OnAddDialogOK)
 
+    def OnAddDialogOK(self, newCommand, _):
         newBindIndex = self.RearrangeList.Append(newCommand.MakeListEntryString())
         self.RearrangeList.Select(newBindIndex)
         self.RearrangeList.SetClientData(newBindIndex, newCommand)
@@ -285,6 +309,28 @@ class PowerBinderDialog(wx.Dialog):
             else:
                 self.EditButton.Disable()
 
+    # There's a wee UI glitch that I think is ok:
+    # If we have multiple command edit dialogs open, and we "OK" any one
+    # of them, this updates itself to the state of ALL of them, even if
+    # we've changed something but not hit "OK" on some of the other ones.
+    #
+    # This updates the visible bind string to an incorrect value.
+    #
+    # Hitting "Cancel" (Or "OK") on any of the other ones will then
+    # re-update to the correct value, so this is not a big deal, it only
+    # applies during a state where:
+    # * there are multiple command edit dialogs open
+    # * one or more of them has been changed and NOT "OK'ed yet
+    # * we "OK" a different one
+    #
+    # ...and it only is a visual thing with the main powerbinder dialog
+    # that's "in the background" (though not modally) while the other
+    # edit dialogs are open.
+    #
+    # I only put this long comment here in case I later get bored and go
+    # looking for things to twiddle with.
+    #
+    # NOTE DO NOT FIX THIS BY MAKING THE EDIT DIALOGS MODAL.
     def UpdateBindStringDisplay(self) -> None:
         bindstring = self.MakeBindString()
         self.BindStringDisplay.SetValue(bindstring)

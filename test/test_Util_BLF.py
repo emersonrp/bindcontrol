@@ -1,5 +1,5 @@
 import wx
-from BLF import BLF
+from Util.BLF import BLF
 
 def test_blf_silent(monkeypatch):
     _ = wx.App()

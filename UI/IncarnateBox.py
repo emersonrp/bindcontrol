@@ -7,6 +7,7 @@ import wx.lib.buttons as buttons
 import re
 from Icon import GetIcon,GetIconBitmap
 from Util.Incarnate import Rarities, Aliases, SlotData
+import UI
 
 browserBoxSize = wx.Size(400, 300)
 class IncarnateBox(wx.StaticBoxSizer):
@@ -21,14 +22,14 @@ class IncarnateBox(wx.StaticBoxSizer):
         self.Add(incarnateSizer, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
 
         if self.Server == "Rebirth":
-            self.genesisInc = IncarnatePicker(staticbox, slot = "Genesis")
+            self.genesisInc = IncarnatePicker(staticbox, dialog = parent, slot = "Genesis")
 
-        self.hybridInc    = IncarnatePicker(staticbox, slot = "Hybrid")
-        self.loreInc      = IncarnatePicker(staticbox, slot = "Lore")
-        self.destinyInc   = IncarnatePicker(staticbox, slot = "Destiny")
-        self.judgementInc = IncarnatePicker(staticbox, slot = "Judgement")
-        self.interfaceInc = IncarnatePicker(staticbox, slot = "Interface")
-        self.alphaInc     = IncarnatePicker(staticbox, slot = "Alpha")
+        self.hybridInc    = IncarnatePicker(staticbox, dialog = parent, slot = "Hybrid")
+        self.loreInc      = IncarnatePicker(staticbox, dialog = parent, slot = "Lore")
+        self.destinyInc   = IncarnatePicker(staticbox, dialog = parent, slot = "Destiny")
+        self.judgementInc = IncarnatePicker(staticbox, dialog = parent, slot = "Judgement")
+        self.interfaceInc = IncarnatePicker(staticbox, dialog = parent, slot = "Interface")
+        self.alphaInc     = IncarnatePicker(staticbox, dialog = parent, slot = "Alpha")
 
         if self.Server == "Rebirth":
             incarnateSizer.Add(self.hybridInc,    wx.GBPosition(0,0), wx.GBSpan(1,2), wx.EXPAND|wx.LEFT, 12)
@@ -48,13 +49,19 @@ class IncarnateBox(wx.StaticBoxSizer):
         incarnateSizer.AddGrowableCol(3)
 
     def FillWith(self, incarnate) -> None:
+        # TODO -- this doesn't clear the state of ones that are mission from the incoming data
+        # The correct thing to have done / to do is to have everything inside the incoming data,
+        # even if that thing is blank, but would that break other asumptions?  Oy.
+        allboxes = [self.hybridInc, self.loreInc, self.destinyInc, self.judgementInc,
+                       self.interfaceInc, self.alphaInc]
+        if self.Server == 'Rebirth':
+            allboxes.append(self.genesisInc)
         if incarnate:
-            for boxname, contents in incarnate.items():
-                box = getattr(self, boxname.lower() + "Inc", None)
-                if box:
-                    box.IncName.SetLabel(contents['power'])
-                    box.IncIcon.SetBitmapLabel(GetIconBitmap(contents['iconfile']))
-                    box.IconFilename = contents['iconfile']
+            for box in allboxes:
+                contents = incarnate.get(box.Slot, {})
+                box.IncName.SetLabel(contents.get('power', ''))
+                box.IncIcon.SetBitmapLabel(GetIconBitmap(contents.get('iconfile', 'Empty')))
+                box.IconFilename = contents.get('iconfile', '')
 
     def Serialize(self) -> dict[str, str]:
         incarnatedata = {}
@@ -77,10 +84,12 @@ class IncarnateIcon(buttons.ThemedGenBitmapButton):
         self.Picker : IncarnatePicker|None = None
 
 class IncarnatePicker(wx.StaticBoxSizer):
-    def __init__(self, parent, slot = "") -> None:
+    def __init__(self, parent, dialog = None, slot = "") -> None:
         super().__init__(wx.HORIZONTAL, parent, label = slot)
         staticbox = self.GetStaticBox()
+        staticbox.Bind(wx.EVT_LEFT_DOWN, self.OnClickAnywhere)
 
+        self.Dialog = dialog
         self.Slot = slot
         self.IconFilename = ''
         self.SlotData = SlotData[slot]
@@ -90,16 +99,17 @@ class IncarnatePicker(wx.StaticBoxSizer):
         # "Themed" GenBitmapButton looks flat etc the way we want it to.
         self.IncIcon = IncarnateIcon(staticbox, GetIconBitmap('Empty'), wx.Size(39,40))
         self.IncIcon.Picker = self
-        self.IncIcon.Bind(wx.EVT_BUTTON, self.OnButtonPress)
+        self.IncIcon.Bind(wx.EVT_BUTTON, self.OnClickAnywhere)
         self.IncIcon.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
         self.IncName = wx.StaticText(staticbox, style=wx.ALIGN_RIGHT, size=wx.Size(310, -1))
+        self.IncName.SetFont(UI.COHFont(11))
 
         hsizer.Add(self.IncName, 1, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 6)
         hsizer.Add(self.IncIcon, 0, wx.ALIGN_CENTER_VERTICAL)
 
         self.Add(hsizer, 1, wx.EXPAND|wx.RIGHT|wx.BOTTOM, 12)
 
-    def OnButtonPress(self, evt) -> None:
+    def OnClickAnywhere(self, evt) -> None:
         with IncarnateBrowser(self) as dlg:
             if dlg.ShowModal() == wx.ID_OK:
                 if powerdata := dlg.GetPickedPower():
@@ -113,6 +123,10 @@ class IncarnatePicker(wx.StaticBoxSizer):
                     w,_ = self.IncName.GetSize()
                     self.IncName.Wrap(w)
                     self.Layout()
+
+                    if isinstance(self.Dialog, wx.Dialog):
+                        if self.Dialog.IsShown():
+                            self.Dialog.Raise()
 
         evt.Skip()
 
@@ -143,6 +157,7 @@ class IncarnateBrowser(wx.Dialog):
         self.TypeList = IncarnateBrowserList(self)
         self.TypeList.AppendColumn('')
         self.TypeList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onPickType)
+        self.TypeList.SetFont(UI.COHFont())
         typeImgList = wx.ImageList(32,32)
         self.TypeList.AssignImageList(typeImgList, wx.IMAGE_LIST_SMALL)
 
@@ -159,6 +174,7 @@ class IncarnateBrowser(wx.Dialog):
         self.LevelList = IncarnateBrowserList(self)
         self.LevelList.AppendColumn('')
         self.LevelList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onPickLevel)
+        self.LevelList.SetFont(UI.COHFont())
         listSizer.Add(self.LevelList, 1, wx.EXPAND)
 
         self.IncDetails = wx.html.HtmlWindow(self, size = browserBoxSize)
@@ -168,6 +184,12 @@ class IncarnateBrowser(wx.Dialog):
 
         buttonSizer = self.CreateButtonSizer(wx.OK|wx.CANCEL)
         browserSizer.Add(buttonSizer, 0, wx.EXPAND|wx.ALL, 10)
+
+        if pickedIncPower := self.Picker.IncName.GetLabel():
+            pickedCategory = pickedIncPower if pickedIncPower == "Disable Slot" else pickedIncPower.split()[0]
+
+            self.TypeList.Select(self.TypeList.FindItem(-1, pickedCategory))
+            self.LevelList.Select(self.LevelList.FindItem(-1, pickedIncPower))
 
         self.SetSizerAndFit(browserSizer)
         self.Layout()

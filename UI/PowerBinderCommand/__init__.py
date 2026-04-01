@@ -10,6 +10,8 @@ class PowerBinderCommand:
 
     def __init__(self, dialog, init : dict|None = None) -> None:
         self.Profile = GetCurrentProfile()
+        self.Dialog  = dialog
+        self.EditDialog = None
 
         if self.UseEditDialog:
             self.EditDialog = PowerBinderEditDialog(self, dialog)
@@ -32,13 +34,14 @@ class PowerBinderCommand:
         short_bindstr = "{:.40}{}".format(bindstr, "…" if len(bindstr) > 40 else "")
         return f"{self.Name} - {short_bindstr}"
 
-    def ShowEditDialog(self) -> int:
-        self.EditDialog.SetTitle(f'Editing Command "{commandRevClasses[type(self)]}"')
+    def ShowEditDialog(self, callback = None, data = None) -> None:
+        if self.EditDialog:
+            self.EditDialog.SetTitle(f'Editing Command "{commandRevClasses[type(self)]}"')
+            self.EditDialog.Callback = callback
+            self.EditDialog.Data     = data
 
-        result = self.EditDialog.ShowModal()
-        if result == wx.ID_CANCEL:
-            self.Deserialize(self.State)# refill ourselves from state
-        return result
+            self.EditDialog.Show()
+            self.EditDialog.Raise()
 
 class PowerBinderEditDialog(wx.Dialog):
     def __init__(self, pbc, dialog) -> None:
@@ -51,6 +54,8 @@ class PowerBinderEditDialog(wx.Dialog):
 
         self.Page = dialog.Page
         self.PowerBinderCommand = pbc
+        self.Callback = None
+        self.Data = None
 
         self.mainSizer.Add(
             self.CreateSeparatedButtonSizer(wx.OK|wx.CANCEL),
@@ -59,14 +64,25 @@ class PowerBinderEditDialog(wx.Dialog):
         okbutton = self.FindWindow(wx.ID_OK)
         okbutton.Bind(wx.EVT_BUTTON, self.onOKButton)
 
+        cancelbutton = self.FindWindow(wx.ID_CANCEL)
+        cancelbutton.Bind(wx.EVT_BUTTON, self.onCancelButton)
+
         outerSizer.Add(self.mainSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 3)
 
         self.SetSizerAndFit(outerSizer)
 
     def onOKButton(self, evt) -> None:
-        if self.PowerBinderCommand.OKToClose():
+        pbc = self.PowerBinderCommand
+        if pbc.OKToClose():
             evt.Skip()
-            self.PowerBinderCommand.State = self.PowerBinderCommand.Serialize()
+            pbc.State = pbc.Serialize()
+            if self.Callback:
+                self.Callback(self.PowerBinderCommand, self.Data)
+
+    def onCancelButton(self,evt) -> None:
+        evt.Skip()
+        self.PowerBinderCommand.Deserialize(self.PowerBinderCommand.State)
+        self.PowerBinderCommand.Dialog.UpdateBindStringDisplay()
 
     def AddContents(self, contents) -> None:
         self.mainSizer.Insert(0, contents, 1, wx.EXPAND|wx.ALL, 10)

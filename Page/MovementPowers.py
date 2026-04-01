@@ -2,7 +2,7 @@ import re
 import wx
 from typing import Any, Literal, Final
 
-from BLF import BLF
+from Util.BLF import BLF
 import GameData
 from Models.tObject import tObject
 from Page import Page

@@ -92,5 +92,3 @@ def wsl_available() -> int:
         )
     except subprocess.SubprocessError:
         return False
-
-

@@ -1,5 +1,5 @@
 from typing import Literal
-from BLF import BLF
+from Util.BLF import BLF
 
 class tObject(dict):
     def __init__(self, profile):

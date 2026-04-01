@@ -5,6 +5,7 @@ import wx.lib.newevent
 
 import GameData
 
+import UI
 from UI.CGControls import CGControlMixin, cgStaticText
 from Util.Profile import GetCurrentProfile
 
@@ -196,7 +197,7 @@ def ChatBubbleBitmap(text = '', textsize = 14, zigzag = False, cols = None):
     mdc.SelectObject(dummyBitmap)
 
     # make the text poop and get the extent
-    font = wx.Font(wx.FontInfo(textsize).FaceName("Montreal-DemiBold"))
+    font = UI.COHFont(textsize)
     mdc.SetFont(font)
     extent = mdc.GetTextExtent(text)
 

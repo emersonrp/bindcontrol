@@ -26,7 +26,6 @@ class ChatCmd(PowerBinderCommand):
     Menu = "Social"
 
     def BuildUI(self, dialog) -> wx.GridBagSizer:
-        self.Dialog = dialog
         chatCommandSizer = wx.GridBagSizer(5, 5)
         self.chatCommandUseColorsCB = wx.CheckBox(dialog, label = "Use Chat Bubble Colors")
         chatCommandSizer.Add(self.chatCommandUseColorsCB, (0,0), (1,3), flag=wx.ALIGN_CENTER_VERTICAL)
@@ -65,7 +64,8 @@ class ChatCmd(PowerBinderCommand):
     def OnChatEnableCB(self, evt = None):
         if evt: evt.Skip()
         self.chatColorPicker.Show(self.chatCommandUseColorsCB.IsChecked())
-        self.Dialog.Layout()
+        if self.EditDialog:
+            self.EditDialog.Layout()
 
     def MakeBindString(self) -> str:
         duration = self.chatCommandDuration.GetValue()

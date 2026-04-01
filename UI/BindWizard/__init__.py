@@ -32,7 +32,10 @@ class WizardParent:
                 helpbutton = wd.FindWindow(wx.ID_HELP)
                 helpbutton.Bind(wx.EVT_BUTTON, self.ShowHelp)
             okbutton = wd.FindWindow(wx.ID_OK)
-            okbutton.Bind(wx.EVT_BUTTON, self.BindPane.UpdateAndRefresh)
+            okbutton.Bind(wx.EVT_BUTTON, self.onOKClicked)
+
+            cancelbutton = wd.FindWindow(wx.ID_CANCEL)
+            cancelbutton.Bind(wx.EVT_BUTTON, self.onCancelClicked)
 
             mainSizer.Add(buttonsizer, 0, wx.EXPAND|wx.ALL, 10)
 
@@ -41,8 +44,17 @@ class WizardParent:
             self.WizardDialog = wd
         return self.WizardDialog
 
+    def onOKClicked(self, evt):
+        self.BindPane.UpdateAndRefresh(evt)
+        if evt: evt.Skip()
+
+    # for overriding in wizards
+    def onCancelClicked(self, evt):
+        if evt: evt.Skip()
+
     def ShowWizard(self, evt = None):
         self.Dialog().Show(True)
+        self.Dialog().Raise()
         if evt: evt.Skip()
 
     def PaneContents(self) -> wx.Panel:

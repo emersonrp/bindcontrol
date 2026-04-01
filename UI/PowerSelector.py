@@ -7,6 +7,7 @@ import GameData
 from Icon import GetIcon
 if TYPE_CHECKING:
     from Help import HelpButton
+import UI
 from UI.CGControls import cgStaticText
 
 PowerSelectorChanged, EVT_POWERSELECTOR_CHANGED = wx.lib.newevent.NewCommandEvent()
@@ -53,6 +54,8 @@ class Popup(wx.PopupTransientWindow):
         super().__init__(parent)
 
         self.PowerSelector = powerselector
+
+        self.SetFont(UI.COHFont(11))
 
         pickername = self.PowerSelector.PickerName
         powerset = parent.Ctrls[pickername].GetStringSelection()

@@ -6,7 +6,7 @@ import wx
 import wx.lib.colourselect as csel
 
 from BindFile import BindFile
-from BLF import BLF
+from Util.BLF import BLF
 from Icon import GetIcon
 
 from Models.ProfileData import ProfileData, BindsDirectoryException
@@ -159,7 +159,7 @@ class Profile(wx.Notebook):
                     ctrl.CheckConflicts()
 
             if page == self.CustomBinds:
-                for pane in page.Panes:
+                for pane in page.Panes: # pyright: ignore
                     for ctrl in pane.Ctrls.values():
                         if isinstance(ctrl, bcKeyButton) and ctrl.IsEnabled():
                             ctrl.CheckConflicts()

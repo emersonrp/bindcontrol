@@ -13,8 +13,7 @@ class EmoteCmd(PowerBinderCommand):
         self.emoteText = wx.StaticText(dialog, label = "Select Emote:")
         emoteSizer.Add(self.emoteText, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 4)
 
-        self.emoteName = wx.Button(dialog, label = "...")
-        self.emoteName.Bind(wx.EVT_BUTTON, UI.EmotePicker.OnEmotePicker)
+        self.emoteName = UI.EmotePicker.EmotePicker(dialog)
         emoteSizer.Add(self.emoteName, 1, wx.ALIGN_CENTER_VERTICAL)
 
         return emoteSizer

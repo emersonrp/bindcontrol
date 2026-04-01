@@ -1,7 +1,7 @@
 import re
 from typing import overload
 from pathlib import PurePath, Path, PureWindowsPath
-from BLF import BLF
+from Util.BLF import BLF
 
 class KeyBind:
     def __init__(self, key, name : str, page, contents : str|list[str]|None = None):

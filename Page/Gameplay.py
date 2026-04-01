@@ -2,7 +2,7 @@ import wx
 from typing import Any
 import UI
 from Page import Page
-from BLF import BLF
+from Util.BLF import BLF
 from Help import HelpButton
 
 from BindFile import KeyBind

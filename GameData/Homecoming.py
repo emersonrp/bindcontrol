@@ -2065,9 +2065,10 @@ Emotes = {
                 'Eat Pocket Dog|pocketdog', 'Eat Watermelon|watermelon', 'Eat Onigiri|onigiri', 'Drink',  'Drink Tea|teabag', 'Drink Enriche',
                 { 'Drenched Donuts' :
                     [ 'Eat Strawberry Donut|Donut1', 'Eat Chocolate Donut|Donut2', 'Eat Sprinkled Donut|Donut3',
-                     'Eat Plain Donut|Donut4', 'Eat Blue Sky Donut|Donut5', 'Eat Winter Donut|WinterDonut',
-                     'Eat Spooky Donut|SpookyDonut', 'Eat Jelly Donut|jellydonut', 'Eat Lemon Donut|lemondonut',
-                     'Drink DD Coffee|DDCoffee', 'Drink DD Coffee 2|DDCoffee2' ],
+                     'Eat Plain Donut|Donut4', 'Eat Blue Sky Donut|Donut5', 'Eat Choco Mint Donut|Donut6',
+                     'Eat Winter Donut|WinterDonut', 'Eat Spooky Donut|SpookyDonut',
+                     'Eat Jelly Donut|jellydonut', 'Eat Lemon Donut|lemondonut',
+                     'DD Coffee|DDCoffee', 'DD Coffee 2|DDCoffee2' ],
                  },
                 { 'Collectible Mugs' :
                     [ 'Arachnos Mug', 'Paragon Mug', 'Winter Mug', 'Pumpkin Mug', ],
@@ -2078,7 +2079,7 @@ Emotes = {
                     [ 'Smartphone 1', 'Smartphone 2', 'Cellphone', 'Text 1', 'Text 2', 'Camera Phone 1', 'Camera Phone 2', ],
                  },
                 'Crouch',
-                { 'Kneel' : [ 'kneel', 'kneel2', 'kneel3', 'kneel4', 'kneel5'] },
+                { 'Kneel' : [ 'Kneel', 'Kneel2', 'Kneel3', 'Kneel4', 'Kneel5'] },
                 'Use Laptop|laptop', 'Lotus', 'Read Newspaper|newspaper',
                 'AFK Sleep|sleep', 'Sit on Ground|sit', 'Wait|waiting',
             ]},

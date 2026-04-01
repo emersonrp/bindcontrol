@@ -61,8 +61,20 @@ class General(Page):
     def BuildPage(self) -> None:
 
         self.bannerPanel = wx.Panel(self)
-        bannerSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.bannerPanel.SetFont(UI.COHFont(13))
+        bannerSizer = wx.BoxSizer(wx.VERTICAL)
         self.bannerPanel.SetSizer(bannerSizer)
+
+        self.nameBox = wx.Panel(self.bannerPanel)
+        nameSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.nameBox.SetSizer(nameSizer)
+        self.NameDisplay = ST.GenStaticText(self.nameBox, style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.NameDisplay.SetFont(wx.Font(wx.FontInfo(16).Bold().FaceName('Paragon City')))
+        self.NameDisplay.SetBackgroundColour(wx.WHITE)
+        nameSizer.Add(self.NameDisplay, 1, wx.ALIGN_CENTER|wx.ALL, 6)
+        bannerSizer.Add(self.nameBox, 1, wx.EXPAND|wx.TOP, 6)
+
+        pickerSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         alignPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
         alignPicker.Clear()
@@ -71,7 +83,7 @@ class General(Page):
         self.Ctrls['Alignment'] = alignPicker
         alignPicker.SetStringSelection(self.Init['Alignment'])
         alignPicker.Bind(wx.EVT_COMBOBOX, self.OnPickAlignment)
-        bannerSizer.Add(alignPicker, 1, wx.EXPAND|wx.ALL, 5)
+        pickerSizer.Add(alignPicker, 1, wx.EXPAND|wx.ALL, 5)
 
         originPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
         originPicker.Clear()
@@ -80,15 +92,7 @@ class General(Page):
         self.Ctrls['Origin'] = originPicker
         originPicker.SetStringSelection(self.Init['Origin'])
         originPicker.Bind(wx.EVT_COMBOBOX, self.OnPickOrigin)
-        bannerSizer.Add(originPicker, 1, wx.EXPAND|wx.ALL, 5)
-
-        self.nameBox = wx.Panel(self.bannerPanel)
-        nameSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.nameBox.SetSizer(nameSizer)
-        self.NameDisplay = ST.GenStaticText(self.nameBox, style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        self.NameDisplay.SetFont(wx.Font(wx.FontInfo().Bold()))
-        nameSizer.Add(self.NameDisplay, 1, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 6)
-        bannerSizer.Add(self.nameBox, 1, wx.EXPAND|wx.ALL, 5)
+        pickerSizer.Add(originPicker, 1, wx.EXPAND|wx.ALL, 5)
 
         archetypePicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
         archetypePicker.Clear()
@@ -97,7 +101,7 @@ class General(Page):
         self.Ctrls['Archetype'] = archetypePicker
         archetypePicker.SetStringSelection(self.Init['Archetype'])
         archetypePicker.Bind(wx.EVT_COMBOBOX, self.OnPickArchetype)
-        bannerSizer.Add(archetypePicker, 1, wx.EXPAND|wx.ALL, 5)
+        pickerSizer.Add(archetypePicker, 1, wx.EXPAND|wx.ALL, 5)
 
         self.ServerPicker = wx.adv.BitmapComboBox(self.bannerPanel, style = wx.CB_READONLY, choices = [''])
         self.ServerPicker.Clear()
@@ -105,7 +109,9 @@ class General(Page):
             self.ServerPicker.Append(s, GetIconBitmap('Servers', s))
         self.Ctrls['Server'] = self.ServerPicker
         self.ServerPicker.Bind(wx.EVT_COMBOBOX, self.OnServerChange)
-        bannerSizer.Add(self.ServerPicker, 1, wx.EXPAND|wx.ALL, 5)
+        pickerSizer.Add(self.ServerPicker, 1, wx.EXPAND|wx.ALL, 5)
+
+        bannerSizer.Add(pickerSizer, 0, wx.BOTTOM|wx.LEFT|wx.RIGHT|wx.EXPAND, 6)
 
         topSizer = wx.BoxSizer(wx.HORIZONTAL)
         powersBox = ControlGroup(self, self, 'Powers', width = 3)
@@ -193,6 +199,9 @@ class General(Page):
             ctlType = 'powerselector',
             context = 'Pool4',
         )
+
+        for picker in ['Primary', 'Secondary', 'Epic', 'Pool1', 'Pool2', 'Pool3', 'Pool4', ]:
+            self.Ctrls[picker].SetFont(UI.COHFont())
 
         ## Typing Notifier
         TNPanel = wx.Panel(self)

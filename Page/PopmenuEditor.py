@@ -2,10 +2,11 @@ import wx
 from Page import Page
 from Page.MacroComposer import MacroPane
 from Help import HelpHTMLWindow
+import UI
 from UI.ControlGroup import cgTextCtrl
 from UI.PrefsDialog import PrefsDialog
 from Icon import GetIcon
-from typing import Literal
+from typing import cast, Literal
 from collections.abc import Callable
 
 from pathlib import Path
@@ -15,7 +16,7 @@ import platform
 from functools import partial
 from Util.Paths import GetValidGamePath, GetPopmenuPath
 
-import wx.lib.agw.flatmenu as FM
+import COHMenu as FM
 
 def CheckAndCreateMenuPath(config, server:str) -> Path|Literal[False]:
     gamepath = GetValidGamePath(config, server)
@@ -481,10 +482,11 @@ class Popmenu(FM.FlatMenu):
         if isinstance(self.Parent, Popmenu):
             self.Parent.SetModified(modified)
         else:
+            parent = cast("PopmenuEditor", self.Parent)
             self.Modified = modified
-            mlc = self.Parent.MenuListCtrl
+            mlc = parent.MenuListCtrl
             item = mlc.FindItem(-1, self.Title)
-            font = (self.Parent.ModifiedMenuFont if modified else self.Parent.LoadedMenuFont)
+            font = (parent.ModifiedMenuFont if modified else parent.LoadedMenuFont)
             mlc.SetItemFont(item, font)
 
     def Dismiss(self, dismissParent = False, resetOwner = False, forceDismiss = False) -> None:
@@ -724,6 +726,10 @@ class Popmenu(FM.FlatMenu):
                     Popmenu.ProgressDialog.Destroy()
                     Popmenu.ProgressDialog = None
 
+                    # re-raise the main window just in case - this is needed on Windows
+                    wx.App.Get().Main.Raise()
+
+    # return the correctly-capitalized version of the name no matter what we started with
     def NormalizeOptName(self, optname) -> str|None:
         for opt in ('DisplayName', 'Command', 'Authbit', 'Badge', 'RewardToken', 'StoreProduct', 'Icon', 'PowerReady', 'PowerOwned',):
             if optname.lower() == opt.lower():
@@ -764,6 +770,7 @@ class Popmenu_ContextMenu(FM.FlatMenu):
         self.Bind(wx.EVT_MENU, self.OnContextMoveUp, self.MoveUpMenuItem)
         self.Bind(wx.EVT_MENU, self.OnContextMoveDown, self.MoveDnMenuItem)
         InsertMenu.Bind(wx.EVT_MENU, self.OnContextInsert)
+
 
     def OnContextEdit(self, _) -> None:
         if cmi := self.CurrentMenuItem:
@@ -851,14 +858,14 @@ class Popmenu_SubContextMenu(Popmenu_ContextMenu):
 class PEMenuItem(FM.FlatMenuItem):
     EditorDialog: Callable
     TitleFont = None
-    def __init__(self, parent, data, label = '') -> None:
-        super().__init__(parent, wx.ID_ANY, label = label)
+    def __init__(self, parent, data, label = '', kind = wx.ITEM_NORMAL) -> None:
+        super().__init__(parent, wx.ID_ANY, label = label, kind = kind)
 
         self.SetContextMenu(parent.ContextMenu)
         self.Parent = parent
         self.Data   = data
         self.Editor = None
-        PEMenuItem.TitleFont = PEMenuItem.TitleFont or wx.Font(wx.FontInfo().Bold())
+        PEMenuItem.TitleFont = PEMenuItem.TitleFont or UI.COHFont(13)
 
     def ConfigureContextMenu(self) -> None:
         if cm := self.GetContextMenu():
@@ -917,7 +924,7 @@ class PETitle(PEMenuItem):
     def __init__(self, parent, data) -> None:
         super().__init__(parent, data, label = data)
         self.SetFont(PEMenuItem.TitleFont)
-        self.SetTextColour((128,128,128))
+        self.SetTextColour(wx.WHITE)
 
     def EditorDialog(self) -> wx.TextEntryDialog:
         return wx.TextEntryDialog(self.Parent, message = "Title:",
@@ -931,7 +938,7 @@ class PETitle(PEMenuItem):
 
 class PEDivider(PEMenuItem):
     def __init__(self, parent, data) -> None:
-        super().__init__(parent, data, label = "--------------------")
+        super().__init__(parent, data, kind = wx.ITEM_SEPARATOR)
 
 class PEOption(PEMenuItem):
     def __init__(self, parent, data : dict[str, str]|None = None) -> None:
@@ -967,7 +974,6 @@ class PEOption(PEMenuItem):
 
         self.Data = {newlabel : newvalue}
         self.SetText(newlabel)
-        self.Parent.UpdateItem(self)
 
 class PELockedOption(PEMenuItem):
     def __init__(self, parent, data) -> None:

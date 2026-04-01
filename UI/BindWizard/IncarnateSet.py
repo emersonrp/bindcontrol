@@ -37,6 +37,14 @@ class IncarnateSet(WizardParent):
             'BindKey' : self.BindKeyCtrl.Key,
         }
 
+    def onCancelClicked(self, evt):
+        if wizdata := self.State.get('WizData'):
+            if incdata := wizdata.get('IncData'):
+                if self.IncarnateBox:
+                    self.IncarnateBox.FillWith(incdata)
+        super().onCancelClicked(evt)
+        evt.Skip()
+
     def PaneContents(self):
         bindpane = self.BindPane
         panel = wx.Panel(bindpane.GetPane())

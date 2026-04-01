@@ -41,11 +41,13 @@ for package_file in sorted(path.glob('*.py')):
     extra_hidden_imports.append("UI.BindWizard." + package_file.stem)
 
 
+strip_upx = True
+
 if sys.platform == 'darwin':
     extra_pyinstaller_files.append(('tools/bcicon/BindControl.icns', '.'))
     version_info = None
 elif sys.platform == 'windows':
-    ...
+    strip_upx = False
 else: # linux
     ...
 
@@ -80,8 +82,8 @@ coll = COLLECT(
     exe,
     a.binaries,
     a.datas,
-    strip=True,
-    upx=True,
+    strip=strip_upx,
+    upx=strip_upx,
     upx_exclude=[],
     name='BindControl',
 )

@@ -205,6 +205,12 @@ class BaseEditMode(WizardParent):
             self.EnterEditMode.AddError('undef', 'The keybind has not been selected')
             return False
 
+    def FillDialogFromState(self):
+        wizdata = self.State.get('WizData', {})
+        for ctrlname in wizdata:
+            if ctrl := self.BindPane.GetCtrl(ctrlname):
+                ctrl.SetValue(wizdata[ctrlname])
+
     def UpdateStateFromDialog(self):
         newstate = { 'EnterEditMode' : self.BindPane.GetCtrl('EnterEditMode').GetValue() }
         for ctrlname in self.AllCtrls:

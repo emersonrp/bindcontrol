@@ -47,7 +47,7 @@ class WizardParent:
     def BuildUI(self, dialog, init) -> wx.Sizer:
         ...
 
-    def UpdateState(self):
+    def UpdateStateFromDialog(self):
         ...
 
 class WizardDialog(wx.Dialog):

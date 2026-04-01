@@ -145,7 +145,7 @@ class EscapeConfigurator(WizardParent):
 
         return panel
 
-    def UpdateState(self):
+    def UpdateStateFromDialog(self):
         self.State = { 'WizData' : {
             'EscUnselect'    : self.EscUnselect   .GetValue(), # pyright: ignore
             'EscUnqueue'     : self.EscUnqueue    .GetValue(), # pyright: ignore

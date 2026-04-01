@@ -73,7 +73,7 @@ class WizardBindPane(CustomBindPaneParent):
 
     def UpdateAndRefresh(self, evt):
         if evt: evt.Skip()
-        self.Wizard.UpdateState()
+        self.Wizard.UpdateStateFromDialog()
         self.Profile.UpdateData('CustomBinds', self.Serialize())
         self.BuildBindUI(None)
 

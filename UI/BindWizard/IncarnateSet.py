@@ -98,7 +98,7 @@ class IncarnateSet(WizardParent):
 
         return panel
 
-    def UpdateState(self):
+    def UpdateStateFromDialog(self):
         if self.IncarnateBox:
             self.State = { 'WizData' : { 'IncData' : self.IncarnateBox.Serialize() } }
 

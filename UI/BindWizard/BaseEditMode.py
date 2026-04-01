@@ -193,7 +193,7 @@ class BaseEditMode(WizardParent):
     def OnBindKeyChanged(self, evt = None):
         if evt: evt.Skip()
         self.CheckIfWellFormed()
-        self.UpdateState()
+        self.UpdateStateFromDialog()
 
     def CheckIfWellFormed(self, evt = None):
         if evt: evt.Skip()
@@ -204,7 +204,7 @@ class BaseEditMode(WizardParent):
             self.EnterEditMode.AddError('undef', 'The keybind has not been selected')
             return False
 
-    def UpdateState(self):
+    def UpdateStateFromDialog(self):
         newstate = { 'EnterEditMode' : self.BindPane.GetCtrl('EnterEditMode').GetValue() }
         for ctrlname in self.AllCtrls:
             newstate[ctrlname] = self.BindPane.GetCtrl(ctrlname).GetValue()

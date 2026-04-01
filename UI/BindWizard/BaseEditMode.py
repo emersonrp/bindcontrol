@@ -62,11 +62,12 @@ class BaseEditMode(WizardParent):
         for k,v in self.KeyInit.items():
             self.Profile.CustomBinds.Init[self.BindPane.MakeCtrlName(k)] = v
 
-        self.Dialog() # do this early to run Profile.CheckAllConflicts
+        # do this early to run Profile.CheckAllConflicts, since we have
+        # actual keybuttons inside the dialog innards
+        self.Dialog()
 
-    def BuildUI(self, dialog, init : dict|None = None) -> wx.Sizer:
-        wizdata = {}
-        if init: wizdata = init.get('WizData', {})
+    def BuildUI(self, dialog, init : dict = {}) -> wx.Sizer:
+        wizdata = init.get('WizData', {})
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 

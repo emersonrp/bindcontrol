@@ -1,6 +1,13 @@
 import wx
 from Help import ShowHelpWindow
 
+# the thinking behind making this not a wx object itself is so that
+# we don't have to build a whole dialog etc to keep state for every
+# one of these we load up from a Profile at load time.  We keep State
+# here, and lazy-create the dialog.
+#
+# This makes for some confusing bits going through the code.  This
+# needs a little love still but that's why it's done this way.
 class WizardParent:
     WizardName  = ''
     WizToolTip  = ''
@@ -13,7 +20,6 @@ class WizardParent:
         self.Profile = parent.Profile
         self.State = init
         self.WizardDialog = None
-        wx.CallAfter(self.Dialog)
 
     def Dialog(self):
         if not self.WizardDialog:
@@ -32,11 +38,17 @@ class WizardParent:
     def onCancelClicked(self, evt):
         if evt: evt.Skip()
 
+    # this might want to be called ShowWizardDialog hmm.
     def ShowWizard(self, evt = None):
         self.Dialog().Show(True)
         self.Dialog().Raise()
         if evt: evt.Skip()
 
+    # called whenever the dialog is shown from a not-shown state
+    def FillDialogFromState(self):
+        ...
+
+    # the juicy innards of the dialog
     def PaneContents(self) -> wx.Panel:
         ...
 
@@ -81,3 +93,8 @@ class WizardDialog(wx.Dialog):
 
         self.SetSizerAndFit(mainSizer)
         self.Layout()
+
+    def Show(self, show = True):
+        if not self.IsShown():
+            self.Wizard.FillDialogFromState()
+        return super().Show(show)

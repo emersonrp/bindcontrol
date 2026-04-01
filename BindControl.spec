@@ -46,7 +46,7 @@ strip_upx = True
 if sys.platform == 'darwin':
     extra_pyinstaller_files.append(('tools/bcicon/BindControl.icns', '.'))
     version_info = None
-elif sys.platform == 'windows':
+elif sys.platform == 'win32':
     strip_upx = False
 else: # linux
     ...

@@ -2,6 +2,8 @@ import re
 import wx
 from typing import Any, Literal, Final
 
+import wx.lib.agw.flatmenu as FM
+
 from Util.BLF import BLF
 import GameData
 from Models.tObject import tObject
@@ -305,9 +307,7 @@ class MovementPowers(Page):
         self.TempTravelPowerLabel = wx.StaticText(self.tempSizer.GetStaticBox(), label = "Temp Travel Power:", style = wx.ALIGN_RIGHT)
         self.TempTravelPowerLabel.SetToolTip('Select the temporary travel power to toggle using the keybind')
         self.tempSizer.InnerSizer.Add(self.TempTravelPowerLabel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT)
-        temptravelPowerMenu = self.BuildTempTravelPowerMenu()
-        temptravelPowerMenu.Bind(wx.EVT_MENU, self.OnTempTravelPowerPicked)
-        self.TempTravelPowerPicker = PowerPicker(self.tempSizer.GetStaticBox(), menu = temptravelPowerMenu, size = wx.Size(230, 40))
+        self.TempTravelPowerPicker = PowerPicker(self.tempSizer.GetStaticBox(), menuclass = TempTravelPowerMenu, size = wx.Size(230, 40))
         self.TempTravelPowerPicker.SetToolTip('Select the temporary travel power to toggle using the keybind')
         self.TempTravelPowerPicker.DefaultToolTip = 'Select the temporary travel power to toggle using the keybind'
         self.Ctrls['TempTravelPowerPicker'] = self.TempTravelPowerPicker
@@ -784,28 +784,6 @@ class MovementPowers(Page):
         self.TempTravelPowerPicker.SetBitmap(menuitem.GetBitmapBundle())
         self.TempTravelPowerPicker.IconFilename = menuitem.IconFilename
         evt.Skip()
-
-    def BuildTempTravelPowerMenu(self) -> wx.Menu:
-
-        class TempMenuItem(wx.MenuItem):
-            def __init__(self, wxid, text):
-                super().__init__(id = wxid, text = text)
-                self.IconFilename: str = ''
-
-        menu = wx.Menu()
-        for item in GameData.TempTravelPowers:
-            if re.search(r'\|', item):
-                item, iconname = re.split(r'\|', item)
-            else:
-                iconname = item
-            menuitem = TempMenuItem(wx.ID_ANY, item)
-
-            if icon := GetIcon('Powers', f'Temp_{iconname}'):
-                menuitem.SetBitmap(icon)
-                menuitem.IconFilename = icon.Filename
-
-            menu.Append(menuitem)
-        return menu
 
     def SynchronizeUI(self, evt = None) -> None:
         self.OnDetailsCameraChanged()
@@ -2444,3 +2422,33 @@ UI.Labels.update( {
     'TTPTPGFly'      : 'Group Fly when Team Teleporting',
     'TPHideWindows'  : 'Hide Windows when Holding Target Marker Key',
 })
+
+class TempTravelPowerMenu(FM.FlatMenu):
+    def __init__(self):
+        super().__init__()
+        for item in GameData.TempTravelPowers:
+            if re.search(r'\|', item):
+                item, iconname = re.split(r'\|', item)
+            else:
+                iconname = item
+            menuitem = TempMenuItem(self, wx.ID_ANY, item)
+
+            if icon := GetIcon('Powers', f'Temp_{iconname}'):
+                menuitem.SetNormalBitmap(icon.GetBitmap(wx.Size(32,32)))
+                menuitem.IconFilename = icon.Filename
+
+            self.AppendItem(menuitem)
+
+    ### Ugly hack for MacOS until wx 4.2.6 ships.
+    def SetSize(self, size):
+        size.SetHeight(size.GetHeight() + 20)
+        super().SetSize(size)
+
+    def Destroy(self):
+        breakpoint()
+
+class TempMenuItem(FM.FlatMenuItem):
+    def __init__(self, parent, wxid, text):
+        super().__init__(parent, id = wxid, label = text)
+        self.SetFont(UI.COHFont())
+        self.IconFilename: str = ''

@@ -13,7 +13,7 @@ import wx.lib.newevent
 PowerChanged, EVT_POWERPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 class PowerPicker(ErrorControlMixin, wx.Button):
-    def __init__(self, parent, menu = None, size = wx.DefaultSize) -> None:
+    def __init__(self, parent, menuclass = None, size = wx.DefaultSize) -> None:
         super().__init__(parent, size = size)
 
         if size == wx.DefaultSize:
@@ -21,8 +21,9 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         self.Bind(wx.EVT_BUTTON,     self.OnPowerPicker)
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightClick)
         self.IconFilename = ''
-        self.Picker = menu
-        self.SetFont(UI.COHFont(13))
+        self.PickerClass = menuclass # for JIT instantiation of custom menu.  Yes this is necessary
+        self.Picker = None # stash the actual menu here once we on-demand create it, in OnPowerPicker
+        self.SetFont(UI.COHFont())
         if self.Picker:  # we've passed in our own menu, bind its behavior
             self.Picker.Bind(wx.EVT_MENU, self.OnMenuSelected)
 
@@ -34,12 +35,13 @@ class PowerPicker(ErrorControlMixin, wx.Button):
 
     def OnPowerPicker(self, _) -> None:
         # if we didn't pass in a menu, make the normal full-on one
-        if self.Picker:
-            picker = self.Picker
+        if self.PickerClass:
+            picker = self.PickerClass()
         else:
             picker = PowerPickerMenu()
-            picker.Bind(wx.EVT_MENU, self.OnMenuSelected)
             picker.BuildMenu()
+        picker.Bind(wx.EVT_MENU, self.OnMenuSelected)
+        self.Picker = picker
         picker.Popup(wx.GetMousePosition())
 
     def OnRightClick(self, _) -> None:

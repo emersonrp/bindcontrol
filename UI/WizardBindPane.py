@@ -37,7 +37,7 @@ class WizardBindPane(CustomBindPaneParent):
 
     def Serialize(self) -> dict[str, Any]:
         data = self.CreateSerialization({
-            'WizClass' : rev_wiz[self.WizClass],
+            'WizClass' : self.WizClass.WizardName,
             'WizData'  : self.Wizard.Serialize(),
         })
         return data
@@ -122,12 +122,10 @@ def LoadModules():
 
             if modName := getattr(modclass, 'WizardName', ''):
                 wizards[modName] = modclass
-                rev_wiz[modclass] = modName
             else:
                 wx.LogError(f"Class {modclass} didn't define 'Name' - this is a bug")
         else:
             wx.LogError(f"Module {mod} didn't define a class of the same name - this is a bug!")
 
 wizards = {}
-rev_wiz = {}
 LoadModules()

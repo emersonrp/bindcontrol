@@ -38,7 +38,7 @@ class EmotePickerMenu(FM.FlatMenu):
         for category in data:
             # 'Converse' : []
             for catname, cat in category.items():
-                submenu = FM.FlatMenu()
+                submenu = FM.FlatMenu(self.UpdateTarget)
                 submenu.Bind(FM.EVT_FLAT_MENU_SELECTED, self.OnMenuSelected)
                 self.AppendSubMenu(submenu, catname)
 
@@ -50,7 +50,7 @@ class EmotePickerMenu(FM.FlatMenu):
                     elif isinstance(subcat, dict):
                         # { submenu : [ list, of, emotes ]}
                         for subitem, deepdata in subcat.items():
-                            subsubmenu = FM.FlatMenu()
+                            subsubmenu = FM.FlatMenu(self.UpdateTarget)
                             subsubmenu.Bind(FM.EVT_FLAT_MENU_SELECTED, self.OnMenuSelected)
                             submenu.AppendSubMenu(subsubmenu, subitem)
 
@@ -61,7 +61,7 @@ class EmotePickerMenu(FM.FlatMenu):
                                 elif isinstance(leafitem, dict):
                                     # Thanks, "kneel" subsubsubsubmenu
                                     for subsubitem, deeperdata in leafitem.items():
-                                        subsubsubmenu = FM.FlatMenu()
+                                        subsubsubmenu = FM.FlatMenu(self.UpdateTarget)
                                         subsubsubmenu.Bind(FM.EVT_FLAT_MENU_SELECTED, self.OnMenuSelected)
                                         subsubmenu.AppendSubMenu(subsubsubmenu, subsubitem)
 

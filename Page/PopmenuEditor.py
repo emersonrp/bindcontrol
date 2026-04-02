@@ -8,6 +8,7 @@ from UI.PrefsDialog import PrefsDialog
 from Icon import GetIcon
 from typing import cast, Literal
 from collections.abc import Callable
+from pubsub import pub
 
 from pathlib import Path
 from datetime import datetime, UTC
@@ -153,7 +154,13 @@ class PopmenuEditor(Page):
 
         self.InitialLoadComplete = False
 
+        pub.subscribe(self.OnGameDirChanged, 'prefschanged.gamedir')
+
         self.Layout()
+
+    def OnGameDirChanged(self):
+        self.LoadMenusIfNeeded(force = True)
+        self.SynchronizeUI()
 
     def LoadMenusIfNeeded(self, force = False):
         if not self.InitialLoadComplete or force:
@@ -294,21 +301,22 @@ class PopmenuEditor(Page):
         # DO NOT PUT THIS IN SynchronizeUI;  it will blow away
         # unsaved changes with no recourse.
         menupath = GetPopmenuPath(self.Config, self.Server)
-        if menupath and menupath.is_dir():
+        if self.MenuListCtrl:
             self.MenuIDList = {}
             self.MenuListCtrl.DeleteAllItems()
-            for menufile in sorted(menupath.glob('*.mnu', case_sensitive = False)):
-                with menufile.open() as f:
-                    menuname = ''
-                    while not menuname:
-                        line = f.readline().strip()
-                        if match := re.match(r'Menu\s+(.*)', line):
-                            menuname = match.group(1).strip('"')
+            if menupath and menupath.is_dir():
+                for menufile in sorted(menupath.glob('*.mnu', case_sensitive = False)):
+                    with menufile.open() as f:
+                        menuname = ''
+                        while not menuname:
+                            line = f.readline().strip()
+                            if match := re.match(r'Menu\s+(.*)', line):
+                                menuname = match.group(1).strip('"')
 
-                    item = self.doInsertMenuSorted(menuname, file = str(menufile))
-                    self.MenuListCtrl.SetItemFont(item, self.UnloadedMenuFont)
+                        item = self.doInsertMenuSorted(menuname, file = str(menufile))
+                        self.MenuListCtrl.SetItemFont(item, self.UnloadedMenuFont)
 
-                    f.close()
+                        f.close()
         self.MenuListCtrl.Refresh()
 
     def GetNewMenuName(self, dupe_menu_name = None) -> int|str:

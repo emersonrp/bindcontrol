@@ -1,6 +1,7 @@
 import re
 from functools import partial
 from pathlib import PurePath, Path
+from pubsub import pub
 from typing import TYPE_CHECKING
 import wx
 import wx.lib.colourselect as csel
@@ -95,6 +96,8 @@ class Profile(wx.Notebook):
 
         if self.EditingDefault: self.ColorThingsForEditingDefault()
         self.CheckModified()
+
+        pub.subscribe(self.CheckAllConflicts, 'prefschanged.resetkey')
 
     def CreatePage(self, page):
         page.BuildPage()

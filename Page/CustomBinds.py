@@ -3,6 +3,7 @@ import re
 from functools import partial
 from typing import Any
 from pathlib import Path
+from pubsub import pub
 import json
 
 from Icon import GetIcon
@@ -28,6 +29,8 @@ class CustomBinds(Page):
         self.TabTitle : str                        = "Custom Binds"
         self.Panes    : list[CustomBindPaneParent] = []
         self.Init     : dict[str, Any]             = {}
+
+        pub.subscribe(self.OnVerboseBindsChanged, 'prefschanged.verbosebinds')
 
     def BuildPage(self) -> None:
 
@@ -73,6 +76,10 @@ class CustomBinds(Page):
         self.ShowScrollbars(wx.SHOW_SB_NEVER, wx.SHOW_SB_NEVER)
 
         self.Layout()
+
+    def OnVerboseBindsChanged(self):
+        for pane in self.Panes:
+            pane.UpdateLabel()
 
     def OnNewCustomBindButton(self, evt) -> None:
         popupmenu = wx.Menu()

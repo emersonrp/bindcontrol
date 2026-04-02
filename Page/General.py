@@ -383,6 +383,7 @@ class General(Page):
 
     def OnPickArchetype(self, evt = None) -> None:
         arch = self.GetState('Archetype')
+        prof = self.Profile
         c = self.Ctrls
 
         if not arch:
@@ -405,7 +406,7 @@ class General(Page):
         for s in Secondaries : c['Secondary'].Append(s)
         for e in Epix        : c['Epic'].Append(e)
 
-        gendata = self.Profile.Data['General']
+        gendata = prof.Data['General']
         for x in ['Primary', 'Secondary', 'Epic']:
             self.SetState(x, gendata[x])
 
@@ -427,13 +428,15 @@ class General(Page):
             wx.CallAfter(self.Profile.MovementPowers.OnTeleportChanged)
 
         if arch == "Mastermind":
-            if self.Profile.FindPage(self.Profile.Mastermind) == wx.NOT_FOUND:
-                # hard-coded "5" here is ugly
-                self.Profile.InsertPage(5, self.Profile.Mastermind, self.Profile.Mastermind.TabTitle)
+            if prof.FindPage(prof.Mastermind) == wx.NOT_FOUND:
+                ip_idx = prof.FindPage(prof.InspirationPopper)
+                # if ip is missing, something is wrong, hard-code it to '4' just to put it somewhere
+                if ip_idx == wx.NOT_FOUND: ip_idx = 4
+                prof.InsertPage(ip_idx+1, prof.Mastermind, prof.Mastermind.TabTitle)
         else:
-            mmidx = self.Profile.FindPage(self.Profile.Mastermind)
+            mmidx = prof.FindPage(prof.Mastermind)
             if mmidx != wx.NOT_FOUND:
-                self.Profile.RemovePage(mmidx)
+                prof.RemovePage(mmidx)
 
         if evt: evt.Skip()
 

@@ -5,11 +5,12 @@ from typing import Any, TYPE_CHECKING
 import wx
 import wx.lib.stattext as ST
 from pathlib import Path, PureWindowsPath
+from pubsub import pub
+
 from Help import HelpButton
 from UI.KeySelectDialog import bcKeyButton
 from UI.ControlGroup import cgDirPickerCtrl, cgTextCtrl
 from bcController import bcController
-from Util.Profile import GetCurrentProfile
 
 # This ST.GenStaticText is so we can intercept clicks on it, but
 # the background color is wrong on Windows in a way I can't work out,
@@ -421,6 +422,7 @@ class PrefsDialog(wx.Dialog):
         evt.Skip()
 
     def ShowAndUpdatePrefs(self) -> None:
+        self.ResetKey.CheckConflicts() # Hmm
         if self.ShowModal() == wx.ID_OK:
             config = wx.ConfigBase.Get()
 
@@ -470,23 +472,13 @@ class PrefsDialog(wx.Dialog):
 
             config.Flush()
 
-            # This AAAAALMOST has me ready to add pubsub as a dependence.  Almost.
-            if profile := GetCurrentProfile():
-                if changedGameDir:
-                    # repopulate the Popmenu Editor, if we fiddled with GameDir
-                    profile.PopmenuEditor.LoadMenusIfNeeded(force = True)
-                    profile.PopmenuEditor.SynchronizeUI()
-
-                    # Update PetMouse's display re: GameDir
-                    profile.Mastermind.qwyPetMousePage.CheckPopmenuPath()
-
-                if changedResetKey:
-                    # highlight buttons as needed if we fiddled with ResetKey
-                    profile.CheckAllConflicts()
-
-                if changedVerboseCustomBinds:
-                    for pane in profile.CustomBinds.Panes:
-                        pane.UpdateLabel()
+            pub.sendMessage('prefschanged')
+            if changedGameDir:
+                pub.sendMessage('prefschanged.gamedir')
+            if changedResetKey:
+                pub.sendMessage('prefschanged.resetkey')
+            if changedVerboseCustomBinds:
+                pub.sendMessage('prefschanged.verbosebinds')
 
 class controllerModPicker(wx.Choice):
     def __init__(self, *args, **kwargs):

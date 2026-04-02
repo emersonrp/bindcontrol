@@ -65,6 +65,7 @@ jobs:
           pip install -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04 wxPython --user
           pip install pyinstaller==6.10.0 -r requirements.txt
           pip install pillow
+          pip install pypubsub
 
       - name: Create Executable
         run: |

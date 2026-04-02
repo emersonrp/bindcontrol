@@ -38,7 +38,7 @@ class PowerPicker(ErrorControlMixin, wx.Button):
         if self.PickerClass:
             picker = self.PickerClass()
         else:
-            picker = PowerPickerMenu()
+            picker = PowerPickerMenu(self)
             picker.BuildMenu()
         picker.Bind(wx.EVT_MENU, self.OnMenuSelected)
         self.Picker = picker
@@ -95,6 +95,11 @@ class PowerPicker(ErrorControlMixin, wx.Button):
 
 class PowerPickerMenu(FM.FlatMenu):
 
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.Bind(FM.EVT_FLAT_MENU_SELECTED, parent.OnMenuSelected)
+
+
     def SetSize(self, size):
         # add 20 to our height iff we are MacOS pre-fix
         if not isinstance(self, wx.PopupWindow):
@@ -107,7 +112,7 @@ class PowerPickerMenu(FM.FlatMenu):
         # primary / secondary / epic powers
         archdata = GameData.Archetypes[gen.GetState('Archetype')]
         for category in ['Primary', 'Secondary', 'Epic']:
-            submenu = PowerPickerMenu(self)
+            submenu = PowerPickerMenu(self.Parent)
             powerset = gen.GetState(category)
             if not powerset: continue
             self.AppendSubMenu(submenu, f"{category}: {powerset}")
@@ -116,7 +121,7 @@ class PowerPickerMenu(FM.FlatMenu):
             for power in powers:
                 if isinstance(power, dict):  # for sub sub menus like Corruptor -> Dual Pistols -> Swap Ammo
                     [(subsubname, items)] = power.items()
-                    subsubmenu = PowerPickerMenu(submenu)
+                    subsubmenu = PowerPickerMenu(self.Parent)
                     for power in items:
                         if not self.ShowPower(category, power): continue
                         icon = GetIcon('Powers', f'{powerset}_{power}')
@@ -139,7 +144,7 @@ class PowerPickerMenu(FM.FlatMenu):
         for poolpicker in ["Pool1", "Pool2", "Pool3", "Pool4"]:
             poolname = gen.GetState(poolpicker)
             if poolname:
-                submenu = PowerPickerMenu(self)
+                submenu = PowerPickerMenu(self.Parent)
                 self.AppendSubMenu(submenu, "Pool: " + poolname)
 
                 powers = GameData.PoolPowers[poolname]
@@ -150,13 +155,13 @@ class PowerPickerMenu(FM.FlatMenu):
                     submenu.AppendItem(menuitem)
 
         # Incarnate Powers
-        menu = PowerPickerMenu(self)
+        menu = PowerPickerMenu(self.Parent)
         for slot, slotdata in GameData.IncarnatePowers.items():
             if 'Powers' in slotdata:
-                submenu = PowerPickerMenu(menu)
+                submenu = PowerPickerMenu(self.Parent)
                 menu.AppendSubMenu(submenu, slot)
                 for inc_type in slotdata['Types']:
-                    subsubmenu = PowerPickerMenu(submenu)
+                    subsubmenu = PowerPickerMenu(self.Parent)
                     submenu.AppendSubMenu(subsubmenu, inc_type)
 
                     for index, power in enumerate(slotdata['Powers']):
@@ -184,14 +189,14 @@ class PowerPickerMenu(FM.FlatMenu):
 
     def MakeRecursiveMenu(self, menustruct) -> FM.FlatMenu:
 
-        menu = PowerPickerMenu()
+        menu = PowerPickerMenu(self.Parent)
 
         for name, data in menustruct.items():
             if isinstance(data, dict):
                 submenu = self.MakeRecursiveMenu(data)
                 menu.AppendSubMenu(submenu, name)
             elif isinstance(data, list):
-                submenu = PowerPickerMenu()
+                submenu = PowerPickerMenu(self.Parent)
                 for item in data:
                     item, iconpathparts = SplitNameAndIcon(item)
                     icon = GetIcon('Powers', f'Misc_{iconpathparts[0]}')

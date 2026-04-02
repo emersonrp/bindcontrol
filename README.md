@@ -6,14 +6,6 @@
 
 BindControl is a helper app for creating and maintaining keybinds, macros, and popmenus for City of Heroes.
 
-It began as a direct port of Konoko and Monorail's [CityBinder 0.76](http://sourceforge.net/projects/citybinder/), using Python and the WxWidgets UI toolkit.  It has since come into its own, adding many original features, UI improvements, and quality-of-life upgrades.
-
-During City of Heroes' original run, CityBinder was the go-to app for keybinds.  It's written in lua, using the IUP toolkit, and the required versions of those can be difficult to set up for development on modern OSes.  I wanted to add features and clean up the UI, so in a stunningly unwise act of hubris, I instead started work on BindControl.
-
-I worked on it on-and-off for the remainder of the original run of City of Heroes, then shelved it, ostensibly forever, when NCSoft shut down the game.  Then, of course, everything changed, the game lives again, and BindControl has a reason to exist.
-
-BindControl is and has been developed on Homecoming, and best supports that.  Recently, beta support for Rebirth has been added, supporting the Guardian archetype, new powersets, the Genesis Incarnate slot, and more.  This support is solid but is a work in progress -- Rebirth players, check it out and file issues as you find bugs!
-
 ![BindControl_ Tinker 3_17_2026 11_47_23 PM](https://github.com/user-attachments/assets/cba3d81c-4939-4004-91ba-4a4411deb947)
 
 ## Features
@@ -39,7 +31,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
 * Movement / Speed-on-Demand
     * Speed-on-Demand keybinds based on CityBinder and the original Gnarly's SoD keybinds, with many clarifications and improvements
     * Updates to Speed-on-Demand to accommodate the various [travel power changes introduced by Homecoming](https://homecoming.wiki/wiki/Issue_27_Page_2#Travel_Power_Updates)
-    * Simple Power Toggle keybinds that can activate individual travel powers or toggle between related powers like Fly and Hover
+    * Simple Power Toggles that can activate travel powers or toggle between related powers like Fly and Hover
     * Support for all formal travel powers:  Fly, Mystic Flight, Group Fly, Super Jump, Mighty Leap, Super Speed, Speed of Sound, Teleport, and Team Teleport
     * Secondary / server tray travel powers like Super Jump's "Double Jump" and Mystic Flight's "Translocation" integrated
     * With Homecoming profiles, <code>powexec_location cursor</code> used for Teleport binds, with "teleport immediately" and "teleport on key release" options available
@@ -51,7 +43,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
     * By-type; dual and team inspirations supported
     * Option to use or skip "super" inspirations
     * Largest-first or smallest-first
-    * Optional /say feedback with per-inspiration-type custom colors
+    * Optional "/tell $name" feedback with per-inspiration-type custom colors
 
 * Mastermind / Pet Binds
     * Features to help name pets uniquely, required for most of BindControl's Mastermind bind styles
@@ -88,19 +80,17 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
 
 * Popmenu Editor (beta)
     * Create, install, edit, and delete popmenus in the game folder
-        + Requires telling BindControl where the game is installed
-        + BindControl can create the necessary folders in the game install folder for popmenus
-    * Easy GUI editing and testing of popmenus
+    * Easy GUI editing and testing of installed popmenus
     * Generate macros to make popmenu buttons in-game
 
 ## TODO
 
-* There are still some Homecoming-specific notions hard-coded into BindControl.  I'm working on finding and fixing these, but any bug reports and other feedback from Rebirth players would be very welcomed.
-* There are a growing number of places where bits of BindControl want to trigger changes in other far-flung bits, for instance, reworking some of the UI in response to changes in the Preferences Dialog.  This is currently done haphazardly and in an ugly tightly-coupled fashion.  The time will come when I buckle down and rewrite most of these cases using [pubsub](https://pypi.org/project/Pypubsub/) which I've mostly been avoiding just to keep from adding extra dependencies.
+* There are still some Homecoming-specific notions hard-coded into BindControl.  I'm working on fixing these, but bug reports and other feedback from Rebirth players is very welcomed.
+* There are a number of places where bits of BindControl want to trigger changes in other far-flung bits, for instance, reworking some of the UI in response to changes in the Preferences Dialog.  This is currently done haphazardly and in an ugly tightly-coupled fashion.  The time will come when I buckle down and rewrite most of these cases using [pubsub](https://pypi.org/project/Pypubsub/) which I've mostly been avoiding just to keep from adding extra dependencies.
 * I hope to make every reasonable slash command available, typically via PowerBinder.  What counts as a "reasonable slash command" is yet to be determined.  Check [the SlashCommands.md file](SlashCommands.md) for the current status.
 * I have ideas for a few more BindWizards.  Rolling those up from scratch is always a process, so they'll arrive whenever they do.
 * Access to MacOS for testing is via a VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment.
-* Similarly, notarizing MacOS software involves having a $99/year Apple Developer Account, which is not something I find remotely interesting just for making life a few clicks easier for BindControl's MacOS users, of which I suspect there are approximately zero....
+* Similarly, notarizing MacOS software requires having a $99/year Apple Developer Account, which is not something I find remotely interesting just for making life a few clicks easier for BindControl's MacOS users, of which I suspect there are approximately zero....
 * The popmenu editor, on Windows, can't load pathologically large popmenus (tens of thousands of entries).  This is a hard limit on the wx toolkit imposed by Windows itself, and can't be worked around in any way I can see.  As there exist at least two menus this large "in the wild," further investigation is merited.
 * More error detection and better / cleaner error handling.
 * More and better help text and documentation.  <i>(WIP - check [the wiki](https://github.com/emersonrp/bindcontrol/wiki/Getting-Started-With-BindControl))</i>
@@ -109,7 +99,7 @@ BindControl is and has been developed on Homecoming, and best supports that.  Re
 
 ## Using Binary Releases
 
-Binary releases of Python applications are a bit finicky and fragile, but are provided on the [latest release page](https://github.com/emersonrp/bindcontrol/releases).  Feel free to try them, but if you have any trouble, skip down to [Running From Source](#running-from-source) below for an alternative, very deterministic, way of running BindControl.  Any feedback on your experience with the binary releases is welcome and encouraged.
+Binary releases of Python applications are finicky and fragile, but are provided on the [releases page](https://github.com/emersonrp/bindcontrol/releases).  Feel free to try them, but if you have any trouble, skip down to [Running From Source](#running-from-source) below for an alternative, very deterministic, way of running BindControl.  Any feedback on your experience with the binary releases is welcome and encouraged.
 
 *Windows users*:  Try the ZIP file.  If that works for you, it's the quickest path to victory.  ***If you receive malware warnings when downloading***, please read [my comments on that issue](Help/MalwareWarnings.md).
 
@@ -165,6 +155,16 @@ There is a small but growing `pytest` test suite.  It only runs on Linux (and po
 I make liberal use of `typing` in parameters, attributes, and return values, and continue to add this into new and existing code as I go.  This has proven to be a bit of a hassle since BindControl was originally a direct port of CityBinder, and inherited many of its original questionable design decisions, as well as having introduced any number of its own over the years.  Enforcing more strict typing is an ongoing process, but has resulted in cleaner and better code, as well as having surfaced any number of potential and actual bugs.
 
 Any submitted patches or pull requests should pass the test suite and `pyright` at the very least.  Adding new tests is encouraged.
+
+## History
+
+BindControl began as a direct port of Konoko and Monorail's [CityBinder 0.76](http://sourceforge.net/projects/citybinder/), using Python and the WxWidgets UI toolkit.  It has since come into its own, adding many original features, UI improvements, and quality-of-life upgrades.
+
+During City of Heroes' original run, CityBinder was the go-to app for keybinds.  CityBinder is written in lua, using the IUP toolkit, and the required versions of those can be difficult to set up for development on modern OSes.  I wanted to add features and clean up the UI, so in a stunningly unwise act of hubris, I instead started work on BindControl.
+
+I worked on it on-and-off for the remainder of the original run of City of Heroes, then shelved it, ostensibly forever, when NCSoft shut down the game.  Then, of course, everything changed, the game lives again, and BindControl has a reason to exist.
+
+BindControl is and has been developed on Homecoming, and best supports that.  Recently, beta support for Rebirth has been added, supporting the Guardian archetype, new powersets, the Genesis Incarnate slot, and more.  This support is solid but is a work in progress -- Rebirth players, check it out and file issues as you find bugs!
 
 ## Credits
 

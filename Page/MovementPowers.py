@@ -777,14 +777,6 @@ class MovementPowers(Page):
 
         if evt: evt.Skip()
 
-    def OnTempTravelPowerPicked(self, evt) -> None:
-        menu = evt.GetEventObject()
-        menuitem = menu.FindItemById(evt.GetId())
-        self.TempTravelPowerPicker.SetLabel (menuitem.GetItemLabel())
-        self.TempTravelPowerPicker.SetBitmap(menuitem.GetBitmapBundle())
-        self.TempTravelPowerPicker.IconFilename = menuitem.IconFilename
-        evt.Skip()
-
     def SynchronizeUI(self, evt = None) -> None:
         self.OnDetailsCameraChanged()
 

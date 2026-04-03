@@ -16,7 +16,7 @@ class BaseEditMode(WizardParent):
 
         # we use this also to serialize, below
         self.AllCtrls = {
-            'EnterEditMode'     : 'Toggle Base Edit Mode',
+            'ToggleEditMode'    : 'Toggle Base Edit Mode',
             'BEDisableMovement' : 'Default Movement Keys',
             'BEDisableChat'     : 'Disable Chat Keys',
             'BEGridCycle'       : 'Cycle Placement Grid Sizes',
@@ -141,8 +141,8 @@ class BaseEditMode(WizardParent):
             cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
         if conflicts := self.CheckForConflicts():
-            if 'EnterEditMode' in conflicts:
-                conflicts.remove('EnterEditMode')
+            if 'ToggleEditMode' in conflicts:
+                conflicts.remove('ToggleEditMode')
             conflicts = [f"\n\t\u2022 {UI.Labels[self.BindPane.MakeCtrlName(c)]}" for c in conflicts]
             ctpanel = wx.Panel(cmdPanel)
             ctsizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -163,15 +163,15 @@ class BaseEditMode(WizardParent):
         panelSizer.Add(bkText, 0, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 5)
         bkText.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
-        self.EnterEditMode = bcKeyButton(panel, init = {
-            'CtlName' : bindpane.MakeCtrlName('EnterEditMode'),
+        self.ToggleEditMode = bcKeyButton(panel, init = {
+            'CtlName' : bindpane.MakeCtrlName('ToggleEditMode'),
             'Page'    : bindpane.Page,
-            'Key'     : self.State.get('WizData', {}).get('EnterEditMode', ''),
+            'Key'     : self.State.get('WizData', {}).get('ToggleEditMode', ''),
         })
-        panelSizer.Add(self.EnterEditMode, 0, wx.ALIGN_CENTER|wx.ALL, 5)
-        bindpane.SetCtrl('EnterEditMode', self.EnterEditMode)
-        self.EnterEditMode.Bind(EVT_KEY_CHANGED, self.OnBindKeyChanged)
-        UI.Labels[self.EnterEditMode] = 'Enter Edit Mode'
+        panelSizer.Add(self.ToggleEditMode, 0, wx.ALIGN_CENTER|wx.ALL, 5)
+        bindpane.SetCtrl('ToggleEditMode', self.ToggleEditMode)
+        self.ToggleEditMode.Bind(EVT_KEY_CHANGED, self.OnBindKeyChanged)
+        UI.Labels[self.ToggleEditMode] = 'Enter Edit Mode'
 
         panel.SetSizer(panelSizer)
 
@@ -187,8 +187,8 @@ class BaseEditMode(WizardParent):
             if ctrl := self.BindPane.GetCtrl(key):
                 if conflicts := ctrl.CheckConflicts():
                     conflicts.append(key)
-        if eem := self.BindPane.GetCtrl('EnterEditMode'):
-            if eem.CheckConflicts():  conflicts.append('EnterEditMode')
+        if tem := self.BindPane.GetCtrl('ToggleEditMode'):
+            if tem.CheckConflicts():  conflicts.append('ToggleEditMode')
         return conflicts
 
     def OnBindKeyChanged(self, evt = None):
@@ -198,11 +198,11 @@ class BaseEditMode(WizardParent):
 
     def CheckIfWellFormed(self, evt = None):
         if evt: evt.Skip()
-        if self.BindPane.GetCtrl('EnterEditMode').GetValue():
-            self.EnterEditMode.RemoveError('undef')
+        if self.BindPane.GetCtrl('ToggleEditMode').GetValue():
+            self.ToggleEditMode.RemoveError('undef')
             return True
         else:
-            self.EnterEditMode.AddError('undef', 'The keybind has not been selected')
+            self.ToggleEditMode.AddError('undef', 'The keybind has not been selected')
             return False
 
     def FillDialogFromState(self):
@@ -212,7 +212,7 @@ class BaseEditMode(WizardParent):
                 ctrl.SetValue(wizdata[ctrlname])
 
     def UpdateStateFromDialog(self):
-        newstate = { 'EnterEditMode' : self.BindPane.GetCtrl('EnterEditMode').GetValue() }
+        newstate = { 'ToggleEditMode' : self.BindPane.GetCtrl('ToggleEditMode').GetValue() }
         for ctrlname in self.AllCtrls:
             newstate[ctrlname] = self.BindPane.GetCtrl(ctrlname).GetValue()
         self.State = { 'WizData' : newstate }
@@ -222,8 +222,8 @@ class BaseEditMode(WizardParent):
         resetfile = self.Profile.ResetFile()
         modefile  = self.Profile.GetBindFile('wiz', f"{self.BindPane.CustomID}-md.txt")
 
-        resetfile.SetBind(self.BindPane.GetCtrl('EnterEditMode').MakeBind([                'editbase 1', modefile .BLF()]))
-        modefile .SetBind(self.BindPane.GetCtrl('EnterEditMode').MakeBind(['keybindreset', 'editbase 0', resetfile.BLF()]))
+        resetfile.SetBind(self.BindPane.GetCtrl('ToggleEditMode').MakeBind([                'editbase 1', modefile .BLF()]))
+        modefile .SetBind(self.BindPane.GetCtrl('ToggleEditMode').MakeBind(['keybindreset', 'editbase 0', resetfile.BLF()]))
 
         if self.BindPane.GetCtrl('BEDisableMovement').GetValue():
             # reset movement keys if so
@@ -238,6 +238,10 @@ class BaseEditMode(WizardParent):
             modefile.SetBind('D'    , 'Right'   , self.Profile.CustomBinds, '+right')
             modefile.SetBind('X'    , 'Down'    , self.Profile.CustomBinds, '+down')
             modefile.SetBind('SPACE', 'Up'      , self.Profile.CustomBinds, '+up')
+            # Let's turn off the binds reset key, too, which would otherwise place us back into SoD Mode.
+            # It remains to be seen if this is a good idea.
+            config = wx.ConfigBase.Get()
+            modefile.SetBind(config.Read('ResetKey'), "Reset Key", self.Profile.CustomBinds, 'nop')
 
         if self.BindPane.GetCtrl('BEDisableChat').GetValue():
             # go through chat keys, add them as 'nop' to modefile

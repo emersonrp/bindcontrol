@@ -121,7 +121,7 @@ class BaseEditMode(WizardParent):
         panel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         panelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        cmdSizer = wx.GridSizer(2, 4, 5, 5)
+        cmdSizer = wx.BoxSizer(wx.HORIZONTAL)
         cmdPanel = wx.Panel(panel)
         cmdPanel.SetSizer(cmdSizer)
         for cmd in ('BEDisableMovement', 'BEDisableChat', ):
@@ -129,35 +129,56 @@ class BaseEditMode(WizardParent):
             ctsizer = wx.BoxSizer(wx.HORIZONTAL)
             ctpanel.SetSizer(ctsizer)
             cmdtext = cgStaticText(ctpanel, label = UI.Labels[self.BindPane.MakeCtrlName(cmd)], style = wx.ALIGN_CENTER)
-            cmdtext.SetBackgroundColour(wx.Colour(220, 220, 220))
             if self.State.get('WizData', {}).get(cmd, False):
                 cmdtext.SetLabel("✓ " + UI.Labels[self.BindPane.MakeCtrlName(cmd)])
             else:
                 cmdtext.SetForegroundColour(wx.Colour(160, 160, 160))
             ctsizer.Add(cmdtext, 1, wx.EXPAND|wx.ALL, 5)
-            cmdSizer.Add(ctpanel, 1, wx.EXPAND)
+            ctpanel.SetBackgroundColour(wx.Colour(220, 220, 220))
+            cmdSizer.Add(ctpanel, 1, wx.EXPAND|wx.RIGHT, 6)
 
             ctpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
             cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
-        if conflicts := self.CheckForConflicts():
-            if 'ToggleEditMode' in conflicts:
-                conflicts.remove('ToggleEditMode')
-            conflicts = [f"\n\t\u2022 {UI.Labels[self.BindPane.MakeCtrlName(c)]}" for c in conflicts]
-            ctpanel = wx.Panel(cmdPanel)
-            ctsizer = wx.BoxSizer(wx.HORIZONTAL)
-            ctpanel.SetSizer(ctsizer)
-            cmdtext = cgStaticText(ctpanel, label = f"Error: {len(conflicts)} key conflicts", style = wx.ALIGN_CENTER)
-            cmdtext.SetBackgroundColour(wx.Colour(255, 200, 200))
-            cmdtext.SetToolTip("The following keys have conflicts:" + "".join(conflicts))
-            ctsizer.Add(cmdtext, 1, wx.EXPAND|wx.ALL, 5)
-            cmdSizer.Add(ctpanel, 1, wx.EXPAND)
+#        if conflicts := self.CheckForConflicts():
+#            if 'ToggleEditMode' in conflicts:
+#                conflicts.remove('ToggleEditMode')
+#            conflicts = [f"\n\t\u2022 {UI.Labels[self.BindPane.MakeCtrlName(c)]}" for c in conflicts]
+#            ctpanel = wx.Panel(cmdPanel)
+#            ctsizer = wx.BoxSizer(wx.HORIZONTAL)
+#            ctpanel.SetSizer(ctsizer)
+#            cmdtext = cgStaticText(ctpanel, label = f"Error: {len(conflicts)} key conflicts", style = wx.ALIGN_CENTER)
+#            cmdtext.SetBackgroundColour(wx.Colour(255, 200, 200))
+#            cmdtext.SetToolTip("The following keys have conflicts:" + "".join(conflicts))
+#            ctsizer.Add(cmdtext, 1, wx.EXPAND|wx.ALL, 5)
+#            cmdSizer.Add(ctpanel, 1, wx.EXPAND)
+#
+#            ctpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+#            cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
-            ctpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-            cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+        #panelSizer.Add(ctpanel, 1, wx.ALIGN_CENTER|wx.ALL, 15)
 
-        panelSizer.Add(cmdPanel, 1, wx.ALIGN_CENTER|wx.ALL, 15)
+        panelSizer.Add(cmdPanel, 0, wx.ALIGN_CENTER|wx.ALL, 15)
         cmdPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+
+        keybindSizer = wx.GridSizer(2,1,1)
+        keybindPanel = wx.Panel(panel)
+        keybindPanel.SetSizer(keybindSizer)
+        keybindPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+
+        for keybind in self.KeyInit:
+            keyval = self.BindPane.GetCtrl(keybind).GetValue()
+            kbmini = wx.StaticText(keybindPanel, label = keyval, size = wx.Size(25,6), style = wx.ALIGN_CENTER)
+            kbmini.SetFont(wx.Font(wx.FontInfo(4)))
+            if keyval:
+                kbmini.SetBackgroundColour(wx.WHITE)
+            else:
+                kbmini.SetBackgroundColour(wx.Colour(220, 220, 220))
+            kbmini.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+            keybindSizer.Add(kbmini, 0, wx.ALL, 1)
+        panelSizer.Add(keybindPanel, 0, wx.ALIGN_CENTER)
+
+        panelSizer.AddStretchSpacer(1)
 
         bkText = cgStaticText(panel, label = 'Toggle Base Edit Mode:')
         panelSizer.Add(bkText, 0, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 5)

@@ -84,7 +84,7 @@ BindControl is a helper app for creating and maintaining keybinds, macros, and p
 ## TODO
 
 * There are still some Homecoming-specific notions hard-coded into BindControl.  I'm working on fixing these, but bug reports and other feedback from Rebirth players is very welcomed.
-* There are a number of places where bits of BindControl want to trigger changes in other far-flung bits, for instance, reworking some of the UI in response to changes in the Preferences Dialog.  This is currently done haphazardly and in an ugly tightly-coupled fashion.  The time will come when I buckle down and rewrite most of these cases using [pubsub](https://pypi.org/project/Pypubsub/) which I've mostly been avoiding just to keep from adding extra dependencies.
+* There are a number of places where bits of BindControl want to trigger changes in other far-flung bits, for instance, reworking some of the UI in response to changes in the Preferences Dialog.  This is currently done haphazardly and in an ugly tightly-coupled fashion.  I have started to detangle this using [pypubsub](https://pypi.org/project/Pypubsub/), but there's a lot of this still to do, and it's slow and hazardous work.
 * I hope to make every reasonable slash command available, typically via PowerBinder.  What counts as a "reasonable slash command" is yet to be determined.  Check [the SlashCommands.md file](SlashCommands.md) for the current status.
 * I have ideas for a few more BindWizards.  Rolling those up from scratch is always a process, so they'll arrive whenever they do.
 * Access to MacOS for testing is via a VM several OS versions old.  I don't want to buy an actual Mac just for this wee vanity project, so mileage may vary on how it acts in an actual recent Mac environment.
@@ -114,17 +114,18 @@ Binary releases of Python applications are finicky and fragile, but are provided
 1. [Python](https://www.python.org) version 3.13 or later
 2. [wxPython](https://www.wxpython.org) version 4.2.2 or later
 3. [Pillow](https://pypi.org/project/pillow/)
+4. [pypubsub](https://pypi.org/project/Pypubsub/)
 
 *Windows users*:
 * follow the instructions on the above sites' download pages to install Python and wxPython.
-* From a command line, `pip3 install pillow`
+* From a command line, `pip3 install pillow` and `pip3 install pypubsub`
 
 *MacOS users*:
 * *Pre-Catalina*:  I recommend following the instructions in [this article at opensource.com](https://www.opensource.com/article/19/5/python-3-default-mac) to get Python 3 installed and working as the default Python.  Once Python 3 is working, you will want to run `pip3 install wxPython`.
 * *Catalina and later*: follow the instructions on the above sites' download pages to install Python and wxPython.
-* *All versions*: from a command line, `pip3 install pillow`
+* *All versions*: from a command line, `pip3 install pillow` and `pip3 install pypubsyb`
 
-*Linux users*:  install your distribution's packages for Python 3 and wxPython, and "python-pillow" or whatever your distribution calls it.
+*Linux users*:  install your distribution's packages for Python 3, wxPython, `python-pillow`, and `python-pypubsub`.[^6]
 
 
 ### Step 2 - Getting and running the code
@@ -222,3 +223,5 @@ emerson@hayseed.net
 [^4]: [i26 The Mastermind's PetMouse](https://forums.homecomingservers.com/topic/20788-i26-the-masterminds-petmouse-new-menu/)
 
 [^5]: [Shenanigunner passed away in April 2025](https://forums.homecomingservers.com/topic/59721-shenanigunner-ave-atque-vale/) and his site has gone dark since then.  The links in the Credits section point to the latest available captures of his site at the Internet Archive.  Shenanigunner was an iconic and tireless member of the City of Heroes community, and his presence is deeply missed.
+
+[^6]: Various distributions have different names for their package manager versions of python packages.  You might need to do a little searching with apt or yum or what-have-you to find these.  You can also use pip to install them but that path is sometimes very fiddly.

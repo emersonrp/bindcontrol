@@ -4,7 +4,7 @@
 
 BindControl is a helper app for creating and maintaining keybinds, macros, and popmenus for City of Heroes.
 
-![BindControl_ Tinker 3_17_2026 11_47_23 PM](https://github.com/user-attachments/assets/cba3d81c-4939-4004-91ba-4a4411deb947)
+![BindControl](https://github.com/user-attachments/assets/e07c3b32-8503-4002-99b8-5ee90efe8c98)
 
 ## Features
 

@@ -93,7 +93,11 @@ class Page(wx.ScrolledWindow):
         binds = []
         for ctrlname, ctrl in self.Ctrls.items():
             if isinstance(ctrl, bcKeyButton):
-                if not ctrl.IsEnabled(): continue
+                # we need IsThisEnabled() instead of IsEnabled() because on Windows
+                # IsEnabled is falsie for everything when checking from the prefs
+                # dialog.  I thiiiink that's because it's modal, so everything else
+                # is "disabled" temporarily.  IsThisEnabled() gets the right thing.
+                if not ctrl.IsThisEnabled(): continue
                 binds.append( [ctrlname, ctrl.Key] )
         return binds
 

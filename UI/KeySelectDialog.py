@@ -540,10 +540,20 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
     # This makes the buttons look aaaalmost like the native ones,
     # at least on my Catalina VM.
     def DrawBezel(self, dc, width, height, dx=0, dy=0):
+        oldpen = dc.GetPen()
+        oldbrs = dc.GetBrush()
+
         pen = wx.Pen(dc.GetPen())
         pen.SetColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNSHADOW))
+        # paint with current background color, in case it's error-red.
+        brush = wx.Brush(self.GetBackgroundColour())
+
         dc.SetPen(pen)
+        dc.SetBrush(brush)
         dc.DrawRoundedRectangle(width-1, height-1, dx+2, dy+2, 3)
+
+        dc.SetPen  (oldpen)
+        dc.SetBrush(oldbrs)
 
     def onKeyChanged(self, evt) -> None:
         evt.Skip()

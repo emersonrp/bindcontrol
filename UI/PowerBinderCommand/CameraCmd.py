@@ -195,7 +195,7 @@ class CameraCmd(PowerBinderCommand):
 
     def Deserialize(self, init) -> None:
         self.camdistcb.SetValue(init.get('camdistcb', False))
-        self.camdistsc.SetValue(init.get('camdistsc', 1.0))
+        self.camdistsc.SetValue(init.get('camdistsc', 30))
         self.camresetcb.SetValue(init.get('camresetcb', False))
         self.camrotatecb.SetValue(init.get('camrotatecb', False))
         self.camrotatech.SetStringSelection(init.get('camrotatech', ''))

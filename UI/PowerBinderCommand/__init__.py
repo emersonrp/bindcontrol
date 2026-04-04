@@ -51,7 +51,6 @@ class PowerBinderEditDialog(wx.Dialog):
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
         self.mainSizer.SetMinSize(wx.Size(500, 150))
 
-        self.Page = dialog.Page
         self.PowerBinderCommand = pbc
         self.Callback = None
         self.Data = None

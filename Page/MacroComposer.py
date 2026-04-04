@@ -10,6 +10,7 @@ from Page import Page
 from Help import HelpButton
 from Icon import GetIcon, GetIconBitmap
 from UI.PowerBinder import PowerBinder
+from UI.ProfileAwareControl import ProfileAwareControlMixin
 from Util.SourceFileIcons import MACRO_ICON_NAMES, YCC_COLORS
 
 class MacroComposer(Page):
@@ -124,7 +125,7 @@ class MacroComposer(Page):
 
         self.Panes.append(macropane)
 
-        macropane.BuildMacroUI(self)
+        macropane.BuildMacroUI()
 
         # put it in a box with control buttons
         macroSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -274,7 +275,7 @@ class MacroComposer(Page):
             dlg.Destroy()
             return False
 
-class MacroPane(wx.CollapsiblePane):
+class MacroPane(ProfileAwareControlMixin, wx.CollapsiblePane):
     def __init__(self, page, init : dict|None = None) -> None:
         init = init or {}
         super().__init__(page.scrolledPanel, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
@@ -300,8 +301,7 @@ class MacroPane(wx.CollapsiblePane):
             'ToolTip'         : self.ToolTipText.GetValue(),
         }
 
-    def BuildMacroUI(self, page):
-        self.Page = page
+    def BuildMacroUI(self):
 
         pane = self.GetPane()
         macroSizer = wx.BoxSizer(wx.HORIZONTAL)

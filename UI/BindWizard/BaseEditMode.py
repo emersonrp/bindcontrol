@@ -45,7 +45,7 @@ class BaseEditMode(WizardParent):
         self.CBToolTips = {
             'BEDefaultMovement' : 'Set movement keys to their basic game-default behavior',
             'BEDisableChat'     : 'Disable keys that will pop up the chat window',
-            'BEDisableWindows'  : 'Disable keys that will toggle windows on top of the base edit UI',
+            'BEDisableWindows'  : 'Disable keys that will toggle various windows\' visibility',
         }
 
         # we use this as a list, below, to initialize and later to conflict-check these.
@@ -140,12 +140,14 @@ class BaseEditMode(WizardParent):
             ctsizer = wx.BoxSizer(wx.HORIZONTAL)
             ctpanel.SetSizer(ctsizer)
             cmdtext = cgStaticText(ctpanel, label = UI.Labels[self.BindPane.MakeCtrlName(cmd)], style = wx.ALIGN_CENTER)
-            if self.State.get('WizData', {}).get(cmd, False):
+            if self.State.get('WizData', {}).get(cmd, True):
                 cmdtext.SetLabel("✓ " + UI.Labels[self.BindPane.MakeCtrlName(cmd)])
             else:
                 cmdtext.SetForegroundColour(wx.Colour(160, 160, 160))
+            cmdtext.SetToolTip(self.CBToolTips[cmd])
             ctsizer.Add(cmdtext, 1, wx.EXPAND|wx.ALL, 5)
             ctpanel.SetBackgroundColour(wx.Colour(220, 220, 220))
+            ctpanel.SetToolTip(self.CBToolTips[cmd])
             cmdSizer.Add(ctpanel, 1, wx.EXPAND|wx.RIGHT, 6)
 
             ctpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
@@ -297,7 +299,7 @@ class BaseEditMode(WizardParent):
                     modefile.SetBind(defaultKey, '', self.Profile.CustomBinds, 'nop')
 
         if self.BindPane.GetCtrl('BEDisableWindows').GetValue():
-            # Turn off the keys that'll pop up windows on top of the base edit UI.
+            # Turn off the keys that'll pop up windows
             for defaultKey in ['C', 'M', 'N', 'P', '\\', 'H', 'T', ]:
                 if defaultKey not in allBindKeys:
                     modefile.SetBind(defaultKey, '', self.Profile.CustomBinds, 'nop')

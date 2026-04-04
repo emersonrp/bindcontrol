@@ -27,7 +27,7 @@ from UI.PowerBinder import EVT_POWERBINDER_CHANGED
 from UI.PowerPicker import EVT_POWERPICKER_CHANGED
 from UI.ChatColorPicker import EVT_CHATCOLORPICKER_CHANGED
 from UI.PowerSelector import EVT_POWERSELECTOR_CHANGED
-from Util.Paths import ProfilePath
+from Util.Paths import ProfilePath, GetValidGamePath
 
 class Profile(wx.Notebook):
     # class method to load a Profile from a file-open dialog
@@ -61,7 +61,7 @@ class Profile(wx.Notebook):
                 wx.LogError(f"Problem loading profile: {e} - this is a bug.")
 
         if newProfile:
-            wx.CallAfter(wx.App.Get().Main.CheckIfGameDirNeeded, newProfile.Server())
+            wx.CallAfter(newProfile.CheckIfGameDirNeeded)
         return newProfile
 
     # Instance methods
@@ -139,6 +139,16 @@ class Profile(wx.Notebook):
         filepath = self.GameBindsDir()
         for arg in args: filepath = filepath  /  arg
         return f"$${BLF()} " + str(filepath)
+
+    def CheckIfGameDirNeeded(self):
+        server = self.Server()
+        if not GetValidGamePath(wx.ConfigBase.Get(), server):
+            with wx.MessageDialog(self,
+                    (f"You don't have a valid game path set up for the {server} server.\n"
+                     "Please fix this in Preferences.  Go to the Preferences Dialog now?"),
+                    f"{server} Game Directory Not Set", style=wx.YES_NO|wx.ICON_WARNING|wx.CENTER) as dlg:
+                if dlg.ShowModal() == wx.ID_YES:
+                    wx.App.Get().Main.OnMenuPrefsDialog()
 
     def CheckConflict(self, key, existingctrlname) -> list:
         conflicts = []

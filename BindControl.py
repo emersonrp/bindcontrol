@@ -232,15 +232,6 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
 
-    def CheckIfGameDirNeeded(self, server):
-        if not Util.Paths.GetValidGamePath(self.Config, server):
-            with wx.MessageDialog(self,
-                    (f"You don't have a valid game path set up for the {server} server.\n"
-                     "Please fix this in Preferences.  Go to the Preferences Dialog now?"),
-                    f"{server} Game Directory Not Set", style=wx.YES_NO|wx.ICON_WARNING|wx.CENTER) as dlg:
-                if dlg.ShowModal() == wx.ID_YES:
-                    self.OnMenuPrefsDialog()
-
     # This is the two-button "start new profile" vs "load existing profile" panel
     def MakeStartupPanel(self) -> wx.Panel:
         StartupPanel = wx.Panel(self)
@@ -733,7 +724,7 @@ class MyApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
                 self.Main.Profile.CheckAllConflicts()
 
         if self.Main.Profile:
-            wx.CallAfter(self.Main.CheckIfGameDirNeeded, self.Main.Profile.Server())
+            wx.CallAfter(self.Main.Profile.CheckIfGameDirNeeded)
 
 if __name__ == "__main__":
 

@@ -1,7 +1,7 @@
 import Page
 import Profile
 from collections.abc import Callable
-# Mixin to give any control a self.Profile that dtrt
+# Mixin to give any wx.Window a self.Page and self.Profile that dtrt
 
 class ProfileAwareControlMixin:
     GetParent : Callable

@@ -98,5 +98,4 @@ class ErrorControlMixin:
                 self.SetToolTip("\n".join(tipstrings))
                 return
 
-        if self.DefaultToolTip:
-            self.SetToolTip(self.DefaultToolTip)
+        self.SetToolTip(self.DefaultToolTip)

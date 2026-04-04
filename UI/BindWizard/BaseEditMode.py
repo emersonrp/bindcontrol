@@ -99,7 +99,6 @@ class BaseEditMode(WizardParent):
             keybutton = cgbcKeyButton(keysSizer.GetStaticBox(), init = {
                 'CtlName'  : self.BindPane.MakeCtrlName(key),
                 'CtlLabel' : kblabel,
-                'ToolTip'  : UI.Labels[self.BindPane.MakeCtrlName(key)],
                 'Key'      : wizdata.get(key) if key in wizdata else self.KeyInit.get(key, ''),
             })
             self.BindPane.SetCtrl(key, keybutton)

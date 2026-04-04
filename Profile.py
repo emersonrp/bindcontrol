@@ -497,7 +497,7 @@ class Profile(wx.Notebook):
             if errors:
                 for err in errors:
                     wx.LogError(err)
-                wx.App.Get().Main.Logger.LogWindow.Show()
+                pub.sendMessage('showlogwindow')
 
         # clear out our state
         self.BindFiles = {}

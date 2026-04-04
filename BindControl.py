@@ -5,6 +5,7 @@ import re
 import os
 import platform
 from pathlib import Path
+from pubsub import pub
 
 import wx.lib.mixins.inspection
 import wx.adv
@@ -653,8 +654,7 @@ class Main(wx.Frame):
         wx.adv.GenericAboutBox(self.about_info, self)
 
     def OnMenuLogWindow(self, _) -> None:
-        if self.Logger:
-            self.Logger.LogWindow.Show()
+        pub.sendMessage('showlogwindow')
 
     def OnMenuExitApplication(self, _) -> None:
         self.Close()

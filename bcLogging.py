@@ -1,4 +1,5 @@
 import wx
+from pubsub import pub
 
 class bcLogging(wx.Log):
     def __init__(self, parent) -> None:
@@ -11,7 +12,12 @@ class bcLogging(wx.Log):
 
         self.LogInterposer = bcLogInterposer(self)
 
+        pub.subscribe(self.ShowLogWindow, 'showlogwindow')
+
         self.SetLogLevel(wx.LOG_Message)
+
+    def ShowLogWindow(self):
+        self.LogWindow.Show()
 
 class bcLogInterposer(wx.LogInterposer):
     def __init__(self, logger) -> None:

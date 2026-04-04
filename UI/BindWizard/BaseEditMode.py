@@ -140,43 +140,51 @@ class BaseEditMode(WizardParent):
             ctpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
             cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
-#        if conflicts := self.CheckForConflicts():
-#            if 'ToggleEditMode' in conflicts:
-#                conflicts.remove('ToggleEditMode')
-#            conflicts = [f"\n\t\u2022 {UI.Labels[self.BindPane.MakeCtrlName(c)]}" for c in conflicts]
-#            ctpanel = wx.Panel(cmdPanel)
-#            ctsizer = wx.BoxSizer(wx.HORIZONTAL)
-#            ctpanel.SetSizer(ctsizer)
-#            cmdtext = cgStaticText(ctpanel, label = f"Error: {len(conflicts)} key conflicts", style = wx.ALIGN_CENTER)
-#            cmdtext.SetBackgroundColour(wx.Colour(255, 200, 200))
-#            cmdtext.SetToolTip("The following keys have conflicts:" + "".join(conflicts))
-#            ctsizer.Add(cmdtext, 1, wx.EXPAND|wx.ALL, 5)
-#            cmdSizer.Add(ctpanel, 1, wx.EXPAND)
-#
-#            ctpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-#            cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-
-        #panelSizer.Add(ctpanel, 1, wx.ALIGN_CENTER|wx.ALL, 15)
-
         panelSizer.Add(cmdPanel, 0, wx.ALIGN_CENTER|wx.ALL, 15)
         cmdPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
+        keybindWrapper = wx.BoxSizer(wx.VERTICAL)
+        keybindWrapPanel = wx.Panel(panel)
+        keybindWrapPanel.SetSizer(keybindWrapper)
+        keybindWrapPanel.SetBackgroundColour(wx.Colour(200, 200, 200))
+
+        keybindTitle = wx.StaticText(keybindWrapPanel, label = 'KEYBINDS')
+        keybindTitle.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+        keybindWrapper.Add(keybindTitle, 0, wx.ALL|wx.ALIGN_CENTER, 5)
+
         keybindSizer = wx.GridSizer(2,1,1)
-        keybindPanel = wx.Panel(panel)
+        keybindPanel = wx.Panel(keybindWrapPanel)
         keybindPanel.SetSizer(keybindSizer)
         keybindPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+        keybindWrapper.Add(keybindPanel, 1, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5)
 
+        tooltiptext = []
         for keybind in self.KeyInit:
-            keyval = self.BindPane.GetCtrl(keybind).GetValue()
-            kbmini = wx.StaticText(keybindPanel, label = keyval, size = wx.Size(25,6), style = wx.ALIGN_CENTER)
+            keybutton = self.BindPane.GetCtrl(keybind)
+            kbmini = wx.StaticText(keybindPanel, label = keybutton.GetValue(), size = wx.Size(25,6), style = wx.ALIGN_CENTER)
             kbmini.SetFont(wx.Font(wx.FontInfo(4)))
-            if keyval:
-                kbmini.SetBackgroundColour(wx.WHITE)
+            if keybutton.GetValue():
+                tooltiptext.append(f"{self.AllCtrls[keybind]}: {keybutton.GetValue()}")
+                if keybutton.CheckConflicts():
+                    kbmini.SetBackgroundColour(wx.Colour(255, 200, 200))
+                else:
+                    kbmini.SetBackgroundColour(wx.WHITE)
             else:
                 kbmini.SetBackgroundColour(wx.Colour(220, 220, 220))
+                tooltiptext.append('')
             kbmini.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
             keybindSizer.Add(kbmini, 0, wx.ALL, 1)
-        panelSizer.Add(keybindPanel, 0, wx.ALIGN_CENTER)
+
+        # There's got to be a more pythonic way to permute these
+        tooltip = ''
+        half = int(len(tooltiptext)/2)
+        for i in range(0, half, 2):
+            if tooltiptext[i]: tooltip = tooltip + ("\n" if i != 0 else '') + tooltiptext[i]
+        for i in range(1, half, 2):
+            if tooltiptext[i]: tooltip = tooltip + "\n" + tooltiptext[i]
+        keybindPanel.SetToolTip(tooltip)
+
+        panelSizer.Add(keybindWrapPanel, 0, wx.ALIGN_CENTER)
 
         panelSizer.AddStretchSpacer(1)
 

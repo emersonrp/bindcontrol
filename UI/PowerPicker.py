@@ -7,7 +7,6 @@ import UI
 from UI.ErrorControls import ErrorControlMixin
 from UI.ProfileAwareControl import ProfileAwareControlMixin
 from Util.Incarnate import Rarities, Aliases
-from Util.Profile import GetCurrentProfile
 import wx.lib.agw.flatmenu as FM
 
 import wx.lib.newevent
@@ -181,7 +180,7 @@ class PowerPickerMenu(FM.FlatMenu):
     def ShowPower(self, category:str, power:str) -> bool:
         # This next line is uuuuugly.  What is the right way to do this?
         # Answer:  a method on General?  On Profile?
-        powerlist = GetCurrentProfile().General.Ctrls[f'{category}Powers'].GetValue()
+        powerlist = self.Profile.General.Ctrls[f'{category}Powers'].GetValue()
         if   powerlist == []    : return True # we haven't picked powers, show them all
         elif power in powerlist : return True # we have picked this one, show it
         else                    : return False

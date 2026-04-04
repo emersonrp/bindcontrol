@@ -1,6 +1,5 @@
 import wx
 from UI.PowerBinder import commandRevClasses
-from Util.Profile import GetCurrentProfile
 
 ########### Power Binder Command Objects
 class PowerBinderCommand:
@@ -9,8 +8,8 @@ class PowerBinderCommand:
     UseEditDialog = True
 
     def __init__(self, dialog, init : dict|None = None) -> None:
-        self.Profile = GetCurrentProfile() # ugh
         self.Dialog  = dialog
+        self.Profile = dialog.Profile
         self.EditDialog = None
 
         if self.UseEditDialog:

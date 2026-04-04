@@ -1,4 +1,6 @@
 import wx
+
+from Help import HelpButton
 import UI
 from UI.BindWizard import WizardParent
 from UI.CGControls import bcKeyButton, cgStaticText
@@ -17,7 +19,7 @@ class BaseEditMode(WizardParent):
         # we use this also to serialize, below
         self.AllCtrls = {
             'ToggleEditMode'    : 'Toggle Base Edit Mode',
-            'BEDisableMovement' : 'Default Movement Keys',
+            'BEDisableMovement' : 'Disable Special Movement Behavior',
             'BEDisableChat'     : 'Disable Chat Keys',
             'BEDisableWindows'  : 'Disable Window Toggle Keys',
             'BEGridCycle'       : 'Cycle Placement Grid Sizes',
@@ -41,7 +43,7 @@ class BaseEditMode(WizardParent):
             UI.Labels[self.BindPane.MakeCtrlName(k)] = v
 
         self.CBToolTips = {
-            'BEDisableMovement' : 'Disable SoD etc and set movement keys to their default behavior',
+            'BEDisableMovement' : 'Set movement keys to their basic game-default behavior',
             'BEDisableChat'     : 'Disable keys that will pop up the chat window',
             'BEDisableWindows'  : 'Disable keys that will toggle windows on top of the base edit UI',
         }
@@ -81,14 +83,21 @@ class BaseEditMode(WizardParent):
         ### OPTS SIZER
         optsSizer = wx.StaticBoxSizer(wx.VERTICAL, dialog, label = 'Options')
 
+        optsgrid = wx.FlexGridSizer(2, wx.Size(2,2))
+        optsgrid.AddGrowableCol(0)
+
         for cb in ['BEDisableMovement', 'BEDisableChat', 'BEDisableWindows', ]:
             checkbox = cgCheckBox(optsSizer.GetStaticBox(), label = UI.Labels[self.BindPane.MakeCtrlName(cb)])
             checkbox.SetToolTip(self.CBToolTips[cb])
             checkbox.CtlName = self.BindPane.MakeCtrlName(cb)
             checkbox.SetValue(wizdata.get(cb, True))
             self.BindPane.SetCtrl(cb, checkbox)
-            optsSizer.Add(checkbox, 0, wx.EXPAND|wx.ALL, 5)
+            optsgrid.Add(checkbox, 0, wx.EXPAND|wx.ALL, 5)
             setattr(self, cb, checkbox)
+
+            optsgrid.Add(HelpButton(optsSizer.GetStaticBox(), f"{cb}.html"), 0, wx.ALL, 5)
+
+        optsSizer.Add(optsgrid, 1, wx.ALL|wx.ALIGN_CENTER, 5)
 
         ### KEY SIZER
         keysSizer = wx.StaticBoxSizer(wx.VERTICAL, dialog, label = 'Options')

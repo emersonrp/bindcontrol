@@ -164,8 +164,8 @@ class BaseEditMode(WizardParent):
         tooltiptext = []
         for keybind in self.KeyInit:
             keybutton = self.BindPane.GetCtrl(keybind)
-            kbmini = wx.StaticText(keybindPanel, label = keybutton.GetValue(), size = wx.Size(25,6), style = wx.ALIGN_CENTER)
-            kbmini.SetFont(wx.Font(wx.FontInfo(4)))
+            kbmini = wx.StaticText(keybindPanel, label = keybutton.GetValue(), size = wx.Size(30,6), style = wx.ALIGN_CENTER)
+            kbmini.SetFont(wx.Font(wx.FontInfo(3)))
             if keybutton.GetValue():
                 tooltiptext.append(f"{self.AllCtrls[keybind]}: {keybutton.GetValue()}")
                 if keybutton.CheckConflicts():
@@ -180,10 +180,9 @@ class BaseEditMode(WizardParent):
 
         # There's got to be a more pythonic way to permute these
         tooltip = ''
-        half = int(len(tooltiptext)/2)
-        for i in range(0, half, 2):
+        for i in range(0, len(tooltiptext), 2):
             if tooltiptext[i]: tooltip = tooltip + ("\n" if i != 0 else '') + tooltiptext[i]
-        for i in range(1, half, 2):
+        for i in range(1, len(tooltiptext), 2):
             if tooltiptext[i]: tooltip = tooltip + "\n" + tooltiptext[i]
         keybindPanel.SetToolTip(tooltip)
 

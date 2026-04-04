@@ -5,6 +5,7 @@ from Help import HelpButton
 from wx.lib.expando import EVT_ETC_LAYOUT_NEEDED
 from UI.CGControls import cgExpandoTextCtrl
 from UI.ErrorControls import ErrorControlMixin
+from UI.ProfileAwareControl import ProfileAwareControlMixin
 from Util.Paths import GetRootDirPath
 
 import wx.lib.newevent
@@ -45,12 +46,10 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
         self.SetValue(bindString)
         wx.PostEvent(self, PowerBinderChanged(wx.NewId()))
 
-class PowerBinderDialog(wx.Dialog):
+class PowerBinderDialog(ProfileAwareControlMixin, wx.Dialog):
     def __init__(self, parent, powerbinder) -> None:
         super().__init__(parent, title = "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
-        self.Page        = parent.Page if hasattr(parent, 'Page') else None
-        self.Profile     = self.Page.Profile if self.Page else None
         self.ExtraLength = powerbinder.ExtraLength
         self.PowerBinder = powerbinder
 

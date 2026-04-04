@@ -7,18 +7,17 @@ import GameData
 
 import UI
 from UI.CGControls import CGControlMixin, cgStaticText
+from UI.ProfileAwareControl import ProfileAwareControlMixin
 
 ChatColorPickerChanged, EVT_CHATCOLORPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 def ChatColors(fg,bg,bd) -> str: return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'
 
 # the calling convention to create one of this is WAY too complicated.
-class ChatColorPicker(wx.Panel):
-    def __init__(self, parent, page, prefix:tuple, initcols:dict):
+class ChatColorPicker(ProfileAwareControlMixin, wx.Panel):
+    def __init__(self, parent, prefix:tuple, initcols:dict):
         super().__init__(parent)
 
-        self.Page       = page
-        self.Profile    = page.Profile
         self.PrefixBits = prefix
         self.Prefix     = ''.join(prefix)
         self.Colors     = initcols
@@ -27,9 +26,8 @@ class ChatColorPicker(wx.Panel):
 
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        # Back to main control:
         self.example = ExampleText(self)
-        if page: page.Ctrls[f"{self.Prefix}Example"] = self.example
+        if self.Page: self.Page.Ctrls[f"{self.Prefix}Example"] = self.example
 
         sizer.Add(self.example, 0, wx.ALIGN_CENTER|wx.RESERVE_SPACE_EVEN_IF_HIDDEN)
 
@@ -153,7 +151,7 @@ class ChatColorPickerWindow(wx.Dialog):
     def UpdateChatBubble(self):
 
         inspname = re.sub(r'([A-Z])', r' \1', self.Picker.PrefixBits[2])
-        text = f"{self.Picker.Profile.ProfileName()}: {inspname}"
+        text = f"{self.Picker.Profile.ProfileName()}: {inspname}" # pyright: ignore
         cols = {
             'background' : self.backgroundPicker.GetColour(),
             'border'     : self.borderPicker.GetColour(),

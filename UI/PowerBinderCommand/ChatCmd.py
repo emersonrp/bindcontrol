@@ -31,7 +31,7 @@ class ChatCmd(PowerBinderCommand):
         chatCommandSizer.Add(self.chatCommandUseColorsCB, (0,0), (1,3), flag=wx.ALIGN_CENTER_VERTICAL)
         self.chatCommandUseColorsCB.Bind(wx.EVT_CHECKBOX, self.OnChatEnableCB)
 
-        self.chatColorPicker = ChatColorPicker(dialog, None, ('','','Attack!!!'),
+        self.chatColorPicker = ChatColorPicker(dialog, ('','','Attack!!!'),
                        {'border': '#000000', 'background': '#FFFFFF', 'foreground' : '#000000'})
         chatCommandSizer.Add(self.chatColorPicker, (0,3), (1,3), flag = wx.ALIGN_CENTER_VERTICAL)
 

@@ -153,7 +153,7 @@ class InspirationPopper(Page):
                         ltcolor = 'dkcolor'
                         dkcolor = 'ltcolor'
 
-                    chatcolorpicker = ChatColorPicker(box.GetStaticBox(), self, (tab, order, Insp),
+                    chatcolorpicker = ChatColorPicker(box.GetStaticBox(), (tab, order, Insp),
                         {
                           'border'     : InspData[dkcolor],
                           'background' : InspData[ltcolor],

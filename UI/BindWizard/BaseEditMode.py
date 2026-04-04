@@ -40,6 +40,12 @@ class BaseEditMode(WizardParent):
         for k,v in self.AllCtrls.items():
             UI.Labels[self.BindPane.MakeCtrlName(k)] = v
 
+        self.CBToolTips = {
+            'BEDisableMovement' : 'Disable SoD etc and set movement keys to their default behavior',
+            'BEDisableChat'     : 'Disable keys that will pop up the chat window',
+            'BEDisableWindows'  : 'Disable keys that will toggle windows on top of the base edit UI',
+        }
+
         # we use this as a list, below, to initialize and later to conflict-check these.
         # Order matters here for layout.
         self.KeyInit = {
@@ -72,28 +78,17 @@ class BaseEditMode(WizardParent):
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
+        ### OPTS SIZER
         optsSizer = wx.StaticBoxSizer(wx.VERTICAL, dialog, label = 'Options')
 
-        self.BEDisableMovement = cgCheckBox(optsSizer.GetStaticBox(), label = 'Default Movement Keys')
-        self.BEDisableMovement.SetToolTip('Disable SoD etc and set movement keys to their default behavior')
-        self.BEDisableMovement.CtlName = self.BindPane.MakeCtrlName('BEDisableMovement')
-        self.BEDisableMovement.SetValue(wizdata.get('BEDisableMovement', True))
-        self.BindPane.SetCtrl('BEDisableMovement', self.BEDisableMovement)
-        optsSizer.Add(self.BEDisableMovement, 0, wx.EXPAND|wx.ALL, 5)
-
-        self.BEDisableChat = cgCheckBox(optsSizer.GetStaticBox(), label = 'Disable Chat Keys')
-        self.BEDisableChat.SetToolTip('Disable keys that will pop up the chat window')
-        self.BEDisableChat.CtlName = self.BindPane.MakeCtrlName('BEDisableChat')
-        self.BEDisableChat.SetValue(wizdata.get('BEDisableChat', False))
-        self.BindPane.SetCtrl('BEDisableChat', self.BEDisableChat)
-        optsSizer.Add(self.BEDisableChat, 0, wx.EXPAND|wx.ALL, 5)
-
-        self.BEDisableWindows = cgCheckBox(optsSizer.GetStaticBox(), label = 'Disable Window Toggle Keys')
-        self.BEDisableWindows.SetToolTip('Disable keys that will toggle windows on top of the base edit UI')
-        self.BEDisableWindows.CtlName = self.BindPane.MakeCtrlName('BEDisableWindows')
-        self.BEDisableWindows.SetValue(wizdata.get('BEDisableWindows', False))
-        self.BindPane.SetCtrl('BEDisableWindows', self.BEDisableWindows)
-        optsSizer.Add(self.BEDisableWindows, 0, wx.EXPAND|wx.ALL, 5)
+        for cb in ['BEDisableMovement', 'BEDisableChat', 'BEDisableWindows', ]:
+            checkbox = cgCheckBox(optsSizer.GetStaticBox(), label = UI.Labels[self.BindPane.MakeCtrlName(cb)])
+            checkbox.SetToolTip(self.CBToolTips[cb])
+            checkbox.CtlName = self.BindPane.MakeCtrlName(cb)
+            checkbox.SetValue(wizdata.get(cb, True))
+            self.BindPane.SetCtrl(cb, checkbox)
+            optsSizer.Add(checkbox, 0, wx.EXPAND|wx.ALL, 5)
+            setattr(self, cb, checkbox)
 
         ### KEY SIZER
         keysSizer = wx.StaticBoxSizer(wx.VERTICAL, dialog, label = 'Options')
@@ -290,13 +285,13 @@ class BaseEditMode(WizardParent):
 
             # And check the default ones that the game starts with, and if we haven't assigned
             # them to something else, go ahead and nop them.  /keybind_reset will fix them back.
-            for defaultKey in ['']:
+            for defaultKey in ["'", "/", ";", "COMMA", "ENTER",]:
                 if defaultKey not in allBindKeys:
                     modefile.SetBind(defaultKey, '', self.Profile.CustomBinds, 'nop')
 
         if self.BindPane.GetCtrl('BEDisableWindows').GetValue():
             # Turn off the keys that'll pop up windows on top of the base edit UI.
-            for defaultKey in ['']:
+            for defaultKey in ['C', 'M', 'N', 'P', '\\', 'H', 'T', ]:
                 if defaultKey not in allBindKeys:
                     modefile.SetBind(defaultKey, '', self.Profile.CustomBinds, 'nop')
 

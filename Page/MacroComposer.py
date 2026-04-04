@@ -4,6 +4,7 @@ import re
 import json
 
 from pathlib import Path
+from pubsub import pub
 from typing import Any
 
 from Page import Page
@@ -58,6 +59,8 @@ class MacroComposer(Page):
         self.ShowScrollbars(wx.SHOW_SB_NEVER, wx.SHOW_SB_NEVER)
 
         self.Layout()
+
+        pub.subscribe(self.OnContentsChanged, 'macrocontentschanged')
 
     def AllBindFiles(self) -> dict[str, list]:
         return {
@@ -321,7 +324,7 @@ class MacroPane(ProfileAwareControlMixin, wx.CollapsiblePane):
         fieldSizer = wx.GridBagSizer(5, 5)
         fieldSizer.Add(wx.StaticText(pane, label = "Contents:"), (0, 0), flag = wx.ALIGN_CENTER_VERTICAL)
         self.MacroContents = PowerBinder(pane, self.Init.get('powerbinderdata'), contents = self.Init.get('Contents', ''))
-        self.MacroContents.Bind(wx.EVT_TEXT, self.Page.OnContentsChanged)
+        self.MacroContents.Bind(wx.EVT_TEXT, self.OnContentsChanged)
         fieldSizer.Add(self.MacroContents, (0, 1), (1, 2), flag = wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
 
         self.ToolTipLabel = wx.StaticText(pane, label = "Tooltip:")
@@ -329,7 +332,7 @@ class MacroPane(ProfileAwareControlMixin, wx.CollapsiblePane):
         self.ToolTipText = wx.TextCtrl(pane)
         self.ToolTipText.SetValue(self.Init.get('ToolTip', ''))
         self.ToolTipText.SetHint('Optional in-game tooltip for the macro button')
-        self.ToolTipText.Bind(wx.EVT_TEXT, self.Page.OnContentsChanged)
+        self.ToolTipText.Bind(wx.EVT_TEXT, self.OnContentsChanged)
         fieldSizer.Add(self.ToolTipText, (1, 1), flag = wx.ALIGN_CENTER_VERTICAL|wx.EXPAND)
 
         stringButton = wx.Button(pane, label = 'Get Macro String')
@@ -365,14 +368,18 @@ class MacroPane(ProfileAwareControlMixin, wx.CollapsiblePane):
                 button.SetToolTip(iconname)
                 button.SetLabel(iconname)
                 button.SetBitmap(GetIcon('Macros', iconname))
-                self.Page.OnContentsChanged()
+                self.OnContentsChanged()
                 self.CheckToolTipSlot()
 
     def OnIconButtonRClick(self, evt):
         if evt: evt.Skip()
         self.SetFakeIcon()
-        self.Page.OnContentsChanged()
+        self.OnContentsChanged()
         self.CheckToolTipSlot()
+
+    def OnContentsChanged(self, evt = None):
+        if evt: evt.Skip()
+        pub.sendMessage('macrocontentschanged')
 
     def CheckToolTipSlot(self):
         enable = bool(self.IconButton) and (self.IconButton.GetLabel() != '')

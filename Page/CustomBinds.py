@@ -61,7 +61,8 @@ class CustomBinds(Page):
         BlankSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BlankPanel = wx.Panel(self)
         helptext = wx.StaticText(self.BlankPanel, style = wx.ALIGN_CENTER,
-                                 label = "Create a Custom Bind using the buttons above")
+                                 label = "Create a Custom Bind using the buttons above",
+                                 size = wx.Size(-1, 50))
         helptext.SetFont(wx.Font(wx.FontInfo(16).Bold()))
         BlankSizer.Add(helptext, 1, wx.ALIGN_CENTER_VERTICAL)
         self.BlankPanel.SetSizer(BlankSizer)

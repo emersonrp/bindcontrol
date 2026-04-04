@@ -100,7 +100,7 @@ class WizPickerMenu(wx.Menu):
             if wizClass.IsUnique:
                 for pane in page.Panes:
                     if hasattr(pane, 'WizClass') and (pane.WizClass == wizClass):
-                        self.Delete(menuitem)
+                        menuitem.Enable(False)
 
 
 # Load plugins / modules from UI/BindWizard directory

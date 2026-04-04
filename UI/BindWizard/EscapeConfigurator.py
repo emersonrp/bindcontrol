@@ -120,10 +120,6 @@ class EscapeConfigurator(WizardParent):
         panelSizer.Add(cmdPanel, 1, wx.ALIGN_CENTER|wx.ALL, 15)
         cmdPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
-        # BindStringDisplay = cgStaticText(panel, label = self.BindString())
-        # panelSizer.Add(BindStringDisplay, 1, wx.ALIGN_CENTER|wx.ALL, 10)
-        # BindStringDisplay.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-
         bkText = cgStaticText(panel, label = 'Bind Key:')
         panelSizer.Add(bkText, 0, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 5)
         bkText.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)

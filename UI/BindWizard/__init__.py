@@ -20,6 +20,8 @@ class WizardParent:
         self.Profile = parent.Profile
         self.State = init
         self.WizardDialog = None
+        self.BindPane.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+        self.BindPane.GetPane().Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
     def Dialog(self):
         if not self.WizardDialog:

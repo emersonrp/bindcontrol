@@ -9,7 +9,7 @@ class PowerBinderCommand:
     UseEditDialog = True
 
     def __init__(self, dialog, init : dict|None = None) -> None:
-        self.Profile = GetCurrentProfile()
+        self.Profile = GetCurrentProfile() # ugh
         self.Dialog  = dialog
         self.EditDialog = None
 

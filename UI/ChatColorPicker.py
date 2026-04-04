@@ -7,7 +7,6 @@ import GameData
 
 import UI
 from UI.CGControls import CGControlMixin, cgStaticText
-from Util.Profile import GetCurrentProfile
 
 ChatColorPickerChanged, EVT_CHATCOLORPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
@@ -18,10 +17,11 @@ class ChatColorPicker(wx.Panel):
     def __init__(self, parent, page, prefix:tuple, initcols:dict):
         super().__init__(parent)
 
-        self.Page = page
+        self.Page       = page
+        self.Profile    = page.Profile
         self.PrefixBits = prefix
-        self.Prefix = ''.join(prefix)
-        self.Colors = initcols
+        self.Prefix     = ''.join(prefix)
+        self.Colors     = initcols
 
         self.Dialog = None
 
@@ -153,7 +153,7 @@ class ChatColorPickerWindow(wx.Dialog):
     def UpdateChatBubble(self):
 
         inspname = re.sub(r'([A-Z])', r' \1', self.Picker.PrefixBits[2])
-        text = f"{GetCurrentProfile().ProfileName()}: {inspname}"
+        text = f"{self.Picker.Profile.ProfileName()}: {inspname}"
         cols = {
             'background' : self.backgroundPicker.GetColour(),
             'border'     : self.borderPicker.GetColour(),

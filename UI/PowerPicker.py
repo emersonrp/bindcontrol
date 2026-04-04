@@ -5,6 +5,7 @@ import GameData
 from Icon import GetIcon, SplitNameAndIcon
 import UI
 from UI.ErrorControls import ErrorControlMixin
+from UI.ProfileAwareControl import ProfileAwareControlMixin
 from Util.Incarnate import Rarities, Aliases
 from Util.Profile import GetCurrentProfile
 import wx.lib.agw.flatmenu as FM
@@ -12,7 +13,7 @@ import wx.lib.agw.flatmenu as FM
 import wx.lib.newevent
 PowerChanged, EVT_POWERPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
-class PowerPicker(ErrorControlMixin, wx.Button):
+class PowerPicker(ProfileAwareControlMixin, ErrorControlMixin, wx.Button):
     def __init__(self, parent, menuclass = None, size = wx.DefaultSize) -> None:
         super().__init__(parent, size = size)
 
@@ -94,11 +95,9 @@ class PowerPicker(ErrorControlMixin, wx.Button):
             self.SetIconFromFilename(iconfile)
 
 class PowerPickerMenu(FM.FlatMenu):
-
     def __init__(self, parent):
         super().__init__(parent)
         self.Bind(FM.EVT_FLAT_MENU_SELECTED, parent.OnMenuSelected)
-
 
     def SetSize(self, size):
         # add 20 to our height iff we are MacOS pre-fix
@@ -107,7 +106,7 @@ class PowerPickerMenu(FM.FlatMenu):
         super().SetSize(size)
 
     def BuildMenu(self) -> None:
-        gen = GetCurrentProfile().General
+        gen = self.Profile.General
 
         # primary / secondary / epic powers
         archdata = GameData.Archetypes[gen.GetState('Archetype')]

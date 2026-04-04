@@ -8,13 +8,11 @@ import wx.html
 import wx.lib.newevent
 from wx.lib.buttons import GenButton
 
-import Page
-
 from BindFile import KeyBind
 import UI
 from UI.ErrorControls import ErrorControlMixin
+from UI.ProfileAwareControl import ProfileAwareControlMixin
 from bcController import bcController
-from Util.Profile import GetCurrentProfile
 
 KeyChanged, EVT_KEY_CHANGED = wx.lib.newevent.NewCommandEvent()
 
@@ -51,6 +49,7 @@ class KeySelectDialog(wx.Dialog):
             self.Desc    = UI.Labels.get(button.CtlName, 'this keybind')
         self.Button  = button
         self.Binding = button.Key
+        self.Profile = button.Profile
 
         # prepopulate ModSlot and KeySlot so ShowBind doesn't clear everything
         # on the first event it sees, usually a spurious joystick event
@@ -335,7 +334,7 @@ class KeySelectDialog(wx.Dialog):
         self.Layout()
 
     def CheckConflicts(self) -> None:
-        if bool(GetCurrentProfile()):
+        if self.Profile:
             conflicts = self.Button.CheckConflicts(self.Binding)
             if conflicts:
                 conflictStrings = []
@@ -504,13 +503,13 @@ class KeySelectDialog(wx.Dialog):
             self.Keymap[ord(str(alphanum))] = str(alphanum)
 
 # I *can* *not* *believe* this if.. else.. hackery works:
-class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' else wx.Button): # pyright: ignore
+class bcKeyButton(ErrorControlMixin, ProfileAwareControlMixin, GenButton if platform.system() == 'Darwin' else wx.Button): # pyright: ignore
     def __init__(self, parent, wx_id : int = wx.ID_ANY, init : dict|None = None) -> None:
         init = init or {}
-        self.CtlName       : str                 = init.get('CtlName', '')
-        self.CtlLabel      : cgStaticText | None = init.get('CtlLabel')
-        self.Key           : str                 = init.get('Key', '')
-        self.AlwaysShorten : bool                = init.get('AlwaysShorten', False)
+        self.CtlName       : str                  = init.get('CtlName', '')
+        self.CtlLabel      : cgStaticText | None  = init.get('CtlLabel')
+        self.Key           : str                  = init.get('Key', '')
+        self.AlwaysShorten : bool                 = init.get('AlwaysShorten', False)
         # This might be overloading "AlwaysShorten", but:
         style = wx.BU_EXACTFIT if self.AlwaysShorten else 0
 
@@ -519,15 +518,6 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
         if tt := init.get('ToolTip', ''):
             self.DefaultToolTip = tt
             self.SetToolTip(tt)
-
-        # Set self.Page to the nearest Page in the parent chain
-        thing = self.GetParent()
-        while not isinstance(thing, Page.Page):
-            thing = thing.GetParent()
-            # we use these in the prefs dialog, so this happens there
-            if not thing: break
-        if isinstance(thing, Page.Page):
-            self.Page = thing
 
         self.SetLabel(self.Key)
 
@@ -557,12 +547,12 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
 
     def onKeyChanged(self, evt) -> None:
         evt.Skip()
-        profile = GetCurrentProfile()
-        profile.CheckAllConflicts()
         self.CheckConflicts()
-        # Let's try this out -- every time we pick a new key, update the trays'
-        # default-keys display just in case we've mashed over one of them now.
-        profile.Gameplay.OnKeybindProfilePicker()
+        if self.Profile:
+            self.Profile.CheckAllConflicts()
+            # Let's try this out -- every time we pick a new key, update the trays'
+            # default-keys display just in case we've mashed over one of them now.
+            self.Profile.Gameplay.OnKeybindProfilePicker()
 
     def ClearButton(self, evt) -> None:
         self.SetLabel("")
@@ -603,8 +593,8 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
 
     def CheckConflicts(self, newbinding = None) -> list:
         conflicts = []
-        if Profile := GetCurrentProfile():
-            conflicts = Profile.CheckConflict(newbinding or self.Key, self.CtlName)
+        if self.Profile:
+            conflicts = self.Profile.CheckConflict(newbinding or self.Key, self.CtlName)
             if conflicts:
                 conflictStrings = []
                 for conflict in conflicts:
@@ -618,8 +608,6 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
         button = evt.EventObject
 
         with KeySelectDialog(button) as dlg:
-            profile = GetCurrentProfile()
-
             if dlg.ShowModal() == wx.ID_OK:
                 # re-label the button / set its state
                 if newKey := dlg.Binding:
@@ -627,5 +615,6 @@ class bcKeyButton(ErrorControlMixin, GenButton if platform.system() == 'Darwin' 
                     button.SetLabel(newKey)
 
             # else we canceled, don't do any of that but still:
-            profile.CheckAllConflicts()
+            if self.Profile:
+                self.Profile.CheckAllConflicts()
             wx.PostEvent(button, KeyChanged(evt.GetId(), control = button))

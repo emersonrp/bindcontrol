@@ -618,7 +618,7 @@ class Main(wx.Frame):
         self.Profile.DeleteBindFiles()
 
     def OnMenuPrefsDialog(self, _ = None) -> None:
-        with PrefsDialog(self) as dlg:
+        with PrefsDialog(self.Profile or self) as dlg: # parent to self.Profile to make CheckAllConflicts work
             dlg.ShowAndUpdatePrefs()
 
     def OnMenuAboutBox(self, _) -> None:

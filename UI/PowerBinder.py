@@ -50,6 +50,7 @@ class PowerBinderDialog(wx.Dialog):
         super().__init__(parent, title = "PowerBinder", style = wx.DEFAULT_DIALOG_STYLE)
 
         self.Page        = parent.Page if hasattr(parent, 'Page') else None
+        self.Profile     = self.Page.Profile if self.Page else None
         self.ExtraLength = powerbinder.ExtraLength
         self.PowerBinder = powerbinder
 

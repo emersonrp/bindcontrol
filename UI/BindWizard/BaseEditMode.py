@@ -18,8 +18,8 @@ class BaseEditMode(WizardParent):
 
         # we use this also to serialize, below
         self.AllCtrls = {
-            'ToggleEditMode'    : 'Toggle Base Edit Mode',
-            'BEDisableMovement' : 'Disable Special Movement Behavior',
+            'ToggleEditMode'    : 'Base Edit Mode',
+            'BEDefaultMovement' : 'Default Movement Behavior',
             'BEDisableChat'     : 'Disable Chat Keys',
             'BEDisableWindows'  : 'Disable Window Toggle Keys',
             'BEGridCycle'       : 'Cycle Placement Grid Sizes',
@@ -43,7 +43,7 @@ class BaseEditMode(WizardParent):
             UI.Labels[self.BindPane.MakeCtrlName(k)] = v
 
         self.CBToolTips = {
-            'BEDisableMovement' : 'Set movement keys to their basic game-default behavior',
+            'BEDefaultMovement' : 'Set movement keys to their basic game-default behavior',
             'BEDisableChat'     : 'Disable keys that will pop up the chat window',
             'BEDisableWindows'  : 'Disable keys that will toggle windows on top of the base edit UI',
         }
@@ -86,7 +86,7 @@ class BaseEditMode(WizardParent):
         optsgrid = wx.FlexGridSizer(2, wx.Size(2,2))
         optsgrid.AddGrowableCol(0)
 
-        for cb in ['BEDisableMovement', 'BEDisableChat', 'BEDisableWindows', ]:
+        for cb in ['BEDefaultMovement', 'BEDisableChat', 'BEDisableWindows', ]:
             checkbox = cgCheckBox(optsSizer.GetStaticBox(), label = UI.Labels[self.BindPane.MakeCtrlName(cb)])
             checkbox.SetToolTip(self.CBToolTips[cb])
             checkbox.CtlName = self.BindPane.MakeCtrlName(cb)
@@ -135,7 +135,7 @@ class BaseEditMode(WizardParent):
         cmdSizer = wx.BoxSizer(wx.HORIZONTAL)
         cmdPanel = wx.Panel(panel)
         cmdPanel.SetSizer(cmdSizer)
-        for cmd in ('BEDisableMovement', 'BEDisableChat', 'BEDisableWindows',):
+        for cmd in ('BEDefaultMovement', 'BEDisableChat', 'BEDisableWindows',):
             ctpanel = wx.Panel(cmdPanel)
             ctsizer = wx.BoxSizer(wx.HORIZONTAL)
             ctpanel.SetSizer(ctsizer)
@@ -151,7 +151,7 @@ class BaseEditMode(WizardParent):
             ctpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
             cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
-        panelSizer.Add(cmdPanel, 0, wx.ALIGN_CENTER|wx.ALL, 15)
+        panelSizer.Add(cmdPanel, 0, wx.ALIGN_CENTER|wx.ALL, 10)
         cmdPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
         keybindWrapper = wx.BoxSizer(wx.VERTICAL)
@@ -194,11 +194,11 @@ class BaseEditMode(WizardParent):
             if tooltiptext[i]: tooltip = tooltip + "\n" + tooltiptext[i]
         keybindPanel.SetToolTip(tooltip)
 
-        panelSizer.Add(keybindWrapPanel, 0, wx.ALIGN_CENTER)
+        panelSizer.Add(keybindWrapPanel, 0, wx.ALIGN_CENTER|wx.RIGHT, 10)
 
         panelSizer.AddStretchSpacer(1)
 
-        bkText = cgStaticText(panel, label = 'Toggle Base Edit Mode:')
+        bkText = cgStaticText(panel, label = 'Base Edit Mode:')
         panelSizer.Add(bkText, 0, wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, 5)
         bkText.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
@@ -265,7 +265,7 @@ class BaseEditMode(WizardParent):
         modefile .SetBind(self.BindPane.GetCtrl('ToggleEditMode').MakeBind(['keybindreset', 'editbase 0', resetfile.BLF()]))
 
         allBindKeys = self.Profile.AllBindKeys()
-        if self.BindPane.GetCtrl('BEDisableMovement').GetValue():
+        if self.BindPane.GetCtrl('BEDefaultMovement').GetValue():
             # reset movement keys if so
             # TODO - this in lieu of "keybindreset" which might crush other things we want?
             # Or am I overthinking this?

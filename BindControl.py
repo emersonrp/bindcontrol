@@ -198,6 +198,8 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
 
+        pub.subscribe(self.OnMenuPrefsDialog, 'showprefsdialog')
+
     def SetupInitialProfile(self, input_profile = None):
 
         config = wx.ConfigBase.Get()

@@ -148,7 +148,7 @@ class Profile(wx.Notebook):
                      "Please fix this in Preferences.  Go to the Preferences Dialog now?"),
                     f"{server} Game Directory Not Set", style=wx.YES_NO|wx.ICON_WARNING|wx.CENTER) as dlg:
                 if dlg.ShowModal() == wx.ID_YES:
-                    wx.App.Get().Main.OnMenuPrefsDialog()
+                    pub.sendMessage('showprefsdialog')
 
     def CheckConflict(self, key, existingctrlname) -> list:
         conflicts = []

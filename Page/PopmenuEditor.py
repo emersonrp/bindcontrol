@@ -4,7 +4,6 @@ from Page.MacroComposer import MacroPane
 from Help import HelpHTMLWindow
 import UI
 from UI.ControlGroup import cgTextCtrl
-from UI.PrefsDialog import PrefsDialog
 from Icon import GetIcon
 from typing import cast, Literal
 from collections.abc import Callable
@@ -180,8 +179,7 @@ class PopmenuEditor(Page):
         return retval
 
     def OnOpenPrefsButton(self, _) -> None:
-        with PrefsDialog(self) as dlg:
-            dlg.ShowAndUpdatePrefs()
+        pub.sendMessage('showprefsdialog')
 
     def SynchronizeUI(self, _ = None) -> None:
         NoErrors = True

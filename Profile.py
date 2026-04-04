@@ -517,6 +517,14 @@ class Profile(wx.Notebook):
             'dirs'  : dirs,
         }
 
+    # We might redo CheckConflicts in terms of this?  Or maybe not?
+    def AllBindKeys(self) -> dict:
+        allkeys = {wx.ConfigBase.Get().Read('ResetKey'): 'Reset Key'}
+        for page in self.Pages:
+            for ctrlname, bindkey in page.GetKeyBinds():
+                allkeys[bindkey] = UI.Labels.get(ctrlname, ctrlname or '')
+        return allkeys
+
     def DeleteBindFiles(self):
         result = wx.MessageBox((
                 "DELETING ALL BINDFILES"

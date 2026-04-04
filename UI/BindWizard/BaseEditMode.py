@@ -19,6 +19,7 @@ class BaseEditMode(WizardParent):
             'ToggleEditMode'    : 'Toggle Base Edit Mode',
             'BEDisableMovement' : 'Default Movement Keys',
             'BEDisableChat'     : 'Disable Chat Keys',
+            'BEDisableWindows'  : 'Disable Window Toggle Keys',
             'BEGridCycle'       : 'Cycle Placement Grid Sizes',
             'BEAngleCycle'      : 'Cycle Rotation Snap Angle',
             'BEClipCycle'       : 'Toggle Wall Clipping',
@@ -87,6 +88,13 @@ class BaseEditMode(WizardParent):
         self.BindPane.SetCtrl('BEDisableChat', self.BEDisableChat)
         optsSizer.Add(self.BEDisableChat, 0, wx.EXPAND|wx.ALL, 5)
 
+        self.BEDisableWindows = cgCheckBox(optsSizer.GetStaticBox(), label = 'Disable Window Toggle Keys')
+        self.BEDisableWindows.SetToolTip('Disable keys that will toggle windows on top of the base edit UI')
+        self.BEDisableWindows.CtlName = self.BindPane.MakeCtrlName('BEDisableWindows')
+        self.BEDisableWindows.SetValue(wizdata.get('BEDisableWindows', False))
+        self.BindPane.SetCtrl('BEDisableWindows', self.BEDisableWindows)
+        optsSizer.Add(self.BEDisableWindows, 0, wx.EXPAND|wx.ALL, 5)
+
         ### KEY SIZER
         keysSizer = wx.StaticBoxSizer(wx.VERTICAL, dialog, label = 'Options')
 
@@ -124,7 +132,7 @@ class BaseEditMode(WizardParent):
         cmdSizer = wx.BoxSizer(wx.HORIZONTAL)
         cmdPanel = wx.Panel(panel)
         cmdPanel.SetSizer(cmdSizer)
-        for cmd in ('BEDisableMovement', 'BEDisableChat', ):
+        for cmd in ('BEDisableMovement', 'BEDisableChat', 'BEDisableWindows',):
             ctpanel = wx.Panel(cmdPanel)
             ctsizer = wx.BoxSizer(wx.HORIZONTAL)
             ctpanel.SetSizer(ctsizer)
@@ -254,6 +262,7 @@ class BaseEditMode(WizardParent):
         resetfile.SetBind(self.BindPane.GetCtrl('ToggleEditMode').MakeBind([                'editbase 1', modefile .BLF()]))
         modefile .SetBind(self.BindPane.GetCtrl('ToggleEditMode').MakeBind(['keybindreset', 'editbase 0', resetfile.BLF()]))
 
+        allBindKeys = self.Profile.AllBindKeys()
         if self.BindPane.GetCtrl('BEDisableMovement').GetValue():
             # reset movement keys if so
             # TODO - this in lieu of "keybindreset" which might crush other things we want?
@@ -273,17 +282,23 @@ class BaseEditMode(WizardParent):
             modefile.SetBind(config.Read('ResetKey'), "Reset Key", self.Profile.CustomBinds, 'nop')
 
         if self.BindPane.GetCtrl('BEDisableChat').GetValue():
-            # go through chat keys, add them as 'nop' to modefile
-            #
-            # TODO - ponder whether they might still have some default ones also set up?
-            # There's no way to test for that in-game, but we could maybe... examine all
-            # the default ones and see if there's a bind set?  Do we have a mechanism for that?
-            # Hmm we probably don't since we're in the middle of populating the list when
-            # we're in here.  Hmm.
+            # Go through BC-managed chat keys, add them as 'nop' to modefile
             gen = self.Profile.General
             for chatkey in ['StartChat', 'SlashChat', 'StartEmote', 'AutoReply', 'TellLast', 'TellTarget', 'QuickChat',]:
                 if key := gen.GetState(chatkey):
                     modefile.SetBind(key, '', self.Profile.CustomBinds, 'nop')
+
+            # And check the default ones that the game starts with, and if we haven't assigned
+            # them to something else, go ahead and nop them.  /keybind_reset will fix them back.
+            for defaultKey in ['']:
+                if defaultKey not in allBindKeys:
+                    modefile.SetBind(defaultKey, '', self.Profile.CustomBinds, 'nop')
+
+        if self.BindPane.GetCtrl('BEDisableWindows').GetValue():
+            # Turn off the keys that'll pop up windows on top of the base edit UI.
+            for defaultKey in ['']:
+                if defaultKey not in allBindKeys:
+                    modefile.SetBind(defaultKey, '', self.Profile.CustomBinds, 'nop')
 
         ### turn each keybutton into a bind in modefile
         if self.BindPane.GetCtrl('BEGridCycle').GetValue():

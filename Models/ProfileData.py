@@ -171,8 +171,10 @@ class ProfileData(dict):
                     break
             if not replaced:
                 if contents.get('Action') != 'delete':
-                    # we canceled a custom bind add way up front so that it never even got
-                    # into the structure in the first place to be replaced.  Just ignore it.
+                    # if it's 'delete' but we didn't find it in the previous loop, then
+                    # we cancelled a Custom Bind add when being asked for the name, before
+                    # it got into the structure in the first place to be replaced.
+                    # Just ignore it.  This could probably be cleaned up.
                     self[pagename].append(contents)
         else:
             self[pagename] = self.get(pagename, {})

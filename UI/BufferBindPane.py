@@ -30,28 +30,21 @@ class BufferBindPane(CustomBindPaneParent):
             'BuffsAffectTeam' : True,
             'BuffsAffectPets' : False,
         }
+        self.Init.update(self.PassedInit)
 
         for i in (1,2,3,4,5,6,7,8):
             self.Init[f'Team{i}BuffKey'] = ''
+            UI.Labels[self.MakeCtrlName(f'Team{i}BuffKey')] = f'Team {i} Key'
         for i in (1,2,3,4,5,6):
             self.Init[f'Pet{i}BuffKey'] = ''
+            UI.Labels[self.MakeCtrlName(f'Pet{i}BuffKey')] = f'Pet {i} Key'
+
 
     def BuildBindUI(self) -> None:
         pane = self.Pane.GetPane()
 
-        # Doing this UI here since we need CustomID to be set to get MakeCtrlName right
-        # TODO: is this still true?  Can we do this in init now that we use CustomID?
-        for i in (1,2,3,4,5,6,7,8):
-            UI.Labels[self.MakeCtrlName(f'Team{i}BuffKey')] = f'Team {i} Key'
-        for i in (1,2,3,4,5,6):
-            UI.Labels[self.MakeCtrlName(f'Pet{i}BuffKey')] = f'Pet {i} Key'
-
-        # TODO:  why do I do this here instead of in __init__?  Must have been a reason.
-        self.Init.update(self.PassedInit)
-
         # bind text controls
-        # TODO this doesn't need to be a Gridbag any more.  Just BoxSizer it.
-        BindSizer = wx.GridBagSizer(hgap=5, vgap=5)
+        BindSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # on-select chat/emote
         selChatTxt = wx.StaticText(pane, label = 'On select, tell:')
@@ -64,9 +57,10 @@ class BufferBindPane(CustomBindPaneParent):
         self.SelChat.SetHint('/tell contents; leave blank to skip')
         self.SetCtrl('SelChat', self.SelChat)
 
-        BindSizer.Add(selChatTxt,      (0, 0), flag = wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(self.SelChatTgt, (0, 1))
-        BindSizer.Add(self.SelChat,    (0, 2), (1, 3), flag = wx.EXPAND)
+        BindSizer.Add(selChatTxt,      0, flag = wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(self.SelChatTgt, 0)
+        BindSizer.Add(self.SelChat,    1, flag = wx.EXPAND)
+        BindSizer.Layout()
 
         self.BuffSizer = wx.BoxSizer(wx.VERTICAL)
         if self.Init.get('Buffs', ''):
@@ -115,10 +109,6 @@ class BufferBindPane(CustomBindPaneParent):
             PetInner.Add(label , (0,i), flag = wx.EXPAND|wx.ALIGN_CENTER)
             PetInner.Add(button, (1,i))
             self.SetCtrl(f'Pet{i}BuffKey', button)
-
-        BindSizer.AddGrowableCol(2)
-        BindSizer.AddGrowableCol(4)
-        BindSizer.Layout()
 
         # border around the addr box
         border = wx.BoxSizer(wx.VERTICAL)

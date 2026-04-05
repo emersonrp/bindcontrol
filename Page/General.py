@@ -107,7 +107,7 @@ class General(Page):
         for s in ['Homecoming', 'Rebirth']:
             self.ServerPicker.Append(s, GetIconBitmap('Servers', s))
         self.Ctrls['Server'] = self.ServerPicker
-        self.ServerPicker.Bind(wx.EVT_COMBOBOX, self.OnServerChange)
+        self.ServerPicker.Bind(wx.EVT_COMBOBOX, self.OnServerChangePicker)
         pickerSizer.Add(self.ServerPicker, 1, wx.EXPAND|wx.ALL, 5)
 
         bannerSizer.Add(pickerSizer, 0, wx.BOTTOM|wx.LEFT|wx.RIGHT|wx.EXPAND, 6)
@@ -521,7 +521,7 @@ class General(Page):
     def ValidateServerPicker(self) -> None:
         if not self.GetState('Server'): self.SetState('Server', 'Homecoming')
 
-    def OnServerChange(self, evt) -> None:
+    def OnServerChangePicker(self, evt) -> None:
         if evt: evt.Skip()
 
         if self.GetState('Server') != self.Server:
@@ -537,7 +537,6 @@ class General(Page):
                     newProfile = Profile.Profile(mainwindow, filename = str(self.Profile.Filepath()))
                 newProfile.buildUIFromData()
                 mainwindow.InsertProfile(newProfile)
-                wx.CallAfter(newProfile.CheckIfGameDirNeeded)
             else:
                 self.ServerPicker.SetStringSelection(self.Server)
                 self.Profile.UpdateData('General', 'Server', self.Server)

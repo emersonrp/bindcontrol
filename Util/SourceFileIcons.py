@@ -23,7 +23,6 @@ def GetBitmapFromSourceFile(source, name) -> wx.Bitmap|None:
             raise(Exception(f"ICON SOURCE FILE {sourcefile} MISSING - THIS IS A BUG."))
         sourcefile = Image.open(sourcefile, formats = ["PNG"])
         SourceCache[source] = sourcefile
-
     sourcelist = list(sourcemaps[source]['list'])
 
     if name not in sourcelist:

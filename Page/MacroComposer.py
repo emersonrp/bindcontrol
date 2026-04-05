@@ -127,6 +127,7 @@ class MacroComposer(Page):
             macropane.Init['CustomID'] = macropane.CustomID
 
         macropane.UpdateLabel()
+        macropane.SetFakeIconIfNeeded()
 
         self.Panes.append(macropane)
 
@@ -229,6 +230,7 @@ class MacroComposer(Page):
         if dlg.ShowModal() == wx.ID_OK:
             macropane.Title = dlg.GetValue()
             macropane.UpdateLabel()
+            macropane.SetFakeIconIfNeeded()
             if not new:
                 macropane.DelButton.SetToolTip(f'Delete macro "{macropane.Title}"')
                 macropane.RenButton.SetToolTip(f'Rename macro "{macropane.Title}"')
@@ -244,12 +246,6 @@ class MacroComposer(Page):
             return False
 
 class MacroPane(ListPanel):
-    def __init__(self, parent, init):
-        self.IconButton = None
-        self.MacroContents = ''
-        self.ToolTipText = ''
-        super().__init__(parent, init)
-
     def Serialize(self) -> dict:
         return {
             'CustomID'        : self.CustomID,
@@ -311,9 +307,6 @@ class MacroPane(ListPanel):
         else:
             self.SetLabel(f"{self.Title}")
 
-        if self.IconButton and not self.IconButton.GetLabel():
-            self.SetFakeIcon()
-
     def OnIconButton(self, evt):
         button = evt.GetEventObject()
         with MacroIconPicker(self) as iconpicker: # RP: don't try to cache this, make a new one every time ugh
@@ -337,12 +330,13 @@ class MacroPane(ListPanel):
         pub.sendMessage('macrocontentschanged')
 
     def CheckToolTipSlot(self):
-        enable = bool(self.IconButton) and (self.IconButton.GetLabel() != '')
-        self.ToolTipText.Enable(enable)
-        self.ToolTipLabel.Enable(enable)
-        tooltiptext = '' if enable else 'Tooltip is only supported if an icon is chosen.'
-        self.ToolTipText.SetToolTip(tooltiptext)
-        self.ToolTipLabel.SetToolTip(tooltiptext)
+        if self.ToolTipText and self.ToolTipLabel:
+            enable = bool(self.IconButton) and (self.IconButton.GetLabel() != '')
+            self.ToolTipText.Enable(enable)
+            self.ToolTipLabel.Enable(enable)
+            tooltiptext = '' if enable else 'Tooltip is only supported if an icon is chosen.'
+            self.ToolTipText.SetToolTip(tooltiptext)
+            self.ToolTipLabel.SetToolTip(tooltiptext)
 
     def OnStringButton(self, evt):
         with MacroTextDialog(self.Page, self) as dlg:
@@ -356,11 +350,14 @@ class MacroPane(ListPanel):
 
         return macrostring
 
+    def SetFakeIconIfNeeded(self):
+        if self.IconButton and not self.IconButton.GetLabel():
+            self.SetFakeIcon()
+
     def SetFakeIcon(self):
-        if self.IconButton:
-            self.IconButton.SetLabel('')
-            self.IconButton.SetToolTip(self.Title)
-            self.IconButton.SetBitmap(self.FakeMacroIcon(self.Title))
+        self.IconButton.SetLabel('')
+        self.IconButton.SetToolTip(self.Title)
+        self.IconButton.SetBitmap(self.FakeMacroIcon(self.Title))
 
     def FakeMacroIcon(self, text) -> wx.BitmapBundle:
         bitmapdc = wx.MemoryDC()

@@ -29,9 +29,6 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         if not self.CustomID and self.Profile:
             self.CustomID = self.Profile.GetCustomID()
 
-        self.SetLabel(self.Title)
-
-        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT))
 
         self.Class = type(self).__name__
 
@@ -39,6 +36,8 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         self.SetSizer(self.Sizer)
 
         self.Pane = wx.CollapsiblePane(self, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
+        self.Pane.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT))
+        self.Pane.SetLabel(self.Title)
         self.Sizer.Add(self.Pane, 1, wx.EXPAND, 5)
 
         buttonSizer = wx.BoxSizer(wx.VERTICAL)
@@ -93,9 +92,9 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
 
     def UpdateLabel(self):
         if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
-            self.SetLabel(f"{self.Title} ({self.Description} ID:{self.CustomID})")
+            self.Pane.SetLabel(f"{self.Title} ({self.Description} ID:{self.CustomID})")
         else:
-            self.SetLabel(f"{self.Title}")
+            self.Pane.SetLabel(f"{self.Title}")
 
     def GetPane(self):
         return self.Pane.GetPane()
@@ -109,7 +108,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
 
         if dlg.ShowModal() == wx.ID_OK:
             self.Title = dlg.GetValue()
-            self.SetLabel(self.Title)
+            self.Pane.SetLabel(self.Title)
             if not new:
                 self.DelButton.SetToolTip(f'Delete "{self.Title}"')
                 self.RenButton.SetToolTip(f'Rename "{self.Title}"')

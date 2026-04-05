@@ -261,19 +261,19 @@ class ProfileData(dict):
                 if not custombind: continue
 
                 if custombind.get('Type') == "BufferBind":
-                    if power := custombind.pop('BuffPower1'):
+                    if power := custombind.pop('BuffPower1', None):
                         custombind['Buffs'] = [{
                             'Power'   : power,
                             'ChatTgt' : custombind.pop('BuffChat1Tgt', ''),
                             'Chat'    : custombind.pop('BuffChat1', ''),
                         }]
-                    if power := custombind.pop('BuffPower2'):
+                    if power := custombind.pop('BuffPower2', None):
                         custombind['Buffs'].append({
                             'Power'   : power,
                             'ChatTgt' : custombind.pop('BuffChat2Tgt', ''),
                             'Chat'    : custombind.pop('BuffChat2', ''),
                         })
-                    if power := custombind.pop('BuffPower3'):
+                    if power := custombind.pop('BuffPower3', None):
                         custombind['Buffs'].append({
                             'Power'   : power,
                             'ChatTgt' : custombind.pop('BuffChat3Tgt', ''),

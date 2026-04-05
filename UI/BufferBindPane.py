@@ -1,9 +1,11 @@
 import re
 import wx
+from pubsub import pub
+
 import UI
 from Util.BLF import BLF
 
-from UI.PowerPicker import PowerPicker, EVT_POWERPICKER_CHANGED
+from UI.PowerPicker import PowerPicker
 
 from UI.CGControls import cgStaticText
 from UI.CustomBindPaneParent import CustomBindPaneParent
@@ -348,7 +350,7 @@ class Buff(wx.Panel):
         self.BuffPower.SetLabel(buff.get('Power', {}).get('pname', ''))
         if iconname := buff.get('Power', {}).get('picon', ''):
             self.BuffPower.SetIconFromFilename(iconname)
-        self.BuffPower.Bind(EVT_POWERPICKER_CHANGED, self.OnPowerPicked)
+        pub.subscribe(self.OnPowerPicked, 'powerpickerchanged')
 
         self.delButton = wx.Button(self, label = "X", size = wx.Size(40,-1))
         self.delButton.SetForegroundColour(wx.RED)
@@ -358,10 +360,10 @@ class Buff(wx.Panel):
         self.OnPowerPicked()
         self.SetSizerAndFit(buffSizer)
 
-    def OnPowerPicked(self, evt = None) -> None:
-        if evt: evt.Skip()
-        if self.BuffPower.HasPowerPicked():
-            self.BuffPower.RemoveError("nopick")
-        else:
-            self.BuffPower.AddError("nopick", "No power has been picked")
+    def OnPowerPicked(self, control = None):
+        if control == self.BuffPower:
+            if self.BuffPower.HasPowerPicked():
+                self.BuffPower.RemoveError("nopick")
+            else:
+                self.BuffPower.AddError("nopick", "No power has been picked")
 

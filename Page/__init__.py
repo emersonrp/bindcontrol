@@ -41,8 +41,9 @@ class Page(wx.ScrolledWindow):
         self.Ctrls : dict = {}
         self.Init  : dict = {}
 
-        pub.subscribe(self.OnCommandPubSub, 'powerbinderchanged')
         pub.subscribe(self.OnCommandPubSub, 'chatcolorpickerchanged')
+        pub.subscribe(self.OnCommandPubSub, 'powerbinderchanged')
+        pub.subscribe(self.OnCommandPubSub, 'powerpickerchanged')
 
     def OnCommandPubSub(self, control):
         self.Profile.DoCommand(self, control)

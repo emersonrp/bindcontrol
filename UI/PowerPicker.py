@@ -1,5 +1,6 @@
 import wx
 import re
+from pubsub import pub
 
 import GameData
 from Icon import GetIcon, SplitNameAndIcon
@@ -8,9 +9,6 @@ from UI.ErrorControls import ErrorControlMixin
 from UI.ProfileAwareControl import ProfileAwareControlMixin
 from Util.Incarnate import Rarities, Aliases
 import wx.lib.agw.flatmenu as FM
-
-import wx.lib.newevent
-PowerChanged, EVT_POWERPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 class PowerPicker(ProfileAwareControlMixin, ErrorControlMixin, wx.Button):
     def __init__(self, parent, menuclass = None, size = wx.DefaultSize) -> None:
@@ -62,7 +60,7 @@ class PowerPicker(ProfileAwareControlMixin, ErrorControlMixin, wx.Button):
 
     def OnMenuSelected(self, evt = None) -> None:
         self.doOnMenuSelected(evt)
-        wx.PostEvent(self, PowerChanged(wx.NewId(), control = self))
+        pub.sendMessage('powerpickerchanged', control = self)
 
     # DRYed this up from a few places.  Probably belongs here but not 100% sure.
     def SetIconFromFilename(self, filename):

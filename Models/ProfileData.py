@@ -170,7 +170,10 @@ class ProfileData(dict):
                     replaced = True
                     break
             if not replaced:
-                self[pagename].append(contents)
+                if contents.get('Action') != 'delete':
+                    # we canceled a custom bind add way up front so that it never even got
+                    # into the structure in the first place to be replaced.  Just ignore it.
+                    self[pagename].append(contents)
         else:
             self[pagename] = self.get(pagename, {})
             # de-JSONize things if we got them from GetState().

@@ -19,7 +19,7 @@ from Page.MovementPowers import MovementPowers
 from Page.InspirationPopper import InspirationPopper
 from Page.Mastermind import Mastermind
 from Page.CustomBinds import CustomBinds
-from Page.MacroComposer import MacroComposer
+from Page.MacroComposer import MacroComposer, MacroPane
 from Page.PopmenuEditor import PopmenuEditor
 import UI
 from UI.KeySelectDialog import bcKeyButton
@@ -313,7 +313,7 @@ class Profile(wx.Notebook):
                 for macro in data['MacroComposer']:
                     if not macro: continue
 
-                    if macropane := mpage.BuildMacroPaneFromData(macro):
+                    if macropane := MacroPane(mpage, macro):
                         mpage.AddMacroToPage(macropane = macropane)
 
         # if we want to set things based on power picks, let's do that.  This might

@@ -90,21 +90,16 @@ class MacroComposer(Page):
                 macrodata = json.loads(bindjson)
                 macrodata.pop('CustomID', None)
 
-                if macropane := self.BuildMacroPaneFromData(macrodata):
+                if macropane := MacroPane(self, macrodata):
                     self.AddMacroToPage(macropane = macropane)
                     existingMacroNames = [pane.Title for pane in self.Panes if pane != macropane]
                     if macropane.Title in existingMacroNames:
-                        self.SetMacroPaneLabel(None, macropane, new = True)
+                        macropane.SetPanelLabel(None, new = True)
 
             except Exception as e:
                 wx.LogError(f'Cannot import macro "{filepath.name}": {e}')
 
         evt.Skip()
-
-    def BuildMacroPaneFromData(self, macrodata):
-        macropane = MacroPane(self, init = macrodata)
-        macropane.BuildMacroUI()
-        return macropane
 
     def AddMacroToPage(self, macropane = None) -> None:
         if not macropane:
@@ -112,7 +107,7 @@ class MacroComposer(Page):
             return
 
         if not macropane.Title: # this is from a "New Bind" button
-            if not self.SetMacroPaneLabel(None, macropane, new = True):
+            if not macropane.SetPanelLabel(None, new = True):
                 return
 
         if len(self.Panes) == 0:
@@ -176,7 +171,7 @@ class MacroComposer(Page):
         init.pop('CustomID', None)
         init.pop('Title', None)
 
-        newmacropane = self.BuildMacroPaneFromData(init)
+        newmacropane = MacroPane(self, init)
 
         if not newmacropane:
             wx.LogError(f'Error duplicating macro "{oldmacropane.Title}"!')
@@ -216,47 +211,9 @@ class MacroComposer(Page):
         for pane in self.Panes:
             self.Profile.UpdateData('MacroComposer', pane.Serialize())
 
-    def SetMacroPaneLabel(self, evt, macropane = None, new = False) -> bool:
-        if not macropane:
-            macropane = evt.GetEventObject().MacroPane
-        if not macropane:
-            wx.LogError("Tried to set a MacroPane label without a macropane.  This is a bug.")
-            return False
-
-        dlg = wx.TextEntryDialog(self, 'Enter name for macro:')
-        if macropane.Title:
-            dlg.SetValue(macropane.Title)
-
-        if dlg.ShowModal() == wx.ID_OK:
-            macropane.Title = dlg.GetValue()
-            macropane.UpdateLabel()
-            macropane.SetFakeIconIfNeeded()
-            if not new:
-                macropane.DelButton.SetToolTip(f'Delete macro "{macropane.Title}"')
-                macropane.RenButton.SetToolTip(f'Rename macro "{macropane.Title}"')
-                macropane.DupButton.SetToolTip(f'Duplicate macro "{macropane.Title}"')
-                macropane.ExpButton.SetToolTip(f'Export macro "{macropane.Title}"')
-            self.Refresh()
-            dlg.Destroy()
-            return True # successful name change
-        else: # they hit 'cancel'
-            if new:
-                self.doDeleteMacroPane(macropane)
-            dlg.Destroy()
-            return False
-
 class MacroPane(ListPanel):
-    def Serialize(self) -> dict:
-        return {
-            'CustomID'        : self.CustomID,
-            'Title'           : self.Title,
-            'Icon'            : self.IconButton.GetLabel() if self.IconButton else '',
-            'Contents'        : self.MacroContents.GetValue() if self.MacroContents else '',
-            'powerbinderdata' : self.MacroContents.SaveToData() if self.MacroContents else '',
-            'ToolTip'         : self.ToolTipText.GetValue() if self.ToolTipText else '',
-        }
-
-    def BuildMacroUI(self):
+    def __init__(self, parent, init = None):
+        super().__init__(parent, init)
         pane = self.GetPane()
         macroSizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -300,6 +257,16 @@ class MacroPane(ListPanel):
         pane.SetSizer(borderSizer)
 
         self.CheckToolTipSlot()
+
+    def Serialize(self) -> dict:
+        return {
+            'CustomID'        : self.CustomID,
+            'Title'           : self.Title,
+            'Icon'            : self.IconButton.GetLabel() if self.IconButton else '',
+            'Contents'        : self.MacroContents.GetValue() if self.MacroContents else '',
+            'powerbinderdata' : self.MacroContents.SaveToData() if self.MacroContents else '',
+            'ToolTip'         : self.ToolTipText.GetValue() if self.ToolTipText else '',
+        }
 
     def UpdateLabel(self):
         if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):

@@ -31,13 +31,3 @@ class CustomBindPaneParent(ListPanel):
             'Title'    : self.Title,
             **data
         }
-
-    def SetPanelLabel(self, new = False) -> bool:
-        if retval := super().SetPanelLabel(new):
-            if not new:
-                if deletefiles := self.AllBindFiles():
-                    if self.Profile:
-                        self.Profile.doDeleteBindFiles(deletefiles)
-            pub.sendMessage('updatebinds')
-
-        return retval

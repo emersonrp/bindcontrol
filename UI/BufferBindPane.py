@@ -8,12 +8,12 @@ from Util.BLF import BLF
 from UI.PowerPicker import PowerPicker
 
 from UI.CGControls import cgStaticText
-from UI.ListPanel import ListPanel
+from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 
 ChatTargets = ['team', 'target', 'local']
 
-class BufferBindPane(ListPanel):
+class BufferBindPane(CustomBindPaneParent):
     def __init__(self, page, init : dict|None = None) -> None:
         init = init or {}
         super().__init__(page, init)

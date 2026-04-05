@@ -2,14 +2,14 @@ from pubsub import pub
 from typing import Any
 import wx
 import UI
-from UI.ListPanel import ListPanel
+from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinder import PowerBinder
 from Icon import GetIcon
 
 ### CustomBind subclasses for the individual bind types
 
-class SimpleBindPane(ListPanel):
+class SimpleBindPane(CustomBindPaneParent):
     def __init__(self, page, init : dict|None = None) -> None:
         init = init or {}
         super().__init__(page, init)

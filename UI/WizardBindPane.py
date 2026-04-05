@@ -4,10 +4,10 @@ import sys
 from typing import Any
 from functools import partial
 
-from UI.ListPanel import ListPanel
+from UI.CustomBindPaneParent import CustomBindPaneParent
 from Util.Paths import GetRootDirPath
 
-class WizardBindPane(ListPanel):
+class WizardBindPane(CustomBindPaneParent):
     def __init__(self, page, wizClass, init : dict|None = None) -> None:
         init = init or {}
         super().__init__(page, init)

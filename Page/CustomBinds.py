@@ -10,7 +10,7 @@ from Icon import GetIcon
 from Page import Page
 from Help import HelpButton
 if TYPE_CHECKING:
-    from UI.ListPanel import ListPanel
+    from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
@@ -28,7 +28,7 @@ class CustomBinds(Page):
         super().__init__(parent)
 
         self.TabTitle : str                        = "Custom Binds"
-        self.Panes    : list[ListPanel] = []
+        self.Panes    : list[CustomBindPaneParent] = []
         self.Init     : dict[str, Any]             = {}
 
         pub.subscribe(self.OnVerboseBindsChanged, 'prefschanged.verbosebinds')

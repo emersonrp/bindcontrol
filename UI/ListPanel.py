@@ -75,21 +75,6 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
 
         self.Pane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
 
-    def BuildBindUI(self) -> None:
-        wx.LogError(f"{self.Class} did not override BuildBindUI.  This is a bug.")
-        # build the UI needed to edit/create this bind, and shim
-        # it into 'page'
-
-    def CheckIfWellFormed(self) -> bool:
-        wx.LogWarning(f"{self.Class} did not override CheckIfWellFormed.  This is a bug.")
-        return False
-
-    def PopulateBindFiles(self) -> None:
-        wx.LogError(f"{self.Class} did not override PopulateBindFiles.  This is a bug.")
-        # for overriding on child classes this will be called in the course of
-        # the Custom Binds page doing its own PopulateBindFiles, iteratively
-        # over all of its kids
-
     def UpdateLabel(self):
         if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
             self.Pane.SetLabel(f"{self.Title} ({self.Description} ID:{self.CustomID})")
@@ -216,18 +201,6 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
 
         self.DestroyLater()
 
-    def CreateSerialization(self, data) -> dict[str, Any]:
-        return {
-            'CustomID' : self.CustomID,
-            'Type'     : self.Type,
-            'Title'    : self.Title,
-            **data
-        }
-
-    def Serialize(self) -> dict:
-        wx.LogError(f"{self.Class} did not override Serialize.  This is a bug.")
-        return {}
-
     def OnPaneChanged(self, evt) -> None:
         IsCollapsed = evt.GetCollapsed()
         if self.DelButton: self.DelButton.Show(not IsCollapsed)
@@ -242,6 +215,10 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         for _,ctrl in self.Ctrls.items():
             if isinstance(ctrl, bcKeyButton):
                 ctrl.ClearButton(None)
+
+    def Serialize(self) -> dict:
+        wx.LogError(f"{self.Class} did not override Serialize.  This is a bug.")
+        return {}
 
     def MakeCtrlName(self, name) -> str:
         return f"{self.Class}_{self.CustomID}_{name}"

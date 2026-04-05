@@ -2,12 +2,12 @@ from pubsub import pub
 import re
 import wx
 import UI
-from UI.ListPanel import ListPanel
+from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinder import PowerBinder
 from Icon import GetIcon
 
-class ComplexBindPane(ListPanel):
+class ComplexBindPane(CustomBindPaneParent):
     def __init__(self, page, init : dict|None = None) -> None:
         init = init or {}
         super().__init__(page, init)

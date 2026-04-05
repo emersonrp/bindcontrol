@@ -173,7 +173,8 @@ class ComplexBindPane(ListPanel):
             step.StepNumber = i
             step.StepLabel  .SetLabel(f"Step {i} Press Action:" if step.IsPR() else f"Step {i}:")
             step.ReleaseText.SetLabel(f"Step {i} Release Action:")
-        self.Page.Layout()
+        if self.Page:
+            self.Page.Layout()
 
     def PopulateBindFiles(self) -> None:
         if self.Profile:
@@ -196,11 +197,11 @@ class ComplexBindPane(ListPanel):
                     else:
                         cmd = [        step.PowerBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{nextCycle}.txt')]
 
-                    if i == 1: resetfile.SetBind(key, self, title, cmd)
-                    cbindfile.SetBind(key, self, title, cmd)
+                    if i == 1: resetfile.SetBind(key, title, self.Page, cmd)
+                    cbindfile.SetBind(key, title, self.Page, cmd)
                     if rbindfile:
                         rcmd = ['+$$' + step.ReleaseBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{nextCycle}.txt')]
-                        rbindfile.SetBind(key, self, title, rcmd)
+                        rbindfile.SetBind(key, title, self.Page, rcmd)
 
     def AllBindFiles(self) -> dict[str, list]:
         files = []

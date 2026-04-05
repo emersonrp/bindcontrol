@@ -1,6 +1,6 @@
-import platform
 import wx
-import wx.lib.newevent
+import platform
+from pubsub import pub
 from typing import Any, TYPE_CHECKING
 
 import GameData
@@ -9,8 +9,6 @@ if TYPE_CHECKING:
     from Help import HelpButton
 import UI
 from UI.CGControls import cgStaticText
-
-PowerSelectorChanged, EVT_POWERSELECTOR_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 MenuBGColor = wx.SYS_COLOUR_WINDOW if platform.system() == 'Darwin' else wx.SYS_COLOUR_MENU
 
@@ -41,7 +39,7 @@ class PowerSelector(wx.BitmapButton):
     def ClearPowers(self, evt = None):
         if evt: evt.Skip()
         self.Powers = []
-        wx.PostEvent(self.Page, PowerSelectorChanged(wx.NewId(), control = self))
+        pub.sendMessage('powerselectorchanged', control = self)
 
     def GetValue(self):
         return self.Powers
@@ -103,7 +101,7 @@ class Popup(wx.PopupTransientWindow):
     def OnDismiss(self):
         self.PowerSelector.Powers = [p.Power for p in self.Popups if p.CB.IsChecked()]
 
-        wx.PostEvent(self.PowerSelector.Page, PowerSelectorChanged(wx.NewId(), control = self.PowerSelector))
+        pub.sendMessage('powerselectorchanged', control = self.PowerSelector)
         self.DestroyLater()
 
 class PopupPower(wx.Panel):

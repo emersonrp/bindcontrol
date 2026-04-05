@@ -1,5 +1,6 @@
 import re
 import wx
+from pubsub import pub
 from typing import Any, Literal, Final
 
 import wx.lib.agw.flatmenu as FM
@@ -479,6 +480,11 @@ class MovementPowers(Page):
         topSizer.Add(self.rightColumn, 0, wx.ALL, 3)
 
         self.MainSizer.Add(topSizer, flag = wx.ALL|wx.ALIGN_CENTER_HORIZONTAL)
+
+        pub.subscribe(self.OnPowerSelectorChanged, 'powerselectorchanged')
+
+    def OnPowerSelectorChanged(self, control):
+        self.SynchronizeUI()
 
     def ShowControlGroup(self, group, show = True) -> None:
         if self.rightColumn.GetItem(group):

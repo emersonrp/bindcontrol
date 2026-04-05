@@ -16,6 +16,8 @@
 
 import json
 from typing import TYPE_CHECKING, Final
+from pubsub import pub
+
 import wx
 import wx.lib.colourselect as csel
 if TYPE_CHECKING:
@@ -38,6 +40,11 @@ class Page(wx.ScrolledWindow):
 
         self.Ctrls : dict = {}
         self.Init  : dict = {}
+
+        pub.subscribe(self.OnCommandPubSub, 'powerbinderchanged')
+
+    def OnCommandPubSub(self, control):
+        self.Profile.DoCommand(self, control)
 
     def GetState(self, key) -> str:
         control = self.Ctrls.get(key)

@@ -1,15 +1,14 @@
 import wx
 import sys
 import importlib
+from pubsub import pub
+
 from Help import HelpButton
 from wx.lib.expando import EVT_ETC_LAYOUT_NEEDED
 from UI.CGControls import cgExpandoTextCtrl
 from UI.ErrorControls import ErrorControlMixin
 from UI.ProfileAwareControl import ProfileAwareControlMixin
 from Util.Paths import GetRootDirPath
-
-import wx.lib.newevent
-PowerBinderChanged, EVT_POWERBINDER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 class PowerBinder(ErrorControlMixin, wx.TextCtrl):
     def __init__(self, parent, init : dict|None = None, extralength = 0, contents = ''):
@@ -44,7 +43,7 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
     def UpdateState(self, bindString, state) -> None:
         self.CurrentState = state
         self.SetValue(bindString)
-        wx.PostEvent(self, PowerBinderChanged(wx.NewId()))
+        pub.sendMessage('powerbinderchanged', control = self)
 
 class PowerBinderDialog(ProfileAwareControlMixin, wx.Dialog):
     def __init__(self, parent, powerbinder) -> None:

@@ -61,6 +61,7 @@ class MacroComposer(Page):
         self.Layout()
 
         pub.subscribe(self.OnContentsChanged, 'macrocontentschanged')
+        pub.subscribe(self.UpdateAllMacros, 'updatemacros')
 
     def AllBindFiles(self) -> dict[str, list]:
         return {

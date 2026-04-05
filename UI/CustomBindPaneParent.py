@@ -1,5 +1,4 @@
 # parent class for various custom bindpane types
-from pubsub import pub
 from typing import Any
 from UI.ListPanel import ListPanel
 import wx

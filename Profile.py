@@ -355,8 +355,7 @@ class Profile(wx.Notebook):
         if page== self.CustomBinds:
             pub.sendMessage('updatebinds')
         elif page == self.MacroComposer:
-            # TODO pubsub
-            page.UpdateAllMacros()
+            pub.sendMessage('updatemacros')
         else:
             if ctlname := next((name for name,c in page.Ctrls.items() if control == c), None):
                 pagename = page.__class__.__name__ # eww

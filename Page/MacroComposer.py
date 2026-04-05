@@ -94,7 +94,7 @@ class MacroComposer(Page):
                     self.AddMacroToPage(macropane = macropane)
                     existingMacroNames = [pane.Title for pane in self.Panes if pane != macropane]
                     if macropane.Title in existingMacroNames:
-                        macropane.SetPanelLabel(None, new = True)
+                        macropane.SetPanelLabel(new = True)
 
             except Exception as e:
                 wx.LogError(f'Cannot import macro "{filepath.name}": {e}')
@@ -107,7 +107,7 @@ class MacroComposer(Page):
             return
 
         if not macropane.Title: # this is from a "New Bind" button
-            if not macropane.SetPanelLabel(None, new = True):
+            if not macropane.SetPanelLabel(new = True):
                 return
 
         if len(self.Panes) == 0:
@@ -214,6 +214,8 @@ class MacroComposer(Page):
 class MacroPane(ListPanel):
     def __init__(self, parent, init = None):
         super().__init__(parent, init)
+        self.Description = "macro"
+
         pane = self.GetPane()
         macroSizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -268,12 +270,6 @@ class MacroPane(ListPanel):
             'ToolTip'         : self.ToolTipText.GetValue() if self.ToolTipText else '',
         }
 
-    def UpdateLabel(self):
-        if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
-            self.SetLabel(f"{self.Title} (ID:{self.CustomID})")
-        else:
-            self.SetLabel(f"{self.Title}")
-
     def OnIconButton(self, evt):
         button = evt.GetEventObject()
         with MacroIconPicker(self) as iconpicker: # RP: don't try to cache this, make a new one every time ugh
@@ -295,6 +291,28 @@ class MacroPane(ListPanel):
     def OnContentsChanged(self, evt = None):
         if evt: evt.Skip()
         pub.sendMessage('macrocontentschanged')
+
+    def SetPanelLabel(self, new = False) -> bool:
+        dlg = wx.TextEntryDialog(self, f'Enter name for {self.Description or "macro"}:')
+        if self.Title:
+            dlg.SetValue(self.Title)
+
+        if dlg.ShowModal() == wx.ID_OK:
+            self.Title = dlg.GetValue()
+            self.UpdateLabel()
+            if not new:
+                self.DelButton.SetToolTip(f'Delete macro "{self.Title}"')
+                self.RenButton.SetToolTip(f'Rename macro "{self.Title}"')
+                self.DupButton.SetToolTip(f'Duplicate macro "{self.Title}"')
+                self.ExpButton.SetToolTip(f'Export macro "{self.Title}"')
+            pub.sendMessage('updatemacros')
+            dlg.Destroy()
+            return True # successful name change
+        else:
+            if new:
+                self.doDeletePanel()
+            dlg.Destroy()
+            return False
 
     def CheckToolTipSlot(self):
         if self.ToolTipText and self.ToolTipLabel:

@@ -201,50 +201,6 @@ class CustomBinds(Page):
 
         bindpane.BuildBindUI()
 
-#        # put it in a box with control buttons
-#        bindSizer = wx.BoxSizer(wx.HORIZONTAL)
-#        bindSizer.Add(bindpane, 1, wx.EXPAND, 5)
-#
-#        buttonSizer = wx.BoxSizer(wx.VERTICAL)
-#        deleteButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'delete'))
-#        deleteButton.BindPane  = bindpane
-#        deleteButton.BindSizer = bindSizer
-#        bindpane.DelButton = deleteButton
-#        deleteButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
-#        deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
-#        buttonSizer.Add(deleteButton)
-#
-#        renameButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'rename'))
-#        renameButton.BindPane = bindpane
-#        bindpane.RenButton = renameButton
-#        renameButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
-#        renameButton.Bind(wx.EVT_BUTTON, self.SetBindPaneLabel)
-#        buttonSizer.Add(renameButton)
-#
-#        duplicateButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'copy'))
-#        duplicateButton.BindPane = bindpane
-#        bindpane.DupButton = duplicateButton
-#        duplicateButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
-#        duplicateButton.Bind(wx.EVT_BUTTON, self.OnDuplicateButton)
-#        buttonSizer.Add(duplicateButton)
-#
-#        exportButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'export'))
-#        exportButton.BindPane = bindpane
-#        bindpane.ExpButton = exportButton
-#        exportButton.SetToolTip(f'Export bind "{bindpane.Title}"')
-#        exportButton.Bind(wx.EVT_BUTTON, self.OnExportButton)
-#        buttonSizer.Add(exportButton)
-#
-#        bindSizer.Add(buttonSizer, 0, wx.LEFT, 10)
-#
-#        # more hackery -- if we have a unique wizbind (currently just esc config), turn off the
-#        # duplicate button
-#        if isinstance(bindpane, WizardBindPane):
-#            if bindpane.WizClass.IsUnique:
-#                duplicateButton.Enable(False)
-#                duplicateButton.SetToolTip(f"You can only have one instance of {bindpane.WizClass.WizardName} per profile.")
-#
-#        self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), bindSizer, 0, wx.ALL|wx.EXPAND, 10)
         self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), bindpane, 0, wx.ALL|wx.EXPAND, 10)
         bindpane.Pane.Expand()
         self.Layout()

@@ -51,7 +51,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         renameButton.Pane = self.Pane
         self.RenButton = renameButton
         renameButton.SetToolTip(f'Rename "{self.Title}"')
-        renameButton.Bind(wx.EVT_BUTTON, self.SetPanelLabel)
+        renameButton.Bind(wx.EVT_BUTTON, self.OnRenameButton)
         buttonSizer.Add(renameButton)
 
         duplicateButton = ListPanelControlButton(self, GetIcon('UI', 'copy'))
@@ -83,27 +83,20 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
     def GetPane(self):
         return self.Pane.GetPane()
 
-    def SetPanelLabel(self, evt, new = False) -> bool:
-        # marshal up the files to delete, before we change the name
-        deletefiles = None if new else self.AllBindFiles()
+    def SetPanelLabel(self, new = False) -> bool:
         dlg = wx.TextEntryDialog(self, f'Enter name for {self.Description or "bind"}:')
         if self.Title:
             dlg.SetValue(self.Title)
 
         if dlg.ShowModal() == wx.ID_OK:
             self.Title = dlg.GetValue()
-            self.Pane.SetLabel(self.Title)
+            self.UpdateLabel()
             if not new:
                 self.DelButton.SetToolTip(f'Delete "{self.Title}"')
                 self.RenButton.SetToolTip(f'Rename "{self.Title}"')
                 self.DupButton.SetToolTip(f'Duplicate "{self.Title}"')
                 self.ExpButton.SetToolTip(f'Export "{self.Title}"')
-                # if we have files to delete (we do, if not new) then delete them.
-                # Also this is bind-specific
-                if deletefiles and self.Profile:
-                    self.Profile.doDeleteBindFiles(deletefiles)
             # TODO ok now we're doing something bind-specific in here again oops
-            pub.sendMessage('updatebinds')
             dlg.Destroy()
             return True # successful name change
         else:
@@ -111,6 +104,10 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
                 self.doDeletePanel()
             dlg.Destroy()
             return False
+
+    def OnRenameButton(self, evt) -> None:
+        if evt: evt.Skip()
+        self.SetPanelLabel()
 
     def OnDuplicateButton(self, evt) -> None:
         init = self.Serialize()
@@ -171,7 +168,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
     # TODO - is all of this better done in the enclosing page?  Do I need a ListPanelList class
     # to encapsulate a bunch of this?  Probably ugh
     def doDeletePanel(self) -> None:
-        # this is wanting to be done up outside, hide and remove the whole thing
+        # TODO - this is wanting to be done up outside, hide and remove the whole thing
         #delButton = self.DelButton
         #sizer = delButton.BindSizer
         #self.PaneSizer.Hide(sizer)

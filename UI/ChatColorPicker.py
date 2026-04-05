@@ -1,15 +1,13 @@
 import re
 import wx
 import wx.lib.colourselect as csel
-import wx.lib.newevent
+from pubsub import pub
 
 import GameData
 
 import UI
 from UI.CGControls import CGControlMixin, cgStaticText
 from UI.ProfileAwareControl import ProfileAwareControlMixin
-
-ChatColorPickerChanged, EVT_CHATCOLORPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
 
 def ChatColors(fg,bg,bd) -> str: return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'
 
@@ -59,8 +57,7 @@ class ChatColorPicker(ProfileAwareControlMixin, wx.Panel):
                 'foreground'       : txcolor,
             }
             self.example.UpdateExampleBitmap()
-            if self.Page:
-                wx.PostEvent(self.Page, ChatColorPickerChanged(id = wx.NewIdRef(), control = self))
+            pub.sendMessage('chatcolorpickerchanged', control = self)
         else:
             if self.Dialog:
                 self.Dialog.borderPicker    .SetColour(initbrd)

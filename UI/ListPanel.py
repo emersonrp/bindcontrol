@@ -18,7 +18,7 @@ class ListPanelControlButton(wx.BitmapButton):
 class ListPanel(ProfileAwareControlMixin, wx.Panel):
     def __init__(self, parent, init : dict|None = None) -> None:
         init = init or {}
-        super().__init__(parent)
+        super().__init__(parent.scrolledPanel)
 
         self.Ctrls                        = {}
         self.Init        : dict           = init
@@ -38,7 +38,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         self.Sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(self.Sizer)
 
-        self.Pane = wx.CollapsiblePane(parent.scrolledPanel, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
+        self.Pane = wx.CollapsiblePane(self, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
         self.Sizer.Add(self.Pane, 1, wx.EXPAND, 5)
 
         buttonSizer = wx.BoxSizer(wx.VERTICAL)
@@ -96,6 +96,9 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
             self.SetLabel(f"{self.Title} ({self.Description} ID:{self.CustomID})")
         else:
             self.SetLabel(f"{self.Title}")
+
+    def GetPane(self):
+        return self.Pane.GetPane()
 
     def SetPanelLabel(self, evt, new = False) -> bool:
         # marshal up the files to delete, before we change the name

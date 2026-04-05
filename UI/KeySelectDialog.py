@@ -1,4 +1,5 @@
 import platform
+from pubsub import pub
 import re
 import string
 from typing import TYPE_CHECKING
@@ -523,7 +524,6 @@ class bcKeyButton(ErrorControlMixin, ProfileAwareControlMixin, GenButton if plat
 
         self.Bind(wx.EVT_BUTTON, self.KeySelectEventHandler)
         self.Bind(wx.EVT_RIGHT_DOWN, self.ClearButton)
-        self.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
     # This is an override for GenButton, which is only on MacOS
     # On other platforms, we have wx.Button and this is never called.
@@ -545,19 +545,11 @@ class bcKeyButton(ErrorControlMixin, ProfileAwareControlMixin, GenButton if plat
         dc.SetPen  (oldpen)
         dc.SetBrush(oldbrs)
 
-    def onKeyChanged(self, evt) -> None:
-        evt.Skip()
-        self.CheckConflicts()
-        if self.Profile:
-            self.Profile.CheckAllConflicts()
-            # Let's try this out -- every time we pick a new key, update the trays'
-            # default-keys display just in case we've mashed over one of them now.
-            self.Profile.Gameplay.OnKeybindProfilePicker()
-
     def ClearButton(self, evt) -> None:
         self.SetLabel("")
         self.Key = ""
         wx.PostEvent(self, KeyChanged(evt.GetId(), control = self))
+        pub.sendMessage('keybuttonchanged', control = self)
 
     def MakeBind(self, contents) -> KeyBind:
         label = self.CtlLabel.GetLabel() if self.CtlLabel else ''
@@ -618,3 +610,4 @@ class bcKeyButton(ErrorControlMixin, ProfileAwareControlMixin, GenButton if plat
             if self.Profile:
                 self.Profile.CheckAllConflicts()
             wx.PostEvent(button, KeyChanged(evt.GetId(), control = button))
+            pub.sendMessage('keybuttonchanged', control = button)

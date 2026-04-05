@@ -22,7 +22,7 @@ from Page.CustomBinds import CustomBinds
 from Page.MacroComposer import MacroComposer
 from Page.PopmenuEditor import PopmenuEditor
 import UI
-from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
+from UI.KeySelectDialog import bcKeyButton
 from Util.Paths import ProfilePath, GetValidGamePath
 
 class Profile(wx.Notebook):
@@ -93,6 +93,7 @@ class Profile(wx.Notebook):
         if self.EditingDefault: self.ColorThingsForEditingDefault()
 
         pub.subscribe(self.CheckAllConflicts, 'prefschanged.resetkey')
+        pub.subscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
 
     def CreatePage(self, page):
         page.BuildPage()
@@ -339,8 +340,7 @@ class Profile(wx.Notebook):
             for evt in [
                 wx.EVT_CHECKBOX, wx.EVT_BUTTON, wx.EVT_CHOICE, wx.EVT_COMBOBOX, wx.EVT_TEXT, wx.EVT_SPINCTRL,
                 wx.EVT_DIRPICKER_CHANGED, wx.EVT_COLOURPICKER_CHANGED, wx.EVT_MENU, wx.EVT_RADIOBUTTON,
-                wx.EVT_SLIDER, EVT_KEY_CHANGED, wx.EVT_NOTEBOOK_PAGE_CHANGED, csel.EVT_COLOURSELECT,
-                wx.EVT_TOGGLEBUTTON,
+                wx.EVT_SLIDER, wx.EVT_NOTEBOOK_PAGE_CHANGED, csel.EVT_COLOURSELECT, wx.EVT_TOGGLEBUTTON,
             ]:
                 page.Bind(evt, partial(self.OnCommandEvent, page = page))
 
@@ -360,6 +360,9 @@ class Profile(wx.Notebook):
                 pagename = page.__class__.__name__ # eww
                 # TODO:  "unless (some way to opt things out of this), then..."
                 self.UpdateData(pagename, ctlname, page.GetState(ctlname))
+        self.CheckAllConflicts()
+
+    def OnKeyButtonChanged(self, control):
         self.CheckAllConflicts()
 
     def InspectData(self, *args):

@@ -1,4 +1,5 @@
 import wx
+from pubsub import pub
 from typing import Any
 import UI
 from Page import Page
@@ -276,6 +277,11 @@ class Gameplay(Page):
         bottomSizer.Add(HelpfulBox,    0, wx.ALL|wx.EXPAND, 10)
         self.MainSizer.Add(self.TraySizer,   flag = wx.ALL|          wx.ALIGN_CENTER_HORIZONTAL, border = 16)
         self.MainSizer.Add(bottomSizer, flag = wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
+
+        pub.subscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
+
+    def OnKeyButtonChanged(self, control):
+        self.OnKeybindProfilePicker()
 
     def SynchronizeUI(self, evt = None) -> None:
         self.OnTPSEnable()

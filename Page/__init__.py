@@ -41,12 +41,13 @@ class Page(wx.ScrolledWindow):
         self.Ctrls : dict = {}
         self.Init  : dict = {}
 
-        pub.subscribe(self.OnCommandPubSub, 'chatcolorpickerchanged')
-        pub.subscribe(self.OnCommandPubSub, 'powerbinderchanged')
-        pub.subscribe(self.OnCommandPubSub, 'powerpickerchanged')
-        pub.subscribe(self.OnCommandPubSub, 'powerselectorchanged')
+        pub.subscribe(self.OnControlChangedPubSub, 'chatcolorpickerchanged')
+        pub.subscribe(self.OnControlChangedPubSub, 'keybuttonchanged')
+        pub.subscribe(self.OnControlChangedPubSub, 'powerbinderchanged')
+        pub.subscribe(self.OnControlChangedPubSub, 'powerpickerchanged')
+        pub.subscribe(self.OnControlChangedPubSub, 'powerselectorchanged')
 
-    def OnCommandPubSub(self, control):
+    def OnControlChangedPubSub(self, control):
         self.Profile.DoCommand(self, control)
 
     def GetState(self, key) -> str:

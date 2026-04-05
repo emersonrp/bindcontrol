@@ -91,7 +91,7 @@ class Profile(wx.Notebook):
         self.PopmenuEditor     = self.CreatePage(PopmenuEditor    (self))
 
         if self.EditingDefault: self.ColorThingsForEditingDefault()
-        self.CheckModified()
+        pub.sendMessage('profilemodified')
 
         pub.subscribe(self.CheckAllConflicts, 'prefschanged.resetkey')
 
@@ -127,9 +127,7 @@ class Profile(wx.Notebook):
         return self.Data.HasPower(psettype, powername)
 
     def GetCustomID(self) -> int:
-        cust_id = self.Data.GetCustomID()
-        self.CheckModified()
-        return cust_id
+        return self.Data.GetCustomID()
 
     def BLF(self, *args) -> str:
         filepath = self.GameBindsDir()
@@ -173,12 +171,6 @@ class Profile(wx.Notebook):
                     ctrl.CheckConflicts()
 
     def IsModified(self): return self.Data.IsModified()
-
-    def CheckModified(self):
-        if self.IsModified():
-            self.Parent.SetTitle(f"BindControl: {self.ProfileName()} (*)") # pyright: ignore
-        else:
-            self.Parent.SetTitle(f"BindControl: {self.ProfileName()}") # pyright: ignore
 
     ###################
     # Profile Save/Load
@@ -242,7 +234,6 @@ class Profile(wx.Notebook):
             if result == wx.NO: return wx.NO
 
         self.Data.doSaveToFile()
-        self.SetTitle()
         wx.LogMessage(f"Wrote profile {self.Filepath()}")
 
     def SetServer(self, server):
@@ -252,7 +243,8 @@ class Profile(wx.Notebook):
         self.Data['Server'] = server
 
     def buildUIFromData(self, set_power_picks = False):
-        self.SetTitle()
+        # this is a little ugly.  pubsub this somehow?
+        self.General.NameDisplay.SetLabel(self.ProfileName())
 
         data = self.Data
 
@@ -376,12 +368,6 @@ class Profile(wx.Notebook):
 
     def UpdateData(self, *args):
         self.Data.UpdateData(*args)
-        self.CheckModified()
-
-    def SetTitle(self):
-        self.CheckModified()
-        self.General.NameDisplay.SetLabel(self.ProfileName())
-        self.General.Layout()
 
     #####################
     # Bind file functions

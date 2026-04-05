@@ -199,6 +199,11 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
 
         pub.subscribe(self.OnMenuPrefsDialog, 'showprefsdialog')
+        pub.subscribe(self.OnProfileModified, 'checkprofilemodified')
+
+    def OnProfileModified(self):
+        if self.Profile:
+            self.SetTitle(self.Profile.ProfileName() + (" (*)" if self.Profile.IsModified() else ''))
 
     def SetupInitialProfile(self, input_profile = None):
 

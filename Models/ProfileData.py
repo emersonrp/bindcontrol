@@ -2,6 +2,7 @@ import re
 import os
 import platform
 from pathlib import Path, PureWindowsPath
+from pubsub import pub
 import copy
 import json
 import codecs
@@ -90,6 +91,11 @@ class ProfileData(dict):
             raise BindsDirectoryException("Can't come up with a sane Binds Directory!")
 
         GameData.SetupGameData(self.Server())
+
+    # send the check message every time we update anything in the underlying dict
+    def __setitem__(self, key, val):
+        super().__setitem__(key, val)
+        pub.sendMessage('checkprofilemodified')
 
     def ProfileName(self)   -> str      : return self.Filepath.stem if self.Filepath else ''
     def ProfileIDFile(self) -> Path     : return self.BindsPath() / 'bcprofileid.txt'
@@ -341,6 +347,8 @@ class ProfileData(dict):
             self.SavedState = copy.deepcopy(dict(self))
         except Exception as e:
             raise Exception(f"Problem saving to profile {savefile}: {e}") from e
+
+        pub.sendMessage('checkprofilemodified')
 
     def AsJSON(self, small = False) -> str:
         if small:

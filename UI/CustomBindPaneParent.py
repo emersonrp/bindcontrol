@@ -2,7 +2,6 @@
 from typing import Any
 from UI.ListPanel import ListPanel
 import wx
-from UI.KeySelectDialog import bcKeyButton
 
 class CustomBindPaneParent(ListPanel):
 

@@ -3,7 +3,6 @@ import json
 from pathlib import Path
 from pubsub import pub
 import re
-from typing import Any
 import wx
 from UI.KeySelectDialog import bcKeyButton
 from UI.ProfileAwareControl import ProfileAwareControlMixin

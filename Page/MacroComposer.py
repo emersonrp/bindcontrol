@@ -44,7 +44,8 @@ class MacroComposer(Page):
         BlankSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BlankPanel = wx.Panel(self)
         helptext = wx.StaticText(self.BlankPanel, style = wx.ALIGN_CENTER,
-                                 label = "Create a Macro using the button above")
+                                 label = "Create a Macro using the button above",
+                                 size = wx.Size(-1, 50))
         helptext.SetFont(wx.Font(wx.FontInfo(16).Bold()))
         BlankSizer.Add(helptext, 1, wx.ALIGN_CENTER_VERTICAL)
         self.BlankPanel.SetSizer(BlankSizer)
@@ -62,7 +63,7 @@ class MacroComposer(Page):
 
         pub.subscribe(self.OnContentsChanged, 'macrocontentschanged')
         pub.subscribe(self.UpdateAllMacros, 'updatemacros')
-        pub.subscribe(self.doDeleteMacroPane, 'deletepanel')
+        pub.subscribe(self.doDeleteMacroPane, 'deletepanel.Macro')
 
     def AllBindFiles(self) -> dict[str, list]:
         return {
@@ -148,10 +149,6 @@ class MacroComposer(Page):
                 return
 
     def doDeleteMacroPane(self, panel) -> None:
-        if delButton := panel.DelButton:
-            sizer = delButton.MacroSizer
-            self.PaneSizer.Hide(sizer)
-            self.PaneSizer.Remove(sizer)
         if panel in self.Panes:
             self.Panes.remove(panel)
         # won't have an ID if it was a cancelled new bind
@@ -217,6 +214,7 @@ class MacroPane(ListPanel):
     def __init__(self, parent, init = None):
         super().__init__(parent, init)
         self.Description = "macro"
+        self.Type = 'Macro'
 
         pane = self.GetPane()
         macroSizer = wx.BoxSizer(wx.HORIZONTAL)

@@ -33,7 +33,12 @@ class CustomBinds(Page):
 
         pub.subscribe(self.OnVerboseBindsChanged, 'prefschanged.verbosebinds')
         pub.subscribe(self.OnBindsChanged, 'updatebinds')
-        pub.subscribe(self.OnDeletePanel, 'deletepanel')
+        # this next bit is a little spammy, but we want not to do all of 'deletepanel'
+        # because that'll get us in here trying to delete macros
+        pub.subscribe(self.OnDeletePanel, 'deletepanel.BufferBind')
+        pub.subscribe(self.OnDeletePanel, 'deletepanel.ComplexBind')
+        pub.subscribe(self.OnDeletePanel, 'deletepanel.SimpleBind')
+        pub.subscribe(self.OnDeletePanel, 'deletepanel.WizardBind')
 
     def BuildPage(self) -> None:
 
@@ -79,23 +84,6 @@ class CustomBinds(Page):
         # This is black magic, and may still act squirrely.
         self.ShowScrollbars(wx.SHOW_SB_NEVER, wx.SHOW_SB_NEVER)
 
-        self.Layout()
-
-    def OnDeletePanel(self, panel):
-        for ctrlname in panel.Ctrls:
-            if self.Ctrls.get(ctrlname) : del self.Ctrls[ctrlname]
-
-        if panel in self.Panes:
-            self.Panes.remove(panel)
-
-        if not panel.Title and self.Profile:
-            self.Profile.UpdateData('CustomBinds', { 'CustomID' : panel.CustomID, 'Action' : 'delete' })
-
-        if len(self.Panes) == 0:
-            # need to put back the blankpanel
-            self.scrolledPanel.Hide()
-            self.BlankPanel.Show()
-            self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
         self.Layout()
 
     def OnBindsChanged(self):
@@ -271,6 +259,9 @@ class CustomBinds(Page):
             dlg.Destroy()
             return False
 
+    def OnDeletePanel(self, panel):
+        self.doDeleteBindPane(panel) # need do to this to get the args named right.  This is dumb.
+
     def OnDeleteButton(self, evt) -> None:
         delButton = evt.EventObject
         bindpane = delButton.BindPane
@@ -285,24 +276,26 @@ class CustomBinds(Page):
         evt.Skip()
 
     def doDeleteBindPane(self, bindpane) -> None:
-        if delButton := bindpane.DelButton:
-            sizer = delButton.BindSizer
-            self.PaneSizer.Hide(sizer)
-            self.PaneSizer.Remove(sizer)
         for ctrlname in bindpane.Ctrls:
-            if self.Ctrls.get(ctrlname) : del self.Ctrls[ctrlname]
+            if self.Ctrls.get(ctrlname):
+                del self.Ctrls[ctrlname]
+
         if bindpane in self.Panes:
             self.Panes.remove(bindpane)
-        # won't have an ID if it was a cancelled new bind
-        if bindpane.CustomID:
+
+        if bindpane.Title and self.Profile:
+            # won't have a Title if it was a cancelled new bind, for which we want to
+            # gloss over and not poke this out there.
             self.Profile.UpdateData('CustomBinds', { 'CustomID' : bindpane.CustomID, 'Action' : 'delete' })
+
         bindpane.DestroyLater()
-        wx.CallAfter(self.Profile.CheckAllConflicts)
+
         if len(self.Panes) == 0:
             # need to put back the blankpanel
             self.scrolledPanel.Hide()
             self.BlankPanel.Show()
             self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
+
         self.Layout()
 
     def OnDuplicateButton(self, evt) -> None:

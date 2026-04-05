@@ -100,7 +100,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
             return True # successful name change
         else:
             if new:
-                pub.sendMessage('deletepanel', panel = self)
+                pub.sendMessage(f'deletepanel.{self.Type}', panel = self)
                 self.DestroyLater()
             dlg.Destroy()
             return False
@@ -162,7 +162,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
                 if self.Profile:
                     files = self.AllBindFiles()
                     self.Profile.doDeleteBindFiles(files)
-        pub.sendMessage('deletepanel', panel = self)
+        pub.sendMessage(f'deletepanel.{self.Type}', panel = self)
         self.DestroyLater()
         evt.Skip()
 
@@ -207,7 +207,7 @@ class PanelDeletionDialog(wx.Dialog):
     def __init__(self, parent):
         bindpane = parent
         super().__init__(parent)
-        self.SetTitle(f"Delete {bindpane.GetTitle()}")
+        self.SetTitle(f"Delete {bindpane.Title}")
 
         self.DeleteFilesCB = None
 

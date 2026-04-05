@@ -93,7 +93,7 @@ class Profile(wx.Notebook):
         if self.EditingDefault: self.ColorThingsForEditingDefault()
 
         pub.subscribe(self.CheckAllConflicts, 'prefschanged.resetkey')
-        pub.subscribe(self.CheckAllConflicts, 'deletepanel')
+        pub.subscribe(self.OnDeletePanel, 'deletepanel')
         pub.subscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
 
     def CreatePage(self, page):
@@ -361,6 +361,9 @@ class Profile(wx.Notebook):
                 pagename = page.__class__.__name__ # eww
                 # TODO:  "unless (some way to opt things out of this), then..."
                 self.UpdateData(pagename, ctlname, page.GetState(ctlname))
+        self.CheckAllConflicts()
+
+    def OnDeletePanel(self, panel):
         self.CheckAllConflicts()
 
     def OnKeyButtonChanged(self, control):

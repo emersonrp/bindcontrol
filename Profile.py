@@ -91,7 +91,6 @@ class Profile(wx.Notebook):
         self.PopmenuEditor     = self.CreatePage(PopmenuEditor    (self))
 
         if self.EditingDefault: self.ColorThingsForEditingDefault()
-        pub.sendMessage('profilemodified')
 
         pub.subscribe(self.CheckAllConflicts, 'prefschanged.resetkey')
 

@@ -1,12 +1,13 @@
+from pubsub import pub
 import re
 import wx
 import UI
-from UI.CustomBindPaneParent import CustomBindPaneParent
+from UI.ListPanel import ListPanel
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinder import PowerBinder
 from Icon import GetIcon
 
-class ComplexBindPane(CustomBindPaneParent):
+class ComplexBindPane(ListPanel):
     def __init__(self, page, init : dict|None = None) -> None:
         init = init or {}
         super().__init__(page, init)
@@ -37,13 +38,10 @@ class ComplexBindPane(CustomBindPaneParent):
 
         return data
 
-    def BuildBindUI(self, page) -> None:
-        pane = self.GetPane()
-        self.Page = page
-
+    def BuildBindUI(self) -> None:
         self.BindSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BindStepSizer = wx.BoxSizer(wx.VERTICAL)
-        AddBindStepButton = wx.Button(pane, label = "Add Step")
+        AddBindStepButton = wx.Button(self.Pane, label = "Add Step")
         AddBindStepButton.Bind(wx.EVT_BUTTON, self.onAddStepButton)
         self.BindStepSizer.Add(AddBindStepButton, 0, wx.TOP, 10)
         if steps := self.Init.get('Steps', []):
@@ -54,15 +52,15 @@ class ComplexBindPane(CustomBindPaneParent):
 
         self.BindSizer.Add (self.BindStepSizer, 1, wx.EXPAND)
 
-        BindKeyCtrl = bcKeyButton(pane, init = {
+        BindKeyCtrl = bcKeyButton(self.Pane, init = {
             'CtlName' : self.MakeCtrlName('BindKey'),
-            'Page'    : page,
+            'Page'    : self.Page,
             'Key'     : self.Init.get('Key', ''),
         })
         BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
         BindKeySizer = wx.BoxSizer(wx.HORIZONTAL)
-        BindKeySizer.Add(wx.StaticText(pane, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
+        BindKeySizer.Add(wx.StaticText(self.Pane, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindKeySizer.Add(BindKeyCtrl,                          0)
         self.BindSizer.Add(BindKeySizer, 0, wx.LEFT|wx.RIGHT, 10)
         self.SetCtrl('BindKey', BindKeyCtrl)
@@ -73,7 +71,7 @@ class ComplexBindPane(CustomBindPaneParent):
         # border around the addr box
         border = wx.BoxSizer(wx.VERTICAL)
         border.Add(self.BindSizer, 1, wx.EXPAND|wx.ALL, 10)
-        pane.SetSizer(border)
+        self.Pane.SetSizer(border)
 
         self.RenumberSteps()
         self.CheckIfWellFormed()
@@ -110,7 +108,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
     def onAddStepButton(self, evt = None, stepdata : dict|None = None) -> None:
         self.doAddStep(stepdata or {})
-        self.Page.UpdateAllBinds()
+        pub.sendMessage('updatebinds')
         if evt: evt.Skip()
 
     def doAddStep(self, stepdata : dict|None = None) -> None:
@@ -128,7 +126,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.BindStepSizer.Detach(idx)
         self.BindStepSizer.Insert(idx-1, self.Steps[idx], 0, wx.EXPAND)
         self.Steps[idx], self.Steps[idx-1] = self.Steps[idx-1], self.Steps[idx]
-        self.Page.UpdateAllBinds()
+        pub.sendMessage('updatebinds')
         self.RenumberSteps()
         evt.Skip()
 
@@ -139,7 +137,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.BindStepSizer.Detach(idx)
         self.BindStepSizer.Insert(idx+1, self.Steps[idx], 0, wx.EXPAND)
         self.Steps[idx], self.Steps[idx+1] = self.Steps[idx+1], self.Steps[idx]
-        self.Page.UpdateAllBinds()
+        pub.sendMessage('updatebinds')
         self.RenumberSteps()
         evt.Skip()
 
@@ -154,7 +152,7 @@ class ComplexBindPane(CustomBindPaneParent):
         newstep = BindStep(self, stepidx+1, data)
         self.BindStepSizer.Insert(stepidx+1, newstep, 0, wx.EXPAND)
         self.Steps.insert(stepidx+1, newstep)
-        self.Page.UpdateAllBinds()
+        pub.sendMessage('updatebinds')
         self.RenumberSteps()
         evt.Skip()
 
@@ -163,7 +161,7 @@ class ComplexBindPane(CustomBindPaneParent):
         step = button.GetParent()
         self.Steps.remove(step)
         step.DestroyLater()
-        self.Page.UpdateAllBinds()
+        pub.sendMessage('updatebinds')
         self.RenumberSteps()
         evt.Skip()
 
@@ -178,40 +176,42 @@ class ComplexBindPane(CustomBindPaneParent):
         self.Page.Layout()
 
     def PopulateBindFiles(self) -> None:
-        resetfile = self.Profile.ResetFile()
-        # fish out only the steps that are valid
-        fullsteps = list(filter(lambda x: x.CheckIfWellFormed(), self.Steps))
-        title = re.sub(r'\W+', '', self.Title)
-        cid = self.CustomID
-        for i, step in enumerate(fullsteps, start = 1):
-            nextCycle = 1 if (i+1 > len(fullsteps)) else i+1
+        if self.Profile:
+            resetfile = self.Profile.ResetFile()
+            # fish out only the steps that are valid
+            fullsteps = list(filter(lambda x: x.CheckIfWellFormed(), self.Steps))
+            title = re.sub(r'\W+', '', self.Title)
+            cid = self.CustomID
+            for i, step in enumerate(fullsteps, start = 1):
+                nextCycle = 1 if (i+1 > len(fullsteps)) else i+1
 
-            cbindfile = self.Profile.GetBindFile('cb', f'{cid}-{i}.txt')
-            rbindfile = self.Profile.GetBindFile('cb', f'{cid}-{i}-r.txt') if step.IsPR() else None
+                cbindfile = self.Profile.GetBindFile('cb', f'{cid}-{i}.txt')
+                rbindfile = self.Profile.GetBindFile('cb', f'{cid}-{i}-r.txt') if step.IsPR() else None
 
-            if key := self.GetCtrl('BindKey'):
-                key = key.Key
+                if key := self.GetCtrl('BindKey'):
+                    key = key.Key
 
-                if step.IsPR():
-                    cmd = ['+$$' + step.PowerBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{i}-r.txt')]
-                else:
-                    cmd = [        step.PowerBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{nextCycle}.txt')]
+                    if step.IsPR():
+                        cmd = ['+$$' + step.PowerBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{i}-r.txt')]
+                    else:
+                        cmd = [        step.PowerBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{nextCycle}.txt')]
 
-                if i == 1: resetfile.SetBind(key, self, title, cmd)
-                cbindfile.SetBind(key, self, title, cmd)
-                if rbindfile:
-                    rcmd = ['+$$' + step.ReleaseBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{nextCycle}.txt')]
-                    rbindfile.SetBind(key, self, title, rcmd)
+                    if i == 1: resetfile.SetBind(key, self, title, cmd)
+                    cbindfile.SetBind(key, self, title, cmd)
+                    if rbindfile:
+                        rcmd = ['+$$' + step.ReleaseBinder.GetValue(), self.Profile.BLF('cb', f'{cid}-{nextCycle}.txt')]
+                        rbindfile.SetBind(key, self, title, rcmd)
 
     def AllBindFiles(self) -> dict[str, list]:
         files = []
         # we do both of these for backwards compat but might eventually just do cid
         title = re.sub(r'\W+', '', self.Title)
         cid = self.CustomID
-        for i, _ in enumerate(self.Steps, start = 1):
-            files.append(self.Profile.GetBindFile('cbinds', f'{title}-{i}.txt'))
-            files.append(self.Profile.GetBindFile('cb', f'{cid}-{i}.txt'))
-            files.append(self.Profile.GetBindFile('cb', f'{cid}-{i}-r.txt')) # 'release'
+        if self.Profile:
+            for i, _ in enumerate(self.Steps, start = 1):
+                files.append(self.Profile.GetBindFile('cbinds', f'{title}-{i}.txt'))
+                files.append(self.Profile.GetBindFile('cb', f'{cid}-{i}.txt'))
+                files.append(self.Profile.GetBindFile('cb', f'{cid}-{i}-r.txt')) # 'release'
 
         return {
             'files' : files,

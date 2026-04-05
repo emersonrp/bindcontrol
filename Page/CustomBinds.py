@@ -1,7 +1,7 @@
 import wx
 import re
 from functools import partial
-from typing import Any
+from typing import Any, TYPE_CHECKING
 from pathlib import Path
 from pubsub import pub
 import json
@@ -9,7 +9,8 @@ import json
 from Icon import GetIcon
 from Page import Page
 from Help import HelpButton
-from UI.CustomBindPaneParent import CustomBindPaneParent
+if TYPE_CHECKING:
+    from UI.ListPanel import ListPanel
 from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
@@ -27,10 +28,11 @@ class CustomBinds(Page):
         super().__init__(parent)
 
         self.TabTitle : str                        = "Custom Binds"
-        self.Panes    : list[CustomBindPaneParent] = []
+        self.Panes    : list[ListPanel] = []
         self.Init     : dict[str, Any]             = {}
 
         pub.subscribe(self.OnVerboseBindsChanged, 'prefschanged.verbosebinds')
+        pub.subscribe(self.OnBindsChanged, 'updatebinds')
 
     def BuildPage(self) -> None:
 
@@ -77,6 +79,10 @@ class CustomBinds(Page):
         self.ShowScrollbars(wx.SHOW_SB_NEVER, wx.SHOW_SB_NEVER)
 
         self.Layout()
+
+    def OnBindsChanged(self):
+        self.UpdateAllBinds()
+        self.Refresh()
 
     def OnVerboseBindsChanged(self):
         for pane in self.Panes:
@@ -144,7 +150,7 @@ class CustomBinds(Page):
 
         evt.Skip()
 
-    def BuildBindPaneFromData(self, binddata) -> CustomBindPaneParent|None:
+    def BuildBindPaneFromData(self, binddata):
         bindpane = None
         if binddata['Type'] == "SimpleBind":
             bindpane = SimpleBindPane(self, init = binddata)
@@ -239,7 +245,7 @@ class CustomBinds(Page):
                 duplicateButton.SetToolTip(f"You can only have one instance of {bindpane.WizClass.WizardName} per profile.")
 
         self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), bindSizer, 0, wx.ALL|wx.EXPAND, 10)
-        bindpane.Expand()
+        bindpane.Pane.Expand()
         self.Layout()
 
     def SetBindPaneLabel(self, evt, bindpane = None, new = False) -> bool:
@@ -347,7 +353,7 @@ class CustomBinds(Page):
 
         shorttitle = re.sub(r'\W+', '', bindpane.Title)
 
-        with wx.FileDialog(self, f'Export Complex Bind "{bindpane.Title}"',
+        with wx.FileDialog(self, f'Export Custom Bind "{bindpane.Title}"',
                            defaultFile = f"{shorttitle}.bcb",
                            defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
                            wildcard = "BindControl Custom Bind Files (*.bcb)|*.bcb|All Files (*.*)|*.*",
@@ -364,7 +370,7 @@ class CustomBinds(Page):
                 filepath.write_text(json.dumps(binddata, indent=2))
 
             except Exception as e:
-                wx.LogError(f"Error exporting Complex Bind: {e}")
+                wx.LogError(f"Error exporting Custom Bind: {e}")
 
     def GetKeyBinds(self):
         binds = super().GetKeyBinds()

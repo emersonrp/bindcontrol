@@ -8,12 +8,12 @@ from Util.BLF import BLF
 from UI.PowerPicker import PowerPicker
 
 from UI.CGControls import cgStaticText
-from UI.CustomBindPaneParent import CustomBindPaneParent
+from UI.ListPanel import ListPanel
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 
 ChatTargets = ['team', 'target', 'local']
 
-class BufferBindPane(CustomBindPaneParent):
+class BufferBindPane(ListPanel):
     def __init__(self, page, init : dict|None = None) -> None:
         init = init or {}
         super().__init__(page, init)
@@ -36,9 +36,8 @@ class BufferBindPane(CustomBindPaneParent):
         for i in (1,2,3,4,5,6):
             self.Init[f'Pet{i}BuffKey'] = ''
 
-    def BuildBindUI(self, page) -> None:
+    def BuildBindUI(self) -> None:
         pane = self.GetPane()
-        self.Page = page
 
         # Doing this UI here since we need CustomID to be set to get MakeCtrlName right
         # TODO: is this still true?  Can we do this in init now that we use CustomID?
@@ -148,7 +147,7 @@ class BufferBindPane(CustomBindPaneParent):
         self.Buffs.remove(buff)
         buff.GetContainingSizer().Detach(buff)
         buff.DestroyLater()
-        self.Page.UpdateAllBinds()
+        pub.sendMessage('updatebinds')
         self.Parent.Layout()
         wx.CallAfter(self.Page.SynchronizeUI)
 

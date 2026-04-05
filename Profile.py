@@ -353,8 +353,9 @@ class Profile(wx.Notebook):
 
     def DoCommand(self, page, control, evt = None):
         if page== self.CustomBinds:
-            page.UpdateAllBinds() # no trivial or mess-free way to do just the one we need
+            pub.sendMessage('updatebinds')
         elif page == self.MacroComposer:
+            # TODO pubsub
             page.UpdateAllMacros()
         else:
             if ctlname := next((name for name,c in page.Ctrls.items() if control == c), None):

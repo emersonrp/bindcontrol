@@ -30,7 +30,7 @@ class CustomBindPaneParent(wx.CollapsiblePane):
 
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
 
-    def BuildBindUI(self, page) -> None:
+    def BuildBindUI(self) -> None:
         wx.LogError(f"{self.bindclass} did not override BuildBindUI.  This is a bug.")
         # build the UI needed to edit/create this bind, and shim
         # it into 'page'

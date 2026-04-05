@@ -1,14 +1,15 @@
+from pubsub import pub
 from typing import Any
 import wx
 import UI
-from UI.CustomBindPaneParent import CustomBindPaneParent
+from UI.ListPanel import ListPanel
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 from UI.PowerBinder import PowerBinder
 from Icon import GetIcon
 
 ### CustomBind subclasses for the individual bind types
 
-class SimpleBindPane(CustomBindPaneParent):
+class SimpleBindPane(ListPanel):
     def __init__(self, page, init : dict|None = None) -> None:
         init = init or {}
         super().__init__(page, init)
@@ -36,9 +37,8 @@ class SimpleBindPane(CustomBindPaneParent):
 
         return data
 
-    def BuildBindUI(self, page) -> None:
-        pane = self.GetPane()
-        self.Page = page
+    def BuildBindUI(self):
+        pane = self.Pane.GetPane()
 
         self.BindSizer = wx.FlexGridSizer(5, 5, 0)
         self.BindSizer.AddGrowableCol(1)
@@ -63,7 +63,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
         BindKeyCtrl = bcKeyButton(pane, init = {
             'CtlName' : self.MakeCtrlName("BindKey"),
-            'Page'    : page,
+            'Page'    : self.Page,
             'Key'     : self.Init.get('Key', ''),
         })
         BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
@@ -101,11 +101,12 @@ class SimpleBindPane(CustomBindPaneParent):
         self.PressText.SetLabel('Press Action:' if checked else 'Bind Contents:')
         self.CheckIfWellFormed()
         self.BindSizer.Layout()
-        self.Page.Layout()
+        if self.Page:
+            self.Page.Layout()
 
     def onContentsChanged(self, evt) -> None:
         evt.Skip()
-        self.Page.UpdateAllBinds()
+        pub.sendMessage('updatebinds')
         self.CheckIfWellFormed()
 
     def onKeyChanged(self, evt) -> None:
@@ -117,8 +118,9 @@ class SimpleBindPane(CustomBindPaneParent):
 
     def AllBindFiles(self) -> dict:
         cid = self.CustomID
-        p   = self.Profile
-        files = [p.GetBindFile('sb', f'{cid}-p.txt'), p.GetBindFile('sb', f'{cid}-r.txt')] if self.IsPR() else []
+        files = []
+        if p := self.Profile:
+            files = [p.GetBindFile('sb', f'{cid}-p.txt'), p.GetBindFile('sb', f'{cid}-r.txt')] if self.IsPR() else []
         return {
             'files' : files,
             'dirs'  : ['sb'],
@@ -155,16 +157,17 @@ class SimpleBindPane(CustomBindPaneParent):
         cid = self.CustomID
         if ctrl := self.GetCtrl('BindKey'):
             key = ctrl.Key
-            resetfile = self.Profile.ResetFile()
-            if self.IsPR():
-                # press/release bind, do it in resetfile plus two more, sigh.
-                pfile = self.Profile.GetBindFile('sb', f"{cid}-p.txt")
-                rfile = self.Profile.GetBindFile('sb', f"{cid}-r.txt")
-                if pb := self.PressBinder:
-                    if rb := self.ReleaseBinder:
-                        resetfile.SetBind(key, self.Title, self.Page, "+$$" + pb.GetValue() + '$$' + rfile.BLF())
-                        pfile    .SetBind(key, self.Title, self.Page, "+$$" + pb.GetValue() + '$$' + rfile.BLF())
-                        rfile    .SetBind(key, self.Title, self.Page, "+$$" + rb.GetValue() + '$$' + pfile.BLF())
-            else:
-                if pb := self.PressBinder:
-                    resetfile.SetBind(key, self.Title, self.Page, pb.GetValue())
+            if p := self.Profile:
+                resetfile = p.ResetFile()
+                if self.IsPR():
+                    # press/release bind, do it in resetfile plus two more, sigh.
+                    pfile = p.GetBindFile('sb', f"{cid}-p.txt")
+                    rfile = p.GetBindFile('sb', f"{cid}-r.txt")
+                    if pb := self.PressBinder:
+                        if rb := self.ReleaseBinder:
+                            resetfile.SetBind(key, self.Title, self.Page, "+$$" + pb.GetValue() + '$$' + rfile.BLF())
+                            pfile    .SetBind(key, self.Title, self.Page, "+$$" + pb.GetValue() + '$$' + rfile.BLF())
+                            rfile    .SetBind(key, self.Title, self.Page, "+$$" + rb.GetValue() + '$$' + pfile.BLF())
+                else:
+                    if pb := self.PressBinder:
+                        resetfile.SetBind(key, self.Title, self.Page, pb.GetValue())

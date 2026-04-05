@@ -4,10 +4,10 @@ import sys
 from typing import Any
 from functools import partial
 
-from UI.CustomBindPaneParent import CustomBindPaneParent
+from UI.ListPanel import ListPanel
 from Util.Paths import GetRootDirPath
 
-class WizardBindPane(CustomBindPaneParent):
+class WizardBindPane(ListPanel):
     def __init__(self, page, wizClass, init : dict|None = None) -> None:
         init = init or {}
         super().__init__(page, init)
@@ -54,9 +54,9 @@ class WizardBindPane(CustomBindPaneParent):
             return self.Wizard.AllBindFiles()
         return {}
 
-    def BuildBindUI(self, page) -> None:
+    def BuildBindUI(self) -> None:
         # if the pane already has stuff, clear it out
-        pane = self.GetPane()
+        pane = self.Pane.GetPane()
         if mainSizer := pane.GetSizer():
             for item in range(mainSizer.GetItemCount()):
                 mainSizer.Hide(item)
@@ -74,8 +74,9 @@ class WizardBindPane(CustomBindPaneParent):
     def UpdateAndRefresh(self, evt):
         if evt: evt.Skip()
         self.Wizard.UpdateStateFromDialog()
-        self.Profile.UpdateData('CustomBinds', self.Serialize())
-        self.BuildBindUI(None)
+        if self.Profile:
+            self.Profile.UpdateData('CustomBinds', self.Serialize())
+        self.BuildBindUI()
 
 class WizButton(wx.Button):
     def __init__(self, parent, label, wizclass):

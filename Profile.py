@@ -93,6 +93,7 @@ class Profile(wx.Notebook):
         if self.EditingDefault: self.ColorThingsForEditingDefault()
 
         pub.subscribe(self.CheckAllConflicts, 'prefschanged.resetkey')
+        pub.subscribe(self.CheckAllConflicts, 'deletepanel')
         pub.subscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
 
     def CreatePage(self, page):

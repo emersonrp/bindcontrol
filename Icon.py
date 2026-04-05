@@ -37,8 +37,10 @@ def GetIcon(*args) -> Icon:
 
         # we renamed icons because we like simplicity and parallelism.  But we need to munch Incarnate
         # icons' filenames now, forever and ever amen.  Ah well.
-        if re.match('Incarnate_', arg):
-            arg = re.sub('^Incarnate_', '', arg)
+        # ETA:  ...except in Macros land where the Incarnate_ is still there and needs to remain.
+        if pathbits and pathbits[0] != 'Macros':
+            if re.match('Incarnate_', arg):
+                arg = re.sub('^Incarnate_', '', arg)
 
         # UGH
         # The devs left ONE icon in there with a ' in it and scraped out the rest.

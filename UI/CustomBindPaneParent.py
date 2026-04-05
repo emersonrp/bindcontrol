@@ -32,32 +32,12 @@ class CustomBindPaneParent(ListPanel):
             **data
         }
 
-    # override the more general ListPanel one completely.  Would be nice to
-    # DRY it up a bit but no
     def SetPanelLabel(self, new = False) -> bool:
-        # marshal up the files to delete, before we change the name
-        deletefiles = None if new else self.AllBindFiles()
-        dlg = wx.TextEntryDialog(self, f'Enter name for {self.Description or "bind"}:')
-        if self.Title:
-            dlg.SetValue(self.Title)
-
-        if dlg.ShowModal() == wx.ID_OK:
-            self.Title = dlg.GetValue()
-            self.Pane.SetLabel(self.Title)
+        if retval := super().SetPanelLabel(new):
             if not new:
-                self.DelButton.SetToolTip(f'Delete bind "{self.Title}"')
-                self.RenButton.SetToolTip(f'Rename bind "{self.Title}"')
-                self.DupButton.SetToolTip(f'Duplicate bind "{self.Title}"')
-                self.ExpButton.SetToolTip(f'Export bind "{self.Title}"')
-                # if we have files to delete (we do, if not new) then delete them.
-                if deletefiles and self.Profile:
-                    self.Profile.doDeleteBindFiles(deletefiles)
+                if deletefiles := self.AllBindFiles():
+                    if self.Profile:
+                        self.Profile.doDeleteBindFiles(deletefiles)
             pub.sendMessage('updatebinds')
-            dlg.Destroy()
-            return True # successful name change
-        else:
-            if new:
-                self.doDeletePanel()
-            dlg.Destroy()
-            return False
 
+        return retval

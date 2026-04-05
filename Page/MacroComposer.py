@@ -293,26 +293,9 @@ class MacroPane(ListPanel):
         pub.sendMessage('macrocontentschanged')
 
     def SetPanelLabel(self, new = False) -> bool:
-        dlg = wx.TextEntryDialog(self, f'Enter name for {self.Description or "macro"}:')
-        if self.Title:
-            dlg.SetValue(self.Title)
-
-        if dlg.ShowModal() == wx.ID_OK:
-            self.Title = dlg.GetValue()
-            self.UpdateLabel()
-            if not new:
-                self.DelButton.SetToolTip(f'Delete macro "{self.Title}"')
-                self.RenButton.SetToolTip(f'Rename macro "{self.Title}"')
-                self.DupButton.SetToolTip(f'Duplicate macro "{self.Title}"')
-                self.ExpButton.SetToolTip(f'Export macro "{self.Title}"')
+        if retval := super().SetPanelLabel(new):
             pub.sendMessage('updatemacros')
-            dlg.Destroy()
-            return True # successful name change
-        else:
-            if new:
-                self.doDeletePanel()
-            dlg.Destroy()
-            return False
+        return retval
 
     def CheckToolTipSlot(self):
         if self.ToolTipText and self.ToolTipLabel:

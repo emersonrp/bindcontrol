@@ -84,7 +84,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         return self.Pane.GetPane()
 
     def SetPanelLabel(self, new = False) -> bool:
-        dlg = wx.TextEntryDialog(self, f'Enter name for {self.Description or "bind"}:')
+        dlg = wx.TextEntryDialog(self, f'Enter name for {self.Description}:')
         if self.Title:
             dlg.SetValue(self.Title)
 
@@ -92,11 +92,10 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
             self.Title = dlg.GetValue()
             self.UpdateLabel()
             if not new:
-                self.DelButton.SetToolTip(f'Delete "{self.Title}"')
-                self.RenButton.SetToolTip(f'Rename "{self.Title}"')
-                self.DupButton.SetToolTip(f'Duplicate "{self.Title}"')
-                self.ExpButton.SetToolTip(f'Export "{self.Title}"')
-            # TODO ok now we're doing something bind-specific in here again oops
+                self.DelButton.SetToolTip(f'Delete {self.Description} "{self.Title}"')
+                self.RenButton.SetToolTip(f'Rename {self.Description} "{self.Title}"')
+                self.DupButton.SetToolTip(f'Duplicate {self.Description} "{self.Title}"')
+                self.ExpButton.SetToolTip(f'Export {self.Description} "{self.Title}"')
             dlg.Destroy()
             return True # successful name change
         else:

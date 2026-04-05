@@ -62,6 +62,7 @@ class MacroComposer(Page):
 
         pub.subscribe(self.OnContentsChanged, 'macrocontentschanged')
         pub.subscribe(self.UpdateAllMacros, 'updatemacros')
+        pub.subscribe(self.doDeleteMacroPane, 'deletepanel')
 
     def AllBindFiles(self) -> dict[str, list]:
         return {
@@ -146,17 +147,17 @@ class MacroComposer(Page):
             else:
                 return
 
-    def doDeleteMacroPane(self, macropane) -> None:
-        if delButton := macropane.DelButton:
+    def doDeleteMacroPane(self, panel) -> None:
+        if delButton := panel.DelButton:
             sizer = delButton.MacroSizer
             self.PaneSizer.Hide(sizer)
             self.PaneSizer.Remove(sizer)
-        if macropane in self.Panes:
-            self.Panes.remove(macropane)
+        if panel in self.Panes:
+            self.Panes.remove(panel)
         # won't have an ID if it was a cancelled new bind
-        if macropane.CustomID:
-            self.Profile.UpdateData('MacroComposer', { 'CustomID' : macropane.CustomID, 'Action' : 'delete' })
-        macropane.DestroyLater()
+        if panel.CustomID:
+            self.Profile.UpdateData('MacroComposer', { 'CustomID' : panel.CustomID, 'Action' : 'delete' })
+        panel.DestroyLater()
         if len(self.Panes) == 0:
             # need to put back the blankpanel
             self.scrolledPanel.Hide()

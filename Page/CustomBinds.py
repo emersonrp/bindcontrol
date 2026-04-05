@@ -33,6 +33,7 @@ class CustomBinds(Page):
 
         pub.subscribe(self.OnVerboseBindsChanged, 'prefschanged.verbosebinds')
         pub.subscribe(self.OnBindsChanged, 'updatebinds')
+        pub.subscribe(self.OnDeletePanel, 'deletepanel')
 
     def BuildPage(self) -> None:
 
@@ -78,6 +79,23 @@ class CustomBinds(Page):
         # This is black magic, and may still act squirrely.
         self.ShowScrollbars(wx.SHOW_SB_NEVER, wx.SHOW_SB_NEVER)
 
+        self.Layout()
+
+    def OnDeletePanel(self, panel):
+        for ctrlname in panel.Ctrls:
+            if self.Ctrls.get(ctrlname) : del self.Ctrls[ctrlname]
+
+        if panel in self.Panes:
+            self.Panes.remove(panel)
+
+        if not panel.Title and self.Profile:
+            self.Profile.UpdateData('CustomBinds', { 'CustomID' : panel.CustomID, 'Action' : 'delete' })
+
+        if len(self.Panes) == 0:
+            # need to put back the blankpanel
+            self.scrolledPanel.Hide()
+            self.BlankPanel.Show()
+            self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
         self.Layout()
 
     def OnBindsChanged(self):

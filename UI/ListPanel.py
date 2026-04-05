@@ -100,7 +100,8 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
             return True # successful name change
         else:
             if new:
-                self.doDeletePanel()
+                pub.sendMessage('deletepanel', panel = self)
+                self.DestroyLater()
             dlg.Destroy()
             return False
 
@@ -161,40 +162,9 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
                 if self.Profile:
                     files = self.AllBindFiles()
                     self.Profile.doDeleteBindFiles(files)
-        self.doDeletePanel()
-        evt.Skip()
-
-    # TODO - is all of this better done in the enclosing page?  Do I need a ListPanelList class
-    # to encapsulate a bunch of this?  Probably ugh
-    def doDeletePanel(self) -> None:
-        # TODO - this is wanting to be done up outside, hide and remove the whole thing
-        #delButton = self.DelButton
-        #sizer = delButton.BindSizer
-        #self.PaneSizer.Hide(sizer)
-        #self.PaneSizer.Remove(sizer)
-        if self.Page:
-            for ctrlname in self.Ctrls:
-                if self.Page.Ctrls.get(ctrlname) : del self.Page.Ctrls[ctrlname]
-
-        # won't have an ID if it was a cancelled new bind
-        # (NO LONGER TRUE AHA!!!)
-        # TODO - figure out some new way to decide this was a cancelled new panel
-        if self.CustomID and self.Profile:
-            # pubsub this?  Generally want some sort of ('updatedata', data=binddata) scheme?
-            self.Profile.UpdateData('CustomBinds', { 'CustomID' : self.CustomID, 'Action' : 'delete' })
-
         pub.sendMessage('deletepanel', panel = self)
-        # TODO - catch 'deletepanel' message in enclosing page and do this next bit:
-#        if self in self.Panes:
-#            self.Panes.remove(self)
-#        if len(self.Panes) == 0:
-#            # need to put back the blankpanel
-#            self.scrolledPanel.Hide()
-#            self.BlankPanel.Show()
-#            self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
-#        self.Layout()
-
         self.DestroyLater()
+        evt.Skip()
 
     def OnPaneChanged(self, evt) -> None:
         IsCollapsed = evt.GetCollapsed()

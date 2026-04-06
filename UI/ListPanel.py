@@ -149,16 +149,11 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
             except Exception as e:
                 wx.LogError(f"Error exporting Complex Bind: {e}")
 
+    # Basic deletion.  Subclasses should override if anything interesting needs happen.
     def OnDeleteButton(self, evt) -> None:
         with PanelDeletionDialog(self) as dlg:
             if dlg.ShowModal() == wx.ID_CANCEL:
                 return
-            if dlg.DeleteFilesCB and dlg.DeleteFilesCB.GetValue():
-                # do the delete of the files
-                # TODO PUBSUB
-                if self.Profile:
-                    files = self.AllBindFiles()
-                    self.Profile.doDeleteBindFiles(files)
         pub.sendMessage(f'deletepanel.{self.Topic}', panel = self)
         self.DestroyLater()
         evt.Skip()
@@ -205,15 +200,8 @@ class PanelDeletionDialog(wx.Dialog):
         super().__init__(parent)
         self.SetTitle(f"Delete {bindpane.Title}")
 
-        self.DeleteFilesCB = None
-
         mainSizer = wx.BoxSizer(wx.VERTICAL)
-        mainSizer.Add(wx.StaticText(self, label = f'Delete Custom Bind "{bindpane.Title}"?'), 0, wx.ALL, 20)
-
-        if bindpane.CreatesFiles:
-            self.DeleteFilesCB = wx.CheckBox(self, label = "Delete all associated bindfiles")
-            self.DeleteFilesCB.SetValue(True)
-            mainSizer.Add(self.DeleteFilesCB, 0, wx.ALL|wx.ALIGN_CENTER, 10)
+        mainSizer.Add(wx.StaticText(self, label = f'Delete {bindpane.Type} "{bindpane.Title}"?'), 0, wx.ALL, 20)
 
         mainSizer.Add(self.CreateButtonSizer(wx.OK|wx.CANCEL), 0, wx.ALL|wx.ALIGN_CENTER, 20)
 

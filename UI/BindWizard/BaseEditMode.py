@@ -1,6 +1,7 @@
 import wx
 from pubsub import pub
 
+import bcColours
 from Help import HelpButton
 import UI
 from UI.BindWizard import WizardParent
@@ -149,11 +150,13 @@ class BaseEditMode(WizardParent):
             cmdtext = cgStaticText(ctpanel, label = UI.Labels[self.BindPane.MakeCtrlName(cmd)], style = wx.ALIGN_CENTER)
             if self.State.get('WizData', {}).get(cmd, True):
                 cmdtext.SetLabel("✓ " + UI.Labels[self.BindPane.MakeCtrlName(cmd)])
+                cmdtext.SetFont(wx.Font(wx.FontInfo().Strikethrough(False)))
             else:
-                cmdtext.SetForegroundColour(wx.Colour(160, 160, 160))
+                cmdtext.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_GRAYTEXT))
+                cmdtext.SetFont(wx.Font(wx.FontInfo().Strikethrough(True)))
             cmdtext.SetToolTip(self.CBToolTips[cmd])
             ctsizer.Add(cmdtext, 1, wx.EXPAND|wx.ALL, 5)
-            ctpanel.SetBackgroundColour(wx.Colour(220, 220, 220))
+            ctpanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
             ctpanel.SetToolTip(self.CBToolTips[cmd])
             cmdSizer.Add(ctpanel, 1, wx.EXPAND|wx.RIGHT, 6)
 
@@ -186,11 +189,11 @@ class BaseEditMode(WizardParent):
             if keybutton.GetValue():
                 tooltiptext.append(f"{self.AllCtrls[keybind]}: {keybutton.GetValue()}")
                 if keybutton.CheckConflicts():
-                    kbmini.SetBackgroundColour(wx.Colour(255, 200, 200))
+                    kbmini.SetBackgroundColour(bcColours.ErrorColour())
                 else:
-                    kbmini.SetBackgroundColour(wx.WHITE)
+                    kbmini.SetBackgroundColour(bcColours.WhiteColour())
             else:
-                kbmini.SetBackgroundColour(wx.Colour(220, 220, 220))
+                kbmini.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
                 tooltiptext.append('')
             kbmini.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
             keybindSizer.Add(kbmini, 0, wx.ALL, 1)

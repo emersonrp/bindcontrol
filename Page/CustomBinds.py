@@ -117,7 +117,7 @@ class CustomBinds(Page):
     # but the other way seems just as weirdly intrusive.
     def OnBindWizardPicked(self, wizClass = None, evt = None):
         if wizClass:
-            newWizBindPane = WizardBindPane(self, wizClass)
+            newWizBindPane = WizardBindPane(self, init = {'WizClass' : wizClass})
             self.AddBindToPage(bindpane = newWizBindPane)
             if newWizBindPane in self.Panes: # did we cancel the add?
                 newWizBindPane.Wizard.ShowWizard()
@@ -160,7 +160,7 @@ class CustomBinds(Page):
         elif binddata['Type'] == "ComplexBind":
             bindpane = ComplexBindPane(self, init = binddata)
         elif binddata['Type'] == "WizardBind":
-            bindpane = WizardBindPane(self, binddata['WizClass'], init = binddata)
+            bindpane = WizardBindPane(self, init = binddata)
         else:
             wx.LogError("No valid custom bind found.")
 

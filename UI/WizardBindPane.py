@@ -8,20 +8,19 @@ from UI.CustomBindPaneParent import CustomBindPaneParent
 from Util.Paths import GetRootDirPath
 
 class WizardBindPane(CustomBindPaneParent):
-    def __init__(self, page, wizClass, init : dict|None = None) -> None:
+    def __init__(self, page, init : dict|None = None) -> None:
         init = init or {}
         super().__init__(page, init)
+
+        wizStr   = ''
+        wizClass = init.get('WizClass')
 
         if isinstance(wizClass, str):
             wizStr = wizClass
             wizClass = wizards.get(wizStr)
 
-            if not wizClass:
-                wizStr = init.get('WizClass')
-                wizClass = wizards.get(wizStr)
-
-                if not wizClass:
-                    raise Exception(f'Unknown BindWizard class "{wizStr}" requested when building BindWizard.  This is a bug')
+        if not wizClass:
+            raise Exception(f'Unknown BindWizard class "{wizStr or wizClass}" requested when building BindWizard.  This is a bug')
 
         self.WizClass     = wizClass
         self.Description  = wizClass.WizardName

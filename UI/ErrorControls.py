@@ -1,6 +1,8 @@
 from collections.abc import Callable
 import wx
 from wx.lib.buttons import GenButton
+import bcColours
+
 # Mixin to handle setting/showing errors and tooltips
 class ErrorControlMixin:
     GetBackgroundColour    : Callable
@@ -38,7 +40,7 @@ class ErrorControlMixin:
 
     def AddWarning(self, errname, tooltip = None) -> None:
         if not self.Errors:
-            self.SetFullBackgroundColour((255,255,200))
+            self.SetFullBackgroundColour(bcColours.WarningColour())
         self.Warnings[errname] = tooltip
         self.SetErrorToolTip()
         self.Refresh()
@@ -48,12 +50,12 @@ class ErrorControlMixin:
         if not self.Errors and not self.Warnings:
             self.SetFullBackgroundColour(self.BGColour if self.IsEnabled() else self.DisabledColor)
         elif not self.Errors:
-            self.SetFullBackgroundColour((255,255,200))
+            self.SetFullBackgroundColour(bcColours.WarningColour())
         self.SetErrorToolTip()
         self.Refresh()
 
     def AddError(self, errname, tooltip = None) -> None:
-        self.SetFullBackgroundColour((255,200,200))
+        self.SetFullBackgroundColour(bcColours.ErrorColour())
         self.Errors[errname] = tooltip
         self.SetErrorToolTip()
         self.Refresh()
@@ -63,7 +65,7 @@ class ErrorControlMixin:
         if not self.Errors and not self.Warnings:
             self.SetFullBackgroundColour(self.BGColour if self.IsEnabled() else self.DisabledColor)
         elif not self.Errors:
-            self.SetFullBackgroundColour((255,255,200))
+            self.SetFullBackgroundColour(bcColours.WarningColour())
         self.SetErrorToolTip()
         self.Refresh()
 

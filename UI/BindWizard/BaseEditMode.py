@@ -1,4 +1,5 @@
 import wx
+from pubsub import pub
 
 from Help import HelpButton
 import UI
@@ -120,12 +121,16 @@ class BaseEditMode(WizardParent):
         mainSizer.Add(optsSizer, 0, wx.EXPAND|wx.ALL, 10)
         mainSizer.Add(keysSizer, 0, wx.EXPAND|wx.ALL, 10)
 
-        self.Profile.CheckAllConflicts()
+        # we want to listen to this to update the mini-keybind display
+        pub.subscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
 
         return mainSizer
 
     def Serialize(self):
         return self.State.get('WizData', {})
+
+    def OnKeyButtonChanged(self, control):
+        self.BindPane.BuildBindUI()
 
     def PaneContents(self):
         bindpane = self.BindPane

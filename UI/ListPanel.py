@@ -24,6 +24,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         self.Title       : str            = init.get('Title', '')
         self.Description : str            = ''
         self.Type        : str            = ''
+        self.Topic       : str            = 'panel'
         self.CustomID    : int|None       = init.get('CustomID')
         if not self.CustomID and self.Profile:
             self.CustomID = self.Profile.GetCustomID()
@@ -100,7 +101,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
             return True # successful name change
         else:
             if new:
-                pub.sendMessage(f'deletepanel.{self.Type}', panel = self)
+                pub.sendMessage(f'deletepanel.{self.Topic}', panel = self)
                 self.DestroyLater()
             dlg.Destroy()
             return False
@@ -118,14 +119,12 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         init.pop('Key', None)
 
         # make a new one of whatever we are.  Is this the sane way to do this?
-        newbindpane = self.__class__(init)
-
-        if not newbindpane:
-            wx.LogError(f"Error duplicating bind {self.Title}!")
+        if not (newpanel := self.__class__(self.Page, init)):
+            wx.LogError(f"Error duplicating {self.Title}!")
             return
 
-        if self.Page:
-            self.Page.AddBindToPage(newbindpane) # pyright: ignore   # TODO pubsub this?
+        pub.sendMessage(f'addpanel.{self.Topic}', panel = newpanel)
+        pub.sendMessage('updatebinds')
 
     def OnExportButton(self, evt) -> None:
 
@@ -162,7 +161,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
                 if self.Profile:
                     files = self.AllBindFiles()
                     self.Profile.doDeleteBindFiles(files)
-        pub.sendMessage(f'deletepanel.{self.Type}', panel = self)
+        pub.sendMessage(f'deletepanel.{self.Topic}', panel = self)
         self.DestroyLater()
         evt.Skip()
 

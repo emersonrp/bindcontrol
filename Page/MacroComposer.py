@@ -63,7 +63,8 @@ class MacroComposer(Page):
 
         pub.subscribe(self.OnContentsChanged, 'macrocontentschanged')
         pub.subscribe(self.UpdateAllMacros, 'updatemacros')
-        pub.subscribe(self.doDeleteMacroPane, 'deletepanel.Macro')
+        pub.subscribe(self.doDeleteMacroPane, 'deletepanel.macro')
+        pub.subscribe(self.OnAddPanel, 'addpanel.macro')
 
     def AllBindFiles(self) -> dict[str, list]:
         return {
@@ -103,6 +104,9 @@ class MacroComposer(Page):
                 wx.LogError(f'Cannot import macro "{filepath.name}": {e}')
 
         evt.Skip()
+
+    def OnAddPanel(self, panel):
+        self.AddMacroToPage(panel) # to get the args named right for pubsub
 
     def AddMacroToPage(self, macropane = None) -> None:
         if not macropane:
@@ -215,6 +219,7 @@ class MacroPane(ListPanel):
         super().__init__(parent, init)
         self.Description = "macro"
         self.Type = 'Macro'
+        self.Topic = 'macro'
 
         pane = self.GetPane()
         macroSizer = wx.BoxSizer(wx.HORIZONTAL)

@@ -33,12 +33,8 @@ class CustomBinds(Page):
 
         pub.subscribe(self.OnVerboseBindsChanged, 'prefschanged.verbosebinds')
         pub.subscribe(self.OnBindsChanged, 'updatebinds')
-        # this next bit is a little spammy, but we want not to do all of 'deletepanel'
-        # because that'll get us in here trying to delete macros
-        pub.subscribe(self.OnDeletePanel, 'deletepanel.BufferBind')
-        pub.subscribe(self.OnDeletePanel, 'deletepanel.ComplexBind')
-        pub.subscribe(self.OnDeletePanel, 'deletepanel.SimpleBind')
-        pub.subscribe(self.OnDeletePanel, 'deletepanel.WizardBind')
+        pub.subscribe(self.OnDeletePanel, 'deletepanel.bind')
+        pub.subscribe(self.OnAddPanel, 'addpanel.bind')
 
     def BuildPage(self) -> None:
 
@@ -170,6 +166,9 @@ class CustomBinds(Page):
             wx.LogError("No valid custom bind found.")
 
         return bindpane
+
+    def OnAddPanel(self, panel):
+        self.AddBindToPage(panel) # to get the args named right, sigh.
 
     def AddBindToPage(self, bindpane = None) -> None:
         if not bindpane:

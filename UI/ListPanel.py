@@ -9,11 +9,6 @@ from UI.ProfileAwareControl import ProfileAwareControlMixin
 
 from Icon import GetIcon
 
-class ListPanelControlButton(wx.BitmapButton):
-    def __init__(self, parent, bitmap):
-        super().__init__(parent, bitmap = bitmap)
-        self.Pane: wx.Window|None = None
-
 class ListPanel(ProfileAwareControlMixin, wx.Panel):
     def __init__(self, parent, init : dict|None = None) -> None:
         init = init or {}
@@ -42,29 +37,25 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         self.Sizer.Add(self.Pane, 1, wx.EXPAND, 5)
 
         buttonSizer = wx.BoxSizer(wx.VERTICAL)
-        deleteButton = ListPanelControlButton(self, GetIcon('UI', 'delete'))
-        deleteButton.Pane  = self.Pane
+        deleteButton = wx.BitmapButton(self, bitmap = GetIcon('UI', 'delete'))
         self.DelButton = deleteButton
         deleteButton.SetToolTip(f'Delete "{self.Title}"')
         deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
         buttonSizer.Add(deleteButton)
 
-        renameButton = ListPanelControlButton(self, GetIcon('UI', 'rename'))
-        renameButton.Pane = self.Pane
+        renameButton = wx.BitmapButton(self, bitmap = GetIcon('UI', 'rename'))
         self.RenButton = renameButton
         renameButton.SetToolTip(f'Rename "{self.Title}"')
         renameButton.Bind(wx.EVT_BUTTON, self.OnRenameButton)
         buttonSizer.Add(renameButton)
 
-        duplicateButton = ListPanelControlButton(self, GetIcon('UI', 'copy'))
-        duplicateButton.Pane = self.Pane
+        duplicateButton = wx.BitmapButton(self, bitmap = GetIcon('UI', 'copy'))
         self.DupButton = duplicateButton
         duplicateButton.SetToolTip(f'Duplicate "{self.Title}"')
         duplicateButton.Bind(wx.EVT_BUTTON, self.OnDuplicateButton)
         buttonSizer.Add(duplicateButton)
 
-        exportButton = ListPanelControlButton(self, GetIcon('UI', 'export'))
-        exportButton.Pane = self.Pane
+        exportButton = wx.BitmapButton(self, bitmap = GetIcon('UI', 'export'))
         self.ExpButton = exportButton
         exportButton.SetToolTip(f'Export "{self.Title}"')
         exportButton.Bind(wx.EVT_BUTTON, self.OnExportButton)

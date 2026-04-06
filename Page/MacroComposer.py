@@ -139,19 +139,6 @@ class MacroComposer(Page):
         self.UpdateAllMacros()
         self.Layout()
 
-    def OnDeleteButton(self, evt):
-        delButton = evt.EventObject
-        macropane = delButton.MacroPane
-        with wx.MessageDialog(self,
-                              message = f'Delete macro "{macropane.Title}"?  This cannot be undone.',
-                              caption = f'Delete macro "{macropane.Title}"?',
-                              style   = wx.OK|wx.CANCEL,
-                              ) as dlg:
-            if dlg.ShowModal() == wx.ID_OK:
-                self.doDeleteMacroPane(macropane)
-            else:
-                return
-
     def doDeleteMacroPane(self, panel) -> None:
         if panel in self.Panes:
             self.Panes.remove(panel)
@@ -166,46 +153,6 @@ class MacroComposer(Page):
             self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
         self.Layout()
 
-    def OnDuplicateButton(self, evt):
-        oldmacropane = evt.EventObject.MacroPane
-        init = oldmacropane.Serialize()
-
-        # clear out a few things that we don't want in the new bind
-        init.pop('CustomID', None)
-        init.pop('Title', None)
-
-        newmacropane = MacroPane(self, init)
-
-        if not newmacropane:
-            wx.LogError(f'Error duplicating macro "{oldmacropane.Title}"!')
-            return
-
-        self.AddMacroToPage(newmacropane)
-
-    def OnExportButton(self, evt):
-        macropane = evt.GetEventObject().MacroPane
-
-        shorttitle = re.sub(r'\W+', '', macropane.Title)
-
-        with wx.FileDialog(self, f'Export Macro "{macropane.Title}"',
-                           defaultFile = f"{shorttitle}.bcm",
-                           defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
-                           wildcard = "BindControl Macro Files (*.bcm)|*.bcm|All Files (*.*)|*.*",
-                           style = wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT) as fileDialog:
-
-            if fileDialog.ShowModal() == wx.ID_CANCEL:
-                return
-
-            pathname = fileDialog.GetPath()
-            try:
-                filepath = Path(pathname)
-                macrodata = macropane.Serialize()
-                macrodata.pop('CustomID', None)
-                filepath.write_text(json.dumps(macrodata, indent=2))
-
-            except Exception as e:
-                wx.LogError(f"Error exporting Macro: {e}")
-
     def OnContentsChanged(self, evt = None) -> None:
         if evt: evt.Skip()
         self.UpdateAllMacros()
@@ -217,9 +164,10 @@ class MacroComposer(Page):
 class MacroPane(ListPanel):
     def __init__(self, parent, init = None):
         super().__init__(parent, init)
-        self.Description = "macro"
-        self.Type = 'Macro'
-        self.Topic = 'macro'
+        self.Description = 'macro'
+        self.Type        = 'Macro'
+        self.Topic       = 'macro'
+        self.ExportExt   = 'bcm'
 
         pane = self.GetPane()
         macroSizer = wx.BoxSizer(wx.HORIZONTAL)

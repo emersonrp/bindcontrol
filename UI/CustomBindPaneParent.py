@@ -10,6 +10,7 @@ class CustomBindPaneParent(ListPanel):
         self.Description  = "Custom Bind"
         self.Topic        = 'bind'
         self.CreatesFiles = False
+        self.ExportExt    = 'bcb'
 
     def BuildBindUI(self) -> None:
         wx.LogError(f"{self.Class} did not override BuildBindUI.  This is a bug.")

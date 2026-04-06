@@ -1,5 +1,4 @@
 import wx
-import re
 from functools import partial
 from typing import Any, TYPE_CHECKING
 from pathlib import Path
@@ -145,7 +144,7 @@ class CustomBinds(Page):
                     self.AddBindToPage(bindpane = bindpane)
                     existingBindsNames = [pane.Title for pane in self.Panes if pane != bindpane]
                     if bindpane.Title in existingBindsNames:
-                        self.SetBindPaneLabel(None, bindpane, new = True)
+                        bindpane.SetPanelLabel(new = True)
 
             except Exception as e:
                 wx.LogError(f'Cannot import custom bind "{filepath.name}": {e}')
@@ -176,7 +175,7 @@ class CustomBinds(Page):
             return
 
         if not bindpane.Title: # this is from a "New Bind" button
-            if not self.SetBindPaneLabel(None, bindpane, new = True):
+            if not bindpane.SetPanelLabel(new = True):
                 return
 
         if len(self.Panes) == 0:
@@ -210,69 +209,8 @@ class CustomBinds(Page):
         bindpane.Pane.Expand()
         self.Layout()
 
-    def SetBindPaneLabel(self, evt, bindpane = None, new = False) -> bool:
-        if not bindpane:
-            bindpane = evt.GetEventObject().BindPane
-        if not bindpane:
-            wx.LogError("Tried to set a BindPane label without a bindpane.  This is a bug.")
-            return False
-
-        # marshal up the files to delete, before we change the name
-        deletefiles = None if new else bindpane.AllBindFiles()
-        dlg = wx.TextEntryDialog(self, f'Enter name for {bindpane.Description or "bind"}:')
-        if bindpane.Title:
-            dlg.SetValue(bindpane.Title)
-        if dlg.ShowModal() == wx.ID_OK:
-            # check if we already have a bind named that.  Complex Binds use the name as
-            # part of the bindfiles' filenames, so we can't have dupes
-            #
-            # TODO?  This is no longer the case, but do we want duplicate bind names allowed?
-            # That makes the "you have a conflict with custom bind 'Stan'" message ambiguous
-            title = dlg.GetValue()
-            for pane in self.Panes:
-                if title == pane.Title:
-                    if pane != bindpane:
-                        # show an "oops" dialog and try again, this might not be perfect
-                        wx.MessageBox(f"A bind called {title} already exists!", "Error", wx.OK, self)
-                        return self.SetBindPaneLabel(evt, bindpane, new)
-                    dlg.Destroy()
-                    return False
-
-            bindpane.Title = title
-            bindpane.SetLabel(bindpane.Title)
-            if not new:
-                bindpane.DelButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
-                bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
-                bindpane.DupButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
-                bindpane.ExpButton.SetToolTip(f'Export bind "{bindpane.Title}"')
-                # if we have files to delete (we do, if not new) then delete them.
-                if deletefiles:
-                    self.Profile.doDeleteBindFiles(deletefiles)
-            self.UpdateAllBinds()
-            self.Refresh()
-            dlg.Destroy()
-            return True # successful name change
-        else:
-            if new:
-                self.doDeleteBindPane(bindpane)
-            dlg.Destroy()
-            return False
-
     def OnDeletePanel(self, panel):
         self.doDeleteBindPane(panel) # need do to this to get the args named right.  This is dumb.
-
-    def OnDeleteButton(self, evt) -> None:
-        delButton = evt.EventObject
-        bindpane = delButton.BindPane
-        with BindDeletionDialog(self, bindpane) as dlg:
-            if dlg.ShowModal() == wx.ID_CANCEL:
-                return
-            if dlg.DeleteFilesCB and dlg.DeleteFilesCB.GetValue():
-                # do the delete of the files
-                files = bindpane.AllBindFiles()
-                self.Profile.doDeleteBindFiles(files)
-        self.doDeleteBindPane(bindpane)
-        evt.Skip()
 
     def doDeleteBindPane(self, bindpane) -> None:
         for ctrlname in bindpane.Ctrls:
@@ -296,48 +234,6 @@ class CustomBinds(Page):
             self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
 
         self.Layout()
-
-    def OnDuplicateButton(self, evt) -> None:
-        oldbindpane = evt.EventObject.BindPane
-        init = oldbindpane.Serialize()
-
-        # clear out a few things that we don't want in the new bind
-        init.pop('CustomID', None)
-        init.pop('Title', None)
-        init.pop('Key', None)
-
-        newbindpane = self.BuildBindPaneFromData(init)
-
-        if not newbindpane:
-            wx.LogError(f"Error duplicating bind {oldbindpane.Title}!")
-            return
-
-        self.AddBindToPage(newbindpane)
-
-    def OnExportButton(self, evt) -> None:
-
-        bindpane = evt.GetEventObject().BindPane
-
-        shorttitle = re.sub(r'\W+', '', bindpane.Title)
-
-        with wx.FileDialog(self, f'Export Custom Bind "{bindpane.Title}"',
-                           defaultFile = f"{shorttitle}.bcb",
-                           defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
-                           wildcard = "BindControl Custom Bind Files (*.bcb)|*.bcb|All Files (*.*)|*.*",
-                           style = wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT) as fileDialog:
-
-            if fileDialog.ShowModal() == wx.ID_CANCEL:
-                return
-
-            pathname = fileDialog.GetPath()
-            try:
-                filepath = Path(pathname)
-                binddata = bindpane.Serialize()
-                binddata.pop('CustomID', None)
-                filepath.write_text(json.dumps(binddata, indent=2))
-
-            except Exception as e:
-                wx.LogError(f"Error exporting Custom Bind: {e}")
 
     def GetKeyBinds(self):
         binds = super().GetKeyBinds()

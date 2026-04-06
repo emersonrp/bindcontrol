@@ -26,9 +26,10 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         self.Type        : str            = ''
         self.Topic       : str            = 'panel'
         self.CustomID    : int|None       = init.get('CustomID')
+        self.ExportExt   : str            = 'txt'
+
         if not self.CustomID and self.Profile:
             self.CustomID = self.Profile.GetCustomID()
-
 
         self.Class = type(self).__name__
 
@@ -113,7 +114,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
     def OnDuplicateButton(self, evt) -> None:
         init = self.Serialize()
 
-        # clear out a few things that we don't want in the new bind
+        # clear out a few things that we don't want in the new panel
         init.pop('CustomID', None)
         init.pop('Title', None)
         init.pop('Key', None)
@@ -130,10 +131,10 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
 
         shorttitle = re.sub(r'\W+', '', self.Title)
 
-        with wx.FileDialog(self, f'Export Complex Bind "{self.Title}"',
-                           defaultFile = f"{shorttitle}.bcb",
+        with wx.FileDialog(self, f'Export {self.Description} "{self.Title}"',
+                           defaultFile = f"{shorttitle}.{self.ExportExt}",
                            defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
-                           wildcard = "BindControl Custom Bind Files (*.bcb)|*.bcb|All Files (*.*)|*.*",
+                           wildcard = f"BindControl {self.Description} Files (*.{self.ExportExt})|*.{self.ExportExt}|All Files (*.*)|*.*",
                            style = wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT) as fileDialog:
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
@@ -142,12 +143,12 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
             pathname = fileDialog.GetPath()
             try:
                 filepath = Path(pathname)
-                binddata = self.Serialize()
-                binddata.pop('CustomID', None)
-                filepath.write_text(json.dumps(binddata, indent=2))
+                paneldata = self.Serialize()
+                paneldata.pop('CustomID', None)
+                filepath.write_text(json.dumps(paneldata, indent=2))
 
             except Exception as e:
-                wx.LogError(f"Error exporting Complex Bind: {e}")
+                wx.LogError(f"Error exporting {self.Description}: {e}")
 
     # Basic deletion.  Subclasses should override if anything interesting needs happen.
     def OnDeleteButton(self, evt) -> None:

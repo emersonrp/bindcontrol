@@ -7,7 +7,7 @@ class KeyBind:
     def __init__(self, key, name : str, page, contents : str|list[str]|None = None):
         contents = contents or []
 
-        if type(contents) is str : contents = [contents]
+        if type(contents) is str: contents = [contents]
 
         self.Key      : str       = key      # actual key combo
         self.Name     : str       = name     # friendly name, ie, "Select All Pets"
@@ -15,7 +15,7 @@ class KeyBind:
         self.Contents : list[str] = contents # a list of strings to '$$'-join to create the actual payload # pyright: ignore
 
     # factory for PopulateBindFiles to use
-    # TODO this should be a class method
+    # TODO this should be a class method but making that leap is terrifying.
     def MakeBind(self, contents):
         if type(contents) is str: contents = [contents]
 

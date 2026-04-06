@@ -14,15 +14,21 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         init = init or {}
         super().__init__(parent.scrolledPanel)
 
-        self.Ctrls                        = {}
-        self.Init        : dict           = init
-        self.Title       : str            = init.get('Title', '')
-        self.Description : str            = ''
-        self.Type        : str            = ''
-        self.Topic       : str            = 'panel'
-        self.CustomID    : int|None       = init.get('CustomID')
-        self.ExportExt   : str            = 'txt'
+        self.Ctrls                  = {}
+        self.Init        : dict     = init
+        self.Title       : str      = init.get('Title', '')
+        self.Description : str      = ''
+        self.Type        : str      = ''
+        self.Topic       : str      = 'panel'
+        self.CustomID    : int|None = init.get('CustomID')
+        self.ExportExt   : str      = 'txt'
 
+        # TODO maybe - now we do this on every __init__, which increments
+        # Profile's customID, *even if we cancel* and so the Profile gets
+        # flagged as modified.  Not clear how much of a problem this is
+        # versus the hassle of fixing it.  Having it do it this way fixes
+        # a -bunch- of other race-condition weirdness that happens if we
+        # don't have a CustomID at all times.
         if not self.CustomID and self.Profile:
             self.CustomID = self.Profile.GetCustomID()
 
@@ -85,10 +91,10 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
             self.Title = dlg.GetValue()
             self.UpdateLabel()
             if not new:
-                self.DelButton.SetToolTip(f'Delete {self.Description} "{self.Title}"')
-                self.RenButton.SetToolTip(f'Rename {self.Description} "{self.Title}"')
+                self.DelButton.SetToolTip(   f'Delete {self.Description} "{self.Title}"')
+                self.RenButton.SetToolTip(   f'Rename {self.Description} "{self.Title}"')
                 self.DupButton.SetToolTip(f'Duplicate {self.Description} "{self.Title}"')
-                self.ExpButton.SetToolTip(f'Export {self.Description} "{self.Title}"')
+                self.ExpButton.SetToolTip(   f'Export {self.Description} "{self.Title}"')
             dlg.Destroy()
             return True # successful name change
         else:
@@ -107,10 +113,10 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
 
         # clear out a few things that we don't want in the new panel
         init.pop('CustomID', None)
-        init.pop('Title', None)
-        init.pop('Key', None)
+        init.pop('Title'   , None)
+        init.pop('Key'     , None)
 
-        # make a new one of whatever we are.  Is this the sane way to do this?
+        # make a new one of whatever we are.
         if not (newpanel := self.__class__(self.Page, init)):
             wx.LogError(f"Error duplicating {self.Title}!")
             return
@@ -118,6 +124,12 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         pub.sendMessage(f'addpanel.{self.Topic}', panel = newpanel)
         pub.sendMessage('updatebinds')
 
+    # to make this work completely correctly, subclasses need to set
+    # self.ExportExt (default 'txt') to something interesting
+    #
+    # TODO - someday maybe use that info to register file types, but then we
+    # have to handle them in BindControl.py in case they're passed in as
+    # command-line args, and funnel them to the right code to import/load them
     def OnExportButton(self, evt) -> None:
 
         shorttitle = re.sub(r'\W+', '', self.Title)

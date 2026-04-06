@@ -40,9 +40,11 @@ class ComplexBindPane(CustomBindPaneParent):
         return data
 
     def BuildBindUI(self) -> None:
+        pane = self.Pane.GetPane()
+
         self.BindSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BindStepSizer = wx.BoxSizer(wx.VERTICAL)
-        AddBindStepButton = wx.Button(self.Pane, label = "Add Step")
+        AddBindStepButton = wx.Button(pane, label = "Add Step")
         AddBindStepButton.Bind(wx.EVT_BUTTON, self.onAddStepButton)
         self.BindStepSizer.Add(AddBindStepButton, 0, wx.TOP, 10)
         if steps := self.Init.get('Steps', []):
@@ -51,9 +53,9 @@ class ComplexBindPane(CustomBindPaneParent):
         else:
             self.doAddStep()
 
-        self.BindSizer.Add (self.BindStepSizer, 1, wx.EXPAND)
+        self.BindSizer.Add(self.BindStepSizer, 1, wx.EXPAND)
 
-        BindKeyCtrl = bcKeyButton(self.Pane, init = {
+        BindKeyCtrl = bcKeyButton(pane, init = {
             'CtlName' : self.MakeCtrlName('BindKey'),
             'Page'    : self.Page,
             'Key'     : self.Init.get('Key', ''),
@@ -61,7 +63,7 @@ class ComplexBindPane(CustomBindPaneParent):
         BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.onKeyChanged)
 
         BindKeySizer = wx.BoxSizer(wx.HORIZONTAL)
-        BindKeySizer.Add(wx.StaticText(self.Pane, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
+        BindKeySizer.Add(wx.StaticText(pane, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindKeySizer.Add(BindKeyCtrl,                          0)
         self.BindSizer.Add(BindKeySizer, 0, wx.LEFT|wx.RIGHT, 10)
         self.SetCtrl('BindKey', BindKeyCtrl)
@@ -72,7 +74,7 @@ class ComplexBindPane(CustomBindPaneParent):
         # border around the addr box
         border = wx.BoxSizer(wx.VERTICAL)
         border.Add(self.BindSizer, 1, wx.EXPAND|wx.ALL, 10)
-        self.Pane.SetSizer(border)
+        pane.SetSizer(border)
 
         self.RenumberSteps()
         self.CheckIfWellFormed()

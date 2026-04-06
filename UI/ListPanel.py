@@ -128,11 +128,9 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
 
     def OnExportButton(self, evt) -> None:
 
-        bindpane = evt.GetEventObject().BindPane
+        shorttitle = re.sub(r'\W+', '', self.Title)
 
-        shorttitle = re.sub(r'\W+', '', bindpane.Title)
-
-        with wx.FileDialog(self, f'Export Complex Bind "{bindpane.Title}"',
+        with wx.FileDialog(self, f'Export Complex Bind "{self.Title}"',
                            defaultFile = f"{shorttitle}.bcb",
                            defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
                            wildcard = "BindControl Custom Bind Files (*.bcb)|*.bcb|All Files (*.*)|*.*",
@@ -144,7 +142,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
             pathname = fileDialog.GetPath()
             try:
                 filepath = Path(pathname)
-                binddata = bindpane.Serialize()
+                binddata = self.Serialize()
                 binddata.pop('CustomID', None)
                 filepath.write_text(json.dumps(binddata, indent=2))
 

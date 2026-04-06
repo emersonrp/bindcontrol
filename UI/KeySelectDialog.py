@@ -9,6 +9,7 @@ import wx.html
 import wx.lib.newevent
 from wx.lib.buttons import GenButton
 
+import bcColours
 from BindFile import KeyBind
 import UI
 from UI.ErrorControls import ErrorControlMixin
@@ -87,7 +88,7 @@ class KeySelectDialog(wx.Dialog):
 
         self.kbDesc = wx.StaticText     (self, label = desc,           style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
         self.kbBind = wx.html.HtmlWindow(self, size = wx.Size(450,60), style = wx.html.HW_SCROLLBAR_NEVER)
-        self.kbBind.SetHTMLBackgroundColour( wx.WHITE )
+        self.kbBind.SetHTMLBackgroundColour( bcColours.WhiteColour() )
         self.kbErr  = wx.StaticText     (self, label = " ",            style = wx.ALIGN_CENTER|wx.ALIGN_CENTER_VERTICAL)
 
         self.ShowBind()
@@ -146,7 +147,8 @@ class KeySelectDialog(wx.Dialog):
         return super().ShowModal()
 
     def ShowBind(self) -> None:
-        self.kbBind.SetPage('<center><b><font size=+4>' + self.Binding + '</font></b></center>')
+        fontcolor = 'white' if bcColours.DarkMode() else 'black'
+        self.kbBind.SetPage(f'<center><b><font size=+4 color={fontcolor}>' + self.Binding + '</font></b></center>')
 
     def handleJS(self, event) -> None:
         # we don't want to do this clearing logic with unknown events,
@@ -343,11 +345,11 @@ class KeySelectDialog(wx.Dialog):
                     conflictStrings.append(f'Conflict with {conflict["ctrl"]} on {conflict["page"]} tab.')
                 self.kbErr.SetForegroundColour(wx.RED)
                 self.kbErr.SetLabel("\n".join(conflictStrings))
-                self.kbBind.SetHTMLBackgroundColour(wx.Colour(255,200,200))
+                self.kbBind.SetHTMLBackgroundColour(bcColours.ErrorColour())
             else:
                 self.kbErr.SetForegroundColour(wx.NullColour)
                 self.kbErr.SetLabel(" ")
-                self.kbBind.SetHTMLBackgroundColour( wx.WHITE )
+                self.kbBind.SetHTMLBackgroundColour( bcColours.WhiteColour() )
 
     # This keymap code was initially adapted from PADRE < http://padre.perlide.org/ >.
     def SetKeymap(self) -> None:

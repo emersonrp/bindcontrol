@@ -9,7 +9,6 @@ class AttributeMonitorCmd(PowerBinderCommand):
     Menu = "Graphics / UI"
 
     def BuildUI(self, dialog) -> wx.BoxSizer:
-        self.Page = dialog.Page
         self.AttributeTable = {
             'Base' : {
                 'Current Hit Points'       : 'NT H',

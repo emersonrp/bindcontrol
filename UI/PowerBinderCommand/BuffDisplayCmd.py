@@ -1,5 +1,4 @@
 import wx
-from UI.ControlGroup import ControlGroup
 import wx.adv
 from UI.PowerBinderCommand import PowerBinderCommand
 
@@ -9,8 +8,7 @@ class BuffDisplayCmd(PowerBinderCommand):
     Menu = "Graphics / UI"
 
     def BuildUI(self, dialog) -> wx.BoxSizer:
-        self.Groups = {}
-        self.Page = dialog.Page
+        self.Ctrls = {}
         self.buffDisplayMap = {
             'Status Window' : {
                 'Hide Auto' : 1,
@@ -40,34 +38,27 @@ class BuffDisplayCmd(PowerBinderCommand):
                 'Stop Sending Buffs' : 4194304,
             },
         }
-        groupSizer = wx.BoxSizer(wx.HORIZONTAL)
+        masterSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         for group, controls in self.buffDisplayMap.items():
-            self.Groups[group] = ControlGroup(dialog, self.Page, label = group)
-            groupid = self.Groups[group].GetStaticBox().GetId()
-            for cb, data in controls.items():
-                self.Groups[group].AddControl(
-                    ctlType = 'checkbox',
-                    ctlName = f"{groupid}_{group}_{cb}",
-                    label = cb,
-                    data = data,
-                )
+            groupSizer = wx.StaticBoxSizer(wx.VERTICAL, dialog, group)
+            staticBox = groupSizer.GetStaticBox()
+            for cb in controls:
+                self.Ctrls[f"{group}_{cb}"] = wx.CheckBox(staticBox, label = cb)
+                groupSizer.Add(self.Ctrls[f"{group}_{cb}"], 0, wx.ALL, 3)
 
-            groupSizer.Add(self.Groups[group], 1, wx.ALL, 10)
+            masterSizer.Add(groupSizer, 1, wx.EXPAND|wx.ALL, 5)
 
-        return groupSizer
+        return masterSizer
 
     def CalculateValue(self) -> int:
-        page = self.Profile.CustomBinds
-
         total = 0
 
         for group, controls in self.buffDisplayMap.items():
-            groupid = self.Groups[group].GetStaticBox().GetId()
             for cb in controls:
-                checkbox = page.Ctrls[f"{groupid}_{group}_{cb}"]
+                checkbox = self.Ctrls[f"{group}_{cb}"]
                 if checkbox.IsChecked():
-                    total = total + checkbox.Data
+                    total = total + self.buffDisplayMap[group][cb]
         return total
 
     def MakeBindString(self) -> str:
@@ -82,7 +73,6 @@ class BuffDisplayCmd(PowerBinderCommand):
         value = value or 0  # in case we had for some reason 'None' stashed in the init values
 
         for group, controls in self.buffDisplayMap.items():
-            groupid = self.Groups[group].GetStaticBox().GetId()
             for cb in controls:
-                checkbox = self.Page.Ctrls[f"{groupid}_{group}_{cb}"]
-                checkbox.SetValue( checkbox.Data & value )
+                checkbox = self.Ctrls[f"{group}_{cb}"]
+                checkbox.SetValue( self.buffDisplayMap[group][cb] & value )

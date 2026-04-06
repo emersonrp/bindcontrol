@@ -18,9 +18,10 @@ class BufferBindPane(CustomBindPaneParent):
         init = init or {}
         super().__init__(page, init)
 
-        self.PassedInit  = init
-        self.Description = "Buffer Bind"
-        self.Type        = "BufferBind"
+        self.PassedInit   = init
+        self.Description  = "Buffer Bind"
+        self.Type         = "BufferBind"
+        self.CreatesFiles = True
 
         self.Buffs = []
 

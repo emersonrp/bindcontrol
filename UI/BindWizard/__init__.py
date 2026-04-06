@@ -9,11 +9,12 @@ from Help import ShowHelpWindow
 # This makes for some confusing bits going through the code.  This
 # needs a little love still but that's why it's done this way.
 class WizardParent:
-    WizardName  = ''
-    WizToolTip  = ''
-    WizHelpFile = ''
-    IconPath    = ('Empty',) # trailing , is important
-    IsUnique    = False
+    WizardName   = ''
+    WizToolTip   = ''
+    WizHelpFile  = ''
+    IconPath     = ('Empty',) # trailing , is important
+    IsUnique     = False
+    CreatesFiles = False
 
     def __init__(self, parent, init):
         self.BindPane = parent

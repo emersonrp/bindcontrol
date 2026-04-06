@@ -8,10 +8,11 @@ from UI.KeySelectDialog import EVT_KEY_CHANGED
 from UI.CGControls import cgCheckBox, cgbcKeyButton
 
 class BaseEditMode(WizardParent):
-    WizardName  = 'Base Edit Mode'
-    WizToolTip  = 'Switch to and from a set of controls optimized for base editing'
-    WizHelpFile = 'BaseEditMode.html'
-    IconPath    = ('UI', 'BaseEditMode')
+    WizardName   = 'Base Edit Mode'
+    WizToolTip   = 'Switch to and from a set of controls optimized for base editing'
+    WizHelpFile  = 'BaseEditMode.html'
+    IconPath     = ('UI', 'BaseEditMode')
+    CreatesFiles = True
 
     def __init__(self, parent, init):
         super().__init__(parent, init)

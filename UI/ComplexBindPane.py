@@ -12,8 +12,9 @@ class ComplexBindPane(CustomBindPaneParent):
         init = init or {}
         super().__init__(page, init)
 
-        self.Description = "Complex Bind"
-        self.Type        = "ComplexBind"
+        self.Description  = "Complex Bind"
+        self.Type         = "ComplexBind"
+        self.CreatesFiles = True
 
         self.Steps = []
 

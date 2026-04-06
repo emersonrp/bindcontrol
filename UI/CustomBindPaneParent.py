@@ -6,8 +6,9 @@ import wx
 class CustomBindPaneParent(ListPanel):
     def __init__(self, parent, init):
         super().__init__(parent, init)
-        self.Description = "Custom Bind"
-        self.Topic       = 'bind'
+        self.Description  = "Custom Bind"
+        self.Topic        = 'bind'
+        self.CreatesFiles = False
 
     def BuildBindUI(self) -> None:
         wx.LogError(f"{self.Class} did not override BuildBindUI.  This is a bug.")

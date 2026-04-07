@@ -106,6 +106,7 @@ if sys.platform == 'darwin':
                     "CFBundleTypeName": "BindControl Profile",
                     "CFBundleTypeRole": "Viewer",
                     "LSTypeIsPackage": 0,
+                    "NSRequiresAquaSystemAppearance": "No",
                 }
             ],
             "LSEnvironment": {"LANG": "en_US.UTF-8", "LC_ALL": "en_US.UTF-8"},

@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from pubsub import pub
 import wx
 from wx.lib.buttons import GenButton
 import bcColours
@@ -20,15 +21,10 @@ class ErrorControlMixin:
         self.Warnings       : dict           = {}
         self.DefaultToolTip : str            = ''
         self.DisabledColor  : wx.Colour|None = None
+        self.BGColour       : wx.Colour|None = None
 
-        if isinstance(self, wx.TextCtrl):
-            self.BGColour = self.GetBackgroundColour()
-        else:
-            if isinstance(self, GenButton):
-                self.BGColour      = wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNHIGHLIGHT)
-                self.DisabledColor = wx.NullColour
-            else:
-                self.BGColour = wx.NullColour
+        pub.subscribe(self.OnSystemColoursChanged, 'systemcolourschanged')
+        #self.OnSystemColoursChanged()
 
     def Enable(self, enable = True) -> bool:
         if not enable:
@@ -71,6 +67,8 @@ class ErrorControlMixin:
 
     def HasErrors(self) -> bool: return bool(self.Errors)
 
+    def HasWarnings(self) -> bool: return bool(self.Warnings)
+
     def ClearErrors(self) -> None:
         # make a list copy of self.Errors first b/c we change self.Errors in the loop
         errors = list(self.Errors)
@@ -88,6 +86,25 @@ class ErrorControlMixin:
             [start, end] = target.GetSelection()
             target.SetStyle(start, end, newstyle)
             target.SelectNone()
+
+    def OnSystemColoursChanged(self):
+        if isinstance(self, wx.TextCtrl):
+            self.BGColour = self.GetBackgroundColour()
+        else:
+            if isinstance(self, GenButton):
+                self.BGColour      = wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNHIGHLIGHT)
+                self.DisabledColor = wx.NullColour
+            else:
+                self.BGColour = wx.NullColour
+
+        if self.HasErrors():
+            self.SetFullBackgroundColour(bcColours.ErrorColour())
+        elif self.HasWarnings():
+            self.SetFullBackgroundColour(bcColours.WarningColour())
+        elif not self.IsEnabled():
+            self.SetFullBackgroundColour(self.DisabledColor)
+        else:
+            self.SetFullBackgroundColour(self.BGColour)
 
     def StylingTarget(self):
         return self.GetTextCtrl() if (isinstance(self, wx.PickerBase) and self.HasTextCtrl()) else self

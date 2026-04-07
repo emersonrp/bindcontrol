@@ -2,7 +2,7 @@ import wx
 import re
 import base64
 from pathlib import Path
-from Util.SourceFileIcons import GetBitmapFromSourceFile, sourcemaps
+from Util.SourceFileIcons import GetImageFromSourceFile, sourcemaps
 
 import Util.Paths
 
@@ -21,7 +21,7 @@ def GetIcon(*args) -> Icon:
     # If we haven't initialized the empty/fallback icon, do that now.
     # We don't do this at start-time b/c wx is not initialized.
     if 'Empty.png' not in Icons:
-        Icons['Empty.png'] = Icon(wx.Bitmap.NewFromPNGData(transparentPNG, len(transparentPNG)), '')
+        Icons['Empty.png'] = Icon(wx.Image(32, 32, transparentPNG), 'Empty')
 
     pathbits = []
 
@@ -59,7 +59,7 @@ def GetIcon(*args) -> Icon:
         if source in sourcemaps:
             sourcename = '_'.join(pathbits[1:]) # probably not needed on this code path, but just in case
             if sourcename in sourcemaps[source]['list']:
-                if bitmap := GetBitmapFromSourceFile(source, sourcename):
+                if bitmap := GetImageFromSourceFile(source, sourcename):
                     Icons[iconpathstr] = Icon(bitmap, filename = f"{source}/{sourcename}")
                 else:
                     wx.LogWarning(f"Missing Icon: SourceFile {source} returned None for {sourcename} - check logs!")

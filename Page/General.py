@@ -3,6 +3,8 @@ import wx
 import wx.adv
 import wx.lib.stattext as ST
 from typing import Any
+
+import bcColours
 import UI
 import Profile
 from Icon import GetIconBitmap
@@ -69,7 +71,7 @@ class General(Page):
         self.nameBox.SetSizer(nameSizer)
         self.NameDisplay = ST.GenStaticText(self.nameBox, style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.NameDisplay.SetFont(wx.Font(wx.FontInfo(16).Bold().FaceName('Paragon City')))
-        self.NameDisplay.SetBackgroundColour(wx.WHITE)
+        self.NameDisplay.SetBackgroundColour(bcColours.WhiteColour())
         nameSizer.Add(self.NameDisplay, 1, wx.ALIGN_CENTER|wx.ALL, 6)
         bannerSizer.Add(self.nameBox, 1, wx.EXPAND|wx.TOP, 6)
 

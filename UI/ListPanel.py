@@ -72,6 +72,8 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
 
         self.Pane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
 
+        pub.subscribe(self.OnSystemColoursChanged, 'systemcolourschanged')
+
     def UpdateLabel(self):
         if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
             self.Pane.SetLabel(f"{self.Title} ({self.Description} ID:{self.CustomID})")
@@ -161,6 +163,9 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         pub.sendMessage(f'deletepanel.{self.Topic}', panel = self)
         self.DestroyLater()
         evt.Skip()
+
+    def OnSystemColoursChanged(self):
+        self.Pane.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT))
 
     def OnPaneChanged(self, evt) -> None:
         IsCollapsed = evt.GetCollapsed()

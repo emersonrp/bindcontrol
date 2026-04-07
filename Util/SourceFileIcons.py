@@ -9,7 +9,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True # this became necessary to make pytest dt
 
 # We assume 'name' has been properly s/// already.  We want NOT
 # to do it in here because of "Warrior'sChallenge" sigh
-def GetBitmapFromSourceFile(source, name) -> wx.Bitmap|None:
+def GetImageFromSourceFile(source, name) -> wx.Image|None:
 
     if source in IconCache:
         if name in IconCache[source]:
@@ -41,7 +41,7 @@ def GetBitmapFromSourceFile(source, name) -> wx.Bitmap|None:
     wx_image.SetAlpha(pil_image.convert("RGBA").tobytes()[3::4])
     if source not in IconCache:
         IconCache[source] = {}
-    IconCache[source][name] = wx.Bitmap(wx_image)
+    IconCache[source][name] = wx_image
     return IconCache[source][name]
 
 YCC_COLORS = {

@@ -169,9 +169,10 @@ class BaseEditMode(WizardParent):
         keybindWrapper = wx.BoxSizer(wx.VERTICAL)
         keybindWrapPanel = wx.Panel(panel)
         keybindWrapPanel.SetSizer(keybindWrapper)
-        keybindWrapPanel.SetBackgroundColour(wx.Colour(200, 200, 200))
+        keybindWrapPanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
 
         keybindTitle = wx.StaticText(keybindWrapPanel, label = 'KEYBINDS')
+        keybindTitle.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT))
         keybindTitle.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         keybindWrapper.Add(keybindTitle, 0, wx.ALL|wx.ALIGN_CENTER, 5)
 

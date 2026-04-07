@@ -3,7 +3,7 @@ import wx
 # is there a saner way to do this?
 
 def DarkMode():
-    return wx.SystemSettings.GetAppearance().IsDark()
+    return wx.SystemSettings().GetAppearance().IsDark()
 
 def ErrorColour() -> wx.Colour:
     return wx.Colour(128, 0, 0) if DarkMode() else wx.Colour(255, 200, 200)

@@ -5,7 +5,7 @@ from pathlib import Path
 from Util.Incarnate import Aliases
 import GameData
 import Util.Paths
-from Util.SourceFileIcons import GetBitmapFromSourceFile, sourcemaps, SourceCache
+from Util.SourceFileIcons import GetImageFromSourceFile, sourcemaps, SourceCache
 import Icon
 
 def RecurseMiscPowers(menustruct):
@@ -42,7 +42,7 @@ def test_source_files():
 
         powerlist  = list(sourcemaps[source]['list'])
         powercount = len(powerlist)
-        GetBitmapFromSourceFile(source, powerlist[0]) # to cache the source file
+        GetImageFromSourceFile(source, powerlist[0]) # to cache the source file
 
         sourcefile = SourceCache[source]
         assert sourcefile is not None
@@ -89,8 +89,8 @@ def test_archetype_icons(empty):
                                 assert filename.exists(), f"Powers icon missing: {filename}"
                                 if str(filename) in powcheck: powcheck.remove(str(filename))
 
-                                sourceicon = GetBitmapFromSourceFile('Powers', f'{powerset}_{p}')
-                                assert isinstance(sourceicon, wx.Bitmap)
+                                sourceicon = GetImageFromSourceFile('Powers', f'{powerset}_{p}')
+                                assert isinstance(sourceicon, wx.Image)
                                 assert sourceicon != empty, f'{powerset}_{p}" in source file'
                         power = re.sub(r'\W+', '', power)
                         filename = icondir / "Powers" / f"{powerset}_{power}.png"
@@ -122,8 +122,8 @@ def test_pool_power_icons():
                 assert filename.exists(), f"Pool power icon missing: {filename}"
                 if str(filename) in filecheck: filecheck.remove(str(filename))
 
-                sourceicon = GetBitmapFromSourceFile('Powers', f'{poolname}_{power}')
-                assert isinstance(sourceicon, wx.Bitmap)
+                sourceicon = GetImageFromSourceFile('Powers', f'{poolname}_{power}')
+                assert isinstance(sourceicon, wx.Image)
                 assert sourceicon != empty, f'{poolname}_{power} in source file'
 
     assert not filecheck, f"{len(filecheck)} extra Powers icons exist: {filecheck}"
@@ -163,8 +163,8 @@ def test_miscpowers_icons(empty):
             assert filename.exists(), f"Misc Powers icon missing: {filename}"
             if str(filename) in filecheck: filecheck.remove(str(filename))
 
-            sourceicon = GetBitmapFromSourceFile('Powers', f'Misc_{icon}')
-            assert isinstance(sourceicon, wx.Bitmap)
+            sourceicon = GetImageFromSourceFile('Powers', f'Misc_{icon}')
+            assert isinstance(sourceicon, wx.Image)
             assert sourceicon != empty, f'Misc_{icon} in source file'
 
     assert not filecheck, f"{len(filecheck)} extra Misc Power icons exist: {filecheck}"

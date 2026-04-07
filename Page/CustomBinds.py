@@ -153,14 +153,13 @@ class CustomBinds(Page):
 
     def BuildBindPaneFromData(self, binddata):
         bindpane = None
-        if binddata['Type'] == "SimpleBind":
-            bindpane = SimpleBindPane(self, init = binddata)
-        elif binddata['Type'] == "BufferBind":
-            bindpane = BufferBindPane(self, init = binddata)
-        elif binddata['Type'] == "ComplexBind":
-            bindpane = ComplexBindPane(self, init = binddata)
-        elif binddata['Type'] == "WizardBind":
-            bindpane = WizardBindPane(self, init = binddata)
+        if paneclass := {
+            'SimpleBind'  : SimpleBindPane,
+            'ComplexBind' : ComplexBindPane,
+            'BufferBind'  : BufferBindPane,
+            'WizardBind'  : WizardBindPane,
+        }[binddata['Type']]:
+            bindpane = paneclass(self, init = binddata)
         else:
             wx.LogError("No valid custom bind found.")
 

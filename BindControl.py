@@ -198,12 +198,18 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
 
+        self.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.OnSysColourChanged)
+
         pub.subscribe(self.OnMenuPrefsDialog, 'showprefsdialog')
         pub.subscribe(self.OnProfileModified, 'checkprofilemodified')
 
     def OnProfileModified(self):
         if self.Profile:
             self.SetTitle(self.Profile.ProfileName() + (" (*)" if self.Profile.IsModified() else ''))
+
+    # pass the system colour change notion on to whomever is interested.
+    def OnSysColourChanged(self, _):
+        pub.sendMessage('syscolourschanged')
 
     def SetupInitialProfile(self, input_profile = None):
 

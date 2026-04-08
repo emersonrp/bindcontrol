@@ -59,9 +59,7 @@ class WizardBindPane(CustomBindPaneParent):
         pane = self.Pane.GetPane()
         if mainSizer := pane.GetSizer():
             for item in range(mainSizer.GetItemCount()):
-                mainSizer.Hide(item)
                 mainSizer.Detach(item)
-            pane.Layout()
         else:
             mainSizer = wx.BoxSizer(wx.VERTICAL)
             pane.SetSizer(mainSizer)

@@ -127,11 +127,11 @@ class BaseEditMode(WizardParent):
         return mainSizer
 
     def Serialize(self):
+        self.UpdateStateFromDialog()
         return self.State.get('WizData', {})
 
     def OnKeyButtonChanged(self, control):
-        self.UpdateStateFromDialog()
-        self.BindPane.BuildBindUI()
+        self.BindPane.UpdateAndRefresh()
 
     def PaneContents(self):
         bindpane = self.BindPane
@@ -218,7 +218,6 @@ class BaseEditMode(WizardParent):
         })
         panelSizer.Add(self.ToggleEditMode, 0, wx.ALIGN_CENTER|wx.ALL, 5)
         bindpane.SetCtrl('ToggleEditMode', self.ToggleEditMode)
-        self.ToggleEditMode.Bind(EVT_KEY_CHANGED, self.OnBindKeyChanged)
         UI.Labels[self.ToggleEditMode] = 'Enter Edit Mode'
 
         panel.SetSizer(panelSizer)

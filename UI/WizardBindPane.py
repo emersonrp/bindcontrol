@@ -71,7 +71,7 @@ class WizardBindPane(CustomBindPaneParent):
 
         pane.Layout()
 
-    def UpdateAndRefresh(self, evt):
+    def UpdateAndRefresh(self, evt = None):
         if evt: evt.Skip()
         self.Wizard.UpdateStateFromDialog()
         if self.Profile:

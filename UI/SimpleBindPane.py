@@ -106,7 +106,7 @@ class SimpleBindPane(CustomBindPaneParent):
 
     def onContentsChanged(self, evt) -> None:
         evt.Skip()
-        pub.sendMessage('updatebinds')
+        pub.sendMessage('updatepanels.bind')
         self.CheckIfWellFormed()
 
     def onKeyChanged(self, evt) -> None:

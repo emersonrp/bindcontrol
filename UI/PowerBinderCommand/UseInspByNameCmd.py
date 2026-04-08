@@ -51,6 +51,6 @@ class UseInspByNameCmd(PowerBinderCommand):
             # If we touch one that is int-based, mark it as needing re-saving.
             # TODO:  is there a trivial way to tell it "resave the whole thing,
             # examining and updating all steps?"  Probably not.
-            pub.sendMessage('updatebinds')
+            pub.sendMessage('updatepanels.bind')
         elif isinstance(insp, str):
             self.useInspByNameModeChoice.SetStringSelection(insp)

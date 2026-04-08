@@ -60,7 +60,7 @@ class IncarnateSet(WizardParent):
                 self.State['WizData'] = {}
             newdata = self.IncarnateBox.Serialize()
             if self.State['WizData'].get('IncData', {}) != newdata:
-                pub.sendMessage('updatebinds')
+                pub.sendMessage('updatepanels.bind')
                 self.State['WizData']['IncData'] = newdata
 
         # and then in either case, build the Pane from State

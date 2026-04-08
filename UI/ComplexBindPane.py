@@ -111,7 +111,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
     def onAddStepButton(self, evt = None, stepdata : dict|None = None) -> None:
         self.doAddStep(stepdata or {})
-        pub.sendMessage('updatebinds')
+        pub.sendMessage('updatepanels.bind')
         if evt: evt.Skip()
 
     def doAddStep(self, stepdata : dict|None = None) -> None:
@@ -129,7 +129,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.BindStepSizer.Detach(idx)
         self.BindStepSizer.Insert(idx-1, self.Steps[idx], 0, wx.EXPAND)
         self.Steps[idx], self.Steps[idx-1] = self.Steps[idx-1], self.Steps[idx]
-        pub.sendMessage('updatebinds')
+        pub.sendMessage('updatepanels.bind')
         self.RenumberSteps()
         evt.Skip()
 
@@ -140,7 +140,7 @@ class ComplexBindPane(CustomBindPaneParent):
         self.BindStepSizer.Detach(idx)
         self.BindStepSizer.Insert(idx+1, self.Steps[idx], 0, wx.EXPAND)
         self.Steps[idx], self.Steps[idx+1] = self.Steps[idx+1], self.Steps[idx]
-        pub.sendMessage('updatebinds')
+        pub.sendMessage('updatepanels.bind')
         self.RenumberSteps()
         evt.Skip()
 
@@ -155,7 +155,7 @@ class ComplexBindPane(CustomBindPaneParent):
         newstep = BindStep(self, stepidx+1, data)
         self.BindStepSizer.Insert(stepidx+1, newstep, 0, wx.EXPAND)
         self.Steps.insert(stepidx+1, newstep)
-        pub.sendMessage('updatebinds')
+        pub.sendMessage('updatepanels.bind')
         self.RenumberSteps()
         evt.Skip()
 
@@ -164,7 +164,7 @@ class ComplexBindPane(CustomBindPaneParent):
         step = button.GetParent()
         self.Steps.remove(step)
         step.DestroyLater()
-        pub.sendMessage('updatebinds')
+        pub.sendMessage('updatepanels.bind')
         self.RenumberSteps()
         evt.Skip()
 

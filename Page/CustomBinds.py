@@ -31,7 +31,7 @@ class CustomBinds(Page):
         self.Init     : dict[str, Any]             = {}
 
         pub.subscribe(self.OnVerboseBindsChanged, 'prefschanged.verbosebinds')
-        pub.subscribe(self.OnBindsChanged, 'updatebinds')
+        pub.subscribe(self.OnBindsChanged, 'updatepanels.bind')
         pub.subscribe(self.OnDeletePanel, 'deletepanel.bind')
         pub.subscribe(self.OnAddPanel, 'addpanel.bind')
 

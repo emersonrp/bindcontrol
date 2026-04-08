@@ -62,7 +62,7 @@ class MacroComposer(Page):
         self.Layout()
 
         pub.subscribe(self.OnContentsChanged, 'macrocontentschanged')
-        pub.subscribe(self.UpdateAllMacros, 'updatemacros')
+        pub.subscribe(self.UpdateAllMacros, 'updatepanels.macro')
         pub.subscribe(self.doDeleteMacroPane, 'deletepanel.macro')
         pub.subscribe(self.OnAddPanel, 'addpanel.macro')
 
@@ -247,7 +247,7 @@ class MacroPane(ListPanel):
 
     def SetPanelLabel(self, new = False) -> bool:
         if retval := super().SetPanelLabel(new):
-            pub.sendMessage('updatemacros')
+            pub.sendMessage('updatepanels.macro')
         return retval
 
     def CheckToolTipSlot(self):

@@ -121,7 +121,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
             return
 
         pub.sendMessage(f'addpanel.{self.Topic}', panel = newpanel)
-        pub.sendMessage('updatebinds')
+        pub.sendMessage(f'updatepanels.{self.Topic}')
 
     # to make this work completely correctly, subclasses need to set
     # self.ExportExt (default 'txt') to something interesting

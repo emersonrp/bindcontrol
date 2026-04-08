@@ -139,7 +139,7 @@ class BufferBindPane(CustomBindPaneParent):
         self.Buffs.remove(buff)
         buff.GetContainingSizer().Detach(buff)
         buff.DestroyLater()
-        pub.sendMessage('updatebinds')
+        pub.sendMessage('updatepanels.bind')
         self.Parent.Layout()
         if self.Page:
             wx.CallAfter(self.Page.SynchronizeUI)

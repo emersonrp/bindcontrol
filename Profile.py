@@ -353,9 +353,9 @@ class Profile(wx.Notebook):
 
     def DoCommand(self, page, control, evt = None):
         if page== self.CustomBinds:
-            pub.sendMessage('updatebinds')
+            pub.sendMessage('updatepanels.bind')
         elif page == self.MacroComposer:
-            pub.sendMessage('updatemacros')
+            pub.sendMessage('updatepanels.macro')
         else:
             if ctlname := next((name for name,c in page.Ctrls.items() if control == c), None):
                 pagename = page.__class__.__name__ # eww

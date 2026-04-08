@@ -97,6 +97,10 @@ class ProfileData(dict):
         super().__setitem__(key, val)
         pub.sendMessage('checkprofilemodified')
 
+    def __delitem__(self, key):
+        super().__delitem__(key)
+        pub.sendMessage('checkprofilemodified')
+
     def ProfileName(self)   -> str      : return self.Filepath.stem if self.Filepath else ''
     def ProfileIDFile(self) -> Path     : return self.BindsPath() / 'bcprofileid.txt'
     def Server(self)        -> str      : return self.get('General', {}).get('Server', 'Homecoming')
@@ -163,7 +167,10 @@ class ProfileData(dict):
             for i, test in enumerate(self[pagename]):
                 if test['CustomID'] == contents['CustomID']:
                     if contents.get('Action') == 'delete':
-                        del self[pagename][i]
+                        # do this dance so we trigger the __setitem__ magic
+                        oldbindlist = self[pagename]
+                        del oldbindlist[i]
+                        self[pagename] = oldbindlist
                         replaced = True
                         break
                     self[pagename][i] = contents

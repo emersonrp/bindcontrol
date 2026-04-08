@@ -1,19 +1,20 @@
 import wx
+from collections.abc import Callable
+from datetime import datetime, UTC
+from functools import partial
+from pathlib import Path
+import platform
+from pubsub import pub
+import re
+from typing import cast, Literal
+
+import bcColours
 from Page import Page
 from Page.MacroComposer import MacroPane
 from Help import HelpHTMLWindow
 import UI
 from UI.ControlGroup import cgTextCtrl
 from Icon import GetIcon
-from typing import cast, Literal
-from collections.abc import Callable
-from pubsub import pub
-
-from pathlib import Path
-from datetime import datetime, UTC
-import re
-import platform
-from functools import partial
 from Util.Paths import GetValidGamePath, GetPopmenuPath
 
 import COHMenu as FM
@@ -118,7 +119,7 @@ class PopmenuEditor(Page):
         MiddlePanel.SetSizer(MiddleSizer)
 
         self.CheckGameDirBox = wx.Panel(MiddlePanel)
-        self.CheckGameDirBox.SetBackgroundColour(wx.Colour(255,200,200))
+        self.CheckGameDirBox.SetBackgroundColour(bcColours.ErrorColour())
         CheckGameDirSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.CheckGameDirBox.SetSizer(CheckGameDirSizer)
         CheckGameDirText = wx.StaticText(self.CheckGameDirBox, label = "Your game directory is not set up correctly.\nThis is required for the Popmenu Editor to work.\nPlease visit the Preferences dialog.")
@@ -129,7 +130,7 @@ class PopmenuEditor(Page):
         self.CheckGameDirBox.Hide()
 
         self.CheckMenuDirBox = wx.Panel(MiddlePanel)
-        self.CheckMenuDirBox.SetBackgroundColour(wx.Colour(255,200,200))
+        self.CheckMenuDirBox.SetBackgroundColour(bcColours.ErrorColour())
         CheckMenuDirSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.CheckMenuDirBox.SetSizer(CheckMenuDirSizer)
         CheckMenuDirText = wx.StaticText(self.CheckMenuDirBox, label = "Your Popmenu directory does not exist.  BindControl can create it for you.")
@@ -139,11 +140,11 @@ class PopmenuEditor(Page):
         CheckMenuDirSizer.Add(CreateDirButton,  0, wx.EXPAND|wx.ALL, 10)
         self.CheckMenuDirBox.Hide()
 
-        self.InstructionBox = HelpHTMLWindow(MiddlePanel, "PopmenuInstructions.html", size = wx.DefaultSize)
+        self.InstructionBox = InstructionPanel(MiddlePanel)
 
         MiddleSizer.Add(self.CheckGameDirBox, 0, wx.EXPAND|wx.ALL, 15)
         MiddleSizer.Add(self.CheckMenuDirBox, 0, wx.EXPAND|wx.ALL, 15)
-        MiddleSizer.Add(self.InstructionBox,  1, wx.EXPAND|wx.ALL, 25)
+        MiddleSizer.Add(self.InstructionBox,  1, wx.EXPAND|wx.ALL, 15)
 
         MESizer.Add(MiddlePanel, 1, wx.EXPAND|wx.ALL, 10)
 
@@ -467,6 +468,41 @@ class PopmenuEditor(Page):
             'files' : [],
             'dirs'  : [],
         }
+
+class InstructionPanel(wx.Panel):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(sizer)
+
+        self.SetFont(wx.Font(wx.FontInfo(12)))
+
+        title = wx.StaticText(self, label = 'Popmenu Editor')
+        title.SetFont(wx.Font(wx.FontInfo(15).Bold()))
+        sizer.Add(title)
+        sizer.Add(wx.StaticText(self, label = 'The Popmenu Editor helps you create, edit, import, and manage your installed popmenus.'))
+        sizer.AddSpacer(30)
+        sizer.Add(wx.StaticText(self, label = 'You can use the buttons in the upper left to:'))
+        sizer.Add(wx.StaticText(self, label = '\u2022 create a new popmenu from scratch'), 0, wx.LEFT, 35)
+        sizer.Add(wx.StaticText(self, label = '\u2022 import a popmenu from a file'), 0, wx.LEFT, 35)
+        sizer.Add(wx.StaticText(self, label = '\u2022 uninstall / delete a popmenu completely'), 0, wx.LEFT, 35)
+        sizer.Add(wx.StaticText(self, label = '\u2022 reload your popmenus from disk, discarding all changes'), 0, wx.LEFT, 35)
+        sizer.AddSpacer(30)
+        sizer.Add(wx.StaticText(self, label = 'The list on the lower left contains all popmenus installed to the menu directory.'))
+        sizer.AddSpacer(30)
+        markupline = wx.StaticText(self)
+        markupline.SetLabelMarkup('Menus shown in <i>italics</i> have not yet been loaded into BindControl.  Selecting one will automatically load it.')
+        sizer.Add(markupline)
+        markup2 = wx.StaticText(self)
+        markup2.SetLabelMarkup('Menus shown in <b>boldface</b> contain unsaved changes.')
+        sizer.Add(markup2)
+        sizer.AddSpacer(30)
+        sizer.Add(wx.StaticText(self, label = 'You can select any of the menus and test it using the "Test" button at the top.'))
+        sizer.Add(wx.StaticText(self, label = 'While testing a menu, right-click on any entry in a popmenu to edit that entry or create a new one.'))
+        sizer.Add(wx.StaticText(self, label = 'Use the "Write Menu" button at the top to save your changes to a popmenu.'))
+        sizer.Add(wx.StaticText(self, label = 'The "Generate Macro" button will create a macro for the popmenu using the Macro Composer.'))
+
 
 class Popmenu(FM.FlatMenu):
     ContextMenu    = None

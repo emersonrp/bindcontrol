@@ -166,13 +166,21 @@ class BaseEditMode(WizardParent):
         panelSizer.Add(cmdPanel, 0, wx.ALIGN_CENTER|wx.ALL, 10)
         cmdPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
+        keybindBorder = wx.BoxSizer(wx.VERTICAL)
+        keybindBorderPanel = wx.Panel(panel)
+        keybindBorderPanel.SetSizer(keybindBorder)
+        keybindBorderPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+        keybindBorderPanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENUHILIGHT))
+
         keybindWrapper = wx.BoxSizer(wx.VERTICAL)
-        keybindWrapPanel = wx.Panel(panel)
+        keybindWrapPanel = wx.Panel(keybindBorderPanel)
         keybindWrapPanel.SetSizer(keybindWrapper)
-        keybindWrapPanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT))
+        keybindWrapPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+        keybindWrapPanel.SetBackgroundColour(self.BindPane.GetBackgroundColour())
+        keybindBorder.Add(keybindWrapPanel, 1, wx.EXPAND|wx.ALL, 2)
 
         keybindTitle = wx.StaticText(keybindWrapPanel, label = 'KEYBINDS')
-        keybindTitle.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT))
+        keybindTitle.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_LISTBOXTEXT))
         keybindTitle.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         keybindWrapper.Add(keybindTitle, 0, wx.ALL|wx.ALIGN_CENTER, 5)
 
@@ -185,7 +193,11 @@ class BaseEditMode(WizardParent):
         tooltiptext = []
         for keybind in self.KeyInit:
             keybutton = self.BindPane.GetCtrl(keybind)
-            kbmini = wx.StaticText(keybindPanel, label = keybutton.GetValue(), size = wx.Size(30,6), style = wx.ALIGN_CENTER)
+            kbborder = wx.BoxSizer(wx.HORIZONTAL)
+            kbbpanel = wx.Panel(keybindPanel, size = wx.Size(32,8))
+            kbbpanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNSHADOW))
+            kbbpanel.SetSizer(kbborder)
+            kbmini = wx.StaticText(kbbpanel, label = keybutton.GetValue(), size = wx.Size(30,6), style = wx.ALIGN_CENTER)
             kbmini.SetFont(wx.Font(wx.FontInfo(3)))
             if keybutton.GetValue():
                 tooltiptext.append(f"{self.AllCtrls[keybind]}: {keybutton.GetValue()}")
@@ -197,7 +209,8 @@ class BaseEditMode(WizardParent):
                 kbmini.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
                 tooltiptext.append('')
             kbmini.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-            keybindSizer.Add(kbmini, 0, wx.ALL, 1)
+            kbborder.Add(kbmini, 1, wx.EXPAND|wx.ALL, 1)
+            keybindSizer.Add(kbbpanel, 0, wx.ALL, 1)
 
         # There's got to be a more pythonic way to permute these
         tooltip = ''
@@ -207,7 +220,7 @@ class BaseEditMode(WizardParent):
             if tooltiptext[i]: tooltip = tooltip + "\n" + tooltiptext[i]
         keybindPanel.SetToolTip(tooltip)
 
-        panelSizer.Add(keybindWrapPanel, 0, wx.ALIGN_CENTER|wx.RIGHT, 10)
+        panelSizer.Add(keybindBorderPanel, 0, wx.ALIGN_CENTER|wx.RIGHT, 10)
 
         panelSizer.AddStretchSpacer(1)
 

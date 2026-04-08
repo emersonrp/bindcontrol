@@ -38,7 +38,6 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         self.SetSizer(self.Sizer)
 
         self.Pane = wx.CollapsiblePane(self, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
-        self.Pane.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT))
         self.Pane.SetLabel(self.Title)
         self.Sizer.Add(self.Pane, 1, wx.EXPAND, 5)
 

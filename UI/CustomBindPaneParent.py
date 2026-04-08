@@ -49,6 +49,15 @@ class CustomBindPaneParent(ListPanel):
             **data
         }
 
+    def AllBindFiles(self):
+        return {
+            'files': [],
+            'dirs':  [],
+        }
+
+# We have our own copy of this class here so that we can add in
+# the "delete all associated bindfiles" notion, which was too
+# fiddly to try to do as some kind of subclass.
 class PanelDeletionDialog(wx.Dialog):
     def __init__(self, parent):
         bindpane = parent

@@ -191,21 +191,14 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         self.Ctrls[self.MakeCtrlName(name)] = ctl
         return ctl
 
-    # uverride these next two on subclasses
-    def AllBindFiles(self):
-        return {
-            'files': [],
-            'dirs':  [],
-        }
-
 class PanelDeletionDialog(wx.Dialog):
     def __init__(self, parent):
-        bindpane = parent
+        panel = parent
         super().__init__(parent)
-        self.SetTitle(f"Delete {bindpane.Title}")
+        self.SetTitle(f"Delete {panel.Title}")
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
-        mainSizer.Add(wx.StaticText(self, label = f'Delete {bindpane.Type} "{bindpane.Title}"?'), 0, wx.ALL, 20)
+        mainSizer.Add(wx.StaticText(self, label = f'Delete {panel.Type} "{panel.Title}"?'), 0, wx.ALL, 20)
 
         mainSizer.Add(self.CreateButtonSizer(wx.OK|wx.CANCEL), 0, wx.ALL|wx.ALIGN_CENTER, 20)
 

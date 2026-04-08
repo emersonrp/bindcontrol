@@ -1,56 +1,45 @@
 # parent class for various custom bindpane types
+from pubsub import pub
 from typing import Any
+from UI.ListPanel import ListPanel
 import wx
-from UI.KeySelectDialog import bcKeyButton
 
-class CustomBindPaneParent(wx.CollapsiblePane):
-    def __init__(self, page, init : dict|None = None) -> None:
-        init = init or {}
-        super().__init__(page.scrolledPanel, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
+class CustomBindPaneParent(ListPanel):
+    def __init__(self, parent, init):
+        super().__init__(parent, init)
+        self.Description  = "Custom Bind"
+        self.Topic        = 'bind'
+        self.CreatesFiles = False
+        self.ExportExt    = 'bcb'
 
-        self.Ctrls                        = {}
-        self.Page                         = page
-        self.Profile                      = page.Profile
-        self.Init        : dict           = init
-        self.Title       : str            = init.get('Title', '')
-        self.Description : str            = ''
-        self.Type        : str            = ''
-        self.CustomID    : int|None       = init.get('CustomID') or self.Profile.GetCustomID()
-        self.DelButton   : wx.Button|None = None
-        self.RenButton   : wx.Button|None = None
-        self.DupButton   : wx.Button|None = None
-        self.ExpButton   : wx.Button|None = None
-        self.SetLabel(self.Title)
-
-        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT))
-
-        self.bindclass = type(self).__name__
-
-        self.UpdateLabel()
-
-        self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
-
-    def BuildBindUI(self, page) -> None:
-        wx.LogError(f"{self.bindclass} did not override BuildBindUI.  This is a bug.")
+    def BuildBindUI(self) -> None:
+        wx.LogError(f"{self.Class} did not override BuildBindUI.  This is a bug.")
         # build the UI needed to edit/create this bind, and shim
         # it into 'page'
 
     def CheckIfWellFormed(self) -> bool:
-        wx.LogWarning(f"{self.bindclass} did not override CheckIfWellFormed.  This is a bug.")
+        wx.LogWarning(f"{self.Class} did not override CheckIfWellFormed.  This is a bug.")
         return False
 
     def PopulateBindFiles(self) -> None:
-        wx.LogError(f"{self.bindclass} did not override PopulateBindFiles.  This is a bug.")
+        wx.LogError(f"{self.Class} did not override PopulateBindFiles.  This is a bug.")
         # for overriding on child classes this will be called in the course of
         # the Custom Binds page doing its own PopulateBindFiles, iteratively
         # over all of its kids
 
-    def UpdateLabel(self):
-        if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
-            self.SetLabel(f"{self.Title} ({self.Description} ID:{self.CustomID})")
-        else:
-            self.SetLabel(f"{self.Title}")
-
+    def OnDeleteButton(self, evt) -> None:
+        with PanelDeletionDialog(self) as dlg:
+            if dlg.ShowModal() == wx.ID_CANCEL:
+                return
+            if dlg.DeleteFilesCB and dlg.DeleteFilesCB.GetValue():
+                # do the delete of the files
+                # TODO PUBSUB
+                if self.Profile:
+                    files = self.AllBindFiles()
+                    self.Profile.doDeleteBindFiles(files)
+        pub.sendMessage(f'deletepanel.{self.Topic}', panel = self)
+        self.DestroyLater()
+        evt.Skip()
 
     def CreateSerialization(self, data) -> dict[str, Any]:
         return {
@@ -60,31 +49,31 @@ class CustomBindPaneParent(wx.CollapsiblePane):
             **data
         }
 
-    def Serialize(self) -> dict:
-        wx.LogError(f"{self.bindclass} did not override Serialize.  This is a bug.")
-        return {}
+    def AllBindFiles(self):
+        return {
+            'files': [],
+            'dirs':  [],
+        }
 
-    def OnPaneChanged(self, evt) -> None:
-        IsCollapsed = evt.GetCollapsed()
-        if self.DelButton: self.DelButton.Show(not IsCollapsed)
-        if self.RenButton: self.RenButton.Show(not IsCollapsed)
-        if self.DupButton: self.DupButton.Show(not IsCollapsed)
-        if self.ExpButton: self.ExpButton.Show(not IsCollapsed)
-        self.Page.Layout()
+# We have our own copy of this class here so that we can add in
+# the "delete all associated bindfiles" notion, which was too
+# fiddly to try to do as some kind of subclass.
+class PanelDeletionDialog(wx.Dialog):
+    def __init__(self, parent):
+        bindpane = parent
+        super().__init__(parent)
+        self.SetTitle(f"Delete {bindpane.Title}")
 
-    # this is called when we duplicate a bind.  We'll want to clear any keybuttons
-    # to keep the new duplicate bind from conflicting
-    def ClearKeyBinds(self) -> None:
-        for _,ctrl in self.Ctrls.items():
-            if isinstance(ctrl, bcKeyButton):
-                ctrl.ClearButton(None)
+        self.DeleteFilesCB = None
 
-    def MakeCtrlName(self, name) -> str:
-        return f"{self.bindclass}_{self.CustomID}_{name}"
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+        mainSizer.Add(wx.StaticText(self, label = f'Delete Custom Bind "{bindpane.Title}"?'), 0, wx.ALL, 20)
 
-    def GetCtrl(self, name):
-        return self.Ctrls.get(self.MakeCtrlName(name))
+        if bindpane.CreatesFiles:
+            self.DeleteFilesCB = wx.CheckBox(self, label = "Delete all associated bindfiles")
+            self.DeleteFilesCB.SetValue(True)
+            mainSizer.Add(self.DeleteFilesCB, 0, wx.ALL|wx.ALIGN_CENTER, 10)
 
-    def SetCtrl(self, name, ctl):
-        self.Ctrls[self.MakeCtrlName(name)] = ctl
-        return ctl
+        mainSizer.Add(self.CreateButtonSizer(wx.OK|wx.CANCEL), 0, wx.ALL|wx.ALIGN_CENTER, 20)
+
+        self.SetSizerAndFit(mainSizer)

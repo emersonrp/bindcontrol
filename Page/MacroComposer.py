@@ -10,8 +10,8 @@ from typing import Any
 from Page import Page
 from Help import HelpButton
 from Icon import GetIcon, GetIconBitmap
+from UI.ListPanel import ListPanel
 from UI.PowerBinder import PowerBinder
-from UI.ProfileAwareControl import ProfileAwareControlMixin
 from Util.SourceFileIcons import MACRO_ICON_NAMES, YCC_COLORS
 
 class MacroComposer(Page):
@@ -44,7 +44,8 @@ class MacroComposer(Page):
         BlankSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.BlankPanel = wx.Panel(self)
         helptext = wx.StaticText(self.BlankPanel, style = wx.ALIGN_CENTER,
-                                 label = "Create a Macro using the button above")
+                                 label = "Create a Macro using the button above",
+                                 size = wx.Size(-1, 50))
         helptext.SetFont(wx.Font(wx.FontInfo(16).Bold()))
         BlankSizer.Add(helptext, 1, wx.ALIGN_CENTER_VERTICAL)
         self.BlankPanel.SetSizer(BlankSizer)
@@ -61,6 +62,9 @@ class MacroComposer(Page):
         self.Layout()
 
         pub.subscribe(self.OnContentsChanged, 'macrocontentschanged')
+        pub.subscribe(self.UpdateAllMacros, 'updatepanels.macro')
+        pub.subscribe(self.doDeleteMacroPane, 'deletepanel.macro')
+        pub.subscribe(self.OnAddPanel, 'addpanel.macro')
 
     def AllBindFiles(self) -> dict[str, list]:
         return {
@@ -90,19 +94,19 @@ class MacroComposer(Page):
                 macrodata = json.loads(bindjson)
                 macrodata.pop('CustomID', None)
 
-                if macropane := self.BuildMacroPaneFromData(macrodata):
+                if macropane := MacroPane(self, macrodata):
                     self.AddMacroToPage(macropane = macropane)
                     existingMacroNames = [pane.Title for pane in self.Panes if pane != macropane]
                     if macropane.Title in existingMacroNames:
-                        self.SetMacroPaneLabel(None, macropane, new = True)
+                        macropane.SetPanelLabel(new = True)
 
             except Exception as e:
                 wx.LogError(f'Cannot import macro "{filepath.name}": {e}')
 
         evt.Skip()
 
-    def BuildMacroPaneFromData(self, macrodata):
-        return MacroPane(self, init = macrodata)
+    def OnAddPanel(self, panel):
+        self.AddMacroToPage(panel) # to get the args named right for pubsub
 
     def AddMacroToPage(self, macropane = None) -> None:
         if not macropane:
@@ -110,7 +114,7 @@ class MacroComposer(Page):
             return
 
         if not macropane.Title: # this is from a "New Bind" button
-            if not self.SetMacroPaneLabel(None, macropane, new = True):
+            if not macropane.SetPanelLabel(new = True):
                 return
 
         if len(self.Panes) == 0:
@@ -125,122 +129,29 @@ class MacroComposer(Page):
             macropane.Init['CustomID'] = macropane.CustomID
 
         macropane.UpdateLabel()
+        macropane.SetFakeIconIfNeeded()
 
         self.Panes.append(macropane)
 
-        macropane.BuildMacroUI()
+        self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), macropane, 0, wx.ALL|wx.EXPAND, 10)
 
-        # put it in a box with control buttons
-        macroSizer = wx.BoxSizer(wx.HORIZONTAL)
-        macroSizer.Add(macropane, 1, wx.EXPAND, 5)
-
-        buttonSizer = wx.BoxSizer(wx.VERTICAL)
-        deleteButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'delete'))
-        deleteButton.MacroPane  = macropane
-        deleteButton.MacroSizer = macroSizer
-        macropane.DelButton = deleteButton
-        deleteButton.SetToolTip(f'Delete macro "{macropane.Title}"')
-        deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
-        buttonSizer.Add(deleteButton)
-
-        renameButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'rename'))
-        renameButton.MacroPane = macropane
-        macropane.RenButton = renameButton
-        renameButton.SetToolTip(f'Rename macro "{macropane.Title}"')
-        renameButton.Bind(wx.EVT_BUTTON, self.SetMacroPaneLabel)
-        buttonSizer.Add(renameButton)
-
-        duplicateButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'copy'))
-        duplicateButton.MacroPane = macropane
-        macropane.DupButton = duplicateButton
-        duplicateButton.SetToolTip(f'Duplicate macro "{macropane.Title}"')
-        duplicateButton.Bind(wx.EVT_BUTTON, self.OnDuplicateButton)
-        buttonSizer.Add(duplicateButton)
-
-        exportButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'export'))
-        exportButton.MacroPane = macropane
-        macropane.ExpButton = exportButton
-        exportButton.SetToolTip(f'Export macro "{macropane.Title}"')
-        exportButton.Bind(wx.EVT_BUTTON, self.OnExportButton)
-        buttonSizer.Add(exportButton)
-
-        macroSizer.Add(buttonSizer, 0, wx.LEFT, 10)
-
-        self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), macroSizer, 0, wx.ALL|wx.EXPAND, 10)
-        macropane.Expand()
+        macropane.Pane.Expand()
         self.UpdateAllMacros()
         self.Layout()
 
-    def OnDeleteButton(self, evt):
-        delButton = evt.EventObject
-        macropane = delButton.MacroPane
-        with wx.MessageDialog(self,
-                              message = f'Delete macro "{macropane.Title}"?  This cannot be undone.',
-                              caption = f'Delete macro "{macropane.Title}"?',
-                              style   = wx.OK|wx.CANCEL,
-                              ) as dlg:
-            if dlg.ShowModal() == wx.ID_OK:
-                self.doDeleteMacroPane(macropane)
-            else:
-                return
-
-    def doDeleteMacroPane(self, macropane) -> None:
-        if delButton := macropane.DelButton:
-            sizer = delButton.MacroSizer
-            self.PaneSizer.Hide(sizer)
-            self.PaneSizer.Remove(sizer)
-        if macropane in self.Panes:
-            self.Panes.remove(macropane)
+    def doDeleteMacroPane(self, panel) -> None:
+        if panel in self.Panes:
+            self.Panes.remove(panel)
         # won't have an ID if it was a cancelled new bind
-        if macropane.CustomID:
-            self.Profile.UpdateData('MacroComposer', { 'CustomID' : macropane.CustomID, 'Action' : 'delete' })
-        macropane.DestroyLater()
+        if panel.CustomID:
+            self.Profile.UpdateData('MacroComposer', { 'CustomID' : panel.CustomID, 'Action' : 'delete' })
+        panel.DestroyLater()
         if len(self.Panes) == 0:
             # need to put back the blankpanel
             self.scrolledPanel.Hide()
             self.BlankPanel.Show()
             self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
         self.Layout()
-
-    def OnDuplicateButton(self, evt):
-        oldmacropane = evt.EventObject.MacroPane
-        init = oldmacropane.Serialize()
-
-        # clear out a few things that we don't want in the new bind
-        init.pop('CustomID', None)
-        init.pop('Title', None)
-
-        newmacropane = self.BuildMacroPaneFromData(init)
-
-        if not newmacropane:
-            wx.LogError(f'Error duplicating macro "{oldmacropane.Title}"!')
-            return
-
-        self.AddMacroToPage(newmacropane)
-
-    def OnExportButton(self, evt):
-        macropane = evt.GetEventObject().MacroPane
-
-        shorttitle = re.sub(r'\W+', '', macropane.Title)
-
-        with wx.FileDialog(self, f'Export Macro "{macropane.Title}"',
-                           defaultFile = f"{shorttitle}.bcm",
-                           defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
-                           wildcard = "BindControl Macro Files (*.bcm)|*.bcm|All Files (*.*)|*.*",
-                           style = wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT) as fileDialog:
-
-            if fileDialog.ShowModal() == wx.ID_CANCEL:
-                return
-
-            pathname = fileDialog.GetPath()
-            try:
-                filepath = Path(pathname)
-                macrodata = macropane.Serialize()
-                macrodata.pop('CustomID', None)
-                filepath.write_text(json.dumps(macrodata, indent=2))
-
-            except Exception as e:
-                wx.LogError(f"Error exporting Macro: {e}")
 
     def OnContentsChanged(self, evt = None) -> None:
         if evt: evt.Skip()
@@ -250,61 +161,13 @@ class MacroComposer(Page):
         for pane in self.Panes:
             self.Profile.UpdateData('MacroComposer', pane.Serialize())
 
-    def SetMacroPaneLabel(self, evt, macropane = None, new = False) -> bool:
-        if not macropane:
-            macropane = evt.GetEventObject().MacroPane
-        if not macropane:
-            wx.LogError("Tried to set a MacroPane label without a macropane.  This is a bug.")
-            return False
-
-        dlg = wx.TextEntryDialog(self, 'Enter name for macro:')
-        if macropane.Title:
-            dlg.SetValue(macropane.Title)
-
-        if dlg.ShowModal() == wx.ID_OK:
-            macropane.Title = dlg.GetValue()
-            macropane.UpdateLabel()
-            if not new:
-                macropane.DelButton.SetToolTip(f'Delete macro "{macropane.Title}"')
-                macropane.RenButton.SetToolTip(f'Rename macro "{macropane.Title}"')
-                macropane.DupButton.SetToolTip(f'Duplicate macro "{macropane.Title}"')
-                macropane.ExpButton.SetToolTip(f'Export macro "{macropane.Title}"')
-            self.Refresh()
-            dlg.Destroy()
-            return True # successful name change
-        else: # they hit 'cancel'
-            if new:
-                self.doDeleteMacroPane(macropane)
-            dlg.Destroy()
-            return False
-
-class MacroPane(ProfileAwareControlMixin, wx.CollapsiblePane):
-    def __init__(self, page, init : dict|None = None) -> None:
-        init = init or {}
-        super().__init__(page.scrolledPanel, style = wx.CP_DEFAULT_STYLE|wx.CP_NO_TLW_RESIZE)
-
-        self.Title       : str             = init.get('Title', '')
-        self.CustomID    : int|None        = init.get('CustomID')
-        self.Init        : dict            = init
-        self.IconButton  : wx.Button|None  = None
-        self.DelButton   : wx.Button|None  = None
-        self.RenButton   : wx.Button|None  = None
-        self.DupButton   : wx.Button|None  = None
-        self.ExpButton   : wx.Button|None  = None
-
-        self.UpdateLabel()
-
-    def Serialize(self) -> dict:
-        return {
-            'CustomID'        : self.CustomID,
-            'Title'           : self.Title,
-            'Icon'            : self.IconButton.GetLabel() if self.IconButton else '',
-            'Contents'        : self.MacroContents.GetValue(),
-            'powerbinderdata' : self.MacroContents.SaveToData(),
-            'ToolTip'         : self.ToolTipText.GetValue(),
-        }
-
-    def BuildMacroUI(self):
+class MacroPane(ListPanel):
+    def __init__(self, parent, init = None):
+        super().__init__(parent, init)
+        self.Description = 'macro'
+        self.Type        = 'Macro'
+        self.Topic       = 'macro'
+        self.ExportExt   = 'bcm'
 
         pane = self.GetPane()
         macroSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -350,14 +213,15 @@ class MacroPane(ProfileAwareControlMixin, wx.CollapsiblePane):
 
         self.CheckToolTipSlot()
 
-    def UpdateLabel(self):
-        if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
-            self.SetLabel(f"{self.Title} (ID:{self.CustomID})")
-        else:
-            self.SetLabel(f"{self.Title}")
-
-        if self.IconButton and not self.IconButton.GetLabel():
-            self.SetFakeIcon()
+    def Serialize(self) -> dict:
+        return {
+            'CustomID'        : self.CustomID,
+            'Title'           : self.Title,
+            'Icon'            : self.IconButton.GetLabel() if self.IconButton else '',
+            'Contents'        : self.MacroContents.GetValue() if self.MacroContents else '',
+            'powerbinderdata' : self.MacroContents.SaveToData() if self.MacroContents else '',
+            'ToolTip'         : self.ToolTipText.GetValue() if self.ToolTipText else '',
+        }
 
     def OnIconButton(self, evt):
         button = evt.GetEventObject()
@@ -381,13 +245,19 @@ class MacroPane(ProfileAwareControlMixin, wx.CollapsiblePane):
         if evt: evt.Skip()
         pub.sendMessage('macrocontentschanged')
 
+    def SetPanelLabel(self, new = False) -> bool:
+        if retval := super().SetPanelLabel(new):
+            pub.sendMessage('updatepanels.macro')
+        return retval
+
     def CheckToolTipSlot(self):
-        enable = bool(self.IconButton) and (self.IconButton.GetLabel() != '')
-        self.ToolTipText.Enable(enable)
-        self.ToolTipLabel.Enable(enable)
-        tooltiptext = '' if enable else 'Tooltip is only supported if an icon is chosen.'
-        self.ToolTipText.SetToolTip(tooltiptext)
-        self.ToolTipLabel.SetToolTip(tooltiptext)
+        if self.ToolTipText and self.ToolTipLabel:
+            enable = bool(self.IconButton) and (self.IconButton.GetLabel() != '')
+            self.ToolTipText.Enable(enable)
+            self.ToolTipLabel.Enable(enable)
+            tooltiptext = '' if enable else 'Tooltip is only supported if an icon is chosen.'
+            self.ToolTipText.SetToolTip(tooltiptext)
+            self.ToolTipLabel.SetToolTip(tooltiptext)
 
     def OnStringButton(self, evt):
         with MacroTextDialog(self.Page, self) as dlg:
@@ -401,11 +271,14 @@ class MacroPane(ProfileAwareControlMixin, wx.CollapsiblePane):
 
         return macrostring
 
+    def SetFakeIconIfNeeded(self):
+        if self.IconButton and not self.IconButton.GetLabel():
+            self.SetFakeIcon()
+
     def SetFakeIcon(self):
-        if self.IconButton:
-            self.IconButton.SetLabel('')
-            self.IconButton.SetToolTip(self.Title)
-            self.IconButton.SetBitmap(self.FakeMacroIcon(self.Title))
+        self.IconButton.SetLabel('')
+        self.IconButton.SetToolTip(self.Title)
+        self.IconButton.SetBitmap(self.FakeMacroIcon(self.Title))
 
     def FakeMacroIcon(self, text) -> wx.BitmapBundle:
         bitmapdc = wx.MemoryDC()
@@ -415,12 +288,6 @@ class MacroPane(ProfileAwareControlMixin, wx.CollapsiblePane):
         extent = bitmapdc.GetTextExtent(text)
         bitmapdc.DrawText(text, max(0, int(16 - (extent.x / 2))), int(16 - (extent.y / 2)))
         return wx.BitmapBundle(bitmap = bitmapdc.GetAsBitmap())
-
-class CustomBindControlButton(wx.BitmapButton):
-    def __init__(self, parent, bitmap):
-        super().__init__(parent, bitmap = bitmap)
-        self.MacroPane:  wx.Window|None = None
-        self.MacroSizer: wx.Sizer |None = None
 
 class IconVirtualList(ULC.UltimateListCtrl):
     def __init__(self, parent):

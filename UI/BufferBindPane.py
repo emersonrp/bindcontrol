@@ -18,9 +18,10 @@ class BufferBindPane(CustomBindPaneParent):
         init = init or {}
         super().__init__(page, init)
 
-        self.PassedInit  = init
-        self.Description = "Buffer Bind"
-        self.Type        = "BufferBind"
+        self.PassedInit   = init
+        self.Description  = "Buffer Bind"
+        self.Type         = "BufferBind"
+        self.CreatesFiles = True
 
         self.Buffs = []
 
@@ -30,29 +31,21 @@ class BufferBindPane(CustomBindPaneParent):
             'BuffsAffectTeam' : True,
             'BuffsAffectPets' : False,
         }
+        self.Init.update(self.PassedInit)
 
         for i in (1,2,3,4,5,6,7,8):
             self.Init[f'Team{i}BuffKey'] = ''
-        for i in (1,2,3,4,5,6):
-            self.Init[f'Pet{i}BuffKey'] = ''
-
-    def BuildBindUI(self, page) -> None:
-        pane = self.GetPane()
-        self.Page = page
-
-        # Doing this UI here since we need CustomID to be set to get MakeCtrlName right
-        # TODO: is this still true?  Can we do this in init now that we use CustomID?
-        for i in (1,2,3,4,5,6,7,8):
             UI.Labels[self.MakeCtrlName(f'Team{i}BuffKey')] = f'Team {i} Key'
         for i in (1,2,3,4,5,6):
+            self.Init[f'Pet{i}BuffKey'] = ''
             UI.Labels[self.MakeCtrlName(f'Pet{i}BuffKey')] = f'Pet {i} Key'
 
-        # TODO:  why do I do this here instead of in __init__?  Must have been a reason.
-        self.Init.update(self.PassedInit)
+
+    def BuildBindUI(self) -> None:
+        pane = self.Pane.GetPane()
 
         # bind text controls
-        # TODO this doesn't need to be a Gridbag any more.  Just BoxSizer it.
-        BindSizer = wx.GridBagSizer(hgap=5, vgap=5)
+        BindSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # on-select chat/emote
         selChatTxt = wx.StaticText(pane, label = 'On select, tell:')
@@ -65,9 +58,10 @@ class BufferBindPane(CustomBindPaneParent):
         self.SelChat.SetHint('/tell contents; leave blank to skip')
         self.SetCtrl('SelChat', self.SelChat)
 
-        BindSizer.Add(selChatTxt,      (0, 0), flag = wx.ALIGN_CENTER_VERTICAL)
-        BindSizer.Add(self.SelChatTgt, (0, 1))
-        BindSizer.Add(self.SelChat,    (0, 2), (1, 3), flag = wx.EXPAND)
+        BindSizer.Add(selChatTxt,      0, flag = wx.ALIGN_CENTER_VERTICAL)
+        BindSizer.Add(self.SelChatTgt, 0)
+        BindSizer.Add(self.SelChat,    1, flag = wx.EXPAND)
+        BindSizer.Layout()
 
         self.BuffSizer = wx.BoxSizer(wx.VERTICAL)
         if self.Init.get('Buffs', ''):
@@ -117,10 +111,6 @@ class BufferBindPane(CustomBindPaneParent):
             PetInner.Add(button, (1,i))
             self.SetCtrl(f'Pet{i}BuffKey', button)
 
-        BindSizer.AddGrowableCol(2)
-        BindSizer.AddGrowableCol(4)
-        BindSizer.Layout()
-
         # border around the addr box
         border = wx.BoxSizer(wx.VERTICAL)
         border.Add(BindSizer     , 0, wx.EXPAND|wx.ALL, 10)
@@ -139,7 +129,8 @@ class BufferBindPane(CustomBindPaneParent):
         self.BuffSizer.Add(newBuff, flag=wx.EXPAND)
         # don't SynchronizeUI in here, because we call this before the full page is built
         # TODO this is arguably a bad idea, overloading this as a general "add buff" scheme
-        self.Page.Layout()
+        if self.Page:
+            self.Page.Layout()
 
     def OnDelBuffButton(self, evt) -> None:
         evt.Skip()
@@ -148,9 +139,10 @@ class BufferBindPane(CustomBindPaneParent):
         self.Buffs.remove(buff)
         buff.GetContainingSizer().Detach(buff)
         buff.DestroyLater()
-        self.Page.UpdateAllBinds()
+        pub.sendMessage('updatepanels.bind')
         self.Parent.Layout()
-        wx.CallAfter(self.Page.SynchronizeUI)
+        if self.Page:
+            wx.CallAfter(self.Page.SynchronizeUI)
 
     def GetVerbFor(self, ctl) -> str:
         tgt = ctl.GetString(ctl.GetSelection())
@@ -165,63 +157,63 @@ class BufferBindPane(CustomBindPaneParent):
         return verb
 
     def PopulateBindFiles(self) -> None:
-        profile = self.Profile
-        ResetFile = profile.ResetFile()
+        if profile := self.Profile:
+            ResetFile = profile.ResetFile()
 
-        cid = self.CustomID
+            cid = self.CustomID
 
-        BuffChats = {}
+            BuffChats = {}
 
-        BuffChats['SelChat'] = self.GetVerbFor(self.SelChatTgt) + self.SelChat.GetValue()
+            BuffChats['SelChat'] = self.GetVerbFor(self.SelChatTgt) + self.SelChat.GetValue()
 
-        for i, b in enumerate(self.Buffs, start = 2): # select is step i, buffs 2..x
+            for i, b in enumerate(self.Buffs, start = 2): # select is step i, buffs 2..x
 
-            BuffChats[f'Buff{i}'] = self.GetVerbFor(b.ChatTgt) + b.Chat.GetValue()
+                BuffChats[f'Buff{i}'] = self.GetVerbFor(b.ChatTgt) + b.Chat.GetValue()
 
-        if ctrl := self.GetCtrl('BuffsAffectTeam'):
-            if ctrl.GetValue():
-                for j in [1,2,3,4,5,6,7,8]:
-                    teamkey = self.GetCtrl(f"Team{j}BuffKey")
-                    if not teamkey: continue
-                    teamkey = teamkey.Key
-                    filebase = profile.BindsDir()     / 'buff' / f"{cid}_t{j}"
-                    gamebase = profile.GameBindsDir() / 'buff' / f"{cid}_t{j}"
+            if ctrl := self.GetCtrl('BuffsAffectTeam'):
+                if ctrl.GetValue():
+                    for j in [1,2,3,4,5,6,7,8]:
+                        teamkey = self.GetCtrl(f"Team{j}BuffKey")
+                        if not teamkey: continue
+                        teamkey = teamkey.Key
+                        filebase = profile.BindsDir()     / 'buff' / f"{cid}_t{j}"
+                        gamebase = profile.GameBindsDir() / 'buff' / f"{cid}_t{j}"
 
-                    outfiles = {}
-                    outfiles[1] = profile.GetBindFile(f"{filebase}1.txt")
+                        outfiles = {}
+                        outfiles[1] = profile.GetBindFile(f"{filebase}1.txt")
 
-                    outfiles[1].SetBind(teamkey, self.Page, self.Title, [f'teamselect {j}', BuffChats['SelChat'], f'{BLF()} {gamebase}2.txt'])
-                    ResetFile  .SetBind(teamkey, self.Page, self.Title, [f'teamselect {j}', BuffChats['SelChat'], f'{BLF()} {gamebase}2.txt'])
+                        outfiles[1].SetBind(teamkey, self.Title, self.Page, [f'teamselect {j}', BuffChats['SelChat'], f'{BLF()} {gamebase}2.txt'])
+                        ResetFile  .SetBind(teamkey, self.Title, self.Page, [f'teamselect {j}', BuffChats['SelChat'], f'{BLF()} {gamebase}2.txt'])
 
-                    for i, b in enumerate(self.Buffs, start = 2): # number the binds as steps 2..x
-                        outfiles[i] = profile.GetBindFile(f"{filebase}{i}.txt")
-                        if i == len(self.Buffs)+1:  # on the last one, back to step 1
-                            outfiles[i].SetBind(teamkey, self.Page, self.Title, [BuffChats[f'Buff{i}'], f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}1.txt'])
-                        else:
-                            outfiles[i].SetBind(teamkey, self.Page, self.Title, [BuffChats[f'Buff{i}'], f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}{i+1}.txt'])
+                        for i, b in enumerate(self.Buffs, start = 2): # number the binds as steps 2..x
+                            outfiles[i] = profile.GetBindFile(f"{filebase}{i}.txt")
+                            if i == len(self.Buffs)+1:  # on the last one, back to step 1
+                                outfiles[i].SetBind(teamkey, self.Title, self.Page, [BuffChats[f'Buff{i}'], f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}1.txt'])
+                            else:
+                                outfiles[i].SetBind(teamkey, self.Title, self.Page, [BuffChats[f'Buff{i}'], f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}{i+1}.txt'])
 
-        # NB:  Don't use the BuffChats for the pet ones.  They're spammy, nobody cares, and /tell $target breaks.
-        if ctrl := self.GetCtrl("BuffsAffectPets"):
-            if ctrl.GetValue():
-                for j in [1,2,3,4,5,6]:
-                    petkey = self.GetCtrl(f"Pet{j}BuffKey")
-                    if not petkey: continue
-                    petkey = petkey.Key
-                    filebase = profile.BindsDir()     / 'buff' / f"{cid}_p{j}"
-                    gamebase = profile.GameBindsDir() / 'buff' / f"{cid}_p{j}"
+            # NB:  Don't use the BuffChats for the pet ones.  They're spammy, nobody cares, and /tell $target breaks.
+            if ctrl := self.GetCtrl("BuffsAffectPets"):
+                if ctrl.GetValue():
+                    for j in [1,2,3,4,5,6]:
+                        petkey = self.GetCtrl(f"Pet{j}BuffKey")
+                        if not petkey: continue
+                        petkey = petkey.Key
+                        filebase = profile.BindsDir()     / 'buff' / f"{cid}_p{j}"
+                        gamebase = profile.GameBindsDir() / 'buff' / f"{cid}_p{j}"
 
-                    outfiles = {}
-                    outfiles[1] = profile.GetBindFile(f"{filebase}1.txt")
+                        outfiles = {}
+                        outfiles[1] = profile.GetBindFile(f"{filebase}1.txt")
 
-                    outfiles[1].SetBind(petkey, self.Page, self.Title, ['petselect 1', f'{BLF()} {gamebase}2.txt'])
-                    ResetFile  .SetBind(petkey, self.Page, self.Title, ['petselect 1', f'{BLF()} {gamebase}2.txt'])
+                        outfiles[1].SetBind(petkey, self.Title, self.Page, ['petselect 1', f'{BLF()} {gamebase}2.txt'])
+                        ResetFile  .SetBind(petkey, self.Title, self.Page, ['petselect 1', f'{BLF()} {gamebase}2.txt'])
 
-                    for i, b in enumerate(self.Buffs, start = 2): # number the binds as steps 2..x
-                        outfiles[i] = profile.GetBindFile(f"{filebase}{i}.txt")
-                        if i == len(self.Buffs)+1:  # on the last one, back to step 1
-                            outfiles[i].SetBind(petkey, self.Page, self.Title, [f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}1.txt'])
-                        else:
-                            outfiles[i].SetBind(petkey, self.Page, self.Title, [f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}{i+i}.txt'])
+                        for i, b in enumerate(self.Buffs, start = 2): # number the binds as steps 2..x
+                            outfiles[i] = profile.GetBindFile(f"{filebase}{i}.txt")
+                            if i == len(self.Buffs)+1:  # on the last one, back to step 1
+                                outfiles[i].SetBind(petkey, self.Title, self.Page, [f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}1.txt'])
+                            else:
+                                outfiles[i].SetBind(petkey, self.Title, self.Page, [f'powexecname {b.BuffPower.GetLabel()}', f'{BLF()} {gamebase}{i+i}.txt'])
 
     def SynchronizeUI(self, _ = None) -> None:
 
@@ -241,7 +233,8 @@ class BufferBindPane(CustomBindPaneParent):
                     buffkey.Enable(usepet)
 
         self.CheckAnyKeyPicked()
-        self.Page.Layout()
+        if self.Page:
+            self.Page.Layout()
 
     def Serialize(self) -> dict[str, str|list]:
         bat = self.GetCtrl('BuffsAffectTeam')
@@ -277,20 +270,20 @@ class BufferBindPane(CustomBindPaneParent):
         files = []
         title = re.sub(r'\W+', '', self.Title)
         cid = self.CustomID
-        for j in [1,2,3,4,5,6,7,8]:
-            filebase  = self.Profile.BindsDir() / f"buff{cid}"   / f"bufft{j}"
-            filebase2 = self.Profile.BindsDir() / f"buff{title}" / f"bufft{j}"
-            for k in ['a','b','c','d']:
-                files.append(self.Profile.GetBindFile(f"{filebase}{k}.txt"))
-                files.append(self.Profile.GetBindFile(f"{filebase2}{k}.txt"))
+        if self.Profile:
+            for j in [1,2,3,4,5,6,7,8]:
+                filebase  = self.Profile.BindsDir() / f"buff{cid}"   / f"bufft{j}"
+                filebase2 = self.Profile.BindsDir() / f"buff{title}" / f"bufft{j}"
+                for k in ['a','b','c','d']:
+                    files.append(self.Profile.GetBindFile(f"{filebase}{k}.txt"))
+                    files.append(self.Profile.GetBindFile(f"{filebase2}{k}.txt"))
 
-        for j in [1,2,3,4,5,6]:
-            filebase  = self.Profile.BindsDir() / f"buff{cid}"   / f"buffp{j}"
-            filebase2 = self.Profile.BindsDir() / f"buff{title}" / f"buffp{j}"
-            for k in ['a','b','c','d']:
-                files.append(self.Profile.GetBindFile(f"{filebase}{k}.txt"))
-                files.append(self.Profile.GetBindFile(f"{filebase2}{k}.txt"))
-
+            for j in [1,2,3,4,5,6]:
+                filebase  = self.Profile.BindsDir() / f"buff{cid}"   / f"buffp{j}"
+                filebase2 = self.Profile.BindsDir() / f"buff{title}" / f"buffp{j}"
+                for k in ['a','b','c','d']:
+                    files.append(self.Profile.GetBindFile(f"{filebase}{k}.txt"))
+                    files.append(self.Profile.GetBindFile(f"{filebase2}{k}.txt"))
         return {
             'files' : files,
             'dirs'  : [f"buff{title}", f"buff{cid}"],

@@ -1,4 +1,5 @@
 import wx
+from pubsub import pub
 
 from Help import HelpButton
 import UI
@@ -8,10 +9,11 @@ from UI.KeySelectDialog import EVT_KEY_CHANGED
 from UI.CGControls import cgCheckBox, cgbcKeyButton
 
 class BaseEditMode(WizardParent):
-    WizardName  = 'Base Edit Mode'
-    WizToolTip  = 'Switch to and from a set of controls optimized for base editing'
-    WizHelpFile = 'BaseEditMode.html'
-    IconPath    = ('UI', 'BaseEditMode')
+    WizardName   = 'Base Edit Mode'
+    WizToolTip   = 'Switch to and from a set of controls optimized for base editing'
+    WizHelpFile  = 'BaseEditMode.html'
+    IconPath     = ('UI', 'BaseEditMode')
+    CreatesFiles = True
 
     def __init__(self, parent, init):
         super().__init__(parent, init)
@@ -119,12 +121,17 @@ class BaseEditMode(WizardParent):
         mainSizer.Add(optsSizer, 0, wx.EXPAND|wx.ALL, 10)
         mainSizer.Add(keysSizer, 0, wx.EXPAND|wx.ALL, 10)
 
-        self.Profile.CheckAllConflicts()
+        # we want to listen to this to update the mini-keybind display
+        pub.subscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
 
         return mainSizer
 
     def Serialize(self):
+        self.UpdateStateFromDialog()
         return self.State.get('WizData', {})
+
+    def OnKeyButtonChanged(self, control):
+        self.BindPane.UpdateAndRefresh()
 
     def PaneContents(self):
         bindpane = self.BindPane
@@ -211,7 +218,6 @@ class BaseEditMode(WizardParent):
         })
         panelSizer.Add(self.ToggleEditMode, 0, wx.ALIGN_CENTER|wx.ALL, 5)
         bindpane.SetCtrl('ToggleEditMode', self.ToggleEditMode)
-        self.ToggleEditMode.Bind(EVT_KEY_CHANGED, self.OnBindKeyChanged)
         UI.Labels[self.ToggleEditMode] = 'Enter Edit Mode'
 
         panel.SetSizer(panelSizer)
@@ -233,9 +239,9 @@ class BaseEditMode(WizardParent):
         return conflicts
 
     def OnBindKeyChanged(self, evt = None):
-        if evt: evt.Skip()
         self.CheckIfWellFormed()
         self.UpdateStateFromDialog()
+        if evt: evt.Skip()
 
     def CheckIfWellFormed(self, evt = None):
         if evt: evt.Skip()

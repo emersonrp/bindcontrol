@@ -1,4 +1,5 @@
 import wx
+from pubsub import pub
 import re
 from wx.adv import BitmapComboBox
 import GameData
@@ -50,6 +51,6 @@ class UseInspByNameCmd(PowerBinderCommand):
             # If we touch one that is int-based, mark it as needing re-saving.
             # TODO:  is there a trivial way to tell it "resave the whole thing,
             # examining and updating all steps?"  Probably not.
-            self.Profile.CustomBinds.UpdateAllBinds()
+            pub.sendMessage('updatepanels.bind')
         elif isinstance(insp, str):
             self.useInspByNameModeChoice.SetStringSelection(insp)

@@ -1,7 +1,6 @@
 import wx
-import re
 from functools import partial
-from typing import Any
+from typing import Any, TYPE_CHECKING
 from pathlib import Path
 from pubsub import pub
 import json
@@ -9,7 +8,8 @@ import json
 from Icon import GetIcon
 from Page import Page
 from Help import HelpButton
-from UI.CustomBindPaneParent import CustomBindPaneParent
+if TYPE_CHECKING:
+    from UI.CustomBindPaneParent import CustomBindPaneParent
 from UI.BufferBindPane  import BufferBindPane
 from UI.SimpleBindPane  import SimpleBindPane
 from UI.ComplexBindPane import ComplexBindPane
@@ -31,6 +31,9 @@ class CustomBinds(Page):
         self.Init     : dict[str, Any]             = {}
 
         pub.subscribe(self.OnVerboseBindsChanged, 'prefschanged.verbosebinds')
+        pub.subscribe(self.OnBindsChanged, 'updatepanels.bind')
+        pub.subscribe(self.OnDeletePanel, 'deletepanel.bind')
+        pub.subscribe(self.OnAddPanel, 'addpanel.bind')
 
     def BuildPage(self) -> None:
 
@@ -78,6 +81,10 @@ class CustomBinds(Page):
 
         self.Layout()
 
+    def OnBindsChanged(self):
+        self.UpdateAllBinds()
+        self.Refresh()
+
     def OnVerboseBindsChanged(self):
         for pane in self.Panes:
             pane.UpdateLabel()
@@ -110,7 +117,7 @@ class CustomBinds(Page):
     # but the other way seems just as weirdly intrusive.
     def OnBindWizardPicked(self, wizClass = None, evt = None):
         if wizClass:
-            newWizBindPane = WizardBindPane(self, wizClass)
+            newWizBindPane = WizardBindPane(self, init = {'WizClass' : wizClass})
             self.AddBindToPage(bindpane = newWizBindPane)
             if newWizBindPane in self.Panes: # did we cancel the add?
                 newWizBindPane.Wizard.ShowWizard()
@@ -137,27 +144,29 @@ class CustomBinds(Page):
                     self.AddBindToPage(bindpane = bindpane)
                     existingBindsNames = [pane.Title for pane in self.Panes if pane != bindpane]
                     if bindpane.Title in existingBindsNames:
-                        self.SetBindPaneLabel(None, bindpane, new = True)
+                        bindpane.SetPanelLabel(new = True)
 
             except Exception as e:
                 wx.LogError(f'Cannot import custom bind "{filepath.name}": {e}')
 
         evt.Skip()
 
-    def BuildBindPaneFromData(self, binddata) -> CustomBindPaneParent|None:
+    def BuildBindPaneFromData(self, binddata):
         bindpane = None
-        if binddata['Type'] == "SimpleBind":
-            bindpane = SimpleBindPane(self, init = binddata)
-        elif binddata['Type'] == "BufferBind":
-            bindpane = BufferBindPane(self, init = binddata)
-        elif binddata['Type'] == "ComplexBind":
-            bindpane = ComplexBindPane(self, init = binddata)
-        elif binddata['Type'] == "WizardBind":
-            bindpane = WizardBindPane(self, binddata['WizClass'], init = binddata)
+        if paneclass := {
+            'SimpleBind'  : SimpleBindPane,
+            'ComplexBind' : ComplexBindPane,
+            'BufferBind'  : BufferBindPane,
+            'WizardBind'  : WizardBindPane,
+        }[binddata['Type']]:
+            bindpane = paneclass(self, init = binddata)
         else:
             wx.LogError("No valid custom bind found.")
 
         return bindpane
+
+    def OnAddPanel(self, panel):
+        self.AddBindToPage(panel) # to get the args named right, sigh.
 
     def AddBindToPage(self, bindpane = None) -> None:
         if not bindpane:
@@ -165,7 +174,7 @@ class CustomBinds(Page):
             return
 
         if not bindpane.Title: # this is from a "New Bind" button
-            if not self.SetBindPaneLabel(None, bindpane, new = True):
+            if not bindpane.SetPanelLabel(new = True):
                 return
 
         if len(self.Panes) == 0:
@@ -193,178 +202,37 @@ class CustomBinds(Page):
 
         self.Panes.append(bindpane)
 
-        bindpane.BuildBindUI(self)
+        bindpane.BuildBindUI()
 
-        # put it in a box with control buttons
-        bindSizer = wx.BoxSizer(wx.HORIZONTAL)
-        bindSizer.Add(bindpane, 1, wx.EXPAND, 5)
-
-        buttonSizer = wx.BoxSizer(wx.VERTICAL)
-        deleteButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'delete'))
-        deleteButton.BindPane  = bindpane
-        deleteButton.BindSizer = bindSizer
-        bindpane.DelButton = deleteButton
-        deleteButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
-        deleteButton.Bind(wx.EVT_BUTTON, self.OnDeleteButton)
-        buttonSizer.Add(deleteButton)
-
-        renameButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'rename'))
-        renameButton.BindPane = bindpane
-        bindpane.RenButton = renameButton
-        renameButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
-        renameButton.Bind(wx.EVT_BUTTON, self.SetBindPaneLabel)
-        buttonSizer.Add(renameButton)
-
-        duplicateButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'copy'))
-        duplicateButton.BindPane = bindpane
-        bindpane.DupButton = duplicateButton
-        duplicateButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
-        duplicateButton.Bind(wx.EVT_BUTTON, self.OnDuplicateButton)
-        buttonSizer.Add(duplicateButton)
-
-        exportButton = CustomBindControlButton(self.scrolledPanel, GetIcon('UI', 'export'))
-        exportButton.BindPane = bindpane
-        bindpane.ExpButton = exportButton
-        exportButton.SetToolTip(f'Export bind "{bindpane.Title}"')
-        exportButton.Bind(wx.EVT_BUTTON, self.OnExportButton)
-        buttonSizer.Add(exportButton)
-
-        bindSizer.Add(buttonSizer, 0, wx.LEFT, 10)
-
-        # more hackery -- if we have a unique wizbind (currently just esc config), turn off the
-        # duplicate button
-        if isinstance(bindpane, WizardBindPane):
-            if bindpane.WizClass.IsUnique:
-                duplicateButton.Enable(False)
-                duplicateButton.SetToolTip(f"You can only have one instance of {bindpane.WizClass.WizardName} per profile.")
-
-        self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), bindSizer, 0, wx.ALL|wx.EXPAND, 10)
-        bindpane.Expand()
+        self.PaneSizer.Insert(self.PaneSizer.GetItemCount(), bindpane, 0, wx.ALL|wx.EXPAND, 10)
+        bindpane.Pane.Expand()
         self.Layout()
 
-    def SetBindPaneLabel(self, evt, bindpane = None, new = False) -> bool:
-        if not bindpane:
-            bindpane = evt.GetEventObject().BindPane
-        if not bindpane:
-            wx.LogError("Tried to set a BindPane label without a bindpane.  This is a bug.")
-            return False
-
-        # marshal up the files to delete, before we change the name
-        deletefiles = None if new else bindpane.AllBindFiles()
-        dlg = wx.TextEntryDialog(self, f'Enter name for {bindpane.Description or "bind"}:')
-        if bindpane.Title:
-            dlg.SetValue(bindpane.Title)
-        if dlg.ShowModal() == wx.ID_OK:
-            # check if we already have a bind named that.  Complex Binds use the name as
-            # part of the bindfiles' filenames, so we can't have dupes
-            #
-            # TODO?  This is no longer the case, but do we want duplicate bind names allowed?
-            # That makes the "you have a conflict with custom bind 'Stan'" message ambiguous
-            title = dlg.GetValue()
-            for pane in self.Panes:
-                if title == pane.Title:
-                    if pane != bindpane:
-                        # show an "oops" dialog and try again, this might not be perfect
-                        wx.MessageBox(f"A bind called {title} already exists!", "Error", wx.OK, self)
-                        return self.SetBindPaneLabel(evt, bindpane, new)
-                    dlg.Destroy()
-                    return False
-
-            bindpane.Title = title
-            bindpane.SetLabel(bindpane.Title)
-            if not new:
-                bindpane.DelButton.SetToolTip(f'Delete bind "{bindpane.Title}"')
-                bindpane.RenButton.SetToolTip(f'Rename bind "{bindpane.Title}"')
-                bindpane.DupButton.SetToolTip(f'Duplicate bind "{bindpane.Title}"')
-                bindpane.ExpButton.SetToolTip(f'Export bind "{bindpane.Title}"')
-                # if we have files to delete (we do, if not new) then delete them.
-                if deletefiles:
-                    self.Profile.doDeleteBindFiles(deletefiles)
-            self.UpdateAllBinds()
-            self.Refresh()
-            dlg.Destroy()
-            return True # successful name change
-        else:
-            if new:
-                self.doDeleteBindPane(bindpane)
-            dlg.Destroy()
-            return False
-
-    def OnDeleteButton(self, evt) -> None:
-        delButton = evt.EventObject
-        bindpane = delButton.BindPane
-        with BindDeletionDialog(self, bindpane) as dlg:
-            if dlg.ShowModal() == wx.ID_CANCEL:
-                return
-            if dlg.DeleteFilesCB and dlg.DeleteFilesCB.GetValue():
-                # do the delete of the files
-                files = bindpane.AllBindFiles()
-                self.Profile.doDeleteBindFiles(files)
-        self.doDeleteBindPane(bindpane)
-        evt.Skip()
+    def OnDeletePanel(self, panel):
+        self.doDeleteBindPane(panel) # need do to this to get the args named right.  This is dumb.
 
     def doDeleteBindPane(self, bindpane) -> None:
-        if delButton := bindpane.DelButton:
-            sizer = delButton.BindSizer
-            self.PaneSizer.Hide(sizer)
-            self.PaneSizer.Remove(sizer)
         for ctrlname in bindpane.Ctrls:
-            if self.Ctrls.get(ctrlname) : del self.Ctrls[ctrlname]
+            if self.Ctrls.get(ctrlname):
+                del self.Ctrls[ctrlname]
+
         if bindpane in self.Panes:
             self.Panes.remove(bindpane)
-        # won't have an ID if it was a cancelled new bind
-        if bindpane.CustomID:
+
+        if bindpane.Title and self.Profile:
+            # won't have a Title if it was a cancelled new bind, for which we want to
+            # gloss over and not poke this out there.
             self.Profile.UpdateData('CustomBinds', { 'CustomID' : bindpane.CustomID, 'Action' : 'delete' })
+
         bindpane.DestroyLater()
-        wx.CallAfter(self.Profile.CheckAllConflicts)
+
         if len(self.Panes) == 0:
             # need to put back the blankpanel
             self.scrolledPanel.Hide()
             self.BlankPanel.Show()
             self.MainSizer.Replace(self.scrolledPanel, self.BlankPanel)
+
         self.Layout()
-
-    def OnDuplicateButton(self, evt) -> None:
-        oldbindpane = evt.EventObject.BindPane
-        init = oldbindpane.Serialize()
-
-        # clear out a few things that we don't want in the new bind
-        init.pop('CustomID', None)
-        init.pop('Title', None)
-        init.pop('Key', None)
-
-        newbindpane = self.BuildBindPaneFromData(init)
-
-        if not newbindpane:
-            wx.LogError(f"Error duplicating bind {oldbindpane.Title}!")
-            return
-
-        self.AddBindToPage(newbindpane)
-
-    def OnExportButton(self, evt) -> None:
-
-        bindpane = evt.GetEventObject().BindPane
-
-        shorttitle = re.sub(r'\W+', '', bindpane.Title)
-
-        with wx.FileDialog(self, f'Export Complex Bind "{bindpane.Title}"',
-                           defaultFile = f"{shorttitle}.bcb",
-                           defaultDir = wx.ConfigBase.Get().Read('ProfilePath'),
-                           wildcard = "BindControl Custom Bind Files (*.bcb)|*.bcb|All Files (*.*)|*.*",
-                           style = wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT) as fileDialog:
-
-            if fileDialog.ShowModal() == wx.ID_CANCEL:
-                return
-
-            pathname = fileDialog.GetPath()
-            try:
-                filepath = Path(pathname)
-                binddata = bindpane.Serialize()
-                binddata.pop('CustomID', None)
-                filepath.write_text(json.dumps(binddata, indent=2))
-
-            except Exception as e:
-                wx.LogError(f"Error exporting Complex Bind: {e}")
 
     def GetKeyBinds(self):
         binds = super().GetKeyBinds()

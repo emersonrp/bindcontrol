@@ -7,7 +7,7 @@ class KeyBind:
     def __init__(self, key, name : str, page, contents : str|list[str]|None = None):
         contents = contents or []
 
-        if type(contents) is str : contents = [contents]
+        if type(contents) is str: contents = [contents]
 
         self.Key      : str       = key      # actual key combo
         self.Name     : str       = name     # friendly name, ie, "Select All Pets"
@@ -46,9 +46,9 @@ class BindFile:
         self.KeyBinds = {}
 
     @overload
-    def SetBind(self, keybind: KeyBind): ...
+    def SetBind(self, keybind:KeyBind): ...
     @overload
-    def SetBind(self, keybind: str, name: str, page, contents: str|list[str]): ...
+    def SetBind(self, keybind:str,         name:str,      page,      contents:str|list[str]): ...
 
     def SetBind(self, keybind:KeyBind|str, name:str = '', page = '', contents:str|list[str] = '') -> None:
 

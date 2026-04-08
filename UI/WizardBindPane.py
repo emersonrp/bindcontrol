@@ -8,25 +8,25 @@ from UI.CustomBindPaneParent import CustomBindPaneParent
 from Util.Paths import GetRootDirPath
 
 class WizardBindPane(CustomBindPaneParent):
-    def __init__(self, page, wizClass, init : dict|None = None) -> None:
+    def __init__(self, page, init : dict|None = None) -> None:
         init = init or {}
         super().__init__(page, init)
+
+        wizStr   = ''
+        wizClass = init.get('WizClass')
 
         if isinstance(wizClass, str):
             wizStr = wizClass
             wizClass = wizards.get(wizStr)
 
-            if not wizClass:
-                wizStr = init.get('WizClass')
-                wizClass = wizards.get(wizStr)
+        if not wizClass:
+            raise Exception(f'Unknown BindWizard class "{wizStr or wizClass}" requested when building BindWizard.  This is a bug')
 
-                if not wizClass:
-                    raise Exception(f'Unknown BindWizard class "{wizStr}" requested when building BindWizard.  This is a bug')
-
-        self.WizClass    = wizClass
-        self.Description = wizClass.WizardName
-        self.Type        = "WizardBind"
-        self.Wizard      = wizClass(self, init)
+        self.WizClass     = wizClass
+        self.Description  = wizClass.WizardName
+        self.Type         = "WizardBind"
+        self.Wizard       = wizClass(self, init)
+        self.CreatesFiles = self.Wizard.CreatesFiles
 
         if init:
             init = init.get('WizData', {})
@@ -54,14 +54,12 @@ class WizardBindPane(CustomBindPaneParent):
             return self.Wizard.AllBindFiles()
         return {}
 
-    def BuildBindUI(self, page) -> None:
+    def BuildBindUI(self) -> None:
         # if the pane already has stuff, clear it out
-        pane = self.GetPane()
+        pane = self.Pane.GetPane()
         if mainSizer := pane.GetSizer():
             for item in range(mainSizer.GetItemCount()):
-                mainSizer.Hide(item)
                 mainSizer.Detach(item)
-            pane.Layout()
         else:
             mainSizer = wx.BoxSizer(wx.VERTICAL)
             pane.SetSizer(mainSizer)
@@ -71,11 +69,12 @@ class WizardBindPane(CustomBindPaneParent):
 
         pane.Layout()
 
-    def UpdateAndRefresh(self, evt):
+    def UpdateAndRefresh(self, evt = None):
         if evt: evt.Skip()
         self.Wizard.UpdateStateFromDialog()
-        self.Profile.UpdateData('CustomBinds', self.Serialize())
-        self.BuildBindUI(None)
+        if self.Profile:
+            self.Profile.UpdateData('CustomBinds', self.Serialize())
+        self.BuildBindUI()
 
 class WizButton(wx.Button):
     def __init__(self, parent, label, wizclass):

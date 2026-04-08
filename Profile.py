@@ -19,7 +19,7 @@ from Page.MovementPowers import MovementPowers
 from Page.InspirationPopper import InspirationPopper
 from Page.Mastermind import Mastermind
 from Page.CustomBinds import CustomBinds
-from Page.MacroComposer import MacroComposer
+from Page.MacroComposer import MacroComposer, MacroPane
 from Page.PopmenuEditor import PopmenuEditor
 import UI
 from UI.KeySelectDialog import bcKeyButton
@@ -93,6 +93,7 @@ class Profile(wx.Notebook):
         if self.EditingDefault: self.ColorThingsForEditingDefault()
 
         pub.subscribe(self.CheckAllConflicts, 'prefschanged.resetkey')
+        pub.subscribe(self.OnDeletePanel, 'deletepanel')
         pub.subscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
 
     def CreatePage(self, page):
@@ -312,7 +313,7 @@ class Profile(wx.Notebook):
                 for macro in data['MacroComposer']:
                     if not macro: continue
 
-                    if macropane := mpage.BuildMacroPaneFromData(macro):
+                    if macropane := MacroPane(mpage, macro):
                         mpage.AddMacroToPage(macropane = macropane)
 
         # if we want to set things based on power picks, let's do that.  This might
@@ -352,14 +353,17 @@ class Profile(wx.Notebook):
 
     def DoCommand(self, page, control, evt = None):
         if page== self.CustomBinds:
-            page.UpdateAllBinds() # no trivial or mess-free way to do just the one we need
+            pub.sendMessage('updatepanels.bind')
         elif page == self.MacroComposer:
-            page.UpdateAllMacros()
+            pub.sendMessage('updatepanels.macro')
         else:
             if ctlname := next((name for name,c in page.Ctrls.items() if control == c), None):
                 pagename = page.__class__.__name__ # eww
                 # TODO:  "unless (some way to opt things out of this), then..."
                 self.UpdateData(pagename, ctlname, page.GetState(ctlname))
+        self.CheckAllConflicts()
+
+    def OnDeletePanel(self, panel):
         self.CheckAllConflicts()
 
     def OnKeyButtonChanged(self, control):

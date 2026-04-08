@@ -1,4 +1,5 @@
 from functools import partial
+from pubsub import pub
 import re
 import wx
 import UI
@@ -9,10 +10,11 @@ from UI.IncarnateBox import IncarnateBox
 from UI.KeySelectDialog import bcKeyButton, EVT_KEY_CHANGED
 
 class IncarnateSet(WizardParent):
-    WizardName  = 'Incarnate Powers Set'
-    WizToolTip  = 'Create a keybind that, with multiple presses, will load a particular set of Incarnate Powers'
-    WizHelpFile = 'IncarnateWizard.html'
-    IconPath    = ('Incarnate', 'Alpha_Musculature_VeryRare')
+    WizardName   = 'Incarnate Powers Set'
+    WizToolTip   = 'Create a keybind that, with multiple presses, will load a particular set of Incarnate Powers'
+    WizHelpFile  = 'IncarnateWizard.html'
+    IconPath     = ('Incarnate', 'Alpha_Musculature_VeryRare')
+    CreatesFiles = True
 
     def __init__(self, parent, init) -> None:
         super().__init__(parent, init)
@@ -58,7 +60,7 @@ class IncarnateSet(WizardParent):
                 self.State['WizData'] = {}
             newdata = self.IncarnateBox.Serialize()
             if self.State['WizData'].get('IncData', {}) != newdata:
-                self.BindPane.Page.UpdateAllBinds()
+                pub.sendMessage('updatepanels.bind')
                 self.State['WizData']['IncData'] = newdata
 
         # and then in either case, build the Pane from State

@@ -67,7 +67,7 @@ class WizardParent:
 
 class WizardDialog(wx.Dialog):
     def __init__(self, parent, wizard):
-        super().__init__(parent)
+        super().__init__(wizard.Profile)
 
         self.BindPane = parent
         self.Wizard   = wizard

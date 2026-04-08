@@ -2,9 +2,10 @@ import wx
 import re
 import base64
 from pathlib import Path
-from Util.SourceFileIcons import GetImageFromSourceFile, sourcemaps
 
+import bcColours
 import Util.Paths
+from Util.SourceFileIcons import GetImageFromSourceFile, sourcemaps
 
 # just a BitmapBundle with a filename attached.
 class Icon(wx.BitmapBundle):
@@ -66,6 +67,9 @@ def GetIcon(*args) -> Icon:
             else:
                 wx.LogWarning(f"Missing icon: {source} icon not in sourcemap: {sourcename}")
         else:  # we don't have any such source file, so check the filesystem for the leftover UI icons etc
+            if 'UI' in iconpath.parts:
+                darklight = 'dark' if bcColours.DarkMode() else 'light'
+                iconpath = Path('UI') / darklight / iconpath.parts[1] # shim 'dark' or 'light' in there.
             filepath = Util.Paths.GetRootDirPath() / 'icons' / iconpath
             if filepath.exists():
                 Icons[iconpathstr] = Icon( wx.Image(str(filepath), wx.BITMAP_TYPE_ANY, -1,), iconpathstr)

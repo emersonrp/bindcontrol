@@ -130,6 +130,7 @@ class BaseEditMode(WizardParent):
         return self.State.get('WizData', {})
 
     def OnKeyButtonChanged(self, control):
+        self.UpdateStateFromDialog()
         self.BindPane.BuildBindUI()
 
     def PaneContents(self):
@@ -239,9 +240,9 @@ class BaseEditMode(WizardParent):
         return conflicts
 
     def OnBindKeyChanged(self, evt = None):
-        if evt: evt.Skip()
         self.CheckIfWellFormed()
         self.UpdateStateFromDialog()
+        if evt: evt.Skip()
 
     def CheckIfWellFormed(self, evt = None):
         if evt: evt.Skip()

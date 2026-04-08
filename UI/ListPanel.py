@@ -95,6 +95,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
                 self.DupButton.SetToolTip(f'Duplicate {self.Description} "{self.Title}"')
                 self.ExpButton.SetToolTip(   f'Export {self.Description} "{self.Title}"')
             dlg.Destroy()
+            pub.sendMessage(f'updatepanels.{self.Topic}')
             return True # successful name change
         else:
             if new:

@@ -156,9 +156,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /recharge_timer_opacity | Sets the Recharge Timer Opacity. |
 | /recharge_timer_threshold | Enables the Power Recharge Timer and sets the threshold for when the timer will appear. |
 | /release_pets | Release your current pets |
-| /renderscalex | Changes the horizontal scale at which the 3D world is rendered relative to your screen size |
-| /renderscaley | Changes the vertical scale at which the 3D world is rendered relative to your screen size |
-| /rendersize | Changes the size at which the 3D world is rendered |
 | /requestexitmission number | Leave the mission once it is completed. It requires a number argument, but the number doesn't seem to do anything. |
 | /respec | Go to the power respecification screen if you have a free respec |
 | /respec_status | Find out how many respecs are available. |
@@ -320,6 +317,9 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /prevshaders | Use previous Cg shader set found in 'cgfx/prev' subfolder for comparison/debugging |
 | /prev_trays_tray 1-3 | Go to previous power tray in the specified tray slot. |
 | /reduce_mip | Reduces the resolution of textures to only use the reduced (mip-map) textures. Must pass as command line arg -reduce_mip or you need to subsequently run unloadgfx |
+| /renderscalex | Changes the horizontal scale at which the 3D world is rendered relative to your screen size |
+| /renderscaley | Changes the vertical scale at which the 3D world is rendered relative to your screen size |
+| /rendersize | Changes the size at which the 3D world is rendered |
 | /room_clip [0-1] | Enables or disables the room clipping option while in the SG base editor. Alias: /room_clip_cycle. (F3) |
 | /sg_music filename | Sets a sound file to play over the music channel in a supergroup base. |
 | /sgpasscode text | Creates a Base Access Passcode, used to enter a supergroup's base |
@@ -331,7 +331,6 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /texaniso | Sets the amount of anisotropic filtering to use, reloads textures |
 | /thumbtack x y z | Adds a thumbtack to the map at the specified X/Y/Z coordinates |
 | /useHQ number | Allow use of High Quality shader variants |
-| /userenderscale | Enables/disables render scaling feature |
 
 
 ## Slash Commands With Unknown Functionality

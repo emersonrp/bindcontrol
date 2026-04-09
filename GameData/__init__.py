@@ -26,6 +26,7 @@ IncarnatePowers = {}
 MMPowerSets = {}
 PoolPowers = {}
 TempTravelPowers = {}
+Badges = {}
 
 # There's probably a better way to do this.
 def SetupGameData(server):
@@ -41,6 +42,7 @@ def SetupGameData(server):
         GameData.MMPowerSets      = GameData.Rebirth.MMPowerSets
         GameData.PoolPowers       = GameData.Rebirth.PoolPowers
         GameData.TempTravelPowers = GameData.Rebirth.TempTravelPowers
+        GameData.Badges           = GameData.Rebirth.Badges
     elif server == 'Homecoming':
         GameData.Archetypes       = GameData.Homecoming.Archetypes
         GameData.MiscPowers       = GameData.Homecoming.MiscPowers
@@ -52,6 +54,7 @@ def SetupGameData(server):
         GameData.MMPowerSets      = GameData.Homecoming.MMPowerSets
         GameData.PoolPowers       = GameData.Homecoming.PoolPowers
         GameData.TempTravelPowers = GameData.Homecoming.TempTravelPowers
+        GameData.Badges           = GameData.Homecoming.Badges
     else:
         raise Exception(f'GameData.SetupGameData called with unknown server "{server}"')
 

@@ -59,7 +59,8 @@ class SetTitleCmd(PowerBinderCommand):
                     'Resistance' : 'H',
                 }.get(self.Profile.Alignment(), 'H')
                 for badgeid, namedata in badges.items():
-                    self.BadgeData[category][namedata[acode]] = badgeid
+                    badgename = namedata.get(acode, namedata['H'])
+                    self.BadgeData[category][badgename] = badgeid
 
 
 class BadgeMenu(wx.Menu):

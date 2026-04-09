@@ -26,10 +26,11 @@ class GraphicsCmd(PowerBinderCommand):
         sizer.Add(self.usedofch, 1, wx.ALIGN_CENTER_VERTICAL)
 
         self.dofweightcb = wx.CheckBox(dialog, label = "dofweight")
-        self.dofweightcb.SetToolTip('Controls the distance for how "blurry" Depth of Field effects are - also executes /usedof 1')
+        self.dofweightcb.SetToolTip('Controls the distance for how "blurry" Depth of Field effects are - also enables /usedof 1')
         sizer.Add(self.dofweightcb, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.dofweightcb.Bind(wx.EVT_CHECKBOX, self.OnDOFWeightCB)
         self.dofweightsc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.5, max = 2.0, inc = 0.1)
-        self.dofweightsc.SetToolTip('Controls the distance for how "blurry" Depth of Field effects are - also executes /usedof 1')
+        self.dofweightsc.SetToolTip('Controls the distance for how "blurry" Depth of Field effects are - also enables /usedof 1')
         sizer.Add(self.dofweightsc, 1, wx.ALIGN_CENTER_VERTICAL)
 
         self.fsaacb = wx.CheckBox(dialog, label = "fsaa")
@@ -71,10 +72,11 @@ class GraphicsCmd(PowerBinderCommand):
         sizer.Add(self.userenderscalech, 1, wx.ALIGN_CENTER_VERTICAL)
 
         self.renderscalecb = wx.CheckBox(dialog, label = "renderscale")
-        self.renderscalecb.SetToolTip('Changes the scale at which the 3D world is rendered relative to your screen size - also executes /userenderscale 1')
+        self.renderscalecb.SetToolTip('Changes the scale at which the 3D world is rendered relative to your screen size - also enables /userenderscale 1')
         sizer.Add(self.renderscalecb, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.renderscalecb.Bind(wx.EVT_CHECKBOX, self.OnRenderScaleCB)
         self.renderscalesc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.1, max = 20.0, inc = 0.1)
-        self.renderscalesc.SetToolTip('Changes the scale at which the 3D world is rendered relative to your screen size - also executes /userenderscale 1')
+        self.renderscalesc.SetToolTip('Changes the scale at which the 3D world is rendered relative to your screen size - also enables /userenderscale 1')
         sizer.Add(self.renderscalesc, 1, wx.ALIGN_CENTER_VERTICAL)
 
         self.usecelshadercb = wx.CheckBox(dialog, label = "usecelshader")
@@ -96,6 +98,18 @@ class GraphicsCmd(PowerBinderCommand):
         centeringSizer.Add(sizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
         return centeringSizer
 
+    def OnDOFWeightCB(self, evt):
+        evt.Skip()
+        if self.dofweightcb.IsChecked():
+            self.usedofcb.SetValue(True)
+            self.usedofch.SetSelection(1)
+
+    def OnRenderScaleCB(self, evt):
+        evt.Skip()
+        if self.renderscalecb.IsChecked():
+            self.userenderscalecb.SetValue(True)
+            self.userenderscalech.SetSelection(1)
+
     def MakeBindString(self) -> str:
         # choice 1, do this one at a time by hand;  choice 2, hack up some data-driven iterable.  I choose 1.
         bindstrings = []
@@ -108,7 +122,7 @@ class GraphicsCmd(PowerBinderCommand):
                 usedofvalue = self.usedofch.GetString(usedofselection)
             bindstrings.append("usedof " + usedofvalue)
         if self.dofweightcb.IsChecked():
-            bindstrings.append("usedof 1$$dofweight " + str(self.dofweightsc.GetValue()))
+            bindstrings.append("dofweight " + str(self.dofweightsc.GetValue()))
         if self.fsaacb.IsChecked():
             fsaavalue = ""
             fsaaselection = self.fsaach.GetSelection()
@@ -132,7 +146,7 @@ class GraphicsCmd(PowerBinderCommand):
                 userenderscalevalue = self.userenderscalech.GetString(userenderscaleselection)
             bindstrings.append("userenderscale " + userenderscalevalue)
         if self.renderscalecb.IsChecked():
-            bindstrings.append("userenderscale 1$$renderscale " + str(self.renderscalesc.GetValue()))
+            bindstrings.append("renderscale " + str(self.renderscalesc.GetValue()))
         if self.usecelshadercb.IsChecked():
             usecelshadervalue = ""
             usecelshaderselection = self.usecelshaderch.GetSelection()

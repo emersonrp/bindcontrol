@@ -15,20 +15,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /auc_loginupdate | Get status of auction inventory info to the player. Displays how many items were bought and sold in the Consignment House chat channel. |
 | /build_save | Saves the current character build (Name, Level, Archetype, Origin, Powers and Slotted Enhancements) to build.txt |
 | /build_save_file filename | Saves the current character build (Name, Level, Archetype, Origin, Powers and Slotted Enhancements) to a specified file |
-| /chan_create channel | Create a new chat channel |
-| /chan_desc channel description | Set the channel's description |
-| /chan_invite channel username | Invite a player or chat handle to a chat channel. Alias: /ginvite |
-| /chan_invite_gf channel | Invites your entire global friends list to a global chat channel |
-| /chan_invite_sg channel rank | Invite your entire Supergroup to a global chat channel. Only leaders may use this command. The rank parameter may be any of the ranks listed below. Alias: /ginvite_sg |
-| /chan_invite_team channel | Invites your entire team or Task Force to a Global chat channel |
-| /chan_join channel | Join an existing chat channel |
-| /chan_leave channel | Leave a chat channel |
-| /chan_members channel | List all members of channel |
-| /chan_mode channel options | Changes default access rights for new user who joins the channel. If you set -join, no one can join unless invited by an operator. |
-| /chan_motd channel message | Set the channel's Message Of The Day, which is sent to everyone that joins or logs into the channel |
-| /chan_send channel message | Send message to chat channel. You must be in the channel and have Send priviledges. Alias: /send |
-| /chan_timeout <channel name> <days> | Sets the number of days a member of a global channel must go without logging in before being automatically kicked from the channel. |
-| /chan_user_mode channel global options | Sets user permissions for the user with the handle global (without the @) on channel. You must have operator status to set permissions. |
 | /chat_cycle | Cycles through the default chat channels |
 | /chatoptions [0-4] | Activates context menu for the chat windows. |
 | /chat_set channel_name | Changes the default channel in the chat window. |
@@ -49,7 +35,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /contactfinder_showprevious | Shows the previous contact in the Contact Finder window. |
 | /contactfinder_teleporttocurrent | Teleports you to the contact currently detailed in the Contact Finder window. |
 | /contextmenu menu_num | Activate a context menu slot. |
-| /cooldown_indicator [0-3] | Sets cooldown timer onto tray icons: Recharge indicator setting (0=off, 1=bottom, 2=top, 3=center) Alias: /recharge_indicator |
 | /copychat tab | Copy the entire chat history from specified chat Tab into the clipboard |
 | /ctm [0-1] | Alias for /clicktomove |
 | /ctm_invert [0-1] | Alias for /clicktomove. |
@@ -150,15 +135,7 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /profiler_stop | Stop recording profiler information. |
 | /profiling_memory | Set the number of MB of memory to use for profiling |
 | /promote character | Promote supergroup member one rank |
-| /recharge_indicator [0-3] | Sets the position of the recharge timer on tray icons. |
-| /recharge_timer_color | Sets the Recharge Timer Color. |
-| /recharge_timer_format | Sets the Recharge Timer Format. |
-| /recharge_timer_opacity | Sets the Recharge Timer Opacity. |
-| /recharge_timer_threshold | Enables the Power Recharge Timer and sets the threshold for when the timer will appear. |
 | /release_pets | Release your current pets |
-| /renderscalex | Changes the horizontal scale at which the 3D world is rendered relative to your screen size |
-| /renderscaley | Changes the vertical scale at which the 3D world is rendered relative to your screen size |
-| /rendersize | Changes the size at which the 3D world is rendered |
 | /requestexitmission number | Leave the mission once it is completed. It requires a number argument, but the number doesn't seem to do anything. |
 | /respec | Go to the power respecification screen if you have a free respec |
 | /respec_status | Find out how many respecs are available. |
@@ -212,9 +189,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /toggle_enemy_prev | Cycles through targetable enemies in reverse order |
 | /trade character | Invite character to trade, must have character targeted if no name is provided |
 | /trade_accept | Recieves a trade accept (unfinished or internal command) |
-| /tray_always_shrink | Shrink power icons when recharging. |
-| /tray_animations | Power Tray Animations. |
-| /tray_labels | Power Tray Labels. |
 | /traysticky [1-2] [0-1] | Show or hide the secondary (Alt) or tertiary (Alt2) tray slot. |
 | /traystickyalt2 | Toggles the tertiary (Alt2) tray slot (show/hide). |
 | /ttl character_name, message | Send a message to a character's team leader. |
@@ -226,7 +200,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /unlevelingpact | Bring up the dialog for quitting a leveling pact. |
 | /unloadgfx | unloads all textures (causing them to be reloaded dynamically). Alias: /reloadgfx |
 | /useCubemap number | Use cubemap |
-| /usedof | Use Depth of Field effects if available |
 | /usefp | Use a floating point render target for HDR lighting effects if available |
 | /usewater | Use fancy water effects if available |
 | /watching | List all members of all chat channels that you belong to |
@@ -271,13 +244,28 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /base_default_sky number | Sets SG base editing default sky setting to one of 16 preset values |
 | /boost_convert | Converts the specified enhancement into a different enhancement. |
 | /camdistadjust | Adjusts the camera distance relative to the current camera distance. |
+| /chan_create channel | Create a new chat channel |
+| /chan_desc channel description | Set the channel's description |
+| /chan_invite channel username | Invite a player or chat handle to a chat channel. Alias: /ginvite |
+| /chan_invite_gf channel | Invites your entire global friends list to a global chat channel |
+| /chan_invite_sg channel rank | Invite your entire Supergroup to a global chat channel. Only leaders may use this command. The rank parameter may be any of the ranks listed below. Alias: /ginvite_sg |
+| /chan_invite_team channel | Invites your entire team or Task Force to a Global chat channel |
 | /chan_invitedeny channel name_string | Chat channel invite denied message. Appears to be an internal command. |
+| /chan_join channel | Join an existing chat channel |
+| /chan_leave channel | Leave a chat channel |
+| /chan_members channel | List all members of channel |
+| /chan_mode channel options | Changes default access rights for new user who joins the channel. If you set -join, no one can join unless invited by an operator. |
+| /chan_motd channel message | Set the channel's Message Of The Day, which is sent to everyone that joins or logs into the channel |
+| /chan_send channel message | Send message to chat channel. You must be in the channel and have Send priviledges. Alias: /send |
+| /chan_timeout <channel name> <days> | Sets the number of days a member of a global channel must go without logging in before being automatically kicked from the channel. |
+| /chan_user_mode channel global options | Sets user permissions for the user with the handle global (without the @) on channel. You must have operator status to set permissions. |
 | /change_handle new_global | Change your global user name, if allowed. |
 | /clear_tray | Removes all power icons from all power trays; preserves macros |
 | /cmdlist | Prints out most slash commands in the chat window |
 | /compatiblecursors | Enables useage of basic Windows mouse cursors instead of graphical cursors (command line option) |
 | /controller_modifiers <first> <second> | Allows setting two controller buttons as modifiers on a gamepad |
 | /controller_vmouse <LMB> <RMB> [MMB] [Snap] | Configures virtual mouse mode buttons on a gamepad |
+| /cooldown_indicator [0-3] | Sets cooldown timer onto tray icons: Recharge indicator setting (0=off, 1=bottom, 2=top, 3=center) Alias: /recharge_indicator |
 | /cursorcache | Enable cursor cache for smoother cursor changes |
 | /demodump | Alias for /demostop |
 | /demodumptga [0-1] | dump frames to tga files |
@@ -318,7 +306,15 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /powexec_slot slot | Executes the given power slot in the primary tray slot |
 | /prevshaders | Use previous Cg shader set found in 'cgfx/prev' subfolder for comparison/debugging |
 | /prev_trays_tray 1-3 | Go to previous power tray in the specified tray slot. |
+| /recharge_indicator [0-3] | Sets the position of the recharge timer on tray icons. |
+| /recharge_timer_color | Sets the Recharge Timer Color. |
+| /recharge_timer_format | Sets the Recharge Timer Format. |
+| /recharge_timer_opacity | Sets the Recharge Timer Opacity. |
+| /recharge_timer_threshold | Enables the Power Recharge Timer and sets the threshold for when the timer will appear. |
 | /reduce_mip | Reduces the resolution of textures to only use the reduced (mip-map) textures. Must pass as command line arg -reduce_mip or you need to subsequently run unloadgfx |
+| /renderscalex | Changes the horizontal scale at which the 3D world is rendered relative to your screen size |
+| /renderscaley | Changes the vertical scale at which the 3D world is rendered relative to your screen size |
+| /rendersize | Changes the size at which the 3D world is rendered |
 | /room_clip [0-1] | Enables or disables the room clipping option while in the SG base editor. Alias: /room_clip_cycle. (F3) |
 | /sg_music filename | Sets a sound file to play over the music channel in a supergroup base. |
 | /sgpasscode text | Creates a Base Access Passcode, used to enter a supergroup's base |
@@ -328,9 +324,10 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /sgsetmotto motto | Sets the supergroup's motto. |
 | /supporthardwarelights | Enable support for AlienFX/LightFX case lights. |
 | /texaniso | Sets the amount of anisotropic filtering to use, reloads textures |
-| /thumbtack x y z | Adds a thumbtack to the map at the specified X/Y/Z coordinates |
+| /tray_always_shrink | Shrink power icons when recharging. |
+| /tray_animations | Power Tray Animations. |
+| /tray_labels | Power Tray Labels. |
 | /useHQ number | Allow use of High Quality shader variants |
-| /userenderscale | Enables/disables render scaling feature |
 
 
 ## Slash Commands With Unknown Functionality
@@ -364,6 +361,7 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /selected_ent_server_index | send selected entity ? |
 | /soundDebugName | name of sound to debug (will only play this sound name) ? |
 | /splatShadowBias | Change how far from the camera to give people shadows. //scales distance to draw entitys' splat shadow. |
+| /thumbtack x y z | Adds a thumbtack to the map at the specified X/Y/Z coordinates |
 | /turnstile_invite_player_accept <dbID> <int> <int> | Invite player to the leaders instance ? |
 | /useFBOs | Use FBOs, if supported, for off-screen rendering ? |
 | /useMRTs | Use MRTs, for DoF effect debugging |

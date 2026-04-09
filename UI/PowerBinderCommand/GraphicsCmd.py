@@ -17,11 +17,20 @@ class GraphicsCmd(PowerBinderCommand):
         self.visscalesc.SetToolTip('Controls the distance at which world details are rendered (larger values render more details, farther away)')
         sizer.Add(self.visscalesc, 1, wx.ALIGN_CENTER_VERTICAL)
 
+        self.usedofcb = wx.CheckBox(dialog, label = "usedof")
+        self.usedofcb.SetToolTip('Enables or disables Depth of Field Effects')
+        sizer.Add(self.usedofcb, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.usedofch = wx.Choice(dialog, choices = ["0", "1"])
+        self.usedofch.SetToolTip('Enables or disabany Depth of Field Effects')
+        self.usedofch.SetSelection(0)
+        sizer.Add(self.usedofch, 1, wx.ALIGN_CENTER_VERTICAL)
+
         self.dofweightcb = wx.CheckBox(dialog, label = "dofweight")
-        self.dofweightcb.SetToolTip('Controls the distance for how "blurry" Depth of Field effects are.')
+        self.dofweightcb.SetToolTip('Controls the distance for how "blurry" Depth of Field effects are - also enables /usedof 1')
         sizer.Add(self.dofweightcb, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.dofweightcb.Bind(wx.EVT_CHECKBOX, self.OnDOFWeightCB)
         self.dofweightsc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.5, max = 2.0, inc = 0.1)
-        self.dofweightsc.SetToolTip('Controls the distance for how "blurry" Depth of Field effects are.')
+        self.dofweightsc.SetToolTip('Controls the distance for how "blurry" Depth of Field effects are - also enables /usedof 1')
         sizer.Add(self.dofweightsc, 1, wx.ALIGN_CENTER_VERTICAL)
 
         self.fsaacb = wx.CheckBox(dialog, label = "fsaa")
@@ -54,11 +63,20 @@ class GraphicsCmd(PowerBinderCommand):
         self.lodbiassc.SetToolTip('Sets "Loss of Detail" distance for entites (larger values retain detail farther)')
         sizer.Add(self.lodbiassc, 1, wx.ALIGN_CENTER_VERTICAL)
 
+        self.userenderscalecb = wx.CheckBox(dialog, label = "userenderscale")
+        self.userenderscalecb.SetToolTip('Enables or disables any 3D rendering scaling')
+        sizer.Add(self.userenderscalecb, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.userenderscalech = wx.Choice(dialog, choices = ["0", "1"])
+        self.userenderscalech.SetToolTip('Enables or disabany 3D rendering scaling')
+        self.userenderscalech.SetSelection(0)
+        sizer.Add(self.userenderscalech, 1, wx.ALIGN_CENTER_VERTICAL)
+
         self.renderscalecb = wx.CheckBox(dialog, label = "renderscale")
-        self.renderscalecb.SetToolTip('Changes the scale at which the 3D world is rendered relative to your screen size')
+        self.renderscalecb.SetToolTip('Changes the scale at which the 3D world is rendered relative to your screen size - also enables /userenderscale 1')
         sizer.Add(self.renderscalecb, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.renderscalecb.Bind(wx.EVT_CHECKBOX, self.OnRenderScaleCB)
         self.renderscalesc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.1, max = 20.0, inc = 0.1)
-        self.renderscalesc.SetToolTip('Changes the scale at which the 3D world is rendered relative to your screen size')
+        self.renderscalesc.SetToolTip('Changes the scale at which the 3D world is rendered relative to your screen size - also enables /userenderscale 1')
         sizer.Add(self.renderscalesc, 1, wx.ALIGN_CENTER_VERTICAL)
 
         self.usecelshadercb = wx.CheckBox(dialog, label = "usecelshader")
@@ -80,11 +98,29 @@ class GraphicsCmd(PowerBinderCommand):
         centeringSizer.Add(sizer, 0, wx.ALIGN_CENTER_HORIZONTAL)
         return centeringSizer
 
+    def OnDOFWeightCB(self, evt):
+        evt.Skip()
+        if self.dofweightcb.IsChecked():
+            self.usedofcb.SetValue(True)
+            self.usedofch.SetSelection(1)
+
+    def OnRenderScaleCB(self, evt):
+        evt.Skip()
+        if self.renderscalecb.IsChecked():
+            self.userenderscalecb.SetValue(True)
+            self.userenderscalech.SetSelection(1)
+
     def MakeBindString(self) -> str:
         # choice 1, do this one at a time by hand;  choice 2, hack up some data-driven iterable.  I choose 1.
         bindstrings = []
         if self.visscalecb.IsChecked():
             bindstrings.append("visscale " + str(self.visscalesc.GetValue()))
+        if self.usedofcb.IsChecked():
+            usedofvalue = ""
+            usedofselection = self.usedofch.GetSelection()
+            if usedofselection != wx.NOT_FOUND:
+                usedofvalue = self.usedofch.GetString(usedofselection)
+            bindstrings.append("usedof " + usedofvalue)
         if self.dofweightcb.IsChecked():
             bindstrings.append("dofweight " + str(self.dofweightsc.GetValue()))
         if self.fsaacb.IsChecked():
@@ -103,6 +139,12 @@ class GraphicsCmd(PowerBinderCommand):
             bindstrings.append("bloomweight " + str(self.bloomweightsc.GetValue()))
         if self.lodbiascb.IsChecked():
             bindstrings.append("lodbias " + str(self.lodbiassc.GetValue()))
+        if self.userenderscalecb.IsChecked():
+            userenderscalevalue = ""
+            userenderscaleselection = self.userenderscalech.GetSelection()
+            if userenderscaleselection != wx.NOT_FOUND:
+                userenderscalevalue = self.userenderscalech.GetString(userenderscaleselection)
+            bindstrings.append("userenderscale " + userenderscalevalue)
         if self.renderscalecb.IsChecked():
             bindstrings.append("renderscale " + str(self.renderscalesc.GetValue()))
         if self.usecelshadercb.IsChecked():
@@ -121,6 +163,10 @@ class GraphicsCmd(PowerBinderCommand):
         return '$$'.join(bindstrings)
 
     def Serialize(self) -> dict:
+        usedofvalue = ""
+        usedofselection = self.usedofch.GetSelection()
+        if usedofselection != wx.NOT_FOUND:
+            usedofvalue = self.usedofch.GetString(usedofselection)
         fsaavalue = ""
         fsaaselection = self.fsaach.GetSelection()
         if fsaaselection != wx.NOT_FOUND:
@@ -129,6 +175,10 @@ class GraphicsCmd(PowerBinderCommand):
         bloomscaleselection = self.bloomscalech.GetSelection()
         if bloomscaleselection != wx.NOT_FOUND:
             bloomscalevalue = self.bloomscalech.GetString(bloomscaleselection)
+        userenderscalevalue = ""
+        userenderscaleselection = self.userenderscalech.GetSelection()
+        if userenderscaleselection != wx.NOT_FOUND:
+            userenderscalevalue = self.userenderscalech.GetString(userenderscaleselection)
         usecelshadervalue = ""
         usecelshaderselection = self.usecelshaderch.GetSelection()
         if usecelshaderselection != wx.NOT_FOUND:
@@ -138,29 +188,35 @@ class GraphicsCmd(PowerBinderCommand):
         if usehdrselection != wx.NOT_FOUND:
             usehdrvalue = self.usehdrch.GetString(usehdrselection)
         return {
-            'visscalecb'     : self.visscalecb.IsChecked(),
-            'visscalesc'     : self.visscalesc.GetValue(),
-            'dofweightcb'    : self.dofweightcb.IsChecked(),
-            'dofweightsc'    : self.dofweightsc.GetValue(),
-            'fsaacb'         : self.fsaacb.IsChecked(),
-            'fsaach'         : fsaavalue,
-            'bloomscalecb'   : self.bloomscalecb.IsChecked(),
-            'bloomscalech'   : bloomscalevalue,
-            'bloomweightcb'  : self.bloomweightcb.IsChecked(),
-            'bloomweightsc'  : self.bloomweightsc.GetValue(),
-            'lodbiascb'      : self.lodbiascb.IsChecked(),
-            'lodbiassc'      : self.lodbiassc.GetValue(),
-            'renderscalecb'  : self.renderscalecb.IsChecked(),
-            'renderscalesc'  : self.renderscalesc.GetValue(),
-            'usecelshadercb' : self.usecelshadercb.IsChecked(),
-            'usecelshaderch' : usecelshadervalue,
-            'usehdrcb'       : self.usehdrcb.IsChecked(),
-            'usehdrch'       : usehdrvalue,
+            'visscalecb'       : self.visscalecb.IsChecked(),
+            'visscalesc'       : self.visscalesc.GetValue(),
+            'usedofcb'         : self.usedofcb.IsChecked(),
+            'usedofch'         : usedofvalue,
+            'dofweightcb'      : self.dofweightcb.IsChecked(),
+            'dofweightsc'      : self.dofweightsc.GetValue(),
+            'fsaacb'           : self.fsaacb.IsChecked(),
+            'fsaach'           : fsaavalue,
+            'bloomscalecb'     : self.bloomscalecb.IsChecked(),
+            'bloomscalech'     : bloomscalevalue,
+            'bloomweightcb'    : self.bloomweightcb.IsChecked(),
+            'bloomweightsc'    : self.bloomweightsc.GetValue(),
+            'lodbiascb'        : self.lodbiascb.IsChecked(),
+            'lodbiassc'        : self.lodbiassc.GetValue(),
+            'userenderscalecb' : self.userenderscalecb.IsChecked(),
+            'userenderscalech' : userenderscalevalue,
+            'renderscalecb'    : self.renderscalecb.IsChecked(),
+            'renderscalesc'    : self.renderscalesc.GetValue(),
+            'usecelshadercb'   : self.usecelshadercb.IsChecked(),
+            'usecelshaderch'   : usecelshadervalue,
+            'usehdrcb'         : self.usehdrcb.IsChecked(),
+            'usehdrch'         : usehdrvalue,
         }
 
     def Deserialize(self, init) -> None:
         self.visscalecb.SetValue(init.get('visscalecb', False))
         self.visscalesc.SetValue(init.get('visscalesc', 1.0))
+        self.usedofcb.SetValue(init.get('usedofcb', False))
+        self.usedofch.SetStringSelection(init.get('usedofch', ''))
         self.dofweightcb.SetValue(init.get('dofweightcb', False))
         self.dofweightsc.SetValue(init.get('dofweightsc', 1.0))
         self.fsaacb.SetValue(init.get('fsaacb', False))
@@ -171,6 +227,8 @@ class GraphicsCmd(PowerBinderCommand):
         self.bloomweightsc.SetValue(init.get('bloomweightsc', 1.0))
         self.lodbiascb.SetValue(init.get('lodbiascb', False))
         self.lodbiassc.SetValue(init.get('lodbiassc', 1.0))
+        self.userenderscalecb.SetValue(init.get('userenderscalecb', False))
+        self.userenderscalech.SetStringSelection(init.get('userenderscalech', ''))
         self.renderscalecb.SetValue(init.get('renderscalecb', False))
         self.renderscalesc.SetValue(init.get('renderscalesc', 1.0))
         self.usecelshadercb.SetValue(init.get('usecelshadercb', False))

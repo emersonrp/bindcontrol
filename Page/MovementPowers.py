@@ -482,8 +482,17 @@ class MovementPowers(Page):
         self.MainSizer.Add(topSizer, flag = wx.ALL|wx.ALIGN_CENTER_HORIZONTAL)
 
         pub.subscribe(self.OnPowerSelectorChanged, 'powerselectorchanged')
+        pub.subscribe(self.OnArchChanged, 'archetypechanged')
+        pub.subscribe(self.OnPoolChanged, 'powersetchanged.pool')
 
     def OnPowerSelectorChanged(self, control):
+        self.SynchronizeUI()
+
+    def OnArchChanged(self, profile):
+        self.OnFlyChanged()
+        self.OnTeleportChanged()
+
+    def OnPoolChanged(self):
         self.SynchronizeUI()
 
     def ShowControlGroup(self, group, show = True) -> None:

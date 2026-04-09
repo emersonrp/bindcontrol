@@ -2,7 +2,9 @@
 import wx
 import wx.adv
 import wx.lib.stattext as ST
+from pubsub import pub
 from typing import Any
+
 import UI
 import Profile
 from Icon import GetIconBitmap
@@ -381,6 +383,7 @@ class General(Page):
         if evt: evt.Skip()
 
     def OnPickArchetype(self, evt = None) -> None:
+        if evt: evt.Skip()
         arch = self.GetState('Archetype')
         prof = self.Profile
         c = self.Ctrls
@@ -419,13 +422,7 @@ class General(Page):
             if self.Server == 'Rebirth':
                 wx.CallAfter(self.UpdatePoolPickers)
 
-        if getattr(self.Profile, 'Mastermind', None):
-            wx.CallAfter(self.Profile.Mastermind.SynchronizeUI)
-        if getattr(self.Profile, 'MovementPowers', None):
-            # touch up the UI in MovementPowers in case we changed to a Kheldian arch
-            wx.CallAfter(self.Profile.MovementPowers.OnFlyChanged)
-            wx.CallAfter(self.Profile.MovementPowers.OnTeleportChanged)
-
+        # show or hide Mastermind page as appropriate
         if arch == "Mastermind":
             if prof.FindPage(prof.Mastermind) == wx.NOT_FOUND:
                 ip_idx = prof.FindPage(prof.InspirationPopper)
@@ -437,12 +434,12 @@ class General(Page):
             if mmidx != wx.NOT_FOUND:
                 prof.RemovePage(mmidx)
 
-        if evt: evt.Skip()
+        pub.sendMessage('archetypechanged', profile = prof)
 
     def OnPickOrigin(self, evt = None) -> None:
+        if evt: evt.Skip()
         if not self.GetState('Origin'):
             self.SetState('Origin', 'Magic')
-        if evt: evt.Skip()
 
     def UpdatePoolPickers(self) -> None:
         c = self.Ctrls
@@ -486,37 +483,40 @@ class General(Page):
             self.Profile.UpdateData('General', pickername, self.GetState(pickername))
 
     def OnPickPrimaryPowerSet(self, evt) -> None:
+        evt.Skip()
         self.Profile.CheckAllConflicts()
         self.SetupPowerSelectors()
         self.Ctrls['PrimaryPowers'].ClearPowers()
         wx.CallAfter(self.Profile.Mastermind.SynchronizeUI)
-        evt.Skip()
+        pub.sendMessage('powersetchanged.primary')
 
     def OnPickSecondaryPowerSet(self, evt) -> None:
+        evt.Skip()
         self.Profile.CheckAllConflicts()
         self.SetupPowerSelectors()
         self.Ctrls['SecondaryPowers'].ClearPowers()
-        evt.Skip()
+        pub.sendMessage('powersetchanged.secondary')
 
     def OnPickEpicPowerSet(self, evt) -> None:
+        evt.Skip()
         self.SetupPowerSelectors()
         self.Ctrls['EpicPowers'].ClearPowers()
-        evt.Skip()
+        pub.sendMessage('powersetchanged.epic')
 
     def OnPickPoolPower(self, evt) -> None:
+        evt.Skip()
         self.UpdatePoolPickers()
         self.Profile.CheckAllConflicts()
         self.SetupPowerSelectors()
         pname = evt.GetEventObject().CtlName
         self.Ctrls[f'{pname}Powers'].ClearPowers()
-        wx.CallAfter(self.Profile.MovementPowers.SynchronizeUI)
-        evt.Skip()
+        pub.sendMessage('powersetchanged.pool')
 
     def OnTypeEnable(self, evt = None) -> None:
+        if evt: evt.Skip()
         typeenabled = self.GetState('TypingNotifierEnable')
         self.EnableControls(typeenabled, ['TypingNotifier'])
         self.Layout()
-        if evt: evt.Skip()
 
     def ValidateServerPicker(self) -> None:
         if not self.GetState('Server'): self.SetState('Server', 'Homecoming')

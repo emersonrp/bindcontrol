@@ -1,4 +1,5 @@
 import wx
+from pubsub import pub
 import re
 
 import GameData
@@ -132,6 +133,14 @@ class Mastermind(Page):
         self.MainSizer.Add(self.BindstyleLabel, 0, wx.EXPAND)
         self.MainSizer.Add(self.BindStyleNotebook, 1, wx.EXPAND)
 
+        pub.subscribe(self.OnArchChanged, 'archetypechanged')
+        pub.subscribe(self.OnPrimaryChanged, 'powersetchanged.primary')
+        self.SynchronizeUI()
+
+    def OnArchChanged(self, profile):
+        self.SynchronizeUI()
+
+    def OnPrimaryChanged(self):
         self.SynchronizeUI()
 
     def NoBindStylePage(self):

@@ -174,7 +174,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /set_difficulty_level level | Sets the level part of your Notoriety |
 | /set_difficulty_team_size size | Sets the team size part of your Notoriety |
 | /set_powerinfo_class | Brings up context menu for choosing archetype for power info display. |
-| /set_title number | Set badge title by number, if you do not have the specified badge your current badge title will be cleared. |
 | /sg_enter_passcode | When the Base Entry Selection window is open, opens a secondary window to enter a Supergroup Base Access Passcode. |
 | /sgk character | Kick character from supergroup. |
 | /sgkickyes name | Kick player from supergroup, without confirmation. |

@@ -1,2 +1,3 @@
-# Add any future requirements here
-# blank file used for actions-cache for now...
+wxpython
+pillow
+pypubsub

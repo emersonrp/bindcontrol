@@ -95,6 +95,7 @@ class Profile(wx.Notebook):
         pub.subscribe(self.CheckAllConflicts, 'prefschanged.resetkey')
         pub.subscribe(self.OnDeletePanel, 'deletepanel')
         pub.subscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
+        pub.subscribe(self.OnMMBindStyleChanged, 'mmbindstylechanged')
 
     def CreatePage(self, page):
         page.BuildPage()
@@ -367,6 +368,9 @@ class Profile(wx.Notebook):
         self.CheckAllConflicts()
 
     def OnKeyButtonChanged(self, control):
+        self.CheckAllConflicts()
+
+    def OnMMBindStyleChanged(self, bindstyle):
         self.CheckAllConflicts()
 
     def InspectData(self, *args):

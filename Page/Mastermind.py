@@ -85,13 +85,12 @@ class Mastermind(Page):
         self.Ctrls['MMLevel'] = self.LevelSlider
 
         RenameLabel = wx.StaticText(PetNameSB, label = 'Rename Pets:')
-        RenameLabel          .SetToolTip('Choose the key that will rename your pets, in-game, to match the names set in BindControl')
+        RenameLabel.SetToolTip('Choose the key that will rename your pets, in-game, to match the names set in BindControl')
         self.RenamePetsButton = bcKeyButton(PetNameSB, init = {
                 'CtlName'  : 'RenamePets',
                 'Key'      : self.Init['RenamePets'],
                 'ToolTip'  :'Choose the key that will rename your pets, in-game, to match the names set in BindControl',
             })
-        self.RenamePetsButton.SetToolTip('Choose the key that will rename your pets, in-game, to match the names set in BindControl')
         self.Ctrls['RenamePets'] = self.RenamePetsButton
 
         PetExtraTop.Add(RenameLabel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
@@ -148,7 +147,8 @@ class Mastermind(Page):
 
         BlankSizer = wx.BoxSizer(wx.HORIZONTAL)
         helptext = wx.StaticText(page, style = wx.ALIGN_CENTER,
-                                 label = "No Mastermind bind style selected.\nBy-name selection binds will still work.")
+                                 label = "No Mastermind bind style selected.\nBy-name selection binds will still work.",
+                                 size = wx.Size(-1, 100))
         helptext.SetFont(wx.Font(wx.FontInfo(16).Bold()))
         BlankSizer.Add(helptext, 1, wx.ALIGN_CENTER_VERTICAL)
         page.SetSizer(BlankSizer)
@@ -159,13 +159,12 @@ class Mastermind(Page):
     def GetKeyBinds(self):
         binds = super().GetKeyBinds()
 
-        bindstyle = self.BindStyle()
-
-        if bindstyle == 'qwy Numpad':
+        if self.BindStyle() == 'qwy Numpad':
             binds = binds + self.qwyNumpadPage.GetKeyBinds()
 
         return binds
 
+    # TODO do we want to make this some sort of Final constants or am I overthinking it?
     def BindStyle(self):
         return ['No Binds', 'Sandolphan', 'qwy Numpad', 'qwy PetMouse'][self.BindStyleNotebook.GetSelection()]
 
@@ -190,6 +189,8 @@ class Mastermind(Page):
         self.OnBindStyleChanged()
 
     def OnBindStyleChanged(self, evt = None):
+        if evt: evt.Skip()
+
         bindstyle = self.BindStyle()
         for ctrl in self.SandolphanPage.SandolphanKeyButtons.values():
             ctrl.Enable(bindstyle == 'Sandolphan')
@@ -197,20 +198,10 @@ class Mastermind(Page):
         for ctrl in self.qwyPetMousePage.qwyPetMouseKeyButtons.values():
             ctrl.Enable(bindstyle == 'qwy PetMouse')
 
-        self.Profile.CheckAllConflicts()
+        pub.sendMessage('mmbindstylechanged', bindstyle = bindstyle)
 
-        # we want to re-fill the gameplay trays if we're no longer using '2' and '4' from PetMouse
-        # TODO - should this just be part of CheckAllConflicts?
-        self.Profile.Gameplay.OnKeybindProfilePicker()
-
-        if bindstyle == 'Sandolphan':
-            self.SandolphanPage.SynchronizeUI()
-        elif bindstyle == 'qwy Numpad':
-            self.qwyNumpadPage.SynchronizeUI()
-        elif bindstyle == 'No Binds':
+        if bindstyle == 'No Binds':
             self.BindStyleNotebook.GetPage(0).Refresh()
-
-        if evt: evt.Skip()
 
     def OnLevelChanged(self, evt = None) -> None:
         if evt: evt.Skip()
@@ -225,13 +216,13 @@ class Mastermind(Page):
         self.CheckUniqueNames()
 
     def OnNameTextChange(self, evt = None):
+        if evt: evt.Skip()
         self.CheckUndefNames()
         self.CheckUniqueNames()
         if self.BindStyle() == 'Sandolphan':
             self.SandolphanPage.SynchronizeUI()
         elif self.BindStyle() == 'qwy Numpad':
             self.qwyNumpadPage.SynchronizeUI()
-        if evt: evt.Skip()
 
     def CheckUndefNames(self) -> None:
         for i in (1,2,3,4,5,6):

@@ -1,5 +1,6 @@
 import wx
 import wx.lib.agw.ultimatelistctrl as ulc
+from pubsub import pub
 from Help import HelpButton
 
 import GameData
@@ -47,6 +48,12 @@ class qwyNumpad(wx.Panel):
 
         self.Fit()
         self.Layout()
+
+        pub.subscribe(self.OnMMBindStyleChanged, 'mmbindstylechanged')
+
+    def OnMMBindStyleChanged(self, bindstyle):
+        if bindstyle == 'qwy Numpad':
+            self.SynchronizeUI()
 
     def SynchronizeUI(self):
         self.PopulateButtonGrid()

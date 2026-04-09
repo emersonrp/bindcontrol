@@ -1,4 +1,5 @@
 import wx
+from pubsub import pub
 import re
 import UI
 import GameData
@@ -209,6 +210,12 @@ class SandolphanBinds(wx.Panel):
         petCommandsKeys.InnerSizer.Add(self.BGCBSizer, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 10)
 
         SandolphanSizer.Add(petCommandsKeys, 0, wx.EXPAND|wx.ALL, 0)
+
+        pub.subscribe(self.OnMMBindStyleChanged, 'mmbindstylechanged')
+
+    def OnMMBindStyleChanged(self, bindstyle):
+        if bindstyle == 'Sandolphan':
+            self.SynchronizeUI()
 
     def SynchronizeUI(self, evt = None):
         for i in range(6):

@@ -279,8 +279,12 @@ class Gameplay(Page):
         self.MainSizer.Add(bottomSizer, flag = wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
 
         pub.subscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
+        pub.subscribe(self.OnMMBindStyleChanged, 'mmbindstylechanged')
 
     def OnKeyButtonChanged(self, control):
+        self.OnKeybindProfilePicker()
+
+    def OnMMBindStyleChanged(self, bindstyle):
         self.OnKeybindProfilePicker()
 
     def SynchronizeUI(self, evt = None) -> None:

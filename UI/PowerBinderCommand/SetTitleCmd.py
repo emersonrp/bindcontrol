@@ -1,4 +1,6 @@
 import wx
+import re
+
 import GameData
 from UI.PowerBinderCommand import PowerBinderCommand
 
@@ -15,8 +17,7 @@ class SetTitleCmd(PowerBinderCommand):
         self.titleName = wx.Button(dialog)
         titleSizer.Add(self.titleName, 1, wx.ALIGN_CENTER_VERTICAL)
 
-        self.BadgeData = {}
-        self.TitleNumer = None
+        self.BadgeData   = {}
 
         self.MassageBadgeData()
 
@@ -25,7 +26,11 @@ class SetTitleCmd(PowerBinderCommand):
         return titleSizer
 
     def MakeBindString(self) -> str:
-        return "settitle " + self.TitleNumber
+        match = re.search(r'(\d+)$', self.titleName.GetLabel())
+        if match.groups():
+            return "settitle " + match.groups()[0]
+        else:
+            return ''
 
     def Serialize(self) -> dict:
         return {'titleName': self.titleName.GetLabel()}
@@ -34,7 +39,7 @@ class SetTitleCmd(PowerBinderCommand):
         if init.get('titleName', ''): self.titleName.SetLabel(init['titleName'])
 
     def PopupBadgeMenu(self, evt):
-        self.titleName.PopupMenu(BadgeMenu(self.titleName, self))
+        self.titleName.PopupMenu(BadgeMenu(self.titleName, self.BadgeData))
 
     # set up the GameData badge data with alignment-appropriate names
     def MassageBadgeData(self, evt = None):
@@ -58,10 +63,10 @@ class SetTitleCmd(PowerBinderCommand):
 
 
 class BadgeMenu(wx.Menu):
-    def __init__(self, button, commandobj):
+    def __init__(self, button, badgedata):
         super().__init__()
 
-        badgedata = commandobj.BadgeData
+        self.Button = button
 
         for category in sorted(badgedata):
             badgemenu = wx.Menu()
@@ -70,6 +75,11 @@ class BadgeMenu(wx.Menu):
                 badgeid = badgedata[category][name]
                 badgemenu.Append(wx.ID_ANY, f"{name} - {badgeid}")
 
+        self.Bind(wx.EVT_MENU, self.OnMenuSelection)
+
 
     def OnMenuSelection(self, evt):
-        ...
+        evt.Skip()
+        menuitem = self.FindItemById(evt.GetId())
+        label = menuitem.GetItemLabelText()
+        self.Button.SetLabel(label)

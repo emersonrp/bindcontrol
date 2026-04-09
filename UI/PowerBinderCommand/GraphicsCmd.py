@@ -17,11 +17,19 @@ class GraphicsCmd(PowerBinderCommand):
         self.visscalesc.SetToolTip('Controls the distance at which world details are rendered (larger values render more details, farther away)')
         sizer.Add(self.visscalesc, 1, wx.ALIGN_CENTER_VERTICAL)
 
+        self.usedofcb = wx.CheckBox(dialog, label = "usedof")
+        self.usedofcb.SetToolTip('Enables or disables Depth of Field Effects')
+        sizer.Add(self.usedofcb, 0, wx.ALIGN_CENTER_VERTICAL)
+        self.usedofch = wx.Choice(dialog, choices = ["0", "1"])
+        self.usedofch.SetToolTip('Enables or disabany Depth of Field Effects')
+        self.usedofch.SetSelection(0)
+        sizer.Add(self.usedofch, 1, wx.ALIGN_CENTER_VERTICAL)
+
         self.dofweightcb = wx.CheckBox(dialog, label = "dofweight")
-        self.dofweightcb.SetToolTip('Controls the distance for how "blurry" Depth of Field effects are.')
+        self.dofweightcb.SetToolTip('Controls the distance for how "blurry" Depth of Field effects are - also executes /usedof 1')
         sizer.Add(self.dofweightcb, 0, wx.ALIGN_CENTER_VERTICAL)
         self.dofweightsc = wx.SpinCtrlDouble(dialog, initial = 1.0, min = 0.5, max = 2.0, inc = 0.1)
-        self.dofweightsc.SetToolTip('Controls the distance for how "blurry" Depth of Field effects are.')
+        self.dofweightsc.SetToolTip('Controls the distance for how "blurry" Depth of Field effects are - also executes /usedof 1')
         sizer.Add(self.dofweightsc, 1, wx.ALIGN_CENTER_VERTICAL)
 
         self.fsaacb = wx.CheckBox(dialog, label = "fsaa")
@@ -93,8 +101,14 @@ class GraphicsCmd(PowerBinderCommand):
         bindstrings = []
         if self.visscalecb.IsChecked():
             bindstrings.append("visscale " + str(self.visscalesc.GetValue()))
+        if self.usedofcb.IsChecked():
+            usedofvalue = ""
+            usedofselection = self.usedofch.GetSelection()
+            if usedofselection != wx.NOT_FOUND:
+                usedofvalue = self.usedofch.GetString(usedofselection)
+            bindstrings.append("usedof " + usedofvalue)
         if self.dofweightcb.IsChecked():
-            bindstrings.append("dofweight " + str(self.dofweightsc.GetValue()))
+            bindstrings.append("usedof 1$$dofweight " + str(self.dofweightsc.GetValue()))
         if self.fsaacb.IsChecked():
             fsaavalue = ""
             fsaaselection = self.fsaach.GetSelection()
@@ -135,6 +149,10 @@ class GraphicsCmd(PowerBinderCommand):
         return '$$'.join(bindstrings)
 
     def Serialize(self) -> dict:
+        usedofvalue = ""
+        usedofselection = self.usedofch.GetSelection()
+        if usedofselection != wx.NOT_FOUND:
+            usedofvalue = self.usedofch.GetString(usedofselection)
         fsaavalue = ""
         fsaaselection = self.fsaach.GetSelection()
         if fsaaselection != wx.NOT_FOUND:
@@ -158,6 +176,8 @@ class GraphicsCmd(PowerBinderCommand):
         return {
             'visscalecb'       : self.visscalecb.IsChecked(),
             'visscalesc'       : self.visscalesc.GetValue(),
+            'usedofcb'         : self.usedofcb.IsChecked(),
+            'usedofch'         : usedofvalue,
             'dofweightcb'      : self.dofweightcb.IsChecked(),
             'dofweightsc'      : self.dofweightsc.GetValue(),
             'fsaacb'           : self.fsaacb.IsChecked(),
@@ -181,6 +201,8 @@ class GraphicsCmd(PowerBinderCommand):
     def Deserialize(self, init) -> None:
         self.visscalecb.SetValue(init.get('visscalecb', False))
         self.visscalesc.SetValue(init.get('visscalesc', 1.0))
+        self.usedofcb.SetValue(init.get('usedofcb', False))
+        self.usedofch.SetStringSelection(init.get('usedofch', ''))
         self.dofweightcb.SetValue(init.get('dofweightcb', False))
         self.dofweightsc.SetValue(init.get('dofweightsc', 1.0))
         self.fsaacb.SetValue(init.get('fsaacb', False))

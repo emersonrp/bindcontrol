@@ -224,7 +224,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /unlevelingpact | Bring up the dialog for quitting a leveling pact. |
 | /unloadgfx | unloads all textures (causing them to be reloaded dynamically). Alias: /reloadgfx |
 | /useCubemap number | Use cubemap |
-| /usedof | Use Depth of Field effects if available |
 | /usefp | Use a floating point render target for HDR lighting effects if available |
 | /usewater | Use fancy water effects if available |
 | /watching | List all members of all chat channels that you belong to |

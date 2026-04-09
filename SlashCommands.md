@@ -15,20 +15,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /auc_loginupdate | Get status of auction inventory info to the player. Displays how many items were bought and sold in the Consignment House chat channel. |
 | /build_save | Saves the current character build (Name, Level, Archetype, Origin, Powers and Slotted Enhancements) to build.txt |
 | /build_save_file filename | Saves the current character build (Name, Level, Archetype, Origin, Powers and Slotted Enhancements) to a specified file |
-| /chan_create channel | Create a new chat channel |
-| /chan_desc channel description | Set the channel's description |
-| /chan_invite channel username | Invite a player or chat handle to a chat channel. Alias: /ginvite |
-| /chan_invite_gf channel | Invites your entire global friends list to a global chat channel |
-| /chan_invite_sg channel rank | Invite your entire Supergroup to a global chat channel. Only leaders may use this command. The rank parameter may be any of the ranks listed below. Alias: /ginvite_sg |
-| /chan_invite_team channel | Invites your entire team or Task Force to a Global chat channel |
-| /chan_join channel | Join an existing chat channel |
-| /chan_leave channel | Leave a chat channel |
-| /chan_members channel | List all members of channel |
-| /chan_mode channel options | Changes default access rights for new user who joins the channel. If you set -join, no one can join unless invited by an operator. |
-| /chan_motd channel message | Set the channel's Message Of The Day, which is sent to everyone that joins or logs into the channel |
-| /chan_send channel message | Send message to chat channel. You must be in the channel and have Send priviledges. Alias: /send |
-| /chan_timeout <channel name> <days> | Sets the number of days a member of a global channel must go without logging in before being automatically kicked from the channel. |
-| /chan_user_mode channel global options | Sets user permissions for the user with the handle global (without the @) on channel. You must have operator status to set permissions. |
 | /chat_cycle | Cycles through the default chat channels |
 | /chatoptions [0-4] | Activates context menu for the chat windows. |
 | /chat_set channel_name | Changes the default channel in the chat window. |
@@ -268,7 +254,21 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /base_default_sky number | Sets SG base editing default sky setting to one of 16 preset values |
 | /boost_convert | Converts the specified enhancement into a different enhancement. |
 | /camdistadjust | Adjusts the camera distance relative to the current camera distance. |
+| /chan_create channel | Create a new chat channel |
+| /chan_desc channel description | Set the channel's description |
+| /chan_invite channel username | Invite a player or chat handle to a chat channel. Alias: /ginvite |
+| /chan_invite_gf channel | Invites your entire global friends list to a global chat channel |
+| /chan_invite_sg channel rank | Invite your entire Supergroup to a global chat channel. Only leaders may use this command. The rank parameter may be any of the ranks listed below. Alias: /ginvite_sg |
+| /chan_invite_team channel | Invites your entire team or Task Force to a Global chat channel |
 | /chan_invitedeny channel name_string | Chat channel invite denied message. Appears to be an internal command. |
+| /chan_join channel | Join an existing chat channel |
+| /chan_leave channel | Leave a chat channel |
+| /chan_members channel | List all members of channel |
+| /chan_mode channel options | Changes default access rights for new user who joins the channel. If you set -join, no one can join unless invited by an operator. |
+| /chan_motd channel message | Set the channel's Message Of The Day, which is sent to everyone that joins or logs into the channel |
+| /chan_send channel message | Send message to chat channel. You must be in the channel and have Send priviledges. Alias: /send |
+| /chan_timeout <channel name> <days> | Sets the number of days a member of a global channel must go without logging in before being automatically kicked from the channel. |
+| /chan_user_mode channel global options | Sets user permissions for the user with the handle global (without the @) on channel. You must have operator status to set permissions. |
 | /change_handle new_global | Change your global user name, if allowed. |
 | /clear_tray | Removes all power icons from all power trays; preserves macros |
 | /cmdlist | Prints out most slash commands in the chat window |
@@ -328,7 +328,6 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /sgsetmotto motto | Sets the supergroup's motto. |
 | /supporthardwarelights | Enable support for AlienFX/LightFX case lights. |
 | /texaniso | Sets the amount of anisotropic filtering to use, reloads textures |
-| /thumbtack x y z | Adds a thumbtack to the map at the specified X/Y/Z coordinates |
 | /useHQ number | Allow use of High Quality shader variants |
 
 
@@ -363,6 +362,7 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /selected_ent_server_index | send selected entity ? |
 | /soundDebugName | name of sound to debug (will only play this sound name) ? |
 | /splatShadowBias | Change how far from the camera to give people shadows. //scales distance to draw entitys' splat shadow. |
+| /thumbtack x y z | Adds a thumbtack to the map at the specified X/Y/Z coordinates |
 | /turnstile_invite_player_accept <dbID> <int> <int> | Invite player to the leaders instance ? |
 | /useFBOs | Use FBOs, if supported, for off-screen rendering ? |
 | /useMRTs | Use MRTs, for DoF effect debugging |

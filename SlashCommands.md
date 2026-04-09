@@ -35,7 +35,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /contactfinder_showprevious | Shows the previous contact in the Contact Finder window. |
 | /contactfinder_teleporttocurrent | Teleports you to the contact currently detailed in the Contact Finder window. |
 | /contextmenu menu_num | Activate a context menu slot. |
-| /cooldown_indicator [0-3] | Sets cooldown timer onto tray icons: Recharge indicator setting (0=off, 1=bottom, 2=top, 3=center) Alias: /recharge_indicator |
 | /copychat tab | Copy the entire chat history from specified chat Tab into the clipboard |
 | /ctm [0-1] | Alias for /clicktomove |
 | /ctm_invert [0-1] | Alias for /clicktomove. |
@@ -136,11 +135,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /profiler_stop | Stop recording profiler information. |
 | /profiling_memory | Set the number of MB of memory to use for profiling |
 | /promote character | Promote supergroup member one rank |
-| /recharge_indicator [0-3] | Sets the position of the recharge timer on tray icons. |
-| /recharge_timer_color | Sets the Recharge Timer Color. |
-| /recharge_timer_format | Sets the Recharge Timer Format. |
-| /recharge_timer_opacity | Sets the Recharge Timer Opacity. |
-| /recharge_timer_threshold | Enables the Power Recharge Timer and sets the threshold for when the timer will appear. |
 | /release_pets | Release your current pets |
 | /requestexitmission number | Leave the mission once it is completed. It requires a number argument, but the number doesn't seem to do anything. |
 | /respec | Go to the power respecification screen if you have a free respec |
@@ -196,9 +190,6 @@ Anything not found on this list has been implemented, or is a longer alias to a 
 | /toggle_enemy_prev | Cycles through targetable enemies in reverse order |
 | /trade character | Invite character to trade, must have character targeted if no name is provided |
 | /trade_accept | Recieves a trade accept (unfinished or internal command) |
-| /tray_always_shrink | Shrink power icons when recharging. |
-| /tray_animations | Power Tray Animations. |
-| /tray_labels | Power Tray Labels. |
 | /traysticky [1-2] [0-1] | Show or hide the secondary (Alt) or tertiary (Alt2) tray slot. |
 | /traystickyalt2 | Toggles the tertiary (Alt2) tray slot (show/hide). |
 | /ttl character_name, message | Send a message to a character's team leader. |
@@ -275,6 +266,7 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /compatiblecursors | Enables useage of basic Windows mouse cursors instead of graphical cursors (command line option) |
 | /controller_modifiers <first> <second> | Allows setting two controller buttons as modifiers on a gamepad |
 | /controller_vmouse <LMB> <RMB> [MMB] [Snap] | Configures virtual mouse mode buttons on a gamepad |
+| /cooldown_indicator [0-3] | Sets cooldown timer onto tray icons: Recharge indicator setting (0=off, 1=bottom, 2=top, 3=center) Alias: /recharge_indicator |
 | /cursorcache | Enable cursor cache for smoother cursor changes |
 | /demodump | Alias for /demostop |
 | /demodumptga [0-1] | dump frames to tga files |
@@ -315,6 +307,11 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /powexec_slot slot | Executes the given power slot in the primary tray slot |
 | /prevshaders | Use previous Cg shader set found in 'cgfx/prev' subfolder for comparison/debugging |
 | /prev_trays_tray 1-3 | Go to previous power tray in the specified tray slot. |
+| /recharge_indicator [0-3] | Sets the position of the recharge timer on tray icons. |
+| /recharge_timer_color | Sets the Recharge Timer Color. |
+| /recharge_timer_format | Sets the Recharge Timer Format. |
+| /recharge_timer_opacity | Sets the Recharge Timer Opacity. |
+| /recharge_timer_threshold | Enables the Power Recharge Timer and sets the threshold for when the timer will appear. |
 | /reduce_mip | Reduces the resolution of textures to only use the reduced (mip-map) textures. Must pass as command line arg -reduce_mip or you need to subsequently run unloadgfx |
 | /renderscalex | Changes the horizontal scale at which the 3D world is rendered relative to your screen size |
 | /renderscaley | Changes the vertical scale at which the 3D world is rendered relative to your screen size |
@@ -328,6 +325,9 @@ These are commands that seem either too fiddly or too situational to want to bin
 | /sgsetmotto motto | Sets the supergroup's motto. |
 | /supporthardwarelights | Enable support for AlienFX/LightFX case lights. |
 | /texaniso | Sets the amount of anisotropic filtering to use, reloads textures |
+| /tray_always_shrink | Shrink power icons when recharging. |
+| /tray_animations | Power Tray Animations. |
+| /tray_labels | Power Tray Labels. |
 | /useHQ number | Allow use of High Quality shader variants |
 
 

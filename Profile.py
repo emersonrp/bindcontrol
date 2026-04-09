@@ -110,6 +110,7 @@ class Profile(wx.Notebook):
     # Convenience / JIT accessors
     def ProfileName(self)     : return self.Data.ProfileName()
     def Archetype(self)       : return self.Data['General']['Archetype']
+    def Alignment(self)       : return self.Data['General']['Alignment']
     def Primary(self)         : return self.Data['General']['Primary']
     def Secondary(self)       : return self.Data['General']['Secondary']
     def ResetFile(self)       : return self.GetBindFile("reset.txt")

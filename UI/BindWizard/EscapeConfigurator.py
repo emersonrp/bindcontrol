@@ -1,4 +1,6 @@
 import wx
+
+import bcColours
 import UI
 from UI.BindWizard import WizardParent
 from UI.ControlGroup import ControlGroup
@@ -100,17 +102,19 @@ class EscapeConfigurator(WizardParent):
                     'EscResetCam', 'EscNoReward', 'EscDialogNo', 'EscMenu',):
             ctpanel = wx.Panel(cmdPanel)
             if self.CheckIfWellFormed():
-                ctpanel.SetBackgroundColour(wx.Colour(220, 220, 220))
+                ctpanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
             else:
-                ctpanel.SetBackgroundColour(wx.Colour(255, 220, 220))
+                ctpanel.SetBackgroundColour(bcColours.ErrorColour())
                 ctpanel.SetToolTip("No commands are selected;  bind will not be written.")
             ctsizer = wx.BoxSizer(wx.HORIZONTAL)
             ctpanel.SetSizer(ctsizer)
             cmdtext = cgStaticText(ctpanel, label = UI.Labels[cmd], style = wx.ALIGN_CENTER)
             if self.State.get('WizData', {}).get(cmd):
                 cmdtext.SetLabel("✓ " + UI.Labels[cmd])
+                cmdtext.SetFont(wx.Font(wx.FontInfo().Strikethrough(False)))
             else:
-                cmdtext.SetForegroundColour(wx.Colour(160, 160, 160))
+                cmdtext.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_GRAYTEXT))
+                cmdtext.SetFont(wx.Font(wx.FontInfo().Strikethrough(True)))
             ctsizer.Add(cmdtext, 1, wx.EXPAND|wx.ALL, 5)
             cmdSizer.Add(ctpanel, 1, wx.EXPAND)
 

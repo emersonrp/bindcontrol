@@ -54,6 +54,10 @@ def GetIcon(*args) -> Icon:
         pathbits.append(arg)
 
     iconpath    = Path(*pathbits).with_suffix('.png')
+    # dark/light the UI icons
+    if 'UI' in iconpath.parts:
+        darklight = 'dark' if bcColours.DarkMode() else 'light'
+        iconpath = Path('UI') / darklight / iconpath.parts[1] # shim 'dark' or 'light' in there.
     iconpathstr = str(iconpath)
     if iconpathstr not in Icons:
         source = pathbits[0]
@@ -67,9 +71,6 @@ def GetIcon(*args) -> Icon:
             else:
                 wx.LogWarning(f"Missing icon: {source} icon not in sourcemap: {sourcename}")
         else:  # we don't have any such source file, so check the filesystem for the leftover UI icons etc
-            if 'UI' in iconpath.parts:
-                darklight = 'dark' if bcColours.DarkMode() else 'light'
-                iconpath = Path('UI') / darklight / iconpath.parts[1] # shim 'dark' or 'light' in there.
             filepath = Util.Paths.GetRootDirPath() / 'icons' / iconpath
             if filepath.exists():
                 Icons[iconpathstr] = Icon( wx.Image(str(filepath), wx.BITMAP_TYPE_ANY, -1,), iconpathstr)

@@ -23,8 +23,8 @@ class ErrorControlMixin:
         self.DisabledColor  : wx.Colour|None = None
         self.BGColour       : wx.Colour|None = None
 
-        pub.subscribe(self.OnSystemColoursChanged, 'systemcolourschanged')
-        #self.OnSystemColoursChanged()
+        self.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.OnSystemColoursChanged)
+        self.OnSystemColoursChanged()
 
     def Enable(self, enable = True) -> bool:
         if not enable:
@@ -87,7 +87,8 @@ class ErrorControlMixin:
             target.SetStyle(start, end, newstyle)
             target.SelectNone()
 
-    def OnSystemColoursChanged(self):
+    def OnSystemColoursChanged(self, evt = None):
+        if evt: evt.Skip()
         if isinstance(self, wx.TextCtrl):
             self.BGColour = self.GetBackgroundColour()
         else:

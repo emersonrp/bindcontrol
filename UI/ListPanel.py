@@ -71,8 +71,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         self.UpdateLabel()
 
         self.Pane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
-
-        pub.subscribe(self.OnSystemColoursChanged, 'systemcolourschanged')
+        self.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.OnSystemColoursChanged)
 
     def UpdateLabel(self):
         if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
@@ -164,7 +163,8 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
         self.DestroyLater()
         evt.Skip()
 
-    def OnSystemColoursChanged(self):
+    def OnSystemColoursChanged(self, evt = None):
+        if evt: evt.Skip()
         self.Pane.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT))
 
     def OnPaneChanged(self, evt) -> None:

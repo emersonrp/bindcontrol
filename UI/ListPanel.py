@@ -22,7 +22,6 @@ class UIButton(wx.BitmapButton):
         if evt: evt.Skip()
         self.SetBitmap(GetIcon('UI', self.Icon))
 
-
 class ListPanel(ProfileAwareControlMixin, wx.Panel):
     def __init__(self, parent, init : dict|None = None) -> None:
         init = init or {}
@@ -179,6 +178,7 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
 
     def OnSystemColoursChanged(self, evt = None):
         if evt: evt.Skip()
+        self.GetPane().SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT))
         self.Pane.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_3DLIGHT))
 
     def OnPaneChanged(self, evt) -> None:

@@ -198,12 +198,30 @@ class Main(wx.Frame):
 
         self.Bind(wx.EVT_CLOSE, self.OnWindowClosing)
 
+        self.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.OnSysColourChanged)
+
         pub.subscribe(self.OnMenuPrefsDialog, 'showprefsdialog')
         pub.subscribe(self.OnProfileModified, 'checkprofilemodified')
 
     def OnProfileModified(self):
         if self.Profile:
             self.SetTitle(self.Profile.ProfileName() + (" (*)" if self.Profile.IsModified() else ''))
+
+    # pass the system colour change notion on to whomever is interested.
+    def OnSysColourChanged(self, evt):
+        evt.Skip()
+        # If we're showing the Startup Panel, remove and rebuild it
+        if not self.Profile:
+            if self.StartupPanel:
+                self.Sizer.Remove(0)
+                self.StartupPanel.Destroy()
+
+            self.StartupPanel = self.MakeStartupPanel()
+            self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
+
+            self.Layout()
+
+
 
     def SetupInitialProfile(self, input_profile = None):
 

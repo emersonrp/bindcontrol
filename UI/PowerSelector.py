@@ -26,6 +26,7 @@ class PowerSelector(wx.BitmapButton):
         self.Powers                         = []
 
         self.Bind(wx.EVT_BUTTON, self.OnButtonClicked)
+        self.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.OnSystemColourChanged)
         page.Ctrls[pickername].Bind(wx.EVT_CHOICE, self.ClearPowers)
 
     def OnButtonClicked(self, _):
@@ -35,6 +36,10 @@ class PowerSelector(wx.BitmapButton):
         powerlist.Position(wx.Point(evtpos.x + 5, evtpos.y + 5), wx.DefaultSize)
         powerlist.Popup()
         #powerlist.CheckList.SetSelection(wx.NOT_FOUND)
+
+    def OnSystemColourChanged(self, evt):
+        evt.Skip()
+        self.SetBitmap(GetIcon('UI', 'select'))
 
     def ClearPowers(self, evt = None):
         if evt: evt.Skip()

@@ -58,8 +58,10 @@ class WizardBindPane(CustomBindPaneParent):
         # if the pane already has stuff, clear it out
         pane = self.Pane.GetPane()
         if mainSizer := pane.GetSizer():
-            for item in range(mainSizer.GetItemCount()):
+            for item in mainSizer.GetChildren():
+                item = item.GetWindow()
                 mainSizer.Detach(item)
+                item.Destroy()
         else:
             mainSizer = wx.BoxSizer(wx.VERTICAL)
             pane.SetSizer(mainSizer)
@@ -72,9 +74,9 @@ class WizardBindPane(CustomBindPaneParent):
     def UpdateAndRefresh(self, evt = None):
         if evt: evt.Skip()
         self.Wizard.UpdateStateFromDialog()
+        self.BuildBindUI()
         if self.Profile:
             self.Profile.UpdateData('CustomBinds', self.Serialize())
-        self.BuildBindUI()
 
 class WizButton(wx.Button):
     def __init__(self, parent, label, wizclass):
@@ -93,7 +95,7 @@ class WizPickerMenu(wx.Menu):
             menuitem.SetBitmap(GetIcon(*wizClass.IconPath))
             self.Append(menuitem)
             self.Bind(wx.EVT_MENU, partial(page.OnBindWizardPicked, wizClass), menuitem)
-            # Delete the menuitem if it's a unique item ("Escape Configurator" so far)
+            # Disable the menuitem if it's a unique item ("Escape Configurator" so far)
             # and we already have one in there.
             # This is a little hacky, innit?
             if wizClass.IsUnique:

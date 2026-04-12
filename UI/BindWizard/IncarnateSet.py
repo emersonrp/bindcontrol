@@ -68,6 +68,7 @@ class IncarnateSet(WizardParent):
         slots = ['Alpha', 'Interface', 'Judgement', 'Destiny', 'Lore', 'Hybrid']
         if self.Profile.Server() == 'Rebirth':
             slots.append('Genesis')
+        self.slotBitmaps = {}
         for slot in slots:
             if slotData := incarnateData.get(slot):
                 iconfile = slotData['iconfile']
@@ -83,6 +84,7 @@ class IncarnateSet(WizardParent):
             bitmap.Bind(wx.EVT_SYS_COLOUR_CHANGED, partial(self.SetBitmapBGColour, bitmap))
             bitmap.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
             listSizer.Add(bitmap, 0, wx.ALL, 5)
+            self.slotBitmaps[slot] = bitmap
         self.HoverDisplay = wx.StaticText(panel)
         self.HoverDisplay.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         listSizer.Add(self.HoverDisplay, 1, wx.ALL, 10)
@@ -97,7 +99,7 @@ class IncarnateSet(WizardParent):
             'Key'     : bindkey,
         })
         self.BindKeyCtrl.Bind(EVT_KEY_CHANGED, self.OnKeyChanged)
-        BindSizer.Add(wx.StaticText(panel, label = "Bind Key:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
+        BindSizer.Add(wx.StaticText(panel, label = "Slot Incarnate Set:"), 0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT|wx.RIGHT, 5)
         BindSizer.Add(self.BindKeyCtrl,                      0, wx.ALIGN_CENTER_VERTICAL)
         bindpane.Ctrls[self.BindKeyCtrl.CtlName] = self.BindKeyCtrl
         UI.Labels[self.BindKeyCtrl.CtlName] = f'Incarnate Set Bind "{bindpane.Title}"'
@@ -110,12 +112,23 @@ class IncarnateSet(WizardParent):
 
         return panel
 
+    def OnWizardChanged(self):
+        incarnateData = self.State.get('WizData', {}).get('IncData', {})
+        for slot, bitmap in self.slotBitmaps.items():
+            if slotData := incarnateData.get(slot):
+                iconfile = slotData['iconfile']
+            else:
+                iconfile = 'Empty'
+            bitmap.SetBitmap(GetIcon(iconfile))
+
+
     def SetBitmapBGColour(self, bitmap, evt):
         bitmap.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
 
     def UpdateStateFromDialog(self):
         if self.IncarnateBox:
             self.State = { 'WizData' : { 'IncData' : self.IncarnateBox.Serialize() } }
+        self.OnWizardChanged()
 
     def OnHoverIcon(self, markup, evt = None):
         if markup:

@@ -11,7 +11,6 @@ from typing import cast, Literal
 import bcColours
 from Page import Page
 from Page.MacroComposer import MacroPane
-from Help import HelpHTMLWindow
 import UI
 from UI.ControlGroup import cgTextCtrl
 from Icon import GetIcon

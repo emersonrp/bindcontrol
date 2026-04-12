@@ -47,16 +47,16 @@ def BuildSlotData() -> None:
                     if isinstance(effectdata, int) and effectdata == 0:
                         continue
                     if isinstance(effectdata, list):
-                        effectline = "<br>".join(effectdata)
+                        effectline = "\n".join(effectdata)
                     elif isinstance(effectdata, str):
-                        effectline = f"{effectdata}"
+                        effectline = effectdata
                     elif isinstance(effectdata, int) and effectdata == 1:
                         effectline = ''
                     else:
                         raise Exception(f'Something is terribly wrong with the incarnate data at {typename}, {i}, {j}: {effectdata}')
-                    effecttext = effecttext + f"<dt><b>{effectname}</b></dt><dd>{effectline}</dd>"
+                    effecttext = effecttext + f"<b>{effectname}</b>\n\t{effectline}\n"
 
-                slotdata[typename][f'{typename} {levelname}'] = f"<dl>{effecttext}</dl>"
+                slotdata[typename][f'{typename} {levelname}'] = effecttext
 
         Util.Incarnate.SlotData[slot] = slotdata
 

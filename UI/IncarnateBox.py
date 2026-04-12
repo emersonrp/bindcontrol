@@ -177,8 +177,16 @@ class IncarnateBrowser(wx.Dialog):
         self.LevelList.SetFont(UI.COHFont())
         listSizer.Add(self.LevelList, 1, wx.EXPAND)
 
-        self.IncDetails = wx.html.HtmlWindow(self, size = browserBoxSize)
-        listSizer.Add(self.IncDetails, 1, wx.EXPAND)
+        detailPanel = wx.Panel(self)
+        detailPanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
+        detailSizer = wx.BoxSizer(wx.HORIZONTAL)
+        detailPanel.SetSizer(detailSizer)
+
+        self.IncDetails = wx.StaticText(detailPanel, size = browserBoxSize)
+        self.IncDetails.SetFont(UI.COHFont())
+        self.IncDetails.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
+        detailSizer.Add(self.IncDetails, 1, wx.EXPAND|wx.ALL, 15)
+        listSizer.Add(detailPanel, 1, wx.EXPAND)
 
         browserSizer.Add(listSizer, 1, wx.EXPAND|wx.ALL, 10)
 
@@ -223,7 +231,7 @@ class IncarnateBrowser(wx.Dialog):
 
     def onPickType(self, evt) -> None:
         self.LevelList.DeleteAllItems()
-        self.IncDetails.SetPage('')
+        self.IncDetails.SetLabel('')
 
         inc_type = self.TypeList.GetItemText(evt.GetIndex())
 
@@ -246,4 +254,4 @@ class IncarnateBrowser(wx.Dialog):
         level = self.LevelList.GetItemText(evt.GetIndex())
         info = self.Picker.SlotData[inc_type][level]
 
-        self.IncDetails.SetPage(info)
+        self.IncDetails.SetLabelMarkup(info)

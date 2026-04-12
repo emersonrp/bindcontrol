@@ -65,14 +65,23 @@ class IncarnateSet(WizardParent):
 
         # and then in either case, build the Pane from State
         incarnateData = self.State.get('WizData', {}).get('IncData', {})
-        for slot in ['Alpha', 'Interface', 'Judgement', 'Destiny', 'Lore', 'Hybrid', 'Genesis',]:
+        slots = ['Alpha', 'Interface', 'Judgement', 'Destiny', 'Lore', 'Hybrid']
+        if self.Profile.Server() == 'Rebirth':
+            slots.append('Genesis')
+        for slot in slots:
             if slotData := incarnateData.get(slot):
-                icon = GetIcon(slotData['iconfile']) # pyright: ignore
-                bitmap = wx.GenericStaticBitmap(panel, bitmap = icon)
-                bitmap.Bind(wx.EVT_ENTER_WINDOW, partial(self.OnHoverIcon, f"<b>{slot}</b>: {slotData['power']}")) # pyright: ignore
-                bitmap.Bind(wx.EVT_LEAVE_WINDOW, partial(self.OnHoverIcon, None))
-                bitmap.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-                listSizer.Add(bitmap, 0, wx.ALL, 5)
+                iconfile = slotData['iconfile']
+                power    = slotData['power']
+            else:
+                iconfile = 'Empty'
+                power    = 'None'
+            icon = GetIcon(iconfile)
+            bitmap = wx.GenericStaticBitmap(panel, bitmap = icon, size = wx.Size(32, 32))
+            bitmap.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
+            bitmap.Bind(wx.EVT_ENTER_WINDOW, partial(self.OnHoverIcon, f"<b>{slot}</b>: {power}"))
+            bitmap.Bind(wx.EVT_LEAVE_WINDOW, partial(self.OnHoverIcon, None))
+            bitmap.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+            listSizer.Add(bitmap, 0, wx.ALL, 5)
         self.HoverDisplay = wx.StaticText(panel)
         self.HoverDisplay.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         listSizer.Add(self.HoverDisplay, 1, wx.ALL, 10)
@@ -106,10 +115,10 @@ class IncarnateSet(WizardParent):
 
     def OnHoverIcon(self, markup, evt = None):
         if markup:
-            self.HoverDisplay.SetForegroundColour(wx.BLACK)
+            self.HoverDisplay.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
             self.HoverDisplay.SetLabelMarkup(markup)
         else:
-            self.HoverDisplay.SetForegroundColour(wx.Colour(128, 128, 128))
+            self.HoverDisplay.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_GRAYTEXT))
             self.HoverDisplay.SetLabelMarkup("Incarnate Power Set - Hover any icon for details;  click anywhere to edit")
         if evt: evt.Skip()
 

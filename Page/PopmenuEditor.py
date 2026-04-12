@@ -157,6 +157,14 @@ class PopmenuEditor(Page):
 
         self.Layout()
 
+        self.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.OnSysColoursChanged)
+
+    def OnSysColoursChanged(self, evt = None):
+        if evt: evt.Skip()
+        self.MenuListCtrl.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
+        # TODO - at least on Linux, this doesn't set the "Installed Menus" header colour
+        self.MenuListCtrl.SetTextColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENUTEXT))
+
     def OnGameDirChanged(self):
         self.LoadMenusIfNeeded(force = True)
         self.SynchronizeUI()

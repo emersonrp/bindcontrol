@@ -26,11 +26,10 @@ class SetTitleCmd(PowerBinderCommand):
         return titleSizer
 
     def MakeBindString(self) -> str:
-        match = re.search(r'(\d+)$', self.titleName.GetLabel())
-        if match.groups():
-            return "settitle " + match.groups()[0]
-        else:
-            return ''
+        if match := re.search(r'(\d+)$', self.titleName.GetLabel()):
+            if match.groups():
+                return "settitle " + match.groups()[0]
+        return ''
 
     def Serialize(self) -> dict:
         return {'titleName': self.titleName.GetLabel()}

@@ -4,7 +4,7 @@ from pubsub import pub
 import bcColours
 from Help import HelpButton
 import UI
-from UI.BindWizard import WizardParent
+from UI.BindWizard import WizardParent, PaneCheckIndicator
 from UI.CGControls import bcKeyButton, cgStaticText
 from UI.KeySelectDialog import EVT_KEY_CHANGED
 from UI.CGControls import cgCheckBox, cgbcKeyButton
@@ -78,7 +78,8 @@ class BaseEditMode(WizardParent):
         # actual keybuttons inside the dialog innards
         self.Dialog()
 
-    def BuildUI(self, dialog, init : dict = {}) -> wx.Sizer:
+    def BuildUI(self, dialog, init : dict|None = None) -> wx.Sizer:
+        init = init or {}
         wizdata = init.get('WizData', {})
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -144,83 +145,16 @@ class BaseEditMode(WizardParent):
         cmdPanel = wx.Panel(panel)
         cmdPanel.SetSizer(cmdSizer)
         for cmd in ('BEDefaultMovement', 'BEDisableChat', 'BEDisableWindows',):
-            ctpanel = wx.Panel(cmdPanel)
-            ctsizer = wx.BoxSizer(wx.HORIZONTAL)
-            ctpanel.SetSizer(ctsizer)
-            cmdtext = cgStaticText(ctpanel, label = UI.Labels[self.BindPane.MakeCtrlName(cmd)], style = wx.ALIGN_CENTER)
-            if self.State.get('WizData', {}).get(cmd, True):
-                cmdtext.SetLabel("✓ " + UI.Labels[self.BindPane.MakeCtrlName(cmd)])
-                cmdtext.SetFont(wx.Font(wx.FontInfo().Strikethrough(False)))
-            else:
-                cmdtext.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_GRAYTEXT))
-                cmdtext.SetFont(wx.Font(wx.FontInfo().Strikethrough(True)))
-            cmdtext.SetToolTip(self.CBToolTips[cmd])
-            ctsizer.Add(cmdtext, 1, wx.EXPAND|wx.ALL, 5)
-            ctpanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
-            ctpanel.SetToolTip(self.CBToolTips[cmd])
-            cmdSizer.Add(ctpanel, 1, wx.EXPAND|wx.RIGHT, 6)
+            indicator = PaneCheckIndicator(cmdPanel, self, cmd, self.CBToolTips[cmd])
 
-            ctpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-            cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+            cmdSizer.Add(indicator, 1, wx.EXPAND|wx.RIGHT, 6)
 
         panelSizer.Add(cmdPanel, 0, wx.ALIGN_CENTER|wx.ALL, 10)
         cmdPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
 
-        keybindBorder = wx.BoxSizer(wx.VERTICAL)
-        keybindBorderPanel = wx.Panel(panel)
-        keybindBorderPanel.SetSizer(keybindBorder)
-        keybindBorderPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-        keybindBorderPanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
+        self.keybindWidget = KeyBindWidget(panel, self)
 
-        keybindWrapper = wx.BoxSizer(wx.VERTICAL)
-        keybindWrapPanel = wx.Panel(keybindBorderPanel)
-        keybindWrapPanel.SetSizer(keybindWrapper)
-        keybindWrapPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-        keybindWrapPanel.SetBackgroundColour(self.BindPane.GetBackgroundColour())
-        keybindBorder.Add(keybindWrapPanel, 1, wx.EXPAND|wx.ALL, 1)
-
-        keybindTitle = wx.StaticText(keybindWrapPanel, label = 'KEYBINDS')
-        keybindTitle.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_LISTBOXTEXT))
-        keybindTitle.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-        keybindWrapper.Add(keybindTitle, 0, wx.ALL|wx.ALIGN_CENTER, 5)
-
-        keybindSizer = wx.GridSizer(2,1,1)
-        keybindPanel = wx.Panel(keybindWrapPanel)
-        keybindPanel.SetSizer(keybindSizer)
-        keybindPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-        keybindWrapper.Add(keybindPanel, 1, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5)
-
-        tooltiptext = []
-        for keybind in self.KeyInit:
-            keybutton = self.BindPane.GetCtrl(keybind)
-            kbborder = wx.BoxSizer(wx.HORIZONTAL)
-            kbbpanel = wx.Panel(keybindPanel, size = wx.Size(32,8))
-            kbbpanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNSHADOW))
-            kbbpanel.SetSizer(kbborder)
-            kbmini = wx.StaticText(kbbpanel, label = keybutton.GetValue(), size = wx.Size(30,6), style = wx.ALIGN_CENTER)
-            kbmini.SetFont(wx.Font(wx.FontInfo(3)))
-            if keybutton.GetValue():
-                tooltiptext.append(f"{self.AllCtrls[keybind]}: {keybutton.GetValue()}")
-                if keybutton.CheckConflicts():
-                    kbmini.SetBackgroundColour(bcColours.ErrorColour())
-                else:
-                    kbmini.SetBackgroundColour(bcColours.WhiteColour())
-            else:
-                kbmini.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
-                tooltiptext.append('')
-            kbmini.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-            kbborder.Add(kbmini, 1, wx.EXPAND|wx.ALL, 1)
-            keybindSizer.Add(kbbpanel, 0, wx.ALL, 1)
-
-        # There's got to be a more pythonic way to permute these
-        tooltip = ''
-        for i in range(0, len(tooltiptext), 2):
-            if tooltiptext[i]: tooltip = tooltip + ("\n" if i != 0 else '') + tooltiptext[i]
-        for i in range(1, len(tooltiptext), 2):
-            if tooltiptext[i]: tooltip = tooltip + "\n" + tooltiptext[i]
-        keybindPanel.SetToolTip(tooltip)
-
-        panelSizer.Add(keybindBorderPanel, 0, wx.ALIGN_CENTER|wx.RIGHT, 10)
+        panelSizer.Add(self.keybindWidget, 0, wx.ALIGN_CENTER|wx.RIGHT, 10)
 
         panelSizer.AddStretchSpacer(1)
 
@@ -281,6 +215,7 @@ class BaseEditMode(WizardParent):
         for ctrlname in self.AllCtrls:
             newstate[ctrlname] = self.BindPane.GetCtrl(ctrlname).GetValue()
         self.State = { 'WizData' : newstate }
+        pub.sendMessage(f'wizardchanged.{self.BindPane.CustomID}')
 
     def PopulateBindFiles(self):
         if not self.CheckIfWellFormed():  return
@@ -396,3 +331,83 @@ class BaseEditMode(WizardParent):
             'files' : files,
             'dirs'  : [],
         }
+
+class KeyBindWidget(wx.Panel):
+    def __init__(self, panel, wizard):
+        super().__init__(panel)
+
+        self.BindPane  = wizard.BindPane
+        self.Wizard    = wizard
+        self.kbbpanels = {}
+        self.kbminis   = {}
+
+        keybindBorder = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(keybindBorder)
+        self.Bind(wx.EVT_LEFT_DOWN, wizard.ShowWizard)
+
+        keybindWrapper = wx.BoxSizer(wx.VERTICAL)
+        self.keybindWrapPanel = wx.Panel(self)
+        self.keybindWrapPanel.SetSizer(keybindWrapper)
+        self.keybindWrapPanel.Bind(wx.EVT_LEFT_DOWN, wizard.ShowWizard)
+        keybindBorder.Add(self.keybindWrapPanel, 1, wx.EXPAND|wx.ALL, 1)
+
+        self.keybindTitle = wx.StaticText(self.keybindWrapPanel, label = 'KEYBINDS')
+        self.keybindTitle.Bind(wx.EVT_LEFT_DOWN, wizard.ShowWizard)
+        keybindWrapper.Add(self.keybindTitle, 0, wx.ALL|wx.ALIGN_CENTER, 5)
+
+        keybindSizer = wx.GridSizer(2,1,1)
+        keybindPanel = wx.Panel(self.keybindWrapPanel)
+        keybindPanel.SetSizer(keybindSizer)
+        keybindPanel.Bind(wx.EVT_LEFT_DOWN, wizard.ShowWizard)
+        keybindWrapper.Add(keybindPanel, 1, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.BOTTOM, 5)
+
+        for keybind in wizard.KeyInit:
+            keybutton = wizard.BindPane.GetCtrl(keybind)
+            kbborder = wx.BoxSizer(wx.HORIZONTAL)
+            kbbpanel = wx.Panel(keybindPanel, size = wx.Size(32,8))
+            kbbpanel.SetSizer(kbborder)
+            kbmini = wx.StaticText(kbbpanel, label = keybutton.GetValue(), size = wx.Size(30,6), style = wx.ALIGN_CENTER)
+            kbmini.SetFont(wx.Font(wx.FontInfo(3)))
+            kbmini.Bind(wx.EVT_LEFT_DOWN, wizard.ShowWizard)
+            self.kbbpanels[keybind] = kbbpanel
+            self.kbminis[keybind]   = kbmini
+            kbborder.Add(kbmini, 1, wx.EXPAND|wx.ALL, 1)
+            keybindSizer.Add(kbbpanel, 0, wx.ALL, 1)
+
+        self.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.UpdateWidget)
+        pub.subscribe(self.OnBaseEditChanged, f'wizardchanged.{wizard.BindPane.CustomID}')
+        self.UpdateWidget()
+
+    def OnBaseEditChanged(self):
+        self.UpdateWidget()
+
+    def UpdateWidget(self, evt = None):
+        if evt: evt.Skip()
+        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
+        self.keybindWrapPanel.SetBackgroundColour(self.BindPane.GetBackgroundColour())
+        self.keybindTitle.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_LISTBOXTEXT))
+
+        tooltiptext = []
+        for keybind in self.Wizard.KeyInit:
+            self.kbbpanels[keybind].SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNSHADOW))
+            keybutton = self.Wizard.BindPane.GetCtrl(keybind)
+            keyval = keybutton.GetValue()
+            kbmini = self.kbminis[keybind]
+            kbmini.SetLabel(keyval)
+            if keyval:
+                if keybutton.CheckConflicts():
+                    kbmini.SetBackgroundColour(bcColours.ErrorColour())
+                    tooltiptext.append(f"{self.Wizard.AllCtrls[keybind]}: {keybutton.GetValue()}")
+                else:
+                    kbmini.SetBackgroundColour(bcColours.WhiteColour())
+                    tooltiptext.append('')
+            else:
+                kbmini.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNFACE))
+
+        # There's got to be a more pythonic way to permute these
+        tooltip = ''
+        for i in range(0, len(tooltiptext), 2):
+            if tooltiptext[i]: tooltip = tooltip + ("\n" if i != 0 else '') + tooltiptext[i]
+        for i in range(1, len(tooltiptext), 2):
+            if tooltiptext[i]: tooltip = tooltip + "\n" + tooltiptext[i]
+        self.SetToolTip(tooltip)

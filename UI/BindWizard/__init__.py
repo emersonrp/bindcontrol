@@ -1,5 +1,8 @@
 import wx
+from pubsub import pub
 from Help import ShowHelpWindow
+import UI
+from UI.ControlGroup import cgStaticText
 
 # the thinking behind making this not a wx object itself is so that
 # we don't have to build a whole dialog etc to keep state for every
@@ -101,3 +104,45 @@ class WizardDialog(wx.Dialog):
         if not self.IsShown():
             self.Wizard.FillDialogFromState()
         return super().Show(show)
+
+class PaneCheckIndicator(wx.Panel):
+    def __init__(self, parent, wizard, cmd, tooltip):
+        super().__init__(parent)
+
+        self.Cmd = cmd
+        self.Wizard = wizard
+
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.SetSizer(sizer)
+
+        cmdtext = cgStaticText(self, label = UI.Labels[wizard.BindPane.MakeCtrlName(cmd)], style = wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        cmdtext.SetToolTip(tooltip)
+        sizer.Add(cmdtext, 1, wx.EXPAND|wx.ALL, 5)
+
+        self.SetToolTip(tooltip)
+
+        self.cmdtext = cmdtext
+
+        self.Bind(wx.EVT_LEFT_DOWN, wizard.ShowWizard)
+        self.cmdtext.Bind(wx.EVT_LEFT_DOWN, wizard.ShowWizard)
+
+        self.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.UpdateIndicator)
+        pub.subscribe(self.OnWizardChanged, f'wizardchanged.{wizard.BindPane.CustomID}')
+
+        self.UpdateIndicator()
+
+    def OnWizardChanged(self):
+        self.UpdateIndicator()
+
+    def UpdateIndicator(self, evt = None):
+        if evt: evt.Skip()
+        self.cmdtext.SetLabel(UI.Labels[self.Wizard.BindPane.MakeCtrlName(self.Cmd)])
+        if self.Wizard.State.get('WizData', {}).get(self.Cmd, True):
+            self.cmdtext.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
+            self.cmdtext.SetLabel("✓ " + self.cmdtext.GetLabel())
+            self.cmdtext.SetFont(wx.Font(wx.FontInfo().Strikethrough(False)))
+        else:
+            self.cmdtext.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_GRAYTEXT))
+            self.cmdtext.SetFont(wx.Font(wx.FontInfo().Strikethrough(True)))
+
+        self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))

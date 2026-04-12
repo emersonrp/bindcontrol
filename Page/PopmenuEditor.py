@@ -153,6 +153,8 @@ class PopmenuEditor(Page):
 
         self.InitialLoadComplete = False
 
+        self.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.OnSysColoursChanged)
+
         pub.subscribe(self.OnGameDirChanged, 'prefschanged.gamedir')
         pub.subscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
@@ -161,6 +163,12 @@ class PopmenuEditor(Page):
     def OnProfileClosingPubSub(self):
         pub.unsubscribe(self.OnGameDirChanged, 'prefschanged.gamedir')
         pub.unsubscribe(self.OnProfileClosingPubSub, 'profileclosing')
+
+    def OnSysColoursChanged(self, evt = None):
+        if evt: evt.Skip()
+        self.MenuListCtrl.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
+        # TODO - at least on Linux, this doesn't set the "Installed Menus" header colour
+        self.MenuListCtrl.SetTextColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENUTEXT))
 
     def OnGameDirChanged(self):
         self.LoadMenusIfNeeded(force = True)

@@ -191,6 +191,7 @@ class InspirationPopper(Page):
                     else:
                         rowSet.AddSpacer(1)
                     rowSet.Add(chatcolorpicker, 0, wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 3)
+                    self.Ctrls[f'{tab}{order}{Insp}Colors'] = chatcolorpicker
 
             tabsizer.Add(InspBox, 0, wx.EXPAND|wx.ALL, 10)
             tabsizer.Add(RevInspBox, 0, wx.EXPAND|wx.ALL, 10)

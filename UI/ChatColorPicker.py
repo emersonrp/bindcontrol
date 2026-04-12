@@ -58,7 +58,7 @@ class ChatColorPicker(ProfileAwareControlMixin, wx.Panel):
             self.Colors = {
                 'border'     : bdcolor,
                 'background' : bgcolor,
-                'foreground'       : txcolor,
+                'foreground' : txcolor,
             }
             self.example.UpdateExampleBitmap()
             pub.sendMessage('chatcolorpickerchanged', control = self)

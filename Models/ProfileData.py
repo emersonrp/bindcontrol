@@ -92,15 +92,6 @@ class ProfileData(dict):
 
         GameData.SetupGameData(self.Server())
 
-    # send the check message every time we update anything in the underlying dict
-    def __setitem__(self, key, val):
-        super().__setitem__(key, val)
-        pub.sendMessage('checkprofilemodified')
-
-    def __delitem__(self, key):
-        super().__delitem__(key)
-        pub.sendMessage('checkprofilemodified')
-
     def ProfileName(self)   -> str      : return self.Filepath.stem if self.Filepath else ''
     def ProfileIDFile(self) -> Path     : return self.BindsPath() / 'bcprofileid.txt'
     def Server(self)        -> str      : return self.get('General', {}).get('Server', 'Homecoming')
@@ -195,6 +186,7 @@ class ProfileData(dict):
                         value = newvalue
             except Exception: pass # if it didn't JSON, just use it
             self[pagename][ctlname] = value
+        pub.sendMessage('checkprofilemodified')
 
     def IsModified(self): return (dict(self) != self.SavedState)
 

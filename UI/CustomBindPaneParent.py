@@ -12,10 +12,6 @@ class CustomBindPaneParent(ListPanel):
         self.CreatesFiles = False
         self.ExportExt    = 'bcb'
 
-    def OnSystemColoursChanged(self, evt = None):
-        super().OnSystemColoursChanged(evt) # does evt.Skip()
-        self.BuildBindUI()
-
     def BuildBindUI(self) -> None:
         wx.LogError(f"{self.Class} did not override BuildBindUI.  This is a bug.")
         # build the UI needed to edit/create this bind, and shim

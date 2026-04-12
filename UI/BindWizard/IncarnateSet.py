@@ -80,6 +80,7 @@ class IncarnateSet(WizardParent):
             bitmap.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
             bitmap.Bind(wx.EVT_ENTER_WINDOW, partial(self.OnHoverIcon, f"<b>{slot}</b>: {power}"))
             bitmap.Bind(wx.EVT_LEAVE_WINDOW, partial(self.OnHoverIcon, None))
+            bitmap.Bind(wx.EVT_SYS_COLOUR_CHANGED, partial(self.SetBitmapBGColour, bitmap))
             bitmap.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
             listSizer.Add(bitmap, 0, wx.ALL, 5)
         self.HoverDisplay = wx.StaticText(panel)
@@ -108,6 +109,9 @@ class IncarnateSet(WizardParent):
         self.CheckIfWellFormed()
 
         return panel
+
+    def SetBitmapBGColour(self, bitmap, evt):
+        bitmap.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
 
     def UpdateStateFromDialog(self):
         if self.IncarnateBox:

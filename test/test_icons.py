@@ -2,6 +2,8 @@ import re
 import wx
 import pytest
 from pathlib import Path
+
+import bcColours
 from Util.Incarnate import Aliases
 import GameData
 import Util.Paths
@@ -213,6 +215,7 @@ def test_icon_class():
 def test_geticon_fromfile(monkeypatch, empty):
     _ = wx.App()
     monkeypatch.setattr(Util.Paths, 'GetRootDirPath', fixturepathfs)
+    monkeypatch.setattr(bcColours, 'DarkMode', lambda: True)
 
     copyicon = Icon.GetIcon('UI', 'copy')
     assert isinstance(copyicon, Icon.Icon), 'Gets from filesystem'

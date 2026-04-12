@@ -1,5 +1,4 @@
 from collections.abc import Callable
-from pubsub import pub
 import wx
 from wx.lib.buttons import GenButton
 import bcColours

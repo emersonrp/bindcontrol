@@ -1,21 +1,10 @@
 import wx
+from pubsub import pub
 
-import bcColours
 import UI
-from UI.BindWizard import WizardParent
+from UI.BindWizard import WizardParent, PaneCheckIndicator
 from UI.ControlGroup import ControlGroup
 from UI.CGControls import bcKeyButton, cgStaticText
-
-UI.Labels.update({
-    'EscUnselect'    : 'Unselect',
-    'EscUnqueue'     : 'Unqueue',
-    'EscWindows'     : 'Close All Windows',
-    'EscExitMission' : 'Exit Completed Mission',
-    'EscResetCam'    : 'Reset Camera',
-    'EscNoReward'    : 'Choose No Reward',
-    'EscDialogNo'    : 'Answer No to Dialog',
-    'EscMenu'        : 'Show Main Menu',
-})
 
 class EscapeConfigurator(WizardParent):
     WizardName  = 'Escape Configurator'
@@ -24,7 +13,23 @@ class EscapeConfigurator(WizardParent):
     IsUnique    = True
     IconPath    = ('UI', 'EscKey')
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for k, v in {
+            'EscUnselect'    : 'Unselect',
+            'EscUnqueue'     : 'Unqueue',
+            'EscWindows'     : 'Close All Windows',
+            'EscExitMission' : 'Exit Completed Mission',
+            'EscResetCam'    : 'Reset Camera',
+            'EscNoReward'    : 'Choose No Reward',
+            'EscDialogNo'    : 'Answer No to Dialog',
+            'EscMenu'        : 'Show Main Menu',
+        }.items():
+            UI.Labels[self.BindPane.MakeCtrlName(k)] = v
+
+
     def BuildUI(self, dialog, init : dict|None = None) -> wx.Sizer:
+
         wizdata = {}
         if init: wizdata = init.get('WizData', {})
 
@@ -37,49 +42,49 @@ class EscapeConfigurator(WizardParent):
 
         self.EscUnselect = mainSizer.AddControl(
             ctlType = 'checkbox',
-            ctlName = 'EscUnselect',
+            ctlName = self.BindPane.MakeCtrlName('EscUnselect'),
             tooltip = 'Unselect any selected units or items',
         )
         self.EscUnselect.SetValue(bool(wizdata.get('EscUnselect'))) # pyright: ignore
         self.EscUnqueue = mainSizer.AddControl(
             ctlType = 'checkbox',
-            ctlName = 'EscUnqueue',
+            ctlName = self.BindPane.MakeCtrlName('EscUnqueue'),
             tooltip = 'Unqueue any power that is about to fire',
         )
         self.EscUnqueue.SetValue(bool(wizdata.get('EscUnqueue'))) # pyright: ignore
         self.EscWindows = mainSizer.AddControl(
             ctlType = 'checkbox',
-            ctlName = 'EscWindows',
+            ctlName = self.BindPane.MakeCtrlName('EscWindows'),
             tooltip = 'Close all non-essential windows, clearing the screen',
         )
         self.EscWindows.SetValue(bool(wizdata.get('EscWindows'))) # pyright: ignore
         self.EscExitMission = mainSizer.AddControl(
             ctlType = 'checkbox',
-            ctlName = 'EscExitMission',
+            ctlName = self.BindPane.MakeCtrlName('EscExitMission'),
             tooltip = 'Exit a completed mission',
         )
         self.EscExitMission.SetValue(bool(wizdata.get('EscExitMission'))) # pyright: ignore
         self.EscResetCam = mainSizer.AddControl(
             ctlType = 'checkbox',
-            ctlName = 'EscResetCam',
+            ctlName = self.BindPane.MakeCtrlName('EscResetCam'),
             tooltip = 'Reset the camera to behind the player',
         )
         self.EscResetCam.SetValue(bool(wizdata.get('EscResetCam'))) # pyright: ignore
         self.EscNoReward = mainSizer.AddControl(
             ctlType = 'checkbox',
-            ctlName = 'EscNoReward',
+            ctlName = self.BindPane.MakeCtrlName('EscNoReward'),
             tooltip = 'Select "No Reward" from a reward choice list',
         )
         self.EscNoReward.SetValue(bool(wizdata.get('EscNoReward'))) # pyright: ignore
         self.EscDialogNo = mainSizer.AddControl(
             ctlType = 'checkbox',
-            ctlName = 'EscDialogNo',
+            ctlName = self.BindPane.MakeCtrlName('EscDialogNo'),
             tooltip = 'Answer "OK" or "No" or "Cancel" to a dialog',
         )
         self.EscDialogNo.SetValue(bool(wizdata.get('EscDialogNo'))) # pyright: ignore
         self.EscMenu = mainSizer.AddControl(
             ctlType = 'checkbox',
-            ctlName = 'EscMenu',
+            ctlName = self.BindPane.MakeCtrlName('EscMenu'),
             tooltip = 'Open the Main Menu',
         )
         self.EscMenu.SetValue(bool(wizdata.get('EscMenu'))) # pyright: ignore
@@ -100,26 +105,9 @@ class EscapeConfigurator(WizardParent):
         cmdPanel.SetToolTip(self.BindString())
         for cmd in ('EscUnselect', 'EscUnqueue', 'EscWindows', 'EscExitMission',
                     'EscResetCam', 'EscNoReward', 'EscDialogNo', 'EscMenu',):
-            ctpanel = wx.Panel(cmdPanel)
-            if self.CheckIfWellFormed():
-                ctpanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
-            else:
-                ctpanel.SetBackgroundColour(bcColours.ErrorColour())
-                ctpanel.SetToolTip("No commands are selected;  bind will not be written.")
-            ctsizer = wx.BoxSizer(wx.HORIZONTAL)
-            ctpanel.SetSizer(ctsizer)
-            cmdtext = cgStaticText(ctpanel, label = UI.Labels[cmd], style = wx.ALIGN_CENTER)
-            if self.State.get('WizData', {}).get(cmd):
-                cmdtext.SetLabel("✓ " + UI.Labels[cmd])
-                cmdtext.SetFont(wx.Font(wx.FontInfo().Strikethrough(False)))
-            else:
-                cmdtext.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_GRAYTEXT))
-                cmdtext.SetFont(wx.Font(wx.FontInfo().Strikethrough(True)))
-            ctsizer.Add(cmdtext, 1, wx.EXPAND|wx.ALL, 5)
-            cmdSizer.Add(ctpanel, 1, wx.EXPAND)
 
-            ctpanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-            cmdtext.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
+            indicator = PaneCheckIndicator(cmdPanel, self, cmd, '')
+            cmdSizer.Add(indicator, 1, wx.EXPAND)
 
         panelSizer.Add(cmdPanel, 1, wx.ALIGN_CENTER|wx.ALL, 15)
         cmdPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
@@ -155,7 +143,8 @@ class EscapeConfigurator(WizardParent):
             'EscNoReward'    : self.EscNoReward   .GetValue(), # pyright: ignore
             'EscDialogNo'    : self.EscDialogNo   .GetValue(), # pyright: ignore
             'EscMenu'        : self.EscMenu       .GetValue(), # pyright: ignore
-        } }
+        }}
+        pub.sendMessage(f'wizardchanged.{self.BindPane.CustomID}')
 
     def DeHandleButton(self, _):
         # do not evt.Skip

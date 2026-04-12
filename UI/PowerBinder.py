@@ -26,6 +26,11 @@ class PowerBinder(ErrorControlMixin, wx.TextCtrl):
         self.SetHint("Click to launch PowerBinder")
 
         self.Bind(wx.EVT_LEFT_DOWN, self.OnClickPB)
+        self.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.OnSystemColoursChanged)
+
+    def OnSystemColoursChanged(self, evt = None):
+        if evt: evt.Skip()
+        self.SetBackgroundColour(wx.NullColour)
 
     def OnClickPB(self, _) -> None:
         self.PowerBinderDialog().Show()

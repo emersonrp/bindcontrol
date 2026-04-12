@@ -170,14 +170,14 @@ class BaseEditMode(WizardParent):
         keybindBorderPanel = wx.Panel(panel)
         keybindBorderPanel.SetSizer(keybindBorder)
         keybindBorderPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
-        keybindBorderPanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENUHILIGHT))
+        keybindBorderPanel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
 
         keybindWrapper = wx.BoxSizer(wx.VERTICAL)
         keybindWrapPanel = wx.Panel(keybindBorderPanel)
         keybindWrapPanel.SetSizer(keybindWrapper)
         keybindWrapPanel.Bind(wx.EVT_LEFT_DOWN, self.ShowWizard)
         keybindWrapPanel.SetBackgroundColour(self.BindPane.GetBackgroundColour())
-        keybindBorder.Add(keybindWrapPanel, 1, wx.EXPAND|wx.ALL, 2)
+        keybindBorder.Add(keybindWrapPanel, 1, wx.EXPAND|wx.ALL, 1)
 
         keybindTitle = wx.StaticText(keybindWrapPanel, label = 'KEYBINDS')
         keybindTitle.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_LISTBOXTEXT))
@@ -238,6 +238,7 @@ class BaseEditMode(WizardParent):
         UI.Labels[self.ToggleEditMode] = 'Enter Edit Mode'
 
         panel.SetSizer(panelSizer)
+        panel.Layout()
 
         self.CheckForConflicts()
         self.CheckIfWellFormed()

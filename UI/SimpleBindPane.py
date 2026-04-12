@@ -91,6 +91,13 @@ class SimpleBindPane(CustomBindPaneParent):
         self.onPRButtonClicked()
         self.CheckIfWellFormed()
 
+    # override + super() - don't love this
+    def OnSystemColoursChanged(self, evt = None):
+        if evt: evt.Skip()
+        super().OnSystemColoursChanged(evt)
+        self.PRButton.SetBitmap(GetIcon('UI', 'add_circle'))
+        self.Layout()
+
     def onPRButtonClicked(self, evt = None) -> None:
         if evt: evt.Skip()
         checked = self.IsPR()

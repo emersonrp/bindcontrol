@@ -283,6 +283,15 @@ class BindStep(wx.Panel):
 
         self.onPRButtonClicked()
 
+        self.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.OnSysColourChanged)
+
+    def OnSysColourChanged(self, evt = None):
+        if evt: evt.Skip()
+        self.PRButton.SetBitmap(GetIcon('UI', 'add_circle'))
+        self.dupeButton.SetBitmap(GetIcon('UI', 'copy'))
+        self.delButton.SetBitmap(GetIcon('UI', 'delete'))
+
+
     def IsPR(self):
         return self.PRButton.GetValue()
 

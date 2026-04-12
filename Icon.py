@@ -64,8 +64,8 @@ def GetIcon(*args) -> Icon:
         if source in sourcemaps:
             sourcename = '_'.join(pathbits[1:]) # probably not needed on this code path, but just in case
             if sourcename in sourcemaps[source]['list']:
-                if bitmap := GetImageFromSourceFile(source, sourcename):
-                    Icons[iconpathstr] = Icon(bitmap, filename = f"{source}/{sourcename}")
+                if image := GetImageFromSourceFile(source, sourcename):
+                    Icons[iconpathstr] = Icon(image, filename = f"{source}/{sourcename}")
                 else:
                     wx.LogWarning(f"Missing Icon: SourceFile {source} returned None for {sourcename} - check logs!")
             else:

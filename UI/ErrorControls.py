@@ -13,6 +13,7 @@ class ErrorControlMixin:
     HasTextCtrl            : Callable
     Refresh                : Callable
     IsEnabled              : Callable
+    Bind                   : Callable
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)

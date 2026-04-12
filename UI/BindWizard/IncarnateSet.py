@@ -64,7 +64,7 @@ class IncarnateSet(WizardParent):
                 self.State['WizData']['IncData'] = newdata
 
         # and then in either case, build the Pane from State
-        incarnateData = self.State.get('WizData', {}).get('IncData', {})
+        incarnateData : dict = self.State.get('WizData', {}).get('IncData', {})
         slots = ['Alpha', 'Interface', 'Judgement', 'Destiny', 'Lore', 'Hybrid']
         if self.Profile.Server() == 'Rebirth':
             slots.append('Genesis')
@@ -113,7 +113,7 @@ class IncarnateSet(WizardParent):
         return panel
 
     def OnWizardChanged(self):
-        incarnateData = self.State.get('WizData', {}).get('IncData', {})
+        incarnateData : dict = self.State.get('WizData', {}).get('IncData', {})
         for slot, bitmap in self.slotBitmaps.items():
             if slotData := incarnateData.get(slot):
                 iconfile = slotData['iconfile']

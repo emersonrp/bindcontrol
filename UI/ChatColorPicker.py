@@ -9,16 +9,13 @@ import UI
 from UI.CGControls import CGControlMixin, cgStaticText
 from UI.ProfileAwareControl import ProfileAwareControlMixin
 
-ChatColorPickerChanged, EVT_CHATCOLORPICKER_CHANGED = wx.lib.newevent.NewCommandEvent()
-
 def ChatColors(fg,bg,bd) -> str: return f'<color {fg}><bgcolor {bg}><bordercolor {bd}>'
 
 # the calling convention to create one of this is WAY too complicated.
 class ChatColorPicker(ProfileAwareControlMixin, wx.Panel):
-    def __init__(self, parent, page, prefix:tuple, InspData:dict):
+    def __init__(self, parent, prefix:tuple, InspData:dict):
         super().__init__(parent)
 
-        self.Page = page
         self.PrefixBits = prefix
         self.Prefix = ''.join(prefix)
         self.InspData = InspData

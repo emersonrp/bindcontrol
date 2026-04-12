@@ -182,7 +182,7 @@ class InspirationPopper(Page):
                         optsbutton.CtlName = optsname
                         self.Ctrls[optsname] = optsbutton
 
-                    chatcolorpicker = ChatColorPicker(box.GetStaticBox(), self, (tab, order, Insp), InspData)
+                    chatcolorpicker = ChatColorPicker(box.GetStaticBox(), (tab, order, Insp), InspData)
 
                     rowSet.Add(kblabel,         0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 3)
                     rowSet.Add(keybutton,       0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 3)

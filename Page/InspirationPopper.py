@@ -11,6 +11,7 @@ import GameData
 from UI.ChatColorPicker import ChatColorPicker, ChatColors
 from UI.CGControls import cgStaticText
 from UI.KeySelectDialog import bcKeyButton
+from UI.ProfileAwareControl import ProfileAwareControlMixin
 
 InspOptsChanged, EVT_INSPOPTS_CHANGED = wx.lib.newevent.NewCommandEvent()
 
@@ -264,14 +265,27 @@ class InspirationPopper(Page):
                     bc = rcols['border']
                     reverseOrder.insert(0, f'tell $name, {ChatColors(fg, bg, bc)}{Insp}')
 
-
-                if self.GetState('EnableInspBinds'):
-                    # TODO in this line and the subsequent one, we also need to check the state of the global "Enable" checkbox
-                    #combinelines = self.Ctrls[f"{tab}{Insp}Opts"].GetCombineKeybinds() if tab == 'Single' else []
-                    ResetFile.SetBind(self.Ctrls[f"{tab}{Insp}Key"].MakeBind(forwardOrder))
-                if self.GetState('EnableRevInspBinds'):
-                    #combinelines = self.Ctrls[f"{tab}Rev{Insp}Opts"].GetCombineKeybinds() if tab == 'Single' else []
-                    ResetFile.SetBind(self.Ctrls[f"{tab}Rev{Insp}Key"].MakeBind(reverseOrder))
+                # this is terribly tangle, I know.
+                usecombine = self.GetState('EnableCombineBinds')
+                inspabbr = Insp[0:3].lower()
+                for order in '', 'Rev':
+                    if self.GetState(f'Enable{order}InspBinds'):
+                        key = self.Ctrls[f'{tab}{order}{Insp}Key']
+                        if not key.GetValue(): continue
+                        orderlines = forwardOrder if not order else reverseOrder
+                        if usecombine and (tab == 'Single'):
+                            combinelines = self.Ctrls[f"{tab}{order}{Insp}Opts"].GetCombineLines()
+                            for i, line in enumerate(combinelines):
+                                nx = i+1 if (i+1 < len(combinelines)) else 0
+                                rev = '' if not order else 'r'
+                                downfile = self.Profile.GetBindFile('ip', f'{inspabbr}d{rev}{i}.txt')
+                                upfile   = self.Profile.GetBindFile('ip', f'{inspabbr}u{rev}{i}.txt')
+                                if i == 0:
+                                    ResetFile.SetBind(key.MakeBind(["+", line, upfile.BLF()]))
+                                downfile.SetBind(key.MakeBind(["+", line, upfile.BLF()]))
+                                upfile  .SetBind(key.MakeBind(["+", *orderlines, self.Profile.BLF('ip', f'{inspabbr}d{rev}{nx}.txt')]))
+                        else:
+                            ResetFile.SetBind(key.MakeBind(orderlines))
 
         return True
 
@@ -282,7 +296,7 @@ class InspirationPopper(Page):
             'dirs'  : [],
         }
 
-class InspOptsButton(wx.Panel):
+class InspOptsButton(ProfileAwareControlMixin, wx.Panel):
     def __init__(self, parent, page, insptype):
         super().__init__(parent)
         sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -360,16 +374,27 @@ class InspOptsButton(wx.Panel):
 
         self.Layout()
 
-    def GetCombineKeybinds(self):
-        # TODO - check server, somehow, to decide on 'mergeinsp' vs 'inspcombine'
+    def GetCombineLines(self):
+        slashcommand = 'mergeinsp' if self.Profile.Server() == 'Homecoming' else 'inspcombine'
         combineitems = []
         for insptype in self.CombineInsps:
             insptype = re.sub(' ', '', insptype) # ugh this gets old
             for idx in range(3):
                 srcinsp = re.sub(' ', '_', GameData.Inspirations['Single'][insptype]['tiers'][idx])
                 dstinsp = re.sub(' ', '_', GameData.Inspirations['Single'][self.InspType]['tiers'][idx])
-                combineitems.append(f'inspcombine {srcinsp} {dstinsp}')
-        return combineitems
+                combineitems.append(f'{slashcommand} {srcinsp} {dstinsp}')
+
+        combinelines = []
+        inspabbr = self.InspType[0:3].lower()
+        blflen = len(self.Profile.BLF('ip', f'{inspabbr}drx.txt'))
+        for item in combineitems:
+            combinelines = combinelines or ['']
+            # check whether what's there, plus '$$' and "+$$"  plus the BLF length, plus the new item is going to exceed 250-ish
+            if (len(combinelines[-1]) + 5 + blflen + len(item)) > 250:
+                combinelines.append(item) # make a new line
+            else:
+                combinelines[-1] = combinelines[-1] + '$$' + item # glom onto the existing one
+        return combinelines
 
     def GetValue(self):
         return { 'CombineInsps'  : self.CombineInsps, }

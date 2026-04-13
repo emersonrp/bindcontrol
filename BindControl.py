@@ -573,7 +573,7 @@ class Main(wx.Frame):
         else:
             self.ProfDirButton.AddWarning('toolong', 'Your binds directory name is rather long.  This is not an error but can lead to some binds being too long for the game to use.')
 
-        otherprofile = Util.Paths.CheckProfileForBindsDir(config, self.Profile.ProfileBindsDir())
+        otherprofile = Util.Paths.CheckProfileForBindsDir(config, self.Profile.BindsDir())
         if otherprofile and (otherprofile != self.Profile.ProfileName()):
             self.ProfDirButton.AddWarning('owned', f'The binds directory you have chosen is marked as owned by the profile "{otherprofile}."  This is not an error, but be sure this is what you want to do.')
         else:

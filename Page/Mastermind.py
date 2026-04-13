@@ -139,7 +139,8 @@ class Mastermind(Page):
 
         BlankSizer = wx.BoxSizer(wx.HORIZONTAL)
         helptext = wx.StaticText(page, style = wx.ALIGN_CENTER,
-                                 label = "No Mastermind bind style selected.\nBy-name selection binds will still work.")
+                                 label = "No Mastermind bind style selected.\nBy-name selection binds will still work.",
+                                 size = wx.Size(-1, 100))
         helptext.SetFont(wx.Font(wx.FontInfo(16).Bold()))
         BlankSizer.Add(helptext, 1, wx.ALIGN_CENTER_VERTICAL)
         page.SetSizer(BlankSizer)

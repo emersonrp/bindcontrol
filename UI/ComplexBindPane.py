@@ -292,7 +292,6 @@ class BindStep(wx.Panel):
         self.dupeButton.SetBitmap(GetIcon('UI', 'copy'))
         self.delButton.SetBitmap(GetIcon('UI', 'delete'))
 
-
     def IsPR(self):
         return self.PRButton.GetValue()
 

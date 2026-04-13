@@ -207,7 +207,6 @@ class Main(wx.Frame):
         if self.Profile:
             self.SetTitle(self.Profile.ProfileName() + (" (*)" if self.Profile.IsModified() else ''))
 
-    # pass the system colour change notion on to whomever is interested.
     def OnSysColourChanged(self, evt):
         evt.Skip()
         # If we're showing the Startup Panel, remove and rebuild it
@@ -220,8 +219,6 @@ class Main(wx.Frame):
             self.Sizer.Insert(0, self.StartupPanel, 1, wx.EXPAND)
 
             self.Layout()
-
-
 
     def SetupInitialProfile(self, input_profile = None):
 
@@ -238,7 +235,6 @@ class Main(wx.Frame):
                 self.Profile = Profile(self, filename)
                 self.Profile.buildUIFromData()
                 self.Sizer.Insert(0, self.Profile, 1, wx.EXPAND)
-                self.CheckProfDirButtonErrors()
             except Exception:
                 if self.Profile:
                     pub.sendMessage('profileclosing')
@@ -308,6 +304,7 @@ class Main(wx.Frame):
         # TODO - do smarter things with enabling the write and delete buttons
         self.WriteButton.Enable(self.EnableProfCtrls())
         self.DeleteButton.Enable(self.EnableProfCtrls())
+        self.CheckProfDirButtonErrors()
 
     def OnPageChanged(self, evt) -> None:
         if self.Profile:
@@ -366,7 +363,6 @@ class Main(wx.Frame):
             wx.LogError(f"Something broke in new profile: {e}.  This is a bug.")
         finally:
             self.SetupProfileUI()
-            self.CheckProfDirButtonErrors()
             self.Layout()
             self.Thaw()
 
@@ -408,7 +404,6 @@ class Main(wx.Frame):
 
         # OK, we made it, set up the UI bits etc.
         self.SetupProfileUI()
-        self.CheckProfDirButtonErrors()
         if not newProfile.EditingDefault:
             wx.ConfigBase.Get().Write('LastProfile', str(newProfile.Filepath()))
             wx.ConfigBase.Get().Flush()

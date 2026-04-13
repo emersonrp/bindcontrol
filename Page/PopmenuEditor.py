@@ -1028,9 +1028,10 @@ class PELockedOption(PEMenuItem):
     def __init__(self, parent, data) -> None:
         name = data.get('DisplayName', '')
         super().__init__(parent, data, label = name)
+        self.Ctrls = {}
+        self.Buttons = []
 
     def EditorDialog(self) -> wx.Dialog:
-        self.Ctrls = {}
         dialog = wx.Dialog(self.Parent, title = "Editing LockedOption item")
         paddingsizer = wx.BoxSizer(wx.VERTICAL)
         dialog.SetSizer(paddingsizer)
@@ -1050,6 +1051,7 @@ class PELockedOption(PEMenuItem):
             row = row + 1
 
         IconButton = wx.BitmapButton(staticbox, bitmap = GetIcon('UI', 'search'))
+        self.Buttons.append(IconButton)
         gridsizer.Add(IconButton, pos = (2,2))
         IconButton.Bind(wx.EVT_BUTTON, partial(self.LaunchBrowser, 'https://homecoming.wiki/wiki/Macro_image_(Slash_Command)'))
 
@@ -1071,10 +1073,10 @@ class PELockedOption(PEMenuItem):
             self.Ctrls[ctrl].Bind(wx.EVT_TEXT, self.CheckEditorFieldsForError)
             gridsizer.Add(self.Ctrls[ctrl], pos = (row, 1), flag = wx.EXPAND)
             srchbutton = wx.BitmapButton(staticbox, bitmap = GetIcon('UI', 'search'))
+            self.Buttons.append(srchbutton)
             gridsizer.Add(srchbutton, pos = (row,2))
             srchbutton.Bind(wx.EVT_BUTTON, partial(self.LaunchBrowser, URLs[ctrl]))
             row = row + 1
-
 
         buttons = dialog.CreateButtonSizer(wx.OK|wx.CANCEL)
 
@@ -1088,9 +1090,17 @@ class PELockedOption(PEMenuItem):
         self.CheckEditorFieldsForError()
         dialog.Fit()
 
+        dialog.Bind(wx.EVT_SYS_COLOUR_CHANGED, self.OnSysColoursChanged)
+
         return dialog
 
     def LaunchBrowser(self, url, _): wx.LaunchDefaultBrowser(url)
+
+    def OnSysColoursChanged(self, evt):
+        evt.Skip()
+        for button in self.Buttons:
+            button.SetBitmap(GetIcon('UI', 'search'))
+        self.CheckEditorFieldsForError()
 
     def OnOKButton(self, evt) -> None:
         if self.CheckEditorFieldsForError(): return

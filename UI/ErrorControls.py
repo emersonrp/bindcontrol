@@ -89,14 +89,11 @@ class ErrorControlMixin:
 
     def OnSystemColoursChanged(self, evt = None):
         if evt: evt.Skip()
-        if isinstance(self, wx.TextCtrl):
-            self.BGColour = self.GetBackgroundColour()
+        if isinstance(self, GenButton):
+            self.BGColour      = wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNHIGHLIGHT)
+            self.DisabledColor = wx.NullColour
         else:
-            if isinstance(self, GenButton):
-                self.BGColour      = wx.SystemSettings.GetColour(wx.SYS_COLOUR_BTNHIGHLIGHT)
-                self.DisabledColor = wx.NullColour
-            else:
-                self.BGColour = wx.NullColour
+            self.BGColour = wx.NullColour
 
         if self.HasErrors():
             self.SetFullBackgroundColour(bcColours.ErrorColour())

@@ -11,7 +11,7 @@ def ErrorColour() -> wx.Colour:
     return wx.Colour(86, 3, 25) if DarkMode() else wx.Colour(255, 200, 200)
 
 def WarningColour() -> wx.Colour:
-    return wx.Colour(128, 128, 0) if DarkMode() else wx.Colour(255, 255, 200)
+    return wx.Colour(125, 94, 0) if DarkMode() else wx.Colour(255, 255, 200)
 
 def BlackColour() -> wx.Colour:
     return wx.WHITE if DarkMode() else wx.BLACK

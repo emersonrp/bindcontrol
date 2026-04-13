@@ -1,9 +1,11 @@
 import wx
+import platform
 
 # is there a saner way to do this?
 
+# we're not gonna darkmode on Windows since Win11 is so broken in this respect
 def DarkMode():
-    return wx.SystemSettings().GetAppearance().IsDark()
+    return platform.system() != 'Windows' and wx.SystemSettings().GetAppearance().IsDark()
 
 def ErrorColour() -> wx.Colour:
     return wx.Colour(86, 3, 25) if DarkMode() else wx.Colour(255, 200, 200)

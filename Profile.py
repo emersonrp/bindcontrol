@@ -154,10 +154,6 @@ class Profile(wx.Notebook):
                 if (key != '') and (key == bindkey) and (not existingctrlname == ctrlname):
                     conflicts.append({'page' : page.TabTitle, 'ctrl' : UI.Labels.get(ctrlname, ctrlname)})
 
-        # Explicit check against Reset Kay from Prefs dialog
-        if (key != '') and (key == wx.ConfigBase.Get().Read('ResetKey') and existingctrlname != 'ResetKey'):
-            conflicts.append( { 'page' : 'Preferences Dialog', 'ctrl' : 'Reset Key' } )
-
         return conflicts
 
     # check all buttons for conflicts.

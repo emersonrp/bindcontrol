@@ -28,6 +28,8 @@ class General(Page):
             'Pool3'     : '',
             'Pool4'     : '',
 
+            'ResetKey'  : wx.ConfigBase.Get().Read('ResetKey'),
+
             'StartChat'  : 'ENTER',
             'SlashChat'  : '/',
             'StartEmote' : ';',
@@ -113,6 +115,9 @@ class General(Page):
         bannerSizer.Add(pickerSizer, 0, wx.BOTTOM|wx.LEFT|wx.RIGHT|wx.EXPAND, 6)
 
         topSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        topleftSizer = wx.BoxSizer(wx.VERTICAL)
+
         powersBox = ControlGroup(self, self, 'Powers', width = 3)
 
         powersBox.AddControl(
@@ -202,6 +207,17 @@ class General(Page):
         for picker in ['Primary', 'Secondary', 'Epic', 'Pool1', 'Pool2', 'Pool3', 'Pool4', ]:
             self.Ctrls[picker].SetFont(UI.COHFont())
 
+        ResetGroup = ControlGroup(self, self, 'Reset Key')
+        ResetGroup.AddControl(
+            ctlName  = 'ResetKey',
+            ctlType  = 'keybutton',
+            tooltip  = 'Resets and reloads all keybinds',
+            helpfile = 'ResetKey.html',
+        )
+
+        topleftSizer.Add(powersBox, 0, wx.EXPAND|wx.BOTTOM, 3)
+        topleftSizer.Add(ResetGroup, 0, wx.EXPAND)
+
         ## Typing Notifier
         TNPanel = wx.Panel(self)
         TNSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -282,7 +298,7 @@ class General(Page):
                 tooltip = b[1],
             )
 
-        topSizer.Add(powersBox, 1, wx.EXPAND|wx.RIGHT, 10)
+        topSizer.Add(topleftSizer, 1, wx.EXPAND|wx.RIGHT, 10)
         topSizer.Add(chatBindBox, 1, wx.EXPAND)
 
         bottomSizer = wx.BoxSizer(wx.HORIZONTAL)

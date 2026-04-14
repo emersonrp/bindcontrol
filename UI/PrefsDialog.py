@@ -128,11 +128,11 @@ class PrefsDialog(wx.Dialog):
 
         optsSizer = wx.FlexGridSizer(2, 0, 0)
 
-        optsSizer.Add(wx.StaticText(self.generalPanel, label = "Binds Reset Key:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        optsSizer.Add(wx.StaticText(self.generalPanel, label = "Default Binds Reset Key:"), 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
         resetKey = config.Read('ResetKey')
         self.ResetKey = bcKeyButton(self.generalPanel, init ={ 'CtlName': 'ResetKey', 'Key' : resetKey })
         self.ResetKey.SetLabel(resetKey)
-        self.ResetKey.DefaultToolTip = 'This is the key that will reset your binds to their default state, and stop all movement, if movement binds are installed.'
+        self.ResetKey.DefaultToolTip = 'This is the default for the key that will reset your binds to their default state, and stop all movement, if movement binds are installed.  This can also be changed per-Profile.'
         optsSizer.Add(self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)
 
         splitKeyLabel = CBLabel(self.generalPanel, label = "Bind L/R mod keys separately:")
@@ -422,7 +422,6 @@ class PrefsDialog(wx.Dialog):
         evt.Skip()
 
     def ShowAndUpdatePrefs(self) -> None:
-        self.ResetKey.CheckConflicts() # Hmm
         if self.ShowModal() == wx.ID_OK:
             config = wx.ConfigBase.Get()
 

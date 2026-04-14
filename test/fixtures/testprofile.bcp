@@ -2,6 +2,7 @@
   "ProfileBindsDir": "testprofile",
   "MaxCustomID": 10,
   "General": {
+    "ResetKey" : "CTRL+R",
     "Alignment": "Hero",
     "Origin": "Magic",
     "Archetype": "Arachnos Soldier",

@@ -309,11 +309,13 @@ class ProfileData(dict):
                     ip[newkey] = ip.get(newkey, {})
                     ip[newkey][matches[2].lower()] = ip.pop(key)
 
-        # if we're loading a pre-cretaceous profile, it won't have Server which will crash things
-        if not self.get('General', {}).get('Server'):
-            if 'General' not in self:
-                self['General'] = {}
+        # set up a couple of things in General that we're going to want
+        if 'General' not in self:
+            self['General'] = {}
+        if 'Server' not in self['General']:
             self['General']['Server'] = 'Homecoming'
+        if 'ResetKey' not in self['General']:
+            self['General']['ResetKey'] = self.Config.Read('ResetKey')
 
     def doSaveAsDefault(self) -> None:
         # if this blows up, calling code should try/except it

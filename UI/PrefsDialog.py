@@ -430,7 +430,7 @@ class PrefsDialog(wx.Dialog):
             if self.gameDirPicker.GetPath()        != config.Read('GamePath')       : changedGameDir = True
             if self.gameDirRebirthPicker.GetPath() != config.Read('GameRebirthPath'): changedGameDir = True
 
-            # Ditto check if reset key changed
+            # Ditto check if verbose binds pref changed
             changedVerboseCustomBinds = (self.VerboseCustomBinds.GetValue() != config.ReadBool('VerboseCustomBinds'))
 
             ###

@@ -113,6 +113,7 @@ class Profile(wx.Notebook):
     def Primary(self)         : return self.Data['General']['Primary']
     def Secondary(self)       : return self.Data['General']['Secondary']
     def ResetFile(self)       : return self.GetBindFile("reset.txt")
+    def ResetKey(self)        : return self.Data['General']['ResetKey']
     def ProfileIDFile(self)   : return self.Data.ProfileIDFile()
     def Server(self)          : return self.Data['General']['Server']
     def Filepath(self)        : return self.Data.Filepath
@@ -437,7 +438,8 @@ class Profile(wx.Notebook):
 
         # Start by making the bind to make the reset load itself.  This might get overridden with
         # more elaborate load strings in like MovementPowers, but this is the safety fallback
-        # we do this out here to make sure it -does- get overwritten if desired.
+        # we do this out here to make sure it -does- get overwritten if desired, when the
+        # individual pages populate their binds, below.
         config = wx.ConfigBase.Get()
         resetfile = self.ResetFile()
         keybindreset = 'unbindall' if config.ReadBool('FlushAllBinds') else ''

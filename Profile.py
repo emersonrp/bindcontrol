@@ -92,7 +92,6 @@ class Profile(wx.Notebook):
 
         if self.EditingDefault: self.ColorThingsForEditingDefault()
 
-        pub.subscribe(self.CheckAllConflicts, 'prefschanged.resetkey')
         pub.subscribe(self.OnDeletePanel, 'deletepanel')
         pub.subscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
 
@@ -438,12 +437,12 @@ class Profile(wx.Notebook):
 
         # Start by making the bind to make the reset load itself.  This might get overridden with
         # more elaborate load strings in like MovementPowers, but this is the safety fallback
-
+        # we do this out here to make sure it -does- get overwritten if desired.
         config = wx.ConfigBase.Get()
         resetfile = self.ResetFile()
         keybindreset = 'unbindall' if config.ReadBool('FlushAllBinds') else ''
         feedback = 't $name, Resetting keybinds.'
-        resetfile.SetBind(config.Read('ResetKey'), "Reset Key", "Preferences", [keybindreset , feedback, resetfile.BLF()])
+        resetfile.SetBind(self.General.GetState('ResetKey'), "Reset Key", "General", [keybindreset, feedback, resetfile.BLF()])
 
         errors = []
         donefiles = 0

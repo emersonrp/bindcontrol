@@ -1623,7 +1623,7 @@ class MovementPowers(Page):
 
         config = wx.ConfigBase.Get()
 
-        curfile.SetBind(config.Read('ResetKey'), UI.Labels['ResetKey'], self,
+        curfile.SetBind(self.Profile.General.GetState('ResetKey'), UI.Labels['ResetKey'], self,
             [
                 '+',
                 'unbindall' if config.ReadBool('FlushAllBinds') else '',

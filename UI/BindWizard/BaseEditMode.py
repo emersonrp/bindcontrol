@@ -288,8 +288,7 @@ class BaseEditMode(WizardParent):
             modefile.SetBind('SPACE', 'Up'      , self.Profile.CustomBinds, '+up')
             # Let's turn off the binds reset key, too, which would otherwise place us back into SoD Mode.
             # It remains to be seen if this is a good idea.
-            config = wx.ConfigBase.Get()
-            modefile.SetBind(config.Read('ResetKey'), "Reset Key", self.Profile.CustomBinds, 'nop')
+            modefile.SetBind(self.Profile.General.GetState('ResetKey'), "Reset Key", self.Profile.CustomBinds, 'nop')
 
         if self.BindPane.GetCtrl('BEDisableChat').GetValue():
             # Go through BC-managed chat keys, add them as 'nop' to modefile

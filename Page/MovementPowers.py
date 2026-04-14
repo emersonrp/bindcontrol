@@ -1452,17 +1452,18 @@ class MovementPowers(Page):
         config    = wx.ConfigBase.Get()
         default   = self.SoDModeInfo(self.DefaultMode())
         on_off    = self.actPower_toggle(default['sta'], self.AllMovementPowers())
+        resetkey  = profile.General.GetState('ResetKey')
 
         # We do this over two files so it doesn't get too long if there are
         # multiple SoD pools and on_off has like five powers in it.
-        resetfile.SetBind(config.Read('ResetKey'), "Reset Key", self.TabTitle,
+        resetfile.SetBind(resetkey, "Reset Key", self.TabTitle,
                     [
                         '+',
                         'unbindall' if config.ReadBool('FlushAllBinds') else '',
                         on_off,
                         extrafile.BLF(),
                     ])
-        extrafile.SetBind(config.Read('ResetKey'), "Reset Key", self.TabTitle,
+        extrafile.SetBind(resetkey, "Reset Key", self.TabTitle,
                     [
                         '+',
                         'up 0', 'down 0', 'forward 0', 'backward 0', 'left 0', 'right 0',

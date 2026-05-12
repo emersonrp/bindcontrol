@@ -8,6 +8,8 @@ def test_create_main_no_config(app, config, monkeypatch): # 'app' to init wx.App
     monkeypatch.undo() # get rid of config.Read patch
 
     assert config.Read('GameLang') == 'English'
+    assert config.ReadBool('RelativeBindsDir')
+    assert config.Read('BindTextPath') == 'kb'
     assert config.Read('ResetKey') == 'CTRL+R'
     assert config.ReadBool('UseSplitModKeys') is False
     assert config.ReadBool('FlushAllBinds')

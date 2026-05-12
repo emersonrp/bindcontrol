@@ -79,11 +79,13 @@ def test_bcController_StickIsNearCenter(app):
 
 def test_bcController_ListOfPossibleMods(app, monkeypatch):
     bcC = bcController()
+    monkeypatch.setattr(bcC, 'IsOk', lambda: False)
     assert bcC.ListOfPossibleMods() == []
 
     monkeypatch.setattr(bcC, 'IsOk', lambda: True)
     monkeypatch.setattr(bcC, 'HasPOV4Dir', lambda: False)
     monkeypatch.setattr(bcC, 'GetMaxAxes', lambda: 0)
+    monkeypatch.setattr(bcC, 'GetNumberButtons', lambda: 0)
     assert bcC.ListOfPossibleMods() == ["", "LTrigger", "RTrigger"]
 
     monkeypatch.setattr(bcC, 'GetNumberButtons', lambda: 4)
@@ -104,6 +106,7 @@ def test_bcController_ListOfPossibleMods(app, monkeypatch):
 def test_bcController_GetCurrentAxis_POV4Dir(app, monkeypatch):
     bcC = bcController()
     monkeypatch.setattr(bcC, 'HasPOV4Dir', lambda: True)
+    monkeypatch.setattr(bcC, 'SetCurrentAxisPercents', lambda: None)
     assert bcC.GetCurrentAxis() == ''
 
     monkeypatch.setattr(bcC, 'GetPOVPosition', lambda: 0)

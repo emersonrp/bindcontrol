@@ -132,18 +132,8 @@ class PrefsDialog(wx.Dialog):
         resetKey = config.Read('ResetKey')
         self.ResetKey = bcKeyButton(self.generalPanel, init ={ 'CtlName': 'ResetKey', 'Key' : resetKey })
         self.ResetKey.SetLabel(resetKey)
-        self.ResetKey.DefaultToolTip = 'This is the default for the key that will reset your binds to their default state, and stop all movement, if movement binds are installed.  This can also be changed per-Profile.'
+        self.ResetKey.SetToolTip('This is the default for the key that will reset your binds to their default state, and stop all movement, if movement binds are installed.  This can be set per-profile in the "General" tab.')
         optsSizer.Add(self.ResetKey, 1, wx.ALL|wx.ALIGN_CENTRE_VERTICAL, 6)
-
-        splitKeyLabel = CBLabel(self.generalPanel, label = "Bind L/R mod keys separately:")
-        optsSizer.Add(splitKeyLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
-        self.UseSplitModKeys = wx.CheckBox(self.generalPanel)
-        self.UseSplitModKeys.SetValue(config.ReadBool('UseSplitModKeys'))
-        self.UseSplitModKeys.SetToolTip("This allows the left and right modifier keys to be bound separately on the \"right-hand\" side of a bind.  Check \"Help > Getting Started with BindControl\" for more information.")
-        optsSizer.Add(self.UseSplitModKeys, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
-
-        splitKeyLabel.CB = self.UseSplitModKeys
-        splitKeyLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         flushBindsLabel = CBLabel(self.generalPanel, label = "Set binds to default on reset:")
         optsSizer.Add(flushBindsLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
@@ -154,6 +144,16 @@ class PrefsDialog(wx.Dialog):
 
         flushBindsLabel.CB = self.FlushAllBinds
         flushBindsLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
+
+        splitKeyLabel = CBLabel(self.generalPanel, label = "Bind L/R mod keys separately:")
+        optsSizer.Add(splitKeyLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)
+        self.UseSplitModKeys = wx.CheckBox(self.generalPanel)
+        self.UseSplitModKeys.SetValue(config.ReadBool('UseSplitModKeys'))
+        self.UseSplitModKeys.SetToolTip("This allows the left and right modifier keys to be bound separately on the \"right-hand\" side of a bind.  Check \"Help > Getting Started with BindControl\" for more information.")
+        optsSizer.Add(self.UseSplitModKeys, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+
+        splitKeyLabel.CB = self.UseSplitModKeys
+        splitKeyLabel.Bind(wx.EVT_LEFT_DOWN, self.OnCBLabelClick)
 
         StartWithLastProfileLabel = CBLabel(self.generalPanel, label = "On startup, load last used profile:")
         optsSizer.Add(StartWithLastProfileLabel, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 6)

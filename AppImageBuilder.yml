@@ -47,6 +47,7 @@ AppDir:
     python3.13 get-pip.py
     # Install application dependencies in AppDir
     python3.13 -m pip install --upgrade --isolated --no-input --ignore-installed --prefix=$TARGET_APPDIR/usr pillow
+    python3.13 -m pip install --upgrade --isolated --no-input --ignore-installed --prefix=$TARGET_APPDIR/usr pypubsub
     # get wxPython wheel from wxpython.org directly
     # try for a local copy first, though
     if ! [ -f wxpython-4.2.4-cp313-cp313-linux_x86_64.whl ]; then

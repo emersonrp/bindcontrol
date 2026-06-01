@@ -141,7 +141,7 @@ Binary releases of Python applications are finicky and fragile, but are provided
 
 ## Developing BindControl
 
-BindControl is being developed on Manjaro Linux.  It gets feature-tested on Windows 10 and 11 VMs, and occasionally on a MacOS Catalina VM.
+BindControl is being developed on CachyOS.  It gets feature-tested on Windows 10 and 11 VMs, and occasionally on a MacOS Catalina VM.
 
 While developing, I make sure the code passes both `pyright` and `ruff` with a large subset of the possible ruff rules included.
 
@@ -154,6 +154,8 @@ There is a small but growing `pytest` test suite.  It only runs on Linux (and po
 I make liberal use of `typing` in parameters, attributes, and return values, and continue to add this into new and existing code as I go.  This has proven to be a bit of a hassle since BindControl was originally a direct port of CityBinder, and inherited many of its original questionable design decisions, as well as having introduced any number of its own over the years.  Enforcing more strict typing is an ongoing process, but has resulted in cleaner and better code, as well as having surfaced any number of potential and actual bugs.
 
 Any submitted patches or pull requests should pass the test suite and `pyright` at the very least.  Adding new tests is encouraged.
+
+AI-authored or -assisted code is not welcome.  I've seen firsthand the low-quality code that can come out of that, and I'm not interested in debugging stuff that literally nobody understands.  There's enough bad code in BindControl in the first place, let's not compound our problems.
 
 ## History
 
@@ -214,7 +216,7 @@ BindControl is licensed under the [GPL version 3](LICENSE) or later, except for 
 
 emerson@hayseed.net
 
-[^1]: For instance, I run Manjaro, and have to install "libtiff5" from AUR to make the binary release work.
+[^1]: For instance, I used to run Manjaro Linux, and had to install "libtiff5" from the AUR to make the binary release work.
 
 [^2]: If you are familiar at all with git or github, cloning the repo is the recommended action here -- this makes it easier and quicker to get new changes when they arrive, as well as allows access to incremental between-release changes and experimental branches.
 

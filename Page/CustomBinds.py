@@ -82,6 +82,12 @@ class CustomBinds(Page):
         self.Layout()
 
     def OnBindsChanged(self):
+        # WHY?!  How do we get into here with a null 'self'?  Pubsub still has the nonentity
+        # subscdribed to the message but it's supposed to be weakref'ed so it doesn't do that?
+        # Anyway, if we don't exist, don't try anything.
+        #
+        # This is a hack to get around a bug somewhere else and it makes me feel icky.
+        if not self: return
         self.UpdateAllBinds()
         self.Refresh()
 

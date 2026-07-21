@@ -545,9 +545,17 @@ class Profile(wx.Notebook):
             ), "DELETE ALL BINDFILES", wx.YES_NO)
         if result == wx.NO: return
 
-        removed = self.doDeleteBindFiles(self.AllBindFiles())
+        # remove the ProfileID file, since we're going to try to nuke the whole bindsdir
+        try:
+            self.ProfileIDFile().unlink()
+        except Exception as e:
+            wx.LogMessage(f"Can't delete ProfileID file: {e}")
 
-        if removed:
+        # actually delete the files and dirs from AllBindFiles()
+        if removed := self.doDeleteBindFiles(self.AllBindFiles()):
+            # clear out our state
+            self.BindFiles = {}
+
             with DeleteDoneDialog(self, removed = removed) as dlg:
                 dlg.ShowModal()
 
@@ -572,7 +580,7 @@ class Profile(wx.Notebook):
         dlg = wx.ProgressDialog('Deleting Bind Files', '',
             maximum = totalfiles, style=wx.PD_APP_MODAL|wx.PD_AUTO_HIDE)
 
-        # try all 15k+ of the files
+        # try each of the specified files
         progress = 0
         removed = 0
         for file in bindfiles['files']:
@@ -584,13 +592,6 @@ class Profile(wx.Notebook):
 
             dlg.Update(progress, str(file.Path))
             progress = progress + 1
-
-
-        # remove the ProfileID file
-        try:
-            self.ProfileIDFile().unlink()
-        except Exception as e:
-            wx.LogMessage(f"Can't delete ProfileID file: {e}")
 
         # try the directories
         for bdir in bindfiles['dirs']:
@@ -613,9 +614,6 @@ class Profile(wx.Notebook):
             bindsdir.rmdir()
         except Exception:
             pass
-
-        # clear out our state
-        self.BindFiles = {}
 
         return removed
 

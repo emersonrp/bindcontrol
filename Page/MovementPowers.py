@@ -483,6 +483,10 @@ class MovementPowers(Page):
 
         pub.subscribe(self.OnPowerSelectorChanged, 'powerselectorchanged')
 
+    def OnWindowDestroy(self, evt):
+        super().OnWindowDestroy(evt)
+        pub.unsubscribe(self.OnPowerSelectorChanged, 'powerselectorchanged')
+
     def OnPowerSelectorChanged(self, control):
         self.SynchronizeUI()
 

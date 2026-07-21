@@ -157,6 +157,10 @@ class PopmenuEditor(Page):
 
         self.Layout()
 
+    def OnWindowDestroy(self, evt):
+        super().OnWindowDestroy(evt)
+        pub.unsubscribe(self.OnGameDirChanged, 'prefschanged.gamedir')
+
     def OnGameDirChanged(self):
         self.LoadMenusIfNeeded(force = True)
         self.SynchronizeUI()

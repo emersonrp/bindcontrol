@@ -280,6 +280,10 @@ class Gameplay(Page):
 
         pub.subscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
 
+    def OnWindowDestroy(self, evt):
+        super().OnWindowDestroy(evt)
+        pub.unsubscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
+
     def OnKeyButtonChanged(self, control):
         self.OnKeybindProfilePicker()
 

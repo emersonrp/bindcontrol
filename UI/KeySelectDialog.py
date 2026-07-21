@@ -161,7 +161,9 @@ class KeySelectDialog(wx.Dialog):
                 self.KeySlot = ''
 
         if event.ButtonDown():
-            button_keyname = self.Keymap["JOY" + str(event.GetButtonOrdinal()+1)]
+            button_number = event.GetButtonOrdinal()+1
+            if button_number > 25: return
+            button_keyname = self.Keymap["JOY" + str(button_number)]
             self.PressedKeys.add(button_keyname)
             if button_keyname in self.modKeys:
                 self.ModSlot = button_keyname
@@ -169,7 +171,9 @@ class KeySelectDialog(wx.Dialog):
                 self.KeySlot = button_keyname
 
         elif event.ButtonUp():
-            button_keyname = self.Keymap["JOY" + str(event.GetButtonOrdinal()+1)]
+            button_number = event.GetButtonOrdinal()+1
+            if button_number > 25: return
+            button_keyname = self.Keymap["JOY" + str(button_number)]
             self.PressedKeys.discard(button_keyname)
 
         elif event.IsMove() or event.IsZMove():

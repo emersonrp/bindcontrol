@@ -479,7 +479,3 @@ class PrefsDialog(wx.Dialog):
                 pub.sendMessage('prefschanged.resetkey')
             if changedVerboseCustomBinds:
                 pub.sendMessage('prefschanged.verbosebinds')
-
-class controllerModPicker(wx.Choice):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)

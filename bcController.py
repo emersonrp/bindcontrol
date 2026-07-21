@@ -121,6 +121,7 @@ class bcController(wx.adv.Joystick):
         possible_mods = ["", "LTrigger", "RTrigger"] # assume everybody has triggers
 
         for bnum in range(1, self.GetNumberButtons()+1):
+            if bnum > 25: break # CoH "only" supports 25 js buttons
             bname = "JOY" + str(bnum)
             # TODO - should keep these mappings in this class somewhere
             if bnum == 5: bname = "LeftBumper"

@@ -561,14 +561,6 @@ class Profile(wx.Notebook):
 
     def doDeleteBindFiles(self, bindfiles):
 
-        bindpath = self.BindsPath()
-        # TODO - should rethink if this step is right or even necessary after the new
-        # RelativeBindsDir notion.  I suppose "kb/bj" is possible so maybe 5?  Maybe this
-        # is too fiddly or corner-case-y in the first place?
-        if len(str(bindpath)) < 6: # "C:\COH" being the classic
-            wx.MessageBox(f"Your Binds Directory is set to '{bindpath}' which seems wrong.  Check the preferences dialog.", "Binds Directory Error", wx.OK)
-            return
-
         if not bindfiles:
             wx.LogError("Tried to doDeleteBindFiles with no bindfiles.  Please report this as a bug.  Bailing.")
             return
@@ -581,6 +573,7 @@ class Profile(wx.Notebook):
             maximum = totalfiles, style=wx.PD_APP_MODAL|wx.PD_AUTO_HIDE)
 
         # try each of the specified files
+        bindpath = self.BindsPath()
         progress = 0
         removed = 0
         for file in bindfiles['files']:

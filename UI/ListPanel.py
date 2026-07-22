@@ -72,6 +72,14 @@ class ListPanel(ProfileAwareControlMixin, wx.Panel):
 
         self.Pane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.OnPaneChanged)
 
+        self.Bind(wx.EVT_WINDOW_DESTROY, self.OnWindowDestroy)
+
+    def OnWindowDestroy(self, evt):
+        # We do this so as not to propagate the EVT_WINDOW_DESTROY upwards to the
+        # CustomBinds / etc page, where it would be caught, and then the page would
+        # dutifully unsubscribe from all pubsub.  This is hacks on hacks.
+        pass
+
     def UpdateLabel(self):
         if wx.ConfigBase.Get().ReadBool('VerboseCustomBinds'):
             self.Pane.SetLabel(f"{self.Title} ({self.Description} ID:{self.CustomID})")

@@ -24,7 +24,7 @@ class UsePowerFromTrayCmd(PowerBinderCommand):
 
     def MakeBindString(self) -> str:
         choice = self.usePowerFromTrayTray
-        tray = choice.GetSelection()
+        tray = choice.GetSelection()+1
 
         choice = self.usePowerFromTraySlot
         slot   = choice.GetSelection()+1

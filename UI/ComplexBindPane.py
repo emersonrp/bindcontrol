@@ -111,6 +111,7 @@ class ComplexBindPane(CustomBindPaneParent):
 
     def onAddStepButton(self, evt = None, stepdata : dict|None = None) -> None:
         self.doAddStep(stepdata or {})
+        self.CheckIfWellFormed()
         pub.sendMessage('updatepanels.bind')
         if evt: evt.Skip()
 

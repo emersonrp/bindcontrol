@@ -279,10 +279,11 @@ class Gameplay(Page):
         self.MainSizer.Add(bottomSizer, flag = wx.LEFT|wx.RIGHT|wx.ALIGN_CENTER_HORIZONTAL, border = 16)
 
         pub.subscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
+        pub.subscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
-    def OnWindowDestroy(self, evt):
-        super().OnWindowDestroy(evt)
+    def OnProfileClosingPubSub(self):
         pub.unsubscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
+        pub.unsubscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
     def OnKeyButtonChanged(self, control):
         self.OnKeybindProfilePicker()

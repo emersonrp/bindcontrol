@@ -41,20 +41,20 @@ class Page(wx.ScrolledWindow):
         self.Ctrls : dict = {}
         self.Init  : dict = {}
 
-        self.Bind(wx.EVT_WINDOW_DESTROY, self.OnWindowDestroy)
-
         pub.subscribe(self.OnControlChangedPubSub, 'chatcolorpickerchanged')
         pub.subscribe(self.OnControlChangedPubSub, 'keybuttonchanged')
         pub.subscribe(self.OnControlChangedPubSub, 'powerbinderchanged')
         pub.subscribe(self.OnControlChangedPubSub, 'powerpickerchanged')
         pub.subscribe(self.OnControlChangedPubSub, 'powerselectorchanged')
+        pub.subscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
-    def OnWindowDestroy(self, evt):
+    def OnProfileClosingPubSub(self):
         pub.unsubscribe(self.OnControlChangedPubSub, 'chatcolorpickerchanged')
         pub.unsubscribe(self.OnControlChangedPubSub, 'keybuttonchanged')
         pub.unsubscribe(self.OnControlChangedPubSub, 'powerbinderchanged')
         pub.unsubscribe(self.OnControlChangedPubSub, 'powerpickerchanged')
         pub.unsubscribe(self.OnControlChangedPubSub, 'powerselectorchanged')
+        pub.unsubscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
     def OnControlChangedPubSub(self, control):
         self.Profile.DoCommand(self, control)

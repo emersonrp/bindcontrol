@@ -482,10 +482,11 @@ class MovementPowers(Page):
         self.MainSizer.Add(topSizer, flag = wx.ALL|wx.ALIGN_CENTER_HORIZONTAL)
 
         pub.subscribe(self.OnPowerSelectorChanged, 'powerselectorchanged')
+        pub.subscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
-    def OnWindowDestroy(self, evt):
-        super().OnWindowDestroy(evt)
+    def OnProfileClosingPubSub(self):
         pub.unsubscribe(self.OnPowerSelectorChanged, 'powerselectorchanged')
+        pub.unsubscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
     def OnPowerSelectorChanged(self, control):
         self.SynchronizeUI()

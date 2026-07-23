@@ -34,13 +34,14 @@ class CustomBinds(Page):
         pub.subscribe(self.OnBindsChanged, 'updatepanels.bind')
         pub.subscribe(self.OnDeletePanel, 'deletepanel.bind')
         pub.subscribe(self.OnAddPanel, 'addpanel.bind')
+        pub.subscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
-    def OnWindowDestroy(self, evt):
-        super().OnWindowDestroy(evt)
+    def OnProfileClosingPubSub(self):
         pub.unsubscribe(self.OnVerboseBindsChanged, 'prefschanged.verbosebinds')
         pub.unsubscribe(self.OnBindsChanged, 'updatepanels.bind')
         pub.unsubscribe(self.OnDeletePanel, 'deletepanel.bind')
         pub.unsubscribe(self.OnAddPanel, 'addpanel.bind')
+        pub.unsubscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
     def BuildPage(self) -> None:
 

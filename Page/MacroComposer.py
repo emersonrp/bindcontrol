@@ -65,13 +65,14 @@ class MacroComposer(Page):
         pub.subscribe(self.UpdateAllMacros, 'updatepanels.macro')
         pub.subscribe(self.doDeleteMacroPane, 'deletepanel.macro')
         pub.subscribe(self.OnAddPanel, 'addpanel.macro')
+        pub.subscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
-    def OnWindowDestroy(self, evt):
-        super().OnWindowDestroy(evt)
-        pub.subscribe(self.OnContentsChanged, 'macrocontentschanged')
-        pub.subscribe(self.UpdateAllMacros, 'updatepanels.macro')
-        pub.subscribe(self.doDeleteMacroPane, 'deletepanel.macro')
-        pub.subscribe(self.OnAddPanel, 'addpanel.macro')
+    def OnProfileClosingPubSub(self):
+        pub.unsubscribe(self.OnContentsChanged, 'macrocontentschanged')
+        pub.unsubscribe(self.UpdateAllMacros, 'updatepanels.macro')
+        pub.unsubscribe(self.doDeleteMacroPane, 'deletepanel.macro')
+        pub.unsubscribe(self.OnAddPanel, 'addpanel.macro')
+        pub.unsubscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
     def AllBindFiles(self) -> dict[str, list]:
         return {

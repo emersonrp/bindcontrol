@@ -223,6 +223,7 @@ class Main(wx.Frame):
                 self.CheckProfDirButtonErrors()
             except Exception:
                 if self.Profile:
+                    pub.sendMessage('profileclosing')
                     self.Profile.DestroyLater()
                 self.Profile = None
                 self.StartupPanel = self.MakeStartupPanel()
@@ -329,10 +330,13 @@ class Main(wx.Frame):
 
                 self.Sizer.Remove(0)
 
-                if self.Profile: self.Profile.Destroy()
+                if self.Profile:
+                    pub.sendMessage('profileclosing')
+                    self.Profile.DestroyLater()
 
                 # destroy the Startup Panel if it's there.  This is only needed on Windows dunno why.
-                if self.StartupPanel: self.StartupPanel.Destroy()
+                if self.StartupPanel:
+                    self.StartupPanel.DestroyLater()
 
                 self.Profile = Profile(self, newname = newname)
                 self.Profile.buildUIFromData()
@@ -364,10 +368,13 @@ class Main(wx.Frame):
             self.Sizer.Remove(0)
 
             # delete any existing Profile and all its subwidgets and geegaws
-            if self.Profile: self.Profile.DestroyLater()
+            if self.Profile:
+                pub.sendMessage('profileclosing')
+                self.Profile.DestroyLater()
 
             # destroy the Startup Panel if it's there.  This is only needed on Windows dunno why.
-            if self.StartupPanel: self.StartupPanel.DestroyLater()
+            if self.StartupPanel:
+                self.StartupPanel.DestroyLater()
 
             # and set up our new profile as the current one
             self.Profile = newProfile
@@ -449,6 +456,7 @@ class Main(wx.Frame):
         if self.CheckIfProfileNeedsSaving() == wx.CANCEL: return
         self.Sizer.Remove(0)
         if self.Profile:
+            pub.sendMessage('profileclosing')
             self.Profile.DestroyLater()
             self.Profile = None
             wx.ConfigBase.Get().Write('LastProfile', '')

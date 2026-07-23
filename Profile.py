@@ -92,16 +92,17 @@ class Profile(wx.Notebook):
 
         if self.EditingDefault: self.ColorThingsForEditingDefault()
 
-        self.Bind(wx.EVT_WINDOW_DESTROY, self.OnWindowDestroy)
-
         pub.subscribe(self.CheckAllConflicts, 'prefschanged.resetkey')
         pub.subscribe(self.OnDeletePanel, 'deletepanel')
         pub.subscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
 
-    def OnWindowDestroy(self, evt):
+        pub.subscribe(self.OnProfileClosingPubSub, 'profileclosing')
+
+    def OnProfileClosingPubSub(self):
         pub.unsubscribe(self.CheckAllConflicts, 'prefschanged.resetkey')
         pub.unsubscribe(self.OnDeletePanel, 'deletepanel')
         pub.unsubscribe(self.OnKeyButtonChanged, 'keybuttonchanged')
+        pub.unsubscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
     def CreatePage(self, page):
         page.BuildPage()

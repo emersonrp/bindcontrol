@@ -154,12 +154,13 @@ class PopmenuEditor(Page):
         self.InitialLoadComplete = False
 
         pub.subscribe(self.OnGameDirChanged, 'prefschanged.gamedir')
+        pub.subscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
         self.Layout()
 
-    def OnWindowDestroy(self, evt):
-        super().OnWindowDestroy(evt)
+    def OnProfileClosingPubSub(self):
         pub.unsubscribe(self.OnGameDirChanged, 'prefschanged.gamedir')
+        pub.unsubscribe(self.OnProfileClosingPubSub, 'profileclosing')
 
     def OnGameDirChanged(self):
         self.LoadMenusIfNeeded(force = True)

@@ -1596,7 +1596,7 @@ Emotes = {
                 'Yes%em thumbsup$$local Yes',
                 'Yes sir!%em salute$$local Yes sir!',
                 'No%em no$$No',
-                'Huh?%em shrug$$local Huh?'
+                'Huh?%em shrug$$local Huh?',
                 'Good job!%em thumbsup$$Good job!',
                 'Sorry%em bow$$local Sorry',
                 'Thank You%em thanks$$local Thank You',

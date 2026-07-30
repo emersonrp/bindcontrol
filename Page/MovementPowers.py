@@ -390,9 +390,6 @@ class MovementPowers(Page):
         self.superSpeedSizer.AddControl(ctlName = 'SpeedMode', ctlType = 'keybutton',)
         self.Ctrls['SpeedMode'].Bind(EVT_KEY_CHANGED, self.OnSpeedChanged)
         self.superSpeedSizer.AddControl(ctlName = 'SpeedSpecialKey', ctlType = 'keybutton',)
-        self.superSpeedSizer.AddControl(ctlName = 'SSSJModeEnable', ctlType = 'checkbox',
-            helpfile = 'SuperSpeedSuperJumpMode.html',
-            tooltip = 'Enable Super Speed / Super Jump Mode')
         self.rightColumn.Add(self.superSpeedSizer, 0, wx.EXPAND)
 
         ##### SUPER JUMP
@@ -415,6 +412,9 @@ class MovementPowers(Page):
             tooltip = 'Turn off Jumping powers completely')
         self.Ctrls['JumpOff'].Bind(EVT_KEY_CHANGED, self.OnJumpChanged)
         self.superJumpSizer.AddControl(ctlName = 'JumpSpecialKey', ctlType = 'keybutton',)
+        self.superJumpSizer.AddControl(ctlName = 'SSSJModeEnable', ctlType = 'checkbox',
+            helpfile = 'SuperJumpDuringJumps.html',
+            tooltip = 'Super Jump only during jumps')
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
         ##### FLY
@@ -564,8 +564,6 @@ class MovementPowers(Page):
             c['SpeedPower'].ShowEntryIf('Speed of Sound', self.Profile.HasPower('Experimentation', 'Speed of Sound'))
             c['SpeedPower'].Enable(bool(speedkeyaction))
             c['SpeedMode'].Enable(bool(speedkeyaction) and bool(c['SpeedPower'].GetStringSelection()) and self.DefaultMode() != MODE_SS)
-            c['SSSJModeEnable'].Show(self.rightColumn.IsShown(self.superJumpSizer))
-            c['SSSJModeEnable'].Enable(speedkeyaction == ACTION_SOD)
 
             if self.DefaultMode() == MODE_SS:
                 modekeytooltip = 'The Speed Key is disabled because Speed is your default Speed on Demand Mode'
@@ -618,7 +616,6 @@ class MovementPowers(Page):
                 bool(self.GetState('CJPower'))
             )
 
-            c['SSSJModeEnable'].Show(bool(self.GetState('SpeedPower')))
             c['SSSJModeEnable'].Enable(self.SoDEnabled())
 
             if self.DefaultMode() == MODE_JMP:
@@ -2397,7 +2394,7 @@ UI.Labels.update( {
     'SpeedKeyAction'    : "Speed Key Action",
     'SpeedPower'        : "Speed Power",
     'SpeedMode'         : 'Speed Key',
-    'SSSJModeEnable'    : 'Enable Super Speed / Super Jump Mode',
+    'SSSJModeEnable'    : 'Super Jump only during jumps',
     'SpeedSpecialKey'   : '',
     'SpeedSpecialPower' : '', # Hidden
 

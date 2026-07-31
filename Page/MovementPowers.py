@@ -394,6 +394,10 @@ class MovementPowers(Page):
 
         ##### SUPER JUMP
         self.superJumpSizer = ControlGroup(self, self, 'Jumping Settings')
+        self.superJumpSizer.AddControl(ctlName = 'SSSJModeEnable', ctlType = 'checkbox',
+            helpfile = 'SuperJumpDuringJumps.html',
+            tooltip = UI.Labels['SSSJModeEnable'])
+        self.Ctrls['SSSJModeEnable'].Bind(wx.EVT_CHECKBOX, self.OnJumpChanged)
         self.superJumpSizer.AddControl(ctlName = 'JumpKeyAction', ctlType = 'choice',
             contents = ('Speed on Demand', 'Power Toggle', 'None'),
             helpfile = 'JumpKeyAction.html',
@@ -412,9 +416,6 @@ class MovementPowers(Page):
             tooltip = 'Turn off Jumping powers completely')
         self.Ctrls['JumpOff'].Bind(EVT_KEY_CHANGED, self.OnJumpChanged)
         self.superJumpSizer.AddControl(ctlName = 'JumpSpecialKey', ctlType = 'keybutton',)
-        self.superJumpSizer.AddControl(ctlName = 'SSSJModeEnable', ctlType = 'checkbox',
-            helpfile = 'SuperJumpDuringJumps.html',
-            tooltip = 'Super Jump only during jumps')
         self.rightColumn.Add(self.superJumpSizer, 0, wx.EXPAND)
 
         ##### FLY
@@ -594,21 +595,37 @@ class MovementPowers(Page):
 
     def OnJumpChanged(self, evt = None) -> None:
         c = self.Ctrls
-        jumpkeyaction = self.GetKeyAction('Jump')
+
         if (self.Profile.HasPower('Leaping', 'Super Jump') or self.Profile.HasPower('Force of Will', 'Mighty Leap')):
+            jumpkeyaction = self.GetKeyAction('Jump')
+            havejumpkeyaction = bool(c['JumpKeyAction'].GetStringSelection() != 'None')  # ewww
             c['DefaultMode'].ShowEntryIf('Jump', jumpkeyaction == ACTION_SOD)
             self.ShowControlGroup(self.superJumpSizer)
             c['JumpPower'].ShowEntryIf('Super Jump',  self.Profile.HasPower('Leaping', 'Super Jump'))
             c['JumpPower'].ShowEntryIf('Mighty Leap', self.Profile.HasPower('Force of Will', 'Mighty Leap'))
-            c['JumpPower'].Enable(bool(jumpkeyaction))
+            c['JumpPower'].Enable(self.SSSJEnabled() or havejumpkeyaction)
 
             c['CJPower'].ShowEntryIf('Combat Jumping', self.Profile.HasPower('Leaping', 'Combat Jumping'))
-            c['CJPower'].Show  (bool(jumpkeyaction) and c['CJPower'].GetCount() > 1)
-            c['CJPower'].Enable(bool(jumpkeyaction) and c['CJPower'].GetCount() > 1)
+            c['CJPower'].Show  (havejumpkeyaction and c['CJPower'].GetCount() > 1)
+            c['CJPower'].Enable(havejumpkeyaction and c['CJPower'].GetCount() > 1)
 
-            c['JumpMode'].Enable(bool(jumpkeyaction and (
-                c['JumpPower'].GetStringSelection() or c['CJPower'].GetStringSelection()
-                ) and self.DefaultMode() != MODE_JMP))
+            if self.SSSJEnabled():
+                c['JumpKeyAction'].Enable(False)
+                c['JumpMode']     .Enable(False)
+                c['JumpKeyAction'].Show(False)
+                c['JumpMode']     .Show(False)
+            else:
+                c['JumpKeyAction'].Show(True)
+                c['JumpMode']     .Show(True)
+
+                c['JumpKeyAction'].Enable(True)
+                c['JumpMode'].Enable(
+                    bool(jumpkeyaction)
+                        and
+                    (c['JumpPower'].GetStringSelection() or c['CJPower'].GetStringSelection())
+                        and
+                    self.DefaultMode() != MODE_JMP
+                )
 
             c['JumpOff'].Show(
                 jumpkeyaction == ACTION_PT and
@@ -616,9 +633,15 @@ class MovementPowers(Page):
                 bool(self.GetState('CJPower'))
             )
 
-            c['SSSJModeEnable'].Enable(self.SoDEnabled())
+            c['SSSJModeEnable'].Enable(
+                self.SoDEnabled()
+                    and
+                self.DefaultMode() not in (MODE_JMP, MODE_FLY)
+            )
 
-            if self.DefaultMode() == MODE_JMP:
+            if self.SSSJEnabled():
+                modekeytooltip = f'The Jump Key is disabled because "{UI.Labels['SSSJModeEnable']}" is active'
+            elif self.DefaultMode() == MODE_JMP:
                 modekeytooltip = 'The Jump Key is disabled because Jump is your default Speed on Demand Mode'
             elif not (c['JumpPower'].GetStringSelection() or c['CJPower'].GetStringSelection()):
                 modekeytooltip = 'The Jump Key is disabled because you have not selected any Jump powers'
@@ -1547,9 +1570,9 @@ class MovementPowers(Page):
                                     self.MakeSoDFile({
                                         't'          : t,
                                         'key'        : t.SpeedModeKey,
-                                        'suffix'     : 's',
-                                        'mobile'     : t.speed,
-                                        'stationary' : None, # I think we want no stationary power with SS anymore
+                                    'suffix'     : 's',
+                                    'mobile'     : t.speed,
+                                    'stationary' : None, # I think we want no stationary power with SS anymore
                                         'mode'       : MODE_SS,
                                         'sssj'       : sssj,
                                     })

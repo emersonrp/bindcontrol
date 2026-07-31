@@ -395,7 +395,7 @@ class MovementPowers(Page):
         ##### SUPER JUMP
         self.superJumpSizer = ControlGroup(self, self, 'Jumping Settings')
         self.superJumpSizer.AddControl(ctlName = 'SSSJModeEnable', ctlType = 'checkbox',
-            helpfile = 'SuperJumpDuringJumps.html',
+            helpfile = 'ToggleSuperJumpWhileJumping.html',
             tooltip = UI.Labels['SSSJModeEnable'])
         self.Ctrls['SSSJModeEnable'].Bind(wx.EVT_CHECKBOX, self.OnJumpChanged)
         self.superJumpSizer.AddControl(ctlName = 'JumpKeyAction', ctlType = 'choice',
@@ -2417,7 +2417,7 @@ UI.Labels.update( {
     'SpeedKeyAction'    : "Speed Key Action",
     'SpeedPower'        : "Speed Power",
     'SpeedMode'         : 'Speed Key',
-    'SSSJModeEnable'    : 'Super Jump only during jumps',
+    'SSSJModeEnable'    : 'Toggle Super Jump While Jumping',
     'SpeedSpecialKey'   : '',
     'SpeedSpecialPower' : '', # Hidden
 

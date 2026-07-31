@@ -606,8 +606,8 @@ class MovementPowers(Page):
             c['JumpPower'].Enable(self.SSSJEnabled() or havejumpkeyaction)
 
             c['CJPower'].ShowEntryIf('Combat Jumping', self.Profile.HasPower('Leaping', 'Combat Jumping'))
-            c['CJPower'].Show  (havejumpkeyaction and c['CJPower'].GetCount() > 1)
-            c['CJPower'].Enable(havejumpkeyaction and c['CJPower'].GetCount() > 1)
+            c['CJPower'].Show  (not self.SSSJEnabled() and havejumpkeyaction and c['CJPower'].GetCount() > 1)
+            c['CJPower'].Enable(not self.SSSJEnabled() and havejumpkeyaction and c['CJPower'].GetCount() > 1)
 
             if self.SSSJEnabled():
                 c['JumpKeyAction'].Enable(False)

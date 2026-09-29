@@ -68,6 +68,7 @@ AppDir:
       - curl
       - libsdl2-2.0-0
       - libnotify4
+      - libselinux1
     exclude:
       - dbus-bin
       - libacl1
@@ -117,7 +118,6 @@ AppDir:
       - librtmp1
       - libsamplerate0
       - libseccomp2
-      - libselinux1
       - libsndfile1
       - libsqlite3-0
       - libssh-4

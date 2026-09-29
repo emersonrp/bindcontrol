@@ -67,6 +67,7 @@ AppDir:
       - python3.13
       - curl
       - libsdl2-2.0-0
+      - libnotify4
     exclude:
       - dbus-bin
       - libacl1

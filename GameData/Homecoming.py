@@ -576,7 +576,7 @@ Archetypes: dict[Any, Any] = {
             'Radiation Armor' : [ 'Hide', 'Alpha Barrier', 'Gamma Boost', 'Proton Armor', 'Fallout Shelter', 'Radiation Therapy', 'Particle Shielding', 'Ground Zero', 'Meltdown', ],
             'Regeneration'    : [ 'Hide', 'Reconstruction', 'Fast Healing', 'Ailment Resistance', 'Integration', 'Resilience', 'Instant Healing', 'Reactive Regeneration', 'Second Wind', 'Moment of Glory', ],
             'Shield Defense'  : [ 'Hide', 'Deflection', 'Battle Agility', 'True Grit', 'Active Defense', 'Against All Odds', 'Grant Cover', 'Shield Charge', 'One with the Shield', ],
-            'Sonic Aura'      : [ 'Sonic Diffusion', 'Attenuation Blanket', 'Equalization', 'Harmonic Distortion', 'Disruption Aura', 'Ultrasonic Hide', 'Somatic Aura', 'Sonic Boom', 'Noise Cancellation', ],
+            'Sonic Aura'      : [ 'Sonic Diffusion', 'Attenuation Blanket', 'Equalization', 'Harmonic Distortion', 'Disruption Aura', 'Ultrasonic Flow', 'Somatic Aura', 'Sonic Boom', 'Noise Cancellation', ],
             'Stone Armor'     : [ 'Hide', 'Rock Armor', 'Stone Skin', 'Earth\'s Embrace', 'Rooted', 'Crystal Armor', 'Brimstone Armor', 'Minerals', 'Geode', ],
             'Super Reflexes'  : [ 'Hide', 'Focused Fighting', 'Focused Senses', 'Agile', 'Practiced Brawler', 'Dodge', 'Quickness', 'Evasion', 'Elude', ],
             'Willpower'       : [ 'Hide', 'High Pain Tolerance', 'Reconstruction', 'Mind Over Body', 'Indomitable Will', 'Heightened Senses', 'Fast Healing', 'Resurgence', 'Strength of Will', ],
@@ -2091,6 +2091,7 @@ Emotes = {
                 { 'Kneel' : [ 'Kneel', 'Kneel2', 'Kneel3', 'Kneel4', 'Kneel5'] },
                 'Use Laptop|laptop', 'Lotus', 'Read Newspaper|newspaper',
                 'AFK Sleep|sleep', 'Sit on Ground|sit', 'Wait|waiting',
+                'Type Gauntlet',
             ]},
             { 'Evil' : [
                 'Hold Bat|batlookout', 'Evil Laugh', 'Hold Torch', 'Scheme',

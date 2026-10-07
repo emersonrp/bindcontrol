@@ -205,7 +205,7 @@ Archetypes: dict[Any, Any] = {
             'Storm Summoning'     : [ 'Gale', 'O2 Boost', 'Snow Storm', 'Steamy Mist', 'Freezing Rain', 'Hurricane', 'Thunder Clap', 'Tornado', 'Lightning Storm', ],
             'Thermal Radiation'   : [ 'Warmth', 'Thermal Shield', 'Cauterize', 'Plasma Shield', 'Power of the Phoenix', 'Thaw', 'Forge', 'Heat Exhaustion', 'Melt Armor', ],
             'Time Manipulation'   : [ 'Time Crawl', 'Temporal Mending', 'Time\'s Juncture', 'Temporal Selection', 'Distortion Field', 'Time Stop', 'Farsight', 'Slowed Response', 'Chrono Shift', ],
-            'Traps'               : [ 'Web Grenade', 'Caltrops', 'Triage Beacon', 'Acid Mortar', 'Force Field Generator', 'Poison Trap', 'Seeker Drones', 'Trip Mine', 'Temporal Bomb', ],
+            'Traps'               : [ 'Debilitating Web Grenade', 'Shrapnel Grenade', 'Triage Beacon', 'Acid Mortar', 'Force Field Generator', 'Poison Trap', 'Seeker Drones', 'Trip Mine', 'Temporal Bomb', ],
             'Trick Arrow'         : [ 'Entangling Arrow', 'Flash Arrow', 'Glue Arrow', 'Ice Arrow', 'Poison Gas Arrow', 'Acid Arrow', 'Disruption Arrow', 'Oil Slick Arrow', 'EMP Arrow', ],
         },
     },
